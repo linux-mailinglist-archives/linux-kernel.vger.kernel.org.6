@@ -1,88 +1,111 @@
-Return-Path: <linux-kernel+bounces-360000-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1B99999366
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:10:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76C32999375
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7216D2834B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3B41F24A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:12:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64EF61D04B9;
-	Thu, 10 Oct 2024 20:10:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0185A1E1C15;
+	Thu, 10 Oct 2024 20:11:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="amNPfYSH"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="pMF193xb"
+Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69C91CEAD8
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2277C1CF2B3;
+	Thu, 10 Oct 2024 20:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728591028; cv=none; b=chsvm49GyzxE9zJYbLZ8oACWrhYaEzAe0g92ALBDx8TD0x8ve8JLsnjnmsrCCtmBnSnMGSP243EwEnFQ2N6T/Roz5W8xohql4a/pCkZAs6VKFTSp5k0uhp/GTX+XjTqRxvoAYlfK+0vLCPuLd6BalaQ17tbEVD09Ykz+58ICe9Q=
+	t=1728591100; cv=none; b=h2nPAvVK/LxZzv86QcmJv74HaoS7jlEQSbdcVhZtR/NTsYJ5jFnzdOHImeQ2sG5VuXxNaPj8JnG8097zBh/rOrTnwX+krK76DXQZ3lR5fyigRoPmosOGBwkBjlgvn2nsDfju+e8Dr0kAO7oQ2i8bZudZUFEx3ZZ0K+Xw1EwbPiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728591028; c=relaxed/simple;
-	bh=BSsw+Y7OCGA/ex7b4VjgtD8Mj7ponFqGdm1B/6PluOQ=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=STAF7icoygnMbN7DMuZBXBz/8h3FWDvtAM98WgEbmwkoOVa9rNCyeguAWfof5R8rPRo4/DBjqzeHY6lni+RYtbruxh4TIbX4mZXMb7PsI58dGvhk/cXZ9Eo72DkIqOJoxoLvxnoy5whQaWZEg/KfaA8qWkrFZSrXrdH6A0MWyK0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=amNPfYSH; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A7E2C4CECC;
-	Thu, 10 Oct 2024 20:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728591027;
-	bh=BSsw+Y7OCGA/ex7b4VjgtD8Mj7ponFqGdm1B/6PluOQ=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=amNPfYSHH/H53KPD3Uewa6He4jRlEirCJxFEDoJLPcVOcDL8lt8PZyP2ZiG4aE6C8
-	 5slTYrC3pXTca8AykH0lVGYjB+YpN7DkuTibj+wGrA30BaDvgl0q23+p2sbvR64DSP
-	 1mR3RHmTlRIgzbsRlEfwjAkvYEvpsvI88rkf8gXanYMGdpWBM2DEfbjXEt/W9mRxh6
-	 uAbSl8AGgE9lTMo30/wqdv96nKIZIXIS7twmx+6rD7aZ5rmqvXmwioVkLLfcIZ4KRx
-	 wNBIPjk7JLTSiCS7MSJiLWEWsKwjoMHeii/KCJvNaGFU+kmfQ8QaMCnX2xFZSgiETV
-	 IA0g3Q/U8gI3Q==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD6F3803263;
-	Thu, 10 Oct 2024 20:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728591100; c=relaxed/simple;
+	bh=YUURegqHlzdMc+l9OPp0EJKPdH70Hf31zc5tVc3O95A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RmzFISW/WMK3N/8vDA/CN+YR4JPrJeS8815lB6fSXNYIdYYUuW7iMpR1NbnZwEj6BpQ2WfvI0t5a82eV4ISDXjVxKSAlIMeIzYh5iYXfPjcccgDynU6a4JeobD1YWg0QJf9gEvfWFfTtWNW+ZLwzHUIacH8/Jui2FkE+dmENJd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=pMF193xb; arc=none smtp.client-ip=217.194.8.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
+Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
+	by mail11.truemail.it (Postfix) with ESMTPA id E31AD1F969;
+	Thu, 10 Oct 2024 22:11:25 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
+	s=default; t=1728591086;
+	bh=/I/lOPCvj/ZjeWChjY+DvX2ksqrYKCeJpqQ5rwBLawg=; h=From:To:Subject;
+	b=pMF193xbTFIzRJTY6djU4mXUsm9R6/HW+dM2v2iOS9lqEfsk32VpZ1E+pXfqj1ZCx
+	 1iPu8rpsjf/LD2jXnV7Qpun5CQDjei5WZC0/I8J7v/9OfxbirdO2ZA16oZzQ3qvEyL
+	 M9869aCZ+4aUDBQ0dcZDu9qR72BPi8TOd8FGDfgD8tm2mM6sl5OipwVagnB8xIn7CW
+	 UgwZiMmbL+u1yMEi3VfclrXSkFe3PQmQkDQCioAVXdt1IocqHiZsE+gsoVZHcrP3Fc
+	 pu/9bUqsvXMpwD6T6I2b71P/zRbSSvrzg0Q0J+BERe6M+88IgeIVMLM/lx1WzGL+tx
+	 48dIdF46pK8/g==
+Date: Thu, 10 Oct 2024 22:11:21 +0200
+From: Francesco Dolcini <francesco@dolcini.it>
+To: Frank Li <Frank.li@nxp.com>
+Cc: Stefan Eichenberger <eichest@gmail.com>, hongxing.zhu@nxp.com,
+	l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
+	kernel@pengutronix.de, festevam@gmail.com,
+	francesco.dolcini@toradex.com, linux-pci@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
+Message-ID: <20241010201121.GA88411@francesco-nb>
+References: <20241009131659.29616-1-eichest@gmail.com>
+ <ZwgykRyE+jDU0CiU@lizhi-Precision-Tower-5810>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [f2fs-dev] [PATCH] f2fs: allow parallel DIO reads
-From: patchwork-bot+f2fs@kernel.org
-Message-Id: 
- <172859103175.2156650.13652147260460527526.git-patchwork-notify@kernel.org>
-Date: Thu, 10 Oct 2024 20:10:31 +0000
-References: <20241010000923.1278817-1-jaegeuk@kernel.org>
-In-Reply-To: <20241010000923.1278817-1-jaegeuk@kernel.org>
-To: Jaegeuk Kim <jaegeuk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-f2fs-devel@lists.sourceforge.net
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwgykRyE+jDU0CiU@lizhi-Precision-Tower-5810>
 
-Hello:
+Hello Frank,
 
-This patch was applied to jaegeuk/f2fs.git (dev)
-by Jaegeuk Kim <jaegeuk@kernel.org>:
-
-On Thu, 10 Oct 2024 00:09:23 +0000 you wrote:
-> This fixes a regression which prevents parallel DIO reads.
+On Thu, Oct 10, 2024 at 04:01:21PM -0400, Frank Li wrote:
+> On Wed, Oct 09, 2024 at 03:14:05PM +0200, Stefan Eichenberger wrote:
+> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> >
+> > The suspend/resume support is broken on the i.MX6QDL platform. This
+> > patch resets the link upon resuming to recover functionality. It shares
+> > most of the sequences with other i.MX devices but does not touch the
+> > critical registers, which might break PCIe. This patch addresses the
+> > same issue as the following downstream commit:
+> > https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
+> > In comparison this patch will also reset the device if possible. Without
+> > this patch suspend/resume will not work if a PCIe device is connected.
+> > The kernel will hang on resume and print an error:
+> > ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+> > 8<--- cut here ---
+> > Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
+> >
+> > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> > ---
 > 
-> Fixes: 0cac51185e65 ("f2fs: fix to avoid racing in between read and OPU dio write")
-> Signed-off-by: Jaegeuk Kim <jaegeuk@kernel.org>
-> ---
->  fs/f2fs/file.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
+> Thank you for your patch.
+> 
+> But it may conflict with another suspend/resume patch
+> https://lore.kernel.org/imx/1727245477-15961-8-git-send-email-hongxing.zhu@nxp.com/
 
-Here is the summary with links:
-  - [f2fs-dev] f2fs: allow parallel DIO reads
-    https://git.kernel.org/jaegeuk/f2fs/c/bdab38b79199
+Thanks for the head-up.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+Do you see any issue with this patch apart that? Because this patch is
+fixing a crash, so I would expect this to be merged, once ready, and
+such a series rebased afterward.
 
+I am writing this explicitly since you wrote a similar comment on the
+v1 (https://lore.kernel.org/all/ZsNXDq%2FkidZdyhvD@lizhi-Precision-Tower-5810/)
+and I would like to prevent to have this fix starving for long just because
+multiple people is working on the same driver.
+
+Francesco
 
 
