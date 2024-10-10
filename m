@@ -1,89 +1,162 @@
-Return-Path: <linux-kernel+bounces-358919-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358920-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EC16998549
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:46:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C6E599854D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:47:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 250A31F223CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:46:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2FE9283295
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:47:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CF031C2454;
-	Thu, 10 Oct 2024 11:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3E51C2DC8;
+	Thu, 10 Oct 2024 11:46:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="DSWwCyki";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="SbzAb/Wd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="e+BlO3/K"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925C7183CD9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:46:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA851C2454
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560796; cv=none; b=pKd2qKeReew9qHk7zk5gofYUBQGX2cOlpX3GLysQXuAoGSgOURSI9hZ6xuTlr+LaOroKLo0BKfm3wdWjGeVc66MSutr5MIP113BP+tv86LTpIOxQE1xWc5Les4kYiC2KgiQLBJ4RBRBQ71s0bSLJfs/vWJNVLTp3ZtooR2Xmdn0=
+	t=1728560813; cv=none; b=nWuToeb/DS7hQGX7hYWPmROtboOtyEUQj1i2lLD2peCXuPfrHcXAIVLfaWVlErCWurva6OWYOV73pVcxMM8BeZYQiRe3zaYYoZA80Kji0ncRbRvBXMUOUizTdx6lsSPP7Z6ncLme++xNVlRrWv4DLCrmqXLk5srdwk/s58OUNBY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560796; c=relaxed/simple;
-	bh=rFkxvfPO1JHC/WQR6HbnlLOaMbVKXMFENzloyo6155s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=s8AeBW86SRwXEUWiM+LB/iKQ2nY/l2VyZidpFUzFvRqA3ZDN+//aWR1V85Z2hDK5B6Fhk0dHag316XrkMCBspSVGIrMnhx3g9kOKDXlrlsFQcMkf08LUub4xG5iE6ZM1hUxS+omWP12ka+MkBV7WTVNYBWlbCPQbRpSgBuW6dMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=DSWwCyki; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=SbzAb/Wd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728560792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AlMv9tmvfuxRB+hSunR/bD24PVWzP/WzhnKYM4KcZI8=;
-	b=DSWwCykiDPoqW6qwi896xbYnYnEYM8Uvjfgf5pddMmI9CZEGjJ5IXuvVW0QTWLP7VNPszS
-	+3Dm/Jh6+keNsbiNWYwon8sKGfgqi1okrNBjViX/XUv8pY0EDOssHelGSAMAnen8okcNzv
-	aUr0ZHrcBuMJLo+vRmwoc4UustJqgNCbGdYBYOwPi2UNJx8g+w8YJeNzR+k518Ih4OCkX+
-	7LD6Yo+RPD8FyUY8idRDUT8fl6UnUIUtubbe4708jKk81zDJ+OoX0Sw0MI/LSoZoDHC65q
-	tXNHfJRpwyzdTtxUqoM+HegW5OgMBu/gqj9tBBsa6zYNra9ZRylWaH22BSAE0Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728560792;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AlMv9tmvfuxRB+hSunR/bD24PVWzP/WzhnKYM4KcZI8=;
-	b=SbzAb/WdqSuZe3iS2pCMRNc0hdq+CYiOwDZu8kenLwtKWJ2EoFV720KcVf6LDa6MfOjtfD
-	eDpsX+ax/vbip8CA==
-To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Subject: Re: [patch 03/25] debugobjects: Dont destroy kmem cache in init()
-In-Reply-To: <c118dad2-4e39-78f2-c09b-0fe771feb86a@huawei.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.137021337@linutronix.de>
- <c118dad2-4e39-78f2-c09b-0fe771feb86a@huawei.com>
-Date: Thu, 10 Oct 2024 13:46:32 +0200
-Message-ID: <878quwi3jb.ffs@tglx>
+	s=arc-20240116; t=1728560813; c=relaxed/simple;
+	bh=8RulCbDWGVtRgGZnMLOgBnNo1CGaUuL572tGJIdYd6Y=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Ek5mr43dqZ0xuZ6JbUw3VlzMR5/kYS0U70vmHLz4Gi2O2BQPIydGY0AA/4rA/+MitsyzfzbxR9zeAoPH52crYmnWKk54buqGey7qUx+JdsQlVUuneMfalpizQ4zMr2H9Up1I4ePaR6GBcx7L0g8LJNpWuFTpA7FkXyyekb4ojo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=e+BlO3/K; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-42cde6b5094so6971825e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:46:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728560810; x=1729165610; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=51heMfImEr3nRBBulIoSOl7yW3U4cglSvjX85ti6WiA=;
+        b=e+BlO3/KoakbpuWO/lDuKBLZSycig3H7p42KS2L0sLTHABSjx/XxcydAcIlPPLGdNF
+         Qz7qc6MszUGqC/NzulADTtYNwwPOtRhfy5h1FnSMDpf2wbMzo6mWnJP7JalxQgOOrDz+
+         g5o1EW7mNZkgtAryNaDyIeUwcVKrX1ZbdKktL0XLpQPI5ciquqo6XLyqfRuUwyueMgXe
+         L6dIB2V3xaFOXicMuRvqJH/+vMq241fUcWYlq7g63M4gucHF9gTt4bU0+/QNWPRr+9ND
+         cA8n5wcgQheKuHt2+LpQK51ogtO8qaKb5qxbFq9r0DiRhx3Qdam4xhH45bgLTbfhqfwq
+         pSxg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728560810; x=1729165610;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=51heMfImEr3nRBBulIoSOl7yW3U4cglSvjX85ti6WiA=;
+        b=Rg7rs40j97x7jaYl1LiueNE+SrtzA5PEYI2aibTA+bMa8RZyV1EDEPLfP630x6PlK+
+         Fy2V9eUL7/yJ1KoZVRBmvGDU0CZU7P/Yh/3gHG/7WEz2fh6VJ/9kZ/G0K4pn8mbo1a1X
+         gy2D8GEho6M+wWrteyysCqYAj6IFkrLd7rOB44xe4wnlUsgtMISNP/ZhwBUuBTJSwvVR
+         ZYET6MmdFwR2xDvOv/oODnnq95LpmmiNs0aCBXyyzX1YlHgw2du3Xop4r8RjjWG9nzq8
+         6veyhTofleERlopKs6nnC6IxtKO67Oh+7TJUerthC+Yd4GbrW8BcFbgRKZ0aX+DwrOux
+         ingQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIYqjF8pIywV3FkvS8185/yKzB8CmveskU5r+O7+B1RDk9nNjv76k3y2xQ411cX3gbHY0QK1PCs6U5+14=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2eQHhIo72Bz/YsX+dnq9msaVV65qFdsUzf7dse0WDcn2DtiDe
+	q5ZO/u9XR+Tk/vNfwEnXyAq3etUhO8IuDqQlza7+InMgF1bPo54EJHMlxAw2ylg=
+X-Google-Smtp-Source: AGHT+IFa75cF+jj4ZG6STuUH/lBb3jUgnt96M7yzoYZ5b+EpsWNGz0c2CtxoTU0fMOvpLbUv8bZc3A==
+X-Received: by 2002:a05:600c:474d:b0:42c:cd7c:a196 with SMTP id 5b1f17b1804b1-431157b4638mr34318945e9.17.1728560810088;
+        Thu, 10 Oct 2024 04:46:50 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:982:cbb0:64e2:34a0:1d01:60a2? ([2a01:e0a:982:cbb0:64e2:34a0:1d01:60a2])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79f9a9sm1340063f8f.74.2024.10.10.04.46.49
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 04:46:49 -0700 (PDT)
+Message-ID: <c84dd670-d417-4df7-b95f-c0fbc1703c2d@linaro.org>
+Date: Thu, 10 Oct 2024 13:46:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH] soc: qcom: mark pd-mapper as broken
+To: Johan Hovold <johan@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Chris Lew <quic_clew@quicinc.com>,
+ Stephan Gerhold <stephan.gerhold@linaro.org>,
+ Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
+ linux-kernel@vger.kernel.org, regressions@lists.linux.dev,
+ stable@vger.kernel.org
+References: <20241010074246.15725-1-johan+linaro@kernel.org>
+ <CAA8EJpoiu2hwKWGMTeA=Kr+ZaPL=JJFq1qQOJhUnYz6-uTmHWw@mail.gmail.com>
+ <ZweoZwz73GaVlnLB@hovoldconsulting.com>
+ <CAA8EJprg0ip=ejFOzBe3iisKHX14w0BnAQUDPqzuPRX6d8fvRA@mail.gmail.com>
+ <Zwe-DYZKQpLJgUtp@hovoldconsulting.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <Zwe-DYZKQpLJgUtp@hovoldconsulting.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10 2024 at 10:14, Leizhen wrote:
-> On 2024/10/8 0:49, Thomas Gleixner wrote:
->> -	if (!obj_cache || debug_objects_replace_static_objects()) {
->> +	if (!cache || !debug_objects_replace_static_objects(cache)) {
->>  		debug_objects_enabled = 0;
->> -		kmem_cache_destroy(obj_cache);
->
-> kmem_cache_destroy(cache) should be kept, or move it into debug_objects_replace_static_objects()
-> and place it above 'return false'.
+On 10/10/2024 13:44, Johan Hovold wrote:
+> On Thu, Oct 10, 2024 at 01:55:11PM +0300, Dmitry Baryshkov wrote:
+>> On Thu, 10 Oct 2024 at 13:11, Johan Hovold <johan@kernel.org> wrote:
+>>> On Thu, Oct 10, 2024 at 12:55:48PM +0300, Dmitry Baryshkov wrote:
+> 
+>>>> Please don't break what is working. pd_mapper is working on all
+>>>> previous platforms. I suggest reverting commit bd6db1f1486e ("soc:
+>>>> qcom: pd_mapper: Add X1E80100") instead.
+>>>
+>>> As I tried to explain in the commit message, there is currently nothing
+>>> indicating that these issues are specific to x1e80100 (even if you may
+>>> not hit them in your setup depending on things like probe order).
+>>
+>> I have the understanding that the issues are related to the ADSP
+>> switching the firmware on the fly, which is only used on X1E8.
+> 
+> Is this speculation on your part or something that has recently been
+> confirmed to be the case? AFAIK, there is nothing SoC specific about the
+> ECANCELED issue, and we also still do not know what is causing the audio
+> regression.
+> 
+> The thing is, we have a working and well-tested solution in the
+> user-space service so there is no rush to switch to the in-kernel one
+> (and risk distros removing the user-space service) before this has been
+> fixed.
 
-At that point it can't be destroyed. See the backtrace.
+The in-kernel pd-mapper works fine on SM8550 and SM8650, please just revert
+the X1E8 patch as suggested by Dmitry.
 
-So we just give the objects back and leak the kmem_cache.
+Neil
 
-Thanks,
+> 
+> Johan
+> 
 
-        tglx
 
