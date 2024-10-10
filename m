@@ -1,127 +1,184 @@
-Return-Path: <linux-kernel+bounces-358689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44B899827B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:38:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD570998207
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:22:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 201B21C2465C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:38:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57A221F228B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:22:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DE221BC094;
-	Thu, 10 Oct 2024 09:37:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FlsJOB2u"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F9111A0718;
+	Thu, 10 Oct 2024 09:22:48 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E21B1BBBFD;
-	Thu, 10 Oct 2024 09:37:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AAA17C22F;
+	Thu, 10 Oct 2024 09:22:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728553046; cv=none; b=kKEveWA7tE3CLqQ8U8k9w54o+uyY/bGD5rJI2gpAc6icFPTKP0ixPJmFPv2MtxOmQUnZ4aW8olu0QQ5FsMTyCDA/TfpzLDX+e1Dgu9QgBuAz83GiuDgOW7+CSP9zIh+SihxtzB6Cz1qsCGIi7PO2Y8zGK8ShAa6tCtWlW12I2yE=
+	t=1728552168; cv=none; b=hQj67QX2kjGif766tppqRNbbdmICEf0qXn7pGhwAyotGP3/6I1yFfHH3kLsL3u5JXNbuDSxY66iUE+nvmJkozkUTYPUkpwiSVYy/pFvAAUUXUhLoense0oxgnK3hn9jCfmnjSG0RcVP5W6XZrpB8aPj2J39Jmm8cv1sY/eBMSm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728553046; c=relaxed/simple;
-	bh=VHw6/ru4WIVfCSF+1BJ/2OnkobBWimQqjQ0m1jsqe1E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sYn3YzHA7jezRX/jdXFBlZlISKMFY3Sce3QMHqiP5uTA77EWBqwDrBXwtZvHtrg1UrczDZmiMHJHp+K+hggnLNTrlf5nHXFlHLM8c06EYhcElLKhMRMHulbN77JMMfDn67dq6PWZGF5IWNopoK+y3MXLJeQw/k/L97LyckkEey4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FlsJOB2u; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fac187eef2so7420011fa.3;
-        Thu, 10 Oct 2024 02:37:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728553042; x=1729157842; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=qasUjW8lOXNOYBd4pGW/rSPH9GILqj8in2xygjAFCM8=;
-        b=FlsJOB2u3lR+BH7X3NVJqnOWLPPzqFMxPvk3tUb6VXeq1ELc7sXWz3WYTmTkWyl194
-         FnsQnfy7Ls9ZlZjwwZlVRz26ZM8qU9yDB1atoJ+gs6NhULALVb8UoZXmIdK7ArCatK05
-         Un4zkZMb5VwsrhIXlNbyT5/Rb84B0pnb6KLCEsyhDyRyDAYW3v7eSywVjJrJKenIaURQ
-         keoXX9plhbZavdgg+km+DtgkAOe1zaHdFk5Po6An4gUan3BtILtf+pwY5po8Aehlp9Dh
-         HX1U2AM0mB3b2mVdj3OSpvHZXabQ2fLDQ4Znb2ZkIZmM7rDmT3AUsoaYh5HkiyPal3Yc
-         6GrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728553042; x=1729157842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :reply-to:in-reply-to:references:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qasUjW8lOXNOYBd4pGW/rSPH9GILqj8in2xygjAFCM8=;
-        b=lf6pAVk4yo5ci6j4H/29eDBfN+Sd4HM73cUvdITFf7zUXFD/jfBzbQa1SEaD6P/u0+
-         PHpheasRRgk0euMoriqH0Jrv2+tF6OwofOd/bLKd31C9Vnd0BzJ5WpV8IW3We1bVBToe
-         F40tODZnDlHZwd1Kf/TFy1zxAbvMkdgHeX8MfAONfpNc2KLyKfOVkXjBMrhZiJoqFSz8
-         h9jXXwJBeBCy+YjZBfZ7PXXhjOafm64ThfgXZnwWTgUFHQaO2c2oP7sSnJ8Mo+lMIPAa
-         hnWlOSxjs37rOt6fLxDT3NSF1vjHZ4a+QhNfok51CSySM3rVO7EDwJQ2KuolBMz6vVa5
-         aZmw==
-X-Forwarded-Encrypted: i=1; AJvYcCXgHKiFUGQwl33SCLsrMykfa0U42VcsIk080uc9RfMRSjDXDRqXt0gy0giKBzCueYu0YPF06CCyUR/kfobw@vger.kernel.org, AJvYcCXib4b7r8Dv8bExpknU4vmhkCOHn6JI9dyjurSag1sfFRIbi34gVi6oa020bJZ7WV5o55Es4z8V0fWFS8BQGw==@vger.kernel.org, AJvYcCXrT+j1F6SNGvcUXO3GlVrHQ60JZUuyuLyvg/B4L5TROaHck5BoUp+oSqkEc2ZL8+/1X1+gk95w06lRQb8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4ZZDjgPFR+purIoLEGCG5tD5rM1x3EpU2Ee5ojoep3vy2TYfp
-	HcixH8e1111++Qxb5ptF/XLeV+RV2LGwD9bGs4k124Ut20cPPMZhYcVJiVmvpFZD4An/vbw7Ptr
-	6OB6tytSbbQSHk6mTsg9Dy7NzVWk=
-X-Google-Smtp-Source: AGHT+IFoqWdCcFDyIW+T0u2K8pinEPwVaR4dgwJcH4CIPd5f99UTZp6LTbYJnA+DiT5gZsxG7Rmadj7M2RjxD5xISsQ=
-X-Received: by 2002:a05:651c:a0a:b0:2f3:b8dc:7d24 with SMTP id
- 38308e7fff4ca-2fb1873e91emr32922731fa.17.1728553042257; Thu, 10 Oct 2024
- 02:37:22 -0700 (PDT)
+	s=arc-20240116; t=1728552168; c=relaxed/simple;
+	bh=OKVUD5pQ8K5rzajDUHl4Uc/nZWbMTC5CIfO3E51a058=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qkJwWnfjqToSFroCSsHcwCBdd2BbL5cItSwI0C+bi1cUfyis8HCM/mZ4sMgjvoQltqcJyCv9C6kvo0dBWDQXXZs+ih7gADZ4XVmspM0V/tbB2+BFpeoMS3APCjSYUwsj3F1dSM7Nj+G2U2x8hQ3T7tp6bLHnW0TuLprEwGg0FJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPPRV3R8Pz4f3m86;
+	Thu, 10 Oct 2024 17:22:30 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 45FE51A0359;
+	Thu, 10 Oct 2024 17:22:42 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.127.227])
+	by APP4 (Coremail) with SMTP id gCh0CgDH+sbgnAdntDrIDg--.34168S4;
+	Thu, 10 Oct 2024 17:22:42 +0800 (CST)
+From: Ye Bin <yebin@huaweicloud.com>
+To: djwong@kernel.org,
+	linux-xfs@vger.kernel.org,
+	chandan.babu@oracle.com,
+	dchinner@redhat.com
+Cc: linux-kernel@vger.kernel.org,
+	yebin10@huawei.com,
+	zhangxiaoxu5@huawei.com
+Subject: [PATCH] xfs: fix use-after-free in xfs_cui_release()
+Date: Thu, 10 Oct 2024 17:37:15 +0800
+Message-Id: <20241010093715.1505534-1-yebin@huaweicloud.com>
+X-Mailer: git-send-email 2.31.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <42aa307d7ffae1851b4a8787f5c276dd0b3beece.1728543368.git.linux@leemhuis.info>
- <b32f1e42-d775-4538-ba36-9e9b906a34e3@leemhuis.info> <CA+icZUUgwJWY=PWO5fQPZbUc-q=LkdHXVe4+g-LnXmQfCA3N7Q@mail.gmail.com>
- <CA+icZUX9hrwFXA-6KVT+yZ=-NqyPB=LOKKWSf77-xb32totgHA@mail.gmail.com> <a5b3c47e-5f0f-4c0f-8ad9-4fb34d150548@leemhuis.info>
-In-Reply-To: <a5b3c47e-5f0f-4c0f-8ad9-4fb34d150548@leemhuis.info>
-Reply-To: sedat.dilek@gmail.com
-From: Sedat Dilek <sedat.dilek@gmail.com>
-Date: Thu, 10 Oct 2024 11:36:46 +0200
-Message-ID: <CA+icZUUmo+mJTKUS8kH9qUNH0+CqeYNspqp9OA-iWw1KMMDMwg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1] module: sign with sha512 by default to avoid build errors
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	linux-modules@vger.kernel.org, Masahiro Yamada <masahiroy@kernel.org>, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDH+sbgnAdntDrIDg--.34168S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxGFW5XF48Ar45Kr18Cw1DAwb_yoWrGFW7pr
+	97ArWxCr1kCFy0kFsakF45tFy8JFWYvwnFvrnagF13Xas8tr4jgFy3t3W0gryUWF40va1j
+	vFn7Jr98Xw1Ygw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUyEb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
+	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
+	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE
+	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
+	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWxJwCI42IY6I8E87Iv6xkF
+	7I0E14v26r4UJVWxJrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHDUUUUU==
+X-CM-SenderInfo: p1hex046kxt4xhlfz01xgou0bp/
 
-On Thu, Oct 10, 2024 at 10:57=E2=80=AFAM Thorsten Leemhuis <linux@leemhuis.=
-info> wrote:
->
-> On 10.10.24 10:42, Sedat Dilek wrote:
-> > On Thu, Oct 10, 2024 at 10:29=E2=80=AFAM Sedat Dilek <sedat.dilek@gmail=
-.com> wrote:
-> >> On Thu, Oct 10, 2024 at 10:19=E2=80=AFAM Thorsten Leemhuis <linux@leem=
-huis.info> wrote:
-> >>> On 10.10.24 09:00, Thorsten Leemhuis wrote:
-> >>
-> >> That was wrong in the original code which you moved:
-> >>
-> >> +config MODULE_SIG_SHA384
-> >> +       bool "SHA-384"
-> >> +       select CRYPTO_SHA512 <--- SHA*384*
-> >
-> > Thorsten, please fix it!
->
-> That looks intentional to me -- and CRYPTO_SHA384 from a quick look does
-> not even exist.
->
-> But that's not at all my area of expertise, so I would not want to touch
-> it anyway.
->
-> Ciao, Thorsten
->
-> P.S.: Vegard Nossum mentioned in the fediverse that I could also solve
-> the problem the patch is about by adding "default MODULE_SIG_SHA512" to
-> the "choice" section; haven't tried that, but that sounds like a better
-> solution. Will likely give it a try, unless someone brings up unwanted
-> side effects this might cause.
->
->
+From: Ye Bin <yebin10@huawei.com>
 
-SHA1 | SHA256 | SHA512 <--- IMHO enough.
+There's issue as follows when do IO fault injection:
+ XFS (loop0): Filesystem has been shut down due to log error (0x2).
+ XFS (loop0): Please unmount the filesystem and rectify the problem(s).
+ XFS (loop0): Failed to recover intents
+ XFS (loop0): log mount finish failed
+ ==================================================================
+ BUG: KASAN: slab-use-after-free in xfs_cui_release+0x20/0xe0
+ Read of size 4 at addr ffff88826d204098 by task kworker/u18:4/252
 
--sed@-
+ CPU: 7 PID: 252 Comm: kworker/u18:4 Not tainted 6.3.0-next #446
+ Workqueue: xfs-cil/loop0 xlog_cil_push_work
+ Call Trace:
+  <TASK>
+  dump_stack_lvl+0xd9/0x150
+  print_report+0xc1/0x5e0
+  kasan_report+0x96/0xc0
+  kasan_check_range+0x13f/0x1a0
+  xfs_cui_release+0x20/0xe0
+  xfs_cud_item_release+0x37/0x80
+  xfs_trans_committed_bulk+0x337/0x8f0
+  xlog_cil_committed+0xc08/0x1010
+  xlog_cil_push_work+0x1cb4/0x25f0
+  process_one_work+0x9cf/0x1610
+  worker_thread+0x63a/0x10a0
+  kthread+0x343/0x440
+  ret_from_fork+0x1f/0x30
+  </TASK>
+
+ Allocated by task 8537:
+  kasan_save_stack+0x22/0x40
+  kasan_set_track+0x25/0x30
+  __kasan_slab_alloc+0x7f/0x90
+  slab_post_alloc_hook+0x65/0x560
+  kmem_cache_alloc+0x1cf/0x440
+  xfs_cui_init+0x1a8/0x1e0
+  xlog_recover_cui_commit_pass2+0x137/0x440
+  xlog_recover_items_pass2+0xd8/0x310
+  xlog_recover_commit_trans+0x958/0xb20
+  xlog_recovery_process_trans+0x13a/0x1e0
+  xlog_recover_process_ophdr+0x1e9/0x410
+  xlog_recover_process_data+0x19c/0x400
+  xlog_recover_process+0x257/0x2e0
+  xlog_do_recovery_pass+0x70c/0xf90
+  xlog_do_log_recovery+0x9e/0x100
+  xlog_do_recover+0xdf/0x5a0
+  xlog_recover+0x2a8/0x500
+  xfs_log_mount+0x36e/0x790
+  xfs_mountfs+0x133a/0x2220
+  xfs_fs_fill_super+0x1376/0x1f10
+  get_tree_bdev+0x44a/0x770
+  vfs_get_tree+0x8d/0x350
+  path_mount+0x1228/0x1cc0
+  do_mount+0xf7/0x110
+  __x64_sys_mount+0x193/0x230
+  do_syscall_64+0x39/0xb0
+  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+ Freed by task 8537:
+  kasan_save_stack+0x22/0x40
+  kasan_set_track+0x25/0x30
+  kasan_save_free_info+0x2e/0x40
+  __kasan_slab_free+0x11f/0x1b0
+  kmem_cache_free+0xf2/0x670
+  xfs_cui_item_free+0xa4/0xc0
+  xfs_cui_release+0xa0/0xe0
+  xlog_recover_cancel_intents.isra.0+0xf4/0x200
+  xlog_recover_finish+0x87f/0xa20
+  xfs_log_mount_finish+0x325/0x570
+  xfs_mountfs+0x16ba/0x2220
+  xfs_fs_fill_super+0x1376/0x1f10
+  get_tree_bdev+0x44a/0x770
+  vfs_get_tree+0x8d/0x350
+  path_mount+0x1228/0x1cc0
+  do_mount+0xf7/0x110
+  __x64_sys_mount+0x193/0x230
+  do_syscall_64+0x39/0xb0
+  entry_SYSCALL_64_after_hwframe+0x63/0xcd
+
+As xlog_recover_process_intents() failed will trigger LOG shutdown will not
+push CIL. Then xlog_recover_finish() will remove log item from AIL list and
+release log item. However xlog_cil_push_work() perhaps concurrent
+processing this log item, then trigger UAF.
+To solve above issue, there's need to make sure all CIL is pushed before
+cancel intent item.
+
+Fixes: deb4cd8ba87f ("xfs: transfer recovered intent item ownership in ->iop_recover")
+Signed-off-by: Ye Bin <yebin10@huawei.com>
+---
+ fs/xfs/xfs_log_recover.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/fs/xfs/xfs_log_recover.c b/fs/xfs/xfs_log_recover.c
+index 1997981827fb..54faa0608958 100644
+--- a/fs/xfs/xfs_log_recover.c
++++ b/fs/xfs/xfs_log_recover.c
+@@ -3521,6 +3521,7 @@ xlog_recover_finish(
+ 		 * (inode reclaim does this) before we get around to
+ 		 * xfs_log_mount_cancel.
+ 		 */
++		xfs_log_force(log->l_mp, XFS_LOG_SYNC);
+ 		xlog_recover_cancel_intents(log);
+ 		xfs_alert(log->l_mp, "Failed to recover intents");
+ 		xlog_force_shutdown(log, SHUTDOWN_LOG_IO_ERROR);
+-- 
+2.31.1
+
 
