@@ -1,100 +1,109 @@
-Return-Path: <linux-kernel+bounces-358193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C05997B46
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:29:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A203D997A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED0071F234D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:29:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8D2C1C203B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:20:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9E851922D5;
-	Thu, 10 Oct 2024 03:29:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="Bz4DAGzl"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB98F4594C;
+	Thu, 10 Oct 2024 02:19:56 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 840D4BE57;
-	Thu, 10 Oct 2024 03:29:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1046D1773D
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:19:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728530970; cv=none; b=bMIFuAo3bdR8WDgO2/aUKJlRcBl3UMrsBbC1JxX4MGiygcCB0JswXRupDNTrgHwV5TKdZQN3m1BOv8zJEgKhhpbtq0cT1ykIDo7ub6mKhYuP6StrVTmJVLC6f/Hy/UDAZiBaSB0bI4aa06dF6Kp3mBzorGLYgJFG/XL6QE3n/Mk=
+	t=1728526796; cv=none; b=RcOV1oxK4HbKAdsYNJPM4T0jhZMb3RVQn6+SUW3ujj170409FUo1QHcdH/qGQtf9bvhW1viCWMNrQkcFLlvPlmq8GR/00h3MdEo4QlCfw3fbCUTPHJ0K4mZKLTLLXhVpYXdArl1S+meYMKvS+wktON1B5KJ9V5TG9ipgqk4lepE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728530970; c=relaxed/simple;
-	bh=PyF5geQSl03RGWICGtUFnjvq/wA03VKXDbCICjL6w14=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H5NCtozIfcvbnofYujDVVksWRFqi/qBLLOi2JhG1NaTb4Bpk8DDC8irEgHYvdCuFf3wf/kyHymHvnSpykEfz5B2QbTviYxUx5gy2Jsiq2s5BtRMJyUgIcBSa29xWIikHfm/AjiedoHKUWZaFOLWfAESgAjQsmcJS0LMl0f6ZQfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=Bz4DAGzl; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 723AF88FAB;
-	Thu, 10 Oct 2024 05:29:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728530966;
-	bh=gQnsQNQ/PBK1SteM9oC4cO5u8kTLGnBUpC1Tp8O2a+Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Bz4DAGzlzPqKpi94IKhRnwm9EDdVDYpweUjGZCxQC5/5v0ZScB7AHUZz99xNZ3sO4
-	 fXwHcb7Wfo9g1chTT07xZ3hg5iFnq2wW6XoqMOs1YdkzmI9d3BtX9usExRCZZJQLzV
-	 fO3hNP8Mq+sf/y5TZAPx6e7mnwBjwjBGeNJ724egjSM81vhEV5VWl+VcmLrtD8e50W
-	 EECJ93i9aovobS4t1zqCX1ZT0BP6CJDEKP02T/pxQj/Vfe3eBSSbD8ndTnnMHse5+3
-	 by8zd7hh3H5bfHb22YWv0AwSVzznnQYTNEq0KmGuZSzbip+bdhut1fsmmlM4iYJJg2
-	 HMrbWIqvnBwMg==
-Message-ID: <0ea547b0-5ccb-4cf7-bb57-807caf8649ca@denx.de>
-Date: Thu, 10 Oct 2024 03:18:58 +0200
+	s=arc-20240116; t=1728526796; c=relaxed/simple;
+	bh=TUXpeUxfX/b1sXOvHxKTJwpfVheVBhQrJjMEcjRvi50=;
+	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=saxoQSe94BAK/QPjqCB2PG0rkC8VpSCpVmT9y5Oj9qtR+vvyrKQM189hSk0Tnd7Hjxd3salw6uW3KxChFoQcdc/ov3Llw6J5Fwlqf4Ry+AP1UM8QFG06HTZntXPbWkTStopgUmJcDFukM1GBcc92TZGVtJ3eq46qRwu4Kic4OJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XPD2Y4GLxz1j9Wn;
+	Thu, 10 Oct 2024 10:18:45 +0800 (CST)
+Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
+	by mail.maildlp.com (Postfix) with ESMTPS id 810091A016C;
+	Thu, 10 Oct 2024 10:19:51 +0800 (CST)
+Received: from [10.174.178.55] (10.174.178.55) by
+ dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 10:19:51 +0800
+Subject: Re: [patch 04/25] debugobjects: Remove pointless hlist initialization
+To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
+CC: Waiman Long <longman@redhat.com>
+References: <20241007163507.647617031@linutronix.de>
+ <20241007164913.200379308@linutronix.de>
+From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
+Message-ID: <a4c8cba5-ca20-7440-c0c6-4a30e9aa677f@huawei.com>
+Date: Thu, 10 Oct 2024 10:19:50 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8 1/1] pwm: imx27: workaround of the pwm output bug when
- decrease the duty cycle
-To: Frank Li <Frank.li@nxp.com>
-Cc: u.kleine-koenig@baylibre.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, festevam@gmail.com, francesco@dolcini.it,
- imx@lists.linux.dev, jun.li@nxp.com, kernel@pengutronix.de,
- krzk+dt@kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
- p.zabel@pengutronix.de, pratikmanvar09@gmail.com, robh@kernel.org,
- s.hauer@pengutronix.de, shawnguo@kernel.org, xiaoning.wang@nxp.com
-References: <20241008194123.1943141-1-Frank.Li@nxp.com>
- <41cc47bd-f18f-463b-a0dc-843088ecf91e@denx.de>
- <ZwajVXRwDLDg2rc7@lizhi-Precision-Tower-5810>
+In-Reply-To: <20241007164913.200379308@linutronix.de>
+Content-Type: text/plain; charset="utf-8"
 Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <ZwajVXRwDLDg2rc7@lizhi-Precision-Tower-5810>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf100006.china.huawei.com (7.185.36.228)
 
-On 10/9/24 5:37 PM, Frank Li wrote:
-> On Wed, Oct 09, 2024 at 03:55:35AM +0200, Marek Vasut wrote:
->> On 10/8/24 9:41 PM, Frank Li wrote:
->>
->> [...]
->>
->>> +	c = clkrate * 1500;
->>> +	do_div(c, NSEC_PER_SEC);
->>> +
->>> +	local_irq_save(flags);
->>> +	val = FIELD_GET(MX3_PWMSR_FIFOAV, readl_relaxed(imx->mmio_base + MX3_PWMSR));
->>> +
->>> +	if (duty_cycles < imx->duty_cycle && (cr & MX3_PWMCR_EN)) {
->>
->> I think you can use state->enabled instead of (cr & MX3_PWMCR_EN).
+
+
+On 2024/10/8 0:49, Thomas Gleixner wrote:
+> It's BSS zero initialized.
+
+Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
+
 > 
-> state->enabled is new state. Need check old state here. If old state is
-> disable, needn't this workaround at all.
-Can you add code comment like this please ?
+> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+> ---
+>  lib/debugobjects.c |   11 +----------
+>  1 file changed, 1 insertion(+), 10 deletions(-)
+> 
+> --- a/lib/debugobjects.c
+> +++ b/lib/debugobjects.c
+> @@ -1364,20 +1364,11 @@ static bool __init debug_objects_replace
+>  void __init debug_objects_mem_init(void)
+>  {
+>  	struct kmem_cache *cache;
+> -	int cpu, extras;
+> +	int extras;
+>  
+>  	if (!debug_objects_enabled)
+>  		return;
+>  
+> -	/*
+> -	 * Initialize the percpu object pools
+> -	 *
+> -	 * Initialization is not strictly necessary, but was done for
+> -	 * completeness.
+> -	 */
+> -	for_each_possible_cpu(cpu)
+> -		INIT_HLIST_HEAD(&per_cpu(percpu_obj_pool.free_objs, cpu));
+> -
+>  	if (!debug_objects_selftest())
+>  		return;
+>  
+> 
+> 
+> .
+> 
 
-Thank you !
+-- 
+Regards,
+  Zhen Lei
 
