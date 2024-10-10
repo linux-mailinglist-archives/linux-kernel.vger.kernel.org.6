@@ -1,134 +1,97 @@
-Return-Path: <linux-kernel+bounces-359574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359577-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46619998DE9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:59:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB22998D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:34:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9583CB2C2C2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:32:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E21E1F22914
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:34:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B43192D9C;
-	Thu, 10 Oct 2024 16:31:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 140A319413B;
+	Thu, 10 Oct 2024 16:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gFmGEv4C"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="HK3SOQez";
+	dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b="qNppMYo5"
+Received: from mta-03.yadro.com (mta-03.yadro.com [89.207.88.253])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7BC926AFC;
-	Thu, 10 Oct 2024 16:31:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D6C197A93;
+	Thu, 10 Oct 2024 16:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.207.88.253
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728577916; cv=none; b=HBAn7qWe90rVxkqtqM/AylZWIb/fYe+xTqn/5t+hHNWX+bBudB/906pH4GNab8mvAtzSYKZL7BKKE0i5BA23Qtlievy2nxd22KwOz8Sd2StB/THKTSXOz4A6aQ+cZma7u+6g9WtjV0nx+B777BC9nt3Cm/knxMZ6aBHlvsDYtqw=
+	t=1728578043; cv=none; b=s1M5LTNksvUCswC7clv55W74UoOAwrVrwTJ5fKaTP0zD92EU3kTptU4iT5YnhiBfovE9GzXS/OWLvxleQaDcNRPEaJYA6ct6pXOT4b+9HStaHkmyypUodBGo2VPB110Ti7PNY4VH4QkW+98lcFR/ek1ohTtJKdpFekq2Cn3z+T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728577916; c=relaxed/simple;
-	bh=ISMg2hg05B+ooD5IxBVrLLWhhuz9hf2nRGppEGJnpSw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=elVDjaVh1sxPWSqUgOVglVOkUsr5fEO9A/2GVvSRRVPcNxvCKWgbPgo0ozp6crxixQpK5+PF66CwxuVjrgCZBaIX0hI7XccJNlF+UI5yrHuaBhQvhdBnJnF84iYnjsJqF6YCA8qp/p1P6CK++GGEc/jmTzwX0Z8ZcxP7/0pADIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gFmGEv4C; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E95A3C4CEC5;
-	Thu, 10 Oct 2024 16:31:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728577916;
-	bh=ISMg2hg05B+ooD5IxBVrLLWhhuz9hf2nRGppEGJnpSw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gFmGEv4CSUPv+/iN9dxYJZpRvvY3XTdVtztb2t9+gC4DyKnJm2eNnR3HT3hTcpfdm
-	 wIA7vdfVueibSQLFxNBy8LneDggdPv5Ig/NEPWOH8ghO2715ERPLcDMT+X8MPPwF9B
-	 2Tej5WED9MCzRTmu/7iS3sqCs7j5X+CL9TvJ280VmhWc3L+luq6yCgHluYzLGoGwXv
-	 ND1KQ5s2dJLo9HfG4mmOZtfo6SD74KqDme3lEm+CYU59JW/wmX73RBl6z/kSWa51SP
-	 fXFMQW8OyZ/sbA5RG/e+kEGceOwrPMDP2QJOwN3O7GgNY/kVwEO6O9PtdKmdk1u01p
-	 4gYyKCiuDz6dw==
-Date: Thu, 10 Oct 2024 09:31:54 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Jiri Slaby <jirislaby@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Howard Chu <howardchu95@gmail.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@intel.com>, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Arnaldo Carvalho de Melo <acme@redhat.com>
-Subject: Re: [PATCH/RFT] Re: [PATCH v5 1/8] perf trace: Fix iteration of
- syscall ids in syscalltbl->entries
-Message-ID: <ZwgBenahw7EImQLk@google.com>
-References: <ZtJWEVn8-w07Wm0q@x1>
- <0f841525-e02a-4e11-b5f8-1acc61979ccf@kernel.org>
- <ZtYJ0z8f-1jwYSbV@x1>
- <c279ad02-2543-4a95-9404-9304e1e704da@kernel.org>
- <ffc2eb09-ac78-4594-a376-3fff9918c2a7@kernel.org>
- <ZwYbQswnGHSstClc@google.com>
- <CAH0uvoi622J7gZ9BoTik7niNH3axVJR0kPNovUQnMjUB6GWLNg@mail.gmail.com>
- <CAH0uvojw5EKqxqETq_H3-5zmjXiK=ew2hBQiPDpCtZmO7=mrKA@mail.gmail.com>
- <3a592835-a14f-40be-8961-c0cee7720a94@kernel.org>
- <ZwgAzde-jVyo4cSu@google.com>
+	s=arc-20240116; t=1728578043; c=relaxed/simple;
+	bh=AqMThYWnxXN2dG5zO52+LCz6lhKNg5SlN1+Yyu1Qwqg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P+BTEuPfrAGbtw/HGqFkRO+uGyQud8sQz6Q4EN038pvIKDdEDbu7lhbzr0icKo/KTPhvyKllhxu3fu29kNH3RbWj55dx7wiluBAsbOrvO9IeIL1HrFRr4/w959pvX58+dSWPpoKBTY7j0FDeY5ue1d1ZO4wg+XfJNtUa78jBePE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com; spf=pass smtp.mailfrom=yadro.com; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=HK3SOQez; dkim=pass (2048-bit key) header.d=yadro.com header.i=@yadro.com header.b=qNppMYo5; arc=none smtp.client-ip=89.207.88.253
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=yadro.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=yadro.com
+DKIM-Filter: OpenDKIM Filter v2.11.0 mta-03.yadro.com C29F0E0002
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-04;
+	t=1728578029; bh=SQi5Kp+ilhRmAcF2pNfJqX2VcEFC13qo8zhMMga7zW4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=HK3SOQezuYRMwTCul7R4vl/O5P58jjE18iYfIL0/vXzos5ZYnpQw+AAggzSefjJf+
+	 pnWD1B3gd33Vwafz1zVzdQYZcc8285+CErWzfbqH7wgU7dnQU+HhHkeIBvlMUen0t+
+	 brrg56OsNEIUMxAhkdkizSIqD7C/QatFYCQ1t+f/llm9ZjcgLQy0wmdRF2Ue7jodT4
+	 e1zPWi+uw2QOWH5nhMRf/OatAJQrTbAQIFEpLRbqNzNNkAglw4Nla1EJORDoOMcVuW
+	 3yk8R1b4f8R+lR1HtdFJelXY0rrKWww75gteUuwXyyGMxyZXHJX+PbsRV+NiXw16nm
+	 yQoi/xaHYoI4w==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yadro.com; s=mta-03;
+	t=1728578029; bh=SQi5Kp+ilhRmAcF2pNfJqX2VcEFC13qo8zhMMga7zW4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type:From;
+	b=qNppMYo5R8gAMRFfqBi6u2JtcBqmThis7HXbmuKqtGE3Z0zoRB3SjD3Tbgq+HZC7r
+	 6MzmMY87DL6YrelrwgfJtEZdFZnmSU03Ja//2b4yRZJJ9W4VW4cgX84MMvO9nLV/z0
+	 zQjUcsM7jtOQ/GiOuZPL8TRK5y8X4UsS1ppw5bQzkw+F3EjlUZGJt1SC2WSKt74dgF
+	 ysQER8InSuhRdmPhZ2/wYYV1h9bu5jffJBWffbq1WxTc8in/+NjCJox1Z/pW7IArE4
+	 yKHzALDzEIeKZKvPe02y+Iieg+5v99p2Vl8clKVhISTjivxXl6F/vwy5qHvr/iu5Se
+	 mI9fiEiHCPB/Q==
+From: Anastasia Kovaleva <a.kovaleva@yadro.com>
+To: <target-devel@vger.kernel.org>
+CC: <njavali@marvell.com>, <GR-QLogic-Storage-Upstream@marvell.com>,
+	<James.Bottomley@HansenPartnership.com>, <martin.petersen@oracle.com>,
+	<bvanassche@acm.org>, <quinn.tran@cavium.com>, <himanshu.madhani@oracle.com>,
+	<linux-scsi@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux@yadro.com>, <hare@suse.de>, <stable@vger.kernel.org>
+Subject: [PATCH v3 0/3] Fix bugs in qla2xxx driver
+Date: Thu, 10 Oct 2024 19:32:33 +0300
+Message-ID: <20241010163236.27969-1-a.kovaleva@yadro.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <ZwgAzde-jVyo4cSu@google.com>
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
+X-ClientProxiedBy: T-EXCH-09.corp.yadro.com (172.17.11.59) To
+ T-EXCH-09.corp.yadro.com (172.17.11.59)
 
-On Thu, Oct 10, 2024 at 09:29:01AM -0700, Namhyung Kim wrote:
-> On Thu, Oct 10, 2024 at 10:22:12AM +0200, Jiri Slaby wrote:
-> > From 3d4f06d79c949a8f155c20652b4f685540899ad4 Mon Sep 17 00:00:00 2001
-> > From: Jiri Slaby <jslaby@suse.cz>
-> > Date: Thu, 10 Oct 2024 09:57:07 +0200
-> > Subject: [PATCH] perf: fix non-listed archs
-> > 
-> > Suggested-by: Howard Chu <howardchu95@gmail.com>
-> > Signed-off-by: Jiri Slaby <jslaby@suse.cz>
-> 
-> Acked-by: Namhyung Kim <namhyung@kernel.org>
+This series of patches contains 3 separate changes that fix some bugs in
+the qla2xxx driver.
+---
+v3:
+- Fix build issue in patch 1
+v2:
+- Change a spinlock wrap to a WRITE_ONCE() in patch 1
+- Add Reviewed-by tags on patches 2 and 3
+---
 
-Also with,
+Anastasia Kovaleva (3):
+  scsi: qla2xxx: Drop starvation counter on success
+  scsi: qla2xxx: Make target send correct LOGO
+  scsi: qla2xxx: Remove incorrect trap
 
-Fixes: 7a2fb5619cc1fb53 ("perf trace: Fix iteration of syscall ids in syscalltbl->entries")
+ drivers/scsi/qla2xxx/qla_iocb.c   | 11 +++++++++++
+ drivers/scsi/qla2xxx/qla_isr.c    |  4 ++++
+ drivers/scsi/qla2xxx/qla_target.c | 16 +++++++---------
+ 3 files changed, 22 insertions(+), 9 deletions(-)
 
-> 
-> Arnaldo, can you please pick this up for v6.12?
-> 
-> Thanks,
-> Namhyung
-> 
-> > ---
-> >  tools/perf/util/syscalltbl.c | 10 ++++++++++
-> >  1 file changed, 10 insertions(+)
-> > 
-> > diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-> > index 7c15dec6900d..6c45ded922b6 100644
-> > --- a/tools/perf/util/syscalltbl.c
-> > +++ b/tools/perf/util/syscalltbl.c
-> > @@ -46,6 +46,11 @@ static const char *const *syscalltbl_native = syscalltbl_mips_n64;
-> >  #include <asm/syscalls.c>
-> >  const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
-> >  static const char *const *syscalltbl_native = syscalltbl_loongarch;
-> > +#else
-> > +const int syscalltbl_native_max_id = 0;
-> > +static const char *const syscalltbl_native[] = {
-> > +	[0] = "unknown",
-> > +};
-> >  #endif
-> >  
-> >  struct syscall {
-> > @@ -182,6 +187,11 @@ int syscalltbl__id(struct syscalltbl *tbl, const char *name)
-> >  	return audit_name_to_syscall(name, tbl->audit_machine);
-> >  }
-> >  
-> > +int syscalltbl__id_at_idx(struct syscalltbl *tbl __maybe_unused, int idx)
-> > +{
-> > +	return idx;
-> > +}
-> > +
-> >  int syscalltbl__strglobmatch_next(struct syscalltbl *tbl __maybe_unused,
-> >  				  const char *syscall_glob __maybe_unused, int *idx __maybe_unused)
-> >  {
-> > -- 
-> > 2.46.1
-> > 
-> 
+-- 
+2.40.1
+
 
