@@ -1,157 +1,120 @@
-Return-Path: <linux-kernel+bounces-358677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C45D799825A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F7699825E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0033B1C22EC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:34:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3451C1F23B1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 09:34:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697681BDA84;
-	Thu, 10 Oct 2024 09:33:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC40A1BF336;
+	Thu, 10 Oct 2024 09:33:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="En4Ag8Dl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="INirg5Ug"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA5F33CE8;
-	Thu, 10 Oct 2024 09:33:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DB2A1BE245;
+	Thu, 10 Oct 2024 09:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728552823; cv=none; b=CYYd1BIKZnxv9TE08PkTGE55vV8BUoVwiYfbr8yv+9UzkyhGEgTtUcH7zBNO/lxgG6zatF0otNQ07h8DLF3YKGOfAFNh01rgtak/iSuJJj6pDoQNIwIC2Zt5JIcyKdqDgg2gZPU5nxwQIQHdL6FhkX8VP9Nq0JcAvOpXU3iWvIg=
+	t=1728552835; cv=none; b=dapzRyWf1UFoTebdSMUqrysmanuQrOeb8+nqVEdqjckrLyzL6C9bq+Ti7ew0loxc8ZedSstsIQ1K+rd8305a/bGBeOP3akkcpzWN+Kwk4QsiHUqh+Mw4pRu8ios1aiGKEVj3Gvn1h7ef4Q43LTtcRZiI3NGop/pWg/PR+XR6dKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728552823; c=relaxed/simple;
-	bh=qBxQgkj2nJgxxaoqA5Dg7eRIG8Bdg50/61evn+NoLJ0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+j8BPIjv/Cnkn2BGioDuX+GeHP0jLy2+0J7wSyo2SMPmQvTznMhbvmgNHSwRWKCamPaHosDgxMUF32HkVPXXqn/y4i4E4zZzu+b9ffuSLYF9e03GyTOno2kar3u0D/Fsj8iU6/OsHMmpvvpeGpqqYnPzp7VlcB345D0NOxszt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=En4Ag8Dl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2F6C4CEC5;
-	Thu, 10 Oct 2024 09:33:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728552823;
-	bh=qBxQgkj2nJgxxaoqA5Dg7eRIG8Bdg50/61evn+NoLJ0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=En4Ag8DlmZ6disIgz53CZ3K0DvRM+gC92oLowhIX/DCCQXVFmeO6m4HrbmW9EVIlI
-	 xg05COwRn39bwJ2LXUzaWIbjQEiTZOeOXSmn4a0cS3vBNjAbMt33NhE4N0hsALnhlX
-	 e/SI9T38sDZcPnQiF+RyM/kZ7yMtfyfsZfcbeHNJPoj8VdEnQR3Rr/poUtbNQcT7tr
-	 UgvL7v2VWhkRVwojxQIlQDbLqiGpenIc4MOyhx6BtyUKjSeLi0Q8hoReD/rBuHXB07
-	 xCHtIVAws4xHmZm19B6Y+dREdmOmj+YYrJcSf0tRCyAto27CKikNGxPu7WZyZ2dYMj
-	 kUkvEVnOms8uQ==
-Date: Thu, 10 Oct 2024 11:33:38 +0200
-From: Niklas Cassel <cassel@kernel.org>
-To: Hongxing Zhu <hongxing.zhu@nxp.com>
-Cc: "robh@kernel.org" <robh@kernel.org>,
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"shawnguo@kernel.org" <shawnguo@kernel.org>,
-	"l.stach@pengutronix.de" <l.stach@pengutronix.de>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"kernel@pengutronix.de" <kernel@pengutronix.de>,
-	"imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: Re: [PATCH v5 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
- "atu" for i.MX8M PCIe Endpoint
-Message-ID: <ZwefciwGBSU-iwFg@ryzen.lan>
-References: <1723534943-28499-1-git-send-email-hongxing.zhu@nxp.com>
- <1723534943-28499-2-git-send-email-hongxing.zhu@nxp.com>
- <ZwaagtTx1ar1CW4V@ryzen.lan>
- <AS8PR04MB8676516366FB6EE23F4823C68C782@AS8PR04MB8676.eurprd04.prod.outlook.com>
+	s=arc-20240116; t=1728552835; c=relaxed/simple;
+	bh=re5Q+qO/hHoNx+eKZZ1hEuECNny9DIdvg8+EGAFqVig=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IyMtn1WuFby4mAfPOqs6As7CcDP5mZbYl4y7l5J2xu5IwCt3d8s4/W5ToyX+b1Ytli6lAN5rsE1WaVFjMQMQh7gaNSqFN1sZFop28gfZOmPDw3U/SbBkv+IFKP9TV+fR5aDo/jw4KmyMy5mHoGTJmfkCZNhqmtexlRKQ94/k9G0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=INirg5Ug; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728552833; x=1760088833;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=re5Q+qO/hHoNx+eKZZ1hEuECNny9DIdvg8+EGAFqVig=;
+  b=INirg5Ug+4+Ch0DdJMisIg58FBycSy7vUfj9mDBi9tOuXkxC7hsCt3f2
+   oU3Dhgg/6U19j7PSBr70wiGN27jtNr1BOKx3Ps9n02VVofn1mMTn+JGXt
+   z8J/FKOfXknV7J3ApkleUFRGFLQi6dFrb3Q/lYEH+NV9v5oALsNn/vCno
+   TvbRKvIintG4K9ZGJGzJxWHo5grXJxmADeBT1YU3ddhkxBPfCuHQMwlTk
+   pie09uYhx7QGG8PdrI5W3SSZO6nk9fow3WdOkSxwNhYyIoWVOtmzQ5rgU
+   GSgZjg8qHxC6SqmmAmuTgzy6q4s85LFPjm3s92cIpCo+mohkpY6OMxIvP
+   A==;
+X-CSE-ConnectionGUID: UgRKTbP2RVyH5++iiGp5iA==
+X-CSE-MsgGUID: PZLH6j5NS/qB2R7sGeA3FQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="27710352"
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="27710352"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 02:33:52 -0700
+X-CSE-ConnectionGUID: QgsLcRwqRKuJVaJxSY/Zcw==
+X-CSE-MsgGUID: SKqVmDLOQ/maIfi6mzE8lA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
+   d="scan'208";a="76143171"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa006.fm.intel.com with ESMTP; 10 Oct 2024 02:33:49 -0700
+Received: from [10.245.97.255] (unknown [10.245.97.255])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id E7C982876E;
+	Thu, 10 Oct 2024 10:33:46 +0100 (IST)
+Message-ID: <6f64b79b-391e-4c78-98ac-8741b82201b4@intel.com>
+Date: Thu, 10 Oct 2024 11:33:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <AS8PR04MB8676516366FB6EE23F4823C68C782@AS8PR04MB8676.eurprd04.prod.outlook.com>
-
-On Thu, Oct 10, 2024 at 02:17:25AM +0000, Hongxing Zhu wrote:
-> > -----Original Message-----
-> > From: Niklas Cassel <cassel@kernel.org>
-> > Sent: 2024年10月9日 23:00
-> > To: Hongxing Zhu <hongxing.zhu@nxp.com>
-> > Cc: robh@kernel.org; krzk+dt@kernel.org; conor+dt@kernel.org;
-> > shawnguo@kernel.org; l.stach@pengutronix.de; devicetree@vger.kernel.org;
-> > linux-pci@vger.kernel.org; linux-arm-kernel@lists.infradead.org;
-> > linux-kernel@vger.kernel.org; kernel@pengutronix.de; imx@lists.linux.dev
-> > Subject: Re: [PATCH v5 1/4] dt-bindings: imx6q-pcie: Add reg-name "dbi2" and
-> > "atu" for i.MX8M PCIe Endpoint
-> > 
-> > On Tue, Aug 13, 2024 at 03:42:20PM +0800, Richard Zhu wrote:
-> > > Add reg-name: "dbi2", "atu" for i.MX8M PCIe Endpoint.
-> > >
-> > > For i.MX8M PCIe EP, the dbi2 and atu addresses are pre-defined in the
-> > > driver. This method is not good.
-> > >
-> > > In commit b7d67c6130ee ("PCI: imx6: Add iMX95 Endpoint (EP) support"),
-> > > Frank suggests to fetch the dbi2 and atu from DT directly. This commit
-> > > is preparation to do that for i.MX8M PCIe EP.
-> > >
-> > > These changes wouldn't break driver function. When "dbi2" and "atu"
-> > > properties are present, i.MX PCIe driver would fetch the according
-> > > base addresses from DT directly. If only two reg properties are
-> > > provided, i.MX PCIe driver would fall back to the old method.
-> > >
-> > > Signed-off-by: Richard Zhu <hongxing.zhu@nxp.com>
-> > > Reviewed-by: Frank Li <Frank.Li@nxp.com>
-> > > ---
-> > >  .../devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml  | 13
-> > > +++++++++----
-> > >  1 file changed, 9 insertions(+), 4 deletions(-)
-> > >
-> > > diff --git
-> > > a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > index a06f75df8458..84ca12e8b25b 100644
-> > > --- a/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > +++ b/Documentation/devicetree/bindings/pci/fsl,imx6q-pcie-ep.yaml
-> > > @@ -65,12 +65,14 @@ allOf:
-> > >      then:
-> > >        properties:
-> > >          reg:
-> > > -          minItems: 2
-> > > -          maxItems: 2
-> > > +          minItems: 4
-> > > +          maxItems: 4
-> > 
-> > Now it seems like this patch has already been picked up, but how is this not
-> > breaking DT backwards compatibility?
-> > 
-> > You are here increasing minItems, which means that an older DT should now fail
-> > to validate using the new schema?
-> > 
-> > I thought that it was only acceptable to add new optional properties after the
-> > DT binding has been accepted.
-> > 
-> > What am I missing?
-> > 
-> > 
-> > If the specific compatible isn't used by any DTS in a released kernel, then I think
-> > that the commit log should have clearly stated so, and explained that that is the
-> > reason why it is okay to break DT backwards compatibility.
-> > 
-> Hi Niklas:
-> Thanks for your comments and concerns.
-> Up to now, the pcie_ep of i.MX8MP is only present in i.mx8mp.dtsi file.
-> And it isn't used by any DTS in the release kernels.
-> So, this series wouldn't break DT backwards compatibility.
-
-Ok, this information should have been in the commit message IMO.
-(Too late now, but for the next patch affecting i.mx8mp.dtsi)
-
-In the normal case, someone reviewing a DT binding patch will of course
-assume there thre is actually a DTS using the binding, thus in the
-(non-normal) case where there is no DTS using the binding, I think that
-you should explicitly mention that in the commit message.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V3] drm/xe/guc: Fix dereference before NULL check
+To: Dan Carpenter <dan.carpenter@linaro.org>,
+ "Everest K.C." <everestkc@everestkc.com.np>
+Cc: lucas.demarchi@intel.com, thomas.hellstrom@linux.intel.com,
+ rodrigo.vivi@intel.com, maarten.lankhorst@linux.intel.com,
+ mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
+ skhan@linuxfoundation.org, intel-xe@lists.freedesktop.org,
+ dri-devel@lists.freedesktop.org, kernel-janitors@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241010064636.3970-1-everestkc@everestkc.com.np>
+ <1a5407c4-3b0f-48a1-940a-cc6b3ff3fb12@stanley.mountain>
+Content-Language: en-US
+From: Michal Wajdeczko <michal.wajdeczko@intel.com>
+In-Reply-To: <1a5407c4-3b0f-48a1-940a-cc6b3ff3fb12@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
-Kind regards,
-Niklas
+
+On 10.10.2024 08:54, Dan Carpenter wrote:
+> On Thu, Oct 10, 2024 at 12:46:34AM -0600, Everest K.C. wrote:
+>> The pointer list->list is dereferenced before the NULL check.
+>> Fix this by moving the NULL check outside the for loop, so that
+>> the check is performed before the dereferencing.
+>> The list->list pointer cannot be NULL so this has no effect on runtime.
+>> It's just a correctness issue.
+>>
+>> This issue was reported by Coverity Scan.
+>> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
+>>
+>> Fixes: a18c696fa5cb ("drm/xe/guc: Fix dereference before Null check")
+
+hmm, this seems wrong, shouldn't this be:
+
+Fixes: 0f1fdf559225 ("drm/xe/guc: Save manual engine capture into
+capture list")
+
+>> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+>> ---
+> 
+> Perfect!  Thanks.
+> 
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+> 
+> regards,
+> dan carpenter
+> 
+
 
