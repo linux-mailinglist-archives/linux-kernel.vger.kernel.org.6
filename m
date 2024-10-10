@@ -1,179 +1,129 @@
-Return-Path: <linux-kernel+bounces-358943-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A2F7998598
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:08:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 672AD99859B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB6931C2407D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:08:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BCA32B21E4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841AB1C3F2F;
-	Thu, 10 Oct 2024 12:07:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610651C3F2E;
+	Thu, 10 Oct 2024 12:10:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T5A5EIcS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rGm1tJ3a";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="T5A5EIcS";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="rGm1tJ3a"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BOgHlTRF"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C27B18FDBE;
-	Thu, 10 Oct 2024 12:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DDF61BD018
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:09:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728562073; cv=none; b=oPUp0uEcS2Y3XpFYW6Avwm5dQmMjSLP3gtGF77lcjxYsBPi5bDnNW2B0Hva59sEHJSh198aJrceXX+mk9FsgDKBM3f8AeceCWP3xtta5/vixHcb1aEWoJ32DgpTSgH6Lb8g/ntrOvntmnW1ube2zpeq7uNmWMsdl+dWEuxprnRE=
+	t=1728562200; cv=none; b=inhpC8v1gV1h1+dmuhSQpUVwZvaPYy+Y3aJGCw1Kz7RyoUYe4oqVxZWknXrqzJrWNJuNFGv9+x4+MS2TvIj8zwQeFeaUr+0oTdfpvnAiNdaA0PnKPS3SdUwr+vNU6kte7c+3Td5NsmhGH8HOIVgD7T5oCVJ03DF2SRR3BAndJyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728562073; c=relaxed/simple;
-	bh=b23DmUkPPVUh0RMHhNGyRZzyT51ZPU5TJeFOjzuuHA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hFnHHVdquxI+rSDb9JqOKEX8zLms3Ful4sz2DXfZ9456NstV4u/QpLigeWmtpveHlyIkGQN/3Zuju0Ot+jEw/tVvsihMwZ8165sWX8bJ0HjzFpxNBnxW5B5LdvPw1OU3LVQ1NkErrDnLriB8PTewkqYONe2U8Qciv1CuXmal1N4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T5A5EIcS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rGm1tJ3a; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=T5A5EIcS; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=rGm1tJ3a; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 5E39621DBF;
-	Thu, 10 Oct 2024 12:07:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728562070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
-	b=T5A5EIcSiNozLeib8tZqyP71dlnFJgh6RkT3+Hi5OlgOOZU2t7X0gRvTdCEGFMQXKQkCfE
-	H4Coqn1dnmAL9D5QLQ1EHzE+JtR02QgyLShnnphz9QDfv5BwYBTSMqwX+sbZoh2oxIxeN1
-	128w1/5SW/R9Q4I67UR2p6a8LrHGMJM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728562070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
-	b=rGm1tJ3a8pd0nIxCqJ1ZnEEPiyTGTlhErZA+lgCfuO/CN5pSIU5PgJH8ePEq5khQSwyKby
-	0T3U8Ege0DemqpAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728562070; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
-	b=T5A5EIcSiNozLeib8tZqyP71dlnFJgh6RkT3+Hi5OlgOOZU2t7X0gRvTdCEGFMQXKQkCfE
-	H4Coqn1dnmAL9D5QLQ1EHzE+JtR02QgyLShnnphz9QDfv5BwYBTSMqwX+sbZoh2oxIxeN1
-	128w1/5SW/R9Q4I67UR2p6a8LrHGMJM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728562070;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=miOkYgLzd78hF3PRbfRfmms8PfuItF8zeCePsmZ6stI=;
-	b=rGm1tJ3a8pd0nIxCqJ1ZnEEPiyTGTlhErZA+lgCfuO/CN5pSIU5PgJH8ePEq5khQSwyKby
-	0T3U8Ege0DemqpAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 515861370C;
-	Thu, 10 Oct 2024 12:07:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id FK/UE5bDB2dNOgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Thu, 10 Oct 2024 12:07:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C8DFCA08A2; Thu, 10 Oct 2024 14:07:49 +0200 (CEST)
-Date: Thu, 10 Oct 2024 14:07:49 +0200
-From: Jan Kara <jack@suse.cz>
-To: Ye Bin <yebin@huaweicloud.com>
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	yebin10@huawei.com, zhangxiaoxu5@huawei.com
-Subject: Re: [PATCH 1/3] vfs: introduce shrink_icache_sb() helper
-Message-ID: <20241010120749.7x5xdiodu3lwxg7j@quack3>
-References: <20241010112543.1609648-1-yebin@huaweicloud.com>
- <20241010112543.1609648-2-yebin@huaweicloud.com>
+	s=arc-20240116; t=1728562200; c=relaxed/simple;
+	bh=aW0SFmckV67IduRMXCaEXm4aQZLIjm4A5Gwd4KCgguk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=GaPjw5nd729z4JP6Gmaf2t93zuPF3z/oo3Ohzwp3FZDb3S5OKMG56wbs4AZh+8l0uUQZTAJZ9Tm3W/3cjYcvusGYDrzfn1sOG+DIk/2RXcxaDdBMEO1ApQmc9HWbriwJ/yULHig8Qc0u5zQzwXcpZRkaEBhMv+0w9J0wmdiD1Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BOgHlTRF; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b49ee353cso7050855ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:09:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728562199; x=1729166999; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4uToUyv1Tn3i0V8tUilohK5/CS3wyFdpI4TShRaX1RA=;
+        b=BOgHlTRF2xWvk+MbugzY381KdhxjyD5cJN6vysReAuwaiKk1+Y73gpPbiMetdEyVH2
+         qbKpePhIwavUxUpjR2jaeAiPlJbDuIvHUgx0gxTU7mqLgGWTSZVB5FLgJH05hTZHR55G
+         j/MpTFl0pcT2tNZpU+MSHLRb80oxdfFwUcpuSWYbDSB2bQFkt5iU9HBXsHlKKgBg7qKb
+         FepyQexSvLSK3NUmBI9DRIekRluNHp+rQaFgDIwJH+tbfMo9SedIHqVm86guQN62ZaSg
+         jHm+hgZrPlEJxuQIWOyhMRnCgK4zilXa9AT6Usj8frLfa4eljhcl8FOXlCwdOz3z2vsf
+         Kzaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728562199; x=1729166999;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4uToUyv1Tn3i0V8tUilohK5/CS3wyFdpI4TShRaX1RA=;
+        b=dEowWfEuzFqX4YYO39/QkR1R4yjFYOS0ea0H67f0InTlmYVU0YobvndpRv0zUZhXtR
+         VELyKMge93/By4cDRxCKpeDfhno5q04OCZw3asWDDq7Y2sdO7PrG/qkiw3FBFdmaFAAl
+         PBNK1p+WuFi8cnzuktR8QTY5Ldiii6LWSpHT7TkbKV9OudmfdBi3m6WrVmbMz/mbXT1x
+         wrKJCla2h+I0sVr4krIiagZsZU71+SDhrEt/GKpZI9NU8LHXxKCZTI/Ja4ucU+MN6ji4
+         o+PqjKfimp5S/RrWoQ8cl67fqhBuZRjbQYIkpGyE64h1p1D5VlMX5Dv9XqtdY2YLHwgW
+         SE9w==
+X-Forwarded-Encrypted: i=1; AJvYcCXFf7Wm5/xy+3g4B9qsT5WFSYbUxS1caSJoGGqAcc3KfUwdPPCX7EXAakY7RGf106i/r2oavniikC5cHPE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz8p+3YtK6nrXpygpt00y3AoKtNLRu5cdLMkxr2xj4Vp51rGXAA
+	zEKz+zR0UvNLZQKmGGPMYn0EK3APBOSoWsLI8/r+RyFR4da/kzJBHC77giRN
+X-Google-Smtp-Source: AGHT+IFDS5d+AboBnYWrSLCBixB9EGeFpYM3d2sk/ej8q98MJc0L1bfKF0yDUsRBE9gbrVPmMXhaGQ==
+X-Received: by 2002:a17:902:fb04:b0:20b:707c:d688 with SMTP id d9443c01a7336-20c6371d8f4mr55024415ad.18.1728562198709;
+        Thu, 10 Oct 2024 05:09:58 -0700 (PDT)
+Received: from localhost.localdomain ([14.22.11.162])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c2133besm8456115ad.211.2024.10.10.05.09.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 05:09:58 -0700 (PDT)
+From: alexjlzheng@gmail.com
+X-Google-Original-From: mengensun@tencent.com
+To: akpm@linux-foundation.org
+Cc: linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	alexjlzheng@tencent.com,
+	MengEn Sun <mengensun@tencent.com>
+Subject: [PATCH] mm: add pcp high_min high_max to proc zoneinfo
+Date: Thu, 10 Oct 2024 20:09:36 +0800
+Message-Id: <20241010120935.656619-1-mengensun@tencent.com>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010112543.1609648-2-yebin@huaweicloud.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_LAST(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu 10-10-24 19:25:41, Ye Bin wrote:
-> From: Ye Bin <yebin10@huawei.com>
-> 
-> This patch is prepare for support drop_caches for specify file system.
-> shrink_icache_sb() helper walk the superblock inode LRU for freeable inodes
-> and attempt to free them.
-> 
-> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> ---
->  fs/inode.c    | 17 +++++++++++++++++
->  fs/internal.h |  1 +
->  2 files changed, 18 insertions(+)
-> 
-> diff --git a/fs/inode.c b/fs/inode.c
-> index 1939f711d2c9..2129b48571b4 100644
-> --- a/fs/inode.c
-> +++ b/fs/inode.c
-> @@ -1045,6 +1045,23 @@ long prune_icache_sb(struct super_block *sb, struct shrink_control *sc)
->  	return freed;
->  }
->  
-> +/*
-> + * Walk the superblock inode LRU for freeable inodes and attempt to free them.
-> + * Inodes to be freed are moved to a temporary list and then are freed outside
-> + * inode_lock by dispose_list().
-> + */
-> +void shrink_icache_sb(struct super_block *sb)
-> +{
-> +	do {
-> +		LIST_HEAD(dispose);
-> +
-> +		list_lru_walk(&sb->s_inode_lru, inode_lru_isolate,
-> +			      &dispose, 1024);
-> +		dispose_list(&dispose);
-> +	} while (list_lru_count(&sb->s_inode_lru) > 0);
-> +}
-> +EXPORT_SYMBOL(shrink_icache_sb);
+From: MengEn Sun <mengensun@tencent.com>
 
-Hum, but this will livelock if we cannot remove all the inodes? Now I guess
-inode_lru_isolate() usually removes busy inodes from the LRU so this should
-not happen in practice but such behavior is not guaranteed (we can LRU_SKIP
-inodes if i_lock is busy or LRU_RETRY if inode has page cache pages). So I
-think we need some safety net here...
+when we do not config percpu_pagelist_high_fraction the kernel
+compute the pcp high_min/max by itself, which may be not easy
+to tell the really high_min/max.
 
-								Honza
+we output the pcp high_min/max to the zoneinfo
+
+Reviewed-by: Jinliang Zheng <alexjlzheng@tencent.com>
+Signed-off-by: MengEn Sun <mengensun@tencent.com>
+---
+ mm/vmstat.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/mm/vmstat.c b/mm/vmstat.c
+index b5a4cea423e1..1917c034c045 100644
+--- a/mm/vmstat.c
++++ b/mm/vmstat.c
+@@ -1791,13 +1791,17 @@ static void zoneinfo_show_print(struct seq_file *m, pg_data_t *pgdat,
+ 		pcp = per_cpu_ptr(zone->per_cpu_pageset, i);
+ 		seq_printf(m,
+ 			   "\n    cpu: %i"
+-			   "\n              count: %i"
+-			   "\n              high:  %i"
+-			   "\n              batch: %i",
++			   "\n              count:    %i"
++			   "\n              high:     %i"
++			   "\n              batch:    %i"
++			   "\n              high_min: %i"
++			   "\n              high_max: %i",
+ 			   i,
+ 			   pcp->count,
+ 			   pcp->high,
+-			   pcp->batch);
++			   pcp->batch,
++			   pcp->high_min,
++			   pcp->high_max);
+ #ifdef CONFIG_SMP
+ 		pzstats = per_cpu_ptr(zone->per_cpu_zonestats, i);
+ 		seq_printf(m, "\n  vm stats threshold: %d",
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.5
+
 
