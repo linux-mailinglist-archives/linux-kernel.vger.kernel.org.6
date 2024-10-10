@@ -1,166 +1,111 @@
-Return-Path: <linux-kernel+bounces-358369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD73997DE4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:56:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F24E2997DE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:56:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0974C1C23DF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 59D6CB24A3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:56:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CC331BB6BA;
-	Thu, 10 Oct 2024 06:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 578271B78E7;
+	Thu, 10 Oct 2024 06:56:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FfGHmxmg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="S1i3eUBT"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125A31B3727;
-	Thu, 10 Oct 2024 06:56:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62690405F7;
+	Thu, 10 Oct 2024 06:56:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728543380; cv=none; b=UdHFL7538k/DpFObT+8cy7vQ+TKL/Lf612QTEf6FQS9SQA/1zWs8x6ul84Wlb0+eWfp0TJxrdT1Ihva+vKQQY948OC0h3xxgkmkHo6PwiED6yIzEIjxEg6lVy5BgSsiQppVSZ/vyt9VNFB0g/0sCo59LotvKzWZRyIWUm/4gzvk=
+	t=1728543375; cv=none; b=hbS3LzER8Rv6GbLAvarJ2JjXz4pROnm85x262lLbuT9rLYDDLrnQUVkRcWzOWg6pwCla6zpjlD6NkBQtSLDfCKFnSencpEzFbHltx61HW0FJ/npVXB/3qdH+BwPDe16cF8S5RGLwUFKnp7DpzhN0bAhpj3vM6f1cOBc9q2dOcuw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728543380; c=relaxed/simple;
-	bh=2Df5FXqi+/E58OjQ101ZrWiq5+1tVdsdX+lRyBQgnRE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KCse64m+LAxoWxX8PAP+WT0E0+vgt93punx6qOjmjotbiIs4CS7JgOfbvqFuk8PUR/ptV5Qpm1JvEJoZkEjqLBfc6/f4Fo82xOIrUjJoulZgWbw6owEwBPHc4jFCG3KeXFAsWOZBDFmZH815tqdqJlm4Nwaut+Z+YPEF7+3aS+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FfGHmxmg; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728543379; x=1760079379;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=2Df5FXqi+/E58OjQ101ZrWiq5+1tVdsdX+lRyBQgnRE=;
-  b=FfGHmxmgwUTQKB8ytO9MvQoxF70Tm118ym/Qb3cfNf9xEFmbSVEkoufi
-   gLVWfFfUBtVInLt8eNGsf2TJi4K47PDEqFYjNXXxVfqTkrabCPZm2ROy2
-   ivgC29GtKozAK6HNJ1WioPRByk+0k7ER41CMl6ssxSLzs2CRUIg9g03Ug
-   8wK/DoUZHkB6umnts2ZR4Wr61gkxd7xvb0kM0pd6POhf3I0cuT2dBV5bk
-   fcf7aIb3emVQtDff735CWBqM15K1LXjqmNuZMVRVe6ctU8U8y0QYDwsHd
-   oNzoRlSqQeCuiLXJE71+UFL/3grNgQf4phdI4LB3fW7nwIu82Dyi3TUHy
-   g==;
-X-CSE-ConnectionGUID: DjeH6cP4RMCDc+wmnGhLjQ==
-X-CSE-MsgGUID: 5ByBeTi3RYakfuzynzSzeg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="28013097"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="28013097"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 23:56:18 -0700
-X-CSE-ConnectionGUID: 1aAYwmSHSemda/dLtUrbhQ==
-X-CSE-MsgGUID: yz/iyDIDSySv1bSXMR8fdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="81504475"
-Received: from unknown (HELO yhuang6-mobl2.ccr.corp.intel.com) ([10.245.243.193])
-  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 09 Oct 2024 23:56:15 -0700
-From: Huang Ying <ying.huang@intel.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	linux-cxl@vger.kernel.org,
-	Huang Ying <ying.huang@intel.com>,
-	Dan Williams <dan.j.williams@intel.com>,
-	David Hildenbrand <david@redhat.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Baoquan He <bhe@redhat.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	Alison Schofield <alison.schofield@intel.com>
-Subject: [RFC] resource: Avoid unnecessary resource tree walking in __region_intersects()
-Date: Thu, 10 Oct 2024 14:55:58 +0800
-Message-Id: <20241010065558.1347018-1-ying.huang@intel.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1728543375; c=relaxed/simple;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IN4XfJHywsXd5uGwnpVuz9t3OoQAOdS81W44PfnHlqYh5U7gpDK3/+nRx3PRWH3NMvobjN8xC8YMqnOUdRXN7zDsMMWPqMiVrc6yiiuQYti0gtT/7bZ6+YdFYNS5F8hOcmV36hR3/z8KKcLnCPIMEtB7d9GIxD0BhQWqW5aCH20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=S1i3eUBT; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=M7NmYC/Iylm9myghHwqILim55SAUt9QrM+UZYk0eJlw=; b=S1i3eUBTXT9snJsFrbYxMtVIxa
+	2StIUbW26jUiUGIHiDuWcwr2xPnOuME/tm/Ig9DP1J8ahWmc+tV4O+GstiWqRblDitfVyE5ew0Uig
+	Bqs4GEi17ugtYkHDkIrdqDc22k32J/RNAB6vuXKUjphX4kDewbtvDrEg2mgaJ38e6t01Y1o2p6ZQz
+	2Zg4UVpewhMHh6X6XXWAMtSY1bChiJssPjTsIVZf3+Qg0Z1M50mb3LQRFBdP6hRGOcwcSxAMkeKZv
+	nXV3I//z+cxoqRg5hCz82aSNMKo5bzs0kgoLs+nW4ZG/8EMh/ZdMaSpNHyHSR1k4O3v3VdeCd4d2z
+	urfTiyig==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1syn5c-0000000Bkoc-2sjD;
+	Thu, 10 Oct 2024 06:56:00 +0000
+Date: Wed, 9 Oct 2024 23:56:00 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Andreas Larsson <andreas@gaisler.com>,
+	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
+	Brian Cain <bcain@quicinc.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Christoph Hellwig <hch@infradead.org>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Dinh Nguyen <dinguyen@kernel.org>,
+	Geert Uytterhoeven <geert@linux-m68k.org>,
+	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
+	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
+	Johannes Berg <johannes@sipsolutions.net>,
+	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Richard Weinberger <richard@nod.at>,
+	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
+	Stafford Horne <shorne@gmail.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
+	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org, linux-mm@kvack.org,
+	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+	sparclinux@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v5 5/8] arch: introduce set_direct_map_valid_noflush()
+Message-ID: <Zwd6gDYEvjOwQ5wJ@infradead.org>
+References: <20241009180816.83591-1-rppt@kernel.org>
+ <20241009180816.83591-6-rppt@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009180816.83591-6-rppt@kernel.org>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Currently, if __region_intersects() finds any overlapped but unmatched
-resource, it walks the descendant resource tree to check for
-overlapped and matched descendant resources.  This is achieved using
-for_each_resource(), which iterates not only the descent tree, but
-also subsequent sibling trees in certain scenarios.  While this
-doesn't introduce bugs, it makes code hard to be understood and
-potentially inefficient.
+Looks good:
 
-So, the patch renames next_resource() to __next_resource() and
-modified it to return NULL after traversing all descent resources.
-Test shows that this avoids unnecessary resource tree walking in
-__region_intersects().
-
-It appears even better to revise for_each_resource() to traverse the
-descendant resource tree of "_root" only.  But that will cause "_root"
-to be evaluated twice, which I don't find a good way to eliminate.
-
-Signed-off-by: "Huang, Ying" <ying.huang@intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>
-Cc: David Hildenbrand <david@redhat.com>
-Cc: Davidlohr Bueso <dave@stgolabs.net>
-Cc: Jonathan Cameron <jonathan.cameron@huawei.com>
-Cc: Alistair Popple <apopple@nvidia.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Bjorn Helgaas <bhelgaas@google.com>
-Cc: Baoquan He <bhe@redhat.com>
-Cc: Dave Jiang <dave.jiang@intel.com>
-Cc: Alison Schofield <alison.schofield@intel.com>
----
- kernel/resource.c | 19 ++++++++++++++++---
- 1 file changed, 16 insertions(+), 3 deletions(-)
-
-diff --git a/kernel/resource.c b/kernel/resource.c
-index b730bd28b422..3ded4c5d4418 100644
---- a/kernel/resource.c
-+++ b/kernel/resource.c
-@@ -50,15 +50,28 @@ EXPORT_SYMBOL(iomem_resource);
- 
- static DEFINE_RWLOCK(resource_lock);
- 
--static struct resource *next_resource(struct resource *p, bool skip_children)
-+static struct resource *__next_resource(struct resource *root, struct resource *p,
-+					bool skip_children)
- {
- 	if (!skip_children && p->child)
- 		return p->child;
--	while (!p->sibling && p->parent)
-+	while (!p->sibling && p->parent) {
- 		p = p->parent;
-+		if (p == root)
-+			return NULL;
-+	}
- 	return p->sibling;
- }
- 
-+static struct resource *next_resource(struct resource *p, bool skip_children)
-+{
-+	return __next_resource(NULL, p, skip_children);
-+}
-+
-+/*
-+ * Traverse the whole resource tree (NOTE: not descendant tree under
-+ * _root) from _root->child on.
-+ */
- #define for_each_resource(_root, _p, _skip_children) \
- 	for ((_p) = (_root)->child; (_p); (_p) = next_resource(_p, _skip_children))
- 
-@@ -572,7 +585,7 @@ static int __region_intersects(struct resource *parent, resource_size_t start,
- 		covered = false;
- 		ostart = max(res.start, p->start);
- 		oend = min(res.end, p->end);
--		for_each_resource(p, dp, false) {
-+		for (dp = p->child; dp; dp = __next_resource(p, dp, false)) {
- 			if (!resource_overlaps(dp, &res))
- 				continue;
- 			is_type = (dp->flags & flags) == flags &&
--- 
-2.39.2
-
+Reviewed-by: Christoph Hellwig <hch@lst.de>
 
