@@ -1,101 +1,105 @@
-Return-Path: <linux-kernel+bounces-359195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDBC099888C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:00:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BE89998894
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:01:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FC05287002
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:00:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58DE1B27973
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E83851CB31D;
-	Thu, 10 Oct 2024 13:59:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 430E71C9ED3;
+	Thu, 10 Oct 2024 14:00:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZ92nFQM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="DwH6SBFW"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BBC11CB302;
-	Thu, 10 Oct 2024 13:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D42121BDA90;
+	Thu, 10 Oct 2024 14:00:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568797; cv=none; b=a4krnehcqDNn3BD0KSNi5/TO0krFUj5eIAr5AUcvuyXpmo3n3U+hqriWCcIZS/KP9qIv4LiYHOn7wwLlTVl9mzDSKTcoSnN8bUNluIHirMF06lPfvdXXT5bYS36lB2kmbl4ASkv2lT5DPKzHwY7lkEugLbEIYJyZFohb9jlXGn8=
+	t=1728568857; cv=none; b=BuDDzAHqNBchWjbCRhMt/kYfCZprozK/lJT6+qhOVmotFD0WozI6QExYEfQG6NsExmg3P9JQTewda0FlbdK3Q3xcanJ3KsfZNLH78mnuWSBgVp7k3LMzY+weyNTPoNDv6tS7cbPYIOGfPH9bfWb89H2dUv0bBWEIF3O2zWWwB8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568797; c=relaxed/simple;
-	bh=7Ww90GvXc+Ix4uHfxVqsy07IC53s9MBe4r1CMRExWtE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OwsewyoNrL1Nq7ir3mVuAL+5kcsjos0UYwgdqTghdKrdx1qmqRPR47BlQFcoMIwQ881GLeqLlQ2UQJuPrVFcUS5jacoxeP8WZ5m0IYbd4uhZ4GludYNRACZUSNxDQ3id4IqpabaF6lwYsh3ReiCTzVSffrMeJ9D3mRug56UzhvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZ92nFQM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E590DC4CECF;
-	Thu, 10 Oct 2024 13:59:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728568796;
-	bh=7Ww90GvXc+Ix4uHfxVqsy07IC53s9MBe4r1CMRExWtE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZZ92nFQMVWW1+RICgwZc/druk4wm9AjT2YhAd+HQ4Fn9Bn4ttiorbO60CTiMBnBFw
-	 luu8MMxOjpTcXVTH85bFKRB9PT9+DjDvQmKtf0y3ctpuqFTLPcyQirCI7sOO5xAh6J
-	 NHdRjrmJEdeDEQgjH7ZF+HVrPJfObxcMkhOJqngrdEQj503vtn2wBXj/ip//6nhYfV
-	 k1eCaIvMBqeknmMrciv9BkiXTS+Ib5A1Zcv/qns5BIIqXFE3Xiy3tJeOBUpdD31WRM
-	 oITCNRF1a8C/AnBilu6UFs0CTCewHERg43w65X0Yq083zvvLpPYveZ1rZUXmy0hWSg
-	 AKz30M9NTpvsg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539973829e7so962221e87.0;
-        Thu, 10 Oct 2024 06:59:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJrcbwgf4XFJ0Bh5scumfQPMFVwXlKWcS/71gVMsYtNUKCVW9IM7pKh4tRYwg2o3oxBz3JFeqebdnN6torQno=@vger.kernel.org, AJvYcCXhjbJAcG//BtRdvFSqUZgEmR1eVHD9fQ9eHPzhutoXjy2qYEK3eDnmTgAz3Ub56mNOcKGXVMidUBMBjbuy@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeVC0vce7xLkRokXjrovRT+G+LVgtXbrO8XL4rF5mRoiJbwClc
-	d9T3B6LI+caza+mXac2EU3LCJpp4OiPuJzRarBPEI56T+BRBELb4wHJYq2P3RU8bLap14T6eFdF
-	Y4zs1WGWBYAKqZb8NgA0oAQvxEIs=
-X-Google-Smtp-Source: AGHT+IGOT1AWXDpwLRrYOsifyHE4hA+rB+bIHQ8EyJ6+fEcFPu4Ly5om+AN1zutWYtdrygOWdUpxHDoFHhsaDqz9j3U=
-X-Received: by 2002:a05:6512:3b23:b0:52e:74d5:89ae with SMTP id
- 2adb3069b0e04-539c4951548mr3966891e87.39.1728568795311; Thu, 10 Oct 2024
- 06:59:55 -0700 (PDT)
+	s=arc-20240116; t=1728568857; c=relaxed/simple;
+	bh=inVUxz74LeTafvVpc7yyQ+a9E48+irURsnVSweAxxHI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kCfXvwxJz2PwHiZ6M9rkevsvwsa6AyNXpFPnLPKB/ZzbYz6HjESyDLrVuUysqOtsAY1NmK4h8F0VR+EcLpftk4d4n+j6ksh7+PNGzTeLYRpClqCKAcXweFu+LhNM6hEoRNhneqL/qHnYCdlX+Mmk5SITj2dZMBLx7bwKUAU34tQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=DwH6SBFW; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=3gu4vrCoGcCYQlq4BWraLzQK3LX4/Mgovi2zoTV8H2c=; b=DwH6SBFWkXWr1pA1j4nl2qX+07
+	9KWUyDZShKUQrXGcz+kFxYy1L9Jx53wD2pnrbVTZjrBE8nhAHxuORb8icMC65IJMmz3PVx6ptx7k2
+	mJI9JIPUHU5ZIKwqp42hlhEyWcTzjs8tUkqP9mqJngkqQNuE8GAp+vc8HcP93upaHFjymAE5JzG2o
+	mJYtgxgn9/fReIKvU6sPml4i0RkqLYOWg/mBEJc6yLL8NJK6ZASK2O5PAyZBjVET2KfAxotVSLl8h
+	F+/BRjELvdCOpY39psidABgksphijxx6lU70yvxqumRrsTCxc/02Vfg0yRMJ6rqVTuvMQnHa78H6v
+	XThENvLg==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1sytib-0005bC-J8; Thu, 10 Oct 2024 16:00:41 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: wim@linux-watchdog.org, linux@roeck-us.net, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org,
+ Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
+Cc: linux-watchdog@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Karthikeyan Krishnasamy <karthikeyan@linumiz.com>,
+ Conor Dooley <conor.dooley@microchip.com>
+Subject:
+ Re: [PATCH 1/1] dt-bindings: watchdog: rockchip: Add rockchip,rv1126-wdt
+ string
+Date: Thu, 10 Oct 2024 16:00:40 +0200
+Message-ID: <3657223.R56niFO833@diego>
+In-Reply-To: <20241010061408.1351865-2-karthikeyan@linumiz.com>
+References:
+ <20241010061408.1351865-1-karthikeyan@linumiz.com>
+ <20241010061408.1351865-2-karthikeyan@linumiz.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010122801.1321976-7-ardb+git@google.com> <20241010122801.1321976-8-ardb+git@google.com>
- <20241010132623.GI17263@noisy.programming.kicks-ass.net>
-In-Reply-To: <20241010132623.GI17263@noisy.programming.kicks-ass.net>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 10 Oct 2024 15:59:43 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFg+JWMrfw40y2=0f9jr-3ebUxsFPprAK5diK4GQke_4A@mail.gmail.com>
-Message-ID: <CAMj1kXFg+JWMrfw40y2=0f9jr-3ebUxsFPprAK5diK4GQke_4A@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] objtool: Deal with relative jump tables correctly
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	keescook@chromium.org, linux-hardening@vger.kernel.org, nathan@kernel.org, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jan Beulich <jbeulich@suse.com>, 
-	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 10 Oct 2024 at 15:26, Peter Zijlstra <peterz@infradead.org> wrote:
->
-> On Thu, Oct 10, 2024 at 02:28:03PM +0200, Ard Biesheuvel wrote:
-> > diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-> > index 3cb3e9b5ad0b..7f7981a93535 100644
-> > --- a/tools/objtool/check.c
-> > +++ b/tools/objtool/check.c
-> > @@ -2101,6 +2101,8 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
-> >  {
-> >       struct symbol *pfunc = insn_func(insn)->pfunc;
-> >       struct reloc *table = insn_jump_table(insn);
-> > +     unsigned int rtype = reloc_type(table);
-> > +     bool pcrel = rtype == R_X86_64_PC32;
->
-> R_DATA32 or R_TEXT32 please, the budding cross arch stuff has their own
-> names for all that.
->
+Am Donnerstag, 10. Oktober 2024, 08:14:08 CEST schrieb Karthikeyan Krishnasamy:
+> Add rockchip,rv1126-wdt compatible string.
+> 
+> Acked-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Karthikeyan Krishnasamy <karthikeyan@linumiz.com>
 
-#define R_DATA32        R_X86_64_PC32
-#define R_DATA64        R_X86_64_PC32
-#define R_TEXT32        R_X86_64_PC32
-#define R_TEXT64        R_X86_64_PC32
+Acked-by: Heiko Stuebner <heiko@sntech.de>
 
-Clear as mud.
+> ---
+>  Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+> index b5a3dc377070..1efefd741c06 100644
+> --- a/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+> +++ b/Documentation/devicetree/bindings/watchdog/snps,dw-wdt.yaml
+> @@ -32,6 +32,7 @@ properties:
+>                - rockchip,rk3576-wdt
+>                - rockchip,rk3588-wdt
+>                - rockchip,rv1108-wdt
+> +              - rockchip,rv1126-wdt
+>            - const: snps,dw-wdt
+>  
+>    reg:
+> 
 
-I'd guess we need the '64' variant here, but I'm not sure which one to
-use for a .rodata relocation pointing to .text. Any hints?
+
+
+
 
