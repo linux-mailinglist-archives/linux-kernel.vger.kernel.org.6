@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-359878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C493E99922E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:24:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FBF499921A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:22:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9B0C9B2F833
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:09:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9694EB2F9CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:09:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BDBF1DF997;
-	Thu, 10 Oct 2024 19:05:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BCCE1CEE8D;
+	Thu, 10 Oct 2024 19:05:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="eFx2z6uy"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6KtjF6m"
+Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 279C21C8FBC;
-	Thu, 10 Oct 2024 19:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EBD719DFAB;
+	Thu, 10 Oct 2024 19:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728587103; cv=none; b=RDjxSf8hFAM9YG22zHTajn34nq5RSAtyv+RtbLCFzwgI9Cwb/prl7ui3+hXx2zaxuJjfty0ZNj0OXIfFSSCKLgyhbemml0e8GLYtPkpp2tjKi7uNs43whFuCPQXf0IzRSKT+mJBqfph/abLApjABcpLI29RQQKPXTiyYtC7KLNM=
+	t=1728587141; cv=none; b=Kg47rvaFfov09WBbOwPKFIcYyNIG9c+m52FP3C0gimA6IOh6Md+3ODn8wzMgAh2XjJb2IVrZcgSk9SxJGhwdrQS3JGNrUZq8nLDrDFWLAHLDnvZfvPlKjLOu0wvWXIFOxT3c4AiawLBwP9dAGFoKAsgyuKOkSDjtqcL3HXMgq4k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728587103; c=relaxed/simple;
-	bh=phoNZa9//6972a7VEYUPTIF2z9sXR02KuJ191yz9DBY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=nb40NE9PLvpWSgqPumthpFedExwT9vOato42CQ1AFSFRGkaa1DI9fGrXiNQYOyYgmPsUdh4gL5DvZ6hGNUTgHI6bN5MEI2gpSTaaBFZcocGqrFlIWUnL5g+sV0HRtc9l6oSfrY9TgoQ7lJ46pf9cZC4LKyJPzpPFZPLxh19PgSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=eFx2z6uy; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACSV1i022390;
-	Thu, 10 Oct 2024 19:04:45 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	phoNZa9//6972a7VEYUPTIF2z9sXR02KuJ191yz9DBY=; b=eFx2z6uycYzWp2CK
-	tW49HvuK4Bf19WTfXoQHcI0bc/bl6jmPca5DMV0/fWH0ruG8DQPu1OPfVumWCa5Y
-	fE7QpXzO0xxAjn/D5MCClT0RKT+SCXR29DKtxty7wED5OJ+e0SzInq63PK7TTP2O
-	uZOkJpVlSpP4Qnf9P58aX6IfOxgFulLAVTAgHBVYwTUVWOMXAsEdxCVK8xj2sNDD
-	heAEL+FkajMbxZjsyvg4G0HhvjppZl9E7Rt2EyJ/xuVXWXg6KctFkAhJk2Mm9tl3
-	cGszKB+qZ7F5avYcbG3WgI3q46IcdE5og5sjLUIB5XfEd5pTw+QI026K6A53co4m
-	qlIZoQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xptugpe-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 19:04:45 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49AJ4gER027564
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 10 Oct 2024 19:04:42 GMT
-Received: from [10.71.109.85] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
- 2024 12:04:39 -0700
-Message-ID: <94b7090d-583e-4008-acc3-1aa87d2fe6fa@quicinc.com>
-Date: Thu, 10 Oct 2024 12:04:30 -0700
+	s=arc-20240116; t=1728587141; c=relaxed/simple;
+	bh=9nZKTw4aCkvD4i44ycAJVgRMQ4dQDg9MK9LwgzbylZA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QC9wOtfvM1DA+A7rsGKQJnOmoiptGYp5zsizMsqNHybj13WQ8VwE03R0RWLlo/MurtljkYoG1dgcm39K9C/jqgn5Z4HW2sabRHPRa18NaD2tQo0XnVTisXrixsRc7kqlJSNy1Ib+ZWtEvNV1GchaSEI/4W+2v4qioYxXOLNa+cY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6KtjF6m; arc=none smtp.client-ip=209.85.128.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-6db836c6bd7so12924517b3.3;
+        Thu, 10 Oct 2024 12:05:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728587138; x=1729191938; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=MZdywbszG1pbZ42IsUss783Lv34wT7AFus2iDOuZXog=;
+        b=h6KtjF6mE9jlVr4Jv+wGIT1o46i0Skf+FyQdL0HaElUB0Sld0Ek3n3B4VAPgy/xDrq
+         5pJ1/sivVVQ76s4ShAYFEQI6QBZqZWazzXQ0HFFv1skAozuqLEr9wbqGnPAXkaE7Ab2X
+         cWX+HNWK1a966u2ke4+Cxe7U+l7y61nWpCltty0jKTX4hY+Fj+cAHM+rHbWjhXuGrWNH
+         jvKNgXCi79eQuP4Ljqt9pFIFJ5kaJXB09W/b/72FaVn6+5PSSuKqCceW8L2JT6jnf8KQ
+         JyK9huL85rmRk+gWyaFmORbLmE4LkyGz6JO8PVjiau28mJsSlkMI2GF2MLHHBZHFlCaK
+         oo0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728587138; x=1729191938;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=MZdywbszG1pbZ42IsUss783Lv34wT7AFus2iDOuZXog=;
+        b=mjfaQAHAkX3NrrtI4MR54LmyihD3Tm6df5u56luS63UacL8ZmCC9ze9gtIj0wQtrS8
+         61zfLDLuaAgE1h5nv8w4bTFl/gbsCNfM7oxhYfT6OtdWyAmjWIjfGSLh3VUNAnfWbKOc
+         oll4yXjiod6gFZ1znKae+auO7Cw4ycbh4K081qMLeWR1SK4Rj0HIG8q/sY4z2krdaRA5
+         wMxJqcQ7qLBJhN3+a4Nvnk5dYcgCkGF7rGNukP9azZ8OlgYXKeYq5UjX6Y/FTIeJW/fe
+         SJ6IEbHFrEuYIRh3zuFTQhXGscaAckFiSL9Fze+uotfUN9ufVOKCIgcyn1MF3U/z8Jnu
+         iCBg==
+X-Forwarded-Encrypted: i=1; AJvYcCVA6xgMkW7Dxzz2kAWASbjwd4zbNQU2KXMcbQA1619hZkCkofh+j5kaprm6lSqmsDH8s0Ee0UBf@vger.kernel.org, AJvYcCXsmvnRlZQCA1SS3LC7+ZD9p/p7YWgs5TkTJ5Mvfgb+jdGItqzdk4X8veXDZYFWg4Q9K4uMs8LtwTsXOuc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQ6dVz4EZC6wiVeY2UEWTW37DWaDf+1dnwCQlSjbvftI7sl1U4
+	DfV53Css0Cym6cmK1vHn+Rc3cg3ggybDylIpTU9Vy+9p3yJGikus
+X-Google-Smtp-Source: AGHT+IGmzrqsm2WeIIOfbFMt2zkFaMV3uzEZvHqw/Nseaz0VNTxVD7ItQDpkh1owdugxCTKIB3Obfg==
+X-Received: by 2002:a05:690c:4887:b0:6ad:deb1:c8e0 with SMTP id 00721157ae682-6e32e20a00dmr37587117b3.18.1728587138061;
+        Thu, 10 Oct 2024 12:05:38 -0700 (PDT)
+Received: from dove-Linux.. ([2601:586:8301:5150:f757:be8b:66fa:b754])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332c3049dsm3107287b3.90.2024.10.10.12.05.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 12:05:37 -0700 (PDT)
+From: Iulian Gilca <igilca1980@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: igilca@outlook.com,
+	Iulian Gilca <igilca1980@gmail.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] of: net: Add option for random mac address
+Date: Thu, 10 Oct 2024 15:05:03 -0400
+Message-ID: <20241010190508.196894-1-igilca1980@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 2/2] sh: Restructure setup code to reserve memory
- regions earlier
-To: Artur Rojek <contact@artur-rojek.eu>
-CC: <dalias@libc.org>, <glaubitz@physik.fu-berlin.de>,
-        <ysato@users.sourceforge.jp>, <kernel@quicinc.com>,
-        <linux-kernel@vger.kernel.org>, <linux-sh@vger.kernel.org>,
-        <robh+dt@kernel.org>, Geert Uytterhoeven <geert+renesas@glider.be>
-References: <20240718021822.1545976-1-quic_obabatun@quicinc.com>
- <20240718021822.1545976-3-quic_obabatun@quicinc.com>
- <aba64912a7cf700fd281016d4a2ad82d@artur-rojek.eu>
-Content-Language: en-US
-From: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
-In-Reply-To: <aba64912a7cf700fd281016d4a2ad82d@artur-rojek.eu>
-Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 83left3nMHHMzBaLqF--RnitoKgAqkGt
-X-Proofpoint-GUID: 83left3nMHHMzBaLqF--RnitoKgAqkGt
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- adultscore=0 suspectscore=0 spamscore=0 mlxscore=0 bulkscore=0
- phishscore=0 mlxlogscore=703 lowpriorityscore=0 clxscore=1011
- impostorscore=0 malwarescore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410100126
 
+Embedded devices that may not have fixed mac address
+may want to use a randomly generated one.
+DSA switch ports are some of these.
 
-On 9/29/2024 2:15 PM, Artur Rojek wrote:
-> On 2024-07-18 04:18, Oreoluwa Babatunde wrote:
->> The unflatten_device_tree() function contains a call to
->> memblock_alloc(). This is a problem because this allocation is done
->> before any of the reserved memory regions are set aside in
->> paging_init().
->> As a result, there is a possibility for memblock to unknowingly allocate
->> from any of the memory regions that are meant to be reserved.
->>
->> Hence, restructure the setup code to reserve the memory regions before
->> any allocation is done by the unflatten_devicetree*() using memblock.
->>
->> Signed-off-by: Oreoluwa Babatunde <quic_obabatun@quicinc.com>
->
-> Hi Oreoluwa,
->
->> ---
->>  arch/sh/mm/init.c | 15 +++++++--------
->>  1 file changed, 7 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/sh/mm/init.c b/arch/sh/mm/init.c
->> index 643e3617c6a6..857ce8cc84bd 100644
->> --- a/arch/sh/mm/init.c
->> +++ b/arch/sh/mm/init.c
->> @@ -249,6 +249,7 @@ void __init early_reserve_mem(void)
->>      u32 zero_base = (u32)__MEMORY_START + (u32)PHYSICAL_OFFSET;
->>      u32 start = zero_base + (u32)CONFIG_ZERO_PAGE_OFFSET;
->>
->> +    sh_mv.mv_mem_init();
->
-> One side effect of moving mv_mem_init here is that it makes cache
-> operations available earlier. But I see no harm in doing that.
->
-> Otherwise the patch is looking good. Verified on J2 Turtle Board.
->
-> Reviewed-by: Artur Rojek <contact@artur-rojek.eu>
->
-ack.
+Signed-off-by: Iulian Gilca <igilca1980@gmail.com>
+---
+ net/core/of_net.c | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-Thank you for the review Artur!
-
-Regards,
-Oreoluwa
+diff --git a/net/core/of_net.c b/net/core/of_net.c
+index 93ea425b9248..aa4acdffc710 100644
+--- a/net/core/of_net.c
++++ b/net/core/of_net.c
+@@ -142,6 +142,10 @@ int of_get_mac_address(struct device_node *np, u8 *addr)
+ 	if (!ret)
+ 		return 0;
+ 
++	ret = of_get_mac_addr(np, "random-address", addr);
++	if (!ret)
++		return 0;
++
+ 	return of_get_mac_address_nvmem(np, addr);
+ }
+ EXPORT_SYMBOL(of_get_mac_address);
+-- 
+2.43.0
 
 
