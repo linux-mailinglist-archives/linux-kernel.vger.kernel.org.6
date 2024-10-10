@@ -1,121 +1,134 @@
-Return-Path: <linux-kernel+bounces-358462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95D35997FAC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:27:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE58D997FC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:30:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248C91F282E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:27:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EE96D1C23BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:30:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC3F1F9A8A;
-	Thu, 10 Oct 2024 07:42:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3861FCC58;
+	Thu, 10 Oct 2024 07:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EWIlVZyq"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVtLcd07"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B29931F9417
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F07D91C5796;
+	Thu, 10 Oct 2024 07:44:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728546158; cv=none; b=agfeG84pz2fIBln/18iu2kFMZB1uvAg/2wTaYzYNHIzwoas1y7Kt5EsD9PPeVVbJ79+aWs6ckFxJArV+8cEYrfB5/6IoYZYOt08vFCiji+l6YopCG/MyK8eg4Ndkqd0H6wAh5lEdHTBEqkMVEPZowlvuBXG9KwL10YnNk4bS58U=
+	t=1728546292; cv=none; b=mOmI4nSEsgZynwVi2+8nGZh7y5cOyUrkonKDAyiztk1Cg7alk5OYfh1+O54ANF+T26iSqdJFBc1C5wAlFYAGekMoJkBthY0HZpx/52n/h3FYWLdh5ZH1UGj/kOrIRlMgv7wyxyo2/DTMOaF27KFkbfNSrY8t53qZMk/NLZJjKVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728546158; c=relaxed/simple;
-	bh=STN6QxUVD2dVR9YjNXmUvMxd6idCs756ZvIov2g2HS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n+M+Oz/EWpOAKbgFjWlypgUY6ed1PRUxvP/4YrFh5gV+CKc3x9Ag8QN9M8ME71NbZVZzDKC26QCPoLACaPY5pBkQIZccm81ttJGkWnXJh+FFaIBNRf4igRSGjs8KX/QciHHBdBFaRVL1GXmmxur97qkSs6RxVeRvLDMx0/mgp8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EWIlVZyq; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c77459558so5128815ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 00:42:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728546156; x=1729150956; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rB9MS+OSoCKnJI226KdUhyLvFiOBCe/rn/d38cpBX4w=;
-        b=EWIlVZyq5O6wIkFgkPNyb8yZwYEtsF3Dd14hJvOFnF9z7QGIodt4ZSOaJnnL+cwpO0
-         EXBJ84VlHurNqQkgb+vyM4AueobgRmvDzp2sKCcJKQK2wZ6BOamVZjQ2bxkR/RM7Waus
-         dZXkqEuoGYbq/hpMFYqevBhy+NCPi9VbiPBNpIde9F3Qy8tZFuiWe41ZO4fVgl/OWoAE
-         TRxChtTFDms8dLxIu8aUUd2TKmYCbagLcmP/i8IO2Xx179zW5ONpSpMyr2M8K60sBhkq
-         x/GycKvetQfxS1JLH3aB7j5fzUVjdUxSodXsvBRJZsHoq339syzpMBh3Z3x6/snC4s2u
-         q5xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728546156; x=1729150956;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rB9MS+OSoCKnJI226KdUhyLvFiOBCe/rn/d38cpBX4w=;
-        b=wAVVsUO8ElWBo5y6O+R2yZqZqQMsmf19Suh9yPQmBIU2a0yd1UbOBQk5qFzfnJt8DB
-         kYU23l/+BtMNIb34RAWG7nQggXCrYUY5KSXYCf5NEelFePH3/cphflWapgo5LnIzPPaP
-         hIkkQKFcvpdlyksdRRkSTyUCzWS320eNbgG//d1toa/NC7Ey2Weme/xOuRlUkTZ4z62E
-         es2aBByjj2URxklDA/MFqsvgYG+KQyyTlDypHk4BV2SWLF0zJJKEKQLXJ/hCVITXxuAx
-         qUa66MQKP5qECl9RExqRob4nGO7MHBse9NkHiBo8OSeGXxilEWJTpBcJEkTB3bOIQqNa
-         sWSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV77aWp6vxCXBcD1pd9hkw6LfuZh/w/xPS21mTYzReGYG/jDQzGJBINFtIu3vG6kWxSu+TH50ukYUF0al0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydLi0MR5rErQ7sl/DNJpymg7DFqPjS5dPghE50YL6g24Q9SPYW
-	vOuiv+Z67lj9qnBZ9KkzLeEhqXS2dc4LmxA14+Co9qA4dAYt9VG3J7cwJdzPHYY=
-X-Google-Smtp-Source: AGHT+IEq3hkzm6E1ohw2y557xveBL0B9VvN01FT/oaUkvjCiTzz5z2pb3BYkA2s+ALH3W5dnU5Cwzg==
-X-Received: by 2002:a17:902:ce82:b0:207:15f9:484a with SMTP id d9443c01a7336-20c7ec8c349mr33908135ad.15.1728546156075;
-        Thu, 10 Oct 2024 00:42:36 -0700 (PDT)
-Received: from localhost ([122.172.84.231])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c216429sm4693565ad.218.2024.10.10.00.42.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 00:42:35 -0700 (PDT)
-Date: Thu, 10 Oct 2024 13:12:33 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Vedang Nagar <quic_vnagar@quicinc.com>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <quic_kdybcio@quicinc.com>,
-	Nikunj Kela <nkela@quicinc.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Mikko Perttunen <mperttunen@nvidia.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Stephan Gerhold <stephan@gerhold.net>,
-	Ilia Lin <ilia.lin@kernel.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	linux-pm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 03/11] OPP: Rework _set_required_devs() to manage a
- single device per call
-Message-ID: <20241010074233.s5rw7kf37glkgi2l@vireshk-i7>
-References: <20241002122232.194245-1-ulf.hansson@linaro.org>
- <20241002122232.194245-4-ulf.hansson@linaro.org>
- <20241003071411.vvhqb6bxxnrbkaw7@vireshk-i7>
- <CAPDyKFodrKnmFNjqLWfv2AExqkfRo9DRrf7wqB4ht=XwjZDhtw@mail.gmail.com>
- <20241009154807.4i5qse7utnqbsoib@vireshk-i7>
- <CAPDyKFoL5ZB45s6sgxDusjXk6PhUCA6U-n73XGZGHbvwCtVrLg@mail.gmail.com>
+	s=arc-20240116; t=1728546292; c=relaxed/simple;
+	bh=A20Cxip7h9+hwVZDDL8T9b50iOLKZr6WhzudD6Hbq8E=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ORC6tS/HsJQS7bLmdieex06A4qw8f4QQdytxOUVHUa/MwR33Nl7gFE31sup8fYDl2YvabHckX5KNya5gukFnPTvNmvY6+CZpxsxGkXw2+es8X7CZZfYaVcuc60bsaojQuWBBoxthmOcv8Z5xBlTDRSIavVK1XkntxJCIVxnvqr0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVtLcd07; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74114C4CEC5;
+	Thu, 10 Oct 2024 07:44:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728546291;
+	bh=A20Cxip7h9+hwVZDDL8T9b50iOLKZr6WhzudD6Hbq8E=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MVtLcd07As1FA0eLjjXzFN7+2Swv38YSrDFoGa3CM0hUn3GteVeYvK/K6GbutNxyJ
+	 vjlDlXQvGS/VBAbX3ZZCEvXsot4rB4RsSwfJcg3/iUfmensZhh6sozHLAzkLClf1wm
+	 ERA7MFbVmLEXnYzNuRRpWiPJ3f+MyRAq53vDlKkrYE4p/pZjISE9wB4EpaS6m/X0n2
+	 lyAeW5//o1dMahL7tk0EE59nISwuCH8/hgJUFfyHylNX3a9y6bhImaE+tzIoYUaVlT
+	 ZhdZRoz06h/FdeFVOC3Y7k+DKJwAcoVi+wn03Fm2l858YxGRv4nFuINL4nrhCY4zpg
+	 iyls+R2aC7o9w==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1synqw-0000000047M-3YFJ;
+	Thu, 10 Oct 2024 09:44:55 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev,
+	Johan Hovold <johan+linaro@kernel.org>,
+	stable@vger.kernel.org
+Subject: [PATCH] soc: qcom: mark pd-mapper as broken
+Date: Thu, 10 Oct 2024 09:42:46 +0200
+Message-ID: <20241010074246.15725-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAPDyKFoL5ZB45s6sgxDusjXk6PhUCA6U-n73XGZGHbvwCtVrLg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On 09-10-24, 17:54, Ulf Hansson wrote:
-> Right, it was mostly patch 3 and patch4 that I would appreciate an
-> ack/reviewed-by tag from you.
-> 
-> If I make the rename to "required_dev_index" according to your
-> suggestion above, it sounds like I could add the acks from you?
+When using the in-kernel pd-mapper on x1e80100, client drivers often
+fail to communicate with the firmware during boot, which specifically
+breaks battery and USB-C altmode notifications. This has been observed
+to happen on almost every second boot (41%) but likely depends on probe
+order:
 
-For entire series (with above change).
+    pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+    pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
 
-Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+    ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
 
+    qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+
+In the same setup audio also fails to probe albeit much more rarely:
+
+    PDR: avs/audio get domain list txn wait failed: -110
+    PDR: service lookup for avs/audio failed: -110
+
+Chris Lew has provided an analysis and is working on a fix for the
+ECANCELED (125) errors, but it is not yet clear whether this will also
+address the audio regression.
+
+Even if this was first observed on x1e80100 there is currently no reason
+to believe that these issues are specific to that platform.
+
+Disable the in-kernel pd-mapper for now, and make sure to backport this
+to stable to prevent users and distros from migrating away from the
+user-space service.
+
+Fixes: 1ebcde047c54 ("soc: qcom: add pd-mapper implementation")
+Cc: stable@vger.kernel.org	# 6.11
+Link: https://lore.kernel.org/lkml/Zqet8iInnDhnxkT9@hovoldconsulting.com/
+Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
+---
+
+It's now been over two months since I reported this regression, and even
+if we seem to be making some progress on at least some of these issues I
+think we need disable the pd-mapper temporarily until the fixes are in
+place (e.g. to prevent distros from dropping the user-space service).
+
+Johan
+
+
+#regzbot introduced: 1ebcde047c54
+
+
+ drivers/soc/qcom/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/soc/qcom/Kconfig b/drivers/soc/qcom/Kconfig
+index 74b9121240f8..35ddab9338d4 100644
+--- a/drivers/soc/qcom/Kconfig
++++ b/drivers/soc/qcom/Kconfig
+@@ -78,6 +78,7 @@ config QCOM_PD_MAPPER
+ 	select QCOM_PDR_MSG
+ 	select AUXILIARY_BUS
+ 	depends on NET && QRTR && (ARCH_QCOM || COMPILE_TEST)
++	depends on BROKEN
+ 	default QCOM_RPROC_COMMON
+ 	help
+ 	  The Protection Domain Mapper maps registered services to the domains
 -- 
-viresh
+2.45.2
+
 
