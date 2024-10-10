@@ -1,94 +1,96 @@
-Return-Path: <linux-kernel+bounces-358075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0AA7F9979F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:01:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 14A4E9979F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:05:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 69AB1B22A5C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E9231C21391
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 01:05:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B40F2224CF;
-	Thu, 10 Oct 2024 01:01:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8ORzYCT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD19F29D0C;
+	Thu, 10 Oct 2024 01:04:58 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B83DF9D6;
-	Thu, 10 Oct 2024 01:01:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D25CC153;
+	Thu, 10 Oct 2024 01:04:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728522070; cv=none; b=dUSSCGBSSm7GTNa0Stu13UFibgCPEC4qAs3i+Nxh5bJ/FDMIGeG7fmmEF+wcQ2IThvuB3djwXiFBHRr2orWuQhfiHX8MNK8OEel9+sPM3ByfZLmD59GycEUtdrIZiC1e6qBeC+MS9seEoKH6l0J0/JlkI7lGUuNjE/I+hlFD7YU=
+	t=1728522298; cv=none; b=nTRjINVnAQ30Z0vFdKCdnhvGBd5GXDjDvh6W2WZwjXF6dTGzHwtK8M2+GPmv3lkq0hS7MldGSqeS2mZw0lErphJbwF2xJAaWUb4SAcgwcEWDS23wncsiB2v0bQ/VHHxIeIh4s38fLeg1V6AKqbm9paOiMEU9E5N8+qumi+gYXes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728522070; c=relaxed/simple;
-	bh=DpeB5UWr5Bb8oES9qXDvqB1/Pw3hbXWVNjFtf+W36Ow=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fqlJoUfuxG7GVGp4CFNEOndrDU/vVK9MMV8JlMoEkiAWYWC4Eq9EtFW1pqVqvqb4KTwn39EFSyFvMnLiCisXnEncWP0FcMYoArZ09aQaXDoPjQnR0gr9FFQgcgIxxG5lpBHBy7HjDLfUoJOxeKZCGH2hhM5U/RkTlaGpOYmfHFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8ORzYCT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A53CC4CEC3;
-	Thu, 10 Oct 2024 01:01:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728522069;
-	bh=DpeB5UWr5Bb8oES9qXDvqB1/Pw3hbXWVNjFtf+W36Ow=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s8ORzYCTeYXPJAEUkV/ulCHp01iGvhr9UK67dKySFI+txfdyWr395q8DTkG/u1M5+
-	 2hjwsknNZMbcehlq2JmjJlQsEVASp93fzS6VN9IVcUeZy0vmnfm1nb4sfmvgeze9J5
-	 9UX9hLkWB7+BxJznALD0kQ0z5DHJlnwHfcZL/4Nmuy0ssGtr3jH6TEZ6hmlebb/yHV
-	 OWjjNDpNjtHfFu+2Q0nNKFxSvJlnGU0QpJUm4Esm+uyxXpsZmJNeLd5K394jo6h6J6
-	 cp/Z2EPI6tjPK/AJo6Q9IAGuy6qPK87JL7lARUyTIB3L4mBzgnNNpQ5EKjcvro8pc8
-	 f8hulp7/CU9KA==
-Date: Wed, 9 Oct 2024 18:01:08 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Howard Chu <howardchu95@gmail.com>
-Cc: Alan Maguire <alan.maguire@oracle.com>,
-	Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-	James Clark <james.clark@linaro.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
- BPF skeletons
-Message-ID: <ZwcnVKn3wVSSMcaL@google.com>
-References: <caad2d84-a8ff-4304-b8ab-04642ea18323@linaro.org>
- <ZuL_0V5jgaaEUOY_@x1>
- <49fe18ff-827a-429b-9d74-9d8ed02ac409@linaro.org>
- <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
- <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com>
- <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
- <CAH0uvohEozKixjDM9_jJ5FFxYK7agsqVO-BrAsm=4hCTDQAx2A@mail.gmail.com>
- <9bbfe425-1f2b-4846-a5a3-a31618742e9a@oracle.com>
- <CAH0uvojJ1rME4hb6NfrA4NPj2XmGMDLOLP3wEbHh8B5-qWGvFQ@mail.gmail.com>
- <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
+	s=arc-20240116; t=1728522298; c=relaxed/simple;
+	bh=kwol1wPpXs2AKwn9h1QYs2yysuRiBCgE9Goka29iThM=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=H6PEqSggt0uJcVE7S8TLde0pTOL6Vf8DvhHoHn8PQVcf5LeN6/hxEkQr7bvmSQU5ANAQo9WT11BnspAtBmOQ6dN/mHW5eywisuYBkkQmpx9x69L18FJNjDAAcDbxViQ6vW7VIaPEBN9KpGrVdjPbHjYXLiHGBwM9SOKmUPZ6zLA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XPBNb0lPmz20q46;
+	Thu, 10 Oct 2024 09:04:15 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 47F861A0170;
+	Thu, 10 Oct 2024 09:04:52 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 10 Oct 2024 09:04:51 +0800
+Message-ID: <7bdbdb85-8fb9-4086-ac25-f815804a870a@huawei.com>
+Date: Thu, 10 Oct 2024 09:04:50 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>
+Subject: Re: [PATCH V11 net-next 07/10] net: hibmcge: Implement rx_poll
+ function to receive packets
+To: Joe Damato <jdamato@fastly.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<shenjian15@huawei.com>, <wangpeiyang1@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <sudongming1@huawei.com>, <xujunsheng@huawei.com>,
+	<shiyongbang@huawei.com>, <libaihan@huawei.com>, <andrew@lunn.ch>,
+	<horms@kernel.org>, <kalesh-anakkur.purayil@broadcom.com>,
+	<christophe.jaillet@wanadoo.fr>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241008022358.863393-1-shaojijie@huawei.com>
+ <20241008022358.863393-8-shaojijie@huawei.com> <Zwb3PvG_EjwqMT4v@LQ3V64L9R2>
+ <Zwb4vlznjquet3DT@LQ3V64L9R2>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <Zwb4vlznjquet3DT@LQ3V64L9R2>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Tue, Oct 08, 2024 at 12:27:24AM -0700, Howard Chu wrote:
-> Hi Alan, Arnaldo and James,
-> 
-> This problem was solved in [PATCH 0/2] perf trace: Fix support for the
-> new BPF feature in clang 12 (Link:
-> https://lore.kernel.org/linux-perf-users/20241007051414.2995674-1-howardchu95@gmail.com/T/#t),
-> sorry I forgot to cc you two.
-> 
-> Alan's thought was correct. Thank you so much! :)
 
-It'd be great if any of you can test this change.  Now I only have
-machines with clang 16.
+on 2024/10/10 5:42, Joe Damato wrote:
+> On Wed, Oct 09, 2024 at 02:35:58PM -0700, Joe Damato wrote:
+>> On Tue, Oct 08, 2024 at 10:23:55AM +0800, Jijie Shao wrote:
+>>> +
+>>> +	if (likely(packet_done < budget &&
+>>> +		   napi_complete_done(napi, packet_done)))
+>>> +		hbg_hw_irq_enable(priv, HBG_INT_MSK_RX_B, true);
+>> I am not sure this is correct.
+>>
+>> napi_complete_done might return false if napi_defer_hard_irqs is
+>> being used [1].
+>>
+>> In that case you'd probably want to avoid re-enabling IRQs even
+>> though (packet_done < budget) is true.
+> Err, sorry. I read the code wrong. The implementation you have looks
+> right to me, my mistake.
 
-Thanks,
-Namhyung
+It's okay. Thank you for reviewing the code.
+
+
+Jijie Shao.
+
 
 
