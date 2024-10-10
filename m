@@ -1,170 +1,121 @@
-Return-Path: <linux-kernel+bounces-359712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359713-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C3AF998F6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:09:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B52FC998F6E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5708287F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:09:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4EFAC2881D4
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:09:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B85B31E47A1;
-	Thu, 10 Oct 2024 18:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE51519B3D7;
+	Thu, 10 Oct 2024 18:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M8teAtA1"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XBDr4N7Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B841E379F;
-	Thu, 10 Oct 2024 18:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353404A15;
+	Thu, 10 Oct 2024 18:08:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728583634; cv=none; b=VTkl7hwtfKIfpf6wriZYVRkoLmPXvOYmKNOTZX/VqGSetgGvmJs+Gu9nYmY3NMCIP+FjJC4UAbVsB3dKNvLgX6IvNSvraHklrNZ53gQ8s2jmP6fZawh1zAhDzBuJ3q9xie5/PfwIpErAZbQOxjFpaRrVblWpo43POcJJvWwbPH4=
+	t=1728583713; cv=none; b=G9LsVzMCYKurrcEjXjLlU8JYxMICGVRly/7rd6NpUbix/B1SaciwL3lqvTq5vb/FRRFE8/mAiQHtef/WEDXo+G5GuZILK62N09o8pol/Lm2OQuP6dGb5A41WsFBBnFMZ5kGkRGogQ/MobFb4rsAL7y/6oFkI0WYfUSepzfy0Ooc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728583634; c=relaxed/simple;
-	bh=cxG+YNl+v9iEpZmHv73E0r3KZfsBXIVJgAGWTwlWd8E=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mzJMVc3VajOoGa/bChGL1QR4E6fCPBH0WVpro95QPsteAeFJl6Abx+hHJ0FsmFKIzX/WNPFmTgowzu16EZ3u8xyYjGJwkPBBqF2zq+iK/SrOrMhT6y9/zlwFQu6Yzjnj+GllKzTWz4nVRn7AdWpWZR4jfBurb0qcAOqBsOVM1v0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M8teAtA1; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e0cd1f3b6so993513b3a.0;
-        Thu, 10 Oct 2024 11:07:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728583632; x=1729188432; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hJrjmdMI96zPiPqng8kU9+m7/MaNtEw4rEx+JduNOGM=;
-        b=M8teAtA16WgNPN5webbAUs98e7Liu9bCjxwQclZ3c1m3eYmsASwY5kPZARPgxvlOi6
-         UFTolg3BVA8qdiR5NvYBS4NfEdEWwo5DT7XfE2hNgY8a9G9cIT21AYAwDwBBfgfhca0r
-         cEDGv1TYvKKs71X5z3lL9kudh0a4WoKYe5oqfpPkvOUgRrJUOI7UD+6rNSpUiEQr64ev
-         eYwPq+xulw4ON8/3MLE0jwKNhLZXtN+DIEhkPvZnL9YNLcvnuF/dHpIjOEr9MR5Oxz+W
-         UbSX6K8PCVdaBHl1pu1B1PbFdbHR7JNI4Nf6+tU2XB/egQavRCzlxxsy5t6DP+awu7sS
-         O++g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728583632; x=1729188432;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hJrjmdMI96zPiPqng8kU9+m7/MaNtEw4rEx+JduNOGM=;
-        b=Rig6OJUQVglEbbtcS/IJSi+0y4vzny5sILHgtg1ICKsaLS3eEc0vjWrm2TXJbom41B
-         ZJyxbedoCmjmed7BNM0qi5M3AQy7ss257N6o7okK2ebUd6XQm4tbxkavgDJDZmZQ1c++
-         1CQTt8WdicAC6/GqzXstZc7ycsgPE4DsHH9lLmICvtlxl/kNEVLUrLlVGHuX5VMahNZd
-         EgyniZWhC8L/y/obvYizaBNgiEdHLTXQUstAv3jcWlm2RcQhdAS/wzcRzGBm/vVa0V1n
-         rfGQWp73tDT/qj2h4vs1RUr/swo9LM6dNq/B2ljH9glEgHEa+Pb7uZ/o8WvGcxj3hGED
-         GbZg==
-X-Forwarded-Encrypted: i=1; AJvYcCV+3TVDftcbsmug1wWzFkikMH+AmFdzrrt0AXFTPOgN1E8xGCIIJMlQ3ZYtlgn3WK2E2JCwuHnkfqrT@vger.kernel.org, AJvYcCVnZTq5Itt2r2HcaJ+wg2f1qA2FsCJHnNVEWd1NmttyGuRWhs5DUyZ1RLk8WvbEJgz+QysI7+7+xSU/@vger.kernel.org, AJvYcCWnpqeuYdGOyhIqX9UMi2XABRjTPijCO9Bxss5Qm4+KZTAMFbSsMG/VokQf6LneaQKpWcUqwZ134ZwazXr2@vger.kernel.org, AJvYcCXfqiFA3KqBGM16ziaOyTazro7/Yj9d8POSuE9cE99tebFIX6+qua6zP2s8imOK99MQa5JHWRIQu7CuZw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzguAHtShH3GhMNhgpjTEwMNHPpb9Tesb7kzx8tTg4bQRbk4fxk
-	qVMeIgNU1oK/f6vqoCprec5u5sz9SsVD3PN4BrL1aPUpxZuSPhW+
-X-Google-Smtp-Source: AGHT+IEjAcQXROm73I8kzCjIfwzpA2mw6XHOqLkD8N3Qu45MZeHc2xU90RHnBEIvm8wQO7RYA0ZqHQ==
-X-Received: by 2002:a05:6a00:3cd3:b0:71d:fb83:6301 with SMTP id d2e1a72fcca58-71e1db878d0mr10326087b3a.16.1728583631847;
-        Thu, 10 Oct 2024 11:07:11 -0700 (PDT)
-Received: from fan ([2601:646:8f03:9fee:c165:c800:4280:d79b])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa0ccd4sm1341853b3a.93.2024.10.10.11.07.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 11:07:11 -0700 (PDT)
-From: Fan Ni <nifan.cxl@gmail.com>
-X-Google-Original-From: Fan Ni <fan.ni@samsung.com>
-Date: Thu, 10 Oct 2024 11:07:08 -0700
-To: Ira Weiny <ira.weiny@intel.com>
-Cc: Dave Jiang <dave.jiang@intel.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v4 18/28] cxl/pci: Factor out interrupt policy check
-Message-ID: <ZwgXzOwhryyyaEds@fan>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-18-c261ee6eeded@intel.com>
+	s=arc-20240116; t=1728583713; c=relaxed/simple;
+	bh=pNNUzgsfeE3vU6Z9Jaru3B2zlAzESzIjzx09qGL1/9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JZn5N+HIOLXm82ZjatNJtOUGby4raFZx7imgQfbxb76q12dsWmgYNC83ZVCZcxMicDHm9jsQGuQZBRDcVuoiW4EDthPuqn+T1nbd8oIDRKWv1r4BafWZ2G6/m9kTnuJaA9qg3BWF7QvfaAVuuZ08+GCHP8A6wkcYU2MzEQ783UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XBDr4N7Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2120C4CEC5;
+	Thu, 10 Oct 2024 18:08:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728583712;
+	bh=pNNUzgsfeE3vU6Z9Jaru3B2zlAzESzIjzx09qGL1/9c=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XBDr4N7Q13MdOJgVw6Wzl5yIDzSS8lWC7jQCj/tolC3liU4D0Lzg3plDkG91bgAbg
+	 zBs67Dyu5siAqCHAmQ+RKjJcBDbnZFCuQW7kis/KveRCXmjt6PXx1FtlOsv19EDWYH
+	 EpiVQerNkPWoBPARGpo1LqDRQQbApcH2fC4Zewi3DhciCYlTzZkkG0bMxzRnoVMXrz
+	 a863fw1YeeeuIuPO65BoIki47rjZsBkBvy9cNghmTHIQxKeg0fGj1uFCvStZJXTWZl
+	 GFkBBmODz+dt6IloPoR/okfZc+EikoxZLwmfx8/OOnFxeyJPjhDz850IyJPnraQE4j
+	 0/msx9waQaB/A==
+Date: Thu, 10 Oct 2024 19:08:27 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich
+ <michael.hennerich@analog.com>, Nuno =?UTF-8?B?U8Oh?=	
+ <nuno.sa@analog.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] iio: adc: ad7944: add namespace to T_QUIET_NS
+Message-ID: <20241010190827.039b9125@jic23-huawei>
+In-Reply-To: <b5427f9c7fdbd4b93ba7b355aaf44afde23b0026.camel@gmail.com>
+References: <20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-v1-1-a216357a065c@baylibre.com>
+	<b5427f9c7fdbd4b93ba7b355aaf44afde23b0026.camel@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-18-c261ee6eeded@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 07, 2024 at 06:16:24PM -0500, Ira Weiny wrote:
-> Dynamic Capacity Devices (DCD) require event interrupts to process
-> memory addition or removal.  BIOS may have control over non-DCD event
-> processing.  DCD interrupt configuration needs to be separate from
-> memory event interrupt configuration.
-> 
-> Factor out event interrupt setting validation.
-> 
-> Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-> 
+On Thu, 10 Oct 2024 10:32:44 +0200
+Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
 
-Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> On Wed, 2024-10-09 at 16:26 -0500, David Lechner wrote:
+> > Add AD7944_ namespace to T_QUIET_NS. This is the preferred style. This
+> > way the bad style won't be copied when we add more T_ macros.
+> >=20
+> > Signed-off-by: David Lechner <dlechner@baylibre.com>
+> > --- =20
+>=20
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+Applied to the togreg branch of iio.git.
 
-> ---
-> Changes:
-> [iweiny: reword commit message]
-> [iweiny: keep review tags on simple patch]
-> ---
->  drivers/cxl/pci.c | 23 ++++++++++++++++-------
->  1 file changed, 16 insertions(+), 7 deletions(-)
-> 
-> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-> index 29a863331bec..c6042db0653d 100644
-> --- a/drivers/cxl/pci.c
-> +++ b/drivers/cxl/pci.c
-> @@ -742,6 +742,21 @@ static bool cxl_event_int_is_fw(u8 setting)
->  	return mode == CXL_INT_FW;
->  }
->  
-> +static bool cxl_event_validate_mem_policy(struct cxl_memdev_state *mds,
-> +					  struct cxl_event_interrupt_policy *policy)
-> +{
-> +	if (cxl_event_int_is_fw(policy->info_settings) ||
-> +	    cxl_event_int_is_fw(policy->warn_settings) ||
-> +	    cxl_event_int_is_fw(policy->failure_settings) ||
-> +	    cxl_event_int_is_fw(policy->fatal_settings)) {
-> +		dev_err(mds->cxlds.dev,
-> +			"FW still in control of Event Logs despite _OSC settings\n");
-> +		return false;
-> +	}
-> +
-> +	return true;
-> +}
-> +
->  static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  			    struct cxl_memdev_state *mds, bool irq_avail)
->  {
-> @@ -764,14 +779,8 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
->  	if (rc)
->  		return rc;
->  
-> -	if (cxl_event_int_is_fw(policy.info_settings) ||
-> -	    cxl_event_int_is_fw(policy.warn_settings) ||
-> -	    cxl_event_int_is_fw(policy.failure_settings) ||
-> -	    cxl_event_int_is_fw(policy.fatal_settings)) {
-> -		dev_err(mds->cxlds.dev,
-> -			"FW still in control of Event Logs despite _OSC settings\n");
-> +	if (!cxl_event_validate_mem_policy(mds, &policy))
->  		return -EBUSY;
-> -	}
->  
->  	rc = cxl_event_config_msgnums(mds, &policy);
->  	if (rc)
-> 
-> -- 
-> 2.46.0
-> 
+Thanks,
 
--- 
-Fan Ni
+Jonathan
+
+>=20
+> > =C2=A0drivers/iio/adc/ad7944.c | 4 ++--
+> > =C2=A01 file changed, 2 insertions(+), 2 deletions(-)
+> >=20
+> > diff --git a/drivers/iio/adc/ad7944.c b/drivers/iio/adc/ad7944.c
+> > index 0f36138a7144..a5aea4e9f1a7 100644
+> > --- a/drivers/iio/adc/ad7944.c
+> > +++ b/drivers/iio/adc/ad7944.c
+> > @@ -80,7 +80,7 @@ struct ad7944_adc {
+> > =C2=A0};
+> > =C2=A0
+> > =C2=A0/* quite time before CNV rising edge */
+> > -#define T_QUIET_NS	20
+> > +#define AD7944_T_QUIET_NS	20
+> > =C2=A0
+> > =C2=A0static const struct ad7944_timing_spec ad7944_timing_spec =3D {
+> > =C2=A0	.conv_ns =3D 420,
+> > @@ -150,7 +150,7 @@ static int ad7944_3wire_cs_mode_init_msg(struct dev=
+ice
+> > *dev, struct ad7944_adc *
+> > =C2=A0	 * CS is tied to CNV and we need a low to high transition to sta=
+rt
+> > the
+> > =C2=A0	 * conversion, so place CNV low for t_QUIET to prepare for this.
+> > =C2=A0	 */
+> > -	xfers[0].delay.value =3D T_QUIET_NS;
+> > +	xfers[0].delay.value =3D AD7944_T_QUIET_NS;
+> > =C2=A0	xfers[0].delay.unit =3D SPI_DELAY_UNIT_NSECS;
+> > =C2=A0
+> > =C2=A0	/*
+> >=20
+> > ---
+> > base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+> > change-id: 20241009-iio-adc-ad7944-add-namespace-to-t_quiet_ns-a9ed6969=
+2718
+> >=20
+> > Best regards, =20
+>=20
+
 
