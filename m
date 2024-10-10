@@ -1,133 +1,528 @@
-Return-Path: <linux-kernel+bounces-359896-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F3C6999224
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:24:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1DFD99925B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24CDD284BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 978E2B26C51
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:24:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE57C1CDA31;
-	Thu, 10 Oct 2024 19:24:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E83A1D0483;
+	Thu, 10 Oct 2024 19:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="lNO8vrqn"
-Received: from mail-qv1-f52.google.com (mail-qv1-f52.google.com [209.85.219.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DKbyADYO"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9ED821B6525
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:24:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C48C1CF5F3
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728588243; cv=none; b=rvMZ93Uaj0JgsQMxFKBvDEa01ifjEcKyXnyo8Pgj5GRIvDqx0FHrpoG+XDmpimCY0FejYdl2UK0QHoiWdf5Y9IftDGdy+34ROeyUXTn+JvQwkRiS6joMxY7cMxXrPbaT0BrMs7b67BSn2/56XACo4jBXoEgiKQkzS3Ah3yPRK0Y=
+	t=1728588250; cv=none; b=PEOGgPplaF5S5AxRCc6wZRvwfNoQKic4O8cNxOnFxjP5Fm+SLaD22JqvFkGkNY531DF9r6KJON3zBcrZjWAIdxsrw518F1tjrAE5DBQyroUG/fA8JZ6N1PnXSnwqVfzH3qjDZCdv24ekONdz9y/rb9GDsbBm2LuPz38b7CAYDnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728588243; c=relaxed/simple;
-	bh=66KBTKQ6NcMAQQUcCpPGAjzFBWkzOGqbuV6tYQl+gI0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMVA2a4Pn6dSbLjKWy5bEJwSsQRMDNhUpALSKzptQDg3x2fC9tFxqSgclAOBYsErmqo54rr6bQxD6z4A5+ulMGCGnUCQO6vXAPXX/sDQAekeqDGXQRje8020taz0tnneFpdfCaKhO4/Dpjz1BKWni6b/0CKzMPPiIwRn0lH18xU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=lNO8vrqn; arc=none smtp.client-ip=209.85.219.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f52.google.com with SMTP id 6a1803df08f44-6cbc7976a6dso7553056d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:24:00 -0700 (PDT)
+	s=arc-20240116; t=1728588250; c=relaxed/simple;
+	bh=4aV4Vf4Dnlms7H78qFliS5vnmDmCAFO20W4kAwl8veI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=qcMKu4MhQnduND//pTT+GYI92NbPDghBRpMnkTqRh+3ZZWWfFRg1W8XEuhEjmiYsWielYAxxzBvPr6/M1bJHlUKAqFp1yKqkXYZN+U9A75rrzX9WPu3e5x7ks/3p4y5v+suTSnro1bwAPxYvw+QK8b4Vuhi0qzWo7s8itfmeq74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--xur.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DKbyADYO; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--xur.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3204db795so22335267b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:24:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1728588239; x=1729193039; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vrQEWn5/w+Y6IS85vKSKnwu6LL413ydIBaXoz3HnS8E=;
-        b=lNO8vrqnKii17nEwyjDtV26qHmSW+V3eR6KDBJ5wLtc0Sb1k/Nbtnr0euypQgDKm6Q
-         Ozrn0V6nAyHHQ7F3e97E1Q2UoEx7shZz+pMNUgAtogwRkg6WitCm/BqHmX1qGK7HF+h8
-         dE7OaV1mG4pQUVhaLYDI5l8pFA0hGO+j94wY7IvRjq0oUsEnSCKtMDDiCgmOY8CykVEH
-         Eah23zXIWdhJdciDHfS83lAhFyCCr/Iu+44b8bjZ/nzZVK8PcX+PnfBPnpwkhISzkIDP
-         62h6N3vBgBSYqdsms3Zaady/CsTWRlVMQoXE6sivbJVF7Jo0nKG0p+tb13Ox780+2Jwy
-         KspQ==
+        d=google.com; s=20230601; t=1728588247; x=1729193047; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=XX/6HD4slzBTzGEwcNiNs+1L0zFh7B6w5scbjoGcHw4=;
+        b=DKbyADYO9DRkWYd69M+c1u1muRjSJOtgTTC60yKZlVA9k4iH1fnfxP/7v4RFAm53wx
+         2/EJZaW4ZvdIXPtlM7RHjMexn1It3o5fn2BIGztzt6+pDxFA17lNtclPgkEokJ4q+xsM
+         /b5A5ZexJN3nCtzr8l/hSRRM7/ppRcdcs+hYho1yYrcoMo9bMzh7k7uvUlbsZkw4MeSq
+         Xxoym2cDBF2KspB8xofjCjlB8yp1rxFsoTLaV5X77Q28AuCi6do185kFxMyV9vpqiNEU
+         by1ccl5rWGSnKk6ojcIY++1zV/EnacuxGF9JBPMV2WuGhCXR4gCkv8faTCV2fhBUNTxj
+         WH8Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728588239; x=1729193039;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vrQEWn5/w+Y6IS85vKSKnwu6LL413ydIBaXoz3HnS8E=;
-        b=lpbgqBA4pm+f11GhJHJOZ48RWKNgZIKfRZWSxYmM326MAN4xQyYvK1gRx+BY55YYSE
-         Qvl7VSo3QEh/pLMFRUXHyQ+w7IXERsxnYsBllYeR2vjv3ByFp3ufS5EmxChVvzaAK0XQ
-         lYcNPF0OyTloKOlkft/7RsWAAp7PKhqrRSUzt+TwA+SrT/YMGtxGHl/ZuCrvi1ol1Abw
-         6pAWH13U+W8zjy2d/nYiB9qrxBGI1WmqWkg+o2kOVdqQQD9EyVVTR4oIChmROsDHTsCe
-         jqIxFacI1H+7ZVicYmW1H5swFULixc3AjphwwghUElxagM/1PdAGOFOrFpOK+hzqA46R
-         5gwg==
-X-Forwarded-Encrypted: i=1; AJvYcCW0E0Tq8qDT1NEpjdq28vpVsENVRXLf8CJDr5B4HLPmqPCoTaWw+9SpHL3ErtGUCDdmwukbfz6DGnIHj9U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqRSfdHmk5GVFbdv6Suz1O7NF+vYpMxClyhekcoZNj4OWtzwj0
-	MiSf7y/1lrxOna7aTRLz8KpEm40BoadSooIv74PP4CqZarhHDcfWllDuY8Cd4vo=
-X-Google-Smtp-Source: AGHT+IEStr6X+z6bYcPqki2wni4vVBvRUMWaf8Uozji0MAOTu9qBmNfU3369uwtWQ7P+wnKjZ8trgg==
-X-Received: by 2002:a05:6214:5b06:b0:6cb:e4d3:91c5 with SMTP id 6a1803df08f44-6cbf0098734mr1878596d6.36.1728588239347;
-        Thu, 10 Oct 2024 12:23:59 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608d68sm8152416d6.94.2024.10.10.12.23.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 12:23:58 -0700 (PDT)
-Date: Thu, 10 Oct 2024 15:23:53 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Peter Ziljstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Klaus Kudielka <klaus.kudielka@gmail.com>,
-	Chris Bainbridge <chris.bainbridge@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Youssef Esmat <youssefesmat@google.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Bert Karwatzki <spasswolf@web.de>, regressions@lists.linux.dev
-Subject: Re: [PATCH 1/3] sched/core: Dequeue PSI signals for blocked tasks
- that are delayed
-Message-ID: <20241010192353.GB181795@cmpxchg.org>
-References: <20241010082838.2474-1-kprateek.nayak@amd.com>
- <20241010082838.2474-2-kprateek.nayak@amd.com>
+        d=1e100.net; s=20230601; t=1728588247; x=1729193047;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=XX/6HD4slzBTzGEwcNiNs+1L0zFh7B6w5scbjoGcHw4=;
+        b=HVXhJBtSRmZO4ql4imRn0snv+z/MYKy/eNA34dwdl+X9hSXu2LFCpeCwB0oSkWaBAB
+         0G4ZY/5bG1aoZhuJRuan+rL82Uem/KQzzIkTN6ZrgBLdVw/F4eW2rXY0izL7Md9Am6nG
+         kKs3+KPdgcKHGfR/4scqgmPeY9ZiuuvlfofQPaR+U/Q34+16NfBEXZ6pQzrmkIPyR3Nm
+         7ZL3yD3L+4vF3wD4zBjg0NHiN7E8zin1xb70Dw8FWCdiTUpRhvz72L6V43R3F1/jyifz
+         Cgav0QA4Qdhkg4ML48O4pmktZIr44gVfQnEjyf1oDQML5nkjL49rCMQucfpQeOjVn9wZ
+         nStg==
+X-Forwarded-Encrypted: i=1; AJvYcCVf1iqTeMjGLDoEPIhVTcIIYjXMAsuHP9Lo22RfR5HE+IPBSD0YHLX1iQkUbIKaLXDlpCDzLOC5LPEvSZU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIXKzLjPg0PyKQDM2jL/mLnM7jh8Q110NK4KMsLozs8YDqVzrN
+	pdE5c33iJ4CFsXJDIQdDIe21KQLg2qpLzFyXDLXrQA0jEhXXLoUvcKXFHCMxNyNs4Q==
+X-Google-Smtp-Source: AGHT+IGyWjvgMgjNWbkOgO7lLoUZEFijLdQklOL6eZgBelbYevlja9yvXhNh71Ny3sIrfPmpes+4ZXM=
+X-Received: from xur.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:2330])
+ (user=xur job=sendgmr) by 2002:a05:690c:731:b0:6b0:d571:3540 with SMTP id
+ 00721157ae682-6e32217dfb7mr181217b3.6.1728588246387; Thu, 10 Oct 2024
+ 12:24:06 -0700 (PDT)
+Date: Thu, 10 Oct 2024 12:23:53 -0700
+In-Reply-To: <20241010192400.451187-1-xur@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010082838.2474-2-kprateek.nayak@amd.com>
+Mime-Version: 1.0
+References: <20241010192400.451187-1-xur@google.com>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241010192400.451187-2-xur@google.com>
+Subject: [PATCH v3 1/6] Add AutoFDO support for Clang build
+From: Rong Xu <xur@google.com>
+To: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Masahiro Yamada <masahiroy@kernel.org>, "Mike Rapoport (IBM)" <rppt@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, "Paul E. McKenney" <paulmck@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Rong Xu <xur@google.com>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>
+Cc: x86@kernel.org, linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 08:28:36AM +0000, K Prateek Nayak wrote:
-> From: Peter Zijlstra <peterz@infradead.org>
-> 
-> psi_dequeue() in for blocked task expects psi_sched_switch() to clear
-> the TSK_.*RUNNING PSI flags and set the TSK_IOWAIT flags however
-> psi_sched_switch() uses "!task_on_rq_queued(prev)" to detect if the task
-> is blocked or still runnable which is no longer true with DELAY_DEQUEUE
-> since a blocking task can be left queued on the runqueue.
-> 
-> This can lead to PSI splats similar to:
-> 
->     psi: inconsistent task state! task=... cpu=... psi_flags=4 clear=0 set=4
-> 
-> when the task is requeued since the TSK_RUNNING flag was not cleared
-> when the task was blocked.
-> 
-> Explicitly communicate that the task was blocked to psi_sched_switch()
-> even if it was delayed and is still on the runqueue.
-> 
->   [ prateek: Broke off the relevant part from [1], commit message ]
-> 
-> Link: https://lore.kernel.org/lkml/20241004123506.GR18071@noisy.programming.kicks-ass.net/ [1]
-> Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-> Closes: https://lore.kernel.org/lkml/20240830123458.3557-1-spasswolf@web.de/
-> Closes: https://lore.kernel.org/all/cd67fbcd-d659-4822-bb90-7e8fbb40a856@molgen.mpg.de/
-> Tested-by: Johannes Weiner <hannes@cmpxchg.org>
-> Not-yet-signed-off-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: K Prateek Nayak <kprateek.nayak@amd.com>
+Add the build support for using Clang's AutoFDO. Building the kernel
+with AutoFDO does not reduce the optimization level from the
+compiler. AutoFDO uses hardware sampling to gather information about
+the frequency of execution of different code paths within a binary.
+This information is then used to guide the compiler's optimization
+decisions, resulting in a more efficient binary. Experiments
+showed that the kernel can improve up to 10% in latency.
 
-Acked-by: Johannes Weiner <hannes@cmpxchg.org>
+The support requires a Clang compiler after LLVM 17. This submission
+is limited to x86 platforms that support PMU features like LBR on
+Intel machines and AMD Zen3 BRS. Support for SPE on ARM 1,
+ and BRBE on ARM 1 is part of planned future work.
+
+Here is an example workflow for AutoFDO kernel:
+
+1) Build the kernel on the HOST machine with LLVM enabled, for example,
+       $ make menuconfig LLVM=3D1
+    Turn on AutoFDO build config:
+      CONFIG_AUTOFDO_CLANG=3Dy
+    With a configuration that has LLVM enabled, use the following
+    command:
+       scripts/config -e AUTOFDO_CLANG
+    After getting the config, build with
+      $ make LLVM=3D1
+
+2) Install the kernel on the TEST machine.
+
+3) Run the load tests. The '-c' option in perf specifies the sample
+   event period. We suggest     using a suitable prime number,
+   like 500009, for this purpose.
+   For Intel platforms:
+      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> \
+        -o <perf_file> -- <loadtest>
+   For AMD platforms:
+      The supported system are: Zen3 with BRS, or Zen4 with amd_lbr_v2
+     For Zen3:
+      $ cat proc/cpuinfo | grep " brs"
+      For Zen4:
+      $ cat proc/cpuinfo | grep amd_lbr_v2
+      $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a \
+        -N -b -c <count> -o <perf_file> -- <loadtest>
+
+4) (Optional) Download the raw perf file to the HOST machine.
+
+5) To generate an AutoFDO profile, two offline tools are available:
+   create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
+   of the AutoFDO project and can be found on GitHub
+   (https://github.com/google/autofdo), version v0.30.1 or later. The
+   llvm_profgen tool is included in the LLVM compiler itself. It's
+   important to note that the version of llvm_profgen doesn't need to
+   match the version of Clang. It needs to be the LLVM 19 release or
+   later, or from the LLVM trunk.
+      $ llvm-profgen --kernel --binary=3D<vmlinux> --perfdata=3D<perf_file>=
+ \
+        -o <profile_file>
+   or
+      $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file> \
+        --format=3Dextbinary -o <profile_file>
+
+   Note that multiple AutoFDO profile files can be merged into one via:
+      $ llvm-profdata merge -o <profile_file>  <profile_1> ... <profile_n>
+
+6) Rebuild the kernel using the AutoFDO profile file with the same config
+   as step 1, (Note CONFIG_AUTOFDO_CLANG needs to be enabled):
+      $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
+
+Co-developed-by: Han Shen <shenhan@google.com>
+Signed-off-by: Han Shen <shenhan@google.com>
+Signed-off-by: Rong Xu <xur@google.com>
+Suggested-by: Sriraman Tallam <tmsriram@google.com>
+Suggested-by: Krzysztof Pszeniczny <kpszeniczny@google.com>
+Suggested-by: Nick Desaulniers <ndesaulniers@google.com>
+Suggested-by: Stephane Eranian <eranian@google.com>
+---
+ Documentation/dev-tools/autofdo.rst | 165 ++++++++++++++++++++++++++++
+ Documentation/dev-tools/index.rst   |   1 +
+ MAINTAINERS                         |   7 ++
+ Makefile                            |   1 +
+ arch/Kconfig                        |  20 ++++
+ arch/x86/Kconfig                    |   1 +
+ scripts/Makefile.autofdo            |  23 ++++
+ scripts/Makefile.lib                |  10 ++
+ tools/objtool/check.c               |   1 +
+ 9 files changed, 229 insertions(+)
+ create mode 100644 Documentation/dev-tools/autofdo.rst
+ create mode 100644 scripts/Makefile.autofdo
+
+diff --git a/Documentation/dev-tools/autofdo.rst b/Documentation/dev-tools/=
+autofdo.rst
+new file mode 100644
+index 000000000000..c244e2b697a4
+--- /dev/null
++++ b/Documentation/dev-tools/autofdo.rst
+@@ -0,0 +1,165 @@
++.. SPDX-License-Identifier: GPL-2.0
++
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++Using AutoFDO with the Linux kernel
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++This enables AutoFDO build support for the kernel when using
++the Clang compiler. AutoFDO (Auto-Feedback-Directed Optimization)
++is a type of profile-guided optimization (PGO) used to enhance the
++performance of binary executables. It gathers information about the
++frequency of execution of various code paths within a binary using
++hardware sampling. This data is then used to guide the compiler's
++optimization decisions, resulting in a more efficient binary. AutoFDO
++is a powerful optimization technique, and data indicates that it can
++significantly improve kernel performance. It's especially beneficial
++for workloads affected by front-end stalls.
++
++For AutoFDO builds, unlike non-FDO builds, the user must supply a
++profile. Acquiring an AutoFDO profile can be done in several ways.
++AutoFDO profiles are created by converting hardware sampling using
++the "perf" tool. It is crucial that the workload used to create these
++perf files is representative; they must exhibit runtime
++characteristics similar to the workloads that are intended to be
++optimized. Failure to do so will result in the compiler optimizing
++for the wrong objective.
++
++The AutoFDO profile often encapsulates the program's behavior. If the
++performance-critical codes are architecture-independent, the profile
++can be applied across platforms to achieve performance gains. For
++instance, using the profile generated on Intel architecture to build
++a kernel for AMD architecture can also yield performance improvements.
++
++There are two methods for acquiring a representative profile:
++(1) Sample real workloads using a production environment.
++(2) Generate the profile using a representative load test.
++When enabling the AutoFDO build configuration without providing an
++AutoFDO profile, the compiler only modifies the dwarf information in
++the kernel without impacting runtime performance. It's advisable to
++use a kernel binary built with the same AutoFDO configuration to
++collect the perf profile. While it's possible to use a kernel built
++with different options, it may result in inferior performance.
++
++One can collect profiles using AutoFDO build for the previous kernel.
++AutoFDO employs relative line numbers to match the profiles, offering
++some tolerance for source changes. This mode is commonly used in a
++production environment for profile collection.
++
++In a profile collection based on a load test, the AutoFDO collection
++process consists of the following steps:
++
++#. Initial build: The kernel is built with AutoFDO options
++   without a profile.
++
++#. Profiling: The above kernel is then run with a representative
++   workload to gather execution frequency data. This data is
++   collected using hardware sampling, via perf. AutoFDO is most
++   effective on platforms supporting advanced PMU features like
++   LBR on Intel machines.
++
++#. AutoFDO profile generation: Perf output file is converted to
++   the AutoFDO profile via offline tools.
++
++The support requires a Clang compiler LLVM 17 or later.
++
++Preparation
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++Configure the kernel with::
++
++   CONFIG_AUTOFDO_CLANG=3Dy
++
++Customization
++=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
++
++You can enable or disable AutoFDO build for individual file and directorie=
+s by
++adding a line similar to the following to the respective kernel Makefile:
++
++- For enabling a single file (e.g. foo.o) ::
++
++   AUTOFDO_PROFILE_foo.o :=3D y
++
++- For enabling all files in one directory ::
++
++   AUTOFDO_PROFILE :=3D y
++
++- For disabling one file ::
++
++   AUTOFDO_PROFILE_foo.o :=3D n
++
++- For disabling all files in one directory ::
++
++   AUTOFDO_PROFILE :=3D n
++
++Workflow
++=3D=3D=3D=3D=3D=3D=3D=3D
++
++Here is an example workflow for AutoFDO kernel:
++
++1)  Build the kernel on the HOST machine with LLVM enabled,
++    for example, ::
++
++      $ make menuconfig LLVM=3D1
++
++    Turn on AutoFDO build config::
++
++      CONFIG_AUTOFDO_CLANG=3Dy
++
++    With a configuration that with LLVM enabled, use the following command=
+::
++
++      $ scripts/config -e AUTOFDO_CLANG
++
++    After getting the config, build with ::
++
++      $ make LLVM=3D1
++
++2) Install the kernel on the TEST machine.
++
++3) Run the load tests. The '-c' option in perf specifies the sample
++   event period. We suggest using a suitable prime number, like 500009,
++   for this purpose.
++
++   - For Intel platforms::
++
++      $ perf record -e BR_INST_RETIRED.NEAR_TAKEN:k -a -N -b -c <count> -o=
+ <perf_file> -- <loadtest>
++
++   - For AMD platforms: For Intel platforms:
++     The supported systems are: Zen3 with BRS, or Zen4 with amd_lbr_v2. To=
+ check,
++     For Zen3::
++
++      $ cat proc/cpuinfo | grep " brs"
++
++     For Zen4::
++
++      $ cat proc/cpuinfo | grep amd_lbr_v2
++
++     The following command generated the perf data file::
++
++      $ perf record --pfm-events RETIRED_TAKEN_BRANCH_INSTRUCTIONS:k -a -N=
+ -b -c <count> -o <perf_file> -- <loadtest>
++
++4) (Optional) Download the raw perf file to the HOST machine.
++
++5) To generate an AutoFDO profile, two offline tools are available:
++   create_llvm_prof and llvm_profgen. The create_llvm_prof tool is part
++   of the AutoFDO project and can be found on GitHub
++   (https://github.com/google/autofdo),  version v0.30.1 or later.
++   The llvm_profgen tool is included in the LLVM compiler itself. It's
++   important to note that the version of llvm_profgen doesn't need to matc=
+h
++   the version of Clang. It needs to be the LLVM 19 release of Clang
++   or later, or just from the LLVM trunk. ::
++
++      $ llvm-profgen --kernel --binary=3D<vmlinux> --perfdata=3D<perf_file=
+> -o <profile_file>
++
++   or ::
++
++      $ create_llvm_prof --binary=3D<vmlinux> --profile=3D<perf_file> --fo=
+rmat=3Dextbinary -o <profile_file>
++
++   Note that multiple AutoFDO profile files can be merged into one via::
++
++      $ llvm-profdata merge -o <profile_file>  <profile_1> <profile_2> ...=
+ <profile_n>
++
++6) Rebuild the kernel using the AutoFDO profile file with the same config =
+as step 1,
++   (Note CONFIG_AUTOFDO_CLANG needs to be enabled)::
++
++      $ make LLVM=3D1 CLANG_AUTOFDO_PROFILE=3D<profile_file>
++
+diff --git a/Documentation/dev-tools/index.rst b/Documentation/dev-tools/in=
+dex.rst
+index 53d4d124f9c5..6945644f7008 100644
+--- a/Documentation/dev-tools/index.rst
++++ b/Documentation/dev-tools/index.rst
+@@ -34,6 +34,7 @@ Documentation/dev-tools/testing-overview.rst
+    ktap
+    checkuapi
+    gpio-sloppy-logic-analyzer
++   autofdo
+=20
+=20
+ .. only::  subproject and html
+diff --git a/MAINTAINERS b/MAINTAINERS
+index d01256208c9f..1b8db863031f 100644
+--- a/MAINTAINERS
++++ b/MAINTAINERS
+@@ -3678,6 +3678,13 @@ F:	kernel/audit*
+ F:	lib/*audit.c
+ K:	\baudit_[a-z_0-9]\+\b
+=20
++AUTOFDO BUILD
++M:	Rong Xu <xur@google.com>
++M:	Han Shen <shenhan@google.com>
++S:	Supported
++F:	Documentation/dev-tools/autofdo.rst
++F:	scripts/Makefile.autofdo
++
+ AUXILIARY BUS DRIVER
+ M:	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ R:	Dave Ertman <david.m.ertman@intel.com>
+diff --git a/Makefile b/Makefile
+index c5493c0c0ca1..bbb6ec68f5dc 100644
+--- a/Makefile
++++ b/Makefile
+@@ -1018,6 +1018,7 @@ include-$(CONFIG_KMSAN)		+=3D scripts/Makefile.kmsan
+ include-$(CONFIG_UBSAN)		+=3D scripts/Makefile.ubsan
+ include-$(CONFIG_KCOV)		+=3D scripts/Makefile.kcov
+ include-$(CONFIG_RANDSTRUCT)	+=3D scripts/Makefile.randstruct
++include-$(CONFIG_AUTOFDO_CLANG)	+=3D scripts/Makefile.autofdo
+ include-$(CONFIG_GCC_PLUGINS)	+=3D scripts/Makefile.gcc-plugins
+=20
+ include $(addprefix $(srctree)/, $(include-y))
+diff --git a/arch/Kconfig b/arch/Kconfig
+index 8af374ea1adc..5e9604960cbb 100644
+--- a/arch/Kconfig
++++ b/arch/Kconfig
+@@ -811,6 +811,26 @@ config LTO_CLANG_THIN
+ 	  If unsure, say Y.
+ endchoice
+=20
++config ARCH_SUPPORTS_AUTOFDO_CLANG
++	bool
++
++config AUTOFDO_CLANG
++	bool "Enable Clang's AutoFDO build (EXPERIMENTAL)"
++	depends on ARCH_SUPPORTS_AUTOFDO_CLANG
++	depends on CC_IS_CLANG && CLANG_VERSION >=3D 170000
++	help
++	  This option enables Clang=E2=80=99s AutoFDO build. When
++	  an AutoFDO profile is specified in variable
++	  CLANG_AUTOFDO_PROFILE during the build process,
++	  Clang uses the profile to optimize the kernel.
++
++	  If no profile is specified, AutoFDO options are
++	  still passed to Clang to facilitate the collection
++	  of perf data for creating an AutoFDO profile in
++	  subsequent builds.
++
++	  If unsure, say N.
++
+ config ARCH_SUPPORTS_CFI_CLANG
+ 	bool
+ 	help
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2852fcd82cbd..503a0268155a 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -126,6 +126,7 @@ config X86
+ 	select ARCH_SUPPORTS_LTO_CLANG
+ 	select ARCH_SUPPORTS_LTO_CLANG_THIN
+ 	select ARCH_SUPPORTS_RT
++	select ARCH_SUPPORTS_AUTOFDO_CLANG
+ 	select ARCH_USE_BUILTIN_BSWAP
+ 	select ARCH_USE_CMPXCHG_LOCKREF		if X86_CMPXCHG64
+ 	select ARCH_USE_MEMTEST
+diff --git a/scripts/Makefile.autofdo b/scripts/Makefile.autofdo
+new file mode 100644
+index 000000000000..1c9f224bc221
+--- /dev/null
++++ b/scripts/Makefile.autofdo
+@@ -0,0 +1,23 @@
++# SPDX-License-Identifier: GPL-2.0
++
++# Enable available and selected Clang AutoFDO features.
++
++CFLAGS_AUTOFDO_CLANG :=3D -fdebug-info-for-profiling -mllvm -enable-fs-dis=
+criminator=3Dtrue -mllvm -improved-fs-discriminator=3Dtrue
++
++# If CONFIG_DEBUG_INFO is not enabled, set -gmlt option.
++ifndef CONFIG_DEBUG_INFO
++  CFLAGS_AUTOFDO_CLANG +=3D -gmlt
++endif
++
++ifdef CLANG_AUTOFDO_PROFILE
++  CFLAGS_AUTOFDO_CLANG +=3D -fprofile-sample-use=3D$(CLANG_AUTOFDO_PROFILE=
+)
++endif
++
++ifdef CONFIG_LTO_CLANG_THIN
++  ifdef CLANG_AUTOFDO_PROFILE
++    KBUILD_LDFLAGS +=3D --lto-sample-profile=3D$(CLANG_AUTOFDO_PROFILE)
++  endif
++  KBUILD_LDFLAGS +=3D --mllvm=3D-enable-fs-discriminator=3Dtrue --mllvm=3D=
+-improved-fs-discriminator=3Dtrue -plugin-opt=3Dthinlto
++endif
++
++export CFLAGS_AUTOFDO_CLANG
+diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
+index 01a9f567d5af..e85d6ac31bd9 100644
+--- a/scripts/Makefile.lib
++++ b/scripts/Makefile.lib
+@@ -191,6 +191,16 @@ _c_flags +=3D $(if $(patsubst n%,, \
+ 	-D__KCSAN_INSTRUMENT_BARRIERS__)
+ endif
+=20
++#
++# Enable Clang's AutoFDO build flags for a file or directory depending on
++# variables AUTOFDO_PROFILE_obj.o and AUTOFDO_PROFILE.
++#
++ifeq ($(CONFIG_AUTOFDO_CLANG),y)
++_c_flags +=3D $(if $(patsubst n%,, \
++	$(AUTOFDO_PROFILE_$(target-stem).o)$(AUTOFDO_PROFILE)$(is-kernel-object))=
+, \
++	$(CFLAGS_AUTOFDO_CLANG))
++endif
++
+ # $(src) for including checkin headers from generated source files
+ # $(obj) for including generated headers from checkin source files
+ ifeq ($(KBUILD_EXTMOD),)
+diff --git a/tools/objtool/check.c b/tools/objtool/check.c
+index 6604f5d038aa..4c5229991e1e 100644
+--- a/tools/objtool/check.c
++++ b/tools/objtool/check.c
+@@ -4557,6 +4557,7 @@ static int validate_ibt(struct objtool_file *file)
+ 		    !strcmp(sec->name, "__jump_table")			||
+ 		    !strcmp(sec->name, "__mcount_loc")			||
+ 		    !strcmp(sec->name, ".kcfi_traps")			||
++		    !strcmp(sec->name, ".llvm.call-graph-profile")	||
+ 		    strstr(sec->name, "__patchable_function_entries"))
+ 			continue;
+=20
+--=20
+2.47.0.rc1.288.g06298d1525-goog
+
 
