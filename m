@@ -1,155 +1,153 @@
-Return-Path: <linux-kernel+bounces-359624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A2D2998E44
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:19:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66E79998E4D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96B0928138D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:19:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0E6371F2518C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:27:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9874019B3D7;
-	Thu, 10 Oct 2024 17:19:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383C419D071;
+	Thu, 10 Oct 2024 17:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Memwycz7"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Dic41h+A"
+Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4443F19B5B8;
-	Thu, 10 Oct 2024 17:19:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E66419B5AC
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:26:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728580742; cv=none; b=Grdu9fJJIpD5FP2AE4jcAaioGTkUAG9fj8w5ITeDz8Qh/Z8y2M38B8kDoWPsXM15x7FOTWEEcEQxMnYU6Sx2i0GYYULKnl3+6grOYjl8IhI3o1xihli3uiO+2bUHgrGbd87PXlVNln4Qoqk/iMoQanFL5x6ShkNtsKAtDZA8FP8=
+	t=1728581215; cv=none; b=IpoTRLq/J6dLrzwwXCcGegJKwNjo/WKnRTPBD16CVG74C4g1Dee8E2aXLnOYIqfTlLBy5/n0mmq4DYa7pz6h+703RgTnymPzfB8mcAaadVS/32TJ4kLggrzW56b/1TzdL+LAqnAovO+V9L2HNkxaZVN8cq35S/jQLTRzkhdnazM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728580742; c=relaxed/simple;
-	bh=7AfwBx0KrRdZE2Nc0wEtIN3SO9w69Z+D6PzQdmgv3+M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bjfkUgrDzbTaDM8M31pvOj+7kj8eQIMvL2tAxCCcPLeP09L7szEIwPuISil+N8vh4DuIcqJjw17Z6cCBwzSVp+lFBDWchFoWV0bbDq0aDq4l7KVt0OyuH82X8PBLdL4MHvnL1VVY3lvzIuQ42ntFyW7lRce623qp8pwGr3uUkWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Memwycz7; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-5398996acbeso1425940e87.1;
-        Thu, 10 Oct 2024 10:18:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1728580738; x=1729185538; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=lLPtmjy9vjMWMTF2rCSUMPmTkeRCqgbGtEZX20lNPD8=;
-        b=Memwycz7nFLh9pqmcALpBLn0yn6FAhyZWUU8QSdleTRBq0C7t9v55cinzbewt/TnE+
-         r8WT8jJKnNMp6UHN4KJIFlaOie62fO+DuGEEnPSTjxqWVI35fk3Tag/51RwA/d6VSRSC
-         zt5LEHMpOoEVXov8J+jZQR1GDY/jaKvui061kExvp/QLNkmMfz0/OtBBXJk6BXJu3B20
-         JR6BoEGQx1k8nuOC9+I+Adgm9OA2GIP/zik82v+rkqir7QY2BdLymjjOP8EVwYNrPyqa
-         EnBLWZzNpkSq1T8zUpGWyP0JX0TXLzXyfnSsN9OBMzjjalrSsMDVLkQHmI/YRFJ54gqq
-         xwaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728580738; x=1729185538;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lLPtmjy9vjMWMTF2rCSUMPmTkeRCqgbGtEZX20lNPD8=;
-        b=mH4oQAVGim0bCdpZhIW9j0S5Z7ur7s0qJpji5/oYlXM4jccKlu5zdsQHXbRhIFNpfh
-         QGZMeltnKbvd+Zk8e3MoxY5mMMxo4/sOnROTSJVgVKISuk9JWFZFnswmS5t3krfKuJvi
-         xv0vhr/lvRs08nf3IqQ7U2R5pp1f50kHPOgdZOoI8uIF2HQKPYolyugQIpK+TkRq2GE2
-         O0bC/9XQHYPTKieMWavGdZzsoROZOSmQOPsFXJR8441Hf1vBsf9fPTyoRRPzJe6gLoqu
-         Ao1dFwqe9vJ3m+0UovIueC3H6ALjJ76arV9haNbRl9JiW17sGf9wrRUfC5h+fb/Ro7of
-         ahXQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6wGCBmqPBZmxwH2v6U+tZVblcuXCRp/tpD8v0BLkxHtuUdsDVPyzXOSzzhHt59Pg+whBVBWIB@vger.kernel.org, AJvYcCWWqkXdu77dvkLsxYoyeFHzJoFm+ZK0nYq1YpOehdf2gy19EQKxbWAmXhY1QzmX5k5Umu1XoKgXVvhm09I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYRFkwhgnBD6uYPQXG3Kzl0u2mGTqNEJDgdt378Ij1e+QjsMLg
-	hpiSDwgnuaQ1QxLt5qkyFlC/ZpFuVdkB9mz87xKX1xld4e5QurI=
-X-Google-Smtp-Source: AGHT+IHo+T4k3kMGacfyrzoVyByXdkR+c37mFkM03i8sydsrFr+og0a5dbRThE5h2Au/GU8P0EJzJA==
-X-Received: by 2002:a05:6512:b8a:b0:539:8fef:8a80 with SMTP id 2adb3069b0e04-539d4ce4bdfmr156101e87.52.1728580738012;
-        Thu, 10 Oct 2024 10:18:58 -0700 (PDT)
-Received: from [192.168.1.3] (p5b2b485e.dip0.t-ipconnect.de. [91.43.72.94])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf51753sm53533315e9.23.2024.10.10.10.18.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 10:18:57 -0700 (PDT)
-Message-ID: <86472ad5-6fd3-4273-be9b-e4815b54797e@googlemail.com>
-Date: Thu, 10 Oct 2024 19:18:55 +0200
+	s=arc-20240116; t=1728581215; c=relaxed/simple;
+	bh=VSwejWraDl+HuFTGO8vtSWlCvVIuL+5MpcBlUBbGQcE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DJFPRc4pdnIOVL5l5DhPMRUWfcd/ZjBJn9G1Vwu/VN6Fw41aVDfQ0oc6jCBIu1Y/LUiKWxKboVye1b7rIq9EtLvb9L22t8u8k4VDBEP5Y2o7zVh8h+GMdjoimRw+ihXtNZiIA8YghqfGyqWEcqoPZ41F9pO3RdLqs15sznRf2fU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Dic41h+A; arc=none smtp.client-ip=95.215.58.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 10 Oct 2024 10:26:36 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728581211;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=T74j4BfBpF8MtvJMwEYG2DbO+zpXeVI3CcEFUfNAPFM=;
+	b=Dic41h+AbX+RzAqWdAMNaEJikD2+y1U1sEX+56cJGZXBafhhQ2gfOqLMSq9P3REaA1v1st
+	n8iqjSsfKysCfa2dtz/0HV4qjXztDK4hTlxWeVQW8PHL7JDwmPb89qvClg4lwNpZAaKOgn
+	izA1d4jTrT6XeholR+OaDwgMg7nPJu0=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Michal Hocko <mhocko@kernel.org>, Roman Gushchin <roman.gushchin@linux.dev>, 
+	Muchun Song <muchun.song@linux.dev>, JP Kobryn <inwardvessel@gmail.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Meta kernel team <kernel-team@meta.com>, Daniel Xu <dxu@dxuuu.xyz>, bpf@vger.kernel.org, 
+	Martin KaFai Lau <martin.lau@linux.dev>
+Subject: Re: [PATCH] memcg: add tracing for memcg stat updates
+Message-ID: <mt474r4yn346in5akhyziwxrh4ip5wukh4fjbhwzfl26wq64nf@xgbv4dtfs3ak>
+References: <20241010003550.3695245-1-shakeel.butt@linux.dev>
+ <CAJD7tkYq+dduc7+M=9TkR6ZAiBYrVyUsF_AuwPqaQNrsfH_qfg@mail.gmail.com>
+ <20241009210848.43adb0c3@gandalf.local.home>
+ <CAJD7tkaLQwVphoLiwh8-NTyav36_gAVdzB=gC_qXzv7ti9TzmA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Betterbird (Windows)
-Subject: Re: [PATCH 6.10 000/482] 6.10.14-rc1 review
-To: Muhammad Usama Anjum <Usama.Anjum@collabora.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
- torvalds@linux-foundation.org, akpm@linux-foundation.org,
- linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
- lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
- f.fainelli@gmail.com, sudipm.mukherjee@gmail.com, srw@sladewatkins.net,
- rwarsow@gmx.de, conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
-References: <20241008115648.280954295@linuxfoundation.org>
- <05ef1fc5-6947-45f1-bf9b-879681647107@collabora.com>
-Content-Language: de-DE
-From: Peter Schneider <pschneider1968@googlemail.com>
-In-Reply-To: <05ef1fc5-6947-45f1-bf9b-879681647107@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkaLQwVphoLiwh8-NTyav36_gAVdzB=gC_qXzv7ti9TzmA@mail.gmail.com>
+X-Migadu-Flow: FLOW_OUT
 
-Am 10.10.2024 um 10:58 schrieb Muhammad Usama Anjum:
+On Wed, Oct 09, 2024 at 06:24:55PM GMT, Yosry Ahmed wrote:
+> On Wed, Oct 9, 2024 at 6:08 PM Steven Rostedt <rostedt@goodmis.org> wrote:
+> >
+> > On Wed, 9 Oct 2024 17:46:22 -0700
+> > Yosry Ahmed <yosryahmed@google.com> wrote:
+> >
+> > > > +++ b/mm/memcontrol.c
+> > > > @@ -71,6 +71,10 @@
+> > > >
+> > > >  #include <linux/uaccess.h>
+> > > >
+> > > > +#define CREATE_TRACE_POINTS
+> > > > +#include <trace/events/memcg.h>
+> > > > +#undef CREATE_TRACE_POINTS
+> > > > +
+> > > >  #include <trace/events/vmscan.h>
+> > > >
+> > > >  struct cgroup_subsys memory_cgrp_subsys __read_mostly;
+> > > > @@ -682,7 +686,9 @@ void __mod_memcg_state(struct mem_cgroup *memcg, enum memcg_stat_item idx,
+> > > >                 return;
+> > > >
+> > > >         __this_cpu_add(memcg->vmstats_percpu->state[i], val);
+> > > > -       memcg_rstat_updated(memcg, memcg_state_val_in_pages(idx, val));
+> > > > +       val = memcg_state_val_in_pages(idx, val);
+> > > > +       memcg_rstat_updated(memcg, val);
+> > > > +       trace_mod_memcg_state(memcg, idx, val);
+> > >
+> > > Is it too unreasonable to include the stat name?
+> > >
+> > > The index has to be correlated with the kernel config and perhaps even
+> > > version. It's not a big deal, but if performance is not a concern when
+> > > tracing is enabled anyway, maybe we can lookup the name here (or in
+> > > TP_fast_assign()).
+> >
+> > What name? Is it looked up from idx? If so, you can do it on the reading of
 
-> Please find the KernelCI report below :-
-> 
-> 
-> OVERVIEW
-> 
->      Builds: 24 passed, 1 failed
-> 
->      Boot tests: 510 passed, 0 failed
-> 
->      CI systems: maestro
-> 
-> REVISION
-> 
->      Commit
->          name:
->          hash: d44129966591836e3ff248d0af2358f1b8f7bc28
->      Checked out from
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git
-> linux-6.10.y
-> 
-> 
-> BUILDS
->      - i386 (defconfig+kcidebug+x86-board)
->        Build error:
-> drivers/gpu/drm/amd/amdgpu/../display/dc/core/dc_state.c:219:1: error:
-> the frame size of 1192 bytes is larger than 1024 bytes
-> [-Werror=frame-larger-than=]
->        config:
-> https://kciapistagingstorage1.file.core.windows.net/early-access/kbuild-gcc-12-x86-kcidebug-6705246a7ef7358befb78db3/.config?sv=2022-11-02&ss=f&srt=sco&sp=r&se=2024-10-17T19:19:12Z&st=2023-10-17T11:19:12Z&spr=https&sig=sLmFlvZHXRrZsSGubsDUIvTiv%2BtzgDq6vALfkrtWnv8%3D
-> 
-> BOOT TESTS
-> 
->      No new boot failures found
-> 
-> Tested-by: kernelci.org bot <bot@kernelci.org>
-> 
-> Thanks,
-> KernelCI team
-> 
+Does reading side mean the one reading /sys/kernel/tracing/trace will do
+the translation from enums to string?
 
-I do all my kernel build tests with CONFIG_WERROR=Y, and I found that due to THIS driver, 
-I had to increase CONFIG_FRAME_WARN to 2048 from its default 1024 (which comes from my PVE 
-oldconfig). This avoids this warning/error. However I don't know whether a driver, or any 
-function, using a larger stack frame than 1024 bytes will generally be a problem.
+> > the trace event where performance is not an issue. See the __print_symbolic()
+> > and friends in samples/trace_events/trace-events-sample.h
+> 
+> Yeah they can be found using idx. Thanks for referring us to
+> __print_symbolic(), I suppose for this to work we need to construct an
+> array of {idx, name}. I think we can replace the existing memory_stats
+> and memcg1_stats/memcg1_stat_names arrays with something that we can
+> reuse for tracing, so we wouldn't need to consume extra space.
+> 
+> Shakeel, what do you think?
 
-Beste Grüße,
-Peter Schneider
+Cc Daniel & Martin
 
--- 
-Climb the mountain not to plant your flag, but to embrace the challenge,
-enjoy the air and behold the view. Climb it so you can see the world,
-not so the world can see you.                    -- David McCullough Jr.
+I was planning to use bpftrace which can use dwarf/btf to convert the
+raw int to its enum string. Martin provided the following command to
+extract the translation from the kernel.
 
-OpenPGP:  0xA3828BD796CCE11A8CADE8866E3A92C92C3FF244
-Download: https://www.peters-netzplatz.de/download/pschneider1968_pub.asc
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@googlemail.com
-https://keys.mailvelope.com/pks/lookup?op=get&search=pschneider1968@gmail.com
+$ bpftool btf dump file /sys/kernel/btf/vmlinux | grep -A10 node_stat_item
+[2264] ENUM 'node_stat_item' encoding=UNSIGNED size=4 vlen=46
+        'NR_LRU_BASE' val=0
+        'NR_INACTIVE_ANON' val=0
+        'NR_ACTIVE_ANON' val=1
+        'NR_INACTIVE_FILE' val=2
+        'NR_ACTIVE_FILE' val=3
+        'NR_UNEVICTABLE' val=4
+        'NR_SLAB_RECLAIMABLE_B' val=5
+        'NR_SLAB_UNRECLAIMABLE_B' val=6
+        'NR_ISOLATED_ANON' val=7
+        'NR_ISOLATED_FILE' val=8
+...
+
+My point is userspace tools can use existing infra to extract this
+information.
+
+However I am not against adding __print_symbolic() (but without any
+duplication), so users reading /sys/kernel/tracing/trace directly can
+see more useful information as well. Please post a follow up patch after
+this one.
+
+thanks for the review,
+Shakeel
+
 
