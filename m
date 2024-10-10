@@ -1,59 +1,81 @@
-Return-Path: <linux-kernel+bounces-359884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 107D199923C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:25:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D05A89991F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 21:12:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9661AB2F99B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:11:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 939AB2840B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 19:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 165C3188A08;
-	Thu, 10 Oct 2024 19:11:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D523F19CD17;
+	Thu, 10 Oct 2024 19:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LhZj38Ls"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NXYRDCBC"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A34A1925B6;
-	Thu, 10 Oct 2024 19:11:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90B8A19ABA3;
+	Thu, 10 Oct 2024 19:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728587497; cv=none; b=MNzGNflpkK6wQWAjibbzOdn7Wsto+aAkm/ohULzbEO/vaF3MilATsAIegCB0QLr4+aOk9Iga3Z1EbR/H2IFriJSfwbOrLUZscPhnSvq5TvzdAv/QfAxgxTGW3hX+kTKvSwbY15ZvQmkXGezu6sd6QKSOxd8gelnGJ03UsBWeMls=
+	t=1728587514; cv=none; b=FhhMiRY+5M1c/86yc2ZmgcUEaI0ExhfWUXj8HWoFY6u50mBbHV1nins5DgBWNF9C2FsUQJfJ6G2WUzwlJ8bXp5gYKJf6aTnTQDTTPb2W2lJkMIHLJF5Bs0m8LK1ZhFg/v1qzOOEfNoCmEKlrwCkBussqTXcFMu02YpJc+RfDc5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728587497; c=relaxed/simple;
-	bh=r8HhG9Dpfw304yRuKhN7YX4GSw7YfgMwFFG06xYAPZU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=HW9NMZJQz+n6ojk4NOtW3Io2K3Cp3LqTu3DnSBmB/hvx9Wgrgb+0d+JrTFNvffsRC94+sRCKY9OfVvh35w/ugDnqZmnMPdtjXwKDD7R/vgpsrOW7VWsASv+0b90x4Wy6uoMkpjvF40V/DXZuCO9fG/idyvcl84QA3Cww0CZXWCM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LhZj38Ls; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B7DD1C4CEC5;
-	Thu, 10 Oct 2024 19:11:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728587497;
-	bh=r8HhG9Dpfw304yRuKhN7YX4GSw7YfgMwFFG06xYAPZU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=LhZj38LsNOF90G5cEKy1yrkiBO+a8lRNiDYw3v6qApwjWi0kbjK3TsPKXQKyH2ONY
-	 AcvtyfzBtyPwTDEh25LsqLGwxIrk6zJHju/zCeVFpqABnuxbhhCTrrAJEDsS01CioF
-	 ttiTDAVANxZS5hHRtgoSjLRj8dlCTiBW6v4jjU+CmrZsd6+jLcy311GKjocuUDHN56
-	 WYRRU1sF6TrctGy7Nc2Gygc67WEQVEIeAsN9q/mkiSZ7dZeLt52StzXTuYdtR2dHIE
-	 FqUF+jF2uf1A9EWX5Uk4OwvdWk87tkSM51aWxDpKKJbu6mznBfn7jg6kxhP7FOMu0L
-	 iCFhzoyOEinkA==
-Date: Thu, 10 Oct 2024 14:11:35 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Terry Bowman <terry.bowman@amd.com>
-Cc: ming4.li@intel.com, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-	dave@stgolabs.net, jonathan.cameron@huawei.com,
-	dave.jiang@intel.com, alison.schofield@intel.com,
-	vishal.l.verma@intel.com, dan.j.williams@intel.com,
-	bhelgaas@google.com, mahesh@linux.ibm.com, oohall@gmail.com,
-	Benjamin.Cheatham@amd.com, rrichter@amd.com,
-	nathan.fontenot@amd.com, smita.koralahallichannabasappa@amd.com
-Subject: Re: [PATCH 03/15] cxl/aer/pci: Refactor AER driver's existing
- interfaces to support CXL PCIe ports
-Message-ID: <20241010191135.GA571342@bhelgaas>
+	s=arc-20240116; t=1728587514; c=relaxed/simple;
+	bh=mavLUvPe/Z33R+r7s6f0yQ/Y1XkbhHeqDb+k+2j+8Fg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UtqAt0SYtK07kKtT3Wg7zMIU8cf8lnCFdju2LKnn6DZjd3WP4sYWOGtFTqj9mwfxc1+gcGHH+LZFLu/otEoR9DFiAfmJLqmaHHXmW8hbR63zVu/+65AUqhR9uQ9Dti9JnNX5DPdoEd3CgmkXyYCrxb99RCtpHau4qwgsovp+QPQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NXYRDCBC; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb2f4b282cso2034371fa.2;
+        Thu, 10 Oct 2024 12:11:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728587511; x=1729192311; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=dV4Y8wvjEvYr9420WvUI+5b6+iJt6Y/8cuJ/hdjAW7A=;
+        b=NXYRDCBCFVNvH9SGiRDWscuNIGuN55vGXbNQJshIdwXt4kp/frb+9zrcLO0SmKX3//
+         8iy9eTQldmZlXmOBVITPscI0e39RqwaIU1sIKElyLU8TSo8OC4sWq/AcQ2AdVsFINWzG
+         fsv3wq4pzPBeNEUjuCwgsIuwm4sLF4H+T/IuryCL/C1+bnx19vNrV7Fey39LRuyvcEaN
+         jppGWaIRqA/TnYkr4pjc9erdFFE03594iceVjnRUJrAtqv3yN4DnXdNYDeBrw7jEneuF
+         RezfeF5oAjc1jhqs23M8QQX0LT5wFAmaFDmk/VjM0rJmS0yNUylgRBfLu5iKdtwhxbNM
+         88KQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728587511; x=1729192311;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dV4Y8wvjEvYr9420WvUI+5b6+iJt6Y/8cuJ/hdjAW7A=;
+        b=ejmTffBtxHSzRCCJHeTNEINassP3UV/k/oqz/Xo+wo7SA6rmTH71jhHScHXqpKykn8
+         cN2JlYWN9OZM7xakLG1tj+xO9WN8gceLXuxUpRQtSnLyvplyJGV0w2z86kgsvrWkKHf+
+         pUhJOVZtu9XTUziAqHauvKLHBoIL6DNH+DjHn62G4SaQBjp9+9amUDf1E8I7rrO8EEer
+         SgTdMqI8nAYabw4S5Is+0gMC8kcNCyRBKImc8quchnLASALnlbpK5JGYXDFIrmf5X3Te
+         Kx9gPMc7EkTx2lfQ02yueuxCaGr4b4S88c5Xgtbuawt2e8W4XQdKoCCDMm/hT9FAKicI
+         e43Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV1hYf5cTzBJfsYNPT2c6A8L3Iox8O1f3GD+jPrALCVOxD1MCP4IWDbDh+WfKCEmOiaXZpT+dJBg0E4ZQ==@vger.kernel.org, AJvYcCWBjw2cAPNqldK9P/HL+GfY9GdIhAaeCTZNXKreoC+UY/8uagTrnSvDkJVXl3OyOBmO30+qVZFeGDF8THreuruX@vger.kernel.org, AJvYcCWknM1lJTSuY87lubECfkWK9RDW6YgylCLEzEwQmR12QujM8fOeNxCZxjBI4P8TQkWHPOY/7N0D@vger.kernel.org, AJvYcCXvhHgC+AHEJFT3AkMHMUK60qRYXqI0OzbnsitDHQq4hTaXV1j3v7u8RXUJRStEyPCib3qtMLXMVXBMiT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSMujcfjfddXQi4aPMZzSaFbpsK0ejXX2pHOFg4NHcUwtu4/ca
+	jBybSZnv3kjy8G7CoVO3usIT/xVlSd+5OfvLPC22T7k0JPR1+GSZ
+X-Google-Smtp-Source: AGHT+IEuKfVs3iRf0Hz2+U1nsMKSApblmz+h7J4ac6CBD50ItYNEHj2D6C3yPD9lZXHenfR0Ve6hZQ==
+X-Received: by 2002:a05:6512:2342:b0:539:8d46:4746 with SMTP id 2adb3069b0e04-539c4980d63mr4709005e87.60.1728587510361;
+        Thu, 10 Oct 2024 12:11:50 -0700 (PDT)
+Received: from localhost (net-2-44-97-22.cust.vodafonedsl.it. [2.44.97.22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ede92bsm127899866b.28.2024.10.10.12.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 12:11:49 -0700 (PDT)
+Date: Thu, 10 Oct 2024 21:11:48 +0200
+From: Alessandro Zanni <alessandro.zanni87@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: allison.henderson@oracle.com, davem@davemloft.net, edumazet@google.com, 
+	pabeni@redhat.com, shuah@kernel.org, netdev@vger.kernel.org, 
+	linux-rdma@vger.kernel.org, linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	skhan@linuxfoundation.org, anupnewsmail@gmail.com
+Subject: Re: [PATCH] selftests: net: rds: fix module not found
+Message-ID: <wldy6xafdjem7nni2bnaq7gvozkwqpdtsmed5aopdcedsegmzd@faw3xb76qqgd>
+References: <20241008082259.243476-1-alessandro.zanni87@gmail.com>
+ <20241009194031.269a1251@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,110 +84,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008221657.1130181-4-terry.bowman@amd.com>
+In-Reply-To: <20241009194031.269a1251@kernel.org>
 
-I would describe this more as "renaming" than "refactoring".
-
-On Tue, Oct 08, 2024 at 05:16:45PM -0500, Terry Bowman wrote:
-> The AER service driver already includes support for CXL restricted host
-> (RCH) downstream port error handling. The current implementation is based
-> CXl1.1 using a root complex event collector.
+On 24/10/09 07:40, Jakub Kicinski wrote:
+> On Tue,  8 Oct 2024 10:22:53 +0200 Alessandro Zanni wrote:
+> > This fix solves this error, when calling kselftest with targets "net/rds":
+> > 
+> > selftests: net/rds: test.py
+> > Traceback (most recent call last):
+> >   File "tools/testing/selftests/net/rds/./test.py", line 17, in <module>
+> >     from lib.py import ip
+> > ModuleNotFoundError: No module named 'lib'
+> > 
+> > Signed-off-by: Alessandro Zanni <alessandro.zanni87@gmail.com>
+> > ---
+> >  tools/testing/selftests/net/rds/test.py | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/testing/selftests/net/rds/test.py b/tools/testing/selftests/net/rds/test.py
+> > index e6bb109bcead..112a8059c030 100755
+> > --- a/tools/testing/selftests/net/rds/test.py
+> > +++ b/tools/testing/selftests/net/rds/test.py
+> > @@ -14,8 +14,9 @@ import sys
+> >  import atexit
+> >  from pwd import getpwuid
+> >  from os import stat
+> > -from lib.py import ip
+> >  
+> > +sys.path.append("..")
+> > +from lib.py.utils import ip
+> >  
+> >  libc = ctypes.cdll.LoadLibrary('libc.so.6')
+> >  setns = libc.setns
 > 
-> Update the function interfaces and parameters where necessary to add
-> virtual hierarchy (VH) mode CXL PCIe port error handling alongside the RCH
-> handling. The CXL PCIe port error handling will be added in a future patch.
+> Does this work regardless of where we try to run the script from?
+> In other cross-imports we try to build the path based on __file__,
+> see: tools/testing/selftests/drivers/net/lib/py/__init__.py
 
-"Virtual Hierarchy mode" sounds like something defined by the spec.
-If so, add a citation and capitalize it the same way it's used in the
-spec.
+Yes, it works regardeless where we run the script from but I agree
+with you to keep the same style used in other files.
+Thanks for pointing out.
 
-Same for "restricted host", at least in terms of styling.  That
-support was added previously, so a citation probably isn't necessary
-here, but since this is part of *adding* VH support, hints about VH
-will be more helpful.
+> Would be good to keep consistency.
 
-> Limit changes to refactoring variable and function names. No
-> functional changes are added.
-> 
-> Signed-off-by: Terry Bowman <terry.bowman@amd.com>
-> ---
->  drivers/pci/pcie/aer.c | 28 ++++++++++++++--------------
->  1 file changed, 14 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-> index 1e72829a249f..dc8b17999001 100644
-> --- a/drivers/pci/pcie/aer.c
-> +++ b/drivers/pci/pcie/aer.c
-> @@ -1030,7 +1030,7 @@ static int cxl_rch_handle_error_iter(struct pci_dev *dev, void *data)
->  	return 0;
->  }
->  
-> -static void cxl_rch_handle_error(struct pci_dev *dev, struct aer_err_info *info)
-> +static void cxl_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  {
->  	/*
->  	 * Internal errors of an RCEC indicate an AER error in an
-> @@ -1053,30 +1053,30 @@ static int handles_cxl_error_iter(struct pci_dev *dev, void *data)
->  	return *handles_cxl;
->  }
->  
-> -static bool handles_cxl_errors(struct pci_dev *rcec)
-> +static bool handles_cxl_errors(struct pci_dev *dev)
->  {
->  	bool handles_cxl = false;
->  
-> -	if (pci_pcie_type(rcec) == PCI_EXP_TYPE_RC_EC &&
-> -	    pcie_aer_is_native(rcec))
-> -		pcie_walk_rcec(rcec, handles_cxl_error_iter, &handles_cxl);
-> +	if (pci_pcie_type(dev) == PCI_EXP_TYPE_RC_EC &&
-> +	    pcie_aer_is_native(dev))
-> +		pcie_walk_rcec(dev, handles_cxl_error_iter, &handles_cxl);
->  
->  	return handles_cxl;
->  }
->  
-> -static void cxl_rch_enable_rcec(struct pci_dev *rcec)
-> +static void cxl_enable_internal_errors(struct pci_dev *dev)
->  {
-> -	if (!handles_cxl_errors(rcec))
-> +	if (!handles_cxl_errors(dev))
->  		return;
->  
-> -	pci_aer_unmask_internal_errors(rcec);
-> -	pci_info(rcec, "CXL: Internal errors unmasked");
-> +	pci_aer_unmask_internal_errors(dev);
-> +	pci_info(dev, "CXL: Internal errors unmasked");
->  }
->  
->  #else
-> -static inline void cxl_rch_enable_rcec(struct pci_dev *dev) { }
-> -static inline void cxl_rch_handle_error(struct pci_dev *dev,
-> -					struct aer_err_info *info) { }
-> +static inline void cxl_enable_internal_errors(struct pci_dev *dev) { }
-> +static inline void cxl_handle_error(struct pci_dev *dev,
-> +				    struct aer_err_info *info) { }
->  #endif
->  
->  void register_cxl_port_hndlrs(struct cxl_port_err_hndlrs *_cxl_port_hndlrs)
-> @@ -1134,7 +1134,7 @@ static void pci_aer_handle_error(struct pci_dev *dev, struct aer_err_info *info)
->  
->  static void handle_error_source(struct pci_dev *dev, struct aer_err_info *info)
->  {
-> -	cxl_rch_handle_error(dev, info);
-> +	cxl_handle_error(dev, info);
->  	pci_aer_handle_error(dev, info);
->  	pci_dev_put(dev);
->  }
-> @@ -1512,7 +1512,7 @@ static int aer_probe(struct pcie_device *dev)
->  		return status;
->  	}
->  
-> -	cxl_rch_enable_rcec(port);
-> +	cxl_enable_internal_errors(port);
->  	aer_enable_rootport(rpc);
->  	pci_info(port, "enabled with IRQ %d\n", dev->irq);
->  	return 0;
+Definitely. I'm sending a v2 patch with this in mind.
+
 > -- 
-> 2.34.1
-> 
+> pw-bot: cr
 
