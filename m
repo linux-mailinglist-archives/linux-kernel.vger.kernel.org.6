@@ -1,210 +1,397 @@
-Return-Path: <linux-kernel+bounces-358449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5627E997F88
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:23:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F7D1997F91
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 021F41F2512F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:23:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E53F6B23EBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:24:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33A01EF94D;
-	Thu, 10 Oct 2024 07:39:26 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBC0D1F4728;
+	Thu, 10 Oct 2024 07:39:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="onoLFChd"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCF8A433C9
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DDBB433C9;
+	Thu, 10 Oct 2024 07:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728545966; cv=none; b=HzfUPFMaJpwPTEDAAJ4gRbD2BcPdN3DcJK/iyG6wMrNGuMCh0FMsLy3BmWU5ijTSvg+RVOAmCTIsocYK9qf2XFcplywCylEDPvCP0h3X6ZF6n0CgJItHj3BhKx0rYuBtTu36eUp8PrcwS252VFhEcu0B103thKXso3RJ4nTkgks=
+	t=1728545994; cv=none; b=L1oJm399UaT/bUZVaunJejCeOsGBX75Q8hmOKk/cICxiLCd48GWGdyAt2Y4fyMnDcI8UvbgbqE8aDLCu3U61Neaeu56JB3WT80N96493uKRpn3cS4tpOMnl6Wf0L/A8sSOP6fXwQrDW+oQOPQ0/l/YmAMTtLklD0kPgMHVNu8wY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728545966; c=relaxed/simple;
-	bh=bT69dXRMAGvZFXTup/QXktId8zC/nDeIddEF/ZVfV08=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=T902djue3o8De9ALs3c0sSrczkLNj92wZXVQdi4VFZvVs8gSKIpMgqtbbWuGw9qtOv41wZxFs2PwXtiLSq98TeaXW6E0LxBWn7PsCYuNp7eJfPG5dSfjGzplep3+o7Avy9gGOx3afxjINOrOoWy3upL38y6p5MnCcDhBGn6W0pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XPM5b5DJPzfcfc;
-	Thu, 10 Oct 2024 15:36:51 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id DE9161402CB;
-	Thu, 10 Oct 2024 15:39:15 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
+	s=arc-20240116; t=1728545994; c=relaxed/simple;
+	bh=sRYIv1gRpeLAr5ZgEzDO+E6/anGSS3qGlkFZavUs5rk=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=GrOgAnPS6eSiaZXOfDeuOCM1605F8SiC43UdRZqOdf8oy0j/wvL644447WcuE/6q5S5R2mLKNoxI8vorR1iS2LG80C1AuvnoLfAfogvK30KF4EAetL60971EVnUcyLHZjk4+ud1dP8gZGLckiryDF8eJfEZqpT1eLuM4bUEyX/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=onoLFChd; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A1b4d7030283;
+	Thu, 10 Oct 2024 07:39:37 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I9/04b9/sWOWVTpl1YR14gpRJOEDbRR58oQhG90l1hw=; b=onoLFChdQBvlENIi
+	XsdtXBfuXtKrd1ceaA0xulZZIRc7tQImL1W/PgpQzhK0ug69bLwc3oyWNWjsaNmK
+	/oh3Y4gxq/Vgo/RCQe4P9DMwsp/Ajk82nBaehqH8pw0ini4l3BKDtbGIhSQUV+w1
+	nWyZT3Sv/kZTSlAWfEC85KSh4iY6fzP4D6zit+VD0IJ2XmjXrseEtaRdd4rZkWuY
+	2VW2o7MBdok2MImATNsksOqrggdTHun/BnZofprjaUrBUDeK++KWGIZCdGcm80OL
+	NS/Ga86L/9RJSERQk6iFqbZgC/B9+qgtZXeMko0UKZeAd8mm8h7Dcbn1ulBNeROC
+	1ijKLQ==
+Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424x7ryny5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 07:39:36 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49A7daCN028679
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 10 Oct 2024 07:39:36 GMT
+Received: from 3b5b8f7e4007.qualcomm.com (10.49.16.6) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 15:39:15 +0800
-Subject: Re: [patch 16/25] debugobjects: Rework object freeing
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Waiman Long <longman@redhat.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.955542307@linutronix.de>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <f8b86635-008c-3923-1f78-10575578f037@huawei.com>
+ 15.2.1544.9; Thu, 10 Oct 2024 00:39:35 -0700
+From: Songwei Chai <quic_songchai@quicinc.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>,
+        Mike Leach
+	<mike.leach@linaro.org>, James Clark <james.clark@arm.com>,
+        "Alexander
+ Shishkin" <alexander.shishkin@linux.intel.com>,
+        Andy Gross
+	<agross@kernel.org>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Songwei Chai <quic_songchai@quicinc.com>, <linux-kernel@vger.kernel.org>,
+        <coresight@lists.linaro.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v2 6/7] coresight-tgu: add timer/counter functionality for TGU
 Date: Thu, 10 Oct 2024 15:39:14 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+Message-ID: <20241010073917.16023-7-quic_songchai@quicinc.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241010073917.16023-1-quic_songchai@quicinc.com>
+References: <20241010073917.16023-1-quic_songchai@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241007164913.955542307@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: c3R04vOE5okdqaCRQZa-psdVfLOdho3q
+X-Proofpoint-ORIG-GUID: c3R04vOE5okdqaCRQZa-psdVfLOdho3q
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 suspectscore=0
+ phishscore=0 mlxlogscore=999 spamscore=0 clxscore=1015 malwarescore=0
+ lowpriorityscore=0 priorityscore=1501 mlxscore=0 adultscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410100049
 
+Add counter and timer node for each step which could be
+programed if they are to be utilized in trigger event/sequence.
 
+Signed-off-by: Songwei Chai <quic_songchai@quicinc.com>
+---
+ .../testing/sysfs-bus-coresight-devices-tgu   | 14 +++
+ drivers/hwtracing/coresight/coresight-tgu.c   | 95 ++++++++++++++++++-
+ drivers/hwtracing/coresight/coresight-tgu.h   | 47 ++++++++-
+ 3 files changed, 154 insertions(+), 2 deletions(-)
 
-On 2024/10/8 0:50, Thomas Gleixner wrote:
-> __free_object() is uncomprehensibly complex. The same can be achieved by:
-> 
->    1) Adding the object to the per CPU pool
-> 
->    2) If that pool is full, move a batch of objects into the global pool
->       or if the global pool is full into the to free pool
-> 
-> This also prepares for batch processing.
-
-It feels like cutting the Gordian knot with a sharp sword.
-
-Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  lib/debugobjects.c |   99 ++++++++++++-----------------------------------------
->  1 file changed, 24 insertions(+), 75 deletions(-)
-> 
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -199,6 +199,27 @@ static struct debug_obj *pcpu_alloc(void
->  	}
->  }
->  
-> +static void pcpu_free(struct debug_obj *obj)
-> +{
-> +	struct obj_pool *pcp = this_cpu_ptr(&pool_pcpu);
-> +
-> +	lockdep_assert_irqs_disabled();
-> +
-> +	hlist_add_head(&obj->node, &pcp->objects);
-> +	pcp->cnt++;
-> +
-> +	/* Pool full ? */
-> +	if (pcp->cnt < ODEBUG_POOL_PERCPU_SIZE)
-> +		return;
-> +
-> +	/* Remove a batch from the per CPU pool */
-> +	guard(raw_spinlock)(&pool_lock);
-> +	/* Try to fit the batch into the pool_global first */
-> +	if (!pool_move_batch(&pool_global, pcp))
-> +		pool_move_batch(&pool_to_free, pcp);
-> +	obj_pool_used -= ODEBUG_BATCH_SIZE;
-> +}
-> +
->  static void free_object_list(struct hlist_head *head)
->  {
->  	struct hlist_node *tmp;
-> @@ -375,83 +396,11 @@ static void free_obj_work(struct work_st
->  
->  static void __free_object(struct debug_obj *obj)
->  {
-> -	struct debug_obj *objs[ODEBUG_BATCH_SIZE];
-> -	struct obj_pool *percpu_pool;
-> -	int lookahead_count = 0;
-> -	bool work;
-> -
->  	guard(irqsave)();
-> -
-> -	if (unlikely(!obj_cache)) {
-> +	if (likely(obj_cache))
-> +		pcpu_free(obj);
-> +	else
->  		hlist_add_head(&obj->node, &pool_boot);
-> -		return;
-> -	}
-> -
-> -	/*
-> -	 * Try to free it into the percpu pool first.
-> -	 */
-> -	percpu_pool = this_cpu_ptr(&pool_pcpu);
-> -	if (percpu_pool->cnt < ODEBUG_POOL_PERCPU_SIZE) {
-> -		hlist_add_head(&obj->node, &percpu_pool->objects);
-> -		percpu_pool->cnt++;
-> -		return;
-> -	}
-> -
-> -	/*
-> -	 * As the percpu pool is full, look ahead and pull out a batch
-> -	 * of objects from the percpu pool and free them as well.
-> -	 */
-> -	for (; lookahead_count < ODEBUG_BATCH_SIZE; lookahead_count++) {
-> -		objs[lookahead_count] = __alloc_object(&percpu_pool->objects);
-> -		if (!objs[lookahead_count])
-> -			break;
-> -		percpu_pool->cnt--;
-> -	}
-> -
-> -	raw_spin_lock(&pool_lock);
-> -	work = (pool_global.cnt > pool_global.max_cnt) && obj_cache &&
-> -	       (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX);
-> -	obj_pool_used--;
-> -
-> -	if (work) {
-> -		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt + 1);
-> -		hlist_add_head(&obj->node, &pool_to_free.objects);
-> -		if (lookahead_count) {
-> -			WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt + lookahead_count);
-> -			obj_pool_used -= lookahead_count;
-> -			while (lookahead_count) {
-> -				hlist_add_head(&objs[--lookahead_count]->node,
-> -					       &pool_to_free.objects);
-> -			}
-> -		}
-> -
-> -		if ((pool_global.cnt > pool_global.max_cnt) &&
-> -		    (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX)) {
-> -			int i;
-> -
-> -			/*
-> -			 * Free one more batch of objects from obj_pool.
-> -			 */
-> -			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
-> -				obj = __alloc_object(&pool_global.objects);
-> -				hlist_add_head(&obj->node, &pool_to_free.objects);
-> -				WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
-> -				WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt + 1);
-> -			}
-> -		}
-> -	} else {
-> -		WRITE_ONCE(pool_global.cnt, pool_global.cnt + 1);
-> -		hlist_add_head(&obj->node, &pool_global.objects);
-> -		if (lookahead_count) {
-> -			WRITE_ONCE(pool_global.cnt, pool_global.cnt + lookahead_count);
-> -			obj_pool_used -= lookahead_count;
-> -			while (lookahead_count) {
-> -				hlist_add_head(&objs[--lookahead_count]->node,
-> -					       &pool_global.objects);
-> -			}
-> -		}
-> -	}
-> -	raw_spin_unlock(&pool_lock);
->  }
->  
->  /*
-> 
-> .
-> 
-
--- 
-Regards,
-  Zhen Lei
+diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+index 8dce2b46b48a..e404e0d6f8f0 100644
+--- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
++++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tgu
+@@ -28,3 +28,17 @@ KernelVersion   6.10
+ Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
+ Description:
+                 (RW) Set/Get the next action with specific step for TGU.
++
++What:           /sys/bus/coresight/devices/<tgu-name>/step[0:7]_timer/reg[0:1]
++Date:           August 2024
++KernelVersion   6.10
++Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
++Description:
++                (RW) Set/Get the timer value with specific step for TGU.
++
++What:           /sys/bus/coresight/devices/<tgu-name>/step[0:7]_counter/reg[0:1]
++Date:           August 2024
++KernelVersion   6.10
++Contact:        Jinlong Mao (QUIC) <quic_jinlmao@quicinc.com>, Sam Chai (QUIC) <quic_songchai@quicinc.com>
++Description:
++                (RW) Set/Get the counter value with specific step for TGU.
+diff --git a/drivers/hwtracing/coresight/coresight-tgu.c b/drivers/hwtracing/coresight/coresight-tgu.c
+index 860fab854b95..05456e23b852 100644
+--- a/drivers/hwtracing/coresight/coresight-tgu.c
++++ b/drivers/hwtracing/coresight/coresight-tgu.c
+@@ -37,6 +37,10 @@ static int calculate_array_location(struct tgu_drvdata *drvdata, int step_index,
+ 	case TGU_CONDITION_SELECT:
+ 		ret = step_index * (drvdata->max_condition_select) + reg_index;
+ 		break;
++	case TGU_COUNTER:
++	case TGU_TIMER:
++		ret = step_index * (drvdata->max_timer_counter) + reg_index;
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -70,7 +74,16 @@ static ssize_t tgu_dataset_show(struct device *dev,
+ 			drvdata->value_table->condition_select[calculate_array_location(
+ 				drvdata, tgu_attr->step_index, tgu_attr->operation_index,
+ 				tgu_attr->reg_num)]);
+-
++	case TGU_TIMER:
++		return sysfs_emit(buf, "0x%x\n",
++			drvdata->value_table->timer[calculate_array_location(
++				drvdata, tgu_attr->step_index, tgu_attr->operation_index,
++				tgu_attr->reg_num)]);
++	case TGU_COUNTER:
++		return sysfs_emit(buf, "0x%x\n",
++			drvdata->value_table->counter[calculate_array_location(
++				drvdata, tgu_attr->step_index, tgu_attr->operation_index,
++				tgu_attr->reg_num)]);
+ 	}
+ 	return -EINVAL;
+ 
+@@ -113,6 +126,18 @@ static ssize_t tgu_dataset_store(struct device *dev,
+ 			tgu_attr->reg_num)] = val;
+ 		ret = size;
+ 		break;
++	case TGU_TIMER:
++		tgu_drvdata->value_table->timer[calculate_array_location(
++			tgu_drvdata, tgu_attr->step_index, tgu_attr->operation_index,
++			tgu_attr->reg_num)] = val;
++		ret = size;
++		break;
++	case TGU_COUNTER:
++		tgu_drvdata->value_table->counter[calculate_array_location(
++			tgu_drvdata, tgu_attr->step_index, tgu_attr->operation_index,
++			tgu_attr->reg_num)] = val;
++		ret = size;
++		break;
+ 	default:
+ 		break;
+ 	}
+@@ -153,6 +178,15 @@ static umode_t tgu_node_visible(struct kobject *kobject, struct attribute *attr,
+ 					drvdata->max_condition_select) ?
+ 						attr->mode : 0;
+ 			break;
++		case TGU_COUNTER:
++		case TGU_TIMER:
++			if (drvdata->max_timer_counter == 0)
++				ret = SYSFS_GROUP_INVISIBLE;
++			else
++				ret = (tgu_attr->reg_num <
++					drvdata->max_timer_counter) ?
++					attr->mode : 0;
++			break;
+ 		default:
+ 			break;
+ 		}
+@@ -200,6 +234,26 @@ static void tgu_write_all_hw_regs(struct tgu_drvdata *drvdata)
+ 		}
+ 	}
+ 
++	for (i = 0; i < drvdata->max_step; i++) {
++		for (j = 0; j < drvdata->max_timer_counter; j++) {
++			tgu_writel(drvdata,
++				drvdata->value_table->timer
++					[calculate_array_location(drvdata, i,
++							TGU_TIMER, j)],
++						TIMER0_COMPARE_STEP(i, j));
++		}
++	}
++
++	for (i = 0; i < drvdata->max_step; i++) {
++		for (j = 0; j < drvdata->max_timer_counter; j++) {
++			tgu_writel(drvdata,
++				drvdata->value_table->counter
++					[calculate_array_location(drvdata, i,
++						TGU_COUNTER, j)],
++				COUNTER0_COMPARE_STEP(i, j));
++		}
++	}
++
+ 	/* Enable TGU to program the triggers */
+ 	tgu_writel(drvdata, 1, TGU_CONTROL);
+ 	CS_LOCK(drvdata->base);
+@@ -358,6 +412,22 @@ static const struct attribute_group *tgu_attr_groups[] = {
+ 	CONDITION_SELECT_ATTRIBUTE_GROUP_INIT(5),
+ 	CONDITION_SELECT_ATTRIBUTE_GROUP_INIT(6),
+ 	CONDITION_SELECT_ATTRIBUTE_GROUP_INIT(7),
++	TIMER_ATTRIBUTE_GROUP_INIT(0),
++	TIMER_ATTRIBUTE_GROUP_INIT(1),
++	TIMER_ATTRIBUTE_GROUP_INIT(2),
++	TIMER_ATTRIBUTE_GROUP_INIT(3),
++	TIMER_ATTRIBUTE_GROUP_INIT(4),
++	TIMER_ATTRIBUTE_GROUP_INIT(5),
++	TIMER_ATTRIBUTE_GROUP_INIT(6),
++	TIMER_ATTRIBUTE_GROUP_INIT(7),
++	COUNTER_ATTRIBUTE_GROUP_INIT(0),
++	COUNTER_ATTRIBUTE_GROUP_INIT(1),
++	COUNTER_ATTRIBUTE_GROUP_INIT(2),
++	COUNTER_ATTRIBUTE_GROUP_INIT(3),
++	COUNTER_ATTRIBUTE_GROUP_INIT(4),
++	COUNTER_ATTRIBUTE_GROUP_INIT(5),
++	COUNTER_ATTRIBUTE_GROUP_INIT(6),
++	COUNTER_ATTRIBUTE_GROUP_INIT(7),
+ 	NULL,
+ };
+ 
+@@ -407,6 +477,11 @@ static int tgu_probe(struct amba_device *adev, const struct amba_id *id)
+ 	if (ret)
+ 		return -EINVAL;
+ 
++	ret = of_property_read_u32(adev->dev.of_node, "tgu-timer-counters",
++				   &drvdata->max_timer_counter);
++	if (ret)
++		return -EINVAL;
++
+ 	drvdata->max_condition_decode = drvdata->max_condition;
+ 	/* select region has an additional 'default' register */
+ 	drvdata->max_condition_select = drvdata->max_condition + 1;
+@@ -443,6 +518,24 @@ static int tgu_probe(struct amba_device *adev, const struct amba_id *id)
+ 	if (!drvdata->value_table->condition_select)
+ 		return -ENOMEM;
+ 
++	drvdata->value_table->timer = devm_kzalloc(
++		dev,
++		drvdata->max_step * drvdata->max_timer_counter *
++			sizeof(*(drvdata->value_table->timer)),
++		GFP_KERNEL);
++
++	if (!drvdata->value_table->timer)
++		return -ENOMEM;
++
++	drvdata->value_table->counter = devm_kzalloc(
++		dev,
++		drvdata->max_step * drvdata->max_timer_counter *
++			sizeof(*(drvdata->value_table->counter)),
++		GFP_KERNEL);
++
++	if (!drvdata->value_table->counter)
++		return -ENOMEM;
++
+ 	drvdata->enable = false;
+ 	desc.type = CORESIGHT_DEV_TYPE_HELPER;
+ 	desc.pdata = adev->dev.platform_data;
+diff --git a/drivers/hwtracing/coresight/coresight-tgu.h b/drivers/hwtracing/coresight/coresight-tgu.h
+index 0d3b966dafc7..9fa23033b4af 100644
+--- a/drivers/hwtracing/coresight/coresight-tgu.h
++++ b/drivers/hwtracing/coresight/coresight-tgu.h
+@@ -52,6 +52,12 @@
+ #define CONDITION_SELECT_STEP(step, select) \
+ 	(0x0060 + 0x4 * select + 0x1D8 * step)
+ 
++#define TIMER0_COMPARE_STEP(step, timer) \
++	(0x0040 + 0x4 * timer + 0x1D8 * step)
++
++#define COUNTER0_COMPARE_STEP(step, counter) \
++	(0x0048 + 0x4 * counter + 0x1D8 * step)
++
+ #define tgu_dataset_ro(name, step_index, type, reg_num)     \
+ 	(&((struct tgu_attribute[]){ {                      \
+ 		__ATTR(name, 0444, tgu_dataset_show, NULL), \
+@@ -78,6 +84,12 @@
+ #define STEP_SELECT(step_index, reg_num) \
+ 	tgu_dataset_rw(reg##reg_num, step_index, TGU_CONDITION_SELECT, reg_num)
+ 
++#define STEP_TIMER(step_index, reg_num) \
++	tgu_dataset_rw(reg##reg_num, step_index, TGU_TIMER, reg_num)
++
++#define STEP_COUNTER(step_index, reg_num) \
++	tgu_dataset_rw(reg##reg_num, step_index, TGU_COUNTER, reg_num)
++
+ #define STEP_PRIORITY_LIST(step_index, priority)  \
+ 	{STEP_PRIORITY(step_index, 0, priority),  \
+ 	 STEP_PRIORITY(step_index, 1, priority),  \
+@@ -117,6 +129,18 @@
+ 	 NULL           \
+ 	}
+ 
++#define STEP_TIMER_LIST(n) \
++	{STEP_TIMER(n, 0), \
++	 STEP_TIMER(n, 1), \
++	 NULL           \
++	}
++
++#define STEP_COUNTER_LIST(n) \
++	{STEP_COUNTER(n, 0), \
++	 STEP_COUNTER(n, 1), \
++	 NULL           \
++	}
++
+ #define PRIORITY_ATTRIBUTE_GROUP_INIT(step, priority)\
+ 	(&(const struct attribute_group){\
+ 		.attrs = (struct attribute*[])STEP_PRIORITY_LIST(step, priority),\
+@@ -138,13 +162,29 @@
+ 		.name = "step" #step "_condition_select" \
+ 	})
+ 
++#define TIMER_ATTRIBUTE_GROUP_INIT(step)\
++	(&(const struct attribute_group){\
++		.attrs = (struct attribute*[])STEP_TIMER_LIST(step),\
++		.is_visible = tgu_node_visible,\
++		.name = "step" #step "_timer" \
++	})
++
++#define COUNTER_ATTRIBUTE_GROUP_INIT(step)\
++	(&(const struct attribute_group){\
++		.attrs = (struct attribute*[])STEP_COUNTER_LIST(step),\
++		.is_visible = tgu_node_visible,\
++		.name = "step" #step "_counter" \
++	})
++
+ enum operation_index {
+ 	TGU_PRIORITY0,
+ 	TGU_PRIORITY1,
+ 	TGU_PRIORITY2,
+ 	TGU_PRIORITY3,
+ 	TGU_CONDITION_DECODE,
+-	TGU_CONDITION_SELECT
++	TGU_CONDITION_SELECT,
++	TGU_TIMER,
++	TGU_COUNTER
+ };
+ 
+ /* Maximum priority that TGU supports */
+@@ -161,6 +201,8 @@ struct value_table {
+ 	unsigned int *priority;
+ 	unsigned int *condition_decode;
+ 	unsigned int *condition_select;
++	unsigned int *timer;
++	unsigned int *counter;
+ };
+ 
+ /**
+@@ -176,6 +218,8 @@ struct value_table {
+  * @max_condition: Maximum number of condition
+  * @max_condition_decode: Maximum number of condition_decode
+  * @max_condition_select: Maximum number of condition_select
++ * @max_timer_counter: Maximum number of timers and counters
++ *
+  * This structure defines the data associated with a TGU device, including its base
+  * address, device pointers, clock, spinlock for synchronization, trigger data pointers,
+  * maximum limits for various trigger-related parameters, and enable status.
+@@ -192,6 +236,7 @@ struct tgu_drvdata {
+ 	int max_condition;
+ 	int max_condition_decode;
+ 	int max_condition_select;
++	int max_timer_counter;
+ };
+ 
+ #endif
 
