@@ -1,61 +1,61 @@
-Return-Path: <linux-kernel+bounces-359513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75634998C87
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BAD32998C89
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:58:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7551F20C85
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:57:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E97A01C240A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:58:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A2DD1CF2B0;
-	Thu, 10 Oct 2024 15:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 166191CDFDB;
+	Thu, 10 Oct 2024 15:56:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FwjrL2vP"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b4UlfQig"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B901CDFA4;
-	Thu, 10 Oct 2024 15:56:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1619E1CCEC7;
+	Thu, 10 Oct 2024 15:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575780; cv=none; b=TIR9Va2gDECv/7L45O3fp6HEXLta6+DLiM4LVuNKvPVSNSS3AGLy6kxidvRHH6zliE6lQq3FcFCHWeUKnqQ7Itk0d3ckmzdORibRdqaOVGByNXmbxqsWoMkFmNSVA2Buyou66xyTf/5tTgPjT+0SQdMZKb/6thmh/h6U6LPqa3o=
+	t=1728575791; cv=none; b=uIABWKcC+2hf6Pqvl1BNamgXPzCKnfL0zY2X//zBr31ip/AqnvTw8kHlZSXZY+hZnmRspCvjzjrUvdjs5VKH/7ibN4cs4qyN02OlUJyWHGivcq1jkv5012wO+bHCud1cn4tc3PQd4S7PyQqPoTtHXX8B2EqCgwZvsRprb/1S1+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575780; c=relaxed/simple;
-	bh=7+X6jaeieNzTyu8ssogMovOtcKGNTvrNvXl2BzPVSqs=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=kh7GP7zhSIeA9W2AhPf78k+eohKE5sPpWiW/hc/RIRcOA5HO9T1iNhejjSDB3Nc4dlcJWBUvty+ybecv0PZGhk1XEDJ9AeLnnIr1VsSbrcsaVEdzUX0eaQi36IIPp6w8UTIx1hiCl/va1Ck0WWneQjzbQ4kyWdf9yOZAFM9qHt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FwjrL2vP; arc=none smtp.client-ip=198.175.65.10
+	s=arc-20240116; t=1728575791; c=relaxed/simple;
+	bh=PNjkL74Tdpas2X+jz0pbVU2iCpkA0u1uF4KLAUanT3I=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=U3die5/pFvsn9rAAkzP0JW3tlbuio6K4hcZgNXF48KCH7WlxDX25VL83Pq6qrQVHrCWGQK1lFcbwXkldXNdc1/aWlmXyjRO54q4LitHqkt9vQIy9LkZCQrwP1iD3QdEY+xt3MwgB3IbKCVKCyUBASrtvz1z0JPqsr91ADNASbNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b4UlfQig; arc=none smtp.client-ip=198.175.65.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728575779; x=1760111779;
+  t=1728575790; x=1760111790;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references;
-  bh=7+X6jaeieNzTyu8ssogMovOtcKGNTvrNvXl2BzPVSqs=;
-  b=FwjrL2vPCqvsIu9RWz3ddv0Gwe1SLOs7ezjVPApvi+2djnT9p7Hdq7eX
-   uoUncKTdEC7U8369A304CRYe/a/AkydtdRvf76f/jrIFDYMdzIdwfpeYv
-   3eIYU1G43i8ebBO6ZGBM6JEdnzy9k5sTjLZEgUo080g8c67HJmyFs1r+e
-   UhPWYaIvF8H4HDwJoNND5ehbiXI9bcrkfcwkZOPsMWr0L+t5JNwRt6FlV
-   CrBDhmb5/CuoSNFWYOH9zW3uQaQLNB8DHC3TO2R8RofZTDCGlBiR+/WCJ
-   D302m7DoNhtpUW5BuPGB3U1m9ooCE5JWWKh5OZgP5O0AjadyWnXUDpIKo
-   A==;
-X-CSE-ConnectionGUID: UdDcMylnR6OdT2H9Hkpi/w==
-X-CSE-MsgGUID: bPbiJd95Q5m5DF3rMknvBQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45423288"
+  bh=PNjkL74Tdpas2X+jz0pbVU2iCpkA0u1uF4KLAUanT3I=;
+  b=b4UlfQiggKKHdtM2otwQmVq2dQBJnaWJ/nzNIrKeBxEGzeJ80r+7THWG
+   ZP9C9EDAJ3Y0QZhrYYgH63b6CpZMyXx7NpnHzVj8mHyt0OAAheOcD4+OW
+   bO0QI7RzLBNgy1+LcufD7uXgqnn//W9LC3zPBPiaMUIV7XmcW/4aO7+db
+   wgWDoPKm7cpLrYfpq23rOhI6RpZ5cH+5ZnLIlz18GI3WyP6LKGsvlNaMK
+   yJIwhE1artOXwzAXfvpxm2zdcPi2591iCW8LIwuDXYbz1uvCPp3Vow5A9
+   iyrDS36tVKqLZ8b9tkGvXtK7jv1GZL8Y9xT6ZsV6n9h6qqLdQoV93bdos
+   w==;
+X-CSE-ConnectionGUID: 9kSEgjRLTAOH5vAvb/fsUw==
+X-CSE-MsgGUID: V58IyFJGRCu5r/QURsb/Rg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45423314"
 X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="45423288"
+   d="scan'208";a="45423314"
 Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:56:19 -0700
-X-CSE-ConnectionGUID: kNmUVqeyTga0uGYteAwvtw==
-X-CSE-MsgGUID: 9xnY+BeNRmKpwfsOH9h9Vw==
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:56:28 -0700
+X-CSE-ConnectionGUID: 3wczDe8CRMWPkkN578YmDQ==
+X-CSE-MsgGUID: ux5466TKS3q0sDXKScWsZA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="81222842"
+   d="scan'208";a="81222905"
 Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:56:16 -0700
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 08:56:26 -0700
 From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 To: tony.luck@intel.com,
 	bp@alien8.de
@@ -67,9 +67,9 @@ Cc: tglx@linutronix.de,
 	linux-edac@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	qiuxu.zhuo@intel.com
-Subject: [PATCH 09/10] x86/mce/amd: Remove unnecessary NULL pointer initializations
-Date: Thu, 10 Oct 2024 23:32:01 +0800
-Message-Id: <20241010153202.30876-10-qiuxu.zhuo@intel.com>
+Subject: [PATCH 10/10] x86/mce: Fix typos in comments
+Date: Thu, 10 Oct 2024 23:32:02 +0800
+Message-Id: <20241010153202.30876-11-qiuxu.zhuo@intel.com>
 X-Mailer: git-send-email 2.17.1
 In-Reply-To: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
 References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
@@ -79,49 +79,38 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-As 'pos' and 'tmp' are initialized prior to their use in
-list_for_each_entry_safe(), remove the unnecessary NULL pointer
-initializations.
+Fix the following typos in comments:
+
+  s/callin/calling/
+  s/TBL/TLB/
 
 Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
 ---
- arch/x86/kernel/cpu/mce/amd.c | 8 +++-----
- 1 file changed, 3 insertions(+), 5 deletions(-)
+ arch/x86/kernel/cpu/mce/core.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/arch/x86/kernel/cpu/mce/amd.c b/arch/x86/kernel/cpu/mce/amd.c
-index 4dae9841ee38..aecea842dac2 100644
---- a/arch/x86/kernel/cpu/mce/amd.c
-+++ b/arch/x86/kernel/cpu/mce/amd.c
-@@ -917,8 +917,8 @@ static void log_and_reset_block(struct threshold_block *block)
-  */
- static void amd_threshold_interrupt(void)
- {
--	struct threshold_block *first_block = NULL, *block = NULL, *tmp = NULL;
- 	struct threshold_bank **bp = this_cpu_read(threshold_banks);
-+	struct threshold_block *first_block, *block, *tmp;
- 	unsigned int bank, cpu = smp_processor_id();
- 
- 	/*
-@@ -1197,8 +1197,7 @@ static int allocate_threshold_blocks(unsigned int cpu, struct threshold_bank *tb
- static int __threshold_add_blocks(struct threshold_bank *b)
- {
- 	struct list_head *head = &b->blocks->miscj;
--	struct threshold_block *pos = NULL;
--	struct threshold_block *tmp = NULL;
-+	struct threshold_block *pos, *tmp;
- 	int err = 0;
- 
- 	err = kobject_add(&b->blocks->kobj, b->kobj, b->blocks->kobj.name);
-@@ -1308,8 +1307,7 @@ static void deallocate_threshold_blocks(struct threshold_bank *bank)
- 
- static void __threshold_remove_blocks(struct threshold_bank *b)
- {
--	struct threshold_block *pos = NULL;
--	struct threshold_block *tmp = NULL;
-+	struct threshold_block *pos, *tmp;
- 
- 	kobject_put(b->kobj);
- 
+diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
+index 844a6f8d6f39..19e6730e7c22 100644
+--- a/arch/x86/kernel/cpu/mce/core.c
++++ b/arch/x86/kernel/cpu/mce/core.c
+@@ -1118,7 +1118,7 @@ static noinstr int mce_start(int *no_way_out)
+ 	} else {
+ 		/*
+ 		 * Subject: Now start the scanning loop one by one in
+-		 * the original callin order.
++		 * the original calling order.
+ 		 * This way when there are any shared banks it will be
+ 		 * only seen by one CPU before cleared, avoiding duplicates.
+ 		 */
+@@ -1892,7 +1892,7 @@ static int __mcheck_cpu_apply_quirks(struct cpuinfo_x86 *c)
+ 	case X86_VENDOR_AMD:
+ 		if (c->x86 == 15 && this_cpu_read(mce_num_banks) > 4) {
+ 			/*
+-			 * disable GART TBL walk error reporting, which
++			 * disable GART TLB walk error reporting, which
+ 			 * trips off incorrectly with the IOMMU & 3ware
+ 			 * & Cerberus:
+ 			 */
 -- 
 2.17.1
 
