@@ -1,159 +1,142 @@
-Return-Path: <linux-kernel+bounces-360208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360207-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2577C9995E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:59:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D63639995E3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BD9B41F246C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:59:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BDD51F2385D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 23:58:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FAB51E3DE6;
-	Thu, 10 Oct 2024 23:58:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="QEsvtV2m"
-Received: from out30-124.freemail.mail.aliyun.com (out30-124.freemail.mail.aliyun.com [115.124.30.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBE91E5738;
+	Thu, 10 Oct 2024 23:58:43 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3728126AC1
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:58:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04AC226AC1;
+	Thu, 10 Oct 2024 23:58:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728604729; cv=none; b=FJIpm15HxYYeEA/C/RQdzUK8fXsxCXfW9QRHjvmlnstxDuuxdW3TfmySVvq/gasij5t5otIV0RlKK2W7HQLuDNnMIjszbNnzwRideTV83RVoamX/z6UuQjbcAfpRkJcT6x0ZzBOLxDVDHlF6Wct0FIrfTTnDvVFkSR1YCfV8MfU=
+	t=1728604723; cv=none; b=OlrtC+CGuTwzwVN2vxkxpPGOmYDFC2BduNgwzqsQWcfcEF6YskfqWBpceQca10QTnawez8v6tTYYOCSI3RxWdXL7Q+q2Qc11nKBHbGxxvn5dqluCThArfX4gYlBGEXGkuKYP47f+dNAg+VDWYvIS2TJUZmyPFi1Mi6gKVOp6qiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728604729; c=relaxed/simple;
-	bh=67V5K0LbtQteYuuVLCGG4b8mJeFia1qpUwRglEJXnPk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nklzlGyACcB4k8NVAtcMyE9sClGcM7nvKRNUrVA/uCPPwPkdCnZY4gbXu4+9G6PTd6NKahAOLh6s6Cqu3rQypr/n46YRG0hj8vwOeAL/razXQYLOo904hga1nlXqfqBY1WSH8iZnOp8WIo1NEJM+XLQ4E8mJMGfeCxzBbPpFknA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=QEsvtV2m; arc=none smtp.client-ip=115.124.30.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728604718; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=zbXq5dUZg+8cBo6+/cLm+yRxdzIzOWWwebxq2zDBn0Q=;
-	b=QEsvtV2mT1DJpvvu7nBlFQ6LspOZZKcsUc6H4Fdii7Hu2FFXygEucOHQLGJs135HlF98MA/eM+ijeQIdLQzocK2wljLWNfoVHqkr0p/1pccQfaA/1xleK48B6aMPAcQuh+46EqJ+W4d3N3M2DW+A5EtU24SpW6Ac/LIwVPj5WWY=
-Received: from x31i01179.sqa.na131.tbsite.net(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGnpNaL_1728604712 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 11 Oct 2024 07:58:37 +0800
-From: Gao Xiang <hsiangkao@linux.alibaba.com>
-To: linux-erofs@lists.ozlabs.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Gao Xiang <hsiangkao@linux.alibaba.com>
-Subject: [PATCH v2 2/2] erofs: get rid of kaddr in `struct z_erofs_maprecorder`
-Date: Fri, 11 Oct 2024 07:58:30 +0800
-Message-ID: <20241010235830.1535616-1-hsiangkao@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241010090420.405871-2-hsiangkao@linux.alibaba.com>
-References: <20241010090420.405871-2-hsiangkao@linux.alibaba.com>
+	s=arc-20240116; t=1728604723; c=relaxed/simple;
+	bh=ZCD3Hg84HzhJgXYNeIt3BZVDla+T/v78Hd9ZSUC4gLQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=n0ww2T7dtTDguyvkYSmhlIaJWADP+qdvW+VC7i91FI2/r7HPugZe/ETKKO7IBvtoVAZzDIK6AZbQ/owuFzirUOf6sCAv1FnaROsiRFofc4BTLJbgyP+MsMe+HYceq0akSx/lsQktgz/62JoIOMGDYdQosd7iSiFs+twEfqi1VGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD64CC4CEC5;
+	Thu, 10 Oct 2024 23:58:41 +0000 (UTC)
+Date: Thu, 10 Oct 2024 19:58:49 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH] ring-buffer: Have the buffer update counter be atomic
+Message-ID: <20241010195849.2f77cc3f@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-`kaddr` becomes useless after switching to metabuf.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+In order to prevent any subtle races with the buffer update counter,
+change it to an atomic_t. Also, since atomic_t is 32 bits, move its
+location in the ring_buffer_per_cpu structure next to "current_context" as
+that too is only 32 bits (making 64 bit alignment).
+
+The counter is only used to detect that the buffer has been updated when
+the buffer verifier check is being done. It's not really that important
+that it's atomic or not. But since the updates to the counter are never in
+the fast path, having it be consistent isn't a bad thing.
+
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
-change since v1:
- - shouldn't move `m->lcn` downwards since `lcn` has been changed.
+Note, this is based on top of:
 
- fs/erofs/zmap.c | 32 ++++++++++++--------------------
- 1 file changed, 12 insertions(+), 20 deletions(-)
+  https://lore.kernel.org/linux-trace-kernel/20240715145141.5528-1-petr.pavlu@suse.com/
 
-diff --git a/fs/erofs/zmap.c b/fs/erofs/zmap.c
-index e980e29873a5..37516d7ea811 100644
---- a/fs/erofs/zmap.c
-+++ b/fs/erofs/zmap.c
-@@ -10,8 +10,6 @@
- struct z_erofs_maprecorder {
- 	struct inode *inode;
- 	struct erofs_map_blocks *map;
--	void *kaddr;
--
- 	unsigned long lcn;
- 	/* compression extent information gathered */
- 	u8  type, headtype;
-@@ -33,14 +31,11 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
- 	struct z_erofs_lcluster_index *di;
- 	unsigned int advise;
+ kernel/trace/ring_buffer.c | 16 ++++++++--------
+ 1 file changed, 8 insertions(+), 8 deletions(-)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index a6a1c26ea2e3..bbf7f68f9af2 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -481,9 +481,9 @@ struct ring_buffer_per_cpu {
+ 	struct buffer_data_page		*free_page;
+ 	unsigned long			nr_pages;
+ 	unsigned int			current_context;
+-	struct list_head		*pages;
+ 	/* pages generation counter, incremented when the list changes */
+-	unsigned long			cnt;
++	atomic_t			cnt;
++	struct list_head		*pages;
+ 	struct buffer_page		*head_page;	/* read from head */
+ 	struct buffer_page		*tail_page;	/* write to tail */
+ 	struct buffer_page		*commit_page;	/* committed pages */
+@@ -1532,7 +1532,7 @@ static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ 	head = rb_list_head(cpu_buffer->pages);
+ 	if (!rb_check_links(cpu_buffer, head))
+ 		goto out_locked;
+-	buffer_cnt = cpu_buffer->cnt;
++	buffer_cnt = atomic_read(&cpu_buffer->cnt);
+ 	tmp = head;
+ 	raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 		return;
+@@ -1540,7 +1540,7 @@ static void rb_check_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ 	while (true) {
+ 		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
  
--	m->kaddr = erofs_read_metabuf(&m->map->buf, inode->i_sb,
--				      pos, EROFS_KMAP);
--	if (IS_ERR(m->kaddr))
--		return PTR_ERR(m->kaddr);
--
--	m->nextpackoff = pos + sizeof(struct z_erofs_lcluster_index);
-+	di = erofs_read_metabuf(&m->map->buf, inode->i_sb, pos, EROFS_KMAP);
-+	if (IS_ERR(di))
-+		return PTR_ERR(di);
- 	m->lcn = lcn;
--	di = m->kaddr;
-+	m->nextpackoff = pos + sizeof(struct z_erofs_lcluster_index);
+-		if (buffer_cnt != cpu_buffer->cnt) {
++		if (buffer_cnt != atomic_read(&cpu_buffer->cnt)) {
+ 			/* The list was updated, try again. */
+ 			raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 			goto again;
+@@ -2585,7 +2585,7 @@ rb_remove_pages(struct ring_buffer_per_cpu *cpu_buffer, unsigned long nr_pages)
  
- 	advise = le16_to_cpu(di->di_advise);
- 	m->type = advise & Z_EROFS_LI_LCLUSTER_TYPE_MASK;
-@@ -53,8 +48,7 @@ static int z_erofs_load_full_lcluster(struct z_erofs_maprecorder *m,
- 				DBG_BUGON(1);
- 				return -EFSCORRUPTED;
- 			}
--			m->compressedblks = m->delta[0] &
--				~Z_EROFS_LI_D0_CBLKCNT;
-+			m->compressedblks = m->delta[0] & ~Z_EROFS_LI_D0_CBLKCNT;
- 			m->delta[0] = 1;
+ 	/* make sure pages points to a valid page in the ring buffer */
+ 	cpu_buffer->pages = next_page;
+-	cpu_buffer->cnt++;
++	atomic_inc(&cpu_buffer->cnt);
+ 
+ 	/* update head page */
+ 	if (head_bit)
+@@ -2692,7 +2692,7 @@ rb_insert_pages(struct ring_buffer_per_cpu *cpu_buffer)
+ 			 * pointer to point to end of list
+ 			 */
+ 			head_page->prev = last_page;
+-			cpu_buffer->cnt++;
++			atomic_inc(&cpu_buffer->cnt);
+ 			success = true;
+ 			break;
  		}
- 		m->delta[1] = le16_to_cpu(di->di_u.delta[1]);
-@@ -110,9 +104,9 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	struct erofs_inode *const vi = EROFS_I(m->inode);
- 	const unsigned int lclusterbits = vi->z_logical_clusterbits;
- 	unsigned int vcnt, lo, lobits, encodebits, nblk, bytes;
--	int i;
--	u8 *in, type;
- 	bool big_pcluster;
-+	u8 *in, type;
-+	int i;
+@@ -5347,7 +5347,7 @@ rb_get_reader_page(struct ring_buffer_per_cpu *cpu_buffer)
+ 	rb_list_head(reader->list.next)->prev = &cpu_buffer->reader_page->list;
+ 	rb_inc_page(&cpu_buffer->head_page);
  
- 	if (1 << amortizedshift == 4 && lclusterbits <= 14)
- 		vcnt = 2;
-@@ -121,6 +115,10 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	else
- 		return -EOPNOTSUPP;
+-	cpu_buffer->cnt++;
++	atomic_inc(&cpu_buffer->cnt);
+ 	local_inc(&cpu_buffer->pages_read);
  
-+	in = erofs_read_metabuf(&m->map->buf, m->inode->i_sb, pos, EROFS_KMAP);
-+	if (IS_ERR(in))
-+		return PTR_ERR(in);
-+
- 	/* it doesn't equal to round_up(..) */
- 	m->nextpackoff = round_down(pos, vcnt << amortizedshift) +
- 			 (vcnt << amortizedshift);
-@@ -128,9 +126,7 @@ static int unpack_compacted_index(struct z_erofs_maprecorder *m,
- 	lobits = max(lclusterbits, ilog2(Z_EROFS_LI_D0_CBLKCNT) + 1U);
- 	encodebits = ((vcnt << amortizedshift) - sizeof(__le32)) * 8 / vcnt;
- 	bytes = pos & ((vcnt << amortizedshift) - 1);
--
--	in = m->kaddr - bytes;
--
-+	in -= bytes;
- 	i = bytes >> amortizedshift;
+ 	/* Finally update the reader page to the new head */
+@@ -6804,7 +6804,7 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
+ 		cpu_buffer->pages = cpu_buffer->new_pages.next;
+ 		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
+ 		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
+-		cpu_buffer->cnt++;
++		atomic_inc(&cpu_buffer->cnt);
  
- 	lo = decode_compactedbits(lobits, in, encodebits * i, &type);
-@@ -255,10 +251,6 @@ static int z_erofs_load_compact_lcluster(struct z_erofs_maprecorder *m,
- 	amortizedshift = 2;
- out:
- 	pos += lcn * (1 << amortizedshift);
--	m->kaddr = erofs_read_metabuf(&m->map->buf, inode->i_sb,
--				      pos, EROFS_KMAP);
--	if (IS_ERR(m->kaddr))
--		return PTR_ERR(m->kaddr);
- 	return unpack_compacted_index(m, amortizedshift, pos, lookahead);
- }
- 
+ 		/* Clear the new_pages list */
+ 		INIT_LIST_HEAD(&cpu_buffer->new_pages);
 -- 
-2.43.5
+2.45.2
 
 
