@@ -1,176 +1,149 @@
-Return-Path: <linux-kernel+bounces-359221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D92CF9988DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:11:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12BC99988E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83FC11F25C99
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:11:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8B2C1F2651C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B346B1CB329;
-	Thu, 10 Oct 2024 14:11:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XDpQ7bY6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hMEK6aEU";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="XDpQ7bY6";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="hMEK6aEU"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C73B1CB524;
+	Thu, 10 Oct 2024 14:11:38 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C4861CB322;
-	Thu, 10 Oct 2024 14:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 033991C9B67;
+	Thu, 10 Oct 2024 14:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569476; cv=none; b=eglma0j/Tpt4a6XizfI7jbDuZuzBiZ8uZ1oZcOJhG5JzLjPtyWTjMLujJZwRf3a6FM4daN6yEfsHoZYVWP/DdU+NWoEGJzsrThBKjzi7NKI/VVe925thESQKJl17Y8/ByuidpkJPGAJ22HlxPQsKNP9B4AnanupT59OlpNGgvzg=
+	t=1728569497; cv=none; b=JR2JT3Cy3NlN4fdNljAFionF73GQvySFBr9qXU2zZ9vyo7o/YCRSsvE7KH/AVf8i7onP99wsMp2iLriGeSxM9gk89gdx2xdZoymIrXSTtwvbqx7dO4elBZ3GE9K0aH4AcyMQ/FBuZTg6x5OmeO8GxGGDNGnuxG5csWiJBCCtako=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569476; c=relaxed/simple;
-	bh=1yylciXsLYYSioPLf48P+RnSSIHazRBTvgOQ20rKQXQ=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=otq5SCZiGbuVhGfsQZtHTu77dWpZB8vDnsXmWhpE4uf08WNW9KzU0p5viEgpSv9X50k/lEEY2nqPaz25PpX0RUYIe+9nRhH+Jd7VJU1tuzY2PHQeCDucef3G/MrQkZ8TV/1HDMIw5Jb4N2RvdtA9iYZ1OuIFPyx1kSqVBj9AZcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XDpQ7bY6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hMEK6aEU; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=XDpQ7bY6; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=hMEK6aEU; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2C57B21FAC;
-	Thu, 10 Oct 2024 14:11:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728569472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bKGWuHnoAY3oScw9gPPFvX+fuzsUbv/zXNsP6f00WS4=;
-	b=XDpQ7bY6n45UwZvFtC9+TAMeJJEJg0xBBFXi786tPXIf2UfKs6lkxJ9mDg81Uh6aDSgWNl
-	Voy2NVfzlgyD1t8uLQzzL8ORIRhI0gehVZVYT03LUBQLA6z/F9nbvl0XGCmawrtNFxRC94
-	Ee93UbfKwyx4kuPzxArVDD7t4nTgB1g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728569472;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bKGWuHnoAY3oScw9gPPFvX+fuzsUbv/zXNsP6f00WS4=;
-	b=hMEK6aEUuGS0jJYIfjWNeTBYPI1dK/HNX3omGOoLAy6Z7Gdahi08qr0s+QV8FoUbBjxNCm
-	PGGjMRULOalcDSBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728569472; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bKGWuHnoAY3oScw9gPPFvX+fuzsUbv/zXNsP6f00WS4=;
-	b=XDpQ7bY6n45UwZvFtC9+TAMeJJEJg0xBBFXi786tPXIf2UfKs6lkxJ9mDg81Uh6aDSgWNl
-	Voy2NVfzlgyD1t8uLQzzL8ORIRhI0gehVZVYT03LUBQLA6z/F9nbvl0XGCmawrtNFxRC94
-	Ee93UbfKwyx4kuPzxArVDD7t4nTgB1g=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728569472;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bKGWuHnoAY3oScw9gPPFvX+fuzsUbv/zXNsP6f00WS4=;
-	b=hMEK6aEUuGS0jJYIfjWNeTBYPI1dK/HNX3omGOoLAy6Z7Gdahi08qr0s+QV8FoUbBjxNCm
-	PGGjMRULOalcDSBw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id E0B1D1370C;
-	Thu, 10 Oct 2024 14:11:11 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 0KyvNX/gB2duYgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 10 Oct 2024 14:11:11 +0000
-Date: Thu, 10 Oct 2024 16:12:08 +0200
-Message-ID: <877cag11zb.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Julian Vetter <jvetter@kalrayinc.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Takashi Iwai <tiwai@suse.de>,
-	Yann Sionneau
- <ysionneau@kalrayinc.com>
-Subject: Re: [PATCH] sound: Make CONFIG_SND depend on INDIRECT_IOMEM instead of UML
-In-Reply-To: <20241010124601.700528-1-jvetter@kalrayinc.com>
-References: <20241010124601.700528-1-jvetter@kalrayinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1728569497; c=relaxed/simple;
+	bh=oi/D2Kzewes91CYXc/5PW2MKqcYFHBamyFrcq+mAGco=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=LLknmbpW3Dyi+UZ41h3DV9b18L6HdpVYrgqDPAotlpTVfSbV78bPOmSpbM9rj7+/JhkixJM+JJVoIjruOaA8Fx2v4rken+DcINZw7l1uoruck5Z4HCJwpgYvwwq6Eud+2P3ByTUFPpp9tru9Uykaj/fjezNmtKwZ9QeFeotRfUU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPWpx4sxVz10N5x;
+	Thu, 10 Oct 2024 22:09:45 +0800 (CST)
+Received: from kwepemh100016.china.huawei.com (unknown [7.202.181.102])
+	by mail.maildlp.com (Postfix) with ESMTPS id BCD6D1402CA;
+	Thu, 10 Oct 2024 22:11:30 +0800 (CST)
+Received: from huawei.com (10.175.113.32) by kwepemh100016.china.huawei.com
+ (7.202.181.102) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 10 Oct
+ 2024 22:11:27 +0800
+From: Kaixiong Yu <yukaixiong@huawei.com>
+To: <akpm@linux-foundation.org>, <mcgrof@kernel.org>
+CC: <ysato@users.sourceforge.jp>, <dalias@libc.org>,
+	<glaubitz@physik.fu-berlin.de>, <luto@kernel.org>, <tglx@linutronix.de>,
+	<mingo@redhat.com>, <bp@alien8.de>, <dave.hansen@linux.intel.com>,
+	<hpa@zytor.com>, <viro@zeniv.linux.org.uk>, <brauner@kernel.org>,
+	<jack@suse.cz>, <kees@kernel.org>, <j.granados@samsung.com>,
+	<willy@infradead.org>, <Liam.Howlett@oracle.com>, <vbabka@suse.cz>,
+	<lorenzo.stoakes@oracle.com>, <trondmy@kernel.org>, <anna@kernel.org>,
+	<chuck.lever@oracle.com>, <jlayton@kernel.org>, <neilb@suse.de>,
+	<okorniev@redhat.com>, <Dai.Ngo@oracle.com>, <tom@talpey.com>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <paul@paul-moore.com>, <jmorris@namei.org>,
+	<linux-sh@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-nfs@vger.kernel.org>, <netdev@vger.kernel.org>,
+	<linux-security-module@vger.kernel.org>, <dhowells@redhat.com>,
+	<haifeng.xu@shopee.com>, <baolin.wang@linux.alibaba.com>,
+	<shikemeng@huaweicloud.com>, <dchinner@redhat.com>, <bfoster@redhat.com>,
+	<souravpanda@google.com>, <hannes@cmpxchg.org>, <rientjes@google.com>,
+	<pasha.tatashin@soleen.com>, <david@redhat.com>, <ryan.roberts@arm.com>,
+	<ying.huang@intel.com>, <yang@os.amperecomputing.com>,
+	<zev@bewilderbeest.net>, <serge@hallyn.com>, <vegard.nossum@oracle.com>,
+	<wangkefeng.wang@huawei.com>, <sunnanyong@huawei.com>
+Subject: [PATCH v3 -next 00/15] sysctl: move sysctls from vm_table into its own files
+Date: Thu, 10 Oct 2024 23:22:00 +0800
+Message-ID: <20241010152215.3025842-1-yukaixiong@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	RCVD_TLS_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh100016.china.huawei.com (7.202.181.102)
 
-On Thu, 10 Oct 2024 14:46:01 +0200,
-Julian Vetter wrote:
-> 
-> When building for the UM arch and neither INDIRECT_IOMEM=y, nor
-> HAS_IOMEM=y is selected, it will fall back to the implementations from
-> asm-generic/io.h for IO memcpy. But these fall-back functions just do a
-> memcpy. So, instead of depending on UML, add dependency on 'HAS_IOMEM ||
-> INDIRECT_IOMEM'.
-> 
-> Acked-by: Takashi Iwai <tiwai@suse.de>
-> Reviewed-by: Yann Sionneau <ysionneau@kalrayinc.com>
-> Signed-off-by: Julian Vetter <jvetter@kalrayinc.com>
+This patch series moves sysctls of vm_table in kernel/sysctl.c to
+places where they actually belong, and do some related code clean-ups.
+After this patch series, all sysctls in vm_table have been moved into its
+own files, meanwhile, delete vm_table.
 
-This is expected to be applied via sound.git tree?
-Then I'll happily take it.
+All the modifications of this patch series base on
+linux-next(tags/next-20241010). To test this patch series, the code was
+compiled with both the CONFIG_SYSCTL enabled and disabled on arm64 and
+x86_64 architectures. After this patch series is applied, all files
+under /proc/sys/vm can be read or written normally.
 
+Changes in v3:
+ - change patch1~10, patch14 title suggested by Joel Granados
+ - change sysctl_stat_interval to static type in patch1
+ - add acked-by from Paul Moore in patch7
+ - change dirtytime_expire_interval to static type in patch9
+ - add acked-by from Anna Schumaker in patch11
 
-thanks,
+Changes in v2:
+ - fix sysctl_max_map_count undeclared issue in mm/nommu.c for patch6
+ - update changelog for patch7/12, suggested by Kees/Paul
+ - fix patch8, sorry for wrong changes and forget to built with NOMMU
+ - add reviewed-by from Kees except patch8 since patch8 is wrong in v1
+ - add reviewed-by from Jan Kara, Christian Brauner in patch12
 
-Takashi
+Kaixiong Yu (15):
+  mm: vmstat: move sysctls to mm/vmstat.c
+  mm: filemap: move sysctl to mm/filemap.c
+  mm: swap: move sysctl to mm/swap.c
+  mm: vmscan: move vmscan sysctls to mm/vmscan.c
+  mm: util: move sysctls to mm/util.c
+  mm: mmap: move sysctl to mm/mmap.c
+  security: min_addr: move sysctl to security/min_addr.c
+  mm: nommu: move sysctl to mm/nommu.c
+  fs: fs-writeback: move sysctl to fs/fs-writeback.c
+  fs: drop_caches: move sysctl to fs/drop_caches.c
+  sunrpc: use vfs_pressure_ratio() helper
+  fs: dcache: move the sysctl to fs/dcache.c
+  x86: vdso: move the sysctl to arch/x86/entry/vdso/vdso32-setup.c
+  sh: vdso: move the sysctl to arch/sh/kernel/vsyscall/vsyscall.c
+  sysctl: remove unneeded include
 
-> ---
->  sound/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/sound/Kconfig b/sound/Kconfig
-> index 4c036a9a420a..8b40205394fe 100644
-> --- a/sound/Kconfig
-> +++ b/sound/Kconfig
-> @@ -1,7 +1,7 @@
->  # SPDX-License-Identifier: GPL-2.0-only
->  menuconfig SOUND
->  	tristate "Sound card support"
-> -	depends on HAS_IOMEM || UML
-> +	depends on HAS_IOMEM || INDIRECT_IOMEM
->  	help
->  	  If you have a sound card in your computer, i.e. if it can say more
->  	  than an occasional beep, say Y.
-> -- 
-> 2.34.1
-> 
-> 
-> 
-> 
-> 
+ arch/sh/kernel/vsyscall/vsyscall.c |  14 ++
+ arch/x86/entry/vdso/vdso32-setup.c |  16 ++-
+ fs/dcache.c                        |  21 ++-
+ fs/drop_caches.c                   |  23 ++-
+ fs/fs-writeback.c                  |  30 ++--
+ include/linux/dcache.h             |   7 +-
+ include/linux/mm.h                 |  23 ---
+ include/linux/mman.h               |   2 -
+ include/linux/swap.h               |   9 --
+ include/linux/vmstat.h             |  11 --
+ include/linux/writeback.h          |   4 -
+ kernel/sysctl.c                    | 221 -----------------------------
+ mm/filemap.c                       |  18 ++-
+ mm/internal.h                      |  10 ++
+ mm/mmap.c                          |  54 +++++++
+ mm/nommu.c                         |  15 +-
+ mm/swap.c                          |  16 ++-
+ mm/swap.h                          |   1 +
+ mm/util.c                          |  67 +++++++--
+ mm/vmscan.c                        |  23 +++
+ mm/vmstat.c                        |  44 +++++-
+ net/sunrpc/auth.c                  |   2 +-
+ security/min_addr.c                |  11 ++
+ 23 files changed, 330 insertions(+), 312 deletions(-)
+
+-- 
+2.34.1
+
 
