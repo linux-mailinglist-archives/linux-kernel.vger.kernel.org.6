@@ -1,156 +1,415 @@
-Return-Path: <linux-kernel+bounces-358957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC7529985BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:17:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0BC9985C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:18:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 790962830E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:17:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9EC4C1C23422
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:18:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72651C3F34;
-	Thu, 10 Oct 2024 12:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z5bayww4"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8090B1C4612;
+	Thu, 10 Oct 2024 12:18:23 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06401C3F1B
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 12:17:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDA371C1757;
+	Thu, 10 Oct 2024 12:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728562669; cv=none; b=uPsndx0NSUb40ezZGgPhKx56zPxgS97oRIsY+rMbAnDB2cQ2OwulTFi4O3Bo13LQdp2UfBYvfOgZmYmns6OPcYrftc4F60C5auvpt0nnJQ9gmM3eS+SfOUYMTqoTHbKM5hwn37fHU+8fTDe8l5xMd6IjSdY5sLSM5YzOAchd9vE=
+	t=1728562702; cv=none; b=fx/7d/ijnBAS6sWV+e6KixHOYExPRlH1llDhFBtv3b2q1LC0NW5GU4SS+FAWhXxyckqIlyIN0/ScL6CxnJtBvlThir9pX9xuT1qKkLmgYQmW9NPl994vScLgU4jegQTmILznUMEW/COP5lBMZngJQm7opBajase/CigR7PeJLfQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728562669; c=relaxed/simple;
-	bh=H9JaAro8seubwTztcgeEs18CcSuyFWdBlUaF2TD1klI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=b6XdEo1/+7p0gkeJR9PXzambBSk4+9Qx4xd2948dq72YaKjN2IrIzVO7UDj2XwohAhIpuYO2PO88HlWiPDymHYChTtq/HQi0Ie0Y5OSp/ixM0oPKdej7nvqMffA9FsjR2IFlwjdwgcJO1ODhr4HfsajQ6+uyPI4Ss6H2codzOTs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z5bayww4; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728562666;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YvflPd5gKQrGEgjFqXi5n/SBqJrFGg+Ya3MysYEqqj0=;
-	b=Z5bayww42hGvedtijq3X7zCMcFkTbeAgTU1jlB6eJM9agrtlERSVAnWXjLPEZ22GeNixA1
-	Xkni24Q0q9RvRdo4r3CkHPOpADoS/5SCAfHUR7bt1dLIoO0J3U0QA3dvy/N24PbcJpyerT
-	TAIDV0Wmu2Wqfg5hwBheIDfT2CboGzg=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-128-MuZZsmWyO1CSHwWWla1ykw-1; Thu, 10 Oct 2024 08:17:45 -0400
-X-MC-Unique: MuZZsmWyO1CSHwWWla1ykw-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d37f8159aso523372f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 05:17:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728562664; x=1729167464;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=YvflPd5gKQrGEgjFqXi5n/SBqJrFGg+Ya3MysYEqqj0=;
-        b=vEcPkz4dl+Z8GVPoDvs51kOa/PaefN61Iis60CSdp5dZRcTr2l6uJ1fe48l6YNY1Jk
-         /cUaaZyhdmQVFngtyqsNBHSV/pDSl9HwiX1knPwWXdO+tXL4b1oqiKHJdjcaNOOApw84
-         G/DSxAw/oLMCTCOz6cHTu9uLQcusD+f5RLavHFGtDxB3k8oqWf27DXjfi621dEzE4Mtx
-         S5UdIfCKHH+9k6ZtS0y4d0zckF2wZXI5cobpzpMurvWshU34M1xhUHGn4trv1sjYsTuz
-         j5x61eAbwzokvIQcFKB9kMi3e77nQ5u/FEGgm3wlxqnxpWD73WiVqMTB8MrcIRSJcT43
-         2bJg==
-X-Forwarded-Encrypted: i=1; AJvYcCUs5P8Dral3tUydrLYXCeopodS4hcHPPZW+HnjlGr4hyv2cn/hMNuzng98YVXW55XB4toUBS4LbG664GTk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwLRVrYLAr86QJqwwRCaF5wDmDtRhlL1CgN0WwtGQd4433DnHDV
-	kK+SxDJmKt8bNd13ux+LqayFf+zAP0HllPZanq9etH7u2ygO/CJj+BBMbWsNDqUW6/txX+KcFbH
-	xToaWni96BUx2EUK/fkZIQRrUWCi+Emv8OLoQ290wLhjco7AShi6OVQjPsdJp6UzyRz7DnMw306
-	Kr+aA+K1lOoDwuAqv4S47m0/2QJaTTGP507J7x
-X-Received: by 2002:a05:6000:180f:b0:37c:fbf8:fc4 with SMTP id ffacd0b85a97d-37d3ab44826mr5009155f8f.59.1728562664053;
-        Thu, 10 Oct 2024 05:17:44 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFBsPvpcLWaCbyaJMuqsA/5wnAlx8SPVzPF+E5uBgFKKaQkqn66KqpMb1Cp9R5xxS9r7cV9xXbYD2SU+tSEMx4=
-X-Received: by 2002:a05:6000:180f:b0:37c:fbf8:fc4 with SMTP id
- ffacd0b85a97d-37d3ab44826mr5009123f8f.59.1728562663682; Thu, 10 Oct 2024
- 05:17:43 -0700 (PDT)
+	s=arc-20240116; t=1728562702; c=relaxed/simple;
+	bh=JNVB4kkruHlTAxVnW0w15975h+UfHocUYfQCALgwWeU=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BKk2kB0UHDGqT3MYmwekRXdUbs1F2JktPM73duk06usS5A/jt6+SebgmhwHCOoJ9D6glFe09l2Md5UQ6Mp9gIAX96CpcKtBpNXnggnnCWoMhrmq9zfm8mpGQgGxu69tiZJCnqOw/eFa4Tb/bTuTVZA2G7un65nXwHNg1irkWQl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPTJl30zvz67GZ3;
+	Thu, 10 Oct 2024 20:16:55 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 3D1F7140B3C;
+	Thu, 10 Oct 2024 20:18:16 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 14:18:15 +0200
+Date: Thu, 10 Oct 2024 13:18:12 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+CC: <sudeep.holla@arm.com>, <cristian.marussi@arm.com>,
+	<andersson@kernel.org>, <konrad.dybcio@linaro.org>, <robh+dt@kernel.org>,
+	<krzysztof.kozlowski+dt@linaro.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <quic_rgottimu@quicinc.com>,
+	<quic_kshivnan@quicinc.com>, <conor+dt@kernel.org>,
+	<arm-scmi@vger.kernel.org>, Amir Vajid <avajid@quicinc.com>
+Subject: Re: [PATCH V4 4/5] soc: qcom: Introduce SCMI based Memlat (Memory
+ Latency) governor
+Message-ID: <20241010131812.0000566b@Huawei.com>
+In-Reply-To: <20241007061023.1978380-5-quic_sibis@quicinc.com>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+	<20241007061023.1978380-5-quic_sibis@quicinc.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <c355dc9ad23470098d6a8d0f31fbd702551c9ea8.1728552769.git.jstancek@redhat.com>
-In-Reply-To: <c355dc9ad23470098d6a8d0f31fbd702551c9ea8.1728552769.git.jstancek@redhat.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Thu, 10 Oct 2024 14:17:32 +0200
-Message-ID: <CAP4=nvQT2-f98Sd6paMWqfGYv4pc39p2rfZfyCoxL6KrN-2Jdg@mail.gmail.com>
-Subject: Re: [PATCH 1/2] tools/rtla: drop __NR_sched_getattr
-To: Jan Stancek <jstancek@redhat.com>
-Cc: rostedt@goodmis.org, linux-trace-kernel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, jforbes@redhat.com, ezulian@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500004.china.huawei.com (7.191.163.9) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-=C4=8Dt 10. 10. 2024 v 11:33 odes=C3=ADlatel Jan Stancek <jstancek@redhat.c=
-om> napsal:
->
-> It's not used since commit 084ce16df0f0 ("tools/rtla:
-> Remove unused sched_getattr() function").
->
-> Signed-off-by: Jan Stancek <jstancek@redhat.com>
-> ---
->  tools/tracing/rtla/src/utils.c | 32 ++++++++++++++------------------
->  1 file changed, 14 insertions(+), 18 deletions(-)
->
-> diff --git a/tools/tracing/rtla/src/utils.c b/tools/tracing/rtla/src/util=
-s.c
-> index 9ac71a66840c..05b2b3fc005e 100644
-> --- a/tools/tracing/rtla/src/utils.c
-> +++ b/tools/tracing/rtla/src/utils.c
-> @@ -211,24 +211,20 @@ long parse_ns_duration(char *val)
->  /*
->   * This is a set of helper functions to use SCHED_DEADLINE.
->   */
-> -#ifdef __x86_64__
-> -# define __NR_sched_setattr    314
-> -# define __NR_sched_getattr    315
-> -#elif __i386__
-> -# define __NR_sched_setattr    351
-> -# define __NR_sched_getattr    352
-> -#elif __arm__
-> -# define __NR_sched_setattr    380
-> -# define __NR_sched_getattr    381
-> -#elif __aarch64__ || __riscv
-> -# define __NR_sched_setattr    274
-> -# define __NR_sched_getattr    275
-> -#elif __powerpc__
-> -# define __NR_sched_setattr    355
-> -# define __NR_sched_getattr    356
-> -#elif __s390x__
-> -# define __NR_sched_setattr    345
-> -# define __NR_sched_getattr    346
-> +#ifndef __NR_sched_setattr
-> +# ifdef __x86_64__
-> +#  define __NR_sched_setattr   314
-> +# elif __i386__
-> +#  define __NR_sched_setattr   351
-> +# elif __arm__
-> +#  define __NR_sched_setattr   380
-> +# elif __aarch64__ || __riscv
-> +#  define __NR_sched_setattr   274
-> +# elif __powerpc__
-> +#  define __NR_sched_setattr   355
-> +# elif __s390x__
-> +#  define __NR_sched_setattr   345
-> +# endif
->  #endif
->
->  #define SCHED_DEADLINE         6
-> --
-> 2.43.0
->
+On Mon, 7 Oct 2024 11:40:22 +0530
+Sibi Sankar <quic_sibis@quicinc.com> wrote:
 
-Right, the definition is now redundant.
+> Introduce a client driver that uses the memlat algorithm string
+> hosted on QCOM SCMI Generic Extension Protocol to detect memory
+> latency workloads and control frequency/level of the various
+> memory buses (DDR/LLCC/DDR_QOS).
+> 
+> Co-developed-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> Signed-off-by: Shivnandan Kumar <quic_kshivnan@quicinc.com>
+> Co-developed-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+> Signed-off-by: Ramakrishna Gottimukkula <quic_rgottimu@quicinc.com>
+> Co-developed-by: Amir Vajid <avajid@quicinc.com>
+> Signed-off-by: Amir Vajid <avajid@quicinc.com>
+> Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+I was curious. A few comments from a quick read through.
 
-Reviewed-by: Tomas Glozar <tglozar@redhat.com>
+Jonathan
 
-Tomas
+> diff --git a/drivers/soc/qcom/qcom_scmi_memlat_client.c b/drivers/soc/qcom/qcom_scmi_memlat_client.c
+> new file mode 100644
+> index 000000000000..05198bf1f7ec
+> --- /dev/null
+> +++ b/drivers/soc/qcom/qcom_scmi_memlat_client.c
+
+> +static int populate_cluster_info(u32 *cluster_info)
+> +{
+> +	char name[MAX_NAME_LEN];
+> +	int i = 0;
+> +
+> +	struct device_node *cn __free(device_node) = of_find_node_by_path("/cpus");
+> +	if (!cn)
+> +		return -ENODEV;
+> +
+> +	struct device_node *map __free(device_node) = of_get_child_by_name(cn, "cpu-map");
+> +	if (!map)
+> +		return -ENODEV;
+> +
+> +	do {
+while(1) {
+}
+> +		snprintf(name, sizeof(name), "cluster%d", i);
+> +		struct device_node *c __free(device_node) = of_get_child_by_name(map, name);
+> +		if (!c)
+> +			break;
+> +
+> +		*(cluster_info + i) = of_get_child_count(c);
+> +		i++;
+> +	} while (1);
+> +
+> +	return 0;
+> +}
+> +
+tic struct cpufreq_memfreq_map *init_cpufreq_memfreq_map(struct device *dev,
+> +							    struct scmi_memory_info *memory,
+> +							    struct device_node *of_node,
+> +							    u32 *cnt)
+> +{
+> +	struct device_node *tbl_np __free(device_node), *opp_np __free(device_node);
+> +	struct cpufreq_memfreq_map *tbl;
+> +	int ret, i = 0;
+> +	u32 level, len;
+> +	u64 rate;
+> +
+> +	tbl_np = of_parse_phandle(of_node, "operating-points-v2", 0);
+> +	if (!tbl_np)
+
+This will call the free on the uninitialzed opp_np above.
+Note this sort of path is why the constructor and destructor should always
+be together in the code.
+
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	len = min(of_get_available_child_count(tbl_np), MAX_MAP_ENTRIES);
+> +	if (len == 0)
+> +		return ERR_PTR(-ENODEV);
+> +
+> +	tbl = devm_kzalloc(dev, (len + 1) * sizeof(struct cpufreq_memfreq_map),
+> +			   GFP_KERNEL);
+> +	if (!tbl)
+> +		return ERR_PTR(-ENOMEM);
+> +
+> +	for_each_available_child_of_node(tbl_np, opp_np) {
+
+Why not scoped variant which will also solve the lifetime issue above.
+
+> +		ret = of_property_read_u64_index(opp_np, "opp-hz", 0, &rate);
+> +		if (ret < 0)
+> +			return ERR_PTR(ret);
+> +
+> +		tbl[i].cpufreq_mhz = rate / HZ_PER_MHZ;
+> +
+> +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
+> +			ret = of_property_read_u64_index(opp_np, "opp-hz", 1, &rate);
+> +			if (ret < 0)
+> +				return ERR_PTR(ret);
+> +
+> +			tbl[i].memfreq_khz = rate / HZ_PER_KHZ;
+> +		} else {
+> +			ret = of_property_read_u32(opp_np, "opp-level", &level);
+> +			if (ret < 0)
+> +				return ERR_PTR(ret);
+> +
+> +			tbl[i].memfreq_khz = level;
+> +		}
+> +
+> +		dev_dbg(dev, "Entry%d CPU:%u, Mem:%u\n", i, tbl[i].cpufreq_mhz, tbl[i].memfreq_khz);
+> +		i++;
+> +	}
+> +	*cnt = len;
+> +
+> +	return tbl;
+> +}
+> +
+> +static int process_scmi_memlat_of_node(struct scmi_device *sdev, struct scmi_memlat_info *info)
+> +{
+> +	struct scmi_monitor_info *monitor;
+> +	struct scmi_memory_info *memory;
+> +	char name[MAX_NAME_LEN];
+> +	u64 memfreq[2];
+> +	int ret;
+> +
+> +	ret = populate_cluster_info(info->cluster_info);
+> +	if (ret < 0) {
+> +		dev_err_probe(&sdev->dev, ret, "failed to populate cluster info\n");
+> +		goto err;
+putting a node you never got?
+		return dev_err_probe()
+
+
+> +	}
+> +
+> +	of_node_get(sdev->dev.of_node);
+Maybe use __free(device_node) here so you can do early returns on error.
+Will need a local variable for the return of of_node_get, but that would
+be nice anyway to simplify some parameters belwo.
+
+> +	do {
+Might as well do while(1) {
+}
+> +		snprintf(name, sizeof(name), "memory-%d", info->memory_cnt);
+> +		struct device_node *memory_np __free(device_node) =
+> +			of_find_node_by_name(sdev->dev.of_node, name);
+> +
+> +		if (!memory_np)
+> +			break;
+> +
+> +		if (info->memory_cnt >= MAX_MEMORY_TYPES)
+> +			return dev_err_probe(&sdev->dev, -EINVAL,
+> +					     "failed to parse unsupported memory type\n");
+> +
+> +		memory = devm_kzalloc(&sdev->dev, sizeof(*memory), GFP_KERNEL);
+> +		if (!memory) {
+> +			ret = -ENOMEM;
+> +			goto err;
+> +		}
+> +
+> +		ret = of_property_read_u32(memory_np, "qcom,memory-type", &memory->hw_type);
+> +		if (ret) {
+> +			dev_err_probe(&sdev->dev, ret, "failed to read memory type\n");
+> +			goto err;
+> +		}
+> +
+> +		ret = of_property_read_u64_array(memory_np, "freq-table-hz", memfreq, 2);
+> +		if (ret && (ret != -EINVAL)) {
+> +			dev_err_probe(&sdev->dev, ret, "failed to read min/max freq\n");
+> +			goto err;
+> +		}
+> +
+> +		if (memory->hw_type != QCOM_MEM_TYPE_DDR_QOS) {
+> +			memory->min_freq = memfreq[0] / HZ_PER_KHZ;
+> +			memory->max_freq = memfreq[1] / HZ_PER_KHZ;
+> +		} else {
+> +			memory->min_freq = memfreq[0];
+> +			memory->max_freq = memfreq[1];
+> +		}
+> +		info->memory[info->memory_cnt++] = memory;
+> +
+> +		do {
+> +			snprintf(name, sizeof(name), "monitor-%d", memory->monitor_cnt);
+> +			struct device_node *monitor_np __free(device_node) =
+> +				of_get_child_by_name(memory_np, name);
+> +
+> +			if (!monitor_np)
+> +				break;
+> +
+> +			if (memory->monitor_cnt >= MAX_MONITOR_CNT)
+> +				return dev_err_probe(&sdev->dev, -EINVAL,
+> +						     "failed to parse unsupported monitor\n");
+> +
+> +			monitor = devm_kzalloc(&sdev->dev, sizeof(*monitor), GFP_KERNEL);
+> +			if (!monitor) {
+> +				ret = -ENOMEM;
+> +				goto err;
+> +			}
+> +
+> +			monitor->mon_type = of_property_read_bool(monitor_np, "qcom,compute-type");
+> +			if (!monitor->mon_type) {
+> +				ret = of_property_read_u32(monitor_np, "qcom,ipm-ceil",
+> +							   &monitor->ipm_ceil);
+> +				if (ret) {
+> +					dev_err_probe(&sdev->dev, ret,
+> +						      "failed to read IPM ceiling\n");
+> +					goto err;
+> +				}
+> +			}
+> +
+> +			/*
+> +			 * Variants of the SoC having reduced number of cpus operate
+> +			 * with the same number of logical cpus but the physical
+> +			 * cpu disabled will differ between parts. Calculate the
+> +			 * physical cpu number using cluster information instead.
+> +			 */
+> +			populate_physical_mask(monitor_np, &monitor->mask, info->cluster_info);
+> +
+> +			monitor->freq_map = init_cpufreq_memfreq_map(&sdev->dev, memory, monitor_np,
+> +								     &monitor->freq_map_len);
+> +			if (IS_ERR(monitor->freq_map)) {
+> +				dev_err_probe(&sdev->dev, PTR_ERR(monitor->freq_map),
+> +					      "failed to populate cpufreq-memfreq map\n");
+> +				goto err;
+> +			}
+> +
+> +			strscpy(monitor->mon_name, name, sizeof(monitor->mon_name));
+> +			monitor->mon_idx = memory->monitor_cnt;
+> +
+> +			memory->monitor[memory->monitor_cnt++] = monitor;
+> +		} while (1);
+> +
+> +		if (!memory->monitor_cnt) {
+> +			ret = -EINVAL;
+> +			dev_err_probe(&sdev->dev, ret, "failed to find monitor nodes\n");
+> +			goto err;
+> +		}
+> +	} while (1);
+> +
+> +	if (!info->memory_cnt) {
+> +		ret = -EINVAL;
+> +		dev_err_probe(&sdev->dev, ret, "failed to find memory nodes\n");
+> +	}
+> +
+> +err:
+> +	of_node_put(sdev->dev.of_node);
+> +
+> +	return ret;
+> +}
+
+
+> +
+> +static int cpucp_memlat_init(struct scmi_device *sdev)
+> +{
+> +	const struct scmi_handle *handle = sdev->handle;
+> +	const struct qcom_generic_ext_ops *ops;
+> +	struct scmi_protocol_handle *ph;
+> +	struct scmi_memlat_info *info;
+> +	u32 cpucp_freq_method = CPUCP_DEFAULT_FREQ_METHOD;
+> +	u32 cpucp_sample_ms = CPUCP_DEFAULT_SAMPLING_PERIOD_MS;
+> +	int ret, i, j;
+> +
+> +	if (!handle)
+> +		return -ENODEV;
+> +
+> +	ops = handle->devm_protocol_get(sdev, SCMI_PROTOCOL_QCOM_GENERIC, &ph);
+> +	if (IS_ERR(ops))
+> +		return PTR_ERR(ops);
+> +
+> +	info = devm_kzalloc(&sdev->dev, sizeof(*info), GFP_KERNEL);
+
+I'd add a local variable
+
+	struct device *dev = &sdev->dev;
+given how many uses of this you have in this function.
+
+> +	if (!info)
+> +		return -ENOMEM;
+> +
+> +	ret = process_scmi_memlat_of_node(sdev, info);
+> +	if (ret)
+> +		return ret;
+> +
+> +	info->ph = ph;
+> +	info->ops = ops;
+> +
+> +	/* Configure common events ids */
+As below.
+> +	ret = configure_cpucp_common_events(info);
+> +	if (ret < 0)
+> +		return dev_err_probe(&sdev->dev, ret, "failed to configure common events\n");
+> +
+> +	for (i = 0; i < info->memory_cnt; i++) {
+> +		/* Configure per group parameters */
+As below.
+> +		ret = configure_cpucp_grp(&sdev->dev, info, i);
+> +		if (ret < 0)
+> +			return ret;
+> +
+> +		for (j = 0; j < info->memory[i]->monitor_cnt; j++) {
+> +			/* Configure per monitor parameters */
+
+I'd argue this and the above comment are clear from the function names
+so add no benefit, but not that important if you want to keep them anyway.
+Reasoning is that if a comment isn't providing more information it
+is an opportunity for bit rot in the longer run and bloats the code.
+Keep them for where they add more value.
+
+> +			ret = configure_cpucp_mon(&sdev->dev, info, i, j);
+> +			if (ret < 0)
+> +				return ret;
+> +		}
+> +	}
+...
+
+> +}
+> +
+> +static int scmi_client_probe(struct scmi_device *sdev)
+> +{
+> +	return cpucp_memlat_init(sdev);
+What is benefit of this wrapper? I'd just use cpucp_memlat_init as the probe
+function.
+
+> +}
+> +
+> +static const struct scmi_device_id scmi_id_table[] = {
+
+Probably name this in a fashion related to the driver given
+maybe we'll have a namespace clash in future with such
+a generic name.
+
+> +	{ SCMI_PROTOCOL_QCOM_GENERIC, "qcom-generic-ext" },
+> +	{ },
+No point in comma after a 'NULL' terminator like this.
+
+> +};
+> +MODULE_DEVICE_TABLE(scmi, scmi_id_table);
+> +
+> +static struct scmi_driver qcom_scmi_client_drv = {
+> +	.name		= "scmi-qcom-generic-ext-memlat",
+> +	.probe		= scmi_client_probe,
+> +	.id_table	= scmi_id_table,
+> +};
+> +module_scmi_driver(qcom_scmi_client_drv);
+> +
+> +MODULE_DESCRIPTION("QTI SCMI client driver");
+> +MODULE_LICENSE("GPL");
 
 
