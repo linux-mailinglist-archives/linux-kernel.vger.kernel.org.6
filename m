@@ -1,60 +1,67 @@
-Return-Path: <linux-kernel+bounces-358557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D759F9980D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:51:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271B69980DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:51:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E01D1F23FAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:51:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA3A92841D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:51:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D7E1BE251;
-	Thu, 10 Oct 2024 08:40:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 614841BFDE7;
+	Thu, 10 Oct 2024 08:41:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b/C4/1ya"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="L9P38nIn"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCF3C1BDA9A;
-	Thu, 10 Oct 2024 08:40:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201891BF322;
+	Thu, 10 Oct 2024 08:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728549624; cv=none; b=I/P/xkcSn7F/MQifCuW4l6fPfuM57AExwBnPQm7djhUDZxf5v2P2xgUUyLobRQ6eFhK5ZTEeqxo3VQD97jHySHqfIM1F9B+7S0cCtLWRxfUHdt1UX6sKJwi6KEAU1KiJEPQXea4Z+LJjuQNj6Ri1pbZ+tBsdr54wuIWeiQSjyZ4=
+	t=1728549659; cv=none; b=nmDlQsrFU/hd3Mi9kPN7RcUHCfr8L31XfwutZc/zaNfZ70aAp4D9TjiZ4SCoKn32JgegxgE33+WjdvWNytMrUXiiBtKPj7PRLhrjzvyW4Y3EHcbUDg/WlXilOWsO4vMuD9KC2HMrsap+lYXExQSxiVaqnh3jcvMf9BqvGq3Q3lA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728549624; c=relaxed/simple;
-	bh=d5L3ruuzQE3YNWbW1AZiD2NWXlJdaPiW0Mdntpz1t0s=;
+	s=arc-20240116; t=1728549659; c=relaxed/simple;
+	bh=90vxXsx2oRvzxGDopEo5+qSMo0jQCscmJyIdkiKViog=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a60Y85Wr89qxy7KNe0o64/QragkEvE46tpjic0QdsGhqufkDmcxIXZCbnqQoz1pU6gmVeJmSxwnFuICUYbOQuHeBLDnEV9hgLaPg+tAZ358oG/3NrfOHXZsbXmqmvtoIQy7gwmS9DnEWthE5JOqawSSxTxigfpGqARkQqowh6aU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b/C4/1ya; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 28E2DC4CEC5;
-	Thu, 10 Oct 2024 08:40:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728549624;
-	bh=d5L3ruuzQE3YNWbW1AZiD2NWXlJdaPiW0Mdntpz1t0s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=b/C4/1yaqz+mi9cq7KqNX8F6rlQVWOjWPeNT/kVk7qVvOs2fywYWQWdmd1RpI+d8F
-	 bmdJKRK1nf/MUn4W4/SCsDwciu56hdxv2tlU5uk28DUKs16wkwe5bk1eQRx6lEORUJ
-	 eGRRTAzcXHU6SneBtGNObhBg/ktMjlDYNWwpG14qjWXXWN1HMQQcaAulxmvBxxFnVG
-	 J52QxMRGE0qtJajEyO4FCZr9ADZKZnIjE8xvD2a3uc1X8xPgHCS9qAm4Tgrs4sbI6X
-	 2DCgVXiWjRHi/mdfwul8yP721WIc04iPIl/jKRhWJ2ZbUzYoKhEnyZ+7UH/8d5NzX9
-	 gKdMywKrO3nUQ==
-Date: Thu, 10 Oct 2024 09:40:19 +0100
-From: Lee Jones <lee@kernel.org>
-To: Thomas Richard <thomas.richard@bootlin.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Guenter Roeck <linux@roeck-us.net>, linux-kernel@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-i2c@vger.kernel.org,
-	linux-watchdog@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	blake.vermeer@keysight.com
-Subject: [GIT PULL] Immutable branch between MFD, GPIO, I2C and Watchdog due
- for the v6.13 merge window
-Message-ID: <20241010084019.GF661995@google.com>
-References: <20241001-congatec-board-controller-v3-0-39ceceed5c47@bootlin.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ImuM4rJmGScE3ip+cwOn2MNP/4HRlnMIU8V7IMEmwtemTAg3DIPvClcSCZHDteI8kbgm0Ve6UFzVfsyw/gEqHKxgOOuv5tw4P3PtAGAlYGB0CJi6prRn+nLxuyQn/esyW+ZZT/OBQ4882oy5gyDxBRkf5FQNm7WdDjDnBIVp/z8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=L9P38nIn; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=KNFeZPwsXdKsBcX3uUpDInf5sJ7Tv8OC8VcZMT67wdg=; b=L9P38nInvsOEuUuWw+wmWovqCz
+	n271/H9ri/SK2ZXCtBZ1gDRCJWrwB26TUaXewjNnxyBJlOJun5g6QE0pkOdAxCDy0o96Lz1KbCTHH
+	Q7kBWmMpI12hM61325TJ1AcjqOYjvzJN2pDFAmXVQ1UxRef+WhWEkBYsqgaXUe/SVLESn5NDEohRF
+	yNpBgRWqROzSfxmCKkKNZ8kmN5lB94UH3Jzl7609esyFPgJdvwF3eFKw42t82p8iEH8/8fq0yXlLs
+	qF1PhqprHj/WVdS9Qz2wUr1pOH40NJvjBOyxGbhJmE6orkJ8VMNgQhNbCYGhNPr51c3eyq+y37H9U
+	akPSIyUA==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1syoZ0-008HQ1-1t;
+	Thu, 10 Oct 2024 16:40:41 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 10 Oct 2024 16:40:40 +0800
+Date: Thu, 10 Oct 2024 16:40:40 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	kernel test robot <lkp@intel.com>, oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 RESEND] crypto: lib/mpi - Extend support for
+ scope-based resource management
+Message-ID: <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
+References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
+ <202409180725.ZV8DCvII-lkp@intel.com>
+ <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
+ <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
+ <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,54 +71,25 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241001-congatec-board-controller-v3-0-39ceceed5c47@bootlin.com>
+In-Reply-To: <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
 
-Enjoy!
+On Sat, Oct 05, 2024 at 08:27:03AM +0200, Markus Elfring wrote:
+> From: Markus Elfring <elfring@users.sourceforge.net>
+> Date: Wed, 18 Sep 2024 11:06:35 +0200
+> 
+> Scope-based resource management became supported for some
+> programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
+> See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
+> Introduce __cleanup() based infrastructure").
+> 
+> Thus add a macro call so that the attribute “__free(mpi_free)” can be
+> applied accordingly.
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+So where are the users of this?
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
-
-are available in the Git repository at:
-
-  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/lee/mfd.git tags/ib-mfd-gpio-i2c-watchdog-v6.13
-
-for you to fetch changes up to 590bcce85e014a2e16afe910bc6a20b4c1b2b374:
-
-  MAINTAINERS: Add entry for Congatec Board Controller (2024-10-09 16:32:13 +0100)
-
-----------------------------------------------------------------
-Immutable branch between MFD, GPIO, I2C and Watchdog due for the v6.13 merge window
-
-----------------------------------------------------------------
-Thomas Richard (5):
-      mfd: Add Congatec Board Controller driver
-      gpio: Congatec Board Controller gpio driver
-      i2c: Congatec Board Controller i2c bus driver
-      watchdog: Congatec Board Controller watchdog timer driver
-      MAINTAINERS: Add entry for Congatec Board Controller
-
- MAINTAINERS                   |   9 +
- drivers/gpio/Kconfig          |  10 +
- drivers/gpio/Makefile         |   1 +
- drivers/gpio/gpio-cgbc.c      | 196 ++++++++++++++++++++
- drivers/i2c/busses/Kconfig    |  10 +
- drivers/i2c/busses/Makefile   |   1 +
- drivers/i2c/busses/i2c-cgbc.c | 406 +++++++++++++++++++++++++++++++++++++++++
- drivers/mfd/Kconfig           |  12 ++
- drivers/mfd/Makefile          |   1 +
- drivers/mfd/cgbc-core.c       | 411 ++++++++++++++++++++++++++++++++++++++++++
- drivers/watchdog/Kconfig      |  10 +
- drivers/watchdog/Makefile     |   1 +
- drivers/watchdog/cgbc_wdt.c   | 211 ++++++++++++++++++++++
- include/linux/mfd/cgbc.h      |  44 +++++
- 14 files changed, 1323 insertions(+)
- create mode 100644 drivers/gpio/gpio-cgbc.c
- create mode 100644 drivers/i2c/busses/i2c-cgbc.c
- create mode 100644 drivers/mfd/cgbc-core.c
- create mode 100644 drivers/watchdog/cgbc_wdt.c
- create mode 100644 include/linux/mfd/cgbc.h
-
+Thanks,
 -- 
-Lee Jones [李琼斯]
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
