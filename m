@@ -1,108 +1,133 @@
-Return-Path: <linux-kernel+bounces-360162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1080D999551
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:37:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A859F999553
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:39:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 412131C2173E
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:37:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AA3A2859B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:39:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10A761E8829;
-	Thu, 10 Oct 2024 22:37:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F6A1E5034;
+	Thu, 10 Oct 2024 22:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="l5v+C3bF"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="isGxSbk+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BC91E7C35
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:37:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 445BF1A2645;
+	Thu, 10 Oct 2024 22:39:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728599823; cv=none; b=MKp5gpEUVZXcxe+bNqAcRkWxIOsSMltKlrDMmVorQzTLJJkf9RaGzXcWSzqoW4vvODJq7gcB6ZAXIwXxVCTOdfrXggMUd/kznZSlLkCy9N09p1yFRlcHXLzyEEeaUKGQ18VxAAfoi+CNSrrZZYiIjhQ32nY9h8GLzhfBKxrSJks=
+	t=1728599944; cv=none; b=OvxWzNwcjjkHfmUb1y0UoxW0FTxb5sCyVQcuAsCLPTfy0+n4K2nE5S9ylhh0UKZ12KN0MJzI3Bd5JRZopH221JGIuRJKyc7zq4FQZp7TacbnxQKwgq9QG8hYDk76k6xmisYPTB8PuidUvSxhhutcZEnhUl4zpqYTNc945da51uM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728599823; c=relaxed/simple;
-	bh=ELTIZpa/nLA7FG1SYG2wR8cL7xe3VKiueavOjWMz2Jc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZL8Iy7ZiPox9y+maHwIgi7vjzHTsz1eA67Hf/nq4SMNKTXD410+66WCKB+JIbmcnJO+LbUKCkKH7/WOPEyuagiEi5JAQNGh+UbJixySTzuOo4IGvYIPaZnHwERodVzsmJVU/XRy619iumHq7Yd4gjct9XuLKr5hQ9UFN0mGDnMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=l5v+C3bF; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so16085681fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:37:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728599819; x=1729204619; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=otakXsanXUr8ItyEhwzCKI/sGAGwRsLWsuVYvQjRYBk=;
-        b=l5v+C3bFFbbTIfTum+xLlonRWPHEWLB+De1cGtkdEak5P4Y2+S3bkUzik1Lglrwtvg
-         48/sAq3s/I7aLZcd4kSBrEVTQv5Iph0D/8E/+H8NVNjsNjLjExrl+7iLeUnKjCABCVA+
-         dKmISEKLSr1GZQIqZMGx/Dw34T/uUOYogELjA=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728599819; x=1729204619;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=otakXsanXUr8ItyEhwzCKI/sGAGwRsLWsuVYvQjRYBk=;
-        b=BvuhEPUMXQP6hHOQ5GYG/k8XPIXmHa7AvabKDTEDtRSct4/2ES8+sFj5k/6UWIcUr1
-         SQJcL4n97qGFkkYrtSH6KSpuTxy6ZPqk/u9l0CaVNFFEqIRGo8xZJ1eqRlrXeZUAPr8P
-         5wMcA0C5D86yDEQb9iI7pqbajVUoYSXfkaZ81JYY3OhmkRhnHu7eXMjo4spmPIRJxYF9
-         UbWzkbjBTizSn1W6HKLX+OiJdMKaGHXwdFGUadJV2uQmJkpLEJPR2eSEhyGqyGTDHAQ4
-         EQ1Tjxe3qIYe42rLWKL3GJGI+pLYL9TngY564CKGudyBdUCBWLkPPsobklAT4w1YSG8G
-         D+Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPi8rYEfXzr6c4gVTBdD9uUjqbd0xvXr1aAy22yj5nS0xr1QxLw5g2S4jHafrBMPdPmgZHG2KcMymaML4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzB2PcgkNz5ceXMcf0tWxt0gOZo1qcZ4bnBK4VN/qyjlQ/kSZsd
-	Iqjk8Nq6U9Q3eDvLLIjs+/vSU9sGHSCEOBK35+5Sgnc3vG28MlKLWU+WfhxKRCHrG6/YxHBMEdX
-	SpeKn
-X-Google-Smtp-Source: AGHT+IFC0DCdG+qXg9YY3ZV2vueDY2+wXc4bnqwFHPx1mgKyE7sBLZS1nwvRDScCIL3Fgj0sjzJexw==
-X-Received: by 2002:a05:651c:551:b0:2fb:30d5:669f with SMTP id 38308e7fff4ca-2fb326f69ffmr1826641fa.7.1728599819275;
-        Thu, 10 Oct 2024 15:36:59 -0700 (PDT)
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com. [209.85.208.177])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb24706329sm3313361fa.90.2024.10.10.15.36.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 15:36:56 -0700 (PDT)
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fac787f39fso15977251fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:36:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXVcfcIwKXbaUAzXxPa93oxtdQg6m/YZxFuBCIOb98gReyA8+p8s8TDIpU8tmDbOQ/Xj2EuiiBMSEf/jzE=@vger.kernel.org
-X-Received: by 2002:a05:651c:221b:b0:2f7:663c:48d7 with SMTP id
- 38308e7fff4ca-2fb329b2a84mr1316951fa.39.1728599816013; Thu, 10 Oct 2024
- 15:36:56 -0700 (PDT)
+	s=arc-20240116; t=1728599944; c=relaxed/simple;
+	bh=0lQwxyIA8D2mA4EpLag19jMxk3mdwg6s+WRoI9RXPKo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=c3wReDknpZNCyTLAFJ4IxwL4Cs6pfgDcl4f9hKHA5xzvqH1XTU1l1Ho5n/pRsE8hYKQ8Ow1fQqsaBALVz1Q02mWh6gYUJiRUaKveIO9uafu2z5eUCdUQZrTf0D03eaGQ04Pa/CV3UCZwgrjbIBryI8tHZxj28hCinK1Bkwcscws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=isGxSbk+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2D50C4CEC5;
+	Thu, 10 Oct 2024 22:39:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728599943;
+	bh=0lQwxyIA8D2mA4EpLag19jMxk3mdwg6s+WRoI9RXPKo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=isGxSbk+ds8bH37giquW3qR0ymvkWfeBg/4es8mIiTERNZw4jOARThjbrKnXtf9j0
+	 MczYwMeV8K3z+qC8YpoRImBl/fUQ1Q4AJbIW6ZD0JCWb7SmNHoeUdEfcaFrs6HKpBm
+	 NYuloUxQgUKYDHnSA9r/IR4KvOHfEZZ+L6rl773Tpq0WXRhWF3EYr/iyttKiAKE34A
+	 gAS8Min/zcQ9uTD8UaZRIhHDwiYLIM+h3KXSZry9QJElZihlGWevcTwZz1Aj+Ycy+I
+	 +xaTKvIVPChQ1kq86b/KSW8WqReA2beou+5MT0B1RuD7GMd53Q+4GcVgNJj7uKtrOl
+	 CfJOXrm8IK0oA==
+Received: by pali.im (Postfix)
+	id 7391181B; Fri, 11 Oct 2024 00:38:57 +0200 (CEST)
+Date: Fri, 11 Oct 2024 00:38:57 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] cifs: Add mount option -o reparse=native
+Message-ID: <20241010223857.vasehbu7nilemato@pali>
+References: <20241006100046.30772-1-pali@kernel.org>
+ <20241006100046.30772-2-pali@kernel.org>
+ <CAH2r5muLa_0L5LL4ipQkzEHOUdtYtJVAD29AAjQOaun9dWmK0g@mail.gmail.com>
+ <20241007183650.aw3skuztljpgk2bs@pali>
+ <CAH2r5mttO-aDq94QrLQm10xJRGLg=PULqX9fcfoykAweVVO+uQ@mail.gmail.com>
+ <CAH2r5mvV7WzB62hWt4K6oF_xyrQH1EF75zc0JdfjsjFEV4SQKQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009145110.16847-1-johan+linaro@kernel.org> <20241009145110.16847-10-johan+linaro@kernel.org>
-In-Reply-To: <20241009145110.16847-10-johan+linaro@kernel.org>
-From: Doug Anderson <dianders@chromium.org>
-Date: Thu, 10 Oct 2024 15:36:40 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=VDjZWLDt=1rJWvwt=QWNWhJeNYAfhgDmLBiH0xiq+FjA@mail.gmail.com>
-Message-ID: <CAD=FV=VDjZWLDt=1rJWvwt=QWNWhJeNYAfhgDmLBiH0xiq+FjA@mail.gmail.com>
-Subject: Re: [PATCH v3 9/9] serial: qcom-geni: rename suspend functions
-To: Johan Hovold <johan+linaro@kernel.org>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>, linux-arm-msm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5mvV7WzB62hWt4K6oF_xyrQH1EF75zc0JdfjsjFEV4SQKQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-Hi,
+On Thursday 10 October 2024 17:21:59 Steve French wrote:
+> On Thu, Oct 10, 2024 at 5:17 PM Steve French <smfrench@gmail.com> wrote:
+> >
+> >
+> >
+> > On Mon, Oct 7, 2024 at 1:36 PM Pali Rohár <pali@kernel.org> wrote:
+> >>
+> >> Currently choosing how new symlinks are created is quite complicated.
+> >>
+> >> Without these patch series, by default new symlinks are created via
+> >> native reparse points, even when reparse=nfs or reparse=wsl is
+> >> specified. There is no possibility to create a NFS-style or WSL-style
+> >> symlink yet, and this patch series address this missing functionality.
+> >> When option -o sfu is specified then all new symlinks are created in
+> >> SFU-style, independently of -o reparse option. And when -o mfsymlinks is
+> >> specified then all new symlinks are created in mf style, independently
+> >> of -o reparse and -o sfu options.
+> >>
+> >> This patch series does not change -o sfu and -o mfsymlinks overrides, it
+> >> just changes the way how -o reparse is handled.
+> >>
+> 
+> I lean toward something similar, and more intuitive - do not have
+> "reparse=" control symlink creation - but instead use another mount
+> parm (e.g. "symlink=") for that.  It would be rarely used - only if
+> you don't want the default (windows default format too) for server
+> symlinks or "mfsymlinks" (for client only symlinks):
+> 
+> 1) "symlink=" if specified can be set to one of five formats (with the
+> default being the windows format)
+>   a) "mfsymlinks" (Mac style which is safer for many use cases since
+> they are "client only" symlinks which the server will never use)
+>      Setting "symlink=mfsymlinks" will have the same effect as just
+> specifying "mfsymlinks" so won't break anything
+>   b) "default" (or "windows") which uses the default symlink format
+> when trying to create a new symlink
+>   c) "nfs"
+>   d) "wsl"
+>   e) "sfu"
+> 2) "reparse=" will still control how special files are created (char,
+> block, fifo, socket) and can be set to:
+>    a) "nfs" (default)
+>    b) or "wsl"
+>    c) If "sfu" set on mount will cause special files to be created
+> with "sfu" format instead of using reparse points to create
+> 3) reading reparse points will always be supported (unless you want to
+> add a new parameter "reparse=none" to treat all reparse points as
+> empty directories)
+> 4) reading special files via the old "sfu" will only be supported if
+> you mount with "sfu"
+> 
+> 
+> 
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
-On Wed, Oct 9, 2024 at 7:51=E2=80=AFAM Johan Hovold <johan+linaro@kernel.or=
-g> wrote:
->
-> Drop the unnecessary "_sys" infix from the suspend PM ops.
->
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
->  drivers/tty/serial/qcom_geni_serial.c | 7 +++----
->  1 file changed, 3 insertions(+), 4 deletions(-)
-
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
+Ok, and how to handle creating new sockets? For me it makes sense to
+create new sockets in "native" AF_UNIX style - compatible with Windows
+WinAPI / WinSocks. Should be there also a new parameter?
 
