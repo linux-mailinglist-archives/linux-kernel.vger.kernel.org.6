@@ -1,65 +1,60 @@
-Return-Path: <linux-kernel+bounces-358051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99BC9979A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:33:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 511A09979A6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 78B7CB22225
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:33:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB4DEB22226
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 00:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 042DB36C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E94281DA5E;
 	Thu, 10 Oct 2024 00:33:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XOtR3avt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bji8pfHx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E924C144;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48C70F9D6;
 	Thu, 10 Oct 2024 00:33:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728520414; cv=none; b=ZcGwN0Erd1qvB7rsPqkIOJ8D8x0PPJ336Xghrs9ZkYxQRVsyACYdz8hiNk5gFSu6OW2CZ8PTcccLPAK9XEA2JoDyP1QTe/KQb7b49o3Ws9NrSaFy2KOiK7ISxjo3BxoUm9Rn/DFiHam1v7djrdfkS7turJ3I3zLoyiE08uttqh0=
+	t=1728520415; cv=none; b=uq94tP0QM+jnKSaSJ8w2l9/Iye73hwKko06tmJywY0slho2rw4aCsKpd/paaDrT2HrTUvZ60Vnw7zWEkcGAnZW9Yr9knJTblyquNlHXFCNnUXZn5gMjoxd8ecLfhHc0veZxtj9EddGHnqpQJuNdQgkhpds5RzJ9AbeuDInd7dY0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728520414; c=relaxed/simple;
-	bh=IqcTrKiwdbZHhepDa3OiHZSbNeCni10R4bqSzlR+NCc=;
+	s=arc-20240116; t=1728520415; c=relaxed/simple;
+	bh=bLYLoR9zCeCxC6ft6XwdkDhKvXMrAg2eFwimb6+jaOA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jrfzjh6sBN+/SmArSrQOH3/XTI8hAimGLT9Hku/zpVEiKrgwvNEAl1mSaYW1dWTto81c8AXJY0WjyxeTsiGxogtbILpA5No0HxWHQQ6HJjL3d4PrtcSiAC7IzJE9deFAvu6SU1Pccr0jOJrLH95wp9jR1A2i/U3/e54L/k8uNL8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XOtR3avt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A59D9C4CEC3;
-	Thu, 10 Oct 2024 00:33:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=T8F7+nmpLKv1Nr8MePCe4Xh73c7j3gqr8C7oL/WcG0cuMFN6WaqM4Z25FvGaqEpp2rPzKYqOwu5n+B2ZPVE3M9rgMpje2u92GjxDtRGrfbPI5ryOBVDLxTeC6UMR3fdBfCWD36X6STwj2tmXceR9N6Uykigl/1c/eUZBUCJnagc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bji8pfHx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5F1ACC4CECD;
+	Thu, 10 Oct 2024 00:33:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728520413;
-	bh=IqcTrKiwdbZHhepDa3OiHZSbNeCni10R4bqSzlR+NCc=;
+	s=k20201202; t=1728520414;
+	bh=bLYLoR9zCeCxC6ft6XwdkDhKvXMrAg2eFwimb6+jaOA=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XOtR3avtr5Y27qwqeQNHH1lyP1O1eKGCqx44DvflLLWrh8Og1bdpvmD3/v1kSFNXT
-	 xOJHsMx2HpSrUCtwmbtY5wZEUWjmtlhYFcEqBbbOsppeJ5oSkIhUOSayHjEnSTjyip
-	 y62h7aNdhvNqRuJeVvSNcIvTHnAhnsLUWCsJLMMi8OcKACLDy09hzY0UKuLMY6Sf6V
-	 CIDR5lU+R31E/Sui7GYUhSeYnhpioMKepLa2RRcyh4quLAAAWjmYPLqiTzWoa7gLgj
-	 FVpXYVPGLL+uIQDUbfSSc1GRIZO9Uh01dTCQR7z4n+3DchoQwtkJ0x+Sd7oQTPnhrc
-	 v+XOs0RRJTK7Q==
-Date: Wed, 9 Oct 2024 17:33:31 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>,
-	Juri Lelli <juri.lelli@redhat.com>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	"Jose E. Marchesi" <jose.marchesi@oracle.com>
-Subject: Re: NULL pointer deref when running BPF monitor program (6.11.0-rc1)
-Message-ID: <20241010003331.gsanhvqyl5g2kgiq@treble.attlocal.net>
-References: <CAADnVQL2ChR5hGAXoV11QdMjN2WwHTLizfiAjRQfz3ekoj2iqg@mail.gmail.com>
- <20240816101031.6dd1361b@rorschach.local.home>
- <Zr-ho0ncAk__sZiX@krava>
- <20240816153040.14d36c77@rorschach.local.home>
- <ZsMwyO1Tv6BsOyc-@krava>
- <20240819113747.31d1ae79@gandalf.local.home>
- <ZsRtOzhicxAhkmoN@krava>
- <20240820110507.2ba3d541@gandalf.local.home>
- <Zv11JnaQIlV8BCnB@krava>
- <Zwbqhkd2Hneftw5F@krava>
+	b=Bji8pfHxzyecyqLhzkQTngtgq+xLmXt2zEQ/lei5JrzpcG/u790cq4FMTFG4X2yNm
+	 Enmq1ZQOG0rLafhYVoQukosIOXGZfb6MAN5B01RwjpVLyq/2SaZSAWMsDThUJxO31v
+	 KqV2/j9dq3GaazlrO3V0eCVplouOtg+uRGxEg+/XDMCl/rALjPRhza5IIV/r7Qm0oE
+	 EFMo/T10YUcXrozQnckS39jm0mBoBHx/7dH4CyPFw7F2QXStysc2rJGe8Dza3AjM1a
+	 7aH5ZoYgrk1FoMwbFxwoTnU8DV+NOQGwLycRKyDMXm8CW6bBNTNlVzt0Pl5EDPhpQm
+	 uI9ecrKOUx+PA==
+Date: Wed, 9 Oct 2024 17:33:33 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: linux@treblig.org, peterz@infradead.org, mingo@redhat.com,
+	acme@kernel.org, mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com, jolsa@kernel.org,
+	irogers@google.com, adrian.hunter@intel.com,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Andi Kleen <ak@linux.intel.com>,
+	Thomas Falcon <thomas.falcon@intel.com>
+Subject: Re: [PATCH] perf callchain: Remove unused callchain_branch_counts
+Message-ID: <Zwcg3ULyehsSODxF@google.com>
+References: <20241006012204.373803-1-linux@treblig.org>
+ <ZwYVCTsf8p3v22HQ@google.com>
+ <ba80cbe4-877a-4b5f-a5d6-de16fc1d2d4d@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,34 +63,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <Zwbqhkd2Hneftw5F@krava>
+In-Reply-To: <ba80cbe4-877a-4b5f-a5d6-de16fc1d2d4d@linux.intel.com>
 
-On Wed, Oct 09, 2024 at 10:41:42PM +0200, Jiri Olsa wrote:
-> > AFAICS we'd need to do roughly:
-> >   - for each tracepoint we'd need to interpret one of the functions
-> >     where TP_fast_assign macro gets unwinded:
-> >       perf_trace_##call
-> >       trace_custom_event_raw_event_##call
-> >       trace_event_raw_event_##call
-> >   - we can't tell at this point which argument is kernel object,
-> >     so we'd need to check all arguments (assuming we can get their count)
-> >   - store argument info (if it has null check) into some elf tables and
-> >     use those later in bpf verifier
-> >   - it's all arch specific 
-> > 
-> > on first look it seems hard and fragile (given it's arch specific)
-> > but I might be easily wrong with above.. do you have an idea on how
-> > this could work?
+On Wed, Oct 09, 2024 at 11:27:16AM -0400, Liang, Kan wrote:
 > 
-> Hi Josh,
-> we'd like to have information on which of tracepoint's arguments can be NULL
 > 
-> Steven had an idea that objtool could help with that by doing something like
-> what's described above.. would you have any thoughts on that?
-
-Objtool doesn't know anything about function arguments, I'm not sure how
-this could be done unless I'm missing something.
-
--- 
-Josh
+> On 2024-10-09 1:30 a.m., Namhyung Kim wrote:
+> > On Sun, Oct 06, 2024 at 02:22:04AM +0100, linux@treblig.org wrote:
+> >> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+> >>
+> >> callchain_branch_counts() was added in 2016 by commit
+> >> 3dd029ef9401 ("perf report: Calculate and return the branch flag counting")
+> >> but unused.
+> 
+> It seems the original patchset was not well organized. This function is
+> actually used by the last patch of the series.
+> https://lore.kernel.org/lkml/1477876794-30749-7-git-send-email-yao.jin@linux.intel.com/
+> 
+> But for some reason, the last patch was not merged. I think Andi gave
+> the Acked-by for the whole series. It might be just accidentally missed.
+> 
+> I think the missed feature is still useful.
+> We will redo the test and re-post it.
+ 
+Great, thanks for taking care of this.
+Namhyung
 
