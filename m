@@ -1,86 +1,125 @@
-Return-Path: <linux-kernel+bounces-359494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99E7998C59
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA250998C5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:52:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E47F1F227C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:52:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C1191F23556
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4493F1C1AD1;
-	Thu, 10 Oct 2024 15:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57B191CC15B;
+	Thu, 10 Oct 2024 15:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nZcvYtiL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gc+ajeRr"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A13F62A8E5;
-	Thu, 10 Oct 2024 15:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A78901917FB;
+	Thu, 10 Oct 2024 15:52:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575517; cv=none; b=Xpx1E0IJXYO/DLpTvHLDJjQtYSdRyCYbIbOFowxHpctBfVY10KqnFbkwbBBqNV0B8GusNkyKldluu8Ur0QQl48JnIlfmXhEYwJwFKKFK838Tk0zhuTYOyvLyVY8sN1f3coBLBfQv1QCCK/hLKHK+v2zvE5qJ5lozs00JpFqNl88=
+	t=1728575531; cv=none; b=jHimY0Pr2Icjsidd/uDPtIZ5XY7gUv7CJNZ8i6kyqwkKpVTHGEbBwwg0inITFozhM/ABccT1m3s3SwNG0IWVhRyXwcJ1NcRneUxxPvusa04PoqdaBvGfLNclDgMenVpm1ObKx46fTlKvQ/c/P9frW/hD1YwWVcy1wc64UgGXIwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575517; c=relaxed/simple;
-	bh=9IfOKTFMuHxxcYNIEM0Z3+cvEbDsgPRaUT941c6hTkc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UP9o9s2O9nLTzWIcTK6hhORucGsypdlORm91pxY4ZXg6k5p/DGFW3yaxY3uczCAp7cbiW2VFd/V+h883jlw4RQl8ToWuBgB5iC8AbLM6gH1VqZ81UR7brf0PRZ1NWWzWXq8bTkf8oveai+4UdB3e6JQVpcVb3GUclACfdwGjlPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nZcvYtiL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C80DCC4CEC5;
-	Thu, 10 Oct 2024 15:51:56 +0000 (UTC)
+	s=arc-20240116; t=1728575531; c=relaxed/simple;
+	bh=39KxPMJVKK5wuawUO5u2oXsAmwKoyC+/FTrdHsX0cFs=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=av7tc5/XIeXsbG+zOzIYW2qljv5fCN8vZ0QaevFlMehetRfX0kJZkNQ92Gj4a/nhTRIhoIGhKRTe1XeNo10lvKlp76W9sgIOrOejx1eZ0wSp117RKRIh6leNeCfmKcmdn0P2xLr+oXhQ5gd1SNYiFhDk/0RCqnAp8drutWelSkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gc+ajeRr; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 300B0C4CEC5;
+	Thu, 10 Oct 2024 15:52:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728575517;
-	bh=9IfOKTFMuHxxcYNIEM0Z3+cvEbDsgPRaUT941c6hTkc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nZcvYtiLt9Dk8SRVATcq/NJvXvSV8USShGL31Hay4BVv7GfD604Khjhe0i2UwuDRF
-	 R8dV7Vr67vmVYKju8rq07oKik2a6hAlsii0h89CI2173qfIc1cgOR8S8ISIiMnjiYz
-	 qus3SSvUiHje/OBpSdOl0Bxxc0b2yxYdRNsnJzMc+BRJdtXupwPur9Qal9tY/7W02N
-	 KfvH2a8Xwg23OClXuluyvYsebSrjfTBBR3r9Hby5QXF4NalG7tR8GzgWtM9sdFng+a
-	 9YzVXtRhI3AytH/miwerDyJpEBtwtiE033NUXAR+Czq+7MhDO7HjJk1PDTM5lQU689
-	 +TWUYkju919Xw==
-From: Namhyung Kim <namhyung@kernel.org>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	acme@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	kan.liang@linux.intel.com,
-	linux@treblig.org
-Cc: linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] perf tools: Remove unused color_fwrite_lines
-Date: Thu, 10 Oct 2024 08:51:54 -0700
-Message-ID: <172857548034.1133000.14066165819952517246.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc0.187.ge670bccf7e-goog
-In-Reply-To: <20241009003938.254936-1-linux@treblig.org>
-References: <20241009003938.254936-1-linux@treblig.org>
+	s=k20201202; t=1728575531;
+	bh=39KxPMJVKK5wuawUO5u2oXsAmwKoyC+/FTrdHsX0cFs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Gc+ajeRrIx4ycdWxBYWFVFEoR2k6Y0wUM+i91An4qnUFTN+sDwp1JlmiKbpWnASxg
+	 TeWBaz0FHNdzgTCOxKq/KBC1WjpVQldt/2+y/2zdSbO96B5nh5vqKyQUfGNa2gL9UN
+	 8JnNHQV0FQYNAgoovJrv5NOiQlpQUzu7ua/4p26GqHOdXF+8M8SWBzG0jxQi7yW9bY
+	 eiqbKm187ZL4wM7sEMx8P201eoASdyWrV2agfQxHTlAXc42GmcPnpM8CRIIlRBFVGd
+	 P7SahYeFichRRJuZPKHsTcM/qbatUdYlQ7XDlYULsiuf3ja7cxlANqFrfAi1EaihaZ
+	 jGZ2VJ2kcsymg==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1syvSS-002FWy-Na;
+	Thu, 10 Oct 2024 16:52:08 +0100
+Date: Thu, 10 Oct 2024 16:52:07 +0100
+Message-ID: <86ldyw5520.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: <lpieralisi@kernel.org>,
+	<guohanjun@huawei.com>,
+	<sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>,
+	<rafael@kernel.org>,
+	<lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ACPI: GTDT: Tighten the check for the first platform timer entry
+In-Reply-To: <20241010144703.113728-1-zhengzengkai@huawei.com>
+References: <20241010144703.113728-1-zhengzengkai@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: zhengzengkai@huawei.com, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org, lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-
-On Wed, 09 Oct 2024 01:39:38 +0100, linux@treblig.org wrote:
-> color_fwrite_lines() was added by 2009's commit
-> 8fc0321f1ad0 ("perf_counter tools: Add color terminal output support")
+On Thu, 10 Oct 2024 15:47:03 +0100,
+Zheng Zengkai <zhengzengkai@huawei.com> wrote:
 > 
-> but has never been used.
+> As suggested by Marc and Lorenzo, first we need to check whether
+> the platform_timer pointer is within gtdt bounds (< gtdt_end) before
+> de-referencing what it points at to detect the (first) platform
+> timer entry length and check that next platform_timer pointer is
+> within gtdt_end too. Now we do that only in next_platform_timer()
+> for subsequent platform timers.
 > 
-> Remove it.
+> So add check against table length (gtdt_end) for the first platform
+> timer entry.
 > 
-> [...]
+> Suggested-by: Marc Zyngier <maz@kernel.org>
+> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> ---
+>  drivers/acpi/arm64/gtdt.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> index c0e77c1c8e09..f249af1ed1cd 100644
+> --- a/drivers/acpi/arm64/gtdt.c
+> +++ b/drivers/acpi/arm64/gtdt.c
+> @@ -177,7 +177,8 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+>  	}
+>  
+>  	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+> +	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt) ||
+> +			platform_timer >= acpi_gtdt_desc.gtdt_end) {
+>  		pr_err(FW_BUG "invalid timer data.\n");
+>  		return -EINVAL;
+>  	}
 
-Applied to perf-tools-next, thanks!
+You  are  only  checking  the  base  pointer  for  the  platform_timer
+array. This doesn't say anything about the *size* of that array (or at
+least its first element), and whether that actually fits in the table.
 
-Best regards,
-Namhyung
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
