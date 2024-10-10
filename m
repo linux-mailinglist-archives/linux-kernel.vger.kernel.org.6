@@ -1,118 +1,176 @@
-Return-Path: <linux-kernel+bounces-358471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF36A997FC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:30:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BD0997FBB
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:29:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0824F2808F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:30:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DB1F1C23A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684D81FCC76;
-	Thu, 10 Oct 2024 07:45:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EqK782ub"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E09131FB3E6;
+	Thu, 10 Oct 2024 07:44:35 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 513051FCC70
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03AD81C5796;
+	Thu, 10 Oct 2024 07:44:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728546299; cv=none; b=m7B7R7zEom601Y3APJ7dLl3djWffebvFZOx++bzod4sK1uu/1h8f2u8NxodCH+28EwSNTBq0FbS5sNdux1GqUFdd83LFHbNkqlsRiMrhY25W9HKBpCnTAWOc1BFccZQXmzpN65wKqq9dbvyQ453vfrbtyy28LEuvKhk9qUODDic=
+	t=1728546275; cv=none; b=rvAaTSNq9JtC4XNSydIN2NPd6V5IkYaZ7xBHxdwr0OQ9aSIbngAI8vONRZSHM2N5/CK8VcHHzMGJTV+zyg8zT89GuohJt3hDBdjLCR/2r0sjGiKvRq9kTL7Kk24PhNa5RBnM9oBvosjw5IIc6MIrYxrWFu68k/ue5nutprQHcog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728546299; c=relaxed/simple;
-	bh=45hp/XUBOcyovIOArO++WoEHXue+KGCZoGUQk99sOeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=eNN2JhilSTjjNI3cL+x9uD5BtPMLScBWOe6r8LfkD9anjqWxuZJQgnEhi+oUgTvKXP/suskQdvO3oJPS+oYS3k0UENl+1snWxRhuR40HO+XDEER/GCpPTydx/sPcMPnI1rK9NsJ9HcrE/53C2RyjXIm4DISpXqrdRLVDzmIgJnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EqK782ub; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728546298; x=1760082298;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=45hp/XUBOcyovIOArO++WoEHXue+KGCZoGUQk99sOeI=;
-  b=EqK782ubL/gHO+Kb/7sYLS8EsATJ7CRzB3pfxaa/Lpj8wg3y/s0hPplm
-   QN9VLQO8Ip8hEHWS35Q2YCbe0wjWX/OKkNO76WTXDbWdDvmqKoUXEX3CU
-   LqZY018XUEU0slgHOTA3qELIQ3O1RPqzeS/+8UatjlNW642qF6Utnt2+4
-   SOgNGzVsALQmN6aaG+V/20TTpG5XtWnoZ0onW3It6A0xMq8T5sgrdl5aa
-   +6h0n96YXTzWPieW9EF43DF8BuKyo4haQMumIAlDWI7/lTN/L0gUI1QTt
-   six6ohXfPAuxkIlSjXaip2o6Yq6EwpFLS13q27dZjgv9zWRjXg9gCNi7Y
-   g==;
-X-CSE-ConnectionGUID: WbugL1ZmRdyvvETIkLRtlA==
-X-CSE-MsgGUID: A21Db2CuQP6LNEIpjcdG3A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="31588364"
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="31588364"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 00:44:57 -0700
-X-CSE-ConnectionGUID: oHLY7ZIuS2GeOMzjoohMZg==
-X-CSE-MsgGUID: tnt2BWOjRl2xRSVELtdcww==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="76428658"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 10 Oct 2024 00:44:55 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1synqu-000ALv-37;
-	Thu, 10 Oct 2024 07:44:52 +0000
-Date: Thu, 10 Oct 2024 15:44:05 +0800
-From: kernel test robot <lkp@intel.com>
-To: Guo Ren <guoren@linux.alibaba.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Palmer Dabbelt <palmer@rivosinc.com>
-Subject: arch/riscv/kernel/irq.c:49:1: sparse: sparse: symbol
- '__pcpu_scope_irq_stack' was not declared. Should it be static?
-Message-ID: <202410101516.J0ChPNHa-lkp@intel.com>
+	s=arc-20240116; t=1728546275; c=relaxed/simple;
+	bh=xW9Aem4bT3xdvCkS27khxSn+XWTR/JYMW/swhyA+2fc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=XqYWSU9YXC6zE9Rr/CW09j+05R6LlHRl19bgS+Xx95tzQuTb146O/Efrv2yZM9RqJU5cpM8ZYLhv7hUsZh365veCgvoQni2Ukut1VtBm9lxMuSY6YMyR2gPvlJhRgvzpfAJ8AmkZc78EMjChAAQD4dgLzlBlv5QhUocqvS9Ocmg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XPMF63p3Zz2DcwW;
+	Thu, 10 Oct 2024 15:43:22 +0800 (CST)
+Received: from dggpeml500002.china.huawei.com (unknown [7.185.36.158])
+	by mail.maildlp.com (Postfix) with ESMTPS id E2C611400D2;
+	Thu, 10 Oct 2024 15:44:28 +0800 (CST)
+Received: from ubuntu.huawei.com (10.69.192.56) by
+ dggpeml500002.china.huawei.com (7.185.36.158) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 10 Oct 2024 15:44:28 +0800
+From: Junhao He <hejunhao3@huawei.com>
+To: <irogers@google.com>, <peterz@infradead.org>, <mingo@redhat.com>,
+	<acme@kernel.org>, <namhyung@kernel.org>, <mark.rutland@arm.com>,
+	<alexander.shishkin@linux.intel.com>, <jolsa@kernel.org>,
+	<adrian.hunter@intel.com>, <kan.liang@linux.intel.com>
+CC: <linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<jonathan.cameron@huawei.com>, <yangyicong@huawei.com>,
+	<linuxarm@huawei.com>, <prime.zeng@hisilicon.com>, <hejunhao3@huawei.com>
+Subject: [PATCH v2] perf metrics: Support parsing metrics if platforms only have json table of system PMU
+Date: Thu, 10 Oct 2024 15:44:30 +0800
+Message-ID: <20241010074430.16685-1-hejunhao3@huawei.com>
+X-Mailer: git-send-email 2.33.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ dggpeml500002.china.huawei.com (7.185.36.158)
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   d3d1556696c1a993eec54ac585fe5bf677e07474
-commit: 163e76cc6ef43b7a5e9b6e245a6d6667c9d9b4a7 riscv: stack: Support HAVE_IRQ_EXIT_ON_IRQ_STACK
-date:   1 year, 4 months ago
-config: riscv-randconfig-r122-20241010 (https://download.01.org/0day-ci/archive/20241010/202410101516.J0ChPNHa-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
-reproduce: (https://download.01.org/0day-ci/archive/20241010/202410101516.J0ChPNHa-lkp@intel.com/reproduce)
+The system PMUs don't depend on the certain CPUs and we don't need a CPUID
+to metric table mapping to match the json event for generating the metric
+table. For example HiSilicon HIP09 only have json events table of system
+PMUs in the "sys/" subdirectory.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410101516.J0ChPNHa-lkp@intel.com/
+Currently for this case the struct of system metric table
+"pmu_metrics__hisilicon_hip09_sys" generating works fine and metrics
+display as expected by using `perf list`. But `perf stat` doesn't work
+for such metrics.
 
-sparse warnings: (new ones prefixed by >>)
->> arch/riscv/kernel/irq.c:49:1: sparse: sparse: symbol '__pcpu_scope_irq_stack' was not declared. Should it be static?
+  $ perf list metric
+  Metrics:
+    cpa_p0_avg_bw
+         [Average bandwidth of CPA Port 0]
+    cpa_p1_avg_bw
+         [Average bandwidth of CPA Port 1]
+  $ perf stat -M cpa_p0_avg_bw --timeout 1000 --> No error messages output
+  $ echo $?
+  234
 
-vim +/__pcpu_scope_irq_stack +49 arch/riscv/kernel/irq.c
+The metricgroup__parse_groups() expects to find an cpu metric table, but
+the hisilicon/hip09 doesn't uses CPUID to map json events and metrics, so
+pmu_metrics_table__find() will return NULL, than the cmd run failed.
 
-    35	
-    36	#ifdef CONFIG_VMAP_STACK
-    37	static void init_irq_stacks(void)
-    38	{
-    39		int cpu;
-    40		ulong *p;
-    41	
-    42		for_each_possible_cpu(cpu) {
-    43			p = arch_alloc_vmap_stack(IRQ_STACK_SIZE, cpu_to_node(cpu));
-    44			per_cpu(irq_stack_ptr, cpu) = p;
-    45		}
-    46	}
-    47	#else
-    48	/* irq stack only needs to be 16 byte aligned - not IRQ_STACK_SIZE aligned. */
-  > 49	DEFINE_PER_CPU_ALIGNED(ulong [IRQ_STACK_SIZE/sizeof(ulong)], irq_stack);
-    50	
+But in metricgroup__add_metric(), the function parse for each sys metric
+and add it to metric_list, which also will get an valid sys metric table.
+So, we can ignore the NULL result of pmu_metrics_table__find() and to use
+the sys metric table.
 
+metricgroup__parse_groups
+ -> parse_groups
+     -> metricgroup__add_metric_list
+         -> metricgroup__add_metric
+	     -> pmu_for_each_sys_metric   --> parse for each sys metric
+
+Testing:
+  $ perf stat -M cpa_p0_avg_bw --timeout 1000
+
+ Performance counter stats for 'system wide':
+
+     4,004,863,602      cpa_cycles                #     0.00 cpa_p0_avg_bw
+                 0      cpa_p0_wr_dat
+                 0      cpa_p0_rd_dat_64b
+                 0      cpa_p0_rd_dat_32b
+
+       1.001306160 seconds time elapsed
+
+Signed-off-by: Junhao He <hejunhao3@huawei.com>
+Tested-by: Yicong Yang <yangyicong@hisilicon.com>
+---
+v1 --> v2:
+ -Add some comments to explain the table is null.
+ -Modify the patch commit.
+ -Add Yicong Test-by.
+v1:https://lore.kernel.org/all/20240807040002.47119-1-hejunhao3@huawei.com/
+---
+ tools/perf/util/metricgroup.c | 12 ++++++++----
+ 1 file changed, 8 insertions(+), 4 deletions(-)
+
+diff --git a/tools/perf/util/metricgroup.c b/tools/perf/util/metricgroup.c
+index 69f6a46402c3..cb428eabd485 100644
+--- a/tools/perf/util/metricgroup.c
++++ b/tools/perf/util/metricgroup.c
+@@ -1123,7 +1123,7 @@ static int metricgroup__add_metric_sys_event_iter(const struct pmu_metric *pm,
+ 
+ 	ret = add_metric(d->metric_list, pm, d->modifier, d->metric_no_group,
+ 			 d->metric_no_threshold, d->user_requested_cpu_list,
+-			 d->system_wide, d->root_metric, d->visited, d->table);
++			 d->system_wide, d->root_metric, d->visited, d->table ?: table);
+ 	if (ret)
+ 		goto out;
+ 
+@@ -1226,7 +1226,8 @@ static int metricgroup__add_metric_callback(const struct pmu_metric *pm,
+  * @system_wide: Are events for all processes recorded.
+  * @metric_list: The list that the metric or metric group are added to.
+  * @table: The table that is searched for metrics, most commonly the table for the
+- *       architecture perf is running upon.
++ *       architecture perf is running upon. This value could be NULL if no core
++ *       metrics matches the architecture and we'll try to use the table of system PMUs.
+  */
+ static int metricgroup__add_metric(const char *pmu, const char *metric_name, const char *modifier,
+ 				   bool metric_no_group, bool metric_no_threshold,
+@@ -1239,7 +1240,8 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
+ 	int ret;
+ 	bool has_match = false;
+ 
+-	{
++	/* Add core metrics to the metric list */
++	if (table) {
+ 		struct metricgroup__add_metric_data data = {
+ 			.list = &list,
+ 			.pmu = pmu,
+@@ -1263,6 +1265,7 @@ static int metricgroup__add_metric(const char *pmu, const char *metric_name, con
+ 		has_match = data.has_match;
+ 	}
+ 	{
++		/* Parse metrics table of system PMUs */
+ 		struct metricgroup_iter_data data = {
+ 			.fn = metricgroup__add_metric_sys_event_iter,
+ 			.data = (void *) &(struct metricgroup_add_iter_data) {
+@@ -1697,7 +1700,8 @@ int metricgroup__parse_groups(struct evlist *perf_evlist,
+ 	const struct pmu_metrics_table *table = pmu_metrics_table__find();
+ 
+ 	if (!table)
+-		return -EINVAL;
++		pr_debug("The core metric table not found, continue to parse system metric table\n");
++
+ 	if (hardware_aware_grouping)
+ 		pr_debug("Use hardware aware grouping instead of traditional metric grouping method\n");
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.33.0
+
 
