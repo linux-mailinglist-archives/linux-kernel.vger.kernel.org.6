@@ -1,131 +1,92 @@
-Return-Path: <linux-kernel+bounces-359488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85322998C49
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:49:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83721998C4C
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39BC11F23B8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380C81F22F6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:49:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCD931CCB26;
-	Thu, 10 Oct 2024 15:49:27 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAFF1C1AD1;
+	Thu, 10 Oct 2024 15:49:51 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C736FE16;
-	Thu, 10 Oct 2024 15:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014121917C0
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 15:49:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728575367; cv=none; b=SEXD7r3Gi+np2N+smYlVaiP1mOJaOUXNgY53c45g8yPfbzJ71slSr9HkUvDrYisO59gz6XpHAiO55KOnPW9i8yb7ggizR6eF+LVPwQ0gzD0F2XnrP66c6kBPWxqqoH7C4OVo5jJA1zu2Rzx/V6v1Ws+0cVcnLnvSBMuBp4pT52g=
+	t=1728575390; cv=none; b=lfE+3jx4gaxzw2d+ivzdDk8CeA+EQarcXXnhSQzHYdU3QJ2SRItz01/EPFnTu40pqcO+z6PVB7PAeDtSjeX1Wvn2XfXerujhLRJVKeR1Ae+CMnv7ponDU0CBvoetUfs0zXiZkS0bdRaJsu3vV21f6GouBSeY89k4dJ86vWdcQi8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728575367; c=relaxed/simple;
-	bh=4if/+AC5zfdaW9hX01DiAjIH7LjMn6PrGXqZ+pXc1v8=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EmiT/x03zyBQhpn7bA3At5J69vgSH2THUvIHJRKNXUu/GBAZOUzAzl/vUYgSe3y8wGpn2qHAh5LHXObMbaTXAET3E/NyGgVRdztf6QxW5kfCWX6uQ83RUDwfnyGUfhWbLr52h5nCQgYvvmmzLaz1MS1npO98LoyvUrxAkQ1z4Hc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPZ0K5GkZz6J7DR;
-	Thu, 10 Oct 2024 23:48:01 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 0D3CD140A36;
-	Thu, 10 Oct 2024 23:49:23 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
- 2024 17:49:22 +0200
-Date: Thu, 10 Oct 2024 16:49:20 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Ira Weiny <ira.weiny@intel.com>
-CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
- Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
- Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
-	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
-	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v4 27/28] tools/testing/cxl: Make event logs dynamic
-Message-ID: <20241010164920.000017d8@Huawei.com>
-In-Reply-To: <20241007-dcd-type2-upstream-v4-27-c261ee6eeded@intel.com>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
-	<20241007-dcd-type2-upstream-v4-27-c261ee6eeded@intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728575390; c=relaxed/simple;
+	bh=vv//5ekSEcWr5P3Sp+lQmrBP0oOlGOyYRdbA6C87hfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fPic4Ro+gXypdPOb1zeNcKajEYbkeej7azVLPmj7X8WCDBV/9CIAWn3QCngGI737iImInJNhglg3lwYg/XeLEfesVMxxzr/W1e0aQ0I36v3zqaO52OKeerVh5akU4Bx4vRvxPZHPKV+bslouNdYMo/qyGjh3/YY2eqwBxyheZAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: from fw by Chamillionaire.breakpoint.cc with local (Exim 4.92)
+	(envelope-from <fw@strlen.de>)
+	id 1syvQ1-0002HR-RT; Thu, 10 Oct 2024 17:49:37 +0200
+Date: Thu, 10 Oct 2024 17:49:37 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Eric Dumazet <edumazet@google.com>
+Cc: Florian Westphal <fw@strlen.de>, "Lai, Yi" <yi1.lai@linux.intel.com>,
+	Pablo Neira Ayuso <pablo@netfilter.org>,
+	syzkaller-bugs@googlegroups.com, linux-kernel@vger.kernel.org,
+	yi1.lai@intel.com
+Subject: Re: [Syzkaller & bisect] There is KASAN: slab-use-after-free Read in
+ __nf_unregister_net_hook in v6.12-rc1
+Message-ID: <20241010154937.GA8322@breakpoint.cc>
+References: <ZweN3SiUk4bK9N7u@ly-workstation>
+ <CANn89iKNZ4AZVYfxzhGWnx82T44_7tw5P63-TE0-GUn+sTRkZg@mail.gmail.com>
+ <CANn89iKvrv+-yMRwmyb_bjus6sN1hOq+QmOwvpCFU9G0UzkWNw@mail.gmail.com>
+ <20241010120219.GA30424@breakpoint.cc>
+ <CANn89iK0a_h2KdGekLdvYKrxOyzwW=L2u33QscDBKH1zKwTdQg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500002.china.huawei.com (7.191.160.78) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89iK0a_h2KdGekLdvYKrxOyzwW=L2u33QscDBKH1zKwTdQg@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Mon, 07 Oct 2024 18:16:33 -0500
-Ira Weiny <ira.weiny@intel.com> wrote:
-
-> The event logs test was created as static arrays as an easy way to mock
-> events.  Dynamic Capacity Device (DCD) test support requires events be
-> generated dynamically when extents are created or destroyed.
+Eric Dumazet <edumazet@google.com> wrote:
+> On Thu, Oct 10, 2024 at 2:02 PM Florian Westphal <fw@strlen.de> wrote:
+> >
+> > Eric Dumazet <edumazet@google.com> wrote:
+> > > On Thu, Oct 10, 2024 at 10:58 AM Eric Dumazet <edumazet@google.com> wrote:
+> > > >
+> > > > On Thu, Oct 10, 2024 at 10:19 AM Lai, Yi <yi1.lai@linux.intel.com> wrote:
+> > > > >
+> > > Florian, Pablo :
+> > >
+> > > It seems that bpf was able to defer the __nf_unregister_net_hook()
+> > > after exit()/close() time.
+> >
+> > Thanks for the analysis, I will send a patch later today.
 > 
-> The current event log test has specific checks for the number of events
-> seen including log overflow.
-> 
-> Modify mock event logs to be dynamically allocated.  Adjust array size
-> and mock event entry data to match the output expected by the existing
-> event test.
-> 
-> Use the static event data to create the dynamic events in the new logs
-> without inventing complex event injection for the previous tests.
-> 
-> Simplify log processing by using the event log array index as the
-> handle.  Add a lock to manage concurrency required when user space is
-> allowed to control DCD extents
-> 
-> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
-Might be worth breaking up into refactor (the static cases) and
-then new stuff.
+> Wow, this was fast, thanks Florian !
 
-Otherwise one trivial comment inline.
+I spoke too soon, I cannot get the rerpdocuer to work, it fails with:
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+bpf(BPF_PROG_LOAD, {prog_type=BPF_PROG_TYPE_NETFILTER, insn_cnt=4, insns=0x20000200, license="syzkaller", log_level=0, log_size=0, log_buf=NULL, kern_version=KERNEL_VERSION(0, 0, 0), prog_flags=0, prog_name="", prog_ifindex=0, expected_attach_type=BPF_NETFILTER, prog_btf_fd=-1, func_info_rec_size=0, func_info=NULL, func_info_cnt=0, line_info_rec_size=0, line_info=NULL, line_info_cnt=0, attach_btf_id=0, attach_prog_fd=0, fd_array=NULL}, 144) = -1 EINVAL (Invalid argument)
+bpf(BPF_LINK_CREATE, {link_create={prog_fd=-1, target_fd=0, attach_type=BPF_NETFILTER, flags=0}, ...}, 64) = -1 EBADF (Bad file descriptor)
+...
+Killed
+uname -a
+Linux virtme-ng 6.12.0-rc1-kvm-virtme #1 SMP PREEMPT_DYNAMIC Thu Oct 10 17:25:40 CEST 2024 x86_64 GNU/Linux
 
-> 
-> ---
-> Changes:
-> [iweiny: rebase to 6.12]
-> ---
->  tools/testing/cxl/test/mem.c | 268 ++++++++++++++++++++++++++-----------------
->  1 file changed, 162 insertions(+), 106 deletions(-)
-> 
-> diff --git a/tools/testing/cxl/test/mem.c b/tools/testing/cxl/test/mem.c
-> index ccdd6a504222..5e453aa2819b 100644
-> --- a/tools/testing/cxl/test/mem.c
-> +++ b/tools/testing/cxl/test/mem.c
-> @@ -126,18 +126,26 @@ static struct {
+... with vng --build --config kconfig_origin on
+9852d85ec9d492ebef56dc5f229416c925758edc (== 6.12.0-rc1).
 
->  /* Handle can never be 0 use 1 based indexing for handle */
-> -static u16 event_get_clear_handle(struct mock_event_log *log)
-> +static u16 event_inc_handle(u16 handle)
->  {
-> -	return log->clear_idx + 1;
-> +	handle = (handle + 1) % CXL_TEST_EVENT_ARRAY_SIZE;
-> +	if (!handle)
-> +		handle = handle + 1;
-
-That's a little confusing for me
-
-	if (handle == 0)
-		handle = 1;
-
-> +	return handle;
->  }
-
-
+As Erics analysis looks correct to me I will send a patch anyway, but I
+can't say if it resolves the problem or not.
 
