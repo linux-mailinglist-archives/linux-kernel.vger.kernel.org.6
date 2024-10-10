@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-358115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13621997A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:05:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B808997A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:07:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CBD1628494D
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:05:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4F281F23331
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 02:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8320940C03;
-	Thu, 10 Oct 2024 02:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eqWtSqJK"
-Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 238104CB2B;
+	Thu, 10 Oct 2024 02:06:22 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8766A14293;
-	Thu, 10 Oct 2024 02:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF6273CF58
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 02:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728525934; cv=none; b=dABL507twSSYrDjrRcGuvTzKhFVt+hlc6JHbmwD3VFmrFVKQlU/tGLRpE5n7ieEITnjLwhhbCdFrYfJPAXvDHukQ9CF41E9eYtrQMFAU5jGYLODG8mtQHo3IYbDvoOzoOYb/9nm2GzwRM5usZ2yaSRvnj255uqIa1ycx6ZLYd9c=
+	t=1728525981; cv=none; b=WtN71mUN+2Tj3gXIWnrdHDMQXBD8unaPod0EQ5XrvHJ+xU+JqXzZODrK3vyPo1vG2alu585AUphk40TgZGtEMqSuXSgc2tWrEIxcHd+lW+zQaCOO7krXhJYCmm2IUQX8tUcJWuddPD2loWTuL/bRuUe/P5IO3ZfJSNdhJZ5SOd0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728525934; c=relaxed/simple;
-	bh=oP5QYm/70vfqOtPdsGr2+LBh3R8qeM5xVe8DOd5ZiD8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OF2Tcmjlb4r8Z9/2e1I2R31Ay/hHHim5OBtrVGVwPoQy0vdkA/p2bcpCNRsDd8Fe31DTJeyWkAYREV0zhaQwSl5nSAu16mu/mShJeCH6g0XLdBaaxAtUFCB/SRZX0l97mmYjtHYFUUcfqtoOU/Lc10qj2ZUXB66/vk547tjIv1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eqWtSqJK; arc=none smtp.client-ip=209.85.219.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e2904ce7e14so432455276.0;
-        Wed, 09 Oct 2024 19:05:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728525931; x=1729130731; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NMrS54MxodS3n9OqxrG5rU5JYoDqHS/hBg9ei6ZcNfA=;
-        b=eqWtSqJKJKhYnrhr8TRMf6nMyW2YH8KE7rRFICtta40hpiNwk74YoahGaWBTPxU/L1
-         GPQgaTsWqad12UAWnJDafzdBI53ySaTVfPMOhalCkyHXjzzShsId/GLtDzZDQDkhocES
-         TeDC8QLZ/mUba91eV8Ip3nBatF9MOQvBXDUm49e2YzvTVvmkf1qwZvHek/kZijBGN3vS
-         hlaOdtbIonjC20QQwGtI85lQSv5yGQFvPVCt0durzKyfbwZzygwYjQZI7Q7kwxqCzv/9
-         O3lKD/PE5rMnAiTNbmJiaV74Jfqtzy9FaBW9OB0fzK9ljEUDmG9F0StKHv7clL05JKt6
-         HWCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728525931; x=1729130731;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NMrS54MxodS3n9OqxrG5rU5JYoDqHS/hBg9ei6ZcNfA=;
-        b=Xd+yeeeanvQ2pQhD4UokANsDMH46f7ScI3zzzRMHwSaBCkMLL365OvNBGE7iJg7kZ3
-         LcWICTVAIoNKSJbCpiouv3ABGy1vZI5BavxNDPP47p3RuZ5REYPo7ByDgoYECk82Prkg
-         363B2Lm7rGAmOfi1fnKHcxDNnyYVKxHVhiuqoKtSPlnMiDQW0tThgJFcO6wEKFUYQInK
-         sb/eVAICjpVANNXAEPT/VNVACnd0d8vgRHtjV/15PwmcU/BX8yHC7jCdlU8gWvL0R4H1
-         bs7svn/IPbP5w1V7spUbtkE6bVEBJRI20/pIr17RnD204PfnNSGn4SjHgyaeKPjTA57d
-         kmgA==
-X-Forwarded-Encrypted: i=1; AJvYcCWQYvQa14NSo24w1GX3/hkRxca5ia1ts18HsAd3mms6WGFUi2HV8CSZgje8XIdprb8vWf4XY7xk@vger.kernel.org, AJvYcCXwWKG2guyR16gJ7FzZAyPbVqg8I7YGP72y6dtvZrrMmMUN93oWMthwmq2Ell72CC57Ol8nHTAmnBOQrzc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGOrVqtvhW5LENIklMUApqZg8+jQwsmQ82Yg1cqhg7Ero4EaRG
-	mluMZB+ItBKk1F1bztx7IzeQ+C/jgxadrbGl+rw1C9m1dOLeBtSrFytjWDlpCs7dF/1MJWOM51N
-	eG8v8YIFNCg9ncxGRguR/lXY1C/Y=
-X-Google-Smtp-Source: AGHT+IGx8Yz9D2oYZMxrivrhT/RrPksLeeIeW6BZDSTBHLzlqNKOeKwrgDz6WnDPsSv84d+PwSDXh+jx6w3kYpV0+lc=
-X-Received: by 2002:a05:6902:2310:b0:e29:c8f:14ba with SMTP id
- 3f1490d57ef6-e290c8f16e2mr1156535276.5.1728525931383; Wed, 09 Oct 2024
- 19:05:31 -0700 (PDT)
+	s=arc-20240116; t=1728525981; c=relaxed/simple;
+	bh=1pKOvqjkmWg3Iphfkje73m4O8tgM8IjJroQCpRpBEWY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=bkLTHaNULA5/MWUZ+GcJrSGkYMR+uOroiTug4gLi3mdgpuo81SC4kOUcPV2vig1S9rgjJYdAj5UJw3NAzH329+dMq8wDSOdgJk+a281q/inpkTOM6HKSRQ+6WqmibJooIXNnNoGt59/F4kktZKSuIo6RklNayyclegY1wQVaIlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPCmC43s3z26gbb;
+	Thu, 10 Oct 2024 10:06:19 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id F17B5140120;
+	Thu, 10 Oct 2024 10:06:14 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 10:06:14 +0800
+Message-ID: <7e29e022-eae6-4a93-f7f1-841febab0988@huawei.com>
+Date: Thu, 10 Oct 2024 10:06:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008142300.236781-1-dongml2@chinatelecom.cn>
- <20241008142300.236781-9-dongml2@chinatelecom.cn> <ZwV0cjdg2x67URMx@debian>
- <CADxym3ZDkjuu9TJQ_vmbky75T+bn32XMrMhQRi=rVtxgRXC_Zw@mail.gmail.com> <CAL+tcoAwJCsACt=Cc6HtzCFgBq_TUhmJq7dSuYnbFF5XGETQ_Q@mail.gmail.com>
-In-Reply-To: <CAL+tcoAwJCsACt=Cc6HtzCFgBq_TUhmJq7dSuYnbFF5XGETQ_Q@mail.gmail.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Thu, 10 Oct 2024 10:06:13 +0800
-Message-ID: <CADxym3Y4p6kH=UGA7=bq6LKxBzLTpEPhUuJrd9FUqgL7_7HVJg@mail.gmail.com>
-Subject: Re: [PATCH net-next v6 08/12] net: vxlan: use kfree_skb_reason() in vxlan_xmit()
-To: Jason Xing <kerneljasonxing@gmail.com>
-Cc: Guillaume Nault <gnault@redhat.com>, idosch@nvidia.com, kuba@kernel.org, 
-	aleksander.lobakin@intel.com, horms@kernel.org, davem@davemloft.net, 
-	edumazet@google.com, pabeni@redhat.com, dsahern@kernel.org, 
-	dongml2@chinatelecom.cn, amcohen@nvidia.com, bpoirier@nvidia.com, 
-	b.galvani@gmail.com, razor@blackwall.org, petrm@nvidia.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH] net/9p/usbg: Fix build error
+Content-Language: en-US
+To: Greg KH <gregkh@linuxfoundation.org>
+CC: <ericvh@kernel.org>, <lucho@ionkov.net>, <asmadeus@codewreck.org>,
+	<linux_oss@crudebyte.com>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+	<aou@eecs.berkeley.edu>, <m.grzeschik@pengutronix.de>,
+	<v9fs@lists.linux.dev>, <linux-kernel@vger.kernel.org>,
+	<linux-riscv@lists.infradead.org>
+References: <20240930081520.2371424-1-ruanjinjie@huawei.com>
+ <2ff5834d-cb88-39f5-168d-8e179f152757@huawei.com>
+ <2024100910-distrust-cornhusk-a8bd@gregkh>
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+In-Reply-To: <2024100910-distrust-cornhusk-a8bd@gregkh>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-On Wed, Oct 9, 2024 at 10:29=E2=80=AFAM Jason Xing <kerneljasonxing@gmail.c=
-om> wrote:
->
-> On Wed, Oct 9, 2024 at 9:37=E2=80=AFAM Menglong Dong <menglong8.dong@gmai=
-l.com> wrote:
-> >
-> > On Wed, Oct 9, 2024 at 2:05=E2=80=AFAM Guillaume Nault <gnault@redhat.c=
-om> wrote:
-> > >
-> > > On Tue, Oct 08, 2024 at 10:22:56PM +0800, Menglong Dong wrote:
-> > > > Replace kfree_skb() with kfree_skb_reason() in vxlan_xmit(). Follow=
-ing
-> > > > new skb drop reasons are introduced for vxlan:
-> > > >
-> > > > /* no remote found for xmit */
-> > > > SKB_DROP_REASON_VXLAN_NO_REMOTE
-> > > > /* packet without necessary metadata reached a device which is in
-> > > >  * "eternal" mode
-> > >
-> > > That should be "external" mode (with an "x").
-> > >
-> > > > +     /**
-> > > > +      * @SKB_DROP_REASON_TUNNEL_TXINFO: packet without necessary m=
-etadata
-> > > > +      * reached a device which is in "eternal" mode.
-> > >
-> > > Here too.
-> > >
-> >
-> > Oh, my eyes!
-> >
-> > I checked this document one by one, and I'm sure there
-> > are no more typos besides this one.
-> >
->
-> You can try "codespell xxx.patch" to avoid typos easily before
-> submitting patches.
 
-That's a good idea! Thank you, xing~
+
+On 2024/10/9 15:55, Greg KH wrote:
+> On Wed, Oct 09, 2024 at 03:49:22PM +0800, Jinjie Ruan wrote:
+>> Ping.
+>>
+>> On 2024/9/30 16:15, Jinjie Ruan wrote:
+>>> When CONFIG_NET_9P_USBG=y but CONFIG_USB_LIBCOMPOSITE=m and
+>>> CONFIG_CONFIGFS_FS=m, the following build error occurs:
+>>>
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_free_func':
+>>> 	trans_usbg.c:(.text+0x124): undefined reference to `usb_free_all_descriptors'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_rx_complete':
+>>> 	trans_usbg.c:(.text+0x2d8): undefined reference to `usb_interface_id'
+>>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x2f6): undefined reference to `usb_string_id'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_func_bind':
+>>> 	trans_usbg.c:(.text+0x31c): undefined reference to `usb_ep_autoconfig'
+>>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x336): undefined reference to `usb_ep_autoconfig'
+>>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x378): undefined reference to `usb_assign_descriptors'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `f_usb9pfs_opts_buflen_store':
+>>> 	trans_usbg.c:(.text+0x49e): undefined reference to `usb_put_function_instance'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc_instance':
+>>> 	trans_usbg.c:(.text+0x5fe): undefined reference to `config_group_init_type_name'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_alloc':
+>>> 	trans_usbg.c:(.text+0x7aa): undefined reference to `config_ep_by_speed'
+>>> 	riscv64-unknown-linux-gnu-ld: trans_usbg.c:(.text+0x7ea): undefined reference to `config_ep_by_speed'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_set_alt':
+>>> 	trans_usbg.c:(.text+0x828): undefined reference to `alloc_ep_req'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modexit':
+>>> 	trans_usbg.c:(.exit.text+0x10): undefined reference to `usb_function_unregister'
+>>> 	riscv64-unknown-linux-gnu-ld: net/9p/trans_usbg.o: in function `usb9pfs_modinit':
+>>> 	trans_usbg.c:(.init.text+0x1e): undefined reference to `usb_function_register'
+>>>
+>>> Select the config for NET_9P_USBG to fix it.
+>>>
+>>> Fixes: a3be076dc174 ("net/9p/usbg: Add new usb gadget function transport")
+>>> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+>>> ---
+>>>  net/9p/Kconfig | 2 ++
+>>>  1 file changed, 2 insertions(+)
+>>>
+>>> diff --git a/net/9p/Kconfig b/net/9p/Kconfig
+>>> index 63f988f0c9e8..ee967fd25312 100644
+>>> --- a/net/9p/Kconfig
+>>> +++ b/net/9p/Kconfig
+>>> @@ -43,6 +43,8 @@ config NET_9P_XEN
+>>>  config NET_9P_USBG
+>>>  	bool "9P USB Gadget Transport"
+>>>  	depends on USB_GADGET=y || USB_GADGET=NET_9P
+>>> +	select CONFIGFS_FS
+>>> +	select USB_LIBCOMPOSITE
+>>>  	help
+>>>  	  This builds support for a transport for 9pfs over
+>>>  	  usb gadget.
+> 
+> Ah, I can take this through the USB tree as it fixes a bug that came in
+> through there.
+
+Hi, Greg
+Thank you very much!
+
+> 
+> thanks,
+> 
+> greg k-h
 
