@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-358941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56C13998594
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:06:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C35C998584
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16A8D282C7B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:06:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D996C282BA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 12:04:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBB771C7B72;
-	Thu, 10 Oct 2024 12:05:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="t2uBbRyy"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB0D1C3F3B;
+	Thu, 10 Oct 2024 12:04:43 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63451C6F7A;
-	Thu, 10 Oct 2024 12:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 260E21BFDEE;
+	Thu, 10 Oct 2024 12:04:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728561912; cv=none; b=YJeTHQA2COMFFoyuI2eErEdZRbYfzXqeL1AXv6yoaovn0fw27sMmxqi3fTqj7bAtBSuL0iuCZJKtxv++dnCHXViPTaYzerEPJUdf7yFJFlS80SI2pmA9FYu8joEV3hmt0w2/js340x1KLs9qbmCrhRZL+S4Jg64gl9AQUb7haD4=
+	t=1728561883; cv=none; b=DiLtqXyeUhq0QQNqpmX34iweRTsxQWlRMIC8jGOaB1yu9f463NI6EWH05bL4MKF/1FNQJc1/IiBQe4yihkTFgwq4tkfmCL0WHLnhHTJlFtIslgsidMa1Xw8Um991s9Lbf7eyjZ79gMGftHd0PiSiNUzdS8VJdATuqndcNrxVTRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728561912; c=relaxed/simple;
-	bh=flQEluk5hLljQfPymWhZA5C4pdYlqlYSYYtSaCbnjQ8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ftembV5LG80FQCfosmN5Tb2Bp5dvg1wwcA9tHv0ifxSn/gSa6NrUBFQGukXdvzsXrGnMec5+gwzVR92utTHAyzTlIilNImfY88U7E5dWzmBcu1BoRi4rdq0JMeolBx+/O+1GFrjXylSqu+yjAyLeTl29t4n5SrlcW7FiYVDZnEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=t2uBbRyy; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728561910; x=1760097910;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=flQEluk5hLljQfPymWhZA5C4pdYlqlYSYYtSaCbnjQ8=;
-  b=t2uBbRyyRLePpoVF8WTd4itS2En3N+sBvWzgevUrrq/71Swm2IY1VJ9B
-   Z//lBpBZX/0tfaq45REGOfEfHo5wIWjz1jMvhs++Q4NpCCpD51dXRQXKY
-   1epFAOfQqdYF/GPfCZ84BZxAZmFoO5TMxSMMTwO2fyMmX+lecEXdeO7zb
-   eqLh/dxOvL/bC0R34DKo3oc1udj6iozRlqDcWAaK3M+g/Dvvfrkb7hoEh
-   KtEFek+Pa2BcgL/PBizfgRQRncNLWOjWmv57BUq42utyfXbpvOei50Cpt
-   wFXqtSoWQGraM/LC5jzKlWVFrwnPGqPJ1d2yoHsxhqKyuF6o8yyE+gpej
-   g==;
-X-CSE-ConnectionGUID: 6vPdQ8NYTmWaYmDn0yd8Nw==
-X-CSE-MsgGUID: 1WdRkE9yRD6MFDyWMKXKuw==
-X-IronPort-AV: E=Sophos;i="6.11,192,1725346800"; 
-   d="scan'208";a="263902615"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 10 Oct 2024 05:05:10 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 10 Oct 2024 05:04:31 -0700
-Received: from che-lt-i67070.microchip.com (10.10.85.11) by
- chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 10 Oct 2024 05:04:27 -0700
-From: Varshini Rajendran <varshini.rajendran@microchip.com>
-To: <claudiu.beznea@tuxon.dev>, <sre@kernel.org>, <robh@kernel.org>,
-	<krzk+dt@kernel.org>, <conor+dt@kernel.org>, <nicolas.ferre@microchip.com>,
-	<alexandre.belloni@bootlin.com>, <linux-pm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <varshini.rajendran@microchip.com>, Krzysztof Kozlowski
-	<krzysztof.kozlowski@linaro.org>, Sebastian Reichel
-	<sebastian.reichel@collabora.com>
-Subject: [PATCH v8 6/9] dt-bindings: power: reset: atmel,sama5d2-shdwc: add sam9x7
-Date: Thu, 10 Oct 2024 17:34:25 +0530
-Message-ID: <20241010120425.93102-1-varshini.rajendran@microchip.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241010120142.92057-1-varshini.rajendran@microchip.com>
-References: <20241010120142.92057-1-varshini.rajendran@microchip.com>
+	s=arc-20240116; t=1728561883; c=relaxed/simple;
+	bh=+ti7+iaC+/ZMJzcBHYfFME65mceK17aAsNlzVfLqVJk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=QSiyJKucJySYZQ1FuARFIjgNbRSIWBuDFAwGLvA/qATHU43WSjKoCb8oz9Hua9bFUj7kYsUDanZEFuz5vrJ4T8z06DKNehztgEzFoMZfyMgLybuVDHDVCBV5aBGcpendJSRKXSm6XlKJnNPoTKlXjQp8cMRQzfb8PfetNgz+OYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XPT1k6m81zCt9w;
+	Thu, 10 Oct 2024 20:03:54 +0800 (CST)
+Received: from kwepemf100017.china.huawei.com (unknown [7.202.181.16])
+	by mail.maildlp.com (Postfix) with ESMTPS id D06BF18010F;
+	Thu, 10 Oct 2024 20:04:32 +0800 (CST)
+Received: from [10.174.176.88] (10.174.176.88) by
+ kwepemf100017.china.huawei.com (7.202.181.16) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 10 Oct 2024 20:04:31 +0800
+Message-ID: <8d05cae1-55d2-415b-810e-3fb14c8566fd@huawei.com>
+Date: Thu, 10 Oct 2024 20:04:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 7/8] cachefiles: Fix NULL pointer dereference in
+ object->file
+To: David Howells <dhowells@redhat.com>
+CC: <netfs@lists.linux.dev>, <jlayton@kernel.org>,
+	<hsiangkao@linux.alibaba.com>, <jefflexu@linux.alibaba.com>,
+	<zhujia.zj@bytedance.com>, <linux-erofs@lists.ozlabs.org>,
+	<linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<libaokun1@huawei.com>, <yangerkun@huawei.com>, <houtao1@huawei.com>,
+	<yukuai3@huawei.com>
+References: <20240821024301.1058918-8-wozizhi@huawei.com>
+ <20240821024301.1058918-1-wozizhi@huawei.com>
+ <303977.1728559565@warthog.procyon.org.uk>
+From: Zizhi Wo <wozizhi@huawei.com>
+In-Reply-To: <303977.1728559565@warthog.procyon.org.uk>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemf100017.china.huawei.com (7.202.181.16)
 
-Add shutdown controller DT bindings.
 
-Signed-off-by: Varshini Rajendran <varshini.rajendran@microchip.com>
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Acked-by: Sebastian Reichel <sebastian.reichel@collabora.com>
----
- .../devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml   | 3 +++
- 1 file changed, 3 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml
-index 8c58e12cdb60..0735ceb7c103 100644
---- a/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml
-+++ b/Documentation/devicetree/bindings/power/reset/atmel,sama5d2-shdwc.yaml
-@@ -22,6 +22,9 @@ properties:
-       - enum:
-           - atmel,sama5d2-shdwc
-           - microchip,sam9x60-shdwc
-+      - items:
-+          - const: microchip,sam9x7-shdwc
-+          - const: microchip,sam9x60-shdwc
- 
-   reg:
-     maxItems: 1
--- 
-2.25.1
+在 2024/10/10 19:26, David Howells 写道:
+> Zizhi Wo <wozizhi@huawei.com> wrote:
+> 
+>> +	spin_lock(&object->lock);
+>>   	if (object->file) {
+>>   		fput(object->file);
+>>   		object->file = NULL;
+>>   	}
+>> +	spin_unlock(&object->lock);
+> 
+> I would suggest stashing the file pointer in a local var and then doing the
+> fput() outside of the locks.
+> 
+> David
+> 
+> 
 
+If fput() is executed outside the lock, I am currently unsure how to
+guarantee that file in __cachefiles_write() does not trigger null
+pointer dereference...
+
+Thanks,
+Zizhi Wo
 
