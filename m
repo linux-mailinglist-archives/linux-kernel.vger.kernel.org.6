@@ -1,441 +1,105 @@
-Return-Path: <linux-kernel+bounces-358209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49E59997B77
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:47:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3F96997B7E
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:51:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05421281AD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:47:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B467D1C21ACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FFEF18BBA9;
-	Thu, 10 Oct 2024 03:47:20 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCC018C03D
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 368DD192D97;
+	Thu, 10 Oct 2024 03:50:55 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D2A5028C
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728532039; cv=none; b=MIac4ZYVNSpiOP6+NlCesSy/m6YQJCwzubkiK3hSmS1JoH+X9g6XtUFmNDOLX8YTSfzmHfYZaZIRjP09/TkaFLII010pOmdElkxQ27xo27vS9PPnyYcpXy3cvjlA9XPB1nhEr0Ije2vLiZP7/pKiF52dW5uuOBc53B6PCj3ZcvI=
+	t=1728532254; cv=none; b=nS8isO3Z0RTc6qxmOkAmZCEgk0qp+jv+G+AAvnQShvjZVLsVCMngO2pt5Pz01mbxN3OnkojoBL0fQV0tk4pXVRt/S9ISe80Uq82Y64vl4MIkOtuLbQCW7jOZCXmVPTANH7VmOBTVCu16OAj/g8rWFZy5KSogervavIMb4rU+Sno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728532039; c=relaxed/simple;
-	bh=hZwBjM7skvQQPUzTYcFTFDBym4QKLVYgWtE+8HqR3Nk=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FSawg0eUtzHDjH79mVKOZY4OI9G3JYG8NargQvlK1j/aSD0iaGMKcCCV/EbKcNz48wtmbs/iafYmTp9mBGjSHYgaVAFWFAmUyBJ6/lVehe6cVShMHtifYbdbSMMmThfRF/AiODd0xcGDcp4l0sboO9ObzUVvAUY4o4ZDH6d6mas=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XPG0d0VMJz28fRJ;
-	Thu, 10 Oct 2024 11:47:13 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id 779B11401E9;
-	Thu, 10 Oct 2024 11:47:08 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 10 Oct 2024 11:47:08 +0800
-Subject: Re: [patch 11/25] debugobjects: Move pools into a datastructure
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Waiman Long <longman@redhat.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.646171170@linutronix.de>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <5ecc499c-a07b-f4f2-fb81-f47e21217a54@huawei.com>
-Date: Thu, 10 Oct 2024 11:47:07 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1728532254; c=relaxed/simple;
+	bh=DEH5sLqV98/CSF+ZFh0bp8j4baZyz1B5ZwDF/lhjHHw=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EjHw5g5esB3rCPYBF6VEbvKbFzC86c2bi6UZA1mnjxKjzRBrDvuV4lX1mWPHR4vhPAGjV2/nyiHEOBmx0axq8ho4kVP5Tj54vFXuDKxI3cWQ+7iMGWVVzd0r8mZrc5jNsr7d7Pd2/SOvaee7aRAzvzhW94xZwt51S3wAX5PHapk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Bx34saTwdnwrsRAA--.25122S3;
+	Thu, 10 Oct 2024 11:50:50 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMDx7tUZTwdnFP8hAA--.52915S2;
+	Thu, 10 Oct 2024 11:50:49 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: David Hildenbrand <david@redhat.com>,
+	Barry Song <baohua@kernel.org>,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	kasan-dev@googlegroups.com,
+	linux-mm@kvack.org
+Subject: [PATCH 0/4] LoongArch: Fix vmalloc test issue
+Date: Thu, 10 Oct 2024 11:50:44 +0800
+Message-Id: <20241010035048.3422527-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20241007164913.646171170@linutronix.de>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMDx7tUZTwdnFP8hAA--.52915S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
+
+On LoongArch 3C5000 Dual-Way machine, there are 32 CPUs and 128G RAM,
+there are some errors with run vmalloc test with command like this
+  insmod test_vmalloc.ko   nr_threads=32  run_test_mask=0x3af
+
+Here is part of error message,
+ WARNING: CPU: 13 PID: 1457 at mm/vmalloc.c:503 vmap_small_pages_range_noflush+0x388/0x510
+ CPU: 13 UID: 0 PID: 1457 Comm: vmalloc_test/15 Not tainted 6.12.0-rc2+ #93
+
+ Trying to vfree() nonexistent vm area (000000004dec9ced)
+ WARNING: CPU: 3 PID: 1444 at mm/vmalloc.c:3345 vfree+0x1e8/0x4c8
+ CPU: 3 UID: 0 PID: 1444 Comm: vmalloc_test/2
+
+ Trying to vfree() bad address (00000000fc7c9da5)
+ WARNING: CPU: 10 PID: 1552 at mm/vmalloc.c:3210 remove_vm_area+0x88/0x98
+ CPU: 10 UID: 0 PID: 1552 Comm: kworker/u144:3
+
+The mainly problem is that function set_pte() and pte_free() is atomic,
+there is contension between them. Since these functions need modify
+two consecutive pte entries for kernel space area, to assure that both
+pte entries with PAGE_GLOBAL bit set.
+
+With this patchset, vmalloc test case passes to run with command
+  insmod test_vmalloc.ko   nr_threads=32  run_test_mask=0x3af
+
+Bibo Mao (4):
+  LoongArch: Set pte entry with PAGE_GLOBAL for kernel space
+  mm/sparse-vmemmap: set pte_init when vmemmap is created
+  LoongArch: Add barrier between set_pte and memory access
+  LoongArch: Use atomic operation with set_pte and pte_clear function
+
+ arch/loongarch/include/asm/cacheflush.h | 14 +++++++-
+ arch/loongarch/include/asm/pgalloc.h    | 13 +++++++
+ arch/loongarch/include/asm/pgtable.h    | 45 +++++++++----------------
+ arch/loongarch/mm/init.c                |  4 ++-
+ arch/loongarch/mm/kasan_init.c          |  4 ++-
+ arch/loongarch/mm/pgtable.c             | 22 ++++++++++++
+ mm/sparse-vmemmap.c                     |  5 +++
+ 7 files changed, 75 insertions(+), 32 deletions(-)
 
 
-
-On 2024/10/8 0:50, Thomas Gleixner wrote:
-> The contention on the global pool lock can be reduced by strict batch
-> processing where batches of objects are moved from one list head to another
-> instead of moving them object by object. This also reduces the cache
-> footprint because it avoids the list walk and dirties at maximum three
-> cache lines instead of potentially up to eighteen.
-> 
-> To prepare for that, move the hlist head and related counters into a
-> struct.
-> 
-> No functional change.
-
-Reviewed-by: Zhen Lei <thunder.leizhen@huawei.com>
-
-> 
-> Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-> ---
->  lib/debugobjects.c |  140 +++++++++++++++++++++++++++++------------------------
->  1 file changed, 78 insertions(+), 62 deletions(-)
-> 
-> --- a/lib/debugobjects.c
-> +++ b/lib/debugobjects.c
-> @@ -52,6 +52,11 @@ struct debug_percpu_free {
->  	int			obj_free;
->  };
->  
-> +struct obj_pool {
-> +	struct hlist_head	objects;
-> +	unsigned int		cnt;
-> +} ____cacheline_aligned;
-> +
->  static DEFINE_PER_CPU(struct debug_percpu_free, percpu_obj_pool);
->  
->  static struct debug_bucket	obj_hash[ODEBUG_HASH_SIZE];
-> @@ -60,8 +65,8 @@ static struct debug_obj		obj_static_pool
->  
->  static DEFINE_RAW_SPINLOCK(pool_lock);
->  
-> -static HLIST_HEAD(obj_pool);
-> -static HLIST_HEAD(obj_to_free);
-> +static struct obj_pool		pool_global;
-> +static struct obj_pool		pool_to_free;
->  
->  /*
->   * Because of the presence of percpu free pools, obj_pool_free will
-> @@ -71,12 +76,9 @@ static HLIST_HEAD(obj_to_free);
->   * can be off.
->   */
->  static int __data_racy		obj_pool_min_free = ODEBUG_POOL_SIZE;
-> -static int __data_racy		obj_pool_free = ODEBUG_POOL_SIZE;
->  static int			obj_pool_used;
->  static int __data_racy		obj_pool_max_used;
->  static bool			obj_freeing;
-> -/* The number of objs on the global free list */
-> -static int			obj_nr_tofree;
->  
->  static int __data_racy			debug_objects_maxchain __read_mostly;
->  static int __data_racy __maybe_unused	debug_objects_maxchecked __read_mostly;
-> @@ -124,6 +126,21 @@ static const char *obj_states[ODEBUG_STA
->  	[ODEBUG_STATE_NOTAVAILABLE]	= "not available",
->  };
->  
-> +static __always_inline unsigned int pool_count(struct obj_pool *pool)
-> +{
-> +	return READ_ONCE(pool->cnt);
-> +}
-> +
-> +static inline bool pool_global_should_refill(void)
-> +{
-> +	return READ_ONCE(pool_global.cnt) < debug_objects_pool_min_level;
-> +}
-> +
-> +static inline bool pool_global_must_refill(void)
-> +{
-> +	return READ_ONCE(pool_global.cnt) < (debug_objects_pool_min_level / 2);
-> +}
-> +
->  static void free_object_list(struct hlist_head *head)
->  {
->  	struct hlist_node *tmp;
-> @@ -146,11 +163,8 @@ static void fill_pool_from_freelist(void
->  	/*
->  	 * Reuse objs from the global obj_to_free list; they will be
->  	 * reinitialized when allocating.
-> -	 *
-> -	 * obj_nr_tofree is checked locklessly; the READ_ONCE() pairs with
-> -	 * the WRITE_ONCE() in pool_lock critical sections.
->  	 */
-> -	if (!READ_ONCE(obj_nr_tofree))
-> +	if (!pool_count(&pool_to_free))
->  		return;
->  
->  	/*
-> @@ -171,12 +185,12 @@ static void fill_pool_from_freelist(void
->  	 * Recheck with the lock held as the worker thread might have
->  	 * won the race and freed the global free list already.
->  	 */
-> -	while (obj_nr_tofree && (obj_pool_free < debug_objects_pool_min_level)) {
-> -		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
-> +	while (pool_to_free.cnt && (pool_global.cnt < debug_objects_pool_min_level)) {
-> +		obj = hlist_entry(pool_to_free.objects.first, typeof(*obj), node);
->  		hlist_del(&obj->node);
-> -		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
-> -		hlist_add_head(&obj->node, &obj_pool);
-> -		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
-> +		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt - 1);
-> +		hlist_add_head(&obj->node, &pool_global.objects);
-> +		WRITE_ONCE(pool_global.cnt, pool_global.cnt + 1);
->  	}
->  	clear_bit(0, &state);
->  }
-> @@ -190,12 +204,11 @@ static void fill_pool(void)
->  	 *   - One other CPU is already allocating
->  	 *   - the global pool has not reached the critical level yet
->  	 */
-> -	if (READ_ONCE(obj_pool_free) > (debug_objects_pool_min_level / 2) &&
-> -	    atomic_read(&cpus_allocating))
-> +	if (!pool_global_must_refill() && atomic_read(&cpus_allocating))
->  		return;
->  
->  	atomic_inc(&cpus_allocating);
-> -	while (READ_ONCE(obj_pool_free) < debug_objects_pool_min_level) {
-> +	while (pool_global_should_refill()) {
->  		struct debug_obj *new, *last = NULL;
->  		HLIST_HEAD(head);
->  		int cnt;
-> @@ -212,9 +225,9 @@ static void fill_pool(void)
->  			break;
->  
->  		guard(raw_spinlock_irqsave)(&pool_lock);
-> -		hlist_splice_init(&head, &last->node, &obj_pool);
-> +		hlist_splice_init(&head, &last->node, &pool_global.objects);
->  		debug_objects_allocated += cnt;
-> -		WRITE_ONCE(obj_pool_free, obj_pool_free + cnt);
-> +		WRITE_ONCE(pool_global.cnt, pool_global.cnt + cnt);
->  	}
->  	atomic_dec(&cpus_allocating);
->  }
-> @@ -268,10 +281,10 @@ alloc_object(void *addr, struct debug_bu
->  	}
->  
->  	raw_spin_lock(&pool_lock);
-> -	obj = __alloc_object(&obj_pool);
-> +	obj = __alloc_object(&pool_global.objects);
->  	if (obj) {
->  		obj_pool_used++;
-> -		WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
-> +		WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
->  
->  		/*
->  		 * Looking ahead, allocate one batch of debug objects and
-> @@ -283,22 +296,21 @@ alloc_object(void *addr, struct debug_bu
->  			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
->  				struct debug_obj *obj2;
->  
-> -				obj2 = __alloc_object(&obj_pool);
-> +				obj2 = __alloc_object(&pool_global.objects);
->  				if (!obj2)
->  					break;
-> -				hlist_add_head(&obj2->node,
-> -					       &percpu_pool->free_objs);
-> +				hlist_add_head(&obj2->node, &percpu_pool->free_objs);
->  				percpu_pool->obj_free++;
->  				obj_pool_used++;
-> -				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
-> +				WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
->  			}
->  		}
->  
->  		if (obj_pool_used > obj_pool_max_used)
->  			obj_pool_max_used = obj_pool_used;
->  
-> -		if (obj_pool_free < obj_pool_min_free)
-> -			obj_pool_min_free = obj_pool_free;
-> +		if (pool_global.cnt < obj_pool_min_free)
-> +			obj_pool_min_free = pool_global.cnt;
->  	}
->  	raw_spin_unlock(&pool_lock);
->  
-> @@ -329,7 +341,7 @@ static void free_obj_work(struct work_st
->  	if (!raw_spin_trylock_irqsave(&pool_lock, flags))
->  		return;
->  
-> -	if (obj_pool_free >= debug_objects_pool_size)
-> +	if (pool_global.cnt >= debug_objects_pool_size)
->  		goto free_objs;
->  
->  	/*
-> @@ -339,12 +351,12 @@ static void free_obj_work(struct work_st
->  	 * may be gearing up to use more and more objects, don't free any
->  	 * of them until the next round.
->  	 */
-> -	while (obj_nr_tofree && obj_pool_free < debug_objects_pool_size) {
-> -		obj = hlist_entry(obj_to_free.first, typeof(*obj), node);
-> +	while (pool_to_free.cnt && pool_global.cnt < debug_objects_pool_size) {
-> +		obj = hlist_entry(pool_to_free.objects.first, typeof(*obj), node);
->  		hlist_del(&obj->node);
-> -		hlist_add_head(&obj->node, &obj_pool);
-> -		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
-> -		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree - 1);
-> +		hlist_add_head(&obj->node, &pool_global.objects);
-> +		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt - 1);
-> +		WRITE_ONCE(pool_global.cnt, pool_global.cnt + 1);
->  	}
->  	raw_spin_unlock_irqrestore(&pool_lock, flags);
->  	return;
-> @@ -355,9 +367,9 @@ static void free_obj_work(struct work_st
->  	 * list. Move remaining free objs to a temporary list to free the
->  	 * memory outside the pool_lock held region.
->  	 */
-> -	if (obj_nr_tofree) {
-> -		hlist_move_list(&obj_to_free, &tofree);
-> -		WRITE_ONCE(obj_nr_tofree, 0);
-> +	if (pool_to_free.cnt) {
-> +		hlist_move_list(&pool_to_free.objects, &tofree);
-> +		WRITE_ONCE(pool_to_free.cnt, 0);
->  	}
->  	raw_spin_unlock_irqrestore(&pool_lock, flags);
->  
-> @@ -400,45 +412,45 @@ static void __free_object(struct debug_o
->  
->  free_to_obj_pool:
->  	raw_spin_lock(&pool_lock);
-> -	work = (obj_pool_free > debug_objects_pool_size) && obj_cache &&
-> -	       (obj_nr_tofree < ODEBUG_FREE_WORK_MAX);
-> +	work = (pool_global.cnt > debug_objects_pool_size) && obj_cache &&
-> +	       (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX);
->  	obj_pool_used--;
->  
->  	if (work) {
-> -		WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
-> -		hlist_add_head(&obj->node, &obj_to_free);
-> +		WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt + 1);
-> +		hlist_add_head(&obj->node, &pool_to_free.objects);
->  		if (lookahead_count) {
-> -			WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + lookahead_count);
-> +			WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt + lookahead_count);
->  			obj_pool_used -= lookahead_count;
->  			while (lookahead_count) {
->  				hlist_add_head(&objs[--lookahead_count]->node,
-> -					       &obj_to_free);
-> +					       &pool_to_free.objects);
->  			}
->  		}
->  
-> -		if ((obj_pool_free > debug_objects_pool_size) &&
-> -		    (obj_nr_tofree < ODEBUG_FREE_WORK_MAX)) {
-> +		if ((pool_global.cnt > debug_objects_pool_size) &&
-> +		    (pool_to_free.cnt < ODEBUG_FREE_WORK_MAX)) {
->  			int i;
->  
->  			/*
->  			 * Free one more batch of objects from obj_pool.
->  			 */
->  			for (i = 0; i < ODEBUG_BATCH_SIZE; i++) {
-> -				obj = __alloc_object(&obj_pool);
-> -				hlist_add_head(&obj->node, &obj_to_free);
-> -				WRITE_ONCE(obj_pool_free, obj_pool_free - 1);
-> -				WRITE_ONCE(obj_nr_tofree, obj_nr_tofree + 1);
-> +				obj = __alloc_object(&pool_global.objects);
-> +				hlist_add_head(&obj->node, &pool_to_free.objects);
-> +				WRITE_ONCE(pool_global.cnt, pool_global.cnt - 1);
-> +				WRITE_ONCE(pool_to_free.cnt, pool_to_free.cnt + 1);
->  			}
->  		}
->  	} else {
-> -		WRITE_ONCE(obj_pool_free, obj_pool_free + 1);
-> -		hlist_add_head(&obj->node, &obj_pool);
-> +		WRITE_ONCE(pool_global.cnt, pool_global.cnt + 1);
-> +		hlist_add_head(&obj->node, &pool_global.objects);
->  		if (lookahead_count) {
-> -			WRITE_ONCE(obj_pool_free, obj_pool_free + lookahead_count);
-> +			WRITE_ONCE(pool_global.cnt, pool_global.cnt + lookahead_count);
->  			obj_pool_used -= lookahead_count;
->  			while (lookahead_count) {
->  				hlist_add_head(&objs[--lookahead_count]->node,
-> -					       &obj_pool);
-> +					       &pool_global.objects);
->  			}
->  		}
->  	}
-> @@ -453,7 +465,7 @@ static void __free_object(struct debug_o
->  static void free_object(struct debug_obj *obj)
->  {
->  	__free_object(obj);
-> -	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
-> +	if (!READ_ONCE(obj_freeing) && pool_count(&pool_to_free)) {
->  		WRITE_ONCE(obj_freeing, true);
->  		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
->  	}
-> @@ -622,13 +634,13 @@ static void debug_objects_fill_pool(void
->  	if (unlikely(!obj_cache))
->  		return;
->  
-> -	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
-> +	if (likely(!pool_global_should_refill()))
->  		return;
->  
->  	/* Try reusing objects from obj_to_free_list */
->  	fill_pool_from_freelist();
->  
-> -	if (likely(READ_ONCE(obj_pool_free) >= debug_objects_pool_min_level))
-> +	if (likely(!pool_global_should_refill()))
->  		return;
->  
->  	/*
-> @@ -1040,7 +1052,7 @@ static void __debug_check_no_obj_freed(c
->  		debug_objects_maxchecked = objs_checked;
->  
->  	/* Schedule work to actually kmem_cache_free() objects */
-> -	if (!READ_ONCE(obj_freeing) && READ_ONCE(obj_nr_tofree)) {
-> +	if (!READ_ONCE(obj_freeing) && pool_count(&pool_to_free)) {
->  		WRITE_ONCE(obj_freeing, true);
->  		schedule_delayed_work(&debug_obj_work, ODEBUG_FREE_WORK_DELAY);
->  	}
-> @@ -1066,12 +1078,12 @@ static int debug_stats_show(struct seq_f
->  	seq_printf(m, "max_checked   :%d\n", debug_objects_maxchecked);
->  	seq_printf(m, "warnings      :%d\n", debug_objects_warnings);
->  	seq_printf(m, "fixups        :%d\n", debug_objects_fixups);
-> -	seq_printf(m, "pool_free     :%d\n", READ_ONCE(obj_pool_free) + obj_percpu_free);
-> +	seq_printf(m, "pool_free     :%d\n", pool_count(&pool_global) + obj_percpu_free);
->  	seq_printf(m, "pool_pcp_free :%d\n", obj_percpu_free);
->  	seq_printf(m, "pool_min_free :%d\n", obj_pool_min_free);
->  	seq_printf(m, "pool_used     :%d\n", obj_pool_used - obj_percpu_free);
->  	seq_printf(m, "pool_max_used :%d\n", obj_pool_max_used);
-> -	seq_printf(m, "on_free_list  :%d\n", READ_ONCE(obj_nr_tofree));
-> +	seq_printf(m, "on_free_list  :%d\n", pool_count(&pool_to_free));
->  	seq_printf(m, "objs_allocated:%d\n", debug_objects_allocated);
->  	seq_printf(m, "objs_freed    :%d\n", debug_objects_freed);
->  	return 0;
-> @@ -1330,7 +1342,9 @@ void __init debug_objects_early_init(voi
->  		raw_spin_lock_init(&obj_hash[i].lock);
->  
->  	for (i = 0; i < ODEBUG_POOL_SIZE; i++)
-> -		hlist_add_head(&obj_static_pool[i].node, &obj_pool);
-> +		hlist_add_head(&obj_static_pool[i].node, &pool_global.objects);
-> +
-> +	pool_global.cnt = ODEBUG_POOL_SIZE;
->  }
->  
->  /*
-> @@ -1354,21 +1368,23 @@ static bool __init debug_objects_replace
->  		hlist_add_head(&obj->node, &objects);
->  	}
->  
-> -	debug_objects_allocated += i;
-> +	debug_objects_allocated = ODEBUG_POOL_SIZE;
-> +	pool_global.cnt = ODEBUG_POOL_SIZE;
->  
->  	/*
->  	 * Replace the statically allocated objects list with the allocated
->  	 * objects list.
->  	 */
-> -	hlist_move_list(&objects, &obj_pool);
-> +	hlist_move_list(&objects, &pool_global.objects);
->  
->  	/* Replace the active object references */
->  	for (i = 0; i < ODEBUG_HASH_SIZE; i++, db++) {
->  		hlist_move_list(&db->list, &objects);
->  
->  		hlist_for_each_entry(obj, &objects, node) {
-> -			new = hlist_entry(obj_pool.first, typeof(*obj), node);
-> +			new = hlist_entry(pool_global.objects.first, typeof(*obj), node);
->  			hlist_del(&new->node);
-> +			pool_global.cnt--;
->  			/* copy object data */
->  			*new = *obj;
->  			hlist_add_head(&new->node, &db->list);
-> 
-> .
-> 
-
+base-commit: 87d6aab2389e5ce0197d8257d5f8ee965a67c4cd
 -- 
-Regards,
-  Zhen Lei
+2.39.3
+
 
