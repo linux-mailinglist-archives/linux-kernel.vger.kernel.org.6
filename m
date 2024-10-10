@@ -1,236 +1,134 @@
-Return-Path: <linux-kernel+bounces-359299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C50B9989E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:39:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78476998AD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 17:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2ED19289E94
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:39:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 717E8B35E8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A57E21C68B2;
-	Thu, 10 Oct 2024 14:30:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446421CFEA1;
+	Thu, 10 Oct 2024 14:30:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="urJG02DX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b="KPJbcT5L"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4CFA1F1319;
-	Thu, 10 Oct 2024 14:30:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832D01CF7B5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:30:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570609; cv=none; b=IABHbn+ydsABsePS9+RHaaAIQ9a60QiOM/CmHhx9i3YwOh34Ra5Ws365Eq9ufiJpR7wPZb8eiQI9402jLujrZ7y21iYMVuCZYR9BUPHbQmMci5BX4D9n5aw+z446zWbGj1bYGAlHy4oG0vlrfFlr1nLBnuRjOL8Cd0ebdpPjbkA=
+	t=1728570624; cv=none; b=Fa4tS81JuUScWxS0zMg1M7ubCrJZ7zhX0g+tUzqL+sohCCRAyHN7VOr71LLVcTIkTdjh8GPIlmA5c3yn796jmv5pBcOTdhTgbN612HkgnCAeNv3KxfqlPkutEevfxFmev1I5lcJhTKhOo6eOgtWTTQ6eIK5LvKYjFM1WV5VUo9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570609; c=relaxed/simple;
-	bh=OXYTseSavrvP5Laj4WRn5qD6AAIg2e7hd5QYSkTyaJ4=;
-	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=LWLpIaRXW7yoRWIE3R1Nb9zOpif2XZA8AKRQY9BOEmS5hw+JHZeP49yoywDNm64DSAVRCSYPKmv8JYFuxRJeTFjZBVBkcIRBOD6FmwjsgtGCjJHr2r0BQlKX7m/7TW5ZPShgbPmLebFshPbcF1RMqid5NfQvZ/hKab6a+2t8G4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=urJG02DX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8317AC4CEC5;
-	Thu, 10 Oct 2024 14:30:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728570609;
-	bh=OXYTseSavrvP5Laj4WRn5qD6AAIg2e7hd5QYSkTyaJ4=;
-	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=urJG02DXdX02b2LP/wiaLOZwLu16lu8GyI4Jk1sRkMWWOfKWKjVVQCUReypybEDy3
-	 +cIQnCL3c6MUiKuSx5DkwuzFqMXyG0OPFRaWFLfk7pNEYEMBew3GfMj9Dd1qVxk50Y
-	 E3JUtZ8LeQNZBj/PChmbTCTmGecLlwKFPR6v3hKE8sZ48ZECOi44eUhXgxRQFt1KU+
-	 S9nKcEtAYMgTY5oV+MPlw0c47c/ycMLXj8IhZ0F6F36noUClXQNwB0z57pF0CYFC1C
-	 jvtsZzMg5N7o58qFRe83ugeXZtUuLZYBS9KBA9OToliDfrxNxYvl3foIByt4aKoNEH
-	 7pqBLnDZg3PGg==
-Date: Thu, 10 Oct 2024 09:30:08 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=arc-20240116; t=1728570624; c=relaxed/simple;
+	bh=oXJ7lfwXtpBlrtO/QantpAikpLoh0DXMMyP3+aSMWJw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=s4Xi6IYWRXy10M1VRCR2jKO5DXQd7w8KwnrJZjP2HYPVLkjAzZ3aJRE6if3qk7iKaELCNjP90RYscTNFrzfFAjRWoc6hPdjSWFhSHVLVfCYmMTnuVB2vVQAX/ESDKT+EHRuMg54W7big1sMYxhCPugxgwTsVK3TUaUp3Kz5+W9c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org; spf=pass smtp.mailfrom=joelfernandes.org; dkim=pass (1024-bit key) header.d=joelfernandes.org header.i=@joelfernandes.org header.b=KPJbcT5L; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=joelfernandes.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=joelfernandes.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e3e4f65dso10616527b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 07:30:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=joelfernandes.org; s=google; t=1728570621; x=1729175421; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uUNoplpJmE21x17Kjz2iHi1JFbJLmtq1EI5dZK24xkQ=;
+        b=KPJbcT5L8IWrKoicSlJFET5MfLvys4gEPZgIRBxqnFK7iryYrAOSe5CbzhvfoHp5Tg
+         L3yXTTlr6s4h2Uah0q3qKlZ2DY0UZn3A2UtEMMipptYAfy/BBce3is79Csh/m6xZrB6m
+         OuW5UNkhr8tMQFBmLslA2GRSdzn185IyNASLc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728570621; x=1729175421;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uUNoplpJmE21x17Kjz2iHi1JFbJLmtq1EI5dZK24xkQ=;
+        b=XAVTIg7qUkJjFbirOy6cPSwsw1dRT7dQFzU0tbjy3XkiYn2JDPga9Zbz7FWlA+Qa1k
+         Nl9flm/Ytyejo9X9VGiAakIhOQl7h2p1WoWFCzD2ckTr8IoNq+IDtpSh6N2I8iykTre9
+         nqcbGVx9ZlUPWe6F5r/4o4xaLj8x/F2cY5bWZwiBo5Xyz2A/gquUJP3MK15YXg8QdOGK
+         J/Ebmg24xtjmIs+jGU9ffUwFGqBy0inNzGzDj2+KcS0GAUrEIrImyCxpoAK0bsOkkman
+         T2DSTSnqIyefaSFrvkhvZaqcZpa8N8MA15IEgQZIqIXZdujUfyHZWluzblGtXWwPUoeK
+         xscg==
+X-Forwarded-Encrypted: i=1; AJvYcCUzocGGKQ1/Si/lBA3jty9nl3nhnvVcMTJoXEOBRRbS4KOlkZXg199XFXhYItfICZvvymYPZZwfKBZkrgo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjcZVJYHS9DjcCDlHXyHsgCh7fzv7M0ZRjRfjRY5kPNJlHZQgF
+	8zc6wAGBnsqJxkK6YyV/JrykhLWtne6JrvpU+RrSKEZWP809DlJNUibbwUpCdbZO6GDq03FWeAq
+	Rl5GUkPhYVxjOVNj/MConMBQ8EtVnTzeIzKZMUg==
+X-Google-Smtp-Source: AGHT+IF+kZ8U6MyPvBmBydf1kiqfRxQ5Z/fJhPUYZtma/5AjJ/fbFFe/Fp1Xot+64Qib49vxaP7+7vEZ2lVXpAWq0ro=
+X-Received: by 2002:a05:690c:f15:b0:6de:1e2:d65b with SMTP id
+ 00721157ae682-6e32219968bmr66408287b3.8.1728570621362; Thu, 10 Oct 2024
+ 07:30:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Varshini Rajendran <varshini.rajendran@microchip.com>
-Cc: alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, 
- claudiu.beznea@tuxon.dev, nicolas.ferre@microchip.com, krzk+dt@kernel.org, 
- sre@kernel.org, mihai.sain@microchip.com, devicetree@vger.kernel.org, 
- linux-pm@vger.kernel.org, conor+dt@kernel.org, p.zabel@pengutronix.de, 
- linux-arm-kernel@lists.infradead.org
-In-Reply-To: <20241010120142.92057-1-varshini.rajendran@microchip.com>
-References: <20241010120142.92057-1-varshini.rajendran@microchip.com>
-Message-Id: <172857036103.1533272.15935981992235971511.robh@kernel.org>
-Subject: Re: [PATCH v8 0/9] Add support for sam9x7 SoC family
+References: <20241002145738.38226-1-frederic@kernel.org> <20241002145738.38226-4-frederic@kernel.org>
+ <Zv1f8-1tLd-r1cyu@localhost.localdomain> <4e81816e-3a4d-4642-a86c-fd9bd49ca163@paulmck-laptop>
+ <084a9230-c272-49c8-9c67-6c51b595f6e2@paulmck-laptop>
+In-Reply-To: <084a9230-c272-49c8-9c67-6c51b595f6e2@paulmck-laptop>
+From: Joel Fernandes <joel@joelfernandes.org>
+Date: Thu, 10 Oct 2024 10:30:09 -0400
+Message-ID: <CAEXW_YQwVCDR++=5SCEjQjsD_kfPbZsCAN15j3EDCoC4=KDTSA@mail.gmail.com>
+Subject: Re: [PATCH 3/3] rcu: Report callbacks enqueued on offline CPU blind spot
+To: paulmck@kernel.org
+Cc: Frederic Weisbecker <frederic@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Boqun Feng <boqun.feng@gmail.com>, Neeraj Upadhyay <neeraj.upadhyay@amd.com>, 
+	Uladzislau Rezki <urezki@gmail.com>, Zqiang <qiang.zhang1211@gmail.com>, rcu <rcu@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 9, 2024 at 11:13=E2=80=AFAM Paul E. McKenney <paulmck@kernel.or=
+g> wrote:
+>
+> On Tue, Oct 08, 2024 at 07:03:50PM -0700, Paul E. McKenney wrote:
+> > On Wed, Oct 02, 2024 at 05:00:03PM +0200, Frederic Weisbecker wrote:
+> > > Le Wed, Oct 02, 2024 at 04:57:38PM +0200, Frederic Weisbecker a =C3=
+=A9crit :
+> > > > Callbacks enqueued after rcutree_report_cpu_dead() fall into RCU ba=
+rrier
+> > > > blind spot. Report any potential misuse.
+> > > >
+> > > > Reported-by: Paul E. McKenney <paulmck@kernel.org>
+> > > > Signed-off-by: Frederic Weisbecker <frederic@kernel.org>
+> > > > ---
+> > > >  kernel/rcu/tree.c | 3 +++
+> > > >  1 file changed, 3 insertions(+)
+> > > >
+> > > > diff --git a/kernel/rcu/tree.c b/kernel/rcu/tree.c
+> > > > index a60616e69b66..36070b6bf4a1 100644
+> > > > --- a/kernel/rcu/tree.c
+> > > > +++ b/kernel/rcu/tree.c
+> > > > @@ -3084,8 +3084,11 @@ __call_rcu_common(struct rcu_head *head, rcu=
+_callback_t func, bool lazy_in)
+> > > >   head->func =3D func;
+> > > >   head->next =3D NULL;
+> > > >   kasan_record_aux_stack_noalloc(head);
+> > > > +
+> > > >   local_irq_save(flags);
+> > > >   rdp =3D this_cpu_ptr(&rcu_data);
+> > > > + RCU_LOCKDEP_WARN(rcu_rdp_cpu_online(rdp), "Callback enqueued on o=
+ffline
+> > > > CPU!");
+> > >
+> > > This should be !rcu_rdp_cpu_online(rdp)
+> > >
+> > > Sigh...
+> >
+> > I am pulling this in for testing with this change, thank you!
+>
+> And:
+>
+> Tested-by: Paul E. McKenney <paulmck@kernel.org>
 
-On Thu, 10 Oct 2024 17:31:42 +0530, Varshini Rajendran wrote:
-> This patch series adds support for the new SoC family - sam9x7.
->  - The device tree, configs and drivers are added
->  - Clock driver for sam9x7 is added
->  - Support for basic peripherals is added
->  - Target board SAM9X75 Curiosity is added
-> 
->  Changes in v8:
->  --------------
-> 
->  - Dropped patches that are applied from the series
->  - Picked up Reviewed-by tags
->  - Changed the node name from leds to led-controller in the board dts
->    file.
-> 
->  Changes in v7:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Dropped patches that are applied from the series
->  - Removed sfr node from the DT to add it later after creating the right
->    DT documentation for microchip sfr IPs.
->  - All the specific changes are captured in the corresponding patches
-> 
->  Changes in v6:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Picked up all Acked-by and Reviewed-by tags
->  - Reverted the IRQ patch to that of version 3 of the same series
->  - All the specific changes are captured in the corresponding patches
-> 
->  Changes in v5:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Picked up all Acked-by and Reviewed-by tags
->  - Dropped applied patches from the series
->  - Addressed the ABI breakage reported in the IRQ patch
->  - All the specific changes are captured in the corresponding patches
-> 
->  Changes in v4:
->  --------------
-> 
->  - Addressed all the review comments in the patches
->  - Picked up all Acked-by and Reviewed-by tags
->  - Dropped applied patches from the series
->  - Added pwm node and related dt binding documentation
->  - Added support for exporting some clocks to DT
->  - Dropped USB related patches and changes. See NOTE.
->  - All the specific changes are captured in the corresponding patches
-> 
->  NOTE: Owing to the discussion here
->  https://lore.kernel.org/linux-devicetree/CAL_JsqJ9PrX6fj-EbffeJce09MXs=B7t+KS_kOinxaRx38=WxA@mail.gmail.com/
->  the USB related changes are dropped from this series in order to enable
->  us to work on the mentioned issues before adding new compatibles as
->  said. The issues/warnings will be addressed in subsequent patches.
->  After which the USB related support for sam9x7 SoCs will be added. Hope
->  this works out fine.
-> 
->  Changes in v3:
->  --------------
-> 
->  - Fixed the DT documentation errors pointed out in v2.
->  - Dropped Acked-by tag in tcb DT doc patch as it had to be adapted
->    according to sam9x7 correctly.
->  - Picked by the previously missed tags.
->  - Dropped this patch "dt-bindings: usb: generic-ehci: Document clock-names
->    property" as the warning was not found while validating DT-schema for
->    at91-sam9x75_curiosity.dtb.
->  - Dropped redundant words in the commit message.
->  - Fixed the CHECK_DTBS warnings validated against
->    at91-sam9x75_curiosity.dtb.
->  - Renamed dt nodes according to naming convention.
->  - Dropped unwanted status property in dts.
->  - Removed nodes that are not in use from the board dts.
->  - Removed spi DT doc patch from the series as it was already applied
->    and a fix patch was applied subsequently. Added a patch to remove the
->    compatible to adapt sam9x7.
->  - Added sam9x7 compatibles in usb dt documentation.
-> 
-> 
->  Changes in v2:
->  --------------
-> 
->  - Added sam9x7 specific compatibles in DT with fallbacks
->  - Documented all the newly added DT compatible strings
->  - Added device tree for the target board sam9x75 curiosity and
->    documented the same in the DT bindings documentation
->  - Removed the dt nodes that are not supported at the moment
->  - Removed the configs added by previous version that are not supported
->    at the moment
->  - Fixed all the corrections in the commit message
->  - Changed all the instances of copyright year to 2023
->  - Added sam9x7 flag in PIT64B configuration
->  - Moved macro definitions to header file
->  - Added another divider in mck characteristics in the pmc driver
->  - Fixed the memory leak in the pmc driver
->  - Dropped patches that are no longer needed
->  - Picked up Acked-by and Reviewed-by tags
-> 
-> Varshini Rajendran (9):
->   dt-bindings: atmel-ssc: add microchip,sam9x7-ssc
->   power: reset: at91-poweroff: lookup for proper pmc dt node for sam9x7
->   power: reset: at91-reset: add reset support for sam9x7 SoC
->   power: reset: at91-reset: add sdhwc support for sam9x7 SoC
->   dt-bindings: reset: atmel,at91sam9260-reset: add sam9x7
->   dt-bindings: power: reset: atmel,sama5d2-shdwc: add sam9x7
->   ARM: dts: at91: sam9x7: add device tree for SoC
->   dt-bindings: arm: add sam9x75 curiosity board
->   ARM: dts: microchip: sam9x75_curiosity: add sam9x75 curiosity board
-> 
->  .../devicetree/bindings/arm/atmel-at91.yaml   |    6 +
->  .../devicetree/bindings/misc/atmel-ssc.txt    |    1 +
->  .../power/reset/atmel,sama5d2-shdwc.yaml      |    3 +
->  .../reset/atmel,at91sam9260-reset.yaml        |    4 +
->  arch/arm/boot/dts/microchip/Makefile          |    3 +
->  .../dts/microchip/at91-sam9x75_curiosity.dts  |  324 +++++
->  arch/arm/boot/dts/microchip/sam9x7.dtsi       | 1220 +++++++++++++++++
->  drivers/power/reset/Kconfig                   |    4 +-
->  drivers/power/reset/at91-sama5d2_shdwc.c      |    1 +
->  9 files changed, 1564 insertions(+), 2 deletions(-)
->  create mode 100644 arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dts
->  create mode 100644 arch/arm/boot/dts/microchip/sam9x7.dtsi
-> 
-> --
-> 2.25.1
-> 
-> 
-> 
+With the correction,
+Reviewed-by: Joel Fernandes (Google) <joel@joelfernandes.org>
 
+thanks,
 
-My bot found new DTB warnings on the .dts files added or changed in this
-series.
-
-Some warnings may be from an existing SoC .dtsi. Or perhaps the warnings
-are fixed by another series. Ultimately, it is up to the platform
-maintainer whether these warnings are acceptable or not. No need to reply
-unless the platform maintainer has comments.
-
-If you already ran DT checks and didn't see these error(s), then
-make sure dt-schema is up to date:
-
-  pip3 install dtschema --upgrade
-
-
-New warnings running 'make CHECK_DTBS=y microchip/at91-sam9x75_curiosity.dtb' for 20241010120142.92057-1-varshini.rajendran@microchip.com:
-
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/dma-controller@f0008000: failed to match any schema with compatible: ['microchip,sam9x7-dma', 'atmel,sama5d4-dma']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ssc@f0010000: failed to match any schema with compatible: ['microchip,sam9x7-ssc', 'atmel,at91sam9g45-ssc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0028000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/timer@f0040000: failed to match any schema with compatible: ['microchip,sam9x7-pit64b', 'microchip,sam9x60-pit64b']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/matrix@ffffde00: failed to match any schema with compatible: ['microchip,sam9x7-matrix', 'atmel,at91sam9x5-matrix', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/ecc-engine@ffffe000: failed to match any schema with compatible: ['microchip,sam9x7-pmecc', 'atmel,at91sam9g45-pmecc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/mpddrc@ffffe800: failed to match any schema with compatible: ['microchip,sam9x7-ddramc', 'atmel,sama5d3-ddramc']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/smc@ffffea00: failed to match any schema with compatible: ['microchip,sam9x7-smc', 'atmel,at91sam9260-smc', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
-arch/arm/boot/dts/microchip/at91-sam9x75_curiosity.dtb: /apb/syscon@fffffe60: failed to match any schema with compatible: ['microchip,sam9x7-gpbr', 'atmel,at91sam9260-gpbr', 'syscon']
-
-
-
-
-
+ - Joel
 
