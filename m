@@ -1,87 +1,70 @@
-Return-Path: <linux-kernel+bounces-358526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EA30998065
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:44:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63E25998069
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7B69B222BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:44:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 16F381F257AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:44:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69C521CDA09;
-	Thu, 10 Oct 2024 08:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DC3D1BD4FD;
+	Thu, 10 Oct 2024 08:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VB7fMUjB"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="HNsPJU2Y"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40B811CCEDB;
-	Thu, 10 Oct 2024 08:23:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C39F1BD4F8;
+	Thu, 10 Oct 2024 08:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728548598; cv=none; b=LpQHGRXUh3FygHTeXis0H+mauRRQhVhVIu6NeHWQeAzI4+8mxVDmMyrrh5g5R+rh8kNdrRqM5/QxcoScl8Z5+hcQegslK2DDG5r8ZtW6Eaf6DBYUxTKC7ZTSJn8DJacQ66SYy7uuNkesXWPyjeKbtoOQyspfdeg/6vP4YXHNXjY=
+	t=1728548687; cv=none; b=pH2hA+K+b0pyoWpspmoG7O1sBzd5mrxF5NAOVLYIkk8NXM/D4L8zFokF7Cf8RimNExG9kTfTQluH1vHmYDXwrHHMR9Qq3fBqAn/hy/oe3XiU/uLsRzys8kafDHzDLjWpqo5m/JRh+uGwQi7y9zR3CkzcW4Da4ykVPX7vrFhN3Nw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728548598; c=relaxed/simple;
-	bh=Hyt9tUhyvPpV9HjxpvdqApE6hevaQk0eU2o9K2Y9L6s=;
+	s=arc-20240116; t=1728548687; c=relaxed/simple;
+	bh=FBagXwmoXvU7XXwjhgrbodhvH71mmVSljW1zLtYlQbw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EUNKYlHlXzWb/VWcmhjH7KV7PzqzS4Sfdu6lN8xvsnarXawgKOWhIdtNvYDWza358zGuWstqVKeXBOuTNMwBF6U/OXqO0DZhgSWLTSYAN4az3ZukGg9Gt1h6xOvCmJ/gmU3vvhyKqizA+PfAaxPmqVBwV4CW/agHlWYx6DJadQk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VB7fMUjB; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71e02249621so535543b3a.1;
-        Thu, 10 Oct 2024 01:23:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728548596; x=1729153396; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=M9ae+E6I1o/9YcKGY7pVfcBgL0XOF7rD+Bry9l6DIFs=;
-        b=VB7fMUjBfCortyheTNXzxmuSOH4nKVAaotH2FYXcPX1R8FUO3gOFmOGOeEl2LOsW94
-         S+hW7oGfMTB/D8opzlLuLL5iH/FRhMBW9sWyqCCuoF4pKz197a+jY/Vi/kfVMpdUCYEd
-         9eW9PAZF9JP4Uq9aZPH4CLkLHEFNi3Euw0NNgl/4t8LnGm3LmgBe7pDLO2RW1hI2oelW
-         rG9fEZ7vWG/PUvK3aLmbyl1pj1dCgYwO1cH+GySDKfyeOriSjdDw8wCnB4nWPmyTvUpp
-         VeLylrVtwgIoWL5DznYOErbnjZIEAWGaoP0+Lo5pi6e5Us40ucGuqMeIbVdEJlDaW3jx
-         rt6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728548596; x=1729153396;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M9ae+E6I1o/9YcKGY7pVfcBgL0XOF7rD+Bry9l6DIFs=;
-        b=xUtGNqG1xzHD8ZhDp7sUNvSWmlyvMaPzPdSGj4NZr1csv/HC5pA8qznfbvY1M+NeXQ
-         X8AYfiUW2RDX+6A7+1JiRUqdZNNhRXnkAiKQ9i94QfDWfYbIqgOjM/AuIQq9MCfMYue+
-         hXo1ptM9CXoN35gNpUDiw3nVOSr5yk0sBM2qhlxuN3+oDcRI0jXoB8H9Fh65wUxblfHB
-         Gw7m9cVfNAvu1yQv5ZdnofTzr+4xdxsOTw3MmUBq2L+WakfwqcWDE5hUSktur7ls0S8S
-         HIcPvl3YiRq74wXdKvSPcXi1Bu8lU2n9gqnnF7neJhkNJN7MRzXSybzf8OKaAWG2d/Tz
-         rqIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU3uvL4/0hY7Z+HNKc3CWGtaaC5wFlU323eu3efLL61Tam3T5/ylYlYlNX6YltxvugWfCgAuAt3izh+5RnF@vger.kernel.org, AJvYcCWFYa5gGe8MiT0aq2F+u3c+Q5OMVVdFoRfS5fHh1kPpH50w8iGDMBb5fbgCT6X8ESw1So6Vsy6A7n/0ocp4@vger.kernel.org, AJvYcCWZmFSV++TvBm9WkWj3Ss+lG/GmqPbICL4nJHLayw2DkfA8Gea7uGmUE/Tmqk2k1mN3+ETu5K2ikYmA@vger.kernel.org
-X-Gm-Message-State: AOJu0YyOPASsJVZ3zA0R7cwpH2KsXRsmLqHAzK/1npvm4loDN1IZaZWI
-	3xH0bE05bxjDwusQc2q1+Hlmn0/diEA84aDEzm8Tt2XCRmI1jzQr
-X-Google-Smtp-Source: AGHT+IF+ABFFDVIysog+ECM1hPrRK2sdF4oKlO6i+zlPKD326M6dvSUGzGyER0bQYlnvZfAEhjKCKA==
-X-Received: by 2002:a05:6a00:1a8b:b0:71d:f821:1981 with SMTP id d2e1a72fcca58-71e1db64904mr9432588b3a.4.1728548596384;
-        Thu, 10 Oct 2024 01:23:16 -0700 (PDT)
-Received: from localhost ([121.250.214.124])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aab9b1dsm587766b3a.148.2024.10.10.01.23.13
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 01:23:14 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:23:05 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <muz6ze7cxho5niz67agoxwnaowumzlcto2vwydmxs2yzdjmisi@symog2asftmv>
-References: <20241009233908.153188-1-inochiama@gmail.com>
- <20241009233908.153188-2-inochiama@gmail.com>
- <oyvqsywyznanpx5oflnemcsrk7r7nnhvxl6ly7b55oan2boi5d@kobrtldqbj6m>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uOcWYml2ps/B6rQ5NaX25gRwSLIRPrjmwXKh9bOsF9LMuSiso3ikjPQzomSEZJGybD0KoKwv/df3ppkjRBjjneGwNdhUZq16GWN7il2UNcn+5h4uNBK03jpYP7Diwjpx6f9zG3LyOv0kuwJ0Sf1TmRLPBL8G+cdES6pJkA4nA9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=HNsPJU2Y; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=SIflBkcXF4BQ+o90EDUrROcjCvAZBUvwNPAzj7vSA/k=; b=HNsPJU2YSok6X8YnM21QTmqkeB
+	pAEGCV/6cK+VGDq6aLJVh1C44gOmInPGKGMm3iFeN8QvE+MFRNUQ4U3e6BgU+DLtfE93tNoIeVwnA
+	MiWQzjGjntwLV1Etk7DmOmHB0lwAT5jvMi7kn8R2lf/LTbwX7fA5YCEAG3daGGkRrDAcg6Ps3mILU
+	K9TZaIJeXBNqb9NYfzVSuakgU6UZpUpmf6nnBDOjeUsOiAT6DO6TwhSes53FlQaDgDzALBaNMJ5nb
+	P8kZaPRwGTxypFtVko7YqnwywoZ9ORlsetcUCc/DmNDKHu/qvzJpBXmpFUOkRD+wHn5RlubSuyomr
+	rc6oXwQQ==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1syoJW-008H4W-1g;
+	Thu, 10 Oct 2024 16:24:41 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Thu, 10 Oct 2024 16:24:40 +0800
+Date: Thu, 10 Oct 2024 16:24:40 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: Klaus Kudielka <klaus.kudielka@gmail.com>
+Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Linux Crypto Mailing List <linux-crypto@vger.kernel.org>,
+	Boris Brezillon <bbrezillon@kernel.org>,
+	Arnaud Ebalard <arno@natisbad.org>,
+	Romain Perier <romain.perier@free-electrons.com>
+Subject: Re: [REGRESSION] alg: ahash: Several tests fail during boot on
+ Turris Omnia
+Message-ID: <ZwePSPG8aWm6mwKK@gondor.apana.org.au>
+References: <ZwJUO5Nz3S7EeqO6@gondor.apana.org.au>
+ <1fc4db6269245de4c626f029a46efef246ee7232.camel@gmail.com>
+ <ZwObXYVHJlBaKuj2@gondor.apana.org.au>
+ <38a275a4e0224266ceb9ce822e3860fe9209d50c.camel@gmail.com>
+ <ZwZAExmK52txvHE8@gondor.apana.org.au>
+ <7e38e34adddb14d0a23a13cf738b6b7cccbfce6f.camel@gmail.com>
+ <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,47 +73,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <oyvqsywyznanpx5oflnemcsrk7r7nnhvxl6ly7b55oan2boi5d@kobrtldqbj6m>
+In-Reply-To: <ZwduxHxQtHdzz-kl@gondor.apana.org.au>
 
-On Thu, Oct 10, 2024 at 08:12:41AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Oct 10, 2024 at 07:39:05AM +0800, Inochi Amaoto wrote:
-> > Add compatibles string for the Sophgo SG2044 uarts.
-> 
-> This we see from the diff, say something about hardware.
-> 
+On Thu, Oct 10, 2024 at 02:05:56PM +0800, Herbert Xu wrote:
+>
+> Is it really OK to add new entries to the chain after it has been
+> given over to the hardware?
 
-The reason for this compatiable (and the hardware) is mainly in the
-next patch. Will it be better to submit a new verion with improved
-description? If so, I wonder whether I can reserve your ack.
+Please give this patch a try to see if it improves the hashing.
 
-> > 
-> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > ---
-> >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > index 4cdb0dcaccf3..6963f89a1848 100644
-> > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > @@ -58,6 +58,10 @@ properties:
-> >                - brcm,bcm11351-dw-apb-uart
-> >                - brcm,bcm21664-dw-apb-uart
-> >            - const: snps,dw-apb-uart
-> > +      - items:
-> > +          - enum:
-> > +              - sophgo,sg2044-uart
-> 
-> I would just add it to starfive enum, but this is fine as well.
-> 
-> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Thanks.
-
-Regard,
-Inochi
+Thanks,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
+--
+diff --git a/drivers/crypto/marvell/cesa/tdma.c b/drivers/crypto/marvell/cesa/tdma.c
+index 388a06e180d6..0de99fa6c1f5 100644
+--- a/drivers/crypto/marvell/cesa/tdma.c
++++ b/drivers/crypto/marvell/cesa/tdma.c
+@@ -113,6 +113,7 @@ void mv_cesa_tdma_chain(struct mv_cesa_engine *engine,
+ 		 * the request.
+ 		 */
+ 		if (!(last->flags & CESA_TDMA_BREAK_CHAIN) &&
++		    0 &&
+ 		    !(dreq->chain.first->flags & CESA_TDMA_SET_STATE))
+ 			last->next_dma = cpu_to_le32(dreq->chain.first->cur_dma);
+ 	}
 
