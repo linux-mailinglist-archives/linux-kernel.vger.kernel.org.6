@@ -1,111 +1,90 @@
-Return-Path: <linux-kernel+bounces-360007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360027-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C32999375
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:12:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67D719993A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 22:25:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A3B41F24A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:12:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1376A1F23028
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:25:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0185A1E1C15;
-	Thu, 10 Oct 2024 20:11:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9C61DFD84;
+	Thu, 10 Oct 2024 20:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b="pMF193xb"
-Received: from mail11.truemail.it (mail11.truemail.it [217.194.8.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="bIMaU8TE"
+Received: from mx04lb.world4you.com (mx04lb.world4you.com [81.19.149.114])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2277C1CF2B3;
-	Thu, 10 Oct 2024 20:11:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.194.8.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFE791D0E10
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:25:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.114
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728591100; cv=none; b=h2nPAvVK/LxZzv86QcmJv74HaoS7jlEQSbdcVhZtR/NTsYJ5jFnzdOHImeQ2sG5VuXxNaPj8JnG8097zBh/rOrTnwX+krK76DXQZ3lR5fyigRoPmosOGBwkBjlgvn2nsDfju+e8Dr0kAO7oQ2i8bZudZUFEx3ZZ0K+Xw1EwbPiE=
+	t=1728591919; cv=none; b=S5bHYN9EIQcBT8g+TLkLGu6RxTku83ltXosTTMyQdMHulKyx1pFGRm4CE9BWt060sLtLySF6zHYP19kbsTiDOsk+Ia/qYBQllvoJGhm4h7pci/nrsXfV8oSTVqfIbvOffFP+/Tr3AI7p0KLFphaaJf0ywnlIJrh54uCM8PucmxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728591100; c=relaxed/simple;
-	bh=YUURegqHlzdMc+l9OPp0EJKPdH70Hf31zc5tVc3O95A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RmzFISW/WMK3N/8vDA/CN+YR4JPrJeS8815lB6fSXNYIdYYUuW7iMpR1NbnZwEj6BpQ2WfvI0t5a82eV4ISDXjVxKSAlIMeIzYh5iYXfPjcccgDynU6a4JeobD1YWg0QJf9gEvfWFfTtWNW+ZLwzHUIacH8/Jui2FkE+dmENJd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it; spf=pass smtp.mailfrom=dolcini.it; dkim=pass (2048-bit key) header.d=dolcini.it header.i=@dolcini.it header.b=pMF193xb; arc=none smtp.client-ip=217.194.8.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=dolcini.it
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dolcini.it
-Received: from francesco-nb (93-49-2-63.ip317.fastwebnet.it [93.49.2.63])
-	by mail11.truemail.it (Postfix) with ESMTPA id E31AD1F969;
-	Thu, 10 Oct 2024 22:11:25 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=dolcini.it;
-	s=default; t=1728591086;
-	bh=/I/lOPCvj/ZjeWChjY+DvX2ksqrYKCeJpqQ5rwBLawg=; h=From:To:Subject;
-	b=pMF193xbTFIzRJTY6djU4mXUsm9R6/HW+dM2v2iOS9lqEfsk32VpZ1E+pXfqj1ZCx
-	 1iPu8rpsjf/LD2jXnV7Qpun5CQDjei5WZC0/I8J7v/9OfxbirdO2ZA16oZzQ3qvEyL
-	 M9869aCZ+4aUDBQ0dcZDu9qR72BPi8TOd8FGDfgD8tm2mM6sl5OipwVagnB8xIn7CW
-	 UgwZiMmbL+u1yMEi3VfclrXSkFe3PQmQkDQCioAVXdt1IocqHiZsE+gsoVZHcrP3Fc
-	 pu/9bUqsvXMpwD6T6I2b71P/zRbSSvrzg0Q0J+BERe6M+88IgeIVMLM/lx1WzGL+tx
-	 48dIdF46pK8/g==
-Date: Thu, 10 Oct 2024 22:11:21 +0200
-From: Francesco Dolcini <francesco@dolcini.it>
-To: Frank Li <Frank.li@nxp.com>
-Cc: Stefan Eichenberger <eichest@gmail.com>, hongxing.zhu@nxp.com,
-	l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, shawnguo@kernel.org, s.hauer@pengutronix.de,
-	kernel@pengutronix.de, festevam@gmail.com,
-	francesco.dolcini@toradex.com, linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Stefan Eichenberger <stefan.eichenberger@toradex.com>
-Subject: Re: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
-Message-ID: <20241010201121.GA88411@francesco-nb>
-References: <20241009131659.29616-1-eichest@gmail.com>
- <ZwgykRyE+jDU0CiU@lizhi-Precision-Tower-5810>
+	s=arc-20240116; t=1728591919; c=relaxed/simple;
+	bh=5qc2uLKtcng0Pbn4QgiTyzAIaDW5ySBZ4olEDvBdt8g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=doaeyoIjFITWmHkysx0ASGBLPGeLqie9S+gkMkofIyOncLI0Tx0m8lc/pdUL8p5pFpQ1J1lFvLX42NGlJDk3/5bkS5eBXBqYRiCM/eo/Xo/aayt+/PEdMU2nKpppgWQMydGDXyBx5cQ4BRO8HdV0J3TQLJ3UKdCwlVCKe2snpd4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=bIMaU8TE; arc=none smtp.client-ip=81.19.149.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WIszEjML8mTs5AA53t+/xCrTzFI6TfvvQCFOYTlehB0=; b=bIMaU8TEvyrFU+JMrk7ZQGq626
+	5NRsVJf4spONbLzBcfHdUQRdltmXaXvs6vzw7r37wvlAfykl+S75MJw/gJeviFo3ezaTQdmCmMsQN
+	tmOLIJDSEFjNbj8vgx7PSfsXjUG57MeSGM1MDQyjG7d5RDLzqcX7Y3B9lm8DN9ReCui8=;
+Received: from [88.117.56.173] (helo=[10.0.0.160])
+	by mx04lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1syzEV-000000003dn-3QQK;
+	Thu, 10 Oct 2024 21:53:59 +0200
+Message-ID: <fdd45a82-bf05-4e03-bac2-cb670bbf5200@engleder-embedded.com>
+Date: Thu, 10 Oct 2024 21:53:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwgykRyE+jDU0CiU@lizhi-Precision-Tower-5810>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/6] misc: keba: Add SPI controller device
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: linux-kernel@vger.kernel.org, arnd@arndb.de,
+ Gerhard Engleder <eg@keba.com>
+References: <20241009202949.20164-1-gerhard@engleder-embedded.com>
+ <20241009202949.20164-2-gerhard@engleder-embedded.com>
+ <2024101026-scoured-conductor-c92e@gregkh>
+Content-Language: en-US
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <2024101026-scoured-conductor-c92e@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-Hello Frank,
-
-On Thu, Oct 10, 2024 at 04:01:21PM -0400, Frank Li wrote:
-> On Wed, Oct 09, 2024 at 03:14:05PM +0200, Stefan Eichenberger wrote:
-> > From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> >
-> > The suspend/resume support is broken on the i.MX6QDL platform. This
-> > patch resets the link upon resuming to recover functionality. It shares
-> > most of the sequences with other i.MX devices but does not touch the
-> > critical registers, which might break PCIe. This patch addresses the
-> > same issue as the following downstream commit:
-> > https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
-> > In comparison this patch will also reset the device if possible. Without
-> > this patch suspend/resume will not work if a PCIe device is connected.
-> > The kernel will hang on resume and print an error:
-> > ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
-> > 8<--- cut here ---
-> > Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
-> >
-> > Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
-> > ---
+On 10.10.24 09:12, Greg KH wrote:
+> On Wed, Oct 09, 2024 at 10:29:44PM +0200, Gerhard Engleder wrote:
+>>   static void cp500_register_auxiliary_devs(struct cp500 *cp500)
+>>   {
+>>   	struct device *dev = &cp500->pci_dev->dev;
+>>   
+>>   	if (cp500_register_i2c(cp500))
+>> -		dev_warn(dev, "Failed to register i2c!\n");
+>> +		dev_warn(dev, "Failed to register I2C!\n");
 > 
-> Thank you for your patch.
-> 
-> But it may conflict with another suspend/resume patch
-> https://lore.kernel.org/imx/1727245477-15961-8-git-send-email-hongxing.zhu@nxp.com/
+> Nit, this doesn't have anything to do with the original commit message,
+> please be more careful when splitting patches up into a series.
 
-Thanks for the head-up.
+Yes, I also did some variable renaming, which should be moved to a
+separate commit. I will be more strict in the future.
 
-Do you see any issue with this patch apart that? Because this patch is
-fixing a crash, so I would expect this to be merged, once ready, and
-such a series rebased afterward.
+Thanks!
 
-I am writing this explicitly since you wrote a similar comment on the
-v1 (https://lore.kernel.org/all/ZsNXDq%2FkidZdyhvD@lizhi-Precision-Tower-5810/)
-and I would like to prevent to have this fix starving for long just because
-multiple people is working on the same driver.
-
-Francesco
-
+Gerhard
 
