@@ -1,99 +1,96 @@
-Return-Path: <linux-kernel+bounces-359534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDC3B998D2F
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:22:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B92A2998D20
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63E97B2DC36
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:07:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D3E5B2E0BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:07:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1C01CDFCB;
-	Thu, 10 Oct 2024 16:06:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9B651CDA15;
+	Thu, 10 Oct 2024 16:07:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QGxTUdEH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="GsTrJMkU"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9C61CBE80
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E56966FE16
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 16:07:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728576415; cv=none; b=NBjttMxd+KjulYxvI2Vv/zL+RBKOa1YN8znmCUwKyMjKG8BqeZ1MycQLl7v/lQDS4YuutT6mUVyAdAxAn9BlZ3xP1FnzqPBEQ9bPDW8M7500mJRFSg5W8idBbFd4biDhNfvsVHKKp8N807Jb/gY/ziDgNHAXfA1y2exYLu0U7a0=
+	t=1728576463; cv=none; b=O0yaE6q59HOZZdch5fBE1Tc+DrGIQEyXnMLFykeo2uHkAnEVw7KeivKR0suSPGy8xk+I8UAEQIDJD/sC4DzmJNsxDd5+VU8QO2gdgzPRjgf4gn1FZBENKyJzfh4nKs1E7xc5oaySvmVg1KAm9C089U+bhZvGbQxeRh3FgzF4WI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728576415; c=relaxed/simple;
-	bh=iiFqIaeGWzn5Xw4KqI1wHYf2EWVoHUdUhd1tZQSD++s=;
+	s=arc-20240116; t=1728576463; c=relaxed/simple;
+	bh=gMJJQSlsn8Yh8reIJdg3CtduncAlSvBM+SH5wCCRMpg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dpYhVj2VcrJWJpC4SQPW7q0eU1a8cI8FkAWoL2sjH3/M35/RkBAybTpsyZI/YF9AdIN68prmaqwlU3yHBariP5SpDjVOslGbKYY9wut5hZODeHN0sUbEcb9Wwdtrrd/4PtDY/18oqwieSAtm/hMZTqCh6F5Y6Qh9z5aMErdLW80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QGxTUdEH; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728576413;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=S/HNyejBOzZNAS2pmhlTCa73HqHtmX71UiVQvzZUuQU=;
-	b=QGxTUdEHfw9YI7qTW6dVvwz5Bz/HVK36p0i7c9QcpFAh6PjuJEnznjLzl/q616+DxlUA2y
-	BqCAMWExhUGpGjnOKiYex2E2JVxDvUCf6ApKaakQihXMVzrgGmvDWLifPzzY3ks/gduVWK
-	jbeiWW3W4aJOEANxLQNusFF5G7UwGR8=
-Received: from mail-pf1-f200.google.com (mail-pf1-f200.google.com
- [209.85.210.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-37-0Fg8Fv-aOOqRDJ0S98U1ig-1; Thu, 10 Oct 2024 12:06:51 -0400
-X-MC-Unique: 0Fg8Fv-aOOqRDJ0S98U1ig-1
-Received: by mail-pf1-f200.google.com with SMTP id d2e1a72fcca58-71930797560so1286260b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:06:50 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=i//tgWfJwCoCOpvaKiAcJRLyZcGs9aeSjWxwWdregUarwg92sjWRj79gVtXfZ5PxlJ8YHzfYAfbfykAp2JdtZWq0iHgdyJpYOjTrSWJKMIwFJXUR79Lnc++cwxbK0r34DkBtR6shGHpsBVbN2sG9WT1uQFUwjXSVZ0S6/rA6aDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=GsTrJMkU; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b9b35c7c7so7185005ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 09:07:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fastly.com; s=google; t=1728576461; x=1729181261; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lLDmBuPbqdFWywlMJb7s5WtOj7TP+t2aXk4dAI9ZYPM=;
+        b=GsTrJMkU25PTamlCMwj87VBDSg08a9TYsWC/cOPWfuVOfRvnrParif5IpeDbCg4MKw
+         wHJ/vAKC1dIdXOs1HCvL9FNUt+WJhcZnLPmPOdzXcizhVnHsxxDZcOn2FrwYYfbJa/X2
+         3aNilAGkKW3DcnVXRiG8wt/fKZJLJDwx9hdW8=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728576410; x=1729181210;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=S/HNyejBOzZNAS2pmhlTCa73HqHtmX71UiVQvzZUuQU=;
-        b=InY8cvjIsn3NljWr3WNFoHvuxOkK9fMjksN4YiTO4sBqOUwjY0g6qpOoPcxfn1zQ7d
-         UvMly99Luo9uxHzeL+h8FYjG9TmExHPvL66Iob2Y4YORSKaTBMIvKtTWqoAeC0jx00gC
-         gGolJMuqHpcG7OoM6XiWp64gRUf1sQFVPWRl8VNxLCszkFKTr9XW2FiQjesb4fKoBvS1
-         VH8BBnH92F2g/L0m38x7Ndu97tIWSWR5WbaUSlQvLkNSDe2DSlSLhC2YUMywmD2hskGm
-         N9VOT8mJWjsOvouiveAsGjTjDJ0SLDFALhvG5n5+vULTkdbCESAbfYl2I4KzB1JMIwst
-         d2pA==
-X-Forwarded-Encrypted: i=1; AJvYcCWDhBfyYoKvOkN3fW66DArDQVSvAPBa2mo70qVFNFuWEJ0F4G4DmRfZjFIyTgv6b0GLxkFgoCGW35sYBWY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmJqFIaI4EccDIHbLZjo583s64Ql5Mik8Np9xqNkCgiJX0H3BU
-	TUxZIliurZ0+JXHHSZGWw1+6Ru8knmzV0xNsS+mTqRvlY+Y27hgztZvZFH4ZNlKnGYttGj9f7Gk
-	Pqy3cpLzDIu+HTSSoOp2Tc4hLxPWF9An3i+3U0/KUUxHlvvBzydjmTHEH2VbTaw==
-X-Received: by 2002:a05:6a00:179b:b0:719:7475:f07e with SMTP id d2e1a72fcca58-71e1db6481fmr11819879b3a.4.1728576410024;
-        Thu, 10 Oct 2024 09:06:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG+7f1RLhbjySKF/4qyAXiKo7lGpEQ+qrTVlBlzhq+59C96dfh+Iq8tKg2tVLc+cHIQsd5gOg==
-X-Received: by 2002:a05:6a00:179b:b0:719:7475:f07e with SMTP id d2e1a72fcca58-71e1db6481fmr11819813b3a.4.1728576409638;
-        Thu, 10 Oct 2024 09:06:49 -0700 (PDT)
-Received: from x1n (pool-99-254-114-190.cpe.net.cable.rogers.com. [99.254.114.190])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9ea46csm1229368b3a.17.2024.10.10.09.06.44
+        d=1e100.net; s=20230601; t=1728576461; x=1729181261;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:mail-followup-to:message-id:subject:cc:to
+         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lLDmBuPbqdFWywlMJb7s5WtOj7TP+t2aXk4dAI9ZYPM=;
+        b=igOoHqjxytHcO0dOk0vppiM7W6WRt9E9AXVg9Fdo5+0UsupTrEAXzF7K+AZjtdRVQQ
+         tSG06NhXM9iOEqetrubYo0fnorWAkseBcuFjwl2dWH7sevmxRlH+NvGasvmFqRKmBcPE
+         7obLpo0VoVDh9sSPCSbmyJE6efwv6DZrdXw7iEm1cwtgkePedu5EW0uhrImJgbO0wkai
+         RUTwjrooxMSRnDglVZxpd+FJ7KBT5ZA0CVEYJTNcJgPwgJMEPu48M914UkUC8FTwj/5r
+         vu7PWQTgv1CW2nczPrnSrc1uGQSajutbOB0e9LtCudWV1Effu6AlpxYq1IAbaxVOaRVB
+         046A==
+X-Forwarded-Encrypted: i=1; AJvYcCVuLe6IbS9TopwJedwJMse0e6Wx3NmGVJ+M2xhvjgHtbnD9QRZpNyxtzxNIaUzLtCtKMmMe5Nkie6xojyI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBC5j68sBQUf9PB8vc0Yl8ZGh6FLyAa2U9w3Aqf3PRV/WG6IYH
+	ILmEnB6fbMe7V8/SdGcpEWksm60AA9evyj11W6kX0goCDMYR8psUUOIpm1ejya0=
+X-Google-Smtp-Source: AGHT+IG0fUbGFEzJUGz4lr95LVIQt209ymVKDCNv+HN/QpGQnTewWumSlw9CcDSQqGqrSbXg5wKhWw==
+X-Received: by 2002:a17:903:32c9:b0:20b:43f8:d764 with SMTP id d9443c01a7336-20c6375c6e4mr98324265ad.8.1728576461240;
+        Thu, 10 Oct 2024 09:07:41 -0700 (PDT)
+Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c33ce22sm10984635ad.256.2024.10.10.09.07.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 09:06:48 -0700 (PDT)
-Date: Thu, 10 Oct 2024 12:06:43 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Ackerley Tng <ackerleytng@google.com>
-Cc: tabba@google.com, quic_eberman@quicinc.com, roypat@amazon.co.uk,
-	jgg@nvidia.com, david@redhat.com, rientjes@google.com,
-	fvdl@google.com, jthoughton@google.com, seanjc@google.com,
-	pbonzini@redhat.com, zhiquan1.li@intel.com, fan.du@intel.com,
-	jun.miao@intel.com, isaku.yamahata@intel.com, muchun.song@linux.dev,
-	mike.kravetz@oracle.com, erdemaktas@google.com,
-	vannapurve@google.com, qperret@google.com, jhubbard@nvidia.com,
-	willy@infradead.org, shuah@kernel.org, brauner@kernel.org,
-	bfoster@redhat.com, kent.overstreet@linux.dev, pvorel@suse.cz,
-	rppt@kernel.org, richard.weiyang@gmail.com, anup@brainfault.org,
-	haibo1.xu@intel.com, ajones@ventanamicro.com, vkuznets@redhat.com,
-	maciej.wieczor-retman@intel.com, pgonda@google.com,
-	oliver.upton@linux.dev, linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org, kvm@vger.kernel.org,
-	linux-kselftest@vger.kernel.org, linux-fsdevel@kvack.org
-Subject: Re: [RFC PATCH 26/39] KVM: guest_memfd: Track faultability within a
- struct kvm_gmem_private
-Message-ID: <Zwf7k1wmPqEEaRxz@x1n>
-References: <cover.1726009989.git.ackerleytng@google.com>
- <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
+        Thu, 10 Oct 2024 09:07:40 -0700 (PDT)
+Date: Thu, 10 Oct 2024 09:07:37 -0700
+From: Joe Damato <jdamato@fastly.com>
+To: Eric Dumazet <edumazet@google.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com,
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [net-next v5 9/9] mlx4: Add support for persistent NAPI config
+ to RX CQs
+Message-ID: <Zwf7ydIettFJ6p2K@LQ3V64L9R2>
+Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
+	Eric Dumazet <edumazet@google.com>, netdev@vger.kernel.org,
+	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
+	bjorn@rivosinc.com, amritha.nambiar@intel.com,
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
+	Tariq Toukan <tariqt@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:MELLANOX MLX4 core VPI driver" <linux-rdma@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>
+References: <20241009005525.13651-1-jdamato@fastly.com>
+ <20241009005525.13651-10-jdamato@fastly.com>
+ <CANn89i+187Yht9K-Vkg6j_qj9sFiK0jaGSxMDdYCAUZUtBgMOw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -102,47 +99,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <bd163de3118b626d1005aa88e71ef2fb72f0be0f.1726009989.git.ackerleytng@google.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANn89i+187Yht9K-Vkg6j_qj9sFiK0jaGSxMDdYCAUZUtBgMOw@mail.gmail.com>
 
-On Tue, Sep 10, 2024 at 11:43:57PM +0000, Ackerley Tng wrote:
-> The faultability xarray is stored on the inode since faultability is a
-> property of the guest_memfd's memory contents.
+On Thu, Oct 10, 2024 at 06:28:59AM +0200, Eric Dumazet wrote:
+> On Wed, Oct 9, 2024 at 2:56 AM Joe Damato <jdamato@fastly.com> wrote:
+> >
+> > Use netif_napi_add_config to assign persistent per-NAPI config when
+> > initializing RX CQ NAPIs.
+> >
+> > Presently, struct napi_config only has support for two fields used for
+> > RX, so there is no need to support them with TX CQs, yet.
+> >
+> > Signed-off-by: Joe Damato <jdamato@fastly.com>
+> > ---
 > 
-> In this RFC, presence of an entry in the xarray indicates faultable,
-> but this could be flipped so that presence indicates unfaultable. For
-> flexibility, a special value "FAULT" is used instead of a simple
-> boolean.
-> 
-> However, at some stages of a VM's lifecycle there could be more
-> private pages, and at other stages there could be more shared pages.
-> 
-> This is likely to be replaced by a better data structure in a future
-> revision to better support ranges.
-> 
-> Also store struct kvm_gmem_hugetlb in struct kvm_gmem_hugetlb as a
-> pointer. inode->i_mapping->i_private_data.
+> nit: technically, the napi_defer_hard_irqs could benefit TX completions as well.
 
-Could you help explain the difference between faultability v.s. the
-existing KVM_MEMORY_ATTRIBUTE_PRIVATE?  Not sure if I'm the only one who's
-confused, otherwise might be good to enrich the commit message.
+That's true - I think I missed updating this commit message when I
+realized it. I can correct the commit message while retaining your
+Reviewed-by for the v6.
 
-The latter is per-slot, so one level higher, however I don't think it's a
-common use case for mapping the same gmemfd in multiple slots anyway for
-KVM (besides corner cases like live upgrade).  So perhaps this is not about
-layering but something else?  For example, any use case where PRIVATE and
-FAULTABLE can be reported with different values.
-
-Another higher level question is, is there any plan to support non-CoCo
-context for 1G?
-
-I saw that you also mentioned you have working QEMU prototypes ready in
-another email.  It'll be great if you can push your kernel/QEMU's latest
-tree (including all dependency patches) somewhere so anyone can have a
-closer look, or play with it.
-
-Thanks,
-
--- 
-Peter Xu
-
+Note: This adds to the confusion I have around the support for
+allocating max(rxqs, txqs) config structs; it would seem we'll be
+missing config structure for some queues if the system is configured
+to use the maximum number of each? Perhaps that configuration is
+uncommon enough that it doesn't matter?
+ 
+> Reviewed-by: Eric Dumazet <edumazet@google.com>
 
