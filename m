@@ -1,72 +1,72 @@
-Return-Path: <linux-kernel+bounces-359789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA4999990C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:39:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 817AF9990C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 20:39:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0586DB2195B
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:39:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 359D61F20FE5
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 18:39:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8EE204089;
-	Thu, 10 Oct 2024 18:26:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE1A2040B8;
+	Thu, 10 Oct 2024 18:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E53iqmq8"
-Received: from mail-pf1-f201.google.com (mail-pf1-f201.google.com [209.85.210.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xqt2Fs5n"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9D3202F90
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:26:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A9C7204086
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:26:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728584781; cv=none; b=KvjFq8AaSdnmUtc73ut438tDHZItBZj3HPzR8fcNiRoo+R6NBrLgDFqQKiWu1ugpJHlrBBvOAWWxirx53fKA05ieIYOgV1Q90XKuIDkFxUVQN/h8BWja7JlcOHTNTM3ejzAcycjLRQpK5JgGMq0NnpQq9MAbivrny8Q9oN+D6iA=
+	t=1728584784; cv=none; b=boIIfIQnQOIM/bEqTucyM9vgFq0UK7wfLCZkvTbGdwFpdx+oxY+1TSrkBqM34CwQs1cEghT7jWnV6JCcxdw8Cc9boMuQj8oPlTzXXg6r0y43BgD5Hs57y36W3uCmES9x0PiB9kvByeRs5seXAxpzCdhIhHFFB2IUJwwSkrg4EQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728584781; c=relaxed/simple;
-	bh=hSHnz2G1ntKemXewFOwXdDJXjhCTKhhhRrw1wSIGnaU=;
+	s=arc-20240116; t=1728584784; c=relaxed/simple;
+	bh=acp8IhS6KrAOGkkRIhpxPxZ31aINXkAYcQRqekRRiYM=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=tdECsv9TR+eIbSUP0quhFc4wNCipFoik5z5yETN21stBCoMVTnwkqQPlXRPGhyJNSOi2hKWjbolAtsFPbIQQ6DXhVLBEhoEIrMIRVVvkB+TzZh7fKqJWV9uNp4BIujLtRpK4VakJJ+iJPMc79Ny4NfRnGLW71RtofSRG6kb1bOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E53iqmq8; arc=none smtp.client-ip=209.85.210.201
+	 To:Cc:Content-Type; b=APjL5vScxqGjfRMwPg4XVpvbZu36gFvs5SePFrl93p3gg8Is4k3LJJZptGbMHiKg+UU12Hf2hx/C1dqHRqnrfhVrjW6b/EGYLbfRja8pAga7Z2jwkpZzk2l2v3VwURP2xP2TrQdfOrc3HXQXcCSidIxRAIFKZh7qUCxpDUFB43s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xqt2Fs5n; arc=none smtp.client-ip=209.85.128.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f201.google.com with SMTP id d2e1a72fcca58-71e1e989aa2so1655349b3a.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:26:20 -0700 (PDT)
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e29b4f8837so18944137b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:26:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728584780; x=1729189580; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728584782; x=1729189582; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=8DwvYXI8CmE5CO0Ycvk+EgdgF52vTMi74FFh8TONwA8=;
-        b=E53iqmq8I7HHufRa9Nfa4QpSUD3mPUf0HdiC+gr3+ZJVA0PtJRMGFCy2RlpuApodID
-         MHkYZafORHG4Fo5pdlmIa2Zu49fY42Dn8Mwbg8BEIZ/Pa8OJQiqqaoX3cE0NBkDUycJi
-         8knjazonwqf9LvKUPFmBk2crmB0MGGb2WbPM1i7pjkVZjFgAzrwTCr7oBWE4eumlOw58
-         NDuf4DR/sTZJYm1oq12ic4ny/HL0dHq+Txgeh165RAyYFWZt+w+um9fwU7jF7aG4NAnz
-         uIpRYBDmcMn403NAN6nAehV9jbOFJtSN+/wsSbKYsr5xfV60UWvUZH56iYMQo+BvtQRs
-         hZkw==
+        bh=CHy2j9VNwFKd5G/Ubc3O4QkXvNoIm5ox3M6XZ4oswcY=;
+        b=Xqt2Fs5nbw3a9rY6oVLT35/D0l+G/AD+Q49HX1QdXMfC2SfNz4O5O1dvtdhGzDWUDl
+         JpqTDsMCsN6OxFww5+NH7ydMQnMFtfrmh34ZhDsUCf/uTkDGYmH6VlOYAcds86k0XnLu
+         dP0P0MTgvn/Qf9H0M5XOt0K7URLrCKcwSGSrKXhaF7fEgRm8tzA0j54XzIeR4IkT7Ji5
+         AoZrpW3iiSMjwhmWTfZ64gNRi5aT38cY6iP8t9xd8k0HMzsVYBTUhBM1elfqfp5jqfzO
+         ADF/8T0Dad0vzNIZJhArpIvd/mEd9y0HE3XU4hpM3jp77eHkpOjUClLqF4+0clJvSyS9
+         WkzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728584780; x=1729189580;
+        d=1e100.net; s=20230601; t=1728584782; x=1729189582;
         h=content-transfer-encoding:cc:to:from:subject:message-id:references
          :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
          :cc:subject:date:message-id:reply-to;
-        bh=8DwvYXI8CmE5CO0Ycvk+EgdgF52vTMi74FFh8TONwA8=;
-        b=aIskNM9luHqe8fcq3BHxh66Y0vqbpDaJbdHKJnzGfTOi9+iN9cQXnwQBiNPDegJVGm
-         spJ0KdMAloWyDd6rmDsmLdp1+vaIXDGTDDeoUtaf580CdPE+1QTRHjGSJBx+LR3eQZm3
-         Fl/PmIWWAJBWKSVZJp6U+/7/lwUWdiOeP81UYqE6FG4O7aIHlX0dryeKsa6BcDu+qCpF
-         QttJnPC52ikRBE4yLAkw3Zq2N8ZTneCWlgelxBxHXOyu+MMdPRHmfNCwCcvW2DGulDfY
-         3UZ9I1WKcOkqpNYmtmHTBpVTGGbUdi0s7y+JQlHZMs47zowLBNZawqKPELIpWlG/PvVo
-         WgZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBqWVfw7icTiw5tG5lwP9sNRLfvEjIBOK+Yf1qCjla2pLFadSHc3FyeNT5tGBGr+OxA+D4ZaniEkTkc2w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrNEkHMdEn/chsB38B+HL/wx4eq6/+1DJFR92sqrO8R2KmJzlf
-	i8Q6kxHMPPuHlC9WgDjWis9AcduPyuxSupiSUIF9dQteJ5flJMFqXipA6ryD3SmIKn3Iz9v1UYF
-	EJg==
-X-Google-Smtp-Source: AGHT+IG3pPvsekcqYnotExeZVZUXEYlJLq+6e3a1eutYJX4gtVKcKQbhJKMNrxmpaRIGMBxtyW/kZ/ByL14=
+        bh=CHy2j9VNwFKd5G/Ubc3O4QkXvNoIm5ox3M6XZ4oswcY=;
+        b=il+rzKFo6I1oklxehqWblzrHmn9hURUlR+YZOrbB1a8yzXrDJjcTVkdkQePf0eefVr
+         7apiqNbL9MfBhZ26uiH2DTFemtw5IoTIwa5Rmj+Tunh/pFzyRyNN84NPfxDRQk3Fzjr7
+         i8at3DKnnp0cKMnIsY7aLYftzWLD8x1jN98u2QHXSuFXFToTCU3day2au2pQsW7lf6ou
+         jfSIHD+2K/GfLr1Z0AdZBNAeQ6qhz1x4upVsMdx9bAVjpf5N6gqYanJDwFt4iJlWOFs+
+         b+zOOHYmNp016RrOgReGp+G0gLv6yk1IaXpIGdbu+oKMvQhNXuC5kP/JmWVTY8Oqbx/N
+         Wn2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWJPkTlfW33XBKQN+OSSL7XG4IFmYImSLZayQfOtu16vDOBi5/wZ4L6bNQ0SoX8AbzNGDo4qEKpb5sHSEo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1BR8dKr0z8SNOg0k4+OrPhjE2yvucU3JwHkKo8cVPgbffoA31
+	XeAamjEixkJYCZvLhqj2/ikztUFmkFf+mBJJtrLaDx1y+/p89q62XDqizJUTXd8U6wyCg46vuKD
+	xaw==
+X-Google-Smtp-Source: AGHT+IEBXjEpYcXfPYRm3Nf4G9ZN1ucR55aqjscHr2p9QPsSrcRZYI0185ucK64AXquh+1QVcruWQv+kNDM=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:91a3:b0:71d:fb06:e79b with SMTP id
- d2e1a72fcca58-71e37c53abamr28b3a.0.1728584779496; Thu, 10 Oct 2024 11:26:19
- -0700 (PDT)
+ (user=seanjc job=sendgmr) by 2002:a05:690c:5605:b0:6be:523:af53 with SMTP id
+ 00721157ae682-6e32f2f4e28mr919077b3.3.1728584781575; Thu, 10 Oct 2024
+ 11:26:21 -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 11:23:44 -0700
+Date: Thu, 10 Oct 2024 11:23:45 -0700
 In-Reply-To: <20241010182427.1434605-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -76,8 +76,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241010182427.1434605-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241010182427.1434605-43-seanjc@google.com>
-Subject: [PATCH v13 42/85] KVM: Move declarations of memslot accessors up in kvm_host.h
+Message-ID: <20241010182427.1434605-44-seanjc@google.com>
+Subject: [PATCH v13 43/85] KVM: Add kvm_faultin_pfn() to specifically service
+ guest page faults
 From: Sean Christopherson <seanjc@google.com>
 To: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>, 
 	Oliver Upton <oliver.upton@linux.dev>, Tianrui Zhao <zhaotianrui@loongson.cn>, 
@@ -97,55 +98,83 @@ Cc: kvm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Move the memslot lookup helpers further up in kvm_host.h so that they can
-be used by inlined "to pfn" wrappers.
+Add a new dedicated API, kvm_faultin_pfn(), for servicing guest page
+faults, i.e. for getting pages/pfns that will be mapped into the guest via
+an mmu_notifier-protected KVM MMU.  Keep struct kvm_follow_pfn buried in
+internal code, as having __kvm_faultin_pfn() take "out" params is actually
+cleaner for several architectures, e.g. it allows the caller to have its
+own "page fault" structure without having to marshal data to/from
+kvm_follow_pfn.
 
-No functional change intended.
+Long term, common KVM would ideally provide a kvm_page_fault structure, a
+la x86's struct of the same name.  But all architectures need to be
+converted to a common API before that can happen.
 
 Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- include/linux/kvm_host.h | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+ include/linux/kvm_host.h | 12 ++++++++++++
+ virt/kvm/kvm_main.c      | 22 ++++++++++++++++++++++
+ 2 files changed, 34 insertions(+)
 
 diff --git a/include/linux/kvm_host.h b/include/linux/kvm_host.h
-index 9263375d0362..346bfef14e5a 100644
+index 346bfef14e5a..3b9afb40e935 100644
 --- a/include/linux/kvm_host.h
 +++ b/include/linux/kvm_host.h
-@@ -1168,6 +1168,10 @@ static inline bool kvm_memslot_iter_is_valid(struct =
-kvm_memslot_iter *iter, gfn_
- 	     kvm_memslot_iter_is_valid(iter, end);			\
- 	     kvm_memslot_iter_next(iter))
+@@ -1231,6 +1231,18 @@ static inline void kvm_release_page_unused(struct pa=
+ge *page)
+ void kvm_release_page_clean(struct page *page);
+ void kvm_release_page_dirty(struct page *page);
 =20
-+struct kvm_memory_slot *gfn_to_memslot(struct kvm *kvm, gfn_t gfn);
-+struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
-+struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn=
-_t gfn);
++kvm_pfn_t __kvm_faultin_pfn(const struct kvm_memory_slot *slot, gfn_t gfn,
++			    unsigned int foll, bool *writable,
++			    struct page **refcounted_page);
 +
- /*
-  * KVM_SET_USER_MEMORY_REGION ioctl allows the following operations:
-  * - create a new memory slot
-@@ -1303,15 +1307,13 @@ int kvm_gfn_to_hva_cache_init(struct kvm *kvm, stru=
-ct gfn_to_hva_cache *ghc,
- })
-=20
- int kvm_clear_guest(struct kvm *kvm, gpa_t gpa, unsigned long len);
--struct kvm_memory_slot *gfn_to_memslot(struct kvm *kvm, gfn_t gfn);
- bool kvm_is_visible_gfn(struct kvm *kvm, gfn_t gfn);
- bool kvm_vcpu_is_visible_gfn(struct kvm_vcpu *vcpu, gfn_t gfn);
- unsigned long kvm_host_page_size(struct kvm_vcpu *vcpu, gfn_t gfn);
- void mark_page_dirty_in_slot(struct kvm *kvm, const struct kvm_memory_slot=
- *memslot, gfn_t gfn);
- void mark_page_dirty(struct kvm *kvm, gfn_t gfn);
-=20
--struct kvm_memslots *kvm_vcpu_memslots(struct kvm_vcpu *vcpu);
--struct kvm_memory_slot *kvm_vcpu_gfn_to_memslot(struct kvm_vcpu *vcpu, gfn=
-_t gfn);
++static inline kvm_pfn_t kvm_faultin_pfn(struct kvm_vcpu *vcpu, gfn_t gfn,
++					bool write, bool *writable,
++					struct page **refcounted_page)
++{
++	return __kvm_faultin_pfn(kvm_vcpu_gfn_to_memslot(vcpu, gfn), gfn,
++				 write ? FOLL_WRITE : 0, writable, refcounted_page);
++}
 +
- kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu, gfn_t gfn);
+ kvm_pfn_t gfn_to_pfn(struct kvm *kvm, gfn_t gfn);
+ kvm_pfn_t gfn_to_pfn_prot(struct kvm *kvm, gfn_t gfn, bool write_fault,
+ 		      bool *writable);
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 6dcb4f0eed3e..696d5e429b3e 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -3098,6 +3098,28 @@ kvm_pfn_t kvm_vcpu_gfn_to_pfn(struct kvm_vcpu *vcpu,=
+ gfn_t gfn)
+ }
+ EXPORT_SYMBOL_GPL(kvm_vcpu_gfn_to_pfn);
 =20
- int __kvm_vcpu_map(struct kvm_vcpu *vcpu, gpa_t gpa, struct kvm_host_map *=
-map,
++kvm_pfn_t __kvm_faultin_pfn(const struct kvm_memory_slot *slot, gfn_t gfn,
++			    unsigned int foll, bool *writable,
++			    struct page **refcounted_page)
++{
++	struct kvm_follow_pfn kfp =3D {
++		.slot =3D slot,
++		.gfn =3D gfn,
++		.flags =3D foll,
++		.map_writable =3D writable,
++		.refcounted_page =3D refcounted_page,
++	};
++
++	if (WARN_ON_ONCE(!writable || !refcounted_page))
++		return KVM_PFN_ERR_FAULT;
++
++	*writable =3D false;
++	*refcounted_page =3D NULL;
++
++	return kvm_follow_pfn(&kfp);
++}
++EXPORT_SYMBOL_GPL(__kvm_faultin_pfn);
++
+ int kvm_prefetch_pages(struct kvm_memory_slot *slot, gfn_t gfn,
+ 		       struct page **pages, int nr_pages)
+ {
 --=20
 2.47.0.rc1.288.g06298d1525-goog
 
