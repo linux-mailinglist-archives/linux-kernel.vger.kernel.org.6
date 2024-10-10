@@ -1,223 +1,172 @@
-Return-Path: <linux-kernel+bounces-359122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1A19987C0
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:31:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 134299987BE
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67A012888CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:31:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ABBD7288611
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 647A51C9EBC;
-	Thu, 10 Oct 2024 13:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEE3D1C9DE6;
+	Thu, 10 Oct 2024 13:30:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xPmcEznn"
-Received: from NAM04-DM6-obe.outbound.protection.outlook.com (mail-dm6nam04on2045.outbound.protection.outlook.com [40.107.102.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ltm7gU8U"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 327BB1BD008;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51F52AF1D;
 	Thu, 10 Oct 2024 13:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.102.45
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728567051; cv=fail; b=XphAMtCp20ZOUVhtHVdKK/9irJTpZugF2gSCL8A2tuvFOZNlmmeevr0HugsweFnGR5tySXYRydfq7akWlm47nONxY7Kw6KDjP2Y2spMEkU1DeIj26hOV4qT+W/Qs2u0rkfWDPrwpnT4h0gxR28NZhRc9iol8sZDsKdcz0zb0KtM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728567051; c=relaxed/simple;
-	bh=o8AzQh9jibWS9c/kOaU2MoilFwUOQKXwu/J3TIiH800=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=lw0U6L/ovSm4V1nyOdF7SigmFGUMT7zVJXmEi5SSj9iyvgHh/MBKp+0VzcY4LrmaP1J3SWyecbif2n1sGB+HJ3Y4IsY7fu/2uH3VKTQdaPY6Nobig4vyTNtB4m2OfN3B8TVyxLGlZmB2eyRJ+of163eQIF0WWujseNzKA1161k4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xPmcEznn; arc=fail smtp.client-ip=40.107.102.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PZuLHU/b+IZGXYRzP+M1zWMt5+Md/mBetqJ1fBmGXXp34YsS8SLAXNycRdLYVxKSIX0eK2JUJv1o3EodsQNoRNwy1SKooxEAGzV4/UhNTxByFQQzy17PFUS7/HIZvWPH1Iotfe2D68Evx9UY2B21NVv0meqHSsLVoFJ4trln7/eR33UFNjvcNMKzmNBNptVFXzhDJ7RUI7xTaN078567SW1ehoZ9kEppyqkVMzeHMnHgXdVNmJC99Ev1t1qk+ItJ0VezY7ATR8Y5s7DEkFUYoHCPYG3O7JAqXK0Wtsy+c862WAT3Pw+k6wJH3RlCfebhLgb0VgygvoZJNuzYnn+LpQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=O0/DMiHsFvm4Nsi5ObybOhlPWLWoq31fWwZSptsGQM0=;
- b=UGZ0jqoC893Em1jlpKkh+zvwifMqjMbxrnCPIIjbKb4c3LtU6DimPqjnMe6+0xFcTxicLG4F8bqsCcsF0rN9qHobghVACMlWdZKpx01GhqXTCQd7xq/TUIRn77oF/ECTZjQb0/cs2wxismTxKFDA9o+GqYDUL7avApAVuqkQygyIskO/wTI3mrxQIYjBrWneH+VyR9EY7e9rG2uRNccMdn97GTYnKxYCaj822NAKOaK7NMMc859NRhdlyJsY2rfqA6ZY9HZSw55aCGuvWM+RlegpHYIqa/Ukbl0qJyAhlocLqnmOKIPOaYoI5ERPDyz4r7QTLLzxyxNRigxMIt0pWg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=O0/DMiHsFvm4Nsi5ObybOhlPWLWoq31fWwZSptsGQM0=;
- b=xPmcEznnf16eVDeHqdgFJ2DeUj4Bx74xs32cVxBVvgeDdD8nhOv/E0cqH/w82ZNHd3xn92szbP9rgFTm6osibvDms42Qp4duzkIEd3nhPstGUc/WbppGsVsJidTmqf/Y9srFwZLXIr7nXtcxFmX7MPdeoXj+cChn7VQs4lypXos=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com (2603:10b6:510:13c::22)
- by SA1PR12MB9246.namprd12.prod.outlook.com (2603:10b6:806:3ac::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Thu, 10 Oct
- 2024 13:30:44 +0000
-Received: from PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5]) by PH7PR12MB5685.namprd12.prod.outlook.com
- ([fe80::46fb:96f2:7667:7ca5%2]) with mapi id 15.20.8048.017; Thu, 10 Oct 2024
- 13:30:44 +0000
-Message-ID: <a975f84c-f74b-4825-8111-0c883cc709e0@amd.com>
-Date: Thu, 10 Oct 2024 15:30:34 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] drm/amdgpu: Fix potential integer overflow on shift
- of a int
-To: Colin Ian King <colin.i.king@gmail.com>,
- Alex Deucher <alexander.deucher@amd.com>, Xinhui Pan <Xinhui.Pan@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Leo Liu <leo.liu@amd.com>, amd-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org,
- Advait Dhamorikar <advaitdhamorikar@gmail.com>
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241010112204.636188-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>
-In-Reply-To: <20241010112204.636188-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0395.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:cf::19) To PH7PR12MB5685.namprd12.prod.outlook.com
- (2603:10b6:510:13c::22)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728567050; cv=none; b=UouKG/tTXJDVoV1ZT0KZWW8v8GSBcimIzpsfBqbvC86GC+pFF+wb0goRpFp0/xPY9cW/nuesYJ4rJZJr3kORQ3mOgQmZHQhX+p7ZhBcJxKZt+iKdNBG2eS20gQ3l2a6tlEfnqLvJsv0e+WQYdhAeaKvsBK9ixrmZFmBafcW1m24=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728567050; c=relaxed/simple;
+	bh=NKKWad7Govv4BAEPX4u9VEwU2jck9P8QCIU+Aqgxdy4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=auvWd5oiMXdLeoYsDpC6dWNotI9H8C68+4WXQoY1W4rOqbN9gqZ8r2nliHT0rPD7gS5buPSicuF7h8zUpisJaCDMu140z80en33Jr0t6RJKFKgXI7f7/Cr/ROvn99NoDdUsU9MBxbOHea5RHyo45R87RZV5ENmyC8V3ZsjaNKeo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ltm7gU8U; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-716a7fabf31so348324a34.3;
+        Thu, 10 Oct 2024 06:30:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728567048; x=1729171848; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4SK4LT2nNm84AhZpXABE570v9PceMVgU3Fb2pHfApgw=;
+        b=ltm7gU8UDa+MXN0nLRnpeEFC44e1BRlYrwqzWhBBYmY39kboI/kD+XGbyWDvmsV1yM
+         1+heZVvXIKy/3ZrmZ9iXMxhqja0W4TVXBSt0n8AlLTfNN9KBRxJ3VY+l/iFaThsyPWxq
+         y6xNw55JgH7wUlEU9hQzt4uo2U6vEFhNVzJjgq3T9LskI6Hs2JObH7+f6YIamReveQsK
+         5DQ6DoHDtPCarBONcL3lw6bhuyfDUpHbLs2vaty3h7HADeU5qmVWkpkHuedzUsOnkGqy
+         DjeqakV0TDPM+Ox3NOMYK51AbbwCY2cQAz9Y1uyBD9YeqOVaruSXzI34pbUWs44yGo2g
+         mYIg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728567048; x=1729171848;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4SK4LT2nNm84AhZpXABE570v9PceMVgU3Fb2pHfApgw=;
+        b=oUW3R/yKDvpaEXIWBEhb7GYv9JrVIe3rj7rE08Lf7xfKiDCQkrZoJtmrcnlzkOfOD+
+         9kRtE4j17UKAvKqRQ+TBy1WWMe5JiXhivaC2iUdnwjgL8FWPSihUcQlpfrHNDwEgCnKy
+         vlx4i6lt4kn5zcb5X4IsYbLq/OziQJkRt5P3YppoZRGDFe3XUTlW8qL/3SdMQWz8Rj+r
+         84Xz4BT3x8dPiCVc7+I9o4dgbZjbqiTIYNAWif9/8tS7lD8HCnuyD+X7PtJ4UMQ6WmtP
+         rMHhVgbMtx2zGvke922nBuGqhbZXkJTrFr9fl06jEX0SKIKj8sUFU+FOAUPNYzOsz7R/
+         BXHA==
+X-Forwarded-Encrypted: i=1; AJvYcCUKiFjBDh89vgesqDxcLf+9415+s+KqxmWdiNnw416/58AF4J6i1eBsmv/X5MYfPp4MSyfzk+eGEtVRGmM=@vger.kernel.org, AJvYcCWlwM+rqm9NEAIeAUrDZNQ4eMGbWypmaSRUklWaaZZqwJejNc6f4MNi4JwT2XMmciEb9h4hseV/WRIj1qk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCm0wbBb0VBFugj+yFrshUqXjluT8zMAI3jQKLXCUjT7r+InbF
+	Ji6654j5VioucmxgJuZpyG8xrf46heNZtNWguzL8/s7IdOU7GCIS
+X-Google-Smtp-Source: AGHT+IEkCCEyay3cKAq4bSPwIgeCPS8DRUBLuKqweN2kQt/3ee+FraBEJFL65l9+hg56tgRFbAH9Fg==
+X-Received: by 2002:a05:6870:d93:b0:25e:940:e934 with SMTP id 586e51a60fabf-2883454e9damr3677014fac.47.1728567047426;
+        Thu, 10 Oct 2024 06:30:47 -0700 (PDT)
+Received: from ?IPV6:2603:8080:1400:9f00:1ac8:ba3e:b226:eb6a? ([2603:8080:1400:9f00:1ac8:ba3e:b226:eb6a])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-28858360ebfsm274657fac.35.2024.10.10.06.30.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 06:30:47 -0700 (PDT)
+Message-ID: <3ef8a82f-5e71-4386-90e1-f34222a60bdf@gmail.com>
+Date: Thu, 10 Oct 2024 08:30:45 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB5685:EE_|SA1PR12MB9246:EE_
-X-MS-Office365-Filtering-Correlation-Id: 55b2bc8e-89b3-43ce-8ae9-08dce92fbe1e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?QTJzcGZTTkN2N1FqMS95dWxwR3FxUmw2dUlrVmVKak5aV3gzVWJuOWo1RUEz?=
- =?utf-8?B?RmRLdnBubElLTGlvbnhTTTZsbkJRczlDWlhoQ0MrZHMzK1FKOVBtbTdpOEdr?=
- =?utf-8?B?Q3JzRHlENGkrSEFXSmplTnR6eHE5YlFGUEFLaHEweHlwNkRIR2lxMFpZbEx5?=
- =?utf-8?B?L041ajJtS2ZxL2NqRGxhWWJRRHNzbW1ZaGUxZjZjTXFTa0JwbE5JZDQ3ZFZ4?=
- =?utf-8?B?dldickFUdWdDbEFRb1pGTys3SlVQRTQ3VGxCdUxCUGZOek5QaE85MFNNcy9O?=
- =?utf-8?B?anQ3VE1FTjNuZkpueWE4MG4rYXpMdDFvUmgydnkwTFBZd1c4dGVDcCtkbDhm?=
- =?utf-8?B?SVFyb1p5aC94R2ZJeUJ1SmRPeVhxa2xoQ2xUdlVrSlgyQVRqYnRzVXpNQWhw?=
- =?utf-8?B?TVlBQ2x2SS9OVEVWYVZtWktMYXAwcE9OVWVHT1VrWDBERGlicC9HcERmQVph?=
- =?utf-8?B?bVQxanI2aGtZSXVPQkpHU3ZvVVdEbm43Yy9nYXA0Ykw2U0NkVXJlRWtOOHE1?=
- =?utf-8?B?M09lMTVsN0hwYUxidUVoanNRalRpSThxbVRlMzlaODZzRjlGZkw0NHJNeW0x?=
- =?utf-8?B?ck40UU5XL09BQkdVRDMwRFFQMDc5QVF4VDYvcVE2ZlRMU04xNTRHNEorUTAz?=
- =?utf-8?B?Q215WE9tbjdjRDlkbWx1RllOSGduT0pibVJpazFQazZKYm5jQXRPbXFiWXBu?=
- =?utf-8?B?U3BySGhSd1BnRHdiNVN4YzdncnM1Mm45Z0doMURMNTVQR0I4a1JNTG1jRFI0?=
- =?utf-8?B?d3lYZVRVMWVqd1lvaERWazRCRUh3S3hpUjR5ZExDZWR4VUhUQWVOV1h1NXh3?=
- =?utf-8?B?ZHRvU3l2dllSdDBmOWVYSHJRRm4xeUE5dENGK29MNWhTNFk0WDFEd2lId0dz?=
- =?utf-8?B?WVBtd2J5Z3dlc0J2d0hRdmlod3Q1eXN6SzZOQVlBY2creE1qZFYrOUxTWG1P?=
- =?utf-8?B?S09JMzRmTUUrSnpOdkF0UWZpK1lzcG9FcHJoWHBiQkQ1dmRlWG9hR3hxTzkv?=
- =?utf-8?B?TEJ1RUovcFAvYWl0UHpxWGxRRFp5SlBFZ0JpTko3ODczU1BrVkZ2citpMjhH?=
- =?utf-8?B?NGpyWWY0UjYwZi9pZFNBdHk5Vm4xOWNHclVpRU83UDZObDN2VVZHZExMVGpI?=
- =?utf-8?B?Qk50UTcrUlZ4SUh5S3ZHMUQyOGtEeUwveVo5Q1pEOHpnM1h5TDdBYW5DOXJ0?=
- =?utf-8?B?clJrSmVFUVllQnZJdWsweEF0RzA1amF5R3lMK2xaSUNwVGs5MmY1NEJjeVFR?=
- =?utf-8?B?MWpmUlBDQUIwU24yUWpWK0RpRjFBN2JUQUliZmh4cmNhdFVlUlFzRkt3enl3?=
- =?utf-8?B?UEpIb3E5RGpaQVl5K3RFeTlSR2xnZStWaG41N0ozQ1ZScXo0QTlibFpNSTNh?=
- =?utf-8?B?UmovRlUvNFFoN0FvZmdzdis1ZkRkMFRkK082UUxZeEhHYS9lR2p3Q2xVTFJE?=
- =?utf-8?B?aXA1OWpjaDlmL0tIdVpFWWRnYnZDdXZPTzJiWW5GRlJKcUFvR0lxQVdZckcv?=
- =?utf-8?B?MTk4QjVTWXQ4c25sTlljU0o2WDJ6cDVobXFmczlOMENKdDJmMUYwWHR2SnBn?=
- =?utf-8?B?V0JsU0VEWEVVbVBqV3czWXVzVEJEaTl2ZE0vcmM1RnZTUEU2NEtXUzB4amJn?=
- =?utf-8?B?dERPQzV6RXkzbUMwTUFoaWdsTGE4U1BiSUNXa0NTRmxid2lRZVZWZVlVODV4?=
- =?utf-8?B?TmdWcEpkR1hXMG52cUk0WThCc2hLZU9ub2FrOW9INVNKZHd4Y0FDTVRRPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB5685.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?TnNRZGNsbWRnaE9zNzBiWUhIanZsTTVGMFhuL0JEK0VtT3VWT2FOa3QyYVVN?=
- =?utf-8?B?OHQxODVabjJscThXeFpWcG11eXVpY05Nbm9ydHZuTUJkeUxtM1hUemY4MHNQ?=
- =?utf-8?B?YjBPMXNpZUp5bTdvTWhLcFJqbVBoMUpMZ1NnTUhXdDBOaDBpNEgvQnFsbWM5?=
- =?utf-8?B?TEdRQVdqWDM0anZuUDJOSFpoNDZqM3JIRUV1czdGM0NvOTY4eklxR0FRQjBT?=
- =?utf-8?B?UlMrN2g0dGNMazlsN01sMnYvaUpOMU5XNTJtY0FMZUM0SURoanhnNDJIa2wv?=
- =?utf-8?B?Snl3N0RDZ3kzZy9IOTF6Wk8zbllFUVhwOEw2NG1rUzhONlhpdHBvRVJTcjkr?=
- =?utf-8?B?SDhlajZEKzR5eEhxV2Vtd05MYnI3RlgvRU96ZHFqSENqSXdaNTExdjNrSUht?=
- =?utf-8?B?YVRtQUdDcVhBdGhWTUZlMHROWk81Z3g2em1uQ0Fzb25NVGJOcUg4YkVPR2x3?=
- =?utf-8?B?aXV4UjVqZWJzVTJzb0ZqUEpmaHpqV2JYRjFkWlpBV2ZmU0J6dmg2aStGM3Uv?=
- =?utf-8?B?NmUrRTdjNUlpYTNyRGdHU3ByZ2FMbjkrZDJlQXBSREhrZDU1MVBFQ25LUDZw?=
- =?utf-8?B?cm1IOHJCbEs1VFptR0RpclgzSmV3RnpOdWhvajQ2NnBOTW53MmE2SDlMZWZj?=
- =?utf-8?B?ZGczS2Fxb1lXQ2dlOWJpVzhCZ2YxRmlpQWNKL2hKOHo1cHFCWXBiWHVZNmhU?=
- =?utf-8?B?eGlzZCszNGhpR1hzVWs4akhFTlEzNWJYRTNmeC8zblZtc2hsMEpxZjFtRDdD?=
- =?utf-8?B?MFkxQmxHUTlSdyt2dHViUWdZb0lEajJMZnY2ai81bDJnYkFEbXRrMEIyNVVC?=
- =?utf-8?B?S04xeVBzNU8xd0QrZEp2OFFPVXVZRklNZWRwMnR4cndSSnF5SjcvVGdINXU4?=
- =?utf-8?B?N1EyeXBiazA4YTdiV0FDUWhTZVRPRjZ2U1BTdGxyOW84a3R4MDM2MWlPaGNS?=
- =?utf-8?B?QU5hRkpEYlB3US9hRTZ0MFdSUWNSQ2FxckhpSU9SWnBia0RIMGVEeExwTVRh?=
- =?utf-8?B?c29BNU5vVE1qcHBnQVlUWWttVWFJVzU0SGI3bFF0bEx5b0pBMGk3ZUZ5eURG?=
- =?utf-8?B?M3dKVVBaK3ovN0RDalBqK1hoY25YcmcvNHlxUFE5SDlQQXJrWnJnL3pnbXRt?=
- =?utf-8?B?d1RnWEl5NzdlR2VwdTJldHpNT01vYTdCZG1KSjA2TWw4ZVowZG5TWGdOM1g3?=
- =?utf-8?B?U0FCRWJURkdpaExiaFhuVFlzYnkyM3l5cFUyOUFJSFdycmNpaU5nckVwbFp1?=
- =?utf-8?B?MjRHV2hNY1RsL1lmTWVudVRPNTZVaGR1S3U4Tmt3WldJWHFMWERNYzl3NlUv?=
- =?utf-8?B?T0VzYjVMSml5RERqOEo0TDFGaCttVmVoTW1SSk5xQTV2Y1JWbzUva3A5Zndx?=
- =?utf-8?B?b3dpNTlLQWc2Q3JTSzVHUGRIZ3Z1dHlkNHI4bEZDZVFpZG91bWtiVmJPNlVp?=
- =?utf-8?B?eEJJUExwdGZ3RW1DNUJmcmgvMFRKSFVoekVlbXBtNnNQd0RwYnJkMWl6bk4x?=
- =?utf-8?B?eXU1Y241QzFGa2JJR3YxcEZNMjVxZzhON21iZ21oYnViRnhCYjcrR2paNnFm?=
- =?utf-8?B?eDk0Q2ZvRHJyemt5SUU1QzdubE5WY0V5VElQazR0OHd6MVk5ZXptQ1dXNDBG?=
- =?utf-8?B?SXZydEY0a0RueE1Qamo2UENuaWtYUTAzVkpUNmdhQVU5TEcyRzhUZEQxNlRp?=
- =?utf-8?B?M1JQWHo3ZkFjT0RSeXd4T2lyUFE0ZlVRclJJbk0vWG9keGxCZXRWM3c3V05r?=
- =?utf-8?B?Tk1pV1o2ZXoyRnBXdEttTkJ3SGxUVHNFOW9Zdk9hbkZjbUQ3ajB3SmNOTW51?=
- =?utf-8?B?Ynd4MFR0KzQ1MU9LdFowOXRhTXNCa1hQTEk1bHFoSlJ0UTI1a0pWOTViRFhM?=
- =?utf-8?B?OWt1WElYZkNIR0ZjaHZNSStvdFhXM0xGdUttcWxBWE1KeGJPZG1pVUN3SXhY?=
- =?utf-8?B?Z0pqdG9xVEpxbUhsQmRYM3lsc2pQMkk3aWRWR1JCLzFvNEZKRFdXaGI1aytM?=
- =?utf-8?B?cHAzcjZFNnRyUmloWVc2UlJOWWxucTFxMHdPTXY3djhFTEJ2MENGaFpxY3Av?=
- =?utf-8?B?OU94MnZOM0tPbVpDbjBpeXFyTFlKcE9vU2xIR0hrclFMUjVPTTR5SG4rZjF3?=
- =?utf-8?Q?wg1agra4GEtWWtJnV5WDiIrlF?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 55b2bc8e-89b3-43ce-8ae9-08dce92fbe1e
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB5685.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 10 Oct 2024 13:30:44.5033
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: skBATaU5wFeimebryiATcn6w3waWYPUaa87PL2zg1MbaK1EpywLdG83+s76OORGV
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB9246
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: [PATCH v1] Upload dsp firmware for ASUS laptop
+ 1EB30 & 1EB31 and Update WHENCE for both
+To: "Ding, Shenghao" <shenghao-ding@ti.com>,
+ "linux-firmware@kernel.org" <linux-firmware@kernel.org>
+Cc: "Xu, Baojun" <baojun.xu@ti.com>,
+ "derekjohn.clark@gmail.com" <derekjohn.clark@gmail.com>,
+ "13916275206@139.com" <13916275206@139.com>,
+ "romangg@manjaro.org" <romangg@manjaro.org>,
+ "linux-sound@vger.kernel.org" <linux-sound@vger.kernel.org>,
+ "Chen, Robin" <robinchen@ti.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Yi, Ken" <k-yi@ti.com>, "philm@manjaro.org" <philm@manjaro.org>,
+ "jlobue10@gmail.com" <jlobue10@gmail.com>, "luke@ljones.dev"
+ <luke@ljones.dev>, "antheas.dk@gmail.com" <antheas.dk@gmail.com>
+References: <20241009101807.1473-1-shenghao-ding@ti.com>
+ <d1941b10-0549-4a0e-a3fe-a8d7c50c175b@gmail.com>
+ <7e138a1c8b6d4ace8c759bb2266216da@ti.com>
+Content-Language: en-US
+From: Mario Limonciello <superm1@gmail.com>
+In-Reply-To: <7e138a1c8b6d4ace8c759bb2266216da@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Am 10.10.24 um 13:22 schrieb Colin Ian King:
-> The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-> arithmetic and then assigned to and operated upon using a 64 bit unsigned
-> integer. In the case where the shift is 32 or more this can lead to an
-> overflow. Avoid this by shifting using the BIT_ULL macro instead.
+> Although TAS2XXX1EB30.bin and TAS2XXX1EB31.bin are both in ti/tas2781, yet it reported "does not exist".
+> I have no idea why the file is there while report "does not exist". After I removed the newly-merged, no such report.
 
-Advait Dhamorikar already came up with a similar patch which also cleans 
-up some other occasions.
+I think you forgot to git add them to the commit?
 
-Regards,
-Christian.
+> 
+> Following is the log.
+> 
+> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new# make check
+> Check that executables have shebangs.....................................Passed
+> Forbid new submodules....................................................Passed
+> Check Yaml...............................................................Passed
+> Check for broken symlinks............................(no files to check)Skipped
+> Detect Destroyed Symlinks................................................Passed
+> shellcheck...............................................................Passed
+> black....................................................................Passed
+> markdownlint.............................................................Failed
+> - hook id: markdownlint
+> - exit code: 1
+> 
+> internal/modules/cjs/loader.js:818
+>    throw err;
+>    ^
+> 
+> Error: Cannot find module 'node:fs'
+> Require stack:
+> - /root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/node_modules/markdownlint-cli/markdownlint.js
+>      at Function.Module._resolveFilename (internal/modules/cjs/loader.js:815:15)
+>      at Function.Module._load (internal/modules/cjs/loader.js:667:27)
+>      at Module.require (internal/modules/cjs/loader.js:887:19)
+>      at require (internal/modules/cjs/helpers.js:85:18)
+>      at Object.<anonymous> (/root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/node_modules/markdownlint-cli/markdownlint.js:5:12)
+>      at Module._compile (internal/modules/cjs/loader.js:999:30)
+>      at Object.Module._extensions..js (internal/modules/cjs/loader.js:1027:10)
+>      at Module.load (internal/modules/cjs/loader.js:863:32)
+>      at Function.Module._load (internal/modules/cjs/loader.js:708:14)
+>      at Function.executeUserEntryPoint [as runMain] (internal/modules/run_main.js:60:12) {
+>    code: 'MODULE_NOT_FOUND',
+>    requireStack: [
+>      '/root/.cache/pre-commit/repoxl59c0uz/node_env-system/lib/node_modules/markdownlint-cli/markdownlint.js'
+>    ]
+> }
+> 
 
->
-> Fixes: f0b19b84d391 ("drm/amdgpu: add amdgpu_jpeg_sched_mask debugfs")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c | 6 +++---
->   1 file changed, 3 insertions(+), 3 deletions(-)
->
-> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> index 95e2796919fc..136a0c8d8c7a 100644
-> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_jpeg.c
-> @@ -357,14 +357,14 @@ static int amdgpu_debugfs_jpeg_sched_mask_set(void *data, u64 val)
->   	if (!adev)
->   		return -ENODEV;
->   
-> -	mask = (1 << (adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
-> +	mask = (BIT_ULL(adev->jpeg.num_jpeg_inst * adev->jpeg.num_jpeg_rings)) - 1;
->   	if ((val & mask) == 0)
->   		return -EINVAL;
->   
->   	for (i = 0; i < adev->jpeg.num_jpeg_inst; ++i) {
->   		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
->   			ring = &adev->jpeg.inst[i].ring_dec[j];
-> -			if (val & (1 << ((i * adev->jpeg.num_jpeg_rings) + j)))
-> +			if (val & BIT_ULL((i * adev->jpeg.num_jpeg_rings) + j))
->   				ring->sched.ready = true;
->   			else
->   				ring->sched.ready = false;
-> @@ -388,7 +388,7 @@ static int amdgpu_debugfs_jpeg_sched_mask_get(void *data, u64 *val)
->   		for (j = 0; j < adev->jpeg.num_jpeg_rings; ++j) {
->   			ring = &adev->jpeg.inst[i].ring_dec[j];
->   			if (ring->sched.ready)
-> -				mask |= 1 << ((i * adev->jpeg.num_jpeg_rings) + j);
-> +				mask |= BIT_ULL((i * adev->jpeg.num_jpeg_rings) + j);
->   		}
->   	}
->   	*val = mask;
+This looks like you're missing some dependencie on you system for 
+markdownlint. You need nodejs v18.
+
+If you can't install this you can skip this check when you commit by 
+adding "SKIP=markdownlint" to your environment while running 'git commit'.
+
+> Check whence.............................................................Failed
+> - hook id: check-whence
+> - exit code: 1
+> 
+> E: ti/tas2781/TAS2XXX1EB30.bin listed in WHENCE does not exist
+> E: ti/tas2781/TAS2XXX1EB31.bin listed in WHENCE does not exist
+> E: target ti/tas2781/TAS2XXX1EB30.bin of link TAS2XXX1EB30.bin in WHENCE does not exist
+> E: target ti/tas2781/TAS2XXX1EB31.bin of link TAS2XXX1EB31.bin in WHENCE does not exist
+> 
+
+These files are missing in your commit or they have broken links. 
+Double check them.
+
+> make: *** [Makefile:10: check] Error 1
+> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new# ls ti/tas2781/TAS2XXX1* -al
+> -rw-r--r-- 1 root root 35220 Sep 28 21:54 ti/tas2781/TAS2XXX1EB30.bin
+> -rw-r--r-- 1 root root 35220 Sep 28 21:55 ti/tas2781/TAS2XXX1EB31.bin
+> root@LAPTOP-70RJ5B8Q:/usr/local/src/fw_new#
+>>
+>> Thanks,
 
 
