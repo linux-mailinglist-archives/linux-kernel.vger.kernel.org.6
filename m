@@ -1,100 +1,233 @@
-Return-Path: <linux-kernel+bounces-358201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 370C9997B59
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:36:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27D1A997B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 05:35:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFA36B229C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:36:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 580551C21A88
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 03:35:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55F2191F81;
-	Thu, 10 Oct 2024 03:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D86F719258B;
+	Thu, 10 Oct 2024 03:35:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b="ffOGxovQ"
-Received: from m16.mail.126.com (m16.mail.126.com [220.197.31.7])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2984229CEC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 03:36:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.7
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DEOhmpa2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2129429CEC;
+	Thu, 10 Oct 2024 03:35:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728531410; cv=none; b=XFtKsfZeD8AOLauMu48Ig/gcyAYH+9rLL0W7apMH91HHUnFRehVLrhdHLCPFYcaTQxNoT0nrvDiaTIyr24o3RvQVdz1wlsCkYX5wIaNmJAG5Bvor1+sQEBsnCwfOKje7vN4E7Pi/rqshwR0hNybQkH1IVkyiKkV9ABoqQS8jiZQ=
+	t=1728531301; cv=none; b=KD+IeU0hblmfiOXKB/Bmozry+limeosEgx2ma4qPhOsUmVRwrcukhL5Gfy0SoLqayXOUPKfDHve4fqtez9Jdc4nZiAFNHx4/eIUbOuUGsa3rQuHGc73+3ANlLeuXON6Z/0o5UVbPwPUeaIsty19RcxtvdN5bC8eXEr5ydhrg+8A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728531410; c=relaxed/simple;
-	bh=h8L1VIWsVrx8AgqznXh+8HVtniozkY43IsZ7/XXIZ4s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=uSUnEB0zm49OZugL9F0YLhwZi4LgK/2cbaKfya6UD37DbSrvnsaf5B5HgJ8Fx0YuxeWFS9vG908E2VRwpjV/GykHYOW/aeZO0es/yz3PU9kfUsLCzdVDW2RABW4NxU+JD3GbPuEa8eC/bL60mUllmN3GzsIv4+UAEQexKsRNUUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com; spf=pass smtp.mailfrom=126.com; dkim=pass (1024-bit key) header.d=126.com header.i=@126.com header.b=ffOGxovQ; arc=none smtp.client-ip=220.197.31.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=126.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=126.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=126.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=vatIf
-	tOds7mGJMXYrucjXN8DiSWuey6OgLXf5FxxoRg=; b=ffOGxovQnYNxjHvGk63Kl
-	js57FX/keqhqf7hYmNZgOHw3YLfe7vzEtz5RyGdF8JdTZf5Gsv9PvHYvOvIq0lWP
-	6ipwCCpvYN7nScPyJZw/0qOSsEVTh4sTqjtI7RG4syf8QjH6F4Vezz0Tc9BTosZ/
-	dnIgmR5K3ymntXfYUXmZQg=
-Received: from localhost.localdomain (unknown [111.204.182.99])
-	by gzsmtp3 (Coremail) with SMTP id pykvCgAnRssvSwdn3THdAw--.58443S2;
-	Thu, 10 Oct 2024 11:34:08 +0800 (CST)
-From: Honglei Wang <jameshongleiwang@126.com>
-To: tj@kernel.org,
-	void@manifault.com
-Cc: mingo@redhat.com,
-	peterz@infradead.org,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
+	s=arc-20240116; t=1728531301; c=relaxed/simple;
+	bh=HRHgG5jbEVObO69ghP4ySIjYU1RAmUl9a4hkfRJ4aQs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ANrONF2z28Lwyurrs3hNmXoDeFmkL3wq6p2ySjv/Yw/1kDaL0/bL0BsDFAiarMOEefmWFievqUVxMCpnCQl5V+czmoTWTef7HvPcnZu8XeD/w0Q7N/N+ljKtZEHrPPU0odZWNEZ+X4hrJo3+KBLNFJMIk82Ig2xbsHM2jHXd8jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DEOhmpa2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7D8EEC4CEC6;
+	Thu, 10 Oct 2024 03:35:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728531300;
+	bh=HRHgG5jbEVObO69ghP4ySIjYU1RAmUl9a4hkfRJ4aQs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DEOhmpa2qPEbQHb4KZYM8MjPjXiMLk3yOJWi4BO0kAX5vgg0g8w+k0kkGMP8qoj0A
+	 kcz6O+2axML30axzbUVgTOdsTQ3m2BnHvcf36f0XsfKPBNKxagJ85Y/r4ve83Kyn9c
+	 3d1XINXYb6kxOQ5vl9x30y6D9cNwmRZIRPjxxAdAQ4PDnVqJsX45JmjQ76fbtxGQBO
+	 azo/oplOHBYucSWtKhGsTfqlfIakomGs7lpSjmqUrxVyorTM9iDC7THzafzBfMOtLR
+	 vPfI3V/XOwqJZKXuNoZOiNVqLDOS9Fp3AnP2s1xwZieDFC8bOZmgR/EJ9/s9vw7E3l
+	 6N2yKBDm6EnYA==
+Date: Wed, 9 Oct 2024 22:34:59 -0500
+From: Rob Herring <robh@kernel.org>
+To: Andreas Kemnade <andreas@kemnade.info>
+Cc: Aaro Koskinen <aaro.koskinen@iki.fi>, Tony Lindgren <tony@atomide.com>,
+	Roger Quadros <rogerq@kernel.org>, linux-omap@vger.kernel.org,
+	Kevin Hilman <khilman@baylibre.com>, devicetree@vger.kernel.org,
+	linux-clk@vger.kernel.org, Tero Kristo <kristo@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] sched_ext: use correct function name in pick_task_scx() warning message
-Date: Thu, 10 Oct 2024 11:34:05 +0800
-Message-Id: <20241010033405.72313-1-jameshongleiwang@126.com>
-X-Mailer: git-send-email 2.24.3 (Apple Git-128)
+Subject: Re: [PATCH RFC v2 1/2] dt-bindings: clock: ti: Convert interface.txt
+ to json-schema
+Message-ID: <20241010033459.GA1297859-robh@kernel.org>
+References: <20241009205619.16250-1-andreas@kemnade.info>
+ <20241009205619.16250-2-andreas@kemnade.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:pykvCgAnRssvSwdn3THdAw--.58443S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JFWxWrWfGw48tFyfAw18Zrb_yoWDKrgEka
-	4agrs2kFyq9F1kua1UGan7t3s5Kay2qF1fAw4DKrZ7ArZYkFsxKrykJF98JrWkWF97KFnx
-	urs0kFykCrnIgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IUbtC7UUUUUU==
-X-CM-SenderInfo: 5mdpv2pkrqwzphlzt0bj6rjloofrz/1tbiJBl0rWcHQ6B8TwAAsU
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009205619.16250-2-andreas@kemnade.info>
 
-pick_next_task_scx() was turned into pick_task_scx() since
-commit 753e2836d139 ("sched_ext: Unify regular and core-sched pick
-task paths"). Update the outdated message.
+On Wed, Oct 09, 2024 at 10:56:18PM +0200, Andreas Kemnade wrote:
+> Convert the OMAP interface clock device tree binding to json-schema.
+> Specify the creator of the original binding as a maintainer.
 
-Signed-off-by: Honglei Wang <jameshongleiwang@126.com>
----
-Changes since v1:
-- use __func__ to address the function name base on David's suggestion
+Nice to see this! These are the top occurring undocumented (by schema) 
+warnings for arm32.
 
- kernel/sched/ext.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+> ---
+>  .../bindings/clock/ti/interface.txt           | 55 ---------------
+>  .../bindings/clock/ti/ti,interface-clock.yaml | 70 +++++++++++++++++++
+>  2 files changed, 70 insertions(+), 55 deletions(-)
+>  delete mode 100644 Documentation/devicetree/bindings/clock/ti/interface.txt
+>  create mode 100644 Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/clock/ti/interface.txt b/Documentation/devicetree/bindings/clock/ti/interface.txt
+> deleted file mode 100644
+> index 85fb1f2d2d28..000000000000
+> --- a/Documentation/devicetree/bindings/clock/ti/interface.txt
+> +++ /dev/null
+> @@ -1,55 +0,0 @@
+> -Binding for Texas Instruments interface clock.
+> -
+> -This binding uses the common clock binding[1]. This clock is
+> -quite much similar to the basic gate-clock [2], however,
+> -it supports a number of additional features, including
+> -companion clock finding (match corresponding functional gate
+> -clock) and hardware autoidle enable / disable.
+> -
+> -[1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+> -[2] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
+> -
+> -Required properties:
+> -- compatible : shall be one of:
+> -  "ti,omap3-interface-clock" - basic OMAP3 interface clock
+> -  "ti,omap3-no-wait-interface-clock" - interface clock which has no hardware
+> -				       capability for waiting clock to be ready
+> -  "ti,omap3-hsotgusb-interface-clock" - interface clock with USB specific HW
+> -					handling
+> -  "ti,omap3-dss-interface-clock" - interface clock with DSS specific HW handling
+> -  "ti,omap3-ssi-interface-clock" - interface clock with SSI specific HW handling
+> -  "ti,am35xx-interface-clock" - interface clock with AM35xx specific HW handling
+> -  "ti,omap2430-interface-clock" - interface clock with OMAP2430 specific HW
+> -				  handling
+> -- #clock-cells : from common clock binding; shall be set to 0
+> -- clocks : link to phandle of parent clock
+> -- reg : base address for the control register
+> -
+> -Optional properties:
+> -- clock-output-names : from common clock binding.
+> -- ti,bit-shift : bit shift for the bit enabling/disabling the clock (default 0)
+> -
+> -Examples:
+> -	aes1_ick: aes1_ick@48004a14 {
+> -		#clock-cells = <0>;
+> -		compatible = "ti,omap3-interface-clock";
+> -		clocks = <&security_l4_ick2>;
+> -		reg = <0x48004a14 0x4>;
+> -		ti,bit-shift = <3>;
+> -	};
+> -
+> -	cam_ick: cam_ick@48004f10 {
+> -		#clock-cells = <0>;
+> -		compatible = "ti,omap3-no-wait-interface-clock";
+> -		clocks = <&l4_ick>;
+> -		reg = <0x48004f10 0x4>;
+> -		ti,bit-shift = <0>;
+> -	};
+> -
+> -	ssi_ick_3430es2: ssi_ick_3430es2@48004a10 {
+> -		#clock-cells = <0>;
+> -		compatible = "ti,omap3-ssi-interface-clock";
+> -		clocks = <&ssi_l4_ick>;
+> -		reg = <0x48004a10 0x4>;
+> -		ti,bit-shift = <0>;
+> -	};
+> diff --git a/Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml b/Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+> new file mode 100644
+> index 000000000000..0e9542ed381f
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/clock/ti/ti,interface-clock.yaml
+> @@ -0,0 +1,70 @@
+> +# SPDX-License-Identifier: GPL-2.0-only
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/clock/ti/ti,interface-clock.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Texas Instruments interface clock.
+> +
+> +maintainers:
+> +  - Tero Kristo <kristo@kernel.org>
+> +
+> +description: |
+> +  This clock is quite much similar to the basic gate-clock[1], however,
+> +  it supports a number of additional features, including
+> +  companion clock finding (match corresponding functional gate
+> +  clock) and hardware autoidle enable / disable.
+> +
+> +  [1] Documentation/devicetree/bindings/clock/gpio-gate-clock.yaml
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - ti,omap3-interface-clock           # basic OMAP3 interface clock
+> +      - ti,omap3-no-wait-interface-clock   # interface clock which has no hardware
+> +                                           # capability for waiting clock to be ready
+> +      - ti,omap3-hsotgusb-interface-clock  # interface clock with USB specific HW handling
+> +      - ti,omap3-dss-interface-clock       # interface clock with DSS specific HW handling
+> +      - ti,omap3-ssi-interface-clock       # interface clock with SSI specific HW handling
+> +      - ti,am35xx-interface-clock          # interface clock with AM35xx specific HW handling
+> +      - ti,omap2430-interface-clock        # interface clock with OMAP2430 specific HW handling
+> +
+> +  "#clock-cells":
+> +    const: 0
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +  clock-output-names:
+> +    maxItems: 1
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  ti,bit-shift:
+> +    description:
+> +      bit shift for the bit enabling/disabling the clock
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    default: 0
 
-diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
-index 410a4df8a121..c2596e7581fb 100644
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -2958,8 +2958,8 @@ static struct task_struct *pick_task_scx(struct rq *rq)
- 
- 		if (unlikely(!p->scx.slice)) {
- 			if (!scx_rq_bypassing(rq) && !scx_warned_zero_slice) {
--				printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in pick_next_task_scx()\n",
--						p->comm, p->pid);
-+				printk_deferred(KERN_WARNING "sched_ext: %s[%d] has zero slice in %s()\n",
-+						p->comm, p->pid, __func__);
- 				scx_warned_zero_slice = true;
- 			}
- 			p->scx.slice = SCX_SLICE_DFL;
--- 
-2.24.3 (Apple Git-128)
+maximum: 31 ?
 
+Otherwise,
+
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+
+> +
+> +required:
+> +  - compatible
+> +  - clocks
+> +  - '#clock-cells'
+> +  - reg
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    bus {
+> +      #address-cells = <1>;
+> +      #size-cells = <0>;
+> +
+> +      aes1_ick: clock-controller@3 {
+> +        #clock-cells = <0>;
+> +        compatible = "ti,omap3-interface-clock";
+> +        clocks = <&security_l4_ick2>;
+> +        reg = <3>;
+> +      };
+> +    };
+> -- 
+> 2.39.5
+> 
 
