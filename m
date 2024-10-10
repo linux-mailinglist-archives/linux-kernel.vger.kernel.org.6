@@ -1,86 +1,84 @@
-Return-Path: <linux-kernel+bounces-359264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359265-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EEEC9989D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:38:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D79AF998988
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:29:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D58AB26387
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:29:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DCF81F22BF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:29:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 352311CEE80;
-	Thu, 10 Oct 2024 14:25:35 +0000 (UTC)
-Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 950681CF28E;
+	Thu, 10 Oct 2024 14:25:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D74D41CEAD8;
-	Thu, 10 Oct 2024 14:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D3AD1CBE92
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728570334; cv=none; b=XsHX469KXqsPc48JQN7bWwATxsVMtKTFuTN4SI0oN/tdgqVs5+aE21xjwZw6SdbZYW3wKbzGU1D2Wpd+mxXckz55Wnm7JmfkmLwtiNYrjWKndVCGJI9fSqQyB4JHD0wG3ltK/vbyp9nCsyBWM7fk8Gxy+sbjxsL/p5U+JDiZiDY=
+	t=1728570342; cv=none; b=Fm3GaAwDJAgdSv3rSd4uT8y75Kt/5zBOEnEltaK9IuYvY7eQ/7f3qKvbYk8Cf7OaXYxcSIKfg7ASSy54Q25bHyShvyRZ/0GW74mygLKH4rNxnixf9FVe/pY3/XgQcS/YWW8uAsuy2HmLJr4+BnrXPM/bZntw/sN1rXF1RP5ip0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728570334; c=relaxed/simple;
-	bh=2pq+PCaKW13OcGj/QHrGroHyRrC3F1xj885ZlE5cY8c=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=J6DgEYAT6ku9bTHcNvyk32CZj0Xii+OCUqiIdFVSvrDnSmadxfFzcCbl9k4GQ2czt0pmnqexSWhqt4l6G6tniwUGKXYvKClT+muIHLIzSDph/U6dNUTVE35MbXcR+Iu7r/hrihh1byYoTJLMulnIXWFUeiIvD2c+UwomLfNdY/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XPX8N0nHhzCt8W;
-	Thu, 10 Oct 2024 22:24:52 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1D210180105;
-	Thu, 10 Oct 2024 22:25:30 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 10 Oct 2024 22:25:28 +0800
-Message-ID: <ff5ce467-321a-4037-b643-65ff4151d092@huawei.com>
-Date: Thu, 10 Oct 2024 22:25:28 +0800
+	s=arc-20240116; t=1728570342; c=relaxed/simple;
+	bh=2rZkopSpPhf5J8+EuIDLDP9+fB0XnQ1YmFHjGHiUydw=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=JNROK3na4tsq6e/E1N1qhGVJXwOIULtrXWU+mIFTw4zbzd3CbRBs75EhE7cNcyu9X0aituO3OfXoYiKy5154b/BbrnThbI+yLTDJ0ZbccEs3YdDvYTxOkshJGG5xuZzhq+HWnNot5n6HdmAY0jO49cHBJ8RDfqBbuTht1yFyxEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C16FAC4CECC;
+	Thu, 10 Oct 2024 14:25:41 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1syu6v-00000001HGM-2pHo;
+	Thu, 10 Oct 2024 10:25:49 -0400
+Message-ID: <20241010142537.255433162@goodmis.org>
+User-Agent: quilt/0.68
+Date: Thu, 10 Oct 2024 10:25:37 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 00/10] tracing: Updates for 6.13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<pabeni@redhat.com>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<andrew@lunn.ch>, <jdamato@fastly.com>, <horms@kernel.org>,
-	<kalesh-anakkur.purayil@broadcom.com>, <christophe.jaillet@wanadoo.fr>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V11 net-next 00/10] Add support of HIBMCGE Ethernet Driver
-To: Jakub Kicinski <kuba@kernel.org>
-References: <20241008022358.863393-1-shaojijie@huawei.com>
- <20241009193641.17015e59@kernel.org>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <20241009193641.17015e59@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/for-next
+
+Head SHA1: eb887c4567d1b0e7684c026fe7df44afa96589e6
 
 
-on 2024/10/10 10:36, Jakub Kicinski wrote:
-> On Tue, 8 Oct 2024 10:23:48 +0800 Jijie Shao wrote:
->> This patch set adds the support of Hisilicon BMC Gigabit Ethernet Driver.
->>
->> This patch set includes basic Rx/Tx functionality. It also includes
->> the registration and interrupt codes.
->>
->> This work provides the initial support to the HIBMCGE and
->> would incrementally add features or enhancements.
-> Please wrap the code at 80 chars.
-> We still prefer the 80 char limit in networking.
-> Use ./scripts/checkpatch.pl --strict --max-line-length=80
+Levi Yun (1):
+      trace/trace_event_perf: remove duplicate samples on the first tracepoint event
 
-Thanks,I will fix it in v12
+Mathieu Desnoyers (8):
+      tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
+      tracing/ftrace: disable preemption in syscall probe
+      tracing/perf: disable preemption in syscall probe
+      tracing/bpf: disable preemption in syscall probe
+      tracing: Allow system call tracepoints to handle page faults
+      tracing/ftrace: Add might_fault check to syscall probes
+      tracing/perf: Add might_fault check to syscall probes
+      tracing/bpf: Add might_fault check to syscall probes
 
+Uros Bizjak (1):
+      tracing: Use atomic64_inc_return() in trace_clock_counter()
+
+----
+ include/linux/tracepoint.h      | 71 ++++++++++++++++++++++++++++++++---------
+ include/trace/bpf_probe.h       | 14 ++++++++
+ include/trace/define_trace.h    |  5 +++
+ include/trace/events/syscalls.h |  4 +--
+ include/trace/perf.h            | 44 +++++++++++++++++++++++--
+ include/trace/trace_events.h    | 62 ++++++++++++++++++++++++++++++++---
+ init/Kconfig                    |  1 +
+ kernel/trace/trace_clock.c      |  2 +-
+ kernel/trace/trace_event_perf.c |  6 ++++
+ kernel/trace/trace_syscalls.c   | 28 ++++++++++++++++
+ 10 files changed, 212 insertions(+), 25 deletions(-)
 
