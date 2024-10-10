@@ -1,115 +1,167 @@
-Return-Path: <linux-kernel+bounces-358491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C7B997FFF
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:35:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBB7F998011
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 10:36:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 094A1B265C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:35:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DF192817E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 08:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFE320606D;
-	Thu, 10 Oct 2024 08:03:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5910E206E6D;
+	Thu, 10 Oct 2024 08:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="wpYPC3OB"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="qUwWDZgm";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="YKVFY9ru"
+Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E90BD1BBBFC
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 08:03:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AADC206972;
+	Thu, 10 Oct 2024 08:04:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728547437; cv=none; b=I4iQqYWglaVwMtE8QYC2wqjOwxNt9PE/czsBLkLk19yxW+tsqWj6kXA65x5smmyigNbE5mA4j72pRPkzNXscA1+IRc5+JO05ZTVvWvsNisqN6SkQ2mVxpSreFFgxW64itHp9mcMlOV0RCRO9cipuZGD3KOd8zICcNyrOnbXddBg=
+	t=1728547485; cv=none; b=EHyy9BYRpjToh3Qb59S5zew1d1qYdkRt/Ijr4LPgws+n5F8sMuKyekcCcg9rsKF/p74rz6WmmEpNluZOk1k0RngCH40jCt8nrTs7+ju59/TKDfYrYErRNYyvD+kk7asNoTMrDwU7hElHLPRjsjSk9gtgzE4F8lN7P7Qy4lRI9F8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728547437; c=relaxed/simple;
-	bh=4Hnw26mcyPUG+bSpHqaDPucCGEMOkROxTInnOfHr5og=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jvTnFdckE7AkgPbxq8dBE2Nopb9uXXBvW73pHkw2fVWZlWyJMzeUf0oW3YOAbM3WiSlr5hrLwr/uRkzU9ylbASo3OT6USI8QSwwzEVHrntPWJD/z8PeIGQHCrccSwUCbde3e2lKNqwTMECRI0BWqfrEDUN+jib6XWDvf3VZuCGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=wpYPC3OB; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-42cb806623eso5271155e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 01:03:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728547433; x=1729152233; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=hOHSJVTdLAqav+eEKmBbCxq8KtaWLAU67BYMtt/w3UU=;
-        b=wpYPC3OButPHmA6BVhV+k/lYYKajzMAHJNvoisJtwzj37RXp1xjdmPEc7lbHt89iLX
-         HqDs6oqumHMCQHWloD4nn2K/SjpYgLK47EFp6vFsaNmm6MZeB8uGABvAIi7Id6wlIIL2
-         PKJt645vvQVi6gURdH6tv359HZ049enA+EVUn6KfUZEQBfW1sn1mcE6MmA8F2M8k5uId
-         dvh+k3T7/MnaOPNfg49OmpyFx2/YGVpJwfHjgGyWzx5hgjKYf/mjYEIlLZbuLUlHaWWX
-         BXvVsROnHnIEdQwXfiW+3+bnogwDXG+XnGYwZ95gOHbPTHfLcMIWkVnDOjuiod6Ngk98
-         QLTw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728547433; x=1729152233;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hOHSJVTdLAqav+eEKmBbCxq8KtaWLAU67BYMtt/w3UU=;
-        b=uMwJct4Ft4EuWByhOZ9ZSgvPDjhljv8LVEEFGfuar5Sin3HKE+NT3a9VcS7PAcb5Of
-         gTYYAfDy7hVWuRUQSFwu+2ZTkQvZvBEgDJ3KiHGsJry7arHxSrzW2UWsi4ZfyDLSDUEw
-         /FGrvrb0pF9tYH+My6y3kFs6gEqy8Rs0meJVB/4lvI2y3zI9Tn8tpQaj2nZ/A5dotxF7
-         UuENFEu4OBPAsHsrK6vnJ4myqxQx4d4ZFD5n/GnvBGgjitvlymA9Ez6kRHKJTJ9DaLDY
-         xhGzMrkrpRc+lEQDFbG4uTfeWuOySE81Lk3qwZCcvND/EqKWcNdt3KACZPMdyVSxOJVS
-         clVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWO/FcpqABCZiiZmA9Q4jVY0k1NkZ8/DthWfYtWalWKruPv3rkzWccDBcuebwkyIdUIsg+J2ccBUsulagM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywi3HqjsybRm4XZLh7Rxqf7A80smYfoqloDiw009VLjZlAjc7hU
-	EsbOMAxfI6AlFYXjh4zvDqQx598o6RVCyqFB5KGjm1ayAvv7QxbfF9c96xXIn4JBBpVQVp3qy0c
-	j
-X-Google-Smtp-Source: AGHT+IEVjmNCPCIiHOq4s9rPIdkzMfu4AW4u4I1oaeC0njtcNkIz+cNZ/lJCbEU3ps1f+YR/oUmeiw==
-X-Received: by 2002:adf:facb:0:b0:37d:4aa5:eaed with SMTP id ffacd0b85a97d-37d4aa5ecb4mr1052794f8f.41.1728547432952;
-        Thu, 10 Oct 2024 01:03:52 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:5e5d:bfca:20cc:60ae])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fd90sm776097f8f.79.2024.10.10.01.03.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 01:03:52 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] pinctrl: aw9523: fix kerneldoc for _aw9523_gpio_get_multiple()
-Date: Thu, 10 Oct 2024 10:03:47 +0200
-Message-ID: <20241010080347.7759-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728547485; c=relaxed/simple;
+	bh=NOnTXEDf/afk98+qld6jjp5+THx/CJ1WRioKL/FDWFo=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=MRVnYAoHoenjrfhIoAGrGBM4oe2ofBruaYZNILTXmFvBsEywcMgEFOa/y8zUJfT+69oYrdNLcgOAyZicwEOaCzvCWmeUMn1iB5lcx32GsGYs3G9xmiBwLrB8fIV9YxD5tSwqfBLUX908w7zzJ7jNGZWqxsDOqS+S1/6/lupc/F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=qUwWDZgm; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=YKVFY9ru; arc=none smtp.client-ip=103.168.172.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id 36D3E11401D9;
+	Thu, 10 Oct 2024 04:04:41 -0400 (EDT)
+Received: from phl-imap-11 ([10.202.2.101])
+  by phl-compute-10.internal (MEProxy); Thu, 10 Oct 2024 04:04:41 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728547481;
+	 x=1728633881; bh=NOnTXEDf/afk98+qld6jjp5+THx/CJ1WRioKL/FDWFo=; b=
+	qUwWDZgmoFSc2bvCLEkOL58hDVYZTrXcWqA1r8Cm2RvEFx5gUkRYopFuSPQ3amGK
+	A75AnB60O0tNSjpd6qb4sOHfavqwBuHErQVjVa8XNdYjdZheAewMWD81oqp5grVF
+	OMyHEJ3EtyhTGHXEhPd56/rpTE8Os9ZcKFpOiuCDpJ0WFjtvtQv24Ut5jJoTHnYd
+	aFsDvyOZRC8f1Zd8Ggv9tLbENlgXMnhXw4fjpTepep99VYTMAzRQ02ssu1RFUoY3
+	g2Q/l1BksGyyAC49oDIHgf037BwdnufA/EmmDjUOvMxnh4dx4RBbboyuyOd840NT
+	xuqFLD+Nws1CIVcuTITmHg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728547481; x=
+	1728633881; bh=NOnTXEDf/afk98+qld6jjp5+THx/CJ1WRioKL/FDWFo=; b=Y
+	KVFY9ruZTwjCXaru75A1LYIRzB9hNonTtp+VnwOuUDc00DfM6Q58QBkP6xvTdp45
+	5KRX9ad0rBSJypNyLeRiaImyE0+6VyqMZel3jXqgaXrTtoIYd8as+0tpJgI4+Rwy
+	XFY3m+TuzIDj8+4xOE9H/ir6Bpc93KNZM9vqBvrYFGayrfXvHSClTBdE5Y51ymOD
+	CBmzaZCAlBE7NBw0EKGEjQ/m7G/CH5ceK628BoC5sGH6eY/a3dskoTF5R7ilaei7
+	0OZJ/HycrEwomf3gFDs9UzNX1vf9aG49RHy276/+i4YF/m+QWD5HGfVUe1MczrPH
+	EnyTMmojm4/cNsD1aIH0Q==
+X-ME-Sender: <xms:mIoHZ4klWhimXUj0T6QpcTwiYXJRsoU5LdDufDqDOomjiAXzPU1DeQ>
+    <xme:mIoHZ30tXQyn4xrtPUssnTi-kdfuHuz3J0caWpTGpMt2leGiFPK0R6BThxrSwX69m
+    nH-QCqJpajtXht5q6M>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefgedguddvkecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthejredtredt
+    tdenucfhrhhomhepfdetrhhnugcuuegvrhhgmhgrnhhnfdcuoegrrhhnugesrghrnhgusg
+    druggvqeenucggtffrrghtthgvrhhnpefhtdfhvddtfeehudekteeggffghfejgeegteef
+    gffgvedugeduveelvdekhfdvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgtphhtthhopedu
+    fedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpfhesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrlhhphhgrsehvghgvrhdrkhgvrhhn
+    vghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgvrhhnvg
+    hlrdhorhhgpdhrtghpthhtoheplhhinhhugidqtghskhihsehvghgvrhdrkhgvrhhnvghl
+    rdhorhhgpdhrtghpthhtoheplhhinhhugidqhhgvgigrghhonhesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghr
+    nhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmihhpshesvhhgvghrrdhkvghrnh
+    gvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhmohguuhhlvghssehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqohhpvghnrhhishgtsehvghgvrh
+    drkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:mIoHZ2oEJ0fbuiaD8xkujPJKuAgfTVFVgkQ1MaKFzQJpFSIpGzfDAg>
+    <xmx:mIoHZ0mJL5zhDflICU5OnCxj5xD-lNh7hszg2y7w_jG0SosfB6v4TA>
+    <xmx:mIoHZ23OJE-QCT7HdDHaNJq2YoxMQsePqKr1PpcugeuoE58nHC1iew>
+    <xmx:mIoHZ7tuhBf_WSccVXoM3lkeeX0DDoNl6mMcyPN5JCQqsonWnM8tzw>
+    <xmx:mYoHZ8NM8dSyfUFOSROsLFZvsdyCyDiUWAXTgcQSDhI-SDaU9fYoh5C4>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id D17622220071; Thu, 10 Oct 2024 04:04:40 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Thu, 10 Oct 2024 08:04:19 +0000
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Mike Rapoport" <rppt@kernel.org>,
+ "Andrew Morton" <akpm@linux-foundation.org>
+Cc: "Andreas Larsson" <andreas@gaisler.com>,
+ "Andy Lutomirski" <luto@kernel.org>, "Ard Biesheuvel" <ardb@kernel.org>,
+ "Borislav Petkov" <bp@alien8.de>, "Brian Cain" <bcain@quicinc.com>,
+ "Catalin Marinas" <catalin.marinas@arm.com>,
+ "Christoph Hellwig" <hch@infradead.org>,
+ "Christophe Leroy" <christophe.leroy@csgroup.eu>,
+ "Dave Hansen" <dave.hansen@linux.intel.com>,
+ "Dinh Nguyen" <dinguyen@kernel.org>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>, guoren <guoren@kernel.org>,
+ "Helge Deller" <deller@gmx.de>, "Huacai Chen" <chenhuacai@kernel.org>,
+ "Ingo Molnar" <mingo@redhat.com>,
+ "Johannes Berg" <johannes@sipsolutions.net>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ "Kent Overstreet" <kent.overstreet@linux.dev>,
+ "Liam R. Howlett" <Liam.Howlett@oracle.com>,
+ "Luis Chamberlain" <mcgrof@kernel.org>,
+ "Mark Rutland" <mark.rutland@arm.com>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Matt Turner" <mattst88@gmail.com>, "Max Filippov" <jcmvbkbc@gmail.com>,
+ "Michael Ellerman" <mpe@ellerman.id.au>,
+ "Michal Simek" <monstr@monstr.eu>, "Oleg Nesterov" <oleg@redhat.com>,
+ "Palmer Dabbelt" <palmer@dabbelt.com>,
+ "Peter Zijlstra" <peterz@infradead.org>,
+ "Richard Weinberger" <richard@nod.at>,
+ "Russell King" <linux@armlinux.org.uk>, "Song Liu" <song@kernel.org>,
+ "Stafford Horne" <shorne@gmail.com>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Thomas Gleixner" <tglx@linutronix.de>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>,
+ "Vineet Gupta" <vgupta@kernel.org>, "Will Deacon" <will@kernel.org>,
+ bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
+ Linux-Arch <linux-arch@vger.kernel.org>,
+ linux-arm-kernel@lists.infradead.org,
+ "linux-csky@vger.kernel.org" <linux-csky@vger.kernel.org>,
+ linux-hexagon@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
+ linux-mm@kvack.org, linux-modules@vger.kernel.org,
+ "linux-openrisc@vger.kernel.org" <linux-openrisc@vger.kernel.org>,
+ linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
+ linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
+ linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
+ linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
+ sparclinux@vger.kernel.org, x86@kernel.org
+Message-Id: <e1ba5ab2-a7e2-4f2c-8e2d-4788656ef695@app.fastmail.com>
+In-Reply-To: <20241009180816.83591-4-rppt@kernel.org>
+References: <20241009180816.83591-1-rppt@kernel.org>
+ <20241009180816.83591-4-rppt@kernel.org>
+Subject: Re: [PATCH v5 3/8] asm-generic: introduce text-patching.h
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+On Wed, Oct 9, 2024, at 18:08, Mike Rapoport wrote:
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> Several architectures support text patching, but they name the header
+> files that declare patching functions differently.
+>
+> Make all such headers consistently named text-patching.h and add an empty
+> header in asm-generic for architectures that do not support text patching.
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-The parameters' descriptions are wrong, drop the invalid ones and
-document the ones that are missing the description.
-
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/pinctrl/pinctrl-aw9523.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/pinctrl/pinctrl-aw9523.c b/drivers/pinctrl/pinctrl-aw9523.c
-index 5cb24c1dcb0d..9bf53de20be8 100644
---- a/drivers/pinctrl/pinctrl-aw9523.c
-+++ b/drivers/pinctrl/pinctrl-aw9523.c
-@@ -550,10 +550,10 @@ static int aw9523_gpio_get(struct gpio_chip *chip, unsigned int offset)
- 
- /**
-  * _aw9523_gpio_get_multiple - Get I/O state for an entire port
-- * @regmap: Regmap structure
-- * @pin: gpiolib pin number
-+ * @awi: Controller data
-  * @regbit: hw pin index, used to retrieve port number
-  * @state: returned port I/O state
-+ * @mask: lines to read values for
-  *
-  * Return: Zero for success or negative number for error
-  */
--- 
-2.43.0
-
+Acked-by: Arnd Bergmann <arnd@arndb.de>
 
