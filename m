@@ -1,124 +1,168 @@
-Return-Path: <linux-kernel+bounces-359167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD38F998843
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:50:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 724B7998847
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 15:51:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A426B26561
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:50:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AD5E1C20A75
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:51:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6EF21CC16D;
-	Thu, 10 Oct 2024 13:49:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NrYedPSs"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7869E1CB32C;
+	Thu, 10 Oct 2024 13:49:33 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 744721C9DF3
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 13:49:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93A71C7B6A;
+	Thu, 10 Oct 2024 13:49:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728568162; cv=none; b=V+ZyBs8LRhtTjFhMCNtMo0FCB0XZbOkHye06zN/1uGv+/EsjEV2m6asvCJPIDNOfijlC2bkBGwbkSp6QFpCKNjrtwS6RWvamjOz8ZvP8oaUfCqBPDfFAfKME4uBrE1MdhD4GZpeyBAwnbsNz939zezRbqQZtt/KZkeqogRatKSQ=
+	t=1728568173; cv=none; b=uv0H6QUXUmsu6BiftA0YFnMbAb1iYb3h607j2KGevGLw/+QvsMvFloIvUflb4rPPk4/xokWOPMRZcvMW2tfGHblF+bMMvDvhdgn8gzyCWgIKhiSezaQJcI44aaSpfQIy0zndLLxAuVfZDnI/0pJ0eHHvwQyEuZA+URQb7vBMQRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728568162; c=relaxed/simple;
-	bh=MkfzJPryuENSyvLa2fWlHXY7JSZm/ynNAd9cER+oGiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=joqzPllWniu2POpt6pVWWm5hn2jlpxJTbGnnBcKzmpnfueY8BVe8Cf0vH9LPXyS0ND/oaL1hixFDg/AcZe8MXGBAU873Gy8X0Z8lEwheovq5AAn3xYbAfQgnthadY5aFqu+0BAkJNT7x3+vW167twV9LrYqZ/FHBBfBUDAAGUpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NrYedPSs; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43058268d91so8654875e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 06:49:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728568159; x=1729172959; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kVs/IOPgNM31y6y82QiYclQ6PlIE3YW8FKJDe7DuIfc=;
-        b=NrYedPSszYcTF/lX9Ggg8P97HFVRoHeOLwcbclPABVKexpO5NP/g78xUfIdekNLoaN
-         BQbAkhqoxbZBPSYWvAABThcgss3WQ2f8ODSJCFE/m4Yrf3hRp6d4/Cj0+JzbjHbZ7lFB
-         8Rs+OuIYQxAFFFmrPxldGBmMZ4mkrqwk8wnvpl9hB+rcOb/cwG2Shn9iBZrxx74en3vY
-         bfCkzMakg0N7Ox+6jOs9++mTloZCqLAv9jO45dgT19KBDuOqGoesFEyFrvsDgar1njwh
-         KTXGgtzlWr2ctKHNk3rJzJgelq/4zHxh6cGDxZTpdH4wOE87G4aigl2oPFSByWHyYtqJ
-         ZmJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728568159; x=1729172959;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kVs/IOPgNM31y6y82QiYclQ6PlIE3YW8FKJDe7DuIfc=;
-        b=YLssP8uLLC3+Wbb7KQv5b7/3NsElDGzflmfpMWQcnVA/mndeELSm2bfwJAVvrva2hx
-         s7pkqKTkYMif+KilzQTuydjo1KAZ3UbHWJ4cDT9qBGq7YT/IHBlK4zollCYBwxqxEI8B
-         iYTTm0TDBD0flyn4GIC3uyBxD/E76WLFApHV0aJy0KU4m+kVH1TqtYMg5UOFyWqI+xqP
-         4B/unMCi591q6ZY734ExE1lIDxj5fY3IdDjtGC3zKoUuoze8naK0HM+DbM0kJfPof5a2
-         d2qO68qrSp8TsiurXR6pOkH22lQIvpHak9JvCbg2FlY9VOBP1zgBUfMdE07caNxKzccq
-         ezjA==
-X-Forwarded-Encrypted: i=1; AJvYcCXfh2VrPBlDcCmQXZZAWzKNcAoXGlS1An+G6oDpVLYcbbTLeMwhFm5fRmgydiLWp0zOH9jqUlhB20ydrug=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5LqZubmVDTx+CczU8axYNjie5auLja0sRuhkXcPsAjfhaMVj7
-	abDp0+RqecvKcbrAQvL7S0tSOfjwR4hielQLjjUwHuafpoHwN1WKxadOhJc1kd0=
-X-Google-Smtp-Source: AGHT+IHjkW70IvZpZidBcOOO1FW1z74uz5tbvpksvMoBr6DAW85JUj00bLvuq5bdwty4viiClMPJXQ==
-X-Received: by 2002:a05:600c:4ec9:b0:430:5887:c238 with SMTP id 5b1f17b1804b1-430ccf2879cmr53610325e9.11.1728568158920;
-        Thu, 10 Oct 2024 06:49:18 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf43da8sm49649975e9.11.2024.10.10.06.49.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 06:49:18 -0700 (PDT)
-Date: Thu, 10 Oct 2024 16:49:14 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Sunil Goutham <sgoutham@marvell.com>,
-	Linu Cherian <lcherian@marvell.com>,
-	Geetha sowjanya <gakula@marvell.com>,
-	Jerin Jacob <jerinj@marvell.com>, hariprasad <hkelam@marvell.com>,
-	Subbaraya Sundeep <sbhatta@marvell.com>,
-	"David S . Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Naveen Mamindlapalli <naveenm@marvell.com>, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] octeontx2-af: Fix potential integer overflow on
- shift of a int
-Message-ID: <15043c16-019e-40c3-874d-fb6d1392a9d7@stanley.mountain>
-References: <20241010131122.751744-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1728568173; c=relaxed/simple;
+	bh=nBqSAYCspXG50WnbQUQ6A0JibPo+98HLRl/jVeDw7mY=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=UT/jDENyjcwjbwUAGpvNnm1PWBHzQCSKkEA00SFD0pUQJuIIlEdi0g8xxsAiUVyJbO6z+XbNnkcTwissxiR9dZ/IKm+F8svndv+etI/BJo1vqA3T+Iqfz++MdC9ih+h+QMQQnxhAYpeObFUCTFo9AXlImT0PklXYKQpU90pjcrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPWGW03txz6LDJf;
+	Thu, 10 Oct 2024 21:45:07 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D1559140AE5;
+	Thu, 10 Oct 2024 21:49:27 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 10 Oct
+ 2024 15:49:27 +0200
+Date: Thu, 10 Oct 2024 14:49:25 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 17/28] cxl/events: Split event msgnum configuration
+ from irq setup
+Message-ID: <20241010144925.00006c2b@Huawei.com>
+In-Reply-To: <20241007-dcd-type2-upstream-v4-17-c261ee6eeded@intel.com>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-17-c261ee6eeded@intel.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010131122.751744-1-colin.i.king@gmail.com>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500003.china.huawei.com (7.191.162.67) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Oct 10, 2024 at 02:11:22PM +0100, Colin Ian King wrote:
-> The left shift of int 32 bit integer constant 1 is evaluated using 32 bit
-> arithmetic and then assigned to a 64 bit unsigned integer. In the case
-> where the shift is 32 or more this can lead to an overflow. Avoid this
-> by shifting using the BIT_ULL macro instead.
+On Mon, 07 Oct 2024 18:16:23 -0500
+Ira Weiny <ira.weiny@intel.com> wrote:
+
+> Dynamic Capacity Devices (DCD) require event interrupts to process
+> memory addition or removal.  BIOS may have control over non-DCD event
+> processing.  DCD interrupt configuration needs to be separate from
+> memory event interrupt configuration.
 > 
-> Fixes: 019aba04f08c ("octeontx2-af: Modify SMQ flush sequence to drop packets")
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Split cxl_event_config_msgnums() from irq setup in preparation for
+> separate DCD interrupts configuration.
+> 
+> Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+Trivial comment inline
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+
 > ---
->  drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  drivers/cxl/pci.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-> index 82832a24fbd8..28f917a37acf 100644
-> --- a/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-> +++ b/drivers/net/ethernet/marvell/octeontx2/af/rvu_nix.c
-> @@ -2411,7 +2411,7 @@ static int nix_smq_flush(struct rvu *rvu, int blkaddr,
->  				 NIX_AF_TL3_TL2X_LINKX_CFG(tl2_tl3_link_schq, link));
->  		if (!(cfg & BIT_ULL(12)))
->  			continue;
-> -		bmap |= (1 << i);
-> +		bmap |= BIT_ULL(i);
+> diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
+> index fc5ab74448cc..29a863331bec 100644
+> --- a/drivers/cxl/pci.c
+> +++ b/drivers/cxl/pci.c
+> @@ -702,35 +702,31 @@ static int cxl_event_config_msgnums(struct cxl_memdev_state *mds,
+>  	return cxl_event_get_int_policy(mds, policy);
+>  }
+>  
+> -static int cxl_event_irqsetup(struct cxl_memdev_state *mds)
+> +static int cxl_event_irqsetup(struct cxl_memdev_state *mds,
+> +			      struct cxl_event_interrupt_policy *policy)
+>  {
+>  	struct cxl_dev_state *cxlds = &mds->cxlds;
+> -	struct cxl_event_interrupt_policy policy;
+>  	int rc;
+>  
+> -	rc = cxl_event_config_msgnums(mds, &policy);
+> -	if (rc)
+> -		return rc;
+> -
+> -	rc = cxl_event_req_irq(cxlds, policy.info_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->info_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Info log\n");
+>  		return rc;
 
-There is a similar issue in the next loop.  Could you fix that as well?
+At somepoint maybe dev_err_probe() is appropriate in here.
 
-regards,
-dan carpenter
-
+>  	}
+>  
+> -	rc = cxl_event_req_irq(cxlds, policy.warn_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->warn_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Warn log\n");
+>  		return rc;
+>  	}
+>  
+> -	rc = cxl_event_req_irq(cxlds, policy.failure_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->failure_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Failure log\n");
+>  		return rc;
+>  	}
+>  
+> -	rc = cxl_event_req_irq(cxlds, policy.fatal_settings);
+> +	rc = cxl_event_req_irq(cxlds, policy->fatal_settings);
+>  	if (rc) {
+>  		dev_err(cxlds->dev, "Failed to get interrupt for event Fatal log\n");
+>  		return rc;
+> @@ -749,7 +745,7 @@ static bool cxl_event_int_is_fw(u8 setting)
+>  static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  			    struct cxl_memdev_state *mds, bool irq_avail)
+>  {
+> -	struct cxl_event_interrupt_policy policy;
+> +	struct cxl_event_interrupt_policy policy = { 0 };
+>  	int rc;
+>  
+>  	/*
+> @@ -777,11 +773,15 @@ static int cxl_event_config(struct pci_host_bridge *host_bridge,
+>  		return -EBUSY;
+>  	}
+>  
+> +	rc = cxl_event_config_msgnums(mds, &policy);
+> +	if (rc)
+> +		return rc;
+> +
+>  	rc = cxl_mem_alloc_event_buf(mds);
+>  	if (rc)
+>  		return rc;
+>  
+> -	rc = cxl_event_irqsetup(mds);
+> +	rc = cxl_event_irqsetup(mds, &policy);
+>  	if (rc)
+>  		return rc;
+>  
+> 
 
 
