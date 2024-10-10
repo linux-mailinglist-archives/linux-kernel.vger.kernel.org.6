@@ -1,100 +1,108 @@
-Return-Path: <linux-kernel+bounces-358225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D7A73997BA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:09:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE67997BA8
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 06:10:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6816A283986
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:09:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EFE81C217F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 04:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A4C3192D93;
-	Thu, 10 Oct 2024 04:09:02 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C6B019AD8B;
+	Thu, 10 Oct 2024 04:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0gcoErzJ"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B11A31925A2
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AA4219ABD5
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:10:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728533342; cv=none; b=N+5H6Tw08JPLRWg7wLQT8LmMmuOfYynqDb8y4Ou6nEtpXz06b+QivG//wvQ36w+pWfv5lP+7JOrUqgEUAeRXIiDdrToZzxtP8inn0WUyLaN06P0PTPvCeHFxEt+gPqP4MyAyeHqRnauHkuJ7YHZooPozfpWZSu03pp9U9TNY880=
+	t=1728533441; cv=none; b=O41x9ekJsVroyhfS0ZZEF6326Fy9DLuLf3mxKvjHYC66ID7nmLSs+c10TU7Ng4Bh1TPlGTdihZ6i4gwq2NlJKkIifm/7q8cRghunJ4jjhe8FZq+GgMOhKb0PGXo2qpG11DWFAIDGrLcFAm6GSvmXR2yAkWQhpviDZIzr01QnkN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728533342; c=relaxed/simple;
-	bh=N+pyFf78H/AqcS+gzEpmdQub5nK33PwlUOdXF1CpalM=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=osa4f741rRe9wxtJTyIIDdV1kZ3PGaRnZyGiV4W+VDtNi2gdL+RI3HIqS4KXdXw1t7T65S/rAsCzEUI5ZP0YrrDVGLZMolJDlKuFh/IjpOe1Ymo4eYAet9HWUQW+i4nHoBT5a9kNlJmXL6p+HKo3W8h9pkIM+AYBTAzGHpr2u6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49A3jCgM012573;
-	Thu, 10 Oct 2024 04:08:39 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 422tp45b1y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Thu, 10 Oct 2024 04:08:39 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 9 Oct 2024 21:08:38 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Wed, 9 Oct 2024 21:08:36 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+66c146268dc88f4341fd@syzkaller.appspotmail.com>
-CC: <jlbec@evilplan.org>, <joseph.qi@linux.alibaba.com>,
-        <linux-kernel@vger.kernel.org>, <mark@fasheh.com>,
-        <ocfs2-devel@lists.linux.dev>, <syzkaller-bugs@googlegroups.com>
-Subject: Re: [ocfs2?] KASAN: use-after-free Read in __ocfs2_find_path
-Date: Thu, 10 Oct 2024 12:08:35 +0800
-Message-ID: <20241010040835.1648107-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6706e8cd.050a0220.67064.0053.GAE@google.com>
-References: <6706e8cd.050a0220.67064.0053.GAE@google.com>
+	s=arc-20240116; t=1728533441; c=relaxed/simple;
+	bh=p/npfda4+uZ+eoFTnpXPziV2yWyvJSD8J0L6jcrQTWw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P8rmfNCy18MZav/g9coXo+joyH1oRJghZWHK/SmzWUHAko0hbemXnPlQntjNMsgwwlMYvGcyALyI91UcttHrkRTUmf5J84F6vQ1CPwql0XVKWZwKbfRBx5NeSbaqdvWT9WrzXbLA3l+ajVNwICkDZdG5U8bjkCn7UpgzgDgQF6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0gcoErzJ; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c896b9b4e0so548246a12.3
+        for <linux-kernel@vger.kernel.org>; Wed, 09 Oct 2024 21:10:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728533438; x=1729138238; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=p/npfda4+uZ+eoFTnpXPziV2yWyvJSD8J0L6jcrQTWw=;
+        b=0gcoErzJTaRx/2zH0mJ200zJZxKvqKrTAIEO8pZT4jJtb5LJwL/p0/tUBxmhn79bgw
+         ssJLfSwAiS02Er2q/3sLZQYzGRRzU8ei6pd2NxqyEcHMF0jrbzvLqf1kdPQTu3H/Ol80
+         uNe0UyCuGMI6329xN77V8MNqfddBnQ9gb2aJSWsDmMmzVDJQxQUMrud8dy9cYnm9Ckbe
+         /zoPIH6MsSOeubzQCq+3S7XfnVMgEJA6i82zb4qrtx1MDeF9CVZA4IoZuiCTfydWinoe
+         bD8CoL8ZreQ07YulnwkEwHVVfqyKwl5mYNOAqScT2vEWI/JC8PMVf0kHRRAepGuuywk4
+         QWIA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728533438; x=1729138238;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=p/npfda4+uZ+eoFTnpXPziV2yWyvJSD8J0L6jcrQTWw=;
+        b=Jp03ek3PX1yOgrub8FUM5yaPfcNjHekLOK9QDbtlPrhyVYvbqzoSyEqPZ2yeEsOntF
+         aPlylegsKgmbbPmkgDmflnfLekFAOfL+P/OjXRcIb8Vc5t4gKpLzFfPP38yCeZV6Lo2K
+         wJtQqFZw76tStQ3xyLNVX8kqxXtZd9hHHCl6xXVsRUEZH7DwSLZ62Kduad9upMSZ9SR/
+         DuaHgmKXf2CJAI+1GZb6tm8LnfAxIjEFijQi8rhv1UN9PJnHkts4O2m4lkVFcHgGIzG2
+         3MSAD3dbUxkknSCJmD04gGwAmbS3ytbVPLMcrk4CmO5S/8eg/Z7qJuB1VFtEix1QiIBF
+         DalQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVSG8S4ZHgPYSLI+GdoaoYQu+R5oaPOxtjcXp0V7z02Lxhkjd3HfJmhzonJGHHD7oZ14wlFoIXVi6Az1b8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKEoo+v0SiO1M6wvSqdRoF70v1PVRkyB9Iv8c2HsWOg5/pYMk4
+	uY1ejVpdNe/oBxYyPJ1CbshwWA9cJM8U4gpKqZ8KSEIfpgJSj8km0VZdbzoxo0RmD0iYEODqfU4
+	zyotJjzSleVPcRfd4zlK3UV5rU3W1ULRdwfgp
+X-Google-Smtp-Source: AGHT+IG/RkJ2ip5TWITEkWDE7GCfRYmWjtsrdI7s7O3yMXKJbAkmwnTBP8gXo5UcKJQO0FLzl/ylTPlWpyTAdX57idY=
+X-Received: by 2002:a05:6402:1e8f:b0:5c9:36c4:ceaf with SMTP id
+ 4fb4d7f45d1cf-5c936c4d33cmr400018a12.26.1728533438158; Wed, 09 Oct 2024
+ 21:10:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=XPtiShhE c=1 sm=1 tr=0 ts=67075347 cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=DAUX931o1VcA:10 a=2ZFrcfy9enmZ0iwdtswA:9
-X-Proofpoint-ORIG-GUID: 5S04E4MbfOFA_rkQYAifu3mSzYrn9a2E
-X-Proofpoint-GUID: 5S04E4MbfOFA_rkQYAifu3mSzYrn9a2E
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-09_23,2024-10-09_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 mlxscore=0
- spamscore=0 bulkscore=0 priorityscore=1501 mlxlogscore=671 malwarescore=0
- suspectscore=0 impostorscore=0 adultscore=0 lowpriorityscore=0
- clxscore=1011 classifier=spam authscore=0 adjust=0 reason=mlx scancount=1
- engine=8.21.0-2409260000 definitions=main-2410100026
+References: <20241009005525.13651-1-jdamato@fastly.com> <20241009005525.13651-2-jdamato@fastly.com>
+In-Reply-To: <20241009005525.13651-2-jdamato@fastly.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Thu, 10 Oct 2024 06:10:26 +0200
+Message-ID: <CANn89i+-pzFiw0CZSn-unerhqroU_hqKUrjV0c1ucT9WAT+FLA@mail.gmail.com>
+Subject: Re: [net-next v5 1/9] net: napi: Make napi_defer_hard_irqs per-NAPI
+To: Joe Damato <jdamato@fastly.com>
+Cc: netdev@vger.kernel.org, mkarsten@uwaterloo.ca, skhawaja@google.com, 
+	sdf@fomichev.me, bjorn@rivosinc.com, amritha.nambiar@intel.com, 
+	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Jiri Pirko <jiri@resnulli.us>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+	Johannes Berg <johannes.berg@intel.com>, Breno Leitao <leitao@debian.org>, 
+	Alexander Lobakin <aleksander.lobakin@intel.com>, 
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Extent tree depth is never bigger than 256, because the high 8 bits cannot be used.
+On Wed, Oct 9, 2024 at 2:55=E2=80=AFAM Joe Damato <jdamato@fastly.com> wrot=
+e:
+>
+> Add defer_hard_irqs to napi_struct in preparation for per-NAPI
+> settings.
+>
+> The existing sysfs parameter is respected; writes to sysfs will write to
+> all NAPI structs for the device and the net_device defer_hard_irq field.
+> Reads from sysfs show the net_device field.
+>
+> The ability to set defer_hard_irqs on specific NAPI instances will be
+> added in a later commit, via netdev-genl.
+>
+> Signed-off-by: Joe Damato <jdamato@fastly.com>
 
-#syz test
-
-diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-index f7672472fa82..2ca546af9191 100644
---- a/fs/ocfs2/extent_map.c
-+++ b/fs/ocfs2/extent_map.c
-@@ -415,6 +415,15 @@ static int ocfs2_get_clusters_nocache(struct inode *inode,
- 	tree_height = le16_to_cpu(el->l_tree_depth);
- 
- 	if (tree_height > 0) {
-+		if (tree_height > 256) {
-+			ocfs2_error(inode->i_sb,
-+				    "Inode %lu has too big tree depth %d in leaf block %llu\n",
-+				    inode->i_ino,
-+				    tree_height,
-+				    (unsigned long long)di_bh->b_blocknr);
-+			ret = -EROFS;
-+			goto out;
-+		}
- 		ret = ocfs2_find_leaf(INODE_CACHE(inode), el, v_cluster,
- 				      &eb_bh);
- 		if (ret) {
+Reviewed-by: Eric Dumazet <edumazet@google.com>
 
