@@ -1,79 +1,78 @@
-Return-Path: <linux-kernel+bounces-359208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-359210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF1A9988B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:05:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AAA9988C2
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 16:05:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AA3941C23D75
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:05:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15D901F25753
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 14:05:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD7C1C9B60;
-	Thu, 10 Oct 2024 14:05:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47C301CB510;
+	Thu, 10 Oct 2024 14:05:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ly0IpkVg"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="YvmR5ZxO"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68F0D1C8FD9;
-	Thu, 10 Oct 2024 14:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1055F1CB323
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 14:05:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728569102; cv=none; b=md7Mn8hIzeJwcN/lHu/bntgv5NLCzyMfXozph8LpA4Ix824rPu/l+oUrQU8TKggw3SXepK0JY/+/UJPm2ij8UIPTDYaQ13ep+Ht1NyYD2MLPm2ljrDPfZ7/s4N6DPbwON6s2QPbf7xX7rWd+FZc3JEG5Ti24LqZymgZgvcr02tA=
+	t=1728569133; cv=none; b=GBATCKSKar8CbmNACzk58UQoekCiK3VbHtoTAW+Y412EimhY+QTiTHkwgbTJ1e6JoPZkqhviXAFXJnOLcMJpzpw9TVGLTn55BcRjETMI+HnMBx85h8ity7x2RIldkF6OSghHtyjhGHlUHPvcBIjCxZ1OSDlxbxy07gSu/HdnySA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728569102; c=relaxed/simple;
-	bh=qlFazhdY3LadMTqM1gppptyJCxhnz9Bj7jrDqYnr8DU=;
+	s=arc-20240116; t=1728569133; c=relaxed/simple;
+	bh=6/RpoWFIVzdGO1ZXmdL4ihrgrieD31/pgww4ZZRgVvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VvVPRiFUsJvUBlLlMlnFRfXNNsGJZVXNcMOLoci93KhNTiYdIm1OWSq8zkENEh5L2yIYimtOENJHkPCu4MkNY2sHekZJMfVmtGZ2tNoxNFN5mTJ/vONt0dLfObdUUPk7CkM/U70npBIw+QyRtXaGbl4KECP4vg8pINJ/fKHFh7k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ly0IpkVg; arc=none smtp.client-ip=198.175.65.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728569102; x=1760105102;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=qlFazhdY3LadMTqM1gppptyJCxhnz9Bj7jrDqYnr8DU=;
-  b=ly0IpkVgOpEjzaX6eFwJj5Y4DHnY+mBG0J9T6tif/8rBinxcWA7oKaZL
-   Te2uoO5WKHS33+aCZd8WDc6n+ocrdGE8bA/VcyLmt3f1h5fAg6nOcxg45
-   2Z6v04IsZ2wL2haZkiSxHI7l/pFpHRKawk9vACePHmuVr1sw7KUG8102w
-   B1Va6icsE+Cn9c+J2eRmpkR1DzhNf8kFoNcvZq8+RGoRmpAgm5yjLjLOk
-   n5ib+cSI7R21PJlfh3IoFunbxBLV0wIkhOMHUBZaNnFnGh3XvQ8FzaG5B
-   TcUllFjhtamkMPwOgMsLohssBiKx84QsYuOX3kVIZfX2xU8wMQiOWB19S
-   Q==;
-X-CSE-ConnectionGUID: 0px18HJtRBOLCYBItyOdcw==
-X-CSE-MsgGUID: 6wD5H2TaQKaJdsj3MiSB0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11220"; a="45405315"
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="45405315"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:04:35 -0700
-X-CSE-ConnectionGUID: ll8uRov0QiS8jjNodzd4dQ==
-X-CSE-MsgGUID: twNYhGoYQO6yvY627aAYsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,193,1725346800"; 
-   d="scan'208";a="77088342"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa007.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 07:04:33 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1sytmI-00000001YWx-0cCl;
-	Thu, 10 Oct 2024 17:04:30 +0300
-Date: Thu, 10 Oct 2024 17:04:29 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Jai Luthra <jai.luthra@ideasonboard.com>
-Subject: Re: [PATCH 12/13] media: i2c: ds90ub913: Add error handling to
- ub913_hw_init()
-Message-ID: <Zwfe7V_rV3Xyxp31@smile.fi.intel.com>
-References: <20241004-ub9xx-fixes-v1-0-e30a4633c786@ideasonboard.com>
- <20241004-ub9xx-fixes-v1-12-e30a4633c786@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=DlBlte/5/Nvc3TRMct6ggSTu9oWKQrZfAeM+amaIQK/9/jYVaU6F2aqYmRG0UdVOdXy1Fi7bp5Zkbep0WXJC2/Gvckve54jaVcmgx8pnF+zc0dgrOz1fnsPu8Vvh8t3YzfFWk7cBv2tejfxapehTOg5oJILzwmo8wyuvTtp26o4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=YvmR5ZxO; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Z3LxugzGjm3ua3Lyz81PyPiPu9NIfx6+I5T5xWD5HFs=; b=YvmR5ZxO6gEyjrgn69d090F0sn
+	l8dfclwqyhB7EpxED3CjEwQyjVd1ekWmIyXG4sfqvHxJS3GhTGEU9pu/jB0ISNpgzh1zbrYyUOaxV
+	04RztPoS3Ni0qgzaIldJrpsCdFecd6sbccHjZ1grDzrEYtEcHi4OOjCf2dQbU3wVzUDRWbaK8UpRo
+	xCUY95Ref95HXuKczQjgfbChFRyZSFRRWlC7Xp1wwsKQ7ud88+8FOlMEa1oPQJMgkwQKdp7WVfdDL
+	EJpKTx6pf90IHIlMUq96VKXmZ7W7gblnPbaHl8G8LZOZP4rZHnFrAvNdRWnuO+n9wVF4UX5QMFRvU
+	gJcR70XQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1sytn0-00000007mCp-49oN;
+	Thu, 10 Oct 2024 14:05:15 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D957230088D; Thu, 10 Oct 2024 16:05:14 +0200 (CEST)
+Date: Thu, 10 Oct 2024 16:05:14 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Joel Fernandes <joelaf@google.com>,
+	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Ben Segall <bsegall@google.com>,
+	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>,
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Metin Kaya <Metin.Kaya@arm.com>,
+	Xuewen Yan <xuewen.yan94@gmail.com>,
+	K Prateek Nayak <kprateek.nayak@amd.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com,
+	Connor O'Brien <connoro@google.com>
+Subject: Re: [RESEND x3][PATCH v12 2/7] locking/mutex: Make mutex::wait_lock
+ irq safe
+Message-ID: <20241010140514.GJ17263@noisy.programming.kicks-ass.net>
+References: <20241009235352.1614323-1-jstultz@google.com>
+ <20241009235352.1614323-3-jstultz@google.com>
+ <20241010100045.321ca4de@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,30 +81,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241004-ub9xx-fixes-v1-12-e30a4633c786@ideasonboard.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <20241010100045.321ca4de@gandalf.local.home>
 
-On Fri, Oct 04, 2024 at 05:46:43PM +0300, Tomi Valkeinen wrote:
-> Add error handling to ub913_hw_init() using a new helper function,
-> ub913_update_bits().
+On Thu, Oct 10, 2024 at 10:00:45AM -0400, Steven Rostedt wrote:
+> On Wed,  9 Oct 2024 16:53:35 -0700
+> John Stultz <jstultz@google.com> wrote:
+> 
+> > From: Juri Lelli <juri.lelli@redhat.com>
+> > 
+> > mutex::wait_lock might be nested under rq->lock.
+> > 
+> > Make it irq safe then.
+> 
+> Can you expand on this please?
+> 
+> If the mutex:wait_lock might be taken under an rq->lock, doesn't that mean
+> a mutex was taken under rq->lock? Or is it something internal?
 
-...
-
-> +	ret = ub913_update_bits(priv, UB913_REG_GENERAL_CFG,
-> +				UB913_REG_GENERAL_CFG_PCLK_RISING,
-> +				priv->pclk_polarity_rising ?
-> +					UB913_REG_GENERAL_CFG_PCLK_RISING :
-> +					0);
-
-So, you can use regmap_set_bits() / regmap_clear_bits() instead of this
-ternary. It also gives one parameter less to the regmap calls.
-
-> +	if (ret)
-> +		return ret;
-
--- 
-With Best Regards,
-Andy Shevchenko
-
+Very similar to what we do for rt_mutex during PI; we'll want to look at
+mutex_owner during the block chain walk, and holding wait_lock ensures
+objects persistence.
 
 
