@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-358881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-358882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD636998509
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:34:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F7D499850A
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 13:34:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 492CD1F27135
-	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D6781C237F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 10 Oct 2024 11:34:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959031C5788;
-	Thu, 10 Oct 2024 11:33:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98BE01C3304;
+	Thu, 10 Oct 2024 11:33:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kq2qMXyE"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="F34EPHzy"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E6A31C4616
-	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:33:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1420B1C5781
+	for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 11:33:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728560034; cv=none; b=qki3yZatpqLNTSfoeYGC1dG+uSmOOfcHQu1Qe2/GZGOF4PNSeu9+D59YB62Qm2bcuBwibrDYjZZcbJnSS0T9IVgl8QUx44u7Z7IRfRsMyC/HS0r6pHjRCm6PdDT+0uXxiN6PwvxOHj4wDOyltDbPKymRh0jHa6nV4azXwNOOFVM=
+	t=1728560035; cv=none; b=LizaUI/2xcmHcuTwV+OfJixNvuecPAZl56ksiTmqVfyQ7SX9xko13bkqP23QuTuUQP4jMthHD/3Oqhef8Ci/aUnl4HA8ynegRSmvSR1Js4vSOfP+D/fUBpH7bvwlawAV+s7PdDwLhAK5Y9K8py2B0GUMBoqBm6wDYTya47Mo+Jc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728560034; c=relaxed/simple;
-	bh=HgpuQCGct+VCXYretZz57uSNbkNJ0GIymihuDxTTfNw=;
+	s=arc-20240116; t=1728560035; c=relaxed/simple;
+	bh=TXjj9xFMQ8ObJncCvfOXEQyxyh4pdr8dOD7N4vVAW1Y=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=cE2YHY9FjUdBzOzgEaNJEQOR1WklqudfmwrD2z/Nb/r2vNgljHtlfpzmYp9lRDKi2HcMdKhEmkbl7+7q4IEHp7FPPwxIw0Qr7CKkhZm5sOKdgIiASXNB/YwzpDCDD0gpzFno5443QDHDPAfQZ9ChLFiH65jxAdni1ArnK7C87jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kq2qMXyE; arc=none smtp.client-ip=209.85.208.181
+	 In-Reply-To:To:Cc; b=lc6flr7DlK8iuC1Y8YKtvowWheJavyeudYhJQZnLg4l5SPnw5F07JXPTcNauf+du9TOyl4h/q5ZYUG+9kc1xd7PwitSw3VQGe7DQ15zGBYIIlGLscRznCuQ/2PkaAFNVCeoqfQsSey8Y5S5RwsD0f7Er0rJZjHy7w/Mf7ZoSG3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=F34EPHzy; arc=none smtp.client-ip=209.85.218.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fac6b3c220so12352001fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:33:51 -0700 (PDT)
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a994c322aefso354079166b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 04:33:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728560030; x=1729164830; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728560032; x=1729164832; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=TDl9iLJ9IcIQCUiDPdY7G7jOst94Sq4L5J+um8W/x4k=;
-        b=kq2qMXyEtyL9KuI9wUVnuxiIUf0sWEap56hCMBAAMQZVRQI9YZXZ7TO0YJJnd7QTWE
-         MV1ZdNN9h7Uzw4X8mIU2x4Y54CMPJsNXW5lZiiMIh52OU25hWP+UextpcoTKWrxej7Vy
-         3QF84z36b2H8wMeZMfTccoAo/xZl79xozVsNmlh/SF5UgC7ik4QGXSzdoSzs04KkXAvv
-         j1jyIllFF1EA+h/KX9Uls+mxJHUY6P5vc81GYiy1xE6VY5oOzgi9QYNfOCRXvmuunecC
-         mijvzoSrtwPJIHhLLECRdKIPso1RTadni4L23zxjeq+d5Dko7dQ6bJajJYmy5u4lXQnx
-         ZiYg==
+        bh=FhwutFaJAhBwzUvxWfpVZxdfXLNUR2eiL6c/Y41YU9M=;
+        b=F34EPHzyhAwnyesUBY+juUf5aVrU2ynaPG6OMmjt5jmThnLS/XMCkx+hoSpnLW5THD
+         yPFvL11j3yL0qSgwpcoRpJY6JXM6BYnTYGrGQVjGJqRdvGsu0B9hXVZm0xSh6WEs3rwO
+         teEC8h/tgRPXWcK1DPVgWKUwbf4s1N5mkrKAI0Lhk+brW6JRe/z+EEk2xQm72fk/kAmb
+         ZS/T1NJwnOvfKg9rqfobenXk2dFrqPKn5IAMrUFoTZgP8Fgxcuxcnr6oXaaad/ADUAkv
+         zw5bP995Etp5B/PAfu0o+zfBXEmD6VXgpJdxAYk6MXKF7mDzu4aI8XIgQ26k5ZCJC/jo
+         Fz6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728560030; x=1729164830;
+        d=1e100.net; s=20230601; t=1728560032; x=1729164832;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=TDl9iLJ9IcIQCUiDPdY7G7jOst94Sq4L5J+um8W/x4k=;
-        b=xH3vdtmh7CyLtzYUaY7cvSJ5It4vAWiSLDirQuc0l6agHYwPTGR8iOyOl5HEQxmyCs
-         udkpjMus/zMT91tglYioFASJum0O4mtQwS+XClx+CHfOhuupcma5Gn7dkl/nZjr6FTSJ
-         K4mUbuiKxh9ZCVBsAVeVZ1dUK16FUdAWOCYldazNecHeS8HvQ+V6NsigLzXOvINBL6Gx
-         GbsLead8TbIijztwc676w39JCs7LzF7BkY/keD9wvDY0zdE/qxfshfZ+iFzIqyRnN0/x
-         lQOT5st4+I2qcqAxN1djZ+mgoeRXDkWCTns0HxEy415u0TegBU2LPZG/J1I9Icveow/d
-         ODsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXUnpwmBsnYBnVvedmR747VBBGB1nXkyKM7MxODi1G+DKxyr/G58//kfpwIh1talrNX4wTU3aLMPiPgEqs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQko9yjoqaBRaZ2kvAcyijLblnx65DwyCWWHklD3A6EmrxcOjs
-	QvnPEr/j2hYKv4yQbVDP3E/fpehiIGQQYcqpkPHVZwjn8BcosQL4/w1RpaUc9nk=
-X-Google-Smtp-Source: AGHT+IFYXNUhaWmpiLq2q8xgds0Kykd3WYlCfTU5AddMN69mncHRj5KixgWaFupTNP5HEIlSrViaww==
-X-Received: by 2002:a2e:b8cb:0:b0:2f3:f1ee:2256 with SMTP id 38308e7fff4ca-2fb18807a65mr56092621fa.44.1728560030103;
-        Thu, 10 Oct 2024 04:33:50 -0700 (PDT)
+        bh=FhwutFaJAhBwzUvxWfpVZxdfXLNUR2eiL6c/Y41YU9M=;
+        b=wejiNae+bMAZcZKY2+loDHScDABxB5DsUdmwMbJfuyl2PGIzdKquGU9UaumVq9AVfc
+         9vPJa9u/+BF26mvcSlFsHBFNJzhbOqv1NTbgT7RTGEgyTBu1hFqRbYgcrmYjWVmG5TOI
+         4FHtqM4G8NFddEQ762rLdxc5Nehj3n8iPe/rbvYfBJ55D961Y2lrijbxH8tDwQaGzx0l
+         +7JyGR1daiQBdv0ao7A6JNWeR9xYNzO5cFhi87nd5LWFEtWN6xhf+IAS1FV94dGByoFd
+         b29YwGKQYYNc6eSmI5ZLwFr4FqRu+1DF+R0PKE9kHeZ4yq1qTW0hoBMfggaoQibszv5g
+         pOcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmezkf2LZk9SIX3fw9vN+MkaL2p6EcA4SYSV608LR55yYjfYlbGHbranl1ny4J9vjbuSJrtH/yOViAMSE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YweX8rs44tqA6s0UCPhRsHGFXXtLxgHyDGZO8XAlc1bjZCG7uhz
+	yct4tNPtN4X72VZdVDQKWVbdGEDDq4qDaRXDM4xG/dHFxkZawy9FzB22w0q8D6Y=
+X-Google-Smtp-Source: AGHT+IFaoE3sZWLkTplU7TDESmJsAO9u+n0GW9GsY4BElZ/Wg4eEpzfSZ1AqFssYL+f+8cp61QXAgw==
+X-Received: by 2002:a17:906:6a11:b0:a86:8f9b:ef6e with SMTP id a640c23a62f3a-a99a10f7328mr306580766b.13.1728560032206;
+        Thu, 10 Oct 2024 04:33:52 -0700 (PDT)
 Received: from lino.lan ([85.235.12.238])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.33.48
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25406sm77619066b.69.2024.10.10.04.33.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 04:33:48 -0700 (PDT)
+        Thu, 10 Oct 2024 04:33:50 -0700 (PDT)
 From: Linus Walleij <linus.walleij@linaro.org>
-Date: Thu, 10 Oct 2024 13:33:42 +0200
-Subject: [PATCH RFC 04/28] ARM: process: Rewrite ret_from_fork i C
+Date: Thu, 10 Oct 2024 13:33:43 +0200
+Subject: [PATCH RFC 05/28] ARM: process: Remove local restart
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +77,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241010-arm-generic-entry-v1-4-b94f451d087b@linaro.org>
+Message-Id: <20241010-arm-generic-entry-v1-5-b94f451d087b@linaro.org>
 References: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 In-Reply-To: <20241010-arm-generic-entry-v1-0-b94f451d087b@linaro.org>
 To: Oleg Nesterov <oleg@redhat.com>, Russell King <linux@armlinux.org.uk>, 
@@ -90,127 +90,146 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Linus Walleij <linus.walleij@linaro.org>
 X-Mailer: b4 0.14.0
 
-Move the direct assembly call to schedule_tail() and the
-call starting a kernel thread into a C version of ret_from_fork()
-in process.c and rename the old ret_from_fork to ret_from_fork_asm
-following the pattern in x86.
+The ARM kernel contains a quirk to handle syscall restarts
+inside the kernel without exiting to userspace. The generic
+entry cannot handle this.
 
-Leave a comment on what we will do when we get to switching to
-generic entry with this as a base.
+Rename do_signal() to arch_do_signal_or_restart() to fit
+with the upcoming generic entry conversion.
+
+This is essentially a revert of commit 81783786d5cf
+"ARM: 7473/1: deal with handlerless restarts without leaving the kernel"
+from 2012.
+
+Other solutions may be possible, such as checking the PC after
+do_work_pending and assume it is a local restart if that address
+is inside the kernel, or modifying the generic entry code to
+track local restarts like ARM does and pass that information
+back.
 
 Signed-off-by: Linus Walleij <linus.walleij@linaro.org>
 ---
- arch/arm/include/asm/switch_to.h |  4 ++++
- arch/arm/kernel/entry-common.S   | 22 +++++++++++++++-------
- arch/arm/kernel/process.c        | 24 ++++++++++++++++++++++--
- 3 files changed, 41 insertions(+), 9 deletions(-)
+ arch/arm/include/asm/signal.h  |  3 +--
+ arch/arm/kernel/entry-common.S |  9 +--------
+ arch/arm/kernel/signal.c       | 28 +++++++++-------------------
+ 3 files changed, 11 insertions(+), 29 deletions(-)
 
-diff --git a/arch/arm/include/asm/switch_to.h b/arch/arm/include/asm/switch_to.h
-index 9372348516ce..18d084aff5a4 100644
---- a/arch/arm/include/asm/switch_to.h
-+++ b/arch/arm/include/asm/switch_to.h
-@@ -17,6 +17,10 @@
- #define __complete_pending_tlbi()
- #endif
+diff --git a/arch/arm/include/asm/signal.h b/arch/arm/include/asm/signal.h
+index 8b84092d1518..7acccc96840c 100644
+--- a/arch/arm/include/asm/signal.h
++++ b/arch/arm/include/asm/signal.h
+@@ -24,7 +24,6 @@ typedef struct {
+ #include <asm/sigcontext.h>
  
-+asmlinkage void ret_from_fork_asm(void);
-+__visible void ret_from_fork(struct task_struct *prev, struct pt_regs *regs,
-+			     int (*fn)(void *), void *fn_arg);
-+
- /*
-  * switch_to(prev, next) should switch from task `prev' to `next'
-  * `prev' will never be the same as `next'.  schedule() itself
+ void do_rseq_syscall(struct pt_regs *regs);
+-int do_work_pending(struct pt_regs *regs, unsigned int thread_flags,
+-		    int syscall);
++void do_work_pending(struct pt_regs *regs, unsigned int thread_flags);
+ 
+ #endif
 diff --git a/arch/arm/kernel/entry-common.S b/arch/arm/kernel/entry-common.S
-index 2f93c2f6d5b8..df6961a1006b 100644
+index df6961a1006b..da5c2d4b62e5 100644
 --- a/arch/arm/kernel/entry-common.S
 +++ b/arch/arm/kernel/entry-common.S
-@@ -5,6 +5,7 @@
-  *  Copyright (C) 2000 Russell King
-  */
+@@ -86,14 +86,8 @@ ENDPROC(ret_fast_syscall)
+ 	bne	__sys_trace_return_nosave
+ slow_work_pending:
+ 	mov	r0, sp				@ 'regs'
+-	mov	r2, why				@ 'syscall'
+ 	bl	do_work_pending
+-	cmp	r0, #0
+-	beq	no_work_pending
+-	movlt	scno, #(__NR_restart_syscall - __NR_SYSCALL_BASE)
+-	str	scno, [tsk, #TI_ABI_SYSCALL]	@ make sure tracers see update
+-	ldmia	sp, {r0 - r6}			@ have to reload r0 - r6
+-	b	local_restart			@ ... and off we go
++	b	no_work_pending
+ ENDPROC(ret_fast_syscall)
  
-+#include <linux/cfi_types.h>
- #include <asm/assembler.h>
- #include <asm/unistd.h>
- #include <asm/ftrace.h>
-@@ -128,15 +129,22 @@ ENDPROC(ret_to_user)
  /*
-  * This is how we return from a fork.
-  */
--ENTRY(ret_from_fork)
--	bl	schedule_tail
--	cmp	r5, #0
--	movne	r0, r4
--	badrne	lr, 1f
--	retne	r5
-+SYM_TYPED_FUNC_START(ret_from_fork_asm)
-+	/*
-+	 * ret_from_fork() expects:
-+	 * r0: prev
-+	 * r1: regs
-+	 * r2: fn() for kernel process or NULL
-+	 * r3: fn_arg for kernel process or N/A
-+	 */
-+	mov	r1, sp
-+	mov	r2, r5
-+	mov	r3, r4
-+	bl	ret_from_fork
-+	mov	r0, #0
- 1:	get_thread_info tsk
- 	b	ret_to_user
--ENDPROC(ret_from_fork)
-+SYM_FUNC_END(ret_from_fork_asm)
+@@ -266,7 +260,6 @@ ENTRY(vector_swi)
+ 	 */
+  TRACE(	ldmia	sp, {r0 - r3}		)
  
- /*=============================================================================
-  * SWI handler
-diff --git a/arch/arm/kernel/process.c b/arch/arm/kernel/process.c
-index e16ed102960c..81c1c3f98834 100644
---- a/arch/arm/kernel/process.c
-+++ b/arch/arm/kernel/process.c
-@@ -29,6 +29,7 @@
- #include <asm/processor.h>
- #include <asm/thread_notify.h>
- #include <asm/stacktrace.h>
-+#include <asm/switch_to.h>
- #include <asm/system_misc.h>
- #include <asm/mach/time.h>
- #include <asm/tls.h>
-@@ -230,7 +231,26 @@ void flush_thread(void)
- 	thread_notify(THREAD_NOTIFY_FLUSH, thread);
+-local_restart:
+ 	ldr	r10, [tsk, #TI_FLAGS]		@ check for syscall tracing
+ 	stmdb	sp!, {r4, r5}			@ push fifth and sixth args
+ 
+diff --git a/arch/arm/kernel/signal.c b/arch/arm/kernel/signal.c
+index 79a6730fa0eb..7b1a16e86b23 100644
+--- a/arch/arm/kernel/signal.c
++++ b/arch/arm/kernel/signal.c
+@@ -18,6 +18,7 @@
+ #include <asm/traps.h>
+ #include <asm/unistd.h>
+ #include <asm/vfp.h>
++#include <asm/syscall.h>
+ #include <asm/syscalls.h>
+ 
+ #include "signal.h"
+@@ -534,9 +535,10 @@ static void handle_signal(struct ksignal *ksig, struct pt_regs *regs)
+  * the kernel can handle, and then we build all the user-level signal handling
+  * stack-frames in one go after that.
+  */
+-static int do_signal(struct pt_regs *regs, int syscall)
++static void arch_do_signal_or_restart(struct pt_regs *regs)
+ {
+ 	unsigned int retval = 0, continue_addr = 0, restart_addr = 0;
++	bool syscall = (syscall_get_nr(current, regs) != -1);
+ 	struct ksignal ksig;
+ 	int restart = 0;
+ 
+@@ -590,16 +592,14 @@ static int do_signal(struct pt_regs *regs, int syscall)
+ 	} else {
+ 		/* no handler */
+ 		restore_saved_sigmask();
+-		if (unlikely(restart) && regs->ARM_pc == restart_addr) {
++		if (unlikely(restart) && regs->ARM_pc == restart_addr)
+ 			regs->ARM_pc = continue_addr;
+-			return restart;
+-		}
+ 	}
+-	return 0;
++	return;
  }
  
--asmlinkage void ret_from_fork(void) __asm__("ret_from_fork");
-+/* The assembly stub sets up the parameters and calls ret_from_fork() */
-+asmlinkage void ret_from_fork_asm(void) __asm__("ret_from_fork_asm");
-+
-+__visible void ret_from_fork(struct task_struct *prev, struct pt_regs *regs,
-+				     int (*fn)(void *), void *fn_arg)
-+{
-+	schedule_tail(prev);
-+
-+	/* Is this a kernel thread? */
-+	if (unlikely(fn)) {
-+		fn(fn_arg);
-+		/*
-+		 * A kernel thread is allowed to return here after successfully
-+		 * calling kernel_execve().  Exit to userspace to complete the
-+		 * execve() syscall.
-+		 */
-+	}
-+
-+	/* syscall_exit_to_user_mode(regs); here once we switch to generic entry */
-+}
- 
- int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
+-asmlinkage int
+-do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
++asmlinkage void
++do_work_pending(struct pt_regs *regs, unsigned int thread_flags)
  {
-@@ -263,7 +283,7 @@ int copy_thread(struct task_struct *p, const struct kernel_clone_args *args)
- 		thread->cpu_context.r5 = (unsigned long)args->fn;
- 		childregs->ARM_cpsr = SVC_MODE;
- 	}
--	thread->cpu_context.pc = (unsigned long)ret_from_fork;
-+	thread->cpu_context.pc = (unsigned long)ret_from_fork_asm;
- 	thread->cpu_context.sp = (unsigned long)childregs;
+ 	/*
+ 	 * The assembly code enters us with IRQs off, but it hasn't
+@@ -612,19 +612,10 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
+ 			schedule();
+ 		} else {
+ 			if (unlikely(!user_mode(regs)))
+-				return 0;
++				return;
+ 			local_irq_enable();
+ 			if (thread_flags & (_TIF_SIGPENDING | _TIF_NOTIFY_SIGNAL)) {
+-				int restart = do_signal(regs, syscall);
+-				if (unlikely(restart)) {
+-					/*
+-					 * Restart without handlers.
+-					 * Deal with it without leaving
+-					 * the kernel space.
+-					 */
+-					return restart;
+-				}
+-				syscall = 0;
++				arch_do_signal_or_restart(regs);
+ 			} else if (thread_flags & _TIF_UPROBE) {
+ 				uprobe_notify_resume(regs);
+ 			} else {
+@@ -634,7 +625,6 @@ do_work_pending(struct pt_regs *regs, unsigned int thread_flags, int syscall)
+ 		local_irq_disable();
+ 		thread_flags = read_thread_flags();
+ 	} while (thread_flags & _TIF_WORK_MASK);
+-	return 0;
+ }
  
- 	clear_ptrace_hw_breakpoint(p);
+ struct page *get_signal_page(void)
 
 -- 
 2.46.2
