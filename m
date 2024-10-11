@@ -1,113 +1,179 @@
-Return-Path: <linux-kernel+bounces-360851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51C1C99A07B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:56:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72F4199A07E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9EBDB2541E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:56:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B7FD2883C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E342C212623;
-	Fri, 11 Oct 2024 09:54:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0381B212D14;
+	Fri, 11 Oct 2024 09:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="HKqgf+Bk"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mfIqlLPn"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA39210C01;
-	Fri, 11 Oct 2024 09:54:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCC251F9415;
+	Fri, 11 Oct 2024 09:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640466; cv=none; b=L6EVjcjJEYgEiplt9A+N4bLW+5sxhKcZS217o636TG5pUR4fDn2Uduicm57pbMmt8q3JZy1tPEscKOBlktR9Ga8w3ZRHQ+WM+SJRTx5ZUSySAqIm/tW/xgGn76UINpqzsa/7jzYJyCPfsrQsnPoVpH4PXn2/d0Pii124bJC913A=
+	t=1728640481; cv=none; b=ihjAe0qAncmBpQ7A9LVIgtH8EIOYVUjJnzVvKWBNhuFNmpWT4LmxsRWc4obJjqqgQ/TZmLuy56T6ySChbrWzhbUm8bSp1Bj0rvO1vqlwvQucbrlsoHonFi6UcOC+9MDK9GRuaYdNjZuVnHAnIknVg6M7WBXU3jHjARwi9emdlEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640466; c=relaxed/simple;
-	bh=zjc/xE1gF/ahy55fvUubLE/TcJQ1uuUmJmUTVcGnPu0=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d0pbkgWlMuj7cvYJ6S3/r0Ue5rOBkyUTcGFnhgfhA0f8zuXIy1IbZe6KgiL2MOMktyAdNvBrkKB0pX2mmEXEgBLPOC/80K39kNQTiXiQQWt9J/q45Zq6NerolGUjiR+77VfYTF91fW6M9IMMa3bI4Qx5Lqt3DfBx7Y9xys7odJY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=HKqgf+Bk; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49B9sAmm058382;
-	Fri, 11 Oct 2024 04:54:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728640450;
-	bh=3JrfZw4qA1G5nvmuE+klJlyZ8u0JCYflyP0Is0x2k5M=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=HKqgf+BkAi/V2I/fDDrPNKpuJhtZ4F+IWtpPX4w4av19U+xKhdDthtaOp0auDItNh
-	 VsANXCXP4qu63axhlK7HgVQ0feOeaUXmAqB/+6XwsGgj0TONZ1QZj+VIgss5cgXeTl
-	 9dqVnWfSIlSG7KpXtu6XzL5T43LEzqQFlPITUCnQ=
-Received: from DFLE104.ent.ti.com (dfle104.ent.ti.com [10.64.6.25])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49B9sAbA021426
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Oct 2024 04:54:10 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Oct 2024 04:54:09 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Oct 2024 04:54:09 -0500
-Received: from localhost (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49B9s8q7089632;
-	Fri, 11 Oct 2024 04:54:09 -0500
-Date: Fri, 11 Oct 2024 15:24:08 +0530
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: Chintan Vankar <c-vankar@ti.com>
-CC: Conor Dooley <conor+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Rob Herring <robh@kernel.org>, Tero Kristo
-	<kristo@kernel.org>,
-        Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon
-	<nm@ti.com>,
-        <s-vadapalli@ti.com>, <srk@ti.com>, <danishanwar@ti.com>,
-        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>
-Subject: Re: [PATCH] arm64: dts: ti: k3-am62x-sk-common: Add bootph-all
- property in cpsw_mac_syscon node
-Message-ID: <7fead0bc-de77-43f1-83c8-ef0a5318cfec@ti.com>
-References: <20241011094814.64447-1-c-vankar@ti.com>
+	s=arc-20240116; t=1728640481; c=relaxed/simple;
+	bh=RpeG/rTTMam2yBQbOjZii9wvh/NKHEVnxM1dRWn9JlM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ylt8sa7l8Vybv+N5Htvfj3F0BEIZCUnjKsRamvFF3il0ipMBJWI+Su1EiFwXjlevpBdFfuBRQFimrcba1BPVb7y0UccdvZyiRLj/gWbZNyMghO1H969V6AWdC153dXhJO6PRzkr8Tc4WluaF7paRUHplF4FgZUE/pgQ7PaGMpbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mfIqlLPn; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728640480; x=1760176480;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=RpeG/rTTMam2yBQbOjZii9wvh/NKHEVnxM1dRWn9JlM=;
+  b=mfIqlLPnoi9LKAppMJ7CX049bW+5fOZWs8BvT4rJ+PQX71lIK+SbIQsu
+   msQT+VuUPSOn0quMr8wOFuWtzg2tDu3olw42vX3c90VHx+RPHV58CCYXe
+   fYmXE1Lut26htCa2hvLijgsG2C4xkeQHJ3NFC1ElSoHHGHl03hAlQmkE/
+   5lhWTxzgiatKWHIei1bihXD/xecaJubpdSGSO0brAN5Q/qU6bkIWFKLJI
+   TLyt4AQi/4OZO+e37PcZzjwpxQsz9YCDXV7/ds8lQpriEiXhJ6eVwntCL
+   Cob+9yKO6UV+kbSWP7rToWjPRxhd+z2ppnFSljSrLjf7v9AsnjgziO7st
+   Q==;
+X-CSE-ConnectionGUID: i0nAVyW8Tsupl9bz4ipgbw==
+X-CSE-MsgGUID: VPiV68kCS3K02/GOagDHuQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="38683728"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="38683728"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:54:39 -0700
+X-CSE-ConnectionGUID: LIUpkNU0QZuYvxJQr0bLDw==
+X-CSE-MsgGUID: QB9L8/v6RJuoJrQuGSxeJw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="77166591"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:54:35 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id C5D1611F855;
+	Fri, 11 Oct 2024 12:54:32 +0300 (EEST)
+Date: Fri, 11 Oct 2024 09:54:32 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] device property: Introduce
+ fwnode_for_each_available_child_node_scoped()
+Message-ID: <Zwj12J5bTNUEnxA0@kekkonen.localdomain>
+References: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
+ <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
+ <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
+ <07ec0837-d7a3-413e-a281-e06feafe7f34@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011094814.64447-1-c-vankar@ti.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <07ec0837-d7a3-413e-a281-e06feafe7f34@gmail.com>
 
-On Fri, Oct 11, 2024 at 03:18:14PM +0530, Chintan Vankar wrote:
-> Add bootph-all property in CPSW MAC's eFuse node cpsw_mac_syscon.
-> 
-> Signed-off-by: Chintan Vankar <c-vankar@ti.com>
-> ---
-> 
-> This patch is based on linux-next tagged next-20241011.
-> 
->  arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 4 ++++
->  1 file changed, 4 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> index 44ff67b6bf1e..912425f28052 100644
-> --- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
-> @@ -303,6 +303,10 @@ AM62X_MCU_IOPAD(0x028, PIN_OUTPUT, 0) /* (C5/C6) WKUP_UART0_TXD */
->  	};
->  };
->  
-> +&cpsw_mac_syscon {
-> +	bootph-all;
-> +}
+Hi Javier,
 
-Semicolon is missing. Please fix this.
+On Fri, Oct 11, 2024 at 10:34:32AM +0200, Javier Carrasco wrote:
+> On 11/10/2024 07:39, Sakari Ailus wrote:
+> > Hi Javier,
+> > 
+> > On Tue, Oct 08, 2024 at 06:10:27PM +0200, Javier Carrasco wrote:
+> >> Introduce the scoped variant of the
+> >> fwnode_for_each_available_child_node() to automatically decrement the
+> >> child's refcount when it goes out of scope, removing the need for
+> >> explicit calls to fwnode_handle_put().
+> >>
+> >> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> >> ---
+> >>  include/linux/property.h | 5 +++++
+> >>  1 file changed, 5 insertions(+)
+> >>
+> >> diff --git a/include/linux/property.h b/include/linux/property.h
+> >> index 61fc20e5f81f..b37508ecf606 100644
+> >> --- a/include/linux/property.h
+> >> +++ b/include/linux/property.h
+> >> @@ -168,6 +168,11 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+> >>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+> >>  	     child = fwnode_get_next_available_child_node(fwnode, child))
+> >>  
+> >> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	       \
+> >> +	for (struct fwnode_handle *child __free(fwnode_handle) =	       \
+> >> +		fwnode_get_next_available_child_node(fwnode, NULL); child;     \
+> >> +	     child = fwnode_get_next_available_child_node(fwnode, child))
+> >> +
+> > 
+> > On OF, the implementation of the .get_next_child_node() fwnode op is:
+> > 
+> > static struct fwnode_handle *
+> > of_fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
+> >                               struct fwnode_handle *child)
+> > {
+> >         return of_fwnode_handle(of_get_next_available_child(to_of_node(fwnode),
+> >                                                             to_of_node(child)));
+> > }
+> > 
+> > On ACPI we currently have .device_is_available() returning false but that
+> > probably should be returning true instead (it's been virtually unused
+> > previously).
+> > 
+> > That makes fwnode_get_next_available_child_node() and
+> > fwnode_get_next_child_node() equivalent on both ACPI and OF. Presumably
+> > creating unavailable nodes would be useless on swnode, too.
+> > 
+> > So my question is: what do we gain by adding all these fwnode_*available()
+> > helpers?
+> > 
+> >>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+> >>  						 struct fwnode_handle *child);
+> > 
+> 
+> Hi Sakari, thanks for your feedback.
+> 
+> I thought that the difference is not in OF (which either way ends up
+> calling __of_device_is_available()), but in ACPI.
+> 
+> For fwnode_for_each_child_node(), the ACPI callback is
+> acpi_get_next_subnode(), and I don't see that the device_is_available()
+> callback is used in that case.
 
-Regards,
-Siddharth.
+fwnode_get_next_available_child_node() also calls
+fwnode_device_is_available() and that returns false on all non-device nodes
+right now. As noted above, fwnode_device_is_available() should probably
+return true for non-device nodes on ACPI. I'll post a patch.
+
+> 
+> For fwnode_for_each_available_child_node(),
+> fwnode_get_next_available_child_node() is used, which checks
+> fwnode_device_is_available(), which then calls device_is_available().
+> 
+> What's the catch?
+
+-- 
+Kind regards,
+
+Sakari Ailus
 
