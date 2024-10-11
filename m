@@ -1,132 +1,137 @@
-Return-Path: <linux-kernel+bounces-360975-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360976-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0864A99A1F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F23899A1F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61C87B2621B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:48:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5364286DE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:49:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E03B20FA9A;
-	Fri, 11 Oct 2024 10:48:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13EE8210C11;
+	Fri, 11 Oct 2024 10:49:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="D/SJF3ZM"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GCVLUXWl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 548AF1D0E15
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:48:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 073B56F31E;
+	Fri, 11 Oct 2024 10:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643702; cv=none; b=D5cHFdpDA/lxLpOxixFG7IXHFm/6Jpp3DV10Wly4scE6u/W/2cwBTqTnT2lBjnMroSkyvd0r+9kI7UxFMb/A/tt6/vbGtwmEpMjVo29sm0Nc/1COwxSHdj89y1DFa9Anx1L5sQiwE1lOnU0Pfhl/990mz4A8xD26Dg5BcaonRwY=
+	t=1728643775; cv=none; b=C/wy330/Bf+GG68BVRCfE0J0TQDK94p5walLSPD2uEQX/eVeoZcF4MsN3COfzzxADXm7TjRCC6FBBm6768n0DN4kbPyKIThKkiXVUog5jD7IRn2nlEhNZmoaeYq2n7km4E8sca/PFe67EuGhBENIQG0eneK0fR2fadHd/2PZIZA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643702; c=relaxed/simple;
-	bh=0mIpcsnmmc7WlMwsdZ44vbuzOFQ4E6EE40hIStwDpHw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=X6OKqSp05s2I++UY4rkltoj8MyI7xyyeSfcw76iwfWhGuUmFlWnPJOWlY14hg9DkhrrgIEYdCjpSesQvx3azLHq1dFGKhocbimPEVVu4GZOM75P07Af2eQcoVzLnAVuflI7x1/ZHWg1/MIsh8/0s1UTBYYdbyeZm6gI+OZsZdXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=D/SJF3ZM; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [IPV6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f] (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 2605A220;
-	Fri, 11 Oct 2024 12:46:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728643594;
-	bh=0mIpcsnmmc7WlMwsdZ44vbuzOFQ4E6EE40hIStwDpHw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=D/SJF3ZMiTpu2m8jbzWQ/rTZgSjKBvwNpJIv0/Beg2IjIwoYP6atdBpdjsOegxnTn
-	 QO8I/BaHCb/ygwzCQa6ggZkcOBEZ8Lp+8J9E+gdYdBUhpevNLNda/VF2ESGhcte+/t
-	 O0GLPlIPkw7oC+6wybnnIxvDxqwXyB05eLMjG/2M=
-Message-ID: <9ed1ca9d-a17e-46b7-ae08-81c3d44a6063@ideasonboard.com>
-Date: Fri, 11 Oct 2024 16:18:08 +0530
+	s=arc-20240116; t=1728643775; c=relaxed/simple;
+	bh=XH9y2E5yHPSSbBGvg6K2K0apjNjCYkkwGjaiDudoz1U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pYqDJ0EmY4svV7BTkI9QZWhAKeLvwW1eZPWg/UHnnwLCMsu2tKsRFHnlW8J6nKT0iHQeVhwAx8of/lAiGqhD1e9H/ACUDf8hTNh+2Nyr63zddJNBNrqatYAcJv/I/XsPySagVkahuZn2dB+DpiNx0zGVJhb1HTSRv1GKDlVIqzI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GCVLUXWl; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728643774; x=1760179774;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=XH9y2E5yHPSSbBGvg6K2K0apjNjCYkkwGjaiDudoz1U=;
+  b=GCVLUXWlIK+dgYIHPTgss7A0hdM0S7/JXi05R9iQ5V0EHK7urUbqVhfE
+   uo9U5wxRP+ZOVoP3Q8Q3VjtgAophf7rUuHGkPdT+jRoZCHWV0eLhwrMhS
+   /knJMr/5bk2IL+Uty/Ll2Y177QwPgojBFzZN61cHAt+kLWlVw5NN2Yvjp
+   FWRob9vEJpPoM5W8SdFki/VsltegYW1vgnTV2yF0tmkHlx5rzvCvwivBA
+   Tpng1CYTaTeII4pFAHxcu33FHYKj7x64jb16ZvlTNarhVaSCJa5ZTt36h
+   xPHeignNXrUCdkjV1SFOCKKE6SLH3GzjV3Lc1S9aJpSBO03WvTKhFin/d
+   w==;
+X-CSE-ConnectionGUID: TePsHd3wTIqcjOIIGQgp5g==
+X-CSE-MsgGUID: zoYcwusUSr6CP86QVo9N5Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27909893"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="27909893"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:49:33 -0700
+X-CSE-ConnectionGUID: 7/ZcGODLQUWBwWhh7JtSpA==
+X-CSE-MsgGUID: Kg5MiDyFRtSq+ak0B7s8Dg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="76984507"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:49:30 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szDD5-00000001reQ-1m08;
+	Fri, 11 Oct 2024 13:49:27 +0300
+Date: Fri, 11 Oct 2024 13:49:27 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>
+Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+Message-ID: <ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
+References: <20241010065558.1347018-1-ying.huang@intel.com>
+ <d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
+ <87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] staging: vchiq_core: Properly log dev_err()
-To: Stefan Wahren <wahrenst@gmx.net>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- kernel-list@raspberrypi.com
-References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
- <20241011072210.494672-3-umang.jain@ideasonboard.com>
- <b0074647-f730-4d94-a11c-ebec7f48b928@gmx.net>
-Content-Language: en-US
-From: Umang Jain <umang.jain@ideasonboard.com>
-In-Reply-To: <b0074647-f730-4d94-a11c-ebec7f48b928@gmx.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Stefan
+On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
+> David Hildenbrand <david@redhat.com> writes:
+> > On 10.10.24 08:55, Huang Ying wrote:
 
-On 11/10/24 4:15 pm, Stefan Wahren wrote:
-> Hi Umang,
->
-> [add Raspberry Pi guys to the loop]
->
-> Am 11.10.24 um 09:22 schrieb Umang Jain:
->> Properly log a dev_err() message when the msgid is not of
->> VCHIQ_MSG_PADDING type. Drop 'oldmsgid' scoped variable and improve
->> on the error string as well.
->>
->> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
->> ---
->>   .../vc04_services/interface/vchiq_arm/vchiq_core.c    | 11 ++++-------
->>   1 file changed, 4 insertions(+), 7 deletions(-)
->>
->> diff --git 
->> a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c 
->> b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
->> index e9b60dd8d419..1dca676186b6 100644
->> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
->> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
->> @@ -1188,13 +1188,10 @@ queue_message_sync(struct vchiq_state *state, 
->> struct vchiq_service *service,
->>       header = (struct vchiq_header *)SLOT_DATA_FROM_INDEX(state,
->>           local->slot_sync);
->>
->> -    {
->> -        int oldmsgid = header->msgid;
->> -
->> -        if (oldmsgid != VCHIQ_MSGID_PADDING)
->> -            dev_err(state->dev, "core: %d: qms - msgid %x, not 
->> PADDING\n",
->> -                state->id, oldmsgid);
->> -    }
->> +    if (header->msgid != VCHIQ_MSGID_PADDING)
->> +        dev_err(state->dev,
->> +            "core: %d: qms - msgid %x, is not a PADDING message\n",
->> +            state->id, header->msgid);
-> I'm fine with this change, but the behavior looks strange to me.
->
-> Either this is a real error, I would expect the function would return
-> with something like EINVAL here or this should be a warning?
->
-> Sorry, no idea what's correct here.
+...
 
-indeed, I'll check the code path and see how it is used.
+> > 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
+> 
+> Yes.  This can improve code readability.
+> 
+> A possible issue is that "_root" will be evaluated twice in above macro
+> definition.  IMO, this should be avoided.
 
-However, I will propose the change (if any) on top of this series/patch. 
-Since it would be functional change ... so need to document it 
-appropriately.
+Ideally, yes. But how many for_each type of macros you see that really try hard
+to achieve that? I believe we shouldn't worry right now about this and rely on
+the fact that root is the given variable. Or do you have an example of what you
+suggested in the other reply, i.e. where it's an evaluation of the heavy call?
 
->
-> Best regards
->>
->>       dev_dbg(state->dev, "sync: %d: qms %s@%pK,%x (%d->%d)\n",
->>           state->id, msg_type_str(VCHIQ_MSG_TYPE(msgid)), header, size,
->
+> Do you have some idea about
+> how to do that?  Something like below?
+> 
+> #define for_each_resource_XXX(_root, _p)                                \
+> 	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
+> 	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
+
+This is a bit ugly :-( I would avoid ugliness as long as we have no problem to
+solve (see above).
+
+> > XXX TBD
+> >
+> > Or do you think this should not only be "improved" for the __region_intersects() use case
+> > but for all for_each_resource() users? I cannot tell easily.
+> 
+> I prefer to make for_each_resource() to traverse only descendant
+> resource tree of "_root".  This helps code reusing and make the
+> interface easier to be understood.  The difficulty lies in twice
+> evaluation as above.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
