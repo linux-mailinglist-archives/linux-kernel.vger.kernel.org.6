@@ -1,249 +1,126 @@
-Return-Path: <linux-kernel+bounces-361272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3924F99A607
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:13:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F169D99A602
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB75528394D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:13:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1CF1C2359C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:13:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C70C21D2BC;
-	Fri, 11 Oct 2024 14:11:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60D321D197;
+	Fri, 11 Oct 2024 14:10:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="T8IKJxF0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRRSdftS"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED94221A6FE;
-	Fri, 11 Oct 2024 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A151E21D187;
+	Fri, 11 Oct 2024 14:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728655864; cv=none; b=gHkGaNWZPQD34GTa3h8PqdmVwToxh38LuElRK/CkknsBK3DumBmeZ6e+f6+mAMMJz6Bnce2EziiUaBnOfQSXVRwlcvQ8m9leg5Lu5RQHZzJXSzfHVrLN4mosNOGc9oGCuylOR0nx4rFFKeqc5gvQ8k2W6becgVhxn/HrP7FamaQ=
+	t=1728655859; cv=none; b=jkXC744UAbs3Nh/3XmPM4swv40/QjKQec5NHcSCmo8HhmMhvqGDUh8F4ngBB5Jq6hScuF/GHQxyMcQGIALUC8Zip2KxzKHOEuEPVaRY5ZKmj/fK6HMrXekKkEQ3baPAAML45XBYtkfEs9o+qGVZ4V7CXkkLXwde8djuXSQQThhU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728655864; c=relaxed/simple;
-	bh=qhRRa+1gCVFxS2URaNDFg5S6iBEmjXRytWLg5woUsrs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Phfz3Rta+pBqcEQgt2Yc2XUtcRJ62P8m+9kXt6dilOa9m+Vra3+QPyyP4xwxfvZ1gxfYCUlVE7Ec5lrHxpyTk5UB7WIJclGnkWcVaVVv/WaFQW3lu3AbVZ9nqVEGBZUvj4jIHn+AunUz4gVn/+M9/fMoP4DrimTBzTPAkIU/w1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=T8IKJxF0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BCCuXu032566;
-	Fri, 11 Oct 2024 14:10:50 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ztomLQVgs+j0jsrvBYpYTGoNgMdBJzql6rt62p4C3rQ=; b=T8IKJxF0G1kUOn8i
-	KoR/taRehQU2jKuTRSxlvQsjiuygd9X1s1EBOWrpGGVljLgzHK3w1KcATsnLu847
-	sMVAGIEMAvxCnJ7vkRAjV4djI8YXkkoXLE7/DJYDsGc1nuzphFCTR4R1kaP2zt20
-	HDxBbBaguGbcuQmxHMgdZwXMIKlc/i82sOL0St+TZUS1hop9VSz5ETml2awEGgdC
-	zwOBJ1qM4xAswzYB5ByCS7jpwNNy1UQ6I/KanptYIDVeKYQKM+jlGJuWRMQskRwv
-	SPZ10ELZ+JzRVQGktrGmp88/N/WueurZZwIkagfjV9b2ELr63nq6LuVQ4r0tSzoI
-	nSc85Q==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424cy7pp75-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 14:10:49 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BEAmdP023564
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 14:10:48 GMT
-Received: from hu-vikramsa-hyd.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 11 Oct 2024 07:10:38 -0700
-From: Vikram Sharma <quic_vikramsa@quicinc.com>
-To: <rfoss@kernel.org>, <todor.too@gmail.com>, <bryan.odonoghue@linaro.org>,
-        <mchehab@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <akapatra@quicinc.com>, <hariramp@quicinc.com>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <hverkuil-cisco@xs4all.nl>, <cros-qcom-dts-watchers@chromium.org>,
-        <catalin.marinas@arm.com>, <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <quic_vikramsa@quicinc.com>,
-        <linux-media@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <kernel@quicinc.com>
-Subject: [PATCH v3 8/8] arm64: dts: qcom: qcs6490-rb3gen2-vision-mezzanine: Add vision mezzanine
-Date: Fri, 11 Oct 2024 19:39:32 +0530
-Message-ID: <20241011140932.1744124-9-quic_vikramsa@quicinc.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
-References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+	s=arc-20240116; t=1728655859; c=relaxed/simple;
+	bh=GPjgRl0dDccu/pNWWwulBtG8/TZjOyjqQie32ZkTW3I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ffo1Hsa7+5JQoUmmYeVRC+VLX5cR+spz6MekWPDqDFORswD/uRAWFSclldQq0woUZasoVJP30uGEQDorOjK/jdNr15KU3QTgjV+RmjR1WrHLkxkezq/WceXkoyrDB6nExKBm7heXoVHbFDQmI6xHMVswXxMSXJpeNpct0kEItX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRRSdftS; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a998a5ca499so294394266b.0;
+        Fri, 11 Oct 2024 07:10:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728655856; x=1729260656; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lXo0pIJugni3PGreyejzU+9DDRAp+EZRDdgwqzItr5Y=;
+        b=iRRSdftS2Y+4TSckWrLM+TGc3K1G9PRSmqaXbCJ0a31NN3mRpqKLjZBsKxQzN5cBJz
+         S9IZs5YCQsefi5pcUKs+1m6RbdICkYCNLnuydM4kTFXi7cdD0pSaSXJxhzKzh+5onmY6
+         3U3NTZwBD35uMm4KA42xIYaA8OhcXSiy4jmMhyVXT6dK1YeKHTjeOO1qNNgzoEI9tj+E
+         se1GPvFDIMNT4mFA2A9/MR/58GDPJfGOYPnifAJ2CcuT5YR7gp9QMMk1jvHfhIp8VTy1
+         FAMUrzk0gwhTuEjcfB2AuHu9cokLQTHl/AcUSMaE8Suzv4oAx54c7zY6Ojo1+oGuQqbG
+         QGfw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728655856; x=1729260656;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lXo0pIJugni3PGreyejzU+9DDRAp+EZRDdgwqzItr5Y=;
+        b=sRnCqmkQpWlxkKRdsJSczqcBq0b3T48lgLH9iBZSsgmEPXC8Ab/XuYoVnz8zjgHl39
+         MAoowiKv9SkPbjCsGqExoRN3lmlLNwVkpv3iKGtptb5dpEEIkTqmjt9snqcrAHN+s8xo
+         8j8Z7/k7M6MEF5YWSwc5SZ9W0nM2PPslDYdwiW/gcNj6PayU+Sst1hbjb1SQ0I5Om1n5
+         tApfBbCAXzEJRZ4TPVMGrLP8kLATtCn/UvFnzd5ozbwePu1zKnbPEHYcLzAdcfJ9+nKE
+         2Hlehisg1/+az2nGEwu5j6VlLpROdo3Aak7OohcuhNp/qRbKM/furT2alnmmREEvXk9M
+         Q6hA==
+X-Forwarded-Encrypted: i=1; AJvYcCVH5Pl7puWbagh64ANEo2QZTizR5E/PyVeVxfw6a+Q1VkBntu5epUn7UN3MUwbUHdiBsjYteLG5E/A=@vger.kernel.org, AJvYcCVnVGQsw1Bh1M2kpjLFWXKvCbObsev6jN9WcTuJTUC/vTcoXfBOcr4RRSb2sdpmYh5ruS9y0u4fSVa7dekV@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvkaMhV52QM2Ry42ZjZirDkghda4qJhi3VGTTibom4raSaeXY+
+	XEa2Khbd6rsuvRaqpcN6OF/LhD1+Tmsl2i8NBUheem+W9gDI/XL5T0Graa49zmeSAr5lgs8F4z2
+	fkjP/PuRfWW470hGDlGzKf855oQ==
+X-Google-Smtp-Source: AGHT+IEGhgxhknhFM8Bp/09aaqR8LI8wYEzwSlOZYTef32VMBfIrkXYcXxlYMuSyrISu+q7c2LNU502hPZSgM7rAVh0=
+X-Received: by 2002:a17:907:d3e7:b0:a88:b90a:ff30 with SMTP id
+ a640c23a62f3a-a99b9583146mr234695166b.50.1728655855881; Fri, 11 Oct 2024
+ 07:10:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: wlYPjgfPZvThRb51eocBvDgmxaUQAl9k
-X-Proofpoint-GUID: wlYPjgfPZvThRb51eocBvDgmxaUQAl9k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 clxscore=1015 bulkscore=0 malwarescore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110097
+References: <20241011055231.9826-1-kfting@nuvoton.com> <20241011055231.9826-3-kfting@nuvoton.com>
+ <ZwkFWVC3_5xr6OQW@smile.fi.intel.com> <CACD3sJY_79_VTe1EHPdh-1+FCBwb2KCW_N19==TMHAsrFL-rzg@mail.gmail.com>
+ <ZwkvBFHS1m3N2yoW@smile.fi.intel.com>
+In-Reply-To: <ZwkvBFHS1m3N2yoW@smile.fi.intel.com>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Fri, 11 Oct 2024 22:10:45 +0800
+Message-ID: <CACD3sJaNe71Jr9isRdBp1Svgg6ULfgVfUFGkw2i=mELmNQTr+w@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] i2c: npcm: Modify the client address assignment
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The Vision Mezzanine for the RB3 ships with an imx577 camera sensor.
-Enable the IMX577 on the vision mezzanine.
+Hi Andy:
 
-An example media-ctl pipeline for the imx577 is:
+Thank you for your feedback.
 
-media-ctl --reset
-media-ctl -v -V '"imx577 '19-001a'":0[fmt:SRGGB10/4056x3040 field:none]'
-media-ctl -V '"msm_csiphy3":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_csid0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -V '"msm_vfe0_rdi0":0[fmt:SRGGB10/4056x3040]'
-media-ctl -l '"msm_csiphy3":1->"msm_csid0":0[1]'
-media-ctl -l '"msm_csid0":1->"msm_vfe0_rdi0":0[1]'
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
+10=E6=9C=8811=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:58=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+>
+> On Fri, Oct 11, 2024 at 09:44:42PM +0800, Tyrone Ting wrote:
+> > > On Fri, Oct 11, 2024 at 01:52:29PM +0800, Tyrone Ting wrote:
+>
+> ...
+>
+> > > > +             if (bus->dest_addr & I2C_M_RD)
+> > >
+> > > Redundant.
+> >
+> > Just to double check. Is the code "if (bus->dest_addr & I2C_M_RD)" redu=
+ndant?
+>
+> Yes.
+>
+> > > > +                     bus->dest_addr &=3D ~I2C_M_RD;
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-yavta -B capture-mplane -c -I -n 5 -f SRGGB10P -s 4056x3040 -F /dev/video0
+Have a nice day.
 
-Signed-off-by: Hariram Purushothaman <quic_hariramp@quicinc.com>
-Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
-Signed-off-by: Trishansh Bhardwaj <quic_tbhardwa@quicinc.com>
----
- arch/arm64/boot/dts/qcom/Makefile             |  1 +
- .../qcom/qcs6490-rb3gen2-vision-mezzanine.dts | 61 +++++++++++++++++++
- arch/arm64/boot/dts/qcom/sc7280.dtsi          | 33 ++++++++++
- 3 files changed, 95 insertions(+)
- create mode 100644 arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dts
-
-diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
-index aea1d69db541..7208da1d3697 100644
---- a/arch/arm64/boot/dts/qcom/Makefile
-+++ b/arch/arm64/boot/dts/qcom/Makefile
-@@ -111,6 +111,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= qcm6490-shift-otter.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-1000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs404-evb-4000.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2.dtb
-+dtb-$(CONFIG_ARCH_QCOM)	+= qcs6490-rb3gen2-vision-mezzanine.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qcs8550-aim300-aiot.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qdu1000-idp.dtb
- dtb-$(CONFIG_ARCH_QCOM)	+= qrb2210-rb1.dtb
-diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dts
-new file mode 100644
-index 000000000000..04b5fe80d38d
---- /dev/null
-+++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2-vision-mezzanine.dts
-@@ -0,0 +1,61 @@
-+// SPDX-License-Identifier: BSD-3-Clause
-+/*
-+ * Copyright (c) 2024, Qualcomm Innovation Center, Inc. All rights reserved.
-+ */
-+
-+/dts-v1/;
-+
-+#include "qcs6490-rb3gen2.dts"
-+
-+&camcc {
-+	status = "okay";
-+};
-+
-+&camss {
-+	vdda-phy-supply = <&vreg_l10c_0p88>;
-+	vdda-pll-supply = <&vreg_l6b_1p2>;
-+	status = "okay";
-+
-+	ports {
-+		/* The port index denotes CSIPHY id i.e. csiphy3 */
-+		port@3 {
-+			reg = <3>;
-+			csiphy3_ep: endpoint {
-+				clock-lanes = <7>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&imx577_ep>;
-+			};
-+		};
-+	};
-+};
-+
-+&cci1 {
-+	status = "okay";
-+};
-+
-+&cci1_i2c1 {
-+	camera@1a {
-+		compatible = "sony,imx577";
-+		reg = <0x1a>;
-+
-+		reset-gpios = <&tlmm 78 GPIO_ACTIVE_LOW>;
-+		pinctrl-names = "default", "suspend";
-+		pinctrl-0 = <&cam2_default>;
-+		pinctrl-1 = <&cam2_suspend>;
-+
-+		clocks = <&camcc CAM_CC_MCLK3_CLK>;
-+		assigned-clocks = <&camcc CAM_CC_MCLK3_CLK>;
-+		assigned-clock-rates = <24000000>;
-+
-+		dovdd-supply  = <&vreg_l18b_1p8>;
-+
-+		port {
-+			imx577_ep: endpoint {
-+				clock-lanes = <7>;
-+				link-frequencies = /bits/ 64 <600000000>;
-+				data-lanes = <0 1 2 3>;
-+				remote-endpoint = <&csiphy3_ep>;
-+			};
-+		};
-+	};
-+};
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index 9bab2d8dc1b4..74f65129e653 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -5115,6 +5115,39 @@ tlmm: pinctrl@f100000 {
- 			gpio-ranges = <&tlmm 0 0 175>;
- 			wakeup-parent = <&pdc>;
- 
-+			cam2_default: cam2-default-state {
-+				rst-pins {
-+					pins = "gpio78";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+
-+				mclk-pins {
-+					pins = "gpio67";
-+					function = "cam_mclk";
-+					drive-strength = <2>;
-+					bias-disable;
-+				};
-+			};
-+
-+			cam2_suspend: cam2-suspend-state {
-+				rst-pins {
-+					pins = "gpio78";
-+					function = "gpio";
-+					drive-strength = <2>;
-+					bias-pull-down;
-+					output-low;
-+				};
-+
-+				mclk-pins {
-+					pins = "gpio67";
-+					function = "cam_mclk";
-+					drive-strength = <2>;
-+					bias-pull-down;
-+				};
-+			};
-+
- 			cci0_default: cci0-default-state {
- 				pins = "gpio69", "gpio70";
- 				function = "cci_i2c";
--- 
-2.25.1
-
+Regards,
+Tyrone
 
