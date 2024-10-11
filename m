@@ -1,308 +1,220 @@
-Return-Path: <linux-kernel+bounces-361144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAB799A435
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:52:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C667199A439
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE8C11F23C0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:52:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E83601C21814
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A3BC2178F8;
-	Fri, 11 Oct 2024 12:52:27 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDA322141B5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:52:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E777821858D;
+	Fri, 11 Oct 2024 12:54:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b="VbVHhWG9"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA732141B5;
+	Fri, 11 Oct 2024 12:54:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728651146; cv=none; b=FGRpuEFIbL8jruuwMlC5M65UKPBQcX7/YJoZ2+zkuDk1/eqiWKgR/6IFchW+dcHoarkyCEp5Al4osIy2NBMilW//5i8l0aTym+x/Y9VIYZ0J0TD/QEdj/IsdqOlsugi1LeDKTu7djO+AJ93ohgVn1OP8N0nu0B4ClO9h7r5odoQ=
+	t=1728651250; cv=none; b=irnQLVS28giAFBl/F7n/OxN1zFp5ROKbT+a3m7EKDZc3DouAUVpLoiIuM5KQFEWRwhlriaq9A426mJsGuqUB+NyjvJUhqyZnZDp4MULlyQ2cMM684UQGZsDWJ6w9YaoCkXEFHWxzDZBYG3qit/s0R940H28Rlg3FH9Z3ucfVg34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728651146; c=relaxed/simple;
-	bh=Mkx14mAjHPqOtseLvwEdoAfTDmF/gsjlSafOH2m7cAs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BKaj7FbyGhj3x8WGRWC11VkHoiXauFh3QRV4sDYTukM15XR0rW1izKxPYTwuP3N7alpFIQyqsWmLnwikfrbJbhchp4AgmmvgN2Nuyc9eoN/niVjzT0zKZRlokRXfNgyuRJ1JmD1slcgpij571m17/B4alY96P+4w4UnRk+iQ1cA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6B458497;
-	Fri, 11 Oct 2024 05:52:53 -0700 (PDT)
-Received: from [10.34.129.34] (e126645.nice.arm.com [10.34.129.34])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E8623F64C;
-	Fri, 11 Oct 2024 05:52:20 -0700 (PDT)
-Message-ID: <59b31e93-9784-493d-8c85-10e07aabd86b@arm.com>
-Date: Fri, 11 Oct 2024 14:52:18 +0200
+	s=arc-20240116; t=1728651250; c=relaxed/simple;
+	bh=MPJGN4wESKD2gf1aeyittLoAkXe9uQPgjXC70LtSMww=;
+	h=MIME-Version:Message-ID:From:To:Cc:Subject:Content-Type:Date:
+	 In-Reply-To:References; b=WUObPLlbpEqO8aVLQyki08//B6G/q0frOifja9YOPZ3X1RoonWemzatYexkcWwIV6cp5/2BXz+aeiXBTqgEjGASgr8ma+5PDdUwkf8KxeOjDdnMvNOcpB+LKAW0wju9HSs60Vo0lRX9O4DeRZeeYjoTITbhA3GAhNkysfxo4gb8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de; spf=pass smtp.mailfrom=public-files.de; dkim=pass (2048-bit key) header.d=public-files.de header.i=frank-w@public-files.de header.b=VbVHhWG9; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=public-files.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=public-files.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=public-files.de;
+	s=s31663417; t=1728651225; x=1729256025; i=frank-w@public-files.de;
+	bh=pqvc/oNdc0PsTL4Mg/npxkx7wLb4cU550Stv88W38fY=;
+	h=X-UI-Sender-Class:MIME-Version:Message-ID:From:To:Cc:Subject:
+	 Content-Type:Date:In-Reply-To:References:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VbVHhWG9+1LYA64yWGRqSuFuTZcKnbTMJ8xHVIzVFCVSSBgU8c5IbpTHIYrSD4GX
+	 Hqlm9X/rRBn+uLYkMrqNjShSMMM1HnGIQRBqmmqMAofMqkuuh6POzQeV6L5nbVwQE
+	 gKOctFEK9wQshGuL4ryAWGjN0cMdN3oiBg+64TAvkfKU6kE356/v+Hbyj18U28pXu
+	 lQQFQMeX3lgMl/wLgCkBZ2Q1J8kYy9YAnr0Ns+hURU+ncsibAaGlYDS6Kh2Mc0vdm
+	 WhVqLV5iCMv/CZHSUQA3S3nhRq1yC2aqDdEH7sO55EUsPgzmX/2nsIehssqTN61yz
+	 vTOR00LqC6/TosoGYg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [217.61.153.152] ([217.61.153.152]) by web-mail.gmx.net
+ (3c-app-gmx-bs32.server.lan [172.19.170.84]) (via HTTP); Fri, 11 Oct 2024
+ 14:53:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 4/5] sched/fair: Use EAS also when overutilized
-To: Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Christian Loehle <christian.loehle@arm.com>, qyousef@layalina.io,
- hongyan.xia2@arm.com, mingo@redhat.com, peterz@infradead.org,
- linux-kernel@vger.kernel.org, rafael.j.wysocki@intel.com,
- lukasz.luba@arm.com, vschneid@redhat.com, mgorman@suse.de,
- bsegall@google.com, rostedt@goodmis.org, dietmar.eggemann@arm.com,
- juri.lelli@redhat.com
-References: <20240830130309.2141697-1-vincent.guittot@linaro.org>
- <20240830130309.2141697-5-vincent.guittot@linaro.org>
- <64ed0fb8-12ea-4452-9ec2-7ad127b65529@arm.com>
- <66583e86-e2a7-4e4f-bd45-40ea2d4a21df@arm.com>
- <CAKfTPtAooR2Qqko6Cfe=hQiTqJEzHX0j5uydza-SxdGDTsoGYA@mail.gmail.com>
- <ae1d8de4-dbd2-44fd-b4a4-ce1c63286c1d@arm.com>
- <CAKfTPtB5LfT7Rr1RRhqnQcLxhHN_w9APn4E9rf4-uBC2oofG8Q@mail.gmail.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <CAKfTPtB5LfT7Rr1RRhqnQcLxhHN_w9APn4E9rf4-uBC2oofG8Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Message-ID: <trinity-090e30b8-45a9-4a2b-98f1-e34904616b2d-1728651225070@3c-app-gmx-bs32>
+From: Frank Wunderlich <frank-w@public-files.de>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Frank Wunderlich <linux@fw-web.de>, Linus Walleij
+ <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Matthias Brugger <matthias.bgg@gmail.com>, Sean Wang
+ <sean.wang@kernel.org>, linux-gpio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ daniel@makrotopia.org, john@phrozen.org, ansuelsmth@gmail.com,
+ eladwf@gmail.com
+Subject: Aw: Re: [PATCH v4 4/4] arm64: dts: mediatek: mt7988: add pinctrl
+ support
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Oct 2024 14:53:45 +0200
+Importance: normal
+Sensitivity: Normal
+In-Reply-To: <4ac4c8ab-4180-4fcc-9e48-6dede7448dee@collabora.com>
+References: <20241009165222.5670-1-linux@fw-web.de>
+ <20241009165222.5670-5-linux@fw-web.de>
+ <4ac4c8ab-4180-4fcc-9e48-6dede7448dee@collabora.com>
+X-UI-Message-Type: mail
+X-Priority: 3
+X-Provags-ID: V03:K1:VxR+ZCvzqrITMlxMKyyrVv8NDsGfVlHJ/2Z23LevYUCc5uV8UGtaX6lN/ACVGdM03ILKp
+ bOgLorgQbXbzYxD2pyvuSfOyfquZSDSHGu91cK0Njkk8EoGf5++nrgQyLSGy/8H0J8IZ/X5DnJGw
+ wg0W4NB8dwPR5ewIk7yABHDMYo38Jm4Icwru1ycLZ7yB/qC4B8P5faVOmeyCwtfNKVo3roSH6B9m
+ weglWLqYNQDRScUgpPT/FYUzVRIQ5SvLlUpzjLaKDbMa5BPjszG6r6znArn2a+pb9pPX4eI5Xnn5
+ 2I=
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:HIN9WLpnYPY=;Jq8RJJfCG9pX1doLo0aeI2OltCi
+ 32OT7k4Bii7ka3FBvIrwHGBuuKkkt8EDbnrTzTfoY/3cPtm51HIu6OGD2DO1JU7I6N5Uw+6wr
+ 0y8J8x4A3Nxq8909Rqh2MosGf/qmWMM2cK+ToFU34s3tnAzKVGaL1HNYmms9AKX3cFyj4gM48
+ qi5eWI4Li46x6mRJj90UETSmoidoTVwnJdvQTVtUwx9hNS99fylk+j1bkn3Slgyo/ajqPfFZM
+ 8EgB0UWZLzbjnPKneDkccEpTuaYDLP4KW/7aKuod3rTlha7TPs9PSGaeI99wwATa7oW3mlCtW
+ h/pE7eOOWkmA87oJjDU5tkmwsk0gkUyTDmH6a8HqC3EVKCWeLxlMLKPRqLHGLbsGzkscw02uc
+ ZOih3uPLU9VVVSPY+0fIZrcth87O2F4buyZKyMaCmH2eZ0eK7P3HJVMamLdiIGOfqYS+JMf1G
+ h3QK3qoMzggDSIiN2/CRq+dEDHssQZuTc0ncM65Y8OdfAylj6deNIyXVYBaYjfj839QcAn1xR
+ hfTeVsAYs38ciejWOIfqUGAMJhzk0tB/1ZJjen8sGD8d3Wt2qJHH8K/yz+YwFA0VnMzRbp+8W
+ tDS4IFgmNMllbGvgOu11VPJHO1Ctjj4wOQbY7181TdCKrlnyjkLuRB+RsB7KVNAJkT8Z/1IFD
+ nHNQLNudg3oqNFLd+aK/hjDQp6S230E+dmwCHOg0rw==
+Content-Transfer-Encoding: quoted-printable
 
-Hello Vincent,
+Hi
 
-On 10/9/24 10:53, Vincent Guittot wrote:
-> Hi Pierre,
-> 
-> On Mon, 7 Oct 2024 at 09:03, Pierre Gondois <pierre.gondois@arm.com> wrote:
->>
->> Hello Vincent,
->>
->> Sorry for the delay:
->>
->> On 9/25/24 15:28, Vincent Guittot wrote:
->>> On Thu, 19 Sept 2024 at 10:26, Pierre Gondois <pierre.gondois@arm.com> wrote:
->>>>
->>>> Hello Vincent,
->>>> I tried this patch on a Pixel 6 (8 CPUs, 4 little, 2 mid, 2 big)
->>>> with patches 1-4/5 using these workloads:
->>>> ---
->>>> A.
->>>> a. 8 tasks at 2%/5%/10% during 1s
->>>> b. 1 task:
->>>>       - sleeping during 0.3s
->>>>       - at 100% during 0.3s
->>>>       - sleeping during 0.3s
->>>>
->>>> b. is used to reach the overutilized state during a limited amount of time.
->>>> EAS is then operating, then the load balancer does the task placement, then EAS
->>>> is operating again.
->>>>
->>>> B.
->>>> a. 8 tasks at 2%/5%/10% during 1s
->>>> b. 1 task:
->>>>       - at 100% during 1s
->>>>
->>>> ---
->>>> I'm seeing the energy consumption increase in some cases. This seems to be
->>>> due to feec() migrating tasks more often than what the load balancer does
->>>> for this workload. This leads to utilization 'spikes' and then frequency
->>>> 'spikes', increasing the overall energy consumption.
->>>> This is not entirely related to this patch though,, as the task placement seems
->>>> correct. I.e. feec() effectively does an optimal placement given the EM and
->>>> task utilization. The task placement is just a bit less stable than with
->>>> the load balancer.
->>>
->>> Would patch 5 help to keep things better placed ? in particular if
->>> task b is misplaced at some point because of load balance ?
->>
->> I assume so, it would require more testing on my side
->>
->>>
->>> I agree that load balance might still contribute to migrate task in a
->>> not energy efficient way
->>>
->>>>
->>>> ---
->>>> Regarding hackbench, I've reproduced the test you've run on the same Pixel6.
->>>> I have CONFIG_SCHED_CLUSTER enabled, which allows having a sched domain for
->>>> each little/mid/big CPUs (without the config, these group would no exist).
->>>
->>> Why did you do this ? All cpus are expected to be in same sched domain
->>> as they share their LLC
->>
->> I did this to observe the loa balancer a bit more carefully while reviewing
->> the first patch:
->>     sched/fair: Filter false overloaded_group case for EAS
->> I've let this configuration, but effectively this should not bring anything more.
->>
->>
->>>
->>>>
->>>> I see an important regression in the result.
->>>> I replaced the condition to run feec() through select_task_rq_fair() by:
->>>>      if (get_rd_overloaded(cpu_rq(cpu)->rd) == 0)) {
->>>
->>> overloaded is enable when more than 1 task runs on a cpu whatever the
->>> utilization
->>
->> Yes right, this idea has little sense.
->>
->>>
->>>>        new_cpu = find_energy_efficient_cpu(p, prev_cpu);
->>>>        ...
->>>>      }
->>>> and obtained better results.
->>>>
->>>> Indeed, for such intensive workload:
->>>> - EAS would not have any energy benefit, so better prioritize performance
->>>>      (as Christian mentioned)
->>>> - EAS would not be able to find a fitting CPU, so running feec() should be
->>>>      avoided
->>>> - as you mention in the commit message, shuffling tasks when one CPU becomes
->>>>      momentarily overutilized is inefficient energy-wise (even though I don't have
->>>>      the numbers, it should make sense).
->>>> So detecting when the system is overloaded should be a better compromise I
->>>> assume. The condition in sched_balance_find_src_group() to let the load balancer
->>>> operate might also need to be updated.
->>>>
->>>> Note:
->>>> - base: with patches 1-4/5
->>>> - _ou: run feec() when not overutilized
->>>> - _ol: run feec() when not overloaded
->>>> - mean: hackbench execution time in s.
->>>> - delta: negative is better. Value is in percentage.
->>>
->>> Could you share your command line ? As explained in the cover letter I
->>> have seen some perf regressions but not in the range that you have
->>> below
->>>
->>> What is your base ? tip/sched/core ?
->>
->> I am working on a Pixel6, with a branch based on v6.8 with some scheduler patches
->> to be able to apply your patches cleanly.
-> 
-> TBH, I'm always cautious with those kind of frankenstein kernel
-> especially with all changes that have happened on the scheduler since
-> v6.8 compared to tip/sched/core
+> Gesendet: Donnerstag, 10. Oktober 2024 um 14:36 Uhr
+> Von: "AngeloGioacchino Del Regno" <angelogioacchino.delregno@collabora.c=
+om>
+> Betreff: Re: [PATCH v4 4/4] arm64: dts: mediatek: mt7988: add pinctrl su=
+pport
+>
+> Il 09/10/24 18:52, Frank Wunderlich ha scritto:
+> > From: Frank Wunderlich <frank-w@public-files.de>
+> >
+> > Add mt7988a pinctrl node.
+> >
+> > Signed-off-by: Frank Wunderlich <frank-w@public-files.de>
+> > ---
+> > v2:
+> > - fix wrong alignment of reg values
+> > ---
+> >   arch/arm64/boot/dts/mediatek/mt7988a.dtsi | 241 ++++++++++++++++++++=
+++
+> >   1 file changed, 241 insertions(+)
+> >
+> > diff --git a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi b/arch/arm64/bo=
+ot/dts/mediatek/mt7988a.dtsi
+> > index c9649b815276..7e15934efe0b 100644
+> > --- a/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+> > +++ b/arch/arm64/boot/dts/mediatek/mt7988a.dtsi
+> > @@ -3,6 +3,7 @@
+> >   #include <dt-bindings/clock/mediatek,mt7988-clk.h>
+> >   #include <dt-bindings/interrupt-controller/arm-gic.h>
+> >   #include <dt-bindings/phy/phy.h>
+> > +#include <dt-bindings/pinctrl/mt65xx.h>
+> >
+> >   / {
+> >   	compatible =3D "mediatek,mt7988a";
+> > @@ -105,6 +106,246 @@ clock-controller@1001e000 {
+> >   			#clock-cells =3D <1>;
+> >   		};
+> >
+> > +		pio: pinctrl@1001f000 {
+> > +			compatible =3D "mediatek,mt7988-pinctrl";
+> > +			reg =3D <0 0x1001f000 0 0x1000>,
+> > +			      <0 0x11c10000 0 0x1000>,
+> > +			      <0 0x11d00000 0 0x1000>,
+> > +			      <0 0x11d20000 0 0x1000>,
+> > +			      <0 0x11e00000 0 0x1000>,
+> > +			      <0 0x11f00000 0 0x1000>,
+> > +			      <0 0x1000b000 0 0x1000>;
+> > +			reg-names =3D "gpio", "iocfg_tr",
+> > +				    "iocfg_br", "iocfg_rb",
+> > +				    "iocfg_lb", "iocfg_tl", "eint";
+> > +			gpio-controller;
+> > +			#gpio-cells =3D <2>;
+> > +			gpio-ranges =3D <&pio 0 0 84>;
+> > +			interrupt-controller;
+> > +			interrupts =3D <GIC_SPI 225 IRQ_TYPE_LEVEL_HIGH>;
+> > +			interrupt-parent =3D <&gic>;
+> > +			#interrupt-cells =3D <2>;
+> > +
+> > +			mdio0_pins: mdio0-pins {
+> > +				mux {
+> > +					function =3D "eth";
+> > +					groups =3D "mdc_mdio0";
+> > +				};
+> > +
+> > +				conf {
+> > +					pins =3D "SMI_0_MDC", "SMI_0_MDIO";
+> > +					drive-strength =3D <MTK_DRIVE_8mA>;
+>
+> Please do *not* use the MTK_DRIVE_(x)mA definitions anymore.
+>
+> Here it is `drive-strength =3D <8>`.
 
-Yes I understand, I'll re-test it on a Juno with a newer kernel.
+OK
 
-> 
->>
->> The mapping id -> command line is as:
-> 
-> Thanks for the commands details, I'm going to have a look
-> 
->> (1) hackbench -l 5120 -g 1
->> (2) hackbench -l 1280 -g 4
->> (3) hackbench -l 640  -g 8
->> (4) hackbench -l 320  -g 16
->>
->> (5) hackbench -p -l 5120 -g 1
->> (6) hackbench -p -l 1280 -g 4
->> (7) hackbench -p -l 640  -g 8
->> (8) hackbench -p -l 320  -g 16
->>
->> (9) hackbench -T -l 5120 -g 1
->> (10) hackbench -T -l 1280 -g 4
->> (11) hackbench -T -l 640  -g 8
->> (12) hackbench -T -l 320  -g 16
->>
->> (13) hackbench -T -p -l 5120 -g 1
->> (14) hackbench -T -p -l 1280 -g 4
->> (15) hackbench -T -p -l 640  -g 8
->> (16) hackbench -T -p -l 320  -g 16
->>
->>
->>>
->>>> ┌─────┬───────────┬──────────┬─────────┬──────────┬─────────┬──────────┬──────────┬──────────┐
->>>> │ id  ┆ mean_base ┆ std_base ┆ mean_ou ┆ std_ou   ┆ mean_ol ┆ std_ol   ┆ delta_ou ┆ delta_ol │
->>>> ╞═════╪═══════════╪══════════╪═════════╪══════════╪═════════╪══════════╪══════════╪══════════╡
->>>> │ 1   ┆ 1.9786    ┆ 0.04719  ┆ 3.0856  ┆ 0.122209 ┆ 2.1734  ┆ 0.045203 ┆ 55.95    ┆ 9.85     │
-> 
-> I might have misunderstood your results above last time.
-> mean_base results include patches 1 to 4 and  mean_ou revert patch 4.
-> Does it mean that it is 55% better with patch 4 ? I originally thought
-> there was a regression with patch 4 but I'm not sure that I understood
-> correctly after re reading the table.
+> > +				};
+> > +			};
+> > +
+> > +			i2c0_pins: i2c0-g0-pins {
+> > +				mux {
+> > +					function =3D "i2c";
+> > +					groups =3D "i2c0_1";
+> > +				};
+> > +			};
+> > +
+> > +			i2c1_pins: i2c1-g0-pins {
+> > +				mux {
+> > +					function =3D "i2c";
+> > +					groups =3D "i2c1_0";
+> > +				};
+> > +			};
+>
+> Whatever pin can be configured with one or multiple groups that can be d=
+ifferent
+> must *not* be in the SoC dtsi, but rather in the *board* dts(i) file, as=
+ the wanted
+> configuration of those pins is *not* soc-specific but board-specific.
+>
+>  From a fast look, I can see that at least the I2C pins can be assigned =
+to different
+> functions: for example, pins 15+16 can be either of i2c0_1, *or* u30_phy=
+_i2c0, *or*
+> u32_phy_i2c0, *or* xfi_phy0_i2c1 ... or others, even.
+>
+> Finally - I think that *most* of the muxing that you're declaring here m=
+ust instead
+> go to your board specific devicetree and not in mt7988a.dtsi.
 
-The columns are:
-- the _base configuration disables EAS/feec() when in the overutilized state,
-   i.e. patches 1-3 are applied.
-- the _ou configuration keeps running EAS/feec() when in the overutilized state
-   i.e. patches 1-4 are applied
-- the _ol configuration should be ignored as previously established
+As far as i see also mdio and uart0 sharing pins with other pin definition=
+s.
+It looks for me that nearly all (except pcie) needs to go in board(s) dts =
+then...
+imho this creates duplicates of same nodes, if 2 boards using the same pin=
+conf.
+But if it is the way to go, i drop all subnodes except the pcie-pins.
 
+> Cheers,
+> Angelo
 
-> 
->>>> │ 2   ┆ 1.8991    ┆ 0.019768 ┆ 2.6672  ┆ 0.135266 ┆ 1.98875 ┆ 0.055132 ┆ 40.45    ┆ 4.72     │
->>>> │ 3   ┆ 1.9053    ┆ 0.014795 ┆ 2.5761  ┆ 0.141693 ┆ 2.06425 ┆ 0.045901 ┆ 35.21    ┆ 8.34     │
->>>> │ 4   ┆ 1.9586    ┆ 0.023439 ┆ 2.5823  ┆ 0.110399 ┆ 2.0955  ┆ 0.053818 ┆ 31.84    ┆ 6.99     │
->>>> │ 5   ┆ 1.746     ┆ 0.055676 ┆ 3.3437  ┆ 0.279107 ┆ 1.88    ┆ 0.038184 ┆ 91.51    ┆ 7.67     │
->>>> │ 6   ┆ 1.5476    ┆ 0.050131 ┆ 2.6835  ┆ 0.140497 ┆ 1.5645  ┆ 0.081644 ┆ 73.4     ┆ 1.09     │
->>>> │ 7   ┆ 1.4562    ┆ 0.062457 ┆ 2.3568  ┆ 0.119213 ┆ 1.48425 ┆ 0.06212  ┆ 61.85    ┆ 1.93     │
->>>> │ 8   ┆ 1.3554    ┆ 0.031757 ┆ 2.0609  ┆ 0.112869 ┆ 1.4085  ┆ 0.036601 ┆ 52.05    ┆ 3.92     │
->>>> │ 9   ┆ 2.0391    ┆ 0.035732 ┆ 3.4045  ┆ 0.277307 ┆ 2.2155  ┆ 0.019053 ┆ 66.96    ┆ 8.65     │
->>>> │ 10  ┆ 1.9247    ┆ 0.056472 ┆ 2.6605  ┆ 0.119417 ┆ 2.02775 ┆ 0.05795  ┆ 38.23    ┆ 5.35     │
->>>> │ 11  ┆ 1.8923    ┆ 0.038222 ┆ 2.8113  ┆ 0.120623 ┆ 2.089   ┆ 0.025259 ┆ 48.57    ┆ 10.39    │
->>>> │ 12  ┆ 1.9444    ┆ 0.034856 ┆ 2.6675  ┆ 0.219585 ┆ 2.1035  ┆ 0.076514 ┆ 37.19    ┆ 8.18     │
->>>> │ 13  ┆ 1.7107    ┆ 0.04874  ┆ 3.4443  ┆ 0.154481 ┆ 1.8275  ┆ 0.036665 ┆ 101.34   ┆ 6.83     │
->>>> │ 14  ┆ 1.5565    ┆ 0.056595 ┆ 2.8241  ┆ 0.158643 ┆ 1.5515  ┆ 0.040813 ┆ 81.44    ┆ -0.32    │
->>>> │ 15  ┆ 1.4932    ┆ 0.085256 ┆ 2.6841  ┆ 0.135623 ┆ 1.50475 ┆ 0.028336 ┆ 79.75    ┆ 0.77     │
->>>> │ 16  ┆ 1.4263    ┆ 0.067666 ┆ 2.3971  ┆ 0.145928 ┆ 1.414   ┆ 0.061422 ┆ 68.06    ┆ -0.86    │
->>>> └─────┴───────────┴──────────┴─────────┴──────────┴─────────┴──────────┴──────────┴──────────┘
->>>>
->>>> On 9/17/24 22:24, Christian Loehle wrote:
->>>>> On 8/30/24 14:03, Vincent Guittot wrote:
->>>>>> Keep looking for an energy efficient CPU even when the system is
->>>>>> overutilized and use the CPU returned by feec() if it has been able to find
->>>>>> one. Otherwise fallback to the default performance and spread mode of the
->>>>>> scheduler.
->>>>>> A system can become overutilized for a short time when workers of a
->>>>>> workqueue wake up for a short background work like vmstat update.
->>>>>> Continuing to look for a energy efficient CPU will prevent to break the
->>>>>> power packing of tasks.
->>>>>>
->>>>>> Signed-off-by: Vincent Guittot <vincent.guittot@linaro.org>
->>>>>> ---
->>>>>>     kernel/sched/fair.c | 2 +-
->>>>>>     1 file changed, 1 insertion(+), 1 deletion(-)
->>>>>>
->>>>>> diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
->>>>>> index 2273eecf6086..e46af2416159 100644
->>>>>> --- a/kernel/sched/fair.c
->>>>>> +++ b/kernel/sched/fair.c
->>>>>> @@ -8505,7 +8505,7 @@ select_task_rq_fair(struct task_struct *p, int prev_cpu, int wake_flags)
->>>>>>                    cpumask_test_cpu(cpu, p->cpus_ptr))
->>>>>>                        return cpu;
->>>>>>
->>>>>> -            if (!is_rd_overutilized(this_rq()->rd)) {
->>>>>> +            if (sched_energy_enabled()) {
->>>>>>                        new_cpu = find_energy_efficient_cpu(p, prev_cpu);
->>>>>>                        if (new_cpu >= 0)
->>>>>>                                return new_cpu;
->>>>>
->>>>> Super quick testing on pixel6:
->>>>> for i in $(seq 0 6); do /data/local/tmp/hackbench -l 500 -g 100 | grep Time; sleep 60; done
->>>>> with patch 5/5 only:
->>>>> Time: 19.433
->>>>> Time: 19.657
->>>>> Time: 19.851
->>>>> Time: 19.789
->>>>> Time: 19.857
->>>>> Time: 20.092
->>>>> Time: 19.973
->>>>>
->>>>> mainline:
->>>>> Time: 18.836
->>>>> Time: 18.718
->>>>> Time: 18.781
->>>>> Time: 19.015
->>>>> Time: 19.061
->>>>> Time: 18.950
->>>>> Time: 19.166
->>>>>
->>>>>
->>>>> The reason we didn't always have this enabled is the belief that
->>>>> this costs us too much performance in scenarios we most need it
->>>>> while at best making subpar EAS decisions anyway (in an
->>>>> overutilized state).
->>>>> I'd be open for questioning that, but why the change of mind?
->>>>> And why is this necessary in your series if the EAS selection
->>>>> isn't 'final' (until the next sleep) anymore (Patch 5/5)?
->>>>>
+regards Frank
 
