@@ -1,242 +1,216 @@
-Return-Path: <linux-kernel+bounces-361642-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361643-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1CDC99AAC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:01:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA0899AACB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:01:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6711C21863
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:01:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0BCB238C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150231C32FE;
-	Fri, 11 Oct 2024 18:01:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A0019FA9D;
+	Fri, 11 Oct 2024 18:01:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtUgfsCv"
-Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rtlwow9b"
+Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E455B804;
-	Fri, 11 Oct 2024 18:01:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C7019EEBF
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728669670; cv=none; b=RyiPKZ/bUmYHqB+Io26Xpl/QHg/90HWLrZOP4OgmZ0MR4ht2uxQkcacfZSewtvzfA4shiRr7fgsbKuTF5hYxkcp5t2qRPYxB7Nf706JEf2gYcwQWdh+TzIvtvt+g49eHkPHITNsLMlmETCZy4faADOf7zBmO6GTppwMvZCuOcXA=
+	t=1728669684; cv=none; b=jWHGMtWPUF9bvaooT+wulNAOx496XnhPDX0gy00ByhtwBZ4Ojb4UKkiDHeDAonQZrSOGiyOQSUofHiWLofzJf6Kuf1+2VLzq3GtLcTqYBiFCGFYqcjj0XE2o4lo7cKc68frKgpvBgGlG7tJQiJqtE6yn7hOJbFqG8jfkEIr8gqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728669670; c=relaxed/simple;
-	bh=8mynNEaZ0hT0/RcT9aLr8SxrUuLtirPGnkOXC5pPXZ4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MMYUxt+Qfazc1LiUQEnwgCzUBBIp+xw//QEcliOre7K1zcM6e8foop7Bea8+wj5RgIrhq1GqLvpgORFrP7UM5UkYxk6kczJhiQn9iMw2rweibFGmPHKuJZ1y6xWi95U7B+GsmcZ6TIuQKT3Ffy7JwRlnzFm91KV8s7SbmMJZqcQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtUgfsCv; arc=none smtp.client-ip=209.85.215.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e9f998e1e4so1925641a12.1;
-        Fri, 11 Oct 2024 11:01:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728669668; x=1729274468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=uiirbpxLNm5AT7dufmX+S9DrEak7ySZgLvcNmiXZ6fA=;
-        b=mtUgfsCv+UaHunvixEC4t2mPzW8aR4GlNdx8dPEk2oVJX46f2+O+XogiYhij/IGmHk
-         tCZ6oLve79pZsUxBOXq9qYCPgAraSCf/EY37rNG2U+bXI+xXhrUt1xSBOwwUVXB/Uh0t
-         DnStDYK/iXjecpCutn+/RORdi5TrUSIv3BG0OTxj/lCBbh/TRclgR0WElRHpW6VTOmAC
-         1EYGPkevJzEleo8yMpN4m3e8Dvv08tvIVmM7MlPwS9OsKMqkxTqK+i60/dExepFKgHPN
-         Li8FHPVjJW9oQzn78s/Vx6FtfnAt4Y2hbm68UyQEhGPFKHRzeVzykExz05a28AAXeahW
-         1eEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728669668; x=1729274468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=uiirbpxLNm5AT7dufmX+S9DrEak7ySZgLvcNmiXZ6fA=;
-        b=PbHdmmNzSrjHqQT8zSkGRim7Hhmnt+oR8dn/6oHytxvY4nsXE+m6onSXhK9/si8bKZ
-         FD5wsLrp/baqRDExaZmDvoXc2SjO7JTUzhFESvHpoVV/GVh6BazSvvi4XH+2fJGfBH0R
-         iJs63z8zhKomzB/dtIW2VFhuYUlZGFYEF048RBZeO1S8CtPX+eIffvdhrCbmnvC/7UkI
-         ranKUyXuSLUAIYYEv9dYQwL8vr1dgf83Li34CPbnz03yGA1rbGcCO57kPjtS3x1HvkaR
-         3eCYyCJltbZXn1f9s05QTfo9J6OawTdrde9WWZThr61dOcq1Kkh8RhGiqwEfm7JApq1W
-         6FgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUXFqldNenHnMwx2ZiWMHKfUzAYOyzCwwKz1Q9PXL4CFZWyuioLsSQ+oMKY//B5GADlisTmyo0w46x8v7OIlmx4lg==@vger.kernel.org, AJvYcCUYmhrQT6Gomp5uAapW9oonxYZc7DUpM7i/yg66bsWXSy1FgJ0K3Tp6qVujtBOuVg4pE+uMqrBG4JgqLKYG@vger.kernel.org, AJvYcCW8kFHEoRpMhnNyxFJHH38Y8x9N4q8+ROpBhSAbUhIDSEgUA5Hdp5ABA6vTsfThOcHsf9o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJa7o7HEaXDI2BN655YdafdWYDX3dmkmHSI5Ld8+CTpm+zkdzM
-	i4lzyJNpq+QlYUXJt6BkQu/ak7b6LxNo8cusywXyx1/xMdHeZ+cVpPwy+19kETzQDz0BHfmc109
-	DiKNJsiSCi6aBbbJLEcqoq0AzTj4=
-X-Google-Smtp-Source: AGHT+IFGHxaG21IMv7iEP3SE8KaKMBe64K46Ft7YZJkhgIaY+f0QaOj4Dx2iMXApt5FONI7nU1z2OdE0XhG0MaaJkkk=
-X-Received: by 2002:a17:90a:688b:b0:2e2:eb2d:2352 with SMTP id
- 98e67ed59e1d1-2e2f0dc3494mr4221733a91.37.1728669668007; Fri, 11 Oct 2024
- 11:01:08 -0700 (PDT)
+	s=arc-20240116; t=1728669684; c=relaxed/simple;
+	bh=h9sy3AusCRKy2qm4CUs+WPB+D2ZOAF/+JCiNkAUrUh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NIjyB1XeGvm3vAPaHfg8McLFgWTr+l4IWBirY4AkST5YiAo2oO6KS+V9GUpPa172y1DbNwqA5pIVO8o6s7mxZBIPivONSs+pZX7a+MJraUFQpvndKaA+FyxwulsIsfqsOkpp5Exd+Z/ENoBK2jIjyJEwH4CFE4k7o/jhYYY338Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=rtlwow9b; arc=none smtp.client-ip=66.163.185.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728669680; bh=HIh3w2Wv5OrrOmgES6g2plZtYM+9vbHSejXtUulIfvM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rtlwow9bUxzL0/yBy3K2qzylw5K5I8G7KQLUkmoh+i8yoSmTIRft9Av06RcprRZ3K4GjLG2wkqDntl4BEmQ3Qv3XpDH4Kkl6yjp0+tzbqJXvjfI4fyP5DN58XbjZfwOE+HzJp2Xu69dMJu0d4fFvfkl2QU0KgZoZsDB664cB/ouKwgHGiOgiPo+IuEVHhL9kgM0dHcXheujTclMN2ZiozO7uZ3NugKSnPfQpkprz8qbrWQOcOM6j23pt8belo04LiIZc/XIr81EzX/hbNp9RrrppASbyqxYXVYHTjlWIE6J0rPHJ/7tyKU59qHUhBxTZP/Z8KchbupE5HpSuCZmlJA==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728669680; bh=CEp427t7pg4UNfoYMUMKQlwGtoC71xIEWh5coHwwuIW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=V+LZwR2IH7qnPKhpoKZ6GFBTgZ1mZVbAlVHh1CYEKQnN5WC7jM9T5Z3Q9jj9+5DPCMofNr+/Z70GpailKxxemuu1JW1k57XVzmJ8qXbf+GKBfgrse18Y3qzLfJpmssa98iueE5VYJLtqyKorVUiF4JOlQAqiiPY1JO1t0EdtZatPzzFVi+d0/bT2Ddi/Uw5quzwQcWGjh+HuCnpTEo/cvbGiYkruKVsLNsLeCfGaBvpv2Q0LbyN7eZu0Liotw6tx878ckW3f9HG6QKD2pqSykNhiaqBRGW1uKRFcNAGKqfyTJPd7iEJZNwO0fMVdKnDOWrIay1MiWGeYtKVZEiHg9w==
+X-YMail-OSG: nFyRJKsVM1l9ru.wT4_SHVhEUM5ex_iHy06TlEdVnUOu5FrUQsFBbb23TnhsYhp
+ svvBG4Taq6zelgPhYE6BlKnUTWh47nPNyEP8Oh86P7YaloYdkH029oApT1jcmK52uISCs3tXYBNH
+ q.Z.xUYgPkQQs8qZ2b15Qc5ZhRXJl_Xt8gW2vdmYyPSl3ykLKRFd5pUFq80yGCqAhaI9fFgeVaSc
+ .Z9pWsXBrB.TY8DXsDU78aQoeUzX1SIck47lqLCpo7.EiGUrv0TK.FKd8l1zMd8M6FkCtCOmUR_n
+ 2.r7Y4FBnzhq0H3n1Y25iWmjFQ3v9tHLPDLNUuYHVrMXSYXm5jkS1y7l6uCZjHlzY7CLDR1TDqbd
+ PY35c90HXWPeHzvL96sSg35DXGko2YE83_8ISP3xDZyxKxLiXThhIT0U79EZh1R956hPdXXS9kiA
+ 7mBQ6l9zfYKDfCaF0KzHDguECNWHjq.wjLz7WHB22cKlzvpY__qK_i4tGgCNKtb788DFl2RkIOuS
+ FjmJBQV8wpioiUnblABxIVIdRzaDCRhqh4C78scLXC02ckne7lzQ3cyhcsoPuQ2IEQu.4POrJxLR
+ x168N6.hK3sTJbUKskU4K57b0Y0oyaKXASv84vFknDRqYgH6y5BOryKBBZ0nlQ4jG8TSOL4aZacU
+ 8Kf.eWnA3.xAsU5Yg2LBPYqh2Er1LvcXcOOw9f1OWUuxxAmjasnW5OtM5czkJ_8uPquXgOiQ.gmn
+ ZCj6B1BMhzHFu93oM9b6o9lx4R4ZeiKOLgHmJUs4xcp7CgIfFutdAa.5uWgpF3t8qrmTBng9zSri
+ TJeuG3kBn2QPDT4Q9jSdLUZwW.M7jp8OHEvBJ_CHw_rGA5KTSMysNjV3UIhM..uHTs09MeEp9p98
+ zBJXpmrh2BbGXRIWe2YJE7wI5C9QGsndkr_uNlVRZUv2zHTY_eA7lBzxfcEzMYNGELse7ji0iTGI
+ B6A9LvMh1d7ZuSH8MyQE_uAmMhOKxN2AtVBfVHTp9h6xF1gSkxe2lnzB0OfnI0jwU275ME0.a_ot
+ 6kzhexXqXrgQtOY3EegiFO86.PtB4_D9qMhpQwnJsfPRVLtd0JBk5RAWCVk9Zx1FO39jA6FOJKJi
+ GndbPLVgUHO.PgOUGwo_A_dJ72q2QuuNsR1KMoFRoSc4iabgOq3D8z9ll7EhK1CpZD1RXx29wqkP
+ Os3qkkL1eOmwEJSs4GU13ncbz9KCodiqP1A0CUnTrbGWPOOKN0calGGB4HZNOuWeo8KQ.QAuYnOj
+ B_uStj.5wBWsc.wWcAR0NQgXATQJ0rg2BmY2fl9zURvmNaCdGbvpHO7uVO9BXR0lIZqqqZaIhF1d
+ 6LpSbSdFgz6XHQSZ_Z9VvFcexyTCmEI0v3nxx8p0IUDLt1W6PRiNaY0XqVeTt0xyvlMGXIqijlm8
+ rjtHmNoQnyMYp6RAJvRaHPOMj5So832QNJjJ94QiPVMgZIxwDERvJiI03tRzccpbaow0kCRR9t0B
+ SE_Gn7yuIdlthdsESr3SkflTyfLvG1ju.KhH2TV_csDk4ZvCBdsRCUcdwLnm97LpR5uPsTqx.iP1
+ w1PWEkdZHtaedVgCh0._jX16dK48bwYghoeCSOhkJLHKwMf3h1TM4NNSsj7LZsOZkMHN6gpkRcK.
+ sGeZEl7.ftotmvX2bjMvvj5S__v85nvYn5igeKaTTMRR3vGDUyuU2JypcftBOFAKf1DHtut9phhg
+ _.0VvxA0G_Pj0UZVC2nTcxTEvy1j6mHJVHCRwZ5PB0t7kBpwxRjBAlV81E3621hI3arUvQOlvoKE
+ nDCzRpcSOVcWsTEhXQlFTsmcWY934iWInyRGkgV.kBMC5AFifYKzRJPqaDPNeg20ibJcdTMTYM5K
+ MVhadzWGtlPEqoV5N_BecoN0kDF7cAD5niAvI.hPCtK6gxq8Q8kWYp.VwoesqtzcZW1bvc8nB1qk
+ AE89VI3ZzQHJQDFGGO3EJ_3hSIoQb19G2BIwpxmW4EkTe2RQtMf2QMANoXArNVlZeUQIQ9PIIVVE
+ 6ljsFOxsoxKWQbkhhavotcZqhAV2LCaO6yQd8z6XDWKhGrVBbQgxt7.3c65rg99Srq4BLgxBhwXr
+ oF2Ocf3Nu1Cz.1a5PD9Vvj1DwldLPUSvJAbckmWrGrxt1AKq5PakhM.kXLMzIAP_BTl508DEUOai
+ qhixFDIglAma904_dHbH04ZCKgzFgqrC4AtOsQTAi7nrmRHA9gwz_Z4gtoUd0kLPKDBPoIw7Jnh4
+ 7HjLjvGL9.JUgTHh7LA1mylvFm1k6HeSJA_UlBbpsg2GiMpz05Rmbu7qkyxw7gGitygEQe87s_Pd
+ MxubrNFZTteKjAQZM97tUMAlK
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: f2ad06a5-4ca6-4aa6-bf9e-e85f44e27abc
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 11 Oct 2024 18:01:20 +0000
+Received: by hermes--production-gq1-5d95dc458-rx7kt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5098af3afb1e52fb594a7de9db1133eb;
+          Fri, 11 Oct 2024 18:01:17 +0000 (UTC)
+Message-ID: <dee25159-4d17-4f07-9ce5-5d23dae81301@schaufler-ca.com>
+Date: Fri, 11 Oct 2024 11:01:15 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009202009.884884-1-namhyung@kernel.org> <CAEf4BzYQenNtKPmWV=P3EsnqBsjNuAeXpC5ypL1k2z-H60i0=w@mail.gmail.com>
- <ZwlV_jyx3OjfQxwS@google.com>
-In-Reply-To: <ZwlV_jyx3OjfQxwS@google.com>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Fri, 11 Oct 2024 11:00:56 -0700
-Message-ID: <CAEf4BzYCOpwnTVGKs8rHE4CdcQHDU0ButEKHnJE5cqcWpdZwWw@mail.gmail.com>
-Subject: Re: [PATCH 1/2] perf tools: Fix possible compiler warnings in hashmap
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
-	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [GIT PULL] tomoyo update for v6.12
+To: "Dr. Greg" <greg@enjellic.com>
+Cc: Paul Moore <paul@paul-moore.com>,
+ Linus Torvalds <torvalds@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>,
+ Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
+ <877cavdgsu.fsf@trenco.lwn.net>
+ <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
+ <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
+ <20241002103830.GA22253@wind.enjellic.com>
+ <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
+ <20241008111442.GA23889@wind.enjellic.com>
+ <88954576-5e62-4d95-bdf4-3913ffea68c2@schaufler-ca.com>
+ <20241011170617.GA5139@wind.enjellic.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <20241011170617.GA5139@wind.enjellic.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Oct 11, 2024 at 9:44=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
-wrote:
+On 10/11/2024 10:06 AM, Dr. Greg wrote:
+> On Tue, Oct 08, 2024 at 11:25:16AM -0700, Casey Schaufler wrote:
 >
-> On Thu, Oct 10, 2024 at 06:48:26PM -0700, Andrii Nakryiko wrote:
-> > On Wed, Oct 9, 2024 at 1:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.or=
-g> wrote:
-> > >
-> > > The hashmap__for_each_entry[_safe] is accessing 'map' as if it's a
-> > > pointer.  But it does without parentheses so passing a static hash ma=
-p
-> > > with an ampersand (like &slab_hash below) caused compiler warnings du=
-e
-> > > to unmatched types.
-> > >
-> > >   In file included from util/bpf_lock_contention.c:5:
-> > >   util/bpf_lock_contention.c: In function =E2=80=98exit_slab_cache_it=
-er=E2=80=99:
-> > >   linux/tools/perf/util/hashmap.h:169:32: error: invalid type argumen=
-t of =E2=80=98->=E2=80=99 (have =E2=80=98struct hashmap=E2=80=99)
-> > >     169 |         for (bkt =3D 0; bkt < map->cap; bkt++)             =
-                   \
-> > >         |                                ^~
-> > >   util/bpf_lock_contention.c:105:9: note: in expansion of macro =E2=
-=80=98hashmap__for_each_entry=E2=80=99
-> > >     105 |         hashmap__for_each_entry(&slab_hash, cur, bkt)
-> > >         |         ^~~~~~~~~~~~~~~~~~~~~~~
-> > >   /home/namhyung/project/linux/tools/perf/util/hashmap.h:170:31: erro=
-r: invalid type argument of =E2=80=98->=E2=80=99 (have =E2=80=98struct hash=
-map=E2=80=99)
-> > >     170 |                 for (cur =3D map->buckets[bkt]; cur; cur =
-=3D cur->next)
-> > >         |                               ^~
-> > >   util/bpf_lock_contention.c:105:9: note: in expansion of macro =E2=
-=80=98hashmap__for_each_entry=E2=80=99
-> > >     105 |         hashmap__for_each_entry(&slab_hash, cur, bkt)
-> > >         |         ^~~~~~~~~~~~~~~~~~~~~~~
-> > >
-> > > Cc: bpf@vger.kernel.org
-> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > > ---
-> > > I've discovered this while prototyping the slab symbolization for per=
-f
-> > > lock contention.  So this code is not available yet but I'd like to f=
-ix
-> > > the problem first.
-> > >
-> > > Also noticed bpf has the same code and the same problem.  I'll send a
-> > > separate patch for them.
-> > >
-> >
-> > Yep, please do. Fixes look good, thanks.
+> Good morning, I hope the week has gone well for everyone.
 >
-> Sure will do, can I get your Acked-by for this patch?
+>> On 10/8/2024 4:14 AM, Dr. Greg wrote:
+>>> ...
+>>>
+>>> Which we also believe justifies more attention than what it has been
+>>> able to receive in 20 months.
+>> You're right. You're also not alone. There are things that you can do
+>> that will help get the review you're looking for. Developers who attend
+>> to the needs and preferences of reviewers get a whole lot more attention
+>> than those who fuss and fume about not getting what they "deserve". My
+>> hopefully constructive recommendations are:
+> We put a significant body of code and engineering time on the table to
+> try and improve the Linux security ecosystem.  We did this because in
+> certain circles the value of our approach is understood and there was
+> a desire to have it more generally available.
 >
+> We don't believe we 'deserve' anything, review or don't review, it is
+> completely up to everyone involved.
+>
+> Believe me when I say we are perfectly capable of supporting our
+> constituencies without contributing a single line of code or comment
+> back to the good of the Linux security commons.
+>
+> Our aggravation in all of this is when statements are made regarding
+> serious and supposedly well understood flaws in our approach that
+> 'everyone' agrees to be the case.  Statements that are a complete and
+> utter crock of bullshit meant to simply gaslight the situation that
+> has gone down.
 
-Sure:
+Inflammatory claims regarding motivation are not helpful.
 
-Acked-by: Andrii Nakryiko <andrii@kernel.org>
+> Hopefully our choice of lingua franca is sufficiently simple and
+> unsophisticated.
 
-> Thanks,
-> Namhyung
+Err, no, it's not. For a complete explanation see "When Jargon Becomes Gibberish":
+https://www.youtube.com/watch?v=-7cUnID7vFs
+
+> We would, again, encourage everyone to re-read our previous e-mail
+> where we outlined our concerns over the status of the review that did
+> occur.
 >
-> >
-> > >  tools/perf/util/hashmap.h | 20 ++++++++++----------
-> > >  1 file changed, 10 insertions(+), 10 deletions(-)
-> > >
-> > > diff --git a/tools/perf/util/hashmap.h b/tools/perf/util/hashmap.h
-> > > index c12f8320e6682d50..0c4f155e8eb745d9 100644
-> > > --- a/tools/perf/util/hashmap.h
-> > > +++ b/tools/perf/util/hashmap.h
-> > > @@ -166,8 +166,8 @@ bool hashmap_find(const struct hashmap *map, long=
- key, long *value);
-> > >   * @bkt: integer used as a bucket loop cursor
-> > >   */
-> > >  #define hashmap__for_each_entry(map, cur, bkt)                      =
-       \
-> > > -       for (bkt =3D 0; bkt < map->cap; bkt++)                       =
-         \
-> > > -               for (cur =3D map->buckets[bkt]; cur; cur =3D cur->nex=
-t)
-> > > +       for (bkt =3D 0; bkt < (map)->cap; bkt++)                     =
-         \
-> > > +               for (cur =3D (map)->buckets[bkt]; cur; cur =3D cur->n=
-ext)
-> > >
-> > >  /*
-> > >   * hashmap__for_each_entry_safe - iterate over all entries in hashma=
-p, safe
-> > > @@ -178,8 +178,8 @@ bool hashmap_find(const struct hashmap *map, long=
- key, long *value);
-> > >   * @bkt: integer used as a bucket loop cursor
-> > >   */
-> > >  #define hashmap__for_each_entry_safe(map, cur, tmp, bkt)            =
-       \
-> > > -       for (bkt =3D 0; bkt < map->cap; bkt++)                       =
-         \
-> > > -               for (cur =3D map->buckets[bkt];                      =
-         \
-> > > +       for (bkt =3D 0; bkt < (map)->cap; bkt++)                     =
-         \
-> > > +               for (cur =3D (map)->buckets[bkt];                    =
-         \
-> > >                      cur && ({tmp =3D cur->next; true; });           =
-         \
-> > >                      cur =3D tmp)
-> > >
-> > > @@ -190,19 +190,19 @@ bool hashmap_find(const struct hashmap *map, lo=
-ng key, long *value);
-> > >   * @key: key to iterate entries for
-> > >   */
-> > >  #define hashmap__for_each_key_entry(map, cur, _key)                 =
-       \
-> > > -       for (cur =3D map->buckets                                    =
-         \
-> > > -                    ? map->buckets[hash_bits(map->hash_fn((_key), ma=
-p->ctx), map->cap_bits)] \
-> > > +       for (cur =3D (map)->buckets                                  =
-         \
-> > > +                    ? (map)->buckets[hash_bits((map)->hash_fn((_key)=
-, (map)->ctx), (map)->cap_bits)] \
-> > >                      : NULL;                                         =
-       \
-> > >              cur;                                                    =
-       \
-> > >              cur =3D cur->next)                                      =
-         \
-> > > -               if (map->equal_fn(cur->key, (_key), map->ctx))
-> > > +               if ((map)->equal_fn(cur->key, (_key), (map)->ctx))
-> > >
-> > >  #define hashmap__for_each_key_entry_safe(map, cur, tmp, _key)       =
-       \
-> > > -       for (cur =3D map->buckets                                    =
-         \
-> > > -                    ? map->buckets[hash_bits(map->hash_fn((_key), ma=
-p->ctx), map->cap_bits)] \
-> > > +       for (cur =3D (map)->buckets                                  =
-         \
-> > > +                    ? (map)->buckets[hash_bits((map)->hash_fn((_key)=
-, (map)->ctx), (map)->cap_bits)] \
-> > >                      : NULL;                                         =
-       \
-> > >              cur && ({ tmp =3D cur->next; true; });                  =
-         \
-> > >              cur =3D tmp)                                            =
-         \
-> > > -               if (map->equal_fn(cur->key, (_key), map->ctx))
-> > > +               if ((map)->equal_fn(cur->key, (_key), (map)->ctx))
-> > >
-> > >  #endif /* __LIBBPF_HASHMAP_H */
-> > > --
-> > > 2.47.0.rc0.187.ge670bccf7e-goog
-> > >
-> > >
+> We do respect reviewers, but let's engage in some sense of
+> intellectual honesty.  This is not a situation of some poor lonely
+> overworked individual reviewing Linux code in their mother's basement
+> at night in Gulley, Minnesota while they work at the Cenex Station
+> during the day.
+
+HeeHee. There really are hobbyists in situations similar to that.
+I've been one of them. To dismiss them as fictional is pretty insulting.
+
+> Paul has publically stated that Microsoft employees him to maintain
+> the Linux security system because of Microsoft's concern for the long
+> term health and well being of Linux.  In case anyone doubts this or
+> missed it, here is the link:
+
+It's pretty rare that a Linux maintainer is paid to do nothing but maintain
+Linux code. Developers who are qualified to be kernel maintainers are usually
+in demand for other, more directly profitable, projects as well. I can't
+speak directly for Paul, but I would be shocked if he gets anywhere close to
+half his work time allocated to the maintainer role.
+
+> https://lore.kernel.org/linux-security-module/20230608191304.253977-2-paul@paul-moore.com/
+>
+> Unfortunately our experience seems to challenge Linus' mantra of:
+>
+> "Code talks, bullshit walks".
+>
+> Perhaps times have changed for Linux in this new custodial
+> environment.
+>
+>> 1.	Lead with code. Save the documentation for later.
+>> 2.	Incremental implementation. Don't drop the whole mess on the
+>> 	reviewers at once. A patch set should be a story, with each patch
+>> 	introducing one new element.
+>> 3.	Emphasize the similarities with existing implementations. No one
+>> 	wants to deal with novel or clever code. If it is familiar, it is
+>> 	easy to understand.
+>> 4.	Thank your reviewers. Complaints about review latency typically
+>> 	increase it.
+>> 5.	Do some reviews yourself. That will get in the good graces of other
+>> 	reviewers.
+>> 6.	Be brief. The biggest single problem with reviewing TSEM has been that
+>> 	doing anything takes so long. Multiple paragraph responses to an issue
+>> 	don't help. Say it, say it once, say it in small words, and use as
+>> 	few of those as possible.
+> We appreciate the insight and recommendations, we will see how and
+> where all of this ends up getting litigated.
+>
+> Given the zeal for simplicity embodied in these recommendations, we
+> will assume that adversaries targeting Linux from a security
+> perspective will also choose to limit themselves to simple and
+> unsophisticated means and methods of attack.
+
+Gordian Knot. Alexander. Just saying. 
+
+>
+> Have a good weekend.
+
+Likewise.
+
+>
+> As always,
+> Dr. Greg
+>
+> The Quixote Project - Flailing at the Travails of Cybersecurity
+>               https://github.com/Quixote-Project
+>
 
