@@ -1,172 +1,152 @@
-Return-Path: <linux-kernel+bounces-361465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 228B399A89A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:06:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D825899A89F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:10:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813361F24868
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:06:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C07A28497C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:10:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F49198E8C;
-	Fri, 11 Oct 2024 16:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF2E199947;
+	Fri, 11 Oct 2024 16:09:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+ltvnx0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qhkNPbTC";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QDKDMnfa";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VnOEvGFd";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7alE20ib"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536CB5381E;
-	Fri, 11 Oct 2024 16:06:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A2D198E7F;
+	Fri, 11 Oct 2024 16:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728662775; cv=none; b=QR992sTG9XCr6T3h6RYxvvYJqjp56UYdBrqwsL/dBPOB3IjvbYK/JB4/8OGCc1p55fiAjRaCKJsCDQzD0xEcCoR93pD6P8dslpEbm5cNkrVACj3Y9BuOcVAOKBOxGSioYJBNT4LK/IMauJc4I/XKxOkRzJWFA7I9/7sPVB5y/KY=
+	t=1728662986; cv=none; b=O30CRV7Aud/WnVYKaPkxkEuSZNOOvg/nFYy/Ns2Y41HzRIy3r+pwQKLle73MvVYijWs09r88LS5Zcg8G+YXe33Od9bCU4shJzob2JbPg8cWp+yLgH1j8T+MyveUQ1ZQ3MpVZr0HpyFuIpO4vBPxHDT0+O4SGSX1+xyKB7Cif68Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728662775; c=relaxed/simple;
-	bh=iXP9jbL2CA2gwdWaf/4lNfMMPm5b1SYlw++ZXuEjyTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TRvnO8wbnLIkFGShRFmbQ342DBUmwo/+rnZANcJj0DQtEE3d2nqVCB1ERCthgzzyNtUcdNly2KR+Rywzi6IciFVYKAdgB/NaeDRCy4AykxKW1UIqDMghorsesz68nnLcfw/GWjLT5UWooAiYF5d8MIrlt2BMP/cM8Z6u3haePoo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+ltvnx0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218D0C4CEC3;
-	Fri, 11 Oct 2024 16:06:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728662774;
-	bh=iXP9jbL2CA2gwdWaf/4lNfMMPm5b1SYlw++ZXuEjyTw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=m+ltvnx0PRtGDbI3dMbNn4Int8i+PMNx8D666zQLbPdi9HH1UQ/3THq820+3kpONJ
-	 JoQIcuwo/gRKF4CeEVjaDOK8xqJZZppAI2+ixaqvGy9pOGKl0+i0TLJjklgoo8V+gG
-	 G0KXjyxAi4Os+ZJw1E6dIWjRjmKByuc2vtGLHIeUXct3Ivj9LraBfNnJcg9Z4/p8rl
-	 QfNQIFkFx5PRWlzn029K/2jLsa/CR5+L9fxImJNwcZhfQjUYIKrTlSDlQy+Bi3Pue4
-	 RdK20UXGyUumS+Qcgdeuhl1wNcuOGa/gTNxgY0ze0jzvxrhuztiO/QzuaY0K4/pNXd
-	 ixZPqXkKV3ahg==
-Message-ID: <df6379c6-662a-4b35-a919-13c695a869c7@kernel.org>
-Date: Fri, 11 Oct 2024 18:06:02 +0200
+	s=arc-20240116; t=1728662986; c=relaxed/simple;
+	bh=4Xv9mFJWh2zaT2SmbVYcQ1utBb05Hj8xL+GDvsllSLo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJTA2s23AMxWYzvRj2IxV2Yfc3OtCw4rI/xfYiS65ddtp0wnayAo3CrnYC2tCsJyO/Ij7dq87YJMnRfcXvVKSy+/s8IOFPpjV59ccAi8lIOvzaKW+uz6jBxj1F9GNkypbdiQt1qLLtxzgMhBzQmNbQPZ6N/GWDZsZhZOC1qL30s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qhkNPbTC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QDKDMnfa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VnOEvGFd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7alE20ib; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E240A1F871;
+	Fri, 11 Oct 2024 16:09:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728662982;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
+	b=qhkNPbTC/dv1JINfs7BVGvT9+BoCQfJoBRTMkYuCiuf2bptgxKMBMsTMsPjRY/8mxXAMeV
+	LaBqWCJrCpCtmxhKzNhuDZN5ASoupCtLF0crBWkrzffgsY2D9aZ+VnzWrJjeiSa6bfUTKT
+	5Qf4YxAkSzUqYZ6NudRuBUJ7LtOVaJA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728662982;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
+	b=QDKDMnfaDvTMR1TeAGGhkR3amOnm5qdjROuspk8chCWji2kyKy59MuG5H7wBN/n1QB0+Ik
+	N0qk3S2E99994jBQ==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728662981;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
+	b=VnOEvGFdieSGuT22ebJOBz1TG0JWZGZqG2SkZu+uI9O6Y9squToRUhvdOxPWLtWMhLY7GW
+	a7GM/jcT1tYmTrpQ8LJLiwQQNIOr02/GVJ/Rz0VTQfwac+c/IjoHvW2Cz0dVXmwTYlI7Bz
+	EIh+MDUlbVSQa0ECFd6yAOqfDaZ79n4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728662981;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
+	b=7alE20ibM5J+akv2I4S/eDC5++wRTN4Z6RGixZMtfX5jpcQTenPipcS828e0kXe14qP8Hh
+	04ZwgT11jgqtC3AA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CCEE61370C;
+	Fri, 11 Oct 2024 16:09:41 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jNoZMcVNCWcPNQAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Fri, 11 Oct 2024 16:09:41 +0000
+Date: Fri, 11 Oct 2024 18:09:40 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Roi Martin <jroi.martin@gmail.com>
+Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] btrfs: fix uninit pointer free on read_alloc_one_name
+ error
+Message-ID: <20241011160940.GY1609@twin.jikos.cz>
+Reply-To: dsterba@suse.cz
+References: <20241010194717.1536428-1-jroi.martin@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
- interrupt
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Qiang Yu <quic_qianyu@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
- dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
- <20241011104142.1181773-4-quic_qianyu@quicinc.com>
- <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
- <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
- <3d1d0822-da66-44c8-a328-69804210123c@kernel.org>
- <65B34B14-76C3-491D-8A58-6D0887889018@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <65B34B14-76C3-491D-8A58-6D0887889018@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010194717.1536428-1-jroi.martin@gmail.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Spam-Score: -2.50
+X-Spamd-Result: default: False [-2.50 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_DN_SOME(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RCVD_TLS_ALL(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 11/10/2024 17:51, Manivannan Sadhasivam wrote:
+On Thu, Oct 10, 2024 at 09:47:17PM +0200, Roi Martin wrote:
+> The read_alloc_one_name function does not initialize the name field of
+> the passed fscrypt_str struct if kmalloc fails to allocate the
+> corresponding buffer.  Thus, it is not guaranteed that
+> fscrypt_str.name is initialized when freeing it.
 > 
+> This is a follow-up to the linked patch that fixes the remaining
+> instances of the bug introduced by commit e43eec81c516 ("btrfs: use
+> struct qstr instead of name and namelen pairs").
 > 
-> On October 11, 2024 9:14:31 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On 11/10/2024 17:42, Manivannan Sadhasivam wrote:
->>>
->>>
->>> On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->>>> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
->>>>> Document 'global' SPI interrupt along with the existing MSI interrupts so
->>>>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
->>>>> link specific events, safety events, etc.
->>>>
->>>> Describe the hardware, not what the driver will do.
->>>>
->>>>>
->>>>> Though adding a new interrupt will break the ABI, it is required to
->>>>> accurately describe the hardware.
->>>>
->>>> That's poor reason. Hardware was described and missing optional piece
->>>> (because according to your description above everything was working
->>>> fine) is not needed to break ABI.
->>>>
->>>
->>> Hardware was described but not completely. 'global' IRQ let's the controller driver to handle PCIe link specific events like Link up, Link down etc... They improve user experience like the driver can use those interrupts to start bus enumeration on its own. So breaking the ABI for good in this case.
->>>
->>>> Sorry, if your driver changes the ABI for this poor reason.
->>>>
->>>
->>> Is the above reasoning sufficient? 
->>
->> I tried to look for corresponding driver change, but could not, so maybe
->> there is no ABI break in the first place.
-> 
-> Here it is:
-> 
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4581403f67929d02c197cb187c4e1e811c9e762a
-> 
->  Above explanation is good, but
->> still feels like improvement and device could work without global clock.
+> Link: https://lore.kernel.org/linux-btrfs/20241009080833.1355894-1-jroi.martin@gmail.com/
+> Fixes: e43eec81c516 ("btrfs: use struct qstr instead of name and namelen pairs")
+> Signed-off-by: Roi Martin <jroi.martin@gmail.com>
 
-So there is no ABI break in the first place... Commit is misleading.
-
->>
-> 
-> It is certainly an improvement but provides a nice user experience as the devices will be enumerated when they get plugged into the slot (like hotplug). Otherwise, users have to rescan the bus every time they plug a device. Also when the device gets removed, driver could retrain the link if link went to a bad state. Otherwise, link will remain in the broken state requiring users to unload/load the driver again.
-
-OK
-
-Best regards,
-Krzysztof
-
+Added to for-next, thanks.
 
