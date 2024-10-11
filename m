@@ -1,194 +1,131 @@
-Return-Path: <linux-kernel+bounces-361063-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361064-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4184C99A2F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:45:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1177499A2F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:46:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BECF1C21A54
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:45:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4211E1C22AE3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B8D1216A10;
-	Fri, 11 Oct 2024 11:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56867216A0B;
+	Fri, 11 Oct 2024 11:46:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cyldTcid"
-Received: from mail-qk1-f171.google.com (mail-qk1-f171.google.com [209.85.222.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F4g3wEPh"
+Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84A0217D2;
-	Fri, 11 Oct 2024 11:45:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC1717D2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:46:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728647112; cv=none; b=aNgR0Vl+Bt1DEdL+RPpHwThbwC7Y1tvUb8l6mbzI7tsosPc0e5yXioRlJXjQXAguyMQ4D8OsHWorCxfMtTSHskoU4zq25DINyd0Jh8FF9NyDYNzxiGbnJ3FPID7OuPHH91bi4K/s6acgHxfVOXxLNK3Drf+ihshqmlSN74mdVa8=
+	t=1728647172; cv=none; b=DJ8e+b0ubyNFKV2cLtfcM3Dy6OHCXgu04bgSuj2C15GGbxqGkYZw4FzCO1EjQ9EemurV9OndnQMF6MoMNCY+ox+VZj/6yLl6Tx18gzjLoa1zy6P/E8PcobRytzNdTW0bIHRH6jqvCbEh0hw4Wlqe4HtECESjrdUe45qVj7trq58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728647112; c=relaxed/simple;
-	bh=1E58vcsQo4BTxJHtB+WMS22DqYsQ6EIPd0N+gjtJB6I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cz15TeVwGDivgJjFuq9PeMXtEJwgA6XgeEKN4LnS8GDV0gQyJA3f+lXBogN3hWxFm2DijTBSw+BI50U/U1i/CPBLx3TNUmPPcgx+yrQyJieR2hDhF8elb4Ox+7dlqwJ2hJd78zS6OWEZ+TfgAJi0BymP8G+bZ+TR2MULpJulnLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cyldTcid; arc=none smtp.client-ip=209.85.222.171
+	s=arc-20240116; t=1728647172; c=relaxed/simple;
+	bh=q9JaW72xhNQODHCW8uPiP8ifxJeQ4I57PtepsnhlQCc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=rVdsbTDmlas/7/aJboyoZQD3rr+IVSoeriYqkyqNiboxD7uYxs5EqQXiOlqw6OBiqR3udg35tcsbAUyh/TMwhVtLPX5b5rVGSVQ9v3KLBCUCdrLcHfCU0FuvrkD7fGJKEXt/nLj5nDq2zEVfYu1/qyLEk86nIaSynQxUZFwnzkI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F4g3wEPh; arc=none smtp.client-ip=209.85.216.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f171.google.com with SMTP id af79cd13be357-7b1109e80f8so134091885a.0;
-        Fri, 11 Oct 2024 04:45:10 -0700 (PDT)
+Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2c2a17aa4so320331a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:46:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728647109; x=1729251909; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N1jb/ru5Bjn1Blrcth4PCNUJS0t0xfvX9jEJ3dJXFS4=;
-        b=cyldTcidf+qDDk3G1a7yZlHdBBUVzsNDYsChjyeNaFmA4Rp9FGg5Ngjt2UzOdfNDJl
-         0VsX0wDZ8otkK66Sc78KhVMJ1Do+iYQk7rzjtLfPcy8t0NR9KeI2TaZ2amNVZXBDrDav
-         EK+Fn3MNUPkSSe+LCibnqfRaxnXiVBC/VAzfKnsAO9VhqLq1TeTuKXB7zPpzn9Crk37s
-         2/eW1e8WRgeVnNEACvbrGR6i6Fa4oxwUNDgN85YAEhHQlwblCVKhLVb4ktfFYARW4t9o
-         Gi8vYlFu49dTUqIGQ9sv3ARSO8Y2a+6qOTkEIemSYKR7NCbefRfYt6a/tqpqgeefW7h3
-         cUzw==
+        d=gmail.com; s=20230601; t=1728647171; x=1729251971; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=dh0JsT1PknEj7URfHm3XckV7bx4afAgP2FtAaB0E9bA=;
+        b=F4g3wEPhUUvdga/uKkYQ33Vmm1fHl0xBZq3BhATmKRUL66bPIEc6ppbocCLgZiPkiZ
+         ALSii5shqcDlu3MeWVe9Y0xoUqKX1EFzY6mVitSOsaEJg0Eyn/Q9cgKEdxBw0M2gytcd
+         5iVKW44f3Q3wEepFS+i9vEi31wXuvuT/A8Wi254jbW6XaPxJDBhL2fx85zZjRuzvVqhK
+         +fOHq6vgxyaQ6ZS4lmcEUcc/H9Axqbd3OBHzKHDa/moeSuXhgASm1qS2PrkxxCECIrwd
+         uUt/7HN93BB2jSfPjvZNQQ26d2Cv3+ru5iSc1bT2RvM9BOiAsgVjprBsWqIlvG1D9Mzc
+         lyWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728647109; x=1729251909;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N1jb/ru5Bjn1Blrcth4PCNUJS0t0xfvX9jEJ3dJXFS4=;
-        b=cQFXJpfZ8RwE+0RMS6YFnFaG8HC37jcIofGOA8kCYiy3c/4WQzh3Xkz13D115mtbry
-         5E/rXQuvvtnpjQtL9ScaMUaflRvZXB+hk5izo0GpcYipqdme1lUh59+WiUqEKmIJEmRh
-         IXBh3wnfD0vw1EsoKU8PP3bu1oosC7ROd/js63jED5jDztB9pZXZfXaYsrJjCRZl3iEp
-         6dv/Mc+OwTyDZFExidlTGA1+eNMg0mluxe0nwS4zMfVtnOBM835Aqf0uckAyAgv99Ydd
-         O9afaptekLYP/hMCnxGYN2hFU+Vuy0CA/7/gDZDpl9MSUwyW2I1O4Op5pzTtxLH36FwI
-         kj8g==
-X-Forwarded-Encrypted: i=1; AJvYcCU06U7JhHvUgBGFNaKxHQTa1atm68mRytBY+7zfAj4pUQfIEGI3J6ZnEFn0oT+OeuFg1d+5S1jJ6wdyumzP@vger.kernel.org, AJvYcCXQqWYUn0JJjRhLbMWO92kx/5yC376/VxPxQjStPvOYk/YB+oxWJszc3ESBmOm5y66hJMyUqTvSH/D7YTKQ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0qSELuAh5vAqLVw2aJntAeIJhoUefOCHNB3uSczDFcfDSWkkm
-	3FRKCkj0y8gFS++6dzIhaflcYtEXXN5NQVuAeGbqr9E+Vhq43hLJ7G4gsLNSg9ZuQwEErFpzsX7
-	jYQWiRYzK25ptjAZKF6akf1Rj8Vg=
-X-Google-Smtp-Source: AGHT+IFyNzeb5KjHCbIrIePBptEFYE3LsiWqvEeRW3bLqPoHEY80MxzHHH2MRrAv673DCAO/NgSltJ3W2HuchUwfRlc=
-X-Received: by 2002:a05:620a:2902:b0:7a9:d0ec:2d9d with SMTP id
- af79cd13be357-7b11a35f5camr339903985a.15.1728647108062; Fri, 11 Oct 2024
- 04:45:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728647171; x=1729251971;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=dh0JsT1PknEj7URfHm3XckV7bx4afAgP2FtAaB0E9bA=;
+        b=lknNIRS4Jl8N8cedOnCqLXxbbnPWsrCgWwFDl4m9VELJE6P+nvfnrlghZrWNj6SezX
+         G2IVGHP1BFPDsou+38KGPvowoE0RVjsqUVuCMEWpdSYdmD8+1rlf6t8gwYt41tgJ06Ev
+         VNWjKIo2q6m3vdqL3I5S1t4KWE/RgGmFKEPUlym1s+puHDQ1e8PW/v8TKxHEv40SZo+R
+         czgNM7ho+aFpysbiPxeNEdhHQPNP0TqPGsY9jPK2Q6/yDR+jtpP91ZHHJXHoACr9m6O9
+         5y2B5JYaMY3o11WcBewj8CRtc4r6GBF14yxLm/hpn+nSBjH8sPiI9zXVsKEJbyKCX4l1
+         LXPA==
+X-Forwarded-Encrypted: i=1; AJvYcCXB1+UqY6GUW9AwjEeNNFWX0B/uMtRRodB7lkuZcghIWZQv8tbqqB6kNyRaRyqim1QnI8lCA2E2EVeoOIo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5y24ZsciiW7rGu4X/DdJOFu6IEU4JSRbQqqUQqlpOvMaQKImF
+	2udIXSWHSHnnSNZrJr0UxOwq0ZjRSVBLuDyJLC0ALIxKy1T4xy95
+X-Google-Smtp-Source: AGHT+IFUfBiftskmge97vNioQrB9NznTrJWcEA4rGHaYPM1pLAobyBMBxiXwmUDLrdbEl6ptsCd8Vg==
+X-Received: by 2002:a17:90b:3509:b0:2e2:de92:2d52 with SMTP id 98e67ed59e1d1-2e2f0e0403amr1317867a91.9.1728647170482;
+        Fri, 11 Oct 2024 04:46:10 -0700 (PDT)
+Received: from ice.. ([171.76.87.218])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2f6e9ec0esm1106025a91.28.2024.10.11.04.46.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 04:46:10 -0700 (PDT)
+From: Nihar Chaithanya <niharchaithanya@gmail.com>
+To: ryabinin.a.a@gmail.com
+Cc: andreyknvl@gmail.com,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	skhan@linuxfoundation.org,
+	Nihar Chaithanya <niharchaithanya@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: [PATCH v3] mm:kasan: fix sparse warnings: Should it be static?
+Date: Fri, 11 Oct 2024 17:15:38 +0530
+Message-Id: <20241011114537.35664-1-niharchaithanya@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010112543.1609648-1-yebin@huaweicloud.com>
- <20241010112543.1609648-3-yebin@huaweicloud.com> <20241010121607.54ttcmdfmh7ywho7@quack3>
- <5A1217C0-A778-4A9A-B9D8-5F0401DC1013@redhat.com> <20241010170405.m5l4wutd4csj3v6d@quack3>
-In-Reply-To: <20241010170405.m5l4wutd4csj3v6d@quack3>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Fri, 11 Oct 2024 13:44:57 +0200
-Message-ID: <CAOQ4uxiR9ssLb8b6WBFhYJpDrSEvMfALx12w3sOzjB8qe_7t_g@mail.gmail.com>
-Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual filesystem
-To: Jan Kara <jack@suse.cz>, brauner@kernel.org
-Cc: Benjamin Coddington <bcodding@redhat.com>, Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	yebin10@huawei.com, zhangxiaoxu5@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 7:04=E2=80=AFPM Jan Kara <jack@suse.cz> wrote:
->
-> On Thu 10-10-24 09:35:46, Benjamin Coddington wrote:
-> > On 10 Oct 2024, at 8:16, Jan Kara wrote:
-> >
-> > > On Thu 10-10-24 19:25:42, Ye Bin wrote:
-> > >> From: Ye Bin <yebin10@huawei.com>
-> > >>
-> > >> In order to better analyze the issue of file system uninstallation c=
-aused
-> > >> by kernel module opening files, it is necessary to perform dentry re=
-cycling
-> > >
-> > > I don't quite understand the use case you mention here. Can you expla=
-in it
-> > > a bit more (that being said I've needed dropping caches for a particu=
-lar sb
-> > > myself a few times for debugging purposes so I generally agree it is =
-a
-> > > useful feature).
-> > >
-> > >> on a single file system. But now, apart from global dentry recycling=
-, it is
-> > >> not supported to do dentry recycling on a single file system separat=
-ely.
-> > >> This feature has usage scenarios in problem localization scenarios.A=
-t the
-> > >> same time, it also provides users with a slightly fine-grained
-> > >> pagecache/entry recycling mechanism.
-> > >> This patch supports the recycling of pagecache/entry for individual =
-file
-> > >> systems.
-> > >>
-> > >> Signed-off-by: Ye Bin <yebin10@huawei.com>
-> > >> ---
-> > >>  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
-> > >>  include/linux/mm.h |  2 ++
-> > >>  kernel/sysctl.c    |  9 +++++++++
-> > >>  3 files changed, 54 insertions(+)
-> > >>
-> > >> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> > >> index d45ef541d848..99d412cf3e52 100644
-> > >> --- a/fs/drop_caches.c
-> > >> +++ b/fs/drop_caches.c
-> > >> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_t=
-able *table, int write,
-> > >>    }
-> > >>    return 0;
-> > >>  }
-> > >> +
-> > >> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, in=
-t write,
-> > >> +                            void *buffer, size_t *length, loff_t *p=
-pos)
-> > >> +{
-> > >> +  unsigned int major, minor;
-> > >> +  unsigned int ctl;
-> > >> +  struct super_block *sb;
-> > >> +  static int stfu;
-> > >> +
-> > >> +  if (!write)
-> > >> +          return 0;
-> > >> +
-> > >> +  if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) !=3D 3)
-> > >> +          return -EINVAL;
-> > >
-> > > I think specifying bdev major & minor number is not a great interface=
- these
-> > > days. In particular for filesystems which are not bdev based such as =
-NFS. I
-> > > think specifying path to some file/dir in the filesystem is nicer and=
- you
-> > > can easily resolve that to sb here as well.
-> >
-> > Slight disagreement here since NFS uses set_anon_super() and major:mino=
-r
-> > will work fine with it.
->
-> OK, fair point, anon bdev numbers can be used. But filesystems using
-> get_tree_nodev() would still be problematic.
->
-> > I'd prefer it actually since it avoids this
-> > interface having to do a pathwalk and make decisions about what's mount=
-ed
-> > where and in what namespace.
->
-> I don't understand the problem here. We'd do user_path_at(AT_FDCWD, ...,
-> &path) and then take path.mnt->mnt_sb. That doesn't look terribly
-> complicated to me. Plus it naturally deals with issues like namespacing
-> etc. although they are not a huge issue here because the functionality
-> should be restricted to CAP_SYS_ADMIN anyway.
->
+Yes, when making the global variables kasan_ptr_result and
+kasan_int_result as static volatile, the warnings are removed and
+the variable and assignments are retained, but when just static is
+used I understand that it might be optimized.
 
-Both looking up bdev and looking up path from write() can make syzbot
-and lockdep very upset:
-https://lore.kernel.org/linux-fsdevel/00000000000098f75506153551a1@google.c=
-om/
+Add a fix making the global varaibles - static volatile, removing the
+warnings:
+mm/kasan/kasan_test.c:36:6: warning: symbol 'kasan_ptr_result' was not declared. Should it be static?
+mm/kasan/kasan_test.c:37:5: warning: symbol 'kasan_int_result' was not declared. Should it be static?
 
-I thought Christian had a proposal for dropping cache per-sb API via fadvis=
-e()
-or something?
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202312261010.o0lRiI9b-lkp@intel.com/
+Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
+---
+v1 -> v2: Used the aproach of making global variables static to resolve the
+warnings instead of local declarations.
 
-Why use sysfs API for this and not fd to reference an sb?
+v2 -> v3: Making the global variables static volatile to resolve the
+warnings.
 
-Thanks,
-Amir.
+Link to v1: https://lore.kernel.org/all/20241011033604.266084-1-niharchaithanya@gmail.com/
+Link to v2: https://lore.kernel.org/all/20241011095259.17345-1-niharchaithanya@gmail.com/
+
+ mm/kasan/kasan_test_c.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9d..7884b46a1e71 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -45,8 +45,8 @@ static struct {
+  * Some tests use these global variables to store return values from function
+  * calls that could otherwise be eliminated by the compiler as dead code.
+  */
+-void *kasan_ptr_result;
+-int kasan_int_result;
++static volatile void *kasan_ptr_result;
++static volatile int kasan_int_result;
+ 
+ /* Probe for console output: obtains test_status lines of interest. */
+ static void probe_console(void *ignore, const char *buf, size_t len)
+-- 
+2.34.1
+
 
