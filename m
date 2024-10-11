@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-360504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BF79999BC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:43:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1EE8999BC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A52A1C22CE7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:43:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5007C1F2432B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13D3A1FCC5D;
-	Fri, 11 Oct 2024 04:43:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2305C1F4FD8;
+	Fri, 11 Oct 2024 04:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mSsLiclH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VGw3h4Sf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B00101F4FB7
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:42:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217828EB;
+	Fri, 11 Oct 2024 04:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728621781; cv=none; b=RIlQp2j0CHVdSWo2LW778Boqr17X3e+KDH4xADZy38RfpaC5RZBYTjh7RxY/5OxbwZiAeU/kfiNKGbWKf9cHECmEFVSvNRDu9HfG+zZMTC9551nRelsLBpPoNksvneNtf0lLhpaKjnGt+5OVtR5Bv9ZoabyxQMnhTBu03bUbTAo=
+	t=1728621770; cv=none; b=cRDy1Radl92OTH8t5K3qSmcYNvOYv1FpD1MWb08gwbzWi13IWGFLSFwLaZL0WikGrZWByTWpKRbsnqskp+o2I2fwKECdlx5gPibW876xDuNf4rT4KrUV3+0i4b0uMJqem4TqnMIDuteZ/nN67UFi5xQ5L1hKOqR/CbYGFactFYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728621781; c=relaxed/simple;
-	bh=xq2xYxCeEvzyDD2ePxSl33QtiL+L//1dLF/xG9ewvDY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ihfEpY3kdCOm6XMxu8XZfpHpAHUAQzCrfoYZ0K1tsoTLEDzteOQF527xvQ5uyE9HZRha58sH05JAhMr9MKb571qBslA3XUaMpau9wcjHs5vrAI/4XYushcB13uKcMtuqEm5Z6Nhr6W3q+dP4qeeXF9JJ7jizOcBs6spizWAxDnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mSsLiclH; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728621780; x=1760157780;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xq2xYxCeEvzyDD2ePxSl33QtiL+L//1dLF/xG9ewvDY=;
-  b=mSsLiclHpGRRcxDniaSAwupRtVMqK1euVAEtEJbmjinkfjvPVchwpmxR
-   hVzW80h80wrBUgNk2JL+k6RBhwTNOJYvP4Z0lV4oOyJCeqHIuCrn5VZjK
-   RFDx2pQ/XlxsK2WIqYrWWxnHjXkZHNwo6ekXYXXrbkhgcRcMYqGs6zWEE
-   JwdTgBzImvz0RSTNwtkm7wcU+i+SuVOlzviaOAp2FY+9il2x6dBR4xuLy
-   OGgboH6XPEzt3z34FRwaWYAzXS+xa2pUYtHtTCaglglyy562MGz6efUnO
-   nd6CuiYGmitvweTIU8+OFV/h2MqKb1RylSCbRT7oqj4HkPh43rkjkUPP4
-   Q==;
-X-CSE-ConnectionGUID: gVHsKtpFSguSmDFcZUonAw==
-X-CSE-MsgGUID: zMppVHA3S6e79rFpNg/S/g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27959198"
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="27959198"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 21:42:58 -0700
-X-CSE-ConnectionGUID: pbRcFdqLRZmQX/JmBKPFNg==
-X-CSE-MsgGUID: /8q1Oky7SJmnO1TALXDWhw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="76712344"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 10 Oct 2024 21:42:56 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sz7UL-000Bod-0J;
-	Fri, 11 Oct 2024 04:42:53 +0000
-Date: Fri, 11 Oct 2024 12:42:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Bibo Mao <maobibo@loongson.cn>, Huacai Chen <chenhuacai@kernel.org>,
-	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	David Hildenbrand <david@redhat.com>,
-	Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com
-Subject: Re: [PATCH 2/4] mm/sparse-vmemmap: set pte_init when vmemmap is
- created
-Message-ID: <202410111254.kon5pPzX-lkp@intel.com>
-References: <20241010035048.3422527-3-maobibo@loongson.cn>
+	s=arc-20240116; t=1728621770; c=relaxed/simple;
+	bh=WKoHtQ3Shd9jyF/7n3zw6+AuqxeuhzrjH5MwMRnLQGE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YdXhOdRqFkKUs8VTz4t8cTGzHgjZ9HgkhE/kXNpXYVeBXzj8cbuc1fkcbyTbKNqsEAp9gBNmsVijSND78zBdULeecCMULIpzEfzRpiwottDkWV5MeFieWZa7snMDIwV8H+KtoJqLVyjU+XRY9r7FkFQYsLiiEn5f5cFjq6Zuuds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VGw3h4Sf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728621761;
+	bh=lkwU82CX5DaBerlW7p3qaRCDFl8Xh+e50RB6heVkVwI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=VGw3h4SfWRfwcEcJHPFnjOKDn0RMEo+rXh7qaQ+sXET2dkIlV/YNfarQPNBRupZ9h
+	 qreojj1MJPo0NBBRlsVD3dS4f7NX1QWuz2/ohTwr9RPuGqbEfaL4Mtcym68K3aeLOg
+	 vrbjqnJcdp5xXJ6EX6imaHQH5XuIibDaAEi7WZ3g+6VPlRET38jK/7uTv/ICwzkYSg
+	 JPXdIx/oRyYhBYBYV+gSrPzuaDxPKnZeALoX3d5pDS/sJZ8m/aSloo68L0zfdKg6Sv
+	 EyjVUrNM5QMzXYkB63t39bWBArDK6Dul9zCX0oL//nx0B/2Q2sNLXEai6bP/V+N1b+
+	 zlxRnlfc9q2eA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPvB94NFZz4wb7;
+	Fri, 11 Oct 2024 15:42:41 +1100 (AEDT)
+Date: Fri, 11 Oct 2024 15:42:41 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Abhash Jha <abhashkumarjha123@gmail.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the iio tree
+Message-ID: <20241011154241.511878bd@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010035048.3422527-3-maobibo@loongson.cn>
+Content-Type: multipart/signed; boundary="Sig_/Ok6U.VI4ReSyob4gJbvytdw";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hi Bibo,
+--Sig_/Ok6U.VI4ReSyob4gJbvytdw
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-kernel test robot noticed the following build warnings:
+Hi all,
 
-[auto build test WARNING on 87d6aab2389e5ce0197d8257d5f8ee965a67c4cd]
+After merging the iio tree, today's linux-next build (x86_64 allmodconfig)
+failed like this:
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Bibo-Mao/LoongArch-Set-pte-entry-with-PAGE_GLOBAL-for-kernel-space/20241010-115120
-base:   87d6aab2389e5ce0197d8257d5f8ee965a67c4cd
-patch link:    https://lore.kernel.org/r/20241010035048.3422527-3-maobibo%40loongson.cn
-patch subject: [PATCH 2/4] mm/sparse-vmemmap: set pte_init when vmemmap is created
-config: s390-allnoconfig (https://download.01.org/0day-ci/archive/20241011/202410111254.kon5pPzX-lkp@intel.com/config)
-compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410111254.kon5pPzX-lkp@intel.com/reproduce)
+drivers/iio/dac/ad5770r.c:20:10: fatal error: asm/unaligned.h: No such file=
+ or directory
+   20 | #include <asm/unaligned.h>
+      |          ^~~~~~~~~~~~~~~~~
+drivers/iio/adc/max1363.c:37:10: fatal error: asm/unaligned.h: No such file=
+ or directory
+   37 | #include <asm/unaligned.h>
+      |          ^~~~~~~~~~~~~~~~~
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410111254.kon5pPzX-lkp@intel.com/
+Caused by commits
 
-All warnings (new ones prefixed by >>):
+  c2c4826cfa46 ("iio: adc: max1363: Convert to get_unaligned_be16")
+  0f87813bc338 ("iio: dac: ad5770r: Convert to get_unaligned_le16")
 
-   In file included from mm/sparse-vmemmap.c:21:
-   In file included from include/linux/mm.h:2213:
-   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
-     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
-         |                               ~~~~~~~~~~~ ^ ~~~
-   In file included from mm/sparse-vmemmap.c:23:
-   In file included from include/linux/memblock.h:13:
-   In file included from arch/s390/include/asm/dma.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:37:59: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) __swab16((__force __u16)(__le16)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:102:54: note: expanded from macro '__swab16'
-     102 | #define __swab16(x) (__u16)__builtin_bswap16((__u16)(x))
-         |                                                      ^
-   In file included from mm/sparse-vmemmap.c:23:
-   In file included from include/linux/memblock.h:13:
-   In file included from arch/s390/include/asm/dma.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/big_endian.h:35:59: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) __swab32((__force __u32)(__le32)(x))
-         |                                                           ^
-   include/uapi/linux/swab.h:115:54: note: expanded from macro '__swab32'
-     115 | #define __swab32(x) (__u32)__builtin_bswap32((__u32)(x))
-         |                                                      ^
-   In file included from mm/sparse-vmemmap.c:23:
-   In file included from include/linux/memblock.h:13:
-   In file included from arch/s390/include/asm/dma.h:5:
-   In file included from include/linux/io.h:14:
-   In file included from arch/s390/include/asm/io.h:93:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
->> mm/sparse-vmemmap.c:187:23: warning: no previous prototype for function 'kernel_pte_init' [-Wmissing-prototypes]
-     187 | void __weak __meminit kernel_pte_init(void *addr)
-         |                       ^
-   mm/sparse-vmemmap.c:187:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-     187 | void __weak __meminit kernel_pte_init(void *addr)
-         | ^
-         | static 
-   14 warnings generated.
+interacting with commit
 
+  5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
 
-vim +/kernel_pte_init +187 mm/sparse-vmemmap.c
+from Linus' tree (in v6.12-rc2).
 
-   186	
- > 187	void __weak __meminit kernel_pte_init(void *addr)
-   188	{
-   189	}
-   190	
+I have applied the following merge fix patch.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+Date: Fri, 11 Oct 2024 15:35:57 +1100
+Subject: [PATCH] fix up for asm/unaligned inclusions in ad5770r.c and max13=
+63.c
+
+Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+---
+ drivers/iio/adc/max1363.c | 2 +-
+ drivers/iio/dac/ad5770r.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
+index d59cd638db96..d065b1ade95a 100644
+--- a/drivers/iio/adc/max1363.c
++++ b/drivers/iio/adc/max1363.c
+@@ -34,7 +34,7 @@
+ #include <linux/iio/trigger_consumer.h>
+ #include <linux/iio/triggered_buffer.h>
+=20
+-#include <asm/unaligned.h>
++#include <linux/unaligned.h>
+=20
+ #define MAX1363_SETUP_BYTE(a) ((a) | 0x80)
+=20
+diff --git a/drivers/iio/dac/ad5770r.c b/drivers/iio/dac/ad5770r.c
+index 12c98f3e62a5..7d7f5110d66a 100644
+--- a/drivers/iio/dac/ad5770r.c
++++ b/drivers/iio/dac/ad5770r.c
+@@ -17,7 +17,7 @@
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
+ #include <linux/spi/spi.h>
+-#include <asm/unaligned.h>
++#include <linux/unaligned.h>
+=20
+ #define ADI_SPI_IF_CONFIG_A		0x00
+ #define ADI_SPI_IF_CONFIG_B		0x01
+--=20
+2.45.2
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Ok6U.VI4ReSyob4gJbvytdw
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcIrMEACgkQAVBC80lX
+0Gx7AQf/dkbjSB0PtNZnL275xXqHv+yCpMTGAWAHHztiUE8JdnUV0gRYzHWYktFb
+Av0JWl4eOL21TLXEOrQodofUNWd4OSgwx9UT/jOACyuSFLm9jNL48RY5zS4TdGcs
+oMh5e9X/RLbPdoutCT7PdexBXs80TI5RL3tATZqLpZZOApBnbN2a3/Liqi8GR5AX
+zo6jf3O4M1oUxk42cnEkE2oeDUDCH/ooLL48oTWh4rHUwkay8t7O9dO4x4UV/c8i
+WwEHtafW6qvmr+/RDqyg7vkhFNkPfS2okbnOmKbvpPwGmXPm3xR/SVq9YBnXNUvI
+CHFR+9IYArsBaYerk7kg2RgfJR8bHQ==
+=j6A6
+-----END PGP SIGNATURE-----
+
+--Sig_/Ok6U.VI4ReSyob4gJbvytdw--
 
