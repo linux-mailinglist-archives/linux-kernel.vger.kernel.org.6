@@ -1,106 +1,146 @@
-Return-Path: <linux-kernel+bounces-361417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D86E99A7EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:36:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43CFB99A7F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:38:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE7B281A28
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:36:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D18BAB23A7C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:38:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2E8195808;
-	Fri, 11 Oct 2024 15:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF6119645D;
+	Fri, 11 Oct 2024 15:38:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="J8ieCERo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b="P98Bo4tS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eURhFjgS"
+Received: from fout-a1-smtp.messagingengine.com (fout-a1-smtp.messagingengine.com [103.168.172.144])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7C19194AF3;
-	Fri, 11 Oct 2024 15:36:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDF781946D0;
+	Fri, 11 Oct 2024 15:38:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.144
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661011; cv=none; b=G+V/nreNUckX6CECgDIFc0LQlWizKcgKn9i3CpAwJdpiDjxmOeuzm4O7egMg2Oj1lnljaC7rj37/vY+ntEgB7X1GguNHpP45tAuk8VWzr8/W3Qs1fCrMN8hKU0H4vw7RXzEXYHOZ91cWNtqE0KGJzIhTrlK977KU9Tje+rt5tT0=
+	t=1728661101; cv=none; b=IjuZdm4rJ92Ch0TszfPnDcjNVxzHH81yRxrPNKOLM4DZn9sm/xVfXqJsQ7lb5zmoUDtiRIPuoXeprgQB6OeGISFx1tLBgZCZ3vDL/2UfTM1roq7chPGER58ciOKxp86ZWWjghVPDRWXP00ms+EcCdNf/N89D+VMRXhIN8rQXmf8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661011; c=relaxed/simple;
-	bh=2e2aAbeHFM/XJiLOLYfo31xFHP9CBo1V6ggyJGJuMZQ=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=YYJ5uIyiCYb/t9N73TMHV/sbDdsn8bxurljugFyYl+UoPEMxidKL3E7DjouXspKxvrMzhSF1U4ZAS+lCjPGxQ/AYUAOgzXSy1H7XagpPWp/iUSPXO4i2h5Di7wEAYDaPP60yEmixafw5fM+a0QhtsqwJSV8Htu9A8/Se8CGh7lU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=J8ieCERo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BCDEC4CED4;
-	Fri, 11 Oct 2024 15:36:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728661011;
-	bh=2e2aAbeHFM/XJiLOLYfo31xFHP9CBo1V6ggyJGJuMZQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=J8ieCERo1jePD8yOJ5b7CBpot+4B+EvucrEG0wx/ZkLNJJIZteAUKmewCo5Y+HHAZ
-	 F1MsHJO5eAmqYf652+oNcACL87pHynefR2b887tD41BceMxgQUaT9ZBVSgysA7ldsX
-	 6QS+kBsjnKKB6EY4so0y1S/KTQ5lahXA2Z/gsJmfmEmSTvP2o2FoB+ZcszLU1cMrK6
-	 ry/IFi0k1XRQu09wEmeeiwVSNd5dhXUkfcBjG8f8WOItIwCEDuiCE/iUegJ3PmeRrE
-	 Q3I26Fb6JFL+348AQEdtAMu4sb/jAxLy4mkJkAyHxtHA2mVy2YJrmuFZZOmGuNVKTv
-	 b0mf7Z35JUkBg==
-Received: by mail-oi1-f170.google.com with SMTP id 5614622812f47-3e4d624ac28so1374069b6e.2;
-        Fri, 11 Oct 2024 08:36:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWt9Qu2TTr2KXf50arKOpDw0rSWYsPo/3ptKsdGOIpPbt8GJXPfuo+Pv9A56V9gsdUnuv8KbmeCgHmSdlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYt/V+/IXD8tXGVxWtsn45j1sKYpgWHFHiAIiBmLO71Qjv69S1
-	Zd6FXOr5i3qGQ+tXirV/bkHDneq4bSxAI7gTyLziqPY5ZMTMMPOrQMgk8669qEZ7VlVX5a4Z9a+
-	2jnSrsPK6BgYb3G+ZrNF84HWFL2A=
-X-Google-Smtp-Source: AGHT+IG5oYqdHeubz5datcEne84s3DCdCUh6B1Z9T5VGnQ35URrQQWnEGK/GMqPZUAU6nSgCEuNfcKSl3qxkR5zQ0A4=
-X-Received: by 2002:a05:6870:b6a3:b0:287:130e:f665 with SMTP id
- 586e51a60fabf-2886ddbabb2mr1959804fac.16.1728661010551; Fri, 11 Oct 2024
- 08:36:50 -0700 (PDT)
+	s=arc-20240116; t=1728661101; c=relaxed/simple;
+	bh=tB04dcyu1p3tDuTO1UFKgPuXQnmgUJm92UfAhpG5oG8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u3Gwv79uQifd9Z0kBieg5hu9f3d7FLllDO/Yqy22lknZcvRPi+yKhNres1oI7aXyKH40CE3JqJCPGn7SvC8lrB4m6Bppa9/T2iRK6UAErI8RX2pwQT3FkLBx5wj20iq6wIKsAJCC86e8hy/elEMbNvbY2Yf3rjX47FrZswC1fz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com; spf=pass smtp.mailfrom=justinweiss.com; dkim=pass (2048-bit key) header.d=justinweiss.com header.i=@justinweiss.com header.b=P98Bo4tS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eURhFjgS; arc=none smtp.client-ip=103.168.172.144
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=justinweiss.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=justinweiss.com
+Received: from phl-compute-11.internal (phl-compute-11.phl.internal [10.202.2.51])
+	by mailfout.phl.internal (Postfix) with ESMTP id C8AD2138021B;
+	Fri, 11 Oct 2024 11:38:17 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-11.internal (MEProxy); Fri, 11 Oct 2024 11:38:17 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=justinweiss.com;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm1; t=1728661097; x=1728747497; bh=Iv1bN6LPlU
+	yed6AGnlaSdg/MCrJJV1U9vOCapSaRGQg=; b=P98Bo4tSGnaYyM8KiggBgcrvG4
+	FPPP9F1d7zIp8T48Mx76wWx3qV1PrbAJKUXnyqZgYG+rWpAZM3JsF0+jAiu18xnd
+	P3jhS0x+56jG/SVZMf8w7wi2zcFl6iI6VfPpmbRFtx7OHSuzPAvFwfWUJwR8zbtI
+	lZirrvfOcwCg92Pvudc5sy/tzz4ioGu6wvB+Dh9vcVE9Z1pIRBueya0UTsVsqPhr
+	gOmUH7/W50EytemcQuPqQU59zzTsXYr41X+D6uUYMxFGqKa+skA519cO6gCRURrs
+	FI0i49duowglmQkK2r+1pf/ZG9bKE3uPY9+s7WKkQzQqHMWCuWzfFGQuxQDQ==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728661097; x=1728747497; bh=Iv1bN6LPlUyed6AGnlaSdg/MCrJJ
+	V1U9vOCapSaRGQg=; b=eURhFjgSmC3lKIVsQY2d5CKW8XLRraAhmZCYqD+f0paq
+	dUkOPPWC0st+Q1kfvz7G8/XlrxtXJTuFa5XIYHwXr1yET5Z1mj3hevWZ8erT/Jlf
+	RSIPtnFrl+XgsURCpbwwbLFJiShKProCofmTubIz3FAYcQfz4hfr++vqIcpV/i0R
+	7nobzyQvAjk8TDz7b0nPyVuY/XS+6dseiUWWo+cPxlgpJeN0NkFbiJulYxNfITH6
+	W/6O/k8ThbrjtXYKBEW//9k7XiYMjRkG4bqF+y92dcgDuQ0gt2hYi3cUNj1/Fh/Q
+	vuQg2bxgvcVL0vHS8KB98OnV0ExtCXstqmiQ9XVXCw==
+X-ME-Sender: <xms:aEYJZ47qEkGcR7qdMjp--aNV0UZG-GBfOcKJykFGpSxmciyF3nGz_w>
+    <xme:aEYJZ56Op1pQihPqVfdKCEAlqDSmoahWFKhNMeykvI4om5CMICkL1YnCI_aFlTPW8
+    fIuGuw3YZTSk0xokw>
+X-ME-Received: <xmr:aEYJZ3cFgpg1Ar6b4FSiIqx4_dpL_j7jCrpEEfgXiwZFVbQfYkccnc9FkNNq3YVUol0-tAkaQHfzO94XVjtiTLoHIvp3jqQ-rSfSdBQnxw>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefkedgledtucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhephffvvefufffkofgggfestdekredtredttdenucfh
+    rhhomheplfhushhtihhnucghvghishhsuceojhhushhtihhnsehjuhhsthhinhifvghish
+    hsrdgtohhmqeenucggtffrrghtthgvrhhnpeehiefgffdvledvhedvtddugfeigeefleef
+    udffveettdffueelheeuffejjeffudenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehjuhhsthhinhesjhhushhtihhnfigvihhsshdrtghomhdp
+    nhgspghrtghpthhtohepkedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhgrnh
+    iirghnohdrrghlvgigsehgmhgrihhlrdgtohhmpdhrtghpthhtohepjhhitgdvfeeskhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhgrrhhssehmvghtrghfohhordguvgdprhgtph
+    htthhopehjuhhsthhinhesjhhushhtihhnfigvihhsshdrtghomhdprhgtphhtthhopehl
+    ihhnuhigqdhiihhosehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinh
+    hugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepuggv
+    rhgvkhhjohhhnhdrtghlrghrkhesghhmrghilhdrtghomhdprhgtphhtthhopehphhhilh
+    hmsehmrghnjhgrrhhordhorhhg
+X-ME-Proxy: <xmx:aEYJZ9Kp3ECm1en9mCVrM_mUqEuCXrzXiercx6g4jW_RdJrEuQScdQ>
+    <xmx:aEYJZ8K-YsSNpQ6gINlQvY9RQhrYa3Mshve87HcyO2rrNzSs5udzHg>
+    <xmx:aEYJZ-wgLO1iVervrtrbedv3Xwol0iPW6i6AIKQdqjLtwUKDVJIegQ>
+    <xmx:aEYJZwKeixUbdd_A_5o3oaIQmvXRHDHnOQFtcMjnjFjbeh4-iV8ZCQ>
+    <xmx:aUYJZ785qQ6Z6-XuaSRy3qv0rgWY4uQSqcjOwmoIrmPyrFkbBnddK7AM>
+Feedback-ID: icf614246:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Oct 2024 11:38:15 -0400 (EDT)
+From: Justin Weiss <justin@justinweiss.com>
+To: Alex Lanzano <lanzano.alex@gmail.com>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Cc: Justin Weiss <justin@justinweiss.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	"Derek J . Clark" <derekjohn.clark@gmail.com>,
+	=?UTF-8?q?Philip=20M=C3=BCller?= <philm@manjaro.org>
+Subject: [PATCH 0/3] Add i2c driver for Bosch BMI260 IMU
+Date: Fri, 11 Oct 2024 08:37:46 -0700
+Message-ID: <20241011153751.65152-1-justin@justinweiss.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 11 Oct 2024 17:36:39 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0j9MrSTXS-uZxNy=hfx514QdBCqFQ25tC0nVV-URX2xBQ@mail.gmail.com>
-Message-ID: <CAJZ5v0j9MrSTXS-uZxNy=hfx514QdBCqFQ25tC0nVV-URX2xBQ@mail.gmail.com>
-Subject: [GIT PULL] ACPI fixes for v6.12-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: ACPI Devel Maling List <linux-acpi@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi Linus,
+Add support for the Bosch BMI260 IMU to the BMI270 device driver.
 
-Please pull from the tag
+The BMI270 and BMI260 have nearly identical register maps, but have
+different chip IDs and firmware.
 
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- acpi-6.12-rc3
+The BMI260 is the IMU on a number of handheld PCs. Unfortunately,
+these devices often misidentify it in ACPI as a BMI160 ("BMI0160," for
+example), and it can only be correctly identified using the chip
+ID. I've changed the driver to fail if the chip ID isn't recognized so
+the firmware initialization data isn't sent to incompatible devices.
 
-with top-most commit 1af7e441feb08cdaab8f4a320577ed0bba1f5896
+Also add triggered buffer and scale / sampling frequency attributes,
+which the input tools commonly used on handheld PCs require to support
+IMUs.
 
- ACPI: resource: Fold Asus Vivobook Pro N6506M* DMI quirks together
+Like the BMI270, the BMI260 requires firmware to be provided.
 
-on top of commit e1043b6765d6ca310a10be342e25d5451d58ee53
+Signed-off-by: Justin Weiss <justin@justinweiss.com>
+---
 
- Merge tag 'acpi-6.12-rc2' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
+Justin Weiss (3):
+  iio: imu: Add i2c driver for bmi260 imu
+  iio: imu: Add triggered buffer for Bosch BMI270 IMU
+  iio: imu: Add scale and sampling frequency to BMI270 IMU
 
-to receive ACPI fixes for 6.12-rc3.
+ drivers/iio/imu/bmi270/Kconfig       |   1 +
+ drivers/iio/imu/bmi270/bmi270.h      |  24 +-
+ drivers/iio/imu/bmi270/bmi270_core.c | 369 ++++++++++++++++++++++++++-
+ drivers/iio/imu/bmi270/bmi270_i2c.c  |  22 +-
+ drivers/iio/imu/bmi270/bmi270_spi.c  |  11 +-
+ 5 files changed, 413 insertions(+), 14 deletions(-)
 
-These reduce the number of ACPI IRQ override DMI quirks by combining
-quirks that cover similar systems while making them cover additional
-models at the same time (Hans de Goede).
 
-Thanks!
+base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+-- 
+2.47.0
 
-
----------------
-
-Hans de Goede (4):
-      ACPI: resource: Make Asus ExpertBook B2402 matches cover more models
-      ACPI: resource: Make Asus ExpertBook B2502 matches cover more models
-      ACPI: resource: Fold Asus ExpertBook B1402C* and B1502C* DMI
-quirks together
-      ACPI: resource: Fold Asus Vivobook Pro N6506M* DMI quirks together
-
----------------
-
- drivers/acpi/resource.c | 76 +++++++------------------------------------------
- 1 file changed, 10 insertions(+), 66 deletions(-)
 
