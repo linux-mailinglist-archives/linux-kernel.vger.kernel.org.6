@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-360290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEB6C9997F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:34:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC2D79997F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF161B2195B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:34:35 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29BA6B249F5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:34:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4076EAF1;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E28DDA9;
 	Fri, 11 Oct 2024 00:32:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="Pwr3vYqB"
-Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="LrDx79Dk"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 125CF2114
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:32:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DDF86FB0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:32:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728606744; cv=none; b=ojkV1nYw+CkwUevt7Y6xYD3vDi/kaeW8faxbzrAGebaZTz2+3KWv/UGkZFYyLge3ScqnTMCU0lK54sG/9LpBUdIv6zTbksfCXjY6nPhy0IyS+AbhNvlREUoUQZM5uSqxtPdMjzmVXBNbYWVWnM6pcMEozvsSL24AkSpGEFwBQt8=
+	t=1728606744; cv=none; b=Z9n7szwGXHOJ5M+84fcpqfvpnSJp18WSQ0/wqKuGoIVnlxV7zwMuFPGJ+il1fv2Tpu0R5SBhS9l5k3+h3LXyW5w5ikw8WsA8NjXrZeLlOeJAJ67V8yjyh9pUkLYVzm84gKcIttNOE+n9YRV4jC12OHo+DFeqiytZIpRv+Akxs7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728606744; c=relaxed/simple;
-	bh=U6PUAykp73iKKHV5fdD8PAkfE5kmnNbKtNiNViCmipg=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=UwCYKdQAnZCrQVExS3s70TEKF2RDlvY9JlG0rsM3Ld/sIJW8s+a7MOW3PHUPMP3ffDD4J4rA/3IBzfitQFa1QPKyZavMWN8HflqDDSUPcuixNsHgN95238J24RR+xesBkKMRN6R7zkDUT3oPFAdnpamF4mkRSs7IRV55VnJyG5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=Pwr3vYqB; arc=none smtp.client-ip=209.85.210.169
+	bh=UyWMIIBCmwkbjPM0A+FmTU87MU0ZGnNGDXu/rgKEGp8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=qclLleqTcKiCK0pg0oZVspzC464fTFUE7JL+dx743M9EZH3snt1dqYSf1fD3lroYrfjuieAn/yfQPUii/vrAVqVw0Pw/iJgn9fvfNBsBwGnQ10rVanGkhMunUd2sAohqOw+LCg/HYUlgSr06cVsPn6vEsiSvDFx0cvsRE4UdyLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=LrDx79Dk; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71de9e1f374so1150750b3a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:32:20 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71dea49e808so1367714b3a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:32:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728606740; x=1729211540; darn=vger.kernel.org;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L88k/6LQJ6n1DZsE/un1+ux0jKynkO+0CSLGH0Z2NJk=;
-        b=Pwr3vYqBDOAy8cnkB7RyrcMYV+dJyFEgkKpAbFmEoUJ+E3YEYhTvlc+MeiLCU4xsE4
-         nPCvNXXvdICIPLrvvZEf+Ws7eYulqt/x8rJs0iTYpdjil17iLt8FMI4Fex+s4+hS6eSw
-         GP65XkrvTHwAXR2t8TRCuvYk9HVImv6HpCODdU9hda8LaXSLuaa3JFhSSXtfMj2OXcZQ
-         pynd+O3vJnkfxl00bU6ZgacquJKWJqp9GFD2TyWHfXSo+RLSh7F9dpZ492lchdGV1p7I
-         mwOW10ncjDa/X9j2yVbzl+q90VWgJkVhC0ihFdx/6IZBCT1HNC+ycjZKYxY9b+vFFRN8
-         037A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728606740; x=1729211540;
-        h=cc:to:content-transfer-encoding:mime-version:message-id:date
-         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728606742; x=1729211542; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=L88k/6LQJ6n1DZsE/un1+ux0jKynkO+0CSLGH0Z2NJk=;
-        b=mGdBtaNBsY71G7AfDu8sV7129nrFoKc/LF1a4FUvewsYHU4LNEUWqCiROD/c1h16em
-         PQLbJ9bJXe0U1PvDlV34JBv9FEjPZ9/AXyEtcwuqbAnvfYXtPyUjqyzpxbDZ/7eMcXII
-         LNpZPLDIpGHZDkxriv6EnsShI3f51LiICUL1BepDgKG/YZRacKPBXKe4JbHtj8Ux0Qh+
-         ECNYgNxAy9ismby3TitOw5Q0KHnNMMqZhFZd0YBEt9ztUwQ6DhZxSK2hNhQB/2qL7l+1
-         vArI2+mg6cJIWF9eUkxEHoYyIXjXKLGvq6b9E4NN4sUFxozOaIKVcII0uMZ49VQ7LJb9
-         bOSA==
-X-Gm-Message-State: AOJu0YzJ4aiM1duX4/a6wZYybWn8k2iCASYw0G5KcUQCB+s7v4luloBA
-	v8g7LBulXh+pTrqH2K+++ZSNydRRtnVQlPcPT+YAzDoT82F3g/RVTLeVG4MP/WM=
-X-Google-Smtp-Source: AGHT+IGyS+aA9UxCtkzeUWYlobH1ifyQtJfGEXOmfg62rhTEkQa/syWVFaq3tPCmx1Ml8NjwqupEEw==
-X-Received: by 2002:a05:6a00:4f95:b0:71e:21:d2da with SMTP id d2e1a72fcca58-71e38083ec2mr1436401b3a.27.1728606740101;
-        Thu, 10 Oct 2024 17:32:20 -0700 (PDT)
+        bh=pcb1JUl7nxyzCR2L+K51gN2ROJJ8XrFInAPZeivTlr8=;
+        b=LrDx79DkE5kkxe8AIxK1FbyJMJ55ltQH3yftF8CJwC1cKU3ShVXF+kSFd/ZH7rn6DA
+         B9jq3ISVBRMoPCVZnp60vR12xlmV5JtTCWJDaL1+p8qYuT9ScGwXkLPB28hcsaIr/8HH
+         FzxPkt+JJw/FGTq5OfRwFvg3TsRqRYljLjsMa3ndOZZ3qH+SzLkrYpQRqoJLQvn6oZBh
+         5hNzs/zPF77UUOVq2vmgoWgSg1IPYQfs+Jsfo7vMKAjKm2/A7G24QYWjRj19XdtH831i
+         ofQRo6rryrHjre1nLSVBlQSCguTBqxMR541h2ipzLzWOrBt76b0aLGt1mTuRiBU/g1oJ
+         6ukg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728606742; x=1729211542;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pcb1JUl7nxyzCR2L+K51gN2ROJJ8XrFInAPZeivTlr8=;
+        b=nB9cqJ6kF7BNLkmi5FCo83ETh/8PeHi9TFRApkN+qiByI95Sk5TWEe1v2K2HO6OjL/
+         54+oFzRlHOfkO82vfNQCmRdnymSX3vOfc+u6WEkJLF8Eb3sj+CeNbQn1mYjXQCcFPAWK
+         iHsYX2tlm24Ap3qEGoVjxwPmRbrFeTBniibljnqUx8AKZjMvgxdmzxi/wgB+N5yN9YNQ
+         sJs6x+Z3/+FdPqutYOW2R488d3NhtEUm5yeC7DIq+8J9MzWj341qndNw8T5vxZexfCdD
+         4R73dTLeG0cGKvosWhYtf+MDnerQOTZrIrXOtnvoB3huw1Gysv9BjzqwFAwI+8A/AMrh
+         8+nQ==
+X-Gm-Message-State: AOJu0Yz2Ouhohzw3VHykpkUj1y40D+ITOh7yLROpCgQYZ6n2MWyPVhuz
+	zOefRaS7JCY0WGSb1Ikg4vbqkTME8of4zONVbOQ0MRe4k1+/6HG+5puVNU+3A5c=
+X-Google-Smtp-Source: AGHT+IFSf80aIAMN4Fscyo/d2B9xB9WQkYt/Q471M36cO+ATFH/XCXiTEEuhz953CSaf5qR503Upaw==
+X-Received: by 2002:a05:6a00:14ce:b0:71e:cd0:cc99 with SMTP id d2e1a72fcca58-71e37e2d6admr1520196b3a.4.1728606741623;
+        Thu, 10 Oct 2024 17:32:21 -0700 (PDT)
 Received: from debug.ba.rivosinc.com ([64.71.180.162])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea4496b1afsm1545600a12.94.2024.10.10.17.32.18
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea4496b1afsm1545600a12.94.2024.10.10.17.32.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 17:32:19 -0700 (PDT)
+        Thu, 10 Oct 2024 17:32:21 -0700 (PDT)
 From: Deepak Gupta <debug@rivosinc.com>
-Subject: [PATCH RFC/RFT 0/3] Converge common flows for cpu assisted shadow
- stack
-Date: Thu, 10 Oct 2024 17:32:02 -0700
-Message-Id: <20241010-shstk_converge-v1-0-631beca676e7@rivosinc.com>
+Date: Thu, 10 Oct 2024 17:32:03 -0700
+Subject: [PATCH RFC/RFT 1/3] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,9 +76,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-B4-Tracking: v=1; b=H4sIAAJyCGcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDA0MD3eKM4pLs+OT8vLLUIqBsYmpaUnJSapppirmhElBTQVFqWmYF2MB
- opSA3Z/0gtxCl2NpaAE6oGlppAAAA
+Message-Id: <20241010-shstk_converge-v1-1-631beca676e7@rivosinc.com>
+References: <20241010-shstk_converge-v1-0-631beca676e7@rivosinc.com>
+In-Reply-To: <20241010-shstk_converge-v1-0-631beca676e7@rivosinc.com>
 To: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
  Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
  x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, 
@@ -94,81 +94,82 @@ Cc: linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
  Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 X-Mailer: b4 0.14.0
 
-x86, arm64 and risc-v support cpu assisted shadow stack. x86 was first
-one and most of the shadow stack related code is in x86 arch directory.
-arm64 guarded control stack (GCS) patches from Mark Brown are in -next.
+From: Mark Brown <broonie@kernel.org>
 
-There are significant flows which are quite common between all 3 arches:
+Since multiple architectures have support for shadow stacks and we need to
+select support for this feature in several places in the generic code
+provide a generic config option that the architectures can select.
 
-- Enabling is via prctl.
-- Managing virtual memory for shadow stack handled similarly.
-- Virtual memory management of shadow stack on clone/fork is similar.
-
-This led to obvious discussion many how to merge certain common flows in
-generic code. Recent one being [1]. Goes without saying having generic
-code helps with bug management as well (not having to fix same bug for 3
-different arches).
-
-In that attempt, Mark brown introduced `ARCH_HAS_SHADOW_STACK` as part
-of arm64 gcs series [2]. This patchset uses same config to move as much
-as possible common code in generic kernel. Additionaly this patchset
-introduces wrapper abstractions where arch specific handling is required.
-I looked at only x86 and risc-v while carving out common code and defining
-these abstractions. Mark, please take a look at this and point out if arm64
-would require something additional (or removal).
-
-I've not tested this. Only compiled for x86 with shadow stack enable. Thus
-this is a RFC and possible looking for some help to test as well on x86.
-
-[1] - https://lore.kernel.org/all/20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com/T/#m98d14237663150778a3f8df59a76a3fe6318624a
-
-[2] - https://lore.kernel.org/linux-arm-kernel/20241001-arm64-gcs-v13-0-222b78d87eee@kernel.org/T/#m1ff65a49873b0e770e71de7af178f581c72be7ad
-
-To: Thomas Gleixner <tglx@linutronix.de>
-To: Ingo Molnar <mingo@redhat.com>
-To: Borislav Petkov <bp@alien8.de>
-To: Dave Hansen <dave.hansen@linux.intel.com>
-To: x86@kernel.org
-To: H. Peter Anvin <hpa@zytor.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-To: Liam R. Howlett <Liam.Howlett@oracle.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-kernel@vger.kernel.org
-Cc: linux-fsdevel@vger.kernel.org
-Cc: linux-mm@kvack.org
-Cc: linux-arch@vger.kernel.org
-Cc: Rick Edgecombe <rick.p.edgecombe@intel.com>
-Cc: Mark Brown <broonie@kernel.org>
-
-Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+Suggested-by: David Hildenbrand <david@redhat.com>
+Acked-by: David Hildenbrand <david@redhat.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
+Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
 ---
-Deepak Gupta (2):
-      mm: helper `is_shadow_stack_vma` to check shadow stack vma
-      kernel: converge common shadow stack flow agnostic to arch
+ arch/x86/Kconfig   | 1 +
+ fs/proc/task_mmu.c | 2 +-
+ include/linux/mm.h | 2 +-
+ mm/Kconfig         | 6 ++++++
+ 4 files changed, 9 insertions(+), 2 deletions(-)
 
-Mark Brown (1):
-      mm: Introduce ARCH_HAS_USER_SHADOW_STACK
+diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+index 2852fcd82cbd..8ccae77d40f7 100644
+--- a/arch/x86/Kconfig
++++ b/arch/x86/Kconfig
+@@ -1954,6 +1954,7 @@ config X86_USER_SHADOW_STACK
+ 	depends on AS_WRUSS
+ 	depends on X86_64
+ 	select ARCH_USES_HIGH_VMA_FLAGS
++	select ARCH_HAS_USER_SHADOW_STACK
+ 	select X86_CET
+ 	help
+ 	  Shadow stack protection is a hardware feature that detects function
+diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+index 72f14fd59c2d..23f875e78eae 100644
+--- a/fs/proc/task_mmu.c
++++ b/fs/proc/task_mmu.c
+@@ -971,7 +971,7 @@ static void show_smap_vma_flags(struct seq_file *m, struct vm_area_struct *vma)
+ #ifdef CONFIG_HAVE_ARCH_USERFAULTFD_MINOR
+ 		[ilog2(VM_UFFD_MINOR)]	= "ui",
+ #endif /* CONFIG_HAVE_ARCH_USERFAULTFD_MINOR */
+-#ifdef CONFIG_X86_USER_SHADOW_STACK
++#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
+ 		[ilog2(VM_SHADOW_STACK)] = "ss",
+ #endif
+ #if defined(CONFIG_64BIT) || defined(CONFIG_PPC32)
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..57533b9cae95 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -354,7 +354,7 @@ extern unsigned int kobjsize(const void *objp);
+ #endif
+ #endif /* CONFIG_ARCH_HAS_PKEYS */
+ 
+-#ifdef CONFIG_X86_USER_SHADOW_STACK
++#ifdef CONFIG_ARCH_HAS_USER_SHADOW_STACK
+ /*
+  * VM_SHADOW_STACK should not be set with VM_SHARED because of lack of
+  * support core mm.
+diff --git a/mm/Kconfig b/mm/Kconfig
+index 4c9f5ea13271..4b2a1ef9a161 100644
+--- a/mm/Kconfig
++++ b/mm/Kconfig
+@@ -1296,6 +1296,12 @@ config NUMA_EMU
+ 	  into virtual nodes when booted with "numa=fake=N", where N is the
+ 	  number of nodes. This is only useful for debugging.
+ 
++config ARCH_HAS_USER_SHADOW_STACK
++	bool
++	help
++	  The architecture has hardware support for userspace shadow call
++          stacks (eg, x86 CET, arm64 GCS or RISC-V Zicfiss).
++
+ source "mm/damon/Kconfig"
+ 
+ endmenu
 
- arch/x86/Kconfig                       |   1 +
- arch/x86/include/asm/shstk.h           |   9 +
- arch/x86/include/uapi/asm/mman.h       |   3 -
- arch/x86/kernel/shstk.c                | 270 ++++++------------------------
- fs/proc/task_mmu.c                     |   2 +-
- include/linux/mm.h                     |   2 +-
- include/linux/usershstk.h              |  25 +++
- include/uapi/asm-generic/mman-common.h |   3 +
- kernel/Makefile                        |   2 +
- kernel/usershstk.c                     | 289 +++++++++++++++++++++++++++++++++
- mm/Kconfig                             |   6 +
- mm/gup.c                               |   2 +-
- mm/vma.h                               |  10 +-
- 13 files changed, 392 insertions(+), 232 deletions(-)
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20241010-shstk_converge-aefbcbef5d71
---
-- debug
+-- 
+2.45.0
 
 
