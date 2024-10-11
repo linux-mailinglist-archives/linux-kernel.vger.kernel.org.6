@@ -1,147 +1,93 @@
-Return-Path: <linux-kernel+bounces-361202-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4B299A505
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:29:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB1999A506
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:30:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD5F92823CA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:29:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D34C51F23CBE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:30:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03083218D70;
-	Fri, 11 Oct 2024 13:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2924E2194A5;
+	Fri, 11 Oct 2024 13:29:47 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A0620CCE6;
-	Fri, 11 Oct 2024 13:29:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C363620CCE6
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:29:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653382; cv=none; b=XKZxoPJ8N7FzLjb4q3u0lIrUBTGJJoLAmdrWh/yLzxdCOBUY/dVCwz/WixZGtzoNC0oB9w70GLPUAohZXNg4kb55zdheSa9YPTDgWWU3TzmG40JoPXFGlNiEFv04OaAOHa0XtTW9E2/D3oOjINfNb6Z97o3NHbhLCZDtyx7TUEI=
+	t=1728653386; cv=none; b=FW7GmRfOrEHDQ3on4p1JduvCCV6TxY3tUKEPxziEBR8dQ8LRQqpYcNhy4clnGGTow4C1udg/ig+ldhhHWAbIbMQYjWI1izvA3BxoyT6a03KdcEDnbcLzUPlHRGQsYsmHX8fpbTJZdvsN8bXoslcxJ1iYvuSDEkz2XT2rT4u9l68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653382; c=relaxed/simple;
-	bh=3/khhb4dshCmgaie0jZhAGL7mH9Ib6h+BrfD+wsuW2g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZzChSjVKfUA3F9Bf1Xn8M2rC0NYT5Tq/g9bWgHgtyI8erdLZa3YSvjGFO8RQbfsVxgYEuZeQi6LCmVL3xbYXbiLCXDfzsr1FA6vWwzmbxYKq1RoHpCErTMvaTAa05QJcum4dqYxehgLKrA7kwFFkVy0EL7uTdvKFBVlotdNnOMY=
+	s=arc-20240116; t=1728653386; c=relaxed/simple;
+	bh=EYaeIqvy5+cYHqrZlJUVfXMauHuio98DTE7XZd5BX78=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=GOlNjtKd6EnVQ7zTgvQKmsOEjVDiNwvrxaVpcLzrk792kUJnPKZQKj2RhDex6DUy87bO98qNogcQ8NLuYMmQVFrnYYEQFEGCHOZpxkMdDkcE/cseaxP7Kklm0+uAH1gQQsqiW57BMUc6IF+KCnAfB01r6laxHFOnH1VR9IrEVUY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6F09C4CEC7;
-	Fri, 11 Oct 2024 13:29:40 +0000 (UTC)
-Message-ID: <250bf825-7e64-4132-9c70-fa25c5976ed3@xs4all.nl>
-Date: Fri, 11 Oct 2024 15:29:39 +0200
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4F177C4CEC3;
+	Fri, 11 Oct 2024 13:29:46 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1szFiO-00000001QWz-1cBI;
+	Fri, 11 Oct 2024 09:29:56 -0400
+Message-ID: <20241011132941.339392460@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 11 Oct 2024 09:29:41 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [for-next][PATCH 0/4] ftrace: Updates for 6.13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 1/3] media: videodev2: Add flag to unconditionally
- enumerate pixel formats
-To: Benjamin Gaignard <benjamin.gaignard@collabora.com>, mchehab@kernel.org,
- ezequiel@vanguardiasur.com.ar
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, kernel@collabora.com
-References: <20240826172407.140538-1-benjamin.gaignard@collabora.com>
- <010201918fb77141-93148d3e-6899-4b09-bff3-5d4f146f1449-000000@eu-west-1.amazonses.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <010201918fb77141-93148d3e-6899-4b09-bff3-5d4f146f1449-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
 
-Hi Benjamin,
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+ftrace/for-next
 
-On 26/08/2024 19:24, Benjamin Gaignard wrote:
-> When the index is ORed with V4L2_FMTDESC_FLAG_ENUM_ALL the
-> driver clears the flag and enumerate all the possible formats,
-> ignoring any limitations from the current configuration.
-> Drivers which do not support this flag yet always return an EINVAL.
-> 
-> Signed-off-by: Benjamin Gaignard <benjamin.gaignard@collabora.com>
-> ---
-> change in version 7:
-> - Rework documentation about which drivers should use the flag
-> 
->  .../media/v4l/vidioc-enum-fmt.rst              | 18 +++++++++++++++++-
->  .../media/videodev2.h.rst.exceptions           |  1 +
->  include/uapi/linux/videodev2.h                 |  3 +++
->  3 files changed, 21 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> index 3adb3d205531..e39c87bcbfc3 100644
-> --- a/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> +++ b/Documentation/userspace-api/media/v4l/vidioc-enum-fmt.rst
-> @@ -85,7 +85,17 @@ the ``mbus_code`` field is handled differently:
->      * - __u32
->        - ``index``
->        - Number of the format in the enumeration, set by the application.
-> -	This is in no way related to the ``pixelformat`` field.
-> +        This is in no way related to the ``pixelformat`` field.
-> +        When the index is ORed with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` the
-> +        driver clears the flag and enumerates all the possible formats,
-> +        ignoring any limitations from the current configuration. Drivers
-> +        which do not support this flag always return an ``EINVAL``
-> +        error code.
+Head SHA1: 3e7814207b41eafafd49e6d8010c07f2d5831891
 
-I would like to add: " without clearing this flag."
 
-> +        Formats enumerated when using ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
-> +        shouldn't be used when calling :c:func:`VIDIOC_ENUM_FRAMESIZES`
-> +        or :c:func:`VIDIOC_ENUM_FRAMEINTERVALS`.
-> +        ``V4L2_FMTDESC_FLAG_ENUM_ALL`` should only be used by drivers that
-> +        can return different format list depending on this flag.
->      * - __u32
->        - ``type``
->        - Type of the data stream, set by the application. Only these types
-> @@ -234,6 +244,12 @@ the ``mbus_code`` field is handled differently:
->  	valid. The buffer consists of ``height`` lines, each having ``width``
->  	Data Units of data and the offset (in bytes) between the beginning of
->  	each two consecutive lines is ``bytesperline``.
-> +    * - ``V4L2_FMTDESC_FLAG_ENUM_ALL``
-> +      - 0x80000000
-> +      - When the applications ORs ``index`` with ``V4L2_FMTDESC_FLAG_ENUM_ALL`` flag
-> +        the driver enumerates all the possible pixel formats without taking care
-> +        of any already set configuration. Drivers which do not support this flag,
-> +        always return ``EINVAL``.
+Masami Hiramatsu (Google) (1):
+      fgraph: Simplify return address printing in function graph tracer
 
-Ditto.
+Steven Rostedt (3):
+      fgragh: No need to invoke the function call_filter_check_discard()
+      ftrace: Make ftrace_regs abstract from direct use
+      ftrace: Consolidate ftrace_regs accessor functions for archs using pt_regs
 
-If you agree, then I can make that change myself, no need to post a new version.
-
-Regards,
-
-	Hans
-
->  
->  Return Value
->  ============
-> diff --git a/Documentation/userspace-api/media/videodev2.h.rst.exceptions b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> index bdc628e8c1d6..0a9ea9686c24 100644
-> --- a/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> +++ b/Documentation/userspace-api/media/videodev2.h.rst.exceptions
-> @@ -216,6 +216,7 @@ replace define V4L2_FMT_FLAG_CSC_YCBCR_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_HSV_ENC fmtdesc-flags
->  replace define V4L2_FMT_FLAG_CSC_QUANTIZATION fmtdesc-flags
->  replace define V4L2_FMT_FLAG_META_LINE_BASED fmtdesc-flags
-> +replace define V4L2_FMTDESC_FLAG_ENUM_ALL fmtdesc-flags
->  
->  # V4L2 timecode types
->  replace define V4L2_TC_TYPE_24FPS timecode-type
-> diff --git a/include/uapi/linux/videodev2.h b/include/uapi/linux/videodev2.h
-> index 4e91362da6da..421a30cb0c51 100644
-> --- a/include/uapi/linux/videodev2.h
-> +++ b/include/uapi/linux/videodev2.h
-> @@ -904,6 +904,9 @@ struct v4l2_fmtdesc {
->  #define V4L2_FMT_FLAG_CSC_QUANTIZATION		0x0100
->  #define V4L2_FMT_FLAG_META_LINE_BASED		0x0200
->  
-> +/*  Format description flag, to be ORed with the index */
-> +#define V4L2_FMTDESC_FLAG_ENUM_ALL		0x80000000
-> +
->  	/* Frame Size and frame rate enumeration */
->  /*
->   *	F R A M E   S I Z E   E N U M E R A T I O N
-
+----
+ arch/arm64/include/asm/ftrace.h          | 21 ++++++------
+ arch/arm64/kernel/asm-offsets.c          | 22 ++++++-------
+ arch/arm64/kernel/ftrace.c               | 10 +++---
+ arch/loongarch/include/asm/ftrace.h      | 29 +++--------------
+ arch/loongarch/kernel/ftrace_dyn.c       |  2 +-
+ arch/powerpc/include/asm/ftrace.h        | 27 ++--------------
+ arch/powerpc/kernel/trace/ftrace.c       |  4 +--
+ arch/powerpc/kernel/trace/ftrace_64_pg.c |  2 +-
+ arch/riscv/include/asm/ftrace.h          | 22 +++++++------
+ arch/riscv/kernel/asm-offsets.c          | 28 ++++++++--------
+ arch/riscv/kernel/ftrace.c               |  2 +-
+ arch/s390/include/asm/ftrace.h           | 29 +++--------------
+ arch/s390/kernel/asm-offsets.c           |  4 +--
+ arch/s390/kernel/ftrace.c                |  2 +-
+ arch/s390/lib/test_unwind.c              |  4 +--
+ arch/x86/include/asm/ftrace.h            | 30 ++++-------------
+ arch/x86/kernel/ftrace.c                 |  2 +-
+ include/linux/ftrace.h                   | 55 ++++++++++++--------------------
+ include/linux/ftrace_regs.h              | 36 +++++++++++++++++++++
+ kernel/trace/fgraph.c                    | 45 ++++++++++++++++----------
+ kernel/trace/ftrace.c                    |  5 ++-
+ kernel/trace/trace.h                     |  3 +-
+ kernel/trace/trace_functions_graph.c     | 22 ++++++-------
+ kernel/trace/trace_irqsoff.c             |  3 +-
+ kernel/trace/trace_sched_wakeup.c        |  3 +-
+ kernel/trace/trace_selftest.c            |  8 ++---
+ 26 files changed, 188 insertions(+), 232 deletions(-)
+ create mode 100644 include/linux/ftrace_regs.h
 
