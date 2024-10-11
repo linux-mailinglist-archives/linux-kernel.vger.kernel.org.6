@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-361964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C59E699AF60
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:26:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0765599AF61
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:26:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E486B1C2733C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:26:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97C4828943F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CFA11E7668;
-	Fri, 11 Oct 2024 23:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC521E9073;
+	Fri, 11 Oct 2024 23:25:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RxFKRPAm"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VUIe64eR"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AF81E0B6D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 23:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06C0F1E7670
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 23:25:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728689144; cv=none; b=dy88fHHplxaesbd2kXX+qbegb5Lj6MkZvijCroHRQp/zTBvCoOfGBKIoKNiZcsPIRLgZ3yA8x9cMeYGUtNDuk2UeT0IjP08dV5zqF4A2mg8/VH+ZprIOgb50AK9e6zs2mgPPwqVogxkCyZhW/eS5dGcUjtlPem52cv4FoBOGu2A=
+	t=1728689147; cv=none; b=pwF5sEFm7JiQRw8aTlKb+MA6rvC1Q9XpcV3yP1K3aH8qZmgIAO83FJZVxmFdDkbmZC4dxLa93YTCgiYcAtuhUWH14gpEF4eEysFM+cB3nbpHCzjS3tvgwBHnRmI4JN4MX/YXW4Aj49jzi3kxEsngiuI/PbgJmAb6Qd7nNmaGH4c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728689144; c=relaxed/simple;
-	bh=urjROjbvvzG3adzYbMqYoVN99qnivB8A7yniPBhNj20=;
+	s=arc-20240116; t=1728689147; c=relaxed/simple;
+	bh=2MMOxSmQOaj45c8JI7ITrThZt6Tw6kmxdn7MPxX8Zj4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=frfIcjOFlRF/bq5iEbHp7b5k1leS44llzdKm+FgdzpmrA4MgEDfBfJyzhB68J9NkXNwL2Cc/RGNChC+edkVmjcMcqOgMYXInGQfmSRLuZP9yJS/ToygzPbPNmfgAQNhuQkZnFf1pWjsAYGXhE8v6TkAdKT9DyKYiU9yykCVdpaY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RxFKRPAm; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=pit7BXNQkoyeu9dNWYObOJB+JCwC6inHG9GyUO5OPwX3XvsNYzDGUnzLnyWCUT+fM5TpPMQN9v6xUFRJCK/XtlZpAbX99F1iSj4G0iYnj7L7/rRhJl+bpqGYm4Y7PwfWphsqF3vsJffcbbGNJVGiaXlhJMirk5HM+TSupyELHV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VUIe64eR; arc=none smtp.client-ip=209.85.215.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jstultz.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7ea0069a8b0so2476457a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:25:42 -0700 (PDT)
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-7ea0069a8b0so2476469a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:25:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728689142; x=1729293942; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728689144; x=1729293944; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zSymx5j9+ZJCHggN2DuLmX3gB/lIKt6AY663VlhicU=;
-        b=RxFKRPAm0iGtAgi7TiRpgbaazm8on5KnNx7JDVi84aBWxK1AyJCKRyfSIQkFr9Tmpw
-         AMghBAueRKZD9Yz2qPqfPhwbCFDz9edCqUYmDVoQPHnWYi+H3zgSjClnAquQKUmZdcSb
-         d6OSzDaWvcsDRszBjdbKGhDh6ICFApOtJurQwjx1BBq07JjjHRVyKyvEJQbyDHePxlMS
-         CxC9+OMooM+6qmz10wCOGdI5bGbIIHL0qzEbBSMWFw+1TmvY1iKK4MQCGqBaa6sMsxaE
-         RcZoSSxx9+os6AJHTMt95fMy708WMT9nFvQFwfGofUPP9PkWiyrhyFxvvVfozTub5ViU
-         QVYg==
+        bh=TmdfVKli6f+t2i8KGgDxePHnjVWNTK9utMAJ0OxuThg=;
+        b=VUIe64eR1CHi4pTsbuiCZdZGQlVO7D8/m6eVKz0E6Sj5zTzCnbbcNfx0W/7aetyCpE
+         kuhy0ZmMBCAIeUbZ3mMQc1E9wWLYdn78UQiAB48imUJa6VJ0Jm3EYqXUxP49nevRTQZM
+         HTQnDWuCptsxL66yGSobea+n0mjk2DlHoqRvCWSkrEJy1fFWDbYIp0NyEdlBT2I9whBN
+         2w0DQFZeJx7R5kywMzDj4RS2SJu9b9AB050wrj51Oc6yBRQZYBLjPTKlaZ0UIEnjy1qr
+         ZDuFmOWg/RO7GceF95o3Jkgq3XMwNm8wPKF1mkYwQVuKgFvW9g8/rM80qnMCGBod5EpL
+         lr+A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728689142; x=1729293942;
+        d=1e100.net; s=20230601; t=1728689144; x=1729293944;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/zSymx5j9+ZJCHggN2DuLmX3gB/lIKt6AY663VlhicU=;
-        b=ejQCl1f8iTpFcL3L02uVS4jTt6Z+I3fsjntVM4S59HnnLTOwPCj98sLYBfqljLBcTq
-         uvTbJCPVmw7twM+FIQBodYYj07jAxs7H9HDDDKI1OTw3GALELAcIuM07KuWuYvrfMJd1
-         itHhPWswDg8Dm2XjJj/oIvDmXTZ9CWk728ByXNjQRuNVab2tNlnlZQI8LkP7Lbqbb2JZ
-         C8k9vYT2eTTywpzArZmKLh08hEXgq5nYc1E6A8SMGZV4iRVJOKmb7EE2POx2iqI/y7dv
-         JEvbfWX+un3vquH/55OV9OrOoWbiju42fumQYpJM/GodRj/A2B4hp0esWaAlFJOMLj4y
-         b67w==
-X-Gm-Message-State: AOJu0YzW8+ME/uTAD64LOeYX0M74wuJrpSUMszT+3bnXrs2tpRY3erx5
-	BcdM268UVQMo28i8UmVbtxfIvM/rwlTisTOO/pqeiJBXivAHixYto8HWbfU5yZwDa3APV4BeCXO
-	JQutiJYQlrFkzD2IsDzoV6Jc5DGcG6WyC2V3dzmj8b4ziI/JRdGkNHIuPg5CBJrf6klrlNuui7W
-	DdoGecqsHxGvXc4ldZIY5hzAI6ji5BTZ+HeAstTLtU+bul
-X-Google-Smtp-Source: AGHT+IEijfMwwl5nsVTqDbSHbzV4cEsaxEpnYMdFNF9cXIcE7hTT62zKvUWPzw0G57DaYlcvR1v/Ownztaso
+        bh=TmdfVKli6f+t2i8KGgDxePHnjVWNTK9utMAJ0OxuThg=;
+        b=EdVo+BgcV9st0I7QaOAgqC3vFd14pAIqlNdBT2/KZ7qPLcXCxPawchTOjDOTaj24hy
+         /J80dR1D/rnsVARRjZmGA7gjlFpgOPN1WqIQlzheU/XsqgPD222nrVNRxXnQJZvipOQv
+         4kDpQ1iMvyuTilQi1WepTXGLEHyyudBX4Pd5I6+LOj7u4o6tjiNhjcSNUh26EGWMQNXN
+         xLoqpPuijMPja60wp6AL7xn4euAmcYVz/sSi4BQsaXFZgYETeea39abQQcPrbn2Mxjgw
+         xs5PU/qyMNNUZssYCFpG3a0mEFusDSHyARY3lcDmxKVn1MUIm+8nKnzIEz+x4FBYEJQj
+         bjQQ==
+X-Gm-Message-State: AOJu0Ywp9/MXtOrat6ko8Fl2OYpNlH7BGlbFGiNO1EGwMbDEhDGzRZS0
+	hXdyi8adhgw+uSU7lvELjcXbhXSassYEC6FT306cD75D8Y/fKp05qxMjQHctXkxK4O/fCFSw0Jq
+	JWcEuBhLY1BUXBpEOpJ1yLFs6lloYRU3iaFgV234OjiK0VcB0IV3WTffl5gr2E16H1KHQTsmlB7
+	sJBtG4nrRGdnD2TH/mbT0ryorHHETJDGM4ks/EmY2Ll/80
+X-Google-Smtp-Source: AGHT+IEbAY3tUbeddT/n7uJQtatQtjVyFSsRZDwaIBPWNPSgL5WFmRrvAG+MDLJ1h8NYBadiOpOyoi+88I53
 X-Received: from jstultz-noogler2.c.googlers.com ([fda3:e722:ac3:cc00:24:72f4:c0a8:600])
- (user=jstultz job=sendgmr) by 2002:a63:de55:0:b0:7cd:8b26:15df with SMTP id
- 41be03b00d2f7-7ea5358e84cmr3375a12.7.1728689141080; Fri, 11 Oct 2024 16:25:41
+ (user=jstultz job=sendgmr) by 2002:a17:90a:9a94:b0:2e2:da81:40c1 with SMTP id
+ 98e67ed59e1d1-2e2f09f2280mr6662a91.1.1728689142910; Fri, 11 Oct 2024 16:25:42
  -0700 (PDT)
-Date: Fri, 11 Oct 2024 16:25:15 -0700
+Date: Fri, 11 Oct 2024 16:25:16 -0700
 In-Reply-To: <20241011232525.2513424-1-jstultz@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,30 +73,32 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241011232525.2513424-1-jstultz@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241011232525.2513424-4-jstultz@google.com>
-Subject: [PATCH v13 3/7] locking/mutex: Expose __mutex_owner()
+Message-ID: <20241011232525.2513424-5-jstultz@google.com>
+Subject: [PATCH v13 4/7] sched: Add move_queued_task_locked helper
 From: John Stultz <jstultz@google.com>
 To: LKML <linux-kernel@vger.kernel.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Joel Fernandes <joelaf@google.com>, 
+Cc: "Connor O'Brien" <connoro@google.com>, Joel Fernandes <joelaf@google.com>, 
 	Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	Dietmar Eggemann <dietmar.eggemann@arm.com>, Valentin Schneider <vschneid@redhat.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, 
-	Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, Will Deacon <will@kernel.org>, 
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Valentin Schneider <vschneid@redhat.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Ben Segall <bsegall@google.com>, Zimuzo Ezeozue <zezeozue@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
 	"Paul E. McKenney" <paulmck@kernel.org>, Metin Kaya <Metin.Kaya@arm.com>, 
 	Xuewen Yan <xuewen.yan94@gmail.com>, K Prateek Nayak <kprateek.nayak@amd.com>, 
 	Thomas Gleixner <tglx@linutronix.de>, Daniel Lezcano <daniel.lezcano@linaro.org>, kernel-team@android.com, 
-	Metin Kaya <metin.kaya@arm.com>, Valentin Schneider <valentin.schneider@arm.com>, 
-	"Connor O'Brien" <connoro@google.com>, John Stultz <jstultz@google.com>
+	Metin Kaya <metin.kaya@arm.com>, John Stultz <jstultz@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-From: Juri Lelli <juri.lelli@redhat.com>
+From: Connor O'Brien <connoro@google.com>
 
-Implementing proxy execution requires that scheduler code be able to
-identify the current owner of a mutex. Expose __mutex_owner() for
-this purpose (alone!). Includes a null mutex check, so that users
-of the function can be simplified.
+Switch logic that deactivates, sets the task cpu,
+and reactivates a task on a different rq to use a
+helper that will be later extended to push entire
+blocked task chains.
+
+This patch was broken out from a larger chain migration
+patch originally by Connor O'Brien.
 
 Cc: Joel Fernandes <joelaf@google.com>
 Cc: Qais Yousef <qyousef@layalina.io>
@@ -124,102 +126,140 @@ Tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
 Tested-by: Metin Kaya <metin.kaya@arm.com>
 Reviewed-by: Metin Kaya <metin.kaya@arm.com>
 Reviewed-by: Valentin Schneider <vschneid@redhat.com>
-Signed-off-by: Juri Lelli <juri.lelli@redhat.com>
-[Removed the EXPORT_SYMBOL]
-Signed-off-by: Valentin Schneider <valentin.schneider@arm.com>
+Reviewed-by: Qais Yousef <qyousef@layalina.io>
 Signed-off-by: Connor O'Brien <connoro@google.com>
-[jstultz: Reworked per Peter's suggestions]
+[jstultz: split out from larger chain migration patch]
 Signed-off-by: John Stultz <jstultz@google.com>
 ---
-v4:
-* Move __mutex_owner() to kernel/locking/mutex.h instead of
-  adding a new globally available accessor function to keep
-  the exposure of this low, along with keeping it an inline
-  function, as suggested by PeterZ
+v8:
+* Renamed from push_task_chain to do_push_task so it makes
+  more sense without proxy-execution
 v10:
-* Handle null lock ptr, to simplify later code, as suggested
-  by Metin Kaya
+* Changed name to move_queued_task_locked as suggested by Valentin
 v11:
-* Tweak commit message suggested by Metin Kaya
+* Also use new helper in __migrate_swap_task() and
+  try_steal_cookie() as suggested by Qais Yousef
+* Nit cleanups suggested by Metin
 ---
- kernel/locking/mutex.c | 25 -------------------------
- kernel/locking/mutex.h | 27 +++++++++++++++++++++++++++
- 2 files changed, 27 insertions(+), 25 deletions(-)
+ kernel/sched/core.c     | 13 +++----------
+ kernel/sched/deadline.c |  8 ++------
+ kernel/sched/rt.c       |  8 ++------
+ kernel/sched/sched.h    | 12 ++++++++++++
+ 4 files changed, 19 insertions(+), 22 deletions(-)
 
-diff --git a/kernel/locking/mutex.c b/kernel/locking/mutex.c
-index cd248d1767eb..3302e52f0c96 100644
---- a/kernel/locking/mutex.c
-+++ b/kernel/locking/mutex.c
-@@ -56,31 +56,6 @@ __mutex_init(struct mutex *lock, const char *name, struct lock_class_key *key)
- }
- EXPORT_SYMBOL(__mutex_init);
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 43e453ab7e20..615fc7a7b17c 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -2615,9 +2615,7 @@ int push_cpu_stop(void *arg)
  
--/*
-- * @owner: contains: 'struct task_struct *' to the current lock owner,
-- * NULL means not owned. Since task_struct pointers are aligned at
-- * at least L1_CACHE_BYTES, we have low bits to store extra state.
-- *
-- * Bit0 indicates a non-empty waiter list; unlock must issue a wakeup.
-- * Bit1 indicates unlock needs to hand the lock to the top-waiter
-- * Bit2 indicates handoff has been done and we're waiting for pickup.
-- */
--#define MUTEX_FLAG_WAITERS	0x01
--#define MUTEX_FLAG_HANDOFF	0x02
--#define MUTEX_FLAG_PICKUP	0x04
--
--#define MUTEX_FLAGS		0x07
--
--/*
-- * Internal helper function; C doesn't allow us to hide it :/
-- *
-- * DO NOT USE (outside of mutex code).
-- */
--static inline struct task_struct *__mutex_owner(struct mutex *lock)
--{
--	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~MUTEX_FLAGS);
--}
--
- static inline struct task_struct *__owner_task(unsigned long owner)
- {
- 	return (struct task_struct *)(owner & ~MUTEX_FLAGS);
-diff --git a/kernel/locking/mutex.h b/kernel/locking/mutex.h
-index 0b2a79c4013b..cbff35b9b7ae 100644
---- a/kernel/locking/mutex.h
-+++ b/kernel/locking/mutex.h
-@@ -20,6 +20,33 @@ struct mutex_waiter {
- #endif
- };
+ 	// XXX validate p is still the highest prio task
+ 	if (task_rq(p) == rq) {
+-		deactivate_task(rq, p, 0);
+-		set_task_cpu(p, lowest_rq->cpu);
+-		activate_task(lowest_rq, p, 0);
++		move_queued_task_locked(rq, lowest_rq, p);
+ 		resched_curr(lowest_rq);
+ 	}
  
-+/*
-+ * @owner: contains: 'struct task_struct *' to the current lock owner,
-+ * NULL means not owned. Since task_struct pointers are aligned at
-+ * at least L1_CACHE_BYTES, we have low bits to store extra state.
-+ *
-+ * Bit0 indicates a non-empty waiter list; unlock must issue a wakeup.
-+ * Bit1 indicates unlock needs to hand the lock to the top-waiter
-+ * Bit2 indicates handoff has been done and we're waiting for pickup.
-+ */
-+#define MUTEX_FLAG_WAITERS	0x01
-+#define MUTEX_FLAG_HANDOFF	0x02
-+#define MUTEX_FLAG_PICKUP	0x04
-+
-+#define MUTEX_FLAGS		0x07
-+
-+/*
-+ * Internal helper function; C doesn't allow us to hide it :/
-+ *
-+ * DO NOT USE (outside of mutex & scheduler code).
-+ */
-+static inline struct task_struct *__mutex_owner(struct mutex *lock)
+@@ -3303,9 +3301,7 @@ static void __migrate_swap_task(struct task_struct *p, int cpu)
+ 		rq_pin_lock(src_rq, &srf);
+ 		rq_pin_lock(dst_rq, &drf);
+ 
+-		deactivate_task(src_rq, p, 0);
+-		set_task_cpu(p, cpu);
+-		activate_task(dst_rq, p, 0);
++		move_queued_task_locked(src_rq, dst_rq, p);
+ 		wakeup_preempt(dst_rq, p, 0);
+ 
+ 		rq_unpin_lock(dst_rq, &drf);
+@@ -6293,10 +6289,7 @@ static bool try_steal_cookie(int this, int that)
+ 		if (sched_task_is_throttled(p, this))
+ 			goto next;
+ 
+-		deactivate_task(src, p, 0);
+-		set_task_cpu(p, this);
+-		activate_task(dst, p, 0);
+-
++		move_queued_task_locked(src, dst, p);
+ 		resched_curr(dst);
+ 
+ 		success = true;
+diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+index 9ce93d0bf452..6c87d812efbe 100644
+--- a/kernel/sched/deadline.c
++++ b/kernel/sched/deadline.c
+@@ -2751,9 +2751,7 @@ static int push_dl_task(struct rq *rq)
+ 		goto retry;
+ 	}
+ 
+-	deactivate_task(rq, next_task, 0);
+-	set_task_cpu(next_task, later_rq->cpu);
+-	activate_task(later_rq, next_task, 0);
++	move_queued_task_locked(rq, later_rq, next_task);
+ 	ret = 1;
+ 
+ 	resched_curr(later_rq);
+@@ -2839,9 +2837,7 @@ static void pull_dl_task(struct rq *this_rq)
+ 			if (is_migration_disabled(p)) {
+ 				push_task = get_push_task(src_rq);
+ 			} else {
+-				deactivate_task(src_rq, p, 0);
+-				set_task_cpu(p, this_cpu);
+-				activate_task(this_rq, p, 0);
++				move_queued_task_locked(src_rq, this_rq, p);
+ 				dmin = p->dl.deadline;
+ 				resched = true;
+ 			}
+diff --git a/kernel/sched/rt.c b/kernel/sched/rt.c
+index 172c588de542..e2506ab33c97 100644
+--- a/kernel/sched/rt.c
++++ b/kernel/sched/rt.c
+@@ -2088,9 +2088,7 @@ static int push_rt_task(struct rq *rq, bool pull)
+ 		goto retry;
+ 	}
+ 
+-	deactivate_task(rq, next_task, 0);
+-	set_task_cpu(next_task, lowest_rq->cpu);
+-	activate_task(lowest_rq, next_task, 0);
++	move_queued_task_locked(rq, lowest_rq, next_task);
+ 	resched_curr(lowest_rq);
+ 	ret = 1;
+ 
+@@ -2361,9 +2359,7 @@ static void pull_rt_task(struct rq *this_rq)
+ 			if (is_migration_disabled(p)) {
+ 				push_task = get_push_task(src_rq);
+ 			} else {
+-				deactivate_task(src_rq, p, 0);
+-				set_task_cpu(p, this_cpu);
+-				activate_task(this_rq, p, 0);
++				move_queued_task_locked(src_rq, this_rq, p);
+ 				resched = true;
+ 			}
+ 			/*
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index b1c3588a8f00..b904a5004eae 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -3768,6 +3768,18 @@ static inline void init_sched_mm_cid(struct task_struct *t) { }
+ 
+ extern u64 avg_vruntime(struct cfs_rq *cfs_rq);
+ extern int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se);
++#ifdef CONFIG_SMP
++static inline
++void move_queued_task_locked(struct rq *src_rq, struct rq *dst_rq, struct task_struct *task)
 +{
-+	if (!lock)
-+		return NULL;
-+	return (struct task_struct *)(atomic_long_read(&lock->owner) & ~MUTEX_FLAGS);
-+}
++	lockdep_assert_rq_held(src_rq);
++	lockdep_assert_rq_held(dst_rq);
 +
- #ifdef CONFIG_DEBUG_MUTEXES
- extern void debug_mutex_lock_common(struct mutex *lock,
- 				    struct mutex_waiter *waiter);
++	deactivate_task(src_rq, task, 0);
++	set_task_cpu(task, dst_rq->cpu);
++	activate_task(dst_rq, task, 0);
++}
++#endif
+ 
+ #ifdef CONFIG_RT_MUTEXES
+ 
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
