@@ -1,118 +1,102 @@
-Return-Path: <linux-kernel+bounces-360338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88FA29999C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:46:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E586B9999D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:49:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D731F23E63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:46:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2124F1C22DDF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:49:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681C91426C;
-	Fri, 11 Oct 2024 01:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mdkytAbu"
-Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7BC1759F;
+	Fri, 11 Oct 2024 01:49:42 +0000 (UTC)
+Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83BA15E97;
-	Fri, 11 Oct 2024 01:46:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4581DFC0B;
+	Fri, 11 Oct 2024 01:49:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728611195; cv=none; b=KhlboRMNrfl75/kXbrt79rr7XFkW/y/xDWTyZnaSuI8g7ZkrouWcC+J+0XU8W9goOK8aFTNo2NfcMPgYU9bM5boPeS7evCI0D3RNYltM/Cs57/bvtI9q01l2LfWConYv9UNmz/uNX0Zn3rxWCczsWKOoyjC5Tv5j3WjULdtH/6Y=
+	t=1728611381; cv=none; b=kRMHnIVV91qkvQPb8KapELi/jm0tyv2EMZOq2m7NaphmA3+644EUTTy3Tp3dU3RX2voKu42Zo/hna33j3kZtti1Oo+q9dBpo37GCCiUi1+WT2dvFWiqlxDziAN0OIk0rNnm7bDE5AIHRz0LGhpmQDagmob2cuCSOmmrPU3Nn/TI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728611195; c=relaxed/simple;
-	bh=V1ex6JnBkyArAbLsBg6zh29Yuy7ncQOxbLp2XoOjxBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pwLJx0YohdTeCmm9hrm2/Cw1r9KIiFEm/vpKECM7IOg3HgtKgNtaYQhSyKW8oiCoKTGy6WLIy++t/lO18VmTkotC8YrPXZ6dA/gD3qI2qEtvKRr6R0YqnwHaoWxTP9cFn/lt+vsQK5c4bCiCNjoUvpmCl2HrHjqTr0cDWXBmgMo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mdkytAbu; arc=none smtp.client-ip=115.124.30.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728611190; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=Aq/pEFbbDoLqCT/1dwacA/sA0zk+kGqwRRgdCZkAyoE=;
-	b=mdkytAbu6v/wvF9I+pbuiuFJMO6APMDlQ1Q1DOAAkJEzPHrtmarbB7Dk9JlT7WRo3S0dS6wrVqfncDBHQ0i5LO0ihO9vYXCKcYOXMdcSZsFy7S6tLuJ3LGPpX6IM99sf7C0VDc1ki0RHa7qBRdDhft/4mFJdcslDT7neSzn7lGg=
-Received: from 30.221.128.133(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WGo3O4w_1728611189 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 11 Oct 2024 09:46:29 +0800
-Message-ID: <76395c99-a656-42c0-a004-b5e8db241ed0@linux.alibaba.com>
-Date: Fri, 11 Oct 2024 09:46:27 +0800
+	s=arc-20240116; t=1728611381; c=relaxed/simple;
+	bh=VzU/r74608DW8rwP3q/dNanxvdMrpgci97YcayLvb2k=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=j/LDe7by4ysvp8Rm1CPyruX4piXrVjluG+VMjupueZky9foL+dEQhgHW6ZH56K0RWfWTkKQkTjBLwgWnefRoFkaq+OibWtV9IS1q1/tGR4FEMtVoYNAKsKtQxNhUlhm3tw+7FqkEXujdqpPkwZd/aXuusoepUPQ0RCxkhFJ02vI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
+Received: from dlp.unisoc.com ([10.29.3.86])
+	by SHSQR01.spreadtrum.com with ESMTP id 49B1lclI040915;
+	Fri, 11 Oct 2024 09:47:38 +0800 (+08)
+	(envelope-from Xiuhong.Wang@unisoc.com)
+Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
+	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XPq6d43yJz2RY1yf;
+	Fri, 11 Oct 2024 09:39:21 +0800 (CST)
+Received: from tj10379pcu.spreadtrum.com (10.5.32.15) by
+ BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
+ 15.0.1497.23; Fri, 11 Oct 2024 09:47:34 +0800
+From: Xiuhong Wang <xiuhong.wang@unisoc.com>
+To: <tj@kernel.org>, <josef@toxicpanda.com>, <axboe@kernel.dk>,
+        <cgroups@vger.kernel.org>, <linux-block@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+CC: <niuzhiguo84@gmail.com>, <ke.wang@unisoc.com>, <xiuhong.wang.cn@gmail.com>
+Subject: [PATCH] Revert "blk-throttle: Fix IO hang for a corner case"
+Date: Fri, 11 Oct 2024 09:47:24 +0800
+Message-ID: <20241011014724.2199182-1-xiuhong.wang@unisoc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf-next] bpf: Add rcu ptr in btf_id_sock_common_types
-To: Martin KaFai Lau <martin.lau@linux.dev>
-Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
- andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, xuanzhuo@linux.alibaba.com,
- bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241008080916.44724-1-lulie@linux.alibaba.com>
- <80cb3d4b-cebb-4f08-865d-354110a54467@linux.dev>
- <2e3f676a-ef03-4618-852d-ceb3b620a640@linux.alibaba.com>
- <7b090ca5-7997-4371-8d79-7862a7e27052@linux.dev>
-From: Philo Lu <lulie@linux.alibaba.com>
-In-Reply-To: <7b090ca5-7997-4371-8d79-7862a7e27052@linux.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SHCAS03.spreadtrum.com (10.0.1.207) To
+ BJMBX02.spreadtrum.com (10.0.64.8)
+X-MAIL:SHSQR01.spreadtrum.com 49B1lclI040915
 
+This reverts commit 5b7048b89745c3c5fb4b3080fb7bced61dba2a2b.
 
+The throtl_adjusted_limit function was removed after
+commit bf20ab538c81 ("blk-throttle: remove
+CONFIG_BLK_DEV_THROTTLING_LOW"), so the problem of not being
+able to scale after setting bps or iops to 1 will not occur.
+So revert this commit that bps/iops can be set to 1.
 
-On 2024/10/11 06:07, Martin KaFai Lau wrote:
-> On 10/8/24 7:23 PM, Philo Lu wrote:
->>
->>
->> On 2024/10/9 03:05, Martin KaFai Lau wrote:
->>> On 10/8/24 1:09 AM, Philo Lu wrote:
->>>> Sometimes sk is dereferenced as an rcu ptr, such as skb->sk in tp_btf,
->>>> which is a valid type of sock common. Then helpers like bpf_skc_to_*()
->>>> can be used with skb->sk.
->>>>
->>>> For example, the following prog will be rejected without this patch:
->>>> ```
->>>> SEC("tp_btf/tcp_bad_csum")
->>>> int BPF_PROG(tcp_bad_csum, struct sk_buff* skb)
->>>> {
->>>>     struct sock *sk = skb->sk;
->>>>     struct tcp_sock *tp;
->>>>
->>>>     if (!sk)
->>>>         return 0;
->>>>     tp = bpf_skc_to_tcp_sock(sk);
->>>
->>> If the use case is for reading the fields in tp, please use the 
->>> bpf_core_cast from the libbpf's bpf_core_read.h. bpf_core_cast is 
->>> using the bpf_rdonly_cast kfunc underneath.
->>>
->>
->> Thank you! This works for me so this patch is unnecessary then.
->>
->> Just curious is there any technical issue to include rcu_ptr into 
->> btf_id_sock_common_types? AFAICT rcu_ptr should also be a valid ptr 
->> type, and then btf_id_sock_common_types will behave like 
->> (PTR_TO_BTF_ID + &btf_sock_ids[BTF_SOCK_TYPE_SOCK_COMMON]) in 
->> bpf_func_proto.
-> 
-> bpf_skc_to_*() returns a PTR_TO_BTF_ID which can be passed into other 
-> helpers that takes ARG_PTR_TO_BTF_ID_SOCK_COMMON. There are helpers that 
-> change the sk. e.g. bpf_setsockopt() changes the sk and needs sk to be 
-> locked. Other non tracing hooks do have a hold on the skb also. I did 
-> take a quick look at the bpf_setsockopt situation and looks ok. I am 
-> positive there are other helpers that need to audit first.
-> 
-> Tracing use case should only read the sk. bpf_core_cast() is the correct 
-> one to use. The bpf_sk_storage_{get,delete}() should be the only allowed 
-> helper that can change the sk.
+Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+Cc: Yu Kuai <yukuai3@huawei.com>
+Signed-off-by: Xiuhong Wang <xiuhong.wang@unisoc.com>
+Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+---
+ block/blk-throttle.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
-Thank you for explanation, Martin. This helps me a lot.
+diff --git a/block/blk-throttle.c b/block/blk-throttle.c
+index 2c4192e12efa..443d1f47c2ce 100644
+--- a/block/blk-throttle.c
++++ b/block/blk-throttle.c
+@@ -1485,13 +1485,13 @@ static ssize_t tg_set_limit(struct kernfs_open_file *of,
+ 			goto out_finish;
+ 
+ 		ret = -EINVAL;
+-		if (!strcmp(tok, "rbps") && val > 1)
++		if (!strcmp(tok, "rbps"))
+ 			v[0] = val;
+-		else if (!strcmp(tok, "wbps") && val > 1)
++		else if (!strcmp(tok, "wbps"))
+ 			v[1] = val;
+-		else if (!strcmp(tok, "riops") && val > 1)
++		else if (!strcmp(tok, "riops"))
+ 			v[2] = min_t(u64, val, UINT_MAX);
+-		else if (!strcmp(tok, "wiops") && val > 1)
++		else if (!strcmp(tok, "wiops"))
+ 			v[3] = min_t(u64, val, UINT_MAX);
+ 		else
+ 			goto out_finish;
 -- 
-Philo
+2.25.1
 
 
