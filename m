@@ -1,139 +1,189 @@
-Return-Path: <linux-kernel+bounces-360694-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93BA7999E1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:40:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57E55999E25
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3ED891F216DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:40:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E0BE1C20EB0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD3B20A5E8;
-	Fri, 11 Oct 2024 07:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 395F0209F55;
+	Fri, 11 Oct 2024 07:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gdj7QnNb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="M8ctGUKK"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 943A6207A30;
-	Fri, 11 Oct 2024 07:40:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49F5C209689
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728632414; cv=none; b=j1GhOfnaoS1PG1zKuGxDEP1wcecFAyZ+i4zxXL70zXMAKtvHJS6uJRFjrBVkg+Z8Ruc5SNXb/+nqADAB/YxhlNq/00jaI4AWh9qKk0c+c7AQuWywt38cZf3yUW8Qn18SzJE5kf1hXIuzi7RIk9DfiRyGbwzB1i01/GCNgFbQh4c=
+	t=1728632534; cv=none; b=bQyWsg7/DcblHosPj4jniWT0nRPBZG380QzTqziutLP1+gofaOjI8zebm1/Mz1B+hPtGQeMrXnAPhN6F2yA2hR3td0zrwVmHj/MbZkpQSWQko9vhFFtIunDvJ3tHfXVeLpSMMECTYuVeskxQfWeoEiAzxiUbxZ4GALWYaq7tXcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728632414; c=relaxed/simple;
-	bh=ufe1xPjenN3eDVYHCnQkY7klh2kLErGpDUiRsq7Aygw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UN/e5quBbcDzsSlPecJcGru/ybodBCpIcJczH6c6KMlzKBcM6TVVBriV/I8JrlInZlvdoHJFlqFEOxKo2lWLhmFSTMZ4uzRqMwBuGvTD8F25CUlYVX5A8RTaep6FoiDMQcEgPacrLS72mvMRnfsB37DxW7UzbyiLASzWBO03OjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gdj7QnNb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BFA3C4CEC3;
-	Fri, 11 Oct 2024 07:40:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728632414;
-	bh=ufe1xPjenN3eDVYHCnQkY7klh2kLErGpDUiRsq7Aygw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gdj7QnNbS+n42PAUJAwDuz5+0Vwz+wKsoXpey0YtbomEQzGZV8tFN39xZfOkxF2ys
-	 ZI6Bxxw8ubCw/mRkjd7ExwOSIxyJ9iWNH1BO1/AcAz1tB3elvRW8v08dzSVu35dfua
-	 M27wFxddC5poYu3O2rsMjTbdrVpISZY+W2qN1ykiFCjJkbCyjwalVCh+83gtEItOdO
-	 Zs9zwBHvkHQ09kYMoTtiKf9weBydE8uvBpqGIv/NlL1TUaNCySPI+5POLjO6Y/8rtm
-	 cBtNLr2To/Tu9D3N1pxj+U+qqxzOr+YMlYEG3WXx2HF3RDYl2k4RW8o3QVfpo1WEyM
-	 0a4JcFIKG37Cw==
-Date: Fri, 11 Oct 2024 08:40:09 +0100
-From: Lee Jones <lee@kernel.org>
-To: Karel Balej <balejk@matfyz.cz>
-Cc: duje.mihanovic@skole.hr, phone-devel@vger.kernel.org,
-	~postmarketos/upstreaming@lists.sr.ht,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: (subset) [RFC PATCH 1/2] mfd: 88pm886: add the RTC cell and
- relevant definitions
-Message-ID: <20241011074009.GM661995@google.com>
-References: <20240920161518.32346-1-balejk@matfyz.cz>
- <172846840369.471299.4136306941601177946.b4-ty@kernel.org>
- <D4RIBTPD0W5Y.198XNBY2OIDGL@matfyz.cz>
- <20241010083100.GB661995@google.com>
- <20241010083519.GC661995@google.com>
- <D4S9WUGGL00V.16E4ARKMPS1JJ@matfyz.cz>
+	s=arc-20240116; t=1728632534; c=relaxed/simple;
+	bh=+R5HHutOZN5y8/merz2EeKl7lAPJJcSjtUI7r0cqqs0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=CBU2W5URgXOHtduhAOtwPc9eLSRAQpSLdq/HZGaXpTVKmdHYo5vYiLsMsirAuruo1JcwL258931JcaiGEZgsKXgbjuk0IObv4uzG9UeljYsP/iXpw9JfIMeX2N7GErZrJbqMjID6oB/zH0N6KBSNvJyE8GUJ9J15v5iJZwqC4vw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=M8ctGUKK; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49B7fEvc109082;
+	Fri, 11 Oct 2024 02:41:14 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728632474;
+	bh=es33GNqyh9UGspSpIYLSp8Xp0iI1EizL9XtOPEzEOXY=;
+	h=From:To:CC:Subject:Date;
+	b=M8ctGUKKgVt93eHVA3ogSvefqhEmJNxiOj4x5dS2FfVuNSLHJ5Nb3/5SMFs4uVta+
+	 rD8+odF7nq8a11NZnXCWF6XZB3qZAQFYPud1CD7Exe0DVxV+3EzL7mTdD/Z9wLihuy
+	 2+KcOnn/NjsYd/R5j1cAkBFvek33WUghPibNez94=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49B7fEcW016669;
+	Fri, 11 Oct 2024 02:41:14 -0500
+Received: from DFLE102.ent.ti.com (10.64.6.23) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Oct 2024 02:41:14 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Oct 2024 02:41:14 -0500
+Received: from lelvsmtp6.itg.ti.com ([10.250.165.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49B7f5jZ039969;
+	Fri, 11 Oct 2024 02:41:06 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <pierre-louis.bossart@linux.intel.com>, <kevin-lu@ti.com>,
+        <shenghao-ding@ti.com>, <navada@ti.com>, <13916275206@139.com>,
+        <v-hampiholi@ti.com>, <v-po@ti.com>, <niranjan.hy@ti.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <liam.r.girdwood@intel.com>, <yung-chuan.liao@linux.intel.com>,
+        <baojun.xu@ti.com>, <broonie@kernel.org>, <soyer@irl.hu>
+Subject: [PATCH v1] ALSA: hda/tas2781: Add new quirk for Lenovo, ASUS, Dell projects
+Date: Fri, 11 Oct 2024 15:40:40 +0800
+Message-ID: <20241011074040.524-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <D4S9WUGGL00V.16E4ARKMPS1JJ@matfyz.cz>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 10 Oct 2024, Karel Balej wrote:
+Add new vendor_id and subsystem_id in quirk for Lenovo, ASUS,
+and Dell projects.
 
-> Lee Jones, 2024-10-10T09:35:19+01:00:
-> > On Thu, 10 Oct 2024, Lee Jones wrote:
-> >
-> > > On Wed, 09 Oct 2024, Karel Balej wrote:
-> > > 
-> > > > Lee Jones, 2024-10-09T11:06:43+01:00:
-> > > > > On Fri, 20 Sep 2024 18:12:34 +0200, Karel Balej wrote:
-> > > > > > RTC lives on the base register page of the chip. Add definitions of the
-> > > > > > registers needed for a basic set/read time functionality.
-> > > > > > 
-> > > > > > 
-> > > > >
-> > > > > Applied, thanks!
-> > > > 
-> > > > Thank you, however I'm a little perplexed.
-> > > > 
-> > > > It was my understanding that RFC patches should not be applied without
-> > > > further agreement, is that not the case? Obviously this patch was very
-> > > > simple and I used RFC mainly because of the RTC driver itself, but I'm
-> > > > curious to know for future submissions.
-> > > 
-> > > I missed the fact that this was an RFC.  I can unapply it if you like?
-> > > 
-> > > > Also, I expected the entire series to go at once through the rtc tree
-> > > > with your ack as while it is not a strict dependency in terms of
-> > > > breakage, the first patch seems rather pointless without the follow-up
-> > > > which could theoretically take a long time to get applied and even some
-> > > > requested changes could require changes to this patch. Could you please
-> > > > explain what the policy is on this?
-> > > 
-> > > The policy is flexible.  However, the generally accepted rule is that if
-> > > there are build-time dependencies between patches, then one maintainer
-> > > (usually me since MFD is usually at the centre of these cross-subsystem
-> > > patch-sets) takes them and sends out a pull-request for an immutable
-> > > branch for the other maintainers to pull from.
-> > > 
-> > > However in this case, there are no build-time dependencies so the
-> > > patches are able to and therefore should go in via their respective
-> > > repos.
-> >
-> > Actually, it looks like there are build-time deps between them.
-> 
-> Indeed, I didn't realize that yesterday. What I had in mind before was
-> in fact the other part of the patch: I was wondering about the policy of
-> applying a patch adding a MFD cell for which there is no driver
-> available. That's what I meant by "not a strict dependency in terms of
-> breakage".
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ sound/pci/hda/patch_realtek.c | 29 +++++++++++++++++++++++++++++
+ 1 file changed, 29 insertions(+)
 
-I've become less strict about that over the years.  The chances of the
-accompanying driver not going in over the next release or so is usually
-very small.
-
-> > Please break out the inclusion of the additional defines and place them
-> > into the RTC patch.  I will then Ack that one.  The patch making changes
-> > to driver/mfd will still go in via the MFD repo.
-> 
-> So the above in other words: it sounds like you would apply this updated
-> patch independently of the RTC driver because otherwise you could just
-> ack the current version, is that correct? If so, I cannot see why this
-> would be preferable given what I wrote before about the RTC driver being
-> possibly delayed or eventually given up on (not that I would expect that
-> to be the case here :-). Could you please still comment on this then?
-
-As above.  I trust you. :)
-
+diff --git a/sound/pci/hda/patch_realtek.c b/sound/pci/hda/patch_realtek.c
+index 5e2e927656cd..28d8e58e7fee 100644
+--- a/sound/pci/hda/patch_realtek.c
++++ b/sound/pci/hda/patch_realtek.c
+@@ -10198,6 +10198,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1028, 0x0c1e, "Dell Precision 3540", ALC236_FIXUP_DELL_DUAL_CODECS),
+ 	SND_PCI_QUIRK(0x1028, 0x0c28, "Dell Inspiron 16 Plus 7630", ALC295_FIXUP_DELL_INSPIRON_TOP_SPEAKERS),
+ 	SND_PCI_QUIRK(0x1028, 0x0c4d, "Dell", ALC287_FIXUP_CS35L41_I2C_4),
++	SND_PCI_QUIRK(0x1028, 0x0c94, "Dell Polaris 3 metal", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1028, 0x0c96, "Dell Polaris 2in1", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x1028, 0x0cbd, "Dell Oasis 13 CS MTL-U", ALC289_FIXUP_DELL_CS35L41_SPI_2),
+ 	SND_PCI_QUIRK(0x1028, 0x0cbe, "Dell Oasis 13 2-IN-1 MTL-U", ALC289_FIXUP_DELL_CS35L41_SPI_2),
+ 	SND_PCI_QUIRK(0x1028, 0x0cbf, "Dell Oasis 13 Low Weight MTU-L", ALC289_FIXUP_DELL_CS35L41_SPI_2),
+@@ -10501,11 +10503,15 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x103f, "ASUS TX300", ALC282_FIXUP_ASUS_TX300),
+ 	SND_PCI_QUIRK(0x1043, 0x106d, "Asus K53BE", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x1043, 0x10a1, "ASUS UX391UA", ALC294_FIXUP_ASUS_SPK),
++	SND_PCI_QUIRK(0x1043, 0x10a4, "ASUS TP3407SA", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x1043, 0x10c0, "ASUS X540SA", ALC256_FIXUP_ASUS_MIC),
+ 	SND_PCI_QUIRK(0x1043, 0x10d0, "ASUS X540LA/X540LJ", ALC255_FIXUP_ASUS_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1043, 0x10d3, "ASUS K6500ZC", ALC294_FIXUP_ASUS_SPK),
++	SND_PCI_QUIRK(0x1043, 0x1154, "ASUS TP3607SH", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x1043, 0x115d, "Asus 1015E", ALC269_FIXUP_LIMIT_INT_MIC_BOOST),
+ 	SND_PCI_QUIRK(0x1043, 0x11c0, "ASUS X556UR", ALC255_FIXUP_ASUS_MIC_NO_PRESENCE),
++	SND_PCI_QUIRK(0x1043, 0x1204, "ASUS Strix G615JHR_JMR_JPR", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x1214, "ASUS Strix G615LH_LM_LP", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x1043, 0x125e, "ASUS Q524UQK", ALC255_FIXUP_ASUS_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1043, 0x1271, "ASUS X430UN", ALC256_FIXUP_ASUS_MIC_NO_PRESENCE),
+ 	SND_PCI_QUIRK(0x1043, 0x1290, "ASUS X441SA", ALC233_FIXUP_EAPD_COEF_AND_MIC_NO_PRESENCE),
+@@ -10583,6 +10589,7 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x1e51, "ASUS Zephyrus M15", ALC294_FIXUP_ASUS_GU502_PINS),
+ 	SND_PCI_QUIRK(0x1043, 0x1e5e, "ASUS ROG Strix G513", ALC294_FIXUP_ASUS_G513_PINS),
+ 	SND_PCI_QUIRK(0x1043, 0x1e8e, "ASUS Zephyrus G15", ALC289_FIXUP_ASUS_GA401),
++	SND_PCI_QUIRK(0x1043, 0x1eb3, "ASUS Ally RCLA72", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x1043, 0x1ed3, "ASUS HN7306W", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x1043, 0x1ee2, "ASUS UM6702RA/RC", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x1043, 0x1c52, "ASUS Zephyrus G15 2022", ALC289_FIXUP_ASUS_GA401),
+@@ -10597,6 +10604,13 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x1043, 0x3a40, "ASUS G814JZR", ALC285_FIXUP_ASUS_SPI_REAR_SPEAKERS),
+ 	SND_PCI_QUIRK(0x1043, 0x3a50, "ASUS G834JYR/JZR", ALC285_FIXUP_ASUS_SPI_REAR_SPEAKERS),
+ 	SND_PCI_QUIRK(0x1043, 0x3a60, "ASUS G634JYR/JZR", ALC285_FIXUP_ASUS_SPI_REAR_SPEAKERS),
++	SND_PCI_QUIRK(0x1043, 0x3e30, "ASUS TP3607SA", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x3ee0, "ASUS Strix G815_JHR_JMR_JPR", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x3ef0, "ASUS Strix G635LR_LW_LX", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x3f00, "ASUS Strix G815LH_LM_LP", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x3f10, "ASUS Strix G835LR_LW_LX", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x3f20, "ASUS Strix G615LR_LW", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x1043, 0x3f30, "ASUS Strix G815LR_LW", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x1043, 0x831a, "ASUS P901", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x834a, "ASUS S101", ALC269_FIXUP_STEREO_DMIC),
+ 	SND_PCI_QUIRK(0x1043, 0x8398, "ASUS P1005", ALC269_FIXUP_STEREO_DMIC),
+@@ -10819,11 +10833,14 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x3878, "Lenovo Legion 7 Slim 16ARHA7", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x17aa, 0x387d, "Yoga S780-16 pro Quad AAC", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x387e, "Yoga S780-16 pro Quad YC", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x387f, "Yoga S780-16 pro dual LX", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x3880, "Yoga S780-16 pro dual YC", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x3881, "YB9 dual power mode2 YC", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x3882, "Lenovo Yoga Pro 7 14APH8", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
+ 	SND_PCI_QUIRK(0x17aa, 0x3884, "Y780 YG DUAL", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x3886, "Y780 VECO DUAL", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x3891, "Lenovo Yoga Pro 7 14AHP9", ALC287_FIXUP_YOGA9_14IAP7_BASS_SPK_PIN),
++	SND_PCI_QUIRK(0x17aa, 0x38a5, "Y580P AMD dual", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38a7, "Y780P AMD YG dual", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38a8, "Y780P AMD VECO dual", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38a9, "Thinkbook 16P", ALC287_FIXUP_MG_RTKC_CSAMP_CS35L41_I2C_THINKPAD),
+@@ -10832,6 +10849,8 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x38b5, "Legion Slim 7 16IRH8", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x17aa, 0x38b6, "Legion Slim 7 16APH8", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x17aa, 0x38b7, "Legion Slim 7 16APH8", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x17aa, 0x38b8, "Yoga S780-14.5 proX AMD YC Dual", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x38b9, "Yoga S780-14.5 proX AMD LX Dual", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38ba, "Yoga S780-14.5 Air AMD quad YC", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38bb, "Yoga S780-14.5 Air AMD quad AAC", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38be, "Yoga S980-14.5 proX YC Dual", ALC287_FIXUP_TAS2781_I2C),
+@@ -10842,12 +10861,22 @@ static const struct snd_pci_quirk alc269_fixup_tbl[] = {
+ 	SND_PCI_QUIRK(0x17aa, 0x38cb, "Y790 YG DUAL", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38cd, "Y790 VECO DUAL", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38d2, "Lenovo Yoga 9 14IMH9", ALC287_FIXUP_YOGA9_14IMH9_BASS_SPK_PIN),
++	SND_PCI_QUIRK(0x17aa, 0x38d3, "Yoga S990-16 Pro IMH YC Dual", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x38d4, "Yoga S990-16 Pro IMH VECO Dual", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x38d5, "Yoga S990-16 Pro IMH YC Quad", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x38d6, "Yoga S990-16 Pro IMH VECO Quad", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38d7, "Lenovo Yoga 9 14IMH9", ALC287_FIXUP_YOGA9_14IMH9_BASS_SPK_PIN),
++	SND_PCI_QUIRK(0x17aa, 0x38df, "Yoga Y990 Intel YC Dual", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x38e0, "Yoga Y990 Intel VECO Dual", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x38f8, "Yoga Book 9i", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38df, "Y990 YG DUAL", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x38f9, "Thinkbook 16P Gen5", ALC287_FIXUP_CS35L41_I2C_2),
+ 	SND_PCI_QUIRK(0x17aa, 0x38fa, "Thinkbook 16P Gen5", ALC287_FIXUP_CS35L41_I2C_2),
++	SND_PCI_QUIRK(0x17aa, 0x38fd, "ThinkBook plus Gen5 Hybrid", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x3902, "Lenovo E50-80", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3913, "Lenovo 145", ALC236_FIXUP_LENOVO_INV_DMIC),
++	SND_PCI_QUIRK(0x17aa, 0x391f, "Yoga S990-16 pro Quad YC Quad", ALC287_FIXUP_TAS2781_I2C),
++	SND_PCI_QUIRK(0x17aa, 0x3920, "Yoga S990-16 pro Quad VECO Quad", ALC287_FIXUP_TAS2781_I2C),
+ 	SND_PCI_QUIRK(0x17aa, 0x3977, "IdeaPad S210", ALC283_FIXUP_INT_MIC),
+ 	SND_PCI_QUIRK(0x17aa, 0x3978, "Lenovo B50-70", ALC269_FIXUP_DMIC_THINKPAD_ACPI),
+ 	SND_PCI_QUIRK(0x17aa, 0x3bf8, "Quanta FL1", ALC269_FIXUP_PCM_44K),
 -- 
-Lee Jones [李琼斯]
+2.43.0
+
 
