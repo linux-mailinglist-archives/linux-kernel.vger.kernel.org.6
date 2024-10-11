@@ -1,185 +1,137 @@
-Return-Path: <linux-kernel+bounces-360609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC25999D2F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:53:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E94999D34
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD06282B50
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:53:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43CB51F24FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C179920966D;
-	Fri, 11 Oct 2024 06:52:47 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 472BC20966B;
+	Fri, 11 Oct 2024 06:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zUjWwqVD"
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE6911187;
-	Fri, 11 Oct 2024 06:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27042635
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:54:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629567; cv=none; b=dDHmCUEY44nrL9P2OJZYR5ONVyMohir58rdJDpg/x10MMmWY2uDnP8qa+XHkOeIQuNYgG1DcRh63fNZvFMh6VxRDEGP5U50v0PKo7ohLeQrFaW2QeWynKfSXRXPxBqGDg7Tk48KTLsDEmnbjuGUWJpjsxruOt7LFsfTDFRk7R4o=
+	t=1728629642; cv=none; b=FIP3EpvmZN65WCnSfXBo5oUEqWIA1qrc+7yZx/kQsFmS7sigHw8zoWJMuGzLKRH1qwSBKtqrP7wqRYqk2L9evT5SS5pW8uHvK1JadvAYAcrAVgIHNPmTFHpmdj5PX8doMb7qy1UPzk7JwvgoqSnZ+31/5FgVOneP0qBxULaGlno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629567; c=relaxed/simple;
-	bh=SLFgZQahCLtFyNqgNRxTY+gRqHIFvgAOjkV0MOUTMns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ulbJAgRvGHlVc65qsEGjZphLSKMekGbhAijA5jNDVOgVJZ+2VnJNQ6FCLS2CbvVwWVn8FgEAPlimFHYx2O6CrRe4wEpLuJHMAxL40BWO7aB8AbvNl7IaLs5vvGsULMgpLrZOhXrWWaxAW6q1lckpxPr023YMBTt1UG7azdmhv3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB0BC4CEC3;
-	Fri, 11 Oct 2024 06:52:45 +0000 (UTC)
-Message-ID: <f2953879-9f52-4d61-9093-7dd327d7149c@xs4all.nl>
-Date: Fri, 11 Oct 2024 08:52:44 +0200
+	s=arc-20240116; t=1728629642; c=relaxed/simple;
+	bh=RhOyCcD+p6NcNr11PB1lLFi9WZWY8FM8KzdFrOo0HEA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KuThBhLeYlexR6oKtStZKCvCUv1E8G2wUxMjrm/tAlU8sNjbjaZusK5RFYcLSqvQ1nSRnghje4DX/PbbOx4goKrc7e8XluywjqnEnewc5EEccZnAoJ4xahC24OdsuRh70BvUog+HfxcfwPaj5IsPGLYSSdUYj4aCapFk6xzlyqI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zUjWwqVD; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso1507051276.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:54:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728629640; x=1729234440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=17oCjGzef/2UE8bCOde+fsQlgIs92oMXKbycZ1wrAZI=;
+        b=zUjWwqVD6qxHI23mPyMI7Z1ACR1SObW3bHWlEEqIclsgKEvnz7Em9/0cl/NBHzalgN
+         m3mnRwqonrl+LvCFh0sSVldtJZ9HJtuXjqCngIsS6jlfr39eDAgl76O+vPo1DXbnfAWK
+         6AjRs3IbEvkycmsEsdWah6DbgvVc72jHpn2zr8zqZil6tZcV+nPl6n2LcVZghjIC49mb
+         DwdCtuDGPJRQ8weWY+9U4Tnm4aMeYU9lFjE/bGtuU50Fg6AVPqYR0RGlaDzZ6e9x0Huh
+         Mow0bHYcc1og4OBlDy4aa/zxaKlBRZmgglPNgXCDt5c85xWRzzPyjaoTXEvfq6w0Wu79
+         wkSg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728629640; x=1729234440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=17oCjGzef/2UE8bCOde+fsQlgIs92oMXKbycZ1wrAZI=;
+        b=Kk0Ij8ZtYHNzIfLW46r1kXQBSCaoQoyvq+2NJVFI6zIDt/qYSpYmWRNtTn0IP6txxz
+         5Vlm4+WsRChowHgTnsykkcZQYpTody4zYI9pn0r3A6w99clUP7AdMX+sP2vYvnsC6KjT
+         vtK1porJasBA6nDXlfusKqTibDWhPgbPeHlLdtrmxiSpiVQWYqsk6UL0ElC5NN/P0lut
+         g5WuVCVCyJntOrVQ92k+seX5SpVI5o5gnLPbDB1rqCz8yjBIi3PZQCBY4jQVlws1DD7A
+         sAtJHYfkfe9xmpNguiYM0/268qvfOifa35DTvaoZaB5oVLwM9PdjAU6hviAqsXLuZK7n
+         ANrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWmTAI2G+E3A3BE2HJaCIzeTAisctuDj+S9RXq/68rcSdk5oKr+qtQ4/6D6A9NZumtU98F/wyEsxy/pg2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCrawAmNxzU21fYC7n3nu1IgiV1ZX/7fW+dVJcwyqk+SZMT8Ci
+	9DXFM/433vUDPCKW63gr4gPok/OCCb3n0yQFm05i2MvMhLDbME7+Vn+jz0aVXjYyOLbhXFBf55f
+	V4DeM8b1Lu7mhAx4ZcOIzq9io8le23lkVDQNG1g==
+X-Google-Smtp-Source: AGHT+IEcKrVhYkTlegrRYlks5vwNXkS8Zs44m1DY8Xw3QedwmulZZ7MGGC1XpVbTOaR1CUfuKx1qdvJf7YjcaChKFkY=
+X-Received: by 2002:a05:6902:e06:b0:e28:e5e8:5e3d with SMTP id
+ 3f1490d57ef6-e2918e5e2dcmr1023240276.0.1728629640142; Thu, 10 Oct 2024
+ 23:54:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] media: uvcvideo: Stop stream during unregister
-To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: Ricardo Ribalda <ribalda@chromium.org>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
- <80f800c8-46e0-47bb-8a7b-1566e5eed91a@xs4all.nl>
- <20241007144401.GE6403@pendragon.ideasonboard.com>
- <799ce9ae-bdb4-4fcf-be33-a40a7c746705@xs4all.nl>
- <20241010182304.GF32107@pendragon.ideasonboard.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20241010182304.GF32107@pendragon.ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-11-76d4f5d413bf@linaro.org>
+ <olzxobeurhyi76tdn7mq3wegxth4c7a2ys7dikajkx4d5y5z7i@3vkyjy3hg57s>
+In-Reply-To: <olzxobeurhyi76tdn7mq3wegxth4c7a2ys7dikajkx4d5y5z7i@3vkyjy3hg57s>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Fri, 11 Oct 2024 14:53:49 +0800
+Message-ID: <CABymUCO0u8hOLtie7typUQ3XV4AAds3RhT_hF23WB5Ruiz9AnQ@mail.gmail.com>
+Subject: Re: [PATCH v2 11/14] drm/msm/dpu: Share SSPP info for multi-rect case
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Laurent,
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
+=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:21=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Wed, Oct 09, 2024 at 04:50:24PM GMT, Jun Nie wrote:
+> > Share SSPP info for multi-rect case if virtual plane is not enabled.
+> > Otherwise, the 2nd half of DMA content is not displayed due to sspp
+> > pointer of r_pipe is null.
+>
+> Fixes?
 
-On 10/10/2024 20:23, Laurent Pinchart wrote:
-> Hi Hans,
-> 
-> On Mon, Oct 07, 2024 at 04:53:30PM +0200, Hans Verkuil wrote:
->> On 07/10/2024 16:44, Laurent Pinchart wrote:
->>> On Mon, Oct 07, 2024 at 09:46:47AM +0200, Hans Verkuil wrote:
->>>> Hi Laurent,
->>>>
->>>> Just a reminder: I have extensively reviewed this patch here:
->>>>
->>>> https://lore.kernel.org/linux-media/f4c49ccf-9dc9-475a-8fc9-4ef4c85a729a@xs4all.nl/
->>>>
->>>> and here (specifically checking for mmap() races):
->>>>
->>>> https://lore.kernel.org/linux-media/1a10530f-b4bb-4244-84ff-1f2365ae9b23@xs4all.nl/
->>>>
->>>> To the best of my ability I believe this patch is correct.
->>>>
->>>> Unless you have any additional concerns I plan to take this patch as a fix for
->>>> v6.12 on Monday next week.
->>>
->>> I thought we had an agreement that I could submit an alternative fix for
->>> v6.12. Can you therefore delay merging this patch until v6.12-rc6 ?
->>
->> Correct, if there is indeed something wrong with this patch and an alternative
->> fix is needed (or at least should be considered).
->>
->> But I see nothing wrong with this patch after careful analysis. If you disagree
->> with my analysis, and you think I missed a possible race condition, then that's
->> a reason to wait for a better fix. Otherwise there is no point in waiting any longer.
-> 
-> I'm in Montréal this week for the GStreamer conference and XDC. I'll
-> reply to your last e-mail early next week, let's make a decision then.
-> Surely this can wait until -rc4 before being merged ?
-
-Sure, no problem.
-
-Enjoy Montréal!
-
-	Hans
-
-> 
->>>> Alternatively, you can make a PR for 6.12 with this patch that I can pull from.
->>>>
->>>> Regards,
->>>>
->>>> 	Hans
->>>>
->>>> On 26/09/2024 07:59, Ricardo Ribalda wrote:
->>>>> uvc_unregister_video() can be called asynchronously from
->>>>> uvc_disconnect(). If the device is still streaming when that happens, a
->>>>> plethora of race conditions can occur.
->>>>>
->>>>> Make sure that the device has stopped streaming before exiting this
->>>>> function.
->>>>>
->>>>> If the user still holds handles to the driver's file descriptors, any
->>>>> ioctl will return -ENODEV from the v4l2 core.
->>>>>
->>>>> This change makes uvc more consistent with the rest of the v4l2 drivers
->>>>> using the vb2_fop_* and vb2_ioctl_* helpers.
->>>>>
->>>>> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->>>>> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
->>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
->>>>> ---
->>>>> This patch was part of the series:
->>>>> https://patchwork.linuxtv.org/project/linux-media/list/?series=13064
->>>>>
->>>>> Moved out from it to ease the review.
->>>>> ---
->>>>>  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
->>>>>  1 file changed, 31 insertions(+), 1 deletion(-)
->>>>>
->>>>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
->>>>> index f0febdc08c2d..bee150b852e4 100644
->>>>> --- a/drivers/media/usb/uvc/uvc_driver.c
->>>>> +++ b/drivers/media/usb/uvc/uvc_driver.c
->>>>> @@ -1919,11 +1919,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
->>>>>  	struct uvc_streaming *stream;
->>>>>  
->>>>>  	list_for_each_entry(stream, &dev->streams, list) {
->>>>> +		/* Nothing to do here, continue. */
->>>>>  		if (!video_is_registered(&stream->vdev))
->>>>>  			continue;
->>>>>  
->>>>> +		/*
->>>>> +		 * For stream->vdev we follow the same logic as:
->>>>> +		 * vb2_video_unregister_device().
->>>>> +		 */
->>>>> +
->>>>> +		/* 1. Take a reference to vdev */
->>>>> +		get_device(&stream->vdev.dev);
->>>>> +
->>>>> +		/* 2. Ensure that no new ioctls can be called. */
->>>>>  		video_unregister_device(&stream->vdev);
->>>>> -		video_unregister_device(&stream->meta.vdev);
->>>>> +
->>>>> +		/* 3. Wait for old ioctls to finish. */
->>>>> +		mutex_lock(&stream->mutex);
->>>>> +
->>>>> +		/* 4. Stop streaming. */
->>>>> +		uvc_queue_release(&stream->queue);
->>>>> +
->>>>> +		mutex_unlock(&stream->mutex);
->>>>> +
->>>>> +		put_device(&stream->vdev.dev);
->>>>> +
->>>>> +		/*
->>>>> +		 * For stream->meta.vdev we can directly call:
->>>>> +		 * vb2_video_unregister_device().
->>>>> +		 */
->>>>> +		vb2_video_unregister_device(&stream->meta.vdev);
->>>>> +
->>>>> +		/*
->>>>> +		 * Now both vdevs are not streaming and all the ioctls will
->>>>> +		 * return -ENODEV.
->>>>> +		 */
->>>>>  
->>>>>  		uvc_debugfs_cleanup_stream(stream);
->>>>>  	}
->>>>>
->>>>> ---
->>>>> base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
->>>>> change-id: 20240926-uvc_stop_streaming-6e9fd20e97bc
-> 
-
+Yeah. It is to fix bug in non virtual plane mode. Do you suggest to split
+to another patch set?
+>
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
+m/msm/disp/dpu1/dpu_plane.c
+> > index 904ebec1c8a18..898fc2937954e 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -1042,6 +1042,11 @@ static int dpu_plane_atomic_check(struct drm_pla=
+ne *plane,
+> >               pipe->multirect_index =3D DPU_SSPP_RECT_0;
+> >               pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_PARALLEL;
+> >
+> > +             /*
+> > +              * Signifies that r_pipe is to be used if the width of th=
+e 2nd
+> > +              * pipe is not 0. This does not apply to virtual plane ca=
+se.
+> > +              */
+> > +             r_pipe->sspp =3D pipe->sspp;
+> >               r_pipe->multirect_index =3D DPU_SSPP_RECT_1;
+> >               r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_PARALLEL;
+> >       }
+> >
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
