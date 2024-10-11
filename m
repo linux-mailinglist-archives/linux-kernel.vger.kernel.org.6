@@ -1,155 +1,188 @@
-Return-Path: <linux-kernel+bounces-360628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBC7999D70
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:07:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD80F999D7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:09:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6CE1C22012
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:07:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17688B223F4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70D8207A36;
-	Fri, 11 Oct 2024 07:06:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F054209F45;
+	Fri, 11 Oct 2024 07:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEhpSdm5"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VgIJNAdZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6FBBA2D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:06:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 739E71CDFD9;
+	Fri, 11 Oct 2024 07:09:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630415; cv=none; b=ZXnoDjwA1RKDcfz07XInS+pH7NZ0qmwFMI583KAJ06mGI3dy9EIY3o2fY9/kUMZEiz6X0VfoXGv6ahFKCsrBsvXwqblsbiqRtXcFhBzxAgsBquBd6iguza/+ERjhnVoJShZpLG3903iyqU7W3TEpLG30UhLPwNSB/ONS+diOZOM=
+	t=1728630562; cv=none; b=J0nqIh+Tb6Qho0UmPHOs9gDEWw4tJRo64ZpGNKOxKu5/FpoKP08LnnBBVZEATeMW+NcnDiir0UF+5FA19JdMattIcFLTJe48kjO19gBDrtzKlnEkvdCw7+C0KsoyhEj6uRqZxHUaD+zt7BvWbUiLCQX/uOETjoVlCkTka07erm8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630415; c=relaxed/simple;
-	bh=OUEq0owwHAkCt3sxN/Mq8rka0fcPjesIj/2Td3oVAH0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g/ArrxxEYm/mjYrZzxcY2PuAWgdqIhvcBoDTgRRXiZ2NU1zNRUKp928lJsRQJRiJyRfcWyHB1Idc/XepfX+rs2TJ3gEDmhDNFFJzDmiftxAv/lWzBgSpn7ifbxDjxlxCzTx1hTVAdCUhn6inOYqR+5GiWc/K4YU/HAeJ22Lfp54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEhpSdm5; arc=none smtp.client-ip=209.85.128.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6dde476d3dfso16111707b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:06:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728630412; x=1729235212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KbDvhzRE0GcC1Dd4Kqw9/lX4StqtF0AG6/j/dYmGN1o=;
-        b=iEhpSdm53iy/7JIxasQ7kLL4P2inSpX9JSGpxEF9oPcwJiiw1u5jk1GdWIvQKGHH1Q
-         h42hzWALmMGeE/Wi3u69kPa/D4VvK9aG1imEoRRCz48y7FMd19gvLCokxPeHL/wtNTGw
-         Kz8t7DRAkTSLrT+KZOowbnPMPPta/S4mZ0fp7ZQ6jIcy9Nx0gu604F1gzqDx/+O+7Q2N
-         7mLGQhTR7fNbCdgLVnZLN5D84QFSQNWM9bn0B8JUJpJKAm6qlC1s0JUUMlui9SChdAzO
-         pRhcNvX/jNhkj2imx1hTVphZCl2DvOh6FrFJHzP9pdcUTytZm7JqqE27JKANCDkgPnrk
-         i/Cg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728630412; x=1729235212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KbDvhzRE0GcC1Dd4Kqw9/lX4StqtF0AG6/j/dYmGN1o=;
-        b=RRPnP5WBLXiEU37sYcfvUPSVeWbqpIEtLF7h9LQW+6BsRh5rqO817PyWLItt/J6Ii/
-         PJJbWJdsUFj8oC7JvQNI/sJ/afs3l1qbrNk3wXLHZIELl5rS6c9lZHbWEGCtrewHGLVv
-         GndAr2mwfQOJAzaPR8IbeHXddeB4pw6NxiPkk0AOy0+J8pAQ/tfPH0lxnbVsWXgFgbtG
-         DZVTzlExvPswlQ4NUql2lfwxRE82nh1ttjvtFMcGbSOWpUljBtfM7MyXPikus2JXv/cB
-         1S2jtRluBmfc1DqYLUsZW7i7pvGeoKZ6whbXHP1MG461iZ+tyU6sACFf2z38SNc+cz4V
-         o2Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCWAUFr95Teot5vuhS8qWliRDTHdKwQu/9XbndNLfO/8hE/mPifAWs+RJoCJrhKrAKBbJ2Z8A9wA/hgb+ns=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwL6tBhkUkyMtn56ML3aSClhxlNYEZ9iAECV3WNBz9xblk5jio2
-	3xvX1SMYeTtkvEA22xvP06fT/eM3NJ7h+MPA6HqjH8wn4pEfGL7LhIwiM6ZobPlkIrEgQ6c1zTh
-	SOIBarLEcVYahSUT9O0rfYrnAfS0CBYrHEEvMmQ==
-X-Google-Smtp-Source: AGHT+IGAqFf1aCWRylzQD2egBbLwi3qRNqcNEIYZaTvmCmq4ukOzJTKIvCqu2AgBinqdnGTEhCOpEXxLoURFTP8BrkA=
-X-Received: by 2002:a05:690c:fc7:b0:6e2:b263:1045 with SMTP id
- 00721157ae682-6e3477befe2mr12970867b3.6.1728630412570; Fri, 11 Oct 2024
- 00:06:52 -0700 (PDT)
+	s=arc-20240116; t=1728630562; c=relaxed/simple;
+	bh=VrPtVv5FlCUskE9B1vvUk/ASInsexebhl7HGm16yv7o=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n1uHz/kMKoVh1detgMWHIRQoGSGZWsJvwdwa2StFBrepR8BP7qOQT4N6xBr6uBiqBwx6r8cosAC6BV1EdFKjEkWcNe7qAM68Mk8vGle8Bns/cyy2IZWxSXS8RGfW0BNHTQonKV+qGaTLG8t47gS07J5mh1GF9Q5KeUwUWFH3j9o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VgIJNAdZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B179Yp020093;
+	Fri, 11 Oct 2024 07:09:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=hv9LlgEFyhdrxyjodnLdh+xm
+	Zed4tH4L1a+qmH7of0A=; b=VgIJNAdZTEs0/Yju4jN+B7ygb3cUzle13pOnZG9d
+	N2oMsn7hY4y0Df2MWfZR/zwa1ZriPEY/hNJnSDCkysnBO4s9p4iev9WYcBJIUm0X
+	BY5EoQUNxR0tnhKB+fVkKbfi0/+7R6ZpyIHfyHuUwlZA6DTNSevVVA3hGkJTef91
+	B4zyxxJmHrESvxudDpHgpeL2/pNdsm/h5BY2ZyXWWwj63lC+LzIIHOHpIXmkJNK0
+	PLjYRDTANSYYF7lb5GWE72ZHE5zwALn5PXC8ng9mxK8XSrPKZdA3fuB2uzJgFbeG
+	7rCz2PGMDYaQTah7T3fqyvJcoaJzjQCqh4Ycvjd9FWu3ig==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7jr73-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 07:09:16 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B79FrM032452
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 07:09:15 GMT
+Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 11 Oct 2024 00:09:10 -0700
+Date: Fri, 11 Oct 2024 12:39:07 +0530
+From: Shiraz Hashim <quic_shashim@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <neil.armstrong@linaro.org>, Mukesh Ojha <quic_mojha@quicinc.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
+ support
+Message-ID: <20241011070907.GK1421305@hu-shashim-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-7-quic_mojha@quicinc.com>
+ <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+ <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
+ <ZwTPghV36CSIpkE4@hu-mojha-hyd.qualcomm.com>
+ <dfe46653-5243-47c8-8de9-17a38d13da53@linaro.org>
+ <20241011050518.GJ1421305@hu-shashim-hyd.qualcomm.com>
+ <rbek5diyuwhquhbhk6pukzv474xug3pupcqqc2svrceyodvem5@obah2ahgmcox>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-8-76d4f5d413bf@linaro.org>
- <n7bkvvxph2wxaxf2s7vonj273ouonlb2nisl7n7ora6j5stnlv@tt3v3uawwh2q> <CABymUCPV+bu-MNGCRp_0A+jC9Z6hY3XRm4vZ5Ju2XxT5YuRzPA@mail.gmail.com>
-In-Reply-To: <CABymUCPV+bu-MNGCRp_0A+jC9Z6hY3XRm4vZ5Ju2XxT5YuRzPA@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 11 Oct 2024 10:06:41 +0300
-Message-ID: <CAA8EJpprO9pZ7bRf5HDA7-8UYKn5RiK2Yg9eW1NTYSEAE8ZDFw@mail.gmail.com>
-Subject: Re: [PATCH v2 08/14] drm/msm/dpu: update mixer number info earlier
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <rbek5diyuwhquhbhk6pukzv474xug3pupcqqc2svrceyodvem5@obah2ahgmcox>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: KUgT_JaMbyozpd_MAOuH6ur7Gkg9xQfM
+X-Proofpoint-GUID: KUgT_JaMbyozpd_MAOuH6ur7Gkg9xQfM
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 clxscore=1015 spamscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410110046
 
-On Fri, 11 Oct 2024 at 09:30, Jun Nie <jun.nie@linaro.org> wrote:
->
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
-=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:12=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Wed, Oct 09, 2024 at 04:50:21PM GMT, Jun Nie wrote:
-> > > Update mixer number info earlier so that the plane nopipe check
-> > > can have the info to clip the plane. Otherwise, the first nonpipe
-> > > check will have mixer number as 0 and plane is not checked.
-> > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 11 ++++++++++-
-> > >  1 file changed, 10 insertions(+), 1 deletion(-)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_encoder.c
-> > > index dfe282c607933..68655c8817bf8 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-> > > @@ -638,6 +638,7 @@ static int dpu_encoder_virt_atomic_check(
-> > >       struct dpu_global_state *global_state;
-> > >       struct drm_framebuffer *fb;
-> > >       struct drm_dsc_config *dsc;
-> > > +     struct dpu_crtc_state *cstate;
-> > >       int ret =3D 0;
-> > >
-> > >       if (!drm_enc || !crtc_state || !conn_state) {
-> > > @@ -662,6 +663,8 @@ static int dpu_encoder_virt_atomic_check(
-> > >       dsc =3D dpu_encoder_get_dsc_config(drm_enc);
-> > >
-> > >       topology =3D dpu_encoder_get_topology(dpu_enc, dpu_kms, adj_mod=
-e, crtc_state, dsc);
-> > > +     cstate =3D to_dpu_crtc_state(crtc_state);
-> > > +     cstate->num_mixers =3D topology.num_lm;
-> > >
-> > >       /*
-> > >        * Use CDM only for writeback or DP at the moment as other inte=
-rfaces cannot handle it.
-> > > @@ -1170,7 +1173,13 @@ static void dpu_encoder_virt_atomic_mode_set(s=
-truct drm_encoder *drm_enc,
-> > >       }
-> > >
-> > >       cstate->num_dscs =3D num_dsc;
-> > > -     cstate->num_mixers =3D num_lm;
-> > > +     if (cstate->num_mixers !=3D num_lm) {
-> > > +             if (!cstate->num_mixers)
-> > > +                     DPU_ERROR_ENC(dpu_enc,
-> > > +                                   "mixer number %d is not as expect=
-ed %d\n",
-> > > +                                   num_lm, cstate->num_mixers);
-> > > +             cstate->num_mixers =3D num_lm;
-> > > +     }
-> >
-> > Is it a possible case or just defensive coding?
->
-> The value is initialized beforehand only in virtual plane case. So we
-> still need this
-> for non virtual plane case.
+On Fri, Oct 11, 2024 at 09:23:05AM +0300, Dmitry Baryshkov wrote:
+> On Fri, Oct 11, 2024 at 10:35:18AM GMT, Shiraz Hashim wrote:
+> > On Thu, Oct 10, 2024 at 08:57:56AM +0200, neil.armstrong@linaro.org wrote:
+> > > On 08/10/2024 08:21, Mukesh Ojha wrote:
+> > > > On Mon, Oct 07, 2024 at 08:22:39PM +0530, Mukesh Ojha wrote:
+> > > > > On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
+> > > > > > On 04/10/2024 23:23, Mukesh Ojha wrote:
+> > > > > > > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> > > > > > > translation for remote processors is managed by QHEE and if the same SoC
+> > > > > > > run under KVM, remoteproc carveout and devmem region should be IOMMU
+> > > > > > > mapped from Linux PAS driver before remoteproc is brought up and
+> > > > > > > unmapped once it is tear down and apart from this, SHM bridge also need
+> > > > > > > to set up to enable memory protection on both remoteproc meta data
+> > > > > > > memory as well as for the carveout region.
+> > > > > > > 
+> > > > > > > Enable the support required to run Qualcomm remoteprocs on non-QHEE
+> > > > > > > hypervisors.
+> > > > > > > 
+> > > > > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > > > > ---
+> > > > > > >    drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
+> > > > > > >    1 file changed, 40 insertions(+), 1 deletion(-)
+> > > > > > > 
+> > > > > > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > > > > > index ac339145e072..13bd13f1b989 100644
+> > > > > > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > > > > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > 
+> > <snip>
+> > 
+> > > > > > > +		struct of_phandle_args args;
+> > > > > > > +
+> > > > > > > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
+> > > > > > > +		if (ret < 0)
+> > > > > > > +			return ret;
+> > > > > > > +
+> > > > > > > +		rproc->has_iommu = true;
+> > > > > > > +		adsp->sid = args.args[0];
+> > > > > > > +		of_node_put(args.np);
+> > > > > > > +		ret = adsp_devmem_init(adsp);
+> > > > > > > +		if (ret)
+> > > > > > > +			return ret;
+> > > > > > 
+> > > > > > Why don't you get this table from the firmware like presumably
+> > > > > > QHEE does ?
+> > > > > 
+> > > > > Well, AFAIK, QHEE(EL2) has this information statically present
+> > > > > and does not get it from anywhere., but will confirm this
+> > > > > twice..
+> > > > 
+> > > > Double confirmed, device memory region required by remoteproc is
+> > > > statically present with QHEE.
+> > > 
+> > > Right, in this case why those tables can't be embedded in the elf
+> > > .resource_table like it's done with qcom_q6v5_adsp.c by calling
+> > > rproc_elf_load_rsc_table() and let the remoteproc framework load the
+> > > resource table and setup the devmem ssmu_map ?
+> > 
+> > Mainly for two reasons -
+> > 
+> > firmware images on platforms where we like to bring additional no-qhee
+> > support do not have resource table.
+> > 
+> > QCOM PAS implementation for secure remoteproc supports single TZ call
+> > of auth_and_rest that authenticates and brings remoteproc out of
+> > reset. And we don't have provision to authenticate resource table
+> > before it is used for devmem/iommu setup.
+> 
+> So normally TZ / QHEE have the platform-specific resource table? Isn't
+> it tied to the firmware binary?
 
-It looks better if it's handled in the non-virtual code instead.
+Yes this table is with QHEE and not firmware binary. Now with no-qhee
+case, this patch series is proposing to get it from device tree.
 
---=20
-With best wishes
-Dmitry
+regards
+Shiraz
 
