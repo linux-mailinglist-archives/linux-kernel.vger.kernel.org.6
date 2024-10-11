@@ -1,195 +1,211 @@
-Return-Path: <linux-kernel+bounces-360637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C2FE999D94
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:13:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D709999D9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:13:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5BEA1F24BCE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C69381F2432E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:13:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6CE209F2E;
-	Fri, 11 Oct 2024 07:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2780520899B;
+	Fri, 11 Oct 2024 07:13:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="jRQf5nvU"
-Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2079.outbound.protection.outlook.com [40.107.20.79])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GrweT7X/"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7371CEEBD;
-	Fri, 11 Oct 2024 07:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.79
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630770; cv=fail; b=gIdubDOCqu5XMXNW7oCn8bX+K3jeW9oacoU2H6t2k7tnB0/v1k7khnmy0bCmLEzyzUmpW8dX2uQemMsT6DDsrlgbIdrVaIK31fBiDh6FdF8APBmLGsajtIobIra0EU39NJfGqnPHYVJdzq1qAi1s1KFfCt/9LFzuWj1Jiv1qhRM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630770; c=relaxed/simple;
-	bh=w5fXjh5ukZfUB7jjpm6DJrnwzJjngpLv25y+HZbhMzQ=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZDQtD4zEJsyTRsd1Lug0/oVfRf0v/LKulTszSbHES1t49U3U4yH/h244r20hJe2GhzWPIdVC807kFA26XWBPJFJ1xr28rDVxw4gvxWy54E1pLe8wjYBoP+ugkn6N+nZW5nwqFMttFM96ORxAnHZukMSyD/LIpjeh5UM1UvP1khU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=jRQf5nvU; arc=fail smtp.client-ip=40.107.20.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=K5JrvMjEvCjIcHBmj1eBALtVUQNgshc0dt+RKTjGDslo9+ogHcMnb/tYj5hhbTbIkTK1WevOi8yRu2QeqTfFVSleQZNRsdvunRPmUuZfVkwc0qdEGUlUDIZop67+LBR9uG1ct41rsaAPrtRfgPDkwLjHLeEaxF43FWY0/jgfQQRQi7J7fHV0v2MvyMM/S7t0fDBALsmoNdGEaAGE9rt3iMdb8sOw4rVbr60Y922ytMXlLg1tsuvhQW4Fvb1vsDqdigozQDRmgmiCARJEOu2lMOATDj89XADKMZWPnZwgc32ASdrT6JybRvwol4XtzCNYqHDQVcHy0VejWOAWUkn2Mw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jkSVaAMDJtiTlpzWJ6S3VqOVXH1Fti78ep4zOljKpXc=;
- b=TsaKu1kkWIjYTSM3ZOucw9zhxZwyBD5ubo2UFfoZg+zJMgutzk6CAy3hAzQ0bauoAxPkjF2cr0OR63kX8d0UuSlT1JpfZPRmWDsrjPx5JYLEVHr8OeOVNAIC3NXMPGJXnFtazp/9TvXbzbZEy8VixlDtYEht4PUORd1EMSwNC/cvtCFzqMUHu6jXjgtDM4Y/3D0OHrUM5dLmNiHfaN+WEDgULQybrlwg+QEBUnAjS18TYYBB5/zGvt1CbhKkGGtNMfa9WqeZTk3l5OZKqjmM0GR/lZ+XKX/hpeGgtP4eNyHR1mdVzCfYjYWl8bIsZ2/pEBVh6Hl9MP9tAtGrmHuamg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jkSVaAMDJtiTlpzWJ6S3VqOVXH1Fti78ep4zOljKpXc=;
- b=jRQf5nvUuMdZvgzXEjlNBZp4BrGEz9VISMGZ+9HmNusv3caV9IbmjDEvvfkW2mytvYKGCwKJ+kAu0G8yHp+oBWBuvQ7xs3+vPLuaSYzm3sKcVjtETX9mlNWNiDGmRQ47PayypGH9MfJsMvHjlydjt5DVfeQoMg2z6mZuyv+oCN+VPuv57xitF0zWkhmLvPaPp2F5gmnFDCxFP+whWzp65nbCz8hfyZXS/x4NHNleHCCh6SftyyiOnyTxxq8Ymonqdc7LWWGyKqCEjl+U8FnclPmCubXhsqKef4fABNBX2n1hY2btw60nwDIl5Rp31b+T+yadpVq4tQkLQzc3qI6Kjw==
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com (2603:10a6:20b:42c::17)
- by DB8PR04MB7100.eurprd04.prod.outlook.com (2603:10a6:10:127::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
- 2024 07:12:45 +0000
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684]) by AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684%7]) with mapi id 15.20.8048.013; Fri, 11 Oct 2024
- 07:12:44 +0000
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>, "christophe.leroy@csgroup.eu"
-	<christophe.leroy@csgroup.eu>
-CC: "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>
-Subject: RE: [PATCH net] net: enetc: add missing static descriptor and inline
- keyword
-Thread-Topic: [PATCH net] net: enetc: add missing static descriptor and inline
- keyword
-Thread-Index: AQHbG4vsngPoRfYLS0GcdXcVcjZlerKBIorw
-Date: Fri, 11 Oct 2024 07:12:44 +0000
-Message-ID:
- <AS8PR04MB884978B9D55DCB94225480EE96792@AS8PR04MB8849.eurprd04.prod.outlook.com>
-References: <20241011030103.392362-1-wei.fang@nxp.com>
-In-Reply-To: <20241011030103.392362-1-wei.fang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8849:EE_|DB8PR04MB7100:EE_
-x-ms-office365-filtering-correlation-id: 9dc7ba0d-6004-40b2-04c9-08dce9c41aa1
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?bj2pCDjvpCEn7/EATu8qSBW6Z1DlcxSLBPfIboKuO75LURuyoyqHMNxoVGRq?=
- =?us-ascii?Q?5G/wGhu61LEu3FlCPWVYvE6N/DZbmbRQk8zrZYOlJHOpfF2JjwcXiaZUByxt?=
- =?us-ascii?Q?CspH1J8wzilBOp4cIlFUZ23Bz5qK5oIGt3fUZLEWxT8Ttgyn7p52ZZZ7V8yE?=
- =?us-ascii?Q?JUBwmuhPGZCSUA7Q+OFv/ENOObwsMRz4VvV52W67UYo7/EFSbt30peMW795k?=
- =?us-ascii?Q?aBpEduIwLKRgc+oeP40y1wehyw9CPkJLhoOfkb27H2J59tP2mtR/MirdThqw?=
- =?us-ascii?Q?mdoRx3DLMLDzeBIZhBinvMr+7d1VTRVBWPJTd6TxdCt8pvFMJb0bQXll0uBl?=
- =?us-ascii?Q?44owB7WB7axl7OgY7O6H4rE3Q7h1jzgoNqCdEQBhK38fEzCsNWG6fa/kg+Ce?=
- =?us-ascii?Q?k/vPTFG7fu0phQjg+Xr7tdR3Hdutna3zLVfuesMiaBmCnvxQAc/vx6eZUqo4?=
- =?us-ascii?Q?LnmoIzjo69Ny0iO6CURqKD7fkHO3+R1RUN2YoHIJzRPseU1BgHvE7WL2xiPj?=
- =?us-ascii?Q?U8ajKmqwamAoPe4v3NnRIMMeorH0XKXnPhhaSpdk8pTF2pazrEgSSTWyWwVl?=
- =?us-ascii?Q?XYbY/HTU1b5/SwI1QF/KRGuPXULV9Co+3ixAMzsoGCWHSRu7afiXlWGYn5MR?=
- =?us-ascii?Q?Ky+VRrvJT9s5LXkb1oqpZ12GKlfaUbMPDenjVlMW3+ucJ9I1pEFikl71DUNT?=
- =?us-ascii?Q?OcwcT+G1AVVa0M7/i9irifesa9oEFuLcrMiHrEUJegp9+dWpML6+7d1U8HZm?=
- =?us-ascii?Q?6drRSXU9SkuILVWVetXFAigdI1H5oQTQ8DienuLrPCR9/M0p15KuEXtAh+ys?=
- =?us-ascii?Q?jW4rqWlLI6op4G07LXO3bjH3sA7WqmxRIFk3EasVJHS9aCWGpALZj1cponVJ?=
- =?us-ascii?Q?q92P5FHbFLC+RqG97XhicQLWKSmqmnhjyGb9Kjp9BX9vYM74a9uy43QrqpYC?=
- =?us-ascii?Q?wKOE/fP9pJ0n1X6SSzR5QbXN3fU6/pMVUlxe3rMF7jPHPwrhrtFfhGP39ll0?=
- =?us-ascii?Q?cUY2tfhmMc2LkcU+eQVxNzG2wr/HIABJu8gw/5DZcACvr3m2l5MfQ59yVARp?=
- =?us-ascii?Q?gQNbPrGvpV8+jpdlNh7UGSppIUmUl47gHkAYHDi3Pg33H+JiCjJtABZKidkn?=
- =?us-ascii?Q?Ao1+VSQxtp2XcpyP1LmUTRXHsSgXqoudhs4DAveLm9RThW2jqZz/uKhLBn6r?=
- =?us-ascii?Q?BC+Wv2yE3B6L1vuVC7fhoxfJCJ7KzKPRK/hAvlVO3fdishGUffwOF1/6g4HN?=
- =?us-ascii?Q?GTWSpF9+5LA6PRlgbtjK0dR97wWgx0gaYtzmczWcH0T9TER+VsIjD8khSYkg?=
- =?us-ascii?Q?UESlcDtqluQKHxrJY6ntDhT8QmSjc/jSGR8wglSuG7ravQ=3D=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8849.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?TDbP7j0zTu0gAf0PxXEJ069WRRt5mYhYAu4hIF4xJYdAc1eaI3Weds7i/Gv7?=
- =?us-ascii?Q?wnr+VqupV7spIi0katgj5pcrX+T+gHwAuImsVIbxLo8ION68qP07TYylY0Fa?=
- =?us-ascii?Q?J8aEqlWrjzyNGMMj+6+VQxPS4OIKZBq4Ob9d+Pk38TLr+WkHnMzoEpLm6fNL?=
- =?us-ascii?Q?bXgS9jdPXcfmK3/3CGc6/S3mnxBENV3AIlGXGS8ClomUoCtf3/+/WUPXvtYE?=
- =?us-ascii?Q?bmeYH29a44CdAv60+Sg5LcRCvaT9q1DMUp/lYFIJnumR1G70c3i6oelw6/7n?=
- =?us-ascii?Q?dmkKcCaiVtbYo1uORtLMGEpkzTlD70H3oIiRlM3KKXW5D1jnoxlAnvqDspDt?=
- =?us-ascii?Q?Na0dBmuGnSWOMm3M7yOdkO0A3m9DJHoWiuZSp8IIB4v+UsU0UJIXW2mt/YM4?=
- =?us-ascii?Q?1QY6J9cilcvsjhwCZDOLyft11AOdGqfO1PboBdMb0ChkwrXd1YM0zFrAp1Yw?=
- =?us-ascii?Q?bZ7uo+CNXoMg3jtrvsiThM/tufy4K+UB3W1LEGBrbeyo4/6QauPcGQcdLDcP?=
- =?us-ascii?Q?b+wwRekgjvZ1CO3AbMXaKLRw7x4H2qRw8+XCapp6DBJYaTGE0czFuTk29SMU?=
- =?us-ascii?Q?ZnCEvjUWWaCSTvdkvVGuEoFcWHtZyTP1G/EYfPAl8ASZ2FRKa7MNnm6QD8Id?=
- =?us-ascii?Q?cciy4VzsWv0gV8NeD29wcPRMIpV/w0MCf/0FODZcesdLDD268tVgSb77Lm/R?=
- =?us-ascii?Q?fiHCrGB5d27U7w0QqDTKLEvGOgS3OjA1x9Sko028sxvv3yRXKzOHTHNbLHxi?=
- =?us-ascii?Q?C0BbK+QDUQtOHGDfROPoL61Essbb5qVM8fDpwi8ZkavJNNibyjVBOBZUsB1C?=
- =?us-ascii?Q?I8eNJEsGUB3XyaCFOw+75ljb89ExKjJs+ST2CyTN5nwsCqn2hfZzQXXeNWKi?=
- =?us-ascii?Q?zPM9s+UQDbHftfW2ZxD6sw8M26WLMe3pE6rGBeboPhm5KPSwxFH6D0NvERQM?=
- =?us-ascii?Q?9YgKLOD1zaRoWLQagaopu0tTjr2FNuXOYDsRbNPgDsd5ENDNfJkcs9Q60FYC?=
- =?us-ascii?Q?+oBk7jUE+ZbD3qM/UAPRJa8wixPJ09iCxFLgEjXLXqJC1BDSttcjUWcAqct6?=
- =?us-ascii?Q?1udrJUW+1jULmffLa4nDHykU39/wK7iGRhqPUwEgoMxVCw8jme8Nc8L4hm5u?=
- =?us-ascii?Q?x3lfpkYBmys93D48rj9RIoRC/GKn/IgcCbGp6zgSLLrNYufVmoapU7xFAYdU?=
- =?us-ascii?Q?FCCDlF0I0d0TNWMpcDr+E1ZjkPFzgZt3TqNlcx047cw0vlKYQXU61J4o4w5+?=
- =?us-ascii?Q?me7Q64KztFCpl+9EJmTC76dE3KoKdXZx5zlACRMzskBsKtaKOtAvr4QQUGy2?=
- =?us-ascii?Q?8IEWcDI2qTL7neNYq7rO5FOEvJ9kTlhYTBm7IuK+zxe9nGzQAsdBBqZ49HIU?=
- =?us-ascii?Q?B/vv2ykY3fOAA/3hLP4ZnwiQbEC7/SYGYB6mQcccu2tz1Wt3PhMbctOBuljv?=
- =?us-ascii?Q?ElnCgiAK3FwSrqgRhGD4YBhJ8/KKXUaVboAlII2LWp6okaVHPYR+fqhTxHz5?=
- =?us-ascii?Q?sbfh4KMLiNwj0l3RKMp5qD11yDHy+5YqfLYciqrzqnd5IkbMSw4csNdqsQr2?=
- =?us-ascii?Q?1jXOOBa+dKPJQzUzgxonGCO56p96mGGLPCt4bHFp?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE802207A36
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:13:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728630801; cv=none; b=Y31oSi+2myITOl5FzLCRb4yRDnx8mPS4NFNB80byPYa/QLwbmRU1Wg+Fkq98huHSjaGCZWTuVPplWVto8dn5N5QeghQtVA+3CtieKy50tBWprHanNZ8gejKyGpwt3QdkGTNueyz62adbd/2ANtqJ52ZnuWXsyovvEcG5piPL1PU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728630801; c=relaxed/simple;
+	bh=9qXYyL221GKrspzBu5mePpBszokIB5ntvBcKiRaOX/Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mbOkQTZqpFUj70DOvyDweQ/Tl5IKRJ/h5WPq0NTmcoN4026d+431jcznQTgkC5LGe3n50sdfrh8JchYprWJr5liP+J3FujKpyjKbB380SIcA5q6/r7qF2XYFHKNdiC8tgZ+zi7ZsVQADbXL0N8yI+3IpzHdtf5jC0irBZXB1SPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GrweT7X/; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e2e4244413so20364147b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:13:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728630798; x=1729235598; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pVy3cXzl86sH2JLHgiFtJxWYGEOPC7pnAO5jIndLRl4=;
+        b=GrweT7X/sFiizTvThbS5VqX+H3MS3AKtjY7OvRHPUuUKoDbtUN8ONRYrQ2LK/4v+Hu
+         SKYMAg4OC4P3w749VsFI6WIaon45MsuphIuRS25X2GicZf7w9cmMzPbauIvrlAJX2C47
+         q+1vA8tSVo6S4qZuBTtx0DZZLE9vTdwDNdVLu1KI4hNxiW0AFKNRrcohmS2v9RxJqMMt
+         TkXVDzr9+WLhob75WN6VMgSvDqGMDISrtzozelYvwyGL2G9Fbp35NfpD6ktReqUKIfVy
+         EhfPHqLPTTjfMGSoWqqeE3y27PTjqspIo72wARH6nsUoXyPodXtyNqu10A05wbW7tLxQ
+         gqSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728630798; x=1729235598;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pVy3cXzl86sH2JLHgiFtJxWYGEOPC7pnAO5jIndLRl4=;
+        b=qOXDp4C0F65DDm4z8SgpaZCrQ/1HEvkQjQZo/WeMoinONeHO885bxC0/KOOpfPLeD/
+         5AhNCv99qO181CSVG+fRbDKrahMB1+HyF2VsdaePcmCbYpVvbxn/8sMbMwvo77vAoT2T
+         5eRhVQtiR93uP818CiKAyEoxcYou33nnadK+jX0Nekv4x/AzaxvnjeXoE4v7njdRb8dt
+         ngvl2urKpvxKItz3T84u1tqW2HMYyQAHCRogCrSZwsWDpOPHhwELDZkeb9hqiFkPjiQv
+         BM3niL5lYePf7rd0yTjWXt08m1h09oYIoqUVioQq8hp1ouznkbWLPRQZquYHfEwADFZ4
+         Kx6g==
+X-Forwarded-Encrypted: i=1; AJvYcCV1dtK93pE3l2g7x5IZhSFXwXvS20d3NU19ar111U1ZYdfs9G9N+zQ9gy7ALlX8E9SgID0nM5b9K8dtgWo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQidTDXYpGLlgCQ6nffJs8AIqMV1BJXL3S39hpJTXUG1iSlsU/
+	mrrnzEih/Tjn6jGMAUjxbcI8NzQV+VvrYiHYP81Nw3cKZoNVh/7Xv6M8es4rwBpSZ4axUpki1BQ
+	jxtalKSUGuMkXi7jdVCu2Ug3Y8mo8LJN1AjLdyQ==
+X-Google-Smtp-Source: AGHT+IGDBtidaBjCA+V6TUtDSxl4XAawtegW2WS9EFKGFvRhSXTvKYz5awzj9XJntrNJqGu2AzyUvSFjTEPgOfOXMps=
+X-Received: by 2002:a05:690c:6085:b0:6e3:15ad:a560 with SMTP id
+ 00721157ae682-6e3479b858amr12310937b3.12.1728630797790; Fri, 11 Oct 2024
+ 00:13:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8849.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 9dc7ba0d-6004-40b2-04c9-08dce9c41aa1
-X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 07:12:44.9073
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: jIiaBXZba/YEn/DuAZVF4lmknfVr/C6cVNtICdJyZvj+gw2tVu4WQh7lL5nk8Pfp/OCdxkyeiGxqXWzA9SMVgw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB8PR04MB7100
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
+ <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3>
+ <CABymUCP7bVBSWXCNp33x_B8KaZSFU-Dx+bU5ctkgDGXrzURrXQ@mail.gmail.com>
+ <CAA8EJpovnEq_ciO0YmiREhwvxv6yGKnRMPx5=6G7R+Ob6Hy_hA@mail.gmail.com> <CABymUCPdu5+iz-amwv_O999sLUOmUMczo_v=1aUpJGpHo5f8CA@mail.gmail.com>
+In-Reply-To: <CABymUCPdu5+iz-amwv_O999sLUOmUMczo_v=1aUpJGpHo5f8CA@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 11 Oct 2024 10:13:07 +0300
+Message-ID: <CAA8EJppMu5o7juhKUN2Y_4CRYKtaWN9G01aPU2ZfksE_tzjqCQ@mail.gmail.com>
+Subject: Re: [PATCH v2 09/14] drm/msm/dpu: blend pipes per mixer pairs config
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> -----Original Message-----
-> From: Wei Fang <wei.fang@nxp.com>
-> Sent: Friday, October 11, 2024 6:01 AM
-[...]
-> Subject: [PATCH net] net: enetc: add missing static descriptor and inline
-> keyword
->=20
-> Fix the build warnings when CONFIG_FSL_ENETC_MDIO is not enabled.
-> The detailed warnings are shown as follows.
->=20
-> include/linux/fsl/enetc_mdio.h:62:18: warning: no previous prototype for
-> function 'enetc_hw_alloc' [-Wmissing-prototypes]
->       62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iom=
-em
-> *port_regs)
->          |                  ^
-> include/linux/fsl/enetc_mdio.h:62:1: note: declare 'static' if the functi=
-on is not
-> intended to be used outside of this translation unit
->       62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iom=
-em
-> *port_regs)
->          | ^
->          | static
-> 8 warnings generated.
->=20
-> Fixes: 6517798dd343 ("enetc: Make MDIO accessors more generic and export
-> to include/linux/fsl")
+On Fri, 11 Oct 2024 at 10:11, Jun Nie <jun.nie@linaro.org> wrote:
+>
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
+=E6=9C=8811=E6=97=A5=E5=91=A8=E4=BA=94 15:03=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Fri, 11 Oct 2024 at 09:40, Jun Nie <jun.nie@linaro.org> wrote:
+> > >
+> > > Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B4=
+10=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:15=E5=86=99=E9=81=93=EF=BC=9A
+> > > >
+> > > > On Wed, Oct 09, 2024 at 04:50:22PM GMT, Jun Nie wrote:
+> > > > > Blend pipes by set of mixer pair config. The first 2 pipes are fo=
+r left
+> > > > > half screen with the first set of mixer pair config. And the late=
+r 2 pipes
+> > > > > are for right in quad pipe case.
+> > > > >
+> > > > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > > > > ---
+> > > > >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 38 +++++++++++++++=
++++-----------
+> > > > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
+> > > > >  2 files changed, 25 insertions(+), 14 deletions(-)
+> > > > >
+> > > > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/g=
+pu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > > > index 43d9817cd858f..66f745399a602 100644
+> > > > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > > > @@ -442,7 +442,7 @@ static void _dpu_crtc_blend_setup_mixer(struc=
+t drm_crtc *crtc,
+> > > > >       const struct msm_format *format;
+> > > > >       struct dpu_hw_ctl *ctl =3D mixer->lm_ctl;
+> > > > >
+> > > > > -     uint32_t lm_idx, i;
+> > > > > +     uint32_t lm_idx, lm_pair, i, pipe_idx;
+> > > > >       bool bg_alpha_enable =3D false;
+> > > > >       DECLARE_BITMAP(fetch_active, SSPP_MAX);
+> > > > >
+> > > > > @@ -463,15 +463,20 @@ static void _dpu_crtc_blend_setup_mixer(str=
+uct drm_crtc *crtc,
+> > > > >               if (pstate->stage =3D=3D DPU_STAGE_BASE && format->=
+alpha_enable)
+> > > > >                       bg_alpha_enable =3D true;
+> > > > >
+> > > > > -             for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
+> > > > > -                     if (!pstate->pipe[i].sspp)
+> > > > > -                             continue;
+> > > > > -                     set_bit(pstate->pipe[i].sspp->idx, fetch_ac=
+tive);
+> > > > > -                     _dpu_crtc_blend_setup_pipe(crtc, plane,
+> > > > > -                                                mixer, cstate->n=
+um_mixers,
+> > > > > -                                                pstate->stage,
+> > > > > -                                                format, fb ? fb-=
+>modifier : 0,
+> > > > > -                                                &pstate->pipe[i]=
+, i, stage_cfg);
+> > > > > +             /* loop pipe per mixer pair */
+> > > > > +             for (lm_pair =3D 0; lm_pair < PIPES_PER_PLANE / 2; =
+lm_pair++) {
+> > > > > +                     for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
+> > > > > +                             pipe_idx =3D i + lm_pair * PIPES_PE=
+R_LM_PAIR;
+> > > > > +                             if (!pstate->pipe[pipe_idx].sspp)
+> > > > > +                                     continue;
+> > > > > +                             set_bit(pstate->pipe[pipe_idx].sspp=
+->idx, fetch_active);
+> > > > > +                             _dpu_crtc_blend_setup_pipe(crtc, pl=
+ane,
+> > > > > +                                                        mixer, c=
+state->num_mixers,
+> > > > > +                                                        pstate->=
+stage,
+> > > > > +                                                        format, =
+fb ? fb->modifier : 0,
+> > > > > +                                                        &pstate-=
+>pipe[pipe_idx], i,
+> > > > > +                                                        &stage_c=
+fg[lm_pair]);
+> > > > > +                     }
+> > > > >               }
+> > > > >
+> > > > >               /* blend config update */
+> > > > > @@ -503,7 +508,7 @@ static void _dpu_crtc_blend_setup(struct drm_=
+crtc *crtc)
+> > > > >       struct dpu_crtc_mixer *mixer =3D cstate->mixers;
+> > > > >       struct dpu_hw_ctl *ctl;
+> > > > >       struct dpu_hw_mixer *lm;
+> > > > > -     struct dpu_hw_stage_cfg stage_cfg;
+> > > > > +     struct dpu_hw_stage_cfg stage_cfg[LM_PAIRS_PER_PLANE];
+> > > >
+> > > > After seeing this code, can we define STAGES_PER_PLANE (and
+> > > > also keep PLANES_PER_STAGE defined to 2)?
+> > > >
+> > > Could you elaborate it? Stages describe how many layers to be blended=
+.
+> > > Plane is a DRM concept that describe a buffer to be display in specif=
+ic
+> > > display driver. Plane is already mapped to SSPP/multi-rect in DPU dri=
+ver
+> > >  in blending stage level. So I am confused here.
+> >
+> > We have dpu_hw_stage_cfg, you are adding a second instance of it. So
+> > we now have two stages per plane.
+>
+> So you suggest to replace LM_PAIRS_PER_PLANE with STAGES_PER_PLANE,
+> right? I assume a stage is coupled with a LM pair.
+>
+> But for PLANES_PER_STAGE, I am still confused. A stage or a LM pair can
+> involve many SSPP layers. How it related to planes? Plane is a concepts f=
+rom
+> higher level.
 
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+PIPES_PER_STAGE, excuse me.
+
+--=20
+With best wishes
+Dmitry
 
