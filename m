@@ -1,166 +1,99 @@
-Return-Path: <linux-kernel+bounces-361385-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 041F599A779
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:24:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1348B99A770
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A7DC283D8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:24:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB862868A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40E21957E2;
-	Fri, 11 Oct 2024 15:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 270DF194C78;
+	Fri, 11 Oct 2024 15:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fJy54j3r"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="inwKbYms"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E68EC1946DF;
-	Fri, 11 Oct 2024 15:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AE2194AEC;
+	Fri, 11 Oct 2024 15:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660251; cv=none; b=LY1Oygv4qSJwh7w4deh77MAIgmFTHtLcwg6KVxWtBVw+HT2HfKx9dVePkKEsapslwvco2hWhH/rwDRCPtuOPskE2WDvPAujUv8xBpA1Agsl388+KLWelW6TjMjSNI3tdYcPsHK+YnGvevP2BJBiYYL9Tukbw5vSlAeEoWbgliDk=
+	t=1728660196; cv=none; b=VOcztYll3jOaFbLRGKWSYesCeQWanWLyVg0E1myQuw9tOzS1rJrXdZBnOxwVCQb9tR2kowuWZZ/3qNCY8+/DYXt9yXHfkLfBHR1uVuLx+0pbKXr+CKNb2iyp39z4BXiloa6SGeCaPWFAE3Z9rIR2SQf7O643uu17gMwUt/68/WQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660251; c=relaxed/simple;
-	bh=A3N9Mkq30GPl1hwp0+TVudApr5l241CnTDu+mkjDc68=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LXoUR+2lEo7g5wSd5l5SfaHtLTuNpz0ZUfbt/7+HDoyitY4OrPcX+828pY7Oz/KqNxKHrVOOi4O6a0JvMdpMppcnoTqRWdX10cb6Y36XFQwSoeoE1XNyhOO4x3IRqFtFdg5nnaxpglY9o8NgKxd6LOyBUEsHPBfuxwldw1QLfcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fJy54j3r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39333C4CEC3;
-	Fri, 11 Oct 2024 15:23:24 +0000 (UTC)
+	s=arc-20240116; t=1728660196; c=relaxed/simple;
+	bh=VxMYsiMGxFdOggv+A2yXHzsko1My1hLKFoG5O1Jw8Pw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=bjhj0AbMNsu0zb2S+nIWv3Ap5Hby9w+flrHDvVZu1g0bteJt32eXJFnND3weELMNZ6i514slZvppKQnsy9Wi8G+BfPXFUGsZ6Izct2snciKFqsB02BKyX0uZqUZexT/XKSIjXTejb4Sy7ieSSejE9OkkqDV1IApVdiXok0O1IOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=inwKbYms; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D5D08C4CEC3;
+	Fri, 11 Oct 2024 15:23:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728660250;
-	bh=A3N9Mkq30GPl1hwp0+TVudApr5l241CnTDu+mkjDc68=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fJy54j3rdRFfLY2A7N5cYYGCebcq3yQ7Nn3YpXPetQdckOI3xObxbldIKT/3sa4pY
-	 P0pMjlETYXgk5U9otowTN0tcgGSiHOnEA+T7brocFPuL7mxw8+lWpBc3d1IZg7QrTi
-	 yxcm1ahYN+C3XxkjCb7gQhnOAJW0mQ24ywsBTW+bD59i1djn7RcWzLwmMWi7FhGtRa
-	 f/Wlzo2/2dx4/+fXDKYXgOsTbpGfv868g7eBHtYCnd3ZTbC8zDts+Bjo0zvfstARrm
-	 Wu1+LOPZIdHy3rx7zi4/v+iynpsH50cr29F6HhEPLYf51ySyV+L1zOfHn1gFLPgizY
-	 WdZnrav+mlECA==
-Date: Fri, 11 Oct 2024 08:23:12 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Wedson Almeida Filho <wedsonaf@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?utf-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
-	linux-arch@vger.kernel.org, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Sean Christopherson <seanjc@google.com>,
-	Uros Bizjak <ubizjak@gmail.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>,
-	linux-arm-kernel@lists.infradead.org,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Andrew Jones <ajones@ventanamicro.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Samuel Holland <samuel.holland@sifive.com>,
-	linux-riscv@lists.infradead.org,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Subject: Re: [PATCH v10 5/5] rust: add arch_static_branch
-Message-ID: <20241011152312.r5sy7k7hsunmmbfo@treble>
-References: <20241011-tracepoint-v10-0-7fbde4d6b525@google.com>
- <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
+	s=k20201202; t=1728660196;
+	bh=VxMYsiMGxFdOggv+A2yXHzsko1My1hLKFoG5O1Jw8Pw=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=inwKbYmse/jNerPh8/BxmbXBw54gwkLiN0CX2N3bInMxFomMNQlAz/kcymjXilMgn
+	 2kyXa6AbyvtEINqUV2L0FdRbJ/mLNLVoIsuaYaGrD+BxlDXYSZPH613MsFXpq6tWK1
+	 um4w7+atyc2auMd1imP4yCzWYVhHIQu+VHV7AU6BBl3p53p3TN5/z3RZ1swfI1cCmV
+	 IiCzFbhayPQCdJX79ItcbMXeR5lOkWR7ZnImJi568bfdquZJJepmNbGBy/tFvAf8xw
+	 6ybUE/Diry/rJbWaGG2q5UR3nkdiv7Aqn50QfAF9sJY7FQ5t/mmac4rfT9qUF4Gti1
+	 wBloIPz5T3O5g==
+From: Mark Brown <broonie@kernel.org>
+To: lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com, 
+ Tang Bin <tangbin@cmss.chinamobile.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+In-Reply-To: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
+References: <20241010073547.3720-1-tangbin@cmss.chinamobile.com>
+Subject: Re: (subset) [PATCH 1/2] ASoC: mediatek: mt8188: Remove
+ unnecessary variable assignments
+Message-Id: <172866019355.3915434.3492314512247747487.b4-ty@kernel.org>
+Date: Fri, 11 Oct 2024 16:23:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241011-tracepoint-v10-5-7fbde4d6b525@google.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Fri, Oct 11, 2024 at 10:13:38AM +0000, Alice Ryhl wrote:
-> +#[cfg(CONFIG_JUMP_LABEL)]
-> +#[cfg(not(CONFIG_HAVE_JUMP_LABEL_HACK))]
-> +macro_rules! arch_static_branch {
-> +    ($key:path, $keytyp:ty, $field:ident, $branch:expr) => {'my_label: {
-> +        $crate::asm!(
-> +            include!(concat!(env!("OBJTREE"), "/rust/kernel/arch_static_branch_asm.rs"));
-> +            l_yes = label {
-> +                break 'my_label true;
-> +            },
-> +            symb = sym $key,
-> +            off = const ::core::mem::offset_of!($keytyp, $field),
-> +            branch = const $crate::jump_label::bool_to_int($branch),
-> +        );
-> +
-> +        break 'my_label false;
-> +    }};
-> +}
-> +
-> +#[macro_export]
-> +#[doc(hidden)]
-> +#[cfg(CONFIG_JUMP_LABEL)]
-> +#[cfg(CONFIG_HAVE_JUMP_LABEL_HACK)]
-> +macro_rules! arch_static_branch {
-> +    ($key:path, $keytyp:ty, $field:ident, $branch:expr) => {'my_label: {
-> +        $crate::asm!(
-> +            include!(concat!(env!("OBJTREE"), "/rust/kernel/arch_static_branch_asm.rs"));
-> +            l_yes = label {
-> +                break 'my_label true;
-> +            },
-> +            symb = sym $key,
-> +            off = const ::core::mem::offset_of!($keytyp, $field),
-> +            branch = const 2 | $crate::jump_label::bool_to_int($branch),
-> +        );
-> +
-> +        break 'my_label false;
-> +    }};
+On Thu, 10 Oct 2024 15:35:47 +0800, Tang Bin wrote:
+> In the function mtk_dai_hdmitx_dptx_hw_params, the variable
+> 'ret' is redundant, thus remove it.
+> 
+> 
 
-Ouch... could we get rid of all this duplication by containing the hack
-bit to ARCH_STATIC_BRANCH_ASM() like so?
+Applied to
 
-diff --git a/arch/x86/include/asm/jump_label.h b/arch/x86/include/asm/jump_label.h
-index ffd0d1a1a4af..3f1c1d6c0da1 100644
---- a/arch/x86/include/asm/jump_label.h
-+++ b/arch/x86/include/asm/jump_label.h
-@@ -24,7 +24,7 @@
- #ifdef CONFIG_HAVE_JUMP_LABEL_HACK
- #define ARCH_STATIC_BRANCH_ASM(key, label)		\
- 	"1: jmp " label " # objtool NOPs this \n\t"	\
--	JUMP_TABLE_ENTRY(key, label)
-+	JUMP_TABLE_ENTRY(key " + 2", label)
- #else /* !CONFIG_HAVE_JUMP_LABEL_HACK */
- #define ARCH_STATIC_BRANCH_ASM(key, label)		\
- 	"1: .byte " __stringify(BYTES_NOP5) "\n\t"	\
-@@ -33,10 +33,8 @@
- 
- static __always_inline bool arch_static_branch(struct static_key * const key, const bool branch)
- {
--	int hack_bit = IS_ENABLED(CONFIG_HAVE_JUMP_LABEL_HACK) ? 2 : 0;
--
- 	asm goto(ARCH_STATIC_BRANCH_ASM("%c0 + %c1", "%l[l_yes]")
--		: :  "i" (key), "i" (hack_bit | branch) : : l_yes);
-+		: :  "i" (key), "i" (branch) : : l_yes);
- 
- 	return false;
- l_yes:
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+
+Thanks!
+
+[1/2] ASoC: mediatek: mt8188: Remove unnecessary variable assignments
+      commit: f5a0ea8936a640d8229d5219515141fc496ec5d8
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
