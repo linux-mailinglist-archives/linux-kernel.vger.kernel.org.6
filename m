@@ -1,73 +1,72 @@
-Return-Path: <linux-kernel+bounces-361085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2663E99A33A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3079699A34F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:07:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B2FB242CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:04:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D03DE285EC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC52821790C;
-	Fri, 11 Oct 2024 12:04:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20947217311;
+	Fri, 11 Oct 2024 12:06:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvbF05Ki"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ODPL4t6h";
+	dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b="ODPL4t6h"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9C820C49B;
-	Fri, 11 Oct 2024 12:04:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415BA2178F2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:06:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648271; cv=none; b=KaHmziGNIOjLwIR+OJ1pQvmhW62lwpAl6tNSowbBzOFyZJ8TNsCz4TDyIssKfFvAQy4qeCNe1ienXUyZztzmfbC6pkzE8XhYRMVQYlBU8u7LE5DnqorbUwaPgYp/ZvetIufs4fjhyA6MWZwjva1nytIJyqHCAZ2ZltiXhE2deGE=
+	t=1728648381; cv=none; b=XJzFed532YnJhhdj62VIDZAtCbvZhv+RZhiR/NfcUFdhYPv/LcJaPO4q4TARTdGK8EIg06jzi2JALZrjmzSC+UIvgtYcKvZ7UYygbCxsqUkNMnnbBbdcRoKRC5xuVxLqNg5Hukaskm/DkhYvoMTgPlYr4tLxQCwt8cR85AiGMI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648271; c=relaxed/simple;
-	bh=d2lsdLlJ23PzLx+t87PT/SQoDACaRKM+kkKERIEh25I=;
+	s=arc-20240116; t=1728648381; c=relaxed/simple;
+	bh=AP0lE6GELvjDU5tE5u0JtEumVZXQfjmSmXY1XghR4tw=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U063Nmb5AgUDJOkKFFscX6BrtXQeuDszyA9+/SO7Qo0qA8v1HAQswU3VUPNG3GRxHGn5Rlh2mwSVQiHIge9H1QVBEp5k4DS1XOAwepZExj9J9krmHDR+jgpOiK4I6EoouFJmJJaEf0XftLwDuZklFBt2zA/XcQ5DbbRPRc/TlPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NvbF05Ki; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398e53ca28so2175172e87.3;
-        Fri, 11 Oct 2024 05:04:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728648267; x=1729253067; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=AyShL+hX7deCzpof4F0fbg7eMw0Pnc7HEQfvWtO/NKM=;
-        b=NvbF05KiYYLN+x6VhpmQSaX8F3M6JPZDpqyioxOHzQ+u9P3BcelVt2acAP6hS/dFaJ
-         +vuNZhXQnHRc+KM2WK2DPbum0shqeAu/KOvIBZ0tEAt+hORzJLdHRnFEc+juq8CbOfRE
-         7v3sJ9tbSMM9ztvXodUesLvWFKygA7iF2H7Unyh5fjlq7L/eHsexEGEiZoFDxPtk4Jr8
-         DjndUI5yO/LWc0TmFiIyCAwVsdFanyeBG/+Lq66cqe4+PcLSWWOF1l8C8F6Xl+zuX+7I
-         gUYefWfW3j6T1jJtOJokeWSuLJh6QbYcYZfL30rozsg50l5ui+uTdCfTFGDMwwp7XKya
-         jOVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728648267; x=1729253067;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AyShL+hX7deCzpof4F0fbg7eMw0Pnc7HEQfvWtO/NKM=;
-        b=qx4dTOvJlUrp3yxy1/rfUblwOtvS+lUSvf79MAFwFzjS8lwVoMUnt4TeFGfQWGaSEB
-         tt1mVqYpl8IWfTQ2OeEqZsmHCBcijYYy+PmGP8NysK+VcmEIWOO0S7PpUdLE8uikebx7
-         pz2kaiskDum+5JEY3ABWZQ5PqzDGOp7UJujIgtsbcWBaZWn38gP1pm0GktbpfHyHvz+1
-         GPZp6zBHpmymsVD2bpkY/8vBRKMec7s48a3aSK6CmjPncqncBWvF6T5ljQic3v4IAXdX
-         qzrTMXqpE3J+Nr0pskiyXTbJzMaC3/PfC2svWNkxMb4fOE/8RBoP4zg7N1Y2rxfEw/FU
-         yiIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVtg4YBJbx/NpTi4t0iv4yfXLyqhldh8wzs3K74WIXSZD4VrU6kXOCZVxH84e2ccyzKimSeCnG//yu/@vger.kernel.org, AJvYcCWS7u4ZR0vh0919JoxmRmNe64RjUjoF6xK0S6SpbgrFXWr5aSkBpTvg0vcgzIvVGwrId1Sch+bv@vger.kernel.org, AJvYcCXv1y1Xo+S3TGHNMhwmajRdAwIVpEXVzOdtMEQeOZ1grFDvuMzE6ZhMIktQKmFcoV76YZ9mu/LYcZ6bGuTO@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4mhNtLMwhJzEidr8pgp3SbXZDcmMZmuHaR1FlYDStSWHtLhBd
-	203P5Ywjla7zsquNDCya9o1rq/V/r/PgpgD523jSfZvF/5snniFJT5WL5NDB
-X-Google-Smtp-Source: AGHT+IEFmewdlQ1CPXu2nV+GJbqCzq5j5B1b19TApH5sZAJ+BffXTe4lNLUiGOh2G3Wr71IqwpAF9A==
-X-Received: by 2002:a05:6512:3b24:b0:539:9717:7ea0 with SMTP id 2adb3069b0e04-539da58b296mr1527424e87.55.1728648267031;
-        Fri, 11 Oct 2024 05:04:27 -0700 (PDT)
-Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f5c4c3sm206188966b.95.2024.10.11.05.04.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 05:04:26 -0700 (PDT)
-Message-ID: <105dfbaa-0b7f-4e9e-8ab8-16d35ec165d7@gmail.com>
-Date: Fri, 11 Oct 2024 14:04:24 +0200
+	 In-Reply-To:Content-Type; b=oUlpwxTxtn2WDZbvfQiOb6mxCmCefBMf2gFBOqlwxuTFquORbHhysUESkdsH3Mmp0pl90VfzMqV2ytbg+Z66Zpaea/Ro+Imm1bLXXmst4fsakt7dMzZzubv0rNZZt2d492ervLAP7VHxk3QaUEfFvGHPtjVVMdA+dt7uxz0tvP8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ODPL4t6h; dkim=pass (1024-bit key) header.d=suse.com header.i=@suse.com header.b=ODPL4t6h; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 23F101FCE0;
+	Fri, 11 Oct 2024 12:06:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728648375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=AP0lE6GELvjDU5tE5u0JtEumVZXQfjmSmXY1XghR4tw=;
+	b=ODPL4t6hHkumrDnkrdEuWDx9YayMdRSZzVZzAZLqJ87MoL7VBopu4oqr4rbUZMlM0XWjGT
+	sU0HgdbvGDeomhgHKvJ1pAkiYtnE7cevQTdhsJtQyXobjcbARQ3W9C1K+zAzPwRXtip5ze
+	Xh23xL5WtsnC5e6YrI+liT8s5zZMHY0=
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.com header.s=susede1 header.b=ODPL4t6h
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.com; s=susede1;
+	t=1728648375; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=AP0lE6GELvjDU5tE5u0JtEumVZXQfjmSmXY1XghR4tw=;
+	b=ODPL4t6hHkumrDnkrdEuWDx9YayMdRSZzVZzAZLqJ87MoL7VBopu4oqr4rbUZMlM0XWjGT
+	sU0HgdbvGDeomhgHKvJ1pAkiYtnE7cevQTdhsJtQyXobjcbARQ3W9C1K+zAzPwRXtip5ze
+	Xh23xL5WtsnC5e6YrI+liT8s5zZMHY0=
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id DB2731370C;
+	Fri, 11 Oct 2024 12:06:14 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id I0LbM7YUCWelYwAAD6G6ig
+	(envelope-from <jgross@suse.com>); Fri, 11 Oct 2024 12:06:14 +0000
+Message-ID: <e6938fd7-2cb8-412f-b3e3-1943eeb271d8@suse.com>
+Date: Fri, 11 Oct 2024 14:06:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,120 +74,211 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/3] device property: Introduce
- fwnode_for_each_available_child_node_scoped()
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
- <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
- <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
- <07ec0837-d7a3-413e-a281-e06feafe7f34@gmail.com>
- <Zwj12J5bTNUEnxA0@kekkonen.localdomain>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <Zwj12J5bTNUEnxA0@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Subject: Re: [PATCH v3] xen: Remove dependency between pciback and privcmd
+To: Jiqian Chen <Jiqian.Chen@amd.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+References: <20241011034227.1278144-1-Jiqian.Chen@amd.com>
+Content-Language: en-US
+From: Juergen Gross <jgross@suse.com>
+Autocrypt: addr=jgross@suse.com; keydata=
+ xsBNBFOMcBYBCACgGjqjoGvbEouQZw/ToiBg9W98AlM2QHV+iNHsEs7kxWhKMjrioyspZKOB
+ ycWxw3ie3j9uvg9EOB3aN4xiTv4qbnGiTr3oJhkB1gsb6ToJQZ8uxGq2kaV2KL9650I1SJve
+ dYm8Of8Zd621lSmoKOwlNClALZNew72NjJLEzTalU1OdT7/i1TXkH09XSSI8mEQ/ouNcMvIJ
+ NwQpd369y9bfIhWUiVXEK7MlRgUG6MvIj6Y3Am/BBLUVbDa4+gmzDC9ezlZkTZG2t14zWPvx
+ XP3FAp2pkW0xqG7/377qptDmrk42GlSKN4z76ELnLxussxc7I2hx18NUcbP8+uty4bMxABEB
+ AAHNH0p1ZXJnZW4gR3Jvc3MgPGpncm9zc0BzdXNlLmNvbT7CwHkEEwECACMFAlOMcK8CGwMH
+ CwkIBwMCAQYVCAIJCgsEFgIDAQIeAQIXgAAKCRCw3p3WKL8TL8eZB/9G0juS/kDY9LhEXseh
+ mE9U+iA1VsLhgDqVbsOtZ/S14LRFHczNd/Lqkn7souCSoyWsBs3/wO+OjPvxf7m+Ef+sMtr0
+ G5lCWEWa9wa0IXx5HRPW/ScL+e4AVUbL7rurYMfwCzco+7TfjhMEOkC+va5gzi1KrErgNRHH
+ kg3PhlnRY0Udyqx++UYkAsN4TQuEhNN32MvN0Np3WlBJOgKcuXpIElmMM5f1BBzJSKBkW0Jc
+ Wy3h2Wy912vHKpPV/Xv7ZwVJ27v7KcuZcErtptDevAljxJtE7aJG6WiBzm+v9EswyWxwMCIO
+ RoVBYuiocc51872tRGywc03xaQydB+9R7BHPzsBNBFOMcBYBCADLMfoA44MwGOB9YT1V4KCy
+ vAfd7E0BTfaAurbG+Olacciz3yd09QOmejFZC6AnoykydyvTFLAWYcSCdISMr88COmmCbJzn
+ sHAogjexXiif6ANUUlHpjxlHCCcELmZUzomNDnEOTxZFeWMTFF9Rf2k2F0Tl4E5kmsNGgtSa
+ aMO0rNZoOEiD/7UfPP3dfh8JCQ1VtUUsQtT1sxos8Eb/HmriJhnaTZ7Hp3jtgTVkV0ybpgFg
+ w6WMaRkrBh17mV0z2ajjmabB7SJxcouSkR0hcpNl4oM74d2/VqoW4BxxxOD1FcNCObCELfIS
+ auZx+XT6s+CE7Qi/c44ibBMR7hyjdzWbABEBAAHCwF8EGAECAAkFAlOMcBYCGwwACgkQsN6d
+ 1ii/Ey9D+Af/WFr3q+bg/8v5tCknCtn92d5lyYTBNt7xgWzDZX8G6/pngzKyWfedArllp0Pn
+ fgIXtMNV+3t8Li1Tg843EXkP7+2+CQ98MB8XvvPLYAfW8nNDV85TyVgWlldNcgdv7nn1Sq8g
+ HwB2BHdIAkYce3hEoDQXt/mKlgEGsLpzJcnLKimtPXQQy9TxUaLBe9PInPd+Ohix0XOlY+Uk
+ QFEx50Ki3rSDl2Zt2tnkNYKUCvTJq7jvOlaPd6d/W0tZqpyy7KVay+K4aMobDsodB3dvEAs6
+ ScCnh03dDAFgIq5nsB11j3KPKdVoPlfucX2c7kGNH+LUMbzqV6beIENfNexkOfxHfw==
+In-Reply-To: <20241011034227.1278144-1-Jiqian.Chen@amd.com>
+Content-Type: multipart/signed; micalg=pgp-sha256;
+ protocol="application/pgp-signature";
+ boundary="------------ZXUb7OBS6mGfOIbLlsELebFw"
+X-Rspamd-Queue-Id: 23F101FCE0
+X-Spam-Score: -6.41
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-6.41 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SIGNED_PGP(-2.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MIME_GOOD(-0.20)[multipart/signed,multipart/mixed,text/plain];
+	R_DKIM_ALLOW(-0.20)[suse.com:s=susede1];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_UNKNOWN(0.10)[application/pgp-keys];
+	MIME_BASE64_TEXT(0.10)[];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.com:s=susede1];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+,1:+,2:+,3:+,4:~,5:~];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	DKIM_TRACE(0.00)[suse.com:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	HAS_ATTACHMENT(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:mid,suse.com:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 11/10/2024 11:54, Sakari Ailus wrote:
-> Hi Javier,
-> 
-> On Fri, Oct 11, 2024 at 10:34:32AM +0200, Javier Carrasco wrote:
->> On 11/10/2024 07:39, Sakari Ailus wrote:
->>> Hi Javier,
->>>
->>> On Tue, Oct 08, 2024 at 06:10:27PM +0200, Javier Carrasco wrote:
->>>> Introduce the scoped variant of the
->>>> fwnode_for_each_available_child_node() to automatically decrement the
->>>> child's refcount when it goes out of scope, removing the need for
->>>> explicit calls to fwnode_handle_put().
->>>>
->>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->>>> ---
->>>>  include/linux/property.h | 5 +++++
->>>>  1 file changed, 5 insertions(+)
->>>>
->>>> diff --git a/include/linux/property.h b/include/linux/property.h
->>>> index 61fc20e5f81f..b37508ecf606 100644
->>>> --- a/include/linux/property.h
->>>> +++ b/include/linux/property.h
->>>> @@ -168,6 +168,11 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
->>>>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
->>>>  	     child = fwnode_get_next_available_child_node(fwnode, child))
->>>>  
->>>> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	       \
->>>> +	for (struct fwnode_handle *child __free(fwnode_handle) =	       \
->>>> +		fwnode_get_next_available_child_node(fwnode, NULL); child;     \
->>>> +	     child = fwnode_get_next_available_child_node(fwnode, child))
->>>> +
->>>
->>> On OF, the implementation of the .get_next_child_node() fwnode op is:
->>>
->>> static struct fwnode_handle *
->>> of_fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
->>>                               struct fwnode_handle *child)
->>> {
->>>         return of_fwnode_handle(of_get_next_available_child(to_of_node(fwnode),
->>>                                                             to_of_node(child)));
->>> }
->>>
->>> On ACPI we currently have .device_is_available() returning false but that
->>> probably should be returning true instead (it's been virtually unused
->>> previously).
->>>
->>> That makes fwnode_get_next_available_child_node() and
->>> fwnode_get_next_child_node() equivalent on both ACPI and OF. Presumably
->>> creating unavailable nodes would be useless on swnode, too.
->>>
->>> So my question is: what do we gain by adding all these fwnode_*available()
->>> helpers?
->>>
->>>>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
->>>>  						 struct fwnode_handle *child);
->>>
->>
->> Hi Sakari, thanks for your feedback.
->>
->> I thought that the difference is not in OF (which either way ends up
->> calling __of_device_is_available()), but in ACPI.
->>
->> For fwnode_for_each_child_node(), the ACPI callback is
->> acpi_get_next_subnode(), and I don't see that the device_is_available()
->> callback is used in that case.
-> 
-> fwnode_get_next_available_child_node() also calls
-> fwnode_device_is_available() and that returns false on all non-device nodes
-> right now. As noted above, fwnode_device_is_available() should probably
-> return true for non-device nodes on ACPI. I'll post a patch.
-> 
+This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
+--------------ZXUb7OBS6mGfOIbLlsELebFw
+Content-Type: multipart/mixed; boundary="------------KzonHHoe46ML3HTmZO8toNtL";
+ protected-headers="v1"
+From: Juergen Gross <jgross@suse.com>
+To: Jiqian Chen <Jiqian.Chen@amd.com>,
+ Stefano Stabellini <sstabellini@kernel.org>,
+ Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>
+Cc: xen-devel@lists.xenproject.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Marek_Marczykowski-G=C3=B3recki?= <marmarek@invisiblethingslab.com>
+Message-ID: <e6938fd7-2cb8-412f-b3e3-1943eeb271d8@suse.com>
+Subject: Re: [PATCH v3] xen: Remove dependency between pciback and privcmd
+References: <20241011034227.1278144-1-Jiqian.Chen@amd.com>
+In-Reply-To: <20241011034227.1278144-1-Jiqian.Chen@amd.com>
 
-fwnode_device_is_available() is indeed called in
-fwnode_get_next_available_child_node(), as I stated a couple of lines below.
+--------------KzonHHoe46ML3HTmZO8toNtL
+Content-Type: multipart/mixed; boundary="------------HIhyeYz3LjAO61Tn6TXjB10r"
 
-My question on the other hand was how that is called in
-fwnode_for_each_child_node(), as I could not see any call to check
-availability in acpi_get_next_subnode().
-That is what confused me about the _available_ macros being the same as
-their counterparts without the _available_.
+--------------HIhyeYz3LjAO61Tn6TXjB10r
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
 
-Could you please clarify that? Thanks again.
+T24gMTEuMTAuMjQgMDU6NDIsIEppcWlhbiBDaGVuIHdyb3RlOg0KPiBDb21taXQgMmZhZTZi
+YjdiZTMyICgieGVuL3ByaXZjbWQ6IEFkZCBuZXcgc3lzY2FsbCB0byBnZXQgZ3NpIGZyb20g
+ZGV2IikNCj4gYWRkcyBhIHdlYWsgcmV2ZXJzZSBkZXBlbmRlbmN5IHRvIHRoZSBjb25maWcg
+WEVOX1BSSVZDTUQgZGVmaW5pdGlvbiwgdGhhdA0KPiBkZXBlbmRlbmN5IGNhdXNlcyB4ZW4t
+cHJpdmNtZCBjYW4ndCBiZSBsb2FkZWQgb24gZG9tVSwgYmVjYXVzZSBkZXBlbmRlbnQNCj4g
+eGVuLXBjaWJhY2sgaXNuJ3QgYWx3YXlzIGJlIGxvYWRlZCBzdWNjZXNzZnVsbHkgb24gZG9t
+VS4NCj4gDQo+IFRvIHNvbHZlIGFib3ZlIHByb2JsZW0sIHJlbW92ZSB0aGF0IGRlcGVuZGVu
+Y3ksIGFuZCBkbyBub3QgY2FsbA0KPiBwY2lzdHViX2dldF9nc2lfZnJvbV9zYmRmKCkgZGly
+ZWN0bHksIGluc3RlYWQgYWRkIGEgaG9vayBpbg0KPiBkcml2ZXJzL3hlbi9hcGNpLmMsIHhl
+bi1wY2liYWNrIHJlZ2lzdGVyIHRoZSByZWFsIGNhbGwgZnVuY3Rpb24sIHRoZW4gaW4NCj4g
+cHJpdmNtZF9pb2N0bF9wY2lkZXZfZ2V0X2dzaSBjYWxsIHRoYXQgaG9vay4NCj4gDQo+IEZp
+eGVzOiAyZmFlNmJiN2JlMzIgKCJ4ZW4vcHJpdmNtZDogQWRkIG5ldyBzeXNjYWxsIHRvIGdl
+dCBnc2kgZnJvbSBkZXYiKQ0KPiBSZXBvcnRlZC1ieTogTWFyZWsgTWFyY3p5a293c2tpLUfD
+s3JlY2tpIDxtYXJtYXJla0BpbnZpc2libGV0aGluZ3NsYWIuY29tPg0KPiBTaWduZWQtb2Zm
+LWJ5OiBKaXFpYW4gQ2hlbiA8SmlxaWFuLkNoZW5AYW1kLmNvbT4NCg0KVW5mb3J0dW5hdGVs
+eSBJJ20gc2VlaW5nIGEgYnVpbGQgYnJlYWthZ2UgZm9yIHRoZSAzMi1iaXQgeDg2IGJ1aWxk
+Lg0KDQpSZWFzb24gaXMgdGhhdCBkcml2ZXJzL3hlbi9hY3BpLmMgaXMgYmVpbmcgYnVpbHQg
+Zm9yIERvbTAgb25seSwgc28gaGF2aW5nDQpDT05GSUdfWEVOX0FDUEkgZGVmaW5lZCBpcyBu
+b3QgZW5vdWdoIGZvciBlbnN1cmluZyB0aGUgbmV3IGZ1bmN0aW9ucyBhcmUNCnByZXNlbnQu
+DQoNCkkgc3VnZ2VzdCB0byBhZGQgYSBuZXcgQ09ORklHIGl0ZW0gQ09ORklHX1hFTl9ET00w
+X0FDUEkgbGlrZQ0KDQpjb25maWcgWEVOX0RPTTBfQUNQSQ0KCWRlZl9ib29sIHkNCglkZXBl
+bmRzIG9uIFhFTl9BQ1BJICYmIFhFTl9ET00wDQoNCmFuZCB0aGVuIHJlcGxhY2UgYWxsIENP
+TkZJR19YRU5fQUNQSSBpbnN0YW5jZXMgaW4geW91ciBwYXRjaCB3aXRoDQpDT05GSUdfWEVO
+X0RPTTBfQUNQSS4gVGhpcyBpbmNsdWRlcyB0aGUgdXNlIGNhc2UgaW4NCnByaXZjbWRfaW9j
+dGxfcGNpZGV2X2dldF9nc2koKS4NCg0KDQpKdWVyZ2VuDQo=
+--------------HIhyeYz3LjAO61Tn6TXjB10r
+Content-Type: application/pgp-keys; name="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Disposition: attachment; filename="OpenPGP_0xB0DE9DD628BF132F.asc"
+Content-Description: OpenPGP public key
+Content-Transfer-Encoding: quoted-printable
 
->>
->> For fwnode_for_each_available_child_node(),
->> fwnode_get_next_available_child_node() is used, which checks
->> fwnode_device_is_available(), which then calls device_is_available().
->>
->> What's the catch?
-> 
+-----BEGIN PGP PUBLIC KEY BLOCK-----
 
+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
+kt+z4drzFUyEjLM1vVvIMjkUoJs=3D
+=3DeeAB
+-----END PGP PUBLIC KEY BLOCK-----
+
+--------------HIhyeYz3LjAO61Tn6TXjB10r--
+
+--------------KzonHHoe46ML3HTmZO8toNtL--
+
+--------------ZXUb7OBS6mGfOIbLlsELebFw
+Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
+Content-Description: OpenPGP digital signature
+Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+wsB5BAABCAAjFiEEhRJncuj2BJSl0Jf3sN6d1ii/Ey8FAmcJFLYFAwAAAAAACgkQsN6d1ii/Ey/9
+1Af/QbUZAWY+c7Ca+FSbwKWfxGwSoWvAbiHN4qas6uzSDPzvMQySzJljQxNTxTkduaFUxE/RgDw0
+XpxrCxkp/jYy4SuJ9hLu63KuTgCEIKk7WbFOcATMJG20vZtVxdVBHysWDnHgweK6Ls5KCfuIjmjw
+dV4g+y0lpw2gL3JTYj1/p87WRhN+nDAtnAzM1vyWSUsMftJQvf+BEA2VNmKgzfOV+hhV+Bl2xgvF
+jZ/Qf+8AMpvxoUu6I/JAquUrNLPmSUaVUnP8qBoI094qqQiBA2WHse7YeRysUv83/WBXjOIT+Z4F
+X3YnW2USjj6Oo00hIgIVFtbN1iKlwn2frQ+vQgThzw==
+=OVU7
+-----END PGP SIGNATURE-----
+
+--------------ZXUb7OBS6mGfOIbLlsELebFw--
 
