@@ -1,98 +1,129 @@
-Return-Path: <linux-kernel+bounces-361387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE47E99A77F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:25:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9674399A786
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 48E10283969
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:25:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63C61C2456A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:26:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195C6194A53;
-	Fri, 11 Oct 2024 15:25:32 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FF8E194A53;
+	Fri, 11 Oct 2024 15:26:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="T9fDsFjR"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0ED1946DF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9968194A65;
+	Fri, 11 Oct 2024 15:26:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660331; cv=none; b=mmzpwXDv6xatFMUFBfb+lISCbVvMHw5Cijqmg/hDZzZhEs6CRFI4UsThco2DNkRI6Azi4xTzLFAM2rMZrX5wqNH86dumE9n9p/DammBmrQaoFVm+cgzNr6cWVWMpIWDt6desr+wpcQBIOb7jptE+y7nd6sr4SuEeHM759n9Dpuo=
+	t=1728660392; cv=none; b=dV30vereqrW21F7+Ha4XUcMy4IkgNEHFu3gTInqJR4TeFoQRlDgynLRBoKGVLapUKxQJ8dvA01rtMEc0HQP2u02ZLeeFjqyiF6I8tnIHzMegw7hhUNC+beevhJJsVMU5AutsdoWfFCgbjsukMr0aUWpb3WydC8pT+sRVUcocjXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660331; c=relaxed/simple;
-	bh=yTcImAvSrPOfIo8sqUv7ec8p025b7a6EU+kbzxfFlZo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=JXRKZk0eKtzrnKC9Hyy4tACo05q17grmCF7V3HSZ21OycsCdAS61JiXv/uN3MsNyIGPf/lSNkRTh1uBlIQKkWkTiZkt6I5h9l5InNRT7GAGmiOyj9Ed9UqcHSB5/qeCdr9PIKZjvMx4sQXrRpbxm2Y5RarlJnVFUglw7PIGUIzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a342e872a7so21653985ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:25:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728660329; x=1729265129;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=a8GqyG4q9XKhcH6uWn9ylQYKUk2Itw869FNns+eJ65A=;
-        b=OIfLOTAbfPHbgCtHtBABv3H1d042HWp5KV7k/IyvokrrmeWlHpPleWh4H2bxcjbD8H
-         Lqsj18lUxPB+Kuf4Oppxdbv4K2820Eo9XKxnNXRO/1gamWC1AqAWYerXwexjBVLSufm2
-         Wyu6fMxNpJ2Rf0m0SrvfD1Dlhq6mOOJrVk+p0rnbN5TLlerrTGnyQKRW4Pgp1GpSyCwX
-         Wsx7pOGvzXOBos/eamm9DrnBh7y+1g3fpIV8QgEqHN7//7R9PPEs1/2NswqpUnEFTZYA
-         Hy22pQkHxiV8PM3Etcbz4xFRMHJD+8SOdVn/+/ZQEdvHu6sUj53RmVUqW95ag9+P4T8W
-         iOAw==
-X-Forwarded-Encrypted: i=1; AJvYcCVxZ6wMS1XTLXxR6G53ZdXPIxpg8kz2lrHm/W6ocbAuIP6fUXL26k7R3iCmli1Ah+L5rRtpHV4cocSPsvg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwByXzq+eC7U7/6aVVEv+T8kCxeEAxSwYFyWIOcEnHker5ToYE3
-	xgB8ZGP9q2Ir9LehzBe1iYSkLgcNch3Tf7uDAyT5Nznrp4KlaI/qf7h9GR372wEXJlVV+ODv04L
-	dlBScIMdzI+bm2HHAx1Wp6UasJNtWuLmcTjWG8oIYHKIqwxW+aAPRnyA=
-X-Google-Smtp-Source: AGHT+IEOWThoXLfZK7qpqPffhr9j8Wn1xh4UoCp/mFqdQDb4BAxqr8ZXdUs6MdbhjnnKmpZeS2z7njUlvriI3LFZH8sSp2iPMGoR
+	s=arc-20240116; t=1728660392; c=relaxed/simple;
+	bh=giPqeOH/RSw1VdB+Wl0PIEL8nT37w/uVSBSFTWm147E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mRRFLmWZguj4OOMmvu3MKwAOxySWYqysMhLRoO8LZ2ASpSsQRwZyhrKm8IDxJzGHeknXJ9hEJMwdqNtR6+3cbn0o51iFtGyPI/2EPayM3bnu8nYfYnY5ydAveC2703X0llE7bb8PYWsV3SSTFEiIfGsJeIcQhTKGDqriLVu/CsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=T9fDsFjR; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id E86621C0087; Fri, 11 Oct 2024 17:26:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1728660388;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UcwpcOG8ou2eL058uLGZfB1UfmH7tSswN80Lv6moiw8=;
+	b=T9fDsFjRt10r/lCr0AVd952sZi88eGqS8Lr6G/JoLCdJvaHwYLEvmLGQlZyej5maTEu6Hn
+	pF6WVrtLS/nplqem0QYFMJ/9F5w8LAk2JFYprMXmdRdXv8CYXe84NZy1Psk1LUa9d9U7JO
+	Ig+kDWTIyn+3ta+mn24xzEMg8Exw1a0=
+Date: Fri, 11 Oct 2024 17:26:28 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Armin Wolf <W_Armin@gmx.de>
+Cc: Werner Sembach <wse@tuxedocomputers.com>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <ZwlDpCPhieF3tezX@duo.ucw.cz>
+References: <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
+ <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
+ <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
+ <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
+ <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c4a:b0:3a3:49f0:f425 with SMTP id
- e9e14a558f8ab-3a3b5c73ef8mr28733595ab.0.1728660329361; Fri, 11 Oct 2024
- 08:25:29 -0700 (PDT)
-Date: Fri, 11 Oct 2024 08:25:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67094369.050a0220.4cbc0.000c.GAE@google.com>
-Subject: [syzbot] Monthly nilfs report (Oct 2024)
-From: syzbot <syzbot+listac229802b21f5b6f6df2@syzkaller.appspotmail.com>
-To: konishi.ryusuke@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-nilfs@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="zWKrZbw00MuOib0M"
+Content-Disposition: inline
+In-Reply-To: <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de>
 
-Hello nilfs maintainers/developers,
 
-This is a 31-day syzbot report for the nilfs subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/nilfs
+--zWKrZbw00MuOib0M
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-During the period, 1 new issues were detected and 0 were fixed.
-In total, 4 issues are still open and 50 have been fixed so far.
+Hi!
 
-Some of the still happening issues:
+> > 1.
+> > https://lore.kernel.org/all/6b32fb73-0544-4a68-95ba-e82406a4b188@gmx.de/
+> > -> Should be no problem? Because this is not generally exposing wmi
+> > calls, just mapping two explicitly with sanitized input (whitelisting
+> > basically).
+>=20
+> It would be OK to expose a selected set of WMI calls to userspace and san=
+itizing the input of protect potentially buggy firmware from userspace.
+>
 
-Ref Crashes Repro Title
-<1> 8223    Yes   WARNING in mark_buffer_dirty (6)
-                  https://syzkaller.appspot.com/bug?extid=d98fd19acd08b36ff422
-<2> 16      Yes   kernel BUG in nilfs_delete_entry
-                  https://syzkaller.appspot.com/bug?extid=32c3706ebf5d95046ea1
-<3> 1       No    WARNING: ODEBUG bug in nilfs_detach_log_writer
-                  https://syzkaller.appspot.com/bug?extid=c4b312367c177af55bdd
+I don't believe this is good idea. Passthrough interfaces where
+userland talks directly to hardware are very tricky.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+>=20
+> Regarding the basic idea of having a virtual HID interface: i would prefe=
+r to create a illumination subsystem instead, but i have to agree that we s=
+hould be doing this
+> only after enough drivers are inside the kernel, so we can design a
+> suitable interface for them. For now, creating a virtual HID
+> interface seems to be good enough.
 
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
+I have an RGB keyboard, and would like to get it supported. I already
+have kernel driver for LEDs (which breaks input functionality). I'd
+like to cooperate on "illumination" subsystem.
 
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
+Best regards,
+								Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
 
-You may send multiple commands in a single email message.
+--zWKrZbw00MuOib0M
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwlDpAAKCRAw5/Bqldv6
+8mh0AJ0aTptrc+f+mRYy54oz6nrCUGaV6wCfd1a2bQN7AH6mB0+NHPYlLYV1I2s=
+=eE0M
+-----END PGP SIGNATURE-----
+
+--zWKrZbw00MuOib0M--
 
