@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-361754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87CBA99AC94
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:22:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B70A499AC9A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3439228DF2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:22:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 40676B24118
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA8AA1CFED3;
-	Fri, 11 Oct 2024 19:22:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBCC11CF2B6;
+	Fri, 11 Oct 2024 19:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FHM1iFgF"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Cs+/KZdj"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A644D1CF2B6
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:22:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49021C2327;
+	Fri, 11 Oct 2024 19:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728674549; cv=none; b=ORrDIsoC5LfsAB90B83WHekYiDvcrqq0+1WbD+iTbk3m6Ld+KAeBGc9GEW7wDy0iYtRJatKmbcJECOsKTGG4SUDSbk8Z1XZsOL/NTvJytygtf1QdUb+EtXSqEzuGOjLFF4KJS3KS1J8t9GwOXWQN3pLno8AggGd15h0mz+UbAl8=
+	t=1728674679; cv=none; b=CEquo7Hx8fqeow8nPdDcrmhL3W7aJ2e30na103Xq6h+hD4vOeYpPpqLhbAMl/iNV7I50rEMUAhnhkCixmCzefx1pZ6dUXxlmoYSRCy9ccVw+Pu0l+cGUYNgdPCzeb0Sbejkdhlcnf1W9Ug7rtrEtflbcIiQ5BrmS7QzymlA4Xng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728674549; c=relaxed/simple;
-	bh=NIQyalFfWvXbrf5QDhsF9KSVr5abtwUFulTgkzyXOgM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=PoQ6C0Ftw32e4cHpw0TCFZMy9MxecTXGICE4y4mfvsDUELIUvwGgeS/xjYA9e5EwHYe1Kz7J5ScmPPfzhcYWIbeN6qpLM2iI8h8SJYPTfC0Ij35N4O1jxHWQ+Bia1/VAJZIARsrRXB4xFVuXBbPLYpj6cP5B2OlbtUN53Mevy4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FHM1iFgF; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4311d972e3eso8116165e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:22:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728674546; x=1729279346; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=m894EEj8MKVIaKel5D8cwxspY83xIoj8l4L9T9MgTMM=;
-        b=FHM1iFgFMugkvEYjhqvWHB+By2TpK9WfoBEbzjFSqw+G1n8zLbURELqsf6IO4M9yfQ
-         AphkEaIO+lphtBRov5AIBCY4D7FsnJ6eoYEUJ5Jm6yFu4B4xP9rEJO2QzxxKqf4A5LDA
-         ZB9DyNOx78PbLGtUw1rtJ4tmwY82ydWwNe74MeV1+jreXzbovgpwK9xmpsdvzvkmx911
-         LgGL+1UW0J1mbx0FD/SGhxvwf0/HdcVlw5ZBwiZU+yThLMfBiGzbVarMKIo1VDzV+nZZ
-         hy/tzSQ+35yFeQ5nvnh1WoiQiDzoMj4ld71Z6CLcLDDZV+iC7pgoGq8zl1QB5ZxjXr/l
-         qp3w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728674546; x=1729279346;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=m894EEj8MKVIaKel5D8cwxspY83xIoj8l4L9T9MgTMM=;
-        b=dkC6L/5EMD09CXyCOVAW6S/6fF4QTzng2SrIwz+BpvRnaYX9MKKNds14aXjJIjDiqa
-         T4HGJCO5SzXAFVBOZGOh+HsA9McATYLf7FHIxNXwDZdHM3N/dAjq9EDfk5IjP6v1TXOH
-         LMXIzVjGdQIebqPQjp6WdkNrfFpBcELcjVCYcLbn4rIzBNP+bcjk94wby9v43RQc00FV
-         cuIwSrt3LXP8n1HnmbITnVPT5LtMi5B8Jn7VURXnECJlMiqq13z0wWdQbN8dkPYYv7Qx
-         mIopcChioKrjh6vcF4lyRUdgj5YRAztCyPf44PKAxf33or2zcjfE2SKz3xmcjnRAicXQ
-         /yNQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWUCZiUUD7sKR6rfEE1XZr6ErIGVolS4qNBlUcTRXhn3bD5I0kL+VFNDBwsv1pptSryhsLsBiGqR50L0Kw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypVX7Vmw9qT7EG6OuHdRLePihpzIgftUHX8Zgc9ZapsULPHEN6
-	LFQajgsQIWr2xQBlE1ge41jQwDwxIVW5IhZc2oy47zSX0RIl/2c6
-X-Google-Smtp-Source: AGHT+IET3Ck++IAbg8SE1O1j1TEiGtDgB9CXJmSO93us894bSYi9oAhFM+9i9y/jH/CFuKjQZAnQuA==
-X-Received: by 2002:a5d:4082:0:b0:37d:4d3f:51e9 with SMTP id ffacd0b85a97d-37d5ffb98b0mr440582f8f.40.1728674545757;
-        Fri, 11 Oct 2024 12:22:25 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-55c0-165d-e76c-a019.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:55c0:165d:e76c:a019])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ee49bsm4581663f8f.100.2024.10.11.12.22.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:22:25 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 11 Oct 2024 21:21:52 +0200
-Subject: [PATCH 2/2] drm/mediatek: Switch to
- for_each_child_of_node_scoped()
+	s=arc-20240116; t=1728674679; c=relaxed/simple;
+	bh=4nPb24ZEiQjI2CujzhQ2WwHWjHi/QZJvFIX6w92Wm+g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tmfF9vIrjwsVwnB2bEwlkLA0VtUZxoFOblKHrlYmRNFdAYfjFBuSFlVUI+ME6PF8fcENzYnDba02kDQY5iG9eZFnfpBHMsdQk7iVrsJi+lfqPXBYVMzGeF+vAPP4UlxBQgFnGCcLrP5rFy4wjYGWp4huzCoUsk41eNu2Jh687Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Cs+/KZdj; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728674677; x=1760210677;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4nPb24ZEiQjI2CujzhQ2WwHWjHi/QZJvFIX6w92Wm+g=;
+  b=Cs+/KZdj36f16HDAYQxeSV9v3d4Sst3ydVHzROaIdFrw6GRISeyQg6oh
+   JjYoEXohxicA223HR4PNg6PFppgqZsJuO07PPLAjo7IyTSq2l1KdTpjOY
+   oio+DPmMeDanyp9nMC2zirzHzQPYx6gm1volAZbIgcDliLK/HJjBHfPuG
+   bt4f65qPSNXgmG3BIPBYckpeH6dG+NpBOHtrSOV8d0leB8iz2jHeDlD/c
+   YfgQf28k7Uid73YtEioj+9PA2MxV0NPUAclErFQNgT5Z08MbWcnIV/FMe
+   svG6E9OkP2F8qwvGfPycrfwcJN/BQhAusEBTVHUgAFSaM5YhQGvhmSEfH
+   Q==;
+X-CSE-ConnectionGUID: zY+Bpew5TA+Hd2slQktFlQ==
+X-CSE-MsgGUID: +M6sLxznQ2iUUXWvMLBpZA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53495214"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="53495214"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 12:24:36 -0700
+X-CSE-ConnectionGUID: fYLHsV1TSIqfipBf9iIKlw==
+X-CSE-MsgGUID: zyyMIgNCQM6TSitT/egsPw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="77003745"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa009.fm.intel.com with ESMTP; 11 Oct 2024 12:24:32 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1szLFW-000Cet-2K;
+	Fri, 11 Oct 2024 19:24:30 +0000
+Date: Sat, 12 Oct 2024 03:23:59 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dzmitry Sankouski <dsankouski@gmail.com>,
+	Sebastian Reichel <sre@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	Pavel Machek <pavel@ucw.cz>
+Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
+	Dzmitry Sankouski <dsankouski@gmail.com>
+Subject: Re: [PATCH v6 6/7] power: supply: max77705: Add fuel gauge driver
+ for Maxim 77705
+Message-ID: <202410120358.OZgWQ1aJ-lkp@intel.com>
+References: <20241007-starqltechn_integration_upstream-v6-6-0d38b5090c57@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-mtk_drm_drv_memleak-v1-2-2b40c74c8d75@gmail.com>
-References: <20241011-mtk_drm_drv_memleak-v1-0-2b40c74c8d75@gmail.com>
-In-Reply-To: <20241011-mtk_drm_drv_memleak-v1-0-2b40c74c8d75@gmail.com>
-To: Chun-Kuang Hu <chunkuang.hu@kernel.org>, 
- Philipp Zabel <p.zabel@pengutronix.de>, David Airlie <airlied@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Matthias Brugger <matthias.bgg@gmail.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Alexandre Mergnat <amergnat@baylibre.com>, CK Hu <ck.hu@mediatek.com>, 
- "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728674541; l=1436;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=NIQyalFfWvXbrf5QDhsF9KSVr5abtwUFulTgkzyXOgM=;
- b=rbU7FqAOUJAaaOiSLWdKxgwrbugJ/grvJuThgHTtqrrqNwfI9iTGPlHUx/XB89McOBEJe5dBu
- yJhiWoNOe+BBmCJt5qEWcN0JkOJoUYWYGOxcxUVTsX0PA3p8LqE99pX
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-starqltechn_integration_upstream-v6-6-0d38b5090c57@gmail.com>
 
-Introduce the scoped variant of the loop to automatically release the
-child node when it goes out of scope, which is more robust than the
-non-scoped variant, and accounts for new early exits that could be added
-in the future.
+Hi Dzmitry,
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/gpu/drm/mediatek/mtk_drm_drv.c | 7 ++-----
- 1 file changed, 2 insertions(+), 5 deletions(-)
+kernel test robot noticed the following build errors:
 
-diff --git a/drivers/gpu/drm/mediatek/mtk_drm_drv.c b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-index 0878df832859..9ab656b10a49 100644
---- a/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-+++ b/drivers/gpu/drm/mediatek/mtk_drm_drv.c
-@@ -372,12 +372,11 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
- 	struct mtk_drm_private *temp_drm_priv;
- 	struct device_node *phandle = dev->parent->of_node;
- 	const struct of_device_id *of_id;
--	struct device_node *node;
- 	struct device *drm_dev;
- 	unsigned int cnt = 0;
- 	int i, j;
- 
--	for_each_child_of_node(phandle->parent, node) {
-+	for_each_child_of_node_scoped(phandle->parent, node) {
- 		struct platform_device *pdev;
- 
- 		of_id = of_match_node(mtk_drm_of_ids, node);
-@@ -406,10 +405,8 @@ static bool mtk_drm_get_all_drm_priv(struct device *dev)
- 		if (temp_drm_priv->mtk_drm_bound)
- 			cnt++;
- 
--		if (cnt == MAX_CRTC) {
--			of_node_put(node);
-+		if (cnt == MAX_CRTC)
- 			break;
--		}
- 	}
- 
- 	if (drm_priv->data->mmsys_dev_num == cnt) {
+[auto build test ERROR on 58ca61c1a866bfdaa5e19fb19a2416764f847d75]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20241008-000014
+base:   58ca61c1a866bfdaa5e19fb19a2416764f847d75
+patch link:    https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-6-0d38b5090c57%40gmail.com
+patch subject: [PATCH v6 6/7] power: supply: max77705: Add fuel gauge driver for Maxim 77705
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241012/202410120358.OZgWQ1aJ-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241012/202410120358.OZgWQ1aJ-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410120358.OZgWQ1aJ-lkp@intel.com/
+
+All errors (new ones prefixed by >>, old ones prefixed by <<):
+
+WARNING: modpost: missing MODULE_DESCRIPTION() in security/tomoyo/tomoyo.o
+WARNING: modpost: missing MODULE_DESCRIPTION() in drivers/gpu/drm/bridge/imx/imx-legacy-bridge.o
+>> ERROR: modpost: "__udivdi3" [drivers/power/supply/max77705_fuel_gauge.ko] undefined!
+>> ERROR: modpost: "__divdi3" [drivers/power/supply/max77705_fuel_gauge.ko] undefined!
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 -- 
-2.43.0
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
