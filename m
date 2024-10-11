@@ -1,127 +1,178 @@
-Return-Path: <linux-kernel+bounces-360781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360782-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 291A7999F76
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:57:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15507999F82
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BBFFFB22F85
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:57:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54ED285FE2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7284E20C48A;
-	Fri, 11 Oct 2024 08:56:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZTArbzVF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3427420C472;
+	Fri, 11 Oct 2024 08:59:34 +0000 (UTC)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B650119413B;
-	Fri, 11 Oct 2024 08:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2657120A5E2;
+	Fri, 11 Oct 2024 08:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728637016; cv=none; b=PWXwwuVveH9+r1LGgUT8Ru4oettGPZ2kZy9uMRrCqCOlUjMLd5XUcVXnzYPP/Di5urqCUL3IIoecOK7TB3IIYkax9nH9EzNKwpZFj8wqWykKkylJmCK+36pFdcnd88gmHjHv1sqIL7Phj+vlXocqcI0qyNA3t/eisLH6AoO2n/A=
+	t=1728637173; cv=none; b=exKebqeEdnYFLIeV6QlFTpfIJSZ4W1w0hAXMGNF/TUE33TYyV/M+t/I9VVHAHmzaZhcZHjiT+N3kmHr3VosJTsehb11mDCerYqm65+ysOT12RFZG7SkKyrNLmkSpFBYEdBk+ANL8WiWH3rNKbXk6ETv99c+fIC79sa+XsBueAs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728637016; c=relaxed/simple;
-	bh=O8UMgy4NK3I9Ac3Z4UxYDyPfUUZlGgk3rritssUgmSE=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=tARUZFXjkRilAgHZolZI8wwyzUbDh0CI/KW8wpDk9KE24GW/KY6Jv8mHIiUtXJbigOEXUPgOzZ5zMFXvo/sVA4VwsG0QxIpFxZrsNooxoa92JsY7TxLX3YvFRvPgoPNYEILUwhSKWdT7ed0yb4tyMFWZ2zT7v/rVg++4OttSb9s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZTArbzVF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD7DBC4CEC3;
-	Fri, 11 Oct 2024 08:56:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728637016;
-	bh=O8UMgy4NK3I9Ac3Z4UxYDyPfUUZlGgk3rritssUgmSE=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=ZTArbzVFqv+vzi6Ln/obGoDSQd75fU7AS/1J/rnwZ9ku7vVaqKOt4oBS7JFJl97LO
-	 yfC4gpjRIdwLUVcsR9aNXaQ6VxmcJjgqc03c2XxyAheP9pjPRqKKdIVrJRezZcmW7+
-	 u7ukKjQBckULxox8wj4bRRfYoIAOsNmJ8L6ZPg91RV4KwaOr43dORcPYh54BY6GKfA
-	 7jcHaXhmB6Yr6s1PdvDKz/PoD24aPBKaeXx1xn1bWJCfC7unyVJ9J60SyCACrCVTR6
-	 7nFcVxyZz16BTAgYSUOGucG0jGiJ+vlDb+LhwhTgc1Ntryp70OhvnjbNbVa8XXHbce
-	 XYBaxpbPM8g0g==
-Message-ID: <94166f32-7ff9-46d2-83c9-4df2a787fe25@kernel.org>
-Date: Fri, 11 Oct 2024 16:56:47 +0800
+	s=arc-20240116; t=1728637173; c=relaxed/simple;
+	bh=nc6A17rnILQmIKKtpPcrAfjXVsbFKsUmfKWuYF0xYVE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rN0+vlW84s5pH3g5qVFxL3GrU6mX95VFY+4weKa4rvXbCgtkuf0B7sHHiG3Q7o3IkPCmBgCBRT3lpNtsWtXKhUJqMmzID1OgtsH1GKO12C4beoXI4FiK/LALxJmZ5tz8DtsYoOQnebAGKVpSg3oSMQZGf9yIxrpwyd+srChEMu0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e28e4451e0bso1549405276.0;
+        Fri, 11 Oct 2024 01:59:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728637170; x=1729241970;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ykzu39AKcXejuBpU5m8IW6q6EkpIRw0KjmH9pDXGNvg=;
+        b=wJvLUQACSZCvvTrtQPVo+HjVjnskobDQGx3ex3xhndaV8r/Bko/nEzqtsypM08h07I
+         c50injTVjV2j0C9t2Kh94rw+R3zA5/9m9r16abQDeQ6aeWP61nPaagcmgbHeIqx83+QU
+         F8wcm/xE3CjWwxqpO/CrxtFMNF+z4V85JBzZkazWlWzKr5b0bOlpOLoq9/1L6KYbj9h/
+         Z8R6+F9jI5V6BJsNN9y2SzXIs3i2oDbEBMgLrjIXdwYiE5SleHZNLwKvHos728ddRChZ
+         MzKUqPznb6rzNRuhcZe0jsYZPt+TnDWfkjO+nGYOr2yljKNHlWAUseRABjRHx47ZjpNe
+         WqEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVw+omKt28TArN6VTpBZuwYA/WPDpNs4EGRLXIAN3V8Lq6RR6z9YCs8RnPwhPVKNLtUDYVmyFBBjj4f9XRHXNeR@vger.kernel.org, AJvYcCWhJkl2V6ZAyQxajM9TRXS2//WQwnj/GpiskdwmXpd1KAarUJA0eknHXhb+IXs0KtJVufZQjiAxzjXNhlI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyv+XQlq2WmyN7sc5X6rLieVCUbqb83CjLGywG2C3dSoP8qTPk7
+	kt7AbUbPB6Vh2O/DKzFZPfiDHUk4bQTlFp05wiB32hNPyF0GOxUMdCRCO7v6uls=
+X-Google-Smtp-Source: AGHT+IGMH2q+47yN8Dkhst+SljTukcdc9/T1V3uWHCt9F1/qVebmk2raQBWcGFq9HcyIUlFmhmVJ8Q==
+X-Received: by 2002:a05:6902:13cf:b0:e29:1de:e1f4 with SMTP id 3f1490d57ef6-e2919dfb1d3mr1177124276.35.1728637169705;
+        Fri, 11 Oct 2024 01:59:29 -0700 (PDT)
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332c27d10sm5125147b3.99.2024.10.11.01.59.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 01:59:28 -0700 (PDT)
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e20a8141c7so16861957b3.0;
+        Fri, 11 Oct 2024 01:59:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCV6mggg5M3tFw4jtWN7Xmbaq6AvKVUCEC+oADX5z66iKy+7g8uAAm7sIVQVFQs7Hm9PzgUVGuAMOXvxAd1tlBUf@vger.kernel.org, AJvYcCV7+fEe2g34FaT24n5l58skkGZE8XRdvnY5f9MJM3yCTZSnk67zF6UHEbM/rrZpMdgHCFUOoQgweFdgDjQ=@vger.kernel.org
+X-Received: by 2002:a05:690c:397:b0:6e2:e22:12d9 with SMTP id
+ 00721157ae682-6e347b520d5mr11901267b3.35.1728637168527; Fri, 11 Oct 2024
+ 01:59:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>,
- "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Theodore Ts'o <tytso@mit.edu>, Jonathan Corbet <corbet@lwn.net>,
- Josef Bacik <josef@toxicpanda.com>, Johannes Weiner <hannes@cmpxchg.org>,
- =?UTF-8?Q?Michal_Koutn=C3=BD?= <mkoutny@suse.com>,
- Alexander Viro <viro@zeniv.linux.org.uk>,
- "Darrick J . Wong" <djwong@kernel.org>, Zefan Li <lizefan.x@bytedance.com>,
- Tejun Heo <tj@kernel.org>, akpm@linux-foundation.org,
- Christian Brauner <brauner@kernel.org>,
- Andreas Dilger <adilger.kernel@dilger.ca>, Jan Kara <jack@suse.cz>,
- Chris Mason <clm@fb.com>, David Sterba <dsterba@suse.com>,
- cgroups@vger.kernel.org, linux-btrfs@vger.kernel.org,
- linux-ext4@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-f2fs-devel@lists.sourceforge.net, linux-fsdevel@vger.kernel.org,
- mcgrof@kernel.org, gost.dev@samsung.com, linux-doc@vger.kernel.org,
- linux-xfs@vger.kernel.org, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [PATCH] fs/writeback: convert wbc_account_cgroup_owner to take a
- folio
-To: Matthew Wilcox <willy@infradead.org>, Jaegeuk Kim <jaegeuk@kernel.org>
-References: <20240926140121.203821-1-kernel@pankajraghav.com>
- <ZvVrmBYTyNL3UDyR@casper.infradead.org> <ZvstH7UHpdnnDxW6@google.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <ZvstH7UHpdnnDxW6@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241011072509.3068328-2-davidgow@google.com> <20241011072509.3068328-3-davidgow@google.com>
+In-Reply-To: <20241011072509.3068328-3-davidgow@google.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 11 Oct 2024 10:59:16 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUdotDYAgSDDrWi-TOj2o=5a53n452DydhD-Q0fjiGhew@mail.gmail.com>
+Message-ID: <CAMuHMdUdotDYAgSDDrWi-TOj2o=5a53n452DydhD-Q0fjiGhew@mail.gmail.com>
+Subject: Re: [PATCH 1/6] lib: math: Move kunit tests into tests/ subdir
+To: David Gow <davidgow@google.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
+	Brendan Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>, 
+	Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org, 
+	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
+	Stephen Rothwell <sfr@canb.auug.org.au>, Luis Felipe Hernandez <luis.hernandez093@gmail.com>, 
+	quic_jjohnson@quicinc.com, macro@orcam.me.uk, tpiepho@gmail.com, 
+	ricardo@marliere.net, linux-kernel-mentees@lists.linuxfoundation.org, 
+	Nicolas Pitre <npitre@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/10/1 6:58, Jaegeuk Kim wrote:
-> On 09/26, Matthew Wilcox wrote:
->> On Thu, Sep 26, 2024 at 04:01:21PM +0200, Pankaj Raghav (Samsung) wrote:
->>> Convert wbc_account_cgroup_owner() to take a folio instead of a page,
->>> and convert all callers to pass a folio directly except f2fs.
->>>
->>> Convert the page to folio for all the callers from f2fs as they were the
->>> only callers calling wbc_account_cgroup_owner() with a page. As f2fs is
->>> already in the process of converting to folios, these call sites might
->>> also soon be calling wbc_account_cgroup_owner() with a folio directly in
->>> the future.
->>
->> I was hoping for more from f2fs.  I still don't have an answer from them
->> whether they're going to support large folios.  There's all kinds of
->> crud already in these functions like:
->>
->>          f2fs_set_bio_crypt_ctx(bio, fio->page->mapping->host,
->>                          page_folio(fio->page)->index, fio, GFP_NOIO);
->>
->> and this patch is making it worse, not better.  A series of patches
->> which at least started to spread folios throughout f2fs would be better.
->> I think that struct f2fs_io_info should have its page converted to
->> a folio, for example.  Although maybe not; perhaps this structure can
->> carry data which doesn't belong to a folio that came from the page cache.
->> It's very hard to tell because f2fs is so mind-numbingly complex and
->> riddled with stupid abstraction layers.
-> 
-> Hah, I don't think it's too complex at all tho, there's a somewhat complexity to
-> support file-based encryption, compression, and fsverity, which are useful
+Hi David,
 
-I agree w/ Jaegeuk.
+On Fri, Oct 11, 2024 at 9:31=E2=80=AFAM David Gow <davidgow@google.com> wro=
+te:
+> From: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+>
+> This patch is a follow-up task from a discussion stemming from point 3
+> in a recent patch introducing the int_pow kunit test [1] and
+> documentation regarding kunit test style and nomenclature [2].
+>
+> Colocate all kunit test suites in lib/math/tests/ and
+> follow recommended naming convention for files <suite>_kunit.c
+> and kconfig entries CONFIG_<name>_KUNIT_TEST.
+>
+> Link: https://lore.kernel.org/all/CABVgOS=3D-vh5TqHFCq_jo=3Dffq8v_nGgr6Js=
+PnOZag3e6+19ysxQ@mail.gmail.com/ [1]
+> Link: https://docs.kernel.org/dev-tools/kunit/style.html [2]
+>
+> Signed-off-by: Luis Felipe Hernandez <luis.hernandez093@gmail.com>
+> Acked-by: Nicolas Pitre <npitre@baylibre.com>
+> [Rebased on top of mm-nonmm-unstable.]
+> Signed-off-by: David Gow <davidgow@google.com>
 
-> for Android users. Well, I don't see any strong needs to support large folio,
-> but some requests exist which was why we had to do some conversion.
-> 
->>
->> But I don't know what the f2fs maintainers have planned.  And they won't
->> tell me despite many times of asking.
+Thanks for your patch!
 
-I supported large folio in f2fs by using a hacking way /w iomap fwk, it can
-only be enabled in very limited condition, after some seqread tests, I can
-see performance gain in server environment, but none in android device, and
-in addition, there is a memory leak bug which can cause out-of-memory issue.
-Unlucky, I have no slots to dig into these issues recently.
+> --- a/arch/m68k/configs/amiga_defconfig
+> +++ b/arch/m68k/configs/amiga_defconfig
+> @@ -619,7 +619,7 @@ CONFIG_KUNIT=3Dm
+>  CONFIG_KUNIT_ALL_TESTS=3Dm
+>  CONFIG_TEST_DHRY=3Dm
+>  CONFIG_TEST_MIN_HEAP=3Dm
+> -CONFIG_TEST_DIV64=3Dm
+> +CONFIG_DIV64_KUNIT_TEST=3Dm
+>  CONFIG_REED_SOLOMON_TEST=3Dm
+>  CONFIG_ATOMIC64_SELFTEST=3Dm
+>  CONFIG_ASYNC_RAID6_TEST=3Dm
 
-Thanks,
+[...]
 
+> --- a/lib/Kconfig.debug
+> +++ b/lib/Kconfig.debug
+> @@ -2296,7 +2296,7 @@ config TEST_SORT
+>
+>           If unsure, say N.
+>
+> -config TEST_DIV64
+> +config DIV64_KUNIT_TEST
+>         tristate "64bit/32bit division and modulo test"
+>         depends on DEBUG_KERNEL || m
+>         help
+> @@ -2306,7 +2306,7 @@ config TEST_DIV64
+>
+>           If unsure, say N.
+>
+> -config TEST_MULDIV64
+> +config MULDIV64_KUNIT_TEST
+>         tristate "mul_u64_u64_div_u64() test"
+>         depends on DEBUG_KERNEL || m
+>         help
 
+This conflicts with "[PATCH] m68k: defconfig: Update defconfigs for
+v6.12-rc1"[1].  Of course the proper way forward would be to add
+"default KUNIT_ALL_TESTS" to all tests that still lack it, so I can
+just never queue that patch ;-)
+
+> @@ -2993,7 +2993,7 @@ config TEST_OBJPOOL
+>
+>           If unsure, say N.
+>
+> -config INT_POW_TEST
+> +config INT_POW_KUNIT_TEST
+>         tristate "Integer exponentiation (int_pow) test" if !KUNIT_ALL_TE=
+STS
+>         depends on KUNIT
+>         default KUNIT_ALL_TESTS
+
+[1] https://lore.kernel.org/all/4092672cb64b86ec3f300b4cf0ea0c2db2b52e2e.17=
+27699197.git.geert@linux-m68k.org/
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
