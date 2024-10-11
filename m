@@ -1,559 +1,407 @@
-Return-Path: <linux-kernel+bounces-360284-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D77E9997DC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:32:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C1479997E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:33:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16481C243A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:32:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 936A2284E37
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:33:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AA19415E;
-	Fri, 11 Oct 2024 00:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVvD/FIn"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D290C195B33;
+	Fri, 11 Oct 2024 00:21:10 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1052107;
-	Fri, 11 Oct 2024 00:20:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5A31953A3;
+	Fri, 11 Oct 2024 00:21:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728606052; cv=none; b=QV1feix1NIYTP/cjAV3WHBzjMCn8/WCz3sMQXySYstXI9alol6YL/lM7zRC6myOgo9ThijRU7AXQ63hoE/HpOSDFQbLIZIthXtgjHhID7K9KcfHjUoYrrBYDfD70fU+nbceWUXF7IoEablSGUgO2SfOFRBAqDwWUBytonYLkR88=
+	t=1728606070; cv=none; b=fJA/gC28f+tLMsEkTf8WU86V4e7ySA52JTWxu5bj7bokLqjw45CY1YwttL7LRBKjSPRPyayKR4W6xVYs5PGD6AfPzFHx3Fi/Yk4oWUpOYl4uMJXPAzEnJkBMYGufo0O7QEQQzsU0T+zV6cuD7syZy7/Ht31RnWPgsWL1lQPTUyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728606052; c=relaxed/simple;
-	bh=d7cSWv33SjULNxgDnaNHNot2JLds/pnKNPPuS1YiJRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=injogPyLLK+xcytZVXXAnKC/qN1K9xsGh8irno9uD6ixXIPtDSoWn+Y+I9DEz9auR4QFElxMUGTU/CQYOxScSVq7Yxvk6CtxT5LSZORJ+V9PGWJfWTLRF64El5Svgy0rZ9sFpg2d/Q122EhbMgkjgghouonu4n3VM/ndG9oEJAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVvD/FIn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A337C4CEC5;
-	Fri, 11 Oct 2024 00:20:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728606052;
-	bh=d7cSWv33SjULNxgDnaNHNot2JLds/pnKNPPuS1YiJRA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RVvD/FIn1FE3iVRJmcD4i36URx3Q2iRrWvnwF/h3DEAxNleD/BIVj+wDHiEohyfdg
-	 tuRDaEhkcB+RotwLvX+U+wD02o5C3DINiDO6GvZF6QxYcm+yIUgEzE53HAbP3VwtWs
-	 z6EwAP/6HRAZbuSUd6wdokkJLPrwlwCKKmV9fQ+yhmEZd5yzONUGUmXfEZhqHxHxAN
-	 ZdjA3abA67AtwMbjH8nkGlW2uBU2QonS/PDXTsMdMnfM/eY6hp+yV+ZP9eEz/Mn3Q3
-	 7s1GaD9LQ1k98cuTgU/PDtb/Z84eyvMR8QFNC6LB/N4ibA/1pMVNo+RszlFTjDtPqy
-	 Tt9z3kPuOTA6A==
-Date: Thu, 10 Oct 2024 17:20:50 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Howard Chu <howardchu95@gmail.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>, mingo@redhat.com,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 0/2] perf trace: Fix support for the new BPF feature in
- clang 12
-Message-ID: <ZwhvYsN7UPAOPvFj@google.com>
-References: <20241007051414.2995674-1-howardchu95@gmail.com>
- <52125138-9ba5-4f71-9e7d-aff5f85d0dae@linaro.org>
+	s=arc-20240116; t=1728606070; c=relaxed/simple;
+	bh=vBguymaNlfDLBcQvi27SonEvz0Yt1tvxdBXq+XLi4aE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WSma9pl0A5eQQGvKZ1mXrvVYDoGjnGFRTNG51Zwu0Bjj1dh3fjHimaMaUzN52qJs+MhmXuXhsh6Bl0SvpV+MeM+6LirwTg5XXrMW/Q09wA8ZPdBhcjlZBavhaRZsIFKtvrgWWHmEfXnRzwo6hT5dZzf1slWL3DcC7HjoNkTOOLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3712EC4CECE;
+	Fri, 11 Oct 2024 00:21:06 +0000 (UTC)
+Date: Thu, 10 Oct 2024 20:21:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, "linux-arch@vger.kernel.org"
+ <linux-arch@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
+ Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao
+ <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul 
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas 
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav 
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: [PATCH v3] ftrace: Consolidate ftrace_regs accessor functions for
+ archs using pt_regs
+Message-ID: <20241010202114.2289f6fd@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <52125138-9ba5-4f71-9e7d-aff5f85d0dae@linaro.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 10:06:05AM +0100, James Clark wrote:
-> 
-> 
-> On 07/10/2024 6:14 am, Howard Chu wrote:
-> > The new augmentation feature in perf trace, along with the protocol
-> > change (from payload to payload->value), breaks the clang 12 build.
-> > 
-> > perf trace actually builds for any clang version newer than clang 16.
-> > However, as pointed out by Namhyung Kim <namhyung@kernel.org> and Ian
-> > Rogers <irogers@google.com>, clang 16, which was released in 2023, is
-> > still too new for most users. Additionally, as James Clark
-> > <james.clark@linaro.org> noted, some commonly used distributions do not
-> > yet support clang 16. Therefore, breaking BPF features between clang 12
-> > and clang 15 is not a good approach.
-> > 
-> > This patch series rewrites the BPF program in a way that allows it to
-> > pass the BPF verifier, even when the BPF bytecode is generated by older
-> > versions of clang.
-> > 
-> > However, I have only tested it till clang 14, as older versions are not
-> > supported by my distribution.
-> > 
-> > Howard Chu (2):
-> >    perf build: Change the clang check back to 12.0.1
-> >    perf trace: Rewrite BPF code to pass the verifier
-> > 
-> >   tools/perf/Makefile.config                    |   4 +-
-> >   .../bpf_skel/augmented_raw_syscalls.bpf.c     | 117 ++++++++++--------
-> >   2 files changed, 65 insertions(+), 56 deletions(-)
-> > 
-> 
-> Tested with clang 15:
-> 
->  $ sudo perf trace -e write --max-events=100 -- echo hello
->     0.000 ( 0.014 ms): echo/834165 write(fd: 1, buf: hello\10, count: 6)
->                                             =
-> 
-> Tested-by: James Clark <james.clark@linaro.org>
+From: Steven Rostedt <rostedt@goodmis.org>
+
+Most architectures use pt_regs within ftrace_regs making a lot of the
+accessor functions just calls to the pt_regs internally. Instead of
+duplication this effort, use a HAVE_ARCH_FTRACE_REGS for architectures
+that have their own ftrace_regs that is not based on pt_regs and will
+define all the accessor functions, and for the architectures that just use
+pt_regs, it will leave it undefined, and the default accessor functions
+will be used.
+
+Note, this will also make it easier to add new accessor functions to
+ftrace_regs as it will mean having to touch less architectures.
+
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
+Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v2: https://lore.kernel.org/20241008230629.118325673@goodmis.org
+
+- Fixed #ifdef header protection to match the name (Masami Hiramatsu)
+
+ arch/arm64/include/asm/ftrace.h     |  1 +
+ arch/loongarch/include/asm/ftrace.h | 25 +-------------------
+ arch/powerpc/include/asm/ftrace.h   | 26 +--------------------
+ arch/riscv/include/asm/ftrace.h     |  1 +
+ arch/s390/include/asm/ftrace.h      | 26 +--------------------
+ arch/x86/include/asm/ftrace.h       | 21 +----------------
+ include/linux/ftrace.h              | 32 ++++++-------------------
+ include/linux/ftrace_regs.h         | 36 +++++++++++++++++++++++++++++
+ 8 files changed, 49 insertions(+), 119 deletions(-)
+ create mode 100644 include/linux/ftrace_regs.h
+
+diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
+index bbb69c7751b9..5ccff4de7f09 100644
+--- a/arch/arm64/include/asm/ftrace.h
++++ b/arch/arm64/include/asm/ftrace.h
+@@ -54,6 +54,7 @@ extern void return_to_handler(void);
+ unsigned long ftrace_call_adjust(unsigned long addr);
  
-I got this on my system (clang 16).  The kernel refused to load it.
-
-  $ sudo ./perf trace -e write --max-events=10 -- echo hello
-  libbpf: prog 'sys_enter': BPF program load failed: Permission denied
-  libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
-  0: R1=ctx() R10=fp0
-  ; int sys_enter(struct syscall_enter_args *args) @ augmented_raw_syscalls.bpf.c:518
-  0: (bf) r7 = r1                       ; R1=ctx() R7_w=ctx()
-  ; return bpf_get_current_pid_tgid(); @ augmented_raw_syscalls.bpf.c:427
-  1: (85) call bpf_get_current_pid_tgid#14      ; R0_w=scalar()
-  2: (63) *(u32 *)(r10 -4) = r0         ; R0_w=scalar() R10=fp0 fp-8=mmmm????
-  3: (bf) r2 = r10                      ; R2_w=fp0 R10=fp0
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  4: (07) r2 += -4                      ; R2_w=fp-4
-  ; return bpf_map_lookup_elem(pids, &pid) != NULL; @ augmented_raw_syscalls.bpf.c:432
-  5: (18) r1 = 0xffff9dcccdfe7000       ; R1_w=map_ptr(map=pids_filtered,ks=4,vs=1)
-  7: (85) call bpf_map_lookup_elem#1    ; R0=map_value_or_null(id=1,map=pids_filtered,ks=4,vs=1)
-  8: (bf) r1 = r0                       ; R0=map_value_or_null(id=1,map=pids_filtered,ks=4,vs=1) R1_w=map_value_or_null(id=1,map=pids_filtered,ks=4,vs=1)
-  9: (b7) r0 = 0                        ; R0_w=0
-  ; if (pid_filter__has(&pids_filtered, getpid())) @ augmented_raw_syscalls.bpf.c:531
-  10: (55) if r1 != 0x0 goto pc+161     ; R1_w=0
-  11: (b7) r6 = 0                       ; R6_w=0
-  ; int key = 0; @ augmented_raw_syscalls.bpf.c:150
-  12: (63) *(u32 *)(r10 -4) = r6        ; R6_w=0 R10=fp0 fp-8=0000????
-  13: (bf) r2 = r10                     ; R2_w=fp0 R10=fp0
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  14: (07) r2 += -4                     ; R2_w=fp-4
-  ; return bpf_map_lookup_elem(&augmented_args_tmp, &key); @ augmented_raw_syscalls.bpf.c:151
-  15: (18) r1 = 0xffff9dcc73f8f200      ; R1_w=map_ptr(map=augmented_args_,ks=4,vs=8272)
-  17: (85) call bpf_map_lookup_elem#1   ; R0=map_value_or_null(id=2,map=augmented_args_,ks=4,vs=8272)
-  18: (bf) r8 = r0                      ; R0=map_value_or_null(id=2,map=augmented_args_,ks=4,vs=8272) R8_w=map_value_or_null(id=2,map=augmented_args_,ks=4,vs=8272)
-  19: (b7) r0 = 1                       ; R0_w=1
-  ; if (augmented_args == NULL) @ augmented_raw_syscalls.bpf.c:535
-  20: (15) if r8 == 0x0 goto pc+151     ; R8_w=map_value(map=augmented_args_,ks=4,vs=8272)
-  ; bpf_probe_read_kernel(&augmented_args->args, sizeof(augmented_args->args), args); @ augmented_raw_syscalls.bpf.c:538
-  21: (bf) r1 = r8                      ; R1_w=map_value(map=augmented_args_,ks=4,vs=8272) R8_w=map_value(map=augmented_args_,ks=4,vs=8272)
-  22: (b7) r2 = 64                      ; R2_w=64
-  23: (bf) r3 = r7                      ; R3_w=ctx() R7=ctx()
-  24: (85) call bpf_probe_read_kernel#113       ; R0_w=scalar()
-  ; int zero = 0, value_size = sizeof(struct augmented_arg) - sizeof(u64); @ augmented_raw_syscalls.bpf.c:438
-  25: (63) *(u32 *)(r10 -4) = r6        ; R6=0 R10=fp0 fp-8=0000????
-  ; nr             = (__u32)args->syscall_nr; @ augmented_raw_syscalls.bpf.c:448
-  26: (79) r1 = *(u64 *)(r8 +8)         ; R1_w=scalar() R8_w=map_value(map=augmented_args_,ks=4,vs=8272)
-  27: (63) *(u32 *)(r10 -8) = r1        ; R1_w=scalar() R10=fp0 fp-8=0000scalar()
-  28: (bf) r2 = r10                     ; R2_w=fp0 R10=fp0
-  ; bpf_probe_read_kernel(&augmented_args->args, sizeof(augmented_args->args), args); @ augmented_raw_syscalls.bpf.c:538
-  29: (07) r2 += -8                     ; R2_w=fp-8
-  ; beauty_map     = bpf_map_lookup_elem(&beauty_map_enter, &nr); @ augmented_raw_syscalls.bpf.c:449
-  30: (18) r1 = 0xffff9dcccdfe5800      ; R1_w=map_ptr(map=beauty_map_ente,ks=4,vs=24)
-  32: (85) call bpf_map_lookup_elem#1   ; R0=map_value_or_null(id=3,map=beauty_map_ente,ks=4,vs=24)
-  ; if (beauty_map == NULL) @ augmented_raw_syscalls.bpf.c:450
-  33: (15) if r0 == 0x0 goto pc+132     ; R0=map_value(map=beauty_map_ente,ks=4,vs=24)
-  34: (bf) r2 = r10                     ; R2_w=fp0 R10=fp0
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  35: (07) r2 += -4                     ; R2_w=fp-4
-  ; payload        = bpf_map_lookup_elem(&beauty_payload_enter_map, &zero); @ augmented_raw_syscalls.bpf.c:454
-  36: (18) r1 = 0xffff9dcc73f8e800      ; R1_w=map_ptr(map=beauty_payload_,ks=4,vs=24688)
-  38: (7b) *(u64 *)(r10 -16) = r0       ; R0=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16_w=map_value(map=beauty_map_ente,ks=4,vs=24)
-  39: (85) call bpf_map_lookup_elem#1   ; R0_w=map_value_or_null(id=4,map=beauty_payload_,ks=4,vs=24688)
-  40: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16_w=map_value(map=beauty_map_ente,ks=4,vs=24)
-  ; if (payload == NULL) @ augmented_raw_syscalls.bpf.c:456
-  41: (15) if r0 == 0x0 goto pc+124     ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688)
-  42: (7b) *(u64 *)(r10 -48) = r7       ; R7=ctx() R10=fp0 fp-48_w=ctx()
-  ; __builtin_memcpy(&payload->args, args, sizeof(struct syscall_enter_args)); @ augmented_raw_syscalls.bpf.c:460
-  43: (79) r1 = *(u64 *)(r8 +56)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  44: (7b) *(u64 *)(r0 +56) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  45: (79) r1 = *(u64 *)(r8 +48)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  46: (7b) *(u64 *)(r0 +48) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  47: (79) r1 = *(u64 *)(r8 +40)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  48: (7b) *(u64 *)(r0 +40) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  49: (79) r1 = *(u64 *)(r8 +32)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  50: (7b) *(u64 *)(r0 +32) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  51: (79) r1 = *(u64 *)(r8 +24)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  52: (7b) *(u64 *)(r0 +24) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  53: (79) r1 = *(u64 *)(r8 +16)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  54: (7b) *(u64 *)(r0 +16) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  55: (79) r1 = *(u64 *)(r8 +8)         ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  56: (7b) *(u64 *)(r0 +8) = r1         ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  57: (79) r1 = *(u64 *)(r8 +0)         ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  58: (7b) *(u64 *)(r0 +0) = r1         ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
-  59: (b7) r1 = 64                      ; R1_w=64
-  60: (7b) *(u64 *)(r10 -24) = r1       ; R1_w=64 R10=fp0 fp-24_w=64
-  61: (7b) *(u64 *)(r10 -40) = r8       ; R8=map_value(map=augmented_args_,ks=4,vs=8272) R10=fp0 fp-40_w=map_value(map=augmented_args_,ks=4,vs=8272)
-  62: (bf) r7 = r8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272) R8=map_value(map=augmented_args_,ks=4,vs=8272)
-  63: (07) r7 += 16                     ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=16)
-  64: (7b) *(u64 *)(r10 -56) = r0       ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R10=fp0 fp-56_w=map_value(map=beauty_payload_,ks=4,vs=24688)
-  ; payload_offset = (void *)&payload->aug_args; @ augmented_raw_syscalls.bpf.c:455
-  65: (bf) r9 = r0                      ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688)
-  66: (07) r9 += 64                     ; R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=64)
-  67: (b7) r1 = 0                       ; R1_w=0
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  68: (7b) *(u64 *)(r10 -32) = r1       ; R1_w=0 R10=fp0 fp-32_w=0
-  69: (05) goto pc+11
-  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
-  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
-  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R6=0
-  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=16)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
-  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
-  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=64) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=64)
-  90: (07) r1 += 8                      ; R1=map_value(map=beauty_payload_,ks=4,vs=24688,off=72)
-  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
-  91: (55) if r8 != 0x1 goto pc-22      ; R8=1
-  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
-  92: (b7) r2 = 4096                    ; R2_w=4096
-  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
-  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
-  95: (bf) r8 = r0                      ; R0_w=scalar(id=5,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=5,smin=smin32=-4095,smax=smax32=4096)
-  96: (b7) r1 = 1                       ; R1_w=1
-  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
-  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
-  99: (b7) r2 = 4096                    ; R2=4096
-  100: (6d) if r2 s> r8 goto pc+1       ; R2=4096 R8=4096
-  101: (b7) r8 = 4096                   ; R8_w=4096
-  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
-  102: (57) r1 &= 1                     ; R1_w=1
-  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
-  104: (bf) r1 = r8                     ; R1_w=4096 R8_w=4096
-  105: (07) r1 += 8                     ; R1_w=4104
-  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
-  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
-  108: (77) r2 >>= 32                   ; R2=4104
-  109: (25) if r2 > 0x1008 goto pc-32   ; R2=4104
-  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
-  110: (63) *(u32 *)(r9 +0) = r8        ; R8=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=64)
-  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
-  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=64 R10=fp0 fp-24=64
-  112: (0f) r1 += r3                    ; R1_w=4168 R3_w=64
-  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
-  113: (0f) r9 += r2                    ; R2=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168)
-  114: (b7) r2 = 1                      ; R2_w=1
-  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
-  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=4168 R10=fp0 fp-24_w=4168
-  117: (05) goto pc-40
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=24)
-  79: (07) r6 += 4                      ; R6_w=4
-  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=4
-  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
-  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
-  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=4) R6_w=4
-  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=4) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  87: (79) r3 = *(u64 *)(r7 +0)         ; R3=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=24)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  88: (15) if r3 == 0x0 goto pc-11      ; R3=scalar(umin=1)
-  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
-  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168)
-  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=4176)
-  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
-  91: (55) if r8 != 0x1 goto pc-22      ; R8=1
-  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
-  92: (b7) r2 = 4096                    ; R2_w=4096
-  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
-  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
-  95: (bf) r8 = r0                      ; R0_w=scalar(id=6,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=6,smin=smin32=-4095,smax=smax32=4096)
-  96: (b7) r1 = 1                       ; R1=1
-  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
-  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
-  99: (b7) r2 = 4096                    ; R2_w=4096
-  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
-  101: (b7) r8 = 4096                   ; R8_w=4096
-  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
-  102: (57) r1 &= 1                     ; R1_w=1
-  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
-  104: (bf) r1 = r8                     ; R1_w=4096 R8_w=4096
-  105: (07) r1 += 8                     ; R1_w=4104
-  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
-  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
-  108: (77) r2 >>= 32                   ; R2_w=4104
-  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
-  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
-  110: (63) *(u32 *)(r9 +0) = r8        ; R8_w=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168)
-  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
-  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=4168 R10=fp0 fp-24=4168
-  112: (0f) r1 += r3                    ; R1_w=8272 R3_w=4168
-  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
-  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272)
-  114: (b7) r2 = 1                      ; R2_w=1
-  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
-  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=8272 R10=fp0 fp-24_w=8272
-  117: (05) goto pc-40
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=32)
-  79: (07) r6 += 4                      ; R6=8
-  80: (15) if r6 == 0x18 goto pc+56     ; R6=8
-  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
-  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
-  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=8) R6=8
-  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=8) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=32)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
-  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
-  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272)
-  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=8280)
-  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
-  91: (55) if r8 != 0x1 goto pc-22      ; R8_w=1
-  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
-  92: (b7) r2 = 4096                    ; R2_w=4096
-  93: (85) call bpf_probe_read_user_str#114     ; R0=scalar(smin=smin32=-4095,smax=smax32=4096)
-  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
-  95: (bf) r8 = r0                      ; R0=scalar(id=7,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=7,smin=smin32=-4095,smax=smax32=4096)
-  96: (b7) r1 = 1                       ; R1_w=1
-  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
-  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
-  99: (b7) r2 = 4096                    ; R2_w=4096
-  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
-  101: (b7) r8 = 4096                   ; R8_w=4096
-  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
-  102: (57) r1 &= 1                     ; R1_w=1
-  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
-  104: (bf) r1 = r8                     ; R1_w=4096 R8_w=4096
-  105: (07) r1 += 8                     ; R1_w=4104
-  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
-  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
-  108: (77) r2 >>= 32                   ; R2_w=4104
-  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
-  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
-  110: (63) *(u32 *)(r9 +0) = r8        ; R8_w=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272)
-  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
-  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=8272 R10=fp0 fp-24=8272
-  112: (0f) r1 += r3                    ; R1_w=12376 R3_w=8272
-  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
-  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376)
-  114: (b7) r2 = 1                      ; R2_w=1
-  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
-  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=12376 R10=fp0 fp-24_w=12376
-  117: (05) goto pc-40
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=40)
-  79: (07) r6 += 4                      ; R6_w=12
-  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=12
-  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
-  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4_w=map_value(map=beauty_map_ente,ks=4,vs=24)
-  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=12) R6_w=12
-  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=12) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  85: (c7) r8 s>>= 32                   ; R8=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  86: (15) if r8 == 0x0 goto pc-9       ; R8=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=40)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
-  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
-  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376)
-  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=12384)
-  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
-  91: (55) if r8 != 0x1 goto pc-22      ; R8=1
-  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
-  92: (b7) r2 = 4096                    ; R2_w=4096
-  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
-  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
-  95: (bf) r8 = r0                      ; R0_w=scalar(id=8,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=8,smin=smin32=-4095,smax=smax32=4096)
-  96: (b7) r1 = 1                       ; R1_w=1
-  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
-  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
-  99: (b7) r2 = 4096                    ; R2_w=4096
-  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
-  101: (b7) r8 = 4096                   ; R8=4096
-  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
-  102: (57) r1 &= 1                     ; R1_w=1
-  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
-  104: (bf) r1 = r8                     ; R1_w=4096 R8=4096
-  105: (07) r1 += 8                     ; R1_w=4104
-  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
-  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
-  108: (77) r2 >>= 32                   ; R2_w=4104
-  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
-  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
-  110: (63) *(u32 *)(r9 +0) = r8        ; R8=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376)
-  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
-  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=12376 R10=fp0 fp-24=12376
-  112: (0f) r1 += r3                    ; R1_w=16480 R3_w=12376
-  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
-  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480)
-  114: (b7) r2 = 1                      ; R2_w=1
-  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
-  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=16480 R10=fp0 fp-24_w=16480
-  117: (05) goto pc-40
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=48)
-  79: (07) r6 += 4                      ; R6_w=16
-  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=16
-  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
-  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
-  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=16) R6_w=16
-  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=16) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=48)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
-  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
-  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480)
-  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16488)
-  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
-  91: (55) if r8 != 0x1 goto pc-22      ; R8_w=1
-  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
-  92: (b7) r2 = 4096                    ; R2_w=4096
-  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
-  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
-  95: (bf) r8 = r0                      ; R0_w=scalar(id=9,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=9,smin=smin32=-4095,smax=smax32=4096)
-  96: (b7) r1 = 1                       ; R1_w=1
-  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
-  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
-  99: (b7) r2 = 4096                    ; R2_w=4096
-  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
-  101: (b7) r8 = 4096                   ; R8_w=4096
-  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
-  102: (57) r1 &= 1                     ; R1=1
-  103: (15) if r1 == 0x0 goto pc-26     ; R1=1
-  104: (bf) r1 = r8                     ; R1_w=4096 R8=4096
-  105: (07) r1 += 8                     ; R1_w=4104
-  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
-  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
-  108: (77) r2 >>= 32                   ; R2_w=4104
-  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
-  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
-  110: (63) *(u32 *)(r9 +0) = r8        ; R8=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480)
-  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
-  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=16480 R10=fp0 fp-24=16480
-  112: (0f) r1 += r3                    ; R1_w=20584 R3_w=16480
-  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
-  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584)
-  114: (b7) r2 = 1                      ; R2_w=1
-  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
-  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=20584 R10=fp0 fp-24_w=20584
-  117: (05) goto pc-40
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=56)
-  79: (07) r6 += 4                      ; R6_w=20
-  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=20
-  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
-  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
-  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=20) R6_w=20
-  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=20) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
-  ;  @ augmented_raw_syscalls.bpf.c:0
-  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=56)
-  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
-  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
-  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
-  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584)
-  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20592)
-  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
-  91: (55) if r8 != 0x1 goto pc-22      ; R8_w=1
-  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
-  92: (b7) r2 = 4096                    ; R2_w=4096
-  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
-  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
-  95: (bf) r8 = r0                      ; R0_w=scalar(id=10,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=10,smin=smin32=-4095,smax=smax32=4096)
-  96: (b7) r1 = 1                       ; R1_w=1
-  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
-  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
-  99: (b7) r2 = 4096                    ; R2_w=4096
-  100: (6d) if r2 s> r8 goto pc+1 102: R0_w=scalar(id=10,smin=smin32=-4095,smax=smax32=4096) R1_w=1 R2_w=4096 R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R6_w=20 R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=56) R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4095) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584) R10=fp0 fp-8=mmmmmmmm fp-16=map_value(map=beauty_map_ente,ks=4,vs=24) fp-24_w=20584 fp-32_w=1 fp-40=map_value(map=augmented_args_,ks=4,vs=8272) fp-48=ctx() fp-56=map_value(map=beauty_payload_,ks=4,vs=24688)
-  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
-  102: (57) r1 &= 1                     ; R1_w=1
-  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
-  104: (bf) r1 = r8                     ; R1_w=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095) R8_w=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095)
-  105: (07) r1 += 8                     ; R1_w=scalar(smin=0xffffffff80000008,smax=smax32=4103,smin32=0x80000008)
-  106: (bf) r2 = r1                     ; R1_w=scalar(id=13,smin=0xffffffff80000008,smax=smax32=4103,smin32=0x80000008) R2_w=scalar(id=13,smin=0xffffffff80000008,smax=smax32=4103,smin32=0x80000008)
-  107: (67) r2 <<= 32                   ; R2_w=scalar(smax=0x100700000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  108: (77) r2 >>= 32                   ; R2_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff))
-  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
-  110: (63) *(u32 *)(r9 +0) = r8        ; R8_w=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584)
-  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
-  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=20584 R10=fp0 fp-24_w=20584
-  112: (0f) r1 += r3                    ; R1_w=scalar(smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R3_w=20584
-  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
-  113: (0f) r9 += r2                    ; R2_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff)) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584,smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff))
-  114: (b7) r2 = 1                      ; R2_w=1
-  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
-  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R10=fp0 fp-24_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070)
-  117: (05) goto pc-40
-  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
-  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=64)
-  79: (07) r6 += 4                      ; R6_w=24
-  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=24
-  ; if (!bpf_probe_read_user(value_offset, augment_size, addr)) @ augmented_raw_syscalls.bpf.c:491
-  137: (79) r5 = *(u64 *)(r10 -24)      ; R5_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R10=fp0 fp-24=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070)
-  138: (bf) r2 = r5                     ; R2_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R5_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070)
-  139: (67) r2 <<= 32                   ; R2_w=scalar(smax=0x606f00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  140: (77) r2 >>= 32                   ; R2_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  141: (b7) r1 = 1                      ; R1_w=1
-  142: (b7) r3 = 24689                  ; R3_w=24689
-  143: (2d) if r3 > r2 goto pc+1 145: R0=scalar(id=10,smin=smin32=-4095,smax=smax32=4096) R1=1 R2=scalar(smin=smin32=0,smax=umax=smax32=umax32=24688,var_off=(0x0; 0x7fff)) R3=24689 R4=map_value(map=beauty_map_ente,ks=4,vs=24) R5=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R6=24 R7=map_value(map=augmented_args_,ks=4,vs=8272,off=64) R8=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584,smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff)) R10=fp0 fp-8=mmmmmmmm fp-16=map_value(map=beauty_map_ente,ks=4,vs=24) fp-24=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) fp-32=1 fp-40=map_value(map=augmented_args_,ks=4,vs=8272) fp-48=ctx() fp-56=map_value(map=beauty_payload_,ks=4,vs=24688)
-  ; if (!bpf_probe_read_user(value_offset, augment_size, addr)) @ augmented_raw_syscalls.bpf.c:491
-  145: (79) r2 = *(u64 *)(r10 -32)      ; R2_w=1 R10=fp0 fp-32=1
-  ; if (!do_augment || len > sizeof(struct beauty_payload_enter)) @ augmented_raw_syscalls.bpf.c:511
-  146: (5f) r2 &= r1                    ; R1=1 R2_w=1
-  147: (57) r2 &= 1                     ; R2_w=1
-  148: (79) r7 = *(u64 *)(r10 -48)      ; R7_w=ctx() R10=fp0 fp-48=ctx()
-  149: (79) r8 = *(u64 *)(r10 -40)      ; R8_w=map_value(map=augmented_args_,ks=4,vs=8272) R10=fp0 fp-40=map_value(map=augmented_args_,ks=4,vs=8272)
-  150: (79) r4 = *(u64 *)(r10 -56)      ; R4_w=map_value(map=beauty_payload_,ks=4,vs=24688) R10=fp0 fp-56=map_value(map=beauty_payload_,ks=4,vs=24688)
-  151: (55) if r2 != 0x0 goto pc+1      ; R2_w=1
-  ; return bpf_perf_event_output(ctx, &__augmented_syscalls__, BPF_F_CURRENT_CPU, data, len); @ augmented_raw_syscalls.bpf.c:162
-  153: (67) r5 <<= 32                   ; R5_w=scalar(smax=0x606f00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
-  154: (77) r5 >>= 32                   ; R5_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
-  155: (bf) r1 = r7                     ; R1_w=ctx() R7_w=ctx()
-  156: (18) r2 = 0xffffaed2058d9000     ; R2_w=map_ptr(map=__augmented_sys,ks=4,vs=4)
-  158: (18) r3 = 0xffffffff             ; R3_w=0xffffffff
-  160: (85) call bpf_perf_event_output#25
-  R5 unbounded memory access, use 'var &= const' or 'if (var < const)'
-  processed 387 insns (limit 1000000) max_states_per_insn 1 total_states 20 peak_states 20 mark_read 13
-  -- END PROG LOAD LOG --
-  libbpf: prog 'sys_enter': failed to load: -13
-  libbpf: failed to load object 'augmented_raw_syscalls_bpf'
-  libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
-  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
-  hello
-       0.000 ( 0.008 ms): write(fd: 1, buf: , count: 6)                                         = 
-
-Also like James said, the buf doesn't show anything and the return
-value is missing.
-
-Thanks,
-Namhyung
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
++#define HAVE_ARCH_FTRACE_REGS
+ struct dyn_ftrace;
+ struct ftrace_ops;
+ struct ftrace_regs;
+diff --git a/arch/loongarch/include/asm/ftrace.h b/arch/loongarch/include/asm/ftrace.h
+index 0e15d36ce251..8f13eaeaa325 100644
+--- a/arch/loongarch/include/asm/ftrace.h
++++ b/arch/loongarch/include/asm/ftrace.h
+@@ -43,43 +43,20 @@ void prepare_ftrace_return(unsigned long self_addr, unsigned long *parent);
+ 
+ #ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+ struct ftrace_ops;
+-struct ftrace_regs;
+-#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+ 
+-struct __arch_ftrace_regs {
+-	struct pt_regs regs;
+-};
++#include <linux/ftrace_regs.h>
+ 
+ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *fregs)
+ {
+ 	return &arch_ftrace_regs(fregs)->regs;
+ }
+ 
+-static __always_inline unsigned long
+-ftrace_regs_get_instruction_pointer(struct ftrace_regs *fregs)
+-{
+-	return instruction_pointer(&arch_ftrace_regs(fregs)->regs);
+-}
+-
+ static __always_inline void
+ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs, unsigned long ip)
+ {
+ 	instruction_pointer_set(&arch_ftrace_regs(fregs)->regs, ip);
+ }
+ 
+-#define ftrace_regs_get_argument(fregs, n) \
+-	regs_get_kernel_argument(&arch_ftrace_regs(fregs)->regs, n)
+-#define ftrace_regs_get_stack_pointer(fregs) \
+-	kernel_stack_pointer(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_return_value(fregs) \
+-	regs_return_value(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_set_return_value(fregs, ret) \
+-	regs_set_return_value(&arch_ftrace_regs(fregs)->regs, ret)
+-#define ftrace_override_function_with_return(fregs) \
+-	override_function_with_return(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_query_register_offset(name) \
+-	regs_query_register_offset(name)
+-
+ #define ftrace_graph_func ftrace_graph_func
+ void ftrace_graph_func(unsigned long ip, unsigned long parent_ip,
+ 		       struct ftrace_ops *op, struct ftrace_regs *fregs);
+diff --git a/arch/powerpc/include/asm/ftrace.h b/arch/powerpc/include/asm/ftrace.h
+index e299fd47d201..0edfb874eb02 100644
+--- a/arch/powerpc/include/asm/ftrace.h
++++ b/arch/powerpc/include/asm/ftrace.h
+@@ -32,12 +32,7 @@ struct dyn_arch_ftrace {
+ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec);
+ #define ftrace_init_nop ftrace_init_nop
+ 
+-struct ftrace_regs;
+-#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+-
+-struct __arch_ftrace_regs {
+-	struct pt_regs regs;
+-};
++#include <linux/ftrace_regs.h>
+ 
+ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *fregs)
+ {
+@@ -52,25 +47,6 @@ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+ 	regs_set_return_ip(&arch_ftrace_regs(fregs)->regs, ip);
+ }
+ 
+-static __always_inline unsigned long
+-ftrace_regs_get_instruction_pointer(struct ftrace_regs *fregs)
+-{
+-	return instruction_pointer(&arch_ftrace_regs(fregs)->regs);
+-}
+-
+-#define ftrace_regs_get_argument(fregs, n) \
+-	regs_get_kernel_argument(&arch_ftrace_regs(fregs)->regs, n)
+-#define ftrace_regs_get_stack_pointer(fregs) \
+-	kernel_stack_pointer(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_return_value(fregs) \
+-	regs_return_value(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_set_return_value(fregs, ret) \
+-	regs_set_return_value(&arch_ftrace_regs(fregs)->regs, ret)
+-#define ftrace_override_function_with_return(fregs) \
+-	override_function_with_return(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_query_register_offset(name) \
+-	regs_query_register_offset(name)
+-
+ struct ftrace_ops;
+ 
+ #define ftrace_graph_func ftrace_graph_func
+diff --git a/arch/riscv/include/asm/ftrace.h b/arch/riscv/include/asm/ftrace.h
+index c6bcdff105b5..3d66437a1029 100644
+--- a/arch/riscv/include/asm/ftrace.h
++++ b/arch/riscv/include/asm/ftrace.h
+@@ -125,6 +125,7 @@ int ftrace_init_nop(struct module *mod, struct dyn_ftrace *rec);
+ 
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+ #define arch_ftrace_get_regs(regs) NULL
++#define HAVE_ARCH_FTRACE_REGS
+ struct ftrace_ops;
+ struct ftrace_regs;
+ #define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+diff --git a/arch/s390/include/asm/ftrace.h b/arch/s390/include/asm/ftrace.h
+index 1498d0a9c762..fc97d75dc752 100644
+--- a/arch/s390/include/asm/ftrace.h
++++ b/arch/s390/include/asm/ftrace.h
+@@ -51,12 +51,7 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
+ 	return addr;
+ }
+ 
+-struct ftrace_regs;
+-#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+-
+-struct __arch_ftrace_regs {
+-	struct pt_regs regs;
+-};
++#include <linux/ftrace_regs.h>
+ 
+ static __always_inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *fregs)
+ {
+@@ -84,12 +79,6 @@ static __always_inline unsigned long fgraph_ret_regs_frame_pointer(struct fgraph
+ }
+ #endif /* CONFIG_FUNCTION_GRAPH_TRACER */
+ 
+-static __always_inline unsigned long
+-ftrace_regs_get_instruction_pointer(const struct ftrace_regs *fregs)
+-{
+-	return arch_ftrace_regs(fregs)->regs.psw.addr;
+-}
+-
+ static __always_inline void
+ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+ 				    unsigned long ip)
+@@ -97,19 +86,6 @@ ftrace_regs_set_instruction_pointer(struct ftrace_regs *fregs,
+ 	arch_ftrace_regs(fregs)->regs.psw.addr = ip;
+ }
+ 
+-#define ftrace_regs_get_argument(fregs, n) \
+-	regs_get_kernel_argument(&arch_ftrace_regs(fregs)->regs, n)
+-#define ftrace_regs_get_stack_pointer(fregs) \
+-	kernel_stack_pointer(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_return_value(fregs) \
+-	regs_return_value(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_set_return_value(fregs, ret) \
+-	regs_set_return_value(&arch_ftrace_regs(fregs)->regs, ret)
+-#define ftrace_override_function_with_return(fregs) \
+-	override_function_with_return(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_query_register_offset(name) \
+-	regs_query_register_offset(name)
+-
+ #ifdef CONFIG_DYNAMIC_FTRACE_WITH_DIRECT_CALLS
+ /*
+  * When an ftrace registered caller is tracing a function that is
+diff --git a/arch/x86/include/asm/ftrace.h b/arch/x86/include/asm/ftrace.h
+index 87943f7a299b..8f02d28c571a 100644
+--- a/arch/x86/include/asm/ftrace.h
++++ b/arch/x86/include/asm/ftrace.h
+@@ -33,12 +33,8 @@ static inline unsigned long ftrace_call_adjust(unsigned long addr)
+ }
+ 
+ #ifdef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+-struct ftrace_regs;
+-#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+ 
+-struct __arch_ftrace_regs {
+-	struct pt_regs		regs;
+-};
++#include <linux/ftrace_regs.h>
+ 
+ static __always_inline struct pt_regs *
+ arch_ftrace_get_regs(struct ftrace_regs *fregs)
+@@ -52,21 +48,6 @@ arch_ftrace_get_regs(struct ftrace_regs *fregs)
+ #define ftrace_regs_set_instruction_pointer(fregs, _ip)	\
+ 	do { arch_ftrace_regs(fregs)->regs.ip = (_ip); } while (0)
+ 
+-#define ftrace_regs_get_instruction_pointer(fregs) \
+-	arch_ftrace_regs(fregs)->regs.ip)
+-
+-#define ftrace_regs_get_argument(fregs, n) \
+-	regs_get_kernel_argument(&arch_ftrace_regs(fregs)->regs, n)
+-#define ftrace_regs_get_stack_pointer(fregs) \
+-	kernel_stack_pointer(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_return_value(fregs) \
+-	regs_return_value(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_set_return_value(fregs, ret) \
+-	regs_set_return_value(&arch_ftrace_regs(fregs)->regs, ret)
+-#define ftrace_override_function_with_return(fregs) \
+-	override_function_with_return(&arch_ftrace_regs(fregs)->regs)
+-#define ftrace_regs_query_register_offset(name) \
+-	regs_query_register_offset(name)
+ 
+ struct ftrace_ops;
+ #define ftrace_graph_func ftrace_graph_func
+diff --git a/include/linux/ftrace.h b/include/linux/ftrace.h
+index 66f10291a0b2..aa9ddd1e4bb6 100644
+--- a/include/linux/ftrace.h
++++ b/include/linux/ftrace.h
+@@ -113,6 +113,8 @@ static inline int ftrace_mod_get_kallsym(unsigned int symnum, unsigned long *val
+ 
+ #ifdef CONFIG_FUNCTION_TRACER
+ 
++#include <linux/ftrace_regs.h>
++
+ extern int ftrace_enabled;
+ 
+ /**
+@@ -150,14 +152,11 @@ struct ftrace_regs {
+ #define ftrace_regs_size()	sizeof(struct __arch_ftrace_regs)
+ 
+ #ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+-
+-struct __arch_ftrace_regs {
+-	struct pt_regs		regs;
+-};
+-
+-struct ftrace_regs;
+-#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
+-
++/*
++ * Architectures that define HAVE_DYNAMIC_FTRACE_WITH_ARGS must define their own
++ * arch_ftrace_get_regs() where it only returns pt_regs *if* it is fully
++ * populated. It should return NULL otherwise.
++ */
+ static inline struct pt_regs *arch_ftrace_get_regs(struct ftrace_regs *fregs)
+ {
+ 	return &arch_ftrace_regs(fregs)->regs;
+@@ -191,23 +190,6 @@ static __always_inline bool ftrace_regs_has_args(struct ftrace_regs *fregs)
+ 	return ftrace_get_regs(fregs) != NULL;
+ }
+ 
+-#ifndef CONFIG_HAVE_DYNAMIC_FTRACE_WITH_ARGS
+-#define ftrace_regs_get_instruction_pointer(fregs) \
+-	instruction_pointer(ftrace_get_regs(fregs))
+-#define ftrace_regs_get_argument(fregs, n) \
+-	regs_get_kernel_argument(ftrace_get_regs(fregs), n)
+-#define ftrace_regs_get_stack_pointer(fregs) \
+-	kernel_stack_pointer(ftrace_get_regs(fregs))
+-#define ftrace_regs_return_value(fregs) \
+-	regs_return_value(ftrace_get_regs(fregs))
+-#define ftrace_regs_set_return_value(fregs, ret) \
+-	regs_set_return_value(ftrace_get_regs(fregs), ret)
+-#define ftrace_override_function_with_return(fregs) \
+-	override_function_with_return(ftrace_get_regs(fregs))
+-#define ftrace_regs_query_register_offset(name) \
+-	regs_query_register_offset(name)
+-#endif
+-
+ typedef void (*ftrace_func_t)(unsigned long ip, unsigned long parent_ip,
+ 			      struct ftrace_ops *op, struct ftrace_regs *fregs);
+ 
+diff --git a/include/linux/ftrace_regs.h b/include/linux/ftrace_regs.h
+new file mode 100644
+index 000000000000..dea6a0851b74
+--- /dev/null
++++ b/include/linux/ftrace_regs.h
+@@ -0,0 +1,36 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef _LINUX_FTRACE_REGS_H
++#define _LINUX_FTRACE_REGS_H
++
++/*
++ * For archs that just copy pt_regs in ftrace regs, it can use this default.
++ * If an architecture does not use pt_regs, it must define all the below
++ * accessor functions.
++ */
++#ifndef HAVE_ARCH_FTRACE_REGS
++struct __arch_ftrace_regs {
++	struct pt_regs		regs;
++};
++
++#define arch_ftrace_regs(fregs) ((struct __arch_ftrace_regs *)(fregs))
++
++struct ftrace_regs;
++
++#define ftrace_regs_get_instruction_pointer(fregs) \
++	instruction_pointer(arch_ftrace_get_regs(fregs))
++#define ftrace_regs_get_argument(fregs, n) \
++	regs_get_kernel_argument(arch_ftrace_get_regs(fregs), n)
++#define ftrace_regs_get_stack_pointer(fregs) \
++	kernel_stack_pointer(arch_ftrace_get_regs(fregs))
++#define ftrace_regs_return_value(fregs) \
++	regs_return_value(arch_ftrace_get_regs(fregs))
++#define ftrace_regs_set_return_value(fregs, ret) \
++	regs_set_return_value(arch_ftrace_get_regs(fregs), ret)
++#define ftrace_override_function_with_return(fregs) \
++	override_function_with_return(arch_ftrace_get_regs(fregs))
++#define ftrace_regs_query_register_offset(name) \
++	regs_query_register_offset(name)
++
++#endif /* HAVE_ARCH_FTRACE_REGS */
++
++#endif /* _LINUX_FTRACE_REGS_H */
+-- 
+2.45.2
 
 
