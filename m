@@ -1,97 +1,155 @@
-Return-Path: <linux-kernel+bounces-360627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 211AA999D6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:06:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBC7999D70
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:07:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DAD61C22D6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:06:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD6CE1C22012
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1330B209686;
-	Fri, 11 Oct 2024 07:06:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70D8207A36;
+	Fri, 11 Oct 2024 07:06:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IwB5TRzj"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iEhpSdm5"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC29D1CEEBD
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:06:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B6FBBA2D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:06:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630366; cv=none; b=V7Hei0lF0Tf3kg3VicgQ2Yj4Xm2YWYv+z/EUDiWFExuTdl8CJoHB/8XM6g2VJsuvP5QMIebzN8oU+WFgCQSArFOTPhyxGozZRtqcJH8YF3NhyE8rZrhVbnLGuOLbnM/cbLr1J51ol5qVwq6z6DdSdUzpWscbxgE1iBXSst3IcyA=
+	t=1728630415; cv=none; b=ZXnoDjwA1RKDcfz07XInS+pH7NZ0qmwFMI583KAJ06mGI3dy9EIY3o2fY9/kUMZEiz6X0VfoXGv6ahFKCsrBsvXwqblsbiqRtXcFhBzxAgsBquBd6iguza/+ERjhnVoJShZpLG3903iyqU7W3TEpLG30UhLPwNSB/ONS+diOZOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630366; c=relaxed/simple;
-	bh=UYWmRPOJ9agPa54+7bFHUne6XJDZ4rsf7JqfyugsRJg=;
+	s=arc-20240116; t=1728630415; c=relaxed/simple;
+	bh=OUEq0owwHAkCt3sxN/Mq8rka0fcPjesIj/2Td3oVAH0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sRY1Tnl4DxIYx2aeDWTjaN7EOIU4zpaZqWTcKCqMYAtz7RKU2+VwE9ngk6+zNwTXqKa1qXBRjDpX63ALbYBYza0kHzVve65RI7tppXCkxHBldjb8uA651jgC1ibYU9pp8kffeTzoYKZxURsS8j0th/iHM75en4mYLMVZk9njkeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IwB5TRzj; arc=none smtp.client-ip=209.85.208.171
+	 To:Cc:Content-Type; b=g/ArrxxEYm/mjYrZzxcY2PuAWgdqIhvcBoDTgRRXiZ2NU1zNRUKp928lJsRQJRiJyRfcWyHB1Idc/XepfX+rs2TJ3gEDmhDNFFJzDmiftxAv/lWzBgSpn7ifbxDjxlxCzTx1hTVAdCUhn6inOYqR+5GiWc/K4YU/HAeJ22Lfp54=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iEhpSdm5; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb2f4b282cso6107551fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:06:04 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6dde476d3dfso16111707b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:06:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728630363; x=1729235163; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728630412; x=1729235212; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=UYWmRPOJ9agPa54+7bFHUne6XJDZ4rsf7JqfyugsRJg=;
-        b=IwB5TRzjW1ZTRbx3yt+onCkz52zjrn1fi/CBJLTHDxusfJGYuME+szQzc9F7C6o3yu
-         pr4qWqgDy8LVWWOrXPGIpwrH/hqfM/E1o1YZeK+gXl5niW3Kv89aar5DA9ltVchAN6aQ
-         g/AWbJ1q6ODS1oDxKBd2jMlzrZ/1QARYqnrGE6JEwxvVJ6MSXOISXhqsoHEvsXVm+1bm
-         rul0esGAIOIOj7/wZker9kibxA4Dcc1Yy/59WcoELOrAi8A2s4AFyUH3aDp8ZH8qAtXe
-         w13soXnyHiM0ddI456sxI5LC1Ye59e3+16wSsu5Ujc+vYC6ewSlQ98d+ec2eTYIlxCQi
-         XcYg==
+        bh=KbDvhzRE0GcC1Dd4Kqw9/lX4StqtF0AG6/j/dYmGN1o=;
+        b=iEhpSdm53iy/7JIxasQ7kLL4P2inSpX9JSGpxEF9oPcwJiiw1u5jk1GdWIvQKGHH1Q
+         h42hzWALmMGeE/Wi3u69kPa/D4VvK9aG1imEoRRCz48y7FMd19gvLCokxPeHL/wtNTGw
+         Kz8t7DRAkTSLrT+KZOowbnPMPPta/S4mZ0fp7ZQ6jIcy9Nx0gu604F1gzqDx/+O+7Q2N
+         7mLGQhTR7fNbCdgLVnZLN5D84QFSQNWM9bn0B8JUJpJKAm6qlC1s0JUUMlui9SChdAzO
+         pRhcNvX/jNhkj2imx1hTVphZCl2DvOh6FrFJHzP9pdcUTytZm7JqqE27JKANCDkgPnrk
+         i/Cg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728630363; x=1729235163;
+        d=1e100.net; s=20230601; t=1728630412; x=1729235212;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=UYWmRPOJ9agPa54+7bFHUne6XJDZ4rsf7JqfyugsRJg=;
-        b=VVW0Dgsd7KvXGL5lS0pjaLu/x8W5ExT/IjgHJOMH3+lzpk8JrM4ojzD2jNfj3QlFCn
-         wAkhs8WSjNhMNkDRTCtvRl3SUhIuSaaGkDOW8lWQa+qB3ubFKrHQlKeCr9AGeRR7AyLa
-         z++ag4rtq8mScEBGFtVhp4+0xE9MHg+dUYQDUGBV7YC6TeIDczFwbWIdz+4rR48bp9mr
-         oddoIlwTx3v/LwjmeIfBSe9g19d8qNk25ppbA72TBIZ3DQPNm0at3vM74GKEBFoWDjwj
-         M30To0dF9Wl1lTHW3YsK+ZiLXVSoomThuSzIFMmlkzc3eJJYa9X385GX0pCrNsAM5TLD
-         3sDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWpOb5CE7ONWJupp61Y9Q8Pvx9h3WeLmqlS1r8TxZP8GgqdkVxn6oaIiDavootc25TqOVOvwCtEwT8l/Nc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTot339/0pbgje0Do9GNX9PglndxAQki+vxB5xmzcANP5FLBD/
-	AvUmlAlQJcLHaVDu0YQyCqntmkoqehSKXd40krFjmPwzoeRsPVjl37j6PYMlrZ/2VuIlcLVIG26
-	RJchub2V9JZ9NQ/p72OcU0PCmRvdZXpnMBu8/9vV0VzmRVlA1d5s=
-X-Google-Smtp-Source: AGHT+IG8zV2+iAyrrbJ4WDMnZQFSISzC1s84X7Xtp+3otAX9bwU3ugO5M90Syf8AIdg5cszVYklkeEzk34c4PQQiivI=
-X-Received: by 2002:a2e:bc10:0:b0:2f6:5f0a:9d00 with SMTP id
- 38308e7fff4ca-2fb3270597emr6660451fa.1.1728630362991; Fri, 11 Oct 2024
- 00:06:02 -0700 (PDT)
+        bh=KbDvhzRE0GcC1Dd4Kqw9/lX4StqtF0AG6/j/dYmGN1o=;
+        b=RRPnP5WBLXiEU37sYcfvUPSVeWbqpIEtLF7h9LQW+6BsRh5rqO817PyWLItt/J6Ii/
+         PJJbWJdsUFj8oC7JvQNI/sJ/afs3l1qbrNk3wXLHZIELl5rS6c9lZHbWEGCtrewHGLVv
+         GndAr2mwfQOJAzaPR8IbeHXddeB4pw6NxiPkk0AOy0+J8pAQ/tfPH0lxnbVsWXgFgbtG
+         DZVTzlExvPswlQ4NUql2lfwxRE82nh1ttjvtFMcGbSOWpUljBtfM7MyXPikus2JXv/cB
+         1S2jtRluBmfc1DqYLUsZW7i7pvGeoKZ6whbXHP1MG461iZ+tyU6sACFf2z38SNc+cz4V
+         o2Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCWAUFr95Teot5vuhS8qWliRDTHdKwQu/9XbndNLfO/8hE/mPifAWs+RJoCJrhKrAKBbJ2Z8A9wA/hgb+ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwL6tBhkUkyMtn56ML3aSClhxlNYEZ9iAECV3WNBz9xblk5jio2
+	3xvX1SMYeTtkvEA22xvP06fT/eM3NJ7h+MPA6HqjH8wn4pEfGL7LhIwiM6ZobPlkIrEgQ6c1zTh
+	SOIBarLEcVYahSUT9O0rfYrnAfS0CBYrHEEvMmQ==
+X-Google-Smtp-Source: AGHT+IGAqFf1aCWRylzQD2egBbLwi3qRNqcNEIYZaTvmCmq4ukOzJTKIvCqu2AgBinqdnGTEhCOpEXxLoURFTP8BrkA=
+X-Received: by 2002:a05:690c:fc7:b0:6e2:b263:1045 with SMTP id
+ 00721157ae682-6e3477befe2mr12970867b3.6.1728630412570; Fri, 11 Oct 2024
+ 00:06:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009162910.33477-1-brgl@bgdev.pl> <20241009162910.33477-2-brgl@bgdev.pl>
-In-Reply-To: <20241009162910.33477-2-brgl@bgdev.pl>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Oct 2024 09:05:52 +0200
-Message-ID: <CACRpkdaMzN3pps=Fm9YC0i9HB2GYLa1C4vaO1QB27KpUBiR1vA@mail.gmail.com>
-Subject: Re: [PATCH 2/2] gpio: mpc8xxx: use generic device_is_compatible()
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-8-76d4f5d413bf@linaro.org>
+ <n7bkvvxph2wxaxf2s7vonj273ouonlb2nisl7n7ora6j5stnlv@tt3v3uawwh2q> <CABymUCPV+bu-MNGCRp_0A+jC9Z6hY3XRm4vZ5Ju2XxT5YuRzPA@mail.gmail.com>
+In-Reply-To: <CABymUCPV+bu-MNGCRp_0A+jC9Z6hY3XRm4vZ5Ju2XxT5YuRzPA@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 11 Oct 2024 10:06:41 +0300
+Message-ID: <CAA8EJpprO9pZ7bRf5HDA7-8UYKn5RiK2Yg9eW1NTYSEAE8ZDFw@mail.gmail.com>
+Subject: Re: [PATCH v2 08/14] drm/msm/dpu: update mixer number info earlier
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 9, 2024 at 6:29=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.pl> =
-wrote:
-
-> This driver doesn't need to include of.h and use OF-specific interfaces.
-> Use generic property helpers instead.
+On Fri, 11 Oct 2024 at 09:30, Jun Nie <jun.nie@linaro.org> wrote:
 >
-> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
+=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:12=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Wed, Oct 09, 2024 at 04:50:21PM GMT, Jun Nie wrote:
+> > > Update mixer number info earlier so that the plane nopipe check
+> > > can have the info to clip the plane. Otherwise, the first nonpipe
+> > > check will have mixer number as 0 and plane is not checked.
+> > >
+> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c | 11 ++++++++++-
+> > >  1 file changed, 10 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gp=
+u/drm/msm/disp/dpu1/dpu_encoder.c
+> > > index dfe282c607933..68655c8817bf8 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
+> > > @@ -638,6 +638,7 @@ static int dpu_encoder_virt_atomic_check(
+> > >       struct dpu_global_state *global_state;
+> > >       struct drm_framebuffer *fb;
+> > >       struct drm_dsc_config *dsc;
+> > > +     struct dpu_crtc_state *cstate;
+> > >       int ret =3D 0;
+> > >
+> > >       if (!drm_enc || !crtc_state || !conn_state) {
+> > > @@ -662,6 +663,8 @@ static int dpu_encoder_virt_atomic_check(
+> > >       dsc =3D dpu_encoder_get_dsc_config(drm_enc);
+> > >
+> > >       topology =3D dpu_encoder_get_topology(dpu_enc, dpu_kms, adj_mod=
+e, crtc_state, dsc);
+> > > +     cstate =3D to_dpu_crtc_state(crtc_state);
+> > > +     cstate->num_mixers =3D topology.num_lm;
+> > >
+> > >       /*
+> > >        * Use CDM only for writeback or DP at the moment as other inte=
+rfaces cannot handle it.
+> > > @@ -1170,7 +1173,13 @@ static void dpu_encoder_virt_atomic_mode_set(s=
+truct drm_encoder *drm_enc,
+> > >       }
+> > >
+> > >       cstate->num_dscs =3D num_dsc;
+> > > -     cstate->num_mixers =3D num_lm;
+> > > +     if (cstate->num_mixers !=3D num_lm) {
+> > > +             if (!cstate->num_mixers)
+> > > +                     DPU_ERROR_ENC(dpu_enc,
+> > > +                                   "mixer number %d is not as expect=
+ed %d\n",
+> > > +                                   num_lm, cstate->num_mixers);
+> > > +             cstate->num_mixers =3D num_lm;
+> > > +     }
+> >
+> > Is it a possible case or just defensive coding?
+>
+> The value is initialized beforehand only in virtual plane case. So we
+> still need this
+> for non virtual plane case.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+It looks better if it's handled in the non-virtual code instead.
 
-Yours,
-Linus Walleij
+--=20
+With best wishes
+Dmitry
 
