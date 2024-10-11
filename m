@@ -1,117 +1,173 @@
-Return-Path: <linux-kernel+bounces-361074-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361079-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1101299A310
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:57:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D9A99A31E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 858842853C4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:57:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 442D91C218BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88CCE216A1F;
-	Fri, 11 Oct 2024 11:57:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4655F216A2A;
+	Fri, 11 Oct 2024 12:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="fPFwGSnz"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JYuu0YC/"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 619102AE7F;
-	Fri, 11 Oct 2024 11:57:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9ECC19923C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:01:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728647860; cv=none; b=YLThuVLvnC7lV/H79lVF7nsuv8WtyL20hG6zfWr+n5yfKqj0mhE69+0AaBLsJhSvB5oJ9V+u9DGA5NDZS0XCHqmWa+j9/Lz5NxpTXiQZjIGZVUFI3Mb+TmAHrU/GSJF5+tjjkUXR/cEEaDVOfE1MKjgXjczJvi3KhGvOlfFbWRA=
+	t=1728648077; cv=none; b=pRWs+/HDcjUuNpjw2g44SNfkcy78cd7rUytUGQK5jU8tUVt3vbZTgikQ0H9sLvpMp92lVBHHA0LYYAnNghpgqMGC0cAi1BYUY2Rog3JyZPozexdtwWIbG196pLQ9GYqP0r7/UgWMyPmJ+KgTYpgyuYMdBKEHlIRN8ZtI0ZsEZ+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728647860; c=relaxed/simple;
-	bh=Q7XL/TXQyMBQb3KLaQfFLqc1QkvYBlgSvkt16YmJmnk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oz+6qGYO6RRe5hnB7twzgMYwBtEcBBUydnYYMPNCPynmjAkWHw2Zm+mFCdUKKH357di5p4hs6/H5Ob1wnUJvne4BMMk3ESojDyuo6ZItfBQQY5tZVmGEUjKH+BU6Iu0ekjqypSYRKVWnx0+U2WVcadqNKFxOVgMOSin38o5xy6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=fPFwGSnz; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 562BB40E0163;
-	Fri, 11 Oct 2024 11:57:28 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id HWnVobhI6GlO; Fri, 11 Oct 2024 11:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728647843; bh=hsoYnwjk+bx8QIrA3aXqChgdJHxyjjoKqysOlGZEEkY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=fPFwGSnzZ0M2UzmfA6nUwfF48I9ivtLQQvrDIoRbzU5FzEzX0nQj5KRn+dDvWLxKn
-	 rZhV2ynDeSiteHw5ciMbkH8AHVuSU3ijTWTe9GK8GvoMGKhMhFW9njVkUhNa7x8Z3z
-	 fhw3qMoQtXkf+OgPuFsuN7aid2byG/+hpWifp5oJUQzm6uW5FEZHBzfwL4MtPU9Wvh
-	 QPn53Gk5VWHRMXBW3aELv0baAcbi3KAimjbV0MailmDVy9QPd4ACNayZxfrDacX2b4
-	 wcU7NmxlXWpSw7/CySkeJEbg2w+YDvOEAT1sd4e5HPW27z5RwQKuImlZBGOpHt7eZZ
-	 amn1doPuPtqOheyEz5Uq0GhVcKFxFf6O8fjdOlkRFErLw4Yf9P1CJP7hkE586o7Ds5
-	 DiZho5h94B/RSxXWVFDfBs5Cgiu9YTSMMEdpW9rX3J5w77Z2/DR9/FLBBWUuglCmlg
-	 deRdjV3FBV7kKt4KqS/Obpx4NajH4JVNgRsnG83/oiabXZ8zSw1hcikHRWj2KcYgPY
-	 4PAG3ahMBeLPM/j4oxYMsTbw6kP2QoQO6TwnpObAc1yLbvd2PcHjOmI0da/sfjLos6
-	 uGf0Oafp5XugSIAmZUzk1dz0Q74oxoWJReJIQifCNDAWofXGvnPLZGdCGaxQHCIv9W
-	 9/mwydeq86B57gDCbxk6Kkcg=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E5A8640E0169;
-	Fri, 11 Oct 2024 11:57:12 +0000 (UTC)
-Date: Fri, 11 Oct 2024 13:57:07 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>
-Cc: James Morse <james.morse@arm.com>, Jonathan Corbet <corbet@lwn.net>,
-	Tony Luck <tony.luck@intel.com>, linux-acpi@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-edac@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 0/5] Fix issues with ARM Processor CPER records
-Message-ID: <20241011115707.GCZwkSk5ybx-s9AqMM@fat_crate.local>
-References: <cover.1725429659.git.mchehab+huawei@kernel.org>
+	s=arc-20240116; t=1728648077; c=relaxed/simple;
+	bh=On39dKXOMppwLZCYpokNty+xpqfFYIk4OCDgpyUSYYY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Ddil1DbDAIBOLvP7Hza2ms0Rg6drc+w9jvzT7dMc6yp1Yq14+jBSGmSwFlvDBDGKrl+InvVHhAG9FP5sQSj48Al8Jk/Rl/PMkrDr0SnvASAgHnYCH/7hUMX3eYuJMfzdtL+NrZXmlxFAkNXJgYgiqhyvreCkYoMbK0pHyeaO0tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JYuu0YC/; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728648076; x=1760184076;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=On39dKXOMppwLZCYpokNty+xpqfFYIk4OCDgpyUSYYY=;
+  b=JYuu0YC/yp63GFptY0fpgaFbAjS/gmzDNthuq8uVAZhZTOOQubbhuj0H
+   BBjy/jKb86ljcD7ow8lAGePNoHR7PKMv5uZV2qSh1IhhLudWZyH/eCyJF
+   S/ErfP7e2Nijms7iZ5fDEdK5PWstwRdnCRxqOTKhAjO/1zNpFKrkWurbh
+   elAeuDLzJ8TB1lJEVh+cLsPSrU0qNrcqWAim36wC4oxxKzv+/5X7Z/Gkd
+   5Go2BDPmvwIvtcsw+ysK+MH2LuKCapl01Pd4fDYYEAembo2QiYgQkOTAp
+   gDQTqKWCP35MJigi6n0mdecYw1eL41VoUwMSWp5dgnJcMkl5DU+zUBxKr
+   w==;
+X-CSE-ConnectionGUID: e0BnZ1eFSxmRSIiJ2cS1zA==
+X-CSE-MsgGUID: JqI6dIDdRuyT8gIK4ib3Xg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="38613796"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="38613796"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 05:01:15 -0700
+X-CSE-ConnectionGUID: DHw0voemSQ+9xLlLMZ0flw==
+X-CSE-MsgGUID: ShXFkEczQUuShiAFt8SrhQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="77196039"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 05:01:12 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
+  Borislav Petkov <bp@alien8.de>,  Dave Hansen
+ <dave.hansen@linux.intel.com>,  "Kirill A . Shutemov"
+ <kirill.shutemov@linux.intel.com>,  x86@kernel.org,
+  linux-coco@lists.linux.dev,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  Dan Williams <dan.j.williams@intel.com>,
+  Kai Huang <kai.huang@intel.com>,  "H. Peter Anvin" <hpa@zytor.com>,  Andy
+ Lutomirski <luto@kernel.org>,  Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH -V2] tdx, memory hotplug: Check whole hot-adding memory
+ range for TDX
+In-Reply-To: <50881635-092f-4940-b998-1532d5c9f83a@redhat.com> (David
+	Hildenbrand's message of "Fri, 11 Oct 2024 11:53:13 +0200")
+References: <20241010074726.1397820-1-ying.huang@intel.com>
+	<037801d9-8923-4d49-8423-072fd7c73069@redhat.com>
+	<87o73ra0p7.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<71dc3853-45a6-4fa5-b3c6-b165e0ab6a1b@redhat.com>
+	<87v7xz81jk.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<4bc038a4-e8ff-4441-acb1-63fcb3dc9068@redhat.com>
+	<50881635-092f-4940-b998-1532d5c9f83a@redhat.com>
+Date: Fri, 11 Oct 2024 19:57:39 +0800
+Message-ID: <87r08m97ik.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <cover.1725429659.git.mchehab+huawei@kernel.org>
+Content-Type: text/plain; charset=ascii
 
-On Wed, Sep 04, 2024 at 08:07:13AM +0200, Mauro Carvalho Chehab wrote:
-> Jason Tian (1):
->   RAS: Report all ARM processor CPER information to userspace
-> 
-> Mauro Carvalho Chehab (4):
->   efi/cper: Adjust infopfx size to accept an extra space
->   efi/cper: Add a new helper function to print bitmasks
->   efi/cper: align ARM CPER type with UEFI 2.9A/2.10 specs
->   docs: efi: add CPER functions to driver-api
-> 
->  .../driver-api/firmware/efi/index.rst         | 11 +++-
->  drivers/acpi/apei/ghes.c                      | 27 ++++----
->  drivers/firmware/efi/cper-arm.c               | 52 ++++++++--------
->  drivers/firmware/efi/cper.c                   | 62 ++++++++++++++++++-
->  drivers/ras/ras.c                             | 41 +++++++++++-
->  include/linux/cper.h                          | 12 ++--
->  include/linux/ras.h                           | 16 ++++-
->  include/ras/ras_event.h                       | 48 ++++++++++++--
->  8 files changed, 210 insertions(+), 59 deletions(-)
+David Hildenbrand <david@redhat.com> writes:
 
-With the issues to patch 1 fixed:
+> On 11.10.24 11:48, David Hildenbrand wrote:
+>> On 11.10.24 10:51, Huang, Ying wrote:
+>>> David Hildenbrand <david@redhat.com> writes:
+>>>
+>>>> On 11.10.24 03:27, Huang, Ying wrote:
+>>>>> David Hildenbrand <david@redhat.com> writes:
+>>>>>
+>>>>>>>      extern u64 max_mem_size;
+>>>>>>>        extern int mhp_online_type_from_str(const char *str);
+>>>>>>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
+>>>>>>> index 621ae1015106..c4769f24b1e2 100644
+>>>>>>> --- a/mm/memory_hotplug.c
+>>>>>>> +++ b/mm/memory_hotplug.c
+>>>>>>> @@ -1305,6 +1305,11 @@ int try_online_node(int nid)
+>>>>>>>      	return ret;
+>>>>>>>      }
+>>>>>>>      +int __weak arch_check_hotplug_memory_range(u64 start, u64 size)
+>>>>>>> +{
+>>>>>>> +	return 0;
+>>>>>>> +}
+>>>>>>
+>>>>>> BTW, I remember that "__weak" doesn't always behave the way it would
+>>>>>> seem, which is the reason we're usually using
+>>>>>>
+>>>>>> #define arch_check_hotplug_memory_range arch_check_hotplug_memory_range
+>>>>>>
+>>>>>> #ifndef arch_check_hotplug_memory_range
+>>>>>> ...
+>>>>>> #endif
+>>>>>>
+>>>>>>
+>>>>>> Not that I remember the details, just that it can result in rather
+>>>>>> surprising outcomes (e.g., the wrong function getting called).
+>>>>> I can replace __weak with #define/#ifndef.
+>>>>> However, it appears that "__weak" is still widely used now.
+>>>>
+>>>> Probably better to avoid new ones.
+>>>
+>>> Sure.  Will do that in the future versions.
+>>>
+>>>> See also
+>>>> Documentation/dev-tools/checkpatch.rst
+>>>>
+>>>> I assume checkpatch.pl should complain as well?
+>>>
+>>> Double checked again.  It doesn't complain for that.
+>> Indeed, it only checks for usage of "weak" for *declarations*. So
+>> maybe
+>> it's fine after all and I am misremembering things. So just leave it as
+>> is for the time being.
+>> 
+>
+> For completeness, this is the issue I remembered:
+>
+> commit 65d9a9a60fd71be964effb2e94747a6acb6e7015
+> Author: Naveen N Rao <naveen@kernel.org>
+> Date:   Fri Jul 1 13:04:04 2022 +0530
+>
+>     kexec_file: drop weak attribute from functions
+>          As requested
+>     (http://lkml.kernel.org/r/87ee0q7b92.fsf@email.froward.int.ebiederm.org),
+>     this series converts weak functions in kexec to use the #ifdef approach.
+>          Quoting the 3e35142ef99fe ("kexec_file: drop weak attribute
+>         from
+>     arch_kexec_apply_relocations[_add]") changelog:
+>          : Since commit d1bcae833b32f1 ("ELF: Don't generate unused
+>         section symbols")
+>     : [1], binutils (v2.36+) started dropping section symbols that it thought
+>     : were unused.  This isn't an issue in general, but with kexec_file.c, gcc
+>     : is placing kexec_arch_apply_relocations[_add] into a separate
+>     : .text.unlikely section and the section symbol ".text.unlikely" is being
+>     : dropped.  Due to this, recordmcount is unable to find a non-weak symbol in
+>     : .text.unlikely to generate a relocation record against.
 
-Acked-by: Borislav Petkov (AMD) <bp@alien8.de>
+Good to know this, Thanks!
 
-I'm presuming this'll go through Ard's tree. Alternatively, I can pick it up
-too with Ard's ack.
-
-Thx.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+--
+Best Regards,
+Huang, Ying
 
