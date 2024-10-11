@@ -1,202 +1,200 @@
-Return-Path: <linux-kernel+bounces-360983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5A7D99A20A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0049B99A20C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 233DDB209A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:53:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701671F23241
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:54:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 142FE2141C2;
-	Fri, 11 Oct 2024 10:53:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E90212EF0;
+	Fri, 11 Oct 2024 10:54:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cLErmwLa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="pE34G824"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5545F210C11;
-	Fri, 11 Oct 2024 10:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27F41D0E15;
+	Fri, 11 Oct 2024 10:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644022; cv=none; b=M/wt1kAzA9FZEU/nyrNNVA+/aZ/Ai8EB71NpA9hW/bgTqKSYxKDdAnYNTCgbpN3CP+QIR1Ccr6qMvZwsbAyVdNsMhThXf0iYrVwv1q7ae/HmyeS6shotUxVJ7iJUUCAtK7gxGuWHdqGMHVKwgyxqCQPyGUnht6vSWP1+FCij2s8=
+	t=1728644087; cv=none; b=K+6ECd0pKm+KrQtyeGOyirH5jrzSy2QGAMj+1BWi5dRnItKNYMQ0ckjjoj8R92yjMX1rn65gYpzydpv73qzbYjVUQvUQ30aKehnxKJuPcHKcjHRKyRCJRQ6/eslHo2h5aYLCIlxHRSwLhltNnRyMOuZ8YI1XmVZ9vdWMXLwSxNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644022; c=relaxed/simple;
-	bh=SMSAwURTM1d5RipIGE/rB4foIsdd0HI1hdITJc1eIWQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=eZGydDBvoHBYn276TR2bKUH4wjZ7jsE0mt6xFGxNaSdCyFKgz3k7dhamXizfa+WZDxjib/oangdy9MXMXFevXLW1n11s3er/W4bLQ74LkZYMWBRWv4sDYn94WZjLM7Kz+1P21OsVOQrdU7QhIEL5Sa57Y/M2oy8nms2vq8rYbIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cLErmwLa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 003D0C4CECC;
-	Fri, 11 Oct 2024 10:53:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728644021;
-	bh=SMSAwURTM1d5RipIGE/rB4foIsdd0HI1hdITJc1eIWQ=;
-	h=From:Date:Subject:To:Cc:From;
-	b=cLErmwLayP9ONrUIcQ5NUPsnImMlfKAGPKJ94ZbYel10Dj+DNS407zuPUdOltR1yI
-	 dE/kXlW62n+LiAwl7WoS1VqzWbeal8kj9AKZKJiiAc5SjxZYmhieBXIdmTB3iEUPNf
-	 CiNfXwBJipRyhScvz9EijSkBxBloCXYUx5PK5pOqrROd534d/exqMc9UwOxIZGtuiE
-	 4jR0DzKmL9lboZa4+81fz4Wsla1bXdMAFVlzsTKxZfY8t24yPBzPxo4Ir3sDU4UHWm
-	 ZOD7ZXdqdBvuEldcvkFJ02vCVNb/A87pmYSCjAVj5kdYfWXh+SPA/KtFNvfu+R1UGQ
-	 UTW3BFMKp1zsA==
-From: Roger Quadros <rogerq@kernel.org>
-Date: Fri, 11 Oct 2024 13:53:24 +0300
-Subject: [PATCH v3] usb: dwc3: core: Fix system suspend on TI AM62
- platforms
+	s=arc-20240116; t=1728644087; c=relaxed/simple;
+	bh=BJhX/lmW/LILX88W3qn5ZKczb0DptbBEdZjDz6RxflU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bexcN19AuVi9+0dhewLZXpSgSk59unzQuCktdZp0QTa+pcN5kwmrkGmRbnUGJ30c8dLWeSUSfI8R0MgBYPRttus7ctB+vd7lLckBMVTittSKsiJWmgCZj3SsU07Z+DNMyhYZMzNM1uuJG+2UA6VoNrJqI94uEKGr/oi6Ex0eRwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=pE34G824; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728644076; x=1729248876; i=wahrenst@gmx.net;
+	bh=B0nqQTWmbX/DXBru/TDDCruKEolLwzT5aKjKNmMn0p4=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=pE34G824TsaI03+4EbgVmM4hxuWSOmuTvlN5XwOFYLEzmFXWoLXslEpjahLwIZjE
+	 HyQF+aWIxruRFTKexMLPFzm/MpfI8N1LWkfatdrcEbsvdK+qUIK6I291uzuIkHjln
+	 lAuoQEAz5x2qHPP91lpwtKyQ8wI9FnUPeBrFQVu4DaYKo92MsPF+EXr1SpNLUcqCV
+	 Z9d+FfOEzfslSsjXj++nOtIRYaC57Vz5WYh+WjTb05IQFVj1P84XIjYSVE3UvS17l
+	 zhPjhBlrFB48olYPsnEaLZ3Lhj+mChZUl+diyhKNazDUgegUR2eAkbdzc50xgNZEg
+	 R8ffFGRvf7kozx2ELQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1N49hB-1tylzR2lwf-015pDe; Fri, 11
+ Oct 2024 12:54:36 +0200
+Message-ID: <eb4713e3-ccc5-4848-800e-dbf30158b8af@gmx.net>
+Date: Fri, 11 Oct 2024 12:54:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-am62-lpm-usb-v3-1-562d445625b5@kernel.org>
-X-B4-Tracking: v=1; b=H4sIAKMDCWcC/13MSw6CMBSF4a2Qjq3pvWCbOmIfxgGlF2jklVYbD
- WHvFkbi8Jzk/xYWyDsK7JotzFN0wU1jGvkpY3VXjS1xZ9NmKLAQGnNeDRJ5Pw/8FQxvChQalLF
- KKJaS2VPj3jt3u6fdufCc/GfXI2zvDoEQcIQicOBagzQKQF4aVT7Ij9SfJ9+yTYr4W+u/GlNtK
- 5S1qC0aoEO9rusXCIoagucAAAA=
-To: "Rafael J. Wysocki" <rafael@kernel.org>, 
- Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Nishanth Menon <nm@ti.com>, 
- Tero Kristo <kristo@kernel.org>, Santosh Shilimkar <ssantosh@kernel.org>, 
- Thinh Nguyen <Thinh.Nguyen@synopsys.com>
-Cc: Dhruva Gole <d-gole@ti.com>, Vishal Mahaveer <vishalm@ti.com>, 
- msp@baylibre.com, srk@ti.com, linux-pm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
- linux-usb@vger.kernel.org, stable@vger.kernel.org, 
- Roger Quadros <rogerq@kernel.org>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=openpgp-sha256; l=4130; i=rogerq@kernel.org;
- h=from:subject:message-id; bh=SMSAwURTM1d5RipIGE/rB4foIsdd0HI1hdITJc1eIWQ=;
- b=owEBbQKS/ZANAwAIAdJaa9O+djCTAcsmYgBnCQOxqBmfPC7eJ+c6SU8SoLZDV4m1FX17mmtof
- Pg59HytZ4OJAjMEAAEIAB0WIQRBIWXUTJ9SeA+rEFjSWmvTvnYwkwUCZwkDsQAKCRDSWmvTvnYw
- kxCiEACzojewd1nrTI35G+GeuXLP49y/iaIJEt2DCqrgIZY0S58KivuWPzK3Y9X/576gwoYO3kl
- 0NM6jUpW26tCZYFxxkT6IdaFbtwNTB7qYqAcnUFHURd46OlD06etXmtjDlLT8i9wxK1+mZDSMUP
- F9Pi5/ZipbtYeUVG6f7p+dNH+pqo9Vr3Q44RdThtCgaekEAJSUF00ZvV0bDJMymcOIqsvvGtxkC
- IeIP8fBSdx64NamC6Nimr7pYI8cP4DkMma1j1StVp/bwJ4fiZlz4lV6UAXSY27rOJkXwfSrNteE
- IHSBGIZP3Abml1QGT2jPjnyyjFRcHo39XrQ3L/uVDE06QoImjWZOezAQTZ821BwjfhMOrKQeXwk
- GkBTJwyrZ8+SrqrgdlQ1UUtsAqWtEojqpJVKLx8J7Gm4k1oqrwa6YymSIcVcseSz70rhlu0CITp
- vVU3wu+n8l9P1+Nmwcz1+0IITxyGjiGhwZ/hDqfuS359JypOos5OTmik2ZVFe1QktKaGpWYRUA9
- YQ6vJNhomn991yh4QK76hhu57RC7uGjLGNb5EoPl2fT31zAyOkvUemJKJCKXRaGMgJmqn8vs0Gb
- QCXZQ2cj1gkjWLNvWUiRTeykn3uBW8jtNnwf48ODXw/tZ+ROfQcl8hKzn+rSOezSxJLcL/RNgtE
- DVucmURkWBVLcsA==
-X-Developer-Key: i=rogerq@kernel.org; a=openpgp;
- fpr=412165D44C9F52780FAB1058D25A6BD3BE763093
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] staging: vchiq_core: Lower indentation of a
+ conditional block
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
+ <20241011072210.494672-5-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241011072210.494672-5-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:5HvJFIaJdVlUI3BICXc22twfJyPqXfvSQiy8GgciEliiSrCE9+N
+ ywPwflgFjfYjGLwPCxCdXpuYEFbzjx5o5eeRn2CsFncP5RxBEQIcWpx2bWXQGmZfYpmDi31
+ 3UWYtxtLF9UGKaKHTLvAQFYgDV1ucKEEPBz1xf2MPee0Ub+iMfO7UJ1t5TWpCXzs5qt5ST1
+ IW6KFZpbkrzeVx75uB3FA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:WCGfBiwOFhw=;TWWCgkAaDvSNbOtqLyEFvUepvg0
+ MH/WQDOlZKc7g0TzgP4J1+emuk6b7nTLEdzMTSbLOySmQZPDjPSVHFRPSOUM71GvlR+iew+4j
+ Lg2Ro8y9xBTGFRqiMJ4A2IYWVmJQDvcOAmhrpspqHbvdLWfBpEuyBbOHUXd6g6N6RxkfUmmxN
+ nBEnSgv9rkNdv/IqWCAqWxJotk1kPPlr9DrWHTxNk7W/IO4CKOgxA236t3KzHLbbfv0cMok1S
+ 9/FW5RqFG1ftIAq3FQ4SMeaT1b1usjL4ntbbQ3R182eXH/Lop0mb6uwADtFFmHP1v7IeRftDN
+ bhCsVK870IM9vu5WQStYo/YcqW/aNYbI47pcmP2GX0/FMb2wmAtbnAxOGATfXgp5B5YTdiK3p
+ s5Uk+qx4qp4Xryf1E//xhUp/non4q0mk2NHoMeGCiz3NkvHAfSpZcX7GKEQW7nqJuwkW+wAh+
+ z43c63MMDCF+u662bxo70eSoXj7IeDHS9V8KxE33pFD7S+8SFuLcgV0Kx/syViSh5/djGivQ7
+ tLEaUTpNufGop2O7qVs8vTfTWdhMgL8nptT944LRiupIFk5n+R6DDWgHux5NaRU8CJq8vmgmU
+ M27P/Z38PRiOBTVK5VjPGKHHT92TkELjBivAKUshnqhXhMB1OZPapPmlv7A9N9vqnAbeCjvti
+ YyaED5tBP9eVe4wUJ9t+90fXkonlo4Usg7aHb6ZupHIo6P9ay/8IYlwWCzmEg/jmnNo669sPP
+ NwiJKRDzcRNDUJta0RD4bCJ80HyqV64QPNav9Tjw6ZNCkvs+nPAOJCEXHZK/Y0Yq9+6wUBh/v
+ T09DqVXrfHsWDys9iA3wdR5g==
 
-Since commit 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init"),
-system suspend is broken on AM62 TI platforms.
+Hi Umang,
 
-Before that commit, both DWC3_GUSB3PIPECTL_SUSPHY and DWC3_GUSB2PHYCFG_SUSPHY
-bits (hence forth called 2 SUSPHY bits) were being set during core
-initialization and even during core re-initialization after a system
-suspend/resume.
+Am 11.10.24 um 09:22 schrieb Umang Jain:
+> Lower indentation of 'if (bulk->data && service->instance)'
+> conditional block. This is achieved introducing a early check for
+> (!bulk->data || !service->instance) and using a goto label 'complete'
+> if it evaluates to true.
+>
+> No functional changes intended in this patch.
+>
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+> ---
+>   .../interface/vchiq_arm/vchiq_core.c          | 61 ++++++++++---------
+>   1 file changed, 31 insertions(+), 30 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
+e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> index 15257cf66fa4..b95443043c27 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+> @@ -1326,44 +1326,45 @@ notify_bulks(struct vchiq_service *service, stru=
+ct vchiq_bulk_queue *queue,
+>   		struct vchiq_bulk *bulk =3D
+>   			&queue->bulks[BULK_INDEX(queue->remove)];
+>
+> +		if (!bulk->data || !service->instance)
+> +			goto complete;
+> +
+>   		/*
+>   		 * Only generate callbacks for non-dummy bulk
+>   		 * requests, and non-terminated services
+>   		 */
+> -		if (bulk->data && service->instance) {
+> -			if (bulk->actual !=3D VCHIQ_BULK_ACTUAL_ABORTED) {
+> -				if (bulk->dir =3D=3D VCHIQ_BULK_TRANSMIT) {
+> -					VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
+> -					VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
+> -								bulk->actual);
+> -				} else {
+> -					VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
+> -					VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
+> -								bulk->actual);
+> -				}
+> +		if (bulk->actual !=3D VCHIQ_BULK_ACTUAL_ABORTED) {
+> +			if (bulk->dir =3D=3D VCHIQ_BULK_TRANSMIT) {
+> +				VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
+> +				VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
+> +							bulk->actual);
+>   			} else {
+> -				VCHIQ_SERVICE_STATS_INC(service, bulk_aborted_count);
+> -			}
+> -			if (bulk->mode =3D=3D VCHIQ_BULK_MODE_BLOCKING) {
+> -				struct bulk_waiter *waiter;
+> -
+> -				spin_lock(&service->state->bulk_waiter_spinlock);
+> -				waiter =3D bulk->userdata;
+> -				if (waiter) {
+> -					waiter->actual =3D bulk->actual;
+> -					complete(&waiter->event);
+> -				}
+> -				spin_unlock(&service->state->bulk_waiter_spinlock);
+> -			} else if (bulk->mode =3D=3D VCHIQ_BULK_MODE_CALLBACK) {
+> -				enum vchiq_reason reason =3D
+> -						get_bulk_reason(bulk);
+> -				status =3D make_service_callback(service, reason,	NULL,
+> -							       bulk->userdata);
+> -				if (status =3D=3D -EAGAIN)
+> -					break;
+> +				VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
+> +				VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
+> +							bulk->actual);
+>   			}
+> +		} else {
+> +			VCHIQ_SERVICE_STATS_INC(service, bulk_aborted_count);
+>   		}
+> +		if (bulk->mode =3D=3D VCHIQ_BULK_MODE_BLOCKING) {
+> +			struct bulk_waiter *waiter;
+>
+> +			spin_lock(&service->state->bulk_waiter_spinlock);
+> +			waiter =3D bulk->userdata;
+> +			if (waiter) {
+> +				waiter->actual =3D bulk->actual;
+> +				complete(&waiter->event);
+> +			}
+> +			spin_unlock(&service->state->bulk_waiter_spinlock);
+> +		} else if (bulk->mode =3D=3D VCHIQ_BULK_MODE_CALLBACK) {
+> +			enum vchiq_reason reason =3D
+> +					get_bulk_reason(bulk);
+> +			status =3D make_service_callback(service, reason,	NULL,
+> +						       bulk->userdata);
+> +			if (status =3D=3D -EAGAIN)
+> +				break;
+> +		}
+> +complete:
+I would consider goto labels within a while loop as error prone and
+ugly. Maybe moving the enclosing code into a separate function would be
+a nicer approach?
 
-These bits are required to be set for system suspend/resume to work correctly
-on AM62 platforms.
-
-Since that commit, the 2 SUSPHY bits are not set for DEVICE/OTG mode if gadget
-driver is not loaded and started.
-For Host mode, the 2 SUSPHY bits are set before the first system suspend but
-get cleared at system resume during core re-init and are never set again.
-
-This patch resovles these two issues by ensuring the 2 SUSPHY bits are set
-before system suspend and restored to the original state during system resume.
-
-Cc: stable@vger.kernel.org # v6.9+
-Fixes: 6d735722063a ("usb: dwc3: core: Prevent phy suspend during init")
-Link: https://lore.kernel.org/all/1519dbe7-73b6-4afc-bfe3-23f4f75d772f@kernel.org/
-Signed-off-by: Roger Quadros <rogerq@kernel.org>
-Acked-by: Thinh Nguyen <Thinh.Nguyen@synopsys.com>
----
-Changes in v3:
-- Fix single line comment style
-- add DWC3_GUSB3PIPECTL_SUSPHY to documentation of susphy_state
-- Added Acked-by tag
-- Link to v2: https://lore.kernel.org/r/20241009-am62-lpm-usb-v2-1-da26c0cd2b1e@kernel.org
-
-Changes in v2:
-- Fix comment style
-- Use both USB3 and USB2 SUSPHY bits to determine susphy_state during system suspend/resume.
-- Restore SUSPHY bits at system resume regardless if it was set or cleared before system suspend.
-- Link to v1: https://lore.kernel.org/r/20241001-am62-lpm-usb-v1-1-9916b71165f7@kernel.org
----
- drivers/usb/dwc3/core.c | 19 +++++++++++++++++++
- drivers/usb/dwc3/core.h |  3 +++
- 2 files changed, 22 insertions(+)
-
-diff --git a/drivers/usb/dwc3/core.c b/drivers/usb/dwc3/core.c
-index 9eb085f359ce..ca77f0b186c4 100644
---- a/drivers/usb/dwc3/core.c
-+++ b/drivers/usb/dwc3/core.c
-@@ -2336,6 +2336,11 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- 	u32 reg;
- 	int i;
- 
-+	dwc->susphy_state = (dwc3_readl(dwc->regs, DWC3_GUSB2PHYCFG(0)) &
-+			    DWC3_GUSB2PHYCFG_SUSPHY) ||
-+			    (dwc3_readl(dwc->regs, DWC3_GUSB3PIPECTL(0)) &
-+			    DWC3_GUSB3PIPECTL_SUSPHY);
-+
- 	switch (dwc->current_dr_role) {
- 	case DWC3_GCTL_PRTCAP_DEVICE:
- 		if (pm_runtime_suspended(dwc->dev))
-@@ -2387,6 +2392,15 @@ static int dwc3_suspend_common(struct dwc3 *dwc, pm_message_t msg)
- 		break;
- 	}
- 
-+	if (!PMSG_IS_AUTO(msg)) {
-+		/*
-+		 * TI AM62 platform requires SUSPHY to be
-+		 * enabled for system suspend to work.
-+		 */
-+		if (!dwc->susphy_state)
-+			dwc3_enable_susphy(dwc, true);
-+	}
-+
- 	return 0;
- }
- 
-@@ -2454,6 +2468,11 @@ static int dwc3_resume_common(struct dwc3 *dwc, pm_message_t msg)
- 		break;
- 	}
- 
-+	if (!PMSG_IS_AUTO(msg)) {
-+		/* restore SUSPHY state to that before system suspend. */
-+		dwc3_enable_susphy(dwc, dwc->susphy_state);
-+	}
-+
- 	return 0;
- }
- 
-diff --git a/drivers/usb/dwc3/core.h b/drivers/usb/dwc3/core.h
-index c71240e8f7c7..31de4b57ae7c 100644
---- a/drivers/usb/dwc3/core.h
-+++ b/drivers/usb/dwc3/core.h
-@@ -1150,6 +1150,8 @@ struct dwc3_scratchpad_array {
-  * @sys_wakeup: set if the device may do system wakeup.
-  * @wakeup_configured: set if the device is configured for remote wakeup.
-  * @suspended: set to track suspend event due to U3/L2.
-+ * @susphy_state: state of DWC3_GUSB2PHYCFG_SUSPHY + DWC3_GUSB3PIPECTL_SUSPHY
-+ *		  before PM suspend.
-  * @imod_interval: set the interrupt moderation interval in 250ns
-  *			increments or 0 to disable.
-  * @max_cfg_eps: current max number of IN eps used across all USB configs.
-@@ -1382,6 +1384,7 @@ struct dwc3 {
- 	unsigned		sys_wakeup:1;
- 	unsigned		wakeup_configured:1;
- 	unsigned		suspended:1;
-+	unsigned		susphy_state:1;
- 
- 	u16			imod_interval;
- 
-
----
-base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
-change-id: 20240923-am62-lpm-usb-f420917bd707
-
-Best regards,
--- 
-Roger Quadros <rogerq@kernel.org>
+Regards
+>   		queue->remove++;
+>   		complete(&service->bulk_remove_event);
+>   	}
 
 
