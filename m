@@ -1,175 +1,138 @@
-Return-Path: <linux-kernel+bounces-361517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CBC899A92E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:53:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BECBF99A932
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EA351F24DC8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:53:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 635081F2521D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E228019E98E;
-	Fri, 11 Oct 2024 16:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D685A19F12A;
+	Fri, 11 Oct 2024 16:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ufsVwA2Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7CD19DF9E;
-	Fri, 11 Oct 2024 16:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 208D119CC1C;
+	Fri, 11 Oct 2024 16:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728665617; cv=none; b=a9ukqunIgTHN7+HE48mtCReO4v4eKotAvwSUB64OLPpY+7+8i8Q4uv8AZ+qwKenrsXK0HHL4YK+LXto0exmsU6aryskBvsCWM0IN+yx0Wv2xAezyrTmYsdwuKj/Xe1pEhFUPxlTSnUQByvyYOWNXEdWg582jcpIhvcwBg54+NAs=
+	t=1728665680; cv=none; b=Ju1VXecmV5fYqospNHvKA4gb9A5fuN8Cgk8oC05+vQVZFAxArS7N7I08P8lbcZ4J7KZsPL6nMUMDK1SSkcfCZ6u6iWiPAsgXIBRfJBkkE9pnkh++Do+A6vxlS7Dd7Xqa7hMMcimHbMd4vQqv8/wXJXMIjlACl0D63mB3F39lDYM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728665617; c=relaxed/simple;
-	bh=Y4SVNKt9XFjLaD9B8pcqDTkmKM3gcnH+xqX6wTR5iJE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KX3ZsyYb47NJsnOP6KhYFA8SPZPCk04OarBH4/mF3ZwyZH+WFx3Fv5vt5zbc+DHvELMH7amrbsCl3++UB3FNw32EsqwbY8zc5vjdkxy4gOVuKm7LPPMvAFaYoEcUHdUsz5VNjKmkEIm1CUFSP+L52Ho4J8LSPkzQmgtJOJtgjFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C5C6C4CEC3;
-	Fri, 11 Oct 2024 16:53:36 +0000 (UTC)
-Date: Fri, 11 Oct 2024 12:53:46 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Have the buffer update counter be atomic
-Message-ID: <20241011125346.5edffba6@gandalf.local.home>
-In-Reply-To: <84179edb-dba1-42fd-88a9-70d05d8915ec@suse.com>
-References: <20241010195849.2f77cc3f@gandalf.local.home>
-	<1924e096-916a-4311-a3d5-07d3813f50da@suse.com>
-	<20241011100132.456f903a@gandalf.local.home>
-	<20241011104848.7f5b180b@gandalf.local.home>
-	<84179edb-dba1-42fd-88a9-70d05d8915ec@suse.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728665680; c=relaxed/simple;
+	bh=ZsYmybhZu4ZCvMH/vb4XwEgP+XdZzVCAccmz0o8mybY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uHD0n73AmxRjfZL2vs7Z17ogyKV6646jqlkaICM90ClCeWehLtqA++bjjJKODw/dPf1KoZmMX1cmamMgGZygHJGdNvOxnq3oSeyvTkEW811jolOrKO7ztZuar8zFyWYnMlxVY33opBbyOvHo0sSFI/8NB9X1nJYXBIeNgJYhFVg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ufsVwA2Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 256B8C4CEC3;
+	Fri, 11 Oct 2024 16:54:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728665679;
+	bh=ZsYmybhZu4ZCvMH/vb4XwEgP+XdZzVCAccmz0o8mybY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ufsVwA2ZElW1u+ZKTc4gZ77JWPyfWXlC6/7BBeR+oyAGop0Lk9FhP2FvwN/zOqxNO
+	 OXg/3S64y9UXftmcuGFAUTzlpTLpJEqppvLDc0zUmf/INJnLD4AbgR0O0iYGdE09AT
+	 99bJNDdvlFfyL4J2xJlqaXWBE8nj638X3pmGjAw4=
+Date: Fri, 11 Oct 2024 18:54:34 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Henry Lin <henryl@nvidia.com>
+Cc: Mathias Nyman <mathias.nyman@intel.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>, Jim Lin <jilin@nvidia.com>,
+	Petlozu Pravareshwar <petlozup@nvidia.com>,
+	linux-usb@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v3] xhci: tegra: fix checked USB2 port number
+Message-ID: <2024101120-sycamore-limelight-fe8b@gregkh>
+References: <20241011145114.8905-1-henryl@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011145114.8905-1-henryl@nvidia.com>
 
-On Fri, 11 Oct 2024 17:20:12 +0200
-Petr Pavlu <petr.pavlu@suse.com> wrote:
-
-> >From 359f5aa523bc27ca8600b4efae471eefc0514ce0 Mon Sep 17 00:00:00 2001  
-> From: Petr Pavlu <petr.pavlu@suse.com>
-> Date: Tue, 16 Jul 2024 11:35:00 +0200
-> Subject: [PATCH] ring-buffer: Fix reader locking when changing the sub buffer
->  order
+On Fri, Oct 11, 2024 at 10:51:14PM +0800, Henry Lin wrote:
+> If USB virtualizatoin is enabled, USB2 ports are shared between all
+> Virtual Functions. The USB2 port number owned by an USB2 root hub in
+> a Virtual Function may be less than total USB2 phy number supported
+> by the Tegra XUSB controller.
 > 
-> The function ring_buffer_subbuf_order_set() updates each
-> ring_buffer_per_cpu and installs new sub buffers that match the requested
-> page order. This operation may be invoked concurrently with readers that
-> rely on some of the modified data, such as the head bit (RB_PAGE_HEAD), or
-> the ring_buffer_per_cpu.pages and reader_page pointers. However, no
-> exclusive access is acquired by ring_buffer_subbuf_order_set(). Modyfing
-> the mentioned data while a reader also operates on them can then result in
-> incorrect memory access and various crashes.
+> Using total USB2 phy number as port number to check all PORTSC values
+> would cause invalid memory access.
 > 
-> Fix the problem by taking the reader_lock when updating a specific
-> ring_buffer_per_cpu in ring_buffer_subbuf_order_set().
+> [  116.923438] Unable to handle kernel paging request at virtual address 006c622f7665642f
+> ...
+> [  117.213640] Call trace:
+> [  117.216783]  tegra_xusb_enter_elpg+0x23c/0x658
+> [  117.222021]  tegra_xusb_runtime_suspend+0x40/0x68
+> [  117.227260]  pm_generic_runtime_suspend+0x30/0x50
+> [  117.232847]  __rpm_callback+0x84/0x3c0
+> [  117.237038]  rpm_suspend+0x2dc/0x740
+> [  117.241229] pm_runtime_work+0xa0/0xb8
+> [  117.245769]  process_scheduled_works+0x24c/0x478
+> [  117.251007]  worker_thread+0x23c/0x328
+> [  117.255547]  kthread+0x104/0x1b0
+> [  117.259389]  ret_from_fork+0x10/0x20
+> [  117.263582] Code: 54000222 f9461ae8 f8747908 b4ffff48 (f9400100)
 > 
-> Fixes: 8e7b58c27b3c ("ring-buffer: Just update the subbuffers when changing their allocation order")
-> Signed-off-by: Petr Pavlu <petr.pavlu@suse.com>
+> Cc: <stable@vger.kernel.org> # v6.3+
+> Fixes: a30951d31b25 ("xhci: tegra: USB2 pad power controls")
+> Signed-off-by: Henry Lin <henryl@nvidia.com>
 > ---
->  kernel/trace/ring_buffer.c | 41 ++++++++++++++++++++++++--------------
->  1 file changed, 26 insertions(+), 15 deletions(-)
+>  drivers/usb/host/xhci-tegra.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-> index 4c24191fa47d..d324f4f9ab9d 100644
-> --- a/kernel/trace/ring_buffer.c
-> +++ b/kernel/trace/ring_buffer.c
-> @@ -6773,36 +6773,38 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
+> diff --git a/drivers/usb/host/xhci-tegra.c b/drivers/usb/host/xhci-tegra.c
+> index 6246d5ad1468..76f228e7443c 100644
+> --- a/drivers/usb/host/xhci-tegra.c
+> +++ b/drivers/usb/host/xhci-tegra.c
+> @@ -2183,7 +2183,7 @@ static int tegra_xusb_enter_elpg(struct tegra_xusb *tegra, bool runtime)
+>  		goto out;
 >  	}
 >  
->  	for_each_buffer_cpu(buffer, cpu) {
-> +		struct buffer_data_page *old_free_data_page;
-> +		struct list_head old_pages;
-> +		unsigned long flags;
->  
->  		if (!cpumask_test_cpu(cpu, buffer->cpumask))
+> -	for (i = 0; i < tegra->num_usb_phys; i++) {
+> +	for (i = 0; i < xhci->usb2_rhub.num_ports; i++) {
+>  		if (!xhci->usb2_rhub.ports[i])
 >  			continue;
->  
->  		cpu_buffer = buffer->buffers[cpu];
->  
-> +		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-> +
->  		/* Clear the head bit to make the link list normal to read */
->  		rb_head_page_deactivate(cpu_buffer);
->  
-> -		/* Now walk the list and free all the old sub buffers */
-> -		list_for_each_entry_safe(bpage, tmp, cpu_buffer->pages, list) {
-> -			list_del_init(&bpage->list);
-> -			free_buffer_page(bpage);
-> -		}
-> -		/* The above loop stopped an the last page needing to be freed */
-> -		bpage = list_entry(cpu_buffer->pages, struct buffer_page, list);
-> -		free_buffer_page(bpage);
-> -
-> -		/* Free the current reader page */
-> -		free_buffer_page(cpu_buffer->reader_page);
-> +		/*
-> +		 * Collect buffers from the cpu_buffer pages list and the
-> +		 * reader_page on old_pages, so they can be freed later when not
-> +		 * under a spinlock. The pages list is a linked list with no
-> +		 * head, adding old_pages turns it into a regular list with
-> +		 * old_pages being the head.
-> +		 */
-> +		list_add(&old_pages, cpu_buffer->pages);
-> +		list_add(&cpu_buffer->reader_page->list, &old_pages);
->  
->  		/* One page was allocated for the reader page */
->  		cpu_buffer->reader_page = list_entry(cpu_buffer->new_pages.next,
->  						     struct buffer_page, list);
->  		list_del_init(&cpu_buffer->reader_page->list);
->  
-> -		/* The cpu_buffer pages are a link list with no head */
-> +		/* Install the new pages, remove the head from the list */
->  		cpu_buffer->pages = cpu_buffer->new_pages.next;
-> -		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
-> -		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
-> +		list_del(&cpu_buffer->new_pages);
+>  		portsc = readl(xhci->usb2_rhub.ports[i]->addr);
+> -- 
+> 2.25.1
+> 
+> 
 
-Heh, not sure why I didn't just use list_del() on the head itself instead
-of open coding it. But anyway, it should be list_del_init(), as I will
-likely remove the initialization of new_pages and have it always be
-initialized. I rather have it clean than pointing to something unknown.
+Hi,
 
-Care to send this as a real patch?
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-We can look at any other locking issues here separately, but this should be
-fixed now.
+You are receiving this message because of the following common error(s)
+as indicated below:
 
--- Steve
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
->  		cpu_buffer->cnt++;
->  
->  		/* Clear the new_pages list */
-> @@ -6815,11 +6817,20 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
->  		cpu_buffer->nr_pages = cpu_buffer->nr_pages_to_update;
->  		cpu_buffer->nr_pages_to_update = 0;
->  
-> -		free_pages((unsigned long)cpu_buffer->free_page, old_order);
-> +		old_free_data_page = cpu_buffer->free_page;
->  		cpu_buffer->free_page = NULL;
->  
->  		rb_head_page_activate(cpu_buffer);
->  
-> +		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
-> +
-> +		/* Free old sub buffers */
-> +		list_for_each_entry_safe(bpage, tmp, &old_pages, list) {
-> +			list_del_init(&bpage->list);
-> +			free_buffer_page(bpage);
-> +		}
-> +		free_pages((unsigned long)old_free_data_page, old_order);
-> +
->  		rb_check_pages(cpu_buffer);
->  	}
->  
+thanks,
+
+greg k-h's patch email bot
 
