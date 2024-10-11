@@ -1,61 +1,56 @@
-Return-Path: <linux-kernel+bounces-360547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360553-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F7E7999C77
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:13:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52D3D999C91
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C08E1F24DC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:13:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1196E2833BB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 786DA207A29;
-	Fri, 11 Oct 2024 06:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="bsVFUT12"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CC6192D77
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:13:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65618208963;
+	Fri, 11 Oct 2024 06:22:37 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED902581;
+	Fri, 11 Oct 2024 06:22:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728627221; cv=none; b=S63/j5+rzQOVgoFK4jvx7ELh2hvhz6/4/7T9jxo//WdyMak8uGaR0XOAmd9IN4S75347Uhhz2Tec8zx9+eALqqG6uWuDWc/Aj/WzcRA7W5XdXvyp2fblvL9WrEYKB8pntJzlCl8r+6kJRbtktTYP3ErCg8d43VLHu1teuZmMt8o=
+	t=1728627757; cv=none; b=J8jFllRPj4J+GNSHXmeE8tNye1cyordjzywsXpYPdVN329IKS6TGcJxTx2efvX8LkBLb3QtuKTxpEghSg1CHSclofoR1MItBM+ggycsoqyv9lSR5zmIz1L+d/N4YoLQlS19u/zphvdB3wGxb4WLWPcdAr1h1NUEaYvpG7O+2RTo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728627221; c=relaxed/simple;
-	bh=GIuSjLCx0t8gTGIU8H8tMCoA8Au0zTPx6Uz3kVb3vEc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pFHe76RPFuABKoZmenRh7pI6U1yL1YGoOuulCC7IbzHZujcfdw4lUHPHzYsS9x3i1GMykaA0SONRvRfgaSGtsLluRa0cQUBVsqfJDdidA+trkq5LaGLEI1aKpor6EZ/b5PjwlGoGfquk2r57bsWl404+c4PCWp1KI6TcSYsjtdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=bsVFUT12; arc=none smtp.client-ip=117.135.210.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version:
-	Content-Type; bh=+Qb/OMQ+V44I4trO0c/MhysrJ0ok2ChO0ceP3sapKKw=;
-	b=bsVFUT12L5NjMNgFxx/h0M6fM1XBtAPOnrqVeEjrweFE0o2CW338pByZj3mhTe
-	SKvup1USSySZGOUTzkkeXYh2XbjZgMisnS5cTcEwIDk/rIxKt30fbTiTjsXbJYNn
-	lyS9FUtljc/8m4cF0PuI05lSrY4mXOnm/K3d4z8ZCFQNc=
-Received: from localhost (unknown [101.132.132.191])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3H8GjwQhnuZm0AQ--.47715S2;
-	Fri, 11 Oct 2024 14:11:48 +0800 (CST)
-From: Xavier <xavier_qy@163.com>
-To: peterz@infradead.org,
-	mingo@redhat.com,
-	juri.lelli@redhat.com,
-	vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com,
-	rostedt@goodmis.org,
-	bsegall@google.com,
-	mgorman@suse.de,
-	vschneid@redhat.com,
-	yu.c.chen@intel.com
-Cc: linux-kernel@vger.kernel.org,
-	xw357835 <xw357835@alibaba-inc.com>
-Subject: [PATCH v2] sched/eevdf: Reduce the computation frequency of avg_vruntime
-Date: Fri, 11 Oct 2024 14:11:45 +0800
-Message-Id: <20241011061145.998428-1-xavier_qy@163.com>
+	s=arc-20240116; t=1728627757; c=relaxed/simple;
+	bh=uS1vketAMn+QuN65fHsUsbaau8xZ+bb+fzaY0ejlOJE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XNChDQKEoSn7jXt4TBAYw2TrJ9nUzU9mQS+aWs/GXyoUDQIabry7FJb/CxfrtHBvNZV09hy+5Fk1cFTe6/BLdAXVa7JI6YsDROr+NnSlZgTEwxYVQSywRM8SAS48bgLMJRaRCDg27GTLvAfi5jj8374bL+407UKXX6feydKAbKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPxP04bvzz4f3kp8;
+	Fri, 11 Oct 2024 14:22:12 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 769061A06D7;
+	Fri, 11 Oct 2024 14:22:24 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.67.174.26])
+	by APP4 (Coremail) with SMTP id gCh0CgDXDMkfxAhnqG8ZDw--.5449S2;
+	Fri, 11 Oct 2024 14:22:24 +0800 (CST)
+From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+To: tj@kernel.org,
+	lizefan.x@bytedance.com,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	shuah@kernel.org,
+	joshua.hahn6@gmail.com
+Cc: cgroups@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	xiujianfeng@huawei.com
+Subject: [PATCH -next] selftests/cgroup: Fix compile error in test_cpu.c
+Date: Fri, 11 Oct 2024 06:11:53 +0000
+Message-Id: <20241011061153.107208-1-xiujianfeng@huaweicloud.com>
 X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20240912091454.801033-1-xavier_qy@163.com>
-References: <20240912091454.801033-1-xavier_qy@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,308 +59,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wD3H8GjwQhnuZm0AQ--.47715S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3Gw4xKr1kXFW7CF4UCFW8Crg_yoWfKw4fpF
-	WUZay3tr40qr1qvr4kAr9rWF9xGr95G3y2gFyvyayIyws8K3s8tFyaqFW3tF1Ykr4kCFy7
-	ArW0qrW7Cr17KrUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jbmiiUUUUU=
-X-CM-SenderInfo: 50dyxvpubt5qqrwthudrp/1tbiwhB1EGcIjjzj1AABsc
+X-CM-TRANSID:gCh0CgDXDMkfxAhnqG8ZDw--.5449S2
+X-Coremail-Antispam: 1UD129KBjvJXoW7AF1kGrykZr18CrWrAF1fZwb_yoW8Gw4Dpa
+	1kG34j9F4rKF17J3Z2vrW2gFyI9Fs7JFWjya18Xr9xZF1fJryIqrW7Kayjqry5ua95Z3sx
+	Aa4SqF1ag3WDJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
+	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
+	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
+	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
+	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
+	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
+	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
+	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
+	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
+	xUF1v3UUUUU
+X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
 
-From: xw357835 <xw357835@alibaba-inc.com>
+From: Xiu Jianfeng <xiujianfeng@huawei.com>
 
-The current code subtracts the value of curr from avg_vruntime and avg_load
-during runtime. Then, every time avg_vruntime() is called, it adds the
-value of curr to the avg_vruntime and avg_load. Afterward, it divides these
-and adds min_vruntime to obtain the actual avg_vruntime.
+When compiling the cgroup selftests with the following command:
 
-Analysis of the code indicates that avg_vruntime only changes significantly
-during update_curr(), update_min_vruntime(), and when tasks are enqueued or
-dequeued. Therefore, it is sufficient to recalculate and store avg_vruntime
-only in these specific scenarios. This optimization ensures that accessing
-avg_vruntime() does not necessitate a recalculation each time, thereby
-enhancing the efficiency of the code.
+make -C tools/testing/selftests/cgroup/
 
-There is no need to subtract curr’s load from avg_load during runtime.
-Instead, we only need to calculate the incremental change and update
-avg_vruntime whenever curr’s time is updated.
+the compiler complains as below:
 
-To better represent their functions, rename the original avg_vruntime and
-avg_load to tot_vruntime and tot_load, respectively, which more accurately
-describes their roles in the computation.
+test_cpu.c: In function ‘test_cpucg_nice’:
+test_cpu.c:284:39: error: incompatible type for argument 2 of ‘hog_cpus_timed’
+  284 |                 hog_cpus_timed(cpucg, param);
+      |                                       ^~~~~
+      |                                       |
+      |                                       struct cpu_hog_func_param
+test_cpu.c:132:53: note: expected ‘void *’ but argument is of type ‘struct cpu_hog_func_param’
+  132 | static int hog_cpus_timed(const char *cgroup, void *arg)
+      |                                               ~~~~~~^~~
 
-Signed-off-by: xw357835 <xw357835@alibaba-inc.com>
+Fix it by passing the address of param to hog_cpus_timed().
+
+Fixes: 2e82c0d4562a ("cgroup/rstat: Selftests for niced CPU statistics")
+Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
 ---
-Note:
-The patch V2 has been updated based on the latest sched/core branch.
+ tools/testing/selftests/cgroup/test_cpu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
- kernel/sched/fair.c  | 107 ++++++++++++++++++++++++-------------------
- kernel/sched/sched.h |   3 +-
- 2 files changed, 61 insertions(+), 49 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 5a621210c9c..fb0434dd0a8 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -606,8 +606,8 @@ static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  * Which we track using:
-  *
-  *                    v0 := cfs_rq->min_vruntime
-- * \Sum (v_i - v0) * w_i := cfs_rq->avg_vruntime
-- *              \Sum w_i := cfs_rq->avg_load
-+ * \Sum (v_i - v0) * w_i := cfs_rq->tot_vruntime
-+ *              \Sum w_i := cfs_rq->tot_load
-  *
-  * Since min_vruntime is a monotonic increasing variable that closely tracks
-  * the per-task service, these deltas: (v_i - v), will be in the order of the
-@@ -617,14 +617,29 @@ static inline s64 entity_key(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  *
-  * As measured, the max (key * weight) value was ~44 bits for a kernel build.
-  */
-+static inline void avg_vruntime_update(struct cfs_rq *cfs_rq)
-+{
-+	s64	tot_vruntime = cfs_rq->tot_vruntime;
-+
-+	/* sign flips effective floor / ceiling */
-+	if (cfs_rq->tot_load) {
-+		if (tot_vruntime < 0)
-+			tot_vruntime -= (cfs_rq->tot_load - 1);
-+		cfs_rq->avg_vruntime = div_s64(tot_vruntime, cfs_rq->tot_load);
-+	} else {
-+		cfs_rq->avg_vruntime = cfs_rq->tot_vruntime;
-+	}
-+}
-+
- static void
- avg_vruntime_add(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- 	unsigned long weight = scale_load_down(se->load.weight);
- 	s64 key = entity_key(cfs_rq, se);
+diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
+index 201ce14cb422..a2b50af8e9ee 100644
+--- a/tools/testing/selftests/cgroup/test_cpu.c
++++ b/tools/testing/selftests/cgroup/test_cpu.c
+@@ -281,7 +281,7 @@ static int test_cpucg_nice(const char *root)
  
--	cfs_rq->avg_vruntime += key * weight;
--	cfs_rq->avg_load += weight;
-+	cfs_rq->tot_vruntime += key * weight;
-+	cfs_rq->tot_load += weight;
-+	avg_vruntime_update(cfs_rq);
- }
- 
- static void
-@@ -633,17 +648,29 @@ avg_vruntime_sub(struct cfs_rq *cfs_rq, struct sched_entity *se)
- 	unsigned long weight = scale_load_down(se->load.weight);
- 	s64 key = entity_key(cfs_rq, se);
- 
--	cfs_rq->avg_vruntime -= key * weight;
--	cfs_rq->avg_load -= weight;
-+	cfs_rq->tot_vruntime -= key * weight;
-+	cfs_rq->tot_load -= weight;
-+	avg_vruntime_update(cfs_rq);
-+}
-+
-+static inline
-+void avg_vruntime_update_for_curr(struct cfs_rq *cfs_rq, s64 delta)
-+{
-+	struct sched_entity *curr = cfs_rq->curr;
-+	unsigned long weight = scale_load_down(curr->load.weight);
-+
-+	cfs_rq->tot_vruntime += delta * weight;
-+	avg_vruntime_update(cfs_rq);
- }
- 
- static inline
--void avg_vruntime_update(struct cfs_rq *cfs_rq, s64 delta)
-+void avg_vruntime_update_for_minv(struct cfs_rq *cfs_rq, s64 delta)
- {
- 	/*
--	 * v' = v + d ==> avg_vruntime' = avg_runtime - d*avg_load
-+	 * v' = v + d ==> avg_runtime' = tot_runtime - d*tot_load
- 	 */
--	cfs_rq->avg_vruntime -= cfs_rq->avg_load * delta;
-+	cfs_rq->tot_vruntime -= cfs_rq->tot_load * delta;
-+	avg_vruntime_update(cfs_rq);
- }
- 
- /*
-@@ -652,25 +679,7 @@ void avg_vruntime_update(struct cfs_rq *cfs_rq, s64 delta)
-  */
- u64 avg_vruntime(struct cfs_rq *cfs_rq)
- {
--	struct sched_entity *curr = cfs_rq->curr;
--	s64 avg = cfs_rq->avg_vruntime;
--	long load = cfs_rq->avg_load;
--
--	if (curr && curr->on_rq) {
--		unsigned long weight = scale_load_down(curr->load.weight);
--
--		avg += entity_key(cfs_rq, curr) * weight;
--		load += weight;
--	}
--
--	if (load) {
--		/* sign flips effective floor / ceiling */
--		if (avg < 0)
--			avg -= (load - 1);
--		avg = div_s64(avg, load);
--	}
--
--	return cfs_rq->min_vruntime + avg;
-+	return cfs_rq->min_vruntime + cfs_rq->avg_vruntime;
- }
- 
- /*
-@@ -725,18 +734,8 @@ static void update_entity_lag(struct cfs_rq *cfs_rq, struct sched_entity *se)
-  */
- static int vruntime_eligible(struct cfs_rq *cfs_rq, u64 vruntime)
- {
--	struct sched_entity *curr = cfs_rq->curr;
--	s64 avg = cfs_rq->avg_vruntime;
--	long load = cfs_rq->avg_load;
--
--	if (curr && curr->on_rq) {
--		unsigned long weight = scale_load_down(curr->load.weight);
--
--		avg += entity_key(cfs_rq, curr) * weight;
--		load += weight;
--	}
--
--	return avg >= (s64)(vruntime - cfs_rq->min_vruntime) * load;
-+	return cfs_rq->tot_vruntime >=
-+			(s64)(vruntime - cfs_rq->min_vruntime) * (s64)cfs_rq->tot_load;
- }
- 
- int entity_eligible(struct cfs_rq *cfs_rq, struct sched_entity *se)
-@@ -752,7 +751,7 @@ static u64 __update_min_vruntime(struct cfs_rq *cfs_rq, u64 vruntime)
- 	 */
- 	s64 delta = (s64)(vruntime - min_vruntime);
- 	if (delta > 0) {
--		avg_vruntime_update(cfs_rq, delta);
-+		avg_vruntime_update_for_minv(cfs_rq, delta);
- 		min_vruntime = vruntime;
- 	}
- 	return min_vruntime;
-@@ -851,7 +850,6 @@ RB_DECLARE_CALLBACKS(static, min_vruntime_cb, struct sched_entity,
-  */
- static void __enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
--	avg_vruntime_add(cfs_rq, se);
- 	se->min_vruntime = se->vruntime;
- 	se->min_slice = se->slice;
- 	rb_add_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
-@@ -862,7 +860,6 @@ static void __dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se)
- {
- 	rb_erase_augmented_cached(&se->run_node, &cfs_rq->tasks_timeline,
- 				  &min_vruntime_cb);
--	avg_vruntime_sub(cfs_rq, se);
- }
- 
- struct sched_entity *__pick_root_entity(struct cfs_rq *cfs_rq)
-@@ -1219,6 +1216,7 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 	struct rq *rq = rq_of(cfs_rq);
- 	s64 delta_exec;
- 	bool resched;
-+	s64 vdelta_exec;
- 
- 	if (unlikely(!curr))
- 		return;
-@@ -1227,8 +1225,10 @@ static void update_curr(struct cfs_rq *cfs_rq)
- 	if (unlikely(delta_exec <= 0))
- 		return;
- 
--	curr->vruntime += calc_delta_fair(delta_exec, curr);
-+	vdelta_exec = calc_delta_fair(delta_exec, curr);
-+	curr->vruntime += vdelta_exec;
- 	resched = update_deadline(cfs_rq, curr);
-+	avg_vruntime_update_for_curr(cfs_rq, vdelta_exec);
- 	update_min_vruntime(cfs_rq);
- 
- 	if (entity_is_task(curr)) {
-@@ -3883,6 +3883,8 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
- 		avruntime = avg_vruntime(cfs_rq);
- 		if (!curr)
- 			__dequeue_entity(cfs_rq, se);
-+
-+		avg_vruntime_sub(cfs_rq, se);
- 		update_load_sub(&cfs_rq->load, se->load.weight);
- 	}
- 	dequeue_load_avg(cfs_rq, se);
-@@ -3913,6 +3915,8 @@ static void reweight_entity(struct cfs_rq *cfs_rq, struct sched_entity *se,
- 		if (!curr)
- 			__enqueue_entity(cfs_rq, se);
- 
-+		avg_vruntime_add(cfs_rq, se);
-+
- 		/*
- 		 * The entity's vruntime has been adjusted, so let's check
- 		 * whether the rq-wide min_vruntime needs updated too. Since
-@@ -5281,7 +5285,6 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	 * EEVDF: placement strategy #1 / #2
- 	 */
- 	if (sched_feat(PLACE_LAG) && cfs_rq->nr_running && se->vlag) {
--		struct sched_entity *curr = cfs_rq->curr;
- 		unsigned long load;
- 
- 		lag = se->vlag;
-@@ -5338,9 +5341,7 @@ place_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 		 *
- 		 *   vl_i = (W + w_i)*vl'_i / W
- 		 */
--		load = cfs_rq->avg_load;
--		if (curr && curr->on_rq)
--			load += scale_load_down(curr->load.weight);
-+		load = cfs_rq->tot_load;
- 
- 		lag *= load + scale_load_down(se->load.weight);
- 		if (WARN_ON_ONCE(!load))
-@@ -5427,6 +5428,8 @@ enqueue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 	update_stats_enqueue_fair(cfs_rq, se, flags);
- 	if (!curr)
- 		__enqueue_entity(cfs_rq, se);
-+
-+	avg_vruntime_add(cfs_rq, se);
- 	se->on_rq = 1;
- 
- 	if (cfs_rq->nr_running == 1) {
-@@ -5530,6 +5533,8 @@ dequeue_entity(struct cfs_rq *cfs_rq, struct sched_entity *se, int flags)
- 
- 	if (se != cfs_rq->curr)
- 		__dequeue_entity(cfs_rq, se);
-+
-+	avg_vruntime_sub(cfs_rq, se);
- 	se->on_rq = 0;
- 	account_entity_dequeue(cfs_rq, se);
- 
-@@ -6924,11 +6929,17 @@ requeue_delayed_entity(struct sched_entity *se)
- 			cfs_rq->nr_running--;
- 			if (se != cfs_rq->curr)
- 				__dequeue_entity(cfs_rq, se);
-+			avg_vruntime_sub(cfs_rq, se);
-+
- 			se->vlag = 0;
- 			place_entity(cfs_rq, se, 0);
-+
- 			if (se != cfs_rq->curr)
- 				__enqueue_entity(cfs_rq, se);
-+			avg_vruntime_add(cfs_rq, se);
- 			cfs_rq->nr_running++;
-+
-+			update_min_vruntime(cfs_rq);
- 		}
- 	}
- 
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index b1c3588a8f0..7f7c93518c7 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -650,8 +650,9 @@ struct cfs_rq {
- 	unsigned int		idle_nr_running;   /* SCHED_IDLE */
- 	unsigned int		idle_h_nr_running; /* SCHED_IDLE */
- 
-+	s64			tot_vruntime;
- 	s64			avg_vruntime;
--	u64			avg_load;
-+	u64			tot_load;
- 
- 	u64			min_vruntime;
- #ifdef CONFIG_SCHED_CORE
+ 		/* Try to keep niced CPU usage as constrained to hog_cpu as possible */
+ 		nice(1);
+-		hog_cpus_timed(cpucg, param);
++		hog_cpus_timed(cpucg, &param);
+ 		exit(0);
+ 	} else {
+ 		waitpid(pid, &status, 0);
 -- 
-2.45.2
+2.34.1
 
 
