@@ -1,145 +1,100 @@
-Return-Path: <linux-kernel+bounces-360892-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F011499A111
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:16:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D64B99A114
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:16:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E1DA1F21671
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:16:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFBAE2853B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:16:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8BD210C0D;
-	Fri, 11 Oct 2024 10:16:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E283210C32;
+	Fri, 11 Oct 2024 10:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dHsPmUvu"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JDmNIIwU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82AD520B20B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:16:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0445B210C0F;
+	Fri, 11 Oct 2024 10:16:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641788; cv=none; b=U6lI2G4PiKf5G7/HN1EZhNNiGtfzMEGx7ktMT2SzK1Pb9FUwm5EIup1p88rzmNPf6lFLtw4Of543sY68shJ4QoMdIF9BTGPZooskEKl2DBKAKIP44JJDiixV6OBBgJRjDQB+hC6aCOp6XbYUndW4bqv4jptTo1wqkOwzNKdcYZY=
+	t=1728641789; cv=none; b=mTaLMTJrom4iLxBaXZfMWPZzjF80fNwbEQLYxB4LcSA7PfrQxhLQH7CN1/YBrBPnYjGMyg2PcorNIpddbLZzP/i9Drp5wEIUTvL+Ftd0XUvdnVXe3gL6R9CPESKbIxWsUwp2tw3noxaltMqTCwglmzhU7ipw/F8WEaPgS4JKx9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641788; c=relaxed/simple;
-	bh=VnRcOvG00eDk9unXV1hgFBknglSVE5O1qDH//99Y1Rw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mOkqWDO3JI5p3QteQSZpNoCiYyG/v1sPeFSY6Ou5q+djKThKu1t7c1zli/fCSdVVDzwMBOa4QRGUrZ0tkx8kgvzVbJOBY7qcjFd5EIOhTEHTdTULzU2tCKLCKirPpYzUkvpOVSEPwJGYGQX+amDFLerMYC3lLEI0Xmt3ME6/2OU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dHsPmUvu; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-430576ff251so16208335e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:16:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728641785; x=1729246585; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VnRcOvG00eDk9unXV1hgFBknglSVE5O1qDH//99Y1Rw=;
-        b=dHsPmUvuEGrSeb222HJsh48e4OS2YwbZb/ba8QgQO7B+sRVD80Wae8KSrCv6aINT1E
-         Lm4HaARgBoTn5D8OknLykrc+bhqpWw95UzgkYxte1Ff2ILb6rNdUqywO7hKDwJVfHv2q
-         T49+2eMAvdisJQtEEq/NrhRk7MNuZCekZdGEI3L45SLUvpx6DTG4D6vMMgb7GJP+gYU5
-         MVqqldBidARWrQgDAiP3XcPMlLfW0/lhSu3eAESosLArMXgKJ9HfH7qRtb9V7v9Ojxmu
-         HN1/qrnzRFz+NsbiH3BEjCcW8VccLaunw6h2ELn7XWy8yKbvmNhs2RztkBf8Um/3/KdG
-         npCQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728641785; x=1729246585;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VnRcOvG00eDk9unXV1hgFBknglSVE5O1qDH//99Y1Rw=;
-        b=Ccw2Md69LEREbB1Li+JA0xyK2CWa6FMQzIvXfCScrbEEvdP32eFie4BTvRAeUXDrCr
-         JrUsj6BU/NqFzpPkzp6mQomihAUPfh2i+e/dPNuX3DJ+aQH1lfzp0EmWSPGHU1fJ/pcN
-         Js8PPBfDf0Ftp3jBh74YtZ2BGY245vJtPPN2wlVUUVdnk6sGAwQar8xKzu2e55vmYfQP
-         9h0fjrgkuRHnDiS0QZL2bpXU+0LrsQwuLCidAtShdzdz9o8kzAoaWZadVSI+ECD1kueW
-         GpbJha5+jThGh790UKND4nVVTXNcGtSYe1JRTzHF0R6ug8cq+SEKK5ZBQGBuRY3CAFVo
-         8vkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWlo46oi7NmjnVRl/8H2tFYqfrrYRfZ0ywlH6+jqzefc/6utKpFALW8Cet5oKHrJS3BzTwwhuCDhNi1CRk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5a6kz0EOR9yASkSvlfDCvLfkprA1PWPL95c+o/7IAWz5xtVLv
-	yzMJy51KimKyAj1QyZlea3wq/XnWBnCmZAT2HPqaG1TYWRwZ/28e8nWf9S+9BfGhBF495j1YNlF
-	XGybIHfmlftUWxWmNrHmYLrhZE3wKgFWoecUN
-X-Google-Smtp-Source: AGHT+IGMNjtCG9rpECyAAco9DzsrUijuUFkuK2ogFVx/VRCgWggYYygWbJym2kgBDSGBNFLXnFb7cUmfBa/gllnaBLs=
-X-Received: by 2002:a05:600c:4e8a:b0:42c:af06:718 with SMTP id
- 5b1f17b1804b1-4311df435e7mr16515715e9.28.1728641784578; Fri, 11 Oct 2024
- 03:16:24 -0700 (PDT)
+	s=arc-20240116; t=1728641789; c=relaxed/simple;
+	bh=OqL0tve/win0Q01XpfcdOPbrxM8KlrftfppKY/6qiNs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uGFdBnEGAtfTPFbmPeAM4NShGucKIdlby6yFTgUoORYcBnBSb6NDdohmnohXznetJQOqlsqlSaboeJ2KxwYQVV6PLWApQ7Zkh8Mg4141KH0ON2bGxoaIiiTH9J/UMCfsFcKDap8wbbMvDSTQfT/+6w4xwq2+Cpgz8VGqAaTPDek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JDmNIIwU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E7FAC4CEC3;
+	Fri, 11 Oct 2024 10:16:25 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728641787;
+	bh=OqL0tve/win0Q01XpfcdOPbrxM8KlrftfppKY/6qiNs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=JDmNIIwUw1jgwgr5vFEXGkr1tpDkRuTQbxdLjxk5f76pXaIm+6XHqWP28oXaIl3Vu
+	 BKA7j8D4GkhJZ0QwPaTSbHNhknMjxLoqt8zAqSRwzx4fFiAbQ3vsPqUPujT3X6pa6G
+	 p6jnRKQoj1CAUXEiXZ0AuhYoT6FLfVcHgXjysdEFDtlFDbM9YqL2QR3TWAG/p2Cfcf
+	 DWoKGaYUCYwPgTEgvCooUeysM2J/T1Alay+63wxuuk13m3DV8I5kteA28Ek/ZwE6SI
+	 fC81DqgKpl0EfTrgxmh4udB385tOb9tZMC+mGUqzoUjqSNXSGppKvASm+AVL7uumHj
+	 HQIrKhbdGfKDg==
+Date: Fri, 11 Oct 2024 11:16:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Stefan Wiehler <stefan.wiehler@nokia.com>
+Cc: "David S . Miller" <davem@davemloft.net>,
+	David Ahern <dsahern@kernel.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v3 3/4] ip6mr: Lock RCU before ip6mr_get_table() call
+ in ip6mr_compat_ioctl()
+Message-ID: <20241011101623.GF66815@kernel.org>
+References: <20241010090741.1980100-2-stefan.wiehler@nokia.com>
+ <20241010090741.1980100-7-stefan.wiehler@nokia.com>
+ <20241010094130.GA1098236@kernel.org>
+ <aa10d178-3421-4759-bac0-2b187255db6f@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241001-tracepoint-v9-0-1ad3b7d78acb@google.com>
- <20241001-tracepoint-v9-1-1ad3b7d78acb@google.com> <20241001211543.qdjl4pyfhehxqfk7@treble>
- <20241010154320.6d17ba69@gandalf.local.home>
-In-Reply-To: <20241010154320.6d17ba69@gandalf.local.home>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 11 Oct 2024 12:16:10 +0200
-Message-ID: <CAH5fLgiW-AEN-YN3YoW66hV2w6eEP03OC4oefg0N-tdwyLx8cA@mail.gmail.com>
-Subject: Re: [PATCH v9 1/5] rust: add generic static_key_false
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aa10d178-3421-4759-bac0-2b187255db6f@nokia.com>
 
-On Thu, Oct 10, 2024 at 9:43=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Tue, 1 Oct 2024 14:15:43 -0700
-> Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> > On Tue, Oct 01, 2024 at 01:29:58PM +0000, Alice Ryhl wrote:
-> > > Add just enough support for static key so that we can use it from
-> > > tracepoints. Tracepoints rely on `static_key_false` even though it is
-> > > deprecated, so we add the same functionality to Rust.
-> >
-> > Instead of extending the old deprecated static key interface into Rust,
-> > can we just change tracepoints to use the new one?
-> >
-> > /me makes a note to go convert the other users...
-> >
-> > From: Josh Poimboeuf <jpoimboe@kernel.org>
-> > Subject: [PATCH] tracepoints: Use new static branch API
-> >
-> > The old static key API based on 'struct static_key' is deprecated.
-> > Convert tracepoints to use the new API.
-> >
-> > Signed-off-by: Josh Poimboeuf <jpoimboe@kernel.org>
->
-> Alice,
->
-> Can you send a v10 with the added acks and whitespace fixes as well as
-> using static_branch_unlikely(), and I'll pull it into my tree.
->
-> Base it off of v6.12-rc2.
+On Thu, Oct 10, 2024 at 04:43:34PM +0200, Stefan Wiehler wrote:
+> >> When IPV6_MROUTE_MULTIPLE_TABLES is enabled, calls to ip6mr_get_table()
+> >> must be done under RCU or RTNL lock. Copy from user space must be
+> >> performed beforehand as we are not allowed to sleep under RCU lock.
+> >>
+> >> Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
+> >> Fixes: d1db275dd3f6 ("ipv6: ip6mr: support multiple tables")
 
-Here you go:
-https://lore.kernel.org/all/20241011-tracepoint-v10-0-7fbde4d6b525@google.c=
-om/
+...
 
-Alice
+> >> @@ -2004,11 +2020,13 @@ int ip6mr_compat_ioctl(struct sock *sk, unsigned int cmd, void __user *arg)
+> >>                               return -EFAULT;
+> >>                       return 0;
+> >>               }
+> >> -             rcu_read_unlock();
+> >> -             return -EADDRNOTAVAIL;
+> >> -     default:
+> >> -             return -ENOIOCTLCMD;
+> >> +             err = -EADDRNOTAVAIL;
+> >> +             goto out;
+> >>       }
+> >> +
+> > 
+> > I think that this out label should be used consistently once rcu_read_lock
+> > has been taken. With this patch applied there seems to be one case on error
+> > where rcu_read_unlock() before returning, and one case where it isn't
+> > (which looks like it leaks the lock).
+> 
+> In the remaining two return paths we need to release the RCU lock before
+> calling copy_to_user(), so unfortunately we cannot use a common out label.
+
+Ok, sure. But can you check that the code always releases the lock?
 
