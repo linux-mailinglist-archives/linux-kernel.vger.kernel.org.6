@@ -1,54 +1,54 @@
-Return-Path: <linux-kernel+bounces-360241-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A78C9996F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:17:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF629996EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:17:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A235C1C21E2D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:17:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76271284AF1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0181D151C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BA291D131C;
 	Fri, 11 Oct 2024 00:07:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GjxDWgv8"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="NnJPmI59"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A841991C9;
-	Fri, 11 Oct 2024 00:07:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419721946B3;
+	Fri, 11 Oct 2024 00:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728605260; cv=none; b=MtkP+bYfFmTNyT04PLE0+5nM3RCrfNW3JmltzgPnqUEWlb2VCevnLiDYIiij8YG06pFr6KpRL/LtSsUGFSzQN+LMMbSRWxU7i/pdjXYvMtDcLrncjzAfP4lSkOyF0TQ0QR9dFO3NhJDtSeSrYJhO8wQQz3xOPsRJMVfe2JQdcn4=
+	t=1728605257; cv=none; b=iMgbeg56wWe9AYZTmKsQzI3sS5XFmukUhpLKpjUWnBF4aGPxE98aV1+dfv6yQZqmgR1BJtLUzOdO/wEtjjcRaBtJ1DbhX3A+DZ5dJ+Azj9pYp3ZKr58jr0EdyqDsh/ur+kcjcx7Um3oTqrCxXRz0v9cwci5iUIVKkvUUm7n3c2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728605260; c=relaxed/simple;
+	s=arc-20240116; t=1728605257; c=relaxed/simple;
 	bh=kuXvZj2O2+6sLb6+HCTWSvVJ9L05ubY9bD4DgQROLzQ=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hNjnhrwKQu56mBa72skethhrPZ9E201qMvG5tmT6JGutzog6CIBq0sVp05ve7DPicfPRm83ztz1a4kaVRJPMeFpH4b3S5vNp35Utb/FIiYfd6k24+JwhlNDKKbGNEahpqvhaWOG+S0AOzAPSEzzj/AC4xnKfdTqHCswLqzSNCUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GjxDWgv8; arc=none smtp.client-ip=205.220.168.131
+	 MIME-Version:Content-Type; b=gFNHmknD2i3R4A8vLXrkpZAHQ1g/Y19xoWGeIvd8AkeKbLu9l4ORWyT3k2EeugopabTvg5jNifBzGHjHdxrFZGzSzmY8Bt3Cvlh4bE7Kg9k/V6hrsJErBAHRxXpeDbhOz/pyIrP/DUDUxcVv370pIG2heOmHGYZvxODP50h9DVo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=NnJPmI59; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACN0At011311;
-	Fri, 11 Oct 2024 00:07:12 GMT
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACVVd7009171;
+	Fri, 11 Oct 2024 00:07:11 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	T5qz9jWyU4v1+Ht9Jgi80H4Z4CwhOfh2aqovq123O+U=; b=GjxDWgv85wYJJjjZ
-	9Q5ctiL2U+ZvDHet9uUCDMymRTHwtgRskMaE/H9jPVX1857r2yXWhk4wDVSyDzMB
-	lmq5REZ324a/0Eunu6HloWG7kxNznGZNQ2hOKVG1Y7+6/gU+R8R0WoFwDP5mrr82
-	Nbl/PXAqNpdGZQsk6PbmVwXGfsNcu585tvIQsLDSz+D2hYSOrCocyqJBAUQqkLF9
-	sGYMX0Q96DhEOSiCO/eHGGU/a+SQfVWiRVpZ8t8GQR87z2GdPlberuD49/ab8UWP
-	GYFcbgdbdskLyhKlt9d6YxyP318i8W3fsoKAMm4Jgz6mXWC9BGvHafSVm1t6tMYu
-	CxQt8g==
+	T5qz9jWyU4v1+Ht9Jgi80H4Z4CwhOfh2aqovq123O+U=; b=NnJPmI59rNgDEbBK
+	qbaw+TRE1ODG/hukFiu6PwsgCH4V9pRhaXm0l7h2ungtuvTSwBqDGDVQNJ2WGa4l
+	SP+5l9nt2b2Y40SdJty1Ckz7ABnCw4cWpCvUquGJGpqNcQaHK7zM15M8sKjRFJor
+	/HDL1P8Al18hsW32qoYsdnxeVflUfhuc+R9Cp1bC+8ITjViYQ7azc2Vqe6Ha/pUo
+	SDl2bNApnHqSfbnRF1LW8DptRWuFGY4EVyxuXrWH1jVZ/6MrxqfpAsVQ+BAnMgeh
+	JQpVfBKEuvDMdgs3DDnczUmMs0ovdb1A4qNHqREzr+mEfkpqUfrBQ/7jGw1fdZj2
+	u+qW5A==
 Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xthv1yw-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425tn150w3-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 11 Oct 2024 00:07:11 +0000 (GMT)
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B07AAd020049
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B07ASq020059
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
 	Fri, 11 Oct 2024 00:07:10 GMT
 Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
@@ -69,9 +69,9 @@ CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
         Wesley Cheng
 	<quic_wcheng@quicinc.com>
-Subject: [PATCH v28 14/32] ASoC: Add SOC USB APIs for adding an USB backend
-Date: Thu, 10 Oct 2024 17:06:13 -0700
-Message-ID: <20241011000650.2585600-29-quic_wcheng@quicinc.com>
+Subject: [PATCH v28 15/33] ASoC: Add SOC USB APIs for adding an USB backend
+Date: Thu, 10 Oct 2024 17:06:14 -0700
+Message-ID: <20241011000650.2585600-30-quic_wcheng@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
 References: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
@@ -87,16 +87,16 @@ X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: tvyww0Tvrdk0YXcgHdIKrV5E1rccZVgX
-X-Proofpoint-GUID: tvyww0Tvrdk0YXcgHdIKrV5E1rccZVgX
+X-Proofpoint-ORIG-GUID: YBWSZBR3iS4PWhJfkK-CkFRKmh9vsIKE
+X-Proofpoint-GUID: YBWSZBR3iS4PWhJfkK-CkFRKmh9vsIKE
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 clxscore=1015 mlxlogscore=999 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410100159
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
+ suspectscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
+ spamscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410100159
 
 Some platforms may have support for offloading USB audio devices to a
 dedicated audio DSP.  Introduce a set of APIs that allow for management of
