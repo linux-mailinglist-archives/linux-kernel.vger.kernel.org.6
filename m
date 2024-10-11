@@ -1,141 +1,119 @@
-Return-Path: <linux-kernel+bounces-361731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 942CB99AC54
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:05:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1900899AC50
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:05:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C158B1C2675B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:05:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0D528B135
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:05:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DF91D04B8;
-	Fri, 11 Oct 2024 19:00:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EACED1D0427;
+	Fri, 11 Oct 2024 18:59:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahY7ztNv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XtvLOl9i"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE041BD4E7;
-	Fri, 11 Oct 2024 19:00:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1ED61CEE86
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673206; cv=none; b=qUla/OqQzFRtl0J2ez8OdZaSXuOdi04VGA7auIfr5adFnXYj1q0w2QjenNlhPbr2NX1eaLa4HKmltEF8M3XW2JY//Q7zBGcUnenHfNgQWvQrefUNPLH7LrvEdli6p1ePUns+E4nRsXrcEc1POT0///vssfEjXbEiNqmipfl25/8=
+	t=1728673189; cv=none; b=bD5FMnWeffs7sZSWtmgatWYAxxuGD07d4iqgr60lp+NeJKLDCYhSF+AxKxY3p6Pu79BprbA2/CZIhYC2Hxhgh9zCGqicYaxVuX8FTb7InipODxe+aGGcwHGblsp3lfyn4htO/QN1n7gD+mqehVt804imI91t4NkRTMzZC5KgX+Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673206; c=relaxed/simple;
-	bh=a84u9nTZ3sCDcURG6NNOgGWd1sDBA3xGdpK8P8jUnag=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=apUH4Tn8KDvcB1B99GSBR3qCi2McDAltGEcY3IIIpYEyKHPI8IdNF2/fqalkWUkOYw/gyGSrjSKOySiSZEK5mlpa4G0J9s50Pu9FQA+HRx4mHdiY1YJyoPaxaU1wCqqEkt2cDgKIPEOo7GEx12yrBv5Tk/rSnqgAOdyf6ws4ekQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahY7ztNv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8944AC4CEC3;
-	Fri, 11 Oct 2024 19:00:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728673205;
-	bh=a84u9nTZ3sCDcURG6NNOgGWd1sDBA3xGdpK8P8jUnag=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ahY7ztNvTTetEplHcaY8bCL4JU7+eKJkpcwiGJvQZaC4cMapaXfQuxagwMLLJxHha
-	 xFjwj5ikLuNRcLJ1pNrhpQnsSEkP5vtKx7JYcTJ4M5MIjmGBg0lTSfqL5l39Qkeik8
-	 L4pjhKvmt+LcIpUsGysVpSOKc2LDX3aQmg+ZleHnz/qY4VQ7w5rhmFmzYrHE970D1N
-	 WJiIi43l5zjrUe5CjN3uz0vw7JfExbvfGxCXVeQ/L6tU7K97WawMsMSeU+yetPaeeg
-	 ivMmF7eM08D+Jk88NwhxzhkxPAgh8iT8k+RavqfWFA5zF5h043w4gZ3x3bm61/3jui
-	 Fecn1nuqgCTBw==
-Date: Fri, 11 Oct 2024 19:59:29 +0100
-From: Simon Horman <horms@kernel.org>
-To: Markus Schneider-Pargmann <msp@baylibre.com>
-Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Vishal Mahaveer <vishalm@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
-	Andrew Lunn <andrew@lunn.ch>
-Subject: Re: [PATCH v3 3/9] can: m_can: Map WoL to device_set_wakeup_enable
-Message-ID: <20241011185929.GA53629@kernel.org>
-References: <20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com>
- <20241011-topic-mcan-wakeup-source-v6-12-v3-3-9752c714ad12@baylibre.com>
+	s=arc-20240116; t=1728673189; c=relaxed/simple;
+	bh=DVB4dVhVZ/XAV1+ShuvPw4FP9kY0aGQnXBc6U6sbKJc=;
+	h=Message-ID:Date:MIME-Version:Cc:From:Subject:To:Content-Type; b=BIkwmUhUFYnN+R5Z2rZuUo8K9ywG5wglahcMiZfFwOCtLf28wU4DGJLrnvk7mFfy9y67bZ7qFpgfLp5EYAumswQswtnZn4CNbhyOovZex3HbcEfem+Ltq1w5i0HpQUrd8a4aj/S/A/MEmq3F3ZQzgxO57Vr5yHwYZj40QQ00BCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XtvLOl9i; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99388e3009so318150466b.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728673186; x=1729277986; darn=vger.kernel.org;
+        h=content-transfer-encoding:to:subject:from:cc:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MrSoOBsX+fyaOaBJqOaUdYh1pjEXpggjg85T8AzPojk=;
+        b=XtvLOl9icPt2Ej2bN2hxz2975rHsWhxmG9iaq5eTzOQLXr4E5YqqPR2OhyySaiaVtv
+         T9jMLuvhkDJcNmGRYzEfBJvKtDjAoX3ypkMjqM8UIqvzrbc6anEBsI18w4z/243PWfgF
+         +QG7GZryQgK/5Q/DPPHbmVwcdcYI4+FnaXQ076F+M7K1Yoir/VWZggbFVz/sQaC5mNts
+         UyXoewC3YKJAadCNWydFeWUL6unVSOWHttqmcm9fz3KdT5TM+f2+NR1MSS+k1WMugif4
+         HUJ8rKggmqBIjLtv43L8zTUqA0Gib3+jVETB1uOxCihR23Dr8eVxavtiglxnLuY9Y+Yp
+         ZBnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728673186; x=1729277986;
+        h=content-transfer-encoding:to:subject:from:cc:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=MrSoOBsX+fyaOaBJqOaUdYh1pjEXpggjg85T8AzPojk=;
+        b=Y7KLm34crpuDtdHghE/oE1tChUFS+uqo6UmrzC0vuFsfTg174jr0diNAk14xgVZWzI
+         yFLkLE8VhKqj9tmTPGDME2ceDtvNyxzfrrZl9aYdrC47/AgzRIw15Ebz2HBiXq3WWWHJ
+         jLKMDpHEfCbmr9Usxh4OetvP4aJEj4DYekzzYEqXPFCQcaJIx2qexZOpToWZ48lTmukx
+         k9RYwx7Pgg0Wo8s4QYVkC+G/GYUrj7rrW788xvUsWxNM/G+yZF7amVSE+TNguNHTcZrF
+         nAifTE/C83jqRhLkcNIatrxKuhhPsLjL72x4N4BJkjyNY4D9BYI+ga57VyFNOw7ATwYg
+         B5dg==
+X-Forwarded-Encrypted: i=1; AJvYcCX3sNQnT9l+c4pughBcYyKyQdMUmwZ7L6PZcn8O9oIWvDOejbNEzBD7Xr55AWHVIp+hxRSEFSGDMddFM8I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkaybSdCwbp2Sb6Er+OJKuAyQdrzMg9TWazqJJ21ArVjATjPcq
+	mvWJ4GaTvayYQwsa5uy7GjoSve1lK+C88WUSYyFnxzCFLFP1yMryeAhFlQY+
+X-Google-Smtp-Source: AGHT+IEBAKE0eElGdrA3pm59neuAr7gQh275QTJvmPc8Jwiq7IX1ASgkODASR88cqmv1tZDgfSBNsw==
+X-Received: by 2002:a17:907:961e:b0:a99:89ea:3643 with SMTP id a640c23a62f3a-a99b9711d61mr317961866b.53.1728673185829;
+        Fri, 11 Oct 2024 11:59:45 -0700 (PDT)
+Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ec56eesm241064366b.31.2024.10.11.11.59.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 11:59:45 -0700 (PDT)
+Message-ID: <d7ef2954-21d0-4ddc-85d3-1334e7270ced@gmail.com>
+Date: Fri, 11 Oct 2024 20:59:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011-topic-mcan-wakeup-source-v6-12-v3-3-9752c714ad12@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+Cc: Malcolm Priestley <tvboxspy@gmail.com>,
+ Teddy Engel <engel.teddy@gmail.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Michael Straube <straube.linux@gmail.com>,
+ Sathish Kumar <skumark1902@gmail.com>,
+ Florian Ziegler <florian.ziegler@posteo.de>,
+ Pritthijit Nath <pritthijit.nath@icloud.com>, Arnd Bergmann <arnd@arndb.de>,
+ tdavies@darkphysics.net, m.omerfarukbulut@gmail.com,
+ =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
+ <dominik.karol.piatkowski@protonmail.com>
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [RFC] staging: vt6656: Proposal to delete driver vt6656_stage
+To: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 03:16:40PM +0200, Markus Schneider-Pargmann wrote:
-> In some devices the pins of the m_can module can act as a wakeup source.
-> This patch helps do that by connecting the PHY_WAKE WoL option to
-> device_set_wakeup_enable. By marking this device as being wakeup
-> enabled, this setting can be used by platform code to decide which
-> sleep or poweroff mode to use.
-> 
-> Also this prepares the driver for the next patch in which the pinctrl
-> settings are changed depending on the desired wakeup source.
-> 
-> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
-> ---
->  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++++
->  1 file changed, 37 insertions(+)
-> 
-> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
-> index a978b960f1f1e1e8273216ff330ab789d0fd6d51..29accadc20de7e9efa509f14209cc62e599f03bb 100644
-> --- a/drivers/net/can/m_can/m_can.c
-> +++ b/drivers/net/can/m_can/m_can.c
-> @@ -2185,6 +2185,36 @@ static int m_can_set_coalesce(struct net_device *dev,
->  	return 0;
->  }
->  
-> +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-> +{
-> +	struct m_can_classdev *cdev = netdev_priv(dev);
-> +
-> +	wol->supported = device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> +	wol->wolopts = device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
-> +}
-> +
-> +static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
-> +{
-> +	struct m_can_classdev *cdev = netdev_priv(dev);
-> +	bool wol_enable = !!wol->wolopts & WAKE_PHY;
+Dear Sirs,
 
-Hi Markus,
+Forest Bond contributed this driver in 2009.
 
-I suspect there is an order of operations issue here.
-Should the line above be like this?
+The following points let me propose to delete the driver:
+- This driver generates maintenance workload
+- This driver has a maximum 54MBit/s as it supports only 802.11 b/g. 
+Peak throughput is 3MBytes/s.
+- ping times can be 17ms are often above 500ms and worst case 22 seconds.
 
-	bool wol_enable = !!(wol->wolopts & WAKE_PHY);
+I suggest deleting the driver as it no longer meets current expectations.
 
-> +	int ret;
-> +
-> +	if ((wol->wolopts & WAKE_PHY) != wol->wolopts)
-> +		return -EINVAL;
-> +
-> +	if (wol_enable == device_may_wakeup(cdev->dev))
-> +		return 0;
-> +
-> +	ret = device_set_wakeup_enable(cdev->dev, wol_enable);
-> +	if (ret) {
-> +		netdev_err(cdev->net, "Failed to set wakeup enable %pE\n",
-> +			   ERR_PTR(ret));
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
+Former Maintainer Forest Bond <forest@alittletooquiet.net> is unreachable.
 
-...
+The staging subsystem needs to focus on drivers that support usable 
+hardware that is available. Newbies can then get the hardware and play 
+around which is fun.
+
+Please consider that support will remain for years in the longterm kernels.
+
+Thanks for any response about your thoughts.
+
+No response will result in a patch for removal in 14 days.
+
+Bye Philipp
 
