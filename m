@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-360238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2DD049996F4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:17:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEA18999705
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DCE36281D39
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:17:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FDE51F239F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6CB1D1507;
-	Fri, 11 Oct 2024 00:07:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4AD1D2239;
+	Fri, 11 Oct 2024 00:07:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RV2M9PzI"
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JRzsexJD"
 Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24F8416F84F;
-	Fri, 11 Oct 2024 00:07:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CC08195B18;
+	Fri, 11 Oct 2024 00:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728605258; cv=none; b=BHHqmBSXuX1rHTMauuvgIAfNEj3YoKYna1VfHis9dA4YvuRjwjb8DW6ZpBDJtKof0IjUvu2NKUpMMYYQKci/nuhgCp74jMBoNPscAZlFjoCnGnNF9iYjAe5JgzkOJ2kD3lGXDu8UjgkSG8Re+iYIHY1pSdK7evQKwj3S+8Le+oc=
+	t=1728605259; cv=none; b=LwUViDO/J9KLft4wiQdk06zyn0TJDIB4fi2fB4HnTuI9pqIHNabDZSA+s8/HiDRGDhdeXbidPRtqYSzm08m/Kl/RNxHWYuXIuRUVw/krNNuUPufeiiaa8SuRgEqJvaPipnLEykjT1rbiYZfUHuykYD/aoGvveyibwncqHx4/9rw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728605258; c=relaxed/simple;
+	s=arc-20240116; t=1728605259; c=relaxed/simple;
 	bh=skg6UIxU/pMv3E9zD9o2TZGC4pkMoAHN4igM72YfWMA=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Nxfc92q5BrhGvYFeFWUQ9uihCTsqBYb37HzbfyrltMPSKvAorF8xCKNBkZK5B5y3qPQ3m/XJ4W0auoIRU3VCOsByOMAV5N9eWodx3wEzdO/83O/5/1yVUXmCflf6CieCi+0BBdRZP46G+AsOfot1NO1Qa9qq/EPEZ0EV/OFnz1E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RV2M9PzI; arc=none smtp.client-ip=205.220.180.131
+	 MIME-Version:Content-Type; b=Br3i94UNE1nxGjm/iD1wRmibOZYJwpZrXROWm4IrNqZOJNXxltugNIpVI9wSNRBvmqdgctc5mhCFXJ0ZHr46t7cH691bDpK8WkmBG5ulTBSZdahbcK9T4NMuyTwYLZGI4vHA7mGTV4Y78P4vR9/duKmkVziCGhWC6bOvl+3uJSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JRzsexJD; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AD9A7o027275;
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49AHf3VG024126;
 	Fri, 11 Oct 2024 00:07:06 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	0ZOt60nzqTKhSEbIxsqylHw856gJTMJM0gWwrXx4SQw=; b=RV2M9PzIQPFPoAvh
-	oCtKpmW1ygt2VRGjcsOH7SqZqzEen3MhGu61u0g0KWUtnIJevTPHOyOkUs/l7mYP
-	5fFDC6zg8zDvT7eVjRGg207X67onPpUSI/8x1mkUCrox+poI+T6WkMQTGg/DHBeZ
-	A5m2V6ioOfBvThwYFT4xJsAAmRtLUaqZz8wp7Li4OZ3B3jV99B1wWIxEUKdCQnbQ
-	lodPrUj4YVXsn/eAeBn+CjJVqbYIehGNa0Dhyx2YKnQZ301vLZZWZvWSBCxG9GCD
-	Pzvw8SpANuaUDrmz4eIJhI+LUM/YSxAlMPmqmNXCG8WdT0bVGE34mxXcYus4rlZd
-	PmVDNw==
+	0ZOt60nzqTKhSEbIxsqylHw856gJTMJM0gWwrXx4SQw=; b=JRzsexJDmtSemTvS
+	FbGYNeF+46hg9yGSpA0VD6jW764aIPGK3QRtajdHRD3bpEJ66HPnGWJyfMzryhb5
+	zgI4wZ9hZcM2rEcTYEC0q7m2ZGchbw073mRBfysYrk5MCfWdx9AxcMjfKp/rSXR9
+	r+G9uqSZi9IpSEAUvuguQeGgrSeVvXFpr6QxRsuXLNLiLpte1W4bAsS7bFXDx8hx
+	dlcIfpv93Cng6ptX08ZUjJSbId9qUiefWncqyA3/Ip+1+AF/ByzxR4AgH0vVBK67
+	MtRfqDjspusXNxRFOMrsf3uqZ1WH2FHCdqe7083ZhwhIAfgH31skAIjLODUzvv6Q
+	9It/5w==
 Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426fj6sf5g-1
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426adhjdnr-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 00:07:05 +0000 (GMT)
+	Fri, 11 Oct 2024 00:07:06 +0000 (GMT)
 Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B074f5015223
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B0751v015235
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 00:07:04 GMT
+	Fri, 11 Oct 2024 00:07:05 GMT
 Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
  nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
  (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
@@ -70,9 +70,9 @@ CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
         Mathias Nyman
 	<mathias.nyman@linux.intel.com>,
         Wesley Cheng <quic_wcheng@quicinc.com>
-Subject: [PATCH v28 03/32] xhci: sideband: add initial api to register a sideband entity
-Date: Thu, 10 Oct 2024 17:05:51 -0700
-Message-ID: <20241011000650.2585600-7-quic_wcheng@quicinc.com>
+Subject: [PATCH v28 04/33] xhci: sideband: add initial api to register a sideband entity
+Date: Thu, 10 Oct 2024 17:05:53 -0700
+Message-ID: <20241011000650.2585600-9-quic_wcheng@quicinc.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
 References: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
@@ -88,16 +88,16 @@ X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
  nalasex01b.na.qualcomm.com (10.47.209.197)
 X-QCInternal: smtphost
 X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ERVWagKZIw7mr1HGRqwO6evUCYznOHYz
-X-Proofpoint-ORIG-GUID: ERVWagKZIw7mr1HGRqwO6evUCYznOHYz
+X-Proofpoint-GUID: FRoQ_YFIYdE7k3XOLypT-nYXBEOObcBC
+X-Proofpoint-ORIG-GUID: FRoQ_YFIYdE7k3XOLypT-nYXBEOObcBC
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
  definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410100159
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ mlxlogscore=999 clxscore=1015 mlxscore=0 impostorscore=0 phishscore=0
+ bulkscore=0 lowpriorityscore=0 adultscore=0 suspectscore=0
+ priorityscore=1501 spamscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410100159
 
 From: Mathias Nyman <mathias.nyman@linux.intel.com>
 
