@@ -1,90 +1,84 @@
-Return-Path: <linux-kernel+bounces-361431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD10599A81E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:44:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D7FD99A809
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC5E51C21F2B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:44:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5121F23D9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8103C196DA4;
-	Fri, 11 Oct 2024 15:44:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DF195FF1;
+	Fri, 11 Oct 2024 15:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uUhyI3rR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dASfOhcj"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D814A188CB1;
-	Fri, 11 Oct 2024 15:44:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169D188CB1;
+	Fri, 11 Oct 2024 15:40:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661459; cv=none; b=Z/d4Bg4TDL3mGSZcdXbK89xpNRCBsMXgiKLU3rlbGuV1q6LdjxSyDw84iMmBO/vwrXCEpIvOF60wbDb4WkRJqs3zRClDp3yxLLHM17gYi9nPp2/H99Rk5rM8LMc9CvQMiPYYlfMoE48KLg6dD2v+vA1lxypQgL++hAik86nFLog=
+	t=1728661244; cv=none; b=YpPfSNEvnXoW6wU1TsErGUBegBO/TYUIL01C+GdiVwWXTuBir8JTLh6ZPcnGloxBp5hGN3N6Ygu9hO7VBsjxhNNaMvnSha9Rda8QT0ZYLQ9rDgFxs1QTqWaL100hNw4fR8p9v7u0oe6sXTEbxKDvboxrOrSfJFdyLH4A6T0aJrM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661459; c=relaxed/simple;
-	bh=sXty7ZbtksBSz1exHU2CbDqu59M0E4xIlq58x6+VjGg=;
+	s=arc-20240116; t=1728661244; c=relaxed/simple;
+	bh=txzseXvjE2O+sLlURQCWNSGk2j8iSYWpIn/M93xrnvI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YeWWV1JflnHNyegQOFpLLtWWDZN/MCB+mzgWU3lj/ZnBD+FX4YKfyjAap7zS3Zbpdy1hQ4HWbOpZNnZVKzHTpK4k+OlqnHOHWTsWVx2h+lTpsqkoLT2G1AJia9UOji2BNKCHOamOcruzwfO3Vk7c+tpxI0zsR37P5wkHYucudAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uUhyI3rR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8B8BC4CECE;
-	Fri, 11 Oct 2024 15:44:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728661459;
-	bh=sXty7ZbtksBSz1exHU2CbDqu59M0E4xIlq58x6+VjGg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uUhyI3rRROr1y9If9WROKeSEPDwdL7k5oM9jxEtMZWeIqai2cBNAU/2UbXWyzSuOk
-	 t8/yP2jYJHXsvnrQXaSshHMtt9lM7oRiWdgkRzjDGAHmmu0J8xKK+DtckimPz/Uv9Y
-	 bx7xtUhjs1x/xBwtGcaAwK10rsOoSgve+QWdTzZnbvYNctX1cA3DE35jk/eY5BOPXj
-	 DZLBjaRNrABTph6Iy97QP5uH1atR5loE1QJFME34LBtNXqxVzs1ahSbWtvILVYAWkO
-	 YsLsXyUQp1cbpyGdH7DnEsvyyKR+VXhwokQJmK1boA0WlfGlA/9nCTtq6Md2ZIKFOi
-	 +HiqzmcVXGTQw==
+	 Content-Type:Content-Disposition:In-Reply-To; b=AcQERrxtlKFSPfbvq4WU2EWTDsuJWn+PBzgTswjOHOb0EazUcuP405o4fJgRkX0phPbtaYJZDaXfvi4VP/hRcwvo6MRJHGYMqiIErjfvFRHFla+/+Wfj0z0xb4NM5OYG93ehvSyzk2HIpAXF9XUUf18svUsjVqbDdmznSy6bc18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dASfOhcj; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2facaa16826so19888211fa.0;
+        Fri, 11 Oct 2024 08:40:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728661241; x=1729266041; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=khBtE4bfekeyDh6IrhDJxWXSph73WxxA+3qlzAGlTrQ=;
+        b=dASfOhcjPvBwde/DBl0KJAZ4qlU8PRzrie75rD4bphcY2dPkrQyLc0oW2T+x/rCrW5
+         Ji/4Cl2IDjlAT9eScaLTzNTMdyla2e1b0ULtRbXQ6eSFkw8uVgYv8AWlTc8Ael0kPvNp
+         HStVJeYz64u/rSd9GAUxWV50bXcqqY5AydkZGZOMjCXMJzxugYC8Ry2TPbKFmwKpafVG
+         zxFkCNKa2Hy+U+5p1WUffHVlNK3K1u5GM38tCWaoWmT2cqRbMClWBJWq0Z2e493TzEpT
+         FShvrjpDSa9E6ROd0sAESO9Tb5Bu8HnwEHKdCxuEzoS5oMzxIFzw4eQuJVPet4Og4pVq
+         sIfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728661241; x=1729266041;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=khBtE4bfekeyDh6IrhDJxWXSph73WxxA+3qlzAGlTrQ=;
+        b=FJDp0qKGn4IyMo5lzDhVm0MdbVBzFL0It/qkesHY+0yWqVrtyFrPN83mQHI29SetqB
+         0qjxJz2c1HGMLR0+P963huLBrhAnR+Scppt27N43kV3L+o0SKGsVlsyBLJJC4QMJaGFp
+         Jffm7RgQMuZ0HnUy2rPP7iCQFPkA7Qw6KjpaFFeY/+bI4ULJqBPpAHDdVVgbRlJGMnLj
+         VEhyvQgOCHa0uU0iwrIYoOHfQ3mS2ZC4P+dnwoEyS6kO+r0oTkqD6R/CV/2FfBxFH6uc
+         Zeq2fKHlXJEgESLE/unjRyQIFmQGettVS4XKxOJS4N5Iq+cIDaj6PCWnjEqM1DkDy6OS
+         rZJw==
+X-Forwarded-Encrypted: i=1; AJvYcCUwJg/Yp0QXtbc8xu4IIe94evWpUB+5x8xYu5m/8UTm9myLX83XpviMz5uR5d8qPeNKjdcaLHJffDB3O0rr@vger.kernel.org, AJvYcCVffHSZOsX4/gOD/r/iHxbIyUgjqWp47ZF3CuHxM9kjq4wWqRNNGeDJe92yr5pR6Tc5fG5u3CmbFaGV@vger.kernel.org, AJvYcCWG4SHiPNS1S5QgAFotTYVE+xLekuJfz5nNqYb9XV4XuolXmxSqcwfj+JmdJCZlVGxOEZZBeAD943UnlA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8fgsnNxwAPdcZMz2ZSuUXqVxZLIwJT8DI/2E6jhoKiR1X0E+M
+	Oz8LdLQHDKf6aCs4+zbU2hlZZzHWM9UK4CvJ0OHiIuEaBRGPtti8JD1qrQtF
+X-Google-Smtp-Source: AGHT+IHep9OrMoxi7CVDlu+vi5Q0yCuyEnYZKWCtJ8HitXCyhFhaycpIEJ/UUfG2VXmQImYcI0ahMw==
+X-Received: by 2002:a05:651c:1548:b0:2f9:cc40:6afe with SMTP id 38308e7fff4ca-2fb3270b3b4mr15435211fa.14.1728661240359;
+        Fri, 11 Oct 2024 08:40:40 -0700 (PDT)
+Received: from KILLINGMACHINE ([46.188.27.115])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb245799fcsm5281791fa.7.2024.10.11.08.40.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 08:40:38 -0700 (PDT)
 Date: Fri, 11 Oct 2024 18:40:36 +0300
-From: Mike Rapoport <rppt@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
-	lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Christoph Hellwig <hch@infradead.org>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [linux-next:master] [x86/module] 6661cae1aa:
- WARNING:at_arch/x86/mm/pat/set_memory.c:#__cpa_process_fault
-Message-ID: <ZwlG9NENb3GWT8Ea@kernel.org>
-References: <202410111408.8fe6f604-lkp@intel.com>
- <ZwkjPKKxRKUoJuOE@kernel.org>
- <73d5a6ed-da3c-448e-8cf8-6abb59cb2c36@intel.com>
+From: Sergey Matsievskiy <matsievskiysv@gmail.com>
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com,
+	lars.povlsen@microchip.com, horatiu.vultur@microchip.com,
+	andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
+	UNGLinuxDriver@microchip.com
+Subject: Re: [PATCH 1/1] pinctrl: ocelot: fix system hang on level based
+ interrupts
+Message-ID: <ZwlG9AKToZFFPAvi@KILLINGMACHINE>
+References: <20241006181310.181309-1-matsievskiysv@gmail.com>
+ <20241006181310.181309-2-matsievskiysv@gmail.com>
+ <CACRpkdbJ7xh1qOYaZOh+s+Tj_GgE4LXMFuOgL1zpxBRqJQVx6w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -93,19 +87,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <73d5a6ed-da3c-448e-8cf8-6abb59cb2c36@intel.com>
+In-Reply-To: <CACRpkdbJ7xh1qOYaZOh+s+Tj_GgE4LXMFuOgL1zpxBRqJQVx6w@mail.gmail.com>
 
-On Fri, Oct 11, 2024 at 07:00:01AM -0700, Dave Hansen wrote:
-> On 10/11/24 06:08, Mike Rapoport wrote:
-> > This patch disables ROX caches on 32-bit, it should fix the issue.
-> 
-> While I'm not going to shed a tear for 32-bit, what's the actual
-> compatibility issue with 32-bit?
+On Fri, Oct 11, 2024 at 11:18:55AM +0200, Linus Walleij wrote:
+> I'm a bit puzzled by the patch because I don't understand it.
 
-From the stack trace it looks like execmem tries to update the direct map
-for highmem memory, and cpa is not happy about it.
+The current implementation only calls chained_irq_enter() and chained_irq_exit()
+if it detects pending interrupts.
 
--- 
-Sincerely yours,
-Mike.
+```
+for (i = 0; i < info->stride; i++) {
+	uregmap_read(info->map, id_reg + 4 * i, &reg);
+	if (!reg)
+		continue;
+
+	chained_irq_enter(parent_chip, desc);
+```
+
+However, in case of GPIO pin configured in level mode and the parent controller
+configured in edge mode, GPIO interrupt might be lowered by the hardware. In the
+result,if the interrupt is short enough, the parent interrupt is still pending
+while the GPIO interrupt is cleared; chained_irq_enter() never gets called and
+the system hangs trying to service the parent interrupt.
+
+Moving chained_irq_enter() and chained_irq_exit() outside the for loop ensures
+that they are called even when GPIO interrupt is lowered by the hardware.
+
+The similar code with chained_irq_enter() / chained_irq_exit() functions
+wrapping interrupt checking loop may be found in many other drivers:
+```
+grep -r -A 10 chained_irq_enter drivers/pinctrl
+```
+
+> This needs to describe how moving the chained irq calls achieves
+> this effect.
+
+If the explanation above satisfies you, I'll elaborate the commit message and
+resend the patch.
+
+--
+Sergey Matsievskiy
 
