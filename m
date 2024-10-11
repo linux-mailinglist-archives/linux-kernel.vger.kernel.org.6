@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-361430-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2138B99A81C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:44:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D7A399A823
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E1E1C2296A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:44:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63CE5B2317A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:44:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9D9196DA4;
-	Fri, 11 Oct 2024 15:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF9197A88;
+	Fri, 11 Oct 2024 15:44:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEX+jkfU"
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZU8g/Erz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD948194AE8;
-	Fri, 11 Oct 2024 15:44:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BEA194AF3;
+	Fri, 11 Oct 2024 15:44:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661442; cv=none; b=vArPoV1yOTxVXbaGFuKf9X9SJxgvVAdkIBUivDuRFCaGTZxH7eop8yvqhSgKB6fG47JNwczssNvpSq0C1M1W3orAIMYgH0uux5JTd1t7AZkuQ1K5dQkJI/b+7sDXdQ3cJgRGVxbzXo50TK3B7eCUFKjJn/sX7J9DnKCL0tz281w=
+	t=1728661481; cv=none; b=CweNJCYOFOLEQVjlzmkSwNP/4D9tD+LHnhNO07mXDiMgb1TjLLOU4U4Xh4NBtFL4rjsC/v166E0qqH+n8Kyi5d3ENyHpjk6X3HX8iis27Rl8kGtSY0+RTKLFHLL2ngn+iaiv6/Y26t7VP8ANMZ38ot37MOB+x6n99gV9yjE+ihY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661442; c=relaxed/simple;
-	bh=PooPGWvgmo1UR9R92pPvRf5+4zgiaZSygxrcEWt+qUQ=;
+	s=arc-20240116; t=1728661481; c=relaxed/simple;
+	bh=5/y9AyZw/R3ZOSr7RfPFOAOHH7Jry8D1rgUwHlE0tCk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JvcfSxto1seTmUSNWIr1IPClqixItdPtLtgpTFj1KgglopEF0/AtY26DGhn4v3pMK3f111LVrGpE58sg6drvSYUYMOLb3EjAyjtek6tau6IErDSeM+Ko/EjciYX2v+ZwZjEqjSfZFBsLFM0so0CFgveKjbwsRlzIvyFSsIX11CI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEX+jkfU; arc=none smtp.client-ip=209.85.208.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c942815197so961902a12.1;
-        Fri, 11 Oct 2024 08:44:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728661439; x=1729266239; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=OrxxF3yNL/neU0KeLnUooiqCBgYtc6nVU7hAyqRA2W0=;
-        b=YEX+jkfUEToiS4Yfq3TI15EgGV38mDqbL6quudSJStG0trg7ZC4e6L/UtNDBrHDESt
-         D/mQoPycT/aBarZIKIhwjsavVxHgMUR/qilOWBNhHZsJP47iaix0uyd2hzjGfmATYqWK
-         LCdZx/h1MKZYPXpnPCtE4+s+CGp68UWylKU1NQI0ywdXOKPneyXbkFxwJbP5mT2SDbKY
-         h6e2fouLrvKUSikKhnY9BaPonu51DfbxoqSBEg/bMAnSrnV1vfJrJo/oMPhLU7O5blsb
-         KuRqJGPK+xdjKAI7wZ/mm/dtF2ep2WreSmv7fpjf1lNwYyljSLSVYWirZpuq6aSNgEJL
-         UOcA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728661439; x=1729266239;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OrxxF3yNL/neU0KeLnUooiqCBgYtc6nVU7hAyqRA2W0=;
-        b=GwXfFkFrmOq62FbevCOYz5Snteo6Xz78Nk+cNXaT638dNyVADMRtQf2PT1HF3Jm665
-         TC3QzrWiw5Jcl8i/8Efaqcfc8fFOMO0Yt967ePQOjBc6rS1DCJwl01aDGAlAauHyADPl
-         +3X4ft6FJRuVYIz/saBli4zPRuNU+//qRO34kwC60nEM6lEXmjF7QZqflJzRFIZDxa9W
-         8Omwk/OpcT8WGKMFz+pC4Uefdgf4/ugaUYtKq+eWMgXwUwHNPNJN51l8fmZ0ZEgG+utH
-         gXx949qgUq3Gs3usiYSqcwprr+V/iYeA/FJ19tERflA5OBc1Xns0GV/vagyo683hbiKE
-         hYZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUhGfvFac9ZLv612k8+yoNG/d2Kd7Y3rUcyLX9Ww/d2EUJUcSp71D45SpHmcciNEJ6w+ByUH3hJidJLPK458D4=@vger.kernel.org, AJvYcCVnKb4uJkirOWiW+qMPVEXls8CMl1X7nE7BP5vACK+SggK+p6y9ZUVTCFTmI2t2UbXwJ8Z4gAgC5WGyQbE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvsERrNu+0FG39ByJh60fxMEnsUhW/Ukp8/ibjnR7u1mwS0i/j
-	cYWNbwhsh1Sm9H6QDEsDuZ1+pz308EVxP6Ig+O1ue6EALerPpqWr
-X-Google-Smtp-Source: AGHT+IFY98Tc3cVGdGaOgsDFu7925UW/KVti8l3p26KH+Ng8egwPJ2H13W2ZO7izpyk7+n7RsmcfQg==
-X-Received: by 2002:a05:6402:4410:b0:5c8:7bbd:1c4f with SMTP id 4fb4d7f45d1cf-5c948c882fdmr3297711a12.7.1728661438938;
-        Fri, 11 Oct 2024 08:43:58 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf0d:b400:a17a:b60f:897e:1773? (p200300dfbf0db400a17ab60f897e1773.dip0.t-ipconnect.de. [2003:df:bf0d:b400:a17a:b60f:897e:1773])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937153939sm2049178a12.47.2024.10.11.08.43.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 08:43:58 -0700 (PDT)
-Message-ID: <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com>
-Date: Fri, 11 Oct 2024 17:43:57 +0200
+	 In-Reply-To:Content-Type; b=pV75gRIyhtl7gswxYKXGT1NZs5ZJNNjYZY/Wy4rzarTDClgm+avlNG3Q7qvgMtAsCXvcCOckRm7Z/Hi+P0tw0gD6tFDAimFwt41fJvAqyvoJ8QkqRJKPK5MkdV2iA8k4NmM24EqXEfZ18rmyfF8jjSFpZqk5dJuLzgKSASxElLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZU8g/Erz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB46C4CEC3;
+	Fri, 11 Oct 2024 15:44:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728661480;
+	bh=5/y9AyZw/R3ZOSr7RfPFOAOHH7Jry8D1rgUwHlE0tCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ZU8g/ErzjCWLcSBaAHHaLF4bm0XsM3NVh3HwJ/iP5HPOI4ctHmWGIGv8QQDmOphJH
+	 KMtx165guLEZ95BCqKC/TmhxFUtPHcfTaXAgX28PNydXzvZarmpxSoZfZ4oAjMSJSI
+	 J1dbbngHwmcmjbKGNU/LS6eSwjrnRyw+EqEvjSfb89ptnmAgf3n6Gvb82g5JBBz2OV
+	 9hXtkodDQ5anutmLR8KOrcx2kJAf19aYkVrPKzjadumKgdF2clZ1Q6iPpqqV336cI0
+	 furZ9lsSMuUKieycVmqQVNPT93Y/iTCDKw0/Nls8P6oP4j++hSxewq8dmoMjAvlvkD
+	 qifxIJSGJjS3A==
+Message-ID: <3d1d0822-da66-44c8-a328-69804210123c@kernel.org>
+Date: Fri, 11 Oct 2024 17:44:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,189 +49,104 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/14] hrtimer Rust API
-To: Andreas Hindborg <a.hindborg@kernel.org>,
- Boqun Feng <boqun.feng@gmail.com>, Lyude Paul <lyude@redhat.com>
-Cc: Dirk Behme <dirk.behme@de.bosch.com>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>,
- Anna-Maria Behnsen <anna-maria@linutronix.de>,
- Frederic Weisbecker <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
- rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240917222739.1298275-1-a.hindborg@kernel.org>
- <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
- <ZvwKTinnLckZm8aQ@boqun-archlinux> <87a5falmjy.fsf@kernel.org>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <87a5falmjy.fsf@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
+ interrupt
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Qiang Yu <quic_qianyu@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+ dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
+ <20241011104142.1181773-4-quic_qianyu@quicinc.com>
+ <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
+ <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-Hi Andreas,
-
-Am 11.10.24 um 16:52 schrieb Andreas Hindborg:
+On 11/10/2024 17:42, Manivannan Sadhasivam wrote:
 > 
-> Dirk, thanks for reporting!
-
-:)
-
-> Boqun Feng <boqun.feng@gmail.com> writes:
 > 
->> On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
->>> On 18.09.2024 00:27, Andreas Hindborg wrote:
->>>> Hi!
->>>>
->>>> This series adds support for using the `hrtimer` subsystem from Rust code.
->>>>
->>>> I tried breaking up the code in some smaller patches, hopefully that will
->>>> ease the review process a bit.
+> On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
+>>> Document 'global' SPI interrupt along with the existing MSI interrupts so
+>>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
+>>> link specific events, safety events, etc.
+>>
+>> Describe the hardware, not what the driver will do.
+>>
 >>>
->>> Just fyi, having all 14 patches applied I get [1] on the first (doctest)
->>> Example from hrtimer.rs.
->>>
->>> This is from lockdep:
->>>
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
->>>
->>> Having just a quick look I'm not sure what the root cause is. Maybe mutex in
->>> interrupt context? Or a more subtle one?
+>>> Though adding a new interrupt will break the ABI, it is required to
+>>> accurately describe the hardware.
 >>
->> I think it's calling mutex inside an interrupt context as shown by the
->> callstack:
+>> That's poor reason. Hardware was described and missing optional piece
+>> (because according to your description above everything was working
+>> fine) is not needed to break ABI.
 >>
->> ]  __mutex_lock+0xa0/0xa4
->> ] ...
->> ]  hrtimer_interrupt+0x1d4/0x2ac
+> 
+> Hardware was described but not completely. 'global' IRQ let's the controller driver to handle PCIe link specific events like Link up, Link down etc... They improve user experience like the driver can use those interrupts to start bus enumeration on its own. So breaking the ABI for good in this case.
+> 
+>> Sorry, if your driver changes the ABI for this poor reason.
 >>
->> , it is because:
->>
->> +//! struct ArcIntrusiveTimer {
->> +//!     #[pin]
->> +//!     timer: Timer<Self>,
->> +//!     #[pin]
->> +//!     flag: Mutex<bool>,
->> +//!     #[pin]
->> +//!     cond: CondVar,
->> +//! }
->>
->> has a Mutex<bool>, which actually should be a SpinLockIrq [1]. Note that
->> irq-off is needed for the lock, because otherwise we will hit a self
->> deadlock due to interrupts:
->>
->> 	spin_lock(&a);
->> 	> timer interrupt
->> 	  spin_lock(&a);
->>
->> Also notice that the IrqDisabled<'_> token can be simply created by
->> ::new(), because irq contexts should guarantee interrupt disabled (i.e.
->> we don't support nested interrupts*).
 > 
-> I updated the example based on the work in [1]. I think we need to
-> update `CondVar::wait` to support waiting with irq disabled. 
+> Is the above reasoning sufficient? 
 
-Yes, I agree. This answers one of the open questions I had in the 
-discussion with Boqun :)
+I tried to look for corresponding driver change, but could not, so maybe
+there is no ABI break in the first place. Above explanation is good, but
+still feels like improvement and device could work without global clock.
 
-What do you think regarding the other open question: In this *special* 
-case here, what do you think to go *without* any lock? I mean the 
-'while *guard != 5' loop in the main thread is read only regarding 
-guard. So it doesn't matter if it *reads* the old or the new value. 
-And the read/modify/write of guard in the callback is done with 
-interrupts disabled anyhow as it runs in interrupt context. And with 
-this can't be interrupted (excluding nested interrupts). So this 
-modification of guard doesn't need to be protected from being 
-interrupted by a lock if there is no modifcation of guard "outside" 
-the interupt locked context.
-
-What do you think?
-
-Thanks
-
-Dirk
-
-
-> Without
-> this, when we get back from `bindings::schedule_timeout` in
-> `CondVar::wait_internal`, interrupts are enabled:
-> 
-> ```rust
-> use kernel::{
->      hrtimer::{Timer, TimerCallback, TimerPointer, TimerRestart},
->      impl_has_timer, new_condvar, new_spinlock, new_spinlock_irq,
->      irq::IrqDisabled,
->      prelude::*,
->      sync::{Arc, ArcBorrow, CondVar, SpinLock, SpinLockIrq},
->      time::Ktime,
-> };
-> 
-> #[pin_data]
-> struct ArcIntrusiveTimer {
->      #[pin]
->      timer: Timer<Self>,
->      #[pin]
->      flag: SpinLockIrq<u64>,
->      #[pin]
->      cond: CondVar,
-> }
-> 
-> impl ArcIntrusiveTimer {
->      fn new() -> impl PinInit<Self, kernel::error::Error> {
->          try_pin_init!(Self {
->              timer <- Timer::new(),
->              flag <- new_spinlock_irq!(0),
->              cond <- new_condvar!(),
->          })
->      }
-> }
-> 
-> impl TimerCallback for ArcIntrusiveTimer {
->      type CallbackTarget<'a> = Arc<Self>;
->      type CallbackTargetParameter<'a> = ArcBorrow<'a, Self>;
-> 
->      fn run(this: Self::CallbackTargetParameter<'_>, irq: IrqDisabled<'_>) -> TimerRestart {
->          pr_info!("Timer called\n");
->          let mut guard = this.flag.lock_with(irq);
->          *guard += 1;
->          this.cond.notify_all();
->          if *guard == 5 {
->              TimerRestart::NoRestart
->          }
->          else {
->              TimerRestart::Restart
-> 
->          }
->      }
-> }
-> 
-> impl_has_timer! {
->      impl HasTimer<Self> for ArcIntrusiveTimer { self.timer }
-> }
-> 
-> 
-> let has_timer = Arc::pin_init(ArcIntrusiveTimer::new(), GFP_KERNEL)?;
-> let _handle = has_timer.clone().schedule(Ktime::from_ns(200_000_000));
-> 
-> kernel::irq::with_irqs_disabled(|irq| {
->    let mut guard = has_timer.flag.lock_with(irq);
-> 
->    while *guard != 5 {
->        pr_info!("Not 5 yet, waiting\n");
->        has_timer.cond.wait(&mut guard); // <-- we arrive back here with interrupts enabled!
->    }
-> });
-> ```
-> 
-> I think an update of `CondVar::wait` should be part of the patch set [1].
-> 
-> 
-> Best regards,
-> Andreas
-> 
-> 
-> [1] https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/
-> 
-> 
+Best regards,
+Krzysztof
 
 
