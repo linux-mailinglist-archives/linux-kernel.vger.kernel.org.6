@@ -1,126 +1,81 @@
-Return-Path: <linux-kernel+bounces-361364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7E9D99A73B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C06699A738
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CEC81F239EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:10:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A71D51F23F14
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:10:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03702194125;
-	Fri, 11 Oct 2024 15:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0081194124;
+	Fri, 11 Oct 2024 15:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0+igw2Rz"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nWYwKt36"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4706B19308A;
-	Fri, 11 Oct 2024 15:10:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 063B618E02D;
+	Fri, 11 Oct 2024 15:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728659444; cv=none; b=Bf3fOjlad28pJI3yIjIGRctmS8kH6CC0sbB3B56P3rQf86gmljIzpjoimWk7V+iXOHpaoXwH3wvvZP7+4VQYFINBYTorMY43vt57a4SXn6V0m9AqKHU8SyX6+pDCq6wm/O9JVvTeSh/kQ1r5Rfs7CJI/BHKBUGywHkZFsBqTGgU=
+	t=1728659422; cv=none; b=PW57Ys0GZitbi9C8g7us1mN3PPGk0HnlbHWiM0g/UC9BcM3F1ZsxyqP1hZf0HqkJfom0CDp+bSfg/lRpWxIIBXH4JqvM/vPalne8km/8+mXDGIo1sv4WAgL8N7TK6N6tXbKiXYPU6N/ylVNH7P40L7fOuHCz14ItZZVEx2kmwLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728659444; c=relaxed/simple;
-	bh=O3pN2LphdavFySd1d/Z3XXRUvezrporz6lH83zanGec=;
-	h=MIME-Version:Content-Type:Date:Message-ID:CC:Subject:From:To:
-	 References:In-Reply-To; b=uZsTSzYEmvgiUQe9rKpdfb/p9+DP1lzFdDVqrUWrPrTLYIpUbi6ztE5W0oad0Xgu6Hlq4FoQx80uf8GsCPk/v7AGXXX61qoNB8NLGH6mAhImKrBPCzQyw7p2x6y1BhlzPryux3pKuDWoipcwv6Uv1iw5qVYK5LSCC8QgEsYWX14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0+igw2Rz; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728659442; x=1760195442;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   cc:subject:from:to:references:in-reply-to;
-  bh=O3pN2LphdavFySd1d/Z3XXRUvezrporz6lH83zanGec=;
-  b=0+igw2RzYFrTytKgWQVm4z2aj/9XUUG52g0x4LvHQDDelV8p7JD4ujgX
-   yWnn6qjr43oTLRVeqKBvzeP0pvPEp1Ehe0ZIWsaqqC+dLkeyH5vqNIJGe
-   jVoXH2zvlymH/ZKYH8O7rK+SxkQtfjL8nyClASTqm2bw24zsI2qFeOTwm
-   CRc0BsXDhpltEJp5qeHZwTh6o4Xx+5dvo7BFSvm8zaW6kTpWD0q9vssFb
-   vMfqX9p/83Rz+SOwmSqFhFm6LjQ+4Ej8VYgxYxslY01d7SmdZYYl2RJfR
-   091fnd9SEyX7M95ObJzPgZlzkn4OwRP+j2zc04V/I0YbAOb+1az5FYO95
-   A==;
-X-CSE-ConnectionGUID: M4UEVG7FSLmebq4pEKbrKw==
-X-CSE-MsgGUID: X2e24i8mSO2djMMbxEVwjQ==
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="200333377"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Oct 2024 08:10:41 -0700
-Received: from chn-vm-ex03.mchp-main.com (10.10.85.151) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 11 Oct 2024 08:10:11 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex03.mchp-main.com
- (10.10.85.151) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 11 Oct 2024 08:10:08 -0700
+	s=arc-20240116; t=1728659422; c=relaxed/simple;
+	bh=ZU2g8GXMhK2mCBChQNinMtGNp7JF9hb84Aw7s2vufK8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f0WL6mb0zyYNvvQ82bJduZED634smdpYuiDccS2Vc8Vvo/RfCvRqASRW8VDCgKQYkN7rjs8bGHL69M5R2e5zTb47knfya5lbiIdP/S4i2uedhUvB3JxgcR17rUZ98kebBLyvMUjjjlpZ2V80Q3keUR4GjBDlX7eJQGQSCv1GFcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nWYwKt36; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4FCF6C4CEC3;
+	Fri, 11 Oct 2024 15:10:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728659421;
+	bh=ZU2g8GXMhK2mCBChQNinMtGNp7JF9hb84Aw7s2vufK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nWYwKt360LCebFiMVhxFSos5SgFlwEij3Rm2bJZyUmn/QednxSeynRgsTiekX8tS6
+	 BKYCRK4vWjduVTcU+cL+h/gJPEgHSdH8ZMLVge2sJxCvpJMiJqLNnUyJAVbXcZ5zoG
+	 YumUduPP28Z3jsVgiYS1M1wuAPeJLxYDWOJotOfQECkQ4+q7ZLKpFz4QFVlqlHHisW
+	 IOfg+YCEFK8NZftl6kngcvqe1guJK8nYj+C84/0hIfmb+PJyd3pBFl9bzUop+oUnoE
+	 sJJQjXJJHikUCoKeDNXcuhXXWH690xNnXrF/oMqTPFcC2PjyEYyQ8yvpQfr9BJkY/z
+	 x01GrBRNpWOVw==
+Date: Fri, 11 Oct 2024 10:10:19 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Pengfei Li <pengfei.li_1@nxp.com>
+Cc: frank.li@nxp.com, aisheng.dong@nxp.com, linux-clk@vger.kernel.org,
+	ye.li@nxp.com, linux-arm-kernel@lists.infradead.org,
+	festevam@gmail.com, peng.fan@nxp.com, devicetree@vger.kernel.org,
+	mturquette@baylibre.com, shawnguo@kernel.org, abelvesa@kernel.org,
+	conor+dt@kernel.org, ping.bai@nxp.com, linux-kernel@vger.kernel.org,
+	s.hauer@pengutronix.de, sboyd@kernel.org, kernel@pengutronix.de,
+	krzk+dt@kernel.org, imx@lists.linux.dev
+Subject: Re: [PATCH v3 1/3] dt-bindings: clock: Add i.MX91 clock support
+Message-ID: <172865941878.2417451.3899149145187240529.robh@kernel.org>
+References: <20241011045736.308338-1-pengfei.li_1@nxp.com>
+ <20241011045736.308338-2-pengfei.li_1@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 11 Oct 2024 17:10:08 +0200
-Message-ID: <D4T2M90I0282.D2DYJ3EITRTH@microchip.com>
-CC: <lars.povlsen@microchip.com>, <Steen.Hegelund@microchip.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
-	<linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: microchip: vcap api: Fix memory leaks in
- vcap_api_encode_rule_test()
-From: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
-	<jensemil.schulzostergaard@microchip.com>
-To: Daniel Machon <daniel.machon@microchip.com>, Jinjie Ruan
-	<ruanjinjie@huawei.com>
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20241010130231.3151896-1-ruanjinjie@huawei.com>
- <20241011102459.zxmegrcro2tv6b46@DEN-DL-M70577>
-In-Reply-To: <20241011102459.zxmegrcro2tv6b46@DEN-DL-M70577>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011045736.308338-2-pengfei.li_1@nxp.com>
 
-On Fri Oct 11, 2024 at 12:24 PM CEST, Daniel Machon wrote:
-> > Cc: stable@vger.kernel.org
-> > Fixes: a3c1e45156ad ("net: microchip: vcap: Fix use-after-free error in=
- kunit test")
-> > Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> > ---
-> >  drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> >=20
-> > diff --git a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c b/dri=
-vers/net/ethernet/microchip/vcap/vcap_api_kunit.c
-> > index f2a5a36fdacd..7251121ab196 100644
-> > --- a/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
-> > +++ b/drivers/net/ethernet/microchip/vcap/vcap_api_kunit.c
-> > @@ -1444,6 +1444,8 @@ static void vcap_api_encode_rule_test(struct kuni=
-t *test)
-> >=20
-> >         ret =3D vcap_del_rule(&test_vctrl, &test_netdev, id);
-> >         KUNIT_EXPECT_EQ(test, 0, ret);
-> > +
-> > +       vcap_free_rule(rule);
-> >  }
->
-> Wait, should vcap_del_rule not handle the freeing of the rule?
-> Maybe Emil can shed some light on this..
->
-> /Daniel
->
 
-No, this is a bug. I made the mistake of thinking that vcap_del_rule freed =
-the
-rule.
+On Thu, 10 Oct 2024 21:57:34 -0700, Pengfei Li wrote:
+> i.MX91 has similar Clock Control Module(CCM) design as i.MX93.
+> Add a new compatible string for i.MX91.
+> 
+> Signed-off-by: Pengfei Li <pengfei.li_1@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/clock/imx93-clock.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
 
-However, it frees an internal copy of the rule, which is made in vcap_add_r=
-ule.
-The local copy must still be freed. I reproduced the leak and the patch fix=
-es
-this.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-/Emil
 
