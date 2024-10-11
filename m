@@ -1,111 +1,142 @@
-Return-Path: <linux-kernel+bounces-361080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 054F299A31F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:01:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6677B99A327
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:03:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90398282594
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:01:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AFCC285636
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:03:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4675921730E;
-	Fri, 11 Oct 2024 12:01:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7621210C18;
+	Fri, 11 Oct 2024 12:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b="L0xMS7Hu"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="ugXInR+L"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D0911CB311
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:01:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D316419923C
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:03:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648078; cv=none; b=Sgz0kkbUkdsdFGViaPCX5sLbu6WNMfncxO3gg0tdZHJztUCqa2N5LJEGX1nwY8x2wZq0OqO2ziOjrzomgkjBeSANxN6v9FBqfSNlr5EAA9MOynQzGxnpceqEJZT/kUiT/2r5Unp9d4Z545PVqwj28yTsE3B56tBXrOrR4PWny+M=
+	t=1728648184; cv=none; b=TdyeiZ+2eB6RT7RmrYtdzB0ohMIFWOTPTMVWdt6MQwEDAxaSFvVtB/Sf17PjpD+qBLTce02DMtaUeDyk0/djHe3O7fVeq/qCKigBIT2mACm3tSah3xK6/VUTgslUJbErgMOAZ7Ep6Ovbe1j5JDVL4QZ17+eWQbgk/8S9OVVfSAU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648078; c=relaxed/simple;
-	bh=LT1IaCp5+fhZVHfVV7IJ+78xYx8h/eAPb/ijFeWEWc8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DPsz2FcQ49ktRpcK2AyAkIYmPTftcqntVmRcorUt/PqSjhAy2SiJYjWjrPyqF7nkRA7JCgaYMHn/UMaTSWenvh4YQmEglHiZ/24tZuaV7454zBFVS2+26AZ0T/WCQkslkAsEOQSUUIvrlU4NxjmuSvi+njiyAFgTntpZ0Qj8hd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com; spf=none smtp.mailfrom=readmodwrite.com; dkim=pass (2048-bit key) header.d=readmodwrite-com.20230601.gappssmtp.com header.i=@readmodwrite-com.20230601.gappssmtp.com header.b=L0xMS7Hu; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=readmodwrite.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=readmodwrite.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c924667851so2336700a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:01:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=readmodwrite-com.20230601.gappssmtp.com; s=20230601; t=1728648075; x=1729252875; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OpKEy9eKEr828a+5Sj4OEUU4agb/G4dm93dgL6VdZuw=;
-        b=L0xMS7Hu8NwMr0kCjaWaygXhxozm9B59UBplkQd0duhe+1STGNetE5VXigNs9GM2hk
-         FPvBByYHhure9xA0JxyUad4SM6QYElzA23+UzF2wlfra9sFmYvidS55q8lHwhNuu4QZl
-         r39o6A9vGjq3YTiM054nZi19F83P8jNWA78/hYusQLLSXkfWnYJjJSKHrzqmx2pu+ySk
-         kK//8XxBPA20zmLCxJ9v9mnMu2t6b3W9UprZfvBQa+FRrAIVi5t8Q4WxPF6DvXiB4W2P
-         rv+lrbZLG/ZMqa+FHXD1eBH9VJqWEIOQq0G8RAWRhsKmkFySIYEXCI+r8g6BDnI8DbgH
-         IlyQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728648075; x=1729252875;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OpKEy9eKEr828a+5Sj4OEUU4agb/G4dm93dgL6VdZuw=;
-        b=Dg/OclPJrjjiM+hL9GPRVe8y4BXtN0fDUrm7vDLqzveBYkWZeRRe6P/5jw1a6M4SXF
-         NMuDwK2YcW8Ty0r36XtSdgWdaUYmWRGzdlFwDk/hjdgJrr4Jy0W4OUarTixr/QKWduOm
-         Ue+RVpONyBDno2x6ScUuB3pIiPI02Y2FMPT/a2PEbUkVdlDoIz5/eosXb2gaaOjZ0mg6
-         G/r1hOIHJ2vBHtTKg2sqT6ylQaSGG4sdCMW5rI6BqcQFqw5+0nqtTv21gmdf54kvwpIX
-         APYqYUeFCEl/x9F8EwPXx2Lnv2VOtv1IUApCy8NfUPbdYEXQDXA+ED7tBlq6RbsGSE50
-         BFkg==
-X-Forwarded-Encrypted: i=1; AJvYcCWeaJOPG+i2wQcByyMYL7MJzKdSlXclRvmkkX3QgiGIxKjHO2jZf9ss7fu1Ve2hK/HM1SwlIGRfXRkfGi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysT9meLJQ0QSFVznlBJ3+5wbevfuYQDld4d1ff3UGJvpgTcqie
-	mjBBUeLotskmltLj2ksuQHR3zhD/eSnmIOGn0ZuVYUoNJM+Zg/VSOGLdp47FlJDDmfFkyAAdm6r
-	g4FzZ+Stik+2xVIKiqMrI8z/l3LYthRpPUntxCg==
-X-Google-Smtp-Source: AGHT+IFIfxq9+xDx7PZBV2IwVM3jqEqcPFmqwd/ztphHxEMC9D5lQLpx2XzRzy5zRcisVSixrYav/q4IK5ZlN2o4DbQ=
-X-Received: by 2002:a05:6402:84c:b0:5c9:4664:e699 with SMTP id
- 4fb4d7f45d1cf-5c948d5117fmr1490793a12.23.1728648074858; Fri, 11 Oct 2024
- 05:01:14 -0700 (PDT)
+	s=arc-20240116; t=1728648184; c=relaxed/simple;
+	bh=8VVhqncYcwr0I6+wZ4R0jTYn5VaZhHQ611VXr2mSzWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sJaROPVNTCvzdFnV32YplOt79aok+O6NT82O6GSYsf5fX6yFcy3cCCSNy+bYNfdPSq+2m23+3M1i5iZJQ1O5xYuiDGVDA3RFsloYgGnHweespRpXVZxjfHaKP12swCGDku3b6vHg4uxosDASUcjIeTiyr9xsrNUQUMhFHTWdl2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=ugXInR+L; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from [192.168.88.20] (91-156-87-48.elisa-laajakaista.fi [91.156.87.48])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9DF438D4;
+	Fri, 11 Oct 2024 14:01:20 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728648081;
+	bh=8VVhqncYcwr0I6+wZ4R0jTYn5VaZhHQ611VXr2mSzWg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ugXInR+Lna6C0kUfsKSENL7uI894/9Td8eXVVUvE6fZttzl0zP2XI4yv6Is5op7fv
+	 aTSOf5Bzm1ltAVTsCUNbji4ZDKQKU4/tFJ/B578q8K7nXcuWMBXsOJnOmEJothIbMm
+	 FvxjU6gqVgY/9xJG4RtlycGl6ZL9lqMblgMLyUno=
+Message-ID: <1ea19ca9-25fd-42c3-b495-5df0ab6c3ea3@ideasonboard.com>
+Date: Fri, 11 Oct 2024 15:02:56 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011055700.4142694-1-howardchu95@gmail.com>
-In-Reply-To: <20241011055700.4142694-1-howardchu95@gmail.com>
-From: Matt Fleming <matt@readmodwrite.com>
-Date: Fri, 11 Oct 2024 13:01:03 +0100
-Message-ID: <CAENh_STz6DxQ483c4pwX=Gwfwy_iKSQno+zHmXXQ3N0pOpxcqw@mail.gmail.com>
-Subject: Re: [PATCH] perf test: Delete unused Intel CQM test
-To: Howard Chu <howardchu95@gmail.com>
-Cc: peterz@infradead.org, mingo@redhat.com, acme@kernel.org, 
-	namhyung@kernel.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/2] drm/bridge: tc358767: Fix
+ DRM_BRIDGE_ATTACH_NO_CONNECTOR case
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+ Jan Kiszka <jan.kiszka@siemens.com>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Aradhya Bhatia <a-bhatia1@ti.com>, dri-devel@lists.freedesktop.org,
+ Marek Vasut <marex@denx.de>, Andrzej Hajda <andrzej.hajda@intel.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>,
+ Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+ Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
+References: <f6af46e0-aadb-450a-9349-eec1337ea870@ti.com>
+ <b221c978-2ce0-4d31-8146-ab43a9f86a1f@ti.com>
+ <st6vgd2k6dxo4vd3pmqmqlc5haofhbym2jeb2eeh2pa2n6zcca@tradpzxrzexl>
+ <2469374.jE0xQCEvom@steina-w>
+ <CAA8EJpraKjBZRLL5U+BVQRf98_EBa5b=nSPxZATU+yvvq9Kfmw@mail.gmail.com>
+ <4133a684-61a1-4d18-bb25-212d5fdc5620@siemens.com>
+ <5bb0459a-ec3a-487f-a9b5-28ee643a1215@ideasonboard.com>
+ <9b0e99f5-554b-428f-856c-cc32f4520c73@siemens.com>
+ <lxcxo3y7z6emrpvisibj6ccr6qx5nozchuyy5aizfvkvvlp44m@jecj6k5y6z2t>
+Content-Language: en-US
+From: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Autocrypt: addr=tomi.valkeinen@ideasonboard.com; keydata=
+ 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
+In-Reply-To: <lxcxo3y7z6emrpvisibj6ccr6qx5nozchuyy5aizfvkvvlp44m@jecj6k5y6z2t>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 6:57=E2=80=AFAM Howard Chu <howardchu95@gmail.com> =
-wrote:
->
-> As Ian Rogers <irogers@google.com> pointed out, intel-cqm.c is neither
-> used nor built. It was deleted in the following commit:
->
-> commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license identifie=
-r to files with no license")
->
-> However, it resurfaced soon after in the following commit:
->
-> commit 5c9295bfe6f5 ("perf tests: Remove Intel CQM perf test")
->
-> It should be deleted once and for all.
->
-> Suggested-by: Ian Rogers <irogers@google.com>
-> Signed-off-by: Howard Chu <howardchu95@gmail.com>
-> ---
->  tools/perf/arch/x86/tests/intel-cqm.c | 128 --------------------------
->  1 file changed, 128 deletions(-)
->  delete mode 100644 tools/perf/arch/x86/tests/intel-cqm.c
+Hi,
 
-Reviewed-by: Matt Fleming <mfleming@cloudflare.com>
+On 23/09/2024 15:25, Dmitry Baryshkov wrote:
+
+>> As Dmitry asked me during Plumbers to revalidate if our setup still
+>> needs patch 2, I just did that over 6.11.0-next-20240923 (where patch 1
+>> is now included). No surprise, it is still needed for our iot2050 device
+>> series, otherwise the display remains black.
+> 
+> Granted that nobody with the DRM_BRIDGE_ATTACH_NO_CONNECTOR + DSI-DP
+> spoke in the last several months, I think we'd better merge the patch as
+> it is now. If noone objects (last call), I'll do that in one or two
+> days.
+
+No one has objected, are we ready to merge?
+
+  Tomi
+
 
