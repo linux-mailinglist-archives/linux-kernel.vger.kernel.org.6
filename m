@@ -1,148 +1,110 @@
-Return-Path: <linux-kernel+bounces-360998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA8DF99A232
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:01:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141BF99A237
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:02:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 791FD286EEB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:01:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC3DB1F25591
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 720F121502D;
-	Fri, 11 Oct 2024 11:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 480F4213EC6;
+	Fri, 11 Oct 2024 11:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="eUR78K4E"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="GdztFdD9"
+Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76BDC215011;
-	Fri, 11 Oct 2024 11:00:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A03D014293;
+	Fri, 11 Oct 2024 11:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644451; cv=none; b=cVIP4ICcLwP/4xW4is1NUT+6fGKx8lXGLmk2Of6zyd9Lo3IJDaEmj+I4Wf1XzYnYyGlMRlz3UBagzxdjr7+VxRR44YHJo9arwkCReDIL0k/x0UV4yn1qh6ejGeW0euWc76jhEaEycPH3WKzVoqYOa3KEKBobatjwOgTPF1iWZVw=
+	t=1728644541; cv=none; b=DZETgZQLPmCOrazKs9WZP18notMNL7QGqCwPrgZN8pikpGTQ9O2jgzyFlT1IrYCIeX6TqfyuU83qh+gkfLRxtgfht9GabhCfZdyu+GRMrpgaYZA9UcsNBN/7jlU61hg+Is9iX2pJqfQROOqy0lAhu0iTL1twPsPvJum6RE/mPLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644451; c=relaxed/simple;
-	bh=SxASXN/DKncrAiabitEc0oaTlVRcphYtNi5cDXvkuQc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=neKIGD0QzeFp3b97KOvBa3F/7TY/wXHvAaogkeNrmFBQtrRaZSXdbY0gxD5lF/N43WN8cjXYp8clKDpwMmlUxu5fK/GO9z0jo4QJ+LKUEmflx2lApqWMJbCij/fYrCr+itLuTjWem7KCiTrtXu4YU/BbaLdQTFA40RcEj08HWLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=eUR78K4E; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728644451; x=1760180451;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=SxASXN/DKncrAiabitEc0oaTlVRcphYtNi5cDXvkuQc=;
-  b=eUR78K4Envud31Eo5ZBIHaxorkI8/X4wNhccc2XSA8DxV8LD+gRyENTK
-   JXyq0VkvBZ+TDv+w7so3RlFReQ66QvSnd+3v5TrNg0ob1eCjinFLCz2qo
-   mtN50oejn7+AxP+6nokrJwF/UNxdWByaHnhNpuYTxcD8nmP1s/rabzbAz
-   QGfdAV7rcfjclAtp/QseIACa6LvHQ5kw/qLcLJDGIz8qRvsGcXS9OIoOE
-   HBRHyCRExLpUunVkMHaDaoE4AQqZhQnCGSpwMfnhUDqZ6gXukZs9SyTWO
-   Fbi8ZwAjSM9uRNz4W2UAtOMB+YE3waz9YijLdBegV98lZgeAMfdcBACqW
-   A==;
-X-CSE-ConnectionGUID: BQXH2AoGR0WjDGgXbew+6A==
-X-CSE-MsgGUID: 5+f8YqyDTQGMoHZL38SO0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="50582143"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="50582143"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:00:50 -0700
-X-CSE-ConnectionGUID: njuZsZEOTqW+vRcqCaoGKQ==
-X-CSE-MsgGUID: cvcsFYMdQl+7ss1gQmeiOA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="81878617"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa004.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:00:45 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1szDNy-00000001rqO-0yOT;
-	Fri, 11 Oct 2024 14:00:42 +0300
-Date: Fri, 11 Oct 2024 14:00:41 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Tyrone Ting <warp5tw@gmail.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com,
-	venture@google.com, yuenn@google.com, benjaminfair@google.com,
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com,
-	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v6 2/4] i2c: npcm: Modify the client address assignment
-Message-ID: <ZwkFWVC3_5xr6OQW@smile.fi.intel.com>
-References: <20241011055231.9826-1-kfting@nuvoton.com>
- <20241011055231.9826-3-kfting@nuvoton.com>
+	s=arc-20240116; t=1728644541; c=relaxed/simple;
+	bh=4TA5iWp28rU7dsx2qosdjaM2a6HNpkJaKgZKMzcQIdU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HsLR4Mtb82JdU/B6vwg8TnFXkUOyJVlElxx2hOq96/gMueUwqoQJhNT32rUepAsClRgKiFA9scyCASpj2YWSwLZ+/Z5uP46i7Nn2XI3F187+bwKMLRuer5Jksf+so2/HZxnXEKt7ufE0JIdUUKggkYMq/B/jblmUeC/rh6N5Fw0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=GdztFdD9; arc=none smtp.client-ip=198.47.23.249
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BB29Od034061;
+	Fri, 11 Oct 2024 06:02:09 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728644529;
+	bh=lveVADprlH2tGE8x9sJ7xZSsBIMARgxyzXlVmZ0tj8o=;
+	h=From:To:CC:Subject:Date;
+	b=GdztFdD9/u5sU76EPDJZywBOz6yvKmvm5Jk6Z9IBAQLUQgzVun0nZrK26Ozn+Ep5D
+	 FbUTaOuDkjqT2nFPQXsD9Pp2ALvkOEnjuOgu3+Lgtf8WJvhtqMqaq5q9aQBi5o4aEZ
+	 SwTpvtBCGyePDdtgUL2eqrNnHpZfuywEdcm3cEDQ=
+Received: from DFLE100.ent.ti.com (dfle100.ent.ti.com [10.64.6.21])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BB29qh092346
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Oct 2024 06:02:09 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE100.ent.ti.com
+ (10.64.6.21) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Oct 2024 06:02:09 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Oct 2024 06:02:09 -0500
+Received: from localhost (chintan-thinkstation-p360-tower.dhcp.ti.com [172.24.227.220])
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BB28Km028934;
+	Fri, 11 Oct 2024 06:02:09 -0500
+From: Chintan Vankar <c-vankar@ti.com>
+To: Conor Dooley <conor+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Rob Herring <robh@kernel.org>, Tero Kristo
+	<kristo@kernel.org>,
+        Vignesh Raghavendra <vigneshr@ti.com>, Nishanth Menon
+	<nm@ti.com>
+CC: <c-vankar@ti.com>, <s-vadapalli@ti.com>, <srk@ti.com>,
+        <danishanwar@ti.com>, <linux-kernel@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>
+Subject: [PATCH v2] arm64: dts: ti: k3-am62x-sk-common: Add bootph-all property in cpsw_mac_syscon node
+Date: Fri, 11 Oct 2024 16:32:07 +0530
+Message-ID: <20241011110207.600678-1-c-vankar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011055231.9826-3-kfting@nuvoton.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Oct 11, 2024 at 01:52:29PM +0800, Tyrone Ting wrote:
-> From: Tyrone Ting <kfting@nuvoton.com>
-> 
-> Store the client address earlier since it might get called in
-> the i2c_recover_bus() logic flow at the early stage of
-> npcm_i2c_master_xfer().
+Add bootph-all property in CPSW MAC's eFuse node cpsw_mac_syscon.
 
-...
+Signed-off-by: Chintan Vankar <c-vankar@ti.com>
+---
 
-> +	/*
-> +	 * Previously, the address was stored w/o left-shift by one bit and
-> +	 * with that shift in the following call to npcm_i2c_master_start_xmit().
-> +	 *
-> +	 * Since there are cases that the i2c_recover_bus() gets called at the
-> +	 * early stage of npcm_i2c_master_xfer(), the address is stored with
-> +	 * the shift and used in the i2c_recover_bus().
-> +	 *
-> +	 * The address is stored from bit 1 to bit 7 in the register for
-> +	 * sending the i2c address later so it's left-shifted by 1 bit.
-> +	 */
+This patch is based on linux-next tagged next-20241011.
 
-I would rephrase it a bit like
+ arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi | 4 ++++
+ 1 file changed, 4 insertions(+)
 
-	/*
-	 * Previously, the 7-bit address was stored and being converted to
-	 * the address of event in the following call to npcm_i2c_master_start_xmit().
-	 *
-	 * Since there are cases that the i2c_recover_bus() gets called at the
-	 * early stage of npcm_i2c_master_xfer(), the address of event is stored
-	 * and then used in the i2c_recover_bus().
-	 */
-
-(E.g., the last paragraph just describes 101 about I2C 7-bit addresses usage
- and may be dropped completely.)
-
-> +	bus->dest_addr = i2c_8bit_addr_from_msg(msg0);
-
-...
-
-> +		/*
-> +		 * Since the transfer might be a read operation, remove the I2C_M_RD flag
-> +		 * from the bus->dest_addr for the i2c_recover_bus() call later.
-> +		 *
-> +		 * The i2c_recover_bus() uses the address in a write direction to recover
-> +		 * the i2c bus if some error condition occurs.
-> +		 */
-
-> +		if (bus->dest_addr & I2C_M_RD)
-
-Redundant.
-
-> +			bus->dest_addr &= ~I2C_M_RD;
-
+diff --git a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+index 44ff67b6bf1e..82d34dfb91ed 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-am62x-sk-common.dtsi
+@@ -303,6 +303,10 @@ AM62X_MCU_IOPAD(0x028, PIN_OUTPUT, 0) /* (C5/C6) WKUP_UART0_TXD */
+ 	};
+ };
+ 
++&cpsw_mac_syscon {
++	bootph-all;
++};
++
+ &wkup_uart0 {
+ 	/* WKUP UART0 is used by DM firmware */
+ 	bootph-pre-ram;
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
