@@ -1,103 +1,221 @@
-Return-Path: <linux-kernel+bounces-361213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB94F99A51C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:32:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CC5199A521
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:34:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FD681F2462E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:32:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB92CB2176D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:34:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4FD218D7F;
-	Fri, 11 Oct 2024 13:31:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52D1E218D71;
+	Fri, 11 Oct 2024 13:34:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WwbaJb1O"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JSiElrhs"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CF6216A3B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:31:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A717B28E7;
+	Fri, 11 Oct 2024 13:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653500; cv=none; b=GM7a7zOh37mWq5fvQvQ3HLvKyMfvr9PaB9Xy0NFASBKcjmnu5Nf5eydr+26slvqRmAqg6gbeaN2wyMjGsCOBNq3ZHT2y1YsFQoeWxqYRu1OZen0ZnpC0SL4NT1QJEmy5BwpgF/S53SmNHySSQTGKcuzQX+dBggSzaS6rbKdFWiA=
+	t=1728653661; cv=none; b=jB33/DAaehnf4ZkxV7+AN11hbWKxgzNVql9XIwEdNqi8SQ/hBhsGYNIikIUrRIJ4zC35kDaCiIdrd8j7+gYP/A+62rksXK3c3wLExOSsKtGmD82r0qcvP1QjKCKoo9z0N+UkIVztCtiAS5JWDKGeyAijJK2iga/bYkFZ/i7IdSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653500; c=relaxed/simple;
-	bh=j/wtLlxySXlF9gYSMdXWCVsVjV+CFdAyaQrF3V57TB4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jBQDHoELOIANQmJGmClpFiT2aE9avooPuqki9NdZQ7NaBF7gSpdgYH/xdIqZ+dHRpqu8QBLUL9pEzH5SSeAr7VHdGkcmcMZZmw4OJj8bnnnjVFmfhx4GB312VvtufbO3RIoAl/FVcjxfTRMXKXs5C6joyztDvA5HHYrARD1d0rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WwbaJb1O; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e13375d3so626657e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:31:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728653496; x=1729258296; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=UIlPR/9Tg3tHHscVFQyLHlaqdkpPPKNYkKjRrr77Miw=;
-        b=WwbaJb1OgXlDq6wMML81xjqw/G+6Z02zHXiKi6eGVqeTDdFGP9y7yNr6vfWzwD+Cco
-         QdYsEVC92NupffUtcSRF/g3OkKDBHx4X9I7hHmHv3qy5QmZH10oBwaXZvhqu2ltXvojX
-         sUo7CcFbXl9dHGvHDNoEVUN2XK8Sgaw2PcDUDz/T29q3tIdPiNHntw0GJ9nL+hQwOPkh
-         OaHCQJ8QAD6l0ZiolvEZ6xfsc6VfXRMCYPSSKc3TgYskdJg5baN/beofAw2oj+Re349Q
-         IwHR2XlcO7a+AlA4QzkaorpCIlPmrHfPg3WKdZxMSDFZwIy3LcQKLyO7xdIJSHQDaX2Y
-         +9Ng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728653496; x=1729258296;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UIlPR/9Tg3tHHscVFQyLHlaqdkpPPKNYkKjRrr77Miw=;
-        b=H71diBKoGYyaPXIIKOfj8AA4oLmbzG0JBfPdtreGJoHQkzyi1aVJV9ScRqOnOyT6RE
-         zQTITAtLAqMBdlms29Ab27htyBd6LoAHl4f21/21veuN9aMTgSa1kudYm0pLBggs4DI9
-         XJQoSTKu/mDPpWeb6YE6/fxEAN9F4hEaRA+CLv16OVF1lUO7pMkUM1lYRQki8H1A5Jdj
-         VF5emj18lCm5rvestwXCKqKrsMEOQtD9ypxu02HZvemxyrVkIF8BD65kOaM8ySPlY+zE
-         bNz0l8ltLgWrVaLFHO/cjraukzF01qSH5ELAxG5kg5xHkLad79m3ewq28qqRWItMpsIf
-         5yVA==
-X-Forwarded-Encrypted: i=1; AJvYcCWfT4EDYYky95pF/PcnKvxa0CAOnp+uXENlrJggLDsTgUT0wC+UNs1BgubwYfsFGoHPP3/nRsc+A/pRJ+w=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw//bu+NFzvKsh0rTirT0WBo9l/AKOHUEfQvAC97OwUlLcLqJjo
-	gXFVXgoo/NmMCJBBjvlW54BUBNC871So+WFUflkfXERafVqFZDOttlpBzvosu+Q=
-X-Google-Smtp-Source: AGHT+IER+2T7o5roEOHdG2VzoyGI9V0OMobx4hMMs/g1LQaHCUTDYumSlr4X5UmhEj8PNLhbkOKQYw==
-X-Received: by 2002:a05:6512:33ce:b0:538:9eb8:c4a2 with SMTP id 2adb3069b0e04-539da3c1dc0mr1463370e87.6.1728653496446;
-        Fri, 11 Oct 2024 06:31:36 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8f0f9csm604503e87.189.2024.10.11.06.31.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 06:31:35 -0700 (PDT)
-Date: Fri, 11 Oct 2024 16:31:33 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org
-Subject: Re: [PATCH 05/10] remoteproc: qcom_q6v5_adsp: Simplify with
- dev_err_probe()
-Message-ID: <qqocjewtt57shpscam4vkixsvnj5f2rjqlbek3mbzn34qzdyxu@6pqultmfonpg>
-References: <20241011-remote-proc-dev-err-probe-v1-0-5abb4fc61eca@linaro.org>
- <20241011-remote-proc-dev-err-probe-v1-5-5abb4fc61eca@linaro.org>
+	s=arc-20240116; t=1728653661; c=relaxed/simple;
+	bh=oWTNbmGHPDCrID2KgcAKai9GNhD2zdd7lHp2hMHUJbA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=kgKCPk3sj+c/qtvvHPopDlwVML7/tqVHCuk22afmmYWg8nJ7wpiul/nAjdi98GhOWL4vm96XYICnkZq+4yXingno3MGdyh+g+nt3x2NkF+5ykYwRMqEDCl8f5htrD6WdsFK3qskS+CoHaHKzPp3CAVb6cdb5arH3DrI8x/Z3+d0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JSiElrhs; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id A6F6F20008;
+	Fri, 11 Oct 2024 13:34:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728653657;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=aueBH+lVpYMUXJgkH5Q2tsSfZVEnADtuEBiwUoEShhw=;
+	b=JSiElrhsnIc58seLVXGCZnj9YXhxsv+3fZKFK2v1fDPN2sCYRi8QufWYiaXgJncLzxRIYd
+	XVFiReI45zP0HtV5GmYhcE0kVFLC/f1HWyyQP176/vG4i/+mZwQEpCaAJoiLpfV2t/dHZF
+	d3RgAK5/LhAD0O2Gpoa1cUeLLNuBSwS1bgADWDMzFQ9OlidsG2b56H4B+/HsCKVoAqxa2B
+	TP2tNa9Tq9RUcpuXyBMYZvG7X9C0pTCu93OlEEel5WsnhXirCiKFmb3Cu7Ts8l9qYGHhnT
+	aL9LhHPnkb6pNKtNA+jzqKYGQ7S2A5OMLbqpNZCm0haUN50ZJEYJd7IOY0alaQ==
+From: Gregory CLEMENT <gregory.clement@bootlin.com>
+Date: Fri, 11 Oct 2024 15:34:08 +0200
+Subject: [PATCH v2] MIPS: Allow using more than 32-bit addresses for reset
+ vectors when possible
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011-remote-proc-dev-err-probe-v1-5-5abb4fc61eca@linaro.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241011-eyeq6h-smp-v2-1-8381edf8a5c6@bootlin.com>
+X-B4-Tracking: v=1; b=H4sIAE8pCWcC/23MQQ6CMBCF4auQWVvDVGiNK+9hWGCZ2kmkhZY0E
+ sLdraxd/i953waJIlOCW7VBpMyJgy8hTxUY1/sXCR5Kg6xlgzWioJVm5UQaJ2EVttRLaS+6hXK
+ YIln+HNijK+04LSGuh53xt/5lMgoUV6Ua1FpLM+j7M4Tlzf5swgjdvu9f1u9jsqYAAAA=
+To: Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+ Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Vladimir Kondratiev <vladimir.kondratiev@mobileye.com>, 
+ =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>, 
+ Tawfik Bayouk <tawfik.bayouk@mobileye.com>, 
+ Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Gregory CLEMENT <gregory.clement@bootlin.com>
+X-Mailer: b4 0.14.1
+X-GND-Sasl: gregory.clement@bootlin.com
 
-On Fri, Oct 11, 2024 at 03:09:13PM +0200, Krzysztof Kozlowski wrote:
-> Use dev_err_probe() to make error and defer code handling simpler.
-> 
-> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-> ---
->  drivers/remoteproc/qcom_q6v5_adsp.c | 17 ++++++-----------
->  1 file changed, 6 insertions(+), 11 deletions(-)
-> 
+While most MIPS64 CPUs use 32-bit values for their VP Local Reset
+Exception Base registers, some I6500 CPUs can utilize a 64-bit value,
+allowing addressing up to 47 bits of physical memory.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+For the EyeQ6H CPU, where physical memory addresses exceed the 4GB
+limit, utilizing this feature is mandatory to enable SMP support.
 
+Unfortunately, there is no way to detect this capability based solely
+on the ID of the CPU. According to Imagination, which designed the
+CPU, the only reliable method is to fill the reset base field with
+0xFF and then read back its value. If the upper part of the read-back
+value is zero, it indicates that the address space is limited to 32
+bits.
+
+Signed-off-by: Gregory CLEMENT <gregory.clement@bootlin.com>
+---
+Hello,
+
+The following patch enables SMP on EyeQ6H SoCs.
+
+It was successfully tested on EyeQ5 and EyeQ6H, as well as on MIPS32
+CPUs such as ocelot on board PCB123 and JZ4780 on CI20. However, I
+must admit that none of these platforms ran SMP. The ocelot has only
+one core, and while the JZ4780 does have SMP capabilities, its support
+is not yet available in the mainline kernel.
+
+In the first version, I forgot to remove a line from
+check_64bit_reset() that was originally used to print debug
+information, but is no longer required. Sorry for the inconvenience.
+
+Gregory
+---
+Changes in v2:
+- Removed a leftover line of code that was used during development
+- Link to v1: https://lore.kernel.org/r/20241011-eyeq6h-smp-v1-1-866417772cd7@bootlin.com
+---
+ arch/mips/include/asm/mips-cm.h |  2 ++
+ arch/mips/kernel/smp-cps.c      | 46 ++++++++++++++++++++++++++++++++++-------
+ 2 files changed, 41 insertions(+), 7 deletions(-)
+
+diff --git a/arch/mips/include/asm/mips-cm.h b/arch/mips/include/asm/mips-cm.h
+index 1e782275850a3..23ce951f445bb 100644
+--- a/arch/mips/include/asm/mips-cm.h
++++ b/arch/mips/include/asm/mips-cm.h
+@@ -326,7 +326,9 @@ GCR_CX_ACCESSOR_RW(32, 0x018, other)
+ 
+ /* GCR_Cx_RESET_BASE - Configure where powered up cores will fetch from */
+ GCR_CX_ACCESSOR_RW(32, 0x020, reset_base)
++GCR_CX_ACCESSOR_RW(64, 0x020, reset64_base)
+ #define CM_GCR_Cx_RESET_BASE_BEVEXCBASE		GENMASK(31, 12)
++#define CM_GCR_Cx_RESET64_BASE_BEVEXCBASE	GENMASK_ULL(47, 12)
+ #define CM_GCR_Cx_RESET_BASE_MODE		BIT(1)
+ 
+ /* GCR_Cx_ID - Identify the current core */
+diff --git a/arch/mips/kernel/smp-cps.c b/arch/mips/kernel/smp-cps.c
+index 395622c373258..82c8f9b9573cc 100644
+--- a/arch/mips/kernel/smp-cps.c
++++ b/arch/mips/kernel/smp-cps.c
+@@ -37,7 +37,7 @@ enum label_id {
+ UASM_L_LA(_not_nmi)
+ 
+ static DECLARE_BITMAP(core_power, NR_CPUS);
+-static uint32_t core_entry_reg;
++static u64 core_entry_reg;
+ static phys_addr_t cps_vec_pa;
+ 
+ struct core_boot_config *mips_cps_core_bootcfg;
+@@ -94,6 +94,20 @@ static void __init *mips_cps_build_core_entry(void *addr)
+ 	return p;
+ }
+ 
++static bool __init check_64bit_reset(void)
++{
++	bool cx_64bit_reset = false;
++
++	mips_cm_lock_other(0, 0, 0, CM_GCR_Cx_OTHER_BLOCK_LOCAL);
++	write_gcr_co_reset64_base(CM_GCR_Cx_RESET64_BASE_BEVEXCBASE);
++	if ((read_gcr_co_reset64_base() & CM_GCR_Cx_RESET64_BASE_BEVEXCBASE) ==
++	    CM_GCR_Cx_RESET64_BASE_BEVEXCBASE)
++		cx_64bit_reset = true;
++	mips_cm_unlock_other();
++
++	return cx_64bit_reset;
++}
++
+ static int __init allocate_cps_vecs(void)
+ {
+ 	/* Try to allocate in KSEG1 first */
+@@ -105,11 +119,23 @@ static int __init allocate_cps_vecs(void)
+ 					CM_GCR_Cx_RESET_BASE_BEVEXCBASE;
+ 
+ 	if (!cps_vec_pa && mips_cm_is64) {
+-		cps_vec_pa = memblock_phys_alloc_range(BEV_VEC_SIZE, BEV_VEC_ALIGN,
+-							0x0, SZ_4G - 1);
+-		if (cps_vec_pa)
+-			core_entry_reg = (cps_vec_pa & CM_GCR_Cx_RESET_BASE_BEVEXCBASE) |
++		phys_addr_t end;
++
++		if (check_64bit_reset()) {
++			pr_info("VP Local Reset Exception Base support 47 bits address\n");
++			end = MEMBLOCK_ALLOC_ANYWHERE;
++		} else {
++			end = SZ_4G - 1;
++		}
++		cps_vec_pa = memblock_phys_alloc_range(BEV_VEC_SIZE, BEV_VEC_ALIGN, 0, end);
++		if (cps_vec_pa) {
++			if (check_64bit_reset())
++				core_entry_reg = (cps_vec_pa & CM_GCR_Cx_RESET64_BASE_BEVEXCBASE) |
++					CM_GCR_Cx_RESET_BASE_MODE;
++			else
++				core_entry_reg = (cps_vec_pa & CM_GCR_Cx_RESET_BASE_BEVEXCBASE) |
+ 					CM_GCR_Cx_RESET_BASE_MODE;
++		}
+ 	}
+ 
+ 	if (!cps_vec_pa)
+@@ -308,7 +334,10 @@ static void boot_core(unsigned int core, unsigned int vpe_id)
+ 	mips_cm_lock_other(0, core, 0, CM_GCR_Cx_OTHER_BLOCK_LOCAL);
+ 
+ 	/* Set its reset vector */
+-	write_gcr_co_reset_base(core_entry_reg);
++	if (mips_cm_is64)
++		write_gcr_co_reset64_base(core_entry_reg);
++	else
++		write_gcr_co_reset_base(core_entry_reg);
+ 
+ 	/* Ensure its coherency is disabled */
+ 	write_gcr_co_coherence(0);
+@@ -411,7 +440,10 @@ static int cps_boot_secondary(int cpu, struct task_struct *idle)
+ 
+ 	if (cpu_has_vp) {
+ 		mips_cm_lock_other(0, core, vpe_id, CM_GCR_Cx_OTHER_BLOCK_LOCAL);
+-		write_gcr_co_reset_base(core_entry_reg);
++		if (mips_cm_is64)
++			write_gcr_co_reset64_base(core_entry_reg);
++		else
++			write_gcr_co_reset_base(core_entry_reg);
+ 		mips_cm_unlock_other();
+ 	}
+ 
+
+---
+base-commit: 9852d85ec9d492ebef56dc5f229416c925758edc
+change-id: 20241011-eyeq6h-smp-f615ea22f375
+
+Best regards,
 -- 
-With best wishes
-Dmitry
+Gregory CLEMENT <gregory.clement@bootlin.com>
+
 
