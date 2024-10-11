@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-360653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A52B999DC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:23:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D02999DCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:24:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97E471C21B7C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:23:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3461F23894
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:24:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F4AC20B1EE;
-	Fri, 11 Oct 2024 07:22:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4264820B201;
+	Fri, 11 Oct 2024 07:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="irtUpP2P"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QB+0yjaJ"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0672120ADF0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:22:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1863820B1EB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728631375; cv=none; b=WFRIt+YMapNyY2zKantg1RIFv15XFmCWopRbjpoDQKEQ+8yb49mfCqi5cxbR+/YCMS2AmwlCh2x4skFUAr101WuBxdFE6KGz17h2Fm6y+dvsBiZ+cgRd73Y+LP4wapAyA70mtJJV2q187MLlhzZ8TbfDV2itUHH5ZKx8Bu05aPw=
+	t=1728631377; cv=none; b=OWz52qJxinBytiZtj3K/wGM6oBSdIkmSRj06l2BernakD5/b1YT09+SGRMobEx8lGlEo4zMQIfersxzbf6s4iySZ9jTdvxItAGjSN+rO0nOlUftGEzvFrfN04z5QJMCaOqGOoptZ5zucC/aOgqJdB/p6fXRftCm0uE910eEs8gk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728631375; c=relaxed/simple;
-	bh=ju7Tgv1YIpsQRNU04x/igU8G/YOvFQuWc2cpRl91hM0=;
+	s=arc-20240116; t=1728631377; c=relaxed/simple;
+	bh=csyxQoNQ7+mcBisJn+zgfV6Hd6DlNjHmaj2xueLISA8=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=G65Nv2dNIZUvWaWSBpjGMTwZ/Tc204q3PMet+IH7hWcLoHp3OZIQlsVgGRaYw7uhq8RXTVB3/cSvLRtg0KJkMQ1RcBSF6igiQ5gSzkLoXbBu4OcYNlrIRED9GWawmTylf9QEaMM60b7nQ87LEczasTlrGj+jJt0AnVnVFaKbGo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=irtUpP2P; arc=none smtp.client-ip=213.167.242.64
+	 MIME-Version; b=GV8mmiGUBlBhx1Bka3cXF/k42wXUW3kcn9QWGxOrNeGw7hd18V8cjBE7/LnxVnZAXFvnBleZEGA5cDn3WICh5Xatsd6Qe+6/7dyr6BBdLmzkBhxycvGlU1YjnHsDTZ6cIFEGpS0EAkHsaif9I+aEGFKDIWiTbDtAj4CyMrlFOOM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QB+0yjaJ; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 9F763CDB;
-	Fri, 11 Oct 2024 09:21:12 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B9A25D8B;
+	Fri, 11 Oct 2024 09:21:14 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728631274;
-	bh=ju7Tgv1YIpsQRNU04x/igU8G/YOvFQuWc2cpRl91hM0=;
+	s=mail; t=1728631276;
+	bh=csyxQoNQ7+mcBisJn+zgfV6Hd6DlNjHmaj2xueLISA8=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=irtUpP2PuYNSI1tv5aqDf9S05AVEBS2DZBhO9fpr6HvbF2GPEEFl5g6bymAN/TfkL
-	 T5QBe9CGzTvtMZhsNurO1V0p0bP1rVu1TqssW+SVZM3KnzjBaLD2uN9nafFPxuJTU6
-	 AL4/JN1ENUJ3RYR/lHo0n2XJa3osZ4vsqeQzNWak=
+	b=QB+0yjaJGoVmccHL2cyKLdAx/mNCkmh57XSSS559Lg8tLrlcOu+P6tsk54Y/jqYDH
+	 4WJ1gVu3jGZJMVhn/gcuPfn2kGJQYWsXCh76RE4E+YAQSBgAU+uzTyzpZBJnT5/whI
+	 jsVqZEHgcRyVMpKF6KpuxrXvIlZ9vdWH8zSLPOzo=
 From: Umang Jain <umang.jain@ideasonboard.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
@@ -52,9 +52,9 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <wahrenst@gmx.net>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH 7/8] staging: vchiq_core: Lower indentation in parse_open()
-Date: Fri, 11 Oct 2024 12:52:09 +0530
-Message-ID: <20241011072210.494672-8-umang.jain@ideasonboard.com>
+Subject: [PATCH 8/8] staging: vchiq_core: Lower indentation in vchiq_close_service_internal
+Date: Fri, 11 Oct 2024 12:52:10 +0530
+Message-ID: <20241011072210.494672-9-umang.jain@ideasonboard.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241011072210.494672-1-umang.jain@ideasonboard.com>
 References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
@@ -66,96 +66,53 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-If the service is not in VCHIQ_SRVSTATE_LISTENING state, it is
-implied that the message is dealt with and parse_open() should return.
-If this is the case, simply jump the code flow to return site using
-'goto done;' statement.
-
-This helps to lower the indentation of
-	if (service->srvstate == VCHIQ_SRVSTATE_LISTENING)
-conditional branch.
-
-No functional changes intended in this patch.
+Reduce indentation of the conditional nesting in
+vchiq_close_service_internal() switch case by checking the error paths
+first and break early. This helps to reduce conditional branching and
+reduce indentation levels.
 
 Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 ---
- .../interface/vchiq_arm/vchiq_core.c          | 48 ++++++++++---------
- 1 file changed, 26 insertions(+), 22 deletions(-)
+ .../interface/vchiq_arm/vchiq_core.c          | 24 ++++++++++---------
+ 1 file changed, 13 insertions(+), 11 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 3ed949343608..04401baee9a6 100644
+index 04401baee9a6..204d73f4e904 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1813,8 +1813,10 @@ static int
- parse_open(struct vchiq_state *state, struct vchiq_header *header)
- {
- 	const struct vchiq_open_payload *payload;
-+	struct vchiq_openack_payload ack_payload;
- 	struct vchiq_service *service = NULL;
- 	int msgid, size;
-+	int openack_id;
- 	unsigned int localport, remoteport, fourcc;
- 	short version, version_min;
- 
-@@ -1849,34 +1851,36 @@ parse_open(struct vchiq_state *state, struct vchiq_header *header)
- 	}
- 	service->peer_version = version;
- 
--	if (service->srvstate == VCHIQ_SRVSTATE_LISTENING) {
--		struct vchiq_openack_payload ack_payload = {
--			service->version
--		};
--		int openack_id = MAKE_OPENACK(service->localport, remoteport);
-+	if (service->srvstate != VCHIQ_SRVSTATE_LISTENING)
-+		goto done;
- 
--		if (state->version_common <
--		    VCHIQ_VERSION_SYNCHRONOUS_MODE)
--			service->sync = 0;
-+	ack_payload.version = service->version;
-+	openack_id = MAKE_OPENACK(service->localport, remoteport);
- 
--		/* Acknowledge the OPEN */
--		if (service->sync) {
--			if (queue_message_sync(state, NULL, openack_id, memcpy_copy_callback,
--					       &ack_payload, sizeof(ack_payload)) == -EAGAIN)
--				goto bail_not_ready;
-+	if (state->version_common < VCHIQ_VERSION_SYNCHRONOUS_MODE)
-+		service->sync = 0;
- 
--			/* The service is now open */
--			set_service_state(service, VCHIQ_SRVSTATE_OPENSYNC);
+@@ -3152,19 +3152,21 @@ vchiq_close_service_internal(struct vchiq_service *service, int close_recvd)
+ 		if (close_recvd) {
+ 			dev_err(state->dev, "core: (1) called in state %s\n",
+ 				srvstate_names[service->srvstate]);
+-		} else if (is_server) {
+-			if (service->srvstate == VCHIQ_SRVSTATE_LISTENING) {
+-				status = -EINVAL;
+-			} else {
+-				service->client_id = 0;
+-				service->remoteport = VCHIQ_PORT_FREE;
+-				if (service->srvstate == VCHIQ_SRVSTATE_CLOSEWAIT)
+-					set_service_state(service, VCHIQ_SRVSTATE_LISTENING);
+-			}
+-			complete(&service->remove_event);
 -		} else {
--			if (queue_message(state, NULL, openack_id, memcpy_copy_callback,
--					  &ack_payload, sizeof(ack_payload), 0) == -EINTR)
--				goto bail_not_ready;
-+	/* Acknowledge the OPEN */
-+	if (service->sync) {
-+		if (queue_message_sync(state, NULL, openack_id,
-+				       memcpy_copy_callback,
-+				       &ack_payload,
-+				       sizeof(ack_payload)) == -EAGAIN)
-+			goto bail_not_ready;
- 
--			/* The service is now open */
--			set_service_state(service, VCHIQ_SRVSTATE_OPEN);
--		}
-+		/* The service is now open */
-+		set_service_state(service, VCHIQ_SRVSTATE_OPENSYNC);
-+	} else {
-+		if (queue_message(state, NULL, openack_id,
-+				  memcpy_copy_callback, &ack_payload,
-+				  sizeof(ack_payload), 0) == -EINTR)
-+			goto bail_not_ready;
++			break;
++		} else if (!is_server) {
+ 			vchiq_free_service_internal(service);
++			break;
++		}
 +
-+		/* The service is now open */
-+		set_service_state(service, VCHIQ_SRVSTATE_OPEN);
- 	}
- 
-+done:
- 	/* Success - the message has been dealt with */
- 	vchiq_service_put(service);
- 	return 1;
++		if (service->srvstate == VCHIQ_SRVSTATE_LISTENING) {
++			status = -EINVAL;
++		} else {
++			service->client_id = 0;
++			service->remoteport = VCHIQ_PORT_FREE;
++			if (service->srvstate == VCHIQ_SRVSTATE_CLOSEWAIT)
++				set_service_state(service, VCHIQ_SRVSTATE_LISTENING);
+ 		}
++		complete(&service->remove_event);
+ 		break;
+ 	case VCHIQ_SRVSTATE_OPENING:
+ 		if (close_recvd) {
 -- 
 2.45.2
 
