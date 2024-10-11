@@ -1,175 +1,174 @@
-Return-Path: <linux-kernel+bounces-361633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DAE999AAAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:51:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1990099AAB1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B91521F22675
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:51:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9398FB22860
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:52:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55E81C244B;
-	Fri, 11 Oct 2024 17:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 448381C6F59;
+	Fri, 11 Oct 2024 17:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="F+dy1ya7"
-Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zcHkz36s"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 979817F9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F06131C3F32
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728669065; cv=none; b=sE4XdTlj2KUeXyid4gCcpSbkzwEv71C2L1DWmRmOGXqXokSEbiKstMJ0der+WdpkR+YXrEabIaGdhMEkfir+jJgrJeUA3bmjoBhDr2tmDghf8uJK4+BOi3SkP0APBomdjlHkqjr+d3xnAFilWl0y0momMDSxQyYBs5k/ylOxLyE=
+	t=1728669139; cv=none; b=AZ2HSK93/tsXHZFjjHOaQkG15VBJutWG2yhtt1M/mzK0VFyN+mUFkRAP+PFIlGTxW+RTRQrq49YavlmbZTpatS/qtZgo8gdkCBqjVVFG3OaIPPo4xdScU33/HQgjI+66EM2uniZW1PxoMzM6SI/yTvnchbOpDt3VlXp7Ffoihl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728669065; c=relaxed/simple;
-	bh=TWG5/vrvpxkuVk5XXDU2QrOHtYfyNAN1kOAsWJQ6I4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q2WAg/TTvvReGUVrGUnW9aBjM2++nmp8P+cid6cpLvaEEOEswl8Or8G9a8qiBuHqRpIK2nhYAH3QIKN9fr/cJmyKftWGDW0ZtcR8TchMSVOf8QKhZp73swg77ZNint2JRb7ExDdWqpdOlBMvgcn++YutkfBeCPgfg0t1ELpzxZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=F+dy1ya7; arc=none smtp.client-ip=209.85.214.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-207115e3056so18873415ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:51:03 -0700 (PDT)
+	s=arc-20240116; t=1728669139; c=relaxed/simple;
+	bh=UbA/iFDHRQ6qK3Ht4X9Feltcke5IsxxCQungku19kWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kcjSdVTU/wOlhdFMxnP8FVwtG/K4zHaRP0vZz3lgcgI9zRj5+oV7QshGwCgpwhnHp6zGQkMfmHTsFWA+xpakxZi7KKn672CGAE4LpxiGXP1iMLJ/1g7MYa33LoItBSL0uH2VZ9WvX/NqQYT6R3AJeq0efQXpj2aPO7KeKR4DDQM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zcHkz36s; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4601a471aecso7881cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:52:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728669063; x=1729273863; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RvnmNjfgy1//lZbNTPPlkwEdk3MRe3SYgZ2nM+Y5pJg=;
-        b=F+dy1ya7fyydZ79FOT4Ifq+3ak48vGhJqLIQqYl7zyn3bYqxlf41bgBvLSztJzIONg
-         PJpcOK9/kiv6GVHvgAFOJlN6nQpn22gPFG4Kq7RaRKEz151PWxZ50oWXUTsgH6yKAsB5
-         ZtjCv8CGosowoBb7Py2wyMfmjnYvnxkqQY9kM=
+        d=google.com; s=20230601; t=1728669137; x=1729273937; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nFVu/0Ci5Drk+gHVAbW8VDcAFM6IjgK0BzGcAxp3FVw=;
+        b=zcHkz36sijyfW6L3+oqPlDl3WZgl0pIx4cWL3ismpt0KhOIp9FYNmOvDw3QRfdbfhB
+         wjJqwIB39R7OKQLgc14nmTS5w9ZaOB0uwXWDP/8oKdDUUom0oB0l6tdT4nW4OEuhIusO
+         QiN8UQqlOeEEBa/6+D1OGpci8N6eqEGTt1Htv5b8GymqG23U/ELZ2min8H2RpfLDvXVv
+         FtRAy3F7W0IlSAHvoGmubITdjrASOhQnzMmyX22+8HpIsgjbJXkAsWu1wvbKogrHkZcF
+         p5+oqa++lDFyPLN8zc0nHTOXYuU7BSz9eKjMmVLZAxzDy1/oHNwtoR/9HuX713KDHujN
+         b0xw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728669063; x=1729273863;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:mail-followup-to:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=RvnmNjfgy1//lZbNTPPlkwEdk3MRe3SYgZ2nM+Y5pJg=;
-        b=iDm1vqtdIVylNF+Q6wY9yavrCpWVsxCvBtWPfLmOhZznIyHkISIX7fRIKakxT4JTuU
-         a8kk8QUBbldY7EwuMrRofvDNWqeyoX0x5Exz0Ye2KTMuADCdejoUO2X7Otq6+GfIbGA1
-         ZAmSUvN/44OA9iaH8g4JQaCAer4DITZtyk2lSH+ZbIz8DKMrbSh6Xtx6K4XZIAQ30mul
-         bQxGb/2D9LgJS11EKiN5Czm4r9P4QtqM6ZfPBOvWfnj+mseJ9WnCWHUlasLbMP4+wxpe
-         7OOK+QcCFmSsmwhxTsKKigUivYsX1Qv0qN/30vK2oJLyJE91asf6LvMXx6oLLw7977iZ
-         eCvA==
-X-Forwarded-Encrypted: i=1; AJvYcCVEtMI9YU7BzRBhA3IQX0zH0jpY7QhK0c3mLgXeB085xEpO3+dJCCvwuHgKXtFYlZKIGgxIpo1yhsfIXgk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfbSdRBKtHlU3R6f+bUEEXte9Rd116gJjBHKEvHheJLHGNXUMV
-	1K8wxS2PRk8SGVQmRdCEgCfuYJ6zDzi4cbHE4tECjL1nbl1pWOnBolt9IgxzbIY=
-X-Google-Smtp-Source: AGHT+IGMpfzhw02DP7gsHgb6/cY4RebhSS+seJXmW/NKZ/XA4TbwouBQqOnbenkVe4gPEIt/GFEkOA==
-X-Received: by 2002:a17:902:d501:b0:20b:c1e4:2d5d with SMTP id d9443c01a7336-20ca1677e53mr50290365ad.34.1728669062932;
-        Fri, 11 Oct 2024 10:51:02 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc00dcesm25742415ad.64.2024.10.11.10.51.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:51:02 -0700 (PDT)
-Date: Fri, 11 Oct 2024 10:50:59 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Eric Dumazet <edumazet@google.com>
-Cc: Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [net-next v5 6/9] netdev-genl: Support setting per-NAPI config
- values
-Message-ID: <ZwllgzfOrK86q15M@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, netdev@vger.kernel.org,
-	mkarsten@uwaterloo.ca, skhawaja@google.com, sdf@fomichev.me,
-	bjorn@rivosinc.com, amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com, willemdebruijn.kernel@gmail.com,
-	Donald Hunter <donald.hunter@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	Mina Almasry <almasrymina@google.com>,
-	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20241009005525.13651-1-jdamato@fastly.com>
- <20241009005525.13651-7-jdamato@fastly.com>
- <CANn89iJ1=xA9WGhXAMcCAeacE3pYgqiWjcBdxiWjGPACP-5n_g@mail.gmail.com>
- <20241010081923.7714b268@kernel.org>
- <CANn89iK_iDY_nTCgqYUk7D_R8k_qu2qQrs2rUAxxAu_ufrzBnw@mail.gmail.com>
- <ZwgDh3O0_95uGAgd@LQ3V64L9R2>
- <CANn89iL65LPmJbiHVt10JvKXSVMhk-SsTN5xdaZ7MjgXXT4f9w@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1728669137; x=1729273937;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nFVu/0Ci5Drk+gHVAbW8VDcAFM6IjgK0BzGcAxp3FVw=;
+        b=usHsBzjJGj28kJfEw5KnKVLt0IXLGRHii0xAmCP5GN3Z5Gmg+Xvf93GU3cM8oChyPa
+         1ox8ip48ywAmkcaxvVgoNClNUHbHs8gebdm+5ycs2zZKKmNnmYf++sLqqK7LezB+OiLD
+         Wd0T0UpzX5TPqkWcTX/YRCOx8KqP4G+IlA+zcoul/x3bQcfg9rOwaJE63YGpk4sh+NiN
+         /KYSGYEnZkIVxH4ie8A2MKFt2lfr0i2SjVlZ7sevddaE8b3jRpkm16XiJ3T/dVXhZhZu
+         1dbveIXCrvbtsnhFfa6ONkwtogrsLayT9rC/9Ym3fYMTT20ooFxCyvt3emXQj7/PGLUM
+         1Etw==
+X-Forwarded-Encrypted: i=1; AJvYcCWAuoppiiwRmffBE9Jd4EwfGzYOiQSL2ViQAgRlyaJvYzL2yEqgM1LykB62HarckFR7gPUBd0wdJg57Otk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbRweg7lMWZY4tTs/xLohVDeLcxrxWntAgsRkgrGWf1JX9A9tD
+	7GIRbV23x7c16/7H0UdPtTzAxYZ17LZRU7CZdhaMgxtHQfBWrBc+9d8idY0+SLAYZGT1lsmdpzY
+	uP6Df28AqbL+ZPXyI8MGkSSYWy2oiKPoHcZk0
+X-Google-Smtp-Source: AGHT+IEEPPLA8HdfmHuDQ6n+ZWN9VIwgJKQNohNKF/6PyZg/dJQ0X34S6H6r+67M6aytOK48Tol7C6iHV8tyTZjxViQ=
+X-Received: by 2002:a05:622a:2d11:b0:447:f108:f80e with SMTP id
+ d75a77b69052e-46058edff6amr144611cf.16.1728669136519; Fri, 11 Oct 2024
+ 10:52:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANn89iL65LPmJbiHVt10JvKXSVMhk-SsTN5xdaZ7MjgXXT4f9w@mail.gmail.com>
+References: <20241011-tracepoint-v10-0-7fbde4d6b525@google.com>
+ <20241011-tracepoint-v10-1-7fbde4d6b525@google.com> <20241011131316.5d6e5d10@eugeo>
+ <CABCJKuesYQWvfScFaqv_rW5ZqAJNn4zK9iOFAmyTaYKO3S5hgw@mail.gmail.com> <20241011171251.0bd53f01@eugeo>
+In-Reply-To: <20241011171251.0bd53f01@eugeo>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Fri, 11 Oct 2024 10:51:37 -0700
+Message-ID: <CABCJKue7qT9drhgrXPEjBO=gPw79vYELAZxz747Z8WMF=vj2MQ@mail.gmail.com>
+Subject: Re: [PATCH v10 1/5] rust: add static_branch_unlikely for static_key_false
+To: Gary Guo <gary@garyguo.net>
+Cc: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
+	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
+	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
+	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
+	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
+	linux-arm-kernel@lists.infradead.org, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
+	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
+	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
+	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
+	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
+	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
+	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 07:19:47PM +0200, Eric Dumazet wrote:
-> On Thu, Oct 10, 2024 at 6:40 PM Joe Damato <jdamato@fastly.com> wrote:
-> >
-> > On Thu, Oct 10, 2024 at 05:30:26PM +0200, Eric Dumazet wrote:
-> > > On Thu, Oct 10, 2024 at 5:19 PM Jakub Kicinski <kuba@kernel.org> wrote:
-> > > >
-> > > > On Thu, 10 Oct 2024 06:24:54 +0200 Eric Dumazet wrote:
-> > > > > > +static const struct netlink_range_validation netdev_a_napi_defer_hard_irqs_range = {
-> > > > > > +       .max    = 2147483647ULL,
-> > > > >
-> > > > > Would (u64)INT_MAX  work ?
-> > > >
-> > > > I sent a codegen change for this. The codegen is a bit of a mess.
-> > > >
-> > > > > > +int netdev_nl_napi_set_doit(struct sk_buff *skb, struct genl_info *info)
-> > > > > > +{
-> > > > > > +       struct napi_struct *napi;
-> > > > > > +       unsigned int napi_id;
-> > > > > > +       int err;
-> > > > > > +
-> > > > > > +       if (GENL_REQ_ATTR_CHECK(info, NETDEV_A_NAPI_ID))
-> > > > > > +               return -EINVAL;
-> > > > > > +
-> > > > > > +       napi_id = nla_get_u32(info->attrs[NETDEV_A_NAPI_ID]);
-> > > > > > +
-> > > > > > +       rtnl_lock();
-> > > > >
-> > > > > Hmm.... please see my patch there :
-> > > > >
-> > > > >  https://patchwork.kernel.org/project/netdevbpf/patch/20241009232728.107604-2-edumazet@google.com/
-> > > > >
-> > > > > Lets not add another rtnl_lock() :/
-> > > >
-> > > > It's not as easy since NAPIs can come and go at driver's whim.
-> > > > I'm quietly hoping we can convert all netdev-nl NAPI accesses
-> > > > to use the netdev->lock protection I strong-armed Paolo into
-> > > > adding in his shaper series. But perhaps we can do that after
-> > > > this series? NAPI GET already takes RTNL lock.
+Hi Gary,
+
+On Fri, Oct 11, 2024 at 9:12=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
+>
+> On Fri, 11 Oct 2024 08:23:18 -0700
+> Sami Tolvanen <samitolvanen@google.com> wrote:
+>
+> > On Fri, Oct 11, 2024 at 5:13=E2=80=AFAM Gary Guo <gary@garyguo.net> wro=
+te:
 > > >
+> > > On Fri, 11 Oct 2024 10:13:34 +0000
+> > > Alice Ryhl <aliceryhl@google.com> wrote:
 > > >
-> > > napi_by_id() is protected by rcu and its own spinlock ( napi_hash_lock )
-> > > I do not see why rtnl is needed.
-> > > This will also be a big issue with per netns-RTNL anyway.
+> > > > +#ifndef CONFIG_JUMP_LABEL
+> > > > +int rust_helper_static_key_count(struct static_key *key)
+> > > > +{
+> > > > +     return static_key_count(key);
+> > > > +}
+> > > > +EXPORT_SYMBOL_GPL(rust_helper_static_key_count);
+> > >
+> > > ^ Explicit export should be removed. This only works because we didn'=
+t
+> > > remove export.h from all helpers.c yet, but there's a patch to do
+> > > that and this will stop working.
 > >
-> > I deeply appreciate and respect both of your thoughts on this; I
-> > will hold off on sending a v6 until a decision is made on this
-> > particular issue.
+> > What's the benefit of removing explicit exports from the Rust helper C
+> > code? It requires special casing things like modversions for these
+> > files, so I assume there's a reason for this. I asked about it here,
+> > but never got a response:
 > >
-> 
-> I do not want to block your series.
-> 
-> Whatever is needed later, I can handle.
+> > https://lore.kernel.org/rust-for-linux/CABCJKudqAEvLcdqTqyfE2+iW+jeqBpn=
+TGgYJvrZ0by6hGdfevQ@mail.gmail.com/
+> >
+> > Sami
+>
+> Ah, I didn't saw that email, probably because I archived the mails after
+> the patch is applied.
 
-Thank you, Eric.
+Sometimes you might get pings about patches that are already applied too. :=
+)
 
-I am happy to help with the future changes if needed. Feel free to
-reach out if you'd like me to assist in any way as I know you have a
-tremendous amount of work on your plate.
+> We're working towards having an option that enables inlining these
+> helpers into Rust; when that option is enabled, the helpers must not be
+> exported. See
+> https://lore.kernel.org/rust-for-linux/20240529202817.3641974-1-gary@gary=
+guo.net/
+> and https://lwn.net/Articles/993163/.
 
-I will submit the v6 shortly, after I've rebased and retested.
+Interesting, thanks for the links. It would have been helpful to
+explain the motivation for the change also in the patch that was
+applied.
+
+Did you consider using the preprocessor to simply skip exporting the
+helpers when cross-language LTO inlining is used? This would allow us
+to use the existing C build rules for the code instead of adding a
+separate rule to handle Rust-style exports, like I'm doing here:
+
+https://github.com/samitolvanen/linux/commit/545277e4d0432dafc530b1618f0152=
+aed82af2f5
+
+> It's also quite tedious for every helper to carry this export.
+
+It's just one line per helper, but sure, I do see your point.
+
+Sami
 
