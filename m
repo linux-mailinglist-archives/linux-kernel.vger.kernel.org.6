@@ -1,279 +1,300 @@
-Return-Path: <linux-kernel+bounces-360924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 318D999A167
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:32:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA7E99A12E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:19:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CDDF32831F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:32:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64BA21F22B66
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A51C1E3773;
-	Fri, 11 Oct 2024 10:32:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A147210C1C;
+	Fri, 11 Oct 2024 10:19:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b="jvt7JZkL"
-Received: from smtp-out.freemail.hu (fmfe36.freemail.hu [46.107.16.241])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VQZ7E1d/"
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3521991AF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:32:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.107.16.241
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D28828EB;
+	Fri, 11 Oct 2024 10:19:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728642731; cv=none; b=mRYBdJ9+EKa399UC/1B/4VawOn1s0GNBEI3GtrBUwjO9edc+xiAa7TJ/JfSM9a8ERFUgNG2dodfBnOrfDajowNeI9i2NlJEqgFDG2P7O+wJB0gJVuRDb4Gs0jrePJ8HOz9gsM3/ycARzSmU+oP2qMUQsZbHPnCPi/MqClZLx4PY=
+	t=1728641978; cv=none; b=IchuJ3UxUcbEh6gxKf2gd229VfCNaX+N9hSYEG9FJeEytweoO7dtTl82XWry9dQfGEcQ1zcN/grKEf9HZgys5IyX8cNjBffM9FFc/j9+PydiZopHvp1F3dZB/5KdZMd7ls2iz3g+2RjdZ7JE/JDHESBDgfsp1RSR1v/j1jPS+Xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728642731; c=relaxed/simple;
-	bh=wBma+ItmBOwZcRQzQpUqQkWXcDIKan3tg7AsNCuZdbQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=FhdOjgUw71g84hB8tZiQfe0a3AL604tNxdYhNac0tU9lcb85vTOtkGl7/haKlXZbAMJpF2Qm4ioJOXvo2hz4c1SrFCoPeEwRiLPEBVWyLFp28iCUdysc/3ZL8Tni3Pwj491Xay2m+LXZBW+ECbG9mZSXbxBf+GsEje+vjbIzbo8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu; spf=pass smtp.mailfrom=freemail.hu; dkim=fail (2048-bit key) header.d=freemail.hu header.i=@freemail.hu header.b=jvt7JZkL reason="signature verification failed"; arc=none smtp.client-ip=46.107.16.241
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=freemail.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freemail.hu
-Received: from [192.168.0.16] (catv-178-48-208-49.catv.fixed.vodafone.hu [178.48.208.49])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp.freemail.hu (Postfix) with ESMTPSA id 4XQ2mn4GPSzD8J;
-	Fri, 11 Oct 2024 12:24:41 +0200 (CEST)
-Message-ID: <264890a1-7234-407e-b7ba-078f32462afe@freemail.hu>
-Date: Fri, 11 Oct 2024 12:23:18 +0200
+	s=arc-20240116; t=1728641978; c=relaxed/simple;
+	bh=BzjUC2WdUuGsR2SFi0W1LmPuVrcKnpzELb0ehppyCaw=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KToZfDC/S0o20iulkGFrnHj6+NQwqxKVP+TbwMOblDJGwILEC9ulhvrO3zQdGmROk9dgefdCA9vTdlpjIiOkyDnmRtKyR+Tq0F8apIgpVK1oiQyq/3R6RYs7wVaBI3M+5yGexg21Tgl+ny64RHd3HlB1UruEYwpxVl2Sp8Heyp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VQZ7E1d/; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-5c920611a86so2454814a12.0;
+        Fri, 11 Oct 2024 03:19:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728641975; x=1729246775; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=BzjUC2WdUuGsR2SFi0W1LmPuVrcKnpzELb0ehppyCaw=;
+        b=VQZ7E1d/ih8IHEaDfHpmVr9ud8+0f/ZFiKck6eY/FhnaXWpcjdoCrrA3QD3wgSpn1T
+         sAJ34KPinyxozFO4cFZKWs4fIYzbw+cJpZKvN+hPe9/0qTGZiCF+/cWq2kDfXQ7BGkx/
+         2jbH+mAxWrb6yUt5XyssjepvXCHhSECgUNX0DI9aL8+/a86KRv/sovL/MBnU+rDD+eT1
+         scECyrakKmzftCVSeQJi7zA9TOcGb962h/QLeCPeRe4ogZeZ+K8ZffA48h1gFA18AS56
+         DSWgPO5HtpP5GEQgzqmE8xX7ksnAvv7p89iV4rvGQdoYjPmNubC/vqpUcD/NaZZbg1hK
+         628Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728641975; x=1729246775;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=BzjUC2WdUuGsR2SFi0W1LmPuVrcKnpzELb0ehppyCaw=;
+        b=j7MKCrn47Z5rYKX9yY5k2UHp9YkJkM/VTTP57aVJ3Rx8p3P5mySWMZ7/e3v4s4fkJL
+         XUSYfpkKxLFecXU/hTJ5WQlf3uId990v90fBqaEOpJOROSAgHZce2yiZrrv7yYIJstZK
+         UNnFZbNNDKEJBtBZmDFwwKk/ZAawOyArZ1YxMEXs9X05tMuBJeBTnJO4t0eE2MK69KCz
+         jhphCzVbWT361yCL1z9wazkhxXxFaMZFIDshB/KsGmZW86aJTAxDrfilUzwB9KgX6eUA
+         cBIR0TTr3HQ04sEbLGqVW/qSnDWHTTGKy8AVhxCWuKDfDpVbHUWiHmY+6ceM66j8CebB
+         w00w==
+X-Forwarded-Encrypted: i=1; AJvYcCUe2dQnSxyIIQJ9QAXUwjp5GZuS3lW9S3mpPxH2Jd8oiGQ+RvAVfKzjzfeaBoniFoN3J0hLDvtog8cN@vger.kernel.org, AJvYcCWVP2Wq0Iuti2n4Mec34eLDhCZ06qW7k1V2Dvm2eKONrAEm72T8EW72wqwCnqcxoSczjf0HVq4ARYe9d7t0@vger.kernel.org, AJvYcCXHp38gbmzHohEGM9VNdFBGgqgx7g+887P9xEypWApQYPFP751+hxCUXLOiUbtZDAABuFbpbOXBTW8s@vger.kernel.org, AJvYcCXUdB1bqmY7Faw+C27j9igrKHjzkFy0CtU6kJWsB2lRDxbVPs8h8KDBh86TNS7QH77GpIR8NTSdKFwZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz7bfBZDSRj/3TgjH3hCz20GepFV6C7n+dx/Nogme9QqaQCzhs8
+	GAq9gSHn5efp7zjOT8ea2sjl4P9D3Yw8bWj3h+aZ9Yh6CFPmExYM
+X-Google-Smtp-Source: AGHT+IFmZh07eDuGU/glT9pd5yl9UegdvZu4wewUDe7IZyXiAbdOhObnRH6fhxBvbIRyNjDiLE18/w==
+X-Received: by 2002:a05:6402:84c:b0:5c9:3451:498 with SMTP id 4fb4d7f45d1cf-5c948d4817dmr1368905a12.25.1728641974441;
+        Fri, 11 Oct 2024 03:19:34 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93729a8cfsm1757460a12.95.2024.10.11.03.19.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 03:19:34 -0700 (PDT)
+Message-ID: <13800d4f04e1302488d357144b2e51e914951d67.camel@gmail.com>
+Subject: Re: [PATCH 6/7] iio: adc: ad485x: add ad485x driver
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: David Lechner <dlechner@baylibre.com>, Antoniu Miclaus	
+ <antoniu.miclaus@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich <Michael.Hennerich@analog.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski	 <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa	 <nuno.sa@analog.com>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?=	
+ <ukleinek@kernel.org>, Andy Shevchenko <andy@kernel.org>, Marcelo Schmitt	
+ <marcelo.schmitt@analog.com>, =?ISO-8859-1?Q?Jo=E3o?= Paulo
+ =?ISO-8859-1?Q?Gon=E7alves?=	 <joao.goncalves@toradex.com>, Mike Looijmans
+ <mike.looijmans@topic.nl>,  Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Alisa-Dariana Roman <alisadariana@gmail.com>, Sergiu Cuciurean
+ <sergiu.cuciurean@analog.com>, Dragos Bogdan	 <dragos.bogdan@analog.com>,
+ linux-iio@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-pwm@vger.kernel.org
+Date: Fri, 11 Oct 2024 12:23:49 +0200
+In-Reply-To: <20241005182608.2be20d3a@jic23-huawei>
+References: <20240923101206.3753-1-antoniu.miclaus@analog.com>
+		<20240923101206.3753-7-antoniu.miclaus@analog.com>
+		<CAMknhBHRfj7d8Uea8vX=t+y+9dqoPABQSzsgNhBMTK-8-f6L7w@mail.gmail.com>
+		<20240928183044.0b5ea2e0@jic23-huawei>
+		<35944d57af0ed62124e1e7cea544ef357fad1659.camel@gmail.com>
+	 <20241005182608.2be20d3a@jic23-huawei>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] drm/nouveau/i2c: rename aux.c and aux.h to auxch.c and
- auxch.h
-To: Lyude Paul <lyude@redhat.com>, bskeggs@nvidia.com, kherbst@redhat.com,
- airlied@gmail.com, daniel@ffwll.ch, dri-devel@lists.freedesktop.org,
- nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org
-References: <20240603091558.35672-1-egyszeregy@freemail.hu>
- <114482fe-0d91-4742-8ea1-5eaef8254c45@freemail.hu>
- <40b4b653e8c0c15343e211ff88ac8fe3f4d53e20.camel@redhat.com>
-Content-Language: hu
-From: =?UTF-8?Q?Sz=C5=91ke_Benjamin?= <egyszeregy@freemail.hu>
-In-Reply-To: <40b4b653e8c0c15343e211ff88ac8fe3f4d53e20.camel@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=simple/relaxed; t=1728642282;
-	s=20181004; d=freemail.hu;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
-	l=8454; bh=wmH4MV95rwYFIztY5AXfM1HAtK2mdhjrRiZSZ1fyGyI=;
-	b=jvt7JZkLPIQ6RukzGrSHqrANt5slZDKVr7MCcTZk3XVh8rlmADWvccTnvoL7Joja
-	exzlJxeZwQfIsPtQbOv7VSxxCqwHrt+OkAHeoqRhq3hmy+buUqmvpsxPtHGRM/U9a76
-	KmF3kW39DsrugrYBUdcl/mHq0A8c0wap4I1362Zi+uHIZBSuMtU/LI8vzmRw5rCKuth
-	mQ8QxAQQe4VUoux6iTpECTDVzJjTHiYh+uMswQqlfvh6CGhd6El5pYBxB2zz36OFyyS
-	gSfNmIHJyCXUvhPbkAiEAREZSwynScVYylanCsTte4Ked3zCXjbuPAoRQn72MWvNuPQ
-	VlZ82Shwrg==
 
-2024. 10. 10. 23:17 keltezéssel, Lyude Paul írta:
-> Hi - how did you send this message? This patch comes out looking quite strange
-> on my machine, perhaps you don't have the encoding set to UTF-8 or aren't
-> using git send-email?
-> 
-> On Mon, 2024-09-23 at 22:18 +0200, Szőke Benjamin wrote:
->> 	s=20181004; d=freemail.hu;
->> 	h=Message-ID:Date:MIME-Version:Subject:To:References:From:In-Reply-To:Content-Type:Content-Transfer-Encoding;
->> 	l=6727; bh=sJL9AOsUJH2ovHr5PYMU/rHzKoMeXVYsbJRkD0TaT5E=;
->> 	b=qY1DL1nlKnhWn0mpbbrefaus7g0fXuyQgL10k8YLW7EoFYdwaqOeDl6O+oQvVNmk
->> 	SvFiAJ5gdZeuP+2ZqTy3J1GOrOWP4HE77uQ4mJh9vyF3orZv2QtyIksudyXdHHiWwSS
->> 	IV7i4YkfUElv4+pFlUQ+hMRRXAOiqU/RVo1xBF0MBe/XGM1dt2UOj96u6lDp/vR7KP4
->> 	Tc7OCbj3h2I+07VEElEunHRpDFgZer+RV3SBLWBjiYBFtuUj3+iMnO/z36DlNJyHAj5
->> 	fySgG1IiRjIheKlzc5H7ikpMRfchALaeD+t1ayA7CERE4zDvIcBse8S5Oxkxvg7zwIW
->> 	Elv65cjloA==
->> Content-Transfer-Encoding: quoted-printable
->>
->> 2024. 06. 03. 11:15 keltez=C3=A9ssel, egyszeregy@freemail.hu =C3=ADrta:
->>> From: Benjamin Sz=C5=91ke <egyszeregy@freemail.hu>
->>> =20
->>> The goal is to clean-up Linux repository from AUX file names, because
->>> the use of such file names is prohibited on other operating systems
->>> such as Windows, so the Linux repository cannot be cloned and
->>> edited on them.
->>> =20
->>> Signed-off-by: Benjamin Sz=C5=91ke <egyszeregy@freemail.hu>
->>> ---
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild             | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c          | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c =3D> auxch.c} | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h =3D> auxch.h} | 0
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c           | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c         | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c         | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c             | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c           | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c         | 2 +-
->>>    drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c         | 2 +-
->>>    11 files changed, 10 insertions(+), 10 deletions(-)
->>>    rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.c =3D> auxch.c} (=
->> 99%)
->>>    rename drivers/gpu/drm/nouveau/nvkm/subdev/i2c/{aux.h =3D> auxch.h} (=
->> 100%)
->>> =20
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild b/drivers/g=
->> pu/drm/nouveau/nvkm/subdev/i2c/Kbuild
->>> index 819703913a00..2c551bdc9bc9 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/Kbuild
->>> @@ -25,7 +25,7 @@ nvkm-y +=3D nvkm/subdev/i2c/busnv50.o
->>>    nvkm-y +=3D nvkm/subdev/i2c/busgf119.o
->>>    nvkm-y +=3D nvkm/subdev/i2c/bit.o
->>>   =20
->>> -nvkm-y +=3D nvkm/subdev/i2c/aux.o
->>> +nvkm-y +=3D nvkm/subdev/i2c/auxch.o
->>>    nvkm-y +=3D nvkm/subdev/i2c/auxg94.o
->>>    nvkm-y +=3D nvkm/subdev/i2c/auxgf119.o
->>>    nvkm-y +=3D nvkm/subdev/i2c/auxgm200.o
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c b/driver=
->> s/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
->>> index dd391809fef7..6c76e5e14b75 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/anx9805.c
->>> @@ -24,7 +24,7 @@
->>>    #define anx9805_pad(p) container_of((p), struct anx9805_pad, base)
->>>    #define anx9805_bus(p) container_of((p), struct anx9805_bus, base)
->>>    #define anx9805_aux(p) container_of((p), struct anx9805_aux, base)
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>    #include "bus.h"
->>>   =20
->>>    struct anx9805_pad {
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c b/drivers/gp=
->> u/drm/nouveau/nvkm/subdev/i2c/auxch.c
->>> similarity index 99%
->>> rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
->>> rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.c
->>> index d063d0dc13c5..fafc634acbf6 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.c
->>> @@ -24,7 +24,7 @@
->>>   =20
->>>    #include <linux/string_helpers.h>
->>>   =20
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>    #include "pad.h"
->>>   =20
->>>    static int
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h b/drivers/gp=
->> u/drm/nouveau/nvkm/subdev/i2c/auxch.h
->>> similarity index 100%
->>> rename from drivers/gpu/drm/nouveau/nvkm/subdev/i2c/aux.h
->>> rename to drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxch.h
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c b/drivers=
->> /gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
->>> index 47068f6f9c55..854bb4b5fdb4 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxg94.c
->>> @@ -22,7 +22,7 @@
->>>     * Authors: Ben Skeggs <bskeggs@redhat.com>
->>>     */
->>>    #define g94_i2c_aux(p) container_of((p), struct g94_i2c_aux, base)
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>   =20
->>>    struct g94_i2c_aux {
->>>    	struct nvkm_i2c_aux base;
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c b/drive=
->> rs/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
->>> index dab40cd8fe3a..c17d5647cb99 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgf119.c
->>> @@ -19,7 +19,7 @@
->>>     * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE=
->>   OR
->>>     * OTHER DEALINGS IN THE SOFTWARE.
->>>     */
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>   =20
->>>    static const struct nvkm_i2c_aux_func
->>>    gf119_i2c_aux =3D {
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c b/drive=
->> rs/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
->>> index 8bd1d442e465..3c5005e3b330 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/auxgm200.c
->>> @@ -22,7 +22,7 @@
->>>     * Authors: Ben Skeggs <bskeggs@redhat.com>
->>>     */
->>>    #define gm200_i2c_aux(p) container_of((p), struct gm200_i2c_aux, base=
->> )
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>   =20
->>>    struct gm200_i2c_aux {
->>>    	struct nvkm_i2c_aux base;
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c b/drivers/g=
->> pu/drm/nouveau/nvkm/subdev/i2c/base.c
->>> index 976539de4220..ab86e11e7780 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/base.c
->>> @@ -22,7 +22,7 @@
->>>     * Authors: Ben Skeggs
->>>     */
->>>    #include "priv.h"
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>    #include "bus.h"
->>>    #include "pad.h"
->>>   =20
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c b/drivers=
->> /gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
->>> index 5904bc5f2d2a..cc26cd677917 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padg94.c
->>> @@ -22,7 +22,7 @@
->>>     * Authors: Ben Skeggs
->>>     */
->>>    #include "pad.h"
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>    #include "bus.h"
->>>   =20
->>>    void
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c b/drive=
->> rs/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
->>> index 3bc4d0310076..1797c6c65979 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgf119.c
->>> @@ -22,7 +22,7 @@
->>>     * Authors: Ben Skeggs
->>>     */
->>>    #include "pad.h"
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>    #include "bus.h"
->>>   =20
->>>    static const struct nvkm_i2c_pad_func
->>> diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c b/drive=
->> rs/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
->>> index 7d417f6a816e..5afc1bf8e798 100644
->>> --- a/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
->>> +++ b/drivers/gpu/drm/nouveau/nvkm/subdev/i2c/padgm200.c
->>> @@ -22,7 +22,7 @@
->>>     * Authors: Ben Skeggs
->>>     */
->>>    #include "pad.h"
->>> -#include "aux.h"
->>> +#include "auxch.h"
->>>    #include "bus.h"
->>>   =20
->>>    static void
->>
->> @Ben Skeggs
->> When it will be merged? Your hints was done and ready in this renaming pa=
->> tch.
->>
-> 
+On Sat, 2024-10-05 at 18:26 +0100, Jonathan Cameron wrote:
+> On Mon, 30 Sep 2024 09:05:04 +0200
+> Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+>=20
+> > On Sat, 2024-09-28 at 18:30 +0100, Jonathan Cameron wrote:
+> > > =C2=A0=20
+> > > > =C2=A0=20
+> > > > > +static struct iio_chan_spec_ext_info ad4858_ext_info[] =3D {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("packet_format", I=
+IO_SHARED_BY_ALL,
+> > > > > &ad4858_packet_fmt),
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM_AVAILABLE("packet_=
+format",
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 IIO_SHARED_BY_ALL, &ad4858_packet_fmt),
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {},
+> > > > > +};
+> > > > > +
+> > > > > +static struct iio_chan_spec_ext_info ad4857_ext_info[] =3D {
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM("packet_format", I=
+IO_SHARED_BY_ALL,
+> > > > > &ad4857_packet_fmt),
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 IIO_ENUM_AVAILABLE("packet_=
+format",
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 IIO_SHARED_BY_ALL, &ad4857_packet_fmt),
+> > > > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 {},
+> > > > > +};=C2=A0=C2=A0=C2=A0=20
+> > > >=20
+> > > > Usually, something like this packet format would be automatically
+> > > > selected when buffered reads are enabled based on what other featur=
+es
+> > > > it provides are needed, i.e only enable the status bits when events
+> > > > are enabled.
+> > > >=20
+> > > > (For those that didn't read the datasheet, the different packet
+> > > > formats basically enable extra status bits per sample. And in the c=
+ase
+> > > > of oversampling, one of the formats also selects a reduced number o=
+f
+> > > > sample bits.)
+> > > >=20
+> > > > We have quite a few parts in the pipline right like this one that h=
+ave
+> > > > per-sample status bits. In the past, these were generally handled w=
+ith
+> > > > IIO events, but this doesn't really work for these high-speed backe=
+nds
+> > > > since the data is being piped directly to DMA and we don't look at
+> > > > each sample in the ADC driver. So it would be worthwhile to try to
+> > > > find some general solution here for handling this sort of thing.=C2=
+=A0=20
+> >=20
+> > I did not read the datasheet that extensively but here it goes my 2 cen=
+ts
+> > (basically my internal feedback on this one):
+> >=20
+> > So this packet format thingy may be a very "funny" discussion if we rea=
+lly
+> > need
+> > to support it. I'm not sure how useful it is the 32 bits format rather =
+than
+> > being used in test pattern. I'm not seeing too much benefit on the chan=
+nel
+> > id or
+> > span id information (we can already get that info with other attributes=
+).
+> > The
+> > OR/UR is the one that could be more useful but is there someone using i=
+t? Do
+> > we
+> > really need to have it close to the sample? If not, there's the status
+> > register
+> > and... Also, I think this can be implemented using IIO events (likely w=
+hat
+> > we
+> > will be asked). So what comes to mind could be:
+>=20
+> Definite preference for using events, but for a device doing DMA I'm not =
+sure
+> how we can do that without requiring parsing all the data.
+>=20
+> So we would need some metadata description to know it is there.
+>=20
+> >=20
+> > For test_pattern (could be implemented as ext_info or an additional cha=
+nnel
+> > I
+> > think - not for now I guess) we can easily look at our word side and
+> > dynamically
+> > set the proper packet size. So, to me, this is effectively the only pla=
+ce
+> > where
+> > 32bits would make sense (assuming we don't implement OR/UR for now).
+> > For oversampling we can have both 20/24 bit averaged data. But from the
+> > datasheet:
+> >=20
+> > "Oversampling is useful in applications requiring lower noise and highe=
+r
+> > dynamic
+> > range per output data-word, which the AD4858 supports with 24-bit outpu=
+t
+> > resolution and reduced average output data rates"
+> >=20
+> > So from the above it looks like it could make sense to default to 24bit
+> > packets
+> > if oversampling is enabled.
+>=20
+> That sounds like what we do for the DMA oversampling cases that change
+> the resolutions.
+>=20
+> >=20
+> > Now the question is OR/UR. If that is something we can support with eve=
+nts,
+> > we
+> > could see when one of OR/UR is being requested to either enable 24 pack=
+ets
+> > (no
+> > oversampling) or 32 bit packets (oversampling on).
+> >=20
+> >=20
+> >=20
+> > >=20
+> > > We have previously talked about schemes to describe metadata
+> > > alongside channels. I guess maybe it's time to actually look at how
+> > > that works.=C2=A0 I'm not sure dynamic control of that metadata
+> > > is going to be easy to do though or if we even want to
+> > > (as opposed to always on or off for a particular device).
+> > > =C2=A0=20
+> >=20
+> > Indeed this is something we have been discussing and the ability to hav=
+e
+> > status
+> > alongside a buffered samples is starting to be requested more and more.=
+ Some
+> > parts do have the status bit alongside the sample (meaning in the same
+> > register
+> > read) which means it basically goes with the sample as part of it's
+> > storage_bits. While not ideal, an application caring about those bits s=
+till
+> > has
+> > access to the complete raw sample and can access them.=20
+>=20
+> This has the advantage that if we come along later and define a metadata
+> in storage bits description it is backwards compatible.=C2=A0 We've been =
+doing
+> this for years with some devices.
+>=20
+> > It gets more complicated
+> > where the status (sometimes a per device status register) is located in
+> > another
+> > register. I guess we can have two case:
+> >=20
+> > 1) A device status which applies for all channels being sampled;
+> > 2) A per channel status (where the .metada approach could make sense).
+>=20
+> If it's a separate register per channel and optional, we'd have to treat =
+it as
+> a metadata
+> channel as no guarantee it would be packed next to the main channel.
+>=20
+> If we have a description of metadata additions in main channel storage, I=
+'m
+> not
+> against having a IIO_METADATA channel type.=20
+>=20
 
-It was sent via git send-email and it used UTF-8 in default.
+I guess you mean that a complete solution would never only be a IIO_METADAT=
+A but
+also extending 'struct iio_scan_type'?
 
-In the patch website there is no any problem about encoding looks good, please 
-check your mailing client.
-https://lore.kernel.org/all/4fbfe84b-c092-4648-819f-4368add9ec4a@nvidia.com/T/
+> If it's a single channel I'm not sure how we'd make as channel descriptio=
+n
+> general enough easily as we end up with every field possibly needed an
+> association
+> with a different channel.
 
+Not sure I followed the above... You mean having a single channel (like one
+register) pointing to different channels?=20
+
+What I mean with 1) is for example what happens with IMUs (eg: adis16475). =
+They
+have a DIAG_STAT register (which is pretty much device wide status/error
+information) that's also part of burst transfers (where we get our samples)=
+ and
+while some bits might not be meaningful for the sampling "session", others =
+might
+make sense to reason about data integrity or correctness.=20
+
+For the above case, I think the IIO_METADATA channel type would fit.
+
+- Nuno S=C3=A1
 
