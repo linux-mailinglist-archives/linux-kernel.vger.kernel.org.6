@@ -1,189 +1,242 @@
-Return-Path: <linux-kernel+bounces-361339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E42C99A700
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:55:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EECE299A701
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:55:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF79C1F23246
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:55:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E71A1F216A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30162405FB;
-	Fri, 11 Oct 2024 14:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB541183CD5;
+	Fri, 11 Oct 2024 14:55:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ed9tz3b2"
-Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="P1WAoWd3"
+Received: from mail-qv1-f65.google.com (mail-qv1-f65.google.com [209.85.219.65])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB662E403
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EB50405FB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658497; cv=none; b=UiAtgwNtZEh0O4TIKH5VzYA/GE/e9rQ6rk9tmeZdJ1ZecTTJzJeY/3+KIpJfm6zWXueuft7qlF+9EH3AD1h+IqO0jOUMiKWtNY3vQv7E/hirLQuodDXZV2OKq1EcAcheWghcCtX4uc7E2QYqkaj0JEKK3nv8xlEAtPY7Llq30dA=
+	t=1728658528; cv=none; b=ekS1iAsdpS6Sy9jVsG6ldt7uuKcviw/Tk7Fdy/90POjH9W7iNzWLmApMV1oAYIyBsQ0IPyuXnDvR5MqLQItaNE6/vJVNd87FUc1Aci6tyiYgY24vb38ZuEYYRVHTM62WrAGpeZ7AmGr73G1B5eOQNdrUVReRoF4zuWcPnjgaohU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658497; c=relaxed/simple;
-	bh=ayOP6kmT0Uhxqgho5scUs/ofCyaD3oPtnl1pskkLz5s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HcxjBoLSN2tnxeHlCAQPgVPVQiADsKkihGXyrmW/Jy71xchCnZvTcXv5CXWb13HmrdUXfKvdW1G1h2MJGJyUs6mYC4eunglIh37gs/e3ZZJhRKUDmyZsvXe1xzQ+8OEkb7nZo1aXjdk/WhK5JDrQiO1VfJ2vMpiSxHfTeWnSGRE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ed9tz3b2; arc=none smtp.client-ip=209.85.167.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5398e53ca28so2375652e87.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:54:55 -0700 (PDT)
+	s=arc-20240116; t=1728658528; c=relaxed/simple;
+	bh=aHZMY9R/W7f0WVRPhNJljkS9waE6ViiKOSOCw+2gghY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=J1KKDhyTIQMC1ZaLXSYfBxE4lQ3ZjZiTPwEBOPVSsTmyMMe1hz2OwgvfJ610TXVm+jdAsDxw/Ke7skAf9TPGrLG+njHIs0hmHVhhcRovdl/yvPk6IbgUVqIVWHxXTUXTMJORxgAbEJ4GgsOgOWFq/rvrJ1tLPXp2Ml4MdoBh6RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=P1WAoWd3; arc=none smtp.client-ip=209.85.219.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f65.google.com with SMTP id 6a1803df08f44-6cbf0e6414aso4018136d6.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:55:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728658494; x=1729263294; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=UqJdH6KvlGOaJs6LPdOjTJk5FO4Bru3b1GwmXSj7OG0=;
-        b=ed9tz3b2N1MfcdCGQcfVoznA64jeL8e3DVCWAatIi7fbH7XuC6x+90RWiyHdX7fwkR
-         IpgQ2a5rDA9AQesDEiaWo3iaCLPbYxU2YSmyE0qVlzm0zLP+RFsxovosiNCTRsqSsIEk
-         DL5N6blfm5CbkL1dlZF38+VNXGWxL9CFuKPiG1G8cBTo5b8U2LO2TLa6JkChyU7+pzb2
-         zNSEDTWKX7idKL7ew/jbXuJMTltOLX8YAJ/I8fF5EzNHYxY3FpLcUMIQtAf2OjHN/7oo
-         JEQ5p7s66QvJ8Sh1OC9iIRjBuDs7zJ7T9ZIodf2C+8oTCwFVnsJe0JM2OsJdRwsZHkXc
-         h0dA==
+        d=rowland.harvard.edu; s=google; t=1728658525; x=1729263325; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tfXt/0V3gGz/Nl53n2+SwqZesc7IYnQqnW1L9TAWte0=;
+        b=P1WAoWd3aBUx8TbkavEjFrcmgVQJYcki8d5TpK3TgvHQe1HV2ufEYp3XMVhTs3Xb4K
+         7fMeeLXxiRz1WnrcjZdxZgOY+X6QIrdwn/b9jIL6z/M59J70G2tIeVvydSa/QaRnx5sT
+         U2QjILtyGY3Cy0KD9ESNH6GfCJIMFl5D40e6JDHwP1vVCnjJmWFxd/IzOcGT3iMLaQMq
+         eTgG5eTx938xS/jLQA/fMBUChtirSOWHdxOWQ/57X8w8CcB3U/ZcHcm+EIyy76tn/u9g
+         Mzk5EcylUvvCsrjUDdo0BG3ijZ/JPG4DT14s6CcfCYCzysJ7fhYsOVn37Vm1XnsrNiJX
+         0umw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728658494; x=1729263294;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UqJdH6KvlGOaJs6LPdOjTJk5FO4Bru3b1GwmXSj7OG0=;
-        b=awoHVgZQHAwreOjtk+VA1xuf0i0j7BjrsPGGcMtF+30I/SLnRi3wdRvfPvgD/csbjA
-         hY25cbIFtZpWTBIbcGuqJ/yoDQkzLKvXJtUPmkQmsJqcNXDio55q3YMlhYE5iw2R1nAw
-         zX3vzEyPUswRtcrhoDe2HrhpZ7dPYp9+qtR3VVH6Ugjw4Twvd7CvhVaoX70ppsDc3nTr
-         zNLcHLHx47bG6y4qbQSSNkMnqS2VC97NNh3TgOii/tqJ1vu2WYgp+jmpmAVH7AW3/1+A
-         w7i6F58akhikYwMMP98RZMNtFxMzJOAD1D9XkojaCs3v2NKvTvnqfgE36iwCAyd4dxeP
-         kN1w==
-X-Forwarded-Encrypted: i=1; AJvYcCU8jaty35dBJhfbQArSz7gYkbY8Q9j05FENJiKtpf/QW/5BhGcMRW+l8VVVQjIVm7E4G6GG7kHcGsT8nXw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR601TO9N7HMhbQCwUZJ6YCgt9wSMv2efvJiGXBauDNlokZMBH
-	21rIFj7gSDjQhmJ9oY2iBScqNbPPnBAs6dEDN1fhPBlPN87CNBh4Efn7+yFZSyY=
-X-Google-Smtp-Source: AGHT+IGEqpHxLhsvoJ3aD2Hs3uY1bxru/hFDC2inGgVcpwnr5oCn1DIcDbUUVYp2qv7/GuTpsG+sdg==
-X-Received: by 2002:a05:6512:3a8d:b0:52e:7542:f469 with SMTP id 2adb3069b0e04-539da22cdf6mr1789366e87.0.1728658493944;
-        Fri, 11 Oct 2024 07:54:53 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff6d3sm44130005e9.12.2024.10.11.07.54.52
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 07:54:53 -0700 (PDT)
-Message-ID: <9513f8d7-7f42-4c1e-bdc9-d2078d46ba1f@linaro.org>
-Date: Fri, 11 Oct 2024 15:54:52 +0100
+        d=1e100.net; s=20230601; t=1728658525; x=1729263325;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tfXt/0V3gGz/Nl53n2+SwqZesc7IYnQqnW1L9TAWte0=;
+        b=ZYfOMgjhVWvoGZJXFHPMbWZSHT6L0hf+UDNiW9QUKW2W/nA1fZyECDxCBH3E4C7UGB
+         VVL55kJN/euXmKHeDgf9pvLyojhn2AKCSBr6oHY8ZozaAICoz8biSiUYNrW0JMgbIg87
+         206eCP5c1Bwhy6jX+B4aDYdrK5GUq8iR6Zn16R7vxPdbaYipIagid0E/F+sWtkD6YoMV
+         TM75emBwofSqWWLTskKRU8UJnp+h//EAs3TRGwTIgYCTnXJwMKqbtA7ZxeTcn0nmZKob
+         nytUkuR56O57t6uI7jg5XfzJD1FcXSWTSfy9ArDURddN9ecq4apJEDJJxMYevuqjOh71
+         Idqg==
+X-Forwarded-Encrypted: i=1; AJvYcCWjSKIJxZlr45Ky8YNIML1eBJ7UMyJK/qj1tmM86Be/6pLOaeIjLpRCWOcUj/VGij4Z4OUNxI57qjYWgwQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykuvavgUx5LT69qBGnpgjm7XCABEGqa9iputbaMIJAcD3zEhJD
+	twJqEUl/PzzjtX5KjyClBWJwSZjG1zH1k/eL/Hcrs6vQ67M9QhOCxz66d1vTTQ==
+X-Google-Smtp-Source: AGHT+IFG6nBmcE9lldQyQmN3k3AEJupi5pM/juawXFnijvZk8oP90eN1Kb+XkygHtzIsYs12ex6d3Q==
+X-Received: by 2002:a05:6214:4587:b0:6cb:e52c:c8e6 with SMTP id 6a1803df08f44-6cbf0040c52mr44070816d6.31.1728658525268;
+        Fri, 11 Oct 2024 07:55:25 -0700 (PDT)
+Received: from rowland.harvard.edu ([2607:fb60:2501:2805:c6d5:fe22:7fa3:ec54])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608e90sm16235646d6.99.2024.10.11.07.55.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 07:55:24 -0700 (PDT)
+Date: Fri, 11 Oct 2024 10:55:22 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, sylv@sylv.io,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <9cc382bd-debc-42d6-977e-559d48b82f58@rowland.harvard.edu>
+References: <d65e2258-2901-486a-ab83-ff57e9868a91@rowland.harvard.edu>
+ <67093796.050a0220.3e960.0012.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] perf test: Introduce '-w --list' to list the
- available workloads
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
- Arnaldo Carvalho de Melo <acme@redhat.com>
-References: <20241011143906.1285675-1-acme@kernel.org>
- <20241011143906.1285675-3-acme@kernel.org>
-Content-Language: en-US
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241011143906.1285675-3-acme@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <67093796.050a0220.3e960.0012.GAE@google.com>
 
-
-
-On 11/10/2024 3:39 pm, Arnaldo Carvalho de Melo wrote:
-> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Fri, Oct 11, 2024 at 07:35:02AM -0700, syzbot wrote:
+> Hello,
 > 
-> Using it:
-> 
->    $ perf test -w noplop
->    No workload found: noplop
->    $
->    $ perf test -w
->     Error: switch `w' requires a value
->     Usage: perf test [<options>] [{list <test-name-fragment>|[<test-name-fragments>|<test-numbers>]}]
-> 
->        -w, --workload <work>
->                              workload to run for testing, use '-w --list' to list the available ones.
->    $
->    $ perf test -w --list
->    noploop
->    thloop
->    leafloop
->    sqrtloop
->    brstack
->    datasym
->    landlock
->    $
-> 
-> Would be good at some point to have a description in 'struct test_workload'.
-> 
-> Cc: Adrian Hunter <adrian.hunter@intel.com>
-> Cc: Ian Rogers <irogers@google.com>
-> Cc: Jiri Olsa <jolsa@kernel.org>
-> Cc: Kan Liang <kan.liang@linux.intel.com>
-> Cc: Namhyung Kim <namhyung@kernel.org>
-> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-> ---
->   tools/perf/tests/builtin-test.c | 18 +++++++++++++++++-
->   1 file changed, 17 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-> index 2201f7ed432ce9f2..f0d10d2dd0d40019 100644
-> --- a/tools/perf/tests/builtin-test.c
-> +++ b/tools/perf/tests/builtin-test.c
-> @@ -505,10 +505,26 @@ static int perf_test__list(int argc, const char **argv)
->   	return 0;
->   }
->   
-> +static int workloads__fprintf_list(FILE *fp)
-> +{
-> +	struct test_workload *twl;
-> +	int printed = 0;
-> +
-> +	workloads__for_each(twl)
-> +		printed += fprintf(fp, "%s\n", twl->name);
-> +
-> +	return printed;
-> +}
-> +
->   static int run_workload(const char *work, int argc, const char **argv)
->   {
->   	struct test_workload *twl;
->   
-> +	if (!strcmp(work, "--list")) {
-> +		workloads__fprintf_list(stdout);
-> +		return 0;
-> +	}
-> +
+> syzbot tried to test the proposed patch but the build/boot failed:
 
-Very minor nit, but I think searching the workload name for an argument 
-instead of having a 'proper' toplevel argument seems a bit weird, but I 
-can see why you did it that way.
+...
 
-But maybe something like this might be a bit more readable especially 
-when searching in the usual places for an argument. And in the future 
-might survive auto doc attempts of known arguments:
+> Tested on:
+> 
+> commit:         920e7522 usb: gadget: function: Remove usage of the de..
 
-   $ perf test --list-workloads
+All right, let's try again with an explicit patch to undo the timer 
+changes in dummy_hcd.c.
 
-And add it with OPT_BOOLEAN() etc.
+Alan Stern
 
->   	workloads__for_each(twl) {
->   		if (!strcmp(twl->name, work))
->   			return twl->func(argc, argv);
-> @@ -544,7 +560,7 @@ int cmd_test(int argc, const char **argv)
->   	OPT_BOOLEAN('p', "parallel", &parallel, "Run the tests in parallel"),
->   	OPT_BOOLEAN('S', "sequential", &sequential,
->   		    "Run the tests one after another rather than in parallel"),
-> -	OPT_STRING('w', "workload", &workload, "work", "workload to run for testing"),
-> +	OPT_STRING('w', "workload", &workload, "work", "workload to run for testing, use '-w --list' to list the available ones."),
->   	OPT_STRING(0, "dso", &dso_to_test, "dso", "dso to test"),
->   	OPT_STRING(0, "objdump", &test_objdump_path, "path",
->   		   "objdump binary to use for disassembly and annotations"),
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+
+Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+===================================================================
+--- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
++++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -30,7 +30,7 @@
+ #include <linux/slab.h>
+ #include <linux/errno.h>
+ #include <linux/init.h>
+-#include <linux/hrtimer.h>
++#include <linux/timer.h>
+ #include <linux/list.h>
+ #include <linux/interrupt.h>
+ #include <linux/platform_device.h>
+@@ -50,8 +50,6 @@
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
+ #define POWER_BUDGET_3	900	/* in mA */
+ 
+-#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
+-
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+ 
+@@ -242,7 +240,7 @@ enum dummy_rh_state {
+ struct dummy_hcd {
+ 	struct dummy			*dum;
+ 	enum dummy_rh_state		rh_state;
+-	struct hrtimer			timer;
++	struct timer_list		timer;
+ 	u32				port_status;
+ 	u32				old_status;
+ 	unsigned long			re_timeout;
+@@ -1303,8 +1301,8 @@ static int dummy_urb_enqueue(
+ 		urb->error_count = 1;		/* mark as a new urb */
+ 
+ 	/* kick the scheduler, it'll do the rest */
+-	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
++	if (!timer_pending(&dum_hcd->timer))
++		mod_timer(&dum_hcd->timer, jiffies + 1);
+ 
+  done:
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+@@ -1325,7 +1323,7 @@ static int dummy_urb_dequeue(struct usb_
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+ 			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL);
++		mod_timer(&dum_hcd->timer, jiffies);
+ 
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+@@ -1779,7 +1777,7 @@ static int handle_control_request(struct
+  * drivers except that the callbacks are invoked from soft interrupt
+  * context.
+  */
+-static enum hrtimer_restart dummy_timer(struct hrtimer *t)
++static void dummy_timer(struct timer_list *t)
+ {
+ 	struct dummy_hcd	*dum_hcd = from_timer(dum_hcd, t, timer);
+ 	struct dummy		*dum = dum_hcd->dum;
+@@ -1810,6 +1808,8 @@ static enum hrtimer_restart dummy_timer(
+ 		break;
+ 	}
+ 
++	/* FIXME if HZ != 1000 this will probably misbehave ... */
++
+ 	/* look at each urb queued by the host side driver */
+ 	spin_lock_irqsave(&dum->lock, flags);
+ 
+@@ -1817,7 +1817,7 @@ static enum hrtimer_restart dummy_timer(
+ 		dev_err(dummy_dev(dum_hcd),
+ 				"timer fired with no URBs pending?\n");
+ 		spin_unlock_irqrestore(&dum->lock, flags);
+-		return HRTIMER_NORESTART;
++		return;
+ 	}
+ 	dum_hcd->next_frame_urbp = NULL;
+ 
+@@ -1995,12 +1995,10 @@ return_urb:
+ 		dum_hcd->udev = NULL;
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+ 		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS), HRTIMER_MODE_REL);
++		mod_timer(&dum_hcd->timer, jiffies + msecs_to_jiffies(1));
+ 	}
+ 
+ 	spin_unlock_irqrestore(&dum->lock, flags);
+-
+-	return HRTIMER_NORESTART;
+ }
+ 
+ /*-------------------------------------------------------------------------*/
+@@ -2389,7 +2387,7 @@ static int dummy_bus_resume(struct usb_h
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+ 		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL);
++			mod_timer(&dum_hcd->timer, jiffies);
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
+@@ -2467,8 +2465,7 @@ static DEVICE_ATTR_RO(urbs);
+ 
+ static int dummy_start_ss(struct dummy_hcd *dum_hcd)
+ {
+-	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	dum_hcd->timer.function = dummy_timer;
++	timer_setup(&dum_hcd->timer, dummy_timer, 0);
+ 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 	dum_hcd->stream_en_ep = 0;
+ 	INIT_LIST_HEAD(&dum_hcd->urbp_list);
+@@ -2497,8 +2494,7 @@ static int dummy_start(struct usb_hcd *h
+ 		return dummy_start_ss(dum_hcd);
+ 
+ 	spin_lock_init(&dum_hcd->dum->lock);
+-	hrtimer_init(&dum_hcd->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL);
+-	dum_hcd->timer.function = dummy_timer;
++	timer_setup(&dum_hcd->timer, dummy_timer, 0);
+ 	dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 
+ 	INIT_LIST_HEAD(&dum_hcd->urbp_list);
+@@ -2517,11 +2513,8 @@ static int dummy_start(struct usb_hcd *h
+ 
+ static void dummy_stop(struct usb_hcd *hcd)
+ {
+-	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
+-
+-	hrtimer_cancel(&dum_hcd->timer);
+-	device_remove_file(dummy_dev(dum_hcd), &dev_attr_urbs);
+-	dev_info(dummy_dev(dum_hcd), "stopped\n");
++	device_remove_file(dummy_dev(hcd_to_dummy_hcd(hcd)), &dev_attr_urbs);
++	dev_info(dummy_dev(hcd_to_dummy_hcd(hcd)), "stopped\n");
+ }
+ 
+ /*-------------------------------------------------------------------------*/
 
 
