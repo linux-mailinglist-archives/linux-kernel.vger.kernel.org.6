@@ -1,101 +1,118 @@
-Return-Path: <linux-kernel+bounces-360337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360338-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F29599999B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:43:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 88FA29999C9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A14301F24863
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:43:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08D731F23E63
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:46:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA910FBF0;
-	Fri, 11 Oct 2024 01:43:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 681C91426C;
+	Fri, 11 Oct 2024 01:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IA0E/430"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="mdkytAbu"
+Received: from out30-133.freemail.mail.aliyun.com (out30-133.freemail.mail.aliyun.com [115.124.30.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93B5E17BA2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:43:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83BA15E97;
+	Fri, 11 Oct 2024 01:46:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728610999; cv=none; b=SPKeTMSuP1pErS5aM67CZFSTu9HbuHMbzUXgrPKhA5z9RIZU+MSTicSjHloj1thS2mW3wp6RT6UsTYwQvuwP8yzswfC42s9tR8c2ND59N1oha4yazWZqWR3y64PLgARleuVxyGrPFq301G4hu/r+spj15KVJzlX9nH0AgcvEH7M=
+	t=1728611195; cv=none; b=KhlboRMNrfl75/kXbrt79rr7XFkW/y/xDWTyZnaSuI8g7ZkrouWcC+J+0XU8W9goOK8aFTNo2NfcMPgYU9bM5boPeS7evCI0D3RNYltM/Cs57/bvtI9q01l2LfWConYv9UNmz/uNX0Zn3rxWCczsWKOoyjC5Tv5j3WjULdtH/6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728610999; c=relaxed/simple;
-	bh=Ktk9uShMn9i6iJxdDAuDLiEoGr9jwNuK66b5JV1x0MI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PsQ+nN55m+W4YhQ1mxMIBBPHzsuvmf0idN/f76ND5fGsnFsFyDxAYzGGHlpR42IvafRNKcxSvbLIOr//LYxSg6RTzZSeaAfX1lZ0xUh9BOqTS9TscOb6LPMmSE9gi7xOJlsZfT/emjRS7GeWE8EL1WiU7bgqxHD20R2V1TPm57s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IA0E/430; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a99415adecaso116414266b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:43:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728610996; x=1729215796; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=dnglVLWtixIdDbLNgnmODrJm/ZnuP3sTcG7B77zgpsk=;
-        b=IA0E/430/pGBXmwpYm7VZaAHy94HQQD0xz3j4yOdFchAmx969FyvPgT7h2B8AD5lcP
-         olKQ4SeuI2CkJyQ9Ln7HnkwHeiL+rNa2dz/gmKG0oCfMdfeCZYbrFDBMDAs4U7aAoGjw
-         bqxc9aAxrZsrmltMj4x2clKA7XmgmMq59aRrepWHKmbMiXt9wVJUR9gxAZRia26QSjNU
-         oYzB6JCiw13/1dTX23X44/g+L252kE38RCs5Azk4uybE63Nii3jJgA1vjQxuxzHGdru4
-         f3UGu/IBPt1jevyhR6doTkcrbNgIO0EEmfNZRTbrutB1yGdnSSS3oT8eAXDJxrWnqJcy
-         kcgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728610996; x=1729215796;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=dnglVLWtixIdDbLNgnmODrJm/ZnuP3sTcG7B77zgpsk=;
-        b=wlwEan7akLzp2T224V81s8yVbzlTGhSoeOx2BNUlwc0g/+xIt44NJyv8Zr7sXwnyif
-         HoI3PPAr0/qCp5f4blSwoxqvZuqj4PUVrWXLz35vdt2L+kc98C5dI3df5ASKOt0mGRlW
-         WfoEkTXqgNZuccpc5jrC+nyHjRLbp0omlByOvgWa5dKnX/UceLUG5ARY8Uumttlk4D2V
-         wd71p9v+WKOKjiD1MHv5hx3mTPvyCLX+33H9U+O60jbsjEBil9A3OgHLa8gP9EwCKb2C
-         Eq90yIcYIG5j050iPh9YG+lsrDYnOICCO1xCq8ov/gVFnPeuXF8A6xWEBjkbxd+atj2b
-         LYHg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/fqECv7vxciAWwKO8sEdBCAWY9N1QBQpSAu4F0lVrJeKCsXrsfSHDAIa86Tfd7U1ysb7c9wslxqwsLIA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOBEh68lK8ciRjBzGblmqZg4u9aKKd19UQEy9O0FAcbCKVwGTa
-	wK7n9lbibN4lSB3isCzM44eQXM0mKFABFWpNYOAQdJ3dHAUd9sIVjGFbPEKi
-X-Google-Smtp-Source: AGHT+IH5B/rFi6dhX1OP5O/M4KsKImU9kUA2CfDYdRCCclIyjTD6X4BJC7ifp6YRtjCMqthE7u+jbQ==
-X-Received: by 2002:a17:906:dc8e:b0:a8a:6bd8:b671 with SMTP id a640c23a62f3a-a99a0eb825dmr574967566b.5.1728610995834;
-        Thu, 10 Oct 2024 18:43:15 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80c03b3sm154147166b.127.2024.10.10.18.43.12
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Oct 2024 18:43:14 -0700 (PDT)
-Date: Fri, 11 Oct 2024 01:43:12 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Jann Horn <jannh@google.com>
-Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	maple-tree@lists.infradead.org, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] maple_tree: fix outdated flag name in comment
-Message-ID: <20241011014312.eplmnhhwfcp4qlor@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20241007-maple-tree-doc-fix-v1-1-6bbf89c1153d@google.com>
+	s=arc-20240116; t=1728611195; c=relaxed/simple;
+	bh=V1ex6JnBkyArAbLsBg6zh29Yuy7ncQOxbLp2XoOjxBw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pwLJx0YohdTeCmm9hrm2/Cw1r9KIiFEm/vpKECM7IOg3HgtKgNtaYQhSyKW8oiCoKTGy6WLIy++t/lO18VmTkotC8YrPXZ6dA/gD3qI2qEtvKRr6R0YqnwHaoWxTP9cFn/lt+vsQK5c4bCiCNjoUvpmCl2HrHjqTr0cDWXBmgMo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=mdkytAbu; arc=none smtp.client-ip=115.124.30.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728611190; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=Aq/pEFbbDoLqCT/1dwacA/sA0zk+kGqwRRgdCZkAyoE=;
+	b=mdkytAbu6v/wvF9I+pbuiuFJMO6APMDlQ1Q1DOAAkJEzPHrtmarbB7Dk9JlT7WRo3S0dS6wrVqfncDBHQ0i5LO0ihO9vYXCKcYOXMdcSZsFy7S6tLuJ3LGPpX6IM99sf7C0VDc1ki0RHa7qBRdDhft/4mFJdcslDT7neSzn7lGg=
+Received: from 30.221.128.133(mailfrom:lulie@linux.alibaba.com fp:SMTPD_---0WGo3O4w_1728611189 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Oct 2024 09:46:29 +0800
+Message-ID: <76395c99-a656-42c0-a004-b5e8db241ed0@linux.alibaba.com>
+Date: Fri, 11 Oct 2024 09:46:27 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-maple-tree-doc-fix-v1-1-6bbf89c1153d@google.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH bpf-next] bpf: Add rcu ptr in btf_id_sock_common_types
+To: Martin KaFai Lau <martin.lau@linux.dev>
+Cc: ast@kernel.org, daniel@iogearbox.net, john.fastabend@gmail.com,
+ andrii@kernel.org, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, xuanzhuo@linux.alibaba.com,
+ bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241008080916.44724-1-lulie@linux.alibaba.com>
+ <80cb3d4b-cebb-4f08-865d-354110a54467@linux.dev>
+ <2e3f676a-ef03-4618-852d-ceb3b620a640@linux.alibaba.com>
+ <7b090ca5-7997-4371-8d79-7862a7e27052@linux.dev>
+From: Philo Lu <lulie@linux.alibaba.com>
+In-Reply-To: <7b090ca5-7997-4371-8d79-7862a7e27052@linux.dev>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 07, 2024 at 11:47:45PM +0200, Jann Horn wrote:
->MAPLE_USE_RCU was renamed to MT_FLAGS_USE_RCU at some point, fix up the
->comment.
->
->Signed-off-by: Jann Horn <jannh@google.com>
 
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
+On 2024/10/11 06:07, Martin KaFai Lau wrote:
+> On 10/8/24 7:23 PM, Philo Lu wrote:
+>>
+>>
+>> On 2024/10/9 03:05, Martin KaFai Lau wrote:
+>>> On 10/8/24 1:09 AM, Philo Lu wrote:
+>>>> Sometimes sk is dereferenced as an rcu ptr, such as skb->sk in tp_btf,
+>>>> which is a valid type of sock common. Then helpers like bpf_skc_to_*()
+>>>> can be used with skb->sk.
+>>>>
+>>>> For example, the following prog will be rejected without this patch:
+>>>> ```
+>>>> SEC("tp_btf/tcp_bad_csum")
+>>>> int BPF_PROG(tcp_bad_csum, struct sk_buff* skb)
+>>>> {
+>>>>     struct sock *sk = skb->sk;
+>>>>     struct tcp_sock *tp;
+>>>>
+>>>>     if (!sk)
+>>>>         return 0;
+>>>>     tp = bpf_skc_to_tcp_sock(sk);
+>>>
+>>> If the use case is for reading the fields in tp, please use the 
+>>> bpf_core_cast from the libbpf's bpf_core_read.h. bpf_core_cast is 
+>>> using the bpf_rdonly_cast kfunc underneath.
+>>>
+>>
+>> Thank you! This works for me so this patch is unnecessary then.
+>>
+>> Just curious is there any technical issue to include rcu_ptr into 
+>> btf_id_sock_common_types? AFAICT rcu_ptr should also be a valid ptr 
+>> type, and then btf_id_sock_common_types will behave like 
+>> (PTR_TO_BTF_ID + &btf_sock_ids[BTF_SOCK_TYPE_SOCK_COMMON]) in 
+>> bpf_func_proto.
+> 
+> bpf_skc_to_*() returns a PTR_TO_BTF_ID which can be passed into other 
+> helpers that takes ARG_PTR_TO_BTF_ID_SOCK_COMMON. There are helpers that 
+> change the sk. e.g. bpf_setsockopt() changes the sk and needs sk to be 
+> locked. Other non tracing hooks do have a hold on the skb also. I did 
+> take a quick look at the bpf_setsockopt situation and looks ok. I am 
+> positive there are other helpers that need to audit first.
+> 
+> Tracing use case should only read the sk. bpf_core_cast() is the correct 
+> one to use. The bpf_sk_storage_{get,delete}() should be the only allowed 
+> helper that can change the sk.
+
+Thank you for explanation, Martin. This helps me a lot.
 -- 
-Wei Yang
-Help you, Help me
+Philo
+
 
