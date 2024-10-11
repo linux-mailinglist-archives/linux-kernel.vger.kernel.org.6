@@ -1,42 +1,43 @@
-Return-Path: <linux-kernel+bounces-360904-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DDF699A134
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:24:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C57899A135
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:24:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3B24B21C93
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:24:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 929CE1C213E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EBAC21265D;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1942212D39;
 	Fri, 11 Oct 2024 10:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="zGS6x4dt"
-Received: from out0-217.mail.aliyun.com (out0-217.mail.aliyun.com [140.205.0.217])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="sfij/V3h"
+Received: from out0-215.mail.aliyun.com (out0-215.mail.aliyun.com [140.205.0.215])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7EC22210C2C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:24:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2376212623
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:24:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.215
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728642249; cv=none; b=ryjJfSOAfh270fuRIUS2A4glrl/GVK+10bo3tcqHVpre1QFllSEJ6hXm1XYbiL60LYWdynATVft8tcivY5XlZ/D01zAr97aAygmplQYp2Pi7kJcXCjgax4XfV7ky4t0U7z3en1ja4WHU0PZC82mCIOloBFJnu/ZXdiMUZTVDV30=
+	t=1728642250; cv=none; b=OPbvWOk8syptgNuP8iJ4pSjMvzUpByA4bIPNNxdSZnyt4sYVYPxHipfe/BVoCpGQGaZuQomOPOF89rlpWTrMpFOcI1vGR0F5eVGJc3DYDNdWF15+HJY5LXkW+XNGNm6EG0rtmS2w0z6HdoOEeDHBQma+iJ6BqxXwV1/IOYE2RLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728642249; c=relaxed/simple;
-	bh=Wd4pj46/twq5DBK2dTHcgkCEQf3kgrw1fVkR51iaR2s=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UH/5V4Ad1Vv5OiMNnN0QqZCSE5NpAES2i8FL/MzaAtWNW/X8+5Yi571a4WQ4LLQaZu2AwuJO+XU86Mk9OJzGATYwECNd1s2c2zPw3i6cLPg4NmpRApH7SgsllW9dJLz1Vv1HNvFYHTajIHHgGFqWtcdNZkB28hU+ewgOhi7QTYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=zGS6x4dt; arc=none smtp.client-ip=140.205.0.217
+	s=arc-20240116; t=1728642250; c=relaxed/simple;
+	bh=/hX+bxsF6lpohxaIef4uWTY1yePA2cOA0dESUbQsSHY=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ewYyDLdrC4y7J2d0c2iHZzH8RZR83hSaqhhISvwBxt5c2eyE46O6kGa4ZcnwcjHUfbOPlJAbpPRXkhpH2iEsPvrG/6jl7Tu5rLlvxSjTS7iJx/C/vtVCMXusxdUp1monOMsOiVSU+LswExU7fd5u87z+xR8zT/+yLGqV8aaqJ+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=sfij/V3h; arc=none smtp.client-ip=140.205.0.215
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=antgroup.com; s=default;
-	t=1728642243; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=XaH+HrDOONCnVrlgIRr7EJ0vjGugHLu4U4mCg4db9+A=;
-	b=zGS6x4dtYrPCdEXNfto78Y73idVNRAXRzno7Tb1MbdZMqzozMpw2j4hM01fG00OyFkJ6BHysTYsXPawpARYXUzx1NhBLUtKTMh9nuWtmD/Y2W9q+HHnftcZGm+YpVSu1Mz7JJC7FC7wb9azi/2Kx4eoF3hJ798D4A2sWTssSTF8=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.ZeXjAEj_1728642236 cluster:ay29)
+	t=1728642244; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=wGSZJTGBgekPP7ZWKI1NSpSXjezm46pwmtVfcdcBt0M=;
+	b=sfij/V3hQGkXk15HeZrAKNjBHPNkc5Ov/ZGChbClrYaBaTszEuHm8qZRChu+yGOPLE0nsAE8aNirTq1Z8kgqZ0AtfvB5sEdJDHFreBGf5dyDI4lSKoN6Nn0uPJXn+SuZgrRIgEjPZ4PX8Ib4rs97jCNoxjplqovIBP+Hu4qySz0=
+Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.ZeXjAHV_1728642242 cluster:ay29)
           by smtp.aliyun-inc.com;
-          Fri, 11 Oct 2024 18:24:02 +0800
+          Fri, 11 Oct 2024 18:24:03 +0800
 From: "Tiwei Bie" <tiwei.btw@antgroup.com>
 To: richard@nod.at,
 	anton.ivanov@cambridgegreys.com,
@@ -44,11 +45,14 @@ To: richard@nod.at,
 Cc:  <linux-um@lists.infradead.org>,
    <linux-kernel@vger.kernel.org>,
    <benjamin@sipsolutions.net>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH v2 0/2] um: Some page bit cleanups
-Date: Fri, 11 Oct 2024 18:23:52 +0800
-Message-Id: <20241011102354.1682626-1-tiwei.btw@antgroup.com>
+  "Tiwei Bie" <tiwei.btw@antgroup.com>,
+  "Benjamin Berg" <benjamin.berg@intel.com>
+Subject: [PATCH v2 1/2] um: Abandon the _PAGE_NEWPROT bit
+Date: Fri, 11 Oct 2024 18:23:53 +0800
+Message-Id: <20241011102354.1682626-2-tiwei.btw@antgroup.com>
 X-Mailer: git-send-email 2.34.1
+In-Reply-To: <20241011102354.1682626-1-tiwei.btw@antgroup.com>
+References: <20241011102354.1682626-1-tiwei.btw@antgroup.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,30 +61,321 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-v2:
-- Remove the unneeded "if" (suggested by Johannes Berg);
-- Collect the "Reviewed-by" from Benjamin Berg;
-- Add "um: Rename _PAGE_NEWPAGE to _PAGE_NEEDSYNC" (suggested by Benjamin Berg);
-- Add a missing comment update in tlbflush.h;
+When a PTE is updated in the page table, the _PAGE_NEWPAGE bit will
+always be set. And the corresponding page will always be mapped or
+unmapped depending on whether the PTE is present or not. The check
+on the _PAGE_NEWPROT bit is not really reachable. Abandoning it will
+allow us to simplify the code and remove the unreachable code.
 
-v1: https://lore.kernel.org/all/20241011053843.1623089-1-tiwei.btw@antgroup.com/
-
-Tiwei Bie (2):
-  um: Abandon the _PAGE_NEWPROT bit
-  um: Rename _PAGE_NEWPAGE to _PAGE_NEEDSYNC
-
- arch/um/include/asm/page.h              |  2 +-
- arch/um/include/asm/pgtable-2level.h    |  2 +-
- arch/um/include/asm/pgtable-4level.h    | 14 ++---
- arch/um/include/asm/pgtable.h           | 75 +++++++++----------------
+Reviewed-by: Benjamin Berg <benjamin.berg@intel.com>
+Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
+---
+ arch/um/include/asm/pgtable.h           | 37 +++-----------
  arch/um/include/asm/tlbflush.h          |  4 +-
  arch/um/include/shared/os.h             |  2 -
  arch/um/include/shared/skas/stub-data.h |  1 -
  arch/um/kernel/skas/stub.c              | 10 ----
- arch/um/kernel/tlb.c                    | 74 +++++++++++-------------
- arch/um/os-Linux/skas/mem.c             | 21 -------
- 10 files changed, 68 insertions(+), 137 deletions(-)
+ arch/um/kernel/tlb.c                    | 66 +++++++++++--------------
+ arch/um/os-Linux/skas/mem.c             | 21 --------
+ 7 files changed, 36 insertions(+), 105 deletions(-)
 
+diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
+index bd7a9593705f..6b1317400190 100644
+--- a/arch/um/include/asm/pgtable.h
++++ b/arch/um/include/asm/pgtable.h
+@@ -12,7 +12,6 @@
+ 
+ #define _PAGE_PRESENT	0x001
+ #define _PAGE_NEWPAGE	0x002
+-#define _PAGE_NEWPROT	0x004
+ #define _PAGE_RW	0x020
+ #define _PAGE_USER	0x040
+ #define _PAGE_ACCESSED	0x080
+@@ -151,23 +150,12 @@ static inline int pte_newpage(pte_t pte)
+ 	return pte_get_bits(pte, _PAGE_NEWPAGE);
+ }
+ 
+-static inline int pte_newprot(pte_t pte)
+-{
+-	return(pte_present(pte) && (pte_get_bits(pte, _PAGE_NEWPROT)));
+-}
+-
+ /*
+  * =================================
+  * Flags setting section.
+  * =================================
+  */
+ 
+-static inline pte_t pte_mknewprot(pte_t pte)
+-{
+-	pte_set_bits(pte, _PAGE_NEWPROT);
+-	return(pte);
+-}
+-
+ static inline pte_t pte_mkclean(pte_t pte)
+ {
+ 	pte_clear_bits(pte, _PAGE_DIRTY);
+@@ -182,19 +170,14 @@ static inline pte_t pte_mkold(pte_t pte)
+ 
+ static inline pte_t pte_wrprotect(pte_t pte)
+ {
+-	if (likely(pte_get_bits(pte, _PAGE_RW)))
+-		pte_clear_bits(pte, _PAGE_RW);
+-	else
+-		return pte;
+-	return(pte_mknewprot(pte));
++	pte_clear_bits(pte, _PAGE_RW);
++	return pte;
+ }
+ 
+ static inline pte_t pte_mkread(pte_t pte)
+ {
+-	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
+-		return pte;
+ 	pte_set_bits(pte, _PAGE_USER);
+-	return(pte_mknewprot(pte));
++	return pte;
+ }
+ 
+ static inline pte_t pte_mkdirty(pte_t pte)
+@@ -211,18 +194,14 @@ static inline pte_t pte_mkyoung(pte_t pte)
+ 
+ static inline pte_t pte_mkwrite_novma(pte_t pte)
+ {
+-	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
+-		return pte;
+ 	pte_set_bits(pte, _PAGE_RW);
+-	return(pte_mknewprot(pte));
++	return pte;
+ }
+ 
+ static inline pte_t pte_mkuptodate(pte_t pte)
+ {
+ 	pte_clear_bits(pte, _PAGE_NEWPAGE);
+-	if(pte_present(pte))
+-		pte_clear_bits(pte, _PAGE_NEWPROT);
+-	return(pte);
++	return pte;
+ }
+ 
+ static inline pte_t pte_mknewpage(pte_t pte)
+@@ -236,12 +215,10 @@ static inline void set_pte(pte_t *pteptr, pte_t pteval)
+ 	pte_copy(*pteptr, pteval);
+ 
+ 	/* If it's a swap entry, it needs to be marked _PAGE_NEWPAGE so
+-	 * fix_range knows to unmap it.  _PAGE_NEWPROT is specific to
+-	 * mapped pages.
++	 * update_pte_range knows to unmap it.
+ 	 */
+ 
+ 	*pteptr = pte_mknewpage(*pteptr);
+-	if(pte_present(*pteptr)) *pteptr = pte_mknewprot(*pteptr);
+ }
+ 
+ #define PFN_PTE_SHIFT		PAGE_SHIFT
+@@ -298,8 +275,6 @@ static inline int pte_same(pte_t pte_a, pte_t pte_b)
+ 	({ pte_t pte;					\
+ 							\
+ 	pte_set_val(pte, page_to_phys(page), (pgprot));	\
+-	if (pte_present(pte))				\
+-		pte_mknewprot(pte_mknewpage(pte));	\
+ 	pte;})
+ 
+ static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
+diff --git a/arch/um/include/asm/tlbflush.h b/arch/um/include/asm/tlbflush.h
+index db997976b6ea..13a3009942be 100644
+--- a/arch/um/include/asm/tlbflush.h
++++ b/arch/um/include/asm/tlbflush.h
+@@ -9,8 +9,8 @@
+ #include <linux/mm.h>
+ 
+ /*
+- * In UML, we need to sync the TLB over by using mmap/munmap/mprotect syscalls
+- * from the process handling the MM (which can be the kernel itself).
++ * In UML, we need to sync the TLB over by using mmap/munmap syscalls from
++ * the process handling the MM (which can be the kernel itself).
+  *
+  * To track updates, we can hook into set_ptes and flush_tlb_*. With set_ptes
+  * we catch all PTE transitions where memory that was unusable becomes usable.
+diff --git a/arch/um/include/shared/os.h b/arch/um/include/shared/os.h
+index bf539fee7831..09f8201de5db 100644
+--- a/arch/um/include/shared/os.h
++++ b/arch/um/include/shared/os.h
+@@ -279,8 +279,6 @@ int map(struct mm_id *mm_idp, unsigned long virt,
+ 	unsigned long len, int prot, int phys_fd,
+ 	unsigned long long offset);
+ int unmap(struct mm_id *mm_idp, unsigned long addr, unsigned long len);
+-int protect(struct mm_id *mm_idp, unsigned long addr,
+-	    unsigned long len, unsigned int prot);
+ 
+ /* skas/process.c */
+ extern int is_skas_winch(int pid, int fd, void *data);
+diff --git a/arch/um/include/shared/skas/stub-data.h b/arch/um/include/shared/skas/stub-data.h
+index 3fbdda727373..81a4cace032c 100644
+--- a/arch/um/include/shared/skas/stub-data.h
++++ b/arch/um/include/shared/skas/stub-data.h
+@@ -30,7 +30,6 @@ enum stub_syscall_type {
+ 	STUB_SYSCALL_UNSET = 0,
+ 	STUB_SYSCALL_MMAP,
+ 	STUB_SYSCALL_MUNMAP,
+-	STUB_SYSCALL_MPROTECT,
+ };
+ 
+ struct stub_syscall {
+diff --git a/arch/um/kernel/skas/stub.c b/arch/um/kernel/skas/stub.c
+index 5d52ffa682dc..796fc266d3bb 100644
+--- a/arch/um/kernel/skas/stub.c
++++ b/arch/um/kernel/skas/stub.c
+@@ -35,16 +35,6 @@ static __always_inline int syscall_handler(struct stub_data *d)
+ 				return -1;
+ 			}
+ 			break;
+-		case STUB_SYSCALL_MPROTECT:
+-			res = stub_syscall3(__NR_mprotect,
+-					    sc->mem.addr, sc->mem.length,
+-					    sc->mem.prot);
+-			if (res) {
+-				d->err = res;
+-				d->syscall_data_len = i;
+-				return -1;
+-			}
+-			break;
+ 		default:
+ 			d->err = -95; /* EOPNOTSUPP */
+ 			d->syscall_data_len = i;
+diff --git a/arch/um/kernel/tlb.c b/arch/um/kernel/tlb.c
+index 548af31d4111..23c1f550cd7c 100644
+--- a/arch/um/kernel/tlb.c
++++ b/arch/um/kernel/tlb.c
+@@ -23,9 +23,6 @@ struct vm_ops {
+ 		    int phys_fd, unsigned long long offset);
+ 	int (*unmap)(struct mm_id *mm_idp,
+ 		     unsigned long virt, unsigned long len);
+-	int (*mprotect)(struct mm_id *mm_idp,
+-			unsigned long virt, unsigned long len,
+-			unsigned int prot);
+ };
+ 
+ static int kern_map(struct mm_id *mm_idp,
+@@ -44,15 +41,6 @@ static int kern_unmap(struct mm_id *mm_idp,
+ 	return os_unmap_memory((void *)virt, len);
+ }
+ 
+-static int kern_mprotect(struct mm_id *mm_idp,
+-			 unsigned long virt, unsigned long len,
+-			 unsigned int prot)
+-{
+-	return os_protect_memory((void *)virt, len,
+-				 prot & UM_PROT_READ, prot & UM_PROT_WRITE,
+-				 1);
+-}
+-
+ void report_enomem(void)
+ {
+ 	printk(KERN_ERR "UML ran out of memory on the host side! "
+@@ -65,33 +53,37 @@ static inline int update_pte_range(pmd_t *pmd, unsigned long addr,
+ 				   struct vm_ops *ops)
+ {
+ 	pte_t *pte;
+-	int r, w, x, prot, ret = 0;
++	int ret = 0;
+ 
+ 	pte = pte_offset_kernel(pmd, addr);
+ 	do {
+-		r = pte_read(*pte);
+-		w = pte_write(*pte);
+-		x = pte_exec(*pte);
+-		if (!pte_young(*pte)) {
+-			r = 0;
+-			w = 0;
+-		} else if (!pte_dirty(*pte))
+-			w = 0;
+-
+-		prot = ((r ? UM_PROT_READ : 0) | (w ? UM_PROT_WRITE : 0) |
+-			(x ? UM_PROT_EXEC : 0));
+-		if (pte_newpage(*pte)) {
+-			if (pte_present(*pte)) {
+-				__u64 offset;
+-				unsigned long phys = pte_val(*pte) & PAGE_MASK;
+-				int fd = phys_mapping(phys, &offset);
+-
+-				ret = ops->mmap(ops->mm_idp, addr, PAGE_SIZE,
+-						prot, fd, offset);
+-			} else
+-				ret = ops->unmap(ops->mm_idp, addr, PAGE_SIZE);
+-		} else if (pte_newprot(*pte))
+-			ret = ops->mprotect(ops->mm_idp, addr, PAGE_SIZE, prot);
++		if (!pte_newpage(*pte))
++			continue;
++
++		if (pte_present(*pte)) {
++			__u64 offset;
++			unsigned long phys = pte_val(*pte) & PAGE_MASK;
++			int fd = phys_mapping(phys, &offset);
++			int r, w, x, prot;
++
++			r = pte_read(*pte);
++			w = pte_write(*pte);
++			x = pte_exec(*pte);
++			if (!pte_young(*pte)) {
++				r = 0;
++				w = 0;
++			} else if (!pte_dirty(*pte))
++				w = 0;
++
++			prot = (r ? UM_PROT_READ : 0) |
++			       (w ? UM_PROT_WRITE : 0) |
++			       (x ? UM_PROT_EXEC : 0);
++
++			ret = ops->mmap(ops->mm_idp, addr, PAGE_SIZE,
++					prot, fd, offset);
++		} else
++			ret = ops->unmap(ops->mm_idp, addr, PAGE_SIZE);
++
+ 		*pte = pte_mkuptodate(*pte);
+ 	} while (pte++, addr += PAGE_SIZE, ((addr < end) && !ret));
+ 	return ret;
+@@ -180,11 +172,9 @@ int um_tlb_sync(struct mm_struct *mm)
+ 	if (mm == &init_mm) {
+ 		ops.mmap = kern_map;
+ 		ops.unmap = kern_unmap;
+-		ops.mprotect = kern_mprotect;
+ 	} else {
+ 		ops.mmap = map;
+ 		ops.unmap = unmap;
+-		ops.mprotect = protect;
+ 	}
+ 
+ 	pgd = pgd_offset(mm, addr);
+diff --git a/arch/um/os-Linux/skas/mem.c b/arch/um/os-Linux/skas/mem.c
+index 9a13ac23c606..d7f1814b0e5a 100644
+--- a/arch/um/os-Linux/skas/mem.c
++++ b/arch/um/os-Linux/skas/mem.c
+@@ -217,24 +217,3 @@ int unmap(struct mm_id *mm_idp, unsigned long addr, unsigned long len)
+ 
+ 	return 0;
+ }
+-
+-int protect(struct mm_id *mm_idp, unsigned long addr, unsigned long len,
+-	    unsigned int prot)
+-{
+-	struct stub_syscall *sc;
+-
+-	/* Compress with previous syscall if that is possible */
+-	sc = syscall_stub_get_previous(mm_idp, STUB_SYSCALL_MPROTECT, addr);
+-	if (sc && sc->mem.prot == prot) {
+-		sc->mem.length += len;
+-		return 0;
+-	}
+-
+-	sc = syscall_stub_alloc(mm_idp);
+-	sc->syscall = STUB_SYSCALL_MPROTECT;
+-	sc->mem.addr = addr;
+-	sc->mem.length = len;
+-	sc->mem.prot = prot;
+-
+-	return 0;
+-}
 -- 
 2.34.1
 
