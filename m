@@ -1,191 +1,145 @@
-Return-Path: <linux-kernel+bounces-361570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2AC2A99A9E8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:25:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38F9499A9E5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 440C51C23438
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:25:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF42283346
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:25:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B4A71BCA0A;
-	Fri, 11 Oct 2024 17:25:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D8E1BBBC6;
+	Fri, 11 Oct 2024 17:25:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DiUA1qAC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Khp9Sxfc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7500B84E0A;
-	Fri, 11 Oct 2024 17:25:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E8984E0A;
+	Fri, 11 Oct 2024 17:25:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728667547; cv=none; b=VQ631kwPV/qrapHAIBjzejUqKObcNT7aGSIuMdUA86zglbbgyudU1+GJoUU/2l/duxGDq+IXrbG48rEAGS1IkogUCEec5kXtUYElpPvU9WV8xkn0sPePGJvnzJsEezJ6E9ibSwPOZnfPxIA0xI8I5+6SGM3x+1tyROdSpGW5UKU=
+	t=1728667530; cv=none; b=bPixs8z399gvbdOoUWB3+1qDQqbdpcsTYR7p9AG2l1p06/D1R/upze4dX5bizIcgFNvpvU38fWCgoDBjRQANO37fxlgOdi3LR7nAl8+AD+fqoLpl4WrXVGrF4FND6B/KnftK5lMVmXGEeK6iJlQkLW/pSXrzetVeDZjCY7lmTYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728667547; c=relaxed/simple;
-	bh=ObF400hR0lx7SnM1OGa7c3QDb1u/UbS9efaTl1Yk/g4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Ha61aq7Kyv6AuoSun7ipkhkpJyO00oFiTWDzWiayawM0weHfozBLHWftuKm+dwQGInO94sawY3tTrJ7FZmwMkVcT1av562P3cOBDNbW6zCjMpCK0FiiuezoOgwOgRvlOK7oBo4lucblYvEXnMrjZx14mE+TA6VnFwgQUcruMm0w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DiUA1qAC; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728667546; x=1760203546;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=ObF400hR0lx7SnM1OGa7c3QDb1u/UbS9efaTl1Yk/g4=;
-  b=DiUA1qACzOUI/qNNmQlh6msTf0PvZKErXxrFfw/t4nLDaoEx5/D1mz8+
-   PVkp/RbNTl5Qf7A23nCNroeVS7rnoHdhBVEmTs2U/ETrpINzQNLnMEDui
-   7/AgUtzkK6wrcByraPmdmdi3oFmkFdCdBgJMVUhA4gXzioKXdqgbSuoi7
-   r0qvxoU9qgjg83axOZ9IWGGP9Rgt5FAeAyYtypHr3Dkb2Smfy5CmsFVey
-   zDmby5EWHnfwNF+41/+BQrmtwi9aGG0JnpE5ds1aC9JajcsOs/SIrWV9R
-   2Q+XmKmrz/ZPwAi9JQaMMEoJpprxopJevK8Hq4b/nr3HdfGeZobWQ/ReH
-   Q==;
-X-CSE-ConnectionGUID: HzqdlhoNTFKxmOzVOENCTg==
-X-CSE-MsgGUID: OBlACRvCTvaADwGBvdcjqQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53481836"
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="53481836"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 10:25:44 -0700
-X-CSE-ConnectionGUID: hWqe/KRATrSgzzgb5jdKmA==
-X-CSE-MsgGUID: Tf8nG0vyQ06bfNCJOl/TFw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="107808346"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa002.jf.intel.com with ESMTP; 11 Oct 2024 10:25:41 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id A844D807; Fri, 11 Oct 2024 20:25:39 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Tero Kristo <tero.kristo@linux.intel.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Hans de Goede <hdegoede@redhat.com>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	David Gow <davidgow@google.com>,
-	Masahiro Yamada <masahiroy@kernel.org>
-Subject: [rfc, PATCH v1 1/1] platform/x86: intel: Add 'intel' prefix to the modules automatically
-Date: Fri, 11 Oct 2024 20:24:09 +0300
-Message-ID: <20241011172531.3407093-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1728667530; c=relaxed/simple;
+	bh=7gKo3yfQbtf682tI2CBMgRz5iYurKpzkmcCft6FC4gs=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qnADRP0VQaP4RTqKB1yJvlsi9AgeQr3HeG2cgN93z6BJYXfBqV7gX8DbgeO46KQw5r5iy0j1uO/XW3xV0L+hheQc4lbM9jj9cX1oI2Vkz/5J5BBGkQyAlImprSgEJYUspYFyBP5cgi6OvrGfUHnkUCIQ9ocniIobLCBQ2RxqfXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Khp9Sxfc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BG0srI023945;
+	Fri, 11 Oct 2024 17:25:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=USif0rGIKgTqepWQydU1/A
+	WW05Ve570RSc7Edg+BTy8=; b=Khp9SxfcY6C3KWZbSxMljDRaL42vvEGZGdryng
+	VJ8God/FiBKzMY49DNqqPxEz+ol+gSmIZ2g7cSoojhzY6XovesUqADBpazn0Urwo
+	rk1ZjLluxtpxQ4kOl+RKVBnUmNL6aP4ojK2eb7tK1BSwtMI7afXgMzEeBr+o3kjv
+	8kd4zon4O1oR2PySgsjDpSwqYgX2aUnUN4/oXcaqjJFPfNEGZebFgpIYHkP6uEuI
+	UKPqvIg/x0mknbEOg5da8Xhmng4Y2mN47MbxhzTi8snTsvME+ooz7IKrhGnRkP4o
+	jEVMhXD/c8Vu/8YF5t+7nKpiuVR+RCc5ep1ZepZyWNYOehSA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426y3vstq9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 17:25:20 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BHPJb3014244
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 17:25:19 GMT
+Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Fri, 11 Oct 2024 10:25:19 -0700
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+Date: Fri, 11 Oct 2024 10:25:13 -0700
+Subject: [PATCH v2] drm/msm/dpu: don't always activate merge_3d block
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241011-merge3d-fix-v2-1-2082470f573c@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAHhfCWcC/1XMQQ6CMBCF4auQWVszHYqgK+9hWGA7wCyg2CrRk
+ N7dys7l/5L3bRA5CEe4FBsEXiWKn3PQoQA7dvPASlxuICSDDTVq4jBw6VQvb6W7xiFWXFJdQ34
+ sgfO8a7c29yjx6cNnx1f9W3dHI57/nFUrrdDh/dRXlozh6+MlVmZ7tH6CNqX0BcldeXCoAAAA
+X-Change-ID: 20240828-merge3d-fix-1a8d005e3277
+To: Rob Clark <robdclark@gmail.com>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, "Simona
+ Vetter" <simona@ffwll.ch>
+CC: <quic_abhinavk@quicinc.com>, Rob Clark <robdclark@chromium.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        "Jessica
+ Zhang" <quic_jesszhan@quicinc.com>
+X-Mailer: b4 0.15-dev-2a633
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1728667519; l=1640;
+ i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
+ bh=7gKo3yfQbtf682tI2CBMgRz5iYurKpzkmcCft6FC4gs=;
+ b=ReHRBe6XXxKBGEFfM5svE4kO+fJtHDfuZUvy7WK5tWqdTawQKQSN1duVqxxA5wYkCp0qovEzp
+ TJnKy90EnyMBGRqE3KO8TadCUjhKUvfEXGSXEWS9LjeFXhQ3uM1Ck69
+X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
+ pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: H6MuThEwCCo9shs5F3Rb_WaOAznXY87G
+X-Proofpoint-GUID: H6MuThEwCCo9shs5F3Rb_WaOAznXY87G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ suspectscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
+ clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0 adultscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110121
 
-Rework Makefile to add 'intel' prefix to the modules automatically.
-This removes a lot of boilerplate code in it and also makes robust
-against mistypos in the prefix.
+Only enable the merge_3d block for the video phys encoder when the 3d
+blend mode is not *_NONE since there is no need to activate the merge_3d
+block for cases where merge_3d is not needed.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
+Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
 ---
+Changes in v2:
+- Added more detailed commit message
+- Link to v1: https://lore.kernel.org/r/20241009-merge3d-fix-v1-1-0d0b6f5c244e@quicinc.com
+---
+ drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Send as RFC because TBH I rather want to have something like this to be
-available on the level of Kbuild for any of the subdirectories in
-question. Also I haven't done any comprehensive build tests on this,
-let's see what CIs think about this...
+diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+index ba8878d21cf0e1945a393cca806cb64f03b16640..c5e27eeaff0423a69fad98122ffef7e041fbc68e 100644
+--- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
++++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
+@@ -302,7 +302,7 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
+ 	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
+ 	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
+ 	intf_cfg.dsc = dpu_encoder_helper_get_dsc(phys_enc);
+-	if (phys_enc->hw_pp->merge_3d)
++	if (intf_cfg.mode_3d && phys_enc->hw_pp->merge_3d)
+ 		intf_cfg.merge_3d = phys_enc->hw_pp->merge_3d->idx;
+ 
+ 	spin_lock_irqsave(phys_enc->enc_spinlock, lock_flags);
 
- drivers/platform/x86/intel/Makefile           | 68 ++++++++-----------
- .../intel/{intel_plr_tpmi.c => plr_tpmi.c}    |  0
- 2 files changed, 29 insertions(+), 39 deletions(-)
- rename drivers/platform/x86/intel/{intel_plr_tpmi.c => plr_tpmi.c} (100%)
+---
+base-commit: a20a91fb1bfac5d05ec5bcf9afe0c9363f6c8c93
+change-id: 20240828-merge3d-fix-1a8d005e3277
 
-diff --git a/drivers/platform/x86/intel/Makefile b/drivers/platform/x86/intel/Makefile
-index 74db065c82d6..21e9e21e0142 100644
---- a/drivers/platform/x86/intel/Makefile
-+++ b/drivers/platform/x86/intel/Makefile
-@@ -17,50 +17,40 @@ obj-$(CONFIG_INTEL_UNCORE_FREQ_CONTROL)	+= uncore-frequency/
- 
- 
- # Intel input drivers
--intel-hid-y				:= hid.o
--obj-$(CONFIG_INTEL_HID_EVENT)		+= intel-hid.o
--intel-vbtn-y				:= vbtn.o
--obj-$(CONFIG_INTEL_VBTN)		+= intel-vbtn.o
-+intel-target-$(CONFIG_INTEL_HID_EVENT)		+= hid.o
-+intel-target-$(CONFIG_INTEL_VBTN)		+= vbtn.o
- 
- # Intel miscellaneous drivers
--obj-$(CONFIG_INTEL_ISHTP_ECLITE)	+= ishtp_eclite.o
--intel_int0002_vgpio-y			:= int0002_vgpio.o
--obj-$(CONFIG_INTEL_INT0002_VGPIO)	+= intel_int0002_vgpio.o
--intel_oaktrail-y			:= oaktrail.o
--obj-$(CONFIG_INTEL_OAKTRAIL)		+= intel_oaktrail.o
--intel_sdsi-y				:= sdsi.o
--obj-$(CONFIG_INTEL_SDSI)		+= intel_sdsi.o
--intel_vsec-y				:= vsec.o
--obj-$(CONFIG_INTEL_VSEC)		+= intel_vsec.o
-+intel-target-$(CONFIG_INTEL_ISHTP_ECLITE)	+= ishtp_eclite.o
-+
-+intel-target-$(CONFIG_INTEL_INT0002_VGPIO)	+= int0002_vgpio.o
-+intel-target-$(CONFIG_INTEL_OAKTRAIL)		+= oaktrail.o
-+intel-target-$(CONFIG_INTEL_SDSI)		+= sdsi.o
-+intel-target-$(CONFIG_INTEL_VSEC)		+= vsec.o
- 
- # Intel PMIC / PMC / P-Unit drivers
--intel_bxtwc_tmu-y			:= bxtwc_tmu.o
--obj-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= intel_bxtwc_tmu.o
--intel_crystal_cove_charger-y		:= crystal_cove_charger.o
--obj-$(CONFIG_X86_ANDROID_TABLETS)	+= intel_crystal_cove_charger.o
--intel_bytcrc_pwrsrc-y			:= bytcrc_pwrsrc.o
--obj-$(CONFIG_INTEL_BYTCRC_PWRSRC)	+= intel_bytcrc_pwrsrc.o
--intel_chtdc_ti_pwrbtn-y			:= chtdc_ti_pwrbtn.o
--obj-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= intel_chtdc_ti_pwrbtn.o
--intel_chtwc_int33fe-y			:= chtwc_int33fe.o
--obj-$(CONFIG_INTEL_CHTWC_INT33FE)	+= intel_chtwc_int33fe.o
--intel_mrfld_pwrbtn-y			:= mrfld_pwrbtn.o
--obj-$(CONFIG_INTEL_MRFLD_PWRBTN)	+= intel_mrfld_pwrbtn.o
--intel_punit_ipc-y			:= punit_ipc.o
--obj-$(CONFIG_INTEL_PUNIT_IPC)		+= intel_punit_ipc.o
-+intel-target-$(CONFIG_INTEL_BXTWC_PMIC_TMU)	+= bxtwc_tmu.o
-+intel-target-$(CONFIG_X86_ANDROID_TABLETS)	+= crystal_cove_charger.o
-+intel-target-$(CONFIG_INTEL_BYTCRC_PWRSRC)	+= bytcrc_pwrsrc.o
-+intel-target-$(CONFIG_INTEL_CHTDC_TI_PWRBTN)	+= chtdc_ti_pwrbtn.o
-+intel-target-$(CONFIG_INTEL_CHTWC_INT33FE)	+= chtwc_int33fe.o
-+intel-target-$(CONFIG_INTEL_MRFLD_PWRBTN)	+= mrfld_pwrbtn.o
-+intel-target-$(CONFIG_INTEL_PUNIT_IPC)		+= punit_ipc.o
- 
- # TPMI drivers
--intel_vsec_tpmi-y			:= tpmi.o
--obj-$(CONFIG_INTEL_TPMI)		+= intel_vsec_tpmi.o
--obj-$(CONFIG_INTEL_PLR_TPMI)		+= intel_plr_tpmi.o
--
--intel_tpmi_power_domains-y		:= tpmi_power_domains.o
--obj-$(CONFIG_INTEL_TPMI_POWER_DOMAINS)	+= intel_tpmi_power_domains.o
-+intel-target-$(CONFIG_INTEL_TPMI)		+= vsec_tpmi.o
-+intel-target-$(CONFIG_INTEL_PLR_TPMI)		+= plr_tpmi.o
-+intel-target-$(CONFIG_INTEL_TPMI_POWER_DOMAINS)	+= tpmi_power_domains.o
- 
- # Intel Uncore drivers
--intel-rst-y				:= rst.o
--obj-$(CONFIG_INTEL_RST)			+= intel-rst.o
--intel-smartconnect-y			:= smartconnect.o
--obj-$(CONFIG_INTEL_SMARTCONNECT)	+= intel-smartconnect.o
--intel_turbo_max_3-y			:= turbo_max_3.o
--obj-$(CONFIG_INTEL_TURBO_MAX_3)		+= intel_turbo_max_3.o
-+intel-target-$(CONFIG_INTEL_RST)		+= rst.o
-+intel-target-$(CONFIG_INTEL_SMARTCONNECT)	+= smartconnect.o
-+intel-target-$(CONFIG_INTEL_TURBO_MAX_3)	+= turbo_max_3.o
-+
-+define INTEL_OBJ_TARGET
-+intel-$(1)-y := $(1).o
-+obj-$(2) += intel-$(1).o
-+endef
-+
-+$(foreach target-y, $(basename $(intel-target-m)), $(eval $(call INTEL_OBJ_TARGET,$(target-y),y)))
-+$(foreach target-m, $(basename $(intel-target-m)), $(eval $(call INTEL_OBJ_TARGET,$(target-m),m)))
-diff --git a/drivers/platform/x86/intel/intel_plr_tpmi.c b/drivers/platform/x86/intel/plr_tpmi.c
-similarity index 100%
-rename from drivers/platform/x86/intel/intel_plr_tpmi.c
-rename to drivers/platform/x86/intel/plr_tpmi.c
+Best regards,
 -- 
-2.43.0.rc1.1336.g36b5255a03ac
+Jessica Zhang <quic_jesszhan@quicinc.com>
 
 
