@@ -1,219 +1,204 @@
-Return-Path: <linux-kernel+bounces-360763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 44E18999F35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:44:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F2E7999F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0A871F238BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:43:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 703931C21645
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:44:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CC720B216;
-	Fri, 11 Oct 2024 08:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D7C20B219;
+	Fri, 11 Oct 2024 08:44:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Z6lvzrqv"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="sD8kqpP4"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB1120ADD9;
-	Fri, 11 Oct 2024 08:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE18E20ADE7;
+	Fri, 11 Oct 2024 08:44:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636231; cv=none; b=Fmd/X+CH5Nsi9cDwUAHSFFdOZVM5HNQZee0bJjTbH5e4jsRlimjTM2KXpuG2CD7fLLwNANQg2MqZ+kuQzh7gi8qh66r7jmNmXrqjUezi+ryko44d75B591RO5lFZwpcpxfNN0BYLW6g9we58RFGBlOLReGST2ZEl+dEm/X0bJLU=
+	t=1728636257; cv=none; b=feQzTqUAGNiOrbI3G0YprQybRp7n8jjBw/I2QsLTMqFTItyhfvfXgcqClD0v9QGga7LolzX5oQIQOiagNI0qc9IYn1PBWzFuF7IuGvf4gmOmUzvLtqstIsBfb08Sxdqkzlig7ykH+P87SHF7NZ3u8WSpKKZgaQT0x09Q5VyZ6fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636231; c=relaxed/simple;
-	bh=m4iic7uKAXnsL6uCrTkkS8/BqTZS/Mc3ys/B02K28sE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dRmwCPfqXlTbp1okYQVXBhs/bsw6cQlasgmImcK0y/SsaWYfSuyb7qO06ZbXtDS1JT2CoipmqCmAMM4BkHb6EXx2mJ11SbCSiY0UlWRZfBZhukDPNE9++wsTHXQHrpPkNhc2GL6YmOSWi3vHAPGheWxozOFHk8JVylpVqKpx9xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Z6lvzrqv; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=reuDQlwZETnYSzS/i7ijoLlelnSTU2XRw/IvwMzVWMQ=; b=Z6lvzrqv5WpV5ajzRR/JH6hisw
-	dg1veub6KgDb9AV1WD8qUiRRk8EiTl51ZC5GVO0zbAgcMvBZwYGufCH2haBjfbx/CM3DDq7sr9dQs
-	07dztG9S5r4ggIjCqSXp8S9FiuyBDR2hNeXLh/wYw316xmyA2z65xRvwEyn5khM781blw10YTfgn5
-	UoshcCss63COWkW1F4SMHNCXXgofjrBecZF4GJoptW7KsLoKsJSazL5L15CPDnI/PoPzdthOYzc0v
-	7RbJalfaxHxJ357BL4Z23cvP/x8uJGcXo1lYSesI6xw9aLk6FCXSNll8MMPEKutfzxnQEV8Cj3X0O
-	k2L2tMpA==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1szBFP-0005Ig-7T; Fri, 11 Oct 2024 10:43:43 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>,
- Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org
-Subject:
- Re: [PATCH v2] arm64: dts: rockchip: Add dtsi file for RK3399S SoC variant
-Date: Fri, 11 Oct 2024 10:43:42 +0200
-Message-ID: <1999678.yKVeVyVuyW@diego>
-In-Reply-To: <D4SU6WHZCN34.2XL5W4D2T188G@cknow.org>
-References:
- <c32622e4a6897378d9df81c8c3eda1bdb9211e0b.1728632052.git.dsimic@manjaro.org>
- <20da65423e77e13511cc7c7bb39e0246@manjaro.org>
- <D4SU6WHZCN34.2XL5W4D2T188G@cknow.org>
+	s=arc-20240116; t=1728636257; c=relaxed/simple;
+	bh=ZI9clCjJjhVmMmhpzQMGAsPFn6KxMsb2kzwjyz1MSKw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lqnl6kH0IbldnL1RxNX4yQsClnOY0ZKFagjd/p2K0ym3iDFyKxpGPX6wQ/BoNXSb1xl6SxdoBGWo/bZsAMRdwQEtA+i188TKn1m9PgBGJKPY78Vp5VHU5DnlY10k6vN6sJv49bniFRTPpf8pJToHNGEwGftY8PP7pvRoqQlj7t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=sD8kqpP4; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=ufjU2q/C1FQdH4rkSPCHarm6ljmOSPBULCiUiT9EckE=; b=sD8kqpP4VzsRLqmeP0OxD40fLl
+	wrMM1jlHeRCdLcJsflW1Fjw66CYruIUBInI6EV+umzMLGnYqdIfoEd6GnzssQW5DCycAMt+hkymiz
+	0+t49eOlXG30bGb4CiYdQGF7jd+uMCbKx+8gjoXRwMgDyOpONA3iFrfazepyTmCy8/eU3LWbci+nt
+	4j02X12XIS8r2vTp+y+msbsUlx5iUOjxxvxZk4UCmuG4HRPHd8/HxnhtZpawhHJCCloUgh568GobO
+	5EIb6hXYPcw0RJla6huBxzgVN5gpDHtubsvyX7U1/MPR/2kKmNrsxBXKys+Vhin1h+9mFPektmGso
+	20TrEpqw==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1szBFu-0000000FiVI-1u6R;
+	Fri, 11 Oct 2024 08:44:14 +0000
+Date: Fri, 11 Oct 2024 01:44:14 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Ming Lei <ming.lei@redhat.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Andrew Morton <akpm@linux-foundation.org>,
+	Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	David Howells <dhowells@redhat.com>
+Subject: Re: [PATCH V2] lib/iov_iter.c: extract virt-contiguous pages in
+ iov_iter_extract_bvec_pages
+Message-ID: <ZwjlXoSu6zA5Xcy7@infradead.org>
+References: <20241011035247.2444033-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011035247.2444033-1-ming.lei@redhat.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Am Freitag, 11. Oktober 2024, 10:33:56 CEST schrieb Diederik de Haas:
-> Hi Dragan,
+On Fri, Oct 11, 2024 at 11:52:47AM +0800, Ming Lei wrote:
+> Actually iov_iter_extract_pages() requires that there isn't gap in the
+> extracted pages, so 'offset' only exists in the 1st page, then these
+> pages can be mapped to one virtual(contiguous) address.
 > 
-> On Fri Oct 11, 2024 at 10:23 AM CEST, Dragan Simic wrote:
-> > On 2024-10-11 10:00, Diederik de Haas wrote:
-> > > On Fri Oct 11, 2024 at 9:40 AM CEST, Dragan Simic wrote:
-> > >> Following the hierarchical representation of the SoC data that's been 
-> > >> already
-> > >> established in the commit 296602b8e5f7 ("arm64: dts: rockchip: Move 
-> > >> RK3399
-> > >> OPPs to dtsi files for SoC variants"), add new SoC dtsi file for the 
-> > >> Rockchip
-> > >> RK3399S SoC, which is yet another variant of the Rockchip RK3399 SoC.
-> > >> ...
-> > >> The RK3399S variant is used in the Pine64 PinePhone Pro only, [1] 
-> > >> whose board
-> > >> dts file included the necessary adjustments to the CPU DVFS OPPs.  
-> > >> This commit
-> > >> effectively moves those adjustments into the separate RK3399S SoC dtsi 
-> > >> file,
-> > >> following the above-mentioned "encapsulation" approach.
-> > >> ...
-> > >> ---
-> > >> ...
-> > >>  .../dts/rockchip/rk3399-pinephone-pro.dts     |  23 +---
-> > >>  arch/arm64/boot/dts/rockchip/rk3399-s.dtsi    | 123 
-> > >> ++++++++++++++++++
-> > >>  2 files changed, 124 insertions(+), 22 deletions(-)
-> > >>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
-> > >> 
-> > >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts 
-> > >> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> > >> index 1a44582a49fb..eee6cfb6de01 100644
-> > >> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> > >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> > >> @@ -13,7 +13,7 @@
-> > >>  #include <dt-bindings/input/gpio-keys.h>
-> > >>  #include <dt-bindings/input/linux-event-codes.h>
-> > >>  #include <dt-bindings/leds/common.h>
-> > >> -#include "rk3399.dtsi"
-> > >> +#include "rk3399-s.dtsi"
-> > >> 
-> > >>  / {
-> > >>  	model = "Pine64 PinePhone Pro";
-> > >> @@ -456,27 +456,6 @@ mpu6500@68 {
-> > >>  	};
-> > >>  };
-> > >> 
-> > >> -&cluster0_opp {
-> > >> -	opp04 {
-> > >> -		status = "disabled";
-> > >> -	};
-> > >> -
-> > >> -	opp05 {
-> > >> -		status = "disabled";
-> > >> -	};
-> > >> -};
-> > >> -
-> > >> -&cluster1_opp {
-> > >> -	opp06 {
-> > >> -		opp-hz = /bits/ 64 <1500000000>;
-> > >> -		opp-microvolt = <1100000 1100000 1150000>;
-> > >> -	};
-> > >> -
-> > >> -	opp07 {
-> > >> -		status = "disabled";
-> > >> -	};
-> > >> -};
-> > >> -
-> > >>  &io_domains {
-> > >>  	bt656-supply = <&vcc1v8_dvp>;
-> > >>  	audio-supply = <&vcca1v8_codec>;
-> > >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi 
-> > >> b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
-> > >> new file mode 100644
-> > >> index 000000000000..e54f451af9f3
-> > >> --- /dev/null
-> > >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
-> > >> @@ -0,0 +1,123 @@
-> > >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> > >> +/*
-> > >> + * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
-> > >> + */
-> > >> +
-> > >> +#include "rk3399-base.dtsi"
-> > >> +
-> > >> +/ {
-> > >> +	cluster0_opp: opp-table-0 {
-> > >> +		compatible = "operating-points-v2";
-> > >> +		opp-shared;
-> > >> +
-> > >> +		opp00 {
-> > >> +			opp-hz = /bits/ 64 <408000000>;
-> > >> +			opp-microvolt = <825000 825000 1250000>;
-> > >> +			clock-latency-ns = <40000>;
-> > >> +		};
-> > >> +		opp01 {
-> > >> +			opp-hz = /bits/ 64 <600000000>;
-> > >> +			opp-microvolt = <825000 825000 1250000>;
-> > >> +		};
-> > >> +		opp02 {
-> > >> +			opp-hz = /bits/ 64 <816000000>;
-> > >> +			opp-microvolt = <850000 850000 1250000>;
-> > >> +		};
-> > > 
-> > > Is there a reason why there isn't a line separator between the various
-> > > opp nodes? Normally there is one between nodes.
-> > > Note that in rk3588-opp.dtsi there are no separator lines between the
-> > > opp nodes, while they do exist between other nodes.
-> > > And in rk356x.dtsi the opp nodes do have a separator line.
-> >
-> > That has also bothered me. :)  I already had a look around in various
-> > dts(i) files long time ago and there seems to be no preferred layout.
-
-I guess "with" lines in between is sort-of preferred in general.
-I sometime add them in new board-dts when applying and noticing them,
-but also sometimes miss them.
-
-I guess empty lines are helpful when the nodes are "not the same",
-but I guess for OPPs it doesn't matter so much, as the individual nodes
-are all the same.
-
-
-But in the end, I guess just follow the other OPPs in rk3399 for now ;-)
-[as this patch does]
-
-> I'm inclined to say the opp ones are the odd ones.
+> All iov_iter_bvec() users only want to extract virt-contiguous pages from
+> iov_iter_extract_pages() instead physical-contiguous pages.
 > 
-> > In this particular case, it's better to have no separator lines because
-> > that's what we already have lacking in rk3399.dtsi, rk3399-t.dtsi, etc.,
-> > so running something like "diff rk3399.dtsi rk3399-s.dtsi" makes it easy
-> > to see what actually differs in the RK3399 SoC variants, without having
-> > to filter out any whitespace differences.
+> Change iov_iter_extract_bvec_pages() to extract virt-contiguous pages via
+> bvec helper.
 > 
-> Besides that inconsistencies always seem to 'trigger' me, I especially
-> noticed it as this patch changed it from having separator lines to
-> having no separator lines.
+> This way can fill much more pages one time, instead of (often)one page from
+> iov_iter_extract_pages() each time.
 > 
-> Cheers,
->   Diederik
-> 
+> The change is reasonable & safe since oher kind of iterators(UBUF, KVEC, ...)
+> do return non physically-contiguous pages.
 
+I had to read through the code to understand what this means.  Here is
+what I have written based on my understanding:
 
+The iov_iter_extract_pages interface allows to return physically
+discontiguous pages, as long as all but the first and last page
+in the array are page aligned and page size.  Rewrite
+iov_iter_extract_bvec_pages to take advantage of that instead of only
+returning ranges of physically contiguous pages.
 
+> Fixes: a7e689dd1c06 ("block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages")
 
+As far as I can tell the current behavior is highly suboptimal, but not
+actually buggy, does this really warrant a fixes tag?
+
+> +#define for_each_bvec_max(bvl, bio_vec, iter, start, nr_bvecs)		\
+> +	for (iter = (start);						\
+> +	     (iter).bi_size && iter.bi_idx < nr_bvecs &&		\
+> +		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
+> +	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
+> +
+
+And this helper just makes the code harder to read, and makes people
+wonder what this undocumented _max interface does.  What about the
+below variant of your patch that open codes it, and throws in a few
+comments to explain the logic?
+
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 1abb32c0da50bc..7768f1b2006d81 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1677,8 +1677,8 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
+ }
+ 
+ /*
+- * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
+- * not get references on the pages, nor does it get a pin on them.
++ * Extract a list of virtually contiguous pages from an ITER_BVEC iterator.
++ * This does not get references on the pages, nor does it get a pin on them.
+  */
+ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
+ 					   struct page ***pages, size_t maxsize,
+@@ -1686,35 +1686,57 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
+ 					   iov_iter_extraction_t extraction_flags,
+ 					   size_t *offset0)
+ {
+-	struct page **p, *page;
+-	size_t skip = i->iov_offset, offset, size;
+-	int k;
++	size_t skip = i->iov_offset, size = 0;
++	struct bvec_iter bi;
++	int k = 0;
+ 
+-	for (;;) {
+-		if (i->nr_segs == 0)
+-			return 0;
+-		size = min(maxsize, i->bvec->bv_len - skip);
+-		if (size)
+-			break;
++	if (i->nr_segs == 0)
++		return 0;
++
++	if (i->iov_offset == i->bvec->bv_len) {
+ 		i->iov_offset = 0;
+ 		i->nr_segs--;
+ 		i->bvec++;
+ 		skip = 0;
+ 	}
++	bi.bi_size = maxsize + skip;
++	bi.bi_bvec_done = skip;
++
++	maxpages = want_pages_array(pages, maxsize, skip, maxpages);
++
++	while (bi.bi_size && bi.bi_idx < i->nr_segs) {
++		struct bio_vec bv = bvec_iter_bvec(i->bvec, bi);
++
++		/*
++		 * The iov_iter_extract_pages interface only allows an offset
++		 * into the first page.  Break out of the loop if we see an
++		 * offset into subsequent pages, the caller will have to call
++		 * iov_iter_extract_pages again for the reminder.
++		 */
++		if (k) {
++			if (bv.bv_offset)
++				break;
++		} else {
++			*offset0 = bv.bv_offset;
++		}
+ 
+-	skip += i->bvec->bv_offset;
+-	page = i->bvec->bv_page + skip / PAGE_SIZE;
+-	offset = skip % PAGE_SIZE;
+-	*offset0 = offset;
++		(*pages)[k++] = bv.bv_page;
++		size += bv.bv_len;
+ 
+-	maxpages = want_pages_array(pages, size, offset, maxpages);
+-	if (!maxpages)
+-		return -ENOMEM;
+-	p = *pages;
+-	for (k = 0; k < maxpages; k++)
+-		p[k] = page + k;
++		if (k >= maxpages)
++			break;
++
++		/*
++		 * Similarly, we are done when the end of the bvec doesn't align
++		 * to a page boundary as that would create a hole in the
++		 * returned space.  The caller will handle this with another call
++		 * to iov_iter_extract_pages.
++		 */
++		if (bv.bv_offset + bv.bv_len != PAGE_SIZE)
++			break;
++	     	bvec_iter_advance_single(i->bvec, &bi, bv.bv_len);
++	}
+ 
+-	size = min_t(size_t, size, maxpages * PAGE_SIZE - offset);
+ 	iov_iter_advance(i, size);
+ 	return size;
+ }
 
