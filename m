@@ -1,148 +1,203 @@
-Return-Path: <linux-kernel+bounces-361233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C2EB99A560
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:48:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93A4799A563
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2868A2822B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:48:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5098928583D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ACB61EEE6;
-	Fri, 11 Oct 2024 13:47:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A946219486;
+	Fri, 11 Oct 2024 13:50:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="YjesxH2H"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b="DRMwYd+b"
+Received: from mail.flyingcircus.io (mail.flyingcircus.io [212.122.41.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086C51E501C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:47:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 614331E501C;
+	Fri, 11 Oct 2024 13:50:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.122.41.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728654473; cv=none; b=dwf/PQOcXCEoREcvhzpNPrv9D72Kb2mVaaYWXF9Sgumw/enjzPdRXnSiJI8bVEfCjHq4qtDMlYw4cYrsFZtpzcbiV2p5wtla1pHcEurokbFK0P0SY9xExc73RlStryhOtmoBB067LvpwZqe8o9JXU9kBnb5gKMkelRATzVRzFUA=
+	t=1728654640; cv=none; b=aAavM454i9ht3rl64nmo4YuXCUMx/A1Mlj7pX6I7W88IAoPKcHHh6T16LO/w1LMUG+CZgLbGTEV71/q9jtT4IEJabcY0vY3QQKAEUBhRfyolZijRr/BuXblV55GZk+lXzThoVhq+/QBVkoFxMZ7a09U+CjdZUoo7HG7RlaPUCZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728654473; c=relaxed/simple;
-	bh=xol6+oqkqEtwPyNG/T0qpuSKB5mejCsxYo/fna8PeXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sylBmuiqegXKDv/N5onCFQhHF6KNfa8NifRhstbGjwSWMjZav8ONOakhj309zNFxQXMDzq8rXYSoHuAgdXPzxrvBBJgXfhlsBrhjqP2vV+ykdHe3p0EJ7OtdjtrcT/E0a3/gNNFEWiA3PdyMAOR/ILYsePde5jDSP+nLWtu9NlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=YjesxH2H; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-716a5b9ee6fso1076184a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:47:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728654471; x=1729259271; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2IllKSGecey5qWktiICvboLBrDNTF07DwRxsCQfzPeA=;
-        b=YjesxH2H3c9q2kgTXPlJLxonA8o0wnZpNrSV8AsBQ8KFRlhNZr4SlDe+4AwB4aLNV9
-         J2m9tpUKMYkcsF6YHHG1T7il7v41LJso4fnRRy3KMnuqkOCMqkgNy7mrt5GFXk2YjPD+
-         B7RvmTJthnlknZVGmkPVQJtNH1gKnn6zehM1X9Re5gAI+K4Ry3J41rVTMCJ25qvSyCtc
-         6D4EIrgtmeJw2gck9yDQyHK5Az07i8CQGM5kaZTigIaqkprmn8DzA4TvOJ54nxpFVlzz
-         PSeUvXYn3FAzRWczMnRBBFOUEyNsg5jc3U5/5Rg6PWK8X++1FcpcGrkIq587pX+iZ2U2
-         zLXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728654471; x=1729259271;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2IllKSGecey5qWktiICvboLBrDNTF07DwRxsCQfzPeA=;
-        b=KSWkZgxThw3eMqNgoIpdA5QJkW3XaYh2JinRmZXh7CulMQQqaKQ/EErXMD+8BLGAFv
-         yueTvkEhMMa9mk4Q5BMGlDYPioWYrNLFrIriMJHc03xk7ymG3/s5vfU3OSuUUxPExlbR
-         gwKHiL1yiiC2CEPsW85cRRGP76XaxFO5uY269wsxLl49/smF9zqMySnmuFuIxVxNjKTb
-         DCSAqcNSFBpSPmbM9ELILkwN3P/aX6stBRwWaFpDjVAZ0VGJibkm7hok/3/z1qxR/Y1w
-         Ni+itwfalPli83zTps1PCyTrldzqAEvZWGCgjNAg8HVRg1hDCb2WfMtD8RdMqRX1upqE
-         IQrA==
-X-Forwarded-Encrypted: i=1; AJvYcCXDJ+wK62jx9/+pg9xoWFNbRyKkKAH7/Fm2YFSrSSkpHyzOr4C3o7HM7BBf42Xw6C7Paa2NZPvRdsK0LUU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPHlNesBR/kXEdZxcZikPCcLHedoqE/P19vBhO7OjDpHsiJ/O5
-	lrqujEyxO3XUuOqn7C7KRaKLpsm1w7+DTxJ36NDu95s9OMh8L14jr1wTwXM6SnQ=
-X-Google-Smtp-Source: AGHT+IFlag4FfVRPYfOwmoRNQk/fTAWY8jzG3YeWFKLCMLYaHcTiK3JfGI/Bszqx8uRfq7yjIqm3hA==
-X-Received: by 2002:a05:6830:7303:b0:710:f83e:111b with SMTP id 46e09a7af769-717d643ce86mr1662012a34.8.1728654471127;
-        Fri, 11 Oct 2024 06:47:51 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717cff38401sm591578a34.35.2024.10.11.06.47.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 06:47:49 -0700 (PDT)
-Message-ID: <807d35e5-f479-4c1c-9761-b9dbb086fabc@baylibre.com>
-Date: Fri, 11 Oct 2024 08:47:47 -0500
+	s=arc-20240116; t=1728654640; c=relaxed/simple;
+	bh=rkoN1t9+WGwqDDBopn4udo62u+w8ZOwNYcBJAvq9Nx0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=IECZFPGgw1P2ctMAilnYlSvxhZY+BmKGSgqzF9wFAaXZxBGUDMfKVSgl0f8IuXdbU2FcrwCgXFcTAB30vvKTQaicIxDsZ6lz/RRKluB6P3NsDxMa/A+8y62I/uH8dmQ5h48crpcwtEv48wNWi41KW3M0G6PCTMxmSACHmHAfUmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io; spf=pass smtp.mailfrom=flyingcircus.io; dkim=pass (1024-bit key) header.d=flyingcircus.io header.i=@flyingcircus.io header.b=DRMwYd+b; arc=none smtp.client-ip=212.122.41.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=flyingcircus.io
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flyingcircus.io
+Content-Type: text/plain;
+	charset=utf-8
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flyingcircus.io;
+	s=mail; t=1728654635;
+	bh=KvNGlemhaNExRrqlaQX0CrDFggZF6YQd0fZVnjowWsM=;
+	h=Subject:From:In-Reply-To:Date:Cc:References:To;
+	b=DRMwYd+bbgVy+htDpLRrpNmovu27Zg0dxG7AOb97R+c4AJMEVG7JtuUnp+AolUgjv
+	 ONa2do625TUZFB7b7qLtIESnLirPx0g4oqwY6gNqwRAmMLaIiDZK4iz6TFZ2X8WAZX
+	 zEZePLfyx26unk2qsQTvoyHz51ToIUE8oIpKUzxQ=
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/7] iio: adc: ad485x: add ad485x driver
-To: "Miclaus, Antoniu" <Antoniu.Miclaus@analog.com>,
- Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, "Hennerich, Michael" <Michael.Hennerich@analog.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, "Sa, Nuno" <Nuno.Sa@analog.com>,
- Olivier Moysan <olivier.moysan@foss.st.com>,
- =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
- Andy Shevchenko <andy@kernel.org>,
- "Schmitt, Marcelo" <Marcelo.Schmitt@analog.com>,
- Mike Looijmans <mike.looijmans@topic.nl>,
- Marius Cristea <marius.cristea@microchip.com>,
- Dumitru Ceclan <mitrutzceclan@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Alisa-Dariana Roman <alisadariana@gmail.com>,
- Ivan Mikhaylov <fr0st61te@gmail.com>,
- "Cuciurean, Sergiu" <Sergiu.Cuciurean@analog.com>,
- "Bogdan, Dragos" <Dragos.Bogdan@analog.com>,
- "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>
-References: <20241004140922.233939-1-antoniu.miclaus@analog.com>
- <20241004140922.233939-6-antoniu.miclaus@analog.com>
- <CAHp75VeaYBGTA7sN7SefsyMj09kaJLBoMz4=hf0GpxiXtF65+Q@mail.gmail.com>
- <CY4PR03MB33992F19FF780FF86234426A9B7E2@CY4PR03MB3399.namprd03.prod.outlook.com>
- <71c4a073-1b5e-42d3-8fee-a2a5215d5856@baylibre.com>
- <CY4PR03MB33992328530A8AC613C7A6C79B792@CY4PR03MB3399.namprd03.prod.outlook.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <CY4PR03MB33992328530A8AC613C7A6C79B792@CY4PR03MB3399.namprd03.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
+Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
+ folios since Dec 2021 (any kernel from 6.1 upwards)
+From: Christian Theune <ct@flyingcircus.io>
+In-Reply-To: <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
+Date: Fri, 11 Oct 2024 15:50:12 +0200
+Cc: Linus Torvalds <torvalds@linux-foundation.org>,
+ Dave Chinner <david@fromorbit.com>,
+ Matthew Wilcox <willy@infradead.org>,
+ Jens Axboe <axboe@kernel.dk>,
+ linux-mm@kvack.org,
+ "linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>,
+ linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Daniel Dao <dqminh@cloudflare.com>,
+ regressions@lists.linux.dev,
+ regressions@leemhuis.info
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <CCFA457F-E115-47F0-87F1-F64A51BDE96C@flyingcircus.io>
+References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
+ <ZulMlPFKiiRe3iFd@casper.infradead.org>
+ <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
+ <ZumDPU7RDg5wV0Re@casper.infradead.org>
+ <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
+ <459beb1c-defd-4836-952c-589203b7005c@meta.com>
+ <ZurXAco1BKqf8I2E@casper.infradead.org>
+ <ZuuBs762OrOk58zQ@dread.disaster.area>
+ <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
+ <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
+ <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io>
+ <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
+ <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io>
+ <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
+ <f8232f8b-06e0-4d1a-bee4-cfc2ac23194e@meta.com>
+ <E07B71C9-A22A-4C0C-B4AD-247CECC74DFA@flyingcircus.io>
+ <381863DE-17A7-4D4E-8F28-0F18A4CEFC31@flyingcircus.io>
+ <0A480EBE-9B4D-49CC-9A32-3526F32426E6@flyingcircus.io>
+ <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
+To: Chris Mason <clm@meta.com>
 
-On 10/11/24 6:27 AM, Miclaus, Antoniu wrote:
->> On 10/8/24 5:48 AM, Miclaus, Antoniu wrote:
->>>>> +static int ad485x_get_calibscale(struct ad485x_state *st, int ch, int *val,
->> int
->>>> *val2)
->>>>> +{
->>>>> +       unsigned int reg_val;
->>>>> +       int gain;
->>>>
->>>> Should be u8 gain[2] and...
->>>
->>> As discussed in previous patch series, the bulk operations won't work for
->> these
->>> chips. The CS needs to be raised between each byte read/written.
->>>
->>
->> So the datasheet is wrong and Streaming Instruction Mode doesn't actually
->> work?
->>
->> There is also Nonstreaming Instruction Mode if we need to read/write
->> nonconsecutive
->> registers without deasserting CS.
-> 
-> The chip was set to Nonstreaming Instruction Mode from the start in the ad485x_setup() function.
-> 
-> And the datasheet specifies (page 49 of 70):
-> "In nonstreaming instruction mode, one or more SPI transactions can be provided in
-> a single SPI frame."
-> 
-> So I guess it is an error in the datasheet.
+Hi,
 
-So maybe regmap bulk operations would work if we change it to
-Streaming Instruction Mode (along with the correct increment
-direction)?
+> On 11. Oct 2024, at 15:06, Chris Mason <clm@meta.com> wrote:
+>=20
+> - It's actually taking the IO a long time to finish.  We can poke at =
+the
+> pending requests, how does the device look in the VM?  (virtio, scsi =
+etc).
+
+I _think_ that=E2=80=99s not it. This is a Qemu w/ virtio-block + Ceph =
+stack with 2x10G and fully SSD backed. The last 24 hours show operation =
+latency at less than 0.016ms. Ceph=E2=80=99s slow request warning (30s =
+limit) has not triggered in the last 24 hours.
+
+Also, aside from a VM that was exhausting its Qemu io throttling for a =
+minute (and stuck in completely different tracebacks) the only blocked =
+task reports from the last 48 hours was this specific process.
+
+I=E2=80=99d expect that we=E2=80=99d see a lot more reports about IO =
+issues from multiple VMs and multiple loads at the same time when the =
+storage misbehaves (we did experience those in the long long past in =
+older Ceph versions and with spinning rust, so I=E2=80=99m pretty =
+confident (at the moment) this isn=E2=80=99t a storage issue per se).
+
+Incidentally this now reminds me of a different (maybe not?) issue that =
+I=E2=80=99ve been trying to track down with mdraid/xfs:
+https://marc.info/?l=3Dlinux-raid&m=3D172295385102939&w=3D2
+
+This is only tested on an older kernel so far (5.15.138) and we ended up =
+seeing IOPS stuck in the md device but not below it. However, MD isn=E2=80=
+=99t involved here. I made the connection because the original traceback =
+also shows it stuck in =E2=80=9Cwait_on_page_writeback=E2=80=9D, but =
+maybe that=E2=80=99s a red herring:
+
+[Aug 6 09:35] INFO: task .backy-wrapped:2615 blocked for more than 122 =
+seconds.
+[ +0.008130] Not tainted 5.15.138 #1-NixOS
+[ +0.005194] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables =
+this message.
+[ +0.008895] task:.backy-wrapped state:D stack: 0 pid: 2615 ppid: 1 =
+flags:0x00000002
+[ +0.000005] Call Trace:
+[ +0.000002] <TASK>
+[ +0.000004] __schedule+0x373/0x1580
+[ +0.000009] ? xlog_cil_commit+0x559/0x880 [xfs]
+[ +0.000041] schedule+0x5b/0xe0
+[ +0.000001] io_schedule+0x42/0x70
+[ +0.000001] wait_on_page_bit_common+0x119/0x380
+[ +0.000005] ? __page_cache_alloc+0x80/0x80
+[ +0.000002] wait_on_page_writeback+0x22/0x70
+[ +0.000001] truncate_inode_pages_range+0x26f/0x6d0
+[ +0.000006] evict+0x15f/0x180
+[ +0.000003] __dentry_kill+0xde/0x170
+[ +0.000001] dput+0x15b/0x330
+[ +0.000002] do_renameat2+0x34e/0x5b0
+[ +0.000003] __x64_sys_rename+0x3f/0x50
+[ +0.000002] do_syscall_64+0x3a/0x90
+[ +0.000002] entry_SYSCALL_64_after_hwframe+0x62/0xcc
+[ +0.000003] RIP: 0033:0x7fdd1885275b
+[ +0.000002] RSP: 002b:00007ffde643ad18 EFLAGS: 00000246 ORIG_RAX: =
+0000000000000052
+[ +0.000002] RAX: ffffffffffffffda RBX: 00007ffde643adb0 RCX: =
+00007fdd1885275b
+[ +0.000001] RDX: 0000000000000000 RSI: 00007fdd09a3d3d0 RDI: =
+00007fdd098549d0
+[ +0.000001] RBP: 00007ffde643ad60 R08: 00000000ffffffff R09: =
+0000000000000000
+[ +0.000001] R10: 00007ffde643af90 R11: 0000000000000246 R12: =
+00000000ffffff9c
+[ +0.000000] R13: 00000000ffffff9c R14: 000000000183cab0 R15: =
+00007fdd0b128810
+[ +0.000001] </TASK>
+[ +0.000011] INFO: task kworker/u64:0:2380262 blocked for more than 122 =
+seconds.
+[ +0.008309] Not tainted 5.15.138 #1-NixOS
+[ +0.005190] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables =
+this message.
+[ +0.008895] task:kworker/u64:0 state:D stack: 0 pid:2380262 ppid: 2 =
+flags:0x00004000
+[ +0.000004] Workqueue: kcryptd/253:4 kcryptd_crypt [dm_crypt]
+[ +0.000006] Call Trace:
+[ +0.000001] <TASK>
+[ +0.000001] __schedule+0x373/0x1580
+[ +0.000003] schedule+0x5b/0xe0
+[ +0.000001] md_bitmap_startwrite+0x177/0x1e0
+[ +0.000004] ? finish_wait+0x90/0x90
+[ +0.000004] add_stripe_bio+0x449/0x770 [raid456]
+[ +0.000005] raid5_make_request+0x1cf/0xbd0 [raid456]
+[ +0.000003] ? kmem_cache_alloc_node_trace+0x391/0x3e0
+[ +0.000004] ? linear_map+0x44/0x90 [dm_mod]
+[ +0.000005] ? finish_wait+0x90/0x90
+[ +0.000001] ? __blk_queue_split+0x516/0x580
+[ +0.000003] md_handle_request+0x122/0x1b0
+[ +0.000003] md_submit_bio+0x6e/0xb0
+[ +0.000001] __submit_bio+0x18f/0x220
+[ +0.000002] ? crypt_page_alloc+0x46/0x60 [dm_crypt]
+[ +0.000002] submit_bio_noacct+0xbe/0x2d0
+[ +0.000001] kcryptd_crypt+0x392/0x550 [dm_crypt]
+[ +0.000002] process_one_work+0x1d6/0x360
+[ +0.000003] worker_thread+0x4d/0x3b0
+[ +0.000002] ? process_one_work+0x360/0x360
+[ +0.000001] kthread+0x118/0x140
+[ +0.000001] ? set_kthread_struct+0x50/0x50
+[ +0.000001] ret_from_fork+0x22/0x30
+[ +0.000004] </TASK>
+=E2=80=A6(more md kworker tasks pile up here)
+
+Christian
+
+--=20
+Christian Theune =C2=B7 ct@flyingcircus.io =C2=B7 +49 345 219401 0
+Flying Circus Internet Operations GmbH =C2=B7 https://flyingcircus.io
+Leipziger Str. 70/71 =C2=B7 06108 Halle (Saale) =C2=B7 Deutschland
+HR Stendal HRB 21169 =C2=B7 Gesch=C3=A4ftsf=C3=BChrer: Christian Theune, =
+Christian Zagrodnick
 
 
