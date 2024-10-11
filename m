@@ -1,78 +1,144 @@
-Return-Path: <linux-kernel+bounces-360407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 55132999A75
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:35:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D5CD999A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 853B31C21227
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:35:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 221971F2423D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:36:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E0041F131A;
-	Fri, 11 Oct 2024 02:35:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39D871F473B;
+	Fri, 11 Oct 2024 02:36:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUGTnha1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WOOyHs16"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE8AC23BB;
-	Fri, 11 Oct 2024 02:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44A0C1F470D;
+	Fri, 11 Oct 2024 02:36:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728614145; cv=none; b=jkuZlHHFthb0cFZxYRaLRlUJy1BwMvPUcJ2xGmx3tDFoYNQXuQ77CiFdKpGgIXqfxHwxvOi/nqb8gbpTnvQMcB9Hd0UNQ0BCqPZSq7u4SaSOOc1lIXFGKMco7Mg7uHA8zCTCc+sR/1kvLrPsahR+sEe4w0EHATSlZ/QoT2uSZTA=
+	t=1728614164; cv=none; b=sWavclZvj/zCFAwXlkX+ErrVq7Dx6rLnn242Y3gCkckW6K9ZQWvy/P1lQLfUaXs2G7g68TS6QAXn0x2mVkOWKrKL9IS0USJv5RPNpltZIalRoBOJ4aGVASfgDKgmpoQeJuX9V97hH42gQlx+Tbfbu3nXyFCjVAGJ+57jZ1jlmXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728614145; c=relaxed/simple;
-	bh=rShLXfFIjHn1c9cjO/f4Yh906mHA/WX5/cOB1uCMIr0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qVQ6BiTdAWcB/Kr5fNexyk5VKa+3kqU4vfTGqmE92M6hPXHslzkUbAtvLrePvshYYuVRThKzC4GIrbRk2QmAz0BvBo1+Ithp3wENJw9gbWNuw8MFO9cmRCISLq2N7ZidBmbFbY8RxeGRBnGMDcjcAoHMwkPtA7QrfbINnbkLnD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUGTnha1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D8B99C4CEC5;
-	Fri, 11 Oct 2024 02:35:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728614145;
-	bh=rShLXfFIjHn1c9cjO/f4Yh906mHA/WX5/cOB1uCMIr0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hUGTnha1/a09VelDQxvikJiIKwGI0nfzhP84Re7cZt/glWuYtchIdfvolNMW+AC88
-	 B5ehNQfS4fy94CEW7D30nKhvSGf/xL2POmH/avgJxeybsiZy1utjPiR1v5pkN+En/A
-	 ShVRjvYx2PD6fzF8ibd1qFLtJuUp5i1YAWtvnTL0ZROIajQJ5ZYUg562ZU6OO6tBoq
-	 g8DT4u26JpphUUG1RMrphMRYI0hb+NV5xwEGmv/rHTZKoDBR88CN39dGRMdYt0yNPq
-	 WNtQoakknxjFj74QbK3oyQM2R9Lk9RTnJ2XufvfCqVcSu5hHC5rhkYnidQzFUQ1p75
-	 KlkpQmRmZucDQ==
-Date: Fri, 11 Oct 2024 10:35:39 +0800
-From: Tzung-Bi Shih <tzungbi@kernel.org>
-To: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <linux@weissschuh.net>
-Cc: Sebastian Reichel <sre@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Pali =?iso-8859-1?Q?Roh=E1r?= <pali@kernel.org>,
-	Benson Leung <bleung@chromium.org>,
-	Guenter Roeck <groeck@chromium.org>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-acpi@vger.kernel.org,
-	chrome-platform@lists.linux.dev
-Subject: Re: [PATCH 2/8] ACPI: battery: Register power supply with
- power_supply_register()
-Message-ID: <ZwiO-wYlHPnxDl6S@tzungbi-laptop>
-References: <20241005-power-supply-no-wakeup-source-v1-0-1d62bf9bcb1d@weissschuh.net>
- <20241005-power-supply-no-wakeup-source-v1-2-1d62bf9bcb1d@weissschuh.net>
+	s=arc-20240116; t=1728614164; c=relaxed/simple;
+	bh=+vMIA/cu/vkqBnx52a1ObvjTlLcczbHQCFo5mkm7/Uo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O1/iiC3HVSGaobhcBKow9leF1mAsRICV7WGNn+ulIdNCLqCU+VlSOjpe517Y/rre32k5R5hn++vbUekBAd0ON4MxrWhO6AkyjDf1xoogpmb3veZs83NQDVMAjCw4ULaIlo2ToJalrvoH8fFL81gmEHoI5knJDAo6o0Kpxrx+lfQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WOOyHs16; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2eba31d3aso412614a91.2;
+        Thu, 10 Oct 2024 19:36:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728614162; x=1729218962; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r1P7tuB4hLxbBXGAGgneey3fBMAOG19TvuBf4+nhAyo=;
+        b=WOOyHs16KnKev7cF6KgPHkfTlppG169uNS5OLbT7Cd8jA/YF73syjJi/qtETk+KDt7
+         7jmkUILjklna93UpLL1sZsGTU8b42b6FpZDmkdc37VW12WnRgA+vn3z1cG1G+GpWNUsC
+         9tPDutDP5brDpCby6ZlxxmU4NpGxN5ig0PEFtDMorFAZDxNaexLBvSELcbebBWlCuGc6
+         dSr07fkXS5VdUojZO3wW5es9X16rfJTDhrflg3H0o17h50EHReNOPePgJzsa2p4eJI2U
+         gUlFMK4B3XKsJBVJNXnAl5xYe+cenR/vgHtXkSl34+SOqS6Pv3JBgHhk986iSHq3419o
+         t1Bw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728614162; x=1729218962;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r1P7tuB4hLxbBXGAGgneey3fBMAOG19TvuBf4+nhAyo=;
+        b=xEE5eO3reu+vUP2GGxMuKyqwSJNumURGGysA+CZW/PWWmJiAK3p6K9IktTA7xBKDCx
+         I0B1yn8M1ndA2fchBStAVgAmJasGy/FZfxz6effTinqvkBG5YG1fuTzbQPVHkGs9ZdCB
+         onZapmTAssKk18s2MPSIDC688dg1GGVg4w8zWJpKfhsfl7TY+rp3c5NRhHRBavc9kSUI
+         JDxo954AZAuu3QcqrMJrBRtua1E5T2dGXVsofpL7ycU4X0uRobBqhUjpCQEZlhumstIn
+         eegi/6KNZFnjMH3cRifWcfsE9fiFVqLzxiP8B/CFP3DvHmOi3pJ3xUlE/yXARIPl/cJy
+         LSPg==
+X-Forwarded-Encrypted: i=1; AJvYcCUIlz0oKHqcoisO+IkM4myuBa+CDWFuqSSHcFU5ow5sirsqq+TQYaOh5sngwV9/8+TcqKkeu4x8vitPewZkH/GjISk6@vger.kernel.org, AJvYcCW2UNH8gVLzo5RCqO8zU50ViGdR43oK8beLyKeh0/ayabd4ox66MiEy7U72B8sc29WCATY=@vger.kernel.org, AJvYcCXuHwAX2vJbh/R/E4iG1PnHyvoMBPCoaO2/hva4IULohoNdyYIiMYCo7l25BD0Ekg7XIUGl64CIpXqNVn26@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx874FDQkztmccpcRyqkvFlwRxpZEftdSLgjyijwpHsfK5RRZfR
+	1EaiXYLDE+0Tw1b6gWKBK6VGF16bDwDjRmrD2uZxxdGhw0Lu5NG/dP6p54SawEIZkPlmFBSfQMI
+	agWlh6UiGQVCvK8k/dOYWK0TgLoE=
+X-Google-Smtp-Source: AGHT+IHRvKwhvii4OLSB5Xz+gSEWFWZ4FyItMJy7oxRr642+ExeG6tjlZB9QRfciHtw4LLtVT8cZAjJNchEZFaU7eOs=
+X-Received: by 2002:a17:90b:3757:b0:2c9:9658:d704 with SMTP id
+ 98e67ed59e1d1-2e2f0df9cb7mr1370458a91.40.1728614162471; Thu, 10 Oct 2024
+ 19:36:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241005-power-supply-no-wakeup-source-v1-2-1d62bf9bcb1d@weissschuh.net>
+References: <20241010200957.2750179-1-jolsa@kernel.org> <20241010200957.2750179-17-jolsa@kernel.org>
+In-Reply-To: <20241010200957.2750179-17-jolsa@kernel.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Thu, 10 Oct 2024 19:35:50 -0700
+Message-ID: <CAEf4Bza3VLNKSdRQJtODAwmb4jZ85wq46QHBnXwzu_M+um9d_g@mail.gmail.com>
+Subject: Re: [PATCHv6 bpf-next 16/16] selftests/bpf: Add threads to consumer test
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org, Martin KaFai Lau <kafai@fb.com>, 
+	Song Liu <songliubraving@fb.com>, Yonghong Song <yhs@fb.com>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@chromium.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-trace-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Oct 05, 2024 at 12:05:04PM +0200, Thomas Weiﬂschuh wrote:
-> power_supply_register_no_ws() is going to be removed.
-> Switch to the general registration API.
-> 
-> Signed-off-by: Thomas Weiﬂschuh <linux@weissschuh.net>
+On Thu, Oct 10, 2024 at 1:13=E2=80=AFPM Jiri Olsa <jolsa@kernel.org> wrote:
+>
+> With recent uprobe fix [1] the sync time after unregistering uprobe is
+> much longer and prolongs the consumer test which creates and destroys
+> hundreds of uprobes.
+>
+> This change adds 16 threads (which fits the test logic) and speeds up
+> the test.
+>
+> Before the change:
+>
+>   # perf stat --null ./test_progs -t uprobe_multi_test/consumers
+>   #421/9   uprobe_multi_test/consumers:OK
+>   #421     uprobe_multi_test:OK
+>   Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+>
+>    Performance counter stats for './test_progs -t uprobe_multi_test/consu=
+mers':
+>
+>         28.818778973 seconds time elapsed
+>
+>          0.745518000 seconds user
+>          0.919186000 seconds sys
+>
+> After the change:
+>
+>   # perf stat --null ./test_progs -t uprobe_multi_test/consumers 2>&1
+>   #421/9   uprobe_multi_test/consumers:OK
+>   #421     uprobe_multi_test:OK
+>   Summary: 1/1 PASSED, 0 SKIPPED, 0 FAILED
+>
+>    Performance counter stats for './test_progs -t uprobe_multi_test/consu=
+mers':
+>
+>          3.504790814 seconds time elapsed
+>
+>          0.012141000 seconds user
+>          0.751760000 seconds sys
+>
+> [1] commit 87195a1ee332 ("uprobes: switch to RCU Tasks Trace flavor for b=
+etter performance")
+>
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  .../bpf/prog_tests/uprobe_multi_test.c        | 98 +++++++++++++++----
+>  1 file changed, 80 insertions(+), 18 deletions(-)
+>
 
-Reviewed-by: Tzung-Bi Shih <tzungbi@kernel.org>
+OK, LGTM
+
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
+
+[...]
 
