@@ -1,361 +1,151 @@
-Return-Path: <linux-kernel+bounces-360528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7540999C21
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:39:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D0E7999C24
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:39:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F14B1C21DDC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E93F728449A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9BCD1F706F;
-	Fri, 11 Oct 2024 05:38:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC361F943C;
+	Fri, 11 Oct 2024 05:39:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="W5S96Js7"
-Received: from out0-217.mail.aliyun.com (out0-217.mail.aliyun.com [140.205.0.217])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aUTTCd2O"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E7322F26
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.217
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B141A2F26;
+	Fri, 11 Oct 2024 05:39:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728625138; cv=none; b=XS7PZG4dzEPhHJ+oFWjxC/kL7eajz/C2frRHuFnMU8hg8CFZY+kHcyqPCONdcalDXVdcC+FMZLcyzWh57MQARO96nQAFoxSsROLRK/fg+3TzupFvUOVQMwES1ZWD1zNXbxrlcyuecUL2HS0lZ1CAj9wHY/fK7CDUcCn3mxaRoyk=
+	t=1728625175; cv=none; b=YH/niysU5o0eNMoVQTGZLrsX/jDhxphuzmNkltR/8SR+KUE2lEkOe0ZpaosVgCLWbU/myODsFufLpJNI5joDBXMBsPT7jcvSjNuYA2s2Vy3fmepnDcaDUF30vzmHSPanDXNY8aTa9QYoFQ8HcUB8OtS8XNyrHowyxerahRmNJuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728625138; c=relaxed/simple;
-	bh=je7AxxxfVGgQ2asS0FCf9K7XxUDkJ4LgEifkyyTTWtU=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oYzwKNuIum0miKJzVvp1dYozI/WzeaNWK/NdSFRZ1F4Av3PqmrGDIR08ZIQbgZj0KO5yzpsqNzs2UryFvBBTNA3o1o6O1UqmdiidMZi317o9OaBYSrIkknUuMbSa4GLLrZ3z50tyNmdfnxxPGLR25+HKjYi88SV9sKDDQz39x8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=W5S96Js7; arc=none smtp.client-ip=140.205.0.217
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=antgroup.com; s=default;
-	t=1728625130; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=jNZvmtgMrhrSzhWeEFJbQqmXqmsoe+8jgh3kE3BJ/xc=;
-	b=W5S96Js7cYOKInW3LPFdVraRlmEXV5kG3q88xGT/ZEUIsmMUCybdlcYYx8KrmN0zydzc7tbEIxUPNMza1wLUseGToI0xnDVkn1r+x9CG+x1cCEaxf4i47zNlsp6E6pu9xGz4TchH4mm9iSViUbZrOGhOPYkfJwLpaLB1juMU0jQ=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.Ze6cW8F_1728625124)
-          by smtp.aliyun-inc.com;
-          Fri, 11 Oct 2024 13:38:50 +0800
-From: "Tiwei Bie" <tiwei.btw@antgroup.com>
-To: richard@nod.at,
-	anton.ivanov@cambridgegreys.com,
-	johannes@sipsolutions.net
-Cc:  <linux-um@lists.infradead.org>,
-   <linux-kernel@vger.kernel.org>,
-  "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH] um: Abandon the _PAGE_NEWPROT bit
-Date: Fri, 11 Oct 2024 13:38:43 +0800
-Message-Id: <20241011053843.1623089-1-tiwei.btw@antgroup.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728625175; c=relaxed/simple;
+	bh=+d42UvkUBu98QAceADfnNLgwqRMi7KeH8jtCFXIHtv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XqqCn0VBEXrTSrbm/ujMwmAISZmAXU3kvXCBaUOLpYkzIaLENABOrp+yNAcjzQoK/JWyeDn5rJDXWUPSZ4RCLoxDtDKsIN0/F0e9Qa22Yrw2PApCLx9kF7vtfu4+i1QMBfavFDTwF63ucaJRNT0ivNgxjrsros7H+1bKom8tap4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aUTTCd2O; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728625174; x=1760161174;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=+d42UvkUBu98QAceADfnNLgwqRMi7KeH8jtCFXIHtv4=;
+  b=aUTTCd2OjDuOfv9+GwLO4AWEVRPjRhuuumNTlNZwukzjcYAo+VIYZrNT
+   cYAkFMkrDSBDq1m3QPImGtQX/BdogWsZlta37/GU3RsPAkMo6QoYByMfv
+   GbFqfdEPWxoEfnlrFEEf5mzIVZwDulCgIg0bF1ZDdxXWS58oWf2YKx9WD
+   Q8N9Yp43TM9W5zIjHceTdsyUBWsgr0eBDRCxGfGMHb0oxg5NCRHihyFBP
+   Yd3CdLic1p/RrWD9A8G+ADtmKaSGpMsItTN3hEckZBQR2/hMvNGJLIWBm
+   4Y2Ph8HmOcakw0DY7CghUGMstZVKf5z8f/GyREiq5i8Zqxk4eZQh2mm31
+   A==;
+X-CSE-ConnectionGUID: /Rfvx4KcRcyPkcLNs/NJ9g==
+X-CSE-MsgGUID: 6CYZGIpPRxKVD0upnjqI4w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27824747"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="27824747"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 22:39:33 -0700
+X-CSE-ConnectionGUID: CjJQ2kg9SW2lgwlQLQSKYA==
+X-CSE-MsgGUID: QF+qDOJ5TA6Re0RbSQUttA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="107673577"
+Received: from turnipsi.fi.intel.com (HELO kekkonen.fi.intel.com) ([10.237.72.44])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 22:39:29 -0700
+Received: from kekkonen.localdomain (localhost [127.0.0.1])
+	by kekkonen.fi.intel.com (Postfix) with SMTP id 57B4D11F855;
+	Fri, 11 Oct 2024 08:39:26 +0300 (EEST)
+Date: Fri, 11 Oct 2024 05:39:26 +0000
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+From: Sakari Ailus <sakari.ailus@linux.intel.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Daniel Scally <djrscally@gmail.com>,
+	Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH net-next 1/3] device property: Introduce
+ fwnode_for_each_available_child_node_scoped()
+Message-ID: <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
+References: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
+ <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
 
-When a PTE is updated in the page table, the _PAGE_NEWPAGE bit will
-always be set. And the corresponding page will always be mapped or
-unmapped depending on whether the PTE is present or not. The check
-on the _PAGE_NEWPROT bit is not really reachable. Abandoning it will
-allow us to simplify the code and remove the unreachable code.
+Hi Javier,
 
-Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
----
- arch/um/include/asm/pgtable.h           | 40 ++++-----------
- arch/um/include/shared/os.h             |  2 -
- arch/um/include/shared/skas/stub-data.h |  1 -
- arch/um/kernel/skas/stub.c              | 10 ----
- arch/um/kernel/tlb.c                    | 66 +++++++++++--------------
- arch/um/os-Linux/skas/mem.c             | 21 --------
- 6 files changed, 37 insertions(+), 103 deletions(-)
+On Tue, Oct 08, 2024 at 06:10:27PM +0200, Javier Carrasco wrote:
+> Introduce the scoped variant of the
+> fwnode_for_each_available_child_node() to automatically decrement the
+> child's refcount when it goes out of scope, removing the need for
+> explicit calls to fwnode_handle_put().
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+> ---
+>  include/linux/property.h | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
+> diff --git a/include/linux/property.h b/include/linux/property.h
+> index 61fc20e5f81f..b37508ecf606 100644
+> --- a/include/linux/property.h
+> +++ b/include/linux/property.h
+> @@ -168,6 +168,11 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+>  	     child = fwnode_get_next_available_child_node(fwnode, child))
+>  
+> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	       \
+> +	for (struct fwnode_handle *child __free(fwnode_handle) =	       \
+> +		fwnode_get_next_available_child_node(fwnode, NULL); child;     \
+> +	     child = fwnode_get_next_available_child_node(fwnode, child))
+> +
 
-diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
-index bd7a9593705f..a32424cfe792 100644
---- a/arch/um/include/asm/pgtable.h
-+++ b/arch/um/include/asm/pgtable.h
-@@ -12,7 +12,6 @@
- 
- #define _PAGE_PRESENT	0x001
- #define _PAGE_NEWPAGE	0x002
--#define _PAGE_NEWPROT	0x004
- #define _PAGE_RW	0x020
- #define _PAGE_USER	0x040
- #define _PAGE_ACCESSED	0x080
-@@ -151,23 +150,12 @@ static inline int pte_newpage(pte_t pte)
- 	return pte_get_bits(pte, _PAGE_NEWPAGE);
- }
- 
--static inline int pte_newprot(pte_t pte)
--{
--	return(pte_present(pte) && (pte_get_bits(pte, _PAGE_NEWPROT)));
--}
--
- /*
-  * =================================
-  * Flags setting section.
-  * =================================
-  */
- 
--static inline pte_t pte_mknewprot(pte_t pte)
--{
--	pte_set_bits(pte, _PAGE_NEWPROT);
--	return(pte);
--}
--
- static inline pte_t pte_mkclean(pte_t pte)
- {
- 	pte_clear_bits(pte, _PAGE_DIRTY);
-@@ -184,17 +172,14 @@ static inline pte_t pte_wrprotect(pte_t pte)
- {
- 	if (likely(pte_get_bits(pte, _PAGE_RW)))
- 		pte_clear_bits(pte, _PAGE_RW);
--	else
--		return pte;
--	return(pte_mknewprot(pte));
-+	return pte;
- }
- 
- static inline pte_t pte_mkread(pte_t pte)
- {
--	if (unlikely(pte_get_bits(pte, _PAGE_USER)))
--		return pte;
--	pte_set_bits(pte, _PAGE_USER);
--	return(pte_mknewprot(pte));
-+	if (likely(!pte_get_bits(pte, _PAGE_USER)))
-+		pte_set_bits(pte, _PAGE_USER);
-+	return pte;
- }
- 
- static inline pte_t pte_mkdirty(pte_t pte)
-@@ -211,18 +196,15 @@ static inline pte_t pte_mkyoung(pte_t pte)
- 
- static inline pte_t pte_mkwrite_novma(pte_t pte)
- {
--	if (unlikely(pte_get_bits(pte,  _PAGE_RW)))
--		return pte;
--	pte_set_bits(pte, _PAGE_RW);
--	return(pte_mknewprot(pte));
-+	if (likely(!pte_get_bits(pte, _PAGE_RW)))
-+		pte_set_bits(pte, _PAGE_RW);
-+	return pte;
- }
- 
- static inline pte_t pte_mkuptodate(pte_t pte)
- {
- 	pte_clear_bits(pte, _PAGE_NEWPAGE);
--	if(pte_present(pte))
--		pte_clear_bits(pte, _PAGE_NEWPROT);
--	return(pte);
-+	return pte;
- }
- 
- static inline pte_t pte_mknewpage(pte_t pte)
-@@ -236,12 +218,10 @@ static inline void set_pte(pte_t *pteptr, pte_t pteval)
- 	pte_copy(*pteptr, pteval);
- 
- 	/* If it's a swap entry, it needs to be marked _PAGE_NEWPAGE so
--	 * fix_range knows to unmap it.  _PAGE_NEWPROT is specific to
--	 * mapped pages.
-+	 * update_pte_range knows to unmap it.
- 	 */
- 
- 	*pteptr = pte_mknewpage(*pteptr);
--	if(pte_present(*pteptr)) *pteptr = pte_mknewprot(*pteptr);
- }
- 
- #define PFN_PTE_SHIFT		PAGE_SHIFT
-@@ -298,8 +278,6 @@ static inline int pte_same(pte_t pte_a, pte_t pte_b)
- 	({ pte_t pte;					\
- 							\
- 	pte_set_val(pte, page_to_phys(page), (pgprot));	\
--	if (pte_present(pte))				\
--		pte_mknewprot(pte_mknewpage(pte));	\
- 	pte;})
- 
- static inline pte_t pte_modify(pte_t pte, pgprot_t newprot)
-diff --git a/arch/um/include/shared/os.h b/arch/um/include/shared/os.h
-index bf539fee7831..09f8201de5db 100644
---- a/arch/um/include/shared/os.h
-+++ b/arch/um/include/shared/os.h
-@@ -279,8 +279,6 @@ int map(struct mm_id *mm_idp, unsigned long virt,
- 	unsigned long len, int prot, int phys_fd,
- 	unsigned long long offset);
- int unmap(struct mm_id *mm_idp, unsigned long addr, unsigned long len);
--int protect(struct mm_id *mm_idp, unsigned long addr,
--	    unsigned long len, unsigned int prot);
- 
- /* skas/process.c */
- extern int is_skas_winch(int pid, int fd, void *data);
-diff --git a/arch/um/include/shared/skas/stub-data.h b/arch/um/include/shared/skas/stub-data.h
-index 3fbdda727373..81a4cace032c 100644
---- a/arch/um/include/shared/skas/stub-data.h
-+++ b/arch/um/include/shared/skas/stub-data.h
-@@ -30,7 +30,6 @@ enum stub_syscall_type {
- 	STUB_SYSCALL_UNSET = 0,
- 	STUB_SYSCALL_MMAP,
- 	STUB_SYSCALL_MUNMAP,
--	STUB_SYSCALL_MPROTECT,
- };
- 
- struct stub_syscall {
-diff --git a/arch/um/kernel/skas/stub.c b/arch/um/kernel/skas/stub.c
-index 5d52ffa682dc..796fc266d3bb 100644
---- a/arch/um/kernel/skas/stub.c
-+++ b/arch/um/kernel/skas/stub.c
-@@ -35,16 +35,6 @@ static __always_inline int syscall_handler(struct stub_data *d)
- 				return -1;
- 			}
- 			break;
--		case STUB_SYSCALL_MPROTECT:
--			res = stub_syscall3(__NR_mprotect,
--					    sc->mem.addr, sc->mem.length,
--					    sc->mem.prot);
--			if (res) {
--				d->err = res;
--				d->syscall_data_len = i;
--				return -1;
--			}
--			break;
- 		default:
- 			d->err = -95; /* EOPNOTSUPP */
- 			d->syscall_data_len = i;
-diff --git a/arch/um/kernel/tlb.c b/arch/um/kernel/tlb.c
-index 548af31d4111..23c1f550cd7c 100644
---- a/arch/um/kernel/tlb.c
-+++ b/arch/um/kernel/tlb.c
-@@ -23,9 +23,6 @@ struct vm_ops {
- 		    int phys_fd, unsigned long long offset);
- 	int (*unmap)(struct mm_id *mm_idp,
- 		     unsigned long virt, unsigned long len);
--	int (*mprotect)(struct mm_id *mm_idp,
--			unsigned long virt, unsigned long len,
--			unsigned int prot);
- };
- 
- static int kern_map(struct mm_id *mm_idp,
-@@ -44,15 +41,6 @@ static int kern_unmap(struct mm_id *mm_idp,
- 	return os_unmap_memory((void *)virt, len);
- }
- 
--static int kern_mprotect(struct mm_id *mm_idp,
--			 unsigned long virt, unsigned long len,
--			 unsigned int prot)
--{
--	return os_protect_memory((void *)virt, len,
--				 prot & UM_PROT_READ, prot & UM_PROT_WRITE,
--				 1);
--}
--
- void report_enomem(void)
- {
- 	printk(KERN_ERR "UML ran out of memory on the host side! "
-@@ -65,33 +53,37 @@ static inline int update_pte_range(pmd_t *pmd, unsigned long addr,
- 				   struct vm_ops *ops)
- {
- 	pte_t *pte;
--	int r, w, x, prot, ret = 0;
-+	int ret = 0;
- 
- 	pte = pte_offset_kernel(pmd, addr);
- 	do {
--		r = pte_read(*pte);
--		w = pte_write(*pte);
--		x = pte_exec(*pte);
--		if (!pte_young(*pte)) {
--			r = 0;
--			w = 0;
--		} else if (!pte_dirty(*pte))
--			w = 0;
--
--		prot = ((r ? UM_PROT_READ : 0) | (w ? UM_PROT_WRITE : 0) |
--			(x ? UM_PROT_EXEC : 0));
--		if (pte_newpage(*pte)) {
--			if (pte_present(*pte)) {
--				__u64 offset;
--				unsigned long phys = pte_val(*pte) & PAGE_MASK;
--				int fd = phys_mapping(phys, &offset);
--
--				ret = ops->mmap(ops->mm_idp, addr, PAGE_SIZE,
--						prot, fd, offset);
--			} else
--				ret = ops->unmap(ops->mm_idp, addr, PAGE_SIZE);
--		} else if (pte_newprot(*pte))
--			ret = ops->mprotect(ops->mm_idp, addr, PAGE_SIZE, prot);
-+		if (!pte_newpage(*pte))
-+			continue;
-+
-+		if (pte_present(*pte)) {
-+			__u64 offset;
-+			unsigned long phys = pte_val(*pte) & PAGE_MASK;
-+			int fd = phys_mapping(phys, &offset);
-+			int r, w, x, prot;
-+
-+			r = pte_read(*pte);
-+			w = pte_write(*pte);
-+			x = pte_exec(*pte);
-+			if (!pte_young(*pte)) {
-+				r = 0;
-+				w = 0;
-+			} else if (!pte_dirty(*pte))
-+				w = 0;
-+
-+			prot = (r ? UM_PROT_READ : 0) |
-+			       (w ? UM_PROT_WRITE : 0) |
-+			       (x ? UM_PROT_EXEC : 0);
-+
-+			ret = ops->mmap(ops->mm_idp, addr, PAGE_SIZE,
-+					prot, fd, offset);
-+		} else
-+			ret = ops->unmap(ops->mm_idp, addr, PAGE_SIZE);
-+
- 		*pte = pte_mkuptodate(*pte);
- 	} while (pte++, addr += PAGE_SIZE, ((addr < end) && !ret));
- 	return ret;
-@@ -180,11 +172,9 @@ int um_tlb_sync(struct mm_struct *mm)
- 	if (mm == &init_mm) {
- 		ops.mmap = kern_map;
- 		ops.unmap = kern_unmap;
--		ops.mprotect = kern_mprotect;
- 	} else {
- 		ops.mmap = map;
- 		ops.unmap = unmap;
--		ops.mprotect = protect;
- 	}
- 
- 	pgd = pgd_offset(mm, addr);
-diff --git a/arch/um/os-Linux/skas/mem.c b/arch/um/os-Linux/skas/mem.c
-index 9a13ac23c606..d7f1814b0e5a 100644
---- a/arch/um/os-Linux/skas/mem.c
-+++ b/arch/um/os-Linux/skas/mem.c
-@@ -217,24 +217,3 @@ int unmap(struct mm_id *mm_idp, unsigned long addr, unsigned long len)
- 
- 	return 0;
- }
--
--int protect(struct mm_id *mm_idp, unsigned long addr, unsigned long len,
--	    unsigned int prot)
--{
--	struct stub_syscall *sc;
--
--	/* Compress with previous syscall if that is possible */
--	sc = syscall_stub_get_previous(mm_idp, STUB_SYSCALL_MPROTECT, addr);
--	if (sc && sc->mem.prot == prot) {
--		sc->mem.length += len;
--		return 0;
--	}
--
--	sc = syscall_stub_alloc(mm_idp);
--	sc->syscall = STUB_SYSCALL_MPROTECT;
--	sc->mem.addr = addr;
--	sc->mem.length = len;
--	sc->mem.prot = prot;
--
--	return 0;
--}
+On OF, the implementation of the .get_next_child_node() fwnode op is:
+
+static struct fwnode_handle *
+of_fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
+                              struct fwnode_handle *child)
+{
+        return of_fwnode_handle(of_get_next_available_child(to_of_node(fwnode),
+                                                            to_of_node(child)));
+}
+
+On ACPI we currently have .device_is_available() returning false but that
+probably should be returning true instead (it's been virtually unused
+previously).
+
+That makes fwnode_get_next_available_child_node() and
+fwnode_get_next_child_node() equivalent on both ACPI and OF. Presumably
+creating unavailable nodes would be useless on swnode, too.
+
+So my question is: what do we gain by adding all these fwnode_*available()
+helpers?
+
+>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+>  						 struct fwnode_handle *child);
+
 -- 
-2.34.1
+Regards,
 
+Sakari Ailus
 
