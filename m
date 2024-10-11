@@ -1,143 +1,159 @@
-Return-Path: <linux-kernel+bounces-361226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361225-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A6399A547
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:41:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2ECF99A545
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:40:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 93A531F22CB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B56C28295A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE62218D90;
-	Fri, 11 Oct 2024 13:41:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9CF218D99;
+	Fri, 11 Oct 2024 13:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LnD1lEUY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6c7PbZo"
+Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C29F1804;
-	Fri, 11 Oct 2024 13:41:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A48804;
+	Fri, 11 Oct 2024 13:40:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728654090; cv=none; b=PDnC+kg4Kv6zSc0g/TIDdGZMQWkwkK6HrS60VQo0vz8QROp5ZMlQzqbUsV8J5/J4igBgVeJWnLaF2OzXMmCXETA4VdaKqIXZeLP4N8Q0satanL5ztgdTYw8mxbL2HeagqodFiCnjveTvyKYCGhJOXtqgIlb9TTpYA/irlQQMYs8=
+	t=1728654030; cv=none; b=QoHjVqqmzoq3Y3z4s5Vilfjk6Ko0cf9NsqAxm4Bqi8Mzt9SzFOEuVnqSSRzeS8hVQHo/3kwuR2/QqHIC6XG+20XVprryigImB0ol2P4IJIf0ygH+i1jk49dqjbZsREYVUDiRcOcZPp2FnZBfJTGJ9UiI4jURLV2H/E7pNlqer5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728654090; c=relaxed/simple;
-	bh=w7w9rsajH//bYko69/flstLIvY32Xup0RimFtfWy7fA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jEVqTY0rwpBvy/kIQjgGrftHLXO0sj9NDmTs2Yksjf2BjLIihWpQpSdDWztGoP45cwYD7hBT5py4EAcQ9/EP8FULQ8S8jwR3004T1EVyuHRYJylYc6/a1Lnl9+oOqSByEpb6khtFw5RsaItlpytZCrRHDhVMpc+PwTyvIBHUbI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LnD1lEUY; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728654089; x=1760190089;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=w7w9rsajH//bYko69/flstLIvY32Xup0RimFtfWy7fA=;
-  b=LnD1lEUYB7c1MFNgE2sALoCL1162yHmfRba9OscQYPS1cbmSImTglIqp
-   A7DmchhCFW2/t98M1kVjMSMo6+kAnGG9Tfm4KpTYkVWKI5BhjAuLF+K8y
-   ZKq9cwncXIIVQ80wzRxDgwBZAQaMqpSuQv1UUO/DGlyRV80jwyoZcLCA9
-   BshPPeEpMB6M+VMN7WlxZMQPBsVGNL2WGjn53Xv2qPpKCV/93hIngYNhs
-   dGk6RLKPIkGW1FqUSnR+TGT0Ho9m0w7udZEYg2W9yWke8LysyvUtXM7WL
-   5YXv+owL/BwWZKdSCYnnEwfuE/h28c9aqvRXb/C9jiq3G+o05ywkKdFDm
-   g==;
-X-CSE-ConnectionGUID: ZF16gCDAQp2cuEjctGD+Mw==
-X-CSE-MsgGUID: E8TvOzfES8KooYh2It7NAg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="50599710"
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="50599710"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:41:28 -0700
-X-CSE-ConnectionGUID: 5FGioOX1STOa+j1Ac7jCxg==
-X-CSE-MsgGUID: n2V+7ihTQuS3AfB73Jq9AA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="80927854"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:41:25 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1szFtT-00000001uAB-0cDa;
-	Fri, 11 Oct 2024 16:41:23 +0300
-Date: Fri, 11 Oct 2024 16:41:22 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Arnd Bergmann <arnd@kernel.org>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Jarred White <jarredwhite@linux.microsoft.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
-Message-ID: <ZwkrAhBIu4SV6B-O@smile.fi.intel.com>
-References: <20241011061948.3211423-1-arnd@kernel.org>
- <20241011061948.3211423-2-arnd@kernel.org>
- <Zwj1p3uMEA24a0sU@smile.fi.intel.com>
- <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
- <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
- <e135bc0a-7c06-4ee2-b149-100595a29d7e@app.fastmail.com>
+	s=arc-20240116; t=1728654030; c=relaxed/simple;
+	bh=wgjfu5r3AaoQ1nJV2V26leGa8fLPEXaUsDW3S1EM/fc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=fFYzvsRsUodUXL0WLuiaJ/1IlaYUcFIfrAU0ZAJYybidSGiGRdVt/z2D1e3wgGmTluvn7wHrkhHEOMvQiTjyV/EJZa3J+J7U4LTxiIH3mpfCxVYdRbQn4ZuMpbCgQnNfWo/7Xb8VBAuwOTRmHGmtITa7VTtlpl7wXrtEX/f7V4E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6c7PbZo; arc=none smtp.client-ip=209.85.167.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539d0929f20so1237694e87.0;
+        Fri, 11 Oct 2024 06:40:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728654026; x=1729258826; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f0ZkUoJvRjLXyfZrkGYuzTLNlYvy7Oqnuq8aLsm5+ho=;
+        b=V6c7PbZo2yjd0bZIeh0HaBWK99ylwjDII8r53QkAwNJIkNzfVrVbtoXdshBbWEcElS
+         DunR87zF6YRMbrKGHwYTAKX7+ZFeTFNqN0UVH5JZ/VpQThcIem3kfDY0KMC/2V30/0wR
+         MPOU08RMeqEHZxyza4iPqZOtn4WvJbG9ikywwKAXEa83ervfX3ZXYM+Td4epCN6CLw/R
+         CaUdtB/t8H8Uzw4FbusVe28ZdqRifExzhKHYvhYAKJkt5zzHdjAKe+3TZ0FEHOykNObh
+         od3SF7KqheLmpcv7/3xncZwVl6sNTrtUuknbhSYmuItsYeOKU7iDqeJP0mACBAGcCUiO
+         YTcg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728654026; x=1729258826;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=f0ZkUoJvRjLXyfZrkGYuzTLNlYvy7Oqnuq8aLsm5+ho=;
+        b=N7HoSaqbeiz1QhPzhlo1ZP5/UWs2A47TJIScSVVH5X1/3h4eQE8rQrep9ClkmKaBOz
+         0gEBwoe3Ttj7qnP8D3DUZame9zD7O5+iDoY4+t7pUmxPE+gNdA7I0FKjMWl0TjIoVSxv
+         UU/p1gICjPVtRaOoJI9rIfep+dT9vu+4uIwmWk2qSO5EB724xnI+d4wIM7xWZB9Pd9zR
+         oxBnGFVfvDds3QiYd/Y1vBaod5Iv9H5PnGvb7+BPJj81TmuHLrKj+D+eP1D/lkkBHIFg
+         nu9po/HUdcxJVsgPRrJGsb9pRyqNcu81u3TJT6hU9b+dsULUSRgVJSvGx5n8oTx7WMKX
+         gRRw==
+X-Forwarded-Encrypted: i=1; AJvYcCUZFzsIDPqYaxpKDx2DJyfNRiHQJV4FTJT5JwXbqzHo1zVzWEo+VIjW9qbA5j8C8k2DQqwzMyTs@vger.kernel.org, AJvYcCUZJAERKObQsBF6rqVYIjzrhUCthStfEzUA8pPtdCktbURFAnVnBYe9M9v08R++drhrV4riRjzYLJy4BJLm@vger.kernel.org, AJvYcCXeAXiIWpnwT9HT/xvS8D/wUOhZ+/aZVN7Ll+WmVyXNkmULNHVqL8LNfZsxPcvH3myszVlWhz3SUQ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxdhy7h7sWWpH1lRN/Nq+VH4yby0qE1v6HT5Nfs1ErENLwPEwEr
+	ROvIk4z+hhalczB/D8+WNXNO5AqOSDB7+iXpLUSnjqU0syruai+E
+X-Google-Smtp-Source: AGHT+IGYbIPQBrWgRbvQaCx70aNq3oHv3T9A2i8xbZOrNifAHVoPr97Fosunh1fB0lmSO7qui2klhw==
+X-Received: by 2002:a05:6512:230f:b0:539:8dde:903e with SMTP id 2adb3069b0e04-539c98ab8a8mr2403029e87.22.1728654026130;
+        Fri, 11 Oct 2024 06:40:26 -0700 (PDT)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c87fdsm604781e87.81.2024.10.11.06.40.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 06:40:25 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: eadavis@qq.com
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kernel@pengutronix.de,
+	kuba@kernel.org,
+	leitao@debian.org,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	mkl@pengutronix.de,
+	netdev@vger.kernel.org,
+	o.rempel@pengutronix.de,
+	pabeni@redhat.com,
+	robin@protonic.nl,
+	socketcan@hartkopp.net,
+	syzbot+ad601904231505ad6617@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com,
+	snovitoll@gmail.com
+Subject: Re: [PATCH net-next V2] can: j1939: fix uaf warning in j1939_session_destroy
+Date: Fri, 11 Oct 2024 18:41:24 +0500
+Message-Id: <20241011134124.3048936-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <tencent_5B8967E03C7737A897DA36604A8A75DB7709@qq.com>
+References: <tencent_5B8967E03C7737A897DA36604A8A75DB7709@qq.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <e135bc0a-7c06-4ee2-b149-100595a29d7e@app.fastmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 11:40:05AM +0000, Arnd Bergmann wrote:
-> On Fri, Oct 11, 2024, at 11:12, Andy Shevchenko wrote:
-> > On Fri, Oct 11, 2024 at 09:59:46AM +0000, Arnd Bergmann wrote:
-> >> On Fri, Oct 11, 2024, at 09:53, Andy Shevchenko wrote:
-> >> > On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
-> >> >> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
-> >> >> +		*value = BIT_MASK(width);
-> >> >> +		return AE_NOT_IMPLEMENTED;
-> >> >
-> >> > Perhaps it has already been discussed, but why do we need to file value with
-> >> > semi-garbage when we know it's invalid anyway?
-> >> 
-> >> It's not strictly necessary, just precaution for possible callers
-> >> that use the resulting data without checking the error code.
-> >
-> > Do you have any examples of that in the kernel?
+On Thu, 8 Aug 2024 19:07:55 +0800, Edward Adam Davis wrote:
+> On Thu, 8 Aug 2024 09:49:18 +0200, Oleksij Rempel wrote:
+> > > the skb to the queue and increase the skb reference count through it.
+> > > 
+> > > Reported-and-tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
+> > > Closes: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
+> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> > 
+> > This patch breaks j1939.
+> > The issue can be reproduced by running following commands:
+> I tried to reproduce the problem using the following command, but was 
+> unsuccessful. Prompt me to install j1939cat and j1939acd, and there are
+> some other errors.
 > 
-> drivers/acpi/processor_throttling.c:            acpi_os_read_port((acpi_io_address) throttling->status_register.
-> --
-> drivers/cpufreq/acpi-cpufreq.c-
-> drivers/cpufreq/acpi-cpufreq.c: acpi_os_read_port(reg->address, &val, reg->bit_width);
-> 
-> $ git grep ^[^=]*acpi_os_read_port 
-> drivers/acpi/processor_throttling.c:            acpi_os_read_port(\ (acpi_io_address) throttling->status_register.
-> drivers/cpufreq/acpi-cpufreq.c: acpi_os_read_port(reg->address, &val, reg->bit_width);
+> Can you share the logs from when you reproduced the problem?
 
-May be we can add checks to them, but dunno...
+Hello,
 
-> >> The all-ones data is what an x86 PC would see when an I/O
-> >> port is read that is not connected to any device.
-> >
-> > Yes, but it's not what your code does.
-> 
-> My bad, I was confused about what BIT_MASK() does.
-> I'll change it to "GENMASK(width, 0)", which should
-> do what I intended.
+Here is the log of can-tests/j1939/run_all.sh:
 
-Okay. Maybe also adding a comment that it's usual behaviour in response to
-the read from non-existing IO port?
+# ip link add type vcan
+# ip l s dev vcan0 up
+# ./run_all.sh vcan0 vcan0
+##############################################
+run: j1939_ac_100k_dual_can.sh
+generate random data for the test
+1+0 records in
+1+0 records out
+102400 bytes (102 kB, 100 KiB) copied, 0.00191192 s, 53.6 MB/s
+start j1939acd and j1939cat on vcan0
+8321
+8323
+start j1939acd and j1939cat on vcan0
+[  132.211317][ T8326] vcan0: tx drop: invalid sa for name 0x0000000011223340
+j1939cat: j1939cat_send_one: transfer error: -99: Cannot assign requested address
 
-(Or for the curios it's all comes from the Data Bus on hardware being Open
- Drain an hence use of pull-up resistors and when there is no response on
- the bus, the default will be "All 1:s").
+It fails here:
+https://github.com/linux-can/can-tests/blob/master/j1939/j1939_ac_100k_dual_can.sh#L70
 
--- 
-With Best Regards,
-Andy Shevchenko
+The error message is printed in this condition:
+https://elixir.bootlin.com/linux/v6.12-rc2/source/net/can/j1939/address-claim.c#L104-L108
 
+I've applied your patch on the current 6.12.0-rc2 and the syzkaller C repro
+doesn't trigger WARNING uaf, refcount anymore though.
+
+== Offtopic:
+I wonder if can-tests/j1939 should be refactored from shell to C tests in the
+same linux-can/can-tests repository (or even migrate to KUnit tests)
+to improve debugging, test coverage. I'd like to understand which syscalls
+and params are used j1939cat and j1939acd utils -- currently, tracing with
+strace and trace-cmd (ftrace).
+
+> > git clone git@github.com:linux-can/can-tests.git
+> > cd can-tests/j1939/
+> > ip link add type vcan
+> > ip l s dev vcan0 up
+> > ./run_all.sh vcan0 vcan0
 
 
