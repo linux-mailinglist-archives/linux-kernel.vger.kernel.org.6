@@ -1,197 +1,280 @@
-Return-Path: <linux-kernel+bounces-360446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 63C99999B12
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:16:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7880C999AD7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:03:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3FE282506
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:16:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086FB1F23A1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:03:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334601F473E;
-	Fri, 11 Oct 2024 03:16:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB901F473B;
+	Fri, 11 Oct 2024 03:03:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XLipNquW"
-Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2080.outbound.protection.outlook.com [40.107.103.80])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MqdB9Jo9"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7162F322E;
-	Fri, 11 Oct 2024 03:16:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.80
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728616576; cv=fail; b=WjRMF4VOBPoGuxlETOpgEa7cQd6HprSzaF1/+HusAenfxpeujH4QaNKqCTgUk2uqNBbbIvh2obNGhwQmlrNkJsFy1ceFFLiL5hYvPV54+z+XUc/HGwfBXTIrpKxwj6yP8AbGXihA8LaUqkiPH1GWpLmeYMIffyaQbPsOmp2t530=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728616576; c=relaxed/simple;
-	bh=ddQdb5QBAMBR+SV7tGl7aBEDzwxzYV62dGo+VKveEq0=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RqEC5V9B3+FDfG1KuW1TUF/EyAwXNbUyVx7U3sLipBh0xY0OIqaHGgUkTrj9MFFn+ebRbjd6L6FBcLaCPCf+mukXR0hFPogM+46fkwQYat1M+N874hMt7kq6wnugyzfB2/SZtkHh2OTaGzFaM+E35pwpwvJccEEeJPzbhkfzjnM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XLipNquW; arc=fail smtp.client-ip=40.107.103.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=aIA/s4hxa8Z2Pg7CwiM5CV7S5vba40yesuHZmtHK106i5cSob6cLi09ejfYE+HdQdLF5M0JOTlobw5H/YwIe8fzbnCNPCBXfNkTCLPIh0rPQ8oogKxwLTZRkL02Y4EJuUHA7YydaRURFLfwUkexuDOtky6qRa/lXFG48vsPNk9wBtLcx91cCz216fuYuf0zyt5zfhgXv/SzEz1Bv1pWFlwTJLqx5uPEmezGALiDo3MTRV7eSKUZpKz9lQlW5EOA+xkf5wLMj9CQ4lmxtlKbAlKT7vs93Dp4Tp1v0vuqqTwS1+sOCdVe446wLKvZv/4OAIvjSbBVA6bVT9U8lNzGBsA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=waCzLYymp369lq2JaGe2UTMDulnmUfPcw7tlc4zpad4=;
- b=Xh4NgNF+wEjyMKw4t5D4EidfltYfT6Bc5BZWeUwXHjuKdvWXJPygaKERFBqTemcHFSZ/3U6StY+tdMlC0OV9n2oamfcY02eipFHd8QZ/VmiF0EiDM7uq7dkCnFvKS34BiWOE7OT2Jp/Sh2sp8VDKaqQ9ZU8+4s9rShZ6mPYHuRW/7hTgNN+pBMazbMB+59Ep6L9Mbvs8b7lVCTbHMUbmLnX4FACc3mmWdSbMPrhSatJiLhjIoUbq6lYq5rFRpfkIpcdu2zBKmwHGgH/IaKH7bX0d7Lmwrp3RPMP6ZNReW9xj3IFvNcpM+Qv3xPqk2s1GDtfVoZ38eqJsqYJj2Wsgsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=waCzLYymp369lq2JaGe2UTMDulnmUfPcw7tlc4zpad4=;
- b=XLipNquWJ9tXKRyq2se5B8QX1ZeEkD9h7NFmFqc8l2eMg8pV6fCNM+n3Q2fo1GMvdCO42BjbQzEwUAu1NSnbE1srFQID+EP/QauNy3VVzXqoc+ONvI0beiYhvK4pkpmByCrkBVOjiTYojuSP3IhyqHJ0FnWSUQa4blO/8ecce7Jfk9ObP8YhGp0nJkZkPdpq/ZY/Rp0jsGV2E+EY9wPK3nKdNNZezhyIJrUPOg2rsV4Og+PpiVkO3ohvcQhYK4cUaI5w0v3BNSAvd4ffa199D+4bmYuDz4HYM1BfugRYFWjjcyEtjeXkiS8LuIWB04HWa6GNoBe+ftYuKmx6DP4LoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
- by VI0PR04MB10999.eurprd04.prod.outlook.com (2603:10a6:800:266::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Fri, 11 Oct
- 2024 03:16:10 +0000
-Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
- ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8026.019; Fri, 11 Oct 2024
- 03:16:10 +0000
-From: Wei Fang <wei.fang@nxp.com>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	claudiu.manoil@nxp.com,
-	vladimir.oltean@nxp.com,
-	christophe.leroy@csgroup.eu
-Cc: linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	imx@lists.linux.dev
-Subject: [PATCH net] net: enetc: add missing static descriptor and inline keyword
-Date: Fri, 11 Oct 2024 11:01:03 +0800
-Message-Id: <20241011030103.392362-1-wei.fang@nxp.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SG2PR02CA0038.apcprd02.prod.outlook.com
- (2603:1096:3:18::26) To PAXPR04MB8510.eurprd04.prod.outlook.com
- (2603:10a6:102:211::7)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A90FEBE;
+	Fri, 11 Oct 2024 03:03:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728615796; cv=none; b=sO6lOZLVZMJ1NFx4aCGXLE8LloL7eFBkXVLUT6LsFVCcq5gSSE9Hn4l63uTtq6rVm59RToivE96v9QMFBaud4oxetLD68aemNkQ9CxfH3lP9WtatTPr08ogUAQMmbQiNKnJAQzo7pBxQyGfAhH7ILLQ53huOLoPdaGJmFPawza4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728615796; c=relaxed/simple;
+	bh=P3TSos/91W1lViiaVUcSn2jpJ+gJDjpOvwBp2Pw/FE4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A0om1vNUark1YmmnSImhYdFwtZ/EcvAC2G9NHAY6UQ6mQEzyQI5+Wf6BkAlVAcAK4ExVNipkRMasRlaCjwYRR/qeQnlOxFPVRotjQ9U9h+1zuhUPlpzdhCS6ix/C4Ueuqq2ZlmiKtrmN0jTunX5shzmPYxcOvKVNvW6UPtCUTSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MqdB9Jo9; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACSQX0011418;
+	Fri, 11 Oct 2024 03:03:08 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=6f3uHrKBFZE0TezqG7rTj2
+	3m1ABTyz8fgG6j+UM3RIY=; b=MqdB9Jo9sUkxOLHvK7QpNrh+ZOX2wEIKzUEicu
+	MT6514d7zJI4z6BNgiXMhhfc06ViRBOvVO0Nj2XcshACaWwMyjCmvrxqP3WTD2vm
+	DumIX8DgJ1Pbg88hx/r6Zqztut+7Ak6TrHwseWlF+VmWND2TFKdDilI5hggCHJQL
+	a5oahs1LPsdOT7Tk0SfjH2PuzosRBpRwLhwhA5NpghDiRqx5MNrxQwBUDKIudCPC
+	0TWZRJmHmBcwR37Ows4PWYmPt54kZsjxyR9LwNwDG/XJA9eqQHmcfgKxV+QLK8Hx
+	77t9ael0fHBj6EgLG8bNfGt7O+3RzNMFQmX9CAJQav3Td6Sw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xthvcfa-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 03:03:07 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B336f6003325
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 03:03:07 GMT
+Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
+ nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 10 Oct 2024 20:03:03 -0700
+From: Miaoqing Pan <quic_miaoqing@quicinc.com>
+To: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <agross@kernel.org>, <andersson@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
+        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
+        <stanimir.k.varbanov@gmail.com>, <kvalo@kernel.org>,
+        <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
+        <dmitry.baryshkov@linaro.org>,
+        Miaoqing Pan <quic_miaoqing@quicinc.com>
+Subject: [PATCH v4] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
+Date: Fri, 11 Oct 2024 11:02:54 +0800
+Message-ID: <20241011030254.2915173-1-quic_miaoqing@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|VI0PR04MB10999:EE_
-X-MS-Office365-Filtering-Correlation-Id: 079c5914-dc3b-4ec2-c65e-08dce9a30dd2
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8f7SfF29biAnKxsg9nEpS3YVutP/sZJi0qj+FfaeMXM8fSlcQi/jkDCLWzN3?=
- =?us-ascii?Q?Vn1dJwcLnURo8PtvTLNDqj1TzHz9f8WEClO0VKwkYRKqY/C8sV8EUSWdzMso?=
- =?us-ascii?Q?y0pE8yaU/TOt4EvQ5nHuKCofgmxkCys/Bifz5xhY96dQkVHh6bdbec7QIFHA?=
- =?us-ascii?Q?ALp6phkps2WwYys4ll864VA0vDWH4mfYNJzKZxQe454hgElqF4If74eFtGZj?=
- =?us-ascii?Q?BWubGYbLqQdikKBqtM80WERNd/xVDj3CclPJnMccZgbKKKIWkr/6gyGvGxM0?=
- =?us-ascii?Q?EC5/R4swq/91WvBhIoQa8D79Tb+l19n0hyYuBgDYIMDtgqPlooCO0J3kOVRP?=
- =?us-ascii?Q?/8gpqcbOQ0JWh6LLGSvdwt2TkO9A6ccCAWLR6wwInxp2l6vCl6/TP5o9RCZB?=
- =?us-ascii?Q?EBFeh2Hoi3zv7bKsHpOnN3x2rIsQ6snEayfzibRX6qQKVUl6YxJJ/vtQljM5?=
- =?us-ascii?Q?SrSrvR2fRXIrPfB3cZBAt1s+5K09HeezjEEsPqyqS+l9qE8a5Lsm2631QOZS?=
- =?us-ascii?Q?Q+MAVHLa77Poer0UDpci5LPskADvVMUasRp6NLTkrOVAF+hDIB1zVpLFk0Sh?=
- =?us-ascii?Q?b36eJbySiu5Kj2mswTNRCJfF1bfK+q1KQkiMupWcPdyoTK0Seb8Dg5K9UW9k?=
- =?us-ascii?Q?j6YXpIJPeGQqXnc+HdnjrhKewYfUh8wrOdbO+hDexxoQnXf//iw1hrAnBctN?=
- =?us-ascii?Q?5fAVDp9XXK1UWuX0X7cbDt34p7xQuQLlV9d6V+eDJOalvFm2/TzZ0C985zjX?=
- =?us-ascii?Q?qxKJb4BOYbtjraAJvLXCMBPWLe5BagrjoikLQ/HU78MlXp7RNEG+SwQ+WtIr?=
- =?us-ascii?Q?R7JZdYc4fX1W29QmEI+n1407DTU5Du6bXwamf/v6Ra+Vb/dVje0GEDriNJy0?=
- =?us-ascii?Q?92UXKP3m5w/ZoUn+C0KUZR4D9orgcoOp3MCn5KtmmEEimwNkMuFYzInWUDuO?=
- =?us-ascii?Q?LhCqp2qaENPhTbTm5LjhA4Qwb/KBDrsOVzcb1uIhSet020QtC/ehEo+7aMr8?=
- =?us-ascii?Q?Nn01XLrXUdMxXiWnNcQfVlRzlamrxGGi6dBsTK7OnkANKeUvGXwDjneBjRpT?=
- =?us-ascii?Q?dJWUS808bJjvx8KqnsJoM1QwqDWJD+HTPz/uhXqsn78kmrzFeSmVgjh7dbjv?=
- =?us-ascii?Q?IQsisTPNZl2fDeUHuqXGogY3w9ywtAFAVxQsnV47vXvCKmOW22IZLUycpMy2?=
- =?us-ascii?Q?dHx97LdJw15XUA2ja9vtTmMcP+sCVt5mArziBgwuIyDfb5zSMKCTA2gJZSdK?=
- =?us-ascii?Q?NzOBGqD/8F2cpEG+Lc/SiLquPkqAli96MUn3opyAXVAglsnwZd2x5Is+8OyB?=
- =?us-ascii?Q?L5kdTwB17Y3Bzgf2YaQIYYteEewsXm5vkaTSSKPrJUcptw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?51gg2zTJsInJumtTJ7cJjf5uvy5dRjRpRSRPLM+rkkm8WKS2Y4yPYevHaglQ?=
- =?us-ascii?Q?d1pIIDZgyUHNbeR8U1O5rd+vthW8bQ0Jy7ojbYq3+gMxWDvDllqWz2h9FP1X?=
- =?us-ascii?Q?WZgcTEBILtKyKg8NyBj4UyCa3wOKztLJh/tCDLNOducleGf7NiSDY44oF8Ad?=
- =?us-ascii?Q?f4o3HkT0nhgmh8QYFcmkcwM5hVdLeF4igOt/Twj+YwvCt6KWiDijg+9nTQ3/?=
- =?us-ascii?Q?ElgH+lvxSbxGgYQevVj/8awW5lH6H8LBHSQrO/EqqKaKDbg/nYnOyFlXIvFg?=
- =?us-ascii?Q?0DIs1b/QOKd1zRR1FCBjRb4axIr6PNjz2tOnYaPxGOq4YqrdV50sYyHV7OMj?=
- =?us-ascii?Q?WID1ME350oMb8+gdprvLYpqUBjwsnczWcQ2OVuLAsSsrptP/0qvdQlL4XD0d?=
- =?us-ascii?Q?NdoGg2K1ZVHba2zmukhcXwqU7gCDGH94pIY/GGvSXXS9nrKPrhmtcCfamuo8?=
- =?us-ascii?Q?FkV/Vl4sRzwZecHbRbbJbLf6cxRjUXdHIDL8EXPynZaoxe/CeWUH7hiPVror?=
- =?us-ascii?Q?+VItcieh76sX7J+0CphYNDYzTb3pq8GdJEFMP5c1wpPE1b1BAeMvksmNsDE7?=
- =?us-ascii?Q?aRHxNIbLDuMjabaac5Te51Jhh5oUYTTLIdGFYV0lokUbO7O/KIEfG0d1UxzY?=
- =?us-ascii?Q?3IM1QYSkD3NRV9IzrlCaCa+ejmZcm/AgUcywb2ETm92474Mq0Axxyhe4/Lxn?=
- =?us-ascii?Q?RF5nrscHZgErFVsCM8mIkcTnFe/UppBcJv/l+1iHpG8UODxjoRusA1wUmTd2?=
- =?us-ascii?Q?KtDpsGLb7l7Yted/lY+6u7V7Q3KgofsgOS4N4EN0J1I5JTtQR63dTZHcjnLk?=
- =?us-ascii?Q?+u4giWmj/YEnRodaAzW7M9u0rDqK8W9t2DGhLTcnrCg38dBrEgT0DAB8OvBO?=
- =?us-ascii?Q?q6CbDKCr6095GwhHoJ3xwmgj23zK7KDhYjUL7rgC3MtNvQIwJBAhR2gIaBJz?=
- =?us-ascii?Q?uZLpIru7YWPzg4v/I7Os5VGlExFsk3XwyKZ6uruvQVM+vaPYvt1IM4t41gX3?=
- =?us-ascii?Q?vi8IjjNFAiNKir2wtZ4DBdVB8JJY0RwM2+JvloXZnKGHKT4kTIN2mo6+v0qG?=
- =?us-ascii?Q?gfVe/dj1iBe6uSDjxeMiGTk6G/O+PmpETl0pPQcHMwFKtSivPb+6hLyubynY?=
- =?us-ascii?Q?IK1vD6QUyjqjGupPFjXMToUAy3wIDqnFaYEXVdrT4zdCkoqzBwXJFyq4YmRK?=
- =?us-ascii?Q?O1z3ML+fU63VjviY/4GX5MR6doQPD6sVxBTpAoO3L8ybgcvFZMLE1yNGXwxA?=
- =?us-ascii?Q?6uYz2gedvqxOtXXy9myxQ3I+IKgo5qtJSeo7+mycBtkh+jj6u5MwLqCVGBDk?=
- =?us-ascii?Q?ihBhl0ON8EXuoAhzq0vE4Loj63QN1vA5GSXY6QaEByctR3FyQiIAVw2h+zFG?=
- =?us-ascii?Q?hL4b080oMnv44NrWOHy/+a1AURQrYqr8NUKUKWbl91obvedwsBRJG3T4CKxT?=
- =?us-ascii?Q?KBNiM34bIqSpm7TmrKcF0yQ6mGaIwvjiLRGCue6H2HtMJBkERw9W5MEkdAa+?=
- =?us-ascii?Q?lE9VtbIlQsUaF2EF8iCxVlWqRfPr+dSEtu0JNTuyapMxFfg4gX1y6yKJj2nH?=
- =?us-ascii?Q?VaLAdcfSTDifCmiQZl0D7x5wCdzMU0qVptpT/TJU?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 079c5914-dc3b-4ec2-c65e-08dce9a30dd2
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 03:16:10.2485
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: /07sUNvPDwU8a/CXIbIhfjVSADllcsSzlWzrRtWeO4AK6lqZMgtjhDlnzbM9KIzTF44eNjz5EVM/hePTyrIC1w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10999
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: uSvkxu_kZc3dlzv4VtXSbwQNcn3-QWQD
+X-Proofpoint-GUID: uSvkxu_kZc3dlzv4VtXSbwQNcn3-QWQD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
+ malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
+ phishscore=0 clxscore=1015 mlxlogscore=999 impostorscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410110017
 
-Fix the build warnings when CONFIG_FSL_ENETC_MDIO is not enabled.
-The detailed warnings are shown as follows.
+Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
+board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
 
-include/linux/fsl/enetc_mdio.h:62:18: warning: no previous prototype for function 'enetc_hw_alloc' [-Wmissing-prototypes]
-      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
-         |                  ^
-include/linux/fsl/enetc_mdio.h:62:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
-      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
-         | ^
-         | static
-8 warnings generated.
-
-Fixes: 6517798dd343 ("enetc: Make MDIO accessors more generic and export to include/linux/fsl")
-Cc: stable@vger.kernel.org
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410102136.jQHZOcS4-lkp@intel.com/
-Signed-off-by: Wei Fang <wei.fang@nxp.com>
+Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
 ---
- include/linux/fsl/enetc_mdio.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+v2:
+  - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
+  - relocate pcieport0 node in alphabetical order.
+v3:
+  - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
+v4:
+  - update 'ath11k-calibration-variant' to "Ride".
+v5:
+  - update 'Ride' to 'QC_SA8775P_Ride'.
+---
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 121 +++++++++++++++++++++
+ arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
+ 2 files changed, 122 insertions(+), 1 deletion(-)
 
-diff --git a/include/linux/fsl/enetc_mdio.h b/include/linux/fsl/enetc_mdio.h
-index df25fffdc0ae..623ccfcbf39c 100644
---- a/include/linux/fsl/enetc_mdio.h
-+++ b/include/linux/fsl/enetc_mdio.h
-@@ -59,7 +59,8 @@ static inline int enetc_mdio_read_c45(struct mii_bus *bus, int phy_id,
- static inline int enetc_mdio_write_c45(struct mii_bus *bus, int phy_id,
- 				       int devad, int regnum, u16 value)
- { return -EINVAL; }
--struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
-+static inline struct enetc_hw *enetc_hw_alloc(struct device *dev,
-+					      void __iomem *port_regs)
- { return ERR_PTR(-EINVAL); }
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+index 0c1b21def4b6..c41fac1eb6c2 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
+@@ -27,6 +27,83 @@ aliases {
+ 	chosen {
+ 		stdout-path = "serial0:115200n8";
+ 	};
++
++	vreg_conn_1p8: vreg_conn_1p8 {
++		compatible = "regulator-fixed";
++		regulator-name = "vreg_conn_1p8";
++		startup-delay-us = <4000>;
++		enable-active-high;
++		gpio = <&pmm8654au_1_gpios 4 GPIO_ACTIVE_HIGH>;
++	};
++
++	vreg_conn_pa: vreg_conn_pa {
++		compatible = "regulator-fixed";
++		regulator-name = "vreg_conn_pa";
++		startup-delay-us = <4000>;
++		enable-active-high;
++		gpio = <&pmm8654au_1_gpios 6 GPIO_ACTIVE_HIGH>;
++	};
++
++	wcn6855-pmu {
++		compatible = "qcom,wcn6855-pmu";
++
++		pinctrl-names = "default";
++		pinctrl-0 = <&bt_en_state>, <&wlan_en_state>;
++
++		vddio-supply = <&vreg_conn_pa>;
++		vddaon-supply = <&vreg_l2c>;
++		vddpmu-supply = <&vreg_conn_1p8>;
++		vddrfa0p95-supply = <&vreg_l2c>;
++		vddrfa1p3-supply = <&vreg_l6e>;
++		vddrfa1p9-supply = <&vreg_s5a>;
++		vddpcie1p3-supply = <&vreg_l6e>;
++		vddpcie1p9-supply = <&vreg_s5a>;
++
++		bt-enable-gpios = <&pmm8654au_1_gpios 8 GPIO_ACTIVE_HIGH>;
++		wlan-enable-gpios = <&pmm8654au_1_gpios 7 GPIO_ACTIVE_HIGH>;
++
++		regulators {
++			vreg_pmu_rfa_cmn: ldo0 {
++				regulator-name = "vreg_pmu_rfa_cmn";
++			};
++
++			vreg_pmu_aon_0p59: ldo1 {
++				regulator-name = "vreg_pmu_aon_0p59";
++			};
++
++			vreg_pmu_wlcx_0p8: ldo2 {
++				regulator-name = "vreg_pmu_wlcx_0p8";
++			};
++
++			vreg_pmu_wlmx_0p85: ldo3 {
++				regulator-name = "vreg_pmu_wlmx_0p85";
++			};
++
++			vreg_pmu_btcmx_0p85: ldo4 {
++				regulator-name = "vreg_pmu_btcmx_0p85";
++			};
++
++			vreg_pmu_rfa_0p8: ldo5 {
++				regulator-name = "vreg_pmu_rfa_0p8";
++			};
++
++			vreg_pmu_rfa_1p2: ldo6 {
++				regulator-name = "vreg_pmu_rfa_1p2";
++			};
++
++			vreg_pmu_rfa_1p7: ldo7 {
++				regulator-name = "vreg_pmu_rfa_1p7";
++			};
++
++			vreg_pmu_pcie_0p9: ldo8 {
++				regulator-name = "vreg_pmu_pcie_0p9";
++			};
++
++			vreg_pmu_pcie_1p8: ldo9 {
++				regulator-name = "vreg_pmu_pcie_1p8";
++			};
++		};
++	};
+ };
  
- #endif
+ &apps_rsc {
+@@ -453,6 +530,20 @@ &pmm8654au_1_gpios {
+ 			  "USB2_PWR_EN",
+ 			  "USB2_FAULT";
+ 
++	wlan_en_state: wlan-en-state {
++		pins = "gpio7";
++		function = "normal";
++		output-low;
++		bias-pull-down;
++	};
++
++	bt_en_state: bt-en-state {
++		pins = "gpio8";
++		function = "normal";
++		output-low;
++		bias-pull-down;
++	};
++
+ 	usb2_en_state: usb2-en-state {
+ 		pins = "gpio9";
+ 		function = "normal";
+@@ -702,6 +793,25 @@ &pcie1_phy {
+ 	status = "okay";
+ };
+ 
++&pcieport0 {
++	wifi@0 {
++		compatible = "pci17cb,1101";
++		reg = <0x10000 0x0 0x0 0x0 0x0>;
++
++		qcom,ath11k-calibration-variant = "Ride";
++
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
++		vddaon-supply = <&vreg_pmu_aon_0p59>;
++		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
++		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
++		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
++		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
++	};
++};
++
+ &remoteproc_adsp {
+ 	firmware-name = "qcom/sa8775p/adsp.mbn";
+ 	status = "okay";
+@@ -744,6 +854,17 @@ &uart17 {
+ 	pinctrl-0 = <&qup_uart17_default>;
+ 	pinctrl-names = "default";
+ 	status = "okay";
++
++	bluetooth {
++		compatible = "qcom,wcn6855-bt";
++
++		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
++		vddaon-supply = <&vreg_pmu_aon_0p59>;
++		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
++		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
++		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
++		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
++	};
+ };
+ 
+ &ufs_mem_hc {
+diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+index e8dbc8d820a6..8d42b5e9c7d6 100644
+--- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
++++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
+@@ -5570,7 +5570,7 @@ pcie0: pcie@1c00000 {
+ 
+ 		status = "disabled";
+ 
+-		pcie@0 {
++		pcieport0: pcie@0 {
+ 			device_type = "pci";
+ 			reg = <0x0 0x0 0x0 0x0 0x0>;
+ 			bus-range = <0x01 0xff>;
 -- 
-2.34.1
+2.25.1
 
 
