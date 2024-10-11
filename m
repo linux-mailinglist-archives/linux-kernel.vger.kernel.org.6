@@ -1,125 +1,142 @@
-Return-Path: <linux-kernel+bounces-361760-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D1FB99ACAD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:32:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7502199ACAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:32:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A3341C2377E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:32:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 337F0283A06
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB98C1CF7DB;
-	Fri, 11 Oct 2024 19:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65CD1CFEC8;
+	Fri, 11 Oct 2024 19:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OLTh9q4J"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mULvvqKu"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C08878BE5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F7191CEE85;
+	Fri, 11 Oct 2024 19:32:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675155; cv=none; b=UMtBqYPiq8lxKSZHWamhqymU2aB/hideZoXwbIsaigROp16tFs9YYEcI9tNOJD/bKRmdNUfRCEg4WuSjbpNdgporEh8S6OY4lK8GEXih7KeAnc6VgOMwnqPGc+ZD0fiKZKZ/ryndR2bQv9hEuqjFCYXh3wqoJpHJrlfxNtwrNK8=
+	t=1728675165; cv=none; b=SaJ8nwUeelTuemnmYaL2B57+muhKdBC88h2qffZgBH5OIit/pgzjiF5Og6qgN91MVC1rU29vmCz6Qiklr+Gmwk05D1+mXOxIfdRk+Q++R3s4jrnvcVH0CvZ+rCDunc9kuFzBXYk6CkFBmNHLc0uTgKny8wMS+mwzuu5B7sab2uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675155; c=relaxed/simple;
-	bh=tgCk3Xe2aBGN1274tXU2mdrX2MWoBWYlMBw/IkjAhL8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IgpBYs7zYaNSseeorK/lPq85fNslXazbIeDHXnlwmTzaj3Avtt0hgyG8oBfPfNGkOsVIae7A2U+pUWkBcfH1D3QyDarWBzOwtsJh4cPnlmGh39bP4iG4BLGdhbHySuZhBMqX0XYchXPXtL+mutUtZqM3nKa/CSExyYHYHxvW2PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OLTh9q4J; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7e6cbf6cd1dso1808687a12.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:32:33 -0700 (PDT)
+	s=arc-20240116; t=1728675165; c=relaxed/simple;
+	bh=jTufO1eqHWvYONgG76j5xyUnwjzmD+Ejxhm+AhPj+AM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s9SD4yQsaNqvYK4jsrcQBbH2bT7iSOOTIq+vHPQuhyU5AuacrW+CHMuj3fYTKTFh5m13GtaBaFpnBMBYnikO5NMzYIliGd2p7JV1WDdDx7rfY4h+G0zS9s6U6QcxaKYXgseXEt3k/QMhcTOEuKBZ33z6ytrqOo0xJWXEpD3NWpU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mULvvqKu; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so1781803f8f.2;
+        Fri, 11 Oct 2024 12:32:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728675153; x=1729279953; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LXNn4Ly4G4neTYf4tTrsbFyNCo3UAgTeY9wRiKE/qto=;
-        b=OLTh9q4JLS11DX7HUY1phCd2ruaVsCOwSGIDDP5pgwatDiYA7yIYD1nZXgXMRA918w
-         fBhXP8EGr4DgIz0HGlwzqhN72M+Vt4o1u1D2j70Jv6MTxkseeFFZkSQ/ZeHf0F0wKiX7
-         17Mgmq2wT4IfOnI08lS7Z2ECKSuRnmQahpDffHGzoAcfyIpsfQbS1J+XTK2I7UMV+tgn
-         dNBxz00Ck0YMJcAzffQ/x4kgRPSjQFEAsiVuzJ8DiM0C8WmARddxBsjyQP8xFqh0/kWU
-         rUOg+OBr3dXSxcq14wccva/5DrY6TEX8gXzhRKdh65kVjqZdaR8Lupgi87l+E+qkxA74
-         n9ZA==
+        d=gmail.com; s=20230601; t=1728675162; x=1729279962; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+HS0NAdsOUYeGI7mRERtfLDO2iH3xgiX9etHXZcQn9A=;
+        b=mULvvqKuDNaZgXFvTT4l0kDnQQszydvwDldHJi6ym8UHzLk8FBeAFftt6M5FwnSmrL
+         2+1/kDhFGFiji6T/Vte1OB9RexpvMLDIjkbzASWOz60YiVnHqTEWdtz5NsiabOw83Zo6
+         jyjvn9yhliqu7B8U6k5eRBmZCCleYxRlZ3YsQcKkosyh461WbBUl10o9bgfLElTTsVGU
+         Cb221Uo3JbHGIeDCTiOkCUH9iaKnGMb1b9sJ/ASg0sYSkEnHMgLWl38h6CnVdUIE5LP+
+         +Qk6QS0g1gwP5M9v+aedmsSYUMjuzDOwF3o5bl24sr63+MynlFuBhGfO1rtJFfAwwGKR
+         lZNw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675153; x=1729279953;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LXNn4Ly4G4neTYf4tTrsbFyNCo3UAgTeY9wRiKE/qto=;
-        b=DiW68h5ZP7dOyJr30o3vJYteURCfL/QQiMwNrY3ycMs2op+dgcXvyDjI9McZUW/Sxb
-         0xLvbqPDW1zz4gcBUTHL8zvZl5nCZL7ZHjWVVJHpYG3hxS7YAArHIw1SzilfzPJBGRTI
-         6Yv2iC25dxmB+GfeQKbURIjzvurpD8Ns7YEoWmFAG4g811ejfAXhkE7quGvu0LER32JY
-         BdHw2syO1qD2FhZy3oLMCZAGCWpMfDY08i8vTodZFtfR0wK6qhteyVYE5Zsi6PiC9hIH
-         Bb5MX8BGM3d3VqYBVrLa/RxBVrxlMz/P+fPJd5N3rDf1IzbuMxqVuVvjN9jgSOX6nJ2T
-         2Ycw==
-X-Forwarded-Encrypted: i=1; AJvYcCWVO+rMYAipeK1SIPSFUd4BxGEY5q4Noxa402h6NvgCyUzoP0jxgQ9XhuAfGQtcGn780PhRpJJGVfwvhps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxvFi9puK1jx7362LuyAqLQCsD37eAN0WfCMaeswstXdmwjBk3H
-	kUj0vHiv7hsWhQui8j0Co9Is7uuQe0V1D1rReNm7/5OyfxUuOcsWysV6CyOTV//tWoVAyBm/NT0
-	LwFN5LXUutQ9gDNHXWbmnAi1xT+Zbs+KGpwvJENAPMCpNrSi4CtTG
-X-Google-Smtp-Source: AGHT+IEq0tPjAJVy9zzh1HUzlSfx1yGwGjXhh4kvHy8ppZ4QEFMmboOCjJSDrwAx4+sjPa8CHPYiNorVcV6F6F0MDd4=
-X-Received: by 2002:a17:90b:218c:b0:2e2:b46f:d92a with SMTP id
- 98e67ed59e1d1-2e2f0a98b0cmr4063317a91.14.1728675152756; Fri, 11 Oct 2024
- 12:32:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728675162; x=1729279962;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+HS0NAdsOUYeGI7mRERtfLDO2iH3xgiX9etHXZcQn9A=;
+        b=U5TNMXkphquSWxffPdOs1GJeDcH/+gHMYrB+vdxxOG23xcptsU5K92riZyGHEapOwD
+         dPaowfoP5Wna3SGLEOTsjGt7ZPJi/D8J69s3KbJSq+zBMQFrCBv/Q8kpFi0ctB2pjITJ
+         R6RIkpyjljTvkBlkCqWUtTx8TB8VVr7plNjcgjaML2JO/KMYnHv+AaKg0+5hd/7Em4MW
+         VXqTX9ObXZxQ/XYToMgnsk3Crsfyva7x8/2tFJ3ugDOix2iHMK+7pa/rhF6ljg+AdbX5
+         imYCdr2QJr+XckNcvXXsbvPZALvNFTeFd2na7CQvwBHQr1P74hxNk+fxiMzkzR0U/+XG
+         XAAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMAUApi+XXTeN/LBVMNCAARm/0EOYVdM3vJ16IJj1LXP4/k6KmfzqqyJDgecQIaqHaIgtlNyz49rY=@vger.kernel.org, AJvYcCWXrrawtyZIMhGNJKRhpRysgRldkP6JFp9qdsG/B2HicjGewx7tW7UX+Q2DhWi4sIJU1kXD2VA2tLWdP9IY@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb1YO1OGlaJ3mrefNi7QMzwNnBYdmtti7rfaHppjx/t8EeuZZv
+	YDuvx8nRBFTI8jOg6XEGOEvPsO824T10kBepePJinVoXVaYfG7Is
+X-Google-Smtp-Source: AGHT+IF9+FsG+E30CjlRvWbpTNN1lU2HNefQEhmynyvChYP7LCMUBll81Ko+v5AnAFFcNs3NnrwZbQ==
+X-Received: by 2002:a5d:62d2:0:b0:37c:d1c6:7e45 with SMTP id ffacd0b85a97d-37d600d2f59mr572270f8f.40.1728675161754;
+        Fri, 11 Oct 2024 12:32:41 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:55c0:165d:e76c:a019? (2a02-8389-41cf-e200-55c0-165d-e76c-a019.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:55c0:165d:e76c:a019])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6b8d13sm4601028f8f.25.2024.10.11.12.32.39
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 12:32:41 -0700 (PDT)
+Message-ID: <0ec5fd64-a172-4054-a2ef-1c12db41beb5@gmail.com>
+Date: Fri, 11 Oct 2024 21:32:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000047eb7e060b652d9a@google.com> <d7b91d4c-8498-49a8-86ad-27eceff18ae2@kernel.dk>
-In-Reply-To: <d7b91d4c-8498-49a8-86ad-27eceff18ae2@kernel.dk>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Fri, 11 Oct 2024 21:32:20 +0200
-Message-ID: <CANp29Y6Zvqt7K9_LWEPQ4X-n1WOJbN0W83wx7a6GRhRFuX_OLw@mail.gmail.com>
-Subject: Re: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_ioctl (4)
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+ed812ed461471ab17a0c@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] iio: Fix uninitialized variable
+To: Vasileios Aoiridis <vassilisamir@gmail.com>
+Cc: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
+ linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net,
+ skhan@linuxfoundation.org, Jonathan Cameron <jic23@kernel.org>,
+ Lars-Peter Clausen <lars@metafoo.de>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Angel Iglesias <ang.iglesiasg@gmail.com>, Adam Rizkalla
+ <ajarizzo@gmail.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+References: <20241011093752.30685-1-0xff07@gmail.com>
+ <20241011115334.367736-1-0xff07@gmail.com>
+ <26f2e35e-0a07-4b24-91a2-a48d4bc5dadc@gmail.com>
+ <ZwlvJCxdiRqRWu6Z@vamoirid-laptop>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <ZwlvJCxdiRqRWu6Z@vamoirid-laptop>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-(minus most people and mailing lists)
+...
 
-On Fri, Oct 11, 2024 at 9:20=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On Thu, Nov 30, 2023 at 2:17?PM syzbot <syzbot+ed812ed461471ab17a0c@syzka=
-ller.appspotmail.com> wrote:
-> >
-> > Hello,
-> >
-> > syzbot found the following issue on:
-> >
-> > HEAD commit:    8c9660f65153 Add linux-next specific files for 20231124
-> > git tree:       linux-next
-> > console output: https://syzkaller.appspot.com/x/log.txt?x=3D1006f178e80=
-000
-> > kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dca1e8655505=
-e280
-> > dashboard link: https://syzkaller.appspot.com/bug?extid=3Ded812ed461471=
-ab17a0c
-> > compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for=
- Debian) 2.40
-> > syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14ec6e62e=
-80000
-> > C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11964f7ce80=
-000
->
-> syz test: git://git.kernel.dk/linux btrace-fault
+> 
+> Hi everyone!
+> 
+> So if you check also the conversations that we had here [1] and in the
+> previous versions, indeed the idea behind the offset is to use it as an
+> self-explanatory index to a char buffer that holds in fact s32 variables.
+> 
+> The data->buf here holds the values that have just been read from the
+> sensor. If you check on the channel specification of this sensor,
+> you will see ".realbits = 24" in both values that the sensor returns so
+> hence the value 3.
+> 
 
-It should begin with a # :)
+So you are using 3 = 24 bits, but s32 not as 4 bytes? the whole thing
+would have turned into sensor_data[0], sensor_data[4], and no variables
+implied, correct? But I am discussing too much for something that in the
+end is more or less the same, I am fine with this proposal.
 
-#syz test: git://git.kernel.dk/linux btrace-fault
+> I am not sure if it makes sense to use a macro here for each one of the
+> 3's that are going to be used only one time each and in order to be more
+> "consistent". But I might have a wrong view on this one so feel free to
+> correct me!
+> 
+> For the initialization of the offset indeed, it was already mentioned
+> here [2] this morning, but on a different patch!!! I couldn't get this
+> error though with gcc...
+> 
+> Cheers,
+> Vasilis
+> 
 
---=20
-Aleksandr
+At least for the things I do in the kernel, clang catches more issues
+than gcc. Sometimes even gcc will not complain, and clang will fail to
+compile (e.g. a goto before a cleanup attribute).
 
->
-> --
-> Jens Axboe
->
-> --
+And if you run smatch before sending the series, you might discover a
+couple of extra "surprises".
+
+Best regards,
+Javier Carrasco
 
