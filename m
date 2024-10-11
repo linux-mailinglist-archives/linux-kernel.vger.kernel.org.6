@@ -1,126 +1,191 @@
-Return-Path: <linux-kernel+bounces-361271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F169D99A602
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:13:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A48E99A60A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:14:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D1CF1C2359C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:13:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8F11C23374
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:14:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60D321D197;
-	Fri, 11 Oct 2024 14:10:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176B621D2D6;
+	Fri, 11 Oct 2024 14:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iRRSdftS"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HZvYMVbB"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A151E21D187;
-	Fri, 11 Oct 2024 14:10:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743EA21A70C;
+	Fri, 11 Oct 2024 14:11:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728655859; cv=none; b=jkXC744UAbs3Nh/3XmPM4swv40/QjKQec5NHcSCmo8HhmMhvqGDUh8F4ngBB5Jq6hScuF/GHQxyMcQGIALUC8Zip2KxzKHOEuEPVaRY5ZKmj/fK6HMrXekKkEQ3baPAAML45XBYtkfEs9o+qGVZ4V7CXkkLXwde8djuXSQQThhU=
+	t=1728655873; cv=none; b=K2KOAHujEqNndmEBmZPzJM5SQc5FHOtie7pomqRPDzbrfbuqm3znjHLHkJyMC/WKCSvK/yB8wa3zJZUwqcvus68Fl61/M8BtjyFiAt9QNl785QzQ2xaazFFnKeLSyoH+Y+cLd2SlG48U6aluR7CAD/FbpKGPae8ofbapBNMcRjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728655859; c=relaxed/simple;
-	bh=GPjgRl0dDccu/pNWWwulBtG8/TZjOyjqQie32ZkTW3I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ffo1Hsa7+5JQoUmmYeVRC+VLX5cR+spz6MekWPDqDFORswD/uRAWFSclldQq0woUZasoVJP30uGEQDorOjK/jdNr15KU3QTgjV+RmjR1WrHLkxkezq/WceXkoyrDB6nExKBm7heXoVHbFDQmI6xHMVswXxMSXJpeNpct0kEItX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iRRSdftS; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a998a5ca499so294394266b.0;
-        Fri, 11 Oct 2024 07:10:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728655856; x=1729260656; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lXo0pIJugni3PGreyejzU+9DDRAp+EZRDdgwqzItr5Y=;
-        b=iRRSdftS2Y+4TSckWrLM+TGc3K1G9PRSmqaXbCJ0a31NN3mRpqKLjZBsKxQzN5cBJz
-         S9IZs5YCQsefi5pcUKs+1m6RbdICkYCNLnuydM4kTFXi7cdD0pSaSXJxhzKzh+5onmY6
-         3U3NTZwBD35uMm4KA42xIYaA8OhcXSiy4jmMhyVXT6dK1YeKHTjeOO1qNNgzoEI9tj+E
-         se1GPvFDIMNT4mFA2A9/MR/58GDPJfGOYPnifAJ2CcuT5YR7gp9QMMk1jvHfhIp8VTy1
-         FAMUrzk0gwhTuEjcfB2AuHu9cokLQTHl/AcUSMaE8Suzv4oAx54c7zY6Ojo1+oGuQqbG
-         QGfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728655856; x=1729260656;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lXo0pIJugni3PGreyejzU+9DDRAp+EZRDdgwqzItr5Y=;
-        b=sRnCqmkQpWlxkKRdsJSczqcBq0b3T48lgLH9iBZSsgmEPXC8Ab/XuYoVnz8zjgHl39
-         MAoowiKv9SkPbjCsGqExoRN3lmlLNwVkpv3iKGtptb5dpEEIkTqmjt9snqcrAHN+s8xo
-         8j8Z7/k7M6MEF5YWSwc5SZ9W0nM2PPslDYdwiW/gcNj6PayU+Sst1hbjb1SQ0I5Om1n5
-         tApfBbCAXzEJRZ4TPVMGrLP8kLATtCn/UvFnzd5ozbwePu1zKnbPEHYcLzAdcfJ9+nKE
-         2Hlehisg1/+az2nGEwu5j6VlLpROdo3Aak7OohcuhNp/qRbKM/furT2alnmmREEvXk9M
-         Q6hA==
-X-Forwarded-Encrypted: i=1; AJvYcCVH5Pl7puWbagh64ANEo2QZTizR5E/PyVeVxfw6a+Q1VkBntu5epUn7UN3MUwbUHdiBsjYteLG5E/A=@vger.kernel.org, AJvYcCVnVGQsw1Bh1M2kpjLFWXKvCbObsev6jN9WcTuJTUC/vTcoXfBOcr4RRSb2sdpmYh5ruS9y0u4fSVa7dekV@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvkaMhV52QM2Ry42ZjZirDkghda4qJhi3VGTTibom4raSaeXY+
-	XEa2Khbd6rsuvRaqpcN6OF/LhD1+Tmsl2i8NBUheem+W9gDI/XL5T0Graa49zmeSAr5lgs8F4z2
-	fkjP/PuRfWW470hGDlGzKf855oQ==
-X-Google-Smtp-Source: AGHT+IEGhgxhknhFM8Bp/09aaqR8LI8wYEzwSlOZYTef32VMBfIrkXYcXxlYMuSyrISu+q7c2LNU502hPZSgM7rAVh0=
-X-Received: by 2002:a17:907:d3e7:b0:a88:b90a:ff30 with SMTP id
- a640c23a62f3a-a99b9583146mr234695166b.50.1728655855881; Fri, 11 Oct 2024
- 07:10:55 -0700 (PDT)
+	s=arc-20240116; t=1728655873; c=relaxed/simple;
+	bh=FqMPAU4HPBdlhTcXShKd1l0QI0kRx19jxv+S9orB7yc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oPMlEU/CbCzmgv81BdNkkp03sKnAimVJhOCUV+D7Y3dr9CbBJI9QttfJbB+xm8FbLbiq+CXTblrJJuq61oXAm7sTV4YKsnsEM0x+9xjJqPX8NII4cPj6MuNOGg1hy91DduBcd/GryQXpOSK0jdsT4+PC+RYrAVRCaaOoIoEyZrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HZvYMVbB; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=B4Ha4yE9lVIj1UEDH8gkFD4pDPWuVhXKTqcgGB3822Q=; b=HZvYMVbBc1H/VM2KxpTBfk/mDw
+	3hP6N4VN+hBsPTK7pfuSzBDjSkwz4ELlojbM34nEZU+TgBy2JyzZYahghsgT4XRf/hOf9cpUu8hy2
+	xmK1gmWuDOrs4qZeQIHLuYHoxIx0THnRlt+/vD1pVu70TAgeBZTA5oho251O7lCkb8VgbHoLmDlww
+	hKu61JlFarVKosdiC4eMztNueN2vcQkqtS2elmjknsCeVF8YVBuahlgV4rwMM1pfoVl2ACdFFSFtb
+	biBeknGoGo7CW+bXZkStRKF9OLTDo1SKXJ8ujNi2PK2vUdBkPdzYqLOQCz2sZhJN8KQSkuBOtmXe2
+	LWufhW3Q==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1szGMF-0000000GYJd-0xTe;
+	Fri, 11 Oct 2024 14:11:07 +0000
+Date: Fri, 11 Oct 2024 07:11:07 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: axboe@kernel.dk, akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
+	dhowells@redhat.com, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] iov_iter: don't require contiguous pages in
+ iov_iter_extract_bvec_pages
+Message-ID: <Zwkx-8M3oRD6Q2cQ@infradead.org>
+References: <20241011132047.1153249-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011055231.9826-1-kfting@nuvoton.com> <20241011055231.9826-3-kfting@nuvoton.com>
- <ZwkFWVC3_5xr6OQW@smile.fi.intel.com> <CACD3sJY_79_VTe1EHPdh-1+FCBwb2KCW_N19==TMHAsrFL-rzg@mail.gmail.com>
- <ZwkvBFHS1m3N2yoW@smile.fi.intel.com>
-In-Reply-To: <ZwkvBFHS1m3N2yoW@smile.fi.intel.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Fri, 11 Oct 2024 22:10:45 +0800
-Message-ID: <CACD3sJaNe71Jr9isRdBp1Svgg6ULfgVfUFGkw2i=mELmNQTr+w@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] i2c: npcm: Modify the client address assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011132047.1153249-1-hch@lst.de>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Hi Andy:
+Btw, this is a missing a:
 
-Thank you for your feedback.
+From: Ming Lei <ming.lei@redhat.com>
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-10=E6=9C=8811=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=889:58=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> On Fri, Oct 11, 2024 at 09:44:42PM +0800, Tyrone Ting wrote:
-> > > On Fri, Oct 11, 2024 at 01:52:29PM +0800, Tyrone Ting wrote:
->
-> ...
->
-> > > > +             if (bus->dest_addr & I2C_M_RD)
-> > >
-> > > Redundant.
-> >
-> > Just to double check. Is the code "if (bus->dest_addr & I2C_M_RD)" redu=
-ndant?
->
-> Yes.
->
-> > > > +                     bus->dest_addr &=3D ~I2C_M_RD;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
+at the top of the mail as it should be credited to Ming of course.
 
-Have a nice day.
-
-Regards,
-Tyrone
+On Fri, Oct 11, 2024 at 03:20:22PM +0200, Christoph Hellwig wrote:
+> The iov_iter_extract_pages interface allows to return physically
+> discontiguous pages, as long as all but the first and last page
+> in the array are page aligned and page size.  Rewrite
+> iov_iter_extract_bvec_pages to take advantage of that instead of only
+> returning ranges of physically contiguous pages.
+> 
+> Signed-off-by: Ming Lei <ming.lei@redhat.com>
+> [hch: minor cleanups, new commit log]
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+> 
+> v3:
+>  - open code the iterator
+>  - improve commit log and comments
+> 
+>  lib/iov_iter.c | 67 +++++++++++++++++++++++++++++++++-----------------
+>  1 file changed, 45 insertions(+), 22 deletions(-)
+> 
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index 1abb32c0da50bc..9fc06f5fb7489f 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -1677,8 +1677,8 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
+>  }
+>  
+>  /*
+> - * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
+> - * not get references on the pages, nor does it get a pin on them.
+> + * Extract a list of virtually contiguous pages from an ITER_BVEC iterator.
+> + * This does not get references on the pages, nor does it get a pin on them.
+>   */
+>  static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
+>  					   struct page ***pages, size_t maxsize,
+> @@ -1686,35 +1686,58 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
+>  					   iov_iter_extraction_t extraction_flags,
+>  					   size_t *offset0)
+>  {
+> -	struct page **p, *page;
+> -	size_t skip = i->iov_offset, offset, size;
+> -	int k;
+> +	size_t skip = i->iov_offset, size = 0;
+> +	struct bvec_iter bi;
+> +	int k = 0;
+>  
+> -	for (;;) {
+> -		if (i->nr_segs == 0)
+> -			return 0;
+> -		size = min(maxsize, i->bvec->bv_len - skip);
+> -		if (size)
+> -			break;
+> +	if (i->nr_segs == 0)
+> +		return 0;
+> +
+> +	if (i->iov_offset == i->bvec->bv_len) {
+>  		i->iov_offset = 0;
+>  		i->nr_segs--;
+>  		i->bvec++;
+>  		skip = 0;
+>  	}
+> +	bi.bi_size = maxsize + skip;
+> +	bi.bi_bvec_done = skip;
+> +
+> +	maxpages = want_pages_array(pages, maxsize, skip, maxpages);
+> +
+> +	while (bi.bi_size && bi.bi_idx < i->nr_segs) {
+> +		struct bio_vec bv = bvec_iter_bvec(i->bvec, bi);
+> +
+> +		/*
+> +		 * The iov_iter_extract_pages interface only allows an offset
+> +		 * into the first page.  Break out of the loop if we see an
+> +		 * offset into subsequent pages, the caller will have to call
+> +		 * iov_iter_extract_pages again for the reminder.
+> +		 */
+> +		if (k) {
+> +			if (bv.bv_offset)
+> +				break;
+> +		} else {
+> +			*offset0 = bv.bv_offset;
+> +		}
+>  
+> -	skip += i->bvec->bv_offset;
+> -	page = i->bvec->bv_page + skip / PAGE_SIZE;
+> -	offset = skip % PAGE_SIZE;
+> -	*offset0 = offset;
+> +		(*pages)[k++] = bv.bv_page;
+> +		size += bv.bv_len;
+>  
+> -	maxpages = want_pages_array(pages, size, offset, maxpages);
+> -	if (!maxpages)
+> -		return -ENOMEM;
+> -	p = *pages;
+> -	for (k = 0; k < maxpages; k++)
+> -		p[k] = page + k;
+> +		if (k >= maxpages)
+> +			break;
+> +
+> +		/*
+> +		 * We are done when the end of the bvec doesn't align to a page
+> +		 * boundary as that would create a hole in the returned space.
+> +		 * The caller will handle this with another call to
+> +		 * iov_iter_extract_pages.
+> +		 */
+> +		if (bv.bv_offset + bv.bv_len != PAGE_SIZE)
+> +			break;
+> +
+> +		bvec_iter_advance_single(i->bvec, &bi, bv.bv_len);
+> +	}
+>  
+> -	size = min_t(size_t, size, maxpages * PAGE_SIZE - offset);
+>  	iov_iter_advance(i, size);
+>  	return size;
+>  }
+> -- 
+> 2.45.2
+> 
+> 
+---end quoted text---
 
