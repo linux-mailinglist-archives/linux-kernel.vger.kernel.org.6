@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-361347-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A05B99A713
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:00:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7493A99A714
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 319991C212F7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB0FD1F22A5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:00:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6ECF1946A8;
-	Fri, 11 Oct 2024 15:00:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CA3B194A68;
+	Fri, 11 Oct 2024 15:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ka2xoCpp"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ioQumLBe"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F02D19414A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59DA9194A59
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:00:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658823; cv=none; b=Y63LdUExkHKrzOE/acAFTAyz+DzX6iBZIEu9nwl3ddEIVsftmEb7Y+F+f9txBjN5hMaNIkD7IVXa2WEt94Zegwrl+8e/POqYMyCotesH4GszyHuzTeGzTyl4ISnuWz7cQNJZtPt0QvSf/3XND4Uhxhjp9+oCgqOBvqZWxHKzzow=
+	t=1728658827; cv=none; b=LVx4cFWLMQ2dywxsAPLrdcdUQ539yGgXuyqpMJHTachW2BuxwqeFUAu2gAu0n27s9Oz3V+iKLf9Jonq9jdzijbOgWEUG2EKCZqHaFqj55u0JuUO2hQF/NflpwLSmohlO8PFFM4g1o60pCI4TpLsZE1WKZVUar9lnPOBy+Lbjo/Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658823; c=relaxed/simple;
-	bh=Q3jhxMB9vfD+HsEj7etjE6Ea4lyy82jH6qx2KW0ZZxA=;
+	s=arc-20240116; t=1728658827; c=relaxed/simple;
+	bh=6kElsZ39PO1yTtDfreZ2+ZK16QAo4KxBxZxyRhdadeg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bgs70fSDPyxp2xmXFrTQTdbToANFUCsQX3SHJcVq2fECKoz3DIBDRrWbvzDJbjAtfrNzt/WCYhVloq8Tdol1rftrpWp29nBNMK8O387TiP5tTjtcmjDctu7mXGBwPGj/Y63nmnppryytwJ72kmREjyXx7LQZ2IPiuwgmUNzOTzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ka2xoCpp; arc=none smtp.client-ip=209.85.210.177
+	 MIME-Version; b=bZGJ89l/wvCwTMRe8nSb6GRum3jIKe51llTq2IF/yM2pOvGzJUWsWKNet4rGmroiWDiNHCuTPYrx7hFyOzOdRlDLE1fOieM7sUkfzJoZIqs3fU6N99wSE4jscKRfFRztd5jfO2pWNurpIu9LDvAvARNmlTvCdcMbnsUYN6ppNok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ioQumLBe; arc=none smtp.client-ip=209.85.210.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71dec1cf48fso1839008b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:00:21 -0700 (PDT)
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e467c3996so274553b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:00:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728658821; x=1729263621; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728658825; x=1729263625; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FOuvgWQlE/foa4I7724xWSn7l3vcksejBT7rSNJjxxM=;
-        b=ka2xoCpp3QZjE6G/ix1VN5b6Vi/DYzuaX1ASaA3kC+YfbhPQNQxj2zRozz6bHbLbuZ
-         A2+Xr/5+sHLPgir8yXqQvzdSPfYptVLi1DT/KlxBAHRnYh9xpg/jnbfw1KaFjeRYwhyS
-         /vdqsZXTHLl7h4WvNEvBpH0Cf9uKeejJG41+t2USF7kcIMUzPuX1+Hp1EiEA6MZTFK2o
-         pUE3wb0SSAApCleqzUd0oP/tO7XAXBhon2VH5+TiBg2ZS2tDP1Z6S3dn5qidrDl6qEBg
-         nPjtV9I9JerxqbE2s24fWPp8go3m9a1X6SO/HDYBHfT4l6DscQoVxQSiIGvlnN0v8fhX
-         BjDw==
+        bh=SU6Z8cvJobq05V76diaI6hL+YRyehnIANBYxgVSeFp8=;
+        b=ioQumLBeiFduscK+twii4tF3cVx6l6OxezdVUGcpOp7/y074bCoFNPGxM/8Zqjc0FH
+         NNzySwe642+1T5ApaxDM0bnvMPAVpi3AfubhFiOMqNaQVRGmEwm6kPKM/gsYeFX4Dg/7
+         4ujLXqFHkqL284hNFreswZjRpOwDoTNebJ0ltiKZdF1t8NB/dClnBgk4OtZAoUZjhpLt
+         E34+FI6x9nISy6b4I9v1Dx4AX7hA17Jdc85fbz8nuVVjMkmXqWmvfC/C7SZ38J4Oi869
+         R3YhkLqFU3vgs1WzROMBLkNeXoMD4XwQ7aqaZLl31ekIRtJ39fKxSYxjt/Wumxb566Ad
+         oNfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728658821; x=1729263621;
+        d=1e100.net; s=20230601; t=1728658825; x=1729263625;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=FOuvgWQlE/foa4I7724xWSn7l3vcksejBT7rSNJjxxM=;
-        b=KoW5P+iBacsw8MW3kx/yfPByKyfl6WuQbl7np+RZ0+pzoIQwNdjdvCv61MltSIApIi
-         dQE4CtcSK5YcAmMEOSpbbbaL1nQEzew+HpzGMZf6WV8ptCbw9rx5bS17PQ//+4WF6/Ck
-         oSzX20UiF99BWZWPEZ784VmkVvkhpNXJpwuP/cAgLFjydq43PAScarybRVh+L17HJcYE
-         DM0UHlX+JLhVvLH7BsAz5bWZ0G/vopLXF/TevrCkrT+DrNzefI/Jfr/qybzJTYla8Q9u
-         Ip0ufeb951tYrwRtYtPMJUrhih8sv5riCyOpPWLpnXwiHMWCHnMZVXDehpwwOuB3PY1X
-         qngA==
-X-Forwarded-Encrypted: i=1; AJvYcCVMYc3EvbyT5L9vPHwHzfgqXiVu46I/X7x85zQ6gjHU3wXBoLTIyOSBhnQcg2/ArddPO+SZ8o8HcTYqQNo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDN7C8Z0PNYCBTHQ5F9sNlc9Dl0GgzgLHl82BiB/lnuxq2/whJ
-	LcTGaKS0zz5YigR+H33Lp7e4pxMwz2zCrXzogIuXYcUQWqseLnDQ
-X-Google-Smtp-Source: AGHT+IG28SN7o4rqiQUvFnUoGcWs4GuDv3GMOcb/mAbo3sv1g27mwrxdu/TPHQf2tYzBTJhSQ+rF+g==
-X-Received: by 2002:a05:6a00:4fd6:b0:71d:fb10:7d1c with SMTP id d2e1a72fcca58-71e380beb6bmr3997069b3a.26.1728658820768;
-        Fri, 11 Oct 2024 08:00:20 -0700 (PDT)
+        bh=SU6Z8cvJobq05V76diaI6hL+YRyehnIANBYxgVSeFp8=;
+        b=b2ARoNdbJA6iOrGTJj2gCmUfXkNCg5bCjmI7/NLu1F8L7Mq1GFMVPIvqB1DsTk3HSG
+         /8p9btlq7IDDsCU3LumUv5j31ethMZZiThDnykldmio5IHSUbyqn4F0l7sx5rNTHN8QB
+         aqdDSLcz97vVtQ2Xjk8qDFfp23gbXhPbiRe038Qsojv8n7SJbnWVKNMI2zO+UX3BJB+c
+         4+AmimXVosXPoa7UVUc6AgnXcU1gYIjjFFtvuryhK7W5J4gZKds/gtAqbgmnnEicpZZb
+         AkuMrtdao/hEvAqg1JiW11VuO15DmsblM816hD1If1XRUdmnqMSCJi6z9W9gJ67oab7L
+         XjjQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBh2jBIoTgEvc5pDM+Qo79wooGNMO7mCmWLYzlMpSc0WdIZFLu0BLFO1H5ZqlT8cL2q+z4okLH+obrCro=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPV11kMZL1DSZ1cWQvMT3s5IzJxkeJi5hdThvtUYHM4p5qRc0R
+	rioCcs8nCEIsle4yUhyuDPEJz8OzZt5XPbv1AsgzT2fcs4zncaXR
+X-Google-Smtp-Source: AGHT+IHIUtDDWU1ylOOcQb4+U5VINFQKXV7ELQ0WwbOcryePVBd3VxH1zwAA7jKr8WsXcEzg2aapfg==
+X-Received: by 2002:a05:6a00:1941:b0:710:5848:8ae1 with SMTP id d2e1a72fcca58-71e37e28ad2mr5574776b3a.4.1728658825459;
+        Fri, 11 Oct 2024 08:00:25 -0700 (PDT)
 Received: from dw-tp.. ([171.76.85.106])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4a2c9767sm146561b3a.85.2024.10.11.08.00.16
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4a2c9767sm146561b3a.85.2024.10.11.08.00.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 08:00:20 -0700 (PDT)
+        Fri, 11 Oct 2024 08:00:24 -0700 (PDT)
 From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
 To: linuxppc-dev@lists.ozlabs.org
 Cc: linux-mm@kvack.org,
@@ -82,9 +82,9 @@ Cc: linux-mm@kvack.org,
 	LKML <linux-kernel@vger.kernel.org>,
 	Sachin P Bappalige <sachinpb@linux.ibm.com>,
 	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC v3 2/3] fadump: Reserve page-aligned boot_memory_size during fadump_reserve_mem
-Date: Fri, 11 Oct 2024 20:30:05 +0530
-Message-ID: <32496f6daeb4ed04c772ae484895241ab2ae1da1.1728658614.git.ritesh.list@gmail.com>
+Subject: [RFC v3 3/3] fadump: Move fadump_cma_init to setup_arch() after initmem_init()
+Date: Fri, 11 Oct 2024 20:30:06 +0530
+Message-ID: <759d0fc37d9fedca6cfe78ea7061447ecbf1bc77.1728658614.git.ritesh.list@gmail.com>
 X-Mailer: git-send-email 2.46.0
 In-Reply-To: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com>
 References: <030b6d46fddac126a6cf7e119bea48055338f0ed.1728658614.git.ritesh.list@gmail.com>
@@ -96,94 +96,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch refactors all CMA related initialization and alignment code
-to within fadump_cma_init() which gets called in the end. This also means
-that we keep [reserve_dump_area_start, boot_memory_size] page aligned
-during fadump_reserve_mem(). Then later in fadump_cma_init() we extract the
-aligned chunk and provide it to CMA. This inherently also fixes an issue in
-the current code where the reserve_dump_area_start is not aligned
-when the physical memory can have holes and the suitable chunk starts at
-an unaligned boundary.
+During early init CMA_MIN_ALIGNMENT_BYTES can be PAGE_SIZE,
+since pageblock_order is still zero and it gets initialized
+later during initmem_init() e.g.
+setup_arch() -> initmem_init() -> sparse_init() -> set_pageblock_order()
 
-After this we should be able to call fadump_cma_init() independently
-later in setup_arch() where pageblock_order is non-zero.
+One such use case where this causes issues is -
+early_setup() -> early_init_devtree() -> fadump_reserve_mem() -> fadump_cma_init()
 
-Suggested-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+This causes CMA memory alignment check to be bypassed in
+cma_init_reserved_mem(). Then later cma_activate_area() can hit
+a VM_BUG_ON_PAGE(pfn & ((1 << order) - 1)) if the reserved memory
+area was not pageblock_order aligned.
+
+Fix it by moving the fadump_cma_init() after initmem_init(),
+where other such cma reservations also gets called.
+
+<stack trace>
+==============
+page: refcount:0 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x10010
+flags: 0x13ffff800000000(node=1|zone=0|lastcpupid=0x7ffff) CMA
+raw: 013ffff800000000 5deadbeef0000100 5deadbeef0000122 0000000000000000
+raw: 0000000000000000 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: VM_BUG_ON_PAGE(pfn & ((1 << order) - 1))
+------------[ cut here ]------------
+kernel BUG at mm/page_alloc.c:778!
+
+Call Trace:
+__free_one_page+0x57c/0x7b0 (unreliable)
+free_pcppages_bulk+0x1a8/0x2c8
+free_unref_page_commit+0x3d4/0x4e4
+free_unref_page+0x458/0x6d0
+init_cma_reserved_pageblock+0x114/0x198
+cma_init_reserved_areas+0x270/0x3e0
+do_one_initcall+0x80/0x2f8
+kernel_init_freeable+0x33c/0x530
+kernel_init+0x34/0x26c
+ret_from_kernel_user_thread+0x14/0x1c
+
+Fixes: 11ac3e87ce09 ("mm: cma: use pageblock_order as the single alignment")
+Suggested-by: David Hildenbrand <david@redhat.com>
+Reported-by: Sachin P Bappalige <sachinpb@linux.ibm.com>
 Acked-by: Hari Bathini <hbathini@linux.ibm.com>
 Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
 ---
- arch/powerpc/kernel/fadump.c | 34 ++++++++++++++++++++++------------
- 1 file changed, 22 insertions(+), 12 deletions(-)
+ arch/powerpc/include/asm/fadump.h  | 7 +++++++
+ arch/powerpc/kernel/fadump.c       | 6 +-----
+ arch/powerpc/kernel/setup-common.c | 6 ++++--
+ 3 files changed, 12 insertions(+), 7 deletions(-)
 
+diff --git a/arch/powerpc/include/asm/fadump.h b/arch/powerpc/include/asm/fadump.h
+index ef40c9b6972a..3638f04447f5 100644
+--- a/arch/powerpc/include/asm/fadump.h
++++ b/arch/powerpc/include/asm/fadump.h
+@@ -34,4 +34,11 @@ extern int early_init_dt_scan_fw_dump(unsigned long node, const char *uname,
+ 				      int depth, void *data);
+ extern int fadump_reserve_mem(void);
+ #endif
++
++#if defined(CONFIG_FA_DUMP) && defined(CONFIG_CMA)
++void fadump_cma_init(void);
++#else
++static inline void fadump_cma_init(void) { }
++#endif
++
+ #endif /* _ASM_POWERPC_FADUMP_H */
 diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
-index 162327d66982..ffaec625b7a8 100644
+index ffaec625b7a8..c42f89862893 100644
 --- a/arch/powerpc/kernel/fadump.c
 +++ b/arch/powerpc/kernel/fadump.c
-@@ -80,7 +80,7 @@ static struct cma *fadump_cma;
+@@ -78,7 +78,7 @@ static struct cma *fadump_cma;
+  * But for some reason even if it fails we still have the memory reservation
+  * with us and we can still continue doing fadump.
   */
- static void __init fadump_cma_init(void)
+-static void __init fadump_cma_init(void)
++void __init fadump_cma_init(void)
  {
--	unsigned long long base, size;
-+	unsigned long long base, size, end;
+ 	unsigned long long base, size, end;
  	int rc;
- 
- 	if (!fw_dump.fadump_supported || !fw_dump.fadump_enabled ||
-@@ -92,8 +92,24 @@ static void __init fadump_cma_init(void)
- 	if (fw_dump.nocma || !fw_dump.boot_memory_size)
- 		return;
- 
-+	/*
-+	 * [base, end) should be reserved during early init in
-+	 * fadump_reserve_mem(). No need to check this here as
-+	 * cma_init_reserved_mem() already checks for overlap.
-+	 * Here we give the aligned chunk of this reserved memory to CMA.
-+	 */
- 	base = fw_dump.reserve_dump_area_start;
- 	size = fw_dump.boot_memory_size;
-+	end = base + size;
-+
-+	base = ALIGN(base, CMA_MIN_ALIGNMENT_BYTES);
-+	end = ALIGN_DOWN(end, CMA_MIN_ALIGNMENT_BYTES);
-+	size = end - base;
-+
-+	if (end <= base) {
-+		pr_warn("%s: Too less memory to give to CMA\n", __func__);
-+		return;
-+	}
- 
- 	rc = cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma);
- 	if (rc) {
-@@ -116,11 +132,12 @@ static void __init fadump_cma_init(void)
- 	/*
- 	 * So we now have successfully initialized cma area for fadump.
- 	 */
--	pr_info("Initialized 0x%lx bytes cma area at %ldMB from 0x%lx "
-+	pr_info("Initialized [0x%llx, %luMB] cma area from [0x%lx, %luMB] "
- 		"bytes of memory reserved for firmware-assisted dump\n",
--		cma_get_size(fadump_cma),
--		(unsigned long)cma_get_base(fadump_cma) >> 20,
--		fw_dump.reserve_dump_area_size);
-+		cma_get_base(fadump_cma), cma_get_size(fadump_cma) >> 20,
-+		fw_dump.reserve_dump_area_start,
-+		fw_dump.boot_memory_size >> 20);
-+	return;
+@@ -139,8 +139,6 @@ static void __init fadump_cma_init(void)
+ 		fw_dump.boot_memory_size >> 20);
+ 	return;
  }
- #else
- static void __init fadump_cma_init(void) { }
-@@ -553,13 +570,6 @@ int __init fadump_reserve_mem(void)
- 	if (!fw_dump.dump_active) {
- 		fw_dump.boot_memory_size =
- 			PAGE_ALIGN(fadump_calculate_reserve_size());
--#ifdef CONFIG_CMA
--		if (!fw_dump.nocma) {
--			fw_dump.boot_memory_size =
--				ALIGN(fw_dump.boot_memory_size,
--				      CMA_MIN_ALIGNMENT_BYTES);
--		}
--#endif
+-#else
+-static void __init fadump_cma_init(void) { }
+ #endif /* CONFIG_CMA */
  
- 		bootmem_min = fw_dump.ops->fadump_get_bootmem_min();
- 		if (fw_dump.boot_memory_size < bootmem_min) {
+ /*
+@@ -642,8 +640,6 @@ int __init fadump_reserve_mem(void)
+ 
+ 		pr_info("Reserved %lldMB of memory at %#016llx (System RAM: %lldMB)\n",
+ 			(size >> 20), base, (memblock_phys_mem_size() >> 20));
+-
+-		fadump_cma_init();
+ 	}
+ 
+ 	return ret;
+diff --git a/arch/powerpc/kernel/setup-common.c b/arch/powerpc/kernel/setup-common.c
+index 4bd2f87616ba..9f1e6f2e299e 100644
+--- a/arch/powerpc/kernel/setup-common.c
++++ b/arch/powerpc/kernel/setup-common.c
+@@ -996,9 +996,11 @@ void __init setup_arch(char **cmdline_p)
+ 	initmem_init();
+ 
+ 	/*
+-	 * Reserve large chunks of memory for use by CMA for KVM and hugetlb. These must
+-	 * be called after initmem_init(), so that pageblock_order is initialised.
++	 * Reserve large chunks of memory for use by CMA for fadump, KVM and
++	 * hugetlb. These must be called after initmem_init(), so that
++	 * pageblock_order is initialised.
+ 	 */
++	fadump_cma_init();
+ 	kvm_cma_reserve();
+ 	gigantic_hugetlb_cma_reserve();
+ 
 -- 
 2.46.0
 
