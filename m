@@ -1,119 +1,148 @@
-Return-Path: <linux-kernel+bounces-361496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 920F199A8F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:33:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51A8099A8F2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF9171C21721
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:33:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE71C284F88
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:34:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E90771991A9;
-	Fri, 11 Oct 2024 16:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A6E19AD87;
+	Fri, 11 Oct 2024 16:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="KMZrIiOp"
-Received: from mail-qv1-f54.google.com (mail-qv1-f54.google.com [209.85.219.54])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="R28FICU5"
+Received: from sonic309-27.consmr.mail.ne1.yahoo.com (sonic309-27.consmr.mail.ne1.yahoo.com [66.163.184.153])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00E8518027
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD2B1199941
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:34:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.184.153
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664385; cv=none; b=es5raMr4bkaUWUhq0uHB+mMpu18XVsrh7v7OznxaK7MGG4kZeKIf7iahGH+4pKo0IVKDggVriDPD7EyKpSIey3NnRW1hGCBmK8DvLemVYsTRl8t+w9phyyKCSLLwWE6iUf4e3E2BYMXgieSl1AwCuyDA86OwYCs0VfeYmiNFpyY=
+	t=1728664454; cv=none; b=u0vlRmEJM/IfvTvinxWaxW2TTJyacUDaS7fxHFsQkIdNdYTv2NxgEdbt1meZ3ekA+6sX/gab6ku5HlxcTU1byVnhh/p7fLAlKCiIISJAb6e1mRU0k6C0qe2kG0VpayXKEE8cAblY6YNoLxPEt9keSvNbiEw12oJtYgmnhgiCtXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664385; c=relaxed/simple;
-	bh=xbQaPynXdEpvRxqGa7X5AdacfjDSR/YzwITPO53jrz4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mMfLYHJysmIOMrivIR1wKBsR82qIBiNAx9XqkuD5uHj7hQjySWoZ+aQeSYHtocKIZw5+82Qk9WMPmOVUCZm/RDQGEkgYcWHJEWAqPAuPiYRClUnQCTP1W2vsOD4zHjSWKAsUXgza7x+7TwGnzyc1aetr/zJtNnItw6paD7wr6WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=KMZrIiOp; arc=none smtp.client-ip=209.85.219.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f54.google.com with SMTP id 6a1803df08f44-6cbf347dc66so4772826d6.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1728664383; x=1729269183; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vOLTO6qowPv73dfBzIlXGTy79lrTXY1ifwKbI9Z39rY=;
-        b=KMZrIiOprMGviZqBXL6Ww04gtH1KSLRS6lxCkNWsP+qBI3nMNKbORhbUvWrYvVSzLN
-         qDmYmXr3xQ7BPrVcGOV62uZ8NNYzevqUPxdeYVPYzpJ8hpFaMYPmw8o/waoceQ0RdNVy
-         LzgF49CHjYucRSAmzPs6Qr+pv+hF6jBnA+mioF1MlJKCDIGkuO5MDQoMUUkg1hDwouxM
-         SHe+ThIptcz9ryaud4DTOVOfIW401n7vJh4ca2w2eTy9FwVZyGofxvM3PVxDRCwIGotW
-         Jzwr87wye95SArmVTShkd72eiC82chtBC2/WwYxbZ94c+KyklScxpATz1ZmDhXFS8B41
-         rFMA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728664383; x=1729269183;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vOLTO6qowPv73dfBzIlXGTy79lrTXY1ifwKbI9Z39rY=;
-        b=o/BnS3iP11y7VcCFtqGa1a1EUpNdcqOqEhLaybzNzBOdYUfWxRm59Bp0O5o3zcIG4I
-         8T5b+QBYjI4cNJW89XBI1BYvQn8M0KfcGE2pgeS5QDac2CkMcQwcSuNySQ2VUki8xYTi
-         aGNboRT4TphyNciUfUM/zJurjxoLwNluB6twUC7OYwxaPR4rHCzv0fXt3967hhMR3szC
-         rbOqqTx31A5Du+9omFGAd3/UH1nYvBScU7OJRHSoYDap36rZwp/W/8aJ/i50gVffURxV
-         GxvrqxcjYiaLAzBOzIR2kE3hXyk/l164o0V64acDdgoFVBmhdvzzV6wvW6lIQC7yEWfW
-         iq2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUTRPd/Vey88/Ws3ZzZ4G1KefHi686kuk35DIW1wWKoQynCifHxUUYRfUTOnjhzrRvKGlJ5jA4TzIUsaxY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQmHZodIhRGf6L7N+7Ouq2b1fJ2wsVBDDUp3vBJi42pPofOu24
-	nXaVNiF2Tsem49x89VMKPEV1Cbq3kLc4pQ61g72WzFNDvcoKzv6dimYpv1d1Xjg=
-X-Google-Smtp-Source: AGHT+IEEs/9BNK3lbSt1K/hYPpP58NiKoems4hd75VVnpLGrm2nR2TXu9DwOV4j9JmofQupNl7DYHw==
-X-Received: by 2002:a05:6214:5913:b0:6cb:e69d:4c0a with SMTP id 6a1803df08f44-6cbf0102302mr47652796d6.48.1728664382945;
-        Fri, 11 Oct 2024 09:33:02 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608d7esm16733616d6.100.2024.10.11.09.33.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 09:33:02 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1szIZZ-007ekU-To;
-	Fri, 11 Oct 2024 13:33:01 -0300
-Date: Fri, 11 Oct 2024 13:33:01 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Lu Baolu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	Vasant Hegde <vasant.hegde@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/7] iommu/vt-d: Add domain_alloc_paging support
-Message-ID: <20241011163301.GQ762027@ziepe.ca>
-References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
- <20241011042722.73930-2-baolu.lu@linux.intel.com>
- <20241011132252.GJ762027@ziepe.ca>
+	s=arc-20240116; t=1728664454; c=relaxed/simple;
+	bh=e+9kzhUJ+tnucZs7OOGtFidzLYWCzsiTmsIeavg7j5g=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ueR8Sb2TnDQ/jdL+tfF+HMJLUrq3IGNbJItraoe7V3vDipO4I8O5fxDhIcoi+5GOMkKjGZh3SE1ESQKJF4c8zbdrW2X47pG3vamKNLijWb2ESNO7stOykKntjYVFM935RPeBv5VrJmx93Afhf+i4AlHG9VSIrijjIlSDe6OnOqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=R28FICU5; arc=none smtp.client-ip=66.163.184.153
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728664445; bh=lurWTRWfGmxvBkgBW61dJhEER75ryLb3QoDneiV+T04=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=R28FICU5RTRNDdjzVJx/HmoJseTDvUwazmuOb5rphyEW6KsaxvLCui2eyMDjjzgTj/QJcBxcsGE4UdEwXYCnrx8PXYHY8+Go/knjmZH72dnNJqsY7ZFqh0PONkDP5E4OzKPUZS2bh4AAkDjBcMMuMFzzBXVQSD3Ks/j2n3cH64s29Iii2Mm18AWjG5VG3JQUaktOQG+yQkjaKK55WLOfmGUUWViB8Jh2mnxDYql5Pkfuy2+MNBGgpQ1EyOOIz/OkSDDcPrXFzzUH6u/oMdNcfgp/ZVKaNlNCAmWDLXFfXLayjeCFecdDXYOBzxtz9KKSQSzl7jqdv7fYLBlnt2awvg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728664445; bh=mZOdNhGWrv7eCsxxostaqKVQxCDMMRCnvvxPoWKuNot=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=RmtXx87ab1RN/2u4DvAtvP49uQ1gcKr2kPnpxIoQoMGgb9w0upF6iDYX8cZpqDVFQkvByZEIs6lryKsaANwLmYCJkVSWtsdLY+Zb33WAQPv5ESGSd+3UVK20wk1WtPMVl0LO6hpSzpNWDKNdKC12tBbuvmXjFdoSfkXm5zTAlokta6owOeaw1cjBPfndSnC0aWMc7nlL1Vyxy5n6Y36kYEeg1aRykqy6ucpnZqHXb3b4LfGOArSrlHXY85ZUNEP8ETChAwyW51E66929FsaXSRquTkiRK/9nZBuf/eQnecaylXvT9xePJTPL2sWFo0tYM8RgmNyWfq4c5nwxdqd88A==
+X-YMail-OSG: fw6cvC8VM1lGeRaLbY6pdYINehhgm52GLEs07CFszb1tBbg8mkmIfrfGCsOFtp7
+ xJWsXLOnFH3tKr_.r2s57Jz04od.CJv8M.TTZrOx8PtxOVy.FbpHCvfImuan5wnWHyYV1WsMkyZx
+ 8HRXRJcOc5csI_qxfqM9W2rxDahFBVrr5Rp2kdiN_5P_vW8DHbHTByhm3d4fi0yKJzaB9DUQoi16
+ Czzsnr1gp6bFBsAuz37P0dOJmMn6hiu1JGZQjV87bCx3bkuqi9vl3DGHOCWoRD3kxq93bpC64U27
+ 62qjI_HxTt89_EeibN22Lb046QEoN_v3JzWPQU2oJ1l5MNZzRwjcG9ecVmhY.fA1PTCRbHaihCll
+ 0L2Eb.ig5Bx8o6KWDMtiz..I6.iQZuYbM6lPD9oiFS4qI.BxBN0xzHXJmOA5.3rl3.OMDYn9Umkm
+ Qqpi_ezajXR7FMs1L86mHRaDMLyljDJCHWO8GO4_IYrNI30CH40mRrUrKncGqjIVQUcjf2dEJnl.
+ LYz4j5REZTH0J1KI9eGIZzRNqYWUBcUVHUr1rSeuQQ5_EWqYgj5Iv8tzhbRw7sjUl4ERG81gbRgS
+ c7stkR0eEvwe_.jt1zyvdz_yyYN120CH3CEM3ybvrqCCKW7AzYdh6AOGHtz0MaqYDsgnZJD5XrR4
+ poEtK7OA7..2jg5odPt9E9j3L87MoE6.a.MhMB2keNo.pveNaVq9Tf2nqmyQWRJlHKy1RdDDz2xj
+ S5LQ16aC5MKzAM_sau60uRD9eIaueEJ8y7JHkTlaaU15YVVj_6wHeEbIziJHrZvaJ00WFkk6.GGT
+ r6Mt6QRSxl5xdkEcuwL0ZFwHPZ4vBPDK2RypWVdDFPb21m.rVC4h7sdR1pmWnEs5RFSJmZsqoWeO
+ RnWuFHKucKemTp9VlGtsYZb.UHKJmb.U11yO4_k.IObdaJBfZ_6zvMqDsCGiu.0bLmOD82wKnXnk
+ h9uAtJoNqgZVZZ16PuJ3AqMZ1S0dlMf6csATeLirJMu.DrtiTZu2VHO4DqufSmPS.PIC0A3vRWsw
+ OaQKHY6hDkoY53nm4mWeFZRjuYLQZqdvZj6NMpDL.58ieN29oD3zbL5rlFc.4Oi9cMzcfDbXUcSh
+ z82Z5kQxOdA5CNvwl4QiYKPnjBG0SefGME4XyJZUYEBEE6orBhDBGVI5BTXon28yeSLD0PQGzttd
+ KPFqZ21sRgKAxl_TbBEpQjNxe.GFko0iPh596lXlitWud3Rf_gkaogAfAw6a1bZAYa7uaCZX9HgO
+ 5lzeFDPnqChADZfwMp29LRV0NXNmezRcPy0lyq4ZZ22W9yKFCznS5EROEVdpBsg0jKd71WO0sBza
+ J_Xo_iGKw8lCuKOZBkEpwDoB2sFarpoIeuJ6U5Rym9A2Qzwm9FZw1FWhcsKBhyEP0qeuElyk4b7w
+ F148N9LR8hpKFJ0HMBwD4vdcuHbAiBRNEj5QJQzckiLDNl5Map24uGPehhwrdev1VlAtXtCfU34g
+ FwS3T68hQ7UBRAvGTZPv8mD7zH08.LnsXG4Y8qbwnVTimmcSNygBEH89N3cOG.NHzeHvHjCi2l6S
+ lhPNNf2g8eCc.bE7GmvYVeXdJqwNIunr5MVAsYPnjgSSkeT9yNUVjNAc9cgZqgsB9OnOuEYVwFCr
+ n2O6Sdkc7eilGCCe8kV2nZt8thsM2S81o9K7d1IIZaLO9c_BpFjQ.9izmY8N6JXKrDdHlOvUKSGl
+ Ahq1TBI0wMnirRZtjUhZRSF8r1vNEUnaDn4C4db1GQlkY56AJI8_5xP1ja8naoTP1LDfSANIOlAR
+ Lwv_BEaFY5AltHkO1jKAg5IBUmqnGSnkm20jOh5lgjLKPO0bBWTl155.XXDfn1JeVIJkq5MuBKUl
+ WxCoZrubrPDe.dG1S31btGjq.5oFAJNvIVNUun00IslkKuLZRPp.gSDDIAcea4xzDPHC2XHLkjx8
+ AYjSSaFy9D0MRKMeVDwQmBgA4D227QCiBCVoPpJO75qzF2Yxp9Dg6OzPNdrS6g6DNx8KWBC5z.2Y
+ xZqJwmW5r7n7bWOQmjqVw7f2i8OqR55BCPRfrplWphhLJ6iqoU6VOzUaYqfQrEfbMTXh4.WdQTrq
+ xMQsCtixCveJSmdRGWd.yK7CPMps8DkMkeeVmQDdlfW6uLOm.VFLoub1cfa3DntEEh.WmzxwVtq2
+ eWs_FWtRdcS2qAhYoEWvZ2kfT34RdmTJA24feW_puJ3dDraCFJ5RIHbHB8kpJ4U74wRliepWmxbQ
+ p9MKKCUXfdwV2Yo9vtDKbqIrDxTRZ5u8bfC8oe0sU0tg2XGGd.ECZw1jM9IJ2ZM9d.R3NK.1ZrTu
+ ub6BVruQtehcyTp3SGGuXS34xvuri7Wg-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: 9dbf66ff-57a0-4509-bec2-32255002911d
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic309.consmr.mail.ne1.yahoo.com with HTTP; Fri, 11 Oct 2024 16:34:05 +0000
+Received: by hermes--production-gq1-5d95dc458-gnv6n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 69b34e485aa7d5c01254829018687508;
+          Fri, 11 Oct 2024 16:34:03 +0000 (UTC)
+Message-ID: <c3423767-91df-4dc9-afe8-895540b185d7@schaufler-ca.com>
+Date: Fri, 11 Oct 2024 09:34:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011132252.GJ762027@ziepe.ca>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 4/13] Audit: maintain an lsm_prop in audit_context
+To: Paul Moore <paul@paul-moore.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org,
+ serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com,
+ penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com,
+ linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net,
+ Casey Schaufler <casey@schaufler-ca.com>
+References: <20241009173222.12219-5-casey@schaufler-ca.com>
+ <4e2669fc0be9b0f1ca15b17ca415a87d@paul-moore.com>
+ <a4094e38-44c9-4ab2-9b37-c1eafee16d5e@schaufler-ca.com>
+ <CAHC9VhSaCVvj-+U+WEBxvzXyi=FPNaL7HMt4Kg86Ugi1SNnCdg@mail.gmail.com>
+Content-Language: en-US
+From: Casey Schaufler <casey@schaufler-ca.com>
+In-Reply-To: <CAHC9VhSaCVvj-+U+WEBxvzXyi=FPNaL7HMt4Kg86Ugi1SNnCdg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Oct 11, 2024 at 10:22:52AM -0300, Jason Gunthorpe wrote:
-> On Fri, Oct 11, 2024 at 12:27:16PM +0800, Lu Baolu wrote:
-> 
-> > +static struct iommu_domain *intel_iommu_domain_alloc_paging(struct device *dev)
-> > +{
-> > +	struct dmar_domain *dmar_domain;
-> > +	bool first_stage;
-> > +
-> > +	first_stage = first_level_by_default(0);
-> > +	dmar_domain = paging_domain_alloc(dev, first_stage);
-> > +	if (IS_ERR(dmar_domain))
-> > +		return ERR_CAST(dmar_domain);
-> > +
-> > +	return &dmar_domain->domain;
-> > +}
-> 
-> With the direction that Vasant's series is going in, I think this
-> should be skipped and instead your other patch to make
-> domain_alloc_user (which we will rename) a full functional replacement
-> is the right thing.
+On 10/11/2024 9:11 AM, Paul Moore wrote:
+> On Fri, Oct 11, 2024 at 11:52 AM Casey Schaufler <casey@schaufler-ca.com> wrote:
+>> On 10/10/2024 8:08 PM, Paul Moore wrote:
+>>> On Oct  9, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+>>>> Replace the secid value stored in struct audit_context with a struct
+>>>> lsm_prop. Change the code that uses this value to accommodate the
+>>>> change. security_audit_rule_match() expects a lsm_prop, so existing
+>>>> scaffolding can be removed. A call to security_secid_to_secctx()
+>>>> is changed to security_lsmprop_to_secctx().  The call to
+>>>> security_ipc_getsecid() is scaffolded.
+>>>>
+>>>> A new function lsmprop_is_set() is introduced to identify whether
+>>>> an lsm_prop contains a non-zero value.
+>>>>
+>>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+>>>> ---
+>>>>  include/linux/security.h | 24 ++++++++++++++++++++++++
+>>>>  kernel/audit.h           |  3 ++-
+>>>>  kernel/auditsc.c         | 19 ++++++++-----------
+>>>>  3 files changed, 34 insertions(+), 12 deletions(-)
+> ..
+>
+>>>> +/**
+>>>> + * lsmprop_is_set - report if there is a value in the lsm_prop
+>>>> + * @prop: Pointer to the exported LSM data
+>>>> + *
+>>>> + * Returns true if there is a value set, false otherwise
+>>>> + */
+>>>> +static inline bool lsm_prop_is_set(struct lsm_prop *prop)
+>>>> +{
+>>>> +    return false;
+>>>> +}
+>>> If we're going to call this lsmprop_is_set() (see 5/13), we really should
+>>> name it that way to start in this patch.
+>> Agreed. That's an unfortunate artifact of the lsmblob to lsm_prop name change.
+>>
+>>> Considering everything else in this patchset looks okay, if you want me
+>>> to fix this up during the merge let me know.
+>> I can do a v5 if that makes life easier, but if you're OK with fixing it
+>> during the merge I'm completely fine with that. Thank you.
+> For trivial things like this where I've already reviewed the full
+> patchset it's easier/quicker if I just make the change as I can do it
+> and not have to re-review everything.  Otherwise it's another revision
+> for you to post, me to review, etc.; granted in that case I'm really
+> just diffing between v4 and v5, not really doing a full review unless
+> something odd pops up in the diff, but I think you get the idea.
 
-Though I guess for patch ordering purposes it makes sense to just
-leave this and remove it the next cycle
+Indeed. Go forth and merge. Thanks again.
 
-Jason
 
