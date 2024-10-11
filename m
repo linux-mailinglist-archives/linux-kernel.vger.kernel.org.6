@@ -1,77 +1,88 @@
-Return-Path: <linux-kernel+bounces-360879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9EC99A0E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:10:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91C3B99A0E8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6118D2853C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:10:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 246C6285E2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:11:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65EF21262A;
-	Fri, 11 Oct 2024 10:10:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7838210C09;
+	Fri, 11 Oct 2024 10:11:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bQ36qftg"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="zmzj5TBv"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91360212622;
-	Fri, 11 Oct 2024 10:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 641EB21018F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:11:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641430; cv=none; b=jukfQHLvlesk/X2gVeC2T+iinPimGhOU8RtYVw72MbSSl4SVb4iqY50anv4DfjERnDKykE5/CnO8N6nXIJQHjy9qxxCtviwyP8nLLJ6Y4kwx+GJqkMRwRQjMB71LBFwrCsTrJdrnEBFv3LvKEjzQPzRUdeRvSm+MM/5sJ5bm2+k=
+	t=1728641509; cv=none; b=t4LqMXhhsJmDeMvJYa3BOmJiJXpD+pL1WK0s1OlZHH/jvpJULutfD9v7z8OBtJ4AVi1oxULTGlfSrIv0jrNY3XGuIf13OerAuLAYQJ0InRRQ2rzmRxZdpYfzKkydKk64jUmwU9BqjBwrcF/M5KQQxS31BDvVEZNvgGntb+dibhA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641430; c=relaxed/simple;
-	bh=3RbFEEJnoKS/e7NOWTYtQJLCiaeAfK0OKuMjVXkA7BA=;
+	s=arc-20240116; t=1728641509; c=relaxed/simple;
+	bh=yaRy18JzaCR4lPwXWEq4MPREYdKVBhXc3Ez/aUa0Drw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uaDc4A+1ZBr8f+/UiSSHyHyV+TqC9O4rmOfqdtJ0Ad13C3r9MBgC7cGjgsm5TeETOgXvg5Sm9qFItRYYZ/LBEAePxxC6HvQH/Lrs9x3EzKg8Ylm6FJXdDWbA+WJj3isNyNkHWOPoVXzuTxOq5lYFlCnqdrjs7CXZHbURO1WgFmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bQ36qftg; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728641429; x=1760177429;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=3RbFEEJnoKS/e7NOWTYtQJLCiaeAfK0OKuMjVXkA7BA=;
-  b=bQ36qftgHr048hxsOgCH84b3DZOp66qNpKUYnHTckQ/NFHgk7VA50KSj
-   nXEmj6YBHNhNEEzAQpLclVgbtbi5uof6dgDyHUvv6Wtp5NFsboJ1ZRXM4
-   5hx9lsjmNAOJ9exKtWwB1XrzaRXMSOEsqPLuNpD4pup+JEz+4PMDaRy5V
-   CHM0Zml3mTKEhvUR5a4PM6HZD6EVLDVNbygQ3pkfwVOOKjwdKZgWIniCl
-   LiCP5YH2GQMMykbpWbnqlBAyRl/4//RmqxICIiJzfTXiYrUQz62Og1wH/
-   qPOfzIuYS6+RSifaW3hmx5A5YYgGAGJERondfjjtQ8iNeXHxfu/Lv1q09
-   w==;
-X-CSE-ConnectionGUID: J4RJlz2uSHeAY1+WqjmgBQ==
-X-CSE-MsgGUID: z9KndGW/SP6A3pWThf9zlg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="45547649"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="45547649"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:10:26 -0700
-X-CSE-ConnectionGUID: M3WpYnsLRQmDT1wa9hEkBA==
-X-CSE-MsgGUID: Lszo2Nq9QNCE6gtktpDaFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="76772806"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:10:23 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1szCbE-00000001qxR-36js;
-	Fri, 11 Oct 2024 13:10:20 +0300
-Date: Fri, 11 Oct 2024 13:10:20 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: vamoirid <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 08/13] iio: chemical: bme680: add power management
-Message-ID: <Zwj5jBm-_9_FX6ms@smile.fi.intel.com>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <20241010210030.33309-9-vassilisamir@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=uvfM+RlirwBLAQ3TEYaU1vy5uAidlT4vR65cJq6JZC1e4Lx+l2I5IXr6B3pzus5gxK71TT/B9LmGkTcL3XzYunBEchC3e1OZdnVvjqt0aRk4GVt2nQIYVrYob0gSB9RsBk+D9iXT4cK9Jjn6QU39k4RgAFayVuaaAEcujvqHAAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=zmzj5TBv; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43056d99a5aso18798145e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:11:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728641506; x=1729246306; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=nthva+KikeYDY2jXsfCkd2Wj5lsxwGGbWSJrT4OoTAY=;
+        b=zmzj5TBvyVr8sIU1690XLn8MGw3MX7VHCcZ6xMSYnffjUWX/ZhlAWGYqGWdGgqa5oN
+         tMjobtD0hm+FcP40Z6AHjvIk//OZtU/9zscfaV9WquBepHWUVyBWRE27Ym9cg2WdYVI3
+         h1A5gq9YAIUUTeksdy1ROn28um320bdWRbGO+qkVBcWzq/7ksjBAWoagBo8/8FyMq3Az
+         mhucC/fwRXX3ShGyhY93ImaWeOhOIS7cST9byDU4ELU3TlyjEZd4R4L0Rm1sK4grFsVd
+         V0bdIqJ7kZb24Gs0PrUy765I2L36lHyQwcarFfdD4VI9T8lOLt3VYqV+YVEGSShtSzKD
+         JAKA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728641506; x=1729246306;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nthva+KikeYDY2jXsfCkd2Wj5lsxwGGbWSJrT4OoTAY=;
+        b=a3031Q6mGeRnY/ZJ8r5WFWXtPHLnN8Q/Tw4AZM5tGGX2j1uUvcrgrX4xvzlD/hYjc4
+         3XaoW4i+OD87OMo81pWU4n6VOi+mzD3s3ZcI/qta4wCIageZ3gw52IsZNLo12Z2doee6
+         muKpUdCCAn1rhXbIQF9LPCUlYTiHlE99W1lMwUxm3olzjRuZhGF8CfexCaPmXVQ4tYta
+         39wOCCH1pPL1yhaGR6imh9Hi7LLZ3iDf6k341xG9tmj7Y7C3tlOTwn73ZOAvHZiAoMxI
+         P4UzbwM59U4kpJvu+iCIVg5eAv3+y8thyaRrrv0jxtf5g+wJSHj8OHHYZsH9DSZfEv/+
+         QMkg==
+X-Forwarded-Encrypted: i=1; AJvYcCWdbyIln3JWnVyRHTQJUoWixXcGNvx1uhguWRuqkh2kGEYNJQgXvHjnzkBFVosEXeA2zhkdDWZ0a9OnaxM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnySnFFJxGfUgDjhpuiHJRXgK1t+iBkiXOPZxVS+DvOJK/K/uu
+	VqGPN26gwJOxPfjW3CJfpDSfZpRsz4N/UXHnhUXg8PTCL/JvqHEAMsvLWp+gsGkzYmVUe9SGyHe
+	pFbQoYw==
+X-Google-Smtp-Source: AGHT+IHsKhIjDvBqoaWJfEqeedwwgJUaycEBOS/lAbm4uc8aM7TqsOOGKINMfjLpgjtxnD7257CBkQ==
+X-Received: by 2002:adf:e8d0:0:b0:374:c7cd:8818 with SMTP id ffacd0b85a97d-37d481c22d1mr4923898f8f.22.1728641505704;
+        Fri, 11 Oct 2024 03:11:45 -0700 (PDT)
+Received: from linaro.org ([2a02:2454:ff21:ef80:63d1:4749:f717:d9e7])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd03fsm3555944f8f.34.2024.10.11.03.11.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 03:11:45 -0700 (PDT)
+Date: Fri, 11 Oct 2024 12:11:43 +0200
+From: Stephan Gerhold <stephan.gerhold@linaro.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>
+Subject: Re: [PATCH 3/3] arm64: dts: qcom: x1e80100-qcp: Add WiFi/BT pwrseq
+Message-ID: <Zwj539cN2DJ7nd3A@linaro.org>
+References: <20241007-x1e80100-pwrseq-qcp-v1-0-f7166510ab17@linaro.org>
+ <20241007-x1e80100-pwrseq-qcp-v1-3-f7166510ab17@linaro.org>
+ <ZweftESPrJNEsqGE@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,95 +91,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010210030.33309-9-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+In-Reply-To: <ZweftESPrJNEsqGE@hovoldconsulting.com>
 
-On Thu, Oct 10, 2024 at 11:00:25PM +0200, vamoirid wrote:
-> From: Vasileios Amoiridis <vassilisamir@gmail.com>
+On Thu, Oct 10, 2024 at 11:34:44AM +0200, Johan Hovold wrote:
+> On Mon, Oct 07, 2024 at 08:22:27PM +0200, Stephan Gerhold wrote:
+> > Add the WiFi/BT nodes for QCP and describe the regulators for the WCN7850
+> > combo chip using the new power sequencing bindings. All voltages are
+> > derived from chained fixed regulators controlled using a single GPIO.
+> > 
+> > The same setup also works for CRD (and likely most of the other X1E80100
+> > laptops). However, unlike the QCP they use soldered or removable M.2 cards
+> > supplied by a single 3.3V fixed regulator. The other necessary voltages are
+> > then derived inside the M.2 card. Describing this properly requires
+> > new bindings, so this commit only adds QCP for now.
 > 
-> Add runtime power management to the device. To facilitate this, add also
-> a struct dev * inside the bme680_data structure to have the device
-> accesible from the data structure.
+> Based on our discussions it seems we do not really need to describe the
+> internal PMU at all for WCN7850 (as the bluetooth and wlan blocks can be
+> enabled indepdendently) so perhaps we can just restore the old binding
+> and drop most of this boilerplate for all boards.
+> 
 
-...
+I think there is no clear conclusion on that yet. The old bindings
+didn't describe any power supplies for WiFi at all. The pwrseq bindings
+are currently the only way to do that.
 
-> --- a/drivers/iio/chemical/bme680.h
-> +++ b/drivers/iio/chemical/bme680.h
-> @@ -75,6 +75,7 @@
->  #define BME680_CALIB_RANGE_3_LEN               5
->  
->  extern const struct regmap_config bme680_regmap_config;
-> +extern const struct dev_pm_ops bmp280_dev_pm_ops;
+We could potentially move all the "PMU supplies" to the WiFi/BT nodes
+and rely on reference counting to handle them. But I think it's better
+to wait how the M.2/generic PCI power control discussion turns out
+before investing any time to refactor the current solution.
 
-Is pm.h being included already in this header? Otherwise you need to add it.
+There are existing users of qcom,wcn7850-pmu already in 6.11, so I think
+it does not hurt to take this patch as-is for now. We can clean them up
+together later if needed.
 
-...
-
->  	struct regmap *regmap;
->  	struct bme680_calib bme680;
->  	struct mutex lock; /* Protect multiple serial R/W ops to device. */
-> +	struct device *dev;
-
-Is it the same that you may get wia regmap_get_device()?
-
->  	u8 oversampling_temp;
->  	u8 oversampling_press;
->  	u8 oversampling_humid;
-
-...
-
-> +	/* Enable runtime PM */
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_active(dev);
-> +	pm_runtime_enable(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, BME680_STARTUP_TIME_US * 100);
-> +	pm_runtime_use_autosuspend(dev);
-> +	pm_runtime_put(dev);
-
-Can we use devm_pm_runtime_enable() for some of the above?
-
-> +	ret = devm_add_action_or_reset(dev, bme680_pm_disable, dev);
-> +	if (ret)
-> +		return ret;
-
-...
-
-> +static int bme680_runtime_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
-> +	struct bme680_data *data = iio_priv(indio_dev);
-> +	int ret;
-> +
-> +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
-> +	if (ret)
-> +		return ret;
-> +
-> +	fsleep(BME680_STARTUP_TIME_US);
-> +
-> +	ret = bme680_chip_config(data);
-> +	if (ret)
-> +		return ret;
-
-> +	ret = bme680_gas_config(data);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return 0;
-
-	return bme680_gas_config(...);
-
-> +}
-
-...
-
-> +EXPORT_RUNTIME_DEV_PM_OPS(bme680_dev_pm_ops, bme680_runtime_suspend,
-> +			  bme680_runtime_resume, NULL);
-
-You also need pm.h for the macro IIRC.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Thanks,
+Stephan
 
