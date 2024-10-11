@@ -1,145 +1,103 @@
-Return-Path: <linux-kernel+bounces-360802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D8C4999FEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:17:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5D12999FF0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:18:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC0D1F2297D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:17:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A9411F22A25
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C07AF20C470;
-	Fri, 11 Oct 2024 09:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EDC720C496;
+	Fri, 11 Oct 2024 09:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="GxtCsEBy";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="EI7LEHQ/";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="ecCV4c4F";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qr0VLfc0"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Quf8GJzg"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 728021F942E;
-	Fri, 11 Oct 2024 09:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BACD207A36;
+	Fri, 11 Oct 2024 09:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728638228; cv=none; b=DIYj2/SZuqct5INDy13YWqI31ddlxkNryGqmpqTe5h6Dlwf50gmTs0pon92ahOwDUCsyaBWi9TgjwZUJNrJyuFcDCwht694bS63issnz+wOF34qIcz5uyCiER8zcREYZhBWK/T0GscbUnjP3r7dFuczPT0pUPG47vLlZJVbjrE4=
+	t=1728638294; cv=none; b=YWxkfmRwekJaJVudJ0lDyYtoZc15Z6505ud+mf8McbKQJRAp5Bt03Lrnd1RxTAJu0CZjkwsyCcegKvvdMGzKNNNZYT231LwZIqljbTXZZMCDSk5xUQED/s2ffv6KOimQJBlA5jGZQgQQ+C6/Kfaher4SKcf+t1EZkgtvjbmwzLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728638228; c=relaxed/simple;
-	bh=PALyVzIVOFahpjkGR0jNU/L45VDE0hSJSYliXR7Uqmk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=N/rEW5Q/tc8uuldnUo5E6uFnKQlXn65XxlD39rfJrU/tjDgH1RQN+QzuOvxSw2Ea9lAMPR7lvAEjB2PkZgD4vwBsSfxWzWxxpAIY7Ad0z4YfSb4P8ocUNZ9xclmIW2KvyRKrHYzcVL6PFULlkZb0kVWLL60SfK6D5Tflk1rsmKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=GxtCsEBy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=EI7LEHQ/; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=ecCV4c4F; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qr0VLfc0; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 91C9C21A5F;
-	Fri, 11 Oct 2024 09:17:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728638224; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmYmCVyl2rFwD9BiqgFd8yoAxWFD/1VIA+PgBB6i4+Y=;
-	b=GxtCsEByyTBznOeEZGz3uCoxw7gXOR6+KKlRd/G6rNaN2SIo/uoJfHsjAa2jMQDp1AElH0
-	7FKjQyweOcV1qZz5jP4CrATxTVeBwEDq8jpu8O4sJ83iDvlE1+Wq958QV0irqtYu4FC9e4
-	AHdMSQSRZ+LtcMwHfjQ3OnDfXvCv2KQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728638224;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmYmCVyl2rFwD9BiqgFd8yoAxWFD/1VIA+PgBB6i4+Y=;
-	b=EI7LEHQ/qCHa6ounjWn/JIxerdm18s+tw3pmADsXGOPOyD9g3V9PUGU4s6bgzs0cBATDBG
-	4hocjl7vSf0a6kBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728638223; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmYmCVyl2rFwD9BiqgFd8yoAxWFD/1VIA+PgBB6i4+Y=;
-	b=ecCV4c4FuI3Vh+kvSCo62rf5CwUCjykXEbPXzGleKSTZhJP08KUAH6PoahbwEP/EqHJekb
-	xozKjl1qS76MolhbvposaDEd8k5TNeFdPk924HfWfV9oicrthOvcrUXzJ6zHR0SKv2f2y8
-	RvPogN+1YOuesRYVqmPpl/QPMsRvvnc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728638223;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=KmYmCVyl2rFwD9BiqgFd8yoAxWFD/1VIA+PgBB6i4+Y=;
-	b=qr0VLfc0mbNLyJzUDgIL/xINESdVi6zfI0rjtkWMsfgn1n/qeDV4nY+XQ8El6RNOtz1feN
-	i2ACX1+8hpyrooBg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 451541370C;
-	Fri, 11 Oct 2024 09:17:03 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id G4NmDw/tCGcXKwAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 11 Oct 2024 09:17:03 +0000
-Date: Fri, 11 Oct 2024 11:18:00 +0200
-Message-ID: <87ldyvm20n.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Zhu Jun <zhujun2@cmss.chinamobile.com>
-Cc: perex@perex.cz,
-	tiwai@suse.com,
-	g@b4.vu,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2] ALSA: scarlett2: Add error check after retrieving PEQ filter values
-In-Reply-To: <20241009092305.8570-1-zhujun2@cmss.chinamobile.com>
-References: <20241009092305.8570-1-zhujun2@cmss.chinamobile.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1728638294; c=relaxed/simple;
+	bh=m2Llmirs7gZ+YvRTkAP1OLo1mBvaOWjgJWGJGgqeTJ4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F4i9BqM9qB/KYYMyBY2QUq81ufoOKlg9g1b9dnavRSb7h9Sz0gLzPpUTv7JLGlHM6+9OcOjGoUjLRad7DesVQD2My8XHXWa+5fJI4QOPOxZskABsv7PCoCzjCimH3S1+4npiBEWpk7HW9V3winIRDojBkbMWfvTsJUSyFKCC+zc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Quf8GJzg; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=lU4r4tbL0K3+5Mx7gnspEYb/vcINY3gT5cXeOgb5F4w=; b=Quf8GJzgeSqTUbUf2AO61bq2LU
+	Vf+sqE1ISUAtcou7pFQzSVWv9InCaQKBoNd0afkNiv10L1mfVdLAfuZqdRMl/eVzwvg1LIjnPSgRK
+	bKGLaoP6oKtAZ0+iIW2SuFuA9IX5rlhBRy2PApzCAuKxL5P39veXhGyuBZikJB5HCpCMvAy/RPwhk
+	x+iQBynF6YG1b170b2ADWCDkmbV+l3SIixwMM+ABeReVdPFfffqfyxC8IpG4uEF7f5C0GB0e8yg9O
+	ROhve62AuLOSgCtv0FBgCduv+2YocVTwKa+gGZ5aSE9GPjg+5J5xpstuLLxyrAoBK+jWMzLm2wGew
+	PN1kCL1w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1szBmb-0000000FnpU-3CEE;
+	Fri, 11 Oct 2024 09:18:01 +0000
+Date: Fri, 11 Oct 2024 02:18:01 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Qun-Wei Lin <qun-wei.lin@mediatek.com>
+Cc: Jens Axboe <axboe@kernel.dk>, Minchan Kim <minchan@kernel.org>,
+	Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>, Ira Weiny <ira.weiny@intel.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"Huang, Ying" <ying.huang@intel.com>, Chris Li <chrisl@kernel.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	David Hildenbrand <david@redhat.com>,
+	Kairui Song <kasong@tencent.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Dan Schatzberg <schatzberg.dan@gmail.com>,
+	Barry Song <baohua@kernel.org>, linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-mm@kvack.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org,
+	Casper Li <casper.li@mediatek.com>,
+	Chinwen Chang <chinwen.chang@mediatek.com>,
+	Andrew Yang <andrew.yang@mediatek.com>,
+	John Hsu <john.hsu@mediatek.com>, wsd_upstream@mediatek.com
+Subject: Re: [PATCH] mm: Split BLK_FEAT_SYNCHRONOUS and SWP_SYNCHRONOUS_IO
+ into separate read and write flags
+Message-ID: <ZwjtSe8zL3WO32h5@infradead.org>
+References: <20241011091133.28173-1-qun-wei.lin@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -3.30
-X-Spam-Flag: NO
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011091133.28173-1-qun-wei.lin@mediatek.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On Wed, 09 Oct 2024 11:23:05 +0200,
-Zhu Jun wrote:
+On Fri, Oct 11, 2024 at 05:11:33PM +0800, Qun-Wei Lin wrote:
+> This patch splits the BLK_FEAT_SYNCHRONOUS feature flag into two
+> separate flags: BLK_FEAT_READ_SYNCHRONOUS and
+> BLK_FEAT_WRITE_SYNCHRONOUS. Similarly, the SWP_SYNCHRONOUS_IO flag is
+> split into SWP_READ_SYNCHRONOUS_IO and SWP_WRITE_SYNCHRONOUS_IO.
 > 
-> Add error check after retrieving PEQ filter values in scarlett2_update_filter_values
-> that ensure function returns error if PEQ filter value retrieval fails.
+> These changes are motivated by the need to better accommodate certain
+> swap devices that support synchronous read operations but asynchronous write
+> operations.
 > 
-> Signed-off-by: Zhu Jun <zhujun2@cmss.chinamobile.com>
-> Cc: <stable@vger.kernel.org>
+> The existing BLK_FEAT_SYNCHRONOUS and SWP_SYNCHRONOUS_IO flags are not
+> sufficient for these devices, as they enforce synchronous behavior for
+> both read and write operations.
 
-Applied now (with additional Fixes tag).
+You're still failing to provide a user.  Without that it is dead in
+the water from the very beginning.
 
-
-thanks,
-
-Takashi
 
