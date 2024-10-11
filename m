@@ -1,119 +1,124 @@
-Return-Path: <linux-kernel+bounces-361869-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361870-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9440E99AE29
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:42:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B76E99AE2B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A52A51C22422
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:42:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 196AC1F2553A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89821D1726;
-	Fri, 11 Oct 2024 21:42:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A49C01D1728;
+	Fri, 11 Oct 2024 21:44:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="LASzk+CF"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zxy8cGtW"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2C0A1D0B97
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 21:42:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2871CF7BC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 21:44:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728682950; cv=none; b=kAcnNxOrIUoV+cHnYAeh0JZOJ70dMGFQP7aysRU/7vLmjWqN2v/VJMLGCX3Cmn+YJVLPNryIheYZCQZSylXoNDOnTNRn9VGYmTXBVJTCVgzdBKx66zH7Ah7D6uydOE/Z6VXxsANNhtZC4pZtv0p6OYzJy9YayqpfM3rxmOfjTKM=
+	t=1728683048; cv=none; b=quL5Ya0b4Mqs0xO/JuVxGtp9hrTMaV45akUDNN0INrOKix1baZcMI1802He8zxtqRSdcxKRrsIT9XloG7jDzmGJXcpeEP8VMnchXKTTWpty1T65nArpO91XSgfSb2oZb7gkLz0U5PMWoAwcix7y/BrMG80zv9tNYTV5GTQFgrgo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728682950; c=relaxed/simple;
-	bh=m+LlSFZiZ4EdyTP0z768l0cUfXeAV9CGldpFQxcl9us=;
-	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
-	 References:In-Reply-To; b=tQswMu907wPt0U2miiTQbvIczIiQwuWqO0940i/dZ6BUdeREmZCZttvTzWfFdkyk75WX1lC+LzOP3rYgkKY8fDgNokb46ofvnwYljznfrcUwM19LnvUbTsMmNbt1BPBXCa4VcTeKIOQX1eWz+bpzglQ0nPsMDEOZbUt59yEZ/zs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=LASzk+CF; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6cbe8119e21so17638416d6.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:42:28 -0700 (PDT)
+	s=arc-20240116; t=1728683048; c=relaxed/simple;
+	bh=GkG6HA/ztoTmh8RNk8cfGt8sBATI27MLHUFNbQ1Xric=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=s8JMDAz25Jgj6F+6KwDJOCNakU0F0IeYcjfR91unoWdwYB+WTFq8/SFl/x71xzLeUA+nEoGBVwCw0TDV/ivEhLgEBm5figP3j/d7YUcR+O/vsAtn2d5C5A9XjEkexOvibxkqqXcUl2UWrDX3FwVy2eAjSGlY3EU3nDHJtba1u08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zxy8cGtW; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jmattson.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-2e2de6496easo1702643a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:44:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1728682948; x=1729287748; darn=vger.kernel.org;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=YdNIDV6aOrHYYOm3W6bJ2hofeoY/nb2/SNegHSUAfN0=;
-        b=LASzk+CFLdjtSwr2lyGOS/narpVheYp7YqZnSDP7cvQHTTNoGdtGibK/xjlsW3yUEd
-         7oXJbj4kZEBXdu7KxAjFSr5c8zZM9sS0uulQra1cgyUWop95KqV8WlpYwJIZPo489ZLH
-         N5EcSzyK5lsvw2hPt7hJrO2XK5OEuYz4NIftwmW0ve/+qCh4m6tfYt6FoeVWcyvARdXo
-         40hLSAPVKtQHQNNirdmx5bDbprlnbuRe8JMe6bgYKZD2buKIBDQwsFgxUpvdXfl9jiOq
-         bLYuBGduqku1qybOj1Tam7+Ei4MU9CoSRculqrCdVKW9oh5/Bp94LfVOJlEsKop4iVMs
-         DKlw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728682948; x=1729287748;
-        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
-         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+        d=google.com; s=20230601; t=1728683046; x=1729287846; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=YdNIDV6aOrHYYOm3W6bJ2hofeoY/nb2/SNegHSUAfN0=;
-        b=OkiDNntr6/AJfnzMyMZO7Hl5z243DWGcsmPgq+XxuK/3EJrqn2Z4tQwJzVBnRe7TdL
-         soxt4dHoUkxku9PgamdCpGqmhfaCQc5XScqAVbB4eZ/nKD9poJz2MrDnxtQsCUvbIe5Z
-         PL1U+ScMPu15S2kJGF1f9S1Us/wl5nLZbgvZjpeLxJ6LSHGpAGN22FkULYy3cwI6rlSM
-         Cg1P0iISUfm/Q6LUd/UqoMEtyYJy/Teqo2eIKbixbKRmgfab1zTIHF2zQ+QyLzMtO/sy
-         L1fjKlhDm66xyQg2Jmc57iZr7VJzOfNa5NBZy3BX60u5nBg4g3C46PF1jlyRDPNsh1+y
-         Aekw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKT/IonehGrJXCo0/7Ku3+z8TVVOMxQTert9L5x2QQr5kXCIhX5hCygjlo4251DXxIyplnn58jthEh29A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxasA3Xp+BUN5l3aGZ38tUwbw2uPoYNo5LRW1XKLu7FTavPPR6G
-	YeTag6BjgIu/n3v0sbBBeB+56l28JvvpXxo2DO3X5kQ8M0c8Ox+7Y53zIaGb3Q==
-X-Google-Smtp-Source: AGHT+IEh+B2X5EjxY/cs15tAetwL781t8oGupqCkY1RdKOysHJaJeW1Ecay1sZmGrh//AIBwq1Gwhg==
-X-Received: by 2002:a05:6214:4883:b0:6cb:f907:ae4b with SMTP id 6a1803df08f44-6cbf907ae78mr16792076d6.20.1728682947732;
-        Fri, 11 Oct 2024 14:42:27 -0700 (PDT)
-Received: from localhost ([70.22.175.108])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8679de8sm19680746d6.136.2024.10.11.14.42.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 14:42:27 -0700 (PDT)
-Date: Fri, 11 Oct 2024 17:42:26 -0400
-Message-ID: <a083e273353d7bc5742ab0030e5ff1f5@paul-moore.com>
+        bh=p/VK3ZfgElYZvlSjzEmYwYu25ZvAhjSSKI8JYiiP+Nw=;
+        b=zxy8cGtWr3uWbG+UmK325GnkwYAa1QTodfKP+aYlpsKuXMiYPck4NXuU/7KNxgFPFq
+         XZUsamD44HscLim8wyj6ODuR4Yb07D/2ugFQBY7cQ5SJ7FVjiCZw8aQB8V5GBcwZ5Nzs
+         wDmQ18Atl8hlbEiiGUfEZFTPh+q3P/eI8HEv0xFy0qhrRCMLAzYnr+UTUwmyV4tRIhpF
+         CElFhB0muLhVJUXH+X+wr7iZ42TN21NZR7zvl6QCPF/4jBgjWi0PnyXtZt7ksfrFiPyb
+         jMSuou3koMdAMLPx6xWzbSWMmgfYNHZznh00qV9LWH4dZ5Mw9ydxBOBS6MMbOPMHQMjG
+         KyDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728683046; x=1729287846;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p/VK3ZfgElYZvlSjzEmYwYu25ZvAhjSSKI8JYiiP+Nw=;
+        b=PE5XhOSdOxWB39QKSWcCy7rCcTZPZlic3C3T6aiixNHC86nE24G/cBXK/ceaxWSJGW
+         TsH3jyD/fN8KTpPDOhaO6ZC42DRP8k/pjnjXR/Su1/na8zMIBXLQBdAgdQf+KDTQSLSx
+         jY4PJU1wZixKA9ElrBMcXhsNqxuirYGlAtYELxTKGwNH1baJf2OACqOkYkaxCaqju8uc
+         REmol9VMP+V4YyBMwBryT8WZLEMQxJ/4Yq6kTiykUTX0voG3b7ueE2YHzoSxG+gcEOjS
+         OXz5YXsr7PNj3KP1F3Vd00tQzn7Qg1waCVGlRNZNecgLfW5JUqI8Ip0lE+Au9nHVpqsw
+         vTbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWJDXdEsOFb6psVeHVviuqDdZ9LRiojwWZzF9OX0+0WCnxm01ioFYkbg+Pxxe2pa4tH50d+aqx8Jx553Ss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmcS6T3gdS+q5XdFFED3BsxAlchyRMvIpiqvlIJfMMrR08QQgd
+	Nw7Vhy++zRDOvVaKlvwffUr1VsriOLS80moqNxptu4mBQTwNmrb/kaHCbBc+f6eooVM6H3AWVsD
+	wXGU2zlkjyQ==
+X-Google-Smtp-Source: AGHT+IGJsPr4hCQb4coiPXkuMY9sZ3MF8ZOV10AcmHOfAQjQx8qT1FpU0cYNsudkCc+q1mrwx7cCJDN2XjCsIQ==
+X-Received: from loggerhead.c.googlers.com ([fda3:e722:ac3:cc00:f3:525d:ac13:60e1])
+ (user=jmattson job=sendgmr) by 2002:a17:90b:3109:b0:2e2:9984:802b with SMTP
+ id 98e67ed59e1d1-2e2c81bd68cmr13436a91.3.1728683045747; Fri, 11 Oct 2024
+ 14:44:05 -0700 (PDT)
+Date: Fri, 11 Oct 2024 14:43:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 
-Content-Type: text/plain; charset=UTF-8 
-Content-Transfer-Encoding: 8bit 
-X-Mailer: pstg-pwork/sendmail
-From: Paul Moore <paul@paul-moore.com>
-To: Song Liu <song@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz, jmorris@namei.org, serge@hallyn.com, kernel-team@fb.com, song@kernel.org
-Subject: Re: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and  security_file_open()
-References: <20241011203722.3749850-1-song@kernel.org>
-In-Reply-To: <20241011203722.3749850-1-song@kernel.org>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241011214353.1625057-1-jmattson@google.com>
+Subject: [PATCH v5 0/4] Distinguish between variants of IBPB
+From: Jim Mattson <jmattson@google.com>
+To: kvm@vger.kernel.org
+Cc: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	jpoimboe@kernel.org, kai.huang@intel.com, linux-kernel@vger.kernel.org, 
+	mingo@redhat.com, pawan.kumar.gupta@linux.intel.com, pbonzini@redhat.com, 
+	sandipan.das@amd.com, seanjc@google.com, tglx@linutronix.de, x86@kernel.org, 
+	Jim Mattson <jmattson@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Oct 11, 2024 Song Liu <song@kernel.org> wrote:
-> 
-> Currently, fsnotify_open_perm() is called from security_file_open(). This
-> is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
-> security_file_open() in this combination will be a no-op and not call
-> fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
-> 
-> Signed-off-by: Song Liu <song@kernel.org>
-> ---
-> PS: I didn't included a Fixes tag. This issue was probably introduced 15
-> years ago in [1]. If we want to back port this to stable, we will need
-> another version for older kernel because of [2].
-> 
-> [1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
-> [2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
-> ---
->  fs/open.c           | 4 ++++
->  security/security.c | 9 +--------
->  2 files changed, 5 insertions(+), 8 deletions(-)
+Prior to Zen4, AMD's IBPB did not flush the RAS (or, in Intel
+terminology, the RSB). Hence, the older version of AMD's IBPB was not
+equivalent to Intel's IBPB. However, KVM has been treating them as
+equivalent, synthesizing Intel's CPUID.(EAX=7,ECX=0):EDX[bit 26] on any
+platform that supports the synthetic features X86_FEATURE_IBPB and
+X86_FEATURE_IBRS.
 
-This looks fine to me, if we can get an ACK from the VFS folks I can
-merge this into the lsm/stable-6.12 tree and send it to Linus, or the
-VFS folks can do it if they prefer (my ACK is below just in case).
+Equivalence also requires a previously ignored feature on the AMD side,
+CPUID Fn8000_0008_EBX[IBPB_RET], which is enumerated on Zen4.
 
-As far as stable prior to v6.8 is concerned, once this hits Linus'
-tree you can submit an adjusted backport for the older kernels to the
-stable team.
+v5: Restored the first commit, which was unintentionally dropped in v4.
+    Added Tom Lendacky's and Thomas Gleixner's Reviewed-by to the two
+    commits that have not changed since v3.
 
-Acked-by: Paul Moore <paul@paul-moore.com>
+v4: Added "guaranteed" to X86_FEATURE_IBPB comment [Pawan]
+    Changed logic for deducing AMD IBPB features from Intel IBPB features
+    in kvm_set_cpu_caps [Tom]
+    Intel CPUs that suffer from PBRSB can't claim AMD_IBPB_RET [myself]
 
---
-paul-moore.com
+v3: Pass through IBPB_RET from hardware to userspace. [Tom]
+    Derive AMD_IBPB from X86_FEATURE_SPEC_CTRL rather than
+    X86_FEATURE_IBPB. [Tom]
+    Clarify semantics of X86_FEATURE_IBPB.
+
+v2: Use IBPB_RET to identify semantic equality. [Venkatesh]
+
+
+Jim Mattson (4):
+  x86/cpufeatures: Clarify semantics of X86_FEATURE_IBPB
+  x86/cpufeatures: Define X86_FEATURE_AMD_IBPB_RET
+  KVM: x86: Advertise AMD_IBPB_RET to userspace
+  KVM: x86: AMD's IBPB is not equivalent to Intel's IBPB
+
+ arch/x86/include/asm/cpufeatures.h |  3 ++-
+ arch/x86/kvm/cpuid.c               | 12 +++++++++---
+ 2 files changed, 11 insertions(+), 4 deletions(-)
+
+-- 
+2.47.0.rc1.288.g06298d1525-goog
+
 
