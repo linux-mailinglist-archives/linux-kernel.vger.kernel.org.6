@@ -1,123 +1,177 @@
-Return-Path: <linux-kernel+bounces-361283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A9B99A62A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:20:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B3B399A62C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:21:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 072FCB218F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:20:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9FB641F255D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:21:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B7D218D7C;
-	Fri, 11 Oct 2024 14:20:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42525218D91;
+	Fri, 11 Oct 2024 14:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="jfxXddjj"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="PyOQgagd"
+Received: from mail-io1-f48.google.com (mail-io1-f48.google.com [209.85.166.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9771E87B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:20:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7EE7184
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728656431; cv=none; b=FUZi/B7HuAcIGgCdnHq0pIMQM+4RyznlJLP9Quqq2s22oMuzLqGZwzB2mqs14cYsEFnc0ojWNIXsZEh4nWi7sKPuXZExl7Y2nL5i8xtvQbYqUIN+nR3eqr/76FeS1gW8gjK3Oyl0D4WoAtfiXxQx7LCwrrWwEPnM2fcmLD9yYGI=
+	t=1728656468; cv=none; b=HFmZXDZ7aIpOq/G5EQ/yrXl7kiYfAofQpvnek28U0gOatAQi+B5drauH4RvzQ9ffudrkKi8qnEeI8nQBAUdEdCQ/kpT3e+ZH9ZDxsLCubc2Hl0PW5A9yAi5c6BAaFG1Pk6P5ta3uNDZeB6J9ZqKiJqRFVim4L+MOIce624DmlgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728656431; c=relaxed/simple;
-	bh=7EbH+3VAZ1saDb1IT42ACcxguJGIG2cli9j7ZXzO7kw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YsJBuvhYBsZASS26qxPyoes0UxW+d87kSssiaXg+vu5kgf/QQm0NUEOLPAyftXy5kV+bOyu4RX50IHIksF1xbDBnFpZb29tnBBLc6qEqbaV29gyf2yTIe3WBVYEJ67KSxoQ/ls/ADlUU2dYRvXdVhLkzkWjvK6WCjMIEyXw7b6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=jfxXddjj; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fac787f39fso23589691fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:20:29 -0700 (PDT)
+	s=arc-20240116; t=1728656468; c=relaxed/simple;
+	bh=TYE5vXTXT7Cm/vgRYyKhBt1I+Zc/7FpaevYm7u7Hc7E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l1fW5iptQGs5peXXQvI08BFwDZ/KkBJRF0nkkE6igOsEp67aIEljMvzc3WCTZ1CgG96EI76h69jL+YlmYlIQQgABeJDO9HHcBBtmVu9ny8yiRasmQzfsTZBNYj8VTpaHGMcm3ruDrWLQL815rSvfqOleD/YJzjAxXQ0YO2+WZnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=PyOQgagd; arc=none smtp.client-ip=209.85.166.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f48.google.com with SMTP id ca18e2360f4ac-83493f2dda4so104918739f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:21:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728656426; x=1729261226; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mvzCEOHylQFKpOsQ3b4jdnej7dL8ckuDevHyY8WxVL4=;
-        b=jfxXddjjJVdpcl9/t00ko6Ot3AnoxHqiX2O2it5DfPgd9auHps3Ek2wOl8HgFCh7+M
-         TX3srYQ2GeiazQZaUjgtPrhAka/qT37e2qRsZ0VmQ5yTJ3cZ6WDAQlhyy9phIOfH4qY4
-         cl1fzu6RhYZpqQOSMiWNUc8h0bsyNVU3eOFJM=
+        d=linuxfoundation.org; s=google; t=1728656466; x=1729261266; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=x2PJdME7gEpgZm4c7VOyfyN+e8wtfK6RNIHEqseNqOQ=;
+        b=PyOQgagdlbt6L5IvYedNskr+0xKmBHYjRW8qsFkj9TDVyFUNsY4oMMc+NP4+YI+R4+
+         7tZSYd0RdJfin3huBipBWVmT5BD/0N23T4Pd9yHNvZ1mT5Q1wfmsKHplvEu1TjqwzEsw
+         SzGW+FTESdnO1+9dFSGYSZ2MwY2vslOLFh2kA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728656426; x=1729261226;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=mvzCEOHylQFKpOsQ3b4jdnej7dL8ckuDevHyY8WxVL4=;
-        b=uPPoRxdm0RDU9y1qodZe3yPqNlS9J0nVQIn0V3Ib7PpY55nOzhsLsNGneG+GzBGyxz
-         j2weM/9YCyhLAoydsjysMc/DHxlz0XJWG5k2Ft9wPB0dEuS8uMnySgY7wXbl/lpegDbr
-         TjfFp+pRm9rRGWY6yfhagBIecO+lVRU+sHEgUTBFO5tzWDwbqyVIRUBtI+tjexwWn/A+
-         hEgMyWmVOEIVrsub1lJTfRklDD2rJNaBtA+L5IwaN/lJH4+DAjL4fB5x0yDE1IF9AWub
-         aS1axQrWxzmIx63pc+u+W2f1UxWUhpodb2hSkZ0SzXz1ag98BoSbyUDxWc36Oq/Li9OM
-         1nng==
-X-Forwarded-Encrypted: i=1; AJvYcCXrhY50AYJO73QRbdaRxSR4N8fnElApEn3E3skmKFXIgjpUIkHKV9hZlZtj49DJwjYKbppkRcP9ZggUkQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUL9vFLuGGOqynR8fQaa9pVUhkAgOJeQOsEf268n/V1crIVSZs
-	CoJBDKyFPhBeVDcZcVw2sEfQaxpBimHS35sSHqF5u60xsxzo5wlE+02EFCLWOD0ipPCoj0bTqCT
-	yo+yQ
-X-Google-Smtp-Source: AGHT+IFkQ3LNNfDjYVvBtbTTeVXixbsxRqKPa2t/aDMo/u/zo/BgDVkabzAJamW22AoFKqJXsa+7+Q==
-X-Received: by 2002:a2e:b24d:0:b0:2fa:fc3f:d606 with SMTP id 38308e7fff4ca-2fb3272ce35mr12846651fa.22.1728656425596;
-        Fri, 11 Oct 2024 07:20:25 -0700 (PDT)
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com. [209.85.167.41])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb247729bbsm5231581fa.133.2024.10.11.07.20.24
-        for <linux-kernel@vger.kernel.org>
+        d=1e100.net; s=20230601; t=1728656466; x=1729261266;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=x2PJdME7gEpgZm4c7VOyfyN+e8wtfK6RNIHEqseNqOQ=;
+        b=RJLuFurMW3U3Bt4hKujGAQxew0AvZAePf/bH4V7r3PdWsctTJqGRH07HHFm8FH8IWl
+         ulJd745IJs/GixvRtuSwYR10lgVuoj+EAns4JDo1ZH55+Gwva/BQ8EWvkS4G3iE9HVHM
+         8ZOE92y/m4KKM95C2a39sLpVDTrv925JEL+kragd2KmkDOcTYO/R8GR7uek5prUE1Q2W
+         mFUMS7EdwK22wXyJ4108hRAphieXuo4MQRMaRZLDLMlfuWKI+GIDNrpYw1yCCTFnZLr+
+         pgsq+sXHHNpcLj6ydgjLfdY0dQiuQrTFb+SEIon/3sHibZQzXVWhbkV2Bx1UlqkCLlNO
+         TDuA==
+X-Gm-Message-State: AOJu0YwO92lBRNL0VNGG4b6hElDmnpeBzohqC6e4ZYBxnVxscUA4qTh3
+	htvaYQ+zLd7hdFLcqqmeyaWqLh1S40UehymQyjpj8MjOvu1bWzPPWznT5CE96Qk=
+X-Google-Smtp-Source: AGHT+IEwImqOyQAmT6fExrU/UEB3L6kghbfDP6gdwjhkhbR9nDrNGWSRu/G2qy6foQOPdk8aNrCEHA==
+X-Received: by 2002:a05:6e02:1e0a:b0:3a0:ce43:fb62 with SMTP id e9e14a558f8ab-3a3a71ddab2mr42676805ab.11.1728656465812;
+        Fri, 11 Oct 2024 07:21:05 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbad9b0e90sm652358173.15.2024.10.11.07.21.04
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 07:20:25 -0700 (PDT)
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-5398d171fa2so2754700e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:20:24 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXlGdHn2FlF57SjhBV85EyUgDeNUoJinhUyNy8sPljqDabDSgQ52d2V7e2/3Ff9ffGysNihBHf/V30m8yc=@vger.kernel.org
-X-Received: by 2002:a05:6512:2302:b0:52e:9b9e:a6cb with SMTP id
- 2adb3069b0e04-539da3c649dmr1856067e87.15.1728656423759; Fri, 11 Oct 2024
- 07:20:23 -0700 (PDT)
+        Fri, 11 Oct 2024 07:21:05 -0700 (PDT)
+Message-ID: <b2e02494-0f22-476e-bb79-f3a133b7fa07@linuxfoundation.org>
+Date: Fri, 11 Oct 2024 08:21:04 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011020819.1254157-1-yangcong5@huaqin.corp-partner.google.com>
-In-Reply-To: <20241011020819.1254157-1-yangcong5@huaqin.corp-partner.google.com>
-From: Doug Anderson <dianders@chromium.org>
-Date: Fri, 11 Oct 2024 07:20:08 -0700
-X-Gmail-Original-Message-ID: <CAD=FV=XfHtdc9RpEwAtVHNYwBGJGhHUAoHaJhP+ZPWuUHAASFQ@mail.gmail.com>
-Message-ID: <CAD=FV=XfHtdc9RpEwAtVHNYwBGJGhHUAoHaJhP+ZPWuUHAASFQ@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: himax-hx83102: Adjust power and gamma to
- optimize brightness
-To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, linus.walleij@linaro.org, 
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
+ directly
+To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org, shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ zhouyuhang <zhouyuhang@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
+References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+ <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
+ <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
+Content-Language: en-US
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On 10/11/24 00:59, zhouyuhang wrote:
+> 
+> On 2024/10/10 23:50, Shuah Khan wrote:
+>> On 10/10/24 06:16, zhouyuhang wrote:
+>>> From: zhouyuhang <zhouyuhang@kylinos.cn>
+>>>
+>>> The libcap commit aca076443591 ("Make cap_t operations thread safe.") added a
+>>> __u8 mutex at the beginning of the struct _cap_struct,it changes the offset of
+>>> the members in the structure that breaks the assumption made in the "struct libcap"
+>>> definition in clone3_cap_checkpoint_restore.c.So use the capget and capset syscall
+>>> directly and remove the libcap library dependency like the commit 663af70aabb7
+>>> ("bpf: selftests: Add helpers to directly use the capget and capset syscall") does.
+>>>
+>>
+>> NIT: grammar and comma spacing. Please fix those for readability.
+>> e.g: Change "struct _cap_struct,it" to "struct _cap_struct, it"
+>> Fix others as well.
+>>
+> 
+> Thanks, I'll fix it in V2
+> 
+> 
+>>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+>>> ---
+>>>   tools/testing/selftests/clone3/Makefile       |  1 -
+>>>   .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
+>>>   2 files changed, 28 insertions(+), 33 deletions(-)
+>>>
+>>> diff --git a/tools/testing/selftests/clone3/Makefile b/tools/testing/selftests/clone3/Makefile
+>>> index 84832c369a2e..59d26e8da8d2 100644
+>>> --- a/tools/testing/selftests/clone3/Makefile
+>>> +++ b/tools/testing/selftests/clone3/Makefile
+>>> @@ -1,6 +1,5 @@
+>>>   # SPDX-License-Identifier: GPL-2.0
+>>>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
+>>> -LDLIBS += -lcap
+>>>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+>>>       clone3_cap_checkpoint_restore
+>>> diff --git a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>> index 3c196fa86c99..111912e2aead 100644
+>>> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>>> @@ -15,7 +15,7 @@
+>>>   #include <stdio.h>
+>>>   #include <stdlib.h>
+>>>   #include <stdbool.h>
+>>> -#include <sys/capability.h>
+>>> +#include <linux/capability.h>
+>>>   #include <sys/prctl.h>
+>>>   #include <sys/syscall.h>
+>>>   #include <sys/types.h>
+>>> @@ -27,6 +27,13 @@
+>>>   #include "../kselftest_harness.h"
+>>>   #include "clone3_selftests.h"
+>>>   +#ifndef CAP_CHECKPOINT_RESTORE
+>>> +#define CAP_CHECKPOINT_RESTORE 40
+>>> +#endif
+>>> +
+>>
+>> Why is this necessary? This is defined in linux/capability.h.
+>>
+>>> +int capget(cap_user_header_t header, cap_user_data_t data);
+>>> +int capset(cap_user_header_t header, const cap_user_data_t data);
+>>
+>> In general prototypes such as these should be defined in header
+>> file. Why are we defining these here?
+>>
+>> These are defined in sys/capability.h
+>>
+>> I don't understand this change. You are removing sys/capability.h
+>> which requires you to add these defines here. This doesn't
+>> sound like a correct solution to me.
+>>
+> 
+> I tested it on my machine without libcap-dev installed, the /usr/include/linux/capability.h
+> 
+> is on this machine by default. Successfully compiled using #include <linux/capability.h>
+> 
+> but not with #include <sys/capability.h>. This patch removes libcap library dependencies.
+> 
+> And we don't use any part of sys/capability.h other than these two syscalls. So I think that's why it's necessary.
 
-On Thu, Oct 10, 2024 at 7:08=E2=80=AFPM Cong Yang
-<yangcong5@huaqin.corp-partner.google.com> wrote:
->
-> The current panel brightness is only 360 nit. Adjust the power and gamma =
-to
-> optimize the panel brightness. The brightness after adjustment is 390 nit=
-.
->
-> Fixes: 3179338750d8 ("drm/panel: Support for IVO t109nw41 MIPI-DSI panel"=
-)
-> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-> ---
->  drivers/gpu/drm/panel/panel-himax-hx83102.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+You are changing the code to not include sys/capability.h
+What happens if sys/capability.h along with linux/capability.h
 
-No objection on my part. This is just modification of some constants,
-is well described, and is to a panel that you added so I don't think
-it needs a long bake time on the list. I'll plan to apply this on
-Monday unless there are comments or someone beats me to applying.
+Do you see problems?
 
-Reviewed-by: Douglas Anderson <dianders@chromium.org>
-
-
-Thanks!
-
--Doug
+thanks,
+-- Shuah
 
