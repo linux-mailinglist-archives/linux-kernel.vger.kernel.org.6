@@ -1,271 +1,242 @@
-Return-Path: <linux-kernel+bounces-361641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9462999AAC6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:59:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1CDC99AAC9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:01:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B62A01C21C36
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:59:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F6711C21863
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:01:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B64C1C3F0A;
-	Fri, 11 Oct 2024 17:58:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150231C32FE;
+	Fri, 11 Oct 2024 18:01:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="kmS3c8vA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mtUgfsCv"
+Received: from mail-pg1-f181.google.com (mail-pg1-f181.google.com [209.85.215.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 996811BB6BB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:58:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E455B804;
+	Fri, 11 Oct 2024 18:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728669537; cv=none; b=n8kjx6iRp1/D8pdJdh578qA7j9ru3bNl+YY53G00ecWfwo+G2u6dOXq3qUY4j4BXr5aFQMoAwoKOAaovMnmewBVc2t21HTHFDC84i4fNafbzIEyFHUoPkv4rMH++9naxAZ5qYDMSqf1sNBQ8uZ46fSv9qB5a9A7vjxrIlganUrA=
+	t=1728669670; cv=none; b=RyiPKZ/bUmYHqB+Io26Xpl/QHg/90HWLrZOP4OgmZ0MR4ht2uxQkcacfZSewtvzfA4shiRr7fgsbKuTF5hYxkcp5t2qRPYxB7Nf706JEf2gYcwQWdh+TzIvtvt+g49eHkPHITNsLMlmETCZy4faADOf7zBmO6GTppwMvZCuOcXA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728669537; c=relaxed/simple;
-	bh=MTP9v94kHA+EdXU2Uoykt2WGBeHhp0M9n/TQa9HNqbM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GSe6Fbrw5FO0iYOpwyD+4XewX+h+fx4smGQcNOmOi9q9de8cAmJMuCJhVyAP+qYGHEyRwAch+cVuDxLLTlnQVnnxz/vhEPhoN27QesBCujUZi+qAeEsQyl96qfKl3EMGuHGQEr3pX60LMPEMj8SQx2kSRr/2/ITC111hq1GTPsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=kmS3c8vA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BDa30H027028
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:58:53 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=AS1rxy8qMQglCbFoeSipseWM
-	7ev0lwhscuoExty4uFg=; b=kmS3c8vAjBNrpWF44ABBl+WXgJPO3MZUpKlANOrd
-	XdTmipfvHSHGHb8fRhB3qdk3LGFvEqMdcjJBxw6EimxARGXd45eOV1MKEiDGwEo8
-	UfaaXzwy56eCISgNV2Pa7b5beHZw5SLdIlqt1Ie+aaVbVgrAc80F6ELHOOEZQHxt
-	Rao2rO+gkAsTCJSNNiXO2jAZH+2rF5C5TirDAQKKkpz25Sp3bNHMA1sKpsEj/N6L
-	zrsiDaz3o3bLbY7JEcDRRTL1qimsX3OEA/0AJuLFSUdDakiB4YHOZf7u0n5r5EY4
-	RBbu1U9dhhiWCyK0hfM+ea0JHMscDYqdm9eTXOV5CvKM3Q==
-Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426fj6v635-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:58:53 +0000 (GMT)
-Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-20c92707255so18099275ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:58:53 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728669532; x=1729274332;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+	s=arc-20240116; t=1728669670; c=relaxed/simple;
+	bh=8mynNEaZ0hT0/RcT9aLr8SxrUuLtirPGnkOXC5pPXZ4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MMYUxt+Qfazc1LiUQEnwgCzUBBIp+xw//QEcliOre7K1zcM6e8foop7Bea8+wj5RgIrhq1GqLvpgORFrP7UM5UkYxk6kczJhiQn9iMw2rweibFGmPHKuJZ1y6xWi95U7B+GsmcZ6TIuQKT3Ffy7JwRlnzFm91KV8s7SbmMJZqcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mtUgfsCv; arc=none smtp.client-ip=209.85.215.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f181.google.com with SMTP id 41be03b00d2f7-7e9f998e1e4so1925641a12.1;
+        Fri, 11 Oct 2024 11:01:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728669668; x=1729274468; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AS1rxy8qMQglCbFoeSipseWM7ev0lwhscuoExty4uFg=;
-        b=DkNmPXVqR/ohCkvLI6HYazb67S+R6+9oTyG9Kp596EB3MTyrB/HsLfx9XuoZxQRUey
-         oScg1i9sUZgvXWeaI4PZVtNLg2F07Ctd41qFibjng2HrcjEY2MLAoEwgI0HOQCgU11mn
-         s94P3RxqyVymzFXXUwueUX5xqfOZRghbKSJBQ6ji0wFG1/sMuFCaAeR53r+Pg4CtGgMX
-         Hv4kyIXm2RXgRkYQTPm6x69ffPiH0a0S87VLLheNnp16pMWKXeMT51k/Hjz0a84+nNco
-         UAozB9SgAhw77YV+oHWTte61x9xoKvTgxybIxbStHPhVvZWQwXGGj2V1y4KmqV66DhNa
-         /Htw==
-X-Forwarded-Encrypted: i=1; AJvYcCUi8CJqFjqbNvIyEdOnoH65XOSMY3enOcsdFbodMTIRcIQ+O71UZ6LkGP/bQRG0cWbjD4oo7uSHkE331Yo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjVCM7xSjKcn1Q3SkIbXqxsdp2IAw6zjHdOpgSDn4wPb8/D0RE
-	H5T6WQNNK7EaYfCP2z8MJnnTSpdeV8agRE3iYgVH7KOTGF/IWy0nHTH0724n2ExWit+5ug/Y1jC
-	PFf2kCazLcbOdi/M09te9zEr9Lx57ZdVzUImg3irD6MUFaiF9M5jgkweA04rYKRg=
-X-Received: by 2002:a17:903:2285:b0:20b:80e6:bcdf with SMTP id d9443c01a7336-20cbb1a9314mr6647485ad.23.1728669531959;
-        Fri, 11 Oct 2024 10:58:51 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFESTnYEwGemJ5Xft5cNtABvqj2e5cIVHpOKMOt3qbTDrZt0qv/vOWjSGlEPCys96ek2YjhYw==
-X-Received: by 2002:a17:903:2285:b0:20b:80e6:bcdf with SMTP id d9443c01a7336-20cbb1a9314mr6647185ad.23.1728669531614;
-        Fri, 11 Oct 2024 10:58:51 -0700 (PDT)
-Received: from hu-bjorande-lv.qualcomm.com (Global_NAT1.qualcomm.com. [129.46.96.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc0c9f5sm26009615ad.82.2024.10.11.10.58.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:58:50 -0700 (PDT)
-Date: Fri, 11 Oct 2024 10:58:48 -0700
-From: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-To: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Cc: andi.shyti@kernel.org, quic_bjorande@quicinc.com,
-        linux-arm-msm@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-kernel@vger.kernel.org, konrad.dybcio@linaro.org,
-        quic_vdadhani@quicinc.com, vkoul@kernel.org
-Subject: Re: [PATCH v2] i2c: i2c-qcom-geni: Serve transfer during early
- resume stage
-Message-ID: <ZwlnWIWkS1pwQ/xK@hu-bjorande-lv.qualcomm.com>
-References: <20241011121757.2267336-1-quic_msavaliy@quicinc.com>
+        bh=uiirbpxLNm5AT7dufmX+S9DrEak7ySZgLvcNmiXZ6fA=;
+        b=mtUgfsCv+UaHunvixEC4t2mPzW8aR4GlNdx8dPEk2oVJX46f2+O+XogiYhij/IGmHk
+         tCZ6oLve79pZsUxBOXq9qYCPgAraSCf/EY37rNG2U+bXI+xXhrUt1xSBOwwUVXB/Uh0t
+         DnStDYK/iXjecpCutn+/RORdi5TrUSIv3BG0OTxj/lCBbh/TRclgR0WElRHpW6VTOmAC
+         1EYGPkevJzEleo8yMpN4m3e8Dvv08tvIVmM7MlPwS9OsKMqkxTqK+i60/dExepFKgHPN
+         Li8FHPVjJW9oQzn78s/Vx6FtfnAt4Y2hbm68UyQEhGPFKHRzeVzykExz05a28AAXeahW
+         1eEw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728669668; x=1729274468;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=uiirbpxLNm5AT7dufmX+S9DrEak7ySZgLvcNmiXZ6fA=;
+        b=PbHdmmNzSrjHqQT8zSkGRim7Hhmnt+oR8dn/6oHytxvY4nsXE+m6onSXhK9/si8bKZ
+         FD5wsLrp/baqRDExaZmDvoXc2SjO7JTUzhFESvHpoVV/GVh6BazSvvi4XH+2fJGfBH0R
+         iJs63z8zhKomzB/dtIW2VFhuYUlZGFYEF048RBZeO1S8CtPX+eIffvdhrCbmnvC/7UkI
+         ranKUyXuSLUAIYYEv9dYQwL8vr1dgf83Li34CPbnz03yGA1rbGcCO57kPjtS3x1HvkaR
+         3eCYyCJltbZXn1f9s05QTfo9J6OawTdrde9WWZThr61dOcq1Kkh8RhGiqwEfm7JApq1W
+         6FgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUXFqldNenHnMwx2ZiWMHKfUzAYOyzCwwKz1Q9PXL4CFZWyuioLsSQ+oMKY//B5GADlisTmyo0w46x8v7OIlmx4lg==@vger.kernel.org, AJvYcCUYmhrQT6Gomp5uAapW9oonxYZc7DUpM7i/yg66bsWXSy1FgJ0K3Tp6qVujtBOuVg4pE+uMqrBG4JgqLKYG@vger.kernel.org, AJvYcCW8kFHEoRpMhnNyxFJHH38Y8x9N4q8+ROpBhSAbUhIDSEgUA5Hdp5ABA6vTsfThOcHsf9o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJa7o7HEaXDI2BN655YdafdWYDX3dmkmHSI5Ld8+CTpm+zkdzM
+	i4lzyJNpq+QlYUXJt6BkQu/ak7b6LxNo8cusywXyx1/xMdHeZ+cVpPwy+19kETzQDz0BHfmc109
+	DiKNJsiSCi6aBbbJLEcqoq0AzTj4=
+X-Google-Smtp-Source: AGHT+IFGHxaG21IMv7iEP3SE8KaKMBe64K46Ft7YZJkhgIaY+f0QaOj4Dx2iMXApt5FONI7nU1z2OdE0XhG0MaaJkkk=
+X-Received: by 2002:a17:90a:688b:b0:2e2:eb2d:2352 with SMTP id
+ 98e67ed59e1d1-2e2f0dc3494mr4221733a91.37.1728669668007; Fri, 11 Oct 2024
+ 11:01:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011121757.2267336-1-quic_msavaliy@quicinc.com>
-X-Proofpoint-GUID: Fg8SbrZwNA_ZBC9K4vPThUe3zEh7H3Wx
-X-Proofpoint-ORIG-GUID: Fg8SbrZwNA_ZBC9K4vPThUe3zEh7H3Wx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
- lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 suspectscore=0
- clxscore=1015 mlxscore=0 impostorscore=0 priorityscore=1501 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410110125
+References: <20241009202009.884884-1-namhyung@kernel.org> <CAEf4BzYQenNtKPmWV=P3EsnqBsjNuAeXpC5ypL1k2z-H60i0=w@mail.gmail.com>
+ <ZwlV_jyx3OjfQxwS@google.com>
+In-Reply-To: <ZwlV_jyx3OjfQxwS@google.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 11 Oct 2024 11:00:56 -0700
+Message-ID: <CAEf4BzYCOpwnTVGKs8rHE4CdcQHDU0ButEKHnJE5cqcWpdZwWw@mail.gmail.com>
+Subject: Re: [PATCH 1/2] perf tools: Fix possible compiler warnings in hashmap
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 05:47:57PM +0530, Mukesh Kumar Savaliya wrote:
+On Fri, Oct 11, 2024 at 9:44=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Thu, Oct 10, 2024 at 06:48:26PM -0700, Andrii Nakryiko wrote:
+> > On Wed, Oct 9, 2024 at 1:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.or=
+g> wrote:
+> > >
+> > > The hashmap__for_each_entry[_safe] is accessing 'map' as if it's a
+> > > pointer.  But it does without parentheses so passing a static hash ma=
+p
+> > > with an ampersand (like &slab_hash below) caused compiler warnings du=
+e
+> > > to unmatched types.
+> > >
+> > >   In file included from util/bpf_lock_contention.c:5:
+> > >   util/bpf_lock_contention.c: In function =E2=80=98exit_slab_cache_it=
+er=E2=80=99:
+> > >   linux/tools/perf/util/hashmap.h:169:32: error: invalid type argumen=
+t of =E2=80=98->=E2=80=99 (have =E2=80=98struct hashmap=E2=80=99)
+> > >     169 |         for (bkt =3D 0; bkt < map->cap; bkt++)             =
+                   \
+> > >         |                                ^~
+> > >   util/bpf_lock_contention.c:105:9: note: in expansion of macro =E2=
+=80=98hashmap__for_each_entry=E2=80=99
+> > >     105 |         hashmap__for_each_entry(&slab_hash, cur, bkt)
+> > >         |         ^~~~~~~~~~~~~~~~~~~~~~~
+> > >   /home/namhyung/project/linux/tools/perf/util/hashmap.h:170:31: erro=
+r: invalid type argument of =E2=80=98->=E2=80=99 (have =E2=80=98struct hash=
+map=E2=80=99)
+> > >     170 |                 for (cur =3D map->buckets[bkt]; cur; cur =
+=3D cur->next)
+> > >         |                               ^~
+> > >   util/bpf_lock_contention.c:105:9: note: in expansion of macro =E2=
+=80=98hashmap__for_each_entry=E2=80=99
+> > >     105 |         hashmap__for_each_entry(&slab_hash, cur, bkt)
+> > >         |         ^~~~~~~~~~~~~~~~~~~~~~~
+> > >
+> > > Cc: bpf@vger.kernel.org
+> > > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > > ---
+> > > I've discovered this while prototyping the slab symbolization for per=
+f
+> > > lock contention.  So this code is not available yet but I'd like to f=
+ix
+> > > the problem first.
+> > >
+> > > Also noticed bpf has the same code and the same problem.  I'll send a
+> > > separate patch for them.
+> > >
+> >
+> > Yep, please do. Fixes look good, thanks.
+>
+> Sure will do, can I get your Acked-by for this patch?
+>
 
-Your recipients list is broken. Please check go/upstream and adopt b4 to
-help avoid such mistakes.
+Sure:
 
-> pm_runtime_get_sync() function fails during PM early resume and returning
-> -EACCES because runtime PM for the device is disabled at the early stage
-> causing i2c transfer to fail. Make changes to serve transfer with forced
-> resume.
-> 
-> Few i2c clients like PCI OR touch may request i2c transfers during early
-> resume stage. In order to serve transfer request do :
-> 
+Acked-by: Andrii Nakryiko <andrii@kernel.org>
 
-This problem description is too generic. I am not aware of any use case
-upstream where PCI or touch might need to perform i2c transfers during
-early resume; your commit message should educate me.
-
-> 1. Register interrupt with IRQF_EARLY_RESUME and IRQF_NO_SUSPEND flags
->    to avoid timeout of transfer when IRQ is not enabled during early stage.
-> 2. Do force resume if pm_runtime_get_sync() is failing after system
->    suspend when runtime PM is not enabled.
-> 3. Increment power usage count after forced resume to balance
->    it against regular runtime suspend.
-> 
-
-Please avoid the bullet list form technical description of your patch.
-
-> Co-developed-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
-> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-> ---
-> v1 -> v2:
-> 
-> - Changed gi2c->se.dev to dev during dev_dbg() calls.
-> - Addressed review comments from Andi and Bjorn.
-
-That's nice, but spell out the changes you're doing so that reviewers
-now what you did.
-
-> - Returned 0 instead garbage inside geni_i2c_force_resume().
-> - Added comments explaining forced resume transfer when runtime PM
->   remains disabled.
-> 
-> V1 link: https://patches.linaro.org/project/linux-i2c/patch/20240328123743.1713696-1-quic_msavaliy@quicinc.com/
-> ---
-> ---
->  drivers/i2c/busses/i2c-qcom-geni.c | 61 +++++++++++++++++++++++++-----
->  1 file changed, 51 insertions(+), 10 deletions(-)
-> 
-> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
-> index 212336f724a6..e1207f1a3de3 100644
-> --- a/drivers/i2c/busses/i2c-qcom-geni.c
-> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
-> @@ -134,6 +134,8 @@ struct geni_i2c_clk_fld {
->  	u8	t_cycle_cnt;
->  };
->  
-> +static int geni_i2c_runtime_resume(struct device *dev);
-> +
->  /*
->   * Hardware uses the underlying formula to calculate time periods of
->   * SCL clock cycle. Firmware uses some additional cycles excluded from the
-> @@ -675,22 +677,49 @@ static int geni_i2c_fifo_xfer(struct geni_i2c_dev *gi2c,
->  	return num;
->  }
->  
-> +static int geni_i2c_force_resume(struct geni_i2c_dev *gi2c)
-> +{
-> +	struct device *dev = gi2c->se.dev;
-> +	int ret;
-> +
-> +	ret = geni_i2c_runtime_resume(dev);
-
-Wouldn't pm_runtime_force_resume() help you do what you're looking for?
-
-> +	if (ret) {
-> +		dev_err(gi2c->se.dev, "Failed to enable SE resources: %d\n", ret);
-> +		pm_runtime_put_noidle(dev);
-> +		pm_runtime_set_suspended(dev);
-> +		return ret;
-> +	}
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_active(dev);
-> +	return 0;
-> +}
-> +
->  static int geni_i2c_xfer(struct i2c_adapter *adap,
->  			 struct i2c_msg msgs[],
->  			 int num)
->  {
->  	struct geni_i2c_dev *gi2c = i2c_get_adapdata(adap);
-> +	struct device *dev = gi2c->se.dev;
->  	int ret;
->  
->  	gi2c->err = 0;
->  	reinit_completion(&gi2c->done);
-> -	ret = pm_runtime_get_sync(gi2c->se.dev);
-> -	if (ret < 0) {
-> -		dev_err(gi2c->se.dev, "error turning SE resources:%d\n", ret);
-> -		pm_runtime_put_noidle(gi2c->se.dev);
-> -		/* Set device in suspended since resume failed */
-> -		pm_runtime_set_suspended(gi2c->se.dev);
-> -		return ret;
-> +
-> +	/* Serve I2C transfer by forced resume whether Runtime PM is enbled or not */
-> +	if (!pm_runtime_enabled(dev) && gi2c->suspended) {
-> +		dev_dbg(dev, "Runtime PM is disabled hence force resume, pm_usage_count: %d\n",
-> +			atomic_read(&dev->power.usage_count));
-> +		ret = geni_i2c_force_resume(gi2c);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-> +		ret = pm_runtime_get_sync(dev);
-> +		if (ret == -EACCES && gi2c->suspended) {
-> +			dev_dbg(dev, "pm_runtime_get_sync() failed-%d, force resume\n", ret);
-> +			ret = geni_i2c_force_resume(gi2c);
-> +			if (ret)
-> +				return ret;
-> +		}
->  	}
->  
->  	qcom_geni_i2c_conf(gi2c);
-> @@ -700,8 +729,19 @@ static int geni_i2c_xfer(struct i2c_adapter *adap,
->  	else
->  		ret = geni_i2c_fifo_xfer(gi2c, msgs, num);
->  
-> -	pm_runtime_mark_last_busy(gi2c->se.dev);
-> -	pm_runtime_put_autosuspend(gi2c->se.dev);
-> +	/* Does Opposite to Forced Resume when runtime PM was not enabled and served
-> +	 * Transfer via forced resume.
-
-Please polish this comment.
-
-Regards,
-Bjorn
-
-> +	 */
-> +	if (!pm_runtime_enabled(dev) && !gi2c->suspended) {
-> +		pm_runtime_put_noidle(dev);
-> +		pm_runtime_set_suspended(dev);
-> +		/* Reset flag same as runtime suspend, next xfer PM can be enabled */
-> +		gi2c->suspended = 0;
-> +	} else {
-> +		pm_runtime_mark_last_busy(gi2c->se.dev);
-> +		pm_runtime_put_autosuspend(gi2c->se.dev);
-> +	}
-> +
->  	gi2c->cur = NULL;
->  	gi2c->err = 0;
->  	return ret;
-> @@ -818,7 +858,8 @@ static int geni_i2c_probe(struct platform_device *pdev)
->  	init_completion(&gi2c->done);
->  	spin_lock_init(&gi2c->lock);
->  	platform_set_drvdata(pdev, gi2c);
-> -	ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq, IRQF_NO_AUTOEN,
-> +	ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq,
-> +			       IRQF_NO_AUTOEN | IRQF_EARLY_RESUME | IRQF_NO_SUSPEND,
->  			       dev_name(dev), gi2c);
->  	if (ret) {
->  		dev_err(dev, "Request_irq failed:%d: err:%d\n",
-> -- 
-> 2.25.1
-> 
+> Thanks,
+> Namhyung
+>
+> >
+> > >  tools/perf/util/hashmap.h | 20 ++++++++++----------
+> > >  1 file changed, 10 insertions(+), 10 deletions(-)
+> > >
+> > > diff --git a/tools/perf/util/hashmap.h b/tools/perf/util/hashmap.h
+> > > index c12f8320e6682d50..0c4f155e8eb745d9 100644
+> > > --- a/tools/perf/util/hashmap.h
+> > > +++ b/tools/perf/util/hashmap.h
+> > > @@ -166,8 +166,8 @@ bool hashmap_find(const struct hashmap *map, long=
+ key, long *value);
+> > >   * @bkt: integer used as a bucket loop cursor
+> > >   */
+> > >  #define hashmap__for_each_entry(map, cur, bkt)                      =
+       \
+> > > -       for (bkt =3D 0; bkt < map->cap; bkt++)                       =
+         \
+> > > -               for (cur =3D map->buckets[bkt]; cur; cur =3D cur->nex=
+t)
+> > > +       for (bkt =3D 0; bkt < (map)->cap; bkt++)                     =
+         \
+> > > +               for (cur =3D (map)->buckets[bkt]; cur; cur =3D cur->n=
+ext)
+> > >
+> > >  /*
+> > >   * hashmap__for_each_entry_safe - iterate over all entries in hashma=
+p, safe
+> > > @@ -178,8 +178,8 @@ bool hashmap_find(const struct hashmap *map, long=
+ key, long *value);
+> > >   * @bkt: integer used as a bucket loop cursor
+> > >   */
+> > >  #define hashmap__for_each_entry_safe(map, cur, tmp, bkt)            =
+       \
+> > > -       for (bkt =3D 0; bkt < map->cap; bkt++)                       =
+         \
+> > > -               for (cur =3D map->buckets[bkt];                      =
+         \
+> > > +       for (bkt =3D 0; bkt < (map)->cap; bkt++)                     =
+         \
+> > > +               for (cur =3D (map)->buckets[bkt];                    =
+         \
+> > >                      cur && ({tmp =3D cur->next; true; });           =
+         \
+> > >                      cur =3D tmp)
+> > >
+> > > @@ -190,19 +190,19 @@ bool hashmap_find(const struct hashmap *map, lo=
+ng key, long *value);
+> > >   * @key: key to iterate entries for
+> > >   */
+> > >  #define hashmap__for_each_key_entry(map, cur, _key)                 =
+       \
+> > > -       for (cur =3D map->buckets                                    =
+         \
+> > > -                    ? map->buckets[hash_bits(map->hash_fn((_key), ma=
+p->ctx), map->cap_bits)] \
+> > > +       for (cur =3D (map)->buckets                                  =
+         \
+> > > +                    ? (map)->buckets[hash_bits((map)->hash_fn((_key)=
+, (map)->ctx), (map)->cap_bits)] \
+> > >                      : NULL;                                         =
+       \
+> > >              cur;                                                    =
+       \
+> > >              cur =3D cur->next)                                      =
+         \
+> > > -               if (map->equal_fn(cur->key, (_key), map->ctx))
+> > > +               if ((map)->equal_fn(cur->key, (_key), (map)->ctx))
+> > >
+> > >  #define hashmap__for_each_key_entry_safe(map, cur, tmp, _key)       =
+       \
+> > > -       for (cur =3D map->buckets                                    =
+         \
+> > > -                    ? map->buckets[hash_bits(map->hash_fn((_key), ma=
+p->ctx), map->cap_bits)] \
+> > > +       for (cur =3D (map)->buckets                                  =
+         \
+> > > +                    ? (map)->buckets[hash_bits((map)->hash_fn((_key)=
+, (map)->ctx), (map)->cap_bits)] \
+> > >                      : NULL;                                         =
+       \
+> > >              cur && ({ tmp =3D cur->next; true; });                  =
+         \
+> > >              cur =3D tmp)                                            =
+         \
+> > > -               if (map->equal_fn(cur->key, (_key), map->ctx))
+> > > +               if ((map)->equal_fn(cur->key, (_key), (map)->ctx))
+> > >
+> > >  #endif /* __LIBBPF_HASHMAP_H */
+> > > --
+> > > 2.47.0.rc0.187.ge670bccf7e-goog
+> > >
+> > >
 
