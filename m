@@ -1,75 +1,75 @@
-Return-Path: <linux-kernel+bounces-361718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 518C699AC36
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:01:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 056F399AC44
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:02:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE5431F26808
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:01:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34450B25868
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:02:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6492F1EF936;
-	Fri, 11 Oct 2024 18:55:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13C641D26ED;
+	Fri, 11 Oct 2024 18:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="h6Zc0ytZ"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="nRkMEkO3"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 283001D041C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:54:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FA901D0E20
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:54:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672896; cv=none; b=ZxJGsXWH2GYCv0FnqZtmjEewuB/C3r5id/ycKqtBJT9UiMpndwLFkKATk9471hueiWGvg3QTSxw/At6Fh/hoIxxj4m0D2MrzLREFOJQnliwSL1U6oqSTa/KdqCNqdUK+hLZdf6lviZP9IDqOD8SZaEISl7lnl35JBlvRBzy91gU=
+	t=1728672900; cv=none; b=AgNd0MW2ub1GJmbAcQ6QY7oTPlp0ZaEvmD5hcBPpHFspE6AgEF8P9S80beDuEb7lR8mvYTiO+kQAINDnWWdV9XPoymQOTJy2T77Q8wJ2eK+9Yl5ewOTqskNsSEfksK52GVS3tptsI57oo1jd4ya8gTYJLSRVW1myvknN4qV3E4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672896; c=relaxed/simple;
-	bh=av5ekMZJt1CCKTT+LM8n2/ThdeWKjLFb14Wc2226m9Y=;
+	s=arc-20240116; t=1728672900; c=relaxed/simple;
+	bh=rCoqdQ9B7Hn8xdsgALiUMx6hOr/x0MpVdqxz3Ze2hQA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ezQa8/RJDaLKfJGDJ2fBEudnBzwrx+pI359kbLZCOHiFHYCrvOzgUl8bdFj3Ap2nwhkyPx9on3HefzBf4w9dk3YIhllvlkz7vWgXFKtkd7zPvZZEewGAYLjeGx9R52qc3tRf+0D5Gjo9MLieB6l+JyiPPUbICquKjhXCSvvV3uE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=h6Zc0ytZ; arc=none smtp.client-ip=209.85.128.47
+	 In-Reply-To:To:Cc; b=sCDCecZ0ZZGim1X06caQphjtRr1uDaigSMBvzu/20rU2fFlKXHVDsRXVjmncVoDKWGtxpGR+RDZmAdBkn9hEQy/Attu/a8AKwI8NgBV9HNaoLEb+8/QYfk85Q3fxaJ7erqM1STIoxfk8fOM4iviVcq9jL4UsB/NcF6aYwpen+KA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=nRkMEkO3; arc=none smtp.client-ip=209.85.128.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43123368ea9so4095105e9.0
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4311ae6426aso12855245e9.2
         for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:54:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728672887; x=1729277687; darn=vger.kernel.org;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728672888; x=1729277688; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=bGWAGLSPgWn5/AObiWCo6XP/hZPo7gBwFrZhxAMnG4g=;
-        b=h6Zc0ytZxL7+KtG/EMYIS+NIm4lVm/jz7o55M999zBfhOOO2+it8g1vrx4UdWzLXsl
-         Kbq7b+rIEkVKUCYfF+rIVIBNuap7ZWK3IAvJFatRoFmvZ/vBhyWByAJh3q9k9+Zqfce3
-         dMFeS9FyYtd7ihXyqb7/Yw2BL5sWpSVjdAetShELpadABZWKElZIzcllA0uxBbDy1ivJ
-         PxcX0nNWeSOtQI1NqpBm0+OTOjTijuB1RohA3FSYLc9m1dZVRfX2E8og+/Ri+J6wjdH1
-         edAuX6XtDUkX+MNBkFmp89MiUhcOMLdgX4Xx30KHCp+R2tv14algxzxbRzVJKahcLK2Z
-         7Vog==
+        bh=bhatKWKJuxfltx1oNZ6oUaNqgboH9F2TpuTRwRw3JfI=;
+        b=nRkMEkO3WAn4V05TmXnB8gjaBNhfQPZIJTzt6Q9SV7V9A9wJG9louYgBc2SltMkUap
+         vbrFbizKTeMn3tVVPXoR+aXaDEK4mvx/79VTmud68FnTyjKPbeSP3kv3SmN+Ldy+pciT
+         d1Gm4NGWZYTacVA7upmqdi+8j0jpmjLYW8am9eglDhMVjp4nMhw4oECCp0broom8aUkQ
+         pdFkw6jEl68o696hM9TqwtVbQsu0UCms/Jy06Y6Yg4ceN1uTW8c62GxgWklzNckDVQMN
+         nMENVlUK7ev0l7OQRcROTSK5WFio43Fn9Nac2ZFE0I4kIpReIOqaBBeUzFPIFg31eotx
+         TnJQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728672887; x=1729277687;
+        d=1e100.net; s=20230601; t=1728672888; x=1729277688;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bGWAGLSPgWn5/AObiWCo6XP/hZPo7gBwFrZhxAMnG4g=;
-        b=o7TtNMZBBy9D9tTjsb4KZvE+HiSs4X+neo65ocJS8RMIZpoS+88vBotCLep1VR5A2B
-         0kb/M4IB0hPP2+qNjLNFzDY99+Ix+Eadr/7k9z+n5JxlBbqjCgG3BpMKz3DpDlww5UZP
-         08zGAYDheIR+7Ng0F/T8iqweycA/qzGxrf0lH+8ykZGmIwLBNUaiQXOB1YIkK0uXokwu
-         i+fJQBVJK0wblmfmJLNzG6QWxCyH3SV41aHZaZaAK1k4Llpy0mmiSppwF2p8jse88XR3
-         EhEzFNST0/3os8gd45cP6D/knhRLrAQ9onhC8713uHKIDFNh8E/jh45GOzNmJ9/qqvgt
-         79Og==
-X-Forwarded-Encrypted: i=1; AJvYcCUUQwr4alrCjYvV7efFB7f8Hsy35p+aAc5FfmTUvkq8B0SfFNN1aMzBMC/dlkUis5dqmzGsbwN1vYvWVVU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzxx5xmy0SJ+lTUre3LzOVnrAmZN3xuvdQV1BsFMh33mo5EiUSO
-	G6DqW/C3h8pYVfVVEOx6ojr+VlbxwaboMn+O7zbblTyxR5wKvD6m5Tgq3VJPUtQ=
-X-Google-Smtp-Source: AGHT+IGaXZcgHcQXsKgnIWWdTg/5GMBmPlNoM6B2HQGTUTRug1kQ9c6bJXfJY9x9FzLOvWAx7apu7w==
-X-Received: by 2002:a05:600c:3acd:b0:42c:b0a4:6b67 with SMTP id 5b1f17b1804b1-4312561a40cmr3174535e9.34.1728672886762;
-        Fri, 11 Oct 2024 11:54:46 -0700 (PDT)
+        bh=bhatKWKJuxfltx1oNZ6oUaNqgboH9F2TpuTRwRw3JfI=;
+        b=nnd5rpotdlsgBjL+Ri4Q8P4gNDf9DQ2eaLTD11U5+UVf1hr+RID8Q0cauyvK10w75m
+         6uId6vDmg7qyNrvvY8+Ft8Jro55aN6i5RyS9wY0g3uGtYq7HLiBbEGBmKepsljAkJ6tf
+         lGLfoeCtASNPwtI8pdmN3gq8+RtuKsQQ8KmAxSNYLA/vHqdkviu5cqnUQzFtLihDmsKo
+         NBBLRFT5qJWR6My5e+Yfmi2Xi16eELR1QgKQVXNCA+jQAcQsF4ltzGStB7FyJ2Ku1R+d
+         lovWM6Vx1FFpxrenRZPgslwh18N/+0paMs8uwI8kK57YFPJGbixlqaeENcBfHAD9NlNm
+         q7NQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXR1OeEIRczoMT4opgWFgfi1IHOQ5sv9t51fi6qaPWJd0IyN56dRLpy646EYtr0b8/WfD0PZWroyENYwzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzy+GKRjnSAHnYjIpY8Wi16YVbDVvPTh/csOmjBbPvuvD86hn73
+	Hj3PjmZkSRd8DV7RzEOqaOjw7a7304qaO6eepmgqsLQXHzKSRvSJARUzuE/Kb1k=
+X-Google-Smtp-Source: AGHT+IGmsTYdyN8AnM0SFDW0KnEWUsE2KWdNV7xLu0WWRUc2MVy9WTK7gb9S/nVCr2balMC3xW7jWQ==
+X-Received: by 2002:a05:600c:1e03:b0:42f:520b:1591 with SMTP id 5b1f17b1804b1-4311df474abmr30031205e9.24.1728672888171;
+        Fri, 11 Oct 2024 11:54:48 -0700 (PDT)
 Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:68b8:bef:b7eb:538f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fe7csm4559161f8f.70.2024.10.11.11.54.45
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fe7csm4559161f8f.70.2024.10.11.11.54.46
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 11:54:46 -0700 (PDT)
+        Fri, 11 Oct 2024 11:54:47 -0700 (PDT)
 From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Fri, 11 Oct 2024 20:54:12 +0200
-Subject: [PATCH v7 13/17] ufs: core: add support for deriving the software
- secret
+Date: Fri, 11 Oct 2024 20:54:13 +0200
+Subject: [PATCH v7 14/17] ufs: core: add support for generating, importing
+ and preparing keys
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-wrapped-keys-v7-13-e3f7a752059b@linaro.org>
+Message-Id: <20241011-wrapped-keys-v7-14-e3f7a752059b@linaro.org>
 References: <20241011-wrapped-keys-v7-0-e3f7a752059b@linaro.org>
 In-Reply-To: <20241011-wrapped-keys-v7-0-e3f7a752059b@linaro.org>
 To: Jens Axboe <axboe@kernel.dk>, Jonathan Corbet <corbet@lwn.net>, 
@@ -108,87 +108,95 @@ Cc: linux-block@vger.kernel.org, linux-doc@vger.kernel.org,
  Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, 
  Om Prakash Singh <quic_omprsing@quicinc.com>
 X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2593;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2542;
  i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
- bh=ThUnFUzOE+WKlyswQqxKI3kiG9w6jnBt19VmRqdLgs0=;
- b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnCXRg10xeWiKDWP5UaAufiEjsF2gcIgHfmgp4T
- tnwZQSIL6eJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZwl0YAAKCRARpy6gFHHX
- cqb2D/0ff6fHIXbLO8/Uxmcs7WNE+Wn7CDOZiPxGkQlls8jo4E6YYu0rErTuq3wbAa1Y9+bMQLf
- o7uIQo1wzHM5cU5zJ7oVcSqnvG0sMlSKIwj1K/6gQUy4gsiU97RmHk68ik4VveCUHtPdXfyNZgU
- YDTcb3VrSUgfYzsa9hQ3jACRv2XLSp+E4IFcQz0R6T8eBNY6v7SkLqbW01PljKlf1rIQX1OLY5h
- kJv65KqBSIezc684Nx4anF06LJNfiljxDTT3C786GXEdQPzrqnXEANQa5Dw4eHThrnqKzbsZL3m
- uHoqlHbb0/rHUVc2OfuLjgPyPkdaf74KCVIOVPQIgWhdgbmyzDoJ6z9sK2euPkrNEcfEjjbNj2n
- vqMa7ZELaszAdd5SS635XpOdUBkl1LyTF2oufFLgYW99QbjRga+kyWAP1lNgBea05/oeBM5eC36
- pnRBw/h48wNzxAwHNn+ty0u/z/9scCZgJNohx1tlDik2b84yydYEjmeNQm4GwJ22ukzCFweR7wJ
- V9y0bCzx616ba74YFEODkeCXuD2tA87lCdaF2/3wtJeQciVWIBeTnY7fBIO1OmjydEpw0oyCG/A
- Wc+lnTJSsZrcKqJ1WDKYLjb5JzMGCPusnDSmGW6svLAavGy77Q+lUc8PmqLH0uFp6rogpu866Ae
- J3NLk1P+mvvW6aw==
+ bh=+ALSGPhqSpFCx8VMqBEOHa6jvoZdtMRVH6U+tA0zR4E=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnCXRgIa9JxS13dmB3BNLm5fvTras3dIpSag6X7
+ iOgkq4b7OWJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZwl0YAAKCRARpy6gFHHX
+ cv+EEADf3pf7OpbgUzzA0lbKqWbwldOeq01TQaRjRNSnIIGR9Pir/kkxjWn0wIojkhZLtqaRXdZ
+ i6cbuaIfFzAbqGeGUNmocV4ivByw808djzRGDXZj5C/l9O0Ztf7Oulz+QvskdWsEmmLhgffrwNt
+ MP/Z47wGvTnVQVsXGbIEyPZSX82eglF9A2u71/d0+Ozb2OjKpwMxAj0UEasybrj7K4+i9MGVTa2
+ 6JlU2kEB/3H1vhhysqZK5T78mKy2Prl97HwuTUgqm+yQ6QLeyyjKXbwWIWe/tG/ZJYUuhnf+cfR
+ E7pphMtjVKPduJeEvBJU3ocdLgtCsiLBxS53CktanacXKOWGWDCkVVn2M2dK2nY6l3YKh7KnQHM
+ VJxRQoQffBcRXUNbhgfUtiaF1Hq3ZE6OVtGBmFUH/1OlE10cn2eEeWmhJ/rS5oBkcajHBvHCwAG
+ 2e1hR41YzEjaKMs1GXbm3nJTI5ogUwQ9gAtur2KYXkd6NSOVy0VeZKfk6mG2/ZzFz9zP7g2EZce
+ lpaXSpe24sTH4DE8/e0OXNRxb/LM0B3U6Klpsf2zUKXvfc1tUo7SXpVKPuGAxs8fjXDxBm6ezhH
+ ab1ZdLu+2XbyoeTs8wAf4xThVS+VVcFDIwYRCMOiG8FEOiBFAn1Rn8/S/tA/XcvAwQirGxP58ML
+ bS1eVfDWvezVEww==
 X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
  fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
 From: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 
-Extend the UFS core to allow calling the block layer's callback for
-deriving the software secret from a wrapped key. This is needed as in
-most cases the wrapped key support will be vendor-specific and the
-implementation will live in the specific UFS driver.
+The block layer now allows storage controllers to implement the
+operations for handling wrapped keys. We can now extend the UFS core to
+also support them by reaching into the block layer. Add hooks
+corresponding with the existing crypto operations lower on the stack.
 
 Tested-by: Neil Armstrong <neil.armstrong@linaro.org>
 Reviewed-by: Om Prakash Singh <quic_omprsing@quicinc.com>
 Signed-off-by: Gaurav Kashyap <quic_gaurkash@quicinc.com>
 Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/ufs/core/ufshcd-crypto.c | 15 +++++++++++++++
- include/ufs/ufshcd.h             |  3 +++
- 2 files changed, 18 insertions(+)
+ drivers/ufs/core/ufshcd-crypto.c | 41 ++++++++++++++++++++++++++++++++++++++++
+ 1 file changed, 41 insertions(+)
 
 diff --git a/drivers/ufs/core/ufshcd-crypto.c b/drivers/ufs/core/ufshcd-crypto.c
-index 64389e876910..2530239d42af 100644
+index 2530239d42af..49c0784f2432 100644
 --- a/drivers/ufs/core/ufshcd-crypto.c
 +++ b/drivers/ufs/core/ufshcd-crypto.c
-@@ -113,6 +113,20 @@ static int ufshcd_crypto_keyslot_evict(struct blk_crypto_profile *profile,
- 	return ufshcd_program_key(hba, NULL, &cfg, slot);
+@@ -145,10 +145,51 @@ bool ufshcd_crypto_enable(struct ufs_hba *hba)
+ 	return true;
  }
  
-+static int ufshcd_crypto_derive_sw_secret(struct blk_crypto_profile *profile,
-+					  const u8 wkey[], size_t wkey_size,
-+					  u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE])
++static int ufshcd_crypto_generate_key(struct blk_crypto_profile *profile,
++				      u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
 +{
 +	struct ufs_hba *hba =
 +		container_of(profile, struct ufs_hba, crypto_profile);
 +
-+	if (hba->vops && hba->vops->derive_sw_secret)
-+		return hba->vops->derive_sw_secret(hba, wkey, wkey_size,
-+						   sw_secret);
++	if (hba->vops && hba->vops->generate_key)
++		return hba->vops->generate_key(hba, lt_key);
 +
 +	return -EOPNOTSUPP;
 +}
 +
- /*
-  * Reprogram the keyslots if needed, and return true if CRYPTO_GENERAL_ENABLE
-  * should be used in the host controller initialization sequence.
-@@ -134,6 +148,7 @@ bool ufshcd_crypto_enable(struct ufs_hba *hba)
++static int ufshcd_crypto_prepare_key(struct blk_crypto_profile *profile,
++				     const u8 *lt_key, size_t lt_key_size,
++				     u8 eph_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
++{
++	struct ufs_hba *hba =
++		container_of(profile, struct ufs_hba, crypto_profile);
++
++	if (hba->vops && hba->vops->prepare_key)
++		return hba->vops->prepare_key(hba, lt_key, lt_key_size, eph_key);
++
++	return -EOPNOTSUPP;
++}
++
++static int ufshcd_crypto_import_key(struct blk_crypto_profile *profile,
++				    const u8 *imp_key, size_t imp_key_size,
++				    u8 lt_key[BLK_CRYPTO_MAX_HW_WRAPPED_KEY_SIZE])
++{
++	struct ufs_hba *hba =
++		container_of(profile, struct ufs_hba, crypto_profile);
++
++	if (hba->vops && hba->vops->import_key)
++		return hba->vops->import_key(hba, imp_key, imp_key_size, lt_key);
++
++	return -EOPNOTSUPP;
++}
++
  static const struct blk_crypto_ll_ops ufshcd_crypto_ops = {
  	.keyslot_program	= ufshcd_crypto_keyslot_program,
  	.keyslot_evict		= ufshcd_crypto_keyslot_evict,
-+	.derive_sw_secret	= ufshcd_crypto_derive_sw_secret,
+ 	.derive_sw_secret	= ufshcd_crypto_derive_sw_secret,
++	.generate_key		= ufshcd_crypto_generate_key,
++	.prepare_key		= ufshcd_crypto_prepare_key,
++	.import_key		= ufshcd_crypto_import_key,
  };
  
  static enum blk_crypto_mode_num
-diff --git a/include/ufs/ufshcd.h b/include/ufs/ufshcd.h
-index 19c36f4ca381..d74a26a36f5b 100644
---- a/include/ufs/ufshcd.h
-+++ b/include/ufs/ufshcd.h
-@@ -372,6 +372,9 @@ struct ufs_hba_variant_ops {
- 	int	(*program_key)(struct ufs_hba *hba,
- 			       const struct blk_crypto_key *bkey,
- 			       const union ufs_crypto_cfg_entry *cfg, int slot);
-+	int	(*derive_sw_secret)(struct ufs_hba *hba, const u8 wkey[],
-+				    unsigned int wkey_size,
-+				    u8 sw_secret[BLK_CRYPTO_SW_SECRET_SIZE]);
- 	int	(*fill_crypto_prdt)(struct ufs_hba *hba,
- 				    const struct bio_crypt_ctx *crypt_ctx,
- 				    void *prdt, unsigned int num_segments);
 
 -- 
 2.43.0
