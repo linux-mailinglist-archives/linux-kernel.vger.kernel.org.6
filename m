@@ -1,171 +1,168 @@
-Return-Path: <linux-kernel+bounces-361485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83DC699A8DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:26:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E6D99A8DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:27:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E9A51C212E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:26:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A79E41C20D8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:27:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2F9C19922F;
-	Fri, 11 Oct 2024 16:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 573EA19922F;
+	Fri, 11 Oct 2024 16:27:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JnyqjGjI"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="WZYUDlbP"
+Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 978AB198E7F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:26:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C80D6198E7F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:27:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728663999; cv=none; b=nQTusQmI7itC0loPLAHq+YKrBeyweYVVxXGwn7iWiKE5zXDIWhVcY6UooeOXwvn+SHRTb6ln0N5uHbF8K3tfitxy+5Hg8c9fSxfu3ujRqidzt2CYSer9uDLanHun0bcJxo9h8Q2tFTzEnNK7BJ8kpomxnnf7C7AShYnoRfiZ77o=
+	t=1728664028; cv=none; b=UTbEYdEpqlF3A4Qim4+g9FnVLCvyaoWwQXXgVTC/v1XRKJXQSCM8CbXFW/HF7WUhy+2hNV/EcloJiFJWciP5XRcB8IYnhQ7EaNm87+FRChtMFE5Qidg3Dx7glzIajh64mCLWIwb3ax1haAmSJt2M/vJyZS/yZ8qdm4nY2PmQ6vY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728663999; c=relaxed/simple;
-	bh=JJfLcSJT6SUfxQIYKsr7yBThKwI/qs9OrJLzfzkQ++E=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NjJ6f5OGZaEr8pGuxlqVN58Z+zRtu+RZTTX/iiLTVUiaRO6KYERz+lXRbdRW2/BECt0T7irFOKYThNWEfLqPav8JDSXPI5EaIaH5lfXNsAZwiA673VCOCXva8Izuployn1AMmFBkFUvtUswM7AGk/pO3kBOfuDdimZMh0lrZuFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JnyqjGjI; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c8ac50b79so226705ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:26:37 -0700 (PDT)
+	s=arc-20240116; t=1728664028; c=relaxed/simple;
+	bh=j4vbPdAlY9hV+J4KUZ0fvDwUvocm8C+KS46LmplaExk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UU6hRp2TorN6BlxqbKVsqjjs+iWyh17m9QWXGtoDKrQWZgST/SlfwkmOSoKuucn7OEpGJ5OQFHGPmn8e3aYJyyQLRBypUZ2DR5kyjvMrmGBRJBLIOLySBnApTvojr27O3xreGzt6c2YRr/mxiyL72l8mMZ0InXdfp4221F4rlro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=WZYUDlbP; arc=none smtp.client-ip=209.85.219.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6cbce16d151so11591046d6.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:27:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728663997; x=1729268797; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rgBi2CgoUh+yA9kfntiaJkcuQrlnuJ/H6QCxY+XAqP4=;
-        b=JnyqjGjIJjxGLG6QIzwwVKp02T0FC0W1wHjDtvjOJPTep6yU3dvz3ihkskmgCH7Sly
-         BlDvAzug4DjRRQ0ey8yjAlKG2hLtCdclv7yuMDpL22lxXOhp8kCL6wTDjq5OjRxipj16
-         v88AmlPXz2hZMiepxGrj1nSRHzhc7Rd7f9sQDN7klG1awRKV11kC/ry28u2VtS+fpqSI
-         eju5lyYIGLHRkBflOMtO8ou2427UP4H+8Zo5u59Iod7HgZSGgSN9tuBwQxsC9MuqwPTL
-         NYBBK0NMwu51jCbpnC3FS7+7ssAy45a1xK4pfP4/SqGRfjIZ5lBVXxubh5TnQDALRv+a
-         hk5w==
+        d=ziepe.ca; s=google; t=1728664025; x=1729268825; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=7PekulykcbN+gb8fZx6BBcDe03TnC4iwq2raCf+a2g4=;
+        b=WZYUDlbPZjbRwfFIsLwK2tOnXvXo1vTJz1spvgmW9tH/Z0EyQEXBAtoQN7LNxWEwQn
+         /XIVtO6Uck0CSntvFv/MzuqDd1POWsjQOfexd6gd7xaLqEZ8DnkWsEvx6XZ74YTeTqX8
+         BVrhd9nsVcbzk565NjED0EhYEmNA34hIR4XjdeFzkwFHo91O8yqcRBlbbqlCxDhKVSWk
+         v/J/pv/hSbLwjZFe8kj5ZdKNye6B+ITkNUMYIN45bkr4+O1U7kJSDsoS2r1cbIEWr/SW
+         u4skzLcyGvhIwyVVALF6mTT3gcbK2lyRJYAx8tix1hu5VDYjZdGFsJhU8Htrvao4iX+f
+         JKxg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728663997; x=1729268797;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rgBi2CgoUh+yA9kfntiaJkcuQrlnuJ/H6QCxY+XAqP4=;
-        b=CRKpzXCAQ4R8rJOBlpUe0W201VTcRRRbfIWnro/YSpTBbPu1LzwqhYEoDY0mQWpHTf
-         dfiSEJKg1uULfIABpdDvpyoOA4sThJFy9qsCKyuHAn6HFtnTc005q3LmxJZKRLv3fBI7
-         6RUbZBg3N6t2kAcKM/F3ow7yXn7cKLXvltQg8dRy01Osnpk1Wiy9pReX5khPR/owbNPI
-         NIuSC7oJxxse2o7FceljogbaliTqjNnov5CSOei2pV7S1mJjFXa8YoHsu1XOs8OqYVfy
-         ChWjPBVV1wry3KMJDbgQeIjjBXVObSIYicR+WXVsS3EgOCqZbUcuTjY+EBPnxCCwLb7E
-         qFxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUNvWuAGjVxgBdrRlHv7p0ILKSeQTL7pXABva62LhWOIs9Jx6rjzB7m0wqFTXMENLhX8KvudA3M8P8hEYU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJnX15b4fv8aRcWkhCQTdMcRNuiscuedeNCiIqaIEEZpySrYW5
-	WXOjktHaN/WdwM8pnOxwcxfq20Ehe9ciWxxIDtpaqr26QCs1M4Ub5XUnaWr2kCNqJ8tf/KRqQjZ
-	NfzS8oE3iJ0CGGLP7QoAxxx/DwW32qkLpkSgJ
-X-Google-Smtp-Source: AGHT+IHqtIXHbgDwBWNWcYCygzM0IEEDf/gvIXxqhjoKQACQ+ujuHX041JX4SWBZXmd30WXWWV5AC5KXwn/M4cQNoc0=
-X-Received: by 2002:a17:903:27cd:b0:20c:a97d:cc83 with SMTP id
- d9443c01a7336-20ca97dd06amr1662835ad.16.1728663996483; Fri, 11 Oct 2024
- 09:26:36 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728664025; x=1729268825;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7PekulykcbN+gb8fZx6BBcDe03TnC4iwq2raCf+a2g4=;
+        b=MXTstGDxG4W1xT9KHJdTYqk8jH81z5jeNqW/fiU6ZLdh1PAA/qVoofJ2zlqL4Y/R1A
+         KHUQXVgoU77BgHRjhdKMVJiTD7rF+R2VyRYbmssbw9OJjWpsseBsa+PBba+2TEEFKVKu
+         Rak5TTQG8WjgnX86u6CSu3zUEJDpcwgIEeREeRntxmOaseJY8oOB6HUH8TcnbrF4J0YW
+         TR0S8+nZTAvslrscVdCjO8z9j7EVYcI4RQJMo/AwZSpdmtzSbAvT9Mmhblql/KyBL9T/
+         9zqOYxyyCKy0ZhMJmAxcUbFp/NrkHzfweM6sROIsX4tpFjBc21q1JcDuWKa0t2JTcNWP
+         ysmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXlIHjTLa8YfgZJ5XPQvNiaAqwYgNzZGywUBWq+QVIwtLQlywTTESGaLpWMi/IPqI3w5Dxrn2dSgbmyhKI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+gqSc3FmMLsvRMfLjFIdNF4GB5Mggf2o8AN2yotmZsKSKclYJ
+	S5xAQIyxCJ02wlW7do2kdhULxEnjDFzq5+Cmmvanjpqf0ZkKCJmekU1CEGjiAww=
+X-Google-Smtp-Source: AGHT+IECAA99O9K/DGavVzcBDiJEt0Sio+U49ZIq/HhKSIk3/fbZT/m740AEMp/LNE2YV+t+Qv9gtg==
+X-Received: by 2002:a05:6214:320b:b0:6c5:8a85:19fe with SMTP id 6a1803df08f44-6cbf00ef174mr36358106d6.51.1728664024598;
+        Fri, 11 Oct 2024 09:27:04 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85b7597sm16987756d6.42.2024.10.11.09.27.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 09:27:04 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1szITn-007dB9-Kl;
+	Fri, 11 Oct 2024 13:27:03 -0300
+Date: Fri, 11 Oct 2024 13:27:03 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+	Vasant Hegde <vasant.hegde@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] iommu/vt-d: Enhance compatibility check for paging
+ domain attach
+Message-ID: <20241011162703.GL762027@ziepe.ca>
+References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
+ <20241011042722.73930-4-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011073559.431302-1-irogers@google.com> <231a275e-00db-499b-92a4-259dab8f9d80@linaro.org>
-In-Reply-To: <231a275e-00db-499b-92a4-259dab8f9d80@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 11 Oct 2024 09:26:19 -0700
-Message-ID: <CAP-5=fULBYVqrgcQ1hHgou29HATOtXfZxR84r-Q2WTccT7SOBg@mail.gmail.com>
-Subject: Re: [PATCH v1 0/8] Run tests in parallel showing number of tests running
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011042722.73930-4-baolu.lu@linux.intel.com>
 
-On Fri, Oct 11, 2024 at 3:03=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
->
->
-> On 11/10/2024 8:35 am, Ian Rogers wrote:
-> > Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
-> > to read them for display. When running on a color terminal, display
-> > the number of running tests (1 if sequential). To avoid previous
-> > flicker, only delete and refresh the display line when it changes. An
-> > earlier version of this code is here:
-> > https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com=
-/
-> >
-> > Add a signal handler for perf tests so that unexpected signals are
-> > displayed and test clean up is possible.
-> >
-> > In perf test add an "exclusive" flag that causes a test to be run with
-> > no other test. Set this flag manually for C tests and via a
-> > "(exclusive)" in the test description for shell tests. Add the flag to
-> > shell tests that may fail when run with other tests.
-> >
-> > Change the perf test loop to run in two passes. For parallel
-> > execution, the first pass runs all tests that can be run in parallel
-> > then the 2nd runs remaining tests sequentially. This causes the
-> > "exclusive" tests to be run last and with test numbers moderately out
-> > of alignment.
-> >
-> > Change the default to be to run tests in parallel. Running tests in
-> > parallel brings the execution time down to less than half.
-> >
-> > Ian Rogers (8):
-> >    tools subcmd: Add non-waitpid check_if_command_finished()
-> >    perf test: Display number of remaining tests
-> >    perf test: Reduce scope of parallel variable
-> >    perf test: Avoid list test blocking on writing to stdout
-> >    perf test: Tag parallel failing shell tests with "(exclusive)"
-> >    perf test: Add a signal handler around running a test
-> >    perf test: Run parallel tests in two passes
-> >    perf test: Make parallel testing the default
-> >
-> >   tools/lib/subcmd/run-command.c                |  33 +++
-> >   tools/perf/tests/builtin-test.c               | 267 ++++++++++++-----=
--
-> >   tools/perf/tests/shell/list.sh                |   5 +-
-> >   .../tests/shell/perftool-testsuite_report.sh  |   2 +-
-> >   tools/perf/tests/shell/record.sh              |   2 +-
-> >   tools/perf/tests/shell/record_lbr.sh          |   2 +-
-> >   tools/perf/tests/shell/record_offcpu.sh       |   2 +-
-> >   tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
-> >   tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
-> >   .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
-> >   tools/perf/tests/tests-scripts.c              |   5 +
-> >   tools/perf/tests/tests.h                      |   1 +
-> >   tools/perf/util/color.h                       |   1 +
-> >   13 files changed, 226 insertions(+), 100 deletions(-)
-> >
->
-> Not really a big deal but remaining doesn't work when a subset of tests
-> are run:
->
->   $ perf test 111 110
->   110: Check Arm64 callgraphs are complete in fp mode      : Ok
->   111: Check Arm CoreSight trace data recording and synthesized samples:
->     Running (150 remaining)
+On Fri, Oct 11, 2024 at 12:27:18PM +0800, Lu Baolu wrote:
 
-Thanks, I'd been so focussed on other issues that I'd missed testing
-like this. v2 will fix the "remaining" but I've renamed it "active" as
-the count doesn't reflect the remaining tests as exclusive tests will
-be missing and they will show 1 test remaining which isn't accurate.
+> @@ -1623,27 +1623,15 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
+>  
+>  	copied_context_tear_down(iommu, context, bus, devfn);
+>  	context_clear_entry(context);
+> -
+>  	context_set_domain_id(context, did);
+>  
+> -	/*
+> -	 * Skip top levels of page tables for iommu which has
+> -	 * less agaw than default. Unnecessary for PT mode.
+> -	 */
+> -	for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
+> -		ret = -ENOMEM;
+> -		pgd = phys_to_virt(dma_pte_addr(pgd));
+> -		if (!dma_pte_present(pgd))
+> -			goto out_unlock;
+> -	}
 
-> Other than that:
->
-> Tested-by: James Clark <james.clark@linaro.org>
+Yikes, this is nasty racy stuff, glad to see it go
 
-Thanks,
-Ian
+But should the agaw stuff be in its own patch?
+
+> @@ -3506,27 +3483,26 @@ int prepare_domain_attach_device(struct iommu_domain *domain,
+>  	if (domain->dirty_ops && !ssads_supported(iommu))
+>  		return -EINVAL;
+>  
+> -	/* check if this iommu agaw is sufficient for max mapped address */
+> -	addr_width = agaw_to_width(iommu->agaw);
+> -	if (addr_width > cap_mgaw(iommu->cap))
+> -		addr_width = cap_mgaw(iommu->cap);
+> -
+> -	if (dmar_domain->max_addr > (1LL << addr_width))
+> +	if (dmar_domain->iommu_coherency !=
+> +			iommu_paging_structure_coherency(iommu))
+>  		return -EINVAL;
+> -	dmar_domain->gaw = addr_width;
+> -
+> -	/*
+> -	 * Knock out extra levels of page tables if necessary
+> -	 */
+> -	while (iommu->agaw < dmar_domain->agaw) {
+> -		struct dma_pte *pte;
+> -
+> -		pte = dmar_domain->pgd;
+> -		if (dma_pte_present(pte)) {
+> -			dmar_domain->pgd = phys_to_virt(dma_pte_addr(pte));
+> -			iommu_free_page(pte);
+> -		}
+> -		dmar_domain->agaw--;
+> +
+> +	if (domain->type & __IOMMU_DOMAIN_PAGING) {
+
+It looks like this entire function is already never called for
+anything but paging?
+
+The only three callers are:
+
+	.default_domain_ops = &(const struct iommu_domain_ops) {
+		.attach_dev		= intel_iommu_attach_device,
+		.set_dev_pasid		= intel_iommu_set_dev_pasid,
+
+and
+
+static const struct iommu_domain_ops intel_nested_domain_ops = {
+	.attach_dev		= intel_nested_attach_dev,
+
+And none of those cases can be anything except a paging domain by
+definition.
+
+So this if should go away, or be turned into a WARN_ON.
+
+Jason
 
