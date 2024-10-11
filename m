@@ -1,127 +1,109 @@
-Return-Path: <linux-kernel+bounces-361687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFC1D99AB72
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:50:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A56EF99AB58
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:47:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E07B31C22810
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:50:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37AD2284837
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:47:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 451D41D27B8;
-	Fri, 11 Oct 2024 18:46:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4208E1CF295;
+	Fri, 11 Oct 2024 18:45:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="yKZY1rdR"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I7mE7FC1"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE731D1E97
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:46:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A47A1C2DB7;
+	Fri, 11 Oct 2024 18:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672375; cv=none; b=QWz12FUMHpfF+g/bE25hEh0e0UsM79uMHTP+HsVAx+ijhEGnv8oP67gy3kto989Nzd/6xXrfFbH3nF3BhszoR0bAYLKsOMBA/I43PtfWnyIBNv0UIdcdgxiFrpnFhC/qm8vcY32+u6G/PxdkLLbbuN/twJbhw49S5Wydl+LJ21U=
+	t=1728672332; cv=none; b=IzDAfsoZpp+/HZtCF+7S8ODfBz8/f0VFSdq3r84QGH7G+XUZjfOQTNXD3c+KOTIjWpuG0L0aoUfekEGnG41aXUy5g2TEhW2+/O9DJS0DYU1lx1fhmylckvyxhkydYtM0nnBSjDYBXxCsNJdZ61a0FzmmhFqb9VslkhMopaq4K28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672375; c=relaxed/simple;
-	bh=RIFYUWJWd7bN5cBhz+koUNJF3wVi5EIvLaiIKSbtO7Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=kQ+Xq/QhhOFs7QJu4PVxm/CssR597s3Plz3/l0aeeWAOyYhMgwhbAzGDXOGHjWNC5wMCiNZFXn+wKGpRri05HtGKBoG82i131bZ4lcRKWdg9337FNjEsbMOWjHT15frdKnpofG5xyYaOriimG88SB4eaxlmGrKYk0E6ITwcrpCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=yKZY1rdR; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e06acff261so1632923a91.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:46:14 -0700 (PDT)
+	s=arc-20240116; t=1728672332; c=relaxed/simple;
+	bh=wraktrblQiTB9JxWAuex6XbMie83pZLaU0C9AZLoeVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LaOWXVR2MnPanHzDiEkgqVTiBzf3+1efKdQhwsif9uAFPLL7iKqi4ZGv9basTWd1vuXkXHVj3Q2AM3H4VXH16vXaXAqRb/FhPGDndoGGlbdd8mWDKGKwOlhZsgXttaGt0pHwC4lFjRcI2zYg/rpFACb/AbWDBBTZfNeTFgeTTC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I7mE7FC1; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4311c575172so11744095e9.2;
+        Fri, 11 Oct 2024 11:45:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728672374; x=1729277174; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Qutnxq+9ITQDx+pSqPE3IDGupovZNJJRS/Je9OZgZtA=;
-        b=yKZY1rdReVg9EwvUDrb1RBtzzj36Fswmrf8LZvEUd57owNUUHS7k785/TEtPZopCJr
-         lKjFUT1frA/bwPFQ59W9n28WeLpoDNQAVwcuDKQkBWcBrUNYgjs+wIy9OVCzKabxkPGN
-         dhjnS2YLbXw0xaQ40w27kDUj3MWHZKa/QhQW8=
+        d=gmail.com; s=20230601; t=1728672329; x=1729277129; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=5ZqKQ2LfzInsks2n4Vpgt/XJ/3z4FcVBp1MqifOjlS0=;
+        b=I7mE7FC1Jx1xvtu7Hx+cI5ug79x+OXHa4YKjyFcn6hZv9yV0l/DCAYBde15udlokwH
+         pLYEB3Tmu6mVe/gqdhXQPInnl2dk1VgLBuaHWkryJhiYYzJ5XsovE7YCM60zejiTV62o
+         k9/IX/hhlnhwIaugxIM04SMMK90gZUlKtlf9X/NBseXB8DuX+KFNHMniooVWZKmhwKBC
+         YU1KjRDnlzvyj2oT06KD3S3H1pGu5GJ1l9RO+hIb3IFvU6NkVx4oYS/+O/c3J5qqa2JK
+         QZXNmoCKJH42wMEk3pX2kvX3amIacUq9yGpQ6/AAzATlTs60r4G1FNqZ1JdWJDfTOpmg
+         40ag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728672374; x=1729277174;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Qutnxq+9ITQDx+pSqPE3IDGupovZNJJRS/Je9OZgZtA=;
-        b=IwBg31ahzCtyozahM8Sf4K1zrYLTeDh98UPLtSrYsrnPmvXsgiOFyqO94bWnZcVNsf
-         LvoWAi0pJQWVEpLSxWadOxs0CyZpYLk56Yq3S6Ouea4llnpgWWqXXMfmD7a6oDWcWeHC
-         WaVXfa2inlfomCiPoG+gCX1DUzs0H0WWuZYsMdU+ecGLzfu+Pszui+9I94nrlfmvS6ZB
-         ojXVoyRXtdAAbk/AhaVJdWl/d1A3gqpViJa3IiQbIAxKD/0breEJ54tqW/McgTua/TsQ
-         KFXLBTMMq5loH+RuBFuJqHQV2zn4Fc8rhIcSdWbv/JsIwJDBVPIuZuWD+mehfNBIMZlJ
-         BYmg==
-X-Forwarded-Encrypted: i=1; AJvYcCUd6FTww/0VleL2qepw1zykZHHTYUNZfiI7kNwu7jotctLrAxiTkxugHHXBKZrF5GO+6yfXynzEFRqtdkI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmX+ZnH/7/NqPDZSybU2loWAmGnPCpXa86VyHGJ4RHY7hLpKQW
-	KZCbWyrxwEuqV1rUzKoBXzXvGfwpcpAkS9hHyriE/6eI0NWbCzSKmsPsvKZmTzQ=
-X-Google-Smtp-Source: AGHT+IGSvRqPkZgaNg6prJZocJDduEg5S2p6+ufKif1tZ3kYV8SUhwDPKkp2QencXRLwI99kDBw/Xw==
-X-Received: by 2002:a17:90b:3b8c:b0:2e2:ac13:6f7 with SMTP id 98e67ed59e1d1-2e2f0a4d6b8mr5021240a91.4.1728672373888;
-        Fri, 11 Oct 2024 11:46:13 -0700 (PDT)
-Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e30d848e1csm687625a91.42.2024.10.11.11.46.12
+        d=1e100.net; s=20230601; t=1728672329; x=1729277129;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5ZqKQ2LfzInsks2n4Vpgt/XJ/3z4FcVBp1MqifOjlS0=;
+        b=DpITA9/SzBS4zQS7w4glJ6wXRBOpWaePYennfC8+GnwLkaMReGLrQzwswiiWQGRi7s
+         q9++t6Hgy6Nmt0eoym8dEjpoZrH3VyrJAFbA+NJyxqED0fnAAmcE8mlle/zy1LIAMAIy
+         6R9gt+/iGzwYI9DLoIiHN+M184AjG4abnM0olQ0B/IYFmsMY9GPy2MlAQAa6RuXY1ov3
+         U0oQ1B69iHUIvH/FasySjwy0XFWMDbHSwaDCO12GhdxliWT+pOIEMtCP9O2fNmdaXZTP
+         uA8AD0LT+7LVkBj4vYKDqrgzCAQ9wdEFmy2xOH2zASYDeEqp3ytQn78d9+VwRy587dsC
+         10Eg==
+X-Forwarded-Encrypted: i=1; AJvYcCVA+BM5WxRHtHKLEZV9YlNuLrC2VgYI6hvwWqcc0baGAd+PFPs2CQ/+s+OoD5CzR7eoPa0A2lvFsQoE@vger.kernel.org, AJvYcCVFoyYuWF981HroM+u9W9Rtm0kBHEZR1EE2ceiogFcxUtK+JbOfI1PNK3a4GR4OnaNPId9c/KMje/l7sB9D@vger.kernel.org, AJvYcCXSSiK8CANecU2KaCTikoI/lOizRAVNxvVDyNwVGixRCGl65L3msiIAPM1uy5lrT1rEGzRKaSdGEAjk@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA+kfWP9Dd/rXkfimmW64kwvV8Woj/1KhHEV2AKOIkHfmUwnHj
+	zsXLFrg+H2tDUIvZ3iH3esM+H+bbOckF5MLSV05qmUWg29XUnD1e
+X-Google-Smtp-Source: AGHT+IFl6lUU2m75dGga7nHPuig5zujRXmtgRHZU0b/P/jNvxeaz4J4ZUE4h8jWxwBFkYEWvoRz7CA==
+X-Received: by 2002:a05:600c:3588:b0:42c:b905:2c04 with SMTP id 5b1f17b1804b1-4311ded19c1mr29212085e9.12.1728672329268;
+        Fri, 11 Oct 2024 11:45:29 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835c35asm49157405e9.40.2024.10.11.11.45.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 11:46:13 -0700 (PDT)
-From: Joe Damato <jdamato@fastly.com>
-To: netdev@vger.kernel.org
-Cc: mkarsten@uwaterloo.ca,
-	skhawaja@google.com,
-	sdf@fomichev.me,
-	bjorn@rivosinc.com,
-	amritha.nambiar@intel.com,
-	sridhar.samudrala@intel.com,
-	willemdebruijn.kernel@gmail.com,
-	edumazet@google.com,
-	Joe Damato <jdamato@fastly.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Tariq Toukan <tariqt@nvidia.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-rdma@vger.kernel.org (open list:MELLANOX MLX4 core VPI driver),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [net-next v6 9/9] mlx4: Add support for persistent NAPI config to RX CQs
-Date: Fri, 11 Oct 2024 18:45:04 +0000
-Message-Id: <20241011184527.16393-10-jdamato@fastly.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241011184527.16393-1-jdamato@fastly.com>
-References: <20241011184527.16393-1-jdamato@fastly.com>
+        Fri, 11 Oct 2024 11:45:28 -0700 (PDT)
+Date: Fri, 11 Oct 2024 20:45:26 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 01/13] iio: chemical: bme680: Fix indentation and
+ unnecessary spaces
+Message-ID: <ZwlyRjnEkO4ROCdr@vamoirid-laptop>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-2-vassilisamir@gmail.com>
+ <Zwj19ONfbDr0f4Fh@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwj19ONfbDr0f4Fh@smile.fi.intel.com>
 
-Use netif_napi_add_config to assign persistent per-NAPI config when
-initializing RX CQ NAPIs.
+On Fri, Oct 11, 2024 at 12:55:00PM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 10, 2024 at 11:00:18PM +0200, vamoirid wrote:
+> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > 
+> > Fix indentation issues, line breaking and unnecessary spaces
+> > reported by checkpatch.pl.
+> 
+> Can we move this to be the last (or close to the end) in the series?
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+>
 
-Presently, struct napi_config only has support for two fields used for
-RX, so there is no need to support them with TX CQs, yet.
+Hi Andy,
 
-Signed-off-by: Joe Damato <jdamato@fastly.com>
-Reviewed-by: Eric Dumazet <edumazet@google.com>
-Reviewed-by: Jakub Kicinski <kuba@kernel.org>
----
- drivers/net/ethernet/mellanox/mlx4/en_cq.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/net/ethernet/mellanox/mlx4/en_cq.c b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-index 461cc2c79c71..0e92956e84cf 100644
---- a/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-+++ b/drivers/net/ethernet/mellanox/mlx4/en_cq.c
-@@ -156,7 +156,8 @@ int mlx4_en_activate_cq(struct mlx4_en_priv *priv, struct mlx4_en_cq *cq,
- 		break;
- 	case RX:
- 		cq->mcq.comp = mlx4_en_rx_irq;
--		netif_napi_add(cq->dev, &cq->napi, mlx4_en_poll_rx_cq);
-+		netif_napi_add_config(cq->dev, &cq->napi, mlx4_en_poll_rx_cq,
-+				      cq_idx);
- 		netif_napi_set_irq(&cq->napi, irq);
- 		napi_enable(&cq->napi);
- 		netif_queue_set_napi(cq->dev, cq_idx, NETDEV_QUEUE_TYPE_RX, &cq->napi);
--- 
-2.25.1
-
+Yes, will do it.
 
