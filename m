@@ -1,156 +1,134 @@
-Return-Path: <linux-kernel+bounces-360306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ED539998BF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:10:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1C399999D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 225CB1C2074A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:10:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B376D282093
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E8E79E1;
-	Fri, 11 Oct 2024 01:10:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B18717996;
+	Fri, 11 Oct 2024 01:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GYtbvKND"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b="Dgnq+EqG"
+Received: from mail-108-mta13.mxroute.com (mail-108-mta13.mxroute.com [136.175.108.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F78B4C7D;
-	Fri, 11 Oct 2024 01:10:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CD616419
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728609016; cv=none; b=dl3gcfW1cLjSZkY5LIYKNW11MiPTyWzhavxKX1WaWpJuN2OFSmcorzoRCwBEa+zf0JJCEk0+uOlz2c9L7b5HbWmBPC3aankSMjuka43eOXDtpAJNe4VovOUYRMWn8vN5yW5pnEsdHv3+PqQCZH2Dd929DAZ9XpmIagXZWxB6X/s=
+	t=1728611547; cv=none; b=eFo2rWLji/YiLZ/Lj/vO0uyizE16Au4IuUNm+nIhSG1cwqCrcGtFe6IPyHBFrwFV/6Y3aOuLOHyLXkPZdctz+OOv4TrmxIkJ/hz8z2tAurzBj2d9K1zqJyZ1VDeNbTIxRWKwq+Q9s7kyOeEluZluiz2nLyvLAxkUDeqaRTnooLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728609016; c=relaxed/simple;
-	bh=CxcNe39wol/3RMMdthb7jSSJhVKt++1yY7sFwySt0Ug=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=qH3CvKfZcsjaAn2CxtKuEgGrwDzbY8WDFEJ0ZXrrzLMyFahLEiHTVjoihs3V/fy9JvF6W8fXvd0tx73zAY2VL4vOuLLOiLG56yE7xTUYLotokHWF6MElxf5F2WwqVYVe9kAOrO85pHvwul0MZwQqBkOGaLuHzo+5enr9UXa5Qg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GYtbvKND; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728609015; x=1760145015;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=CxcNe39wol/3RMMdthb7jSSJhVKt++1yY7sFwySt0Ug=;
-  b=GYtbvKNDO1MVSnybToA8ELBB0/eSb6lMziauiwIY94Au1cOxow/ocbT9
-   m/OagYXQzpquj/woIJtAvSfFsfaHr5suDlhW1VuFQA5lVn8pcHdO7s0h1
-   Jbk1aeWY9P7YlomapZ12tNVldMeEujNriEvVOuJUaS1X71S6XOGiB2DRY
-   jn+a6ROpE0hekVRzNM3I+/QjpaG4Bw2tiFRdQTVhmEZznqL+PzfQs87uU
-   /FYftKCkSOsjN+OHN7L83l/vRqRKxg5/vHwzV3TTjNj7Kdm5KOXSwbeW/
-   5768xNZZyZejwNKPvCinXQL/uHsdwI/XRSHD6P6svQr+L4WdEAMtKasl7
-   A==;
-X-CSE-ConnectionGUID: ubpQHaTfTkK0v5r9BN/Y5Q==
-X-CSE-MsgGUID: r16xOe25S1CbinNtVm0r5Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="30869209"
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="30869209"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 18:10:14 -0700
-X-CSE-ConnectionGUID: cLQw4wNyTAeywHSh/b7aKQ==
-X-CSE-MsgGUID: FkIIDcY1SSeg17kKRAtytA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="107629082"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 18:10:11 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,  Dan Williams
- <dan.j.williams@intel.com>,  Davidlohr Bueso <dave@stgolabs.net>,
-  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
- <apopple@nvidia.com>,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
-  Baoquan He <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison
- Schofield <alison.schofield@intel.com>
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-In-Reply-To: <d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com> (David
-	Hildenbrand's message of "Thu, 10 Oct 2024 14:54:33 +0200")
-References: <20241010065558.1347018-1-ying.huang@intel.com>
-	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
-Date: Fri, 11 Oct 2024 09:06:37 +0800
-Message-ID: <87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728611547; c=relaxed/simple;
+	bh=eMEi30HCHoAAv+JpEoZK1ER7d1QkHukLsqPSuZDJKOk=;
+	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
+	 MIME-Version:Content-Type; b=Zd24S07i+aagmzN+0yFkguwxgpj9RI220xhVzmnkkd0ufYi2KnE4103tja7WAy12br3wln+nbKAWGUk0vD7h7UzUjm+BScffgoRUAfHiRcWNCYMxnApdYJjD4yS8dlHqtlGBTJl/7ZovkejRfTTqruGzuQPXCyJaVFphTp2o4b4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org; spf=pass smtp.mailfrom=damenly.org; dkim=pass (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b=Dgnq+EqG; arc=none smtp.client-ip=136.175.108.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damenly.org
+Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
+ (Authenticated sender: mN4UYu2MZsgR)
+ by mail-108-mta13.mxroute.com (ZoneMTA) with ESMTPSA id 19279421bf90003e01.008
+ for <linux-kernel@vger.kernel.org>
+ (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
+ Fri, 11 Oct 2024 01:47:08 +0000
+X-Zone-Loop: a75c612f20eebae2a4e2dc3aa3967d6fc3e7dfbe59d0
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=damenly.org
+	; s=x; h=Content-Type:MIME-Version:Message-ID:In-reply-to:Date:Subject:Cc:To:
+	From:References:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=pdzEL4cm+5xHpBoIcDQGXqMijQus5IPuZqSbT5JzXiA=; b=Dgnq+EqGvWgMGgCsRfZZK0D65V
+	+14hm3ZdjxuNAjEsCQybe9vOSGdflkuUx57no2qIArOPftpNyGLR/jDMD3azilgZBRkark8P/W7x4
+	92evQO7sjOd7CpPtS8cj5YECPKIQKvTyxccKrt0RZClJiE/B2154TKXCmIJp9XzLZrTrw5Pd2bA0B
+	IeZJ67jH7YHFuKrYj9B2T94ChTIyGC5ueS+i69BAP1Qc1m8RardY/PoOAI2hvhTkBavIn3yVG7VEl
+	2y2A9hhwb+7C/5F0gxEyDOYbr1KgwrvfuqYoRewEdJj53bPrt2cCLJefQC4AmxK0LnKPFMibgvxvL
+	bmV/bKEw==;
+References: <4195446e-2d2b-442c-a1ad-b1498d243a70@linux.alibaba.com>
+ <tencent_91D2962236324AA47465761367183C8F3709@qq.com>
+User-agent: mu4e 1.7.5; emacs 28.2
+From: Su Yue <l@damenly.org>
+To: Edward Adam Davis <eadavis@qq.com>
+Cc: joseph.qi@linux.alibaba.com, jlbec@evilplan.org,
+ linux-kernel@vger.kernel.org, mark@fasheh.com,
+ ocfs2-devel@lists.linux.dev,
+ syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com,
+ syzkaller-bugs@googlegroups.com
+Subject: Re: [PATCH V2] ocfs2: pass u64 to ocfs2_truncate_inline maybe overflow
+Date: Fri, 11 Oct 2024 09:07:09 +0800
+In-reply-to: <tencent_91D2962236324AA47465761367183C8F3709@qq.com>
+Message-ID: <ed4no1gp.fsf@damenly.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; format=flowed
+X-Authenticated-Id: l@damenly.org
 
-David Hildenbrand <david@redhat.com> writes:
 
-> On 10.10.24 08:55, Huang Ying wrote:
->> Currently, if __region_intersects() finds any overlapped but unmatched
->> resource, it walks the descendant resource tree to check for
->> overlapped and matched descendant resources.  This is achieved using
->> for_each_resource(), which iterates not only the descent tree, but
->> also subsequent sibling trees in certain scenarios.  While this
->> doesn't introduce bugs, it makes code hard to be understood and
->> potentially inefficient.
->> So, the patch renames next_resource() to __next_resource() and
->> modified it to return NULL after traversing all descent resources.
->> Test shows that this avoids unnecessary resource tree walking in
->> __region_intersects().
->> It appears even better to revise for_each_resource() to traverse the
->> descendant resource tree of "_root" only.  But that will cause "_root"
->> to be evaluated twice, which I don't find a good way to eliminate.
->
-> I'm not sure I'm enjoying below code, it makes it harder for me to
-> understand what's happening.
->
-> I'm also not 100% sure why "p" becomes "root" and "dp" becomes "p" when
-> calling the function :) Likely this works as intended, but it's confusing
-> (IOW, bad naming, especially for dp).
->
->
-> I think you should just leave next_resource() alone and rather add
-> a new function that doesn't conditionally consume NULL pointers
-> (and also no skip_children because you're passing false either way).
->
-> static struct resource *next_resource_XXX(struct resource *root,
-> 		struct resource *p)
-> {
-> 	while (!p->sibling && p->parent) {
-> 		p = p->parent;
-> 		if (p == root)
-> 			return NULL;
-> 	}
-> 	return p->sibling;
-> }
->
-> Maybe even better, add a new for_each_resource() macro that expresses the intended semantics.
->
-> #define for_each_resource_XXX(_root, _p) \
-> 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
+On Thu 10 Oct 2024 at 22:31, Edward Adam Davis <eadavis@qq.com> 
+wrote:
 
-Yes.  This can improve code readability.
-
-A possible issue is that "_root" will be evaluated twice in above macro
-definition.  IMO, this should be avoided.  Do you have some idea about
-how to do that?  Something like below?
-
-#define for_each_resource_XXX(_root, _p)                                \
-	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
-	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
-
-> XXX TBD
+> Syzbot reported a kernel BUG in ocfs2_truncate_inline.
+> There are two reasons for this: first, the parameter value 
+> passed is greater
+> than UINT_MAX, second, the start and end parameters of 
+> ocfs2_truncate_inline
+> are "unsigned int".
 >
-> Or do you think this should not only be "improved" for the __region_intersects() use case
-> but for all for_each_resource() users? I cannot tell easily.
-
-I prefer to make for_each_resource() to traverse only descendant
-resource tree of "_root".  This helps code reusing and make the
-interface easier to be understood.  The difficulty lies in twice
-evaluation as above.
+> So, we need to add a sanity check for byte_start and byte_len 
+> right before
+> ocfs2_truncate_inline() in ocfs2_remove_inode_range(), if they 
+> are greater
+> than UINT_MAX return -EFBIG.
+>
+> Reported-by: 
+> syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
+> Closes: 
+> https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
+> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+> ---
+> V1 -> V2: move sanity check to ocfs2_remove_inode_range
+>
+>  fs/ocfs2/file.c | 5 +++++
+>  1 file changed, 5 insertions(+)
+>
+> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
+> index ad131a2fc58e..05d6a8acfcda 100644
+> --- a/fs/ocfs2/file.c
+> +++ b/fs/ocfs2/file.c
+> @@ -1784,6 +1784,11 @@ int ocfs2_remove_inode_range(struct inode 
+> *inode,
+>  		return 0;
+>
+>  	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL) {
+> +		if (byte_start > UINT_MAX || byte_start + byte_len > 
+> UINT_MAX) {
+>
+Why not use ocfs2_max_inline_data_with_xattr() here? Yes, UINT_MAX 
+indeed
+solves overflow problem Syzbot reported but you can find much 
+lowerer
+limit if once looked into inline data structures.
+Also, ocfs2_truncate_inline() can be enhanced e.g. replace
+BUG_ON(start > end) with error out.
 
 --
-Best Regards,
-Huang, Ying
+Su
+
+
+> +			ret = -EFBIG;
+> +			mlog_errno(ret);
+> +			goto out;
+> +		}
+>  		ret = ocfs2_truncate_inline(inode, di_bh, byte_start,
+>  					    byte_start + byte_len, 0);
+>  		if (ret) {
 
