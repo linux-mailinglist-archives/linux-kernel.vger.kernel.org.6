@@ -1,125 +1,182 @@
-Return-Path: <linux-kernel+bounces-360862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A36899A0AB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:02:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E957099A08E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:57:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA1E2896AE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:02:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16B0E1C2190F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1547021018A;
-	Fri, 11 Oct 2024 10:02:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A79A5210C08;
+	Fri, 11 Oct 2024 09:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="8cTmyw6+"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="rPrv72bI"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD89820C462;
-	Fri, 11 Oct 2024 10:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC44B20FAAD;
+	Fri, 11 Oct 2024 09:57:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640935; cv=none; b=s/LxQFyRbtaLcmdw2Pg/pQX5hCwDrCkp3vppfQs7gI9micdzsq1CJF/rk7ISoKvE/Kmc7NJuOiDnR58T5xVr/5tlEvyOb8zEnUjBzq4qL6SYkCwwTdYdN7l66AQ+ZSLKH9UWwn564AOl+q0mBgNoRqAyGjK3cgmge/di9E2EHZc=
+	t=1728640623; cv=none; b=AtlDcewtNzSpszyLrzqfv9kxftQl0d+F53VVrptGy8C2b0HfIiPF2eatON+JPwQlB2BChEIWbXAGdUtzrM2THbGzubKj5R9Ih23MWzEtXnzujJtO/dUn5OV6yeObB+rvvKiCnD3DHL0T0sheQ7aJp/G9SHdfmAWdSfW5xt0Hr5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640935; c=relaxed/simple;
-	bh=3p58vwjm0mX+q1bBDxCzK98sObgMUqPvTC/bY3+/RIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ELgB0LJ26T8cULSq8L+AoqUMaG1+k+DTdQIy2S8s1Q0Ns/X3OuMpxNPJ1YovaZO2D7nRu1jFUjpU6YoOgVdg3WlnDR0OEgsLGZZBOQLiGtYoB4lXsI1FhgHS0iSEF+RyvUr3KfTjSA3/wDA3Urc+VUggT6xgj9Px1T4eqNEJK/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=8cTmyw6+; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B7kBUt015393;
-	Fri, 11 Oct 2024 12:01:38 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	95TUYhry6R22ZNdbrt7ktasqRqP2EG69mmNh12OjVR8=; b=8cTmyw6+tRX/sJJC
-	S1mUbCmn8/44Xw1kBz0ZjAyazUxFFtlm8/d107770OLw9sKNYJBsyrgWkHNow2Tn
-	Nv18PIqhVR6zoU5THcZwZwWscbb75v+/70jw5iFcuTV5NTPdxxvI1DGBNt3o0vCQ
-	30KngZPY3jxSxKBb0FhzE2R6eXIDjCS/CGfbgEGLhBWUAwXjaRn1JduNdwn52n3h
-	l+WnJgZopoP8pir8djXJdzQq9/jlAD1fUIcgbAbJrKHpSBGZ+559AjjoBF9lieeS
-	WiyL0pjz+STfUkgEGZkpQHWZ7am0R4msIF54fjHMJu75Gwg7jYVKNyKb2oQ5Ue1m
-	kKoVGA==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425q9839mh-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 12:01:38 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id D904C40054;
-	Fri, 11 Oct 2024 12:00:05 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 6566E268186;
-	Fri, 11 Oct 2024 11:57:06 +0200 (CEST)
-Received: from [10.252.28.117] (10.252.28.117) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
- 2024 11:57:05 +0200
-Message-ID: <9283caeb-1b84-43c2-a8a4-6b43a6962f34@foss.st.com>
-Date: Fri, 11 Oct 2024 11:55:59 +0200
+	s=arc-20240116; t=1728640623; c=relaxed/simple;
+	bh=Gfcidkov4qGXk4naAdSzx+9W8NgThlSmTzasKaKXPlM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=T7gNS+Ulvk75+zsIBKPxcEiQ6SQSz+A1XQ2/7NX5HeuXxHAlJ3Gafsi9e0/sciIEx3llf6aL/kW/V99OnStifsJtPT/XRdmrg/c+qoJda8WXHhS/ILMgVZ16j3vxy49enHyYyHkmjyRD6yjSh0lRvBhYTBfVVgdtuSTnrkkvVA8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=rPrv72bI; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=ciLHEDlJFx/yBo6BbEQxX3v7o6dg6CNuVbDrI0ZaLuU=; b=rPrv72bIJD5WKQLxZ+70kkjCxd
+	iDF4Uxk8GKYZ2jhuCMXiozqOn0qq689M9/EuMsegjYPiIULTPlJME8de90LGLPmS/PHZLdH5KzT1i
+	XFMVNVkfB5/5kk7wOrUS0JmRBds+Nr4aON180g2F3wIYZucn2NkIOvitrICGCpY5p7o6285YGaTyi
+	CIMb3NAW19VfqANZK6KCxHR0awuzYIXKcY6IUNTUEzAVN6K6CWYc1uXuvN4Z/KphI9wpKzaPYP/Cp
+	brah8g5RCilRkadvT6RVZc8y39XRRYEtKB18QCyQlvQCqWPMsEkoqwpfZlh/xedpb3Obx3hcBNJXy
+	Ql8Q+2nA==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1szCO7-0005n5-Om; Fri, 11 Oct 2024 11:56:47 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Jonas Karlman <jonas@kwiboo.se>, Dragan Simic <dsimic@manjaro.org>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
+Subject:
+ Re: [PATCH] arm64: dts: rockchip: Prevent thermal runaways in RK3308 SoC dtsi
+Date: Fri, 11 Oct 2024 11:56:46 +0200
+Message-ID: <1831993.TLkxdtWsSY@diego>
+In-Reply-To: <01e42e08965e58a337b9b531c10446fd@manjaro.org>
+References:
+ <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+ <86ff39fe-cc88-4cf4-a1ad-6398a74ceb11@kwiboo.se>
+ <01e42e08965e58a337b9b531c10446fd@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] hwrng: stm32 - implement support for STM32MP25x
- platforms
-To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
-        Herbert
- Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Lionel
- Debieve <lionel.debieve@foss.st.com>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Yang
- Yingliang <yangyingliang@huawei.com>
-References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
- <20241007132721.168428-3-gatien.chevallier@foss.st.com>
- <2fad1566-49f9-4586-b0d4-8a4a12f9e69e@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <2fad1566-49f9-4586-b0d4-8a4a12f9e69e@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
+
+Am Freitag, 11. Oktober 2024, 11:04:38 CEST schrieb Dragan Simic:
+> Hello Jonas,
+> 
+> On 2024-10-11 10:52, Jonas Karlman wrote:
+> > On 2024-10-10 12:19, Dragan Simic wrote:
+> >> Until the TSADC, thermal zones, thermal trips and cooling maps are 
+> >> defined
+> >> in the RK3308 SoC dtsi, none of the CPU OPPs except the slowest one 
+> >> may be
+> >> enabled under any circumstances.  Allowing the DVFS to scale the CPU 
+> >> cores
+> >> up without even just the critical CPU thermal trip in place can rather 
+> >> easily
+> >> result in thermal runaways and damaged SoCs, which is bad.
+> >> 
+> >> Thus, leave only the lowest available CPU OPP enabled for now.
+> > 
+> > This feel like a very aggressive limitation, to only allow the
+> > opp-suspend rate, that is not even used under normal load.
+> > 
+> > I let my Rock Pi S board with a RK3308B variant run "stress -c 8" for
+> > around 10 hours and the reported temp only reach around 50-55 deg c,
+> > ambient temp around 20 deg c and board laying flat on a table without
+> > any enclosure or heat sink.
+> > 
+> > This was running with performance as scaling_governor and cpu running
+> > the 1008000 opp.
+> 
+> Thanks for testing all that!  That's very low CPU temperature under
+> stress testing indeed.  Maybe the cooling gets worse and the CPU
+> temperature goes higher if the board is installed into some small
+> enclosure with no natural or forced airflow?
+> 
+> > Most RK3308 variants datasheets list 1.3 GHz as max rate for CPU,
+> > the K-variant lists 1.2 GHz, and the -S-variants seem to have both
+> > reduced voltage and max rate.
+> > 
+> > The OPPs for this SoC already limits max rate to 1 GHz and is more than
+> > likely good enough to not reach the max temperature of 115-125 deg c as
+> > rated in datasheets and vendor DTs.
+> > 
+> > Adding the tsadc and trips (same/similar as px30) will probably allow 
+> > us
+> > to add/use the "missing" 1.2 and 1.3 GHz OPPs.
+> 
+> With these insights, I agree that the patch might have been a bit
+> too extreme, but it also promotes good practices when it comes to
+> upstreaming.  The general rule is not to add CPU or GPU OPPs with
+> no proper thermal configuration already in place.
+> 
+> The patch has already been merged, and as I already noted, [1] I'll
+> try to implement, test and submit the proper thermal configuration
+> ASAP.  It's up Heiko to decide whether to drop this patch or not.
+
+Hmm, interesting question ;-) .
+
+Dropping the patch is of course still possible and so far we haven't
+actually seen anyone with real-world problems.
+
+And with Jonas' stress test, it does look like nobody will in the
+(hopefully short) time till we have thermal management.
+
+@Dragan, if you're in favor of that I'll drop the patch.
+
+
+Heiko
+
+
+> 
+> [1] 
+> https://lore.kernel.org/linux-rockchip/df92710498f66bcb4580cb2cd1573fb2@manjaro.org/
+> 
+> >> Fixes: 6913c45239fd ("arm64: dts: rockchip: Add core dts for RK3308 
+> >> SOC")
+> >> Cc: stable@vger.kernel.org
+> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> >> ---
+> >>  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 3 +++
+> >>  1 file changed, 3 insertions(+)
+> >> 
+> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi 
+> >> b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> >> index 31c25de2d689..a7698e1f6b9e 100644
+> >> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> >> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> >> @@ -120,16 +120,19 @@ opp-600000000 {
+> >>  			opp-hz = /bits/ 64 <600000000>;
+> >>  			opp-microvolt = <950000 950000 1340000>;
+> >>  			clock-latency-ns = <40000>;
+> >> +			status = "disabled";
+> >>  		};
+> >>  		opp-816000000 {
+> >>  			opp-hz = /bits/ 64 <816000000>;
+> >>  			opp-microvolt = <1025000 1025000 1340000>;
+> >>  			clock-latency-ns = <40000>;
+> >> +			status = "disabled";
+> >>  		};
+> >>  		opp-1008000000 {
+> >>  			opp-hz = /bits/ 64 <1008000000>;
+> >>  			opp-microvolt = <1125000 1125000 1340000>;
+> >>  			clock-latency-ns = <40000>;
+> >> +			status = "disabled";
+> >>  		};
+> >>  	};
+> 
 
 
 
-On 10/7/24 15:54, Marek Vasut wrote:
-> On 10/7/24 3:27 PM, Gatien Chevallier wrote:
->> Implement the support for STM32MP25x platforms. On this platform, a
->> security clock is shared between some hardware blocks. For the RNG,
->> it is the RNG kernel clock. Therefore, the gate is no more shared
->> between the RNG bus and kernel clocks as on STM32MP1x platforms and
->> the bus clock has to be managed on its own.
->>
->> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
-> A bit of a higher-level design question -- can you use 
-> drivers/clk/clk-bulk.c clk_bulk_*() to handle all these disparate count 
-> of clock easily ?
 
-Hi, I'd like to make sure that we enable the core clock before the bus
-clock so that the RNG hardware block can start its internal tests while
-we ungate the bus clock. It's not a strong opinion but it feels better.
-
-Cheers,
-Gatien
 
