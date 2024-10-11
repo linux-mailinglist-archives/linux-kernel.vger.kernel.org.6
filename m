@@ -1,117 +1,105 @@
-Return-Path: <linux-kernel+bounces-360778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2808B999F64
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:55:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9E53999F6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:56:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B029B287E12
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:55:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E290E287E8C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:55:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCE2B20B218;
-	Fri, 11 Oct 2024 08:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HoUf0a9D"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD5220C471;
+	Fri, 11 Oct 2024 08:55:47 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 306D620A5E2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:55:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8D520B210;
+	Fri, 11 Oct 2024 08:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636919; cv=none; b=G0XqJ3N7tXfxa9zHsRCsxuclHs2djuqr37XHWQQ43TIz9mG3d0/gkZRkBGnb0pPEegBHuNCMglNb/0/JpfjBrc6CZRqj1jEc9FAiquui4ZA3o3Rov997F3ToIrgOy4qZzynwlBnnZ7wfzVAYieShLhyeQ7gHRVEjDRuniawQx8o=
+	t=1728636946; cv=none; b=Vs7uxB1yMheSEsWha3NjMKOsOJVLq8zHxXxS0vRvH5J5x7RzR/TVUn0+TvVDxht9DU9VRb/lHJpYRYtt3jQ3CvbGXjriTcAQgAbKNBKjmfNUo8MLX3z3990mkNAbDW028BLVBWE7aqpOfBEbduBu22jonBr49TdThc6YKz7XnDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636919; c=relaxed/simple;
-	bh=ZaZIZPL75FN7F2Xka8N1vKtFdsaNKv70SY2RDWflhuk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lgdYSDDv2byov3f6vcA0q9qeuRlCktu6aYJ0B7ZptRQHXl2SytBkDHrs6qACBmNOVhsrRf2+fkyCPWNicD/O7QlGqrP0U2CwuUDr01rswmC1CRw7b8GfuHy9fmg32uUZ1XY0B4tk0Y9Ql/osVocQTWT+Q5v7oWDCAjiwbLs/3oA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HoUf0a9D; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fac3f1287bso18438651fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:55:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1728636915; x=1729241715; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=X7wBNfh83lXnA+3o4O/+GyuwzB4d/XfOcAHO7ievXKU=;
-        b=HoUf0a9Dtc7XjwAxoZ+UrNfBF/f2x6stKUf/9oej7GGTjfurylQd1Wt208e/pLhfr/
-         oJOkbe8om3izCp8Ao2M8Xn1ELpXglGm3UPV4NiKcv1nvNEQcQHYAzK8lxsrrqnYcbNPo
-         VoflyiMnmaTcvqVzm5WLebfwMvIaDqkTMslmOsD1nIq9/zaOpZXfQX6gds0bhM8QF2Zb
-         CMjZoxcEhBZhBKQhaYdF/JH+xX1zk76Z1yHi/Cj9U7blijssbGByCQ5enHU2hXyI8cy4
-         VaT/QXDmitXfR9tG3otxacoldvva5FU9L9GmnmDqKh6f3nloMFPMpwENmF1iFZNXQGFF
-         W9Hw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728636915; x=1729241715;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=X7wBNfh83lXnA+3o4O/+GyuwzB4d/XfOcAHO7ievXKU=;
-        b=LrIbYif7LGAiZ/MJB5N4+SyYeuiU0Ln2Agw66m+gXWTkRb+has2PH5Z87x33ahLjv2
-         KOtEbmqooWww6Bk0ziYiupO2iCsQ2/h+W566Usjj4qXJg5rWN+UOEjMNRlQTtkFNhlu6
-         A1BkUDpbs5pgiQ0+MEZu9ZFhlnJqUUHtiekFCnjMK2z8oiovhn+kncsiIXasvO4GLuEp
-         irbKBo/JuYlfUH68lH2o1/Z7DTbqNGx0kkd4hUBW1QE7zCYmlkW//Nn78GaMykt0o03d
-         Z1u+wu5wRJpl4wJd09J9QSeF/3SONLyTHOiNZFx6f1rOjBI2sJdl5my6usDHAYA1N/Q/
-         8mKw==
-X-Forwarded-Encrypted: i=1; AJvYcCWD7/vkLb4GgLapIWWfzMcEo9IGAt/W31lywyGj5CLGAKV07ONe+DffeSX6laFdlkmSG+3VFFlq26eTkfY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYtsF0ewdaL2O2SaTuNeVqs/9bzzXZwhV4a8BaTraQN7ZwxU6T
-	K6gPkfmB1R6EkyVYHaORIiaKLfFQty9IZBVMKcmsogatWUyh4ptgrPS4S1Q1P9Y=
-X-Google-Smtp-Source: AGHT+IH6smBqfgsJtAybZTxVKbMCj9FyiXCKYp1jarZHpl/dwusozZ/5eF82l5M+CGUTW/K/5X4FGQ==
-X-Received: by 2002:a2e:a988:0:b0:2fa:cf82:a1b2 with SMTP id 38308e7fff4ca-2fb327b22demr9136071fa.31.1728636915325;
-        Fri, 11 Oct 2024 01:55:15 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937118d39sm1700349a12.21.2024.10.11.01.55.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 01:55:15 -0700 (PDT)
-Date: Fri, 11 Oct 2024 10:55:13 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Wardenjohn <zhangwarden@gmail.com>
-Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 1/1] livepatch: Add stack_order sysfs attribute
-Message-ID: <Zwjn8YzCZFdoCDBB@pathway.suse.cz>
-References: <20241008014856.3729-1-zhangwarden@gmail.com>
- <20241008014856.3729-2-zhangwarden@gmail.com>
+	s=arc-20240116; t=1728636946; c=relaxed/simple;
+	bh=ahyaqI+0GVoJXcLRPELixs1OlwogaHuKNLEO1U+q9Jw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=VJw3hNaZ4gDzgSoLuO1SSnaPnbD+VXozb1uujoOayWAbfogLcw5glUhm8UBavMeWtHA2ZzOdz4GOovjQBlq9QD35VtnxH2jnzfTDg02wVPa0t+6cYPT5Ikp10MsGuRiU1sbDm08u+jU7PuMaIrc75fJycYDgpC/RKxumlQGuK/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XQ0mn3pz4z1j8yQ;
+	Fri, 11 Oct 2024 16:54:33 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 15BAA140123;
+	Fri, 11 Oct 2024 16:55:41 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 11 Oct 2024 16:55:40 +0800
+Message-ID: <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
+Date: Fri, 11 Oct 2024 16:55:34 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241008014856.3729-2-zhangwarden@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
+To: Furong Xu <0x1207@gmail.com>, Ilias Apalodimas
+	<ilias.apalodimas@linaro.org>
+CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jesper Dangaard
+ Brouer <hawk@kernel.org>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
+	<pabeni@redhat.com>, <xfr@outlook.com>
+References: <20241010114019.1734573-1-0x1207@gmail.com>
+ <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
+ <20241011101455.00006b35@gmail.com>
+ <CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
+ <20241011143158.00002eca@gmail.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <20241011143158.00002eca@gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Tue 2024-10-08 09:48:56, Wardenjohn wrote:
-> Add "stack_order" sysfs attribute which holds the order in which a live
-> patch module was loaded into the system. A user can then determine an
-> active live patched version of a function.
+On 2024/10/11 14:31, Furong Xu wrote:
+> Hi Ilias,
 > 
-> cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
+> On Fri, 11 Oct 2024 08:06:04 +0300, Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
 > 
-> means that livepatch_1 is the first live patch applied
-> 
-> cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
-> 
-> means that livepatch_module is the Nth live patch applied
-> 
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Suggested-by: Miroslav Benes <mbenes@suse.cz>
-> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+>> Hi Furong,
+>>
+>> On Fri, 11 Oct 2024 at 05:15, Furong Xu <0x1207@gmail.com> wrote:
+>>>
+>>> On Thu, 10 Oct 2024 19:53:39 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>>>  
+>>>> Is there any reason that those drivers not to unset the PP_FLAG_DMA_SYNC_DEV
+>>>> when calling page_pool_create()?
+>>>> Does it only need dma sync for some cases and not need dma sync for other
+>>>> cases? if so, why not do the dma sync in the driver instead?  
+>>>
+>>> The answer is in this commit:
+>>> https://git.kernel.org/netdev/net/c/5546da79e6cc  
+>>
+>> I am not sure I am following. Where does the stmmac driver call a sync
+>> with len 0?
+> For now, only drivers/net/ethernet/freescale/fec_main.c does.
+> And stmmac driver does not yet, but I will send another patch to make it call sync with
+> len 0. This is a proper fix as Jakub Kicinski suggested.
 
-Looks and works fine:
+In order to support the above use case, it seems there might be two
+options here:
+1. Driver calls page_pool_create() without PP_FLAG_DMA_SYNC_DEV and
+   handle the dma sync itself.
+2. Page_pool may provides a non-dma-sync version of page_pool_put_page()
+   API even when Driver calls page_pool_create() with PP_FLAG_DMA_SYNC_DEV.
 
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
-
-Best Regards,
-Petr
-
-PS: I'll wait for the selftest before pushing this change.
-    It would be nice to send both patches together in a single
-    thread.
+Maybe option 2 is better one in the longer term as it may provide some
+flexibility for the user and enable removing of the DMA_SYNC_DEV in the
+future?
 
