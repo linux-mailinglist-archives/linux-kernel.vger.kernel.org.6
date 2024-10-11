@@ -1,113 +1,165 @@
-Return-Path: <linux-kernel+bounces-361788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4FE99AD05
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:45:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04BA999AD0F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:46:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FCE028B843
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:45:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 15D481C20985
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DB001D0E19;
-	Fri, 11 Oct 2024 19:43:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350711D0F74;
+	Fri, 11 Oct 2024 19:46:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gwmg2FJj"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b="lV4yCNxs"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E66C01E130E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:43:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4935A1D0E07
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:46:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675838; cv=none; b=BxWVodQs6HXlGt+24wEEqoFwEoigYYQCKXxvW15z9Q3fnbQamRNq4t3xkKuj6lFSs9ubZ2XgRP+jRngdFMS514S5yP+WTHxee2LNTXVG5idsPxG6m8svFexxof2447A+x5eHegdtHdbXvRhJE+yIPe5t9EUvjBzbYr+rw4k6x7M=
+	t=1728675964; cv=none; b=VA2wnoVSlWq/jlPBIKHuzCcDLb/26Tx7kY4rE1jHiDrWktPoCMQ25+wzEcm+DId2XgwAZjPT9jc6VWX7TbvQL4RqseiLpUeVJ+/JC3VObbM4hGLNHtecVyVQW+nSb1fluDkjJV+Le3YYTdHZxtkfErTsniHJgEdOFsGA1f8M5XI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675838; c=relaxed/simple;
-	bh=EyQBti8iRGrfy5Kq8qTYI9BU1x64Ao0+x6jgz0KJsPU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=tdc4nEDXnJqHkwR4YuTh7MGDuwjagEWJBEuoLv/k65WrwDmeoqVf9FotmFDMHxBkqhjSyrKkJz/q9V2xtDHce3uW2RZr4C9S5VpLBt9717wO0y+HxFfcCCPplthoyO26AtZQwo1em/V3hDDX8GBtd182hzIGwWxmvibJdkwv4+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gwmg2FJj; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fac3f20f1dso25239091fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:43:56 -0700 (PDT)
+	s=arc-20240116; t=1728675964; c=relaxed/simple;
+	bh=t7P/KEncHEjcXdz1K3PihQemKIQQ61oPnVKnhfUk5n8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=k3F5wF4d65JqZlNlK9k7+mD8ISdW6ssFatyZHJxza8bNmHjl0ZOB7ARiaAJPEUZy6uZJQ2uEuIkpHkvl6ZaAgYjCnxdvzBrVpXuJKfDemSLwe9KBrOsw1xLOSDFJ58KjRu8I8XvlQ7cVAl6c7SDCw1wHx07id7939GaDdRef/No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com; spf=pass smtp.mailfrom=rivosinc.com; dkim=pass (2048-bit key) header.d=rivosinc-com.20230601.gappssmtp.com header.i=@rivosinc-com.20230601.gappssmtp.com header.b=lV4yCNxs; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=rivosinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rivosinc.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e30e56ce5so1341482b3a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:46:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728675835; x=1729280635; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=VSBzE7LOUj+VcQ2h3x7qcMaBBc1aP+9+KQqW/9SwLIk=;
-        b=gwmg2FJjPGh7PD0tIdhQpqt0/j/L+W04DVP+1bvH1VMH96m2BpBY97Rb7/IojwB+le
-         aFq0CKhwCc2S6FOFi1JDWkhZneQZYWFSE1tlA3Ni89X2tB/G+TRqWHyVXk9BvHZ4B86A
-         KrKRIUmY5sMfyhx2t4yZcG6ldOWeu0BCIquaMR16FXGGcasFdExtxp5/i5TrfQKiK1PV
-         3Iy0xIAdKNHMGpLFZuAv4vyN0v1vwUu2fGiuEGfpWONg3rD9l/umMBHIb7Bwv/A7ba9O
-         iYXF2D0BAKDQU8tTYVjObw4p87I/SDGwbfiQbSJ0996fIfJr9TMk5bS0Oz0pAOtKfesV
-         GKuA==
+        d=rivosinc-com.20230601.gappssmtp.com; s=20230601; t=1728675961; x=1729280761; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=exLsQV8+AgRTzSgIuh9REhlgyhIFFL6ykktOdGZoGFg=;
+        b=lV4yCNxsWdv45991ghfe2wns7l+/s/d+YLcrIZFmoS3x3hGwHVNM/lLDoTb1S148g/
+         wjCNMuU7ASe99vAOixL04qe3q/lGax6rpPyt1lm67ppD2F21CTYZGTN8/X4wycTxHsxL
+         P/A2LCQBZjkSqlvCJI7zm+qY8vwkdXglEPn3QADdA2zYO8iZeXVHbU9BZJLzXkn6beFT
+         ts9isgOszzowJr6cetdaSLt8ipo3Z6+Aey5qB1O+raze27joEJIvyv4Hklm3/FhjSfT8
+         jaZi6Qz7N48YVKso4KxssvtnXgxeSllxs48Rq9PKybtpTBlB++fwin5ip7uz97JKL8LE
+         BytA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675835; x=1729280635;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1728675961; x=1729280761;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=VSBzE7LOUj+VcQ2h3x7qcMaBBc1aP+9+KQqW/9SwLIk=;
-        b=seUWAwVFYOza8FnRDJuUJQWpKqRSMMrjQ3Vt6PCVolYAEjBhnnlE27JL+J9C9CIt3z
-         TVLwF/MomE8gHjtWnIaErydEZXhMIM68su9Z+9Bn/jbgIs9MkgqESkuG3NQj6OHa7A3H
-         gyirxP+7KCWNvqtaoWppSvfwrDlWC3NgUz3MalvDOtq/ip7AgTV4OfTVQtb0DQu/tpo0
-         sQS/ZeEtyaeK4oC1cFsI73/EpzBzdYRfBX0SG+2WzQo8XzID/hUUK2pOMvbE4S/jkGqj
-         5GJnXYYSvb/6BkYGNini82dYBwLmPMJStheqNixSpFTakmD8IR+hlvcrPI9JUfUdd8Ut
-         2yvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWkbG0cDiBSg8FquFIWqRD6+6vewpMK2/fnGIWvxHu8VxNfJJL1fX9lMAV/Dc5QgL+0+E72RUqPHqFYOt8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwA93Vy4Yr88aMDLeteCZgfmDVhOWsFqr5JTntSLTYaUaQTsysU
-	a+cMQUGESKz//ROrGjG3WEPLWrWQlhZdxZcYHvcS7HJmXYS4o1mDBkfTQlF/6J+LVJkSDGn3xZ/
-	K
-X-Google-Smtp-Source: AGHT+IEu1mhLVmze0TtnRFPpPlvy+z4vxQGWp3cGFcMGePx9vX4WB7qzF6iBduA1lrvZ+FXR5JVQyg==
-X-Received: by 2002:a2e:712:0:b0:2f5:11f6:1b24 with SMTP id 38308e7fff4ca-2fb327423bdmr16197361fa.18.1728675834921;
-        Fri, 11 Oct 2024 12:43:54 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffd7esm50175075e9.19.2024.10.11.12.43.53
+        bh=exLsQV8+AgRTzSgIuh9REhlgyhIFFL6ykktOdGZoGFg=;
+        b=lEYXhvToDq9SS3ZIjg9u2DKbHuh+F8GtrzwcFC+CS9P6J7qTr59zbwVqOrpF22Wln8
+         4gnv7YoToHHD2RrhU1uWpd0RVm0QuaSMnbMO4dzjTPEA0DErgRXRqsCeppKkPrn3qVdz
+         xQHVc6oRqKkF2u79kSjPd+p871VSKnxGbFtlQecXAMjIclUYSZ3bLL7+RTDnXcbQfQto
+         +tmGdY4qEPYbFuc009MXCGDDcy+Wz3L2Q6ehnzKRQ4rCv8fD51yd8WplKyLtYEBoE8nm
+         HeWcQSAAQ9q4gxBTwfgJwrfPM6ljdTDTvUuRoeRpHowssAZ1WJD2SRTIDOZJX8rDkzJP
+         SWQA==
+X-Forwarded-Encrypted: i=1; AJvYcCURX8+AsXQPMqhVsa9I9R3EQEs4e9eNhikSrWsLHgMPONW4TbF5TC38YX0G/xOgKjXvFcRAH6kZ26RDNHY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyirpwrjMIQoEHoCt4kFf4Bzhupf0/QGSDMnu9VgxWipQvdof0B
+	8VUdzLX7QuCK5Fnl+vnapWLLNZiRo+yARPQ2z56reHiUoMzf2OnX27Tg6R0IYco=
+X-Google-Smtp-Source: AGHT+IHj8rWFWjfeD1jnOseU69L54Nubw7fuAuLENErbM2G1CFqjE5ekNxV2rf8nSVkMr8qy+VgzZQ==
+X-Received: by 2002:a05:6a21:1519:b0:1cf:4d4e:532b with SMTP id adf61e73a8af0-1d8c96b986bmr675268637.43.1728675961468;
+        Fri, 11 Oct 2024 12:46:01 -0700 (PDT)
+Received: from debug.ba.rivosinc.com ([64.71.180.162])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0f1dcsm2951118b3a.209.2024.10.11.12.45.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:43:54 -0700 (PDT)
-Date: Fri, 11 Oct 2024 22:43:50 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Oliver Neukum <oneukum@suse.com>
-Cc: Keith Packard <keithp@keithp.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] USB: chaoskey: fix deadlock in release
-Message-ID: <8c34cb8d-faaf-4134-851d-78db678d535f@stanley.mountain>
+        Fri, 11 Oct 2024 12:46:01 -0700 (PDT)
+Date: Fri, 11 Oct 2024 12:45:57 -0700
+From: Deepak Gupta <debug@rivosinc.com>
+To: Zong Li <zong.li@sifive.com>
+Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Conor Dooley <conor@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Oleg Nesterov <oleg@redhat.com>,
+	Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-mm@kvack.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org, linux-arch@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	alistair.francis@wdc.com, richard.henderson@linaro.org,
+	jim.shu@sifive.com, andybnac@gmail.com, kito.cheng@sifive.com,
+	charlie@rivosinc.com, atishp@rivosinc.com, evan@rivosinc.com,
+	cleger@rivosinc.com, alexghiti@rivosinc.com,
+	samitolvanen@google.com, rick.p.edgecombe@intel.com
+Subject: Re: [PATCH v6 33/33] kselftest/riscv: kselftest for user mode cfi
+Message-ID: <ZwmAdRb5BRkPLbWg@debug.ba.rivosinc.com>
+References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
+ <20241008-v5_user_cfi_series-v6-33-60d9fe073f37@rivosinc.com>
+ <CANXhq0pXVS2s-hZNusPLoQ4qPkyi1S2BTQ-FyAvcz=cDctKQng@mail.gmail.com>
+ <Zwj7aZj36TBGzpZa@finisterre.sirena.org.uk>
+ <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
 
-This lock should was intended to be an unlock.  It will lead to a hang.
+On Fri, Oct 11, 2024 at 07:43:30PM +0800, Zong Li wrote:
+>On Fri, Oct 11, 2024 at 6:18 PM Mark Brown <broonie@kernel.org> wrote:
+>>
+>> On Fri, Oct 11, 2024 at 01:44:55PM +0800, Zong Li wrote:
+>> > On Wed, Oct 9, 2024 at 7:46 AM Deepak Gupta <debug@rivosinc.com> wrote:
+>>
+>> > > +       if (si->si_code == SEGV_CPERR) {
+>>
+>> > Hi Deepak,
+>> > I got some errors when building this test, I suppose they should be
+>> > fixed in the next version.
+>>
+>> > riscv_cfi_test.c: In function 'sigsegv_handler':
+>> > riscv_cfi_test.c:17:28: error: 'SEGV_CPERR' undeclared (first use in
+>> > this function); did you mean 'SEGV_ACCERR'?
+>> >    17 |         if (si->si_code == SEGV_CPERR) {
+>> >       |                            ^~~~~~~~~~
+>> >       |                            SEGV_ACCERR
+>> >
+>>
+>> Did you run "make headers_install" prior to building kselftest to get
+>> the current kernel's headers available for userspace builds?
+>
+>Yes, I have run "make header" and "make header_install" before
+>building the kselftest. This error happens when I cross compiled it,
+>perhaps I can help to check if it is missing some header files or
+>header search path.
 
-Fixes: 422dc0a4d12d ("USB: chaoskey: fail open after removal")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
-From static analysis.  Not tested.
+That's wierd.
 
- drivers/usb/misc/chaoskey.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+It doesn't fail for me even if I do not do `make headers_install`. But I am
+building kernel and selftests with toolchain which supports shadow stack and
+landing pad. It's defined in `siginfo.h`. When I built toolchain, I did point
+it at the latest kernel headers. May be that's the trick.
 
-diff --git a/drivers/usb/misc/chaoskey.c b/drivers/usb/misc/chaoskey.c
-index e8b63df5f975..4025f386ba6b 100644
---- a/drivers/usb/misc/chaoskey.c
-+++ b/drivers/usb/misc/chaoskey.c
-@@ -319,7 +319,7 @@ static int chaoskey_release(struct inode *inode, struct file *file)
- bail:
- 	mutex_unlock(&dev->lock);
- destruction:
--	mutex_lock(&chaoskey_list_lock);
-+	mutex_unlock(&chaoskey_list_lock);
- 	usb_dbg(interface, "release success");
- 	return rv;
- }
--- 
-2.45.2
+"""
+
+$ grep -nir SEGV_CPERR /scratch/debug/linux/kbuild/usr/include/*
+/scratch/debug/linux/kbuild/usr/include/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control protection fault */
+
+$ grep -nir SEGV_CPERR /scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/*
+/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control protection fault */
+/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/bits/siginfo-consts.h:139:  SEGV_CPERR                  /* Control protection fault.  */
+/scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/include/bits/siginfo-consts.h:140:#  define SEGV_CPERR  SEGV_CPERR
+
+"""
 
 
