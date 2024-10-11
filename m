@@ -1,104 +1,148 @@
-Return-Path: <linux-kernel+bounces-360885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6C199A0F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:14:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9488599A0DD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0A43B1F247BC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:14:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9841F21F6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:10:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9C9210C10;
-	Fri, 11 Oct 2024 10:14:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16F28210C02;
+	Fri, 11 Oct 2024 10:10:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uWSNzcHg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G3atZsNZ"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD796210182;
-	Fri, 11 Oct 2024 10:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D27D921018F;
+	Fri, 11 Oct 2024 10:10:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641650; cv=none; b=imYRSsN9hHt+6En44lDxKssKi3F3NOkWsYsKFnHtcVJz+U9u1sEm/bbd5AZW47SPvh10xbbhfl3uatfN/bvk0qmNZpG6uhvdpj0HQ6mvI15mtztynM/pr4O2XWy6uo1vPjD2/wWDwJLLKiUELnxS7V1cHzcKhtPDZNUMqcyQ7Po=
+	t=1728641416; cv=none; b=LmQBdaFBSMAPQDUSx3WJf38XLpscVUOnudIxwjDkjxE+W0YKs5GbVWs+Bg46wj7g/Jog6ES1s8qFxJP7PvHurHKw8/KwkuVXG84oC6DAvP32a5Lx1nWO2iHg3CgYFxOuuBT0ekBjJlnXGutyuZ9CIQ7KKIQHhDEiQKE9CDlUg1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641650; c=relaxed/simple;
-	bh=REVZTIJAy9FQsHSv/lLjJzgIPSP7Spv7rDiLIhURfB0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=KBkMFQI0II5QtrVPp19tjDYpj4XzcPyIJln5tW6GDz1QqV+sZkuimWESrwAaRn/pGbPfF4PHVfy4BaMrSZ1fmlDSjBrjze9n86CiiUchpIO4PoonAnbgyIMKnn7cR3RUKFyLVmlNUacxQIsznt0YJn7jN3roA40szBpOZGpG9cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uWSNzcHg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4BDABC4CEC3;
-	Fri, 11 Oct 2024 10:14:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728641650;
-	bh=REVZTIJAy9FQsHSv/lLjJzgIPSP7Spv7rDiLIhURfB0=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=uWSNzcHgkJ5WKx1RrP+LuntaSCnwKm7ijB1URpeFn5r0bTalwdIZTRUVC0hSwlil2
-	 PHV5dt0A1KuDaQfZ2p2mcxV/q9YUKDWvGRL+vm373tzj/urE9s7J4miGk5o/i5jfAw
-	 AHs0ADXuGjsfjcCdCrlQ9nF4s8AyQAu2KOUsANsVjAO1wwn51Uhsqf2a1b3yJ7xseg
-	 TDV6xLkrO1ysWmyQ1fwZ0d3hLJeFDv2rcp6FgyOGAUhXReZMvlzsB6b25RexMLAobQ
-	 wqtq++zVQunmw08/yNYiBqYXICvihsS6ElwffaTFAYyg0HS0yD2HtpsUbdTKLRvkBI
-	 ebBVtBxk/UmmA==
-From: Mark Brown <broonie@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>, 
- Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, 
- Dzmitry Sankouski <dsankouski@gmail.com>
-Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, 
- devicetree@vger.kernel.org
-In-Reply-To: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
-References: <20241007-starqltechn_integration_upstream-v6-0-264309aa66de@gmail.com>
-Subject: Re: [PATCH v6 0/3] Add Samsung s2dos05 pmic support
-Message-Id: <172864164727.3853713.7051380602109888746.b4-ty@kernel.org>
-Date: Fri, 11 Oct 2024 11:14:07 +0100
+	s=arc-20240116; t=1728641416; c=relaxed/simple;
+	bh=OlZmQTN6YihzaPwp1RATvGMI8FLQb+lEMghfU4vDDjI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WJ02hooEoDRE/IcXUK6UIOOuGZxRCsDdGuphBOm0v3/8DpE1Ub1oTp1pAwRfaoUjLPMo7n99dDPmcoAYhkpcz4pIzGnBb3NyT4HLv8KtPp2icOCjALR/qlHNaP9eiaJhWCnRbJ2cx1qXjtd89se9nG2TpV/MnPLtgScqQoAxlFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G3atZsNZ; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43115b31366so16085585e9.3;
+        Fri, 11 Oct 2024 03:10:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728641413; x=1729246213; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=OlZmQTN6YihzaPwp1RATvGMI8FLQb+lEMghfU4vDDjI=;
+        b=G3atZsNZfNZ8Rx9q/y6nYmwvaPsK5cDvZgTxFvg4zRkDvVMtRQA3ifCIk+djlZ3gON
+         iv+Kz7KKjiUpawhuGiyADEeMSw3SxeyPbUUeqY/w6yuezhlilFRIo0CRUi2L54Ib9/Ik
+         cAlwd7yxrBTqM51I6HIno2GlscXGmGFJWErFkBNF4yq54X9M7+8nPd4JSZvfyoUE7iPo
+         uv7k7mZPoqaOVdMaJqqVbkrCFL1n/voWoUzfmPF4Pw3weSsgpQHESzVu2WHibLAwAxCt
+         1gUdLi6gj+UFpWAVNkM2RIfiruOl5Kjjdn+Hf3Bev1WYWJh86+u1mZIZOnxYLpve39+V
+         ucZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728641413; x=1729246213;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=OlZmQTN6YihzaPwp1RATvGMI8FLQb+lEMghfU4vDDjI=;
+        b=KVu6HlBadH/C3iBslY02FfUAvYd+10eIzgWdZsYqkAu/9jfpn20jg5W9exKYhR6v0d
+         052T1N7W2plcy3+lGwq8sl7z9ABLA+DeR3ObHxS3DBJrL5CzREc8WiGmA763HlmZeanz
+         h/Z0kaJA2JSMAinbh3OGh0b3bIL4PE4k2E2enMkAVz6Fb3FjzzZigWTHGXY6oNuqarEI
+         /wFIIWNQkYVQ0qWaWffD4hyZpQ71PPRbNasVsPnXO8SyML0fZ/SgzZqnm00Gt98Bt8Nf
+         jS1yLkOyIquaEefFKDgcohHfdWvYV13IWCQom8SRMu23pphnE+IKa7hSD9uv/cNPH3BD
+         YJ/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUwAA/f1uq7EMky9NjkBu9XZ2qGIuTuHGdH6wf3kAN9Q5pJajdltXJT6U/OL2bbMGUrkUPuzEYow9KUlWk=@vger.kernel.org, AJvYcCWFmAYYE0Ooz8GngkOtwPR2FH1R5xCX6bMAP6Qd5crWSqdBVFK+X6EnlzUUkIsso1jHpDJvT1y2afIh@vger.kernel.org
+X-Gm-Message-State: AOJu0YycEwVzg/BS3AHp8O0vEW/4DLmOELtoDdy/MlZTwU7l0C8AYPl3
+	c5K2IYFYMjlOVzOAZUpjHwIRQnEO70UEPGRhPCyvj6RC2ljG9jzz
+X-Google-Smtp-Source: AGHT+IGFG7OuA6O5uwOZx939VQCxoAloO+PcUUo8Wvjo0r0eiKRHgJj9A5DVLRS+cyxVnmGe8ipm8Q==
+X-Received: by 2002:a5d:4591:0:b0:37d:4fb1:4faa with SMTP id ffacd0b85a97d-37d55313054mr1442767f8f.50.1728641412942;
+        Fri, 11 Oct 2024 03:10:12 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7a0588sm3560228f8f.69.2024.10.11.03.10.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 03:10:12 -0700 (PDT)
+Message-ID: <9e10ec246ec03eab2833c27aae4d64e2ab2231b9.camel@gmail.com>
+Subject: Re: [PATCH 0/2] pwm: axi-pwmgen: always enable FORCE_ALIGN
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Uwe =?ISO-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>
+Cc: David Lechner <dlechner@baylibre.com>, Michael Hennerich	
+ <michael.hennerich@analog.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+ <nuno.sa@analog.com>,  Trevor Gamblin <tgamblin@baylibre.com>,
+ linux-pwm@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Fri, 11 Oct 2024 12:14:28 +0200
+In-Reply-To: <zm6uc43aidfouc5wj4outd2cqribbzqnbp76my7ntcflbn6drb@sc7nwgho6x2c>
+References: 
+	<20241009-pwm-axi-pwmgen-enable-force_align-v1-0-5d6ad8cbf5b4@baylibre.com>
+	 <57169283416bf7902523891ba03d1f878772ffe5.camel@gmail.com>
+	 <zm6uc43aidfouc5wj4outd2cqribbzqnbp76my7ntcflbn6drb@sc7nwgho6x2c>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.0 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
 
-On Mon, 07 Oct 2024 17:49:58 +0300, Dzmitry Sankouski wrote:
-> The S2DOS05 is a companion power management IC for the panel and touchscreen
-> in smart phones. Provides voltage regulators and
-> ADC for power/current measurements.
-> 
-> 
+On Fri, 2024-10-11 at 11:51 +0200, Uwe Kleine-K=C3=B6nig wrote:
+> On Thu, Oct 10, 2024 at 10:33:20AM +0200, Nuno S=C3=A1 wrote:
+> > On Wed, 2024-10-09 at 16:11 -0500, David Lechner wrote:
+> > > When using the axi-pwmgen as a trigger for ADCs, we've found that the
+> > > default behavior of the PWMGEN IP block is not ideal. The default
+> > > behavior is to wait for the period of all PWM outputs to run out befo=
+re
+> > > applying any new settings. But there isn't a way to block until this
+> > > happens (and even if there was, it could take a long time). So the
+> > > pwm apply function returns before the new settings are actually appli=
+ed.
+> > >=20
+> > > This makes certain use cases impossible. For example, to use the PWM
+> > > like a GPIO to create a single pulse on and off to trigger a single A=
+DC
+> > > conversion.
+> > >=20
+> > > The AXI PWMGEN has a FORCE_ALIGN configuration option that changes th=
+e
+> > > behavior so that any new output settings (period, duty cycle, etc.) a=
+re
+> > > applied immediately. This can cause glitches in the output, but makes
+> > > the PWM actually useable for most applications.
+> > >=20
+> > > Also, there was a naming conflict with register names, so there is a
+> > > preliminary cleanup patch to sort that out.
+> > >=20
+> > > ---
+> >=20
+> > Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+>=20
+> b4 diagnoses for that:
+> NOTE: some trailers ignored due to from/email mismatches:
+> =C2=A0=C2=A0=C2=A0 ! Trailer: Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> =C2=A0=C2=A0=C2=A0=C2=A0 Msg From: Nuno S=C3=A1 <noname.nuno@gmail.com>
+>=20
+> I fixed that manually now, but would be nice if you'd care for matching
+> addresses in the future.
+>=20
+>=20
 
-Applied to
+Arghh,
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regulator.git for-next
+Completely forgot... As i said in the first time, I'm doing this all the ti=
+me
+and never got a complain about it. I'll try to remember for pwm to reply fr=
+om my
+work email client (which I want to avoid for mailing lists as you might gue=
+ss
+the client I'm speaking about).
 
-Thanks!
+- Nuno S=C3=A1
 
-[1/3] dt-bindings: mfd: add samsung,s2dos05
-      commit: ef9690c04f3b2deebf08f6a889fbe9032f75855d
-[2/3] mfd: sec-core: add s2dos05 support
-      commit: d7a5f27342a84e2999b9d1195c537832a11e85a0
-[3/3] regulator: add s2dos05 regulator support
-      commit: 2ba4dbb7b763df343df7741fca1bfda15fd1e0cb
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
 
 
