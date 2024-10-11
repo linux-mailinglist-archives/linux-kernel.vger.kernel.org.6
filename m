@@ -1,201 +1,99 @@
-Return-Path: <linux-kernel+bounces-360513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33214999BE9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:57:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A029A999BEE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFBFB2864B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:57:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38BA9B21DA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1A11F706F;
-	Fri, 11 Oct 2024 04:57:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F36D51F7071;
+	Fri, 11 Oct 2024 05:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RZbNbNPP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="NHZIrbab"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D4E1C7B6A;
-	Fri, 11 Oct 2024 04:57:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B331CB511
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:01:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728622660; cv=none; b=VJ4c3oTWdvFM2m9DA0vrXJWiLLnQ24IXJWE0hd/sL/uCAzTlWfnNV1h3P518cudlY5i0K7ZbABPKmJzK2zmqF1vv30lJmrzzchBzlzKOAYJ/aY65lE2/CFo/NXyBZ0OO7RkG0HdprXUmg9op9XOJ/M9iBpqC9xWxtaAvFyAUnt8=
+	t=1728622912; cv=none; b=GedteGSIZ0avWnfQ7nllwinRaQ/MuxJYbVrtbOaygunlprsRGoyqMF1V89AXJ+KUzqZv0qF5m6y16YVw1j7xEZUhGLSxirIrIq3+u5UOxmTaJtqpkW9TycS/Opruqb3IcrTM+HtbJF4BVInEEAlLLjqtiBEUsjASKUO4I23fvZY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728622660; c=relaxed/simple;
-	bh=wU9z6zG8MJ4bNscO9Zr9B6be3qjNhU53wWPhZe3xAx4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lkeqno5xB7b0ZGXY4I195A238hY4J6bAztF9AoIyv4In5PNQtOTAjqQtLsqtOOJsXWFiuHcq6QFEmuH79w5bIPUG/nM/54spSPtvYZ1gihlgeHr8cLMYf38PE0JGuyYtGK+OlhEKE226qqXCN52v4SklYNckvy6YvlvsQBiHmQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RZbNbNPP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 24516C4CEC3;
-	Fri, 11 Oct 2024 04:57:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728622659;
-	bh=wU9z6zG8MJ4bNscO9Zr9B6be3qjNhU53wWPhZe3xAx4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=RZbNbNPP4uADn1ohcBi+TmIpNXpiJv7zG9kBt7v7pkhULOieADggi9tvmfKbNFcIz
-	 tOtC7EjsQYSj9COzwPKOQbzcjFHV8F7p4y/EZHIBZOlEQ5hoKfRLT8zrMKNMsGNwD2
-	 NupT66dE/Vg4g8AN0VI8N5rdL38kupNcJF64sNLJwFI+xD1i579xqJrcnuXjq4E/z9
-	 WMx5kmCdt7aVdMRPuavctfXoaMXJhE/lxGl4dWzShRAvXpX7I+VfoJHEC+BdnEJg6b
-	 QujdslgczNf+cxjfW/zQ+87KJLcN3gTfnMGYbXQHFhrSmf3wAOsB5m7xnJe6/JSrnj
-	 rp1yaN8/NVKhw==
-Date: Fri, 11 Oct 2024 06:57:34 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Chenyuan Yang <chenyuan0y@gmail.com>
-Cc: mchehab@kernel.org, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org, syzkaller@googlegroups.com, Zijie Zhao
- <zzjas98@gmail.com>
-Subject: Re: [Linux Kernel Bug] memory leak in dvb_dmxdev_add_pid
-Message-ID: <20241011065734.471f3774@foz.lan>
-In-Reply-To: <CALGdzur5uoqM-8H_MfPJNdPNL1nMhRbttN95kNWi2q-p3-n9hg@mail.gmail.com>
-References: <CALGdzuqAiWA4zEqUEiTMLRjrhCyh+EL311Gen16YnyNSk75Yaw@mail.gmail.com>
-	<CALGdzur5uoqM-8H_MfPJNdPNL1nMhRbttN95kNWi2q-p3-n9hg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1728622912; c=relaxed/simple;
+	bh=exQ8VvyzKI3lS9s1FDqMH64r3sebs6IOpR2HqGuZ/DQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=koBNAJjvJaFGFKi0UmdeLR8o3dlpDyb/n19Lw/hsIlq3No/Y4ctDybT8TxnYU9vfnwLeDdIBSemqOrH6kMQTmrMxB6XD/tPpyr/WN4vvkEuWGINhGeirMeqtHdW8vGY7091ppJRnX9n/B3w2WRrYiihL4ml205dFHnYTZYXUoH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=NHZIrbab; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728622908;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=D/zV6+yqxGlRf1NDbROK0wSHZXpgTfu+TnSkzRD6LcM=;
+	b=NHZIrbabxQx2EDkX7OVfbKSE/ateywcGRvausvZ2RHidW5ceHmPc1hR+pJhcO1xMYobb0c
+	jpANUbisxYAoVL7fNUm99v07F6H/+lXMXg3n8NJhtLYgBO3hhfq6NOq7cVE7ME9wU80rF6
+	Qo4uO9i4Bi5U0Ws20WQA4othc5SQyME=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-44-etmiZfrIOKed5xSDbKaqXw-1; Fri,
+ 11 Oct 2024 01:01:44 -0400
+X-MC-Unique: etmiZfrIOKed5xSDbKaqXw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 452221955D45;
+	Fri, 11 Oct 2024 05:01:35 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.109])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B20381956052;
+	Fri, 11 Oct 2024 05:01:26 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Fri, 11 Oct 2024 07:01:21 +0200 (CEST)
+Date: Fri, 11 Oct 2024 07:01:11 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
+	peterz@infradead.org, rostedt@goodmis.org, mhiramat@kernel.org,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com,
+	akpm@linux-foundation.org, mjguzik@gmail.com, brauner@kernel.org,
+	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz,
+	shakeel.butt@linux.dev, hannes@cmpxchg.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com
+Subject: Re: [PATCH v3 tip/perf/core 4/4] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+Message-ID: <20241011050110.GD21908@redhat.com>
+References: <20241010205644.3831427-1-andrii@kernel.org>
+ <20241010205644.3831427-5-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010205644.3831427-5-andrii@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Em Thu, 10 Oct 2024 20:06:29 -0500
-Chenyuan Yang <chenyuan0y@gmail.com> escreveu:
+On 10/10, Andrii Nakryiko wrote:
+>
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 50 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
 
-> Dear Linux Developers for DVB,
->=20
-> I am writing to inquire if there have been any updates regarding the
-> memory leak issue. The issue remains reproducible on the latest stable
-> Linux version (6.12-rc2, commit
-> 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b).
+FWIW,
 
-The DVB demux has internally a state machine to filter MPEG-TS streams. It
-needs to allocate data and buffers when setting such filters. So, the ioctls
-described at https://www.kernel.org/doc/html/v4.10/media/uapi/dvb/dmx_fcall=
-s.html
-work together.
+Reviewed-by: Oleg Nesterov <oleg@redhat.com>
 
-Having a report that calling DMX functions on a fuzz testing result on
-memory keeping allocated sounds a normal behavior to me, as such filters
-are meant to be persistent.=20
-
-I need to double-check, but I'm almost sure this is persistent even after
-device close(). So, de-allocation should happen when the device driver is
-removed or when a new set of filters is set. In the last case, the old=20
-buffers will be freed and a new set of buffers will be allocated.
-
->=20
-> Thank you for your attention to this matter.
->=20
-> Best,
-> Chenyuan
->=20
-> On Sat, Mar 2, 2024 at 3:12=E2=80=AFPM Chenyuan Yang <chenyuan0y@gmail.co=
-m> wrote:
-> >
-> > Dear Linux Developers for DVB,
-> >
-> > We encountered "memory leak in dvb_dmxdev_add_pid" when testing the
-> > DVB driver with Syzkaller and our generated specifications.
-> >
-> > The C reproducer and the config for the kernel are attached.
-> >
-> > The memory leak originates from the allocated dmxdev_feed structure,
-> > as referenced in the code at
-> > [https://elixir.bootlin.com/linux/latest/source/drivers/media/dvb-core/=
-dmxdev.c#L881].
-> > This structure fails to be freed upon entering the code branch found
-> > at [https://elixir.bootlin.com/linux/latest/source/drivers/media/dvb-co=
-re/dmxdev.c#L891].
-> >
-> > ```
-> > ioctl$KGPT_DMX_START(r0, 0x6f29, 0x0)
-> > BUG: memory leak
-> > unreferenced object 0xffff88802e9ae7e0 (size 32):
-> >   comm "syz-executor.0", pid 27777, jiffies 4295115050 (age 15.550s)
-> >   hex dump (first 32 bytes):
-> >     00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
-> >     08 c0 6a 05 00 c9 ff ff 08 c0 6a 05 00 c9 ff ff  ..j.......j.....
-> >   backtrace:
-> >     [<ffffffff8169126f>] kmemleak_alloc_recursive
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/./include/linux/kmemleak.h:42
-> > [inline]
-> >     [<ffffffff8169126f>] slab_post_alloc_hook
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/mm/slab.h:766
-> > [inline]
-> >     [<ffffffff8169126f>] slab_alloc_node
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/mm/slub.c:3478
-> > [inline]
-> >     [<ffffffff8169126f>] __kmem_cache_alloc_node+0x2ff/0x3e0
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/mm/slub.c:3517
-> >     [<ffffffff815d9da9>] kmalloc_trace+0x29/0x90
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/mm/slab_common.c:1098
-> >     [<ffffffff83db2e09>] kmalloc
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/./include/linux/slab.h:600
-> > [inline]
-> >     [<ffffffff83db2e09>] kzalloc
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/./include/linux/slab.h:721
-> > [inline]
-> >     [<ffffffff83db2e09>] dvb_dmxdev_add_pid+0xa9/0x160
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/drivers/media/dvb-core/dmxdev.c:881
-> >     [<ffffffff83db48de>] dvb_dmxdev_pes_filter_set
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/drivers/media/dvb-core/dmxdev.c:956
-> > [inline]
-> >     [<ffffffff83db48de>] dvb_demux_do_ioctl+0x67e/0xa80
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/drivers/media/dvb-core/dmxdev.c:1076
-> >     [<ffffffff83db1252>] dvb_usercopy+0x82/0x220
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/drivers/media/dvb-core/dvbdev.c:986
-> >     [<ffffffff83db1b51>] dvb_demux_ioctl+0x31/0x40
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/drivers/media/dvb-core/dmxdev.c:1185
-> >     [<ffffffff8171ca88>] vfs_ioctl
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/fs/ioctl.c:51
-> > [inline]
-> >     [<ffffffff8171ca88>] __do_sys_ioctl
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/fs/ioctl.c:871
-> > [inline]
-> >     [<ffffffff8171ca88>] __se_sys_ioctl
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/fs/ioctl.c:857
-> > [inline]
-> >     [<ffffffff8171ca88>] __x64_sys_ioctl+0x108/0x150
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/fs/ioctl.c:857
-> >     [<ffffffff8540b150>] do_syscall_x64
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/arch/x86/entry/common.c:51
-> > [inline]
-> >     [<ffffffff8540b150>] do_syscall_64+0x40/0x110
-> > scratch/zijie-data/LLM-Kernel/spec-eval/shared_linux_builds/syzbot-leak=
--more_631373bc9e824969/arch/x86/entry/common.c:82
-> >     [<ffffffff8560008b>] entry_SYSCALL_64_after_hwframe+0x63/0x6b
-> > ```
-> >
-> > If you have any questions or require more information, please feel
-> > free to contact us.
-> >
-> > Reported-by: Chenyuan Yang <chenyuan0y@gmail.com>
-> >
-> > Best,
-> > Chenyuan =20
-
-
-
-Thanks,
-Mauro
 
