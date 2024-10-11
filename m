@@ -1,212 +1,559 @@
-Return-Path: <linux-kernel+bounces-360285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 844BB9997E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:33:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D77E9997DC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:32:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1F801C248FC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:33:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B16481C243A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:32:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A570194AF3;
-	Fri, 11 Oct 2024 00:21:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70AA19415E;
+	Fri, 11 Oct 2024 00:20:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Lxcv5cg6"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2086.outbound.protection.outlook.com [40.107.220.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RVvD/FIn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 257922107;
-	Fri, 11 Oct 2024 00:21:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728606067; cv=fail; b=h5yMUvICjyytJa+R/FfasynGNvtUx/R0kn73l/cJDp3S+sAq3jnNNws/Fk86QjeqxWsSKEzL/Q6KtkClDdDwbDKnDKfa9DQv/mu1yRmWvy67l7P/yY+ExP5v0rEMdzT2vuyHhtTsPCchMaQT11GLCSRxAdp94DCg+koRuLYBbhI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728606067; c=relaxed/simple;
-	bh=UhlJOORSiePNaja/tfFLj699ZA92Y24ApLC7jQfIJOM=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 Content-Type:MIME-Version; b=ctug/KbKXqIXOEUI+z9Pdj4znX5GsbEIjEWVr3esQruuobxl3X3PW4dA/5G28fFuK27VMzWmFZWD2DDOUKs1kSsD9TJ3XaqgBVhc3unXpQv8zpNv131fk8QeiHnAlHKoLVbVwWWMNzpcCy5zc9bL9n6DaqNpadQT++MGf/my4KY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Lxcv5cg6; arc=fail smtp.client-ip=40.107.220.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XasFqBX8WysBi/Y07/QLUk02TKPgSVzrjkisYJo5Mo2dchJtuJzsaLkOWHSo/C3K1yjJktjbUdqo7z9Y9xSLbiMpUVIoMT4mfNSkf/P7tQmSWwHXOINE4bRCd1uvY8/Gw70S8uLFWaUG/TPQCOA2OjbU0kNWUyfsMikgCE9hh4J5BW1+s0YPzwfT0OW9rW7s0wdjNq/wW5zT152OQsZiITD6WURF5ZJ5ef2UHotImiCtVX6MIw+vCNZIuMlASz+pURE8owyjxrrIl5QwanDVXH7eHS/bbYxh4lnom8lUX4K7/m8/QoFIreGt5Ej6rVqS7eekXlvCJG39Sh4cBDuKmw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=pDe4Gg0Ncrhhdu95WT6ZItmrm5Cnmkgs4KZzgV8WFQY=;
- b=Df71QhfDcMlLYGSimOao8P45MRFQTJttsajMuUj+rVzyCcVrEbt2s0Y2RXput/RdnLS0+5KeNnvtuWv/zJMShg9xHT+CQfyBWMywptcfOoiWJPtbA25ywvhakfdYtOomnjqWGgfuv8yi8NixcWQBhXVy/xQ08sGMwHWgjZvqVYgkV431/tuvbvL1INe3ueiuh0QM2TlMHUWm4ZT3+LW30m8xWIgflABE35SxE6/xR/OUSPDZy7cW9xNzw8ISzhNcP9PCI4xzAjVSUxkZGcNC1vh7kaq7It1lsB7Hp+8Hc8YBSFHAscZaeQtyJJP89QZU9xfBYKQ3ZRH1Gsy2e9ZlFg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=pDe4Gg0Ncrhhdu95WT6ZItmrm5Cnmkgs4KZzgV8WFQY=;
- b=Lxcv5cg6Qw1FfahyZ97zVDm978KO0DtPRdqjCjceFFgpFImoqgkTGr2Y2BxeDd8Gu7vQJwrrGP/FUdrQTXhQBQLOrlQ/yOMqQ3cVubkDvobPYHPfouPS3/4FVCvC5Wd4rywVbwc/CZZPOHrOemN4KrhUwQVpBFhEVdeX3N3TFgcKooQHokYVv2H02DTI600LPmHF1mPLgK1E/YPCa02651ELtlvEE2fQUCqAFkYNV3fZ4aOxUTKTfDY97rnkEPK9afEak0DcKYDEPeaUJaO3Uipk1N1DbXWgSGcXAoJzDS9+s1w2dZSBqVLT4xqn0i72gxmtttT/NejzvBYpZ/GZgQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- SJ0PR12MB6829.namprd12.prod.outlook.com (2603:10b6:a03:47b::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.16; Fri, 11 Oct 2024 00:21:03 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%3]) with mapi id 15.20.8048.017; Fri, 11 Oct 2024
- 00:21:03 +0000
-References: <cover.9f0e45d52f5cff58807831b6b867084d0b14b61c.1725941415.git-series.apopple@nvidia.com>
- <4f8326d9d9e81f1cb893c2bd6f17878b138cf93d.1725941415.git-series.apopple@nvidia.com>
- <6f3402ae-01ad-4764-8941-f88bc77f5227@deltatee.com>
-User-agent: mu4e 1.10.8; emacs 29.1
-From: Alistair Popple <apopple@nvidia.com>
-To: Logan Gunthorpe <logang@deltatee.com>
-Cc: dan.j.williams@intel.com, linux-mm@kvack.org, vishal.l.verma@intel.com,
- dave.jiang@intel.com, bhelgaas@google.com, jack@suse.cz, jgg@ziepe.ca,
- catalin.marinas@arm.com, will@kernel.org, mpe@ellerman.id.au,
- npiggin@gmail.com, dave.hansen@linux.intel.com, ira.weiny@intel.com,
- willy@infradead.org, djwong@kernel.org, tytso@mit.edu,
- linmiaohe@huawei.com, david@redhat.com, peterx@redhat.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linuxppc-dev@lists.ozlabs.org,
- nvdimm@lists.linux.dev, linux-cxl@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-ext4@vger.kernel.org,
- linux-xfs@vger.kernel.org, jhubbard@nvidia.com, hch@lst.de,
- david@fromorbit.com
-Subject: Re: [PATCH 02/12] pci/p2pdma: Don't initialise page refcount to one
-Date: Fri, 11 Oct 2024 11:20:03 +1100
-In-reply-to: <6f3402ae-01ad-4764-8941-f88bc77f5227@deltatee.com>
-Message-ID: <87ttdjxzf9.fsf@nvdebian.thelocal>
-Content-Type: text/plain
-X-ClientProxiedBy: SY5PR01CA0084.ausprd01.prod.outlook.com
- (2603:10c6:10:1f5::14) To DS0PR12MB7726.namprd12.prod.outlook.com
- (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D1052107;
+	Fri, 11 Oct 2024 00:20:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728606052; cv=none; b=QV1feix1NIYTP/cjAV3WHBzjMCn8/WCz3sMQXySYstXI9alol6YL/lM7zRC6myOgo9ThijRU7AXQ63hoE/HpOSDFQbLIZIthXtgjHhID7K9KcfHjUoYrrBYDfD70fU+nbceWUXF7IoEablSGUgO2SfOFRBAqDwWUBytonYLkR88=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728606052; c=relaxed/simple;
+	bh=d7cSWv33SjULNxgDnaNHNot2JLds/pnKNPPuS1YiJRA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=injogPyLLK+xcytZVXXAnKC/qN1K9xsGh8irno9uD6ixXIPtDSoWn+Y+I9DEz9auR4QFElxMUGTU/CQYOxScSVq7Yxvk6CtxT5LSZORJ+V9PGWJfWTLRF64El5Svgy0rZ9sFpg2d/Q122EhbMgkjgghouonu4n3VM/ndG9oEJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RVvD/FIn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A337C4CEC5;
+	Fri, 11 Oct 2024 00:20:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728606052;
+	bh=d7cSWv33SjULNxgDnaNHNot2JLds/pnKNPPuS1YiJRA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=RVvD/FIn1FE3iVRJmcD4i36URx3Q2iRrWvnwF/h3DEAxNleD/BIVj+wDHiEohyfdg
+	 tuRDaEhkcB+RotwLvX+U+wD02o5C3DINiDO6GvZF6QxYcm+yIUgEzE53HAbP3VwtWs
+	 z6EwAP/6HRAZbuSUd6wdokkJLPrwlwCKKmV9fQ+yhmEZd5yzONUGUmXfEZhqHxHxAN
+	 ZdjA3abA67AtwMbjH8nkGlW2uBU2QonS/PDXTsMdMnfM/eY6hp+yV+ZP9eEz/Mn3Q3
+	 7s1GaD9LQ1k98cuTgU/PDtb/Z84eyvMR8QFNC6LB/N4ibA/1pMVNo+RszlFTjDtPqy
+	 Tt9z3kPuOTA6A==
+Date: Thu, 10 Oct 2024 17:20:50 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: James Clark <james.clark@linaro.org>
+Cc: Howard Chu <howardchu95@gmail.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>, mingo@redhat.com,
+	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
+	kan.liang@linux.intel.com, linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH 0/2] perf trace: Fix support for the new BPF feature in
+ clang 12
+Message-ID: <ZwhvYsN7UPAOPvFj@google.com>
+References: <20241007051414.2995674-1-howardchu95@gmail.com>
+ <52125138-9ba5-4f71-9e7d-aff5f85d0dae@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|SJ0PR12MB6829:EE_
-X-MS-Office365-Filtering-Correlation-Id: c91e47eb-77ab-4ac0-7062-08dce98a9732
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?o+4UJ73iqY5GCP1+7egAxS3C14Jrwhpfx7towZ47gP/FTrfZFvdkMXRrf7w4?=
- =?us-ascii?Q?Q2Z+N+RqwrE1HEUrDhWk0wb/Yx3I4n7kszFIKcEyHc3Jq00m1Kngquzqqmsl?=
- =?us-ascii?Q?FqWqbOrYtA4GymeOqqSEPeFKwa223eY55iROTdP8S5TTXCVdILQBUDrNWU1z?=
- =?us-ascii?Q?gCYmWWKmZIMmyhhoiBLkO9APlXJLtgkeczdZvFnnnzQ8glsIob4xVRY6aOLi?=
- =?us-ascii?Q?DqCnKDs3tpp96Nh8VjlFfIwR7grnxjuWhvaVBVsQdcvSi78JnBpxL4ejrdfD?=
- =?us-ascii?Q?krrGtQC2mZ2K25Flu8sGwVAa/ZwfHQfmBshf2vxYVhn3055Xa8bMXmYJ1/DI?=
- =?us-ascii?Q?6dBTUvzXarDerrmgRSHOrjU2PzWVbOUCx8/cnX7lZ7a3m0LQAcs7CsPObNcF?=
- =?us-ascii?Q?0fOUbE1vztWFOP8P0NEjh0CwJ75Zfyt76KvdImVjoJyYT8py2YLR2dNdRd4R?=
- =?us-ascii?Q?fAUl6DcEZO61BTRiSEXxqslhgyFbFEWUieQlOqE2ZW+HHAo3FZnlP1s8E1cx?=
- =?us-ascii?Q?XfvIqVlJ5/RvXRM8g5QByNaoTWXy9mpC2btPU3lh4lsYgei/itavnDRJ8WH/?=
- =?us-ascii?Q?Ce20EgTBYZRcDPghAw49gx6ImcYdUlFb/5YnD782zEAefr+GAZCdWhVU/ZdS?=
- =?us-ascii?Q?G09tULESRQnkmA4YRV1xbJJgDRfvc0muaZdQaQKMnCcAU9ehQUyZWDHi4Zat?=
- =?us-ascii?Q?0IlGGv4Ejf5D9CTylyHjfMEp3YDEXvpex7YctMwI52awZTtspDuVkKPQ8zIr?=
- =?us-ascii?Q?f3XuC4iLTSpz9s3HDNx9iVkVoTrIG6g324eJIl3xnnMSfEgme1/QTxo4gZMI?=
- =?us-ascii?Q?8+J1qPbN4/zwyOFJhEyVUypvGIEK+cOBQLc8caIuLqCPwz63sH5xhmrDo2fF?=
- =?us-ascii?Q?VDZ9eIsX1+Afw3hg6JloRm8GEnhcd2GM+Z1ix+GOb8bLsH5Y1ApZ48qoIoTQ?=
- =?us-ascii?Q?GnAYa/A7VqHht8v3TbpN4p4AAFBpT4KJfbvu6At+NjXkf5GvgBmYlyI4O2tC?=
- =?us-ascii?Q?qsf0U/K8qmPsQo18x+phTFvt5tB+6nwg389CgSwYWNrBeuVcErEtLdNMECkL?=
- =?us-ascii?Q?2yS0MguThCSzUodGEZ7Wvdmu0r0mdhuLaAhNqPRRKDQMB8oIlBP7LNzKP1AF?=
- =?us-ascii?Q?S2n/Y2RnfdlED2VjueJ/R160MitGtqEj7nbDdJCpO+0I6fawdFJoXJwE4D39?=
- =?us-ascii?Q?IfjaQrL2jhYK9cCK7WWdKFKQ0WCAEvS6bnpRyc2eTDfOKRZV1Rws0C1WGF7e?=
- =?us-ascii?Q?IIy9ubmQ7qPD2zzdzp+euEzP5s0TuIk26uGGBe5iKA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?JLAmfjGU8ICnI9TPxyjltd84Iu/es1D59C8h3GhKCCPu30NJGyxrzzJeUPPZ?=
- =?us-ascii?Q?KeE7U6etMbXXDO09lij/fk5qAAYz8/mXxHr0+KPDl6xMaQGJDv+G3oTAHAIW?=
- =?us-ascii?Q?NTuxkQgufD6T1tRW1PEwjWQN63foAM5y9UCWtfrWrh/Zjd4CM35oVEfJm/0x?=
- =?us-ascii?Q?jnUVd2dIDVihjE/HLK6O7nZUm8qudG+TsOX2ViabF5jbOqIpDI2WlufR0cfC?=
- =?us-ascii?Q?VNOZJ5ZYGPXqedZQVsnnrwLXd0YUeRt5IUprC/r8j59CmgK6GJ9JXBPxoqJ6?=
- =?us-ascii?Q?1ZiIe0RMLuSAuBqNDuOAAlfISCeAaA9nvY2zlpN9qRh0SIR0/zcn7kktX8WW?=
- =?us-ascii?Q?YrEE99hbzkCB345nZq1E8gAM9NcdHZWHEU/VWpZBQ+jNUe8Xy4n3yXnxZHjU?=
- =?us-ascii?Q?eLJcdpOEuVqdlHSCAGi18HptKGFsRPG8ZkG/im3UsnmzvUl5iM6FxGfi5MMb?=
- =?us-ascii?Q?7BGbXkWN6sAjtIbMvXn62FJIeV0grvEjbWO0vIJjWtQic4FWm/M7LeUB7fDj?=
- =?us-ascii?Q?sZz3ovBimeBNsYG4QgLUSEnCemuvrnTypFOJTHgeX8SiD0RFznBm6DaByJy5?=
- =?us-ascii?Q?mNHKBVtj9lEUm3QqYZDC+7mQ8SZRYKlbVUNr2kAVIS61h18OFexvnQZbpVCw?=
- =?us-ascii?Q?ent33hoiEXUyDgqlCL3pscTyL01Ke5xj1oNPjI6nHG1gWDqkubp4howAKOq5?=
- =?us-ascii?Q?XeZHgaWyyEiikkr2IzQR3gRTp6gTNOm0vIOX6gRtxMJ4DVjMbUDC/CMIOvCc?=
- =?us-ascii?Q?/pUjIftBIdbsEQ44uQQmxz8tWbnBkMe6ooP2R/Mp7YQUrf2Bg4BhGISje0C2?=
- =?us-ascii?Q?k9darQ7xW5Xu+5fGIQvilhmkHT3jtbijRWav6kzEZPfLVoSBKhwXifn3n6pV?=
- =?us-ascii?Q?H+N7CpAN7aXOV3SZs9oWOAougtTkUZe5ay8lQm6/4eIEE6QjJql8ORmINAsq?=
- =?us-ascii?Q?RWzXSa/KXk2+fpMVw6IGoTpI7sCCesOR7cyNBh35KSJ9b4TB69th2fLI5UYP?=
- =?us-ascii?Q?6m9/YmO/0Jf/pNkPq1f3oHWJe8OC1jhbfjybe5rQSSoR2o2MwvqGA29nkWPS?=
- =?us-ascii?Q?6RFJwDO0HXpQDqL3MLdeKWP5YeQt4fzb9r5umIHXD69+hTwtXxvHrFR9cBza?=
- =?us-ascii?Q?LyCAweagAH4m1K7togLykg3C5sqPMcgudvPWyGomxRu/BDpSWwYjQwbdi2pQ?=
- =?us-ascii?Q?lQzCvtIhvrWZcyYgR3C4RzwygxENwgfPUNhnD4jwqUmqhWrVz0agHWjT7jAU?=
- =?us-ascii?Q?MGe0h8oOEjIpFEXHPoCRgvvcu0ju1EpMJsHeR29hE1itA685NvQeg/t/gYiv?=
- =?us-ascii?Q?qNtt8ltpogKESNka0SJqxWs23fOjaHmoSas07KStBWTkv+j46E9Q1S+P2LPg?=
- =?us-ascii?Q?qFZr7t4LWxzxV76UardcWXPfTbp3NzSdlSU4W72FgrU9hWktPQGqWF8CkLoX?=
- =?us-ascii?Q?76kvCl2fo2LLxdRGT2brQlhiLuXGTonzH4aW0zk5ygV7PtM7R9k+eBz1hcOD?=
- =?us-ascii?Q?dP9t05ZGtn5RPXTe8TfJ/jSLKeVz7DSBZUMBo+GZojj/41eK9cobyg/fdFDG?=
- =?us-ascii?Q?qg/uHG+unqbKoZ7ebWDaq2MaXBvIWnySRQkiVbKQ?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c91e47eb-77ab-4ac0-7062-08dce98a9732
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 00:21:03.2194
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: KS4EGb1kQUqN5jHM+VhpV7qHMZN8MrIjIFw/WeYMaU5pIteO/QKr6p0HAm14hxmCTGyvuslaUGzOQjD73uVWNQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR12MB6829
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <52125138-9ba5-4f71-9e7d-aff5f85d0dae@linaro.org>
 
+On Thu, Oct 10, 2024 at 10:06:05AM +0100, James Clark wrote:
+> 
+> 
+> On 07/10/2024 6:14 am, Howard Chu wrote:
+> > The new augmentation feature in perf trace, along with the protocol
+> > change (from payload to payload->value), breaks the clang 12 build.
+> > 
+> > perf trace actually builds for any clang version newer than clang 16.
+> > However, as pointed out by Namhyung Kim <namhyung@kernel.org> and Ian
+> > Rogers <irogers@google.com>, clang 16, which was released in 2023, is
+> > still too new for most users. Additionally, as James Clark
+> > <james.clark@linaro.org> noted, some commonly used distributions do not
+> > yet support clang 16. Therefore, breaking BPF features between clang 12
+> > and clang 15 is not a good approach.
+> > 
+> > This patch series rewrites the BPF program in a way that allows it to
+> > pass the BPF verifier, even when the BPF bytecode is generated by older
+> > versions of clang.
+> > 
+> > However, I have only tested it till clang 14, as older versions are not
+> > supported by my distribution.
+> > 
+> > Howard Chu (2):
+> >    perf build: Change the clang check back to 12.0.1
+> >    perf trace: Rewrite BPF code to pass the verifier
+> > 
+> >   tools/perf/Makefile.config                    |   4 +-
+> >   .../bpf_skel/augmented_raw_syscalls.bpf.c     | 117 ++++++++++--------
+> >   2 files changed, 65 insertions(+), 56 deletions(-)
+> > 
+> 
+> Tested with clang 15:
+> 
+>  $ sudo perf trace -e write --max-events=100 -- echo hello
+>     0.000 ( 0.014 ms): echo/834165 write(fd: 1, buf: hello\10, count: 6)
+>                                             =
+> 
+> Tested-by: James Clark <james.clark@linaro.org>
+ 
+I got this on my system (clang 16).  The kernel refused to load it.
 
-Logan Gunthorpe <logang@deltatee.com> writes:
+  $ sudo ./perf trace -e write --max-events=10 -- echo hello
+  libbpf: prog 'sys_enter': BPF program load failed: Permission denied
+  libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
+  0: R1=ctx() R10=fp0
+  ; int sys_enter(struct syscall_enter_args *args) @ augmented_raw_syscalls.bpf.c:518
+  0: (bf) r7 = r1                       ; R1=ctx() R7_w=ctx()
+  ; return bpf_get_current_pid_tgid(); @ augmented_raw_syscalls.bpf.c:427
+  1: (85) call bpf_get_current_pid_tgid#14      ; R0_w=scalar()
+  2: (63) *(u32 *)(r10 -4) = r0         ; R0_w=scalar() R10=fp0 fp-8=mmmm????
+  3: (bf) r2 = r10                      ; R2_w=fp0 R10=fp0
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  4: (07) r2 += -4                      ; R2_w=fp-4
+  ; return bpf_map_lookup_elem(pids, &pid) != NULL; @ augmented_raw_syscalls.bpf.c:432
+  5: (18) r1 = 0xffff9dcccdfe7000       ; R1_w=map_ptr(map=pids_filtered,ks=4,vs=1)
+  7: (85) call bpf_map_lookup_elem#1    ; R0=map_value_or_null(id=1,map=pids_filtered,ks=4,vs=1)
+  8: (bf) r1 = r0                       ; R0=map_value_or_null(id=1,map=pids_filtered,ks=4,vs=1) R1_w=map_value_or_null(id=1,map=pids_filtered,ks=4,vs=1)
+  9: (b7) r0 = 0                        ; R0_w=0
+  ; if (pid_filter__has(&pids_filtered, getpid())) @ augmented_raw_syscalls.bpf.c:531
+  10: (55) if r1 != 0x0 goto pc+161     ; R1_w=0
+  11: (b7) r6 = 0                       ; R6_w=0
+  ; int key = 0; @ augmented_raw_syscalls.bpf.c:150
+  12: (63) *(u32 *)(r10 -4) = r6        ; R6_w=0 R10=fp0 fp-8=0000????
+  13: (bf) r2 = r10                     ; R2_w=fp0 R10=fp0
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  14: (07) r2 += -4                     ; R2_w=fp-4
+  ; return bpf_map_lookup_elem(&augmented_args_tmp, &key); @ augmented_raw_syscalls.bpf.c:151
+  15: (18) r1 = 0xffff9dcc73f8f200      ; R1_w=map_ptr(map=augmented_args_,ks=4,vs=8272)
+  17: (85) call bpf_map_lookup_elem#1   ; R0=map_value_or_null(id=2,map=augmented_args_,ks=4,vs=8272)
+  18: (bf) r8 = r0                      ; R0=map_value_or_null(id=2,map=augmented_args_,ks=4,vs=8272) R8_w=map_value_or_null(id=2,map=augmented_args_,ks=4,vs=8272)
+  19: (b7) r0 = 1                       ; R0_w=1
+  ; if (augmented_args == NULL) @ augmented_raw_syscalls.bpf.c:535
+  20: (15) if r8 == 0x0 goto pc+151     ; R8_w=map_value(map=augmented_args_,ks=4,vs=8272)
+  ; bpf_probe_read_kernel(&augmented_args->args, sizeof(augmented_args->args), args); @ augmented_raw_syscalls.bpf.c:538
+  21: (bf) r1 = r8                      ; R1_w=map_value(map=augmented_args_,ks=4,vs=8272) R8_w=map_value(map=augmented_args_,ks=4,vs=8272)
+  22: (b7) r2 = 64                      ; R2_w=64
+  23: (bf) r3 = r7                      ; R3_w=ctx() R7=ctx()
+  24: (85) call bpf_probe_read_kernel#113       ; R0_w=scalar()
+  ; int zero = 0, value_size = sizeof(struct augmented_arg) - sizeof(u64); @ augmented_raw_syscalls.bpf.c:438
+  25: (63) *(u32 *)(r10 -4) = r6        ; R6=0 R10=fp0 fp-8=0000????
+  ; nr             = (__u32)args->syscall_nr; @ augmented_raw_syscalls.bpf.c:448
+  26: (79) r1 = *(u64 *)(r8 +8)         ; R1_w=scalar() R8_w=map_value(map=augmented_args_,ks=4,vs=8272)
+  27: (63) *(u32 *)(r10 -8) = r1        ; R1_w=scalar() R10=fp0 fp-8=0000scalar()
+  28: (bf) r2 = r10                     ; R2_w=fp0 R10=fp0
+  ; bpf_probe_read_kernel(&augmented_args->args, sizeof(augmented_args->args), args); @ augmented_raw_syscalls.bpf.c:538
+  29: (07) r2 += -8                     ; R2_w=fp-8
+  ; beauty_map     = bpf_map_lookup_elem(&beauty_map_enter, &nr); @ augmented_raw_syscalls.bpf.c:449
+  30: (18) r1 = 0xffff9dcccdfe5800      ; R1_w=map_ptr(map=beauty_map_ente,ks=4,vs=24)
+  32: (85) call bpf_map_lookup_elem#1   ; R0=map_value_or_null(id=3,map=beauty_map_ente,ks=4,vs=24)
+  ; if (beauty_map == NULL) @ augmented_raw_syscalls.bpf.c:450
+  33: (15) if r0 == 0x0 goto pc+132     ; R0=map_value(map=beauty_map_ente,ks=4,vs=24)
+  34: (bf) r2 = r10                     ; R2_w=fp0 R10=fp0
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  35: (07) r2 += -4                     ; R2_w=fp-4
+  ; payload        = bpf_map_lookup_elem(&beauty_payload_enter_map, &zero); @ augmented_raw_syscalls.bpf.c:454
+  36: (18) r1 = 0xffff9dcc73f8e800      ; R1_w=map_ptr(map=beauty_payload_,ks=4,vs=24688)
+  38: (7b) *(u64 *)(r10 -16) = r0       ; R0=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16_w=map_value(map=beauty_map_ente,ks=4,vs=24)
+  39: (85) call bpf_map_lookup_elem#1   ; R0_w=map_value_or_null(id=4,map=beauty_payload_,ks=4,vs=24688)
+  40: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16_w=map_value(map=beauty_map_ente,ks=4,vs=24)
+  ; if (payload == NULL) @ augmented_raw_syscalls.bpf.c:456
+  41: (15) if r0 == 0x0 goto pc+124     ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688)
+  42: (7b) *(u64 *)(r10 -48) = r7       ; R7=ctx() R10=fp0 fp-48_w=ctx()
+  ; __builtin_memcpy(&payload->args, args, sizeof(struct syscall_enter_args)); @ augmented_raw_syscalls.bpf.c:460
+  43: (79) r1 = *(u64 *)(r8 +56)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  44: (7b) *(u64 *)(r0 +56) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  45: (79) r1 = *(u64 *)(r8 +48)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  46: (7b) *(u64 *)(r0 +48) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  47: (79) r1 = *(u64 *)(r8 +40)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  48: (7b) *(u64 *)(r0 +40) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  49: (79) r1 = *(u64 *)(r8 +32)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  50: (7b) *(u64 *)(r0 +32) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  51: (79) r1 = *(u64 *)(r8 +24)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  52: (7b) *(u64 *)(r0 +24) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  53: (79) r1 = *(u64 *)(r8 +16)        ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  54: (7b) *(u64 *)(r0 +16) = r1        ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  55: (79) r1 = *(u64 *)(r8 +8)         ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  56: (7b) *(u64 *)(r0 +8) = r1         ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  57: (79) r1 = *(u64 *)(r8 +0)         ; R1_w=scalar() R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  58: (7b) *(u64 *)(r0 +0) = r1         ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R1_w=scalar()
+  59: (b7) r1 = 64                      ; R1_w=64
+  60: (7b) *(u64 *)(r10 -24) = r1       ; R1_w=64 R10=fp0 fp-24_w=64
+  61: (7b) *(u64 *)(r10 -40) = r8       ; R8=map_value(map=augmented_args_,ks=4,vs=8272) R10=fp0 fp-40_w=map_value(map=augmented_args_,ks=4,vs=8272)
+  62: (bf) r7 = r8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272) R8=map_value(map=augmented_args_,ks=4,vs=8272)
+  63: (07) r7 += 16                     ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=16)
+  64: (7b) *(u64 *)(r10 -56) = r0       ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R10=fp0 fp-56_w=map_value(map=beauty_payload_,ks=4,vs=24688)
+  ; payload_offset = (void *)&payload->aug_args; @ augmented_raw_syscalls.bpf.c:455
+  65: (bf) r9 = r0                      ; R0_w=map_value(map=beauty_payload_,ks=4,vs=24688) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688)
+  66: (07) r9 += 64                     ; R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=64)
+  67: (b7) r1 = 0                       ; R1_w=0
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  68: (7b) *(u64 *)(r10 -32) = r1       ; R1_w=0 R10=fp0 fp-32_w=0
+  69: (05) goto pc+11
+  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
+  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
+  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R6=0
+  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=16)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
+  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
+  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=64) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=64)
+  90: (07) r1 += 8                      ; R1=map_value(map=beauty_payload_,ks=4,vs=24688,off=72)
+  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
+  91: (55) if r8 != 0x1 goto pc-22      ; R8=1
+  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
+  92: (b7) r2 = 4096                    ; R2_w=4096
+  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
+  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
+  95: (bf) r8 = r0                      ; R0_w=scalar(id=5,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=5,smin=smin32=-4095,smax=smax32=4096)
+  96: (b7) r1 = 1                       ; R1_w=1
+  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
+  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
+  99: (b7) r2 = 4096                    ; R2=4096
+  100: (6d) if r2 s> r8 goto pc+1       ; R2=4096 R8=4096
+  101: (b7) r8 = 4096                   ; R8_w=4096
+  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
+  102: (57) r1 &= 1                     ; R1_w=1
+  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
+  104: (bf) r1 = r8                     ; R1_w=4096 R8_w=4096
+  105: (07) r1 += 8                     ; R1_w=4104
+  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
+  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
+  108: (77) r2 >>= 32                   ; R2=4104
+  109: (25) if r2 > 0x1008 goto pc-32   ; R2=4104
+  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
+  110: (63) *(u32 *)(r9 +0) = r8        ; R8=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=64)
+  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
+  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=64 R10=fp0 fp-24=64
+  112: (0f) r1 += r3                    ; R1_w=4168 R3_w=64
+  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
+  113: (0f) r9 += r2                    ; R2=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168)
+  114: (b7) r2 = 1                      ; R2_w=1
+  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
+  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=4168 R10=fp0 fp-24_w=4168
+  117: (05) goto pc-40
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=24)
+  79: (07) r6 += 4                      ; R6_w=4
+  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=4
+  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
+  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
+  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=4) R6_w=4
+  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=4) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  87: (79) r3 = *(u64 *)(r7 +0)         ; R3=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=24)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  88: (15) if r3 == 0x0 goto pc-11      ; R3=scalar(umin=1)
+  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
+  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168)
+  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=4176)
+  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
+  91: (55) if r8 != 0x1 goto pc-22      ; R8=1
+  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
+  92: (b7) r2 = 4096                    ; R2_w=4096
+  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
+  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
+  95: (bf) r8 = r0                      ; R0_w=scalar(id=6,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=6,smin=smin32=-4095,smax=smax32=4096)
+  96: (b7) r1 = 1                       ; R1=1
+  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
+  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
+  99: (b7) r2 = 4096                    ; R2_w=4096
+  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
+  101: (b7) r8 = 4096                   ; R8_w=4096
+  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
+  102: (57) r1 &= 1                     ; R1_w=1
+  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
+  104: (bf) r1 = r8                     ; R1_w=4096 R8_w=4096
+  105: (07) r1 += 8                     ; R1_w=4104
+  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
+  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
+  108: (77) r2 >>= 32                   ; R2_w=4104
+  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
+  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
+  110: (63) *(u32 *)(r9 +0) = r8        ; R8_w=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=4168)
+  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
+  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=4168 R10=fp0 fp-24=4168
+  112: (0f) r1 += r3                    ; R1_w=8272 R3_w=4168
+  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
+  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272)
+  114: (b7) r2 = 1                      ; R2_w=1
+  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
+  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=8272 R10=fp0 fp-24_w=8272
+  117: (05) goto pc-40
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=32)
+  79: (07) r6 += 4                      ; R6=8
+  80: (15) if r6 == 0x18 goto pc+56     ; R6=8
+  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
+  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
+  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=8) R6=8
+  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=8) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=32)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
+  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
+  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272)
+  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=8280)
+  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
+  91: (55) if r8 != 0x1 goto pc-22      ; R8_w=1
+  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
+  92: (b7) r2 = 4096                    ; R2_w=4096
+  93: (85) call bpf_probe_read_user_str#114     ; R0=scalar(smin=smin32=-4095,smax=smax32=4096)
+  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
+  95: (bf) r8 = r0                      ; R0=scalar(id=7,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=7,smin=smin32=-4095,smax=smax32=4096)
+  96: (b7) r1 = 1                       ; R1_w=1
+  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
+  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
+  99: (b7) r2 = 4096                    ; R2_w=4096
+  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
+  101: (b7) r8 = 4096                   ; R8_w=4096
+  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
+  102: (57) r1 &= 1                     ; R1_w=1
+  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
+  104: (bf) r1 = r8                     ; R1_w=4096 R8_w=4096
+  105: (07) r1 += 8                     ; R1_w=4104
+  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
+  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
+  108: (77) r2 >>= 32                   ; R2_w=4104
+  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
+  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
+  110: (63) *(u32 *)(r9 +0) = r8        ; R8_w=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=8272)
+  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
+  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=8272 R10=fp0 fp-24=8272
+  112: (0f) r1 += r3                    ; R1_w=12376 R3_w=8272
+  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
+  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376)
+  114: (b7) r2 = 1                      ; R2_w=1
+  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
+  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=12376 R10=fp0 fp-24_w=12376
+  117: (05) goto pc-40
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=40)
+  79: (07) r6 += 4                      ; R6_w=12
+  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=12
+  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
+  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4_w=map_value(map=beauty_map_ente,ks=4,vs=24)
+  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=12) R6_w=12
+  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=12) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  85: (c7) r8 s>>= 32                   ; R8=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  86: (15) if r8 == 0x0 goto pc-9       ; R8=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7=map_value(map=augmented_args_,ks=4,vs=8272,off=40)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
+  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
+  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376)
+  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=12384)
+  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
+  91: (55) if r8 != 0x1 goto pc-22      ; R8=1
+  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
+  92: (b7) r2 = 4096                    ; R2_w=4096
+  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
+  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
+  95: (bf) r8 = r0                      ; R0_w=scalar(id=8,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=8,smin=smin32=-4095,smax=smax32=4096)
+  96: (b7) r1 = 1                       ; R1_w=1
+  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
+  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
+  99: (b7) r2 = 4096                    ; R2_w=4096
+  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
+  101: (b7) r8 = 4096                   ; R8=4096
+  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
+  102: (57) r1 &= 1                     ; R1_w=1
+  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
+  104: (bf) r1 = r8                     ; R1_w=4096 R8=4096
+  105: (07) r1 += 8                     ; R1_w=4104
+  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
+  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
+  108: (77) r2 >>= 32                   ; R2_w=4104
+  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
+  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
+  110: (63) *(u32 *)(r9 +0) = r8        ; R8=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=12376)
+  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
+  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=12376 R10=fp0 fp-24=12376
+  112: (0f) r1 += r3                    ; R1_w=16480 R3_w=12376
+  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
+  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480)
+  114: (b7) r2 = 1                      ; R2_w=1
+  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
+  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=16480 R10=fp0 fp-24_w=16480
+  117: (05) goto pc-40
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=48)
+  79: (07) r6 += 4                      ; R6_w=16
+  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=16
+  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
+  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
+  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=16) R6_w=16
+  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=16) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=48)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
+  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
+  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480)
+  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=16488)
+  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
+  91: (55) if r8 != 0x1 goto pc-22      ; R8_w=1
+  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
+  92: (b7) r2 = 4096                    ; R2_w=4096
+  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
+  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
+  95: (bf) r8 = r0                      ; R0_w=scalar(id=9,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=9,smin=smin32=-4095,smax=smax32=4096)
+  96: (b7) r1 = 1                       ; R1_w=1
+  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
+  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
+  99: (b7) r2 = 4096                    ; R2_w=4096
+  100: (6d) if r2 s> r8 goto pc+1       ; R2_w=4096 R8_w=4096
+  101: (b7) r8 = 4096                   ; R8_w=4096
+  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
+  102: (57) r1 &= 1                     ; R1=1
+  103: (15) if r1 == 0x0 goto pc-26     ; R1=1
+  104: (bf) r1 = r8                     ; R1_w=4096 R8=4096
+  105: (07) r1 += 8                     ; R1_w=4104
+  106: (bf) r2 = r1                     ; R1_w=4104 R2_w=4104
+  107: (67) r2 <<= 32                   ; R2_w=0x100800000000
+  108: (77) r2 >>= 32                   ; R2_w=4104
+  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=4104
+  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
+  110: (63) *(u32 *)(r9 +0) = r8        ; R8=4096 R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=16480)
+  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
+  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=16480 R10=fp0 fp-24=16480
+  112: (0f) r1 += r3                    ; R1_w=20584 R3_w=16480
+  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
+  113: (0f) r9 += r2                    ; R2_w=4104 R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584)
+  114: (b7) r2 = 1                      ; R2_w=1
+  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
+  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=20584 R10=fp0 fp-24_w=20584
+  117: (05) goto pc-40
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=56)
+  79: (07) r6 += 4                      ; R6_w=20
+  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=20
+  ; int augment_size = beauty_map[i], augment_size_with_header; @ augmented_raw_syscalls.bpf.c:472
+  81: (bf) r1 = r4                      ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24) R4=map_value(map=beauty_map_ente,ks=4,vs=24)
+  82: (0f) r1 += r6                     ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=20) R6_w=20
+  83: (61) r8 = *(u32 *)(r1 +0)         ; R1_w=map_value(map=beauty_map_ente,ks=4,vs=24,off=20) R8_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  84: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x7fffffff00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  85: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  86: (15) if r8 == 0x0 goto pc-9       ; R8_w=scalar(smin=0xffffffff80000000,smax=0x7fffffff,umin=1)
+  ;  @ augmented_raw_syscalls.bpf.c:0
+  87: (79) r3 = *(u64 *)(r7 +0)         ; R3_w=scalar() R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=56)
+  ; if (augment_size == 0 || addr == NULL) @ augmented_raw_syscalls.bpf.c:476
+  88: (15) if r3 == 0x0 goto pc-11      ; R3_w=scalar(umin=1)
+  ; value_offset = ((struct augmented_arg *)payload_offset)->value; @ augmented_raw_syscalls.bpf.c:479
+  89: (bf) r1 = r9                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584)
+  90: (07) r1 += 8                      ; R1_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20592)
+  ; if (augment_size == 1) { /* string */ @ augmented_raw_syscalls.bpf.c:481
+  91: (55) if r8 != 0x1 goto pc-22      ; R8_w=1
+  ; augment_size = bpf_probe_read_user_str(value_offset, value_size, addr); @ augmented_raw_syscalls.bpf.c:482
+  92: (b7) r2 = 4096                    ; R2_w=4096
+  93: (85) call bpf_probe_read_user_str#114     ; R0_w=scalar(smin=smin32=-4095,smax=smax32=4096)
+  94: (79) r4 = *(u64 *)(r10 -16)       ; R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R10=fp0 fp-16=map_value(map=beauty_map_ente,ks=4,vs=24)
+  95: (bf) r8 = r0                      ; R0_w=scalar(id=10,smin=smin32=-4095,smax=smax32=4096) R8_w=scalar(id=10,smin=smin32=-4095,smax=smax32=4096)
+  96: (b7) r1 = 1                       ; R1_w=1
+  ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
+  97: (67) r8 <<= 32                    ; R8_w=scalar(smax=0x100000000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  98: (c7) r8 s>>= 32                   ; R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4096)
+  99: (b7) r2 = 4096                    ; R2_w=4096
+  100: (6d) if r2 s> r8 goto pc+1 102: R0_w=scalar(id=10,smin=smin32=-4095,smax=smax32=4096) R1_w=1 R2_w=4096 R4_w=map_value(map=beauty_map_ente,ks=4,vs=24) R6_w=20 R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=56) R8_w=scalar(smin=0xffffffff80000000,smax=smax32=4095) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584) R10=fp0 fp-8=mmmmmmmm fp-16=map_value(map=beauty_map_ente,ks=4,vs=24) fp-24_w=20584 fp-32_w=1 fp-40=map_value(map=augmented_args_,ks=4,vs=8272) fp-48=ctx() fp-56=map_value(map=beauty_payload_,ks=4,vs=24688)
+  ; if (is_augmented && augment_size_with_header <= sizeof(struct augmented_arg)) { @ augmented_raw_syscalls.bpf.c:503
+  102: (57) r1 &= 1                     ; R1_w=1
+  103: (15) if r1 == 0x0 goto pc-26     ; R1_w=1
+  104: (bf) r1 = r8                     ; R1_w=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095) R8_w=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095)
+  105: (07) r1 += 8                     ; R1_w=scalar(smin=0xffffffff80000008,smax=smax32=4103,smin32=0x80000008)
+  106: (bf) r2 = r1                     ; R1_w=scalar(id=13,smin=0xffffffff80000008,smax=smax32=4103,smin32=0x80000008) R2_w=scalar(id=13,smin=0xffffffff80000008,smax=smax32=4103,smin32=0x80000008)
+  107: (67) r2 <<= 32                   ; R2_w=scalar(smax=0x100700000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  108: (77) r2 >>= 32                   ; R2_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff))
+  ; ((struct augmented_arg *)payload_offset)->size = augment_size; @ augmented_raw_syscalls.bpf.c:504
+  110: (63) *(u32 *)(r9 +0) = r8        ; R8_w=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584)
+  ; len            += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:506
+  111: (79) r3 = *(u64 *)(r10 -24)      ; R3_w=20584 R10=fp0 fp-24_w=20584
+  112: (0f) r1 += r3                    ; R1_w=scalar(smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R3_w=20584
+  ; payload_offset += augment_size_with_header; @ augmented_raw_syscalls.bpf.c:507
+  113: (0f) r9 += r2                    ; R2_w=scalar(smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff)) R9_w=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584,smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff))
+  114: (b7) r2 = 1                      ; R2_w=1
+  115: (7b) *(u64 *)(r10 -32) = r2      ; R2_w=1 R10=fp0 fp-32_w=1
+  116: (7b) *(u64 *)(r10 -24) = r1      ; R1_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R10=fp0 fp-24_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070)
+  117: (05) goto pc-40
+  ; for (int i = 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
+  78: (07) r7 += 8                      ; R7_w=map_value(map=augmented_args_,ks=4,vs=8272,off=64)
+  79: (07) r6 += 4                      ; R6_w=24
+  80: (15) if r6 == 0x18 goto pc+56     ; R6_w=24
+  ; if (!bpf_probe_read_user(value_offset, augment_size, addr)) @ augmented_raw_syscalls.bpf.c:491
+  137: (79) r5 = *(u64 *)(r10 -24)      ; R5_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R10=fp0 fp-24=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070)
+  138: (bf) r2 = r5                     ; R2_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R5_w=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070)
+  139: (67) r2 <<= 32                   ; R2_w=scalar(smax=0x606f00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  140: (77) r2 >>= 32                   ; R2_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  141: (b7) r1 = 1                      ; R1_w=1
+  142: (b7) r3 = 24689                  ; R3_w=24689
+  143: (2d) if r3 > r2 goto pc+1 145: R0=scalar(id=10,smin=smin32=-4095,smax=smax32=4096) R1=1 R2=scalar(smin=smin32=0,smax=umax=smax32=umax32=24688,var_off=(0x0; 0x7fff)) R3=24689 R4=map_value(map=beauty_map_ente,ks=4,vs=24) R5=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) R6=24 R7=map_value(map=augmented_args_,ks=4,vs=8272,off=64) R8=scalar(id=12,smin=0xffffffff80000000,smax=smax32=4095) R9=map_value(map=beauty_payload_,ks=4,vs=24688,off=20584,smin=smin32=0,smax=umax=smax32=umax32=4104,var_off=(0x0; 0x1fff)) R10=fp0 fp-8=mmmmmmmm fp-16=map_value(map=beauty_map_ente,ks=4,vs=24) fp-24=scalar(id=14,smin=0xffffffff80005070,smax=smax32=24687,smin32=0x80005070) fp-32=1 fp-40=map_value(map=augmented_args_,ks=4,vs=8272) fp-48=ctx() fp-56=map_value(map=beauty_payload_,ks=4,vs=24688)
+  ; if (!bpf_probe_read_user(value_offset, augment_size, addr)) @ augmented_raw_syscalls.bpf.c:491
+  145: (79) r2 = *(u64 *)(r10 -32)      ; R2_w=1 R10=fp0 fp-32=1
+  ; if (!do_augment || len > sizeof(struct beauty_payload_enter)) @ augmented_raw_syscalls.bpf.c:511
+  146: (5f) r2 &= r1                    ; R1=1 R2_w=1
+  147: (57) r2 &= 1                     ; R2_w=1
+  148: (79) r7 = *(u64 *)(r10 -48)      ; R7_w=ctx() R10=fp0 fp-48=ctx()
+  149: (79) r8 = *(u64 *)(r10 -40)      ; R8_w=map_value(map=augmented_args_,ks=4,vs=8272) R10=fp0 fp-40=map_value(map=augmented_args_,ks=4,vs=8272)
+  150: (79) r4 = *(u64 *)(r10 -56)      ; R4_w=map_value(map=beauty_payload_,ks=4,vs=24688) R10=fp0 fp-56=map_value(map=beauty_payload_,ks=4,vs=24688)
+  151: (55) if r2 != 0x0 goto pc+1      ; R2_w=1
+  ; return bpf_perf_event_output(ctx, &__augmented_syscalls__, BPF_F_CURRENT_CPU, data, len); @ augmented_raw_syscalls.bpf.c:162
+  153: (67) r5 <<= 32                   ; R5_w=scalar(smax=0x606f00000000,umax=0xffffffff00000000,smin32=0,smax32=umax32=0,var_off=(0x0; 0xffffffff00000000))
+  154: (77) r5 >>= 32                   ; R5_w=scalar(smin=0,smax=umax=0xffffffff,var_off=(0x0; 0xffffffff))
+  155: (bf) r1 = r7                     ; R1_w=ctx() R7_w=ctx()
+  156: (18) r2 = 0xffffaed2058d9000     ; R2_w=map_ptr(map=__augmented_sys,ks=4,vs=4)
+  158: (18) r3 = 0xffffffff             ; R3_w=0xffffffff
+  160: (85) call bpf_perf_event_output#25
+  R5 unbounded memory access, use 'var &= const' or 'if (var < const)'
+  processed 387 insns (limit 1000000) max_states_per_insn 1 total_states 20 peak_states 20 mark_read 13
+  -- END PROG LOAD LOG --
+  libbpf: prog 'sys_enter': failed to load: -13
+  libbpf: failed to load object 'augmented_raw_syscalls_bpf'
+  libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
+  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
+  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
+  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
+  libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was it created?)
+  hello
+       0.000 ( 0.008 ms): write(fd: 1, buf: , count: 6)                                         = 
 
-> On 2024-09-09 22:14, Alistair Popple wrote:
->> The reference counts for ZONE_DEVICE private pages should be
->> initialised by the driver when the page is actually allocated by the
->> driver allocator, not when they are first created. This is currently
->> the case for MEMORY_DEVICE_PRIVATE and MEMORY_DEVICE_COHERENT pages
->> but not MEMORY_DEVICE_PCI_P2PDMA pages so fix that up.
->> 
->> Signed-off-by: Alistair Popple <apopple@nvidia.com>
->> ---
->>  drivers/pci/p2pdma.c |  6 ++++++
->>  mm/memremap.c        | 17 +++++++++++++----
->>  mm/mm_init.c         | 22 ++++++++++++++++++----
->>  3 files changed, 37 insertions(+), 8 deletions(-)
->> 
->> diff --git a/drivers/pci/p2pdma.c b/drivers/pci/p2pdma.c
->> index 4f47a13..210b9f4 100644
->> --- a/drivers/pci/p2pdma.c
->> +++ b/drivers/pci/p2pdma.c
->> @@ -129,6 +129,12 @@ static int p2pmem_alloc_mmap(struct file *filp, struct kobject *kobj,
->>  	}
->>  
->>  	/*
->> +	 * Initialise the refcount for the freshly allocated page. As we have
->> +	 * just allocated the page no one else should be using it.
->> +	 */
->> +	set_page_count(virt_to_page(kaddr), 1);
->> +
->> +	/*
->>  	 * vm_insert_page() can sleep, so a reference is taken to mapping
->>  	 * such that rcu_read_unlock() can be done before inserting the
->>  	 * pages
-> This seems to only set reference count to the first page, when there can
-> be more than one page referenced by kaddr.
+Also like James said, the buf doesn't show anything and the return
+value is missing.
 
-Good point.
-
-> I suspect the page count adjustment should be done in the for loop
-> that's a few lines lower than this.
-
-Have moved it there for the next version, thanks!
-
-> I think a similar mistake was made by other recent changes.
->
-> Thanks,
->
-> Logan
+Thanks,
+Namhyung
 
 
