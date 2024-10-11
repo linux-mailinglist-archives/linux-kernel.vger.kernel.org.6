@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-360798-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBC53999FDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:12:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 47AB899A03A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:35:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61B491F234B4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:12:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60821F21C07
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:35:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D044120CCE8;
-	Fri, 11 Oct 2024 09:12:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955D8210191;
+	Fri, 11 Oct 2024 09:34:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="lm+kYWHO"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KD7Py/Jc"
+Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79B8F20C46C;
-	Fri, 11 Oct 2024 09:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC8E20ADDF;
+	Fri, 11 Oct 2024 09:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728637943; cv=none; b=kmwQ5lMWQuoWNiHhvpGy0mfX0t0bdbVcaCWC9fpgNiOjTvOFgofadEEwvAoBEf6cJa4FOm9hzuavEcFgngIXDXS08h0yQOaTUNUqr2UmCdtw2V71/4roBTX7pZpLLoRR4NS2Qv540zpnaZyzjsCXONwCikUVH735a48NX/cCXyk=
+	t=1728639289; cv=none; b=arklpZ2PLaZAJa/mm1LJpBVzXw7/DSCdpMkmX90xjZ7ohUs/MxD4Rst9tUMJUaPIA31Un+ySWa5beAARRq8Qzl6ZIKG2X8bZK9gXt3r8qt9ehoT/cVnHq8pDCbyfmF8YRsDNNwzwCwWIJ9gyc/kRiu/hZkbTsbyIhD0xHAwHQD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728637943; c=relaxed/simple;
-	bh=bLHgUxnHnm6nAbuqDcwCWdMNYnyXNokEveeBOy9gnl0=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ml0RVNTmjFLIzFMQYPsn6DN2qIlEJhdhuG9+Zuhtf7r0kbb7dFgcIMxCSJbMSHDVs0ocPFcTSeaTa7MRaaBDWBgG+qmf+FBd7qiUo9I5bnMpG792Wo7UVRTGpghdrWeWrJt7Ok5cuigrGMlhvz05EzUzod5gtgY5gXBrYL8AS/U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=lm+kYWHO; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=RNqNpxGxeeBAwX+19iC/FZZJ/fILbxplvkx/pcESrjA=; b=lm+kYWHOOUhxM9U8xqgQql7VVt
-	8UzoIxp7jYv2/pVOqdSp03IqQD9mfa6UEp6rEcvd8y/BT5AxnAw7ta3slMIcEZhFlX+6FSa6EuUQZ
-	dOVOHXV0ilTh38756LLGBxl/wQhWO1PEuWuW+gHfeiT12bIq88s/XIrI4UjRB/+lPTI7CdFmele2v
-	m9SYWrhmKvzOUUKWQoMVlMpht+lxV5k0l7SQMdflEwO/3nHdfYhohJibm/N5IM1hARXrA7VZp0Nfy
-	l6O91Ja4MfbWXLTcpVf/wAwDXgDWIPhFHkcpHOWe4BT0XaU6qw2nMXSZHnRZDmTJnwO4kybRvHiOg
-	/IY4hWwQ==;
-Date: Fri, 11 Oct 2024 11:12:12 +0200
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Roger Quadros <rogerq@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- linux-omap@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- tony@atomide.com, devicetree@vger.kernel.org, khilman@baylibre.com, Conor
- Dooley <conor+dt@kernel.org>, aaro.koskinen@iki.fi
-Subject: Re: [PATCH v2 3/4] ARM: dts: omap: omap4-epson-embt2ws: add unknown
- gpio outputs
-Message-ID: <20241011111212.1b935eb8@akair>
-In-Reply-To: <7cde7090-639b-4115-8240-88a63c760d93@kernel.org>
-References: <20241010122957.85164-1-andreas@kemnade.info>
-	<20241010122957.85164-4-andreas@kemnade.info>
-	<7cde7090-639b-4115-8240-88a63c760d93@kernel.org>
-X-Mailer: Claws Mail 4.1.1 (GTK 3.24.38; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728639289; c=relaxed/simple;
+	bh=Gl6dPLjRLbSic9EmZnmscq1zMg/4Htr1XPejk/OM3k8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=CJGTMr9KTg27kslW3j4MhkPWxC93eqp3daUhMmKzFwPtct+99LXtcoI7gI4+eosD4sPFUMlZhn3YSBae0+iiT2PNNRWX4JsvONx4rHRGiNcHExesaRJWOpxV0ONZbp/j/nBK0R8wtPPEXZK2+Y+RHI8mG1Er16zqF5/8jurXA3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KD7Py/Jc; arc=none smtp.client-ip=91.207.212.93
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B7jxoS016451;
+	Fri, 11 Oct 2024 11:34:29 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	Cx8wCvxmonPkb1ieC6lKwP2pVMjk4uOgdXPQfU8JtJo=; b=KD7Py/Jcqjd1pUHD
+	2TCjoUJ0n/G1MuPfk/dhYKv1031rual8A0sF+d4EuwfLW1tqnYRmRAQxl/hNap5+
+	XdRvOMQlD8UPeauFIVc3ZyYy1BWj1a52Lekel5NrS73Gv2q5wBUUy6A01nOi9X9+
+	8y4l+irexXIUCpKxRnqxQ3CJmthQrk3lHEmnSHft6KIy+De/LBWdVhHl7Yh0FdJ5
+	SkUbE0Xm0/1z+Hx8TWnhVTs9PYkP+L6gPglTtJG9x9HLaZ9WK40wxTfkYMIyeaK+
+	KYO0MRx2BbTMh59+O2j0OQTAIvgP77/M90Jlhf2LgCYWXDD2p/tuEDn2Wf2VxIM1
+	ZICQJg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425w9xh02c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 11:34:25 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 299014005C;
+	Fri, 11 Oct 2024 11:27:58 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B0A5D26D085;
+	Fri, 11 Oct 2024 11:12:28 +0200 (CEST)
+Received: from [10.48.87.35] (10.48.87.35) by SHFDAG1NODE3.st.com
+ (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
+ 2024 11:12:28 +0200
+Message-ID: <20394a61-72b8-4d92-ac35-201368035bde@foss.st.com>
+Date: Fri, 11 Oct 2024 11:12:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/11] dt-bindings: dma: stm32-dma3: introduce
+ st,axi-max-burst-len property
+To: Rob Herring <robh@kernel.org>
+CC: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime Coquelin
+	<mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue <alexandre.torgue@foss.st.com>,
+        <dmaengine@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241010-dma3-mp25-updates-v1-0-adf0633981ea@foss.st.com>
+ <20241010-dma3-mp25-updates-v1-6-adf0633981ea@foss.st.com>
+ <20241010181645.GA2121939-robh@kernel.org>
+Content-Language: en-US
+From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+In-Reply-To: <20241010181645.GA2121939-robh@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
+ (10.75.129.71)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-Am Thu, 10 Oct 2024 23:15:51 +0300
-schrieb Roger Quadros <rogerq@kernel.org>:
 
-> On 10/10/2024 15:29, Andreas Kemnade wrote:
-> > Set them to the state seen in a running system, initialized
-> > by vendor u-boot or kernel. Add line names where they are defined
-> > in the vendor kernel.
-> > gpio15 resets something in the display, otherwise meaning of the
-> > gpios is not known.
-> > 
-> > Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
-> > ---
-> >  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 92
-> > +++++++++++++++++++ 1 file changed, 92 insertions(+)
-> > 
-> > diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
-> > b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts index
-> > 7684868a2eed..983a21d95db3 100644 ---
-> > a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts +++
-> > b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts @@ -115,6
-> > +115,73 @@ wl12xx_vmmc: wl12xx-vmmc { };
-> >  };
-> >  
-> > +&gpio1 {
-> > +	pinctrl-names = "default";
-> > +	pinctrl-0 = <&gpio1_hog_pins &gpio1wk_hog_pins>;
-> > +
-> > +	lb-reset-hog {
-> > +		gpio-hog;
-> > +		gpios = <9 GPIO_ACTIVE_HIGH>;
-> > +		output-low;
-> > +		line-name = "lb_reset";
-> > +	};
-> > +
-> > +	power-en-hog {
-> > +		gpio-hog;
-> > +		gpios = <10 GPIO_ACTIVE_HIGH>;
-> > +		output-high;
-> > +		line-name = "power_en";
-> > +	};  
+
+On 10/10/24 20:16, Rob Herring wrote:
+> On Thu, Oct 10, 2024 at 04:27:56PM +0200, Amelie Delaunay wrote:
+>> DMA3 maximum burst length (in unit of beat) may be restricted depending
+>> on bus interconnect.
+>>
+>> As mentionned in STM32MP2 reference manual [1], "the maximum allowed AXI
+>> burst length is 16. The user must set [S|D]BL_1 lower or equal to 15
+>> if the Source/Destination allocated port is AXI (if [S|D]AP=0)".
 > 
-> As GPIO 9 and 10 come form the Wake-up domain, my guess is 
-> they are used as wake-up input source. Reset button / Power off/wake
-> button? From pinmux they seem to be Input. So why do we need to force
-> them to a certain output state?
-
-Interesting reasoning and good to bring up those thoughts.
-
-Vendor v3.0 kernel:
-shell@android:/sys/kernel/debug # cat gpio 
-GPIOs 0-31, gpio:
-[...]
- gpio-9   (gpio_lb_reset       ) out lo
- gpio-10  (gpio_power_en       ) out hi
-
-So they are configured as output.
-There is one power button. It can be handled via the TWL6032 (driver
-not upstreamed yet). There is also one reset button resetting the SoC.
-
-I do not see a reason why to deviate from vendor kernel.
- 
-> Can you please confirm if everything works as usual without this hog?
+> This should be implied by the SoC specific compatible.
 > 
-Well, if everything is working well, I would agree to optimize
-these things. But not now. There are races in the boot process
-and I would like to rule out that any random or strange behavior has
-anything to do with some gpio setting.
+
+I took an example from snps,dw-axi-dmac.yaml (snps,axi-max-burst-len). 
+But I agree, it will be implied by st,stm32mp25-dma3 compatible in V2.
+Patch 8/11 will then be dropped.
 
 Regards,
-Andreas
+Amelie
+
+>>
+>> Introduce st,axi-max-burst-len. If used, it will clamp the burst length
+>> to that value if AXI port is used, if not, the maximum burst length value
+>> supported by DMA3 is used.
+>>
+>> [1] https://www.st.com/resource/en/reference_manual/rm0457-stm32mp2325xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf
+>>
+>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+>> ---
+>>   .../devicetree/bindings/dma/stm32/st,stm32-dma3.yaml          | 11 +++++++++++
+>>   1 file changed, 11 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
+>> index 38c30271f732e0c8da48199a224a88bb647eeca7..90ad70bb24eb790afe72bf2085478fa4cec60b94 100644
+>> --- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
+>> +++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
+>> @@ -51,6 +51,16 @@ properties:
+>>     power-domains:
+>>       maxItems: 1
+>>   
+>> +  st,axi-max-burst-len:
+>> +    description: |
+>> +      Restrict AXI burst length in unit of beat by value specified in this property.
+>> +      The value specified in this property is clamped to the maximum burst length supported by DMA3.
+>> +      If this property is missing, the maximum burst length supported by DMA3 is used.
+>> +    $ref: /schemas/types.yaml#/definitions/uint32
+>> +    minimum: 1
+>> +    maximum: 256
+>> +    default: 64
+>> +
+>>     "#dma-cells":
+>>       const: 3
+>>       description: |
+>> @@ -137,5 +147,6 @@ examples:
+>>                      <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
+>>         clocks = <&rcc CK_BUS_HPDMA1>;
+>>         #dma-cells = <3>;
+>> +      st,axi-max-burst-len = <16>;
+>>       };
+>>   ...
+>>
+>> -- 
+>> 2.25.1
+>>
 
