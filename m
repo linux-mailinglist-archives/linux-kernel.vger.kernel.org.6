@@ -1,123 +1,165 @@
-Return-Path: <linux-kernel+bounces-360553-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D3D999C91
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:22:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5B93999C7D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1196E2833BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:22:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8646C1C21CE5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65618208963;
-	Fri, 11 Oct 2024 06:22:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED902581;
-	Fri, 11 Oct 2024 06:22:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF9B20124B;
+	Fri, 11 Oct 2024 06:18:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="mJm14Gq+"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CB4328B6;
+	Fri, 11 Oct 2024 06:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728627757; cv=none; b=J8jFllRPj4J+GNSHXmeE8tNye1cyordjzywsXpYPdVN329IKS6TGcJxTx2efvX8LkBLb3QtuKTxpEghSg1CHSclofoR1MItBM+ggycsoqyv9lSR5zmIz1L+d/N4YoLQlS19u/zphvdB3wGxb4WLWPcdAr1h1NUEaYvpG7O+2RTo=
+	t=1728627503; cv=none; b=Swqt3JcSpzKgrgdZQzeXJKWCF4Wp+zmVwPuoIbuKDJhHXw4XPcjiI82Y2RqOtLmaiGG5jjvcr5vX18Ul9IEDJERKHpTErTUiZjH3jjHRjr8bJrqtxB23Y79WnWHp05OakGYbLE81LrY+NJI6besxbmQkSW9Ns9ipT/BZQkw2iK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728627757; c=relaxed/simple;
-	bh=uS1vketAMn+QuN65fHsUsbaau8xZ+bb+fzaY0ejlOJE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XNChDQKEoSn7jXt4TBAYw2TrJ9nUzU9mQS+aWs/GXyoUDQIabry7FJb/CxfrtHBvNZV09hy+5Fk1cFTe6/BLdAXVa7JI6YsDROr+NnSlZgTEwxYVQSywRM8SAS48bgLMJRaRCDg27GTLvAfi5jj8374bL+407UKXX6feydKAbKw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPxP04bvzz4f3kp8;
-	Fri, 11 Oct 2024 14:22:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 769061A06D7;
-	Fri, 11 Oct 2024 14:22:24 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.26])
-	by APP4 (Coremail) with SMTP id gCh0CgDXDMkfxAhnqG8ZDw--.5449S2;
-	Fri, 11 Oct 2024 14:22:24 +0800 (CST)
-From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
-To: tj@kernel.org,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	shuah@kernel.org,
-	joshua.hahn6@gmail.com
-Cc: cgroups@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	xiujianfeng@huawei.com
-Subject: [PATCH -next] selftests/cgroup: Fix compile error in test_cpu.c
-Date: Fri, 11 Oct 2024 06:11:53 +0000
-Message-Id: <20241011061153.107208-1-xiujianfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728627503; c=relaxed/simple;
+	bh=eO3/CiHURI2AIuuoUgMs66MWLroRYMhaRhQD3hiw9CQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KOxyA42T+VTSLtuCyJFHiHRQqO/CjgQcY5oIcj6xsmaq2e/YiC3HXZW3qzpiNtU4r0hBdanW9vpn5Q81k1lXvpXz18blkUJeAA5SySVRzjy0HiEPHGnpI1EebGVusvlSv5kTZ7gxTeK71K1LqY+XkZJhAt+F7RfyhGS68Fj1E4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=mJm14Gq+; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=RpJz4KKgLgp+St5K7RZyZ9YL3L6T8JAC/gWa6Q+sU1o=;
+	b=mJm14Gq+alijs6afIQltJSEOdyyaxvQ8HQJwP9tNklbSBDGsiB64D1B6bnzj6t
+	r4U4ehrUpmnGYlDhRQPPuQ0bJKD2q3WQomzkCAjroeB6ZjGfoC8zV1OhwGmbGzR4
+	lsCJ7CbPqX7OXyBRFwRFcfvdx2AmDFEcoqyIyYjfCsXq4=
+Received: from [192.168.22.184] (unknown [223.70.253.255])
+	by gzga-smtp-mtada-g0-1 (Coremail) with SMTP id _____wDHr04awwhnriCrAQ--.44184S2;
+	Fri, 11 Oct 2024 14:18:03 +0800 (CST)
+Message-ID: <2635f3f9-86e1-4d09-ad40-4e02ac4447c5@163.com>
+Date: Fri, 11 Oct 2024 14:18:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] ext4: fix a assertion failure due to ungranted bh
+ dirting
+To: Jan Kara <jack@suse.cz>
+Cc: tytso@mit.edu, adilger.kernel@dilger.ca, zhangshida@kylinos.cn,
+ longzhi@sangfor.com.cn, linux-ext4@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Baolin Liu <liubaolin@kylinos.cn>
+References: <20241010025855.2632516-1-liubaolin12138@163.com>
+ <20241010092923.r53povuflevzhxrw@quack3>
+From: liubaolin <liubaolin12138@163.com>
+In-Reply-To: <20241010092923.r53povuflevzhxrw@quack3>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDXDMkfxAhnqG8ZDw--.5449S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7AF1kGrykZr18CrWrAF1fZwb_yoW8Gw4Dpa
-	1kG34j9F4rKF17J3Z2vrW2gFyI9Fs7JFWjya18Xr9xZF1fJryIqrW7Kayjqry5ua95Z3sx
-	Aa4SqF1ag3WDJw7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvFb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcxkI7VAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7MxkF7I0E
-	n4kS14v26r1q6r43MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I
-	0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWU
-	tVW8ZwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcV
-	CY1x0267AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAF
-	wI0_Jr0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvj
-	xUF1v3UUUUU
-X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
+X-CM-TRANSID:_____wDHr04awwhnriCrAQ--.44184S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxZFy3WFWDXFy7GFWftFy3XFb_yoWrCF43pr
+	W5K345KrWqgry29Fs2qF4fXFy0gw18GrW7GrWfKryFy3y5WFn2qryrtrn8AF1qyrZ3uwn5
+	Zr4UAF9Fk3Wjv37anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07U3-BiUUUUU=
+X-CM-SenderInfo: xolxutxrol0iasrtmqqrwthudrp/1tbiLgR1ymcIwv0ClgAAsR
 
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
+> Greetings，
+> This problem is reproduced by our customer using their own testing tool “run_bug”.
+> When I consulted with a client, the testing tool “run_bug” used a variety of background programs to benchmark 
+> (including memory pressure, cpu pressure, file cycle manipulation, fsstress Stress testing tool, postmark program，and so on).
+> The recurrence probability is relatively low.
+> 
+> In response to your query, in ext4_block_write_begin, the new state will be clear before get block, 
+> and the bh that failed get_block will not be set to new.
+> However, when the page size is greater than the block size, a page will contain multiple bh. 
+> bh->b_this_page is a circular list for managing all bh on the same page.
+> After get_block jumps out of the for loop, then bh->b_this_page is not processed by clear new in the for loop.
+> So after calling ext4_journalled_zero_new_buffers,
+> The ext4_journalled_zero_new_buffers function will determine all bh of the same page and call write_end_fn if they are in new state,
+> get_block returns err's bh->b_this_page and circular list other unhandled bh if the state was previously set to new.
+> Because bh not get access, the corresponding transaction is not placed in jh->b_transaction, resulting in a crash.
+> 
+> Therefore, the patch processing method I submit is to make unprocessed bh determines if it is in new state and get access.
+> There is another way to handle the remaining bh clear_buffer_new that is not processed.
+> I personally recommend get access this way, the impact is small. 
+> Please guide the two processing methods, which one do you recommend?
 
-When compiling the cgroup selftests with the following command:
 
-make -C tools/testing/selftests/cgroup/
 
-the compiler complains as below:
-
-test_cpu.c: In function ‘test_cpucg_nice’:
-test_cpu.c:284:39: error: incompatible type for argument 2 of ‘hog_cpus_timed’
-  284 |                 hog_cpus_timed(cpucg, param);
-      |                                       ^~~~~
-      |                                       |
-      |                                       struct cpu_hog_func_param
-test_cpu.c:132:53: note: expected ‘void *’ but argument is of type ‘struct cpu_hog_func_param’
-  132 | static int hog_cpus_timed(const char *cgroup, void *arg)
-      |                                               ~~~~~~^~~
-
-Fix it by passing the address of param to hog_cpus_timed().
-
-Fixes: 2e82c0d4562a ("cgroup/rstat: Selftests for niced CPU statistics")
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- tools/testing/selftests/cgroup/test_cpu.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/tools/testing/selftests/cgroup/test_cpu.c b/tools/testing/selftests/cgroup/test_cpu.c
-index 201ce14cb422..a2b50af8e9ee 100644
---- a/tools/testing/selftests/cgroup/test_cpu.c
-+++ b/tools/testing/selftests/cgroup/test_cpu.c
-@@ -281,7 +281,7 @@ static int test_cpucg_nice(const char *root)
- 
- 		/* Try to keep niced CPU usage as constrained to hog_cpu as possible */
- 		nice(1);
--		hog_cpus_timed(cpucg, param);
-+		hog_cpus_timed(cpucg, &param);
- 		exit(0);
- 	} else {
- 		waitpid(pid, &status, 0);
--- 
-2.34.1
+在 2024/10/10 17:29, Jan Kara 写道:
+> On Thu 10-10-24 10:58:55, Baolin Liu wrote:
+>> From: Baolin Liu <liubaolin@kylinos.cn>
+>>
+>> Since the merge of commit 3910b513fcdf ("ext4: persist the new uptodate
+>> buffers in ext4_journalled_zero_new_buffers"), a new assertion failure
+>> occurred under a old kernel(ext3, data=journal, pagesize=64k) with
+>> corresponding ported patches:
+> ...
+>> which was caused by bh dirting without calling
+>> do_journal_get_write_access().
+>>
+>> In the loop for all bhs of a page in ext4_block_write_begin(),
+>> when a err occurred, it will jump out of loop.
+>> But that will leaves some bhs being processed and some not,
+>> which will lead to the asserion failure in calling write_end_fn().
+> 
+> Thanks for the patch but I don't understand one thing here: For
+> ext4_journalled_zero_new_buffers() to call write_end_fn() the buffer must
+> have buffer_new flag set. That flag can get set only by ext4_get_block()
+> function when it succeeds in which case we also call
+> do_journal_get_write_access(). So how is it possible that buffer_new was
+> set on a buffer on which we didn't call do_journal_get_write_access()? This
+> indicates there may be some deeper problem hidden. How exactly did you
+> trigger this problem?
+> 
+> 								Honza
+> 
+>>
+>> To fixed that, get write access for the rest unprocessed bhs, just
+>> as what write_end_fn do.
+>>
+>> Fixes: 3910b513fcdf ("ext4: persist the new uptodate buffers in ext4_journalled_zero_new_buffers")
+>> Reported-and-tested-by: Zhi Long <longzhi@sangfor.com.cn>
+>> Suggested-by: Shida Zhang <zhangshida@kylinos.cn>
+>> Signed-off-by: Baolin Liu <liubaolin@kylinos.cn>
+>> ---
+>>   fs/ext4/inode.c | 17 ++++++++++++++++-
+>>   1 file changed, 16 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/fs/ext4/inode.c b/fs/ext4/inode.c
+>> index 54bdd4884fe6..a72f951288e4 100644
+>> --- a/fs/ext4/inode.c
+>> +++ b/fs/ext4/inode.c
+>> @@ -1102,9 +1102,24 @@ int ext4_block_write_begin(handle_t *handle, struct folio *folio,
+>>   			err = -EIO;
+>>   	}
+>>   	if (unlikely(err)) {
+>> -		if (should_journal_data)
+>> +		if (should_journal_data) {
+>> +			if (bh != head || !block_start) {
+>> +				do {
+>> +					block_end = block_start + bh->b_size;
+>> +
+>> +					if (buffer_new(bh))
+>> +						if (block_end > from && block_start < to)
+>> +							do_journal_get_write_access(handle,
+>> +										    inode, bh);
+>> +
+>> +					block_start = block_end;
+>> +					bh = bh->b_this_page;
+>> +				} while (bh != head);
+>> +			}
+>> +
+>>   			ext4_journalled_zero_new_buffers(handle, inode, folio,
+>>   							 from, to);
+>> +		}
+>>   		else
+>>   			folio_zero_new_buffers(folio, from, to);
+>>   	} else if (fscrypt_inode_uses_fs_layer_crypto(inode)) {
+>> -- 
+>> 2.39.2
+>>
 
 
