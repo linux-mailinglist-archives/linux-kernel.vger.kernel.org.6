@@ -1,267 +1,245 @@
-Return-Path: <linux-kernel+bounces-361059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B164F99A2E4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:41:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E82899A2E2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4911B285ECB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:41:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 60B691C2190C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A0A9216A0B;
-	Fri, 11 Oct 2024 11:41:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DD021644D;
+	Fri, 11 Oct 2024 11:40:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="NMnumxg4"
-Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021108.outbound.protection.outlook.com [52.101.95.108])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Et677H8t"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59882141C6;
-	Fri, 11 Oct 2024 11:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.108
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728646865; cv=fail; b=BuZeYNP/AfvaCKE0DuVt49sR+un2lTcq7y50OFZ1CsnhbmPlF0j7RbcajBZNvXXb5AgAHWyhtl83ztxTcHQpoMrS8b/Uy0si2sdVYHJQ0JzxvD/M0kVbGTYHRv7Ab4oImwlMnMwT9hUhApZicw4J6Hw7vnX0JpVBSnM2gJcwHrI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728646865; c=relaxed/simple;
-	bh=JcccRRsPniAGLkqMnQiqfz5bSm7USb+wXGcqWUMU1jo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=nr+HIho5EQouOeaLWn5f3pRvgx9azBVUMxsZQ9tKknw7N68OB1L/7HpTrokYRaUoJHX37iBEV6T9VfH8FRvRv/SqSNd1ash5kGdHDPyMdNHQpb5AtejfeMxQeNsdzVWaOYB3hz8gP8NPQo28gEBtBUW3LkKIxUolljRNytJOEqc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=NMnumxg4; arc=fail smtp.client-ip=52.101.95.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=J2a4mh8ikrTgoSsMS8Ncod8DH3VysJaJKpTWi2DVMjRevMCS9Muu7vXV/s+J4/ct+kPIo/3KSVimVUBVpAeJDSDSXnYOrxpTxPNDuvDQdlCMb9+I6hMKrIycvCNm4yfxQ5eE/tFmSOwZ0RwpcmSpzlCvQfV25zDJLRieT6Yh309WXl0V+tRCa5yXXoHEngn0rM/vU7IDp0QHdq3xQzK0hxfMvPcffJX+P4Kq6L3j3nd9Xw0TLiWUL4msn0tAP4R+ixwwwVTQFI82yV+63dj77bXC00xo/KX3hmsPG87Wv8adbejCkGYIWTtRc4VY4mtm/veySKIdMbpae+qxZ0+7Hw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ckjQRWwDT/eRcydao40iiwrZxOFMUcFU8yVTIXP/b7E=;
- b=hAP0wKRQdyfhYpCHzKU1XGLajp5ha9W+GBmrOzaekiajpRc17ZuXiD9C3DsBsrRDJgkqVDzxMTy22OS+6q8rY7ZBEGa93sjLSpLc+bIIdluonUtcs1Y0eEJeitexL0l4RJwAfpBkifjFym0x2mvrKpuNR3RB4PedOO12WXWzJy+Xf+EGTC3bYenbNEEiXjQ7VkzatLoKNWZbMd1eglhju2NYlGYqRRXxnq4/HN0fI9xH5t/ARXJQmIE4kZj8ukhWz10922VyD0bBCQjNrmbxHbmntGGRyt5qzIwx3WPemXf+q8RVCiItj6gvNWm3ujTRO66XS9ulbogh4AEEzfvKhw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ckjQRWwDT/eRcydao40iiwrZxOFMUcFU8yVTIXP/b7E=;
- b=NMnumxg4J6QlO+803oTJdLNq34JzqzXrZ2wZLwzPRI/sWg2REV/H/Eqw8U6ldJxu7AqBzAnCGcibFURcm8Ix98B5uPhR7y4liIsJEzBaK/B2XMf5C6LuD8R5Z4rOdBbjw5mjf+3vOmHfgoDQJAM0LsOnFYK4lkE7zkWPBmpgHGI=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by CW1P265MB7424.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:217::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20; Fri, 11 Oct
- 2024 11:40:59 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8048.013; Fri, 11 Oct 2024
- 11:40:59 +0000
-From: Gary Guo <gary@garyguo.net>
-To: masahiroy@kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Petr Mladek <pmladek@suse.com>,
-	Tejun Heo <tj@kernel.org>,
-	Yoann Congal <yoann.congal@smile.fr>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Jens Axboe <axboe@kernel.dk>,
-	Jann Horn <jannh@google.com>,
-	Mark Rutland <mark.rutland@arm.com>
-Cc: kees@kernel.org,
-	linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	rust-for-linux@vger.kernel.org,
-	samitolvanen@google.com
-Subject: [PATCH] kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`
-Date: Fri, 11 Oct 2024 12:40:33 +0100
-Message-ID: <20241011114040.3900487-1-gary@garyguo.net>
-X-Mailer: git-send-email 2.44.1
-In-Reply-To: <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
-References: <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P123CA0548.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:319::11) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A39DF21643B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728646843; cv=none; b=uJyWGJsTSR3QYpp9lDh2wsmoT8luoxnQS1JmLPhMKXWpgttDPidNaYO7Je0ffogAAPqSYLVPrTf1Jt9PV/fMfsoLPe8HdRs+zykwwi6pFnISROMGg2QBFauS5nmz+gh5eGmmLjyMMIXOF56h1iCl+mXwCWdHX/5xrqg6+N9z6EY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728646843; c=relaxed/simple;
+	bh=iMSmSjYsaAy0YzE3nCzp+4hkZQj/IpPWLPn99PFVMG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=F8vawNxVn0x96lYkwgLWtGDL3Ld0TrtCzw/zVXMTzsLkkuY0Bkwz1K5vLxNqyBWFX5vexe76BugAZIYIe07GAPE9/JHBTOq35N1WtBcmrOvsJUbEKb84hk41FKHD6rSVMb1Dd5bX2q4qSVTlPyI+cC7PYoCpQEucaQ1q61i52N0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Et677H8t; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728646839;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=VNApqJlSEH0IHmUTUVzt3wENb7pBiZVRDjjZJypXL8E=;
+	b=Et677H8tvW7OC5FQUgPTU3EntHBbVGvdHuwLx29pR1+ipVA6kLrH5DPu5ua/DnaJIMs7HQ
+	M7agmiM2Sa1qW4ou9clh42wJwwd2xBKIpbf/wdEaL3oQLrjyplYTfwFC2zold7pjNz4Qfi
+	xvynL1a388LWuzTw0h5Zx/1MaQDQGrI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-590-YN0mPHJYP7WhhcO-lmWc1A-1; Fri, 11 Oct 2024 07:40:37 -0400
+X-MC-Unique: YN0mPHJYP7WhhcO-lmWc1A-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-43119e2a879so10112755e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:40:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728646836; x=1729251636;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=VNApqJlSEH0IHmUTUVzt3wENb7pBiZVRDjjZJypXL8E=;
+        b=u80kePHPUWz6G5bTvBWt6KJzFxFE9mpZxKnEf4mZKYCTOwc4lSlzZoXKEEKGvFryCZ
+         QVX1+uUXRkc5XTaOza2Vco9BQyHGjyz2QGSCmJAzHcOB4Egjk1ep8A/nboor19rWDk3P
+         KgZqvkpCT8yX2bu3ri7K++PD74v4vrXzBcolK2edzZJsGKzgqbRIwVdMayjGoJcGP3Zf
+         AqX52hvDcH//wUmJW3/kqpR0TsJ/Hp6V4xMSCBtx4O+2Wsw20L4MVRO1GSoElQCVzyVF
+         Ww59TKhYn9wJYCA4tFV0/5aZw4zaglXAbfKsNNxdKcuevr+4NSZ9kHTPH4jEHvBt5Dw6
+         6+/A==
+X-Forwarded-Encrypted: i=1; AJvYcCWFe6zqCuRlqhWdEWd5wHUN+3QCOXjGhwcWZxvBoYru7L95es+LtAYtsBlylQxfF+g8I0cNQnf5ewe7vi0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwsxYdKo/kb825d/tdY4zST5GwHsYFvu3V3ySqW8+A5G1fda2g
+	S5DBEneq8tTxwgmbYIg0WzcSyvqrjNlAm2/6HWNSM18j4YCEW7UCnpl+X+apI//ThIrwgVndvNg
+	7u8v79RZ/ntoN4GNWXBEyNEZEgISXQafWi8mSEUTALMsV9Rx83vhmCWd93vWVKw==
+X-Received: by 2002:a05:600c:3b9b:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-4311deb5ef8mr17287775e9.2.1728646836614;
+        Fri, 11 Oct 2024 04:40:36 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH69GLSyNi6RlX5vmx6fiyWfl5SeRQP8CwWq4DB7EkJvO4xZkEQrRCitOv1WGvOnepQAjS6Qg==
+X-Received: by 2002:a05:600c:3b9b:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-4311deb5ef8mr17287595e9.2.1728646836257;
+        Fri, 11 Oct 2024 04:40:36 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c749:9100:c078:eec6:f2f4:dd3b? (p200300cbc7499100c078eec6f2f4dd3b.dip0.t-ipconnect.de. [2003:cb:c749:9100:c078:eec6:f2f4:dd3b])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43118305c6bsm39740645e9.22.2024.10.11.04.40.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 04:40:35 -0700 (PDT)
+Message-ID: <b6ba0313-6a3f-4bfc-9237-547355cd7b00@redhat.com>
+Date: Fri, 11 Oct 2024 13:40:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CW1P265MB7424:EE_
-X-MS-Office365-Filtering-Correlation-Id: dbb6152f-24c8-49e7-a1d9-08dce9e99397
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|10070799003|366016|1800799024|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?sZxygTeTy5E1tufDO/YH3B/EMT893w5t3QGPu0uOoIWM496+EMyVYofuQ5tG?=
- =?us-ascii?Q?rLa8qSBcTk+UosQJG48Yeox98paeotySXhUgOl764Tj826mEKcevZPdJcwlu?=
- =?us-ascii?Q?5eXEHc7l0nOTc7M12kYtRyR0h2Z/nr1s4gTepRcZTbe/tKbVbY3ZyK7QBFDO?=
- =?us-ascii?Q?7B4RGPg6q2CzNQSyLRwChmXK2FDXaEPu6XU4Hc2EO+y81anTVqTUxKixSgSD?=
- =?us-ascii?Q?w1YB9I+avJQwMEq3uC3fb8tcr4UmznAj1mYB6KE+37sopGgTr3A63AnVh6i7?=
- =?us-ascii?Q?alzzBTIhCwlf+ea4dgZHe0SB7iPKG6GNX8r1BqghQ8RuUP/K0oxjUAtJ7xr7?=
- =?us-ascii?Q?2FNBFNNx8UUKpeTW1CkRq+JspK8N4GIWIZi3eBoa7g0ar/L+0iZhuWwt0UG/?=
- =?us-ascii?Q?7G3BVeVNklczn4aV9sSSm+JVuLlmgpMQ3d/RQfW51N6pPly008YRmY8JIaJB?=
- =?us-ascii?Q?ljg/TB19IQkx4Qh+3dlTuSJNz1Fsp7qy/VRHxaUPTnxWIwae9yjMVtwLxGh7?=
- =?us-ascii?Q?k4bnANietEQKQqvRAsLBn7Nr4CMXsy04w/4F367jVccELDB/am2BOhQ/UW/s?=
- =?us-ascii?Q?wWMi2Zj8nwpQ4O7eCR1kFYzen1pAb/t8EhMMnZXplNxW7aH+RmqJ56PIX3MP?=
- =?us-ascii?Q?GKZN8A5zCy3axhjl4KGzFzdjlkK90oanHa+O6foTJNGic5A/9s2eUskdZyoT?=
- =?us-ascii?Q?k1Gq7wL1pFqeb7jLmTDVg1zXuPKY8OZyPbuBDXP2nT/lOX668J/C9w3iWctj?=
- =?us-ascii?Q?Pu7Ci7DsXLEY6TY34DAJvU3js2z1W7YhUyIGC8EJIs0JXUL0jbf0t8d1Hz3I?=
- =?us-ascii?Q?kgve8Xf4nQjoUbI9TkKB8DtGqGR68NsaGu4K4gZ+qfOlSijts8YlvjyMLE4N?=
- =?us-ascii?Q?zODiA8vsEWx4BdkpvXJ2S1F2th0Ot6yqEoTUBc0+6jYBKGZF4jpMiCDDINol?=
- =?us-ascii?Q?OyEJ9pEfKMovrOu6qB9OG/4lOrHQK5N2NOIqnyeNmSQHOJo1cpEba3UVsSzS?=
- =?us-ascii?Q?LqS/YztUAS17FRqisey5jOZEkw31OBsQIlgXuyN4kb285JKcM3JvcHEXeR/o?=
- =?us-ascii?Q?2KU5THXPLlxOGBF9Uz7CLKcFqkn9sDXGawRpSHtQqdcEP/5ngOPTsUUzhoI1?=
- =?us-ascii?Q?CnxDmnPvcj2mecO1AFF4X3k56c4i2qARXTRX5Idaa+CrYB/OA6m3iFT/Nu6R?=
- =?us-ascii?Q?47aD0QK0M0aW5l7yUxB5HUe7VmbagPPMgHz9InbI6rL0oNqefJ0w2lW+yB0K?=
- =?us-ascii?Q?nlhVxZFLnkozeKWRaXMmls5cZi1SWDpbidE+AeHTf+PNC9dseymfCuJGwjEB?=
- =?us-ascii?Q?oUagcklAZl0cdElzV33TmPO0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(10070799003)(366016)(1800799024)(921020);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?uGg1tmJn72KCynIwO3RuuILZbwCNWlmDELgnsWiopu8R+y/Z//fsV3hDwQk3?=
- =?us-ascii?Q?C2zF64I/XROm4aTYiCC0AUmQdcKKYtvWmRNAnQ4QKa+lCIzD5hT5irhIQQ1v?=
- =?us-ascii?Q?nj53rN34oGEiS0F0Km9FWXuJH46CzwUxHOAi3o7A6olMXIRZwed3jmV+/gpE?=
- =?us-ascii?Q?MQqBPcdT+KZT7rVkCf9paSiwcBk4UWT4nzrJFgdlpWX1A8A6fmalgiK8WDCt?=
- =?us-ascii?Q?8myZodUbvt8ze+cZdj9B1JOgaRLaDSOUozmboEcF37RD13rNQGg1HeXMMd9F?=
- =?us-ascii?Q?/IpKybWsVDtWsn9RzJcaEGoF6r4mAHnm5If4fnEH6xH6y+lw4WGPt2+se0l6?=
- =?us-ascii?Q?KNgG0VlCctIwlBUDb0Cw9pN9c1zWMlRexYyAW0LgmJoYNM8tblvw1RaAaHrX?=
- =?us-ascii?Q?Sosw/siKzbp9PQj4nLbfFFWX0F3lKrWUYVCIIt/atXQgYYruoQNQVQLl4NkQ?=
- =?us-ascii?Q?FBcrx0qhreYUdvw8k7MNa2D1DFqP8MYPL+i+yUZHTJZZRP+SZKcmgKhjzYyI?=
- =?us-ascii?Q?AtTSvW0TqJJXTcwzWmj+BJQnZLKg2Vjie9bqDyVaxCkWShwMoBmOki5D3ciN?=
- =?us-ascii?Q?rzXuqzNHu4QRToxodW5IFne585Z1bHC69tXDZX69fC2OMM3l9kfW3kpDJGR0?=
- =?us-ascii?Q?t064xuWNQnaUbIpRWWg5lznP12XkFvtnMyuyY8DVhKltWy3AbhwYUXhnk1FT?=
- =?us-ascii?Q?RZ2RHVIURCNQajQKh+X2y/LxdkmB+7yiDqxV2xDy8+ci4YenMoKjO/2q/LJ8?=
- =?us-ascii?Q?NXObuPzSayLXJdpICzJ6h5jx2gW4gpRHRNf+3SWAyAjuW8QXxr1sUB8P8BzF?=
- =?us-ascii?Q?e5VPkVlKHXcSQMsbLzcaZH7n6JEMen8cFU0H2+Cnc2D2yvmn+zg3UEl1kEDJ?=
- =?us-ascii?Q?IMT0zUofk5fukWqUu7c6vucn2SfQx7yrDbnyKTnHfU4iSDOWK7Q+miACmcmw?=
- =?us-ascii?Q?GvC9YLYufoCARWU3D53qThT9M8g3AZHXn4YSQifSd3qUNASXWT8WGNBGYpIH?=
- =?us-ascii?Q?bhACTJ10/i6iXaTOcGVcDeNlwouQhlf3zImz8WFrIb4/fqmYNZo4yTiu6bXc?=
- =?us-ascii?Q?ajHbvM1Gg3Nq0gX0jWlNdDOoy/3b/Bh4u6NUDHzfsboeHIq5sTQr1dwCXAaS?=
- =?us-ascii?Q?ML4TsGP6VR+TqpGmWXEph039J6AScImcKCgz+GTIPv9jgcGa/k9ULt6e6HBy?=
- =?us-ascii?Q?KZqHpdhTOPpZay/6E9lYNSJftTo4ZxKAp8MeVKwUlIw6w1/zWBnvJluajyXB?=
- =?us-ascii?Q?38SQG3SC6yYN/qaXprbZ6jVHEU2s3rs3Hx0wPzcMDAC+eclcDJ4cFlTAP9Z+?=
- =?us-ascii?Q?VPLSwyidOGVEK8FotwE+m74a2m3f18poEQmub7dR6L1olRiyuPhyx56Q1+MA?=
- =?us-ascii?Q?kBjaNdru0wK/F8sb/yzfADGm9L9SiJnA8o8Yr8BuzHcZO++yKIZF8uBZOqCK?=
- =?us-ascii?Q?gVfLyDVaCiaJrb8CyOvKgUAYPuMa1N7fc8FmVyhOgCfCaWoFI/HB+FvwMj7y?=
- =?us-ascii?Q?/PK9YeNXlRDYQFj8stn8u0FvqTdhr+4JNOxOjhofQw9OWBOpQYBCpP8GlP+5?=
- =?us-ascii?Q?UgOU51QlYEGDdKEhzuYQ1whABlUW0mrPiExjYKe8?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: dbb6152f-24c8-49e7-a1d9-08dce9e99397
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 11:40:59.4227
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 0oxEZqg8jiXjBQMngJ3CfkhGovWiatj3gmTyiERAz/PzDjcULEYBMklupGv+qaV5P37PtN+hEtWAgYTjVU6bQA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CW1P265MB7424
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm: don't install PMD mappings when THPs are
+ disabled by the hw/process/vma
+To: Ryan Roberts <ryan.roberts@arm.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, kvm@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Thomas Huth <thuth@redhat.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Leo Fu <bfu@redhat.com>
+References: <20241011102445.934409-1-david@redhat.com>
+ <20241011102445.934409-3-david@redhat.com>
+ <a4ca9422-09f5-4137-88d0-88a7ec836c1a@arm.com>
+ <a552416e-fd32-4b84-b5d6-40a27530c939@redhat.com>
+ <4fd20101-d15c-4f9b-93c1-c780734a2294@arm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
+ dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
+ QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
+ XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
+ Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
+ PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
+ WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
+ UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
+ jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
+ B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
+ ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
+ AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAl8Ox4kFCRKpKXgACgkQTd4Q
+ 9wD/g1oHcA//a6Tj7SBNjFNM1iNhWUo1lxAja0lpSodSnB2g4FCZ4R61SBR4l/psBL73xktp
+ rDHrx4aSpwkRP6Epu6mLvhlfjmkRG4OynJ5HG1gfv7RJJfnUdUM1z5kdS8JBrOhMJS2c/gPf
+ wv1TGRq2XdMPnfY2o0CxRqpcLkx4vBODvJGl2mQyJF/gPepdDfcT8/PY9BJ7FL6Hrq1gnAo4
+ 3Iv9qV0JiT2wmZciNyYQhmA1V6dyTRiQ4YAc31zOo2IM+xisPzeSHgw3ONY/XhYvfZ9r7W1l
+ pNQdc2G+o4Di9NPFHQQhDw3YTRR1opJaTlRDzxYxzU6ZnUUBghxt9cwUWTpfCktkMZiPSDGd
+ KgQBjnweV2jw9UOTxjb4LXqDjmSNkjDdQUOU69jGMUXgihvo4zhYcMX8F5gWdRtMR7DzW/YE
+ BgVcyxNkMIXoY1aYj6npHYiNQesQlqjU6azjbH70/SXKM5tNRplgW8TNprMDuntdvV9wNkFs
+ 9TyM02V5aWxFfI42+aivc4KEw69SE9KXwC7FSf5wXzuTot97N9Phj/Z3+jx443jo2NR34XgF
+ 89cct7wJMjOF7bBefo0fPPZQuIma0Zym71cP61OP/i11ahNye6HGKfxGCOcs5wW9kRQEk8P9
+ M/k2wt3mt/fCQnuP/mWutNPt95w9wSsUyATLmtNrwccz63XOwU0EVcufkQEQAOfX3n0g0fZz
+ Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
+ T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
+ 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
+ CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
+ NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
+ 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
+ 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
+ lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
+ AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
+ N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
+ AP+DWgUCXw7HsgUJEqkpoQAKCRBN3hD3AP+DWrrpD/4qS3dyVRxDcDHIlmguXjC1Q5tZTwNB
+ boaBTPHSy/Nksu0eY7x6HfQJ3xajVH32Ms6t1trDQmPx2iP5+7iDsb7OKAb5eOS8h+BEBDeq
+ 3ecsQDv0fFJOA9ag5O3LLNk+3x3q7e0uo06XMaY7UHS341ozXUUI7wC7iKfoUTv03iO9El5f
+ XpNMx/YrIMduZ2+nd9Di7o5+KIwlb2mAB9sTNHdMrXesX8eBL6T9b+MZJk+mZuPxKNVfEQMQ
+ a5SxUEADIPQTPNvBewdeI80yeOCrN+Zzwy/Mrx9EPeu59Y5vSJOx/z6OUImD/GhX7Xvkt3kq
+ Er5KTrJz3++B6SH9pum9PuoE/k+nntJkNMmQpR4MCBaV/J9gIOPGodDKnjdng+mXliF3Ptu6
+ 3oxc2RCyGzTlxyMwuc2U5Q7KtUNTdDe8T0uE+9b8BLMVQDDfJjqY0VVqSUwImzTDLX9S4g/8
+ kC4HRcclk8hpyhY2jKGluZO0awwTIMgVEzmTyBphDg/Gx7dZU1Xf8HFuE+UZ5UDHDTnwgv7E
+ th6RC9+WrhDNspZ9fJjKWRbveQgUFCpe1sa77LAw+XFrKmBHXp9ZVIe90RMe2tRL06BGiRZr
+ jPrnvUsUUsjRoRNJjKKA/REq+sAnhkNPPZ/NNMjaZ5b8Tovi8C0tmxiCHaQYqj7G2rgnT0kt
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <4fd20101-d15c-4f9b-93c1-c780734a2294@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Each version of Rust supports a range of LLVM versions. There are cases where
-we want to gate a config on the LLVM version instead of the Rust version.
-Normalized cfi integer tags are one example [1].
+On 11.10.24 13:36, Ryan Roberts wrote:
+> On 11/10/2024 12:33, David Hildenbrand wrote:
+>> On 11.10.24 13:29, Ryan Roberts wrote:
+>>> On 11/10/2024 11:24, David Hildenbrand wrote:
+>>>> We (or rather, readahead logic :) ) might be allocating a THP in the
+>>>> pagecache and then try mapping it into a process that explicitly disabled
+>>>> THP: we might end up installing PMD mappings.
+>>>>
+>>>> This is a problem for s390x KVM, which explicitly remaps all PMD-mapped
+>>>> THPs to be PTE-mapped in s390_enable_sie()->thp_split_mm(), before
+>>>> starting the VM.
+>>>>
+>>>> For example, starting a VM backed on a file system with large folios
+>>>> supported makes the VM crash when the VM tries accessing such a mapping
+>>>> using KVM.
+>>>>
+>>>> Is it also a problem when the HW disabled THP using
+>>>> TRANSPARENT_HUGEPAGE_UNSUPPORTED? At least on x86 this would be the case
+>>>> without X86_FEATURE_PSE.
+>>>>
+>>>> In the future, we might be able to do better on s390x and only disallow
+>>>> PMD mappings -- what s390x and likely TRANSPARENT_HUGEPAGE_UNSUPPORTED
+>>>> really wants. For now, fix it by essentially performing the same check as
+>>>> would be done in __thp_vma_allowable_orders() or in shmem code, where this
+>>>> works as expected, and disallow PMD mappings, making us fallback to PTE
+>>>> mappings.
+>>>>
+>>>> Reported-by: Leo Fu <bfu@redhat.com>
+>>>> Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+>>>
+>>> Will this patch be difficult to backport given it depends on the previous patch
+>>> and that doesn't have a Fixes tag?
+>>
+>> "difficult" -- not really. Andrew might want to tag patch #1  with "Fixes:" as
+>> well, but I can also send simple stable backports that avoid patch #1.
+>>
+>> (Thinking again, I assume we want to Cc:stable)
+>>
+>>>
+>>>> Cc: Thomas Huth <thuth@redhat.com>
+>>>> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>>> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+>>>> Cc: Janosch Frank <frankja@linux.ibm.com>
+>>>> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+>>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>>> ---
+>>>>    mm/memory.c | 9 +++++++++
+>>>>    1 file changed, 9 insertions(+)
+>>>>
+>>>> diff --git a/mm/memory.c b/mm/memory.c
+>>>> index 2366578015ad..a2e501489517 100644
+>>>> --- a/mm/memory.c
+>>>> +++ b/mm/memory.c
+>>>> @@ -4925,6 +4925,15 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct
+>>>> page *page)
+>>>>        pmd_t entry;
+>>>>        vm_fault_t ret = VM_FAULT_FALLBACK;
+>>>>    +    /*
+>>>> +     * It is too late to allocate a small folio, we already have a large
+>>>> +     * folio in the pagecache: especially s390 KVM cannot tolerate any
+>>>> +     * PMD mappings, but PTE-mapped THP are fine. So let's simply refuse any
+>>>> +     * PMD mappings if THPs are disabled.
+>>>> +     */
+>>>> +    if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags))
+>>>> +        return ret;
+>>>
+>>> Why not just call thp_vma_allowable_orders()?
+>>
+>> Why call thp_vma_allowable_orders() that does a lot more work that doesn't
+>> really apply here? :)
+> 
+> Yeah fair enough, I was just thinking it makes the code simpler to keep all the
+> checks in one place. But no strong opinion.
+> 
+> Either way:
+> 
+> Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-The invocation of rustc-version is being moved from init/Kconfig to
-scripts/Kconfig.include for consistency with cc-version.
+Thanks!
 
-Link: https://lore.kernel.org/all/20240925-cfi-norm-kasan-fix-v1-1-0328985cdf33@google.com/ [1]
-Signed-off-by: Gary Guo <gary@garyguo.net>
----
- init/Kconfig                  |  6 +++++-
- scripts/Kconfig.include       |  3 +++
- scripts/rustc-llvm-version.sh | 22 ++++++++++++++++++++++
- 3 files changed, 30 insertions(+), 1 deletion(-)
- create mode 100755 scripts/rustc-llvm-version.sh
+Also, I decided to not use "thp_vma_allowable_orders" because we are 
+past the allocation phase (as indicated in the comment) and can really 
+just change the way how we map the folio (PMD vs. PTE), not really 
+*what* folio to use.
 
-diff --git a/init/Kconfig b/init/Kconfig
-index fbd0cb06a50a..304e2bd32bfd 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -62,7 +62,7 @@ config LLD_VERSION
- 
- config RUSTC_VERSION
- 	int
--	default $(shell,$(srctree)/scripts/rustc-version.sh $(RUSTC))
-+	default $(rustc-version)
- 	help
- 	  It does not depend on `RUST` since that one may need to use the version
- 	  in a `depends on`.
-@@ -78,6 +78,10 @@ config RUST_IS_AVAILABLE
- 	  In particular, the Makefile target 'rustavailable' is useful to check
- 	  why the Rust toolchain is not being detected.
- 
-+config RUSTC_LLVM_VERSION
-+	int
-+	default $(rustc-llvm-version)
-+
- config CC_CAN_LINK
- 	bool
- 	default $(success,$(srctree)/scripts/cc-can-link.sh $(CC) $(CLANG_FLAGS) $(USERCFLAGS) $(USERLDFLAGS) $(m64-flag)) if 64BIT
-diff --git a/scripts/Kconfig.include b/scripts/Kconfig.include
-index 785a491e5996..33193ca6e803 100644
---- a/scripts/Kconfig.include
-+++ b/scripts/Kconfig.include
-@@ -65,6 +65,9 @@ cc-option-bit = $(if-success,$(CC) -Werror $(1) -E -x c /dev/null -o /dev/null,$
- m32-flag := $(cc-option-bit,-m32)
- m64-flag := $(cc-option-bit,-m64)
- 
-+rustc-version := $(shell,$(srctree)/scripts/rustc-version.sh $(RUSTC))
-+rustc-llvm-version := $(shell,$(srctree)/scripts/rustc-llvm-version.sh $(RUSTC))
-+
- # $(rustc-option,<flag>)
- # Return y if the Rust compiler supports <flag>, n otherwise
- # Calls to this should be guarded so that they are not evaluated if
-diff --git a/scripts/rustc-llvm-version.sh b/scripts/rustc-llvm-version.sh
-new file mode 100755
-index 000000000000..b8ffa24afea8
---- /dev/null
-+++ b/scripts/rustc-llvm-version.sh
-@@ -0,0 +1,22 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Usage: $ ./rustc-version.sh rustc
-+#
-+# Print the LLVM version that the Rust compiler uses in a 6 digit form.
-+
-+# Convert the version string x.y.z to a canonical up-to-6-digits form.
-+get_canonical_version()
-+{
-+	IFS=.
-+	set -- $1
-+	echo $((10000 * $1 + 100 * $2 + $3))
-+}
-+
-+if output=$("$@" --version --verbose 2>/dev/null | grep LLVM); then
-+	set -- $output
-+	get_canonical_version $3
-+else
-+	echo 0
-+	exit 1
-+fi
+Ideally, in the future we have a different way of just saying "no PMD 
+mappings please", decoupling the mapping from the allocation granularity.
 
-base-commit: f5e50614e39e74401b492a2fa125f2e2b6458bab
 -- 
-2.44.1
+Cheers,
+
+David / dhildenb
 
 
