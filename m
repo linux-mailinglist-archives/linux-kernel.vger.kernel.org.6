@@ -1,198 +1,128 @@
-Return-Path: <linux-kernel+bounces-360568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBA04999CBC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:33:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FEAE999CAC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AD92285111
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:33:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8D191F263B8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFFC320A5F0;
-	Fri, 11 Oct 2024 06:32:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FE711CC140;
+	Fri, 11 Oct 2024 06:31:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="FnyGTEMM"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="nTwOOlbx";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="JPpVPfee"
+Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F71D20A5CA;
-	Fri, 11 Oct 2024 06:32:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62EF3199FB9;
+	Fri, 11 Oct 2024 06:31:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728628327; cv=none; b=YcKyU1bGlrrXk/9cbJgXyEGQt/guBz0XdLxQciD3g8uuk3s1ekwOFnQ9SywFUMA7k9qnoMgGw0jvOIGU7pNewm9D3Ij9hxNQhBdsT6jrIx0CjBlrSYll++meOEGiqKlvqGMSqllB27epmRLItF2EANquZEjjn5QvNQ4jBttWv9I=
+	t=1728628314; cv=none; b=TFt/8ubVCFEa1pm2wsKqzWB2Zw3xd9Y21QtT4tSlxLZagoqte0IJTbmDdz7HzdHKSoj4UAOHprbm/os5uK6Nh9ePCPZsFJRzayCut5LoNVHEF6ceN9iqmMe2zHXPCz1dEjgYAxsREbGsLfaxZgKu5ehL0tjwjCNz2UipHc/wJmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728628327; c=relaxed/simple;
-	bh=/lRN1fRtvgCddmJE4BwxegqnA5l7P5tfodhFSQlZFiU=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=g/CZ3gh2mmY2DLBO0PK9IGTuRfBjHcYzEp7kKVixeTC6qeZI1fBCcVwsjWNpsFku+U+SRNPUg6wIj+9vvgUdY0h28WZz0lZKRjcrBD5MsyUihXK7leqDqsbW4lIwdUprA0GPkbpZYUaD9Zrm1wVJZ6IKhiE5R+4epxbQewcwglE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=FnyGTEMM; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ANvvVS022616;
-	Fri, 11 Oct 2024 06:31:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=rQJTztl2bhM1pzaqlxEKn6nB
-	XXChw5OuypaqDbySJV0=; b=FnyGTEMMSRRUWtnc6wJt+Z+ImENrb+RJZWytU6Wc
-	dD6YBJz7wlK9p+pqmQN1cATf/qiha8FAkCK4oE2Wzwj7XRo7pvh0DjKzwUMKIypc
-	mnsd4qZS8lph08uRlUVoiKaPgVORUGMEO2Orb7ge5WIVLuckqkPBMhFLSMiyP195
-	BVb1ECDZ4nzq89MPoIN7g6nII30+4ewZQ6tNiIYVbLOI//kiWsSRlPDCK4J4qyrr
-	d0Ap2sprXC/l8hucYk+93MuYU1GV80VHLRgficptEnx12fIYd5zqS8BoRmleTXcZ
-	9YOFkztbJr3aW1o9xIDocZzrGZN2Z4sGWL0gng4kpaywhw==
-Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7jms8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 06:31:57 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B6VuaB007203
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 06:31:56 GMT
-Received: from hu-qqzhou-sha.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 10 Oct 2024 23:31:52 -0700
-From: Qingqing Zhou <quic_qqzhou@quicinc.com>
-To: <andersson@kernel.org>, <konradybcio@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <robimarko@gmail.com>,
-        <quic_gurus@quicinc.com>, <will@kernel.org>, <robin.murphy@arm.com>,
-        <joro@8bytes.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-        Qingqing Zhou
-	<quic_qqzhou@quicinc.com>
-Subject: [PATCH 4/4] arm64: dts: qcom: qcs615: add the APPS SMMU node
-Date: Fri, 11 Oct 2024 12:01:12 +0530
-Message-ID: <20241011063112.19087-5-quic_qqzhou@quicinc.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241011063112.19087-1-quic_qqzhou@quicinc.com>
-References: <20241011063112.19087-1-quic_qqzhou@quicinc.com>
+	s=arc-20240116; t=1728628314; c=relaxed/simple;
+	bh=0bqvD0UmMFI1ymelQhYbM/Mt5hf980yPF4/OeqnUlUs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ept/6NQPFp4wqVzXc1VFu2vyXn5HW5HXGvKUa/m7kKBYZnX3NsyhJLwiDNlfvh1Yh1FF0iA4E4d40jSLA2qMz08iQ/qW4Frek269WMSgYwBvWjugt0b6DMQDZL3MTa9OgQuaaITXCY1qsPKOz+HjEuEBqAaFe63bxa97/jslTqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=nTwOOlbx; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=JPpVPfee; arc=none smtp.client-ip=103.168.172.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfout.phl.internal (Postfix) with ESMTP id 545671380138;
+	Fri, 11 Oct 2024 02:31:50 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-04.internal (MEProxy); Fri, 11 Oct 2024 02:31:50 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1728628310; x=1728714710; bh=EpJTgdvBeA
+	hgKzpRgymC2grtynE9KvgloorxM6nvsU0=; b=nTwOOlbxuNMgXbDuHFMG73IFt7
+	ClSTpMUm8bmSmQjMgWXLPUpr4saxDrEkplpNk0N1pAEhr1f4R/lnGTl8zuyvtwvC
+	42vI/d0W+ArP7F6GEcoNJzhhLQ8GTtU4jaU5r2bShfGmBv/HdDtiUozYjAYfenOF
+	bI5fRh9Ja4p9nlz93h90e1P1YySQvAowPB4tq4CS5At6aI8IKqKSFf4o+pxli7Qg
+	tF1ki+I25Rsl4hcKF9yZ3YwmHpnDyOuppXTYdJxtvL7BVRXjz/Rfsy+2r45Bll2a
+	7KHcwU4u+NFw5mYICriNMfCkKcdp1uySLhe+DNDnIkjWtpEAaXq/3Sq6P80g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728628310; x=1728714710; bh=EpJTgdvBeAhgKzpRgymC2grtynE9
+	KvgloorxM6nvsU0=; b=JPpVPfeeykI1zHsMuFnXwu/TuSvnV71VzjKH89OHZRqv
+	wCq1Gx7h4z9QC3SkBfGkcKSdYRKbKr3FF10VMgh6I01okZUK7R549xixWD9FK3g0
+	DR5Oeetf7es+jtjwERlOquse284WJGG92kQlBhzWntkaDnFLw4Hlalw7GcOoYuqc
+	Ok46rY4R8LhAqMuXp30gcDHoj83KkkNLOgwEiuX4IN6ADebzZZbBs4ct6a0OS1M9
+	uncTQaPq6F1363xPE38NECvvAjBuJnmv7HkFz65a+CyZRIOB2wBTGcUsNddlPxPX
+	zMHpoMRxGeAg2oAwi0kwxEiVB43ENuywTmvppUU8wQ==
+X-ME-Sender: <xms:VsYIZ7ssTSAyivj5y7cp_XC8e1NtHdTlAhQgtNDtX2zt6wC98UlfeQ>
+    <xme:VsYIZ8cpZsV2j81TVEB5zxvqS1gN4q0YKhwY85IF1cl8w_xKiGc6qyOeBnzR0HJx-
+    WO6Y2GAN8M17g>
+X-ME-Received: <xmr:VsYIZ-zr3OIki8ZtqbZyv8kggfRI0bCh_zzli0PtyIxup5dvI7gkBvIpNu6dREBpGnxZQSDfiAIMrY1Kv475iAVz5cBan1v_qmV-DQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefjedgudduvdcutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
+    necuhfhrohhmpefirhgvghcumffjuceoghhrvghgsehkrhhorghhrdgtohhmqeenucggtf
+    frrghtthgvrhhnpeehgedvvedvleejuefgtdduudfhkeeltdeihfevjeekjeeuhfdtueef
+    hffgheekteenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhroh
+    hmpehgrhgvgheskhhrohgrhhdrtghomhdpnhgspghrtghpthhtohepkedpmhhouggvpehs
+    mhhtphhouhhtpdhrtghpthhtohepshhfrhestggrnhgsrdgruhhughdrohhrghdrrghupd
+    hrtghpthhtoheptghorhgsvghtsehlfihnrdhnvghtpdhrtghpthhtoheplhhinhhugidq
+    khgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugi
+    dqnhgvgihtsehvghgvrhdrkhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:VsYIZ6PneX5fcseXkU2g8AFdEOuTZZkFvC9FMa92WrItCMgd57uMXA>
+    <xmx:VsYIZ7_Wi4DCBfRlt6UHYDpXO9Uf1bW98ZASED2z4jvCgBJGKQgO_A>
+    <xmx:VsYIZ6WldHkdpOvO4Je62FEH07sdVlY7qPW636caqT-PPT6Z0Pk9zQ>
+    <xmx:VsYIZ8dWNsAkMPFEpnexTnDk0HzyHUy3fxXxF7roJzfovuGHWp4RMA>
+    <xmx:VsYIZ3SnjvJx39y4mkyMGPbFi1-yJLt01jtiBjFVDWh__10pHNoaYijl>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Oct 2024 02:31:49 -0400 (EDT)
+Date: Fri, 11 Oct 2024 08:31:47 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Jonathan Corbet <corbet@lwn.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning for a long time
+Message-ID: <2024101127-scrubbed-unfilled-8b47@gregkh>
+References: <20241011172442.3a9cc81b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 4sQTpp5WM4JVcdxzgZa448L3MSusv3EN
-X-Proofpoint-GUID: 4sQTpp5WM4JVcdxzgZa448L3MSusv3EN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=733 bulkscore=0
- malwarescore=0 mlxscore=0 phishscore=0 clxscore=1015 spamscore=0
- adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410110042
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011172442.3a9cc81b@canb.auug.org.au>
 
-Add the APPS SMMU node for qcs615-based platforms. Add the dma-ranges
-to limit DMA address range to 36bit width to align with system
-architecture.
+On Fri, Oct 11, 2024 at 05:24:42PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> From before the git era, an htmldocs build (if we had such a thing back
+> then) would complain like this:
+> 
+> Documentation/driver-api/usb/usb:164: drivers/usb/core/message.c:968: WARNING: Duplicate C declaration, also defined at driver-api/usb/gadget:804.
+> Declaration is '.. c:function:: int usb_string (struct usb_device *dev, int index, char *buf, size_t size)'.
+> 
+> I assume it is confused because we have documented both a function and a
+> data type called "usb_string".  The former in drivers/usb/core/message.c
+> and the latter in include/linux/usb/gadget.h.
+> 
+> There are about 46 references to the function and 105 to the struct.
+> We could rename the function to usb_string_utf8 ...
 
-Signed-off-by: Qingqing Zhou <quic_qqzhou@quicinc.com>
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 74 ++++++++++++++++++++++++++++
- 1 file changed, 74 insertions(+)
+But usb strings are not in utf8 format :)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index 027c5125f36b..fcba83fca7cf 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -379,6 +379,7 @@
- 	soc: soc@0 {
- 		compatible = "simple-bus";
- 		ranges = <0 0 0 0 0x10 0>;
-+		dma-ranges = <0 0 0 0 0x10 0>;
- 		#address-cells = <2>;
- 		#size-cells = <2>;
- 
-@@ -524,6 +525,79 @@
- 			reg = <0x0 0x0c3f0000 0x0 0x400>;
- 		};
- 
-+		apps_smmu: iommu@15000000 {
-+			compatible = "qcom,qcs615-smmu-500", "qcom,smmu-500", "arm,mmu-500";
-+			reg = <0x0 0x15000000 0x0 0x80000>;
-+			#iommu-cells = <2>;
-+			#global-interrupts = <1>;
-+
-+			interrupts = <GIC_SPI 65 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 97 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 99 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 100 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 101 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 102 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 103 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 104 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 105 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 106 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 107 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 108 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 109 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 110 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 111 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 112 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 113 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 114 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 115 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 116 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 117 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 118 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 181 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 182 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 183 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 184 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 185 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 186 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 187 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 188 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 189 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 190 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 191 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 192 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 315 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 316 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 317 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 318 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 319 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 320 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 321 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 322 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 323 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 324 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 325 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 326 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 327 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 328 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 329 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 330 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 331 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 332 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 333 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 334 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 335 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 336 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 337 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 338 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 339 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 340 IRQ_TYPE_LEVEL_HIGH>,
-+					<GIC_SPI 341 IRQ_TYPE_LEVEL_HIGH>;
-+		};
-+
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
--- 
-2.17.1
+As C can handle this just fine, odds are sphinx should also be able to
+handle this?
 
+thanks,
+
+greg k-h
 
