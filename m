@@ -1,137 +1,134 @@
-Return-Path: <linux-kernel+bounces-361434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA6F999A828
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:45:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73E5D99A847
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D071C22FA6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:45:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4FD9282533
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90ADC19645D;
-	Fri, 11 Oct 2024 15:45:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E725198E85;
+	Fri, 11 Oct 2024 15:49:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="D+aNsUu9"
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BJnQPN02"
+Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 266E013CF82
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A961198A30;
+	Fri, 11 Oct 2024 15:49:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661533; cv=none; b=GLywUZ/KRACEzLPPrwFa6LfV2DbkRzad+2SUZgY4aaGqSCgphsfF98Jl21lNWfnadZT0rnTFKbc+UR4wr3vYyk2LAmzDNTEtnc3ThgYmQvsRP9luaw4IJK7nZH1Ltqtc79wcJuaYEMfKQGexKlmuauMr+43diZWYCzU9vgOokMQ=
+	t=1728661769; cv=none; b=kOqQtwiQ1ByT4wW/Zo976mW+c0+SsZ1XFhfkGRa1eEWmXK9tL5p8VmZ7Cwxsa6oFW90tsRe4rDtkRa0oEZG1NFukCZx4V35160FUfffrw7jDOaFrAZnexJlQH5eKPysY2SYVLR5MOeklfif4KqpJ/T18ZCrUl/yQ/XFqaQQX2AE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661533; c=relaxed/simple;
-	bh=ZZ67WxIVnB76P4GfmunoWfIO+zyCFe8qhuB0nefs8Go=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ejHLVZ907f3dGT7sJvmMzMvlea0jGEM7LGFgAromwGwY6Pd3irTvyPSRHLaqI1rh55f8DvTpMEaxhEJ0s3vPqNQZ5hUTUYRSOV1B1yLeLgVZTSZURBADg6hScYmk/2/fbklntNcQFqmjXcqLQxIXIqDm/CSt+YwqU4cG9jeAxbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=D+aNsUu9; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728661524; bh=Zl3/D+6y7HI3TEg3CIvo46/vvwEgBKmvavaGc3sU/r4=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=D+aNsUu9+LdQcKiQUSa8x1gKTuzbYoTsV7xzwhK6uq4tYwO0CM38gN60CmUCmfAKWBRW785DP8BAOdKB3LCG7ixRKKZWjvct+obPKFS3aKJx5PmAZ0WrNYNkFXDPnjCLY01gRG5uYgxYyD0nY4POLx6LAwr+4lDcZtNtjX4NJPQHSMM6U2mfHcqiNH67LfaExIQ1gzEFu/r+cOtJ60ztSbX9diy/rkF4XJCNUQpExDJgqhKnb29PozhBD2NRw2gfeWTri0Hz8amHT0S3W/ElNA2z9EKCXRNjqJKc8DFa2z1MPPpGrNmzoHaVl0GDeAdYgiMcDXTMTPCSlItWOVJ8cA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728661524; bh=w9gCtYguL6n11vJQ4fVljGoD4rfigGM2plM52X///Q1=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=g+0yjnZA4pJNN9GYrAvMNfVsxE65pWTkQjy3qlL5+8hGeScm1/Fe/XboCcqH8vvcm0nmBuI8bW5FmUrmqWYoNFeuWmVBySu1VYd3HoI+6ypOfyvoVWjgBMqNZqbf40F8DiZJepSw+bZmgTErdCHANAxDHPFH6UsFJLzCo3WRu+PA1PLVOb11vMullXXHL6UiS0SE4kAGUAhCqobCueHS72JQGon9htW5rJpcYI1u3FL+G+OaHc6H8Kfjszkj8m55Bv2Nx+tNemkGwFxqgNEynwxD3nk0Ifg0kCOuCLhWj20pg0tzJdR7LC8x5thS0NsGFfXKhZ0xpZUTeCkcFy8UUQ==
-X-YMail-OSG: gU3cfakVM1mj7H_VcPpD_c8dGIS9CE5TsIQivt9C4nbWK7AXhTJg36J5FYn1Vdu
- P.hVVsOBkNc5_F7d8T_wGuaKECgbK33F0HBo7qWIyJ_vTGdBjGRlp02EGRQPyzYgfDRC0sKkTt4y
- xbKNngXtY5wXj4Xd9bZNHWXaJaMdoew206pAIbWKUAA0nm_.lAEFHMsz1RCPfMK4sCmk4NvX_gGJ
- zxgWoipxtYOPZse1be6omXXKMaSTUWxknPRhDg.yhpkU1iOgHcy3hHDofFodmSZNq9qYiUkIj7OM
- QIA1VdwnwpkWh8.j.GgBctj5bo8JZFDydm_P_W8A0Y.Hpf4llO8Zt4FGVa1_2QVnta0Ofidez.QF
- gn_9ZQZQxCr97WLo4xCLgd2Hg6NQaUX0WIzvpjGNq_9fpG8vuHEUd0X7Psxh0vdDa_xAWRLn4t75
- U9B.RyXfXUKwk03TLFsPAGhGKEqcqOB_IYE35mfSoNT6DYEazjVr_DNwJxnFWCDGNn8VeSroRQF0
- Gf0jAWrGRShuRvVGHWmoAK_z3tz8M.hsbz5soABnYV5wEwNcT0Y5LhDABg.cuq9hzgmEPHq6ClqW
- TDUp2cb63AkkyecIewznVtwSJ3t6gXzoB_gKsUX7n.rkQsCJZCLiHo.OV1wZ07ZFeEGrnuupWP1F
- QbGTnA58Z1e7nzXuE1dhKg25mnTJEys_MIk7e2lC3ttzShX2TyH8nQSKthVhUO8glfD.FCIoMMEL
- RxDW06HDYE4UVp3FSXSyrAZMnQdT8nNHNzWMYA_8zkDZg3ekhFLXpH1snvYyhdyk9prqK4xRNTUZ
- yX9T1B7MdNZPc3CTHnUI0U7KU6mox8CGN4.LPOrEoELtEmaqUcJTqqWRE4whNVeVn1b9LppOF7Xk
- giEJirxEbxfCi79ktYYYNViFdTkGR3at8yCEyY81b1owuse.rkAdL8D_Fz6VpN5V.j9vkaOVxrca
- XbVDqwlhXBmXz8_9uFyoENLVidoVHj8allgTkiTLDaaEuNbL2WlKoL8jSpscYVJjr.adV2qZAzsm
- 3ED5LhDQciz8QsPo1Ek.60d3bmSXv6pwIVsDRXEcuyX2YbYM49zUqyipJK16ZH7B7ip_bTVmwIWI
- 6Uoa_rwfuhIYC9AXCIdN_yupv9VGor3GnKSaFXzLaBEHgDw41flALqNDwhT8L5RgnttKmDxkjiYl
- Q1fYdkKJU2V4RVcjwVOkpDQsOjoMbUatFYxH4wdyBA_fDZSZVrUlxEPYZkMyXhY8JyxXyftpMXhM
- _MV_HLZoWIG9AQG33ZeB6qArjKSJeKBw6diOc2kmpChfyrQ2S7qaZRyCiziL2_dDeQulmzpFI0Sn
- smzaHjOoBr4hPXElr5bwvq6EC_IDg8uNmZb3P.y.sNmQ4Fxgrpd3Xhj3Qrxx5iQaoFn2SBrmi43P
- T8rLztBXJeYIoAXz.MsLYpbUp3sN0NxyC3FSqmMYsVY5Ct7d7vY9p4OiwO4idsZ9SEdF5LZF22Hu
- eLxRY6vu0qXsY.s1v_0Dj_q29CaD4SN2PUg2zwnVJHfMjgjX92Vi_TzcF.03_6LbiLPJernDKy.R
- dMafeJ9AX.QSf._ANjf93VGQTaGGZLRLqnsg.UpNlMC5HcQG3LhV15vDaOSJzU8CCbpoXT8iaV4V
- tGOMIoYPhLxP3EIX5tFYjAOiOyef_Z.FXZ4y1Eud6qhqyZBAcdQWJNc52bUfD6oL_9oargRVqzL4
- _OaW6It50BYG03ppxJ3T7uU4GWvqxAg3LYMYxebgKens88T.mS9k5j0M0krCmS1E0pBFMXS1.PUi
- iLGb.jmJ76DEwi87g1J6C1S1L.rWz2Fj.wSkQkOY60IenozZ8MgkYPBqXr2WBmVO3sgxQ1sVhHdO
- Gko6wAvMuly7FpErQqpN8KddZoPDvHBKFJrOXsE0v5lvUizA46B.vpQfdh7b3IY1MPkgJ7_iaxr.
- s0fMIxNnH5CL8AUR6mJm83DUB6qFkM6yyt61JPSfzBOndfkwYWzzyHWLp0G9eyfznUQHwraTjJX4
- fLBNfNXEXAyDBcdLoqZk.5EUEuf_n3LXahb.4AnUYKC73Er34se.sgvBQRCsj0FlWRjfQ03cWEZZ
- hKxsYOHPwifTLGacTRL7_lWKcncatdheN98TOzcoQCfYTRDn6gaRVpRxGaxG8GBFLvQaaqr.ANjp
- xtgTZRKx8nsfb8krZVKW0RuEBHMZe5f4DejrWehv1xusc4tFEtLNpNSkmGAGQ1GP94pOnsLcMFzA
- 6zVTkBGtaxUliA_jo0fXPlscOHyh8xVuGjvBpZgA1IKOuFyVSJgOI9x99l.dgoNdM3EKUXcRHxUO
- UuvblGQ6vHp_4.dozVjKhGJ7oI2c0qBMFgI4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 7ffac3f6-d9b3-4c13-aa62-50fffeef9c53
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 11 Oct 2024 15:45:24 +0000
-Received: by hermes--production-gq1-5d95dc458-24x88 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8eeba5143bfa479ac5e23185bad5640a;
-          Fri, 11 Oct 2024 15:45:18 +0000 (UTC)
-Message-ID: <c346f1a8-8edb-4736-ba78-998316ef611d@schaufler-ca.com>
-Date: Fri, 11 Oct 2024 08:45:16 -0700
+	s=arc-20240116; t=1728661769; c=relaxed/simple;
+	bh=f2hcgsydgRYVoApnvHt1Ek6C1pfxeKgde/tWJDkAMv8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=TZKunO+lbv5uLDAyxn2/r3ZA37v38wHUEPSgJpc0+lnS2FD02trfbvbwAJMEmzSbpp6R7cNatxOiuMqyN2BCCEl6y4fdC8JYhif4PK6XUjyXYyt+4rc/xEv5THI0RDv3CIgty4ZuX8JKq5ca6ZWv9GCfAkz16P4mtiW1V+U4Kgc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BJnQPN02; arc=none smtp.client-ip=209.85.215.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7ea535890e0so131918a12.2;
+        Fri, 11 Oct 2024 08:49:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728661768; x=1729266568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=J1St2Im4uOTbsDXAIoCqhnZbuttTkVPtBeaDvpamXxQ=;
+        b=BJnQPN02lReiSqOduHQcPYfjtP671blYjZeoVWqLA9Sfl/DxUua8NvYzD9AzJKfoeM
+         1RwObS3bbVZtFmtVqNc0wXDlPcYJquLaW7zJScR8oe5QqosGBa53zuKuq2VlVg2ryOGd
+         lPpsHBBK6PoB0fmGX2J15c2qs5Sxdjtbo87b0e0rTpGYm7V4QTL+WV96vLMLPy27JsQx
+         GOGgy4HY3P+ykASGgFxUGy8sbjMSYe4c8SyVY7P5PeOB69JOgDgEbEZsM0zweT7kcbVO
+         eRUfD3mK1JVj6a2ru05kY0I4z/ygI4wCbUROgLNeiR7cmSGmrce7kM9oMPMnswiHKB4H
+         jy/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728661768; x=1729266568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=J1St2Im4uOTbsDXAIoCqhnZbuttTkVPtBeaDvpamXxQ=;
+        b=ty28Zyr21PK34HaVihAoEHKegLWnIrhbkZM3hXvmw6rYYhuLaaH7eX4Mbxkdg7vycf
+         JNPDJXIiYtvbLFBINF2f1fiU62Xw+5iaB+eEJPc6/CjjvFhGMTtO/C/N5GKEBwC3eW2c
+         OOci+YI5aQccxBsLwkBIH46wa89MNSmsD8tQUF7+RvP2l2VYl67Fcas7YsKzMBykyXAQ
+         QapnEVPqxdhQfkgoBEZl33RevSCMJiH92nuCTT9wgKLD/8I6np/bkUounzmsAtd+w5EI
+         GKFDeBTmo7UhdxqGISyCQL1CCCi3YDEchmy5xwWBn3TSnKXO5akUMbDhzVOXpyDuzJcR
+         abTg==
+X-Forwarded-Encrypted: i=1; AJvYcCXCAICdikFIo6Sa26lF7+IDXe60QVHe/2alAZwPZ0GVcbzRW9Jau9LQ0pjPuQbb4/oo2tjoBBf4IqfPBkw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbgpWWVQkYycEXf6qeOMcuFllbi9Gj/YZIusvB/7CN2jAxvW/6
+	GGBqJUaFPpL1IztrxmWtR4sySeK2VRh8YggNQ9AB4fzhYECylUIm
+X-Google-Smtp-Source: AGHT+IE6uVyZZ5iMM+uYfdamWAPqsmsaVtX7zoqAR7E0nuUfTQI0i0pXJJjiy7S0nZW6q8UhSpYleg==
+X-Received: by 2002:a17:90a:8c03:b0:2e0:9d55:3784 with SMTP id 98e67ed59e1d1-2e2f0808125mr1823037a91.0.1728661767527;
+        Fri, 11 Oct 2024 08:49:27 -0700 (PDT)
+Received: from aizome.localdomain ([117.172.223.242])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5fa92e1sm3367382a91.35.2024.10.11.08.49.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 08:49:27 -0700 (PDT)
+From: Pengyu Zhang <zpenya1314@gmail.com>
+To: si.yanteng@linux.dev
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	zpenya1314@gmail.com,
+	yaxin_wang_uestc@163.com
+Subject: Re: [PATCH v4] Docs/zh_CN: Translate page_tables.rst to Simplified Chinese
+Date: Fri, 11 Oct 2024 23:49:13 +0800
+Message-Id: <20241011154913.2808-1-zpenya1314@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/13] LSM: Add the lsm_prop data structure.
-To: Paul Moore <paul@paul-moore.com>, linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org,
- john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp,
- stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org,
- selinux@vger.kernel.org, mic@digikod.net, apparmor@lists.ubuntu.com,
- bpf@vger.kernel.org, Casey Schaufler <casey@schaufler-ca.com>
-References: <20241009173222.12219-2-casey@schaufler-ca.com>
- <1e6f94db91f0df07373ec1e0c8f3eced@paul-moore.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <1e6f94db91f0df07373ec1e0c8f3eced@paul-moore.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Transfer-Encoding: 8bit
 
-On 10/10/2024 8:08 PM, Paul Moore wrote:
-> On Oct  9, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
->> When more than one security module is exporting data to audit and
->> networking sub-systems a single 32 bit integer is no longer
->> sufficient to represent the data. Add a structure to be used instead.
+Hi, Yanteng
+
+>在 2024/10/11 09:47, Yanteng Si 写道:
 >>
->> The lsm_prop structure definition is intended to keep the LSM
->> specific information private to the individual security modules.
->> The module specific information is included in a new set of
->> header files under include/lsm. Each security module is allowed
->> to define the information included for its use in the lsm_prop.
->> SELinux includes a u32 secid. Smack includes a pointer into its
->> global label list. The conditional compilation based on feature
->> inclusion is contained in the include/lsm files.
+>> Hi Pengyu,
 >>
->> Suggested-by: Paul Moore <paul@paul-moore.com>
->> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
->> Cc: apparmor@lists.ubuntu.com
->> Cc: bpf@vger.kernel.org
->> Cc: selinux@vger.kernel.org
->> Cc: linux-security-module@vger.kernel.org
->> ---
->>  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
->>  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
->>  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
->>  include/linux/lsm/smack.h    | 17 +++++++++++++++++
->>  include/linux/security.h     | 20 ++++++++++++++++++++
->>  5 files changed, 86 insertions(+)
->>  create mode 100644 include/linux/lsm/apparmor.h
->>  create mode 100644 include/linux/lsm/bpf.h
->>  create mode 100644 include/linux/lsm/selinux.h
->>  create mode 100644 include/linux/lsm/smack.h
-> Looks good to me, thanks for the lsm_prop rename.  As a FYI, I did add
-> a line to the MAINTAINERS entry for include/linux/lsm/.
-
-Thank you. 
-
+>> 在 2024/10/8 23:38, Pengyu Zhang 写道:
+>>> This patch provides a Simplified Chinese translation of the
+>>> "page_tables.rst" document, aimed at improving accessibility
+>>> for Chinese-speaking developers and users.
+>>>
+>>> The translation prioritizes technical accuracy and readability,
+>>> ensuring that the content remains clear and informative for
+>>> its intended audience.
+>> Let's add a commit tag so that the scripts/checktransupdate.py can
+>> recognize it. just like:
+>>
+>> Subject:[PATCH v3] docs/zh_CN: add the translation of kbuild/gcc-plugins.rst <https://lore.kernel.org/linux-doc/20240907070244.206808-1-dzm91@hust.edu.cn/#r>
+>> Date: Sat,  7 Sep 2024 15:02:08 +0800
+>>
+>> Finish the translation of kbuild/gcc-plugins.rst and move gcc-plugins
+>> from TODO to the main body.
+>>
+>> Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora instructions
+>> for GCC plugins")
+>>
+>>
+>> Thanks，
+>> Yanteng
+>>
+>Sorry, my email client sent an HTML email and I have fixed it. Now resend
+>to the mailing list.
 >
-> --
-> paul-moore.com
+>
+>Thanks,
+>Yanteng
+
+We discovered a pfn calculation error during the translation of the 
+page_tables.rst. I have submitted another patch to fix it, and it had been
+reviewed by three maintainers, but it has not yet been merged into the mainline. 
+https://lore.kernel.org/all/20241009144135.12453-1-zpenya1314@gmail.com/
+
+So I have a question: should the commit tag be based on the fix patch
+I submitted, or the tag of the original page_tables.rst?
+
+Thanks,
+Pengyu
+
 
