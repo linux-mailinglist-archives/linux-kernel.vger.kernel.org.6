@@ -1,258 +1,185 @@
-Return-Path: <linux-kernel+bounces-360608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C64C999D28
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:53:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC25999D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:53:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DE701C21982
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AD06282B50
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C55F20A5E9;
-	Fri, 11 Oct 2024 06:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="azQUAexh"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C179920966D;
+	Fri, 11 Oct 2024 06:52:47 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4B1720ADD4;
-	Fri, 11 Oct 2024 06:51:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FE6911187;
+	Fri, 11 Oct 2024 06:52:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629519; cv=none; b=gjlWLcr8XUT33LCKVuFbvQHJGo/DPMwScjIdcdkpKIiY5l/Csek8bugRmGuFst9s1SMu1XbS//IQN7mzJzaUXNBeaWwJFhPTPhLA0Z5DMAx4FUmQWR6TYYgFXLyPLPi9QU9HZbHj7NHAODIKyVYa1Q/QeSXH5nnVfg39o4r3aXA=
+	t=1728629567; cv=none; b=dDHmCUEY44nrL9P2OJZYR5ONVyMohir58rdJDpg/x10MMmWY2uDnP8qa+XHkOeIQuNYgG1DcRh63fNZvFMh6VxRDEGP5U50v0PKo7ohLeQrFaW2QeWynKfSXRXPxBqGDg7Tk48KTLsDEmnbjuGUWJpjsxruOt7LFsfTDFRk7R4o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629519; c=relaxed/simple;
-	bh=zUzz5FMZgllG1DiUJqa8A07/Ko9fX/OQfwhwMPLWmC0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZsBcqjp3r4oUv81Fm+7zR8fJFBjBDjVPpzc49aiNsto61OcaF6+7XfWqoLXOwDFvyx9KRv2C7wF4KNt3Ebafu7XxP7bMYnqFqMPRRlS6OXnOfOakb/nkQJoh8qiwm3yY4VMX7yUbxxD74yFbhakCP8ywwDV00hRfwDrjwYGwbI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=azQUAexh; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-717839f9eb6so142219b3a.3;
-        Thu, 10 Oct 2024 23:51:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728629517; x=1729234317; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RoXrcFLiduR8K9NPSxdvgXuql0UA1hd/Qh6Orl6Z1QI=;
-        b=azQUAexh43Thv8B698VpC0ZpUHLij3hm6Py7fnzfSkdCBX3PD9ujn6up1kI2BLG4o/
-         IMCRUl+d7viGaEQOSdlTR+Ly14hOeAc0jfw38x42//pOkREUfjg8FmTO5gf9R9uWrOi3
-         cPoucKkbKLOzzaKr3JKYjZQq5B0RSPw8NiNl7Cim9faoRrHq74BHUbpVqJTFwhCBJTPW
-         a0QTixQ9rINCTSKHrKxwSMd1StA/N8eaHNTU6ib6+DNWMl5X6tn0yw5++Wkudlwvkfpr
-         USosirxgM/O7TjVVvo+jKOksl0DBuplhfHIHkfMkbRojVwRfe1p/JNeCQUajIfa9T6Oq
-         UD5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728629517; x=1729234317;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=RoXrcFLiduR8K9NPSxdvgXuql0UA1hd/Qh6Orl6Z1QI=;
-        b=nlH853UW1EynB7vxgH41Cs1yzsiUkD5ON0yKM/w1N+sNc1cETu90my1PGFTLwP2RWa
-         j4iYeHAXwymJbprdQ6iExJN3VTg8Vp5GZ36CQK0kPqea8mr1KYuZVxubiTFORwxQRHdn
-         hjgzVOmWuleHdQs2lGDjZrmh9uVmcsO22fuOhquXVpvFIOC3DGM/ON73umJoPmC5XDSn
-         3gvQ+72vVrpDFnP/xN6X1alun8rUtpcZM7fTJb7SuTKvbmieEo8x6byPHm98BboevkdM
-         kLO0X6q2TKaua9752W6qSe/v3gioBU38sp3INVDCNpsv61ncKsZcZIuFkCPu8ts35LDT
-         MdpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW2fmN1v9BuG/Yxa9WjXJT7sclq26ZooeQS3Teh2SpOEugJvQciohL2epsfKKCm7P4ZntrjIxWJS7L2UJYh@vger.kernel.org, AJvYcCWbjVww4KUyxw1RjUdVR9exMdQDVcQc8nM4luvwH7BZnp3QW7MBk2Q6qDxdzFCIYSvxaumcYG4dNX4q@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSyMBp/ImQ5OX4mXs+jARNeFZtL8n38SMk2MME2grc26M0rIqg
-	I80GSVjfbjBC/PZQiJ13yNNifGSWLGFZdTmYhdeVVABQkuwORFRX
-X-Google-Smtp-Source: AGHT+IE0a4raEMb1CKHZOr3RN/vfXnIURFS+NIbfrAYdekgJC1BrJeUqK/aGlnsCilzTxJ63p8IKRQ==
-X-Received: by 2002:a05:6a00:9453:b0:71d:f2d9:bd5d with SMTP id d2e1a72fcca58-71e380c5a41mr1100111b3a.7.1728629516958;
-        Thu, 10 Oct 2024 23:51:56 -0700 (PDT)
-Received: from localhost.localdomain ([103.29.142.67])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab109e4sm2036099b3a.206.2024.10.10.23.51.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 23:51:56 -0700 (PDT)
-From: Frank Wang <frawang.cn@gmail.com>
-To: vkoul@kernel.org,
-	kishon@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	heiko@sntech.de
-Cc: linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	william.wu@rock-chips.com,
-	tim.chen@rock-chips.com,
-	Frank Wang <frank.wang@rock-chips.com>
-Subject: [PATCH v5 3/3] phy: rockchip: inno-usb2: Add usb2 phys support for rk3576
-Date: Fri, 11 Oct 2024 14:51:40 +0800
-Message-Id: <20241011065140.19999-3-frawang.cn@gmail.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241011065140.19999-1-frawang.cn@gmail.com>
-References: <20241011065140.19999-1-frawang.cn@gmail.com>
+	s=arc-20240116; t=1728629567; c=relaxed/simple;
+	bh=SLFgZQahCLtFyNqgNRxTY+gRqHIFvgAOjkV0MOUTMns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ulbJAgRvGHlVc65qsEGjZphLSKMekGbhAijA5jNDVOgVJZ+2VnJNQ6FCLS2CbvVwWVn8FgEAPlimFHYx2O6CrRe4wEpLuJHMAxL40BWO7aB8AbvNl7IaLs5vvGsULMgpLrZOhXrWWaxAW6q1lckpxPr023YMBTt1UG7azdmhv3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEB0BC4CEC3;
+	Fri, 11 Oct 2024 06:52:45 +0000 (UTC)
+Message-ID: <f2953879-9f52-4d61-9093-7dd327d7149c@xs4all.nl>
+Date: Fri, 11 Oct 2024 08:52:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] media: uvcvideo: Stop stream during unregister
+To: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: Ricardo Ribalda <ribalda@chromium.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240926-uvc_stop_streaming-v1-1-038180fafe5f@chromium.org>
+ <80f800c8-46e0-47bb-8a7b-1566e5eed91a@xs4all.nl>
+ <20241007144401.GE6403@pendragon.ideasonboard.com>
+ <799ce9ae-bdb4-4fcf-be33-a40a7c746705@xs4all.nl>
+ <20241010182304.GF32107@pendragon.ideasonboard.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20241010182304.GF32107@pendragon.ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: William Wu <william.wu@rock-chips.com>
+Hi Laurent,
 
-The RK3576 SoC has two independent USB2.0 PHYs, and each PHY has
-one port. This adds device specific data for it.
+On 10/10/2024 20:23, Laurent Pinchart wrote:
+> Hi Hans,
+> 
+> On Mon, Oct 07, 2024 at 04:53:30PM +0200, Hans Verkuil wrote:
+>> On 07/10/2024 16:44, Laurent Pinchart wrote:
+>>> On Mon, Oct 07, 2024 at 09:46:47AM +0200, Hans Verkuil wrote:
+>>>> Hi Laurent,
+>>>>
+>>>> Just a reminder: I have extensively reviewed this patch here:
+>>>>
+>>>> https://lore.kernel.org/linux-media/f4c49ccf-9dc9-475a-8fc9-4ef4c85a729a@xs4all.nl/
+>>>>
+>>>> and here (specifically checking for mmap() races):
+>>>>
+>>>> https://lore.kernel.org/linux-media/1a10530f-b4bb-4244-84ff-1f2365ae9b23@xs4all.nl/
+>>>>
+>>>> To the best of my ability I believe this patch is correct.
+>>>>
+>>>> Unless you have any additional concerns I plan to take this patch as a fix for
+>>>> v6.12 on Monday next week.
+>>>
+>>> I thought we had an agreement that I could submit an alternative fix for
+>>> v6.12. Can you therefore delay merging this patch until v6.12-rc6 ?
+>>
+>> Correct, if there is indeed something wrong with this patch and an alternative
+>> fix is needed (or at least should be considered).
+>>
+>> But I see nothing wrong with this patch after careful analysis. If you disagree
+>> with my analysis, and you think I missed a possible race condition, then that's
+>> a reason to wait for a better fix. Otherwise there is no point in waiting any longer.
+> 
+> I'm in Montréal this week for the GStreamer conference and XDC. I'll
+> reply to your last e-mail early next week, let's make a decision then.
+> Surely this can wait until -rc4 before being merged ?
 
-Signed-off-by: William Wu <william.wu@rock-chips.com>
-Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
----
-Changelog:
-v5:
- - no changes.
+Sure, no problem.
 
-v4:
- - split the bulk clock management as a new patch, and this just leave
-   adding rk3576-specific data.
+Enjoy Montréal!
 
-v3:
- - amend the commit log adds clocks converting.
- - retrieve the clock by "clks.id" in *_clk480m_register() function.
+	Hans
 
-v2:
- - no changes.
-
-v1:
- - https://patchwork.kernel.org/project/linux-phy/patch/20240923025326.10467-2-frank.wang@rock-chips.com/
-
- drivers/phy/rockchip/phy-rockchip-inno-usb2.c | 103 ++++++++++++++++++
- 1 file changed, 103 insertions(+)
-
-diff --git a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-index f71266c27091e..96f3d868a526f 100644
---- a/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-+++ b/drivers/phy/rockchip/phy-rockchip-inno-usb2.c
-@@ -1510,6 +1510,30 @@ static int rk3128_usb2phy_tuning(struct rockchip_usb2phy *rphy)
- 				BIT(2) << BIT_WRITEABLE_SHIFT | 0);
- }
- 
-+static int rk3576_usb2phy_tuning(struct rockchip_usb2phy *rphy)
-+{
-+	int ret;
-+	u32 reg = rphy->phy_cfg->reg;
-+
-+	/* Deassert SIDDQ to power on analog block */
-+	ret = regmap_write(rphy->grf, reg + 0x0010, GENMASK(29, 29) | 0x0000);
-+	if (ret)
-+		return ret;
-+
-+	/* Do reset after exit IDDQ mode */
-+	ret = rockchip_usb2phy_reset(rphy);
-+	if (ret)
-+		return ret;
-+
-+	/* HS DC Voltage Level Adjustment 4'b1001 : +5.89% */
-+	ret |= regmap_write(rphy->grf, reg + 0x000c, GENMASK(27, 24) | 0x0900);
-+
-+	/* HS Transmitter Pre-Emphasis Current Control 2'b10 : 2x */
-+	ret |= regmap_write(rphy->grf, reg + 0x0010, GENMASK(20, 19) | 0x0010);
-+
-+	return ret;
-+}
-+
- static int rk3588_usb2phy_tuning(struct rockchip_usb2phy *rphy)
- {
- 	int ret;
-@@ -1938,6 +1962,84 @@ static const struct rockchip_usb2phy_cfg rk3568_phy_cfgs[] = {
- 	{ /* sentinel */ }
- };
- 
-+static const struct rockchip_usb2phy_cfg rk3576_phy_cfgs[] = {
-+	{
-+		.reg = 0x0,
-+		.num_ports	= 1,
-+		.phy_tuning	= rk3576_usb2phy_tuning,
-+		.clkout_ctl	= { 0x0008, 0, 0, 1, 0 },
-+		.port_cfgs	= {
-+			[USB2PHY_PORT_OTG] = {
-+				.phy_sus	= { 0x0000, 8, 0, 0, 0x1d1 },
-+				.bvalid_det_en	= { 0x00c0, 1, 1, 0, 1 },
-+				.bvalid_det_st	= { 0x00c4, 1, 1, 0, 1 },
-+				.bvalid_det_clr = { 0x00c8, 1, 1, 0, 1 },
-+				.ls_det_en	= { 0x00c0, 0, 0, 0, 1 },
-+				.ls_det_st	= { 0x00c4, 0, 0, 0, 1 },
-+				.ls_det_clr	= { 0x00c8, 0, 0, 0, 1 },
-+				.disfall_en	= { 0x00c0, 6, 6, 0, 1 },
-+				.disfall_st	= { 0x00c4, 6, 6, 0, 1 },
-+				.disfall_clr	= { 0x00c8, 6, 6, 0, 1 },
-+				.disrise_en	= { 0x00c0, 5, 5, 0, 1 },
-+				.disrise_st	= { 0x00c4, 5, 5, 0, 1 },
-+				.disrise_clr	= { 0x00c8, 5, 5, 0, 1 },
-+				.utmi_avalid	= { 0x0080, 1, 1, 0, 1 },
-+				.utmi_bvalid	= { 0x0080, 0, 0, 0, 1 },
-+				.utmi_ls	= { 0x0080, 5, 4, 0, 1 },
-+			}
-+		},
-+		.chg_det = {
-+			.cp_det		= { 0x0080, 8, 8, 0, 1 },
-+			.dcp_det	= { 0x0080, 8, 8, 0, 1 },
-+			.dp_det		= { 0x0080, 9, 9, 1, 0 },
-+			.idm_sink_en	= { 0x0010, 5, 5, 1, 0 },
-+			.idp_sink_en	= { 0x0010, 5, 5, 0, 1 },
-+			.idp_src_en	= { 0x0010, 14, 14, 0, 1 },
-+			.rdm_pdwn_en	= { 0x0010, 14, 14, 0, 1 },
-+			.vdm_src_en	= { 0x0010, 7, 6, 0, 3 },
-+			.vdp_src_en	= { 0x0010, 7, 6, 0, 3 },
-+		},
-+	},
-+	{
-+		.reg = 0x2000,
-+		.num_ports	= 1,
-+		.phy_tuning	= rk3576_usb2phy_tuning,
-+		.clkout_ctl	= { 0x2008, 0, 0, 1, 0 },
-+		.port_cfgs	= {
-+			[USB2PHY_PORT_OTG] = {
-+				.phy_sus	= { 0x2000, 8, 0, 0, 0x1d1 },
-+				.bvalid_det_en	= { 0x20c0, 1, 1, 0, 1 },
-+				.bvalid_det_st	= { 0x20c4, 1, 1, 0, 1 },
-+				.bvalid_det_clr = { 0x20c8, 1, 1, 0, 1 },
-+				.ls_det_en	= { 0x20c0, 0, 0, 0, 1 },
-+				.ls_det_st	= { 0x20c4, 0, 0, 0, 1 },
-+				.ls_det_clr	= { 0x20c8, 0, 0, 0, 1 },
-+				.disfall_en	= { 0x20c0, 6, 6, 0, 1 },
-+				.disfall_st	= { 0x20c4, 6, 6, 0, 1 },
-+				.disfall_clr	= { 0x20c8, 6, 6, 0, 1 },
-+				.disrise_en	= { 0x20c0, 5, 5, 0, 1 },
-+				.disrise_st	= { 0x20c4, 5, 5, 0, 1 },
-+				.disrise_clr	= { 0x20c8, 5, 5, 0, 1 },
-+				.utmi_avalid	= { 0x2080, 1, 1, 0, 1 },
-+				.utmi_bvalid	= { 0x2080, 0, 0, 0, 1 },
-+				.utmi_ls	= { 0x2080, 5, 4, 0, 1 },
-+			}
-+		},
-+		.chg_det = {
-+			.cp_det		= { 0x2080, 8, 8, 0, 1 },
-+			.dcp_det	= { 0x2080, 8, 8, 0, 1 },
-+			.dp_det		= { 0x2080, 9, 9, 1, 0 },
-+			.idm_sink_en	= { 0x2010, 5, 5, 1, 0 },
-+			.idp_sink_en	= { 0x2010, 5, 5, 0, 1 },
-+			.idp_src_en	= { 0x2010, 14, 14, 0, 1 },
-+			.rdm_pdwn_en	= { 0x2010, 14, 14, 0, 1 },
-+			.vdm_src_en	= { 0x2010, 7, 6, 0, 3 },
-+			.vdp_src_en	= { 0x2010, 7, 6, 0, 3 },
-+		},
-+	},
-+	{ /* sentinel */ }
-+};
-+
- static const struct rockchip_usb2phy_cfg rk3588_phy_cfgs[] = {
- 	{
- 		.reg = 0x0000,
-@@ -2109,6 +2211,7 @@ static const struct of_device_id rockchip_usb2phy_dt_match[] = {
- 	{ .compatible = "rockchip,rk3366-usb2phy", .data = &rk3366_phy_cfgs },
- 	{ .compatible = "rockchip,rk3399-usb2phy", .data = &rk3399_phy_cfgs },
- 	{ .compatible = "rockchip,rk3568-usb2phy", .data = &rk3568_phy_cfgs },
-+	{ .compatible = "rockchip,rk3576-usb2phy", .data = &rk3576_phy_cfgs },
- 	{ .compatible = "rockchip,rk3588-usb2phy", .data = &rk3588_phy_cfgs },
- 	{ .compatible = "rockchip,rv1108-usb2phy", .data = &rv1108_phy_cfgs },
- 	{}
--- 
-2.45.2
+> 
+>>>> Alternatively, you can make a PR for 6.12 with this patch that I can pull from.
+>>>>
+>>>> Regards,
+>>>>
+>>>> 	Hans
+>>>>
+>>>> On 26/09/2024 07:59, Ricardo Ribalda wrote:
+>>>>> uvc_unregister_video() can be called asynchronously from
+>>>>> uvc_disconnect(). If the device is still streaming when that happens, a
+>>>>> plethora of race conditions can occur.
+>>>>>
+>>>>> Make sure that the device has stopped streaming before exiting this
+>>>>> function.
+>>>>>
+>>>>> If the user still holds handles to the driver's file descriptors, any
+>>>>> ioctl will return -ENODEV from the v4l2 core.
+>>>>>
+>>>>> This change makes uvc more consistent with the rest of the v4l2 drivers
+>>>>> using the vb2_fop_* and vb2_ioctl_* helpers.
+>>>>>
+>>>>> Reviewed-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>>>>> Suggested-by: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+>>>>> Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+>>>>> ---
+>>>>> This patch was part of the series:
+>>>>> https://patchwork.linuxtv.org/project/linux-media/list/?series=13064
+>>>>>
+>>>>> Moved out from it to ease the review.
+>>>>> ---
+>>>>>  drivers/media/usb/uvc/uvc_driver.c | 32 +++++++++++++++++++++++++++++++-
+>>>>>  1 file changed, 31 insertions(+), 1 deletion(-)
+>>>>>
+>>>>> diff --git a/drivers/media/usb/uvc/uvc_driver.c b/drivers/media/usb/uvc/uvc_driver.c
+>>>>> index f0febdc08c2d..bee150b852e4 100644
+>>>>> --- a/drivers/media/usb/uvc/uvc_driver.c
+>>>>> +++ b/drivers/media/usb/uvc/uvc_driver.c
+>>>>> @@ -1919,11 +1919,41 @@ static void uvc_unregister_video(struct uvc_device *dev)
+>>>>>  	struct uvc_streaming *stream;
+>>>>>  
+>>>>>  	list_for_each_entry(stream, &dev->streams, list) {
+>>>>> +		/* Nothing to do here, continue. */
+>>>>>  		if (!video_is_registered(&stream->vdev))
+>>>>>  			continue;
+>>>>>  
+>>>>> +		/*
+>>>>> +		 * For stream->vdev we follow the same logic as:
+>>>>> +		 * vb2_video_unregister_device().
+>>>>> +		 */
+>>>>> +
+>>>>> +		/* 1. Take a reference to vdev */
+>>>>> +		get_device(&stream->vdev.dev);
+>>>>> +
+>>>>> +		/* 2. Ensure that no new ioctls can be called. */
+>>>>>  		video_unregister_device(&stream->vdev);
+>>>>> -		video_unregister_device(&stream->meta.vdev);
+>>>>> +
+>>>>> +		/* 3. Wait for old ioctls to finish. */
+>>>>> +		mutex_lock(&stream->mutex);
+>>>>> +
+>>>>> +		/* 4. Stop streaming. */
+>>>>> +		uvc_queue_release(&stream->queue);
+>>>>> +
+>>>>> +		mutex_unlock(&stream->mutex);
+>>>>> +
+>>>>> +		put_device(&stream->vdev.dev);
+>>>>> +
+>>>>> +		/*
+>>>>> +		 * For stream->meta.vdev we can directly call:
+>>>>> +		 * vb2_video_unregister_device().
+>>>>> +		 */
+>>>>> +		vb2_video_unregister_device(&stream->meta.vdev);
+>>>>> +
+>>>>> +		/*
+>>>>> +		 * Now both vdevs are not streaming and all the ioctls will
+>>>>> +		 * return -ENODEV.
+>>>>> +		 */
+>>>>>  
+>>>>>  		uvc_debugfs_cleanup_stream(stream);
+>>>>>  	}
+>>>>>
+>>>>> ---
+>>>>> base-commit: 81ee62e8d09ee3c7107d11c8bbfd64073ab601ad
+>>>>> change-id: 20240926-uvc_stop_streaming-6e9fd20e97bc
+> 
 
 
