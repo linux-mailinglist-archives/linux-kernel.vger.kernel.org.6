@@ -1,74 +1,92 @@
-Return-Path: <linux-kernel+bounces-361197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 210E299A4F3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:24:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A48F99A4FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:27:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32B7C1C2316D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:24:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3083E1F22580
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC617219C87;
-	Fri, 11 Oct 2024 13:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B68218D6A;
+	Fri, 11 Oct 2024 13:27:09 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBAB20CCE6;
-	Fri, 11 Oct 2024 13:23:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CD920CCE6;
+	Fri, 11 Oct 2024 13:27:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653032; cv=none; b=nUe9vB2rq02I0QylSs1yLhty6Do8Sya8hhqXwuXn2SFrxX6UKKAHdtN6uw6n0IkEwueTXtCKINR3yeBTmmb3ETVpMP/Rm54XmzX3fKHnhHhXp12i5RkTVp0DYkkxKVmNaCJtJ3Z1HqYSbLvcgHWaBcM7PziKLwpFddjDNE6nC5g=
+	t=1728653228; cv=none; b=e3mzM2YXs3Mcajm0/GKIgGFT9AVi0KbBpJT7+fxsJx3Ynwd/AifyKJk2fK+oTEIYoQOXDd1Rm+nxDNeVUl4KmDRlp1VOfxln7IEOn+7nIV49lOEtzDpkKJFfh6eJoYQQiCgcIccaFgx5V2XNoC/ERn3+kr8FYl6j+70dyIXkwBQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653032; c=relaxed/simple;
-	bh=V2udko9ZAVBT/JZE9LFiU8HdpgIsV8hZNZ16ZvW3CpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nYV3R+ZKGFp17iYsNjQKHXkbmvi4y0cA+bjSXjuh+oAR/coAFBHTmwwqz+zTNpFy7XWjmVo3rnlyPsYcmwqIE7oZ5u5pXSPSWz0CWLK3W4PF6+fGcpG7Jg4QNfWPhrj7X5ffbpxXIU/VgaCmEFEXbkOfdiRfYnTnRFyGDUN3NR8=
+	s=arc-20240116; t=1728653228; c=relaxed/simple;
+	bh=mvvtwNbvKp4A1OTylp8dWmb0t1EgcxbEJKD/LzFMstA=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=pnhJGGsHmT1LQImW9oTmEE5oKlfoomK7AQyNuTccTFPfHRXHmuGqLuYPxoBdFPIv3r3QDEx8YcX+tLV06FSQU9q4eH3UoU49jTG8oXJuvQKNzlCctb2ZzLzYeibQQHl5D0+aj5xV0/H8A+XwerrgdZXkuAZATuTHMTxv7jd92KA=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8B39CC4CECE;
-	Fri, 11 Oct 2024 13:23:48 +0000 (UTC)
-Date: Fri, 11 Oct 2024 14:23:46 +0100
-From: Catalin Marinas <catalin.marinas@arm.com>
-To: Steven Price <steven.price@arm.com>
-Cc: kvm@vger.kernel.org, kvmarm@lists.linux.dev,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-Subject: Re: [PATCH v6 06/11] efi: arm64: Map Device with Prot Shared
-Message-ID: <Zwkm4v5aeUai7hcH@arm.com>
-References: <20241004144307.66199-1-steven.price@arm.com>
- <20241004144307.66199-7-steven.price@arm.com>
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D23C4CEC7;
+	Fri, 11 Oct 2024 13:27:04 +0000 (UTC)
+Date: Fri, 11 Oct 2024 09:27:14 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
+ linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
+ linux-s390@vger.kernel.org, "linux-arch@vger.kernel.org"
+ <linux-arch@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, Will
+ Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
+ <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
+ <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen
+ N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
+ Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
+ Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger
+ <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
+ Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav
+ Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v3] ftrace: Consolidate ftrace_regs accessor functions
+ for archs using pt_regs
+Message-ID: <20241011092714.71074a2b@gandalf.local.home>
+In-Reply-To: <Zwj9QocrEVtgraHp@arm.com>
+References: <20241010202114.2289f6fd@gandalf.local.home>
+	<Zwj9QocrEVtgraHp@arm.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241004144307.66199-7-steven.price@arm.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 04, 2024 at 03:43:01PM +0100, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Device mappings need to be emulated by the VMM so must be mapped shared
-> with the host.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
+On Fri, 11 Oct 2024 11:26:10 +0100
+Catalin Marinas <catalin.marinas@arm.com> wrote:
 
-Reviewed-by: Catalin Marinas <catalin.marinas@arm.com>
+> On Thu, Oct 10, 2024 at 08:21:14PM -0400, Steven Rostedt wrote:
+> > diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
+> > index bbb69c7751b9..5ccff4de7f09 100644
+> > --- a/arch/arm64/include/asm/ftrace.h
+> > +++ b/arch/arm64/include/asm/ftrace.h
+> > @@ -54,6 +54,7 @@ extern void return_to_handler(void);
+> >  unsigned long ftrace_call_adjust(unsigned long addr);
+> >  
+> >  #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
+> > +#define HAVE_ARCH_FTRACE_REGS
+> >  struct dyn_ftrace;
+> >  struct ftrace_ops;
+> >  struct ftrace_regs;  
+> 
+> In case you need an ack for the arm64 change
+> 
+> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+
+Thanks, appreciate it.
+
+-- Steve
 
