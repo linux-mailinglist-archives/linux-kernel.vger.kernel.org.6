@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-360377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8E81999A31
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:16:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4712B999A32
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91B31C247C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:16:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 79856B248C3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C23D51FB3EB;
-	Fri, 11 Oct 2024 02:11:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F8551FBCB3;
+	Fri, 11 Oct 2024 02:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Va1ihGKY"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PYPMO+dI"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED321FB3E9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:11:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 330011F12E9
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612690; cv=none; b=UN2xexLJHQqD49wxTpBzW91bKJh46dGGpeomUWsq25+wYRDTRcr8MhKsG2fpIDruejxaDzwuHfzRw3ULZ8QnmMB9KkE4qiGImv/PtwfUajBTF9DaWuJ2qv2dkZCedQWqiJgEwlCTZKhNCj9ieRGkSmcv8Zgd7eIXhJi2bwcTSpo=
+	t=1728612691; cv=none; b=BMCOPzF7k+C72of7bT2laf9sZZl0CTLV5BwsT5mrPq4kmcL7mUPljCa3tzletSjbTyAX1Orwjp8TttJuZNeSNn1CrxHqPQTXztTydmQA3QXE1YgCXvgU6JYs5mcdUFrGUGtdD5ILdSBcIHpqEns2bPUgwAlUUXyFPj9GcNUs7uE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612690; c=relaxed/simple;
-	bh=Tp2aWz/KUkLgHNMUQeB0T53YK5NkYJtBqImftywh1pg=;
+	s=arc-20240116; t=1728612691; c=relaxed/simple;
+	bh=iyJm/h+JOO59f+egBKANfLu+0QMr2pI0zJeagTYRCD4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=CE5eSORFRWGikF+B1iwIAdzOGEA0mMGmR5D0aPzGiSf/jxB6EE3uFmXzA5+JHHvgGOzgPCpByuYebg/cMV6GZANrEbbeza0DWMuZFfZwqEOEsdUAVzm4dNLHtR7Th3KdMDnwQALgNDceURdIWRTcheKuTrwOf4+HW30Vf1r507M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Va1ihGKY; arc=none smtp.client-ip=209.85.128.201
+	 To:Cc:Content-Type; b=tQKpgBJTPS/Op8yz5LvFEx0Q9p5JtW5NZQftg6lE+NtrwE7JXC/ScfiFaC1ihQx3I00CuH2X2iLyx4UwbmDDDqdJrt0R1XwTo2k6nIlBZ6r+cp9E2AWRElr0BD1apfmTbZyCmQR0nUKmsJBOfTMllkkCS28ZVsDYRpCfJENMQJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PYPMO+dI; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6dbbeee08f0so39660707b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:11:27 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e31e5d1739so30735237b3.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:11:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728612687; x=1729217487; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728612689; x=1729217489; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=VgP7ZnqG8N9jdCaiPxtHytdx2vM8g+9dqJnt13kkQQE=;
-        b=Va1ihGKY/nVmOINfhOXd8M7aT59KbsX96wpgdbJhNOvasLR7rfi4cXKK897pDwFb9U
-         06n2x/k5uhzaF1eHKcISXMkmp3ANm7qFdyOqtzNdf8oosPh+ZvIyi7wp5lOCpnuDYqrx
-         EJtcBckCfISE54OIGSKBr5PGTshjngSM9e8ziO4yH5yVBaD8Z8stDD5QiWaOR+jTVvUJ
-         T8xpaVusrO/uSap8jQ+Lv6oPyhLNNOCl3kw3zb4lpGBjSxwFRzd+2IJdaa3/Jat6O2Ve
-         ATqFKi9KPGR5JmYDOl7qlmyMXf7k0YxYPxWXIgKVRFFkwb0XeeoGduKPTdLlm7gkjp8c
-         Ck1g==
+        bh=HPDDwUN824pfD2nj2HWQd9wsiBjvr8+g8+t2fSbMNlA=;
+        b=PYPMO+dIz2MEJ9uWGnpzMDLoKh+UuyJIyZmNXuqbSiVOdTd214fzLaTbR1r/huZV6G
+         gUCNMV6B52TgkvmtpjDNuduzkb92NtWqgasAaY+wAZYjvZ0H5I9C16O55KtJTEiAAvpc
+         9QHy/RtL6SGjpF98SSBX5CaAtlaI34+Y9n5jvCtnuLGPW3j/w5bmER0tDHQPup2InfJh
+         8NLMGe2+b0hFnbp0glpF33KZbnMpiOn7DpgyppnLX8VdkE3Eb2RDJQoxANgT2bQBpeTX
+         hqnp3IwrCFkL1iBeNy+pL7ILktxKp96OaGtltMGYnfnPKp6V53PPQF4zzD2T5a5G9g3r
+         F32w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728612687; x=1729217487;
+        d=1e100.net; s=20230601; t=1728612689; x=1729217489;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=VgP7ZnqG8N9jdCaiPxtHytdx2vM8g+9dqJnt13kkQQE=;
-        b=Kb8GgAbrzLFE/qIdqMtv3zoDku8xHBXJRVrPY6s35p5YcqzxFTdMY20/QU+/NlZcH5
-         dXwYRndVtkjGJ53b1+hcEW/4yz+Sa2O+ei0YgX0lZfxO7Q9NoHiNiohTYYn4/qoC/kqU
-         guceYmKUrm8Vck2/n1Yyf1IGZRzv30Rm7BTSmQaS+bs0R+vL0CuhzwJYD3PbMEhj4VAv
-         1FFi/01Hi4HA5CPCHZEUgbYdzmrInXUQKCUIkiXfn3kKxpd648lT+2akppYlFbuvuQRM
-         4FyQsszPNEcoM9sjW84gDGn8dCXLr9wXddNVNwTZFO/raq6aPc37SvQK+eWLHeTeGeX2
-         75lw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKNLtpKuG1LZ2H94b5PBaMQ857/shElNlS22PwvTOE2c+UyNDaaO5LiWl/lsuVwjayV5fcHTPZdoP2HmY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHiFyvRKOOcwFC96yQqf5EojwmrnV1RwEh+73YB61m3gM2mVWO
-	H6iptLP7UUynwKjZf6+07jhv9o7phnPhS2vTDnu97E1bcIIi2/Nr4lWybinq2ctnXSYMY0Sx2vY
-	MTA==
-X-Google-Smtp-Source: AGHT+IHfuBbi88SzKZ8fyOpKZIpd/P6uL6w934+Qz4f2IixKQEh8/8BEdcKQO7aaLExUXEvNpT4HwLrwVCw=
+        bh=HPDDwUN824pfD2nj2HWQd9wsiBjvr8+g8+t2fSbMNlA=;
+        b=Ycyv2cUA0xGa/nYm8kw1lFcq3AnnxL6jmEK8qzKNBH32GETMSLWQnmARlFwRGu4vf2
+         sRlwn8z5o7wLJptIYTtm2c0zH3oiFZbclHDEEryCzKQQCb3g+wzmIFcffXbq+ioLw5ha
+         VBv2OL7u0770NcmY/kDfTsrDgNd1bhtOnKMDqtoG8vGKn5beMmt0uZSGk72GGxqp8YrI
+         3Z6hNKo5f28DCoDkgvzQT+ePjbjX1euT4E0uS4nKPgn1ef09LnB9xBwsCXOh6132euES
+         SsV0sLZcs+NquglqzSDKxvMrvWvnT7hUbIfURILz/4bgcWBHgf6/MA29mZERmKVxcdaq
+         KmEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVrZRZf7N+VXE6EEfmuuOw5YykBP8wyhoOFtdhKJsD7cwoGfcfZeDvuGVjI7aVh2Co91pkXUWB4ybf8ckQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEWp4xtz7PLqk70MQtCRg/CRgEeTLcsNyEN3tzaQnOzZRWZK+B
+	O9tzue8J/vrX+vSPU4gcT1VfApirbm09xCxQZWTKuyPzoAC0tydD0GsjAzZhUnpScF4CfgRf5/G
+	KPA==
+X-Google-Smtp-Source: AGHT+IGTSYki/MPVOSXtSoZ4BErjm1NrfbNeO31MKvV+62YjjXjQGEoBGgc7gkTIPIKCnszTY2Gpwqbhv0k=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a25:b104:0:b0:e29:a86:fd0d with SMTP id
- 3f1490d57ef6-e290bb40627mr81586276.5.1728612686619; Thu, 10 Oct 2024 19:11:26
+ (user=seanjc job=sendgmr) by 2002:a25:d346:0:b0:e17:8e4f:981a with SMTP id
+ 3f1490d57ef6-e291a32c730mr5851276.11.1728612688656; Thu, 10 Oct 2024 19:11:28
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 19:10:48 -0700
+Date: Thu, 10 Oct 2024 19:10:49 -0700
 In-Reply-To: <20241011021051.1557902-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +75,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241011021051.1557902-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241011021051.1557902-17-seanjc@google.com>
-Subject: [PATCH 16/18] KVM: x86/mmu: Set Dirty bit for new SPTEs, even if
- _hardware_ A/D bits are disabled
+Message-ID: <20241011021051.1557902-18-seanjc@google.com>
+Subject: [PATCH 17/18] KVM: Allow arch code to elide TLB flushes when aging a
+ young page
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -86,48 +86,92 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	James Houghton <jthoughton@google.com>
 Content-Type: text/plain; charset="UTF-8"
 
-When making a SPTE, set the Dirty bit in the SPTE as appropriate, even if
-hardware A/D bits are disabled.  Only EPT allows A/D bits to be disabled,
-and for EPT, the bits are software-available (ignored by hardware) when
-A/D bits are disabled, i.e. it is perfectly legal for KVM to use the Dirty
-to track dirty pages in software.
+Add a Kconfig to allow architectures to opt-out of a TLB flush when a
+young page is aged, as invalidating TLB entries is not functionally
+required on most KVM-supported architectures.  Stale TLB entries can
+result in false negatives and theoretically lead to suboptimal reclaim,
+but in practice all observations have been that the performance gained by
+skipping TLB flushes outweighs any performance lost by reclaiming hot
+pages.
+
+E.g. the primary MMUs for x86 RISC-V, s390, and PPC Book3S elide the TLB
+flush for ptep_clear_flush_young(), and arm64's MMU skips the trailing DSB
+that's required for ordering (presumably because there are optimizations
+related to eliding other TLB flushes when doing make-before-break).
 
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/spte.c | 2 +-
- arch/x86/kvm/mmu/spte.h | 6 ------
- 2 files changed, 1 insertion(+), 7 deletions(-)
+ virt/kvm/Kconfig    |  4 ++++
+ virt/kvm/kvm_main.c | 20 ++++++--------------
+ 2 files changed, 10 insertions(+), 14 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index 617479efd127..fd8c3c92ade0 100644
---- a/arch/x86/kvm/mmu/spte.c
-+++ b/arch/x86/kvm/mmu/spte.c
-@@ -237,7 +237,7 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 			wrprot = true;
- 		else
- 			spte |= PT_WRITABLE_MASK | shadow_mmu_writable_mask |
--				spte_shadow_dirty_mask(spte);
-+				shadow_dirty_mask;
- 	}
+diff --git a/virt/kvm/Kconfig b/virt/kvm/Kconfig
+index fd6a3010afa8..54e959e7d68f 100644
+--- a/virt/kvm/Kconfig
++++ b/virt/kvm/Kconfig
+@@ -100,6 +100,10 @@ config KVM_GENERIC_MMU_NOTIFIER
+        select MMU_NOTIFIER
+        bool
  
- 	if (prefetch && !synchronizing)
-diff --git a/arch/x86/kvm/mmu/spte.h b/arch/x86/kvm/mmu/spte.h
-index a404279ba731..e90cc401c168 100644
---- a/arch/x86/kvm/mmu/spte.h
-+++ b/arch/x86/kvm/mmu/spte.h
-@@ -316,12 +316,6 @@ static inline bool spte_ad_need_write_protect(u64 spte)
- 	return (spte & SPTE_TDP_AD_MASK) != SPTE_TDP_AD_ENABLED;
++config KVM_ELIDE_TLB_FLUSH_IF_YOUNG
++       depends on KVM_GENERIC_MMU_NOTIFIER
++       bool
++
+ config KVM_GENERIC_MEMORY_ATTRIBUTES
+        depends on KVM_GENERIC_MMU_NOTIFIER
+        bool
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index b1b10dc408a0..83b525d16b61 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -630,7 +630,8 @@ static __always_inline kvm_mn_ret_t __kvm_handle_hva_range(struct kvm *kvm,
+ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+ 						unsigned long start,
+ 						unsigned long end,
+-						gfn_handler_t handler)
++						gfn_handler_t handler,
++						bool flush_on_ret)
+ {
+ 	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+ 	const struct kvm_mmu_notifier_range range = {
+@@ -638,7 +639,7 @@ static __always_inline int kvm_handle_hva_range(struct mmu_notifier *mn,
+ 		.end		= end,
+ 		.handler	= handler,
+ 		.on_lock	= (void *)kvm_null_fn,
+-		.flush_on_ret	= true,
++		.flush_on_ret	= flush_on_ret,
+ 		.may_block	= false,
+ 	};
+ 
+@@ -650,17 +651,7 @@ static __always_inline int kvm_handle_hva_range_no_flush(struct mmu_notifier *mn
+ 							 unsigned long end,
+ 							 gfn_handler_t handler)
+ {
+-	struct kvm *kvm = mmu_notifier_to_kvm(mn);
+-	const struct kvm_mmu_notifier_range range = {
+-		.start		= start,
+-		.end		= end,
+-		.handler	= handler,
+-		.on_lock	= (void *)kvm_null_fn,
+-		.flush_on_ret	= false,
+-		.may_block	= false,
+-	};
+-
+-	return __kvm_handle_hva_range(kvm, &range).ret;
++	return kvm_handle_hva_range(mn, start, end, handler, false);
  }
  
--static inline u64 spte_shadow_dirty_mask(u64 spte)
--{
--	KVM_MMU_WARN_ON(!is_shadow_present_pte(spte));
--	return spte_ad_enabled(spte) ? shadow_dirty_mask : 0;
--}
--
- static inline bool is_access_track_spte(u64 spte)
+ void kvm_mmu_invalidate_begin(struct kvm *kvm)
+@@ -825,7 +816,8 @@ static int kvm_mmu_notifier_clear_flush_young(struct mmu_notifier *mn,
  {
- 	return !spte_ad_enabled(spte) && (spte & shadow_acc_track_mask) == 0;
+ 	trace_kvm_age_hva(start, end);
+ 
+-	return kvm_handle_hva_range(mn, start, end, kvm_age_gfn);
++	return kvm_handle_hva_range(mn, start, end, kvm_age_gfn,
++				    !IS_ENABLED(CONFIG_KVM_ELIDE_TLB_FLUSH_IF_YOUNG));
+ }
+ 
+ static int kvm_mmu_notifier_clear_young(struct mmu_notifier *mn,
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
