@@ -1,131 +1,105 @@
-Return-Path: <linux-kernel+bounces-361834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E13299AD96
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:37:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C8BD99AD99
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2F04288F3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:37:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 324791F23EC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A55321D14EE;
-	Fri, 11 Oct 2024 20:37:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26D051D1311;
+	Fri, 11 Oct 2024 20:37:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uYAbcrXK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WYUtV0rv";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Wy7lDz+U"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F841C3F0A;
-	Fri, 11 Oct 2024 20:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13BAC1C3F0A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:37:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728679048; cv=none; b=KbpdVama0ONF5wVqel0SJSnH0htrIYgzsSEgef2eqyRTsUZ+r7FBAPyozhy8BQLOLe/qh5rRdnTLpCFu2bRW9TJZeEBx0aaHFD6nN3+VPtwz0TtiZfSbQhqKbweoq/MXkR/3oFZzSOL04siUBbTauEzg24nLGEIB+sOGIwn6ITo=
+	t=1728679066; cv=none; b=RqyP/TnLGYZNEoS/cTnZhVO4OdF1/Yug7jLs8aC5QTgkurceTOvtqWCeP5Ae3NkIR25iLbz2gOlwGvzUzp7v6Fv8yyHi3fxvL7HJFkpvNLNlCMb/w5keJudJoNUkhJmLt/C6e1Eq3X46NEFb0xJsI8dMYGdAds5TFRumxIn0Euw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728679048; c=relaxed/simple;
-	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=M5iLnQr7yGD6fnSGRXwEpejfQdLXQk+O4UJHXZnOz1DdfdT7j+WRYQJNWdxgDHy/VCnc4P8mXN+rDx6/fZKMTR3F4JJtWORhLkFY3RX3c6Yl71Rdns+194czOOQXIZSKKW5E/lGJyrxJZE9rXv2JMcU8NfeDQYO7T6+ioi5xVSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uYAbcrXK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 831CEC4CEC3;
-	Fri, 11 Oct 2024 20:37:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728679047;
-	bh=CWZGBnEJ80UiaDTPSuDUZ70kqMw3cxxu6gG4Z0pcQVE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uYAbcrXK8FLRoEkmirqKqE2T2BWanywm0TM90kzfEKK0nYuDxOhrIhDbmui+SrNt+
-	 1mjjpUvymCswoPAWZddBRZSI7fZe1o/evRZNqBo4Dx0xEuYkhxpBEJfDTd3GNxZ7x6
-	 EfQdm7CxvjmXuQiP/TXiDi+s7rhBX8ol2CN0MOjYzQ641N3+0xB/AMBZfdDW9fuMFx
-	 P22KWy+9B9G/KGvAJ+MhJiAwddKNcyTSZWStAhfBiaqRPqSU4L7Qo+fr2ai89iLO7+
-	 Hpf0G4myWZ4l50hTbL1Ymw49gXx1n5eI2ZVFY1+67nxeDf2gyZfuLV8Q+x3Tkzavr1
-	 H7vOx5CHPuwdg==
-From: Song Liu <song@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	kernel-team@fb.com,
-	song@kernel.org
-Subject: [PATCH] fsnotify, lsm: Separate fsnotify_open_perm() and security_file_open()
-Date: Fri, 11 Oct 2024 13:37:22 -0700
-Message-ID: <20241011203722.3749850-1-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728679066; c=relaxed/simple;
+	bh=0w/5Ikj8lHHRzgca3Ci/TW1pF/uPHUczyyzvek/bCeA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=q3pZAs/UvaSCm+dRRcSFrnA5QPEBYeD9iRTQF0SQmtKy/oBtePRYU5ILqmdlD7eHMkUCFOp3AaSqeL4h+imJGgvifNm3Y6OOOxakDoEEZMWLblPArcG8p5O9ri9R7V6SSKE1y7nHT4OGz7l9hGDzQOB4YgYemmca37AKZEnQZ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WYUtV0rv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Wy7lDz+U; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728679063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvGBlOwXZ0QwZ+atkdEw96HjKqy74TcuL2n6BgA/buQ=;
+	b=WYUtV0rvezi3L9xJFgKXgVoc2Ok7V70pG4VLSK5YQ+NZf6YF8ul239Wr5rHHt3xpG/x4+u
+	IbGQlVT/ThC9pOfy5b3VjGqdPA+4N+5+DalIjYDKyxZcri29754GQIWvx/fCyHvuWvX7Z4
+	3iD1gKHwI77Z7AOWW4XKgolfJJfyw05BrrH5qnXM4gvLhf1qm1It3OZAplLzFt183OzFe5
+	9hpsV22rOjk4mu0n8s30NM3DPfn5Zv/HqTq1bO/UGT0Lo+ekYaCw/2lGxCkcjHD2333lh1
+	x4P1FjEH6d7chyOudqS1bE+FM79mwCGxo7iYmAX1LecALRUpMapss3dPjzSwGw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728679063;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=zvGBlOwXZ0QwZ+atkdEw96HjKqy74TcuL2n6BgA/buQ=;
+	b=Wy7lDz+UnAkc2lqW/Irxea/WgS06DN7FZzdOquBLDKERBqdCmELDHS1FxK62VHJDu1eXhQ
+	zqGD4W2m5MFc0rCA==
+To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, LKML
+ <linux-kernel@vger.kernel.org>
+Cc: Waiman Long <longman@redhat.com>
+Subject: Re: [patch 03/25] debugobjects: Dont destroy kmem cache in init()
+In-Reply-To: <02904743-8c39-5a44-78cd-a41715bf2f0b@huawei.com>
+References: <20241007163507.647617031@linutronix.de>
+ <20241007164913.137021337@linutronix.de>
+ <c118dad2-4e39-78f2-c09b-0fe771feb86a@huawei.com> <878quwi3jb.ffs@tglx>
+ <02904743-8c39-5a44-78cd-a41715bf2f0b@huawei.com>
+Date: Fri, 11 Oct 2024 22:37:43 +0200
+Message-ID: <87plo6gyug.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Currently, fsnotify_open_perm() is called from security_file_open(). This
-is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
-security_file_open() in this combination will be a no-op and not call
-fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
+On Thu, Oct 10 2024 at 21:31, Leizhen wrote:
+> On 2024/10/10 19:46, Thomas Gleixner wrote:
+>> On Thu, Oct 10 2024 at 10:14, Leizhen wrote:
+>>> On 2024/10/8 0:49, Thomas Gleixner wrote:
+>>>> -	if (!obj_cache || debug_objects_replace_static_objects()) {
+>>>> +	if (!cache || !debug_objects_replace_static_objects(cache)) {
+>>>>  		debug_objects_enabled = 0;
+>>>> -		kmem_cache_destroy(obj_cache);
+>>>
+>>> kmem_cache_destroy(cache) should be kept, or move it into debug_objects_replace_static_objects()
+>>> and place it above 'return false'.
+>> 
+>> At that point it can't be destroyed. See the backtrace.
+>> 
+>> So we just give the objects back and leak the kmem_cache.
+>
+> Oh, sorry, I didn't figure it out before, but now I do.
+> But shouldn't we add kmemleak_ignore(cache) ?
 
-Signed-off-by: Song Liu <song@kernel.org>
+I don't know if it's worth the trouble. With the follow up changes the
+only reason why this can happen is that the static object conversion
+cannot allocate memory. Leaking the kmemcache in that case is the least
+of the worries.
 
----
+I just tripped over that back trace because I intentionally triggered
+the error path.
 
-PS: I didn't included a Fixes tag. This issue was probably introduced 15
-years ago in [1]. If we want to back port this to stable, we will need
-another version for older kernel because of [2].
+Thanks,
 
-[1] c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
-[2] 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
----
- fs/open.c           | 4 ++++
- security/security.c | 9 +--------
- 2 files changed, 5 insertions(+), 8 deletions(-)
+        tglx
 
-diff --git a/fs/open.c b/fs/open.c
-index acaeb3e25c88..6c4950f19cfb 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
- 	if (error)
- 		goto cleanup_all;
- 
-+	error = fsnotify_open_perm(f);
-+	if (error)
-+		goto cleanup_all;
-+
- 	error = break_lease(file_inode(f), f->f_flags);
- 	if (error)
- 		goto cleanup_all;
-diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..a72cc62c0a07 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
-@@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
-  */
- int security_file_open(struct file *file)
- {
--	int ret;
--
--	ret = call_int_hook(file_open, file);
--	if (ret)
--		return ret;
--
--	return fsnotify_open_perm(file);
-+	return call_int_hook(file_open, file);
- }
- 
- /**
--- 
-2.43.5
 
 
