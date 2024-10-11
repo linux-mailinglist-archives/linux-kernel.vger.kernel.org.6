@@ -1,117 +1,141 @@
-Return-Path: <linux-kernel+bounces-361729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2068399AC4F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:05:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942CB99AC54
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C41FC1F283DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:05:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C158B1C2675B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C39BA1D0160;
-	Fri, 11 Oct 2024 18:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DF91D04B8;
+	Fri, 11 Oct 2024 19:00:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b="Z1XETybb"
-Received: from bout3.ijzerbout.nl (bout3.ijzerbout.nl [136.144.140.114])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14B721CEE86;
-	Fri, 11 Oct 2024 18:59:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.144.140.114
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ahY7ztNv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AE041BD4E7;
+	Fri, 11 Oct 2024 19:00:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673182; cv=none; b=RzpBLBR21hmLoI3dqgY0/qLmjhUVuqnqW1NF+pONryDhEsqrumXst7mn8SHh8ICjQa2o/WyQhZj+/wnDt1EOQxG0baMtAqhtwfS9K7WoY5pFRH403rXcu2yZ7AsI9vJ3p8mgL+XsDjjZkBaZE4wrRFCkH4dpUuWodBOxb2/VHCE=
+	t=1728673206; cv=none; b=qUla/OqQzFRtl0J2ez8OdZaSXuOdi04VGA7auIfr5adFnXYj1q0w2QjenNlhPbr2NX1eaLa4HKmltEF8M3XW2JY//Q7zBGcUnenHfNgQWvQrefUNPLH7LrvEdli6p1ePUns+E4nRsXrcEc1POT0///vssfEjXbEiNqmipfl25/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673182; c=relaxed/simple;
-	bh=tfzphyBXmgX+W5YnHQG1jp4AfKvqpmREL0HJpK4fxLw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kLiPZZqBJX4K6ORg3KV5lZ2jBKF981M9A7mK9MtYHxLeozOBKqO9/xX2dbliLHtcFdaOYxpomjrcqJkj8i+XpeoN7ev/a77ft1mNsrv8rsNAVcPl+LxsQRbvl4aFYYzBxCNsQAIA4TxIYgtrzA8EMFTLthElfhf/ZJiuSpWCBwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl; spf=pass smtp.mailfrom=ijzerbout.nl; dkim=pass (4096-bit key) header.d=ijzerbout.nl header.i=@ijzerbout.nl header.b=Z1XETybb; arc=none smtp.client-ip=136.144.140.114
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ijzerbout.nl
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ijzerbout.nl
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ijzerbout.nl; s=key;
-	t=1728673170; bh=tfzphyBXmgX+W5YnHQG1jp4AfKvqpmREL0HJpK4fxLw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Z1XETybbQ2OvycLOZqw+47j4m3Da+WPOn3A7l0n9sya+RtdbfMSDZihjKNGPSk8xY
-	 4zWieUZEiyK/HgeiijamKaXP4XbbTTNCnjqB69l9sudIeCWdRAPQXG46kDMRu6mqKp
-	 5k/ebGbhvehd5VXVpzMKsPJ8Xx9LlJ9ol92BZVbphhkFEzXLL2PyPH/Mfuzh2IjQYF
-	 UsCPZO2BriDJ//Q2Jk2awNCOrJii3drWQJWxBwzDuLI6+bWFFVnjtpFPwud8sId0Eh
-	 wTc5ksz6+3BI+KA7cbcnL4nTsK66gTIMguJX09OuN7N3cOogAYSf93MvkWETIXTChJ
-	 fxpwhWFUuu6I23pw+qtcwz5C+oFU/OqBv5nRb4TpEukPX9QviQC4RKmlCjPjDvHJ2Q
-	 GP1+PwmhcFqhkr5nnlxDV7vMK3tRnBtrz4ntaSYa1mynKaAeWujKtMftBCMuIj/e7H
-	 /NbKD7LEOuZeAKOfj35Oc1W2cY8jbq1LTR7VBsv8urxtIqdvkLN58VkiT/BGYxYbkL
-	 p9durlkH1SXzpEOlsolL8yFtrXsYWHhkndEL3pxKZi9OkiDeBHGqmtSjiMpC04y347
-	 wQPGM46NmsqTrkC2BqVxP4O1ibvS0s40jWhpAx83bcCSxDURefs9bDw7dYCVe/cvcI
-	 kwojDC67wxRQbJHTsQpkKaKE=
-Received: from [IPV6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a] (racer.ijzerbout.nl [IPv6:2a10:3781:99:1:1ac0:4dff:fea7:ec3a])
-	by bout3.ijzerbout.nl (Postfix) with ESMTPSA id CB07D1670AA;
-	Fri, 11 Oct 2024 20:59:30 +0200 (CEST)
-Message-ID: <7e9d8b56-2033-4ca6-905a-e761f43cecef@ijzerbout.nl>
-Date: Fri, 11 Oct 2024 20:59:28 +0200
+	s=arc-20240116; t=1728673206; c=relaxed/simple;
+	bh=a84u9nTZ3sCDcURG6NNOgGWd1sDBA3xGdpK8P8jUnag=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=apUH4Tn8KDvcB1B99GSBR3qCi2McDAltGEcY3IIIpYEyKHPI8IdNF2/fqalkWUkOYw/gyGSrjSKOySiSZEK5mlpa4G0J9s50Pu9FQA+HRx4mHdiY1YJyoPaxaU1wCqqEkt2cDgKIPEOo7GEx12yrBv5Tk/rSnqgAOdyf6ws4ekQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ahY7ztNv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8944AC4CEC3;
+	Fri, 11 Oct 2024 19:00:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728673205;
+	bh=a84u9nTZ3sCDcURG6NNOgGWd1sDBA3xGdpK8P8jUnag=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ahY7ztNvTTetEplHcaY8bCL4JU7+eKJkpcwiGJvQZaC4cMapaXfQuxagwMLLJxHha
+	 xFjwj5ikLuNRcLJ1pNrhpQnsSEkP5vtKx7JYcTJ4M5MIjmGBg0lTSfqL5l39Qkeik8
+	 L4pjhKvmt+LcIpUsGysVpSOKc2LDX3aQmg+ZleHnz/qY4VQ7w5rhmFmzYrHE970D1N
+	 WJiIi43l5zjrUe5CjN3uz0vw7JfExbvfGxCXVeQ/L6tU7K97WawMsMSeU+yetPaeeg
+	 ivMmF7eM08D+Jk88NwhxzhkxPAgh8iT8k+RavqfWFA5zF5h043w4gZ3x3bm61/3jui
+	 Fecn1nuqgCTBw==
+Date: Fri, 11 Oct 2024 19:59:29 +0100
+From: Simon Horman <horms@kernel.org>
+To: Markus Schneider-Pargmann <msp@baylibre.com>
+Cc: Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
+	Marc Kleine-Budde <mkl@pengutronix.de>,
+	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	Tero Kristo <kristo@kernel.org>, linux-can@vger.kernel.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+	Vishal Mahaveer <vishalm@ti.com>,
+	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>,
+	Andrew Lunn <andrew@lunn.ch>
+Subject: Re: [PATCH v3 3/9] can: m_can: Map WoL to device_set_wakeup_enable
+Message-ID: <20241011185929.GA53629@kernel.org>
+References: <20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com>
+ <20241011-topic-mcan-wakeup-source-v6-12-v3-3-9752c714ad12@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] iio: pressure: bmp280: Use char instead of s32 for
- data buffer
-To: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org
-Cc: dan.carpenter@linaro.org, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240930202353.38203-1-vassilisamir@gmail.com>
- <20240930202353.38203-3-vassilisamir@gmail.com>
-Content-Language: en-US
-From: Kees Bakker <kees@ijzerbout.nl>
-In-Reply-To: <20240930202353.38203-3-vassilisamir@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011-topic-mcan-wakeup-source-v6-12-v3-3-9752c714ad12@baylibre.com>
 
-Op 30-09-2024 om 22:23 schreef Vasileios Amoiridis:
-> As it was reported and discussed here [1], storing the sensor data in an
-> endian aware s32 buffer is not optimal. Advertising the timestamp as an
-> addition of 2 s32 variables which is also implied is again not the best
-> practice. For that reason, change the s32 sensor_data buffer to a u8
-> buffer and align it properly.
->
-> [1]: https://lore.kernel.org/linux-iio/73d13cc0-afb9-4306-b498-5d821728c3ba@stanley.mountain/
->
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+On Fri, Oct 11, 2024 at 03:16:40PM +0200, Markus Schneider-Pargmann wrote:
+> In some devices the pins of the m_can module can act as a wakeup source.
+> This patch helps do that by connecting the PHY_WAKE WoL option to
+> device_set_wakeup_enable. By marking this device as being wakeup
+> enabled, this setting can be used by platform code to decide which
+> sleep or poweroff mode to use.
+> 
+> Also this prepares the driver for the next patch in which the pinctrl
+> settings are changed depending on the desired wakeup source.
+> 
+> Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
+> Reviewed-by: Andrew Lunn <andrew@lunn.ch>
 > ---
->   drivers/iio/pressure/bmp280-core.c | 72 ++++++++++++++++++------------
->   drivers/iio/pressure/bmp280.h      |  4 +-
->   2 files changed, 46 insertions(+), 30 deletions(-)
-> [...]
-> @@ -2199,7 +2210,7 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
->   	struct iio_poll_func *pf = p;
->   	struct iio_dev *indio_dev = pf->indio_dev;
->   	struct bmp280_data *data = iio_priv(indio_dev);
-> -	int ret;
-> +	int ret, offset;
->   
->   	guard(mutex)(&data->lock);
->   
-> @@ -2211,13 +2222,15 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
->   		goto out;
->   	}
->   
-> -	/* Temperature calculations */
-> -	memcpy(&data->sensor_data[1], &data->buf[0], 3);
-> -
->   	/* Pressure calculations */
-> -	memcpy(&data->sensor_data[0], &data->buf[3], 3);
-> +	memcpy(&data->sensor_data[offset], &data->buf[3], 3);
-Variable offset is not initialized.
+>  drivers/net/can/m_can/m_can.c | 37 +++++++++++++++++++++++++++++++++++++
+>  1 file changed, 37 insertions(+)
+> 
+> diff --git a/drivers/net/can/m_can/m_can.c b/drivers/net/can/m_can/m_can.c
+> index a978b960f1f1e1e8273216ff330ab789d0fd6d51..29accadc20de7e9efa509f14209cc62e599f03bb 100644
+> --- a/drivers/net/can/m_can/m_can.c
+> +++ b/drivers/net/can/m_can/m_can.c
+> @@ -2185,6 +2185,36 @@ static int m_can_set_coalesce(struct net_device *dev,
+>  	return 0;
+>  }
+>  
+> +static void m_can_get_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+> +{
+> +	struct m_can_classdev *cdev = netdev_priv(dev);
 > +
-> +	offset += sizeof(s32);
+> +	wol->supported = device_can_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +	wol->wolopts = device_may_wakeup(cdev->dev) ? WAKE_PHY : 0;
+> +}
 > +
-> +	/* Temperature calculations */
-> +	memcpy(&data->sensor_data[offset], &data->buf[0], 3);
->   
-> -	iio_push_to_buffers_with_timestamp(indio_dev, &data->sensor_data,
-> +	iio_push_to_buffers_with_timestamp(indio_dev, data->sensor_data,
->   					   iio_get_time_ns(indio_dev));
->   
->   out:
->
+> +static int m_can_set_wol(struct net_device *dev, struct ethtool_wolinfo *wol)
+> +{
+> +	struct m_can_classdev *cdev = netdev_priv(dev);
+> +	bool wol_enable = !!wol->wolopts & WAKE_PHY;
+
+Hi Markus,
+
+I suspect there is an order of operations issue here.
+Should the line above be like this?
+
+	bool wol_enable = !!(wol->wolopts & WAKE_PHY);
+
+> +	int ret;
+> +
+> +	if ((wol->wolopts & WAKE_PHY) != wol->wolopts)
+> +		return -EINVAL;
+> +
+> +	if (wol_enable == device_may_wakeup(cdev->dev))
+> +		return 0;
+> +
+> +	ret = device_set_wakeup_enable(cdev->dev, wol_enable);
+> +	if (ret) {
+> +		netdev_err(cdev->net, "Failed to set wakeup enable %pE\n",
+> +			   ERR_PTR(ret));
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+
+...
 
