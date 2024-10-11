@@ -1,166 +1,169 @@
-Return-Path: <linux-kernel+bounces-360865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0825299A0B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:03:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B190699A0BA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 75B861F2505B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 588051F2515E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:04:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8C7120FAB5;
-	Fri, 11 Oct 2024 10:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70854210197;
+	Fri, 11 Oct 2024 10:04:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="TkMNdizR"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="pfhwPVVd"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4701B20FAA2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:03:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 371C120B203;
+	Fri, 11 Oct 2024 10:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640989; cv=none; b=fxJ6z446nRmzjvZ7Rp6StAIRHuu2W0W+WchN35V9wB52hKKO/zoKv2g4uB+yeXrqmFhQWOxo0wSngwupbXSR5lp/uS/OVDvbKBoUiK+yhjNzQnA1RNNV1ZuXD5gMNS6ng4O5mKYUrUlf3R9Z2SJqL/GKTS+d7EPN1wwEu/sY7hc=
+	t=1728641060; cv=none; b=YoTru0xfA0M5/36mJF3k36hblbCYp67wbjVGfsCuXAjpTMNUaGG37eE4LjVSiQsnPuhzqs15mTwWjkQ+uwJe7ArdtdLiYZDZfengHMkOTDWaWktpEjRKHBxD6TYjVud6u2x8bG8cupJYNwvNBwYsauIoz0SnqACsP8iT5EN8aJ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640989; c=relaxed/simple;
-	bh=naYtp1lZscek112KRpfBFbWur/ZMGekKLlhMvarC0mY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
-	 In-Reply-To:Content-Type; b=AcSGU2nnXZRd9TUosL+Us3mAM6Hbwwt+e/qha1h2SaSRgOsnAsSz9F7xeF+p9RnrzYlNf8qO3E5bZKc0oYEU01oWQDQ59TVsjj1/s/PJ+yxBoQIdGTSFlGhyfu8s9Mlr8WLxtHeWRkYWUj9mrOp9SiPZ2TR8w2Rj1NL6Ice8O40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=TkMNdizR; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539908f238fso2262513e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:03:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728640985; x=1729245785; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o6jLzclq8qqUVYgMZwk1ZImEBXfgfrGEoJFHygAMsyo=;
-        b=TkMNdizRVap/C1imeUInAckxJXM96b8WCxjEgaGjeMZGHvHAnfBoEr7vJWnewsAIjc
-         UhVLhDalZ9J0EFu84r1fjQ+vbaKcAp7rfVwwMm3QJClGyOK8UPthA0ta6uqop/z4KN7i
-         48Z/PpUsY9yrq05Mb5jO26YG3UJBCujecbZAqGMZn/dI1LG15HbadBbvFF6oOw0TVS+z
-         ebTzcJhad8HiUFdy5XhC9mEGZfAJhRacAocFrmOLW5Eq5O4UMNzgCdnEW3LcPKKQDrNb
-         p/bVY5uFExJVCnwn9bXsFaV/+aX27L9GfbUvFYRIRInfQGH2B5WMhV/IIRmiRew+IHef
-         GH4w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728640985; x=1729245785;
-        h=content-transfer-encoding:in-reply-to:from:cc:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o6jLzclq8qqUVYgMZwk1ZImEBXfgfrGEoJFHygAMsyo=;
-        b=PVxQOfXX/aPMZoGzMxsaFa5DgBitPTt5G4oBPJFbeBCq9SjoOAFPN492AmnsjGs3zl
-         Ar0CLA+X5+tfzYZVkvIi3kg33pzYvQBvZzvKh15SlFC203csxtr/EWqSFHTPAUFC+zje
-         LXfYIgo3biumluC+6kp7TxP3YeaOTTMCWlUaRj8RDRyqj9lfXcwhdWmZVuP+Bdkq1sZS
-         OwyzbdIvnH8slaraV3mFjhkydi3YklErzPLg1zw8KpGYqgt2NgVdvmAk0JKK38fqOpSW
-         kocnfjMI+BDrHNtsJLzZI3Q2oQjEotJSnuTUQMZzdMV4MGyPwDB47g7EjGn94YYJJ6Yj
-         gUsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXqHuydnZiGc0BSsssgL2TquswS7OGdXSA1rfNNF5qPIiVDPv0eJcm/3V559iqyRMfpyaVU4qkL+G30aE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywdo4h9pgqSch7Ki2HI35rV7Pcx2uIWbrsAczfEOWiSoaU7QQES
-	ToF6caPzOIoWsDqqS/V2svJkuf7dWwBZehhZijGqD46mXMUQff6ZXqRb5X8ZcBk=
-X-Google-Smtp-Source: AGHT+IE4hHizV9yL/qQxX0Tp93XhlA79njW9O2LII+4OIQZhCEMoD5n1Aaf7picS5VfgYT1c3YFdlQ==
-X-Received: by 2002:a05:6512:3045:b0:539:a039:9bb6 with SMTP id 2adb3069b0e04-539da58cf3cmr1010640e87.56.1728640985323;
-        Fri, 11 Oct 2024 03:03:05 -0700 (PDT)
-Received: from [192.168.1.3] ([89.47.253.130])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182d78dcsm38257665e9.5.2024.10.11.03.03.03
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 03:03:04 -0700 (PDT)
-Message-ID: <231a275e-00db-499b-92a4-259dab8f9d80@linaro.org>
-Date: Fri, 11 Oct 2024 11:03:03 +0100
+	s=arc-20240116; t=1728641060; c=relaxed/simple;
+	bh=u62Iqwq1j9hEwHj88f6U4rqUI1Tow4Rkw952pQqSRFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UIhDt/CpzeV1/Gzvq/fKUv9wH9K1HN7wSUEWmQzVhYRMDirymmg22bK1M+E8/XNzbWv4jUUb5Xas3xLM24NzQI02HSGaCv5WB3F026b/Qz5kX/y1vv53/TIaYwo5n9ymrPNwwv8OYWU/bfTjwd25OlcywTC7zA/Pe1hT6XoKsbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=pfhwPVVd; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B9qtUe002354;
+	Fri, 11 Oct 2024 10:03:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=RMS407JH1GzvOCAB6bUsycq2laE
+	xGgR1zHnxYphVvgo=; b=pfhwPVVdIv1XUkO/O79nLwPUWAX9nJmw3MRKv3goE+X
+	6+IKdNG7am1n2kyuWpdnUMHXpr7forAs7CZIgPMFMo+WWCn4yy1cSfjwHTyARaHi
+	wCwUMFBGSShS4+6XkYLfrWpjtTF+I0t9aV8qDnMTbPyt4KP3MYb973Zp4qdZYN+l
+	1beZv0RKTBBfkUtcyiH/2og2fmwqebsx0cYEzrslM7YzP3JNgjDMQzfDv4/WiPDn
+	9MB/MXI5Gpg8WnCF55Zg1U4R8x4aUBrL97AWj6GHG5njCm0QKf1I05eDkQ7AyrWY
+	NGPROE6EsOPVEVZETEV9TC8pxD40a+PVWJRBrbKw3DA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4271s1g1e0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 10:03:57 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49BA3uYA027445;
+	Fri, 11 Oct 2024 10:03:56 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4271s1g1dt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 10:03:56 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49B7u9DM030168;
+	Fri, 11 Oct 2024 10:03:55 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsn4q8w-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 10:03:55 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BA3rHw57344328
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Oct 2024 10:03:53 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 4D1062004F;
+	Fri, 11 Oct 2024 10:03:53 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9564B20040;
+	Fri, 11 Oct 2024 10:03:49 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.124.219.55])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 11 Oct 2024 10:03:49 +0000 (GMT)
+Date: Fri, 11 Oct 2024 15:33:46 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Paolo Bonzini <pbonzini@redhat.com>
+Cc: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>, kvm@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [RFC] powerpc/kvm: Fix spinlock member access for PREEMPT_RT
+Message-ID: <Zwj4AllH_JjH5xEb@linux.ibm.com>
+References: <ZwgYXsCDDwsOBZ4a@linux.ibm.com>
+ <640d6536-e1b3-4ca8-99f8-676e8905cc3e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/8] Run tests in parallel showing number of tests
- running
-To: Ian Rogers <irogers@google.com>
-References: <20241011073559.431302-1-irogers@google.com>
-Content-Language: en-US
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
- Kan Liang <kan.liang@linux.intel.com>, Howard Chu <howardchu95@gmail.com>,
- Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
- Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova
- <vmolnaro@redhat.com>, Dapeng Mi <dapeng1.mi@linux.intel.com>,
- Thomas Richter <tmricht@linux.ibm.com>, Ilya Leoshkevich
- <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>,
- Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>,
- linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org
-From: James Clark <james.clark@linaro.org>
-In-Reply-To: <20241011073559.431302-1-irogers@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <640d6536-e1b3-4ca8-99f8-676e8905cc3e@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: SH0o1WOF3K4iszZHkugJGIa9qTP8DiKn
+X-Proofpoint-GUID: inWjXg4msE69DpFZkDC_wWRY_x9um5QI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-11_07,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=642 impostorscore=0 clxscore=1015 priorityscore=1501
+ adultscore=0 mlxscore=0 bulkscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110067
+
+On Thu, Oct 10, 2024 at 11:23:55PM +0200, Paolo Bonzini wrote:
+> On 10/10/24 20:09, Vishal Chourasia wrote:
+> > Hi,
+> > 
+> > While building the kernel with CONFIG_PREEMPT_RT, I encountered several
+> > compilation errors in the PowerPC KVM code. The issues appear in
+> > book3s_hv_rm_mmu.c where it tries to access the 'rlock' member of struct
+> > spinlock, which doesn't exist in the RT configuration.
+> 
+> How was this tested? I suspect that putting to sleep a task that is running
+> in real mode is a huge no-no.  The actual solution would have to be to split
+> mmu_lock into a spin_lock and a raw_spin_lock, but that's a huge amount of
+> work probably.  I'd just add a "depends on !PPC || !KVM_BOOK3S_64_HV" or
+> something like that, to prevent enabling KVM-HV on PREEMPT_RT kernels.
+Hi Paolo,
+
+This is a build time error, I didn't boot the kernel.
+
+I used pseries_le_defconfig with some other configs enabled. I was trying
+to see if the kernel would compile with ARCH_SUPPORTS_RT and
+CONFIG_PREEMPT_RT enabled.
+
+diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+index 8094a01974cca..568dc856f0dfa 100644
+--- a/arch/powerpc/Kconfig
++++ b/arch/powerpc/Kconfig
+@@ -168,6 +168,7 @@ config PPC
+        select ARCH_STACKWALK
+        select ARCH_SUPPORTS_ATOMIC_RMW
+        select ARCH_SUPPORTS_DEBUG_PAGEALLOC    if PPC_BOOK3S || PPC_8xx
++       select ARCH_SUPPORTS_RT                 if !PPC || !KVM_BOOK3S_64_HV
+        select ARCH_USE_BUILTIN_BSWAP
+        select ARCH_USE_CMPXCHG_LOCKREF         if PPC64
+        select ARCH_USE_MEMTEST
+I tried rebuilding with the above diff as per your suggestion
+though it works when KVM_BOOK3S_64_HV is set to N, but for 
+pseries_le_defconfig, it's set to M, by default, which then requires setting it
+to N explicitly.
 
 
+Will something like below be a better solution? This will set
+KVM_BOOK3S_64_HV to N if ARCH_SUPPORTS_RT is set.
 
-On 11/10/2024 8:35 am, Ian Rogers wrote:
-> Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
-> to read them for display. When running on a color terminal, display
-> the number of running tests (1 if sequential). To avoid previous
-> flicker, only delete and refresh the display line when it changes. An
-> earlier version of this code is here:
-> https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
-> 
-> Add a signal handler for perf tests so that unexpected signals are
-> displayed and test clean up is possible.
-> 
-> In perf test add an "exclusive" flag that causes a test to be run with
-> no other test. Set this flag manually for C tests and via a
-> "(exclusive)" in the test description for shell tests. Add the flag to
-> shell tests that may fail when run with other tests.
-> 
-> Change the perf test loop to run in two passes. For parallel
-> execution, the first pass runs all tests that can be run in parallel
-> then the 2nd runs remaining tests sequentially. This causes the
-> "exclusive" tests to be run last and with test numbers moderately out
-> of alignment.
-> 
-> Change the default to be to run tests in parallel. Running tests in
-> parallel brings the execution time down to less than half.
-> 
-> Ian Rogers (8):
->    tools subcmd: Add non-waitpid check_if_command_finished()
->    perf test: Display number of remaining tests
->    perf test: Reduce scope of parallel variable
->    perf test: Avoid list test blocking on writing to stdout
->    perf test: Tag parallel failing shell tests with "(exclusive)"
->    perf test: Add a signal handler around running a test
->    perf test: Run parallel tests in two passes
->    perf test: Make parallel testing the default
-> 
->   tools/lib/subcmd/run-command.c                |  33 +++
->   tools/perf/tests/builtin-test.c               | 267 ++++++++++++------
->   tools/perf/tests/shell/list.sh                |   5 +-
->   .../tests/shell/perftool-testsuite_report.sh  |   2 +-
->   tools/perf/tests/shell/record.sh              |   2 +-
->   tools/perf/tests/shell/record_lbr.sh          |   2 +-
->   tools/perf/tests/shell/record_offcpu.sh       |   2 +-
->   tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
->   tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
->   .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
->   tools/perf/tests/tests-scripts.c              |   5 +
->   tools/perf/tests/tests.h                      |   1 +
->   tools/perf/util/color.h                       |   1 +
->   13 files changed, 226 insertions(+), 100 deletions(-)
-> 
+diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
+index dbfdc126bf144..33e0d50b08b14 100644
+--- a/arch/powerpc/kvm/Kconfig
++++ b/arch/powerpc/kvm/Kconfig
+@@ -80,7 +80,7 @@ config KVM_BOOK3S_64
 
-Not really a big deal but remaining doesn't work when a subset of tests 
-are run:
+ config KVM_BOOK3S_64_HV
+        tristate "KVM for POWER7 and later using hypervisor mode in host"
+-       depends on KVM_BOOK3S_64 && PPC_POWERNV
++       depends on KVM_BOOK3S_64 && PPC_POWERNV && !ARCH_SUPPORTS_RT
+        select KVM_BOOK3S_HV_POSSIBLE
+        select KVM_GENERIC_MMU_NOTIFIER
+        select CMA
 
-  $ perf test 111 110
-  110: Check Arm64 callgraphs are complete in fp mode      : Ok
-  111: Check Arm CoreSight trace data recording and synthesized samples:
-    Running (150 remaining)
-
-Other than that:
-
-Tested-by: James Clark <james.clark@linaro.org>
+Thanks
 
 
