@@ -1,164 +1,135 @@
-Return-Path: <linux-kernel+bounces-361223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76B4299A53F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:38:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AE5199A541
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:39:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE6771F2462E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:38:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3E7841F23154
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:39:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 312DC218D85;
-	Fri, 11 Oct 2024 13:38:21 +0000 (UTC)
-Received: from mail-yb1-f180.google.com (mail-yb1-f180.google.com [209.85.219.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13142218D81;
+	Fri, 11 Oct 2024 13:39:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nACEZlzO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742E8804;
-	Fri, 11 Oct 2024 13:38:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDE05804;
+	Fri, 11 Oct 2024 13:39:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653900; cv=none; b=NatQOluGFoxvVPs7rHEvT4bLtht8YSu9CTMpN7VcEqJvApJSit1Oy/NIfvFNv+pwJLD+IdnRBeOqCHRb/pPNj8+5f0HqINeWQzv0U6UCWllr6KtTFYNMsWqGzbPgoNqHyhEV3arFAdb0+RsSHSUlBKAhI7mGuAEWY76zRcuEn8k=
+	t=1728653948; cv=none; b=d6naWdGcSssG5kS3oNqHNpILQoLIh3bjQ4J7eIgqPpjtsTBn7XndelGDbzboq+8n8Ls1PvfpzuuJ30CMRkrOG0CItLF3LPtkyfD5yJqzS7PJgk29cnRdhoY0WJ/WBZuW4BivEk5krQe3lY42g5XG7l6IraIJR7+SW9n9JLZSBPU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653900; c=relaxed/simple;
-	bh=q+rW7hWH5Ignpu2pV6JUl1UdxQOkukoVb2hXg2WCsNs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Mgs4+ESN/WwRb61Hk2sMx8nQOJIGk71VIyiZp0T/LLeZ6VBGC+6B8YSZFpTvoYVJbp3H6bh166R0zyPDmRxl8MX0UljwmGKhBio/RVnTLmdJ5JMr2JwIH725g8uEli9swRNmQs7RGkcpTsVxSz3t92et2/aW0n4/Rn/8SDQIaHI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f180.google.com with SMTP id 3f1490d57ef6-e290bf7adaaso2066026276.1;
-        Fri, 11 Oct 2024 06:38:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728653895; x=1729258695;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6GQ33tgjUstB7i6Y5B0N4m09rhIX1en3xDn/TMfIc30=;
-        b=p7iSc3AJxgj8rY1VdwIX5ue3pT9cpw6BicPPfitQeLgt5kLEMVrzWjSP0MPOeDfZAo
-         sr+3lN1j0dJkQKockQSTfvumbRXtDYU4qNKuFpGX4leB5zYX2dhJqHxKxJua42UD5M3M
-         j96LYMFKFur6zJV5Z02sKPdhB5rwNCMd8qurCU1TezMwfrlhrG8ig3k5Xz2PFV1BzQwv
-         HxrG6WCkdlq5xrfMmtRRXRpzZkdcGvcVI1XXPyGYFnjHOr+UZQI8qYJ4XYAtFRq1uJpi
-         RWQOPt5plhSE1VjwlpJHRq6+2cTaPOd8bfXi+Hm7lGQnpXnoJxpKXhTa3nppigJq4OqO
-         Gu5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVdfLoQZ6Cm2bNbad7KLAPHBi4cTU1AsB5gD7qA3Y7KP8/bb328rAjYmKHHICL1ObPlH9oWBaugkv0asv7Ajsbb@vger.kernel.org, AJvYcCWmX6jggYF7A46ewug9XmSywUj6UXKDgiTKzApjMXlWjY7UpPXF7WO04WnZG3vKjtG5LNwus6SdLhkMiHjiPzuiwQht@vger.kernel.org, AJvYcCX3VvCht7kzkekbN0HpSSXZGDq+4oIzi3tNV51m0T6p31oN7U5Mzb/r+kYCHdIsOhsiBri1Nf7hmOqiCU5u@vger.kernel.org, AJvYcCXw7qG9HIBf7BJPeEmCkwTUvqet+IgLZRVegDT7kkt5tT6P8aS/3aiYk97LT0bv30Z3oBXv6giDrIE+hjVznRc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyp/irLhEehgSk1BBxZDXPYIiDixZO9qE9/9W4HRQx1WP/WZzbb
-	L+DRLvjqf6JvzVNZAsuX1ZQFpkOhl46zoPaC/JwK0lqIQMdphdgzpYZLlcT94C4=
-X-Google-Smtp-Source: AGHT+IH3uTNQbX/0461XjwlRWu2FuceeLOeyk08qSrrU4Js1E3kyYCJ71To0Atr69ctjT63/uOHVnw==
-X-Received: by 2002:a05:6902:2b83:b0:e29:10ff:bb6 with SMTP id 3f1490d57ef6-e2919da0252mr1852609276.23.1728653894939;
-        Fri, 11 Oct 2024 06:38:14 -0700 (PDT)
-Received: from mail-yb1-f175.google.com (mail-yb1-f175.google.com. [209.85.219.175])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ee00ef6sm812803276.14.2024.10.11.06.38.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 06:38:14 -0700 (PDT)
-Received: by mail-yb1-f175.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso2077721276.0;
-        Fri, 11 Oct 2024 06:38:13 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU2/L7Kgdt4coSS47KdII67y3Wmubsf8Qi92F882m/ljCxckk01knHthvVbqAH7jCutg2JwGt26ffykJqP3@vger.kernel.org, AJvYcCUfCDLtSn1tyhobTx6eOw9RuZ7uL4nWJyt7hN2S4QCN4yAw2/XHocLyrE8XQSrNFdEILyoby6gmX5YTI5gqtkQ=@vger.kernel.org, AJvYcCVSkcy1NgwTfM/H0NAwMkXwBeMaUHZueFvQGFDZPKx0Ac3feV7SZ/T6UIpl3jGqXLOMdeMNtgm7xOAwPiQMf+bf@vger.kernel.org, AJvYcCXn3A7LQPA2BZUceo1EQtrY2+rCWyVMv0/AMkKpWKLVxvGPV/t0nIM8oa+GWVWNbAM3mtflQy+sKse7o2ubqSLGcULV@vger.kernel.org
-X-Received: by 2002:a05:690c:6bc7:b0:6e2:50a:f436 with SMTP id
- 00721157ae682-6e347c4e77emr12305637b3.36.1728653893515; Fri, 11 Oct 2024
- 06:38:13 -0700 (PDT)
+	s=arc-20240116; t=1728653948; c=relaxed/simple;
+	bh=NeFJiDfBin6S/qt+A0kI6aD97De7gqKLKGeBWCf/zt8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uwRJNmRzpYtTwQSOVuQsTTG/cfoZxQN1VKPHRGifTs/1UbVVjuo/++cpIONPvucSmCGbkxIZQo3LiaCZYUDlR0DP4ZWVlgB3JUwhVdsEh6qxev5BLmQ3ekREkY6stYpGexx5o3DdeLTbdZ30Ad2QCMpltilUTTihujj77czkZv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nACEZlzO; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728653947; x=1760189947;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=NeFJiDfBin6S/qt+A0kI6aD97De7gqKLKGeBWCf/zt8=;
+  b=nACEZlzO20/H4JwCyTFhirvdyYGwJlxJmgTWyt9fe15703FFnp6koyJH
+   T37lQ3SXP1U00dWhkCXrx8JjYxp+3Oh75LvtXL3f88KIUqY5ZniP+A3WV
+   u2INGa7GJ7LWWOiRINIGvmV8qTeHOB2wIJ0ca+V7jmK204HPOX7Ea4/cy
+   jm0EXLFNns0iB1KCWVySFGYdDey7mWv4ijU5obGk+WjunkuAtCEQq3Yld
+   Di2IKz/fgoeZnHsHU5kfptJmaMsGtYcXLkgzfJ0teaKJKflHpiWMHZKoh
+   1t/EGpb/Ylr/hso0xmDyFP/OgGhzwdh32R0cWqKWgIM3zovjf6VOY0ULI
+   Q==;
+X-CSE-ConnectionGUID: LvdX/gERTJGQayLUpyHzGw==
+X-CSE-MsgGUID: QMt2R9W2RgGevwgweV/HLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27923319"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="27923319"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:39:06 -0700
+X-CSE-ConnectionGUID: cxbZaPtmQ+W5qLyzoODT2Q==
+X-CSE-MsgGUID: RxPLCwo/R8yF7apY82UN7g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="81530336"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:39:03 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szFrB-00000001u8Z-19GV;
+	Fri, 11 Oct 2024 16:39:01 +0300
+Date: Fri, 11 Oct 2024 16:39:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Jarred White <jarredwhite@linux.microsoft.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
+Message-ID: <ZwkqdKUANkU-29NN@smile.fi.intel.com>
+References: <20241011061948.3211423-1-arnd@kernel.org>
+ <20241011061948.3211423-2-arnd@kernel.org>
+ <Zwj1p3uMEA24a0sU@smile.fi.intel.com>
+ <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
+ <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
+ <CAJZ5v0hG0o3jxH_HnS76s=VUC28M4fY5yuWxQttGSkCX_SvCSA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011072509.3068328-2-davidgow@google.com> <20241011072509.3068328-5-davidgow@google.com>
- <ZwkBgkthcQM7rLl7@smile.fi.intel.com>
-In-Reply-To: <ZwkBgkthcQM7rLl7@smile.fi.intel.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 11 Oct 2024 15:38:00 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW=MF0H8YVuY6moLomTaxFEeCHgut1fruRGEkn79sbuTA@mail.gmail.com>
-Message-ID: <CAMuHMdW=MF0H8YVuY6moLomTaxFEeCHgut1fruRGEkn79sbuTA@mail.gmail.com>
-Subject: Re: [PATCH 3/6] lib: Move KUnit tests into tests/ subdirectory
-To: Andy Shevchenko <andy@kernel.org>
-Cc: David Gow <davidgow@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Shuah Khan <skhan@linuxfoundation.org>, Brendan Higgins <brendanhiggins@google.com>, 
-	Rae Moar <rmoar@google.com>, Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, 
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	linux-hardening@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Simon Horman <horms@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Latypov <dlatypov@google.com>, 
-	Guenter Roeck <linux@roeck-us.net>, David Howells <dhowells@redhat.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Fangrui Song <maskray@google.com>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJZ5v0hG0o3jxH_HnS76s=VUC28M4fY5yuWxQttGSkCX_SvCSA@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Andy,
+On Fri, Oct 11, 2024 at 01:28:23PM +0200, Rafael J. Wysocki wrote:
+> On Fri, Oct 11, 2024 at 1:12 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Fri, Oct 11, 2024 at 09:59:46AM +0000, Arnd Bergmann wrote:
+> > > On Fri, Oct 11, 2024, at 09:53, Andy Shevchenko wrote:
+> > > > On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
 
-On Fri, Oct 11, 2024 at 12:44=E2=80=AFPM Andy Shevchenko <andy@kernel.org> =
-wrote:
-> On Fri, Oct 11, 2024 at 03:25:07PM +0800, David Gow wrote:
-> > From: Kees Cook <kees@kernel.org>
+...
+
+> > > >> +  if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
+> > > >> +          *value = BIT_MASK(width);
+> > > >> +          return AE_NOT_IMPLEMENTED;
+> > > >
+> > > > Perhaps it has already been discussed, but why do we need to file value with
+> > > > semi-garbage when we know it's invalid anyway?
+> > >
+> > > It's not strictly necessary, just precaution for possible callers
+> > > that use the resulting data without checking the error code.
 > >
-> > Following from the recent KUnit file naming discussion[1], move all
-> > KUnit tests in lib/ into lib/tests/.
+> > Do you have any examples of that in the kernel?
+> 
+> Yes, there are at least 2 cases.  May not be relevant, though.
+
+Btw, may be we even can add the error check to them, dunno...
+
+> > > The all-ones data is what an x86 PC would see when an I/O
+> > > port is read that is not connected to any device.
 > >
-> > Link: https://lore.kernel.org/lkml/20240720165441.it.320-kees@kernel.or=
-g/ [1]
-> > Signed-off-by: Kees Cook <kees@kernel.org>
-> > Acked-by: "Steven Rostedt (Google)" <rostedt@goodmis.org>
-> > Acked-by: Jakub Kicinski <kuba@kernel.org>
-> > Acked-by: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-> > Reviewed-by: David Gow <davidgow@google.com>
-> > [Rebased onto mm-nonmm-unstable, moved usercopy_kunit]
-> > Signed-off-by: David Gow <davidgow@google.com>
->
-> >  rename lib/{ =3D> tests}/bitfield_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/checksum_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/cmdline_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/cpumask_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/fortify_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/hashtable_test.c (100%)
-> >  rename lib/{ =3D> tests}/is_signed_type_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/kunit_iov_iter.c (100%)
-> >  rename lib/{ =3D> tests}/list-test.c (100%)
-> >  rename lib/{ =3D> tests}/memcpy_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/overflow_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/siphash_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/slub_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/stackinit_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/string_helpers_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/string_kunit.c (100%)
-> >  rename lib/{ =3D> tests}/test_bits.c (100%)
-> >  rename lib/{ =3D> tests}/test_fprobe.c (100%)
-> >  rename lib/{ =3D> tests}/test_hash.c (100%)
-> >  rename lib/{ =3D> tests}/test_kprobes.c (100%)
-> >  rename lib/{ =3D> tests}/test_linear_ranges.c (100%)
-> >  rename lib/{ =3D> tests}/test_list_sort.c (100%)
-> >  rename lib/{ =3D> tests}/test_sort.c (100%)
-> >  rename lib/{ =3D> tests}/usercopy_kunit.c (100%)
->
-> While I support the idea, I think this adds an additional churn in creati=
-ng a
-> duplicate 'test' in the filenames. Why they all can't be cut while removi=
-ng?
-> (at least this question is not answered in the commit message)
+> > Yes, but it's not what your code does.
+> 
+> Care to elaborate?
 
-To avoid duplicate *.ko file names?
+Sure, but it seems Arnd already figured out that he set one bit only somewhere
+in the returned value, not what he stated in the explanation in this email
+thread.
 
-Gr{oetje,eeting}s,
+-- 
+With Best Regards,
+Andy Shevchenko
 
-                        Geert
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
