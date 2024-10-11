@@ -1,77 +1,56 @@
-Return-Path: <linux-kernel+bounces-361190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0D9699A4DE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:22:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43BBF99A4DF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6328A1F21DBE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:22:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6EACE1C20EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:22:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10CD6219493;
-	Fri, 11 Oct 2024 13:19:31 +0000 (UTC)
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6427219C95;
+	Fri, 11 Oct 2024 13:19:41 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCC920CCE6;
-	Fri, 11 Oct 2024 13:19:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB872185B1;
+	Fri, 11 Oct 2024 13:19:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728652770; cv=none; b=e70IVuq/tzhYJWRBTYPWXEtiXW2iihpUU4JGAZC84OlEmrA1h82+wHKbie+HYIbp3NmCPXxndvpG6JIAuZVf/Mybu0QQM0aTxuktRpPWffAUhsaPH66wdjNdMZkg24ufC7ALyoSHZ3Iz1YBBj3VMuFLqkDyO2/d+aSX7z8QLf7k=
+	t=1728652781; cv=none; b=tAbaT79jPmdxuIlJcZfhqRh3uWSyhWXyZbZllhQc1Kf+D64nonGa8NUirH/SEQMItcAMasasWjYeQgXxRpOOnzCb1Vn4xNZqmB27oaRZ4L1TTBpp7ht/yI0jctIfaHgzsTNVW0ObAf65+7fnA8NXuKTfC99KsbniTiui/bpkGJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728652770; c=relaxed/simple;
-	bh=cnJ5uvSVuxAfXsetBrggN16fMsTSu79tuyp1x9SGquE=;
+	s=arc-20240116; t=1728652781; c=relaxed/simple;
+	bh=KPk/oGQCSzHeJeEm1U6bQDYtA3wrtPagucVe1rAmc3o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fWILgiDDHOtOgZvhZAGt3GhSHLoDUdwLBPd8aT/6QlU+GaRbVu52Fu9P246vgSgLk4XE9TuRYcaUQiK+kcnl3DcKkdQe0FPk7blJE9nhIRiVtbCTlq6NoNtOJIzk9zf6/x3SKMH/YL46GhwPJbzIa++iiqlMlHqtVMnU8WvLeEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d47b38336so1155291f8f.3;
-        Fri, 11 Oct 2024 06:19:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728652767; x=1729257567;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TfPQ3c0xR8XvTs1ww54hU922OvwjE1r+ePXVHUoyZs8=;
-        b=b3o+KpGkEhswSbHel4dR/UNMM+C/Vhkc7R7FdC9SAXODJ83xTRH6nGOIRv/gKzQba8
-         03K7hWWucO4GsE//UJGheuRnyWc6lwpT5cL8JpK/S6IIKHu/OTt5oH59dCi/Hn6i+icp
-         SKtDfK2PKRILcgNgiq39zCjMiP0fYH4IYtKBFe5yMvh3c/wQW3Ko3WnrS9nSvnNiAHho
-         thiP+UamJ2LeJLZRLZ3pOtA6hEJ3g1guNBe7wvOCZvgHhXXzn1AF2UDiUYfDM2ugDBRy
-         wq8XupFknbetx60bW7YK+024wJ0d1qLpY9x6mOG4SwMvGGDt4Xdd8aEmmzzrDOlZTcfa
-         lQkA==
-X-Forwarded-Encrypted: i=1; AJvYcCURUgSupJDq1EHxk1XUvmVwacW9cP1TCuzS5VtF9SdexHvqa51J/QJ93GHYX30xzWL8wiQU8nQF8v7mBAIy@vger.kernel.org, AJvYcCWFI+v42bdMkZ2mOxljAu+J0ZlqQxIlOO1yR1IJ6cIHS/Eg7L5OXBMtz7/ji+fnn8c5IhCvp0OwzQM=@vger.kernel.org, AJvYcCXFAW7srt9e4sgeBMCc0/9Cf5uRmu1GV3fAmAlUYfcz5grE8lwg7eVpJU2ftGz7zQwX0kdYCVOe@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0AptBqGiLXUHjgTUyHv8j/7Bxu6Wh+uEBAg4WEXnQLFj/gx8g
-	6jnryTPbMaMiLmqeOV1Fl44yBfGGDAohtkRnkK7DRC+TIagHf0Zj
-X-Google-Smtp-Source: AGHT+IF1KxyNFqKfcwngVLGBbxEHxhdpVgb23EjjmLJ1skOpBKj7hUXQXCc0BHIChnU5Vc7j5k7g5w==
-X-Received: by 2002:a5d:688b:0:b0:37d:462a:9bc6 with SMTP id ffacd0b85a97d-37d552fd82dmr1824232f8f.36.1728652767217;
-        Fri, 11 Oct 2024 06:19:27 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-002.fbsv.net. [2a03:2880:30ff:2::face:b00c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cf8dbsm3936638f8f.59.2024.10.11.06.19.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 06:19:26 -0700 (PDT)
-Date: Fri, 11 Oct 2024 06:19:24 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, kernel-team@meta.com,
-	kuniyu@amazon.com, asml.silence@gmail.com,
-	Willem de Bruijn <willemb@google.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next v2] net: Implement fault injection forcing skb
- reallocation
-Message-ID: <20241011-elegant-cobalt-bonobo-ba5aa1@leitao>
-References: <20241008111358.1691157-1-leitao@debian.org>
- <822f5875-5ec0-46e1-83f8-66ec1e31f0f2@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nS2eXTBl8l1OlAvFhVqeo24qnWzAAt7hF4XXPU0WCzBydAnlaKi3uYIe6iCy/mnTeXhP+Oy9AV7hKnHOI4U7NParDcLN/v5Mnubz/H+d1IELcvyq2WYQ+eAGewCXA25Gm20gEElkkacCPxlyJDGH0RvZHgp3PjEgnXYZfUklMLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58A97C4CEC7;
+	Fri, 11 Oct 2024 13:19:37 +0000 (UTC)
+Date: Fri, 11 Oct 2024 14:19:35 +0100
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: Gavin Shan <gshan@redhat.com>
+Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev, Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: Re: [PATCH v6 05/11] arm64: rsi: Map unprotected MMIO as decrypted
+Message-ID: <Zwkl51C3DFEQQ0Jb@arm.com>
+References: <20241004144307.66199-1-steven.price@arm.com>
+ <20241004144307.66199-6-steven.price@arm.com>
+ <e21481a9-3e36-4a5d-9428-0f5ef8083676@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,33 +59,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <822f5875-5ec0-46e1-83f8-66ec1e31f0f2@redhat.com>
+In-Reply-To: <e21481a9-3e36-4a5d-9428-0f5ef8083676@redhat.com>
 
-Hello Paolo,
-
-On Thu, Oct 10, 2024 at 11:20:05AM +0200, Paolo Abeni wrote:
-> On 10/8/24 13:13, Breno Leitao wrote:
-> > +void skb_might_realloc(struct sk_buff *skb)
+On Tue, Oct 08, 2024 at 10:31:06AM +1000, Gavin Shan wrote:
+> On 10/5/24 12:43 AM, Steven Price wrote:
+> > diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+> > index d7bba4cee627..f1add76f89ce 100644
+> > --- a/arch/arm64/kernel/rsi.c
+> > +++ b/arch/arm64/kernel/rsi.c
+> > @@ -6,6 +6,8 @@
+> >   #include <linux/jump_label.h>
+> >   #include <linux/memblock.h>
+> >   #include <linux/psci.h>
+> > +
+> > +#include <asm/io.h>
+> >   #include <asm/rsi.h>
+> >   struct realm_config config;
+> > @@ -92,6 +94,16 @@ bool arm64_is_protected_mmio(phys_addr_t base, size_t size)
+> >   }
+> >   EXPORT_SYMBOL(arm64_is_protected_mmio);
+> > +static int realm_ioremap_hook(phys_addr_t phys, size_t size, pgprot_t *prot)
 > > +{
-> > +	struct net_device *net = skb->dev;
+> > +	if (arm64_is_protected_mmio(phys, size))
+> > +		*prot = pgprot_encrypted(*prot);
+> > +	else
+> > +		*prot = pgprot_decrypted(*prot);
 > > +
-> > +	if (skb_realloc.filtered &&
-> > +	    strncmp(net->name, skb_realloc.devname, IFNAMSIZ))
-> > +		/* device name filter set, but names do not match */
-> > +		return;
+> > +	return 0;
+> > +}
 > > +
-> > +	if (!should_fail(&skb_realloc.attr, 1))
-> > +		return;
 > 
-> if you wraps the above 2 statement in an helper() taking an skb argument,
-> you could wrap it with the ALLOW_ERROR_INJECTION() macro, for added
-> flexibility, i.e. look at the existing should_failslab().
+> We probably need arm64_is_mmio_private() here, meaning arm64_is_protected_mmio() isn't
+> sufficient to avoid invoking SMCCC call SMC_RSI_IPA_STATE_GET in a regular guest where
+> realm capability isn't present.
 
-I've looked deeper and your proposal, and I liked it. It makes sense to
-have it as a helper.
+I think we get away with this since the hook won't be registered in a
+normal guest (done from arm64_rsi_init()). So the additional check in
+arm64_is_mmio_private() is unnecessary.
 
-I will send a new version with it included.
-
-Thanks
---breno
+-- 
+Catalin
 
