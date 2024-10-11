@@ -1,195 +1,195 @@
-Return-Path: <linux-kernel+bounces-360621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2091999D56
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:01:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACB9D999D5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E2A1C22900
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:01:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3EA23287225
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:03:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719F4BA2D;
-	Fri, 11 Oct 2024 07:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B6D2BA2D;
+	Fri, 11 Oct 2024 07:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="cT38qK70"
-Received: from mail-40133.protonmail.ch (mail-40133.protonmail.ch [185.70.40.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j2g7gj2u"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5443D1C1756;
-	Fri, 11 Oct 2024 07:01:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24EC635
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630082; cv=none; b=X06v83h19vR1b65XTUU8cDxMvlOmJs0jmzyYitqx0QFsKizSdUFpsBEaWRqzMFf8egIMUMrv4MxEc+L2OXlUqEFSn9WIYfN/+5hZlaQTyIpFKQZYRkCFOq1hjowUAsnduODfzntAGkREio4tA1yjg6ByUJimRepvfh77INO2Dlg=
+	t=1728630185; cv=none; b=FFXDUhNjdstNBzT4r8EgpCbT72UjqutLVh4LJOT2iX6sZEtQVN1UcJ3vEEIGtKNYuHNpfhf3fMiPizWi3glpMtHvozDXh6nFWm6TxhlNTvJo22E42VjWFIED9l2j0kQSDDUJv9zO8vTjkmTmRN9T/MeycfsKitDOMJFdvj3CWrI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630082; c=relaxed/simple;
-	bh=HCqZwzAk09GT5UPDqNEaN0FyisnY3+WGNoIb8DZaB9U=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tk37o7oz64gB2XNN3K/GzW6BWf3wDw90yANL1uXaSZmh457Wlcf72ljuRSZaiYw1X0ecclr4RcfqENVM4PdUcA7JnmXXiaIguZgdZhNXsWKU8C/3LEwFTxxfbnO/XtBlKb/Ec083ENEnHmoTddY/OyU8hgSKGhO2AOoIAIboFSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=cT38qK70; arc=none smtp.client-ip=185.70.40.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1728630071; x=1728889271;
-	bh=vENrMvJyxPneGl6xdvV28EbXdQvt6S5P8ra/4eY8Dkg=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=cT38qK70Oo/HnUyJr1t3ELZWncTzUG2eR84HdG/MXrEPbHSldX6flKrURiInI+j+2
-	 0h704oXdyta3hkOGWl2BJj9gWk7JUycU8F8WN+bx1hnyEKlimvOZPRaZ4XkgDhYe2e
-	 vzUrzafAzg+Abw96p5r9cu+RIeTiu8QIJmEZVCy+pgPVAG/9O9wL6KfLH5JnwOfGBF
-	 De6ok9XDZw8OQRf7kvnus8vWwueZAb9bIhn2zNuY3QsRyHvfFT3m7lFajDaprdGBrA
-	 KgwFGH8LyV852lg0Sj5YddmqYQUOI8WsVt/FF/FDNkLyY8DYiV/cHIf31gFCYWOlJl
-	 uJcbgi84XzDmQ==
-Date: Fri, 11 Oct 2024 07:01:09 +0000
-To: Boqun Feng <boqun.feng@gmail.com>
-From: Benno Lossin <benno.lossin@proton.me>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Subject: Re: [PATCH v4] rust: add global lock support
-Message-ID: <b91dd35f-78be-4848-a4cf-b82914e742ad@proton.me>
-In-Reply-To: <Zwhd-Eu_1oB9CIYd@boqun-archlinux>
-References: <20240930-static-mutex-v4-1-c59555413127@google.com> <1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me> <CAH5fLghsozD0qeTygBM0-WDgXRwtGcsc6B3bT1794QMx3=vSTg@mail.gmail.com> <Zwfcwg23tfrKIyrq@boqun-archlinux> <CAH5fLgjhTWjmYqxcTRRv6FTpv7Vg9nnVCGGWbSKPqOSjJ5XyQA@mail.gmail.com> <ZwfkzKz5mz6UvZfK@boqun-archlinux> <ZwgB39dXLdFWQkHz@boqun-archlinux> <3e7832f7-8806-41e0-8e36-6f178df2eaef@proton.me> <Zwhd-Eu_1oB9CIYd@boqun-archlinux>
-Feedback-ID: 71780778:user:proton
-X-Pm-Message-ID: dcef549524a6e89979755868095c49ddb29c2bcc
+	s=arc-20240116; t=1728630185; c=relaxed/simple;
+	bh=o4MJNbvGM+bJwqv08q8gLQ2VClYFU3eXABrw4caFEMQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ABwx96zOrQ3MjFzUJZaCCXELKk9sWbisLKdtiOQHJP8XU+G0g+RPhWr+bpE+uUJrvAl781dqKE6VleO0gDSG1WlI/L7+avCHk0hrfDLbowk0HTP+Em/J2SX3Rv8F5b7bMzy1vIRx1hr0YQOdxSy1XGIS+CH15iuWEGpomg9aJ5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j2g7gj2u; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6db836c6bd7so16646197b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:03:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728630183; x=1729234983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e/WrAkYmWTzQpnkkGqkA3T9eZ4D5Jk8JiEoDs0ZQrAM=;
+        b=j2g7gj2uSZhA9vlxgsNLQ/4yqN/O0m0FG6y8PhFCYTkF4xz8VQTUDT1pdvrqZtnWG7
+         XRmDOS59wLqRBIkOEbD27Um9cNUzFrXuLTeMRmFED8pLF4oB7g2vVN+lYvXz8y4pmtax
+         JaIxHCUtxWyfXDx6oNkKZx3ibdlfHrossjvPD2kgKrzLP/whMqrfZ48OOKpSvJx95RdU
+         OwQYYXOLv/Jut5CEOka2u3lFZV2/c0XWxDxZun7+IUB10rnkTqoXZ0lyjHJS8LvUUgjO
+         2ejjYLuATYBc+ds4wGrWraJw2tESczln1TCjsYOp6JffNwtHMp97EybhDMNedJBKZ41Q
+         yiUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728630183; x=1729234983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e/WrAkYmWTzQpnkkGqkA3T9eZ4D5Jk8JiEoDs0ZQrAM=;
+        b=Htcytq37aeKtOEEhTNLXW4AsoJ9hRrwzBZkRNn45/gkDiGLfrPF4pUXwyB6+v+/wEd
+         mB+FoMyf0PiOXVrvewCA8i3AjRUJ2x0FATwACMrJnrrMPEYe8QaHOQ4jSSbK0BsjrY/9
+         TNaXBFJJDxmNr14PQvycdevqHOxMHKDt8dih0OvAnwRghOtzxUGIRxNrbOI8MyBkwOb0
+         MSvzDFyKiABy0iwjcUFUEHJPgdNOvn+e9xn+DjVK1W4AKdDg6JdNwkzxUO6XyxRwte5x
+         xAaP5WiPvgtbe0rIB5pv6ENOsrT55FWHPy14z42uhY8MA4UNIx/gOi4svyz0D5G9RLYp
+         G6Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCU36YUkFyqozMXdgbzXUoTEVRofuU+dd+8h80iFMjiw2R99KITEG9+yAhWXH9mErR//YxYuIDJ1hMAyu7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxu1ZM7YLnMomj7BD5v33L6j7ByiO5+Gg3rB7aMvHdh2k5XyhnP
+	PQXN+6X+X0ieOME9HD7ejeU/aKHwgyoed/t1e6eMGmqsF0e+MZhVUlhm3rM2T6EFq8DHG35NAad
+	nPQjIWUSoUSfDoFuAvBFxICA0vkqpq4hdiKd4cA==
+X-Google-Smtp-Source: AGHT+IExrPlFUulHFd/PrfCfhS/4BHjHsolgjvVdCJaeB+YAMnpZ8ogCYZHPoFPVad1Xx04WRVGP4lRAtqTIlIKyqzc=
+X-Received: by 2002:a05:690c:4e09:b0:6dd:bbb4:bcc7 with SMTP id
+ 00721157ae682-6e347c4de20mr8741367b3.44.1728630182736; Fri, 11 Oct 2024
+ 00:03:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
+ <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3> <CABymUCP7bVBSWXCNp33x_B8KaZSFU-Dx+bU5ctkgDGXrzURrXQ@mail.gmail.com>
+In-Reply-To: <CABymUCP7bVBSWXCNp33x_B8KaZSFU-Dx+bU5ctkgDGXrzURrXQ@mail.gmail.com>
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Date: Fri, 11 Oct 2024 10:02:52 +0300
+Message-ID: <CAA8EJpovnEq_ciO0YmiREhwvxv6yGKnRMPx5=6G7R+Ob6Hy_hA@mail.gmail.com>
+Subject: Re: [PATCH v2 09/14] drm/msm/dpu: blend pipes per mixer pairs config
+To: Jun Nie <jun.nie@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On 11.10.24 01:06, Boqun Feng wrote:
-> On Thu, Oct 10, 2024 at 10:21:41PM +0000, Benno Lossin wrote:
->> On 10.10.24 18:33, Boqun Feng wrote:
->>> On Thu, Oct 10, 2024 at 07:29:32AM -0700, Boqun Feng wrote:
->>>> On Thu, Oct 10, 2024 at 03:58:07PM +0200, Alice Ryhl wrote:
->>>>> On Thu, Oct 10, 2024 at 3:55=E2=80=AFPM Boqun Feng <boqun.feng@gmail.=
-com> wrote:
->>>>>>
->>>>>> On Thu, Oct 10, 2024 at 12:53:00PM +0200, Alice Ryhl wrote:
->>>>>> [...]
->>>>>>>>> +#[macro_export]
->>>>>>>>> +macro_rules! global_lock {
->>>>>>>>> +    {
->>>>>>>>> +        $(#[$meta:meta])* $pub:vis static $name:ident: $kind:ide=
-nt<$valuety:ty> =3D unsafe { uninit };
->>>>>>>>> +        value: $value:expr;
->>>>>>>>
->>>>>>>> I would find it more natural to use `=3D` instead of `:` here, sin=
-ce then
->>>>>>>> it would read as a normal statement with the semicolon at the end.
->>>>>>>> Another alternative would be to use `,` instead of `;`, but that d=
-oesn't
->>>>>>>> work nicely with the static keyword above (although you could make=
- the
->>>>>>>> user write it in another {}, but that also isn't ideal...).
->>>>>>>>
->>>>>>>> Using `=3D` instead of `:` makes my editor put the correct amount =
-of
->>>>>>>> indentation there, `:` adds a lot of extra spaces.
->>>>>>>
->>>>>>> That seems sensible.
->>>>>>>
->>>>>>
->>>>>> While we are at it, how about we make the syntax:
->>>>>>
->>>>>>         global_lock!{
->>>>>>             static MY_LOCK: Mutex<u32> =3D unsafe { 0 };
->>>>>>         }
->>>>>>
->>>>>> or
->>>>>>
->>>>>>         global_lock!{
->>>>>>             static MY_LOCK: Mutex<u32> =3D unsafe { uninit { 0 } };
->>>>>>         }
->>>>>>
->>>>>> ?
->>>>>>
->>>>>> i.e. instead of a "value" field, we put it in the "initialization
->>>>>> expression". To me, this make it more clear that "value" is the
->>>>>> initialized value protected by the lock. Thoughts?
->>>>>
->>>>> `uninit { 0 }` looks pretty terrible IMO. Can we come up with somethi=
-ng better?
->>>>>
->>>>
->>>
->>> how about:
->>>
->>>         global_lock!{
->>>             static MY_LOCK: Mutex<u32> =3D unsafe { data: 0 };
->>
->> I dislike this, since there is no `uninit` anywhere, but the mutex needs
->> to be initialized.
->>
->>>         }
->>>
->>> ?
->>>
->>> "data: " will make it clear that the value is not for the lock state.
->>> "uninit" is dropped because the "unsafe" already requires the global
->>> variable to be initialised first. Or "unsafe { uninit, data: 0 }" if yo=
-u
->>> want to keep the "uninit" part?
->>
->> That also looks weird to me...
->>
->> But I haven't come up with a good alternative
->>
->=20
-> How about a "fake" MaybyUninit:
->=20
-> =09global_lock!{
->             static MY_LOCK: Mutex<u32> =3D unsafe { MaybeUninit::new(0).a=
-ssume_init() };
-> =09}
->=20
-> ?
+On Fri, 11 Oct 2024 at 09:40, Jun Nie <jun.nie@linaro.org> wrote:
+>
+> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
+=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:15=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Wed, Oct 09, 2024 at 04:50:22PM GMT, Jun Nie wrote:
+> > > Blend pipes by set of mixer pair config. The first 2 pipes are for le=
+ft
+> > > half screen with the first set of mixer pair config. And the later 2 =
+pipes
+> > > are for right in quad pipe case.
+> > >
+> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > > ---
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 38 ++++++++++++++++++-=
+----------
+> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
+> > >  2 files changed, 25 insertions(+), 14 deletions(-)
+> > >
+> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/d=
+rm/msm/disp/dpu1/dpu_crtc.c
+> > > index 43d9817cd858f..66f745399a602 100644
+> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > > @@ -442,7 +442,7 @@ static void _dpu_crtc_blend_setup_mixer(struct dr=
+m_crtc *crtc,
+> > >       const struct msm_format *format;
+> > >       struct dpu_hw_ctl *ctl =3D mixer->lm_ctl;
+> > >
+> > > -     uint32_t lm_idx, i;
+> > > +     uint32_t lm_idx, lm_pair, i, pipe_idx;
+> > >       bool bg_alpha_enable =3D false;
+> > >       DECLARE_BITMAP(fetch_active, SSPP_MAX);
+> > >
+> > > @@ -463,15 +463,20 @@ static void _dpu_crtc_blend_setup_mixer(struct =
+drm_crtc *crtc,
+> > >               if (pstate->stage =3D=3D DPU_STAGE_BASE && format->alph=
+a_enable)
+> > >                       bg_alpha_enable =3D true;
+> > >
+> > > -             for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
+> > > -                     if (!pstate->pipe[i].sspp)
+> > > -                             continue;
+> > > -                     set_bit(pstate->pipe[i].sspp->idx, fetch_active=
+);
+> > > -                     _dpu_crtc_blend_setup_pipe(crtc, plane,
+> > > -                                                mixer, cstate->num_m=
+ixers,
+> > > -                                                pstate->stage,
+> > > -                                                format, fb ? fb->mod=
+ifier : 0,
+> > > -                                                &pstate->pipe[i], i,=
+ stage_cfg);
+> > > +             /* loop pipe per mixer pair */
+> > > +             for (lm_pair =3D 0; lm_pair < PIPES_PER_PLANE / 2; lm_p=
+air++) {
+> > > +                     for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
+> > > +                             pipe_idx =3D i + lm_pair * PIPES_PER_LM=
+_PAIR;
+> > > +                             if (!pstate->pipe[pipe_idx].sspp)
+> > > +                                     continue;
+> > > +                             set_bit(pstate->pipe[pipe_idx].sspp->id=
+x, fetch_active);
+> > > +                             _dpu_crtc_blend_setup_pipe(crtc, plane,
+> > > +                                                        mixer, cstat=
+e->num_mixers,
+> > > +                                                        pstate->stag=
+e,
+> > > +                                                        format, fb ?=
+ fb->modifier : 0,
+> > > +                                                        &pstate->pip=
+e[pipe_idx], i,
+> > > +                                                        &stage_cfg[l=
+m_pair]);
+> > > +                     }
+> > >               }
+> > >
+> > >               /* blend config update */
+> > > @@ -503,7 +508,7 @@ static void _dpu_crtc_blend_setup(struct drm_crtc=
+ *crtc)
+> > >       struct dpu_crtc_mixer *mixer =3D cstate->mixers;
+> > >       struct dpu_hw_ctl *ctl;
+> > >       struct dpu_hw_mixer *lm;
+> > > -     struct dpu_hw_stage_cfg stage_cfg;
+> > > +     struct dpu_hw_stage_cfg stage_cfg[LM_PAIRS_PER_PLANE];
+> >
+> > After seeing this code, can we define STAGES_PER_PLANE (and
+> > also keep PLANES_PER_STAGE defined to 2)?
+> >
+> Could you elaborate it? Stages describe how many layers to be blended.
+> Plane is a DRM concept that describe a buffer to be display in specific
+> display driver. Plane is already mapped to SSPP/multi-rect in DPU driver
+>  in blending stage level. So I am confused here.
 
-That still suggests to the user, that the contents are initialized.
+We have dpu_hw_stage_cfg, you are adding a second instance of it. So
+we now have two stages per plane.
 
-> I feel like we need to put the data in the initialization expression
-> because if we resolve the initialization issues and can skip the extra
-> init step, we pretty much want to use the macro like:
->=20
-> =09global_lock!{
->             static MY_LOCK: Mutex<u32> =3D { data: 0 };
-> =09    // maybe even
->             // static MY_LOCK: Mutex<u32> =3D { 0 };
-> =09}
->=20
-> instead of
->=20
-> =09global_lock!{
->             static MY_LOCK: Mutex<u32> =3D init;
-> =09    value =3D 0;
-> =09}
->=20
-> , right?
->=20
-> So we need to think about providing a smooth way for users to transfer.
-> Not just adjust the changes (which I believe is a good practice for
-> coccinelle), but also the conceptual model "oh now I don't need to
-> provide a 'value=3D' field?".=20
+>
+> -  Jun
 
-I think we can just use a multiline regex to find `global_lock!` and
-then change the current way. It shouldn't be that difficult to change.
 
-> Hence even though the above proposals may look weird, but I think
-> that's still better?
 
-Do you think that we will have 1000s of users by the time we change it?
-I don't think so, but I don't know how often drivers use global locks. I
-think we should discourage them. People still can have a "global" lock
-by putting it inside of their Module struct (they need access to the
-module, but maybe we should have a function that gives them the module
-for the `ThisModule` pointer?)
-
----
-Cheers,
-Benno
-
+--=20
+With best wishes
+Dmitry
 
