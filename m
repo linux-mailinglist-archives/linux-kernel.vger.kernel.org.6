@@ -1,955 +1,262 @@
-Return-Path: <linux-kernel+bounces-360386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F031999A43
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:19:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB01B999A45
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:19:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBE32283C60
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:19:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 23486B238A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:19:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C331C207A19;
-	Fri, 11 Oct 2024 02:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Dv3+Hf8S"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFAF91E909F;
+	Fri, 11 Oct 2024 02:18:12 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68EB207205;
-	Fri, 11 Oct 2024 02:17:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA38C1E7C35;
+	Fri, 11 Oct 2024 02:18:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728613034; cv=none; b=hTvVM6LzMrMQXFyEb0gNyK5PBwN2GBi9yRCe0aaFt6Rp8w06BDnmA5ExWsyG9l2WX1h9P7wDBiIn6heRXjnhPHeYteab3KrjCzsXjr3dlhumkmsHo7VrFTFm8tKaM7fJ+JoJx2JTU3EGxLpdSCegs9X24IXx8Z3peGHGYHtwU1s=
+	t=1728613092; cv=none; b=ZGf7VSbiNiqplSWhOdQmR19adhLBprh2sc7w6qAUDM3P+qJZQINKH+Qgcm2+Rx5/YhjfjsZKjajC9g1JVpvQ5bygE+kxVlChfk3WMicAfRKIZp6xB1CndVHqwp/fifgUNBoRZzxUCXaMKzf1zonOygdSFsNQUumm3tiuMajYk4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728613034; c=relaxed/simple;
-	bh=rPzVXgvBdH+mcDaZO6Hvn2JiSWoII0FVviKqgFjuXwE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FMBv18CZ0RRpYnWRUtPbhtUa7UGo6KehefV5aQCOgCpIAN8j3xF+0IZRixqlDx47yXaNaGYKa4dThS3fNNIBLm1h+fK0jPM37oETGy/VF92+Zg7i8t+i0GrQpiY4LeUDoNcRe7I90IYtyJR5N1azFC6uwYSUe3U1HcA9pVVAmVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Dv3+Hf8S; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e2923d5b87aso52181276.3;
-        Thu, 10 Oct 2024 19:17:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728613030; x=1729217830; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6h4iQnW2lP9nDNF1rcytF0D3RYaRTvu4j7tZVujiwPA=;
-        b=Dv3+Hf8SEjVCZurcDfcfvzhnm8okC4b2eemAIniSsjv+nfS6YDjGOxe/2hT/O/ukOy
-         A6jmNOeWztQKJLr+/bSFUrzwx9bb7UNR/coaGGuJnkR/sEUlqJGjersc1L2H1dRm0WyL
-         4saZ2pD2fF1EFNcdbbvcZ4e8WEd7Nqca8Rh/lQVR8LL7nOjrZO5U0xjkTvzRixHSdE8G
-         2yaMU2Nuy9HzSe3on8DDlAvAFMx5+rGwr+0FLfq168MMwS1S1kcfGI7CKgVJTcWAbkzG
-         kf5WXgt3gUe5tmb9CxV4Fqo7BBW8S1MMJKbwtbObBEnyLLgHlZrkgNCTcndx/wj052Qc
-         7xhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728613031; x=1729217831;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6h4iQnW2lP9nDNF1rcytF0D3RYaRTvu4j7tZVujiwPA=;
-        b=b6pfEqejbjW5rthpvpWwUJAiXc5h+YyFGSPmKzZXa+7kn/vbfmpehplcS1CoKGR8l+
-         yVKGYCYHaK5id5dTXSpZLhHhUUFJfpDA/iCsnICbLWcweHKxCia8hthkihknk/vcK66z
-         CRojZGdzZJowH4hCHhG4LcviKJ1fRe5nwcaCMMyrZJVaiUE+lw553yYDdO6LwGJMHp4s
-         MofK54JaNQVfqPw8qz5RQWgaB2vVzsMkJK8FWlSPfTmEcCforL9ZTsq/wzcbz0WyWyKl
-         vZF3D4Hl0tn6dkTDtwu0JQstzosz1v0ExrAnj38ToSILNY+Iz5Z4bIFq+HMTt79L5y1F
-         gZ9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWFSJ56/liIotysDKOY9VTDRlH7QWvMPBl4pIxmixYyaKW7QS/KUhcakYM4disJzLyeFNNMkwRbN1zVIWI=@vger.kernel.org, AJvYcCWy/h9d3rELml71Gf9CpXWCjKtZDM1ioxdgKr3foVBmlQi2OEcD46rcApLBYSUynbpsrHevSlfq2RTj3sfdVQq+Cg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzwCGFuACQezxBu7y1+h/45whs2Fherbl6how8Vk+lZGifKIYqw
-	lcb4WwrfiBOcnwYqR3vvmu3S82IyOBu6/2Bq3QLCFyVuBWGcoo+pseh4bUcxKdxI1F/GXRbUz5N
-	bC10o4vtDwPE6GX5ia8viKk2Og/U=
-X-Google-Smtp-Source: AGHT+IHGcFbcWg9Y4Hi6w+Ul+E+vYC5Aq18lrbYv+LcBum3CJ9+/IDV2DuyImp26QbUvlxkqUJFOFBVyENM49diqHPA=
-X-Received: by 2002:a05:6902:2411:b0:e29:11fe:102a with SMTP id
- 3f1490d57ef6-e2919def5f4mr862732276.36.1728613030308; Thu, 10 Oct 2024
- 19:17:10 -0700 (PDT)
+	s=arc-20240116; t=1728613092; c=relaxed/simple;
+	bh=727jH2mK+NJYkVs2ldM13ZpvolG/NxCD8D+B/CcKDpY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=HCbgfGwtuRwM1KmPhS2Xn1imH0X4tRB3WPy8toCn7j+t2Yp2Ehh9upilWwDao3fcwQK4aLt/vN5JtD9uRb2u1pjT3e+TXqJogMbdeoeOT0hpigCY7dqyoValL82n2a6CoDc+2VOZbMvpCEHqsrEGTzO000hkJ0ACCuQ1nbLMyCk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XPqxH4KK7z10McM;
+	Fri, 11 Oct 2024 10:16:19 +0800 (CST)
+Received: from dggpeml100021.china.huawei.com (unknown [7.185.36.148])
+	by mail.maildlp.com (Postfix) with ESMTPS id 5E219180105;
+	Fri, 11 Oct 2024 10:18:05 +0800 (CST)
+Received: from [127.0.0.1] (10.174.177.71) by dggpeml100021.china.huawei.com
+ (7.185.36.148) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
+ 2024 10:18:04 +0800
+Message-ID: <05f9c7c2-655a-4f5b-be8e-93f511a954bd@huawei.com>
+Date: Fri, 11 Oct 2024 10:18:04 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007051414.2995674-1-howardchu95@gmail.com>
- <52125138-9ba5-4f71-9e7d-aff5f85d0dae@linaro.org> <ZwhvYsN7UPAOPvFj@google.com>
-In-Reply-To: <ZwhvYsN7UPAOPvFj@google.com>
-From: Howard Chu <howardchu95@gmail.com>
-Date: Thu, 10 Oct 2024 19:16:59 -0700
-Message-ID: <CAH0uvohZUBw7VBe99itjTYzQETHNds79_TczO=1VhnF08w0U9w@mail.gmail.com>
-Subject: Re: [PATCH 0/2] perf trace: Fix support for the new BPF feature in
- clang 12
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: James Clark <james.clark@linaro.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, mingo@redhat.com, 
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com, jolsa@kernel.org, 
-	irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com, 
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ext4: fix out-of-bounds issue in ext4_xattr_set_entry
+To: Jan Kara <jack@suse.cz>
+CC: Qianqiang Liu <qianqiang.liu@163.com>, <tytso@mit.edu>,
+	<adilger.kernel@dilger.ca>, syzbot
+	<syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com>,
+	<linux-ext4@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<syzkaller-bugs@googlegroups.com>, Yang Erkun <yangerkun@huawei.com>
+References: <Zu+vI3EipxSsPOMe@thinkpad.lan>
+ <66efba95.050a0220.3195df.008c.GAE@google.com>
+ <Zu+8aQBJgMn7xVws@thinkpad.lan>
+ <d62a25e9-04de-4309-98d1-22a4f9b5bb49@huawei.com>
+ <20241009155028.u7jpzrw6txldt43j@quack3>
+Content-Language: en-US
+From: Baokun Li <libaokun1@huawei.com>
+In-Reply-To: <20241009155028.u7jpzrw6txldt43j@quack3>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ dggpeml100021.china.huawei.com (7.185.36.148)
 
-Hi Namhyung,
+On 2024/10/9 23:50, Jan Kara wrote:
+> On Tue 08-10-24 15:40:39, Baokun Li wrote:
+>> On 2024/9/22 14:42, Qianqiang Liu wrote:
+>>> syzbot has found an out-of-bounds issue in ext4_xattr_set_entry:
+>>>
+>>> ==================================================================
+>>> BUG: KASAN: out-of-bounds in ext4_xattr_set_entry+0x8ce/0x1f60 fs/ext4/xattr.c:1781
+>>> Read of size 18446744073709551572 at addr ffff888036426850 by task syz-executor264/5095
+>>>
+>>> CPU: 0 UID: 0 PID: 5095 Comm: syz-executor264 Not tainted 6.11.0-syzkaller-03917-ga940d9a43e62 #0
+>>> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+>>> Call Trace:
+>>>    <TASK>
+>>>    __dump_stack lib/dump_stack.c:93 [inline]
+>>>    dump_stack_lvl+0x241/0x360 lib/dump_stack.c:119
+>>>    print_address_description mm/kasan/report.c:377 [inline]
+>>>    print_report+0x169/0x550 mm/kasan/report.c:488
+>>>    kasan_report+0x143/0x180 mm/kasan/report.c:601
+>>>    kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
+>>>    __asan_memmove+0x29/0x70 mm/kasan/shadow.c:94
+>>>    ext4_xattr_set_entry+0x8ce/0x1f60 fs/ext4/xattr.c:1781
+>>> [...]
+>>> ==================================================================
+>>>
+>>> This issue is caused by a negative size in memmove.
+>>> We need to check for this.
+>>>
+>>> Fixes: dec214d00e0d ("ext4: xattr inode deduplication")
+>>> Reported-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=f792df426ff0f5ceb8d1
+>>> Tested-by: syzbot+f792df426ff0f5ceb8d1@syzkaller.appspotmail.com
+>>> Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
+>>> ---
+>>>    fs/ext4/xattr.c | 9 ++++++++-
+>>>    1 file changed, 8 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+>>> index 46ce2f21fef9..336badb46246 100644
+>>> --- a/fs/ext4/xattr.c
+>>> +++ b/fs/ext4/xattr.c
+>>> @@ -1776,7 +1776,14 @@ static int ext4_xattr_set_entry(struct ext4_xattr_info *i,
+>>>    	} else if (s->not_found) {
+>>>    		/* Insert new name. */
+>>>    		size_t size = EXT4_XATTR_LEN(name_len);
+>>> -		size_t rest = (void *)last - (void *)here + sizeof(__u32);
+>>> +		size_t rest;
+>>> +
+>>> +		if (last < here) {
+>>> +			ret = -ENOSPC;
+>>> +			goto out;
+>>> +		} else {
+>>> +			rest = (void *)last - (void *)here + sizeof(__u32);
+>>> +		}
+>>>    		memmove((void *)here + size, here, rest);
+>>>    		memset(here, 0, size);
+>> This change just passes syzbot's test cases without fixing the real
+>> problem.
+>>
+>> The root cause of the problem is that the inode's xattr block is marked as
+>> free in the block bitmap, so that block is allocated to the ea inode
+>> resulting in the data in the xattr block being overwritten, and the last of
+>> the second lookups changing resulting in out-of-bounds access.
+>>
+>> The stack that triggers the problem is as follows:
+>>
+>> // An inode with an xattr block of 33.
+>> __ext4_mark_inode_dirty
+>>   __ext4_expand_extra_isize
+>>    ext4_expand_extra_isize_ea
+>>     ext4_xattr_make_inode_space
+>>      // Move xattr from inode to block
+>>      ext4_xattr_move_to_block
+>>       // Find out if the xattr exists in the block
+>>       ext4_xattr_block_find
+>>        // If xattr does not exist, here == last
+>>        xattr_find_entry
+>>       // Add a new xattr to the block
+>>       ext4_xattr_block_set
+>>        |// xattr is too long, needs an ea inode
+>>        |ext4_xattr_inode_lookup_create
+>>        | ext4_xattr_inode_create
+>>        | ext4_xattr_inode_write
+>>        |  ext4_map_blocks
+>>        |   // xattr block 33 is assigned to the new ea inode
+>>        |  memcpy(bh->b_data, buf, csize)
+>>        |   // The value of xattr overwrites the data in the xattr block.
+>>        |ext4_xattr_set_entry
+>>         // Since the contents of the xattr block have changed,
+>>         // now here == last does not hold, so it is possible to
+>>         // have last < here and trigger an out-of-bounds access.
+>>
+>> So I think we should probably add a helper function ext4_mb_block_inuse()
+>> that checks if xattr block is free with the block bitmap in check_xattrs().
+Hi Honza,
 
-Fixed it in v2 (Link:
-https://lore.kernel.org/linux-perf-users/20241011021403.4089793-1-howardchu=
-95@gmail.com/)
-, and tested it on clang-14 ~ clang-18 (did make clean every time just
-incase)
+Thanks so much for your thoughts and feedback!
+> Well, even that would be a relatively narrow fix. You could have e.g.
+> file reference the xattr block as one of its data blocks and then corrupt
+> xattr contents at unfortunate moment. That will not get fixed by checking
+> whether the block is allocated. These multiply claimed blocks (as e2fsck
+> calls it) are very hard to detect inside the kernel.
+Yes, after locating the issue, the first thought was to just get the buffer
+lock and check xattr magic and xattr block checksum. However, if the block
+is allocated as an xattr block to another file, the issue may still occur.
 
+Therefore we have to make sure that the block has been allocated to the
+current file. With the block bitmap we can verify that the current block
+is allocated, but as you pointed out we cannot verify that it is only
+allocated to the current file.
+
+That means we need some means to find the owner of the block by block,
+and then I came up with xfs Reverse-Mapping.
+>> Or go one step further and add a mechanism like xfs Reverse-Mapping, which
+>> makes sure that allocated blocks do point to the target inode, which could
+>> replace the current block_validity, and could also be used in future online
+>> fscks.
+> Well, that is a rather big change. It requires significant on-disk format
+> change and also performance cost when to maintain. Furthermore for xattr
+> blocks which can be shared by many inodes it is not even clear how to
+> implement this... So I'm not sure we really want to do this either.
+>
+> 								Honza
+Yes, there can be a lot of work involved.
+
+  * Perhaps we could create an rmap file to store the rmap tree to avoid
+    on-disk format changes.
+  * The performance impact of maintaining rmap really needs to be evaluated,
+    perhaps by writing a simple DEMO to test it.
+  * XFS supports shared blocks(A.K.A. reflink.), so even if the physical
+    blocks are the same, but the inodes are different or the logical blocks
+    are different, they will be recorded multiple times in the tree. So the
+    shared xattr block can be handled similarly.
+
+We have plans to support online fsck in the future, and implementing rmap
+is one of the steps. Perhaps one can wait until rmap is implemented to
+assess whether it is worth a strict check here.
+
+Implementing rmap may take some time, until then we can avoid the problem
+as much as possible by checking the magic and xattr block csum.
+Maybe something like this?
+
+diff --git a/fs/ext4/xattr.c b/fs/ext4/xattr.c
+index 7647e9f6e190..cd3ae1e3371c 100644
+--- a/fs/ext4/xattr.c
++++ b/fs/ext4/xattr.c
+@@ -1676,6 +1676,13 @@ static int ext4_xattr_set_entry(struct 
+ext4_xattr_info *i,
+                 }
+         }
+
++       if (WARN_ON_ONCE(last < here)) {
++               EXT4_ERROR_INODE(inode, "corrupted xattr entries in %s",
++                                       is_block ? "block" : "ibody");
++               ret = -EFSCORRUPTED;
++               goto out;
++       }
++
+         /* Check whether we have enough space. */
+         if (i->value) {
+                 size_t free;
+@@ -1923,6 +1930,7 @@ ext4_xattr_block_set(handle_t *handle, struct 
+inode *inode,
+         }
+
+         if (s->base) {
++               struct ext4_xattr_header *hdr;
+                 int offset = (char *)s->here - bs->bh->b_data;
+
+                 BUFFER_TRACE(bs->bh, "get_write_access");
+@@ -1932,6 +1940,16 @@ ext4_xattr_block_set(handle_t *handle, struct 
+inode *inode,
+                         goto cleanup;
+
+                 lock_buffer(bs->bh);
++               hdr = header(s->base);
++
++               if (hdr->h_magic != cpu_to_le32(EXT4_XATTR_MAGIC) ||
++                   (ext4_has_metadata_csum(inode->i_sb) &&
++                    (ext4_xattr_block_csum(inode, bs->bh->b_blocknr, 
+hdr) !=
++                     hdr->h_checksum))) {
++                       unlock_buffer(bs->bh);
++                       error = -EFSCORRUPTED;
++                       goto bad_block;
++               }
+
+                 if (header(s->base)->h_refcount == cpu_to_le32(1)) {
+                         __u32 hash = le32_to_cpu(BHDR(bs->bh)->h_hash);
+
+--
 Thanks,
-Howard
-
-
-On Thu, Oct 10, 2024 at 5:20=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> On Thu, Oct 10, 2024 at 10:06:05AM +0100, James Clark wrote:
-> >
-> >
-> > On 07/10/2024 6:14 am, Howard Chu wrote:
-> > > The new augmentation feature in perf trace, along with the protocol
-> > > change (from payload to payload->value), breaks the clang 12 build.
-> > >
-> > > perf trace actually builds for any clang version newer than clang 16.
-> > > However, as pointed out by Namhyung Kim <namhyung@kernel.org> and Ian
-> > > Rogers <irogers@google.com>, clang 16, which was released in 2023, is
-> > > still too new for most users. Additionally, as James Clark
-> > > <james.clark@linaro.org> noted, some commonly used distributions do n=
-ot
-> > > yet support clang 16. Therefore, breaking BPF features between clang =
-12
-> > > and clang 15 is not a good approach.
-> > >
-> > > This patch series rewrites the BPF program in a way that allows it to
-> > > pass the BPF verifier, even when the BPF bytecode is generated by old=
-er
-> > > versions of clang.
-> > >
-> > > However, I have only tested it till clang 14, as older versions are n=
-ot
-> > > supported by my distribution.
-> > >
-> > > Howard Chu (2):
-> > >    perf build: Change the clang check back to 12.0.1
-> > >    perf trace: Rewrite BPF code to pass the verifier
-> > >
-> > >   tools/perf/Makefile.config                    |   4 +-
-> > >   .../bpf_skel/augmented_raw_syscalls.bpf.c     | 117 ++++++++++-----=
----
-> > >   2 files changed, 65 insertions(+), 56 deletions(-)
-> > >
-> >
-> > Tested with clang 15:
-> >
-> >  $ sudo perf trace -e write --max-events=3D100 -- echo hello
-> >     0.000 ( 0.014 ms): echo/834165 write(fd: 1, buf: hello\10, count: 6=
-)
-> >                                             =3D
-> >
-> > Tested-by: James Clark <james.clark@linaro.org>
->
-> I got this on my system (clang 16).  The kernel refused to load it.
->
->   $ sudo ./perf trace -e write --max-events=3D10 -- echo hello
->   libbpf: prog 'sys_enter': BPF program load failed: Permission denied
->   libbpf: prog 'sys_enter': -- BEGIN PROG LOAD LOG --
->   0: R1=3Dctx() R10=3Dfp0
->   ; int sys_enter(struct syscall_enter_args *args) @ augmented_raw_syscal=
-ls.bpf.c:518
->   0: (bf) r7 =3D r1                       ; R1=3Dctx() R7_w=3Dctx()
->   ; return bpf_get_current_pid_tgid(); @ augmented_raw_syscalls.bpf.c:427
->   1: (85) call bpf_get_current_pid_tgid#14      ; R0_w=3Dscalar()
->   2: (63) *(u32 *)(r10 -4) =3D r0         ; R0_w=3Dscalar() R10=3Dfp0 fp-=
-8=3Dmmmm????
->   3: (bf) r2 =3D r10                      ; R2_w=3Dfp0 R10=3Dfp0
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   4: (07) r2 +=3D -4                      ; R2_w=3Dfp-4
->   ; return bpf_map_lookup_elem(pids, &pid) !=3D NULL; @ augmented_raw_sys=
-calls.bpf.c:432
->   5: (18) r1 =3D 0xffff9dcccdfe7000       ; R1_w=3Dmap_ptr(map=3Dpids_fil=
-tered,ks=3D4,vs=3D1)
->   7: (85) call bpf_map_lookup_elem#1    ; R0=3Dmap_value_or_null(id=3D1,m=
-ap=3Dpids_filtered,ks=3D4,vs=3D1)
->   8: (bf) r1 =3D r0                       ; R0=3Dmap_value_or_null(id=3D1=
-,map=3Dpids_filtered,ks=3D4,vs=3D1) R1_w=3Dmap_value_or_null(id=3D1,map=3Dp=
-ids_filtered,ks=3D4,vs=3D1)
->   9: (b7) r0 =3D 0                        ; R0_w=3D0
->   ; if (pid_filter__has(&pids_filtered, getpid())) @ augmented_raw_syscal=
-ls.bpf.c:531
->   10: (55) if r1 !=3D 0x0 goto pc+161     ; R1_w=3D0
->   11: (b7) r6 =3D 0                       ; R6_w=3D0
->   ; int key =3D 0; @ augmented_raw_syscalls.bpf.c:150
->   12: (63) *(u32 *)(r10 -4) =3D r6        ; R6_w=3D0 R10=3Dfp0 fp-8=3D000=
-0????
->   13: (bf) r2 =3D r10                     ; R2_w=3Dfp0 R10=3Dfp0
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   14: (07) r2 +=3D -4                     ; R2_w=3Dfp-4
->   ; return bpf_map_lookup_elem(&augmented_args_tmp, &key); @ augmented_ra=
-w_syscalls.bpf.c:151
->   15: (18) r1 =3D 0xffff9dcc73f8f200      ; R1_w=3Dmap_ptr(map=3Daugmente=
-d_args_,ks=3D4,vs=3D8272)
->   17: (85) call bpf_map_lookup_elem#1   ; R0=3Dmap_value_or_null(id=3D2,m=
-ap=3Daugmented_args_,ks=3D4,vs=3D8272)
->   18: (bf) r8 =3D r0                      ; R0=3Dmap_value_or_null(id=3D2=
-,map=3Daugmented_args_,ks=3D4,vs=3D8272) R8_w=3Dmap_value_or_null(id=3D2,ma=
-p=3Daugmented_args_,ks=3D4,vs=3D8272)
->   19: (b7) r0 =3D 1                       ; R0_w=3D1
->   ; if (augmented_args =3D=3D NULL) @ augmented_raw_syscalls.bpf.c:535
->   20: (15) if r8 =3D=3D 0x0 goto pc+151     ; R8_w=3Dmap_value(map=3Daugm=
-ented_args_,ks=3D4,vs=3D8272)
->   ; bpf_probe_read_kernel(&augmented_args->args, sizeof(augmented_args->a=
-rgs), args); @ augmented_raw_syscalls.bpf.c:538
->   21: (bf) r1 =3D r8                      ; R1_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272) R8_w=3Dmap_value(map=3Daugmented_args_,ks=3D4,v=
-s=3D8272)
->   22: (b7) r2 =3D 64                      ; R2_w=3D64
->   23: (bf) r3 =3D r7                      ; R3_w=3Dctx() R7=3Dctx()
->   24: (85) call bpf_probe_read_kernel#113       ; R0_w=3Dscalar()
->   ; int zero =3D 0, value_size =3D sizeof(struct augmented_arg) - sizeof(=
-u64); @ augmented_raw_syscalls.bpf.c:438
->   25: (63) *(u32 *)(r10 -4) =3D r6        ; R6=3D0 R10=3Dfp0 fp-8=3D0000?=
-???
->   ; nr             =3D (__u32)args->syscall_nr; @ augmented_raw_syscalls.=
-bpf.c:448
->   26: (79) r1 =3D *(u64 *)(r8 +8)         ; R1_w=3Dscalar() R8_w=3Dmap_va=
-lue(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   27: (63) *(u32 *)(r10 -8) =3D r1        ; R1_w=3Dscalar() R10=3Dfp0 fp-=
-8=3D0000scalar()
->   28: (bf) r2 =3D r10                     ; R2_w=3Dfp0 R10=3Dfp0
->   ; bpf_probe_read_kernel(&augmented_args->args, sizeof(augmented_args->a=
-rgs), args); @ augmented_raw_syscalls.bpf.c:538
->   29: (07) r2 +=3D -8                     ; R2_w=3Dfp-8
->   ; beauty_map     =3D bpf_map_lookup_elem(&beauty_map_enter, &nr); @ aug=
-mented_raw_syscalls.bpf.c:449
->   30: (18) r1 =3D 0xffff9dcccdfe5800      ; R1_w=3Dmap_ptr(map=3Dbeauty_m=
-ap_ente,ks=3D4,vs=3D24)
->   32: (85) call bpf_map_lookup_elem#1   ; R0=3Dmap_value_or_null(id=3D3,m=
-ap=3Dbeauty_map_ente,ks=3D4,vs=3D24)
->   ; if (beauty_map =3D=3D NULL) @ augmented_raw_syscalls.bpf.c:450
->   33: (15) if r0 =3D=3D 0x0 goto pc+132     ; R0=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24)
->   34: (bf) r2 =3D r10                     ; R2_w=3Dfp0 R10=3Dfp0
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   35: (07) r2 +=3D -4                     ; R2_w=3Dfp-4
->   ; payload        =3D bpf_map_lookup_elem(&beauty_payload_enter_map, &ze=
-ro); @ augmented_raw_syscalls.bpf.c:454
->   36: (18) r1 =3D 0xffff9dcc73f8e800      ; R1_w=3Dmap_ptr(map=3Dbeauty_p=
-ayload_,ks=3D4,vs=3D24688)
->   38: (7b) *(u64 *)(r10 -16) =3D r0       ; R0=3Dmap_value(map=3Dbeauty_m=
-ap_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16_w=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   39: (85) call bpf_map_lookup_elem#1   ; R0_w=3Dmap_value_or_null(id=3D4=
-,map=3Dbeauty_payload_,ks=3D4,vs=3D24688)
->   40: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16_w=3Dmap_value(map=3Dbeauty_map_en=
-te,ks=3D4,vs=3D24)
->   ; if (payload =3D=3D NULL) @ augmented_raw_syscalls.bpf.c:456
->   41: (15) if r0 =3D=3D 0x0 goto pc+124     ; R0_w=3Dmap_value(map=3Dbeau=
-ty_payload_,ks=3D4,vs=3D24688)
->   42: (7b) *(u64 *)(r10 -48) =3D r7       ; R7=3Dctx() R10=3Dfp0 fp-48_w=
-=3Dctx()
->   ; __builtin_memcpy(&payload->args, args, sizeof(struct syscall_enter_ar=
-gs)); @ augmented_raw_syscalls.bpf.c:460
->   43: (79) r1 =3D *(u64 *)(r8 +56)        ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   44: (7b) *(u64 *)(r0 +56) =3D r1        ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   45: (79) r1 =3D *(u64 *)(r8 +48)        ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   46: (7b) *(u64 *)(r0 +48) =3D r1        ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   47: (79) r1 =3D *(u64 *)(r8 +40)        ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   48: (7b) *(u64 *)(r0 +40) =3D r1        ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   49: (79) r1 =3D *(u64 *)(r8 +32)        ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   50: (7b) *(u64 *)(r0 +32) =3D r1        ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   51: (79) r1 =3D *(u64 *)(r8 +24)        ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   52: (7b) *(u64 *)(r0 +24) =3D r1        ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   53: (79) r1 =3D *(u64 *)(r8 +16)        ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   54: (7b) *(u64 *)(r0 +16) =3D r1        ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   55: (79) r1 =3D *(u64 *)(r8 +8)         ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   56: (7b) *(u64 *)(r0 +8) =3D r1         ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   57: (79) r1 =3D *(u64 *)(r8 +0)         ; R1_w=3Dscalar() R8=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272)
->   58: (7b) *(u64 *)(r0 +0) =3D r1         ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R1_w=3Dscalar()
->   59: (b7) r1 =3D 64                      ; R1_w=3D64
->   60: (7b) *(u64 *)(r10 -24) =3D r1       ; R1_w=3D64 R10=3Dfp0 fp-24_w=
-=3D64
->   61: (7b) *(u64 *)(r10 -40) =3D r8       ; R8=3Dmap_value(map=3Daugmente=
-d_args_,ks=3D4,vs=3D8272) R10=3Dfp0 fp-40_w=3Dmap_value(map=3Daugmented_arg=
-s_,ks=3D4,vs=3D8272)
->   62: (bf) r7 =3D r8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272) R8=3Dmap_value(map=3Daugmented_args_,ks=3D4,vs=
-=3D8272)
->   63: (07) r7 +=3D 16                     ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D16)
->   64: (7b) *(u64 *)(r10 -56) =3D r0       ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R10=3Dfp0 fp-56_w=3Dmap_value(map=3Dbeauty_pay=
-load_,ks=3D4,vs=3D24688)
->   ; payload_offset =3D (void *)&payload->aug_args; @ augmented_raw_syscal=
-ls.bpf.c:455
->   65: (bf) r9 =3D r0                      ; R0_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R9_w=3Dmap_value(map=3Dbeauty_payload_,ks=3D4,=
-vs=3D24688)
->   66: (07) r9 +=3D 64                     ; R9_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D64)
->   67: (b7) r1 =3D 0                       ; R1_w=3D0
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   68: (7b) *(u64 *)(r10 -32) =3D r1       ; R1_w=3D0 R10=3Dfp0 fp-32_w=3D=
-0
->   69: (05) goto pc+11
->   ; int augment_size =3D beauty_map[i], augment_size_with_header; @ augme=
-nted_raw_syscalls.bpf.c:472
->   81: (bf) r1 =3D r4                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R4=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D=
-24)
->   82: (0f) r1 +=3D r6                     ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R6=3D0
->   83: (61) r8 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R8_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xffffffff,v=
-ar_off=3D(0x0; 0xffffffff))
->   84: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x7fffff=
-ff00000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=
-=3D(0x0; 0xffffffff00000000))
->   85: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3D0x7fffffff)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   86: (15) if r8 =3D=3D 0x0 goto pc-9       ; R8_w=3Dscalar(smin=3D0xffff=
-ffff80000000,smax=3D0x7fffffff,umin=3D1)
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   87: (79) r3 =3D *(u64 *)(r7 +0)         ; R3_w=3Dscalar() R7=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D16)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   88: (15) if r3 =3D=3D 0x0 goto pc-11      ; R3_w=3Dscalar(umin=3D1)
->   ; value_offset =3D ((struct augmented_arg *)payload_offset)->value; @ a=
-ugmented_raw_syscalls.bpf.c:479
->   89: (bf) r1 =3D r9                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D64) R9=3Dmap_value(map=3Dbeauty_payload_,=
-ks=3D4,vs=3D24688,off=3D64)
->   90: (07) r1 +=3D 8                      ; R1=3Dmap_value(map=3Dbeauty_p=
-ayload_,ks=3D4,vs=3D24688,off=3D72)
->   ; if (augment_size =3D=3D 1) { /* string */ @ augmented_raw_syscalls.bp=
-f.c:481
->   91: (55) if r8 !=3D 0x1 goto pc-22      ; R8=3D1
->   ; augment_size =3D bpf_probe_read_user_str(value_offset, value_size, ad=
-dr); @ augmented_raw_syscalls.bpf.c:482
->   92: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   93: (85) call bpf_probe_read_user_str#114     ; R0_w=3Dscalar(smin=3Dsm=
-in32=3D-4095,smax=3Dsmax32=3D4096)
->   94: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   95: (bf) r8 =3D r0                      ; R0_w=3Dscalar(id=3D5,smin=3Ds=
-min32=3D-4095,smax=3Dsmax32=3D4096) R8_w=3Dscalar(id=3D5,smin=3Dsmin32=3D-4=
-095,smax=3Dsmax32=3D4096)
->   96: (b7) r1 =3D 1                       ; R1_w=3D1
->   ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
->   97: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x100000=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   98: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3Dsmax32=3D4096)
->   99: (b7) r2 =3D 4096                    ; R2=3D4096
->   100: (6d) if r2 s> r8 goto pc+1       ; R2=3D4096 R8=3D4096
->   101: (b7) r8 =3D 4096                   ; R8_w=3D4096
->   ; if (is_augmented && augment_size_with_header <=3D sizeof(struct augme=
-nted_arg)) { @ augmented_raw_syscalls.bpf.c:503
->   102: (57) r1 &=3D 1                     ; R1_w=3D1
->   103: (15) if r1 =3D=3D 0x0 goto pc-26     ; R1_w=3D1
->   104: (bf) r1 =3D r8                     ; R1_w=3D4096 R8_w=3D4096
->   105: (07) r1 +=3D 8                     ; R1_w=3D4104
->   106: (bf) r2 =3D r1                     ; R1_w=3D4104 R2_w=3D4104
->   107: (67) r2 <<=3D 32                   ; R2_w=3D0x100800000000
->   108: (77) r2 >>=3D 32                   ; R2=3D4104
->   109: (25) if r2 > 0x1008 goto pc-32   ; R2=3D4104
->   ; ((struct augmented_arg *)payload_offset)->size =3D augment_size; @ au=
-gmented_raw_syscalls.bpf.c:504
->   110: (63) *(u32 *)(r9 +0) =3D r8        ; R8=3D4096 R9=3Dmap_value(map=
-=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D64)
->   ; len            +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:506
->   111: (79) r3 =3D *(u64 *)(r10 -24)      ; R3_w=3D64 R10=3Dfp0 fp-24=3D6=
-4
->   112: (0f) r1 +=3D r3                    ; R1_w=3D4168 R3_w=3D64
->   ; payload_offset +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:507
->   113: (0f) r9 +=3D r2                    ; R2=3D4104 R9_w=3Dmap_value(ma=
-p=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D4168)
->   114: (b7) r2 =3D 1                      ; R2_w=3D1
->   115: (7b) *(u64 *)(r10 -32) =3D r2      ; R2_w=3D1 R10=3Dfp0 fp-32_w=3D=
-1
->   116: (7b) *(u64 *)(r10 -24) =3D r1      ; R1_w=3D4168 R10=3Dfp0 fp-24_w=
-=3D4168
->   117: (05) goto pc-40
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   78: (07) r7 +=3D 8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D24)
->   79: (07) r6 +=3D 4                      ; R6_w=3D4
->   80: (15) if r6 =3D=3D 0x18 goto pc+56     ; R6_w=3D4
->   ; int augment_size =3D beauty_map[i], augment_size_with_header; @ augme=
-nted_raw_syscalls.bpf.c:472
->   81: (bf) r1 =3D r4                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R4=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D=
-24)
->   82: (0f) r1 +=3D r6                     ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D4) R6_w=3D4
->   83: (61) r8 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D4) R8_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xff=
-ffffff,var_off=3D(0x0; 0xffffffff))
->   84: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x7fffff=
-ff00000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=
-=3D(0x0; 0xffffffff00000000))
->   85: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3D0x7fffffff)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   86: (15) if r8 =3D=3D 0x0 goto pc-9       ; R8_w=3Dscalar(smin=3D0xffff=
-ffff80000000,smax=3D0x7fffffff,umin=3D1)
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   87: (79) r3 =3D *(u64 *)(r7 +0)         ; R3=3Dscalar() R7=3Dmap_value(=
-map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D24)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   88: (15) if r3 =3D=3D 0x0 goto pc-11      ; R3=3Dscalar(umin=3D1)
->   ; value_offset =3D ((struct augmented_arg *)payload_offset)->value; @ a=
-ugmented_raw_syscalls.bpf.c:479
->   89: (bf) r1 =3D r9                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D4168) R9=3Dmap_value(map=3Dbeauty_payload=
-_,ks=3D4,vs=3D24688,off=3D4168)
->   90: (07) r1 +=3D 8                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D4176)
->   ; if (augment_size =3D=3D 1) { /* string */ @ augmented_raw_syscalls.bp=
-f.c:481
->   91: (55) if r8 !=3D 0x1 goto pc-22      ; R8=3D1
->   ; augment_size =3D bpf_probe_read_user_str(value_offset, value_size, ad=
-dr); @ augmented_raw_syscalls.bpf.c:482
->   92: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   93: (85) call bpf_probe_read_user_str#114     ; R0_w=3Dscalar(smin=3Dsm=
-in32=3D-4095,smax=3Dsmax32=3D4096)
->   94: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   95: (bf) r8 =3D r0                      ; R0_w=3Dscalar(id=3D6,smin=3Ds=
-min32=3D-4095,smax=3Dsmax32=3D4096) R8_w=3Dscalar(id=3D6,smin=3Dsmin32=3D-4=
-095,smax=3Dsmax32=3D4096)
->   96: (b7) r1 =3D 1                       ; R1=3D1
->   ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
->   97: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x100000=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   98: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3Dsmax32=3D4096)
->   99: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   100: (6d) if r2 s> r8 goto pc+1       ; R2_w=3D4096 R8_w=3D4096
->   101: (b7) r8 =3D 4096                   ; R8_w=3D4096
->   ; if (is_augmented && augment_size_with_header <=3D sizeof(struct augme=
-nted_arg)) { @ augmented_raw_syscalls.bpf.c:503
->   102: (57) r1 &=3D 1                     ; R1_w=3D1
->   103: (15) if r1 =3D=3D 0x0 goto pc-26     ; R1_w=3D1
->   104: (bf) r1 =3D r8                     ; R1_w=3D4096 R8_w=3D4096
->   105: (07) r1 +=3D 8                     ; R1_w=3D4104
->   106: (bf) r2 =3D r1                     ; R1_w=3D4104 R2_w=3D4104
->   107: (67) r2 <<=3D 32                   ; R2_w=3D0x100800000000
->   108: (77) r2 >>=3D 32                   ; R2_w=3D4104
->   109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=3D4104
->   ; ((struct augmented_arg *)payload_offset)->size =3D augment_size; @ au=
-gmented_raw_syscalls.bpf.c:504
->   110: (63) *(u32 *)(r9 +0) =3D r8        ; R8_w=3D4096 R9=3Dmap_value(ma=
-p=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D4168)
->   ; len            +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:506
->   111: (79) r3 =3D *(u64 *)(r10 -24)      ; R3_w=3D4168 R10=3Dfp0 fp-24=
-=3D4168
->   112: (0f) r1 +=3D r3                    ; R1_w=3D8272 R3_w=3D4168
->   ; payload_offset +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:507
->   113: (0f) r9 +=3D r2                    ; R2_w=3D4104 R9_w=3Dmap_value(=
-map=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D8272)
->   114: (b7) r2 =3D 1                      ; R2_w=3D1
->   115: (7b) *(u64 *)(r10 -32) =3D r2      ; R2_w=3D1 R10=3Dfp0 fp-32_w=3D=
-1
->   116: (7b) *(u64 *)(r10 -24) =3D r1      ; R1_w=3D8272 R10=3Dfp0 fp-24_w=
-=3D8272
->   117: (05) goto pc-40
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   78: (07) r7 +=3D 8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D32)
->   79: (07) r6 +=3D 4                      ; R6=3D8
->   80: (15) if r6 =3D=3D 0x18 goto pc+56     ; R6=3D8
->   ; int augment_size =3D beauty_map[i], augment_size_with_header; @ augme=
-nted_raw_syscalls.bpf.c:472
->   81: (bf) r1 =3D r4                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R4=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D=
-24)
->   82: (0f) r1 +=3D r6                     ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D8) R6=3D8
->   83: (61) r8 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D8) R8_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xff=
-ffffff,var_off=3D(0x0; 0xffffffff))
->   84: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x7fffff=
-ff00000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=
-=3D(0x0; 0xffffffff00000000))
->   85: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3D0x7fffffff)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   86: (15) if r8 =3D=3D 0x0 goto pc-9       ; R8_w=3Dscalar(smin=3D0xffff=
-ffff80000000,smax=3D0x7fffffff,umin=3D1)
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   87: (79) r3 =3D *(u64 *)(r7 +0)         ; R3_w=3Dscalar() R7=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D32)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   88: (15) if r3 =3D=3D 0x0 goto pc-11      ; R3_w=3Dscalar(umin=3D1)
->   ; value_offset =3D ((struct augmented_arg *)payload_offset)->value; @ a=
-ugmented_raw_syscalls.bpf.c:479
->   89: (bf) r1 =3D r9                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D8272) R9=3Dmap_value(map=3Dbeauty_payload=
-_,ks=3D4,vs=3D24688,off=3D8272)
->   90: (07) r1 +=3D 8                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D8280)
->   ; if (augment_size =3D=3D 1) { /* string */ @ augmented_raw_syscalls.bp=
-f.c:481
->   91: (55) if r8 !=3D 0x1 goto pc-22      ; R8_w=3D1
->   ; augment_size =3D bpf_probe_read_user_str(value_offset, value_size, ad=
-dr); @ augmented_raw_syscalls.bpf.c:482
->   92: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   93: (85) call bpf_probe_read_user_str#114     ; R0=3Dscalar(smin=3Dsmin=
-32=3D-4095,smax=3Dsmax32=3D4096)
->   94: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   95: (bf) r8 =3D r0                      ; R0=3Dscalar(id=3D7,smin=3Dsmi=
-n32=3D-4095,smax=3Dsmax32=3D4096) R8_w=3Dscalar(id=3D7,smin=3Dsmin32=3D-409=
-5,smax=3Dsmax32=3D4096)
->   96: (b7) r1 =3D 1                       ; R1_w=3D1
->   ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
->   97: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x100000=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   98: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3Dsmax32=3D4096)
->   99: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   100: (6d) if r2 s> r8 goto pc+1       ; R2_w=3D4096 R8_w=3D4096
->   101: (b7) r8 =3D 4096                   ; R8_w=3D4096
->   ; if (is_augmented && augment_size_with_header <=3D sizeof(struct augme=
-nted_arg)) { @ augmented_raw_syscalls.bpf.c:503
->   102: (57) r1 &=3D 1                     ; R1_w=3D1
->   103: (15) if r1 =3D=3D 0x0 goto pc-26     ; R1_w=3D1
->   104: (bf) r1 =3D r8                     ; R1_w=3D4096 R8_w=3D4096
->   105: (07) r1 +=3D 8                     ; R1_w=3D4104
->   106: (bf) r2 =3D r1                     ; R1_w=3D4104 R2_w=3D4104
->   107: (67) r2 <<=3D 32                   ; R2_w=3D0x100800000000
->   108: (77) r2 >>=3D 32                   ; R2_w=3D4104
->   109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=3D4104
->   ; ((struct augmented_arg *)payload_offset)->size =3D augment_size; @ au=
-gmented_raw_syscalls.bpf.c:504
->   110: (63) *(u32 *)(r9 +0) =3D r8        ; R8_w=3D4096 R9=3Dmap_value(ma=
-p=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D8272)
->   ; len            +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:506
->   111: (79) r3 =3D *(u64 *)(r10 -24)      ; R3_w=3D8272 R10=3Dfp0 fp-24=
-=3D8272
->   112: (0f) r1 +=3D r3                    ; R1_w=3D12376 R3_w=3D8272
->   ; payload_offset +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:507
->   113: (0f) r9 +=3D r2                    ; R2_w=3D4104 R9_w=3Dmap_value(=
-map=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D12376)
->   114: (b7) r2 =3D 1                      ; R2_w=3D1
->   115: (7b) *(u64 *)(r10 -32) =3D r2      ; R2_w=3D1 R10=3Dfp0 fp-32_w=3D=
-1
->   116: (7b) *(u64 *)(r10 -24) =3D r1      ; R1_w=3D12376 R10=3Dfp0 fp-24_=
-w=3D12376
->   117: (05) goto pc-40
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   78: (07) r7 +=3D 8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D40)
->   79: (07) r6 +=3D 4                      ; R6_w=3D12
->   80: (15) if r6 =3D=3D 0x18 goto pc+56     ; R6_w=3D12
->   ; int augment_size =3D beauty_map[i], augment_size_with_header; @ augme=
-nted_raw_syscalls.bpf.c:472
->   81: (bf) r1 =3D r4                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R4_w=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=
-=3D24)
->   82: (0f) r1 +=3D r6                     ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D12) R6_w=3D12
->   83: (61) r8 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D12) R8_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xf=
-fffffff,var_off=3D(0x0; 0xffffffff))
->   84: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x7fffff=
-ff00000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=
-=3D(0x0; 0xffffffff00000000))
->   85: (c7) r8 s>>=3D 32                   ; R8=3Dscalar(smin=3D0xffffffff=
-80000000,smax=3D0x7fffffff)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   86: (15) if r8 =3D=3D 0x0 goto pc-9       ; R8=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3D0x7fffffff,umin=3D1)
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   87: (79) r3 =3D *(u64 *)(r7 +0)         ; R3_w=3Dscalar() R7=3Dmap_valu=
-e(map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D40)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   88: (15) if r3 =3D=3D 0x0 goto pc-11      ; R3_w=3Dscalar(umin=3D1)
->   ; value_offset =3D ((struct augmented_arg *)payload_offset)->value; @ a=
-ugmented_raw_syscalls.bpf.c:479
->   89: (bf) r1 =3D r9                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D12376) R9=3Dmap_value(map=3Dbeauty_payloa=
-d_,ks=3D4,vs=3D24688,off=3D12376)
->   90: (07) r1 +=3D 8                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D12384)
->   ; if (augment_size =3D=3D 1) { /* string */ @ augmented_raw_syscalls.bp=
-f.c:481
->   91: (55) if r8 !=3D 0x1 goto pc-22      ; R8=3D1
->   ; augment_size =3D bpf_probe_read_user_str(value_offset, value_size, ad=
-dr); @ augmented_raw_syscalls.bpf.c:482
->   92: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   93: (85) call bpf_probe_read_user_str#114     ; R0_w=3Dscalar(smin=3Dsm=
-in32=3D-4095,smax=3Dsmax32=3D4096)
->   94: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   95: (bf) r8 =3D r0                      ; R0_w=3Dscalar(id=3D8,smin=3Ds=
-min32=3D-4095,smax=3Dsmax32=3D4096) R8_w=3Dscalar(id=3D8,smin=3Dsmin32=3D-4=
-095,smax=3Dsmax32=3D4096)
->   96: (b7) r1 =3D 1                       ; R1_w=3D1
->   ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
->   97: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x100000=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   98: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3Dsmax32=3D4096)
->   99: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   100: (6d) if r2 s> r8 goto pc+1       ; R2_w=3D4096 R8_w=3D4096
->   101: (b7) r8 =3D 4096                   ; R8=3D4096
->   ; if (is_augmented && augment_size_with_header <=3D sizeof(struct augme=
-nted_arg)) { @ augmented_raw_syscalls.bpf.c:503
->   102: (57) r1 &=3D 1                     ; R1_w=3D1
->   103: (15) if r1 =3D=3D 0x0 goto pc-26     ; R1_w=3D1
->   104: (bf) r1 =3D r8                     ; R1_w=3D4096 R8=3D4096
->   105: (07) r1 +=3D 8                     ; R1_w=3D4104
->   106: (bf) r2 =3D r1                     ; R1_w=3D4104 R2_w=3D4104
->   107: (67) r2 <<=3D 32                   ; R2_w=3D0x100800000000
->   108: (77) r2 >>=3D 32                   ; R2_w=3D4104
->   109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=3D4104
->   ; ((struct augmented_arg *)payload_offset)->size =3D augment_size; @ au=
-gmented_raw_syscalls.bpf.c:504
->   110: (63) *(u32 *)(r9 +0) =3D r8        ; R8=3D4096 R9=3Dmap_value(map=
-=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D12376)
->   ; len            +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:506
->   111: (79) r3 =3D *(u64 *)(r10 -24)      ; R3_w=3D12376 R10=3Dfp0 fp-24=
-=3D12376
->   112: (0f) r1 +=3D r3                    ; R1_w=3D16480 R3_w=3D12376
->   ; payload_offset +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:507
->   113: (0f) r9 +=3D r2                    ; R2_w=3D4104 R9_w=3Dmap_value(=
-map=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D16480)
->   114: (b7) r2 =3D 1                      ; R2_w=3D1
->   115: (7b) *(u64 *)(r10 -32) =3D r2      ; R2_w=3D1 R10=3Dfp0 fp-32_w=3D=
-1
->   116: (7b) *(u64 *)(r10 -24) =3D r1      ; R1_w=3D16480 R10=3Dfp0 fp-24_=
-w=3D16480
->   117: (05) goto pc-40
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   78: (07) r7 +=3D 8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D48)
->   79: (07) r6 +=3D 4                      ; R6_w=3D16
->   80: (15) if r6 =3D=3D 0x18 goto pc+56     ; R6_w=3D16
->   ; int augment_size =3D beauty_map[i], augment_size_with_header; @ augme=
-nted_raw_syscalls.bpf.c:472
->   81: (bf) r1 =3D r4                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R4=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D=
-24)
->   82: (0f) r1 +=3D r6                     ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D16) R6_w=3D16
->   83: (61) r8 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D16) R8_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xf=
-fffffff,var_off=3D(0x0; 0xffffffff))
->   84: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x7fffff=
-ff00000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=
-=3D(0x0; 0xffffffff00000000))
->   85: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3D0x7fffffff)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   86: (15) if r8 =3D=3D 0x0 goto pc-9       ; R8_w=3Dscalar(smin=3D0xffff=
-ffff80000000,smax=3D0x7fffffff,umin=3D1)
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   87: (79) r3 =3D *(u64 *)(r7 +0)         ; R3_w=3Dscalar() R7_w=3Dmap_va=
-lue(map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D48)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   88: (15) if r3 =3D=3D 0x0 goto pc-11      ; R3_w=3Dscalar(umin=3D1)
->   ; value_offset =3D ((struct augmented_arg *)payload_offset)->value; @ a=
-ugmented_raw_syscalls.bpf.c:479
->   89: (bf) r1 =3D r9                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D16480) R9_w=3Dmap_value(map=3Dbeauty_payl=
-oad_,ks=3D4,vs=3D24688,off=3D16480)
->   90: (07) r1 +=3D 8                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D16488)
->   ; if (augment_size =3D=3D 1) { /* string */ @ augmented_raw_syscalls.bp=
-f.c:481
->   91: (55) if r8 !=3D 0x1 goto pc-22      ; R8_w=3D1
->   ; augment_size =3D bpf_probe_read_user_str(value_offset, value_size, ad=
-dr); @ augmented_raw_syscalls.bpf.c:482
->   92: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   93: (85) call bpf_probe_read_user_str#114     ; R0_w=3Dscalar(smin=3Dsm=
-in32=3D-4095,smax=3Dsmax32=3D4096)
->   94: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   95: (bf) r8 =3D r0                      ; R0_w=3Dscalar(id=3D9,smin=3Ds=
-min32=3D-4095,smax=3Dsmax32=3D4096) R8_w=3Dscalar(id=3D9,smin=3Dsmin32=3D-4=
-095,smax=3Dsmax32=3D4096)
->   96: (b7) r1 =3D 1                       ; R1_w=3D1
->   ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
->   97: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x100000=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   98: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3Dsmax32=3D4096)
->   99: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   100: (6d) if r2 s> r8 goto pc+1       ; R2_w=3D4096 R8_w=3D4096
->   101: (b7) r8 =3D 4096                   ; R8_w=3D4096
->   ; if (is_augmented && augment_size_with_header <=3D sizeof(struct augme=
-nted_arg)) { @ augmented_raw_syscalls.bpf.c:503
->   102: (57) r1 &=3D 1                     ; R1=3D1
->   103: (15) if r1 =3D=3D 0x0 goto pc-26     ; R1=3D1
->   104: (bf) r1 =3D r8                     ; R1_w=3D4096 R8=3D4096
->   105: (07) r1 +=3D 8                     ; R1_w=3D4104
->   106: (bf) r2 =3D r1                     ; R1_w=3D4104 R2_w=3D4104
->   107: (67) r2 <<=3D 32                   ; R2_w=3D0x100800000000
->   108: (77) r2 >>=3D 32                   ; R2_w=3D4104
->   109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=3D4104
->   ; ((struct augmented_arg *)payload_offset)->size =3D augment_size; @ au=
-gmented_raw_syscalls.bpf.c:504
->   110: (63) *(u32 *)(r9 +0) =3D r8        ; R8=3D4096 R9=3Dmap_value(map=
-=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D16480)
->   ; len            +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:506
->   111: (79) r3 =3D *(u64 *)(r10 -24)      ; R3_w=3D16480 R10=3Dfp0 fp-24=
-=3D16480
->   112: (0f) r1 +=3D r3                    ; R1_w=3D20584 R3_w=3D16480
->   ; payload_offset +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:507
->   113: (0f) r9 +=3D r2                    ; R2_w=3D4104 R9_w=3Dmap_value(=
-map=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D20584)
->   114: (b7) r2 =3D 1                      ; R2_w=3D1
->   115: (7b) *(u64 *)(r10 -32) =3D r2      ; R2_w=3D1 R10=3Dfp0 fp-32_w=3D=
-1
->   116: (7b) *(u64 *)(r10 -24) =3D r1      ; R1_w=3D20584 R10=3Dfp0 fp-24_=
-w=3D20584
->   117: (05) goto pc-40
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   78: (07) r7 +=3D 8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D56)
->   79: (07) r6 +=3D 4                      ; R6_w=3D20
->   80: (15) if r6 =3D=3D 0x18 goto pc+56     ; R6_w=3D20
->   ; int augment_size =3D beauty_map[i], augment_size_with_header; @ augme=
-nted_raw_syscalls.bpf.c:472
->   81: (bf) r1 =3D r4                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R4=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D=
-24)
->   82: (0f) r1 +=3D r6                     ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D20) R6_w=3D20
->   83: (61) r8 =3D *(u32 *)(r1 +0)         ; R1_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24,off=3D20) R8_w=3Dscalar(smin=3D0,smax=3Dumax=3D0xf=
-fffffff,var_off=3D(0x0; 0xffffffff))
->   84: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x7fffff=
-ff00000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=
-=3D(0x0; 0xffffffff00000000))
->   85: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3D0x7fffffff)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   86: (15) if r8 =3D=3D 0x0 goto pc-9       ; R8_w=3Dscalar(smin=3D0xffff=
-ffff80000000,smax=3D0x7fffffff,umin=3D1)
->   ;  @ augmented_raw_syscalls.bpf.c:0
->   87: (79) r3 =3D *(u64 *)(r7 +0)         ; R3_w=3Dscalar() R7_w=3Dmap_va=
-lue(map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D56)
->   ; if (augment_size =3D=3D 0 || addr =3D=3D NULL) @ augmented_raw_syscal=
-ls.bpf.c:476
->   88: (15) if r3 =3D=3D 0x0 goto pc-11      ; R3_w=3Dscalar(umin=3D1)
->   ; value_offset =3D ((struct augmented_arg *)payload_offset)->value; @ a=
-ugmented_raw_syscalls.bpf.c:479
->   89: (bf) r1 =3D r9                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D20584) R9_w=3Dmap_value(map=3Dbeauty_payl=
-oad_,ks=3D4,vs=3D24688,off=3D20584)
->   90: (07) r1 +=3D 8                      ; R1_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688,off=3D20592)
->   ; if (augment_size =3D=3D 1) { /* string */ @ augmented_raw_syscalls.bp=
-f.c:481
->   91: (55) if r8 !=3D 0x1 goto pc-22      ; R8_w=3D1
->   ; augment_size =3D bpf_probe_read_user_str(value_offset, value_size, ad=
-dr); @ augmented_raw_syscalls.bpf.c:482
->   92: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   93: (85) call bpf_probe_read_user_str#114     ; R0_w=3Dscalar(smin=3Dsm=
-in32=3D-4095,smax=3Dsmax32=3D4096)
->   94: (79) r4 =3D *(u64 *)(r10 -16)       ; R4_w=3Dmap_value(map=3Dbeauty=
-_map_ente,ks=3D4,vs=3D24) R10=3Dfp0 fp-16=3Dmap_value(map=3Dbeauty_map_ente=
-,ks=3D4,vs=3D24)
->   95: (bf) r8 =3D r0                      ; R0_w=3Dscalar(id=3D10,smin=3D=
-smin32=3D-4095,smax=3Dsmax32=3D4096) R8_w=3Dscalar(id=3D10,smin=3Dsmin32=3D=
--4095,smax=3Dsmax32=3D4096)
->   96: (b7) r1 =3D 1                       ; R1_w=3D1
->   ; if (augment_size > value_size) @ augmented_raw_syscalls.bpf.c:496
->   97: (67) r8 <<=3D 32                    ; R8_w=3Dscalar(smax=3D0x100000=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   98: (c7) r8 s>>=3D 32                   ; R8_w=3Dscalar(smin=3D0xffffff=
-ff80000000,smax=3Dsmax32=3D4096)
->   99: (b7) r2 =3D 4096                    ; R2_w=3D4096
->   100: (6d) if r2 s> r8 goto pc+1 102: R0_w=3Dscalar(id=3D10,smin=3Dsmin3=
-2=3D-4095,smax=3Dsmax32=3D4096) R1_w=3D1 R2_w=3D4096 R4_w=3Dmap_value(map=
-=3Dbeauty_map_ente,ks=3D4,vs=3D24) R6_w=3D20 R7_w=3Dmap_value(map=3Daugment=
-ed_args_,ks=3D4,vs=3D8272,off=3D56) R8_w=3Dscalar(smin=3D0xffffffff80000000=
-,smax=3Dsmax32=3D4095) R9_w=3Dmap_value(map=3Dbeauty_payload_,ks=3D4,vs=3D2=
-4688,off=3D20584) R10=3Dfp0 fp-8=3Dmmmmmmmm fp-16=3Dmap_value(map=3Dbeauty_=
-map_ente,ks=3D4,vs=3D24) fp-24_w=3D20584 fp-32_w=3D1 fp-40=3Dmap_value(map=
-=3Daugmented_args_,ks=3D4,vs=3D8272) fp-48=3Dctx() fp-56=3Dmap_value(map=3D=
-beauty_payload_,ks=3D4,vs=3D24688)
->   ; if (is_augmented && augment_size_with_header <=3D sizeof(struct augme=
-nted_arg)) { @ augmented_raw_syscalls.bpf.c:503
->   102: (57) r1 &=3D 1                     ; R1_w=3D1
->   103: (15) if r1 =3D=3D 0x0 goto pc-26     ; R1_w=3D1
->   104: (bf) r1 =3D r8                     ; R1_w=3Dscalar(id=3D12,smin=3D=
-0xffffffff80000000,smax=3Dsmax32=3D4095) R8_w=3Dscalar(id=3D12,smin=3D0xfff=
-fffff80000000,smax=3Dsmax32=3D4095)
->   105: (07) r1 +=3D 8                     ; R1_w=3Dscalar(smin=3D0xffffff=
-ff80000008,smax=3Dsmax32=3D4103,smin32=3D0x80000008)
->   106: (bf) r2 =3D r1                     ; R1_w=3Dscalar(id=3D13,smin=3D=
-0xffffffff80000008,smax=3Dsmax32=3D4103,smin32=3D0x80000008) R2_w=3Dscalar(=
-id=3D13,smin=3D0xffffffff80000008,smax=3Dsmax32=3D4103,smin32=3D0x80000008)
->   107: (67) r2 <<=3D 32                   ; R2_w=3Dscalar(smax=3D0x100700=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   108: (77) r2 >>=3D 32                   ; R2_w=3Dscalar(smin=3D0,smax=
-=3Dumax=3D0xffffffff,var_off=3D(0x0; 0xffffffff))
->   109: (25) if r2 > 0x1008 goto pc-32   ; R2_w=3Dscalar(smin=3Dsmin32=3D0=
-,smax=3Dumax=3Dsmax32=3Dumax32=3D4104,var_off=3D(0x0; 0x1fff))
->   ; ((struct augmented_arg *)payload_offset)->size =3D augment_size; @ au=
-gmented_raw_syscalls.bpf.c:504
->   110: (63) *(u32 *)(r9 +0) =3D r8        ; R8_w=3Dscalar(id=3D12,smin=3D=
-0xffffffff80000000,smax=3Dsmax32=3D4095) R9_w=3Dmap_value(map=3Dbeauty_payl=
-oad_,ks=3D4,vs=3D24688,off=3D20584)
->   ; len            +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:506
->   111: (79) r3 =3D *(u64 *)(r10 -24)      ; R3_w=3D20584 R10=3Dfp0 fp-24_=
-w=3D20584
->   112: (0f) r1 +=3D r3                    ; R1_w=3Dscalar(smin=3D0xffffff=
-ff80005070,smax=3Dsmax32=3D24687,smin32=3D0x80005070) R3_w=3D20584
->   ; payload_offset +=3D augment_size_with_header; @ augmented_raw_syscall=
-s.bpf.c:507
->   113: (0f) r9 +=3D r2                    ; R2_w=3Dscalar(smin=3Dsmin32=
-=3D0,smax=3Dumax=3Dsmax32=3Dumax32=3D4104,var_off=3D(0x0; 0x1fff)) R9_w=3Dm=
-ap_value(map=3Dbeauty_payload_,ks=3D4,vs=3D24688,off=3D20584,smin=3Dsmin32=
-=3D0,smax=3Dumax=3Dsmax32=3Dumax32=3D4104,var_off=3D(0x0; 0x1fff))
->   114: (b7) r2 =3D 1                      ; R2_w=3D1
->   115: (7b) *(u64 *)(r10 -32) =3D r2      ; R2_w=3D1 R10=3Dfp0 fp-32_w=3D=
-1
->   116: (7b) *(u64 *)(r10 -24) =3D r1      ; R1_w=3Dscalar(id=3D14,smin=3D=
-0xffffffff80005070,smax=3Dsmax32=3D24687,smin32=3D0x80005070) R10=3Dfp0 fp-=
-24_w=3Dscalar(id=3D14,smin=3D0xffffffff80005070,smax=3Dsmax32=3D24687,smin3=
-2=3D0x80005070)
->   117: (05) goto pc-40
->   ; for (int i =3D 0; i < 6; i++) { @ augmented_raw_syscalls.bpf.c:471
->   78: (07) r7 +=3D 8                      ; R7_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272,off=3D64)
->   79: (07) r6 +=3D 4                      ; R6_w=3D24
->   80: (15) if r6 =3D=3D 0x18 goto pc+56     ; R6_w=3D24
->   ; if (!bpf_probe_read_user(value_offset, augment_size, addr)) @ augment=
-ed_raw_syscalls.bpf.c:491
->   137: (79) r5 =3D *(u64 *)(r10 -24)      ; R5_w=3Dscalar(id=3D14,smin=3D=
-0xffffffff80005070,smax=3Dsmax32=3D24687,smin32=3D0x80005070) R10=3Dfp0 fp-=
-24=3Dscalar(id=3D14,smin=3D0xffffffff80005070,smax=3Dsmax32=3D24687,smin32=
-=3D0x80005070)
->   138: (bf) r2 =3D r5                     ; R2_w=3Dscalar(id=3D14,smin=3D=
-0xffffffff80005070,smax=3Dsmax32=3D24687,smin32=3D0x80005070) R5_w=3Dscalar=
-(id=3D14,smin=3D0xffffffff80005070,smax=3Dsmax32=3D24687,smin32=3D0x8000507=
-0)
->   139: (67) r2 <<=3D 32                   ; R2_w=3Dscalar(smax=3D0x606f00=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   140: (77) r2 >>=3D 32                   ; R2_w=3Dscalar(smin=3D0,smax=
-=3Dumax=3D0xffffffff,var_off=3D(0x0; 0xffffffff))
->   141: (b7) r1 =3D 1                      ; R1_w=3D1
->   142: (b7) r3 =3D 24689                  ; R3_w=3D24689
->   143: (2d) if r3 > r2 goto pc+1 145: R0=3Dscalar(id=3D10,smin=3Dsmin32=
-=3D-4095,smax=3Dsmax32=3D4096) R1=3D1 R2=3Dscalar(smin=3Dsmin32=3D0,smax=3D=
-umax=3Dsmax32=3Dumax32=3D24688,var_off=3D(0x0; 0x7fff)) R3=3D24689 R4=3Dmap=
-_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D24) R5=3Dscalar(id=3D14,smin=3D0xf=
-fffffff80005070,smax=3Dsmax32=3D24687,smin32=3D0x80005070) R6=3D24 R7=3Dmap=
-_value(map=3Daugmented_args_,ks=3D4,vs=3D8272,off=3D64) R8=3Dscalar(id=3D12=
-,smin=3D0xffffffff80000000,smax=3Dsmax32=3D4095) R9=3Dmap_value(map=3Dbeaut=
-y_payload_,ks=3D4,vs=3D24688,off=3D20584,smin=3Dsmin32=3D0,smax=3Dumax=3Dsm=
-ax32=3Dumax32=3D4104,var_off=3D(0x0; 0x1fff)) R10=3Dfp0 fp-8=3Dmmmmmmmm fp-=
-16=3Dmap_value(map=3Dbeauty_map_ente,ks=3D4,vs=3D24) fp-24=3Dscalar(id=3D14=
-,smin=3D0xffffffff80005070,smax=3Dsmax32=3D24687,smin32=3D0x80005070) fp-32=
-=3D1 fp-40=3Dmap_value(map=3Daugmented_args_,ks=3D4,vs=3D8272) fp-48=3Dctx(=
-) fp-56=3Dmap_value(map=3Dbeauty_payload_,ks=3D4,vs=3D24688)
->   ; if (!bpf_probe_read_user(value_offset, augment_size, addr)) @ augment=
-ed_raw_syscalls.bpf.c:491
->   145: (79) r2 =3D *(u64 *)(r10 -32)      ; R2_w=3D1 R10=3Dfp0 fp-32=3D1
->   ; if (!do_augment || len > sizeof(struct beauty_payload_enter)) @ augme=
-nted_raw_syscalls.bpf.c:511
->   146: (5f) r2 &=3D r1                    ; R1=3D1 R2_w=3D1
->   147: (57) r2 &=3D 1                     ; R2_w=3D1
->   148: (79) r7 =3D *(u64 *)(r10 -48)      ; R7_w=3Dctx() R10=3Dfp0 fp-48=
-=3Dctx()
->   149: (79) r8 =3D *(u64 *)(r10 -40)      ; R8_w=3Dmap_value(map=3Daugmen=
-ted_args_,ks=3D4,vs=3D8272) R10=3Dfp0 fp-40=3Dmap_value(map=3Daugmented_arg=
-s_,ks=3D4,vs=3D8272)
->   150: (79) r4 =3D *(u64 *)(r10 -56)      ; R4_w=3Dmap_value(map=3Dbeauty=
-_payload_,ks=3D4,vs=3D24688) R10=3Dfp0 fp-56=3Dmap_value(map=3Dbeauty_paylo=
-ad_,ks=3D4,vs=3D24688)
->   151: (55) if r2 !=3D 0x0 goto pc+1      ; R2_w=3D1
->   ; return bpf_perf_event_output(ctx, &__augmented_syscalls__, BPF_F_CURR=
-ENT_CPU, data, len); @ augmented_raw_syscalls.bpf.c:162
->   153: (67) r5 <<=3D 32                   ; R5_w=3Dscalar(smax=3D0x606f00=
-000000,umax=3D0xffffffff00000000,smin32=3D0,smax32=3Dumax32=3D0,var_off=3D(=
-0x0; 0xffffffff00000000))
->   154: (77) r5 >>=3D 32                   ; R5_w=3Dscalar(smin=3D0,smax=
-=3Dumax=3D0xffffffff,var_off=3D(0x0; 0xffffffff))
->   155: (bf) r1 =3D r7                     ; R1_w=3Dctx() R7_w=3Dctx()
->   156: (18) r2 =3D 0xffffaed2058d9000     ; R2_w=3Dmap_ptr(map=3D__augmen=
-ted_sys,ks=3D4,vs=3D4)
->   158: (18) r3 =3D 0xffffffff             ; R3_w=3D0xffffffff
->   160: (85) call bpf_perf_event_output#25
->   R5 unbounded memory access, use 'var &=3D const' or 'if (var < const)'
->   processed 387 insns (limit 1000000) max_states_per_insn 1 total_states =
-20 peak_states 20 mark_read 13
->   -- END PROG LOAD LOG --
->   libbpf: prog 'sys_enter': failed to load: -13
->   libbpf: failed to load object 'augmented_raw_syscalls_bpf'
->   libbpf: failed to load BPF skeleton 'augmented_raw_syscalls_bpf': -13
->   libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was=
- it created?)
->   libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was=
- it created?)
->   libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was=
- it created?)
->   libbpf: map '__augmented_syscalls__': can't use BPF map without FD (was=
- it created?)
->   hello
->        0.000 ( 0.008 ms): write(fd: 1, buf: , count: 6)                  =
-                       =3D
->
-> Also like James said, the buf doesn't show anything and the return
-> value is missing.
->
-> Thanks,
-> Namhyung
->
+Baokun
 
