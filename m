@@ -1,83 +1,85 @@
-Return-Path: <linux-kernel+bounces-361493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E07699A8ED
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:31:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA3499A8EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D5CBB2331B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:31:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C2D21C231A1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:31:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED36199E94;
-	Fri, 11 Oct 2024 16:31:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5841990C7;
+	Fri, 11 Oct 2024 16:31:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b="SQKDUqxH"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Av9Dy6VB"
+Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2951C188918
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:31:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E2B199256
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664276; cv=none; b=ktrI6jAX+AJzPQWJGjNEl6dE2AGLPCdFuPKdjDvU0/kO5My6Bue6kOszOlRieYAVB6TFLu4FzU7FXAcja6dfK7yFtyDlG3jSzFdZjUYgcpRXbDPZuA8ILilckufxvpBB8JoOZsTaqgJBoB9ml7E29aazisewKXaCOBQRSR/3QVc=
+	t=1728664289; cv=none; b=FGAmWXK38zXCY/ZhHM+cBPuNtoSvZ//aSaMRg1k1EdK0L8/MQTtbf22+7C0T1l8M0Ai5P5Cu+ffU46um69UQGGmQ7b2EFVL2cW+bVHEFjaBPlzHxdmoeqUEk48wG2b8pbODxP4jODU5ouQjZP6/tRPqA10MxoEXAerctgwXamZ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664276; c=relaxed/simple;
-	bh=32Mjcd2dJsumm+btTsVmfBP+NbjBoMPuUy6307MRM+A=;
+	s=arc-20240116; t=1728664289; c=relaxed/simple;
+	bh=525ehD9jVRzxqbpKXu59TfkRlURdR2IlhfGKgW7tqZA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u8hDWd2b0o1SdqmlMVsislP3oDnVU64y3jFyj9m8q8okqWVzdo/JUI0LsGkbpQYTq+FB49YgeO0TTfLTtA/FKAoLDNiOF3DNF7UPh42pYS8+Hcp0mNHBqN64eKNVuZpe3dj1lxqElBvox0BhzSxajMc7JlEnjZ4hfWI/XRCW1NA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com; spf=pass smtp.mailfrom=tenstorrent.com; dkim=pass (2048-bit key) header.d=tenstorrent.com header.i=@tenstorrent.com header.b=SQKDUqxH; arc=none smtp.client-ip=209.85.216.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tenstorrent.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tenstorrent.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e3010478e6so508058a91.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:31:14 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=nzhDB9jlumEovdcbqU155nnCcUcZzC4szBD77naqHyoQASmqYUDvuuNGXjTizMpic1ZEwV37jJNoERRcaQ2ayt29cKlDK+M94MJDrptqqQwNxkv+1D2RKNZSXOtkvrSHENwZVx6CXhAyvpbaKfFsBsmQ7k2/Mx/6r/H5THNAV6I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Av9Dy6VB; arc=none smtp.client-ip=209.85.160.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46042895816so23201171cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:31:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=tenstorrent.com; s=google; t=1728664274; x=1729269074; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1728664285; x=1729269085; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ymJ/qex09j4ioztSVDBbfNAos9AY+mRR2jHbKLcRzPg=;
-        b=SQKDUqxH/+TpHnQVGvczsZAfr/bmo6dc9a1J+jx7Vv8N+0qhwQn40uVobe0ySs+rCq
-         mSdJgShmtBPF4I/7whVApyOshP0s/FfeLECl7GtujkcLWSeHeFnRvX8aunvCLWKllMqs
-         y8m3yw0rw6xSjKEafA3YTF7SqBuW6Z+xHTzjxnVmsC4JHI0q55RpxcyMuzqDbKjuxBJb
-         eEOM5MtGNy9hSFkqeuUxYy60Jk+9Aayk5je3HjSJNPkuir/2OogSDt5V/G4qO8kmDKKy
-         ol6Nrcngo/XVN1ccWsdmZp7Jb8vcpRp8cG2JB+o6UeYOFaGGGCG+9nWPdHBIOHpacsF/
-         9fpg==
+        bh=ATpam0YiZTzpjTWMzxJV5L02/OwsB3UVIOf2m/lEpH8=;
+        b=Av9Dy6VB4b1skhAP+ZXYaWvCeZOBNrKxVj/g3tdgDCaApf5zer08hW+eQCtB8BG6Uk
+         +ZY3WuiihlGQqe2t3WuLpoV1+IMVCJlif9PFw5N3FoEkz+gpEDTu62S3Lj1GYcjWqOA+
+         6QP/gKqB0ZHRAKfxnwnF+dTjPeYaXOp/xEeGyRh44ZhGrObsPuG3Kc0Bg4hJ00ER2jUU
+         n7aJVePapXYvmZUzc/uLc+Co1usQqj8xqkWyJ1S/809MlfTcKlRdYU7vjkiRdXh3rj07
+         symaRWAsqITBa1fm+s6FoWC58CQ6OoNZc7C8Gv7wgn787gcNIOgpDJbIG/7jg72uqHRw
+         ETSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728664274; x=1729269074;
+        d=1e100.net; s=20230601; t=1728664285; x=1729269085;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ymJ/qex09j4ioztSVDBbfNAos9AY+mRR2jHbKLcRzPg=;
-        b=A8GlLeQu0/nx9aEN0tC0xIjgPONXTHq4ryUJyAZTD3+Y7Q9w1GAIi180YyubjsGJeR
-         t2RkInvg9kIS4D0DKiJDz1GF8wecUV8VI8RitDVqPyKfVVek4/lNabEHhW/x7LC/5UmP
-         3gdjjazxWZUmU4cUb936MgLFBHfUtfEhsIyWhSwYkEr0482IIotiTf1M9Kk4JSM/+mZM
-         +sHIfKNOnY3G/M0CBHBgII2dXlRJd+YYLQf0pSPenX3kzZcvCiwl3KKE6y50n7xiRp9a
-         xG9LhlHvz2MgnGQ+qJwFwvwBRJ+xHuBoGv9DrhkTSo17oXvgu5EPTiQEXXHdqvTVcnXC
-         AVww==
-X-Gm-Message-State: AOJu0Yzr6qgEfeMYVi04SqhcZibSPVLrO7rC7bTDLIW7OBcwklCeX+sE
-	jRwfsMoOI9xaDlhbJo4l2bTSZX2axvMquHPN5u2PExQHN+9mPDdfexRDfulkTGk=
-X-Google-Smtp-Source: AGHT+IFZHNKSdlUtyflW/oAl3271oyzHBL3EezDm4ZEZS8ioT4B/wsLs4jMN4bfjeIMRhEIYEroxww==
-X-Received: by 2002:a17:90a:4b0f:b0:2e2:bfba:18d4 with SMTP id 98e67ed59e1d1-2e2f0b3b53bmr4317697a91.17.1728664274280;
-        Fri, 11 Oct 2024 09:31:14 -0700 (PDT)
-Received: from x1 (71-34-69-82.ptld.qwest.net. [71.34.69.82])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2ea9d4145sm2092573a91.18.2024.10.11.09.31.13
+        bh=ATpam0YiZTzpjTWMzxJV5L02/OwsB3UVIOf2m/lEpH8=;
+        b=ZYDYVQlDZ5/YDu9HE9LfWVC2Teg+vpkMbCDiUWOpYWpB665Wue8+LzGCmrlGa34ltN
+         CJH7XLp1xTGkKk12NcWkm3/koqif67MyFoCrWre3dr2+TSoFt/e0KfrGwKaEWcSzhj8/
+         ODqVqGb6QWBbKn6eavcCykyGxMvrxK/WcoXyeEIo0TcIKwXbZeQclLO/8OzNdlVeKW8k
+         +kKTa8xlT28cQ1DgBkHfMXYHoPVO2LE1tFxX4taD4tW7EKv6RaFd58HF3FXkcTctwnkH
+         9NK8+aarq9zq0ZJ+eOUvmhv8oSecW8SH5sBGtDY80Fqk94xo2oC9Vxz4ad7QC35QGgKV
+         LfUA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDyf/4rN4+zLWgGRu+B7WpbsmjLGQqfHz9NCwc8TmzLA/xrTlnhkzHEjYOjR7q4/x81Ib51iFa76zinE8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YypYKiV+KMZoWvR3AmzUL0+cYE8FuIa8svrRy1AsvmPtq7ei3XS
+	qbkHuJEOjVi/AhjKCekXRY0d/NdgUr/uwOC449OxhT2XJBCDI7OYGFR7zN7a4Ww=
+X-Google-Smtp-Source: AGHT+IG75EhZG0d5M9MeHOGeqzGArKbIsd9k8HqJa104wmM37x2TGfXxpHNROC2Jk+MqDGWYtqA4YA==
+X-Received: by 2002:ac8:7d13:0:b0:458:2fb7:5035 with SMTP id d75a77b69052e-460583e8b95mr2814621cf.3.1728664284832;
+        Fri, 11 Oct 2024 09:31:24 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460428069c6sm16882951cf.49.2024.10.11.09.31.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 09:31:14 -0700 (PDT)
-Date: Fri, 11 Oct 2024 09:31:12 -0700
-From: Drew Fustini <dfustini@tenstorrent.com>
-To: Emil Renner Berthing <emil.renner.berthing@canonical.com>
-Cc: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Jisheng Zhang <jszhang@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Subject: Re: [PATCH v1 2/3] pinctrl: th1520: Update pinmux tables
-Message-ID: <ZwlS0FiKfiPjhNSf@x1>
-References: <20241011144826.381104-1-emil.renner.berthing@canonical.com>
- <20241011144826.381104-3-emil.renner.berthing@canonical.com>
+        Fri, 11 Oct 2024 09:31:24 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.95)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1szIXz-007eJV-Qa;
+	Fri, 11 Oct 2024 13:31:23 -0300
+Date: Fri, 11 Oct 2024 13:31:23 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Lu Baolu <baolu.lu@linux.intel.com>
+Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
+	Vasant Hegde <vasant.hegde@amd.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 6/7] iommu/vt-d: Refactor first_level_by_default()
+Message-ID: <20241011163123.GO762027@ziepe.ca>
+References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
+ <20241011042722.73930-7-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,69 +88,34 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011144826.381104-3-emil.renner.berthing@canonical.com>
+In-Reply-To: <20241011042722.73930-7-baolu.lu@linux.intel.com>
 
-On Fri, Oct 11, 2024 at 04:48:24PM +0200, Emil Renner Berthing wrote:
-> When Drew took over the pinctrl driver it seems like he didn't use the
-> git tree I pointed him at and thus missed some important fixes to the
-> tables describing valid pinmux settings.
+On Fri, Oct 11, 2024 at 12:27:21PM +0800, Lu Baolu wrote:
+> The first stage page table is compatible across host and guest kernels.
+> Therefore, this driver uses the first stage page table as the default for
+> paging domains.
 > 
-> The documentation has a nice overview table of these settings but
-> unfortunately it doesn't fully match the register descriptions, which
-> seem to be the correct version.
+> The helper first_level_by_default() determines the feasibility of using
+> the first stage page table based on a global policy. This policy requires
+> consistency in scalable mode and first stage translation capability among
+> all iommu units. However, this is unnecessary as domain allocation,
+> attachment, and removal operations are performed on a per-device basis.
 > 
-> Fixes: bed5cd6f8a98 ("pinctrl: Add driver for the T-Head TH1520 SoC")
-> Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+> The domain type (IOMMU_DOMAIN_DMA vs. IOMMU_DOMAIN_UNMANAGED) should not
+> be a factor in determining the first stage page table usage. Both types
+> are for paging domains, and there's no fundamental difference between them.
+> The driver should not be aware of this distinction unless the core
+> specifies allocation flags that require special handling.
+> 
+> Convert first_level_by_default() from global to per-iommu and remove the
+> 'type' input.
+> 
+> Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  drivers/pinctrl/pinctrl-th1520.c | 18 +++++++++---------
->  1 file changed, 9 insertions(+), 9 deletions(-)
-> 
-> diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
-> index 03326df69668..8bd40cb2f013 100644
-> --- a/drivers/pinctrl/pinctrl-th1520.c
-> +++ b/drivers/pinctrl/pinctrl-th1520.c
-> @@ -221,9 +221,9 @@ static const struct pinctrl_pin_desc th1520_group2_pins[] = {
->  	TH1520_PAD(15, UART4_RTSN,    UART, ____, ____, GPIO, ____, ____, 0),
->  	TH1520_PAD(16, UART3_TXD,     DBG,  UART, ____, GPIO, ____, ____, 0),
->  	TH1520_PAD(17, UART3_RXD,     DBG,  UART, ____, GPIO, ____, ____, 0),
-> -	TH1520_PAD(18, GPIO0_18,      GPIO, I2C,  ____, ____, ____, ____, 0),
-> -	TH1520_PAD(19, GPIO0_19,      GPIO, I2C,  ____, ____, ____, ____, 0),
-> -	TH1520_PAD(20, GPIO0_20,      GPIO, UART, IR,   ____, ____, ____, 0),
-> +	TH1520_PAD(18, GPIO0_18,      GPIO, I2C,  ____, ____, DPU0, DPU1, 0),
-> +	TH1520_PAD(19, GPIO0_19,      GPIO, I2C,  ____, ____, DPU0, DPU1, 0),
-> +	TH1520_PAD(20, GPIO0_20,      GPIO, UART, IR,   ____, DPU0, DPU1, 0),
->  	TH1520_PAD(21, GPIO0_21,      GPIO, UART, IR,   ____, DPU0, DPU1, 0),
->  	TH1520_PAD(22, GPIO0_22,      GPIO, JTAG, I2C,  ____, DPU0, DPU1, 0),
->  	TH1520_PAD(23, GPIO0_23,      GPIO, JTAG, I2C,  ____, DPU0, DPU1, 0),
-> @@ -241,7 +241,7 @@ static const struct pinctrl_pin_desc th1520_group2_pins[] = {
->  	TH1520_PAD(35, GPIO1_3,       GPIO, JTAG, ____, ____, DPU0, DPU1, 0),
->  	TH1520_PAD(36, GPIO1_4,       GPIO, JTAG, ____, ____, DPU0, DPU1, 0),
->  	TH1520_PAD(37, GPIO1_5,       GPIO, ____, ____, ____, DPU0, DPU1, 0),
-> -	TH1520_PAD(38, GPIO1_6,       GPIO, ____, ____, ____, DPU0, DPU1, 0),
-> +	TH1520_PAD(38, GPIO1_6,       GPIO, QSPI, ____, ____, DPU0, DPU1, 0),
->  	TH1520_PAD(39, GPIO1_7,       GPIO, QSPI, ____, ____, DPU0, DPU1, 0),
->  	TH1520_PAD(40, GPIO1_8,       GPIO, QSPI, ____, ____, DPU0, DPU1, 0),
->  	TH1520_PAD(41, GPIO1_9,       GPIO, QSPI, ____, ____, DPU0, DPU1, 0),
-> @@ -256,11 +256,11 @@ static const struct pinctrl_pin_desc th1520_group2_pins[] = {
->  	TH1520_PAD(50, CLK_OUT_1,     BSEL, CLK,  ____, GPIO, ____, ____, 0),
->  	TH1520_PAD(51, CLK_OUT_2,     BSEL, CLK,  ____, GPIO, ____, ____, 0),
->  	TH1520_PAD(52, CLK_OUT_3,     BSEL, CLK,  ____, GPIO, ____, ____, 0),
-> -	TH1520_PAD(53, GPIO1_21,      GPIO, ____, ISP,  ____, ____, ____, 0),
-> -	TH1520_PAD(54, GPIO1_22,      GPIO, ____, ISP,  ____, ____, ____, 0),
-> -	TH1520_PAD(55, GPIO1_23,      GPIO, ____, ISP,  ____, ____, ____, 0),
-> -	TH1520_PAD(56, GPIO1_24,      GPIO, ____, ISP,  ____, ____, ____, 0),
-> -	TH1520_PAD(57, GPIO1_25,      GPIO, ____, ISP,  ____, ____, ____, 0),
-> +	TH1520_PAD(53, GPIO1_21,      JTAG, ____, ISP,  GPIO, ____, ____, 0),
-> +	TH1520_PAD(54, GPIO1_22,      JTAG, ____, ISP,  GPIO, ____, ____, 0),
-> +	TH1520_PAD(55, GPIO1_23,      JTAG, ____, ISP,  GPIO, ____, ____, 0),
-> +	TH1520_PAD(56, GPIO1_24,      JTAG, ____, ISP,  GPIO, ____, ____, 0),
-> +	TH1520_PAD(57, GPIO1_25,      JTAG, ____, ISP,  GPIO, ____, ____, 0),
->  	TH1520_PAD(58, GPIO1_26,      GPIO, ____, ISP,  ____, ____, ____, 0),
->  	TH1520_PAD(59, GPIO1_27,      GPIO, ____, ISP,  ____, ____, ____, 0),
->  	TH1520_PAD(60, GPIO1_28,      GPIO, ____, ISP,  ____, ____, ____, 0),
-> -- 
-> 2.43.0
-> 
+>  drivers/iommu/intel/iommu.c | 17 +++++++++--------
+>  1 file changed, 9 insertions(+), 8 deletions(-)
 
-Reviewed-by: Drew Fustini <dfustini@tenstorrent.com>
+Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
+
+Jason
 
