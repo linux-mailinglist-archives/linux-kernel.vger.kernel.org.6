@@ -1,104 +1,274 @@
-Return-Path: <linux-kernel+bounces-361934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 381BF99AF1E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:12:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F8DB99AF26
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:13:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57FF1F22D72
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DDAB21C1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:13:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DE61E2018;
-	Fri, 11 Oct 2024 23:11:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A97F11E2000;
+	Fri, 11 Oct 2024 23:13:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6Ym6KJO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Qq5J/75a"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2058.outbound.protection.outlook.com [40.107.236.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CD21D27A9;
-	Fri, 11 Oct 2024 23:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728688311; cv=none; b=hZRK5tqr3zMMzpTL+IYZoA7fpmZNh3MD7y4YXW/yx4ooOBkFcdHdEO+9BIUNy03FGbulIBV52WHcSe0SPv/GMlnHm3ojmzQUl1eODABzUymEBqxaWhTcEktOMI7Y2KrMFnraxDhcX6MDTMTk1GehOx+ebLEzKmnTcC4CtHWAA3g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728688311; c=relaxed/simple;
-	bh=iVJ74e4tA1WxfHXS2xP4RqS7VvfQLdtn7Zy1xtIgh5A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jtzn6bBBnEacnYghEb/bNNaU85KV8uWOt1v9xiziLT+dV/weXr8J1brl91rA9vGvMamG6p/zcoh2ACyLXkrCAbuJq3Aa/tvqWq7c/lbDnta+MeuEgkfhz9bMZiCLPHwrJy2UcbmDlDeKOtMx2y1og5O23m++Tg1VeAjlcHlupjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6Ym6KJO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D19CC4CEC3;
-	Fri, 11 Oct 2024 23:11:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728688310;
-	bh=iVJ74e4tA1WxfHXS2xP4RqS7VvfQLdtn7Zy1xtIgh5A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R6Ym6KJOF6tfls3kP0ehEPQZxEZLje3eMQHOk+Cd/nR4ws/cIVbd6MA5SeVoVQmKK
-	 mxx5dNMw/481In9ovH50xCEVB6pP31MVQ47e2nYl3C2Oxsuauy29+O1peg0N9/xmbq
-	 F180EP5MTAbYcFwxk9baCTKhQp6OkU2jX/OWDYssXq7xfX8l7jg6+ZhNT+sY/xZhdi
-	 II6Ij98DGQ7smljfSzMGiRKX/PseqCew3FmMuE0rE1HUkLnNWA3KbFktOSDp6z6euh
-	 WvKHXPhyfD2yFHIyQ5QYFySsVXz118y+VowWBAQhzm2diBIvUbczSC4jjVNi6WDHjk
-	 QWA7uI9pVYXzA==
-Date: Fri, 11 Oct 2024 16:11:49 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
-	"Darrick J. Wong" <djwong@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
-	linux-pm <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org,
-	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
-	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
-	Russ Weight <russ.weight@linux.dev>,
-	Danilo Krummrich <dakr@redhat.com>
-Subject: Re: Root filesystem read access for firmware load during hibernation
- image writing
-Message-ID: <ZwmwtZivKP8UDx1V@bombadil.infradead.org>
-References: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
- <413b1e99-8cfe-4018-9ef3-2f3e21806bad@maciej.szmigiero.name>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE19128EB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 23:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728688383; cv=fail; b=cFj8BBFAP0+2ivIG2FXOYN+8l1KMXnXFTcWKmhlBS+sA7XvVgEboAM8A+gk18f3/bpDXE8R7xUFbDxPCVHIjehshpp3uru2eUpsZHHxYl28JS7HErElQSwPFk4DW+N172v9t2C9YNd/DwyeOIMSbamjfnwtZCtFqmxlEM8E/W5A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728688383; c=relaxed/simple;
+	bh=UwWtUwsLYpkzb7TPk2txUCTtfbxkvcdgknCef/5SlzQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HXAEpF8Nw2EeFxyfwbEr/TgNlu68NvWupMg1kPI8JfHi78TW4c4bgCGxenCaWBrFRhOa71rKSNF6f4FCWXCHp1MYSEM2NJCLUBRLl0IosQKs/NO1f1nntUqTDjn+M5Rw0H4LMw2ms0DI3bQzjp9h3VtiSiBW1V7AvPfGiqi4Jx4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Qq5J/75a; arc=fail smtp.client-ip=40.107.236.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=yj/Wkrvaar9Rqq992FgIy9HcOxJjoCwEIjMQtRnadJdMiSDQtMGKIjLHrAZ49mRscdOgkhIC1bNqQdaDpsh3/qQtdMre2DDa1pD9oGqI7t5z6fadfbJ5u9zHNk4t1lvp5WT2hB7f1N8KpKEWGh3ZrRriGmcswlmhDNJf6+oBGiZGexwPBa5QKhGqjIhToS2e2Trn9pvXZ8OAxQeNK3Y/OFqHKAYsjINeiycpEetnjkkIbVwJvReq1+AElhJ4REX3FfhToNVl9MYBf6eHy5WSKEFTTPEQw4kTO9ULF3wqU2U9iHEcruaXNU7J0ET0FWabIC9FbbMGrkoV/BjYgJvNUQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=WrJvLE5A5wCduRGwGKfeyuS7O+uxulxmRFWEFYO37Dc=;
+ b=frBE/mwgO0qDBLiFr3rj4j91GMxk7hUY7SRaYELdspmROG6RocMLAE3EUhF8yLc8+qzvegXEjssbnzbCKDXvkEdy8CYwa6PfdrrhxssHi4OsDdlk4748WvENm6VU8SS+OuIQ80bpwLjnY9sgjQ3K1EtMAcgmFqepz6VIGFhgQryoDf54c+fGWLKgRJShcJgGhJx4Hunh778nPu9SmssqFtO+JJaCEWjkdxx2EDsAz1aDLJMRomoZLJApRubZJ/h0iZ+ASxliN+Lxl1INjxsXMmeNtMt3BVq/mPIWGt4gv4V1W+fRFqEUf7m5ylsi+BFu6LJ2RYQaDhfOZCnEEK14vA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=WrJvLE5A5wCduRGwGKfeyuS7O+uxulxmRFWEFYO37Dc=;
+ b=Qq5J/75au/5Z4OADAnE5zluOc+Ry6GA36aq6z7/YLgcvcK9Tif5qnGwMslkAbH+ANANRrUmPwFXbMNp8bXlU2Z6P3PD8Gyp1Jt8le+a2Fbx1WGMdQ/uSeTIxwuOuft+jbKGwYlN3SL1Z+cYaT/Di9XKenlk3I33y8F2GvT0fetA=
+Received: from MW4PR03CA0209.namprd03.prod.outlook.com (2603:10b6:303:b8::34)
+ by LV8PR12MB9156.namprd12.prod.outlook.com (2603:10b6:408:181::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
+ 2024 23:12:57 +0000
+Received: from CO1PEPF000044FC.namprd21.prod.outlook.com
+ (2603:10b6:303:b8:cafe::88) by MW4PR03CA0209.outlook.office365.com
+ (2603:10b6:303:b8::34) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20 via Frontend
+ Transport; Fri, 11 Oct 2024 23:12:56 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CO1PEPF000044FC.mail.protection.outlook.com (10.167.241.202) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.1 via Frontend Transport; Fri, 11 Oct 2024 23:12:56 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Oct
+ 2024 18:12:55 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Oct
+ 2024 18:12:55 -0500
+Received: from xsjlizhih51.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 11 Oct 2024 18:12:54 -0500
+From: Lizhi Hou <lizhi.hou@amd.com>
+To: <ogabbay@kernel.org>, <dri-devel@lists.freedesktop.org>
+CC: Lizhi Hou <lizhi.hou@amd.com>, <linux-kernel@vger.kernel.org>,
+	<min.ma@amd.com>, <max.zhen@amd.com>, <sonal.santan@amd.com>,
+	<king.tam@amd.com>
+Subject: [PATCH V4 00/10] AMD XDNA driver
+Date: Fri, 11 Oct 2024 16:12:34 -0700
+Message-ID: <20241011231244.3182625-1-lizhi.hou@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <413b1e99-8cfe-4018-9ef3-2f3e21806bad@maciej.szmigiero.name>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CO1PEPF000044FC:EE_|LV8PR12MB9156:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1564e38f-d204-497c-2687-08dcea4a3dac
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?USbzLQ4GnoUBFnFx4GkVmwMB13QYkpyGYzNTHZncDrcK4QfAVYmhsqCq3N38?=
+ =?us-ascii?Q?Pv7FnguXmASbBKtlGb6X1unjWXYXve56l9MgzXr5AHcvhsUIjTZsdKIIHIMX?=
+ =?us-ascii?Q?Ed+ALv9lKggaliuxLO6nKPCo6xHSGj7Cm45w/6pN4X2rbFZx2OGDnSF0AYAB?=
+ =?us-ascii?Q?i7zfZHCDtPSKddh0krXF8XmEK4nGaFYAXZmsLINcizu8SmsV64r8BV4RW6+o?=
+ =?us-ascii?Q?q0Ns6f7xbgy6AERCiMshA0WjxbzF3m+lD1igtF5OH1mVIwOUD+SZ9tqq56/J?=
+ =?us-ascii?Q?S+oV72h2RB4zcSfXOWwjbuvNdquxATQu8KsA+sTtZZZTvNSnjayhoKhOuqZs?=
+ =?us-ascii?Q?DlXFa6e5kp7qw48UTOY/8+S4e3MKtyE8ohfsekQxVsgnFCPSVt9XQwCR3xY1?=
+ =?us-ascii?Q?qlFxoCf8VHN1mBcBSqZBDLNW4W4B0VIQEOL2c+5JpN3mywfptb1f/D38Pl1a?=
+ =?us-ascii?Q?43dHI3d024Fy1J7o9fzRL1rH2FTbVDoX2vFLvUV/W3evzQufYx4Z2UchlKWw?=
+ =?us-ascii?Q?m/n7dtCIIz60ACShjeCX0IbZ4bB/NAgVJNkT7357Hn4Uy94+h3v7bOauEWxH?=
+ =?us-ascii?Q?KBXYk5mdkDLxmvE+FzUL768GfirDgOiU5gj1W+4oCDKGyctYXAmwkxiD8vzh?=
+ =?us-ascii?Q?zrdm1YSuDKBU4BxIjGZv3Co6b4Ptvu5OjAffFLqPcEZ5tlSVxeJQhFkykZqW?=
+ =?us-ascii?Q?XdeO4ddKSlTs2EC2UKYMTvK7paIFp84btAWNswIAoUlibcGey2oHE2QVudEp?=
+ =?us-ascii?Q?05FUi3CPjpw2kfCPzgstBdFGm2QyWtgQvYUxqQxxxaJAyGvp7AZwsjhA/MUi?=
+ =?us-ascii?Q?d3wSgKvQx3zWEU92xKUSpHl7FWRM/7deIC2/Gm9N//0Bm0qw8VsGw49w7Kf2?=
+ =?us-ascii?Q?aZdIxsDy72SUWbIYEd2QBhkTcDk4y1ttPHxVMDyHMH9MnFBO1yuEq5I8evSP?=
+ =?us-ascii?Q?MZS1tf31m+NwmUV3CEgdi8z5QhQE1EjJn+JX4KJKHi9Qk60vXwiSs7J9ceTG?=
+ =?us-ascii?Q?iTU20DQztRHlX6wBTYzOwOMS5H5WhXMGv4C08gsP4diGYzqcgS+I2yC31rjg?=
+ =?us-ascii?Q?r9k/vYvkeQS7Wt0YIyHf5kr5ML78JrjwRJyV1yxa8/tJxIgpbLJ6XnBwl6va?=
+ =?us-ascii?Q?QCHFr1RqJ+XbE4LjhflbRkxkUu/Ula9GsLruQyV3/P5UW1zSyx33Do63X9sn?=
+ =?us-ascii?Q?oV1lfgZVtlr30LDhIavMbrqcn6rZVrYYWo8pCUaEB6xq0uMPb3abc+rBq/G1?=
+ =?us-ascii?Q?AGDyKFts1wRC5WxDoHFjbixOuLzpe3dtK2utCrHDGT/WUbr9M4Jmg/pnidCY?=
+ =?us-ascii?Q?3pw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 23:12:56.1220
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1564e38f-d204-497c-2687-08dcea4a3dac
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CO1PEPF000044FC.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR12MB9156
 
-On Sat, Oct 05, 2024 at 03:16:27PM +0200, Maciej S. Szmigiero wrote:
-> The issue below still happens on kernel version 6.11.1.
-> 
-> Created a kernel bugzilla entry for it:
-> https://bugzilla.kernel.org/show_bug.cgi?id=219353
-> 
-> It would be nice to at least know whether the filesystem read access supposed is
-> to be working normally at PMSG_THAW hibernation stage to assign the issue accordingly.
+This patchset introduces a new Linux Kernel Driver, amdxdna for AMD NPUs.
+The driver is based on Linux accel subsystem.
 
-No, there are races possible if you trigger IO to a fs before a suspend
-is going on. If you have *more* IO ongoing, then you are likely to stall
-suspend and not be able to recover.
+NPU (Neural Processing Unit) is an AI inference accelerator integrated
+into AMD client CPUs. NPU enables efficient execution of Machine Learning
+applications like CNNs, LLMs, etc.  NPU is based on AMD XDNA
+architecture [1].
 
-> CC: request_firmware() maintainers
+AMD NPU consists of the following components:
 
-If IO is ongoing suspend is broken today because of the kthread freezer
-which puts kthreads which should sleep idle, but if IO is ongoing we
-can stall. This is work which we've been working to remove for years and
-after its removal we can gracefully freeze filesystems [0] [1]
-properly on suspend.
+  - Tiled array of AMD AI Engine processors.
+  - Micro Controller which runs the NPU Firmware responsible for
+    command processing, AIE array configuration, and execution management.
+  - PCI EP for host control of the NPU device.
+  - Interconnect for connecting the NPU components together.
+  - SRAM for use by the NPU Firmware.
+  - Address translation hardware for protected host memory access by the
+    NPU.
 
-Other than that, obviously upon resume we want firmware to be present,
-and to prevent races on resume we have a firmware cache. So on suspend
-we cache used firmware so its available in cache on resume. See
-device_cache_fw_images().
+NPU supports multiple concurrent fully isolated contexts. Concurrent
+contexts may be bound to AI Engine array spatially and or temporarily.
 
-So.. we just now gotta respin the latest effort. I had stopped because
-I know Darrick had some changes which he needed to get in sooner but
-since this is low hanging fruit I never got around to it. So someone
-just needs to respin the series.
+The driver is licensed under GPL-2.0 except for UAPI header which is
+licensed GPL-2.0 WITH Linux-syscall-note.
 
-[0] https://lwn.net/Articles/752588/
-[1] https://lwn.net/Articles/935602/
+User mode driver stack consists of XRT [2] and AMD AIE Plugin for IREE [3].
 
-  Luis
+The firmware for the NPU is distributed as a closed source binary, and has
+already been pushed to the DRM firmware repository [4].
+
+[1] https://www.amd.com/en/technologies/xdna.html
+[2] https://github.com/Xilinx/XRT
+[3] https://github.com/nod-ai/iree-amd-aie
+[4] https://gitlab.freedesktop.org/drm/firmware/-/tree/amd-ipu-staging/amdnpu
+
+Changes since v3:
+- Remove debug BO patch
+- Changes based on code review comments
+
+Changes since v2:
+- Add document amdnpu.rst
+- Change AIE2_DEVM_SIZE to 64M due to firmware change
+- Changes based on code review comments
+
+Changes since v1:
+- Remove some inline defines
+- Minor changes based on code review comments
+
+Lizhi Hou (10):
+  accel/amdxdna: Add documentation for AMD NPU accelerator driver
+  accel/amdxdna: Add a new driver for AMD AI Engine
+  accel/amdxdna: Support hardware mailbox
+  accel/amdxdna: Add hardware resource solver
+  accel/amdxdna: Add hardware context
+  accel/amdxdna: Add GEM buffer object management
+  accel/amdxdna: Add command execution
+  accel/amdxdna: Add suspend and resume
+  accel/amdxdna: Add error handling
+  accel/amdxdna: Add query functions
+
+ Documentation/accel/amdxdna/amdnpu.rst        | 281 ++++++
+ Documentation/accel/amdxdna/index.rst         |  11 +
+ Documentation/accel/index.rst                 |   1 +
+ MAINTAINERS                                   |  10 +
+ drivers/accel/Kconfig                         |   1 +
+ drivers/accel/Makefile                        |   1 +
+ drivers/accel/amdxdna/Kconfig                 |  15 +
+ drivers/accel/amdxdna/Makefile                |  21 +
+ drivers/accel/amdxdna/TODO                    |   5 +
+ drivers/accel/amdxdna/aie2_ctx.c              | 917 ++++++++++++++++++
+ drivers/accel/amdxdna/aie2_error.c            | 356 +++++++
+ drivers/accel/amdxdna/aie2_message.c          | 790 +++++++++++++++
+ drivers/accel/amdxdna/aie2_msg_priv.h         | 370 +++++++
+ drivers/accel/amdxdna/aie2_pci.c              | 766 +++++++++++++++
+ drivers/accel/amdxdna/aie2_pci.h              | 255 +++++
+ drivers/accel/amdxdna/aie2_psp.c              | 145 +++
+ drivers/accel/amdxdna/aie2_smu.c              | 119 +++
+ drivers/accel/amdxdna/aie2_solver.c           | 330 +++++++
+ drivers/accel/amdxdna/aie2_solver.h           | 154 +++
+ drivers/accel/amdxdna/amdxdna_ctx.c           | 607 ++++++++++++
+ drivers/accel/amdxdna/amdxdna_ctx.h           | 160 +++
+ drivers/accel/amdxdna/amdxdna_gem.c           | 628 ++++++++++++
+ drivers/accel/amdxdna/amdxdna_gem.h           |  65 ++
+ drivers/accel/amdxdna/amdxdna_mailbox.c       | 575 +++++++++++
+ drivers/accel/amdxdna/amdxdna_mailbox.h       | 124 +++
+ .../accel/amdxdna/amdxdna_mailbox_helper.c    |  61 ++
+ .../accel/amdxdna/amdxdna_mailbox_helper.h    |  42 +
+ drivers/accel/amdxdna/amdxdna_pci_drv.c       | 401 ++++++++
+ drivers/accel/amdxdna/amdxdna_pci_drv.h       | 123 +++
+ drivers/accel/amdxdna/amdxdna_sysfs.c         |  67 ++
+ drivers/accel/amdxdna/npu1_regs.c             | 101 ++
+ drivers/accel/amdxdna/npu2_regs.c             | 118 +++
+ drivers/accel/amdxdna/npu4_regs.c             | 118 +++
+ drivers/accel/amdxdna/npu5_regs.c             | 118 +++
+ include/trace/events/amdxdna.h                | 101 ++
+ include/uapi/drm/amdxdna_accel.h              | 457 +++++++++
+ 36 files changed, 8414 insertions(+)
+ create mode 100644 Documentation/accel/amdxdna/amdnpu.rst
+ create mode 100644 Documentation/accel/amdxdna/index.rst
+ create mode 100644 drivers/accel/amdxdna/Kconfig
+ create mode 100644 drivers/accel/amdxdna/Makefile
+ create mode 100644 drivers/accel/amdxdna/TODO
+ create mode 100644 drivers/accel/amdxdna/aie2_ctx.c
+ create mode 100644 drivers/accel/amdxdna/aie2_error.c
+ create mode 100644 drivers/accel/amdxdna/aie2_message.c
+ create mode 100644 drivers/accel/amdxdna/aie2_msg_priv.h
+ create mode 100644 drivers/accel/amdxdna/aie2_pci.c
+ create mode 100644 drivers/accel/amdxdna/aie2_pci.h
+ create mode 100644 drivers/accel/amdxdna/aie2_psp.c
+ create mode 100644 drivers/accel/amdxdna/aie2_smu.c
+ create mode 100644 drivers/accel/amdxdna/aie2_solver.c
+ create mode 100644 drivers/accel/amdxdna/aie2_solver.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_ctx.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_gem.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_gem.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_mailbox_helper.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.c
+ create mode 100644 drivers/accel/amdxdna/amdxdna_pci_drv.h
+ create mode 100644 drivers/accel/amdxdna/amdxdna_sysfs.c
+ create mode 100644 drivers/accel/amdxdna/npu1_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu2_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu4_regs.c
+ create mode 100644 drivers/accel/amdxdna/npu5_regs.c
+ create mode 100644 include/trace/events/amdxdna.h
+ create mode 100644 include/uapi/drm/amdxdna_accel.h
+
+-- 
+2.34.1
+
 
