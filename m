@@ -1,143 +1,102 @@
-Return-Path: <linux-kernel+bounces-361209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBFA899A512
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:31:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 80B1799A515
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:31:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BFF12877B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:31:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1483287C0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:31:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C865B219C87;
-	Fri, 11 Oct 2024 13:30:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4429A218D8E;
+	Fri, 11 Oct 2024 13:31:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tmM2ieZC"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="odJokxhC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C602194A4;
-	Fri, 11 Oct 2024 13:30:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4711CF291;
+	Fri, 11 Oct 2024 13:31:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653456; cv=none; b=si2a3en+Z/DVygb7QoR0JFhuyMtwhG27o/LrS1u11pIeDcdwmQWy7zA+b/aHt7t/lGZ+tNz7GtB+g0x9kM2uGa70a/vFixLC3bPO9QjeOycYYbKt5xJNC3nb7k0JvJj8FU1wwjNCCldrDbH7ZbCxyJ3/ku80Z/i31XRWw0jPHZ0=
+	t=1728653476; cv=none; b=YMXT9AUqErYBEM09qymrtdk6ixwc7qqTVi5pmayI7FgzIMxiVTgDxmwTPhPVBdsEd9nXesH1ed29De1DLd/c9SB0FwjCt6NH/zHcv0HIvSw2oDrB+i3A4A7AKG8TT8cLk2Wm/KvnuSCmkO5cLIRj5kNcIYkC2yMgv03zLpq/p94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653456; c=relaxed/simple;
-	bh=WX4yQMiZlACIymUMFw/9tLA0YSPfMay9XRpwftgT080=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D2+2FDcHJPThvTn1a/l6+sNysin6sF+gPGpqFxtiJFP/wH19oXi+AQMhaRcRoiMovvX6BdlwcMHClyzYk5eYxUub8D89xpCgyCSivrC7JCW3blcR6i/qsNm8mRGKxWQNxjUzOR8m+fJc0NsR3qxVwOOrgUjveSnVthu6NYwfvEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tmM2ieZC; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (unknown [132.205.230.15])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id BA5FE220;
-	Fri, 11 Oct 2024 15:29:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728653354;
-	bh=WX4yQMiZlACIymUMFw/9tLA0YSPfMay9XRpwftgT080=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tmM2ieZCXdmNLvd0eM0pVtItEpmGCvSIxGkX6DHnMvObgAvLD8wJnd5EHf4EW4JJj
-	 y5aDQgyzKS818f9VA4JYgicGOuwUndqSC9fwRjyLy6q+hY/sLTtSugYSVCPgYXMCaq
-	 5fGQ8l/5Dohnes6+boRxv9W5xXU7AFR2KIn+K4CY=
-Date: Fri, 11 Oct 2024 16:30:47 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: guoniu.zhou@oss.nxp.com
-Cc: linux-media@vger.kernel.org, jacopo@jmondi.org, mchehab@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.d,
-	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] media: nxp: imx8-isi: Add i.MX8ULP support
-Message-ID: <20241011133047.GC9543@pendragon.ideasonboard.com>
-References: <20241011101711.704226-1-guoniu.zhou@oss.nxp.com>
- <20241011101711.704226-2-guoniu.zhou@oss.nxp.com>
+	s=arc-20240116; t=1728653476; c=relaxed/simple;
+	bh=Pa1bnUZ2CsvnT/l+Tzbsrx1EiuynpO91L6NglyA8Kcg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=n5Kdxaxs7AWxT6j9ICdMB5Ao80s1Rc3V39/KRZ5VNQNJp5pBSqAwnbu+xz9347rVc8m/MK88N6R13fGOXy5QYMbMcVVClR7NNKM4e3q2TbGFB+Kf4XXUWt+UMriH73ycwdDGzJQX6s4xc2JZFg3icG/v1/ue4sJz39VLQJi9+KU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=odJokxhC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF59BC4CEC3;
+	Fri, 11 Oct 2024 13:31:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728653476;
+	bh=Pa1bnUZ2CsvnT/l+Tzbsrx1EiuynpO91L6NglyA8Kcg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=odJokxhC9afN+z10xjOTfvmRifnYMyRUqAtM0cEQTOObnLV5JamAgtizPzE7J2LQm
+	 akUf3ZvNQxGtRhcPvQC+M42zcdESCVacnPWuMVkprDMlndKSGVpvuJkrrR0cZDhsZF
+	 vY7yU40EAp/wzwckwApectD1Xz9HHfDVlZ7Y1hqOmBOCKUHOjl5CGUmkQhY2HoTzqI
+	 ZbfhojOQQvZPq7zy3jEMdFUCD/HNkd2BuL+uXxBHzvdd8QSf8ANx/eUkvbWUfXefyn
+	 3NxvlgYqXaFbsAGhJvDml7MACVDcze3PvUSYjIELqfVexY5rIYErjh+qfXT8lknfB6
+	 kdeoMHE8eputg==
+From: Mark Brown <broonie@kernel.org>
+To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
+ Takashi Iwai <tiwai@suse.com>, Ryan Lee <ryans.lee@analog.com>, 
+ linux-sound@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241010182032.776280-1-colin.i.king@gmail.com>
+References: <20241010182032.776280-1-colin.i.king@gmail.com>
+Subject: Re: [PATCH][next] ASoC: max98388: Fix missing increment of
+ variable slot_found
+Message-Id: <172865347434.3898502.5695068809742521783.b4-ty@kernel.org>
+Date: Fri, 11 Oct 2024 14:31:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241011101711.704226-2-guoniu.zhou@oss.nxp.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-Hi Guoniu,
-
-Thank you for the patch.
-
-On Fri, Oct 11, 2024 at 06:17:12PM +0800, guoniu.zhou@oss.nxp.com wrote:
-> From: "Guoniu.zhou" <guoniu.zhou@nxp.com>
+On Thu, 10 Oct 2024 19:20:32 +0100, Colin Ian King wrote:
+> The variable slot_found is being initialized to zero and inside
+> a for-loop is being checked if it's reached MAX_NUM_CH, however,
+> this is currently impossible since slot_found is never changed.
+> In a previous loop a similar coding pattern is used and slot_found
+> is being incremented. It appears the increment of slot_found is
+> missing from the loop, so fix the code by adding in the increment.
 > 
-> Add ISI support for i.MX8ULP.
-> 
-> Signed-off-by: Guoniu.zhou <guoniu.zhou@nxp.com>
-> ---
->  .../platform/nxp/imx8-isi/imx8-isi-core.c      | 18 ++++++++++++++++++
->  .../platform/nxp/imx8-isi/imx8-isi-core.h      |  1 +
->  2 files changed, 19 insertions(+)
-> 
-> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> index c2013995049c..f5d076d7f50b 100644
-> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.c
-> @@ -279,6 +279,10 @@ static const struct clk_bulk_data mxc_imx8mn_clks[] = {
->  	{ .id = "apb" },
->  };
->  
-> +static const struct clk_bulk_data mxc_imx8ulp_clks[] = {
-> +	{ .id = "per" },
+> [...]
 
-This doesn't match the DT bindings. Which one is wrong ?
+Applied to
 
-> +};
-> +
->  static const struct mxc_isi_plat_data mxc_imx8mn_data = {
->  	.model			= MXC_ISI_IMX8MN,
->  	.num_ports		= 1,
-> @@ -307,6 +311,19 @@ static const struct mxc_isi_plat_data mxc_imx8mp_data = {
->  	.has_36bit_dma		= true,
->  };
->  
-> +static const struct mxc_isi_plat_data mxc_imx8ulp_data = {
-> +	.model			= MXC_ISI_IMX8ULP,
-> +	.num_ports		= 1,
-> +	.num_channels		= 1,
-> +	.reg_offset		= 0x0,
-> +	.ier_reg		= &mxc_imx8_isi_ier_v2,
-> +	.set_thd		= &mxc_imx8_isi_thd_v1,
-> +	.clks			= mxc_imx8ulp_clks,
-> +	.num_clks		= ARRAY_SIZE(mxc_imx8ulp_clks),
-> +	.buf_active_reverse	= true,
-> +	.has_36bit_dma		= false,
-> +};
-> +
->  static const struct mxc_isi_plat_data mxc_imx93_data = {
->  	.model			= MXC_ISI_IMX93,
->  	.num_ports		= 1,
-> @@ -528,6 +545,7 @@ static void mxc_isi_remove(struct platform_device *pdev)
->  static const struct of_device_id mxc_isi_of_match[] = {
->  	{ .compatible = "fsl,imx8mn-isi", .data = &mxc_imx8mn_data },
->  	{ .compatible = "fsl,imx8mp-isi", .data = &mxc_imx8mp_data },
-> +	{ .compatible = "fsl,imx8ulp-isi", .data = &mxc_imx8ulp_data },
->  	{ .compatible = "fsl,imx93-isi", .data = &mxc_imx93_data },
->  	{ /* sentinel */ },
->  };
-> diff --git a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> index 2810ebe9b5f7..9c7fe9e5f941 100644
-> --- a/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> +++ b/drivers/media/platform/nxp/imx8-isi/imx8-isi-core.h
-> @@ -158,6 +158,7 @@ struct mxc_gasket_ops {
->  enum model {
->  	MXC_ISI_IMX8MN,
->  	MXC_ISI_IMX8MP,
-> +	MXC_ISI_IMX8ULP,
->  	MXC_ISI_IMX93,
->  };
->  
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
--- 
-Regards,
+Thanks!
 
-Laurent Pinchart
+[1/1] ASoC: max98388: Fix missing increment of variable slot_found
+      commit: ca2803fadfd239abf155ef4a563b22a9507ee4b2
+
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
+
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
+
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
+
 
