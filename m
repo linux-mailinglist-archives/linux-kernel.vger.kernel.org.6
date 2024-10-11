@@ -1,274 +1,197 @@
-Return-Path: <linux-kernel+bounces-361849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361850-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FE0499ADD1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:56:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3D9999ADE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C1CC28AE90
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:56:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FBC028BA56
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444031D1514;
-	Fri, 11 Oct 2024 20:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC071D1503;
+	Fri, 11 Oct 2024 20:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OeleiByD"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OVVzEy4t"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DC861D14FF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728680158; cv=none; b=kXlGT9ERglSfzDum/VBG1s+sBaFHmFweqNOSFIwq+5GX8ZlbhSnWHsYysYKEYpcXLFVqAGOc4JWYtXM22r/SWve6499VUq3o6whV+EEyGsCTXgnk9WGHMAxmYc51Npmk2FkpjWCVQxETbiajwvbCbt1qDoW8yzyuVKj27Lwh1vk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728680158; c=relaxed/simple;
-	bh=uC2xLUGeBTKyYtCrbYvB49i/24wKqmENpfcl+kT6kII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jcJ4eeDZciUja/Yh5GSaBVzcqNMbdMwLGLgEJ3AAxWLJSZNxAetxgYZAoHHuLTMlHKRn4t40898ZE6PFfWapNP0gdUiJ9cUyZYKqu4sFdKRuxjVBok57ADRVyIAMXee7JL3VUYWHQ4iV76SxzX3msoH10P5Nnv9mtdkfBGvb560=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OeleiByD; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4601a471aecso12451cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728680155; x=1729284955; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KBFPzh5NlZh+7Zd1K+MhC4XZXtWT2loiufG6vbfnB2M=;
-        b=OeleiByDAP48vj8/ojIGt0ies1ajsLNjTX7T7hoO6BIRJE5PRHHa283ZsFgQOFid94
-         nbc30+ahp0AGN1VOuJp1tO4i/WH07eG9/pqjIQd1A15Zzn4veFRGimI3yelmcHV6s8cm
-         zOOF4DkTPqotg2EMT2W9qglnU4WG+skFARX8jYkbc7lfWwxQQk6jTBCUsHo/AjbhKrKG
-         tz7nJmT5rseBuR4KSBnOlKXLOoA7PLVtzzZIK1N8PDIdabEdvR8Rjz75c0jWTKSFAbqF
-         1Bpvtv5rjPOZ615jMpqRW9wbjDVCk8WGapbNKAFr6JiibYgOshIyKEKm9sK3L+Yc/4xd
-         msTQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728680155; x=1729284955;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KBFPzh5NlZh+7Zd1K+MhC4XZXtWT2loiufG6vbfnB2M=;
-        b=QNZgXdZeMscSfiKq1pfViuNJ5KGspjgAfEtO6Y8f2T6UH+Gq5iMxvxriEJ+11Yv07F
-         hYFx68+YEV8g+e3TG8KM3gIZbl3s5QWkxwa/8+zGrjxhC6L3S23UXlZPnAPyeG6yYsEv
-         4LnAocvRy3KWsww1INf8W6Trq23HaLSQ1DTd12NbZ76MFGOxS6Bgs3HwjOzm2D3FP848
-         Cmk3VhHOWkYU0Fz0znygULIp4dz1lmG3j5KkiOhzTfAPEGdDrGxxY1UZfnIlBafdlgHa
-         NTofrsjgWGl5CnUDq5pdVjOGwtBXbYDEGYGsGAHMfNorUSG9w+DRwGcyPBjjGsTMcwbm
-         LSrg==
-X-Forwarded-Encrypted: i=1; AJvYcCXe4FW7X/K9l52X5m+AY/fne7beX3vBAYfuhQlGk5mY/YCNPqHvBEspietXs2BvVq6xCmF5IxE3g9NSr8g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHtgLEH4etDKMTRkdR7i41y0VSJmIKwnCvt9jDWoib6eSDA17C
-	XZ4UqJc8hIyb543bnBAzU/eH5Mn23VA8o7HSROv4dRasP96HjAFgVc/XmqYHZrMTU6WB3t8lbA3
-	6mHQlSg+kWwvH0UmmvstsGe8JDDAF1FPqYl8s
-X-Google-Smtp-Source: AGHT+IG6IScrTSH9iJhbpLI7RLZRrQurOaPZvTBCGWMkP7mWaid454o5VBVq59wNWCmpMXfwr84ZSmZjgA3xj9fhNCc=
-X-Received: by 2002:a05:622a:a28c:b0:45c:9d26:8f6e with SMTP id
- d75a77b69052e-46059c77ccdmr87721cf.21.1728680155167; Fri, 11 Oct 2024
- 13:55:55 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56170199231;
+	Fri, 11 Oct 2024 20:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728680278; cv=fail; b=Alo4RJTaYLm6iD7N3Kjmc3t5KNVc2uxl1zBB7A4Iti3j7BexsnQ/cJlOnUu2YrOP6sdx6070ECBp8rc7q7XYXinM6qJgXBUt2mRJOrZxfpwpGjPcnXUYhqod7U4irxFSBYOojCMXcNtQ/CgkC3muzpz3fDGEcBes7DEx9cR8Qss=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728680278; c=relaxed/simple;
+	bh=Y+UKiHa5NFm6Rj/T3ChEaJsxqZnJeIxDqqP/LdJ2ZfY=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=at9XP9dgyMdn+5Uczc1SxnQ320Jfxv6qEg1zJtcr7G497zZWRZx4Eygj3SZpKgcw+iVvkyGv0t4DJ6DKLZhSAmokW89OtU/RszHpRy56UD4qxz5TRtZZa2alPv38BuNtVFrgsQDjZP13E/Ygh8KLLZK5xvN2O2N5+cKZu2cuuyg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OVVzEy4t; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728680277; x=1760216277;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Y+UKiHa5NFm6Rj/T3ChEaJsxqZnJeIxDqqP/LdJ2ZfY=;
+  b=OVVzEy4tTaNWS7dwgL5KeHBtHyFQlUeiTRlZWcwJD/MzsTLGEBlXE4Hz
+   FVh8BO1pUI1mnqvrge1N1MWtPfrofa5EkqzoTP1JMAP0kzIM6XUii+dwT
+   MNalMnn2ANVWIkh0pSut3O684iLLowvHC0afDy2Jy9plnVBpANEpsYgwB
+   TIgSU8ouYYl8Lyfz8ml3jtwJogjzeA2wGOVm6oSde/tgCh86s680aVxyQ
+   /D+gSf0G43fVqE58IypE/0sppZEkum7ulTxLH38LUi20bZ2pOUwGTAYI3
+   qnClc1rKFIaXcS3WsMICDNRe8H6UccEQlJtWLtZtaxb+TYCpAYUCYAlBC
+   g==;
+X-CSE-ConnectionGUID: IQdJ65zvTKGFwV/j94I0jQ==
+X-CSE-MsgGUID: EyNMPiTbQG2E8DvngCM0Vg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28219333"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="28219333"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 13:57:56 -0700
+X-CSE-ConnectionGUID: yW/9arDOT0C7V3a+jtD7tA==
+X-CSE-MsgGUID: 9QyPohTdRWeAYOKagA7dyA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="77109891"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa008.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 11 Oct 2024 13:57:55 -0700
+Received: from fmsmsx612.amr.corp.intel.com (10.18.126.92) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 11 Oct 2024 13:57:54 -0700
+Received: from fmsmsx602.amr.corp.intel.com (10.18.126.82) by
+ fmsmsx612.amr.corp.intel.com (10.18.126.92) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Fri, 11 Oct 2024 13:57:54 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Fri, 11 Oct 2024 13:57:54 -0700
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (104.47.74.46) by
+ edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 11 Oct 2024 13:57:53 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=naShMMYj1Z6McK8pRWguSYZVAKRNDQ3Qaexj8jRCMBPGPUsFtS6A07EBcIOa5KYeXNzck4XSejk51kS5Xko2JMnQ8S+j8Qq4AiGAYNBPeYRQv1D3rtyZ6MP63K0z0tSkrdFZP/xt7RS5Rg+T7D3O4zZA3gYhQtswqDRtkBvZPp1ZbKAk88pXod+VDYzPL6/msOiMQloSjQvXX0p/Fgiuy0qi9BbzLrHDyFh3aQMdsZ3EUlVsrmdDIbf7gKCJ/J4WaQA8o9tIxOKk0FIAD+nUdNoV1B52auDUomuaKdxwztCyDbaBvy0frGfm07dV1AZvZBcjSftnN2sasCjYga5QQg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Y+UKiHa5NFm6Rj/T3ChEaJsxqZnJeIxDqqP/LdJ2ZfY=;
+ b=LIRs3ArRFN+aIMgx5pG4L1S4sVLqJ2GGjdIIdPPhruiYjrih4q0iYFsstBVUXgDG93YBgahX+hgirOqFf4yoMw+D73aXdRltgf+SumlGTqWcPdvJ8FMkLL+kzQpaacFGJgCcmCrfNrjaxV5PeyQNw2nix0c53kcG7Ui89ikDrZ/y6qE5yqSKT87qP/WjtrPcA57OwUcImMnA2gczLxGHK+UY/rrir4npHVBaLHLxN7/XGpcCu4vw+4PDpTTLaVtsbWBWHunuMBjs1G+8cyFjVJ2u0dyyuljPcarX226tD13WMBvNWF2fux0DRrufmHAmMxXRhQgAscfXXaWCzn1XnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com (2603:10b6:a03:48a::9)
+ by SA0PR11MB4703.namprd11.prod.outlook.com (2603:10b6:806:9f::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
+ 2024 20:57:46 +0000
+Received: from SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361]) by SJ1PR11MB6083.namprd11.prod.outlook.com
+ ([fe80::acfd:b7e:b73b:9361%4]) with mapi id 15.20.8048.018; Fri, 11 Oct 2024
+ 20:57:46 +0000
+From: "Luck, Tony" <tony.luck@intel.com>
+To: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>, "bp@alien8.de" <bp@alien8.de>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "mingo@redhat.com" <mingo@redhat.com>,
+	"hpa@zytor.com" <hpa@zytor.com>, "x86@kernel.org" <x86@kernel.org>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 00/10] Clean up some x86/mce code
+Thread-Topic: [PATCH 00/10] Clean up some x86/mce code
+Thread-Index: AQHbGyydj9iKqVTtXUWqfdJVQfjp6LKCCeVw
+Date: Fri, 11 Oct 2024 20:57:46 +0000
+Message-ID: <SJ1PR11MB60839A44D95A5BD564FD424CFC792@SJ1PR11MB6083.namprd11.prod.outlook.com>
+References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+In-Reply-To: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SJ1PR11MB6083:EE_|SA0PR11MB4703:EE_
+x-ms-office365-filtering-correlation-id: 8a8b5370-9f48-44b8-c0cb-08dcea375bc4
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
+x-microsoft-antispam-message-info: =?us-ascii?Q?/nu++z4ZshBkPKOn+QRhEQ2lkzsUXIk+wkYYY9blrd5LDRvS3y0iMID6Xc8D?=
+ =?us-ascii?Q?Yp+yegAeZz1+gqaEYiXR+AV9SCXLjI4jzTSP97s2YnXuHi7sGzci5WJf+AGE?=
+ =?us-ascii?Q?hyYd/jdEQ7e7TmnRUwmAWSd0uJtPQNdZq4Mg9WQce2wlj9kNeD2N6/XaTdw6?=
+ =?us-ascii?Q?KZO29EZKnRmtN4mitHji2Qda2giyqvzkMaqujYZv/BOh5oc6mYwzqS446mUI?=
+ =?us-ascii?Q?rT3xK8+TT3hMT+k06FHZe5RrnR/G5LYftKpXaytjs1AlraDSOMDjTgLbn2Gi?=
+ =?us-ascii?Q?oheRPP0d9gkCjVQ+ajzcWJgfbJC5jyEefWyRsItE7bKghE1O6LKvWWJHieO0?=
+ =?us-ascii?Q?VmMLdPiu3kBmXbqxTfFvA9JO3+vGvnaa9hRPZayjKrDG3y24X0sZtOIjH5VV?=
+ =?us-ascii?Q?M9w9ozXi3lMoZYKUEli/cuQotDnXhTTs09dfW6SDt23qpgtjGg7McGiaid40?=
+ =?us-ascii?Q?uDCSF6XLHgPiegHCAXBRHBfVM6fOVBQqk/tSRyGo9Ixtpy3XUM7VnLqvrfHr?=
+ =?us-ascii?Q?OSYf+GmkDoInHLYD3afzlLI3x96+QmjD4/aFaJyKFvz14SbGVML5TDc32tBp?=
+ =?us-ascii?Q?rEz+DNj8oWsDvIkZ56x2FPAKooCNdd759XiUcvtu8syMiAmlN7QhmuZbnJRC?=
+ =?us-ascii?Q?B15gB83sLQVsNMX2BTSsq7oRL2YkYZzYkPQoC3axHxvuGOhDOPKr5zfbATEj?=
+ =?us-ascii?Q?EnebPd01p1JLlalU+6NTvffrUdLzSg2BGPzzHSfCSZVNNOQTzUBWRw8pL5yb?=
+ =?us-ascii?Q?XwyGNAZOcCB/XRIu/wqb8I2npQ+TC2EJfbIwmQ/BzQMAZqSfEmismhX+Uwol?=
+ =?us-ascii?Q?Rjm+FPkYb02FSAwtAIfTeJJbv7xVs+0f3Y1G3TRz2+1Rqc8QbgAP6VB1zrwD?=
+ =?us-ascii?Q?0XsoMMkFlEOQbyNiuHdoaxG3H+1vSV79Q9WIQb4maBuj+Rvt1e214SiP2zFL?=
+ =?us-ascii?Q?DSRXv1yTUw3KSKkr5JhgLKAAzF0pFE/eN42PAMBvBUKvR142c6lGSivLhi20?=
+ =?us-ascii?Q?MNqhTeLKhpDcts7Yazsp7Qs0RSjizl9BiQM+OCEnqbLYtaKkbZ8T4UI5PB02?=
+ =?us-ascii?Q?uvCeItZhiAkpj6k7zOADhf4pLkdFAZ69NZfOdjvizIErbh4ViNVjnwp6NuwX?=
+ =?us-ascii?Q?RfYEy62uNf5q5Gz8tcBWVjexe+y7v5WpbkBBgT7oRdYxmjbGIWACsGYw+2n8?=
+ =?us-ascii?Q?jMaDRVfzG4XRpE0N0BW/FsBNrbD9fu6CrQ0Vos5yt1lgspMV4dd9KuRN8RGd?=
+ =?us-ascii?Q?9cHq+BDSquDXz072gfiPkDrd3P3066naM+gzFaKgvffqJMBvtgB3uDhgGO4H?=
+ =?us-ascii?Q?BBlQDNoZwrEMZWjS1DpIwcFJhKpVAK8ASLcDRAT4t940gg=3D=3D?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ1PR11MB6083.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?JCrb2Ddc04yrp3W6BONENUeex9q1/D8/ixebFdEic6uiBA9jJdukWVxUTyjT?=
+ =?us-ascii?Q?DQ3Vf5CLvmsT6VlkIu+VAsoShmr/dwknEz9aZhdsupj0lS/RBo6ASiofMxXq?=
+ =?us-ascii?Q?/EsNIkg6H8S6yzC1GMsjYV4emIGdx/Tv4DoB7SFqJWBsTuUd5hjojY4P73kD?=
+ =?us-ascii?Q?bwG/ro2x0QLGPZ/dY/oZqeaJj0Pn2V9FjZiiKwCX2uyqIf3ergxHSl+cKYpn?=
+ =?us-ascii?Q?GoD8VNiARTlH26g6xzERehtGPEfcwY8LEhkDURTjRe1TqW1sllOqOB2rElRW?=
+ =?us-ascii?Q?3t4UoRO/t3jQbLMIivo+XqJjZ0NhK646a1osBkSOTSDZFwmBNsoLygDHIbHh?=
+ =?us-ascii?Q?ANyHjP7Cf1leyCCWcXFMuodwO0J//nlw3YXGwkTp6ywFiU1BbJeVTqjJ9i1d?=
+ =?us-ascii?Q?opzyJykCa4XmDNHGNqLSfwHQRruPXNBbWRLkN0zSOYVgkcfaS6w1DKvr4SbF?=
+ =?us-ascii?Q?Pdd2CoX8CtT13n2vmD7GC9ag2z1+GHcVkcMrbwL/D24IDwx0XSn3NGkHF2yQ?=
+ =?us-ascii?Q?lYuwzToTUMvczxJe86JLidSS3pYFTHic0oNCHFfc6rxB/UKvIczzoRwVoZlO?=
+ =?us-ascii?Q?fncbe7FDb4Ju/gidja1pt4JkhtC29BgGn4FhQdOXOEjT3H3157LVex0uuEp0?=
+ =?us-ascii?Q?mZjCEeoCtVz8td2ZSLPPm4CbO9qqLratUJ74reNS6gY+ue8TziQlxNbKEmDO?=
+ =?us-ascii?Q?Zvz+55ZzP/6iMly1kpwd2//kcgcqETUmm2bANc1CpC/y3XzeXtwtz6CGclGb?=
+ =?us-ascii?Q?u2hS7iZj1p6ogDLvuMMc8QqHjG9vOlfAbPe7z4u/ZKSAqJixi1oz9N1TXgr7?=
+ =?us-ascii?Q?UuHdanbfRDAA0JNvAS7EK20XS9nICaGw4g1is5QhVQ2uPPCu7wGj/ezK8F+7?=
+ =?us-ascii?Q?KGWBjWFpG20xrFNIy9WBxMYEmbGZi704n/ztTIQNUCriQpZAk40ubMdwIEl/?=
+ =?us-ascii?Q?JarBu1rJLsNlNT7GsQ/IF2HKPdNUozExhkUCAg+lrDZ3o8MY4Ro1YqY46hIi?=
+ =?us-ascii?Q?hsMinOT742D5HWAHPc2ijaLj5Lvj7EdSa1dm+KPCG73K4vIFQcYnS+4a5PjN?=
+ =?us-ascii?Q?fD9uHQdMdUVQlSnvp9myv7aNoKPCwL2QlHSM69Yw+xPDrimRmk/aKlppBKMY?=
+ =?us-ascii?Q?ksafO1wqxobHkI/97t/A7+aLSFPE0wvqpXVzlW3bxOJFXd66oQZQaGCVMLYY?=
+ =?us-ascii?Q?FhqOa0fqCAs3oLx6gkaj2qXwXIe+bS/00Ar/1czUFf9oeq1jvgfS0kHKIm+P?=
+ =?us-ascii?Q?Jg+8fQjT8XW7rDtUKrTNGlodl6ZJP2mVxxDBInWbqLyiJEbMb0ndaSeNkuAa?=
+ =?us-ascii?Q?hMXIQ6fX3BgPnH6brMR08tJclW8uYG302T0sJdAIyczur8jymYSTzmMOdCN/?=
+ =?us-ascii?Q?o4ysFeQqEHGXhuuRRWvXKEcu2LsNLEI4ou7Q/sJIQkAJNWcUU3rJfGizqWjt?=
+ =?us-ascii?Q?whZiEqELvccrx1CREM9kyRcfpV8b56GHCAbiXjhFS7ct1P6A8YcwqnOKjQnJ?=
+ =?us-ascii?Q?P0d2rDIZKgF2AEGIlRXtIJX4fAEWRk0Li+pXRT2NWw+27BbawFUK9ZnCvgtx?=
+ =?us-ascii?Q?nIhiLczht7UNKe0jUQvCsdtoCYOMDpIZgewmE6EJ?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
- <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
- <CAG48ez3ursoL-f=mYpV79Do18XPPt+MPPHNUBv6uFE1GhpOwSA@mail.gmail.com>
-In-Reply-To: <CAG48ez3ursoL-f=mYpV79Do18XPPt+MPPHNUBv6uFE1GhpOwSA@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 11 Oct 2024 13:55:42 -0700
-Message-ID: <CAJuCfpFaHz-xW1Rh-+rJ8iLyV19JuG9Rm-eJsz3aOm8dUj3Ewg@mail.gmail.com>
-Subject: Re: [RFC PATCH 3/4] mm: madvise: implement lightweight guard page mechanism
-To: Jann Horn <jannh@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, "Paul E . McKenney" <paulmck@kernel.org>, 
-	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
-	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
-	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
-	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
-	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
-	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
-	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Vlastimil Babka <vbabka@suze.cz>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SJ1PR11MB6083.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8a8b5370-9f48-44b8-c0cb-08dcea375bc4
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 20:57:46.3276
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: wcnWAbzjHcjBJdL/KFaD7iE45V/4FoxYokkAJf0w7TWoi8FhPgakSxodVH2kyoZMvZ8de1PI9OVWZKcSqD4UVw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR11MB4703
+X-OriginatorOrg: intel.com
 
-On Fri, Oct 11, 2024 at 11:12=E2=80=AFAM Jann Horn <jannh@google.com> wrote=
-:
->
-> On Fri, Sep 27, 2024 at 2:51=E2=80=AFPM Lorenzo Stoakes
-> <lorenzo.stoakes@oracle.com> wrote:
-> > Implement a new lightweight guard page feature, that is regions of user=
-land
-> > virtual memory that, when accessed, cause a fatal signal to arise.
-> [...]
-> > ---
-> >  arch/alpha/include/uapi/asm/mman.h     |   3 +
-> >  arch/mips/include/uapi/asm/mman.h      |   3 +
-> >  arch/parisc/include/uapi/asm/mman.h    |   3 +
-> >  arch/xtensa/include/uapi/asm/mman.h    |   3 +
-> >  include/uapi/asm-generic/mman-common.h |   3 +
->
-> I kinda wonder if we could start moving the parts of those headers
-> that are the same for all architectures to include/uapi/linux/mman.h
-> instead... but that's maybe out of scope for this series.
->
-> [...]
-> > diff --git a/mm/madvise.c b/mm/madvise.c
-> > index e871a72a6c32..7216e10723ae 100644
-> > --- a/mm/madvise.c
-> > +++ b/mm/madvise.c
-> > @@ -60,6 +60,7 @@ static int madvise_need_mmap_write(int behavior)
-> >         case MADV_POPULATE_READ:
-> >         case MADV_POPULATE_WRITE:
-> >         case MADV_COLLAPSE:
-> > +       case MADV_GUARD_UNPOISON: /* Only poisoning needs a write lock.=
- */
->
-> What does poisoning need a write lock for? anon_vma_prepare() doesn't
-> need it (it only needs mmap_lock held for reading),
-> zap_page_range_single() doesn't need it, and pagewalk also doesn't
-> need it as long as the range being walked is covered by a VMA, which
-> it is...
->
-> I see you set PGWALK_WRLOCK in guard_poison_walk_ops with a comment
-> saying "We might need to install an anon_vma" - is that referring to
-> an older version of the patch where the anon_vma_prepare() call was
-> inside the pagewalk callback or something like that? Either way,
-> anon_vma_prepare() doesn't need write locks (it can't, it has to work
-> from the page fault handling path).
+Aside from the nit about the commit comment in patch 9
 
-I was wondering about that too and I can't find any reason for
-write-locking the mm for this operation. PGWALK_WRLOCK should also be
-changed to PGWALK_RDLOCK as we are not modifying the VMA.
+Reviewed-off-by: Tony Luck <tony.luck@intel.com>
 
-BTW, I'm testing your patchset on Android and so far it is stable!
-
->
-> >                 return 0;
-> >         default:
-> >                 /* be safe, default to 1. list exceptions explicitly */
-> [...]
-> > +static long madvise_guard_poison(struct vm_area_struct *vma,
-> > +                                struct vm_area_struct **prev,
-> > +                                unsigned long start, unsigned long end=
-)
-> > +{
-> > +       long err;
-> > +       bool retried =3D false;
-> > +
-> > +       *prev =3D vma;
-> > +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */false))
-> > +               return -EINVAL;
-> > +
-> > +       /*
-> > +        * Optimistically try to install the guard poison pages first. =
-If any
-> > +        * non-guard pages are encountered, give up and zap the range b=
-efore
-> > +        * trying again.
-> > +        */
-> > +       while (true) {
-> > +               unsigned long num_installed =3D 0;
-> > +
-> > +               /* Returns < 0 on error, =3D=3D 0 if success, > 0 if za=
-p needed. */
-> > +               err =3D walk_page_range_mm(vma->vm_mm, start, end,
-> > +                                        &guard_poison_walk_ops,
-> > +                                        &num_installed);
-> > +               /*
-> > +                * If we install poison markers, then the range is no l=
-onger
-> > +                * empty from a page table perspective and therefore it=
-'s
-> > +                * appropriate to have an anon_vma.
-> > +                *
-> > +                * This ensures that on fork, we copy page tables corre=
-ctly.
-> > +                */
-> > +               if (err >=3D 0 && num_installed > 0) {
-> > +                       int err_anon =3D anon_vma_prepare(vma);
->
-> I'd move this up, to before we create poison PTEs. There's no harm in
-> attaching an anon_vma to the VMA even if the rest of the operation
-> fails; and I think it would be weird to have error paths that don't
-> attach an anon_vma even though they .
->
-> > +                       if (err_anon)
-> > +                               err =3D err_anon;
-> > +               }
-> > +
-> > +               if (err <=3D 0)
-> > +                       return err;
-> > +
-> > +               if (!retried)
-> > +                       /*
-> > +                        * OK some of the range have non-guard pages ma=
-pped, zap
-> > +                        * them. This leaves existing guard pages in pl=
-ace.
-> > +                        */
-> > +                       zap_page_range_single(vma, start, end - start, =
-NULL);
-> > +               else
-> > +                       /*
-> > +                        * If we reach here, then there is a racing fau=
-lt that
-> > +                        * has populated the PTE after we zapped. Give =
-up and
-> > +                        * let the user know to try again.
-> > +                        */
-> > +                       return -EAGAIN;
->
-> Hmm, yeah, it would be nice if we could avoid telling userspace to
-> loop on -EAGAIN but I guess we don't have any particularly good
-> options here? Well, we could bail out with -EINTR if a (fatal?) signal
-> is pending and otherwise keep looping... if we'd tell userspace "try
-> again on -EAGAIN", we might as well do that in the kernel...
->
-> (Personally I would put curly braces around these branches because
-> they occupy multiple lines, though the coding style doesn't explicitly
-> say that, so I guess maybe it's a matter of personal preference...
-> adding curly braces here would match what is done, for example, in
-> relocate_vma_down().)
->
-> > +               retried =3D true;
-> > +       }
-> > +}
-> > +
-> > +static int guard_unpoison_pte_entry(pte_t *pte, unsigned long addr,
-> > +                                   unsigned long next, struct mm_walk =
-*walk)
-> > +{
-> > +       pte_t ptent =3D ptep_get(pte);
-> > +
-> > +       if (is_guard_pte_marker(ptent)) {
-> > +               /* Simply clear the PTE marker. */
-> > +               pte_clear_not_present_full(walk->mm, addr, pte, true);
->
-> I think that last parameter probably should be "false"? The sparc code
-> calls it "fullmm", which is a term the MM code uses when talking about
-> operations that remove all mappings in the entire mm_struct because
-> the process has died, which allows using some faster special-case
-> version of TLB shootdown or something along those lines.
->
-> > +               update_mmu_cache(walk->vma, addr, pte);
-> > +       }
-> > +
-> > +       return 0;
-> > +}
-> > +
-> > +static const struct mm_walk_ops guard_unpoison_walk_ops =3D {
-> > +       .pte_entry              =3D guard_unpoison_pte_entry,
-> > +       .walk_lock              =3D PGWALK_RDLOCK,
-> > +};
->
-> It is a _little_ weird that unpoisoning creates page tables when they
-> don't already exist, which will also prevent creating THP entries on
-> fault in such areas afterwards... but I guess it doesn't really matter
-> given that poisoning has that effect, too, and you probably usually
-> won't call MADV_GUARD_UNPOISON on an area that hasn't been poisoned
-> before... so I guess this is not an actionable comment.
 
