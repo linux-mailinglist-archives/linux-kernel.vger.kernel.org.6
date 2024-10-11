@@ -1,305 +1,314 @@
-Return-Path: <linux-kernel+bounces-360530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54CD1999C26
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:40:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61B0999C20
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:38:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BE9A1C22867
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:40:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E46EB281AE0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C8791F943C;
-	Fri, 11 Oct 2024 05:40:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 511D51F706F;
+	Fri, 11 Oct 2024 05:38:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HDcpykVk"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h6CoOpFV"
+Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F5E1F4FDC;
-	Fri, 11 Oct 2024 05:39:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728625199; cv=fail; b=LURscSyJuweo6LS2NtTG7fl36OrbBjn8h3V75biy/t+S6DewRmXn71NHyKfTM2LROVe3bNCWrnc+dL74ah/eMGTp6c6NCBZ50jU8bEruP6phmMP+rtNeFHN6r8N9DUu4qwhN0sQ5q2TInkuIviDc3lMjaYEtWd8yHtWbl+pBkno=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728625199; c=relaxed/simple;
-	bh=7FRa47hsvRv1ADl3sgCQtFEtU0GvQUJ5P/zzNKZNc6g=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=Kio+uE9JSjiP3ZwRtpHChpsYXfXSNX2C1eN7YvyLG+s62Jxdox0JlFpbdcHG/YPAmLjii+WAPMqGJ7b13O3HEt01w7kbH7m53cWEz1MRgMVPMeIEIAbvWYEwUnedpaZ4EHsu44Oogvw755XSXadZ6wlLYlPDRfU8TfpCHvITQmQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HDcpykVk; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728625197; x=1760161197;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=7FRa47hsvRv1ADl3sgCQtFEtU0GvQUJ5P/zzNKZNc6g=;
-  b=HDcpykVkxERnjkzl/iGBVo0okXLbfd/OyWy9ziUaSeNUbux+3sUy9fdw
-   sUInEoQhfBzPKeS8Ju1gEktSsbP9Ba3R/LinXH2ZlgrpdfX/GCr0OShJg
-   SoXaO5ytOsh6l4lKJBhqWEcIO8rOFD1GGxpLBtMvhpL1OljeVm8JLer8B
-   GGRoAn8yIuiemxXXD6XXfNXbULeHu9na2F5LWOYRJ774prQnu0JWSyGf9
-   RCeGY+gJ0fUhUdpRtyLhrCrzzR8RwEtfxjHtrcYnnlrx6fok1n2tScjaN
-   XWYNMulNMh8mZkIUCqjVl6R7k1aLG1SveaHY1U00xOM+2Wa5gSEcNTHxK
-   Q==;
-X-CSE-ConnectionGUID: iApo3gk6SM2y5rKv6SV65Q==
-X-CSE-MsgGUID: BmS63hR2RlWEzy/QgfzPlQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="53417243"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="53417243"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 22:39:56 -0700
-X-CSE-ConnectionGUID: 2r6tlcOrR9yJ2ucZu0+QlA==
-X-CSE-MsgGUID: baDH3CyHRCCZvz1RLDiVsg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="114264234"
-Received: from fmsmsx602.amr.corp.intel.com ([10.18.126.82])
-  by orviesa001.jf.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 10 Oct 2024 22:39:57 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx602.amr.corp.intel.com (10.18.126.82) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 10 Oct 2024 22:39:56 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 10 Oct 2024 22:39:55 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 10 Oct 2024 22:39:55 -0700
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (104.47.58.43) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 10 Oct 2024 22:39:55 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ne8hQYg1K8Q2iwq9++SpSjX+BbIVRYgJ3y+6w4Rze+uj7cUl0bxv/AZUATHC04MhCGGmtcqU2R/4oSLKOkjrrmlvg4oG5s1JkL55G2bnDjG2cYQ0lBbf6zFcFwQGjjONDgUb4T68xPDYoExlBHGepz3YFR4fjkRMgCgLDGgi5sOvi44gzSHJPo/3B+1KTvuAaiWulBLGvF5sDqYZ6bu1qWtjNGdjMPQFigTPwM6k68x4DAxR/59spJT7cTPCA28lTvUYIzxPB/ELkQQ84X2r4Kjr2DlHGERFaqX7rnFjWsIhb9MogU/aritZUkFqC/YiRx0S+uRi0cjhj+UJ9YDshg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jErQbYdGEBIyY8Ri282MO36UJgNpj1L3VjIbb/WJ9nQ=;
- b=rXlY1DLNEvTl5r5NPeYIXuQ70SS5WJRkyKT5ndsJWB4kqSm9lOyp4Mu1hwTYm+tQtb42F2cNF/tYoCOEHuHp9xSQ8vekqdvrFxnlT2jld5Az86hlFlevVcUBjUpp96FaR8cNVQL3QaftmhvTRc1xVcYQlhJrr54SKbveDovGLJxFTkhex+w+UeUibYNyYAfvIIowDkevzMtdz2zo57dmqEdDa7uBI+BurijCamcwLa7f4zAQVlLBktZUkG+usAXPMK/PgkUnj04V6jIPf5mUbqYD7BEGb7mfCoyv0l5UJOBjk0kn72d11v/d5IMWjYu73M19QmPx8KSgqzfgjapQSQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- SJ0PR11MB7702.namprd11.prod.outlook.com (2603:10b6:a03:4e2::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.16; Fri, 11 Oct 2024 05:39:53 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8048.017; Fri, 11 Oct 2024
- 05:39:52 +0000
-Date: Fri, 11 Oct 2024 13:37:38 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Sean Christopherson <seanjc@google.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, <kvm@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 2/3] KVM: x86/mmu: Add lockdep assert to enforce safe
- usage of kvm_unmap_gfn_range()
-Message-ID: <Zwi5ogcOiu7aG5hK@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20241009192345.1148353-1-seanjc@google.com>
- <20241009192345.1148353-3-seanjc@google.com>
- <Zwd75Nc8+8pIWUGm@yzhao56-desk.sh.intel.com>
- <Zwf9cSjhlp5clpTm@google.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <Zwf9cSjhlp5clpTm@google.com>
-X-ClientProxiedBy: SI2PR02CA0034.apcprd02.prod.outlook.com
- (2603:1096:4:195::9) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C24AA2F26
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728625085; cv=none; b=leDwSfSe9NhmswBvUdImaFzBHPCKTFv1YmsKmuhBatMlovQybkjY4MHOxZhR0hpceICVlyusbcehLn5wg17RP/fFoWIDbebtts0EU+7rp49KKDDeyQw8McTMQp/cirUIDYPtplmJL6XkIThmeZlRg7Ngx6uULDbPdb3WpfiW/mI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728625085; c=relaxed/simple;
+	bh=jC9WrMbvVeN49TjGV86t0KueBQ9oV3kZ7SayGILohyQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=uQS23aNerBsHmgmzAjMziHV1ojjI7WdvHxTV63UzhNZFlqeCNS6jy+ShYXRKSKH2OtMOwCHOf14q2q5ajQxGUMMSYCe6cRL+ySf2ib03oNwZIzvvF/gj7QfkAIYOtC7CXg43mGAUzW7N1daUkAekn+EX/a1oTaB334y0sp52Nm4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h6CoOpFV; arc=none smtp.client-ip=209.85.222.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7ae3e3db294so82056885a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:38:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728625082; x=1729229882; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hwlVoZjFNRYGaq2/r/PMr145DdKMAVPt1Mu6ZSsQqB0=;
+        b=h6CoOpFVizye9m2dsdetpYEnaHIqBfUhJFe8Q82h3/Ae0hid3GUFPskI5SKo+eUD/v
+         TbB9IO/lIktNzCBAyphlaIeFG2zb9oWYr7X3mdynyYCW+NxUVcUasiYSGBv4NEnQtPjd
+         2CBBthlZeFY8xv7ytJfoAzYw+I64xuuIwtcEtQ5y7XpjRhFFmmJ/y1Kl7vKqjnvVbm+v
+         yu5RKIKahB2H4ASZ9JMCpwaiL6yrnta9+gc8/1V+s+lWfgPuGlbliYtXHB3knxKY4DTg
+         S7E/mCtzYvO9I1+E8A+S76kP2+Xw1jWLoDlwX+L92QkO4FiDyK1XMl5nFoJcxt9s2oYl
+         1wwQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728625082; x=1729229882;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hwlVoZjFNRYGaq2/r/PMr145DdKMAVPt1Mu6ZSsQqB0=;
+        b=HJX1kw9XZqJ0udMD1CI6LXz2R+bxDwXmhRwKneh2is9cfwc0ERo8tFsDj/m+odq3zJ
+         KnWL/vLmx5BDSKpkTCT97p6EqW3N9dZk+/JefWT0OLWAexOmRkzrSjo7044u8X1UAnp1
+         coCwD3fk5S0VTMoZ1CoEFDHJciOuOD/J7PrwkCwvcXhfHNJSjWY8I659NhxtHkpXxx/F
+         QYNVflGS5zRewHsG714o9KPG4iy0zXm5N4SckIQFJyn7mJIYNwaH8xZvAsjUq3hBum2r
+         tZ0Jn0avWEws5Aivizm1jKXvP9wFqEmj/MQeXYe/DkM96Ku2QTuEAh4C9Hd52E/j/X34
+         coDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVQ3HsHrznkGYx2xdp3xqV4dg/AYWnH+NBZLzGfuEdsKwweOSlGzHxLbFnEyQbb5hTYNlP0z0qClg5l4eI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGEbR0ZzB81bjF9/6QrBKlE0JphJbeif+9GRhwL4DLFcNZfgtv
+	wYRCSdf0264UjTLNOLSOzq+tGUVyEhHTW1HYFN9ZHpk47SmRMPAUjuWX9rnfxwAW4NOQZ297ccF
+	IKwp6M6JMte55yEK69FeauU0gnKY=
+X-Google-Smtp-Source: AGHT+IEQfyemdrvKQKrZ7MjKWE0nTXcXuLcBF9JFya6fxbzlek9cQNBnNIMUqQGG+YXT+vOGAagftGcVUxGYjXMBWCA=
+X-Received: by 2002:a0c:f408:0:b0:6cb:cc5e:1bcf with SMTP id
+ 6a1803df08f44-6cbeffe59b8mr19631136d6.21.1728625082463; Thu, 10 Oct 2024
+ 22:38:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|SJ0PR11MB7702:EE_
-X-MS-Office365-Filtering-Correlation-Id: bde69262-a230-46b2-9642-08dce9b72130
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Fj/2q0yhPqyt+jRNI0bZMzG8oQm7TDsq5KZV8ccFHntJrZzjDWZaS0etRuVt?=
- =?us-ascii?Q?OK1Kgk9mLsQTb5wOGDE2pb0pS082LQYvVpRslKmprRwaJ2h3uDvdzyhw1FFH?=
- =?us-ascii?Q?pZ3E8kbKgQBA0V2S9qq9j+moiIgbNtiIBBcb2UsLDzpapGnqh4adkWmauXbx?=
- =?us-ascii?Q?Nj1sUA5Z082U6aL4N3giIp7fhGnm4e7dzuarUQhvpEGo8akv06T7xcehzfvc?=
- =?us-ascii?Q?gvRMnevjRDAgJQDMn7US76ZPcwZD4RZ/S7sbrlleMcicWjXkxGv9h0s3GhMF?=
- =?us-ascii?Q?DU0szYvOpxb5CSw20AF1l4bGcSHl384CthJ4G+chIEngGSPoR21TWXCRb9Iy?=
- =?us-ascii?Q?le1Y8BhGVRKzkfgFR1UWEwZzj31Nv4xXJVi27v8rGxKKyYcYmmt0TXa17ulM?=
- =?us-ascii?Q?VD89KNSqfdLaGKMp4h3jQMpS90w9nomvi8MNYQpRq21PndiEe9i959WDdOuc?=
- =?us-ascii?Q?2J7agLc13jRR4hr9JdL25Tu82Oc+NcP5f20n562zr7jly8SMjACyGHkanwu8?=
- =?us-ascii?Q?JkU/VTU+E3kkJX7Vt4xZlEBzG4OOq12M73tB4IUeDMuRx0cBhlGaZJT4LNmI?=
- =?us-ascii?Q?wiLvwGhh7kt/ajvvo+DqKVt9bP4TZyayZX9/rPuRaojn7DCJCMlAH4x70XY1?=
- =?us-ascii?Q?yzZDPoiD4FICiuusoK8CyltdcJpCqmLd5QB3ljRmbjxVwkBJKJwuePGV+0PT?=
- =?us-ascii?Q?zQNcycewIPokhecfjZI+Xl6V0cMKoMN5Hfj8rPDJSz1gGIC8orSkuDE0x37Z?=
- =?us-ascii?Q?8X4fhSrKMyoNftpP9xBZpbeQhCPw9c/x6EdoiDWefoEIm+Y6tI4JW9wgocOh?=
- =?us-ascii?Q?dj3gPx7j9Y4jL4utr1dr9FmYCQboRjTnPuiYqvFOIQHvHdzoZ0H/VaNmsnWW?=
- =?us-ascii?Q?JQtc/gS8AQvL70hMGloJhe1SkVfN55hmeUwxbt9+xzenDMVTKorPlxP+bDxq?=
- =?us-ascii?Q?uglt8K5g7kcoQaETyfBEN1xBBlbfqq2YlcJTCZsK8CcUErgo7WryabxG7I8+?=
- =?us-ascii?Q?BZKxjpRK5OPafr/naxRK/DHcJuXgZ/fgYSvoUHlZBuDsxRQhzcbfmICkXb1O?=
- =?us-ascii?Q?w/e0SBSBk6Lqm8CgExNfukXo2DjlSrGtZVcE3plfqdDMD/zAIfyr/op5puGh?=
- =?us-ascii?Q?ntEzbKU9/nPBAZo3u0cuaDUrxN/IV7Ob4qgZDkvPaXrO9/unHsXFGP/XMgZf?=
- =?us-ascii?Q?AUgsIPtbKfLxJZFMUoncxjbXM1ddE0i1vvh9ICgcbwXdU0aGx2gRMdAGsQ7H?=
- =?us-ascii?Q?TiHKWZi3ETXwCV9tsYrxThE6FO+pUIhTRI9R9n6J/A=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?EBxb6i48Vb5BK+qKmI8jsh11botC+5Xa3Pp45ZY5uRebYZKk1urvx3shQngx?=
- =?us-ascii?Q?/Y7vP8r5r0/DMwUWAxyqodBXvHUKY91JpcWDbXf6Rc3tRu6AnmalKZC6R3eu?=
- =?us-ascii?Q?qfqb3b/SYXEvTVM0XR0i7jGsXEip3MblaBitJcBZ5dcxqaobI04Yys3l05tx?=
- =?us-ascii?Q?bZeI2zsvQ9jmf+aZjoUnCozoh0kW4J5x+xeVyC2tTePVZhKONlniuX5PlhFW?=
- =?us-ascii?Q?rIQDaejSulebCa+GUzQBEhzatZcSPqDRAKq9y7kO/sa2t/b8Jm4mPRDc0zO6?=
- =?us-ascii?Q?MLQbIurNRArvJd4n7dWqpOiZ4jBKomrSl4mYPyHvFFKHtKwvktBR+zR4NhSG?=
- =?us-ascii?Q?1NDyjMJZ8C8HEIjakpP+Xrs1jbJ0iZ6MkKJW6Q8dlMVicegFtgrB3q4kNHeJ?=
- =?us-ascii?Q?L+l0wehzY6+512dYGoSIoNT8/74Gtj8lomHEfnLnhWW5QxCHnQE1J1cUOxNA?=
- =?us-ascii?Q?mjiiszx5FTM5eHQAlYEcaeT0ncKt32gqduzpip+QDqt71rA6o/8ENp0vFzWW?=
- =?us-ascii?Q?ZVod4aGjKerMAADs3VvrRkzsSHlYFporGnuwuUURZEm8gsNIour9t1QR//OT?=
- =?us-ascii?Q?p48VoTc2mnGDKi6gRWBWApjXoARNrXpEEmjZBsmO0kusXpn4LxPQMi1B0jQH?=
- =?us-ascii?Q?fvwcvqqVqeykQtJuGWYiH0D7V6Xs31yx+ya7O+uOvxJ1ipkLBXmsgUpgqXEz?=
- =?us-ascii?Q?JrHG84yBo4AbVQGff6uKKLm181a6bwsH4DK+Nbn299dn0UjPng0bjTGxW0qW?=
- =?us-ascii?Q?jh7vwYQb1ObvGb+cWZFh98fewN/fgAN0//MSJJqQK+iBveJzX6zhdvs/dZfF?=
- =?us-ascii?Q?HqkRwt6spDTwtG3g7iQEUM6brcUaj+IE3OZ1p+0ehHGj2IICeMMHcC05cvrb?=
- =?us-ascii?Q?OdALCsmNQ75LSIGiB+Rv3yPmXskXzDMmwp1kbhEBUZwXadKZtcg2lRv20Ttn?=
- =?us-ascii?Q?o0b0zPii46fRrIB4mWrdx03vzfUSswWsjHXUN0BuJWFAXWP15BKNJIB91ki+?=
- =?us-ascii?Q?auyEvWGVI4BlKfr+btlLlqQpHWv869XO/XCgeqsKLJA6e/ErnfGg75U0hzMb?=
- =?us-ascii?Q?YYlNpp6qzmdjSiraGf334TcYJaGo+luDcoy+MUzZR45MyuOoD2sI8W116lZq?=
- =?us-ascii?Q?tmUkBye6Wwnm1reaoBWPzY/p5c3PVnq2IFEC8pBlSKQ+QDTDFb2MQH7oo50U?=
- =?us-ascii?Q?QOayvcyqQzdbbrS7hvlvgoKV/3pQeBO0s7/BaamVmcTBc8XI1pRjVdrglJ91?=
- =?us-ascii?Q?5+Ygwp8+qA3SzcDH8iqqpfdIod1U7PfuwVnsl+M/m4jZToXZTEmaHv7k0hAY?=
- =?us-ascii?Q?KdnizWcHfpatqpA3N9uLA0Isic741G4kQ8wb3hlWNhMYA6hNJZ8DnUD0Vs24?=
- =?us-ascii?Q?E/dt3Av01X6WdpZ3Z4n+IQtszxuxo5B9Eag95Z/h0vZ5fvgLD/okHcojDObk?=
- =?us-ascii?Q?mxKEUX7CzMX4JefKxUcu7xujKTRS2+C48Tt/uP8VdAR3gXBsMdIOzAZydGJE?=
- =?us-ascii?Q?vHVoZ6YfHju+iONj+RlfPd5+ZSAmVVYD8iRvvHrLzz/0+Kzukv9JbBSfsxQR?=
- =?us-ascii?Q?58Lo1MKxBqya5IlWE3TVzdWQ/d3c0IkF2L0v8Kvu?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bde69262-a230-46b2-9642-08dce9b72130
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 05:39:52.5950
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: WYgq+i3z9tbMj0woadn96KP9IvxBYtM5AhaH7EYqRruRJ2IVxI59Z8gpZy9BSn2jick3we0qgpgyG/Hu84N/7g==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SJ0PR11MB7702
-X-OriginatorOrg: intel.com
+References: <cover.1728314402.git.lorenzo.stoakes@oracle.com> <48b349a2a0f7c76e18772712d0997a5e12ab0a3b.1728314403.git.lorenzo.stoakes@oracle.com>
+In-Reply-To: <48b349a2a0f7c76e18772712d0997a5e12ab0a3b.1728314403.git.lorenzo.stoakes@oracle.com>
+From: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+Date: Fri, 11 Oct 2024 10:37:51 +0500
+Message-ID: <CABXGCsP_W6V3vKwGvpue47AcbYYsFtwC=AHPx6LwOZmkvLRtrw@mail.gmail.com>
+Subject: Re: [PATCH hotfix 6.12 v3 1/2] maple_tree: correct tree corruption on
+ spanning store
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
+	Matthew Wilcox <willy@infradead.org>, Vlastimil Babka <vbabka@suse.cz>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Sidhartha Kumar <sidhartha.kumar@oracle.com>, 
+	Bert Karwatzki <spasswolf@web.de>, maple-tree@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 09:14:41AM -0700, Sean Christopherson wrote:
-> On Thu, Oct 10, 2024, Yan Zhao wrote:
-> > On Wed, Oct 09, 2024 at 12:23:44PM -0700, Sean Christopherson wrote:
-> > > Add a lockdep assertion in kvm_unmap_gfn_range() to ensure that either
-> > > mmu_invalidate_in_progress is elevated, or that the range is being zapped
-> > > due to memslot removal (loosely detected by slots_lock being held).
-> > > Zapping SPTEs without mmu_invalidate_{in_progress,seq} protection is unsafe
-> > > as KVM's page fault path snapshots state before acquiring mmu_lock, and
-> > > thus can create SPTEs with stale information if vCPUs aren't forced to
-> > > retry faults (due to seeing an in-progress or past MMU invalidation).
-> > > 
-> > > Memslot removal is a special case, as the memslot is retrieved outside of
-> > > mmu_invalidate_seq, i.e. doesn't use the "standard" protections, and
-> > > instead relies on SRCU synchronization to ensure any in-flight page faults
-> > > are fully resolved before zapping SPTEs.
-> > > 
-> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
-> > > ---
-> > >  arch/x86/kvm/mmu/mmu.c | 10 ++++++++++
-> > >  1 file changed, 10 insertions(+)
-> > > 
-> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > index 09494d01c38e..c6716fd3666f 100644
-> > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > @@ -1556,6 +1556,16 @@ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
-> > >  {
-> > >  	bool flush = false;
-> > >  
-> > > +	/*
-> > > +	 * To prevent races with vCPUs faulting in a gfn using stale data,
-> > > +	 * zapping a gfn range must be protected by mmu_invalidate_in_progress
-> > > +	 * (and mmu_invalidate_seq).  The only exception is memslot deletion,
-> > > +	 * in which case SRCU synchronization ensures SPTEs a zapped after all
-> > > +	 * vCPUs have unlocked SRCU and are guaranteed to see the invalid slot.
-> > > +	 */
-> > > +	lockdep_assert_once(kvm->mmu_invalidate_in_progress ||
-> > > +			    lockdep_is_held(&kvm->slots_lock));
-> > > +
-> > Is the detection of slots_lock too loose?
-> 
-> Yes, but I can't think of an easy way to tighten it.  My original thought was to
-> require range->slot to be invalid, but KVM (correctly) passes in the old, valid
-> memslot to kvm_arch_flush_shadow_memslot().
-> 
-> The goal with the assert is to detect as many bugs as possible, without adding
-> too much complexity, and also to document the rules for using kvm_unmap_gfn_range().
-> 
-> Actually, we can tighten the check, by verifying that the slot being unmapped is
-> valid, but that the slot that KVM sees is invalid.  I'm not sure I love it though,
-> as it's absurdly specific.
-Right. It doesn't reflect the wait in kvm_swap_active_memslots() for the old
-slot.
-
-  CPU 0                  CPU 1
-1. fault on old begins
-                       2. swap to new
-		       3. zap old
-4. fault on old ends
-
-Without CPU 1 waiting for 1&4 complete between 2&3, stale data is still
-possible.
-
-So, the detection in kvm_memslot_is_being_invalidated() only indicates the
-caller is from kvm_arch_flush_shadow_memslot() with current code.
-
-Given that, how do you feel about passing in a "bool is_flush_slot" to indicate
-the caller and asserting?
-
-> (untested)
-> 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index c6716fd3666f..12b87b746b59 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -1552,6 +1552,17 @@ static bool __kvm_rmap_zap_gfn_range(struct kvm *kvm,
->                                  start, end - 1, can_yield, true, flush);
+On Mon, Oct 7, 2024 at 8:28=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> There has been a subtle bug present in the maple tree implementation from
+> its inception.
+>
+> This arises from how stores are performed - when a store occurs, it will
+> overwrite overlapping ranges and adjust the tree as necessary to
+> accommodate this.
+>
+> A range may always ultimately span two leaf nodes. In this instance we wa=
+lk
+> the two leaf nodes, determine which elements are not overwritten to the
+> left and to the right of the start and end of the ranges respectively and
+> then rebalance the tree to contain these entries and the newly inserted
+> one.
+>
+> This kind of store is dubbed a 'spanning store' and is implemented by
+> mas_wr_spanning_store().
+>
+> In order to reach this stage, mas_store_gfp() invokes mas_wr_preallocate(=
+),
+> mas_wr_store_type() and mas_wr_walk() in turn to walk the tree and update
+> the object (mas) to traverse to the location where the write should be
+> performed, determining its store type.
+>
+> When a spanning store is required, this function returns false stopping a=
+t
+> the parent node which contains the target range, and mas_wr_store_type()
+> marks the mas->store_type as wr_spanning_store to denote this fact.
+>
+> When we go to perform the store in mas_wr_spanning_store(), we first
+> determine the elements AFTER the END of the range we wish to store (that
+> is, to the right of the entry to be inserted) - we do this by walking to
+> the NEXT pivot in the tree (i.e. r_mas.last + 1), starting at the node we
+> have just determined contains the range over which we intend to write.
+>
+> We then turn our attention to the entries to the left of the entry we are
+> inserting, whose state is represented by l_mas, and copy these into a 'bi=
+g
+> node', which is a special node which contains enough slots to contain two
+> leaf node's worth of data.
+>
+> We then copy the entry we wish to store immediately after this - the copy
+> and the insertion of the new entry is performed by mas_store_b_node().
+>
+> After this we copy the elements to the right of the end of the range whic=
+h
+> we are inserting, if we have not exceeded the length of the node
+> (i.e. r_mas.offset <=3D r_mas.end).
+>
+> Herein lies the bug - under very specific circumstances, this logic can
+> break and corrupt the maple tree.
+>
+> Consider the following tree:
+>
+> Height
+>   0                             Root Node
+>                                  /      \
+>                  pivot =3D 0xffff /        \ pivot =3D ULONG_MAX
+>                                /          \
+>   1                       A [-----]       ...
+>                              /   \
+>              pivot =3D 0x4fff /     \ pivot =3D 0xffff
+>                            /       \
+>   2 (LEAVES)          B [-----]  [-----] C
+>                                       ^--- Last pivot 0xffff.
+>
+> Now imagine we wish to store an entry in the range [0x4000, 0xffff] (note
+> that all ranges expressed in maple tree code are inclusive):
+>
+> 1. mas_store_gfp() descends the tree, finds node A at <=3D0xffff, then
+>    determines that this is a spanning store across nodes B and C. The mas
+>    state is set such that the current node from which we traverse further
+>    is node A.
+>
+> 2. In mas_wr_spanning_store() we try to find elements to the right of piv=
+ot
+>    0xffff by searching for an index of 0x10000:
+>
+>     - mas_wr_walk_index() invokes mas_wr_walk_descend() and
+>       mas_wr_node_walk() in turn.
+>
+>         - mas_wr_node_walk() loops over entries in node A until EITHER it
+>           finds an entry whose pivot equals or exceeds 0x10000 OR it
+>           reaches the final entry.
+>
+>         - Since no entry has a pivot equal to or exceeding 0x10000, pivot
+>           0xffff is selected, leading to node C.
+>
+>     - mas_wr_walk_traverse() resets the mas state to traverse node C. We
+>       loop around and invoke mas_wr_walk_descend() and mas_wr_node_walk()
+>       in turn once again.
+>
+>          - Again, we reach the last entry in node C, which has a pivot of
+>            0xffff.
+>
+> 3. We then copy the elements to the left of 0x4000 in node B to the big
+>    node via mas_store_b_node(), and insert the new [0x4000, 0xffff] entry
+>    too.
+>
+> 4. We determine whether we have any entries to copy from the right of the
+>    end of the range via - and with r_mas set up at the entry at pivot
+>    0xffff, r_mas.offset <=3D r_mas.end, and then we DUPLICATE the entry a=
+t
+>    pivot 0xffff.
+>
+> 5. BUG! The maple tree is corrupted with a duplicate entry.
+>
+> This requires a very specific set of circumstances - we must be spanning
+> the last element in a leaf node, which is the last element in the parent
+> node.
+>
+> spanning store across two leaf nodes with a range that ends at that share=
+d
+> pivot.
+>
+> A potential solution to this problem would simply be to reset the walk ea=
+ch
+> time we traverse r_mas, however given the rarity of this situation it see=
+ms
+> that would be rather inefficient.
+>
+> Instead, this patch detects if the right hand node is populated, i.e. has
+> anything we need to copy.
+>
+> We do so by only copying elements from the right of the entry being inser=
+ted
+> when the maximum value present exceeds the last, rather than basing this =
+on
+> offset position.
+>
+> The patch also updates some comments and eliminates the unused bool retur=
+n
+> value in mas_wr_walk_index().
+>
+> The work performed in commit f8d112a4e657 ("mm/mmap: avoid zeroing vma tr=
+ee
+> in mmap_region()") seems to have made the probability of this event much
+> more likely, which is the point at which reports started to be submitted
+> concerning this bug.
+>
+> The motivation for this change arose from Bert Karwatzki's report of
+> encountering mm instability after the release of kernel v6.12-rc1 which,
+> after the use of CONFIG_DEBUG_VM_MAPLE_TREE and similar configuration
+> options, was identified as maple tree corruption.
+>
+> After Bert very generously provided his time and ability to reproduce thi=
+s
+> event consistently, I was able to finally identify that the issue discuss=
+ed
+> in this commit message was occurring for him.
+>
+> Reported-and-tested-by: Bert Karwatzki <spasswolf@web.de>
+> Closes: https://lore.kernel.org/all/20241001023402.3374-1-spasswolf@web.d=
+e/
+> Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+> Closes: https://lore.kernel.org/all/CABXGCsOPwuoNOqSMmAvWO2Fz4TEmPnjFj-b7=
+iF+XFRu1h7-+Dg@mail.gmail.com/
+> Fixes: 54a611b60590 ("Maple Tree: add new data structure")
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Acked-by: Vlastimil Babka <vbabka@suse.cz>
+> ---
+>  lib/maple_tree.c | 12 ++++++------
+>  1 file changed, 6 insertions(+), 6 deletions(-)
+>
+> diff --git a/lib/maple_tree.c b/lib/maple_tree.c
+> index 20990ecba2dd..2fe59c534328 100644
+> --- a/lib/maple_tree.c
+> +++ b/lib/maple_tree.c
+> @@ -2196,6 +2196,8 @@ static inline void mas_node_or_none(struct ma_state=
+ *mas,
+>
+>  /*
+>   * mas_wr_node_walk() - Find the correct offset for the index in the @ma=
+s.
+> + *                      If @mas->index cannot be found within the contai=
+ning
+> + *                      node, we traverse to the last entry in the node.
+>   * @wr_mas: The maple write state
+>   *
+>   * Uses mas_slot_locked() and does not need to worry about dead nodes.
+> @@ -3532,7 +3534,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
+>         return true;
 >  }
->  
-> +static kvm_memslot_is_being_invalidated(const struct kvm_memory_slot *old)
-> +{
-> +       const struct kvm_memory_slot *new;
-> +
-> +       if (old->flags & KVM_MEMSLOT_INVALID)
-> +               return false;
-> +
-> +       new = id_to_memslot(__kvm_memslots(kvm, old->as_id), old->id);
-> +       return new && new->flags & KVM_MEMSLOT_INVALID;
-> +}
-> +
->  bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
+>
+> -static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
+> +static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
 >  {
->         bool flush = false;
-> @@ -1564,7 +1575,8 @@ bool kvm_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
->          * vCPUs have unlocked SRCU and are guaranteed to see the invalid slot.
->          */
->         lockdep_assert_once(kvm->mmu_invalidate_in_progress ||
-> -                           lockdep_is_held(&kvm->slots_lock));
-> +                           (lockdep_is_held(&kvm->slots_lock) &&
-> +                            kvm_memslot_is_being_invalidated(range->slot));
->  
->         if (kvm_memslots_have_rmaps(kvm))
->                 flush = __kvm_rmap_zap_gfn_range(kvm, range->slot,
-> 
-> 
-> > If a caller just holds slots_lock without calling
-> > "synchronize_srcu_expedited(&kvm->srcu)" as that in kvm_swap_active_memslots()
-> > to ensure the old slot is retired, stale data may still be encountered. 
-> > 
-> > >  	if (kvm_memslots_have_rmaps(kvm))
-> > >  		flush = __kvm_rmap_zap_gfn_range(kvm, range->slot,
-> > >  						 range->start, range->end,
-> > > -- 
-> > > 2.47.0.rc1.288.g06298d1525-goog
-> > > 
+>         struct ma_state *mas =3D wr_mas->mas;
+>
+> @@ -3541,11 +3543,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *=
+wr_mas)
+>                 wr_mas->content =3D mas_slot_locked(mas, wr_mas->slots,
+>                                                   mas->offset);
+>                 if (ma_is_leaf(wr_mas->type))
+> -                       return true;
+> +                       return;
+>                 mas_wr_walk_traverse(wr_mas);
+> -
+>         }
+> -       return true;
+>  }
+>  /*
+>   * mas_extend_spanning_null() - Extend a store of a %NULL to include sur=
+rounding %NULLs.
+> @@ -3765,8 +3765,8 @@ static noinline void mas_wr_spanning_store(struct m=
+a_wr_state *wr_mas)
+>         memset(&b_node, 0, sizeof(struct maple_big_node));
+>         /* Copy l_mas and store the value in b_node. */
+>         mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
+> -       /* Copy r_mas into b_node. */
+> -       if (r_mas.offset <=3D r_mas.end)
+> +       /* Copy r_mas into b_node if there is anything to copy. */
+> +       if (r_mas.max > r_mas.last)
+>                 mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
+>                            &b_node, b_node.b_end + 1);
+>         else
+> --
+> 2.46.2
+
+Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
+
+--=20
+Best Regards,
+Mike Gavrilov.
 
