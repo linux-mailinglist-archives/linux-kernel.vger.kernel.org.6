@@ -1,241 +1,128 @@
-Return-Path: <linux-kernel+bounces-360380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360381-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 896F5999A39
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:17:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1F77999A3A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:17:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0ED20B24D26
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:17:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D20921C2520F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:17:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C541F1307;
-	Fri, 11 Oct 2024 02:11:59 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7F851E9093;
+	Fri, 11 Oct 2024 02:14:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QdWyVl/Z"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE091E882D;
-	Fri, 11 Oct 2024 02:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C90531E882D;
+	Fri, 11 Oct 2024 02:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612718; cv=none; b=WlOUhj01FELMtwTwLGuK8zxBPe+sAJwH3EVWeR9B9nJpAtznxB1pjg3yLxMe86Ul6r6LW+IT5MxEJRnjXGExlMjhgwlVGn5YTTjNnQgK/lNXelMYNPM4V+6QVBScFi9gR0CAMQcCH8ktGxuJuUkfV2PK1b3xy9DebLc6rQasYLY=
+	t=1728612849; cv=none; b=dH0us+HqYYSgkKQrV8z7lOdEwBwl0AWMVaQcQd8N94Ajsut07E//r+3qqlZfgTaX7KO28ionzBqIIn3FdCygKvHmQI0SLsLqLp718eFf7HPSTbcyGpoaCaQllc0V55IeSOwadK7NuA3Cu7vMUVDGa84u/dxDMiJenoGTqsHHUK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612718; c=relaxed/simple;
-	bh=TCYlr+Y7QDcrbkfAcLLSrwpGAdDWlmlEeU7ugUP5V0M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bnR6CUW6guentcDRXqFECzPZ4fAhJG1xxwWAY38ItKL/OphG2RgM4U3ytv6Tohk6uafAQ6wVhl2s9FVYtdwnte9FrGcxh0whxvhNfvUjzJXRSG3xuzFXV4H3X7aa1WdgzPEN/nbpOxqogrfV6Vm/Qg792pcZx/w1N6yPcsIGSWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPqqw66rDz4f3jkM;
-	Fri, 11 Oct 2024 10:11:40 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A6FB41A018D;
-	Fri, 11 Oct 2024 10:11:52 +0800 (CST)
-Received: from [10.67.109.79] (unknown [10.67.109.79])
-	by APP4 (Coremail) with SMTP id gCh0CgAXTclmiQhnOUEJDw--.58880S2;
-	Fri, 11 Oct 2024 10:11:51 +0800 (CST)
-Message-ID: <7ece4154-b7ef-4be4-926a-2f9d5c7311f6@huaweicloud.com>
-Date: Fri, 11 Oct 2024 10:11:49 +0800
+	s=arc-20240116; t=1728612849; c=relaxed/simple;
+	bh=Gu6tKGIytnUPXQxdMpfj7VMXXPOIhmxPgGYPcUDC24I=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T011DeRVcnChlIlZKopgMWHi2D52C+6UIG+AdfN8jVqcf7kvSG6ah6oeaNLupBBBrSmjfSH53iQztPg6JuehDVDRZ2EUr1uXgakkKBV3NB9MRZIg1Pgdr18r58HxZ1IDZVjANzVPWDcypLiGuSwscYsfujcU0prC/h7tbMu49zY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QdWyVl/Z; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2a999b287so1366961a91.0;
+        Thu, 10 Oct 2024 19:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728612847; x=1729217647; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GC7INRZB8Wa+yZPiQbxMDDI5/n3tRCudKMmqzeYnqPg=;
+        b=QdWyVl/ZWwBsotcpNFQlI9m+tn92XVdMiyHS7UXYvGndnY/Z7FUphnDOaLMWzgWaqV
+         4IqqsB9Y+hnWbEYXy29hkVLKaDybzKPaSmoeapJutqS3iAzR+lsBXxws94qvawowY/wf
+         Bjdpf3WLYKqRbpX8tr2Fo6XDi0BZKbpRaKh44g8DS7PfxmscjUHedL2qJKqroDQUi9/r
+         rxFWlmLFRVJcN8ZjdDEZNybefOUx+1RS0vqwmB35gWYqcBNvNNZURfljy9Y5Na9kkfQo
+         a/dEcjunJlq9G0FU0PT5Dbyata/Oo4c7PwlVEkm+/s2rMUwYsko/yDzllTBMe0d22RmP
+         m5Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728612847; x=1729217647;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GC7INRZB8Wa+yZPiQbxMDDI5/n3tRCudKMmqzeYnqPg=;
+        b=tWlL6DvM0lPcmmrDjQi8mjw/+oCrUEsYi0WrUyP5LyRKlw335iJ9De86ReXmBeKiK3
+         UiE/ZVWiURBVqHVb5hRTdwBFGO91V1rXnlf1Q8lTkV5UEYx13EjGUJznG7oVQT/uJ4VY
+         TM7jRmVC7PSnmszojqaz1LcTs24wIejLASeIleFYu54BV8PRPKteylRQANEh2qaL1u4d
+         PIFuNR2SvbduYeoigaVtIGSegLOW33bUwB7ZXsMxgs16qaL/NFjzKg8H9T9GAoxQ9bFI
+         mXX2eQUKTXK9n1F5ndtKi8SbCubVe7gNs4L3YSJfYS5FrmzyVpK4AoJA8KR0LLkQjr3v
+         gksA==
+X-Forwarded-Encrypted: i=1; AJvYcCV4+UaiUEIIXTVU1/ZPP2LzHedZ+1gNIZTtDAFwGofLIkZdwFZMklOlUQRqD/+PsM53vUnlSBncjZDCij0QhSIQbA==@vger.kernel.org, AJvYcCX0+RQ7CKio5i6Pv30gdiXRdrvaXxunHJrQfP2rgg1VU5cHcPCTtBbtH44jFQNL8kp9VAMxSevP3t7e93E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsN4/L5PiQ8RdeM1ddOl6qRaSgs6oIIWAsmYQszCXbA4oQPtyF
+	SfUKWvzjzLqELWyqS5GO3aUf0yZ+tFeIXeTclhLOrPfia3vAuE1P
+X-Google-Smtp-Source: AGHT+IE2QN11I7aRcr75zu9FkTXaen1Dcy4ElHgdVJZDgd5KaND3QAfJyzj97i4yG0uXqYsMWsSc3A==
+X-Received: by 2002:a17:90a:c7cf:b0:2e2:a661:596a with SMTP id 98e67ed59e1d1-2e2f0ad039fmr1664628a91.13.1728612846972;
+        Thu, 10 Oct 2024 19:14:06 -0700 (PDT)
+Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a56f71b5sm4393024a91.20.2024.10.10.19.14.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 19:14:06 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	james.clark@linaro.org,
+	alan.maguire@oracle.com,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH v2 0/2] perf trace: Fix support for the new BPF feature in clang 12
+Date: Thu, 10 Oct 2024 19:14:00 -0700
+Message-ID: <20241011021403.4089793-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] security/keys: fix slab-out-of-bounds in
- key_task_permission
-To: Jarkko Sakkinen <jarkko@kernel.org>, chenridong <chenridong@huawei.com>,
- dhowells@redhat.com, paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com
-Cc: keyrings@vger.kernel.org, linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240913070928.1670785-1-chenridong@huawei.com>
- <6286c177ee1393c64ed2014322074497730c9b33.camel@kernel.org>
- <68b51392-0f93-405f-bcf4-94db22831058@huawei.com>
- <578d5b202782b3e4195b721bab11a811aa50d34e.camel@kernel.org>
-Content-Language: en-US
-From: Chen Ridong <chenridong@huaweicloud.com>
-In-Reply-To: <578d5b202782b3e4195b721bab11a811aa50d34e.camel@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXTclmiQhnOUEJDw--.58880S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxtw4fWr17uw13Gw1kCFWDXFb_yoW7Cr13pF
-	WDKa4qyr15Kr9Iyr10ywnxWF1FvrW5Jw17Wr9IgryxAFsIqr1rKFZFkF1DuFy5ur4fCa4j
-	vF4Yq39xZ3Wjv3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUymb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr1j6rxdM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vI
-	r41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
-	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0
-	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
-	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
-	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UAwIDUUUUU=
-X-CM-SenderInfo: hfkh02xlgr0w46kxt4xhlfz01xgou0bp/
 
+Changes in v2:
+- Resolved a clang-16 build error pointed out by Namhyung Kim
+  <namhyung@kernel.org>
 
+The new augmentation feature in perf trace, along with the protocol
+change (from payload to payload->value), breaks the clang 12 build.
 
-On 2024/10/8 10:41, Jarkko Sakkinen wrote:
-> On Tue, 2024-10-08 at 09:40 +0800, chenridong wrote:
->>
->>
->> On 2024/10/8 7:15, Jarkko Sakkinen wrote:
->>> Hi,
->>>
->>> Revisit...
->>>
->>> On Fri, 2024-09-13 at 07:09 +0000, Chen Ridong wrote:
->>>> We meet the same issue with the LINK, which reads memory out of
->>>> bounds:
->>>
->>> Never ever use pronoun "we" in a commit message in any possible
->>> sentence. Instead always use passive imperative.
->>>
->>> What you probably want to say is:
->>>
->>> "KASAN reports an out of bounds read:"
->>>
->>> Right?
->>>
->>
->> Yes.
->>
->>>> BUG: KASAN: slab-out-of-bounds in __kuid_val
->>>> include/linux/uidgid.h:36
->>>> BUG: KASAN: slab-out-of-bounds in uid_eq
->>>> include/linux/uidgid.h:63
->>>> [inline]
->>>> BUG: KASAN: slab-out-of-bounds in key_task_permission+0x394/0x410
->>>> security/keys/permission.c:54
->>>> Read of size 4 at addr ffff88813c3ab618 by task stress-ng/4362
->>>>
->>>> CPU: 2 PID: 4362 Comm: stress-ng Not tainted 5.10.0-14930-
->>>> gafbffd6c3ede #15
->>>> Call Trace:
->>>>    __dump_stack lib/dump_stack.c:82 [inline]
->>>>    dump_stack+0x107/0x167 lib/dump_stack.c:123
->>>>    print_address_description.constprop.0+0x19/0x170
->>>> mm/kasan/report.c:400
->>>>    __kasan_report.cold+0x6c/0x84 mm/kasan/report.c:560
->>>>    kasan_report+0x3a/0x50 mm/kasan/report.c:585
->>>>    __kuid_val include/linux/uidgid.h:36 [inline]
->>>>    uid_eq include/linux/uidgid.h:63 [inline]
->>>>    key_task_permission+0x394/0x410 security/keys/permission.c:54
->>>>    search_nested_keyrings+0x90e/0xe90 security/keys/keyring.c:793
->>>
->>> Snip all below away:
->>>
->>>>    keyring_search_rcu+0x1b6/0x310 security/keys/keyring.c:922
->>>>    search_cred_keyrings_rcu+0x111/0x2e0
->>>> security/keys/process_keys.c:459
->>>>    search_process_keyrings_rcu+0x1d/0x310
->>>> security/keys/process_keys.c:544
->>>>    lookup_user_key+0x782/0x12e0 security/keys/process_keys.c:762
->>>>    keyctl_invalidate_key+0x20/0x190 security/keys/keyctl.c:434
->>>>    __do_sys_keyctl security/keys/keyctl.c:1978 [inline]
->>>>    __se_sys_keyctl+0x1de/0x5b0 security/keys/keyctl.c:1880
->>>>    do_syscall_64+0x30/0x40 arch/x86/entry/common.c:46
->>>>    entry_SYSCALL_64_after_hwframe+0x67/0xd1
->>>
->>> Remember to cut only the relevant part of the stack trace to make
->>> this
->>> commit message more compact and readable.
->>>
->> Thank you, I will do that.
->>
->>>>
->>>> However, we can't reproduce this issue.
->>>> After our analysis, it can make this issue by following steps.
->>>> 1.As syzkaller reported, the memory is allocated for struct
->>>
->>> "1."
->>>
->>>>     assoc_array_shortcut in the
->>>> assoc_array_insert_into_terminal_node
->>>>     functions.
->>>> 2.In the search_nested_keyrings, when we go through the slots in
->>>> a
->>>> node,
->>>>     (bellow tag ascend_to_node), and the slot ptr is meta and
->>>>     node->back_pointer != NULL, we will proceed to
->>>> descend_to_node.
->>>>     However, there is an exception. If node is the root, and one
->>>> of the
->>>>     slots points to a shortcut, it will be treated as a keyring.
->>>> 3.Whether the ptr is keyring decided by keyring_ptr_is_keyring
->>>> function.
->>>>     However, KEYRING_PTR_SUBTYPE is 0x2UL, the same as
->>>>     ASSOC_ARRAY_PTR_SUBTYPE_MASK,
->>>> 4.As mentioned above, If a slot of the root is a shortcut, it may
->>>> be
->>>>     mistakenly be transferred to a key*, leading to an read out-
->>>> of-
->>>> bounds
->>>>     read.
->>>
->>> Delete the whole list and write a description of the problem and
->>> why
->>> your change resolves it.
->>>
->>> As per code change, let's layout it something more readable first:
->>>
->>> /* Traverse branches into depth: */
->>> if (assoc_array_ptr_is_meta(ptr)) {
->>> 	if (node->back_pointer ||
->>> assoc_array_ptr_is_shortcut(ptr))
->>> 		goto descend_to_node;
->>> }
->>>
->>> So one thing that should be explained just to make the description
->>> rigid is why 'ptr' is passed to assoc_array_ptr_is_shortcut() and
->>> not 'node'. I'm actually 100% sure about that part, which kind
->>> of supports my view here, right? :-)
->>>
->>> The first part of the if-statement obviously filters out everything
->>> that is not root (when it comes to 'node'). Explain the second
->>> part.
->>> At that point it is know that node is a root node, so continue from
->>> there.
->>>
->>> BR, Jarkko
->>>
->>
->> Thank you for your patience.
->> I will update soon.
-> 
-> Yeah of course, and I did low quality job earlier no issues admitting
-> that, so let's do this correct this time. I just try to describe
-> what I'm seeing as accurately as I can :-)
-> 
-> Here it is just important to get the explanation and the code change
-> in-sync so that it is easy to verify and compare them, given that it
-> is quite sensitive functionality and somewhat obfuscated peace of code
-> showing age.
-> 
-> Also I think a good is to make sure that every fix will leave it at
-> least a bit cleaner state. From this basis I proposed a bit different
-> layout for the code.
-> 
->>
->> Best regards,
->> Ridong
-> 
-> BR,Jarkko
+perf trace actually builds for any clang version newer than clang 16.
+However, as pointed out by Namhyung Kim <namhyung@kernel.org> and Ian
+Rogers <irogers@google.com>, clang 16, which was released in 2023, is
+still too new for most users. Additionally, as James Clark
+<james.clark@linaro.org> noted, some commonly used distributions do not
+yet support clang 16. Therefore, breaking BPF features between clang 12
+and clang 15 is not a good approach.
 
-Hi, Jarkko, I sent the v2 several days ago.
-I don't know whether you have received it. I hope you have time to look 
-into it, and I am still looking forward to your reply.
+This patch series rewrites the BPF program in a way that allows it to
+pass the BPF verifier, even when the BPF bytecode is generated by older
+versions of clang.
 
-v2: 
-https://lore.kernel.org/linux-kernel/20241008124639.70000-1-chenridong@huaweicloud.com/
+However, I have only tested it till clang 14, as older versions are not
+supported by my distribution.
 
-Best regards,
-Ridong
+Howard Chu (2):
+  perf build: Change the clang check back to 12.0.1
+  perf trace: Rewrite BPF code to pass the verifier
+
+ tools/perf/Makefile.config                    |   4 +-
+ .../bpf_skel/augmented_raw_syscalls.bpf.c     | 122 ++++++++++--------
+ 2 files changed, 69 insertions(+), 57 deletions(-)
+
+-- 
+2.43.0
 
 
