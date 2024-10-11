@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-360440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99C05999AFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:11:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F950999B01
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:11:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FBB1F24C2A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:11:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497671F24CFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4D91F4FB2;
-	Fri, 11 Oct 2024 03:11:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7306D1F4FD4;
+	Fri, 11 Oct 2024 03:11:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQhPoMzW"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n8tUypdu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE759EBE;
-	Fri, 11 Oct 2024 03:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC37E1F4FB9;
+	Fri, 11 Oct 2024 03:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728616275; cv=none; b=rEznibibmuW4guNtMFfjsb0Hua1xN36bSa3um8yA7PirM5LquL3rDdhhPwXseV00KiYLHLNjyvfnJH+pdkmzJnjLHuJMCBmTbzDIcWogfwl9l5f2nj7jvU3plGozAbC8aVvUugis69YHGeROhf+OP8PUa2gLMGe0rOtl5vvWFdc=
+	t=1728616275; cv=none; b=eR2vT5vFj32eUS8ulBfAD6nBf5iSYSi7j/sN8iz9gG/v2C8zqoY8MEzHBQfjYzzow6oo1ciMmHWV9oGMiL9+NYDSNhuXH4T/scAgIDpUTMR4QGPgTjB4daqDaj6de65TXoYNbAJEDM59gxvARuxDWbs4HeloWhUpihHNA1M0A74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728616275; c=relaxed/simple;
-	bh=/Is7oWoyxrLieInLOs7YT+uoBTtaioJ+iCMHS+28m4s=;
+	bh=N3UykCTaRrTYwxU3/xeGjMWLjrkk12M55Cpmv1W+/1Q=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=jKQmjZyjGwxawL1rk5VXw1kMHNC3bVtx1JjA2e6QsmrlYHs7b8rUrAjtpKwOSP6nc/ZK4UA2UZ7WRPeryEMTNSOTu+Y48Ii2Ljba2okEKg9CtaUZoFF7Qu5pzzda32NNicjlWx2vEcd1oX61XdctnY0oHEZziGtOQi+Pyot7VzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQhPoMzW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6473FC4CEC5;
-	Fri, 11 Oct 2024 03:11:14 +0000 (UTC)
+	 Message-Id:Subject; b=gqNNNOzpphzYbAji5amvUDtAY+b3Elnm+LoKKuAKPoY0l48jTz280+uw4ehT0m3SG74AdYjG5JRl3D97Nt5WL70KaqXM7IrdP2FlSIsGhWhcIWIfUw4OLB4nkro0I5RHJMoV4wNgmM8ujLBjHZN2Ph1aNK5UUGQlUb4mCpXWvAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n8tUypdu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 539C5C4AF0B;
+	Fri, 11 Oct 2024 03:11:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728616274;
-	bh=/Is7oWoyxrLieInLOs7YT+uoBTtaioJ+iCMHS+28m4s=;
+	s=k20201202; t=1728616275;
+	bh=N3UykCTaRrTYwxU3/xeGjMWLjrkk12M55Cpmv1W+/1Q=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=eQhPoMzWy+8mZcr6AqdoEhJQ2JG3QFOjkZqiAMY3UCc9ocKoGVvKRaZH7K95KfGgH
-	 cw1QMpcCienCzG42y2tNFPSEl4pFAh0okp7/8znTfHwIl8RzEF3E7TLd9Sd4QwVrFB
-	 ACtTdRD8ivYtHDtQU3x3XYLdb2UDGYxudrH/YGgJC2diml20/DJyGUsFLEQncFlrO0
-	 txiXgX5WsCu5wwwKTQLPeEiTtT0US0CC31qmTiOcbRPmbhl3ZU5TigntIxxfSPnFhw
-	 HcD2qQD9wf+rlGZI+akwh2skB1vf92KF6jO8xwcNigSiVywwHHFUJVw60Jjqu3Py73
-	 pCsPg9VnwbF/g==
-Date: Thu, 10 Oct 2024 22:11:13 -0500
+	b=n8tUypdu5W2IaZxlSRmby87GmktxZxpu5tdQhs4hBNmoAjhQflDBcV/AMI9T0xBx4
+	 +YTnkFzuu/VRawfLl8u9ZBUCsS2PgDwcI0ZacQahRCjiMzx3LQuAriAhp8gWfFGIJm
+	 ZZrpniOZ/utBo/nx+tGx2yhE24FT9h7BE4WCKSoTTJI4epeEx7yX66CSrkcJr+sjdG
+	 S/pYwZ/myLldDuT/aPc8NTErk8y83+4GTJr5QG56iWoNoDfcEnmfvaPgphrd6V+OzZ
+	 WTJLWmdhUqoz+2a9sMwxlpIrMzsDpC28WJCQcVRvmeJB+z1TG9D+ae8WGJEuOstbxE
+	 3qKI1lz7p9blQ==
+Date: Thu, 10 Oct 2024 22:11:14 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,36 +50,30 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- Pavel Machek <pavel@ucw.cz>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
- linux-leds@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, 
- linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
- Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Guenter Roeck <linux@roeck-us.net>, 
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
- Jingoo Han <jingoohan1@gmail.com>, 
- Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-watchdog@vger.kernel.org
-In-Reply-To: <20241010-zii_yaml-v2-2-0ab730607422@nxp.com>
-References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
- <20241010-zii_yaml-v2-2-0ab730607422@nxp.com>
-Message-Id: <172861627193.2232781.13972900744363458830.robh@kernel.org>
-Subject: Re: [PATCH v2 2/5] dt-bindings: backlight: convert
- zii,rave-sp-backlight.txt to yaml
+To: vamoirid <vassilisamir@gmail.com>
+Cc: linux-kernel@vger.kernel.org, conor+dt@kernel.org, 
+ andriy.shevchenko@linux.intel.com, lars@metafoo.de, krzk+dt@kernel.org, 
+ devicetree@vger.kernel.org, anshulusr@gmail.com, jic23@kernel.org, 
+ linux-iio@vger.kernel.org, gustavograzs@gmail.com
+In-Reply-To: <20241010210030.33309-7-vassilisamir@gmail.com>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-7-vassilisamir@gmail.com>
+Message-Id: <172861627372.2232837.13116431310317751211.robh@kernel.org>
+Subject: Re: [PATCH v1 06/13] dt-bindings: iio: add binding for BME680
+ driver
 
 
-On Thu, 10 Oct 2024 11:42:39 -0400, Frank Li wrote:
-> Convert device tree binding doc zii,rave-sp-backlight.txt to yaml format.
-> Additional Changes:
-> - Remove mfd parent node at example.
-> - Ref to backlight's common.yaml
+On Thu, 10 Oct 2024 23:00:23 +0200, vamoirid wrote:
+> From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > 
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> Add dt-binding for BME680 gas sensor device. The device incorporates as
+> well temperature, pressure and relative humidity sensors.
+> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
 > ---
->  .../leds/backlight/zii,rave-sp-backlight.txt       | 23 --------------
->  .../leds/backlight/zii,rave-sp-backlight.yaml      | 36 ++++++++++++++++++++++
->  2 files changed, 36 insertions(+), 23 deletions(-)
+>  .../bindings/iio/chemical/bosch,bme680.yaml   | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -87,13 +81,17 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-
+Warning: Duplicate compatible "bosch,bme680" found in schemas matching "$id":
+	http://devicetree.org/schemas/iio/chemical/bosch,bme680.yaml#
+	http://devicetree.org/schemas/trivial-devices.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/chemical/bosch,bme680.example.dtb: bme680@77: 'vdd-supply', 'vddio-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/chemical/bosch,bme680.example.dtb: bme680@0: 'vdd-supply', 'vddio-supply' do not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/trivial-devices.yaml#
 
 doc reference errors (make refcheckdocs):
-Warning: Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
-Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241010-zii_yaml-v2-2-0ab730607422@nxp.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241010210030.33309-7-vassilisamir@gmail.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
