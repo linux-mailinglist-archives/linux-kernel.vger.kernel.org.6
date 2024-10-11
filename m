@@ -1,263 +1,133 @@
-Return-Path: <linux-kernel+bounces-361110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C191799A37E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:12:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A993E99A388
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:14:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 504D1281ACE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 59B0D1F22089
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:14:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A346217306;
-	Fri, 11 Oct 2024 12:12:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E716217322;
+	Fri, 11 Oct 2024 12:13:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Z4WgK9ib"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JcIR+2Mc"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F167621500F;
-	Fri, 11 Oct 2024 12:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE78216450
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:13:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648757; cv=none; b=F53Ygp3+4spC0JHjQvBGytQXQ1EcxoI+XbIYMnTaqqYpAyPqJH9QZu9NQ3M6WxPaM9rB5tWdUegoWDEgt1jQuqx5dp8Y9c1jePtSce3a12StUncKIF2EMrmuVqjeoHnspEQND+24WTYv663h6kz7rMw1CjbAfOdbhDuaEXLj4n0=
+	t=1728648833; cv=none; b=q+TzG9vvakoZDMUDfp8J9Q4YsHSqVi61zl8pO8B8UeZMj2iUBUmPwmgpwJcwm4vOf6YAJQ1a9JQh9Qid5BrZuaiU4ILCFy4JI6Bo5Nj1r2r+diMiJM8hk+Be3mA4RAmt34ZFKE3S4gtegBG8t1zxGEtncVlnGe50iY3JfSecLMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648757; c=relaxed/simple;
-	bh=kxqWUy4zcFSTFiCdhxJFdTiPepG49W4Yq1HHpWxsB1U=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=Tz+F+JM6zNPEJHpp+giMoHkz/RWMDiDtqRMP916zzJWOi7kfg/Tne3FHjPeax9kERMTgtPOwGesx8zuWWHkiYIckuT7SRIX+UznBj51ElRxPhr/t873TBQ+UFBdcGqYXXDLIRlcrREXS1O+EkWuworOc1xPR4SxGp2SgabUEoSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Z4WgK9ib; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B86Er5014880;
-	Fri, 11 Oct 2024 12:12:32 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	uLCS0UOy96Mb3H/jJ54bFvXWnhLgH0Ek8zfoPd+tDAE=; b=Z4WgK9ib+kYl9zT4
-	4yiBvbUBG6IK6pP3BpdwB1PZIREpjjoYdxrJkqSsmboH9vQl+S7yu9LNME2ZbVvB
-	udEEHs+p9b984j6no/w01Nqkn/GNuXnKjEPj1bL3LDfhR0cDPBnRuevwpo1riRrX
-	3RhCp8mAdlG4pZN4GLLIROcscc3yx+F1l0eXKKJnXYQuZ7HhIhRumTQ3imIAxuRO
-	7wYbpgnq0dM2sS8PhULLiS4FrGmpgdteOwEUHkdSHcYHasKq6lblqgIbmdcv3MBQ
-	oBYDeUuEn4y2FUscsjuo7bzYY+m/wC5vRWZubD7Qh9p3/ZFwvmQpzjJ1bZbqj/Vw
-	YIAlBw==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427077grxq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 12:12:31 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BCCVAV010158
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 12:12:31 GMT
-Received: from [10.216.16.232] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Oct
- 2024 05:12:28 -0700
-Message-ID: <c1f2b758-85b6-40af-a2a3-e214e625fd9e@quicinc.com>
-Date: Fri, 11 Oct 2024 17:42:23 +0530
+	s=arc-20240116; t=1728648833; c=relaxed/simple;
+	bh=pVgQ4qeBPZp/jrWkLQ9CTTXSj/41aLXmAoXMA/Sm+W4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=E4xHMmzGVXNwY/TGWNXxJFBLmZNV/dnO8n2IeC0EbWqllYLnndGkMPb5QQbpwEg5Y61iu039iPGdkLIdnqkjaOUJpdHjQ4PN6mwND781lmcFeuDE74W6CKBHggCtK1cmdVMKgx11Ew3wWBiaTANlz80QOqnWeO9PDBIOZasfHTI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JcIR+2Mc; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20cb47387ceso995805ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:13:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728648832; x=1729253632; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=6DV8FmK9n2s3xaJw37bhq13Y2oj4hKbJoV0faMjnNfw=;
+        b=JcIR+2McKtwOE5Jd5A3c99BsRdTBzErzRGkGdtQDCZhtwGNaRfsM0HbWj1veOd22mW
+         /Owtk+Zyg0K0aJ93Mufj8B4Llmq/gr68p8Gk5lQk88nKgX60/DfaqyeoO1VAqkN6t5AU
+         2p+v2WZ9lAm+/quhSqJUv2BsrmPnAFhhA4x3PxLJq6eeVopDBuxTPH7JHI7i+2ciKu51
+         rr9H2uStt+n65k67NuTrIRq32N15k3wg9piyvlWUZiz0CmFku+AsMQ/jRNKYbNrQkruS
+         ZOHK7ubNkqkRV3WNcWmMm2/KxNeeOeLFsHxn0b7FfBny+iaq/LtbE6oEsE0Duy8olaCJ
+         AUOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728648832; x=1729253632;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6DV8FmK9n2s3xaJw37bhq13Y2oj4hKbJoV0faMjnNfw=;
+        b=EGA4F+pwrVOFd6x180lmCioUGqpQCLs5repis1dJb4wPnRFg9wBnM1KyOLSnU2jk3L
+         pd8Gglij4+Ewe0DxOC3EI+eqLazOGm8O58n2GLlnQLKwdBLoOeMhyuCiQ1ng7fSinAds
+         F701IroBR84ZvuOF40p8dhdtKJdMeBOm0zlEojd0xRI5qYO0ODXU5BX3oZ6pW03KDx9l
+         UzyJtPpecuxs/LF+AcxtCxZ5Wk61Omzcv5xmY3Vvc4y4EkHaK24otlx0vuqqzAmNMJSc
+         cZe2x3N0L6h0vXHBO79tVUP4dKWtWuZ6Fzo9fGnisRPa3m1AwsG+ZxQoLkZ8Slh/Ql+m
+         PvMA==
+X-Forwarded-Encrypted: i=1; AJvYcCUl8pgyTDmkOYkMBK03N1qXhyC1K+1YL9cgCtBwALd0NelPF44IpupTHQtFy2aPOC8AxrL/qvVdOR3jbyU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkHNs0GMA2rAVqqmSkuAgCNZjpISSwIOIh9IY7zrQwZ+Y6Tmou
+	Ygbc4nOLgwZ1oVIth7ilIqZClNZ7xtC8m90Wd/OSmPIDDSyHjRQJ0btKfWeIa0ajesxcHX82IBp
+	VfTdGY9iS1dxTt9tmI1kK0eflNBnVEMbn7T2uFw==
+X-Google-Smtp-Source: AGHT+IEhHh7IyxNNVXdhpzK7DYdwX3u4HJLwqzq8zbFcpGhkbrrdEfGF3mSpDzSVS0AcPKmBvtOSTltyzsarT9dBX/Q=
+X-Received: by 2002:a17:902:e845:b0:20b:b93f:300a with SMTP id
+ d9443c01a7336-20ca14246b0mr37785885ad.7.1728648831700; Fri, 11 Oct 2024
+ 05:13:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
-Subject: Re: [PATCH v1] i2c: i2c-qcom-geni: Serve transfer during early resume
- stage
-To: Bjorn Andersson <quic_bjorande@quicinc.com>
-CC: <konrad.dybcio@linaro.org>, <andersson@kernel.org>,
-        <andi.shyti@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-i2c@vger.kernel.org>,
-        <quic_vdadhani@quicinc.com>, Vinod Koul <vkoul@kernel.org>
-References: <20240328123743.1713696-1-quic_msavaliy@quicinc.com>
- <Zg9rkXddNC+G36O8@hu-bjorande-lv.qualcomm.com>
-Content-Language: en-US
-In-Reply-To: <Zg9rkXddNC+G36O8@hu-bjorande-lv.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: PgM30PgTV4MwykU7m8qnM4SToeFHTtmk
-X-Proofpoint-ORIG-GUID: PgM30PgTV4MwykU7m8qnM4SToeFHTtmk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- clxscore=1011 priorityscore=1501 mlxscore=0 impostorscore=0 bulkscore=0
- mlxlogscore=999 adultscore=0 suspectscore=0 spamscore=0 malwarescore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110084
+References: <20241010114019.1734573-1-0x1207@gmail.com> <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
+ <20241011101455.00006b35@gmail.com> <CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
+ <20241011143158.00002eca@gmail.com> <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
+In-Reply-To: <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
+From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
+Date: Fri, 11 Oct 2024 15:13:15 +0300
+Message-ID: <CAC_iWjLE+R8sGYx74dZqc+XegLxvd4GGG2rQP4yY_p0DVuK-pQ@mail.gmail.com>
+Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
+To: Yunsheng Lin <linyunsheng@huawei.com>
+Cc: Furong Xu <0x1207@gmail.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Jesper Dangaard Brouer <hawk@kernel.org>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	xfr@outlook.com
+Content-Type: text/plain; charset="UTF-8"
 
-Thanks Bjorn for the review.
+On Fri, 11 Oct 2024 at 11:55, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+>
+> On 2024/10/11 14:31, Furong Xu wrote:
+> > Hi Ilias,
+> >
+> > On Fri, 11 Oct 2024 08:06:04 +0300, Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
+> >
+> >> Hi Furong,
+> >>
+> >> On Fri, 11 Oct 2024 at 05:15, Furong Xu <0x1207@gmail.com> wrote:
+> >>>
+> >>> On Thu, 10 Oct 2024 19:53:39 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+> >>>
+> >>>> Is there any reason that those drivers not to unset the PP_FLAG_DMA_SYNC_DEV
+> >>>> when calling page_pool_create()?
+> >>>> Does it only need dma sync for some cases and not need dma sync for other
+> >>>> cases? if so, why not do the dma sync in the driver instead?
+> >>>
+> >>> The answer is in this commit:
+> >>> https://git.kernel.org/netdev/net/c/5546da79e6cc
+> >>
+> >> I am not sure I am following. Where does the stmmac driver call a sync
+> >> with len 0?
+> > For now, only drivers/net/ethernet/freescale/fec_main.c does.
+> > And stmmac driver does not yet, but I will send another patch to make it call sync with
+> > len 0. This is a proper fix as Jakub Kicinski suggested.
+>
+> In order to support the above use case, it seems there might be two
+> options here:
+> 1. Driver calls page_pool_create() without PP_FLAG_DMA_SYNC_DEV and
+>    handle the dma sync itself.
+> 2. Page_pool may provides a non-dma-sync version of page_pool_put_page()
+>    API even when Driver calls page_pool_create() with PP_FLAG_DMA_SYNC_DEV.
+>
+> Maybe option 2 is better one in the longer term as it may provide some
+> flexibility for the user and enable removing of the DMA_SYNC_DEV in the
+> future?
 
-On 4/5/2024 8:40 AM, Bjorn Andersson wrote:
-> On Thu, Mar 28, 2024 at 06:07:43PM +0530, Mukesh Kumar Savaliya wrote:
->> pm_runtime_get_sync() function fails during PM early resume and returning
->> -EACCES because runtime PM for the device is disabled at the early stage
->> causing i2c transfer to fail. Make changes to serve transfer with force
->> resume.
->>
->> 1. Register interrupt with IRQF_EARLY_RESUME and IRQF_NO_SUSPEND flags
->>     to avoid timeout of transfer when IRQ is not enabled during early stage.
->> 2. Do force resume if pm_runtime_get_sync() is failing after system
->>     suspend when runtime PM is not enabled.
->> 3. Increment power usage count after forced resume to balance
->>     it against regular runtime suspend.
->>
->> Co-developed-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->> Signed-off-by: Viken Dadhaniya <quic_vdadhani@quicinc.com>
->> Signed-off-by: Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>
->> ---
->>   drivers/i2c/busses/i2c-qcom-geni.c | 55 ++++++++++++++++++++++++------
->>   1 file changed, 45 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-qcom-geni.c b/drivers/i2c/busses/i2c-qcom-geni.c
->> index da94df466e83..ed8201983a03 100644
->> --- a/drivers/i2c/busses/i2c-qcom-geni.c
->> +++ b/drivers/i2c/busses/i2c-qcom-geni.c
->> @@ -134,6 +134,8 @@ struct geni_i2c_clk_fld {
->>   	u8	t_cycle_cnt;
->>   };
->>   
->> +static int geni_i2c_runtime_resume(struct device *dev);
->> +
->>   /*
->>    * Hardware uses the underlying formula to calculate time periods of
->>    * SCL clock cycle. Firmware uses some additional cycles excluded from the
->> @@ -677,22 +679,48 @@ static int geni_i2c_fifo_xfer(struct geni_i2c_dev *gi2c,
->>   	return num;
->>   }
->>   
->> +static int geni_i2c_force_resume(struct geni_i2c_dev *gi2c)
->> +{
->> +	struct device *dev = gi2c->se.dev;
->> +	int ret;
->> +
->> +	ret = geni_i2c_runtime_resume(dev);
->> +	if (ret) {
->> +		dev_err(gi2c->se.dev, "Error turning SE resources:%d\n", ret);
-> 
-> "error turning"? How about "Failed to enable SE resources: %d\n"?
-Sounds good, Thanks. Made this change.
-> 
->> +		pm_runtime_put_noidle(dev);
->> +		pm_runtime_set_suspended(dev);
-> 
-> These two where the error-handling for pm_runtime_get_sync() failing, in
-> one case below you get here after pm_runtime_get_sync() failed in the
-> other you have not attempted to call that function.
-> 
-Hi Bjorn, could you please clarify further on this question ? I am not 
-getting two instances for failure of pm_runtime_get_sync().
-> Do you really get through this with things balanced?
-We haven't seen imbalance in the usage count with added debug logs locally.
-> 
->> +		return ret;
->> +	}
->> +	pm_runtime_get_noresume(dev);
->> +	pm_runtime_set_active(dev);
->> +	return ret;
-> 
-> ret is 0.
-> 
->> +}
->> +
->>   static int geni_i2c_xfer(struct i2c_adapter *adap,
->>   			 struct i2c_msg msgs[],
->>   			 int num)
->>   {
->>   	struct geni_i2c_dev *gi2c = i2c_get_adapdata(adap);
->> +	struct device *dev = gi2c->se.dev;
->>   	int ret;
->>   
->>   	gi2c->err = 0;
->>   	reinit_completion(&gi2c->done);
->> -	ret = pm_runtime_get_sync(gi2c->se.dev);
->> -	if (ret < 0) {
->> -		dev_err(gi2c->se.dev, "error turning SE resources:%d\n", ret);
->> -		pm_runtime_put_noidle(gi2c->se.dev);
->> -		/* Set device in suspended since resume failed */
->> -		pm_runtime_set_suspended(gi2c->se.dev);
->> -		return ret;
->> +
->> +	if (!pm_runtime_enabled(dev) && gi2c->suspended) {
->> +		dev_dbg(gi2c->se.dev, "RT_PM disabled, Do force resume, usage_count:%d\n",
-> 
-> "RT_PM" is not a widely used abbreviation for this...
-Agree. Modified as "Runtime PM is disabled"
-> 
->> +			atomic_read(&dev->power.usage_count));
->> +		ret = geni_i2c_force_resume(gi2c);
->> +		if (ret)
->> +			return ret;
->> +	} else {
->> +		ret = pm_runtime_get_sync(dev);
->> +		if (ret == -EACCES && gi2c->suspended) {
->> +			dev_dbg(gi2c->se.dev, "PM get_sync() failed-%d, force resume\n", ret);
-> 
-> Different abbreviation, different formatting of error value in log
-> line...
-yes, improved as ""pm_runtime_get_sync() failed"
-> 
->> +			ret = geni_i2c_force_resume(gi2c);
->> +			if (ret)
->> +				return ret;
-> 
-> This chunk looks identical to the chunk above, can this somehow be
-> restructured to avoid the duplication?
-I see different failure condition and then conditional call to 
-geni_i2c_force_resume(). Could you please highlight exact optimization ?
-> 
->> +		}
->>   	}
->>   
->>   	qcom_geni_i2c_conf(gi2c);
->> @@ -702,8 +730,15 @@ static int geni_i2c_xfer(struct i2c_adapter *adap,
->>   	else
->>   		ret = geni_i2c_fifo_xfer(gi2c, msgs, num);
->>   
->> -	pm_runtime_mark_last_busy(gi2c->se.dev);
->> -	pm_runtime_put_autosuspend(gi2c->se.dev);
-> 
-> I'm not sure I follow this part, please add a comment here for the
-> future reader.
-sure, Added comment in next patch.
+Case 2 would be what this patch does. We already treat -1 as the
+maximum DMA memory size. I think it's ok to treat 0 as 'don't sync'. I
+need to figure out why people need this.
+IOW you still have to sync the page to use it. Now you can do it when
+allocating it, but why is that cheaper or preferable?
 
-> 
->> +	if (!pm_runtime_enabled(dev) && !gi2c->suspended) {
->> +		pm_runtime_put_noidle(dev);
->> +		pm_runtime_set_suspended(dev);
->> +		gi2c->suspended = 0;
-> 
-> Why alter suspended flag in xfer()?
-> 
-Because force_resume() makes it active with respect to the
-> Regards,
-> Bjorn
-> 
->> +	} else {
->> +		pm_runtime_mark_last_busy(gi2c->se.dev);
->> +		pm_runtime_put_autosuspend(gi2c->se.dev);
->> +	}
->> +
->>   	gi2c->cur = NULL;
->>   	gi2c->err = 0;
->>   	return ret;
->> @@ -820,7 +855,7 @@ static int geni_i2c_probe(struct platform_device *pdev)
->>   	init_completion(&gi2c->done);
->>   	spin_lock_init(&gi2c->lock);
->>   	platform_set_drvdata(pdev, gi2c);
->> -	ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq, 0,
->> +	ret = devm_request_irq(dev, gi2c->irq, geni_i2c_irq, IRQF_EARLY_RESUME | IRQF_NO_SUSPEND,
->>   			       dev_name(dev), gi2c);
->>   	if (ret) {
->>   		dev_err(dev, "Request_irq failed:%d: err:%d\n",
->> -- 
->> 2.25.1
->>
+Thanks
+/Ilias
 
