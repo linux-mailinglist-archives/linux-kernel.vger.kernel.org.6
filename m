@@ -1,81 +1,135 @@
-Return-Path: <linux-kernel+bounces-361100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A180699A36D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:09:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B138099A382
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:13:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B9641F25AAF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:09:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DE8281C63
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:13:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FD6D21731B;
-	Fri, 11 Oct 2024 12:09:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF529217306;
+	Fri, 11 Oct 2024 12:13:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G4eHLbzU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SeFwIU4v"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C209216A32;
-	Fri, 11 Oct 2024 12:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3262219923C;
+	Fri, 11 Oct 2024 12:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648572; cv=none; b=Fln4isJyLhGKdOBs9kCbw9n7EIpr5VDSmQ+DihcMTQxFpxbJ1kfZUBfVocch5I4H0TCKCvzyhQH6sS49VJAVIn9Q1fQ8vVZp2HZNvPDN2I4MOg4Jf9f2D0uvdMKVRpEc//aKbzBVPcX+y/BRBci1HOwdu6cKJrKW38MwhfsVyI4=
+	t=1728648795; cv=none; b=Wm+8rjOg4dBRi/h4MCeZjmYBY3S2h4x88ssRrp+TLN8g3djJNnCxmJHByGv+KDOo+FJ6UDDFnnE+sJQAsEAF+xsNs6uXweu859pqNA3lfWs60CQ2hDmqENwtXDihbORl8fe0h1+AraTAjPwEQTSlbiX4bTieDA8wvbvU7zzxARU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648572; c=relaxed/simple;
-	bh=VnpWk4eGdMd6E9wB55AiSzHTxcmv05qwkE1hMVJMCWg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YQP0gLb7YBzNp1jyxyEbe9A+708Z3LTcZ9z/yKTkuh3Md2ToiRM6Mr/8b/caeNnDdThI90+LiYr2HWCmh9myPMW9Tfef8S8d7om14bvihawx+EQgfieil4BH4ZoiEb6w8cbyvyFEGMGDA35LasxcQhKhKnY0+gHfYVZmMyyYyAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G4eHLbzU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7331C4CEC3;
-	Fri, 11 Oct 2024 12:09:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728648572;
-	bh=VnpWk4eGdMd6E9wB55AiSzHTxcmv05qwkE1hMVJMCWg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G4eHLbzUOqj3Y3uEImz1qasUzOyWPKUEs+ocBWHN/gktItFwnl9pDDNX0ecvjAGbu
-	 qUinDUMEu2uy04EBXbaA+AUyjd1WmOcYEpyrxZ6Y42HHxCfVUAsncwTRhpMr6an3zI
-	 WbWHYtp7V8iDTET3y1BTDRP+bQFZyhUefdzPAT8E=
-Date: Fri, 11 Oct 2024 14:09:28 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
-	Abhash Jha <abhashkumarjha123@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the iio tree
-Message-ID: <2024101117-revolver-sadness-24bb@gregkh>
-References: <20241011154241.511878bd@canb.auug.org.au>
- <20241011104232.000042a9@Huawei.com>
+	s=arc-20240116; t=1728648795; c=relaxed/simple;
+	bh=apbQAH3SWt6kRnCOpfxBZSM///7pZYCMSxT/CIMlLJs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=NWu90fvdrddGUAa41v5mJoHJR/j9XttCqKO7yIh+W3F3UmqAeSpfO1goFhp+iH4SKcDigOElxw3GfH/7b8w76/7vL2/9N6SVVONXUuSlZh21BA8GbP/JYykSJwSS5TvMWZAmC25JLNzYaclRtYrz+2tos0emOqKGFzKurd4vnLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SeFwIU4v; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BBwVM6031027;
+	Fri, 11 Oct 2024 14:12:39 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=selector1; bh=
+	hTVrXnYYt+rcLary/TZa08XbMHLGNZVgAQjoCN87HBI=; b=SeFwIU4v2wjNS4Lu
+	1B6yq1V50PMTfnHIZOpDhtQniDh8m2Evn4rQOlzAY6Y+R1RKPr0YY4gSNWUBTAMx
+	Lkhs+bqQJXrfY7i1Nc4a5edvvmEhvCkeRV2EJfo8xw2OIH5OrN/hRa9Kzu/buYeu
+	XPL4jVFwdOvLgF/YRd0FM8e4hxOav1LGCLWSiMW146MjBUSOsTo2wEeSo7mqLodI
+	JVJcUWurzZ9xOsAaAS9uR0hQJzhFtzYGCbgmkyVWiXpRtLcFTVPtGa5utIayM008
+	j/FzdmTfRHnD6SD+flrgGUNIv8CYqiwl8ONh9Nk3cI6fGtWaoK/jMEUrIJTd5AAN
+	mhebAg==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425q5wc6kx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 14:12:39 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8EC2B4005D;
+	Fri, 11 Oct 2024 14:11:09 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2AB672734EB;
+	Fri, 11 Oct 2024 14:07:52 +0200 (CEST)
+Received: from [10.252.28.117] (10.252.28.117) by SHFDAG1NODE1.st.com
+ (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
+ 2024 14:07:51 +0200
+Message-ID: <6a4cccb4-9e55-437d-925b-5f5bb1804159@foss.st.com>
+Date: Fri, 11 Oct 2024 14:07:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011104232.000042a9@Huawei.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] hwrng: stm32 - implement support for STM32MP25x
+ platforms
+To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
+        Herbert
+ Xu <herbert@gondor.apana.org.au>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>,
+        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre
+ Torgue <alexandre.torgue@foss.st.com>
+CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
+        Lionel
+ Debieve <lionel.debieve@foss.st.com>,
+        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Yang
+ Yingliang <yangyingliang@huawei.com>
+References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
+ <20241007132721.168428-3-gatien.chevallier@foss.st.com>
+ <2fad1566-49f9-4586-b0d4-8a4a12f9e69e@denx.de>
+ <9283caeb-1b84-43c2-a8a4-6b43a6962f34@foss.st.com>
+ <b4932f99-cda4-42ef-88d8-461ca6e8cefd@denx.de>
+Content-Language: en-US
+From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
+In-Reply-To: <b4932f99-cda4-42ef-88d8-461ca6e8cefd@denx.de>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Fri, Oct 11, 2024 at 10:42:32AM +0100, Jonathan Cameron wrote:
-> On Fri, 11 Oct 2024 15:42:41 +1100
-> Stephen Rothwell <sfr@canb.auug.org.au> wrote:
-> 
-> > Hi all,
-> >
-> Thanks Stephen,
-> 
-> I'll call these out (I think we have 3 of them now) when I send Greg a pull request as
-> probably best place to tidy this up is when merging into char-misc which has
-> merged rc2 with Al's patch.
-> 
-> Greg, let me know if you'd rather I handled these in the iio tree
-> (probably a merge of rc2 as I'd rather not rebase)
 
-In your tree is fine with me!
 
-thanks,
+On 10/11/24 13:24, Marek Vasut wrote:
+> On 10/11/24 11:55 AM, Gatien CHEVALLIER wrote:
+>>
+>>
+>> On 10/7/24 15:54, Marek Vasut wrote:
+>>> On 10/7/24 3:27 PM, Gatien Chevallier wrote:
+>>>> Implement the support for STM32MP25x platforms. On this platform, a
+>>>> security clock is shared between some hardware blocks. For the RNG,
+>>>> it is the RNG kernel clock. Therefore, the gate is no more shared
+>>>> between the RNG bus and kernel clocks as on STM32MP1x platforms and
+>>>> the bus clock has to be managed on its own.
+>>>>
+>>>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+>>> A bit of a higher-level design question -- can you use drivers/clk/ 
+>>> clk-bulk.c clk_bulk_*() to handle all these disparate count of clock 
+>>> easily ?
+>>
+>> Hi, I'd like to make sure that we enable the core clock before the bus
+>> clock so that the RNG hardware block can start its internal tests while
+>> we ungate the bus clock. It's not a strong opinion but it feels better.
+> Maybe this could still work if the struct clk_bulk_data {} is ordered 
+> that way, so the bus clock are first, and the rest afterward ?
 
-greg k-h
+I guess you meant, the core first.
+Putting the bus clock first with the updated YAML doc generates a
+warning when checking the bindings. I guess what you propose is OK
+then. Core clock is defined first in the device tree.
 
