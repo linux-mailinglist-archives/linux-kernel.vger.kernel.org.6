@@ -1,96 +1,146 @@
-Return-Path: <linux-kernel+bounces-360772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4183999F53
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:52:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B224F999FAE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52902287713
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:52:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4469B21B18
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:03:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C120320C47D;
-	Fri, 11 Oct 2024 08:52:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C1D20C496;
+	Fri, 11 Oct 2024 09:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XX3tEEVm"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="slSlc4ZM"
+Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E3B20ADE4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B1120C46F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636736; cv=none; b=HLyIOEuYb/SgdDIr7a5VC2BPWwaI85vurFMZZkrL/+TCf9z+rKTLjBnUs3QFBegEwziq9HmFVWog0h9JnBsYu5tnwmA7x24EKXgvDhUSJg2LRmIldY0JsLaNHbcNWh2ksHUytdstsM5izdsDtxpy96iVRD6F6eFpWRQVeEbQgIE=
+	t=1728637372; cv=none; b=fGOdBr/rXDZ7YBNjtm3YBVHqItGkRzdH5E2pnYTv5xZbxzvBG/F1vHjhF94QfV618SAVsFeZxC31JE288mXIBm+dNfVEP6akakymBafssOR+/gImill46PzcTUyo+V76+WPojGuIawYQBh91Fya0e2GVXtvAGwhb0sPVuZfxato=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636736; c=relaxed/simple;
-	bh=upmVzJ9gjVfXs2ROzF7vcG7wDgAsGosonijbpss3TCk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OHr1qYpj+nJPEb/ICvhptk1obZ2FLVdaOeEv5pSMIFCgESZacepU/QGgPQs2KnGMN6ZolkMV7N0CxS3NRe412NW+oHHRL1eHzzI2hOqn2j6JfCnzvfDlqo0hx9cuYR/knHuCuMmVgoOaaxOjpOd9a9F3gfQATlWSbjAREJSN7Bw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XX3tEEVm; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=gEggDx+qqkot51kSb68zOP3SYNMgw7OxwK3vHbK/Wv4=; b=XX3tEEVmWoAqLEaAmisxHztVTp
-	p2Ayss58pAIs1yzbofeAAbdv4rjZxU2L9Rceb2xkNWwyxVW7X2xN894ur4WFKE4wGeuPtYSk2Oiz8
-	lw1mMUN/BeFnwCOxuoeMCEU0juk/SaOlVXUNXbxLR6rKLVUzRTWaYbvlKziVrh+8R2n2cFuqrOJe+
-	Yvqw0SnVe9TluAKBcuD0KoE7ZilVLvkUynNfgMhDunBoprroFhyt78eYkk5Ntc229QZgnFtG4yNrM
-	jBrqyp/Wuv5LjQTGkogxkifI/tUZNR89ukRt4OU8a9xLAahFWLmbDlA1wdO0iAI9oKB+nZFJaJhlI
-	6UVlszPg==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1szBNR-0000000AJfy-2NID;
-	Fri, 11 Oct 2024 08:52:02 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id B7833300642; Fri, 11 Oct 2024 10:52:01 +0200 (CEST)
-Date: Fri, 11 Oct 2024 10:52:01 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Xavier <xavier_qy@163.com>
-Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, yu.c.chen@intel.com,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] sched/eevdf: Reduce the computation frequency of
- avg_vruntime
-Message-ID: <20241011085201.GM17263@noisy.programming.kicks-ass.net>
-References: <20240912091454.801033-1-xavier_qy@163.com>
- <20241011062449.998696-1-xavier_qy@163.com>
+	s=arc-20240116; t=1728637372; c=relaxed/simple;
+	bh=19z3d0aqkHvJwN+Hk7S9ZrvGY/Nf3msL/Lxq7i9eJyA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MO2vxGkPbtcRDTX5GjltdjZL0NG2epJEDdMLO7pN35DxrE8sbFm1I78vYrJeOnk4/Fw6s7oGZf6vIMN49Z+WBxkkhgGEYDFtUf0tmhK8J2ccezZWLN3kh8nRCk6iy6IhBbUL1bW69EbmBa7YsDJ0WQyr7C+vpGicOOj1wkaCvIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=slSlc4ZM; arc=none smtp.client-ip=149.28.215.223
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
+ h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
+ Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
+ s=fe-e1b5cab7be; t=1728637367;
+ bh=PR7Qyd/O87/6PBrhIOrZqQvu9qgOrZhgZxSmRsZHQyM=;
+ b=slSlc4ZMiqYtv6xtlf/LBI9QAFKlTKcLt4DfUrLKmERh+r+8WanJ04EN8W440RwtgXeN3++di
+ aI9Id8C0Cl4tuOfR9MdTRs9naNavtHHmfURqpOtIS6JdmqLln6HcjFsKSQmJ2pEcgZavXSPQg4+
+ +C75E8jZDHlecGNu4Up9EjuNl1UBr/ffcoJABJtCxUXO3c7Ig3h0YgdRKDPgONfaeXwqjOvUoY/
+ /DDh2Cn/QfBjq7oqfsK5hmlztSQrnMQ6zCa9JTqoI79uyWIduqPyftsD7rn/btHiqGmU0KFWxcg
+ RsplSa+h833d046ZVcNmq7OZTy245qifAT5i8W+Bagfg==
+Message-ID: <86ff39fe-cc88-4cf4-a1ad-6398a74ceb11@kwiboo.se>
+Date: Fri, 11 Oct 2024 10:52:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241011062449.998696-1-xavier_qy@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: rockchip: Prevent thermal runaways in RK3308
+ SoC dtsi
+To: Dragan Simic <dsimic@manjaro.org>, heiko@sntech.de
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
+References: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+Content-Language: en-US
+From: Jonas Karlman <jonas@kwiboo.se>
+In-Reply-To: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Report-Abuse-To: abuse@forwardemail.net
+X-Report-Abuse: abuse@forwardemail.net
+X-Complaints-To: abuse@forwardemail.net
+X-ForwardEmail-Version: 0.4.40
+X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
+ 149.28.215.223
+X-ForwardEmail-ID: 6708e747ea3bbe7728966137
 
-On Fri, Oct 11, 2024 at 02:24:49PM +0800, Xavier wrote:
-> The current code subtracts the value of curr from avg_vruntime and avg_load
-> during runtime. Then, every time avg_vruntime() is called, it adds the
-> value of curr to the avg_vruntime and avg_load. Afterward, it divides these
-> and adds min_vruntime to obtain the actual avg_vruntime.
-> 
-> Analysis of the code indicates that avg_vruntime only changes significantly
-> during update_curr(), update_min_vruntime(), and when tasks are enqueued or
-> dequeued. Therefore, it is sufficient to recalculate and store avg_vruntime
-> only in these specific scenarios. This optimization ensures that accessing
-> avg_vruntime() does not necessitate a recalculation each time, thereby
-> enhancing the efficiency of the code.
-> 
-> There is no need to subtract curr’s load from avg_load during runtime.
-> Instead, we only need to calculate the incremental change and update
-> avg_vruntime whenever curr’s time is updated.
-> 
-> To better represent their functions, rename the original avg_vruntime and
-> avg_load to tot_vruntime and tot_load, respectively, which more accurately
-> describes their roles in the computation.
-> 
-> Signed-off-by: Xavier <xavier_qy@163.com>
+Hi Dragan,
 
-This makes the code more complicated for no shown benefit.
+On 2024-10-10 12:19, Dragan Simic wrote:
+> Until the TSADC, thermal zones, thermal trips and cooling maps are defined
+> in the RK3308 SoC dtsi, none of the CPU OPPs except the slowest one may be
+> enabled under any circumstances.  Allowing the DVFS to scale the CPU cores
+> up without even just the critical CPU thermal trip in place can rather easily
+> result in thermal runaways and damaged SoCs, which is bad.
+> 
+> Thus, leave only the lowest available CPU OPP enabled for now.
+
+This feel like a very aggressive limitation, to only allow the
+opp-suspend rate, that is not even used under normal load.
+
+I let my Rock Pi S board with a RK3308B variant run "stress -c 8" for
+around 10 hours and the reported temp only reach around 50-55 deg c,
+ambient temp around 20 deg c and board laying flat on a table without
+any enclosure or heat sink.
+
+This was running with performance as scaling_governor and cpu running
+the 1008000 opp.
+
+Most RK3308 variants datasheets list 1.3 GHz as max rate for CPU,
+the K-variant lists 1.2 GHz, and the -S-variants seem to have both
+reduced voltage and max rate.
+
+The OPPs for this SoC already limits max rate to 1 GHz and is more than
+likely good enough to not reach the max temperature of 115-125 deg c as
+rated in datasheets and vendor DTs.
+
+Adding the tsadc and trips (same/similar as px30) will probably allow us
+to add/use the "missing" 1.2 and 1.3 GHz OPPs.
+
+Regards,
+Jonas
+
+> 
+> Fixes: 6913c45239fd ("arm64: dts: rockchip: Add core dts for RK3308 SOC")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> index 31c25de2d689..a7698e1f6b9e 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+> @@ -120,16 +120,19 @@ opp-600000000 {
+>  			opp-hz = /bits/ 64 <600000000>;
+>  			opp-microvolt = <950000 950000 1340000>;
+>  			clock-latency-ns = <40000>;
+> +			status = "disabled";
+>  		};
+>  		opp-816000000 {
+>  			opp-hz = /bits/ 64 <816000000>;
+>  			opp-microvolt = <1025000 1025000 1340000>;
+>  			clock-latency-ns = <40000>;
+> +			status = "disabled";
+>  		};
+>  		opp-1008000000 {
+>  			opp-hz = /bits/ 64 <1008000000>;
+>  			opp-microvolt = <1125000 1125000 1340000>;
+>  			clock-latency-ns = <40000>;
+> +			status = "disabled";
+>  		};
+>  	};
+>  
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+
 
