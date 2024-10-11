@@ -1,121 +1,141 @@
-Return-Path: <linux-kernel+bounces-360620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5D96999D55
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:01:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFCB9999D4E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:59:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818DA1F22D5C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:01:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ECE7B2112C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:59:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E6E1CDA19;
-	Fri, 11 Oct 2024 07:01:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15565209679;
+	Fri, 11 Oct 2024 06:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kC8qaaGy"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHjPgaD8"
+Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B1419C579
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:01:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F90F635;
+	Fri, 11 Oct 2024 06:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630068; cv=none; b=IRl1d9cpvUG/2oqIySn26UnO08HwmJr2X9DmnMJumvEeqfddIYW7rdktHQaqPOQI2r/Sf8FTK5K2kNwyQKSM6uwbkm5IqxmLZwtognq+Z3659ZR+STUj3773puTeEbQPVjvPpoiZki6T0iAtAC0QtgU7wJ+xuOAFCdxhQDiU2Tk=
+	t=1728629952; cv=none; b=MdsAc0zetmdNn/Q7y9qPb1NaVohGevMz/Zo44+vmmmWFLrue2Lf+IyylkWCW47IPzTgH10zkhVg3A1eXIW/9zqjJYiEwZ+LhRAU7UUweZOcxPcxJ5X9/5nmrn2eXTT0OczOJL824gFaJq9ISnSg7Cbi2aF6KR+VgdLt2u/84+Z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630068; c=relaxed/simple;
-	bh=MwumLah0heogfgY2jBbaLZlTmYy8EmATRxyZJ/sFqnI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XawSfEhB/0BKxyRFtu16CwXl2gfTeppepFBlTWGEIG5FsV5h612dIDOPiHDwnp7o/fMp8FQozKOzFBYJ0gpq6qbw3Uh9TVCiWX95+hLhtE2pPH+5MkByuHRN50oFrconzc516m5pybcHAN+hb8d5BL/EWzsIqydHdL7AOg86NAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kC8qaaGy; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728630066; x=1760166066;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=MwumLah0heogfgY2jBbaLZlTmYy8EmATRxyZJ/sFqnI=;
-  b=kC8qaaGyOiBRnNg9kfe3C4EfvV8vBfTbfPgwZUznIPUyzC6Be5qV1E93
-   /+oBMMG0LxuIYIIGmsWHxLqraHCtlD8cERHpnx3msYMX+cCImZigNfc5B
-   uEtHAngiSUg2gFXQ6gesbhprZ+V3RrV16bh6dgdr8N1lITWnO0WJCy2y3
-   AKDxGZj0UatUV5nrybvjy9OWnlLQ0N5wuxEqPSiWpAbIgq+Si0hkq9liI
-   3u6lNUXe/RYUT8WuVIcuF3fNTDEgJyBiesnotTYaG9czvsoRgVmvSX+5F
-   HSRTp1sZJzjuPBHPcxCyESGNnIQ3cn16smngBLK2qXiiep0diFrla8Wi2
-   g==;
-X-CSE-ConnectionGUID: 792izZ3RQEeOWcmH6jjaVg==
-X-CSE-MsgGUID: q6QIEy29QOmah5F4iYDQpw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="38592027"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="38592027"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 00:01:05 -0700
-X-CSE-ConnectionGUID: C5Zp0ThHQDG41+LNjk8vKQ==
-X-CSE-MsgGUID: DlKyb9KRQ3iM1eqRd2Ocrg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="81624165"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 00:01:03 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Zi Yan <ziy@nvidia.com>
-Cc: <linux-mm@kvack.org>,  Alexander Potapenko <glider@google.com>,  Kees
- Cook <keescook@chromium.org>,  David Hildenbrand <david@redhat.com>,
-  Andrew Morton <akpm@linux-foundation.org>,  "Matthew Wilcox (Oracle)"
- <willy@infradead.org>,  Miaohe Lin <linmiaohe@huawei.com>,  Kefeng Wang
- <wangkefeng.wang@huawei.com>,  John Hubbard <jhubbard@nvidia.com>,
-  <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH] mm: avoid clearing user movable page twice with
- init_on_alloc=1
-In-Reply-To: <20241007182315.401167-1-ziy@nvidia.com> (Zi Yan's message of
-	"Mon, 7 Oct 2024 14:23:15 -0400")
-References: <20241007182315.401167-1-ziy@nvidia.com>
-Date: Fri, 11 Oct 2024 14:57:30 +0800
-Message-ID: <874j5j9let.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728629952; c=relaxed/simple;
+	bh=AnM7XamNLc2M6oVcml7mvgQSLuc6IQzUUi2epLGB8ng=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P7WpuQXVzjWDXeDchODyreBqHpIixL5/IF6+FxM6i2AkI1lOK3gxiZVMJWJfI9d7DrsPP7WcKpMvTwz/pE3lTSOM3H4LJ6h9XThH8KNEAk/OMzor0WRcgqs7mGXhFKQOpLzdFBeNXWAOoqMlAeBhZ8jc/A6eKe1TNaQhKurY+Rs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHjPgaD8; arc=none smtp.client-ip=209.85.210.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71927b62fa1so158689b3a.2;
+        Thu, 10 Oct 2024 23:59:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728629950; x=1729234750; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aNprZDujeJLDJHdRYQpNiQJhs787CFLT9EgNyD54pMo=;
+        b=JHjPgaD8+pk1ralETKao5Cp2uRBWiwOTuBcC7TgZQ8jdL8W4BoU25Cvicqo/U/OW6p
+         oYJuvMPl8JitT2GxOyeJNVTqH6iFz7ojFeupnqVPhMRZys8/3YCzNDmhvEpQsbukwZh5
+         4aE4AEdu7ApTzkJeRofOmJYfpNkVAN12Z33gaE/KBf+8iFjEzfbMAdw9WFQZAGyJ2JY4
+         zwPeaj0fxF4/sQaBFrp70ieKz7NT6rdMSJrjvTvv8N5QZMD7PGCtsabz8jgiJIpZ96al
+         IxtSnvPT0mv0ynb/SE7bapUrkdCdi8y+B9SpSLP8f3rJmzYd1iEqAsgBd123Jad6XlDy
+         6k6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728629950; x=1729234750;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aNprZDujeJLDJHdRYQpNiQJhs787CFLT9EgNyD54pMo=;
+        b=QOXcQ75Bs4Hs5FZN6Va8D8Oc+y2kjt27IP/KMUp8HmyyQe5ykERCJoSnLLXiwzcc/H
+         3/VGXGCjLBx+TjY9rttfAAwSLDZaysJdRrXk8Nc0Jvqx9dzhB6/P50xnDG8yEf/1iGJu
+         r0x+LtQhuyarMorzQYZkvnen8e3FCC73+ykUDoQwYC2vMoUn4jOXU+i4id3V4IsWteAJ
+         SJapz9ZvnbRYx76dBImxzsAjaGnZmMhaIZIKMS0paSMkXJM38JsIQKxHj2bfnhkm0n+e
+         QCCmaxktNS4iKmtjPUy1wZnW97Ki0Pl+gNCkcukfd7hXDklUADkQfIfLyHTMzqulL8vN
+         LbkA==
+X-Forwarded-Encrypted: i=1; AJvYcCUPuVhT2la75JJRXSpmzdHkyfhOql5WwZGuPYUccy9kZv/dgXFZu5mfJ/86uX3usJHShoimI+eH7uAPAhs=@vger.kernel.org, AJvYcCV1wbZS+rErf+raiV+z2uRqFeBHmd2SjGnKBD2xAhCjh51dtgNryluWkiu9Olkp+WsQ8HaK8wfQ1xFf+BJt6T0=@vger.kernel.org, AJvYcCWtTbi5yZA71A8JnBLlLmnRPs/bvu/RhxpRD9bm6kCco5+5HdLtpQNvpxrC2/uLkn3fLo4U0eWFFoTg6Ume@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGBKO847L24JsBPStBEQWmCakuM2rwZZQGU7Wo9X/EWo5xcpEU
+	mDmQGu7E3pO5IURvpQMuAmn7boVqpLlnv5SNoYq0eFsP8WFmrdDDe8pZQBTDRaDwvVASzxlv5X9
+	kZiZABnEF1DWPDBNlwrz2EAydFFY=
+X-Google-Smtp-Source: AGHT+IHfgp+RekBe+a33lrGFkLogwB1v4IcRvG8U0x5B9hHpF2h7NSFqzr4UUZhb7LVoGtsHegM+6k0gaj2E+Gka+m4=
+X-Received: by 2002:a05:6a21:32a0:b0:1d8:a203:95a4 with SMTP id
+ adf61e73a8af0-1d8bcf12481mr1225502637.5.1728629950384; Thu, 10 Oct 2024
+ 23:59:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+References: <20241010-icall-detect-vers-v1-0-8f114956aa88@google.com>
+ <20241010-icall-detect-vers-v1-1-8f114956aa88@google.com> <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
+In-Reply-To: <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 11 Oct 2024 08:58:57 +0200
+Message-ID: <CANiq72km-hEBvt-T9CEp6kLJMvemcW99g1hd-E62Xi3H+NX2RA@mail.gmail.com>
+Subject: Re: [PATCH 1/2] kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+	llvm@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Zi Yan <ziy@nvidia.com> writes:
+On Fri, Oct 11, 2024 at 4:04=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
+rg> wrote:
+>
+> Please notice there is no reason to process
+> rustc_version and rustc_llvm_version in the same script
+> because they are completely independent.
+> It even invokes "rustc --version" twice.
+>
+> If you implement it this way, you do not need to
+> touch scripts/rustc-version.sh at all.
+>
+> If both rustc_version and rustc_llvm_version were
+> retrieved from the single invocation of "rustc --version",
+> I would agree "OK, it makes sense to implement it in the
+> same script". But, it isn't.
 
-[snip]
+Yeah, I think we can do that: one is `--verbose`, the other isn't, but
+the verbose one should (hopefully) always contain the non-verbose as
+the first line. Since it is in the first line, we can directly do the
+`set` without having to "extract" that line -- something like [1]
+below?
 
-> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
-> index 930a591b9b61..4b15224842e1 100644
-> --- a/include/linux/highmem.h
-> +++ b/include/linux/highmem.h
-> @@ -220,18 +220,8 @@ static inline void clear_user_highpage(struct page *page, unsigned long vaddr)
->   * Return: A folio containing one allocated and zeroed page or NULL if
->   * we are out of memory.
->   */
-> -static inline
-> -struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
-> -				   unsigned long vaddr)
-> -{
-> -	struct folio *folio;
-> -
-> -	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr, false);
-> -	if (folio)
-> -		clear_user_highpage(&folio->page, vaddr);
-> -
-> -	return folio;
-> -}
-> +#define vma_alloc_zeroed_movable_folio(vma, vaddr) \
-> +	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr, false)
+Independent scripts would be simpler, so that sounds good too.
 
-Although just one line, I still prefer to use inline function instead of
-macro here.  Not strong opinion.
+By the way, this is a prerequisite for an actual fix we need, so I
+would like to send it as part of a `rust-fixes` PR -- your Ack would
+be great!
 
->  #endif
+Cheers,
+Miguel
 
-[snip]
+[1]
 
---
-Best Regards,
-Huang, Ying
+if ! output=3D$("$@" --version --verbose 2>/dev/null); then
+    echo 0 0
+    exit 1
+fi
+
+set -- $output
+rustc_version=3D$(get_rustc_canonical_version $2)
+
+if ! output=3D$(echo "$output" | grep ^LLVM); then
+    echo $rustc_version 0
+    exit 1
+fi
+
+set -- $output
+echo $rustc_version $(get_llvm_canonical_version $3)
 
