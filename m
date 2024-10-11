@@ -1,117 +1,131 @@
-Return-Path: <linux-kernel+bounces-361069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E7D199A302
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8249799A305
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:54:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A90E6B2322D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:51:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247A01F2381B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45FD5216A11;
-	Fri, 11 Oct 2024 11:51:26 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A258D216438;
+	Fri, 11 Oct 2024 11:54:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNuOc83n"
+Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 751E620A5E3
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:51:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B450920ADD3;
+	Fri, 11 Oct 2024 11:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728647485; cv=none; b=EMNWx6fX91P+oatbQMUkLVW6D401G4YLbAywd8x8be+RBdzsa+KQ82dtD+F3qbfA+Pfc4l2IVdXZV/d1xFy99a7pT7bI2/ZTQJBHH+R8TfUEZ3Od7zKXQLlFZwsTy/7mPOR2pJE9SMtLG7hFAQQecZayZT8d9I97bEdc3y7pmZ0=
+	t=1728647684; cv=none; b=vGXseV2mCkswmRdWhzemNCk6OnACdnhlrC8l+I9Dy236Muxss/y8m1kx05HNVMktIjR4ndwi5CYV6dklt4AMsSUa0KEKcvvFoFyEyat226M9vwDivWpQfc15Z2KSINXPEHErSTbgEuLYbZ2oJF8CfbDdYiXMxlpp3Sn9QxIOa6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728647485; c=relaxed/simple;
-	bh=9O7BztCHO3KtV0SdChqcEH5ondx/3hwV164O7Oa05NA=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=tDxhJncjuysb4nKhH3gSTj67JHNocT3N7qPjp+MdVujT2rOQos2TMuwMiy5Z3d04LmnaSYJzpTCV5iUlpfQ0w7VpCSRl9K7IP4AYWVGrB4vCSx1OcTWsPEzr71Bk6TmlhJPLlYkl1Jfw9rUCLT1R3/xuyuxsTFISDoeX3FQuaQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a392e9a8a4so23015965ab.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:51:24 -0700 (PDT)
+	s=arc-20240116; t=1728647684; c=relaxed/simple;
+	bh=BH4DbbmMQUbDmGpkllQVRVVJhPfwORuNLGg9TXD6Tiw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=cgPsfWg30Nf4Ka6pgcOkIdKkKjLaDUX/UJUDZzWYZhXbxiXwQ/7TrVQVacGLm7Izd28fayrj4Le9lr7/cyGKNWKXarBvXExljW1VTTesTBkZ1XrC6HOQrbHMIPNJUYWVTAquaFccRWU8S5l6PFGQXQvY81alEfh0kqocxmaAgDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNuOc83n; arc=none smtp.client-ip=209.85.214.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c767a9c50so16591935ad.1;
+        Fri, 11 Oct 2024 04:54:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728647682; x=1729252482; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=n0M9rAFbcV+izFFMOP8m5z+SO85I3Ch0rIJacPyB8ek=;
+        b=DNuOc83nCI3Rxq7BamMp5N1ixePQMB2MrOF4m9u9pc2oemqzz8zAp/qhoDNhYSTCll
+         lGnzGpAdPW8+/CBWhzEM8LqazSEp0YwdsSKtucWkPsbfIWVlfgUPJI8FeJ//MgzlOtHL
+         HDfTwtuSlHKgn4uSJZHLwmnLJH3ZKxEvxfvULbHGWeAQNdWAcsWt9T7x+Nz+inNq/8cR
+         E5NSjITT2zEpAy6+t6Zsc3JTKktm4LqSY7pIEVGeFIBBhrM92HMoE93zi6STeSpM4yBH
+         jMXsFbLJXkV07r3zz7gAnJRWB+zVpDHhcdhTzXeenmwS0036BqfAT77IFSsvEjxK0UPO
+         RMEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728647484; x=1729252284;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=BEDDXhRBsKWXoiInxqiJ4ScpciEaFalrxT16qh3qfqo=;
-        b=DfiUbtF87DVL0qL2eUpcnh1FngeKrWJkeV6EB+A/MTd5CVO4hKK3Zqa+jwKJ6CG/lo
-         sXm6cHI3Cup8D+KKe389rNUqdI0hqLpsuKCBY9frAw4LMZxZgyLrEEZ0wNyGALy906O3
-         dwu+GurHXXYrqP0wVZNm6XxHwG0HESi0OZJgRk+Dm1F/WQIk6fXgdKi+JK3L75r+fNxl
-         MG3o9Fj5lwB5JQN9alAT4WcSQBn/oAx4S3XzE23ebnT6Vbb1GlMSO1pB7Lcv69iUH+wG
-         ZE3Ccnbwm+4rY5ynX687g3ntLL4663eYZ+D0/cFP60/otIF7EeU2W7Hg3kgU5j7RTIWA
-         XXVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUMHW30hl9N/QGYkj6U49tTWbhA4vW1MLYdWXNyaKGJtKT2JpcsAMB89gVNfBWpAViCfwT8DRIPEVLzanM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxq2yAGYAo9twucT4FzjEPr8Yuleejk45TFIF5G5QpgQk2H8zc8
-	EBPLO0U+PoYmJ14dwm7YT+InUGAv+rFO9j455Im90agZ5DItSqM4j7UbYJDiwN29qlQcJ8MTT+S
-	DNNpUUoBSJTS7gSFoA8vzZ/+QUDm6tE4mwyYCTQN5X28TZbzBt++M9sY=
-X-Google-Smtp-Source: AGHT+IE1Dp7Kc13iub8S0zyHAHgCX/IWIH+GiwadtRoRAvR+gfvYitKqBvz+V+HKCxTswK8eKcjpCbJATswT8QsabgdhtCnXwg3S
+        d=1e100.net; s=20230601; t=1728647682; x=1729252482;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=n0M9rAFbcV+izFFMOP8m5z+SO85I3Ch0rIJacPyB8ek=;
+        b=NIfYvKjSYp1rROxFHlDrnOifqyKh2TYc2h1cvdTdKypf/DcKu+SqoLV1Sl5QVycOIT
+         HoV+UQPV546dAc2s/cjqSMumuy+J24W97a7vKipwHZOdTJsPbD0sISucHskSCuibJ4bc
+         wOVQGcEFbLDc/sHwA8dfGtZAuvvvUmuwsPS9wai0SNiKFvvMQPB4cb4NNn3kHtQam1rz
+         DuTvNKuN13QvX/W8COkzV/UoIuyQu8WXH7+CoHn1iSkoxRygEbe+S6Y/nz9a69SiD4H/
+         SksRarsyQKj1Ehv7FiRqe2KWR6w4ABzf9yquI5RKRhv8wwFjMBoJniAVLLmM8KZCLbW4
+         5slg==
+X-Forwarded-Encrypted: i=1; AJvYcCWRByVI1BkUj2z0KGJK7gmRkhC4oe6wTB0nWLtxJGXG+dmXDKvjGubwOmmwsVWi0IV2azl+8N04T9c=@vger.kernel.org, AJvYcCX/wg7ZDCDyEs4p6cIIzmobOuDw3zplBn0GtV+Jd0sT5bZ4OpZ4hoGzS3dHtqtHG1eyV8yT/4vyaxrtBJWv@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywxv2SjtTU3Xflgpe3K+RVb66parTPITJlt22Vyz6vqV4JjpbIo
+	/zwoAWyTY1FEeEPYlObkIuIgHlVDR+Fw+WbFTyTN7CFrwAD10cQzgURXreFW
+X-Google-Smtp-Source: AGHT+IFWWVOZXb6Mget6b+bWzMDShsv+T0KKOi2cgOJQlaJd94yNCHHf+KVc/uLTiV9ebyDumvxcIQ==
+X-Received: by 2002:a17:903:191:b0:20b:9c8c:e9f3 with SMTP id d9443c01a7336-20ca1458e3amr31858825ad.14.1728647681927;
+        Fri, 11 Oct 2024 04:54:41 -0700 (PDT)
+Received: from ernestox.. (2001-b400-e2af-f494-1c09-712f-68dc-c3fd.emome-ip6.hinet.net. [2001:b400:e2af:f494:1c09:712f:68dc:c3fd])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c8bad32a0sm22298575ad.11.2024.10.11.04.54.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 04:54:41 -0700 (PDT)
+From: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
+To: 
+Cc: linux-kernel-mentees@lists.linuxfoundation.org,
+	ricardo@marliere.net,
+	skhan@linuxfoundation.org,
+	0xff07@gmail.com,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Angel Iglesias <ang.iglesiasg@gmail.com>,
+	Adam Rizkalla <ajarizzo@gmail.com>,
+	linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev
+Subject: [PATCH v2] iio: Fix uninitialized variable
+Date: Fri, 11 Oct 2024 19:52:24 +0800
+Message-ID: <20241011115334.367736-1-0xff07@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241011093752.30685-1-0xff07@gmail.com>
+References: <20241011093752.30685-1-0xff07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:17c9:b0:3a0:bd91:3842 with SMTP id
- e9e14a558f8ab-3a3b5fe9b56mr15811205ab.24.1728647483675; Fri, 11 Oct 2024
- 04:51:23 -0700 (PDT)
-Date: Fri, 11 Oct 2024 04:51:23 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6709113b.050a0220.4cbc0.0003.GAE@google.com>
-Subject: [syzbot] [usb?] WARNING: ODEBUG bug in corrupted (3)
-From: syzbot <syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	tglx@linutronix.de
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+clang found that the "offset" in bmp580_trigger_handler doesn't get
+initialized before access. Add proper initialization to this variable.
 
-syzbot found the following issue on:
-
-HEAD commit:    4a9fe2a8ac53 dt-bindings: usb: dwc3-imx8mp: add compatible..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=10b02707980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=90f31ac02b7ae5e8b578
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1597a7d0580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/883c5319cb52/disk-4a9fe2a8.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/caf4421ed2ef/vmlinux-4a9fe2a8.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d8e3beb01d49/bzImage-4a9fe2a8.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-ODEBUG: free active (active state 0) object: ffff88811dc037c8 object type: timer_list hint: rtl_ips_nic_off_wq_callback+0x0/0x680 drivers/net/wireless/realtek/rtlwifi/ps.c:283
-WARNING: CPU: 1 PID: 5503 at lib/debugobjects.c:514 debug_print_object+0x1a3/0x2b0 lib/debugobjects.c:514
-
+Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
+---
+Change in v2:
+- Make value initialization immediate before its first use.
+- Link to v1: https://lore.kernel.org/all/20241011093752.30685-1-0xff07@gmail.com/
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+ drivers/iio/pressure/bmp280-core.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+index f4df222ed0c3..682329f81886 100644
+--- a/drivers/iio/pressure/bmp280-core.c
++++ b/drivers/iio/pressure/bmp280-core.c
+@@ -2222,6 +2222,8 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
+ 		goto out;
+ 	}
+ 
++	offset = 0;
++
+ 	/* Pressure calculations */
+ 	memcpy(&data->sensor_data[offset], &data->buf[3], 3);
+ 
+-- 
+2.43.0
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
