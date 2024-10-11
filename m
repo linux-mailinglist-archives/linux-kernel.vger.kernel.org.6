@@ -1,149 +1,159 @@
-Return-Path: <linux-kernel+bounces-360942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360943-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C72A599A18B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:38:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0D2199A18D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:38:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D91AF1C21357
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:38:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73396284804
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:38:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F64B215011;
-	Fri, 11 Oct 2024 10:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889392141B7;
+	Fri, 11 Oct 2024 10:37:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KcVq3gfx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="WUgf2/bb"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5051212F10;
-	Fri, 11 Oct 2024 10:37:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 420352141A6;
+	Fri, 11 Oct 2024 10:37:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643027; cv=none; b=rBn+UlFTmGdiP4RcEmIUGpJvis5bxGSd7iCuqwHsYIN3fKrTytBvGQz+4TtK/ssaVKAI9DZMaqEj4iKXSEfVtIhkb5iasUY8lMPxgdNPRpn+ITRZRAyKs8XDaRQ2jPnC6/sal2rsy6oJ/kV2fZrPlujk/TdV5eYBvGiAN1kgLhU=
+	t=1728643053; cv=none; b=iztNM3uhDmuoF8kmfdgX2q0FVidUZKPl+bnDnIZeegoKAlNwyeYSr/vQhGntJzsTQTpZKuS3lYGfNXr5XcWMeYJ9o/KIsJAhxteaxdQ7OH1DSfND66hOi0w6g3hsunkzrFQOAFQAbihA/+m+A3hyLRo56+KbQFYiM8dBTvVygwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643027; c=relaxed/simple;
-	bh=XtgtB9U5UItDpfn9p1vNq1wTCwTC7BdxgrxBwagW/nE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TxKLFXfxTxMsW/sBa8iF3ktWjB7glepkHJIfriOyLj/deNg3/DIybeqVx4CCwTcIC0smOLzspbhyug5Kzhqxzop7DJ6B6c9ut4h3+w5CYt0RwQCojqEx76D9fVdaSPlQEwcNzOBninSvJDnCD03lhA1Kpu5PVL3cuvsL7QrNCfY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KcVq3gfx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6DB43C4CECF;
-	Fri, 11 Oct 2024 10:37:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728643027;
-	bh=XtgtB9U5UItDpfn9p1vNq1wTCwTC7BdxgrxBwagW/nE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KcVq3gfxDwbv137hjR3zWqJBbacsY+73ETuXxYW1l4b1LVOHxPT4ENIN70yj+bgl7
-	 6LWG2N4u8cWJqM2LGwnhcHk3eFaXHKSTS5fM6f7tyaGC1OpXuPSdgDCtVgKYkZufyR
-	 e3Rh1r+91R9qtK5+YWOZsJ9ypy5qakHpdn84m8GZXeeZpa1Kx9q8CmdqpiR4hbt9kJ
-	 XgX91YGBqnu5JhxFsDVblKJyp+f6KIkuf6gKDR79SdW02055nlmX2/vwfeSIr5EFp6
-	 1b3LdOrvS6AJGPJBMngl6wUTPfXurd8eXgALlCGVViz9Dz7uJ/gKVqzYnablOrTSsB
-	 NN3KpPJvpms8w==
-Message-ID: <2d2382e1-2c5b-4780-a670-59dee524ca23@kernel.org>
-Date: Fri, 11 Oct 2024 13:37:02 +0300
+	s=arc-20240116; t=1728643053; c=relaxed/simple;
+	bh=TNWBq93GF4E1/XgY52ihtX4etSNNjRQUHT+/2cQ6Lsc=;
+	h=From:To:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=m98TMUb2Bl/82vVANtXOmCzNW0wqURMwmxDslViutfFRpabyTs+PRjbTZBx741wYd0hrSEs6wLTh+BpI/xADU7ktgt8mnhOWl/aJnIELk2ejedWepEaHL0IR/OeRX+ibvMsNPAlUSdepuIenid0tlwuwnmsO43Vp3re7yKTl9rk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=WUgf2/bb; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1728643048;
+	bh=eOi3s+J0p0Rr7NAS8srzm60cAmwu+YPFf/AT7DlY+X8=;
+	h=From:To:Subject:In-Reply-To:References:Date:From;
+	b=WUgf2/bb4LJatYWiCY0XLpmV+rffzesMAMwfAp+YUuDAt+gw8tmvFrHHligqdjw+P
+	 1y6Ojs9+pdHT4uZkufk1le3fg1mT7JbaNGFbHUeyO4yAAKUcnNoJMPw3Rv/+R1Lhit
+	 EuyLZ030ahnxk2KmT0gobRrhlZfulQpeknqSX6Kgksztt6dVQuH041aS6/lqN7B9Aw
+	 Kl8bv+fmXaiKhELzxjBrbqNFuYazHeuvGSdcvEy8+B4d3PKudLDy/V8rG79rwHvA8M
+	 bOPe4KnsdWkJ5xS1/Aiwci1Kg3ermDpe0crFL/nuJXEOWZkZUwpDubni3AuBmYHsxs
+	 V9tVmx9/1XSsA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XQ33V63y8z4xN6;
+	Fri, 11 Oct 2024 21:37:26 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Vishal Chourasia <vishalc@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ Herbert Xu <herbert@gondor.apana.org.au>, "David S. Miller"
+ <davem@davemloft.net>, Nicholas Piggin <npiggin@gmail.com>, Christophe
+ Leroy <christophe.leroy@csgroup.eu>, Naveen N Rao <naveen@kernel.org>,
+ Madhavan Srinivasan <maddy@linux.ibm.com>, linux-crypto@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: drivers/nx: Invalid wait context issue when rebooting
+In-Reply-To: <ZwjjXJ5UtZ28FH6s@linux.ibm.com>
+References: <ZwjjXJ5UtZ28FH6s@linux.ibm.com>
+Date: Fri, 11 Oct 2024 21:37:27 +1100
+Message-ID: <87wmif53iw.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/4] ARM: dts: omap: omap4-epson-embt2ws: add unknown
- gpio outputs
-To: Andreas Kemnade <andreas@kemnade.info>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
- linux-omap@vger.kernel.org, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- tony@atomide.com, devicetree@vger.kernel.org, khilman@baylibre.com,
- Conor Dooley <conor+dt@kernel.org>, aaro.koskinen@iki.fi
-References: <20241010122957.85164-1-andreas@kemnade.info>
- <20241010122957.85164-4-andreas@kemnade.info>
- <7cde7090-639b-4115-8240-88a63c760d93@kernel.org>
- <20241011111212.1b935eb8@akair>
-Content-Language: en-US
-From: Roger Quadros <rogerq@kernel.org>
-In-Reply-To: <20241011111212.1b935eb8@akair>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
+Vishal Chourasia <vishalc@linux.ibm.com> writes:
+> Hi,
+> I am getting Invalid wait context warning printed when rebooting lpar
+>
+> kexec/61926 is trying to acquire `of_reconfig_chain.rwsem` while holding
+> spinlock `devdata_mutex`
+>
+> Note: Name of the spinlock is misleading.
 
+Oof, yeah let's rename that to devdata_spinlock at least.
 
-On 11/10/2024 12:12, Andreas Kemnade wrote:
-> Am Thu, 10 Oct 2024 23:15:51 +0300
-> schrieb Roger Quadros <rogerq@kernel.org>:
-> 
->> On 10/10/2024 15:29, Andreas Kemnade wrote:
->>> Set them to the state seen in a running system, initialized
->>> by vendor u-boot or kernel. Add line names where they are defined
->>> in the vendor kernel.
->>> gpio15 resets something in the display, otherwise meaning of the
->>> gpios is not known.
->>>
->>> Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
->>> ---
->>>  .../boot/dts/ti/omap/omap4-epson-embt2ws.dts  | 92
->>> +++++++++++++++++++ 1 file changed, 92 insertions(+)
->>>
->>> diff --git a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts
->>> b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts index
->>> 7684868a2eed..983a21d95db3 100644 ---
->>> a/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts +++
->>> b/arch/arm/boot/dts/ti/omap/omap4-epson-embt2ws.dts @@ -115,6
->>> +115,73 @@ wl12xx_vmmc: wl12xx-vmmc { };
->>>  };
->>>  
->>> +&gpio1 {
->>> +	pinctrl-names = "default";
->>> +	pinctrl-0 = <&gpio1_hog_pins &gpio1wk_hog_pins>;
->>> +
->>> +	lb-reset-hog {
->>> +		gpio-hog;
->>> +		gpios = <9 GPIO_ACTIVE_HIGH>;
->>> +		output-low;
->>> +		line-name = "lb_reset";
->>> +	};
->>> +
->>> +	power-en-hog {
->>> +		gpio-hog;
->>> +		gpios = <10 GPIO_ACTIVE_HIGH>;
->>> +		output-high;
->>> +		line-name = "power_en";
->>> +	};  
->>
->> As GPIO 9 and 10 come form the Wake-up domain, my guess is 
->> they are used as wake-up input source. Reset button / Power off/wake
->> button? From pinmux they seem to be Input. So why do we need to force
->> them to a certain output state?
-> 
-> Interesting reasoning and good to bring up those thoughts.
-> 
-> Vendor v3.0 kernel:
-> shell@android:/sys/kernel/debug # cat gpio 
-> GPIOs 0-31, gpio:
-> [...]
->  gpio-9   (gpio_lb_reset       ) out lo
->  gpio-10  (gpio_power_en       ) out hi
-> 
-> So they are configured as output.
-> There is one power button. It can be handled via the TWL6032 (driver
-> not upstreamed yet). There is also one reset button resetting the SoC.
-> 
-> I do not see a reason why to deviate from vendor kernel.
+> In my case, I compiled a new vmlinux file and loaded it into the running
+> kernel using `kexec -l` and then hit `reboot`
+>
+> dmesg:
+> ------
+>
+> [ BUG: Invalid wait context ]
+> 6.11.0-test2-10547-g684a64bf32b6-dirty #79 Not tainted
 
-OK.
+Is that v6.11 plus ~10,000 patches? O_o
 
->  
->> Can you please confirm if everything works as usual without this hog?
->>
-> Well, if everything is working well, I would agree to optimize
-> these things. But not now. There are races in the boot process
-> and I would like to rule out that any random or strange behavior has
-> anything to do with some gpio setting.
-> 
-> Regards,
-> Andreas
+Ah no, 684a64bf32b6 is roughly v6.12-rc1. Maybe if you fetch tags into
+your tree you will get a more sensible version string?
 
--- 
-cheers,
--roger
+Could also be good to try v6.12-rc2.
+
+> -----------------------------
+> kexec/61926 is trying to lock:
+> c000000002d8b590 ((of_reconfig_chain).rwsem){++++}-{4:4}, at: blocking_notifier_chain_unregister+0x44/0xa0
+> other info that might help us debug this:
+> context-{5:5}
+> 4 locks held by kexec/61926:
+>  #0: c000000002926c70 (system_transition_mutex){+.+.}-{4:4}, at: __do_sys_reboot+0xf8/0x2e0
+>  #1: c00000000291af30 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x160/0x310
+>  #2: c000000051011938 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x174/0x310
+>  #3: c000000002d88070 (devdata_mutex){....}-{3:3}, at: nx842_remove+0xac/0x1bc
+  
+That's pretty conclusive.
+
+I don't understand why you're the first person to see this. I can't see
+that any of the relevant code has changed recently. Unless something in
+lockdep itself changed?
+
+Did you just start seeing this on recent kernels? Can you bisect?
+
+> stack backtrace:
+> CPU: 2 UID: 0 PID: 61926 Comm: kexec Not tainted 6.11.0-test2-10547-g684a64bf32b6-dirty #79
+> Hardware name: IBM,9080-HEX POWER10 (architected) 0x800200 0xf000006 of:IBM,FW1060.00 (NH1060_012) hv:phyp pSeries
+> Call Trace:
+> [c0000000bb577400] [c000000001239704] dump_stack_lvl+0xc8/0x130 (unreliable)
+> [c0000000bb577440] [c000000000248398] __lock_acquire+0xb68/0xf00
+> [c0000000bb577550] [c000000000248820] lock_acquire.part.0+0xf0/0x2a0
+> [c0000000bb577670] [c00000000127faa0] down_write+0x70/0x1e0
+> [c0000000bb5776b0] [c0000000001acea4] blocking_notifier_chain_unregister+0x44/0xa0
+> [c0000000bb5776e0] [c000000000e2312c] of_reconfig_notifier_unregister+0x2c/0x40
+> [c0000000bb577700] [c000000000ded24c] nx842_remove+0x148/0x1bc
+> [c0000000bb577790] [c00000000011a114] vio_bus_remove+0x54/0xc0
+> [c0000000bb5777c0] [c000000000c1a44c] device_shutdown+0x20c/0x310
+> [c0000000bb577850] [c0000000001b0ab4] kernel_restart_prepare+0x54/0x70
+> [c0000000bb577870] [c000000000308718] kernel_kexec+0xa8/0x110
+> [c0000000bb5778e0] [c0000000001b1144] __do_sys_reboot+0x214/0x2e0
+> [c0000000bb577a40] [c000000000032f98] system_call_exception+0x148/0x310
+> [c0000000bb577e50] [c00000000000cedc] system_call_vectored_common+0x15c/0x2ec
+
+I don't see why of_reconfig_notifier_unregister() needs to be called
+with the devdata_mutext held, but I haven't looked that closely at it.
+
+So the change below might work.
+
+cheers
+
+diff --git a/drivers/crypto/nx/nx-common-pseries.c b/drivers/crypto/nx/nx-common-pseries.c
+index 35f2d0d8507e..a2050c5fb11d 100644
+--- a/drivers/crypto/nx/nx-common-pseries.c
++++ b/drivers/crypto/nx/nx-common-pseries.c
+@@ -1122,10 +1122,11 @@ static void nx842_remove(struct vio_dev *viodev)
+ 
+ 	crypto_unregister_alg(&nx842_pseries_alg);
+ 
++	of_reconfig_notifier_unregister(&nx842_of_nb);
++
+ 	spin_lock_irqsave(&devdata_mutex, flags);
+ 	old_devdata = rcu_dereference_check(devdata,
+ 			lockdep_is_held(&devdata_mutex));
+-	of_reconfig_notifier_unregister(&nx842_of_nb);
+ 	RCU_INIT_POINTER(devdata, NULL);
+ 	spin_unlock_irqrestore(&devdata_mutex, flags);
+ 	synchronize_rcu();
+
 
