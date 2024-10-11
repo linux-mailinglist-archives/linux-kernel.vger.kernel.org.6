@@ -1,178 +1,452 @@
-Return-Path: <linux-kernel+bounces-361515-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361516-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B099899A929
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:52:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32F799A92C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:52:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C661C21CF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:52:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44AA4B2483B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C0019E993;
-	Fri, 11 Oct 2024 16:52:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4CB19E98E;
+	Fri, 11 Oct 2024 16:52:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1WILygnj"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fg5ssYzW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E7818027
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B3B198A30;
+	Fri, 11 Oct 2024 16:52:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728665544; cv=none; b=d2k3sc9CGRr9omeXLuakYSfg4m5p/jIrM/O3kQNSYXcaCw5wGvtY+Rp7nlEk0yio9SD1AZJHFwu7pGnUD8ghLZxYXy5/hrkqEr6XKtvbOkoOaYQ2I7MR/4mZE1mYsToWboX/StHsycZPVLp2lHok0O0OS4Ke8rWwFN4cZL/sgno=
+	t=1728665562; cv=none; b=QytNLLqWoCWsc79MXo05xPUXEeaQrL/inzEFiSoWwpSTt175Y7dZIDiBHbOiKHP0b5kMRJNd9BRcY0piXScS5+JGbemsxcFReoiEJsHtQObS2Wq/yB53FH/wbM8ts1OdGBfODxmVR1VSoftNWQlLsP1Xx4vd2KyuzsOk9Bumt+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728665544; c=relaxed/simple;
-	bh=NthClo5AnxaarNMb5Qh+0j2rMjzn/l80tfd+wgQu3+Y=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qqHdDNvaG8Jsy4gzCp3A6BSkUqU116Pik6bUOdSubMbXCg450//T7BpCf3uknnO59TKcAxq/EaWbxk/OuVyPEXK9I1HsDB1UxB5lbXojlTNKIvKaKnZaopOsSQzgNEj34OBZPW+VevjCG00DPV9rLIZzmmyh39tVTjHPQ6rmmxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1WILygnj; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca4877690so2285ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:52:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728665542; x=1729270342; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VPimW3AOtehNUkqhF51LIDldD47EJvyRRoaWLoxR7ic=;
-        b=1WILygnj/8FcptDemOF6FrvIiNcppqQ12lHfVBMZK73MlZqB1FOkhn7DyFdkVvH9gH
-         7xlZbcPNcFj2c20NoqU/Ju6tpYyfgsoKr5/b1cgvcGDGudC27ps4CUu2JLLeDoFEdyNg
-         U6Vm2wLU9c7V1BSDWSVi+zF0L6AF75Hjc9HvRcNU11tZypbmys2o+qhStv/A+ahUA2Du
-         O/JF3NyodWwoQ8lGB8woQahgAcXrueA/UkRQnHB18c6qOFeMy5xffroY+JdgQEmTgQJJ
-         CdOOHNeE1gW5lAsCsV1o0F2zkxtAIcR438+8VckGcV4pubsGV8gHTGfeRkt+qtLZ6mpe
-         SlQQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728665542; x=1729270342;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VPimW3AOtehNUkqhF51LIDldD47EJvyRRoaWLoxR7ic=;
-        b=PnBSi2cels/YCrDKhBCc6hP/Q4nH0568MmKfwqcabyqhMXFwGsjYiaSDJeTAM0rGiV
-         j+3EioUchk1bSsZyJrCGRPDjOctZLUcysAqHxyYLrdti7XVsNZqMp+jGgYo9C/ThDPAh
-         vltQjmDyw39uy5B3IjOG/yfTrTJaDuRr0c2w4HfY4BsIo+lqXqHbcNI3w1xMgYF3XFC7
-         Ib/GlN/pCuljtZc1zVY+4Dv3cHIvQLVPDPKwAoU99F4PDGLtD0r5S9bpnzE6RfxkloCw
-         Oxci0Yakafr0Q0QpaHrR9a2lx8ZNdiQ3RiNGCAOuBISkXWU5Qr2CnG9qZC6K03XoT+sV
-         W4hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWzyJSIaBCNo0EbQPy7/ejn7Uahaj+4xMCElvsULs24aBe/JJ6OHxA9x6QjwXPM3iCyVhZeEC4N1B9QS38=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzj/n9U8brxWcXMImpx4yvT1qurfEuZRFEbIEdkxjxS6N+g64F9
-	CD4wmIUPPGMduYrRp6zFkoV4LBfrJL09qEK/ImlHbU7YAgs4fmvp7KA++foqvi6oP8yVh8/o9Av
-	J3yzztH7U7UOPjx6HN1mLMM3Kc8t1dVRcM5y1
-X-Google-Smtp-Source: AGHT+IH5lpLxRSv+Ef1lv9y8MK66pwPMKTVD9AsACrrkYKgXn/FVOuvAN7BqzEM0cVTwMVYTx3KoEdw8CA/zH6PY4TU=
-X-Received: by 2002:a17:902:e802:b0:20b:bf5a:c8 with SMTP id
- d9443c01a7336-20c9ee6eda0mr3316825ad.10.1728665542180; Fri, 11 Oct 2024
- 09:52:22 -0700 (PDT)
+	s=arc-20240116; t=1728665562; c=relaxed/simple;
+	bh=NLWTkqQBlZ5fQp6FKts9KKvEidNRUHCfy8wl2aWXoA4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XdatjeNiMo2t521xLRWtvJa2PqGOgZjZGIpQMTygv/xY68Sboc/RUCQhaG5CHjH7KGe1e4hry7nONLaJqpCQkh7ltMyK5w7BSns/m/+xUn17lyvyGLX3JuxBctUnuwR0AFk1oSqFbCLmzFH5vXvGvwNzKy+jS2MkUSPigd6sRmM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fg5ssYzW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BD5qBM027261;
+	Fri, 11 Oct 2024 16:52:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	YdTapo4S6feBiVPiCSeV3MciWWfF9x6DOTd25x31i+s=; b=fg5ssYzWNdH+cHD5
+	pkp2DBrsWsxvN2BeVmJ7u4gPHF1XcnVeJHvQqsyRWojdGvn0aoovt34wr1hIf84/
+	YlhhUWpTU5S1Ka4xHVVt/VXeBByE5KcQowkfYcO6hIyZSMAiwbE37dmrvTa9P2x+
+	28Z1XJYZlMPddlOBmIxg1bCfAQpDZX1Fryerdebl6a9gwl+gLEmTkbZqep/qBvHV
+	ADP9JVmp5CtjsPqQXsfIHz9YC1eJU0E42PxZHJIreogpVnnrsMZgbPCPWAKKW59d
+	+TdgWeJQjTwii6R/IuLxiexvhKT3+tu7+TU8gH0W5OQuU8aOC1BF57GQ0mh262n3
+	nioJ0A==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426fj6v1kn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 16:52:31 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BGqUVo031421
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 16:52:30 GMT
+Received: from [10.110.78.155] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Oct
+ 2024 09:52:29 -0700
+Message-ID: <6d67c2c6-819b-481a-8cc9-e24ef8f6c142@quicinc.com>
+Date: Fri, 11 Oct 2024 09:52:19 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011073559.431302-1-irogers@google.com> <20241011073559.431302-6-irogers@google.com>
- <c32f8c46-3895-49e0-a837-98859345039b@linaro.org> <affbe9b6-4d27-47d7-8767-9531f92b3d32@linaro.org>
-In-Reply-To: <affbe9b6-4d27-47d7-8767-9531f92b3d32@linaro.org>
-From: Ian Rogers <irogers@google.com>
-Date: Fri, 11 Oct 2024 09:52:10 -0700
-Message-ID: <CAP-5=fWep2dV4-1tzVDQ8z-Ud7tmnw4JBKqkpLoN=nRbbMpxVg@mail.gmail.com>
-Subject: Re: [PATCH v1 5/8] perf test: Tag parallel failing shell tests with "(exclusive)"
-To: James Clark <james.clark@linaro.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, 
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
-	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
-	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
-	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
-	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
-	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
-	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] drm/panel: samsung-s6e88a0-ams427ap24: Add initial
+ driver
+To: Jakob Hauser <jahau@rocketmail.com>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <dri-devel@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        <~postmarketos/upstreaming@lists.sr.ht>
+References: <cover.1728582727.git.jahau@rocketmail.com>
+ <d36d0d152c509b78d02f9f7adbea665c0c863446.1728582727.git.jahau@rocketmail.com>
+Content-Language: en-US
+From: Jessica Zhang <quic_jesszhan@quicinc.com>
+In-Reply-To: <d36d0d152c509b78d02f9f7adbea665c0c863446.1728582727.git.jahau@rocketmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Ycvy_0ng3J6UYrpz85-OCgtoylUA1SbQ
+X-Proofpoint-ORIG-GUID: Ycvy_0ng3J6UYrpz85-OCgtoylUA1SbQ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 mlxlogscore=999
+ lowpriorityscore=0 spamscore=0 malwarescore=0 adultscore=0 suspectscore=0
+ clxscore=1011 mlxscore=0 impostorscore=0 priorityscore=1501 phishscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410110117
 
-On Fri, Oct 11, 2024 at 3:29=E2=80=AFAM James Clark <james.clark@linaro.org=
-> wrote:
->
->
->
-> On 11/10/2024 11:01 am, James Clark wrote:
-> >
-> >
-> > On 11/10/2024 8:35 am, Ian Rogers wrote:
-> >> Some shell tests compete for resources and so can't run with other
-> >> tests, tag such tests.  The "(exclusive)" stems from shared/exclusive
-> >> to describe how the tests run as if holding a lock.
-> >>
-> >> Signed-off-by: Ian Rogers <irogers@google.com>
-> >> ---
-> >>   tools/perf/tests/shell/perftool-testsuite_report.sh | 2 +-
-> >>   tools/perf/tests/shell/record.sh                    | 2 +-
-> >>   tools/perf/tests/shell/record_lbr.sh                | 2 +-
-> >>   tools/perf/tests/shell/record_offcpu.sh             | 2 +-
-> >>   tools/perf/tests/shell/stat_all_pmu.sh              | 2 +-
-> >>   tools/perf/tests/shell/test_intel_pt.sh             | 2 +-
-> >>   tools/perf/tests/shell/test_stat_intel_tpebs.sh     | 2 +-
-> >>   7 files changed, 7 insertions(+), 7 deletions(-)
-> >>
-> >
-> > The following ones would also need to be marked as exclusive, not sure
-> > if you can include those here or you want me to send a patch:
-> >
-> >   tools/perf/tests/shell/coresight/asm_pure_loop.sh
-> >   tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh
-> >   tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh
-> >   tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh
-> >   tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh
-> >   tools/perf/tests/shell/test_arm_coresight.sh
-> >   tools/perf/tests/shell/test_arm_coresight_disasm.sh
-> >   tools/perf/tests/shell/test_arm_spe.sh
 
-I'll add it to v2 and add your suggested-by. Thanks.
 
-> > In theory all tests using probes would also need to be exclusive becaus=
-e
-> > they install and delete probes globally. In practice I don't think I sa=
-w
-> > any failures, whether that's just luck or because of some skips I'm not
-> > sure.
-> >
-> > And this one fails consistently in parallel mode on Arm:
-> >
-> >    22: Number of exit events of a simple workload
-> >      : FAILED!
+On 10/10/2024 11:31 AM, Jakob Hauser wrote:
+> This initial part of the panel driver was mostly generated by the
+> "linux-mdss-dsi-panel-driver-generator" tool [1], reading downstream
+> Android kernel file "dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi" [2].
+> 
+> On top of the generic output of the tool, there were a couple of changes
+> applied:
+> - Added mipi_dsi_dcs_set_display_on() to function s6e88a0_ams427ap24_on(),
+>    otherwise the display does not show up.
+> - In functions s6e88a0_ams427ap24_on() and s6e88a0_ams427ap24_off()
+>    changed DSI commands to multi context and used "accum_err" returns.
+> - In functions s6e88a0_ams427ap24_on() and s6e88a0_ams427ap24_off() replaced
+>    msleep() by mipi_dsi_msleep().
+> - The function s6e88a0_ams427ap24_get_modes() was changed to make use of
+>    drm_connector_helper_get_modes_fixed(). This also required to include
+>    drm/drm_probe_helper.h.
+> - In function s6e88a0_ams427ap24_probe() registring the regulators was changed
+>    to devm_regulator_bulk_get_const(). This required to change supplies in struct
+>    s6e88a0_ams427ap24 to a pointer.
+> 
+> Coulnd't read out RAW EDID, /sys/class/drm/card0-DSI-1/edid is empty.
+> 
+> [1] https://github.com/msm8916-mainline/linux-mdss-dsi-panel-driver-generator
+> [2] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi
+> 
+> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
+> ---
+>   drivers/gpu/drm/panel/Kconfig                 |   9 +
+>   drivers/gpu/drm/panel/Makefile                |   1 +
+>   .../panel/panel-samsung-s6e88a0-ams427ap24.c  | 261 ++++++++++++++++++
+>   3 files changed, 271 insertions(+)
+>   create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+> 
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index ddfaa99ea9dd..fa6a8c6cac5b 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -623,6 +623,15 @@ config DRM_PANEL_SAMSUNG_AMS639RQ08
+>   	  Say Y or M here if you want to enable support for the
+>   	  Samsung AMS639RQ08 FHD Plus (2340x1080@60Hz) CMD mode panel.
+>   
+> +config DRM_PANEL_SAMSUNG_S6E88A0_AMS427AP24
+> +	tristate "Samsung AMS427AP24 panel with S6E88A0 controller"
+> +	depends on GPIOLIB && OF && REGULATOR
+> +	depends on DRM_MIPI_DSI
+> +	help
+> +	  Say Y here if you want to enable support for Samsung AMS427AP24 panel
+> +	  with S6E88A0 controller (found in Samsung Galaxy S4 Mini Value Edition
+> +	  GT-I9195I). To compile this driver as a module, choose M here.
+> +
+>   config DRM_PANEL_SAMSUNG_S6E88A0_AMS452EF01
+>   	tristate "Samsung AMS452EF01 panel with S6E88A0 DSI video mode controller"
+>   	depends on OF
+> diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+> index 4b5eaf111676..3002087c26d1 100644
+> --- a/drivers/gpu/drm/panel/Makefile
+> +++ b/drivers/gpu/drm/panel/Makefile
+> @@ -76,6 +76,7 @@ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
+>   obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0) += panel-samsung-s6e63m0.o
+>   obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0_SPI) += panel-samsung-s6e63m0-spi.o
+>   obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0_DSI) += panel-samsung-s6e63m0-dsi.o
+> +obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E88A0_AMS427AP24) += panel-samsung-s6e88a0-ams427ap24.o
+>   obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E88A0_AMS452EF01) += panel-samsung-s6e88a0-ams452ef01.o
+>   obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0) += panel-samsung-s6e8aa0.o
+>   obj-$(CONFIG_DRM_PANEL_SAMSUNG_SOFEF00) += panel-samsung-sofef00.o
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c b/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+> new file mode 100644
+> index 000000000000..182ba8c347e2
+> --- /dev/null
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+> @@ -0,0 +1,261 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/*
+> + * Samsung AMS427AP24 panel with S6E88A0 controller
+> + * Copyright (c) 2024 Jakob Hauser <jahau@rocketmail.com>
+> + */
+> +
+> +#include <linux/delay.h>
+> +#include <linux/gpio/consumer.h>
+> +#include <linux/module.h>
+> +#include <linux/of.h>
+> +#include <linux/regulator/consumer.h>
+> +
+> +#include <video/mipi_display.h>
+> +
+> +#include <drm/drm_mipi_dsi.h>
+> +#include <drm/drm_modes.h>
+> +#include <drm/drm_panel.h>
+> +#include <drm/drm_probe_helper.h>
+> +
+> +struct s6e88a0_ams427ap24 {
+> +	struct drm_panel panel;
+> +	struct mipi_dsi_device *dsi;
+> +	struct regulator_bulk_data *supplies;
+> +	struct gpio_desc *reset_gpio;
+> +	bool prepared;
 
-This looks like it could be a real issue. I believe the test is doing
-uid filtering:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/task-exit.c?h=3Dperf-tools-next#n49
-uid filtering scans /proc looking for processes of the given uid. This
-is inherently racy with processes exiting and we'd be better using a
-BPF filter to drop samples with the wrong uid - same effect but no
-racy /proc scan. I've seen the racy /proc scan cause termination
-issues, so possibly this is the issue you are seeing.
+Hi Jakob,
 
-It could also be that tweaking the retry count will fix things:
-https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
-ee/tools/perf/tests/task-exit.c?h=3Dperf-tools-next#n134
-
-Anyway, for now I think it is expedient to mark the test as exclusive.
-
-> > But it's a C test so I assume there isn't an exclusive mechanism to ski=
-p
-> > it? It doesn't look like it should be affected though, so maybe we coul=
-d
-> > leave it failing as a real bug.
-> >
->
-> Oh I see it says in the cover letter it can be set for C tests. But can
-> that be done through all the existing TEST_CASE() etc macros?
-
-Currently only whole suites can be exclusive. We could add macros for
-exclusive C tests but my preference would be to make the test work
-non-exclusive. I'll make test cases exclusive and mark this one.
+I think you can drop the `prepared` here as it should be handled by 
+framework now [1]
 
 Thanks,
-Ian
+
+Jessica Zhang
+
+[1] 
+https://elixir.bootlin.com/linux/v6.11.3/source/include/drm/drm_panel.h#L262
+
+> +};
+> +
+> +const struct regulator_bulk_data s6e88a0_ams427ap24_supplies[] = {
+> +	{ .supply = "vdd3" },
+> +	{ .supply = "vci" },
+> +};
+> +
+> +static inline
+> +struct s6e88a0_ams427ap24 *to_s6e88a0_ams427ap24(struct drm_panel *panel)
+> +{
+> +	return container_of(panel, struct s6e88a0_ams427ap24, panel);
+> +}
+> +
+> +static void s6e88a0_ams427ap24_reset(struct s6e88a0_ams427ap24 *ctx)
+> +{
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+> +	usleep_range(5000, 6000);
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +	usleep_range(1000, 2000);
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+> +	usleep_range(18000, 19000);
+> +}
+> +
+> +static int s6e88a0_ams427ap24_on(struct s6e88a0_ams427ap24 *ctx)
+> +{
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+> +
+> +	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x5a, 0x5a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfc, 0x5a, 0x5a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0, 0x11);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfd, 0x11);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0, 0x13);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfd, 0x18);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0, 0x02);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb8, 0x30);
+> +
+> +	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
+> +	mipi_dsi_msleep(&dsi_ctx, 20);
+> +
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf1, 0x5a, 0x5a);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcc, 0x4c);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf2, 0x03, 0x0d);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf1, 0xa5, 0xa5);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca,
+> +				     0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x80,
+> +				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +				     0x80, 0x80, 0x00, 0x00, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2,
+> +				     0x40, 0x08, 0x20, 0x00, 0x08);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0x28, 0x0b);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf7, 0x03);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x00);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0xa5, 0xa5);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfc, 0xa5, 0xa5);
+> +
+> +	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+> +
+> +	return dsi_ctx.accum_err;
+> +}
+> +
+> +static int s6e88a0_ams427ap24_off(struct s6e88a0_ams427ap24 *ctx)
+> +{
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+> +
+> +	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
+> +
+> +	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
+> +	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
+> +	mipi_dsi_msleep(&dsi_ctx, 120);
+> +
+> +	return dsi_ctx.accum_err;
+> +}
+> +
+> +static int s6e88a0_ams427ap24_prepare(struct drm_panel *panel)
+> +{
+> +	struct s6e88a0_ams427ap24 *ctx = to_s6e88a0_ams427ap24(panel);
+> +	struct device *dev = &ctx->dsi->dev;
+> +	int ret;
+> +
+> +	if (ctx->prepared)
+> +		return 0;
+> +
+> +	ret = regulator_bulk_enable(ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
+> +				    ctx->supplies);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to enable regulators: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+> +	s6e88a0_ams427ap24_reset(ctx);
+> +
+> +	ret = s6e88a0_ams427ap24_on(ctx);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to initialize panel: %d\n", ret);
+> +		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +		regulator_bulk_disable(ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
+> +				       ctx->supplies);
+> +		return ret;
+> +	}
+> +
+> +	ctx->prepared = true;
+> +	return 0;
+> +}
+> +
+> +static int s6e88a0_ams427ap24_unprepare(struct drm_panel *panel)
+> +{
+> +	struct s6e88a0_ams427ap24 *ctx = to_s6e88a0_ams427ap24(panel);
+> +	struct device *dev = &ctx->dsi->dev;
+> +	int ret;
+> +
+> +	if (!ctx->prepared)
+> +		return 0;
+> +
+> +	ret = s6e88a0_ams427ap24_off(ctx);
+> +	if (ret < 0)
+> +		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
+> +
+> +	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
+> +	regulator_bulk_disable(ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
+> +			       ctx->supplies);
+> +
+> +	ctx->prepared = false;
+> +	return 0;
+> +}
+> +
+> +static const struct drm_display_mode s6e88a0_ams427ap24_mode = {
+> +	.clock = (540 + 94 + 4 + 18) * (960 + 12 + 1 + 3) * 60 / 1000,
+> +	.hdisplay = 540,
+> +	.hsync_start = 540 + 94,
+> +	.hsync_end = 540 + 94 + 4,
+> +	.htotal = 540 + 94 + 4 + 18,
+> +	.vdisplay = 960,
+> +	.vsync_start = 960 + 12,
+> +	.vsync_end = 960 + 12 + 1,
+> +	.vtotal = 960 + 12 + 1 + 3,
+> +	.width_mm = 55,
+> +	.height_mm = 95,
+> +	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
+> +};
+> +
+> +static int s6e88a0_ams427ap24_get_modes(struct drm_panel *panel,
+> +					struct drm_connector *connector)
+> +{
+> +	return drm_connector_helper_get_modes_fixed(connector,
+> +						    &s6e88a0_ams427ap24_mode);
+> +}
+> +
+> +static const struct drm_panel_funcs s6e88a0_ams427ap24_panel_funcs = {
+> +	.prepare = s6e88a0_ams427ap24_prepare,
+> +	.unprepare = s6e88a0_ams427ap24_unprepare,
+> +	.get_modes = s6e88a0_ams427ap24_get_modes,
+> +};
+> +
+> +static int s6e88a0_ams427ap24_probe(struct mipi_dsi_device *dsi)
+> +{
+> +	struct device *dev = &dsi->dev;
+> +	struct s6e88a0_ams427ap24 *ctx;
+> +	int ret;
+> +
+> +	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
+> +	if (!ctx)
+> +		return -ENOMEM;
+> +
+> +	ret = devm_regulator_bulk_get_const(dev,
+> +				      ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
+> +				      s6e88a0_ams427ap24_supplies,
+> +				      &ctx->supplies);
+> +	if (ret < 0)
+> +		return ret;
+> +
+> +	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> +	if (IS_ERR(ctx->reset_gpio))
+> +		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
+> +				     "Failed to get reset-gpios\n");
+> +
+> +	ctx->dsi = dsi;
+> +	mipi_dsi_set_drvdata(dsi, ctx);
+> +
+> +	dsi->lanes = 2;
+> +	dsi->format = MIPI_DSI_FMT_RGB888;
+> +	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> +			  MIPI_DSI_MODE_NO_EOT_PACKET;
+> +
+> +	drm_panel_init(&ctx->panel, dev, &s6e88a0_ams427ap24_panel_funcs,
+> +		       DRM_MODE_CONNECTOR_DSI);
+> +	ctx->panel.prepare_prev_first = true;
+> +
+> +	drm_panel_add(&ctx->panel);
+> +
+> +	ret = mipi_dsi_attach(dsi);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to attach to DSI host: %d\n", ret);
+> +		drm_panel_remove(&ctx->panel);
+> +		return ret;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+> +static void s6e88a0_ams427ap24_remove(struct mipi_dsi_device *dsi)
+> +{
+> +	struct s6e88a0_ams427ap24 *ctx = mipi_dsi_get_drvdata(dsi);
+> +	int ret;
+> +
+> +	ret = mipi_dsi_detach(dsi);
+> +	if (ret < 0)
+> +		dev_err(&dsi->dev, "Failed to detach from DSI host: %d\n", ret);
+> +
+> +	drm_panel_remove(&ctx->panel);
+> +}
+> +
+> +static const struct of_device_id s6e88a0_ams427ap24_of_match[] = {
+> +	{ .compatible = "samsung,s6e88a0-ams427ap24" },
+> +	{ /* sentinel */ },
+> +};
+> +MODULE_DEVICE_TABLE(of, s6e88a0_ams427ap24_of_match);
+> +
+> +static struct mipi_dsi_driver s6e88a0_ams427ap24_driver = {
+> +	.probe = s6e88a0_ams427ap24_probe,
+> +	.remove = s6e88a0_ams427ap24_remove,
+> +	.driver = {
+> +		.name = "panel-s6e88a0-ams427ap24",
+> +		.of_match_table = s6e88a0_ams427ap24_of_match,
+> +	},
+> +};
+> +module_mipi_dsi_driver(s6e88a0_ams427ap24_driver);
+> +
+> +MODULE_AUTHOR("Jakob Hauser <jahau@rocketmail.com>");
+> +MODULE_DESCRIPTION("Samsung AMS427AP24 panel with S6E88A0 controller");
+> +MODULE_LICENSE("GPL v2");
+> -- 
+> 2.39.5
+> 
+
 
