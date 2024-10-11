@@ -1,217 +1,198 @@
-Return-Path: <linux-kernel+bounces-360459-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7D4999B46
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:50:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08E8999B5A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:53:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DACCF1F23A51
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:50:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E7ED1C2217C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A87C1F4FAE;
-	Fri, 11 Oct 2024 03:50:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC3FC1F4FCD;
+	Fri, 11 Oct 2024 03:53:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="An+xQQ48"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ovr/chtq"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E3863D;
-	Fri, 11 Oct 2024 03:50:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72D221F4720
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728618609; cv=none; b=HfehvnQSXzdEvFtGxDfxnhNbYr/6uhZ8uz6ZiI2Uwrm3+iZ5Zb3ozHEBw/Zx1XLVs10L7NJ/9JM+HQfHZt6JV2gV8fnHCx0VrVhL8u00pTqR91yShE7J2P/TVYJO5pfO3gwgRGtXdF4eNA82xkEoxixRZakOdo/xiRZGJG/9edE=
+	t=1728618783; cv=none; b=cOw25Fwmv7SpcCtUUaeTUq6GJBwIFl3epL7KgWS0/uxFQqFxQSafGl73bdhIUp99GSSqG99J9PEQm26LD6V4HAiKtZ/WcWc2AcBlLOGjNYyNRV1ZeI3Xd4yXH2XbYaL+o61cyt/h5c1lIR2pzn8++z3XslAzWkq6aly9b8k3gIc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728618609; c=relaxed/simple;
-	bh=8u6AC/iyGTJ5VGfZXeiEazhAzoeC1NovR7kibpmhlus=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=l0wqnJuxlQs9PjBGXEYZHBQFI4oF8lmaF9wOCyKW0vy6VPcRO1hlWRLHsGin4hN/qSXKHMEmBre6fIjXGU9KuCO3AzxoQx8pWrhBldlx3MHil5lzgMMUL/QYjiVXvejHB4/lNzNz1eYsFj1jFZiHGsHampahrD7/lZZKiq0Sncc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=An+xQQ48; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728618608; x=1760154608;
-  h=message-id:subject:from:reply-to:to:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=8u6AC/iyGTJ5VGfZXeiEazhAzoeC1NovR7kibpmhlus=;
-  b=An+xQQ48q3JHJlQVWFFlAOX/fN+paJ73Sw/DwFmljIn4KdyWku0UKITq
-   bmfjqH/geXbEqDaJ5/hH104P3rri4UeitjIj7oAQVXCARFzIshlTtNrHp
-   ABJmBdm29G0BJm57xNSCF1NbZghthQaoKn++Zd6EQjCgnc8kzyvML2XXR
-   n89tv5c95aFOiYkOHxP09skCjVtcWjtmHmwQgyKursIM0WOSiHMbvZhLe
-   neXF5gW5uykoDEKHFYVs1NvVwgABtVqDmoRaY/3gqT0F2Uf6vdyB1kPV7
-   xQOrEWL4zmTSD4uX0ROeQXgcWmmt9+uJbc3DF/6A8azQ2t9fs/2PjLqFB
-   w==;
-X-CSE-ConnectionGUID: 2qe0NwxGTHSyx5u8HMdwFA==
-X-CSE-MsgGUID: 3UgEO7sHRoSWR+T01rZChA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31707572"
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="31707572"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 20:50:08 -0700
-X-CSE-ConnectionGUID: 4XMye2RGRoyduzG03AMOtA==
-X-CSE-MsgGUID: 5y+isoFJS8SNGAgr3BpcWw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="76792177"
-Received: from cmdeoliv-mobl.amr.corp.intel.com ([10.125.111.90])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 20:50:06 -0700
-Message-ID: <c9410dd42e01c1ba26fbb43f97a8777f1c95b9af.camel@linux.intel.com>
-Subject: Re: [PATCH V2 2/2] platform/x86/intel/pmc: Disable C1 auto-demotion
- during suspend
-From: "David E. Box" <david.e.box@linux.intel.com>
-Reply-To: david.e.box@linux.intel.com
-To: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, rjw@rjwysocki.net, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Date: Thu, 10 Oct 2024 20:50:05 -0700
-In-Reply-To: <c4513e7857b15ec9146a7b75d00e99987787ced4.camel@linux.intel.com>
-References: <20241011003640.1613812-1-david.e.box@linux.intel.com>
-	 <20241011003640.1613812-2-david.e.box@linux.intel.com>
-	 <c4513e7857b15ec9146a7b75d00e99987787ced4.camel@linux.intel.com>
-Organization: David E. Box
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1728618783; c=relaxed/simple;
+	bh=mKxYBI2DV9EIC92aYnw83/LgOe6UfT/sb+9xhOKx2Kk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nTdtAfXYjUUo/0wezVLpV25OtwXAfkJz9g3y2Evll/lxtucuD9Dl8p+AGHHkzDU9twgcKG3vr6WcB0gtHC2OSHP0Pkx2wCRVar3nTLxCKYuqj5rTxmW13HKgWxKr8RKg+YLUtngK+7fAEZcRec/SkWeXmyinieixsNuFeHvS12k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ovr/chtq; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728618780;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=EhiV5ueL51Y0qrR+FVXMkHrU2UISlA3wemp2cv+GyUg=;
+	b=Ovr/chtqwL4lZr4UtRKpuX2MBGcYZQq52Itok+6nF9lHUYIW6Xq9z0e1WzqgVTz5xQC4V1
+	Rw/HxFo6RVcuWMMd2GaFfWkYxRxK/HvurYGQaomX3WbTYBGQTjPcxBE1ffhoLn9XB4qH+c
+	/1bLo1LyHZ5dTDEfkw7AuyS+w9dp5Go=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-67-2hx9zfY4M6SZxeiREgM_-Q-1; Thu,
+ 10 Oct 2024 23:52:57 -0400
+X-MC-Unique: 2hx9zfY4M6SZxeiREgM_-Q-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id A86451956095;
+	Fri, 11 Oct 2024 03:52:55 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.103])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E76271955F1D;
+	Fri, 11 Oct 2024 03:52:52 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
+	linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Ming Lei <ming.lei@redhat.com>,
+	David Howells <dhowells@redhat.com>
+Subject: [PATCH V2] lib/iov_iter.c: extract virt-contiguous pages in iov_iter_extract_bvec_pages
+Date: Fri, 11 Oct 2024 11:52:47 +0800
+Message-ID: <20241011035247.2444033-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On Thu, 2024-10-10 at 19:09 -0700, srinivas pandruvada wrote:
-> On Thu, 2024-10-10 at 17:36 -0700, David E. Box wrote:
-> > On some platforms, aggressive C1 auto-demotion may lead to failure to
-> > enter
-> > the deepest C-state during suspend-to-idle, causing high power
-> > consumption.
-> > To prevent this, disable C1 auto-demotion during suspend and re-
-> > enable on
-> > resume.
-> >=20
-> > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> > ---
-> >=20
-> > V2 - Remove #define DEBUG
-> > =C2=A0=C2=A0 - Move refactor of cnl_resume() to separate patch
-> > =C2=A0=C2=A0 - Use smp_call_function() to disable and restore C1_AUTO_D=
-EMOTE
-> > =C2=A0=C2=A0 - Add comment that the MSR is per core, not per package.
-> > =C2=A0=C2=A0 - Add comment that the online cpu mask remains unchanged d=
-uring
-> > =C2=A0=C2=A0=C2=A0=C2=A0 suspend due to frozen userspace.
-> >=20
-> > =C2=A0drivers/platform/x86/intel/pmc/cnp.c | 53
-> > ++++++++++++++++++++++++++++
-> > =C2=A01 file changed, 53 insertions(+)
-> >=20
-> > diff --git a/drivers/platform/x86/intel/pmc/cnp.c
-> > b/drivers/platform/x86/intel/pmc/cnp.c
-> > index 513c02670c5a..f12d4f0f9e93 100644
-> > --- a/drivers/platform/x86/intel/pmc/cnp.c
-> > +++ b/drivers/platform/x86/intel/pmc/cnp.c
-> > @@ -8,6 +8,8 @@
-> > =C2=A0 *
-> > =C2=A0 */
-> > =C2=A0
-> > +#include <linux/smp.h>
-> > +#include <linux/suspend.h>
-> > =C2=A0#include "core.h"
-> > =C2=A0
-> > =C2=A0/* Cannon Lake: PGD PFET Enable Ack Status Register(s) bitmap */
-> > @@ -206,8 +208,52 @@ const struct pmc_reg_map cnp_reg_map =3D {
-> > =C2=A0	.etr3_offset =3D ETR3_OFFSET,
-> > =C2=A0};
-> > =C2=A0
-> > +
-> > +/*
-> > + * Disable C1 auto-demotion
-> > + *
-> > + * Aggressive C1 auto-demotion may lead to failure to enter the
-> > deepest C-state
-> > + * during suspend-to-idle, causing high power consumption. To
-> > prevent this, we
-> > + * disable C1 auto-demotion during suspend and re-enable on resume.
-> > + *
-> > + * Note that, although MSR_PKG_CST_CONFIG_CONTROL has 'package' in
-> > its name, it
-> > + * is actually a per-core MSR on client platforms, affecting only a
-> > single CPU.
-> > + * Therefore, it must be configured on all online CPUs. The online
-> > cpu mask is
-> > + * unchanged during the phase of suspend/resume as user space is
-> > frozen.
-> > + */
-> > +
-> > +static DEFINE_PER_CPU(u64, pkg_cst_config);
-> > +
-> > +static void disable_c1_auto_demote(void *unused)
-> > +{
-> > +	int cpunum =3D smp_processor_id();
-> > +	u64 val;
-> > +
-> > +	rdmsrl(MSR_PKG_CST_CONFIG_CONTROL, val);
-> > +	per_cpu(pkg_cst_config, cpunum) =3D val;
-> > +	val &=3D ~NHM_C1_AUTO_DEMOTE;
-> > +	wrmsrl(MSR_PKG_CST_CONFIG_CONTROL, val);
-> > +	pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum, val);
-> Do you want to leave pr_debug?
+Actually iov_iter_extract_pages() requires that there isn't gap in the
+extracted pages, so 'offset' only exists in the 1st page, then these
+pages can be mapped to one virtual(contiguous) address.
 
-Thought it could be useful but it can be removed.
+All iov_iter_bvec() users only want to extract virt-contiguous pages from
+iov_iter_extract_pages() instead physical-contiguous pages.
 
->=20
-> > +}
-> > +
-> > +static void restore_c1_auto_demote(void *unused)
-> > +{
-> > +	int cpunum =3D smp_processor_id();
-> > +
-> > +	pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum,
-> > +		 per_cpu(pkg_cst_config, cpunum));
-> > +	wrmsrl(MSR_PKG_CST_CONFIG_CONTROL, per_cpu(pkg_cst_config,
-> > cpunum));
-> > +}
-> > +
-> > =C2=A0void cnl_suspend(struct pmc_dev *pmcdev)
-> > =C2=A0{
-> > +	if (!pm_suspend_via_firmware()) {
-> > +		preempt_disable();
-> Why do you need this?
+Change iov_iter_extract_bvec_pages() to extract virt-contiguous pages via
+bvec helper.
 
-To ensure that the cpu doesn't change between the next two calls.
+This way can fill much more pages one time, instead of (often)one page from
+iov_iter_extract_pages() each time.
 
-David
+The change is reasonable & safe since oher kind of iterators(UBUF, KVEC, ...)
+do return non physically-contiguous pages.
 
->=20
->=20
-> Thanks,
-> Srinivas
->=20
-> > +		disable_c1_auto_demote(NULL);
-> > +		smp_call_function(disable_c1_auto_demote, NULL, 0);
-> > +		preempt_enable();
-> > +	}
-> > +
-> > =C2=A0	/*
-> > =C2=A0	 * Due to a hardware limitation, the GBE LTR blocks PC10
-> > =C2=A0	 * when a cable is attached. To unblock PC10 during suspend,
-> > @@ -218,6 +264,13 @@ void cnl_suspend(struct pmc_dev *pmcdev)
-> > =C2=A0
-> > =C2=A0int cnl_resume(struct pmc_dev *pmcdev)
-> > =C2=A0{
-> > +	if (!pm_suspend_via_firmware()) {
-> > +		preempt_disable();
-> > +		restore_c1_auto_demote(NULL);
-> > +		smp_call_function(restore_c1_auto_demote, NULL, 0);
-> > +		preempt_enable();
-> > +	}
-> > +
-> > =C2=A0	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-> > =C2=A0
-> > =C2=A0	return pmc_core_resume_common(pmcdev);
->=20
+Fixes: a7e689dd1c06 ("block: Convert bio_iov_iter_get_pages to use iov_iter_extract_pages")
+Cc: David Howells <dhowells@redhat.com>
+Signed-off-by: Ming Lei <ming.lei@redhat.com>
+---
+V2:
+	- add fixes
+	- improve commit log
+
+ include/linux/bvec.h |  6 ++++++
+ lib/iov_iter.c       | 47 +++++++++++++++++++++++---------------------
+ 2 files changed, 31 insertions(+), 22 deletions(-)
+
+diff --git a/include/linux/bvec.h b/include/linux/bvec.h
+index f41c7f0ef91e..98e1a4ad09e0 100644
+--- a/include/linux/bvec.h
++++ b/include/linux/bvec.h
+@@ -184,6 +184,12 @@ static inline void bvec_iter_advance_single(const struct bio_vec *bv,
+ 		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
+ 	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
+ 
++#define for_each_bvec_max(bvl, bio_vec, iter, start, nr_bvecs)		\
++	for (iter = (start);						\
++	     (iter).bi_size && iter.bi_idx < nr_bvecs &&		\
++		((bvl = bvec_iter_bvec((bio_vec), (iter))), 1);	\
++	     bvec_iter_advance_single((bio_vec), &(iter), (bvl).bv_len))
++
+ /* for iterating one bio from start to end */
+ #define BVEC_ITER_ALL_INIT (struct bvec_iter)				\
+ {									\
+diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+index 97003155bfac..6e00f6da5259 100644
+--- a/lib/iov_iter.c
++++ b/lib/iov_iter.c
+@@ -1677,8 +1677,8 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
+ }
+ 
+ /*
+- * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
+- * not get references on the pages, nor does it get a pin on them.
++ * Extract a list of virtually contiguous pages from an ITER_BVEC iterator.
++ * This does not get references on the pages, nor does it get a pin on them.
+  */
+ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
+ 					   struct page ***pages, size_t maxsize,
+@@ -1686,35 +1686,38 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
+ 					   iov_iter_extraction_t extraction_flags,
+ 					   size_t *offset0)
+ {
+-	struct page **p, *page;
+-	size_t skip = i->iov_offset, offset, size;
+-	int k;
++	size_t skip = i->iov_offset, size = 0;
++	struct bvec_iter bi;
++	struct bio_vec bv;
++	int k = 0;
+ 
+-	for (;;) {
+-		if (i->nr_segs == 0)
+-			return 0;
+-		size = min(maxsize, i->bvec->bv_len - skip);
+-		if (size)
+-			break;
++	if (i->nr_segs == 0)
++		return 0;
++
++	if (i->iov_offset == i->bvec->bv_len) {
+ 		i->iov_offset = 0;
+ 		i->nr_segs--;
+ 		i->bvec++;
+ 		skip = 0;
+ 	}
++	bi.bi_size = maxsize + skip;
++	bi.bi_bvec_done = skip;
+ 
+-	skip += i->bvec->bv_offset;
+-	page = i->bvec->bv_page + skip / PAGE_SIZE;
+-	offset = skip % PAGE_SIZE;
+-	*offset0 = offset;
++	maxpages = want_pages_array(pages, maxsize, skip, maxpages);
+ 
+-	maxpages = want_pages_array(pages, size, offset, maxpages);
+-	if (!maxpages)
+-		return -ENOMEM;
+-	p = *pages;
+-	for (k = 0; k < maxpages; k++)
+-		p[k] = page + k;
++	for_each_bvec_max(bv, i->bvec, bi, bi, i->nr_segs) {
++		if (k >= maxpages)
++			break;
++		if (!k)
++			*offset0 = bv.bv_offset;
++		else if (bv.bv_offset)
++			break;
++		(*pages)[k++] = bv.bv_page;
++		size += bv.bv_len;
++		if (bv.bv_offset + bv.bv_len != PAGE_SIZE)
++			break;
++	}
+ 
+-	size = min_t(size_t, size, maxpages * PAGE_SIZE - offset);
+ 	iov_iter_advance(i, size);
+ 	return size;
+ }
+-- 
+2.46.0
 
 
