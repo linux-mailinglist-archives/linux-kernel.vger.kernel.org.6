@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-361948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3122C99AF41
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:20:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB2699AF46
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFD5F1F2232D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:20:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 934D91F22396
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:20:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74591E412E;
-	Fri, 11 Oct 2024 23:20:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DEBF1E765B;
+	Fri, 11 Oct 2024 23:20:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="bc4Uy37e"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="cYm8Lpge"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 958341D1721
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 23:20:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED4661E2019
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 23:20:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728688825; cv=none; b=arip7Rig6FrPSdgravrfEV9klgZsTg2UstDSs9pBPkBdgRHq1KSaL/NUL3wEVG3eznHIVZ2KCJpiJmjCvGymTv8znl+102kwASPxDy4eYULau6J2uXwutCHP30Y0r2r5ESZK5hRYCL9WcFqeSE8bxc0Bn4u6Wdg+Fp+1i4JMocc=
+	t=1728688827; cv=none; b=e8EaKX8HAGGfajIcVPMhOu5Y64AOuAQLSE6eWk6AQ34IV6prAL74KCZ2TQNw61GFhU1fa4/yaz3eS7ZwPyO3GW5qjGjZoJOJEy8kb0AC/ga6FEq+Ud9IqR86Kze74y41QP/x0ti9H7lIfPhriFXCNFLh+dwRK9MSrTvXuCUBZtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728688825; c=relaxed/simple;
-	bh=nDNDo7ALv+O3cxUau8Fj+PX+xIMtyBWTHRXfMjz46/M=;
+	s=arc-20240116; t=1728688827; c=relaxed/simple;
+	bh=seom4uCMX8ojzm6Z3txLhCRgIagC4wOlyNgA6lYM/NI=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Jn1I1wZQEJzv1QFIyUOxf+gi+7yUN4pl22r2q3HgqBpwhF1pkCXnXVZe5nZmGYqH6zrezVHjyhZF5vhOyKXWCIQHJ2hxokiJyUwiec8AK1WrU8GCNPyEv/wSHMrWRcN7cI56b5OeI1caas8YmFcrldqdknu/M0+SGgdvw0LS9xY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=bc4Uy37e; arc=none smtp.client-ip=209.85.222.174
+	 MIME-Version; b=OyHlof4na9n5IvWMl9MOR8VjZpxaR6+pZSAtaw5A/0BYbefkjJoQaNhY45UtSpxKY86SP3tevKm51t3fPdZaB1HGRaKmeJagGaH+gV7oqdjIbNGXFCWkmMbP0gO/yWJmdFLDar4VE8QdmbD7Jz3ym5/n9IT4N7fOLlnbYI8LTD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=cYm8Lpge; arc=none smtp.client-ip=209.85.222.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7afc592ca19so163691885a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:20:23 -0700 (PDT)
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7afc5e480dbso155220585a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:20:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728688822; x=1729293622; darn=vger.kernel.org;
+        d=marek.ca; s=google; t=1728688824; x=1729293624; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=AduvL8sRkCTgfrWSsu7rKhjd0f6vDDJasPZpnT/qEYQ=;
-        b=bc4Uy37eU+yFaQyNBGmAEw/avs7Q/VVscCax3yO4kzspawxhHSj41mf7dXyQ/NqncQ
-         249Kt4Z7Co010gdTpFKh5ffAa5P7H99z4rNTc13KQLYhyR8IUxey9+bKS7b6qd3XuzOd
-         qwLzlEgTp17BjX0vW9U93axNcfwUGYgus5rbH054QWcijpcEmr0jHl6n1j43V0a4Wyja
-         82d9h4XhtGkyVh5o5Qgf7TY+cuJZl0haNzvbXMppOIE0a9br3rJp4SzMrsY658N67piP
-         i3oz2HLCmzu81rdnXbjKATx1DGlABConyu6+FMBWQ3DrwrDKF+mWK7Fj/J/E3hoKQ0rP
-         x3BA==
+        bh=bNQj9mklc4l6H4BuWdWir9/o85V9oVFW514rZ2mNMmM=;
+        b=cYm8LpgeqdBSDmlVuuD8VORxiZL/lWpVyQ1wnpL/s08XOqD0Awv7Kk8V8D7xkEAANU
+         Q6CSyIq/KrbSGyP0ggK48Ba0wB9cdUs1cfEDHWIsY2oJR3TCuyMyMyjazPPoUWLi20iE
+         27rkGFG/p7edAjdaoYlgmP9qY+SIocZ2JQZjpfVwrYn4zI9SvxJigYMS9skenD2L3dnp
+         GrxJNjvLY6LmiETBxzSo9H5iHALCljU8SOhuOtvctqOJeRaYfskDUvuE+4TPJR5bj/r0
+         1Sye016mQ5SSrrBvifiEnu390c8OMV/rpVW881qtoLRGZxRzMS0p4ut7Nbp8YkL4cahE
+         uTag==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728688822; x=1729293622;
+        d=1e100.net; s=20230601; t=1728688824; x=1729293624;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=AduvL8sRkCTgfrWSsu7rKhjd0f6vDDJasPZpnT/qEYQ=;
-        b=a3PW1TNkY5tr3j/SeoNuWvdDSFYqIZdT54o/Yf7UCo9VKFytvJpCOzMr2yfg/29n98
-         SFJkjyjPnQ+GdAyswRrlBHMH1yYs9XpEk1G5udexg142iI3AJve/9d8QwxIRRIhzwzH4
-         iDlgUbOMAZm8yalXptH24OpJdgEy4YS+Gg5/C/+0wkqMBQ2FzKWm8X9qYlazLH4w5gyO
-         +o7f1lTXopr28uAHxFRw7I2i5uYF330R3wxfnz1COTp4vIh3kJbOuZ88FiL8ZmT0wUJC
-         Ms2KUxVhFqlDWMWD5oGOQZ4I7dtRH0uwuzOY8OZ0KlPJ2dRoLaSeMeK6PCNW0kXHLa6p
-         9i2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+ERKxu8wT3R/5LG8y5k0Jf+fh8GjayWdv3zuR4JGnmy6ji97gcZBUhr3IW/cSjB0X9iYkE4n0hiv44pI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoZLr/XaBjeOxsN1T1zMXBc/iEE4qtXwSvk4bj1iVD5kNut27W
-	Uemo060dlFSVVxdZtw3I1O+vzCUOOQrtVwUqTeBhXSJIPv+e/tzy0tmPYq65K+s=
-X-Google-Smtp-Source: AGHT+IHERRNksDcH4woDGxy6Xo1Vuyyg8Mbm887V41NlviKjtKHNlpNjAXx0lyE4C/9XGCG4TpjpNw==
-X-Received: by 2002:a05:620a:3f85:b0:7ae:2f04:bf9c with SMTP id af79cd13be357-7b11a35f56dmr600500385a.18.1728688822487;
-        Fri, 11 Oct 2024 16:20:22 -0700 (PDT)
+        bh=bNQj9mklc4l6H4BuWdWir9/o85V9oVFW514rZ2mNMmM=;
+        b=u5iptZAynrOTGSjgEyD1lT/guticyNBEqB9HX/Gav+Ma3O7C9bnSrtygJQv8YYLwFl
+         FdrVNvKl0wGYZJ0rYpxgpUxKdPKYV6apHf9gcwyYI7FmVlH+8aj3m+aW0t71Jl6stGO5
+         wa8P0M74QroixEiobYbIsq1L/FU82wHSCksdxymUYCCUj+IicLWQ2sqA3MsFXWVwWY8n
+         sUWJbSpvWzB009oCcNgaxaTyi52eK0XAuoEiKAsfb64gcGUa5NrAtx3ymFnp8Gc50O7V
+         ZzsYGHXL3KB/neiaLybKaz97egL2AdRYF3iDfckUnafwTFE4lgfLLw6CAVX6Fid+iZKO
+         Ybvg==
+X-Forwarded-Encrypted: i=1; AJvYcCWXhRfejvPFdsAE84UuyMUSdsZCO8NWr4YJpvE65L5LJTU4C6tC9FG63GWsDKNvazCDne7h6Q0IBxE4+kw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzwHPfevJJ5dkvyj0MzNso+bD6thejPUz6GbYx9Z2DkVgOeZ3vT
+	ED3PmPMyOP31+Ef7njwLlS0Te4D8JnsvSQAgiEiR2S6PCKLVaKaoTAk/ezWcago=
+X-Google-Smtp-Source: AGHT+IGcrSoPOBKvbLBtsjhkFspHjqr/dhe1nXcQ7/0vfufLIC9r3UFaacGLWaiPOnaDehUqUByn1g==
+X-Received: by 2002:a05:620a:29c4:b0:7af:cb6b:b510 with SMTP id af79cd13be357-7b11a35f816mr625444085a.13.1728688823823;
+        Fri, 11 Oct 2024 16:20:23 -0700 (PDT)
 Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11c0a8902sm89949785a.31.2024.10.11.16.20.21
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11c0a8902sm89949785a.31.2024.10.11.16.20.22
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 16:20:22 -0700 (PDT)
+        Fri, 11 Oct 2024 16:20:23 -0700 (PDT)
 From: Jonathan Marek <jonathan@marek.ca>
 To: linux-arm-msm@vger.kernel.org
 Cc: Bjorn Andersson <andersson@kernel.org>,
@@ -75,9 +75,9 @@ Cc: Bjorn Andersson <andersson@kernel.org>,
 	Conor Dooley <conor+dt@kernel.org>,
 	devicetree@vger.kernel.org (open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS),
 	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v2 2/3] arm64: dts: qcom: x1e80100-crd: enable otg on usb ports
-Date: Fri, 11 Oct 2024 19:16:22 -0400
-Message-ID: <20241011231624.30628-2-jonathan@marek.ca>
+Subject: [PATCH v2 3/3] arm64: dts: qcom: x1e78100-t14s: enable otg on usb-c ports
+Date: Fri, 11 Oct 2024 19:16:23 -0400
+Message-ID: <20241011231624.30628-3-jonathan@marek.ca>
 X-Mailer: git-send-email 2.45.1
 In-Reply-To: <20241011231624.30628-1-jonathan@marek.ca>
 References: <20241011231624.30628-1-jonathan@marek.ca>
@@ -89,19 +89,19 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The 3 USB ports on x1e80100-crd are OTG-capable, remove the dr_mode
+The 2 USB-C ports on x1e78100-t14s are OTG-capable, remove the dr_mode
 override to enable OTG.
 
 Signed-off-by: Jonathan Marek <jonathan@marek.ca>
 ---
- arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 12 ------------
- 1 file changed, 12 deletions(-)
+ .../arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts | 8 --------
+ 1 file changed, 8 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-index eb6b735c41453..bc66f4713b231 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
-@@ -1568,10 +1568,6 @@ &usb_1_ss0 {
+diff --git a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+index f05523cb51cd4..6343f34b978ad 100644
+--- a/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
++++ b/arch/arm64/boot/dts/qcom/x1e78100-lenovo-thinkpad-t14s.dts
+@@ -1152,10 +1152,6 @@ &usb_1_ss0 {
  	status = "okay";
  };
  
@@ -112,7 +112,7 @@ index eb6b735c41453..bc66f4713b231 100644
  &usb_1_ss0_dwc3_hs {
  	remote-endpoint = <&pmic_glink_ss0_hs_in>;
  };
-@@ -1600,10 +1596,6 @@ &usb_1_ss1 {
+@@ -1184,10 +1180,6 @@ &usb_1_ss1 {
  	status = "okay";
  };
  
@@ -122,17 +122,6 @@ index eb6b735c41453..bc66f4713b231 100644
 -
  &usb_1_ss1_dwc3_hs {
  	remote-endpoint = <&pmic_glink_ss1_hs_in>;
- };
-@@ -1632,10 +1624,6 @@ &usb_1_ss2 {
- 	status = "okay";
- };
- 
--&usb_1_ss2_dwc3 {
--	dr_mode = "host";
--};
--
- &usb_1_ss2_dwc3_hs {
- 	remote-endpoint = <&pmic_glink_ss2_hs_in>;
  };
 -- 
 2.45.1
