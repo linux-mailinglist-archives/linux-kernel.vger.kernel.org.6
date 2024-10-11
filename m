@@ -1,152 +1,92 @@
-Return-Path: <linux-kernel+bounces-361467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D825899A89F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:10:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1241499A89E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:09:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9C07A28497C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:10:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F591B22F36
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BF2E199947;
-	Fri, 11 Oct 2024 16:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1FD197A9F;
+	Fri, 11 Oct 2024 16:09:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="qhkNPbTC";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QDKDMnfa";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VnOEvGFd";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="7alE20ib"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktzBHSN5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3A2D198E7F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1322C1974F4;
 	Fri, 11 Oct 2024 16:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728662986; cv=none; b=O30CRV7Aud/WnVYKaPkxkEuSZNOOvg/nFYy/Ns2Y41HzRIy3r+pwQKLle73MvVYijWs09r88LS5Zcg8G+YXe33Od9bCU4shJzob2JbPg8cWp+yLgH1j8T+MyveUQ1ZQ3MpVZr0HpyFuIpO4vBPxHDT0+O4SGSX1+xyKB7Cif68Q=
+	t=1728662984; cv=none; b=a5q84l6wE5sAIFr/kI3WAvBY2dn/D7cKh6f0lVnGvgCaDWCGe+F/MA6+sbxzN+ESwF3r3Fkzn5l71xnkB8NOplR+wk4wcfc/SOxquMy3Hj1HsBNw2DY9PnVn/tYkv1t3PAZZcEprAPwIWG4AW3Ag3FZD/kWrzKX8RuzTodMhpBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728662986; c=relaxed/simple;
-	bh=4Xv9mFJWh2zaT2SmbVYcQ1utBb05Hj8xL+GDvsllSLo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJTA2s23AMxWYzvRj2IxV2Yfc3OtCw4rI/xfYiS65ddtp0wnayAo3CrnYC2tCsJyO/Ij7dq87YJMnRfcXvVKSy+/s8IOFPpjV59ccAi8lIOvzaKW+uz6jBxj1F9GNkypbdiQt1qLLtxzgMhBzQmNbQPZ6N/GWDZsZhZOC1qL30s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=qhkNPbTC; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QDKDMnfa; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VnOEvGFd; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=7alE20ib; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E240A1F871;
-	Fri, 11 Oct 2024 16:09:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728662982;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
-	b=qhkNPbTC/dv1JINfs7BVGvT9+BoCQfJoBRTMkYuCiuf2bptgxKMBMsTMsPjRY/8mxXAMeV
-	LaBqWCJrCpCtmxhKzNhuDZN5ASoupCtLF0crBWkrzffgsY2D9aZ+VnzWrJjeiSa6bfUTKT
-	5Qf4YxAkSzUqYZ6NudRuBUJ7LtOVaJA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728662982;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
-	b=QDKDMnfaDvTMR1TeAGGhkR3amOnm5qdjROuspk8chCWji2kyKy59MuG5H7wBN/n1QB0+Ik
-	N0qk3S2E99994jBQ==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728662981;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
-	b=VnOEvGFdieSGuT22ebJOBz1TG0JWZGZqG2SkZu+uI9O6Y9squToRUhvdOxPWLtWMhLY7GW
-	a7GM/jcT1tYmTrpQ8LJLiwQQNIOr02/GVJ/Rz0VTQfwac+c/IjoHvW2Cz0dVXmwTYlI7Bz
-	EIh+MDUlbVSQa0ECFd6yAOqfDaZ79n4=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728662981;
-	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=R+N1ZUlMPItjRVcCm4IinUgfijOdryJXv75jFTYjlHs=;
-	b=7alE20ibM5J+akv2I4S/eDC5++wRTN4Z6RGixZMtfX5jpcQTenPipcS828e0kXe14qP8Hh
-	04ZwgT11jgqtC3AA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CCEE61370C;
-	Fri, 11 Oct 2024 16:09:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id jNoZMcVNCWcPNQAAD6G6ig
-	(envelope-from <dsterba@suse.cz>); Fri, 11 Oct 2024 16:09:41 +0000
-Date: Fri, 11 Oct 2024 18:09:40 +0200
-From: David Sterba <dsterba@suse.cz>
-To: Roi Martin <jroi.martin@gmail.com>
-Cc: clm@fb.com, josef@toxicpanda.com, dsterba@suse.com,
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] btrfs: fix uninit pointer free on read_alloc_one_name
- error
-Message-ID: <20241011160940.GY1609@twin.jikos.cz>
-Reply-To: dsterba@suse.cz
-References: <20241010194717.1536428-1-jroi.martin@gmail.com>
+	s=arc-20240116; t=1728662984; c=relaxed/simple;
+	bh=D4sx2NyNQfPdLcxDUfkwiMuN3iPQBqYCDhL6Odna2es=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=EyuWbsjoSTJlKTFywsynWM5Ai4r7h4zkMXC7wzK/dRkD4N9HLCirquExZc9UoT1bmv3xaV5W61/kt+DsQSnXzUMqAzX991wYk9u8fi972uUb94a4ae/aofN/QveaU5o1T7hp8dG22ieF6KTQxOAn72QJrgP4WP47PQyrHU5vY4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktzBHSN5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A84C4CEC3;
+	Fri, 11 Oct 2024 16:09:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728662983;
+	bh=D4sx2NyNQfPdLcxDUfkwiMuN3iPQBqYCDhL6Odna2es=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ktzBHSN55gta6zaAV0wiWKqiDD0zVyPtuRwoLKrPcM1LGr9dTpXHyKnvFoNG0lOVL
+	 mToGgK2O4RT3Sv/mA0vSg0xMfUb3eP8mYEfh4x2S+6Wc6oL2H6doP1rdw7R3TtPrUF
+	 wzTdW1nYBBQQoOdsfeHdnsVxekfg0rjvcL2FdHJ1h5HKmOs/cUnbEg0zmHpKrnl42k
+	 aOnZqVfddUfmN9WBKK0jzy7tRgrig2aIn8mw+r1UzFI1AYKzZfHNi2NKLxlBWYAKAp
+	 yrDzF4SYMjqixIUdtHTA0uZhY8Jub6ujUNKg3AskiHlMPPaUlU0KI9WCU1MzwOAhaE
+	 /x3+GBXHGGPlw==
+Date: Fri, 11 Oct 2024 09:09:41 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Li Li <dualli@chromium.org>
+Cc: dualli@google.com, corbet@lwn.net, gregkh@linuxfoundation.org,
+ arve@android.com, tkjos@android.com, maco@android.com,
+ joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com,
+ surenb@google.com, arnd@arndb.de, masahiroy@kernel.org,
+ devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
+ kernel-team@android.com, Donald Hunter <donald.hunter@gmail.com>
+Subject: Re: [PATCH v2 1/1] binder: report txn errors via generic netlink
+Message-ID: <20241011090941.3494f1ef@kernel.org>
+In-Reply-To: <20241011064427.1565287-2-dualli@chromium.org>
+References: <20241011064427.1565287-1-dualli@chromium.org>
+	<20241011064427.1565287-2-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010194717.1536428-1-jroi.martin@gmail.com>
-User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
-X-Spam-Score: -2.50
-X-Spamd-Result: default: False [-2.50 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	SUSPICIOUS_RECIPS(1.50)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	HAS_REPLYTO(0.30)[dsterba@suse.cz];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MIME_TRACE(0.00)[0:+];
-	TO_DN_SOME(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FREEMAIL_TO(0.00)[gmail.com];
-	RCVD_TLS_ALL(0.00)[];
-	TAGGED_RCPT(0.00)[];
-	ARC_NA(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	REPLYTO_ADDR_EQ_FROM(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[6];
-	REPLYTO_DOM_NEQ_TO_DOM(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 09:47:17PM +0200, Roi Martin wrote:
-> The read_alloc_one_name function does not initialize the name field of
-> the passed fscrypt_str struct if kmalloc fails to allocate the
-> corresponding buffer.  Thus, it is not guaranteed that
-> fscrypt_str.name is initialized when freeing it.
+On Thu, 10 Oct 2024 23:44:27 -0700 Li Li wrote:
+> Frozen tasks can't process binder transactions, so sync binder
+> transactions will fail with BR_FROZEN_REPLY and async binder
+> transactions will be queued in the kernel async binder buffer.
+> As these queued async transactions accumulates over time, the async
+> buffer will eventually be running out, denying all new transactions
+> after that with BR_FAILED_REPLY.
 > 
-> This is a follow-up to the linked patch that fixes the remaining
-> instances of the bug introduced by commit e43eec81c516 ("btrfs: use
-> struct qstr instead of name and namelen pairs").
+> In addition to the above cases, different kinds of binder error codes
+> might be returned to the sender. However, the core Linux, or Android,
+> system administration process never knows what's actually happening.
 > 
-> Link: https://lore.kernel.org/linux-btrfs/20241009080833.1355894-1-jroi.martin@gmail.com/
-> Fixes: e43eec81c516 ("btrfs: use struct qstr instead of name and namelen pairs")
-> Signed-off-by: Roi Martin <jroi.martin@gmail.com>
+> This patch introduces the Linux generic netlink messages into the binder
+> driver so that the Linux/Android system administration process can
+> listen to important events and take corresponding actions, like stopping
+> a broken app from attacking the OS by sending huge amount of spamming
+> binder transactions.
+> 
+> To prevent making the already bloated binder.c even bigger, a new source
+> file binder_genl.c is created to host those generic netlink code.
 
-Added to for-next, thanks.
+Please add a YNL spec for the new family, and use it to codegen 
+the basics like policy and op tables:
+https://docs.kernel.org/next/userspace-api/netlink/specs.html
+Don't hesitate to ask if you have any questions.
 
