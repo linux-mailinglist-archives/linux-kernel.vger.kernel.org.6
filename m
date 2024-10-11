@@ -1,180 +1,140 @@
-Return-Path: <linux-kernel+bounces-360577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DC6F999CD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:40:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0FCAF999CD5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:40:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D9154B20FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:40:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4685A1C224D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:40:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71684199FB9;
-	Fri, 11 Oct 2024 06:40:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B320898E;
+	Fri, 11 Oct 2024 06:40:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g5vw7eGW"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwOFHQkE"
+Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 221C019F475
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:40:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B88199FB9;
+	Fri, 11 Oct 2024 06:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728628814; cv=none; b=OorWOi9ZL2EN4KjDDQGdsWvS+9eAOsImvndpu6Xz28r1Dr7nkRMRODrpo4R3EoCoTeluqCDhbfuLWzGZ4fwhwF/imkZHm4wWkoRzHOkvMQGssiSNmj/ug60xjsGl51IRycnjg7rZmEMDuv5x1bnUhNb052RPtjgD0LFFMNvZqS4=
+	t=1728628850; cv=none; b=WMfMjXvTKspm9hwPvwy6DHFXCgotwq4LQTON4n2KaF+b+otpdTWrc+h5946OQfqet70b7hTj5rbN93lJGGxP5bg6MMLdla4Lx5Bo4x1D+ZoUawZ2wBhN2GC63Z5eZ0QjFlhVhBe4TAu/8qB8i9h1wMEnIlYuLagntPNFRDVIQgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728628814; c=relaxed/simple;
-	bh=hYksWLHXILV+Jh4QWVWtjIqUuNtdq6Nw7BA7xixW0zI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=bf9qvblfkIRgRJSwqQ6o8t1PDTk9N5xZlyz/2c1SxkRzW1WKAxQVRu7ClSjv87siGK8xkhtQ3QMepwlCC0SALMBi7gEqF4psYzgHWdbXr7DCbrxiB7UPf0zHboksYj/ZSXm8WBVlA/AR4D/hp/g9zRKINrh/qgIyKnC+EiLn55A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g5vw7eGW; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e292926104bso55839276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:40:12 -0700 (PDT)
+	s=arc-20240116; t=1728628850; c=relaxed/simple;
+	bh=n+zxY4Rf474dyrGixT8wUjQqxiY6uFnLEoLhANImtyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=EPEQsAkx/du8cnuodYijyxwbYm6rqzbRd+tPbGwoZFhmqwAkDf5Wi6L8pGqJkguJQ1/Kk3D/4B7pmtP6CZ7hMI6m0/1PAqUSmdM1pb4M9zLwsJhutPTMYs0ZeW9yT5VzAtMac8BIJKaK4E6C4zFADSPlQVmmWfaUqCtIZiHSa6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwOFHQkE; arc=none smtp.client-ip=209.85.210.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e038f3835so1648117b3a.0;
+        Thu, 10 Oct 2024 23:40:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728628812; x=1729233612; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728628848; x=1729233648; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qfSM9AJ7ULCOORqVQMeKLRHN4Z/ZES4kfQKS10nrPyo=;
-        b=g5vw7eGW+BSFapUHdA8nk5SBRdkE1RvAVfoI2FDBqHzZ38sYTPme0Ls73h7YPuRUQe
-         FTpl9Zg8m21gyecpwzhKwu5zyZwGH08PghatpXcfX3i0P0JGijWn7RCr/AARL7yGGk3P
-         uhHe6m8slACfJSJ2g4e8yBoALWrdGJ8V6bkAAut+F4HnEWVlOm0xxyyGd7E3Zz2JhC9m
-         IyIs73syySHRKlACMlzyW5qWKk3grvYLhONdyyScjrTFryoSgoGAYj8h3GdhOp3dKznx
-         4WsvJhYHhmxf8iF5wMFc1kSggZWnL/0E2aL/7AHfu1hnuTY6wL/Ux4UC6Fh5K2SAgXdG
-         SjOQ==
+        bh=2N/8TaScJ2RN0jgasqsAf8d391FaErzcf9On+L6fPbs=;
+        b=TwOFHQkEpfQfEIVqwv3UC9on0ZlVW7u3Dw920iqp7a8O6s1Uj5aGLy5gEUHQF50Dkb
+         +4EFY4y29L/Ud1EjFE1litliAVYFAQisAqWeF2YkWt1v6svfJKxb1mTFEMLGpiORpzCn
+         ot1dspbEZR/x0qiGqL38VLiG6XEsw+GwQWhwlBCy1tlZCveQzzdhEDdJeDOIW4BnQf5l
+         WU5/H6nmjATsFFyoPUpoCGAIyHzqg4e6Kb8ftzqlqxBQNAzg3bo2MLUEB7iByK5byR4V
+         pG6jBIDjTs82u+KMMlYz//Hx6QGfCZEHzZk7hE4zaZZ/bBQmpOoX6qyTavVa/wYguRtf
+         Gxkw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728628812; x=1729233612;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728628848; x=1729233648;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qfSM9AJ7ULCOORqVQMeKLRHN4Z/ZES4kfQKS10nrPyo=;
-        b=YB/h7TXmOOt9NLv/j7876W3ws+JnoGOK3ePmrJBJoSFuIEkl7/7cvPvvSb2Pvjcw3X
-         7W6ATriAv7YM0+Mtq3tmR8Ha7n0lzgwtDv7RbWKXPISfeCsABmkcPKonBS76YpeOtQ1R
-         qAVIp5mcIjcmS/8omVMHOC5S5ykKBPgrQSlausWkZ5vZBT80uqdeml5Durdx5rjgbzQg
-         ngbs0nCNjdMr3Hqk/1hCy//Nq5DtGrWwTwc+oxA/IUt/U1qKsgBqNXVc7I5vI7Q41FAo
-         DhBpo6VdBwNiOOYIHCKyEs+QoIAq8lz2I0zyq2qyW+dp+C+L9W6GWV2xaEuULM747eyy
-         IR4g==
-X-Forwarded-Encrypted: i=1; AJvYcCWo8N6flkeiCJUW2kuVZWwK5O8Tv7LCFMvwOXGHHleU0vGIhy2qrvaMQ+3FqoESiZ98Ivc/xmZPX9fp7Dk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOtF9Jk2TSmxf/B/cR+ZFZDr1Jerx9ml6g6jvi7BfHuZCWT0Y3
-	Rv9XS+nDwNozJdM71WXUWPSIhR4H8bLkgTPfszN9IfVu1+U4wJOuHl78OdS+A5pFu52pzqeP4Tj
-	O4QWwG2bK4+NhxiHmgAPBcCZwG/Jc3OAGtYQUXA==
-X-Google-Smtp-Source: AGHT+IEp7H558OS0vMf/lCfx7nv2J5NRDmMZ5UvSeTPYRs3ovFyldfgKvbQdJiW43i1yheMmuw+j0rRtlg+9hMGjFZg=
-X-Received: by 2002:a05:6902:1003:b0:e28:ead2:2270 with SMTP id
- 3f1490d57ef6-e2919def5dbmr941314276.41.1728628812086; Thu, 10 Oct 2024
- 23:40:12 -0700 (PDT)
+        bh=2N/8TaScJ2RN0jgasqsAf8d391FaErzcf9On+L6fPbs=;
+        b=ep3mHT+lJTSm96C6ZFAS9gxlOJCMyHruZ1kRqrT/wWStcEcgaV4ZJtsOjXSYXRrC1C
+         Sozk5D/rZG57judrSL9AoS5WEHCoUx5vP4KB5vLAnNVFExenguTKDZRhdIRUR2QLtFtG
+         RccFTUVHo8UnO+E/IDZilvOe0IvE3kwFjg2K75NyzqILGCIbqmyPEz8hOQviecVZ3g/9
+         AWHWqrL9+QuMus4UN+gC4FVtQdz+6g3UAYBhlps8ZkNciTjyy60VPRyNXwJnh/2TvFZZ
+         2fqBxqH55ee2wehCfCVj8RPz4fUKEWddUHx3ryUTpJgrBFi9NSa3h65g0+EBz7iDvKp/
+         um7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCULgiQ4Abv8Cke1taMfh7lnsu2rkaDwoPIHy6PLjj9/AWhB0Kv/Sc/nULolqtTgLWugabpg0Cs28c6B2l0=@vger.kernel.org, AJvYcCWSzmZhqD2MIUTqrqA4Eno/BVo0Mk6itbNDS2tAutJS+CVcglC1mPzNWijW9YUz2oWmYyPG0mAQDeFnEZS77PCq1/auhg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlGmDDoKb6s5o0XXBvrwCFnzJaMx75+WkNnEcU+tord3eFBGAP
+	whbQN0qjF0VA+uBGJPxuGZof2//2Jr4/x0YAnuekdQ6N0SxtcDXA
+X-Google-Smtp-Source: AGHT+IGJDSygOGHJgJcC4TgrH1GjS9gF5Lat4fZCtP6snV9njgB/bIlLoYLauuo3zpIykRB4RROTJg==
+X-Received: by 2002:aa7:8883:0:b0:71d:fad0:df28 with SMTP id d2e1a72fcca58-71e37e4be43mr2430573b3a.8.1728628847734;
+        Thu, 10 Oct 2024 23:40:47 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0fcf4sm2013501b3a.219.2024.10.10.23.40.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 23:40:47 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	W_Armin@gmx.de,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH 0/4] Dell AWCC platform_profile support
+Date: Fri, 11 Oct 2024 03:40:06 -0300
+Message-ID: <20241011064005.305038-2-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241007093324.49631-3-kuurtb@gmail.com>
+References: <20241007093324.49631-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-9-76d4f5d413bf@linaro.org>
- <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3>
-In-Reply-To: <zig5zuf6hjcrkwmsdiahtzz3t3mxrmwxj65l43xij3zhfcyidn@fuisasnavvo3>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Fri, 11 Oct 2024 14:40:00 +0800
-Message-ID: <CABymUCP7bVBSWXCNp33x_B8KaZSFU-Dx+bU5ctkgDGXrzURrXQ@mail.gmail.com>
-Subject: Re: [PATCH v2 09/14] drm/msm/dpu: blend pipes per mixer pairs config
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
-=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:15=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Oct 09, 2024 at 04:50:22PM GMT, Jun Nie wrote:
-> > Blend pipes by set of mixer pair config. The first 2 pipes are for left
-> > half screen with the first set of mixer pair config. And the later 2 pi=
-pes
-> > are for right in quad pipe case.
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c    | 38 ++++++++++++++++++---=
---------
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h |  1 +
-> >  2 files changed, 25 insertions(+), 14 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm=
-/msm/disp/dpu1/dpu_crtc.c
-> > index 43d9817cd858f..66f745399a602 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-> > @@ -442,7 +442,7 @@ static void _dpu_crtc_blend_setup_mixer(struct drm_=
-crtc *crtc,
-> >       const struct msm_format *format;
-> >       struct dpu_hw_ctl *ctl =3D mixer->lm_ctl;
-> >
-> > -     uint32_t lm_idx, i;
-> > +     uint32_t lm_idx, lm_pair, i, pipe_idx;
-> >       bool bg_alpha_enable =3D false;
-> >       DECLARE_BITMAP(fetch_active, SSPP_MAX);
-> >
-> > @@ -463,15 +463,20 @@ static void _dpu_crtc_blend_setup_mixer(struct dr=
-m_crtc *crtc,
-> >               if (pstate->stage =3D=3D DPU_STAGE_BASE && format->alpha_=
-enable)
-> >                       bg_alpha_enable =3D true;
-> >
-> > -             for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
-> > -                     if (!pstate->pipe[i].sspp)
-> > -                             continue;
-> > -                     set_bit(pstate->pipe[i].sspp->idx, fetch_active);
-> > -                     _dpu_crtc_blend_setup_pipe(crtc, plane,
-> > -                                                mixer, cstate->num_mix=
-ers,
-> > -                                                pstate->stage,
-> > -                                                format, fb ? fb->modif=
-ier : 0,
-> > -                                                &pstate->pipe[i], i, s=
-tage_cfg);
-> > +             /* loop pipe per mixer pair */
-> > +             for (lm_pair =3D 0; lm_pair < PIPES_PER_PLANE / 2; lm_pai=
-r++) {
-> > +                     for (i =3D 0; i < PIPES_PER_LM_PAIR; i++) {
-> > +                             pipe_idx =3D i + lm_pair * PIPES_PER_LM_P=
-AIR;
-> > +                             if (!pstate->pipe[pipe_idx].sspp)
-> > +                                     continue;
-> > +                             set_bit(pstate->pipe[pipe_idx].sspp->idx,=
- fetch_active);
-> > +                             _dpu_crtc_blend_setup_pipe(crtc, plane,
-> > +                                                        mixer, cstate-=
->num_mixers,
-> > +                                                        pstate->stage,
-> > +                                                        format, fb ? f=
-b->modifier : 0,
-> > +                                                        &pstate->pipe[=
-pipe_idx], i,
-> > +                                                        &stage_cfg[lm_=
-pair]);
-> > +                     }
-> >               }
-> >
-> >               /* blend config update */
-> > @@ -503,7 +508,7 @@ static void _dpu_crtc_blend_setup(struct drm_crtc *=
-crtc)
-> >       struct dpu_crtc_mixer *mixer =3D cstate->mixers;
-> >       struct dpu_hw_ctl *ctl;
-> >       struct dpu_hw_mixer *lm;
-> > -     struct dpu_hw_stage_cfg stage_cfg;
-> > +     struct dpu_hw_stage_cfg stage_cfg[LM_PAIRS_PER_PLANE];
->
-> After seeing this code, can we define STAGES_PER_PLANE (and
-> also keep PLANES_PER_STAGE defined to 2)?
->
-Could you elaborate it? Stages describe how many layers to be blended.
-Plane is a DRM concept that describe a buffer to be display in specific
-display driver. Plane is already mapped to SSPP/multi-rect in DPU driver
- in blending stage level. So I am confused here.
+This patch adds platform_profile support for Dell devices which implement
+User Selectable Thermal Tables (USTT) that are meant to be controlled by
+Alienware Command Center (AWCC). These devices may include newer Alienware
+M-Series, Alienware X-Series and Dell's G-Series. This patch, was tested
+by me on an Alienware x15 R1.
 
--  Jun
+---
+v4:
+ - Fixed indentation on previous code
+ - Removed unnecessary (acpi_size) and (u32 *) casts
+ - Return -EIO on ACPI_FAILURE
+ - Appropiate prefixes given to macros
+ - 0xFFFFFFFF named WMAX_FAILURE_CODE
+ - Added support for a new set of thermal codes. Old ones now have USTT
+   in their names
+ - A new quirk has been added to differantiate between the two sets.
+   thermal and thermal_ustt are mutually exclusive
+ - Added documentation for WMAX interface
+v3:
+ - Removed extra empty line
+ - 0x0B named WMAX_ARG_GET_CURRENT_PROF
+ - Removed casts to the same type on functions added in this patch
+ - Thermal profile to WMAX argument is now an static function and makes
+   use of in-built kernel macros
+ - Platform profile is now removed only if it was created first
+ - create_platform_profile is now create_thermal_profile to avoid
+   confusion
+ - profile_get and profile_set functions renamed too to match the above
+v2:
+ - Moved functionality to alienware-wmi driver
+ - Added thermal and gmode quirks to add support based on dmi match
+ - Performance profile is now GMODE for devices that support it
+ - alienware_wmax_command now is insize agnostic to support new thermal
+   methods
+
+Kurt Borja (4):
+  alienware-wmi: fixed indentation and clean up
+  alienware-wmi: alienware_wmax_command() is now input size agnostic
+  alienware-wmi: added platform profile support
+  alienware-wmi: WMAX interface documentation
+
+ Documentation/wmi/devices/alienware-wmi.rst | 364 ++++++++++++++++++
+ drivers/platform/x86/dell/Kconfig           |   1 +
+ drivers/platform/x86/dell/alienware-wmi.c   | 389 ++++++++++++++++----
+ 3 files changed, 678 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+
+-- 
+2.47.0
+
 
