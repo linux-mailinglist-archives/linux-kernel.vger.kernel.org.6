@@ -1,98 +1,58 @@
-Return-Path: <linux-kernel+bounces-361455-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361456-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BAB499A87C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:57:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 785ED99A87E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:57:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BE901C20F02
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:57:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 842D21C2117D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:57:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF972196C7B;
-	Fri, 11 Oct 2024 15:56:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DE0198A30;
+	Fri, 11 Oct 2024 15:57:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YrPbIslR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ferg.al header.i=@ferg.al header.b="UFUmGaI1"
+Received: from mail.ferg.al (mail.ferg.al [128.140.123.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442D119750B;
-	Fri, 11 Oct 2024 15:56:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63644197A8B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:57:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=128.140.123.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728662217; cv=none; b=jZcdMZxFO2SgxV23rY/5mxeru7Yt9Q/3Gee1CwtTKp0D5OidhEoSUv7GUP2z2aJi6o5npLKsMhSLgJPhNoIrOIk/UQW/mZe0f1EPSz57VsHTGn2FvVTHyfPa+AuQnqO3QtBNtmPwjrnRcBlNpkMr3QPkfDS+CjqFIofwsZby5Zs=
+	t=1728662258; cv=none; b=OPHaoOKiYb/ha/Eg44NTzKPmuk/VwvDYlCkZWxIyltb8VOzYVu7edg0+WU4hBts9XvKbElqHa0o8uTJazgiiZc6BMaaql9Eay6pQeUBa9EcO7yQrp85dc1A2P+50p0+Si9iG0WOCG1DYYuLVPZtppwiWEktIT5Q/MZSJ3pSdfF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728662217; c=relaxed/simple;
-	bh=Fn9ptgM41qALcSRg8TUBAG6/+e/ro51xfKybLhnLgGM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KmNJ3d59u8TN7Ivv6pamLNvMf95qlAziYEjUlAw6G1FoRnj2l6Lp+fkZ5qoPWGw6aMC47UL5jxV9s1o3loahpEz9uGdkpomdrWfmHW01ERusSMarn0XOnPRr1e44ZDFqlMJzYZgMMZgxFbfY+17rlZ5/CYNf9PbWTrEABXjU/7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YrPbIslR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 62D75C4CEC3;
-	Fri, 11 Oct 2024 15:56:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728662216;
-	bh=Fn9ptgM41qALcSRg8TUBAG6/+e/ro51xfKybLhnLgGM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YrPbIslRRF1t1B8nHBSGGOnXms+uD6Njx16YyPyoizdBuFuirO4+3x2Ko/CKE5/oP
-	 XSt3XbqGPviX7kIcbmswAJs5Vy8DWnA2oXuKb67WJ+TW0QiVheVGMO7PtWO0blo7JG
-	 utdBGsK63bteE4zTfjoKlpY9T/M2aGHNVXRQjnA3K/bB1NCl+EUwfniE9oOVYSLiVQ
-	 gP3RkhV3542objfdIDtOAwdE2xhAeN76wwU7kUlCLS1o5ARLFkLza2a9EHF9sAseXk
-	 KS+q49B8iHJyPpVkAwcNqYMtxrqjH/+pL5flmTPXqb+i7CwViZFI77OI+CQUsyap/E
-	 vQOf0SnJ944vw==
-Date: Fri, 11 Oct 2024 08:56:34 -0700
-From: Josh Poimboeuf <jpoimboe@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev, keescook@chromium.org,
-	linux-hardening@vger.kernel.org, nathan@kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Jan Beulich <jbeulich@suse.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH v2 3/5] objtool: Add support for annotated jump tables
-Message-ID: <20241011155634.se7xifgne6z5mqmx@treble>
-References: <20241010122801.1321976-7-ardb+git@google.com>
- <20241010122801.1321976-10-ardb+git@google.com>
- <20241010201530.6kfvlcdplqhrqjbj@treble>
- <CAMj1kXG1K2ka+ygUbRNwGvwFFMuOSXxawpHfCPmZjYSY2weDpA@mail.gmail.com>
+	s=arc-20240116; t=1728662258; c=relaxed/simple;
+	bh=aA6huiGocNu7EQwpUsqFk3t3njZJowfv7VE74cnDdTA=;
+	h=Date:From:To:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=c3TvaSpmNb/dy+xABCx1e7+caZRSfkCJM6UR+EXEp68YQ9mnI01h+tY2z+SU/MRZf8qXPCyz9+9q0edZqlny1GyEhaX1VpDH8aNaOLZ5MJp3LV7d4gFVcB9pNbVH/nQVUpJA6TwYxAqy7DoPZ1hjcnS6tBRmT5RsYwnYHTk7vzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ferg.al; spf=pass smtp.mailfrom=ferg.al; dkim=pass (2048-bit key) header.d=ferg.al header.i=@ferg.al header.b=UFUmGaI1; arc=none smtp.client-ip=128.140.123.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ferg.al
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ferg.al
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id BBB3FC6095
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:57:33 +0100 (IST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ferg.al; s=dkim;
+	t=1728662254; h=from:date:message-id:to:mime-version:content-type;
+	bh=aA6huiGocNu7EQwpUsqFk3t3njZJowfv7VE74cnDdTA=;
+	b=UFUmGaI1LhG9XPDjz1uSC5ELFh5NIglkPevTxw1VT4X6gswKeQXl7Txi9eXvP7NQkHDpkb
+	AsGoL0njblRGkN2Bcf8Gri7LB2ybwososxVxcV3E6Jb/zeLnQix9QD6EsdtGY8o0lBZZWb
+	Ko5wVDnhO+WapRTdpmVEeQP4j8eXgCVl+S4FbjR+cqDI34DUviMPZ06jEe4TGhlMxVRF6n
+	K+L1o6zLjFcieVa4al8ydd522jN1/rdk0NHi9Q6P5hi6b19+lI4rtDlSa4AFgkNUU4JHUP
+	inFT5q5Wgi8mUlxuiBXJqn6FfrwkRhzSlyDhPBGiCgRX+2AyMDl807e6X1Mv0w==
+Date: Fri, 11 Oct 2024 16:57:32 +0100
+From: fergal <fergal@ferg.al>
+To: linux-kernel@vger.kernel.org
+Message-ID: <d2jvuc433rajaw24akeliwgxqoo27tlpgaumurbgxcii3bmucw@p4igi7vsmda7>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CAMj1kXG1K2ka+ygUbRNwGvwFFMuOSXxawpHfCPmZjYSY2weDpA@mail.gmail.com>
+X-Last-TLS-Session-Version: TLSv1.3
 
-On Fri, Oct 11, 2024 at 08:29:48AM +0200, Ard Biesheuvel wrote:
-> On Thu, 10 Oct 2024 at 22:15, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
-> >
-> > On Thu, Oct 10, 2024 at 02:28:05PM +0200, Ard Biesheuvel wrote:
-> > > +++ b/tools/objtool/arch/x86/special.c
-> > > @@ -115,30 +115,51 @@ struct reloc *arch_find_switch_table(struct objtool_file *file,
-> > >       struct reloc  *text_reloc, *rodata_reloc;
-> > >       struct section *table_sec;
-> > >       unsigned long table_offset;
-> > > +     struct symbol *sym;
-> > >
-> > >       /* look for a relocation which references .rodata */
-> > >       text_reloc = find_reloc_by_dest_range(file->elf, insn->sec,
-> > >                                             insn->offset, insn->len);
-> >
-> > Hm, we can probably put insn_reloc() in check.h and use that here to
-> > take advantage of its caching for the no_reloc case.
-> >
-> 
-> insn_reloc() filters out R_*_NONE relocations, for the reasons pointed
-> out in the commit log.
-
-True, unless this becomes the fallback code for the generic "no
-annotations" case as I suggested elsewhere.
-
-Regardless we should be sure to write and read insn->no_reloc where we
-can to minimize duplicate reloc lookups.
-
--- 
-Josh
+subscribe linux-kernel
 
