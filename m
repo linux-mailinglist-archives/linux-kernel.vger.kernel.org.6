@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-361679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAAFE99AB5D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:48:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA02499AB61
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:48:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 867AA2847E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:48:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6904C1F23465
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:48:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350CD1D016C;
-	Fri, 11 Oct 2024 18:45:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EE341D0E31;
+	Fri, 11 Oct 2024 18:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="X1i2cc/O"
-Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
+	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="ZgSUi6K+"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BE51D014E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:45:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EC7A1D0E0F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:45:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672344; cv=none; b=MxcZmfbkwSIqc7Y6ARpXjix19DCj5/YjslYhV+ngF3Et4rfPT3I04Vlei++6NsvztbfqH/y46caGTqGMM+H8zVeaRtVEm6yJy3hP3pXCIJI7uBCnkmbZtU5lQSBD//2xRFiLUhXrAEzddUSJ50GMhrv898qR1TTuOYlkZXbokZg=
+	t=1728672348; cv=none; b=eT1CIwNXJ3pOluS05ssK+BeRlR/7Fb1uc4r3LUICFekjBOzWm+ZN3m4GH1iEPzx2DRdxMoTTRqReJEe5I6D0ca5vM6Xa4dv1GAEzr0HuUop2YFV70lxc8FTdsk0QGT+QsU9cMpZqmoKtsHxjqLzmupKFXgSlU/rmuM0ScyejiMM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672344; c=relaxed/simple;
-	bh=1O1kGSWJK9mXzhgtA1OKFr6nhAfyWnBI/4+yFGVv6WA=;
+	s=arc-20240116; t=1728672348; c=relaxed/simple;
+	bh=q+b9jZGAidjuh8GtSlIIKJ1LqbGOzaugQLHfnQm1lqE=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=iVVEN+2ZpKOXijE5gNSlo5xoNGnUAFojlXCq+u6JMoswweX7YYxui9gA6TQfxTudhufwFH7gp+VPZreRhwwsjTJ7EJoK/v+4p9BGtprBUde75xhwXro7OtrClKU27MKTYDwdk9s88Ah/4clVxBoTmFAlOHDC1iO1Md76G20nrOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=X1i2cc/O; arc=none smtp.client-ip=209.85.216.45
+	 MIME-Version; b=AG0bMzRHxUh76jXXjFym1C9NpyR0+gnHMe83EQ6wR8ilCMEG2q1uuZLVS/NUwpc9bjo/Qr7Nw78ANWcJ0jHc9gwxAaNzcl3TDV1M9OBFYzyINnRICVRH6/IJMWRxMqGBP2cLu4F514QlxyOwYOa9+hL/N9G+FXYWFipY/c+YhIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=ZgSUi6K+; arc=none smtp.client-ip=209.85.216.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2e23f2931so1465676a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:45:42 -0700 (PDT)
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e28b75dbd6so1791145a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:45:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728672342; x=1729277142; darn=vger.kernel.org;
+        d=fastly.com; s=google; t=1728672346; x=1729277146; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/UOc67eyBhG5gGRkb0LgZtml97A93vYaVKIgdUp4Lkw=;
-        b=X1i2cc/OjqWwdU1AJ8Km7VetM8d1QFES0C7sXjBwvNvmDvyjKasUDwiy8Bb6mlTcol
-         AaJpNcbDfoH1FW1Uq7WVJ+gvPzhE8XizxRiX6qjAoJuWvNDZ7x7ZPnmhGDMBvqnejqqw
-         XHC31VIkTadfb2ROEK6s+5fVc5LfSSOXTqIho=
+        bh=yXIej0C4eoHUHQ4nEdeNbNdLeJSUvgnrgxPSPMx1EiE=;
+        b=ZgSUi6K+fg/sFQvrgP4gqFZWja7bxeRtBjGIIsSYjz8p0bbbRpKi4XeAUlLVNNjkzR
+         9ha4BKc8FTRCLUGKEUoXjOM+FuuS0GZ466Jo6Q0LlOEYtfKaFnrgaCIFbtsSs9HrUQmJ
+         FELVyiIjfwI/LwPBoQJBMFCDN0dSs/dOM15tc=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728672342; x=1729277142;
+        d=1e100.net; s=20230601; t=1728672346; x=1729277146;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/UOc67eyBhG5gGRkb0LgZtml97A93vYaVKIgdUp4Lkw=;
-        b=FJD/FI+jyqG9ZnBY7npLlXGBTNtmrCvYg1pImneDapd4kjIpqINjLRz3ybzeWVKujI
-         Y5bbSgb/cUnNkMtiJEX/WR9vJ/33/dQw0WBEIqZwZuUV1oUOTTyHNZrwPItL+8/wzemw
-         C0MeA/yDQ3cu3AXH4kCdjdj+r8avT5rG1KjYlrNM3ZLKaIJiR7Fyfub7cs+TwgJZyXXM
-         FIpTl+NgvhVGSVnrEidU/75I3hSJd9D0F9b7HAUk+uvgXh9riB28Lix+uz8ON1N/3guz
-         /PUvS5ECZajVai+e3QJEJzDz8wgaJZgh+4oGUmao0T5iinCqEoZKggYNyiySenK3+7kM
-         Po2g==
-X-Forwarded-Encrypted: i=1; AJvYcCUwW2CIIyGeHrF8W9RnZ/WJRWNzri6xKRPge8M9AyCiNIjdsspG4OuL5kW0OFwrWP0hMXh9Ud1h8ut2mBU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxPUT92FkLBs2vdIgs2sytmvvHqwRTI2OkCj01H8V1sNDBAtVYB
-	EX8vzmhJ3MO/KKFyOP9wrtme22tBPoLpHAPm9jUd7o9yexvwnS9bxfVGvCCmfdo=
-X-Google-Smtp-Source: AGHT+IErkyicZp3WCEfq9BlQNkR5KZMGrmgYeItXsbJJyUYKuK1vGNK9wwxluDQVA+T0yl36htpl2A==
-X-Received: by 2002:a17:90b:1005:b0:2e2:e0c1:4452 with SMTP id 98e67ed59e1d1-2e31539036fmr406881a91.41.1728672341941;
-        Fri, 11 Oct 2024 11:45:41 -0700 (PDT)
+        bh=yXIej0C4eoHUHQ4nEdeNbNdLeJSUvgnrgxPSPMx1EiE=;
+        b=I23UpZhvt8aB2ZvBpCAIplvRlrhrUM0BhUJZvXH9MnIobpX8eeZQHRq5asJT9PU8rW
+         6Pw+7g9V2LjAneX9/LJzBMA1fG4omlOAW815ciKgPqK3eLmgh023r/9dxHn6YJe3nKp+
+         Up6dstcH3GQe47nflOiqZsH+B5ikgpXVmQ7o/HH5si4IwXWDpZZQCLdFG+CFRPAQSshq
+         w7x7Ah6pBz2L1X3R2fagmnwf0u1EC9fl0hphqaoblLPuk8Khj+zCyHsfBw+qMNgjLMPC
+         2J3A7IBT8Y00W9bovKovk111Mn0V5ji01seSeJVjkmezO4HkEhaLuWCCLgqE0jAwVYLw
+         APJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUUxwUTKpW2X9QjvTO16Kj/QxH5kJ4mhBdAcFc/8GXLo8b9WVHlTUbxeCfHBpxEFIXPZK7Mlom4uxkTITE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvBi4oMOquszKKexzPLh7A0QQQJp0Bo+lKggjReMWf8adIw4Sz
+	Gr/QtosF0HEyF8L7xKTh5XTa8svSf2+9++SFii0NG4Zy2nL4mlVmseb1G7Rl2/8=
+X-Google-Smtp-Source: AGHT+IFnsyEs1/CwI3pWxWqWY7TURNss9/odTFhLrbhqMJEXea7TzszaE0iBWvpXWaM9N7sLxA6ERg==
+X-Received: by 2002:a17:90b:4ac3:b0:2e2:e2f8:104 with SMTP id 98e67ed59e1d1-2e3152b0097mr445535a91.8.1728672346549;
+        Fri, 11 Oct 2024 11:45:46 -0700 (PDT)
 Received: from localhost.localdomain ([2620:11a:c019:0:65e:3115:2f58:c5fd])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e30d848e1csm687625a91.42.2024.10.11.11.45.40
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e30d848e1csm687625a91.42.2024.10.11.11.45.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 11:45:41 -0700 (PDT)
+        Fri, 11 Oct 2024 11:45:46 -0700 (PDT)
 From: Joe Damato <jdamato@fastly.com>
 To: netdev@vger.kernel.org
 Cc: mkarsten@uwaterloo.ca,
@@ -77,18 +77,15 @@ Cc: mkarsten@uwaterloo.ca,
 	Jakub Kicinski <kuba@kernel.org>,
 	"David S. Miller" <davem@davemloft.net>,
 	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Johannes Berg <johannes.berg@intel.com>,
-	Breno Leitao <leitao@debian.org>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	linux-doc@vger.kernel.org (open list:DOCUMENTATION),
+	Donald Hunter <donald.hunter@gmail.com>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
+	Larysa Zaremba <larysa.zaremba@intel.com>,
 	linux-kernel@vger.kernel.org (open list)
-Subject: [net-next v6 1/9] net: napi: Make napi_defer_hard_irqs per-NAPI
-Date: Fri, 11 Oct 2024 18:44:56 +0000
-Message-Id: <20241011184527.16393-2-jdamato@fastly.com>
+Subject: [net-next v6 2/9] netdev-genl: Dump napi_defer_hard_irqs
+Date: Fri, 11 Oct 2024 18:44:57 +0000
+Message-Id: <20241011184527.16393-3-jdamato@fastly.com>
 X-Mailer: git-send-email 2.25.1
 In-Reply-To: <20241011184527.16393-1-jdamato@fastly.com>
 References: <20241011184527.16393-1-jdamato@fastly.com>
@@ -100,181 +97,92 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add defer_hard_irqs to napi_struct in preparation for per-NAPI
-settings.
-
-The existing sysfs parameter is respected; writes to sysfs will write to
-all NAPI structs for the device and the net_device defer_hard_irq field.
-Reads from sysfs show the net_device field.
-
-The ability to set defer_hard_irqs on specific NAPI instances will be
-added in a later commit, via netdev-genl.
+Support dumping defer_hard_irqs for a NAPI ID.
 
 Signed-off-by: Joe Damato <jdamato@fastly.com>
 Reviewed-by: Eric Dumazet <edumazet@google.com>
 Reviewed-by: Jakub Kicinski <kuba@kernel.org>
 ---
- .../networking/net_cachelines/net_device.rst  |  1 +
- include/linux/netdevice.h                     |  3 +-
- net/core/dev.c                                | 10 +++---
- net/core/dev.h                                | 36 +++++++++++++++++++
- net/core/net-sysfs.c                          |  2 +-
- 5 files changed, 45 insertions(+), 7 deletions(-)
+ Documentation/netlink/specs/netdev.yaml | 8 ++++++++
+ include/uapi/linux/netdev.h             | 1 +
+ net/core/netdev-genl.c                  | 6 ++++++
+ tools/include/uapi/linux/netdev.h       | 1 +
+ 4 files changed, 16 insertions(+)
 
-diff --git a/Documentation/networking/net_cachelines/net_device.rst b/Documentation/networking/net_cachelines/net_device.rst
-index 1b018ac35e9a..5a7388b2ab6f 100644
---- a/Documentation/networking/net_cachelines/net_device.rst
-+++ b/Documentation/networking/net_cachelines/net_device.rst
-@@ -186,4 +186,5 @@ struct dpll_pin*                    dpll_pin
- struct hlist_head                   page_pools
- struct dim_irq_moder*               irq_moder
- u64                                 max_pacing_offload_horizon
-+u32                                 napi_defer_hard_irqs
- =================================== =========================== =================== =================== ===================================================================================
-diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-index e6b93d01e631..2e7bc23660ec 100644
---- a/include/linux/netdevice.h
-+++ b/include/linux/netdevice.h
-@@ -373,6 +373,7 @@ struct napi_struct {
- 	unsigned int		napi_id;
- 	struct hrtimer		timer;
- 	struct task_struct	*thread;
-+	u32			defer_hard_irqs;
- 	/* control-path-only fields follow */
- 	struct list_head	dev_list;
- 	struct hlist_node	napi_hash_node;
-@@ -2085,7 +2086,6 @@ struct net_device {
- 	unsigned int		real_num_rx_queues;
- 	struct netdev_rx_queue	*_rx;
- 	unsigned long		gro_flush_timeout;
--	u32			napi_defer_hard_irqs;
- 	unsigned int		gro_max_size;
- 	unsigned int		gro_ipv4_max_size;
- 	rx_handler_func_t __rcu	*rx_handler;
-@@ -2413,6 +2413,7 @@ struct net_device {
- 	struct dim_irq_moder	*irq_moder;
+diff --git a/Documentation/netlink/specs/netdev.yaml b/Documentation/netlink/specs/netdev.yaml
+index 08412c279297..585e87ec3c16 100644
+--- a/Documentation/netlink/specs/netdev.yaml
++++ b/Documentation/netlink/specs/netdev.yaml
+@@ -248,6 +248,13 @@ attribute-sets:
+              threaded mode. If NAPI is not in threaded mode (i.e. uses normal
+              softirq context), the attribute will be absent.
+         type: u32
++      -
++        name: defer-hard-irqs
++        doc: The number of consecutive empty polls before IRQ deferral ends
++             and hardware IRQs are re-enabled.
++        type: u32
++        checks:
++          max: s32-max
+   -
+     name: queue
+     attributes:
+@@ -636,6 +643,7 @@ operations:
+             - ifindex
+             - irq
+             - pid
++            - defer-hard-irqs
+       dump:
+         request:
+           attributes:
+diff --git a/include/uapi/linux/netdev.h b/include/uapi/linux/netdev.h
+index 7c308f04e7a0..13dc0b027e86 100644
+--- a/include/uapi/linux/netdev.h
++++ b/include/uapi/linux/netdev.h
+@@ -122,6 +122,7 @@ enum {
+ 	NETDEV_A_NAPI_ID,
+ 	NETDEV_A_NAPI_IRQ,
+ 	NETDEV_A_NAPI_PID,
++	NETDEV_A_NAPI_DEFER_HARD_IRQS,
  
- 	u64			max_pacing_offload_horizon;
-+	u32			napi_defer_hard_irqs;
+ 	__NETDEV_A_NAPI_MAX,
+ 	NETDEV_A_NAPI_MAX = (__NETDEV_A_NAPI_MAX - 1)
+diff --git a/net/core/netdev-genl.c b/net/core/netdev-genl.c
+index 358cba248796..f98e5d1d0d21 100644
+--- a/net/core/netdev-genl.c
++++ b/net/core/netdev-genl.c
+@@ -161,6 +161,7 @@ static int
+ netdev_nl_napi_fill_one(struct sk_buff *rsp, struct napi_struct *napi,
+ 			const struct genl_info *info)
+ {
++	u32 napi_defer_hard_irqs;
+ 	void *hdr;
+ 	pid_t pid;
  
- 	/**
- 	 * @lock: protects @net_shaper_hierarchy, feel free to use for other
-diff --git a/net/core/dev.c b/net/core/dev.c
-index b590eefce3b4..fbaa9eabf77f 100644
---- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -6233,7 +6233,7 @@ bool napi_complete_done(struct napi_struct *n, int work_done)
- 	if (work_done) {
- 		if (n->gro_bitmask)
- 			timeout = READ_ONCE(n->dev->gro_flush_timeout);
--		n->defer_hard_irqs_count = READ_ONCE(n->dev->napi_defer_hard_irqs);
-+		n->defer_hard_irqs_count = napi_get_defer_hard_irqs(n);
+@@ -189,6 +190,11 @@ netdev_nl_napi_fill_one(struct sk_buff *rsp, struct napi_struct *napi,
+ 			goto nla_put_failure;
  	}
- 	if (n->defer_hard_irqs_count > 0) {
- 		n->defer_hard_irqs_count--;
-@@ -6371,7 +6371,7 @@ static void busy_poll_stop(struct napi_struct *napi, void *have_poll_lock,
- 	bpf_net_ctx = bpf_net_ctx_set(&__bpf_net_ctx);
  
- 	if (flags & NAPI_F_PREFER_BUSY_POLL) {
--		napi->defer_hard_irqs_count = READ_ONCE(napi->dev->napi_defer_hard_irqs);
-+		napi->defer_hard_irqs_count = napi_get_defer_hard_irqs(napi);
- 		timeout = READ_ONCE(napi->dev->gro_flush_timeout);
- 		if (napi->defer_hard_irqs_count && timeout) {
- 			hrtimer_start(&napi->timer, ns_to_ktime(timeout), HRTIMER_MODE_REL_PINNED);
-@@ -6653,6 +6653,7 @@ void netif_napi_add_weight(struct net_device *dev, struct napi_struct *napi,
- 	INIT_HLIST_NODE(&napi->napi_hash_node);
- 	hrtimer_init(&napi->timer, CLOCK_MONOTONIC, HRTIMER_MODE_REL_PINNED);
- 	napi->timer.function = napi_watchdog;
-+	napi_set_defer_hard_irqs(napi, READ_ONCE(dev->napi_defer_hard_irqs));
- 	init_gro_hash(napi);
- 	napi->skb = NULL;
- 	INIT_LIST_HEAD(&napi->rx_list);
-@@ -11059,7 +11060,7 @@ void netdev_sw_irq_coalesce_default_on(struct net_device *dev)
- 
- 	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
- 		dev->gro_flush_timeout = 20000;
--		dev->napi_defer_hard_irqs = 1;
-+		netdev_set_defer_hard_irqs(dev, 1);
- 	}
- }
- EXPORT_SYMBOL_GPL(netdev_sw_irq_coalesce_default_on);
-@@ -12003,7 +12004,6 @@ static void __init net_dev_struct_check(void)
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, real_num_rx_queues);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, _rx);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_flush_timeout);
--	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, napi_defer_hard_irqs);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_max_size);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, gro_ipv4_max_size);
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, rx_handler);
-@@ -12015,7 +12015,7 @@ static void __init net_dev_struct_check(void)
- #ifdef CONFIG_NET_XGRESS
- 	CACHELINE_ASSERT_GROUP_MEMBER(struct net_device, net_device_read_rx, tcx_ingress);
- #endif
--	CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 104);
-+	CACHELINE_ASSERT_GROUP_SIZE(struct net_device, net_device_read_rx, 100);
- }
- 
- /*
-diff --git a/net/core/dev.h b/net/core/dev.h
-index d3ea92949ff3..0716b1048261 100644
---- a/net/core/dev.h
-+++ b/net/core/dev.h
-@@ -148,6 +148,42 @@ static inline void netif_set_gro_ipv4_max_size(struct net_device *dev,
- 	WRITE_ONCE(dev->gro_ipv4_max_size, size);
- }
- 
-+/**
-+ * napi_get_defer_hard_irqs - get the NAPI's defer_hard_irqs
-+ * @n: napi struct to get the defer_hard_irqs field from
-+ *
-+ * Return: the per-NAPI value of the defar_hard_irqs field.
-+ */
-+static inline u32 napi_get_defer_hard_irqs(const struct napi_struct *n)
-+{
-+	return READ_ONCE(n->defer_hard_irqs);
-+}
++	napi_defer_hard_irqs = napi_get_defer_hard_irqs(napi);
++	if (nla_put_s32(rsp, NETDEV_A_NAPI_DEFER_HARD_IRQS,
++			napi_defer_hard_irqs))
++		goto nla_put_failure;
 +
-+/**
-+ * napi_set_defer_hard_irqs - set the defer_hard_irqs for a napi
-+ * @n: napi_struct to set the defer_hard_irqs field
-+ * @defer: the value the field should be set to
-+ */
-+static inline void napi_set_defer_hard_irqs(struct napi_struct *n, u32 defer)
-+{
-+	WRITE_ONCE(n->defer_hard_irqs, defer);
-+}
-+
-+/**
-+ * netdev_set_defer_hard_irqs - set defer_hard_irqs for all NAPIs of a netdev
-+ * @netdev: the net_device for which all NAPIs will have defer_hard_irqs set
-+ * @defer: the defer_hard_irqs value to set
-+ */
-+static inline void netdev_set_defer_hard_irqs(struct net_device *netdev,
-+					      u32 defer)
-+{
-+	struct napi_struct *napi;
-+
-+	WRITE_ONCE(netdev->napi_defer_hard_irqs, defer);
-+	list_for_each_entry(napi, &netdev->napi_list, dev_list)
-+		napi_set_defer_hard_irqs(napi, defer);
-+}
-+
- int rps_cpumask_housekeeping(struct cpumask *mask);
+ 	genlmsg_end(rsp, hdr);
  
- #if defined(CONFIG_DEBUG_NET) && defined(CONFIG_BPF_SYSCALL)
-diff --git a/net/core/net-sysfs.c b/net/core/net-sysfs.c
-index 05cf5347f25e..25125f356a15 100644
---- a/net/core/net-sysfs.c
-+++ b/net/core/net-sysfs.c
-@@ -429,7 +429,7 @@ static int change_napi_defer_hard_irqs(struct net_device *dev, unsigned long val
- 	if (val > S32_MAX)
- 		return -ERANGE;
- 
--	WRITE_ONCE(dev->napi_defer_hard_irqs, val);
-+	netdev_set_defer_hard_irqs(dev, (u32)val);
  	return 0;
- }
+diff --git a/tools/include/uapi/linux/netdev.h b/tools/include/uapi/linux/netdev.h
+index 7c308f04e7a0..13dc0b027e86 100644
+--- a/tools/include/uapi/linux/netdev.h
++++ b/tools/include/uapi/linux/netdev.h
+@@ -122,6 +122,7 @@ enum {
+ 	NETDEV_A_NAPI_ID,
+ 	NETDEV_A_NAPI_IRQ,
+ 	NETDEV_A_NAPI_PID,
++	NETDEV_A_NAPI_DEFER_HARD_IRQS,
  
+ 	__NETDEV_A_NAPI_MAX,
+ 	NETDEV_A_NAPI_MAX = (__NETDEV_A_NAPI_MAX - 1)
 -- 
 2.25.1
 
