@@ -1,129 +1,128 @@
-Return-Path: <linux-kernel+bounces-361425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361428-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D24D499A804
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:39:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370D799A80C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:41:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 714141F21DB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:39:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75E0B2812AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF808195803;
-	Fri, 11 Oct 2024 15:39:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 040EA197A9F;
+	Fri, 11 Oct 2024 15:40:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZmY6CT59"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FYzyubZQ"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 436A4188CB1;
-	Fri, 11 Oct 2024 15:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CEE194AF3;
+	Fri, 11 Oct 2024 15:40:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661193; cv=none; b=J1Egf99rQK5DtziLtsH7OUQGRCKSk6apGcFqfbmsDx3pYLmJgPTYVpc/+50bidtFjx+lcGzxpLhdXRFOpZlD2NeGuDKOX2nDQfxYA5G7UpTI4olcC+pTv5uPwJ/yRwVk9B7aMq5qm5SFH92y7vOj3p1N1vdHFNqUrksnpmHZIxk=
+	t=1728661245; cv=none; b=ZbC3NJ+EnJeucQ6FCoLoqzzGIl6bqtCqx3oYS62w1azB+kuYBHwYlqSZMK+U8vz91NjOs4IRCs+zHNVwb6j75ah4pAcBQCw6lsarzsnMQOEr+bINvmnmXh0Li+Xuj4HAGWVHmxz+oftE2CSgoR6Lc90qktVLLEU6Ui+0nhDZLpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661193; c=relaxed/simple;
-	bh=luvGOGPZZYIdzQjAB9ZtwD+WVIc7f5qm3UsozDAnYww=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=OesFQD4gAcgfbT1wcs6S7aDks3GevR9TN1drX7lLA+6APYqnFUUCD93tUguXrdi3sR1gQuQzYyuvP6bo9op7EyOmc2LksY3+lB5aEd+LTlU4LtwR7wEDSxBJ3aZPnCX5k5UmTEsktHqfJ6lBlFoQXBXB6pHZeOgq/sPqAfwuuNM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZmY6CT59; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CF1FEC4CEC3;
-	Fri, 11 Oct 2024 15:39:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728661192;
-	bh=luvGOGPZZYIdzQjAB9ZtwD+WVIc7f5qm3UsozDAnYww=;
-	h=From:Date:Subject:To:Cc:From;
-	b=ZmY6CT59KUFdVXs8tPF82FXslmb21avQhJbeM3XsxQcA9d2ISwuDx+FDhN1eTpXcR
-	 vSGk4Nd9SaO1gPFd8xZPlUy6/7s07TVyxvXFHuC3MpEhxKp33A1TkGfqLmQSDKzaAk
-	 a34NYvOrch+YP7bUXVGdAUAWwnc/lftEN8MM3Nh0TB3H9ghd+y72XnRIyWCSJsIKag
-	 OxzgAYUAAM8pbenUNK/B/+cGO0lqAdrrIazhGSJSgaKNs+SmWs58qHH79MaOHLP8NS
-	 Mb32CziuIoU8g3wZuhiQKSydUvmXoOTYeCgBPpuYqgnVSHJvEL857JyTL0t3QYS4Hj
-	 +yciFa2k3/5/A==
-Received: by mail-oi1-f181.google.com with SMTP id 5614622812f47-3e5cfb970c9so260772b6e.1;
-        Fri, 11 Oct 2024 08:39:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUpL676HybQqhUBoh6TTn1rZkFgQ0xDoVDFSnmY9aZa9nr5JnUYJ/qqgNfkD69fo8+iZr/cPbg8722w12c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylGmiy61ohbsut5DQqylgHVC/Sm2P9OTIpY4TGwcFD20WBi3VL
-	tZtDf1yBXSsJTJ606hZUGgDYtOBKaRwQ16b8TSaa6/xCNBwf+hP621L2T0ps2/ns6Yz3b6G8opi
-	MkcIcVcdSitEm0lS54HMu1KYz4/0=
-X-Google-Smtp-Source: AGHT+IE5SB4rv3cXzYHj84dLcTScXtM0maP6JAg0OHbTUmn9FgERlfueCQQ+sMA6VwUuiUWhnWvF0xiev4hDJcJ1v2Y=
-X-Received: by 2002:a05:6808:130f:b0:3e4:4b8f:cb8e with SMTP id
- 5614622812f47-3e5c911e974mr2608766b6e.35.1728661192179; Fri, 11 Oct 2024
- 08:39:52 -0700 (PDT)
+	s=arc-20240116; t=1728661245; c=relaxed/simple;
+	bh=tVxVy8f1eOdueuP+FRZklxG2ZKTkZh+csjblCJaNsNs=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FaJEddwdq8ynvpbEevDvkPEqEe0m+AFTYU6kbl6NsHC6X00QhOTwwGvYWwSq5SuEMSpArRC7U4CAo4UU3GJfwqPoleABLxQeMXLp4Z2dDrLeFgfsk+pL4+ntHu8yolfsM4MELt4RXfOXf9pXwPBl+C59wv74XvXvdYASrNeWqq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FYzyubZQ; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEwFTt028640;
+	Fri, 11 Oct 2024 15:40:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:subject:to:cc:references:from:in-reply-to
+	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
+	M4Az6bc1Ta3OtXBrLaglWebxytc8ORkGCkixKqyzEjs=; b=FYzyubZQeWU7EPqP
+	7b9YMWQgJK8/cPr8q5RH40qJJi9hNgWIFt9XIvnVaSkl7yeXBeauCPAFsNXA7l9j
+	R7SQDBr9iXhqXbK/YksoMT8cPyEvpndygTHurYr2m1jbihBtL9vbW5Crf61R0GKS
+	5f/oxal/xVOz8L/JEPgPlLwGj09ZKQWyvTF27myPDIjbsxTJxpSVAA7Nc2/EyhXd
+	l26ryEZYtNasjgkZK6VAflfZbxIHx9DNzGjsKUSyfwahc721W7Pz1gamgVS/XwZY
+	dze4hvmFJQb0n7U2Wcgt2iLyyKPU7K+E/JBCfMnQYeJsdud07MJCMOnhWSFVgBsW
+	GDHqKA==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42763b88fx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 15:40:32 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEe5OP030187;
+	Fri, 11 Oct 2024 15:40:31 GMT
+Received: from smtprelay04.dal12v.mail.ibm.com ([172.16.1.6])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsn6c3a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 15:40:31 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay04.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BFeV1U44892444
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Oct 2024 15:40:31 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0995A5805C;
+	Fri, 11 Oct 2024 15:40:31 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9FF2858051;
+	Fri, 11 Oct 2024 15:40:30 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 11 Oct 2024 15:40:30 +0000 (GMT)
+Message-ID: <50e5cfff-94f8-4a45-a32d-9cce4f48d5b4@linux.ibm.com>
+Date: Fri, 11 Oct 2024 11:40:30 -0400
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ima: Suspend PCR extends and log appends when rebooting
+To: linux-integrity@vger.kernel.org, linux-security-module@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, zohar@linux.ibm.com,
+        roberto.sassu@huawei.com,
+        Tushar Sugandhi <tusharsu@linux.microsoft.com>
+References: <20241011150522.2697216-1-stefanb@linux.ibm.com>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20241011150522.2697216-1-stefanb@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: Aqs-gjm7SZmBCNEh50J4dKGImpJP_SGl
+X-Proofpoint-GUID: Aqs-gjm7SZmBCNEh50J4dKGImpJP_SGl
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 11 Oct 2024 17:39:41 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jRZ1yVkn_pa=aY616QNiOe7P2C0RdOG+oRwQ7sH-6w3Q@mail.gmail.com>
-Message-ID: <CAJZ5v0jRZ1yVkn_pa=aY616QNiOe7P2C0RdOG+oRwQ7sH-6w3Q@mail.gmail.com>
-Subject: [GIT PULL] Power management updates for v6.12-rc3
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-
-Hi Linus,
-
-Please pull from the tag
-
- git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git \
- pm-6.12-rc3
-
-with top-most commit 3fb0eea8a1c4be5884e0731ea76cbd3ce126e1f3
-
- thermal: intel: int340x: processor: Add MMIO RAPL PL4 support
-
-on top of commit e1043b6765d6ca310a10be342e25d5451d58ee53
-
- Merge tag 'acpi-6.12-rc2' of
-git://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm
-
-to receive power management updates for 6.12-rc3.
-
-These address two issues in the TPMI module of the Intel RAPL power
-capping driver and one issue in the processor part of the Intel int340x
-thermal driver, update a CPU ID list and register definitions needed
-for RAPL PL4 support and remove some unused code.
-
-Specifics:
-
- - Fix the TPMI_RAPL_REG_DOMAIN_INFO register offset in the TPMI part of
-   the Intel RAPL power capping driver, make it ignore minor hardware
-   version mismatches (which only indicate exposing additional features)
-   and update register definitions in it to enable PL4 support (Zhang
-   Rui).
-
- - Add Arrow Lake-U to the list of processors supporting PL4 in the MSR
-   part of the Intel RAPL power capping driver (Sumeet Pawnikar).
-
- - Remove excess pci_disable_device() calls from the processor part of
-   the int340x thermal driver to address a warning triggered during
-   module unload and remove unused CPU hotplug code related to RAPL
-   support from it (Zhang Rui).
-
-Thanks!
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-11_13,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ lowpriorityscore=0 suspectscore=0 mlxlogscore=792 impostorscore=0
+ adultscore=0 phishscore=0 spamscore=0 bulkscore=0 clxscore=1015
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110107
 
 
----------------
 
-Sumeet Pawnikar (1):
-      powercap: intel_rapl_msr: Add PL4 support for Arrowlake-U
+On 10/11/24 11:05 AM, Stefan Berger wrote:
+> To avoid the following types of error messages from the TPM driver, suspend
+> PCR extends once the reboot notifier has been called. This avoids trying to
+> use the TPM after the TPM subsystem has been shut down.
+> 
+> [111707.685315][    T1] ima: Error Communicating to TPM chip, result: -19
+> [111707.685960][    T1] ima: Error Communicating to TPM chip, result: -19
+> 
+> This error could be observed on a ppc64 machine running SuSE Linux.
+> 
+> Signed-off-by: Tushar Sugandhi <tusharsu@linux.microsoft.com>
 
-Zhang Rui (5):
-      powercap: intel_rapl_tpmi: Fix bogus register reading
-      thermal: intel: int340x: processor: Fix warning during module unload
-      powercap: intel_rapl_tpmi: Ignore minor version change
-      thermal: intel: int340x: processor: Remove MMIO RAPL CPU hotplug support
-      thermal: intel: int340x: processor: Add MMIO RAPL PL4 support
+Some of the code is taken from Tushar's series: 
+https://lore.kernel.org/linux-integrity/20240214153827.1087657-1-tusharsu@linux.microsoft.com/T/#m2d5f23959510ea2ada534febe03beff4a3f97ac7
 
----------------
+See patch 6/8.
 
- drivers/powercap/intel_rapl_msr.c                  |  1 +
- drivers/powercap/intel_rapl_tpmi.c                 | 19 ++++--
- .../int340x_thermal/processor_thermal_device_pci.c |  2 -
- .../intel/int340x_thermal/processor_thermal_rapl.c | 70 ++++++++--------------
- 4 files changed, 40 insertions(+), 52 deletions(-)
+Tushar's series is still needed for carrying the log across kexec 
+properly since without it it can still happen that the state of the PCR 
+10 does not match with the IMA log if a new measurements is taken after 
+the freezing of the log (currently at 'kexec load') and before the 
+'kexec exec'.
+
 
