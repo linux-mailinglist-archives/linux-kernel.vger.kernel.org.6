@@ -1,117 +1,98 @@
-Return-Path: <linux-kernel+bounces-361634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E77799AAB0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:52:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 594AC99AAB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5AAF1C21576
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:52:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92EA8B22CA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:53:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C77A1BE86E;
-	Fri, 11 Oct 2024 17:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73091C243C;
+	Fri, 11 Oct 2024 17:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IZe6JCFg"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="karPNvp3"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8721819EEC4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E5E195811;
+	Fri, 11 Oct 2024 17:53:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728669136; cv=none; b=UO1Vx9iQZStLu0b+jmiF/cHZEeS1UTB8VJBx3vGRqJmhgvg+aF+vVr0OK9CsfRosUj/hjnutIhhpArZjLbPR0kd3P6pgVmrPeZF3aP2fert59Gps+0aZqhx2U0H7KpqIJ1Nu0GuTkMuZMHzeXOrgE02P+vaO3M/ON2UqV4UrWEE=
+	t=1728669224; cv=none; b=VImuAp0Bp5rsJWLhRH6xys8vrXR0W7mTMb+sLxZWPRs7DtdbHe/pKkt2Z0U7WuoX7MXoK/wGV8D33duMCJPP2kfOVslkP1Vswj2bqRFRaqamLmq6zwBxjHefzjo75aMlcIV+QNmNQIQmoPSwj4qwUmIvEHI/g7oOr2fffSOtCss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728669136; c=relaxed/simple;
-	bh=x+TgFR/e+3s+vUjK0QH1Ta10PIrvSijdB8M3Iq3DQ6o=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P7YPe6kH+Op0p2IThI8r/izliRvvatyGO/BNjlC5eKOcDtTYrtNKSoHc3tbM6vd8cXQyrUol6m6gF+GM+rFnmkT6pRpwb57o2fZyPhRlvEurWsZOMy6Difa6o+/hsVagFRYo4rauY4m9xxuGbtpputXOdRwuYm/oKP0Mg4SpZOE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IZe6JCFg; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BHqBei033104;
-	Fri, 11 Oct 2024 12:52:11 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728669131;
-	bh=CjtYFl3pEv+beuRqt1KSFZBpUzj+CQaGmUW7+s5EK5g=;
-	h=From:To:CC:Subject:Date;
-	b=IZe6JCFg6uoCkvieSH+iqyQVTRl65B2C5utknIgk47D97Pc0EM47Y51zxPKnMvabK
-	 31kxm9lhT8NK65qpeCP4RJBEYOcUuo+8DNIootEpw06BUb7bGAspY2dwMW8DIiTsdW
-	 KSUdssIBHDDAmsroLmAuQh/psqFObJmbv97FyZSU=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BHqBMS079315
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Oct 2024 12:52:11 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Oct 2024 12:52:10 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Oct 2024 12:52:10 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BHqAEZ076869;
-	Fri, 11 Oct 2024 12:52:10 -0500
-From: Judith Mendez <jm@ti.com>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Thomas Gleixner
-	<tglx@linutronix.de>
-CC: <linux-kernel@vger.kernel.org>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Bryan Brattlof <bb@ti.com>, Judith Mendez <jm@ti.com>
-Subject: [PATCH v2] clocksource/drivers/timer-ti-dm: Don't fail probe if int not found
-Date: Fri, 11 Oct 2024 12:52:03 -0500
-Message-ID: <20241011175203.1040568-1-jm@ti.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728669224; c=relaxed/simple;
+	bh=yi0IOHhsXYP7btvr12gW4x200lHHEqtCf0KvtVlB3c8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mnSTTDm08yK0XQVZoUO9UEEjQoG5YCw27ZRyWqa+kKyGxW3Dir3tdIjiU5jZ3myUrR0avGrdKvPy4cHTTCk4ZtPKm0B0M3JpBlXj4a9U7AO1JfdrPhJVBQxamCm0Z8wYz81bqXSbawTqB0bzeeHD9v3QQO89KaiWAaTYYlVT68Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=karPNvp3; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539d9fffea1so1115798e87.2;
+        Fri, 11 Oct 2024 10:53:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728669221; x=1729274021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=yi0IOHhsXYP7btvr12gW4x200lHHEqtCf0KvtVlB3c8=;
+        b=karPNvp3MUdgmu0ipD3oeKwNvEDiS+7NOejBEb8qwcBnNAvJIFTRfZh1ED9+C0Bom+
+         w+nJ7PeDYsfIKpgcuk9kue+PMrKEl9Ou53A1v80GiOWMv5MX7Dp1musehqE2cosITgfe
+         EDsPBO2M/mZ1o53yshLIKUB/FBaKYS//+Xgd4ouUXkMzG019uAGNSsI1nvFn0++02ywu
+         V5C0q6v31m3TbxtiCPYv0cb+GNjE2TvO2qAquGJncG4gf6aW3idD4fKzeSVCHlCf7s4J
+         gflSKxSxY/JybeyvzTjT/Ju6LF0VzYh2N1OBGjMBczUcNYZPqDKvyrHSN3uCniQXis5V
+         HUdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728669221; x=1729274021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=yi0IOHhsXYP7btvr12gW4x200lHHEqtCf0KvtVlB3c8=;
+        b=xTy899WvHLBGb6URZnZprWZLxkoJFwtRPAFf32PxpNaJF4q/Okckqxyp0yej2PBhe4
+         JQ3cYmD2w5X9HZBHFd6rnd58tXjRdni3VirTAC/7Y8U7XWn0MOM60aLOOJgA/BgGEEAq
+         kDms/z5H1GheoLluhBCOXg3gftgDv5EsXvudgQqRoLpA2FUJXPc2qDyasUsuFLNlqE1Y
+         YpxDqTAI8f5FgUcuqjsUoDVYZURf//04v6QgUf8uVNcrrXyrWL3bCzdBwjKl7dlFM/Ra
+         fUkaiZlY+TlAaL2XHe1J9tXnopxEsGCe17rz2WlVgs2HHPgPrh/pRhDtwg6oXmnqy3ri
+         rN1w==
+X-Forwarded-Encrypted: i=1; AJvYcCUuX62ZWFlbXoEqyAwpT2KC0uQAR/+wVIAi7P4bP3BrU9+lFhHbDz/dhB5ffTDUDw8SWIi+DGS+eiX4rSE=@vger.kernel.org, AJvYcCVIXHEQsO41yiOkJnVdDKf4Oy34nn1QaX/6luRPqBaZn+2aV6CjK/+ToUeAZyH5LgHv5iUcvdX8xZBd@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywm1qY4zN/Bb/mjWXlZI0WqV5iZ8zu2B8AdWjQHok23jxtBOYbI
+	pPAPYnLKF5w8nw+RM0l7l9BO8Fw9JcXV2HbkwkQrSU5jrrVrNBwUKFAhsxZqIfeujl7uL/RY9bd
+	T5n0+Etp8OLu1tK3JmSp8svTdSYhgAQ==
+X-Google-Smtp-Source: AGHT+IEtZAwtQ3Jy0M0nPbX1jfHsYx5J6HKTKpBofyp3A65IBy2lbYIrGATmFKv2yJcksyi9nBkbyNxGrjkEjAtWog4=
+X-Received: by 2002:a05:6512:1091:b0:539:8f2d:a3bc with SMTP id
+ 2adb3069b0e04-539da595574mr1837328e87.49.1728669220393; Fri, 11 Oct 2024
+ 10:53:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241009131659.29616-1-eichest@gmail.com> <ZwgykRyE+jDU0CiU@lizhi-Precision-Tower-5810>
+ <20241010201121.GA88411@francesco-nb> <ZwhY/dtSNPptgs27@lizhi-Precision-Tower-5810>
+ <Zwk35efNI4EO1eir@eichest-laptop> <ZwlF4VhRPv6mzURo@lizhi-Precision-Tower-5810>
+In-Reply-To: <ZwlF4VhRPv6mzURo@lizhi-Precision-Tower-5810>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Fri, 11 Oct 2024 14:53:28 -0300
+Message-ID: <CAOMZO5Bi_iAJsx4sQW7YzpJHrNYWs-mC+0cTo0c7w0XjCMunXw@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
+To: Frank Li <Frank.li@nxp.com>
+Cc: Stefan Eichenberger <eichest@gmail.com>, Francesco Dolcini <francesco@dolcini.it>, hongxing.zhu@nxp.com, 
+	l.stach@pengutronix.de, lpieralisi@kernel.org, kw@linux.com, 
+	manivannan.sadhasivam@linaro.org, robh@kernel.org, bhelgaas@google.com, 
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
+	francesco.dolcini@toradex.com, linux-pci@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, imx@lists.linux.dev, 
+	linux-kernel@vger.kernel.org, 
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Some timers may not have an interrupt routed to
-the A53 GIC, but the timer PWM functionality can still
-be used by Linux Kernel. Therefore, do not fail probe
-if interrupt is not found and ti,timer-pwm exists.
+On Fri, Oct 11, 2024 at 12:36=E2=80=AFPM Frank Li <Frank.li@nxp.com> wrote:
 
-Signed-off-by: Judith Mendez <jm@ti.com>
----
-Changes since v1:
-- Switch to dev_info()
-- Drop fixes tag
+> I have not met this problem at arm64 platform. what's your .config?
 
-Link to v1: https://lore.kernel.org/all/20241010144440.24654-1-jm@ti.com/
----
- drivers/clocksource/timer-ti-dm.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/clocksource/timer-ti-dm.c b/drivers/clocksource/timer-ti-dm.c
-index b7a34b1a975e..3666d94cc8dd 100644
---- a/drivers/clocksource/timer-ti-dm.c
-+++ b/drivers/clocksource/timer-ti-dm.c
-@@ -1104,8 +1104,12 @@ static int omap_dm_timer_probe(struct platform_device *pdev)
- 		return  -ENOMEM;
- 
- 	timer->irq = platform_get_irq(pdev, 0);
--	if (timer->irq < 0)
--		return timer->irq;
-+	if (timer->irq < 0) {
-+		if (of_property_read_bool(dev->of_node, "ti,timer-pwm"))
-+			dev_info(dev, "Did not find timer interrupt, timer usable in PWM mode only\n");
-+		else
-+			return timer->irq;
-+	}
- 
- 	timer->io_base = devm_platform_ioremap_resource(pdev, 0);
- 	if (IS_ERR(timer->io_base))
-
-base-commit: d3d1556696c1a993eec54ac585fe5bf677e07474
--- 
-2.47.0
-
+Stefan reported the problem on imx6, so imx_v6_v7_defconfig.
 
