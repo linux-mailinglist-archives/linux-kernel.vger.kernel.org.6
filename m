@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-360523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15A65999C0B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:21:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796C6999C11
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:24:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A31FBB2253F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:21:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1C7E11F218D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:24:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684CC1F4732;
-	Fri, 11 Oct 2024 05:21:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7514B1F9401;
+	Fri, 11 Oct 2024 05:24:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="aJfp7qFz"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="HAGQ+XYF"
+Received: from mail-pj1-f66.google.com (mail-pj1-f66.google.com [209.85.216.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594558F58
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3320319B5B2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:24:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728624100; cv=none; b=XV5/BcXJSXPYhOzvHVPMtDdUzW6xQGza3CPWQGMQTJ8is9JsD2cUJPzL7uElQjhxv6UBLhqz2kEthWgfsb3nOotw0K+FlMFV16QziqqjHW07WDlSsWwfZs6pCkceOPrnloH8SJWfdtBM1R5VbSj7Apo6ljX0Aenfv0WWOLkJALo=
+	t=1728624267; cv=none; b=cCozaF5MSUJUq0cPX4zPRs5mB3S3PaeIfex//3NalyL1/9zNOAm4OxZ+mbtPQ4nk56uT8FLalpzaRvflCFzdqGBhSrqw2OGhzaAuhpp2k7ePdtVP2xyM5GgP3Ff2zx5OLTi1PxEmaOOZCb73du2kSXZ3JvSsyPtoHyjcO4Kr4Yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728624100; c=relaxed/simple;
-	bh=eNRhC/GPjXSyncjg99ffIraDleAcQFRowEzhDHCbMpc=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:CC:References:
-	 In-Reply-To:Content-Type; b=NeEauMpuZ1SkPLdgpKcYhf8pCTKqxr0IMitoLGo5Yaa+8gZxIiH3irvw4bRP4bnZzp2hJsQKKXXT1PlAKraHDqem6Ob2KqeR6dm2jr4Umt4IYhSWzwQDS1oJCr+vSDoB+dqrVXa2c7tCtT7aMYBFum235VtMSr9HntAvwHwiz38=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=aJfp7qFz; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B1KcOS020937;
-	Fri, 11 Oct 2024 05:21:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	x0ok5qw2YuaY10CdYOxZW5P7ebPqIFGn73xQbsQnapM=; b=aJfp7qFzprqXx6rR
-	XaHR/WpzvJDQO80GnH0s9s8ytoEt+0h+d2wXFRWSk7xrcpvpHK7EdIzvXefNaVkj
-	AEjZsRJuwa5ggyUFtppUFn7ygVkZlvSKFaC1haiRqD/reht/eah9fzemlFC2aEcZ
-	HNk9UncnoKPT+ki3NdUkv5PWnu0HuERM4EoF58m0xkiz9j7SPkPB7lk/DdY4PUYI
-	P4gOu1/C3ryLcjg41GX9nui2Dkjt+PCXEs2zcGh1cFvvYvnEOqVyVZ4lMJCQv6cp
-	Qx4YHtlvie4JLzUY6/zDkpYOVy4b5fHTk2A680u0Q6A86ptmi9mg1GSCvA5bC+Sb
-	pUSB0Q==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7jfn3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 05:21:29 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B5LT04012770
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 05:21:29 GMT
-Received: from [10.216.58.240] (10.80.80.8) by nasanex01c.na.qualcomm.com
- (10.45.79.139) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
- 2024 22:21:02 -0700
-Message-ID: <6351b4bd-d763-0892-4915-b667444b0e6c@quicinc.com>
-Date: Fri, 11 Oct 2024 10:50:37 +0530
+	s=arc-20240116; t=1728624267; c=relaxed/simple;
+	bh=Eu5/Sx/8t4BbSYZ/Y0H81EOkKHldJwz4fE4MOrm/MkY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T73iG0uj7TQnZ8cs5W8aSBgV7botVanld60ktHiMQlXE4fPVnjvlg8bM9GqNeD8GF0vwd4l7qxXFgQ0oqUmzoJdeRkFQhnrTW1PSzUEWTbHu/mbB63JzlmRl7aCbekm2gwidEiCZIQVz0dHJH55VeeGk5m/EWqwDmZay6nxGhxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=HAGQ+XYF; arc=none smtp.client-ip=209.85.216.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-pj1-f66.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso159614a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:24:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1728624265; x=1729229065; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2BGOKIsMg4QP3m6tKk3FDK1aa5VlkpqPKb0X90CWsAo=;
+        b=HAGQ+XYFbq7tdQ3f25KCFGUKTML1YKfvlNBrxAbzIzN0eSPhMj6bPHzuOgRlkLTl0s
+         smTxTYskW6Bc+jaOq3xjXhrm+g7ZftDTYV44sbA48NYU5Xwd2PTw+7QLIm1ch8yrqt0W
+         OQE6FWSTxj+HDgx+QQ0oi/z03yzy2WGDZvJU+TrwdmfPt3CJQ7V1WncYYGHfojc8YvPF
+         KzISOqvQ6601/hhLS1rO9DfvDBJyWOUiOI798vKGPMu5xJo6ljPyW705qZo+KomK5eIq
+         5ATbBdVHc0mNUtDqZ7dc4PSL1hCGaZpgGenUovu12+h/ZYdI18PfNFT7ipjqwD+u+XIU
+         0y1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728624265; x=1729229065;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2BGOKIsMg4QP3m6tKk3FDK1aa5VlkpqPKb0X90CWsAo=;
+        b=ibKOUGI2fY0uAR12OEtGJ+eGNJ9EuAGLBbDgsdH4uQAbme1Va9q+rVolxkUGXGRTnt
+         IYiTqFIZkIa0HZu6cv5F8TO1joVDETViw58DYKvWIArN9NqQ+SF3V5oHkkinpigPWAOB
+         92NmUnC+JBtYb0R9MZvoZq3V2W65JzHK+/ZQzBKZrlcztJZTVenz8UtXCYu2hPRqndFa
+         nyFsVwzJMx45sUcDAWnQoTXCanZDt1vWkhwnV89OfuXFdDMM5jhrCobeyDFSdkjJtpjX
+         bGqk+Y5MgdvuC2eBUs719JOXK6EZkndILtHifEeaNVYJYQfygOE64sIVW9RxhemcidDp
+         sr7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX6e4RCBYVZa625Far+ZRQW83IGh6QMecZpQcUI7P6quDmvrQNtfKUgc/2ZzXxayQ49GVwYFqxiQnmSt0A=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK/5UZJoC7wwInfeUn84LUVZt89hkoPtsCPoVKD4EItAvZCcq9
+	40GcQOHIRFOLIx7iznmTthqUnbxT7dc7BVofq/ylyjVrHnNH3lr1dXdgLtHJmw4=
+X-Google-Smtp-Source: AGHT+IH//kLRhYfrjYGsfIlcKbHS3xoQNKhRAMnMq31mnsU+jdE6aFHUT5rih9UTGv4Vs6virTNbVA==
+X-Received: by 2002:a17:90b:3844:b0:2e2:8472:c350 with SMTP id 98e67ed59e1d1-2e2f0ad156dmr2213900a91.17.1728624265466;
+        Thu, 10 Oct 2024 22:24:25 -0700 (PDT)
+Received: from localhost.localdomain ([91.196.220.222])
+        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-2e2d5df1133sm2380070a91.15.2024.10.10.22.24.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 22:24:24 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: robdclark@gmail.com,
+	sean@poorly.run,
+	konradybcio@kernel.org,
+	quic_abhinavk@quicinc.com,
+	dmitry.baryshkov@linaro.org,
+	marijn.suijten@somainline.org,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	linux-arm-msm@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] drm/msm/a6xx: Remove logically deadcode in a6xx_preempt.c
+Date: Thu, 10 Oct 2024 23:23:14 -0600
+Message-ID: <20241011052315.4713-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Subject: Re: [PATCH v2] arm64: defconfig: Enable WCD937x driver as module
-To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-        Catalin Marinas
-	<catalin.marinas@arm.com>,
-        Will Deacon <will@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <quic_rohkumar@quicinc.com>, <kernel@quicinc.com>,
-        <srinivas.kandagatla@linaro.org>
-References: <20241010052646.2597418-1-quic_mohs@quicinc.com>
- <638a44fc-c693-4270-8643-7cd75a3c6ba6@linaro.org>
-Content-Language: en-US
-In-Reply-To: <638a44fc-c693-4270-8643-7cd75a3c6ba6@linaro.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: V47C6XP3XAtHQ8AWy6yQ3pdb9aTjyxm1
-X-Proofpoint-GUID: V47C6XP3XAtHQ8AWy6yQ3pdb9aTjyxm1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=763 bulkscore=0
- malwarescore=0 mlxscore=0 phishscore=0 clxscore=1015 spamscore=0
- adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410110031
+Content-Transfer-Encoding: 8bit
 
-On 10/10/2024 11:15 AM, Krzysztof Kozlowski wrote:
-> On 10/10/2024 07:26, Mohammad Rafi Shaik wrote:
->> Enable Qualcomm WCD937x codec driver as modules
->> since it is now used on the QCM6490 platform.
-> 
-> QCM6490 is an SoC. Which company? That's a shared defconfig, you must be
-> here specific for which product you are making it.
-> 
-> Which upstream board uses it? Name it (fully) here as well. We add
-> things to defconfig for the boards, not for the SoCs. You cannot boot an
-> SoC.
-> 
-Ack, Will update the commit message.
+The ternary operator never returns -1 as `ring` will never be NULL.
+Thus, the ternary operator is not needed.
+Fix this by removing the ternary operation and only including the
+value it will return when the `ring` is not NULL.
 
-The WCD937x codec now used in Qualcomm QCM6490 IDP board.
+This was reported by Coverity Scan.
+https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600286
 
->>
->> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
->> Reviewed-by: Rohit Kumar <quic_rohkumar@quicinc.com>
-> 
-> No one will pick it up... You must Cc your SoC maintainers and mailing
-> lists, so they will see it and have in their queue/Patchwork.
-> 
-> Run get_maintainers on the SoC you are interested in.
-> Ack,
+Fixes: 35d36dc1692f ("drm/msm/a6xx: Add traces for preemption")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+---
+ drivers/gpu/drm/msm/adreno/a6xx_preempt.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-Thanks and Regards,
-Rafi.
-
-> Best regards,
-> Krzysztof
-> 
+diff --git a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+index 6803d5af60cc..2fd4e39f618f 100644
+--- a/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
++++ b/drivers/gpu/drm/msm/adreno/a6xx_preempt.c
+@@ -297,8 +297,7 @@ void a6xx_preempt_trigger(struct msm_gpu *gpu)
+ 	 */
+ 	ring->restore_wptr = false;
+ 
+-	trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id,
+-		ring ? ring->id : -1);
++	trace_msm_gpu_preemption_trigger(a6xx_gpu->cur_ring->id, ring->id);
+ 
+ 	spin_unlock_irqrestore(&ring->preempt_lock, flags);
+ 
+-- 
+2.43.0
 
 
