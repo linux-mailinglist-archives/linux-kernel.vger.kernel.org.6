@@ -1,133 +1,166 @@
-Return-Path: <linux-kernel+bounces-361384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EBA99A777
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:24:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 658A999A775
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:23:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C2C8B20FBD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:24:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C37CCB21E1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:23:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE3A2194A66;
-	Fri, 11 Oct 2024 15:24:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FB6194AD9;
+	Fri, 11 Oct 2024 15:23:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0ZwkN+mh"
-Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="BkKdV6cv"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF1CD194A44
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:23:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258C1194A40;
+	Fri, 11 Oct 2024 15:23:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660240; cv=none; b=UTv1yR2fEt47/uUcvDitPluTUgXQx2yI8vtnFh64eWIHdZtr5fyJEXUu9FmJnY5YnGDzGTeCPhEAikr7P4c/uf50gi1DUvE/REm2MCHH+5VKYInad13N0ikWPjeVPCLYTTHZM3HVJTsv3L/mfL/HQewIWGBr9++khLC4YUF7EAk=
+	t=1728660213; cv=none; b=aMa+/tCjVZYRhZ1eAMW3OtPwHXfyFU3iI93l0WCBucQgawVSH2ERNUPzvqtVXN8JstDxYIpG05SYbhbLtqeKkK3BH4x/IaveUXiiDvxjqfEl5liLMc6PkVR58JBNd9OJCyLYUyGtJDiWim3QVcBLOKRSRHnIlmjFFGuQPYF0W1c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660240; c=relaxed/simple;
-	bh=rSznrDKSY4WrxXDZ8t7gM3RFnJVuejTr6MEOcAB6fmg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Yy2HW4vF+hmK87aAh8C1ZFyiJ6zshFBhCPQVd30+BpSbUjHsA9lft2aKP8lgBEfTbpEV/8NBeV43hXpl6WTMn2i6zQVKexVhYATNMX0LiY7tz2dLfGuxyZzph0k3U0tjQnYhixgcKA6UIM4qsmVFA1tmI870scarfRJOSsyOeQ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0ZwkN+mh; arc=none smtp.client-ip=209.85.160.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4603d3e0547so307641cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:23:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728660238; x=1729265038; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rJyLD+5sCaVL1I/s6JcwhAzF4bt83zRxkYYkYug2NjQ=;
-        b=0ZwkN+mhKvCPoqKU7gQXN4FwHUul3KbBPwzynky9Mb71XGEHBPFgDEUT3Ffyh3ctHU
-         djlWQHkPlbFjSVQjVf5LfAwyNhoEQmPGXdr0iQB63b4u2qPKH/J6BSuOycZXscLBKmFB
-         s049UsZT9aLOA+T49P8IOen3FNgz3npnnt80UlENyu2KnpTEyS6h73hzCKVrAHYU2lak
-         WasREDXUYcPf33yA4S903GqZWzlQFTuSDKOvHHtEPbkxX6UW7R7+mPv6YlE8b3nGeeSe
-         ntT+iBDn5U9yEdYN1BZcZ3YGBUp1YAhhf1q1US3wY/2WkjW2BzYBE2TvCNsIuYTObWOR
-         CBMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728660238; x=1729265038;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rJyLD+5sCaVL1I/s6JcwhAzF4bt83zRxkYYkYug2NjQ=;
-        b=tvh9a5U/MGWDGbHlGNEXZK6nAUUozWRvmHJWCQJp7bf93lAfRHv1pb4neKxgKMYPzg
-         gOhZAUm50s1ze8nDLVMf8CAWBmYif+vKy4goF+W8/MWESJg9CpWkfs3pv4YVXB0ITdlt
-         CXSbolPGwQqu3j2QlwecOWWkQsLf1aRho4PHxt9yxh4qCUyoEAIMalemKV6b3q1nOvH+
-         G+u7Utvx2RFPJE0cOzcAB8mov+2r/x1UPlyaJBUbQhgsUxSRIutnQ2+0ARJf+JjELROc
-         NleFsJKLpwXALE6TKwLqCA1yAsFLwGwzMpViSvg6WBS0GMmOHMcpPjgTb1H9l4BOcK3D
-         Wu3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVy95UqGKLkNEydfPFPuhKg+ksAJzorhq2su4H5IGbFg16L4X7LXoltJDQmb2g+Ox3PnvS6sP73FFCz4lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfyR/ApGgs6vJ+JyxM8ky/Lj+k3BYmj8TX29FeELIrCb2SKrbc
-	t1A6VwyzvuDZDCobrdm5tY3/54so+milUJ9XItj/ualH9aF71ZnEkKS2hAv6hmy/Nf1f66FAHWG
-	NiSEGCCumTM69uEf6MtQWbhqXfeSGTT20u1kv
-X-Google-Smtp-Source: AGHT+IHfcllIoreLPh5LQZRi63Z9gY+SjozCRNWADZolB8YwBJ2VdlJgtHx4ZWrWYxemGDRWFvy4vQZfgGpiBJs66xM=
-X-Received: by 2002:ac8:7e4c:0:b0:45f:68d:f0e2 with SMTP id
- d75a77b69052e-4604ac3181amr4086721cf.2.1728660237401; Fri, 11 Oct 2024
- 08:23:57 -0700 (PDT)
+	s=arc-20240116; t=1728660213; c=relaxed/simple;
+	bh=dNkSK16lr1JQGU/ueH8/BjMoCQlHXeuOs4ScHbna40o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=t74GWS1vidXAkpPpBKT4iykxKUnq7V8xzNKFdofj7hbS5fahiCtbu9aChFDp7MjyrzwLK780YAqXhGeEfKDLk1E3jwMObSUL/crxvi6krj6f/5DWo42Qauk4u3j4IsqJfm2jLvov8WWjiTSVqrO/ELNPJx/qI7PLcbF5Ij9lkJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=BkKdV6cv; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id EDC561C0087; Fri, 11 Oct 2024 17:23:27 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1728660207;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=x+uzJgAZKr0aQskZeYDshW8VRu9nH9afBqYYtu8uge4=;
+	b=BkKdV6cvGSL2VVmCHgZHtvvMduAME43++YaCcGI1vW5aZhaCeH6rvzvpMZqanlABN0qGdI
+	TO5Eg6T+zPnoGSqe/eJ8Bi7AJD0AEsSm35xVOJKXHZPIxCKrIwOo9+ay2dty13XTksXixY
+	NdtBHZ5k9mYh3L9toHtex9VzwQHBipo=
+Date: Fri, 11 Oct 2024 17:23:27 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Benjamin Tissoires <bentiss@kernel.org>
+Cc: Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <ZwlC750GojkprUKg@duo.ucw.cz>
+References: <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
+ <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
+ <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
+ <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
+ <Zvxjo/CYXmKw2jjM@duo.ucw.cz>
+ <rdo2yyy5dxsxrfm7bweuuvsqjzjelyevo5xvufixuiyrdlf7pc@mprc7pzbpnla>
+ <Zv0YI3qIEg88Dx4c@duo.ucw.cz>
+ <hdahq2vfi3bnvaqswwdtave2kc2qm3ngvcwn6cgfiirfjfbqnz@zk77mbs3yktp>
+ <Zv54/T+6znqZB3X9@duo.ucw.cz>
+ <ysidntvhwmqwe5o6rpshtoam674lwnkook747ni5dbf4z5sf3a@vdf44xu2ydjz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-tracepoint-v10-0-7fbde4d6b525@google.com>
- <20241011-tracepoint-v10-1-7fbde4d6b525@google.com> <20241011131316.5d6e5d10@eugeo>
-In-Reply-To: <20241011131316.5d6e5d10@eugeo>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Fri, 11 Oct 2024 08:23:18 -0700
-Message-ID: <CABCJKuesYQWvfScFaqv_rW5ZqAJNn4zK9iOFAmyTaYKO3S5hgw@mail.gmail.com>
-Subject: Re: [PATCH v10 1/5] rust: add static_branch_unlikely for static_key_false
-To: Gary Guo <gary@garyguo.net>
-Cc: Alice Ryhl <aliceryhl@google.com>, Steven Rostedt <rostedt@goodmis.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Josh Poimboeuf <jpoimboe@kernel.org>, 
-	Jason Baron <jbaron@akamai.com>, Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="2TcMguCtEoo8TZyh"
+Content-Disposition: inline
+In-Reply-To: <ysidntvhwmqwe5o6rpshtoam674lwnkook747ni5dbf4z5sf3a@vdf44xu2ydjz>
+
+
+--2TcMguCtEoo8TZyh
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 5:13=E2=80=AFAM Gary Guo <gary@garyguo.net> wrote:
->
-> On Fri, 11 Oct 2024 10:13:34 +0000
-> Alice Ryhl <aliceryhl@google.com> wrote:
->
-> > +#ifndef CONFIG_JUMP_LABEL
-> > +int rust_helper_static_key_count(struct static_key *key)
-> > +{
-> > +     return static_key_count(key);
-> > +}
-> > +EXPORT_SYMBOL_GPL(rust_helper_static_key_count);
->
-> ^ Explicit export should be removed. This only works because we didn't
-> remove export.h from all helpers.c yet, but there's a patch to do
-> that and this will stop working.
+Hi!
 
-What's the benefit of removing explicit exports from the Rust helper C
-code? It requires special casing things like modversions for these
-files, so I assume there's a reason for this. I asked about it here,
-but never got a response:
+> > > There is a slight difference between mouse support and LEDs on your
+> > > keyboard. The former is actually required to bring up the machine and=
+ to
+> > > use it, the latter is nice to have.
+> >=20
+> > But that's not the difference that matters. Linux is not microkernel,
+> > and is trying to provide hardware abstractions. (Except for printers,
+> > I guess that's because printers are often network devices).
+> >=20
+> > Besides, mouse was not required to bring up a machine "back then".
+> >=20
+> > Besides,
+> >=20
+> > 1) using those keyboards in dark room without backlight is hard,
+> > because their labels are translucent and not having enough contrast.
+> >=20
+> > 2) rainbow effects make people ill.
+>=20
+> And I agree with you here. And that's also why I agree with Werner's
+> plan: have a minimum support in kernel for that with the already
+> supported LED class, which is supported by UPower and others, and let
+> the ones who want the fancy effects be in charge of their mess.
 
-https://lore.kernel.org/rust-for-linux/CABCJKudqAEvLcdqTqyfE2+iW+jeqBpnTGgY=
-JvrZ0by6hGdfevQ@mail.gmail.com/
+But the patch being proposed does not match the this description,
+right?
 
-Sami
+And for hardware I seen, "minimum driver" you describe would be
+already 90% of the full driver. (We can just use fbdev interface...)
+
+Anyway, lets do it. I have rgb keyboard, you have few, and we have
+Tuxedocomputers with machines where driver can't live in userspace.
+If you have working driver, lets see it. I have posted my copy, but I
+hae problem where keyboard functionality stops working when its
+loaded. Can you help?
+
+Then we can see how much of the driver is required for basic
+functionality. I suspect it will be fairly easy to turn it into "full"
+driver at that point.
+
+> > Note how we have drivers for audio, LEDs, cameras, dunno, iio sensors,
+> > none of that is required to bring system up.
+> >=20
+> > We need driver for the WMI stuff in kernel. And that point it should
+> > be pretty clear proper driver/subsystem should be done.
+>=20
+> Yes, and again, I never said we need to provide WMI to userspace.
+
+Good.
+
+> What I want is:
+> - provide a minimum support on Linux using already existing APIs (LED
+>   class)
+> - allow crazy people to do their thing if they want to have a rainbow
+>   initiated by every key press
+> - ensure the minimum support of the LED class is not messed up when
+>   people start using the HID LampArray API.
+>=20
+> HID LampArray is a ratified standard by a few hardware makers already[0]
+> (Acer, Asus, HP, Logitech, Razer, SteelSeries and Twinkly apparently).
+
+I have yet to see HID LampArray device.
+
+Best regards,
+									Pavel
+
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--2TcMguCtEoo8TZyh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwlC7wAKCRAw5/Bqldv6
+8qY2AKC+nAvGhkJI328sv8/1wPlLQa94/ACfdypXrZPZo6fWin1NoeaTgtYi2cc=
+=98+x
+-----END PGP SIGNATURE-----
+
+--2TcMguCtEoo8TZyh--
 
