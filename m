@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-360600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360602-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFBED999D12
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:51:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D64999D17
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16FF41C22C92
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8899A1C22CC6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A974F20899E;
-	Fri, 11 Oct 2024 06:50:40 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C00209F47;
+	Fri, 11 Oct 2024 06:51:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XGJCie79"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43D0319923C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:50:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E92F209660;
+	Fri, 11 Oct 2024 06:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629440; cv=none; b=qV6oXaYHEXu1kuNA8iH7aBfH8CK3gWmn9z3RKVptUnAUukDFkfUPFMkwNXT17AdV6o7M5L0Rc0d/9PV7skBQPAHI+6TiDukaQaUmxB8mF4FzmlN/2k6egH/i6hGlGbVU1jK9V7RUd7mJdQYPz/yE7EIvRBAd9dpDQ44GQ9vWgm4=
+	t=1728629468; cv=none; b=h4EwkspcGzbHBcF6EGY0pEhTizSh9G0iYv6+1WkyG3ZOziIYbgmOwuicTIjhZGUdpTvNkbUBS7TwL5XVCiXbi5Rrdfk5ufH3/GzxL/d9a/fP2Gxtkp1hG0niBZkohDu9PQMJldjo31+9XC5k7ewL0PS6D+m6mf/aShRw1QziixA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629440; c=relaxed/simple;
-	bh=vlJ3qjbJ9KoHaAGlPBX6PfzhVWD4hl4afC7xYRnLNzI=;
+	s=arc-20240116; t=1728629468; c=relaxed/simple;
+	bh=6VmDg2Li4aD41/Esto7OymB5gFb9yxweeoxyO9g6QEA=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hz1S2imK6J0TXu3ZgOdUbkWvIL0+loIF6U1NjWzIKYJO7plRgGbQ1q0ztLleasolVUXrK3NduNrNWDDUOrD8tHUL8fwzihvLdHp/4btLKW9BGw38nZbcirPOeC7WjCjvc4fwv6F61wwe4GO6oC7rpXpNXMab/MdOIlnFNQ2t9gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XPy1M5xPgz4f3n6M
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:50:15 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 7E64F1A018D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:50:33 +0800 (CST)
-Received: from [10.67.111.172] (unknown [10.67.111.172])
-	by APP4 (Coremail) with SMTP id gCh0CgAXTMi4yghnb0AbDw--.13427S3;
-	Fri, 11 Oct 2024 14:50:33 +0800 (CST)
-Message-ID: <afae0e1f-7033-858c-ea5d-2b4a5383e9c6@huaweicloud.com>
-Date: Fri, 11 Oct 2024 14:50:32 +0800
+	 In-Reply-To:Content-Type; b=qVtvVgaFW7qdheqvjm3B6EhmGx9vsqTw2cFxUxfoIv4IjyuSJYiDlNNyb8NEpe1QMU5GIZ1xLvydQ4mhufvzEYk2ibrEjOBkU0u8KQHIJmQsrZ0WeT08g+JISUCtKJySzajAfncgrl263WT1jtXY70THC7FpAqVNmDU0/MJWBHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XGJCie79; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E649C4CEC3;
+	Fri, 11 Oct 2024 06:51:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728629467;
+	bh=6VmDg2Li4aD41/Esto7OymB5gFb9yxweeoxyO9g6QEA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=XGJCie79DbYmp5Go3HmSvZO1n3Ul6N6/liF2H7ZwawhQWUzF/9ycHMiVJaB00ULMG
+	 cGkPGumPyg8eK6IcsCbMYE7Dx+usRddIxa3jPwMduNWbkmKzVsN9FddkKKy4eZi4jm
+	 8/lqXvnhbvHVIB0Vo1z/5VaHBNf8ovQd/vZSqViF/CnE9h+IxFAbonqJW8sovvpUqT
+	 9V79tI2q8tgPzEsE6zBwcycYYX5wud9nwE3a2UqmEiObiU7EgZPpF2eOTaibVnSK9i
+	 7j3/YZS2QiBI5vXJkeSqOfdocdJMEPwe1MrhK0p/OPw0ZTTPHwBiplUjxRJVp8w0AE
+	 Tkt21geFoFFGg==
+Message-ID: <9fc325ee-0c14-4d17-a0a5-8cf35a8ce245@kernel.org>
+Date: Fri, 11 Oct 2024 08:51:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.6.0
-Subject: Re: [PATCH] x86/unwind/orc: Fix unwind for newly forked tasks
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: peterz@infradead.org, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, hpa@zytor.com, brgerst@gmail.com,
- samitolvanen@google.com, kees@kernel.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, Ye Weihua <yeweihua4@huawei.com>
-References: <20240913024501.1337327-1-zhengyejian@huaweicloud.com>
- <20240913231108.a3ukhoyhp2xactdq@treble>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 06/13] dt-bindings: iio: add binding for BME680 driver
+To: vamoirid <vassilisamir@gmail.com>, jic23@kernel.org, lars@metafoo.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org
+Cc: anshulusr@gmail.com, gustavograzs@gmail.com,
+ andriy.shevchenko@linux.intel.com, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-7-vassilisamir@gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Zheng Yejian <zhengyejian@huaweicloud.com>
-In-Reply-To: <20240913231108.a3ukhoyhp2xactdq@treble>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241010210030.33309-7-vassilisamir@gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:gCh0CgAXTMi4yghnb0AbDw--.13427S3
-X-Coremail-Antispam: 1UD129KBjvJXoWrtF1kGF17uFW8uw48Xr4kXrb_yoW8Jry7pr
-	WfA3W3trZ5try0vFn3tw4avr90yrs3tw1UKr43Gryfua43W3yIyrWruas0kFnIgFykGwnF
-	krZI9345Kan8XaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUF1v3UUUUU
-X-CM-SenderInfo: x2kh0w51hmxt3q6k3tpzhluzxrxghudrp/
 
-On 2024/9/14 07:11, Josh Poimboeuf wrote:
-> On Fri, Sep 13, 2024 at 10:45:01AM +0800, Zheng Yejian wrote:
->> When arch_stack_walk_reliable() is called to unwind for newly forked
->> tasks, the return value is negative which means the call stack is
->> unreliable. This obviously does not meet expectations.
->>
->> The root cause is that after commit 3aec4ecb3d1f ("x86: Rewrite
->>   ret_from_fork() in C"), the 'ret_addr' of newly forked task is changed
->> to 'ret_from_fork_asm' (see copy_thread()), then at the start of the
->> unwind, it is incorrectly interprets not as a "signal" one because
->> 'ret_from_fork' is still used to determine the initial "signal" (see
->> __unwind_start()). Then the address gets incorrectly decremented in the
->> call to orc_find() (see unwind_next_frame()) and resulting in the
->> incorrect ORC data.
->>
->> To fix it, check 'ret_from_fork_asm' rather than 'ret_from_fork' in
->> __unwind_start().
->>
->> Fixes: 3aec4ecb3d1f ("x86: Rewrite ret_from_fork() in C")
->> Signed-off-by: Zheng Yejian <zhengyejian@huaweicloud.com>
+On 10/10/2024 23:00, vamoirid wrote:
+> From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > 
-> Thanks!
+> Add dt-binding for BME680 gas sensor device. The device incorporates as
+> well temperature, pressure and relative humidity sensors.
 > 
-> Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> 
+> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> ---
+>  .../bindings/iio/chemical/bosch,bme680.yaml   | 64 +++++++++++++++++++
+>  1 file changed, 64 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/iio/chemical/bosch,bme680.yaml
 
-Hi, Josh, thanks for your ack!
-Will this patch go into mainline soon?
+The device is already documented. You need to move it from trivial devices.
 
--- 
-Thanks,
-Zheng Yejian
+Best regards,
+Krzysztof
 
 
