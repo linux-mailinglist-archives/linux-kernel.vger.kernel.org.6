@@ -1,39 +1,35 @@
-Return-Path: <linux-kernel+bounces-361034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD02A99A29C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:21:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDCAF99A29B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739371F24854
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:21:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6450B284C33
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DC3216438;
-	Fri, 11 Oct 2024 11:21:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5D03D64;
-	Fri, 11 Oct 2024 11:21:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC057215F76;
+	Fri, 11 Oct 2024 11:21:39 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0EC2141C5;
+	Fri, 11 Oct 2024 11:21:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728645699; cv=none; b=EnaOF3dSTAF5o7QrwWasCeHrM0aqGN10SdSIGf7lBUO1TI3/95qBoyCjA0/aXP0+DCQ/IAVB6nLNU5nDJZrG3p2/kQ8NTgdyryaVxLBFZ7oKZOXW/fDTCIliBUqRudQWUNfyNdeGm4P3cpAoOppWwzM1RlGyx0P19UlbWiDKMJA=
+	t=1728645699; cv=none; b=BmTCPNIUFV2nnKLNFw0mI57zqduZF2w9pyJOuSsXOiBDdMoiB9+lcb2icmegsoq46Itbie8BROZA4dJ9MWPhPOFo3d1fVPNZ6g5ojlHm8C08vYJotskyBaAJPvlib8xg90rjp4loBfKWfcIWS+ZT0U+DSReArmSM2EMbmPUq2sg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728645699; c=relaxed/simple;
-	bh=xL0URaUxHtaSXtH5PsRUYkQ8i/Wvh6VBzDWj0/MIm4M=;
+	bh=vKGwbz9Bno83M1Il4z/LGsCjRoFE2MwdHl7PnUu4kWE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mms7pE4M2QcgEgOX2RoMZ1Bqxzb5WO/+o1JSRA+e/1JTMyGPtUoLlyk5I3A2NBYTP77H9E3z4QnPnuRkjWCX0AlHo2GOmghGSNTHv3wh781dhetthlzrRXY4MuH6VvhwM8oSdOVnw1cNQY0WIcLcXD6wRpaH92MddKprbIeFdy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E1AF497;
-	Fri, 11 Oct 2024 04:22:06 -0700 (PDT)
-Received: from [10.57.85.162] (unknown [10.57.85.162])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2EE63F73F;
-	Fri, 11 Oct 2024 04:21:34 -0700 (PDT)
-Message-ID: <262aa3c4-fdcc-4971-bbbb-024b9086d6c3@arm.com>
-Date: Fri, 11 Oct 2024 12:21:32 +0100
+	 In-Reply-To:Content-Type; b=VWsZ/UhhfQJzKOtZ72UCXQXQw6vo+KnSTYMXPNDZ6PJ2jr0T67p3FdZ1p8h4knA0esec6LPcwYs907a1qwMmnlqWhw930KhPBiI/UzsHckoFZVu5wzdOcQQBS89e6NdPZj83S+gTHfw6CXZgjBC45RKjwH637Ypy1kHaHD3Z9s0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F4B5C4CEC3;
+	Fri, 11 Oct 2024 11:21:37 +0000 (UTC)
+Message-ID: <b4bb440e-3998-41df-93dd-d69012ca8a08@xs4all.nl>
+Date: Fri, 11 Oct 2024 13:21:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,114 +37,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/2] mm: huge_memory: add vma_thp_disabled() and
- thp_disabled_by_hw()
-To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, kvm@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- Thomas Huth <thuth@redhat.com>, "Matthew Wilcox (Oracle)"
- <willy@infradead.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>
-References: <20241011102445.934409-1-david@redhat.com>
- <20241011102445.934409-2-david@redhat.com>
-Content-Language: en-GB
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <20241011102445.934409-2-david@redhat.com>
+Subject: Re: [PATCH -next v3 1/2] media: cec: remove redundant null pointer
+ checks in cec_devnode_init()
+To: Li Zetao <lizetao1@huawei.com>, mchehab@kernel.org,
+ gregkh@linuxfoundation.org, ricardo@marliere.net, ruanjinjie@huawei.com
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240910154803.736951-1-lizetao1@huawei.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
+In-Reply-To: <20240910154803.736951-1-lizetao1@huawei.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 11/10/2024 11:24, David Hildenbrand wrote:
-> From: Kefeng Wang <wangkefeng.wang@huawei.com>
+On 10/09/2024 17:48, Li Zetao wrote:
+> Since the debugfs_create_dir() never returns a null pointer, checking
+> the return value for a null pointer is redundant. Remove this check
+> since debugfs_create_file can handle IS_ERR pointers. At the same time,
+> debugfs_create_dir returns ERR_PTR (-ENODEV) by default when
+> CONFIG_DEBUG_FS=N, so there is no need for CONFIG_DEBUG_FS macro
+> isolation.
 > 
-> Add vma_thp_disabled() and thp_disabled_by_hw() helpers to be shared by
-> shmem_allowable_huge_orders() and __thp_vma_allowable_orders().
-> 
-> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
-> [ rename to vma_thp_disabled(), split out thp_disabled_by_hw() ]
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-
-Looks like a nice tidy up on its own:
-
-Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
-
+> Signed-off-by: Li Zetao <lizetao1@huawei.com>
 > ---
->  include/linux/huge_mm.h | 18 ++++++++++++++++++
->  mm/huge_memory.c        | 13 +------------
->  mm/shmem.c              |  7 +------
->  3 files changed, 20 insertions(+), 18 deletions(-)
+> v2 -> v3: Drop the null pointer check for top_cec_dir
+> v2: https://lore.kernel.org/all/20240907034400.3693797-1-lizetao1@huawei.com/
+> v1 -> v2: Remove this check since debugfs_create_file can handle IS_ERR
+> pointers. And drop the ifdef CONFIG_DEBUG_FS statement.
+> v1: https://lore.kernel.org/all/20240903143607.2004802-1-lizetao1@huawei.com/
 > 
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 67d0ab3c3bba..ef5b80e48599 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -322,6 +322,24 @@ struct thpsize {
->  	(transparent_hugepage_flags &					\
->  	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+>  drivers/media/cec/core/cec-core.c | 11 -----------
+>  1 file changed, 11 deletions(-)
+> 
+> diff --git a/drivers/media/cec/core/cec-core.c b/drivers/media/cec/core/cec-core.c
+> index e0756826d629..2897283ebe72 100644
+> --- a/drivers/media/cec/core/cec-core.c
+> +++ b/drivers/media/cec/core/cec-core.c
+> @@ -374,10 +374,6 @@ int cec_register_adapter(struct cec_adapter *adap,
+>  	}
 >  
-> +static inline bool vma_thp_disabled(struct vm_area_struct *vma,
-> +		unsigned long vm_flags)
-> +{
-> +	/*
-> +	 * Explicitly disabled through madvise or prctl, or some
-> +	 * architectures may disable THP for some mappings, for
-> +	 * example, s390 kvm.
-> +	 */
-> +	return (vm_flags & VM_NOHUGEPAGE) ||
-> +	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
-> +}
-> +
-> +static inline bool thp_disabled_by_hw(void)
-> +{
-> +	/* If the hardware/firmware marked hugepage support disabled. */
-> +	return transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED);
-> +}
-> +
->  unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
->  		unsigned long len, unsigned long pgoff, unsigned long flags);
->  unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 87b49ecc7b1e..2fb328880b50 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -109,18 +109,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->  	if (!vma->vm_mm)		/* vdso */
->  		return 0;
->  
-> -	/*
-> -	 * Explicitly disabled through madvise or prctl, or some
-> -	 * architectures may disable THP for some mappings, for
-> -	 * example, s390 kvm.
-> -	 * */
-> -	if ((vm_flags & VM_NOHUGEPAGE) ||
-> -	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
-> -		return 0;
-> -	/*
-> -	 * If the hardware/firmware marked hugepage support disabled.
-> -	 */
-> -	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
-> +	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags))
->  		return 0;
->  
->  	/* khugepaged doesn't collapse DAX vma, but page fault is fine. */
-> diff --git a/mm/shmem.c b/mm/shmem.c
-> index 4f11b5506363..c5adb987b23c 100644
-> --- a/mm/shmem.c
-> +++ b/mm/shmem.c
-> @@ -1664,12 +1664,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
->  	loff_t i_size;
->  	int order;
->  
-> -	if (vma && ((vm_flags & VM_NOHUGEPAGE) ||
-> -	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags)))
+>  	dev_set_drvdata(&adap->devnode.dev, adap);
+> -#ifdef CONFIG_DEBUG_FS
+> -	if (!top_cec_dir)
 > -		return 0;
 > -
-> -	/* If the hardware/firmware marked hugepage support disabled. */
-> -	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
-> +	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags)))
->  		return 0;
+>  	adap->cec_dir = debugfs_create_dir(dev_name(&adap->devnode.dev),
+>  					   top_cec_dir);
 >  
->  	global_huge = shmem_huge_global_enabled(inode, index, write_end,
+> @@ -388,7 +384,6 @@ int cec_register_adapter(struct cec_adapter *adap,
+>  		return 0;
+>  	debugfs_create_file("error-inj", 0644, adap->cec_dir, adap,
+>  			    &cec_error_inj_fops);
+
+This still has to remain under #ifdef CONFIG_DEBUG_FS, otherwise cec_error_inj_fops
+is not defined. You can probably move the #ifdef to just before the debugfs_create_file
+call above.
+
+Regards,
+
+	Hans
+
+> -#endif
+>  	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(cec_register_adapter);
+> @@ -439,13 +434,7 @@ static int __init cec_devnode_init(void)
+>  		return ret;
+>  	}
+>  
+> -#ifdef CONFIG_DEBUG_FS
+>  	top_cec_dir = debugfs_create_dir("cec", NULL);
+> -	if (IS_ERR_OR_NULL(top_cec_dir)) {
+> -		pr_warn("cec: Failed to create debugfs cec dir\n");
+> -		top_cec_dir = NULL;
+> -	}
+> -#endif
+>  
+>  	ret = bus_register(&cec_bus_type);
+>  	if (ret < 0) {
 
 
