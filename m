@@ -1,84 +1,89 @@
-Return-Path: <linux-kernel+bounces-360582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360583-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 399BA999CE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:44:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0DBC999CE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7948285A53
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:44:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A59A285A22
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 826CD208997;
-	Fri, 11 Oct 2024 06:44:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 211B220966C;
+	Fri, 11 Oct 2024 06:44:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dUq6a/2k"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="LGdOztTk"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA9D19995E;
-	Fri, 11 Oct 2024 06:44:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3129B20898E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:44:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629044; cv=none; b=P7zpSCKj8Hjwf/MjqSJTwfc7AUTmWwqLJKcdpoiMsoaVcQV6F8tj/KL68MAriV9b7gbOsFGIv0n1XQkyK3V7zLp1cms+igiqVykuTDmkuouhGTU16moSMdiHIuzwSXd2hR7oliulsJhvsevAbC4sFN48tHNZ3SwfVbbIDggsk6Q=
+	t=1728629077; cv=none; b=Egn09cAvx8+/IUrhhhKVqKH33h030W+aw10AlJfUYKvE+YLfz+3CayQ6KNsv0tG9YRtfSfjDDt2f4VGixTFP/+FSUIYknK6y5qcdkDtnvfXnhgc3flC7qCKZma3Ph0gttJ6McpocsPcRmzc0pyVUgZE2X2nXTbWMilnYB8fn0m4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629044; c=relaxed/simple;
-	bh=n+zxY4Rf474dyrGixT8wUjQqxiY6uFnLEoLhANImtyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=KiFO4ju+TS7MKwQeT6+okiyfXWtaClxVd0d8rfg1h3LhX5NcxqbiU6tQ9vzAYmzJ9m78vlaIDBASGkaLE+QDZVrFPV85elN0ZrmkbuHjhP0i8sGr/sSIitbbQCBxf7t0QlVszqrrquZKIf1C4IYnKCLZVLnCOpr1Y+G4mNnhmrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dUq6a/2k; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71def715ebdso1196356b3a.2;
-        Thu, 10 Oct 2024 23:44:02 -0700 (PDT)
+	s=arc-20240116; t=1728629077; c=relaxed/simple;
+	bh=HtzI081zHtZSI+J9sEUvMCM/dvjcwisc+1F/dT5H4FA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OKdoKsdCdId5RUlVuHFqzW7+WEg/4JMHpH1tzijk4xgDkRul43wkpkXFBtacbmcBYWh/rYIKhgf7oRFYKDpYBCqp9Byfb99I5LkgBj+DX17149Rcqi10uUSjIajstRTtuD2wj/Nq1FCeuduJRfsPG38jicnJUuJ5NqoDDI8GZM8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=LGdOztTk; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c9978a221so10309515ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:44:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728629042; x=1729233842; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2N/8TaScJ2RN0jgasqsAf8d391FaErzcf9On+L6fPbs=;
-        b=dUq6a/2kgDluW5k9pIrn8i/QTFpgTOS8FNu0q8a/aC/URZPjYNx2rGeOo115IjVJ6L
-         zLyMopA4+hP26+4i300nASFlpQpzn8KSy5xpHKV4EtjJ+c1ufGHceVNLo67DwwVi+AZC
-         VAq2eFxUGZ+sNdNmkGk/NJ1lD2V0IvXVU3oKM6Jy909D5v7z2JpE8uvhsDIbXciTG1Ag
-         PfJSXHXbxv4gQizXQoS/kyYORCWFluTXGXWLNI/aucC4tmcJ3YWUtLeKTKCuea2MnZli
-         vbDDW5ltPYRc8J+pft2ENdm8Ba8YrPxq3tM5BrRTu1Ka0dAFqWuq8bKXSTPdskEkW8pB
-         EOGw==
+        d=chromium.org; s=google; t=1728629075; x=1729233875; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PXak+K/ivuo0yn0eOLdK649JwMrgxIuHICVDrxU66gg=;
+        b=LGdOztTkpDTQP25zDAYykz6sdMCOTBIDMaC3y0/WJQpa+ZWSOh4YxkK5/L4lp2TQxd
+         L4LNi5x1Cgynz4lUDL9aEhfSYuCUkQSXD1vqek6cIWH79wcVi/L9Gd/bzckQ83391ewj
+         ihzs2tqA+qGmFJk1kV8h7GGXBNJ8eUb7l0MfQ=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728629042; x=1729233842;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2N/8TaScJ2RN0jgasqsAf8d391FaErzcf9On+L6fPbs=;
-        b=D5ybj4efmeV8GvW1OPSxfTihX8m37zzxZSUPfBxLMain9gaB9reDVvcfPizMpgEoi0
-         UQlkevcso3sP+A0dzOZufZNNnGqDmIkX8raUJpK+Y+PNY3XsnErZ3b8QJ1/FDaZ3HZKr
-         /3lllwFHKWnn0RKER6DGtEKvjEom6/VogZ6W97gqzj81pTVwZNdR9cf1nte2a9jXKjoe
-         w1eZj/9lDRdCbdIz3jlNnhhVBwutgQxKYyLazepS1fnWLW72Ebj/Q2knodCSBDM432+f
-         xGAsMpgyrevnIPE+AP02jvVKKidYF7G42/FBu/NPJPE4FTioiN3FL0qHOuSXtgdKG8cB
-         //ZA==
-X-Forwarded-Encrypted: i=1; AJvYcCUAo/w+zFKs2Q44CWgUKTPvb69cEQyCW+JvDjmiaCuqEfIfcJILPKfchNzbLPYJc+yqmkkQSt6oCUuzs4zgULC1Pa2UQA==@vger.kernel.org, AJvYcCXfhHTzswNLYAshtE5oSzU02T1pyhpUMB4q5DRmo8288hR+JnnYHc856VM2r3OrjcpYFKttnP+6FOAaosQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcMFpOgdSa5m2a/uPw08iaBLyPMr3pVCgKsIvuCRrQt1uiX4A1
-	F2TL9spEZYiQw6BkSVKwkobLvPVOUr8rMLmADKIIwUXxmJGBlQZgm35AKgjJ
-X-Google-Smtp-Source: AGHT+IGwW8tc0uX5g0yRRAPz7XUMSxPjV/+DFCi123qYmSNFm87AILU+Ux5ulnPzTmx8cGZufFB7mA==
-X-Received: by 2002:a05:6a21:4d8a:b0:1cf:2843:f798 with SMTP id adf61e73a8af0-1d8bcfc7fb6mr2516363637.47.1728629041635;
-        Thu, 10 Oct 2024 23:44:01 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aaba5d4sm2081980b3a.174.2024.10.10.23.43.59
+        d=1e100.net; s=20230601; t=1728629075; x=1729233875;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PXak+K/ivuo0yn0eOLdK649JwMrgxIuHICVDrxU66gg=;
+        b=WJFsrr9S7pXoTRgX9JzVyOPCBIm1MCCa0jGQrx+gJQPcCn4JPjEO5OrYNnBNSRxGcf
+         c3T5xHkjbHIYJ6Yw0mfTVCx52yoZwPVRm5owiNLdJCTNMm3WNZqIpqiKNsCbOdlPDEGF
+         j6oq7Zn1rr9VhwnGGWRPy987noIRjZTKZaOy4mjn9ciMwuUk4LHowLTS92L4SnwAjCmb
+         bcjN5Xn8oa9UTn7UyHTuw7pqtRxtPeKwFTW6F2BT3Zk77XN17jg0sTFAAljkJY5NceJ9
+         jIJFh8TWdDkBZo/phZORF5TUuCwWFRdX1snZwxw+mjHCgDgLcNbZGVh46FUAIQ3vmlCd
+         85ow==
+X-Forwarded-Encrypted: i=1; AJvYcCWp9emGiHFmv5XKvqMw/qcS827CBTH8uFHekyffagLVyNgOdI6vfvvB+ptsRyaXVlIjXHztFQENCVwmlVY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXE3bHTeoA4Jlj3RwXZDyUORjSO7ymTCKpEgkzgAaLSgJTM/Qk
+	1tQlVAHQHn5xqvOxO5HDkdE9F7rgJkkfqVo+qr8l2cAeXseIjwyRG3zHpXnCbg==
+X-Google-Smtp-Source: AGHT+IHJ6LD99qEecDXNWzIMqvh4vifNKH0a7GwYHT96HzQtlchraLxT83xme3B2j+uJE98XoTWbHA==
+X-Received: by 2002:a17:903:22c4:b0:20b:9f8c:e9d3 with SMTP id d9443c01a7336-20ca16ebe51mr18078475ad.55.1728629075390;
+        Thu, 10 Oct 2024 23:44:35 -0700 (PDT)
+Received: from li-cloudtop.c.googlers.com.com (201.204.125.34.bc.googleusercontent.com. [34.125.204.201])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c3561e0sm18201585ad.291.2024.10.10.23.44.34
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 23:44:01 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	W_Armin@gmx.de,
+        Thu, 10 Oct 2024 23:44:34 -0700 (PDT)
+From: Li Li <dualli@chromium.org>
+To: dualli@google.com,
+	corbet@lwn.net,
+	gregkh@linuxfoundation.org,
+	arve@android.com,
+	tkjos@android.com,
+	maco@android.com,
+	joel@joelfernandes.org,
+	brauner@kernel.org,
+	cmllamas@google.com,
+	surenb@google.com,
+	arnd@arndb.de,
+	masahiroy@kernel.org,
+	devel@driverdev.osuosl.org,
 	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v4 0/4] Dell AWCC platform_profile support
-Date: Fri, 11 Oct 2024 03:43:37 -0300
-Message-ID: <20241011064336.305795-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241007093324.49631-3-kuurtb@gmail.com>
-References: <20241007093324.49631-3-kuurtb@gmail.com>
+	netdev@vger.kernel.org,
+	hridya@google.com,
+	smoreland@google.com
+Cc: kernel-team@android.com
+Subject: [PATCH v2 0/1] binder: report txn errors via generic netlink (genl)
+Date: Thu, 10 Oct 2024 23:44:26 -0700
+Message-ID: <20241011064427.1565287-1-dualli@chromium.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,54 +92,57 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch adds platform_profile support for Dell devices which implement
-User Selectable Thermal Tables (USTT) that are meant to be controlled by
-Alienware Command Center (AWCC). These devices may include newer Alienware
-M-Series, Alienware X-Series and Dell's G-Series. This patch, was tested
-by me on an Alienware x15 R1.
+From: Li Li <dualli@google.com>
 
----
-v4:
- - Fixed indentation on previous code
- - Removed unnecessary (acpi_size) and (u32 *) casts
- - Return -EIO on ACPI_FAILURE
- - Appropiate prefixes given to macros
- - 0xFFFFFFFF named WMAX_FAILURE_CODE
- - Added support for a new set of thermal codes. Old ones now have USTT
-   in their names
- - A new quirk has been added to differantiate between the two sets.
-   thermal and thermal_ustt are mutually exclusive
- - Added documentation for WMAX interface
-v3:
- - Removed extra empty line
- - 0x0B named WMAX_ARG_GET_CURRENT_PROF
- - Removed casts to the same type on functions added in this patch
- - Thermal profile to WMAX argument is now an static function and makes
-   use of in-built kernel macros
- - Platform profile is now removed only if it was created first
- - create_platform_profile is now create_thermal_profile to avoid
-   confusion
- - profile_get and profile_set functions renamed too to match the above
-v2:
- - Moved functionality to alienware-wmi driver
- - Added thermal and gmode quirks to add support based on dmi match
- - Performance profile is now GMODE for devices that support it
- - alienware_wmax_command now is insize agnostic to support new thermal
-   methods
+It's a known issue that neither the frozen processes nor the system
+administration process of the OS can correctly deal with failed binder
+transactions. The reason is that there's no reliable way for the user
+space administration process to fetch the binder errors from the kernel
+binder driver.
 
-Kurt Borja (4):
-  alienware-wmi: fixed indentation and clean up
-  alienware-wmi: alienware_wmax_command() is now input size agnostic
-  alienware-wmi: added platform profile support
-  alienware-wmi: WMAX interface documentation
+Android is such an OS suffering from this issue. Since cgroup freezer
+was used to freeze user applications to save battery, innocent frozen
+apps have to be killed when they receive sync binder transactions or
+when their async binder buffer is running out.
 
- Documentation/wmi/devices/alienware-wmi.rst | 364 ++++++++++++++++++
- drivers/platform/x86/dell/Kconfig           |   1 +
- drivers/platform/x86/dell/alienware-wmi.c   | 389 ++++++++++++++++----
- 3 files changed, 678 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+This patch introduces the Linux generic netlink messages into the binder
+driver so that the Linux/Android system administration process can
+listen to important events and take corresponding actions, like stopping
+a broken app from attacking the OS by sending huge amount of spamming
+binder transactiions.
+
+The first version uses a global generic netlink for all binder contexts,
+raising potential security concerns. There were a few other feedbacks
+like request to kernel docs and test code. The thread can be found at
+https://lore.kernel.org/lkml/20240812211844.4107494-1-dualli@chromium.org/
+
+This version fixes those issues and has been tested on the latest
+version of AOSP. See https://r.android.com/3305462 for how userspace is
+going to use this feature and the test code.
+
+v1: add a global binder genl socket for all contexts
+v2: change to per-context binder genl for security reason
+    replace the new ioctl with a netlink command
+    add corresponding doc Documentation/admin-guide/binder_genl.rst
+    add user space test code in AOSP
+
+Li Li (1):
+  binder: report txn errors via generic netlink
+
+ Documentation/admin-guide/binder_genl.rst |  69 ++++++
+ drivers/android/Kconfig                   |   1 +
+ drivers/android/Makefile                  |   2 +-
+ drivers/android/binder.c                  |  82 ++++++-
+ drivers/android/binder_genl.c             | 249 ++++++++++++++++++++++
+ drivers/android/binder_internal.h         |  31 +++
+ drivers/android/binder_trace.h            |  37 ++++
+ drivers/android/binderfs.c                |   4 +
+ include/uapi/linux/android/binder.h       | 132 ++++++++++++
+ 9 files changed, 603 insertions(+), 4 deletions(-)
+ create mode 100644 Documentation/admin-guide/binder_genl.rst
+ create mode 100644 drivers/android/binder_genl.c
 
 -- 
-2.47.0
+2.47.0.rc1.288.g06298d1525-goog
 
 
