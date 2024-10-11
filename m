@@ -1,108 +1,114 @@
-Return-Path: <linux-kernel+bounces-360949-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360950-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032FC99A19E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:40:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C07999A19F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F243B2233D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:40:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C593B1F2145B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:40:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CE520B203;
-	Fri, 11 Oct 2024 10:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF09220FAB9;
+	Fri, 11 Oct 2024 10:40:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="nu/iZllj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UvwGVbLM"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C14820FA83
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173721E3DC0;
+	Fri, 11 Oct 2024 10:40:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643194; cv=none; b=QqF+WkcDt0GZnERrZxoPtQ82nuoMHB1RTJdqjK4S0fPkXWK+/7WzKAk7YrDK7nnZBcJEDvqMgaHtMxwknav3m51zer2bv9ut1rUu8WRM1QmDbdaMVa1w1Ob4OPnC+hZfh4tsFRwAWD+4RHbR/0Ey5EL/U7fwmJKfC4u92B3ibNo=
+	t=1728643217; cv=none; b=kGLznxKr4+bx1WMVF7yEFlGfNyKLALO9/xOOzs4NyKoTHA2TRm3ueTQew3Ri59MENIEqspl+zx4xCAQqoklC8SWvuN6xY3jq8z8GU3EZ4kyaWOudezZgnKpB+TeUMHlSg2XYxGFjzwY4ZQyxnnk8pCGK8NGPYQLnskcDJ0OHoLA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643194; c=relaxed/simple;
-	bh=ek8yRoQld6PNWsf7wevQwhf6mUGkYUiNqAVM33loAqc=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=BbRMBZv5fAq18uU6fm9S7aj8ncD5gkDIhrtB/3JiMAvVDwExmAYZM3w1+RWDH1VZPocqo4HXGNOptuLoLPzeaXIFTHG8A1RR01jomQTO7nZErdvhslAd0OH59LhVgJaGtjBX/l5tqK4BedY7/E9rWnEQSih/QHzwXRMmOXmXgD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=nu/iZllj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1728643190;
-	bh=jULBzTk3CDTvnIp8S8qdm9jX+CRuhYTgoOkcmDLNJPQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=nu/iZlljRycou9HLfh9m7/sPKwDLX3kiMGcdLI1LggQZTACImAY7NBSyXcLzCCcSl
-	 vMT+Q/Pj/kB88F4l+dxva22ZvFXCT+9z5ccEpMbH0fn7MBSmO5KUjbMsxA3jjiwzi5
-	 t2BAEfxADz+htlc7ThCgf+H63xnXxS0fLZ504qJcuCQERXzYZxTj7gbs+7oC+nopnJ
-	 bwUdsfDV7RHkXzxV53mjEiRjUTFcZr1ZxwUK5f0eTU0cbxOo5VIjxBV8/95r3hFsbx
-	 oT1yuQ3ZpoBCGNTDPtbDyF+UtvKUB+F16VXK7yGKeVjY/HKVhy+QBoz0kcNUj3gmqM
-	 Oy9c6YAsr5S6Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XQ36G3fjkz4xN6;
-	Fri, 11 Oct 2024 21:39:50 +1100 (AEDT)
-From: Michael Ellerman <michael@ellerman.id.au>
-To: "Jason A. Donenfeld" <Jason@zx2c4.com>
-Cc: Christophe Leroy <christophe.leroy@csgroup.eu>, Nicholas Piggin
- <npiggin@gmail.com>, Naveen N Rao <naveen@kernel.org>,
- linux-kernel@vger.kernel.org, linuxppc-dev@lists.ozlabs.org
-Subject: Re: [PATCH 2/2] powerpc/vdso: Implement __arch_get_vdso_rng_data()
-In-Reply-To: <ZwQMPmfG5zDGz1Wr@zx2c4.com>
-References: <0557d3ec898c1d0ea2fc59fa8757618e524c5d94.1727858295.git.christophe.leroy@csgroup.eu>
- <a1a9bd0df508f1b5c04684b7366940577dfc6262.1727858295.git.christophe.leroy@csgroup.eu>
- <Zv7HcuhVH1uM9BNI@zx2c4.com>
- <EF78F2DB-7219-407B-9017-990462128B13@ellerman.id.au>
- <Zv_1tqMf-RIXapBD@zx2c4.com> <ZwQMPmfG5zDGz1Wr@zx2c4.com>
-Date: Fri, 11 Oct 2024 21:39:50 +1100
-Message-ID: <87ttdi6hzd.fsf@mail.lhotse>
+	s=arc-20240116; t=1728643217; c=relaxed/simple;
+	bh=UwprDjCRPo53QATi/50yz4xLZs+7HmYX6Xddp6qU6ks=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=irdF7Q6sZhiaAsvRfni05oBTBiDXOprsaL9/m3LiOrJqNv4GhXPLsJKqDHTgSB/RR7vk76xGubgBXRyAKGKSmdt/aDZQ3kLCiVSuJH17h9ANqaa9FkSOjGOodvr3fSVHI2uevEZofpEXzPw6+2Pt92zc91R4XZ+2r/t4E+qxrUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UvwGVbLM; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=Zsb/X6vWwNEkHOK+a0pqgQ7CW/JwBJKq0qJ/CteO/mw=; b=UvwGVbLMMoQEpyY50NxG4bNpmm
+	KaeuOFPktD6RlmWJ/OOQWlldtyo3sg7xC5cvbjvkzMz5h2EcvKMn15FCM0azmwe084hZIYHYbZ9z1
+	mCnv3TL6vMf+XaSMuiwZktkhn8utBZH5qJhb7+eUmAfInjjYO8jL1+XHTrwMixMC/D0yIKROJat7/
+	YBVoeApCwuPzC0RWYuvcnZ/QuKxpb7F5SwS2CFKQ7DqZiLtcCobk6x54I9mmRNyyxv4cqgc+u06eD
+	auvLrSzygi1lxAt80mE10w6CL9RG4UQj0gvTgSnCgVoHahQK45AqaUaOylAHLO/ethwop1ekHUlDW
+	bbvARWuQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1szD3v-00000005r6p-31Jk;
+	Fri, 11 Oct 2024 10:39:59 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id BA8B0300642; Fri, 11 Oct 2024 12:39:58 +0200 (CEST)
+Date: Fri, 11 Oct 2024 12:39:58 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
+	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	linux-kernel@vger.kernel.org,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Klaus Kudielka <klaus.kudielka@gmail.com>,
+	Chris Bainbridge <chris.bainbridge@gmail.com>,
+	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
+	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
+	Youssef Esmat <youssefesmat@google.com>,
+	Paul Menzel <pmenzel@molgen.mpg.de>,
+	Bert Karwatzki <spasswolf@web.de>, regressions@lists.linux.dev
+Subject: Re: [PATCH 3/3] sched/core: Indicate a sched_delayed task was
+ migrated before wakeup
+Message-ID: <20241011103958.GO17263@noisy.programming.kicks-ass.net>
+References: <20241010082838.2474-1-kprateek.nayak@amd.com>
+ <20241010082838.2474-4-kprateek.nayak@amd.com>
+ <20241010130316.GA181795@cmpxchg.org>
+ <20241010130621.GH17263@noisy.programming.kicks-ass.net>
+ <20241010193712.GC181795@cmpxchg.org>
+ <20241011083323.GL17263@noisy.programming.kicks-ass.net>
+ <20241011100803.GA331616@cmpxchg.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011100803.GA331616@cmpxchg.org>
 
-"Jason A. Donenfeld" <Jason@zx2c4.com> writes:
-> On Fri, Oct 04, 2024 at 04:03:34PM +0200, Jason A. Donenfeld wrote:
->> On Fri, Oct 04, 2024 at 08:52:40PM +1000, Michael Ellerman wrote:
->> > 
->> > 
->> > On October 4, 2024 2:33:54 AM GMT+10:00, "Jason A. Donenfeld" <Jason@zx2c4.com> wrote:
->> > >Hey Christophe, Michael,
->> > >
->> > >This series actually looks pretty okay to me. I realize ThomasW is
->> > >working on more generic cleanups that might obliterate the need for
->> > >this, and that may or may not wind up in 6.13. But, I was thinking, this
->> > >seems like a good correct thing to do, and to do it now for 6.12, maybe
->> > >as a fix through the powerpc tree. Then ThomasW can base his work atop
->> > >this, which might wind up including the nice lr optimizations you've
->> > >made. And then also if ThomasW's work doesn't land or gets reverted or
->> > >whatever, at least we'll have this in tree for 6.12.
->> > >
->> > >Michael - what do you think of that? Worth taking these two patches into
->> > >your fixes?
->> > 
->> > I agree the series looks good. But they're not fixes by my reading, so I'd be inclined to put them in next for v6.13?
->> 
->> They're "close enough" to fixes. The get_realdatapage stuff is super
->> wonky and weird and it's quite good Christophe has gotten rid of it.
->> Returning NULL from the generic accesor function never really sat right
->> and looks buggy even if it does work. But more to the point, given the
->> other scheduled churn for 6.13, it's going to be a tree-clashing
->> nightmare to get this in later. And this Sunday is rc2 only, so why not.
->
-> Bumping to top of the box.
+On Fri, Oct 11, 2024 at 06:08:03AM -0400, Johannes Weiner wrote:
 
-Ack. It was too late for rc2, and I'm naturally cautious, so I decided
-these would go into next.
+> Something like this?
 
-We can handle any merge conflicts with a topic branch.
+Yeah, something like that indeed :-)
 
-cheers
+> I like it better too. There is a weird asymmetry between passing
+> ENQ_MIGRATED to one and !ENQ_SLEEP to the other both as "migrate".
+
+So I have a note to stare at the whole {EN,DE}QUEUE_MIGRATING,
+ENQUEUE_MIGRATED and task_on_rq_migrating() situation, it has the
+feeling that something could be done to clean up there.
+
+> No strong preference for whether the ENQUEUE_RESTORE check should be
+> in caller or callee, but I figured if we pass the flags anyway...
+
+Right, and this way it's behind the static key, so win, right :-)
+
+> I toyed with a separate branch for ENQUEUE_INITIAL. But it saves one
+> branch during fork while adding one to repeat enqueues. The latter
+> should be hotter on average, so I removed it again.
+> 
+> Completely untested. But if it looks good, I'll send a proper patch.
+
+Sure. Thanks for doing this.
 
