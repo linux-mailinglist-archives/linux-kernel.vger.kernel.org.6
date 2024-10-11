@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-361886-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361887-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92C8E99AE72
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:04:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D511399AE73
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:05:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 382A11F2132C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:04:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8850D282A1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 030741E1A0C;
-	Fri, 11 Oct 2024 22:04:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 512991E3786;
+	Fri, 11 Oct 2024 22:04:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EhONqIVL"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="IluXIpsN"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D611D31AF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4917E1DC182
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728684255; cv=none; b=GVLVtB+K7zEbjG/hHZDLVc73kMsoFwvQO57aOOJB6hRGo48kwIcv6jU+kyvK76e+jXXXGgcQ6ckt1Sa79DZk5ZXpXsa1Ezt2hBnX/EwbqgzwqvMKCmJyuAYqzUcQ6P6TFbVbfMfDZj42v1GbBXAJ4m2P4o2c8KBwer0M1iApl7A=
+	t=1728684256; cv=none; b=IC3hbVzEJKXNRx345TvAHYlbNQLGyGGDuvV3h6rewd6J19odv9xgOI4EkrfB5soxs75zaNkLNbHBZQNsBzT4nFQ6y3OB+AmFhg/G0J8itgaUCRfH6DAtxkP4TASm+m6XknrDC1xkQxDpkHMTG/ip4uG2MIK3vFKWH21KPmLSK8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728684255; c=relaxed/simple;
-	bh=ayFLEkZZxvRFtfh6rbDKgn18fu4jJI/W7wgdr0IoZZA=;
+	s=arc-20240116; t=1728684256; c=relaxed/simple;
+	bh=U1UusGBDoXz2VQik++HD585jShgBarpm5ySs1yN9FYM=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=AVfmGL3yCEsAewWA7HOESWwhrSF7QxNF0clIBx0I7dQjFaXzxgNZxrEH8taXvPxxm65//TR21Bd4/vgyMAFvMNw6h2tYC043zK+skLXoeeUI7I/gawKGYN5IEkrJAWeYzXTj6cimo9+GOAUpgr6IuDuPuaiFnRXDBFsjL3fvoGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EhONqIVL; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=aj2pq96QiRH2YPZMCgej6gibpIaB5yo/d+u3tSGQZT7K+E1lNWdBghYusB92DAGwsOxqiIE1tIZknOWmCKVWPxj7vFe3+Op0Vm0ZU5NdVPGJoX1ZUL3PXiLFyVMwlMA7I4IBzfaZtVQCUCyz5HscoF7HijCKH/3WEaa5y3SPelA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=IluXIpsN; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e294f38bddso42509717b3.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:04:12 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2e5e376fcso54195077b3.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:04:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728684252; x=1729289052; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728684254; x=1729289054; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=lNrioubmXeLjE0G20Z4Gp3VHKZoRwxqkvbcLs4LSREQ=;
-        b=EhONqIVLt+wav07/C3dbXenSbGmuaCdlXrHKR/be8tEXk//9oBtdBfrE84Ak0DgAZ0
-         37bcXHwqWE4WWK3F/3duEmOKmbzpd2EFbt3OoJTagJ81axm6CJuqZ07n45f3OjFX9dC0
-         oseFVsA/uAZ/obsCD1CdpVc3bFVoODhBsGxlduIL0wTqu7zQMV7/5dm/jqYUSb+bT8R4
-         KJzGXjox5tyU9Y6r0SsN7EwFVJh9lksT+Bv8/Kt516hH8iymBnEOjFZwNZ97ChvHeHsv
-         gs9l2qmU6KYmMSzp6Fz9J96nRjlCMCGiYNyLDLy3Z/V5rFBw+AoUSv3qPhd1Peu8h9uu
-         hSOA==
+        bh=13Gb0Qczu+RyP7NVli2dbJnILTUtWcNY3mpZFWZWiz0=;
+        b=IluXIpsNeoZChxzimRLGOo2rvjb9/u1dxATObwn6M+RWX3+L4+ENQo1HFurxRZi6gR
+         uYjH+PCRmq0N5/X9hwH6wMtzQOT6GXm+N4AhKW9PDlwmdCpzJQUBLG0b2zD3ywBTTDcY
+         tMuFw2lXFNAjUFB/zJpb6tkmhJI+eoN7SCJ5Qbrn8Zfcr5w9WrvArlMqqZGuYoJXedQq
+         5xt8Q31pqiJfkx381JQsj+WU4z6k6vNj7PRGaTJd525xNLEXD49QEfM03YrElMcknXUJ
+         8U625p6NoldD48QYaKYVfmRxTy8lZqBMujgKxjKMoxJGe4jhFZRSorpZKYSeYrEkerpS
+         YUnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728684252; x=1729289052;
+        d=1e100.net; s=20230601; t=1728684254; x=1729289054;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lNrioubmXeLjE0G20Z4Gp3VHKZoRwxqkvbcLs4LSREQ=;
-        b=Am+LHfT35nSVW6EuhEVnAC7x3/mWyJA+5V6fqxAWkr2RRTMPBW4i6APo3ZeTFBS17e
-         eQGigaBPSZ+ppmT/Gd+8HuI51IU68d1hRCU8YqdmeqFTWXuy+CDzABcikqj0lSDX5jvZ
-         GEd1obm4e6ouu9hD93f3X9d39AaoJsB5cx/3k7xbV6K0VYk0xbfV885uASdZMxsEliEL
-         JD6UkD5D0dJWNQEf0KVn3CQKMUMQ8nWIc09MuNLkasvbQVnLRFJcE0ahfPSW4SNeanbx
-         eAETBJ6uZMljPgxo/qDqkSgz5ySvzogk2EusvIeLNswMT0jZRdDUPVYoGCWcfVW6fNlp
-         zkEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU1OAZl9Hk0e5Tk29bPIC1561QJ8TjOpVm54Cmv4hPE9nFB1qDh5tp6JGzxqC4UvOJFaKnUpPFBUqAUslM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPL7B6TM2fSOnC5bqxYC/YDDm7/NPIZmseG5KL33/8kayKXA+J
-	/yPqn7/aJKtXypHpncH61sXrZ5Bb9KkG2fKyDIeqUpLDxz2UI+k9KSl+TEAb/ibaw62gfj7y1WG
-	lZq17jw==
-X-Google-Smtp-Source: AGHT+IH0cp7lEpJ+EU1fmq4BdA4UVq+vSksmc8806woiaMmF0NZBEKmS+zYZPslDPH3bhtxl8VmxpOa34DTG
+        bh=13Gb0Qczu+RyP7NVli2dbJnILTUtWcNY3mpZFWZWiz0=;
+        b=RkVz48EYb1IF9kmD/askQ9rXfbukX7Wklupi8pYYlxZrP82+vqyYK5pazzU8tG48hf
+         BadLjwhvt71kFVvtoaTPu7Ik5IbS1MJ/S0tYGq+M9ktl8NBnbCCfPFJxm+B8kdvKC813
+         WgY/TocCJOS8a/Y6HYQDA/uxoXnL3Hmg3Gerdd2QttHAmVqXSuuThVPWZqAj2edL4ztN
+         rnYqXOSQ0ihAr6UbQPnscDkwFCeVlzkQYIQltgz7EH1ouNkm77NfTVQH/S1Pvs56r/8U
+         o6BkqVcZnOE0mQE/tDD2uyexijU85fLh4WYdmGMqvz+mDjpHptqC5hEhm2awviFJme/K
+         tw1A==
+X-Forwarded-Encrypted: i=1; AJvYcCUZEd7MKLNKZvrfB5ddLTT58lnQGzfxL24DclSqhgMY304KEZJEIfFTUu/yjxUdYOJ8GWPwWvk5y8P0T9c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyn4wwdimaLoyW+I5TDkR3JmepfCvRU35ziNrwrIEA7g2e4ZXSk
+	+ChqwCWgPgEhHKlNGKDQQGy73yPbwqDtRvKP4N8pGEoQaUWRmeRnUTMDXW5bFmbN09Z0B+mDw2d
+	6GmHLDQ==
+X-Google-Smtp-Source: AGHT+IE11H1f4e98EhsItbxbwHzB0EO6S8fZPPSaM5oenhtdfB16Jd4EVSiiCREhHL4t6gwxg6GG+jPU2FUi
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8144:56f:2e1e:4db])
- (user=irogers job=sendgmr) by 2002:a05:690c:906:b0:6e3:189a:ad65 with SMTP id
- 00721157ae682-6e347c71baamr1540377b3.5.1728684251913; Fri, 11 Oct 2024
- 15:04:11 -0700 (PDT)
-Date: Fri, 11 Oct 2024 15:03:49 -0700
+ (user=irogers job=sendgmr) by 2002:a25:fc13:0:b0:e24:a28e:9399 with SMTP id
+ 3f1490d57ef6-e2919d828f7mr2137276.4.1728684253996; Fri, 11 Oct 2024 15:04:13
+ -0700 (PDT)
+Date: Fri, 11 Oct 2024 15:03:50 -0700
 In-Reply-To: <20241011220354.756798-1-irogers@google.com>
-Message-Id: <20241011220354.756798-4-irogers@google.com>
+Message-Id: <20241011220354.756798-5-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241011220354.756798-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Subject: [PATCH v2 3/8] perf test: Reduce scope of parallel variable
+Subject: [PATCH v2 4/8] perf test: Avoid list test blocking on writing to stdout
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,42 +90,32 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-The variable duplicates sequential but is only used for command line
-argument processing. Reduce scope to make the behavior clearer.
+Python's json.tool will output the input json to stdout. Redirect to
+/dev/null to avoid blocking on stdout writes.
 
 Tested-by: James Clark <james.clark@linaro.org>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/builtin-test.c | 9 ++++++---
- 1 file changed, 6 insertions(+), 3 deletions(-)
+ tools/perf/tests/shell/list.sh | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
-index bf03fb42420b..88ffc0feb51e 100644
---- a/tools/perf/tests/builtin-test.c
-+++ b/tools/perf/tests/builtin-test.c
-@@ -41,9 +41,6 @@
- static bool dont_fork;
- /* Don't fork the tests in parallel and wait for their completion. */
- static bool sequential = true;
--/* Do it in parallel, lacks infrastructure to avoid running tests that clash for resources,
-- * So leave it as the developers choice to enable while working on the needed infra */
--static bool parallel;
- const char *dso_to_test;
- const char *test_objdump_path = "objdump";
+diff --git a/tools/perf/tests/shell/list.sh b/tools/perf/tests/shell/list.sh
+index 8a868ae64560..76a9846cff22 100755
+--- a/tools/perf/tests/shell/list.sh
++++ b/tools/perf/tests/shell/list.sh
+@@ -24,8 +24,11 @@ trap trap_cleanup EXIT TERM INT
  
-@@ -565,6 +562,12 @@ int cmd_test(int argc, const char **argv)
- 	};
- 	const char *skip = NULL;
- 	const char *workload = NULL;
-+	/*
-+	 * Run tests in parallel, lacks infrastructure to avoid running tests
-+	 * that clash for resources, So leave it as the developers choice to
-+	 * enable while working on the needed infra.
-+	 */
-+	bool parallel = false;
- 	const struct option test_options[] = {
- 	OPT_STRING('s', "skip", &skip, "tests", "tests to skip"),
- 	OPT_INCR('v', "verbose", &verbose,
+ test_list_json() {
+   echo "Json output test"
++  # Generate perf list json output into list_output file.
+   perf list -j -o "${list_output}"
+-  $PYTHON -m json.tool "${list_output}"
++  # Validate the json using python, redirect the json copy to /dev/null as
++  # otherwise the test may block writing to stdout.
++  $PYTHON -m json.tool "${list_output}" /dev/null
+   echo "Json output test [Success]"
+ }
+ 
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
