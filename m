@@ -1,116 +1,189 @@
-Return-Path: <linux-kernel+bounces-361811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03CD999AD48
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBBF99AD49
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7945280E03
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B3028205B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED231D0F68;
-	Fri, 11 Oct 2024 19:59:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F901D0E30;
+	Fri, 11 Oct 2024 20:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHr/btNx"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wq3EwDci"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F1C1D0144;
-	Fri, 11 Oct 2024 19:59:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B251CFEB8
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:00:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728676799; cv=none; b=TUBtbG+Hkt+STLw3rR0LScE36dTmpWGUmIxuV4SUGlvaZk2xgNIbxn3DLuZJCRkf5eWH1zR9q7rAqa/xS2DQ4pmxjra7dR7IrjYqO/2KZhqWtPkboyeIldmCQF4tuSHQRMuaRVXnCcLUt1jbaJ64KJlbQaa5B0lZjAdzY/1Ii9Q=
+	t=1728676834; cv=none; b=TUFOYcTueUn28g9mtoPlW9mjqRXeUINK20dnMdYgjXSMCMUE1xk4Ba7ifKZ4PLEAQxwo29F/M2oZZT/MkEuVupdCabYTmAubQNkIgiwWhMjs+hcxstZEABNHLKfuJ5Ac12GWvMTYNkmpaCTqUGbXW0kxAZ+Nw4zG/lsCA52s9/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728676799; c=relaxed/simple;
-	bh=vVCVoCLAV8tDG1vrmL20knT7+oenmQWjvXusuYrvcQs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tzjq36uwK+YBq8x8JerrByTZR1PrQYMbDXGvldjE6t4EQ6+Q+OAdnv/nQgNPUAQkQPB8zEQMq3EpaYfw5dzE1XBZ2eOK+XsfOpLjWL5wN77Rj7Fm+xWZk3iehPXiLXS834b/p+7iU2ARy6ng+HHVzOEqx9a2YHjV/Hlc9yAhJWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHr/btNx; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso1574255a12.1;
-        Fri, 11 Oct 2024 12:59:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728676797; x=1729281597; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=roNqdHIBerBblm0SB/SPGUSzXG1uDPhqyUKFuMAssw8=;
-        b=cHr/btNxrDhufSzBrQlKcF4JT3RyObCibn2amSkz0TVuGCImRZb982nbJpVR0CeNL4
-         FENbEISTbWtYqPTNJyhWMiTzQkLwId6lDRtAuBTviaMqVCRviq9htlmPpOhjlGlawKrg
-         uq6VITrFAKG4LrVxPQIebDt++sdRfF6wg3Mr3yRsJyQdFPgODYAZizJOFirXeBmclYBH
-         RwXfG7jXwWw+ibWC3KGZ7ZueQVzNGLTZDLrj+SxaJGqfsaLJ07fh3388TMYU0qbYehBL
-         1FC5vH2riu7d7qL2zj2nlnfIgUetHcWbw4T0pXfHbAWt72KVQfWhQ3WHxl+MFa0j4ZqU
-         68yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728676797; x=1729281597;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=roNqdHIBerBblm0SB/SPGUSzXG1uDPhqyUKFuMAssw8=;
-        b=c1yDspgIAos18a20mPi5Bp04XeqsrPfG0mkzBZVUTJ1zYIaLTs31qoqTSrWeqQKGl4
-         x88gewNRmUbpFexDXhCGy2IyNDbUNm1qhS+Z0nOgMx8XzlSVZX660qKiNn0Ni2D1oqlr
-         VcvZfj4Dn+hyps6wEJKatnvG6qoRv+yHmpE8jpNo2MvfINkvG4X9r98E47kTaeFf62g9
-         Pl6RJ8Jbvftka0EG6eD2vHCOAQo38QJO/NJNjwyg9plLVjNerC3fh44dEn0u+ujBN3LQ
-         iJYMnsf1GDvKE35mEfj2kbqjjd9IqLMbgpI38PieRx08Lw8Nym1/obJ2rOARon/qXvyz
-         Waig==
-X-Forwarded-Encrypted: i=1; AJvYcCV0JKhJEABno7Mj5O2r84gCeWfp61MwF6cnETzk9UyOUuOcjMAeKdOXuopinGui2zBcdwZ5cqblniyxMQg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyZuQUJoO3yc3/+CPNRmgbSfNZCR62yMA2iip//Mjs8X2+FIffD
-	E4ihd0GsXej4KsaLrDvcyiPhvCWHWTEYunCM8FtS7w6SPxpFn1xc9UgyKvx1
-X-Google-Smtp-Source: AGHT+IEE119MsCw3EbNt2UyGkiEU0LPU2ECsFp8kEDcIBoCpB/almBfsIhdvAl2eOSQNMyE2OGyQ7Q==
-X-Received: by 2002:a05:6a21:3514:b0:1cf:31b6:18c6 with SMTP id adf61e73a8af0-1d8bcfc7f96mr5635301637.46.1728676796947;
-        Fri, 11 Oct 2024 12:59:56 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4868e657sm740684b3a.67.2024.10.11.12.59.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:59:56 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Marcin Wojtas <marcin.s.wojtas@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] net: mvneta: use ethtool_puts
-Date: Fri, 11 Oct 2024 12:59:55 -0700
-Message-ID: <20241011195955.7065-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728676834; c=relaxed/simple;
+	bh=DuKDDGu8TSkmXBzAtZnzPczE056d+qxUX2o57Q9dSfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WiBE++rO4pKxc51Z7joN3YW5iZYUZxNcb37bLQZ4fWqOzrp08V8Rja9NxvZwtRbMBEpNmaVsbhsD2ticE14RsheJXLiBogffTlDcTZrGvEZG5MMPb0EWQrAXLjef9M+ySwh7qqqhvFDKwFs0bomHXb1eintPvAGdem4WAXMnLn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wq3EwDci; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728676831;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dbQgie+An3FsfT7/2xbvqwyjDp2Yp9ZZ+SvdAmcNQdk=;
+	b=Wq3EwDciPHBtvaLnTfG3SOWs4UDu/iygxMa/wa/th6f8aBfZATs0qa21zadqheEECybFxD
+	zW83zPMSBAhaoB1dI8QB6ZkeIOfz/hyPLAjkmhe91KtM6OMuoBoijyaHE58LPAyNtuDQgQ
+	yz1s/M75Z9plhbKoumstcESpoCvbUzc=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-8Kc4tQLzOWuFz6q9bkeosw-1; Fri,
+ 11 Oct 2024 16:00:28 -0400
+X-MC-Unique: 8Kc4tQLzOWuFz6q9bkeosw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E7091955E85;
+	Fri, 11 Oct 2024 20:00:25 +0000 (UTC)
+Received: from f39.redhat.com (unknown [10.39.192.233])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 233ED19560AA;
+	Fri, 11 Oct 2024 20:00:17 +0000 (UTC)
+From: Eder Zulian <ezulian@redhat.com>
+To: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	acme@redhat.com,
+	vmalik@redhat.com,
+	williams@redhat.com
+Subject: [PATCH] tools/resolve_btfids: Fix 'variable' may be used uninitialized warnings
+Date: Fri, 11 Oct 2024 22:00:05 +0200
+Message-ID: <20241011200005.1422103-1-ezulian@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-Allows simplifying get_strings and avoids manual pointer manipulation.
+- tools/bpf/resolve_btfids/main.c: Initialize 'set' and 'set8' pointers
+  to NULL in to fix compiler warnings.
 
-Tested on Turris Omnia.
+- tools/lib/bpf/btf_dump.c: Initialize 'new_off' and 'pad_bits' to 0 and
+  'pad_type' to  NULL to prevent compiler warnings.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
+- tools/lib/subcmd/parse-options.c: Initiazlide pointer 'o' to NULL
+  avoiding a compiler warning.
+
+Tested on x86_64 with clang version 17.0.6 and gcc (GCC) 13.3.1.
+
+$ cd tools/bpf/resolve_btfids
+$ for c in gcc clang; do \
+for o in fast g s z $(seq 0 3); do \
+make clean && \
+make HOST_CC=${c} "HOSTCFLAGS=-O${o} -Wall" 2>&1 | tee ${c}-O${o}.out; \
+done; done && grep 'warning:\|error:' *.out
+
+[...]
+clang-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+clang-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+clang-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+clang-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+clang-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+clang-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+gcc-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+gcc-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+gcc-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+gcc-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+gcc-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+gcc-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+
+The above warnings and/or errors are not observed after applying this
+patch.
+
+Signed-off-by: Eder Zulian <ezulian@redhat.com>
 ---
- drivers/net/ethernet/marvell/mvneta.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+ tools/bpf/resolve_btfids/main.c  | 4 ++--
+ tools/lib/bpf/btf_dump.c         | 4 ++--
+ tools/lib/subcmd/parse-options.c | 2 +-
+ 3 files changed, 5 insertions(+), 5 deletions(-)
 
-diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
-index fcd89c67094f..7bb781fb93b5 100644
---- a/drivers/net/ethernet/marvell/mvneta.c
-+++ b/drivers/net/ethernet/marvell/mvneta.c
-@@ -4795,11 +4795,9 @@ static void mvneta_ethtool_get_strings(struct net_device *netdev, u32 sset,
- 		int i;
+diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
+index d54aaa0619df..bd9f960bce3d 100644
+--- a/tools/bpf/resolve_btfids/main.c
++++ b/tools/bpf/resolve_btfids/main.c
+@@ -679,8 +679,8 @@ static int sets_patch(struct object *obj)
  
- 		for (i = 0; i < ARRAY_SIZE(mvneta_statistics); i++)
--			memcpy(data + i * ETH_GSTRING_LEN,
--			       mvneta_statistics[i].name, ETH_GSTRING_LEN);
-+			ethtool_puts(&data, mvneta_statistics[i].name);
+ 	next = rb_first(&obj->sets);
+ 	while (next) {
+-		struct btf_id_set8 *set8;
+-		struct btf_id_set *set;
++		struct btf_id_set8 *set8 = NULL;
++		struct btf_id_set *set = NULL;
+ 		unsigned long addr, off;
+ 		struct btf_id *id;
  
- 		if (!pp->bm_priv) {
--			data += ETH_GSTRING_LEN * ARRAY_SIZE(mvneta_statistics);
- 			page_pool_ethtool_stats_get_strings(data);
- 		}
- 	}
+diff --git a/tools/lib/bpf/btf_dump.c b/tools/lib/bpf/btf_dump.c
+index 8440c2c5ad3e..468392f9882d 100644
+--- a/tools/lib/bpf/btf_dump.c
++++ b/tools/lib/bpf/btf_dump.c
+@@ -867,8 +867,8 @@ static void btf_dump_emit_bit_padding(const struct btf_dump *d,
+ 	} pads[] = {
+ 		{"long", d->ptr_sz * 8}, {"int", 32}, {"short", 16}, {"char", 8}
+ 	};
+-	int new_off, pad_bits, bits, i;
+-	const char *pad_type;
++	int new_off = 0, pad_bits = 0, bits, i;
++	const char *pad_type = NULL;
+ 
+ 	if (cur_off >= next_off)
+ 		return; /* no gap */
+diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+index eb896d30545b..555d617c1f50 100644
+--- a/tools/lib/subcmd/parse-options.c
++++ b/tools/lib/subcmd/parse-options.c
+@@ -807,7 +807,7 @@ static int option__cmp(const void *va, const void *vb)
+ static struct option *options__order(const struct option *opts)
+ {
+ 	int nr_opts = 0, nr_group = 0, nr_parent = 0, len;
+-	const struct option *o, *p = opts;
++	const struct option *o = NULL, *p = opts;
+ 	struct option *opt, *ordered = NULL, *group;
+ 
+ 	/* flatten the options that have parents */
 -- 
-2.47.0
+2.46.2
 
 
