@@ -1,179 +1,219 @@
-Return-Path: <linux-kernel+bounces-360994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D6FD99A224
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:57:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A747899A1FC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A56BE287144
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:57:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CBBB2867CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:51:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5DA9215023;
-	Fri, 11 Oct 2024 10:56:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44BB9213EDE;
+	Fri, 11 Oct 2024 10:51:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ZDNpN5ga"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="DMRcghGn"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A72A216A3B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:56:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE51E210C11
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:51:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644181; cv=none; b=el4OCG6BrTBWbPB7KJ/xiJ5yg5xpIgXbZlbOV4nzNO2tD/7nYncoiPbPGNfQElLhCVcJ1WNasbXysX7cPBBDeOvAQ/E0gBLrzWfAm2WTEXKZpLU12S1qIDnD8MLS5B5l5UNiBvNtRY9SvOmrMMHJP7mxEbuhD5aJXlWQiyJviQA=
+	t=1728643895; cv=none; b=l2QpNuVYj+D2PWto3IzSQNf+bsW/R1ZCoTltdcasS+nE3XkjLjxTzgQ9/Y3yms45xOxtwaJzPLp7SvMPOm/lPSUkU7J9GP0+3WTErCbRKYoip9nMHWxPUm0DAiGN7Psuu9xACtgVEdwlCULmr/g54QRsKnlWhbwO4hMjDH94Sww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644181; c=relaxed/simple;
-	bh=fl0m+h+0ta8bmfvVqG0QE/oG1e2Qehr4IcXcK18nnxo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=UC5IsRkFlLZackMARIXwTRCxfpYj08OYVwjHg255igxUxOKExQJ08Pb6pmAaUQ1TS9jXyVIOIbfpO3f5WwV+EDimyqCUrZbQA7jY0kerQy7o2hQPGr8zwu9HLSXFWjsE8aJ/xaAFdHw21PG29rf/FIBexv/ZPEVNzFz4NEMEftg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ZDNpN5ga; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728644178;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XvqoNQoCBK9gj/IJ1E++Q+I3Hd5/1m/NZeNUHiOJE8E=;
-	b=ZDNpN5gaa0fnyEjjLIwXja80/vjpmBGE9FZlxC45bG3iaQiKixisOdWW/y9wzXQzNW+KTt
-	FjFmQGlGLuWMLVjT/L9X2y+CYO3NbhVP+S4FO6Z5VDbgKkUlRyBAm8LxY8ZTyVTGqjO6Xq
-	a237ZzJ4OIq0UICZby2OP2w5y3vOMl0=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-55-9anfNptEMWSbv5teTupM-A-1; Fri,
- 11 Oct 2024 06:56:13 -0400
-X-MC-Unique: 9anfNptEMWSbv5teTupM-A-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id C7D1C1955EAD;
-	Fri, 11 Oct 2024 10:56:11 +0000 (UTC)
-Received: from hydra.redhat.com (unknown [10.39.192.224])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 4609F19560AA;
-	Fri, 11 Oct 2024 10:56:07 +0000 (UTC)
-From: Jocelyn Falempe <jfalempe@redhat.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Daniel Vetter <daniel@ffwll.ch>,
-	John Ogness <john.ogness@linutronix.de>,
-	Javier Martinez Canillas <javierm@redhat.com>,
-	"Guilherme G . Piccoli" <gpiccoli@igalia.com>,
-	bluescreen_avenger@verizon.net,
-	Caleb Connolly <caleb.connolly@linaro.org>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org
-Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v4 7/7] drm/log: Add integer scaling support
-Date: Fri, 11 Oct 2024 12:50:04 +0200
-Message-ID: <20241011105526.615812-8-jfalempe@redhat.com>
-In-Reply-To: <20241011105526.615812-1-jfalempe@redhat.com>
-References: <20241011105526.615812-1-jfalempe@redhat.com>
+	s=arc-20240116; t=1728643895; c=relaxed/simple;
+	bh=fNhyI6ymc6rJ1kwU8KUBeH8/VwjHky8J3lzfen6Qfyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=l2lmi01wZUSOUoF2P91o53mLOZVIu+RPNYWKQ0Ee2hVY/YlfZkI82GROuds0Uew3+XqbHG5AS0oA2r7n0OL6UtBMcnPz0PLw2Tk4k8kBQT8vusesTf5LKq2b7M1cly+O+5RBzS5alSSzgFzun12pUfNppQu5nU1BZIJs7xUeA5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=DMRcghGn; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BAfdpF024450;
+	Fri, 11 Oct 2024 10:51:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
+	message-id:date:mime-version:subject:to:cc:references:from
+	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=8
+	eHmySt2v8x+g0bchETYaHvtXRQ86U1s8qdg2O3ls68=; b=DMRcghGnWEAHJc2sI
+	aw9j7SdWtf5M0leg2AKI3hT2vVml/82nUHhOFT0LQDzQwlNFdY3FMg7jGtc4riTA
+	eefBFYJYfxENjWrH9H/rRlncZA9aZBOcIjt6uT71gIx1sXflCTGnLTgZgX21TKdR
+	IzbRlD3gY8J+HTTKLKJer5DY+txleze023JeCaOBr+rx0zi4FnF7f55i5ApxCHli
+	qE+iGKKtiI7B3dTCQldSVfv2NGZJdexSipfsh4i4PDV05Ym0x/AAfmRBXLDM01BD
+	7tajdCj9VxHiaaK1qB1fZ12ECMCY6iXiOuCtXbjFZa9zi9Vi+uNMM/8nVAJPrjoq
+	tYlEg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4272g201kt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 10:51:18 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49BApH2Y018293;
+	Fri, 11 Oct 2024 10:51:17 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4272g201kf-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 10:51:17 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49B8sCRO022671;
+	Fri, 11 Oct 2024 10:51:16 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423h9kcub4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 10:51:16 +0000
+Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BApCiL20578890
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Oct 2024 10:51:12 GMT
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6A8222004B;
+	Fri, 11 Oct 2024 10:51:12 +0000 (GMT)
+Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 579EA20043;
+	Fri, 11 Oct 2024 10:51:09 +0000 (GMT)
+Received: from [9.43.15.249] (unknown [9.43.15.249])
+	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri, 11 Oct 2024 10:51:09 +0000 (GMT)
+Message-ID: <5438c185-37ef-467c-8e92-528cf57d30e0@linux.ibm.com>
+Date: Fri, 11 Oct 2024 16:21:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC v2 3/4] fadump: Reserve page-aligned boot_memory_size during
+ fadump_reserve_mem
+To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
+        linuxppc-dev@lists.ozlabs.org
+Cc: linux-mm@kvack.org, Sourabh Jain <sourabhjain@linux.ibm.com>,
+        Zi Yan <ziy@nvidia.com>, David Hildenbrand <david@redhat.com>,
+        "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
+        Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
+        Donet Tom <donettom@linux.vnet.ibm.com>,
+        LKML
+ <linux-kernel@vger.kernel.org>,
+        Sachin P Bappalige <sachinpb@linux.ibm.com>
+References: <cover.1728585512.git.ritesh.list@gmail.com>
+ <4cea3a03fb0a9f52dbd6b62ec21209abf14fb7bf.1728585512.git.ritesh.list@gmail.com>
+Content-Language: en-US
+From: Hari Bathini <hbathini@linux.ibm.com>
+In-Reply-To: <4cea3a03fb0a9f52dbd6b62ec21209abf14fb7bf.1728585512.git.ritesh.list@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: nqiSRij2h5kps6ABDn2ZFzJEFI8kx6-j
+X-Proofpoint-GUID: 4N4onGlyq2D23RRKyjAMKVtP74AVfPyX
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-11_08,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 spamscore=0 bulkscore=0 mlxlogscore=999 malwarescore=0
+ suspectscore=0 phishscore=0 lowpriorityscore=0 clxscore=1011 adultscore=0
+ mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110074
 
-Add a module parameter, to increase the font size for HiDPI screen.
-Even with CONFIG_FONT_TER16x32, it can still be a bit small to read.
-In this case, adding drm_log.scale=2 to your kernel command line will
-double the character size.
 
-Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
----
- drivers/gpu/drm/drm_log.c | 27 ++++++++++++++++++---------
- 1 file changed, 18 insertions(+), 9 deletions(-)
 
-diff --git a/drivers/gpu/drm/drm_log.c b/drivers/gpu/drm/drm_log.c
-index 07d151300146..e44c10819bd0 100644
---- a/drivers/gpu/drm/drm_log.c
-+++ b/drivers/gpu/drm/drm_log.c
-@@ -25,6 +25,10 @@ MODULE_AUTHOR("Jocelyn Falempe");
- MODULE_DESCRIPTION("DRM boot logger");
- MODULE_LICENSE("GPL");
- 
-+static uint scale = 1;
-+module_param(scale, uint, 0444);
-+MODULE_PARM_DESC(scale, "Integer scaling factor for drm_log, default is 1");
-+
- /**
-  * DOC: overview
-  *
-@@ -38,6 +42,8 @@ struct drm_log_scanout {
- 	const struct font_desc *font;
- 	u32 rows;
- 	u32 columns;
-+	u32 scaled_font_h;
-+	u32 scaled_font_w;
- 	u32 line;
- 	u32 format;
- 	u32 px_width;
-@@ -67,7 +73,7 @@ static struct drm_log *console_to_drm_log(struct console *con)
- 
- static void drm_log_blit(struct iosys_map *dst, unsigned int dst_pitch,
- 			 const u8 *src, unsigned int src_pitch,
--			 u32 height, u32 width, u32 scale, u32 px_width, u32 color)
-+			 u32 height, u32 width, u32 px_width, u32 color)
- {
- 	switch (px_width) {
- 	case 2:
-@@ -87,7 +93,7 @@ static void drm_log_blit(struct iosys_map *dst, unsigned int dst_pitch,
- static void drm_log_clear_line(struct drm_log_scanout *scanout, u32 line)
- {
- 	struct drm_framebuffer *fb = scanout->buffer->fb;
--	unsigned long height = scanout->font->height;
-+	unsigned long height = scanout->scaled_font_h;
- 	struct iosys_map map;
- 	struct drm_rect r = DRM_RECT_INIT(0, line * height, fb->width, height);
- 
-@@ -107,8 +113,8 @@ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
- 	size_t font_pitch = DIV_ROUND_UP(font->width, 8);
- 	const u8 *src;
- 	u32 px_width = fb->format->cpp[0];
--	struct drm_rect r = DRM_RECT_INIT(0, scanout->line * font->height,
--					  fb->width, (scanout->line + 1) * font->height);
-+	struct drm_rect r = DRM_RECT_INIT(0, scanout->line * scanout->scaled_font_h,
-+					  fb->width, (scanout->line + 1) * scanout->scaled_font_h);
- 	u32 i;
- 
- 	if (drm_client_buffer_vmap_local(scanout->buffer, &map))
-@@ -118,9 +124,10 @@ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
- 	for (i = 0; i < len && i < scanout->columns; i++) {
- 		u32 color = (i < prefix_len) ? scanout->prefix_color : scanout->front_color;
- 		src = drm_draw_get_char_bitmap(font, s[i], font_pitch);
--		drm_log_blit(&map, fb->pitches[0], src, font_pitch, font->height, font->width,
--			     1, px_width, color);
--		iosys_map_incr(&map, font->width * px_width);
-+		drm_log_blit(&map, fb->pitches[0], src, font_pitch,
-+			     scanout->scaled_font_h, scanout->scaled_font_w,
-+			     px_width, color);
-+		iosys_map_incr(&map, scanout->scaled_font_w * px_width);
- 	}
- 
- 	scanout->line++;
-@@ -205,8 +212,10 @@ static int drm_log_setup_modeset(struct drm_client_dev *client,
- 		return -ENOMEM;
- 	}
- 	mode_set->fb = scanout->buffer->fb;
--	scanout->rows = height / scanout->font->height;
--	scanout->columns = width / scanout->font->width;
-+	scanout->scaled_font_h = scanout->font->height * scale;
-+	scanout->scaled_font_w = scanout->font->width * scale;
-+	scanout->rows = height / scanout->scaled_font_h;
-+	scanout->columns = width / scanout->scaled_font_w;
- 	scanout->front_color = drm_draw_color_from_xrgb8888(0xffffff, format);
- 	scanout->prefix_color = drm_draw_color_from_xrgb8888(0x4e9a06, format);
- 	return 0;
--- 
-2.46.2
+On 11/10/24 12:53 pm, Ritesh Harjani (IBM) wrote:
+> This patch refactors all CMA related initialization and alignment code
+> to within fadump_cma_init() which gets called in the end. This also means
+> that we keep [reserve_dump_area_start, boot_memory_size] page aligned
+> during fadump_reserve_mem(). Then later in fadump_cma_init() we extract the
+> aligned chunk and provide it to CMA. This inherently also fixes an issue in
+> the current code where the reserve_dump_area_start is not aligned
+> when the physical memory can have holes and the suitable chunk starts at
+> an unaligned boundary.
+> 
+> After this we should be able to call fadump_cma_init() independently
+> later in setup_arch() where pageblock_order is non-zero.
+> 
+> Suggested-by: Sourabh Jain <sourabhjain@linux.ibm.com>
+> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+> ---
+>   arch/powerpc/kernel/fadump.c | 34 ++++++++++++++++++++++------------
+>   1 file changed, 22 insertions(+), 12 deletions(-)
+> 
+> diff --git a/arch/powerpc/kernel/fadump.c b/arch/powerpc/kernel/fadump.c
+> index 162327d66982..ffaec625b7a8 100644
+> --- a/arch/powerpc/kernel/fadump.c
+> +++ b/arch/powerpc/kernel/fadump.c
+> @@ -80,7 +80,7 @@ static struct cma *fadump_cma;
+>    */
+>   static void __init fadump_cma_init(void)
+>   {
+> -	unsigned long long base, size;
+> +	unsigned long long base, size, end;
+>   	int rc;
+>   
+>   	if (!fw_dump.fadump_supported || !fw_dump.fadump_enabled ||
+> @@ -92,8 +92,24 @@ static void __init fadump_cma_init(void)
+>   	if (fw_dump.nocma || !fw_dump.boot_memory_size)
+>   		return;
+>   
+> +	/*
+> +	 * [base, end) should be reserved during early init in
+> +	 * fadump_reserve_mem(). No need to check this here as
+> +	 * cma_init_reserved_mem() already checks for overlap.
+> +	 * Here we give the aligned chunk of this reserved memory to CMA.
+> +	 */
+>   	base = fw_dump.reserve_dump_area_start;
+>   	size = fw_dump.boot_memory_size;
+> +	end = base + size;
+> +
+> +	base = ALIGN(base, CMA_MIN_ALIGNMENT_BYTES);
+> +	end = ALIGN_DOWN(end, CMA_MIN_ALIGNMENT_BYTES);
+> +	size = end - base;
+> +
+> +	if (end <= base) {
+> +		pr_warn("%s: Too less memory to give to CMA\n", __func__);
+> +		return;
+> +	}
+>   
+>   	rc = cma_init_reserved_mem(base, size, 0, "fadump_cma", &fadump_cma);
+>   	if (rc) {
+> @@ -116,11 +132,12 @@ static void __init fadump_cma_init(void)
+>   	/*
+>   	 * So we now have successfully initialized cma area for fadump.
+>   	 */
+
+> -	pr_info("Initialized 0x%lx bytes cma area at %ldMB from 0x%lx "
+> +	pr_info("Initialized [0x%llx, %luMB] cma area from [0x%lx, %luMB] "
+>   		"bytes of memory reserved for firmware-assisted dump\n",
+> -		cma_get_size(fadump_cma),
+> -		(unsigned long)cma_get_base(fadump_cma) >> 20,
+> -		fw_dump.reserve_dump_area_size);
+> +		cma_get_base(fadump_cma), cma_get_size(fadump_cma) >> 20,
+> +		fw_dump.reserve_dump_area_start,
+> +		fw_dump.boot_memory_size >> 20);
+
+The changes look good. Thanks for looking into it.
+
+For patches 2, 3 & 4
+
+Acked-by: Hari Bathini <hbathini@linux.ibm.com>
+
+> +	return;
+>   }
+>   #else
+>   static void __init fadump_cma_init(void) { }
+> @@ -553,13 +570,6 @@ int __init fadump_reserve_mem(void)
+>   	if (!fw_dump.dump_active) {
+>   		fw_dump.boot_memory_size =
+>   			PAGE_ALIGN(fadump_calculate_reserve_size());
+> -#ifdef CONFIG_CMA
+> -		if (!fw_dump.nocma) {
+> -			fw_dump.boot_memory_size =
+> -				ALIGN(fw_dump.boot_memory_size,
+> -				      CMA_MIN_ALIGNMENT_BYTES);
+> -		}
+> -#endif
+>   
+>   		bootmem_min = fw_dump.ops->fadump_get_bootmem_min();
+>   		if (fw_dump.boot_memory_size < bootmem_min) {
 
 
