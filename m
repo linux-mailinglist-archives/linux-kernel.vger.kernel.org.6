@@ -1,143 +1,93 @@
-Return-Path: <linux-kernel+bounces-361853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B32B399ADEA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:58:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 282C899ADEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:59:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 547BC1F25119
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEAE428C4FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:59:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125E91D1E88;
-	Fri, 11 Oct 2024 20:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O+JUOZDf"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1A4B1D0F7D;
+	Fri, 11 Oct 2024 20:59:04 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E7F1D172B;
-	Fri, 11 Oct 2024 20:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C38A1D14FD
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:59:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728680297; cv=none; b=WFf2VFKVP2pdLg/o5mh/ieZP1/WxU9Dpg/tF4b9GZhCyGqg8xZWxY4CO/xcDxO9KjGDesz8ypgwQnDdOdkMSm4F1ofGTMLESGtdB9i4Yl6q+3424nME3tWJ2jnBIOheaaG2JVI7PcSrmV+In4DwIF8DyHIlFZhIFOjPMAHylBy0=
+	t=1728680344; cv=none; b=SPBLNffPZHEwAhGfrmf/ROBUTRQtfdgmWan/kYPgNHV1ZBRqO5EKE+MmZvY95nbNw6ZqHXlm/nRuKLGmFV4JoYyp1iBnIDcfAoVdhQIE3VsHVekomKMWKfma3z+xzm6PSaQ4r/ufyOFxq8MQmH+xzR7qchN4/m+nPVVRGinI50U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728680297; c=relaxed/simple;
-	bh=uUNQk/Mq4fzyjqilGErg+9k7fkR99qc+DJ8G3u6dptA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZrJBBoBSrW/CcWW1OeVFWnB+gZHBhnSzgwilS/QChqKBnCjXLHjdJyxNSAT2VP8DT/Etwe5O2jPtdKzuq2iRCVf/MyqQAO9ncRavH3ka/QepKwDhtabVlViq4SLK9b0wC8eRLduXHs+5e5+RNP2gsDD17YpFQqNfR63hh/wN0OM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O+JUOZDf; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-43111cff9d3so18060385e9.1;
-        Fri, 11 Oct 2024 13:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728680294; x=1729285094; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QUF/BYXWqa73w1Ptjg2Or8FJx8zKQF+pmQV2piWya60=;
-        b=O+JUOZDfl9vmqGN5bp1yJFvNXi61d2zoF7Z/6QfpDpHKxAc67F15OaRq70wqquW8P5
-         Kh8zVnHXw8vGOGgGKBsVSezScMIU8MvVyzu7anFvIMfN+1yLM4zb9+JNib/Ryp/fqW4d
-         jdR7YJbDoz3sap/5a7wWRrj2ckcnrApcDxULZhiYsMxyQOaOp6D4aOpjRA5VZmx2/eig
-         udA8eQx4Gj5gyAwP8RcpwVz9OP/IXcdjxk9xT+cMhz4+J5LMhp/g+CnnIbsnoAc2yqHq
-         w89mXw2abNs5YxQvJON1FOwb8EZUJev6Nk0nSD1+sQUQU6EzKgIkBmDtw5xlfbwmWH5G
-         ZivA==
+	s=arc-20240116; t=1728680344; c=relaxed/simple;
+	bh=dxgsExbIp+OVezKK0BZ0B+riyJW3k/G5OfnVOB1l100=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oJZM36t2aQI0w0fV724S2hELmGxfQAjtZleYkXzjRGbKAwNW/xaaUVgiqEhvuDTaKcNzz0pNCHUOQG3/uZWID+dOYnMe5ByZRVl/4+eYoEs6f/eZ/qfbPXQonK9QCoB3ijF2jFpMLGca1Xp45jirLApkMaojl3+xt+Zr+nG+M5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8354557bf73so226739239f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:59:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728680294; x=1729285094;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=QUF/BYXWqa73w1Ptjg2Or8FJx8zKQF+pmQV2piWya60=;
-        b=WsPrdZF/62/3wCYMmoUuI2hbMfh5t3WYZVaBLuRKv9u5wN4ODlOcPPbmpYNPIQ7kDL
-         nUM2Kwq+xm5SlgWdELbUZPb20qNiTN57KxeO6/XZQAGDNnP4KJralvd0czhZ1nTvAKHs
-         xSjTdcZzJzpe38Zf4qFmR4NboEu/uTbcRbflayBWMdbH73b3crO0Gv/koK1mYDpSHdMi
-         Hm7bz0OcVbHZVTWdHj9d140B0oMbMWD9TfSEum70d+RN34ReA3e5EQPpf3xpr5xEkMfQ
-         OIa0HMbhvEkDTdXY77LRA4VRsULNdvuzumx/HGUt3uvvDIvO+MeMg1+a34UzrytqitG4
-         /sBw==
-X-Forwarded-Encrypted: i=1; AJvYcCUOUToisu8nKxMUGI8EL192sEeRz2cyw/dERTPACAZWI74qU3YwhmbCX+7giicdU9vhsgdSRfVIoNJnCkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmUGcNI50ds3y7JeOyUHQjH0F2mnw8lnNIbs5Q9j8fWn4xVIlH
-	iPR1f+ENE6SYJlCJchZoQ6fhkNy1/JSkbJ/CdWpGUApxJ8FSOWeIwN/42DQN
-X-Google-Smtp-Source: AGHT+IEKkm+3IwlgPeSypTq+yOa7pUD5sQvJe8LrR4+l/DjQQuBVLSYLqTZgoLWoIS1gqk/iaxVYyQ==
-X-Received: by 2002:a05:600c:3ba9:b0:426:593c:9361 with SMTP id 5b1f17b1804b1-4311df47018mr29023535e9.26.1728680293933;
-        Fri, 11 Oct 2024 13:58:13 -0700 (PDT)
-Received: from [127.0.1.1] (2a02-8389-41cf-e200-55c0-165d-e76c-a019.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:55c0:165d:e76c:a019])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835c4fbsm50984055e9.39.2024.10.11.13.58.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 13:58:13 -0700 (PDT)
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Date: Fri, 11 Oct 2024 22:58:00 +0200
-Subject: [PATCH 2/2] dmaengine: mv_xor: switch to
- for_each_child_of_node_scoped()
+        d=1e100.net; s=20230601; t=1728680342; x=1729285142;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Xl8GCiVxkqpqWaPtQKGMQtJ2j70cmGQyjMzqhZ48zY0=;
+        b=AdFRzF00rxFdlyt4OlEGd1dnXopjbS6T1iQH2ye5YCVWrosYYLkEOYnBp0dh+hTkZb
+         MkS6ebpRZJ5Eywl9HXfHmVhicWDKmiFBi4XkSCz51OX2TmixaovhZhjLXkzwqe94mH33
+         aSMW0uMdQHsrZRHvc8I87E8lHRSBMroXeQOgS8ESLjdnLIU9H+7Nu1fP53xqP3u1ecq3
+         hOnjLZBTkGulsujWVZyZPABkMFDDzwkJGWtX7y9J+6vrO/ddYNa0sKEBuAJ55J+r0kkQ
+         oF5vRoZwkN26Ci3GpgSErxU1EOK3OvaV4/kWVbe5UaOIyYQgTWneP8GnMsKJ8MGp8R/g
+         8ycg==
+X-Forwarded-Encrypted: i=1; AJvYcCW3rbIXQuifoMNb4waTDmaLOtPKGztg/aJqdNBsm+7YN7usF7hM6raCcXEvIVo6qyvyKwH9hxl0vOek6G8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9+tBrj4XYl9UPv3IVEyMU7ijtc89oS9956knBUzjv3nDDkfIy
+	vfovFKOuVOFhshrYVm7xQkEshw6LI99vE0jcKeyTITOri5IfvcShFjSEJqLNEPJQ9nt4pby19zc
+	Yi1VNTMiQ32FsZaBsqx3Wyh4aHmU1H1eFT8jQz/TO40Ao+r1N1ThlItM=
+X-Google-Smtp-Source: AGHT+IGMg+5mViMxz2hTxCofHeyOpJMtgyuvHSHMfMT+W033sOWNets6kAUVWDyE1p2Xj3LN1YnzHmEyd7OXC4kTEMqAcbfVebMk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-dma_mv_xor_of_node_put-v1-2-3c2de819f463@gmail.com>
-References: <20241011-dma_mv_xor_of_node_put-v1-0-3c2de819f463@gmail.com>
-In-Reply-To: <20241011-dma_mv_xor_of_node_put-v1-0-3c2de819f463@gmail.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Thomas Petazzoni <thomas.petazzoni@free-electrons.com>
-Cc: dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Javier Carrasco <javier.carrasco.cruz@gmail.com>
-X-Mailer: b4 0.14-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728680289; l=1349;
- i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
- bh=uUNQk/Mq4fzyjqilGErg+9k7fkR99qc+DJ8G3u6dptA=;
- b=TNQQsqADQyWmGYtdCojYUrwgmdHLIx1YAHmvSLTsQjx47H3UOH0qdeZFwaaFcFhEREQCUo1nj
- MePh7e80dDZCg7lEQ4M2m71xrOwCFC00t4m5UqNbUOJm+U+En+kMJ8e
-X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
- pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
+X-Received: by 2002:a05:6602:164a:b0:82c:fdc2:e25a with SMTP id
+ ca18e2360f4ac-83a64bfd806mr68962339f.0.1728680342268; Fri, 11 Oct 2024
+ 13:59:02 -0700 (PDT)
+Date: Fri, 11 Oct 2024 13:59:02 -0700
+In-Reply-To: <000000000000cb688206213d1bda@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <67099196.050a0220.4cbc0.0017.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_fiemap
+From: syzbot <syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com>
+To: elic@nvidia.com, jasowang@redhat.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	mst@redhat.com, ocfs2-devel@lists.linux.dev, ocfs2-devel@oss.oracle.com, 
+	parav@nvidia.com, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Introduce the scoped variant of the loop to automatically release the
-child node when it goes out of scope, which is more robust than the
-non-scoped variant, and accounts for new early exits that could be added
-in the future.
+syzbot has bisected this issue to:
 
-Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
----
- drivers/dma/mv_xor.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+commit a3c06ae158dd6fa8336157c31d9234689d068d02
+Author: Parav Pandit <parav@nvidia.com>
+Date:   Tue Jan 5 10:32:03 2021 +0000
 
-diff --git a/drivers/dma/mv_xor.c b/drivers/dma/mv_xor.c
-index 40b76b40bc30..fa6e4646fdc2 100644
---- a/drivers/dma/mv_xor.c
-+++ b/drivers/dma/mv_xor.c
-@@ -1369,10 +1369,9 @@ static int mv_xor_probe(struct platform_device *pdev)
- 		return 0;
- 
- 	if (pdev->dev.of_node) {
--		struct device_node *np;
- 		int i = 0;
- 
--		for_each_child_of_node(pdev->dev.of_node, np) {
-+		for_each_child_of_node_scoped(pdev->dev.of_node, np) {
- 			struct mv_xor_chan *chan;
- 			dma_cap_mask_t cap_mask;
- 			int irq;
-@@ -1388,7 +1387,6 @@ static int mv_xor_probe(struct platform_device *pdev)
- 			irq = irq_of_parse_and_map(np, 0);
- 			if (!irq) {
- 				ret = -ENODEV;
--				of_node_put(np);
- 				goto err_channel_add;
- 			}
- 
-@@ -1397,7 +1395,6 @@ static int mv_xor_probe(struct platform_device *pdev)
- 			if (IS_ERR(chan)) {
- 				ret = PTR_ERR(chan);
- 				irq_dispose_mapping(irq);
--				of_node_put(np);
- 				goto err_channel_add;
- 			}
- 
+    vdpa_sim_net: Add support for user supported devices
 
--- 
-2.43.0
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=13a0a840580000
+start commit:   1d227fcc7222 Merge tag 'net-6.12-rc3' of git://git.kernel...
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1060a840580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=17a0a840580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
+dashboard link: https://syzkaller.appspot.com/bug?extid=ca440b457d21568f8021
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=142fc840580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15026b27980000
 
+Reported-by: syzbot+ca440b457d21568f8021@syzkaller.appspotmail.com
+Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported devices")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
