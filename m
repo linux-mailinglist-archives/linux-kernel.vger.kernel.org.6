@@ -1,149 +1,91 @@
-Return-Path: <linux-kernel+bounces-360786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360784-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB296999FB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:03:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD3EA999FA9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:02:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26F151C23D02
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:03:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F07F2881CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:02:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCBC420C480;
-	Fri, 11 Oct 2024 09:03:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="3R75dh2+"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B1C020CCC5;
+	Fri, 11 Oct 2024 09:02:24 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42F8B20ADE4;
-	Fri, 11 Oct 2024 09:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71C81FC8;
+	Fri, 11 Oct 2024 09:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728637415; cv=none; b=X2BowGoxjACNfPmHbYiRjLnK+dkpQg6LScClY8BR6WZnHyPhiGL0Ku2hYlt6V7fXRdZGW6SLE83aGkZblFCwihnRTRRqbR+/ZNUPyan58gtOREEY+zSsCmotrjzF++p5XhvqmN5hbsbssksqGut1jkxVeb7puwVpXZQp0NqPrp8=
+	t=1728637343; cv=none; b=ncG9T1JV0QYkRoB5pUtI8kRULOqib/coEV6usMTpZ+tKNp1Kg5ZXp60OnI6ZJSPu16WzQCSoP1HDA18h/EEYRI7RCGPB1XRtbpxZINGEHPq2ORtTS5GKYsgF+IOJIhlyFw0tchsCHtzBhYan4vErHG4YJHo7dl83FNXYIlyf8WM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728637415; c=relaxed/simple;
-	bh=Ha/AF5v+viIStrFAcTTJyf/v+jRRHbq4Sk/R278Ki44=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iDVyz5xrYKlHH0+sJ4Lkkd1U2krriH3xBQX30SDY1PPFrp3hf9VGS6UCno3+yn1OqNmK1qrMgqsIcupuAjyL3hxnTVdMLpN5yqxVhrAa4Du7mtp9V8OOnocqY4w5dWqjq4IW3f7xcCgArIpWnU4nDH6EOQBdyWjNY2pzKgwqU7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=3R75dh2+; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B82WQq014668;
-	Fri, 11 Oct 2024 11:03:11 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	W32014r5y3QWUubB7ejNQ9RucL4lQCYgXfxr9DFI93s=; b=3R75dh2+n959fKbq
-	+QQvxFOLciVR6SRNVBS4EZ3HqkbkSd6f5qRqAkI/AE2cAf6VyTPtc/OSY1MWLYXX
-	CnLrDrcQQVEAiuAoZkOdkvDZnoVv0maRtUVEVZtqWOfICN0N3hqEL9QuC9RYl4af
-	L1xZM67augvNz2FbiPvUSf5xZBMAh22MxQ9LmVF71WosnwRyJo/xoCsxQegEDfWN
-	gYkt+9cc4qMRlqvEdmfVRWsZi0SLkY1vziFKBt9a2f42sbNE3MBeA3jeQaGebyod
-	Ng+KlZQxLGq3bDQTempsZgwiVnb4KCIs+Fv+k+FNaAGEEU5FsMKkfHBEpmCbGUG+
-	Enm9ug==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425w9xgt74-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 11:03:11 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 93C594004B;
-	Fri, 11 Oct 2024 11:02:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id BD55626D0AD;
-	Fri, 11 Oct 2024 11:01:33 +0200 (CEST)
-Received: from [10.48.87.35] (10.48.87.35) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
- 2024 11:01:33 +0200
-Message-ID: <3b7b46ca-426c-44a9-b4f2-ce104e0d3b1c@foss.st.com>
-Date: Fri, 11 Oct 2024 11:01:32 +0200
+	s=arc-20240116; t=1728637343; c=relaxed/simple;
+	bh=M1N2+VjFOVpfNTTV4h8YD4Tm4hDrgQ0GEwyZZZtz+Z4=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UkmHKAddPcqt7LMK4dIS5IJZLH6n7PjKPzP1HLAaKWZaAUD5jKWM+rCYvcAJFopgxcTgFRN6ybaOsMocuT43taVPdylIyLM7l2PZqDRCEvkfoHRHtw6z4ogdJ/6kk97z8UqDyfOPX/PPAS+N/rI5grdycRsiHjG/oT/1dWiY3nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XQ0w56f8Dz6K6TC;
+	Fri, 11 Oct 2024 17:00:53 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8550614010C;
+	Fri, 11 Oct 2024 17:02:17 +0800 (CST)
+Received: from GurSIX1 (10.204.104.109) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
+ 2024 11:02:11 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch> <20241009065837.354332-1-gur.stavi@huawei.com> <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch> <002201db1a75$9a83b420$cf8b1c60$@huawei.com> <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch> <002701db1ae3$368d9b70$a3a8d250$@huawei.com> <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch> <000101db1b2f$7410c2f0$5c3248d0$@huawei.com> <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
+In-Reply-To: <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket is not RUNNING
+Date: Fri, 11 Oct 2024 12:02:05 +0300
+Message-ID: <000301db1bbc$453feae0$cfbfc0a0$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/11] dt-bindings: dma: stm32-dma3: prevent linked-list
- refactoring
-To: Rob Herring <robh@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <dmaengine@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241010-dma3-mp25-updates-v1-0-adf0633981ea@foss.st.com>
- <20241010-dma3-mp25-updates-v1-4-adf0633981ea@foss.st.com>
- <20241010181426.GA2107926-robh@kernel.org>
-Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <20241010181426.GA2107926-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGWzwQMZqw76ooUWOpIJuIeDZyLJ8x9WAgAEVHYCAAHM4AIAA1CkdgADoeFuAAINGnIAAsEDw
+Content-Language: en-us
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-On 10/10/24 20:14, Rob Herring wrote:
-> On Thu, Oct 10, 2024 at 04:27:54PM +0200, Amelie Delaunay wrote:
->> stm32-dma3 driver refactors the linked-list in order to address the memory
->> with the highest possible data width.
->> It means that it can introduce up to 2 linked-list items. One with a
->> transfer length multiple of channel maximum burst length and so with the
->> highest possible data width. And an extra one with the latest bytes, with
->> lower data width.
->> Some devices (e.g. FMC ECC) don't support having several transfers instead
->> of only one.
->> So add the possibility to prevent linked-list refactoring, by setting bit
->> 17 of the 'DMA transfer requirements' bit mask.
->>
->> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
->> ---
->>   Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml | 3 +++
->>   1 file changed, 3 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
->> index 5484848735f8ac3d2050104bbab1d986e82ba6a7..38c30271f732e0c8da48199a224a88bb647eeca7 100644
->> --- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
->> +++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
->> @@ -99,6 +99,9 @@ properties:
->>           -bit 16: Prevent packing/unpacking mode
->>             0x0: pack/unpack enabled when source data width/burst != destination data width/burst
->>             0x1: memory data width/burst forced to peripheral data width/burst to prevent pack/unpack
->> +        -bit 17: Prevent linked-list refactoring
->> +          0x0: don't prevent driver to refactor the linked-list for optimal performance
->> +          0x1: prevent driver to refactor the linked-list, despite not optimal performance
 > 
-> Driver settings don't belong in DT. Perhaps reword it in terms of h/w
-> constraints (i.e. single transfer limitation).
-> 
+> If we don't care about opening up fanout groups to ETH_P_NONE, then
+> patch v2 seems sufficient. If explicitly blocking this, the ENXIO
+> return can be added, but ideally without touching the other lines.
 
-Thanks for the review and suggestion. I'll reword it in V2. Indeed, it 
-is due to single transfer limitation, e.g. for ECC status registers 
-transfer.
+I don't think that allowing ETH_P_NONE is relevant.
+In my opinion the 2 options that should be considered to fail
+fanout_add are:
+1. Testing proto == 0
+2. Testing proto == 0 || ifindex == -1
 
--bit 17: Prevent additional transfers due to linked-list refactoring
-   0x0: don't prevent additional transfers for optimal performance
-   0x1: prevent additional transfers to accommodate user constraints 
-such as single transfer
+The only corner case that is caught by [2] and missed by [1] is
+the "unlisted" case during do_bind. It is such a rare case that
+probably no one will ever encounter bind "unlisted" followed by
+FANOUT_ADD. And this is not a dangerous corner case that leads to
+system crash.
 
+However, being a purist, I see the major goal of code review to promote
+correctness by identifying corner cases while improving style is a
+secondary priority. Since we did identify this corner case in our
+discussion I think we should still use [2].
+I don't consider the code complex. In fact, to me, the ifindex clause
+is a more understandable direct reason for failure than the proto which
+is indirect. Having the ifindex clause helps figuring out the proto
+clause.
 
-Regards,
-Amelie
-
->>   
->>   required:
->>     - compatible
->>
->> -- 
->> 2.25.1
->>
 
