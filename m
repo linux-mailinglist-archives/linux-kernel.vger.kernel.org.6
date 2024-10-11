@@ -1,111 +1,88 @@
-Return-Path: <linux-kernel+bounces-361254-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361250-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBB0499A5B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:02:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 221DC99A5A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8727928686C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:02:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 52A4B1C24D71
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:01:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE22219C8A;
-	Fri, 11 Oct 2024 14:02:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="y7YVhH5d"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E710C20ADF4;
+	Fri, 11 Oct 2024 14:01:24 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 780354431;
-	Fri, 11 Oct 2024 14:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2954431;
+	Fri, 11 Oct 2024 14:01:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728655327; cv=none; b=S1H1/EO1g6MoNPwYqeRLedS/TA/NdMznmqUXjgGHoklTxVNpF5L8Mfn7PDqPTPZwhaN+SCTH3L64LzGre1ydpdm7VUsAEX3VJwOwkuaGQ62dYxcBwnGZ1CdqvAWHlTqz+yIXMVuRhO8WeqCc3dz7BwDR6RjXfb2bVlyctrMs9hg=
+	t=1728655284; cv=none; b=fOGp4gQJHMq+KBVxVidIs/H/ppbzzojXktwBJkFhGC05H2qXQD3PmhUHZGU1GmEVE4JxWUQRbuF9LX/wCdPQY15AwFklpr2yT0KToJG1S4XeHWGW9QPbyZpRnJMhTvguT00FtXfve0CvF9TlyzNHDE8vkc8CDp3wlh18c3p7Q1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728655327; c=relaxed/simple;
-	bh=i/HxZYSj3x29bpukEzZcwPkb9qFoaouDs9iL1Ghkig8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XSg2Zs+BLqHvhqIAIzZccslseKIX3e8TPW0ONJso5eDolZ0rC20wA9bn31tQWyTw7mFsTMEtHQiBaF2oTGqMa1dBGj6nuwTmjiPEphVO5dyaUfqvqdZPQDW1jd/w+hV3Q5AgjY1xWkx2KiQUc0Ov6cozfPFmTfZc3+C1jHcx+rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=y7YVhH5d; arc=none smtp.client-ip=68.232.153.233
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728655325; x=1760191325;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=i/HxZYSj3x29bpukEzZcwPkb9qFoaouDs9iL1Ghkig8=;
-  b=y7YVhH5d0n7/DBkLdTyNBb9zbueuNjscSm6hWXU8uwIJEzcuoQAmNRtC
-   d2zQuICiDWjWR/C3qaTL7MupS5Np5wDxMjFa6YuSEMW+0HFPccUmL3+SO
-   Ij/CwI7rbu6IJIy+S4oIVJ1NNVJ+NnpSFSdyRTUz0j1Y3+oBFUhb66dqO
-   0iBRUvu9/mQ7ucA2SFflVd8xiNSH9Jd/0QSzxc0a6AeDq0SMpu/IoW1Te
-   oKkkLK2UZfC1LN+7q/a3WHg2RcPHXuKTGMbIc4kxNXKUOf3O1wHSyIkUr
-   w+hGuFK28Xo8E1kT1WY7uW+y1cd0buI/ASEPS0vGcNJRlK7gnYGxrzWLk
-   w==;
-X-CSE-ConnectionGUID: PBjGkC+SSZ+djG4FWi+TaQ==
-X-CSE-MsgGUID: NA3T2Q4uRL6emXVb6Tl09A==
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="263956568"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa5.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Oct 2024 07:02:04 -0700
-Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 11 Oct 2024 07:01:42 -0700
-Received: from wendy.microchip.com (10.10.85.11) by chn-vm-ex04.mchp-main.com
- (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 11 Oct 2024 07:01:40 -0700
-From: <daire.mcnamara@microchip.com>
-To: <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>
-CC: <conor.dooley@microchip.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
-	<robh@kernel.org>, <bhelgaas@google.com>, <linux-kernel@vger.kernel.org>,
-	<linux-riscv@lists.infradead.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <daire.mcnamara@microchip.com>,
-	<ilpo.jarvinen@linux.intel.com>, <kevin.xie@starfivetech.com>
-Subject: [PATCH v10 3/3] dt-bindings: PCI: microchip,pcie-host: allow dma-noncoherent
-Date: Fri, 11 Oct 2024 15:00:43 +0100
-Message-ID: <20241011140043.1250030-4-daire.mcnamara@microchip.com>
-X-Mailer: git-send-email 2.43.2
-In-Reply-To: <20241011140043.1250030-1-daire.mcnamara@microchip.com>
-References: <20241011140043.1250030-1-daire.mcnamara@microchip.com>
+	s=arc-20240116; t=1728655284; c=relaxed/simple;
+	bh=Iwpl98h1V5EgQRGx6yjRbC4ERp0lCtfsNEnt5QdUewM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ZzOfpeQZnt78rZ2jtgUv0QXTSy96R10T14CfqwY+mpOwVbBcrdbkHZ0aeFvUIfG62Z5uNUdM5ZwNk/73yaLzcS+shp5Ycn8bQyNQWHlGQxXbHLb77rez2ie6Y4jIWZ8daWTvIjdPTnC9u5CTSyc3PQIUjTqJzVsfPr35SLIuLl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72C6CC4CEC3;
+	Fri, 11 Oct 2024 14:01:23 +0000 (UTC)
+Date: Fri, 11 Oct 2024 10:01:32 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Subject: Re: [PATCH] ring-buffer: Have the buffer update counter be atomic
+Message-ID: <20241011100132.456f903a@gandalf.local.home>
+In-Reply-To: <1924e096-916a-4311-a3d5-07d3813f50da@suse.com>
+References: <20241010195849.2f77cc3f@gandalf.local.home>
+	<1924e096-916a-4311-a3d5-07d3813f50da@suse.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Conor Dooley <conor.dooley@microchip.com>
+On Fri, 11 Oct 2024 10:05:51 +0200
+Petr Pavlu <petr.pavlu@suse.com> wrote:
 
-PolarFire SoC may be configured in a way that requires non-coherent DMA
-handling. On RISC-V, buses are coherent by default & the dma-noncoherent
-property is required to denote buses or devices that are non-coherent.
+> On 10/11/24 01:58, Steven Rostedt wrote:
+> > From: Steven Rostedt <rostedt@goodmis.org>
+> > 
+> > In order to prevent any subtle races with the buffer update counter,
+> > change it to an atomic_t. Also, since atomic_t is 32 bits, move its
+> > location in the ring_buffer_per_cpu structure next to "current_context" as
+> > that too is only 32 bits (making 64 bit alignment).
+> > 
+> > The counter is only used to detect that the buffer has been updated when
+> > the buffer verifier check is being done. It's not really that important
+> > that it's atomic or not. But since the updates to the counter are never in
+> > the fast path, having it be consistent isn't a bad thing.
+> > 
+> > Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> > ---
+> > Note, this is based on top of:
+> > 
+> >   https://lore.kernel.org/linux-trace-kernel/20240715145141.5528-1-petr.pavlu@suse.com/  
+> 
+> Sorry for not replying to your last comment on my patch, I was ill.
+> 
+> The member ring_buffer_per_cpu.cnt is intended to be accessed under the
+> reader_lock, same as the pages pointer which it is tied to, so this
+> change shouldn't be strictly needed.
+> 
 
-Signed-off-by: Conor Dooley <conor.dooley@microchip.com>
-Signed-off-by: Daire McNamara <daire.mcnamara@microchip.com>
-Acked-by: Rob Herring <robh@kernel.org>
----
- Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml | 2 ++
- 1 file changed, 2 insertions(+)
+Right, but there was one location that the cnt was updated outside the
+lock. The one I commented on. But instead of adding a lock around it, I
+decided to just make it an atomic. Then there would be no need for the
+lock. Hmm, it still needs a memory barrier though. At least a
+smp_mb__after_atomic().
 
-diff --git a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-index 612633ba59e2..5f5f2b25d797 100644
---- a/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-+++ b/Documentation/devicetree/bindings/pci/microchip,pcie-host.yaml
-@@ -44,6 +44,8 @@ properties:
-     items:
-       pattern: '^fic[0-3]$'
- 
-+  dma-coherent: true
-+
-   ranges:
-     minItems: 1
-     maxItems: 3
--- 
-2.43.0
-
+-- Steve
 
