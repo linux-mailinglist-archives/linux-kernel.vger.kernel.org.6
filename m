@@ -1,99 +1,107 @@
-Return-Path: <linux-kernel+bounces-361038-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361039-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12C8399A2AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:28:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C459899A2B1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:28:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2C441F249F0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885212835C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:28:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F9D216430;
-	Fri, 11 Oct 2024 11:28:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBF1216430;
+	Fri, 11 Oct 2024 11:28:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dqWN39c2"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdqMS35B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3293A215F50
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E039721502F;
+	Fri, 11 Oct 2024 11:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728646103; cv=none; b=gbfzrg+EVPLqoz1+6E7CSmOg1iwmj5Ltpp5Lv/trfxRS/nEMRBu+cYXnkpzFZ+0SaJyUfIuk1e6rNruE1kHYf8AtIFI4D9O1CGUZD8xdUjwlDGUPPynuSdFWnPL94S2kWvs6cRBISsbSPRWVNkshV1hC+zijjS57Cbqer5aSZRE=
+	t=1728646116; cv=none; b=MIetMwyV4HP1N7j8M/Q/T94FF9XL3lVaE4zw4m1K3DyZGx4p8vWw/sJ+OpCzdqTG9fL7kk+KkvxlN9BToagcB8NTh7Ad1dFOpanQDwcf22a7bI3y5yRKPitnJxbiCVbG7uQclC/AorGqQli4wjHDvqmdlh+uQ2iLEpqJf5b38+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728646103; c=relaxed/simple;
-	bh=BlfqTYePpkTIVLUZqLdbWQakAvYxLoLPft8IAiIF51I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=k8ZEEjDsE8Hhzhgp0zx7R1uibJ7S/L8PcLXXPRvpNuD5H6iAB19OxNVj4xmzdEld8aqV6Pz9puz9KbOwH8tEYBM8NPsWhskQKXKpb/t5uGRYT+0ht1lZvDH8cr00y+5tsWUXOU/DVLs8PZ1W8sLltx59IieP8E6DBzvnIYJKua0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dqWN39c2; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728646099;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4HAG/FNfY4USQmCWPTQgELr7Lx25qhoKxL0+773/Hho=;
-	b=dqWN39c2djddKG0BWhGGG/Qu8RmPdSeU27Bd3dylWQVfYt6eK2bS8XYh49zzSXlfI/1gkv
-	VNCANvB7BnhkpY5ALqXeellmK9jeAC2QEM74Z5LxmRn59BbkgLJmBggmMzdGqwl/uHaeLx
-	DGuZW9PLqAwwQQRDCXH50Oro/eYnAGk=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-134-zU7HdmRxOICk-TfUnEvZQg-1; Fri,
- 11 Oct 2024 07:28:13 -0400
-X-MC-Unique: zU7HdmRxOICk-TfUnEvZQg-1
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 34FE219560B5;
-	Fri, 11 Oct 2024 11:28:10 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.109])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 85BEE19560A2;
-	Fri, 11 Oct 2024 11:28:02 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri, 11 Oct 2024 13:27:56 +0200 (CEST)
-Date: Fri, 11 Oct 2024 13:27:47 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Jiri Olsa <jolsa@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv6 perf/core 02/16] uprobe: Add support for session
- consumer
-Message-ID: <20241011112747.GA26310@redhat.com>
-References: <20241010200957.2750179-1-jolsa@kernel.org>
- <20241010200957.2750179-3-jolsa@kernel.org>
+	s=arc-20240116; t=1728646116; c=relaxed/simple;
+	bh=b2BF6aX7yvuhV1cDjKTs1FC2L3sf5W+ct6S8Jto4oYs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ukVaEpPl0/yUnZyTWdqYvjyOYrMtFTFOpjjY8naBIkJtYUj6DsM6agwY58QMYBTihS/3/sFT1I3v20OjWTkcOAox9ic4Yq5msuOVQiXaJKVCSAUf3ADEVLxGr8+X7MRD1A+IcVPQT8GgoqKos/kBVFgnZeruzCOskrMyn9KqP/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdqMS35B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5FEC4CECC;
+	Fri, 11 Oct 2024 11:28:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728646115;
+	bh=b2BF6aX7yvuhV1cDjKTs1FC2L3sf5W+ct6S8Jto4oYs=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=KdqMS35B6UT2S28pF+yBRfQNR4yHsE/zeX5qAGEOTTZdTROCOmPdwHJYn2dGpv5Fz
+	 PEA215lw+JKXy+tgn52/ohxrdik7b+tp3fsufs58id5d9q48olMLDUh8fDySUn6xtv
+	 bmz6zFZU6tOJLOtuqOdF1ViWf5TRMOb45VZebmwPVSUt9Upf6ylua0dKJF4SoEXJd1
+	 pnGVMMolvNKXZCzI/M6W2JoMIR+CHlqxncb6d7FcrByXtGzzdDB23A9aksgRgXcgnL
+	 5j66kPmSsOugPGWsoA2yxrj7Q8f1m/OXJhxsud9cWDck6UpahhF5HrSAeSSj7wjzWt
+	 LQ/uYQMwBXFpA==
+Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-716a5b9ee6fso1016948a34.2;
+        Fri, 11 Oct 2024 04:28:35 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUITq3rPOsKr3tWueA7ZAPP3agGn5t5LrPKODzDKFb/0Twdr8QRAc0ZkjZsufY+woK2BnmYL72NNXtW@vger.kernel.org, AJvYcCX/qgHqrl8OMAox1YQaQSeG1TRx7nUwS4ncA6f+KolCyZHwr0TxIMpboEblOQN+tzTvfV4kSNEB88GR/KZl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzHUyI6I8XOzE+J4VrM5mQz9rv5imu4iuFDxorV6xQU4kvUDRMC
+	g998gsIPfKCdy+PofQNG18/mj5UohWezKA/bTVLrL9UnopFpjLgFeh/9KGE2+5wyODjAoXx2vmi
+	MSXgP4DLKi/T/BB0/cCAsSf3hb44=
+X-Google-Smtp-Source: AGHT+IGtFi7+XflJhdoe2a845QyQCYPlrIQbcAmzlN087fwENXDcaP9JxbSbHXIU/DeakWbMWjuPPBRMY8zguyxW7Xc=
+X-Received: by 2002:a05:6871:5226:b0:261:2072:7b5d with SMTP id
+ 586e51a60fabf-2886df8928dmr1333630fac.29.1728646114921; Fri, 11 Oct 2024
+ 04:28:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010200957.2750179-3-jolsa@kernel.org>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+References: <20241011061948.3211423-1-arnd@kernel.org> <20241011061948.3211423-2-arnd@kernel.org>
+ <Zwj1p3uMEA24a0sU@smile.fi.intel.com> <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
+ <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
+In-Reply-To: <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 11 Oct 2024 13:28:23 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0hG0o3jxH_HnS76s=VUC28M4fY5yuWxQttGSkCX_SvCSA@mail.gmail.com>
+Message-ID: <CAJZ5v0hG0o3jxH_HnS76s=VUC28M4fY5yuWxQttGSkCX_SvCSA@mail.gmail.com>
+Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, 
+	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
+	Mario Limonciello <mario.limonciello@amd.com>, Jarred White <jarredwhite@linux.microsoft.com>, 
+	Perry Yuan <perry.yuan@amd.com>, Easwar Hariharan <eahariha@linux.microsoft.com>, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/10, Jiri Olsa wrote:
+On Fri, Oct 11, 2024 at 1:12=E2=80=AFPM Andy Shevchenko
+<andriy.shevchenko@linux.intel.com> wrote:
 >
->  include/linux/uprobes.h |  21 +++++-
->  kernel/events/uprobes.c | 148 ++++++++++++++++++++++++++++++++--------
->  2 files changed, 139 insertions(+), 30 deletions(-)
+> On Fri, Oct 11, 2024 at 09:59:46AM +0000, Arnd Bergmann wrote:
+> > On Fri, Oct 11, 2024, at 09:53, Andy Shevchenko wrote:
+> > > On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
+>
+> ...
+>
+> > >> +  if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
+> > >> +          *value =3D BIT_MASK(width);
+> > >> +          return AE_NOT_IMPLEMENTED;
+> > >
+> > > Perhaps it has already been discussed, but why do we need to file val=
+ue with
+> > > semi-garbage when we know it's invalid anyway?
+> >
+> > It's not strictly necessary, just precaution for possible callers
+> > that use the resulting data without checking the error code.
+>
+> Do you have any examples of that in the kernel?
 
-Reviewed-by: Oleg Nesterov <oleg@redhat.com>
+Yes, there are at least 2 cases.  May not be relevant, though.
 
+> > The all-ones data is what an x86 PC would see when an I/O
+> > port is read that is not connected to any device.
+>
+> Yes, but it's not what your code does.
+
+Care to elaborate?
 
