@@ -1,249 +1,115 @@
-Return-Path: <linux-kernel+bounces-360541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB3BA999C57
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:57:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C02DF999C5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4051C22498
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:57:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7C249284B38
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:58:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391A91F943C;
-	Fri, 11 Oct 2024 05:57:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5385F1F943C;
+	Fri, 11 Oct 2024 05:57:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iE0GFfAQ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Tp0HmZJi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2472A219FF;
-	Fri, 11 Oct 2024 05:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91EE9219FF;
+	Fri, 11 Oct 2024 05:57:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728626225; cv=none; b=nGsldl4apkyLJ4xCwgo9NT/W+2SmldopZMAUhvwKO3Un6ZJ677OyilLCMIHH7f/NpQnsxHwwRmnygwlPgocTMhHZMa6FO4yrNeKXCL1xtoVxI260+R1o4C+j20teGivMiJhYimDmrEQGxcdsimMfbp7g4Kai7Aoh/4PjPnoXqjw=
+	t=1728626276; cv=none; b=LtdKTJsCXbb0TTmiPUkvd3/+ua3AueG0CW0P2q7Q7z+deZT2IfO6NFNicgxNRVSFGb1Xg4VpwjKIgAmfBvHhxuhGi6BtvvsgQBOu4hXUtN0WYIjDD92+a+uLEOQqnc28yeLCMe+Xo6865jtZWg/Ko511Y2KLK3M7J0PUc3zd8Ko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728626225; c=relaxed/simple;
-	bh=VIa5O4Mkdunqty1j3ijQFPaP6a0eBpH22xQkVKIqdhs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ksKOniE0vTeR/y9M+dAtNhKcBnO40Jk/3Jz7eiIuohhkzWBvFdiEpQmvwpyhBGNQVrQ7xs6b5/Ri+2W1D/xD209xEPrrUvwHR3WevwbikEx3bmELIO22hUKYLhYB8P7eMbuj5NuEIwe4uLaN2+ZPo0p517xOjSrOOcB9+HF0wtA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iE0GFfAQ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c6f492d2dso17084715ad.0;
-        Thu, 10 Oct 2024 22:57:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728626223; x=1729231023; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xPo5xhewKlshq8RUYllOw1URvyS0utF68/5Etae/hmo=;
-        b=iE0GFfAQ6CQbblmgJcJ5Y6fUnR3EgTzZC+X7Y75+FjGPQX14jB707V1cGO6Aa0VLms
-         QYNR9aDB0E8pRoHDkqAaFLKvNdQ89kIkna/gcvNvV0xf9BNV+bQDGVwB6tA0wbYmkNVw
-         jzB4IACAGWZDfSI/cLpqe/RmddEIDiwE7I5dpIEGi7IYs8uvlV+mQK/HSTO3wiSGka9d
-         ZrpDzJKOi8lH3AtjaxJeBN81MspuBT3nSa3O+lda3CWg1RF3fnd9bbL4BiPAIZvdeHGQ
-         En9PeGmY1SqraB74qmUjTkCx7ZtW84HTcea1u/3t3IV9mSD2WCbzKP79lv0T+mNGMXeg
-         1JAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728626223; x=1729231023;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xPo5xhewKlshq8RUYllOw1URvyS0utF68/5Etae/hmo=;
-        b=lLprxnAqv/Bh1r2APpkQQbeUuuv/bwkLK4EGfvEfcrU95VJ/XZ/0h4zmyTii4w/M3n
-         qcohdPYgcgdr7VS1TawSCE+BjwhCqDovPuQoPZUdZcRygUEgVgAmlXlybGBDjJfqGFNJ
-         Y0FMuOR+hcRpXCG8kpl+TuJVe4vbkQJ9vLpDTS6e2m4hQtqNRrDuZC7wcC70FAdD+aWX
-         vFtVHqxqVf+f3UL2LRbl0JM6jk8cDz8aftqHnLlB9QAHeUCQaksp1fGjR/4U/Ska/b8O
-         rtbYtnF2Ym84dS5YzJqGnSqzOLmLpzBuKKOFuHa/E/JPqEePFAPd2bRJEEMyq90VY1sJ
-         GqXw==
-X-Forwarded-Encrypted: i=1; AJvYcCWk/vSGjC8E804Do/Z9mIBhoooyH7jP7MAWTzyrkVwFx2XzqvJxJW+RyOgkaOfB21z297+aItTd7f2rzVY=@vger.kernel.org, AJvYcCWqbefxjRM2gWkPVU8nl8GV+kGV8R5driLwgqN/XlmJ8/ufvQRUO7EDV9hiAYthy4e0hW7z4urp3O/LfPRWhmruvw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEhY76WrQXltd9VQYqyF0UUklnKZCxatPo5YwfIZnSLm0Wd+MQ
-	g/AaGKCXthkBwGU7vafXmM+T/DGP1FIMaj7BuxP+EzWWsnLj5uqJ
-X-Google-Smtp-Source: AGHT+IHuMwPgi2GTVetwUBex5heWqpQzZXPqiR+4kCoBTBCQndirFoUbMwJTC8f2Fg7CHfl7efkfLg==
-X-Received: by 2002:a17:903:2282:b0:20c:92ce:359d with SMTP id d9443c01a7336-20ca169aeb6mr22849565ad.45.1728626223379;
-        Thu, 10 Oct 2024 22:57:03 -0700 (PDT)
-Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc1c566sm17851085ad.114.2024.10.10.22.57.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 22:57:03 -0700 (PDT)
-From: Howard Chu <howardchu95@gmail.com>
-To: peterz@infradead.org
-Cc: mingo@redhat.com,
-	acme@kernel.org,
-	namhyung@kernel.org,
-	mark.rutland@arm.com,
-	alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org,
-	irogers@google.com,
-	adrian.hunter@intel.com,
-	matt@readmodwrite.com,
-	kan.liang@linux.intel.com,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Howard Chu <howardchu95@gmail.com>
-Subject: [PATCH] perf test: Delete unused Intel CQM test
-Date: Thu, 10 Oct 2024 22:57:00 -0700
-Message-ID: <20241011055700.4142694-1-howardchu95@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1728626276; c=relaxed/simple;
+	bh=3UA/Wj0tFj7GNRCpRe1eBnUJ45UOVruZE8go1YajMgE=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VV+VpwtbYgI/EVkdFbs3Iy2lESY24VPX4IQ4zpE8D0xGcc5BlwSwEHCr2mrV9TLHJM2wZre0k0MLXgx4GRxiF9/SsXkSMyKEfvWR2TMBxhhzShVhJUKh0pP6fwF11NlU4wTTz6jrNEkkpDge2mGZkwjNfVdgNNmaM66dHWx84MI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Tp0HmZJi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728626267;
+	bh=ebMRVSKdlSNzb2lYSQYtSXhlEhms4xHDtbLgrCBEC1w=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Tp0HmZJibGu27WTzEQP63b/ugb/oz0d6bE+ApFbp7vRVpKFNX/2AnpgPLWXLxhMc5
+	 H8XqXstEt68wrR2ise/rDf7/TufRjGznJoGsMgw3M0JkBe3mJUm/d63MAaq7I8ASiJ
+	 rwdp0cCIQ7r8poTw21WGAPPPcIorB9ccGD+Bn3+0oJ82wRsV+UqpdfwnIgDgibG1mb
+	 KOn5PBs+zlRbXCaTFU2c2vE8ozPFrZv9WxfddHC/K2pk4kdg2qhrhvm1wPIxR5/aAx
+	 GRFHkyqmlnb2U7KSiO3Iul7SWHOAq759G5/Ve19IfMWZNXO/+Fw0PTG1xGeX8FLnU8
+	 k10MQVk79fkyg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPwrn2Fqkz4xKl;
+	Fri, 11 Oct 2024 16:57:45 +1100 (AEDT)
+Date: Fri, 11 Oct 2024 16:57:45 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Simona Vetter <simona.vetter@ffwll.ch>, Jani Nikula
+ <jani.nikula@linux.intel.com>, Joonas Lahtinen
+ <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>
+Cc: Intel Graphics <intel-gfx@lists.freedesktop.org>, DRI
+ <dri-devel@lists.freedesktop.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build warning after merge of the drm-intel tree
+Message-ID: <20241011165745.64781cf0@canb.auug.org.au>
+In-Reply-To: <20241001134331.7b4d4ca5@canb.auug.org.au>
+References: <20241001134331.7b4d4ca5@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/pom3nNLcN5g6uw8R=nY2fOI";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-As Ian Rogers <irogers@google.com> pointed out, intel-cqm.c is neither
-used nor built. It was deleted in the following commit:
+--Sig_/pom3nNLcN5g6uw8R=nY2fOI
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license identifier to files with no license")
+Hi all,
 
-However, it resurfaced soon after in the following commit:
+On Tue, 1 Oct 2024 13:43:31 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> After merging the drm-intel tree, today's linux-next build (htmldocs)
+> produced this warning:
+>=20
+> drivers/gpu/drm/i915/i915_irq.c:1: warning: 'intel_runtime_pm_disable_int=
+errupts' not found
+> drivers/gpu/drm/i915/i915_irq.c:1: warning: 'intel_runtime_pm_enable_inte=
+rrupts' not found
+>=20
+> Introduced by commit
+>=20
+>   3de5774cb8c0 ("drm/i915/irq: Rename suspend/resume functions")
 
-commit 5c9295bfe6f5 ("perf tests: Remove Intel CQM perf test")
+I am still seeing these warnings.
 
-It should be deleted once and for all.
+--=20
+Cheers,
+Stephen Rothwell
 
-Suggested-by: Ian Rogers <irogers@google.com>
-Signed-off-by: Howard Chu <howardchu95@gmail.com>
----
- tools/perf/arch/x86/tests/intel-cqm.c | 128 --------------------------
- 1 file changed, 128 deletions(-)
- delete mode 100644 tools/perf/arch/x86/tests/intel-cqm.c
+--Sig_/pom3nNLcN5g6uw8R=nY2fOI
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-diff --git a/tools/perf/arch/x86/tests/intel-cqm.c b/tools/perf/arch/x86/tests/intel-cqm.c
-deleted file mode 100644
-index 360a082fc928..000000000000
---- a/tools/perf/arch/x86/tests/intel-cqm.c
-+++ /dev/null
-@@ -1,128 +0,0 @@
--// SPDX-License-Identifier: GPL-2.0
--#include "tests/tests.h"
--#include "cloexec.h"
--#include "debug.h"
--#include "evlist.h"
--#include "evsel.h"
--#include "arch-tests.h"
--#include <internal/lib.h> // page_size
--
--#include <signal.h>
--#include <sys/mman.h>
--#include <sys/wait.h>
--#include <errno.h>
--#include <string.h>
--
--static pid_t spawn(void)
--{
--	pid_t pid;
--
--	pid = fork();
--	if (pid)
--		return pid;
--
--	while(1)
--		sleep(5);
--	return 0;
--}
--
--/*
-- * Create an event group that contains both a sampled hardware
-- * (cpu-cycles) and software (intel_cqm/llc_occupancy/) event. We then
-- * wait for the hardware perf counter to overflow and generate a PMI,
-- * which triggers an event read for both of the events in the group.
-- *
-- * Since reading Intel CQM event counters requires sending SMP IPIs, the
-- * CQM pmu needs to handle the above situation gracefully, and return
-- * the last read counter value to avoid triggering a WARN_ON_ONCE() in
-- * smp_call_function_many() caused by sending IPIs from NMI context.
-- */
--int test__intel_cqm_count_nmi_context(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
--{
--	struct evlist *evlist = NULL;
--	struct evsel *evsel = NULL;
--	struct perf_event_attr pe;
--	int i, fd[2], flag, ret;
--	size_t mmap_len;
--	void *event;
--	pid_t pid;
--	int err = TEST_FAIL;
--
--	flag = perf_event_open_cloexec_flag();
--
--	evlist = evlist__new();
--	if (!evlist) {
--		pr_debug("evlist__new failed\n");
--		return TEST_FAIL;
--	}
--
--	ret = parse_event(evlist, "intel_cqm/llc_occupancy/");
--	if (ret) {
--		pr_debug("parse_events failed, is \"intel_cqm/llc_occupancy/\" available?\n");
--		err = TEST_SKIP;
--		goto out;
--	}
--
--	evsel = evlist__first(evlist);
--	if (!evsel) {
--		pr_debug("evlist__first failed\n");
--		goto out;
--	}
--
--	memset(&pe, 0, sizeof(pe));
--	pe.size = sizeof(pe);
--
--	pe.type = PERF_TYPE_HARDWARE;
--	pe.config = PERF_COUNT_HW_CPU_CYCLES;
--	pe.read_format = PERF_FORMAT_GROUP;
--
--	pe.sample_period = 128;
--	pe.sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_READ;
--
--	pid = spawn();
--
--	fd[0] = sys_perf_event_open(&pe, pid, -1, -1, flag);
--	if (fd[0] < 0) {
--		pr_debug("failed to open event\n");
--		goto out;
--	}
--
--	memset(&pe, 0, sizeof(pe));
--	pe.size = sizeof(pe);
--
--	pe.type = evsel->attr.type;
--	pe.config = evsel->attr.config;
--
--	fd[1] = sys_perf_event_open(&pe, pid, -1, fd[0], flag);
--	if (fd[1] < 0) {
--		pr_debug("failed to open event\n");
--		goto out;
--	}
--
--	/*
--	 * Pick a power-of-two number of pages + 1 for the meta-data
--	 * page (struct perf_event_mmap_page). See tools/perf/design.txt.
--	 */
--	mmap_len = page_size * 65;
--
--	event = mmap(NULL, mmap_len, PROT_READ, MAP_SHARED, fd[0], 0);
--	if (event == (void *)(-1)) {
--		pr_debug("failed to mmap %d\n", errno);
--		goto out;
--	}
--
--	sleep(1);
--
--	err = TEST_OK;
--
--	munmap(event, mmap_len);
--
--	for (i = 0; i < 2; i++)
--		close(fd[i]);
--
--	kill(pid, SIGKILL);
--	wait(NULL);
--out:
--	evlist__delete(evlist);
--	return err;
--}
--- 
-2.43.0
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcIvlkACgkQAVBC80lX
+0Gx0Gwf/TzMYLAvCwD+l3JQGo0WsVY4xXIQRCb0ynZJcxdRuX8aV3Tw0f+3m+KS8
+PSjinOF8W7dm/WhszXmxHEE9xpWSUWI5jCpNizWrYk6vcsXiFlh65rUFM5Pg4Rbq
+9Wo3hcGFoOAEFSQZ1v3iy+IZF9vMDCID+98F2qgyxDfRTA+9wGC9SyS81FVrA2KQ
+13d/QDa+alAzcv/JAzBytjoFh9ihFl4M3RHL5rWWfsp5qoz3EiWJSRyN0vpk60By
+ttG/YK/sJccQDYQT4hNsxG1qBbJ745XlASj4Ii39rc8fqFfrRvG1Usps4lmOthPu
+kK14KfOxYtBsGYTIfHPj92CEH0bTUg==
+=C6pa
+-----END PGP SIGNATURE-----
+
+--Sig_/pom3nNLcN5g6uw8R=nY2fOI--
 
