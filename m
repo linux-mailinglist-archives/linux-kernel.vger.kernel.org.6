@@ -1,104 +1,124 @@
-Return-Path: <linux-kernel+bounces-360308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360309-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EA449998C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:10:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 575529998D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 50C101F23309
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:10:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F43E1C218F6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:12:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DD8E1759F;
-	Fri, 11 Oct 2024 01:10:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A748BE5;
+	Fri, 11 Oct 2024 01:12:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sDSUzqZ7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cgT9S0GK"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E7B6171AF;
-	Fri, 11 Oct 2024 01:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAE9567D;
+	Fri, 11 Oct 2024 01:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728609027; cv=none; b=gnnHeJY1hkiF1YrkHaPdJWkRXdTlKLHmT0+UE+mHpyk9uM0JKnAIp2uk1dfxRVWWxvGIceZnZW6d+EYSSGDuXzTBTRSGB38cVC7u3HxHdWBy11MJWY5x0TZoKjnniG6DTF56YVnFdMVxyz33x799l0MiD2iLAeKYSEJZZY0q0WY=
+	t=1728609122; cv=none; b=kBDsm64v5WxfIpSjBRllAYU9GoBApE1y+aW7/7uU8klGZAyfvfBVZHru/OhWcATSvwMTy0YqoVAkf90yduSZny+1kpec0au4iPjIF5Muugf7Lgh06wi2w4JINrxPTY9suPA6lYVPgS477i0bwVYgS0LEuHkQXarULtWXXJE2f0I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728609027; c=relaxed/simple;
-	bh=ZI0A23ZM4MhhmeNAUdsZcQyjDinp01EptqoAMLrZoKw=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=eofvvmp1Rw5WW3Keb5WWGCVElL9ZfZWObG21KkMOWxTWHcm9HuDpwaJd29ECF0WZAVQ9B+uHgKx9tQaBiL0716qxYfOOcjplL+Pa59RUwGW0tvZJErZI4UYGOalBRiYi9dXB9nw+SKoFQhovfnbYkin6E5jAhkb062pGJdvadOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sDSUzqZ7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1493CC4CEC6;
-	Fri, 11 Oct 2024 01:10:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728609027;
-	bh=ZI0A23ZM4MhhmeNAUdsZcQyjDinp01EptqoAMLrZoKw=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=sDSUzqZ79wL8hBXENQXAdTOA3E7PwihcVOAKKt2oFMEiQuERZkkAcf2rHkHBqbR75
-	 UOAyxsNqIZDJ7eZ09imYbd4YKvK9aonWKV5BQYCMc7LlNznBbIA8v1P6mCtLAM4tpb
-	 p/paLp4L54XBGO2vOpfFvlYwsdvqze4OWIuS8pjI8VR97Qbx6PzH6UH890FP8gYzqU
-	 HlNAFalqRDutsnYD/mbfIXOZzy33ESkYk8wRZd10Ic6UTGEYGAcph1quIucGS8YxI3
-	 eS97bTpBC4/+17fWFyD19H79Nk3QiRjfPrOKsWgePrmv6DsZH74k9CJJBBUxwyRCgO
-	 g4CHDLCUlSPrw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE25E3803263;
-	Fri, 11 Oct 2024 01:10:32 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1728609122; c=relaxed/simple;
+	bh=kz6Wp9ySt2hzSQjerKMpWk13uiAYKPo+Vl5JeQAuAu4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UNOpfUqj1+n24t8/UaggG1YO+p+/mXK2CdnQrd9rG+P82cpf2VDH90tX3uDFh4/K3Z6yjw8FdaNOHWJxPYfc/A2J5F4sGEmDY9KfyZQzQB1IU7O1anhgoB/kQVRAgq+P1rvlL80Pq3idMyEAZLQ4CNoc+Ac4GFfinGYl1Q58iW4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cgT9S0GK; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71def715ebdso1076974b3a.2;
+        Thu, 10 Oct 2024 18:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728609120; x=1729213920; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AAOc/rBakUrniDiHlg2qpejgAj7CPI/jsjOw6Ywi1cw=;
+        b=cgT9S0GKpPWQieZlYGSIzXfL0XONcOeBxFi10dxGFBxTrQRHlQq7caWhEqk1iZKW9V
+         tj7tDbtlo0Seq7ITqQNoisuDcfTsELykEIideRlbxOUdaqoVX1C6sCtn6GXjGLR4rEX3
+         G8uBmbqSHRyc2oSYXpSqQk5QNV+GhfiFWVBAs/Vyxuqn6ptmmFDzyptDkMNb1shnIHVm
+         zRwhIe9v2bPs6MvoEuaVtFIJk9B9+ohxMTKmrcD30G/Xh9pA9c+uqjeZ2lI0IDWEssbX
+         Q49QW6v5kXrNMFQU92pVthK8f5ATjHsg/M06O3k+U5HT6Hf+1C8vLKt3sHNS0CWV2yux
+         gkKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728609120; x=1729213920;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AAOc/rBakUrniDiHlg2qpejgAj7CPI/jsjOw6Ywi1cw=;
+        b=iAQdIDktXoFxSLic4VwRnqm7qZmqSTEbiHgAn5hRhy39VJIuT+wVDoxj32YkdpIf5f
+         ScoVxv7FC3GbNYwbWevuYuZxurdYl77ypo+Ddjicw3s1EhPdZGsMwIDnH9afV/LLUG8S
+         cCr+08r8Y9e3YGO2S0sGjnW5yut4v8QVIGs5rvNE/eo5NndtWsxI0QHLTIuap6omYQRi
+         fqMFWa6v2GinCe61H4JvTCPR4tn1zGdpF3fg7ayVkeNx9mD82NF+2PNUKNFcOloV7XwJ
+         EfyaSBAFpDR79aBrqX+/xAkN8GWtejyPg90esfwU6Vu0UatpcTxdLB+qaXk7vqRkzvGL
+         La6w==
+X-Forwarded-Encrypted: i=1; AJvYcCUfa5+l0ZSfd5fkR9mis3bqjNf9hDWpHT/9Gma2+tOcroNgat/MsXfgQyeoMhGpt9A9S0AHasL2wsnYnEO0@vger.kernel.org, AJvYcCV6Gnmh3VOa028f/LhmiqgI/4Y9h7lGF5zmDko9M42bVqaId9a6aDfxrW2vU8y1yMVAQq4ZCjop/FZhvxDj@vger.kernel.org, AJvYcCXEUq5S4TfYmp7fnPhpuK9MYaT7SIUTX1j7vpHz7wAjm2en8DsyV8IJIbs/Jvmkm6mudYQamyhxSbCJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7lo98Ydetuweo7+FKARpgego5GYdfR7Ln1+ZheU/w3GvIGcpR
+	uhd7ZHejFoG25tpwqMw0E4+mMhJLsLSFFDuWdGzsBtOtv1G4n5Vu
+X-Google-Smtp-Source: AGHT+IHHQvFx/g0NSBQ/2WU5QX9vrmE/ZQ7W5Xx12EJZBah7AEPBBqYXC9VcoE3PO1Vowj3IeW5tRg==
+X-Received: by 2002:a05:6a21:e8b:b0:1cf:4da0:d95c with SMTP id adf61e73a8af0-1d8bcf453d9mr1508105637.23.1728609120231;
+        Thu, 10 Oct 2024 18:12:00 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea449596d3sm1599794a12.61.2024.10.10.18.11.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 18:11:59 -0700 (PDT)
+Date: Fri, 11 Oct 2024 09:11:37 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Inochi Amaoto <inochiama@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Chen Wang <unicorn_wang@outlook.com>, 
+	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, 
+	linux-serial@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
+ SG2044 uarts
+Message-ID: <vinnmu45snxveh6f3emo7nhom6s2z5d7hf5pzeozyowfa3twt7@ykeidfboxfiv>
+References: <20241009233908.153188-1-inochiama@gmail.com>
+ <20241009233908.153188-2-inochiama@gmail.com>
+ <oyvqsywyznanpx5oflnemcsrk7r7nnhvxl6ly7b55oan2boi5d@kobrtldqbj6m>
+ <muz6ze7cxho5niz67agoxwnaowumzlcto2vwydmxs2yzdjmisi@symog2asftmv>
+ <ZwfquBFOVJEz5lTT@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v3 0/3] selftests/bpf: add coverage for
- xdp_features in test_progs
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172860903151.2229933.3365379244670572288.git-patchwork-notify@kernel.org>
-Date: Fri, 11 Oct 2024 01:10:31 +0000
-References: <20241009-convert_xdp_tests-v3-0-51cea913710c@bootlin.com>
-In-Reply-To: <20241009-convert_xdp_tests-v3-0-51cea913710c@bootlin.com>
-To: =?utf-8?q?Alexis_Lothor=C3=A9_=3Calexis=2Elothore=40bootlin=2Ecom=3E?=@codeaurora.org
-Cc: ast@kernel.org, daniel@iogearbox.net, davem@davemloft.net,
- kuba@kernel.org, hawk@kernel.org, john.fastabend@gmail.com,
- andrii@kernel.org, martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
- yonghong.song@linux.dev, kpsingh@kernel.org, sdf@fomichev.me,
- haoluo@google.com, jolsa@kernel.org, mykolal@fb.com, shuah@kernel.org,
- ebpf@linuxfoundation.org, thomas.petazzoni@bootlin.com,
- netdev@vger.kernel.org, bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwfquBFOVJEz5lTT@smile.fi.intel.com>
 
-Hello:
-
-This series was applied to bpf/bpf-next.git (net)
-by Martin KaFai Lau <martin.lau@kernel.org>:
-
-On Wed, 09 Oct 2024 12:12:06 +0200 you wrote:
-> Hello,
-> this small series aims to increase coverage of xdp features in
-> test_progs. The initial versions proposed to rework test_xdp_features.sh
-> to make it fit in test_progs, but some discussions in v1 and v2 showed
-> that the script is still needed as a standalone tool. So this new
-> revision lets test_xdp_features.sh as-is, and rather adds missing
-> coverage in existing test (cpu map). The new revision is now also a
-> follow-up to the update performed by Florian Kauer in [1] for devmap
-> programs testing.
+On Thu, Oct 10, 2024 at 05:54:48PM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 10, 2024 at 04:23:05PM +0800, Inochi Amaoto wrote:
+> > On Thu, Oct 10, 2024 at 08:12:41AM +0200, Krzysztof Kozlowski wrote:
+> > > On Thu, Oct 10, 2024 at 07:39:05AM +0800, Inochi Amaoto wrote:
+> > > > Add compatibles string for the Sophgo SG2044 uarts.
+> > > 
+> > > This we see from the diff, say something about hardware.
+> > 
+> > The reason for this compatiable (and the hardware) is mainly in the
+> > next patch. Will it be better to submit a new verion with improved
+> > description? If so, I wonder whether I can reserve your ack.
+> > 
+> > > I would just add it to starfive enum, but this is fine as well.
 > 
-> [...]
+> Even after reading the second patch I don't understand why you shouldn't re-use
+> the starfive compatible or make a new one that covers this quirk? At least I would
+> see that as second patch is basically not needed.
+> 
 
-Here is the summary with links:
-  - [bpf-next,v3,1/3] selftests/bpf: fix bpf_map_redirect call for cpu map test
-    https://git.kernel.org/bpf/bpf-next/c/ac8d16b2d377
-  - [bpf-next,v3,2/3] selftests/bpf: make xdp_cpumap_attach keep redirect prog attached
-    https://git.kernel.org/bpf/bpf-next/c/d5fbcf46ee82
-  - [bpf-next,v3,3/3] selftests/bpf: check program redirect in xdp_cpumap_attach
-    https://git.kernel.org/bpf/bpf-next/c/d124d984c8a2
+I do not think it is good to re-use the starfive compatible, it is weird
+that a sophgo SoC has a peripheral on the statfive SoC. Another suggestion
+for adding a new one that covers the quirk is a good idea for me, but I am
+not sure whether it may cause some misunderstanding like reuse the starfive
+compatible. If the second one is possible, it is OK for me to drop the second
+patch.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Regard,
+Inochi
 
