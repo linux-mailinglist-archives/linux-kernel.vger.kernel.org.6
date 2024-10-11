@@ -1,105 +1,248 @@
-Return-Path: <linux-kernel+bounces-361322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361326-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8701399A6C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:48:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AD5799A6D8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:50:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2212FB245C1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:48:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8F82E1F21824
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:50:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133F7187FE4;
-	Fri, 11 Oct 2024 14:48:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE5E819415E;
+	Fri, 11 Oct 2024 14:49:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMTfrFYu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A34CB15252D;
-	Fri, 11 Oct 2024 14:48:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 12C9615252D;
+	Fri, 11 Oct 2024 14:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658119; cv=none; b=C/mB2xqFyKEPHlO3YFPW9k/9S0I6PVRcvKZKM3GJIzsZ2lvaZZguGShTGkEyfsOz57/vzrStZITkSZW8nQrlx5byRTO/wUZFTY2SAYkA+LWpRd+Pp/2hBAvOqe25gPzdBAhG5jy1H0EuMIBZ5kZP3/SngqaJ8SGobewWSVNYqi0=
+	t=1728658160; cv=none; b=Znab166OtmMioNhKICOC8n9be3WaDIBXIxn1mr42B7lL66mL7ossr64Oihk6g+hiGnESSMo/mfLI9D0CmygANf3IgF52cpy/SC7ilZJngV8bKZh2zsfeR1wPmKPfhMg1o+rIISO4GFLyDjAAmBgD1B5u3Qi8yl7tKVBrhrIK9fU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658119; c=relaxed/simple;
-	bh=fGD/tH0N2aRmgZKwCYVkMSllh0evjj+jicK2300HS/w=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=mPu/4hTdSt+WEqulToJJhSt4BvXLRwLaVfx4xeh5tb+76+XplzKdpje3X0KYjGF16QRDTgIkm21ZvW+2OWj4+2uwMo8iN0hTU3IvXDufIDDKVHJ66t4eBvB+xzgp6ijR2v/41HgFDiMcMFcW3UiP+S15DCyXQx8GQoBtzOCyUbM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86508C4CED0;
-	Fri, 11 Oct 2024 14:48:38 +0000 (UTC)
-Date: Fri, 11 Oct 2024 10:48:47 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Petr Pavlu <petr.pavlu@suse.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Have the buffer update counter be atomic
-Message-ID: <20241011104848.7f5b180b@gandalf.local.home>
-In-Reply-To: <20241011100132.456f903a@gandalf.local.home>
-References: <20241010195849.2f77cc3f@gandalf.local.home>
-	<1924e096-916a-4311-a3d5-07d3813f50da@suse.com>
-	<20241011100132.456f903a@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728658160; c=relaxed/simple;
+	bh=RjYgyZ44THuAQGuVEDjAJZed+5wFrxBFRaSeQQ6Exv4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XGdwBcGH8L44nq0KP13EgkeRRibGJIJoFvDlxyxXD8UvzUj56SvSGQjw6M0kM8KNL3v5HZXxxXCXGHe4aPWwCLJJTrpFC3U6biJ7Sz9BHYCOSKeQ3gtY8DJcGzICNRuA/9zvAZnQvqkweRA6aF7YsFHdmYMrykfjdPB/tO8rl8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMTfrFYu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C54EDC4CECF;
+	Fri, 11 Oct 2024 14:49:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728658159;
+	bh=RjYgyZ44THuAQGuVEDjAJZed+5wFrxBFRaSeQQ6Exv4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nMTfrFYu+g54px9K4gkvB+d4NBedupfc5G13PZUpUKQA7lJaIa5XOTYNNYwWU1Yhe
+	 vQBCWwzaLtMPfJrK/qTGElpNaUfhhx5sq0vPDYL8EZz10WmHSnh7rnJ1fvSHZnUIbG
+	 nN66qQl80+FfxlvvdezvEkPjthYnN1jupALrkXaAmI6l2coHz34f4wTY6v7FbRySZr
+	 4EF/WdiSpxkBtKZyJQMfYQcjWdNMX17D0H+bYucsYPOD83vVyX49sHZwMewC936FHV
+	 aeuiMx9TurY4HhaTZyB+kbW1yDlJwo/ELnSJHPqa0Fb6unVW0jNSBRVDPfjZeb41GE
+	 S57PKHj5dg84w==
+Date: Fri, 11 Oct 2024 16:49:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: rfoss@kernel.org, todor.too@gmail.com, bryan.odonoghue@linaro.org, 
+	mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org, 
+	konradybcio@kernel.org, hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org, 
+	catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH v3 1/8] media: dt-bindings: media: camss: Add
+ qcom,sc7280-camss binding
+Message-ID: <q63w23zeoteagtw3px4sk3il4567plydgdhckmvpiksm6qc5i2@3rcdrr5uribq>
+References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+ <20241011140932.1744124-2-quic_vikramsa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241011140932.1744124-2-quic_vikramsa@quicinc.com>
 
-On Fri, 11 Oct 2024 10:01:32 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
+On Fri, Oct 11, 2024 at 07:39:25PM +0530, Vikram Sharma wrote:
+> @@ -0,0 +1,440 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +
 
-> > Sorry for not replying to your last comment on my patch, I was ill.
-> > 
-> > The member ring_buffer_per_cpu.cnt is intended to be accessed under the
-> > reader_lock, same as the pages pointer which it is tied to, so this
-> > change shouldn't be strictly needed.
-> >   
-> 
-> Right, but there was one location that the cnt was updated outside the
-> lock. The one I commented on. But instead of adding a lock around it, I
-> decided to just make it an atomic. Then there would be no need for the
-> lock. Hmm, it still needs a memory barrier though. At least a
-> smp_mb__after_atomic().
+Drop blank line (that's a new finding, I would not complain except that
+I expect new version, see further).
 
-Hmm, I don't like how the update in ring_buffer_subbuf_order_set() is
-unprotected. I think this is the proper patch:
+> +    soc {
+> +        #address-cells = <2>;
+> +        #size-cells = <2>;
+> +
+> +        camss: camss@acaf000 {
+> +            compatible = "qcom,sc7280-camss";
+> +
+> +            clocks = <&clock_camcc CAM_CC_CAMNOC_AXI_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_0_CSID_CLK>,
 
-diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
-index 696d422d5b35..0672df07b599 100644
---- a/kernel/trace/ring_buffer.c
-+++ b/kernel/trace/ring_buffer.c
-@@ -6774,6 +6774,7 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 	}
- 
- 	for_each_buffer_cpu(buffer, cpu) {
-+		unsigned long flags;
- 
- 		if (!cpumask_test_cpu(cpu, buffer->cpumask))
- 			continue;
-@@ -6800,11 +6801,15 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
- 						     struct buffer_page, list);
- 		list_del_init(&cpu_buffer->reader_page->list);
- 
-+		/* Synchronize with rb_check_pages() */
-+		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
-+
- 		/* The cpu_buffer pages are a link list with no head */
- 		cpu_buffer->pages = cpu_buffer->new_pages.next;
- 		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
- 		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
- 		cpu_buffer->cnt++;
-+		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
- 
- 		/* Clear the new_pages list */
- 		INIT_LIST_HEAD(&cpu_buffer->new_pages);
+Alignment did not improve. Please carefully read DTS coding style.
 
-Even though it's also protected by the buffer->mutex, I feel more
-comfortable with this.
+> +                <&clock_camcc CAM_CC_IFE_1_CSID_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_2_CSID_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_LITE_0_CSID_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_LITE_1_CSID_CLK>,
+> +                <&clock_camcc CAM_CC_CSIPHY0_CLK>,
+> +                <&clock_camcc CAM_CC_CSI0PHYTIMER_CLK>,
+> +                <&clock_camcc CAM_CC_CSIPHY1_CLK>,
+> +                <&clock_camcc CAM_CC_CSI1PHYTIMER_CLK>,
+> +                <&clock_camcc CAM_CC_CSIPHY2_CLK>,
+> +                <&clock_camcc CAM_CC_CSI2PHYTIMER_CLK>,
+> +                <&clock_camcc CAM_CC_CSIPHY3_CLK>,
+> +                <&clock_camcc CAM_CC_CSI3PHYTIMER_CLK>,
+> +                <&clock_camcc CAM_CC_CSIPHY4_CLK>,
+> +                <&clock_camcc CAM_CC_CSI4PHYTIMER_CLK>,
+> +                <&gcc GCC_CAMERA_AHB_CLK>,
+> +                <&gcc GCC_CAMERA_HF_AXI_CLK>,
+> +                <&clock_camcc CAM_CC_CPAS_AHB_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_0_AXI_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_0_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_0_CPHY_RX_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_1_AXI_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_1_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_1_CPHY_RX_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_2_AXI_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_2_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_2_CPHY_RX_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_LITE_0_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_LITE_0_CPHY_RX_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_LITE_1_CLK>,
+> +                <&clock_camcc CAM_CC_IFE_LITE_1_CPHY_RX_CLK>;
+> +
+> +            clock-names = "camnoc_axi",
+> +                "csi0",
 
--- Steve
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +                "csi1",
+> +                "csi2",
+> +                "csi3",
+> +                "csi4",
+> +                "csiphy0",
+> +                "csiphy0_timer",
+> +                "csiphy1",
+> +                "csiphy1_timer",
+> +                "csiphy2",
+> +                "csiphy2_timer",
+> +                "csiphy3",
+> +                "csiphy3_timer",
+> +                "csiphy4",
+> +                "csiphy4_timer",
+> +                "gcc_camera_ahb",
+> +                "gcc_camera_axi",
+> +                "soc_ahb",
+> +                "vfe0_axi",
+> +                "vfe0",
+> +                "vfe0_cphy_rx",
+> +                "vfe1_axi",
+> +                "vfe1",
+> +                "vfe1_cphy_rx",
+> +                "vfe2_axi",
+> +                "vfe2",
+> +                "vfe2_cphy_rx",
+> +                "vfe0_lite",
+> +                "vfe0_lite_cphy_rx",
+> +                "vfe1_lite",
+> +                "vfe1_lite_cphy_rx";
+> +
+> +            interconnects = <&gem_noc MASTER_APPSS_PROC 0 &cnoc2 SLAVE_CAMERA_CFG 0>,
+> +                <&mmss_noc MASTER_CAMNOC_HF 0 &mc_virt SLAVE_EBI1 0>;
+
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +
+> +            interconnect-names = "ahb", "hf_0";
+> +
+> +            interrupts = <GIC_SPI 464 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 466 IRQ_TYPE_EDGE_RISING>,
+
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +                <GIC_SPI 640 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 468 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 359 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 477 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 478 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 479 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 448 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 122 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 465 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 467 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 641 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 469 IRQ_TYPE_EDGE_RISING>,
+> +                <GIC_SPI 360 IRQ_TYPE_EDGE_RISING>;
+> +
+> +            interrupt-names = "csid0",
+> +                "csid1",
+> +                "csid2",
+> +                "csid_lite0",
+
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +                "csid_lite1",
+> +                "csiphy0",
+> +                "csiphy1",
+> +                "csiphy2",
+> +                "csiphy3",
+> +                "csiphy4",
+> +                "vfe0",
+> +                "vfe1",
+> +                "vfe2",
+> +                "vfe_lite0",
+> +                "vfe_lite1";
+> +
+> +            iommus = <&apps_smmu 0x800 0x4e0>;
+> +
+> +            power-domains = <&camcc CAM_CC_IFE_0_GDSC>,
+> +                <&camcc CAM_CC_IFE_1_GDSC>,
+
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +                <&camcc CAM_CC_IFE_2_GDSC>,
+> +                <&camcc CAM_CC_TITAN_TOP_GDSC>;
+> +
+> +            power-domains-names = "ife0", "ife1", "ife2", "top";
+> +
+> +            reg = <0x0 0x0acb3000 0x0 0x1000>,
+> +                <0x0 0x0acba000 0x0 0x1000>,
+> +                <0x0 0x0acc1000 0x0 0x1000>,
+
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +                <0x0 0x0acc8000 0x0 0x1000>,
+> +                <0x0 0x0accf000 0x0 0x1000>,
+> +                <0x0 0x0ace0000 0x0 0x2000>,
+> +                <0x0 0x0ace2000 0x0 0x2000>,
+> +                <0x0 0x0ace4000 0x0 0x2000>,
+> +                <0x0 0x0ace6000 0x0 0x2000>,
+> +                <0x0 0x0ace8000 0x0 0x2000>,
+> +                <0x0 0x0acaf000 0x0 0x4000>,
+> +                <0x0 0x0acb6000 0x0 0x4000>,
+> +                <0x0 0x0acbd000 0x0 0x4000>,
+> +                <0x0 0x0acc4000 0x0 0x4000>,
+> +                <0x0 0x0accb000 0x0 0x4000>;
+> +
+> +            reg-names = "csid0",
+> +                "csid1",
+> +                "csid2",
+> +                "csid_lite0",
+
+Alignment did not improve. Please carefully read DTS coding style.
+
+> +                "csid_lite1",
+> +                "csiphy0",
+> +                "csiphy1",
+> +                "csiphy2",
+
+Best regards,
+Krzysztof
+
 
