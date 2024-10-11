@@ -1,157 +1,116 @@
-Return-Path: <linux-kernel+bounces-361198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8545199A4F8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:24:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 027F599A4EC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:23:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8EB1F225E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:24:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4D29283EC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46D5218D69;
-	Fri, 11 Oct 2024 13:24:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95BE32185BD;
+	Fri, 11 Oct 2024 13:22:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YBFvuGBC"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ed20bO6u"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E6A2185B1;
-	Fri, 11 Oct 2024 13:24:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B858E216454;
+	Fri, 11 Oct 2024 13:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653088; cv=none; b=dBKas9y6g38BRbf2Rqp3/jqeuJjp4qzWuzSbrPy6Q7GZbyAta3LOBRy62rGBOC13sSg8e/1D4T6gPnDl4GRtza1YQuZKvtQxgLlcOpslXPubJKG4FQHWg4bzlIl5L7aPvH8SENKhT+o5BJC+FOCAOb/T7TzUmvzW+HIGOs5LWaw=
+	t=1728652950; cv=none; b=jgws0tUbzJSQRgWjke/gJH+SROUOcybov2xNkJXKnhLBBNcG1jC9MxcWLyAqrDmtr84Urb/aYcnyxpxalagc/cg6ugDm2SULiLslzr5diYgi2tFnSKhLzrXc82XqTzD2Ab0IITtYv5JOVDxXAXIVuGC50I5r0zYOxIl2Twv5oaE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653088; c=relaxed/simple;
-	bh=iIufuyOteBXsvMYuxWsNVz1UkSne8TnyU6hpEqh44yI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tX2oUa0++kCMLTSLL0bPs15tM8++++AgLkXsxsNzQgxdVjmOU/XQeTWBm4oj0QIF+TpJBseBOZqnUoOQ7yCeWXBOHTgGACewNTaZZSVR98PC+q3pZ7UNir2d0CknLfVNUOiEktSZ+QmFqi9p+DfJw1fElCN8untHUf1CdYAYIyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YBFvuGBC; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728653086; x=1760189086;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=iIufuyOteBXsvMYuxWsNVz1UkSne8TnyU6hpEqh44yI=;
-  b=YBFvuGBCB1zmX1UEEcMwEsnMSOqqV28qPzwYCMAyb0Nv6q25FU/ObfD8
-   N4SvU7NR0x3vVkyFwUtIi6NpPeZn3l/CDuA83KFISYvQU4bMIboTOepjK
-   NpNxly+G9ufPc9X9vkMjApweBzqOBto3xaDj0yROKeN0wW5f/hEmefZpE
-   0j//lUZOuD1KmtE0Ygb/ocJ3XnYh3a9+wVrVOFO2gnYlBED/wPnlRNgbi
-   5tgLtiiBfIge/bEAngvRL7oXeovftal9hg/C4W6kizDiN/MR6ABb/XqEN
-   68N6XZxQN1TJmPHjHZDRuFiT8/ISSc0SOcJ6f70/UkYsysCv8FLJjQYhn
-   Q==;
-X-CSE-ConnectionGUID: UU6h8R+/Qk6y4UtnNiKrvA==
-X-CSE-MsgGUID: /9AnyVUgT+iCCaZN+AXCPA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27523126"
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="27523126"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:24:43 -0700
-X-CSE-ConnectionGUID: 9HFN1MVJREGnXwoFJGKiNg==
-X-CSE-MsgGUID: lLrqMJBrQo+K8cdGK7CVbw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="107640626"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:24:38 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  Andrew Morton
- <akpm@linux-foundation.org>,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,  Dan Williams
- <dan.j.williams@intel.com>,  Davidlohr Bueso <dave@stgolabs.net>,
-  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
- <apopple@nvidia.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Baoquan He
- <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison Schofield
- <alison.schofield@intel.com>
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-In-Reply-To: <12c0a19e-784d-4ac0-8d3c-d5242bcd3723@redhat.com> (David
-	Hildenbrand's message of "Fri, 11 Oct 2024 13:30:15 +0200")
-References: <20241010065558.1347018-1-ying.huang@intel.com>
-	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
-	<87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
-	<b8262026-533b-497b-9713-fa3e32f76d9f@redhat.com>
-	<ZwkI62qBAbc02O8C@smile.fi.intel.com>
-	<ZwkJyMaBnN84Kbg7@smile.fi.intel.com>
-	<12c0a19e-784d-4ac0-8d3c-d5242bcd3723@redhat.com>
-Date: Fri, 11 Oct 2024 21:21:05 +0800
-Message-ID: <87msja93ni.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728652950; c=relaxed/simple;
+	bh=X4jrEL73piYv2hQshoFHqqebq4fF76gXm6+LMN6Al/A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=E5f19QXlVADJ4Xv01IX5piFLIJjGg1puWiBf2cy1KJ5lIju3gZU/paQCCoKULAtRyZoyxy53DeJcKhj/0nNP/EGTxHBtMQoliky8pXivtOlv23Mqt5bBtAXtJk6n4exCZ2QPn0K0qRhIAY0uooYa4sc1hblAESXpmq/6ro81p/I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ed20bO6u; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cb89a4e4cso217375ad.3;
+        Fri, 11 Oct 2024 06:22:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728652946; x=1729257746; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=TvLMHXo3BfNUkLw9ytw5UuEB+h5y/vEG9NYRyEiEEL4=;
+        b=ed20bO6u5NnEPTuWFwJ3N5fO6T7IomRTku4Yn72cjasxlm/c21UQgeYc2XIZ/o+GwA
+         Q7vQVC6LG2ZFzeJX/lTEdc4SWSJIY0MGu/d9v2YG/JV19yCYD1baLQs7xLoxbTRu2pKV
+         YmxTax0pJV8jHcW01tCe1Vn7FP0giB4oY37ZRiG7eTB3JfuQ1DjFLxLE1TCY/42A9ns4
+         850ppKJOzSM2v4sotL1m1LP6Ygk8V+ksHEhm8DuK8Z4DsE4GoMqkbqy1hnlL4RDe1G9H
+         zxt+tgJHx5mYdm7cu1jphVRITl/4jVaXgqv0xFUeJpJMYAA/StrW6w8N+6rM2sBsdvhk
+         Bsdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728652946; x=1729257746;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=TvLMHXo3BfNUkLw9ytw5UuEB+h5y/vEG9NYRyEiEEL4=;
+        b=TZpI4zXP4PrmSx5TMIPu00rjnvt7soEpoG1hJ1IhX/jLj6Ne9cS27E7sNgWeWqbRt6
+         xnWCctC2fXdtcS2PRCvMLYlgTaIbuqXEFAVbab6Hitfng/XYxBJPsrOCmhPbTaExGHTL
+         d92Zi4P20dSQmiEZ/VoaE6mIE7O5+PWhdRrz3Lmp0oTWLFx5FToFb9IGS7eDdIQOl5nT
+         jI4Tw8ygY9lvta3Dte5dZCcD6zys7LRJ+vF4EI4MzNn96c9SUAUaTsJYr8KkRhUdhOqO
+         IGbP8Da1DW1rTqIU7KMJ8S0WGhTuGQb3zG5UbDUYSLnCw29+zE7kj/GKF+TBcfb+Lr60
+         Z8Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCVL6PHxwi2dY//xeMSydGUGZZgPGXDCZUaR7Vs5AHMjROhm2CPWZXUlrX5HImFQgZkZK0cSmIfQlBeveWQ=@vger.kernel.org, AJvYcCXkHCDE3vQFz01Ca7np9WPAcGvNlIvT2aWsVcLQD1yyTDAOh7skdYkshQIIoA4p9yB46EZQUYvLLmIsSg==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3OdMiCUgX+VKgBDzuwvzNd0O0wjdEooiraKhEev9b/MkYMbX0
+	kQHI6Xif6HJd/jdnwzkvTc6vzkc/Lnwoc9Pqa2oK6OxNqw8lfv84
+X-Google-Smtp-Source: AGHT+IHVe8IOBQZmu+MX/aAlR434no8yh5BEm3aOGISvPCP+fwJlanDcT/2aukoQplmi0ob1+Zo46g==
+X-Received: by 2002:a17:902:ce89:b0:20c:8fd4:eda0 with SMTP id d9443c01a7336-20ca147b16fmr36891675ad.24.1728652945767;
+        Fri, 11 Oct 2024 06:22:25 -0700 (PDT)
+Received: from ?IPV6:2409:40c0:11a4:8d8a:687:fb0b:3c04:c809? ([2409:40c0:11a4:8d8a:687:fb0b:3c04:c809])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c348986sm23257035ad.258.2024.10.11.06.22.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 06:22:25 -0700 (PDT)
+Message-ID: <7274be28-aefe-49b1-b8e1-dd1c2bad96d0@gmail.com>
+Date: Fri, 11 Oct 2024 18:52:18 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+User-Agent: Mozilla Thunderbird
+Subject: Re: (subset) [PATCH] leds: Fix uninitialized variable 'ret' in
+ mt6370_mc_pattern_clear
+To: Lee Jones <lee@kernel.org>, pavel@ucw.cz
+Cc: matthias.bgg@gmail.com, angelogioacchino.delregno@collabora.com,
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
+References: <20241006131337.48442-1-surajsonawane0215@gmail.com>
+ <172863776565.3130628.18378710932238203204.b4-ty@kernel.org>
+Content-Language: en-US
+From: Suraj Sonawane <surajsonawane0215@gmail.com>
+In-Reply-To: <172863776565.3130628.18378710932238203204.b4-ty@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-David Hildenbrand <david@redhat.com> writes:
+On 11/10/24 14:39, Lee Jones wrote:
+> On Sun, 06 Oct 2024 18:43:37 +0530, SurajSonawane2415 wrote:
+>> Fix the uninitialized symbol 'ret' in the function mt6370_mc_pattern_clear
+>> to resolve the following warning:
+>> drivers/leds/rgb/leds-mt6370-rgb.c:604 mt6370_mc_pattern_clear()
+>> error: uninitialized symbol 'ret'.
+>> Initialize 'ret' to 0 to prevent undefined behavior from uninitialized
+>> access.
+>>
+>> [...]
+> 
+> Applied, thanks!
+> 
+> [1/1] leds: Fix uninitialized variable 'ret' in mt6370_mc_pattern_clear
+>        commit: b5a5659aebfffbcddb81abafe042fb4044b6ff9e
+> 
+> --
+> Lee Jones [李琼斯]
+> 
+Thank you! I'm glad the patch was applied. I'll ensure future patches 
+follow the necessary guidelines.
 
-> On 11.10.24 13:19, Andy Shevchenko wrote:
->> On Fri, Oct 11, 2024 at 02:15:55PM +0300, Andy Shevchenko wrote:
->>> On Fri, Oct 11, 2024 at 12:51:09PM +0200, David Hildenbrand wrote:
->>>> On 11.10.24 12:49, Andy Shevchenko wrote:
->>>>> On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
->>>>>> David Hildenbrand <david@redhat.com> writes:
->>>>>>> On 10.10.24 08:55, Huang Ying wrote:
->> ...
->> 
->>>>>>> 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
->>>>>>
->>>>>> Yes.  This can improve code readability.
->>>>>>
->>>>>> A possible issue is that "_root" will be evaluated twice in above macro
->>>>>> definition.  IMO, this should be avoided.
->>>>>
->>>>> Ideally, yes. But how many for_each type of macros you see that really try hard
->>>>> to achieve that? I believe we shouldn't worry right now about this and rely on
->>>>> the fact that root is the given variable. Or do you have an example of what you
->>>>> suggested in the other reply, i.e. where it's an evaluation of the heavy call?
->>>>>
->>>>>> Do you have some idea about
->>>>>> how to do that?  Something like below?
->>>>>>
->>>>>> #define for_each_resource_XXX(_root, _p)                                \
->>>>>> 	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
->>>>>> 	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
->>>>>
->>>>> This is a bit ugly :-( I would avoid ugliness as long as we have no problem to
->>>>> solve (see above).
->>>>
->>>> Fully agreed, I didn't quite understand the concern about "evaluation" at
->>>> first.
->>>
->>> It's a basic concept for macros and a good mine field even for the simple
->>> cases.
->>>
->>>> If it's just reading a variable twice, it doesn't matter at all right
->>>> now.
->>>
->>> The problem (even if it's a variable) is that the content of variable can be
->>> changed when run in non-atomic context, i.e. two evaluations will give two
->>> different results. Most "simple" for_each macros leave this exercise to the
->>> caller. That's what I also suggest for now.
->> For any context as Ying provided an example with calls, they have to
->> be
->> idempotent, or you definitely get two different pointers for these, which is
->> bigger issue that what I described above.
->
-> Ah, now I understood what Ying meant: if the root pointer is modified
-> within the loop body we'd be in trouble.
-
-Given we cannot provide a good macro implementation to traverse only the
-descendant tree of _root, I suggest to just keep current
-for_each_resource() implementation.  There is only one user of the
-proposed new macro to traverse the descendant tree.  So, I suggest to
-open coded the for loop instead.  More comments can be added to make it
-clear.
-
---
-Best Regards,
-Huang, Ying
+Best regards,
+Suraj Sonawane
 
