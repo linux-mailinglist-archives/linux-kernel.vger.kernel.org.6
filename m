@@ -1,135 +1,120 @@
-Return-Path: <linux-kernel+bounces-361111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B138099A382
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:13:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 741A699A372
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62DE8281C63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:13:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E9A5AB2508F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF529217306;
-	Fri, 11 Oct 2024 12:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F956218581;
+	Fri, 11 Oct 2024 12:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="SeFwIU4v"
-Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="cahST3Yt"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3262219923C;
-	Fri, 11 Oct 2024 12:13:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DED921733B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648795; cv=none; b=Wm+8rjOg4dBRi/h4MCeZjmYBY3S2h4x88ssRrp+TLN8g3djJNnCxmJHByGv+KDOo+FJ6UDDFnnE+sJQAsEAF+xsNs6uXweu859pqNA3lfWs60CQ2hDmqENwtXDihbORl8fe0h1+AraTAjPwEQTSlbiX4bTieDA8wvbvU7zzxARU=
+	t=1728648627; cv=none; b=ZuRNyEaQwcXDzJiqVudPT2y8cKWm0PnvDoDftM5SpNsZY5g4bDYHwpQMJuoRosomyAs/jc/WAL5SX1wDqtv0dUQQpBiS0M1tU3xEzJjdihrt7M123SbvJNxpeHGxOLn/GEAtPb28d4CrUXUzkxtaBavSj8GbVog7gVDW6L3usUI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648795; c=relaxed/simple;
-	bh=apbQAH3SWt6kRnCOpfxBZSM///7pZYCMSxT/CIMlLJs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=NWu90fvdrddGUAa41v5mJoHJR/j9XttCqKO7yIh+W3F3UmqAeSpfO1goFhp+iH4SKcDigOElxw3GfH/7b8w76/7vL2/9N6SVVONXUuSlZh21BA8GbP/JYykSJwSS5TvMWZAmC25JLNzYaclRtYrz+2tos0emOqKGFzKurd4vnLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=SeFwIU4v; arc=none smtp.client-ip=185.132.182.106
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0288072.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BBwVM6031027;
-	Fri, 11 Oct 2024 14:12:39 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	hTVrXnYYt+rcLary/TZa08XbMHLGNZVgAQjoCN87HBI=; b=SeFwIU4v2wjNS4Lu
-	1B6yq1V50PMTfnHIZOpDhtQniDh8m2Evn4rQOlzAY6Y+R1RKPr0YY4gSNWUBTAMx
-	Lkhs+bqQJXrfY7i1Nc4a5edvvmEhvCkeRV2EJfo8xw2OIH5OrN/hRa9Kzu/buYeu
-	XPL4jVFwdOvLgF/YRd0FM8e4hxOav1LGCLWSiMW146MjBUSOsTo2wEeSo7mqLodI
-	JVJcUWurzZ9xOsAaAS9uR0hQJzhFtzYGCbgmkyVWiXpRtLcFTVPtGa5utIayM008
-	j/FzdmTfRHnD6SD+flrgGUNIv8CYqiwl8ONh9Nk3cI6fGtWaoK/jMEUrIJTd5AAN
-	mhebAg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425q5wc6kx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 14:12:39 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 8EC2B4005D;
-	Fri, 11 Oct 2024 14:11:09 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 2AB672734EB;
-	Fri, 11 Oct 2024 14:07:52 +0200 (CEST)
-Received: from [10.252.28.117] (10.252.28.117) by SHFDAG1NODE1.st.com
- (10.75.129.69) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
- 2024 14:07:51 +0200
-Message-ID: <6a4cccb4-9e55-437d-925b-5f5bb1804159@foss.st.com>
-Date: Fri, 11 Oct 2024 14:07:50 +0200
+	s=arc-20240116; t=1728648627; c=relaxed/simple;
+	bh=WBqPaPeDJDpOXJCYWiEMmcPkk6BJUzfDh0i0SctEqUQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=IS60iSmiI8KEApVfmMfCtvcb0Zely/YhstYS/eh9/N2+SMwZXH4GVjeLqzjUqgWX8tj33iXYg7U+BjvGeJ9/MyiAjpNsP/vjjT2tvVz240d1/jSxspNGmeOXp/KLjCfVZYQTOTs+35oNYGJm+IcmQhu9LJ1ndumCR8wVHRjr+88=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=cahST3Yt; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 04FABD8B;
+	Fri, 11 Oct 2024 14:08:43 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728648526;
+	bh=WBqPaPeDJDpOXJCYWiEMmcPkk6BJUzfDh0i0SctEqUQ=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=cahST3YtkY1BxWTrohz9PNGvVxR/kKsj35FE0zk/Hn3/RjOOQxTtzWPjiRp3p73v9
+	 FJpvhB6iKw8ruuaGfEy+LVtgxGCw0JnFtvQtHDGhGGZNNcxHGjstz8fKEX8oilh0Wt
+	 a/sXZSPRqC7ImIJOeZqZdKBUWRDfA484yp9qYs44=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	kernel-list@raspberrypi.com,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH v2 2/6] staging: vchiq_core: Do not log debug in a separate scope
+Date: Fri, 11 Oct 2024 17:39:06 +0530
+Message-ID: <20241011120910.74045-3-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241011120910.74045-1-umang.jain@ideasonboard.com>
+References: <20241011120910.74045-1-umang.jain@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] hwrng: stm32 - implement support for STM32MP25x
- platforms
-To: Marek Vasut <marex@denx.de>, Olivia Mackall <olivia@selenic.com>,
-        Herbert
- Xu <herbert@gondor.apana.org.au>,
-        Rob Herring <robh+dt@kernel.org>,
-        Krzysztof
- Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre
- Torgue <alexandre.torgue@foss.st.com>
-CC: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-        Lionel
- Debieve <lionel.debieve@foss.st.com>,
-        <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        Yang
- Yingliang <yangyingliang@huawei.com>
-References: <20241007132721.168428-1-gatien.chevallier@foss.st.com>
- <20241007132721.168428-3-gatien.chevallier@foss.st.com>
- <2fad1566-49f9-4586-b0d4-8a4a12f9e69e@denx.de>
- <9283caeb-1b84-43c2-a8a4-6b43a6962f34@foss.st.com>
- <b4932f99-cda4-42ef-88d8-461ca6e8cefd@denx.de>
-Content-Language: en-US
-From: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>
-In-Reply-To: <b4932f99-cda4-42ef-88d8-461ca6e8cefd@denx.de>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
- (10.75.129.69)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+Content-Transfer-Encoding: 8bit
 
+Do not log a dev_dbg() with a separate scope. Drop the {..}
+scope and align the dev_dbg() to make it more readable.
 
+No functional changes intended in this patch.
 
-On 10/11/24 13:24, Marek Vasut wrote:
-> On 10/11/24 11:55 AM, Gatien CHEVALLIER wrote:
->>
->>
->> On 10/7/24 15:54, Marek Vasut wrote:
->>> On 10/7/24 3:27 PM, Gatien Chevallier wrote:
->>>> Implement the support for STM32MP25x platforms. On this platform, a
->>>> security clock is shared between some hardware blocks. For the RNG,
->>>> it is the RNG kernel clock. Therefore, the gate is no more shared
->>>> between the RNG bus and kernel clocks as on STM32MP1x platforms and
->>>> the bus clock has to be managed on its own.
->>>>
->>>> Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
->>> A bit of a higher-level design question -- can you use drivers/clk/ 
->>> clk-bulk.c clk_bulk_*() to handle all these disparate count of clock 
->>> easily ?
->>
->> Hi, I'd like to make sure that we enable the core clock before the bus
->> clock so that the RNG hardware block can start its internal tests while
->> we ungate the bus clock. It's not a strong opinion but it feels better.
-> Maybe this could still work if the struct clk_bulk_data {} is ordered 
-> that way, so the bus clock are first, and the rest afterward ?
+Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
+---
+ .../interface/vchiq_arm/vchiq_core.c            | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
-I guess you meant, the core first.
-Putting the bus clock first with the updated YAML doc generates a
-warning when checking the bindings. I guess what you propose is OK
-then. Core clock is defined first in the device tree.
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+index e9b60dd8d419..0324dfe59dca 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
+@@ -936,6 +936,7 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
+ 	struct vchiq_service_quota *quota = NULL;
+ 	struct vchiq_header *header;
+ 	int type = VCHIQ_MSG_TYPE(msgid);
++	int svc_fourcc;
+ 
+ 	size_t stride;
+ 
+@@ -1128,17 +1129,13 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
+ 	header->msgid = msgid;
+ 	header->size = size;
+ 
+-	{
+-		int svc_fourcc;
+-
+-		svc_fourcc = service
+-			? service->base.fourcc
+-			: VCHIQ_MAKE_FOURCC('?', '?', '?', '?');
++	svc_fourcc = service ? service->base.fourcc
++			     : VCHIQ_MAKE_FOURCC('?', '?', '?', '?');
+ 
+-		dev_dbg(state->dev, "core_msg: Sent Msg %s(%u) to %p4cc s:%u d:%d len:%zu\n",
+-			msg_type_str(VCHIQ_MSG_TYPE(msgid)), VCHIQ_MSG_TYPE(msgid),
+-			&svc_fourcc, VCHIQ_MSG_SRCPORT(msgid), VCHIQ_MSG_DSTPORT(msgid), size);
+-	}
++	dev_dbg(state->dev, "core_msg: Sent Msg %s(%u) to %p4cc s:%u d:%d len:%zu\n",
++		msg_type_str(VCHIQ_MSG_TYPE(msgid)),
++		VCHIQ_MSG_TYPE(msgid), &svc_fourcc,
++		VCHIQ_MSG_SRCPORT(msgid), VCHIQ_MSG_DSTPORT(msgid), size);
+ 
+ 	/* Make sure the new header is visible to the peer. */
+ 	wmb();
+-- 
+2.45.2
+
 
