@@ -1,80 +1,103 @@
-Return-Path: <linux-kernel+bounces-360267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D842B9997BB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:26:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEBD19997CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 118261C23253
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:26:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B24441C22C5E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC6D620012B;
-	Fri, 11 Oct 2024 00:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3E01B677;
+	Fri, 11 Oct 2024 00:08:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="G69tp7ac"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J8Ay4eaI"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F1961EBA0D;
-	Fri, 11 Oct 2024 00:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B3BE6AA7;
+	Fri, 11 Oct 2024 00:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728605271; cv=none; b=ZPF0yJyP5aBXRXkYyZDhzdeVxh5yZLc4fpFjSVqUgRcsOv/rFMTJuAVCiMuXMJ9+5wxkY88QktOI5VXPAIzci/IlqOkOn3c9rMLM34JrkVfmQnzzFi2ZJjYJWmemubvkhqRk60Mfp9npRnCwK7OnoEa7f4cG8CKyumG2o6/RnD0=
+	t=1728605300; cv=none; b=H/HU22JTcNOTKKCWdtRCukKvAM+XlIpgBny993GsmoQgS1MbT0puA1YEIazsVX3GGzkY+ik7dtj2alwR8M+wa9ZVE+v6IYoRjI9ohCgtp9Bk8Nq8P09co64uH37hohH3+b+3Wyosku6i78UZxvWeS8d1JkhmfuBbqZfPIv4kGtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728605271; c=relaxed/simple;
-	bh=qU0dUNxFUuN/ND2hfWc0/b53f/OYr4+0HIcF9EoyLxI=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gy9NRoz+tp9t6ZdyCvIw2Vcvp/esew+cHVVmAalXaa7KJ+ZXK5ki7q89CY670Utf5NJLjEoMPlvyKiHbWXSs16wyNJ+kSAACIuudf5xnR1+6NlxUIcPeYoPiHUr8S+BFlVPl2uDAxwXtAhJYK8E8ByU5IASUF0gKI4TYu3DZi8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=G69tp7ac; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACiZVu009190;
-	Fri, 11 Oct 2024 00:07:22 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	M4IGsOidRHFIubeJL9OdlEYfFZx1GNBQBMy1HdndUaw=; b=G69tp7ac8hXPF2wN
-	i+BWaqvrNw6N4F0Zwb4rH2jbMvCpl1i9qB45EJTaL87S5cNWvWHElVwbnKcGPHUA
-	TGI6ixYDvtwevNEHjYN8zZNeMDedFjJXZnIBRj8Ur7NGp03JDTuV4hJxjXKU6d7h
-	3AM1Ah+6fcGyGZLG0EM7QM5vvAFTEnFFOyuoMwv/W0zgRGThkElMrwhRE284M9yM
-	6eDIsUrmMU2g3O+MK2SjfEiVW2eqvbOS/PsSI+IJrmG2GvQebvzp72CDnUznseyK
-	9OxK2Tyw8YbEyKYsrDfDatNn3NTtApm8frQZhLkirENKuf6sKCxbhmdKEaCPcQha
-	y7VPBw==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425tn150wm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 00:07:21 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B07LuM016447
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 00:07:21 GMT
-Received: from hu-wcheng-lv.qualcomm.com (10.49.16.6) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 10 Oct 2024 17:07:20 -0700
-From: Wesley Cheng <quic_wcheng@quicinc.com>
-To: <srinivas.kandagatla@linaro.org>, <mathias.nyman@intel.com>,
-        <perex@perex.cz>, <conor+dt@kernel.org>, <dmitry.torokhov@gmail.com>,
-        <corbet@lwn.net>, <broonie@kernel.org>, <lgirdwood@gmail.com>,
-        <tiwai@suse.com>, <krzk+dt@kernel.org>,
-        <pierre-louis.bossart@linux.intel.com>, <Thinh.Nguyen@synopsys.com>,
-        <bgoswami@quicinc.com>, <robh@kernel.org>,
-        <gregkh@linuxfoundation.org>
-CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-sound@vger.kernel.org>, <linux-input@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <alsa-devel@alsa-project.org>,
-        Wesley Cheng
-	<quic_wcheng@quicinc.com>
-Subject: [PATCH v28 33/33] ASoC: usb: Rediscover USB SND devices on USB port add
-Date: Thu, 10 Oct 2024 17:06:50 -0700
-Message-ID: <20241011000650.2585600-66-quic_wcheng@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
-References: <20241011000650.2585600-1-quic_wcheng@quicinc.com>
+	s=arc-20240116; t=1728605300; c=relaxed/simple;
+	bh=8w7nDeldreJx8LzlumjXe3oZTS2omzyIbIhL58VZIlI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ZzvSIFrxEmtcQcwIe+xtM+hgdfbHKYthJpGXGVyh3LAJm2rFEEMTCiTUVdA0z2MFScQJSFB0OlPZFvG9Ou5jdUyLTHNIPqKsFJGl1XqQ79/agLYt/qqMAhkTH/Q26s47xcGbK8WGTzKbsmnT2Mfn7pxrH6Dx0oqprn35sLad5c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J8Ay4eaI; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso1348204276.1;
+        Thu, 10 Oct 2024 17:08:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728605297; x=1729210097; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1nh4cL0KF9yExsu8KOk1yBH8TEmcNNSRnVke/5q4xEU=;
+        b=J8Ay4eaIQFgv3rrUVooudkms9cboJI0ZorXvhpc+KuKLZDtjqP9AnaHQEIW+IMztSX
+         FAidKyQ/D0+pygs84Bxswa6p2Ch6NPGeMazzVAX508ZYeJy/OV8/r7unh08QM9gFz4CN
+         ig4Tl2v3VrtHIWNORyLAwXpFUJNnJXwlaVd4dZWrdvvZbKs9ZtmIh3JoRn1BpBWz6ycd
+         VSUXLS2tgdsAEdiDbQxY0bCv6MtUu/YlzLoNtaoRowUNidrLgOIxUXeyCZ+8zaR8d0Wt
+         HcJfmafYo9SYloAfhFKJEz0J2qKtUwaoab2xcewEsog65KZzmdG8LxM7B4FdtYPDCyqi
+         OzPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728605297; x=1729210097;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1nh4cL0KF9yExsu8KOk1yBH8TEmcNNSRnVke/5q4xEU=;
+        b=fJKf/iKjT0EPgTSZtb00s1wngQeXrY+yXWO/4muI0WRa+u0hx0DopDHKIiPN5fk6EF
+         77C2FBFYH8v0x+YaM610JTOaksl645hsMBUCnFgyKtL8OvQfx8I5gvrgD+dSW72qCNO7
+         glDf/xqpj4NdnrhBA04g0ilK4ZG2aD7Rcj++YDHcJfsBxzkxSpPc7MxtCr6lZC7SqwIL
+         CsTm3f/Q1VffQtcgCKMIc+e2PDgAcODK/iQTgHFrn30CCKBvxfYTOwTEn1+a7RsY+Ra8
+         wlcQoap5WlMj3MuBwKjzYu5GBS3h+wHqcMpVP47S6CPdPDINlsNozDr244amkt5OHGtB
+         ctKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWOABSqvGishZ98vre2B7vmkSU48vwbirvp2kfG/fPcTGxGjc//FfdQEQ0rQ6cW6r3jJxcrnLPwlIpjOMm+@vger.kernel.org, AJvYcCWi2cmHrLyipBNS+XAT0sPeCvmHbhCcBx+YaAzFJ5fXAtPjla/PDDQ98nsMBZdPEbPzOCMHOIjCDt62hxopqurhzNv4@vger.kernel.org, AJvYcCXHL9nciZTDZDoRl0Gfk09FWHV23ANgkUSZbA7s9zbmOg6oHyypTfFuRLRtSMd10Hh7yPI=@vger.kernel.org, AJvYcCXnW0w3C5nrdFYfqCKiHRZnEJCvcqgg7PhvjrcSelA8r5APxVcKNDY1QkNRAz+pTY7iZXbx5oW6VDGUsbv6+nH2@vger.kernel.org
+X-Gm-Message-State: AOJu0YyfaxY/Z9xx7vrrC5XR+DF/C6crlgrQT8t14RDf5wiyA10l/Yuf
+	nCJeq7jg0L6+Fmcx6dcWyzrCqsQAaTixkksqFZh0dbiNg6+P2iRAYvi2K5nl
+X-Google-Smtp-Source: AGHT+IEhJMyQ5+kwReRF5tts7vdrVrQIwphK7fmHz9MuEMkK32Y2vAgf1FBbLfUvBLl0VAASWxHolg==
+X-Received: by 2002:a05:6902:2b12:b0:e28:f322:8f97 with SMTP id 3f1490d57ef6-e2919d62508mr675619276.11.1728605297181;
+        Thu, 10 Oct 2024 17:08:17 -0700 (PDT)
+Received: from dev-ubuntu-0.. (104-15-236-76.lightspeed.rlghnc.sbcglobal.net. [104.15.236.76])
+        by smtp.googlemail.com with ESMTPSA id 3f1490d57ef6-e290edf37dcsm548028276.1.2024.10.10.17.08.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 17:08:16 -0700 (PDT)
+From: Tyrone Wu <wudevelops@gmail.com>
+To: andrii.nakryiko@gmail.com
+Cc: andrii@kernel.org,
+	ast@kernel.org,
+	bpf@vger.kernel.org,
+	daniel@iogearbox.net,
+	eddyz87@gmail.com,
+	haoluo@google.com,
+	john.fastabend@gmail.com,
+	jolsa@kernel.org,
+	kernel-patches-bot@fb.com,
+	kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	martin.lau@linux.dev,
+	mathieu.desnoyers@efficios.com,
+	mattbobrowski@google.com,
+	mhiramat@kernel.org,
+	mykolal@fb.com,
+	rostedt@goodmis.org,
+	sdf@fomichev.me,
+	shuah@kernel.org,
+	song@kernel.org,
+	wudevelops@gmail.com,
+	yonghong.song@linux.dev
+Subject: [PATCH bpf v2 1/2] bpf: fix unpopulated path_size when uprobe_multi fields unset
+Date: Fri, 11 Oct 2024 00:08:02 +0000
+Message-ID: <20241011000803.681190-1-wudevelops@gmail.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <CAEf4BzYo12vao0GPYPC=3SMTzc5c8kZSFCE+D63ACgtjs7QhVw@mail.gmail.com>
+References: <CAEf4BzYo12vao0GPYPC=3SMTzc5c8kZSFCE+D63ACgtjs7QhVw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,69 +105,83 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: jJig91f6tQbqCiu6QF3XWFmGK0ex3QE0
-X-Proofpoint-GUID: jJig91f6tQbqCiu6QF3XWFmGK0ex3QE0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- suspectscore=0 priorityscore=1501 mlxlogscore=999 impostorscore=0
- spamscore=0 lowpriorityscore=0 phishscore=0 clxscore=1015 malwarescore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410100159
 
-In case the USB backend device has not been initialized/probed, USB SND
-device connections can still occur.  When the USB backend is eventually
-made available, previous USB SND device connections are not communicated to
-the USB backend.  Call snd_usb_rediscover_devices() to generate the connect
-callbacks for all USB SND devices connected.  This will allow for the USB
-backend to be updated with the current set of devices available.
+Previously when retrieving `bpf_link_info.uprobe_multi` with `path` and
+`path_size` fields unset, the `path_size` field is not populated
+(remains 0). This behavior was inconsistent with how other input/output
+string buffer fields work, as the field should be populated in cases
+when:
+- both buffer and length are set (currently works as expected)
+- both buffer and length are unset (not working as expected)
 
-The chip array entries are all populated and removed while under the
-register_mutex, so going over potential race conditions:
+This patch now fills the `path_size` field when `path` and `path_size`
+are unset.
 
-Thread#1:
-  q6usb_component_probe()
-    --> snd_soc_usb_add_port()
-      --> snd_usb_rediscover_devices()
-        --> mutex_lock(register_mutex)
-
-Thread#2
-  --> usb_audio_disconnect()
-    --> mutex_lock(register_mutex)
-
-So either thread#1 or thread#2 will complete first.  If
-
-Thread#1 completes before thread#2:
-  SOC USB will notify DPCM backend of the device connection.  Shortly
-  after, once thread#2 runs, we will get a disconnect event for the
-  connected device.
-
-Thread#2 completes before thread#1:
-  Then during snd_usb_rediscover_devices() it won't notify of any
-  connection for that particular chip index.
-
-Signed-off-by: Wesley Cheng <quic_wcheng@quicinc.com>
+Fixes: e56fdbfb06e2 ("bpf: Add link_info support for uprobe multi link")
+Signed-off-by: Tyrone Wu <wudevelops@gmail.com>
 ---
- sound/soc/soc-usb.c | 2 ++
- 1 file changed, 2 insertions(+)
+V1 -> V2: no change
 
-diff --git a/sound/soc/soc-usb.c b/sound/soc/soc-usb.c
-index e56826f1df71..ee566ca7c675 100644
---- a/sound/soc/soc-usb.c
-+++ b/sound/soc/soc-usb.c
-@@ -279,6 +279,8 @@ void snd_soc_usb_add_port(struct snd_soc_usb *usb)
- 	mutex_lock(&ctx_mutex);
- 	list_add_tail(&usb->list, &usb_ctx_list);
- 	mutex_unlock(&ctx_mutex);
-+
-+	snd_usb_rediscover_devices();
- }
- EXPORT_SYMBOL_GPL(snd_soc_usb_add_port);
+ kernel/trace/bpf_trace.c | 36 +++++++++++++++++-------------------
+ 1 file changed, 17 insertions(+), 19 deletions(-)
+
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index a582cd25ca87..3bd402fa62a4 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -3133,7 +3133,8 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
+ 	struct bpf_uprobe_multi_link *umulti_link;
+ 	u32 ucount = info->uprobe_multi.count;
+ 	int err = 0, i;
+-	long left;
++	char *p, *buf;
++	long left = 0;
  
+ 	if (!upath ^ !upath_size)
+ 		return -EINVAL;
+@@ -3147,26 +3148,23 @@ static int bpf_uprobe_multi_link_fill_link_info(const struct bpf_link *link,
+ 	info->uprobe_multi.pid = umulti_link->task ?
+ 				 task_pid_nr_ns(umulti_link->task, task_active_pid_ns(current)) : 0;
+ 
+-	if (upath) {
+-		char *p, *buf;
+-
+-		upath_size = min_t(u32, upath_size, PATH_MAX);
+-
+-		buf = kmalloc(upath_size, GFP_KERNEL);
+-		if (!buf)
+-			return -ENOMEM;
+-		p = d_path(&umulti_link->path, buf, upath_size);
+-		if (IS_ERR(p)) {
+-			kfree(buf);
+-			return PTR_ERR(p);
+-		}
+-		upath_size = buf + upath_size - p;
+-		left = copy_to_user(upath, p, upath_size);
++	upath_size = upath_size ? min_t(u32, upath_size, PATH_MAX) : PATH_MAX;
++	buf = kmalloc(upath_size, GFP_KERNEL);
++	if (!buf)
++		return -ENOMEM;
++	p = d_path(&umulti_link->path, buf, upath_size);
++	if (IS_ERR(p)) {
+ 		kfree(buf);
+-		if (left)
+-			return -EFAULT;
+-		info->uprobe_multi.path_size = upath_size;
++		return PTR_ERR(p);
+ 	}
++	upath_size = buf + upath_size - p;
++
++	if (upath)
++		left = copy_to_user(upath, p, upath_size);
++	kfree(buf);
++	if (left)
++		return -EFAULT;
++	info->uprobe_multi.path_size = upath_size;
+ 
+ 	if (!uoffsets && !ucookies && !uref_ctr_offsets)
+ 		return 0;
+-- 
+2.43.0
+
 
