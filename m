@@ -1,141 +1,92 @@
-Return-Path: <linux-kernel+bounces-361342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DDC99A706
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:56:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A304B99A709
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6471F248AF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:56:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22E04283551
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:58:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEFD187FE4;
-	Fri, 11 Oct 2024 14:56:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93F8D19146E;
+	Fri, 11 Oct 2024 14:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTJd1OuT"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eIHEy4lp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B354405FB;
-	Fri, 11 Oct 2024 14:56:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC45F405FB;
+	Fri, 11 Oct 2024 14:58:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658597; cv=none; b=t2wOrW+hErqmqcyHwLQ+GGnSTrVypCPjOjKWDOzbus8lgiH62zh/aCV5n73c9iCkRfcpKRt7yDo9oCr5Yhvewd+cXqJyH1qckfLLVgm4eFIw+emYZavlHKyYJitDZ7mnfHLo9HdWW6wMNvdefEryHLnXcNMPnHZ1TbnJ5biGUXk=
+	t=1728658718; cv=none; b=ioxfcTahUuGYVZLK+S/FQ7nKgF1ljq4XmNlBa8X9gYcV25erIo7nUNwSGVmlOxjSDmQRC91bYMmpmA7EEkGDc7dhcNlLAZs9U8hxw/RyGd8wh9yNOHqYFK3IpZ4ClPxjF22O6VfxThiBYbWUSQm4YFRTXDijoS/WEG5IhuD28fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658597; c=relaxed/simple;
-	bh=PhKPsduoog1RfxuSrwk2Z/ASgKqlNXmshZ+VnXDX3nQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Gt9tVVcNFQKOFewV1Q96oKEGZ6yMmhDE7S6dE92waYW3nOm3J5aVQ4klt21RAfq0WYu7IZMprDyz2TLy9f90qC2tLdkFXaW1DLV7j4pQxJwUtqxxevozp9a0NMyrSWNvjtBsMzNFnQGm6eziVwaJ3auZgcpMyCFrhZJ6iZzZtS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTJd1OuT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4D5C4CEC3;
-	Fri, 11 Oct 2024 14:56:31 +0000 (UTC)
+	s=arc-20240116; t=1728658718; c=relaxed/simple;
+	bh=uAC1hsqraTaOFn/zr9dLVaQssrqC5CU+EZzISvIxio0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sRqgmjpE7xx9Lj9J6WTRohoFBW7z/NinnXe00bwnaq4fWkHjn9wKq4KrO8LXhTvanu6pe2U8eTbv7mEoL/m9B7pM7OPuEk8CNy93Ww4YqqnWZnbRGPhistBaS+3wiDf4hGw7TAggg/Iyh8Pz63q+unrtLKxkvamWQhv0HCmkb2o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eIHEy4lp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4DE88C4CEC3;
+	Fri, 11 Oct 2024 14:58:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728658596;
-	bh=PhKPsduoog1RfxuSrwk2Z/ASgKqlNXmshZ+VnXDX3nQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kTJd1OuTSFuqz5x+9aUDWPcmbLMgpTVH5eX9ee2MfTm7LaXEM9GQhDJhqQNUSeLsA
-	 wC9xWdB+67g2he327vbGvGibb0Mj805fW4dKH3OKnle+abW022C6DxgDYQGgqka9BA
-	 CImAvHecdZj8CAy3Xr2gnCIhBw46uT7E4TadzMfJWoY6EAq4Nb20mCPSWMNujlMxEF
-	 2dsrcL4HnFe6rj9dd43+3O5MZ9G/FdJExvkAYUMS7+KKUJyBcaCLTU49nl2s04o+9D
-	 OktQcgHfa0qBP57vELtvKIHMTPq3c79Zj4AOaBjtCdudsKYXOTTcORobBQlc3YyY2F
-	 nQMzZWnOy9tzw==
-Message-ID: <6594dc3d-4abc-4507-9ff6-d1994778d701@kernel.org>
-Date: Fri, 11 Oct 2024 16:56:29 +0200
+	s=k20201202; t=1728658717;
+	bh=uAC1hsqraTaOFn/zr9dLVaQssrqC5CU+EZzISvIxio0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eIHEy4lp246ggA2OYzvv+z9GX7D7xmeg948RSojVeXyWwNg5D33SKml5W5BNQcIOK
+	 EMphgUffYqBHSKps4UB2VJ5tTb1eH/DDtjVjL1qtJWkDgcgInRraCXeUpej1VNtYlD
+	 7CE3hdsF+3M+8d4bLoBC/hVh4KFcjC2rNr9yFgU2ls64I/I7keMNsKaMaBTH9+6WnY
+	 KYHjnPCts0m7NhKOnH5q0kvhOdOR9kC54m2ZM4JBiFEXOj82ex/9Hm4U54KOjE3MWz
+	 gpkqPnZSJU0Z4BrfF87E6zRRZL53zdSXuDcyKKDRhKppIN1ZWD6sHz1rZXTozpy+QX
+	 yYemcmYg02ymA==
+Date: Fri, 11 Oct 2024 16:58:33 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Saravana Kannan <saravanak@google.com>, 
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 1/7] PCI: Constify pci_register_io_range() fwnode_handle
+Message-ID: <lvjupiwar2vy4v3ulracyi4jbyadj252odf7vhbdt2ij5fc7vh@rrsyabqsmci6>
+References: <20241010-dt-const-v1-0-87a51f558425@kernel.org>
+ <20241010-dt-const-v1-1-87a51f558425@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: phy: mediatek: tphy: add a property for
- power-domains
-To: Macpaul Lin <macpaul.lin@mediatek.com>,
- Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
- Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20241011064810.5103-1-macpaul.lin@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241011064810.5103-1-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241010-dt-const-v1-1-87a51f558425@kernel.org>
 
-On 11/10/2024 08:48, Macpaul Lin wrote:
-> MediaTek TPHY should be existed in a power-domains.
-
-should be part of power domain, hm?
-
-> So we add property 'power-domains' and set 'maxItems: 1' in the
-> DT Schema.
-
-Entire commit msg would benefit from Google Doc/office or ChatGpt/AI
-grammar correction.
-
-Many of us, including myself, are not native speakers so use tools when
-needed for that.
-
+On Thu, Oct 10, 2024 at 11:27:14AM -0500, Rob Herring (Arm) wrote:
+> pci_register_io_range() does not modify the passed in fwnode_handle, so
+> make it const.
 > 
-> A reminder is also added to the description of 'power-domains'
-> property.
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> Please ack and I'll take with the rest of the series.
+> ---
+>  drivers/pci/pci.c   | 2 +-
+>  include/linux/pci.h | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/pci.c b/drivers/pci/pci.c
+> index 7d85c04fbba2..4b102bd1cfea 100644
+> --- a/drivers/pci/pci.c
+> +++ b/drivers/pci/pci.c
+> @@ -4163,7 +4163,7 @@ EXPORT_SYMBOL(pci_request_regions_exclusive);
+>   * Record the PCI IO range (expressed as CPU physical address + size).
+>   * Return a negative value if an error has occurred, zero otherwise
+>   */
+> -int pci_register_io_range(struct fwnode_handle *fwnode, phys_addr_t addr,
+> +int pci_register_io_range(const struct fwnode_handle *fwnode, phys_addr_t addr,
+>  			resource_size_t	size)
 
-Use imperative. See longer explanation here:
-https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
-
-
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Either I look at wrong tree (next) or something is missing and this is
+not bisectable. The fwnode is assigned to range->fwnode which is not
+const.
 
 Best regards,
 Krzysztof
