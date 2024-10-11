@@ -1,70 +1,82 @@
-Return-Path: <linux-kernel+bounces-361732-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D558099AC58
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:06:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF9F199AC5B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B5BF1F25EFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:06:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BC1528BA16
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 435471D094D;
-	Fri, 11 Oct 2024 19:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B2301D0BA2;
+	Fri, 11 Oct 2024 19:02:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dJGjK7LX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GU90VaFv"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83DB51991DB;
-	Fri, 11 Oct 2024 19:01:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 171F01D048C;
+	Fri, 11 Oct 2024 19:02:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673302; cv=none; b=VlxIv8GHYDUuHlrHbBE6XEmI35TXmKl/4IzxrPdcTcmQv+l6cXtgc/RGBWsCkYk/mOroHiovdkK4+vnf51KesihPUqf26GlmHD2UOxPKgEq5dR/Hdry3WjdKF72BSq7VIRBlcREBaft1UAlIc9le4Cpo8xgaLnQGLoVBxW2JwNM=
+	t=1728673358; cv=none; b=plAqRXYlV9NVEJRP1H1NxWGDBjokr+sRCEtmYBGal8hQef/21gx1+Lyh3OQNvN0Avtht4Cg1UPDeqt91Jrc3HchPZyhwInqOA0T1fW+t7atTBPCnIACZQZATsA3WvWW6A3UJhhGj0gCPtsD9nNpCPZrhUkU4lRSJJWKU2+WVjcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673302; c=relaxed/simple;
-	bh=cBNeIIWyAAvy0odt5J1sPJ66IzAhxQQAF1fH4TCwpgc=;
+	s=arc-20240116; t=1728673358; c=relaxed/simple;
+	bh=dwaO0PvTehoiSwlksKhTfqD+2fRrUnaNNJ7a0trqA3M=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Y1diIIXA/mj8eH91hVv1TgObcIBQelsNkzVlfzqxEUGSsHD7sEtSBVK55fRLc78q7lvuar94IH+9d+NIHqF51X1TFl5prOIj77ZxKJTpmv2hGX0uluAJo7FnvgFRvP6hHwWSux72QaYtaTwgv7nYTDLs5o0DdutXnaJZlJmaKBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dJGjK7LX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DA42BC4CEC3;
-	Fri, 11 Oct 2024 19:01:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728673302;
-	bh=cBNeIIWyAAvy0odt5J1sPJ66IzAhxQQAF1fH4TCwpgc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dJGjK7LX+qPL7gUvw7boYnQE82yIXLZy8l1huFSqka1YWSqGSZxbmUWLXQPW9WlGW
-	 h0Ck6I7x68Tx6bcE9f/i7eQj6jNIlRt5NButI5i2QMHbqZpMJa86A7FmJjRQNEPRnT
-	 TSdHPfhc0SdZeqA40U7qy+Dg7Ldq/3jNGW6N1JAa2+lohZic3+p9NXHnlaENoErfzZ
-	 0IbMKXH2cegr0R4yDFM8d55VlSOzty2KPWTgjBOTD/w/ebqVVCU9SLKvtaSdeMQeEY
-	 33OxLALPrSqycuWCCzEL1L4RK0QExycngmuOlqfo2OJ3HVzFr9JiTLT39Gn9bJgK85
-	 +Qm45MG0iWy/w==
-Date: Fri, 11 Oct 2024 20:01:35 +0100
-From: Simon Horman <horms@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Markus Schneider-Pargmann <msp@baylibre.com>,
-	Chandrasekar Ramakrishnan <rcsekar@samsung.com>,
-	Marc Kleine-Budde <mkl@pengutronix.de>,
-	Vincent Mailhol <mailhol.vincent@wanadoo.fr>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nishanth Menon <nm@ti.com>,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Tero Kristo <kristo@kernel.org>, linux-can@vger.kernel.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
-	Vishal Mahaveer <vishalm@ti.com>,
-	Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>
-Subject: Re: [PATCH v3 2/9] dt-bindings: can: m_can: Add vio-supply
-Message-ID: <20241011190135.GB53629@kernel.org>
-References: <20241011-topic-mcan-wakeup-source-v6-12-v3-0-9752c714ad12@baylibre.com>
- <20241011-topic-mcan-wakeup-source-v6-12-v3-2-9752c714ad12@baylibre.com>
- <bbz7h4vfbzusvdqtbfzxo5xdoddqp5nonoywvbrhtwukjus3pp@5amm37u22ehh>
+	 Content-Type:Content-Disposition:In-Reply-To; b=We+xe7+NT04x7BM6/bidvcCZxn1NJEliXjLwwoPBz7QfKTEjwqXQ1UshrmgQjQm8kv5+StOswCtACF0Er0XM+O7E/llNuAycrPKiAcHvKHTlhuGSn1mJa+GxMtwwjb26Q228YgZDAzRK/BKFKoiVxUEeSKQ0RHIJqfZ+e4Z/jeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GU90VaFv; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d47eff9acso1278783f8f.3;
+        Fri, 11 Oct 2024 12:02:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728673355; x=1729278155; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=+/kVOmo9BqoY88B3lT5nnLLFJ6x+62zTyz4jnujbEDQ=;
+        b=GU90VaFvTVTMR3xRJkZ/Zh1BiHaOMe9loLVOE01e8C2UM448nmTDj/b/3nMgdVQt7O
+         IYxpbSyWbnL8onyUBueZSvEQd1I2owx339nQqjPSB7lm+r1UFa4jmHzfW7LMtLHg1Mpv
+         NoMxuwxHIqorHMPGqyBi68WDJCI1DQXczWTpID5y2dzvz7JWaTR3OvCEEsx6nS2VcXn5
+         6gHgLTrvHBkbs5vcRhmz1RA7P284V1ng4AoiebcgUXZpFRVyBchmZFetTxJjbB10zIJt
+         2aVNVh4sZEfG7BnsgVR4J5LQ96ozAlrRQZEfA4OnzLdQ1kMGywfl6iadxUO7K+FqLr1L
+         xMAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728673355; x=1729278155;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+/kVOmo9BqoY88B3lT5nnLLFJ6x+62zTyz4jnujbEDQ=;
+        b=pYuS584F43zBIaRihrUGRDPsvtjq3B3Qr8LXP/R7jbaoAEjajJhnl5d/Fo6D2IaL0a
+         HhR1eS13q4zUqc3oSgL3/wXVby6wdeq2EidlExm1dd3qvDlB7LnikHmTNwXNf2BhiUUQ
+         t1CYjd2H8IxB77VNrutUEW6lgXUG2tUF1/Ad7W+ebQucrBT/EytSMjaDoAin+mj0rPmj
+         FmOEFemjJ+hZswwWMfxDE2xGiG7gvmfP+eSbYdG3bo329feeGpUUsNFqr1mht9ak6MFD
+         VCSay0nugYU44cwmTZh5WK1J6ZlhkDYZfNcoEwfCgfUTvOjtOwSIWGqx2K700t34xf2I
+         q7SQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8oVQ2RKxS7KdzK/4yQwrWKlEg8JuO3CP7S3HDKgkdX3cSFF5JXLs5y2lk/8AnycfECezMZAh9Ro3W@vger.kernel.org, AJvYcCVsGRUsT/an/BB6tZuvbbhO7iDnz9r5Ye32wAe5NTYFpRCN42cCIr2EV4LPs6edBjyOGrf37ftp7c0BCI7C@vger.kernel.org, AJvYcCXIpxPCdt8HH1ZiQNi0TA+7WcAD6DI0SJcgJi0K1GDbV5wdsqFTRBRgnKikxkL2OaAR1cYDpQhiPkCA@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVEuiJctYm828XglCvG93+5c8GCxrZchsFo3GSoFz5TbR/SbzI
+	cI8g5fhxp+vuZvmkE7CFvLEzoiXtjnyHoGF9/W5Q+9VkodlV2TCl
+X-Google-Smtp-Source: AGHT+IHUj2oVsncH/qIJKzxS3lwpcbXodpmZOU/4cWfVLqd8rmb31c3vvMckki/2cFXoIe5WQqhNhg==
+X-Received: by 2002:a05:6000:118c:b0:37d:2ceb:ef92 with SMTP id ffacd0b85a97d-37d5fedbb12mr454693f8f.27.1728673355108;
+        Fri, 11 Oct 2024 12:02:35 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd3e7sm4535930f8f.39.2024.10.11.12.02.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:02:34 -0700 (PDT)
+Date: Fri, 11 Oct 2024 21:02:32 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 08/13] iio: chemical: bme680: add power management
+Message-ID: <Zwl2SEmDqc-PTtqp@vamoirid-laptop>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-9-vassilisamir@gmail.com>
+ <Zwj5jBm-_9_FX6ms@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -73,34 +85,120 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <bbz7h4vfbzusvdqtbfzxo5xdoddqp5nonoywvbrhtwukjus3pp@5amm37u22ehh>
+In-Reply-To: <Zwj5jBm-_9_FX6ms@smile.fi.intel.com>
 
-On Fri, Oct 11, 2024 at 04:44:00PM +0200, Krzysztof Kozlowski wrote:
-> On Fri, Oct 11, 2024 at 03:16:39PM +0200, Markus Schneider-Pargmann wrote:
-> > The m_can unit can be integrated in different ways. For AM62 the unit is
-> > integrated in different parts of the system (MCU or Main domain) and can
-> > be powered by different external power sources. For examle on am62-lp-sk
-> > mcu_mcan0 and mcu_mcan1 are powered through VDDSHV_CANUART by an
-> > external regulator. To be able to describe these relationships, add a
-> > vio-supply property to this binding.
+On Fri, Oct 11, 2024 at 01:10:20PM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 10, 2024 at 11:00:25PM +0200, vamoirid wrote:
+> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > > 
-> > Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
-> > ---
-> >  Documentation/devicetree/bindings/net/can/bosch,m_can.yaml | 4 ++++
-> >  1 file changed, 4 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> > index 0c1f9fa7371897d45539ead49c9d290fb4966f30..e35cabce92c658c1b548cbac0940e16f7c2504ee 100644
-> > --- a/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> > +++ b/Documentation/devicetree/bindings/net/can/bosch,m_can.yaml
-> > @@ -140,6 +140,10 @@ properties:
-> >  
-> >    wakeup-source: true
-> >  
-> > +  vio-supply:
-> > +    description: |
+> > Add runtime power management to the device. To facilitate this, add also
+> > a struct dev * inside the bme680_data structure to have the device
+> > accesible from the data structure.
 > 
-> If there is going to be new version: drop |
+> ...
+> 
+> > --- a/drivers/iio/chemical/bme680.h
+> > +++ b/drivers/iio/chemical/bme680.h
+> > @@ -75,6 +75,7 @@
+> >  #define BME680_CALIB_RANGE_3_LEN               5
+> >  
+> >  extern const struct regmap_config bme680_regmap_config;
+> > +extern const struct dev_pm_ops bmp280_dev_pm_ops;
+> 
+> Is pm.h being included already in this header? Otherwise you need to add it.
+>
 
-And likewise, correct the spelling of examle -> example.
+No it is not, and indeed I need to add it. Probably because it was
+included by some other file I didn't get an error from gcc?
+
+> ...
+> 
+> >  	struct regmap *regmap;
+> >  	struct bme680_calib bme680;
+> >  	struct mutex lock; /* Protect multiple serial R/W ops to device. */
+> > +	struct device *dev;
+> 
+> Is it the same that you may get wia regmap_get_device()?
+> 
+
+Yes it is the same. Maybe I can try and see if I can use the following
+
+	regmap_get_device(data->regmap)
+
+in the places where the pm functions are used in order to not declare a
+new value inside the struct bme680_data. But in general, is this approach
+prefered?
+
+> >  	u8 oversampling_temp;
+> >  	u8 oversampling_press;
+> >  	u8 oversampling_humid;
+> 
+> ...
+> 
+> > +	/* Enable runtime PM */
+> > +	pm_runtime_get_noresume(dev);
+> > +	pm_runtime_set_active(dev);
+> > +	pm_runtime_enable(dev);
+> > +	pm_runtime_set_autosuspend_delay(dev, BME680_STARTUP_TIME_US * 100);
+> > +	pm_runtime_use_autosuspend(dev);
+> > +	pm_runtime_put(dev);
+> 
+> Can we use devm_pm_runtime_enable() for some of the above?
+>
+
+I will have to check its use, and I will let you know.
+
+> > +	ret = devm_add_action_or_reset(dev, bme680_pm_disable, dev);
+> > +	if (ret)
+> > +		return ret;
+> 
+> ...
+> 
+> > +static int bme680_runtime_resume(struct device *dev)
+> > +{
+> > +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> > +	struct bme680_data *data = iio_priv(indio_dev);
+> > +	int ret;
+> > +
+> > +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	fsleep(BME680_STARTUP_TIME_US);
+> > +
+> > +	ret = bme680_chip_config(data);
+> > +	if (ret)
+> > +		return ret;
+> 
+> > +	ret = bme680_gas_config(data);
+> > +	if (ret)
+> > +		return ret;
+> > +
+> > +	return 0;
+> 
+> 	return bme680_gas_config(...);
+> 
+
+Indeed, much cleaner, thanks!
+
+> > +}
+> 
+> ...
+> 
+> > +EXPORT_RUNTIME_DEV_PM_OPS(bme680_dev_pm_ops, bme680_runtime_suspend,
+> > +			  bme680_runtime_resume, NULL);
+> 
+> You also need pm.h for the macro IIRC.
+> 
+
+ACK.
+
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
+
+Cheers,
+Vasilis
 
