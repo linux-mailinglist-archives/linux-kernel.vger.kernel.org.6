@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-361494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CA3499A8EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:31:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8930099A8EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6C2D21C231A1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:31:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 315CD1F2491B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A5841990C7;
-	Fri, 11 Oct 2024 16:31:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4957A188918;
+	Fri, 11 Oct 2024 16:31:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Av9Dy6VB"
-Received: from mail-qt1-f176.google.com (mail-qt1-f176.google.com [209.85.160.176])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="KTm9Kgbw"
+Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3E2B199256
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:31:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E33E195B1A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:31:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664289; cv=none; b=FGAmWXK38zXCY/ZhHM+cBPuNtoSvZ//aSaMRg1k1EdK0L8/MQTtbf22+7C0T1l8M0Ai5P5Cu+ffU46um69UQGGmQ7b2EFVL2cW+bVHEFjaBPlzHxdmoeqUEk48wG2b8pbODxP4jODU5ouQjZP6/tRPqA10MxoEXAerctgwXamZ4=
+	t=1728664316; cv=none; b=AdsI7XVZ9+K0JOKSBhaB2NYSDAznBBhxR6V88VdXs8yfGEH+GNWPz4j7T6G9OrSvsIM8zQ7BNFWmLYmfpoixNDZL41azBMk0tSQZKR5geZokrJnpqIe7+K9RpWcsPz1ozMOFKgvGHc1x5jG/GkwVHMB9nGblJqTcQLAaHXFWkG4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664289; c=relaxed/simple;
-	bh=525ehD9jVRzxqbpKXu59TfkRlURdR2IlhfGKgW7tqZA=;
+	s=arc-20240116; t=1728664316; c=relaxed/simple;
+	bh=woSR6Y75fZOeQBGQO24VdwIFZvxkz6FLKJFAaRwMgJo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nzhDB9jlumEovdcbqU155nnCcUcZzC4szBD77naqHyoQASmqYUDvuuNGXjTizMpic1ZEwV37jJNoERRcaQ2ayt29cKlDK+M94MJDrptqqQwNxkv+1D2RKNZSXOtkvrSHENwZVx6CXhAyvpbaKfFsBsmQ7k2/Mx/6r/H5THNAV6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Av9Dy6VB; arc=none smtp.client-ip=209.85.160.176
+	 Content-Type:Content-Disposition:In-Reply-To; b=MR9+7ZMC5ZlgMSDU5IgZ/1EMYbHty288NgZV1pou2wxTAsX0DS/CK4TwSo23bHvh7G0OU2f70636tIM0p0qjDS8ny9IN+HCDcMMb1jX6Zieamw7FaoS+O3VidkiTxG6O84+HU0dZGa/yk6gPGC42cio7xSV5tIPNsVyPqN7Glbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=KTm9Kgbw; arc=none smtp.client-ip=209.85.222.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f176.google.com with SMTP id d75a77b69052e-46042895816so23201171cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:31:25 -0700 (PDT)
+Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b11692cbcfso130709285a.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:31:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1728664285; x=1729269085; darn=vger.kernel.org;
+        d=ziepe.ca; s=google; t=1728664314; x=1729269114; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=ATpam0YiZTzpjTWMzxJV5L02/OwsB3UVIOf2m/lEpH8=;
-        b=Av9Dy6VB4b1skhAP+ZXYaWvCeZOBNrKxVj/g3tdgDCaApf5zer08hW+eQCtB8BG6Uk
-         +ZY3WuiihlGQqe2t3WuLpoV1+IMVCJlif9PFw5N3FoEkz+gpEDTu62S3Lj1GYcjWqOA+
-         6QP/gKqB0ZHRAKfxnwnF+dTjPeYaXOp/xEeGyRh44ZhGrObsPuG3Kc0Bg4hJ00ER2jUU
-         n7aJVePapXYvmZUzc/uLc+Co1usQqj8xqkWyJ1S/809MlfTcKlRdYU7vjkiRdXh3rj07
-         symaRWAsqITBa1fm+s6FoWC58CQ6OoNZc7C8Gv7wgn787gcNIOgpDJbIG/7jg72uqHRw
-         ETSQ==
+        bh=NwEPzyjMz9lNyBSEKsUJavhwQs/1hDwuBWtKqgoIY1I=;
+        b=KTm9KgbwCIOlSpLNcCXj8w0vHqi650EpoO3o2wxifvLlrQwETISXdS5YuE2GZrGO94
+         t4Be+ggHZE9QIcMW/WfViEjszuOHksjpyiFNO051U3Fk+JGEqzQL/8CtFOYbqk+MKLId
+         Wh9d/tG84+JOYbcRNqYrQN+gQTc4EGyOZulcy1+ueJCZ8l3DAVM0/WEqJAvE1KgusQFt
+         z4yrbJhcfzDLO3yIA/fs7GGl2guTLVlfzPKR8ZwdwNwVs1tCg7hj/jF7l7kjjJvR/8PG
+         1uTyhfhQAoX0d6uoIdkG+gTDaKJF937FgkI+5uuEskAC/q8UvTEx/DQGtfw9mj6fmo4A
+         6gCg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728664285; x=1729269085;
+        d=1e100.net; s=20230601; t=1728664314; x=1729269114;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=ATpam0YiZTzpjTWMzxJV5L02/OwsB3UVIOf2m/lEpH8=;
-        b=ZYDYVQlDZ5/YDu9HE9LfWVC2Teg+vpkMbCDiUWOpYWpB665Wue8+LzGCmrlGa34ltN
-         CJH7XLp1xTGkKk12NcWkm3/koqif67MyFoCrWre3dr2+TSoFt/e0KfrGwKaEWcSzhj8/
-         ODqVqGb6QWBbKn6eavcCykyGxMvrxK/WcoXyeEIo0TcIKwXbZeQclLO/8OzNdlVeKW8k
-         +kKTa8xlT28cQ1DgBkHfMXYHoPVO2LE1tFxX4taD4tW7EKv6RaFd58HF3FXkcTctwnkH
-         9NK8+aarq9zq0ZJ+eOUvmhv8oSecW8SH5sBGtDY80Fqk94xo2oC9Vxz4ad7QC35QGgKV
-         LfUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDyf/4rN4+zLWgGRu+B7WpbsmjLGQqfHz9NCwc8TmzLA/xrTlnhkzHEjYOjR7q4/x81Ib51iFa76zinE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypYKiV+KMZoWvR3AmzUL0+cYE8FuIa8svrRy1AsvmPtq7ei3XS
-	qbkHuJEOjVi/AhjKCekXRY0d/NdgUr/uwOC449OxhT2XJBCDI7OYGFR7zN7a4Ww=
-X-Google-Smtp-Source: AGHT+IG75EhZG0d5M9MeHOGeqzGArKbIsd9k8HqJa104wmM37x2TGfXxpHNROC2Jk+MqDGWYtqA4YA==
-X-Received: by 2002:ac8:7d13:0:b0:458:2fb7:5035 with SMTP id d75a77b69052e-460583e8b95mr2814621cf.3.1728664284832;
-        Fri, 11 Oct 2024 09:31:24 -0700 (PDT)
+        bh=NwEPzyjMz9lNyBSEKsUJavhwQs/1hDwuBWtKqgoIY1I=;
+        b=sbPAQwXkcr9lhHuCCmLUcEWTGP5nk36v7ol1z+l85iVnxmw77C9pbnvkvDXAwCaH33
+         82nJrF4WsGCtM5rRiWUOnJ7m8ebh205117EbBru1QVy/tDKs8b1YluRqL4jO9T4hDJdZ
+         lVdvZZjcvobuTI1o6dugAsMsNVUGND4LhMwZJCSz8relt3p6pfpw7qqt5V4a2+i/A95W
+         UvTETCHOPHpm0pLIkXa6cS6941INbGzQZifBosJBOrajaLKt52WKEDuM5G409IzMTf/a
+         7Ld7wr848ra1PJNuMYQVXShGphH/Bt+nW1/YHhwEjW3orqFIKzL9rYB0r96LTayWkHih
+         5MPA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7aWK5f0DX3dI4WYNTu1qiHaAZ0n/TxV9oJiUh3iy9fuMT+z6ml4K5ZlyYkuNGbKfFfEpEIQDNg+p4QFM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/u24nDyxLXknqeZKv4Q+5+IaSsDoKQOueSSrkL6ti0nJUw2Xp
+	/vsoHQ1jXMZygDQ6Yglhtnrh/2d4cRtabZdHoOgzYyduiT9YHJRdrMc9PdYy4JY=
+X-Google-Smtp-Source: AGHT+IFSqYpeyoL3JBtt2icvevdHUOGvDnGIXVpy91lCgbjPXgn3EqB0Bri9z5CcvXC6KNpLC2+w8w==
+X-Received: by 2002:a05:620a:2622:b0:7b1:1cf6:cfb9 with SMTP id af79cd13be357-7b11cf6d056mr281355985a.55.1728664313746;
+        Fri, 11 Oct 2024 09:31:53 -0700 (PDT)
 Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460428069c6sm16882951cf.49.2024.10.11.09.31.24
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11c0a8902sm55860385a.31.2024.10.11.09.31.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 09:31:24 -0700 (PDT)
+        Fri, 11 Oct 2024 09:31:53 -0700 (PDT)
 Received: from jgg by wakko with local (Exim 4.95)
 	(envelope-from <jgg@ziepe.ca>)
-	id 1szIXz-007eJV-Qa;
-	Fri, 11 Oct 2024 13:31:23 -0300
-Date: Fri, 11 Oct 2024 13:31:23 -0300
+	id 1szIYS-007eRe-Rv;
+	Fri, 11 Oct 2024 13:31:52 -0300
+Date: Fri, 11 Oct 2024 13:31:52 -0300
 From: Jason Gunthorpe <jgg@ziepe.ca>
 To: Lu Baolu <baolu.lu@linux.intel.com>
 Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>,
 	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
 	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
 	Vasant Hegde <vasant.hegde@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/7] iommu/vt-d: Refactor first_level_by_default()
-Message-ID: <20241011163123.GO762027@ziepe.ca>
+Subject: Re: [PATCH 7/7] iommu/vt-d: Refine intel_iommu_domain_alloc_user()
+Message-ID: <20241011163152.GP762027@ziepe.ca>
 References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
- <20241011042722.73930-7-baolu.lu@linux.intel.com>
+ <20241011042722.73930-8-baolu.lu@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,32 +88,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011042722.73930-7-baolu.lu@linux.intel.com>
+In-Reply-To: <20241011042722.73930-8-baolu.lu@linux.intel.com>
 
-On Fri, Oct 11, 2024 at 12:27:21PM +0800, Lu Baolu wrote:
-> The first stage page table is compatible across host and guest kernels.
-> Therefore, this driver uses the first stage page table as the default for
-> paging domains.
+On Fri, Oct 11, 2024 at 12:27:22PM +0800, Lu Baolu wrote:
+> The domain_alloc_user ops should always allocate a guest-compatible page
+> table unless specific allocation flags are specified.
 > 
-> The helper first_level_by_default() determines the feasibility of using
-> the first stage page table based on a global policy. This policy requires
-> consistency in scalable mode and first stage translation capability among
-> all iommu units. However, this is unnecessary as domain allocation,
-> attachment, and removal operations are performed on a per-device basis.
+> Currently, IOMMU_HWPT_ALLOC_NEST_PARENT and IOMMU_HWPT_ALLOC_DIRTY_TRACKING
+> require special handling, as both require hardware support for scalable
+> mode and second-stage translation. In such cases, the driver should select
+> a second-stage page table for the paging domain.
 > 
-> The domain type (IOMMU_DOMAIN_DMA vs. IOMMU_DOMAIN_UNMANAGED) should not
-> be a factor in determining the first stage page table usage. Both types
-> are for paging domains, and there's no fundamental difference between them.
-> The driver should not be aware of this distinction unless the core
-> specifies allocation flags that require special handling.
-> 
-> Convert first_level_by_default() from global to per-iommu and remove the
-> 'type' input.
-> 
+> Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
 > Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
 > ---
->  drivers/iommu/intel/iommu.c | 17 +++++++++--------
->  1 file changed, 9 insertions(+), 8 deletions(-)
+>  drivers/iommu/intel/iommu.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
 
 Reviewed-by: Jason Gunthorpe <jgg@nvidia.com>
 
