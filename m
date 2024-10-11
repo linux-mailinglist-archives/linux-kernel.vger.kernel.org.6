@@ -1,193 +1,175 @@
-Return-Path: <linux-kernel+bounces-360581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360579-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D938999CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCE3B999CD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5B2834C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:43:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1722D283ECB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DDE209690;
-	Fri, 11 Oct 2024 06:42:53 +0000 (UTC)
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B956209662;
+	Fri, 11 Oct 2024 06:42:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WykoIgtS"
+Received: from mail-yw1-f193.google.com (mail-yw1-f193.google.com [209.85.128.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52456209677;
-	Fri, 11 Oct 2024 06:42:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 398BE199FB9;
+	Fri, 11 Oct 2024 06:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728628973; cv=none; b=KpFbnUpTm3t8J9+xYovg9CPMQIVtv5Kf8yuDGkLsmywhi0/g85iYrvuzoVYbM1YU4fnGNW/9HcSZxAV9vrJGdggKeL+TxOpUyCy/6nTYN/ku1QdR9AnrzvY5XfCWlv4Ger7T4B9QsP/epPumStpx2XPhRW+QiPLPBvkzjy1iXlE=
+	t=1728628933; cv=none; b=i3LV+mJE1dg88Z3ykOCIyRNd/pyFp4DgakkajEWzCG1N/uyczwkhboaXzp/O8INvf70+NreS6X/equ25SLaAxe+H2yF53GENGOkD4VJG3W9BBVTgSNwNWnUgOW25Gz9qsu8RG5Tb4jJPux/vFuNRTqW8e4fyq3jDdZluCAEo1To=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728628973; c=relaxed/simple;
-	bh=B5BF9AElxlSzgaYbHLUSKNWQRSL07hjT8G2UPti00ZY=;
+	s=arc-20240116; t=1728628933; c=relaxed/simple;
+	bh=rTU3z5nXZ0203U12sB1J6Lev02OVO6OGTj84QaOG73M=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=qIhzlqrMa9ar7UQrsc45TCRkRh3z8clAFN2cLvliDtOLobWR3xsQUDJH8ndcouqbf1WGsn6/6+ckEVLw/YIzyVnvaWiCd8Qg0kcfaS8IxjAuYoUNXD2EpohmPHWD/RAzVVCbuo3be3G6C8KtCeMglW1EZ3ZxqQJk5y9KQbRETfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=m8FIXMLgJYKS3SFbnGx6UuO/XmzXOpuEAcmr2XRpkoYZf6TWP1Dq0msWq2IV0HwBrn6wzXwP8Pp82O09+bj3X5gXbXVJ+qoCuZSMDQUWjYH04yNjpP8A7ziyBaYb7/tKn0TvYK+q40MbI1JTDutj+xoFytcsAJ44JVJO28PRxzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WykoIgtS; arc=none smtp.client-ip=209.85.128.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2915f00c12so816216276.0;
-        Thu, 10 Oct 2024 23:42:51 -0700 (PDT)
+Received: by mail-yw1-f193.google.com with SMTP id 00721157ae682-6e34fa656a2so1880927b3.1;
+        Thu, 10 Oct 2024 23:42:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728628931; x=1729233731; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=kVhuLsogfUzSYpWHUkggflusdlhQlsEWtOFwPdr5aPY=;
+        b=WykoIgtSugMAgD8gJOoZyVWORCDf8X46OFEeFCFHpiwQm+lRDoz7TgdAIZtx25vbTO
+         skHg94ykXZJbNhJOZ5731YrTt7/irTfnIqEMadyRbMkwd2Y9zvDDouJtgpECtewCHZGp
+         iN71VckEk8PkTG8thuwA1rDs+E74AMBo3l7DbHBmMWtwg5wwOMxNHYm5rgjLaMEEFbxL
+         Q6l6sEouLH78jaGkhZcNkaadV2mrL+HdlfJ3Kd3rAIXEiiRVt0wKIRj1QtwX7S4KLTTF
+         hMIZoUgdwhLHnRNQPJY+/Th1wvgJip7oigRyIA1VpVJkSedf91yWw1QeLfYgpxclSgbN
+         OM1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728628969; x=1729233769;
+        d=1e100.net; s=20230601; t=1728628931; x=1729233731;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=OI3b4NKCZIobgXcfPVHuehiSSfOdHQS+7R2fmQSiyY4=;
-        b=C9s6wN0TjEiEAOdv7W6ce2j16muiIoL7rr/e6932g9CqFMGEMfsFWXT60W9JEUvCAl
-         wT5Q/XxJTYVDP+crLTXPnAUAc+ngHk4LM146RgECiRmxU7GzJF2OP6H8jNCjhyUqgczQ
-         vkUxeh704M+uk7QKMrnyHlTyR1UBR2JpdZfsm0KHi4f9HfYKPx8ZyDYFnv1osR/Uvt79
-         r5X9TEhgQQHoEezzPAWtFklFB/m+mIw9+M3s9BI0ITzFoAj1ViMpDsE2m1EwatErG1Si
-         QSv+TyWNKdG4ibwtbAwgULwCdGrNJbQbMLHGLpFgvnOPnZdne49op1V6ck3cxi9lcsoa
-         Ky2Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUWMDqururERYMxghd271SzJForvCkzzBPaseDRQfuWddAktm+a6MBvvZCI/esxTR+TlPJa/hDlGdk4YQ0=@vger.kernel.org, AJvYcCVM06Ad08OmrCNDacn5ox0wHDpOL3Kkt6N6pqeFFqIX2VQ8WWjYe4In+0uPTBNcRSUKaVj6gH2gXg0f9qQjSuP1lUw=@vger.kernel.org, AJvYcCXPdIcYQMQ3EPRtX2LGxf9o2ShikTMuukTAMIyxCFzJEGnxVbwYEc+D43SLEyLo6gDZnvKhk9vq2LMYC5o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUwWkZNI8iUfC6JBBr63+MqauE7BUoF136I3+FP/0A/WtIHbNm
-	UO5bv7DLVT0hjBWO4/AsbGHZH6YrWOoqbOSj9EZrKAGm3DnsKh4v1LI36aMagRA=
-X-Google-Smtp-Source: AGHT+IHXY1XciuPiTc59piqKVwCaeZpufnOETwPeTkOM5/Dn6toJa0pELv6q1Pf3Jt6m6l6yinwJTw==
-X-Received: by 2002:a05:6902:240f:b0:e28:f3e7:d92b with SMTP id 3f1490d57ef6-e2919da1176mr1061686276.24.1728628969322;
-        Thu, 10 Oct 2024 23:42:49 -0700 (PDT)
-Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290edff990sm680866276.15.2024.10.10.23.42.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 23:42:48 -0700 (PDT)
-Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2915f00c12so816184276.0;
-        Thu, 10 Oct 2024 23:42:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU7xkVl8WNSf+LMCrD5nAoRRYDKG9Gj/MHsFHk8nF7E58SFUDe+MjBhMugZnvX6rAWn4wcwvXASnr2g7l0=@vger.kernel.org, AJvYcCU8tvdpZ+JFxrhvAsvPKTxdDNlVqzLVUPL0RvkA18jzcFkDo3wDsuaURxhSrywxmv3QmN98tfJ/MD1UPKrW2WVSIN4=@vger.kernel.org, AJvYcCUOdZ+Xc4CSIWlnSRbCysKTyc2hEb1RjX7K3k8M/HdUk607ubtK5vPqJ+PK7Uao1i9ZW7/9ooS3dJ1HsLA=@vger.kernel.org
-X-Received: by 2002:a05:6902:200d:b0:e28:fa58:15c0 with SMTP id
- 3f1490d57ef6-e2919d840dcmr1008730276.23.1728628968337; Thu, 10 Oct 2024
- 23:42:48 -0700 (PDT)
+        bh=kVhuLsogfUzSYpWHUkggflusdlhQlsEWtOFwPdr5aPY=;
+        b=wS36o6a55KXiEy28LJm3xKHxpB5tifvvhgoPoBnriZ/q/ayxoQvSPqH974t0ifukcg
+         V7YTgqhP0nIWxAn4gQEMd9PKeTVRJtZ5qpit6WTYXjaxTiAdQXc1lmFeZ76I82fSIsDj
+         9lD+rN9f03p0fmOPji8Ihqd6299r4mjvdLTj4tnGSYRKMOy0DU7pF2E4M0E2JIxmIFdZ
+         S6ZEuhdGueXswq5XHkIXcVV+1G7bz4+z0uM1EgDQpmMhYB5rp6oVnIs7xaxDyNss1xr9
+         w3KQuSJNBzONSWttN8yXdVvYOg5+Z6Ogx5LanIEiXI0utzVc/ADwuECdyxZXsQT3Rgu8
+         tn5w==
+X-Forwarded-Encrypted: i=1; AJvYcCUasYVsApHTe4bOjZNIipuxaEmd9EHJ147FMlI7dMdqDxq15rS2hc50WLaJIpR8qtN9WFg=@vger.kernel.org, AJvYcCVSVBPs2+bGuv+d78PxWTo7KfreVsJ5FstTfKzWArFUhKRE/FH9ktL6Iw0+5JG04feXU8aoUZ/c@vger.kernel.org, AJvYcCXep4mthh9uB4jg/jzZ5Z2nw3gjyV5dzSh3SKobVmLsw3Vfg1jjTv9rYbSenrRjdvyvkA7sxnJc+zTDZ1b4@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2nHN4ujwh2TxNB5DxHjd36M6FBfjnjhdTbtXwrkt/zZQxTdRA
+	w+OfRuRrR8/D58gtc2TQ96BcqxMfxm9K9lH4iq9GEmEWYfEO7Z6L1eD2UuVo5aI4vwHAMbDzi4D
+	KuwxUP7xHXijNUyEPRA53iFS5C/c=
+X-Google-Smtp-Source: AGHT+IGsjrvTm/ajEWNecyoWQ9v/ap1xzqKOckWzZqAyHc6KxoFC3fryNMajDXN25+sd4N5fKXWl0LfWyL51t+GAZa8=
+X-Received: by 2002:a05:690c:670e:b0:699:7b60:d349 with SMTP id
+ 00721157ae682-6e3479b94d3mr10877237b3.11.1728628931231; Thu, 10 Oct 2024
+ 23:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010141432.716868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-In-Reply-To: <20241010141432.716868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Fri, 11 Oct 2024 08:42:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdV=EMnPFGJn5J85x5AtE4fYHChLVLOfk6zMR1rrJzS85g@mail.gmail.com>
-Message-ID: <CAMuHMdV=EMnPFGJn5J85x5AtE4fYHChLVLOfk6zMR1rrJzS85g@mail.gmail.com>
-Subject: Re: [PATCH] ASoC: rsnd: Fix probe failure on HiHope boards due to
- endpoint parsing
-To: Prabhakar <prabhakar.csengg@gmail.com>
-Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	Biju Das <biju.das.jz@bp.renesas.com>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20241007074702.249543-1-dongml2@chinatelecom.cn>
+ <20241007074702.249543-2-dongml2@chinatelecom.cn> <7caf130c-56f0-4f78-a006-5323e237cef1@redhat.com>
+ <CADxym3baw2nLvANd-D5D2kCNRRoDmdgexBeGmD-uCcYYqAf=EQ@mail.gmail.com>
+In-Reply-To: <CADxym3baw2nLvANd-D5D2kCNRRoDmdgexBeGmD-uCcYYqAf=EQ@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 11 Oct 2024 14:42:53 +0800
+Message-ID: <CADxym3ZGR59ojS3HApT30G2bKzht1pbZG212t3E7ku61SX29kg@mail.gmail.com>
+Subject: Re: [PATCH net-next v2 1/7] net: ip: make fib_validate_source()
+ return drop reason
+To: Paolo Abeni <pabeni@redhat.com>
+Cc: edumazet@google.com, kuba@kernel.org, davem@davemloft.net, 
+	dsahern@kernel.org, steffen.klassert@secunet.com, herbert@gondor.apana.org.au, 
+	dongml2@chinatelecom.cn, bigeasy@linutronix.de, toke@redhat.com, 
+	idosch@nvidia.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bpf@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Prabhakar,
-
-On Thu, Oct 10, 2024 at 4:15=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
-om> wrote:
-> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Thu, Oct 10, 2024 at 5:18=E2=80=AFPM Menglong Dong <menglong8.dong@gmail=
+.com> wrote:
 >
-> On the HiHope boards, we have a single port with a single endpoint define=
-d
-> as below:
-> ....
->         rsnd_port: port {
->                 rsnd_endpoint: endpoint {
->                         remote-endpoint =3D <&dw_hdmi0_snd_in>;
+> On Thu, Oct 10, 2024 at 4:25=E2=80=AFPM Paolo Abeni <pabeni@redhat.com> w=
+rote:
+> >
+> >
+> >
+> > On 10/7/24 09:46, Menglong Dong wrote:
+> > > In this commit, we make fib_validate_source/__fib_validate_source ret=
+urn
+> > > -reason instead of errno on error. As the return value of them can be
+> > > -errno, 0, and 1, we can't make it return enum skb_drop_reason direct=
+ly.
+> > >
+> > > In the origin logic, if __fib_validate_source() return -EXDEV,
+> > > LINUX_MIB_IPRPFILTER will be counted. And now, we need to adjust it b=
+y
+> > > checking "reason =3D=3D SKB_DROP_REASON_IP_RPFILTER". However, this w=
+ill take
+> > > effect only after the patch "net: ip: make ip_route_input_noref() ret=
+urn
+> > > drop reasons", as we can't pass the drop reasons from
+> > > fib_validate_source() to ip_rcv_finish_core() in this patch.
+> > >
+> > > We set the errno to -EINVAL when fib_validate_source() is called and =
+the
+> > > validation fails, as the errno can be checked in the caller and now i=
+ts
+> > > value is -reason, which can lead misunderstand.
+> > >
+> > > Following new drop reasons are added in this patch:
+> > >
+> > >    SKB_DROP_REASON_IP_LOCAL_SOURCE
+> > >    SKB_DROP_REASON_IP_INVALID_SOURCE
+> > >
+> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+> >
+> > Looking at the next patches, I'm under the impression that the overall
+> > code will be simpler if you let __fib_validate_source() return directly
+> > a drop reason, and fib_validate_source(), too. Hard to be sure without
+> > actually do the attempt... did you try such patch by any chance?
+> >
 >
->                         dai-format =3D "i2s";
->                         bitclock-master =3D <&rsnd_endpoint>;
->                         frame-master =3D <&rsnd_endpoint>;
+> I analysed the usages of fib_validate_source() before. The
+> return value of fib_validate_source() can be -errno, "0", and "1".
+> And the value "1" can be used by the caller, such as
+> __mkroute_input(). Making it return drop reasons can't cover this
+> case.
 >
->                         playback =3D <&ssi2>;
->                 };
->         };
-> ....
+> It seems that __mkroute_input() is the only case that uses the
+> positive returning value of fib_validate_source(). Let me think
+> about it more in this case.
+
+Hello,
+
+After digging into the code of __fib_validate_source() and __mkroute_input(=
+),
+I think it's hard to make __fib_validate_source() return drop reasons
+directly.
+
+The __fib_validate_source() will return 1 if the scope of the
+source(revert) route is HOST. And the __mkroute_input()
+will mark the skb with IPSKB_DOREDIRECT in this
+case (combine with some other conditions). And then, a REDIRECT
+ICMP will be sent in ip_forward() if this flag exists.
+
+I don't find a way to pass this information to __mkroute_input
+if we make __fib_validate_source() return drop reasons. Can we?
+
+An option is to add a wrapper for fib_validate_source(), such as
+fib_validate_source_reason(), which returns drop reasons. And in
+__mkroute_input(), we still call fib_validate_source().
+
+What do you think?
+
+Thanks!
+Menglong Dong
+
 >
-> With commit 547b02f74e4a ("ASoC: rsnd: enable multi Component support for
-> Audio Graph Card/Card2"), support for multiple ports was added. This caus=
-ed
-> probe failures on HiHope boards, as the endpoint could not be retrieved d=
-ue
-> to incorrect device node pointers being used.
->
-> This patch fixes the issue by updating the `rsnd_dai_of_node()` and
-> `rsnd_dai_probe()` functions to use the correct device node pointers base=
-d
-> on the port names ('port' or 'ports'). It ensures that the endpoint is
-> properly parsed for both single and multi-port configurations, restoring
-> compatibility with HiHope boards.
->
-> Fixes: 547b02f74e4a ("ASoC: rsnd: enable multi Component support for Audi=
-o Graph Card/Card2")
-> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/sound/soc/sh/rcar/core.c
-> +++ b/sound/soc/sh/rcar/core.c
-> @@ -1281,7 +1281,9 @@ static int rsnd_dai_of_node(struct rsnd_priv *priv,=
- int *is_graph)
->                 if (!of_node_name_eq(ports, "ports") &&
->                     !of_node_name_eq(ports, "port"))
->                         continue;
-> -               priv->component_dais[i] =3D of_graph_get_endpoint_count(p=
-orts);
-> +               priv->component_dais[i] =3D
-> +                       of_graph_get_endpoint_count(of_node_name_eq(ports=
-, "ports") ?
-> +                                                   ports : np);
-
-As of_node_name_eq() is not inline or __pure, of_node_name_eq(ports,
-"ports") will be called twice. So it may make sense to add a helper,
-combining the selection with the validation above:
-
-    const struct device_node *pick_endpoint_node_for_ports(const
-struct device_node *np,
-                const struct device_node *e_ports, const struct
-device_node *e_port)
-    {
-            if (of_node_name_eq(ports, "ports"))
-                    return e_ports;
-            if (of_node_name_eq(ports, "port"))
-                    return e_port;
-            return NULL;
-    }
-
->                 nr +=3D priv->component_dais[i];
->                 i++;
->                 if (i >=3D RSND_MAX_COMPONENT) {
-> @@ -1493,7 +1495,8 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
->                         if (!of_node_name_eq(ports, "ports") &&
->                             !of_node_name_eq(ports, "port"))
->                                 continue;
-> -                       for_each_endpoint_of_node(ports, dai_np) {
-> +                       for_each_endpoint_of_node(of_node_name_eq(ports, =
-"ports") ?
-> +                                                 ports : np, dai_np) {
-
-Likewise.
-
->                                 __rsnd_dai_probe(priv, dai_np, dai_np, 0,=
- dai_i);
->                                 if (!rsnd_is_gen1(priv) && !rsnd_is_gen2(=
-priv)) {
->                                         rdai =3D rsnd_rdai_get(priv, dai_=
-i);
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> > Thanks!
+> >
+> > Paolo
+> >
 
