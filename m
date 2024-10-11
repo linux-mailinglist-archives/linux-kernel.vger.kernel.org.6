@@ -1,117 +1,104 @@
-Return-Path: <linux-kernel+bounces-361827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72E6799AD6F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:18:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 870E599ADFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:18:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 18F2D1F26A1F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:18:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4A411C222EB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:18:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D5F91D4336;
-	Fri, 11 Oct 2024 20:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C0BC1D1512;
+	Fri, 11 Oct 2024 21:18:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="H5LPJ5JX"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="LZ+tSF9W"
+Received: from mx12lb.world4you.com (mx12lb.world4you.com [81.19.149.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5406F1D2707
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:17:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34C2D10A1F;
+	Fri, 11 Oct 2024 21:18:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728677848; cv=none; b=El9A7HN1XFGVaszAK6zVDlWDs7AjtBHh3b6ZJt/5xvRGQcAyNilL2Q9pE5KvOIxSQ89tt1nEfE92dURv/CqCUDd0GhvaJUemNaf+8F395qBtJ6bsthzucPJnW0vqnTmvlYcEEx731g2n4VzL7c9yL/+aoX/ZgJmwFSTLiWBUhGc=
+	t=1728681525; cv=none; b=XhC4o6yfzMrw37yivFdSNwDKKloLe5vLZ8wkfz9YQBOVujNoS90BzvkeGk0GSx/DzIT+eeK3zfNsxZmMGDrOE/MekQq26u5I45CzsfrcWA8i5ZldyGxcnxA41vkb5M89AUJRDpTwt1NFFOPvDPiLTseanMBuLSrAVKdKEnpzLYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728677848; c=relaxed/simple;
-	bh=5M6ZDjw0MU4A/OwviHm+a622lr9vP5tFcBVBN7fGyS8=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=T50Z5N7cqszSHUHVbYvYm5dSA/Ixzp3wftSS9DNmawc9lEbyuSVOjCMC5LowZLBHbCu7oOdtxk/sOnPWlJYacVPf2A2opvESLV66aFsnAs4/RYiecIx6eUVOs4utGOtH57av5AaUPsphHz/voR6guE1PQsiOvZCjiXtoSsMJyfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=H5LPJ5JX; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGp7r066561;
-	Fri, 11 Oct 2024 15:16:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728677811;
-	bh=wQeXaz16g8BvuxKa6rSagWr4SkeKW522Qc0ciOgW77o=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=H5LPJ5JXq1ArKfQBFd2ugHL4KygNFBH8HvkOz7RB4s86xj8ZKDHcmtPRxtCqdcV7A
-	 qErW2owdJVHxq7wCHadpTsILllv7jnLsszRcb4uowtcWiPzvDZsIoC4xln77Aev2KO
-	 +L8GpFW2jril8XTH/daXy9i5I3oPSTx6v6ZEn9rg=
-Received: from DFLE115.ent.ti.com (dfle115.ent.ti.com [10.64.6.36])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGoqx071103;
-	Fri, 11 Oct 2024 15:16:50 -0500
-Received: from DFLE106.ent.ti.com (10.64.6.27) by DFLE115.ent.ti.com
- (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Oct 2024 15:16:50 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE106.ent.ti.com
- (10.64.6.27) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Oct 2024 15:16:50 -0500
-Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGkCM102075;
-	Fri, 11 Oct 2024 15:16:50 -0500
-From: Andrew Davis <afd@ti.com>
-To: Andre Przywara <andre.przywara@arm.com>,
-        Russell King
-	<linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer
-	<s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>, Andrew Lunn <andrew@lunn.ch>,
-        Sebastian
- Hesselbarth <sebastian.hesselbarth@gmail.com>,
-        Gregory Clement
-	<gregory.clement@bootlin.com>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian
- Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>
-CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <imx@lists.linux.dev>, Andrew Davis <afd@ti.com>
-Subject: [PATCH v3 6/6] arm/xen: Switch to new sys-off handler API
-Date: Fri, 11 Oct 2024 15:16:45 -0500
-Message-ID: <20241011201645.797394-7-afd@ti.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241011201645.797394-1-afd@ti.com>
-References: <20241011201645.797394-1-afd@ti.com>
+	s=arc-20240116; t=1728681525; c=relaxed/simple;
+	bh=q8fhvin208PWRe3ASvL8VB/S1FAEsxty2mOECPGJkhk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CQ1aW9q02RWaTlWOb+kUP+eOpH6ZBfyHqmHkRRsKl21elDlabzm/d5392zzqSMGvsuU1E98HQY76JAJ4mT/n+06skePl5ytPFZ/05dJD/+qeoLanYRlWt3uhkggA9niyZW+DXeWPmVKBcG11I5kQlMCtPV38piE9cFA+2wKtlA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=LZ+tSF9W; arc=none smtp.client-ip=81.19.149.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=U4RHv9v6ZhC8cnkTz8y7JlOr/v6zNKbbWEOI5pht8Z0=; b=LZ+tSF9WCSrPPw0HNke0G7Gr07
+	NEzrFV5VUbOdNehlee5ZPfU/R3GT/m3SZbBtGUfBKd/NXSRcxAVbLXFec7xoFCWk3ci2nXMjRvFgc
+	Vcg8OtSxmJpPwIS0cvscKoNsO7R4bkGwz4f2/DOmR0+Y0BXqmqETD7atP+mOYLLAuawo=;
+Received: from [88.117.56.173] (helo=[10.0.0.160])
+	by mx12lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1szM5K-000000003cY-0f2y;
+	Fri, 11 Oct 2024 22:18:02 +0200
+Message-ID: <769f3405-9905-4a26-ba8a-baf30e591f54@engleder-embedded.com>
+Date: Fri, 11 Oct 2024 22:17:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] net: mtk_eth_soc: use ethtool_puts
+Content-Language: en-US
+To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
+Cc: Felix Fietkau <nbd@nbd.name>, Sean Wang <sean.wang@mediatek.com>,
+ Mark Lee <Mark-MC.Lee@mediatek.com>, Lorenzo Bianconi <lorenzo@kernel.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ "open list:ARM/Mediatek SoC support" <linux-kernel@vger.kernel.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-arm-kernel@lists.infradead.org>,
+ "moderated list:ARM/Mediatek SoC support"
+ <linux-mediatek@lists.infradead.org>
+References: <20241011200225.7403-1-rosenp@gmail.com>
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <20241011200225.7403-1-rosenp@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-Kernel now supports chained power-off handlers. Use
-register_platform_power_off() that registers a platform level power-off
-handler. Legacy pm_power_off() will be removed once all drivers and archs
-are converted to the new sys-off API.
+On 11.10.24 22:02, Rosen Penev wrote:
+> Allows simplifying get_strings and avoids manual pointer manipulation.
+> 
+> Tested on Belkin RT1800.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>   drivers/net/ethernet/mediatek/mtk_eth_soc.c | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> index 9aaaaa2a27dc..6d93f64f8748 100644
+> --- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> +++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
+> @@ -4328,10 +4328,8 @@ static void mtk_get_strings(struct net_device *dev, u32 stringset, u8 *data)
+>   	case ETH_SS_STATS: {
+>   		struct mtk_mac *mac = netdev_priv(dev);
+>   
+> -		for (i = 0; i < ARRAY_SIZE(mtk_ethtool_stats); i++) {
+> -			memcpy(data, mtk_ethtool_stats[i].str, ETH_GSTRING_LEN);
+> -			data += ETH_GSTRING_LEN;
+> -		}
+> +		for (i = 0; i < ARRAY_SIZE(mtk_ethtool_stats); i++)
+> +			ethtool_puts(&data, mtk_ethtool_stats[i].str);
 
-Signed-off-by: Andrew Davis <afd@ti.com>
----
- arch/arm/xen/enlighten.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/arch/arm/xen/enlighten.c b/arch/arm/xen/enlighten.c
-index a395b6c0aae2a..8655bc3d36347 100644
---- a/arch/arm/xen/enlighten.c
-+++ b/arch/arm/xen/enlighten.c
-@@ -541,7 +541,7 @@ static int __init xen_late_init(void)
- 	if (!xen_domain())
- 		return -ENODEV;
- 
--	pm_power_off = xen_power_off;
-+	register_platform_power_off(xen_power_off);
- 	register_restart_handler(&xen_restart_nb);
- 	if (!xen_initial_domain()) {
- 		struct timespec64 ts;
--- 
-2.39.2
-
+Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
 
