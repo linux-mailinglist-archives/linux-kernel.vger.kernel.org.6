@@ -1,182 +1,157 @@
-Return-Path: <linux-kernel+bounces-361194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C80899A4EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:23:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8545199A4F8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:24:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5818A2859A0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:23:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D8EB1F225E6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D96CF218D7C;
-	Fri, 11 Oct 2024 13:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A46D5218D69;
+	Fri, 11 Oct 2024 13:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FfiWsNK2"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YBFvuGBC"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABB5621A714;
-	Fri, 11 Oct 2024 13:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1E6A2185B1;
+	Fri, 11 Oct 2024 13:24:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728652857; cv=none; b=MCvEAPV/g+D7RGNgImmvI6i48S1lzqW/Dk2vGu1RCQ3kIDIoO9nB8p4HJPoDl+KffQ5aFHFXTE4655ZYFGMUZFZ1gAYwLJowWESgdSAojF9qTEJE6D8BfZB5E0TxeePEFn1OLyKvxbcYjSmOmV4i45Rb5Ggw1xauDD/J3f0iLFY=
+	t=1728653088; cv=none; b=dBKas9y6g38BRbf2Rqp3/jqeuJjp4qzWuzSbrPy6Q7GZbyAta3LOBRy62rGBOC13sSg8e/1D4T6gPnDl4GRtza1YQuZKvtQxgLlcOpslXPubJKG4FQHWg4bzlIl5L7aPvH8SENKhT+o5BJC+FOCAOb/T7TzUmvzW+HIGOs5LWaw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728652857; c=relaxed/simple;
-	bh=e8FifqVONBIXYDPO3q4p/oVtmcyOoSKPN3d75PQqyyo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fXIF3jvBrE2MRP+GO3g8ATK1EtEmfZN4lO+kdsCbN9aZU3RFU1/u8m+zM2rvAbkDDYycKrkl5/ZZICr4Xfizv/Nc1qs773sAror3kdFsAv7yHbWHhFekIir4be/V0rqeU7z0oTgH2+/4vtS6PXOPImYLzbrWlBM4QrJ6lMljRuE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FfiWsNK2; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
-	Content-ID:Content-Description:In-Reply-To:References;
-	bh=s5uwGYftDca6DbfMfT2/9OXcA7gA2HJJHNWbl7asyc4=; b=FfiWsNK26T7cDR9ImV0CPANc/+
-	Jc9UWigVdbq2gYCZKGrBjk9mSDEn/d1dPk1S7z3s8eKK2JbO4tAbsGNU25ZrhDjEuhhOUCTsah6IB
-	tolqnRp1VMaB8PBxPd4HPD+A2GKb18pF4LOqqS+5K0/8Bxe3XPDzhVvhCMIURaRBu9lFlio1J4eUw
-	3fI64Hl3xUgWmmjsf1LXslh+oZKCXjh3cMJZFdx9TKcUWd5orSIDnLGIVi9Ebm7aVYEC3b3hbPLpk
-	/sYYoIReu14K5tRtOyD9pbvMv2xYSY452ICbussHgJTPruNrPEW8XKHSXz4mPACuj2Ra8C148tgY2
-	30Yq5DgA==;
-Received: from 2a02-8389-2341-5b80-02eb-b750-687c-51db.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:2eb:b750:687c:51db] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1szFZb-0000000GQgt-0Dz6;
-	Fri, 11 Oct 2024 13:20:51 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: axboe@kernel.dk,
-	akpm@linux-foundation.org
-Cc: viro@zeniv.linux.org.uk,
-	dhowells@redhat.com,
-	ming.lei@redhat.com,
-	linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v3] iov_iter: don't require contiguous pages in iov_iter_extract_bvec_pages
-Date: Fri, 11 Oct 2024 15:20:22 +0200
-Message-ID: <20241011132047.1153249-1-hch@lst.de>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728653088; c=relaxed/simple;
+	bh=iIufuyOteBXsvMYuxWsNVz1UkSne8TnyU6hpEqh44yI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tX2oUa0++kCMLTSLL0bPs15tM8++++AgLkXsxsNzQgxdVjmOU/XQeTWBm4oj0QIF+TpJBseBOZqnUoOQ7yCeWXBOHTgGACewNTaZZSVR98PC+q3pZ7UNir2d0CknLfVNUOiEktSZ+QmFqi9p+DfJw1fElCN8untHUf1CdYAYIyY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YBFvuGBC; arc=none smtp.client-ip=192.198.163.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728653086; x=1760189086;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=iIufuyOteBXsvMYuxWsNVz1UkSne8TnyU6hpEqh44yI=;
+  b=YBFvuGBCB1zmX1UEEcMwEsnMSOqqV28qPzwYCMAyb0Nv6q25FU/ObfD8
+   N4SvU7NR0x3vVkyFwUtIi6NpPeZn3l/CDuA83KFISYvQU4bMIboTOepjK
+   NpNxly+G9ufPc9X9vkMjApweBzqOBto3xaDj0yROKeN0wW5f/hEmefZpE
+   0j//lUZOuD1KmtE0Ygb/ocJ3XnYh3a9+wVrVOFO2gnYlBED/wPnlRNgbi
+   5tgLtiiBfIge/bEAngvRL7oXeovftal9hg/C4W6kizDiN/MR6ABb/XqEN
+   68N6XZxQN1TJmPHjHZDRuFiT8/ISSc0SOcJ6f70/UkYsysCv8FLJjQYhn
+   Q==;
+X-CSE-ConnectionGUID: UU6h8R+/Qk6y4UtnNiKrvA==
+X-CSE-MsgGUID: /9AnyVUgT+iCCaZN+AXCPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27523126"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="27523126"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:24:43 -0700
+X-CSE-ConnectionGUID: 9HFN1MVJREGnXwoFJGKiNg==
+X-CSE-MsgGUID: lLrqMJBrQo+K8cdGK7CVbw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="107640626"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:24:38 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,  Andrew Morton
+ <akpm@linux-foundation.org>,  linux-mm@kvack.org,
+  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,  Dan Williams
+ <dan.j.williams@intel.com>,  Davidlohr Bueso <dave@stgolabs.net>,
+  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
+ <apopple@nvidia.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Baoquan He
+ <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison Schofield
+ <alison.schofield@intel.com>
+Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+In-Reply-To: <12c0a19e-784d-4ac0-8d3c-d5242bcd3723@redhat.com> (David
+	Hildenbrand's message of "Fri, 11 Oct 2024 13:30:15 +0200")
+References: <20241010065558.1347018-1-ying.huang@intel.com>
+	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
+	<87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+	<ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
+	<b8262026-533b-497b-9713-fa3e32f76d9f@redhat.com>
+	<ZwkI62qBAbc02O8C@smile.fi.intel.com>
+	<ZwkJyMaBnN84Kbg7@smile.fi.intel.com>
+	<12c0a19e-784d-4ac0-8d3c-d5242bcd3723@redhat.com>
+Date: Fri, 11 Oct 2024 21:21:05 +0800
+Message-ID: <87msja93ni.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Type: text/plain; charset=ascii
 
-The iov_iter_extract_pages interface allows to return physically
-discontiguous pages, as long as all but the first and last page
-in the array are page aligned and page size.  Rewrite
-iov_iter_extract_bvec_pages to take advantage of that instead of only
-returning ranges of physically contiguous pages.
+David Hildenbrand <david@redhat.com> writes:
 
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
-[hch: minor cleanups, new commit log]
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
+> On 11.10.24 13:19, Andy Shevchenko wrote:
+>> On Fri, Oct 11, 2024 at 02:15:55PM +0300, Andy Shevchenko wrote:
+>>> On Fri, Oct 11, 2024 at 12:51:09PM +0200, David Hildenbrand wrote:
+>>>> On 11.10.24 12:49, Andy Shevchenko wrote:
+>>>>> On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
+>>>>>> David Hildenbrand <david@redhat.com> writes:
+>>>>>>> On 10.10.24 08:55, Huang Ying wrote:
+>> ...
+>> 
+>>>>>>> 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
+>>>>>>
+>>>>>> Yes.  This can improve code readability.
+>>>>>>
+>>>>>> A possible issue is that "_root" will be evaluated twice in above macro
+>>>>>> definition.  IMO, this should be avoided.
+>>>>>
+>>>>> Ideally, yes. But how many for_each type of macros you see that really try hard
+>>>>> to achieve that? I believe we shouldn't worry right now about this and rely on
+>>>>> the fact that root is the given variable. Or do you have an example of what you
+>>>>> suggested in the other reply, i.e. where it's an evaluation of the heavy call?
+>>>>>
+>>>>>> Do you have some idea about
+>>>>>> how to do that?  Something like below?
+>>>>>>
+>>>>>> #define for_each_resource_XXX(_root, _p)                                \
+>>>>>> 	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
+>>>>>> 	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
+>>>>>
+>>>>> This is a bit ugly :-( I would avoid ugliness as long as we have no problem to
+>>>>> solve (see above).
+>>>>
+>>>> Fully agreed, I didn't quite understand the concern about "evaluation" at
+>>>> first.
+>>>
+>>> It's a basic concept for macros and a good mine field even for the simple
+>>> cases.
+>>>
+>>>> If it's just reading a variable twice, it doesn't matter at all right
+>>>> now.
+>>>
+>>> The problem (even if it's a variable) is that the content of variable can be
+>>> changed when run in non-atomic context, i.e. two evaluations will give two
+>>> different results. Most "simple" for_each macros leave this exercise to the
+>>> caller. That's what I also suggest for now.
+>> For any context as Ying provided an example with calls, they have to
+>> be
+>> idempotent, or you definitely get two different pointers for these, which is
+>> bigger issue that what I described above.
+>
+> Ah, now I understood what Ying meant: if the root pointer is modified
+> within the loop body we'd be in trouble.
 
-v3:
- - open code the iterator
- - improve commit log and comments
+Given we cannot provide a good macro implementation to traverse only the
+descendant tree of _root, I suggest to just keep current
+for_each_resource() implementation.  There is only one user of the
+proposed new macro to traverse the descendant tree.  So, I suggest to
+open coded the for loop instead.  More comments can be added to make it
+clear.
 
- lib/iov_iter.c | 67 +++++++++++++++++++++++++++++++++-----------------
- 1 file changed, 45 insertions(+), 22 deletions(-)
-
-diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-index 1abb32c0da50bc..9fc06f5fb7489f 100644
---- a/lib/iov_iter.c
-+++ b/lib/iov_iter.c
-@@ -1677,8 +1677,8 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
- }
- 
- /*
-- * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
-- * not get references on the pages, nor does it get a pin on them.
-+ * Extract a list of virtually contiguous pages from an ITER_BVEC iterator.
-+ * This does not get references on the pages, nor does it get a pin on them.
-  */
- static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
- 					   struct page ***pages, size_t maxsize,
-@@ -1686,35 +1686,58 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
- 					   iov_iter_extraction_t extraction_flags,
- 					   size_t *offset0)
- {
--	struct page **p, *page;
--	size_t skip = i->iov_offset, offset, size;
--	int k;
-+	size_t skip = i->iov_offset, size = 0;
-+	struct bvec_iter bi;
-+	int k = 0;
- 
--	for (;;) {
--		if (i->nr_segs == 0)
--			return 0;
--		size = min(maxsize, i->bvec->bv_len - skip);
--		if (size)
--			break;
-+	if (i->nr_segs == 0)
-+		return 0;
-+
-+	if (i->iov_offset == i->bvec->bv_len) {
- 		i->iov_offset = 0;
- 		i->nr_segs--;
- 		i->bvec++;
- 		skip = 0;
- 	}
-+	bi.bi_size = maxsize + skip;
-+	bi.bi_bvec_done = skip;
-+
-+	maxpages = want_pages_array(pages, maxsize, skip, maxpages);
-+
-+	while (bi.bi_size && bi.bi_idx < i->nr_segs) {
-+		struct bio_vec bv = bvec_iter_bvec(i->bvec, bi);
-+
-+		/*
-+		 * The iov_iter_extract_pages interface only allows an offset
-+		 * into the first page.  Break out of the loop if we see an
-+		 * offset into subsequent pages, the caller will have to call
-+		 * iov_iter_extract_pages again for the reminder.
-+		 */
-+		if (k) {
-+			if (bv.bv_offset)
-+				break;
-+		} else {
-+			*offset0 = bv.bv_offset;
-+		}
- 
--	skip += i->bvec->bv_offset;
--	page = i->bvec->bv_page + skip / PAGE_SIZE;
--	offset = skip % PAGE_SIZE;
--	*offset0 = offset;
-+		(*pages)[k++] = bv.bv_page;
-+		size += bv.bv_len;
- 
--	maxpages = want_pages_array(pages, size, offset, maxpages);
--	if (!maxpages)
--		return -ENOMEM;
--	p = *pages;
--	for (k = 0; k < maxpages; k++)
--		p[k] = page + k;
-+		if (k >= maxpages)
-+			break;
-+
-+		/*
-+		 * We are done when the end of the bvec doesn't align to a page
-+		 * boundary as that would create a hole in the returned space.
-+		 * The caller will handle this with another call to
-+		 * iov_iter_extract_pages.
-+		 */
-+		if (bv.bv_offset + bv.bv_len != PAGE_SIZE)
-+			break;
-+
-+		bvec_iter_advance_single(i->bvec, &bi, bv.bv_len);
-+	}
- 
--	size = min_t(size_t, size, maxpages * PAGE_SIZE - offset);
- 	iov_iter_advance(i, size);
- 	return size;
- }
--- 
-2.45.2
-
+--
+Best Regards,
+Huang, Ying
 
