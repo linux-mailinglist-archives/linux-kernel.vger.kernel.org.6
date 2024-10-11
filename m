@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-361427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D7FD99A809
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:40:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC8D699A83B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE5121F23D9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:40:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 185B81C22C71
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:48:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B92DF195FF1;
-	Fri, 11 Oct 2024 15:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C57197A68;
+	Fri, 11 Oct 2024 15:47:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dASfOhcj"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="aKnMQXAA"
+Received: from mx07-00178001.pphosted.com (mx07-00178001.pphosted.com [185.132.182.106])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9169D188CB1;
-	Fri, 11 Oct 2024 15:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984278121F;
+	Fri, 11 Oct 2024 15:47:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.132.182.106
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661244; cv=none; b=YpPfSNEvnXoW6wU1TsErGUBegBO/TYUIL01C+GdiVwWXTuBir8JTLh6ZPcnGloxBp5hGN3N6Ygu9hO7VBsjxhNNaMvnSha9Rda8QT0ZYLQ9rDgFxs1QTqWaL100hNw4fR8p9v7u0oe6sXTEbxKDvboxrOrSfJFdyLH4A6T0aJrM=
+	t=1728661679; cv=none; b=sFr+FNkW1WmKlDm4qylCjf3OjNO0uBYL8HJjwIFBmbLqWF+hotgNI53DCpKoh96VrxsEcoAVT/uNkhMaCM69zPoH597kQeImJKUjs/9ymCF8xtnq2bmH7JVuLIY+GXJCBhpaJY6uNkcDdeLZuM2cfc129ktvzwYCJ0Gr3AdC3D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661244; c=relaxed/simple;
-	bh=txzseXvjE2O+sLlURQCWNSGk2j8iSYWpIn/M93xrnvI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AcQERrxtlKFSPfbvq4WU2EWTDsuJWn+PBzgTswjOHOb0EazUcuP405o4fJgRkX0phPbtaYJZDaXfvi4VP/hRcwvo6MRJHGYMqiIErjfvFRHFla+/+Wfj0z0xb4NM5OYG93ehvSyzk2HIpAXF9XUUf18svUsjVqbDdmznSy6bc18=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dASfOhcj; arc=none smtp.client-ip=209.85.208.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2facaa16826so19888211fa.0;
-        Fri, 11 Oct 2024 08:40:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728661241; x=1729266041; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=khBtE4bfekeyDh6IrhDJxWXSph73WxxA+3qlzAGlTrQ=;
-        b=dASfOhcjPvBwde/DBl0KJAZ4qlU8PRzrie75rD4bphcY2dPkrQyLc0oW2T+x/rCrW5
-         Ji/4Cl2IDjlAT9eScaLTzNTMdyla2e1b0ULtRbXQ6eSFkw8uVgYv8AWlTc8Ael0kPvNp
-         HStVJeYz64u/rSd9GAUxWV50bXcqqY5AydkZGZOMjCXMJzxugYC8Ry2TPbKFmwKpafVG
-         zxFkCNKa2Hy+U+5p1WUffHVlNK3K1u5GM38tCWaoWmT2cqRbMClWBJWq0Z2e493TzEpT
-         FShvrjpDSa9E6ROd0sAESO9Tb5Bu8HnwEHKdCxuEzoS5oMzxIFzw4eQuJVPet4Og4pVq
-         sIfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728661241; x=1729266041;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=khBtE4bfekeyDh6IrhDJxWXSph73WxxA+3qlzAGlTrQ=;
-        b=FJDp0qKGn4IyMo5lzDhVm0MdbVBzFL0It/qkesHY+0yWqVrtyFrPN83mQHI29SetqB
-         0qjxJz2c1HGMLR0+P963huLBrhAnR+Scppt27N43kV3L+o0SKGsVlsyBLJJC4QMJaGFp
-         Jffm7RgQMuZ0HnUy2rPP7iCQFPkA7Qw6KjpaFFeY/+bI4ULJqBPpAHDdVVgbRlJGMnLj
-         VEhyvQgOCHa0uU0iwrIYoOHfQ3mS2ZC4P+dnwoEyS6kO+r0oTkqD6R/CV/2FfBxFH6uc
-         Zeq2fKHlXJEgESLE/unjRyQIFmQGettVS4XKxOJS4N5Iq+cIDaj6PCWnjEqM1DkDy6OS
-         rZJw==
-X-Forwarded-Encrypted: i=1; AJvYcCUwJg/Yp0QXtbc8xu4IIe94evWpUB+5x8xYu5m/8UTm9myLX83XpviMz5uR5d8qPeNKjdcaLHJffDB3O0rr@vger.kernel.org, AJvYcCVffHSZOsX4/gOD/r/iHxbIyUgjqWp47ZF3CuHxM9kjq4wWqRNNGeDJe92yr5pR6Tc5fG5u3CmbFaGV@vger.kernel.org, AJvYcCWG4SHiPNS1S5QgAFotTYVE+xLekuJfz5nNqYb9XV4XuolXmxSqcwfj+JmdJCZlVGxOEZZBeAD943UnlA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8fgsnNxwAPdcZMz2ZSuUXqVxZLIwJT8DI/2E6jhoKiR1X0E+M
-	Oz8LdLQHDKf6aCs4+zbU2hlZZzHWM9UK4CvJ0OHiIuEaBRGPtti8JD1qrQtF
-X-Google-Smtp-Source: AGHT+IHep9OrMoxi7CVDlu+vi5Q0yCuyEnYZKWCtJ8HitXCyhFhaycpIEJ/UUfG2VXmQImYcI0ahMw==
-X-Received: by 2002:a05:651c:1548:b0:2f9:cc40:6afe with SMTP id 38308e7fff4ca-2fb3270b3b4mr15435211fa.14.1728661240359;
-        Fri, 11 Oct 2024 08:40:40 -0700 (PDT)
-Received: from KILLINGMACHINE ([46.188.27.115])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb245799fcsm5281791fa.7.2024.10.11.08.40.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 08:40:38 -0700 (PDT)
-Date: Fri, 11 Oct 2024 18:40:36 +0300
-From: Sergey Matsievskiy <matsievskiysv@gmail.com>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com,
-	lars.povlsen@microchip.com, horatiu.vultur@microchip.com,
-	andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH 1/1] pinctrl: ocelot: fix system hang on level based
- interrupts
-Message-ID: <ZwlG9AKToZFFPAvi@KILLINGMACHINE>
-References: <20241006181310.181309-1-matsievskiysv@gmail.com>
- <20241006181310.181309-2-matsievskiysv@gmail.com>
- <CACRpkdbJ7xh1qOYaZOh+s+Tj_GgE4LXMFuOgL1zpxBRqJQVx6w@mail.gmail.com>
+	s=arc-20240116; t=1728661679; c=relaxed/simple;
+	bh=lM5/KYg7Fxq95Kn/TgBwcphBGdjVeKeLfxmH0g3IwEk=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=G/UNpMWmiU8xRP2NGDIoHjqWckTruwtYt+5nMOyIZFq0hbqQOWf2xiYRHTDz4SHJ23XsmAYeAoTyzGbyXxJjqRapn/GIhWvjho78YE3k/pZPX7xpWN3V6bn+avM39ync8r7+3jaG0FsMnUvsSHxBMaCwK+h+Rabucx5EAvKYoJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=aKnMQXAA; arc=none smtp.client-ip=185.132.182.106
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
+Received: from pps.filterd (m0369458.ppops.net [127.0.0.1])
+	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BCUVHT000480;
+	Fri, 11 Oct 2024 17:47:30 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=selector1; bh=EWFrQzCRBMV4WxG/iPDIlA
+	u8I6Hlt8CYexPjPZ/79FM=; b=aKnMQXAAPBuDQqaOQ9jtbxPosdQJMyEU4EntXp
+	9N5I+cu7+SB+ild+A4DFs2SFQ+H8Tz5Shd+Xmn2BsGfEohVtuRPHVbWKQ2Hryx5n
+	dhpfx+aXD9c9zGyH02RqNmVYcHugJ5ogIGYrLJdPkho6ir1Tey560zBsLV3OX8nl
+	7MHc5iNqy/K6gMJAN5PXVK7ER/gNM6nUzpa3dSLWsluM41ugNvhv0qgefBZXwW75
+	RgDWPTSQ95Ldrilz/1FXCWzDCwEfDw2pCy+/foUu/rAQgPhE3Taeh66Qo8bep0QO
+	CYn5enq2QR+bgfpnXHM0+YN/PaBrQIf5TEmOAQ2b768sRzjQ==
+Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
+	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 423f11da7a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 17:47:30 +0200 (MEST)
+Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
+	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id A789240049;
+	Fri, 11 Oct 2024 17:46:15 +0200 (CEST)
+Received: from Webmail-eu.st.com (shfdag1node1.st.com [10.75.129.69])
+	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id D43B229E023;
+	Fri, 11 Oct 2024 17:43:14 +0200 (CEST)
+Received: from localhost (10.252.28.117) by SHFDAG1NODE1.st.com (10.75.129.69)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
+ 2024 17:43:14 +0200
+From: Gatien Chevallier <gatien.chevallier@foss.st.com>
+Subject: [PATCH v2 0/4] Add support for stm32mp25x RNG
+Date: Fri, 11 Oct 2024 17:41:40 +0200
+Message-ID: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CACRpkdbJ7xh1qOYaZOh+s+Tj_GgE4LXMFuOgL1zpxBRqJQVx6w@mail.gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADRHCWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyjHQUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0ND3aK8dN3cAiNT3TIj3SQzEzOD1DRDw1TDNCWgjoKi1LTMCrBp0bG
+ 1tQBlNmmyXQAAAA==
+X-Change-ID: 20241011-rng-mp25-v2-b6460ef11e1f
+To: Olivia Mackall <olivia@selenic.com>,
+        Herbert Xu
+	<herbert@gondor.apana.org.au>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Maxime
+ Coquelin <mcoquelin.stm32@gmail.com>,
+        Alexandre Torgue
+	<alexandre.torgue@foss.st.com>,
+        Lionel Debieve <lionel.debieve@foss.st.com>, <marex@denx.de>
+CC: <linux-crypto@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-stm32@st-md-mailman.stormreply.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+        Gatien Chevallier <gatien.chevallier@foss.st.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE1.st.com
+ (10.75.129.69)
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Fri, Oct 11, 2024 at 11:18:55AM +0200, Linus Walleij wrote:
-> I'm a bit puzzled by the patch because I don't understand it.
+This patchset adds support for the Random Number
+Generator(RNG) present on the stm32mp25x platforms.
+On these platforms, the clock management and the RNG
+parameters are different.
 
-The current implementation only calls chained_irq_enter() and chained_irq_exit()
-if it detects pending interrupts.
+While there, update the RNG max clock frequency on
+stm32mp15 platforms according to the latest specs.
 
-```
-for (i = 0; i < info->stride; i++) {
-	uregmap_read(info->map, id_reg + 4 * i, &reg);
-	if (!reg)
-		continue;
+Tested on the stm32mp257f-ev1 platform with a deep
+power sequence with rngtest before/after the sequence with
+satisfying results.
 
-	chained_irq_enter(parent_chip, desc);
-```
+Same was done on stm32mp135f-dk to make sure no regression was added.
 
-However, in case of GPIO pin configured in level mode and the parent controller
-configured in edge mode, GPIO interrupt might be lowered by the hardware. In the
-result,if the interrupt is short enough, the parent interrupt is still pending
-while the GPIO interrupt is cleared; chained_irq_enter() never gets called and
-the system hangs trying to service the parent interrupt.
+On stm32mp157c-dk2, I didn't perform a power sequence but the rngtest
+results were satisfying.
 
-Moving chained_irq_enter() and chained_irq_exit() outside the for loop ensures
-that they are called even when GPIO interrupt is lowered by the hardware.
+Signed-off-by: Gatien Chevallier <gatien.chevallier@foss.st.com>
+---
+Changes in V2:
+	-Fixes in bindings
+	-Removed MP25 RNG example
+	-Renamed RNG clocks for mp25 to "core" and "bus"
 
-The similar code with chained_irq_enter() / chained_irq_exit() functions
-wrapping interrupt checking loop may be found in many other drivers:
-```
-grep -r -A 10 chained_irq_enter drivers/pinctrl
-```
+---
+Gatien Chevallier (4):
+      dt-bindings: rng: add st,stm32mp25-rng support
+      hwrng: stm32 - implement support for STM32MP25x platforms
+      hwrng: stm32 - update STM32MP15 RNG max clock frequency
+      arm64: dts: st: add RNG node on stm32mp251
 
-> This needs to describe how moving the chained irq calls achieves
-> this effect.
+ .../devicetree/bindings/rng/st,stm32-rng.yaml      | 30 +++++++-
+ arch/arm64/boot/dts/st/stm32mp251.dtsi             | 10 +++
+ drivers/char/hw_random/stm32-rng.c                 | 87 +++++++++++++++++-----
+ 3 files changed, 107 insertions(+), 20 deletions(-)
+---
+base-commit: 1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
+change-id: 20241011-rng-mp25-v2-b6460ef11e1f
 
-If the explanation above satisfies you, I'll elaborate the commit message and
-resend the patch.
+Best regards,
+-- 
+Gatien Chevallier <gatien.chevallier@foss.st.com>
 
---
-Sergey Matsievskiy
 
