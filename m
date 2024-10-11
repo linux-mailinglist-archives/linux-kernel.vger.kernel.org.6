@@ -1,105 +1,139 @@
-Return-Path: <linux-kernel+bounces-361705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEA3299AB9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:55:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F2A99ABA2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:56:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70D712851DA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:55:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 266012834C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:56:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDB761CF7B9;
-	Fri, 11 Oct 2024 18:52:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B64891CFEDE;
+	Fri, 11 Oct 2024 18:53:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XekxK868"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h8yK5X/z"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB697868B;
-	Fri, 11 Oct 2024 18:52:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B631C68AC;
+	Fri, 11 Oct 2024 18:53:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672721; cv=none; b=G7gf/NpP1YKLMwtGkTCHCAMWKZgrMcKoiULYFI5jSA6HG6La9LYqv9VFBK/0M0ZS2glncFAqP1tsaP47N62kkOG4A1jtw2MEzgb9bywBcNvuIiLNvGFSAxogPH19Gh4aBC7tZ+1/9W7H6gE76k/ZqvZa2DOkK6KqHmN1RNStdDM=
+	t=1728672810; cv=none; b=QrVav/CNNN+BN7eyUK6JJKAmMFyRfd3BeznRrrnBxlWkXbE5ksljCRvWnX+HwtCa0NjP+y8TRbzq/hDiAemQaWmz6hNGww6t0jxjGXdEz+doNp9iIoqALXjkQkQh4K3O2cEQRdB8SnIlJHuffK/ci0lpEj1+HWDAf/J3fR5oh3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672721; c=relaxed/simple;
-	bh=Jc/nk5LTKrWWlFX/B0O6+1ZZuWFZCL6ha1DyHuXXhvI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=C0P4B86BZ3xw5K1ZlW5to8d33gixsqZD7iKifJNWywttR4nqKzfNcslenHfXHdnJm3899Llh9DxHhCjDVMtyJEy9DV95lvFO6VJm0H+VyhhVMuBptRMd5blwdNNWFdQFgfv8GKsIq15pAlgUE6++tVd73oex8HsYyyK69zsxeRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XekxK868; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C653AC4CECD;
-	Fri, 11 Oct 2024 18:52:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728672720;
-	bh=Jc/nk5LTKrWWlFX/B0O6+1ZZuWFZCL6ha1DyHuXXhvI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=XekxK868/qmIr+WV4Gdx643wi/FAPj1+Dr5/cd5E1nBZ7arwhUMgMH8lay+xOSN7L
-	 Axo0j9S+xZLB617xe5K7YTctJlA6eGUaa/a6YT9MQZEmftga4m04tH1hHiWw2aH+BG
-	 n+dsUqyfrSRF4OJOEnvwTc9A7tjRi4bpFRk96mHPYK1UlODShOfj4Mhmpt5jOLPBU+
-	 A+fHU+sjXRPEl22W5+AeWx9WqxzfLMCG92AFGH0Dx7QzoOgPN/JJDHvCly1GMDxIru
-	 JS53WiZItW0dicO5fISih4iAbma1zYB1AAzPQ4FMumTzN4oATSYhUe874Zb+g2xCfZ
-	 zM4to4FOOKUWA==
-Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5e98ea02c9dso1013092eaf.2;
-        Fri, 11 Oct 2024 11:52:00 -0700 (PDT)
-X-Gm-Message-State: AOJu0YwFinu3UG7yIMmowMEJ/rfsqVNUTDj5Zh5EzhJXpNsfSEi7xL83
-	Cu3E6bztZSSQxnBDCVdx6SuyGykas8Ld+WhwEA0F2+AJ0DIZJ/jRt4tle29jdHGzFwjpShb421S
-	ZsLFWeVt8UMDR6bFR+UK7s2ZDlZk=
-X-Google-Smtp-Source: AGHT+IEd67iJL9BcP9kjnUS1DPfAWINDJ9CFPDmjc8Imw0r0o5tqFW+CEMI0HOFVpbVlrJcCb2HUIW2I+X77ucbctsI=
-X-Received: by 2002:a4a:ee85:0:b0:5e5:b652:9d14 with SMTP id
- 006d021491bc7-5eb19edd573mr2166175eaf.1.1728672720097; Fri, 11 Oct 2024
- 11:52:00 -0700 (PDT)
+	s=arc-20240116; t=1728672810; c=relaxed/simple;
+	bh=wO52izhtaJkYwZP5/i4Xv7aOxNp/1BOGcLs4pvwgzC8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cP3P+v6tVre095HyDfqT+n4HHyBBLAbraHQw4Yj47j/dkf1k7zH5qMgfLjUrIWFbcsXQWRmD8FX/A7HQRA9wjby03oTELXUPNnyd11O/51nsdlB5RlFVXOLx5MQXSDt2yaw+RXXHdn1H84UeZLqtWtlTPXhMdUMTR9SfUNy8Ln4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h8yK5X/z; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e3f35268so538847e87.3;
+        Fri, 11 Oct 2024 11:53:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728672806; x=1729277606; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tHtdR9gh6gLJx+S+TYBCPLzeRCEOaHqzDMFEdyNLr/w=;
+        b=h8yK5X/zUlTP2z8LFLFXCLQ6qFBI2sLVfFt6siZ2mTTYu+m2l3MSvKxIuimDQmBMfG
+         z96bRpypYseifQXtkXyFQFQYHTpOSczQri0qTiAR6bKaO2bART9eAYp/rKWU8qRy8Psg
+         jLRr8qhJ6jgRDhCIj3gHRwQy2YsOK9qKydpCzl8B13l+6jrMHn4jemRYKhrINuUOzH+r
+         +EpyLJO71OqRoetn5P5Mc91QmW2MQlHcm9FC8F1cnkrpXc/tVIwZZu3bzyLXIBNgBqDj
+         DCSkJNQmuJech/g0mOCNNJ12LMHpN1n27nuGSQe6QcapdMqayC9Y/T/gUdGt+0kFWnuP
+         ds2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728672806; x=1729277606;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tHtdR9gh6gLJx+S+TYBCPLzeRCEOaHqzDMFEdyNLr/w=;
+        b=hSuGSOPLtpxKmkhO8YcfVxGLrQR1oK3V4pfcS1puf26Lus1su7AomCe5pb718P8kqN
+         HVpzi1zpgnYDoWSbqs5kv5isN9ckE7UKQ12Fa+TCPSq+aTCncFOGSrNIHUjVeanKQnvW
+         YhLr7EwTyFsTgX9nLPZTUeHAITMf7yd70g149GPAqO+YD/hnoXQ16z3yJVJVhkA8kaxK
+         ILWV3EarYHf+TesMDYppEQ/6r/QdcBQ4k5gGNksafM1EVqQN5Zdw1T3RWD0utzsG04uL
+         zXA5CkdMvtWkV1vMX8wDWMBi3EFT/Y6FvNMrF8kf3WjgLOe0ov2N1GlJcKsw+UEC4JfY
+         Gm9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUuAD2fDtpwrF4h8oXv7Agmqfb4OWrVU49l17g2hN3Z2pE67leM+7BHYwUUS20T7fM+zXYoBlSIEHIv@vger.kernel.org, AJvYcCVbuORXhtsDOGITpQgv0BeEsNiP33YnAKRllGDs0un+yGUtlVVugjLtQZUPR+KMyytk6rpQiJ4Ys/nSWxj6@vger.kernel.org, AJvYcCVjFAsoiefAlJun0s9zxpDoucgYSO6VpQJ98Cuq3Gf2tB1umw9CIpNIE1smFPw7Xab/48VYDsnetvup@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzBUZhxylfJfDUOG8X1bYbnZOAH3/x86CvIUAnDuOjkUituv8r
+	K9Ip9qPCBvXMhSQwaGUzlrfiYMUxb7gx/aH7uFE6fkxkUEPcgVA5gndMNGCeX4w=
+X-Google-Smtp-Source: AGHT+IH3mQrDWOhMaio0jKUTNt1PDvpFsvG5xMJPLXivdzWr7Pe9AF5R7p6TIiO7uYasJ8Md2mytPg==
+X-Received: by 2002:a05:6512:696:b0:52c:dfa0:dca0 with SMTP id 2adb3069b0e04-539e5731751mr287408e87.43.1728672806125;
+        Fri, 11 Oct 2024 11:53:26 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835d78fsm48459015e9.43.2024.10.11.11.53.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 11:53:25 -0700 (PDT)
+Date: Fri, 11 Oct 2024 20:53:23 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 05/13] iio: chemical: bme680: refactorize set_mode()
+ mode
+Message-ID: <Zwl0IzIp0HssyFTh@vamoirid-laptop>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-6-vassilisamir@gmail.com>
+ <Zwj3tFd549K6ahbY@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4985597.31r3eYUQgx@rjwysocki.net>
-In-Reply-To: <4985597.31r3eYUQgx@rjwysocki.net>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 11 Oct 2024 20:51:49 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0iV4-3-sqmK12ZoRQXzUSgO0NDySe5LZ3z7FMQOFJCymQ@mail.gmail.com>
-Message-ID: <CAJZ5v0iV4-3-sqmK12ZoRQXzUSgO0NDySe5LZ3z7FMQOFJCymQ@mail.gmail.com>
-Subject: Re: [PATCH v2 00/11] thermal: core: Reimplement locking through guards
-To: Linux PM <linux-pm@vger.kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
-	"Rafael J. Wysocki" <rjw@rjwysocki.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwj3tFd549K6ahbY@smile.fi.intel.com>
 
-On Fri, Oct 11, 2024 at 12:22=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysocki.n=
-et> wrote:
+On Fri, Oct 11, 2024 at 01:02:28PM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 10, 2024 at 11:00:22PM +0200, vamoirid wrote:
+> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
+> > 
+> > Refactorize the set_mode() function to use an external enum that
+> > describes the possible modes of the BME680 device instead of using
+> > true/false variables for selecting SLEEPING/FORCED mode.
+> 
+> ...
+> 
+> > -	if (mode) {
+> > -		ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> > -					BME680_MODE_MASK, BME680_MODE_FORCED);
+> > -		if (ret < 0)
+> > -			dev_err(dev, "failed to set forced mode\n");
+> > -
+> > -	} else {
+> > -		ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> > -					BME680_MODE_MASK, BME680_MODE_SLEEP);
+> > -		if (ret < 0)
+> > -			dev_err(dev, "failed to set sleep mode\n");
+> > -
+> > +	switch (mode) {
+> > +	case BME680_SLEEP:
+> > +	case BME680_FORCED:
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> >  	}
+> >  
+> > +	ret = regmap_write_bits(data->regmap, BME680_REG_CTRL_MEAS,
+> > +				BME680_MODE_MASK, mode);
+> > +	if (ret < 0)
+> > +		dev_err(dev, "failed to set ctrl_meas register\n");
+> 
+> This is an information loss. You shuld probably still have a value of mode to
+> be printed.
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
 >
-> Hi Everyone,
->
-> This is a continuation of
->
-> https://lore.kernel.org/linux-pm/2215082.irdbgypaU6@rjwysocki.net/
->
-> and (quite obviously) it is based on that series.
->
-> The majority of the patches in it are new iterations of patches included =
-in
->
-> https://lore.kernel.org/linux-pm/6100907.lOV4Wx5bFT@rjwysocki.net/
->
-> and there is one new patch ([02/11]).
->
-> All of these patches are related to locking, but some of them are prepara=
-tory.
->
-> The series as a whole introduces guards for thermal zones and cooling dev=
-ices
-> and uses them to re-implement locking in the thermal core.  It also uses =
-mutex
-> guards for thermal_list_lock and thermal_governor_lock locking.
->
-> As usual, the details are described by the individual patch changelogs.
 
-This material is now present in the thermal-core-experimental branch
-in linux-pm.git.
+You are right, I missed a return here.
+
+Cheers,
+Vasilis
 
