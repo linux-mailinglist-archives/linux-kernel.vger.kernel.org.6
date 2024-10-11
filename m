@@ -1,113 +1,147 @@
-Return-Path: <linux-kernel+bounces-360623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53278999D5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 280CF999D6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:05:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835F51C226B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:03:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDAF1C22C1B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:05:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E38ECBA2D;
-	Fri, 11 Oct 2024 07:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5E6209F45;
+	Fri, 11 Oct 2024 07:05:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FQFqUwA3"
-Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ztB8wZB8"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C484635
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:03:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7FA11E9067
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728630211; cv=none; b=MrsrnvuR3vfAPnwTJOLNO+2XfzrbTxiBWbog03Cp4bI/g/xx3YKzhYpcycVBxUq4jsy4zSySk/6Skvv5yTWds97mJgBySa7cfEo7rnYVy7VA1kCXjSsL2pCq+c4nQxgVGFjWK/U8FT+L/ToLRApF8YncKkfO9A1rVAlyr+iKkO8=
+	t=1728630337; cv=none; b=uJv0Ne7VmOtdt08oKPTlhZMr9u1X8qNvD+9DI2y36rhet31dRenS8J5ZxndqgoaMNWwIvFudG6264r7D/Hofqf5NlvmkE7njdbVYzpV7qojt6/Wq48W1ZFh1bwv8Z2j17YnxbIVcA/qn26A/gkY8ScExP/43hlhYdvokBR0SF+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728630211; c=relaxed/simple;
-	bh=cUYKvKXx3YacZEKlsfNYw4eUSZHyuCNL6LqQD01H25g=;
+	s=arc-20240116; t=1728630337; c=relaxed/simple;
+	bh=oQVYIhGbEfAnqbdWbSdyP2ZhcG8OZnwQ2cfbNbhQT3s=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AkPXzkIy8ZnMBiZaJ+nfiQjx5F005J6Du/D5zUMSJPmODw9bwHG/3bEGgcUdEndsKhkmlB635OaIpF5m6l8l+9BBMV+wrQ4sZUzzCKvME62d4Dn/cdLV9pF3UWGdAKPpDVjsLEN9SaBSlDWkF+/0EnZypiC5Pq2FPbpQrxBwzOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FQFqUwA3; arc=none smtp.client-ip=209.85.208.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fad784e304so18901201fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:03:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=rOT4/UvhIa7p2EcMB1r5T8O0xd3FboACwzYYpiS2LNZ8D4hAN3AFJAgGoa0v54CFIJVVjmHlHUSw8l7YzPjLCQvVI3d77aBJIN9Yax9CcYmgl+PKVQfePbmVBfTphs6t6NNF0P7ROuEPF9HKPUhIpLli3pnmZ2xNJamzvadPI5M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ztB8wZB8; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a391fdd53fso138915ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:05:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728630208; x=1729235008; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728630335; x=1729235135; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=cUYKvKXx3YacZEKlsfNYw4eUSZHyuCNL6LqQD01H25g=;
-        b=FQFqUwA34iNrCv9+khaqvOZzGT+ODv2idH2ymcqqq4bwDEIVIdVVY4O0bXOuYtc87t
-         wtxoG42/arOMDupfqoxw6kRbNIvfqaPI3sjWfzpdFo0gycRx825DsoN2jwWeDtPZaalO
-         YuZamQ/t+Fu3iS3UbLuX/EQhahtdYU08JCdvnixthqXM/ouEYsRndqrmP8JvDQExrwcU
-         EL1bh6jLiybHAW3Br69yT6ILJL3PTbmmwWQGqXfXiM0Ze+g3nbroqd6nYZqtGhV4u1F/
-         7DsFgM4wrjjZ2CGEZgzoQAMiHPvRypID2ApO3t/nb2Ca3BACMG6M+ilD8QwGNNX340d5
-         FFtA==
+        bh=opgRegBAM5FAXU4C8qQl6ZNe0vpoXti1f24qgQ1xEts=;
+        b=ztB8wZB8UecCP1caU8GfVnMr93xdM+IKU6tCAMPlOXnNxv/9JRhUqx1MW5nxEa9NrN
+         lnX+XBC0JPxdulkEItvwOxJte1y9RQ7QWRyBNTBlbSS7v9vjerkTKTnOOOP2H2H9S2mY
+         lBs1JozJSETBtevIez4BDpReiaWnbmhy5/X4jKkhV1EmIkuQJ34wYuxYhKTpnuMm30QW
+         RROM2LlNlMXlU0vyjbht4ZQWl58LtNQKAzo58XR7fpE1Tq/SLolR/BMgerTkDU8VtQ66
+         I8HogpPuhJ+iUcJa0MSw1F1kiPgX9znbq+x1k7wtpLoGHSZf3Gc48ueRIkUr+YE6cmzf
+         XXvQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728630208; x=1729235008;
+        d=1e100.net; s=20230601; t=1728630335; x=1729235135;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=cUYKvKXx3YacZEKlsfNYw4eUSZHyuCNL6LqQD01H25g=;
-        b=LiDaxAA6Uhq5cIzmE9bGbx9jlLZ+ft+AloXWz16mDBH398iR26uNP9Go51r7EfhArw
-         Iue9FThn1XJEKq+XxXVNR2Tua/gr1UOhoHU5KmewzUKAret3gnIUPlFxmP/F9twlG6oA
-         KULPJYFIEGaQgjcSE+R98GBrBl9qIiZCJI46LrRLbMvhppZDri43uGVljdpccmWVJVjn
-         aoFsBQXwAzKspoIs5iwYaN9NgonrNX3uZbVWMIdbsRqjtjIxK4GkwsyzkEs4mDF82TGx
-         GEiQu3MlkiYjW5wFeZ2uwol2abOFH29dvdU9lyS5tI0bynSB5yeKXt6na+lFRFgnus/y
-         VUkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzkzSvymDwGV5vt/NiEWhq6UpOVUQ/0N93bQO/qjk0HwueANftXw4STqSgchUEg3jhtDp1IIQC1iRCcW0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKfwz9QUOeFyuMBYyjrUtI44COSq/m8Yse1z0gtts0e6H5TU9s
-	7493ssoY5bI2oaThGf6jb8VSChROFM9VvqqxGd6D+WM28MwQJs6A7edfWZ7tQvSkjeT3XwoISWK
-	VqO+3Ka9JHCraWrs3hPF0IprHiOYq2Y91gIxn2w==
-X-Google-Smtp-Source: AGHT+IEMLmWgU40XaEz7cg2fJjnrrvSFsX+Ixe67yUNnaZpe60YgcllCtweYxA726xWakmCHrvQLlc71P3K6O6pyHVY=
-X-Received: by 2002:a2e:4e11:0:b0:2fa:d4c1:3b71 with SMTP id
- 38308e7fff4ca-2fb3272a9a1mr5139231fa.19.1728630207670; Fri, 11 Oct 2024
- 00:03:27 -0700 (PDT)
+        bh=opgRegBAM5FAXU4C8qQl6ZNe0vpoXti1f24qgQ1xEts=;
+        b=cV+LUWxhk/1F85sfucLsU2uJH9EJmReD3+lrMZXZo8xN/WQWcD3h/lS3r33DxCMplV
+         rzpcNnY6n126LK3Kt7MDW9kNvF5dCnI/DqTWJzPWoehISnbG09OxJGHfmhfBy6nGaTA1
+         GZ25lHhsPXr4WiYVQcsfb+CBKfNNGn06+a5yI55kme+8IpzuYgeN+RCtECFvMfxOHIYa
+         FbKrdECOTYD+S9FxoyIfucg8EEjrOl3wiCIGZPSENFJ+OhVLBcIzAneSk6odLYfX6feU
+         +dn7sWtObJdB3H+j2D9DwUdxRzRlSd9HZatwzXvMAFptjQwa9TYLx8TCipvIUqdKdaks
+         bd7w==
+X-Forwarded-Encrypted: i=1; AJvYcCWducKsw17+Z7HMEv5qLAiTsOGORWEZ9t+oy1Q91aNPLQiWuGYKwpSe3ZDzUUEttI2gBLewcLNfuxsNEAA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMQDoM9KL1WpvgpjbyKQMHu9KYnYgEdtsXfNoVqxDSYBHMH2Ox
+	3jOL30YGvSzozjCj2/XeRS+0sRUI+PVQ/02t99anskjlEUA2lt6VN/x4EWP6GLEMYA0A524b6FN
+	TtlPc/DfZn3aYjwCBeV2oFOCs9m1TyUiXeZn0HtzUeEm4GTTft+SkCWY=
+X-Google-Smtp-Source: AGHT+IH0cRUN2m4kUOQeDT0edggke9x59b9iQG74/GOevsfrpTMX28HFCbrd+U/nm7/WWJ8m/yyh3EXal3MCFR7T4Ic=
+X-Received: by 2002:a05:6e02:1566:b0:3a3:a053:c0ad with SMTP id
+ e9e14a558f8ab-3a3b6566f17mr1566875ab.25.1728630334825; Fri, 11 Oct 2024
+ 00:05:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011020819.1254157-1-yangcong5@huaqin.corp-partner.google.com>
-In-Reply-To: <20241011020819.1254157-1-yangcong5@huaqin.corp-partner.google.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Oct 2024 09:03:16 +0200
-Message-ID: <CACRpkdZR0UxF69rcuSpcfYR69FC-rGOakeOiUUbzJH6BWGVh=Q@mail.gmail.com>
-Subject: Re: [PATCH] drm/panel: himax-hx83102: Adjust power and gamma to
- optimize brightness
-To: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
-Cc: sam@ravnborg.org, neil.armstrong@linaro.org, dianders@chromium.org, 
-	airlied@gmail.com, simona@ffwll.ch, dri-devel@lists.freedesktop.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241011102330.02bece12@canb.auug.org.au> <20241010235743.1356168-1-namhyung@kernel.org>
+ <20241011114858.61ff252b@canb.auug.org.au> <ZwjG_ZpqV4h3HifQ@google.com>
+In-Reply-To: <ZwjG_ZpqV4h3HifQ@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 11 Oct 2024 00:05:21 -0700
+Message-ID: <CAP-5=fWm86UcwX+B_XjFSLFJF54QP2trYzJgJF0927h-AzSV_Q@mail.gmail.com>
+Subject: Re: [PATCH] perf tools: Fix build failures on ppc64le
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 4:08=E2=80=AFAM Cong Yang
-<yangcong5@huaqin.corp-partner.google.com> wrote:
-
-> The current panel brightness is only 360 nit. Adjust the power and gamma =
-to
-> optimize the panel brightness. The brightness after adjustment is 390 nit=
-.
+On Thu, Oct 10, 2024 at 11:34=E2=80=AFPM Namhyung Kim <namhyung@kernel.org>=
+ wrote:
 >
-> Fixes: 3179338750d8 ("drm/panel: Support for IVO t109nw41 MIPI-DSI panel"=
-)
-> Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+> On Fri, Oct 11, 2024 at 11:48:58AM +1100, Stephen Rothwell wrote:
+> > Hi Namhyung,
+> >
+> > On Thu, 10 Oct 2024 16:57:43 -0700 Namhyung Kim <namhyung@kernel.org> w=
+rote:
+> > >
+> > > Hi Stephen, can you please test if this patch fixes it?
+> >
+> > Sorry, I still get the same errors.
+>
+> Ok, thanks for the test.  I'll drop the series and rebase the branch.
 
-Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
+Is this a define issue? I dislike that PPC has a #define
+__SANE_USERSPACE_TYPES__, we might be trying to fix something
+inherently insane.
 
-If you look in panel-samsung-s6e63m0.c you can see how that driver actually
-uses a set of gamma+power (ACL) settings to regulate the "backlight",
-i.e. the brightness of the OLED display. You might want to implement
-something similar in your driver to actually provide the user with a
-brightness setting.
+The failure at:
+```
+    138 |         snprintf(path, PATH_MAX, "%s/event-%d-%llu-%d", dir,
+        |                                               ~~~^
+        |                                                  |
+        |                                                  long long
+unsigned int
+        |                                               %lu
+    139 |                  attr->type, attr->config, fd);
+        |                              ~~~~~~~~~~~~
+        |                                  |
+        |                                  __u64 {aka long unsigned int}
+  util/evsel.c:147:41: error: format '%llu' expects argument of type
+'long long unsigned int',
+                       but argument 4 has type '__u64' {aka 'long
+unsigned int'} [-Werror=3Dformat=3D]
+```
+is for code moved from here:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
+ls/perf/tests/attr.c#n77
+```
+snprintf(path, PATH_MAX, "%s/event-%d-%llu-%d", dir,
+attr->type, attr->config, fd);
+```
+ie the code is identical, so why does it compile in one file and not in ano=
+ther?
 
-It's a bit unfortunate that this is for historical reasons called "backligh=
-t"
-but the usecase is definitely the same.
+Elsewhere for PPC we carry:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/too=
+ls/perf/tests/bp_account.c#n3
+```
+/*
+ * Powerpc needs __SANE_USERSPACE_TYPES__ before <linux/types.h> to select
+ * 'int-ll64.h' and avoid compile warnings when printing __u64 with %llu.
+ */
+#define __SANE_USERSPACE_TYPES__
+```
+Given the comment I suspect we need to do similar to fix this.
+Stephen, could you test?
 
-Yours,
-Linus Walleij
+Thanks,
+Ian
 
