@@ -1,307 +1,210 @@
-Return-Path: <linux-kernel+bounces-361005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7295599A24A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:05:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A9B99A24D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:05:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D5D1F25ED0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:05:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F08A7B234BE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:05:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EF82141C8;
-	Fri, 11 Oct 2024 11:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B28EA2141D6;
+	Fri, 11 Oct 2024 11:05:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="YSqlhJqA"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oq/gXs7m"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 898DF212D05;
-	Fri, 11 Oct 2024 11:05:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096A914293;
+	Fri, 11 Oct 2024 11:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644706; cv=none; b=p0B3ryOpaNZyof44ueNsEHVHL7qcRF+j7SAW6+eXJSyfaziVmZHMBObf5kXGHuz9bpuvLVB4fnZuyFYBXXWZcCg+mf00pugifLJSYe5KQoARPo51Q5z9ncv6oezMF0als1FJIyUntIq5W+CdUx4MZHIPSqKytTvhHDMeILeBH4Y=
+	t=1728644731; cv=none; b=hN7Cllly3FVhZjVeZkAeyXjwN7GCjViGBxR+U6klxfcEkWMOenh6PqPDfiwmMFRLoBXFIc+R8eNPcyKPau0wI4p6tR52liWatscgija0+nvQpuJ3MUzuGSNfyKjzov7Z9zxr5KMCv3BfoUL1LT5wj5JiHmaEEkudc7evY+tJYgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644706; c=relaxed/simple;
-	bh=R3nWTPNlPs1+CDCMutvHH8vuIeo/nChWUOhR5LmNvlA=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=u4zN2XZi9MnAn8W9cWHFAKZPCiK6AGTnMF/7k6oESC3DDTyiXyDUUXfHD6MlXRVF5VGvW/UU1z9Y3MrJBfnXnNoRnazlqiTgMLz9SMgvjzt9GTfWZrGzRf+LRIKXGqo9JWIX4QzjrTW8cAjJ8haQUuNAcaqsRT1u5tuhLfCiX70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=YSqlhJqA; arc=none smtp.client-ip=198.175.65.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728644704; x=1760180704;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=R3nWTPNlPs1+CDCMutvHH8vuIeo/nChWUOhR5LmNvlA=;
-  b=YSqlhJqAxY3WHH3TLviNdrGakMrMC5iVllWAuZPyfkO4in8/oXiK7YB9
-   rFzwRlgkJEgLpE1mtOOW9IdJeang/KP2w0S2uelROQJd5yUNWadh7fRwP
-   FkHNTsK76b7XhYnsZMuRCP341dDE6Vb8GUrmq8KH5NDWUK2/Rk28YFCcl
-   bJGPFosg3oGpEn/ayxe/uz3Z1N/5ER6UynmkHPd9EK/czRNGScjdseOSG
-   TyU7PwR6aOggk4jmaq8JvSI0XVzf2S4WAX98KFpgAoZUAqVWkth/fwpIi
-   7XMwb6KSCG+mZ0YXh058B/wtivdjjBPLdh6uZ/0Obq3gDO1xYQ5jZ0+KB
-   w==;
-X-CSE-ConnectionGUID: SSXiQCdbRHKgFjSgb/N+9g==
-X-CSE-MsgGUID: ice/o/HaRamI1ATYbV8bAw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="39434327"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="39434327"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:05:04 -0700
-X-CSE-ConnectionGUID: 0Add7EMqTk6Q+BWKIaUjKw==
-X-CSE-MsgGUID: xjkxwM4yTOaEj1BLcdV/LA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="114340594"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.164])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:05:02 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Fri, 11 Oct 2024 14:04:58 +0300 (EEST)
-To: Kurt Borja <kuurtb@gmail.com>
-cc: Hans de Goede <hdegoede@redhat.com>, W_Armin@gmx.de, 
-    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v4 1/4] alienware-wmi: fixed indentation and clean up
-In-Reply-To: <20241011064634.306236-2-kuurtb@gmail.com>
-Message-ID: <1cf8cd09-aeba-be32-164b-514d65b635b4@linux.intel.com>
-References: <20241011064336.305795-2-kuurtb@gmail.com> <20241011064634.306236-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1728644731; c=relaxed/simple;
+	bh=pWaUK6oZz9+kh/mcn2cVY2AIOr66cZMGpSFQuPnLBBU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=pX0RYHpEtp3oNiVE510U8zJU3AE4HmTiRm37UvlX9x7Eou/Gby0OnpHu143uKmwRv6OSkq5UMWKhZo/LIx7It/qVgXS/KubYGt/UO6RJ0aTKyrM1XzVkHB9tJeYsSSvLu+J8LRzUlq2U06K9y2wNVaVyCJYagTCLSm0gx+kDNOk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oq/gXs7m; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BF49C4AF09;
+	Fri, 11 Oct 2024 11:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728644730;
+	bh=pWaUK6oZz9+kh/mcn2cVY2AIOr66cZMGpSFQuPnLBBU=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Oq/gXs7mU4RKNiYT78CK9ANwbyf/NY5ld2EnY1toMMqv5L76B2usOJ99vsj1AD/89
+	 XL/Hg4F5QDGXNukUtX5lHRia8/NoHz9ti8EmMrooX9vSfzGjxUsvTse6b3jhiAqZPR
+	 Cc0Y51FbNBTy7NmPpE+MFW8gevqfFBv0hAOG3tG7VMbWtsS2jotLCl5MtgO7yAjli1
+	 U+xZ3YHVaMLAeEk0Hf9CLBMyAUusGkADGCOtvys+3V3OmYW31PBH70qZO64yT8NjKU
+	 192zv/M9Bj+lKJuLbpyspN85dGZJGn6QE0P6ZEVi0rJc3tbZHB16TouqrUWrjRMl24
+	 zEclR2YvVV9Vg==
+Received: by mail-oo1-f49.google.com with SMTP id 006d021491bc7-5e803a607f3so735517eaf.2;
+        Fri, 11 Oct 2024 04:05:30 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPSUkXNOgCyzqt8PthcuHDWh83CI6RKn+/KsfGgtsuK9V8oWjaSiMF7S2ayT6bRgpXbeLWXSnjYDvXi/M=@vger.kernel.org, AJvYcCXEphSmL2I3vVahIXTtas2FcRoZQS/N8CXxWMmiHUHiRoi/1yuLEmaLu+egWvBLp+4vmZJh1xi6p1nSHIc+Ew2K71dXuw==@vger.kernel.org, AJvYcCXOGE7d9w28mNkrqfQQIBS9pYO91a/cHwfAPcPM3I7tjTTsNAh9sAGprlXWJqvdpskZN59Adn2WnhU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0HNXcY1/5Jen6zPPj5PSt5hm12LFhu7ghBmKpRS0wg0FLpym8
+	RsRIXqt/1BD9qe84TOu2EmXJFLKYzH5YozJR05uWR0hJ7jW0nHl1Nq+SQGMsLvtGsVNWBGR1jti
+	BIVVAuPBXKNZeBUzUAKUSeSkJkAs=
+X-Google-Smtp-Source: AGHT+IHIXek8kNzmz8ZDbXKuZUg4I3LS7/jhn6vFJ/fxIC+tkCPgzzIGfol6kVCxgvSLASuLxB7nC2KExxoE+D8evqs=
+X-Received: by 2002:a05:6870:2c93:b0:277:f14c:9c0f with SMTP id
+ 586e51a60fabf-2886df763e7mr1168852fac.32.1728644729753; Fri, 11 Oct 2024
+ 04:05:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241011003640.1613812-1-david.e.box@linux.intel.com> <20241011003640.1613812-2-david.e.box@linux.intel.com>
+In-Reply-To: <20241011003640.1613812-2-david.e.box@linux.intel.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Fri, 11 Oct 2024 13:05:18 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0haLjsM67QCVg-6i6i7GmBZjhZzFTmm3=r+8gmAfP4qxQ@mail.gmail.com>
+Message-ID: <CAJZ5v0haLjsM67QCVg-6i6i7GmBZjhZzFTmm3=r+8gmAfP4qxQ@mail.gmail.com>
+Subject: Re: [PATCH V2 2/2] platform/x86/intel/pmc: Disable C1 auto-demotion
+ during suspend
+To: "David E. Box" <david.e.box@linux.intel.com>
+Cc: hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com, rjw@rjwysocki.net, 
+	srinivas.pandruvada@linux.intel.com, platform-driver-x86@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 11 Oct 2024, Kurt Borja wrote:
-
-All patches should provide a description of the change in the commit 
-message body here (the shortlog in the subject is not enough). So please 
-resubmit with the descriptions added to all patches.
-
-The code changes themselves looked very good, thanks for doing this.
-
---
- i.
-
-> Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+On Fri, Oct 11, 2024 at 2:36=E2=80=AFAM David E. Box
+<david.e.box@linux.intel.com> wrote:
+>
+> On some platforms, aggressive C1 auto-demotion may lead to failure to ent=
+er
+> the deepest C-state during suspend-to-idle, causing high power consumptio=
+n.
+> To prevent this, disable C1 auto-demotion during suspend and re-enable on
+> resume.
+>
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
 > ---
->  drivers/platform/x86/dell/alienware-wmi.c | 134 +++++++++++-----------
->  1 file changed, 67 insertions(+), 67 deletions(-)
-> 
-> diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-> index f5ee62ce1..16a3fe9ac 100644
-> --- a/drivers/platform/x86/dell/alienware-wmi.c
-> +++ b/drivers/platform/x86/dell/alienware-wmi.c
-> @@ -116,68 +116,68 @@ static int __init dmi_matched(const struct dmi_system_id *dmi)
->  
->  static const struct dmi_system_id alienware_quirks[] __initconst = {
->  	{
-> -	 .callback = dmi_matched,
-> -	 .ident = "Alienware X51 R3",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R3"),
-> -		     },
-> -	 .driver_data = &quirk_x51_r3,
-> -	 },
-> +		.callback = dmi_matched,
-> +		.ident = "Alienware X51 R3",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R3"),
-> +		},
-> +		.driver_data = &quirk_x51_r3,
-> +	},
->  	{
-> -	 .callback = dmi_matched,
-> -	 .ident = "Alienware X51 R2",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R2"),
-> -		     },
-> -	 .driver_data = &quirk_x51_r1_r2,
-> -	 },
-> +		.callback = dmi_matched,
-> +		.ident = "Alienware X51 R2",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51 R2"),
-> +		},
-> +		.driver_data = &quirk_x51_r1_r2,
-> +	},
->  	{
-> -	 .callback = dmi_matched,
-> -	 .ident = "Alienware X51 R1",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51"),
-> -		     },
-> -	 .driver_data = &quirk_x51_r1_r2,
-> -	 },
-> +		.callback = dmi_matched,
-> +		.ident = "Alienware X51 R1",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware X51"),
-> +		},
-> +		.driver_data = &quirk_x51_r1_r2,
-> +	},
->  	{
-> -	 .callback = dmi_matched,
-> -	 .ident = "Alienware ASM100",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM100"),
-> -		     },
-> -	 .driver_data = &quirk_asm100,
-> -	 },
-> +		.callback = dmi_matched,
-> +		.ident = "Alienware ASM100",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "ASM100"),
-> +		},
-> +		.driver_data = &quirk_asm100,
-> +	},
->  	{
-> -	 .callback = dmi_matched,
-> -	 .ident = "Alienware ASM200",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM200"),
-> -		     },
-> -	 .driver_data = &quirk_asm200,
-> -	 },
-> +		.callback = dmi_matched,
-> +		.ident = "Alienware ASM200",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "ASM200"),
-> +		},
-> +		.driver_data = &quirk_asm200,
-> +	},
->  	{
-> -	 .callback = dmi_matched,
-> -	 .ident = "Alienware ASM201",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "ASM201"),
-> -		     },
-> -	 .driver_data = &quirk_asm201,
-> -	 },
-> -	 {
-> -	 .callback = dmi_matched,
-> -	 .ident = "Dell Inc. Inspiron 5675",
-> -	 .matches = {
-> -		     DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> -		     DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5675"),
-> -		     },
-> -	 .driver_data = &quirk_inspiron5675,
-> -	 },
-> +		.callback = dmi_matched,
-> +		.ident = "Alienware ASM201",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "ASM201"),
-> +		},
-> +		.driver_data = &quirk_asm201,
-> +	},
-> +	{
-> +		.callback = dmi_matched,
-> +		.ident = "Dell Inc. Inspiron 5675",
-> +		.matches = {
-> +			DMI_MATCH(DMI_SYS_VENDOR, "Dell Inc."),
-> +			DMI_MATCH(DMI_PRODUCT_NAME, "Inspiron 5675"),
-> +		},
-> +		.driver_data = &quirk_inspiron5675,
-> +	},
->  	{}
+>
+> V2 - Remove #define DEBUG
+>    - Move refactor of cnl_resume() to separate patch
+>    - Use smp_call_function() to disable and restore C1_AUTO_DEMOTE
+>    - Add comment that the MSR is per core, not per package.
+>    - Add comment that the online cpu mask remains unchanged during
+>      suspend due to frozen userspace.
+>
+>  drivers/platform/x86/intel/pmc/cnp.c | 53 ++++++++++++++++++++++++++++
+>  1 file changed, 53 insertions(+)
+>
+> diff --git a/drivers/platform/x86/intel/pmc/cnp.c b/drivers/platform/x86/=
+intel/pmc/cnp.c
+> index 513c02670c5a..f12d4f0f9e93 100644
+> --- a/drivers/platform/x86/intel/pmc/cnp.c
+> +++ b/drivers/platform/x86/intel/pmc/cnp.c
+> @@ -8,6 +8,8 @@
+>   *
+>   */
+>
+> +#include <linux/smp.h>
+> +#include <linux/suspend.h>
+>  #include "core.h"
+>
+>  /* Cannon Lake: PGD PFET Enable Ack Status Register(s) bitmap */
+> @@ -206,8 +208,52 @@ const struct pmc_reg_map cnp_reg_map =3D {
+>         .etr3_offset =3D ETR3_OFFSET,
 >  };
->  
-> @@ -221,8 +221,8 @@ static struct platform_zone *zone_data;
->  
->  static struct platform_driver platform_driver = {
->  	.driver = {
-> -		   .name = "alienware-wmi",
-> -		   }
-> +		.name = "alienware-wmi",
-> +	}
->  };
->  
->  static struct attribute_group zone_attribute_group = {
-> @@ -292,7 +292,7 @@ static int alienware_update_led(struct platform_zone *zone)
->  		guid = WMAX_CONTROL_GUID;
->  		method_id = WMAX_METHOD_ZONE_CONTROL;
->  
-> -		input.length = (acpi_size) sizeof(wmax_basic_args);
-> +		input.length = sizeof(wmax_basic_args);
->  		input.pointer = &wmax_basic_args;
->  	} else {
->  		legacy_args.colors = zone->colors;
-> @@ -306,7 +306,7 @@ static int alienware_update_led(struct platform_zone *zone)
->  			guid = LEGACY_CONTROL_GUID;
->  		method_id = zone->location + 1;
->  
-> -		input.length = (acpi_size) sizeof(legacy_args);
-> +		input.length = sizeof(legacy_args);
->  		input.pointer = &legacy_args;
->  	}
->  	pr_debug("alienware-wmi: guid %s method %d\n", guid, method_id);
-> @@ -358,7 +358,7 @@ static int wmax_brightness(int brightness)
->  		.led_mask = 0xFF,
->  		.percentage = brightness,
->  	};
-> -	input.length = (acpi_size) sizeof(args);
-> +	input.length = sizeof(args);
->  	input.pointer = &args;
->  	status = wmi_evaluate_method(WMAX_CONTROL_GUID, 0,
->  				     WMAX_METHOD_BRIGHTNESS, &input, NULL);
-> @@ -508,7 +508,7 @@ static acpi_status alienware_wmax_command(struct wmax_basic_args *in_args,
->  	struct acpi_buffer input;
->  	struct acpi_buffer output;
->  
-> -	input.length = (acpi_size) sizeof(*in_args);
-> +	input.length = sizeof(*in_args);
->  	input.pointer = in_args;
->  	if (out_data) {
->  		output.length = ACPI_ALLOCATE_BUFFER;
-> @@ -542,7 +542,7 @@ static ssize_t show_hdmi_cable(struct device *dev,
->  	};
->  	status =
->  	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_CABLE,
-> -				   (u32 *) &out_data);
-> +				   &out_data);
->  	if (ACPI_SUCCESS(status)) {
->  		if (out_data == 0)
->  			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> @@ -563,7 +563,7 @@ static ssize_t show_hdmi_source(struct device *dev,
->  	};
->  	status =
->  	    alienware_wmax_command(&in_args, WMAX_METHOD_HDMI_STATUS,
-> -				   (u32 *) &out_data);
-> +				   &out_data);
->  
->  	if (ACPI_SUCCESS(status)) {
->  		if (out_data == 1)
-> @@ -643,7 +643,7 @@ static ssize_t show_amplifier_status(struct device *dev,
->  	};
->  	status =
->  	    alienware_wmax_command(&in_args, WMAX_METHOD_AMPLIFIER_CABLE,
-> -				   (u32 *) &out_data);
-> +				   &out_data);
->  	if (ACPI_SUCCESS(status)) {
->  		if (out_data == 0)
->  			return sysfs_emit(buf, "[unconnected] connected unknown\n");
-> @@ -695,7 +695,7 @@ static ssize_t show_deepsleep_status(struct device *dev,
->  		.arg = 0,
->  	};
->  	status = alienware_wmax_command(&in_args, WMAX_METHOD_DEEP_SLEEP_STATUS,
-> -					(u32 *) &out_data);
-> +					&out_data);
->  	if (ACPI_SUCCESS(status)) {
->  		if (out_data == 0)
->  			return sysfs_emit(buf, "[disabled] s5 s5_s4\n");
-> 
+>
+> +
+> +/*
+> + * Disable C1 auto-demotion
+> + *
+> + * Aggressive C1 auto-demotion may lead to failure to enter the deepest =
+C-state
+> + * during suspend-to-idle, causing high power consumption. To prevent th=
+is, we
+> + * disable C1 auto-demotion during suspend and re-enable on resume.
+> + *
+> + * Note that, although MSR_PKG_CST_CONFIG_CONTROL has 'package' in its n=
+ame, it
+> + * is actually a per-core MSR on client platforms, affecting only a sing=
+le CPU.
+> + * Therefore, it must be configured on all online CPUs. The online cpu m=
+ask is
+> + * unchanged during the phase of suspend/resume as user space is frozen.
+> + */
+> +
+> +static DEFINE_PER_CPU(u64, pkg_cst_config);
+> +
+> +static void disable_c1_auto_demote(void *unused)
+> +{
+> +       int cpunum =3D smp_processor_id();
+> +       u64 val;
+> +
+> +       rdmsrl(MSR_PKG_CST_CONFIG_CONTROL, val);
+> +       per_cpu(pkg_cst_config, cpunum) =3D val;
+> +       val &=3D ~NHM_C1_AUTO_DEMOTE;
+> +       wrmsrl(MSR_PKG_CST_CONFIG_CONTROL, val);
+> +       pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum, val);
+> +}
+
+If you decide to retain the debug statements, I generally prefer to
+separate them from the rest of the code with empty lines, for clarity.
+
+> +
+> +static void restore_c1_auto_demote(void *unused)
+> +{
+> +       int cpunum =3D smp_processor_id();
+> +
+> +       pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum,
+> +                per_cpu(pkg_cst_config, cpunum));
+> +       wrmsrl(MSR_PKG_CST_CONFIG_CONTROL, per_cpu(pkg_cst_config, cpunum=
+));
+> +}
+> +
+
+I would add something like
+
+static void s2idle_cpu_quirk(smp_call_func_t func)
+{
+       if (pm_suspend_via_firmware())
+              return;
+
+       preempt_disable();
+       func();
+       smp_call_function(func, NULL, 0);
+       preempt_enable();
+}
+
+>  void cnl_suspend(struct pmc_dev *pmcdev)
+>  {
+> +       if (!pm_suspend_via_firmware()) {
+> +               preempt_disable();
+> +               disable_c1_auto_demote(NULL);
+> +               smp_call_function(disable_c1_auto_demote, NULL, 0);
+> +               preempt_enable();
+> +       }
+> +
+
+And here I'd just do
+
+      s2idle_cpu_quirk(disable_c1_auto_demote);
+
+and analogously below.
+
+>         /*
+>          * Due to a hardware limitation, the GBE LTR blocks PC10
+>          * when a cable is attached. To unblock PC10 during suspend,
+> @@ -218,6 +264,13 @@ void cnl_suspend(struct pmc_dev *pmcdev)
+>
+>  int cnl_resume(struct pmc_dev *pmcdev)
+>  {
+> +       if (!pm_suspend_via_firmware()) {
+> +               preempt_disable();
+> +               restore_c1_auto_demote(NULL);
+> +               smp_call_function(restore_c1_auto_demote, NULL, 0);
+> +               preempt_enable();
+> +       }
+> +
+>         pmc_core_send_ltr_ignore(pmcdev, 3, 0);
+>
+>         return pmc_core_resume_common(pmcdev);
+> --
 
