@@ -1,145 +1,85 @@
-Return-Path: <linux-kernel+bounces-361569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38F9499A9E5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:25:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D45E199A9FD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDF42283346
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:25:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F861F24D7A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82D8E1BBBC6;
-	Fri, 11 Oct 2024 17:25:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Khp9Sxfc"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30AC61BE854;
+	Fri, 11 Oct 2024 17:30:18 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77E8984E0A;
-	Fri, 11 Oct 2024 17:25:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D9A1A08A4
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728667530; cv=none; b=bPixs8z399gvbdOoUWB3+1qDQqbdpcsTYR7p9AG2l1p06/D1R/upze4dX5bizIcgFNvpvU38fWCgoDBjRQANO37fxlgOdi3LR7nAl8+AD+fqoLpl4WrXVGrF4FND6B/KnftK5lMVmXGEeK6iJlQkLW/pSXrzetVeDZjCY7lmTYg=
+	t=1728667817; cv=none; b=LrYMgjDgKWf1ZEPZ0FEOVunZodmbTIj4zUrPxIdwdwZVpMeQBXTJyqGc5nLP2PzuCtL73RCcsTwiBGvgYnexUD7VJogFwZxvtHlaEwoNBi+0jqthmFKDNuwu1442WRE5Afnu5Gd6m8GD/yE/nSSRrtM/ThO4EZCHuE3KEX8BPWE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728667530; c=relaxed/simple;
-	bh=7gKo3yfQbtf682tI2CBMgRz5iYurKpzkmcCft6FC4gs=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=qnADRP0VQaP4RTqKB1yJvlsi9AgeQr3HeG2cgN93z6BJYXfBqV7gX8DbgeO46KQw5r5iy0j1uO/XW3xV0L+hheQc4lbM9jj9cX1oI2Vkz/5J5BBGkQyAlImprSgEJYUspYFyBP5cgi6OvrGfUHnkUCIQ9ocniIobLCBQ2RxqfXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Khp9Sxfc; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BG0srI023945;
-	Fri, 11 Oct 2024 17:25:21 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=USif0rGIKgTqepWQydU1/A
-	WW05Ve570RSc7Edg+BTy8=; b=Khp9SxfcY6C3KWZbSxMljDRaL42vvEGZGdryng
-	VJ8God/FiBKzMY49DNqqPxEz+ol+gSmIZ2g7cSoojhzY6XovesUqADBpazn0Urwo
-	rk1ZjLluxtpxQ4kOl+RKVBnUmNL6aP4ojK2eb7tK1BSwtMI7afXgMzEeBr+o3kjv
-	8kd4zon4O1oR2PySgsjDpSwqYgX2aUnUN4/oXcaqjJFPfNEGZebFgpIYHkP6uEuI
-	UKPqvIg/x0mknbEOg5da8Xhmng4Y2mN47MbxhzTi8snTsvME+ooz7IKrhGnRkP4o
-	jEVMhXD/c8Vu/8YF5t+7nKpiuVR+RCc5ep1ZepZyWNYOehSA==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426y3vstq9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 17:25:20 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BHPJb3014244
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 17:25:19 GMT
-Received: from jesszhan-linux.qualcomm.com (10.80.80.8) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 11 Oct 2024 10:25:19 -0700
-From: Jessica Zhang <quic_jesszhan@quicinc.com>
-Date: Fri, 11 Oct 2024 10:25:13 -0700
-Subject: [PATCH v2] drm/msm/dpu: don't always activate merge_3d block
+	s=arc-20240116; t=1728667817; c=relaxed/simple;
+	bh=YhTHPp8Isk7CCUxeNhc9BZXlsJGwPlLmA9rrxx++YAo=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=FA5s+wHGVFsnvCq7ifkEJE/Px/akSiufxc9ikIzzxeDAwJr0u+T92ZalsxCO3YrpcVKoKOdpW9mzVhEZf+B1p6tRWSsF79VMbzWXAOwqUGORV2yUk8tqObhCaA50w0DpTM/8tIeyihg5Il1l59tEGc8DF29a/LjH3BAIq7MuUKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FCD2C4CEC3;
+	Fri, 11 Oct 2024 17:30:17 +0000 (UTC)
+Received: from rostedt by gandalf with local (Exim 4.98)
+	(envelope-from <rostedt@goodmis.org>)
+	id 1szJT9-00000001Txr-3iCa;
+	Fri, 11 Oct 2024 13:30:27 -0400
+Message-ID: <20241011173010.441043942@goodmis.org>
+User-Agent: quilt/0.68
+Date: Fri, 11 Oct 2024 13:30:10 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>
+Subject: [for-next][PATCH 0/9] rtla: Updates for 6.13
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241011-merge3d-fix-v2-1-2082470f573c@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAHhfCWcC/1XMQQ6CMBCF4auQWVszHYqgK+9hWGA7wCyg2CrRk
- N7dys7l/5L3bRA5CEe4FBsEXiWKn3PQoQA7dvPASlxuICSDDTVq4jBw6VQvb6W7xiFWXFJdQ34
- sgfO8a7c29yjx6cNnx1f9W3dHI57/nFUrrdDh/dRXlozh6+MlVmZ7tH6CNqX0BcldeXCoAAAA
-X-Change-ID: 20240828-merge3d-fix-1a8d005e3277
-To: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>
-CC: <quic_abhinavk@quicinc.com>, Rob Clark <robdclark@chromium.org>,
-        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
-        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
-        "Jessica
- Zhang" <quic_jesszhan@quicinc.com>
-X-Mailer: b4 0.15-dev-2a633
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728667519; l=1640;
- i=quic_jesszhan@quicinc.com; s=20230329; h=from:subject:message-id;
- bh=7gKo3yfQbtf682tI2CBMgRz5iYurKpzkmcCft6FC4gs=;
- b=ReHRBe6XXxKBGEFfM5svE4kO+fJtHDfuZUvy7WK5tWqdTawQKQSN1duVqxxA5wYkCp0qovEzp
- TJnKy90EnyMBGRqE3KO8TadCUjhKUvfEXGSXEWS9LjeFXhQ3uM1Ck69
-X-Developer-Key: i=quic_jesszhan@quicinc.com; a=ed25519;
- pk=gAUCgHZ6wTJOzQa3U0GfeCDH7iZLlqIEPo4rrjfDpWE=
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: H6MuThEwCCo9shs5F3Rb_WaOAznXY87G
-X-Proofpoint-GUID: H6MuThEwCCo9shs5F3Rb_WaOAznXY87G
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 bulkscore=0 lowpriorityscore=0 malwarescore=0 spamscore=0
- clxscore=1015 mlxscore=0 phishscore=0 impostorscore=0 adultscore=0
- mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110121
 
-Only enable the merge_3d block for the video phys encoder when the 3d
-blend mode is not *_NONE since there is no need to activate the merge_3d
-block for cases where merge_3d is not needed.
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+tools/for-next
 
-Fixes: 3e79527a33a8 ("drm/msm/dpu: enable merge_3d support on sm8150/sm8250")
-Suggested-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
-Signed-off-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
-Changes in v2:
-- Added more detailed commit message
-- Link to v1: https://lore.kernel.org/r/20241009-merge3d-fix-v1-1-0d0b6f5c244e@quicinc.com
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Head SHA1: 76b3102148135945b013797fac9b206273f0f777
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-index ba8878d21cf0e1945a393cca806cb64f03b16640..c5e27eeaff0423a69fad98122ffef7e041fbc68e 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys_vid.c
-@@ -302,7 +302,7 @@ static void dpu_encoder_phys_vid_setup_timing_engine(
- 	intf_cfg.stream_sel = 0; /* Don't care value for video mode */
- 	intf_cfg.mode_3d = dpu_encoder_helper_get_3d_blend_mode(phys_enc);
- 	intf_cfg.dsc = dpu_encoder_helper_get_dsc(phys_enc);
--	if (phys_enc->hw_pp->merge_3d)
-+	if (intf_cfg.mode_3d && phys_enc->hw_pp->merge_3d)
- 		intf_cfg.merge_3d = phys_enc->hw_pp->merge_3d->idx;
- 
- 	spin_lock_irqsave(phys_enc->enc_spinlock, lock_flags);
 
----
-base-commit: a20a91fb1bfac5d05ec5bcf9afe0c9363f6c8c93
-change-id: 20240828-merge3d-fix-1a8d005e3277
+Andrew Kreimer (1):
+      rv: Fix a typo
 
-Best regards,
--- 
-Jessica Zhang <quic_jesszhan@quicinc.com>
+Ba Jing (2):
+      tools/rv: Correct the grammatical errors in the comments
+      tools/rv: Correct the grammatical errors in the comments
 
+Eder Zulian (1):
+      rtla: use the definition for stdout fd when calling isatty()
+
+Gabriele Monaco (1):
+      rtla: Fix consistency in getopt_long for timerlat_hist
+
+Jan Stancek (2):
+      tools/rtla: drop __NR_sched_getattr
+      tools/rtla: fix collision with glibc sched_attr/sched_set_attr
+
+Tomas Glozar (2):
+      rtla/timerlat: Make timerlat_top_cpu->*_count unsigned long long
+      rtla/timerlat: Make timerlat_hist_cpu->*_count unsigned long long
+
+----
+ kernel/trace/rv/rv.c                   |  2 +-
+ tools/tracing/rtla/src/osnoise_top.c   |  2 +-
+ tools/tracing/rtla/src/timerlat_hist.c | 20 +++++++++----------
+ tools/tracing/rtla/src/timerlat_top.c  | 10 +++++-----
+ tools/tracing/rtla/src/utils.c         | 36 +++++++++++++++-------------------
+ tools/tracing/rtla/src/utils.h         |  2 ++
+ tools/verification/rv/src/in_kernel.c  |  4 ++--
+ tools/verification/rv/src/trace.c      |  2 +-
+ 8 files changed, 38 insertions(+), 40 deletions(-)
 
