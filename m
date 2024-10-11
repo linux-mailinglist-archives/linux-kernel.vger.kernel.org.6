@@ -1,135 +1,191 @@
-Return-Path: <linux-kernel+bounces-361173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4F34899A498
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:11:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0997399A49C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:12:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EE928572D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:11:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38687B23784
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:12:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB81B218D81;
-	Fri, 11 Oct 2024 13:09:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10B2A218D70;
+	Fri, 11 Oct 2024 13:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Z5ZMV0EB"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c5AuFerg"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E2321B43C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:09:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A423216A3B;
+	Fri, 11 Oct 2024 13:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728652190; cv=none; b=RW/XhGtkKj/5676YcALFmSkzqw8BeBgFICW3lLoK9TTtbheH8oySJ/WHn++zG23SOVx0C//xwlxi7a8egDjGx/JYe9595B2IU5cOFuBUNuaUltwSO3XZ9sEdSw3TxTfiN5fkIKikgtC/2Lb/1+mxMZFzltugMESXxXAgPaK2F10=
+	t=1728652314; cv=none; b=dLlBew2vSHxDilgaEkdxczHpD0eYPtNiKzqKFbDCSj5tKw6R6xxKgmR5Inx4x/NokAne9m8aHeJvYPUVFIEUdxtnCtiZ8TueVJ844u99cNtAUnRag2MXcZP1877ZwE9N/TqgBFQ/VR7f/ddZ2fegCbRPWCrZqwQJS/fpnhX17WY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728652190; c=relaxed/simple;
-	bh=aiK48nBymVvo/dH/OUWaei0T3BtvhFeLUjzn+aJU3M8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=fLZZMpoOjdr6AyPmOrzaW+oQPKV/32bBrFE0OSshN8N40k8JIl9Srb6YvEoyS3P2y2Ds0gRFY7VLrU/KfdzbKJqZzicqMhuY6rHf1CSEl+c6QBbkolQbWvD/jG0ew9B35oCz4L5UwG0GfDTHdGmUknXS6yi/YWTjBRhDIL+T4V8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Z5ZMV0EB; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-430576fe517so3557965e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:09:48 -0700 (PDT)
+	s=arc-20240116; t=1728652314; c=relaxed/simple;
+	bh=CRdM9+7MZZqcFi+ijeiqGXWXZ0vqd+EhrlKqzTgUHq8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=E2WCyLMIeVbCevCRPU5C+3014YZM2ap/RIvY0kzlJKHVoY9/uGUaYSziraOn4UAOUu3wJGM+NGjTxU4YE5h9e0AKe6T2TbHnSzpx8LJEhzrAZ+n1KxMdrRpzqt7tajgGASIW2EmeUAqXqZBtM9aUDZ/8vt7EYf5OvZ/GZZ1KNB4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c5AuFerg; arc=none smtp.client-ip=209.85.221.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d39d9f782so1253778f8f.1;
+        Fri, 11 Oct 2024 06:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728652186; x=1729256986; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=v31GXG69vMHk4ux07CakUHVd4DKmezn/8McUHHPc5yQ=;
-        b=Z5ZMV0EBIC9p7mIVw5hMeXKtcyl5bjDW6ISujvli8bCjRIrkZ++6raSPG8Zt0qsJOj
-         tAaPSqdbPA1ePjOjOQZgERpTiGzjhO12+xn914UugGW9PtN//En6a+I9FvM7AvYEaq1u
-         TboutNC8vAZGKHzU+Vo5UQHQJqBDPOKrcqR/dcYyhadIrznIAktEkKOwqm2+8vzjm595
-         D59xeA6UsmTfCUZD9azo3iXkx22AqcBlXTQtZPeDGKf5TWOPSSr/skFYAN+IDwpAqfQ2
-         BwDee2QdaB0EJvGc4/3BrrN+Y//LBQoXZZChUQiucXmre1Y1ExvsTPIiOoO9VGVmN6jP
-         xGEA==
+        d=gmail.com; s=20230601; t=1728652311; x=1729257111; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=wzIhAn2tTcX9dvci0vNq77FW+h13AP/SOK9t5jT/+As=;
+        b=c5AuFergj/WuZo40HoU341tsLU4cNh4EeftdfWLrkLDasaGDGIbvfZc4ndSHtPp4Gb
+         AH9TbjTrGKh2RHWBv0gS/9KmCyxbJnjFAjMj7a2hcB10h6XYtZM6Vw7+fH2AvmnH6YBW
+         8uxXhRkVY7SzmRZYTph/4QgneojF7A9aIpeec3cfX86yvQ7ieIwdjih1vunBbEDMMi9h
+         B2kvUqNOZBXnvU5hKASOipj5S97u1bsaKnK3N/wpHa3Z4pI4u2+nVU8RoNADKyIbYfMP
+         tiaQYZI7mQ4krnuwLC0EA3vrqIQ1UrBysCBNby+viATUvbnMWVjK7Lbnw1MkmwgXaKdH
+         31pQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728652186; x=1729256986;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=v31GXG69vMHk4ux07CakUHVd4DKmezn/8McUHHPc5yQ=;
-        b=R5CAVg6NJkbk9ArzgRbV5YZvSaGu1BjoWSUnktocvUNV+0988J8aLFkxsg1vjHnmY0
-         H4P/VXnrM2vErGAkrqhAEP/uI5J9++nl37nh9Yykl3FljdHT0Fy7QFwL8ASPnOZdY8Zn
-         Is52AT3BvZxusm9MIlAeOz/ZgDIGGZBnpC58Hd52FDW54G4IbPcBdmT+ScWMIDS97I6c
-         OilQQ708uKbKtBJpNohCR4CzlLSE+TFhY3M+IDbJLZ8dpL53TZHk7XYzcc8/WNNNZI8X
-         J+8e+xXp8I+aoGbVOnJtHHQnSdVYR5WAGdju4wyaRgXO8Bn9O1jX1EkpPcD8MOlAQKkX
-         sqhw==
-X-Forwarded-Encrypted: i=1; AJvYcCW6/8uai7aOZCIpmuysw5rSNIB0iPxOJawakwjM9v/ic+9vmwPqE0nmEX3oianRllcw1DO/OxR4M8WPkT4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1VWBOpGz2L+BtMThDQ7DX6qO8bOiBgHtdnnsnI/z7VZBgKtWi
-	d1B3Z7W6SWqlP4ANUyHWfb5QDMzDOqxHOy5pFiPpl9PtGpn5GZpG8138fDnB0Fh6RWNfj8VTPB+
-	A
-X-Google-Smtp-Source: AGHT+IFJV0fBBqZyQIuuDztYZ99k87dRRpSQN2NCI/NjAAk0eHOZWEgeToj9dTo5YUpjSkp3esjnjA==
-X-Received: by 2002:a05:600c:358f:b0:42c:bfd6:9d1f with SMTP id 5b1f17b1804b1-4311debbe68mr9904785e9.1.1728652186408;
-        Fri, 11 Oct 2024 06:09:46 -0700 (PDT)
-Received: from [127.0.1.1] ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff6d3sm41621835e9.12.2024.10.11.06.09.44
+        d=1e100.net; s=20230601; t=1728652311; x=1729257111;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=wzIhAn2tTcX9dvci0vNq77FW+h13AP/SOK9t5jT/+As=;
+        b=IpWcL5ANt4VmVBDRDNLiXxQm1wFFM1sBJXUIJr0MvMxI+vNpWdGk4gegfJ8h/qL3E3
+         t78PnEJSYRpf/zCAoWRrVmWpmGeEWWBcJP8brEzbzfDvHLPAy0SGLZFis1Piuy2tHXoB
+         hjFqA/KHXU3YLk8/EUCAPXQWcCnVc+0XBDH9JNmE4ac6VBE56tYLbrStL2A3m2iKVwP+
+         biP8m+xNXduohSWwsWmuwiCF3ZfvI5GZCuinQGZhOMoN4GS28ov89J9dMribdm7jYGHa
+         U/GgX/KiBLpLWKpb4v2z+NIGq2AT1gjgQYc2/myDj3Ap7RJfo4AaqyTyx0e3nwQw7FAh
+         3xbQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWo83/cMq9n7h1KiFzU9Mb0Z1rnwYtqq6J3ZjQzkkTrpJyhfswK3rLYevvbuR2Ul6BrB24dz8c7hQmKH9M=@vger.kernel.org, AJvYcCX3/6JdJgL8t6zRu696m88XlC1G3orGjcF9UudUXd0xbpjCkhUSEZnOVddqXNXJaeKlgY+R1K3Q1lBRsPWQs/n7AKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzoeRMKoGuxH01y/7znDCRN6o1afjxaWnNGWY2EO5uODb5hiSNH
+	0dB9wpbDVMFsZI2R9f/moZSNoY2/5ur9TFD+h72mQKvQ7uPwJYU3
+X-Google-Smtp-Source: AGHT+IEc7QnSsEmYN9KRSEJk2GsFcjXE5wjkyJOlckXT1cchZfsRChDr2vsMChNzV2WIGOiu03tjWw==
+X-Received: by 2002:adf:f189:0:b0:37d:5338:872c with SMTP id ffacd0b85a97d-37d551afa0emr1668230f8f.1.1728652310520;
+        Fri, 11 Oct 2024 06:11:50 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd1b7sm3925025f8f.37.2024.10.11.06.11.49
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 06:09:44 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Date: Fri, 11 Oct 2024 15:09:18 +0200
-Subject: [PATCH 10/10] remoteproc: qcom_wcnss_iris: Simplify with
- dev_err_probe()
+        Fri, 11 Oct 2024 06:11:50 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v2] ASoC: rsnd: Fix probe failure on HiHope boards due to endpoint parsing
+Date: Fri, 11 Oct 2024 14:10:40 +0100
+Message-ID: <20241011131040.1059130-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-remote-proc-dev-err-probe-v1-10-5abb4fc61eca@linaro.org>
-References: <20241011-remote-proc-dev-err-probe-v1-0-5abb4fc61eca@linaro.org>
-In-Reply-To: <20241011-remote-proc-dev-err-probe-v1-0-5abb4fc61eca@linaro.org>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Mathieu Poirier <mathieu.poirier@linaro.org>
-Cc: linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=969;
- i=krzysztof.kozlowski@linaro.org; h=from:subject:message-id;
- bh=aiK48nBymVvo/dH/OUWaei0T3BtvhFeLUjzn+aJU3M8=;
- b=owEBbQKS/ZANAwAKAcE3ZuaGi4PXAcsmYgBnCSOHreCkDDMaYxg+FYD85uid+AJHsN2qlBqkX
- gfF0DvhUfCJAjMEAAEKAB0WIQTd0mIoPREbIztuuKjBN2bmhouD1wUCZwkjhwAKCRDBN2bmhouD
- 18SCD/4xlZRL8UTPeW0P/qXuNj4U5/rZazAAwWCrbdb/JmJx1KmWWQapR5Ty9P3vU/UT9lKp+EK
- 392NKtcByXR8vDiJtXv96LJwZWZV9Hl0+IVfDbngWC/W+IJT/07rXU5lVjo9+JeO0T143yU6GQ6
- J2C9HWbklt61TT4Yk9yEF4m966qdA3OZLhnbXOsL/1BU8ZKt6gqdbSwV2dajQp6MQ9xCb6YsMXr
- JnkOEIh2mqhUbd2gjgXCKFwtJi247kIizv5C7yaF/HExhnh4on/LjkfzMR4nititybGuPmRI0q7
- stsvmdbiqAnzmLlLDt/LWjY64yVEBtmGl90G32RyB2XToY1U921JW6rGJUo0ZSjhL138H9zL0xm
- +Nf90Wl8qEWdKvCy07axRt9Te2u1gRZ/Aof2b5cmw1GzFeVap4yL+wT6lkq3oHeVQRs2/SSin6j
- KQF+eTk5md7RZp4WOoKZvWJwAKEidYQLPBxdLks0eYdLzT1AY6vVx9HlX/B56m06ABKg17IqN9w
- gww58cvK3B5ntVmtVD8wZqVyL/03PbElXM1MoV3usWZniqETegyqNmDyK+nHWMPJ4r3pZAB+LzM
- LUiWbq3YbWr/ksKP75Kzo1I1O8TBqQ3XjOUoYxTVuVg5NWnI7NSirK5xtSwuGPmWWAAgPx6q9Md
- TOPVThfw/iiltiw==
-X-Developer-Key: i=krzysztof.kozlowski@linaro.org; a=openpgp;
- fpr=9BD07E0E0C51F8D59677B7541B93437D3B41629B
+Content-Transfer-Encoding: 8bit
 
-Use dev_err_probe() to make error and defer code handling simpler.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+On HiHope boards, the audio configuration uses a single port with one
+endpoint, defined as:
+
+    rsnd_port: port {
+        rsnd_endpoint: endpoint {
+            remote-endpoint = <&dw_hdmi0_snd_in>;
+            dai-format = "i2s";
+            bitclock-master = <&rsnd_endpoint>;
+            frame-master = <&rsnd_endpoint>;
+            playback = <&ssi2>;
+        };
+    };
+
+Commit 547b02f74e4a ("ASoC: rsnd: enable multi Component support for Audio
+Graph Card/Card2") added support for multiple ports. This caused probe
+failures on HiHope boards because the device node pointers used to
+retrieve the endpoint were incorrect.
+
+This patch resolves the issue by introducing a new helper function,
+`rsnd_pick_endpoint_node_for_ports()`, which retrieves the correct device
+node pointer by checking if the port is named 'port' or 'ports'. The
+`rsnd_dai_of_node()` and `rsnd_dai_probe()` functions are updated to use
+this helper, ensuring proper endpoint parsing in both single-port and
+multi-port configurations. This restores compatibility with HiHope boards.
+
+Fixes: 547b02f74e4a ("ASoC: rsnd: enable multi Component support for Audio Graph Card/Card2")
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 ---
- drivers/remoteproc/qcom_wcnss_iris.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+v1->v2
+- Added a helper function rsnd_pick_endpoint_node_for_ports()
+- Updated commit message
+- Dropped ACK from Morimoto-san
+---
+ sound/soc/sh/rcar/core.c | 26 ++++++++++++++++++++------
+ 1 file changed, 20 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/remoteproc/qcom_wcnss_iris.c b/drivers/remoteproc/qcom_wcnss_iris.c
-index dd36fd077911afec942f553a55128258c10ba946..b989718776bdb5843bd48b2d724bf1c483725bf3 100644
---- a/drivers/remoteproc/qcom_wcnss_iris.c
-+++ b/drivers/remoteproc/qcom_wcnss_iris.c
-@@ -155,9 +155,8 @@ struct qcom_iris *qcom_iris_probe(struct device *parent, bool *use_48mhz_xo)
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index 9784718a2b6f..b74061b04968 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1233,6 +1233,19 @@ int rsnd_node_count(struct rsnd_priv *priv, struct device_node *node, char *name
+ 	return i;
+ }
  
- 	iris->xo_clk = devm_clk_get(&iris->dev, "xo");
- 	if (IS_ERR(iris->xo_clk)) {
--		ret = PTR_ERR(iris->xo_clk);
--		if (ret != -EPROBE_DEFER)
--			dev_err(&iris->dev, "failed to acquire xo clk\n");
-+		ret = dev_err_probe(&iris->dev, PTR_ERR(iris->xo_clk),
-+				    "failed to acquire xo clk\n");
- 		goto err_device_del;
- 	}
++static struct device_node*
++	rsnd_pick_endpoint_node_for_ports(struct device_node *e_ports,
++					  struct device_node *e_port)
++{
++	if (of_node_name_eq(e_ports, "ports"))
++		return e_ports;
++
++	if (of_node_name_eq(e_ports, "port"))
++		return e_port;
++
++	return NULL;
++}
++
+ static int rsnd_dai_of_node(struct rsnd_priv *priv, int *is_graph)
+ {
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+@@ -1278,10 +1291,10 @@ static int rsnd_dai_of_node(struct rsnd_priv *priv, int *is_graph)
+ 	 * Audio-Graph-Card
+ 	 */
+ 	for_each_child_of_node(np, ports) {
+-		if (!of_node_name_eq(ports, "ports") &&
+-		    !of_node_name_eq(ports, "port"))
++		node = rsnd_pick_endpoint_node_for_ports(ports, np);
++		if (!node)
+ 			continue;
+-		priv->component_dais[i] = of_graph_get_endpoint_count(ports);
++		priv->component_dais[i] = of_graph_get_endpoint_count(node);
+ 		nr += priv->component_dais[i];
+ 		i++;
+ 		if (i >= RSND_MAX_COMPONENT) {
+@@ -1486,14 +1499,15 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
+ 	 */
+ 	dai_i = 0;
+ 	if (is_graph) {
++		struct device_node *dai_np_port;
+ 		struct device_node *ports;
+ 		struct device_node *dai_np;
  
-
+ 		for_each_child_of_node(np, ports) {
+-			if (!of_node_name_eq(ports, "ports") &&
+-			    !of_node_name_eq(ports, "port"))
++			dai_np_port = rsnd_pick_endpoint_node_for_ports(ports, np);
++			if (!dai_np_port)
+ 				continue;
+-			for_each_endpoint_of_node(ports, dai_np) {
++			for_each_endpoint_of_node(dai_np_port, dai_np) {
+ 				__rsnd_dai_probe(priv, dai_np, dai_np, 0, dai_i);
+ 				if (!rsnd_is_gen1(priv) && !rsnd_is_gen2(priv)) {
+ 					rdai = rsnd_rdai_get(priv, dai_i);
 -- 
 2.43.0
 
