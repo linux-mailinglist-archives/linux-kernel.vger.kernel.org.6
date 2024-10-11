@@ -1,140 +1,112 @@
-Return-Path: <linux-kernel+bounces-361605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A61BA99AA64
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:37:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF0B099AA6F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:38:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C6F1C218C7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:37:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A84828D48D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:38:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6221A1BDAB5;
-	Fri, 11 Oct 2024 17:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB15F1C9B65;
+	Fri, 11 Oct 2024 17:34:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="kZO5GIOs";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AtDMQtdo"
-Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="LQsb1Fcf"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE72199234;
-	Fri, 11 Oct 2024 17:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D701C68AC;
+	Fri, 11 Oct 2024 17:34:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728667969; cv=none; b=D76q1mvQFrjh7F2tSIph19fQZhksb0ewFICrvP+Jl/iLlH1qm/dNGQpY2U0Ax7l1BqGw6ykXEZas9NfVzs6eH1VZ9D8okfzUFnk84WGnN61YkXVtC2XQMlc3ROqubSYzQOV3jacsiZVXtl2h/JGkJTV1IfE5Wv11ACwTb8IRSak=
+	t=1728668063; cv=none; b=RZrx23jv9qaBSPJkhHnhpoOgdn0wy/v0SRm1rc2fIXCEiHZDVTIhZOeqCXw0EuHyABl/Ro69F3o2YKllrInJ1firgH9XLWd4VNyXWIBeikrCj1cgjE3M2Yt7ae+IMzCfCgh2MXo2Epb7fn8oBIs9i33E7dV1Sw4FiPZqwQfPRAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728667969; c=relaxed/simple;
-	bh=9CkUuKL47esnuYB4rzdSD0YMfBXPI4yPI1K9UgwAZ30=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=IuJu5Xej1hVTzttV3YKpqXClzSE2dKIxxqnEh78J2g1PR+fIOGKZnBIi+tvNrpVR6kcus0hy+8EPujZbnWKuYJne2q0dMxe8qpujcA5nYMeZFU9Zzv+LPtIGZSfNecId0e2XD8XoPwNNeB6/tW4UKrPyWCay6GFf9TPhNWDO8q4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=kZO5GIOs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AtDMQtdo; arc=none smtp.client-ip=103.168.172.145
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfout.phl.internal (Postfix) with ESMTP id 0CCC913803B0;
-	Fri, 11 Oct 2024 13:32:46 -0400 (EDT)
-Received: from phl-imap-13 ([10.202.2.103])
-  by phl-compute-01.internal (MEProxy); Fri, 11 Oct 2024 13:32:46 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728667966;
-	 x=1728754366; bh=9CkUuKL47esnuYB4rzdSD0YMfBXPI4yPI1K9UgwAZ30=; b=
-	kZO5GIOsjG1Uu6g8+Uq4Nu5sa7ZPNxCvkvjubYn5JWNwUFqAakgGuYdFCnMAxIbE
-	JqZLx2zdAF+IZf8vbjA6Rf6cUXgiOrauRtLhArMFqavd0oKa2UeU1gswjYh2LFs1
-	WyQAyjt5ZzljKUY/Bfam0EVHSj/dmMY0g19Zyga12/D4eoPE8vD6Uf9F3RVK9fxf
-	nEzt0b45GwyNgkAmMqm/5TYrpwXAiri4h7THc0/m8T/xgcbNafdXNow4z09nh+12
-	htPRq/JNvMmxF42hM+rq5GSaBJsCcwJ34i1/wbVyOowwIt7BiSOYkFGOsLVd6Okp
-	ZUie/Hoc2a8bw2QkYT3n7Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728667966; x=
-	1728754366; bh=9CkUuKL47esnuYB4rzdSD0YMfBXPI4yPI1K9UgwAZ30=; b=A
-	tDMQtdog4MuyDXvTP1C6h7F9+FJbbTm9aGsabGM9HovXFhjKjOwOBYz4q2h7IZZF
-	KyJcwG5PW2qUi93W7hj0/lPgH5a088bj2eH3OeXw7Cvw8xmE9kwdf5Qc/G4vrP16
-	JQllC5kzPzloqVrvkKkniPCmTyJYkdcqbRMeN5hH6xbBjgnkXKCNyatPTT8p56ud
-	S/5GfH1THOy8oAjjibST2LO0RT7lFpuBVnxs1NCXUT7n/OWnsnAbeyeZl5TYZsJT
-	3sdbfgypJoz8azLtF8yAhqKZW6uxQHVBmfcL6qqwCrsIGZpQYGzBfCMMY0z463GY
-	teRsrK+nDyseoImg2nGRw==
-X-ME-Sender: <xms:PWEJZ3C1MGuOZgLU6Z-ANXLuCxiLC0J2ruSWE56pdJ6nFj4mHzCnvQ>
-    <xme:PWEJZ9j89RFnFQT5Qa1N9lmKIy0LIMCRJyOkDNK7QZdcHtrdO0bd6ldHDxIvP6riR
-    Dp1xIsWAhqFgLaUOHA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefkedguddufecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
-    jeenucfhrhhomhepofgrthhirghsuceujhpprhhlihhnghcuoehmsegsjhhorhhlihhngh
-    drmhgvqeenucggtffrrghtthgvrhhnpeekkeevfefggeduueejleelkeduveeigfeljeff
-    udejleduteelffeuffekhfetleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpehmsegsjhhorhhlihhnghdrmhgvpdhnsggprhgtphhtthhopedu
-    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrnhhghihughhuihesvgduie
-    dqthgvtghhrdgtohhmpdhrtghpthhtoheptggrshhsvghlsehkvghrnhgvlhdrohhrghdp
-    rhgtphhtthhopegulhgvmhhorghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehksg
-    hushgthheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhvmhgvsehl
-    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohephhgthheslhhsthdrug
-    gvpdhrtghpthhtohepmhgrrhhtihhnrdhpvghtvghrshgvnhesohhrrggtlhgvrdgtohhm
-    pdhrtghpthhtohephhgrrhgvsehsuhhsvgdruggvpdhrtghpthhtoheplhhinhhugidqsg
-    hlohgtkhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:PWEJZykQZwWMORQ63au5LvuRQ9ToY6Ybxq7SH0nfbjZu_XroPa1XoQ>
-    <xmx:PWEJZ5wjFp7n-e4NxlEIIHeFqrp2b4TguTDlEjWRHIvEo7BtAskwbg>
-    <xmx:PWEJZ8QVf4tfOnbjs3-yul9cfQoRfga3A2n0Or37ax0icBPyNs2RkA>
-    <xmx:PWEJZ8b4QBzHKx2eWirZ6EsQ4TrccIQnOe57zf4uUSM55wGv3B45mQ>
-    <xmx:PmEJZxKhplYi0vd_WYDCm5t7_dAGADrEKF-3ml9u_oIJ-HXsAIuZ4jgE>
-Feedback-ID: if4314918:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 23E6C1F00073; Fri, 11 Oct 2024 13:32:45 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728668063; c=relaxed/simple;
+	bh=HzrVIZl8RqgVZlKFjmQ6wI+xqTFoDz8yAlOYT/QWKl8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PQi8hxtq2EfAyD3YpyEq60oeub+LKRW5DABBNnrAoYDn9A1oGmvV7GikWx8r949KJIl1c5S3zVkiQL9RTdi1+uGsMoCrGqehr0Qog0ullaMEKJ3lpUODg1JDuw7wnHEun8iomiDoqym9TsQ2SQVYDj7j4RKkVDpyApcA/EF1qRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=LQsb1Fcf; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BHY5uX030160;
+	Fri, 11 Oct 2024 12:34:05 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728668045;
+	bh=MH212cpsBrz27V6CekiJ3grsULY4GcITqBn4H8Ov+5M=;
+	h=From:To:CC:Subject:Date;
+	b=LQsb1FcfhirJWxnLymMhAVtB22myzuw9Al8IpDqNL5DqTCg0lNQytNaLTe3deNfRW
+	 4AY6Lyndw559EmSwEUKBAoRxkii3ksw3qhpE6x4K6uTayRdc/pRj8nclxOAzquRq8B
+	 DAqWlsqKfC4+M2gny6JYLrPzOg+j7TsejQpYqulA=
+Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BHY5PT067551
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Fri, 11 Oct 2024 12:34:05 -0500
+Received: from DFLE111.ent.ti.com (10.64.6.32) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Oct 2024 12:34:05 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE111.ent.ti.com
+ (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Oct 2024 12:34:05 -0500
+Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BHY47C025973;
+	Fri, 11 Oct 2024 12:34:04 -0500
+From: Judith Mendez <jm@ti.com>
+To: Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin Hilman
+	<khilman@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz
+ Golaszewski <brgl@bgdev.pl>
+CC: <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
+        <linux-serial@vger.kernel.org>, Judith Mendez <jm@ti.com>
+Subject: [PATCH RESEND 0/2] Misc OMAP GPIO/UART fixes
+Date: Fri, 11 Oct 2024 12:33:54 -0500
+Message-ID: <20241011173356.870883-1-jm@ti.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 11 Oct 2024 20:32:23 +0300
-From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
-To: "Christoph Hellwig" <hch@lst.de>
-Cc: kbusch@kernel.org, dlemoal@kernel.org, cassel@kernel.org,
- linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, wangyugui@e16-tech.com,
- martin.petersen@oracle.com, hare@suse.de,
- =?UTF-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>
-Message-Id: <455d17f6-ec55-4bce-b9d3-9f43eb4a056a@app.fastmail.com>
-In-Reply-To: <20241011081452.GA3337@lst.de>
-References: <20241010123951.1226105-1-m@bjorling.me>
- <20241010123951.1226105-2-m@bjorling.me> <20241011081452.GA3337@lst.de>
-Subject: Re: [PATCH 1/3 v2] nvme: make independent ns identify default
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Oct 11, 2024, at 11:14, Christoph Hellwig wrote:
-> On Thu, Oct 10, 2024 at 02:39:49PM +0200, Matias Bj=C3=B8rling wrote:
->> From: Matias Bj=C3=B8rling <matias.bjorling@wdc.com>
->>=20
->> The NVMe 2.0 specification adds an independent identify namespace
->> data structure that contains generic attributes that apply to all
->> namespace types. Some attributes carry over from the NVM command set
->> identify namespace data structure, and others are new.
->>=20
->> Currently, the data structure only considered when CRIMS is enabled or
->> when the namespace type is key-value.
->>=20
->> However, the independent namespace data structure
->> is mandatory for devices that implement features from the 2.0+
->> specification. Therefore, we can check this data structure first. If
->> unavailable, retrieve the generic attributes from the NVM command set
->> identify namespace data structure.
->
-> FYI, I still disagree with this for the same reason as before.
-> Assuming we're not really going to see hard drivers I'd be fine
-> with using it by default for 2.0 (or better even 2.1) by default.
+This patch series carries some miscellaneous
+OMAP driver fixes for GPIO and UART drivers.
 
-Sounds good. When I am back after next week, I'll update the patch set w=
-ith the version check and add the missing logic for hdd support.=20
+For GPIO, add gpio_enable and gpio_disable calls
+to gpio-omap which fixes an issue where if there
+is an irq storm, serial console is unresponsive.
 
-(Apologies for double e-mail. My phone client formatted the mail in html=
-)
+For UART, move pm_runtime_get_sync since the
+current order of omap_8250_rx_dma_flush and
+pm_runtime_get_sync calls are set in a way that
+when omap_8250_shutdown returns, dma->rx_running
+is set and this causes issues next time the UART
+is re-opened.
+
+Changes since v1:
+- Fix CC list
+- Drop Fixes tag
+
+Judith Mendez (2):
+  gpio: omap: Add omap_gpio_disable/enable_irq calls
+  serial: 8250: omap: Move pm_runtime_get_sync
+
+ drivers/gpio/gpio-omap.c            | 29 +++++++++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_omap.c |  4 ++--
+ 2 files changed, 31 insertions(+), 2 deletions(-)
+
+
+base-commit: f45840d172a06d07a1a408b38bdb0be9ab3fd8cb
+-- 
+2.47.0
+
 
