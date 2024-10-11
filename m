@@ -1,200 +1,110 @@
-Return-Path: <linux-kernel+bounces-360984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0049B99A20C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:54:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CF4B99A20E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:55:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 701671F23241
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:54:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5D43B271CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:55:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E90212EF0;
-	Fri, 11 Oct 2024 10:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C77222141C7;
+	Fri, 11 Oct 2024 10:54:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="pE34G824"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XGhvySuU"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B27F41D0E15;
-	Fri, 11 Oct 2024 10:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E114D2141BA;
+	Fri, 11 Oct 2024 10:54:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644087; cv=none; b=K+6ECd0pKm+KrQtyeGOyirH5jrzSy2QGAMj+1BWi5dRnItKNYMQ0ckjjoj8R92yjMX1rn65gYpzydpv73qzbYjVUQvUQ30aKehnxKJuPcHKcjHRKyRCJRQ6/eslHo2h5aYLCIlxHRSwLhltNnRyMOuZ8YI1XmVZ9vdWMXLwSxNs=
+	t=1728644092; cv=none; b=kfvntX61VjyfpN9jNMXG51ALZ9KqaLXWi1hqAfpEdvfPgRJwIXQmLirnA77RK7wGQYDvmKCqksM8soH001hfagbFw+l40wfsZBltLwfYfAYnY1kVpzIuMWb/+URrpu72rQtHFqpqFE9QiwTeOXTglfuW+LXl50Nx/CnjtGYOzJw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644087; c=relaxed/simple;
-	bh=BJhX/lmW/LILX88W3qn5ZKczb0DptbBEdZjDz6RxflU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bexcN19AuVi9+0dhewLZXpSgSk59unzQuCktdZp0QTa+pcN5kwmrkGmRbnUGJ30c8dLWeSUSfI8R0MgBYPRttus7ctB+vd7lLckBMVTittSKsiJWmgCZj3SsU07Z+DNMyhYZMzNM1uuJG+2UA6VoNrJqI94uEKGr/oi6Ex0eRwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=pE34G824; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1728644076; x=1729248876; i=wahrenst@gmx.net;
-	bh=B0nqQTWmbX/DXBru/TDDCruKEolLwzT5aKjKNmMn0p4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=pE34G824TsaI03+4EbgVmM4hxuWSOmuTvlN5XwOFYLEzmFXWoLXslEpjahLwIZjE
-	 HyQF+aWIxruRFTKexMLPFzm/MpfI8N1LWkfatdrcEbsvdK+qUIK6I291uzuIkHjln
-	 lAuoQEAz5x2qHPP91lpwtKyQ8wI9FnUPeBrFQVu4DaYKo92MsPF+EXr1SpNLUcqCV
-	 Z9d+FfOEzfslSsjXj++nOtIRYaC57Vz5WYh+WjTb05IQFVj1P84XIjYSVE3UvS17l
-	 zhPjhBlrFB48olYPsnEaLZ3Lhj+mChZUl+diyhKNazDUgegUR2eAkbdzc50xgNZEg
-	 R8ffFGRvf7kozx2ELQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N49hB-1tylzR2lwf-015pDe; Fri, 11
- Oct 2024 12:54:36 +0200
-Message-ID: <eb4713e3-ccc5-4848-800e-dbf30158b8af@gmx.net>
-Date: Fri, 11 Oct 2024 12:54:35 +0200
+	s=arc-20240116; t=1728644092; c=relaxed/simple;
+	bh=0KOKAhCgsCevJee4BgP8YIJB1hQodgg/8jSRCEcfAl4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A36Al538h65b4die5PSg5sVoGqLFXTjqtArU+HCJvWaGS5EHq8Q1AH5xdHe7z8Sm08QSBpE88UdGf+5hfrt7ptRmsQBGrKbKUP0Mc2WiAk88zwSt5IvkbVvljFCmqb7GwDtAwdwxrpmi/pyLLeCqC6ofYsDPBeLibMuugEqN45c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XGhvySuU; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728644091; x=1760180091;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=0KOKAhCgsCevJee4BgP8YIJB1hQodgg/8jSRCEcfAl4=;
+  b=XGhvySuUhQzETLNumjpTmgvXykpwxZab0AfMq+WkyTEbPeL8fYJSF7ZV
+   uNV6JWBmMM4u8DDw0Fb4cT3XkYsK4wxkLJBZxKk77r5BNHWKwsbPOob2T
+   I5XZ80xYzeIwpMVqLk+UFURKErHImuBkdG7OOVcNZMHGazLrOp9vomLnu
+   naU8kzdLSOj/ydF2d8udXiEPpt+Qs7RhY7NxLNhZT8PT+CiMKbZKTC5w3
+   Dmn4fRB59j3zoUuwvap5ACPXlPclPp8STy6t5IaLIC4VWX3oarY6os4zw
+   sR7QdRT26u7k9MJDRjQdBSU/JGvsG/l1stTNPhN6FfzyH9sGbKx/S3rNg
+   A==;
+X-CSE-ConnectionGUID: jQeWDQamRXCIw2a9fBHOTg==
+X-CSE-MsgGUID: AXuhQ1CBQ3CjyTsBr5GFkg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="15662686"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="15662686"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:54:50 -0700
+X-CSE-ConnectionGUID: OZIz0QrrRvWccFrx1xCAzg==
+X-CSE-MsgGUID: PxQCfAhwRvGI8ldeFJ7V+g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="81665080"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:54:46 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szDIA-00000001rlO-2Ab0;
+	Fri, 11 Oct 2024 13:54:42 +0300
+Date: Fri, 11 Oct 2024 13:54:42 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
+Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net,
+	skhan@linuxfoundation.org, Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Vasileios Amoiridis <vassilisamir@gmail.com>,
+	Angel Iglesias <ang.iglesiasg@gmail.com>,
+	Adam Rizkalla <ajarizzo@gmail.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH] iio: Fix uninitialized variable
+Message-ID: <ZwkD8hXNWcL0z4Cr@smile.fi.intel.com>
+References: <20241011093752.30685-1-0xff07@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/8] staging: vchiq_core: Lower indentation of a
- conditional block
-To: Umang Jain <umang.jain@ideasonboard.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Dan Carpenter <dan.carpenter@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
- <20241011072210.494672-5-umang.jain@ideasonboard.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <20241011072210.494672-5-umang.jain@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5HvJFIaJdVlUI3BICXc22twfJyPqXfvSQiy8GgciEliiSrCE9+N
- ywPwflgFjfYjGLwPCxCdXpuYEFbzjx5o5eeRn2CsFncP5RxBEQIcWpx2bWXQGmZfYpmDi31
- 3UWYtxtLF9UGKaKHTLvAQFYgDV1ucKEEPBz1xf2MPee0Ub+iMfO7UJ1t5TWpCXzs5qt5ST1
- IW6KFZpbkrzeVx75uB3FA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:WCGfBiwOFhw=;TWWCgkAaDvSNbOtqLyEFvUepvg0
- MH/WQDOlZKc7g0TzgP4J1+emuk6b7nTLEdzMTSbLOySmQZPDjPSVHFRPSOUM71GvlR+iew+4j
- Lg2Ro8y9xBTGFRqiMJ4A2IYWVmJQDvcOAmhrpspqHbvdLWfBpEuyBbOHUXd6g6N6RxkfUmmxN
- nBEnSgv9rkNdv/IqWCAqWxJotk1kPPlr9DrWHTxNk7W/IO4CKOgxA236t3KzHLbbfv0cMok1S
- 9/FW5RqFG1ftIAq3FQ4SMeaT1b1usjL4ntbbQ3R182eXH/Lop0mb6uwADtFFmHP1v7IeRftDN
- bhCsVK870IM9vu5WQStYo/YcqW/aNYbI47pcmP2GX0/FMb2wmAtbnAxOGATfXgp5B5YTdiK3p
- s5Uk+qx4qp4Xryf1E//xhUp/non4q0mk2NHoMeGCiz3NkvHAfSpZcX7GKEQW7nqJuwkW+wAh+
- z43c63MMDCF+u662bxo70eSoXj7IeDHS9V8KxE33pFD7S+8SFuLcgV0Kx/syViSh5/djGivQ7
- tLEaUTpNufGop2O7qVs8vTfTWdhMgL8nptT944LRiupIFk5n+R6DDWgHux5NaRU8CJq8vmgmU
- M27P/Z38PRiOBTVK5VjPGKHHT92TkELjBivAKUshnqhXhMB1OZPapPmlv7A9N9vqnAbeCjvti
- YyaED5tBP9eVe4wUJ9t+90fXkonlo4Usg7aHb6ZupHIo6P9ay/8IYlwWCzmEg/jmnNo669sPP
- NwiJKRDzcRNDUJta0RD4bCJ80HyqV64QPNav9Tjw6ZNCkvs+nPAOJCEXHZK/Y0Yq9+6wUBh/v
- T09DqVXrfHsWDys9iA3wdR5g==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011093752.30685-1-0xff07@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Hi Umang,
+On Fri, Oct 11, 2024 at 05:37:45PM +0800, Yo-Jung (Leo) Lin wrote:
+> clang found that the "offset" in bmp580_trigger_handler doesn't get
+> initialized before access. Add proper initialization to this variable.
 
-Am 11.10.24 um 09:22 schrieb Umang Jain:
-> Lower indentation of 'if (bulk->data && service->instance)'
-> conditional block. This is achieved introducing a early check for
-> (!bulk->data || !service->instance) and using a goto label 'complete'
-> if it evaluates to true.
->
-> No functional changes intended in this patch.
->
-> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-> ---
->   .../interface/vchiq_arm/vchiq_core.c          | 61 ++++++++++---------
->   1 file changed, 31 insertions(+), 30 deletions(-)
->
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_cor=
-e.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index 15257cf66fa4..b95443043c27 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -1326,44 +1326,45 @@ notify_bulks(struct vchiq_service *service, stru=
-ct vchiq_bulk_queue *queue,
->   		struct vchiq_bulk *bulk =3D
->   			&queue->bulks[BULK_INDEX(queue->remove)];
->
-> +		if (!bulk->data || !service->instance)
-> +			goto complete;
-> +
->   		/*
->   		 * Only generate callbacks for non-dummy bulk
->   		 * requests, and non-terminated services
->   		 */
-> -		if (bulk->data && service->instance) {
-> -			if (bulk->actual !=3D VCHIQ_BULK_ACTUAL_ABORTED) {
-> -				if (bulk->dir =3D=3D VCHIQ_BULK_TRANSMIT) {
-> -					VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
-> -					VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
-> -								bulk->actual);
-> -				} else {
-> -					VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
-> -					VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
-> -								bulk->actual);
-> -				}
-> +		if (bulk->actual !=3D VCHIQ_BULK_ACTUAL_ABORTED) {
-> +			if (bulk->dir =3D=3D VCHIQ_BULK_TRANSMIT) {
-> +				VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
-> +				VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
-> +							bulk->actual);
->   			} else {
-> -				VCHIQ_SERVICE_STATS_INC(service, bulk_aborted_count);
-> -			}
-> -			if (bulk->mode =3D=3D VCHIQ_BULK_MODE_BLOCKING) {
-> -				struct bulk_waiter *waiter;
-> -
-> -				spin_lock(&service->state->bulk_waiter_spinlock);
-> -				waiter =3D bulk->userdata;
-> -				if (waiter) {
-> -					waiter->actual =3D bulk->actual;
-> -					complete(&waiter->event);
-> -				}
-> -				spin_unlock(&service->state->bulk_waiter_spinlock);
-> -			} else if (bulk->mode =3D=3D VCHIQ_BULK_MODE_CALLBACK) {
-> -				enum vchiq_reason reason =3D
-> -						get_bulk_reason(bulk);
-> -				status =3D make_service_callback(service, reason,	NULL,
-> -							       bulk->userdata);
-> -				if (status =3D=3D -EAGAIN)
-> -					break;
-> +				VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
-> +				VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
-> +							bulk->actual);
->   			}
-> +		} else {
-> +			VCHIQ_SERVICE_STATS_INC(service, bulk_aborted_count);
->   		}
-> +		if (bulk->mode =3D=3D VCHIQ_BULK_MODE_BLOCKING) {
-> +			struct bulk_waiter *waiter;
->
-> +			spin_lock(&service->state->bulk_waiter_spinlock);
-> +			waiter =3D bulk->userdata;
-> +			if (waiter) {
-> +				waiter->actual =3D bulk->actual;
-> +				complete(&waiter->event);
-> +			}
-> +			spin_unlock(&service->state->bulk_waiter_spinlock);
-> +		} else if (bulk->mode =3D=3D VCHIQ_BULK_MODE_CALLBACK) {
-> +			enum vchiq_reason reason =3D
-> +					get_bulk_reason(bulk);
-> +			status =3D make_service_callback(service, reason,	NULL,
-> +						       bulk->userdata);
-> +			if (status =3D=3D -EAGAIN)
-> +				break;
-> +		}
-> +complete:
-I would consider goto labels within a while loop as error prone and
-ugly. Maybe moving the enclosing code into a separate function would be
-a nicer approach?
+...
 
-Regards
->   		queue->remove++;
->   		complete(&service->bulk_remove_event);
->   	}
+>  	struct bmp280_data *data = iio_priv(indio_dev);
+> -	int ret, offset;
+> +	int ret, offset = 0;
+
+Can it be done closer to the actual user of it?
+
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
