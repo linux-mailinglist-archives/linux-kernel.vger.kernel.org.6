@@ -1,235 +1,157 @@
-Return-Path: <linux-kernel+bounces-361504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D099A907
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:38:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1606599A909
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:38:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5AE1C214EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:38:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C6E2847CD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:38:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE2D19B3EE;
-	Fri, 11 Oct 2024 16:38:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3014019B3CB;
+	Fri, 11 Oct 2024 16:38:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnHzVntw"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="II3R02uz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F36199932;
-	Fri, 11 Oct 2024 16:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABE7199941;
+	Fri, 11 Oct 2024 16:38:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664698; cv=none; b=KV6HH+t3jqhUVYH3jF5ZNQOb1g30BdFIGFk+L7sjDT0Irx+QnGqJloeHy02wa295jRDHlf8zcNjW0S07mTtcGYu/xUvVgeVAKVSohmKnh1EZKaBnAWTjFmO14eCaNr2mcRN7S2ClxjjIKK2boHh9Pp7ilUo5ls8LTt5M1sOPj70=
+	t=1728664711; cv=none; b=KNpNbpY1d5kTg2rVqW6CHWgMnCNhep4iDbA3TWrpoQ42Btt8vQq/mhGUdGf89NH1SBil7y0oe7BZKBIBOqFUk3SSLu9mH8Ks70KeMxjIsxS1TBGhsnmYrc/G4+m1PzmqPSaTFLzWVswq4m41VOa9Uowt/7pxRHFW37nTPm0qjNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664698; c=relaxed/simple;
-	bh=W9FTFxeHKW+H3zO9bJftr6UAwVhKYCVBgdeNnVC55Aw=;
+	s=arc-20240116; t=1728664711; c=relaxed/simple;
+	bh=+bv/Ltjg3lqXdKlXUBN51U2EOvBGvrIXsXXFD++cqr8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZsNwU3rwSAl4SoD+sT0eA7YsTu84vk4BgnTX5aBbbni2aqVYUBGfBMqGFYRbO48PtWbD3ILOe0/sL9iJnY5k/FXMXEEzzr6AAWs9SIyv5S5dTYY9tQh1xItTMzPgCIc7/SYuMFqjEKNyATQ19VEnL/jdqN0t07SU5PyHEx7igvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnHzVntw; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728664696; x=1760200696;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=W9FTFxeHKW+H3zO9bJftr6UAwVhKYCVBgdeNnVC55Aw=;
-  b=QnHzVntwocP5omFrMpSTg/d/ENOrD9KleAi67A92vWFMmAxBeyrkswKp
-   DQY72uKGCrlHzzFUpaJBW0VJan14u7F++0t62F0LmvulC8/S8N+EbfRIP
-   2iiNfiw9WTEGHwpZcc2T84eOvIZdxH3T7gWotCguIT9v/syLKUyZWYz/H
-   qoYW4z6VTUUYoDIGOGFaxfYTVE2jh7eGVXvNKW5FV0yL74jpI9btYauAF
-   fy76rJ7yHoL9ji31bKxlYcLGUBzFwQ9Oes2Z5yDxw2CJBfSoB3z0J0jfF
-   IxkobIfKxDfT4KSsJW6moWeCbFK1xr6wO42tENinwasSLtPor9xTu4jYv
-   Q==;
-X-CSE-ConnectionGUID: agZ6dnKyRoq8/X/+wywpJQ==
-X-CSE-MsgGUID: 0kyCEa2ASH+vp9tmPMMxrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="15697845"
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="15697845"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 09:38:15 -0700
-X-CSE-ConnectionGUID: dbe8p01jQPW8OG00bSVVXw==
-X-CSE-MsgGUID: MGnya2K1QnGO4qFC2EvJyA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="76855011"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa009.jf.intel.com with ESMTP; 11 Oct 2024 09:38:14 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id BAD45807; Fri, 11 Oct 2024 19:38:11 +0300 (EEST)
-Date: Fri, 11 Oct 2024 19:38:11 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
-	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
-	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
-	Gil Fine <gil.fine@linux.intel.com>
-Subject: Re: USB-C DisplayPort display failing to stay active with Intel
- Barlow Ridge USB4 controller, power-management related issue?
-Message-ID: <20241011163811.GU275077@black.fi.intel.com>
-References: <20241009220118.70bfedd0@kf-ir16>
- <20241010044919.GD275077@black.fi.intel.com>
- <20241010232656.7fc6359e@kf-ir16>
+	 Content-Type:Content-Disposition:In-Reply-To; b=eWtDLQ7Hucx63D91gljjpDEThBnzt4Wx106Z93i/R/aCBAgVOAgAB828R2SQYRX7rd3n78V8rfNG6jPqXBODHz2LBrcgRq2SJrSnzY3MApJp2fsyhw9L0En3oiQOCuFAyrp2s/KA7wgy0ZwZJtL98cds/STgHkBb35A57g7elD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=II3R02uz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CC9C4CEC3;
+	Fri, 11 Oct 2024 16:38:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728664711;
+	bh=+bv/Ltjg3lqXdKlXUBN51U2EOvBGvrIXsXXFD++cqr8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=II3R02uzGMwMvzKKtwJylWdhQ043i8PxJl2XFeSN8sgOiy+lUZuHOd2+0d1zGqk5H
+	 ONxyOmgYzlaghFFkn17zDYMKcBDirq7d6Dt8rC9QThBGKGKU7ewad6uakmHphorbKX
+	 3bshmGWUZGEVi/LZQLVItmSyZXi3d+jtDEmzXjlXbH9UVIzLpNruxmgVGtpnVQxe7f
+	 u9d2hPxCPzUikkLaYdBdHAztRm39x4xqoafGvibdq4Bz9EufsdBC/ade/hCfc17hjW
+	 tQed+4nIvpn/sGmiT69OL7WmSvf+4kHRbmJm37xk1dbhtSnZ3gcKpZ94UE6AVcQmyg
+	 xBPAhOP973tcg==
+Date: Fri, 11 Oct 2024 09:38:30 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, dchinner@redhat.com,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
+ extsize
+Message-ID: <20241011163830.GX21853@frogsfrogsfrogs>
+References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010232656.7fc6359e@kf-ir16>
+In-Reply-To: <20241011145427.266614-1-ojaswin@linux.ibm.com>
 
-Hi,
-
-On Thu, Oct 10, 2024 at 11:26:56PM -0500, Aaron Rainbolt wrote:
-> > Can you share full dmesg with the repro and "thunderbolt.dyndbg=+p" in
-> > the kernel command line?
+On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
+> Extsize is allowed to be set on files with no data in it. For this,
+> we were checking if the files have extents but missed to check if
+> delayed extents were present. This patch adds that check.
 > 
-> The full log is very long, so I've included it as an email attachment.
-> The exact steps taken after booting with the requested kernel parameter
-> were:
+> While we are at it, also refactor this check into a helper since
+> its used in some other places as well like xfs_inactive() or
+> xfs_ioctl_setattr_xflags()
 > 
-> 1. boot with thunderbolt.dyndbg=+p kernel param, no USB-C plugged in.
-> 2. After login, hot-plug two USB-C cables. This time, the displays came
->   up and stayed resident (this happens sometimes)
-> 3. Unplugged both cables.
-> 4. Replugged both. This time, the displays did not show anything.
-> 5. lspci -k "jiggled" the displays and they came back on.
-> 6. After ~15s, the displays blacked out again.
-> 7. Save to the demsg file after about 30s.
+> **Without the patch (SUCCEEDS)**
 > 
-> The laptop's firmware is fully up-to-date. One of the fixes we tried
-> was installing Windows 11, updating the firmware, and then
-> re-installing Kubuntu 24.04. This had no effect on the issue.
+> $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
 > 
-> Notes:
+> wrote 1024/1024 bytes at offset 0
+> 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
 > 
-> * Kernel 6.1 does not exhibit this time out. 6.5 and later do.
-> * Windows 11 had very similar behavior before installing Windows
->   updates. After update, it was fixed.
-> * All distros and W11 were tested on the same hardware with the latest
->   firmware, so we know this is not a hardware failure.
+> **With the patch (FAILS as expected)**
+> 
+> $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> 
+> wrote 1024/1024 bytes at offset 0
+> 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+> 
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
 
-Thanks for the logs and steps!
+Looks good now,
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-I now realize that
+--D
 
-  a75e0684efe5 ("thunderbolt: Keep the domain powered when USB4 port is in redrive mode")
-
-was half-baked. Yes it deals with the situation where plugging in
-monitor when the domain is powered. However, it completely misses these
-cases:
-
-* Plug in monitor to the Type-C port when the controller is runtime
-   suspended.
-* Boot with monitor plugged in to the Type-C port.
-
-At the end of this email there is a hack patch that tries to solve this.
-Can you try it out? I will be on vacation next week but I'm copying my
-colleague Gil who is familiar with this too. He should be able to help
-you out during my absense.
-
-Couple of notes about the dmesg you shared. They don't affect this issue
-but may cause other issues:
-
-> [    1.382718] thunderbolt 0000:06:00.0: device links to tunneled native ports are missing!
-
-This is means the BIOS does not implement the USB4 power contract which
-means that USB 3.x and PCIe tunnels will not work as expected after
-power transition.
-
-> [    1.416488] thunderbolt 0000:06:00.0: 0: NVM version 14.86
-
-This is really old firmware version. My development system for example
-has 56.x so yours might have a bunch of issues that are solved in the
-later versions.
-
-The hack patch below:
-
-diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
-index 07a66594e904..0e424b7661be 100644
---- a/drivers/thunderbolt/tb.c
-+++ b/drivers/thunderbolt/tb.c
-@@ -2113,6 +2113,37 @@ static void tb_exit_redrive(struct tb_port *port)
- 	}
- }
- 
-+static void tb_switch_enter_redrive(struct tb_switch *sw)
-+{
-+	struct tb_port *port;
-+
-+	tb_switch_for_each_port(sw, port)
-+		tb_enter_redrive(port);
-+}
-+
-+/*
-+ * Called during system and runtime suspend to forcefully exit redrive
-+ * mode without querying whether the resource is available.
-+ */
-+static void tb_switch_exit_redrive(struct tb_switch *sw)
-+{
-+	struct tb_port *port;
-+
-+	if (!(sw->quirks & QUIRK_KEEP_POWER_IN_DP_REDRIVE))
-+		return;
-+
-+	tb_switch_for_each_port(sw, port) {
-+		if (!tb_port_is_dpin(port))
-+			continue;
-+
-+		if (port->redrive) {
-+			port->redrive = false;
-+			pm_runtime_put(&sw->dev);
-+			tb_port_dbg(port, "exit redrive mode\n");
-+		}
-+	}
-+}
-+
- static void tb_dp_resource_unavailable(struct tb *tb, struct tb_port *port,
- 				       const char *reason)
- {
-@@ -2987,6 +3018,7 @@ static int tb_start(struct tb *tb, bool reset)
- 	tb_create_usb3_tunnels(tb->root_switch);
- 	/* Add DP IN resources for the root switch */
- 	tb_add_dp_resources(tb->root_switch);
-+	tb_switch_enter_redrive(tb->root_switch);
- 	/* Make the discovered switches available to the userspace */
- 	device_for_each_child(&tb->root_switch->dev, NULL,
- 			      tb_scan_finalize_switch);
-@@ -3002,6 +3034,7 @@ static int tb_suspend_noirq(struct tb *tb)
- 
- 	tb_dbg(tb, "suspending...\n");
- 	tb_disconnect_and_release_dp(tb);
-+	tb_switch_exit_redrive(tb->root_switch);
- 	tb_switch_suspend(tb->root_switch, false);
- 	tcm->hotplug_active = false; /* signal tb_handle_hotplug to quit */
- 	tb_dbg(tb, "suspend finished\n");
-@@ -3094,6 +3127,7 @@ static int tb_resume_noirq(struct tb *tb)
- 		tb_dbg(tb, "tunnels restarted, sleeping for 100ms\n");
- 		msleep(100);
- 	}
-+	tb_switch_enter_redrive(tb->root_switch);
- 	 /* Allow tb_handle_hotplug to progress events */
- 	tcm->hotplug_active = true;
- 	tb_dbg(tb, "resume finished\n");
-@@ -3157,6 +3191,8 @@ static int tb_runtime_suspend(struct tb *tb)
- 	struct tb_cm *tcm = tb_priv(tb);
- 
- 	mutex_lock(&tb->lock);
-+	tb_disconnect_and_release_dp(tb);
-+	tb_switch_exit_redrive(tb->root_switch);
- 	tb_switch_suspend(tb->root_switch, true);
- 	tcm->hotplug_active = false;
- 	mutex_unlock(&tb->lock);
-@@ -3188,6 +3224,7 @@ static int tb_runtime_resume(struct tb *tb)
- 	tb_restore_children(tb->root_switch);
- 	list_for_each_entry_safe(tunnel, n, &tcm->tunnel_list, list)
- 		tb_tunnel_activate(tunnel);
-+	tb_switch_enter_redrive(tb->root_switch);
- 	tcm->hotplug_active = true;
- 	mutex_unlock(&tb->lock);
- 
+> ---
+>  fs/xfs/xfs_inode.c | 2 +-
+>  fs/xfs/xfs_inode.h | 5 +++++
+>  fs/xfs/xfs_ioctl.c | 4 ++--
+>  3 files changed, 8 insertions(+), 3 deletions(-)
+> 
+> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> index bcc277fc0a83..19dcb569a3e7 100644
+> --- a/fs/xfs/xfs_inode.c
+> +++ b/fs/xfs/xfs_inode.c
+> @@ -1409,7 +1409,7 @@ xfs_inactive(
+>  
+>  	if (S_ISREG(VFS_I(ip)->i_mode) &&
+>  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
+> -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
+> +	     xfs_inode_has_filedata(ip)))
+>  		truncate = 1;
+>  
+>  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
+> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> index 97ed912306fd..03944b6c5fba 100644
+> --- a/fs/xfs/xfs_inode.h
+> +++ b/fs/xfs/xfs_inode.h
+> @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
+>  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
+>  }
+>  
+> +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
+> +{
+> +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
+> +}
+> +
+>  /*
+>   * Check if an inode has any data in the COW fork.  This might be often false
+>   * even for inodes with the reflink flag when there is no pending COW operation.
+> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> index a20d426ef021..2567fd2a0994 100644
+> --- a/fs/xfs/xfs_ioctl.c
+> +++ b/fs/xfs/xfs_ioctl.c
+> @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
+>  
+>  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
+>  		/* Can't change realtime flag if any extents are allocated. */
+> -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
+> +		if (xfs_inode_has_filedata(ip))
+>  			return -EINVAL;
+>  
+>  		/*
+> @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
+>  	if (!fa->fsx_valid)
+>  		return 0;
+>  
+> -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
+>  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+>  		return -EINVAL;
+>  
+> -- 
+> 2.43.5
+> 
+> 
 
