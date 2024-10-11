@@ -1,71 +1,72 @@
-Return-Path: <linux-kernel+bounces-360364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98B74999A15
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:12:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 434DF999A18
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2837F283AF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:12:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 473D61C20937
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14821F4FA4;
-	Fri, 11 Oct 2024 02:11:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D411F4FDF;
+	Fri, 11 Oct 2024 02:11:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FAPaQCoM"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="p5mJoFqi"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4C2B1F4716
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA27D1F4FA3
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:11:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612661; cv=none; b=Ua1RtzA5yBOwZTNqu1uvgBacSRn8S0h4V+N3WEo2GzN5AdSyLyPmHEwdiJjFyCi6r9QzXCRb+Ng+oEhF6PZZW6pBGbgV0D5hG+0ntFv65W8PRGDu5YbtDfeMBl91uXpPY9YfWVVO8m68wFv1y5u7I199zDk2xpL14g3QGsnHDoM=
+	t=1728612664; cv=none; b=AxdQazySapfHLfDR4MIxc8UjHeAjmH4fBpzSzebAYzm6DZgQ17R4O6CFiBLdnSqDsvk67TtzvCw+kY14S2hDVUP7SG7cFrrK1c6P6WKJAi4F11fjexZ7f0ybxeYr79smJ0Y7eh/pP3qF1Ie+9WtnvcmLMMB8ywZZRSzwX/9LzMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612661; c=relaxed/simple;
-	bh=RqYw1AtTmNIpKfrRVZilkRfxBV1RzGHNLXu7fiax26k=;
+	s=arc-20240116; t=1728612664; c=relaxed/simple;
+	bh=E3IXDKgcyUCE+TmbZTTwZzg1L4bUxpva3WFh9qzTdFk=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=keTKeShUKAGPq1JYH5n4kxpjFtIaHqA+hv0Sok8nsFlwK2C1JMTV/52uyXigLo9xA+vqv1P0QoU0/UxE9QjynfjKs9TEXxZELpE/oJsbvNL7DuGYDqXAYbUmEn9lmWeQB41Kupt+Q1ZYhixcJ1LBpNp45oWKVXp7FopC5nmt3sA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FAPaQCoM; arc=none smtp.client-ip=209.85.215.202
+	 To:Cc:Content-Type; b=GcZuNz5DUIIWvcYlY38F7a4SN43NjOXsaZjcEYXKeqsCXx15WNyZKybn1sAvjMU4yISdlHDymuxTpG9zqR3Pe5W/TGAm+o8o9jl6hmv7aR+Kxm4V9BGsvtzAPCwBOGGAOASSRfLrs8A+Kr2ZMSVbuDrmkA5CElaMyN1coP6oRJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=p5mJoFqi; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7b696999c65so1125149a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:10:59 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e2acec0109so28042307b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:11:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728612659; x=1729217459; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=1cFPbD2dKRB4Ynjmw+1iKOno60r0l4Z0l+jOG9EoBK0=;
-        b=FAPaQCoMvl+bXRlr7tk1gXpgMK1NvZajqyA2R6CyWU1/qdgk5wQVUX+c+eq7cHY4TV
-         GYff4dFBwyiBBEGjHir/495APPWYcd104lvlWJ2FpnkKAhHaVXNz7YhsgRDTOW/eHSef
-         IwdVc2wXrXZyDDuNUBxU8ek0+vj91by3sOA0qzhg1Wp5YcTl3kNs7hRYhqWfzrZcFPnd
-         40MJ3FQbAMqknYGXCRvSo4IZPDv474MnKAL0wQStrZ8GUgAqGT2ZvAy5fnHfQh0rji+T
-         0Oa73vYK2PcoqjcU6TzTVAPZfmMxBmLwDPauckIZCtd+xsVLT2oUcX/zjyzCPAFxTzvu
-         e7/Q==
+        d=google.com; s=20230601; t=1728612661; x=1729217461; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:reply-to:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=vfRd4YGDidyx6Q8cdQBlESrYYtQMzsNuRjsxO0/o42k=;
+        b=p5mJoFqiWrKPNXn3tzposfZ/LwMyFOC4Qi/F6zOxZZ+WzeSw961jBZGR0nNjeoUeAd
+         wIutWcEuNHESvCc90p17R8Jmlizw37Vhb+OCnYJ7eDweqT0DMbvZ938z5xWzgTYHaXx4
+         UNlwodEOof06CzkhBv2lWbN+KJ/SwjvTP6B9/NOElMthBbV8TgA4G5Z8SLEQP93/BJLs
+         AFkkICKF+uGb7ILyteK9uzucetMrRF6M+G0B6ka9RJAJLLvSazSq3cWuWAqw0iWnj7bk
+         9SgeLLPICHGUtXrSSfy109fBTNPZtVrXwjKSwxlbLXY7PiPhg//1ONlaP4uuXP7n/iiL
+         SqEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728612659; x=1729217459;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1cFPbD2dKRB4Ynjmw+1iKOno60r0l4Z0l+jOG9EoBK0=;
-        b=TpmtjqtlA62OX1vR2fuCW0xsrkurrAHr40bDt6401htoO6WNHo4RV1WoJDS2ejv1GR
-         vKkFA4OGR9qTPT4S8uxxeQ59g/GUF6g8JY8LHzDbnXFQsWewe/3UCLoAwlRDifHRq/jI
-         SWPdsH+vYHcp3SuYnU9xtNnpm+kh4vvBDM2tNKAxMgVAtljKT5UflihevpFwPZIslVpC
-         cmwkFTmwVkub8U7k0qeLgnKLAFWXbQmNY1ZtVQdCgLiIvtS8SIMuvSftQbv08AMpU5MW
-         WwzBXZafml93c/o0JnmYZJyHeUm5jU3ymS/MuN53zhLIdNgklV0XiMsc0a2XGKvwb72D
-         kC0w==
-X-Forwarded-Encrypted: i=1; AJvYcCUsSnH5MjDSKw19T6OvKUXoNdiE3rTabJVJ5uFlzIgBj+jwQVyAFxLXeFQQ4SrcdWxAVwmTqIu+iok+AOQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxnb+KWuiF1Y8fSGqngTVjP00h9eyY/aREkgpwO2LiA75KQo+30
-	E28znPyy0rPaL3oj4RzH/FCFiYH6SPER67954ycMX8mFKth1IUXB3XjlQ7Cas/U2ji5/X5+jd/E
-	OeQ==
-X-Google-Smtp-Source: AGHT+IGX2CXRtmLd2XIO3ano1VLdg5QbiDrG6U3QGMBhMcsoaLOgnVSvhPE6pecTJ5VW0JuXmb1bfxqe1OQ=
+        d=1e100.net; s=20230601; t=1728612661; x=1729217461;
+        h=content-transfer-encoding:cc:to:from:subject:message-id:references
+         :mime-version:in-reply-to:date:reply-to:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vfRd4YGDidyx6Q8cdQBlESrYYtQMzsNuRjsxO0/o42k=;
+        b=hNvz3aKwLOODwOpY5ZDzxcJjlxyRMZQRxwPPMJKQwvG7kT+bUKEozGbAMF3QTZ3QRp
+         YSi+xPijLtPteRZrKlaCxyMqff5bfIc+0RPD4G8fymQqB4okytX+MaokJFn3JHCGm8tS
+         eXc1kxNahJm8cNdkCSf+YqZgk02pBJYxsqkLFGyqV19LfApMKarnH7/gZxSOQiYb4Zow
+         AQxMhCcPzVTcjNhHxhYuKJWEKvhM8ZGXn+/MTtOVTfE5T6YOVm8BRzgfezF7hBkihBbI
+         qYtLlJdF3mgseEIcIq454644DxEW3CcppbF/+q6gQO7j2QxBBwIG05LA7VBrU9PJsGij
+         cW3A==
+X-Forwarded-Encrypted: i=1; AJvYcCXYFrFxhH7ldus3yQ6zWmT+A8TY0ilBudOCDVwfzE/TCU1nouPvZ+zXChXzevmrj3Nd0X/tuppHkdxuF3s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTonXFDIP6yUgF5vod+Sqx1Wd0W7s9ax+ipw0hdCJzBWq2xcC0
+	Polye0Q2rQedfKy44KP4RxlLBPJZ2yYbOoeF/a914BMfuFKiQkIUPF5maJP4PpXE1ykwlMxHEcK
+	WBw==
+X-Google-Smtp-Source: AGHT+IGmrtxjHtrBMHGZEUy3JQ2tvJIUU8sN8vV3zTrSpyXnDiKaHwy98K8xzQupsJi3j4s85TEUOMvXyAM=
 X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a65:6896:0:b0:7db:18fc:3068 with SMTP id
- 41be03b00d2f7-7ea535903c0mr782a12.5.1728612657867; Thu, 10 Oct 2024 19:10:57
+ (user=seanjc job=sendgmr) by 2002:a05:690c:4384:b0:6e3:15a8:b26b with SMTP id
+ 00721157ae682-6e347c70e18mr57427b3.8.1728612660902; Thu, 10 Oct 2024 19:11:00
  -0700 (PDT)
 Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 19:10:35 -0700
+Date: Thu, 10 Oct 2024 19:10:36 -0700
 In-Reply-To: <20241011021051.1557902-1-seanjc@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -75,9 +76,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241011021051.1557902-1-seanjc@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241011021051.1557902-4-seanjc@google.com>
-Subject: [PATCH 03/18] KVM: x86/mmu: Fold all of make_spte()'s writable
- handling into one if-else
+Message-ID: <20241011021051.1557902-5-seanjc@google.com>
+Subject: [PATCH 04/18] KVM: x86/mmu: Don't force flush if SPTE update clears
+ Accessed bit
 From: Sean Christopherson <seanjc@google.com>
 To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
 Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
@@ -85,53 +86,88 @@ Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org,
 	"=?UTF-8?q?Alex=20Benn=C3=A9e?=" <alex.bennee@linaro.org>, David Matlack <dmatlack@google.com>, 
 	James Houghton <jthoughton@google.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Now that make_spte() no longer uses a funky goto to bail out for a special
-case of its unsync handling, combine all of the unsync vs. writable logic
-into a single if-else statement.
+Don't force a TLB flush if mmu_spte_update() clears the Accessed bit, as
+access tracking tolerates false negatives, as evidenced by the
+mmu_notifier hooks that explicitly test and age SPTEs without doing a TLB
+flush.
 
-No functional change intended.
+In practice, this is very nearly a nop.  spte_write_protect() and
+spte_clear_dirty() never clear the Accessed bit.  make_spte() always
+sets the Accessed bit for !prefetch scenarios.  FNAME(sync_spte) only sets
+SPTE if the protection bits are changing, i.e. if a flush will be needed
+regardless of the Accessed bits.  And FNAME(pte_prefetch) sets SPTE if and
+only if the old SPTE is !PRESENT.
 
+That leaves kvm_arch_async_page_ready() as the one path that will generate
+a !ACCESSED SPTE *and* overwrite a PRESENT SPTE.  And that's very arguably
+a bug, as clobbering a valid SPTE in that case is nonsensical.
+
+Tested-by: Alex Benn=C3=A9e <alex.bennee@linaro.org>
 Signed-off-by: Sean Christopherson <seanjc@google.com>
 ---
- arch/x86/kvm/mmu/spte.c | 13 ++++---------
- 1 file changed, 4 insertions(+), 9 deletions(-)
+ arch/x86/kvm/mmu/mmu.c | 30 +++++++++---------------------
+ 1 file changed, 9 insertions(+), 21 deletions(-)
 
-diff --git a/arch/x86/kvm/mmu/spte.c b/arch/x86/kvm/mmu/spte.c
-index 09ce93c4916a..030813781a63 100644
---- a/arch/x86/kvm/mmu/spte.c
-+++ b/arch/x86/kvm/mmu/spte.c
-@@ -217,8 +217,6 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 	spte |= (u64)pfn << PAGE_SHIFT;
- 
- 	if (pte_access & ACC_WRITE_MASK) {
--		spte |= PT_WRITABLE_MASK | shadow_mmu_writable_mask;
+diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+index 176fc37540df..9ccfe7eba9b4 100644
+--- a/arch/x86/kvm/mmu/mmu.c
++++ b/arch/x86/kvm/mmu/mmu.c
+@@ -521,36 +521,24 @@ static u64 mmu_spte_update_no_track(u64 *sptep, u64 n=
+ew_spte)
+  * not whether or not SPTEs were modified, i.e. only the write-tracking ca=
+se
+  * needs to flush at the time the SPTEs is modified, before dropping mmu_l=
+ock.
+  *
++ * Remote TLBs also need to be flushed if the Dirty bit is cleared, as fal=
+se
++ * negatives are not acceptable, e.g. if KVM is using D-bit based PML on V=
+MX.
++ *
++ * Don't flush if the Accessed bit is cleared, as access tracking tolerate=
+s
++ * false negatives, and the one path that does care about TLB flushes,
++ * kvm_mmu_notifier_clear_flush_young(), uses mmu_spte_update_no_track().
++ *
+  * Returns true if the TLB needs to be flushed
+  */
+ static bool mmu_spte_update(u64 *sptep, u64 new_spte)
+ {
+-	bool flush =3D false;
+ 	u64 old_spte =3D mmu_spte_update_no_track(sptep, new_spte);
+=20
+ 	if (!is_shadow_present_pte(old_spte))
+ 		return false;
+=20
+-	/*
+-	 * For the spte updated out of mmu-lock is safe, since
+-	 * we always atomically update it, see the comments in
+-	 * spte_has_volatile_bits().
+-	 */
+-	if (is_mmu_writable_spte(old_spte) && !is_mmu_writable_spte(new_spte))
+-		flush =3D true;
 -
- 		/*
- 		 * Unsync shadow pages that are reachable by the new, writable
- 		 * SPTE.  Write-protect the SPTE if the page can't be unsync'd,
-@@ -233,16 +231,13 @@ bool make_spte(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp,
- 		 * guaranteed by both the shadow MMU and the TDP MMU.
- 		 */
- 		if ((!is_last_spte(old_spte, level) || !is_writable_pte(old_spte)) &&
--		    mmu_try_to_unsync_pages(vcpu->kvm, slot, gfn, synchronizing, prefetch)) {
-+		    mmu_try_to_unsync_pages(vcpu->kvm, slot, gfn, synchronizing, prefetch))
- 			wrprot = true;
--			pte_access &= ~ACC_WRITE_MASK;
--			spte &= ~(PT_WRITABLE_MASK | shadow_mmu_writable_mask);
--		}
-+		else
-+			spte |= PT_WRITABLE_MASK | shadow_mmu_writable_mask |
-+				spte_shadow_dirty_mask(spte);
- 	}
- 
--	if (pte_access & ACC_WRITE_MASK)
--		spte |= spte_shadow_dirty_mask(spte);
+-	/*
+-	 * Flush TLB when accessed/dirty states are changed in the page tables,
+-	 * to guarantee consistency between TLB and page tables.
+-	 */
 -
- 	if (prefetch && !synchronizing)
- 		spte = mark_spte_for_access_track(spte);
- 
--- 
+-	if (is_accessed_spte(old_spte) && !is_accessed_spte(new_spte))
+-		flush =3D true;
+-
+-	if (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte))
+-		flush =3D true;
+-
+-	return flush;
++	return (is_mmu_writable_spte(old_spte) && !is_mmu_writable_spte(new_spte)=
+) ||
++	       (is_dirty_spte(old_spte) && !is_dirty_spte(new_spte));
+ }
+=20
+ /*
+--=20
 2.47.0.rc1.288.g06298d1525-goog
 
 
