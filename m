@@ -1,151 +1,141 @@
-Return-Path: <linux-kernel+bounces-360846-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762DF99A072
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:55:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AB6C999A050
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D628FB24CF6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:55:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28983B21F6A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40189212F0E;
-	Fri, 11 Oct 2024 09:52:02 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3433720FA86;
+	Fri, 11 Oct 2024 09:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VRiijfzo"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B88215F56;
-	Fri, 11 Oct 2024 09:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C84F9804;
+	Fri, 11 Oct 2024 09:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640321; cv=none; b=PeQ3w+w/886KXyfizJ1Gje8ab67jTnial/5PGlHH19UYEuR/O0DR7snwTJv4ddU0syoWhgkNjoFnvMDJ9auS52WQvhk2pN/dsM2YnqcAQ+1fP5dFIL9pU8z/PFL3y/6xQ4JIxirBSSqNcMlvjplFxEL+A0LBl11deXMbmTD5Vtk=
+	t=1728639990; cv=none; b=eYxASpXidssFcEsFSfeKpA4/IEOezY2AUJAgwvMXNFHuHC+QcWMdR85RuigTuDYswGX4iQT8j2QTF9zLdt9eeKXK7EaZwSjvvdx4vQPIbw9hf8w5xbzhr2MXaIySRkHKDfaMRdX/e9Xqtx7QomCphadTZjb6Gm7J8gc15VF0qxk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640321; c=relaxed/simple;
-	bh=eMbUoafWMeG/UhqmuGxOmA4MhgwPVoTSzE/aWUVtWgc=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VVp28bKqzsd36S0sb6AZjRtTCOxemU/HGtaXAih6pf/1ClzFWabD+ecQJByU7MhMfue8YstjUyG1toavXIRMSMGN6EbkWHaNMUb9QK260ilAv+gyQecWRlpoi76E9rJSz9wOyorqcCCp8gTaxbwkgz2+hsuO7jevoq/yHoGpEDQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XQ2065GjzzkWbs;
-	Fri, 11 Oct 2024 17:49:26 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 65C4E1401F3;
-	Fri, 11 Oct 2024 17:51:51 +0800 (CST)
-Received: from localhost.localdomain (10.90.30.45) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 11 Oct 2024 17:51:50 +0800
-From: Jijie Shao <shaojijie@huawei.com>
-To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <shenjian15@huawei.com>, <salil.mehta@huawei.com>
-CC: <liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>,
-	<shaojijie@huawei.com>, <lanhao@huawei.com>, <chenhao418@huawei.com>,
-	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH net 9/9] net: hns3: fix kernel crash when 1588 is sent on HIP08 devices
-Date: Fri, 11 Oct 2024 17:45:21 +0800
-Message-ID: <20241011094521.3008298-10-shaojijie@huawei.com>
-X-Mailer: git-send-email 2.30.0
-In-Reply-To: <20241011094521.3008298-1-shaojijie@huawei.com>
-References: <20241011094521.3008298-1-shaojijie@huawei.com>
+	s=arc-20240116; t=1728639990; c=relaxed/simple;
+	bh=v+M+sEXI7BqLnPbmrmv04sDNbRIPP7hiTbtDIYhJfWo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=KE0dPDhy7PFQeq/VgE3F9iG/XTV5OQY3unuBFlagChjIZugUFEImOo9otsT9AJ3OLctn6J8gJU5tonXql63/W5Mjs3mgibJ/e1ehR/+QIdfjNj56uMb2aQnY0r6cQhg7x5Xghr1VX7bRG7kPdSx+ZTWLqXSttU4YeY4qmLgM2hQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VRiijfzo; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728639989; x=1760175989;
+  h=message-id:date:mime-version:subject:to:references:from:
+   in-reply-to:content-transfer-encoding;
+  bh=v+M+sEXI7BqLnPbmrmv04sDNbRIPP7hiTbtDIYhJfWo=;
+  b=VRiijfzoCKuJSN6Ahr00heN0TVX4+CWQKOq0zc+eMYEYSCjt2d0VJyF3
+   hW9wLc1BvZ8dOzPauH8wGFeCElFtc85K16H02ZHJiGd0i9RRsp+0V8s8Q
+   5KYeEazQ9aHcV6WJelkHRsGwP+lZ/gx72A4tt+XeM/72sQbLU5PLFYllh
+   0ihDuXGJAZQ5omkBgzOr+GKGkPfJ+itPSYsOjJCN/u8DHPRqKxwicg50X
+   uo9f3OqsYiRMtSelXiWB5qcudiI6vPKNR54sbZrfJ6NQgo0pQLiVhRSJP
+   3fdFyVESm3p4ednc56NSZNpH2wJ33EYXN1TFKekwGdeqwBd9VYGh+fHkp
+   w==;
+X-CSE-ConnectionGUID: S7V7FchsTw6LgQI/pTRuPw==
+X-CSE-MsgGUID: S+xHBBjfQfqzgZUMZxIC5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31829654"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="31829654"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:46:28 -0700
+X-CSE-ConnectionGUID: tPuq55InTMi8UmaXwPg0yg==
+X-CSE-MsgGUID: 5qSlIkiCSiSUtCzmHSfedQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="81651958"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:46:23 -0700
+Message-ID: <d5864414-86ec-43d5-b38d-6c01a47e5b60@intel.com>
+Date: Fri, 11 Oct 2024 12:46:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/5] libperf cpumap: Correct reference count for
+ perf_cpu_map__merge()
+To: Leo Yan <leo.yan@arm.com>, Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>,
+ James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240925195325.426533-1-leo.yan@arm.com>
+ <20240925195325.426533-2-leo.yan@arm.com>
+ <c30c5139-6f77-4a30-bba8-b9372949aec7@intel.com>
+ <91690d5c-7f46-4f6d-8140-c6013d84a0f1@arm.com>
+ <dd674533-4d9c-4298-b6c3-9196b270f68b@arm.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <dd674533-4d9c-4298-b6c3-9196b270f68b@arm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemm000007.china.huawei.com (7.193.23.189)
 
-From: Jie Wang <wangjie125@huawei.com>
+On 11/10/24 12:40, Leo Yan wrote:
+> 
+> 
+> On 10/11/24 10:34, Leo Yan wrote:
+> 
+>>> The 2 non-test uses of perf_cpu_map__merge both do:
+>>>
+>>>          a = perf_cpu_map__merge(a, b);
+>>>
+>>> so another way to make the API less misleading would be
+>>> to introduce:
+>>>
+>>>          err = perf_cpu_map__merge_in(&a, b);
+>>>
+>>> where:
+>>>
+>>> int perf_cpu_map__merge_in(struct perf_cpu_map **orig, struct perf_cpu_map *other)
+>>> {
+>>>          struct perf_cpu_map *result = perf_cpu_map__merge(*orig, other);
+>>>
+>>>          if (!result)
+>>>                  return -ENOMEM;
+>>>
+>>>          *orig = result;
+>>>          return 0;
+>>> }
+>>>
+>>> without any changes to perf_cpu_map__merge().
+>>
+>> Just wandering why we cannot do the same thing for the perf_cpu_map__merge()
+>> function?
+>>
+>>    int perf_cpu_map__merge_in(struct perf_cpu_map **orig,
+>>                               struct perf_cpu_map *other)
+> 
+> Sorry for typo and spamming. The above suggested definition is for perf_cpu_map__merge().
 
-Currently, HIP08 devices does not register the ptp devices, so the
-hdev->ptp is NULL. But the tx process would still try to set hardware time
-stamp info with SKBTX_HW_TSTAMP flag and cause a kernel crash.
+Yes - there is not much reason to have perf_cpu_map__merge()
+and perf_cpu_map__merge_in().
 
-[  128.087798] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000018
-...
-[  128.280251] pc : hclge_ptp_set_tx_info+0x2c/0x140 [hclge]
-[  128.286600] lr : hclge_ptp_set_tx_info+0x20/0x140 [hclge]
-[  128.292938] sp : ffff800059b93140
-[  128.297200] x29: ffff800059b93140 x28: 0000000000003280
-[  128.303455] x27: ffff800020d48280 x26: ffff0cb9dc814080
-[  128.309715] x25: ffff0cb9cde93fa0 x24: 0000000000000001
-[  128.315969] x23: 0000000000000000 x22: 0000000000000194
-[  128.322219] x21: ffff0cd94f986000 x20: 0000000000000000
-[  128.328462] x19: ffff0cb9d2a166c0 x18: 0000000000000000
-[  128.334698] x17: 0000000000000000 x16: ffffcf1fc523ed24
-[  128.340934] x15: 0000ffffd530a518 x14: 0000000000000000
-[  128.347162] x13: ffff0cd6bdb31310 x12: 0000000000000368
-[  128.353388] x11: ffff0cb9cfbc7070 x10: ffff2cf55dd11e02
-[  128.359606] x9 : ffffcf1f85a212b4 x8 : ffff0cd7cf27dab0
-[  128.365831] x7 : 0000000000000a20 x6 : ffff0cd7cf27d000
-[  128.372040] x5 : 0000000000000000 x4 : 000000000000ffff
-[  128.378243] x3 : 0000000000000400 x2 : ffffcf1f85a21294
-[  128.384437] x1 : ffff0cb9db520080 x0 : ffff0cb9db500080
-[  128.390626] Call trace:
-[  128.393964]  hclge_ptp_set_tx_info+0x2c/0x140 [hclge]
-[  128.399893]  hns3_nic_net_xmit+0x39c/0x4c4 [hns3]
-[  128.405468]  xmit_one.constprop.0+0xc4/0x200
-[  128.410600]  dev_hard_start_xmit+0x54/0xf0
-[  128.415556]  sch_direct_xmit+0xe8/0x634
-[  128.420246]  __dev_queue_xmit+0x224/0xc70
-[  128.425101]  dev_queue_xmit+0x1c/0x40
-[  128.429608]  ovs_vport_send+0xac/0x1a0 [openvswitch]
-[  128.435409]  do_output+0x60/0x17c [openvswitch]
-[  128.440770]  do_execute_actions+0x898/0x8c4 [openvswitch]
-[  128.446993]  ovs_execute_actions+0x64/0xf0 [openvswitch]
-[  128.453129]  ovs_dp_process_packet+0xa0/0x224 [openvswitch]
-[  128.459530]  ovs_vport_receive+0x7c/0xfc [openvswitch]
-[  128.465497]  internal_dev_xmit+0x34/0xb0 [openvswitch]
-[  128.471460]  xmit_one.constprop.0+0xc4/0x200
-[  128.476561]  dev_hard_start_xmit+0x54/0xf0
-[  128.481489]  __dev_queue_xmit+0x968/0xc70
-[  128.486330]  dev_queue_xmit+0x1c/0x40
-[  128.490856]  ip_finish_output2+0x250/0x570
-[  128.495810]  __ip_finish_output+0x170/0x1e0
-[  128.500832]  ip_finish_output+0x3c/0xf0
-[  128.505504]  ip_output+0xbc/0x160
-[  128.509654]  ip_send_skb+0x58/0xd4
-[  128.513892]  udp_send_skb+0x12c/0x354
-[  128.518387]  udp_sendmsg+0x7a8/0x9c0
-[  128.522793]  inet_sendmsg+0x4c/0x8c
-[  128.527116]  __sock_sendmsg+0x48/0x80
-[  128.531609]  __sys_sendto+0x124/0x164
-[  128.536099]  __arm64_sys_sendto+0x30/0x5c
-[  128.540935]  invoke_syscall+0x50/0x130
-[  128.545508]  el0_svc_common.constprop.0+0x10c/0x124
-[  128.551205]  do_el0_svc+0x34/0xdc
-[  128.555347]  el0_svc+0x20/0x30
-[  128.559227]  el0_sync_handler+0xb8/0xc0
-[  128.563883]  el0_sync+0x160/0x180
-
-Fixes: 0bf5eb788512 ("net: hns3: add support for PTP")
-Signed-off-by: Jie Wang <wangjie125@huawei.com>
-Signed-off-by: Jijie Shao <shaojijie@huawei.com>
----
- drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
-index 5505caea88e9..bab16c2191b2 100644
---- a/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
-+++ b/drivers/net/ethernet/hisilicon/hns3/hns3pf/hclge_ptp.c
-@@ -58,6 +58,9 @@ bool hclge_ptp_set_tx_info(struct hnae3_handle *handle, struct sk_buff *skb)
- 	struct hclge_dev *hdev = vport->back;
- 	struct hclge_ptp *ptp = hdev->ptp;
- 
-+	if (!ptp)
-+		return false;
-+
- 	if (!test_bit(HCLGE_PTP_FLAG_TX_EN, &ptp->flags) ||
- 	    test_and_set_bit(HCLGE_STATE_PTP_TX_HANDLING, &hdev->state)) {
- 		ptp->tx_skipped++;
--- 
-2.33.0
+> 
+> 
+>> This can allow us to avoid any confusion in the first place. And we don't need
+>> to maintain two functions for the same thing.
+>>
+>> Thanks,
+>> Leo
+>>
+>>
 
 
