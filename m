@@ -1,52 +1,74 @@
-Return-Path: <linux-kernel+bounces-361861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DF93299AE04
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:23:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D639299ADA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:43:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1B7841C227AC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:23:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 878C11F240B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:43:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08AEE1D1518;
-	Fri, 11 Oct 2024 21:23:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58CE71D1311;
+	Fri, 11 Oct 2024 20:43:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="KXqU8AW0"
-Received: from mx13lb.world4you.com (mx13lb.world4you.com [81.19.149.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="LJrgdAqD"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35E110A1F;
-	Fri, 11 Oct 2024 21:23:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB33D1991DB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:43:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728681791; cv=none; b=A0+sTqZf4xt+pylDlhWFHZwZWKBS89Wq0lpyyQmMlsM8n+GP6BnYrxns3oNADiPFpxmEsyvdGlmijWD5fZPJKeaIs5bH3GnvCiCBYEBAs+X3dM1OlKlt43TqXX9r7pa0xbKsVEpqioixXpm+aV1Xp7WFddYWUpV/PW91b3I/1RI=
+	t=1728679428; cv=none; b=YzmsqX0R6wEYf/COop88/gj1n+gB6K8URCOhjxumqlB4xwEnspwQe7q5N/RiWWG7IGNJIFk9vuzLh/sulnm+5W28IXZBvIRl0ErGMNhngZY6pXwnwrMDN/EP3yifV0Sf8Z8uMWLZsLZbzLP1xkiZJqqECrOUreHxTm0NOxQlfxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728681791; c=relaxed/simple;
-	bh=Kzr+1j2jiRTkuHD2Vy3riLZeOdp3FVIGM8hGxo9knAI=;
+	s=arc-20240116; t=1728679428; c=relaxed/simple;
+	bh=E2JU9n1dMZqGRtOK8MkMT3CODlIBMZ1NutgbicfM3B0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jfsixW5+oyQeYSUyekjkBnccV7mLySKs41kjZmdacoLgipu9vkGqtvORFMyPAi5OuLyw0jnC5Rl11Ppaxuje1u3Qk4aWFwkl12Pa5GFIa1EsI3wix2j1Z5JEkIYanbsq52j0q86/+vc4GG1HfW2+Bqx5HfTIne07mf1dnqlx2Gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=KXqU8AW0; arc=none smtp.client-ip=81.19.149.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
-	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
-	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
-	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=BlIxkFNt40zV8S1I5DKAHrqkRbnuLWx/s0mHo7zcF1I=; b=KXqU8AW0o1qXPs33iN6nsO8RNt
-	3XDC2BJrdwzR52cgMrBKlsXZDXj6ms6QzjDuWEg99D2VdNKbrHWKoII4bSUdzS/RSudLNqdn/Rdq3
-	lt7v6M3cfMrpPYgbmrNKm7AwSQSm9ANkqHewjHBeBihAalXbqMzCMzlKiUNxix19Yr8w=;
-Received: from [88.117.56.173] (helo=[10.0.0.160])
-	by mx13lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.97.1)
-	(envelope-from <gerhard@engleder-embedded.com>)
-	id 1szMS4-0000000087x-34zQ;
-	Fri, 11 Oct 2024 22:41:32 +0200
-Message-ID: <3d26ab3e-2a3c-4c36-b165-06a1029bb0b0@engleder-embedded.com>
-Date: Fri, 11 Oct 2024 22:41:31 +0200
+	 In-Reply-To:Content-Type; b=JvoHKVuMhPGzyMBLVIzWWkyElDA9b2chEIDz72ILneBMoxc065nbtl1Dvwa9ZeGAvTnlzNzRCPO5mZTfagjj27y8hArZtI8ADHRFk4jZI3T+E6qLKxV0LD98IjYCQjXV3XcNx+BgiID31aTF/PGTdc0ivOMzmsN6a5fHvgb6DTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=LJrgdAqD; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7e9ad969a4fso1752526a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:43:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728679425; x=1729284225; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=8fjOSIOVoS9iV+9IyTbnrQoIAd1WAV+Gp+FipOumIyI=;
+        b=LJrgdAqD1DruXoTZ7eCUKlIPONnoK/Zg93/T8ooLmQ8YG32RaFu2RCiE9NRBVCr2wj
+         AYxcTh6UggiWN5ENJEFRCGVGy8aUyChX4JpbXznD4F68wAm8/n/6lcN++g68Kjf1eyli
+         5HANillc4+Or4l9Cx+xF4B3ulcZhNDGeFA7lmAr0A7ugqS2Jgtm4K7/wwebfdGgnOKIz
+         ANE1lxnON760VGE9VyXNYVLtIeYyKdvGDU0oJp1lbKBfPnsHBHdefYLEvd1v9Lyux4+V
+         XERlrv2OS/eNFh055f1LC0miYZWSEBO7zskLDFXi/L2wlO0VhSgUDP8TArdshzMrViYM
+         tNRw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728679425; x=1729284225;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8fjOSIOVoS9iV+9IyTbnrQoIAd1WAV+Gp+FipOumIyI=;
+        b=PIjAZadC0UErtVsSK6dPkKOpSaczldkwt2ahWt/ttn7H8OEvYeDCl+RcC/fKg985BR
+         vZc4Ny/tcoJnOvhpK7DfopPxMukrYPLTmmU+bVcXCGrbtpeeqQmB7PXigPTGOZ15sP/y
+         Pty2kbpXm3JPGqkttza7DU3la2EST1zhBHLXmoVFSXNJt55j8Rx9Gp1BWfF2/Lwt9WXN
+         4i32XnU4e/4f/SdKV5sK+mDgWbunlolbAIEelXwbrBC1vB8Z+zzL1QI/U87PryKtrbk8
+         7EWBPQTalGDcseiDZ+0wAJnfVbbQkn5ww+8ytnMaGlF7OV2L3ocGfn7rRy0HcA5wXemA
+         qeDg==
+X-Forwarded-Encrypted: i=1; AJvYcCUO2TSyodQDH8R4eZJextQoVoJSxg+H3V/g+XtyLN2LXlmtRKquMGvpLL/F4+1MFZlGTwdoDZgj5Eprn+E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwyhhpPFHjOxVPH+sZL8aMV4NDPnmyQ/9zC6Upwsa8AgFf8u5lt
+	R7I77J2alYo5KzmUKhhAEpO7QuH2UPFBrfr/QKb9tg/QLK8MKMk8yr7Ups6TQB06zvAjzBognro
+	8LA4=
+X-Google-Smtp-Source: AGHT+IHCn6+awvw92uNuYQw4hacFpLyBgIPV88AaKB4lSsi2GN1JPrJQg+fD4Q4AnVP5uvyJZiUaSQ==
+X-Received: by 2002:a17:90a:e2d7:b0:2c9:5a85:f8dd with SMTP id 98e67ed59e1d1-2e2f0aea0fcmr5310470a91.18.1728679425051;
+        Fri, 11 Oct 2024 13:43:45 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2e6ef1ad0sm2711939a91.49.2024.10.11.13.43.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 13:43:44 -0700 (PDT)
+Message-ID: <4b163281-7b7e-444f-a1db-a14b24afed30@kernel.dk>
+Date: Fri, 11 Oct 2024 14:43:43 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,44 +76,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: aeroflex: fix potential memory leak in
- greth_start_xmit_gbit()
+Subject: Re: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_ioctl (4)
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+ed812ed461471ab17a0c@syzkaller.appspotmail.com>,
+ linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <00000000000047eb7e060b652d9a@google.com>
+ <d7b91d4c-8498-49a8-86ad-27eceff18ae2@kernel.dk>
+ <CANp29Y6Zvqt7K9_LWEPQ4X-n1WOJbN0W83wx7a6GRhRFuX_OLw@mail.gmail.com>
+ <4661f4ef-44a0-402b-864b-83ef8d31f07e@kernel.dk>
+ <CANp29Y7HT=+R-J9tL2v0Ekebe7eKMAPccmf73jLfMa_-7myCaQ@mail.gmail.com>
 Content-Language: en-US
-To: Wang Hai <wanghai38@huawei.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- andreas@gaisler.com, davem@davemloft.net, kuba@kernel.org,
- pabeni@redhat.com, edumazet@google.com, kristoffer@gaisler.com
-References: <20241011113908.43966-1-wanghai38@huawei.com>
-From: Gerhard Engleder <gerhard@engleder-embedded.com>
-In-Reply-To: <20241011113908.43966-1-wanghai38@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <CANp29Y7HT=+R-J9tL2v0Ekebe7eKMAPccmf73jLfMa_-7myCaQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-AV-Do-Run: Yes
 
-On 11.10.24 13:39, Wang Hai wrote:
-> The greth_start_xmit_gbit() returns NETDEV_TX_OK without freeing skb
-> in case of skb->len being too long, add dev_kfree_skb() to fix it.
+On 10/11/24 1:41 PM, Aleksandr Nogikh wrote:
+> On Fri, Oct 11, 2024 at 9:34?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>
+>> On 10/11/24 1:32 PM, Aleksandr Nogikh wrote:
+>>> (minus most people and mailing lists)
+>>>
+>>> On Fri, Oct 11, 2024 at 9:20?PM Jens Axboe <axboe@kernel.dk> wrote:
+>>>>
+>>>> On Thu, Nov 30, 2023 at 2:17?PM syzbot <syzbot+ed812ed461471ab17a0c@syzkaller.appspotmail.com> wrote:
+>>>>>
+>>>>> Hello,
+>>>>>
+>>>>> syzbot found the following issue on:
+>>>>>
+>>>>> HEAD commit:    8c9660f65153 Add linux-next specific files for 20231124
+>>>>> git tree:       linux-next
+>>>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1006f178e80000
+>>>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=ca1e8655505e280
+>>>>> dashboard link: https://syzkaller.appspot.com/bug?extid=ed812ed461471ab17a0c
+>>>>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+>>>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14ec6e62e80000
+>>>>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11964f7ce80000
+>>>>
+>>>> syz test: git://git.kernel.dk/linux btrace-fault
+>>>
+>>> It should begin with a # :)
+>>>
+>>> #syz test: git://git.kernel.dk/linux btrace-fault
+>>
+>> hah thanks, I always have to click the link to remember what to type.
+>> Guess even with that I messed it up...
 > 
-> Fixes: d4c41139df6e ("net: Add Aeroflex Gaisler 10/100/1G Ethernet MAC driver")
-> Signed-off-by: Wang Hai <wanghai38@huawei.com>
-> ---
->   drivers/net/ethernet/aeroflex/greth.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/net/ethernet/aeroflex/greth.c b/drivers/net/ethernet/aeroflex/greth.c
-> index 27af7746d645..8f6835a710b9 100644
-> --- a/drivers/net/ethernet/aeroflex/greth.c
-> +++ b/drivers/net/ethernet/aeroflex/greth.c
-> @@ -484,6 +484,7 @@ greth_start_xmit_gbit(struct sk_buff *skb, struct net_device *dev)
->   
->   	if (unlikely(skb->len > MAX_FRAME_SIZE)) {
->   		dev->stats.tx_errors++;
-> +		dev_kfree_skb(skb);
->   		goto out;
+> FYI we've begun to include a small cheatsheet of the main syzbot
+> commands at the bottom of each syzbot report. So for the newer reports
+> you can just copy-paste the commands directly from the emails.
 
-dev_kfree_skb(skb) is already part of the error handling, one line above
-the "out" label. Why don't you just add another label which includes
-dev_kfree_skb(skb) and goto that label?
+Ok question then - if I just include the patch inline in the email, what
+do I type? Or does that not work?
 
-Gerhard
+-- 
+Jens Axboe
 
