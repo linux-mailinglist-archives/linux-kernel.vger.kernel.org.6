@@ -1,202 +1,179 @@
-Return-Path: <linux-kernel+bounces-361638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B06899AAB7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:54:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E520999AAB6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 159CA283EA2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:54:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 688501F2297B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F7551C2327;
-	Fri, 11 Oct 2024 17:54:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255891C2327;
+	Fri, 11 Oct 2024 17:53:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NfhOYlYz"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CItoddPt"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEE181BB6BB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:54:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8960195811;
+	Fri, 11 Oct 2024 17:53:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728669253; cv=none; b=URVPaIDwffQ7C/b9hAsB9IyLQB0bJv9oN+j3gfLkEXk+0iRy11QGP6xNYmRrRa9tLbV7GHzOiB8Br1pPpD8aGpgZ38/f2dYlp25HIJsk3v51+MHxUotIpANesF1Y1OJ2nD3XWk+NmnSUFQ6mFeZit6OL3XduzXd8sMxnOk5ayCc=
+	t=1728669234; cv=none; b=MCLezlG01+RIunWJMxztVkPB9BLQnYPRasRZxoDyklaiLp11XwQ/FNMyXQOsVX6ZyAhXW5XX1gS7qKxkYToc1krpCUh6TXqopAIqOWmCZWwoDWlYg2IJ9qufHvqWhhZFMd9wO15YbymI8CRB0AuXxbFI/lR2ecvyvzCRk3aOOKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728669253; c=relaxed/simple;
-	bh=qjJpCZiPZXNYPLbj/e5/68U/1eHUjt8X51aHG6q35VA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=pbOkFBleKi1R2YqiCS1OEHdAVbugVxl2OfniVQjkEi/kyutP11iBPNr/jeY2tv6IlIVIPDhTECIRq//qrupW+VJiHgeTvBPK/jWYOTELH14SaTU4TVdb47wHdBCDQx5XaV3UUw7Di//CfJgnf6SFkqDIwkJ5sRxTbTNemq8ZRro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NfhOYlYz; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539d9fffea1so1116150e87.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:54:11 -0700 (PDT)
+	s=arc-20240116; t=1728669234; c=relaxed/simple;
+	bh=sMROR4bvAmoZRlyGcAQoX/Rf440iGOcrPpqc15iOgcg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Mgf/qSkteaeW5aoaYl/MAQhrez2b5qoAoFnTO01GSp0iqdTLSoLihh60zt1DrbkmQUO4FRr+BNVybFA+wiTLPCpgX6T03T4bxqTj05eByz+lFckd1GE5UstiP6LupQNZFJWpojNJRg55iEXCLl0pfsyRgCEiCsbA5sBEF33qcmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CItoddPt; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d4ec26709so1234197f8f.0;
+        Fri, 11 Oct 2024 10:53:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728669250; x=1729274050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NqgP/1pCCpSKuXinIt97h7bzJZWYuOT4pkGtBuCYT58=;
-        b=NfhOYlYzTQnkxzhi+7XTI4Xes2LHvXGxtJn9IB0ChniY+dnPI0ZNIFlDuIvxEcoLvv
-         vmV8uIKBmlAz1UBvf3W2ZT8zyQbIaB2/gRMzP2xBOMyuELgRJ/82wjAMszV1jP8opZ5H
-         8VQc8kgSlEsbCCjbm+Y7sJiwpY5R9fMf+HO/TJr/H7iRwsTdpdqU6W9fAk07Dt7SkCcz
-         aw9YtHjsxtLLc9hS3I9UhcRlV55bSY9crRtrLwFHvqRw4m/QpuiQUgiXWCAl0IWSzc2G
-         mtywjFSbudbtZC0GLt0XU2X9iJBAcN4ETGvk5kycyDRNbBwvSc9ge9cgE4TppHRu1hia
-         AM4A==
+        d=gmail.com; s=20230601; t=1728669231; x=1729274031; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ci1c3uIbysslDczEe12lDguOg4G6dXqtM4CXMZUK/Hk=;
+        b=CItoddPtyIbpjb0eDbLtZvAC3ADaRtI/ELJawUS2QqmAuEAASVvv0T5FCiLH/iN4Bi
+         cYDq/85q8CHaVziZ0L93ksakutGG1CMSy7o+lERwPCB8M2JcofCecDHWC7nTpsbPqInR
+         HxIr4i1KXgNuQm8v+Je50YR8QpdbWg/FTLhz29R9KwfxI3UCUOI8yCm9KxntTtoJJXNy
+         5xVmMmxiCM0AdaMvyyqjEgyLv3CaTlwmOPFXX2zDxq/oESxdLpJZ4aBlWZPSAxp6H/3O
+         k4Xip34O/ptWMCR2zCB4TGgDI0G+t9N37UG2ZLVsXvXgcfz5iFqQHuYe8x9EUhoS2X5K
+         nFtA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728669250; x=1729274050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NqgP/1pCCpSKuXinIt97h7bzJZWYuOT4pkGtBuCYT58=;
-        b=irT+3hO9Mgd8v8uoC/al6CXZiWgsTNYrGKvDlCelyOypP+LEW8N88HO97mofcq65re
-         HXbi3Ih2H8wRGozGRQvPwmdLkN1N7rzbco/QYCZK9oFLhDqj2UkrJe4FsOdte0gh8DJr
-         4zijxI5E++5IBszOQ6vGzu9mcyFoKd9rV91472AfMxoN5NMAjQtTymaEaxNuSuFZckFm
-         rQtbTgWwQXUqgEroKuaNcrM34ZOy+/PWTX6zt50Ei2KAKpdqvGq+LU+qh3HQztJThn3E
-         3bxRhXEgkk72Jhb81u6k2+DDemYL2MZBipJg/51Te7LHtGpjfHghRsOiS8p6jh5FaQqA
-         Z1Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCVT+WABdJ1KYHv8BKA0xoW787hhSrGSNR6S9rTEL74dM9SiSZ9eBDCc24UxHnyzp4M3oGA1wGZEiZHSUiE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3tkh+NdIyppU3KTL47qTlLR/T7Ym4MYmv6BrBnp6Cjono4eRU
-	91DYSFa3OsRwhNm5mXwnLcbFBDnsswJEy0yiA5l1jhTUC69I4h3m4zK+qfLerLsnXm7QSgcbbei
-	KVZepgfGs0k1KoWLpBHdVV/dc3UAkK/1OssX5cg6o0QLKYNAMGOFi
-X-Google-Smtp-Source: AGHT+IE4/pgk3+N8inlVBOFRVaQm590gXmHKPwVD060RWGiTTrhhVLw22lDhsmZT4Xjhs4+zlSvTHED2cAY3FKDysOA=
-X-Received: by 2002:a05:6512:1588:b0:539:93b2:1383 with SMTP id
- 2adb3069b0e04-539da5661c8mr1996729e87.46.1728669249759; Fri, 11 Oct 2024
- 10:54:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728669231; x=1729274031;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ci1c3uIbysslDczEe12lDguOg4G6dXqtM4CXMZUK/Hk=;
+        b=ktbOETTv9pky32d0/0AOXelizplsF+wXg5FGoIsWWzzavzIGRFu/ohGvli4uoZM7ZC
+         xKW+eotsDABKRX+bYeTl4FemhJ6+y5B6LAR4ZYe/L+WGmHmJfYhg7SekbBhJxVsL1vFJ
+         8KojTCIHCl3vwaH2U+v6zMWPDwzJf1dhkHqYY/ztn67xWtGaLUjzwNK3nfu1G4+eMbKP
+         cwY9yPXQ/ljbllMCEYADZaZlEHSDaiF1EbNCbBFV49j3y4L0O5PFDvTGAMzN6CniN7Ki
+         lnpGrb9eWeO6eReoJvDcSIbQ+XeMJBE2sRvrCPh43lqAXCwmp0hulfb37csC48rnDW39
+         2xcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVf+DI4/YYJncd54fCOQgDSLiFYzHJXggv7ReQDeS5czJ1AUVLnmGpCb4973F+yyO5f2Her+ajGD5nx5c8=@vger.kernel.org, AJvYcCWwHObqqYDdmoY2ZuS5wih4ZTNUJU9xk4zr6JH/J8lBjUAghrddfyf/c2XzSf1h0REokrzN34iaFjO/6QJq2aEyemg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSP+uu4/zLgE3ipHd+Y1S/dQtSTbfBtoDJ8K/rGaholSSJC4h8
+	Gqz/tCuMrseXYIxFjhviHq3jNb9t56klRqb7PqgK1+9E+Z7lKkiI
+X-Google-Smtp-Source: AGHT+IGgc2PLd8xMAdDKm2awjb5Ou0yqMmygvCIIutttnqDXOrOjdhw6ujWNWc7qmb97bZ9dVB+XIA==
+X-Received: by 2002:a05:6000:10c5:b0:374:b5fc:d31a with SMTP id ffacd0b85a97d-37d551fb375mr2239677f8f.25.1728669230945;
+        Fri, 11 Oct 2024 10:53:50 -0700 (PDT)
+Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ef4f6sm4489323f8f.107.2024.10.11.10.53.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 10:53:50 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>
+Cc: linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH] ASoC: rsnd: Refactor port handling with helper for endpoint node selection
+Date: Fri, 11 Oct 2024 18:53:46 +0100
+Message-ID: <20241011175346.1093649-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011171950.62684-1-ryncsn@gmail.com>
-In-Reply-To: <20241011171950.62684-1-ryncsn@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 11 Oct 2024 10:53:31 -0700
-Message-ID: <CAJD7tkaZgEHUNce5c8LWpWXKnTZ7geOuBym41t+UoZax_nky7Q@mail.gmail.com>
-Subject: Re: [PATCH] mm/zswap: avoid touching XArray for unnecessary invalidation
-To: Kairui Song <kasong@tencent.com>
-Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <v-songbaohua@oppo.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 10:20=E2=80=AFAM Kairui Song <ryncsn@gmail.com> wro=
-te:
->
-> From: Kairui Song <kasong@tencent.com>
->
-> zswap_invalidation simply calls xa_erase, which acquires the Xarray
-> lock first, then does a look up. This has a higher overhead even if
-> zswap is not used or the tree is empty.
->
-> So instead, do a very lightweight xa_empty check first, if there is
-> nothing to erase, don't touch the lock or the tree.
->
-> Using xa_empty rather than zswap_never_enabled is more helpful as it
-> cover both case where zswap wes never used or the particular range
-> doesn't have any zswap entry. And it's safe as the swap slot should
-> be currently pinned by caller with HAS_CACHE.
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-You actually made me think whether it's better to replace
-zswap_never_enabled() with something like zswap_may_have_swpentry()
-that checks xa_empty() as well.
+Refactor the code responsible for selecting the correct device node for
+audio endpoint parsing in the rsnd driver. A new helper function
+`rsnd_pick_endpoint_node_for_ports()` is introduced to handle the
+selection of the endpoint node by checking whether the port is named
+'port' or 'ports'.
 
->
-> Sequential SWAP in/out tests with zswap disabled showed a minor
-> performance gain, SWAP in of zero page with zswap enabled also
-> showed a performance gain. (swapout is basically unchanged so
-> only test one case):
->
-> Swapout of 2G zero page using brd as SWAP, zswap disabled
-> (total time, 4 testrun, +0.1%):
-> Before: 1705013 us 1703119 us 1704335 us 1705848 us.
-> After:  1703579 us 1710640 us 1703625 us 1708699 us.
->
-> Swapin of 2G zero page using brd as SWAP, zswap disabled
-> (total time, 4 testrun, -3.5%):
-> Before: 1912312 us 1915692 us 1905837 us 1912706 us.
-> After:  1845354 us 1849691 us 1845868 us 1841828 us.
->
-> Swapin of 2G zero page using brd as SWAP, zswap enabled
-> (total time, 4 testrun, -3.3%):
-> Before: 1897994 us 1894681 us 1899982 us 1898333 us
-> After:  1835894 us 1834113 us 1832047 us 1833125 us
->
-> Swapin of 2G random page using brd as SWAP, zswap enabled
-> (total time, 4 testrun, -0.1%):
-> Before: 4519747 us 4431078 us 4430185 us 4439999 us
-> After:  4492176 us 4437796 us 4434612 us 4434289 us
->
-> And the performance is very slightly better or unchanged for
-> build kernel test with zswap enabled or disabled.
->
-> Build Linux Kernel with defconfig and -j32 in 1G memory cgroup,
-> using brd SWAP, zswap disabled (sys time in seconds, 6 testrun, -0.1%):
-> Before: 1648.83 1653.52 1666.34 1665.95 1663.06 1656.67
-> After:  1651.36 1661.89 1645.70 1657.45 1662.07 1652.83
->
-> Build Linux Kernel with defconfig and -j32 in 2G memory cgroup,
-> using brd SWAP zswap enabled (sys time in seconds, 6 testrun, -0.3%):
-> Before: 1240.25 1254.06 1246.77 1265.92 1244.23 1227.74
-> After:  1226.41 1218.21 1249.12 1249.13 1244.39 1233.01
+This change simplifies the logic in both `rsnd_dai_of_node()` and
+`rsnd_dai_probe()` functions by replacing repetitive condition checks
+with the new helper.
 
-Nice!
+Suggested-by: Geert Uytterhoeven <geert+renesas@glider.be>
+Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+---
+Note, this patch applies on top of [0]
+[0] https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+---
+ sound/soc/sh/rcar/core.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
 
-Do you know how the results change if we use xa_load() instead?
+diff --git a/sound/soc/sh/rcar/core.c b/sound/soc/sh/rcar/core.c
+index eca5ce096e54..c32e88d6a141 100644
+--- a/sound/soc/sh/rcar/core.c
++++ b/sound/soc/sh/rcar/core.c
+@@ -1233,6 +1233,19 @@ int rsnd_node_count(struct rsnd_priv *priv, struct device_node *node, char *name
+ 	return i;
+ }
+ 
++static struct device_node*
++	rsnd_pick_endpoint_node_for_ports(struct device_node *e_ports,
++					  struct device_node *e_port)
++{
++	if (of_node_name_eq(e_ports, "ports"))
++		return e_ports;
++
++	if (of_node_name_eq(e_ports, "port"))
++		return e_port;
++
++	return NULL;
++}
++
+ static int rsnd_dai_of_node(struct rsnd_priv *priv, int *is_graph)
+ {
+ 	struct device *dev = rsnd_priv_to_dev(priv);
+@@ -1278,12 +1291,10 @@ static int rsnd_dai_of_node(struct rsnd_priv *priv, int *is_graph)
+ 	 * Audio-Graph-Card
+ 	 */
+ 	for_each_child_of_node(np, ports) {
+-		if (!of_node_name_eq(ports, "ports") &&
+-		    !of_node_name_eq(ports, "port"))
++		node = rsnd_pick_endpoint_node_for_ports(ports, np);
++		if (!node)
+ 			continue;
+-		priv->component_dais[i] =
+-			of_graph_get_endpoint_count(of_node_name_eq(ports, "ports") ?
+-						    ports : np);
++		priv->component_dais[i] = of_graph_get_endpoint_count(node);
+ 		nr += priv->component_dais[i];
+ 		i++;
+ 		if (i >= RSND_MAX_COMPONENT) {
+@@ -1488,15 +1499,16 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
+ 	 */
+ 	dai_i = 0;
+ 	if (is_graph) {
++		struct device_node *dai_np_port;
+ 		struct device_node *ports;
+ 		struct device_node *dai_np;
+ 
+ 		for_each_child_of_node(np, ports) {
+-			if (!of_node_name_eq(ports, "ports") &&
+-			    !of_node_name_eq(ports, "port"))
++			dai_np_port = rsnd_pick_endpoint_node_for_ports(ports, np);
++			if (!dai_np_port)
+ 				continue;
+-			for_each_endpoint_of_node(of_node_name_eq(ports, "ports") ?
+-						  ports : np, dai_np) {
++
++			for_each_endpoint_of_node(dai_np_port, dai_np) {
+ 				__rsnd_dai_probe(priv, dai_np, dai_np, 0, dai_i);
+ 				if (!rsnd_is_gen1(priv) && !rsnd_is_gen2(priv)) {
+ 					rdai = rsnd_rdai_get(priv, dai_i);
+-- 
+2.43.0
 
-Or even do something like this to avoid doing the lookup twice:
-
-XA_STATE(xas, ..);
-
-rcu_read_lock();
-entry =3D xas_load(&xas);
-if (entry) {
-    xas_lock(&xas);
-    WARN_ON_ONCE(xas_reload(&xas) !=3D entry);
-    xas_store(&xas, NULL);
-    xas_unlock(&xas);
-}
-rcu_read_unlock();
-
-On one hand, xa_empty() is cheaper. OTOH, xas_load() will also avoid
-the lock if the tree is not empty yet the entry is not there. Actually
-there's no reason why we can't check both.
-
-I think the benefit of this would be most visible with SSD swap,
-because zswap_load() will erase the entry from the xarray, and
-zswap_invalidate() should always be able to avoid holding the lock.
-
->
-> Signed-off-by: Kairui Song <kasong@tencent.com>
-
-Anyway, all of this is kinda orthogonal to this patch,
-
-Acked-by: Yosry Ahmed <yosryahmed@google.com>
-
-> ---
->  mm/zswap.c | 3 +++
->  1 file changed, 3 insertions(+)
->
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 7f00cc918e7c..f6316b66fb23 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -1641,6 +1641,9 @@ void zswap_invalidate(swp_entry_t swp)
->         struct xarray *tree =3D swap_zswap_tree(swp);
->         struct zswap_entry *entry;
->
-> +       if (xa_empty(tree))
-> +               return;
-> +
->         entry =3D xa_erase(tree, offset);
->         if (entry)
->                 zswap_entry_free(entry);
-> --
-> 2.47.0
->
 
