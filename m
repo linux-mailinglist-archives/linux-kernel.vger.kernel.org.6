@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-360648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0355D999DC0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:22:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA03999DC1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A119A1F23711
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:22:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44F401C217C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:23:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A0C209690;
-	Fri, 11 Oct 2024 07:22:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9539920A5C9;
+	Fri, 11 Oct 2024 07:22:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sk8bw1jm"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="hwZeJGMN"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA67209F28
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:22:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EC68209686
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728631366; cv=none; b=GglGPAYsLe+RbZ6PKYBpdqpFsZO1muaWFgxYJ5WXrJLxEp4udvbwBm8mHM6DmIBWf7jWVaz+MAF25w+m75Ttnz9ezOC8720EOdbCgGQhjcn5HibXJ/5JZl8a10395Hyx/By9cCW5ocSFP14x0IMwq+jkOm6INX8VBp3Y1fE/kb8=
+	t=1728631368; cv=none; b=HB3JE8ZwOSDr0Ymq4avUId7MJWH2QHOdsXVMW7Wx+dA5+eqcz3Yx+pXMiQiFq4boghYHhcmBcnX51mbs2aHTlUehkZwBieFPSkx0ZiwDiu6MvW0XKvFD4Hia3DwzEw4a/vHAC2afclXwfpSCnCifMbSYWft5chB3ZmzFQ1Ubq7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728631366; c=relaxed/simple;
-	bh=xD3T27aSbZGVWM3LeK6ZydUsioF47rQqpXbA99qZANY=;
+	s=arc-20240116; t=1728631368; c=relaxed/simple;
+	bh=2r8iDPbU33zt3eyRnDjAEsNRDwFTo3MDsTAsUAMhUPk=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VQOUdFh+tEDBM+XWbxWc9IxJTrtbWX3oZdX5eBUWO4Uvj5sjjyQHVsAUXBGSE2GtZnI1j24wUlHaivMqxiOBQayYDD/4C/KHC593wqcGaV8W7AJj9a/JRRnnfv/IkIX6FbzSY/2+ZC/5Ph5TssQFjMJ+yURbOUohSktRFoULClo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sk8bw1jm; arc=none smtp.client-ip=213.167.242.64
+	 MIME-Version; b=ALWcpyp0k4w2k2JwQ7MScbpy2Vk2lYK072b7RDkTg9OQ8kgJP7G+bcoL1KJM8xiuFXAuTQOGCdCJNwffI2l6TD4SmkxlA/SXRSt4S4XpBCG2d069MxW2xvohp1/ov8xJlIHYPIkv0THLgarBYSaU2LFUMZKOr+lWMshueySEaBg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=hwZeJGMN; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E0CAD8B;
-	Fri, 11 Oct 2024 09:21:01 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 379931659;
+	Fri, 11 Oct 2024 09:21:04 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728631263;
-	bh=xD3T27aSbZGVWM3LeK6ZydUsioF47rQqpXbA99qZANY=;
+	s=mail; t=1728631266;
+	bh=2r8iDPbU33zt3eyRnDjAEsNRDwFTo3MDsTAsUAMhUPk=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=sk8bw1jmvxjhrc5iEPBuJhwkTPZOY32VV1NqZUihD47hreLaGLG48vSNWpVoBoz0u
-	 Kh6a7b9erjNZn8+N6WUvblXBXdOxiLezxeZdJZTzny7pvY050GL5GCdKFaVe6vaUpa
-	 S8ajAIaNM11ixccxHb0ItwHYWmXW+slhjyPxtCec=
+	b=hwZeJGMNYQeb58MTevyGN9pnCW3RkDcTGvRNQ2CXVRbFU4+oNqk1PCIxed2v0S4Pe
+	 2K28W2ikC29pWZd5vNenvXN4uPgzJgsLnky+0B8/FuyiTRBJfyBOGnwf/tB/mEV4Bq
+	 V49E4eIkxw/iqNC1rDXspc6dNUfJu8b9xSagFoo4=
 From: Umang Jain <umang.jain@ideasonboard.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
@@ -52,9 +52,9 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <wahrenst@gmx.net>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH 2/8] staging: vchiq_core: Properly log dev_err()
-Date: Fri, 11 Oct 2024 12:52:04 +0530
-Message-ID: <20241011072210.494672-3-umang.jain@ideasonboard.com>
+Subject: [PATCH 3/8] staging: vchiq_core: Do not log debug in a separate scope
+Date: Fri, 11 Oct 2024 12:52:05 +0530
+Message-ID: <20241011072210.494672-4-umang.jain@ideasonboard.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241011072210.494672-1-umang.jain@ideasonboard.com>
 References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
@@ -66,37 +66,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Properly log a dev_err() message when the msgid is not of
-VCHIQ_MSG_PADDING type. Drop 'oldmsgid' scoped variable and improve
-on the error string as well.
+Do not log a dev_dbg() with a separate scope. Drop the {..}
+scope and align the dev_dbg() to make it more readable.
+
+No functional changes intended in this patch.
 
 Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
 ---
- .../vc04_services/interface/vchiq_arm/vchiq_core.c    | 11 ++++-------
- 1 file changed, 4 insertions(+), 7 deletions(-)
+ .../interface/vchiq_arm/vchiq_core.c            | 17 +++++++----------
+ 1 file changed, 7 insertions(+), 10 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index e9b60dd8d419..1dca676186b6 100644
+index 1dca676186b6..15257cf66fa4 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1188,13 +1188,10 @@ queue_message_sync(struct vchiq_state *state, struct vchiq_service *service,
- 	header = (struct vchiq_header *)SLOT_DATA_FROM_INDEX(state,
- 		local->slot_sync);
+@@ -936,6 +936,7 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
+ 	struct vchiq_service_quota *quota = NULL;
+ 	struct vchiq_header *header;
+ 	int type = VCHIQ_MSG_TYPE(msgid);
++	int svc_fourcc;
+ 
+ 	size_t stride;
+ 
+@@ -1128,17 +1129,13 @@ queue_message(struct vchiq_state *state, struct vchiq_service *service,
+ 	header->msgid = msgid;
+ 	header->size = size;
  
 -	{
--		int oldmsgid = header->msgid;
+-		int svc_fourcc;
 -
--		if (oldmsgid != VCHIQ_MSGID_PADDING)
--			dev_err(state->dev, "core: %d: qms - msgid %x, not PADDING\n",
--				state->id, oldmsgid);
--	}
-+	if (header->msgid != VCHIQ_MSGID_PADDING)
-+		dev_err(state->dev,
-+			"core: %d: qms - msgid %x, is not a PADDING message\n",
-+			state->id, header->msgid);
+-		svc_fourcc = service
+-			? service->base.fourcc
+-			: VCHIQ_MAKE_FOURCC('?', '?', '?', '?');
++	svc_fourcc = service ? service->base.fourcc
++			     : VCHIQ_MAKE_FOURCC('?', '?', '?', '?');
  
- 	dev_dbg(state->dev, "sync: %d: qms %s@%pK,%x (%d->%d)\n",
- 		state->id, msg_type_str(VCHIQ_MSG_TYPE(msgid)), header, size,
+-		dev_dbg(state->dev, "core_msg: Sent Msg %s(%u) to %p4cc s:%u d:%d len:%zu\n",
+-			msg_type_str(VCHIQ_MSG_TYPE(msgid)), VCHIQ_MSG_TYPE(msgid),
+-			&svc_fourcc, VCHIQ_MSG_SRCPORT(msgid), VCHIQ_MSG_DSTPORT(msgid), size);
+-	}
++	dev_dbg(state->dev, "core_msg: Sent Msg %s(%u) to %p4cc s:%u d:%d len:%zu\n",
++		msg_type_str(VCHIQ_MSG_TYPE(msgid)),
++		VCHIQ_MSG_TYPE(msgid), &svc_fourcc,
++		VCHIQ_MSG_SRCPORT(msgid), VCHIQ_MSG_DSTPORT(msgid), size);
+ 
+ 	/* Make sure the new header is visible to the peer. */
+ 	wmb();
 -- 
 2.45.2
 
