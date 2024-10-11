@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-361540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5063899A983
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:10:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D974C99A986
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:10:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AC5A81F21C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:10:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6502D1F219D5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90A6C1C6F59;
-	Fri, 11 Oct 2024 17:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E18EA1CCB58;
+	Fri, 11 Oct 2024 17:09:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vIFY2t62"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="s4WFxcMl"
 Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8D7A1C4610
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AE71C6F58
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:09:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728666552; cv=none; b=SG18wJJyHeMa07orZ6Ev3AGGe0CslDQnhtdAiVHlOAacIfaSO6YBUuVBQWN86ZGwCE8UiYqgwiGflCnWPWmA5opdku0RmzVUruZxnqL47/5lfZhqMPAlEf919x5QPsXdQc8Um7R9r5JIpRGTLqrvhLg/Ht5mdwIh5Om/53S9hto=
+	t=1728666557; cv=none; b=jHgI41yYlZj+8oikCobeW6h/H77pZjThu7dbt2wi1kU9LXWwGRe4NYqYKYT6+Ei7pN2HD/1mHR4DPHLe+sjdFzGVFhn70dDX9vb3rhxsbWnGrbalzz1AvZ1PvoCR6tEPk7+sjmRnJQGwf87H9Gs8TzSivDwahjvAyvlqfT7aOnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728666552; c=relaxed/simple;
-	bh=VUujYBiQvSszgV0qs3fJK1Hvr5k7z7tzS0djEyuvxZs=;
+	s=arc-20240116; t=1728666557; c=relaxed/simple;
+	bh=0an784L5kpDmdK8mN18dKa6e13LcwOa+SLNxCEIV8x4=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lJXm1IvJQm5RrVP3WYRyEMJ5Y54G9bfoej2Le3STEpvwFwSHFlZoQoJVKS7XXyYTPvx5R3FD4ngiz0GqPutaQYCr7AaUg/pnSLGOzGegO/h1FEf+D64eqXfs9DLFaVICopM7Ko5nT4IR6q3YK/f++XhmATTq+MaPK8oRj7r098E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vIFY2t62; arc=none smtp.client-ip=209.85.128.74
+	 To:Cc:Content-Type; b=ano3HMD7t+5zoo5cFvowU2z9k+gle0dzUH8NtI+QUCbnwkPfpUMn43qio4wUjkdp6b+Q6FrMvphb0xVYb4O8gWpvxgu28aHJeNEH58NSyaDHlA3MLwv9NAnUN9e4Dl8blzGQC66zFfwPD6Fd93U6g7eP3kNz5CuZnn4xRrQPQoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=s4WFxcMl; arc=none smtp.client-ip=209.85.128.74
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--ardb.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-431207426e3so3512685e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:09:10 -0700 (PDT)
+Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-43058dce286so11757975e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:09:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728666549; x=1729271349; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728666552; x=1729271352; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bfj0B3nnHjUxcCyCalhugd5ngmM/JrZzfePhPsFLeh4=;
-        b=vIFY2t62Kfu9sD1TJtD3E5c4RPwLlZA/U+7yY5NfJhMwZlWqcT9jQRfMBnfpb+pjGg
-         voO+yx8Em89gfalkzcJRLCWQC3WsUHGzLxLod9w0Tm1GEOyBxjP2Nk2TPwLlMaE2ZQo2
-         X/4si/pDbdI4gzEm2rpjSO0c2MyLMhmmwZluMD7TRqJ3Ia6kncF4Ciu2sTl52sBV0dYz
-         Zn8diq3+bald2w7c/7SMa501mLH0rZUd9w4n+ttrZoLNLNtSpeuXyyOdqaRPa6P+e9lq
-         eXQ4HfLGNXWmEf4mVktMAPrBeRs8pTcE/nbvAh9v1eKnNaCUeNx5ZCJYbU3buOMDPL3r
-         oh8w==
+        bh=WkO7vfvBh/UE7nLoKyOKLo43oPVJ4Pq/WcQaO1W6Bnw=;
+        b=s4WFxcMlArwxprN5ir0T6F0uVDBwRfqMRUlhWdd47nzXCXjb4o51HZQsbeajrsb8iM
+         b4m3fFTyNQYAhxbP7WVWqMUBYkEoQjnRSLSN/0jrTfCFN6200fhSHmNnc/DHgtQO2Mif
+         Ttc2m2AWJIX16cTDdVbttC9Tb6xKkWuRbMK8HHv06Y3uIBwdxZK6hcnYM+5Zl9Lt2gyA
+         6bd+lTQmuCrWJamYW2enzMQr9uYOzi6iO61HCPf2URY0WZ8+lepyQi8tgmCqwhQ62ZhN
+         xRFZEF1nWuqnJQjB94TNYOKjpfhPAl8XH03D8JUy8VOp5WY1zwRFxXQLJyfnyP8QMR26
+         4Ncg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728666549; x=1729271349;
+        d=1e100.net; s=20230601; t=1728666552; x=1729271352;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bfj0B3nnHjUxcCyCalhugd5ngmM/JrZzfePhPsFLeh4=;
-        b=Meem3kqTVnnZpxNNJ/+gzW7s92uVRlKrlCKSqwq/owwQmB8XgCUET4v8qMVYTT00vm
-         c/N/cI7iE6vDwhywuLTcwwr6kkIf7FhnyzNVNI5hr/ly0n2zDqVfXJZXv1SY9Iqf/PN7
-         j6Uki3hFn2yhMWE+nLmBCYDF/Q+1dlArVNU/miJT6CA2LYcC0NcyA98Ttf8KPcp1fdQe
-         QOcLYhSMJBDmjJm8c3Eqf4/B1RmjFFk9NAAd2ZmX8ppwUBUtNoMSCijAwzZzi1KyurBh
-         +0QJVX+NyA4KphfoWjBetEzmynJ5XDaGI3UN6qTYTd7CdX4YofHyZPocEnKvSHTrgW74
-         DbqQ==
-X-Gm-Message-State: AOJu0YwnGt1Qgvn7cmWkmZ7Uaw/m+K/z5DvItyo7EHv9TP715ec2E7Jc
-	9o+lTDksxpRd2eGncgrygryG+9yANzED7b12Hgo/yi5qTZHPSzSzKZOIxzfgnxXjnD+XbPqTw5k
-	RvGEiytqsJGkGnwfveY7F2letpd+e/5eMgeCgRqR7vbfvwFGQQ34RiRRv9n2FR35SqI+CLYzLBl
-	zf7jQMcIevy+wSjOL6ysHY0HPKSY0tvw==
-X-Google-Smtp-Source: AGHT+IFvX/saq2RUfGzHvn3Yuhv8T3E5DzVonOGZChHXCjZPWicr/2IaSFuxMZRFRkaqCDpZgMyInJz/
+        bh=WkO7vfvBh/UE7nLoKyOKLo43oPVJ4Pq/WcQaO1W6Bnw=;
+        b=nkZMEEBWhqNGnhoRSbQj1o6Qw1u3jW1PD4M6LidENFhz0aLbK24D7gn3sHK2VBS7UW
+         C99IDyesCNp2MI0rCD1j4GLHKvwNKSngTZdUP9EEli44RIfhnfHmJ+JdYs3ZeU1UaXp5
+         yCrvbDfUU9L43bFHfeiIRVMoVQL7YU6F2sNrbwXXzl5qbnvqHgJ/r2MLZ4iWB3HYZgZZ
+         ZdHip36OKcsbLJcbYCh+7Pgcp5v6/5ZpvK7VkT2yM8s48I9o/wDstbuTKyaUNxL8sbNy
+         j0KSk7KilhXIAGYKuts0z7n371R8+LyMjxjf3BxFg+oQ3FUklmxjrWZfOoejQpNsaIxx
+         8s2w==
+X-Gm-Message-State: AOJu0YxLTAVTRn0ay70H3cEzjegaxjwTCGaKgnqSge7qAUCawlmZQ5SA
+	9QjMBeswTU9gO3FtAmg9xj20FKeR9ehUMkZIVvOZp+O5BirbKw+3Fe9bDWYoN6/8/F8zJC2Xw8+
+	9td9IUC9VaX0qu3gzIVSuxOIuYKh+PTgsrkraOM+H7cuNSdEFvUo//nibvWUTvKO8H0NarakyUb
+	ibRwPlOzCM/zXwi6ZOXKd49Fs1QPwOBg==
+X-Google-Smtp-Source: AGHT+IFed+Jkm09W0qDIY/JP8fTr1qhYOY3doVvTKyQfexNDvmU8Qio0ZZDRztBB0SAbldwZsy30PHAh
 X-Received: from palermo.c.googlers.com ([fda3:e722:ac3:cc00:7b:198d:ac11:8138])
- (user=ardb job=sendgmr) by 2002:a5d:6890:0:b0:374:badf:9b16 with SMTP id
- ffacd0b85a97d-37d54de7715mr5662f8f.0.1728666548505; Fri, 11 Oct 2024 10:09:08
- -0700 (PDT)
-Date: Fri, 11 Oct 2024 19:08:50 +0200
+ (user=ardb job=sendgmr) by 2002:a05:600c:1c96:b0:42c:a8b5:c1b with SMTP id
+ 5b1f17b1804b1-4311de86414mr276615e9.2.1728666551095; Fri, 11 Oct 2024
+ 10:09:11 -0700 (PDT)
+Date: Fri, 11 Oct 2024 19:08:51 +0200
 In-Reply-To: <20241011170847.334429-10-ardb+git@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,14 +73,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241011170847.334429-10-ardb+git@google.com>
 X-Developer-Key: i=ardb@kernel.org; a=openpgp; fpr=F43D03328115A198C90016883D200E9CA6329909
-X-Developer-Signature: v=1; a=openpgp-sha256; l=6898; i=ardb@kernel.org;
- h=from:subject; bh=2jvHADU7c8PNtY41id5iwZpe+A4RE0tCIX4zDl/IOwI=;
- b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ0zevGeuTemSKv5/VnNF3SJkT37m5jGny9B0qcX3hCdy
- FY1fcO/jlIWBjEOBlkxRRaB2X/f7Tw9UarWeZYszBxWJpAhDFycAjCR2tMM/wteCl2WXp4vrqrU
- 8/PM1Tu7eE0Ka+2OVWe/PrexdoZEgQ3DP7MzGyWTi0uENn70OL9B8qPnx/4X27Z1bYtzXq58O1l YjB8A
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3782; i=ardb@kernel.org;
+ h=from:subject; bh=A2/RO6uk5klpid4u/+fW8dDiGa2vurlmiGxn2abwXOw=;
+ b=owGbwMvMwCFmkMcZplerG8N4Wi2JIZ0zesm2OynG/CefvNqzuP2B3f2Z556oucZEiLe5TWrVM
+ c4UbnjcUcrCIMbBICumyCIw+++7nacnStU6z5KFmcPKBDKEgYtTACYy8Rwjw9964dRnPnNTMjNf
+ xZ67JjnNas4TGxb2uVeiciP75zndvMvwz/bi+aiTD+/42b7psc+aa3V49Z5j2h/UKj5/OSr6N9j kBD8A
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241011170847.334429-12-ardb+git@google.com>
-Subject: [PATCH v3 2/8] objtool: Allow arch code to discover jump table size
+Message-ID: <20241011170847.334429-13-ardb+git@google.com>
+Subject: [PATCH v3 3/8] objtool: Make some helper functions globally accessible
 From: Ard Biesheuvel <ardb+git@google.com>
 To: linux-kernel@vger.kernel.org
 Cc: llvm@lists.linux.dev, keescook@chromium.org, 
@@ -92,192 +92,104 @@ Content-Type: text/plain; charset="UTF-8"
 
 From: Ard Biesheuvel <ardb@kernel.org>
 
-In preparation for adding support for annotated jump tables, where
-ELF relocations and symbols are used to describe the locations of jump
-tables in the executable, refactor the jump table discovery logic so the
-table size can be returned from arch_find_switch_table().
+Move some helpers around so they can be used from arch specific jump
+table code that is getting refactored in the next patch.
 
 Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 ---
- tools/objtool/arch/loongarch/special.c  |  3 +-
- tools/objtool/arch/powerpc/special.c    |  3 +-
- tools/objtool/arch/x86/special.c        |  4 ++-
- tools/objtool/check.c                   | 31 +++++++++++++-------
- tools/objtool/include/objtool/check.h   |  5 +++-
- tools/objtool/include/objtool/special.h |  3 +-
- 6 files changed, 33 insertions(+), 16 deletions(-)
+ tools/objtool/check.c                 | 22 ++++----------------
+ tools/objtool/include/objtool/check.h | 16 ++++++++++++++
+ 2 files changed, 20 insertions(+), 18 deletions(-)
 
-diff --git a/tools/objtool/arch/loongarch/special.c b/tools/objtool/arch/loongarch/special.c
-index 9bba1e9318e0..87230ed570fd 100644
---- a/tools/objtool/arch/loongarch/special.c
-+++ b/tools/objtool/arch/loongarch/special.c
-@@ -9,7 +9,8 @@ bool arch_support_alt_relocation(struct special_alt *special_alt,
- }
- 
- struct reloc *arch_find_switch_table(struct objtool_file *file,
--				     struct instruction *insn)
-+				     struct instruction *insn,
-+				     unsigned long *table_size)
- {
- 	return NULL;
- }
-diff --git a/tools/objtool/arch/powerpc/special.c b/tools/objtool/arch/powerpc/special.c
-index d33868147196..51610689abf7 100644
---- a/tools/objtool/arch/powerpc/special.c
-+++ b/tools/objtool/arch/powerpc/special.c
-@@ -13,7 +13,8 @@ bool arch_support_alt_relocation(struct special_alt *special_alt,
- }
- 
- struct reloc *arch_find_switch_table(struct objtool_file *file,
--				    struct instruction *insn)
-+				     struct instruction *insn,
-+				     unsigned long *table_size)
- {
- 	exit(-1);
- }
-diff --git a/tools/objtool/arch/x86/special.c b/tools/objtool/arch/x86/special.c
-index 415e4d035e53..f8fb67636384 100644
---- a/tools/objtool/arch/x86/special.c
-+++ b/tools/objtool/arch/x86/special.c
-@@ -109,7 +109,8 @@ bool arch_support_alt_relocation(struct special_alt *special_alt,
-  *    NOTE: MITIGATION_RETPOLINE made it harder still to decode dynamic jumps.
-  */
- struct reloc *arch_find_switch_table(struct objtool_file *file,
--				    struct instruction *insn)
-+				     struct instruction *insn,
-+				     unsigned long *table_size)
- {
- 	struct reloc  *text_reloc, *rodata_reloc;
- 	struct section *table_sec;
-@@ -150,5 +151,6 @@ struct reloc *arch_find_switch_table(struct objtool_file *file,
- 	if (!rodata_reloc)
- 		return NULL;
- 
-+	*table_size = 0;
- 	return rodata_reloc;
- }
 diff --git a/tools/objtool/check.c b/tools/objtool/check.c
-index aa07fdf1cf13..b73e43b9b9e3 100644
+index b73e43b9b9e3..fbb05e973acc 100644
 --- a/tools/objtool/check.c
 +++ b/tools/objtool/check.c
-@@ -150,6 +150,15 @@ static inline struct reloc *insn_jump_table(struct instruction *insn)
- 	return NULL;
+@@ -61,8 +61,8 @@ struct instruction *next_insn_same_sec(struct objtool_file *file,
+ 	return insn;
  }
  
-+static inline unsigned long insn_jump_table_size(struct instruction *insn)
+-static struct instruction *next_insn_same_func(struct objtool_file *file,
+-					       struct instruction *insn)
++struct instruction *next_insn_same_func(struct objtool_file *file,
++				        struct instruction *insn)
+ {
+ 	struct instruction *next = next_insn_same_sec(file, insn);
+ 	struct symbol *func = insn_func(insn);
+@@ -93,8 +93,8 @@ static struct instruction *prev_insn_same_sec(struct objtool_file *file,
+ 	return insn - 1;
+ }
+ 
+-static struct instruction *prev_insn_same_sym(struct objtool_file *file,
+-					      struct instruction *insn)
++struct instruction *prev_insn_same_sym(struct objtool_file *file,
++				       struct instruction *insn)
+ {
+ 	struct instruction *prev = prev_insn_same_sec(file, insn);
+ 
+@@ -110,11 +110,6 @@ static struct instruction *prev_insn_same_sym(struct objtool_file *file,
+ 		for_each_sec(file, __sec)				\
+ 			sec_for_each_insn(file, __sec, insn)
+ 
+-#define func_for_each_insn(file, func, insn)				\
+-	for (insn = find_insn(file, func->sec, func->offset);		\
+-	     insn;							\
+-	     insn = next_insn_same_func(file, insn))
+-
+ #define sym_for_each_insn(file, sym, insn)				\
+ 	for (insn = find_insn(file, sym->sec, sym->offset);		\
+ 	     insn && insn->offset < sym->offset + sym->len;		\
+@@ -141,15 +136,6 @@ static inline struct symbol *insn_call_dest(struct instruction *insn)
+ 	return insn->_call_dest;
+ }
+ 
+-static inline struct reloc *insn_jump_table(struct instruction *insn)
+-{
+-	if (insn->type == INSN_JUMP_DYNAMIC ||
+-	    insn->type == INSN_CALL_DYNAMIC)
+-		return insn->_jump_table;
+-
+-	return NULL;
+-}
+-
+ static inline unsigned long insn_jump_table_size(struct instruction *insn)
+ {
+ 	if (insn->type == INSN_JUMP_DYNAMIC ||
+diff --git a/tools/objtool/include/objtool/check.h b/tools/objtool/include/objtool/check.h
+index e1cd13cd28a3..e2f755484c4a 100644
+--- a/tools/objtool/include/objtool/check.h
++++ b/tools/objtool/include/objtool/check.h
+@@ -114,14 +114,30 @@ static inline bool is_jump(struct instruction *insn)
+ 	return is_static_jump(insn) || is_dynamic_jump(insn);
+ }
+ 
++static inline struct reloc *insn_jump_table(struct instruction *insn)
 +{
 +	if (insn->type == INSN_JUMP_DYNAMIC ||
 +	    insn->type == INSN_CALL_DYNAMIC)
-+		return insn->_jump_table_size;
++		return insn->_jump_table;
 +
-+	return 0;
++	return NULL;
 +}
 +
- static bool is_jump_table_jump(struct instruction *insn)
- {
- 	struct alt_group *alt_group = insn->alt_group;
-@@ -2099,6 +2108,7 @@ static int add_special_section_alts(struct objtool_file *file)
- static int add_jump_table(struct objtool_file *file, struct instruction *insn,
- 			  struct reloc *next_table)
- {
-+	unsigned long table_size = insn_jump_table_size(insn);
- 	struct symbol *pfunc = insn_func(insn)->pfunc;
- 	struct reloc *table = insn_jump_table(insn);
- 	unsigned int rtype = reloc_type(table);
-@@ -2116,6 +2126,8 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
- 		unsigned long addend = reloc_addend(reloc);
+ struct instruction *find_insn(struct objtool_file *file,
+ 			      struct section *sec, unsigned long offset);
  
- 		/* Check for the end of the table: */
-+		if (table_size && reloc_offset(reloc) - reloc_offset(table) >= table_size)
-+			break;
- 		if (reloc != table && reloc == next_table)
- 			break;
++struct instruction *prev_insn_same_sym(struct objtool_file *file, struct instruction *insn);
+ struct instruction *next_insn_same_sec(struct objtool_file *file, struct instruction *insn);
++struct instruction *next_insn_same_func(struct objtool_file *file, struct instruction *insn);
  
-@@ -2175,12 +2187,12 @@ static int add_jump_table(struct objtool_file *file, struct instruction *insn,
-  * find_jump_table() - Given a dynamic jump, find the switch jump table
-  * associated with it.
-  */
--static struct reloc *find_jump_table(struct objtool_file *file,
--				      struct symbol *func,
--				      struct instruction *insn)
-+static void find_jump_table(struct objtool_file *file, struct symbol *func,
-+			    struct instruction *insn)
- {
- 	struct reloc *table_reloc;
- 	struct instruction *dest_insn, *orig_insn = insn;
-+	unsigned long table_size;
+ #define sec_for_each_insn(file, _sec, insn)				\
+ 	for (insn = find_insn(file, _sec, 0);				\
+ 	     insn && insn->sec == _sec;					\
+ 	     insn = next_insn_same_sec(file, insn))
  
- 	/*
- 	 * Backward search using the @first_jump_src links, these help avoid
-@@ -2201,17 +2213,17 @@ static struct reloc *find_jump_table(struct objtool_file *file,
- 		     insn->jump_dest->offset > orig_insn->offset))
- 		    break;
- 
--		table_reloc = arch_find_switch_table(file, insn);
-+		table_reloc = arch_find_switch_table(file, insn, &table_size);
- 		if (!table_reloc)
- 			continue;
- 		dest_insn = find_insn(file, table_reloc->sym->sec, reloc_addend(table_reloc));
- 		if (!dest_insn || !insn_func(dest_insn) || insn_func(dest_insn)->pfunc != func)
- 			continue;
- 
--		return table_reloc;
-+		orig_insn->_jump_table = table_reloc;
-+		orig_insn->_jump_table_size = table_size;
-+		break;
- 	}
--
--	return NULL;
- }
- 
- /*
-@@ -2222,7 +2234,6 @@ static void mark_func_jump_tables(struct objtool_file *file,
- 				    struct symbol *func)
- {
- 	struct instruction *insn, *last = NULL;
--	struct reloc *reloc;
- 
- 	func_for_each_insn(file, func, insn) {
- 		if (!last)
-@@ -2245,9 +2256,7 @@ static void mark_func_jump_tables(struct objtool_file *file,
- 		if (insn->type != INSN_JUMP_DYNAMIC)
- 			continue;
- 
--		reloc = find_jump_table(file, func, insn);
--		if (reloc)
--			insn->_jump_table = reloc;
-+		find_jump_table(file, func, insn);
- 	}
- }
- 
-diff --git a/tools/objtool/include/objtool/check.h b/tools/objtool/include/objtool/check.h
-index daa46f1f0965..e1cd13cd28a3 100644
---- a/tools/objtool/include/objtool/check.h
-+++ b/tools/objtool/include/objtool/check.h
-@@ -71,7 +71,10 @@ struct instruction {
- 	struct instruction *first_jump_src;
- 	union {
- 		struct symbol *_call_dest;
--		struct reloc *_jump_table;
-+		struct {
-+			struct reloc *_jump_table;
-+			unsigned long _jump_table_size;
-+		};
- 	};
- 	struct alternative *alts;
- 	struct symbol *sym;
-diff --git a/tools/objtool/include/objtool/special.h b/tools/objtool/include/objtool/special.h
-index 86d4af9c5aa9..e7ee7ffccefd 100644
---- a/tools/objtool/include/objtool/special.h
-+++ b/tools/objtool/include/objtool/special.h
-@@ -38,5 +38,6 @@ bool arch_support_alt_relocation(struct special_alt *special_alt,
- 				 struct instruction *insn,
- 				 struct reloc *reloc);
- struct reloc *arch_find_switch_table(struct objtool_file *file,
--				    struct instruction *insn);
-+				     struct instruction *insn,
-+				     unsigned long *table_size);
- #endif /* _SPECIAL_H */
++#define func_for_each_insn(file, func, insn)				\
++	for (insn = find_insn(file, func->sec, func->offset);		\
++	     insn;							\
++	     insn = next_insn_same_func(file, insn))
++
+ #endif /* _CHECK_H */
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
