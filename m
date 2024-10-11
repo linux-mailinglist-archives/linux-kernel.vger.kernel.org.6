@@ -1,160 +1,121 @@
-Return-Path: <linux-kernel+bounces-360615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F58999D44
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:56:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5D96999D55
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:01:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5784C1C22C79
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 818DA1F22D5C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6552209662;
-	Fri, 11 Oct 2024 06:56:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4E6E1CDA19;
+	Fri, 11 Oct 2024 07:01:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="DhDTtYN7"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kC8qaaGy"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BF1A208994;
-	Fri, 11 Oct 2024 06:56:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B1419C579
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:01:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629790; cv=none; b=txrLgSe4htcHpSuxFzh6sdqcJ3PpE6tMOP0RveVO6gJw92qP9b9rzlhFFDfiWPzlKFuBJF3qBnFD60YEQogQ4oPjLmBuy4tbN2IaVg/foO49UuysZONv5hiBFZPv0JfgAEdVB8mAbyvuMAGFMe+Ml70ddf/l/CbTYk9KvEuYTZ8=
+	t=1728630068; cv=none; b=IRl1d9cpvUG/2oqIySn26UnO08HwmJr2X9DmnMJumvEeqfddIYW7rdktHQaqPOQI2r/Sf8FTK5K2kNwyQKSM6uwbkm5IqxmLZwtognq+Z3659ZR+STUj3773puTeEbQPVjvPpoiZki6T0iAtAC0QtgU7wJ+xuOAFCdxhQDiU2Tk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629790; c=relaxed/simple;
-	bh=Xo0PyFhCMYGLny235IH5R9IegyfzF0hixbX2hUzIvFk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=r3TOxC19/MDUMGqZ8N5bzX4kdzH1msuK6PoycWjuWY21hM7i5fJ19vxglNLP6ffz/pd8DGTPY/aTsW/I6f2HgbZPiP/6ylrFHSg6cC4dhZw2jPrif04VHrZZ06cgjE69v6epduCxk4yzeaTCfU5WBjk9oOgxGilnL1b5bcN3lPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=DhDTtYN7; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: eb0a1d90879d11ef8b96093e013ec31c-20241011
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:References:CC:To:Subject:MIME-Version:Date:Message-ID; bh=8I6A2olOCtmG5k5rmKmYtyOQFqvwL84wIi1DSFnmSP4=;
-	b=DhDTtYN7VILXZEY+98qOUyp4UqI61eyLpzzTIeiunRvIDx6XTFEh0X75rthRuaoQUrCI+mq1eyTgpIDhXUM8gXK5lOcUa5R0SYS3bztCesFmUgRiyia4wyyCxUr/yv3EjAT6mu9/nan51goeW47r2+Iojdoaozc1X2blvNx3jm4=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:914c961f-83fa-4db2-89cf-ab41b53cf7b8,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:a063a026-5902-4533-af4f-d0904aa89b3c,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|-5,EDM:-3,IP:ni
-	l,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
-	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: eb0a1d90879d11ef8b96093e013ec31c-20241011
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1657576225; Fri, 11 Oct 2024 14:56:19 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Fri, 11 Oct 2024 14:56:18 +0800
-Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n2.mediatek.inc
- (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
- Transport; Fri, 11 Oct 2024 14:56:16 +0800
-Message-ID: <30955c9f-2133-46fe-aaa8-6709d6e301c5@mediatek.com>
-Date: Fri, 11 Oct 2024 14:56:15 +0800
+	s=arc-20240116; t=1728630068; c=relaxed/simple;
+	bh=MwumLah0heogfgY2jBbaLZlTmYy8EmATRxyZJ/sFqnI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=XawSfEhB/0BKxyRFtu16CwXl2gfTeppepFBlTWGEIG5FsV5h612dIDOPiHDwnp7o/fMp8FQozKOzFBYJ0gpq6qbw3Uh9TVCiWX95+hLhtE2pPH+5MkByuHRN50oFrconzc516m5pybcHAN+hb8d5BL/EWzsIqydHdL7AOg86NAU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kC8qaaGy; arc=none smtp.client-ip=198.175.65.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728630066; x=1760166066;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=MwumLah0heogfgY2jBbaLZlTmYy8EmATRxyZJ/sFqnI=;
+  b=kC8qaaGyOiBRnNg9kfe3C4EfvV8vBfTbfPgwZUznIPUyzC6Be5qV1E93
+   /+oBMMG0LxuIYIIGmsWHxLqraHCtlD8cERHpnx3msYMX+cCImZigNfc5B
+   uEtHAngiSUg2gFXQ6gesbhprZ+V3RrV16bh6dgdr8N1lITWnO0WJCy2y3
+   AKDxGZj0UatUV5nrybvjy9OWnlLQ0N5wuxEqPSiWpAbIgq+Si0hkq9liI
+   3u6lNUXe/RYUT8WuVIcuF3fNTDEgJyBiesnotTYaG9czvsoRgVmvSX+5F
+   HSRTp1sZJzjuPBHPcxCyESGNnIQ3cn16smngBLK2qXiiep0diFrla8Wi2
+   g==;
+X-CSE-ConnectionGUID: 792izZ3RQEeOWcmH6jjaVg==
+X-CSE-MsgGUID: q6QIEy29QOmah5F4iYDQpw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="38592027"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="38592027"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 00:01:05 -0700
+X-CSE-ConnectionGUID: C5Zp0ThHQDG41+LNjk8vKQ==
+X-CSE-MsgGUID: DlKyb9KRQ3iM1eqRd2Ocrg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="81624165"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 00:01:03 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: <linux-mm@kvack.org>,  Alexander Potapenko <glider@google.com>,  Kees
+ Cook <keescook@chromium.org>,  David Hildenbrand <david@redhat.com>,
+  Andrew Morton <akpm@linux-foundation.org>,  "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>,  Miaohe Lin <linmiaohe@huawei.com>,  Kefeng Wang
+ <wangkefeng.wang@huawei.com>,  John Hubbard <jhubbard@nvidia.com>,
+  <linux-kernel@vger.kernel.org>
+Subject: Re: [RFC PATCH] mm: avoid clearing user movable page twice with
+ init_on_alloc=1
+In-Reply-To: <20241007182315.401167-1-ziy@nvidia.com> (Zi Yan's message of
+	"Mon, 7 Oct 2024 14:23:15 -0400")
+References: <20241007182315.401167-1-ziy@nvidia.com>
+Date: Fri, 11 Oct 2024 14:57:30 +0800
+Message-ID: <874j5j9let.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
- Thunderbird/91.9.1
-Subject: Re: [PATCH] dt-bindings: phy: mediatek: tphy: add a property for
- power-domains
-Content-Language: en-US
-To: Conor Dooley <conor@kernel.org>
-CC: Jason-ch Chen <Jason-ch.Chen@mediatek.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Chunfeng Yun
-	<chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
- Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, <linux-phy@lists.infradead.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Alexandre
- Mergnat <amergnat@baylibre.com>, Bear Wang <bear.wang@mediatek.com>, Pablo
- Sun <pablo.sun@mediatek.com>, Macpaul Lin <macpaul@gmail.com>, Sen Chu
-	<sen.chu@mediatek.com>, Chris-qj chen <chris-qj.chen@mediatek.com>, MediaTek
- Chromebook Upstream <Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	Chen-Yu Tsai <wenst@chromium.org>
-References: <20240926101804.22471-1-macpaul.lin@mediatek.com>
- <20240926-treadmill-purr-b2e3279a14a4@spud>
- <3a970560-2458-f5f3-87c5-925079fa12a4@mediatek.com>
- <20241008-disorder-slacking-d8196ceb68f7@spud>
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-In-Reply-To: <20241008-disorder-slacking-d8196ceb68f7@spud>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=ascii
 
-
-
-On 10/9/24 00:31, Conor Dooley wrote:
-> On Tue, Oct 08, 2024 at 12:03:37PM +0800, Macpaul Lin wrote:
->>
->>
->> On 9/27/24 00:25, Conor Dooley wrote:
->>> On Thu, Sep 26, 2024 at 06:18:04PM +0800, Macpaul Lin wrote:
->>>> Some platforms requires a dependency for power-domains.
->>>
->>> Some, so not all? Why isn't this restricted on a per compatible basis?
->>
->> After discussion with Chunfeng and double check tphy design in detail.
->> Chunfeng commented that tphy dose not need to add mtcmos.
->> It is not necessary to add it, if the power of the phy is turned off,
->> it will affect other functions.
->>
->>  From the current USB hardware design perspective, even if mtcmos
->> is added to the phy, it is always on.
-> 
-> Firstly, I have no idea what "mtcmos" means, sorry. I am a dt-bindings
-> guy, not someone familiar with mediatek hardware.
-> Secondly, it sounds like this /does/ have a power domain, so it should
-> be in the binding. That it is turned on by something else and must
-> remain on doesn't mean it shouldn't be documented here. What if those
-> things try to turn it off while the tphy is using it?
-
-After discussion in MediaTek internal. Chunfeng agreed to
-add 'power-domains' property to DT schema. The v2 patch will
-also adding the reminder in the description for developers.
-
->>
->>>> So we add property 'power-domains' and set 'maxItems: 1' in the
->>>> DT Schema.
->>>>
->>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
->>>> ---
->>>>    Documentation/devicetree/bindings/phy/mediatek,tphy.yaml | 3 +++
->>>>    1 file changed, 3 insertions(+)
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->>>> index 423b7c4e62f2..c77fe43c224a 100644
->>>> --- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->>>> +++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
->>>> @@ -125,6 +125,9 @@ properties:
->>>>        $ref: /schemas/types.yaml#/definitions/uint32
->>>>        default: 28
->>>> +  power-domains:
->>>> +    maxItems: 1
->>>> +
->>>>    # Required child node:
->>>>    patternProperties:
->>>>      "^(usb|pcie|sata)-phy@[0-9a-f]+$":
->>>> -- 
->>>> 2.45.2
->>>>
->>
+Zi Yan <ziy@nvidia.com> writes:
 
 [snip]
 
-V2 of this patch has been send.
+> diff --git a/include/linux/highmem.h b/include/linux/highmem.h
+> index 930a591b9b61..4b15224842e1 100644
+> --- a/include/linux/highmem.h
+> +++ b/include/linux/highmem.h
+> @@ -220,18 +220,8 @@ static inline void clear_user_highpage(struct page *page, unsigned long vaddr)
+>   * Return: A folio containing one allocated and zeroed page or NULL if
+>   * we are out of memory.
+>   */
+> -static inline
+> -struct folio *vma_alloc_zeroed_movable_folio(struct vm_area_struct *vma,
+> -				   unsigned long vaddr)
+> -{
+> -	struct folio *folio;
+> -
+> -	folio = vma_alloc_folio(GFP_HIGHUSER_MOVABLE, 0, vma, vaddr, false);
+> -	if (folio)
+> -		clear_user_highpage(&folio->page, vaddr);
+> -
+> -	return folio;
+> -}
+> +#define vma_alloc_zeroed_movable_folio(vma, vaddr) \
+> +	vma_alloc_folio(GFP_HIGHUSER_MOVABLE | __GFP_ZERO, 0, vma, vaddr, false)
 
-Thanks
-Macpaul Lin.
+Although just one line, I still prefer to use inline function instead of
+macro here.  Not strong opinion.
+
+>  #endif
+
+[snip]
+
+--
+Best Regards,
+Huang, Ying
 
