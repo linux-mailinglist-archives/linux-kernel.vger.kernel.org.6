@@ -1,492 +1,373 @@
-Return-Path: <linux-kernel+bounces-360733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BD16999EC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:09:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A22EC999EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:13:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 585E01C22F8E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:09:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 008D4B22D33
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7453F20ADF1;
-	Fri, 11 Oct 2024 08:09:33 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58F3720ADE0;
+	Fri, 11 Oct 2024 08:13:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jw7q0nP5"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17BC61CDA31;
-	Fri, 11 Oct 2024 08:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E41B20A5D5
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:13:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728634172; cv=none; b=qCzjDBY+8tGZAimqeUQSlQ13B8cTB6whBB1XuLhmuHx6rVtOpKMVM1O9vMOutNEjXBfyMMHCEAUj1plw7olix1yC3Btwnx0WaKrYSUCNOXf26ruRtuOt8Wjef1lSg9w1yQWsZhdNX4bzhGmreEwN+ykVDjTIS0tazy+3Kh3GSQs=
+	t=1728634391; cv=none; b=Ujs4hR/WYsk/mp9araU4cq7eatPl51F+Na5vgPAQLzJ2NIr9ma1e0Js0CkNExTVGLLyq8M03FIpmgXv6gq/qtnApYVCuHkx0PpF4x2v1y95xYOzQa+94bJWYQXfLxAdw2z2k62EznkAdJnGk8WDBL9kCz+v5W7vRKLiblu8LY68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728634172; c=relaxed/simple;
-	bh=AdashH52wwCwy8N71iUO2XZjU04DU4pbYNNd/eIOTVk=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=lwvjZvBB4H2jRkGZv7gy0l/HMKEd6HszDjazVE1tP9pB3yOejgyhlZWCG5OLG1iAwoo6MMXmWWVMmcwYKqtz8P2bSfHNcGBCfJ2tDXLremjIz7kH5Y53VQWVhavzN7VMSWauH0FZ9YhL4IWJ+grXJmQW+kLGdfQgxxuP4VSx0n0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPzmH5N6Zz6JB8F;
-	Fri, 11 Oct 2024 16:09:03 +0800 (CST)
-Received: from frapeml500007.china.huawei.com (unknown [7.182.85.172])
-	by mail.maildlp.com (Postfix) with ESMTPS id A0DDC140581;
-	Fri, 11 Oct 2024 16:09:26 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml500007.china.huawei.com (7.182.85.172) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Fri, 11 Oct 2024 10:09:26 +0200
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Fri, 11 Oct 2024 10:09:26 +0200
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v9 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
- migration driver
-Thread-Topic: [PATCH v9 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
- migration driver
-Thread-Index: AQHbBcQkh6V22o+1AUK1m5LoEXCq+rKBW/sQ
-Date: Fri, 11 Oct 2024 08:09:26 +0000
-Message-ID: <25ff48eaa1194484b5b4ef016d01191c@huawei.com>
-References: <20240913095502.22940-1-liulongfang@huawei.com>
- <20240913095502.22940-4-liulongfang@huawei.com>
-In-Reply-To: <20240913095502.22940-4-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1728634391; c=relaxed/simple;
+	bh=uLrYFUXBHWX2JXNYaR58oswHfyR8IdaV6UgF1BWiWW0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=izbXii6DWWTbRQEzPu1u2Ip1iGNtu0CXBc8jh40r9nOTQeotLZvkluD3ulEOhByyWLDt2s6j+u03jXk3IkItVj53DoNMvIToeBlRta226DgUaWaEGSuqtzPlV5p4+G+odVakHBB1wNZb4NwF1trTTiTiDdf1EdZRNr1RLy0GHwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jw7q0nP5; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e290200a560so1628083276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:13:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728634387; x=1729239187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/xqi8+YquEXJlPFJXt9jXWmFBFMG9TT+Lb8hYw8B1kA=;
+        b=Jw7q0nP5hFAlwpDVnvQ9SZUe+iix80qd0AQqrM2k7KL+sG6Ur49kidIMivkZ4GR9/2
+         lGRcRLkDXHQFTuBQrSzqlI63vkpg0FSckOsAJD5dq6yWVubwhfzwbFfMwlSVq5e0UeAt
+         yUkEHxnEi7BDGRAUbYwJNj+BUK3xYoAELUZ6MTcxmKIusSvM5dKOVU8rWf3uymRDtACp
+         BAFJjApQLgqNP8PgxZY+4zN7itUMr8KHYDhvodC6/SlZTm2GIYiiuVPPRiVlZTA2fPEB
+         iW+tRHObKhp1XYZ0ZuBn1kfJEzuSkRQIgzFsdtZ5iQRduObNBexRAEkci+xnLlDRuxs2
+         XQCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728634387; x=1729239187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/xqi8+YquEXJlPFJXt9jXWmFBFMG9TT+Lb8hYw8B1kA=;
+        b=btLGEf7IG7a98DVWPD8WCAuG8CfuLHcxzMUOjkTibEA/o8heXkDYlCAZxCSBhmtaPn
+         xlGybiYLJO7gKgsc0ya+D/9RBQsBzBr8EkQO68Or4XNKZbWLfLwRV9VQVZRw+D6ZZWhB
+         sT2cGieZUFZcj0m0IjraB1MOnL+ncudHMXllpOhVqeVzio49cG3jONJ61FRbGx/OFnfe
+         +20bfkdyHe61sm9gEDx80Yw3+QAOI3bCav3gdz7sX9gqfDZ90F+tpbP6exzjeJ4af/nw
+         nQcJWLz8k5Ok5Rp9RahKFKB0XZeD2DfovIyihgMMBWsB9NIza9fMwMEigiZaX9eXTBsf
+         6y3w==
+X-Forwarded-Encrypted: i=1; AJvYcCWEQ1zn9GmthEhsdSCBMYY4cs2r6LnYUPupuTLMo8zzl6HdX23mMwpQis30FrC6iUBgGg8Gs1TG+VZq0R4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+5q4/Lk825/LGXkaqbqD2NtdAzjzOCaFRlFZVdXonEhgmGu/M
+	8gYz3vetVzmohWCZFoHnIwKW4LmHv5zt0QKZ5+BARiLx6Ourc5I5V89i703n04o3vnL+A6P1L6z
+	oU7hv9bQe7NiKDHlNZrCwYizUtUKJFYCd4ibRFw==
+X-Google-Smtp-Source: AGHT+IHHqEdEHu61NjyYbtbIw8Hhydz5tqoMqEmRPHikx10w3Hwl5aGVT/DS042WR3aWmGbkdqH6YngFoaTZ86z+72M=
+X-Received: by 2002:a05:6902:1247:b0:e29:29b0:2b2a with SMTP id
+ 3f1490d57ef6-e2929b02cc0mr225315276.51.1728634387370; Fri, 11 Oct 2024
+ 01:13:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
+ <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-12-76d4f5d413bf@linaro.org>
+ <fbqhq7zvusll377oxi4tcr4bpgwhab2xbnfw2izotua5me4ufe@syy4jundvccf>
+In-Reply-To: <fbqhq7zvusll377oxi4tcr4bpgwhab2xbnfw2izotua5me4ufe@syy4jundvccf>
+From: Jun Nie <jun.nie@linaro.org>
+Date: Fri, 11 Oct 2024 16:12:56 +0800
+Message-ID: <CABymUCMcKwrUFZ=KJdS852-KkWPaGGigHr2Jo8B17_oZa6HEeA@mail.gmail.com>
+Subject: Re: [PATCH v2 12/14] drm/msm/dpu: support plane splitting in
+ quad-pipe case
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
+=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:29=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Wed, Oct 09, 2024 at 04:50:25PM GMT, Jun Nie wrote:
+> > Clip plane into pipes per left and right half screen ROI if topology
+> > is quad pipe.
+>
+> Why? Please provide an explanation for the reviewers not knowing the
+> details.
 
+The content of every half of screen is sent out via one interface in
+dual-DSI case. The content for every interface is blended by a LM
+pair, thus no content of any pipe shall cross the LM pair. We need
+to clip plane into pipes per left and right half screen ROI if topology
+is quad pipe.
+>
+> > Then split the clipped rectangle by half if the rectangle
+> > width still exceeds width limit.
+> >
+> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
+> > ---
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c  |  7 +++
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h  |  6 ++
+> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 99 ++++++++++++++++++++++-=
+--------
+> >  3 files changed, 84 insertions(+), 28 deletions(-)
+> >
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm=
+/msm/disp/dpu1/dpu_crtc.c
+> > index 66f745399a602..d2aca0a9493d5 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
+> > @@ -1310,6 +1310,13 @@ int dpu_crtc_vblank(struct drm_crtc *crtc, bool =
+en)
+> >       return 0;
+> >  }
+> >
+> > +unsigned int dpu_crtc_get_lm_num(const struct drm_crtc_state *state)
+>
+> I think the DPU driver uses num_foo rather than foo_num
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Friday, September 13, 2024 10:55 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v9 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
-> migration driver
->=20
-> On the debugfs framework of VFIO, if the CONFIG_VFIO_DEBUGFS macro is
-> enabled, the debug function is registered for the live migration driver
-> of the HiSilicon accelerator device.
->=20
-> After registering the HiSilicon accelerator device on the debugfs
-> framework of live migration of vfio, a directory file "hisi_acc"
-> of debugfs is created, and then three debug function files are
-> created in this directory:
->=20
->    vfio
->     |
->     +---<dev_name1>
->     |    +---migration
->     |        +--state
->     |        +--hisi_acc
->     |            +--dev_data
->     |            +--migf_data
->     |            +--cmd_state
->     |
->     +---<dev_name2>
->          +---migration
->              +--state
->              +--hisi_acc
->                  +--dev_data
->                  +--migf_data
->                  +--cmd_state
->=20
-> dev_data file: read device data that needs to be migrated from the
-> current device in real time
-> migf_data file: read the migration data of the last live migration
-> from the current driver.
-> cmd_state: used to get the cmd channel state for the device.
->=20
-> +----------------+        +--------------+       +---------------+
-> | migration dev  |        |   src  dev   |       |   dst  dev    |
-> +-------+--------+        +------+-------+       +-------+-------+
->         |                        |                       |
->         |                 +------v-------+       +-------v-------+
->         |                 |  saving_migf |       | resuming_migf |
->   read  |                 |     file     |       |     file      |
->         |                 +------+-------+       +-------+-------+
->         |                        |          copy         |
->         |                        +------------+----------+
->         |                                     |
-> +-------v--------+                    +-------v--------+
-> |   data buffer  |                    |   debug_migf   |
-> +-------+--------+                    +-------+--------+
->         |                                     |
->    cat  |                                 cat |
-> +-------v--------+                    +-------v--------+
-> |   dev_data     |                    |   migf_data    |
-> +----------------+                    +----------------+
->=20
-> When accessing debugfs, user can obtain the most recent status data
-> of the device through the "dev_data" file. It can read recent
-> complete status data of the device. If the current device is being
-> migrated, it will wait for it to complete.
-> The data for the last completed migration function will be stored
-> in debug_migf. Users can read it via "migf_data".
->=20
-> Signed-off-by: Longfang Liu <liulongfang@huawei.com>
-> ---
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.c    | 204 ++++++++++++++++++
->  .../vfio/pci/hisilicon/hisi_acc_vfio_pci.h    |   7 +
->  2 files changed, 211 insertions(+)
->=20
-> diff --git a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> index a8c53952d82e..da9f5b9e6c5b 100644
-> --- a/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> +++ b/drivers/vfio/pci/hisilicon/hisi_acc_vfio_pci.c
-> @@ -627,15 +627,30 @@ static void hisi_acc_vf_disable_fd(struct
-> hisi_acc_vf_migration_file *migf)
->  	mutex_unlock(&migf->lock);
->  }
->=20
-> +static void hisi_acc_debug_migf_copy(struct hisi_acc_vf_core_device
-> *hisi_acc_vdev,
-> +	struct hisi_acc_vf_migration_file *src_migf)
-> +{
-> +	struct hisi_acc_vf_migration_file *dst_migf =3D hisi_acc_vdev-
-> >debug_migf;
-> +
-> +	if (!dst_migf)
-> +		return;
-> +
-> +	dst_migf->total_length =3D src_migf->total_length;
-> +	memcpy(&dst_migf->vf_data, &src_migf->vf_data,
-> +		sizeof(struct acc_vf_data));
-> +}
-> +
->  static void hisi_acc_vf_disable_fds(struct hisi_acc_vf_core_device
-> *hisi_acc_vdev)
->  {
->  	if (hisi_acc_vdev->resuming_migf) {
-> +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-
-> >resuming_migf);
->  		hisi_acc_vf_disable_fd(hisi_acc_vdev->resuming_migf);
->  		fput(hisi_acc_vdev->resuming_migf->filp);
->  		hisi_acc_vdev->resuming_migf =3D NULL;
->  	}
->=20
->  	if (hisi_acc_vdev->saving_migf) {
-> +		hisi_acc_debug_migf_copy(hisi_acc_vdev, hisi_acc_vdev-
-> >saving_migf);
->  		hisi_acc_vf_disable_fd(hisi_acc_vdev->saving_migf);
->  		fput(hisi_acc_vdev->saving_migf->filp);
->  		hisi_acc_vdev->saving_migf =3D NULL;
-> @@ -1294,6 +1309,181 @@ static long hisi_acc_vfio_pci_ioctl(struct
-> vfio_device *core_vdev, unsigned int
->  	return vfio_pci_core_ioctl(core_vdev, cmd, arg);
->  }
->=20
-> +static int hisi_acc_vf_debug_check(struct seq_file *seq, struct vfio_dev=
-ice
-> *vdev)
-> +{
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
-> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
-> +	int ret;
-> +
-> +	lockdep_assert_held(&hisi_acc_vdev->open_mutex);
-> +	/*
-> +	 * When the device is not opened, the io_base is not mapped.
-> +	 * The driver cannot perform device read and write operations.
-> +	 */
-> +	if (!hisi_acc_vdev->dev_opened) {
-> +		seq_printf(seq, "device not opened!\n");
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret =3D qm_wait_dev_not_ready(vf_qm);
-> +	if (ret) {
-> +		seq_printf(seq, "VF device not ready!\n");
-> +		return -EBUSY;
-> +	}
+dpu_crtc_get_num_lm()
+>
+> > +{
+> > +     struct dpu_crtc_state *cstate =3D to_dpu_crtc_state(state);
+> > +
+> > +     return cstate->num_mixers;
+> > +}
+> > +
+> >  #ifdef CONFIG_DEBUG_FS
+> >  static int _dpu_debugfs_status_show(struct seq_file *s, void *data)
+> >  {
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm=
+/msm/disp/dpu1/dpu_crtc.h
+> > index 5260e2440f059..ee7cf71f89fc7 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
+> > @@ -304,4 +304,10 @@ static inline enum dpu_crtc_client_type dpu_crtc_g=
+et_client_type(
+> >
+> >  void dpu_crtc_frame_event_cb(struct drm_crtc *crtc, u32 event);
+> >
+> > +/**
+> > + * dpu_crtc_get_lm_num - Get mixer number in this CRTC pipeline
+> > + * state: Pointer to drm crtc state object
+> > + */
+> > +unsigned int dpu_crtc_get_lm_num(const struct drm_crtc_state *state);
+> > +
+> >  #endif /* _DPU_CRTC_H_ */
+> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
+m/msm/disp/dpu1/dpu_plane.c
+> > index 898fc2937954e..480a1b46aba72 100644
+> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
+> > @@ -837,10 +837,12 @@ static int dpu_plane_atomic_check_nopipe(struct d=
+rm_plane *plane,
+> >       struct dpu_kms *kms =3D _dpu_plane_get_kms(&pdpu->base);
+> >       u64 max_mdp_clk_rate =3D kms->perf.max_core_clk_rate;
+> >       struct dpu_plane_state *pstate =3D to_dpu_plane_state(new_plane_s=
+tate);
+> > -     struct dpu_sw_pipe_cfg *pipe_cfg;
+> > -     struct dpu_sw_pipe_cfg *r_pipe_cfg;
+> > +     struct dpu_sw_pipe_cfg pipe_cfg;
+> >       struct drm_rect fb_rect =3D { 0 };
+> > +     const struct drm_display_mode *mode =3D &crtc_state->adjusted_mod=
+e;
+> >       uint32_t max_linewidth;
+> > +     u32 lm_num;
+> > +     int lmcfg_id, lmcfg_num;
+> >
+> >       min_scale =3D FRAC_16_16(1, MAX_UPSCALE_RATIO);
+> >       max_scale =3D MAX_DOWNSCALE_RATIO << 16;
+> > @@ -863,13 +865,10 @@ static int dpu_plane_atomic_check_nopipe(struct d=
+rm_plane *plane,
+> >               return -EINVAL;
+> >       }
+> >
+> > -     /* move the assignment here, to ease handling to another pairs la=
+ter */
+> > -     pipe_cfg =3D &pstate->pipe_cfg[0];
+> > -     r_pipe_cfg =3D &pstate->pipe_cfg[1];
+> > -     /* state->src is 16.16, src_rect is not */
+> > -     drm_rect_fp_to_int(&pipe_cfg->src_rect, &new_plane_state->src);
+> > +     lm_num =3D dpu_crtc_get_lm_num(crtc_state);
+> >
+> > -     pipe_cfg->dst_rect =3D new_plane_state->dst;
+> > +     /* state->src is 16.16, src_rect is not */
+> > +     drm_rect_fp_to_int(&pipe_cfg.src_rect, &new_plane_state->src);
+> >
+> >       fb_rect.x2 =3D new_plane_state->fb->width;
+> >       fb_rect.y2 =3D new_plane_state->fb->height;
+> > @@ -884,34 +883,78 @@ static int dpu_plane_atomic_check_nopipe(struct d=
+rm_plane *plane,
+> >
+> >       max_linewidth =3D pdpu->catalog->caps->max_linewidth;
+> >
+> > -     drm_rect_rotate(&pipe_cfg->src_rect,
+> > +     drm_rect_rotate(&pipe_cfg.src_rect,
+> >                       new_plane_state->fb->width, new_plane_state->fb->=
+height,
+> >                       new_plane_state->rotation);
+> >
+> > -     if ((drm_rect_width(&pipe_cfg->src_rect) > max_linewidth) ||
+> > -          _dpu_plane_calc_clk(&crtc_state->adjusted_mode, pipe_cfg) > =
+max_mdp_clk_rate) {
+> > -             if (drm_rect_width(&pipe_cfg->src_rect) > 2 * max_linewid=
+th) {
+> > -                     DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_RECT_FMT=
+ " line:%u\n",
+> > -                                     DRM_RECT_ARG(&pipe_cfg->src_rect)=
+, max_linewidth);
+> > -                     return -E2BIG;
+> > +     /*
+> > +      * We have 1 mixer pair cfg for 1:1:1 and 2:2:1 topology, 2 mixer=
+ pair
+> > +      * configs for left and right half screen in case of 4:4:2 topolo=
+gy.
+> > +      * But we may have 2 rect to split plane with 1 config for 2:2:1.
+> > +      * So need to handle super wide plane splitting, and plane on rig=
+ht half
+> > +      * for quad-pipe case. Check dest rectangle left/right clipping
+> > +      * first, then check super wide rectangle splitting in every half=
+ next.
+> > +      */
+> > +     lmcfg_num =3D (lm_num + 1) / 2;
+>
+> num_stages?
 
-Still not very sure this vf_qm ready() check actually helps or not? What gu=
-arantee
-is there that the qm will stay Ready after this call?  Any read/write after=
-wards
-will eventually fail if it is not ready  later for some reason, right?=20
-Perhaps helps in early detection and bails out.
+OK. Then lmcfg_id   ->   stage_id
+>
+> > +     /* iterate mixer configs for this plane, to separate left/right w=
+ith the id */
+> > +     for (lmcfg_id =3D 0; lmcfg_id < lmcfg_num; lmcfg_id++) {
+> > +             struct drm_rect mixer_rect =3D {lmcfg_id * mode->hdisplay=
+ / lmcfg_num, 0,
+> > +                                     (lmcfg_id + 1) * mode->hdisplay /=
+ lmcfg_num, mode->vdisplay};
+> > +             int cfg_idx =3D lmcfg_id * PIPES_PER_LM_PAIR;
+> > +             struct dpu_sw_pipe_cfg *cur_pipecfg =3D &pstate->pipe_cfg=
+[cfg_idx];
+> > +
+> > +             drm_rect_fp_to_int(&cur_pipecfg->src_rect, &new_plane_sta=
+te->src);
+> > +             cur_pipecfg->dst_rect =3D new_plane_state->dst;
+> > +
+> > +             DPU_DEBUG_PLANE(pdpu, "checking src " DRM_RECT_FMT
+> > +                             " vs clip window " DRM_RECT_FMT "\n",
+> > +                             DRM_RECT_ARG(&cur_pipecfg->src_rect),
+> > +                             DRM_RECT_ARG(&mixer_rect));
+> > +
+> > +             /* If this plane does not fall into mixer rect, check nex=
+t mixer rect */
+> > +             if (!drm_rect_clip_scaled(&cur_pipecfg->src_rect, &cur_pi=
+pecfg->dst_rect, &mixer_rect)) {
+> > +                     memset(&pstate->pipe_cfg[cfg_idx], 0, 2 * sizeof(=
+struct dpu_sw_pipe_cfg));
+> > +                     memset(&pstate->pipe[cfg_idx], 0, 2 * sizeof(stru=
+ct dpu_sw_pipe));
+> > +                     continue;
+> >               }
+> >
+> > -             *r_pipe_cfg =3D *pipe_cfg;
+> > -             pipe_cfg->src_rect.x2 =3D (pipe_cfg->src_rect.x1 + pipe_c=
+fg->src_rect.x2) >> 1;
+> > -             pipe_cfg->dst_rect.x2 =3D (pipe_cfg->dst_rect.x1 + pipe_c=
+fg->dst_rect.x2) >> 1;
+> > -             r_pipe_cfg->src_rect.x1 =3D pipe_cfg->src_rect.x2;
+> > -             r_pipe_cfg->dst_rect.x1 =3D pipe_cfg->dst_rect.x2;
+> > -     } else {
+> > -             memset(r_pipe_cfg, 0, sizeof(*r_pipe_cfg));
+> > -     }
+> > +             cur_pipecfg->valid =3D true;
+>
+> ... and checks have been broken up to now. This isn't good.
 
-> +	return 0;
-> +}
-> +
-> +static int hisi_acc_vf_debug_cmd(struct seq_file *seq, void *data)
-> +{
-> +	struct device *vf_dev =3D seq->private;
-> +	struct vfio_pci_core_device *core_device =3D
-> dev_get_drvdata(vf_dev);
-> +	struct vfio_device *vdev =3D &core_device->vdev;
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
-> +	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
-> +	u64 value;
-> +	int ret;
-> +
-> +	mutex_lock(&hisi_acc_vdev->open_mutex);
-> +	ret =3D hisi_acc_vf_debug_check(seq, vdev);
-> +	if (ret) {
-> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
-> +		return ret;
-> +	}
-> +
-> +	value =3D readl(vf_qm->io_base + QM_MB_CMD_SEND_BASE);
-> +	if (value =3D=3D QM_MB_CMD_NOT_READY) {
-> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
-> +		seq_printf(seq, "mailbox cmd channel not ready!\n");
-> +		return -EINVAL;
-> +	}
-> +	mutex_unlock(&hisi_acc_vdev->open_mutex);
-> +	seq_printf(seq, "mailbox cmd channel ready!\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int hisi_acc_vf_dev_read(struct seq_file *seq, void *data)
-> +{
-> +	struct device *vf_dev =3D seq->private;
-> +	struct vfio_pci_core_device *core_device =3D
-> dev_get_drvdata(vf_dev);
-> +	struct vfio_device *vdev =3D &core_device->vdev;
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
-> +	size_t vf_data_sz =3D offsetofend(struct acc_vf_data, padding);
-> +	struct acc_vf_data *vf_data =3D NULL;
-> +	int ret;
-> +
-> +	vf_data =3D kzalloc(sizeof(struct acc_vf_data), GFP_KERNEL);
-> +	if (!vf_data)
-> +		return -ENOMEM;\
+Will move this patch before the plane checking patch.
+>
+> > +             cur_pipecfg->dst_rect.x1 -=3D mixer_rect.x1;
+> > +             cur_pipecfg->dst_rect.x2 -=3D mixer_rect.x1;
+> > +
+> > +             DPU_DEBUG_PLANE(pdpu, "Got clip src:" DRM_RECT_FMT " dst:=
+ " DRM_RECT_FMT "\n",
+> > +                             DRM_RECT_ARG(&cur_pipecfg->src_rect), DRM=
+_RECT_ARG(&cur_pipecfg->dst_rect));
+> > +
+> > +             /* Split super wide rect into 2 rect */
+> > +             if ((drm_rect_width(&cur_pipecfg->src_rect) > max_linewid=
+th) ||
+> > +                  _dpu_plane_calc_clk(mode, cur_pipecfg) > max_mdp_clk=
+_rate) {
+> > +                     struct dpu_sw_pipe_cfg *r_pipe_cfg =3D &pstate->p=
+ipe_cfg[cfg_idx + 1];
+> > +
+> > +                     if (drm_rect_width(&cur_pipecfg->src_rect) > 2 * =
+max_linewidth) {
+> > +                             DPU_DEBUG_PLANE(pdpu, "invalid src " DRM_=
+RECT_FMT " line:%u\n",
+> > +                                             DRM_RECT_ARG(&cur_pipecfg=
+->src_rect), max_linewidth);
+> > +                             return -E2BIG;
+> > +                     }
+> > +
+> > +                     memcpy(r_pipe_cfg, cur_pipecfg, sizeof(struct dpu=
+_sw_pipe_cfg));
+> > +                     cur_pipecfg->src_rect.x2 =3D (cur_pipecfg->src_re=
+ct.x1 + cur_pipecfg->src_rect.x2) >> 1;
+> > +                     cur_pipecfg->dst_rect.x2 =3D (cur_pipecfg->dst_re=
+ct.x1 + cur_pipecfg->dst_rect.x2) >> 1;
+>
+> pipe_cfg. If you need, rename the topmost var name.
 
-You could move the allocation after the below checks and to just before
-vf_qm_read_data().
+OK.  pipe_cfg_cur ?
 
-> +
-> +	mutex_lock(&hisi_acc_vdev->open_mutex);
-> +	ret =3D hisi_acc_vf_debug_check(seq, vdev);
-> +	if (ret) {
-> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
-> +		goto migf_err;
-> +	}
-> +
-> +	mutex_lock(&hisi_acc_vdev->state_mutex);
-> +	vf_data->vf_qm_state =3D hisi_acc_vdev->vf_qm_state;
-> +	ret =3D vf_qm_read_data(&hisi_acc_vdev->vf_qm, vf_data);
-> +	if (ret) {
-> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
-> +		mutex_unlock(&hisi_acc_vdev->state_mutex);
+>
+> > +                     r_pipe_cfg->src_rect.x1 =3D cur_pipecfg->src_rect=
+.x2;
+> > +                     r_pipe_cfg->dst_rect.x1 =3D cur_pipecfg->dst_rect=
+.x2;
+> > +                     r_pipe_cfg->valid =3D true;
+> > +                     DPU_DEBUG_PLANE(pdpu, "Split super wide plane int=
+o:"
+> > +                                     DRM_RECT_FMT " and " DRM_RECT_FMT=
+ "\n",
+> > +                                     DRM_RECT_ARG(&cur_pipecfg->src_re=
+ct),
+> > +                                     DRM_RECT_ARG(&r_pipe_cfg->src_rec=
+t));
+> > +             } else {
+> > +                     memset(&pstate->pipe_cfg[cfg_idx + 1], 0, sizeof(=
+struct dpu_sw_pipe_cfg));
+> > +                     memset(&pstate->pipe[cfg_idx + 1], 0, sizeof(stru=
+ct dpu_sw_pipe));
+>
+> Please keep using r_pipe_cfg here.
 
-I think it is better to unlock in the reverse order. Also probably you can =
-move
-the unlocks to a  goto area.
-
-> +		goto migf_err;
-> +	}
-> +
-> +	mutex_unlock(&hisi_acc_vdev->open_mutex);
-> +	mutex_unlock(&hisi_acc_vdev->state_mutex);
-
-Same as above.
-
-> +	seq_hex_dump(seq, "Dev Data:", DUMP_PREFIX_OFFSET, 16, 1,
-> +			(unsigned char *)vf_data,
-> +			vf_data_sz, false);
-> +
-> +	seq_printf(seq,
-> +		 "acc device:\n"
-> +		 "guest driver load: %u\n"
-> +		 "data size: %lu\n",
-> +		 hisi_acc_vdev->vf_qm_state,
-> +		 sizeof(struct acc_vf_data));
-> +
-> +migf_err:
-> +	kfree(vf_data);
-> +
-> +	return ret;
-> +}
-> +
-> +static int hisi_acc_vf_migf_read(struct seq_file *seq, void *data)
-> +{
-> +	struct device *vf_dev =3D seq->private;
-> +	struct vfio_pci_core_device *core_device =3D
-> dev_get_drvdata(vf_dev);
-> +	struct vfio_device *vdev =3D &core_device->vdev;
-> +	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(vdev);
-> +	size_t vf_data_sz =3D offsetofend(struct acc_vf_data, padding);
-> +	struct hisi_acc_vf_migration_file *debug_migf =3D hisi_acc_vdev-
-> >debug_migf;
-> +
-> +	/* Check whether the live migration operation has been performed
-> */
-> +	if (debug_migf->total_length < QM_MATCH_SIZE) {
-> +		seq_printf(seq, "device not migrated!\n");
-> +		return -EAGAIN;
-> +	}
-> +
-> +	seq_hex_dump(seq, "Mig Data:", DUMP_PREFIX_OFFSET, 16, 1,
-> +			(unsigned char *)&debug_migf->vf_data,
-> +			vf_data_sz, false);
-> +
-> +	seq_printf(seq,
-> +		 "acc device:\n"
-> +		 "guest driver load: %u\n"
-> +		 "device opened: %d\n"
-> +		 "migrate data length: %lu\n",
-> +		 hisi_acc_vdev->vf_qm_state,
-> +		 hisi_acc_vdev->dev_opened,
-> +		 debug_migf->total_length);
-> +
-> +	return 0;
-> +}
-> +
-> +static void hisi_acc_vfio_debug_init(struct hisi_acc_vf_core_device
-> *hisi_acc_vdev)
-> +{
-> +	struct vfio_device *vdev =3D &hisi_acc_vdev->core_device.vdev;
-> +	struct dentry *vfio_dev_migration =3D NULL;
-> +	struct dentry *vfio_hisi_acc =3D NULL;
-> +	struct device *dev =3D vdev->dev;
-> +	void *migf =3D NULL;
-> +
-> +	if (!debugfs_initialized() ||
-> +	    !IS_ENABLED(CONFIG_VFIO_DEBUGFS))
-> +		return;
-> +
-> +	vfio_dev_migration =3D debugfs_lookup("migration", vdev-
-> >debug_root);
-> +	if (!vfio_dev_migration) {
-> +		dev_err(dev, "failed to lookup migration debugfs file!\n");
-> +		return;
-> +	}
-> +
-> +	migf =3D kzalloc(sizeof(struct hisi_acc_vf_migration_file),
-> GFP_KERNEL);
-> +	if (!migf)
-> +		return;
-> +	hisi_acc_vdev->debug_migf =3D migf;
-> +
-> +	vfio_hisi_acc =3D debugfs_create_dir("hisi_acc", vfio_dev_migration);
-> +	debugfs_create_devm_seqfile(dev, "dev_data", vfio_hisi_acc,
-> +				  hisi_acc_vf_dev_read);
-> +	debugfs_create_devm_seqfile(dev, "migf_data", vfio_hisi_acc,
-> +				  hisi_acc_vf_migf_read);
-> +	debugfs_create_devm_seqfile(dev, "cmd_state", vfio_hisi_acc,
-> +				  hisi_acc_vf_debug_cmd);
-> +}
-> +
-> +static void hisi_acc_vf_debugfs_exit(struct hisi_acc_vf_core_device
-> *hisi_acc_vdev)
-> +{
-> +	if (hisi_acc_vdev->debug_migf) {
-> +		kfree(hisi_acc_vdev->debug_migf);
-> +		hisi_acc_vdev->debug_migf =3D NULL;
-> +	}
-> +}
-> +
->  static int hisi_acc_vfio_pci_open_device(struct vfio_device *core_vdev)
->  {
->  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(core_vdev);
-> @@ -1305,12 +1495,16 @@ static int hisi_acc_vfio_pci_open_device(struct
-> vfio_device *core_vdev)
->  		return ret;
->=20
->  	if (core_vdev->mig_ops) {
-> +		mutex_lock(&hisi_acc_vdev->open_mutex);
->  		ret =3D hisi_acc_vf_qm_init(hisi_acc_vdev);
->  		if (ret) {
-> +			mutex_unlock(&hisi_acc_vdev->open_mutex);
->  			vfio_pci_core_disable(vdev);
->  			return ret;
->  		}
->  		hisi_acc_vdev->mig_state =3D VFIO_DEVICE_STATE_RUNNING;
-> +		hisi_acc_vdev->dev_opened =3D true;
-> +		mutex_unlock(&hisi_acc_vdev->open_mutex);
->  	}
->=20
->  	vfio_pci_core_finish_enable(vdev);
-> @@ -1322,7 +1516,10 @@ static void hisi_acc_vfio_pci_close_device(struct
-> vfio_device *core_vdev)
->  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_get_vf_dev(core_vdev);
->  	struct hisi_qm *vf_qm =3D &hisi_acc_vdev->vf_qm;
->=20
-> +	mutex_lock(&hisi_acc_vdev->open_mutex);
-> +	hisi_acc_vdev->dev_opened =3D false;
->  	iounmap(vf_qm->io_base);
-> +	mutex_unlock(&hisi_acc_vdev->open_mutex);
->  	vfio_pci_core_close_device(core_vdev);
->  }
->=20
-> @@ -1342,6 +1539,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
-> vfio_device *core_vdev)
->  	hisi_acc_vdev->pf_qm =3D pf_qm;
->  	hisi_acc_vdev->vf_dev =3D pdev;
->  	mutex_init(&hisi_acc_vdev->state_mutex);
-> +	mutex_init(&hisi_acc_vdev->open_mutex);
->=20
->  	core_vdev->migration_flags =3D VFIO_MIGRATION_STOP_COPY |
-> VFIO_MIGRATION_PRE_COPY;
->  	core_vdev->mig_ops =3D &hisi_acc_vfio_pci_migrn_state_ops;
-> @@ -1413,6 +1611,9 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev
-> *pdev, const struct pci_device
->  	ret =3D vfio_pci_core_register_device(&hisi_acc_vdev->core_device);
->  	if (ret)
->  		goto out_put_vdev;
-> +
-> +	if (ops =3D=3D &hisi_acc_vfio_pci_migrn_ops)
-> +		hisi_acc_vfio_debug_init(hisi_acc_vdev);
-
-I think there was a comment earlier on this. Still not sure why it is not p=
-ossible to
-move ops =3D=3D &hisi_acc_vfio_pci_migrn_ops check inside hisi_acc_vfio_deb=
-ug_init().
-
->  	return 0;
->=20
->  out_put_vdev:
-> @@ -1423,8 +1624,11 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev
-> *pdev, const struct pci_device
->  static void hisi_acc_vfio_pci_remove(struct pci_dev *pdev)
->  {
->  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_drvdata(pdev);
-> +	struct vfio_device *vdev =3D &hisi_acc_vdev->core_device.vdev;
->=20
->  	vfio_pci_core_unregister_device(&hisi_acc_vdev->core_device);
-> +	if (vdev->ops =3D=3D &hisi_acc_vfio_pci_migrn_ops)
-> +		hisi_acc_vf_debugfs_exit(hisi_acc_vdev);
-
-Do we need to do vdev->ops =3D=3D &hisi_acc_vfio_pci_migrn_ops check here?
-
-Since we are checking
-   hisi_acc_vdev->debug_migf inside the exit function, which I think is onl=
-y
-set when the ops =3D=3D migrn_ops. Right?
-
-Thanks,
-Shameer
-
+OK, will make r_pipe_cfg a variable in function scope, not bracket scope.
+>
+> > +             }
+> >
+> > -     drm_rect_rotate_inv(&pipe_cfg->src_rect,
+> > -                         new_plane_state->fb->width, new_plane_state->=
+fb->height,
+> > -                         new_plane_state->rotation);
+> > -     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0)
+> > -             drm_rect_rotate_inv(&r_pipe_cfg->src_rect,
+> > +             drm_rect_rotate_inv(&cur_pipecfg->src_rect,
+> >                                   new_plane_state->fb->width, new_plane=
+_state->fb->height,
+> >                                   new_plane_state->rotation);
+> > +     }
+> >
+> >       pstate->needs_qos_remap =3D drm_atomic_crtc_needs_modeset(crtc_st=
+ate);
+> >
+> >
+> > --
+> > 2.34.1
+> >
+>
+> --
+> With best wishes
+> Dmitry
 
