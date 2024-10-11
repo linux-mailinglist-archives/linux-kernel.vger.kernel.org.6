@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-360668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15F40999DEE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:30:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0355D999DC0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95165B22A97
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:30:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A119A1F23711
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405ED20A5C7;
-	Fri, 11 Oct 2024 07:30:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A0C209690;
+	Fri, 11 Oct 2024 07:22:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="klixmQzz"
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="sk8bw1jm"
 Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EA0207217
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CA67209F28
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728631824; cv=none; b=Y/9JzDruaCaK1wgOOVBeW8jjz0XyWMsxPfxNYw9ITHcUIAz2R7CEVKZBVNfNl/wUq5+sVMcGIbe7R1k1x2tYd1rEEARomqwZyU12W0AJkXLAPTQnif7986PU4F32xo1wbZXfsjpI7KN2C/SViPXIDJb00hG959ImDRLNblAavuU=
+	t=1728631366; cv=none; b=GglGPAYsLe+RbZ6PKYBpdqpFsZO1muaWFgxYJ5WXrJLxEp4udvbwBm8mHM6DmIBWf7jWVaz+MAF25w+m75Ttnz9ezOC8720EOdbCgGQhjcn5HibXJ/5JZl8a10395Hyx/By9cCW5ocSFP14x0IMwq+jkOm6INX8VBp3Y1fE/kb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728631824; c=relaxed/simple;
-	bh=HPzlE9sh1djReKfpWW1YtSaIElNq0n+B+WspYQFZr6Q=;
+	s=arc-20240116; t=1728631366; c=relaxed/simple;
+	bh=xD3T27aSbZGVWM3LeK6ZydUsioF47rQqpXbA99qZANY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mBwAKcAZI1tIb3XuGeXvdH45df0EzFC+wZE5EQ7xeXEMEKdAuv+MGHW1wj6DzWi+ByBAGRqu0C4xMEwfdBslxXQelqX5O22AIDhcoCHiJ1n29IfMpgNl6NFcEsZD3W2lMOZeGFPEITBahYiRR9CgFfqAmSTQkk8ZEdqOKjwqAa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=klixmQzz; arc=none smtp.client-ip=213.167.242.64
+	 MIME-Version; b=VQOUdFh+tEDBM+XWbxWc9IxJTrtbWX3oZdX5eBUWO4Uvj5sjjyQHVsAUXBGSE2GtZnI1j24wUlHaivMqxiOBQayYDD/4C/KHC593wqcGaV8W7AJj9a/JRRnnfv/IkIX6FbzSY/2+ZC/5Ph5TssQFjMJ+yURbOUohSktRFoULClo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=sk8bw1jm; arc=none smtp.client-ip=213.167.242.64
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
 Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 06579229;
-	Fri, 11 Oct 2024 09:20:59 +0200 (CEST)
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 1E0CAD8B;
+	Fri, 11 Oct 2024 09:21:01 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728631261;
-	bh=HPzlE9sh1djReKfpWW1YtSaIElNq0n+B+WspYQFZr6Q=;
+	s=mail; t=1728631263;
+	bh=xD3T27aSbZGVWM3LeK6ZydUsioF47rQqpXbA99qZANY=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=klixmQzzl9HPXqPwQIprJNgmnwZ64HPpgEmp43Uk+l4IuZkFRaIWlgh7rv0TJoNWo
-	 Tv+t6Jju1NVBQRdeq6O0TJroMeiu0C3jlc608DL9wl1spH425UGr5IXB5dfmRPdwqy
-	 8xtNDXfIaAWWoVxTsDYC99Qwf49UoqY2YmfiqQpQ=
+	b=sk8bw1jmvxjhrc5iEPBuJhwkTPZOY32VV1NqZUihD47hreLaGLG48vSNWpVoBoz0u
+	 Kh6a7b9erjNZn8+N6WUvblXBXdOxiLezxeZdJZTzny7pvY050GL5GCdKFaVe6vaUpa
+	 S8ajAIaNM11ixccxHb0ItwHYWmXW+slhjyPxtCec=
 From: Umang Jain <umang.jain@ideasonboard.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
@@ -52,9 +52,9 @@ Cc: linux-rpi-kernel@lists.infradead.org,
 	Stefan Wahren <wahrenst@gmx.net>,
 	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
 	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH 1/8] staging: vchiq_core: Locally cache cache_line_size information
-Date: Fri, 11 Oct 2024 12:52:03 +0530
-Message-ID: <20241011072210.494672-2-umang.jain@ideasonboard.com>
+Subject: [PATCH 2/8] staging: vchiq_core: Properly log dev_err()
+Date: Fri, 11 Oct 2024 12:52:04 +0530
+Message-ID: <20241011072210.494672-3-umang.jain@ideasonboard.com>
 X-Mailer: git-send-email 2.45.2
 In-Reply-To: <20241011072210.494672-1-umang.jain@ideasonboard.com>
 References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
@@ -66,84 +66,37 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Locally cache 'cache_line_size' information in a variable instead of
-repeatedly accessing it from drv_mgmt->info. This helps to reflow lines
-under 80 columns.
-
-No functional change intended in this patch.
+Properly log a dev_err() message when the msgid is not of
+VCHIQ_MSG_PADDING type. Drop 'oldmsgid' scoped variable and improve
+on the error string as well.
 
 Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
-Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 ---
- .../interface/vchiq_arm/vchiq_core.c          | 19 +++++++++++--------
- 1 file changed, 11 insertions(+), 8 deletions(-)
+ .../vc04_services/interface/vchiq_arm/vchiq_core.c    | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
 diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 1e4b2978c186..e9b60dd8d419 100644
+index e9b60dd8d419..1dca676186b6 100644
 --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
 +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -1490,6 +1490,7 @@ create_pagelist(struct vchiq_instance *instance, char *buf, char __user *ubuf,
- 	size_t pagelist_size;
- 	struct scatterlist *scatterlist, *sg;
- 	int dma_buffers;
-+	unsigned int cache_line_size;
- 	dma_addr_t dma_addr;
+@@ -1188,13 +1188,10 @@ queue_message_sync(struct vchiq_state *state, struct vchiq_service *service,
+ 	header = (struct vchiq_header *)SLOT_DATA_FROM_INDEX(state,
+ 		local->slot_sync);
  
- 	if (count >= INT_MAX - PAGE_SIZE)
-@@ -1638,10 +1639,10 @@ create_pagelist(struct vchiq_instance *instance, char *buf, char __user *ubuf,
- 	}
+-	{
+-		int oldmsgid = header->msgid;
+-
+-		if (oldmsgid != VCHIQ_MSGID_PADDING)
+-			dev_err(state->dev, "core: %d: qms - msgid %x, not PADDING\n",
+-				state->id, oldmsgid);
+-	}
++	if (header->msgid != VCHIQ_MSGID_PADDING)
++		dev_err(state->dev,
++			"core: %d: qms - msgid %x, is not a PADDING message\n",
++			state->id, header->msgid);
  
- 	/* Partial cache lines (fragments) require special measures */
-+	cache_line_size = drv_mgmt->info->cache_line_size;
- 	if ((type == PAGELIST_READ) &&
--	    ((pagelist->offset & (drv_mgmt->info->cache_line_size - 1)) ||
--	    ((pagelist->offset + pagelist->length) &
--	    (drv_mgmt->info->cache_line_size - 1)))) {
-+	    ((pagelist->offset & (cache_line_size - 1)) ||
-+	    ((pagelist->offset + pagelist->length) & (cache_line_size - 1)))) {
- 		char *fragments;
- 
- 		if (down_interruptible(&drv_mgmt->free_fragments_sema)) {
-@@ -1671,6 +1672,7 @@ free_pagelist(struct vchiq_instance *instance, struct vchiq_pagelist_info *pagel
- 	struct pagelist *pagelist = pagelistinfo->pagelist;
- 	struct page **pages = pagelistinfo->pages;
- 	unsigned int num_pages = pagelistinfo->num_pages;
-+	unsigned int cache_line_size;
- 
- 	dev_dbg(instance->state->dev, "arm: %pK, %d\n", pagelistinfo->pagelist, actual);
- 
-@@ -1685,16 +1687,17 @@ free_pagelist(struct vchiq_instance *instance, struct vchiq_pagelist_info *pagel
- 	pagelistinfo->scatterlist_mapped = 0;
- 
- 	/* Deal with any partial cache lines (fragments) */
-+	cache_line_size = drv_mgmt->info->cache_line_size;
- 	if (pagelist->type >= PAGELIST_READ_WITH_FRAGMENTS && drv_mgmt->fragments_base) {
- 		char *fragments = drv_mgmt->fragments_base +
- 			(pagelist->type - PAGELIST_READ_WITH_FRAGMENTS) *
- 			drv_mgmt->fragments_size;
- 		int head_bytes, tail_bytes;
- 
--		head_bytes = (drv_mgmt->info->cache_line_size - pagelist->offset) &
--			(drv_mgmt->info->cache_line_size - 1);
-+		head_bytes = (cache_line_size - pagelist->offset) &
-+			     (cache_line_size - 1);
- 		tail_bytes = (pagelist->offset + actual) &
--			(drv_mgmt->info->cache_line_size - 1);
-+			     (cache_line_size - 1);
- 
- 		if ((actual >= 0) && (head_bytes != 0)) {
- 			if (head_bytes > actual)
-@@ -1707,8 +1710,8 @@ free_pagelist(struct vchiq_instance *instance, struct vchiq_pagelist_info *pagel
- 		    (tail_bytes != 0))
- 			memcpy_to_page(pages[num_pages - 1],
- 				       (pagelist->offset + actual) &
--				       (PAGE_SIZE - 1) & ~(drv_mgmt->info->cache_line_size - 1),
--				       fragments + drv_mgmt->info->cache_line_size,
-+				       (PAGE_SIZE - 1) & ~(cache_line_size - 1),
-+				       fragments + cache_line_size,
- 				       tail_bytes);
- 
- 		down(&drv_mgmt->free_fragments_mutex);
+ 	dev_dbg(state->dev, "sync: %d: qms %s@%pK,%x (%d->%d)\n",
+ 		state->id, msg_type_str(VCHIQ_MSG_TYPE(msgid)), header, size,
 -- 
 2.45.2
 
