@@ -1,108 +1,145 @@
-Return-Path: <linux-kernel+bounces-361513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DC099A922
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 481F699A927
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:52:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B3A28700B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597B71C2291D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:52:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B4C19E97F;
-	Fri, 11 Oct 2024 16:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8919E980;
+	Fri, 11 Oct 2024 16:52:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1yr6sdO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TNVFIjKf"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE810199381;
-	Fri, 11 Oct 2024 16:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6400618027;
+	Fri, 11 Oct 2024 16:51:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728665468; cv=none; b=eY37/P8Cv7xMAgPt2qfOyNOcCDXqF9Fcqc5UQi+k2KMYB0sntu76YCxYv/dkDILW2K/BZq7e54PgFw3Dqa9Brr7fKSD1GwNv9nQxbwdnazsIpZ0I5i8FgJ0T4Ar5Ou3M8eaCCepVNOpa3YZ3wCJRmVfeujWbTBLFnWu1y81y37Y=
+	t=1728665520; cv=none; b=K9Bt+pEpJ1IVddejmu9JwhVSlcKXbhrZc5gaYRoBMq0HNT6/D0MMdqR3mCNvZOK7L0QiX7U2xGdr8k/owAz4vamtp6Q/Sv0TApK4heiKxP8KuslAocRW+bIENy31kteVqfY8g64Gb75UsE1E6v9qBDrvBvTH2QWvJHLIcodTPyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728665468; c=relaxed/simple;
-	bh=VXG/GpcD4ZaPugyfbuMxoUDkz9d8ii6cVFf3ZaBPB70=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=FI8KondbhWgmqGUVMrShZ7+HQyF8nmrVFR6trNlYFb+rxsT4gWXPay6ZfNmVHgExnKo9DsmbMF+pB+/mRYQnBmJjN5Cwypk4wUJMmE7aTnNIGdt5zLoUwKXxQfcugM9hneyb+Y1UjBTwSYDhn948AD9fBtQl1PIucT3spIe8bkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1yr6sdO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5370AC4CEC3;
-	Fri, 11 Oct 2024 16:51:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728665468;
-	bh=VXG/GpcD4ZaPugyfbuMxoUDkz9d8ii6cVFf3ZaBPB70=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l1yr6sdOtwtxKq6/CvpLss3HR9GL+5gW9//IS4hIuKQ3hKEw07J33H3cf+TUkFSn8
-	 XNLmchhs9V/FstEhmNAvNRQIcdXcsYMqTYqjjSkPljltKkXX8t30IO/yiOVV4rHpdf
-	 OuKl1+WS4NQaWVX7ShMFfLKTpD9iOZi+krbxzNmwiQAVN8yy3oBhl3LaluFdDnNVgt
-	 B5Flk0lUTGX1VnVzzl4KrVT97Tyz8A2ll5ZAF/j83ppBoNI4dqMhtiW7oYSb53dI/P
-	 EOO3VZEmaQRaH0Gyf0qJ0LCKyZ8XCfQa6IOzh4JELlOBTpd7gvDJ2yrJdxXJeSR4Ko
-	 TX5fAQ4ZOEsHg==
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398996acbeso2683379e87.1;
-        Fri, 11 Oct 2024 09:51:08 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWg8tCuaNlHHC+6in6b1b41bA8YUtWjXTiwssjIq+T6u1pqUDoRLmlBc6lTBi2S0pEMvDhLyN2AYifYF6J4@vger.kernel.org, AJvYcCXFY+VaPNXgxSBPp2ENXOOx38tTVHoiYXQoz27QEgUUsyWqiVDGE2x6khR9bqhImHAp0C4fLo+UH4GlrSZDSBg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUcWc9IGU42vJY5iKeqNdLjAN+0MFHQKzfdvE13vDS9Pr8j3aW
-	sBpTiKLLGgWW9pSQFN++1CC6EbOxdUqdAmRmHXHNCoxok1RKvfRnzCEMgdCx8BoqV+yzHbjLblI
-	Q2OXnvLoc+Yu/OJud+/NC8uPZOpI=
-X-Google-Smtp-Source: AGHT+IFr4QA6SziiBfUmMc6IM6gCN+OvpGX21cJkCaQ5pNTmvRVSVpgDE8qM6X49xroZhvkO4gCrrlCdYmYQgYTgTdk=
-X-Received: by 2002:a05:6512:ad4:b0:52e:9b92:4990 with SMTP id
- 2adb3069b0e04-539da4eb2d2mr1588962e87.32.1728665466750; Fri, 11 Oct 2024
- 09:51:06 -0700 (PDT)
+	s=arc-20240116; t=1728665520; c=relaxed/simple;
+	bh=A+TJf2abRaHp9Asv8iqVXTw2ovZI1EKG8uVgldMLXdA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Cuaf9oCVw189njG9AbC+nh20QRN/R7W0DYlh6T5GbfwerrdW21NfO6uCW1S8/+ejPlkWm6ZBsc93f2rLPNPtBOlzBOdThhOlJwSHYsgI1GRn0JOOjg1hv+xEg0rhQ+DpBfDUTzJw7Tfc8/5Mmlhb8/AhG89nraj0jUmwVo3zfFI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TNVFIjKf; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B9rmUB020040;
+	Fri, 11 Oct 2024 16:51:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	njZ484qpDsi6Z2x/1aupfhS9YOld/F1zjzQoZ1yH3Ro=; b=TNVFIjKf0an3j4fg
+	07Wl25Ax+yyaz+vdrjtWAKSQo4S6/mQPUzoTf0bQ2B4UDoMWHrDljs/+PwqX86V5
+	h4SkgYXqsi0CmeZByvmzvrqt7YQUv3vDGtLbLfKCASt1GcXcv4RIhYz/WcyKOU8n
+	Va4bgJXgy0LKA+P4hQK6mZyRP0mFTvp0jrCIuZAWAq3btJX5bMSQdmVJ6tG5HLMf
+	1vPvgEBO6rcN8/agT7zabF5J1vNoPBPzxvBJgB4R0FMy+w6R5PrZID59VHzpqUeo
+	9aEHv7QGzsgrCpLWmjTtttImpdVbkOV2uHP8eJmDyrikTj+fSpMmvFlaCKyhEfPP
+	W6tiIw==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7mf9k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 16:51:51 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BGpov3028837
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 16:51:51 GMT
+Received: from [10.48.240.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Oct
+ 2024 09:51:50 -0700
+Message-ID: <b58b5b2e-bf9f-480c-810b-2cef29aab82c@quicinc.com>
+Date: Fri, 11 Oct 2024 09:51:49 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010122801.1321976-7-ardb+git@google.com> <20241010122801.1321976-9-ardb+git@google.com>
- <20241010195211.n22geblzb4ogxqcz@treble>
-In-Reply-To: <20241010195211.n22geblzb4ogxqcz@treble>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Fri, 11 Oct 2024 18:50:55 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFaqij=OiJcPY7RcDd79V5qDKkXcxLbqNcnk7nBxiu=Bg@mail.gmail.com>
-Message-ID: <CAMj1kXFaqij=OiJcPY7RcDd79V5qDKkXcxLbqNcnk7nBxiu=Bg@mail.gmail.com>
-Subject: Re: [PATCH v2 2/5] objtool: Allow arch code to discover jump table size
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	keescook@chromium.org, linux-hardening@vger.kernel.org, nathan@kernel.org, 
-	Peter Zijlstra <peterz@infradead.org>, Jan Beulich <jbeulich@suse.com>, 
-	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] wifi: ath10k: add channel 177 for 5 GHz band
+To: =?UTF-8?Q?Pawe=C5=82_Owoc?= <frut3k7@gmail.com>
+CC: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20240801202359.794035-1-frut3k7@gmail.com>
+ <20241009065051.51143-1-frut3k7@gmail.com>
+Content-Language: en-US
+From: Jeff Johnson <quic_jjohnson@quicinc.com>
+In-Reply-To: <20241009065051.51143-1-frut3k7@gmail.com>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9sSnCPrP0KTQXd4Lw_uXlg2Dv2mGvdBW
+X-Proofpoint-GUID: 9sSnCPrP0KTQXd4Lw_uXlg2Dv2mGvdBW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
+ priorityscore=1501 impostorscore=0 mlxlogscore=999 bulkscore=0
+ malwarescore=0 mlxscore=0 phishscore=0 clxscore=1011 spamscore=0
+ adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
+ scancount=1 engine=8.19.0-2409260000 definitions=main-2410110117
 
-On Thu, 10 Oct 2024 at 21:52, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> On Thu, Oct 10, 2024 at 02:28:04PM +0200, Ard Biesheuvel wrote:
-> > @@ -2222,7 +2234,6 @@ static void mark_func_jump_tables(struct objtool_file *file,
-> >                                   struct symbol *func)
-> >  {
-> >       struct instruction *insn, *last = NULL;
-> > -     struct reloc *reloc;
-> >
-> >       func_for_each_insn(file, func, insn) {
-> >               if (!last)
-> > @@ -2245,9 +2256,7 @@ static void mark_func_jump_tables(struct objtool_file *file,
-> >               if (insn->type != INSN_JUMP_DYNAMIC)
-> >                       continue;
-> >
-> > -             reloc = find_jump_table(file, func, insn);
-> > -             if (reloc)
-> > -                     insn->_jump_table = reloc;
-> > +             find_jump_table(file, func, insn);
->
-> Can we detect the annotation here, and if it exists, pivot to a separate
-> generic implementation which skips all the arch-specific code and hacks?
->
-> That way we could keep the "ugly" separate, and also have all arches
-> supported by default.
->
+On 10/8/2024 11:49 PM, Paweł Owoc wrote:> Add support for channel 177 (5885
+MHz ) for the 5 GHz band.
+> 
+> Tested-on: qca988x hw2.0 firmware ver 10.2.4-1.0-00047
 
-I had a stab at this, and while the code changes are a bit intrusive,
-the end result is much better for it (IMHO).
+Can you elaborate on what was tested in your commit text? And more
+importantly, what is the impact on existing devices, especially given that
+existing devices would not have calibration data for this channel in the board
+files? Does the QCA988x board file even have calibration data for this channel?
 
-In the end, the logic in arch_find_switch_table() is mostly generic
-anyway, but it is the code traversal in check.c that is the "ugly". So
-I moved lots of things around. I'll send that out before signing off
-today.
+> 
+> Signed-off-by: Paweł Owoc <frut3k7@gmail.com>
+> ---
+
+what is the diff from v1?
+for future reference when you submit a new version of a patch you should
+include a patch changelog after the ---, see:
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
+
+>  drivers/net/wireless/ath/ath10k/core.h | 4 ++--
+>  drivers/net/wireless/ath/ath10k/mac.c  | 1 +
+>  2 files changed, 3 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
+> index 446dca74f06a..3dff8c028526 100644
+> --- a/drivers/net/wireless/ath/ath10k/core.h
+> +++ b/drivers/net/wireless/ath/ath10k/core.h
+> @@ -39,8 +39,8 @@
+>  #define WMI_READY_TIMEOUT (5 * HZ)
+>  #define ATH10K_FLUSH_TIMEOUT_HZ (5 * HZ)
+>  #define ATH10K_CONNECTION_LOSS_HZ (3 * HZ)
+> -#define ATH10K_NUM_CHANS 41
+> -#define ATH10K_MAX_5G_CHAN 173
+> +#define ATH10K_NUM_CHANS 42
+> +#define ATH10K_MAX_5G_CHAN 177
+>  
+>  /* Antenna noise floor */
+>  #define ATH10K_DEFAULT_NOISE_FLOOR -95
+> diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
+> index 646e1737d4c4..cee6a4d287b5 100644
+> --- a/drivers/net/wireless/ath/ath10k/mac.c
+> +++ b/drivers/net/wireless/ath/ath10k/mac.c
+> @@ -9543,6 +9543,7 @@ static const struct ieee80211_channel ath10k_5ghz_channels[] = {
+>  	CHAN5G(165, 5825, 0),
+>  	CHAN5G(169, 5845, 0),
+>  	CHAN5G(173, 5865, 0),
+> +	CHAN5G(177, 5885, 0),
+>  	/* If you add more, you may need to change ATH10K_MAX_5G_CHAN */
+>  	/* And you will definitely need to change ATH10K_NUM_CHANS in core.h */
+>  };
+
 
