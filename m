@@ -1,92 +1,182 @@
-Return-Path: <linux-kernel+bounces-361199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A48F99A4FD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:27:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53FF199A4FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:28:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3083E1F22580
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:27:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AC131C21F74
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:28:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B68218D6A;
-	Fri, 11 Oct 2024 13:27:09 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0B82185B8;
+	Fri, 11 Oct 2024 13:28:05 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4CD920CCE6;
-	Fri, 11 Oct 2024 13:27:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DA3D20CCE6
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:28:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728653228; cv=none; b=e3mzM2YXs3Mcajm0/GKIgGFT9AVi0KbBpJT7+fxsJx3Ynwd/AifyKJk2fK+oTEIYoQOXDd1Rm+nxDNeVUl4KmDRlp1VOfxln7IEOn+7nIV49lOEtzDpkKJFfh6eJoYQQiCgcIccaFgx5V2XNoC/ERn3+kr8FYl6j+70dyIXkwBQ=
+	t=1728653285; cv=none; b=DL2JLbM6me0n7lLWtzFWKmyo7Qwq6vm/WTweZ6Jp5/HHEHnqzbfRe5E8MvB7dcjS1g1gnTU9oB9ddoqRW6GiuE1ph14BDDDsyQEnli8f1owfh2FWLp+04qCYOr2y3eOqVkxMIkkXHJdteiBLeg2slyDetKhPDEJxUecGAtWMcF4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728653228; c=relaxed/simple;
-	bh=mvvtwNbvKp4A1OTylp8dWmb0t1EgcxbEJKD/LzFMstA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pnhJGGsHmT1LQImW9oTmEE5oKlfoomK7AQyNuTccTFPfHRXHmuGqLuYPxoBdFPIv3r3QDEx8YcX+tLV06FSQU9q4eH3UoU49jTG8oXJuvQKNzlCctb2ZzLzYeibQQHl5D0+aj5xV0/H8A+XwerrgdZXkuAZATuTHMTxv7jd92KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C1D23C4CEC7;
-	Fri, 11 Oct 2024 13:27:04 +0000 (UTC)
-Date: Fri, 11 Oct 2024 09:27:14 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Catalin Marinas <catalin.marinas@arm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
- linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
- linux-s390@vger.kernel.org, "linux-arch@vger.kernel.org"
- <linux-arch@vger.kernel.org>, "x86@kernel.org" <x86@kernel.org>, Masami
- Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Mark Rutland <mark.rutland@arm.com>, Will
- Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui
- <kernel@xen0n.name>, Michael Ellerman <mpe@ellerman.id.au>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, Naveen
- N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, Paul
- Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>,
- Albert Ou <aou@eecs.berkeley.edu>, Heiko Carstens <hca@linux.ibm.com>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v3] ftrace: Consolidate ftrace_regs accessor functions
- for archs using pt_regs
-Message-ID: <20241011092714.71074a2b@gandalf.local.home>
-In-Reply-To: <Zwj9QocrEVtgraHp@arm.com>
-References: <20241010202114.2289f6fd@gandalf.local.home>
-	<Zwj9QocrEVtgraHp@arm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728653285; c=relaxed/simple;
+	bh=0ii4ViiSgv9UuNQ5doKtYQUMAJItzs8Y/87iGpjlmiA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=WpckAcM3gVGOBy9V1rAU0uPoLppMhpDAljC0hA/MlbaDLxajd/lFIhiKPX635V46OmbsjZCrPn43ZwRCK5bxWnAZeeS8r83OP+JWol7zS2i0rcYixNNYGiVBv0000044nOTsPG5nLvyoc9qG/5Qkx3XCFMcCAyeJ6yeuQnpf4Ec=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b2aee1a3so11412125ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:28:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728653282; x=1729258082;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=K5eiNZBfzoB40BG1BrcT4dwj7BxceGzlqdrbWwQ+bIU=;
+        b=KL32eRAH8Pw2P3TXY2VcaFecv4Ywr5XEUb6w0joQAGYoC9jEQ0RqcxLvKb+mFgatYQ
+         lscLYy7wFI4niNpcT7+z36D4i/0fudtp+BuBiwF4pnN/7OguZOT0ZIcrWcv7anepTOaR
+         tTsnZJ+icNgmwPua5zgrTXubWCntd4iClpNEj/rDfdDZdGn/Q3wf19dGexm1pJXrdS5o
+         ML4+XlxFYLuh+WF4gNn1GnyRuQfCGypcFcDRFaQ3fK0zzDQHRR6BREgAddgstCHEAtnx
+         BqaGs7CjFKJ7TxQZ/lZm0Wi22CqH3a2/wX4le1CYkVPSw22024NlGACOZmu7M5aF8iE+
+         pUlQ==
+X-Gm-Message-State: AOJu0YxZkk0E9zrM2EwONjfTKZNMlT3+xcFpxEALeN1dPvCyxPfdNCj2
+	dnyyKRtpKNgI8lfjfu0qyErwSYwfl/ltkucf+AfFNyfbspkFkJUat2PVOSdFL1V+JiT4UhqD2zj
+	dJRDo4+aUjNmcmjobbltSmMQ0uEROl6HvwKb+SQ8Xia67anb0x75cqBk=
+X-Google-Smtp-Source: AGHT+IGRUT+fAXOIAlzAd9vh/zn1X8/GoueqhdOe6g699mr4VbL5kLBitNh2MmXeMAn/CZ2zzXhucvaI89+Ch2mK+jMikWHMANk8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:12cc:b0:3a3:983a:872f with SMTP id
+ e9e14a558f8ab-3a3b5fce83bmr23711905ab.24.1728653282640; Fri, 11 Oct 2024
+ 06:28:02 -0700 (PDT)
+Date: Fri, 11 Oct 2024 06:28:02 -0700
+In-Reply-To: <CAN=OONy0dd0TK0TKJ7J-zWvZWfNPr6re9dP=WThbU-VDT-J3+g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670927e2.050a0220.4cbc0.0009.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, sarvesh20123@gmail.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, 11 Oct 2024 11:26:10 +0100
-Catalin Marinas <catalin.marinas@arm.com> wrote:
+Hello,
 
-> On Thu, Oct 10, 2024 at 08:21:14PM -0400, Steven Rostedt wrote:
-> > diff --git a/arch/arm64/include/asm/ftrace.h b/arch/arm64/include/asm/ftrace.h
-> > index bbb69c7751b9..5ccff4de7f09 100644
-> > --- a/arch/arm64/include/asm/ftrace.h
-> > +++ b/arch/arm64/include/asm/ftrace.h
-> > @@ -54,6 +54,7 @@ extern void return_to_handler(void);
-> >  unsigned long ftrace_call_adjust(unsigned long addr);
-> >  
-> >  #ifdef CONFIG_DYNAMIC_FTRACE_WITH_ARGS
-> > +#define HAVE_ARCH_FTRACE_REGS
-> >  struct dyn_ftrace;
-> >  struct ftrace_ops;
-> >  struct ftrace_regs;  
-> 
-> In case you need an ack for the arm64 change
-> 
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __exfat_get_dentry_set
 
-Thanks, appreciate it.
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
+=====================================================
+BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x1128/0x1570 fs/exfat/dir.c:809
+ __exfat_get_dentry_set+0x1128/0x1570 fs/exfat/dir.c:809
+ exfat_get_dentry_set+0x5a/0xf30 fs/exfat/dir.c:864
+ __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+ __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+ exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
+ exfat_write_failed fs/exfat/inode.c:421 [inline]
+ exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
+ generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+ __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+ exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
--- Steve
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+ copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+ shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_read+0x278/0x760 fs/read_write.c:923
+ lo_read_simple drivers/block/loop.c:283 [inline]
+ do_req_filebacked drivers/block/loop.c:516 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+ generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+ shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+ block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+ exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
+ exfat_extend_valid_size fs/exfat/file.c:553 [inline]
+ exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 1 UID: 0 PID: 6039 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00205-g1d227fcc7222-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+Tested on:
+
+commit:         1d227fcc Merge tag 'net-6.12-rc3' of git://git.kernel...
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17f02840580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d26b27980000
+
 
