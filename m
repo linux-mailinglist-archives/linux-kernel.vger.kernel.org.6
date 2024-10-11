@@ -1,125 +1,108 @@
-Return-Path: <linux-kernel+bounces-361741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B171399AC71
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:09:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C976099AD25
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA99286A47
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:09:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72F6F1F22A79
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F6F1CF5C6;
-	Fri, 11 Oct 2024 19:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 828131CFEB8;
+	Fri, 11 Oct 2024 19:56:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwQZHENH"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="A5iIIX2X"
+Received: from mx01lb.world4you.com (mx01lb.world4you.com [81.19.149.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA6E1BDAA7;
-	Fri, 11 Oct 2024 19:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD1D1D0DE2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673736; cv=none; b=Vea7S+v05PDRlvaPdK8OV12fB21NLcCjmafFqr3GbDO/YyvZf7wlHXIQy2PsM0TeLgYHmsstOgfU2wm9TpBFgf2koWDalT4QlFglPgLg/k99mAsWxNkv08GB3XCUP1SmvVDjDqFWUdLDjjia/ohRxi9nbk9mnqN/ZCQfbO3H2bs=
+	t=1728676569; cv=none; b=M0/UknN5dshHJVM3W1T5q6n0ce/JDPZHGBIxFS9t7bWkuGpmu60sYus4EVg7MYo8E0y3DSmzpH/ZWn0bwqZ2wMDw/UcvLkCjuWoFd1+V0PmXdqYbtrmR8OkAhtDaIXlwW1je9cZlJlQb3WoRnyPVITXg8rdY6AF7UL2HzQddIqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673736; c=relaxed/simple;
-	bh=Jd1Y34/j3tpJW7rG0tckaZLKTfi3GtsA1wBtCJgYtFg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kDLZvpv1+WDljqbgfQPQYs2hJrZerDBlzhuFbisXSKNfN40jq1Fk6RsAjmYreDkLFBUeeyOyuUQ5z77sFqtfgHN8lejy4VddeI+9WZ473Hnq9VgsVr12kNq7ir7PuoaKlLCGvtYq7eSzb78rJA4ii9gUlU2f4fgsAlbuglsGqRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwQZHENH; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-430558cddbeso15505005e9.1;
-        Fri, 11 Oct 2024 12:08:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728673733; x=1729278533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zz1WekoT+K59oVc5HCdNd3N/gx+iU50t2zbre263N5w=;
-        b=BwQZHENHSg2M8rYJqzzED1M/L9J3DeJus3uwZDFcKZF75WuC1dgPyjzozyA4tP8K2/
-         Bfj3f46QvjdE6bRNKCIqim5UkNFUKRCtIxYCeMcIpMqwqbLYYTo4jYjky7InCOqkSZEY
-         RCJEGl19lQvnN2IfMSN+uuTE6NEQ9Z96LZ0WjfyV9h7Su3FxAM7QTKD1B35HLbmEQKD7
-         m3aYT9SOizdaZ5SpdrCcaj0wsLjlZgJHMhwxulzBlYA4ucTUThpqmBvmG94fhPorytAO
-         8L70+Mys8Fuq3SAxvFPX9dYOMwWP0igc21jmKObYlog0wRt6AK+2DxUar27gJmUXMKuH
-         r2UQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728673733; x=1729278533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zz1WekoT+K59oVc5HCdNd3N/gx+iU50t2zbre263N5w=;
-        b=c2G/tTj0HJShTmz9UHbOWwwpZywZV7Gy9OuJ/9BmxzfElM/EGKjUlPBoZ4t+M4Gbe0
-         ZBcKVZTucru+sWk2FCAKj9QPrKtMhPFKceeb7bzg4Z3eKWtlmSJgZ8bxDQ/5gcJOdLzq
-         yaciZ8cY+HWuzcDIcJtCxkh+bRBuLdfQVoSo+ilG9Ad9cpVeXoDsJPd/xu8TMrHrOL9S
-         v8vBcJD5ESQE8ZabimorgZbWKkMRfnHLlKrdHq8qU7QbGU8PL0A2Ajmk49ShIXaqdTbd
-         azDvol7X36fRtchnSBkdekAG1mkU9ZnJoTSh5RC/O+nm85cHjsqXbtgwVDpMKA3eyf8p
-         x0MQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUrWjzy7O6l8EBWJX+7YGBEjhbDvmhVoyIl6CwUs/h2dZGLCGvfNtpQyXG+/hh9aApCbtyo/Pktf27x4rS/@vger.kernel.org, AJvYcCX5ibQenMuSdZevcXmYEZMDXwW1N0iAztjYRTramSYK0jImbilZc+FD8f8xD6OibvCPm+Qvpe/5Xwds@vger.kernel.org, AJvYcCXvKkDGq1sSBYOcw1ew/QHM9XRdF4moDuKY1EoaT8Z3ZIolDCeFgr30yoYsyJpjzAi7ocgl2X9h9AsB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx97WaPDZWUWqb+VTDCR9DQWe2QOtTg7qoO/sC6RiJPaWgM7ZnL
-	LWetfUDXIyGwmDf+5hlIuy9JEmG+UbJZLzuuu/fvXWCEgMaBfKei
-X-Google-Smtp-Source: AGHT+IFJ/K5PyB5o1YqUH9GG/hvf0rLF7JeP7OUjXqRnXOVbr8sQJ2OLYXqvgc3PafxIe22YhKgN7w==
-X-Received: by 2002:a05:600c:1c1d:b0:426:67f9:a7d8 with SMTP id 5b1f17b1804b1-4311d9037demr32709925e9.9.1728673733251;
-        Fri, 11 Oct 2024 12:08:53 -0700 (PDT)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffd8asm48652415e9.16.2024.10.11.12.08.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:08:52 -0700 (PDT)
-Date: Fri, 11 Oct 2024 21:08:51 +0200
-From: Vasileios Aoiridis <vassilisamir@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 13/13] iio: chemical: bme680: Add support for preheat
- current
-Message-ID: <Zwl3w_lwdfqNRYK_@vamoirid-laptop>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <20241010210030.33309-14-vassilisamir@gmail.com>
- <ZwkAYSvmYyu1F5dU@smile.fi.intel.com>
+	s=arc-20240116; t=1728676569; c=relaxed/simple;
+	bh=mx3sMMxKGe2xb8OFf8LL91dLob2tabSj+zDPejpG1zs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Li/shPjk9WVtlJDtn5cx4RxpqUgt/gb5ZZipl7L5kjZc5ydBizyDQbjqbwOOX4JhdpgdKck+L1vliln8Bs6Mgmrud3AM8iokHM3F+kAF/YmTTYCW/4MSUplu8hAhOV9aUzAKepz1SZky5sGxSsZw7juZVeGB/5RBSY3DfzMYlco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=A5iIIX2X; arc=none smtp.client-ip=81.19.149.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:MIME-Version:
+	Message-Id:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=jn50dfSRnUNaN22Rf+Z+uGO+Hea50Pj/Ovl77pGLsrI=; b=A5iIIX2XBy+aTtHejKPdealxYB
+	fJM6izvIuaQcS3FTTM1PRyH5COneqWcY9iDZEh2x0gR19fIdmAftgr73lo/Tm+4XKZFZlgaea78CW
+	VIDyDU7MDYiNKRPEN+Thp5NVl6IWDCRCQEW3wuo3Hb4gLzRsfy1OaD2o7qapNiH80OVQ=;
+Received: from [88.117.56.173] (helo=hornet.engleder.at)
+	by mx01lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1szL4O-0000000039T-13wz;
+	Fri, 11 Oct 2024 21:13:00 +0200
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+To: linux-kernel@vger.kernel.org
+Cc: arnd@arndb.de,
+	gregkh@linuxfoundation.org,
+	Gerhard Engleder <gerhard@engleder-embedded.com>
+Subject: [PATCH v2 0/8] misc: keba: Add support for additional devices
+Date: Fri, 11 Oct 2024 21:12:49 +0200
+Message-Id: <20241011191257.19702-1-gerhard@engleder-embedded.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwkAYSvmYyu1F5dU@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+X-AV-Do-Run: Yes
+X-ACL-Warn: X-W4Y-Internal
 
-On Fri, Oct 11, 2024 at 01:39:29PM +0300, Andy Shevchenko wrote:
-> On Thu, Oct 10, 2024 at 11:00:30PM +0200, vamoirid wrote:
-> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > 
-> > Add functionality to inject a specified amount of current to the heating
-> > plate before the start of the gas measurement to allow the sensor to reach
-> > faster to the requested temperature.
-> 
-> ...
-> 
-> > +	data->preheat_curr = 0; /* milliamps */
-> 
-> Instead of the comment, make it better to any appearance of the variable in the
-> code by adding unit suffix.
-> 
-> 	data->preheat_curr_mA = 0;
-> 
-> (yes, capital 'A').
-> 
+Add SPI controller auxiliary device. The SPI controller driver is not
+part of this series, because it should target spi-next and not
+char-misc. Additionally a driver for the LAN9252 chip, which is
+connected to the SPI controller, is included. This driver only
+configures the LAN9252 chip in the right mode and provides no user space
+interface.
 
-Hi Andy,
+The main EEPROM of the CP500 devices is divided into two sections by
+design/factory. Therefore, provide the two section as separate NVMEM
+devices.
 
-I used the comment here because it is exactly like this above and I
-though it is more consistent if I do the same. But I guess repeating a
-not so good design choice for consistency might not be the best
-decision.
+Add fan, battery and UART auxiliary devices. Similar to the SPI
+controller, this is some prepartion work, because the drivers will
+target other branches than char-misc.
 
-Cheers,
-Vasilis
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
+The series starts with two small cleanups.
+
+v2:
+- separate commits for clean up (Greg KH)
+- uninitialized warning in lan9252_probe() for variable ret (kernel test robot)
+
+Gerhard Engleder (8):
+  misc: keba: Use variable ret for return values
+  misc: keba: Use capital letters for I2C error message
+  misc: keba: Add SPI controller device
+  misc: keba: Add LAN9252 driver
+  misc: keba: Support EEPROM sections as separate devices
+  misc: keba: Add fan device
+  misc: keba: Add battery device
+  misc: keba: Add UART devices
+
+ drivers/misc/keba/Kconfig   |  11 +
+ drivers/misc/keba/Makefile  |   1 +
+ drivers/misc/keba/cp500.c   | 558 ++++++++++++++++++++++++++++++++++--
+ drivers/misc/keba/lan9252.c | 359 +++++++++++++++++++++++
+ include/linux/misc/keba.h   |  47 +++
+ 5 files changed, 955 insertions(+), 21 deletions(-)
+ create mode 100644 drivers/misc/keba/lan9252.c
+
+-- 
+2.39.2
+
 
