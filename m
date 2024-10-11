@@ -1,133 +1,99 @@
-Return-Path: <linux-kernel+bounces-361049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC84499A2CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:35:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C39F99A2C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:35:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36239289ABE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:35:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C9861C226A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4920620FAAE;
-	Fri, 11 Oct 2024 11:35:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OpOITlxG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD3B3216A0A;
+	Fri, 11 Oct 2024 11:35:07 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1821F192D77;
-	Fri, 11 Oct 2024 11:35:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9397192D77;
+	Fri, 11 Oct 2024 11:35:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728646519; cv=none; b=NY5o6IBRo6WJ39no9Qr1DGoPnvv2guDhpIuO7+yEscPqnKWJ2P9fhU8I4AtiPkZA1hL1qsxDOqjZvOv1Qwz1tMtUkz5eEWEus1GMRFb4wlP+jcWdVHTnGC+mLcRUaGAmR6M4uSUSi4Gfua5RXkw4hFDqTRGC86KrmlYj1BvGS6E=
+	t=1728646507; cv=none; b=kVazVAl29pzD0XQ7t7os3sfgGZY4O9g2kXSJH3rcQVQ8Ntd8PJMs2PRxo7JbPCf0K3XGlwdM/pPR3UHx/cPW5qwdcgdq8EQ16MYasIBGcOGwJww4HTteq6yp2FBZYjSNWVcYpaqxOCWkmUkFH8MeU84As7VGE1J3PlqLg+ktp8c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728646519; c=relaxed/simple;
-	bh=ZBZUlNi8h/D5QWW+bum5UjcTb6lETOPGVvmQjW3+6jY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NJPuK7KneNGK5xTF006QrSsAR3/bZ/Zvydeyagf7rZFZyKBcF/TDJKNd2yXvR1OERVBCEDKodkC18NixC9tbYTymbKH65app2/ZnRHAm6FCfDUmCI+dVFYyIxLWcb1S3esNFl2kZdSEiXRhUxk8zCNqZ04XIh/38frxjW1kW5bI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OpOITlxG; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728646517; x=1760182517;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZBZUlNi8h/D5QWW+bum5UjcTb6lETOPGVvmQjW3+6jY=;
-  b=OpOITlxGYUs9SyFVd67vT3SvtTZzKC95Btd4dSl3iSqD4bR2R6M9BG3B
-   411lkNxcLy2H1VPhtjiY2ycr/I9K/pfZVNGlEMS8lfd0dWmFk/Y0DzmhY
-   9MxNxUMbvWmxkZlNNS7R4HluWIZUUFzNnoH25UCvZgRSF1JqhBEexmsCc
-   AUPwS1sybosOBn1S+REx15Pk+O3Qa4au0XpgmjVBBsHtoxbycTKSuQUKD
-   v+gBPsHquR5yJi/6pOGYinIxqnCCL/fqjDDClc2AAT0EdIWz05xMFGokk
-   /OLsEKZhACknqYLnxWeD1iBQK0dL5IFfoKPtaE18+COoWIPQAoHwdeONJ
-   g==;
-X-CSE-ConnectionGUID: /PkL3tqMSIy/snGBErEWqg==
-X-CSE-MsgGUID: lgapOt64TgKYDrK+02xyyQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="53448450"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="53448450"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:35:16 -0700
-X-CSE-ConnectionGUID: O14eHymeRoi8cs5j1wr0Yw==
-X-CSE-MsgGUID: jGCbzQY9Tn+Jhp6BuY8+Rg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="76892191"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 11 Oct 2024 04:35:13 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1szDvL-000CF0-0o;
-	Fri, 11 Oct 2024 11:35:11 +0000
-Date: Fri, 11 Oct 2024 19:34:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
-	Sebastian Reichel <sre@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>, Lee Jones <lee@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Pavel Machek <pavel@ucw.cz>
-Cc: oe-kbuild-all@lists.linux.dev, linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-input@vger.kernel.org, linux-leds@vger.kernel.org,
-	Dzmitry Sankouski <dsankouski@gmail.com>
-Subject: Re: [PATCH v6 6/7] power: supply: max77705: Add fuel gauge driver
- for Maxim 77705
-Message-ID: <202410111913.5ADtNHNM-lkp@intel.com>
-References: <20241007-starqltechn_integration_upstream-v6-6-0d38b5090c57@gmail.com>
+	s=arc-20240116; t=1728646507; c=relaxed/simple;
+	bh=NzuwYRVLbZuWfu7bBXQpk7mh0Hc0R3PvllwT9mM0Pd8=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OAa+9C2zMLAFEp3Z6QcOkocnkSUZ2joptkJZ8wuApNAB8FJb/4hHp+FiOccWEuaDJW8wk8a9EJ6Gv4mM6Ax0D1C7MI0eSX2bb/tyWw8KDJgHWHRg5meZlnReIn+JSAtw32Is+CoqfmnpaT+bGsBnDprg1AA3imsKlnIojzJJC5c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XQ4Hf4wxczpVvj;
+	Fri, 11 Oct 2024 19:33:02 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0E49C180AE9;
+	Fri, 11 Oct 2024 19:35:02 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
+ (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
+ 2024 19:35:01 +0800
+From: Wang Hai <wanghai38@huawei.com>
+To: <martin.petersen@oracle.com>, <michael.christie@oracle.com>,
+	<himanshu.madhani@oracle.com>, <linux-scsi@vger.kernel.org>,
+	<target-devel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH] scsi: target: core: Fix null-ptr-deref in target_alloc_device()
+Date: Fri, 11 Oct 2024 19:34:44 +0800
+Message-ID: <20241011113444.40749-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241007-starqltechn_integration_upstream-v6-6-0d38b5090c57@gmail.com>
+Content-Type: text/plain
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
 
-Hi Dzmitry,
+There is a null-ptr-deref issue reported by kasan:
 
-kernel test robot noticed the following build errors:
+BUG: KASAN: null-ptr-deref in target_alloc_device+0xbc4/0xbe0 [target_core_mod]
+...
+ kasan_report+0xb9/0xf0
+ target_alloc_device+0xbc4/0xbe0 [target_core_mod]
+ core_dev_setup_virtual_lun0+0xef/0x1f0 [target_core_mod]
+ target_core_init_configfs+0x205/0x420 [target_core_mod]
+ do_one_initcall+0xdd/0x4e0
+...
+ entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-[auto build test ERROR on 58ca61c1a866bfdaa5e19fb19a2416764f847d75]
+In target_alloc_device(), if allocing memory for dev queues fails,
+then dev will be freed by dev->transport->free_device(), but
+dev->transport is not initialized at that time, which will lead to a
+null pointer reference problem.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dzmitry-Sankouski/power-supply-add-undervoltage-health-status-property/20241008-000014
-base:   58ca61c1a866bfdaa5e19fb19a2416764f847d75
-patch link:    https://lore.kernel.org/r/20241007-starqltechn_integration_upstream-v6-6-0d38b5090c57%40gmail.com
-patch subject: [PATCH v6 6/7] power: supply: max77705: Add fuel gauge driver for Maxim 77705
-config: i386-allyesconfig (https://download.01.org/0day-ci/archive/20241011/202410111913.5ADtNHNM-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410111913.5ADtNHNM-lkp@intel.com/reproduce)
+Fixing this bug by freeing dev with hba->backend->ops->free_device().
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410111913.5ADtNHNM-lkp@intel.com/
+Fixes: 1526d9f10c61 ("scsi: target: Make state_list per CPU")
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/target/target_core_device.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-All errors (new ones prefixed by >>):
-
-   ld: drivers/power/supply/max77705_fuel_gauge.o: in function `max77705_fg_get_property':
->> max77705_fuel_gauge.c:(.text+0x244): undefined reference to `__divdi3'
->> ld: max77705_fuel_gauge.c:(.text+0x2b1): undefined reference to `__udivdi3'
-   ld: drivers/power/supply/max77705_fuel_gauge.o: in function `max77705_fg_vs_convert':
->> max77705_fuel_gauge.c:(.text+0x6c2): undefined reference to `__udivdi3'
-   ld: drivers/power/supply/max77705_fuel_gauge.o: in function `max77705_fg_cs_convert':
-   max77705_fuel_gauge.c:(.text+0x706): undefined reference to `__divdi3'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for MODVERSIONS
-   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
-   Selected by [y]:
-   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
+diff --git a/drivers/target/target_core_device.c b/drivers/target/target_core_device.c
+index bf4892544cfd..bb84d304b07e 100644
+--- a/drivers/target/target_core_device.c
++++ b/drivers/target/target_core_device.c
+@@ -691,7 +691,7 @@ struct se_device *target_alloc_device(struct se_hba *hba, const char *name)
+ 
+ 	dev->queues = kcalloc(nr_cpu_ids, sizeof(*dev->queues), GFP_KERNEL);
+ 	if (!dev->queues) {
+-		dev->transport->free_device(dev);
++		hba->backend->ops->free_device(dev);
+ 		return NULL;
+ 	}
+ 
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.17.1
+
 
