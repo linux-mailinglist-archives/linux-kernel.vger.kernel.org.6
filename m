@@ -1,139 +1,117 @@
-Return-Path: <linux-kernel+bounces-360923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 062B899A165
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:30:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33D6B99A16A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:33:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21EE6B25EB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:30:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D84791F22608
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:33:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80DDD1CB324;
-	Fri, 11 Oct 2024 10:30:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E18220FA99;
+	Fri, 11 Oct 2024 10:33:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KkgYf50S"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJx1W9Uq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9A91BDA98
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:30:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 832F41991AF;
+	Fri, 11 Oct 2024 10:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728642634; cv=none; b=cDZpC1AzvmWW+cyk9lz1+UcjbPqpew7ZldbN+CO4Rfq+cbPfwrzJg4kEzUWxDpRpECqRzmpuDblKwB9Nd/bMwlFCyWZ7cBX8Ru1/hpLKgYQcCUq3SDY2yG8peAI6bJUgwbX49/wVFBKaLuioyhNsatYBfDfDF0cEwo11xbxozbQ=
+	t=1728642808; cv=none; b=jCC1IQwn9ToxbAjYie6Koro/ECMyh0FsVo/iYLBh/cSrYZCr0XIUKcBWtdOT5133dvSLHWTbcD1+FjE8o8sREIaqJgjn5i9XrlCwk/kyP6Sf0eNnR+Gsx+SMCHqGXsXA24nyYbxJ1Rf19tyqVFvspsnTQtDWRaf07wD3CWcZg2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728642634; c=relaxed/simple;
-	bh=TDop1lBkubXGjGGp93LzvDNHNnROonAD9qA/nZYGCf4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=d0HzbwuRnByFbfVuNlWq+ZTGQci0p+6acQDx9waVzKmeVohuDRuapc4sMoTkbHCCUYZPkOKGjD/A1vPg4Bme9CQdwlZ8MjZX+dl+Hd8bLPmSKjPYqn8bUEdGYB+9e973W/IYtnL82OegVEdRM2TJ+e3IU+bdhCVHroN5KnoOUnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KkgYf50S; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fad5024b8dso21697961fa.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:30:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728642631; x=1729247431; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KMNmAfxFNwJpRM+Dggtk4C70nF4xlRNZQPU+WokqmuQ=;
-        b=KkgYf50S/OHAsxm2mF1WBXWy5ORkytmiGX33Gk+/Kb7rHQlGPZ8ex0ZjCNCZWtFtZk
-         Lz/bzGVzQjVFbL4oRoKBrmvVAFDIZYXY6uN5owCWR7jlaKoKjSfYF2l2thzAykIwCgr8
-         ivd6oBUr3tmqmtfq0l+ZrpJQ6s6HX6ASKAJ/yAcrl5jw+hanTfSqghQinlSAZArBe4Cb
-         nQt1IjzMOIOuAZLIe5q8aVunVM4zjxD4UX2Pj7rZiP14LarxwvPNzgT/6elMNHYa4q0L
-         lGKw3ko2T8M1Ch0lpju9/D7gL6ThEIvQF25S2cqsQS+Frc7Fjrjnge4Fn+wmlO2b3mV0
-         CPiQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728642631; x=1729247431;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KMNmAfxFNwJpRM+Dggtk4C70nF4xlRNZQPU+WokqmuQ=;
-        b=uC9lSby9LSqXyDzBXhLpMW+GVtwZSPl1zx8kxAWg1hlLXB6MW76kdcrrt8CrlbNT9N
-         F8kQM8PO4rHag3j7Rqo/W+h1lJILuyyP3qA8xGxkGRGmgpW3R0QL4IwvVH3snhEqTbYq
-         ahYVGhsPN06FOhKyebVK8780iqZZ0Hzg0ydXrtIgzjYLdqpDVavLb1ioOiBOkqQSYGDI
-         8HPUO3EtE/dN+ZJaT7UeHNJPjBti9mUG4kqjnVTP0vX1efYzaeAcv2wgmSz20uZrr4F6
-         ENVWN6Crkt5/oH2v+giF0JEVubYyyHf/myi0LnaoDwxFtU6IJ19VTtNvJB0KTBGnXJoE
-         VNQg==
-X-Forwarded-Encrypted: i=1; AJvYcCVIS3UszX1FmySQMhHHYql/hMro0w/YZkTuINrVTvN8ztb5eSUUv6mQPZ7cPEU/lV6XCb/l6b/4hdLmBkY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxrWwFqeHz9+dw6cbYYW9Xw9o3fltyJxFsnqRZtPPzCTk7TSobn
-	NzN0GXs4eAFBmZGFVIrFm4fqz9YvH/jBGae3Qj4mZUTIAwaQl2M8Up1u9H1CMGxwjL+HiVHK7kM
-	b
-X-Google-Smtp-Source: AGHT+IFuE220LffJQlPDCqzh1jZ8tOI3NY18uMcugtuXZf9Eo+ON5fcj4QS1rIcmSx1FSaISOuD0zg==
-X-Received: by 2002:a05:6512:3b9c:b0:530:aa3f:7889 with SMTP id 2adb3069b0e04-539da57f62fmr1036047e87.56.1728642631290;
-        Fri, 11 Oct 2024 03:30:31 -0700 (PDT)
-Received: from uffe-tuxpro14.. (h-178-174-189-39.A498.priv.bahnhof.se. [178.174.189.39])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8d8405sm557558e87.139.2024.10.11.03.30.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 03:30:30 -0700 (PDT)
-From: Ulf Hansson <ulf.hansson@linaro.org>
-To: Linus <torvalds@linux-foundation.org>,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Viresh Kumar <viresh.kumar@linaro.org>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	linux-arm-kernel@lists.infradead.org
-Subject: [GIT PULL] pmdomain/opp fixes for v6.12-rc3
-Date: Fri, 11 Oct 2024 12:30:29 +0200
-Message-Id: <20241011103029.477385-1-ulf.hansson@linaro.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728642808; c=relaxed/simple;
+	bh=GhorcXUBxSQTPlPuWzhEnEeFppc/7B1cz3ZeylvbZas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=buBn49F7j5I5f4SLXyER8ZkgWkfiBbJrmH0LJMigjpAKw3LFIAUpH0sJbyMH9mB3K01ED/TNDbPCPLsGxVUue8SbG7ZPf89KCC0fHZSd58gXu50HcD6VQUXdwDeln2uqFl868FlnDyGSq32Z8Q7shz2uRGSZ1sIfjhaMzY+RDLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJx1W9Uq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FB40C4CEC3;
+	Fri, 11 Oct 2024 10:33:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728642808;
+	bh=GhorcXUBxSQTPlPuWzhEnEeFppc/7B1cz3ZeylvbZas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uJx1W9UqBE6Hf5hcVjoM4flGgvmD1IVniYrw/a/r7Gyt18niIZhnTCJ/PJRR+AUtr
+	 /Wzb3dtDOAkwX/dK93zaJ+W4B3L57il/rCZ4L5jXpX3G4BCrJijSAMAMZ5jtVvKF3P
+	 qYfgQr2mzVkZoL4LM0zH08iO4mGhiKjLHiAn/k1EVNm/hluuJ3d4CYpxKLHgMzUwpP
+	 YfFzXku0Rpw/z+5/7I4zV/wR0GiQmrn7rueMDzB3VaJ6mNFT6V+91cT/+8XMMgqeFX
+	 vv1pANtyio0xTML2bHPcIjKU0w4co9DfCBULBqFSaBfbUlNayiwOtLZHb9dJNtQcA1
+	 +ol8dpVu7Oitg==
+Date: Fri, 11 Oct 2024 11:33:24 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+Subject: Re: [PATCH RFC/RFT 1/3] mm: Introduce ARCH_HAS_USER_SHADOW_STACK
+Message-ID: <Zwj-9Dg3onEHnbDq@finisterre.sirena.org.uk>
+References: <20241010-shstk_converge-v1-0-631beca676e7@rivosinc.com>
+ <20241010-shstk_converge-v1-1-631beca676e7@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-
-Hi Linus,
-
-Here's a PR with a couple of pmdomain/opp fixes intended for v6.12-rc3.
-Details about the highlights are as usual found in the signed tag.
-
-Please pull this in!
-
-Kind regards
-Ulf Hansson
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ocdJt+o9mUjvRHVH"
+Content-Disposition: inline
+In-Reply-To: <20241010-shstk_converge-v1-1-631beca676e7@rivosinc.com>
+X-Cookie: Editing is a rewording activity.
 
 
-The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+--ocdJt+o9mUjvRHVH
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+On Thu, Oct 10, 2024 at 05:32:03PM -0700, Deepak Gupta wrote:
+> From: Mark Brown <broonie@kernel.org>
+>=20
+> Since multiple architectures have support for shadow stacks and we need to
+> select support for this feature in several places in the generic code
+> provide a generic config option that the architectures can select.
+>=20
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Mark Brown <broonie@kernel.org>
+> Reviewed-by: Rick Edgecombe <rick.p.edgecombe@intel.com>
+> Reviewed-by: Deepak Gupta <debug@rivosinc.com>
+> Reviewed-by: Carlos Bilbao <carlos.bilbao.osdev@gmail.com>
+> ---
 
-are available in the Git repository at:
+You need to add your own signoff when resending things (though I guess
+this is likely to get applied to a tree that already contains this
+patch so it likely doesn't matter in the end).
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12-rc1
+--ocdJt+o9mUjvRHVH
+Content-Type: application/pgp-signature; name="signature.asc"
 
-for you to fetch changes up to 7738568885f2eaecfc10a3f530a2693e5f0ae3d0:
+-----BEGIN PGP SIGNATURE-----
 
-  PM: domains: Fix alloc/free in dev_pm_domain_attach|detach_list() (2024-10-10 13:55:17 +0200)
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcI/vMACgkQJNaLcl1U
+h9DUvwf8CFk5qIwgXlnGyTrPYSXbnOtVbQryriXq4ItU769fSrWbYRrSDfHAZNuL
+GFJbbI7qXQIwUZjp7itgbXwjiYEfEi1LiaqDJSfsZNEjv5z/HigTj+Q1Z20/nEO+
+QZuVAIXw14A9w+6EYEukxtADhKW53aedbezpJDd8I3eJiaLYy9WxumkOsndh0Tzn
+8DtO2wXHph/jGp8AoWDmLTqU0eMuqWELHgAmirtfl0mHxChlilDYO88fJSt4o2Om
+QlfMrg+YQKIYe76JfjkISxIXeoYXpU9gKjVXPdbJW5rLLl+9o621MhYV6kCe/Ipu
+FjBehOpbNwCRAdM2ctnXaIfshhKRdQ==
+=0ZCo
+-----END PGP SIGNATURE-----
 
-----------------------------------------------------------------
-pmdomain core:
- - Fix alloc/free in dev_pm_domain_attach|detach_list()
-
-pmdomain providers:
- - qcom: Fix the return of uninitialized variable
-
-pmdomain consumers:
- - drm/tegra/gr3d: Revert conversion to dev_pm_domain_attach|detach_list()
-
-OPP core:
- - Fix error code in dev_pm_opp_set_config()
-
-----------------------------------------------------------------
-Dan Carpenter (1):
-      OPP: fix error code in dev_pm_opp_set_config()
-
-Ulf Hansson (2):
-      Revert "drm/tegra: gr3d: Convert into dev_pm_domain_attach|detach_list()"
-      PM: domains: Fix alloc/free in dev_pm_domain_attach|detach_list()
-
-Zhang Zekun (1):
-      pmdomain: qcom-cpr: Fix the return of uninitialized variable
-
- drivers/base/power/common.c  | 25 ++++++++++++++----------
- drivers/gpu/drm/tegra/gr3d.c | 46 +++++++++++++++++++++++++++++++-------------
- drivers/opp/core.c           |  4 +++-
- drivers/pmdomain/qcom/cpr.c  |  2 +-
- 4 files changed, 52 insertions(+), 25 deletions(-)
+--ocdJt+o9mUjvRHVH--
 
