@@ -1,157 +1,197 @@
-Return-Path: <linux-kernel+bounces-360427-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0268F999AD3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:57:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63C99999B12
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:16:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F552285F9C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:57:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC3FE282506
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 282101F473B;
-	Fri, 11 Oct 2024 02:57:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334601F473E;
+	Fri, 11 Oct 2024 03:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H1Ua1Ae0"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="XLipNquW"
+Received: from EUR03-VI1-obe.outbound.protection.outlook.com (mail-vi1eur03on2080.outbound.protection.outlook.com [40.107.103.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABEFF1F4721;
-	Fri, 11 Oct 2024 02:57:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728615466; cv=none; b=TWviOoOYNtPl2mTVJE7o8tyZo2yWIN1ZxyCpcfWM34zAoNfikiWzUQAwM1pmKki09Jtut3jlv4I00ryXUK+N7C6U0Adsp2pCKC9UYMCKmQCvW7XkWMG4/b0OLtpIIKAe1L6Z2lepGxQ3MDfxIQrd7GX18nacp76XN9/zB8ezn6o=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728615466; c=relaxed/simple;
-	bh=i/j8QwwufsvmoQqSrcoj05rqp6XNTeAR1RYfp5/3Ryk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=P1ZI4TGLIPZoS14SUPZbnVpe1UKR6X0wYUDRdr+QCdiuLM3pNio+7E+20P0lzavA9TTH0MhaXVfjpqcl4wNzbBa++WCXWrepJkhG5EsQJ0lrK0dYxAx3uvAwlzvvdy/TPz3pb+Q5LSFPyfz7lOB3koSlu9wR7KEzSywHlE8bMO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H1Ua1Ae0; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B1Hf0K005437;
-	Fri, 11 Oct 2024 02:57:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	+updjsBw4m+RSE17kOknAf4fPZ4jAdTCy2FSnqjk5lU=; b=H1Ua1Ae09jvgnZid
-	5ZeRl5fkXPs9MYKr/h6ZG+6d/eFP60l6CDUFw9hSefRJxZfp2jxX301d6y0/lep5
-	Lwl0dxiH8gRgqVIQ9bVRUw9eNgMvtG6KYSnv4JOClEctQbkoZZadzE+JJuxPmEWI
-	VAH1TBB2sWCHJSBjKeXe8uxSFmG1sP3w3Lo/AAzpfReYax9TcXqKvNc5SIrWA+N/
-	zNMVfWBQOwy5xypgK5aCyAHNpTLkIPT52KDENwB/UFsv85NGUpzd9nI7Od9PgWqo
-	bamrHBsBhtEggTBZlfSjMdi218nQ0wjKPe3AW4egQ0bma+YhThpPEqd1z+qwlHbT
-	UfCttg==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426t7sr602-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 02:57:30 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B2vTj6006525
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 02:57:29 GMT
-Received: from [10.253.78.250] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
- 2024 19:57:25 -0700
-Message-ID: <c6c5068d-ed05-4b49-97e1-f4962839cf44@quicinc.com>
-Date: Fri, 11 Oct 2024 10:57:22 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7162F322E;
+	Fri, 11 Oct 2024 03:16:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.103.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728616576; cv=fail; b=WjRMF4VOBPoGuxlETOpgEa7cQd6HprSzaF1/+HusAenfxpeujH4QaNKqCTgUk2uqNBbbIvh2obNGhwQmlrNkJsFy1ceFFLiL5hYvPV54+z+XUc/HGwfBXTIrpKxwj6yP8AbGXihA8LaUqkiPH1GWpLmeYMIffyaQbPsOmp2t530=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728616576; c=relaxed/simple;
+	bh=ddQdb5QBAMBR+SV7tGl7aBEDzwxzYV62dGo+VKveEq0=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=RqEC5V9B3+FDfG1KuW1TUF/EyAwXNbUyVx7U3sLipBh0xY0OIqaHGgUkTrj9MFFn+ebRbjd6L6FBcLaCPCf+mukXR0hFPogM+46fkwQYat1M+N874hMt7kq6wnugyzfB2/SZtkHh2OTaGzFaM+E35pwpwvJccEEeJPzbhkfzjnM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=XLipNquW; arc=fail smtp.client-ip=40.107.103.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=aIA/s4hxa8Z2Pg7CwiM5CV7S5vba40yesuHZmtHK106i5cSob6cLi09ejfYE+HdQdLF5M0JOTlobw5H/YwIe8fzbnCNPCBXfNkTCLPIh0rPQ8oogKxwLTZRkL02Y4EJuUHA7YydaRURFLfwUkexuDOtky6qRa/lXFG48vsPNk9wBtLcx91cCz216fuYuf0zyt5zfhgXv/SzEz1Bv1pWFlwTJLqx5uPEmezGALiDo3MTRV7eSKUZpKz9lQlW5EOA+xkf5wLMj9CQ4lmxtlKbAlKT7vs93Dp4Tp1v0vuqqTwS1+sOCdVe446wLKvZv/4OAIvjSbBVA6bVT9U8lNzGBsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=waCzLYymp369lq2JaGe2UTMDulnmUfPcw7tlc4zpad4=;
+ b=Xh4NgNF+wEjyMKw4t5D4EidfltYfT6Bc5BZWeUwXHjuKdvWXJPygaKERFBqTemcHFSZ/3U6StY+tdMlC0OV9n2oamfcY02eipFHd8QZ/VmiF0EiDM7uq7dkCnFvKS34BiWOE7OT2Jp/Sh2sp8VDKaqQ9ZU8+4s9rShZ6mPYHuRW/7hTgNN+pBMazbMB+59Ep6L9Mbvs8b7lVCTbHMUbmLnX4FACc3mmWdSbMPrhSatJiLhjIoUbq6lYq5rFRpfkIpcdu2zBKmwHGgH/IaKH7bX0d7Lmwrp3RPMP6ZNReW9xj3IFvNcpM+Qv3xPqk2s1GDtfVoZ38eqJsqYJj2Wsgsw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=waCzLYymp369lq2JaGe2UTMDulnmUfPcw7tlc4zpad4=;
+ b=XLipNquWJ9tXKRyq2se5B8QX1ZeEkD9h7NFmFqc8l2eMg8pV6fCNM+n3Q2fo1GMvdCO42BjbQzEwUAu1NSnbE1srFQID+EP/QauNy3VVzXqoc+ONvI0beiYhvK4pkpmByCrkBVOjiTYojuSP3IhyqHJ0FnWSUQa4blO/8ecce7Jfk9ObP8YhGp0nJkZkPdpq/ZY/Rp0jsGV2E+EY9wPK3nKdNNZezhyIJrUPOg2rsV4Og+PpiVkO3ohvcQhYK4cUaI5w0v3BNSAvd4ffa199D+4bmYuDz4HYM1BfugRYFWjjcyEtjeXkiS8LuIWB04HWa6GNoBe+ftYuKmx6DP4LoA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com (2603:10a6:102:211::7)
+ by VI0PR04MB10999.eurprd04.prod.outlook.com (2603:10a6:800:266::17) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Fri, 11 Oct
+ 2024 03:16:10 +0000
+Received: from PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db]) by PAXPR04MB8510.eurprd04.prod.outlook.com
+ ([fe80::a7c2:e2fa:8e04:40db%7]) with mapi id 15.20.8026.019; Fri, 11 Oct 2024
+ 03:16:10 +0000
+From: Wei Fang <wei.fang@nxp.com>
+To: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	claudiu.manoil@nxp.com,
+	vladimir.oltean@nxp.com,
+	christophe.leroy@csgroup.eu
+Cc: linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	imx@lists.linux.dev
+Subject: [PATCH net] net: enetc: add missing static descriptor and inline keyword
+Date: Fri, 11 Oct 2024 11:01:03 +0800
+Message-Id: <20241011030103.392362-1-wei.fang@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2PR02CA0038.apcprd02.prod.outlook.com
+ (2603:1096:3:18::26) To PAXPR04MB8510.eurprd04.prod.outlook.com
+ (2603:10a6:102:211::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <agross@kernel.org>, <andersson@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
-        <stanimir.k.varbanov@gmail.com>, <kvalo@kernel.org>,
-        <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>
-References: <20241010132902.2882939-1-quic_miaoqing@quicinc.com>
- <asvhh4kzq6s6yz3wrqfmuolcnlonoobogoh45pnq4zdr44lpxs@zgarzpduk2sk>
- <cc8358b1-2442-4a40-8eb3-0912423db554@quicinc.com>
- <3giotvkrwailt75gndhup7xhqvlc3vdowdoypi5vaeebuojp45@vkqxbtjsbksf>
-Content-Language: en-US
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-In-Reply-To: <3giotvkrwailt75gndhup7xhqvlc3vdowdoypi5vaeebuojp45@vkqxbtjsbksf>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 3ny5XeZeQSbTwTeYGSh1bxG09vMA8IPf
-X-Proofpoint-ORIG-GUID: 3ny5XeZeQSbTwTeYGSh1bxG09vMA8IPf
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- mlxlogscore=999 malwarescore=0 phishscore=0 mlxscore=0 priorityscore=1501
- suspectscore=0 impostorscore=0 clxscore=1015 adultscore=0 bulkscore=0
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110016
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB8510:EE_|VI0PR04MB10999:EE_
+X-MS-Office365-Filtering-Correlation-Id: 079c5914-dc3b-4ec2-c65e-08dce9a30dd2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|366016|376014|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?8f7SfF29biAnKxsg9nEpS3YVutP/sZJi0qj+FfaeMXM8fSlcQi/jkDCLWzN3?=
+ =?us-ascii?Q?Vn1dJwcLnURo8PtvTLNDqj1TzHz9f8WEClO0VKwkYRKqY/C8sV8EUSWdzMso?=
+ =?us-ascii?Q?y0pE8yaU/TOt4EvQ5nHuKCofgmxkCys/Bifz5xhY96dQkVHh6bdbec7QIFHA?=
+ =?us-ascii?Q?ALp6phkps2WwYys4ll864VA0vDWH4mfYNJzKZxQe454hgElqF4If74eFtGZj?=
+ =?us-ascii?Q?BWubGYbLqQdikKBqtM80WERNd/xVDj3CclPJnMccZgbKKKIWkr/6gyGvGxM0?=
+ =?us-ascii?Q?EC5/R4swq/91WvBhIoQa8D79Tb+l19n0hyYuBgDYIMDtgqPlooCO0J3kOVRP?=
+ =?us-ascii?Q?/8gpqcbOQ0JWh6LLGSvdwt2TkO9A6ccCAWLR6wwInxp2l6vCl6/TP5o9RCZB?=
+ =?us-ascii?Q?EBFeh2Hoi3zv7bKsHpOnN3x2rIsQ6snEayfzibRX6qQKVUl6YxJJ/vtQljM5?=
+ =?us-ascii?Q?SrSrvR2fRXIrPfB3cZBAt1s+5K09HeezjEEsPqyqS+l9qE8a5Lsm2631QOZS?=
+ =?us-ascii?Q?Q+MAVHLa77Poer0UDpci5LPskADvVMUasRp6NLTkrOVAF+hDIB1zVpLFk0Sh?=
+ =?us-ascii?Q?b36eJbySiu5Kj2mswTNRCJfF1bfK+q1KQkiMupWcPdyoTK0Seb8Dg5K9UW9k?=
+ =?us-ascii?Q?j6YXpIJPeGQqXnc+HdnjrhKewYfUh8wrOdbO+hDexxoQnXf//iw1hrAnBctN?=
+ =?us-ascii?Q?5fAVDp9XXK1UWuX0X7cbDt34p7xQuQLlV9d6V+eDJOalvFm2/TzZ0C985zjX?=
+ =?us-ascii?Q?qxKJb4BOYbtjraAJvLXCMBPWLe5BagrjoikLQ/HU78MlXp7RNEG+SwQ+WtIr?=
+ =?us-ascii?Q?R7JZdYc4fX1W29QmEI+n1407DTU5Du6bXwamf/v6Ra+Vb/dVje0GEDriNJy0?=
+ =?us-ascii?Q?92UXKP3m5w/ZoUn+C0KUZR4D9orgcoOp3MCn5KtmmEEimwNkMuFYzInWUDuO?=
+ =?us-ascii?Q?LhCqp2qaENPhTbTm5LjhA4Qwb/KBDrsOVzcb1uIhSet020QtC/ehEo+7aMr8?=
+ =?us-ascii?Q?Nn01XLrXUdMxXiWnNcQfVlRzlamrxGGi6dBsTK7OnkANKeUvGXwDjneBjRpT?=
+ =?us-ascii?Q?dJWUS808bJjvx8KqnsJoM1QwqDWJD+HTPz/uhXqsn78kmrzFeSmVgjh7dbjv?=
+ =?us-ascii?Q?IQsisTPNZl2fDeUHuqXGogY3w9ywtAFAVxQsnV47vXvCKmOW22IZLUycpMy2?=
+ =?us-ascii?Q?dHx97LdJw15XUA2ja9vtTmMcP+sCVt5mArziBgwuIyDfb5zSMKCTA2gJZSdK?=
+ =?us-ascii?Q?NzOBGqD/8F2cpEG+Lc/SiLquPkqAli96MUn3opyAXVAglsnwZd2x5Is+8OyB?=
+ =?us-ascii?Q?L5kdTwB17Y3Bzgf2YaQIYYteEewsXm5vkaTSSKPrJUcptw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8510.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?51gg2zTJsInJumtTJ7cJjf5uvy5dRjRpRSRPLM+rkkm8WKS2Y4yPYevHaglQ?=
+ =?us-ascii?Q?d1pIIDZgyUHNbeR8U1O5rd+vthW8bQ0Jy7ojbYq3+gMxWDvDllqWz2h9FP1X?=
+ =?us-ascii?Q?WZgcTEBILtKyKg8NyBj4UyCa3wOKztLJh/tCDLNOducleGf7NiSDY44oF8Ad?=
+ =?us-ascii?Q?f4o3HkT0nhgmh8QYFcmkcwM5hVdLeF4igOt/Twj+YwvCt6KWiDijg+9nTQ3/?=
+ =?us-ascii?Q?ElgH+lvxSbxGgYQevVj/8awW5lH6H8LBHSQrO/EqqKaKDbg/nYnOyFlXIvFg?=
+ =?us-ascii?Q?0DIs1b/QOKd1zRR1FCBjRb4axIr6PNjz2tOnYaPxGOq4YqrdV50sYyHV7OMj?=
+ =?us-ascii?Q?WID1ME350oMb8+gdprvLYpqUBjwsnczWcQ2OVuLAsSsrptP/0qvdQlL4XD0d?=
+ =?us-ascii?Q?NdoGg2K1ZVHba2zmukhcXwqU7gCDGH94pIY/GGvSXXS9nrKPrhmtcCfamuo8?=
+ =?us-ascii?Q?FkV/Vl4sRzwZecHbRbbJbLf6cxRjUXdHIDL8EXPynZaoxe/CeWUH7hiPVror?=
+ =?us-ascii?Q?+VItcieh76sX7J+0CphYNDYzTb3pq8GdJEFMP5c1wpPE1b1BAeMvksmNsDE7?=
+ =?us-ascii?Q?aRHxNIbLDuMjabaac5Te51Jhh5oUYTTLIdGFYV0lokUbO7O/KIEfG0d1UxzY?=
+ =?us-ascii?Q?3IM1QYSkD3NRV9IzrlCaCa+ejmZcm/AgUcywb2ETm92474Mq0Axxyhe4/Lxn?=
+ =?us-ascii?Q?RF5nrscHZgErFVsCM8mIkcTnFe/UppBcJv/l+1iHpG8UODxjoRusA1wUmTd2?=
+ =?us-ascii?Q?KtDpsGLb7l7Yted/lY+6u7V7Q3KgofsgOS4N4EN0J1I5JTtQR63dTZHcjnLk?=
+ =?us-ascii?Q?+u4giWmj/YEnRodaAzW7M9u0rDqK8W9t2DGhLTcnrCg38dBrEgT0DAB8OvBO?=
+ =?us-ascii?Q?q6CbDKCr6095GwhHoJ3xwmgj23zK7KDhYjUL7rgC3MtNvQIwJBAhR2gIaBJz?=
+ =?us-ascii?Q?uZLpIru7YWPzg4v/I7Os5VGlExFsk3XwyKZ6uruvQVM+vaPYvt1IM4t41gX3?=
+ =?us-ascii?Q?vi8IjjNFAiNKir2wtZ4DBdVB8JJY0RwM2+JvloXZnKGHKT4kTIN2mo6+v0qG?=
+ =?us-ascii?Q?gfVe/dj1iBe6uSDjxeMiGTk6G/O+PmpETl0pPQcHMwFKtSivPb+6hLyubynY?=
+ =?us-ascii?Q?IK1vD6QUyjqjGupPFjXMToUAy3wIDqnFaYEXVdrT4zdCkoqzBwXJFyq4YmRK?=
+ =?us-ascii?Q?O1z3ML+fU63VjviY/4GX5MR6doQPD6sVxBTpAoO3L8ybgcvFZMLE1yNGXwxA?=
+ =?us-ascii?Q?6uYz2gedvqxOtXXy9myxQ3I+IKgo5qtJSeo7+mycBtkh+jj6u5MwLqCVGBDk?=
+ =?us-ascii?Q?ihBhl0ON8EXuoAhzq0vE4Loj63QN1vA5GSXY6QaEByctR3FyQiIAVw2h+zFG?=
+ =?us-ascii?Q?hL4b080oMnv44NrWOHy/+a1AURQrYqr8NUKUKWbl91obvedwsBRJG3T4CKxT?=
+ =?us-ascii?Q?KBNiM34bIqSpm7TmrKcF0yQ6mGaIwvjiLRGCue6H2HtMJBkERw9W5MEkdAa+?=
+ =?us-ascii?Q?lE9VtbIlQsUaF2EF8iCxVlWqRfPr+dSEtu0JNTuyapMxFfg4gX1y6yKJj2nH?=
+ =?us-ascii?Q?VaLAdcfSTDifCmiQZl0D7x5wCdzMU0qVptpT/TJU?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 079c5914-dc3b-4ec2-c65e-08dce9a30dd2
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8510.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 03:16:10.2485
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /07sUNvPDwU8a/CXIbIhfjVSADllcsSzlWzrRtWeO4AK6lqZMgtjhDlnzbM9KIzTF44eNjz5EVM/hePTyrIC1w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB10999
 
+Fix the build warnings when CONFIG_FSL_ENETC_MDIO is not enabled.
+The detailed warnings are shown as follows.
 
+include/linux/fsl/enetc_mdio.h:62:18: warning: no previous prototype for function 'enetc_hw_alloc' [-Wmissing-prototypes]
+      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+         |                  ^
+include/linux/fsl/enetc_mdio.h:62:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      62 | struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
+         | ^
+         | static
+8 warnings generated.
 
-On 10/10/2024 10:40 PM, Dmitry Baryshkov wrote:
-> On Thu, Oct 10, 2024 at 09:59:11PM GMT, Miaoqing Pan wrote:
->>
->>
->> On 10/10/2024 9:47 PM, Dmitry Baryshkov wrote:
->>> On Thu, Oct 10, 2024 at 09:29:02PM GMT, Miaoqing Pan wrote:
->>>> Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
->>>> board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
->>>>
->>>> Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
->>>> ---
->>>> v2:
->>>>     - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
->>>>     - relocate pcieport0 node in alphabetical order.
->>>> v3:
->>>>     - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
->>>> v4:
->>>>     - update 'ath11k-calibration-variant' to "Ride".
->>>
->>> What exactly is Ride? Is there just one Ride board? I thought it's a
->>> board family name.
->>
->> I just follow the existing boards, 'Ride' is a board name. Both 'Ride' and
->> 'Ride r3' boards are attached with WCN6855 WLAN chip.
->>
->> arch/arm64/boot/dts/qcom/qcm6490-fairphone-fp5.dts:1112:
->> qcom,ath11k-calibration-variant = "Fairphone_5";
->> arch/arm64/boot/dts/qcom/qcm6490-shift-otter.dts:958:
->> qcom,ath11k-calibration-variant = "SHIFTphone_8";
->> arch/arm64/boot/dts/qcom/sc8280xp-lenovo-thinkpad-x13s.dts:879:	
->> qcom,ath11k-calibration-variant = "LE_X13S";
-> 
-> There definitely are other Ride boards. I see patches related to
-> qcs8300-ride. Does that board use the same BDF file?  If not,
-> Qualcomm_SA8775P_Ride or QC_SA8775P_Ride sounds like a better approach.
-> 
+Fixes: 6517798dd343 ("enetc: Make MDIO accessors more generic and export to include/linux/fsl")
+Cc: stable@vger.kernel.org
+Reported-by: kernel test robot <lkp@intel.com>
+Closes: https://lore.kernel.org/oe-kbuild-all/202410102136.jQHZOcS4-lkp@intel.com/
+Signed-off-by: Wei Fang <wei.fang@nxp.com>
+---
+ include/linux/fsl/enetc_mdio.h | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-QCS8300 and SA8775P both use the same WiFi card, so the same BDF file 
-will be used. The extra variant will increase the size of board-2.bin.
-
-Anyway, the calibration variant is no other side effects.
-
->>>
->>> Also, could you please extend the commit message with messages from the
->>> ath11k driver, showing the chip_id / board_id ?
->>
->> The board-id is non 0xff, do you still think we need to add
->> 'qcom,ath11k-calibration-variant', following is the WLAN chip board data
->> info,
->>
->> bus=pci,vendor=17cb,device=1103,subsystem-vendor=17cb,subsystem-device=0108,qmi-chip-id=2,qmi-board-id=519.bin
-> 
-> I'd ask Kalle / Jeff to answer this question. Are we sure that this
-> board-id won't be reused by any else device?
-> 
+diff --git a/include/linux/fsl/enetc_mdio.h b/include/linux/fsl/enetc_mdio.h
+index df25fffdc0ae..623ccfcbf39c 100644
+--- a/include/linux/fsl/enetc_mdio.h
++++ b/include/linux/fsl/enetc_mdio.h
+@@ -59,7 +59,8 @@ static inline int enetc_mdio_read_c45(struct mii_bus *bus, int phy_id,
+ static inline int enetc_mdio_write_c45(struct mii_bus *bus, int phy_id,
+ 				       int devad, int regnum, u16 value)
+ { return -EINVAL; }
+-struct enetc_hw *enetc_hw_alloc(struct device *dev, void __iomem *port_regs)
++static inline struct enetc_hw *enetc_hw_alloc(struct device *dev,
++					      void __iomem *port_regs)
+ { return ERR_PTR(-EINVAL); }
+ 
+ #endif
+-- 
+2.34.1
 
 
