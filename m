@@ -1,141 +1,98 @@
-Return-Path: <linux-kernel+bounces-360830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3028399A04E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:42:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E7099A060
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D697E1F23987
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:42:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6063A281FB9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:52:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ED420CCF6;
-	Fri, 11 Oct 2024 09:42:39 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE2AA20FAA4;
+	Fri, 11 Oct 2024 09:51:52 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7FF19413B;
-	Fri, 11 Oct 2024 09:42:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C051420FA9F;
+	Fri, 11 Oct 2024 09:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728639759; cv=none; b=oldONrGTnD7Z9ykteVmBSo6PbnXq538X5aksYk2eEKKFl4quQxKjpDDDw93iujEJEmR8VmejdXFDqR+yslmQySk37BVLU2Gp9XDLfpZLHfNoNr20LuqqyWNOrLOtkRC27KhsR9dGOMH6ioV+SOFMl2cyYEQoWDv8ADX5S17eNpc=
+	t=1728640312; cv=none; b=cRTnn0CGSWImyRt7KSYZN8+BFvzID8AMmz8VYzloIxdcS3T2+zFPmxltIyxHe9IqPveY4rUheGCLK/KF10KgEa9pvia5ibLoenYNcbaTpQfkSegMoptftuwxKOZ4pVgp1LkP88C8G6/R8BBvK8S5eX7eLBzjfy47+jZUsZ/7K+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728639759; c=relaxed/simple;
-	bh=/a+9b5ouLrp1o+mJiuqLbe+ifCCr4IT5ucpHB+gPjsM=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qanbhuuqCypPH6DgUHJ/CJJTKc54YzQp4H2iKtum5T6ajKWuf+m809yal6bIA1FQdLEBuZlVVfUL2OmEIqMCF6lqUV1UIg3xMs4rUhZ43WgVz6L2GylrPzuZd0oR4j3xWF3vCF7RrDAoKoOn2XGiR5v8qQdBVCnQrzfTIWzoOvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+	s=arc-20240116; t=1728640312; c=relaxed/simple;
+	bh=vW4lb5AP6JnHDHFpP+cLapCaBacyrSVQpxWPMsOux8U=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=iUtmm3MOhCASxNoqnYLR8G7P8vu9Oc/8X3Wz48kMlji+579NnV9HxHKCA+NO80USCGl7A35MzM3DqvNHrPq27DIRQ1KCozG9goEhCMD08Q6povdfkSLwgTXDX2YWSk+E9QRW//IsHR3PelME/T1w3rr0sKajAyYeTwM31RuBdYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XQ1qk6BXrz6K9N5;
-	Fri, 11 Oct 2024 17:42:10 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id ED8A014010C;
-	Fri, 11 Oct 2024 17:42:33 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
- 2024 11:42:33 +0200
-Date: Fri, 11 Oct 2024 10:42:32 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-CC: Abhash Jha <abhashkumarjha123@gmail.com>, Linux Kernel Mailing List
-	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
-	<linux-next@vger.kernel.org>, <gregkh@linuxfoundation.org>
-Subject: Re: linux-next: build failure after merge of the iio tree
-Message-ID: <20241011104232.000042a9@Huawei.com>
-In-Reply-To: <20241011154241.511878bd@canb.auug.org.au>
-References: <20241011154241.511878bd@canb.auug.org.au>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XQ21V5z6Jz1SBR4;
+	Fri, 11 Oct 2024 17:50:38 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2FE9B1A016C;
+	Fri, 11 Oct 2024 17:51:47 +0800 (CST)
+Received: from localhost.localdomain (10.90.30.45) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Fri, 11 Oct 2024 17:51:46 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <shenjian15@huawei.com>, <salil.mehta@huawei.com>
+CC: <liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>,
+	<shaojijie@huawei.com>, <lanhao@huawei.com>, <chenhao418@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH net 0/9] There are some bugfix for the HNS3 ethernet driver
+Date: Fri, 11 Oct 2024 17:45:12 +0800
+Message-ID: <20241011094521.3008298-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-On Fri, 11 Oct 2024 15:42:41 +1100
-Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+There are some bugfix for the HNS3 ethernet driver
 
-> Hi all,
->
-Thanks Stephen,
+Hao Lan (4):
+  net: hns3: fixed reset failure issues caused by the incorrect reset
+    type
+  net: hns3: fix missing features due to dev->features configuration too
+    early
+  net: hns3: Resolved the issue that the debugfs query result is
+    inconsistent.
+  net: hns3: fixed hclge_fetch_pf_reg accesses bar space out of bounds
+    issue
 
-I'll call these out (I think we have 3 of them now) when I send Greg a pull request as
-probably best place to tidy this up is when merging into char-misc which has
-merged rc2 with Al's patch.
+Jian Shen (3):
+  net: hns3: add sync command to sync io-pgtable
+  net: hns3: don't auto enable misc vector
+  net: hns3: initialize reset_timer before hclgevf_misc_irq_init()
 
-Greg, let me know if you'd rather I handled these in the iio tree
-(probably a merge of rc2 as I'd rather not rebase)
+Jie Wang (1):
+  net: hns3: fix kernel crash when 1588 is sent on HIP08 devices
 
-Jonathan
+Peiyang Wang (1):
+  net: hns3: default enable tx bounce buffer when smmu enabled
 
+ .../ethernet/hisilicon/hns3/hns3_debugfs.c    |  4 +-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.c   | 59 ++++++++++++++++++-
+ .../net/ethernet/hisilicon/hns3/hns3_enet.h   |  2 +
+ .../ethernet/hisilicon/hns3/hns3_ethtool.c    | 33 +++++++++++
+ .../hisilicon/hns3/hns3pf/hclge_main.c        | 44 +++++++++++---
+ .../hisilicon/hns3/hns3pf/hclge_ptp.c         |  3 +
+ .../hisilicon/hns3/hns3pf/hclge_regs.c        |  9 +--
+ .../hisilicon/hns3/hns3vf/hclgevf_main.c      | 40 ++++++++++---
+ .../hisilicon/hns3/hns3vf/hclgevf_regs.c      |  9 +--
+ 9 files changed, 178 insertions(+), 25 deletions(-)
 
-> After merging the iio tree, today's linux-next build (x86_64 allmodconfig)
-> failed like this:
-> 
-> drivers/iio/dac/ad5770r.c:20:10: fatal error: asm/unaligned.h: No such file or directory
->    20 | #include <asm/unaligned.h>
->       |          ^~~~~~~~~~~~~~~~~
-> drivers/iio/adc/max1363.c:37:10: fatal error: asm/unaligned.h: No such file or directory
->    37 | #include <asm/unaligned.h>
->       |          ^~~~~~~~~~~~~~~~~
-> 
-> Caused by commits
-> 
->   c2c4826cfa46 ("iio: adc: max1363: Convert to get_unaligned_be16")
->   0f87813bc338 ("iio: dac: ad5770r: Convert to get_unaligned_le16")
-> 
-> interacting with commit
-> 
->   5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
-> 
-> from Linus' tree (in v6.12-rc2).
-> 
-> I have applied the following merge fix patch.
-> 
-> From: Stephen Rothwell <sfr@canb.auug.org.au>
-> Date: Fri, 11 Oct 2024 15:35:57 +1100
-> Subject: [PATCH] fix up for asm/unaligned inclusions in ad5770r.c and max1363.c
-> 
-> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
-> ---
->  drivers/iio/adc/max1363.c | 2 +-
->  drivers/iio/dac/ad5770r.c | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
-> index d59cd638db96..d065b1ade95a 100644
-> --- a/drivers/iio/adc/max1363.c
-> +++ b/drivers/iio/adc/max1363.c
-> @@ -34,7 +34,7 @@
->  #include <linux/iio/trigger_consumer.h>
->  #include <linux/iio/triggered_buffer.h>
->  
-> -#include <asm/unaligned.h>
-> +#include <linux/unaligned.h>
->  
->  #define MAX1363_SETUP_BYTE(a) ((a) | 0x80)
->  
-> diff --git a/drivers/iio/dac/ad5770r.c b/drivers/iio/dac/ad5770r.c
-> index 12c98f3e62a5..7d7f5110d66a 100644
-> --- a/drivers/iio/dac/ad5770r.c
-> +++ b/drivers/iio/dac/ad5770r.c
-> @@ -17,7 +17,7 @@
->  #include <linux/regmap.h>
->  #include <linux/regulator/consumer.h>
->  #include <linux/spi/spi.h>
-> -#include <asm/unaligned.h>
-> +#include <linux/unaligned.h>
->  
->  #define ADI_SPI_IF_CONFIG_A		0x00
->  #define ADI_SPI_IF_CONFIG_B		0x01
+-- 
+2.33.0
 
 
