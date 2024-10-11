@@ -1,101 +1,102 @@
-Return-Path: <linux-kernel+bounces-361399-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361398-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FEBA99A7AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:29:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FC9999A7AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:29:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC3FF1F2511B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:29:15 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E29D8B21619
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B871A196434;
-	Fri, 11 Oct 2024 15:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="ez2qijYt"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0F27194AF3;
+	Fri, 11 Oct 2024 15:28:42 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8B7194C8D;
-	Fri, 11 Oct 2024 15:28:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404ED16F27E;
+	Fri, 11 Oct 2024 15:28:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660536; cv=none; b=cbuS8Kkmg7MLQ5RDOKnNLImtTYf7W7L4vB9NsWUfxVnQ13/cIZ017v2DBc45qerFJXY7ZSbq/l0wDFq6YS7tC6f/u8IQWujbdOX69ZlXwa/P601Oh/zMC4VICoT55Afgg+1wRJFrGqz0gVRhWR4ZShx99JjLBUwDlvGZvCQ+w6g=
+	t=1728660522; cv=none; b=sQq+r8BUh6f83NAIuVI11+cmo3XpLC2q4tkBhWn2K+6UCE66pVvoD5JCLArmuPA9D4V5CoR4JFit0PNd9mzql0AVXjiOFBIheVUxiiSPxYWvsGx1A2hX2xD6FGUKHSkaOt1P9GzEm0YLwI5qItav7emBbUj+yyVwWaKRieWXRLY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660536; c=relaxed/simple;
-	bh=bx074e4HGLmDJv06LML79379zBigZVqcIwirOD1IXIg=;
-	h=MIME-Version:Content-Type:Date:Message-ID:From:CC:To:Subject:
-	 References:In-Reply-To; b=PZaV2bS1ACuOekqzV7sPV269zgFLRZwf0qDW0TEyS8o983Cjes1NYCfRj+0asCYpW0w7vPrdC8vTVdNMIRKdDN/9LVNvu76VjzzDoNtgWrzMue7QsMLj7IcqLbHLCc5+QJsJC0T9SAL5zor6aQHiLNmMhyRkFNEnKKFLzka2WRY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=ez2qijYt; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728660533; x=1760196533;
-  h=mime-version:content-transfer-encoding:date:message-id:
-   from:cc:to:subject:references:in-reply-to;
-  bh=bx074e4HGLmDJv06LML79379zBigZVqcIwirOD1IXIg=;
-  b=ez2qijYtBWKP3YXnq/bDahO0+MHH248zE79D7I+LQZRO/8l5Z+dl47Wq
-   44jjeH10WZxhb+iCOOvSno8kpTo00QxejjT2XO9ACzsVjoU4gS8ShFlpy
-   JvxwzzeRsj6ab2cDBpE5eaL7mNp21VBQFtwvpWnfAEmuzX/Ycwutty9he
-   N/ze04VpQxSV2lQmzpoPoytIa1eZwDZ2c6KDIbqF9wSfA885ZFzOBOOJc
-   aeapfBxFARrnya5f+CQgHulY0P25E+PVvPpPcGowFNgZe6JXUcstdcvPP
-   0vHcxBSbr6kSpf0aig3Y0xMgInEz7hX4Qtr9ZyIDHgeBMITd3QqS1AKg5
-   w==;
-X-CSE-ConnectionGUID: Y93VkM+wSkyKET2ip2ekUg==
-X-CSE-MsgGUID: QMsnCg/IQOazEdV6BmBZTw==
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="32715362"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Oct 2024 08:28:52 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex01.mchp-main.com (10.10.85.143) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 11 Oct 2024 08:28:27 -0700
-Received: from localhost (10.10.85.11) by chn-vm-ex01.mchp-main.com
- (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.35 via Frontend
- Transport; Fri, 11 Oct 2024 08:28:25 -0700
+	s=arc-20240116; t=1728660522; c=relaxed/simple;
+	bh=qPzl/EHoC5JnTiITbzwlGp/NFQGcfPSkb0S5T3wqoy8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=aOEz9eWz1H2CL+ftwyKcvkVjUeIFtcfJqmUH3aL3CKg4ZQtzCDpPvzC4bdvhyMCKK5Saxv0BWNOWzmZ18DZUIfPhgpwgdx1C7+Pa0wDc4NC6xYKNzczN9sLUeQe/f1i2ZLuWD/8A1fl18KcdOLAnC1S0HJCHaWIhnf4dtja6kwA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE11C4CEC3;
+	Fri, 11 Oct 2024 15:28:41 +0000 (UTC)
+Date: Fri, 11 Oct 2024 11:28:50 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, Petr Pavlu <petr.pavlu@suse.com>
+Subject: [PATCH] ring-buffer: Synchronize ring_buffer_subbuf_order_set()
+ with rb_check_pages()
+Message-ID: <20241011112850.17212b25@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
-Date: Fri, 11 Oct 2024 17:28:25 +0200
-Message-ID: <D4T308XAHU63.3213WKORD0FCL@microchip.com>
-From: =?utf-8?q?Jens_Emil_Schulz_=C3=98stergaard?=
-	<jensemil.schulzostergaard@microchip.com>
-CC: <lars.povlsen@microchip.com>, <Steen.Hegelund@microchip.com>,
-	<daniel.machon@microchip.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <UNGLinuxDriver@microchip.com>,
-	<linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Subject: Re: [PATCH] net: microchip: vcap api: Fix memory leaks in
- vcap_api_encode_rule_test()
-X-Mailer: aerc 0.17.0-0-g6ea74eb30457
-References: <20241010130231.3151896-1-ruanjinjie@huawei.com>
-In-Reply-To: <20241010130231.3151896-1-ruanjinjie@huawei.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu Oct 10, 2024 at 3:02 PM CEST, Jinjie Ruan wrote:
-> Commit a3c1e45156ad ("net: microchip: vcap: Fix use-after-free error in
-> kunit test") fixed the use-after-free error, but introduced below
-> memory leaks by removing necessary vcap_free_rule(), add it to fix it.
+From: Steven Rostedt <rostedt@goodmis.org>
 
-Thank you for the fix. I reproduced the bug and confirmed the fix.
+The rb_check_pages() scans the ring buffer sub buffers to make sure they
+are valid after an update. But locks are released during the update to not
+hold preemption for too long.
 
-...
+The ring_buffer_subbuf_order_set() updates the counter used by
+rb_check_pages() without any locks. But it also updates the pages. Even
+though it is likely that the buffer->mutex is enough to protect this, but
+since rb_check_pages() uses the cpu_buffer->reader_lock for
+synchronization, take that lock as well when updating the pages and
+counter in ring_buffer_subbuf_order_set().
 
-> Cc: stable@vger.kernel.org
-> Fixes: a3c1e45156ad ("net: microchip: vcap: Fix use-after-free error in k=
-unit test")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Note, this is based on top of:
 
-Reviewed-by: Jens Emil Schulz =C3=98stergaard <jensemil.schulzostergaard@mi=
-crochip.com>
+  https://lore.kernel.org/linux-trace-kernel/20240715145141.5528-1-petr.pavlu@suse.com/
+
+ kernel/trace/ring_buffer.c | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/kernel/trace/ring_buffer.c b/kernel/trace/ring_buffer.c
+index 696d422d5b35..0672df07b599 100644
+--- a/kernel/trace/ring_buffer.c
++++ b/kernel/trace/ring_buffer.c
+@@ -6774,6 +6774,7 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
+ 	}
+ 
+ 	for_each_buffer_cpu(buffer, cpu) {
++		unsigned long flags;
+ 
+ 		if (!cpumask_test_cpu(cpu, buffer->cpumask))
+ 			continue;
+@@ -6800,11 +6801,15 @@ int ring_buffer_subbuf_order_set(struct trace_buffer *buffer, int order)
+ 						     struct buffer_page, list);
+ 		list_del_init(&cpu_buffer->reader_page->list);
+ 
++		/* Synchronize with rb_check_pages() */
++		raw_spin_lock_irqsave(&cpu_buffer->reader_lock, flags);
++
+ 		/* The cpu_buffer pages are a link list with no head */
+ 		cpu_buffer->pages = cpu_buffer->new_pages.next;
+ 		cpu_buffer->new_pages.next->prev = cpu_buffer->new_pages.prev;
+ 		cpu_buffer->new_pages.prev->next = cpu_buffer->new_pages.next;
+ 		cpu_buffer->cnt++;
++		raw_spin_unlock_irqrestore(&cpu_buffer->reader_lock, flags);
+ 
+ 		/* Clear the new_pages list */
+ 		INIT_LIST_HEAD(&cpu_buffer->new_pages);
+-- 
+2.45.2
 
 
