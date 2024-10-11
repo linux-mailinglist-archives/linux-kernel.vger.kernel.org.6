@@ -1,134 +1,122 @@
-Return-Path: <linux-kernel+bounces-360344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360305-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1C399999D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:52:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75539998BC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B376D282093
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:52:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B0C0B22757
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B18717996;
-	Fri, 11 Oct 2024 01:52:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 410B06AA7;
+	Fri, 11 Oct 2024 01:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b="Dgnq+EqG"
-Received: from mail-108-mta13.mxroute.com (mail-108-mta13.mxroute.com [136.175.108.13])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="e7L6GYib"
+Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46CD616419
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=136.175.108.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1468B7489
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728611547; cv=none; b=eFo2rWLji/YiLZ/Lj/vO0uyizE16Au4IuUNm+nIhSG1cwqCrcGtFe6IPyHBFrwFV/6Y3aOuLOHyLXkPZdctz+OOv4TrmxIkJ/hz8z2tAurzBj2d9K1zqJyZ1VDeNbTIxRWKwq+Q9s7kyOeEluZluiz2nLyvLAxkUDeqaRTnooLE=
+	t=1728608992; cv=none; b=iL6QUgQgNCHugIebIs4OioQS35Z7DsKE1TUrdE7L1yzM7pRJIEZe5X8FD3RDLd5b6g5IvfrkyfGTt9GxXv+NGVL46ruIFFAxAZsAkw60Q85+qPVdz6ULdJFWoNM/QXYuX2ucURlIFi8A0UieqGm8LYaD5qL8H34bzvrOQAc+rWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728611547; c=relaxed/simple;
-	bh=eMEi30HCHoAAv+JpEoZK1ER7d1QkHukLsqPSuZDJKOk=;
-	h=References:From:To:Cc:Subject:Date:In-reply-to:Message-ID:
-	 MIME-Version:Content-Type; b=Zd24S07i+aagmzN+0yFkguwxgpj9RI220xhVzmnkkd0ufYi2KnE4103tja7WAy12br3wln+nbKAWGUk0vD7h7UzUjm+BScffgoRUAfHiRcWNCYMxnApdYJjD4yS8dlHqtlGBTJl/7ZovkejRfTTqruGzuQPXCyJaVFphTp2o4b4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org; spf=pass smtp.mailfrom=damenly.org; dkim=pass (2048-bit key) header.d=damenly.org header.i=@damenly.org header.b=Dgnq+EqG; arc=none smtp.client-ip=136.175.108.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=damenly.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=damenly.org
-Received: from filter006.mxroute.com ([136.175.111.3] filter006.mxroute.com)
- (Authenticated sender: mN4UYu2MZsgR)
- by mail-108-mta13.mxroute.com (ZoneMTA) with ESMTPSA id 19279421bf90003e01.008
- for <linux-kernel@vger.kernel.org>
- (version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384);
- Fri, 11 Oct 2024 01:47:08 +0000
-X-Zone-Loop: a75c612f20eebae2a4e2dc3aa3967d6fc3e7dfbe59d0
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=damenly.org
-	; s=x; h=Content-Type:MIME-Version:Message-ID:In-reply-to:Date:Subject:Cc:To:
-	From:References:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=pdzEL4cm+5xHpBoIcDQGXqMijQus5IPuZqSbT5JzXiA=; b=Dgnq+EqGvWgMGgCsRfZZK0D65V
-	+14hm3ZdjxuNAjEsCQybe9vOSGdflkuUx57no2qIArOPftpNyGLR/jDMD3azilgZBRkark8P/W7x4
-	92evQO7sjOd7CpPtS8cj5YECPKIQKvTyxccKrt0RZClJiE/B2154TKXCmIJp9XzLZrTrw5Pd2bA0B
-	IeZJ67jH7YHFuKrYj9B2T94ChTIyGC5ueS+i69BAP1Qc1m8RardY/PoOAI2hvhTkBavIn3yVG7VEl
-	2y2A9hhwb+7C/5F0gxEyDOYbr1KgwrvfuqYoRewEdJj53bPrt2cCLJefQC4AmxK0LnKPFMibgvxvL
-	bmV/bKEw==;
-References: <4195446e-2d2b-442c-a1ad-b1498d243a70@linux.alibaba.com>
- <tencent_91D2962236324AA47465761367183C8F3709@qq.com>
-User-agent: mu4e 1.7.5; emacs 28.2
-From: Su Yue <l@damenly.org>
-To: Edward Adam Davis <eadavis@qq.com>
-Cc: joseph.qi@linux.alibaba.com, jlbec@evilplan.org,
- linux-kernel@vger.kernel.org, mark@fasheh.com,
- ocfs2-devel@lists.linux.dev,
- syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com,
- syzkaller-bugs@googlegroups.com
-Subject: Re: [PATCH V2] ocfs2: pass u64 to ocfs2_truncate_inline maybe overflow
-Date: Fri, 11 Oct 2024 09:07:09 +0800
-In-reply-to: <tencent_91D2962236324AA47465761367183C8F3709@qq.com>
-Message-ID: <ed4no1gp.fsf@damenly.org>
+	s=arc-20240116; t=1728608992; c=relaxed/simple;
+	bh=9RkDDwOhXP/cCSzIpAAp4QgSbbnxes8iPUelp8+nPyU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=N1ONCTjvtS1qnrocfSea/OjF2CpQsIdUF7nDz+03Z5Vi/o9QWUxPyXyUzBWnQk+tKkIDvMnGYCPVgXECi4cqh2aEpyqzIcXwac2TKXg6gabJ2ajsqK4NeUKf83aTzqtVYfLZ0bUiLhMNDNYgIpJK5HYwDEa0Abr+MGETertNfZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=e7L6GYib; arc=none smtp.client-ip=209.85.208.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c91d0eadbfso2061323a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728608989; x=1729213789; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zTHje0muZPf49FQkQjwDnqpyf3rz9rMv6QsPFUwU2q0=;
+        b=e7L6GYib0xYWDMvxBTonIETwGjiwq48Y6k/MJ6AYF9P0f7NcZjBaZV3d2XqNXk6FiA
+         qfmS9ZcNvc06IDo2ETId8VFcs6aOMbbbTek1srDE4VmLzPqHM20LA9KeBE4MjDdDYEGk
+         7FrhElDp8/HMSw3OufkDAcEpTEDn/LWXTTVXNzlnEW9LXgofRMFUuOiySLGuwZqVza61
+         GjklwnThljmilKebH7fQ2ihPmidZUQrnoLtTA1eqobpI3rqSZfpg/9s1gbCOseev03aJ
+         tQsJ5R4gxoXwlvOV2E3groqptkWpZXimTh++qei3veTqLwfDWk2j2qtpJ9UibiByqceq
+         TeLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728608989; x=1729213789;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=zTHje0muZPf49FQkQjwDnqpyf3rz9rMv6QsPFUwU2q0=;
+        b=hWa9PT6tFoi35T26+KgIF3VrHHV8+pA7qe/C7tKzfODTecFsxiHO+OTO8MvPNCkF8o
+         /dcKqyrGMwOTlJP6T+vy/nqkUnqxMppFGPEYtzT+2Tw1bKoxXooyqz4gyDGz2jSRLR1q
+         MN7+a5D6J1IpBoP6PgNbu1WtUupcAqrHf7XJWh8qQ4CWmcjGX01rHgspycJ9IJ8JLz5S
+         d9kQ3V+awQX/HAf4CLngTS+ahPD4f6Y+0R37BS4OI35noc5GrQt7iQchJnmjE9Po0u0s
+         g/9oRqF3cjR2TMoQzLtGvyK/NgJADGjDksv0e7vusoSDxeflSzIShLDjK7VrOMeQzeme
+         W0hw==
+X-Forwarded-Encrypted: i=1; AJvYcCW3mhKZ9cacqpOk+OgBkL0p1I3H5ajVz/TutsJRH5vxF6JYduVDzWBMZtc46NsGAfqdna/gCPbtNVP/42o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjmnZXulYTY5gbF1CIGsTBO6IjSN/KuYbZNHlaFxURQUfZ6dg3
+	V9XVssEbsAiZGedTWm7aIFSDxWC/oWi8A6N1XX2PzSx9+BmrAdxw
+X-Google-Smtp-Source: AGHT+IG9MwYDvF+nd2vSnJ9HW7qQhl2AOrp7z7oZAVKf8wELtMFSou4SIqZpfnmpwPFuiZTf4urQUQ==
+X-Received: by 2002:a05:6402:274b:b0:5c9:2a8c:8950 with SMTP id 4fb4d7f45d1cf-5c948cc83f6mr398182a12.15.1728608989111;
+        Thu, 10 Oct 2024 18:09:49 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937298d98sm1380250a12.91.2024.10.10.18.09.46
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Oct 2024 18:09:47 -0700 (PDT)
+Date: Fri, 11 Oct 2024 01:09:45 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Jiazi Li <jqqlijiazi@gmail.com>, linux-kernel@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [PATCH 1/2] maple_tree: fix alloc node fail issue
+Message-ID: <20241011010945.usgu7kqjdzimrwo3@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240626160631.3636515-1-Liam.Howlett@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; format=flowed
-X-Authenticated-Id: l@damenly.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626160631.3636515-1-Liam.Howlett@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
+
+On Wed, Jun 26, 2024 at 12:06:30PM -0400, Liam R. Howlett wrote:
+>From: Jiazi Li <jqqlijiazi@gmail.com>
+>
+>In the following code, the second call to the mas_node_count will
+>return -ENOMEM:
+>
+>	mas_node_count(mas, MAPLE_ALLOC_SLOTS + 1);
+>	mas_node_count(mas, MAPLE_ALLOC_SLOTS * 2 + 2);
+>
+>This is because there may be some full maple_alloc node in current
+>maple state. Use full maple_alloc node will make max_req equal to 0.
+>And it leads to mt_alloc_bulk return 0.
+>As a result, mas_node_count set mas.node to MA_ERROR(-ENOMEM).
+>
+>Find a non-full maple_alloc node, and if necessary, use this non-full
+>node in the next while loop.
+>
+>Fixes: 54a611b60590 ("Maple Tree: add new data structure")
+>Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>Signed-off-by: Jiazi Li <jqqlijiazi@gmail.com>
+>Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
 
-On Thu 10 Oct 2024 at 22:31, Edward Adam Davis <eadavis@qq.com> 
-wrote:
+This looks good to me.
 
-> Syzbot reported a kernel BUG in ocfs2_truncate_inline.
-> There are two reasons for this: first, the parameter value 
-> passed is greater
-> than UINT_MAX, second, the start and end parameters of 
-> ocfs2_truncate_inline
-> are "unsigned int".
->
-> So, we need to add a sanity check for byte_start and byte_len 
-> right before
-> ocfs2_truncate_inline() in ocfs2_remove_inode_range(), if they 
-> are greater
-> than UINT_MAX return -EFBIG.
->
-> Reported-by: 
-> syzbot+81092778aac03460d6b7@syzkaller.appspotmail.com
-> Closes: 
-> https://syzkaller.appspot.com/bug?extid=81092778aac03460d6b7
-> Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> ---
-> V1 -> V2: move sanity check to ocfs2_remove_inode_range
->
->  fs/ocfs2/file.c | 5 +++++
->  1 file changed, 5 insertions(+)
->
-> diff --git a/fs/ocfs2/file.c b/fs/ocfs2/file.c
-> index ad131a2fc58e..05d6a8acfcda 100644
-> --- a/fs/ocfs2/file.c
-> +++ b/fs/ocfs2/file.c
-> @@ -1784,6 +1784,11 @@ int ocfs2_remove_inode_range(struct inode 
-> *inode,
->  		return 0;
->
->  	if (OCFS2_I(inode)->ip_dyn_features & OCFS2_INLINE_DATA_FL) {
-> +		if (byte_start > UINT_MAX || byte_start + byte_len > 
-> UINT_MAX) {
->
-Why not use ocfs2_max_inline_data_with_xattr() here? Yes, UINT_MAX 
-indeed
-solves overflow problem Syzbot reported but you can find much 
-lowerer
-limit if once looked into inline data structures.
-Also, ocfs2_truncate_inline() can be enhanced e.g. replace
-BUG_ON(start > end) with error out.
+I don't see it is in the master. Not sure this is missed.
 
---
-Su
-
-
-> +			ret = -EFBIG;
-> +			mlog_errno(ret);
-> +			goto out;
-> +		}
->  		ret = ocfs2_truncate_inline(inode, di_bh, byte_start,
->  					    byte_start + byte_len, 0);
->  		if (ret) {
+-- 
+Wei Yang
+Help you, Help me
 
