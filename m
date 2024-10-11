@@ -1,145 +1,124 @@
-Return-Path: <linux-kernel+bounces-361300-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361301-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9FED99A673
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:37:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AA3699A675
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:37:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 361BAB26402
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:36:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 01F961F238D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:37:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72EF047F4A;
-	Fri, 11 Oct 2024 14:36:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30B680BEC;
+	Fri, 11 Oct 2024 14:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sF4QHqW9"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XCAMeVr0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6800184;
-	Fri, 11 Oct 2024 14:36:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CED745F4;
+	Fri, 11 Oct 2024 14:36:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728657394; cv=none; b=MslBGkDv0wftK0pqUrYrVo7baGq3YoZKgWxBWKCjc5ItDPqaIuBSzjVBoQIiXB2rPjOqlFNIM000eaU2PD937UXElH49jlWwcDiyDoVyePUOtoeCz4ARJ2cFcclENuORXupM5fn9czIIQdTc74sHFl4nT4gzANg0IbFAU79ssS0=
+	t=1728657408; cv=none; b=Sqri0dqtuPTFSIsCaN2yABmKcV/oGgDdC9Atvb2NmJWvibBVkVHZCNqmACA3Fj0JgPMtwx1WHylH48l6efXrx10TRGj6QWV41gLqrMvejK+t1McCr0Hit6rc7NMs8eolqdp3SZX+skKpX2VjYAzf6eQTckVkdIaCbmwO2MiapEs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728657394; c=relaxed/simple;
-	bh=elTTuQlhe68qlI7O7q5tMA03WudpGcGqjtAOdfqvfuA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=tSZtFwyda1E9Wq+AqosXhqAFBuW/GRdy9oRI3S3FFWIKSYB/gb0rjkyMQWjAgZGNnIFHYfrnpdcFXdZ97BX7YialJkAfVLUmUgxgAZnGTTbs1JLYZIhkZCP+qFxWXGf2yr0aEP6eARw1TOkCcRL+EUcTGJpIkK8yz/2I2t3BPrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sF4QHqW9; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF95CC4CEC7;
-	Fri, 11 Oct 2024 14:36:25 +0000 (UTC)
+	s=arc-20240116; t=1728657408; c=relaxed/simple;
+	bh=1ea53qrez4o6hsa0y87C5X/KVCdb6cASptIkacZH8m0=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bOX3i4LX/uOYtU8OBeaQTOLlavlzrnLT2S65XHfh98N3DpMlj31vF6KYHj9fMjRgVxIZ2KGSo/Ghr/CpASgQmNb7OmDyoiZXnk0OYalz9IqkjKBNsLFyUZVbFnKB4dyE7BpArCMEWrgFi6Ov0PzQe/WDHNoRux3rAGM8/zUxqH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XCAMeVr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 822EDC4CEC3;
+	Fri, 11 Oct 2024 14:36:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728657394;
-	bh=elTTuQlhe68qlI7O7q5tMA03WudpGcGqjtAOdfqvfuA=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=sF4QHqW9rn0Q59fdNsnpCmNanVUU2iXqmZSnV0CgncA2F1ARM2OUZVpqgD2L3CEye
-	 jFnBiBX4SG5yxNlwDYR43PCmLkCcmGMsfeQM744V5BEt97bQ38/0VJE5jsBoHDphg4
-	 7uCuL8GP3lUbVXcOgpjQl410CkV+l6nddbhGTJd5L+78HkU9Z0jWgdBUU1OhCRrlCI
-	 Pni0UIT36/oseekkB3W2T7dLs1lwWnXxKvp+nji4aB3/x7msrmZAJjBl9Uf4rAZ4to
-	 aA6BJntRAP5vu7+AjdUXohpjbg3091gMQUonHRc5Sy4UeC0QRCWga8w8Oj82LKVMEt
-	 mDUo6hTBRGLjQ==
-Message-ID: <937d3d61-482a-4a14-a594-615f10baf5f0@kernel.org>
-Date: Fri, 11 Oct 2024 16:36:22 +0200
+	s=k20201202; t=1728657408;
+	bh=1ea53qrez4o6hsa0y87C5X/KVCdb6cASptIkacZH8m0=;
+	h=From:Date:Subject:To:Cc:From;
+	b=XCAMeVr0Tbz5GecDr6+K2LhRuVVAfZIiblGVVc9KXFC9OxCWBHZZP+9k3wIzxMekA
+	 5xFwZxDdUapCLjieW6Y0TtGNrjdURu5QKXRLJ8Y2N4phF2zvV4fWclDuNDaXN9OUE/
+	 4pVHnVRSaRhuODKkgMoZkw380G8PyAjk0t/jYSYLAdDk2856GhcPMZ9/m7UIQRGTNH
+	 i6cuVpkIw+YBDOV8Rys/BtUodnY2qB6a4DYy4jZhog+u/rUZktumA+H3MKx++4965V
+	 SXViH2EJ/01zrXdat+Mp4mBnCe+zRT+cOMXMP1apMnLtfOPuVkf3DTiaoIKf09xT6Z
+	 hk+R1LwmmAuOA==
+From: Mark Brown <broonie@kernel.org>
+Date: Fri, 11 Oct 2024 15:36:25 +0100
+Subject: [PATCH] kselftest/arm64: Ensure stable names for GCS stress test
+ results
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
- interrupt
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Qiang Yu <quic_qianyu@quicinc.com>
-Cc: manivannan.sadhasivam@linaro.org, vkoul@kernel.org, kishon@kernel.org,
- robh@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, mturquette@baylibre.com,
- sboyd@kernel.org, abel.vesa@linaro.org, quic_msarkar@quicinc.com,
- quic_devipriy@quicinc.com, dmitry.baryshkov@linaro.org, kw@linux.com,
- lpieralisi@kernel.org, neil.armstrong@linaro.org,
- linux-arm-msm@vger.kernel.org, linux-phy@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
- devicetree@vger.kernel.org, linux-clk@vger.kernel.org
-References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
- <20241011104142.1181773-4-quic_qianyu@quicinc.com>
- <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241011-arm64-gcs-stress-stable-name-v1-1-4950f226218e@kernel.org>
+X-B4-Tracking: v=1; b=H4sIAOg3CWcC/x3MQQrCQAxG4auUrA1Mho5UryIuxvq3DdhRklIKp
+ Xd3dPX4Nm8nhymcrs1OhlVd36VCTg31Uy4jWJ/VFENsJYhwtvnc8tg7+2LwX/LjBS55BncphSS
+ XAZIi1cXHMOj239/ux/EFj731xW4AAAA=
+To: Catalin Marinas <catalin.marinas@arm.com>, 
+ Will Deacon <will@kernel.org>, Shuah Khan <shuah@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-99b12
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1617; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=1ea53qrez4o6hsa0y87C5X/KVCdb6cASptIkacZH8m0=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBnCTf9xKXHIf3VCZybYDBM5exrPgRIKfvh8ASb+
+ uO9a8tZhfqJATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCZwk3/QAKCRAk1otyXVSH
+ 0ObYB/9jOh8/jfo6HTYkE3K1TuGikVIeQBcVGtfmoSKn2BF5bjyyYwBejF5GwRv49vFtvkV6Nhc
+ 2Ce+699mHrGBQdPaJH/hHMMMBPykaxkKcXvqnUVF42HGmGzsXMMD1DksmbnzSJII9Tjm+FqxQ7f
+ UvadFRd59rahPn7GGj+UmaN7bGB/99cFbnXKz50Qylevjbi4ZlIfL/ajPniPfiZyL6NYjnJMoSD
+ 8fea38JZCr+rNNF2KrbIleOZnB8H84YHrNrMjHppBMHOI83nwu3pXIqLLM6YwbKXwGVNNWgGxFy
+ sOlhTs1+RiiRYrs+o7LzW6et60XxudRC0W0NrT+LPm0sRLh2
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-On 11/10/2024 16:33, Krzysztof Kozlowski wrote:
-> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
->> Document 'global' SPI interrupt along with the existing MSI interrupts so
->> that QCOM PCIe RC driver can make use of it to get events such as PCIe
->> link specific events, safety events, etc.
-> 
-> Describe the hardware, not what the driver will do.
-> 
->>
->> Though adding a new interrupt will break the ABI, it is required to
->> accurately describe the hardware.
-> 
-> That's poor reason. Hardware was described and missing optional piece
-> (because according to your description above everything was working
-> fine) is not needed to break ABI.
-> 
-> Sorry, if your driver changes the ABI for this poor reason.
-> 
-> NAK.
-> 
+The GCS stress test program currently uses the PID of the threads it
+creates in the test names it reports, resulting in unstable test names
+between runs. Fix this by using a thread number instead.
 
-Plus you did not test DTS, not fixed existing users.
+Signed-off-by: Mark Brown <broonie@kernel.org>
+---
+ tools/testing/selftests/arm64/gcs/gcs-stress.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-That's v6, so we assume you already know how to test it and do the
-testing before posting new versions.
+diff --git a/tools/testing/selftests/arm64/gcs/gcs-stress.c b/tools/testing/selftests/arm64/gcs/gcs-stress.c
+index bdec7ee8cfd5..03222c36c436 100644
+--- a/tools/testing/selftests/arm64/gcs/gcs-stress.c
++++ b/tools/testing/selftests/arm64/gcs/gcs-stress.c
+@@ -56,7 +56,7 @@ static int num_processors(void)
+ 	return nproc;
+ }
+ 
+-static void start_thread(struct child_data *child)
++static void start_thread(struct child_data *child, int id)
+ {
+ 	int ret, pipefd[2], i;
+ 	struct epoll_event ev;
+@@ -132,7 +132,7 @@ static void start_thread(struct child_data *child)
+ 		ev.events = EPOLLIN | EPOLLHUP;
+ 		ev.data.ptr = child;
+ 
+-		ret = asprintf(&child->name, "Thread-%d", child->pid);
++		ret = asprintf(&child->name, "Thread-%d", id);
+ 		if (ret == -1)
+ 			ksft_exit_fail_msg("asprintf() failed\n");
+ 
+@@ -437,7 +437,7 @@ int main(int argc, char **argv)
+ 				   tests);
+ 
+ 	for (i = 0; i < gcs_threads; i++)
+-		start_thread(&children[i]);
++		start_thread(&children[i], i);
+ 
+ 	/*
+ 	 * All children started, close the startup pipe and let them
+
+---
+base-commit: bb9ae1a66c85eeb626864efd812c62026e126ec0
+change-id: 20241011-arm64-gcs-stress-stable-name-8550519fe152
 
 Best regards,
-Krzysztof
+-- 
+Mark Brown <broonie@kernel.org>
 
 
