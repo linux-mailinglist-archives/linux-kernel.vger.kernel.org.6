@@ -1,93 +1,188 @@
-Return-Path: <linux-kernel+bounces-360743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE66E999EE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:22:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8403E999EED
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:23:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D5D328390C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:22:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B31BE1C22EC8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:23:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D543920ADE9;
-	Fri, 11 Oct 2024 08:22:20 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C705E20ADF1;
+	Fri, 11 Oct 2024 08:23:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="aXloB4Bk"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B593F19D07B;
-	Fri, 11 Oct 2024 08:22:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3C601CB334;
+	Fri, 11 Oct 2024 08:23:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728634940; cv=none; b=R7VUUUTQxC7oORLiSIr9+H11qa62qi06vk2mnpg+qgZalDvyObu1kJBpKfFIe6EFvzxHj64rpQvJzk3zRBr+9QSB4n1AWhhg8JyV0E77bazJF/+0hlEqTtXkKfObXsEhPhsKR9xGOPH9ocWIBIYFaauS62ilFVTwua/aNy4JJ80=
+	t=1728634998; cv=none; b=oq/QK5ZiyDBgA6GwRJ+vKmbs/BoiWfVyo0FZQQQNbXKeDa3+dE0jKlz8b54X1V+maH2ol4d4StJB1Y9yxUOenvfwsiHsKjlvUQ+uMO5y4jT3QzkmmsHZvRNmKPDOv2UJ/Z7YgRtibD3o1nsvf/wxQHVcQAcOaUmMOGw+In22P8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728634940; c=relaxed/simple;
-	bh=SI9XvgsmIkbBdrw/t5Q5qvaZtgY2aCQBTpr/JLnTjKg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nehaeryI5ccRHvfEeDNrNPkwuqzz5sLyn4LMEtk9Jjkx8ibY9GjSVmnvu7X5P1wEzCQ9B0uo1lrTHmlzL/ZJNRuoxBbA4C/WVT+kRwe8ZpWtiJlSUEG+L+nAY7Djv9f75sQa3NbF6s7vCzA8RZXWNvQwPwjfrWHC/dllbOeeGog=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id D06D4227AB3; Fri, 11 Oct 2024 10:22:12 +0200 (CEST)
-Date: Fri, 11 Oct 2024 10:22:12 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Matias =?iso-8859-1?Q?Bj=F8rling?= <m@bjorling.me>
-Cc: kbusch@kernel.org, hch@lst.de, dlemoal@kernel.org, cassel@kernel.org,
-	linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org, wangyugui@e16-tech.com,
-	martin.petersen@oracle.com, hare@suse.de
-Subject: Re: [PATCH 3/3 v2] nvmet: add rotational support
-Message-ID: <20241011082212.GC3337@lst.de>
-References: <20241010123951.1226105-1-m@bjorling.me> <20241010123951.1226105-4-m@bjorling.me>
+	s=arc-20240116; t=1728634998; c=relaxed/simple;
+	bh=1SCPoV+flAzo+FGqNybbdbTm68eB8EOQkNIGyYMJD2g=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=hyYOGQT94SvSCd+WFk9N1RETSoipCI0fcbyQm/KStXlX2mcZ5XYzcnpcbRE0JJOcdzuukdGhr5UWrwGeq8EsnewgjqkH4F2M8i+MZIH8CmPdLlI3MPR9xO2NzizOs+eAA1Tw7Gab1uhA0WDV6VAKS2rARI1VKpGko7lF6nJoLhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=aXloB4Bk; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241010123951.1226105-4-m@bjorling.me>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728634993;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Wtd4w3kPmY8STzgl3hbVfL0jzi8Spp87zTee4Cx7AxI=;
+	b=aXloB4Bkt0Wtzcjbb28+LTGW/hzvUuVayg8nQDwrKVsHFY1UbGGO3G5qNPJ6/RE8A4CTRw
+	G5v0XBUaAbhWY7/pyUVr7W2s0NVUpKV913bsFaWVUmK1kRWhGOkeAatdz11tRIwvZ3yD18
+	5p6kvBY9bgcxkPaYEcmq1r7QDnWvd7ls03Jhq//X7fBORaghVLe/SxhNZcU3WsWhzAjnL+
+	ScRiDn3zsDu9fHO7hXOD74VB/Ub7LwfBB+e2rpMxbBujicSnF2+WSkn4jwxuP5SO11qO9O
+	NwESBzH69NHTZuuFvZQnm+qGa0i8pHxdNu3gSe78yMU0mVTF+X8QVAjKgh23Tw==
+Date: Fri, 11 Oct 2024 10:23:13 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Add dtsi file for RK3399S SoC
+ variant
+In-Reply-To: <D4STH4Z8LTHN.2X4BJJVACFSIS@cknow.org>
+References: <c32622e4a6897378d9df81c8c3eda1bdb9211e0b.1728632052.git.dsimic@manjaro.org>
+ <D4STH4Z8LTHN.2X4BJJVACFSIS@cknow.org>
+Message-ID: <20da65423e77e13511cc7c7bb39e0246@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, Oct 10, 2024 at 02:39:51PM +0200, Matias Bjørling wrote:
-> From: Keith Busch <kbusch@kernel.org>
+Hello Diederik,
+
+On 2024-10-11 10:00, Diederik de Haas wrote:
+> On Fri Oct 11, 2024 at 9:40 AM CEST, Dragan Simic wrote:
+>> Following the hierarchical representation of the SoC data that's been 
+>> already
+>> established in the commit 296602b8e5f7 ("arm64: dts: rockchip: Move 
+>> RK3399
+>> OPPs to dtsi files for SoC variants"), add new SoC dtsi file for the 
+>> Rockchip
+>> RK3399S SoC, which is yet another variant of the Rockchip RK3399 SoC.
+>> ...
+>> The RK3399S variant is used in the Pine64 PinePhone Pro only, [1] 
+>> whose board
+>> dts file included the necessary adjustments to the CPU DVFS OPPs.  
+>> This commit
+>> effectively moves those adjustments into the separate RK3399S SoC dtsi 
+>> file,
+>> following the above-mentioned "encapsulation" approach.
+>> ...
+>> ---
+>> ...
+>>  .../dts/rockchip/rk3399-pinephone-pro.dts     |  23 +---
+>>  arch/arm64/boot/dts/rockchip/rk3399-s.dtsi    | 123 
+>> ++++++++++++++++++
+>>  2 files changed, 124 insertions(+), 22 deletions(-)
+>>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
+>> 
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts 
+>> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> index 1a44582a49fb..eee6cfb6de01 100644
+>> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+>> @@ -13,7 +13,7 @@
+>>  #include <dt-bindings/input/gpio-keys.h>
+>>  #include <dt-bindings/input/linux-event-codes.h>
+>>  #include <dt-bindings/leds/common.h>
+>> -#include "rk3399.dtsi"
+>> +#include "rk3399-s.dtsi"
+>> 
+>>  / {
+>>  	model = "Pine64 PinePhone Pro";
+>> @@ -456,27 +456,6 @@ mpu6500@68 {
+>>  	};
+>>  };
+>> 
+>> -&cluster0_opp {
+>> -	opp04 {
+>> -		status = "disabled";
+>> -	};
+>> -
+>> -	opp05 {
+>> -		status = "disabled";
+>> -	};
+>> -};
+>> -
+>> -&cluster1_opp {
+>> -	opp06 {
+>> -		opp-hz = /bits/ 64 <1500000000>;
+>> -		opp-microvolt = <1100000 1100000 1150000>;
+>> -	};
+>> -
+>> -	opp07 {
+>> -		status = "disabled";
+>> -	};
+>> -};
+>> -
+>>  &io_domains {
+>>  	bt656-supply = <&vcc1v8_dvp>;
+>>  	audio-supply = <&vcca1v8_codec>;
+>> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi 
+>> b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
+>> new file mode 100644
+>> index 000000000000..e54f451af9f3
+>> --- /dev/null
+>> +++ b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
+>> @@ -0,0 +1,123 @@
+>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+>> +/*
+>> + * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
+>> + */
+>> +
+>> +#include "rk3399-base.dtsi"
+>> +
+>> +/ {
+>> +	cluster0_opp: opp-table-0 {
+>> +		compatible = "operating-points-v2";
+>> +		opp-shared;
+>> +
+>> +		opp00 {
+>> +			opp-hz = /bits/ 64 <408000000>;
+>> +			opp-microvolt = <825000 825000 1250000>;
+>> +			clock-latency-ns = <40000>;
+>> +		};
+>> +		opp01 {
+>> +			opp-hz = /bits/ 64 <600000000>;
+>> +			opp-microvolt = <825000 825000 1250000>;
+>> +		};
+>> +		opp02 {
+>> +			opp-hz = /bits/ 64 <816000000>;
+>> +			opp-microvolt = <850000 850000 1250000>;
+>> +		};
 > 
-> Rotational block devices can be detected in NVMe through the rotational
-> attribute in the independent namespace identify data structure.
-> 
-> Extend nvmet with support for the independent namespace identify data
-> structure and expose the rotational support of the backend device.
+> Is there a reason why there isn't a line separator between the various
+> opp nodes? Normally there is one between nodes.
+> Note that in rk3588-opp.dtsi there are no separator lines between the
+> opp nodes, while they do exist between other nodes.
+> And in rk356x.dtsi the opp nodes do have a separator line.
 
-Most of this patches looks fine, but what it really is, is just an
-implementation of the I/O Command Set Independent Identify
-Namespace data structure.
+That has also bothered me. :)  I already had a look around in various
+dts(i) files long time ago and there seems to be no preferred layout.
 
-NVMe actually requires more for rotational media support (quoting
-from section 8.1.23 in the NVMe 2.1 Base Specification):
-
-A controller that supports namespaces that store user data on rotational media
-shall:
-
- a) set the Rotational Media bit to ‘1’ in the NSFEAT field of the I/O
-    Command Set Independent Identify Namespace data structure (refer to
-    the NVM Command Set Specification) for any namespace that stores data
-    on rotational media;
- b) support the Rotational Media Information log page (refer to section
-    5.1.12.1.22);
- c) support the Spinup Control feature (refer to section 5.1.25.1.18);
- d) support Endurance Groups (refer to section 3.2.3); and
- e) set the EG Rotational Media bit to ‘1’ in the EGFEAT field in the
-    Endurance Group Information log page for each Endurance Group that
-    stores data on rotational media.
-
-So we'll need to implement a bit more here.  Most of this should be
-pretty trivial stubby code, though.
-
-> Signed-off-by: Keith Busch <kbusch@kernel.org>
-
-This also needs your signoff if you pass it on.
-
+In this particular case, it's better to have no separator lines because
+that's what we already have lacking in rk3399.dtsi, rk3399-t.dtsi, etc.,
+so running something like "diff rk3399.dtsi rk3399-s.dtsi" makes it easy
+to see what actually differs in the RK3399 SoC variants, without having
+to filter out any whitespace differences.
 
