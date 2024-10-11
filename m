@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-361023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FAC599A27F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:12:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B314599A281
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882AC1C239A4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 575B81F28678
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:12:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E1122141C8;
-	Fri, 11 Oct 2024 11:12:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA9C021500F;
+	Fri, 11 Oct 2024 11:12:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnPCyOrO"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LpBIKj1o"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A25C17D2;
-	Fri, 11 Oct 2024 11:12:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3F1E17D2;
+	Fri, 11 Oct 2024 11:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728645123; cv=none; b=JqxRWbx1VedsE7k9lFd928ZcMWVUBjWln61xVD44gTfo39ga50OFhUb0lO9FI2CwnWuU78DWSW6Ua4Lh+jWgGD1o7RjPYUioH2zVUcAbViqZwR4X6hNPDNDYxpktFSEjCUGwqdoyel2SPi/T9sBpzrwlW5u6M+Ne/ys2+ZmgEgk=
+	t=1728645150; cv=none; b=GkqAjQD/siDg8OxVkyfvd6hWWsi8q5kSMENYNJjsKZzzJNLKEKgHlFABh/7G65WGkpOLDIQcI8MZEKIeNtLGnMTYZz+cY+qxViY8M6R3mVPcHFGA1QEbFjgzkoXoTtzZDBA+vQTyNoiFHnrGbYn6PQUAfJIcSlIxFKutaH7/FL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728645123; c=relaxed/simple;
-	bh=DEmYEmYU3NnZlSQYYji4FxCI1BKEZ732GjLFqAgUjQQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=grOm0i7FrpEzZ0TWMZ4WRuBndmgzNjLauF4qCx7TfFOGyTkDl3rMXgQxYCXo7TNyGh2l4NcoveVmkq1K9W0fXHg5tcbSuRjVHN3bCnWb+GeQETthL4YnBd08R1gCP+Th3pL/lMU7JAL6sbwabQRpNmQ0nxJrfUVk+D8vkv/tSFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnPCyOrO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AB60C4CEC3;
-	Fri, 11 Oct 2024 11:12:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728645123;
-	bh=DEmYEmYU3NnZlSQYYji4FxCI1BKEZ732GjLFqAgUjQQ=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=PnPCyOrOcNlVfCcl+yBn1DnsDzxq5DNp7V+JXEOqdVd9PKr65su8mwN/GankW06px
-	 isYnqYNjSN1PscycuiXb9SedWI8D0iZKhySh+fBKoa99lyA64a2mu5kRPj0eH7jpaF
-	 Q7tfLyRTa/nXXgYOvRxbNlL0veRnuw4BPI0trr8ISGohnKyPbKgc7O7DoOKfQLEUbF
-	 t9iM1soMse1vv7jBgnQhNg4OvAPlXGwJhcXy9OwLWTLXSBNJgF1Jzcz9Xcc4KQbOSK
-	 Io59X3Xpp1c+ispeXa5sdyaFeXgljJmVmleE6BIndL34EJk5E2BcmOUyZCEU49mrph
-	 ZSVEu98yWjj7g==
-Date: Fri, 11 Oct 2024 13:12:00 +0200 (CEST)
-From: Jiri Kosina <jikos@kernel.org>
-To: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
-cc: linux-input@vger.kernel.org, Benjamin Tissoires <bentiss@kernel.org>, 
-    Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v5] HID: corsair-void: Add Corsair Void headset family
- driver
-In-Reply-To: <20241008233030.395126-3-stuart.a.hayhurst@gmail.com>
-Message-ID: <nycvar.YFH.7.76.2410111311431.20286@cbobk.fhfr.pm>
-References: <20241008233030.395126-3-stuart.a.hayhurst@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1728645150; c=relaxed/simple;
+	bh=GjFn+RXzDnuXWLSd+mRX9b2+JvLHsAtjbnQenqOhY7o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V9GwuqMHxVKNwxuvP//w0Dl26VuJXwXgyacpkBXNN01UlX9kCagjw0xubCrU2dN8LGs4sS6JhilojRcXRTmknI5Uk2KTyNOO1dX61DFZDmeuyk+7hFjJLblbhEVHE/LINxIuAhQ9QpJytCNUcDNUL0/ytKzdYUz8vPGTOfAquWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LpBIKj1o; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728645148; x=1760181148;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=GjFn+RXzDnuXWLSd+mRX9b2+JvLHsAtjbnQenqOhY7o=;
+  b=LpBIKj1oBjQvswkK13KXM9GGKTvRIY7AJZphyoJ+jiQ2tiJL0XRIu4WD
+   NHvP8F2vHhsT9u3mvIOmjbjMnde4YA4rIOrzMkUoH/FGbFzOrUy4bFg7B
+   bFpusS4lMGUDFCiouxfnrwUBvA28+WGs5mqizKv4U/bnTnrawuZlmux4s
+   3wkHZC6bg0zD9Z2IMQugqGVwNzXhsC/7u3mUuHVsiAFUPIz77oXcymFsR
+   77m23ZGMehyYgsDhmGt068AACvoUb+fUuaEbyP7Z6g2Kvx4HW3Lzp0o0E
+   3lDOSCKWIh0LjmIJRwq5RIdjwbXbwqd9o7s+cqY1svDtMu/J3+8VbaR80
+   Q==;
+X-CSE-ConnectionGUID: 7zEgB/flQZyQguLCze1Y6Q==
+X-CSE-MsgGUID: H5ZArsgPQYSRLH0n69sCcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="28151015"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="28151015"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:12:27 -0700
+X-CSE-ConnectionGUID: 7x+1jgOnRKCXwgXho0SGyQ==
+X-CSE-MsgGUID: +UmUCXfeTm2o0qp3eRMp1A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="76797912"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 04:12:24 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szDZF-00000001s68-3E56;
+	Fri, 11 Oct 2024 14:12:21 +0300
+Date: Fri, 11 Oct 2024 14:12:21 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Arnd Bergmann <arnd@kernel.org>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Jarred White <jarredwhite@linux.microsoft.com>,
+	Perry Yuan <perry.yuan@amd.com>,
+	Easwar Hariharan <eahariha@linux.microsoft.com>,
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
+Message-ID: <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
+References: <20241011061948.3211423-1-arnd@kernel.org>
+ <20241011061948.3211423-2-arnd@kernel.org>
+ <Zwj1p3uMEA24a0sU@smile.fi.intel.com>
+ <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Wed, 9 Oct 2024, Stuart Hayhurst wrote:
+On Fri, Oct 11, 2024 at 09:59:46AM +0000, Arnd Bergmann wrote:
+> On Fri, Oct 11, 2024, at 09:53, Andy Shevchenko wrote:
+> > On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
 
-> Introduce a driver for the Corsair Void family of headsets, supporting:
->  - Battery reporting (power_supply)
->  - Sidetone setting support
->  - Physical microphone location reporting
->  - Headset and receiver firmware version reporting
->  - Built-in alert triggering
->  - USB wireless_status
-> 
-> Tested with a Void Pro Wireless, Void Elite Wireless and a Void Elite Wired
-> 
-> Signed-off-by: Stuart Hayhurst <stuart.a.hayhurst@gmail.com>
-> ---
-> 
-> v4 -> v5:
->  - Changed kernel version in sysfs docs to 6.13
->  - Use CONFIG_HID_CORSAIR instead of CONFIG_HID_CORSAIR_VOID
-> 
-> v3 -> v4:
->  - Added missing <linux/device.h> include
->  - Added missing newline, fix indent
->  - Use hid_hw_raw_request return code directly for wireless sidetone
->  - Use battery status enum for remaining values
->  - Use of devm_kasprintf() to create battery string
->  - Moved corsair_void_request_status error reporting to callers
->  - Simplified corsair_void_request_status
->  - Removed battery_struct_size, use sizeof(*battery_data) instead
->  - Removed unnecessary curly brackets in send_alert_store
-> 
-> v2 -> v3:
->  - Use __free(kfree) helper to free allocations
->  - Combined similar condition checks
->  - Check power_supply was created successfully before saving it
->  - Removed explicit initialisation of return value in corsair_void_probe
->  - Use preferred syntax for drvdata's struct allocation size
->  - Removed named success exit point from driver probe
->  - Removed unused driver probe exit point
-> 
-> v1 -> v2:
->  - Added a module author email address
->  - Removed unused variable (psy_cfg)
->  - Corrected status request buffer size from 12 bytes to 2 bytes
->  - Use enums for battery status
->  - Use kmalloc instead of kzalloc where applicable
->  - Use __le16 type for cpu_to_le16
->  - Use DEVICE_ATTR_RO and DEVICE_ATTR_WO to create attributes
->  - Simplified corsair_void_set_sidetone_wired
->  - Cleaned up patch description
-> 
->  .../ABI/testing/sysfs-driver-hid-corsair-void |  38 +
->  drivers/hid/Kconfig                           |   3 +
->  drivers/hid/Makefile                          |   2 +-
->  drivers/hid/hid-corsair-void.c                | 829 ++++++++++++++++++
->  4 files changed, 871 insertions(+), 1 deletion(-)
->  create mode 100644 Documentation/ABI/testing/sysfs-driver-hid-corsair-void
->  create mode 100644 drivers/hid/hid-corsair-void.c
+...
 
-Applied to hid.git#for-6.13/corsair. Thanks,
+> >> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
+> >> +		*value = BIT_MASK(width);
+> >> +		return AE_NOT_IMPLEMENTED;
+> >
+> > Perhaps it has already been discussed, but why do we need to file value with
+> > semi-garbage when we know it's invalid anyway?
+> 
+> It's not strictly necessary, just precaution for possible callers
+> that use the resulting data without checking the error code.
+
+Do you have any examples of that in the kernel?
+
+> The all-ones data is what an x86 PC would see when an I/O
+> port is read that is not connected to any device.
+
+Yes, but it's not what your code does.
 
 -- 
-Jiri Kosina
-SUSE Labs
+With Best Regards,
+Andy Shevchenko
+
 
 
