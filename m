@@ -1,134 +1,141 @@
-Return-Path: <linux-kernel+bounces-360829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FA3E99A04B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:41:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3028399A04E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:42:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6A7284D66
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D697E1F23987
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C61720FA8E;
-	Fri, 11 Oct 2024 09:41:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kK/SpNBV"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ED420CCF6;
+	Fri, 11 Oct 2024 09:42:39 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61C1419413B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:41:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F7FF19413B;
+	Fri, 11 Oct 2024 09:42:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728639695; cv=none; b=gHqP/9/aqyoCIVbUV1fEuiLk357WjSthaY5t+M+ut5jbk+z0HGT+SJUvV3s3/8oGuXwwN7QUpgzuUkYPebF4z1cbftOOubQl2uufnzvYK+1LX1/F0p9WMAE3LYIBmsaScMAgQlNVBJOm744JrYvXVy69wz7BQ5cuWLzHIl2uJY0=
+	t=1728639759; cv=none; b=oldONrGTnD7Z9ykteVmBSo6PbnXq538X5aksYk2eEKKFl4quQxKjpDDDw93iujEJEmR8VmejdXFDqR+yslmQySk37BVLU2Gp9XDLfpZLHfNoNr20LuqqyWNOrLOtkRC27KhsR9dGOMH6ioV+SOFMl2cyYEQoWDv8ADX5S17eNpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728639695; c=relaxed/simple;
-	bh=LB/cH7x2pzJ5VQbbrLYaY3EItf/Da6k4gcFzSYfv/e4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AyPdGh8GP4++tz2QPG72wsY2snbdAL0GpucVSp/FdffOwzmf+xSONPuVb429Di6o9ynPRFfRZTp3xXjJg9keGjEPZ0Iq/e6Jh/wL8IxHuR03PQZnd+Aw9VbhJ/nOTUn+CvwQPETZ0imCxKZJhkvNPrksx0WnNtWhnVR2OPtFG7c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kK/SpNBV; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c9428152c0so1577212a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:41:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728639692; x=1729244492; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eFkvV2tZLZ/lndmyybryC8gPmrkbcqQYe/2yy1vWRjI=;
-        b=kK/SpNBVJL9rjb04xMzY1+kVp5QqktPjWtjYEeYfOSGsW62AeRQFzqKsM7CXWovk1E
-         q4msfv76Svs9LBH+PnfKHB/V2xRt0Va0umQSgmEgw69+HVvpt9ktL2HyY9NvCrxRspS0
-         JPScdQmsgGEccAMCDG6kJrcnjhERlkeBm5AjOP6+x8qSkemiJZygFXYFYsRxUVWzcseT
-         LSDVkq/wZQOs4UkMsxtKch//izFEigmWkIw23p9Y9JUGz3oQsdwWY6kArN/d0IIEo24B
-         DQWvu+xjOVBn0OnRt37oCjSUoI00Y7Lij60bXdJtn9jNzF2s67dNRVsXwDK0Fw1Dw+W8
-         iQJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728639692; x=1729244492;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eFkvV2tZLZ/lndmyybryC8gPmrkbcqQYe/2yy1vWRjI=;
-        b=DFKDXtVi4Q2e3Zo3M45jYG2gHYgoIIMZPHtlp8o+YdjLv2MRHuVBqfJ3BToMTjdUze
-         H0bNGi8c5lJv+LcwW/aNK7uOsk/TN4xfv5mvjGYApcsSxzg4xXr0HvHwysriCUGhb4Mf
-         vN/d3k6t53nGXxzWCqSLietIENrIKV/yl/hltLtUzZEIn9GAZb5sLyw6BF9yG/s1ZFHf
-         bq0abAblOXi3W4qMEwyo8uBABN6/tSuTEMO4fmhnwCpuLxFzgAAyjee9KhRO5TTAvgyY
-         MAqNcLPvhHgnZigbE7oIkcRU3UUJpHbuK8CMEHspnPimsCNrHtdsfebmR57tUPqJY+sM
-         AORA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvbCTYv8nSntQlR+B5XIyazXo+ABk53vuRC/C9qpS/xHNlfdRBaf5tkTFQ6dQIv5pLBctccZCjrJJgXRY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfXsCJKA0udpjyHk6EEBKhAIfU0lDd9gSVEe/SNjEmt5LYNHSw
-	KXYog4UNDiULlzuLZBOH8Qvza3vTC82JnGW60mpjubOJUVCuTnTMprVYXervNvk=
-X-Google-Smtp-Source: AGHT+IHV0FWz8LaMOoLNl/WDkD1DXo5etIuNQysLEeSCJN2NProFBfMgBdzY2Dvu325k2nHOpuwjZw==
-X-Received: by 2002:a17:907:e6df:b0:a8a:91d1:5262 with SMTP id a640c23a62f3a-a99b957fdd6mr177786666b.28.1728639691710;
-        Fri, 11 Oct 2024 02:41:31 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80c0723sm191604066b.135.2024.10.11.02.41.30
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 02:41:31 -0700 (PDT)
-Message-ID: <d394fb33-2fe4-4a5a-b6fa-7f5598aede9b@linaro.org>
-Date: Fri, 11 Oct 2024 10:41:30 +0100
+	s=arc-20240116; t=1728639759; c=relaxed/simple;
+	bh=/a+9b5ouLrp1o+mJiuqLbe+ifCCr4IT5ucpHB+gPjsM=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=qanbhuuqCypPH6DgUHJ/CJJTKc54YzQp4H2iKtum5T6ajKWuf+m809yal6bIA1FQdLEBuZlVVfUL2OmEIqMCF6lqUV1UIg3xMs4rUhZ43WgVz6L2GylrPzuZd0oR4j3xWF3vCF7RrDAoKoOn2XGiR5v8qQdBVCnQrzfTIWzoOvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XQ1qk6BXrz6K9N5;
+	Fri, 11 Oct 2024 17:42:10 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id ED8A014010C;
+	Fri, 11 Oct 2024 17:42:33 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
+ 2024 11:42:33 +0200
+Date: Fri, 11 Oct 2024 10:42:32 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+CC: Abhash Jha <abhashkumarjha123@gmail.com>, Linux Kernel Mailing List
+	<linux-kernel@vger.kernel.org>, Linux Next Mailing List
+	<linux-next@vger.kernel.org>, <gregkh@linuxfoundation.org>
+Subject: Re: linux-next: build failure after merge of the iio tree
+Message-ID: <20241011104232.000042a9@Huawei.com>
+In-Reply-To: <20241011154241.511878bd@canb.auug.org.au>
+References: <20241011154241.511878bd@canb.auug.org.au>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: camss NULL-deref on power on with 6.12-rc2
-To: Johan Hovold <johan@kernel.org>, Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 11/10/2024 10:33, Johan Hovold wrote:
-> Hi,
+On Fri, 11 Oct 2024 15:42:41 +1100
+Stephen Rothwell <sfr@canb.auug.org.au> wrote:
+
+> Hi all,
+>
+Thanks Stephen,
+
+I'll call these out (I think we have 3 of them now) when I send Greg a pull request as
+probably best place to tidy this up is when merging into char-misc which has
+merged rc2 with Al's patch.
+
+Greg, let me know if you'd rather I handled these in the iio tree
+(probably a merge of rc2 as I'd rather not rebase)
+
+Jonathan
+
+
+> After merging the iio tree, today's linux-next build (x86_64 allmodconfig)
+> failed like this:
 > 
-> This morning I hit the below NULL-deref in camss when booting a 6.12-rc2
-> kernel on the Lenovo ThinkPad X13s.
+> drivers/iio/dac/ad5770r.c:20:10: fatal error: asm/unaligned.h: No such file or directory
+>    20 | #include <asm/unaligned.h>
+>       |          ^~~~~~~~~~~~~~~~~
+> drivers/iio/adc/max1363.c:37:10: fatal error: asm/unaligned.h: No such file or directory
+>    37 | #include <asm/unaligned.h>
+>       |          ^~~~~~~~~~~~~~~~~
 > 
-> I booted the same kernel another 50 times without hitting it again it so
-> it may not be a regression, but simply an older, hard to hit bug.
+> Caused by commits
 > 
-> Hopefully you can figure out what went wrong from just staring at the
-> oops and code.
+>   c2c4826cfa46 ("iio: adc: max1363: Convert to get_unaligned_be16")
+>   0f87813bc338 ("iio: dac: ad5770r: Convert to get_unaligned_le16")
 > 
-> Johan
+> interacting with commit
 > 
+>   5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
 > 
-> [    5.657860] ov5675 24-0010: failed to get HW configuration: -517
+> from Linus' tree (in v6.12-rc2).
+> 
+> I have applied the following merge fix patch.
+> 
+> From: Stephen Rothwell <sfr@canb.auug.org.au>
+> Date: Fri, 11 Oct 2024 15:35:57 +1100
+> Subject: [PATCH] fix up for asm/unaligned inclusions in ad5770r.c and max1363.c
+> 
+> Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+> ---
+>  drivers/iio/adc/max1363.c | 2 +-
+>  drivers/iio/dac/ad5770r.c | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
+> index d59cd638db96..d065b1ade95a 100644
+> --- a/drivers/iio/adc/max1363.c
+> +++ b/drivers/iio/adc/max1363.c
+> @@ -34,7 +34,7 @@
+>  #include <linux/iio/trigger_consumer.h>
+>  #include <linux/iio/triggered_buffer.h>
+>  
+> -#include <asm/unaligned.h>
+> +#include <linux/unaligned.h>
+>  
+>  #define MAX1363_SETUP_BYTE(a) ((a) | 0x80)
+>  
+> diff --git a/drivers/iio/dac/ad5770r.c b/drivers/iio/dac/ad5770r.c
+> index 12c98f3e62a5..7d7f5110d66a 100644
+> --- a/drivers/iio/dac/ad5770r.c
+> +++ b/drivers/iio/dac/ad5770r.c
+> @@ -17,7 +17,7 @@
+>  #include <linux/regmap.h>
+>  #include <linux/regulator/consumer.h>
+>  #include <linux/spi/spi.h>
+> -#include <asm/unaligned.h>
+> +#include <linux/unaligned.h>
+>  
+>  #define ADI_SPI_IF_CONFIG_A		0x00
+>  #define ADI_SPI_IF_CONFIG_B		0x01
 
-So this caused it, I guess the sensor failed to power up.
-
-You've booted 50 times in a row and hit a corner case where the sensor 
-didn't power up leading to a NULL deference.
-
-So, two bugs I'd say.
-
-- What is the cirumcstance where the sensor doesn't power up
-- What's the NULL either entity * or entity->pad I'd say.
-
-<snip>
-> [    6.594915] Call trace:
-> [    6.594915]  camss_find_sensor+0x20/0x74 [qcom_camss]
-Hmm, not sure looking at what we have.
-
-                 pad = &entity->pads[0];
-                 if (!(pad->flags & MEDIA_PAD_FL_SINK))
-                         return NULL;
-
-Is pad guaranteed after entity->pads[0] ?
-We dereference it like its guaranteed.
-
-Anyway thanks for the report, should be enough start digging.
-
----
-bod
 
