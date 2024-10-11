@@ -1,129 +1,156 @@
-Return-Path: <linux-kernel+bounces-360287-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BEEC29997EA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE679997EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C41E91C24E94
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01364280C58
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09E4A194085;
-	Fri, 11 Oct 2024 00:23:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EADE4A06;
+	Fri, 11 Oct 2024 00:31:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Eabn3HjJ"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LpXFY4sm"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E552E33E7
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E180635;
+	Fri, 11 Oct 2024 00:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728606201; cv=none; b=hZyWrSQh2APDq1e0ygDK2DGsjOdErl7iB4h4u75x/k+BqBVuRsO1M8MFmCMvaORb6yq3RflY74M7RsZi4KcfrPT1PU8+mPI0gsvo1KorBU5ELb8lJGo08THbOU0zBgTMkgee2kEQamsZcx8R553b+zNcEoGjH9iGhtgha+W6SlY=
+	t=1728606708; cv=none; b=RxdNnhpPsUZenDXbxVsnPfGNzB1rOjOKdRLGhak0nDWMO8DNrOaWsjtkIcZzOIZZyX8yP4C3ukOwuN3DwveO43EwsBX6+ypK0NgTjQ7hr7Ar9eD3slFsmtb4TN5VjFqRVfTSJ2BkTj84zBUzx6Yrp3yOC42BFeWLzenE8/daVTg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728606201; c=relaxed/simple;
-	bh=IdU0NaITwVmuazq/pnPGvgKsS/eq1DvtYLNflhg9uP4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mxVbWZH05oB4WHyDfagmdVX/ReWK4bNjQkfjjekxmsZcZ7YMoTINf+8rnzNpJtI1XnrdGvUpjt1Mdr+5hd/QgxcEfYbfiVP6QNlLTtfSxHWCwP9XLtdqdPra1OHOjbO4U4eqHxmpisPMQ9G7pCpgr/LDufyMhvzeRocMDA6qdnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Eabn3HjJ; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-288349b5a30so119989fac.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:23:19 -0700 (PDT)
+	s=arc-20240116; t=1728606708; c=relaxed/simple;
+	bh=F4BtsFiVX7x2rfeUPCkR60/f3abJBEkIYsc6FplV7sc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Pyv5ZLUydSbFV/0+cz8VfATi1cc0xZWMCPpqPuIVkN96dgJAzc8tLnvax7oxGGgZihmn/4rxBRYlRpLTUlRF/BN7Enki6/rVDEAoYuiDLxuAyKjmVASCtYLCRcJbQhx9cMglX/6kccU2GKlHQzOPoervGotQ2j9UJ82GsqgEMoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LpXFY4sm; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20b90ab6c19so14788345ad.0;
+        Thu, 10 Oct 2024 17:31:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728606199; x=1729210999; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=IVGdgRMRF72j9LkSnHZOZlGd3on28rqlWSf6lpgKKqM=;
-        b=Eabn3HjJsGByZktmfwlcsO/ZN51+EgTXxF+GDyS/pwXx/9Kh9q3HC0FE0y98+L8a48
-         ZGdUYIB3LkG157e+rezSvZ5mTwKmA1qzTMOukLXXQRvWV1JZoGTofz8DQsraKOvT18+v
-         P1o3dzu/UnkyVkhHSuXhkJh0152QP6Lllde/k=
+        d=gmail.com; s=20230601; t=1728606706; x=1729211506; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=tekWhDCN5toSUCUqsw16CTcau0DYG46Y6c1PLwZiPkk=;
+        b=LpXFY4smPAa66i/7noNqqnAdHzvHAytVG/IUn29DJmZbZiXH1W0xPDypLApQMThHkL
+         6wElh7VEcM+o8aXHyFqOjpM90JFZb9k+KzRb+6gqPqvIxJ0nkbDhPJuCFNoOCZ2AP1kY
+         sZpos1HiNz5wVUVJZdQuW45Sj/KWccbYhL7r628id2gSRn0ifsrm801ZK1dq5lKQMKpc
+         RobMVqeSx682H9Z+tyHRCY1eUc3SdI+OeFjpo2GVHZznRT2V19xurgLtLJG4vzynwzmZ
+         4M2VleJjiiaaH9yaqvVXvsLxJWrWH+Ph44SBvrz7/+6sLh4ZGo82JbLDeeSJMQYu3CQW
+         WXzg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728606199; x=1729210999;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=IVGdgRMRF72j9LkSnHZOZlGd3on28rqlWSf6lpgKKqM=;
-        b=fBJaqefaOdyE7TrepKXmAdZmtajszr9APu6XNfgqtovr/TShFeUNSH36tLxAoU+x39
-         dMw6S6hHJtmy3n/3/dvRVuwdcQn9DIOhh1OqB8m7gmi9oAAhqD2DQd790SV6nnEk2U5c
-         hH/IQ3Nrhn54p1uNUFnjtDj+LvAIh7QYeKxYkrpFzYOridHUhpwWNAPc/svfYn68bCmW
-         MRylzaoiJ+In6DFXMZcTB30RArJ/bWre/c6OqPw6xok6LMTSE7Ne2K2lRKuRbPCBC5K2
-         FLhezjRL9n6yQsI2Z/GmRKaQ0o7hBkwoi83wsPzUEvJ9JuiUr2x0e1FDUdLYA2IxiiCc
-         +/7g==
-X-Forwarded-Encrypted: i=1; AJvYcCWYNTiABHpfTZDcJrWGkPZJuJ2kDIQDiVPYq7xvr/o/JVZsriFoy9f/IQjMWOixOfVfogX3iS/9TX1sQHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUJd6LjGzxo4MvemPToCQlN1FsY2ul80QDOrv4nRRQQGR10PAw
-	6lTVf0JryCZ66tNxSJdlLRAbmEMv9ogGiEfZln7006W2tCvDZoeUVlLooer49N3PECLcws91Ja5
-	LIuKK5JIX2A99K72AE/wv6gRprIgNQ8GoScxG
-X-Google-Smtp-Source: AGHT+IFT9pJJLCUSM/YLQyqqRxIfC3K7gw6udoC8IuTRrW138RcWE2mO/y2HCtMWqB0/IdaYqzd2MKMsfG/AmfyOKCo=
-X-Received: by 2002:a05:6870:7252:b0:260:ccfd:1efe with SMTP id
- 586e51a60fabf-2886ddd8c92mr182982fac.6.1728606199035; Thu, 10 Oct 2024
- 17:23:19 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728606706; x=1729211506;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tekWhDCN5toSUCUqsw16CTcau0DYG46Y6c1PLwZiPkk=;
+        b=wuQkCu3c3Lb00QMDJXVvgmqXUfHt1ikoFN7kFHHjjRZn+hTWQBLNSo2mW80CY6AUKR
+         wTTebG4en+ioHkYgO4agPYk9x1DUzYgAbuwBgcnKxDTdEvjGJA2JUjOWOYlS/vBXyKLc
+         AiHIk9QkrcrKzZXaGERcnKELKsoippIoAYbeDdHMBWriDTnIJLDgJFW5FP1BJdlonOAt
+         ywLYoO2CUrgad2fBEHthHOUAT97TKc33vKGYOWy9eIhMj1LJsUrcqCuu6Q4oVeaG1XeC
+         6ExopnFFKIWitm1wccACiIxPilKFYmE5xuQZT1adTsvF0bqi5AZkl3Yo7UIR7kCT86Uq
+         X5Tg==
+X-Forwarded-Encrypted: i=1; AJvYcCXKZFwXQwR166WaX+eoztfdGSaIU5DaLn+mQ0lswj1C5Zf+wDPIIW+13r8npNQg39XJvFTgdw8U/XvW@vger.kernel.org, AJvYcCXOjvjzt44e8miW+tXc7NDqYuc2Uz6rBNGdABUpQ2rb1qQuY6fdj0azwmmZn4FaHNrmeGG6paSrofX9zTji@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1euJscgY1eK6ISGps3uRfBGSW0+YHqBj+R80tVi8lKYWu4yhW
+	PKqyao/+rNDlRIML5uLdq3P0AJ4ShxWJvG1kLt+59PJ6Y2tBUSzE
+X-Google-Smtp-Source: AGHT+IHUvRrkj3FkAVO0d+YRG+WVM1cjdUJiXP6ZpBkhyprfTNny88vxjsdCgMjhLkqdqnaNMYAmtg==
+X-Received: by 2002:a17:902:d491:b0:20b:8aa1:d53e with SMTP id d9443c01a7336-20ca16bdc6bmr9881955ad.44.1728606706355;
+        Thu, 10 Oct 2024 17:31:46 -0700 (PDT)
+Received: from [172.19.1.53] (60-250-196-139.hinet-ip.hinet.net. [60.250.196.139])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad33b5sm14865485ad.37.2024.10.10.17.31.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 17:31:45 -0700 (PDT)
+Message-ID: <037102f1-3e8d-4b76-a9d2-a23fde7a502a@gmail.com>
+Date: Fri, 11 Oct 2024 08:31:41 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008040942.1478931-2-jeffxu@chromium.org> <20241008041804.1481453-1-jeffxu@chromium.org>
- <5e1ef8a0-f063-4166-9d93-cf047cdd2792@infradead.org>
-In-Reply-To: <5e1ef8a0-f063-4166-9d93-cf047cdd2792@infradead.org>
-From: Jeff Xu <jeffxu@chromium.org>
-Date: Thu, 10 Oct 2024 17:23:06 -0700
-Message-ID: <CABi2SkXecdseZBeEJOeP8boP7aEAf815-1H6eMHDy=a4d1oXMg@mail.gmail.com>
-Subject: Re: [PATCH] mseal.rst additional fix
-To: Randy Dunlap <rdunlap@infradead.org>
-Cc: akpm@linux-foundation.org, keescook@chromium.org, corbet@lwn.net, 
-	jorgelo@chromium.org, groeck@chromium.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, jannh@google.com, 
-	sroettger@google.com, pedro.falcato@gmail.com, 
-	linux-hardening@vger.kernel.org, willy@infradead.org, 
-	gregkh@linuxfoundation.org, torvalds@linux-foundation.org, 
-	deraadt@openbsd.org, usama.anjum@collabora.com, surenb@google.com, 
-	merimus@google.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, 
-	enh@google.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 2/2] mtd: rawnand: nuvoton: add new driver for the
+ Nuvoton MA35 SoC
+To: Miquel Raynal <miquel.raynal@bootlin.com>
+Cc: richard@nod.at, vigneshr@ti.com, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, nikita.shubin@maquefel.me, arnd@arndb.de,
+ vkoul@kernel.org, esben@geanix.com, linux-arm-kernel@lists.infradead.org,
+ linux-mtd@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240927020749.46791-1-hpchen0nvt@gmail.com>
+ <20240927020749.46791-3-hpchen0nvt@gmail.com>
+ <20241001215755.5c2f8465@xps-13>
+ <8d5e7755-17fd-4860-bcb0-8c1de04bf0c5@gmail.com>
+ <20241008105230.7fd25438@xps-13>
+ <02098767-19ce-407e-88be-24c6259c4053@gmail.com>
+ <20241009100450.362e3556@xps-13>
+Content-Language: en-US
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+In-Reply-To: <20241009100450.362e3556@xps-13>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 8, 2024 at 9:37=E2=80=AFAM Randy Dunlap <rdunlap@infradead.org>=
- wrote:
->
->
->
-> On 10/7/24 9:18 PM, jeffxu@chromium.org wrote:
-> > From: Jeff Xu <jeffxu@chromium.org>
-> >
-> > Change "overwrite" to overwrites"
-> >
-> > Signed-off-by: Jeff Xu <jeffxu@chromium.org>
-> > ---
-> >  Documentation/userspace-api/mseal.rst | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/Documentation/userspace-api/mseal.rst b/Documentation/user=
-space-api/mseal.rst
-> > index 41102f74c5e2..54bbcce330ec 100644
-> > --- a/Documentation/userspace-api/mseal.rst
-> > +++ b/Documentation/userspace-api/mseal.rst
-> > @@ -97,7 +97,7 @@ Blocked mm syscall for sealed mapping
-> >     The first set of syscalls to block is munmap, mremap, mmap. They ca=
-n
-> >     either leave an empty space in the address space, therefore allowin=
-g
-> >     replacement with a new mapping with new set of attributes, or can
-> > -   overwrite the existing mapping with another mapping.
-> > +   overwrites the existing mapping with another mapping.
->
-> No, that one is correct as is.
->
-Ah, yes. Please ignore this additional patch.
+Dear Miquel,
 
-> >
-> >     mprotect and pkey_mprotect are blocked because they changes the
-> >     protection bits (RWX) of the mapping.
+Thank you for your reply.
+
+
+On 2024/10/9 下午 04:04, Miquel Raynal wrote:
+> Hi Hui-Ping,
 >
-> --
-> ~Randy
+>>>>>> +		return 0;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	ma35_nand_dmac_init(nand);
+>>>>>> +
+>>>>>> +	writel(mtd->oobsize, nand->regs + MA35_NFI_REG_NANDRACTL);
+>>>>>> +
+>>>>>> +	/* setup and start DMA using dma_addr */
+>>>>>> +	dma_addr = dma_map_single(nand->dev, (void *)addr, len, DMA_FROM_DEVICE);
+>>>>>> +	ret = dma_mapping_error(nand->dev, dma_addr);
+>>>>>> +	if (ret) {
+>>>>>> +		dev_err(nand->dev, "dma mapping error\n");
+>>>>>> +		return -EINVAL;
+>>>>>> +	}
+>>>>>> +
+>>>>>> +	writel((unsigned long)dma_addr, nand->regs + MA35_NFI_REG_DMASA);
+>>>>> Please enforce a dma mask of 32 (even though it might be the fault).
+>>>> I will change it to dma_addr & 0xffffffff.
+>>> That's not what I mean, I believe you should use the dma API to ask for
+>>> a mapping within the accessible 32-bit address range. The
+>>> dma_mapping_error() check should return an error if that's not the
+>>> case. Then you can safely write the value.
+>> Here is my misunderstanding: just fill in the dma_addr directly,
+>>
+>> no type conversion is needed. I have already tested it.
+> FYI, it only works because the default DMA mask for your device is gonna
+> be 32 bits. If the reality (what your peripheral DMA can do) was
+> different than this, you would have to set a different mask explicitly
+> to make sure the dma-mapping step would not provide buffers which are
+> out of reach.
+
+Sure, I will keep that in mind. However, due to the memory architecture 
+of the MA35,
+
+which is designed for a maximum of 4GB, there won’t be any situation 
+exceeding 32 bits.
+
+Thank you.
+
+
+> Thanks,
+> Miquèl
+
+
+Best regards,
+
+Hui-Ping Chen
+
+
 
