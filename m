@@ -1,120 +1,203 @@
-Return-Path: <linux-kernel+bounces-360818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59BED99A027
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:29:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 841C999A030
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733AF1C22BB4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:29:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2C8F61F2431E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AFA20C49E;
-	Fri, 11 Oct 2024 09:29:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0JYwjVO"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D55804
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:28:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A1620FAB7;
+	Fri, 11 Oct 2024 09:33:32 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 566DF20FA9F;
+	Fri, 11 Oct 2024 09:33:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728638939; cv=none; b=f0jPtzxqZIJX+wdASrFEtNT8FuUyNP6jskuFc31PUar4ThStXH1d8RzbLUHud02XsSLjah3OlaNWjJ6nNKE+lFkbJlfST4jvrM3kxbQtv5goXNVc/5maATvOXe+q7gqxCHuJq9/PfVf634ZfxuIvVql2gvG7RJ22op+C6XspQSo=
+	t=1728639211; cv=none; b=ijGe/LIW0SB+G/vy8Z7cr+KUl4n8kokuGts/m90d2mfZaTEcvM8588XjbrpyWMsMx0YrcVaLgEUc/yLW5Fr1+nOdAM4WpGDrdcYIj6ygrrvBJ1iX0V37EbUHY54G2H/j0NGGeeFLk/R390Ubro+XTa4uOPvI9+IoDuZ1Qh6rCsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728638939; c=relaxed/simple;
-	bh=DltDeVYJEIb6wjca1o7bFaNWh22hJNIaTsco4M0fMzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=flbqtEWluQJ1g6/p8PfmjwraiCDK01E7YeCs3NUQLG9DPE3i5KGWD9+pVtfRYhjhSNWlVTbetyC9mSyqd+Un7szQd4JEUdmgFtI/barOJLOljJCOoTfzEgIKn1Ef+106U25ueQTUTZyJvJyj3cvU7AwukOEGcRUTjh6jyDThApM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0JYwjVO; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d58377339so357071f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:28:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728638936; x=1729243736; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3TCoDAR3p+NDgfps8OlJnbGKnp0R3MeEWSzHOxiQY0I=;
-        b=G0JYwjVOmsppUfkGh2OByNk70IarIL6uyAStv2jEJCq8DSCJpanb7SMvPcYJ2/xyQ0
-         JRkGBm9ZAhnVkqdjtlRFW65Ue4D54da5VSVwkHWjM9ueHeaZzBGKw5MvWGrPv5jvqxZE
-         dmPfbKGu3x7r5btEbBttkfSncW6G27rdP7tvLJyRck0jT0yhO14Bya1azt4I/+AM4Tuf
-         NfTHcdMeaWBZBgKeLiY5aPRORKuZ6Euu8oTOPRyvqQt0A6YOlYyW8Io47v7LKFi7OFBV
-         gEpLGJQVY+kH6ce75Lx9tTsFe4NxwDU81okz+USANS2sEsTcAMWAD2Z7Vf9WxPczMSaG
-         d8jg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728638936; x=1729243736;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3TCoDAR3p+NDgfps8OlJnbGKnp0R3MeEWSzHOxiQY0I=;
-        b=rTfr7Nu9zoDGzs4hmcgBfTZo/qEyY+0mVVSUDtlTpquTFbm8qhF8NcnVcUAkgkBIPc
-         G6qHxMs7r/NdlJuHb5MoYCtX7CmZlfVgFpv4mESFcDaaB+0lfipwOFo7/QhvhCp/+Y+V
-         eFLat1T9h5lqmV8i5T8TMWxz2BWnnq+Pnvy6qySLAEMpFY4qY/zrquUah765JRTYk0No
-         B5pkD87S5NUmeojv4Gc8dwZjszJA2XtAABug2f7JXDM0ZtAwZS/Yrvg7e4Nj4DCR/3ay
-         GhZ9YS0RTManLXb3pdkojEBvcr+UqLf1379ER8/QvtZa80oD/s1ICSi4Q819HsTbZOWv
-         jUbw==
-X-Forwarded-Encrypted: i=1; AJvYcCVcq2VwrLtmmwGtKYLol9CR9VCYkFaF1iNXHWbO3ZTjOthUHIAt/pjVQwoEylsob2CUzK94OpzPof5hAQY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwqC48bu1kabFevo+rVNH3yCglbGWmA7cpoesYHuUMBqYGRP5oN
-	E9v4lkSfXiLCtKdcjol9RwAFvL+dZF9iN016+14L11+uXWyBPUYJ40L5Ui32FluemRntuS938gY
-	ZteqVCRD+Xoe9XwvmeZA2qTqFxjDbtMqwWsYTdw==
-X-Google-Smtp-Source: AGHT+IG8wW1q8UJWHHq4y9KQZM4c6D7AmGKumiUzVkMrFvBY3yCJMkHghO6Wg3mIMaH1uDi6/A1L+L4KOCuGGEPI4z4=
-X-Received: by 2002:a5d:5270:0:b0:374:c3e4:d6b1 with SMTP id
- ffacd0b85a97d-37d552ade68mr1496679f8f.44.1728638936030; Fri, 11 Oct 2024
- 02:28:56 -0700 (PDT)
+	s=arc-20240116; t=1728639211; c=relaxed/simple;
+	bh=M0d+ANDehZEebyJHx2IcY4rTbs80ZSrqNjo1Xmet/O4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MXCFeJCilycQJwjSIp3O6s/k8K0clHApp/4qo28ObrnjeODcDn0z99EIYF/DA55Yh3o5X8UCzLwbhiGqGLB0FX2aAIUSUGiBRHp28O8uI+l6DuCNgWpvr3n/kx0kkbDIq2h8hRptTwonk7k7grguBD3WmR9rJW+1SWHhv/ZRGoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.2.5.213])
+	by gateway (Coremail) with SMTP id _____8Bx22rg8AhnsmQTAA--.28485S3;
+	Fri, 11 Oct 2024 17:33:20 +0800 (CST)
+Received: from localhost.localdomain (unknown [10.2.5.213])
+	by front1 (Coremail) with SMTP id qMiowMBxXuTf8AhnWK8jAA--.48225S2;
+	Fri, 11 Oct 2024 17:33:19 +0800 (CST)
+From: Bibo Mao <maobibo@loongson.cn>
+To: Huacai Chen <chenhuacai@kernel.org>,
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>
+Cc: loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-mm@kvack.org,
+	kasan-dev@googlegroups.com,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	WANG Xuerui <kernel@xen0n.name>
+Subject: [PATCH] mm: Define general function pXd_init()
+Date: Fri, 11 Oct 2024 17:33:18 +0800
+Message-Id: <20241011093318.519432-1-maobibo@loongson.cn>
+X-Mailer: git-send-email 2.39.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
-In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
-From: Christopher Obbard <christopher.obbard@linaro.org>
-Date: Fri, 11 Oct 2024 10:28:45 +0100
-Message-ID: <CACr-zFAT9tbmH+YUBLazUjzH+uyjeKSewpd=XFr3HBd7=jaMwA@mail.gmail.com>
-Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when
- width is not set
-To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
-	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxXuTf8AhnWK8jAA--.48225S2
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
+	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
+	nUUI43ZEXa7xR_UUUUUUUUU==
 
-On Sun, 6 Oct 2024 at 21:52, Barnab=C3=A1s Cz=C3=A9m=C3=A1n
-<barnabas.czeman@mainlining.org> wrote:
-> Many qcom clock drivers do not have .width set. In that case value of
-> (p)->width - 1 will be negative which breaks clock tree. Fix this
-> by checking if width is zero, and pass 3 to GENMASK if that's the case.
->
-> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
-> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
-.org>
-> ---
-> Changes in v3:
-> - Remove one of the fixes tag.
-> - Link to v2: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v2-1-b8=
-25048b828b@mainlining.org
->
-> Changes in v2:
-> - Pass 3 to GENMASK instead of 0.
-> - Add more Fixes tag for reference root cause.
-> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f7=
-0ba55f415e@mainlining.org
-> ---
->  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+Function pmd_init() and pud_init() are duplicated defined in file kasan.c
+and sparse-vmemmap.c as weak function. Now move them to generic header
+file pgtable.h, architecture can redefine them.
 
-Hi Barnab=C3=A1s,
+Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+---
+ arch/loongarch/include/asm/pgtable.h |  2 ++
+ arch/mips/include/asm/pgtable-64.h   |  2 ++
+ include/linux/mm.h                   |  2 --
+ include/linux/pgtable.h              | 14 ++++++++++++++
+ mm/kasan/init.c                      |  8 --------
+ mm/sparse-vmemmap.c                  |  8 --------
+ 6 files changed, 18 insertions(+), 18 deletions(-)
 
-This patch fixes a regression with UFS devfreq on msm8996 (introduced
-with the linked commit in your patch) so:
+diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
+index 9965f52ef65b..8bd653a6fa70 100644
+--- a/arch/loongarch/include/asm/pgtable.h
++++ b/arch/loongarch/include/asm/pgtable.h
+@@ -267,7 +267,9 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
+  * Initialize a new pgd / pud / pmd table with invalid pointers.
+  */
+ extern void pgd_init(void *addr);
++#define pud_init pud_init
+ extern void pud_init(void *addr);
++#define pmd_init pmd_init
+ extern void pmd_init(void *addr);
+ 
+ /*
+diff --git a/arch/mips/include/asm/pgtable-64.h b/arch/mips/include/asm/pgtable-64.h
+index 401c1d9e4409..45c8572a0462 100644
+--- a/arch/mips/include/asm/pgtable-64.h
++++ b/arch/mips/include/asm/pgtable-64.h
+@@ -316,7 +316,9 @@ static inline pmd_t *pud_pgtable(pud_t pud)
+  * Initialize a new pgd / pud / pmd table with invalid pointers.
+  */
+ extern void pgd_init(void *addr);
++#define pud_init pud_init
+ extern void pud_init(void *addr);
++#define pmd_init pmd_init
+ extern void pmd_init(void *addr);
+ 
+ /*
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index ecf63d2b0582..651bdc1bef48 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -3818,8 +3818,6 @@ void *sparse_buffer_alloc(unsigned long size);
+ struct page * __populate_section_memmap(unsigned long pfn,
+ 		unsigned long nr_pages, int nid, struct vmem_altmap *altmap,
+ 		struct dev_pagemap *pgmap);
+-void pmd_init(void *addr);
+-void pud_init(void *addr);
+ pgd_t *vmemmap_pgd_populate(unsigned long addr, int node);
+ p4d_t *vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node);
+ pud_t *vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node);
+diff --git a/include/linux/pgtable.h b/include/linux/pgtable.h
+index e8b2ac6bd2ae..bec5356ee644 100644
+--- a/include/linux/pgtable.h
++++ b/include/linux/pgtable.h
+@@ -90,6 +90,20 @@ static inline unsigned long pud_index(unsigned long address)
+ #define pgd_index(a)  (((a) >> PGDIR_SHIFT) & (PTRS_PER_PGD - 1))
+ #endif
+ 
++#ifndef pmd_init
++static inline void pmd_init(void *addr)
++{
++}
++#define pmd_init pmd_init
++#endif
++
++#ifndef pud_init
++static inline void pud_init(void *addr)
++{
++}
++#define pud_init pud_init
++#endif
++
+ #ifndef pte_offset_kernel
+ static inline pte_t *pte_offset_kernel(pmd_t *pmd, unsigned long address)
+ {
+diff --git a/mm/kasan/init.c b/mm/kasan/init.c
+index 89895f38f722..6b2dac62e63a 100644
+--- a/mm/kasan/init.c
++++ b/mm/kasan/init.c
+@@ -139,10 +139,6 @@ static int __ref zero_pmd_populate(pud_t *pud, unsigned long addr,
+ 	return 0;
+ }
+ 
+-void __weak __meminit pmd_init(void *addr)
+-{
+-}
+-
+ static int __ref zero_pud_populate(p4d_t *p4d, unsigned long addr,
+ 				unsigned long end)
+ {
+@@ -181,10 +177,6 @@ static int __ref zero_pud_populate(p4d_t *p4d, unsigned long addr,
+ 	return 0;
+ }
+ 
+-void __weak __meminit pud_init(void *addr)
+-{
+-}
+-
+ static int __ref zero_p4d_populate(pgd_t *pgd, unsigned long addr,
+ 				unsigned long end)
+ {
+diff --git a/mm/sparse-vmemmap.c b/mm/sparse-vmemmap.c
+index edcc7a6b0f6f..a0c884947861 100644
+--- a/mm/sparse-vmemmap.c
++++ b/mm/sparse-vmemmap.c
+@@ -196,10 +196,6 @@ pmd_t * __meminit vmemmap_pmd_populate(pud_t *pud, unsigned long addr, int node)
+ 	return pmd;
+ }
+ 
+-void __weak __meminit pmd_init(void *addr)
+-{
+-}
+-
+ pud_t * __meminit vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node)
+ {
+ 	pud_t *pud = pud_offset(p4d, addr);
+@@ -213,10 +209,6 @@ pud_t * __meminit vmemmap_pud_populate(p4d_t *p4d, unsigned long addr, int node)
+ 	return pud;
+ }
+ 
+-void __weak __meminit pud_init(void *addr)
+-{
+-}
+-
+ p4d_t * __meminit vmemmap_p4d_populate(pgd_t *pgd, unsigned long addr, int node)
+ {
+ 	p4d_t *p4d = p4d_offset(pgd, addr);
 
-Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
-Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
+base-commit: 87d6aab2389e5ce0197d8257d5f8ee965a67c4cd
+-- 
+2.39.3
+
 
