@@ -1,216 +1,265 @@
-Return-Path: <linux-kernel+bounces-361643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA0899AACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:01:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 257B199AACD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5C0BCB238C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:01:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8CF4A1F2451C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4A0019FA9D;
-	Fri, 11 Oct 2024 18:01:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 491711BE854;
+	Fri, 11 Oct 2024 18:02:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="rtlwow9b"
-Received: from sonic305-27.consmr.mail.ne1.yahoo.com (sonic305-27.consmr.mail.ne1.yahoo.com [66.163.185.153])
+	dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b="gw8uBxt9"
+Received: from mail-io1-f47.google.com (mail-io1-f47.google.com [209.85.166.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68C7019EEBF
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:01:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.185.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99CBD18787F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:02:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728669684; cv=none; b=jWHGMtWPUF9bvaooT+wulNAOx496XnhPDX0gy00ByhtwBZ4Ojb4UKkiDHeDAonQZrSOGiyOQSUofHiWLofzJf6Kuf1+2VLzq3GtLcTqYBiFCGFYqcjj0XE2o4lo7cKc68frKgpvBgGlG7tJQiJqtE6yn7hOJbFqG8jfkEIr8gqg=
+	t=1728669773; cv=none; b=AqiMKZGaJo41/GAkgwMUVA06MtdJJgZJqUZvYSxnw8ORmRpYKXsqv7jtBQHncn9OkZ1IjLGKrYiuBRiCqVfIsZDqRcjofvEZecKGTXh++c6bEtUfvRxxOkoiJcrlOeWIA3NDmLMnCrJg+0E6BdwDLiYxRI9BcgasxX2WQgFAu6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728669684; c=relaxed/simple;
-	bh=h9sy3AusCRKy2qm4CUs+WPB+D2ZOAF/+JCiNkAUrUh8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NIjyB1XeGvm3vAPaHfg8McLFgWTr+l4IWBirY4AkST5YiAo2oO6KS+V9GUpPa172y1DbNwqA5pIVO8o6s7mxZBIPivONSs+pZX7a+MJraUFQpvndKaA+FyxwulsIsfqsOkpp5Exd+Z/ENoBK2jIjyJEwH4CFE4k7o/jhYYY338Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=rtlwow9b; arc=none smtp.client-ip=66.163.185.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728669680; bh=HIh3w2Wv5OrrOmgES6g2plZtYM+9vbHSejXtUulIfvM=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=rtlwow9bUxzL0/yBy3K2qzylw5K5I8G7KQLUkmoh+i8yoSmTIRft9Av06RcprRZ3K4GjLG2wkqDntl4BEmQ3Qv3XpDH4Kkl6yjp0+tzbqJXvjfI4fyP5DN58XbjZfwOE+HzJp2Xu69dMJu0d4fFvfkl2QU0KgZoZsDB664cB/ouKwgHGiOgiPo+IuEVHhL9kgM0dHcXheujTclMN2ZiozO7uZ3NugKSnPfQpkprz8qbrWQOcOM6j23pt8belo04LiIZc/XIr81EzX/hbNp9RrrppASbyqxYXVYHTjlWIE6J0rPHJ/7tyKU59qHUhBxTZP/Z8KchbupE5HpSuCZmlJA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728669680; bh=CEp427t7pg4UNfoYMUMKQlwGtoC71xIEWh5coHwwuIW=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=V+LZwR2IH7qnPKhpoKZ6GFBTgZ1mZVbAlVHh1CYEKQnN5WC7jM9T5Z3Q9jj9+5DPCMofNr+/Z70GpailKxxemuu1JW1k57XVzmJ8qXbf+GKBfgrse18Y3qzLfJpmssa98iueE5VYJLtqyKorVUiF4JOlQAqiiPY1JO1t0EdtZatPzzFVi+d0/bT2Ddi/Uw5quzwQcWGjh+HuCnpTEo/cvbGiYkruKVsLNsLeCfGaBvpv2Q0LbyN7eZu0Liotw6tx878ckW3f9HG6QKD2pqSykNhiaqBRGW1uKRFcNAGKqfyTJPd7iEJZNwO0fMVdKnDOWrIay1MiWGeYtKVZEiHg9w==
-X-YMail-OSG: nFyRJKsVM1l9ru.wT4_SHVhEUM5ex_iHy06TlEdVnUOu5FrUQsFBbb23TnhsYhp
- svvBG4Taq6zelgPhYE6BlKnUTWh47nPNyEP8Oh86P7YaloYdkH029oApT1jcmK52uISCs3tXYBNH
- q.Z.xUYgPkQQs8qZ2b15Qc5ZhRXJl_Xt8gW2vdmYyPSl3ykLKRFd5pUFq80yGCqAhaI9fFgeVaSc
- .Z9pWsXBrB.TY8DXsDU78aQoeUzX1SIck47lqLCpo7.EiGUrv0TK.FKd8l1zMd8M6FkCtCOmUR_n
- 2.r7Y4FBnzhq0H3n1Y25iWmjFQ3v9tHLPDLNUuYHVrMXSYXm5jkS1y7l6uCZjHlzY7CLDR1TDqbd
- PY35c90HXWPeHzvL96sSg35DXGko2YE83_8ISP3xDZyxKxLiXThhIT0U79EZh1R956hPdXXS9kiA
- 7mBQ6l9zfYKDfCaF0KzHDguECNWHjq.wjLz7WHB22cKlzvpY__qK_i4tGgCNKtb788DFl2RkIOuS
- FjmJBQV8wpioiUnblABxIVIdRzaDCRhqh4C78scLXC02ckne7lzQ3cyhcsoPuQ2IEQu.4POrJxLR
- x168N6.hK3sTJbUKskU4K57b0Y0oyaKXASv84vFknDRqYgH6y5BOryKBBZ0nlQ4jG8TSOL4aZacU
- 8Kf.eWnA3.xAsU5Yg2LBPYqh2Er1LvcXcOOw9f1OWUuxxAmjasnW5OtM5czkJ_8uPquXgOiQ.gmn
- ZCj6B1BMhzHFu93oM9b6o9lx4R4ZeiKOLgHmJUs4xcp7CgIfFutdAa.5uWgpF3t8qrmTBng9zSri
- TJeuG3kBn2QPDT4Q9jSdLUZwW.M7jp8OHEvBJ_CHw_rGA5KTSMysNjV3UIhM..uHTs09MeEp9p98
- zBJXpmrh2BbGXRIWe2YJE7wI5C9QGsndkr_uNlVRZUv2zHTY_eA7lBzxfcEzMYNGELse7ji0iTGI
- B6A9LvMh1d7ZuSH8MyQE_uAmMhOKxN2AtVBfVHTp9h6xF1gSkxe2lnzB0OfnI0jwU275ME0.a_ot
- 6kzhexXqXrgQtOY3EegiFO86.PtB4_D9qMhpQwnJsfPRVLtd0JBk5RAWCVk9Zx1FO39jA6FOJKJi
- GndbPLVgUHO.PgOUGwo_A_dJ72q2QuuNsR1KMoFRoSc4iabgOq3D8z9ll7EhK1CpZD1RXx29wqkP
- Os3qkkL1eOmwEJSs4GU13ncbz9KCodiqP1A0CUnTrbGWPOOKN0calGGB4HZNOuWeo8KQ.QAuYnOj
- B_uStj.5wBWsc.wWcAR0NQgXATQJ0rg2BmY2fl9zURvmNaCdGbvpHO7uVO9BXR0lIZqqqZaIhF1d
- 6LpSbSdFgz6XHQSZ_Z9VvFcexyTCmEI0v3nxx8p0IUDLt1W6PRiNaY0XqVeTt0xyvlMGXIqijlm8
- rjtHmNoQnyMYp6RAJvRaHPOMj5So832QNJjJ94QiPVMgZIxwDERvJiI03tRzccpbaow0kCRR9t0B
- SE_Gn7yuIdlthdsESr3SkflTyfLvG1ju.KhH2TV_csDk4ZvCBdsRCUcdwLnm97LpR5uPsTqx.iP1
- w1PWEkdZHtaedVgCh0._jX16dK48bwYghoeCSOhkJLHKwMf3h1TM4NNSsj7LZsOZkMHN6gpkRcK.
- sGeZEl7.ftotmvX2bjMvvj5S__v85nvYn5igeKaTTMRR3vGDUyuU2JypcftBOFAKf1DHtut9phhg
- _.0VvxA0G_Pj0UZVC2nTcxTEvy1j6mHJVHCRwZ5PB0t7kBpwxRjBAlV81E3621hI3arUvQOlvoKE
- nDCzRpcSOVcWsTEhXQlFTsmcWY934iWInyRGkgV.kBMC5AFifYKzRJPqaDPNeg20ibJcdTMTYM5K
- MVhadzWGtlPEqoV5N_BecoN0kDF7cAD5niAvI.hPCtK6gxq8Q8kWYp.VwoesqtzcZW1bvc8nB1qk
- AE89VI3ZzQHJQDFGGO3EJ_3hSIoQb19G2BIwpxmW4EkTe2RQtMf2QMANoXArNVlZeUQIQ9PIIVVE
- 6ljsFOxsoxKWQbkhhavotcZqhAV2LCaO6yQd8z6XDWKhGrVBbQgxt7.3c65rg99Srq4BLgxBhwXr
- oF2Ocf3Nu1Cz.1a5PD9Vvj1DwldLPUSvJAbckmWrGrxt1AKq5PakhM.kXLMzIAP_BTl508DEUOai
- qhixFDIglAma904_dHbH04ZCKgzFgqrC4AtOsQTAi7nrmRHA9gwz_Z4gtoUd0kLPKDBPoIw7Jnh4
- 7HjLjvGL9.JUgTHh7LA1mylvFm1k6HeSJA_UlBbpsg2GiMpz05Rmbu7qkyxw7gGitygEQe87s_Pd
- MxubrNFZTteKjAQZM97tUMAlK
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: f2ad06a5-4ca6-4aa6-bf9e-e85f44e27abc
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ne1.yahoo.com with HTTP; Fri, 11 Oct 2024 18:01:20 +0000
-Received: by hermes--production-gq1-5d95dc458-rx7kt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5098af3afb1e52fb594a7de9db1133eb;
-          Fri, 11 Oct 2024 18:01:17 +0000 (UTC)
-Message-ID: <dee25159-4d17-4f07-9ce5-5d23dae81301@schaufler-ca.com>
-Date: Fri, 11 Oct 2024 11:01:15 -0700
+	s=arc-20240116; t=1728669773; c=relaxed/simple;
+	bh=2tArKpkGxRE5rK5oKWjfHXAVkMI5Qd73dmAKgEbLPnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NzQ5N3w+rO2BL6cSqxGxBDOYhK3y5+b7y0qsTOeRrepXEyWWeG4BLdypgXbKEXmrMANW3rbxePgF5lw99O0pkHy8cfGdtCpJ4sCGyl+GKZWJlqean0He19Qe4w08SIFLcYhAzZTJwauAdzQf/XCzXMdGeb9ekdg53o7NH3w4pq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org; spf=pass smtp.mailfrom=kfocus.org; dkim=pass (2048-bit key) header.d=kfocus-org.20230601.gappssmtp.com header.i=@kfocus-org.20230601.gappssmtp.com header.b=gw8uBxt9; arc=none smtp.client-ip=209.85.166.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kfocus.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kfocus.org
+Received: by mail-io1-f47.google.com with SMTP id ca18e2360f4ac-8354cc1ab0cso78926139f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:02:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kfocus-org.20230601.gappssmtp.com; s=20230601; t=1728669771; x=1729274571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pMcYkWpWyeivAbqZtP5UVS1GNqQj2sCC24l0/oqkyqw=;
+        b=gw8uBxt9aQ5hvtDDr4eykgJrGlGcxT295HcZpW5jnEx6z8hJA4ps26MrXBd0DEbGzN
+         3NXXqr6RS4wC7r2VAK/z8oGH3C6JlTHAPO8O94EJkMOpPZDdvray9+ycS9CIgm9Qa3b/
+         OmH0k2sa4hL8Atj/VqGU14l/SenMkDDe20feXF+ry95o+ANxvZlO6ZBzk/2J51qnxdV8
+         B1JTxnuPq6CE1GsZcgfNMw2RvM6au2wdTKR5JNSmbwC/3ZzUlvg6DekkgfJJIbeZYqCO
+         dZa9N2UCPfH/Wg1d+2njsciKUKSxTKEfTJQDUVmuCP8t4rewdJpeLVwthWeZJf8Kg+0e
+         yPyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728669771; x=1729274571;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pMcYkWpWyeivAbqZtP5UVS1GNqQj2sCC24l0/oqkyqw=;
+        b=hGW5+xyKjUW0cNeBRh9XlA4a6aVsvv1JL5inla6svTb92A4bNxnt2OkCChcVOHL3Wn
+         +tEguw5JxvhhqDBW8lXzEcHqtEHJdBmiascRl5Rmsd8CDARlG78xAm5Oge8Q6W8rUKfm
+         AXWK5OIIb+/t1u1DqD/W1IhKkpW55nng30Eg/5v8EhVFR6UtqvI8fp+OLIoqa3k1mgxl
+         sCvWagt+GSC+K4WwS9w6mIuSg3d3EL1dQO881RCX+pYH6SHHTiK6TkFIQz5R272IKU5N
+         PiFB8Wrpi4VeACiA6TYyKeh0ufetYiervRJ/AeFgUxAxD6iQrD/td16xyh3u+B5NqmIB
+         MTlg==
+X-Forwarded-Encrypted: i=1; AJvYcCUitewbftm6Z1p9+QlF9/gQ1VGuLiTkHc0rWWWdiB5HRYTGt8/ujah5fTljseOl7AkknPIs0zLOKG+un+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQXVueUGF+eJXZSoRe5qfnVwbRacJcPZy0invEqHhwJbA1kHp8
+	qcmks8FmbIfYfAFqABhoR+5EScTuzQeNwwe+OmQJR58KH9FvXETy1iI7EXWS74w=
+X-Google-Smtp-Source: AGHT+IEvpIPXGIzRQMNxeQzv+bllsHSO8I28ATmLkyTfJ1qdrsOYd4bmRd3IJXHaNWBjb0h5DG/K+Q==
+X-Received: by 2002:a05:6e02:1809:b0:3a3:b593:83a4 with SMTP id e9e14a558f8ab-3a3b5f9e4e3mr27520305ab.14.1728669770445;
+        Fri, 11 Oct 2024 11:02:50 -0700 (PDT)
+Received: from localhost ([172.59.225.52])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbad9f13cbsm729879173.75.2024.10.11.11.02.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 11:02:50 -0700 (PDT)
+Date: Fri, 11 Oct 2024 14:02:45 -0400
+From: Aaron Rainbolt <arainbolt@kfocus.org>
+To: Mika Westerberg <mika.westerberg@linux.intel.com>
+Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
+ andreas.noever@gmail.com, linux-usb@vger.kernel.org, mmikowski@kfocus.org,
+ linux-kernel@vger.kernel.org, Gil Fine <gil.fine@linux.intel.com>
+Subject: Re: USB-C DisplayPort display failing to stay active with Intel
+ Barlow Ridge USB4 controller, power-management related issue?
+Message-ID: <20241011140245.3d86e79b@kfocus.org>
+In-Reply-To: <20241011163811.GU275077@black.fi.intel.com>
+References: <20241009220118.70bfedd0@kf-ir16>
+	<20241010044919.GD275077@black.fi.intel.com>
+	<20241010232656.7fc6359e@kf-ir16>
+	<20241011163811.GU275077@black.fi.intel.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] tomoyo update for v6.12
-To: "Dr. Greg" <greg@enjellic.com>
-Cc: Paul Moore <paul@paul-moore.com>,
- Linus Torvalds <torvalds@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- LKML <linux-kernel@vger.kernel.org>, linux-security-module@vger.kernel.org,
- Casey Schaufler <casey@schaufler-ca.com>
-References: <0c4b443a-9c72-4800-97e8-a3816b6a9ae2@I-love.SAKURA.ne.jp>
- <877cavdgsu.fsf@trenco.lwn.net>
- <CAHC9VhRnTrjP3kNXMmzsK4oZL7WD+uH0OuXszEPgTc5YoT5dew@mail.gmail.com>
- <CAHk-=wjLdoBcY-r64oBbKXo3hSEr5AawrP_5GSFQ4NEbCNt4Kg@mail.gmail.com>
- <20241002103830.GA22253@wind.enjellic.com>
- <CAHC9VhRjq4B4Ub7kbD8uLZxL_CKSm=z+poCXBMmcfs=8ETHj3Q@mail.gmail.com>
- <20241008111442.GA23889@wind.enjellic.com>
- <88954576-5e62-4d95-bdf4-3913ffea68c2@schaufler-ca.com>
- <20241011170617.GA5139@wind.enjellic.com>
-Content-Language: en-US
-From: Casey Schaufler <casey@schaufler-ca.com>
-In-Reply-To: <20241011170617.GA5139@wind.enjellic.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On 10/11/2024 10:06 AM, Dr. Greg wrote:
-> On Tue, Oct 08, 2024 at 11:25:16AM -0700, Casey Schaufler wrote:
->
-> Good morning, I hope the week has gone well for everyone.
->
->> On 10/8/2024 4:14 AM, Dr. Greg wrote:
->>> ...
->>>
->>> Which we also believe justifies more attention than what it has been
->>> able to receive in 20 months.
->> You're right. You're also not alone. There are things that you can do
->> that will help get the review you're looking for. Developers who attend
->> to the needs and preferences of reviewers get a whole lot more attention
->> than those who fuss and fume about not getting what they "deserve". My
->> hopefully constructive recommendations are:
-> We put a significant body of code and engineering time on the table to
-> try and improve the Linux security ecosystem.  We did this because in
-> certain circles the value of our approach is understood and there was
-> a desire to have it more generally available.
->
-> We don't believe we 'deserve' anything, review or don't review, it is
-> completely up to everyone involved.
->
-> Believe me when I say we are perfectly capable of supporting our
-> constituencies without contributing a single line of code or comment
-> back to the good of the Linux security commons.
->
-> Our aggravation in all of this is when statements are made regarding
-> serious and supposedly well understood flaws in our approach that
-> 'everyone' agrees to be the case.  Statements that are a complete and
-> utter crock of bullshit meant to simply gaslight the situation that
-> has gone down.
+On Fri, 11 Oct 2024 19:38:11 +0300
+Mika Westerberg <mika.westerberg@linux.intel.com> wrote:
 
-Inflammatory claims regarding motivation are not helpful.
+> Hi,
+> 
+> On Thu, Oct 10, 2024 at 11:26:56PM -0500, Aaron Rainbolt wrote:
+> > > Can you share full dmesg with the repro and
+> > > "thunderbolt.dyndbg=+p" in the kernel command line?  
+> > 
+> > The full log is very long, so I've included it as an email
+> > attachment. The exact steps taken after booting with the requested
+> > kernel parameter were:
+> > 
+> > 1. boot with thunderbolt.dyndbg=+p kernel param, no USB-C plugged
+> > in. 2. After login, hot-plug two USB-C cables. This time, the
+> > displays came up and stayed resident (this happens sometimes)
+> > 3. Unplugged both cables.
+> > 4. Replugged both. This time, the displays did not show anything.
+> > 5. lspci -k "jiggled" the displays and they came back on.
+> > 6. After ~15s, the displays blacked out again.
+> > 7. Save to the demsg file after about 30s.
+> > 
+> > The laptop's firmware is fully up-to-date. One of the fixes we tried
+> > was installing Windows 11, updating the firmware, and then
+> > re-installing Kubuntu 24.04. This had no effect on the issue.
+> > 
+> > Notes:
+> > 
+> > * Kernel 6.1 does not exhibit this time out. 6.5 and later do.
+> > * Windows 11 had very similar behavior before installing Windows
+> >   updates. After update, it was fixed.
+> > * All distros and W11 were tested on the same hardware with the
+> > latest firmware, so we know this is not a hardware failure.  
+> 
+> Thanks for the logs and steps!
+> 
+> I now realize that
+> 
+>   a75e0684efe5 ("thunderbolt: Keep the domain powered when USB4 port
+> is in redrive mode")
+> 
+> was half-baked. Yes it deals with the situation where plugging in
+> monitor when the domain is powered. However, it completely misses
+> these cases:
+> 
+> * Plug in monitor to the Type-C port when the controller is runtime
+>    suspended.
+> * Boot with monitor plugged in to the Type-C port.
+> 
+> At the end of this email there is a hack patch that tries to solve
+> this. Can you try it out? I will be on vacation next week but I'm
+> copying my colleague Gil who is familiar with this too. He should be
+> able to help you out during my absense.
 
-> Hopefully our choice of lingua franca is sufficiently simple and
-> unsophisticated.
+Thank you so much! We have applied the patch to our kernel and are
+recompiling now. I'll report back the results when testing is complete.
 
-Err, no, it's not. For a complete explanation see "When Jargon Becomes Gibberish":
-https://www.youtube.com/watch?v=-7cUnID7vFs
+> Couple of notes about the dmesg you shared. They don't affect this
+> issue but may cause other issues:
+> 
+> > [    1.382718] thunderbolt 0000:06:00.0: device links to tunneled
+> > native ports are missing!  
+> 
+> This is means the BIOS does not implement the USB4 power contract
+> which means that USB 3.x and PCIe tunnels will not work as expected
+> after power transition.
 
-> We would, again, encourage everyone to re-read our previous e-mail
-> where we outlined our concerns over the status of the review that did
-> occur.
->
-> We do respect reviewers, but let's engage in some sense of
-> intellectual honesty.  This is not a situation of some poor lonely
-> overworked individual reviewing Linux code in their mother's basement
-> at night in Gulley, Minnesota while they work at the Cenex Station
-> during the day.
+Good to know, thank you.
 
-HeeHee. There really are hobbyists in situations similar to that.
-I've been one of them. To dismiss them as fictional is pretty insulting.
+> > [    1.416488] thunderbolt 0000:06:00.0: 0: NVM version 14.86  
+> 
+> This is really old firmware version. My development system for example
+> has 56.x so yours might have a bunch of issues that are solved in the
+> later versions.
 
-> Paul has publically stated that Microsoft employees him to maintain
-> the Linux security system because of Microsoft's concern for the long
-> term health and well being of Linux.  In case anyone doubts this or
-> missed it, here is the link:
+Ah, ok. The machine used for reproducing the issue for generating the
+dmesg log was *not* the same machine as the one we did our initial
+testing on, though it was the exact same model. We used Windows to fully
+update the firmware on the machine where we did the bulk of our
+testing, and the exact same symptoms were observed with the latest
+firmware. We'll try to update the firmware on any machines we use for
+future log gathering.
 
-It's pretty rare that a Linux maintainer is paid to do nothing but maintain
-Linux code. Developers who are qualified to be kernel maintainers are usually
-in demand for other, more directly profitable, projects as well. I can't
-speak directly for Paul, but I would be shocked if he gets anywhere close to
-half his work time allocated to the maintainer role.
+Thanks again for your help with this!
 
-> https://lore.kernel.org/linux-security-module/20230608191304.253977-2-paul@paul-moore.com/
->
-> Unfortunately our experience seems to challenge Linus' mantra of:
->
-> "Code talks, bullshit walks".
->
-> Perhaps times have changed for Linux in this new custodial
-> environment.
->
->> 1.	Lead with code. Save the documentation for later.
->> 2.	Incremental implementation. Don't drop the whole mess on the
->> 	reviewers at once. A patch set should be a story, with each patch
->> 	introducing one new element.
->> 3.	Emphasize the similarities with existing implementations. No one
->> 	wants to deal with novel or clever code. If it is familiar, it is
->> 	easy to understand.
->> 4.	Thank your reviewers. Complaints about review latency typically
->> 	increase it.
->> 5.	Do some reviews yourself. That will get in the good graces of other
->> 	reviewers.
->> 6.	Be brief. The biggest single problem with reviewing TSEM has been that
->> 	doing anything takes so long. Multiple paragraph responses to an issue
->> 	don't help. Say it, say it once, say it in small words, and use as
->> 	few of those as possible.
-> We appreciate the insight and recommendations, we will see how and
-> where all of this ends up getting litigated.
->
-> Given the zeal for simplicity embodied in these recommendations, we
-> will assume that adversaries targeting Linux from a security
-> perspective will also choose to limit themselves to simple and
-> unsophisticated means and methods of attack.
+> The hack patch below:
+> 
+> diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
+> index 07a66594e904..0e424b7661be 100644
+> --- a/drivers/thunderbolt/tb.c
+> +++ b/drivers/thunderbolt/tb.c
+> @@ -2113,6 +2113,37 @@ static void tb_exit_redrive(struct tb_port
+> *port) }
+>  }
+>  
+> +static void tb_switch_enter_redrive(struct tb_switch *sw)
+> +{
+> +	struct tb_port *port;
+> +
+> +	tb_switch_for_each_port(sw, port)
+> +		tb_enter_redrive(port);
+> +}
+> +
+> +/*
+> + * Called during system and runtime suspend to forcefully exit
+> redrive
+> + * mode without querying whether the resource is available.
+> + */
+> +static void tb_switch_exit_redrive(struct tb_switch *sw)
+> +{
+> +	struct tb_port *port;
+> +
+> +	if (!(sw->quirks & QUIRK_KEEP_POWER_IN_DP_REDRIVE))
+> +		return;
+> +
+> +	tb_switch_for_each_port(sw, port) {
+> +		if (!tb_port_is_dpin(port))
+> +			continue;
+> +
+> +		if (port->redrive) {
+> +			port->redrive = false;
+> +			pm_runtime_put(&sw->dev);
+> +			tb_port_dbg(port, "exit redrive mode\n");
+> +		}
+> +	}
+> +}
+> +
+>  static void tb_dp_resource_unavailable(struct tb *tb, struct tb_port
+> *port, const char *reason)
+>  {
+> @@ -2987,6 +3018,7 @@ static int tb_start(struct tb *tb, bool reset)
+>  	tb_create_usb3_tunnels(tb->root_switch);
+>  	/* Add DP IN resources for the root switch */
+>  	tb_add_dp_resources(tb->root_switch);
+> +	tb_switch_enter_redrive(tb->root_switch);
+>  	/* Make the discovered switches available to the userspace */
+>  	device_for_each_child(&tb->root_switch->dev, NULL,
+>  			      tb_scan_finalize_switch);
+> @@ -3002,6 +3034,7 @@ static int tb_suspend_noirq(struct tb *tb)
+>  
+>  	tb_dbg(tb, "suspending...\n");
+>  	tb_disconnect_and_release_dp(tb);
+> +	tb_switch_exit_redrive(tb->root_switch);
+>  	tb_switch_suspend(tb->root_switch, false);
+>  	tcm->hotplug_active = false; /* signal tb_handle_hotplug to
+> quit */ tb_dbg(tb, "suspend finished\n");
+> @@ -3094,6 +3127,7 @@ static int tb_resume_noirq(struct tb *tb)
+>  		tb_dbg(tb, "tunnels restarted, sleeping for
+> 100ms\n"); msleep(100);
+>  	}
+> +	tb_switch_enter_redrive(tb->root_switch);
+>  	 /* Allow tb_handle_hotplug to progress events */
+>  	tcm->hotplug_active = true;
+>  	tb_dbg(tb, "resume finished\n");
+> @@ -3157,6 +3191,8 @@ static int tb_runtime_suspend(struct tb *tb)
+>  	struct tb_cm *tcm = tb_priv(tb);
+>  
+>  	mutex_lock(&tb->lock);
+> +	tb_disconnect_and_release_dp(tb);
+> +	tb_switch_exit_redrive(tb->root_switch);
+>  	tb_switch_suspend(tb->root_switch, true);
+>  	tcm->hotplug_active = false;
+>  	mutex_unlock(&tb->lock);
+> @@ -3188,6 +3224,7 @@ static int tb_runtime_resume(struct tb *tb)
+>  	tb_restore_children(tb->root_switch);
+>  	list_for_each_entry_safe(tunnel, n, &tcm->tunnel_list, list)
+>  		tb_tunnel_activate(tunnel);
+> +	tb_switch_enter_redrive(tb->root_switch);
+>  	tcm->hotplug_active = true;
+>  	mutex_unlock(&tb->lock);
+>  
 
-Gordian Knot. Alexander. Just saying. 
-
->
-> Have a good weekend.
-
-Likewise.
-
->
-> As always,
-> Dr. Greg
->
-> The Quixote Project - Flailing at the Travails of Cybersecurity
->               https://github.com/Quixote-Project
->
 
