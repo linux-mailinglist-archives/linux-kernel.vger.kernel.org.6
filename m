@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-361573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3085D99A9FE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0004499AA00
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D825C1F24036
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:30:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0421284B05
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E2A1BE86E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D7BD1C245D;
 	Fri, 11 Oct 2024 17:30:18 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C661B86F7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 282FE1BDABD
 	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:30:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728667817; cv=none; b=VsdE7P9790zCN4DzB2raiob0zzhGvREqG0wojdWWbR7JoRKdqu6o/EB1Lgb/Wj9+bFPKmNEAOA1K2TpIVxp8PfsGqMHtCutyvoORtwKh/46UIH4KHmg7pCGOTgTtZKcm5oHlsM9WDu3MB8EHwQVcqV55Fv17JL9a/LyH4Y5cM9k=
+	t=1728667818; cv=none; b=Gpf7rSOewBtwhUkhxD4q9wu3Lpb6aM2HUEJ8ha8xtJEW+Wxg0FnnnUuzeNPngF235ay+oDohIo1mlhveyzSUlKlh81Oih/YxgNgz7nlTgu9x6oT8Q7y6XRpIXUtTdgUj2G73+2K7MrOy88LbTZqnfMuH0NHp/DnvI+jKKEDSAh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728667817; c=relaxed/simple;
-	bh=4imnt4Y1RNNvYUBfcqZKWK5cNTtWSmt7hPOSiP+t3G8=;
+	s=arc-20240116; t=1728667818; c=relaxed/simple;
+	bh=fVc/pKVvn61lDZ3Pcaw+QbONKopItCa+PSXF7ERArW4=;
 	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
-	 Content-Type; b=q1uXjV6unrhBI1L0rSlpvI83yDij14qRVBuegvVZGRyNXxw6LCDGAd17r9IzfXAPHZPI9Y/u5doCIHqcyiJxfcVEGQ+IzGx5wZ+cA/R5wN167j13Z4ahFojcJ101BRxXHMxKApA0ZtqQq4Ojgm/EoS906U1cBaaRUV7Cz+1wvmk=
+	 Content-Type; b=Qm8pdPVkXGRXU+1RNoLCjiGQrLKLumsE9m4zBosrvxqLXs80zbzl/86Bs8pqbhSBQk/bxuj4z5UJ/3QJWjj7XejeZn5c8r5n6hSuVCIqHgk0AacqRxnQrysJOqusb/oQoTFRcEi1KraHCkPZWq/5cSfdqAJgN40ZlUujC43DktI=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79B3CC4CEC7;
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B588AC4CECE;
 	Fri, 11 Oct 2024 17:30:17 +0000 (UTC)
 Received: from rostedt by gandalf with local (Exim 4.98)
 	(envelope-from <rostedt@goodmis.org>)
-	id 1szJTA-00000001TyN-0DXn;
+	id 1szJTA-00000001Tyr-0sQ7;
 	Fri, 11 Oct 2024 13:30:28 -0400
-Message-ID: <20241011173027.913282122@goodmis.org>
+Message-ID: <20241011173028.071613598@goodmis.org>
 User-Agent: quilt/0.68
-Date: Fri, 11 Oct 2024 13:30:11 -0400
+Date: Fri, 11 Oct 2024 13:30:12 -0400
 From: Steven Rostedt <rostedt@goodmis.org>
 To: linux-kernel@vger.kernel.org
 Cc: Tomas Glozar <tglozar@redhat.com>,
  John Kacur <jkacur@redhat.com>,
- Eder Zulian <ezulian@redhat.com>
-Subject: [for-next][PATCH 1/9] rtla: use the definition for stdout fd when calling isatty()
+ Ba Jing <bajing@cmss.chinamobile.com>
+Subject: [for-next][PATCH 2/9] tools/rv: Correct the grammatical errors in the comments
 References: <20241011173010.441043942@goodmis.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -50,45 +50,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 
-From: Eder Zulian <ezulian@redhat.com>
+From: Ba Jing <bajing@cmss.chinamobile.com>
 
-Use the STDOUT_FILENO definition when testing whether the standard
-output file descriptor refers to a terminal (for better redability).
+The form of "print" should be consistent with "parses".
 
-Link: https://lore.kernel.org/20240813142338.376039-1-ezulian@redhat.com
-Signed-off-by: Eder Zulian <ezulian@redhat.com>
+Link: https://lore.kernel.org/20240902233408.8684-1-bajing@cmss.chinamobile.com
+Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
 Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 ---
- tools/tracing/rtla/src/osnoise_top.c  | 2 +-
- tools/tracing/rtla/src/timerlat_top.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+ tools/verification/rv/src/in_kernel.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/tools/tracing/rtla/src/osnoise_top.c b/tools/tracing/rtla/src/osnoise_top.c
-index 2f756628613d..66e3a4382bc2 100644
---- a/tools/tracing/rtla/src/osnoise_top.c
-+++ b/tools/tracing/rtla/src/osnoise_top.c
-@@ -627,7 +627,7 @@ osnoise_top_apply_config(struct osnoise_tool *tool, struct osnoise_top_params *p
- 		auto_house_keeping(&params->monitored_cpus);
- 	}
- 
--	if (isatty(1) && !params->quiet)
-+	if (isatty(STDOUT_FILENO) && !params->quiet)
- 		params->pretty_output = 1;
- 
- 	return 0;
-diff --git a/tools/tracing/rtla/src/timerlat_top.c b/tools/tracing/rtla/src/timerlat_top.c
-index 8c16419fe22a..94a2f5bbaeb7 100644
---- a/tools/tracing/rtla/src/timerlat_top.c
-+++ b/tools/tracing/rtla/src/timerlat_top.c
-@@ -850,7 +850,7 @@ timerlat_top_apply_config(struct osnoise_tool *top, struct timerlat_top_params *
- 		}
- 	}
- 
--	if (isatty(1) && !params->quiet)
-+	if (isatty(STDOUT_FILENO) && !params->quiet)
- 		params->pretty_output = 1;
- 
- 	return 0;
+diff --git a/tools/verification/rv/src/in_kernel.c b/tools/verification/rv/src/in_kernel.c
+index f04479ecc96c..f2bbc75a76f4 100644
+--- a/tools/verification/rv/src/in_kernel.c
++++ b/tools/verification/rv/src/in_kernel.c
+@@ -332,7 +332,7 @@ static void ikm_print_header(struct trace_seq *s)
+  * ikm_event_handler - callback to handle event events
+  *
+  * Called any time a rv:"monitor"_event events is generated.
+- * It parses and print event.
++ * It parses and prints event.
+  */
+ static int
+ ikm_event_handler(struct trace_seq *s, struct tep_record *record,
+@@ -384,7 +384,7 @@ ikm_event_handler(struct trace_seq *s, struct tep_record *record,
+  * ikm_error_handler - callback to handle error events
+  *
+  * Called any time a rv:"monitor"_errors events is generated.
+- * It parses and print event.
++ * It parses and prints event.
+  */
+ static int
+ ikm_error_handler(struct trace_seq *s, struct tep_record *record,
 -- 
 2.45.2
 
