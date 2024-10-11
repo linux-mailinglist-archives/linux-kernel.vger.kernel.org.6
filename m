@@ -1,152 +1,88 @@
-Return-Path: <linux-kernel+bounces-361432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D7A399A823
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:44:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA5B599A824
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:45:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 63CE5B2317A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:44:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E99051C21E53
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:45:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF9197A88;
-	Fri, 11 Oct 2024 15:44:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZU8g/Erz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4C0B198832;
+	Fri, 11 Oct 2024 15:45:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BEA194AF3;
-	Fri, 11 Oct 2024 15:44:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E991D196D9D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661481; cv=none; b=CweNJCYOFOLEQVjlzmkSwNP/4D9tD+LHnhNO07mXDiMgb1TjLLOU4U4Xh4NBtFL4rjsC/v166E0qqH+n8Kyi5d3ENyHpjk6X3HX8iis27Rl8kGtSY0+RTKLFHLL2ngn+iaiv6/Y26t7VP8ANMZ38ot37MOB+x6n99gV9yjE+ihY=
+	t=1728661505; cv=none; b=SndhlXIfnL4WObUB0Kn52mH7blfYl+qanLMNLR+mpQ2GoKgozoT5Wn8M1dRElAWoQnz3N3xPmllW/R+amdwjXJ/PfkYWeykSSsQ49zMlYlfI28ijvZFHLk6hz3vqVXS+CUDkPQLK/a6rGK23rnIoZavItlbfFKWb41Y/ifKiY84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661481; c=relaxed/simple;
-	bh=5/y9AyZw/R3ZOSr7RfPFOAOHH7Jry8D1rgUwHlE0tCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pV75gRIyhtl7gswxYKXGT1NZs5ZJNNjYZY/Wy4rzarTDClgm+avlNG3Q7qvgMtAsCXvcCOckRm7Z/Hi+P0tw0gD6tFDAimFwt41fJvAqyvoJ8QkqRJKPK5MkdV2iA8k4NmM24EqXEfZ18rmyfF8jjSFpZqk5dJuLzgKSASxElLg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZU8g/Erz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AB46C4CEC3;
-	Fri, 11 Oct 2024 15:44:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728661480;
-	bh=5/y9AyZw/R3ZOSr7RfPFOAOHH7Jry8D1rgUwHlE0tCk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ZU8g/ErzjCWLcSBaAHHaLF4bm0XsM3NVh3HwJ/iP5HPOI4ctHmWGIGv8QQDmOphJH
-	 KMtx165guLEZ95BCqKC/TmhxFUtPHcfTaXAgX28PNydXzvZarmpxSoZfZ4oAjMSJSI
-	 J1dbbngHwmcmjbKGNU/LS6eSwjrnRyw+EqEvjSfb89ptnmAgf3n6Gvb82g5JBBz2OV
-	 9hXtkodDQ5anutmLR8KOrcx2kJAf19aYkVrPKzjadumKgdF2clZ1Q6iPpqqV336cI0
-	 furZ9lsSMuUKieycVmqQVNPT93Y/iTCDKw0/Nls8P6oP4j++hSxewq8dmoMjAvlvkD
-	 qifxIJSGJjS3A==
-Message-ID: <3d1d0822-da66-44c8-a328-69804210123c@kernel.org>
-Date: Fri, 11 Oct 2024 17:44:31 +0200
+	s=arc-20240116; t=1728661505; c=relaxed/simple;
+	bh=+uc0hhAqphTbjudPJIQn/tyiL8OZySdOBLM33j4fMFs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=YPCrKhaXrKHCdmmQdUKnRV3upQDrBHASjLgKVzaEv/FBDBgqj7odWR10VUzgjyk20F8oI8DvQIPCWoL47s9SeJvKqBjJE7b8I7MQnINKf6jIaVDYTUg6XOgJ3uwpbtT0YeVK7Tkx3ZdIHTseOhac1Cey+KvTCDon77UPh8K8PQ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b457f6aeso10098695ab.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:45:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728661503; x=1729266303;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+M7SUVnhOnFY/CM4aPao/KOYlDmXQ1r/N4YzLoeViPQ=;
+        b=hr29Uylgn3Vlj98JjBko1IQvo+Wm4U9Z1ufIvCvrjOJ/e0pn94u4y0OzxZ8i8keM3v
+         4ROxw4Sns9qHSRdZ2Omv64GuWl5L5D263Dm+RQ84BRoiez8VGwm64F967w0mOZnF1GBv
+         IQGUrtJe6NYo45oj7kZHIW/BsgXXD28b3JiWSGRzET1JfD4UFxuulthk3EkMFS0OuqY4
+         DI2awOiUV59Jrl44taYgK5Re5Zs5jqIfcWUjvQNDaoKgavofb8+cHdIFgeWnsgCSt7y9
+         rIxAOX6yEjWDhj4eZdOw/eHaujrT5ehczT3V7wAn/d6QtLpp4Du1GS2Ttrlk0nR0IfKo
+         5HJw==
+X-Forwarded-Encrypted: i=1; AJvYcCX/3ylvmvOWvCmaJaXjCE/e9VrrOaaTyTUVODGBaKwPkqq/7i5dyqvSlQUrC6fIOZIiuSLtRzxOOHgEjBI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZc2lG3TpBQumkiiirgf+Js4oABDHpcLsQL2q4neYB3tGtqyaG
+	AOsDJ3ay9CLnmc7YkVs0v28ySqlC3IJjEPC4OMt3PIcXtmHCa4l7jDBU5a97Q9tUrqiGnQrp3ZL
+	gSBOg5lkVMJVzFjTJ65ec4lISdElS8nzgHdwsETcUbQyybiVwC2WXCEs=
+X-Google-Smtp-Source: AGHT+IFnLIT4yn5vN+MCS2Bt0OuENQRZSOOvbTh8SHAQ3UiRVyple98Ekr6pH0usG/WrfU9qeWsmyLVrYkDwQr6qDegO6lym79Oj
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
- interrupt
-To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Qiang Yu <quic_qianyu@quicinc.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
- andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
- abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
- dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
- <20241011104142.1181773-4-quic_qianyu@quicinc.com>
- <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
- <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:ca4b:0:b0:395:e85e:f2fa with SMTP id
+ e9e14a558f8ab-3a3b5844745mr24141105ab.1.1728661503096; Fri, 11 Oct 2024
+ 08:45:03 -0700 (PDT)
+Date: Fri, 11 Oct 2024 08:45:03 -0700
+In-Reply-To: <b9ce2eb7-1770-4198-97b2-f5d7aa57c3d1@rowland.harvard.edu>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670947ff.050a0220.3e960.0014.GAE@google.com>
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+From: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, sylv@sylv.io, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 11/10/2024 17:42, Manivannan Sadhasivam wrote:
-> 
-> 
-> On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
->>> Document 'global' SPI interrupt along with the existing MSI interrupts so
->>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
->>> link specific events, safety events, etc.
->>
->> Describe the hardware, not what the driver will do.
->>
->>>
->>> Though adding a new interrupt will break the ABI, it is required to
->>> accurately describe the hardware.
->>
->> That's poor reason. Hardware was described and missing optional piece
->> (because according to your description above everything was working
->> fine) is not needed to break ABI.
->>
-> 
-> Hardware was described but not completely. 'global' IRQ let's the controller driver to handle PCIe link specific events like Link up, Link down etc... They improve user experience like the driver can use those interrupts to start bus enumeration on its own. So breaking the ABI for good in this case.
-> 
->> Sorry, if your driver changes the ABI for this poor reason.
->>
-> 
-> Is the above reasoning sufficient? 
+Hello,
 
-I tried to look for corresponding driver change, but could not, so maybe
-there is no ABI break in the first place. Above explanation is good, but
-still feels like improvement and device could work without global clock.
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Best regards,
-Krzysztof
+Reported-by: syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com
+Tested-by: syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=15346f07980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=f342ea16c9d06d80b585
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1456db27980000
+
+Note: testing is done by a robot and is best-effort only.
 
