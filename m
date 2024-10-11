@@ -1,101 +1,144 @@
-Return-Path: <linux-kernel+bounces-360384-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360385-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6F855999A3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:18:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4923999A41
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 88471B235A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:18:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC39282ED7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C2671EABBE;
-	Fri, 11 Oct 2024 02:15:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6BF1F942F;
+	Fri, 11 Oct 2024 02:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q76UtA3K"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OBzk3v/B"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3C41F4FBB;
-	Fri, 11 Oct 2024 02:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95FA41F8F16;
+	Fri, 11 Oct 2024 02:15:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612909; cv=none; b=ltyrEPnC+EgpY3CaK7jQd1F/Dk334KK9RmrserbI14TgCL1EzLT1brnmr6t1QlorzI2iybKD5u5nVSOwVmbCG4TS+k22juoApCk2KtjSLFZ9IvinUsokraH4tVo19tI7wW9z7zMBSTpzN+VaQoKhEVql/6M0lyqC4nqj4dbm8qc=
+	t=1728612932; cv=none; b=QCmLZmgzA3IXeb40vufKCZAy0olw4WCIHQRwf23pRRxuAe50PKSVmspi+iezlNmYjSccFGiBrtDbkomDwbbEkiSaVKLlsz46ufIt9sFWtQxHKYbvN/Jzsmndf++XBTsYEmFyFYumMlFAeo1bC+Ug+nAKTQWw7TR2x79yDAwFUxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612909; c=relaxed/simple;
-	bh=afqQyJJRGa9Py7JgDpniv4pH0blwhuSvGDb4ahRaPxw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=POtYJWp5e3G93w+Y1dH3gSjLrDWi7m6P2RxRfEwUMkezzGcO0Hh0JLUegUQu4VNsZTIjkJN1+y1W++ckGG+ay5pI3pA24/ZrIo/r8t5bfVm4dTBgpWUQUHN7r+QCfKGOXDddE1ArCyHe0vHbC96HOHV+nuH/2GEY1P7COE9g/iY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q76UtA3K; arc=none smtp.client-ip=209.85.210.171
+	s=arc-20240116; t=1728612932; c=relaxed/simple;
+	bh=gKiPKrKK60BJmsa5junoqJcObDYTvmnASwTlUEIPmT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R4gBlF8S0yp7Mv51+3XzwFjwg/2BBvVqh/1am+0CfAzk8qmx3Gln+nOry8BbmpGhdAjFmZHDsTRtc22LGBWq0RJ2aegWRjdbr6TfCrTqvBEiDZNxZ5U2DjQtCTCwQ3/qqpy45PaxxniKS3Riku7UCnDu0W0+lmUa0KM4xgE9teI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OBzk3v/B; arc=none smtp.client-ip=209.85.214.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-71e3fce4a60so9208b3a.0;
-        Thu, 10 Oct 2024 19:15:08 -0700 (PDT)
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20b7259be6fso16491805ad.0;
+        Thu, 10 Oct 2024 19:15:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728612908; x=1729217708; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=afqQyJJRGa9Py7JgDpniv4pH0blwhuSvGDb4ahRaPxw=;
-        b=Q76UtA3KF2lymPO3o+1fM15rU25yb9DMTQh+QPPZmt5ntOPu391PjRcBm0+JZ/il15
-         NRn35rFoJLn+epsmU43YNBhHKfmJuKYGj6ESQLtsZ/2ThW4UqD6WO7uMeIEKidypcDC0
-         wWfZCTh2oryf5VOHk0qzv84gXi5LHeUwj5gvXk6AHQ/NEOYJ6eAGu0OSiSPe8fUiYT7R
-         +hLF6AeanreGS2hrzo02fave6eMtUD0A3KVuOXJVJEdl3l5QfyxgAku/rd7n8RpK40bH
-         vZloY4F2zpYyxjs6QZuQ84EFRMO+3ZIOsRSuL1LaEE8HyacqktmE6WlaTTUd+k9hFzwo
-         +i0g==
+        d=gmail.com; s=20230601; t=1728612930; x=1729217730; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=G70sgRbW5zVDibTqLQGClZ8RjbVJyvgKa5ojU/Ri918=;
+        b=OBzk3v/B9RuhNBUTEH7jFTurJY2cDiar41HEcLcU6PWRoA8jUIjrX2jVz0v27AELY3
+         zxzFeD+hT73MwnVmsnlivRf/zcl5ApJi/cKi6VIKoA/9vefM53mPj4KbmoWf/4GQPe1i
+         /8QieYDAoK5fpmdMFeI78T6uAdv9lWfB3mbf6k3Q+zXWUW1Zuzd58/f4V5EHrlsOkoAE
+         iLJF16twSPddzdYdur6kHPJnjvKpIe4ZQx54QfkkTP2ptbjEY/LKcrXJEiJ5RbTmAlig
+         cLmgrDw3NyhCMHqv5VS83ycUPqAJc+MQMLVqLsoxov9G4ywlaIamJVoPMNNmFF4r/rCV
+         cs2w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728612908; x=1729217708;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=afqQyJJRGa9Py7JgDpniv4pH0blwhuSvGDb4ahRaPxw=;
-        b=R/+7fTam8VBcMSGY+47CWZpRtuKQ1cHBTA5ivOvMSn2knjBY8Vcz7mHPn1Za9uVHtZ
-         8+U9nbVBnHnlcHcd49+blXbCWXurbJDMYw9E5DPj8e/QMyoiR6oFfrJPRy4Nj4P3xfx7
-         N37m0ejqAwHnfH9LOcXbXYEAkkl/0KFy8AcgQaVzXob7mKz9GhrxGcYuIDmwG9Fh5SU8
-         YS1KG9oFxb0WOum2xymCOHNqc0QoCGGtZBYSwUMGI5hKUC+7nxnn96QzaLJe3f8mg1wv
-         1zfmxiv8TUv+AeIerIFzR3okUllqgZVaGWcjXMSiwdAz7URhLODoFCZSbzz7/r6gMWEN
-         C6lw==
-X-Forwarded-Encrypted: i=1; AJvYcCXj2Xk4XMmzP4ZAVv7dCewFPAwMtezrgU4Y2sliWQw69TdHkTnmQMgiaDz4YovciTAuie8jAtp4z/Kp//U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxHrYdqu7TJ2TwsVScU6XutMNCNxKXs7EudEU7LymPOJ/bauYtC
-	VllanLuzJrCv3upL3NXKXf6eCL46kbJCHTdopLNPhywXP9F52Q6t
-X-Google-Smtp-Source: AGHT+IF7F43rjuoSrxjiEloA6/Y0ZsI80N0Wn656yLobEBvQmz/dF90W0nINukyfO7XXZFPkesOb9g==
-X-Received: by 2002:a05:6a00:4f95:b0:71e:21:d2da with SMTP id d2e1a72fcca58-71e38083ec2mr1837618b3a.27.1728612907510;
-        Thu, 10 Oct 2024 19:15:07 -0700 (PDT)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e368932aesm524003b3a.91.2024.10.10.19.15.04
+        d=1e100.net; s=20230601; t=1728612930; x=1729217730;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=G70sgRbW5zVDibTqLQGClZ8RjbVJyvgKa5ojU/Ri918=;
+        b=Z98+kWOdAr1MpG92kr20QJUELAjW+GM68FGunGx0KGGl+CasJs8jDT8iX6XO47Fxzo
+         dbM40f+XbqJu/VhhIwxXXs7hCjLuHZBcnwLP23YAVhnSghBgJb4guF875N7Gp87CrOxG
+         /ahr7a1j00eGfIMsGlYA9Gx3Up3T16vB0bgzCGqlyKKt5ZjWYwXUlS1Io1xNqMkKQhWf
+         BBqr8flwRxsSJ/rg0KQGhQeAgLDoFNdx8FLVThgkAcw3SwstVSFWWSc3vby7l2O7BAYF
+         1rQxSJIxgvxyAK+ca3WTOXoU9I+BRdVeG3FYEHx9Vh4BdJTVLGNLp9GSnyTL8vYhggaw
+         /KkA==
+X-Forwarded-Encrypted: i=1; AJvYcCU96iDsmObkdWUCJEpVN63Wg+KX729Iesvofp3Gk/Oub6H9/ezmS5NSSSlcttOH9guL2aSCOKxyNWLZoX6n@vger.kernel.org, AJvYcCVBuPoWchl2i78Xc0degEp7dh0Ox2EZiAqabZtzQxih9nwjCePhQBMUucKBfhUt4WURVjM2HzC7abPA/g==@vger.kernel.org, AJvYcCW2C7U9Jel80OkzvDSQpVbqKMCtHy3CVQU8SRE8hwqwccDFPgp/OdpXyKiMSIMm2kS8Rp9m6YRGS9TP@vger.kernel.org, AJvYcCXLM+P0cD9EpXVoJWyh02ro3b+3pL3XhLsI7WPsQ13DwBkiH+htrHd2oJLts/d51+ClvB1qTw1WWvWs@vger.kernel.org
+X-Gm-Message-State: AOJu0YzsDgac/jlxVMyyC4rFXTeNDdFMTAMUxDEOZJ/ZM2MG2uCYP4Y7
+	tgUAkACCV9jrLj2lvRU5FRJEUtve+EodoWd1DL5Q1dX6Qou8nat+
+X-Google-Smtp-Source: AGHT+IE+MmEO12vUoLLKgbmMkNfIYHaPi9xzVe//y2m2AiK1pGN+UkN2eoeP1RMMb86Uy/RRTG6kzw==
+X-Received: by 2002:a17:902:f789:b0:20c:9821:69a9 with SMTP id d9443c01a7336-20ca169e77dmr10577485ad.37.1728612929724;
+        Thu, 10 Oct 2024 19:15:29 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c350ee8sm15532475ad.295.2024.10.10.19.15.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 19:15:07 -0700 (PDT)
-Date: Fri, 11 Oct 2024 10:14:55 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, Jesper
- Dangaard Brouer <hawk@kernel.org>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, <xfr@outlook.com>
-Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
-Message-ID: <20241011101455.00006b35@gmail.com>
-In-Reply-To: <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
-References: <20241010114019.1734573-1-0x1207@gmail.com>
-	<601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+        Thu, 10 Oct 2024 19:15:29 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 99E6E4374224; Fri, 11 Oct 2024 09:15:23 +0700 (WIB)
+Date: Fri, 11 Oct 2024 09:15:23 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: ira.weiny@intel.com, Dave Jiang <dave.jiang@intel.com>,
+	Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 13/28] cxl/mem: Expose DCD partition capabilities in
+ sysfs
+Message-ID: <ZwiKOyvXFXfAiOOU@archie.me>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-13-c261ee6eeded@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="oaAeGPAZ1RHcucEh"
+Content-Disposition: inline
+In-Reply-To: <20241007-dcd-type2-upstream-v4-13-c261ee6eeded@intel.com>
 
-On Thu, 10 Oct 2024 19:53:39 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
 
-> Is there any reason that those drivers not to unset the PP_FLAG_DMA_SYNC_DEV
-> when calling page_pool_create()?
-> Does it only need dma sync for some cases and not need dma sync for other
-> cases? if so, why not do the dma sync in the driver instead?
+--oaAeGPAZ1RHcucEh
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-The answer is in this commit:
-https://git.kernel.org/netdev/net/c/5546da79e6cc
+On Mon, Oct 07, 2024 at 06:16:19PM -0500, ira.weiny@intel.com wrote:
+> +What:		/sys/bus/cxl/devices/memX/dcY/qos_class
+> +Date:		December, 2024
+> +KernelVersion:	v6.13
+> +Contact:	linux-cxl@vger.kernel.org
+> +Description:
+> +		(RO) Dynamic Capacity (DC) region information.  Devices only
+> +		export dcY if DCD partition Y is supported.  For CXL host
+> +		platforms that support "QoS Telemmetry" this attribute conveys
+> +		a comma delimited list of platform specific cookies that
+> +		identifies a QoS performance class for the persistent partition
+> +		of the CXL mem device. These class-ids can be compared against
+> +		a similar "qos_class" published for a root decoder. While it is
+> +		not required that the endpoints map their local memory-class to
+> +		a matching platform class, mismatches are not recommended and
+> +		there are platform specific performance related side-effects
+"... mismatches are not recommended as there are ..."
+> +		that may result. First class-id is displayed.
+> =20
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--oaAeGPAZ1RHcucEh
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZwiKOwAKCRD2uYlJVVFO
+o8NIAQCZrs5IPtJRWJ3wy4dqN3eWUxQgLyspoOpH7V3EXTsEbwEAuEOVomNyr5Hp
+JxCkGB4XGrygV0ZUzfdlEEXL1qkYYgo=
+=v9WZ
+-----END PGP SIGNATURE-----
+
+--oaAeGPAZ1RHcucEh--
 
