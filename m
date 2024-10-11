@@ -1,149 +1,154 @@
-Return-Path: <linux-kernel+bounces-360613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360618-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23396999D3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:56:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BECC999D51
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:59:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84950B24007
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:56:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1721EB2247A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:59:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4126A1C1ABE;
-	Fri, 11 Oct 2024 06:55:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B451209F36;
+	Fri, 11 Oct 2024 06:59:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Se78b/Fl"
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com [209.85.128.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Z36q0s2C"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AAB419923C
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:55:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F36209686
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629758; cv=none; b=gqzjgwdoPlC1VOmuk64QwCyb4BtDiJ0fPsJBJm7ZiRzNOBaxKV5YN0EhzoaykckSKwRYQda85dP9D/KoOTUEpkorwm+zs+ZNOTN4LFrIUqZ8a0pyeGuMqMCGcW32aaIuMe1phGis00Aniqm15eAq2bHyloNSf5ifmxHXtgA2hYU=
+	t=1728629975; cv=none; b=o/ZCwoQtodeF8eTQRcZoYiKh6CAphN7JqIo2kYhQWxeag209xfrA756yt53k4V9MSNbiIIxGi7uW3DaEJ8dud1NQqRYhaAgrZOX32426vkeRlIE7yUT/yuArwsATlWcBUS3Er4dEQT8xbcX5d9av3NKFt6LKdkU2wwoyHmtqu/4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629758; c=relaxed/simple;
-	bh=WvPnWHW6EM58Oqe1lVFDfz/QoUAYQ2cItZ0U1ItXlhc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Vp1lAbvwYUc5/eBy6BIXu5JG9HbasPHjWkZ5vaSvoaMiLsIA5INUDsVw1VueVcVzT5oFWGq4IE28rVgBiadS2EOyuEAVtKUxusGot8ctVKpR5owPYJSfvBX+VKQ8SdVbasjBAKIRcEAeXucKpR5WlLKgMfYPtchi1AsJaRsvLJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Se78b/Fl; arc=none smtp.client-ip=209.85.128.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6db836c6bd7so16583837b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:55:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728629756; x=1729234556; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=leCB05U0kuVzNJlGaNnlHWm3c19kiX7kkCoAs5xAlbw=;
-        b=Se78b/FlHbuxHbH6EveZgvG9BynskMK2h6rTNpglq2xsWulM04Sqd7hJpsDatMVtQ9
-         mUkAg7srRg0tOPQVr9DJDhv0UezQ90ItK2kYVMki7yop12B+H2y3Wid2OSZHCzeagbGL
-         HgiiPnM4vjsN7xLvlvPX9AGVYYjOPXchixI1JuOCij+VOLamG+EBjZ4mJrKRabXfronw
-         Bq1W8CwBaJhWx2HO/wahLlj958nPnmBVntZbSnXSLTXm4ZNpaJnAXmP6MglX9NCpdJC+
-         3vqz3Ja+Q4wxE6aUe6dD4bdEsVgou8S0ORcuKYZOaZWsV4h223ylcyYOqS1hz18dUlSJ
-         IQ2w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728629756; x=1729234556;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=leCB05U0kuVzNJlGaNnlHWm3c19kiX7kkCoAs5xAlbw=;
-        b=FizzbsmV9Ps9LC7NFvfpZN8vS0PTckuCQ0w+EMewELr6bzSwvFpATGIdAVjZvzeEP3
-         iUyOnAX+uALufPpqH2N7MQpD/JutOd9S3Cx99FzmVkO4EcoU+S4Qy+OVoqrEdakGpOwY
-         /pCK4y6gAUpzMtttVTnVuvyg592rqV+326VtWVnP4uyqLonG0FkfsL9tOhYgX0efs1jK
-         r2A6YMoGv2ZM/lVnKZtmDxOysHlldXdlTObBBkOHyIdyMmauYMOcDmhWaYNp8BcEwqER
-         wFl330RV3VxVST8VJApFHcuyU/KrvR2GTaXuM6fSrj7M8HiPcTrOErJ8sQfaT2shfoAW
-         N2cA==
-X-Forwarded-Encrypted: i=1; AJvYcCWlvM/8ozOHqclts2lCW9o8e7a5pL8iTxz2qDcgCQsX7bm8L8l507qvoReNRiLCNqzVbmdeZcLN9ot3PNw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzP/Fl1fZ5msaJcviisp1nItR2MR0vOdJYFDhKX1Ue4DICLkTH
-	/M8vS98YDcpReXidL1Z7ns2gDESZVPHUWZ+lWLKfBbPnezeETcsMVsacdQ3foWmbPg7/CgT0d4W
-	PBnAOobI+p0YeqbMArxq9HJ5Xtka+l0DSqtDVNw==
-X-Google-Smtp-Source: AGHT+IH5YCiYsZRowEZPmtFGdrbCCLKiOnoDuw8fJ58ZsrP+V7juvFxX6T6bpQgDnFc1GnkYDzMRc7XK1/rJE9iA3fs=
-X-Received: by 2002:a05:690c:fc3:b0:63b:f919:2e89 with SMTP id
- 00721157ae682-6e3477b9bbcmr12907577b3.2.1728629756126; Thu, 10 Oct 2024
- 23:55:56 -0700 (PDT)
+	s=arc-20240116; t=1728629975; c=relaxed/simple;
+	bh=JdHmTcFa+nm2iysBKEaftSFgG2BVS8vi3HU9lhfDQ9E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=qNu/0ZH0Ig9cVRH+pssHDnGsIVczKegJC0zN3NYUpsXqazWH94M6nscDR7jO+Qk9HxJ1Gfwnq+AMkzFaEq9ecg+byw6swTQugHzPuyBMpF6WS10Qn5H/ri0b7Iy5zaWoKRnahB5mgms7kgI5g6bivyqwoBPIRXJAZMRVQuGqwDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Z36q0s2C; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728629973; x=1760165973;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version:content-transfer-encoding;
+  bh=JdHmTcFa+nm2iysBKEaftSFgG2BVS8vi3HU9lhfDQ9E=;
+  b=Z36q0s2C2qlJdn7QA1FGMsXUiQsTgKKDvwA/ZBgm7hYzldLrDCTBjpg8
+   /lSPDduBw+fG6iX8YTnIlbJT9f0uRTEcdnL9FtLLVHTfEoegtjR8ipWvJ
+   F9QKATSSWgrxAmzNOKXccsHMZXl0o6DKnG6mBuFe+G70gRiCe3ZyaoKyP
+   G2S3/dbSwUGrPjYgbzg1DPnRQVCkJ9V7zU89g5bWgBAy56goBteOG2UZL
+   xj3bDju5Vj3UIsSMViQGQ/rIJxtxC8q/JRRc4aHXKf9WschlJD/15qoo4
+   +11Tu8iQImd+qWRUrIPTaHy7SChERMhw/Gr9vYMf340FefvyL+/4Knsto
+   w==;
+X-CSE-ConnectionGUID: SoSCq8siTsmXZ8x3A1P0Cg==
+X-CSE-MsgGUID: +r4f6NDfRg+aMbV9d0J0aA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="39149351"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="39149351"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 23:59:33 -0700
+X-CSE-ConnectionGUID: 3oJ1+dsmTUuZizomQfM19g==
+X-CSE-MsgGUID: q69F8MBARm+VDKnd1v1Cuw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="107553921"
+Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 23:59:30 -0700
+From: "Huang, Ying" <ying.huang@intel.com>
+To: Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>,  Vlastimil Babka <vbabka@suse.cz>,
+  <linux-mm@kvack.org>,  Alexander Potapenko <glider@google.com>,  Kees
+ Cook <keescook@chromium.org>,  Andrew Morton <akpm@linux-foundation.org>,
+  "Matthew Wilcox (Oracle)" <willy@infradead.org>,  Miaohe Lin
+ <linmiaohe@huawei.com>,  Kefeng Wang <wangkefeng.wang@huawei.com>,  John
+ Hubbard <jhubbard@nvidia.com>,  <linux-kernel@vger.kernel.org>,  Ryan
+ Roberts <ryan.roberts@arm.com>
+Subject: Re: [RFC PATCH] mm: avoid clearing user movable page twice with
+ init_on_alloc=1
+In-Reply-To: <7C05C178-AE68-4899-BC4B-CE83C17A5BF0@nvidia.com> (Zi Yan's
+	message of "Tue, 08 Oct 2024 09:46:28 -0400")
+References: <20241007182315.401167-1-ziy@nvidia.com>
+	<9e4e3094-00a2-43bc-996f-af15c3168e3a@redhat.com>
+	<84D24C40-AC10-4FF7-B5F6-63FADD523297@nvidia.com>
+	<be1a1c1b-4630-41e2-a79a-57447851017d@suse.cz>
+	<b8272cb4-aee8-45ad-8dff-353444b3fa74@redhat.com>
+	<7C05C178-AE68-4899-BC4B-CE83C17A5BF0@nvidia.com>
+Date: Fri, 11 Oct 2024 14:55:56 +0800
+Message-ID: <878quv9lhf.fsf@yhuang6-desk2.ccr.corp.intel.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-11-76d4f5d413bf@linaro.org>
- <olzxobeurhyi76tdn7mq3wegxth4c7a2ys7dikajkx4d5y5z7i@3vkyjy3hg57s> <CABymUCO0u8hOLtie7typUQ3XV4AAds3RhT_hF23WB5Ruiz9AnQ@mail.gmail.com>
-In-Reply-To: <CABymUCO0u8hOLtie7typUQ3XV4AAds3RhT_hF23WB5Ruiz9AnQ@mail.gmail.com>
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 11 Oct 2024 09:55:44 +0300
-Message-ID: <CAA8EJpoioJ1CzeO0mwbQYJWBK0f1RDv-XZ2J7tX0N-Auf5JG2w@mail.gmail.com>
-Subject: Re: [PATCH v2 11/14] drm/msm/dpu: Share SSPP info for multi-rect case
-To: Jun Nie <jun.nie@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, 11 Oct 2024 at 09:54, Jun Nie <jun.nie@linaro.org> wrote:
+Zi Yan <ziy@nvidia.com> writes:
+
+> On 8 Oct 2024, at 9:06, David Hildenbrand wrote:
 >
-> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=
-=E6=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:21=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Wed, Oct 09, 2024 at 04:50:24PM GMT, Jun Nie wrote:
-> > > Share SSPP info for multi-rect case if virtual plane is not enabled.
-> > > Otherwise, the 2nd half of DMA content is not displayed due to sspp
-> > > pointer of r_pipe is null.
-> >
-> > Fixes?
+>> On 08.10.24 14:57, Vlastimil Babka wrote:
+>>> On 10/8/24 13:52, Zi Yan wrote:
+>>>> On 8 Oct 2024, at 4:26, David Hildenbrand wrote:
+>>>>
+>>>>>
+>>>>> I remember we discussed that in the past and that we do *not* want to=
+ sprinkle these CONFIG_INIT_ON_ALLOC_DEFAULT_ON checks all over the kernel.
+>>>>>
+>>>>> Ideally, we'd use GFP_ZERO and have the buddy just do that for us? Th=
+ere is the slight chance that we zero-out when we're not going to use the a=
+llocated folio, but ... that can happen either way even with the current co=
+de?
+>>>>
+>>>> I agree that putting CONFIG_INIT_ON_ALLOC_DEFAULT_ON here is not ideal=
+, but
+>>>
+>>> Create some nice inline wrapper for the test and it will look less ugly=
+? :)
 >
-> Yeah. It is to fix bug in non virtual plane mode. Do you suggest to split
-> to another patch set?
+> something like?
+>
+> static inline bool alloc_zeroed()
+> {
+> 	return static_branch_maybe(CONFIG_INIT_ON_ALLOC_DEFAULT_ON,
+> 			&init_on_alloc);
+> }
+>
+>
+> I missed another folio_zero_user() caller in alloc_anon_folio() for mTHP.
+> So both PMD THP and mTHP are zeroed twice for all arch.
+>
+> Adding Ryan for mTHP.
+>
+>>>
+>>>> folio_zero_user() uses vmf->address to improve cache performance by ch=
+anging
+>>>> subpage clearing order. See commit c79b57e462b5 ("mm: hugetlb: clear t=
+arget
+>>>> sub-page last when clearing huge page=E2=80=9D). If we use GFP_ZERO, w=
+e lose this
+>>>> optimization. To keep it, vmf->address will need to be passed to alloc=
+ation
+>>>> code. Maybe that is acceptable?
+>>>
+>>> I'd rather not change the page allocation code for this...
+>>
+>> Although I'm curious if that optimization from 2017 is still valuable :)
+>
+> Maybe Ying can give some insight on this.
 
-No, I suggest to add Fixes trailer and to move fixes to the top of the seri=
-es.
+I guess the optimization still applies now.  Although the size of the
+per-core(thread) last level cache increases, it's still quite common for
+it to be smaller than the size of THP.  And the sizes of L1/L2 are
+significantly smaller, the likelihood for the accessed cache line to be
+in L1/L2/LLC increases with the optimization.
 
-> >
-> > >
-> > > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > > ---
-> > >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 5 +++++
-> > >  1 file changed, 5 insertions(+)
-> > >
-> > > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/=
-drm/msm/disp/dpu1/dpu_plane.c
-> > > index 904ebec1c8a18..898fc2937954e 100644
-> > > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > > @@ -1042,6 +1042,11 @@ static int dpu_plane_atomic_check(struct drm_p=
-lane *plane,
-> > >               pipe->multirect_index =3D DPU_SSPP_RECT_0;
-> > >               pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_PARALLEL;
-> > >
-> > > +             /*
-> > > +              * Signifies that r_pipe is to be used if the width of =
-the 2nd
-> > > +              * pipe is not 0. This does not apply to virtual plane =
-case.
-> > > +              */
-> > > +             r_pipe->sspp =3D pipe->sspp;
-> > >               r_pipe->multirect_index =3D DPU_SSPP_RECT_1;
-> > >               r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_PARALLEL;
-> > >       }
-> > >
-> > > --
-> > > 2.34.1
-> > >
-> >
-> > --
-> > With best wishes
-> > Dmitry
-
-
-
---=20
-With best wishes
-Dmitry
+--
+Best Regards,
+Huang, Ying
 
