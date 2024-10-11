@@ -1,123 +1,102 @@
-Return-Path: <linux-kernel+bounces-361791-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0F1D99AD12
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:48:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C1A199AD15
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:49:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 835AD1F21F9F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:48:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD0CAB22AC2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:49:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EE541D0F46;
-	Fri, 11 Oct 2024 19:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAF5C1D12FE;
+	Fri, 11 Oct 2024 19:48:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EuJ4qsYT"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l2LSqeHN"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5A001D0DCB;
-	Fri, 11 Oct 2024 19:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 926F01D0E3F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728676128; cv=none; b=NFFiR0NG1DfTYaunyrlNoau9ErWV0P4x2KGzHj2r9D+6g+tsu+oirgoVhYb3jNInSKPvrc13DwmDLEuHJ0kELso9WNVZ6yK3v4MBqrkY2Fg2HNaoN8YHy6jOUBChYyYrF8A9ic3tws95hB7m4TyTSp18KfVzclDrw8gQDDhhyog=
+	t=1728676130; cv=none; b=N+Iv7WqkU07Mgs/6D+nen2/VQWmS6w3Nyq9BRQRIC6ISMuOivY0IduArSzmzFI4kMRq6H2PVsLRsOe+nXtU0fZsRSK9luhUH0YiRPPvpaFUuApEOBpOZa7GkrrlUvQ2bnN37Um3Xsz2MiymMWLshE1XR71hpa/KRhq5nBX+9z84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728676128; c=relaxed/simple;
-	bh=eHR1pJM+yQAJRr+EhCLcm5xM2IPL3wNgQ41k9P8Ch74=;
+	s=arc-20240116; t=1728676130; c=relaxed/simple;
+	bh=nPrrWFEkh/n2rwW9DN6U89zucgrkrCgU+Jm4I59wVB4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lIEblLOYoNyBrx2TBFhlVY8DmDGhN4nSsmWDVGK/nxd+QDPrNMnP2BvebZ7Oe0kYOrtnkt1pxOk+GpeJaJlfJx44Myl4g3e176XFkamLcoXhe5jwC/7sD9eBrbY2aMjo/fKLSiYv+ZhyUjvdCSI57WYUc/5zFcAuVKW8KRsBqL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EuJ4qsYT; arc=none smtp.client-ip=209.85.210.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e02ceccd0so294914b3a.0;
-        Fri, 11 Oct 2024 12:48:46 -0700 (PDT)
+	 To:Cc:Content-Type; b=J5SZBwpplRtsrFVS2ka5hw2uIs5lfAQjwqoqxlp0AvDUZ2U01aHZJPZHnUdfHcxltqm6yM8zPyyKpf0ymy+ViLHV7LcujKbjKmM7cKJnCF32TAa3PB4cEaAS9SRY2G7fBvVduERJXPqW+sSthpBV5xGKsHA+B9CVl6fl5Qu+WYc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l2LSqeHN; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e314136467so22524947b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:48:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728676126; x=1729280926; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728676127; x=1729280927; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=eHR1pJM+yQAJRr+EhCLcm5xM2IPL3wNgQ41k9P8Ch74=;
-        b=EuJ4qsYTMtpL7ptb2A5o8sbXNkWJIkDxx2H6yfQVT6/Ykx2AcFtb6OhQ5TF3R/hYml
-         sAx3bwas+OINEWD8nUU2MQ/wpPLhaMGAp8uVyOaNZwglxP0/wkv8MoVLnMCuW0M87GkK
-         OVg6Y3RpNWVlbm7nlaxReer0AT3SYE1kaTkn05cDOJ/Q19yX0lXCX/1M6jfjjR/yDEu2
-         9+O0Mu4wyhg0dxM0pHzvZ7EpuC+SevDBXfsLcRn1dh1IDiz9ST8IvqqLPMoDU9Bxekt7
-         TyL8LEBP9HHjJpsDfE9VPD8Fd96D68TKzv9rS1jCrSu8acYUlzR3iQfQnNaGoPr5aN7W
-         Aw1Q==
+        bh=nPrrWFEkh/n2rwW9DN6U89zucgrkrCgU+Jm4I59wVB4=;
+        b=l2LSqeHNrPE8sEGGeFbmBXTt2+BCxSfXWqfmcyRwfoWpuCUCGvJZeAVYNvR+ykUqCo
+         b2iWibJH9z/PuViVNVrbkz3JsqsDTpapSVPLE4xBFVOaYhlWzpKTa8U04uVFtpMYqLye
+         vMUQUrsNIF+4QW7XJXkL5HJU53ajZZrtPxQwgoEooi633B+bLzgJw2iSWpgle8aiJ0P4
+         xeEmAeUs/UicS5gbtoZrj1dU6xARWJVxoiFziGx/Dfd+/c5ZLUlMYr2gzX48si58AN1W
+         HMzDT9BSoJEvswGkJqwyhG1HHR4/0TGYmtAys+Tfc6Wd2BeMpQY/++pvLue6LyrFVmNF
+         GEQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728676126; x=1729280926;
+        d=1e100.net; s=20230601; t=1728676127; x=1729280927;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=eHR1pJM+yQAJRr+EhCLcm5xM2IPL3wNgQ41k9P8Ch74=;
-        b=lM+vVSSRy7mC1moOtGQ7VHkM4UbQcD2IJ+KDAbdld71/IujD4nCLtIWLnTiBsoABGA
-         3vQJibx9EzXovkuSfG7xZucZxgU/etko5VqtKOKtKj3cFUmi7drwDWCcR8AjjbFPjg3S
-         gUHMV/hSHWcxL0XHJRLZt/OuckDQh98AHcRahKK/gR8YtLioXErt+zZlABO2HtWz1z6+
-         gKGHlmd0L9+BXgvAEM/xy/qpNJUSmHrljAsdhZ5TJVUp8M10IBkfKMp5I0VOewNoYXAO
-         J7LpCw6Y/HfRhdO4NF08eN571B17dMaKvHdCYakwYXeKAQPjuiz/xDpb4oUOk472gDtu
-         sM0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUS+zmL2T89XJtn/vYfltBiBqjBpZAhKNdggR9xrVE+Iy/Evy3ufRHLwn2E2mC9kZmzdmyBNXsr6L+W@vger.kernel.org, AJvYcCUX/GnPxllPO4CM05HNScN/Uwu2GbThIkLzX93qTpSBBVFlNze+cgGX0TIhYIoG5CaJhrFkocW5sNUhrdZq@vger.kernel.org, AJvYcCUfLgzYWJfPv4whYsWvFZUEqmR4dSyN7YWRW5CwahwPZi0YXyUWzBNmd+r2o2HDfM4NMtQYTr7K1Fef687yPG8=@vger.kernel.org, AJvYcCWTaY0T3jva5TyHxTHZ/PXFr38HkQuFwu0SJ9nCqYIy3vE7AO/1X7nL10mX9v0iG+FssbwFlTPUZyfV9qNuPFkB226r@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyzj8iYKBrI/QNcbZAWb8HFXk21SHqSqQrBYrTEJ4JMJgn/zxvk
-	0jGg5/y011+fU5baK12PpSAeBQGdHly6MhW0KEG/O5AuDsQyyjgQ/UJ05bzHsrpWfBqcUej0oQt
-	cBQpOW1YDQB3dt0c2vZo5xetmfNU=
-X-Google-Smtp-Source: AGHT+IFm+UwkG6WIg1AqvuqnbDwrR2uK/LvnAOy5vxbnvuoTMa/HQ5sfAKze/sYR1OTnuhhXIrv49b/1Hp/O75r3s04=
-X-Received: by 2002:a05:6a00:9494:b0:71e:3ee6:f8a8 with SMTP id
- d2e1a72fcca58-71e3ee6f918mr1949743b3a.1.1728676125868; Fri, 11 Oct 2024
- 12:48:45 -0700 (PDT)
+        bh=nPrrWFEkh/n2rwW9DN6U89zucgrkrCgU+Jm4I59wVB4=;
+        b=O0SagRkrHYlMYi1TmTfmzm+/Vd/BhJ3LN4SCnUu1BzUw1ofywkYEtA3xH7MFcqPSmO
+         wyNXcsk9CfkRt4YGig+EBgXSjplsJGatcICriEau9gyUJ6OnlGNyzJk9Veb5uFvd2KXD
+         fdeyNaazKkHTLfTKu1mNxntg9fbwRy0YKlxMcZewsAyCBZQ2HW9XcYWcHvxr8Zgxk7d5
+         /f0jAptcfTKbLUJcSIE0ERLPKL3n/9FzNyjkELC4UsLYXoBj6eMpXzwfvI3wJRIwR2sY
+         s++BfL8GzX5+yVHLfZ4cYw2BXxaIDRQYz4oCcwq43EJuGwvif0DHORuMYz6e6mkgEEic
+         GngA==
+X-Forwarded-Encrypted: i=1; AJvYcCW5a4/31DqjxQLz5ZnPyAV1aodQsRcodJEADSxtIGtR8Bsd6zmkgaVYNvjfUuNwGm7PV9aaER1GVhLaBN0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzG/3UPn33mLc4BQNlqOxal6Q2FQozbR5Ni9SGNy4b69MVR8C6N
+	9wr2ok04VtF+35xh4xPwfQ0Ktur7fYjR0Spwx7DdYdHkzenAnSR4UkEKTqu0O1JQHs+ntFA2LoF
+	KVwJ4+FcIDAxYusJV0HTaqb9q+Odgp6ko3CvMjA==
+X-Google-Smtp-Source: AGHT+IGcgArKV9Ezyx2JxXIT5g/tpC2AAQqsWGKx7COvsSQwXw4Ct7g3+6rTQ0Ix418MqQv3uMJC5A57ho9IASI8Obs=
+X-Received: by 2002:a05:690c:7442:b0:6e3:1d8c:1224 with SMTP id
+ 00721157ae682-6e32f29c8e7mr61767057b3.20.1728676127524; Fri, 11 Oct 2024
+ 12:48:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-tracepoint-v10-0-7fbde4d6b525@google.com>
- <20241011-tracepoint-v10-1-7fbde4d6b525@google.com> <20241011131316.5d6e5d10@eugeo>
- <CABCJKuesYQWvfScFaqv_rW5ZqAJNn4zK9iOFAmyTaYKO3S5hgw@mail.gmail.com>
- <20241011171251.0bd53f01@eugeo> <CABCJKue7qT9drhgrXPEjBO=gPw79vYELAZxz747Z8WMF=vj2MQ@mail.gmail.com>
-In-Reply-To: <CABCJKue7qT9drhgrXPEjBO=gPw79vYELAZxz747Z8WMF=vj2MQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 11 Oct 2024 21:48:32 +0200
-Message-ID: <CANiq72nOCkzTyJCydHOrkz3MRizb27sDO_5Y_cKEv3oZDNNqqQ@mail.gmail.com>
-Subject: Re: [PATCH v10 1/5] rust: add static_branch_unlikely for static_key_false
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Gary Guo <gary@garyguo.net>, Alice Ryhl <aliceryhl@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
+References: <20241008081555.23465-1-brgl@bgdev.pl>
+In-Reply-To: <20241008081555.23465-1-brgl@bgdev.pl>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Oct 2024 21:48:34 +0200
+Message-ID: <CACRpkdbO6cQL37DNozuePACe5nT-DWgzrrBN8SLEYzrFrJKXPQ@mail.gmail.com>
+Subject: Re: [PATCH] gpio: mvebu: drop dependency on OF_GPIO
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 7:52=E2=80=AFPM Sami Tolvanen <samitolvanen@google.=
-com> wrote:
+On Tue, Oct 8, 2024 at 10:15=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
+
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> It's just one line per helper, but sure, I do see your point.
+> This driver doesn't really depend on interfaces from OF_GPIO so the
+> Kconfig dependency can be dropped.
+>
+> Suggested-by: Uwe Kleine-K=C3=B6nig <ukleinek@kernel.org>
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-I guess we will have a lot of helpers added over time, so even if it
-is one line, it may end up being a lot of lines in total. The rules
-should stay constant, which would be better. Having said that, it is
-true the extra complexity of the rules isn't great either.
+Reviewed-by: Linus Walleij <linus.walleij@linaro.org>
 
-Cheers,
-Miguel
+Yours,
+Linus Walleij
 
