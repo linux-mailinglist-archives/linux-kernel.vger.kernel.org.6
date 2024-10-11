@@ -1,84 +1,77 @@
-Return-Path: <linux-kernel+bounces-360592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360594-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD20E999CFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C995999D07
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:49:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDE1D1C22B29
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E1F8E280BEB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:49:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83E020966A;
-	Fri, 11 Oct 2024 06:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11FD209F30;
+	Fri, 11 Oct 2024 06:48:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TyTCu+jJ"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="GoGcYPsV"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65C64208997;
-	Fri, 11 Oct 2024 06:48:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80A6209694;
+	Fri, 11 Oct 2024 06:48:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629287; cv=none; b=SJ4iRk3HfbUE0cvh6FnI7jWyWWbaKG5ny33SvvIEeaVK70p5Fym4+OkshP+OjmsBwglF8gFxCGOIeou5uf1bumltNOOQJyFHCzCx3iIeyDZsvgxhpAlzaw2uOMkChE5aBXy8W8AsFp7usUToQsKFkhnSHT2pcgye/QmjBp3mcno=
+	t=1728629304; cv=none; b=QpZUVWSiEdcGyfCcOVKoK473rpDAf9IYlbVZ1lUWeDzzMW0Gtvc5xgCBRHxSYn7zt8dF5sCY572IbUuvZdHlujkLfvWKemnSsIexmod8Gu08aSA2270ZrE9QOFtEW8q/Pvj5HA5xjSRT9ixhn1BGGTvjWWC7pNtg6nPrPkOpPAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629287; c=relaxed/simple;
-	bh=roUlvYh8tk5VwX4xgLjM3LKEC9fdBEhoR+wg5elB3ek=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hexJaAxO90VE2AGWp9ARiPT/dZlPDR0EMlptcDPAP3XQG60xU5Ad0DtLrwgUEpjMoNlZIZcUVd3F3Z3FGhKAOopo658V3ofRbmZEmqejffWQ7yTtgGusnwBdEWH2FnOo7u1a5fXNEz6Btm3xkVzMiJjj2I9AK7L9XOlM06qhXd0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TyTCu+jJ; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-7c3e1081804so1191769a12.3;
-        Thu, 10 Oct 2024 23:48:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728629285; x=1729234085; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=95SFpqoAUV6SFrATAs96UjJLFFMy1Jx1iNhCNqIgsls=;
-        b=TyTCu+jJBYBu8kDgiLqzE9uMJuq8J5ojfgFaW3KmXpJXLcMVEg0kYvDxC7zHU6wywv
-         whoSBLv8FGe7X8l+xFmrO6exYJ4Zrnbnc/cdII/poiJD3lsUhVfskaoPzB9PI/Y3i2y7
-         Mek/rPO5LmL4wP9wPYy85GguGoFpSDBwSRTssnUBX90/bi+Pt+o+I0M3rIVpledeTEJO
-         T7Ms2fwwwAGeSh5eNKId073caI8DHl4vphWR1npznVfrlYj1kRqPZm+cbYyDj2seSx8j
-         8n6btkCHRJGPguvWTrSp+CvUkNeYOzA5BHo8DjXeTadkudy//vvL6EaXCmyDC1UoAo07
-         cNmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728629285; x=1729234085;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=95SFpqoAUV6SFrATAs96UjJLFFMy1Jx1iNhCNqIgsls=;
-        b=DpVkV3reZEOqqofU4XJ8D0pIjOGeA7nlV1/w9u9yXoc26MylgFuOCc47EAUTqAqDAm
-         ukMLbdB2nFWXU/1ToGoLoTyCNwG/31naAXJk3zUs80JWotPFG1zVLTRxlYx2B18oOB9U
-         wWZv6HkAVFgJ3V5npk/MYL/ODZ9NyYHjhMu1aWJM0r7dzvWLqYrGdffSj3hQhjIFO5xU
-         7JOomWncHWbmAqdh+NGJk3Bb+7Jdq0rUfHdZ7iCVQEtccamSlNsZdbkOCyHsc3Gz2bio
-         SSuKDSeooknHIx/Hg4avEUrlnPUJWE/nxjzDwzZwfiKFo76kU+PA1dKRPoUcxjO1Cmx+
-         1Q0g==
-X-Forwarded-Encrypted: i=1; AJvYcCVUV/7sZoUqEvhBgLe+518lDlflGpt55biF8BuQyrITzC+1iSONgSj1iGa7kmCUvpvad8/JJ7ArkcPmyea6UpxaWXx/Aw==@vger.kernel.org, AJvYcCWz2ab4/OWYeVd3qLX6mz9RvFGxBvqD0FKJjInOeFulLQAsKE1GTefXXwYSfE0tBsUc1qdDwI/qN2U9UVI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6Yit3W0djC115RSNvn3jO+6Qs93xKAAhlCAPYQCf5VhWxzT/A
-	qaqNxDIp1Jb/Oy7iTFvPVtNbQPaZuV5d9hdmX6yhxx1pAH5CEBRs
-X-Google-Smtp-Source: AGHT+IHvNSP0/Ctj7483/cRjWrkletoIDDnLAAtaPDJRRZLgkZWzpu0hH3DORufu7Ed3IuclLv2sPw==
-X-Received: by 2002:a05:6a21:3983:b0:1d6:d0d3:c50c with SMTP id adf61e73a8af0-1d8bcfb27abmr2120411637.35.1728629284607;
-        Thu, 10 Oct 2024 23:48:04 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a36417afsm4877614a91.0.2024.10.10.23.48.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 23:48:03 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	W_Armin@gmx.de,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v4 3/4] alienware-wmi: added platform profile support
-Date: Fri, 11 Oct 2024 03:47:52 -0300
-Message-ID: <20241011064751.306795-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241011064336.305795-2-kuurtb@gmail.com>
-References: <20241011064336.305795-2-kuurtb@gmail.com>
+	s=arc-20240116; t=1728629304; c=relaxed/simple;
+	bh=w0mpnanmMdVQFr7/jyzJWYjwj8gVo9DlPWDXPC3hOGY=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=gyFBP/8hO6xdpOIXlSDKWixTJf1EiV1FWW72EouF2SoTqrGD5u8/aX42G99kNlReJ+aFxQNsR3XvecUPkPgN/Jnes/mtYRHLBUIUQ767qiKyXbRUtUQjBAF/XyuLKxwIeB08dxsEcK75SRfX9w/I1VTTONS8mNr2bSgisk8jvTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=GoGcYPsV; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: cb1274ca879c11ef8b96093e013ec31c-20241011
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=y2T9fRA9uvlVR02QkoFnRdEwwHlGLql4m/SX4vgEwHo=;
+	b=GoGcYPsVH18eV2yFySiMsYYm1WP4DMT7fnZI9dlVcyPcHiNAti7DFcDS9GlGO/p89+X3GftJVU1kGkqZ0GIjHQ50h9VezV6CrdDGMrXcGTAUguyD+QFkXxCFxgiu0DFFUZ7Q8bGg35JTaVY7oo0cNpAE3JpWhze/rZrwHsemEig=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:2db058d1-0bb6-46af-8907-036b5c2f81df,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:6dc6a47,CLOUDID:d4341741-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: cb1274ca879c11ef8b96093e013ec31c-20241011
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 220178317; Fri, 11 Oct 2024 14:48:16 +0800
+Received: from mtkmbs13n1.mediatek.inc (172.21.101.193) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Fri, 11 Oct 2024 14:48:13 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs13n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Fri, 11 Oct 2024 14:48:13 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>
+Subject: [PATCH v2] dt-bindings: phy: mediatek: tphy: add a property for power-domains
+Date: Fri, 11 Oct 2024 14:48:10 +0800
+Message-ID: <20241011064810.5103-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,385 +79,61 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--2.165100-8.000000
+X-TMASE-MatchedRID: k8Cd32tj8sGMNoAzq9nHoWNW0DAjL5p++OI6XsK3BWHfUZT83lbkEJVD
+	ZsT0rYWCqP2RhwqsDVhYSGAnlsUp3lAXAjgfNI2iRy+94mWbR+blOkM7VYqzaZi7/tnxUUyGo8W
+	MkQWv6iXBcIE78YqRWo6HM5rqDwqt7aENEMomdGuGxZsjVPBjfObxZIv/aSQArgevuQgg4NYHJD
+	IxduTwSZmxuzUAi+Dfup5+b9g7ZTRiF54b8Md0Br5sQoYg/dmD4sOrsb4iT/K/bbEolHIgZUOc7
+	GjOamnWv5a9cmIodEspRnLV2kwrLg==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--2.165100-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	4AD9FFC112EA5D5D7D7DB547735B4F1CC3D11219A3110772C6367C57CD5144FB2000:8
+X-MTK: N
 
-Signed-off-by: Kurt Borja <kuurtb@gmail.com>
+MediaTek TPHY should be existed in a power-domains.
+So we add property 'power-domains' and set 'maxItems: 1' in the
+DT Schema.
+
+A reminder is also added to the description of 'power-domains'
+property.
+
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
 ---
- drivers/platform/x86/dell/Kconfig         |   1 +
- drivers/platform/x86/dell/alienware-wmi.c | 236 ++++++++++++++++++++++
- 2 files changed, 237 insertions(+)
+ .../devicetree/bindings/phy/mediatek,tphy.yaml         | 10 ++++++++++
+ 1 file changed, 10 insertions(+)
 
-diff --git a/drivers/platform/x86/dell/Kconfig b/drivers/platform/x86/dell/Kconfig
-index 68a49788a..b06d634cd 100644
---- a/drivers/platform/x86/dell/Kconfig
-+++ b/drivers/platform/x86/dell/Kconfig
-@@ -21,6 +21,7 @@ config ALIENWARE_WMI
- 	depends on LEDS_CLASS
- 	depends on NEW_LEDS
- 	depends on ACPI_WMI
-+	select ACPI_PLATFORM_PROFILE
- 	help
- 	 This is a driver for controlling Alienware BIOS driven
- 	 features.  It exposes an interface for controlling the AlienFX
-diff --git a/drivers/platform/x86/dell/alienware-wmi.c b/drivers/platform/x86/dell/alienware-wmi.c
-index 8f7a8bfef..8af2ab7fe 100644
---- a/drivers/platform/x86/dell/alienware-wmi.c
-+++ b/drivers/platform/x86/dell/alienware-wmi.c
-@@ -8,8 +8,11 @@
- #define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+Changes for v2:
+ - Add a reminder in description of 'power-domains' property.
+ - Fix commit message from v1.
+
+diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+index 423b7c4e62f2..6be3aa4557e5 100644
+--- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
++++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
+@@ -125,6 +125,16 @@ properties:
+     $ref: /schemas/types.yaml#/definitions/uint32
+     default: 28
  
- #include <linux/acpi.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
- #include <linux/module.h>
- #include <linux/platform_device.h>
-+#include <linux/platform_profile.h>
- #include <linux/dmi.h>
- #include <linux/leds.h>
- 
-@@ -25,6 +28,12 @@
- #define WMAX_METHOD_AMPLIFIER_CABLE	0x6
- #define WMAX_METHOD_DEEP_SLEEP_CONTROL	0x0B
- #define WMAX_METHOD_DEEP_SLEEP_STATUS	0x0C
-+#define WMAX_METHOD_THERMAL_INFORMATION	0x14
-+#define WMAX_METHOD_THERMAL_CONTROL	0x15
++  power-domains:
++    description:
++      The TPHY of MediaTek should exist within a power domain. The
++      developer should be aware that the hardware design of MediaTek TPHY
++      does not require the addition of MTCMOS. If the power to the TPHY
++      is turned off, it will impact other functions. From the current
++      perspective of USB hardware design, even if MTCMOS is added to the
++      TPHY, it should remain always on.
++    maxItems: 1
 +
-+#define WMAX_ARG_GET_CURRENT_PROF	0x0B
-+
-+#define WMAX_FAILURE_CODE		0xFFFFFFFF
- 
- MODULE_AUTHOR("Mario Limonciello <mario.limonciello@outlook.com>");
- MODULE_DESCRIPTION("Alienware special feature control");
-@@ -49,11 +58,27 @@ enum WMAX_CONTROL_STATES {
- 	WMAX_SUSPEND = 3,
- };
- 
-+enum WMAX_THERMAL_PROFILE {
-+	WMAX_THERMAL_QUIET = 0x96,
-+	WMAX_THERMAL_BALANCED = 0x97,
-+	WMAX_THERMAL_BALANCED_PERFORMANCE = 0x98,
-+	WMAX_THERMAL_PERFORMANCE = 0x99,
-+	WMAX_THERMAL_USTT_LOW_POWER = 0xA5,
-+	WMAX_THERMAL_USTT_QUIET = 0xA3,
-+	WMAX_THERMAL_USTT_BALANCED = 0xA0,
-+	WMAX_THERMAL_USTT_BALANCED_PERFORMANCE = 0xA1,
-+	WMAX_THERMAL_USTT_PERFORMANCE = 0xA4,
-+	WMAX_THERMAL_GMODE = 0xAB,
-+};
-+
- struct quirk_entry {
- 	u8 num_zones;
- 	u8 hdmi_mux;
- 	u8 amplifier;
- 	u8 deepslp;
-+	u8 thermal;
-+	u8 thermal_ustt;
-+	u8 gmode;
- };
- 
- static struct quirk_entry *quirks;
-@@ -64,6 +89,9 @@ static struct quirk_entry quirk_inspiron5675 = {
- 	.hdmi_mux = 0,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_unknown = {
-@@ -71,6 +99,9 @@ static struct quirk_entry quirk_unknown = {
- 	.hdmi_mux = 0,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_x51_r1_r2 = {
-@@ -78,6 +109,9 @@ static struct quirk_entry quirk_x51_r1_r2 = {
- 	.hdmi_mux = 0,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_x51_r3 = {
-@@ -85,6 +119,9 @@ static struct quirk_entry quirk_x51_r3 = {
- 	.hdmi_mux = 0,
- 	.amplifier = 1,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_asm100 = {
-@@ -92,6 +129,9 @@ static struct quirk_entry quirk_asm100 = {
- 	.hdmi_mux = 1,
- 	.amplifier = 0,
- 	.deepslp = 0,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_asm200 = {
-@@ -99,6 +139,9 @@ static struct quirk_entry quirk_asm200 = {
- 	.hdmi_mux = 1,
- 	.amplifier = 0,
- 	.deepslp = 1,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
- };
- 
- static struct quirk_entry quirk_asm201 = {
-@@ -106,6 +149,19 @@ static struct quirk_entry quirk_asm201 = {
- 	.hdmi_mux = 1,
- 	.amplifier = 1,
- 	.deepslp = 1,
-+	.thermal = 0,
-+	.thermal_ustt = 0,
-+	.gmode = 0,
-+};
-+
-+static struct quirk_entry quirk_x15_r1 = {
-+	.num_zones = 2,
-+	.hdmi_mux = 0,
-+	.amplifier = 0,
-+	.deepslp = 0,
-+	.thermal = 0,
-+	.thermal_ustt = 1,
-+	.gmode = 0,
- };
- 
- static int __init dmi_matched(const struct dmi_system_id *dmi)
-@@ -169,6 +225,15 @@ static const struct dmi_system_id alienware_quirks[] __initconst = {
- 		},
- 		.driver_data = &quirk_asm201,
- 	},
-+	{
-+		.callback = dmi_matched,
-+		.ident = "Alienware x15 R1",
-+		.matches = {
-+			DMI_MATCH(DMI_SYS_VENDOR, "Alienware"),
-+			DMI_MATCH(DMI_PRODUCT_NAME, "Alienware x15 R1")
-+		},
-+		.driver_data = &quirk_x15_r1,
-+	},
- 	{
- 		.callback = dmi_matched,
- 		.ident = "Dell Inc. Inspiron 5675",
-@@ -218,6 +283,7 @@ static struct platform_device *platform_device;
- static struct device_attribute *zone_dev_attrs;
- static struct attribute **zone_attrs;
- static struct platform_zone *zone_data;
-+static struct platform_profile_handler pp_handler;
- 
- static struct platform_driver platform_driver = {
- 	.driver = {
-@@ -761,6 +827,168 @@ static int create_deepsleep(struct platform_device *dev)
- 	return ret;
- }
- 
-+/*
-+ * Thermal Profile control
-+ *  - Provides thermal profile control through the Platform Profile API
-+ */
-+#define WMAX_PROFILE_MASK	GENMASK(15, 8)
-+#define WMAX_PROFILE_ACTIVATE	BIT(0)
-+
-+static u32 profile_to_wmax_arg(enum WMAX_THERMAL_PROFILE prof)
-+{
-+	return FIELD_PREP(WMAX_PROFILE_MASK, prof) | WMAX_PROFILE_ACTIVATE;
-+}
-+
-+static int thermal_profile_get(struct platform_profile_handler *pprof,
-+				enum platform_profile_option *profile)
-+{
-+	acpi_status status;
-+	u32 in_args = WMAX_ARG_GET_CURRENT_PROF;
-+	u32 out_data;
-+
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_THERMAL_INFORMATION, &out_data);
-+
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	if (out_data == WMAX_FAILURE_CODE)
-+		return -EBADRQC;
-+
-+	switch (out_data) {
-+	case WMAX_THERMAL_USTT_LOW_POWER:
-+		*profile = PLATFORM_PROFILE_LOW_POWER;
-+		break;
-+	case WMAX_THERMAL_QUIET:
-+	case WMAX_THERMAL_USTT_QUIET:
-+		*profile = PLATFORM_PROFILE_QUIET;
-+		break;
-+	case WMAX_THERMAL_BALANCED:
-+	case WMAX_THERMAL_USTT_BALANCED:
-+		*profile = PLATFORM_PROFILE_BALANCED;
-+		break;
-+	case WMAX_THERMAL_BALANCED_PERFORMANCE:
-+	case WMAX_THERMAL_USTT_BALANCED_PERFORMANCE:
-+		*profile = PLATFORM_PROFILE_BALANCED_PERFORMANCE;
-+		break;
-+	case WMAX_THERMAL_GMODE:
-+	case WMAX_THERMAL_PERFORMANCE:
-+	case WMAX_THERMAL_USTT_PERFORMANCE:
-+		*profile = PLATFORM_PROFILE_PERFORMANCE;
-+		break;
-+	default:
-+		return -ENODATA;
-+	}
-+
-+	return 0;
-+}
-+
-+static int thermal_profile_set(struct platform_profile_handler *pprof,
-+				enum platform_profile_option profile)
-+{
-+	acpi_status status;
-+	u32 in_args;
-+	u32 out_data;
-+
-+	switch (profile) {
-+	case PLATFORM_PROFILE_QUIET:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_QUIET);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_BALANCED_PERFORMANCE);
-+		break;
-+	case PLATFORM_PROFILE_PERFORMANCE:
-+		if (quirks->gmode > 0)
-+			in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
-+		else
-+			in_args = profile_to_wmax_arg(WMAX_THERMAL_PERFORMANCE);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_THERMAL_CONTROL, &out_data);
-+
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	if (out_data == WMAX_FAILURE_CODE)
-+		return -EBADRQC;
-+
-+	return 0;
-+}
-+
-+static int thermal_profile_set_ustt(struct platform_profile_handler *pprof,
-+				    enum platform_profile_option profile)
-+{
-+	acpi_status status;
-+	u32 in_args;
-+	u32 out_data;
-+
-+	switch (profile) {
-+	case PLATFORM_PROFILE_LOW_POWER:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_LOW_POWER);
-+		break;
-+	case PLATFORM_PROFILE_QUIET:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_QUIET);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_BALANCED);
-+		break;
-+	case PLATFORM_PROFILE_BALANCED_PERFORMANCE:
-+		in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_BALANCED_PERFORMANCE);
-+		break;
-+	case PLATFORM_PROFILE_PERFORMANCE:
-+		if (quirks->gmode > 0)
-+			in_args = profile_to_wmax_arg(WMAX_THERMAL_GMODE);
-+		else
-+			in_args = profile_to_wmax_arg(WMAX_THERMAL_USTT_PERFORMANCE);
-+		break;
-+	default:
-+		return -EOPNOTSUPP;
-+	}
-+
-+	status = alienware_wmax_command(&in_args, sizeof(in_args),
-+					WMAX_METHOD_THERMAL_CONTROL, &out_data);
-+
-+	if (ACPI_FAILURE(status))
-+		return -EIO;
-+
-+	if (out_data == WMAX_FAILURE_CODE)
-+		return -EBADRQC;
-+
-+	return 0;
-+}
-+
-+static int create_thermal_profile(void)
-+{
-+	pp_handler.profile_get = thermal_profile_get;
-+
-+	if (quirks->thermal > 0)
-+		pp_handler.profile_set = thermal_profile_set;
-+	else {
-+		pp_handler.profile_set = thermal_profile_set_ustt;
-+		set_bit(PLATFORM_PROFILE_LOW_POWER, pp_handler.choices);
-+	}
-+
-+	set_bit(PLATFORM_PROFILE_QUIET, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_BALANCED, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_BALANCED_PERFORMANCE, pp_handler.choices);
-+	set_bit(PLATFORM_PROFILE_PERFORMANCE, pp_handler.choices);
-+
-+	return platform_profile_register(&pp_handler);
-+}
-+
-+static void remove_thermal_profile(void)
-+{
-+	if (quirks->thermal > 0)
-+		platform_profile_remove();
-+}
-+
- static int __init alienware_wmi_init(void)
- {
- 	int ret;
-@@ -808,6 +1036,12 @@ static int __init alienware_wmi_init(void)
- 			goto fail_prep_deepsleep;
- 	}
- 
-+	if (quirks->thermal > 0 || quirks->thermal_ustt > 0) {
-+		ret = create_thermal_profile();
-+		if (ret)
-+			goto fail_prep_thermal_profile;
-+	}
-+
- 	ret = alienware_zone_init(platform_device);
- 	if (ret)
- 		goto fail_prep_zones;
-@@ -818,6 +1052,7 @@ static int __init alienware_wmi_init(void)
- 	alienware_zone_exit(platform_device);
- fail_prep_deepsleep:
- fail_prep_amplifier:
-+fail_prep_thermal_profile:
- fail_prep_hdmi:
- 	platform_device_del(platform_device);
- fail_platform_device2:
-@@ -835,6 +1070,7 @@ static void __exit alienware_wmi_exit(void)
- 	if (platform_device) {
- 		alienware_zone_exit(platform_device);
- 		remove_hdmi(platform_device);
-+		remove_thermal_profile();
- 		platform_device_unregister(platform_device);
- 		platform_driver_unregister(&platform_driver);
- 	}
+ # Required child node:
+ patternProperties:
+   "^(usb|pcie|sata)-phy@[0-9a-f]+$":
 -- 
-2.47.0
+2.45.2
 
 
