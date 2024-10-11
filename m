@@ -1,218 +1,113 @@
-Return-Path: <linux-kernel+bounces-360945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415DC99A192
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:38:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8361199A196
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:39:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62CDA1C2145F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:38:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9246EB2171C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:39:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A1E212EE0;
-	Fri, 11 Oct 2024 10:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 253FF21265D;
+	Fri, 11 Oct 2024 10:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qspm5aAV"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bux5p6Ku"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 535D01E3DC0;
-	Fri, 11 Oct 2024 10:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79CF91E3773;
+	Fri, 11 Oct 2024 10:38:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643085; cv=none; b=VXbM9agYNknheMvHqtOaKqpL07GCm85FAsZ/TejouvFFAXAC6GkP1VNf6VuPk7vYXgNruWG+ldNgivDTTc1JiaqWRe8MUZHSHgQCGqqFst1pALJbP3v2kBBah1TdUtz038Y73mypobvduS8609BfdoUoJQ9/f+uNtb2MXqqv6lA=
+	t=1728643135; cv=none; b=MooDX8220fcDNaui4CAAgiuDcEuh4+nLYfHX3ILQCD0cCTni+mbTr3GzqVy9J+RU2FSRibvL6ArWdOL99Mn8dJpyzBoaQJsCErDiSJC2sFSCr95pCMhDQrtDpeJ9AiGxkLyZOxfDA7MyYc4KjOKQube1dlktOpKuWsKsa/pJ8Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643085; c=relaxed/simple;
-	bh=1twMMpaoEITh/gUzq4DlkreG5Ork8s0bgnPmf4Efp98=;
+	s=arc-20240116; t=1728643135; c=relaxed/simple;
+	bh=5KifsyOckMISdoD/eCayNq1MKzZ08TydkAYy0i/gD9I=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KUdYV1vdshq62y0XRmQZ8rO8FazmR6AVthB1vLY8S+rfGTnRfXI+uhkKdzoC0SXqUlQ9y9tnUGwK4ly5okYWKabA8KWuJlcbPsfI2moZhG0tousXguK3hlEZfRc8BGAY2f8MSrnwnH0JCqyd2d+2rM/P4q5kaLn05QP5gXFKlZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qspm5aAV; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728643083; x=1760179083;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=1twMMpaoEITh/gUzq4DlkreG5Ork8s0bgnPmf4Efp98=;
-  b=Qspm5aAVZTF7gQAp1BVrEynDr0Scv44bSRydcLbUqi3vqURIanjON37S
-   8JCIRLJq+oEOU2+cvMVvFUww1+PKtx3dxKm9XUnVntB7aB92w4/nTN+1o
-   0YyWM+7nR7c0OcsUAsm4WxNBf06g2T0OcDILmItHq72hHmKQc7wv9RgBW
-   Wp0MH5Y3Snsa8q1RL7il7g4mc3B351kIRqe2IyJQUhnl6D7V/HdJOih5/
-   +ShPMDAEBcCLnJM79XCxdRZXcE9QYOV7CKB/ALXPkEpEpEXXNmeQlkhgC
-   mv9hRy51OTz90all8dCzxgp18PP/05wdeqjh/S2ZQVqZEq6notEpuJacv
-   Q==;
-X-CSE-ConnectionGUID: 7MXWBY4OTQi3coHeYSSIZQ==
-X-CSE-MsgGUID: Kz2YYMkfREuQs268fjJD5g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="39412938"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="39412938"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:38:03 -0700
-X-CSE-ConnectionGUID: yDegCgUPQzeOV92uc52/RA==
-X-CSE-MsgGUID: SYY7ej28RmexZCixIS8/5Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="76789959"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:38:00 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1szD1x-00000001rSZ-0ebI;
-	Fri, 11 Oct 2024 13:37:57 +0300
-Date: Fri, 11 Oct 2024 13:37:56 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: vamoirid <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 12/13] iio: chemical: bme680: Add triggered buffer
- support
-Message-ID: <ZwkABN9RycsVPRwo@smile.fi.intel.com>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <20241010210030.33309-13-vassilisamir@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CLlgJ/e/M36jxdGn/hYzHFQ2/ZLnpH39/eHtV8q+BoAyjDvwTUi6rkNOnNJVJha/r9ryUHwsuatv/Q5rTs1tqSx0Lux2C9IhZt1RBqRZpfgljAzLx1JE7r0t4a10RfzoTDJehpuP/qEhQjV4PykMO4UpXaWTdgYHjGaxWLV8mWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bux5p6Ku; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B39FAC4CECD;
+	Fri, 11 Oct 2024 10:38:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728643135;
+	bh=5KifsyOckMISdoD/eCayNq1MKzZ08TydkAYy0i/gD9I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Bux5p6Kudlx8dt0Eqz21QygqtNlmzFQ1Em5avFM86svr7uf/khX3ZesFhpi+e9pI8
+	 4U5EGyaISIuZkr03vAn+BsC1NyEy7yYNon0acmdOMCclpaYZEC+WbnBSwArU3K34bO
+	 3qEUVzSjbW7E4pi/fMzKUEw+TZXC2HMK3SN/wHQgM+mSMnKTf3qe3tHuH18kBZt3HL
+	 HvSerc/a9U+HmdaFE/9JWsZbbzvKRfnhMFSYMD+lB6AU7WUnlrV5+9Lt5nj7c6ziOH
+	 7nI6Rgu18aeiK8YwRqtiJ/+WTKw5nxJjeEGp4n2at59zJzphGP9WPyJrlwWYhZ/mfi
+	 b1k9T7b64hWIA==
+Date: Fri, 11 Oct 2024 11:38:51 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Deepak Gupta <debug@rivosinc.com>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	linux-arch@vger.kernel.org,
+	Rick Edgecombe <rick.p.edgecombe@intel.com>
+Subject: Re: [PATCH RFC/RFT 2/3] mm: helper `is_shadow_stack_vma` to check
+ shadow stack vma
+Message-ID: <ZwkAO9P3CxGbyq4L@finisterre.sirena.org.uk>
+References: <20241010-shstk_converge-v1-0-631beca676e7@rivosinc.com>
+ <20241010-shstk_converge-v1-2-631beca676e7@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="4zYo/B+253W5RkjB"
+Content-Disposition: inline
+In-Reply-To: <20241010-shstk_converge-v1-2-631beca676e7@rivosinc.com>
+X-Cookie: Editing is a rewording activity.
+
+
+--4zYo/B+253W5RkjB
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241010210030.33309-13-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 11:00:29PM +0200, vamoirid wrote:
-> From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> 
-> Add triggered buffer and soft timestamp support. The available scan mask
-> enables all the channels of the sensor in order to follow the operation of
-> the sensor. The sensor basically starts to capture from all channels
-> as long as it enters into FORCED mode.
+On Thu, Oct 10, 2024 at 05:32:04PM -0700, Deepak Gupta wrote:
+> VM_SHADOW_STACK (alias to VM_HIGH_ARCH_5) is used to encode shadow stack
+> VMA on three architectures (x86 shadow stack, arm GCS and RISC-V shadow
+> stack). In case architecture doesn't implement shadow stack, it's VM_NONE
+> Introducing a helper `is_shadow_stack_vma` to determine shadow stack vma
+> or not.
+>=20
+> Signed-off-by: Deepak Gupta <debug@rivosinc.com>
+> ---
+>  mm/gup.c |  2 +-
+>  mm/vma.h | 10 +++++++---
+>  2 files changed, 8 insertions(+), 4 deletions(-)
 
-...
+As I noted in reply to the version of this patch in the RISC-V series
+there's another test for VM_SHADOW_STACK in mm/mmap.c.
 
->  	struct regulator_bulk_data supplies[BME680_NUM_SUPPLIES];
->  	int ambient_temp;
->  
-> +	u8 buffer[ALIGN(sizeof(s32) * BME680_NUM_CHANNELS, sizeof(s64))
-> +		  + sizeof(s64)] __aligned(sizeof(s64));
+--4zYo/B+253W5RkjB
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Can it be represented as a structure?
-We also have aligned_s64 for the timestamp.
+-----BEGIN PGP SIGNATURE-----
 
->  	union {
-> -		u8 buf[3];
-> +		u8 buf[15];
->  		unsigned int check;
->  		__be16 be16;
->  		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcJADoACgkQJNaLcl1U
+h9AINQf/X72VpmC3qgyCk9bL7hkP3fb0q1+UbJS64dlYea313u2psyRklZdeIxl9
+YBmaV2mf6I9WNwWtqtUlynkA+oz/Mf2pNt1G+kkTYTNWZ/69MTFXSvmKeEdrnQ/c
+zPFp2eMxC3jAPW3vdRgYQMKDgelzD5g+53LBOryBCOpT0mWrdPrDIAPZcccKpKpf
+piSVHCCsWEjfzJopQaAZRQgGTVSrtwELR52lOM3FwC8StXwYUEQrBMJFdCKXO0R/
+Ib4TWsCcq0UDW91t6zxJvL9Q3wEleYRB83JDFM3N6wz36LkGtvh8mgd9OhhChu7g
+4wvien0yfxmNfOx/H1QsE1dnZiZ3bw==
+=Fanw
+-----END PGP SIGNATURE-----
 
-...
-
-> +static irqreturn_t bme680_trigger_handler(int irq, void *p)
-> +{
-> +	struct iio_poll_func *pf = p;
-> +	struct iio_dev *indio_dev = pf->indio_dev;
-> +	struct bme680_data *data = iio_priv(indio_dev);
-> +	u32 adc_temp, adc_press, adc_humid, comp_press, comp_humid;
-
-> +	s32 *chans = (s32 *)data->buffer;
-
-With the structure in place this becomes much more readable.
-
-> +	u16 adc_gas_res, gas_regs_val;
-> +	s32 t_fine, comp_gas_res;
-> +	s16 comp_temp;
-> +	u8 gas_range;
-> +	int ret;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	ret = bme680_set_mode(data, BME680_FORCED);
-> +	if (ret < 0)
-> +		goto out;
-> +
-> +	ret = bme680_wait_for_eoc(data);
-> +	if (ret)
-> +		goto out;
-> +
-> +	/* Burst read data regs */
-> +	ret = regmap_bulk_read(data->regmap, BME680_REG_MEAS_STAT_0,
-> +			       data->buf, sizeof(data->buf));
-> +	if (ret) {
-> +		dev_err(data->dev, "failed to burst read sensor data\n");
-> +		goto out;
-> +	}
-> +	if (data->buf[0] & BME680_GAS_MEAS_BIT) {
-> +		dev_err(data->dev, "gas measurement incomplete\n");
-> +		goto out;
-> +	}
-> +
-> +	/* Temperature calculations */
-> +	adc_temp = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[5]));
-> +	if (adc_temp == BME680_MEAS_SKIPPED) {
-> +		dev_err(data->dev, "reading temperature skipped\n");
-> +		goto out;
-> +	}
-> +	comp_temp = bme680_compensate_temp(data, adc_temp);
-> +	t_fine = bme680_calc_t_fine(data, adc_temp);
-> +
-> +	/* Pressure calculations */
-> +	adc_press = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[2]));
-> +	if (adc_press == BME680_MEAS_SKIPPED) {
-> +		dev_err(data->dev, "reading pressure skipped\n");
-> +		goto out;
-> +	}
-> +	comp_press = bme680_compensate_press(data, adc_press, t_fine);
-
-> +	pr_info("comp_press: %d\n", comp_press);
-
-No debugging in the production code. Or if you really need that, it should
-use dev_dbg().
-
-> +	/* Humidity calculations */
-> +	adc_humid = get_unaligned_be16(&data->buf[8]);
-> +	if (adc_humid == BME680_MEAS_SKIPPED) {
-> +		dev_err(data->dev, "reading humidity skipped\n");
-> +		goto out;
-> +	}
-> +	comp_humid = bme680_compensate_humid(data, adc_humid, t_fine);
-
-> +	pr_info("comp_humid: %d\n", comp_humid);
-
-Ditto.
-
-> +
-> +	/* Gas calculations */
-> +	gas_regs_val = get_unaligned_be16(&data->buf[13]);
-> +	adc_gas_res = FIELD_GET(BME680_ADC_GAS_RES, gas_regs_val);
-> +	if ((gas_regs_val & BME680_GAS_STAB_BIT) == 0) {
-> +		dev_err(data->dev, "heater failed to reach the target temperature\n");
-> +		goto out;
-> +	}
-> +	gas_range = FIELD_GET(BME680_GAS_RANGE_MASK, gas_regs_val);
-> +	comp_gas_res = bme680_compensate_gas(data, adc_gas_res, gas_range);
-> +	pr_info("comp_gas_res: %d\n", comp_gas_res);
-> +
-> +	chans[0] = comp_temp;
-> +	chans[1] = comp_press;
-> +	chans[2] = comp_humid;
-> +	chans[3] = comp_gas_res;
-> +
-> +	/* Push to buffer */
-> +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
-> +					   iio_get_time_ns(indio_dev));
-> +out:
-> +	iio_trigger_notify_done(indio_dev->trig);
-> +	return IRQ_HANDLED;
-> +}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+--4zYo/B+253W5RkjB--
 
