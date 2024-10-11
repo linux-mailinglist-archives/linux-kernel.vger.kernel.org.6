@@ -1,81 +1,111 @@
-Return-Path: <linux-kernel+bounces-360439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67C8F999AF7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:10:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 99C05999AFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:11:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D6078B215E7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:10:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43FBB1F24C2A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:11:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAA501F472C;
-	Fri, 11 Oct 2024 03:10:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4D91F4FB2;
+	Fri, 11 Oct 2024 03:11:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DntyGKQh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eQhPoMzW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AF1EBE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:10:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE759EBE;
+	Fri, 11 Oct 2024 03:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728616234; cv=none; b=AQmrn0/iMjXoxN2VXr746vVFMmrZatyGCDdX3MRexROtiVRRQyCT2ZxlqfETk7iudm/vc3pfHXdD7o/SxLeoWjYu93t/AoUUxR4MtdFSCzYL17mVncvuoqMSyUkP8dMDW4p9HDD0AZjNDXyQ543mgNWjO3rzbc6GxL2upblVJDw=
+	t=1728616275; cv=none; b=rEznibibmuW4guNtMFfjsb0Hua1xN36bSa3um8yA7PirM5LquL3rDdhhPwXseV00KiYLHLNjyvfnJH+pdkmzJnjLHuJMCBmTbzDIcWogfwl9l5f2nj7jvU3plGozAbC8aVvUugis69YHGeROhf+OP8PUa2gLMGe0rOtl5vvWFdc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728616234; c=relaxed/simple;
-	bh=6b25pjgk+omSednQLQU3IFag9Hwh3O+MVcY9W5utO34=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=f9L7Y706YZ73cfb0//vuU2mJHBHD5jWu5H8jE9Hw3jNmTIkIXV89eHWVVnKHTyFDRSJnv5xsZy8EdLTRWVtmk1EKVR2pC1dlIUxSVdM3M9uj64g8yVbxIQYFJK2do73D/PaHy0+LZqZxYW79cN+osYuDg40yOp6Q+phvMczXzY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DntyGKQh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2100EC4CEC5;
-	Fri, 11 Oct 2024 03:10:30 +0000 (UTC)
+	s=arc-20240116; t=1728616275; c=relaxed/simple;
+	bh=/Is7oWoyxrLieInLOs7YT+uoBTtaioJ+iCMHS+28m4s=;
+	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
+	 Message-Id:Subject; b=jKQmjZyjGwxawL1rk5VXw1kMHNC3bVtx1JjA2e6QsmrlYHs7b8rUrAjtpKwOSP6nc/ZK4UA2UZ7WRPeryEMTNSOTu+Y48Ii2Ljba2okEKg9CtaUZoFF7Qu5pzzda32NNicjlWx2vEcd1oX61XdctnY0oHEZziGtOQi+Pyot7VzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eQhPoMzW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6473FC4CEC5;
+	Fri, 11 Oct 2024 03:11:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728616233;
-	bh=6b25pjgk+omSednQLQU3IFag9Hwh3O+MVcY9W5utO34=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=DntyGKQhWSzq52qJFSsEWzkDb1dXQ3q2VlF73pHDHIfIIiCeDKSNGBIC1uhq013Sy
-	 Ncwbqg3eB+jC3lh2bV6Q6FYZMCvQg5AnPgXruk30zIsRB+bHsfE1anDw4uBfw/yQ91
-	 vCZrvDSRf+/oENVvdk4vwiMJIcT3gc8TSLWGLh7Dk8L+17UW5VvuVFQ22Z9vSH9fpx
-	 vQ7+u/5WMdaLZqDfaSvuvqTPshvA0v8PIrd7E2i+UxufvKglswryvBvYOlHUH6nihK
-	 qs37pyjo27UWrvY0qJ0qJina+3qJgwiKORjhsSzecOv9QTGDDV9E2FKVzDmrr3ZH/Z
-	 VPTpyG7fRVGtQ==
-Message-ID: <27aeda6c-dd0d-4cef-b071-18499b1b3e70@kernel.org>
-Date: Fri, 11 Oct 2024 11:10:26 +0800
+	s=k20201202; t=1728616274;
+	bh=/Is7oWoyxrLieInLOs7YT+uoBTtaioJ+iCMHS+28m4s=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=eQhPoMzWy+8mZcr6AqdoEhJQ2JG3QFOjkZqiAMY3UCc9ocKoGVvKRaZH7K95KfGgH
+	 cw1QMpcCienCzG42y2tNFPSEl4pFAh0okp7/8znTfHwIl8RzEF3E7TLd9Sd4QwVrFB
+	 ACtTdRD8ivYtHDtQU3x3XYLdb2UDGYxudrH/YGgJC2diml20/DJyGUsFLEQncFlrO0
+	 txiXgX5WsCu5wwwKTQLPeEiTtT0US0CC31qmTiOcbRPmbhl3ZU5TigntIxxfSPnFhw
+	 HcD2qQD9wf+rlGZI+akwh2skB1vf92KF6jO8xwcNigSiVywwHHFUJVw60Jjqu3Py73
+	 pCsPg9VnwbF/g==
+Date: Thu, 10 Oct 2024 22:11:13 -0500
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>,
- syzbot+001306cd9c92ce0df23f@syzkaller.appspotmail.com,
- LKML <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v2] erofs: ensure regular inodes for file-backed mounts
-To: Gao Xiang <hsiangkao@linux.alibaba.com>, linux-erofs@lists.ozlabs.org
-References: <00000000000011bdde0622498ee3@google.com>
- <20240917130803.32418-1-hsiangkao@linux.alibaba.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <20240917130803.32418-1-hsiangkao@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
+ Pavel Machek <pavel@ucw.cz>, Wim Van Sebroeck <wim@linux-watchdog.org>, 
+ linux-leds@vger.kernel.org, Daniel Thompson <daniel.thompson@linaro.org>, 
+ linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+ Lee Jones <lee@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+ Guenter Roeck <linux@roeck-us.net>, 
+ Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+ Jingoo Han <jingoohan1@gmail.com>, 
+ Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-watchdog@vger.kernel.org
+In-Reply-To: <20241010-zii_yaml-v2-2-0ab730607422@nxp.com>
+References: <20241010-zii_yaml-v2-0-0ab730607422@nxp.com>
+ <20241010-zii_yaml-v2-2-0ab730607422@nxp.com>
+Message-Id: <172861627193.2232781.13972900744363458830.robh@kernel.org>
+Subject: Re: [PATCH v2 2/5] dt-bindings: backlight: convert
+ zii,rave-sp-backlight.txt to yaml
 
-On 2024/9/17 21:08, Gao Xiang wrote:
-> Only regular inodes are allowed for file-backed mounts, not directories
-> (as seen in the original syzbot case) or special inodes.
+
+On Thu, 10 Oct 2024 11:42:39 -0400, Frank Li wrote:
+> Convert device tree binding doc zii,rave-sp-backlight.txt to yaml format.
+> Additional Changes:
+> - Remove mfd parent node at example.
+> - Ref to backlight's common.yaml
 > 
-> Also ensure that .read_folio() is implemented on the underlying fs
-> for the primary device.
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+> ---
+>  .../leds/backlight/zii,rave-sp-backlight.txt       | 23 --------------
+>  .../leds/backlight/zii,rave-sp-backlight.yaml      | 36 ++++++++++++++++++++++
+>  2 files changed, 36 insertions(+), 23 deletions(-)
 > 
-> Fixes: fb176750266a ("erofs: add file-backed mount support")
-> Reported-by: syzbot+001306cd9c92ce0df23f@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/r/00000000000011bdde0622498ee3@google.com
-> Tested-by: syzbot+001306cd9c92ce0df23f@syzkaller.appspotmail.com
-> Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-Reviewed-by: Chao Yu <chao@kernel.org>
+My bot found errors running 'make dt_binding_check' on your patch:
 
-Thanks,
+yamllint warnings/errors:
+
+dtschema/dtc warnings/errors:
+
+
+doc reference errors (make refcheckdocs):
+Warning: Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml references a file that doesn't exist: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
+Documentation/devicetree/bindings/leds/backlight/zii,rave-sp-backlight.yaml: Documentation/devicetree/bindings/mfd/zii,rave-sp.yaml
+
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241010-zii_yaml-v2-2-0ab730607422@nxp.com
+
+The base for the series is generally the latest rc1. A different dependency
+should be noted in *this* patch.
+
+If you already ran 'make dt_binding_check' and didn't see the above
+error(s), then make sure 'yamllint' is installed and dt-schema is up to
+date:
+
+pip3 install dtschema --upgrade
+
+Please check and re-submit after running the above command yourself. Note
+that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+your schema. However, it must be unset to test all examples with your schema.
+
 
