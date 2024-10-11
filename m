@@ -1,107 +1,138 @@
-Return-Path: <linux-kernel+bounces-361039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C459899A2B1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:28:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9C3D99A2B3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:29:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 885212835C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:28:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 28593B222AA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EBF1216430;
-	Fri, 11 Oct 2024 11:28:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23D6E216430;
+	Fri, 11 Oct 2024 11:28:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KdqMS35B"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KnrKGWWF"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E039721502F;
-	Fri, 11 Oct 2024 11:28:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AD90215F76;
+	Fri, 11 Oct 2024 11:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728646116; cv=none; b=MIetMwyV4HP1N7j8M/Q/T94FF9XL3lVaE4zw4m1K3DyZGx4p8vWw/sJ+OpCzdqTG9fL7kk+KkvxlN9BToagcB8NTh7Ad1dFOpanQDwcf22a7bI3y5yRKPitnJxbiCVbG7uQclC/AorGqQli4wjHDvqmdlh+uQ2iLEpqJf5b38+U=
+	t=1728646138; cv=none; b=XDcoaxEPZQSNw/GhkFGtR5l/PbP0SXv1F2Mgd8NBeQGT7dvOO+Pe6DnZK9XXaUDpROHBTjOFFwifg6l36IRsDSJx4ryLxZ7nMmIzmnBUv/4hNyWRyhHqLoWJdlNjMdTUSRlxt2ShifGr060m8X9DMhBzGSsw+da3R1O42/yNKUM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728646116; c=relaxed/simple;
-	bh=b2BF6aX7yvuhV1cDjKTs1FC2L3sf5W+ct6S8Jto4oYs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ukVaEpPl0/yUnZyTWdqYvjyOYrMtFTFOpjjY8naBIkJtYUj6DsM6agwY58QMYBTihS/3/sFT1I3v20OjWTkcOAox9ic4Yq5msuOVQiXaJKVCSAUf3ADEVLxGr8+X7MRD1A+IcVPQT8GgoqKos/kBVFgnZeruzCOskrMyn9KqP/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KdqMS35B; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D5FEC4CECC;
-	Fri, 11 Oct 2024 11:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728646115;
-	bh=b2BF6aX7yvuhV1cDjKTs1FC2L3sf5W+ct6S8Jto4oYs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=KdqMS35B6UT2S28pF+yBRfQNR4yHsE/zeX5qAGEOTTZdTROCOmPdwHJYn2dGpv5Fz
-	 PEA215lw+JKXy+tgn52/ohxrdik7b+tp3fsufs58id5d9q48olMLDUh8fDySUn6xtv
-	 bmz6zFZU6tOJLOtuqOdF1ViWf5TRMOb45VZebmwPVSUt9Upf6ylua0dKJF4SoEXJd1
-	 pnGVMMolvNKXZCzI/M6W2JoMIR+CHlqxncb6d7FcrByXtGzzdDB23A9aksgRgXcgnL
-	 5j66kPmSsOugPGWsoA2yxrj7Q8f1m/OXJhxsud9cWDck6UpahhF5HrSAeSSj7wjzWt
-	 LQ/uYQMwBXFpA==
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-716a5b9ee6fso1016948a34.2;
-        Fri, 11 Oct 2024 04:28:35 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUITq3rPOsKr3tWueA7ZAPP3agGn5t5LrPKODzDKFb/0Twdr8QRAc0ZkjZsufY+woK2BnmYL72NNXtW@vger.kernel.org, AJvYcCX/qgHqrl8OMAox1YQaQSeG1TRx7nUwS4ncA6f+KolCyZHwr0TxIMpboEblOQN+tzTvfV4kSNEB88GR/KZl@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHUyI6I8XOzE+J4VrM5mQz9rv5imu4iuFDxorV6xQU4kvUDRMC
-	g998gsIPfKCdy+PofQNG18/mj5UohWezKA/bTVLrL9UnopFpjLgFeh/9KGE2+5wyODjAoXx2vmi
-	MSXgP4DLKi/T/BB0/cCAsSf3hb44=
-X-Google-Smtp-Source: AGHT+IGtFi7+XflJhdoe2a845QyQCYPlrIQbcAmzlN087fwENXDcaP9JxbSbHXIU/DeakWbMWjuPPBRMY8zguyxW7Xc=
-X-Received: by 2002:a05:6871:5226:b0:261:2072:7b5d with SMTP id
- 586e51a60fabf-2886df8928dmr1333630fac.29.1728646114921; Fri, 11 Oct 2024
- 04:28:34 -0700 (PDT)
+	s=arc-20240116; t=1728646138; c=relaxed/simple;
+	bh=GgBdKZj5b5Cw7VBmE28q+2hXK+ccSbU/BebsShCtnPw=;
+	h=Mime-Version:Content-Type:Date:Message-Id:From:To:Cc:Subject:
+	 References:In-Reply-To; b=A8QDnsgBR1CsafXcCV7L1CX1PIiEV4sLFpA3JzNcefNSbbBxywYzdD0RAlFJfUqiiNo3EDZ+A8x0PvtsaG+zZy0bKYP134vCrjJ6tkCwhVtTxzY3Y4hrJ88ykRr35MaN298MSjRI+WmZSDFggcsMXfAFYIcGVRp4I7LJlZWRQQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KnrKGWWF; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2ed59a35eso789088a91.0;
+        Fri, 11 Oct 2024 04:28:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728646136; x=1729250936; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FtMGOeknI/GUD3P2TAt2mIiZv/wehPAwyVMjpNzsS1o=;
+        b=KnrKGWWF5P5bOaQTOgpiqGpJORjYbNYoWxi6/lLrKX3ZdJS2//H9Tfq46/EyYdfwL2
+         r41n3A4dOYxzftaFzpRwPS35Qbgmj2n09wZr3PSwNLGREUVrS2pz9yOr5Uq7MiRAsU9N
+         i3mo3o1S93xQxrvZS3gdW1mQnl/pRRu0F4xa7AQ3zKlRrZ1ZuzA2c6ipJ6Ej+FA41oVt
+         yjVkR9ELiPoWEB2c8BvQlvJ8ZMLsYrAm3+s3vUeR+CYebACnto5NpMMklbycsEi9vBHZ
+         umXH3bBNVyWKtCjSEnffIPlRJqbTkwqtQ63sHTAXnv9qFyOtLTzgYH9hJUrmTEwxSv+s
+         /RMw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728646136; x=1729250936;
+        h=in-reply-to:references:subject:cc:to:from:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=FtMGOeknI/GUD3P2TAt2mIiZv/wehPAwyVMjpNzsS1o=;
+        b=r96qAHJwz/mk5zterYBQO3sKW07PTCITvopLIteMXBYDiQ4eO3aoyMteWs433rxixz
+         4P0wuqClX83g04otW+VyORkh7QxLno5eQPkgEdQGiYzTgQ4o5yhCpJ9qcF/04lgXXsVh
+         PIJqH3B5VuD7KDBLsLu+ZfZxqoTtLa+q0iDs2Lue3ZeyzLFORqc+tX0QukvF3XJ0/fp3
+         AG9PS6CC8AatILZkuuYesm9q5aK6JcGy5kHkXeAhqWWLROWnWwBoZfoDAkT7A4dRiHlI
+         iYf0pEhGUleTNW8oejTRXdLCkaLTAyYgSFAsQdXswYcpSFDF4lYYy3uPbFKFgPIC4vTO
+         eRxg==
+X-Forwarded-Encrypted: i=1; AJvYcCUJitqERa9DkK4d9+r3T9248OsYHxxUhokHMMlGzrYPsUuhZqqZdmuQxU3nRhxY2YVeCKEG82hsmNHEQA==@vger.kernel.org, AJvYcCVieDWyCH3MURkJJ1h3exiUo90kNBHjkbBz+4ntJCLoltzvYzAgH0gxakkgJ0YXOTVa8JFCGGK7T8oLeh+1@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw0xnZ10VwHg8g8bu8Yw1uf4/k+yOZiY9Rh4Wrl3GN2Cwvxce8
+	VzLKWTCBBc5cq9g9ewYCUA3GZL7HHFmu9vRt0IMe1kE2dg8PPH39
+X-Google-Smtp-Source: AGHT+IHbwrwpRxUcRd7FpYOTq9kEIBl+bXIw2XHRlM96zTS/ROKUqgUd4cgcCw9cFdnJUO9yhXmPAw==
+X-Received: by 2002:a17:90a:ce83:b0:2e1:89aa:65b7 with SMTP id 98e67ed59e1d1-2e2f0a62d34mr3352008a91.9.1728646136355;
+        Fri, 11 Oct 2024 04:28:56 -0700 (PDT)
+Received: from localhost ([2600:6c51:4c3f:8886::b19])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2a55e0c48sm5356358a91.2.2024.10.11.04.28.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 04:28:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241011061948.3211423-1-arnd@kernel.org> <20241011061948.3211423-2-arnd@kernel.org>
- <Zwj1p3uMEA24a0sU@smile.fi.intel.com> <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
- <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
-In-Reply-To: <ZwkIFREb1Ia90hSR@smile.fi.intel.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Fri, 11 Oct 2024 13:28:23 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0hG0o3jxH_HnS76s=VUC28M4fY5yuWxQttGSkCX_SvCSA@mail.gmail.com>
-Message-ID: <CAJZ5v0hG0o3jxH_HnS76s=VUC28M4fY5yuWxQttGSkCX_SvCSA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Arnd Bergmann <arnd@kernel.org>, 
-	"Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
-	Mario Limonciello <mario.limonciello@amd.com>, Jarred White <jarredwhite@linux.microsoft.com>, 
-	Perry Yuan <perry.yuan@amd.com>, Easwar Hariharan <eahariha@linux.microsoft.com>, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Oct 2024 04:28:53 -0700
+Message-Id: <D4SXWUKKJI1G.A7QZ3B0TYHK3@gmail.com>
+From: "Christopher Snowhill" <kode54@gmail.com>
+To: "John Edwards" <uejji@uejji.net>, "Dmitry Torokhov"
+ <dmitry.torokhov@gmail.com>
+Cc: "Derek J . Clark" <derekjohn.clark@gmail.com>,
+ <linux-input@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v1 1/1] Input: xpad - add support for MSI Claw A1M
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241010232020.3292284-2-uejji@uejji.net>
+ <20241010232020.3292284-4-uejji@uejji.net>
+In-Reply-To: <20241010232020.3292284-4-uejji@uejji.net>
 
-On Fri, Oct 11, 2024 at 1:12=E2=80=AFPM Andy Shevchenko
-<andriy.shevchenko@linux.intel.com> wrote:
+On Thu Oct 10, 2024 at 4:09 PM PDT, John Edwards wrote:
+> Add MSI Claw A1M controller to xpad_device match table when in xinput mod=
+e.
+> Add MSI VID as XPAD_XBOX360_VENDOR.
 >
-> On Fri, Oct 11, 2024 at 09:59:46AM +0000, Arnd Bergmann wrote:
-> > On Fri, Oct 11, 2024, at 09:53, Andy Shevchenko wrote:
-> > > On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
->
-> ...
->
-> > >> +  if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
-> > >> +          *value =3D BIT_MASK(width);
-> > >> +          return AE_NOT_IMPLEMENTED;
-> > >
-> > > Perhaps it has already been discussed, but why do we need to file val=
-ue with
-> > > semi-garbage when we know it's invalid anyway?
-> >
-> > It's not strictly necessary, just precaution for possible callers
-> > that use the resulting data without checking the error code.
->
-> Do you have any examples of that in the kernel?
+> Signed-off-by: John Edwards <uejji@uejji.net>
+> Reviewed-by: Derek J. Clark <derekjohn.clark@gmail.com>
 
-Yes, there are at least 2 cases.  May not be relevant, though.
+As a once contributor to the Xbox360 wireless driver, who also happened
+to botch the SoB address and missed a CC from GKH later...
 
-> > The all-ones data is what an x86 PC would see when an I/O
-> > port is read that is not connected to any device.
+Reviewed-by: Christopher Snowhill <kode54@gmail.com>
+
+Also, feel free to be the first to submit a hw-probe of the machine,
+since there's no MSI Claw reporting at this time. Guess not many people
+would be interested in running Linux on a machine that didn't yet have
+working controller support. Thanks for that. :D
+
+> ---
+>  drivers/input/joystick/xpad.c | 2 ++
+>  1 file changed, 2 insertions(+)
 >
-> Yes, but it's not what your code does.
+> diff --git a/drivers/input/joystick/xpad.c b/drivers/input/joystick/xpad.=
+c
+> index 4eda18f4f..9f44669df 100644
+> --- a/drivers/input/joystick/xpad.c
+> +++ b/drivers/input/joystick/xpad.c
+> @@ -218,6 +218,7 @@ static const struct xpad_device {
+>  	{ 0x0c12, 0x8810, "Zeroplus Xbox Controller", 0, XTYPE_XBOX },
+>  	{ 0x0c12, 0x9902, "HAMA VibraX - *FAULTY HARDWARE*", 0, XTYPE_XBOX },
+>  	{ 0x0d2f, 0x0002, "Andamiro Pump It Up pad", MAP_DPAD_TO_BUTTONS, XTYPE=
+_XBOX },
+> +	{ 0x0db0, 0x1901, "Micro Star International Xbox360 Controller for Wind=
+ows", 0, XTYPE_XBOX360 },
+>  	{ 0x0e4c, 0x1097, "Radica Gamester Controller", 0, XTYPE_XBOX },
+>  	{ 0x0e4c, 0x1103, "Radica Gamester Reflex", MAP_TRIGGERS_TO_BUTTONS, XT=
+YPE_XBOX },
+>  	{ 0x0e4c, 0x2390, "Radica Games Jtech Controller", 0, XTYPE_XBOX },
+> @@ -492,6 +493,7 @@ static const struct usb_device_id xpad_table[] =3D {
+>  	XPAD_XBOX360_VENDOR(0x07ff),		/* Mad Catz Gamepad */
+>  	XPAD_XBOXONE_VENDOR(0x0b05),		/* ASUS controllers */
+>  	XPAD_XBOX360_VENDOR(0x0c12),		/* Zeroplus X-Box 360 controllers */
+> +	XPAD_XBOX360_VENDOR(0x0db0),		/* Micro Star International X-Box 360 con=
+trollers */
+>  	XPAD_XBOX360_VENDOR(0x0e6f),		/* 0x0e6f Xbox 360 controllers */
+>  	XPAD_XBOXONE_VENDOR(0x0e6f),		/* 0x0e6f Xbox One controllers */
+>  	XPAD_XBOX360_VENDOR(0x0f0d),		/* Hori controllers */
 
-Care to elaborate?
 
