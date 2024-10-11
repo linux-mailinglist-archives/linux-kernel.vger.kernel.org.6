@@ -1,159 +1,181 @@
-Return-Path: <linux-kernel+bounces-361225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2ECF99A545
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:40:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA1E99A54D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:45:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B56C28295A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:40:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DB80B22FA1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:45:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE9CF218D99;
-	Fri, 11 Oct 2024 13:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EB6219488;
+	Fri, 11 Oct 2024 13:44:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V6c7PbZo"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJjxuWcS"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77A48804;
-	Fri, 11 Oct 2024 13:40:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2704C804;
+	Fri, 11 Oct 2024 13:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728654030; cv=none; b=QoHjVqqmzoq3Y3z4s5Vilfjk6Ko0cf9NsqAxm4Bqi8Mzt9SzFOEuVnqSSRzeS8hVQHo/3kwuR2/QqHIC6XG+20XVprryigImB0ol2P4IJIf0ygH+i1jk49dqjbZsREYVUDiRcOcZPp2FnZBfJTGJ9UiI4jURLV2H/E7pNlqer5c=
+	t=1728654296; cv=none; b=fwXj5hgWwqMalQdDkOEaSOBkkkQmQ/LjO0fq9hk5xy8JPSIR2/KO0uxax2tO2IgBz6ifmxSJcKH22ybQ980Itlgff1DD9qyJu7YTJ+lDZ+hiXnixrvpDmIxjT/YEYLN0wpiiw2QbXeYB3VilBJcAEuWqB8zU0N/K0c+JJVdtJUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728654030; c=relaxed/simple;
-	bh=wgjfu5r3AaoQ1nJV2V26leGa8fLPEXaUsDW3S1EM/fc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=fFYzvsRsUodUXL0WLuiaJ/1IlaYUcFIfrAU0ZAJYybidSGiGRdVt/z2D1e3wgGmTluvn7wHrkhHEOMvQiTjyV/EJZa3J+J7U4LTxiIH3mpfCxVYdRbQn4ZuMpbCgQnNfWo/7Xb8VBAuwOTRmHGmtITa7VTtlpl7wXrtEX/f7V4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V6c7PbZo; arc=none smtp.client-ip=209.85.167.41
+	s=arc-20240116; t=1728654296; c=relaxed/simple;
+	bh=dU3fFhFIgbYSCfGSsXuzCP67XhqLGkePBVU1S71XnZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dET9ZbJPTRMffJAUdZfUwAkF9zS8i8aKwje56mGZFg8DBi5BXf8HxCj1f8+Rcw1Ngg1JTRwgY4Q9mDGyAvdUvSxNLWgpAwVQY443iqQfKx5wHUmTcYgXrcxVbBXyjvN9OtoxLyvKPIEHUGz9bgF+b5T8UfPT+QL0AXlWcGvqi64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJjxuWcS; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539d0929f20so1237694e87.0;
-        Fri, 11 Oct 2024 06:40:28 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a995f56ea2dso325893066b.1;
+        Fri, 11 Oct 2024 06:44:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728654026; x=1729258826; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728654293; x=1729259093; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=f0ZkUoJvRjLXyfZrkGYuzTLNlYvy7Oqnuq8aLsm5+ho=;
-        b=V6c7PbZo2yjd0bZIeh0HaBWK99ylwjDII8r53QkAwNJIkNzfVrVbtoXdshBbWEcElS
-         DunR87zF6YRMbrKGHwYTAKX7+ZFeTFNqN0UVH5JZ/VpQThcIem3kfDY0KMC/2V30/0wR
-         MPOU08RMeqEHZxyza4iPqZOtn4WvJbG9ikywwKAXEa83ervfX3ZXYM+Td4epCN6CLw/R
-         CaUdtB/t8H8Uzw4FbusVe28ZdqRifExzhKHYvhYAKJkt5zzHdjAKe+3TZ0FEHOykNObh
-         od3SF7KqheLmpcv7/3xncZwVl6sNTrtUuknbhSYmuItsYeOKU7iDqeJP0mACBAGcCUiO
-         YTcg==
+        bh=VFmcATx1odRBRodNNtT/YMf8Rdbu+ncYOjMaxBgaZqo=;
+        b=SJjxuWcSm6DIHY0scPGfjknRCknsdPMFjvHGz8rC64QUlriz6Dya/f4ha+TJGv1LyX
+         sMnjZFYsINVJPjBvLRx/pNJXtDSzNzaKJxTNXstUfd5LtpEplK9RO1ahCVsv6sw/OVMV
+         CV1BYpFxoy3yQmI4zuReVzioc3X/yj3S1I21O4H+UQGUyXiGgBkxf08cYnyOXs4hVcav
+         69RmWM1QPnBEbWIMoeUt6hN2EsGDNgPph2oGGSgCPxOYo0yg0mO4d5G/0uSf2wVYOacZ
+         PgNYQftW4IvHQYdxEz1RMJ6Le/3cVmD2nwFJLuN7gH5dbMDNP3qGW4GZ5ns9v3pn+1/q
+         UQ7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728654026; x=1729258826;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728654293; x=1729259093;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=f0ZkUoJvRjLXyfZrkGYuzTLNlYvy7Oqnuq8aLsm5+ho=;
-        b=N7HoSaqbeiz1QhPzhlo1ZP5/UWs2A47TJIScSVVH5X1/3h4eQE8rQrep9ClkmKaBOz
-         0gEBwoe3Ttj7qnP8D3DUZame9zD7O5+iDoY4+t7pUmxPE+gNdA7I0FKjMWl0TjIoVSxv
-         UU/p1gICjPVtRaOoJI9rIfep+dT9vu+4uIwmWk2qSO5EB724xnI+d4wIM7xWZB9Pd9zR
-         oxBnGFVfvDds3QiYd/Y1vBaod5Iv9H5PnGvb7+BPJj81TmuHLrKj+D+eP1D/lkkBHIFg
-         nu9po/HUdcxJVsgPRrJGsb9pRyqNcu81u3TJT6hU9b+dsULUSRgVJSvGx5n8oTx7WMKX
-         gRRw==
-X-Forwarded-Encrypted: i=1; AJvYcCUZFzsIDPqYaxpKDx2DJyfNRiHQJV4FTJT5JwXbqzHo1zVzWEo+VIjW9qbA5j8C8k2DQqwzMyTs@vger.kernel.org, AJvYcCUZJAERKObQsBF6rqVYIjzrhUCthStfEzUA8pPtdCktbURFAnVnBYe9M9v08R++drhrV4riRjzYLJy4BJLm@vger.kernel.org, AJvYcCXeAXiIWpnwT9HT/xvS8D/wUOhZ+/aZVN7Ll+WmVyXNkmULNHVqL8LNfZsxPcvH3myszVlWhz3SUQ4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdhy7h7sWWpH1lRN/Nq+VH4yby0qE1v6HT5Nfs1ErENLwPEwEr
-	ROvIk4z+hhalczB/D8+WNXNO5AqOSDB7+iXpLUSnjqU0syruai+E
-X-Google-Smtp-Source: AGHT+IGYbIPQBrWgRbvQaCx70aNq3oHv3T9A2i8xbZOrNifAHVoPr97Fosunh1fB0lmSO7qui2klhw==
-X-Received: by 2002:a05:6512:230f:b0:539:8dde:903e with SMTP id 2adb3069b0e04-539c98ab8a8mr2403029e87.22.1728654026130;
-        Fri, 11 Oct 2024 06:40:26 -0700 (PDT)
-Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c87fdsm604781e87.81.2024.10.11.06.40.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 06:40:25 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: eadavis@qq.com
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kernel@pengutronix.de,
-	kuba@kernel.org,
-	leitao@debian.org,
-	linux-can@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	mkl@pengutronix.de,
-	netdev@vger.kernel.org,
-	o.rempel@pengutronix.de,
-	pabeni@redhat.com,
-	robin@protonic.nl,
-	socketcan@hartkopp.net,
-	syzbot+ad601904231505ad6617@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com,
-	snovitoll@gmail.com
-Subject: Re: [PATCH net-next V2] can: j1939: fix uaf warning in j1939_session_destroy
-Date: Fri, 11 Oct 2024 18:41:24 +0500
-Message-Id: <20241011134124.3048936-1-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <tencent_5B8967E03C7737A897DA36604A8A75DB7709@qq.com>
-References: <tencent_5B8967E03C7737A897DA36604A8A75DB7709@qq.com>
+        bh=VFmcATx1odRBRodNNtT/YMf8Rdbu+ncYOjMaxBgaZqo=;
+        b=sJ9HXiuP4QPF0uycdqcd6PfhjBHums/p5wHLXzuKZAKxnN4CugQNEhSAY0+YLMbVNx
+         bOkRlNe9vikIv6uFl8Rz2aMtCSXfb6Zomxag7QbXG31cSXm8zTU4iNEeozZpygSXfE99
+         K1D8iBzTQY40G6R+L2eLWWfv2AUIuszHBX/jKgLOSOlzWuakbpzbF2aFcvHMzlXPOrDF
+         WJ9po/6FNfwj8fVCfzBNT7g7XjErspG21XWYNlOkvwnpHqs1rWq9Vf1orTa1QtoiUdvL
+         4rNW3D6sxGlWPql1+1AZXY+nKZRfo74vzK/YkMlrQwLtES8Wm4bO1rZb5w5tAoeQChnt
+         xCkA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhdbqEglDfIFLJb3MuG72IEm9RMXAiWbMvkWxg7rLp8uViYaZus6Nac3KakMTrn+DXA2zNDsbehyUqtMMD@vger.kernel.org, AJvYcCXT6CqLeVetE37fO/Kn19rRsmvptqCktZqep70y7FrQzQs5fsu7cU58gNfRcw5jdZjxWnqlXvZsIOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxUYX6bTHm0IOZ96IKa/JjAm8wOF3nGph51RY/GryKqIxHRONQ9
+	dFB4IYbd9OsvbIBRZuroA93QrRGCmbAX1KzFuIKIQqpWvjSOo7cxkKmUJmGXMiFTBVW2y3lvDm3
+	C6QyldsNp0jYllcqlDpsiF0W0Pw==
+X-Google-Smtp-Source: AGHT+IGDVt0dw5a0G5CT/lg3sbm+HcJzm8qRuJl8QBnUjs0jZTr5VLEwZcO2c6Bra3147lynUJXcW0UTD9RWKIUKq84=
+X-Received: by 2002:a17:907:94d2:b0:a93:d5d3:be4 with SMTP id
+ a640c23a62f3a-a99b93018f2mr214011066b.13.1728654293099; Fri, 11 Oct 2024
+ 06:44:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241011055231.9826-1-kfting@nuvoton.com> <20241011055231.9826-3-kfting@nuvoton.com>
+ <ZwkFWVC3_5xr6OQW@smile.fi.intel.com>
+In-Reply-To: <ZwkFWVC3_5xr6OQW@smile.fi.intel.com>
+From: Tyrone Ting <warp5tw@gmail.com>
+Date: Fri, 11 Oct 2024 21:44:42 +0800
+Message-ID: <CACD3sJY_79_VTe1EHPdh-1+FCBwb2KCW_N19==TMHAsrFL-rzg@mail.gmail.com>
+Subject: Re: [PATCH v6 2/4] i2c: npcm: Modify the client address assignment
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
+	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
+	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 8 Aug 2024 19:07:55 +0800, Edward Adam Davis wrote:
-> On Thu, 8 Aug 2024 09:49:18 +0200, Oleksij Rempel wrote:
-> > > the skb to the queue and increase the skb reference count through it.
-> > > 
-> > > Reported-and-tested-by: syzbot+ad601904231505ad6617@syzkaller.appspotmail.com
-> > > Closes: https://syzkaller.appspot.com/bug?extid=ad601904231505ad6617
-> > > Signed-off-by: Edward Adam Davis <eadavis@qq.com>
-> > 
-> > This patch breaks j1939.
-> > The issue can be reproduced by running following commands:
-> I tried to reproduce the problem using the following command, but was 
-> unsuccessful. Prompt me to install j1939cat and j1939acd, and there are
-> some other errors.
-> 
-> Can you share the logs from when you reproduced the problem?
+Hi Andy:
 
-Hello,
+Thank you for your comments.
 
-Here is the log of can-tests/j1939/run_all.sh:
+Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
+10=E6=9C=8811=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=887:00=E5=AF=AB=
+=E9=81=93=EF=BC=9A
+>
+> On Fri, Oct 11, 2024 at 01:52:29PM +0800, Tyrone Ting wrote:
+> > From: Tyrone Ting <kfting@nuvoton.com>
+> >
+> > Store the client address earlier since it might get called in
+> > the i2c_recover_bus() logic flow at the early stage of
+> > npcm_i2c_master_xfer().
+>
+> ...
+>
+> > +     /*
+> > +      * Previously, the address was stored w/o left-shift by one bit a=
+nd
+> > +      * with that shift in the following call to npcm_i2c_master_start=
+_xmit().
+> > +      *
+> > +      * Since there are cases that the i2c_recover_bus() gets called a=
+t the
+> > +      * early stage of npcm_i2c_master_xfer(), the address is stored w=
+ith
+> > +      * the shift and used in the i2c_recover_bus().
+> > +      *
+> > +      * The address is stored from bit 1 to bit 7 in the register for
+> > +      * sending the i2c address later so it's left-shifted by 1 bit.
+> > +      */
+>
+> I would rephrase it a bit like
+>
+>         /*
+>          * Previously, the 7-bit address was stored and being converted t=
+o
+>          * the address of event in the following call to npcm_i2c_master_=
+start_xmit().
+>          *
+>          * Since there are cases that the i2c_recover_bus() gets called a=
+t the
+>          * early stage of npcm_i2c_master_xfer(), the address of event is=
+ stored
+>          * and then used in the i2c_recover_bus().
+>          */
+>
+> (E.g., the last paragraph just describes 101 about I2C 7-bit addresses us=
+age
+>  and may be dropped completely.)
+>
 
-# ip link add type vcan
-# ip l s dev vcan0 up
-# ./run_all.sh vcan0 vcan0
-##############################################
-run: j1939_ac_100k_dual_can.sh
-generate random data for the test
-1+0 records in
-1+0 records out
-102400 bytes (102 kB, 100 KiB) copied, 0.00191192 s, 53.6 MB/s
-start j1939acd and j1939cat on vcan0
-8321
-8323
-start j1939acd and j1939cat on vcan0
-[  132.211317][ T8326] vcan0: tx drop: invalid sa for name 0x0000000011223340
-j1939cat: j1939cat_send_one: transfer error: -99: Cannot assign requested address
+Understood. I'll modify the comments and remove the last paragraph.
 
-It fails here:
-https://github.com/linux-can/can-tests/blob/master/j1939/j1939_ac_100k_dual_can.sh#L70
+> > +     bus->dest_addr =3D i2c_8bit_addr_from_msg(msg0);
+>
+> ...
+>
+> > +             /*
+> > +              * Since the transfer might be a read operation, remove t=
+he I2C_M_RD flag
+> > +              * from the bus->dest_addr for the i2c_recover_bus() call=
+ later.
+> > +              *
+> > +              * The i2c_recover_bus() uses the address in a write dire=
+ction to recover
+> > +              * the i2c bus if some error condition occurs.
+> > +              */
+>
+> > +             if (bus->dest_addr & I2C_M_RD)
+>
+> Redundant.
+>
 
-The error message is printed in this condition:
-https://elixir.bootlin.com/linux/v6.12-rc2/source/net/can/j1939/address-claim.c#L104-L108
+Just to double check. Is the code "if (bus->dest_addr & I2C_M_RD)" redundan=
+t?
 
-I've applied your patch on the current 6.12.0-rc2 and the syzkaller C repro
-doesn't trigger WARNING uaf, refcount anymore though.
+> > +                     bus->dest_addr &=3D ~I2C_M_RD;
+>
+> --
+> With Best Regards,
+> Andy Shevchenko
+>
+>
 
-== Offtopic:
-I wonder if can-tests/j1939 should be refactored from shell to C tests in the
-same linux-can/can-tests repository (or even migrate to KUnit tests)
-to improve debugging, test coverage. I'd like to understand which syscalls
-and params are used j1939cat and j1939acd utils -- currently, tracing with
-strace and trace-cmd (ftrace).
+Thank you again.
 
-> > git clone git@github.com:linux-can/can-tests.git
-> > cd can-tests/j1939/
-> > ip link add type vcan
-> > ip l s dev vcan0 up
-> > ./run_all.sh vcan0 vcan0
-
+Regards,
+Tyrone
 
