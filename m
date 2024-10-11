@@ -1,87 +1,144 @@
-Return-Path: <linux-kernel+bounces-361440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966DD99A845
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:49:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 699AD99A84A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:50:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C52C51C22C3E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:49:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 098C21F22A14
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:50:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AF8B196D9D;
-	Fri, 11 Oct 2024 15:49:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b15jSpFh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A08D9197A9F;
+	Fri, 11 Oct 2024 15:50:15 +0000 (UTC)
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D3F10F7;
-	Fri, 11 Oct 2024 15:49:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 763528121F;
+	Fri, 11 Oct 2024 15:50:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661765; cv=none; b=Os/ijGthY+ZdFrAT7F0ZhGXhMiYSu9tYANGmyVKrfU1PQ4qb2BZWZC/AGfjOT7WSOX3mEQlbWUTIkj3hlMn7iBRukYQG8y8T8NchWDFDsSYmfpqprq3coHkPYdAXUu92ZuJMJl3h9U3LoP1sHCw9BEem4RxsTtdfvysFXOI0FlE=
+	t=1728661815; cv=none; b=GXp8pWvQvFRSzZNJYdGtcU2T6A6fY1XUWA2Mi1QWprY3EJsJma5mSFkrOWZhl3fFtYJX8JCdqBJnA1E37VXZ2hA07kxxsdkJb1TH1FVmh8SV08TaUgMaAZlR1CQcQsPmyj3N2s7wzamzTT/R7uXjhEabgLmQcRI79ks4jZTnKjs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661765; c=relaxed/simple;
-	bh=pSy1MK1YaflqwCzh6P1vtL7L/EAZ5Pq58NwxmcnsFcA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LsBZifA4hIaSp4TZSgAjtOT+mtNNxkPcJAzeZdmPMkj3UKvSWjMWcQKfGhw09MRtc9PA/3QmK0JQ78Ks0ohtNXnQzx9ldK/8SK8u8j6Vftd9cDPL2meVycaw82JbOB5/NkBgCkCCL31qVBRyhSzXJqea/OQqA3npg/SkraiRNDk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b15jSpFh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EA26C4CEC3;
-	Fri, 11 Oct 2024 15:49:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728661765;
-	bh=pSy1MK1YaflqwCzh6P1vtL7L/EAZ5Pq58NwxmcnsFcA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=b15jSpFh8bXXqrlw18PZY75DNXVhGS97yt42xfGNDuV+Riu35A4Ud8LLkgaY5gRSF
-	 OAlRRjC/u8omL6lGZctxTBd6UnivhOAwya6HWFDht7+gm/r2A44nact+pZr1lFOZsL
-	 TnmYdt9bRdVGrDUoJtqnJaIvBwJ7y0WLbAvhVnfCupi/qOpyiPYWHbeQq/ZTt1ofFm
-	 /zvShPRVMn9ssZ3xXziqv+Udx/zJClsPTNBuAEBvA9KdPK9P/AWl5PbBn85LsAh5mR
-	 W42PpdEd2tQxzSKSWojnY9xHrlm4X0bxoXQz6C83N3Q7gFL0NIKVlRLPYAXmbnhWU9
-	 frNe4/YMWgnuQ==
-Date: Fri, 11 Oct 2024 08:49:24 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Furong Xu <0x1207@gmail.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, Ilias Apalodimas
- <ilias.apalodimas@linaro.org>, <netdev@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>, "Jesper Dangaard Brouer" <hawk@kernel.org>,
- "David S. Miller" <davem@davemloft.net>, "Eric Dumazet"
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, <xfr@outlook.com>
-Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
-Message-ID: <20241011084924.1fa2eb7d@kernel.org>
-In-Reply-To: <20241011172605.0000142f@gmail.com>
-References: <20241010114019.1734573-1-0x1207@gmail.com>
-	<601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
-	<20241011101455.00006b35@gmail.com>
-	<CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
-	<20241011143158.00002eca@gmail.com>
-	<21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
-	<20241011172605.0000142f@gmail.com>
+	s=arc-20240116; t=1728661815; c=relaxed/simple;
+	bh=dNaagMp2bYJLozsyoqEG1U0iqwnLasapZ115/GGHmbQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=stz97Nx4Uy/p8WNAZn2U2CyrOM2YFxq1zewZd76D1KjXnAxjP+VgMN+Pr72JSl1qRwCkWDX3s25AnJb56vgaP9yDMUpxAAYNfT311/YDwcdTDQwy9bwe2UYfbD6wvLfsTDFnUB1XvUaEDnlQdXpP3VJUYs7LA8y9WYZToayXvjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-53993c115cfso2932190e87.2;
+        Fri, 11 Oct 2024 08:50:13 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728661812; x=1729266612;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=1+mX6k5e271iKgfaonKKogx62EDuj/U0NnrkRDMTuNY=;
+        b=CSOo6IJ1R1eM1pp34cdnNhGA65dFdpcowudQrs29tenUZGeMe0KUcZ5VNK9EZusiSF
+         XT7iG3+Ef8AQc6S2LQ9YJwgqbmUr/CBM7geTVZYRdcTCYg3wt6i2euN8zICTTR7PXkj5
+         8pkHPg/DArpV/F4XXd6yAmXeNK2sfvnB1XSLsRIgFAmyrUrulABKMWhDExayGmibufMt
+         GG85gEJtKVogqV1m8rQHxLMOOD3bMPysp1xUL9k8elHof+lZCeZGI7M9bAfBjYKSxB1t
+         Nh79a4DoLcMZCaNVu5vPDhCy9KavtM+RDaOwQK0s4wh3T/+smV0X3MDKVXV9FTD/VFrs
+         PyDg==
+X-Forwarded-Encrypted: i=1; AJvYcCWf1yuqsiZCSG065b8p1nz6x9aMooVBFGZVK2dcl2cahFjlY0mLocC0TdpkEhigTBLs6VhgCeTxQtX76Q==@vger.kernel.org, AJvYcCXdW4dRUXeyrT8gjp+XDhOe1cstzU7dIeOmYWb+mrSE7Zh3YeWS5Fxp4Cnve5Gc6Tc9C8LkCV8qYssBe5GT@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuDWXkgo4rAsi1oE3NptFo+wE0NbegYYPOHMQh37ec9uq8oYWk
+	gCSpqOEVNjC4ECKTEQlubhoQeToTWz48MW/2G4ElLGqQN0Eqqvl0
+X-Google-Smtp-Source: AGHT+IG3GX73KARzZhDvyJxM7HeNeFateF+eFUiu8tSBQc8pi3a53XDvlEtT1q+yrvyY6eriaBq7xA==
+X-Received: by 2002:a05:6512:3e0d:b0:530:abec:9a23 with SMTP id 2adb3069b0e04-539da3c67c4mr1886915e87.17.1728661811251;
+        Fri, 11 Oct 2024 08:50:11 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-004.fbsv.net. [2a03:2880:30ff:4::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf49910sm78482775e9.20.2024.10.11.08.50.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 08:50:09 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: hch@infradead.org,
+	Jens Axboe <axboe@kernel.dk>,
+	Damien Le Moal <dlemoal@kernel.org>
+Cc: kernel-team@meta.com,
+	linux-block@vger.kernel.org (open list:BLOCK LAYER),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] elevator: do not request_module if elevator exists
+Date: Fri, 11 Oct 2024 08:49:58 -0700
+Message-ID: <20241011154959.3198364-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Fri, 11 Oct 2024 17:26:05 +0800 Furong Xu wrote:
-> > In order to support the above use case, it seems there might be two
-> > options here:
-> > 1. Driver calls page_pool_create() without PP_FLAG_DMA_SYNC_DEV and
-> >    handle the dma sync itself.
-> > 2. Page_pool may provides a non-dma-sync version of page_pool_put_page()
-> >    API even when Driver calls page_pool_create() with PP_FLAG_DMA_SYNC_DEV.
-> > 
-> > Maybe option 2 is better one in the longer term as it may provide some
-> > flexibility for the user and enable removing of the DMA_SYNC_DEV in the
-> > future?  
-> 
-> What is your opinion about this?
+Whenever an I/O elevator is changed, the system attempts to load a
+module for the new elevator. This occurs regardless of whether the
+elevator is already loaded or built directly into the kernel. This
+behavior introduces unnecessary overhead and potential issues.
 
-I think your patch is fine, but it's a micro optimization so you need 
-to provide some measurement data to show how much of a performance
-improvement you're getting.
+This makes the operation slower, and more error-prone. For instance,
+making the problem fixed by [1] visible for users that doesn't even rely
+on modules being available through modules.
+
+Do not try to load the ioscheduler if it is already visible.
+
+This change brings two main benefits: it improves the performance of
+elevator changes, and it reduces the likelihood of errors occurring
+during this process.
+
+[1] Commit e3accac1a976 ("block: Fix elv_iosched_local_module handling of "none" scheduler")
+Fixes: 734e1a860312 ("block: Prevent deadlocks when switching elevators")
+Signed-off-by: Breno Leitao <leitao@debian.org>
+---
+Changelog:
+ v2:
+   * Protecet __elevator_find() by elv_list_lock (Christoph Hellwig)
+ v1:
+   * https://lore.kernel.org/all/20241010141509.4028059-1-leitao@debian.org/
+
+ block/elevator.c | 16 +++++++++++++++-
+ 1 file changed, 15 insertions(+), 1 deletion(-)
+
+diff --git a/block/elevator.c b/block/elevator.c
+index 565807f0b1c7..1ac9be3e47d1 100644
+--- a/block/elevator.c
++++ b/block/elevator.c
+@@ -106,6 +106,17 @@ static struct elevator_type *__elevator_find(const char *name)
+ 	return NULL;
+ }
+ 
++static struct elevator_type *elevator_find(const char *name)
++{
++	struct elevator_type *e;
++
++	spin_lock(&elv_list_lock);
++	e = __elevator_find(name);
++	spin_unlock(&elv_list_lock);
++
++	return e;
++}
++
+ static struct elevator_type *elevator_find_get(const char *name)
+ {
+ 	struct elevator_type *e;
+@@ -708,13 +719,16 @@ int elv_iosched_load_module(struct gendisk *disk, const char *buf,
+ 			    size_t count)
+ {
+ 	char elevator_name[ELV_NAME_MAX];
++	const char *name;
+ 
+ 	if (!elv_support_iosched(disk->queue))
+ 		return -EOPNOTSUPP;
+ 
+ 	strscpy(elevator_name, buf, sizeof(elevator_name));
++	name = strstrip(elevator_name);
+ 
+-	request_module("%s-iosched", strstrip(elevator_name));
++	if (!elevator_find(name))
++		request_module("%s-iosched", name);
+ 
+ 	return 0;
+ }
+-- 
+2.43.5
+
 
