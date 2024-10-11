@@ -1,124 +1,117 @@
-Return-Path: <linux-kernel+bounces-360309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 575529998D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:12:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A09669998FE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:18:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F43E1C218F6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:12:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A56F1F234FA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4A748BE5;
-	Fri, 11 Oct 2024 01:12:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cgT9S0GK"
-Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3720817BA2;
+	Fri, 11 Oct 2024 01:18:32 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CAE9567D;
-	Fri, 11 Oct 2024 01:12:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B81FB4A2D;
+	Fri, 11 Oct 2024 01:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728609122; cv=none; b=kBDsm64v5WxfIpSjBRllAYU9GoBApE1y+aW7/7uU8klGZAyfvfBVZHru/OhWcATSvwMTy0YqoVAkf90yduSZny+1kpec0au4iPjIF5Muugf7Lgh06wi2w4JINrxPTY9suPA6lYVPgS477i0bwVYgS0LEuHkQXarULtWXXJE2f0I=
+	t=1728609511; cv=none; b=dktWy/NwolIvgPmbEyRZIEr0uzpJZermr36RPp8DZychhsB6fNMf4v8xmBY2DcEoM/D83kQBWgHZrQWiQkirSHARwkaUvK+09jwWAdunisPKsWzp6jmlWO0F77f7H4UK/X5Q78gAul9Y1U7zMUzqsB7HvHNFCq7dJDvBZNJMwFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728609122; c=relaxed/simple;
-	bh=kz6Wp9ySt2hzSQjerKMpWk13uiAYKPo+Vl5JeQAuAu4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UNOpfUqj1+n24t8/UaggG1YO+p+/mXK2CdnQrd9rG+P82cpf2VDH90tX3uDFh4/K3Z6yjw8FdaNOHWJxPYfc/A2J5F4sGEmDY9KfyZQzQB1IU7O1anhgoB/kQVRAgq+P1rvlL80Pq3idMyEAZLQ4CNoc+Ac4GFfinGYl1Q58iW4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cgT9S0GK; arc=none smtp.client-ip=209.85.210.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-71def715ebdso1076974b3a.2;
-        Thu, 10 Oct 2024 18:12:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728609120; x=1729213920; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=AAOc/rBakUrniDiHlg2qpejgAj7CPI/jsjOw6Ywi1cw=;
-        b=cgT9S0GKpPWQieZlYGSIzXfL0XONcOeBxFi10dxGFBxTrQRHlQq7caWhEqk1iZKW9V
-         tj7tDbtlo0Seq7ITqQNoisuDcfTsELykEIideRlbxOUdaqoVX1C6sCtn6GXjGLR4rEX3
-         G8uBmbqSHRyc2oSYXpSqQk5QNV+GhfiFWVBAs/Vyxuqn6ptmmFDzyptDkMNb1shnIHVm
-         zRwhIe9v2bPs6MvoEuaVtFIJk9B9+ohxMTKmrcD30G/Xh9pA9c+uqjeZ2lI0IDWEssbX
-         Q49QW6v5kXrNMFQU92pVthK8f5ATjHsg/M06O3k+U5HT6Hf+1C8vLKt3sHNS0CWV2yux
-         gkKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728609120; x=1729213920;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=AAOc/rBakUrniDiHlg2qpejgAj7CPI/jsjOw6Ywi1cw=;
-        b=iAQdIDktXoFxSLic4VwRnqm7qZmqSTEbiHgAn5hRhy39VJIuT+wVDoxj32YkdpIf5f
-         ScoVxv7FC3GbNYwbWevuYuZxurdYl77ypo+Ddjicw3s1EhPdZGsMwIDnH9afV/LLUG8S
-         cCr+08r8Y9e3YGO2S0sGjnW5yut4v8QVIGs5rvNE/eo5NndtWsxI0QHLTIuap6omYQRi
-         fqMFWa6v2GinCe61H4JvTCPR4tn1zGdpF3fg7ayVkeNx9mD82NF+2PNUKNFcOloV7XwJ
-         EfyaSBAFpDR79aBrqX+/xAkN8GWtejyPg90esfwU6Vu0UatpcTxdLB+qaXk7vqRkzvGL
-         La6w==
-X-Forwarded-Encrypted: i=1; AJvYcCUfa5+l0ZSfd5fkR9mis3bqjNf9hDWpHT/9Gma2+tOcroNgat/MsXfgQyeoMhGpt9A9S0AHasL2wsnYnEO0@vger.kernel.org, AJvYcCV6Gnmh3VOa028f/LhmiqgI/4Y9h7lGF5zmDko9M42bVqaId9a6aDfxrW2vU8y1yMVAQq4ZCjop/FZhvxDj@vger.kernel.org, AJvYcCXEUq5S4TfYmp7fnPhpuK9MYaT7SIUTX1j7vpHz7wAjm2en8DsyV8IJIbs/Jvmkm6mudYQamyhxSbCJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7lo98Ydetuweo7+FKARpgego5GYdfR7Ln1+ZheU/w3GvIGcpR
-	uhd7ZHejFoG25tpwqMw0E4+mMhJLsLSFFDuWdGzsBtOtv1G4n5Vu
-X-Google-Smtp-Source: AGHT+IHHQvFx/g0NSBQ/2WU5QX9vrmE/ZQ7W5Xx12EJZBah7AEPBBqYXC9VcoE3PO1Vowj3IeW5tRg==
-X-Received: by 2002:a05:6a21:e8b:b0:1cf:4da0:d95c with SMTP id adf61e73a8af0-1d8bcf453d9mr1508105637.23.1728609120231;
-        Thu, 10 Oct 2024 18:12:00 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea449596d3sm1599794a12.61.2024.10.10.18.11.59
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 18:11:59 -0700 (PDT)
-Date: Fri, 11 Oct 2024 09:11:37 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Inochi Amaoto <inochiama@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Chen Wang <unicorn_wang@outlook.com>, 
-	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, 
-	linux-serial@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <vinnmu45snxveh6f3emo7nhom6s2z5d7hf5pzeozyowfa3twt7@ykeidfboxfiv>
-References: <20241009233908.153188-1-inochiama@gmail.com>
- <20241009233908.153188-2-inochiama@gmail.com>
- <oyvqsywyznanpx5oflnemcsrk7r7nnhvxl6ly7b55oan2boi5d@kobrtldqbj6m>
- <muz6ze7cxho5niz67agoxwnaowumzlcto2vwydmxs2yzdjmisi@symog2asftmv>
- <ZwfquBFOVJEz5lTT@smile.fi.intel.com>
+	s=arc-20240116; t=1728609511; c=relaxed/simple;
+	bh=yrc5s+9o+gbztC/j2sh5MbfFaE4EN4fTQfBq1nNR+jo=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=FY4q3m38hh4ZUhkc3vaeYzvNw/dSscjgHzfRDEDAv5dPifee2qiF5h9ZmxlnQKu6f5VvFdG24nOHaNY8QNvvMU+BLMndOG43EoVwuxvyN0YpeFIlU3gjURIsqTtmeqvXfyNmro99bpVwmOtg2umKqMb07WIsujc2ErQ05rO93u8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPpf75mD4z4f3jMX;
+	Fri, 11 Oct 2024 09:18:07 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id B0D891A0359;
+	Fri, 11 Oct 2024 09:18:24 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgDH+sbefAhnm9MFDw--.55490S4;
+	Fri, 11 Oct 2024 09:18:24 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org,
+	mariusz.tkaczyk@intel.com
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH v2 0/7] md: enhance faulty checking for blocked handling
+Date: Fri, 11 Oct 2024 09:16:23 +0800
+Message-Id: <20241011011630.2002803-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwfquBFOVJEz5lTT@smile.fi.intel.com>
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgDH+sbefAhnm9MFDw--.55490S4
+X-Coremail-Antispam: 1UD129KBjvJXoW7CF4xJr1kXr1fur4DJw1xGrg_yoW8GryDpr
+	nxta43Zr1UWr13X3Z3ZF1UXryrWw18JFW3Ar47Kw18W34UZryxJw4kt3WrWr90gryavws0
+	qr15GrZxWFy5Ca7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
+	JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
+	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
+	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
+	v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
+	JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Thu, Oct 10, 2024 at 05:54:48PM +0300, Andy Shevchenko wrote:
-> On Thu, Oct 10, 2024 at 04:23:05PM +0800, Inochi Amaoto wrote:
-> > On Thu, Oct 10, 2024 at 08:12:41AM +0200, Krzysztof Kozlowski wrote:
-> > > On Thu, Oct 10, 2024 at 07:39:05AM +0800, Inochi Amaoto wrote:
-> > > > Add compatibles string for the Sophgo SG2044 uarts.
-> > > 
-> > > This we see from the diff, say something about hardware.
-> > 
-> > The reason for this compatiable (and the hardware) is mainly in the
-> > next patch. Will it be better to submit a new verion with improved
-> > description? If so, I wonder whether I can reserve your ack.
-> > 
-> > > I would just add it to starfive enum, but this is fine as well.
-> 
-> Even after reading the second patch I don't understand why you shouldn't re-use
-> the starfive compatible or make a new one that covers this quirk? At least I would
-> see that as second patch is basically not needed.
-> 
+From: Yu Kuai <yukuai3@huawei.com>
 
-I do not think it is good to re-use the starfive compatible, it is weird
-that a sophgo SoC has a peripheral on the statfive SoC. Another suggestion
-for adding a new one that covers the quirk is a good idea for me, but I am
-not sure whether it may cause some misunderstanding like reuse the starfive
-compatible. If the second one is possible, it is OK for me to drop the second
-patch.
+Changes in v2:
+ - add more comments and commit message in patch 3;
+ - fix some typo;
 
-Regard,
-Inochi
+The lifetime of badblocks:
+
+1) IO error, and decide to record badblocks, and record sb_flags;
+2) write IO found rdev has badblocks and not yet acknowledged, then this
+IO is blocked;
+3) daemon found sb_flags is set, update superblock and flush badblocks;
+4) write IO continue;
+
+Main idea is that badblocks will be set in memory fist, before badblocks
+are acknowledged, new write request must be blocked to prevent reading
+old data after power failure, and this behaviour is not necessary if rdev
+is faulty in the first place.
+
+Yu Kuai (7):
+  md: add a new helper rdev_blocked()
+  md: don't wait faulty rdev in md_wait_for_blocked_rdev()
+  md: don't record new badblocks for faulty rdev
+  md/raid1: factor out helper to handle blocked rdev from
+    raid1_write_request()
+  md/raid1: don't wait for Faulty rdev in wait_blocked_rdev()
+  md/raid10: don't wait for Faulty rdev in wait_blocked_rdev()
+  md/raid5: don't set Faulty rdev for blocked_rdev
+
+ drivers/md/md.c     | 15 +++++++--
+ drivers/md/md.h     | 24 +++++++++++++++
+ drivers/md/raid1.c  | 75 +++++++++++++++++++++++----------------------
+ drivers/md/raid10.c | 40 +++++++++++-------------
+ drivers/md/raid5.c  | 13 ++++----
+ 5 files changed, 99 insertions(+), 68 deletions(-)
+
+-- 
+2.39.2
+
 
