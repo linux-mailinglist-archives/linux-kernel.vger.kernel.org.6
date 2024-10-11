@@ -1,138 +1,149 @@
-Return-Path: <linux-kernel+bounces-361666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 570E899AB1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:39:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1DC999AB23
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:42:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 08CCB1F22F8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:39:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D2724B23327
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:42:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 061FE1C9EA4;
-	Fri, 11 Oct 2024 18:39:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C167F1C9EAF;
+	Fri, 11 Oct 2024 18:42:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bPpmdaS/"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="UiMU2i4Z"
+Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFEF2183CA5;
-	Fri, 11 Oct 2024 18:39:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 463901C9B87
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728671983; cv=none; b=m3CF+Ep2vmGkXNUg8QWvQii8f9/OeT821o5AScebpQYmsDksVfrKItVXhZwXk7+vlY7EBycQdx8p92gAznFO2BaLqUkvjrJ57CwQbtuj6Jc2kBqnFwZHwfdZwNl6U5lt6BNRVhrflLMJslGlO1yI+s2mjsYAE+75F2kYNLjUVsM=
+	t=1728672135; cv=none; b=Qu0avp+TqKGF/XtljRFJQHYb4tLYH76rJcBOayZnwvp2xmjxgrQt093hOrJWRrzC50CCvA9BL+I/4UZ5TI3JetWYFkw4zAlY0bs5ohaT5KwLot9qKVfkt1+C8LhWYoTJj9w1IKqzSADa0BZ+yHZwziCD799fkO8SCl0ywODPD/8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728671983; c=relaxed/simple;
-	bh=BjmHehEYiieqNpDq/GlpQx/BBNqqkQRnGEJAPGl7DC4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DLfnEF1yDOgq+jeoSw+HOdtNO7gMPNDuSpjXK7AF4eCIwiCprbkvD4csAgOopNjcQt4iSa2z1ziiBLxNCEWcXeum/vjlUgqjNJPOm/X8Ba0AMM9GoYzSIpbTbBUJ7xCozS5TVYJycbVpOW80sXU+fSP7Houru3lcnCg8eS215/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bPpmdaS/; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-42cb57f8b41so25572265e9.0;
-        Fri, 11 Oct 2024 11:39:41 -0700 (PDT)
+	s=arc-20240116; t=1728672135; c=relaxed/simple;
+	bh=awZT28/RDhTSYIZAibdl2X4pg3u5JmC0q19vaw6Rwmg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=X4ek3ukQlodnNyj3TacD+vjZIirnP8tT0eqaeK3zXb7v6nITl4Ct9wC9HxwztgA0FTq16EBX2FK5Bha3kA+myM6oebNshHTesjMS9InahzQwDqzQhwwbwpOl2tBQpjqaZD19E7Ta4VJdPCJvaiYUGYnHq34sMJRMTjjM1BMRWqE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=UiMU2i4Z; arc=none smtp.client-ip=209.85.219.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e28fa2807eeso2483839276.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:42:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728671980; x=1729276780; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HZd3vjq/tmMctPSkLmA2iur97vFbUfqjeAAFAjjUbes=;
-        b=bPpmdaS/7fZVR6TZuwJO8qLnabXNmede9LFJjWN67HBMcXmrgyHfltsy8tJk9aK1VM
-         W8r2cl6UPRBve52gKMxmE+5a1c8v+eDZFZ2yiFosEa4szkQb1utkvE2jysk9XgJ3ksaI
-         GtZpTM1OI/P5KmsL9uYN49L3vIabh1Ik8B2Tzt01KJCOyL67MXsyTrYMOHzmdLp4xjPD
-         +h1TgT6GTXbKNz0oPjCISd9mdzWzIr0Iw9L9k1Jls7P8hmmfwZayfwxkVzjuG7ZS1br3
-         4yfduRiIQTcUKqWlBSKNQltF61DwcKKGmuaVL0gumV1laStlJ57pEy1SztK//V+ZBpD8
-         GG4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728671980; x=1729276780;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=paul-moore.com; s=google; t=1728672131; x=1729276931; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=HZd3vjq/tmMctPSkLmA2iur97vFbUfqjeAAFAjjUbes=;
-        b=ZiZId5gJ9szI1fRdUNe5B/pZapow8iTqqIgutyzqr8mHRFLpd6Dw8PsDO3CBi27oyW
-         enpj3W6yNYvFayzo7pMvqqtFXjsJSbkF6SyIQnrEQkAoJX8C7vr3ByBjG6azm2Xz9BPm
-         //x+s4TYQHgE3ng+qf9hFkBBJ9JB1FVP5jRE6MySJrhOE5amHy/0aqh7BCr2rQVzENBn
-         jbNqo7UwdmNzsKllNEZjyGpZos7cuN/5a/DEhYji8Zqp9TWIOIzxC7l+EtemPKvf/mMe
-         TH3trCPmN0Qeq0lqnR3gEhry3fYrij497pyE57Lfz3+W+ZpqzWMffyv0cZURiynVyxwC
-         3E6w==
-X-Forwarded-Encrypted: i=1; AJvYcCVZzCKmtxRYIsO9VbLiqJypYfGX3H7Sz7k9s5nufsuUATpiKWQD97wIsZ2Fqrz0lWkXeyNKtNuxMjeq@vger.kernel.org, AJvYcCVx2VjAO+IDLUjv7pWG2gSzbRwLxvp+QgOJA4OxhWXRzUMa9Rf9tx2H/WEYR6QINWixH0DgK1pABU0t@vger.kernel.org, AJvYcCWa/RvKVSe4c63xcXF0eQrvPNdBJ392ugBWg0g8p1V1uG0FZpueZ1bs8yiSboh9vD8r4nGyTWUP8u/27HNT@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR3XQLg7ZVoiJuGoGi9G6J3+VIEFqjqY6iwJ5Gc7q1nnkx/xGZ
-	8+2Fuf/2Jc4AH9lgQ7N/CxKtjETz5IP8oalIqTsAkFIS4sU9YVrE
-X-Google-Smtp-Source: AGHT+IGX2zS2nstXpg6SsT/vPf49c6EfYdf1f/gcUWCtylET2lJBwsm299NphqGeiEKFawFQofaaMQ==
-X-Received: by 2002:a05:600c:5251:b0:42a:a6b8:f09f with SMTP id 5b1f17b1804b1-43125607846mr4437365e9.23.1728671979747;
-        Fri, 11 Oct 2024 11:39:39 -0700 (PDT)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79f896sm4513805f8f.87.2024.10.11.11.39.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 11:39:38 -0700 (PDT)
-Date: Fri, 11 Oct 2024 20:39:36 +0200
-From: Vasileios Aoiridis <vassilisamir@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/13]: chemical: bme680: 2nd set of clean and add
-Message-ID: <Zwlw6FvJrGRARYVc@vamoirid-laptop>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <ZwkA_NW3xLi3dxMb@smile.fi.intel.com>
+        bh=lEpU+ihmki2IJbXkgKPvOcj9mDJ1xqWdvlEU1cTSkUY=;
+        b=UiMU2i4ZXfRL26G3DOTKJOEfJO+0+38VFacxrE1Op1wZXG2+/uPW5ZjFgQPISkk6bm
+         ODwpbKEPSmiPw7j4j8t3CZvRa8kSq5a42EtL/4mCG5Gvg66mzK/iqddd6Z4YkTBP66jo
+         hz2Tfxex9nPaPvsNckm5mA52Yf/CkWcEv8Mij1mFY8mP1a+RtoQEE0aV0A9ipYcpdd46
+         xYHxt/xMKUngl+DH3d9O5JH4hf55MqSXGhq5UYLhsLHN0QPb/O9OgobumjPgOT3Vr+ra
+         oLX7BJMFdzj2DLN1Frn0D8yKWhnmo7a2OF9nL4Wj6+94KAUNxvOw9+t3YoHZQsyOuSag
+         kunQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728672131; x=1729276931;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=lEpU+ihmki2IJbXkgKPvOcj9mDJ1xqWdvlEU1cTSkUY=;
+        b=EXNjQgfL+0hqUDEGPpE78wL+2cWLqBKAqlu3I9HMP1KxtYGf+LtGkd66/eiLjLeFb9
+         5h66wGinOxB/6WgUQk8o01Hih3ZUYMEfUuA2ceSekyjyyhhv3mi19u6BZ/2RMA+3ZlPH
+         1/ruD1r6wW9Uv/93hPuiHEAWKESijIO8cJPmwSQZIITPsz06zSR2Yx0lAA7YPRCOWsUD
+         CKVh00LhnIJOJiUgn27L/d+sQ2zoLA9eOfm/GQDLUdJHCyL5Q3DaQ2E6HETB+UCb7vTe
+         s5yluAH7n3Aq1Bgv7/S+dmMwWKbW6A3qZMRoVjd2GXo/MzPyTSMAVk7GxI0/0aGP08gA
+         vBNA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl3OfDQ7y8zAPPiYrjyv/b6mtwJkC+WJa1cOfyudGi0c5kC1U/pkmQEXVPxeA3OcEPDDGK1ipkXOSZsJ0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJOi2/+hdTIHOkYEL/0rZVVfS0lh1AbC93WAPWF/LLVmGM0tw+
+	IDRbtqiCvIV7rYonqcguubVClQqnuZub4gghOd3XGe7Yt39nSWz/brpnXbsT6l9h7j6EVV9/Yp1
+	n1SzVhawfy4EHvt/8yl/aRbD/J8IhShiAwq/4Z5hRHKXxAh4=
+X-Google-Smtp-Source: AGHT+IHl9pAM7khqQXTT6XeQ83ZZMoJPB/ej4flIEfjQ9ig+rT5Tafd7vJpMVu9ZDKNGmsLDDiBR89PO0T5VeahSCpQ=
+X-Received: by 2002:a05:6902:727:b0:e29:255:c61b with SMTP id
+ 3f1490d57ef6-e2919d66b89mr3821890276.5.1728672131311; Fri, 11 Oct 2024
+ 11:42:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwkA_NW3xLi3dxMb@smile.fi.intel.com>
+References: <20241009173222.12219-5-casey@schaufler-ca.com>
+ <4e2669fc0be9b0f1ca15b17ca415a87d@paul-moore.com> <a4094e38-44c9-4ab2-9b37-c1eafee16d5e@schaufler-ca.com>
+ <CAHC9VhSaCVvj-+U+WEBxvzXyi=FPNaL7HMt4Kg86Ugi1SNnCdg@mail.gmail.com> <c3423767-91df-4dc9-afe8-895540b185d7@schaufler-ca.com>
+In-Reply-To: <c3423767-91df-4dc9-afe8-895540b185d7@schaufler-ca.com>
+From: Paul Moore <paul@paul-moore.com>
+Date: Fri, 11 Oct 2024 14:42:00 -0400
+Message-ID: <CAHC9VhRcAj8Pjt9E0_bMa5ybW0+LuzpQkgQ8Q+hZ5Pc6GHH9wQ@mail.gmail.com>
+Subject: Re: [PATCH v4 4/13] Audit: maintain an lsm_prop in audit_context
+To: Casey Schaufler <casey@schaufler-ca.com>
+Cc: linux-security-module@vger.kernel.org, jmorris@namei.org, serge@hallyn.com, 
+	keescook@chromium.org, john.johansen@canonical.com, 
+	penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, 
+	linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 01:42:04PM +0300, Andy Shevchenko wrote:
-> On Thu, Oct 10, 2024 at 11:00:17PM +0200, vamoirid wrote:
-> > This patch series is continuing the work that started on [1] by
-> > improving some small issues of the driver in the commits 1,2,3.
-> > 
-> > Commits 4,5 are refactorizing existing code.
-> > 
-> > Commits 6,7,8 are adding DT, regulator and PM support.
-> > 
-> > Commit 9 is refactorizing one macro to attribute.
-> > 
-> > Commit 10,11,12 are refactorizing the read/compensate functions
-> > to become generic and add triggered buffer support.
-> > 
-> > Finally, commit 13 adds support for an *output* channel of type
-> > IIO_CURRENT in order to preheat the plate that is used to measure the
-> > quality of the air.
-> > 
-> > This and the previous series [1] started with the idea to add support
-> > for the new bme688 device but due to the structure of the driver I
-> > decided that it is better to restructure and improve some things before
-> > adding extra funcitonalities.
-> 
-> Besides the small comments here and there I think you need to rearrange the
-> patches layout in the series.
-> 
-> In general it should go in these blocks:
-> 1) bug fixes (if any);
-> 2) cleanups (note, whitespace-cleanup-like are the last);
-> 3) new feature.
-> 
-> Note that PM runtime belongs to the last group quite close to the patches
-> where you more or less start using it more.
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
+On Fri, Oct 11, 2024 at 12:34=E2=80=AFPM Casey Schaufler <casey@schaufler-c=
+a.com> wrote:
+> On 10/11/2024 9:11 AM, Paul Moore wrote:
+> > On Fri, Oct 11, 2024 at 11:52=E2=80=AFAM Casey Schaufler <casey@schaufl=
+er-ca.com> wrote:
+> >> On 10/10/2024 8:08 PM, Paul Moore wrote:
+> >>> On Oct  9, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> >>>> Replace the secid value stored in struct audit_context with a struct
+> >>>> lsm_prop. Change the code that uses this value to accommodate the
+> >>>> change. security_audit_rule_match() expects a lsm_prop, so existing
+> >>>> scaffolding can be removed. A call to security_secid_to_secctx()
+> >>>> is changed to security_lsmprop_to_secctx().  The call to
+> >>>> security_ipc_getsecid() is scaffolded.
+> >>>>
+> >>>> A new function lsmprop_is_set() is introduced to identify whether
+> >>>> an lsm_prop contains a non-zero value.
+> >>>>
+> >>>> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> >>>> ---
+> >>>>  include/linux/security.h | 24 ++++++++++++++++++++++++
+> >>>>  kernel/audit.h           |  3 ++-
+> >>>>  kernel/auditsc.c         | 19 ++++++++-----------
+> >>>>  3 files changed, 34 insertions(+), 12 deletions(-)
+> > ..
+> >
+> >>>> +/**
+> >>>> + * lsmprop_is_set - report if there is a value in the lsm_prop
+> >>>> + * @prop: Pointer to the exported LSM data
+> >>>> + *
+> >>>> + * Returns true if there is a value set, false otherwise
+> >>>> + */
+> >>>> +static inline bool lsm_prop_is_set(struct lsm_prop *prop)
+> >>>> +{
+> >>>> +    return false;
+> >>>> +}
+> >>> If we're going to call this lsmprop_is_set() (see 5/13), we really sh=
+ould
+> >>> name it that way to start in this patch.
+> >> Agreed. That's an unfortunate artifact of the lsmblob to lsm_prop name=
+ change.
+> >>
+> >>> Considering everything else in this patchset looks okay, if you want =
+me
+> >>> to fix this up during the merge let me know.
+> >> I can do a v5 if that makes life easier, but if you're OK with fixing =
+it
+> >> during the merge I'm completely fine with that. Thank you.
+> > For trivial things like this where I've already reviewed the full
+> > patchset it's easier/quicker if I just make the change as I can do it
+> > and not have to re-review everything.  Otherwise it's another revision
+> > for you to post, me to review, etc.; granted in that case I'm really
+> > just diffing between v4 and v5, not really doing a full review unless
+> > something odd pops up in the diff, but I think you get the idea.
 >
+> Indeed. Go forth and merge. Thanks again.
 
-Hello Andy,
+... and now everything is merged into lsm/dev, thanks everyone!
 
-Thank you very much for taking the time to review this, I appreciate it
-a lot. I was not sure about the order of the patches but what you
-explained here makes total sense. I will rework the order and address
-the rest of the comments.
-
-Cheers,
-Vasilis
+--=20
+paul-moore.com
 
