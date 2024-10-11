@@ -1,131 +1,169 @@
-Return-Path: <linux-kernel+bounces-361656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23E4799AAF9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:28:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A87BE99AAFC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:32:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CB7371F22FE1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:28:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65416283373
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:32:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79C9E1C68BF;
-	Fri, 11 Oct 2024 18:28:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B155B193436;
+	Fri, 11 Oct 2024 18:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="j9zn4uMn"
-Received: from mail-qk1-f176.google.com (mail-qk1-f176.google.com [209.85.222.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaPuo91h"
+Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB01D38DF9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6905A219FF;
+	Fri, 11 Oct 2024 18:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728671321; cv=none; b=dGqiWKlN+l5FsW3S9ecNsKuyTAvaGwAVBG60K2avTFB4I4QaTQ1G+eHqp0WZRI4jRXtDSb1X2Vxucb4Yz7V1aTiscbB2R2/Spd3k3XsTajKPYJ35iE12GVOfVqNC8acpR29F83YUXB+hCZyaNZ0IDiaouQ5VtmBeKmiq6hijeEg=
+	t=1728671531; cv=none; b=qMaOU3Rn9gvDN2+qxZuHFWabpNJdjLBumLorl6XVIHT+xU3DBbW+TFEoWAz4uF+i8daO+CGQ5CDZdlxX3YSVV1SG31mv07Kh1EYmgc+T1qzA+9/Pc0NpxY1Il0znSH9pyWcu7uoOBCacCMgsdYVCoUA5wCf/9IGwgq4OSwfbeiI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728671321; c=relaxed/simple;
-	bh=l2UvrNQIKRmHj3uOcMWExb9bsvfrjIPTrrSYOe9n1ok=;
+	s=arc-20240116; t=1728671531; c=relaxed/simple;
+	bh=6ABpjJ5c9laXV1Mofwkc8XFAV1AdWBcZM3Tp255Plkw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q8SX50JHrmr6SW5hu0WWsQMZV2yplVRodaA55y/Ww3XEXqb/fibxsyF8N58lbq1WJ7GBP73uHOUalipfOIDCom04gN0O7CvqGUsduYIenGkK6EqRO4Er5RZiqDqPYHliYcHUUTBpzghTG9wLTi6xzq4MnyYz3hLWzY5tO5qwGhA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=j9zn4uMn; arc=none smtp.client-ip=209.85.222.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qk1-f176.google.com with SMTP id af79cd13be357-7b10e800ba9so262204185a.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:28:38 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=VavLff9YmmJP2RNpgavr5r/3PFF2ofHthfRYHGaDEdy4R6GJZuPCC/G7YXMlmTN+R6GBsLfscurv1hq+NifKUfIB46TQx3sOanZA86dm9nZfbzqve7bFcenjTrT4ZUIVWblFT0Kmbj8MWp2RjZGqX87JepciV1fHeL4O+/KkHcU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaPuo91h; arc=none smtp.client-ip=209.85.221.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d538fe5f2so845967f8f.2;
+        Fri, 11 Oct 2024 11:32:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1728671317; x=1729276117; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=S5TP3pWed8mCMbT6UNBmabqJdMAQFYc90u2/dTq3ojo=;
-        b=j9zn4uMntqzMaO/4XoLXNcn6DVFaRWR76zAL8PuShrPuhT7oMiob0Ee4JDkPXmVI5x
-         38MfiwNYyKZSdXMfI7968m8o9Y2yzOoWvbN1J2uwMscwTkQZ/qrgxyln1HnZ5zrYe1Fg
-         4YzU+ByvFWE2Qqb1G9+LzE04K+cub8/A7ZD0yH6oaCycCpCcG2pcUZKwxaSbnl/r2Ds2
-         8w48oqW04A9TU/W49lsz2KLN2/I3upOmShW2W7WDJAltuOZPwvkyCqTIGkqlTXzKKHqJ
-         xyNCAlXlkdr9OdKsSu8I3D9c/RF6H1CrUA7nPaWbiQ9jKaqPAuoYJbvCc3B3W27mrhHD
-         GIuA==
+        d=gmail.com; s=20230601; t=1728671528; x=1729276328; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hzGJQXEa8Jg8mFbIKKFv9fTv+IGcsaWIojSt7WKuh+A=;
+        b=CaPuo91hwA4EyxbwjGKArpS6SMPsqh0z1Aaazl8r4b5TXels9ScF2tcIhLBfdM6JKA
+         Jzxbpdldwb6ETYAq0xUWKCzZfnpvElu19Xe5uNPu6AInbMdSJ93/weFjaccJlARKY8dw
+         wU0RwnLnkIr6tJZJKVB/vEniIUm/sLH5jUp/+CavBOj66E3ganOTfibX/yNIYb1cg2Kt
+         Hz4agwQpcTWUjVxLxRhotmlQoLasrVV1n0odMz0fNWw926nyMyiCP5WLOBwGa7Ytwoih
+         pnjznTgVr6gcmiGtxGPUo+eX7ao7lKn08w4LTrBb9fxVI8xmtOGHnDr+MWfweM8nFDBI
+         qjEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728671317; x=1729276117;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S5TP3pWed8mCMbT6UNBmabqJdMAQFYc90u2/dTq3ojo=;
-        b=bZ6HZrhB99NudPjTx4NdYgsUFfoQ/LBaXBYy8wV2B0yJfZIMbEW4SQDDK5GDcu7ill
-         YU6cjy9scVBDWlSzjWPAzo0MCcpgEmOA7auMBcdJU78XNBe0fLWufxiWFnw75rTdSm38
-         kYvMCnI70mtYrqbmOhp8+1YbLN5hM+GstQ44ndOeIXnuVWmGSof4rlqyLK3Md97XvtbP
-         iccd7BYhgeIxnWVeBHrvl8zwNLHUHjBTwGFmxDsMQC/F6ykDp/cCw+H3gkSucPGh9l5p
-         gbkC4Zbqlfk/GwoHUUILmqG9p080dxoeVoutFZGSfbWsMJOSziWw8SixVsBysPn8KsC1
-         xXLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVyDERh/SGPql62CEztQ/uboeiTRJ763PLX/p5jkM8dwdPDCJZqYhMq3lGMpkiO1NU6h0PpEY5H/fcKRlo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yygwz4QiKIrUBAuIHArH4IjI4g3T9XCiiPYkwqyoCgX/xBvDWQk
-	tLF69QJAGEACK4gwF9gs+czJGQXfGH3U0JhLRjib86VMhEMYC3iRbY/J+dCFN6Y=
-X-Google-Smtp-Source: AGHT+IHOy2os4AygFCj/si9mO5WDycK903UcjlcAD35+buWA3h7q1akh/to8orx4kFmKiivr7kOhDQ==
-X-Received: by 2002:a05:620a:46aa:b0:7a9:a389:c12e with SMTP id af79cd13be357-7b1124c81dbmr1305699285a.16.1728671317537;
-        Fri, 11 Oct 2024 11:28:37 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148c7e54sm154774185a.18.2024.10.11.11.28.36
+        d=1e100.net; s=20230601; t=1728671528; x=1729276328;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hzGJQXEa8Jg8mFbIKKFv9fTv+IGcsaWIojSt7WKuh+A=;
+        b=pnRUDyXzS8xbOoZQ29TDzFbE4NEUDuZr7jQzUVtVXcQIJUjtFyOuTD5zVPha7MWcXT
+         ViElkIjAdYhSdm4gQ/jtPGaxGdEdLW6Cep+JSYcxizxP5mmNnaGqCgxcg24CkxmEHgT0
+         wQySfIdQLmb1s5Cz3J927ey9gKQnKgDTgt8husTYrizkwD9wM8Zp8rnTbtdVHVECZmbf
+         V1vv63stxk7MecVjF6N1sC9YIMa+OgmARO9SvNsJenfeBxB9ae8RkIGZVs+PYJ875+bu
+         hCzqiuF+n3FEnMFK0NsQ9iwXZ8yp6hKZuwXqCHaYLVPnM62fBSA52VrNk5PjYuY9mFxY
+         ayeg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC8jXCMIiZkx2Rm/QA1YcYeRuuFhclayZbh9lylNiM6OhD4cZtacH7kC7+IQPHpbkBMEm5n0Xs4vjjsJ0p@vger.kernel.org, AJvYcCVpW0/l12XB4J0kHN+Bf99vPCo22jjtZiDXdrc9s8gDRh7boRDAAN5tv35bZJ7mBGkMecqShpAIydE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzytmLaZr96BR1oS0GR0BEis09OuB9b+UeI/5YEj1WEkM6AK0cB
+	SKxXLoem6ZT1hE4rmLbr2N2UbyD/4/tQDeOENP7wf6/4P8bBHO7b
+X-Google-Smtp-Source: AGHT+IHZfchisX4gDQW0KTvSURH8Cyp5fZ6XTR97BtsqZNdAAQv/sME0MaU1UtwkGoz/6W+YdQerPg==
+X-Received: by 2002:a5d:574e:0:b0:37d:518f:995d with SMTP id ffacd0b85a97d-37d552d92c7mr2193936f8f.56.1728671527597;
+        Fri, 11 Oct 2024 11:32:07 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79faa8sm4504907f8f.66.2024.10.11.11.32.05
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 11:28:36 -0700 (PDT)
-Date: Fri, 11 Oct 2024 14:28:31 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Yosry Ahmed <yosryahmed@google.com>
-Cc: Kairui Song <kasong@tencent.com>, linux-mm@kvack.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Chris Li <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>,
-	"Huang, Ying" <ying.huang@intel.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm/zswap: avoid touching XArray for unnecessary
- invalidation
-Message-ID: <20241011182831.GC351101@cmpxchg.org>
-References: <20241011171950.62684-1-ryncsn@gmail.com>
- <CAJD7tkaZgEHUNce5c8LWpWXKnTZ7geOuBym41t+UoZax_nky7Q@mail.gmail.com>
+        Fri, 11 Oct 2024 11:32:07 -0700 (PDT)
+Date: Fri, 11 Oct 2024 20:32:04 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
+	linux-kernel-mentees@lists.linuxfoundation.org,
+	ricardo@marliere.net, skhan@linuxfoundation.org,
+	Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>,
+	Nathan Chancellor <nathan@kernel.org>,
+	Nick Desaulniers <ndesaulniers@google.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Angel Iglesias <ang.iglesiasg@gmail.com>,
+	Adam Rizkalla <ajarizzo@gmail.com>, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
+Subject: Re: [PATCH v2] iio: Fix uninitialized variable
+Message-ID: <ZwlvJCxdiRqRWu6Z@vamoirid-laptop>
+References: <20241011093752.30685-1-0xff07@gmail.com>
+ <20241011115334.367736-1-0xff07@gmail.com>
+ <26f2e35e-0a07-4b24-91a2-a48d4bc5dadc@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJD7tkaZgEHUNce5c8LWpWXKnTZ7geOuBym41t+UoZax_nky7Q@mail.gmail.com>
+In-Reply-To: <26f2e35e-0a07-4b24-91a2-a48d4bc5dadc@gmail.com>
 
-On Fri, Oct 11, 2024 at 10:53:31AM -0700, Yosry Ahmed wrote:
-> On Fri, Oct 11, 2024 at 10:20 AM Kairui Song <ryncsn@gmail.com> wrote:
-> >
-> > From: Kairui Song <kasong@tencent.com>
-> >
-> > zswap_invalidation simply calls xa_erase, which acquires the Xarray
-> > lock first, then does a look up. This has a higher overhead even if
-> > zswap is not used or the tree is empty.
-> >
-> > So instead, do a very lightweight xa_empty check first, if there is
-> > nothing to erase, don't touch the lock or the tree.
-
-Great idea!
-
-> XA_STATE(xas, ..);
+On Fri, Oct 11, 2024 at 02:31:00PM +0200, Javier Carrasco wrote:
+> On 11/10/2024 13:52, Yo-Jung (Leo) Lin wrote:
+> > clang found that the "offset" in bmp580_trigger_handler doesn't get
+> > initialized before access. Add proper initialization to this variable.
+> > 
+> > Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
+> > ---
+> > Change in v2:
+> > - Make value initialization immediate before its first use.
+> > - Link to v1: https://lore.kernel.org/all/20241011093752.30685-1-0xff07@gmail.com/
+> > 
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index f4df222ed0c3..682329f81886 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -2222,6 +2222,8 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
+> >  		goto out;
+> >  	}
+> >  
+> > +	offset = 0;
+> > +
+> >  	/* Pressure calculations */
+> >  	memcpy(&data->sensor_data[offset], &data->buf[3], 3);
+> >  
 > 
-> rcu_read_lock();
-> entry = xas_load(&xas);
-> if (entry) {
->     xas_lock(&xas);
->     WARN_ON_ONCE(xas_reload(&xas) != entry);
->     xas_store(&xas, NULL);
->     xas_unlock(&xas);
-> }
-> rcu_read_unlock();
+> That was a quick reply. I would recommend you to wait a little bit while
+> the first version is under discussion.
+> 
+> I still see the offset thing a bit weird. data->sensor_data uses an
+> offset to avoid hard-coded numbers, but for data->buf we do exactly
+> that, in the very same lines.
+> 
+> Setting offset to 0 to access the first element i.e. no offset required,
+> and then adding the actual offset sizeof(s32), which could even be a
+> const if the first access was to sensor_data[0], looks to verbose.
+> 
+> These things are of course not critical, and the proposed fix is
+> definitely ok, but I am missing some consistency here.
 
-This does the optimization more reliably, and I think we should go
-with this version.
+Hi everyone!
 
-First, swapcache is size-targeted to 50% of total swap capacity (see
-vm_swap_full()), and swap is rarely full. Second, entries in swapcache
-don't hold on to zswap copies. In combination, this means that after
-pressure spikes we routinely end up with many swapcache entries and
-only a few zswap entries. Those few zswapped entries would defeat the
-optimization when invalidating the many swapcached entries.
+So if you check also the conversations that we had here [1] and in the
+previous versions, indeed the idea behind the offset is to use it as an
+self-explanatory index to a char buffer that holds in fact s32 variables.
 
-So checking on a per-entry basis makes a lot of sense.
+The data->buf here holds the values that have just been read from the
+sensor. If you check on the channel specification of this sensor,
+you will see ".realbits = 24" in both values that the sensor returns so
+hence the value 3.
+
+I am not sure if it makes sense to use a macro here for each one of the
+3's that are going to be used only one time each and in order to be more
+"consistent". But I might have a wrong view on this one so feel free to
+correct me!
+
+For the initialization of the offset indeed, it was already mentioned
+here [2] this morning, but on a different patch!!! I couldn't get this
+error though with gcc...
+
+Cheers,
+Vasilis
+
+[1]: https://lore.kernel.org/all/20240930202353.38203-3-vassilisamir@gmail.com/
+[2]: https://lore.kernel.org/linux-iio/202410111221.YIeXHxOv-lkp@intel.com/
+
+
 
