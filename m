@@ -1,87 +1,57 @@
-Return-Path: <linux-kernel+bounces-361507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41CF299A90F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:40:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEE3B99A911
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:41:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E57AE1F23F79
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:40:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D3D6283A70
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:41:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D32419CD0E;
-	Fri, 11 Oct 2024 16:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5B0199941;
+	Fri, 11 Oct 2024 16:40:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="EyLrgaHr"
-Received: from mail-qk1-f178.google.com (mail-qk1-f178.google.com [209.85.222.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GsUam5UA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A4D419ABBB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:40:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A600D19C56D;
+	Fri, 11 Oct 2024 16:40:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664839; cv=none; b=roGjwQXXmO92n+4PTbORm0UdakJ36+xjFNWKaFLSqYEoVfQriCyThF4K8LzwBnO/DvKtdWKU+MmoJwNhdUNWH/UQB8W+XIDqSsoAvkH1Qx1pkd+CYo/DKhvfTJJJlOXCW9s0fQeWsloE4HPLUJHaBAbbkpbX3J7LswUU65Bzf+0=
+	t=1728664857; cv=none; b=tqUvCv8dhSxUjS3ZgyIBX6pbYxFH18DE0hvfRSr0wr98jtlP4UV7wZN9gStHF0o10kNG/LDQHkqJlBKCu8ocf71xYMdw7sYFMeXAtB7C5fwSySKaDx9/qWy38R8evYduv6GZzC5428RCXCuNrAWPgYCWOSgbIR0WGH6uVNyN9wA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664839; c=relaxed/simple;
-	bh=FovhsR+vkuZ2u0LTmZX5Esb+40u2qW79fou6tVONlWI=;
+	s=arc-20240116; t=1728664857; c=relaxed/simple;
+	bh=Asz82BnMJfrhlWHmCMcADIty3kGuGQSL6snq/yAKpjY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kmasjbqYY+OZF1eSSEcBgOZtb5rV0X3xNrlOLLQ70+nXizlCTGoNo6CUO0bOqudw1kjS2HH3wKN5UPeWJw1TSFci41lfIm6wmXOgjbai7YJttoZdYii+QKID6hJWvVF2mfsRgokqLL8SjuzDTao/8cFXXt7r1AwXBzf9GzNXJyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=EyLrgaHr; arc=none smtp.client-ip=209.85.222.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f178.google.com with SMTP id af79cd13be357-7b10e0fadbcso151766785a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:40:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1728664837; x=1729269637; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=0cJUEoNM9ligxsOvROQt2dGxSz7v+QPY1FgP+hf/i+w=;
-        b=EyLrgaHrPwnnZgUgZz5xP5yJ7sPmvDsnIi2m1464rIyYF5ONoYysK7+wkvwdl1adU1
-         Er+ChZLHdltqTDG7lhtVBIpKwfWiWhUKQguu132dDjGm5b9I7mJFasHWxwmg//5Aglo2
-         S60/l0l2K8VpYfgincp8t2eCki2VMsf35PzIO4WKiMUGY2QhG87aG+LL1k/ptGeyijxl
-         GE8NXH6VmdlCu9bC87VIpXsRTWFwvYqO5h/+aAWRdsGZ8+ujvbjjdEkbkDJBhsp49CG/
-         +1wd8SK5TSuvjvtpJfsb4xMexbjqAAhBzGgDxmVCeMg+guKZBbQTRTN0HIS9vBLMeIB7
-         NmtA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728664837; x=1729269637;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0cJUEoNM9ligxsOvROQt2dGxSz7v+QPY1FgP+hf/i+w=;
-        b=GL3l4RczcowtsH7+G10f6EyIdyVc+B6tXBy49NLGUawRDGG9ad4DHkEszxwv/4Q2vX
-         APBZStdwBRRMyuhApQMNRSnhBZWI3lYvbJztuUTJ0xNWzmx8bby2THUhJa/HgbTqfct0
-         BKA2nJCXwXefep221IdbAUtRYpUngAGJX3rY4GDymHNLF4hrA+EM9vY7kG+g0S7VRvG0
-         abAPK63W0n6OZkloX3+C+Q7Y/N4DoOm3n4gauy6/83x2JpWWdyhtpzqWVqWpLJwLJmjZ
-         tzQc3TSlekZjOKSOJyaOQapMT6klHVD9yzKDaSDSMBFab7GfHg/VzuSwb+OFog9p6M8V
-         NOWg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2slxhh+As4PomLoohlxsai6/n0gZuLWQhBJILogYmtGPewao+bCa7B8hKYPBUE+1SLrmd378GCzSjpQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxirjMotmwF3zgnKIknjyHJxtFRFzQAAssbT/q+CLbUOVrywwPX
-	FkfyHjohErJmtZrJ2zcPHOOSAt9np9AArxYnpEZOgC9K1RndG8yu8KHTVj0XWOM=
-X-Google-Smtp-Source: AGHT+IH6xJT0BhkFOSN3WJgaX87Y9gajn6VFuFp/MvVWlU/6es9ypp3mLVGeW7zMzGaDR2abx274ow==
-X-Received: by 2002:a05:620a:2a02:b0:7a9:aba6:d024 with SMTP id af79cd13be357-7b11a3ad022mr535467185a.43.1728664836983;
-        Fri, 11 Oct 2024 09:40:36 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46042789a5csm16697851cf.20.2024.10.11.09.40.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 09:40:34 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1szIgr-007gne-CY;
-	Fri, 11 Oct 2024 13:40:33 -0300
-Date: Fri, 11 Oct 2024 13:40:33 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Joel Granados <joel.granados@kernel.org>
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Lu Baolu <baolu.lu@linux.intel.com>, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Klaus Jensen <its@irrelevant.dk>,
-	linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
-	Klaus Jensen <k.jensen@samsung.com>
-Subject: Re: [PATCH v3 0/5] iommu: Enable user space IOPFs in non-PASID and
- non-svm cases
-Message-ID: <20241011164033.GA1825128@ziepe.ca>
-References: <20241009-jag-iopfv8-v3-0-bd4271df5b2b@kernel.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=P7bZpcsdFiZSTRMLgV0BXLjz4MVIF+/nbeoAkQavBEbDMklA8Pg6n85P4SzIRDQ6N0UW7IEyyNQ2M7E4w+sJp8fbh96Mp0h/ziqb1YQvHDwpDFfuq2nKsNk+bzYqb3MLyK6eDFBrzr5Euilh/ach/C9kHwoxg2LBRj/iAOyayi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GsUam5UA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7BC18C4CEC3;
+	Fri, 11 Oct 2024 16:40:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728664857;
+	bh=Asz82BnMJfrhlWHmCMcADIty3kGuGQSL6snq/yAKpjY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GsUam5UAyPYEEu3qRNzeLCrWXL5UxedTCRGMgMdx9IKIQJyRUla6Wb+fiKoJN9cZY
+	 EnYgrtlVyjod9ygnmLZ7R8N/nD8UtnrNegFc6WsU/04U9dHWVaYN2Zyd/1rgKV5arb
+	 yB7Kn3O0KnGc65jjelTTa8FJTeI0o8vsEE3k1jwNW53pYvuZdrmdH1uj9zkBfWICw5
+	 wFf/Ni0p/cJrBZRU3CpVufU1l5xAIxdRkI8g8GcNUySmhy/xKQ/XHGnLkNiSR6qDZJ
+	 eDs7r3raNZjQ81AACGO/r3hao2ItqWYJywnOZ5LuhQ+mpg95DbJ7b85iw/rrB458mc
+	 Vi6z823MCq9NQ==
+Date: Fri, 11 Oct 2024 09:40:57 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, dchinner@redhat.com,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
+ extsize
+Message-ID: <20241011164057.GY21853@frogsfrogsfrogs>
+References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+ <20241011163830.GX21853@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,19 +60,106 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241009-jag-iopfv8-v3-0-bd4271df5b2b@kernel.org>
+In-Reply-To: <20241011163830.GX21853@frogsfrogsfrogs>
 
-On Wed, Oct 09, 2024 at 09:28:08AM +0200, Joel Granados wrote:
+On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
+> On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
+> > Extsize is allowed to be set on files with no data in it. For this,
+> > we were checking if the files have extents but missed to check if
+> > delayed extents were present. This patch adds that check.
+> > 
+> > While we are at it, also refactor this check into a helper since
+> > its used in some other places as well like xfs_inactive() or
+> > xfs_ioctl_setattr_xflags()
+> > 
+> > **Without the patch (SUCCEEDS)**
+> > 
+> > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > 
+> > wrote 1024/1024 bytes at offset 0
+> > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > 
+> > **With the patch (FAILS as expected)**
+> > 
+> > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > 
+> > wrote 1024/1024 bytes at offset 0
+> > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+> > 
+> > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> 
+> Looks good now,
+> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
 
-> Changes in v3:
-> - Adjust wording in cover letter
-> - Include "_iommu_" in the prq Intel function names to be more in line
->   with functions in iommu.h file
-> - Rebase on top of 6.12-rc2
-> - Update my ID in e-mail, git author and my Signed-off-by.
-> - Link to v2: https://lore.kernel.org/r/20240913-jag-iopfv8-v2-0-dea01c2343bc@samsung.com
+That said, could you add a fixes tag for the xfs_ioctl_setattr_*
+changes, please?
 
-You didn't include any tags from the prior version?
+--D
 
-Jason
+> --D
+> 
+> > ---
+> >  fs/xfs/xfs_inode.c | 2 +-
+> >  fs/xfs/xfs_inode.h | 5 +++++
+> >  fs/xfs/xfs_ioctl.c | 4 ++--
+> >  3 files changed, 8 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > index bcc277fc0a83..19dcb569a3e7 100644
+> > --- a/fs/xfs/xfs_inode.c
+> > +++ b/fs/xfs/xfs_inode.c
+> > @@ -1409,7 +1409,7 @@ xfs_inactive(
+> >  
+> >  	if (S_ISREG(VFS_I(ip)->i_mode) &&
+> >  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
+> > -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
+> > +	     xfs_inode_has_filedata(ip)))
+> >  		truncate = 1;
+> >  
+> >  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
+> > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > index 97ed912306fd..03944b6c5fba 100644
+> > --- a/fs/xfs/xfs_inode.h
+> > +++ b/fs/xfs/xfs_inode.h
+> > @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
+> >  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
+> >  }
+> >  
+> > +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
+> > +{
+> > +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
+> > +}
+> > +
+> >  /*
+> >   * Check if an inode has any data in the COW fork.  This might be often false
+> >   * even for inodes with the reflink flag when there is no pending COW operation.
+> > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > index a20d426ef021..2567fd2a0994 100644
+> > --- a/fs/xfs/xfs_ioctl.c
+> > +++ b/fs/xfs/xfs_ioctl.c
+> > @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
+> >  
+> >  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
+> >  		/* Can't change realtime flag if any extents are allocated. */
+> > -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
+> > +		if (xfs_inode_has_filedata(ip))
+> >  			return -EINVAL;
+> >  
+> >  		/*
+> > @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
+> >  	if (!fa->fsx_valid)
+> >  		return 0;
+> >  
+> > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> > +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
+> >  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+> >  		return -EINVAL;
+> >  
+> > -- 
+> > 2.43.5
+> > 
+> > 
+> 
 
