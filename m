@@ -1,145 +1,178 @@
-Return-Path: <linux-kernel+bounces-361514-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 481F699A927
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:52:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B099899A929
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:52:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 597B71C2291D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:52:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7C661C21CF5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:52:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84F8919E980;
-	Fri, 11 Oct 2024 16:52:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63C0019E993;
+	Fri, 11 Oct 2024 16:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="TNVFIjKf"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1WILygnj"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6400618027;
-	Fri, 11 Oct 2024 16:51:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31E7818027
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728665520; cv=none; b=K9Bt+pEpJ1IVddejmu9JwhVSlcKXbhrZc5gaYRoBMq0HNT6/D0MMdqR3mCNvZOK7L0QiX7U2xGdr8k/owAz4vamtp6Q/Sv0TApK4heiKxP8KuslAocRW+bIENy31kteVqfY8g64Gb75UsE1E6v9qBDrvBvTH2QWvJHLIcodTPyI=
+	t=1728665544; cv=none; b=d2k3sc9CGRr9omeXLuakYSfg4m5p/jIrM/O3kQNSYXcaCw5wGvtY+Rp7nlEk0yio9SD1AZJHFwu7pGnUD8ghLZxYXy5/hrkqEr6XKtvbOkoOaYQ2I7MR/4mZE1mYsToWboX/StHsycZPVLp2lHok0O0OS4Ke8rWwFN4cZL/sgno=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728665520; c=relaxed/simple;
-	bh=A+TJf2abRaHp9Asv8iqVXTw2ovZI1EKG8uVgldMLXdA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Cuaf9oCVw189njG9AbC+nh20QRN/R7W0DYlh6T5GbfwerrdW21NfO6uCW1S8/+ejPlkWm6ZBsc93f2rLPNPtBOlzBOdThhOlJwSHYsgI1GRn0JOOjg1hv+xEg0rhQ+DpBfDUTzJw7Tfc8/5Mmlhb8/AhG89nraj0jUmwVo3zfFI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=TNVFIjKf; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B9rmUB020040;
-	Fri, 11 Oct 2024 16:51:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	njZ484qpDsi6Z2x/1aupfhS9YOld/F1zjzQoZ1yH3Ro=; b=TNVFIjKf0an3j4fg
-	07Wl25Ax+yyaz+vdrjtWAKSQo4S6/mQPUzoTf0bQ2B4UDoMWHrDljs/+PwqX86V5
-	h4SkgYXqsi0CmeZByvmzvrqt7YQUv3vDGtLbLfKCASt1GcXcv4RIhYz/WcyKOU8n
-	Va4bgJXgy0LKA+P4hQK6mZyRP0mFTvp0jrCIuZAWAq3btJX5bMSQdmVJ6tG5HLMf
-	1vPvgEBO6rcN8/agT7zabF5J1vNoPBPzxvBJgB4R0FMy+w6R5PrZID59VHzpqUeo
-	9aEHv7QGzsgrCpLWmjTtttImpdVbkOV2uHP8eJmDyrikTj+fSpMmvFlaCKyhEfPP
-	W6tiIw==
-Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426db7mf9k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 16:51:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BGpov3028837
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 16:51:51 GMT
-Received: from [10.48.240.152] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Oct
- 2024 09:51:50 -0700
-Message-ID: <b58b5b2e-bf9f-480c-810b-2cef29aab82c@quicinc.com>
-Date: Fri, 11 Oct 2024 09:51:49 -0700
+	s=arc-20240116; t=1728665544; c=relaxed/simple;
+	bh=NthClo5AnxaarNMb5Qh+0j2rMjzn/l80tfd+wgQu3+Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qqHdDNvaG8Jsy4gzCp3A6BSkUqU116Pik6bUOdSubMbXCg450//T7BpCf3uknnO59TKcAxq/EaWbxk/OuVyPEXK9I1HsDB1UxB5lbXojlTNKIvKaKnZaopOsSQzgNEj34OBZPW+VevjCG00DPV9rLIZzmmyh39tVTjHPQ6rmmxk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1WILygnj; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20ca4877690so2285ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:52:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728665542; x=1729270342; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=VPimW3AOtehNUkqhF51LIDldD47EJvyRRoaWLoxR7ic=;
+        b=1WILygnj/8FcptDemOF6FrvIiNcppqQ12lHfVBMZK73MlZqB1FOkhn7DyFdkVvH9gH
+         7xlZbcPNcFj2c20NoqU/Ju6tpYyfgsoKr5/b1cgvcGDGudC27ps4CUu2JLLeDoFEdyNg
+         U6Vm2wLU9c7V1BSDWSVi+zF0L6AF75Hjc9HvRcNU11tZypbmys2o+qhStv/A+ahUA2Du
+         O/JF3NyodWwoQ8lGB8woQahgAcXrueA/UkRQnHB18c6qOFeMy5xffroY+JdgQEmTgQJJ
+         CdOOHNeE1gW5lAsCsV1o0F2zkxtAIcR438+8VckGcV4pubsGV8gHTGfeRkt+qtLZ6mpe
+         SlQQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728665542; x=1729270342;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VPimW3AOtehNUkqhF51LIDldD47EJvyRRoaWLoxR7ic=;
+        b=PnBSi2cels/YCrDKhBCc6hP/Q4nH0568MmKfwqcabyqhMXFwGsjYiaSDJeTAM0rGiV
+         j+3EioUchk1bSsZyJrCGRPDjOctZLUcysAqHxyYLrdti7XVsNZqMp+jGgYo9C/ThDPAh
+         vltQjmDyw39uy5B3IjOG/yfTrTJaDuRr0c2w4HfY4BsIo+lqXqHbcNI3w1xMgYF3XFC7
+         Ib/GlN/pCuljtZc1zVY+4Dv3cHIvQLVPDPKwAoU99F4PDGLtD0r5S9bpnzE6RfxkloCw
+         Oxci0Yakafr0Q0QpaHrR9a2lx8ZNdiQ3RiNGCAOuBISkXWU5Qr2CnG9qZC6K03XoT+sV
+         W4hw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzyJSIaBCNo0EbQPy7/ejn7Uahaj+4xMCElvsULs24aBe/JJ6OHxA9x6QjwXPM3iCyVhZeEC4N1B9QS38=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj/n9U8brxWcXMImpx4yvT1qurfEuZRFEbIEdkxjxS6N+g64F9
+	CD4wmIUPPGMduYrRp6zFkoV4LBfrJL09qEK/ImlHbU7YAgs4fmvp7KA++foqvi6oP8yVh8/o9Av
+	J3yzztH7U7UOPjx6HN1mLMM3Kc8t1dVRcM5y1
+X-Google-Smtp-Source: AGHT+IH5lpLxRSv+Ef1lv9y8MK66pwPMKTVD9AsACrrkYKgXn/FVOuvAN7BqzEM0cVTwMVYTx3KoEdw8CA/zH6PY4TU=
+X-Received: by 2002:a17:902:e802:b0:20b:bf5a:c8 with SMTP id
+ d9443c01a7336-20c9ee6eda0mr3316825ad.10.1728665542180; Fri, 11 Oct 2024
+ 09:52:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] wifi: ath10k: add channel 177 for 5 GHz band
-To: =?UTF-8?Q?Pawe=C5=82_Owoc?= <frut3k7@gmail.com>
-CC: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
-        <linux-wireless@vger.kernel.org>, <ath10k@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20240801202359.794035-1-frut3k7@gmail.com>
- <20241009065051.51143-1-frut3k7@gmail.com>
-Content-Language: en-US
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-In-Reply-To: <20241009065051.51143-1-frut3k7@gmail.com>
+References: <20241011073559.431302-1-irogers@google.com> <20241011073559.431302-6-irogers@google.com>
+ <c32f8c46-3895-49e0-a837-98859345039b@linaro.org> <affbe9b6-4d27-47d7-8767-9531f92b3d32@linaro.org>
+In-Reply-To: <affbe9b6-4d27-47d7-8767-9531f92b3d32@linaro.org>
+From: Ian Rogers <irogers@google.com>
+Date: Fri, 11 Oct 2024 09:52:10 -0700
+Message-ID: <CAP-5=fWep2dV4-1tzVDQ8z-Ud7tmnw4JBKqkpLoN=nRbbMpxVg@mail.gmail.com>
+Subject: Re: [PATCH v1 5/8] perf test: Tag parallel failing shell tests with "(exclusive)"
+To: James Clark <james.clark@linaro.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 9sSnCPrP0KTQXd4Lw_uXlg2Dv2mGvdBW
-X-Proofpoint-GUID: 9sSnCPrP0KTQXd4Lw_uXlg2Dv2mGvdBW
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0
- priorityscore=1501 impostorscore=0 mlxlogscore=999 bulkscore=0
- malwarescore=0 mlxscore=0 phishscore=0 clxscore=1011 spamscore=0
- adultscore=0 lowpriorityscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410110117
+Content-Transfer-Encoding: quoted-printable
 
-On 10/8/2024 11:49 PM, Paweł Owoc wrote:> Add support for channel 177 (5885
-MHz ) for the 5 GHz band.
-> 
-> Tested-on: qca988x hw2.0 firmware ver 10.2.4-1.0-00047
+On Fri, Oct 11, 2024 at 3:29=E2=80=AFAM James Clark <james.clark@linaro.org=
+> wrote:
+>
+>
+>
+> On 11/10/2024 11:01 am, James Clark wrote:
+> >
+> >
+> > On 11/10/2024 8:35 am, Ian Rogers wrote:
+> >> Some shell tests compete for resources and so can't run with other
+> >> tests, tag such tests.  The "(exclusive)" stems from shared/exclusive
+> >> to describe how the tests run as if holding a lock.
+> >>
+> >> Signed-off-by: Ian Rogers <irogers@google.com>
+> >> ---
+> >>   tools/perf/tests/shell/perftool-testsuite_report.sh | 2 +-
+> >>   tools/perf/tests/shell/record.sh                    | 2 +-
+> >>   tools/perf/tests/shell/record_lbr.sh                | 2 +-
+> >>   tools/perf/tests/shell/record_offcpu.sh             | 2 +-
+> >>   tools/perf/tests/shell/stat_all_pmu.sh              | 2 +-
+> >>   tools/perf/tests/shell/test_intel_pt.sh             | 2 +-
+> >>   tools/perf/tests/shell/test_stat_intel_tpebs.sh     | 2 +-
+> >>   7 files changed, 7 insertions(+), 7 deletions(-)
+> >>
+> >
+> > The following ones would also need to be marked as exclusive, not sure
+> > if you can include those here or you want me to send a patch:
+> >
+> >   tools/perf/tests/shell/coresight/asm_pure_loop.sh
+> >   tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh
+> >   tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh
+> >   tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh
+> >   tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh
+> >   tools/perf/tests/shell/test_arm_coresight.sh
+> >   tools/perf/tests/shell/test_arm_coresight_disasm.sh
+> >   tools/perf/tests/shell/test_arm_spe.sh
 
-Can you elaborate on what was tested in your commit text? And more
-importantly, what is the impact on existing devices, especially given that
-existing devices would not have calibration data for this channel in the board
-files? Does the QCA988x board file even have calibration data for this channel?
+I'll add it to v2 and add your suggested-by. Thanks.
 
-> 
-> Signed-off-by: Paweł Owoc <frut3k7@gmail.com>
-> ---
+> > In theory all tests using probes would also need to be exclusive becaus=
+e
+> > they install and delete probes globally. In practice I don't think I sa=
+w
+> > any failures, whether that's just luck or because of some skips I'm not
+> > sure.
+> >
+> > And this one fails consistently in parallel mode on Arm:
+> >
+> >    22: Number of exit events of a simple workload
+> >      : FAILED!
 
-what is the diff from v1?
-for future reference when you submit a new version of a patch you should
-include a patch changelog after the ---, see:
-https://www.kernel.org/doc/html/latest/process/submitting-patches.html#the-canonical-patch-format
+This looks like it could be a real issue. I believe the test is doing
+uid filtering:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/tests/task-exit.c?h=3Dperf-tools-next#n49
+uid filtering scans /proc looking for processes of the given uid. This
+is inherently racy with processes exiting and we'd be better using a
+BPF filter to drop samples with the wrong uid - same effect but no
+racy /proc scan. I've seen the racy /proc scan cause termination
+issues, so possibly this is the issue you are seeing.
 
->  drivers/net/wireless/ath/ath10k/core.h | 4 ++--
->  drivers/net/wireless/ath/ath10k/mac.c  | 1 +
->  2 files changed, 3 insertions(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/wireless/ath/ath10k/core.h b/drivers/net/wireless/ath/ath10k/core.h
-> index 446dca74f06a..3dff8c028526 100644
-> --- a/drivers/net/wireless/ath/ath10k/core.h
-> +++ b/drivers/net/wireless/ath/ath10k/core.h
-> @@ -39,8 +39,8 @@
->  #define WMI_READY_TIMEOUT (5 * HZ)
->  #define ATH10K_FLUSH_TIMEOUT_HZ (5 * HZ)
->  #define ATH10K_CONNECTION_LOSS_HZ (3 * HZ)
-> -#define ATH10K_NUM_CHANS 41
-> -#define ATH10K_MAX_5G_CHAN 173
-> +#define ATH10K_NUM_CHANS 42
-> +#define ATH10K_MAX_5G_CHAN 177
->  
->  /* Antenna noise floor */
->  #define ATH10K_DEFAULT_NOISE_FLOOR -95
-> diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-> index 646e1737d4c4..cee6a4d287b5 100644
-> --- a/drivers/net/wireless/ath/ath10k/mac.c
-> +++ b/drivers/net/wireless/ath/ath10k/mac.c
-> @@ -9543,6 +9543,7 @@ static const struct ieee80211_channel ath10k_5ghz_channels[] = {
->  	CHAN5G(165, 5825, 0),
->  	CHAN5G(169, 5845, 0),
->  	CHAN5G(173, 5865, 0),
-> +	CHAN5G(177, 5885, 0),
->  	/* If you add more, you may need to change ATH10K_MAX_5G_CHAN */
->  	/* And you will definitely need to change ATH10K_NUM_CHANS in core.h */
->  };
+It could also be that tweaking the retry count will fix things:
+https://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools-next.git/tr=
+ee/tools/perf/tests/task-exit.c?h=3Dperf-tools-next#n134
 
+Anyway, for now I think it is expedient to mark the test as exclusive.
+
+> > But it's a C test so I assume there isn't an exclusive mechanism to ski=
+p
+> > it? It doesn't look like it should be affected though, so maybe we coul=
+d
+> > leave it failing as a real bug.
+> >
+>
+> Oh I see it says in the cover letter it can be set for C tests. But can
+> that be done through all the existing TEST_CASE() etc macros?
+
+Currently only whole suites can be exclusive. We could add macros for
+exclusive C tests but my preference would be to make the test work
+non-exclusive. I'll make test cases exclusive and mark this one.
+
+Thanks,
+Ian
 
