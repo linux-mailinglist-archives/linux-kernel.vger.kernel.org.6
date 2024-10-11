@@ -1,170 +1,157 @@
-Return-Path: <linux-kernel+bounces-361690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2924C99AB7A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:51:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AC6C99AB83
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58F0D1C2272C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:51:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 164D7284A8D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE8147868B;
-	Fri, 11 Oct 2024 18:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D16901D079A;
+	Fri, 11 Oct 2024 18:50:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="iccmNrmz"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N1l+97Wk"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 875AD1BBBC6;
-	Fri, 11 Oct 2024 18:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 425A21D0406;
+	Fri, 11 Oct 2024 18:50:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728672534; cv=none; b=arVpZ2IRJINCPaosA5teqQDWDdcprgUrYKwRPkKpJZKf5A/xePLa0F1tHS78qiD8bVx6xSwetKrXdJ+h46b/Mpz5xRKHDPKC/vXLx8LJc1cGDxku37KkCT3QG4LyLdU04330oMMURWMjhqo50XjY5SH4KiJGRpuwohGfBhg3tJ0=
+	t=1728672609; cv=none; b=PmvoWRYP6l1N4qNBiDRPhfVk/azG14v8rvcsTGydGCcaoDfEf1w+9N7B5OERyG+VD/Ex5oW36+1Db9NfXl0lZRTS8YRW2DV4yftO3eyLHjpcpKeD7coDaX/kU/+nJPCqUJz/aABGhLh+VnRdOuQ79t3JyR9GK+AotOHUOQ80XTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728672534; c=relaxed/simple;
-	bh=BRBJ69O5Y+OJjvKHG16LKBpIN3vxBrGnZi4bliNQR70=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XDtnT185U/VZb0+Nm2tatcokTZlxGPgWLKp9VcsWj23MfNHriF0TrAtsf2XuIAFv0v4a4RDcu90pYjEQcs0puMJrjTTWYc818Ei3MeiHH3eeFjpaU2jJ/hBeY96MGF5yJCDkltwIFvOAE7BCwD+sNMR4+CI5/F0ELfV1C1SlewE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=iccmNrmz; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728672500; x=1729277300; i=markus.elfring@web.de;
-	bh=fOk+qxQUaR15C1SG3z4GSWnIHZDQPtizqqUOb7X8qk4=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=iccmNrmzWiw+S1pqVV60kuERmH78gvbX8a1d4CZI40q4RuwJ3MoUqhzADwKHqa3U
-	 0XApOmGbd/7w1ijd7SiIdSlwYEinyIVLWiWM17lPtSOME7b/JIGvj4zcs+AYXogSS
-	 oaV2Fsx/XOJG039L1rPpAGsaHMMDcE1RpNSkp3uA7ZfzfcLoBd9OIzE70xi7vrH46
-	 qGCUuw3As2DWxtHPiPXT/FhsgVsi5gi9pZYzp/VmpQKtd8+bNhqysJhC+cw2m2T4f
-	 CCb8E1EEZSycU3f53xVPcQUSWSWezESfZgbVQn4US2ekIK/dW1aL2NVfVaQCnWDFF
-	 n5ISZyW2LoFwlbXH9g==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MMY1N-1tIEyp1M87-00KASn; Fri, 11
- Oct 2024 20:48:20 +0200
-Message-ID: <663a37fe-ffc4-4826-b8ba-bcefdb0e7992@web.de>
-Date: Fri, 11 Oct 2024 20:48:18 +0200
+	s=arc-20240116; t=1728672609; c=relaxed/simple;
+	bh=NKdwyV2yhRLyVZ+vhlosGcKFUdD7xmu+679Y6S8XNsY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=RevjjbNPF32cUhhbUDOQAhZZ0+E811m8bkt9MPBXbqWulhjmZZ787smDVzSf5TAPCTkmsvv9+VEn+5aZZdyLMK44f+mO68a41BawLRZYGZcyeSxFAHyrjwP93ylCqls5Nd+AGXRpqOJjL0p/16Ehw691OBSg/CIhcMow5GCCV/Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N1l+97Wk; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728672607; x=1760208607;
+  h=from:subject:date:message-id:mime-version:
+   content-transfer-encoding:to:cc;
+  bh=NKdwyV2yhRLyVZ+vhlosGcKFUdD7xmu+679Y6S8XNsY=;
+  b=N1l+97WkCgo9O5d650GhnzMf86YGCJkUvaXPAJOl5WG0tKy7zrJZ6xgW
+   vTtTy8xra5bgbRAq8c0yKeb93bC99+Vr5R8/ICQMfd6meFo8ZNXXhiY8B
+   AohkNmQVry9bQQgEUpXWpzkf6CxIuG2v+rC+ORwizaTUKDvZO2kRDbhct
+   JIzEya8Tl5il+wOGapRvI31OAUHuwgnANbWyuxKQQNtZ000vcnQnllJ5t
+   brEuDYk8zRqP7BogcSxt/F0tn/Jgzmx/gRzvWnuvYc3wZMrWTpDNEVkpf
+   E73NiIDHV5OQuMucLBxxJdeoYhZ2Sjl0+r62jAqQPSNIz3AZ9hM4KuVmv
+   w==;
+X-CSE-ConnectionGUID: JWPBwNJRTMmnKIv6McPMKA==
+X-CSE-MsgGUID: cE1fAFMGQoOHM82zoN241w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="50626150"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="50626150"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 11:50:06 -0700
+X-CSE-ConnectionGUID: zJgxWzITQY+UgaeF8BONzA==
+X-CSE-MsgGUID: tZrstZS4Tpqo5f+gg0Kmqw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="77804142"
+Received: from jekeller-desk.jf.intel.com ([10.166.241.20])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 11:50:06 -0700
+From: Jacob Keller <jacob.e.keller@intel.com>
+Subject: [PATCH net-next 0/8] lib: packing: introduce and use
+ (un)pack_fields
+Date: Fri, 11 Oct 2024 11:48:28 -0700
+Message-Id: <20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] irqchip/renesas-rzg2l: Fix missing put_device
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- linux-renesas-soc@vger.kernel.org,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Biju Das <biju.das.jz@bp.renesas.com>,
- Chris Paterson <Chris.Paterson2@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
- Marc Zyngier <maz@kernel.org>
-References: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20241011172003.1242841-1-fabrizio.castro.jz@renesas.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:5vxS5q9WmasTB24MvXKgHDn01i9eCxrPjt3xBpM6u0jstKy1yHx
- Rt2Vp77a5jHb4IoEqgaDGz8OVl9NEB/zi5phpgybZg7HRvVWR0hMSqMKL1JYOtHLq72drjR
- miPjqmoehn60aIv4877oz4DFn2/k9r9key1ydCPsurmaxTl7fB5mFatOmkjWjsWjYZ4eXhY
- a4MDh+0bwPmBVJhxiK2uA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:xEg2pFie58Q=;bVOhJyu9dK2DnQ3etXm0gqj8os6
- 8HR7iNmq4qxjyLV74HaaKDugYxoPm2PYXHBnInGbVweyKgL7Jca9VJnzNyhvc6a9GO6vWTuYN
- Zsd8yTpGpDPad8Q9NPI8bdxupCkThQPUQp9GD7k2jpYKJsZFLZ4+uvw9GGY38aTvky2mwMO+u
- BSxrSjaVF2IhylUnyuV8DjjkjKvq84xnC03tvA7Isq2D2b4aHuA/hZrZWTLfmuKd7cPmB5u2o
- jMoxY/PFXbyF38hDHF1JFK20gxQjiS+hqpT9/XDrZDYqm0quggylWHABR8uDS+/RF4v9KqC7I
- iMmDafcBOO4d9+BUpi0LWft7GqU2eoh+dCDrH9Q7gd3U2mKnssI/s8/Daj7FFSAdxMItwUoix
- ZnFxChB9POdw7h2s0eloA4YBERTzGYmX36OwW/u2VoVZYkzjsV5bkjT/DtH/4NJdFdGh/2JIm
- KKxS1CpJagE0LG1sutV2vMtQoBdersoyZDDc5bN8FM81zL7IRZvJRSZMgdGOeeDeoUEUrZxJa
- kWLvn9SkR1iI8p5wK++Zc0ncwSERxYT5gvhe/G9Op0Tzy7IJ//UJ8mlDLsAehkmcYjBrfEwCh
- WHT4QZc2oqOghtpja2azPmlOeZ/1dXjqYhMkB+pwzS3HbXv6fvKQWh+2uZjiT8rdyhyAb4Dcb
- XGNIV9wySUf7qzaBrd7DwAOXpu+BcdDYuDFC7tXP97KHSKjuM9OClDZ/jKt9Uv34PBfbGLgKJ
- AE7+UhSJZP0lF74/4mHRKyp6wuugIVjDzfN2/AE59AKyxha3otxWV+cxtnexqf+JDHK5tf1Ht
- VhBbDWgSMclBifuvTKYicxqg==
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAPxyCWcC/x2N0QqDMBAEf0XuuQeJCin9ldKHNFntUb2GJIgg/
+ nuDT8vAMnNQQRYUenQHZWxS5KcN7K2j8PE6gyU2pt70ozVm5OTDV3S+lifBEgt7jSyhXde0YIV
+ WX5uG39YFF3DH4AZqwpQxyX7FnqSorNgrvc7zD6sdPq6GAAAA
+To: Vladimir Oltean <olteanv@gmail.com>, 
+ Andrew Morton <akpm@linux-foundation.org>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, Tony Nguyen <anthony.l.nguyen@intel.com>, 
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+ Jacob Keller <jacob.e.keller@intel.com>, 
+ Vladimir Oltean <vladimir.oltean@nxp.com>
+X-Mailer: b4 0.14.1
 
-> rzg2l_irqc_common_init calls of_find_device_by_node, but the
-> corresponding put_device call is missing.
+This series improves the packing library with a new API for packing or
+unpacking a large number of fields at once with minimal code footprint. The
+API is then used to replace bespoke packing logic in the ice driver,
+preparing it to handle unpacking in the future. Finally, the ice driver has
+a few other cleanups related to the packing logic.
 
-How do you think about to append parentheses to function names
-(so that they can be distinguished a bit easier from other identifiers)?
+The pack_fields and unpack_fields functions have the following improvements
+over the existing pack() and unpack() API:
 
+ 1. Packing or unpacking a large number of fields takes significantly less
+    code. This significantly reduces the .text size for an increase in the
+    .data size which is much smaller.
 
-> Make use of the cleanup interfaces from cleanup.h to call into
-> __free_put_device (which in turn calls into put_device) when
+ 2. The unpacked data can be stored in sizes smaller than u64 variables.
+    This reduces the storage requirement both for runtime data structures,
+    and for the rodata defining the fields. This scales with the number of
+    fields used.
 
-Can it help to influence the understanding of this programming
-interface by mentioning the usage of a special attribute?
+ 3. Most of the error checking is done at compile time, rather than
+    runtime via CHECK_PACKED_FIELD_* macros. This saves wasted computation
+    time, *and* catches errors in the field definitions immediately instead
+    of only after the offending code executes.
 
+The actual packing and unpacking code still uses the u64 size
+variables. However, these are converted to the appropriate field sizes when
+storing or reading the data from the buffer.
 
-> leaving function rzg2l_irqc_common_init and variable "dev" goes
-> out of scope.
->
-> Mind that we don't want to "put" "dev" when rzg2l_irqc_common_init
-> completes successfully, therefore assign NULL to "dev" to prevent
-> __free_put_device from calling into put_device within the successful
-> path.
+One complexity is that the CHECK_PACKED_FIELD_* macros need to be defined
+one per size of the packed_fields array. This is because we don't have a
+good way to handle the ordering checks otherwise. The C pre-processor is
+unable to generate and run variable length loops at compile time.
 
-Will further software design options become applicable here?
+This is a significant amount of macro code, ~22,000 lines of code. To
+ensure it is correct and to avoid needing to store this directly in the
+kernel history, this file is generated as <generated/packing-checks.h> via
+a small C program, gen_packing_checks. To generate this, we need to update
+the top level Kbuild process to include the compilation of
+gen_packing_checks and execution to generate the packing-checks.h file.
 
-Can any pointer type be used for the return value
-(instead of the data type =E2=80=9Cint=E2=80=9D)?
+Signed-off-by: Jacob Keller <jacob.e.keller@intel.com>
+---
+Jacob Keller (5):
+      ice: remove int_q_state from ice_tlan_ctx
+      ice: use <linux/packing.h> for Tx and Rx queue context data
+      ice: reduce size of queue context fields
+      ice: move prefetch enable to ice_setup_rx_ctx
+      ice: cleanup Rx queue context programming functions
 
+Vladimir Oltean (3):
+      lib: packing: create __pack() and __unpack() variants without error checking
+      lib: packing: demote truncation error in pack() to a warning in __pack()
+      lib: packing: add pack_fields() and unpack_fields()
 
-> "make coccicheck" will still complain about missing put_device calls,
-> but those are false positives now.
+ drivers/net/ethernet/intel/ice/ice_common.h     |  12 +-
+ drivers/net/ethernet/intel/ice/ice_lan_tx_rx.h  |  49 +---
+ include/linux/packing.h                         |  69 ++++++
+ drivers/net/dsa/sja1105/sja1105_static_config.c |   8 +-
+ drivers/net/ethernet/intel/ice/ice_base.c       |   6 +-
+ drivers/net/ethernet/intel/ice/ice_common.c     | 300 +++++-------------------
+ lib/gen_packing_checks.c                        |  31 +++
+ lib/packing.c                                   | 285 ++++++++++++++++------
+ Kbuild                                          |  13 +-
+ drivers/net/ethernet/intel/Kconfig              |   1 +
+ 10 files changed, 423 insertions(+), 351 deletions(-)
+---
+base-commit: d677aebd663ddc287f2b2bda098474694a0ca875
+change-id: 20241004-packing-pack-fields-and-ice-implementation-b17c7ce8e373
 
-Would you like to discuss any adjustment possibilities for this
-development tool?
+Best regards,
+-- 
+Jacob Keller <jacob.e.keller@intel.com>
 
-
-=E2=80=A6
-> +++ b/drivers/irqchip/irq-renesas-rzg2l.c
-> @@ -8,6 +8,7 @@
->   */
->
->  #include <linux/bitfield.h>
-> +#include <linux/cleanup.h>
-=E2=80=A6
-
-This header file would usually be included by an other inclusion statement=
- already,
-wouldn't it?
-https://elixir.bootlin.com/linux/v6.12-rc2/source/include/linux/device.h#L=
-33
-
-
-=E2=80=A6
-> @@ -530,12 +531,12 @@ static int rzg2l_irqc_parse_interrupts(struct rzg2=
-l_irqc_priv *priv,
->  static int rzg2l_irqc_common_init(struct device_node *node, struct devi=
-ce_node *parent,
->  				  const struct irq_chip *irq_chip)
->  {
-> +	struct platform_device *pdev =3D of_find_device_by_node(node);
-> +	struct device *dev __free(put_device) =3D pdev ? &pdev->dev : NULL;
->  	struct irq_domain *irq_domain, *parent_domain;
-> -	struct platform_device *pdev;
->  	struct reset_control *resetn;
->  	int ret;
->
-> -	pdev =3D of_find_device_by_node(node);
->  	if (!pdev)
->  		return -ENODEV;
-=E2=80=A6
-
-Would you dare to reduce the scopes for any local variables here?
-https://refactoring.com/catalog/reduceScopeOfVariable.html
-
-Regards,
-Markus
 
