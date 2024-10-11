@@ -1,132 +1,163 @@
-Return-Path: <linux-kernel+bounces-360533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6417999C35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:45:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9053D999C3B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:47:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B8B21F24BBF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:45:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C03811C225C8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0CA91F9A97;
-	Fri, 11 Oct 2024 05:45:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC8F91F9A9E;
+	Fri, 11 Oct 2024 05:47:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BFg4Hjdc"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="giP3xilH"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33A2E199FBB;
-	Fri, 11 Oct 2024 05:45:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E8F1946C8;
+	Fri, 11 Oct 2024 05:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728625524; cv=none; b=KRHCykfUfAtuzJAfzl21OkwCLMkIKBuJ9Pi2xCE2mIaOAqFvNUmyRaecJI8+/gYIwCaPp1FwZ0GBnctRsmyY144FkArFf6vdfSjx4ZM//GlE7yhz8YNavHG00OxbdZIt3lvn42OJpa/l0KKehu9zicEGWIyKz8NZHqqFsqFYPP4=
+	t=1728625624; cv=none; b=slPILBnZ+MDqsrh4AnuQixOUhgnCFmNLFRXGhn6xjaH4D2Y73yz+8ypevmkpTX995MkoG5IpsSlKCP5bNZ3ETXHAbrFsaZKJG+F3v81W1VJkEQyiJbnDPo/mzBwl4XEJFgpepfCZB67CxYba+ZwUgZKXGyPpGU+ey0PNx7MJe3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728625524; c=relaxed/simple;
-	bh=nmbF2PhNdJ7/xL34LGBrOuJMIZrELMaifyTLK8hvpsA=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=QIBwFuZIxZNfhH1HiEWevMtYAdkBUHINnrlWYo3g3cpmbF/1Gkt8CaikQuXOppBltcDVctXlcRhF/Wv96dMHmOHFsdSwVtqOFh7ECO/yMyiZkTfM2ZTpMoeXInwH+THt1/H0SpGJwmm1ymg4mrIx6SFIPLh9DQhdZ3xT27pTHVs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BFg4Hjdc; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0035.itg.ti.com ([10.64.41.0])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49B5jAaN100941;
-	Fri, 11 Oct 2024 00:45:10 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728625510;
-	bh=tv0D3m9QqlL2V3O1Ly4Bj2ftcITzo4LxkkV37gOOOVk=;
-	h=From:To:CC:Subject:Date;
-	b=BFg4Hjdc8gZ3Ju0LwF0VoUDTw1QiUXBG+36bvtBY5OSdqvWljoQe5qcWgQVNDBciL
-	 7zZGAHhDju+c/rRZRzl+GosEDVaB8oHtm3nvxJtVUCTvMbX2EjbzD7nhn65UFtuxI1
-	 2OutxfDIXhrNPPTxlX6PPFK0D1cwJng6UCLd7PWk=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49B5jA1e028069
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Oct 2024 00:45:10 -0500
-Received: from DLEE108.ent.ti.com (157.170.170.38) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Oct 2024 00:45:09 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE108.ent.ti.com
- (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Oct 2024 00:45:09 -0500
-Received: from uda0492258.dhcp.ti.com (uda0492258.dhcp.ti.com [10.24.72.81])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49B5j6Dj045606;
-	Fri, 11 Oct 2024 00:45:07 -0500
-From: Siddharth Vadapalli <s-vadapalli@ti.com>
-To: <peter.chen@kernel.org>, <pawell@cadence.com>, <rogerq@kernel.org>,
-        <gregkh@linuxfoundation.org>, <felipe.balbi@linux.intel.com>
-CC: <linux-usb@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        <s-vadapalli@ti.com>
-Subject: [PATCH] usb: cdns3: cdns3-gadget: Fix cdns3_ep_config() by setting ep.maxpacket
-Date: Fri, 11 Oct 2024 11:15:06 +0530
-Message-ID: <20241011054506.2810565-1-s-vadapalli@ti.com>
-X-Mailer: git-send-email 2.40.1
+	s=arc-20240116; t=1728625624; c=relaxed/simple;
+	bh=sKRsXEyxaeRla+k2w1rKXz1PU3G9sKxCHTHbocZ7Nns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=azD9d2k4BmcB3R4Jn5OhcB9AkBvwIOcKaAqQQ3nxqDklrgotDs72SxtehsE9KzAIhaVL7NEzHqFbjTY+dg1bwrAX+H5aW9gtIh+Q6nf+u7MeTnKFsBZrEG2ULj8G4aq41/T4q9X2sj1Oe3Cpcg5QB4+6eW8OAh/vcG3E0JRFzAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=giP3xilH; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B1HfBX005437;
+	Fri, 11 Oct 2024 05:46:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	l9fDGbw6pgOmDAjZ0nxSCghmAFvcpRpZ5c10egbYI1U=; b=giP3xilHNe8A/9r1
+	aXUrUIhsX0oIohd35KFh7lgTpo0VMZ/QPqE1zKqgI6WazrblKtC/dtM6ZR9F8+ti
+	JggNy5/NNdPMqa/AdYngu5eU/HMpkklR0ccgzaxn4rER9JqCT87qiWozO1wO3Rk6
+	ezpeSCmzgiPqkfWgxTEnQ5Z5LICxJcBwX9BgNhxBCrdWCXP1dMHFSCHT6zAA2VAZ
+	bnhF1W9MIcXvzosnh+FsCcWyUmemCtjNOkv8lVGYch3jI/66BlHpCLrPNX7v+7xV
+	7Bq3MposIuNmvXQWrL+5RA1HN9LAplh1iWM25nAM9YbylpS5vaINtiWaz3ohsQSl
+	FRFIWg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 426t7srfqh-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 05:46:56 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B5kjxx010041
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 05:46:45 GMT
+Received: from [10.233.21.53] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 10 Oct
+ 2024 22:46:41 -0700
+Message-ID: <abc3516e-2c12-4612-9035-146b280b36df@quicinc.com>
+Date: Fri, 11 Oct 2024 13:46:38 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/2] pinctrl: qcom: add the tlmm driver for QCS8300
+ platforms
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Linus Walleij
+	<linus.walleij@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Richard
+ Cochran" <richardcochran@gmail.com>,
+        <quic_tengfan@quicinc.com>, <quic_tingweiz@quicinc.com>,
+        <quic_aiquny@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-gpio@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>
+References: <20241009-qcs8300_tlmm-v2-0-9e40dee5e4f1@quicinc.com>
+ <20241009-qcs8300_tlmm-v2-2-9e40dee5e4f1@quicinc.com>
+ <yh5qzohy42r226a4e7yupimfdl6xccpntuffot7dnhrftagtae@4ruw5vmcknfq>
+Content-Language: en-US
+From: Jingyi Wang <quic_jingyw@quicinc.com>
+In-Reply-To: <yh5qzohy42r226a4e7yupimfdl6xccpntuffot7dnhrftagtae@4ruw5vmcknfq>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: h73tjxlGhzXyl6k7L_50HFMFUVaBB5rs
+X-Proofpoint-ORIG-GUID: h73tjxlGhzXyl6k7L_50HFMFUVaBB5rs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ mlxlogscore=999 malwarescore=0 phishscore=0 mlxscore=0 priorityscore=1501
+ suspectscore=0 impostorscore=0 clxscore=1015 adultscore=0 bulkscore=0
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110036
 
-The function cdns3_ep_config() calculates the maximum packet size based
-on the Endpoint Type and the Gadget Speed and stores it in the variable
-"max_packet_size". This value is then programmed in the USB Controller
-for the corresponding Endpoint. This may result in a mismatch between
-the maximum packet size programmed in the USB controller and the maximum
-packet size seen by the UDC Core via "maxpacket" member of "struct usb_ep".
-Additionally, since TD_SIZE as well as TOTAL_TDL are calculated in
-cdns3_ep_run_transfer() on the basis of the maximum packet size stored in
-the "maxpacket" member of "struct usb_ep", it may lead to incorrect values
-of TD_SIZE and TOTAL_TDL when compared with what the USB controller
-actually expects (max_packet_size). This also applies to the calculation of
-TDL in cdns3_ep_run_stream_transfer().
 
-Fix this.
 
-Fixes: 7733f6c32e36 ("usb: cdns3: Add Cadence USB3 DRD Driver")
-Signed-off-by: Siddharth Vadapalli <s-vadapalli@ti.com>
----
-
-Hello,
-
-This patch is based on commit
-1d227fcc7222 Merge tag 'net-6.12-rc3' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net
-of Mainline Linux.
-
-Regards,
-Siddharth.
-
- drivers/usb/cdns3/cdns3-gadget.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
-
-diff --git a/drivers/usb/cdns3/cdns3-gadget.c b/drivers/usb/cdns3/cdns3-gadget.c
-index fd1beb10bba7..e89bd248e81d 100644
---- a/drivers/usb/cdns3/cdns3-gadget.c
-+++ b/drivers/usb/cdns3/cdns3-gadget.c
-@@ -2145,6 +2145,16 @@ int cdns3_ep_config(struct cdns3_endpoint *priv_ep, bool enable)
- 		return -EINVAL;
- 	}
- 
-+	/*
-+	 * The Endpoint is configured to handle a maximum packet size of
-+	 * max_packet_size. Hence, set priv_ep->endpoint.maxpacket to
-+	 * max_packet_size. This is necessary to ensure that TD_SIZE and
-+	 * TOTAL_TDL are calculated correctly in cdns3_ep_run_transfer(),
-+	 * and also to ensure that TDL is calculated correctly in
-+	 * cdns3_ep_run_stream_transfer().
-+	 */
-+	priv_ep->endpoint.maxpacket = max_packet_size;
-+
- 	if (max_packet_size == 1024)
- 		priv_ep->trb_burst_size = 128;
- 	else if (max_packet_size >= 512)
--- 
-2.40.1
+On 10/10/2024 8:56 PM, Dmitry Baryshkov wrote:
+> On Wed, Oct 09, 2024 at 03:13:34PM GMT, Jingyi Wang wrote:
+>> Add support for QCS8300 TLMM configuration and control via the
+>> pinctrl framework.
+>>
+>> Signed-off-by: Jingyi Wang <quic_jingyw@quicinc.com>
+>> ---
+>>  drivers/pinctrl/qcom/Kconfig.msm       |    7 +
+>>  drivers/pinctrl/qcom/Makefile          |    1 +
+>>  drivers/pinctrl/qcom/pinctrl-qcs8300.c | 1246 ++++++++++++++++++++++++++++++++
+>>  3 files changed, 1254 insertions(+)
+>>
+> 
+> [...]
+> 
+>> +	[125] = PINGROUP(125, phase_flag, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[126] = PINGROUP(126, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[127] = PINGROUP(127, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[128] = PINGROUP(128, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[129] = PINGROUP(129, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[130] = PINGROUP(130, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[131] = PINGROUP(131, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[132] = PINGROUP(132, _, _, _, _, _, _, _, _, _, _, egpio),
+>> +	[133] = UFS_RESET(ufs_reset, 0x92000),
+>> +	[134] = SDC_QDSD_PINGROUP(sdc1_rclk, 0x89000, 15, 0),
+>> +	[135] = SDC_QDSD_PINGROUP(sdc1_clk, 0x89000, 13, 6),
+>> +	[136] = SDC_QDSD_PINGROUP(sdc1_cmd, 0x89000, 11, 3),
+>> +	[137] = SDC_QDSD_PINGROUP(sdc1_data, 0x89000, 9, 0),
+>> +};
+>> +
+> 
+> [...]
+> 
+>> +
+>> +static const struct msm_pinctrl_soc_data qcs8300_pinctrl = {
+>> +	.pins = qcs8300_pins,
+>> +	.npins = ARRAY_SIZE(qcs8300_pins),
+>> +	.functions = qcs8300_functions,
+>> +	.nfunctions = ARRAY_SIZE(qcs8300_functions),
+>> +	.groups = qcs8300_groups,
+>> +	.ngroups = ARRAY_SIZE(qcs8300_groups),
+>> +	.ngpios = 134,
+> 
+> I believe this should be 133.
+> 
+133 should be right, thanks for review, will fix that.
+>> +	.wakeirq_map = qcs8300_pdc_map,
+>> +	.nwakeirq_map = ARRAY_SIZE(qcs8300_pdc_map),
+>> +	.egpio_func = 11,
+>> +};
+>> +
+> 
+Thanks,
+Jingyi
 
 
