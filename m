@@ -1,191 +1,353 @@
-Return-Path: <linux-kernel+bounces-360296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360297-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1027999834
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:43:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0923B999836
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0037B1C2372D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:43:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7930C281F16
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1555323C9;
-	Fri, 11 Oct 2024 00:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC658F5B;
+	Fri, 11 Oct 2024 00:43:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nimq0txL"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="ZV1YF843"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B25604A06;
-	Fri, 11 Oct 2024 00:43:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D8B6AA7
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:43:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728607397; cv=none; b=EMcISk5DFHkYHIPmG9+/+ziY7l9J2MgYjCY3Zy/mD6Sp0d0apVbgZdvg9kSXusP722t+EdrouxTr1CiaAcNjwJuNwelz8o3ooSF+eAcUTKvXQfjFoyswf1av+mzqd+LjAS0mS6g+221rF/MIvgKLNlfLKr60whtoJvnGzFAfc5M=
+	t=1728607413; cv=none; b=trOJ5zUln/sSDAROWkkEyHNSxaIl5NQWF8bHcIuYaw1d1GAXZvfwwYYVm2L6gtwjypi9vjhRDFogRVrZAy6Y0d21dBn1GWcjR0N12ya0qx0o0lzwdw97dGyXSfp1TTUNW0gePZozgmRIp6lkjwAAV63rffio7UV/8/B3vidDHdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728607397; c=relaxed/simple;
-	bh=iYJp4eSJQ2KXVkFhqdy/nUnZerhnl4mJAolctJnsTZM=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To; b=Yj1OlTm6tNCWMjDU5qm7QCNyK6DRkUzHFvVtThRnKBOHOJgktv1RcSRTmnDQP6EBSFnzsjOzbVf+nbmnn/wbLSFZeWgvRxQpj9S9LVghQQZ6WXr9Uh1SrQFGiUD873NFGlpu4KCUrmX14ssXr7fst7u23lYsPyg+tPINbmL9LB8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nimq0txL; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728607396; x=1760143396;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to;
-  bh=iYJp4eSJQ2KXVkFhqdy/nUnZerhnl4mJAolctJnsTZM=;
-  b=nimq0txLdOqxzx1KA247/MN6hG+LciJSohU7VH2FVUKsfanJrJe4/+13
-   bH3CgI2eaIieoZ2hFBL/f5rFYpcJnd/NsM9txz7xW+FiGuOxPVab1BOTW
-   HYjPr3H0wTzDk5+juO/uJ4eV4vigEZ6drrG2FjOQV3ZU9MGTmm70GLg4P
-   /11P3nbQzwIzLGHFJydTi1aWznE577GEF7XYnKUe7J1XdSUtNisBvpCiA
-   YITF7pRaoTIULCZVDNVZEzYSqytrSjzj+qTBrGPeML/jvLnJcPmnc/SE5
-   qrG4+a36TuEZ5Lpeh3dGXlozAS6/cpVlp2pbW8uINe1ZgSwpatoGgaUab
-   Q==;
-X-CSE-ConnectionGUID: 5lXIWfJbT7+baCYoMZRcoQ==
-X-CSE-MsgGUID: z5CI+BQjTl+O+Zk+g0RLUQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31894997"
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="31894997"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 17:43:13 -0700
-X-CSE-ConnectionGUID: QPUvuqsQS9qkQTJ75zErMg==
-X-CSE-MsgGUID: KuTpH3KmQba8LVTxIi+t2Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="76850489"
-Received: from msangele-mobl.amr.corp.intel.com (HELO [10.124.223.138]) ([10.124.223.138])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 17:43:13 -0700
-Content-Type: multipart/mixed; boundary="------------k7TWJbYEKR9d03TLeEKm4CLy"
-Message-ID: <edb18687-9cd7-439e-b526-0eda6585e386@intel.com>
-Date: Thu, 10 Oct 2024 17:43:12 -0700
+	s=arc-20240116; t=1728607413; c=relaxed/simple;
+	bh=jYWIO/Kxoxf8Rx+qM6g1i9Z8IIFgza97yWxl7e4M00U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TdvYQZzfUTxxSAf2Xt2qO0/JRr6ktLnURD7i1LoMAV9/izTm3uHrxOwDTGr4QUy3qO2I3wAfg2g51dWwgD8Agv0LGTfWavoGRQ7cQ7zzOVoZDy3McyMVejV0C6W+IIwdlQBhdUQFDjGPr/P01+zQeI6qnRsooyGnrq59G4jN+nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=ZV1YF843; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20c803787abso11013855ad.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 17:43:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1728607411; x=1729212211; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WiOyMBxa/33SDWmb3tUybVzmcM0K7t0Zhy9VnlGY/bk=;
+        b=ZV1YF843pugoB85Js3ZnXlNlU2mPogIc3YRpKpzbJ9+TrKLnu8Spvz0Uh0B2htpQpH
+         onxIGOazX1uEKqzKeW9qAEEy4cy5iaElgWzMVqPDMVKpetSuHxCbvj9hWE5nXFpv6PIS
+         +xs34Kv2xdR/SYc12rhLDiMyLQsxnlzLe/Ii6WqQffGnTcdtATKvgsSEIKjdAe/2GoP5
+         IXeAwFfhheL3rMNHsVRcqkxvz8OSxdoQerl0BtGNax2Cae3O5ih/syOM37pzUVVamPVg
+         pIa5sSXPPnnpCdVWevf/T6uSCSy73uWkXvrPsMbsO2QKLxCNnHeoYGo0MKeOEYap0Utc
+         juoQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728607411; x=1729212211;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WiOyMBxa/33SDWmb3tUybVzmcM0K7t0Zhy9VnlGY/bk=;
+        b=F24JQXchOWXPmiV+IJP3z1sdNAZ0Vz69nYUvSWkef+WNx4Bnv4pOJehWonhJhfRYdp
+         WExPXF00p+fJjh+pVLolMCjH+xiPe11D7ou5z1/eO/pwb7QhfpNk7QWm3eZa94NyAjUa
+         sSHKYHs73SNbIJCGBPucQapoZC7RmfLn6U+HipHopnkOQn/tXXkeFuGbtDenD6tRC3fL
+         JNsUsd/hDjAevePf8dd0rZECpSXqgXxDdxmhCu75zmvptML5Nh5gaM3MoFU2p4BD+ACM
+         JxLMtV0DW9x8J7XiceLShuSMBp/miXVkesJ1a46fIGFsi4MBMEdKijQaDrKmS6nBRJfD
+         3IsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWN9sWl/oEFKdJI2eUaWdZ2LCRlXEsnUwUwdP5q8341NoXtuXdn3tlIpqeK2l2aiJckzS3IRPOEx6mPOxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMfGbCGS3fP2NB6AAq9xLyaSm+4pGFaKOF1HGw+7e/mcVibUH3
+	stwS17tXOI+f7EIpZshv2GF3kKfQ9n5YhWcBgmobBoP6wbdYxG5zdnHDedxWnE+DvfROgL6sq+8
+	7
+X-Google-Smtp-Source: AGHT+IH6KzSoyKjA32xEMRiIKm9VgMQM2PtPAxkRvwSOXUxg+nrq8NCJOHhWoi6xDsEJJLwr7bSqkQ==
+X-Received: by 2002:a17:902:d2c8:b0:20b:a73b:3f5 with SMTP id d9443c01a7336-20ca0399c9amr17198785ad.14.1728607411093;
+        Thu, 10 Oct 2024 17:43:31 -0700 (PDT)
+Received: from dread.disaster.area (pa49-186-209-182.pa.vic.optusnet.com.au. [49.186.209.182])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc13394sm14941465ad.108.2024.10.10.17.43.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 17:43:30 -0700 (PDT)
+Received: from dave by dread.disaster.area with local (Exim 4.96)
+	(envelope-from <david@fromorbit.com>)
+	id 1sz3kd-00Ghbb-1S;
+	Fri, 11 Oct 2024 11:43:27 +1100
+Date: Fri, 11 Oct 2024 11:43:27 +1100
+From: Dave Chinner <david@fromorbit.com>
+To: Goldwyn Rodrigues <rgoldwyn@suse.de>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
+Message-ID: <Zwh0rzp8hpCoF/or@dread.disaster.area>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+ <ZwCk3eROTMDsZql1@casper.infradead.org>
+ <20241007174758.GE21836@frogsfrogsfrogs>
+ <kplkze6blu5pmojn6ikv65qdsccyuxg4yexgkrmldv5stn2mr4@w6zj7ug63f3f>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] x86/apic: Stop the TSC Deadline timer during lapic
- timer shutdown
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Zhang Rui <rui.zhang@intel.com>, tglx@linutronix.de, mingo@redhat.com,
- bp@alien8.de, dave.hansen@linux.intel.com, rafael.j.wysocki@intel.com,
- x86@kernel.org, linux-pm@vger.kernel.org, hpa@zytor.com,
- peterz@infradead.org, thorsten.blum@toblux.com, yuntao.wang@linux.dev,
- tony.luck@intel.com, len.brown@intel.com, srinivas.pandruvada@intel.com,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241009072001.509508-1-rui.zhang@intel.com>
- <f568dbbc-ac60-4c25-80d1-87e424bd649c@intel.com>
- <CAJZ5v0gHn9iOPZXgBPA7O0zcN=S89NBP4JFsjpdWbwixtRrqqQ@mail.gmail.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <CAJZ5v0gHn9iOPZXgBPA7O0zcN=S89NBP4JFsjpdWbwixtRrqqQ@mail.gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <kplkze6blu5pmojn6ikv65qdsccyuxg4yexgkrmldv5stn2mr4@w6zj7ug63f3f>
 
-This is a multi-part message in MIME format.
---------------k7TWJbYEKR9d03TLeEKm4CLy
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+On Thu, Oct 10, 2024 at 02:10:25PM -0400, Goldwyn Rodrigues wrote:
+> On 10:47 07/10, Darrick J. Wong wrote:
+> > On Sat, Oct 05, 2024 at 03:30:53AM +0100, Matthew Wilcox wrote:
+> > > On Fri, Oct 04, 2024 at 04:04:33PM -0400, Goldwyn Rodrigues wrote:
+> > > > Introduce read_inline() function hook for reading inline extents. This
+> > > > is performed for filesystems such as btrfs which may compress the data
+> > > > in the inline extents.
+> > 
+> > Why don't you set iomap->inline_data to the uncompressed buffer, let
+> > readahead copy it to the pagecache, and free it in ->iomap_end?
+> 
+> This will increase the number of copies. BTRFS uncompresses directly
+> into pagecache. Yes, this is an option but at the cost of efficiency.
 
-How about something like the completely untested attached patch?
+Is that such a problem? The process of decompression means the data
+is already hot in cache, so there isn't a huge extra penalty for
+moving this inline data a second time...
 
-IMNHO, it improves on what was posted here because it draws a parallel
-with an AMD erratum and also avoids writes to APIC_TMICT that would get
-ignored anyway.
---------------k7TWJbYEKR9d03TLeEKm4CLy
-Content-Type: text/x-patch; charset=UTF-8; name="deadline1.patch"
-Content-Disposition: attachment; filename="deadline1.patch"
-Content-Transfer-Encoding: base64
+> > > This feels like an attempt to work around "iomap doesn't support
+> > > compressed extents" by keeping the decompression in the filesystem,
+> > > instead of extending iomap to support compressed extents itself.
+> > > I'd certainly prefer iomap to support compressed extents, but maybe I'm
+> > > in a minority here.
+> > 
+> > I'm not an expert on fs compression, but I get the impression that most
+> > filesystems handle reads by allocating some folios, reading off the disk
+> > into those folios, and decompressing into the pagecache folios.  It
+> > might be kind of amusing to try to hoist that into the vfs/iomap at some
+> > point, but I think the next problem you'd run into is that fscrypt has
+> > similar requirements, since it's also a data transformation step.
+> > fsverity I think is less complicated because it only needs to read the
+> > pagecache contents at the very end to check it against the merkle tree.
+> > 
+> > That, I think, is why this btrfs iomap port want to override submit_bio,
+> > right?  So that it can allocate a separate set of folios, create a
+> > second bio around that, submit the second bio, decode what it read off
+> > the disk into the folios of the first bio, then "complete" the first bio
+> > so that iomap only has to update the pagecache state and doesn't have to
+> > know about the encoding magic?
+> 
+> Yes, but that is not the only reason. BTRFS also calculates and checks
+> block checksums for data read during bio completions.
 
-U3ViamVjdDogeDg2L2FwaWM6IEFsd2F5cyBleHBsaWNpdGx5IGRpc2FybSBUU0MtZGVhZGxp
-bmUgdGltZXIKCk5ldyBwcm9jZXNzb3JzIGhhdmUgYmVjb21lIHBpY2tpZXIgYWJvdXQgdGhl
-IGxvY2FsIEFQSUMgdGltZXIgc3RhdGUKYmVmb3JlIGVudGVyaW5nIGxvdyBwb3dlciBtb2Rl
-cy4gVGhlc2UgbG93IHBvd2VyIG1vZGVzIGFyZSB1c2VkIChmb3IKZXhhbXBsZSkgd2hlbiB5
-b3UgY2xvc2UgeW91ciBsYXB0b3AgbGlkIGFuZCBzdXNwZW5kLiBJZiB5b3UgcHV0IHlvdXIK
-bGFwdG9wIGluIGEgYmFnIGluIHRoaXMgdW5uZWNlc3NhcmlseS1oaWdoLXBvd2VyIHN0YXRl
-LCBpdCBpcyBsaWtlbHkKdG8gZ2V0IHF1aXRlIHRvYXN0eSB3aGlsZSBpdCBxdWlja2x5IHN1
-Y2tzIHRoZSBiYXR0ZXJ5IGRyeS4KClRoZSBwcm9ibGVtIGJvaWxzIGRvd24gdG8gc29tZSBD
-UFVzJyBpbmFiaWxpdHkgdG8gcG93ZXIgZG93biB1bnRpbCB0aGUKa2VybmVsIGZ1bGx5IGRp
-c2FibGVzIHRoZSBsb2NhbCBBUElDIHRpbWVyLiBUaGUgY3VycmVudCBrZXJuZWwgY29kZQp3
-b3JrcyBpbiBvbmUtc2hvdCBhbmQgcGVyaW9kaWMgbW9kZXMgYnV0IGRvZXMgbm90IHdvcmsg
-Zm9yIGRlYWRsaW5lCm1vZGUuIERlYWRsaW5lIG1vZGUgaGFzIGJlZW4gdGhlIHN1cHBvcnRl
-ZCBhbmQgcHJlZmVycmVkIG1vZGUgb24KSW50ZWwgQ1BVcyBmb3Igb3ZlciBhIGRlY2FkZSBh
-bmQgdXNlcyBhbiBNU1IgdG8gZHJpdmUgdGhlIHRpbWVyCmluc3RlYWQgb2YgYW4gQVBJQyBy
-ZWdpc3Rlci4KCkRpc2FibGUgdGhlIFRTQyBEZWFkbGluZSB0aW1lciBpbiBsYXBpY190aW1l
-cl9zaHV0ZG93bigpIGJ5IHdyaXRpbmcgdG8KTVNSX0lBMzJfVFNDX0RFQURMSU5FIHdoZW4g
-aW4gVFNDLWRlYWRsaW5lIG1vZGUuIEFsc28gYXZvaWQgd3JpdGluZwp0byB0aGUgaW5pdGlh
-bC1jb3VudCByZWdpc3RlciAoQVBJQ19UTUlDVCkgd2hpY2ggaXMgaWdub3JlZCBpbgpUU0Mt
-ZGVhZGxpbmUgbW9kZS4KCk5vdGU6IFRoZSBBUElDX0xWVFR8PUFQSUNfTFZUX01BU0tFRCBv
-cGVyYXRpb24gc2hvdWxkIHRoZW9yZXRpY2FsbHkgYmUKZW5vdWdoIHRvIHRlbGwgdGhlIGhh
-cmR3YXJlIHRoYXQgdGhlIHRpbWVyIHdpbGwgbm90IGZpcmUgaW4gYW55IG9mIHRoZQp0aW1l
-ciBtb2Rlcy4gQnV0IG1pdGlnYXRpbmcgQU1EIGVycmF0dW0gNDExWzFdIGFsc28gcmVxdWly
-ZXMgY2xlYXJpbmcKb3V0IEFQSUNfVE1JQ1QuIFNvbGVseSBzZXR0aW5nIEFQSUNfTFZUX01B
-U0tFRCBpcyBhbHNvIGluZWZmZWN0aXZlIGluCnByYWN0aWNlIG9uIEludGVsIEx1bmFyIExh
-a2Ugc3lzdGVtcywgd2hpY2ggaXMgdGhlIG1vdGl2YXRpb24gZm9yIHRoaXMKY2hhbmdlLgoK
-MS4gNDExIFByb2Nlc3NvciBNYXkgRXhpdCBNZXNzYWdlLVRyaWdnZXJlZCBDMUUgU3RhdGUg
-V2l0aG91dCBhbiBJbnRlcnJ1cHQgaWYgTG9jYWwgQVBJQyBUaW1lciBSZWFjaGVzIFplcm8g
-LSBodHRwczovL3d3dy5hbWQuY29tL2NvbnRlbnQvZGFtL2FtZC9lbi9kb2N1bWVudHMvYXJj
-aGl2ZWQtdGVjaC1kb2NzL3JldmlzaW9uLWd1aWRlcy80MTMyMl8xMGhfUmV2X0dkLnBkZiAK
-CQkJCQkJCQkJCQkJCQkgICAgLy8KZGlmZiAtLWdpdCBhL2FyY2gveDg2L2tlcm5lbC9hcGlj
-L2FwaWMuYyBiL2FyY2gveDg2L2tlcm5lbC9hcGljL2FwaWMuYwppbmRleCA2NTEzYzUzYzk0
-NTllLi41NDM2YTQwODMwNjVkIDEwMDY0NAotLS0gYS9hcmNoL3g4Ni9rZXJuZWwvYXBpYy9h
-cGljLmMKKysrIGIvYXJjaC94ODYva2VybmVsL2FwaWMvYXBpYy5jCkBAIC00NDAsNyArNDQw
-LDE5IEBAIHN0YXRpYyBpbnQgbGFwaWNfdGltZXJfc2h1dGRvd24oc3RydWN0IGNsb2NrX2V2
-ZW50X2RldmljZSAqZXZ0KQogCXYgPSBhcGljX3JlYWQoQVBJQ19MVlRUKTsKIAl2IHw9IChB
-UElDX0xWVF9NQVNLRUQgfCBMT0NBTF9USU1FUl9WRUNUT1IpOwogCWFwaWNfd3JpdGUoQVBJ
-Q19MVlRULCB2KTsKLQlhcGljX3dyaXRlKEFQSUNfVE1JQ1QsIDApOworCisJLyoKKwkgKiBT
-ZXR0aW5nIEFQSUNfTFZUX01BU0tFRCBzaG91bGQgYmUgZW5vdWdoIHRvIHRlbGwgdGhlCisJ
-ICogaGFyZHdhcmUgdGhhdCB0aGlzIHRpbWVyIHdpbGwgbmV2ZXIgZmlyZS4gQnV0IEFNRAor
-CSAqIGVycmF0dW0gNDExIGFuZCBzb21lIEludGVsIENQVSBiZWhhdmlvciBjaXJjYSAyMDI0
-CisJICogc2F5IG90aGVyd2lzZS4gVGltZSBmb3IgYmVsdCBhbmQgc3VzcGVuZGVycyBwcm9n
-cmFtbWluZywKKwkgKiBtYXNrIHRoZSB0aW1lciBhbmQgemVybyB0aGUgY291bnRlciByZWdp
-c3RlcnM6CisJICovCisJaWYgKHYgJiBBUElDX0xWVF9USU1FUl9UU0NERUFETElORSkKKwkJ
-d3Jtc3JsKE1TUl9JQTMyX1RTQ19ERUFETElORSwgMCk7CisJZWxzZQorCQlhcGljX3dyaXRl
-KEFQSUNfVE1JQ1QsIDApOworCiAJcmV0dXJuIDA7CiB9CiAK
+This is no different to doing fsverity checks at read BIO io
+completion. We should be using the same mechanism in iomap for
+fsverity IO completion verification as filesystems do for data
+checksum verification because, conceptually speaking, they are the
+same operation.
 
---------------k7TWJbYEKR9d03TLeEKm4CLy--
+> > And then, having established that beachhead, porting btrfs fscrypt is
+> > a simple matter of adding more transformation steps to the ioend
+> > processing of the second bio (aka the one that actually calls the disk),
+> > right?  And I think all that processing stuff is more or less already in
+> > place for the existing read path, so it should be trivial (ha!) to
+> > call it in an iomap context instead of straight from btrfs.
+> > iomap_folio_state notwithstanding, of course.
+> > 
+> > Hmm.  I'll have to give some thought to what would the ideal iomap data
+> > transformation pipeline look like?
+> 
+> The order of transformation would make all the difference, and I am not
+> sure if everyone involved can come to a conclusion that all
+> transformations should be done in a particular decided order.
+
+I think there is only one viable order of data transformations
+to/from disk. That's because....
+
+> FWIW, checksums are performed on what is read/written on disk. So
+> for writes, compression happens before checksums.
+
+.... there is specific ordering needed.
+
+For writes, the ordering is:
+
+	1. pre-write data compression - requires data copy
+	2. pre-write data encryption - requires data copy
+	3. pre-write data checksums - data read only
+	4. write the data
+	5. post-write metadata updates
+
+We cannot usefully perform compression after encryption -
+random data doesn't compress - and the checksum must match what is
+written to disk, so it has to come after all other transformations
+have been done.
+
+For reads, the order is:
+
+	1. read the data
+	2. verify the data checksum
+	3. decrypt the data - requires data copy
+	4. decompress the data - requires data copy
+	5. place the plain text data in the page cache
+
+To do 1) we need memory buffers allocated, 2) runs directly out of
+them. If no other transformations are required, then we can read the
+data directly into the folios in the page cache.
+
+However, if we have to decrypt and/or decompress the data, then
+we need multiple sets of bounce buffers - one of the data being
+read and one of the decrypted data. The data can be decompressed
+directly into the page cache.
+
+If there is no compression, the decryption should be done directly
+into the page cache.
+
+If there is nor decryption or compression, then the read IO should
+be done directly into the page cache and the checksum verification
+done by reading out of the page cache.
+
+IOWs, each step of the data read path needs to have "buffer" that
+is a set of folios that may or may not be the final page cache
+location.
+
+The other consideration here is we may want to be able to cache
+these data transformation layers when we are doing rapid RMW
+operations. e.g. on encrypted data, a RMW will need to allocate
+two sets of bounce buffers - one for the read, another for the
+write. If the encrypted data is also hosted in the page cache (at
+some high offset beyond EOF) then we don't need to allocate the
+bounce buffer during write....
+
+> > Though I already have a sneaking suspicion that will morph into "If I
+> > wanted to add {crypt,verity,compression} to xfs how would I do that?" ->
+> > "How would I design a pipeine to handle all three to avoid bouncing
+> > pages between workqueue threads like ext4 does?" -> "Oh gosh now I have
+> > a totally different design than any of the existing implementations." ->
+> > "Well, crumbs. :("
+
+I've actually been thinking about how to do data CRCs, encryption
+and compression with XFS through iomap. I've even started writing a
+design doc, based on feedback from the first fsverity implementation
+attempt.
+
+Andrey and I are essentially working towards a "direct mapped remote
+xattr" model for fsverity merkle tree data. fsverity reads and
+writes are marshalled through the page cache at a filesystem
+determined offset beyond EOF (same model as ext4, et al), but the
+data is mapped into remote xattr blocks. This requires fixing the
+mistake of putting metadata headers into xattr remote blocks by
+moving the CRC to the remote xattr name structure such that remote
+xattrs only contain data again.
+
+The read/write ops that are passed to iomap for such IO are fsverity
+implementation specific that understand that the high offset is to
+be mapped directly to a filesystem block sized remote xattr extent
+and the IO is done directly on that block. The remote xattr block
+CRC can be retreived when it is mapped and validated on read IO
+completion by the iomap code before passing the data to fsverity.
+
+The reason for doing using xattrs in this way is that it provides a
+generic mechanism for storing multiple sets of optional data related
+and/or size-transformed data within a file and within the single
+page caceh address space the inode provides.
+
+For example, it allows XFS to implement native data checksums. For
+this, we need to store 2 x 32bit CRCs per filesystem block. i.e. we
+need the old CRC and the new CRC so we can write/log the CRC update
+before we write the data, and if we crash before the data hits the
+disk we still know what the original CRC was and so can validate
+that the filesystem block contains entirely either the old or the
+new data when it is next read. i.e. one of the two CRC values should
+always be valid.
+
+By using direct mapping into the page cache for CRCs, we don't need
+to continually refetch the checksum data. It gets read in once, and
+a large read will continue to pull CRC data from the cached folio as
+we walk through the data we read from disk.  We can fetch the CRC
+data concurrently with the data itself, and IO completion processing
+doesn't signalled until both have been brought into cache.
+
+For writes, we can calculate the new CRCs sequentially and flush the
+cached CRC page but to the xattr when we reach the end of it. The
+data write bio that was built as we CRC'd the data can then be
+flushed once the xattr data has reached stable storage. There's a
+bit more latency to writeback operations here, but nothing is ever
+free...
+
+Compression is where using xattrs gets interesting - the xattrs can
+have a fixed "offset" they blong to, but can store variable sized
+data records for that offset.
+
+If we say we have a 64kB compression block size, we can store the
+compressed data for a 64k block entirely in a remote xattr even if
+compression fails (i.e. we can store the raw data, not the expanded
+"compressed" data). The remote xattr can store any amount of smaller
+data, and we map the compressed data directly into the page cache at
+a high offset. Then decompression can run on the high offset pages
+with the destination being some other page cache offset....
+
+On the write side, compression can be done directly into the high
+offset page cache range for that 64kb offset range, then we can
+map that to a remote xattr block and write the xattr. The xattr
+naturally handles variable size blocks.
+
+If we overwrite the compressed data (e.g. a 4kB RMW cycle in a 64kB
+block), then we essentially overwrite the compressed data in the
+page cache at writeback, extending the folio set for that record
+if it grows. Then on flush of the compressed record, we atomically
+replace the remote xattr we already have so we are guaranteed that
+we'll see either the old or the new compressed data at that point in
+time. The new remote xattr block is CRC'd by the xattr code, so if
+we are using compression-only, we don't actually need separate
+on-disk data CRC xattrs...
+
+Encryption/decryption doesn't require alternate data storage, so
+that just requires reading the encrypted data into a high page cache
+offset. However, if we are compressing then encrypting, then after
+the encryption step we'd need to store it via the compression
+method, not the uncompressed method. Hence there are some
+implementation details needed to be worked through here.
+
+-----
+
+Overall, I'm looking an iomap mechanism that stages every part of
+the transformation stack in the page cache itself. We have address
+space to burn because we don't support file sizes larger than 8EiB.
+That leaves a full 8EiB of address space available for hosting
+non-user-visible ephemeral IO path data states.
+
+How to break up that address space for different data transformation
+uses is an open question. Files with transformed data would be
+limited to the size of the address space reserved by iomap for
+transformed data, so we want it to be large.
+
+XFS can't use more than 2^32 -extents- for xattrs on an inode at
+this point in time. That means >4 billion alternate data records can
+be stored, not that 256TB is the maximum offset that can be
+supported.
+
+Hence I'm tending towards at least 1PB per alternate address
+range, which would limit encrypted and/or compressed files to this
+size. That leaves over 8000 alternate address ranges iomap can
+support, but I suspect that we'll want fewer, larger ranges in
+preference to more, smaller ranges....
+
+> > I'll start that by asking: Hey btrfs developers, what do you like and
+> > hate about the current way that btrfs handles fscrypt, compression, and
+> > fsverity?  Assuming that you can set all three on a file, right?
+
+I'm definitely assuming that all 3 can be set at once, as well as
+low level filesystem data CRCs underneath all the layered "VFS"
+stuff.
+
+However, what layers we actually need at any point in time can be
+malleable. For XFS, compression would naturally be CRC'd by the
+xattr storage so it wouldn't need that layer at all. If fsverity is
+enabled and fs admin tooling understands fsverity, then we probably
+don't need fs checksums for fsverity files.
+
+so there definitely needs to be some flexibility in the stack to
+allow filesystems to elide transformation layers that are
+redundant...
+
+-Dave.
+-- 
+Dave Chinner
+david@fromorbit.com
 
