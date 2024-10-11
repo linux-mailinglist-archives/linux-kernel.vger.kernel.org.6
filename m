@@ -1,593 +1,208 @@
-Return-Path: <linux-kernel+bounces-360429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3633D999AD9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:05:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161DC999ADC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A9D1C2202E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:05:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F43F28220C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7161F472C;
-	Fri, 11 Oct 2024 03:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A9091F4FA2;
+	Fri, 11 Oct 2024 03:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="waYg2olW"
-Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="rEcKCQe3"
+Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2057.outbound.protection.outlook.com [40.107.244.57])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0286A125D6
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:05:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728615942; cv=none; b=DQu72mmLvlaUltW7uOCm4UoA0Jt9AV/l836je/KSv+lSrHQpx47aTDhQjFkBAoxexg9Q/aXqkYC+bXxGlwSwij/414RTt2rHpP3XAIcPaN/eCWhPLakC/FZvdIMetGJrgAD5pLni5o/D5ohfp4iex/KTtmuOzolXrD8LSTds3n0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728615942; c=relaxed/simple;
-	bh=uxG69NmxwXJn6dIMqJdUT79VOiTA3apokYe0+eaEp2w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NLLhocjUj4wKRh5NXWMewEGZvDsrvNTUUzH6AcHiH67BK+skUFBG8CmQ1xdnDkyiWiDEvtaurdaUFUbFSBxX3Uzq1mrvLC9ZX+2X9HmvyVGiBhmdjfsvuF0fWKe2Xe1Emf/9cXn5I2n+Pqsl/Xxhsonqx7N9/Mv6WQp5/yAUvMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=waYg2olW; arc=none smtp.client-ip=209.85.166.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so91965ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:05:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728615939; x=1729220739; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=meR1uwBZBpIrzRLj6OlVYNic8Q9h/wDJ9Kh8qWKcx/k=;
-        b=waYg2olW/M0s88D22qwHkNFDu+QObi+7x1J/7amgvYfKg/rqqLr5RpLbNLzZkGNs48
-         eIuJbb/MvTIH8WNi2IgTLdN3lcjdwCt13nZBUniiOc3m+T3gjR2kqYIF9MC/YG2Qp8Bi
-         NDOJjHXnZKGSKRI/5nkxF+isUOTdpDaMqA8lYF9SEbrS08mMjeWaEaBuaoF59YKESYYg
-         MLhfkzz2D2pe0OoERIk6OtmKed7Q4gEeBXR+e5VUwgdstj30EfC0AeXxgRNkEMWtHmAz
-         QN/Z/73xQVu/5UN1pntMPt59pb6nYRpvMd6OVZnMOvfstnyDbEPziVSf0qJBMDtyMkYm
-         jOlA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728615939; x=1729220739;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=meR1uwBZBpIrzRLj6OlVYNic8Q9h/wDJ9Kh8qWKcx/k=;
-        b=Zwr+vcIbSn28lq9mm5JBZkmFAQ0xvC3KdNqRTA1ccDgudcVSsbxKeC5fyA0r1FQrb/
-         n8mvREDoLk17/FlYlY/TyhiHFxs/vccljYATLuR3ZFaGkQc02KLnKlm5ktKTWBofDMnq
-         JEQ0XNNsVF5S6/d4MM9I5GEqJWxC8IUds37MyK0s1/smKGa7r/FWfq/kvtRtM78zCPkW
-         zBMtTlmIMVFYMHGIM+smBeFo/1KmPeL6jwWtMfwMvqNjO1e9VSZqtd2+5JNFgIRXuSX9
-         jeSbweHs5JZg79s7CIGFtzhuM817rFZoekUHTWm+CLUoVCukjeFiA6SJ7rpVsYQV9BCI
-         7+2w==
-X-Forwarded-Encrypted: i=1; AJvYcCVR/ZTUM8576L3nRPswOVLU0qLcv20JixEMiZJRhbcK5htgVxAVIN+PvdYaokO82dz92pDPUFiTsdTtdZE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyhd+xnNL0Vr8cUqvyg24Q63w0YvKw3bEpSqTbyN8c2fyT4j5aA
-	+nweI4Rp4IbTx3DuJO8SHPhLoD1VVQAdaGbDNlHBuQmdq1D61jm2WsqCSy5erlhsSAZIPOJtAnD
-	+kDUyAZcUYtJC8dTEHaZhX1uixK3kjyr03Rdq
-X-Google-Smtp-Source: AGHT+IE+amfB8Te0J5PGDb8V4pRpzwOjn87J61zV9nlqijJi80RBuSL84acxhCOcutL6UqVBNkMmuyhe3c4KXqbwJok=
-X-Received: by 2002:a92:cda4:0:b0:39f:3778:c896 with SMTP id
- e9e14a558f8ab-3a3b64f31d1mr1090755ab.5.1728615938651; Thu, 10 Oct 2024
- 20:05:38 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFE8125D6;
+	Fri, 11 Oct 2024 03:06:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.57
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728615972; cv=fail; b=spJw79E0rD6ornXTslr47q9iBmtMLmf2095xYf2GUT9PRj5exaOTFayeVuFrx8qnFja7aTanAAL3pbEltGZPazBiksNdQkShDQk3yEoP8XAuYpHdF/KUMU3XmB/CdkVEYqrGcsY+leZJg7C/N+LkUBZZh21gwdDCtR0pHUk6pNY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728615972; c=relaxed/simple;
+	bh=i0AAU4GcBJCkrqIQADYV/Gz8rA0riYqdZyShg78OO1k=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Nss+p0ZmKa+/QGg006bZXGbxTFRDOn4XWELURue2wEJVTa0qaYVHh/Jg05yvczg17ykLsxSRP7iSYOf0vX2+jYmNYawFu7KSmyw3I9IAVlQXNb7WAlOCUQ4doGcN6wGAWeJQDEQZIBapie2psIyk3l/3cd42yqD36DTlyVf+gbo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=rEcKCQe3; arc=fail smtp.client-ip=40.107.244.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=JFDIBVv9lht6LtSOTzDDqnJEjwUeVw6zfirBVFRnO8eEg0pTVAZmN0PIEb4qEr4wZq2nS5YH3iSiV4Lgtg024xvMgbuC3TOBIvbCGGFE5YgeENWVPGiSwRoCkyh4qyLacJchfTHBafhzBUucWcp0pSCuDHIeqYnms1ijDMpFrlFImee4YYPokHAJlizwUtabf+vzm5cpv7UukpI43uPk7qeRP/SZkuxZOG6ecdckchzbKOIJJ0AVk8WPCUrWdyeRN8mbGM6VqnwkMCNjXyNOAD+VCYWkCrFQyhZKFWPsTy8SHx8+q3YZ/LOaBW/CI/fshk+9FqKbG8cmjeO0BbOl4A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=P7MbwuDXYZcvdgPmuwi9HcHzgBrCFwqTnwlgVlyARr4=;
+ b=t8kq9qGko4JH/KP13SzMhk+saCuNsguNPftHI51BVyCj6Y6+u0WU40NfMR7n6mG6WuSN0f7od8gOFDALpPlpMMeyPMw+ISZFhb+Gp2sCUOlNipdRK8uYXHsrEkDUALYiQezsw+qZ+gRK7APDDvO25y8CZmKpWCHbw3JaaBUeVacorwVg5ZWZWrJ4luPLi4R4SV5AOlVwB5xt4z/4JWwawnSOQb88icDwqBWiVxCk7Kg3iD7x+nKWK6BH2w5V6BcmZcVP0uXyrqaMc11B0pcosGR7KpiRStng1dEyC5Al23Mf+3XZm4VGipIkreR0Y6UkaAZCxDOo6TmZpaR53iFJhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=P7MbwuDXYZcvdgPmuwi9HcHzgBrCFwqTnwlgVlyARr4=;
+ b=rEcKCQe3GEfthCfl6aIAoAAQ1mUXrO2UiGvAoqVv/vG8iDv9nKcEbIckVtxs7uKfiOm/Gh6kHLK0/N+zkUTityhUCwol9bCl1+4ip2Hbbdo2O8zE1vrrZ1V7LyLqbRvpmmvExWvbQY0tN+h6u70Hspwa+qN+eSx676V9Dsd0IrQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB7804.namprd12.prod.outlook.com (2603:10b6:8:142::5) by
+ PH7PR12MB6564.namprd12.prod.outlook.com (2603:10b6:510:210::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
+ 2024 03:06:07 +0000
+Received: from DS0PR12MB7804.namprd12.prod.outlook.com
+ ([fe80::8327:d71a:ce21:a290]) by DS0PR12MB7804.namprd12.prod.outlook.com
+ ([fe80::8327:d71a:ce21:a290%5]) with mapi id 15.20.8048.013; Fri, 11 Oct 2024
+ 03:06:06 +0000
+Message-ID: <a1acb975-c29e-4c90-b7a9-5f50478ab946@amd.com>
+Date: Fri, 11 Oct 2024 08:35:55 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH next] drm/amdgpu: Fix off by one in
+ current_memory_partition_show()
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Alex Deucher <alexander.deucher@amd.com>,
+ =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
+ Xinhui Pan <Xinhui.Pan@amd.com>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>, Hawking Zhang <Hawking.Zhang@amd.com>,
+ Yunxiang Li <Yunxiang.Li@amd.com>,
+ Srinivasan Shanmugam <srinivasan.shanmugam@amd.com>,
+ "Dr. David Alan Gilbert" <linux@treblig.org>,
+ Rajneesh Bhardwaj <rajneesh.bhardwaj@amd.com>,
+ amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+References: <f3cf409f-2b04-444f-88f0-9b4cfe290667@stanley.mountain>
+Content-Language: en-US
+From: "Lazar, Lijo" <lijo.lazar@amd.com>
+In-Reply-To: <f3cf409f-2b04-444f-88f0-9b4cfe290667@stanley.mountain>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN2PR01CA0128.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:6::13) To DS0PR12MB7804.namprd12.prod.outlook.com
+ (2603:10b6:8:142::5)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20230702162802.344176-1-rui.zhang@intel.com> <20241010213136.668672-1-jmattson@google.com>
- <f5962c02ea46c3180e7c0e6e5e1f08f4209a1ca2.camel@intel.com>
-In-Reply-To: <f5962c02ea46c3180e7c0e6e5e1f08f4209a1ca2.camel@intel.com>
-From: Jim Mattson <jmattson@google.com>
-Date: Thu, 10 Oct 2024 20:05:25 -0700
-Message-ID: <CALMp9eQ9v0Ku0Kcrb2mwz6hb5FJRPKT1axyhX5pQ-nhrLzBY4g@mail.gmail.com>
-Subject: Re: [RFC PATCH] x86/acpi: Ignore invalid x2APIC entries
-To: "Zhang, Rui" <rui.zhang@intel.com>
-Cc: "ajorgens@google.com" <ajorgens@google.com>, "myrade@google.com" <myrade@google.com>, 
-	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, 
-	"peterz@infradead.org" <peterz@infradead.org>, "Tang, Feng" <feng.tang@intel.com>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, 
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jay.chen@amd.com" <jay.chen@amd.com>, 
-	"vladteodor@google.com" <vladteodor@google.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB7804:EE_|PH7PR12MB6564:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5c38b589-0d6c-435e-fac4-08dce9a1a5d8
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WHo2eGdrWmo1V1NBZU5QdHdDNFQyWHczM0o5dytUUVBoY0ZwVmR5eE1MSzl3?=
+ =?utf-8?B?OEthRm9wd210UFNpaUJrQVQ3TDVnMmh2K3hNckdiOTJtc1o2SzJsVDNNRTVJ?=
+ =?utf-8?B?THh3bXppODZvekh5bmtRYm02cmpLUmhrUEtXTm92cGpGbXVXYUlEQUxvWVU5?=
+ =?utf-8?B?QTlHSGxRVENRWWlGRy9zK2VZU2VYUUx0RG9QZEhRV1lWdHY0Q1FiUDhPTTZq?=
+ =?utf-8?B?VGNwNlEzQTEzQVlJd3hjWk1UNXhlS2p1WDJUVEFuZHp3aitLb1BucjV2SDVk?=
+ =?utf-8?B?TUk5TXRwT2h0TkoyMDFBTDlwWi9kTnd5Wk1NTDB2QlJwNTdGcGRQZGhDbGsv?=
+ =?utf-8?B?NXM5QXhONlFFQXl0SlJPekZqSW9LUWdudFhSVkZiRlUwSVJ2NWRxS2tia3pB?=
+ =?utf-8?B?RndZWkRCYnk2a2RhbWpNMEV5UlYyT0VKOGttYmtHYU5RRFhJeDFhM0x0cnhF?=
+ =?utf-8?B?YmhteS9FM01TcEh0a3RMRTd0YzZzUVMwN21xL0tlRjhmNTRmTEdkVW5MblJw?=
+ =?utf-8?B?ZHFOalQwL3BneTlUbzRDa3ZnQ2NVUFdkNTZMbUhQOTZOZUt6dFRCb1VETU5I?=
+ =?utf-8?B?TnFQSnhWZ1RoL05VRURGREtHNTNwaUc1SW9pb1JDSVFHSkNqNksxcVc3Qis5?=
+ =?utf-8?B?bWNLMzVnYTF4TDVZRmJDVE5xM2o1Z3M0ZjBvN0xpV3IzM0FjandFRWNLZmY5?=
+ =?utf-8?B?U0VVZTJIbVFpNnF5YzR0LzFZZUJOem8yT2c3UXo2Q25nSkRHM1kwN3lhL0pk?=
+ =?utf-8?B?Q3VuNXJxaE1VWG5RT2hrUE1LdXE5WnhqQVIyLzhBMXFIb01xY1IyMjhtZjZa?=
+ =?utf-8?B?eXFoRmZYZFRpOXZ0Tm1hVkJNeDhCTXE5bXJ2Y3JMeDhuSDNvV20wVVI1NmxS?=
+ =?utf-8?B?TGN4S01ncE51UDJQQ3BidU8ycjNvRko1RktPSWh6NUJ3NHR4RVhjbDI4YlBB?=
+ =?utf-8?B?NmdDZDRDWUFVRHRCNHRMWktYSnFCK29zWU5zd0hya0NETFhGellzQTJIZFZq?=
+ =?utf-8?B?Mmd2Q1IrNFU4UFA5dVlKcG9pSEJSOW8yVEpOT1hGYkx0NzB4OE9sZGxMYnk2?=
+ =?utf-8?B?Q3JxMkpqTWJRcm83ckpvS1RPSlcwUlZOeWdkcStsa1gwSUF3a2tqVUZZVGRI?=
+ =?utf-8?B?dnAxdkJ0Szh2aTRGWU5qc2N6Qk1uRGl0WVZYYnFRYkhrOTJlZUQwaTNheXc2?=
+ =?utf-8?B?N1kwSW4xeVJ3TEhhM2JndU1nMWJLSjI5aHU3OVlwL0lscjhZNzV5RmhXNzZm?=
+ =?utf-8?B?M0IxdjJPWnBXdDJWQXlCQ3BXSGc4R3RyTGhac3lncUFZQ0k2UlQ3ZUxlYklL?=
+ =?utf-8?B?YlplZUV6cGJxbWJBYW5Cb1IwYTZldHVNdS9QcHpNYndza3ZsaEJyNXcwUGdu?=
+ =?utf-8?B?TWJ3emFkbnRyYnRYWGQwT1lNUVF4ZWZYUFlBT1NZNUVtb0JLYjRTcUhuR1dj?=
+ =?utf-8?B?NlRmSVJwUno0UVZEekNjbjJmbHROdEUwQmsvU0VPUy9qZ1c2QVBxMVpsZ0Z0?=
+ =?utf-8?B?YWV0NW1PZ3greXRvRkpkbUFDTlRndWVnYlo4NTdPM3JVeDhMQ2NMZU0vRjh1?=
+ =?utf-8?B?ZzhmdHR2aFhGZnVGbHZEVWViblEra2lPdjNraVRRMTNsdDAza3ZGdTdVclNn?=
+ =?utf-8?B?RWIyM0hnaks4NXUyT0FWT2lDWjZKRkd6RU94QkcwY2I3dXlQK3NUUEYvYmc5?=
+ =?utf-8?B?QXZHU3JWcmkzeTl2UFdEdTBrditGYmxFbkpHTDBUT1Yzd2xLMkZnNmNRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7804.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?M21pS3MwNEZyYk45SUhxS0I0MXd4Smp0Z3BkTnJVaXpGeVpWR0xKVkpkUWlo?=
+ =?utf-8?B?cEpvbVdGSTltMWNXZW9LV2NHWEs1aE96YWF6Ym95d2o1c1VRVEdFS3dqWHAv?=
+ =?utf-8?B?RHB4VStoYzNQYjNwYWZ4T0NReDkvQkluMVNEdVFSMFVNb1VxUWZXMmU4b0gx?=
+ =?utf-8?B?eHFrNmc0TXVXMDZoYWx5ampHS0xQKzBGSUZDR2ZqaUQvRDBiaUpMMFAzRUg5?=
+ =?utf-8?B?REZXSnZ0K3o4M1RzT08zVDNjb0NrcnhPbDdRQUNvbVU0WVJHVWtPTjkwcDQ1?=
+ =?utf-8?B?YmhnMklqTzdDd0tZc3BGWm5YaWFiMzhYZUtSNm9GejMyTjQvd095UU80THhn?=
+ =?utf-8?B?Q3dWV2lBUTgyQXZuYTlRbkpMUWx2R1h0a1RvaXNCUDNiZ0VRbkpBdXg2WWJK?=
+ =?utf-8?B?eHJJSFdVOG9TbTVKdVhBTU43cFFiL210SXlYQmpsYWJTUDQxYkp6V05GallQ?=
+ =?utf-8?B?SEpoQjNIS2k4SllDSTBlRU0xcGFhVDhUbUEraEN2d2JTOXJiaDFBa0dnZTI5?=
+ =?utf-8?B?N25VNm5mMDVtNytOSDFMMGJxU3RWbmhBSzRwK2tkbTJOVlh5dnFsbXlDV0NK?=
+ =?utf-8?B?bDFOYmZJeWlQZ2hKMm1Yb2l2WDhYVERJNFF1OXVzUVBBYXczb0NLU0lwaU82?=
+ =?utf-8?B?UFZJd1hCU0tTVWxMQW81TysybWJBOTh3MmZkOEhOZStDZUR2SWd0RVJSa25I?=
+ =?utf-8?B?dHZ5QUwrcG1jajIrMnQ5cnU5Nk9nM1diMTI0M1NMZ3ZQK2hIejQ0TWh4S0xR?=
+ =?utf-8?B?WWpqcThnT1djanVSNHJwRlFPMWhrdnZZZ0ZlbkxiYzYydU1QZG8xalhDaTdj?=
+ =?utf-8?B?Y2toSTQ2Z2VYcStUbi9qRkkvYmFVVkNWUnlQSUxJaWUrUGh5ZnlHUFlqMmFr?=
+ =?utf-8?B?NFYwTG9SWmtZZXNmelFBZzA1OFExU2U5Y0xJVzBya1hBcmlNMGQzTnlBMURO?=
+ =?utf-8?B?STJHdEZ0d2YwdjA3RkFYZGdaaHZ0OVFidGxQSkdIOXBJbDdkelNDK3JiSklG?=
+ =?utf-8?B?Y3ZJVWpmOXdIUWE3WmFGN3djaE16eC80dHc2dWt2WUs0bDY5UXh6bmVHd25W?=
+ =?utf-8?B?TGFaWk84UENrY2dLMXAxenhaQVdnaWJhcVdTQWwzWkhBU2JYNHVEejljMUFv?=
+ =?utf-8?B?eG1mUWZhRTlPK0FyVnU0ZXBVVHhEUTJJbVBsekJrZ2REVkVDNTBJRG15aHZR?=
+ =?utf-8?B?Rkd1ZGMxYU5nYUpkOWpaeisrMXlLdi9HRm9BMUZwRCtzTFlkUlplRUttb1lR?=
+ =?utf-8?B?UGozVGNSNm5tcllUMnExRHJDYitveDlVQlF4R1hKV3MrNDhzUnJCQ1hIY1ph?=
+ =?utf-8?B?ZTNrdUM0MmZCODdjTUhyNmwyNWQvclMrRnhXQlA1NGdWZFpXdWFjdXpFLytE?=
+ =?utf-8?B?NlBTUVJTcjJldHl2RW53YXIyUlNWbXlUcHdEbzFyQjdlZWlwdmd3aXRKZGRY?=
+ =?utf-8?B?ODdOUGF2OVkxTDlPYzRHcnNBSHZ4UU93ejFrV2VURE1JaVcrZTdNWkNuN0Ri?=
+ =?utf-8?B?M05QcDQ4NEx3d3pCbFQxWWVDcnJralhERTl6eGZDRmgwZTZEaThta3hZVGdL?=
+ =?utf-8?B?UGo4T1AyM040VzJuN2UvZ3ZpeE9hTnVYR1ZZemtScElnQVFKeExPWlJKbjFt?=
+ =?utf-8?B?c2hLTCt5YWpkbnQvbUcwaExXZTFYVUJJc1NMS3o5NUFUcXZ6VkQrcjNlRDhz?=
+ =?utf-8?B?YmFYM1lQNmExS3N4dXl6ZXQvdHl4YnpWRTNjMDM3SE9kS1h3VVZPT010VzdK?=
+ =?utf-8?B?bjFpN0NWc2d2bEpiV2l5b0VRZEhLOTluSUNXMXFZWUNRT2FuanpVSUJWS0Jm?=
+ =?utf-8?B?aUUxWGJyRDBLbEoyV3RTRUowQ1liQnhvR2JlN2RieEFZbkQ2NjQyZTF0SVBH?=
+ =?utf-8?B?bHhTVVpPZFZiNEF6RzlKc0l6VUZINlJONHFHRE9QR0JUUitlWGhudzlxU3BM?=
+ =?utf-8?B?VkFsTTY0VlNmTzRzRlc1R1VDamsrNTNac0J2YXNubHo5akhpWHlseTJVSWti?=
+ =?utf-8?B?YXdDWFhUczJ2SGNrL05oWWRCV05UaGFDOVlPQWppY045czhuVzAzMU1QTEN6?=
+ =?utf-8?B?MTQyVkIrZ20wc0Y1aU1UVDBqVWxkdm14SStNQy9MUHNDaHBlTjVoSW9MUWsz?=
+ =?utf-8?Q?XFUHuaHtODOvVpIDta8BmXVdi?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5c38b589-0d6c-435e-fac4-08dce9a1a5d8
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7804.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 03:06:06.5555
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9kKhqBUVO7KJUcfjzZlvqdyxxRjiqRfsfX/PLGhX0u5DQMPzeOLIYUI+DrH+Br4y
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB6564
 
-On Thu, Oct 10, 2024 at 6:37=E2=80=AFPM Zhang, Rui <rui.zhang@intel.com> wr=
-ote:
->
-> On Thu, 2024-10-10 at 14:31 -0700, Jim Mattson wrote:
-> > > Currently, kernel enumerates the possible CPUs by parsing both ACPI
-> > > MADT
-> > > Local APIC entries and x2APIC entries. So CPUs with "valid" APIC
-> > > IDs,
-> > > even if they have duplicated APIC IDs in Local APIC and x2APIC, are
-> > > always enumerated.
-> > >
-> > > Below is what ACPI MADT Local APIC and x2APIC describes on an
-> > > Ivebridge-EP system,
-> > >
-> > > [02Ch 0044   1]                Subtable Type : 00 [Processor Local
-> > > APIC]
-> > > [02Fh 0047   1]                Local Apic ID : 00
-> > > ...
-> > > [164h 0356   1]                Subtable Type : 00 [Processor Local
-> > > APIC]
-> > > [167h 0359   1]                Local Apic ID : 39
-> > > [16Ch 0364   1]                Subtable Type : 00 [Processor Local
-> > > APIC]
-> > > [16Fh 0367   1]                Local Apic ID : FF
-> > > ...
-> > > [3ECh 1004   1]                Subtable Type : 09 [Processor Local
-> > > x2APIC]
-> > > [3F0h 1008   4]                Processor x2Apic ID : 00000000
-> > > ...
-> > > [B5Ch 2908   1]                Subtable Type : 09 [Processor Local
-> > > x2APIC]
-> > > [B60h 2912   4]                Processor x2Apic ID : 00000077
-> > >
-> > > As a result, kernel shows "smpboot: Allowing 168 CPUs, 120 hotplug
-> > > CPUs".
-> > > And this wastes significant amount of memory for the per-cpu data.
-> > > Plus this also breaks
-> > > https://lore.kernel.org/all/87edm36qqb.ffs@tglx/,
-> > > because __max_logical_packages is over-estimated by the APIC IDs in
-> > > the x2APIC entries.
-> > >
-> > > According to
-> > > https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.ht=
-ml#processor-local-x2apic-structure
-> > > ,
-> > > "[Compatibility note] On some legacy OSes, Logical processors with
-> > > APIC
-> > > ID values less than 255 (whether in XAPIC or X2APIC mode) must use
-> > > the
-> > > Processor Local APIC structure to convey their APIC information to
-> > > OSPM,
-> > > and those processors must be declared in the DSDT using the
-> > > Processor()
-> > > keyword. Logical processors with APIC ID values 255 and greater
-> > > must use
-> > > the Processor Local x2APIC structure and be declared using the
-> > > Device()
-> > > keyword.".
-> > >
-> > > Enumerate CPUs from x2APIC enties with APIC ID values 255 or
-> > > greater,
-> > > when valid CPU from Local APIC is already detected.
-> > >
-> > > Signed-off-by: Zhang Rui <rui.zhang@intel.com>
-> > > ---
-> > > I didn't find any clear statement in the ACPI spec about if a
-> > > mixture of
-> > > Local APIC and x2APIC entries is allowed or not. So it would be
-> > > great if
-> > > this can be clarified.
-> >
-> > Has this been clarified?
-> >
-> > The reason that I ask is that Google Cloud has a 360 vCPU Zen4 VM
-> > occupying two virtual sockets, and the corresponding MADT table has a
-> > mixture of Local APIC and X2APIC entries.
-> >
-> > All of the LPUs in virtual socket 0 have extended APIC IDs below 255,
-> > and they have Local APIC entries. All of the LPUs in virtual socket 1
-> > have extended APIC IDs above 255, and they have X2APIC entries.
-> >
-> > Prior to this change, Linux assigned CPU numbers to all even-numbered
-> > LPUs on virtual socket 0, followed by all even-numbered LPUs on
-> > virtual socket 1, followed by all odd-numbered LPUs on virtual socket
-> > 0, followed by all odd-numbered LPUs on virtual socket 1.
-> >
-> > node  #0, CPUs:          #1   #2  ...   #87  #88  #89
-> > node  #1, CPUs:    #90  #91  #92  ...  #177 #178 #179
-> > node  #0, CPUs:   #180 #181 #182  ...  #267 #268 #269
-> > node  #1, CPUs:   #270 #271 #272  ...  #357 #358 #359
-> >
-> > After this change, however, Linux assigns CPU numbers to all LPUs on
-> > virtual socket 0 before assigning any CPU numbers to LPUs on virtual
-> > socket 1.
-> >
-> > node  #0, CPUs:          #1   #2  ...   #87  #88  #89
-> > node  #1, CPUs:   #180 #181 #182  ...  #267 #268 #269
-> > node  #0, CPUs:    #90  #91  #92  ...  #177 #178 #179
-> > node  #1, CPUs:   #270 #271 #272  ...  #357 #358 #359
-> >
-> > I suspect that this is because all Local APIC MADT entries are now
-> > processed before all X2APIC MADT entries, whereas they may have been
-> > interleaved before.
->
-> agreed.
-> can you attach the acpidump to confirm this?
 
-I'm pretty sure LKML rejects attachments. Here's the parsed MADT:
 
-ACPI: APIC (v005 Google GOOGAPIC 0x00000001 GOOG 0x00000001) @ 0x(nil)
-ACPI: LAPIC (acpi_id[0x00] lapic_id[0x00] enabled)
-ACPI: LAPIC (acpi_id[0x02] lapic_id[0x02] enabled)
-ACPI: LAPIC (acpi_id[0x04] lapic_id[0x04] enabled)
-ACPI: LAPIC (acpi_id[0x06] lapic_id[0x06] enabled)
-ACPI: LAPIC (acpi_id[0x08] lapic_id[0x08] enabled)
-ACPI: LAPIC (acpi_id[0x0a] lapic_id[0x0a] enabled)
-ACPI: LAPIC (acpi_id[0x0c] lapic_id[0x0c] enabled)
-ACPI: LAPIC (acpi_id[0x0e] lapic_id[0x0e] enabled)
-ACPI: LAPIC (acpi_id[0x10] lapic_id[0x10] enabled)
-ACPI: LAPIC (acpi_id[0x12] lapic_id[0x12] enabled)
-ACPI: LAPIC (acpi_id[0x14] lapic_id[0x14] enabled)
-ACPI: LAPIC (acpi_id[0x16] lapic_id[0x16] enabled)
-ACPI: LAPIC (acpi_id[0x18] lapic_id[0x18] enabled)
-ACPI: LAPIC (acpi_id[0x1a] lapic_id[0x1a] enabled)
-ACPI: LAPIC (acpi_id[0x1c] lapic_id[0x1c] enabled)
-ACPI: LAPIC (acpi_id[0x20] lapic_id[0x20] enabled)
-ACPI: LAPIC (acpi_id[0x22] lapic_id[0x22] enabled)
-ACPI: LAPIC (acpi_id[0x24] lapic_id[0x24] enabled)
-ACPI: LAPIC (acpi_id[0x26] lapic_id[0x26] enabled)
-ACPI: LAPIC (acpi_id[0x28] lapic_id[0x28] enabled)
-ACPI: LAPIC (acpi_id[0x2a] lapic_id[0x2a] enabled)
-ACPI: LAPIC (acpi_id[0x2c] lapic_id[0x2c] enabled)
-ACPI: LAPIC (acpi_id[0x2e] lapic_id[0x2e] enabled)
-ACPI: LAPIC (acpi_id[0x30] lapic_id[0x30] enabled)
-ACPI: LAPIC (acpi_id[0x32] lapic_id[0x32] enabled)
-ACPI: LAPIC (acpi_id[0x34] lapic_id[0x34] enabled)
-ACPI: LAPIC (acpi_id[0x36] lapic_id[0x36] enabled)
-ACPI: LAPIC (acpi_id[0x38] lapic_id[0x38] enabled)
-ACPI: LAPIC (acpi_id[0x3a] lapic_id[0x3a] enabled)
-ACPI: LAPIC (acpi_id[0x3c] lapic_id[0x3c] enabled)
-ACPI: LAPIC (acpi_id[0x40] lapic_id[0x40] enabled)
-ACPI: LAPIC (acpi_id[0x42] lapic_id[0x42] enabled)
-ACPI: LAPIC (acpi_id[0x44] lapic_id[0x44] enabled)
-ACPI: LAPIC (acpi_id[0x46] lapic_id[0x46] enabled)
-ACPI: LAPIC (acpi_id[0x48] lapic_id[0x48] enabled)
-ACPI: LAPIC (acpi_id[0x4a] lapic_id[0x4a] enabled)
-ACPI: LAPIC (acpi_id[0x4c] lapic_id[0x4c] enabled)
-ACPI: LAPIC (acpi_id[0x4e] lapic_id[0x4e] enabled)
-ACPI: LAPIC (acpi_id[0x50] lapic_id[0x50] enabled)
-ACPI: LAPIC (acpi_id[0x52] lapic_id[0x52] enabled)
-ACPI: LAPIC (acpi_id[0x54] lapic_id[0x54] enabled)
-ACPI: LAPIC (acpi_id[0x56] lapic_id[0x56] enabled)
-ACPI: LAPIC (acpi_id[0x58] lapic_id[0x58] enabled)
-ACPI: LAPIC (acpi_id[0x5a] lapic_id[0x5a] enabled)
-ACPI: LAPIC (acpi_id[0x5c] lapic_id[0x5c] enabled)
-ACPI: LAPIC (acpi_id[0x60] lapic_id[0x60] enabled)
-ACPI: LAPIC (acpi_id[0x62] lapic_id[0x62] enabled)
-ACPI: LAPIC (acpi_id[0x64] lapic_id[0x64] enabled)
-ACPI: LAPIC (acpi_id[0x66] lapic_id[0x66] enabled)
-ACPI: LAPIC (acpi_id[0x68] lapic_id[0x68] enabled)
-ACPI: LAPIC (acpi_id[0x6a] lapic_id[0x6a] enabled)
-ACPI: LAPIC (acpi_id[0x6c] lapic_id[0x6c] enabled)
-ACPI: LAPIC (acpi_id[0x6e] lapic_id[0x6e] enabled)
-ACPI: LAPIC (acpi_id[0x70] lapic_id[0x70] enabled)
-ACPI: LAPIC (acpi_id[0x72] lapic_id[0x72] enabled)
-ACPI: LAPIC (acpi_id[0x74] lapic_id[0x74] enabled)
-ACPI: LAPIC (acpi_id[0x76] lapic_id[0x76] enabled)
-ACPI: LAPIC (acpi_id[0x78] lapic_id[0x78] enabled)
-ACPI: LAPIC (acpi_id[0x7a] lapic_id[0x7a] enabled)
-ACPI: LAPIC (acpi_id[0x7c] lapic_id[0x7c] enabled)
-ACPI: LAPIC (acpi_id[0x80] lapic_id[0x80] enabled)
-ACPI: LAPIC (acpi_id[0x82] lapic_id[0x82] enabled)
-ACPI: LAPIC (acpi_id[0x84] lapic_id[0x84] enabled)
-ACPI: LAPIC (acpi_id[0x86] lapic_id[0x86] enabled)
-ACPI: LAPIC (acpi_id[0x88] lapic_id[0x88] enabled)
-ACPI: LAPIC (acpi_id[0x8a] lapic_id[0x8a] enabled)
-ACPI: LAPIC (acpi_id[0x8c] lapic_id[0x8c] enabled)
-ACPI: LAPIC (acpi_id[0x8e] lapic_id[0x8e] enabled)
-ACPI: LAPIC (acpi_id[0x90] lapic_id[0x90] enabled)
-ACPI: LAPIC (acpi_id[0x92] lapic_id[0x92] enabled)
-ACPI: LAPIC (acpi_id[0x94] lapic_id[0x94] enabled)
-ACPI: LAPIC (acpi_id[0x96] lapic_id[0x96] enabled)
-ACPI: LAPIC (acpi_id[0x98] lapic_id[0x98] enabled)
-ACPI: LAPIC (acpi_id[0x9a] lapic_id[0x9a] enabled)
-ACPI: LAPIC (acpi_id[0x9c] lapic_id[0x9c] enabled)
-ACPI: LAPIC (acpi_id[0xa0] lapic_id[0xa0] enabled)
-ACPI: LAPIC (acpi_id[0xa2] lapic_id[0xa2] enabled)
-ACPI: LAPIC (acpi_id[0xa4] lapic_id[0xa4] enabled)
-ACPI: LAPIC (acpi_id[0xa6] lapic_id[0xa6] enabled)
-ACPI: LAPIC (acpi_id[0xa8] lapic_id[0xa8] enabled)
-ACPI: LAPIC (acpi_id[0xaa] lapic_id[0xaa] enabled)
-ACPI: LAPIC (acpi_id[0xac] lapic_id[0xac] enabled)
-ACPI: LAPIC (acpi_id[0xae] lapic_id[0xae] enabled)
-ACPI: LAPIC (acpi_id[0xb0] lapic_id[0xb0] enabled)
-ACPI: LAPIC (acpi_id[0xb2] lapic_id[0xb2] enabled)
-ACPI: LAPIC (acpi_id[0xb4] lapic_id[0xb4] enabled)
-ACPI: LAPIC (acpi_id[0xb6] lapic_id[0xb6] enabled)
-ACPI: LAPIC (acpi_id[0xb8] lapic_id[0xb8] enabled)
-ACPI: LAPIC (acpi_id[0xba] lapic_id[0xba] enabled)
-ACPI: LAPIC (acpi_id[0xbc] lapic_id[0xbc] enabled)
-ACPI: X2APIC (apic_id[0x100] uid[0x100] enabled)
-ACPI: X2APIC (apic_id[0x102] uid[0x102] enabled)
-ACPI: X2APIC (apic_id[0x104] uid[0x104] enabled)
-ACPI: X2APIC (apic_id[0x106] uid[0x106] enabled)
-ACPI: X2APIC (apic_id[0x108] uid[0x108] enabled)
-ACPI: X2APIC (apic_id[0x10a] uid[0x10a] enabled)
-ACPI: X2APIC (apic_id[0x10c] uid[0x10c] enabled)
-ACPI: X2APIC (apic_id[0x10e] uid[0x10e] enabled)
-ACPI: X2APIC (apic_id[0x110] uid[0x110] enabled)
-ACPI: X2APIC (apic_id[0x112] uid[0x112] enabled)
-ACPI: X2APIC (apic_id[0x114] uid[0x114] enabled)
-ACPI: X2APIC (apic_id[0x116] uid[0x116] enabled)
-ACPI: X2APIC (apic_id[0x118] uid[0x118] enabled)
-ACPI: X2APIC (apic_id[0x11a] uid[0x11a] enabled)
-ACPI: X2APIC (apic_id[0x11c] uid[0x11c] enabled)
-ACPI: X2APIC (apic_id[0x120] uid[0x120] enabled)
-ACPI: X2APIC (apic_id[0x122] uid[0x122] enabled)
-ACPI: X2APIC (apic_id[0x124] uid[0x124] enabled)
-ACPI: X2APIC (apic_id[0x126] uid[0x126] enabled)
-ACPI: X2APIC (apic_id[0x128] uid[0x128] enabled)
-ACPI: X2APIC (apic_id[0x12a] uid[0x12a] enabled)
-ACPI: X2APIC (apic_id[0x12c] uid[0x12c] enabled)
-ACPI: X2APIC (apic_id[0x12e] uid[0x12e] enabled)
-ACPI: X2APIC (apic_id[0x130] uid[0x130] enabled)
-ACPI: X2APIC (apic_id[0x132] uid[0x132] enabled)
-ACPI: X2APIC (apic_id[0x134] uid[0x134] enabled)
-ACPI: X2APIC (apic_id[0x136] uid[0x136] enabled)
-ACPI: X2APIC (apic_id[0x138] uid[0x138] enabled)
-ACPI: X2APIC (apic_id[0x13a] uid[0x13a] enabled)
-ACPI: X2APIC (apic_id[0x13c] uid[0x13c] enabled)
-ACPI: X2APIC (apic_id[0x140] uid[0x140] enabled)
-ACPI: X2APIC (apic_id[0x142] uid[0x142] enabled)
-ACPI: X2APIC (apic_id[0x144] uid[0x144] enabled)
-ACPI: X2APIC (apic_id[0x146] uid[0x146] enabled)
-ACPI: X2APIC (apic_id[0x148] uid[0x148] enabled)
-ACPI: X2APIC (apic_id[0x14a] uid[0x14a] enabled)
-ACPI: X2APIC (apic_id[0x14c] uid[0x14c] enabled)
-ACPI: X2APIC (apic_id[0x14e] uid[0x14e] enabled)
-ACPI: X2APIC (apic_id[0x150] uid[0x150] enabled)
-ACPI: X2APIC (apic_id[0x152] uid[0x152] enabled)
-ACPI: X2APIC (apic_id[0x154] uid[0x154] enabled)
-ACPI: X2APIC (apic_id[0x156] uid[0x156] enabled)
-ACPI: X2APIC (apic_id[0x158] uid[0x158] enabled)
-ACPI: X2APIC (apic_id[0x15a] uid[0x15a] enabled)
-ACPI: X2APIC (apic_id[0x15c] uid[0x15c] enabled)
-ACPI: X2APIC (apic_id[0x160] uid[0x160] enabled)
-ACPI: X2APIC (apic_id[0x162] uid[0x162] enabled)
-ACPI: X2APIC (apic_id[0x164] uid[0x164] enabled)
-ACPI: X2APIC (apic_id[0x166] uid[0x166] enabled)
-ACPI: X2APIC (apic_id[0x168] uid[0x168] enabled)
-ACPI: X2APIC (apic_id[0x16a] uid[0x16a] enabled)
-ACPI: X2APIC (apic_id[0x16c] uid[0x16c] enabled)
-ACPI: X2APIC (apic_id[0x16e] uid[0x16e] enabled)
-ACPI: X2APIC (apic_id[0x170] uid[0x170] enabled)
-ACPI: X2APIC (apic_id[0x172] uid[0x172] enabled)
-ACPI: X2APIC (apic_id[0x174] uid[0x174] enabled)
-ACPI: X2APIC (apic_id[0x176] uid[0x176] enabled)
-ACPI: X2APIC (apic_id[0x178] uid[0x178] enabled)
-ACPI: X2APIC (apic_id[0x17a] uid[0x17a] enabled)
-ACPI: X2APIC (apic_id[0x17c] uid[0x17c] enabled)
-ACPI: X2APIC (apic_id[0x180] uid[0x180] enabled)
-ACPI: X2APIC (apic_id[0x182] uid[0x182] enabled)
-ACPI: X2APIC (apic_id[0x184] uid[0x184] enabled)
-ACPI: X2APIC (apic_id[0x186] uid[0x186] enabled)
-ACPI: X2APIC (apic_id[0x188] uid[0x188] enabled)
-ACPI: X2APIC (apic_id[0x18a] uid[0x18a] enabled)
-ACPI: X2APIC (apic_id[0x18c] uid[0x18c] enabled)
-ACPI: X2APIC (apic_id[0x18e] uid[0x18e] enabled)
-ACPI: X2APIC (apic_id[0x190] uid[0x190] enabled)
-ACPI: X2APIC (apic_id[0x192] uid[0x192] enabled)
-ACPI: X2APIC (apic_id[0x194] uid[0x194] enabled)
-ACPI: X2APIC (apic_id[0x196] uid[0x196] enabled)
-ACPI: X2APIC (apic_id[0x198] uid[0x198] enabled)
-ACPI: X2APIC (apic_id[0x19a] uid[0x19a] enabled)
-ACPI: X2APIC (apic_id[0x19c] uid[0x19c] enabled)
-ACPI: X2APIC (apic_id[0x1a0] uid[0x1a0] enabled)
-ACPI: X2APIC (apic_id[0x1a2] uid[0x1a2] enabled)
-ACPI: X2APIC (apic_id[0x1a4] uid[0x1a4] enabled)
-ACPI: X2APIC (apic_id[0x1a6] uid[0x1a6] enabled)
-ACPI: X2APIC (apic_id[0x1a8] uid[0x1a8] enabled)
-ACPI: X2APIC (apic_id[0x1aa] uid[0x1aa] enabled)
-ACPI: X2APIC (apic_id[0x1ac] uid[0x1ac] enabled)
-ACPI: X2APIC (apic_id[0x1ae] uid[0x1ae] enabled)
-ACPI: X2APIC (apic_id[0x1b0] uid[0x1b0] enabled)
-ACPI: X2APIC (apic_id[0x1b2] uid[0x1b2] enabled)
-ACPI: X2APIC (apic_id[0x1b4] uid[0x1b4] enabled)
-ACPI: X2APIC (apic_id[0x1b6] uid[0x1b6] enabled)
-ACPI: X2APIC (apic_id[0x1b8] uid[0x1b8] enabled)
-ACPI: X2APIC (apic_id[0x1ba] uid[0x1ba] enabled)
-ACPI: X2APIC (apic_id[0x1bc] uid[0x1bc] enabled)
-ACPI: LAPIC (acpi_id[0x01] lapic_id[0x01] enabled)
-ACPI: LAPIC (acpi_id[0x03] lapic_id[0x03] enabled)
-ACPI: LAPIC (acpi_id[0x05] lapic_id[0x05] enabled)
-ACPI: LAPIC (acpi_id[0x07] lapic_id[0x07] enabled)
-ACPI: LAPIC (acpi_id[0x09] lapic_id[0x09] enabled)
-ACPI: LAPIC (acpi_id[0x0b] lapic_id[0x0b] enabled)
-ACPI: LAPIC (acpi_id[0x0d] lapic_id[0x0d] enabled)
-ACPI: LAPIC (acpi_id[0x0f] lapic_id[0x0f] enabled)
-ACPI: LAPIC (acpi_id[0x11] lapic_id[0x11] enabled)
-ACPI: LAPIC (acpi_id[0x13] lapic_id[0x13] enabled)
-ACPI: LAPIC (acpi_id[0x15] lapic_id[0x15] enabled)
-ACPI: LAPIC (acpi_id[0x17] lapic_id[0x17] enabled)
-ACPI: LAPIC (acpi_id[0x19] lapic_id[0x19] enabled)
-ACPI: LAPIC (acpi_id[0x1b] lapic_id[0x1b] enabled)
-ACPI: LAPIC (acpi_id[0x1d] lapic_id[0x1d] enabled)
-ACPI: LAPIC (acpi_id[0x21] lapic_id[0x21] enabled)
-ACPI: LAPIC (acpi_id[0x23] lapic_id[0x23] enabled)
-ACPI: LAPIC (acpi_id[0x25] lapic_id[0x25] enabled)
-ACPI: LAPIC (acpi_id[0x27] lapic_id[0x27] enabled)
-ACPI: LAPIC (acpi_id[0x29] lapic_id[0x29] enabled)
-ACPI: LAPIC (acpi_id[0x2b] lapic_id[0x2b] enabled)
-ACPI: LAPIC (acpi_id[0x2d] lapic_id[0x2d] enabled)
-ACPI: LAPIC (acpi_id[0x2f] lapic_id[0x2f] enabled)
-ACPI: LAPIC (acpi_id[0x31] lapic_id[0x31] enabled)
-ACPI: LAPIC (acpi_id[0x33] lapic_id[0x33] enabled)
-ACPI: LAPIC (acpi_id[0x35] lapic_id[0x35] enabled)
-ACPI: LAPIC (acpi_id[0x37] lapic_id[0x37] enabled)
-ACPI: LAPIC (acpi_id[0x39] lapic_id[0x39] enabled)
-ACPI: LAPIC (acpi_id[0x3b] lapic_id[0x3b] enabled)
-ACPI: LAPIC (acpi_id[0x3d] lapic_id[0x3d] enabled)
-ACPI: LAPIC (acpi_id[0x41] lapic_id[0x41] enabled)
-ACPI: LAPIC (acpi_id[0x43] lapic_id[0x43] enabled)
-ACPI: LAPIC (acpi_id[0x45] lapic_id[0x45] enabled)
-ACPI: LAPIC (acpi_id[0x47] lapic_id[0x47] enabled)
-ACPI: LAPIC (acpi_id[0x49] lapic_id[0x49] enabled)
-ACPI: LAPIC (acpi_id[0x4b] lapic_id[0x4b] enabled)
-ACPI: LAPIC (acpi_id[0x4d] lapic_id[0x4d] enabled)
-ACPI: LAPIC (acpi_id[0x4f] lapic_id[0x4f] enabled)
-ACPI: LAPIC (acpi_id[0x51] lapic_id[0x51] enabled)
-ACPI: LAPIC (acpi_id[0x53] lapic_id[0x53] enabled)
-ACPI: LAPIC (acpi_id[0x55] lapic_id[0x55] enabled)
-ACPI: LAPIC (acpi_id[0x57] lapic_id[0x57] enabled)
-ACPI: LAPIC (acpi_id[0x59] lapic_id[0x59] enabled)
-ACPI: LAPIC (acpi_id[0x5b] lapic_id[0x5b] enabled)
-ACPI: LAPIC (acpi_id[0x5d] lapic_id[0x5d] enabled)
-ACPI: LAPIC (acpi_id[0x61] lapic_id[0x61] enabled)
-ACPI: LAPIC (acpi_id[0x63] lapic_id[0x63] enabled)
-ACPI: LAPIC (acpi_id[0x65] lapic_id[0x65] enabled)
-ACPI: LAPIC (acpi_id[0x67] lapic_id[0x67] enabled)
-ACPI: LAPIC (acpi_id[0x69] lapic_id[0x69] enabled)
-ACPI: LAPIC (acpi_id[0x6b] lapic_id[0x6b] enabled)
-ACPI: LAPIC (acpi_id[0x6d] lapic_id[0x6d] enabled)
-ACPI: LAPIC (acpi_id[0x6f] lapic_id[0x6f] enabled)
-ACPI: LAPIC (acpi_id[0x71] lapic_id[0x71] enabled)
-ACPI: LAPIC (acpi_id[0x73] lapic_id[0x73] enabled)
-ACPI: LAPIC (acpi_id[0x75] lapic_id[0x75] enabled)
-ACPI: LAPIC (acpi_id[0x77] lapic_id[0x77] enabled)
-ACPI: LAPIC (acpi_id[0x79] lapic_id[0x79] enabled)
-ACPI: LAPIC (acpi_id[0x7b] lapic_id[0x7b] enabled)
-ACPI: LAPIC (acpi_id[0x7d] lapic_id[0x7d] enabled)
-ACPI: LAPIC (acpi_id[0x81] lapic_id[0x81] enabled)
-ACPI: LAPIC (acpi_id[0x83] lapic_id[0x83] enabled)
-ACPI: LAPIC (acpi_id[0x85] lapic_id[0x85] enabled)
-ACPI: LAPIC (acpi_id[0x87] lapic_id[0x87] enabled)
-ACPI: LAPIC (acpi_id[0x89] lapic_id[0x89] enabled)
-ACPI: LAPIC (acpi_id[0x8b] lapic_id[0x8b] enabled)
-ACPI: LAPIC (acpi_id[0x8d] lapic_id[0x8d] enabled)
-ACPI: LAPIC (acpi_id[0x8f] lapic_id[0x8f] enabled)
-ACPI: LAPIC (acpi_id[0x91] lapic_id[0x91] enabled)
-ACPI: LAPIC (acpi_id[0x93] lapic_id[0x93] enabled)
-ACPI: LAPIC (acpi_id[0x95] lapic_id[0x95] enabled)
-ACPI: LAPIC (acpi_id[0x97] lapic_id[0x97] enabled)
-ACPI: LAPIC (acpi_id[0x99] lapic_id[0x99] enabled)
-ACPI: LAPIC (acpi_id[0x9b] lapic_id[0x9b] enabled)
-ACPI: LAPIC (acpi_id[0x9d] lapic_id[0x9d] enabled)
-ACPI: LAPIC (acpi_id[0xa1] lapic_id[0xa1] enabled)
-ACPI: LAPIC (acpi_id[0xa3] lapic_id[0xa3] enabled)
-ACPI: LAPIC (acpi_id[0xa5] lapic_id[0xa5] enabled)
-ACPI: LAPIC (acpi_id[0xa7] lapic_id[0xa7] enabled)
-ACPI: LAPIC (acpi_id[0xa9] lapic_id[0xa9] enabled)
-ACPI: LAPIC (acpi_id[0xab] lapic_id[0xab] enabled)
-ACPI: LAPIC (acpi_id[0xad] lapic_id[0xad] enabled)
-ACPI: LAPIC (acpi_id[0xaf] lapic_id[0xaf] enabled)
-ACPI: LAPIC (acpi_id[0xb1] lapic_id[0xb1] enabled)
-ACPI: LAPIC (acpi_id[0xb3] lapic_id[0xb3] enabled)
-ACPI: LAPIC (acpi_id[0xb5] lapic_id[0xb5] enabled)
-ACPI: LAPIC (acpi_id[0xb7] lapic_id[0xb7] enabled)
-ACPI: LAPIC (acpi_id[0xb9] lapic_id[0xb9] enabled)
-ACPI: LAPIC (acpi_id[0xbb] lapic_id[0xbb] enabled)
-ACPI: LAPIC (acpi_id[0xbd] lapic_id[0xbd] enabled)
-ACPI: X2APIC (apic_id[0x101] uid[0x101] enabled)
-ACPI: X2APIC (apic_id[0x103] uid[0x103] enabled)
-ACPI: X2APIC (apic_id[0x105] uid[0x105] enabled)
-ACPI: X2APIC (apic_id[0x107] uid[0x107] enabled)
-ACPI: X2APIC (apic_id[0x109] uid[0x109] enabled)
-ACPI: X2APIC (apic_id[0x10b] uid[0x10b] enabled)
-ACPI: X2APIC (apic_id[0x10d] uid[0x10d] enabled)
-ACPI: X2APIC (apic_id[0x10f] uid[0x10f] enabled)
-ACPI: X2APIC (apic_id[0x111] uid[0x111] enabled)
-ACPI: X2APIC (apic_id[0x113] uid[0x113] enabled)
-ACPI: X2APIC (apic_id[0x115] uid[0x115] enabled)
-ACPI: X2APIC (apic_id[0x117] uid[0x117] enabled)
-ACPI: X2APIC (apic_id[0x119] uid[0x119] enabled)
-ACPI: X2APIC (apic_id[0x11b] uid[0x11b] enabled)
-ACPI: X2APIC (apic_id[0x11d] uid[0x11d] enabled)
-ACPI: X2APIC (apic_id[0x121] uid[0x121] enabled)
-ACPI: X2APIC (apic_id[0x123] uid[0x123] enabled)
-ACPI: X2APIC (apic_id[0x125] uid[0x125] enabled)
-ACPI: X2APIC (apic_id[0x127] uid[0x127] enabled)
-ACPI: X2APIC (apic_id[0x129] uid[0x129] enabled)
-ACPI: X2APIC (apic_id[0x12b] uid[0x12b] enabled)
-ACPI: X2APIC (apic_id[0x12d] uid[0x12d] enabled)
-ACPI: X2APIC (apic_id[0x12f] uid[0x12f] enabled)
-ACPI: X2APIC (apic_id[0x131] uid[0x131] enabled)
-ACPI: X2APIC (apic_id[0x133] uid[0x133] enabled)
-ACPI: X2APIC (apic_id[0x135] uid[0x135] enabled)
-ACPI: X2APIC (apic_id[0x137] uid[0x137] enabled)
-ACPI: X2APIC (apic_id[0x139] uid[0x139] enabled)
-ACPI: X2APIC (apic_id[0x13b] uid[0x13b] enabled)
-ACPI: X2APIC (apic_id[0x13d] uid[0x13d] enabled)
-ACPI: X2APIC (apic_id[0x141] uid[0x141] enabled)
-ACPI: X2APIC (apic_id[0x143] uid[0x143] enabled)
-ACPI: X2APIC (apic_id[0x145] uid[0x145] enabled)
-ACPI: X2APIC (apic_id[0x147] uid[0x147] enabled)
-ACPI: X2APIC (apic_id[0x149] uid[0x149] enabled)
-ACPI: X2APIC (apic_id[0x14b] uid[0x14b] enabled)
-ACPI: X2APIC (apic_id[0x14d] uid[0x14d] enabled)
-ACPI: X2APIC (apic_id[0x14f] uid[0x14f] enabled)
-ACPI: X2APIC (apic_id[0x151] uid[0x151] enabled)
-ACPI: X2APIC (apic_id[0x153] uid[0x153] enabled)
-ACPI: X2APIC (apic_id[0x155] uid[0x155] enabled)
-ACPI: X2APIC (apic_id[0x157] uid[0x157] enabled)
-ACPI: X2APIC (apic_id[0x159] uid[0x159] enabled)
-ACPI: X2APIC (apic_id[0x15b] uid[0x15b] enabled)
-ACPI: X2APIC (apic_id[0x15d] uid[0x15d] enabled)
-ACPI: X2APIC (apic_id[0x161] uid[0x161] enabled)
-ACPI: X2APIC (apic_id[0x163] uid[0x163] enabled)
-ACPI: X2APIC (apic_id[0x165] uid[0x165] enabled)
-ACPI: X2APIC (apic_id[0x167] uid[0x167] enabled)
-ACPI: X2APIC (apic_id[0x169] uid[0x169] enabled)
-ACPI: X2APIC (apic_id[0x16b] uid[0x16b] enabled)
-ACPI: X2APIC (apic_id[0x16d] uid[0x16d] enabled)
-ACPI: X2APIC (apic_id[0x16f] uid[0x16f] enabled)
-ACPI: X2APIC (apic_id[0x171] uid[0x171] enabled)
-ACPI: X2APIC (apic_id[0x173] uid[0x173] enabled)
-ACPI: X2APIC (apic_id[0x175] uid[0x175] enabled)
-ACPI: X2APIC (apic_id[0x177] uid[0x177] enabled)
-ACPI: X2APIC (apic_id[0x179] uid[0x179] enabled)
-ACPI: X2APIC (apic_id[0x17b] uid[0x17b] enabled)
-ACPI: X2APIC (apic_id[0x17d] uid[0x17d] enabled)
-ACPI: X2APIC (apic_id[0x181] uid[0x181] enabled)
-ACPI: X2APIC (apic_id[0x183] uid[0x183] enabled)
-ACPI: X2APIC (apic_id[0x185] uid[0x185] enabled)
-ACPI: X2APIC (apic_id[0x187] uid[0x187] enabled)
-ACPI: X2APIC (apic_id[0x189] uid[0x189] enabled)
-ACPI: X2APIC (apic_id[0x18b] uid[0x18b] enabled)
-ACPI: X2APIC (apic_id[0x18d] uid[0x18d] enabled)
-ACPI: X2APIC (apic_id[0x18f] uid[0x18f] enabled)
-ACPI: X2APIC (apic_id[0x191] uid[0x191] enabled)
-ACPI: X2APIC (apic_id[0x193] uid[0x193] enabled)
-ACPI: X2APIC (apic_id[0x195] uid[0x195] enabled)
-ACPI: X2APIC (apic_id[0x197] uid[0x197] enabled)
-ACPI: X2APIC (apic_id[0x199] uid[0x199] enabled)
-ACPI: X2APIC (apic_id[0x19b] uid[0x19b] enabled)
-ACPI: X2APIC (apic_id[0x19d] uid[0x19d] enabled)
-ACPI: X2APIC (apic_id[0x1a1] uid[0x1a1] enabled)
-ACPI: X2APIC (apic_id[0x1a3] uid[0x1a3] enabled)
-ACPI: X2APIC (apic_id[0x1a5] uid[0x1a5] enabled)
-ACPI: X2APIC (apic_id[0x1a7] uid[0x1a7] enabled)
-ACPI: X2APIC (apic_id[0x1a9] uid[0x1a9] enabled)
-ACPI: X2APIC (apic_id[0x1ab] uid[0x1ab] enabled)
-ACPI: X2APIC (apic_id[0x1ad] uid[0x1ad] enabled)
-ACPI: X2APIC (apic_id[0x1af] uid[0x1af] enabled)
-ACPI: X2APIC (apic_id[0x1b1] uid[0x1b1] enabled)
-ACPI: X2APIC (apic_id[0x1b3] uid[0x1b3] enabled)
-ACPI: X2APIC (apic_id[0x1b5] uid[0x1b5] enabled)
-ACPI: X2APIC (apic_id[0x1b7] uid[0x1b7] enabled)
-ACPI: X2APIC (apic_id[0x1b9] uid[0x1b9] enabled)
-ACPI: X2APIC (apic_id[0x1bb] uid[0x1bb] enabled)
-ACPI: X2APIC (apic_id[0x1bd] uid[0x1bd] enabled)
-ACPI: IOAPIC (id[0x00] address[0xfec00000] global_irq_base[0x0])
-ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
-ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
-ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
+On 10/11/2024 12:05 AM, Dan Carpenter wrote:
+> The >= ARRAY_SIZE() should be > ARRAY_SIZE() to prevent an out of
+> bounds read.
+> 
+> Fixes: 012be6f22c01 ("drm/amdgpu: Add sysfs interfaces for NPS mode")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 
-> >
-> > TBH, I'm not sure that there is actually anything wrong with the new
-> > numbering scheme.
-> >  The topology is reported correctly (e.g. in
-> > /sys/devices/system/cpu/cpu0/topology/thread_siblings_list). Yet, the
-> > new enumeration does seem to contradict user expectations.
-> >
->
-> Well, we can say this is a violation of the ACPI spec.
-> "OSPM should initialize processors in the order that they appear in the
-> MADT." even for interleaved LAPIC and X2APIC entries.
-
-Ah. Thanks. I didn't know that.
-
-> Maybe we need two steps for LAPIC/X2APIC parsing.
-> 1. check if there is valid LAPIC entry by going through all LAPIC
-> entries first
-> 2. parse LAPIC/X2APIC strictly following the order in MADT. (like we do
-> before)
-
-That makes sense to me.
+Reviewed-by: Lijo Lazar <lijo.lazar@amd.com>
 
 Thanks,
+Lijo
 
---jim
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+> index ddf716d27f3a..75c9291ac3eb 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_gmc.c
+> @@ -1199,7 +1199,7 @@ static ssize_t current_memory_partition_show(
+>  	enum amdgpu_memory_partition mode;
+>  
+>  	mode = adev->gmc.gmc_funcs->query_mem_partition_mode(adev);
+> -	if ((mode > ARRAY_SIZE(nps_desc)) ||
+> +	if ((mode >= ARRAY_SIZE(nps_desc)) ||
+>  	    (BIT(mode) & AMDGPU_ALL_NPS_MASK) != BIT(mode))
+>  		return sysfs_emit(buf, "UNKNOWN\n");
+>  
 
