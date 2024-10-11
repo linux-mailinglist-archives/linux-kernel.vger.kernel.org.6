@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-361051-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361052-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D9A899A2D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:36:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EAC99A2D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:37:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A72A1F24751
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:36:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3AB581F24D2F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:37:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288FB21644D;
-	Fri, 11 Oct 2024 11:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G66Tc2YL"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEFA9216432;
-	Fri, 11 Oct 2024 11:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1171D216A33;
+	Fri, 11 Oct 2024 11:36:58 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36D0D216432;
+	Fri, 11 Oct 2024 11:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728646611; cv=none; b=R4T/jagikSDVGINZYBrRa8sZySVgL2dTdjog/UXg48s+eclNlrVEHYK605fl9/RqlA92ExnHGzTyd5hGCv7iUo+khMmHzZ48BFHZqXzv3xJopzDTGy3AzhIZwIJkEKf3No2qF38nXcNBeCY1BdDq9ZPSUue6upPq+vUj36qHMAw=
+	t=1728646617; cv=none; b=S5PNi5NtsqcD34+uR+NNvDg35CdGb57WvE6kcd1bPhNUIAluj1wTi1wZcDRE9CAJdvX0ZBsWMALz8uO5hSxY2P/XTo8Lm/LdZ4diUWIZinAWNLfyg+g4RHI9OQ35dJHNrQFIAufxLC2X4efrIrnob7dtJ39zC0ev3ioYvQYDjZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728646611; c=relaxed/simple;
-	bh=fS12zFfDSg5QRtQKUz0FYz6oR+Aj6burkqiVH1GI3sk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mqz50jtThzYa1YQbpdfjZ4vGcU3xO7fYyqLz5KZbEAoyBkG11wh00m3DXvl7Tuh/eSOZanSkGffubRXjK590PGZIWWmHyxv7Efz+iRR1M8T7o2TPu/+G9oAEW3WmeVmOlgrLgH0adSxxjEs1GOeJS8c2w5S/QKl5K3p6L3fSIcs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G66Tc2YL; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so1050110f8f.3;
-        Fri, 11 Oct 2024 04:36:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728646608; x=1729251408; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=fYCLJth7NLoOYxi6Dz0gKrn8jpcKzLs3AoDhQjsXJ1I=;
-        b=G66Tc2YLNMdy57Q/Sf3g9HaRzqmXMS3qpExyOJ0ZnP5+1gDkNIhLhdNP31anGoStTJ
-         CVWgJY4yHiunuK2er/yVRfSRGXnh1f7iNv3ucgd+UHgt78RMZ+kgqx/WpXyplGjIt1Oq
-         tLxnALaHWCV69QPIwk8VcBghsbop099oimOZ3qKkHuN14TMTyKp1XpS9562RLaxjuRKY
-         Gy7avAi0BSHp3OQCDALobq6CE1jL3XwytctN0AXTvE2ZeZiGnYm+Jz0t/990FQAjF8iQ
-         kJu2N7+ayzSSA8RyaUwUJeZwEprizYJjeMFbr0QaVMx1gg89v8Fsj+1EK8uqbfEWyl73
-         5Evg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728646608; x=1729251408;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:date:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fYCLJth7NLoOYxi6Dz0gKrn8jpcKzLs3AoDhQjsXJ1I=;
-        b=YIs1+3ZtaTNbchpAX6g+VUWZZ1t4I9prcZNjm9LwH/c33jQNhJaIbUqBvGx/Dbo6Kq
-         H9Hf8Lz+4BM/YCWOgdVzqexSmNy4XsbyFOoqZrSRyTtfwwdvbYinIjgEBmzUB+svjR2/
-         TiRCg3uSzFbUI3citkWdplxYFihWJ8e4Q5v1kHGbsi4jmVFBlPr1TVXypO3joNpsxLQJ
-         DEmKofJ3V0o0wc1TIJPfHXS23jKncvSgQpPlfafyis9hyyQcOLeUim7ZUFpW+jlwRjag
-         RsrCb5+1JdmCNm3PJ3DU22sTRVvoBSMez/rRB0peyXYTQfEmKkGiCv7R2PehPUPfgcN7
-         FUog==
-X-Forwarded-Encrypted: i=1; AJvYcCW+lvmrIFJ6GKbvDOFGyTxTR/vlZcFsc+s6aeMi+45otf2M76265UnGXveIBxmxayoX2JsW3/3ztxW2ZB23@vger.kernel.org, AJvYcCWCTQH30fSy1YAojaYJVrxf5gcO2CoJEWaFphpKKyaYPXhnZGfKV1PJrUx1+zvutZvTUskxc++4IevmyadAnunpvffV@vger.kernel.org, AJvYcCX+wyA41rWoQ/fZ+5FtyEdmryYEM5qsuVakK0cKzr+xiCWL1hNmnY+MTBYlWD9NtEK62so=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywe2aAzAEiz6uVzQr73FW9XkmVmwn9OLs5yxjLsdm43CFD3IPQz
-	k2f3yI8wHAQo/09Lg27vKc6nY/YtcjVo328FTaZ6xG1HCFHnTAPa
-X-Google-Smtp-Source: AGHT+IEmFwW6QnxlYpKGtEGpfRqk3WRVeaIiOPfgUcGsKcP0IodfnMtjmOHC04e/Tf0U4P7yW90N0g==
-X-Received: by 2002:adf:f58a:0:b0:37d:4ab2:9cdc with SMTP id ffacd0b85a97d-37d551b07ebmr1483999f8f.13.1728646608087;
-        Fri, 11 Oct 2024 04:36:48 -0700 (PDT)
-Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6d0217sm3710381f8f.60.2024.10.11.04.36.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 04:36:47 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Fri, 11 Oct 2024 13:36:45 +0200
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Oleg Nesterov <oleg@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
-	Martin KaFai Lau <kafai@fb.com>, Song Liu <songliubraving@fb.com>,
-	Yonghong Song <yhs@fb.com>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@chromium.org>,
-	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCHv6 bpf-next 15/16] selftests/bpf: Add uprobe sessions to
- consumer test
-Message-ID: <ZwkNzWPlpK4P2Iyh@krava>
-References: <20241010200957.2750179-1-jolsa@kernel.org>
- <20241010200957.2750179-16-jolsa@kernel.org>
- <CAEf4BzY5zgoYAgJG7tfa84F2Zzjq=YFjh3=OzWqA6h39FfXB4Q@mail.gmail.com>
+	s=arc-20240116; t=1728646617; c=relaxed/simple;
+	bh=ilN4s64LOZYiaj+PdL2HcRHuyMp46DVVPlPUnaNeVvM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p71lJEdEnD950xs26/U5Jj7Y5Xg92x14I+I85jf9UNTQyktOmk/wXcsKk4+hx6YL7g0lGd0ZTMquruXVf2SB8KcdATmX3dzFj7HelVHc9boX7elPI5U0kyX9BucBu5HWER69JImiP8mL+lbvlU5QwCvpqFDkdnrwNCz4UZ8VHqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id EFA36DA7;
+	Fri, 11 Oct 2024 04:37:23 -0700 (PDT)
+Received: from [10.57.85.162] (unknown [10.57.85.162])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 154823F73F;
+	Fri, 11 Oct 2024 04:36:51 -0700 (PDT)
+Message-ID: <4fd20101-d15c-4f9b-93c1-c780734a2294@arm.com>
+Date: Fri, 11 Oct 2024 12:36:50 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 2/2] mm: don't install PMD mappings when THPs are
+ disabled by the hw/process/vma
+Content-Language: en-GB
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, kvm@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Thomas Huth <thuth@redhat.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>, Leo Fu <bfu@redhat.com>
+References: <20241011102445.934409-1-david@redhat.com>
+ <20241011102445.934409-3-david@redhat.com>
+ <a4ca9422-09f5-4137-88d0-88a7ec836c1a@arm.com>
+ <a552416e-fd32-4b84-b5d6-40a27530c939@redhat.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <a552416e-fd32-4b84-b5d6-40a27530c939@redhat.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzY5zgoYAgJG7tfa84F2Zzjq=YFjh3=OzWqA6h39FfXB4Q@mail.gmail.com>
 
-On Thu, Oct 10, 2024 at 07:30:19PM -0700, Andrii Nakryiko wrote:
-> On Thu, Oct 10, 2024 at 1:13 PM Jiri Olsa <jolsa@kernel.org> wrote:
-> >
-> > Adding uprobe session consumers to the consumer test,
-> > so we get the session into the test mix.
-> >
-> > Signed-off-by: Jiri Olsa <jolsa@kernel.org>
-> > ---
-> >  .../bpf/prog_tests/uprobe_multi_test.c        | 63 +++++++++++++++----
-> >  .../bpf/progs/uprobe_multi_consumers.c        | 16 ++++-
-> >  2 files changed, 66 insertions(+), 13 deletions(-)
-> >
+On 11/10/2024 12:33, David Hildenbrand wrote:
+> On 11.10.24 13:29, Ryan Roberts wrote:
+>> On 11/10/2024 11:24, David Hildenbrand wrote:
+>>> We (or rather, readahead logic :) ) might be allocating a THP in the
+>>> pagecache and then try mapping it into a process that explicitly disabled
+>>> THP: we might end up installing PMD mappings.
+>>>
+>>> This is a problem for s390x KVM, which explicitly remaps all PMD-mapped
+>>> THPs to be PTE-mapped in s390_enable_sie()->thp_split_mm(), before
+>>> starting the VM.
+>>>
+>>> For example, starting a VM backed on a file system with large folios
+>>> supported makes the VM crash when the VM tries accessing such a mapping
+>>> using KVM.
+>>>
+>>> Is it also a problem when the HW disabled THP using
+>>> TRANSPARENT_HUGEPAGE_UNSUPPORTED? At least on x86 this would be the case
+>>> without X86_FEATURE_PSE.
+>>>
+>>> In the future, we might be able to do better on s390x and only disallow
+>>> PMD mappings -- what s390x and likely TRANSPARENT_HUGEPAGE_UNSUPPORTED
+>>> really wants. For now, fix it by essentially performing the same check as
+>>> would be done in __thp_vma_allowable_orders() or in shmem code, where this
+>>> works as expected, and disallow PMD mappings, making us fallback to PTE
+>>> mappings.
+>>>
+>>> Reported-by: Leo Fu <bfu@redhat.com>
+>>> Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+>>
+>> Will this patch be difficult to backport given it depends on the previous patch
+>> and that doesn't have a Fixes tag?
 > 
-> you are undoing most of the changes done in the previous patch... it
-> seems like it would be better to just combine  both patches
+> "difficult" -- not really. Andrew might want to tag patch #1  with "Fixes:" as
+> well, but I can also send simple stable backports that avoid patch #1.
+> 
+> (Thinking again, I assume we want to Cc:stable)
+> 
+>>
+>>> Cc: Thomas Huth <thuth@redhat.com>
+>>> Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+>>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>>> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+>>> Cc: Janosch Frank <frankja@linux.ibm.com>
+>>> Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+>>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>>> ---
+>>>   mm/memory.c | 9 +++++++++
+>>>   1 file changed, 9 insertions(+)
+>>>
+>>> diff --git a/mm/memory.c b/mm/memory.c
+>>> index 2366578015ad..a2e501489517 100644
+>>> --- a/mm/memory.c
+>>> +++ b/mm/memory.c
+>>> @@ -4925,6 +4925,15 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct
+>>> page *page)
+>>>       pmd_t entry;
+>>>       vm_fault_t ret = VM_FAULT_FALLBACK;
+>>>   +    /*
+>>> +     * It is too late to allocate a small folio, we already have a large
+>>> +     * folio in the pagecache: especially s390 KVM cannot tolerate any
+>>> +     * PMD mappings, but PTE-mapped THP are fine. So let's simply refuse any
+>>> +     * PMD mappings if THPs are disabled.
+>>> +     */
+>>> +    if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags))
+>>> +        return ret;
+>>
+>> Why not just call thp_vma_allowable_orders()?
+> 
+> Why call thp_vma_allowable_orders() that does a lot more work that doesn't
+> really apply here? :)
 
-ok, the diff looks actualy ok, I'll squash them together
+Yeah fair enough, I was just thinking it makes the code simpler to keep all the
+checks in one place. But no strong opinion.
 
-thanks,
-jirka
+Either way:
+
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
 > 
-> > diff --git a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-> > index 2effe4d693b4..df9314309bc3 100644
-> > --- a/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-> > +++ b/tools/testing/selftests/bpf/prog_tests/uprobe_multi_test.c
-> > @@ -761,6 +761,10 @@ get_program(struct uprobe_multi_consumers *skel, int prog)
-> >                 return skel->progs.uprobe_0;
-> >         case 1:
-> >                 return skel->progs.uprobe_1;
-> > +       case 2:
-> > +               return skel->progs.uprobe_2;
-> > +       case 3:
-> > +               return skel->progs.uprobe_3;
-> >         default:
-> >                 ASSERT_FAIL("get_program");
-> >                 return NULL;
+> I'd say, just like shmem, we handle this separately here.
 > 
-> [...]
+
 
