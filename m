@@ -1,132 +1,121 @@
-Return-Path: <linux-kernel+bounces-361257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 610F299A5C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:07:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5822099A5C5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:08:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0675B22788
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:07:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E57E228668D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59FF72185B0;
-	Fri, 11 Oct 2024 14:06:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32F452194A5;
+	Fri, 11 Oct 2024 14:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bWgs/6cU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="T/SXrMoC"
+Received: from mail-qk1-f193.google.com (mail-qk1-f193.google.com [209.85.222.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E995D517;
-	Fri, 11 Oct 2024 14:06:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 386B7216A0D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728655617; cv=none; b=fif3VbSxriujuEM8zPmkjRB0Lu37+59wu7UyDEp/djx9g5BAng8ZqzLhg8nRtJO9vBr4iy3GTGsZAq16JiCPJXkUjyEjOXPnA9J5IdPl08Dsv4++ikR5a1QYyb1zr6/q46trFhgweuSFvoxs6aiTsrYHicj7yR74vMGkcem6b4A=
+	t=1728655705; cv=none; b=S3fcq3PseDQj7wP3hnYXnb37Ff96/ws+qcGB25LKFqT8sVXbI36Y1S/TeZxzETXort7XoCDndM1kzecVgUJeTsVwCS1LTp9D+ZEo0WuRsdwsFt9yqQOJTmpk1uKJDmkFawv/Ztl8gmE7b9rBpaUqDrDVEj86+YCv6Sl75BFAT40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728655617; c=relaxed/simple;
-	bh=ncQFcfAlGgvWxjh5lD1Afh7FFx/abLXslVvenTx17aA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sXyRb/xHfyUljEyyGelZSZ3O/wyoRHuIB9MaYOOs5Ep1waHDzi93eCVXS9g17j44AxXxJz3Oi0t5sEbp0wAm21uCSBLJQGmLM5+M8kv/3PU79e7HpPt4Pi4H/6WDUbBo2zDz9JgQO0CEhXSBBRIHgQG0RlkGOOaAEOWDTwP1Go4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bWgs/6cU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C162AC4CEC3;
-	Fri, 11 Oct 2024 14:06:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728655617;
-	bh=ncQFcfAlGgvWxjh5lD1Afh7FFx/abLXslVvenTx17aA=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=bWgs/6cUjeMqPRmlANu/UYQn00ttjfBmBmHXpxo9e7CekiOHot87xexizI1zN8Dwu
-	 npNVZZrYdGOAIrlnsrJJn1/6E5mPhGDrMCDt/2qVg4uZ27JF5h5Qu1a4FZJn91rBND
-	 jUmaWcZpPhpxtXsRlEG53X8ouGEYejBKDtxTOQAN/dZU4836iKtK/5jl9x7w8x7/ZO
-	 NhK1WrE8CdmR8qptn3vU+Udkovfr716T4FZ508S0ysZSU6hnfk+Cb0CjIOm6FYoWjC
-	 s3bTnZpCY0JQdRK0dWXLoRUM2cHHyhpFzUvIOZYVRr+ZoF+2dE0MLcoNb3FauT1Ft7
-	 P/QCkFx/Cdurg==
-Message-ID: <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com, 
- mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe
- <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- keyrings@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 11 Oct 2024 17:06:53 +0300
-In-Reply-To: <20240921120811.1264985-1-jarkko@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728655705; c=relaxed/simple;
+	bh=KNHg690VzbGD19D6SFkkzazgVGxbtQ0FFBYN6fII+NE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WXJjPBV3SymYHt5Oav4hIfI2bEcRT+Xf00vs6ySQwm0KuGtCsuO+kQyLvtLWf9nhkHZAL2cHvAe/NCEAyibhjnbQxCAIpHND9d5BkBdlDzEf6D7Vh2uBjgcFKmYnrA3FTpu4u+C/Ofj4woOPNkD2aUJQdhPNeb5cV7zay/ijdso=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=T/SXrMoC; arc=none smtp.client-ip=209.85.222.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f193.google.com with SMTP id af79cd13be357-7b10f2c24f0so210122785a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:08:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1728655702; x=1729260502; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=SBHgSLmotPuWavg7bxJdcfW6VGuP7eov0LOsjiXZhFA=;
+        b=T/SXrMoCcQdRoKjcj2os4N0Nk5Na308FNgJUuO3z1k729ZoFsldQUbWNm96Fve9lUh
+         tGq9xX8LcqZzGyaq3HU9wsJocfLaGKoe7uOlCN5LbEf6OE8b/JTlGyts4XnpVa+Cuxoq
+         P0yFri2WZX+DJ/EaNCuOsLntbFKePYSZAVkCE2d3iGC/vdGgPIegeApqazytjhoWmBWA
+         5hmW7qoeJHLgKmXDRJoNmAqCt0moOlvhNbXPSowuqtFbU4yx/Ljj062y9R+YI4QQwQTk
+         V4jP2rzRsvbiGUDsFUWg/mPyXu2K8wEzmePYn3ucU5OArfU2KXziGUXDuQ0qJDfPQ68Q
+         +gew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728655702; x=1729260502;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SBHgSLmotPuWavg7bxJdcfW6VGuP7eov0LOsjiXZhFA=;
+        b=lpiKH1F5V2r1EAT/6K1NxqPcrPapPRpeQbV2adShBc51XhrJEs+A4iYBcJNalFZTkf
+         RmCP8oYQHQFXJhWYiHqqS180ExQq2Zr0MUjhDKeZMWsf3dnWBErPiW4z8v8ZeDvC/Sby
+         40q4OPcStbAWoin/sha8wM2N4ht0Att0DxKUFbwKDdk8teenJ8h3JXCYoriT05at/U+k
+         yKcIqBqGtmAJQd7wFjsqkdRaNu4D1MmGVCWtM5CUP3EGSpLUZijBGNEdDT2ai9cFRl/K
+         acePuCpV4Lv6dNYhMH0/FgShfkIi3yEQPSUxM3wwCUrcY5U8SBoVyN6ksBFjGjomNCpd
+         Cghg==
+X-Forwarded-Encrypted: i=1; AJvYcCWvh0d26IVkD+GlG2KYDZJY0XDgF9AwP3IOShz9tcGX3a4+0A54LDGMIjPDSua8lN24B3J3s96OBonKICE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwOvXDFXDVXKqyAbKowsoIv0ftxk87rRWMb84waZ3nLkrnGdyHn
+	1kGdFoRQfwRvXPWrtJtx8HSzZzBLBsC3KFPjFkAwHVEghgjOtNJBeGnXldN/8g==
+X-Google-Smtp-Source: AGHT+IHlTJKVJzss8TaMUZYn5xavVAh8mhokFlmIZWPVm1h4q2IsF8y5D6J03eYFVwIpAG+wgv1f+g==
+X-Received: by 2002:a05:620a:4727:b0:7b1:161c:ef44 with SMTP id af79cd13be357-7b11a3c5c99mr409852885a.60.1728655702078;
+        Fri, 11 Oct 2024 07:08:22 -0700 (PDT)
+Received: from rowland.harvard.edu ([2607:fb60:2501:2805:c6d5:fe22:7fa3:ec54])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148f07d3sm133610485a.59.2024.10.11.07.08.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 07:08:21 -0700 (PDT)
+Date: Fri, 11 Oct 2024 10:08:19 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: Marcello Sylvester Bauer <sylv@sylv.io>, gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <d65e2258-2901-486a-ab83-ff57e9868a91@rowland.harvard.edu>
+References: <6709234e.050a0220.3e960.0011.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <6709234e.050a0220.3e960.0011.GAE@google.com>
 
-On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
-> This patch set aims to fix:
-> https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
->=20
-> The baseline for the series is the v6.11 tag.
->=20
-> v4:
-> https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@ke=
-rnel.org/
-> v3:
-> https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@ke=
-rnel.org/
-> v2:
-> https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko@k=
-ernel.org/
-> v1:
-> https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko@k=
-ernel.org/
->=20
-> Jarkko Sakkinen (5):
-> =C2=A0 tpm: Return on tpm2_create_null_primary() failure
-> =C2=A0 tpm: Implement tpm2_load_null() rollback
-> =C2=A0 tpm: flush the null key only when /dev/tpm0 is accessed
-> =C2=A0 tpm: Allocate chip->auth in tpm2_start_auth_session()
-> =C2=A0 tpm: flush the auth session only when /dev/tpm0 is open
->=20
-> =C2=A0drivers/char/tpm/tpm-chip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0 14 ++++
-> =C2=A0drivers/char/tpm/tpm-dev-common.c |=C2=A0=C2=A0 8 +++
-> =C2=A0drivers/char/tpm/tpm-interface.c=C2=A0 |=C2=A0 10 ++-
-> =C2=A0drivers/char/tpm/tpm2-cmd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
-=C2=A0=C2=A0 3 +
-> =C2=A0drivers/char/tpm/tpm2-sessions.c=C2=A0 | 109 ++++++++++++++++++----=
-------
-> --
-> =C2=A0include/linux/tpm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
-> =C2=A06 files changed, 102 insertions(+), 44 deletions(-)
+On Fri, Oct 11, 2024 at 06:08:30AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot found the following issue on:
+> 
+> HEAD commit:    4a9fe2a8ac53 dt-bindings: usb: dwc3-imx8mp: add compatible..
+> git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17d067d0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
+> dashboard link: https://syzkaller.appspot.com/bug?extid=f342ea16c9d06d80b585
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1312c327980000
+> 
+> Downloadable assets:
+> disk image: https://storage.googleapis.com/syzbot-assets/883c5319cb52/disk-4a9fe2a8.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/caf4421ed2ef/vmlinux-4a9fe2a8.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/d8e3beb01d49/bzImage-4a9fe2a8.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com
+> 
+> INFO: task kworker/1:0:24 blocked for more than 143 seconds.
+>       Not tainted 6.12.0-rc1-syzkaller-00027-g4a9fe2a8ac53 #0
+> "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+> task:kworker/1:0     state:D stack:23808 pid:24    tgid:24    ppid:2      flags:0x00004000
+> Workqueue: pm pm_runtime_work
 
-The summarize some discussions:
+Let's try to verify that this problem really was caused by the timer 
+changes to dummy-hcd.  The following commit is the one preceding those 
+changes.
 
-1. I'll address Stefan's remarks.
-2. We know that these patches address the desktop boot.
-3. IMA is too slow =3D> add a boot option for IMA default off. I.e.
-   IMA will not use the feature unless you specifically ask.
-4. Random generation can be optimized a lot with or without
-   encryption. Not sure if  I have time to do ths right now
-   but I have already patch planned for this.
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git 920e7522e3ba
 
-What is blocking me is the James' request to not include
-functional fixes. The problem with that is that if comply
-to that request I will have to postpone all the performacne
-fixes and send a patch set with only functional fixes and
-go all review rounds with that before moving forward.
-
-This is just how priorities go in kernel and doing by the
-book. Is that really necessary?
-
-Since I've just started in a new job any patches can be
-expected earliest next week. That's why I was rushing with
-the patch set in the first place because I knew that there
-will be otherwise a few week delay but we'll get there :-)
-
-BR, Jarkko
-
+Alan Stern
 
