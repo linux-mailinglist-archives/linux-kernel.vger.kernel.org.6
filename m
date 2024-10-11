@@ -1,307 +1,140 @@
-Return-Path: <linux-kernel+bounces-361604-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361605-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0342399AA5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61BA99AA64
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9479E28C5B2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:37:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5C6F1C218C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:37:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6CB71E765A;
-	Fri, 11 Oct 2024 17:31:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6221A1BDAB5;
+	Fri, 11 Oct 2024 17:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JbSi5BFL"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b="kZO5GIOs";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="AtDMQtdo"
+Received: from fout-a2-smtp.messagingengine.com (fout-a2-smtp.messagingengine.com [103.168.172.145])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AB11E5022;
-	Fri, 11 Oct 2024 17:31:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE72199234;
+	Fri, 11 Oct 2024 17:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.145
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728667889; cv=none; b=n1uUVszHWAVG77e7mg+pWw8hQPaT5tcpKJpXkt/+A7fSq4AqvZKbBr+UGPghyxvOnixnngxdXUrjSMqLi5sq9c9luLRrMTuP6Clw4ohWnGT0kZ5wpftqwykaZ0ruG1j10hzeY/aDmpKW2DANOB3zbOrl5KYHbwyExOzu4EWlzdI=
+	t=1728667969; cv=none; b=D76q1mvQFrjh7F2tSIph19fQZhksb0ewFICrvP+Jl/iLlH1qm/dNGQpY2U0Ax7l1BqGw6ykXEZas9NfVzs6eH1VZ9D8okfzUFnk84WGnN61YkXVtC2XQMlc3ROqubSYzQOV3jacsiZVXtl2h/JGkJTV1IfE5Wv11ACwTb8IRSak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728667889; c=relaxed/simple;
-	bh=4Z4zcz6qi1DRZkhl3ogXePn4yxxghDB3ja6oNYNj7pM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=N6YGj5IRAtpejVJp3R0FpBmIdf4KL7ykCQlJXxSseb5tQhD9/Z50vnHBjlz4olNqz5+hEuNiYo9uqZu9vw2Hxv21Tvu/86BO8zfKUVtBwlJue8vsIpo8DyQXvBiLsRJzN1q7sgJ7zWNRtRmYg5LidqFCy6AIAh3JrJDng/6XyiQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JbSi5BFL; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4311fd48032so5676735e9.0;
-        Fri, 11 Oct 2024 10:31:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728667884; x=1729272684; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LvRKqiDQxMChmwwfQQzV2pZodEp0URXdasfkV2jAffQ=;
-        b=JbSi5BFLb3fJELr31BY9/FH9ZlF+BK3Cvdxm4jHi4G8GweIPSuVfWBvQNvs2MwaYuo
-         UYlKdjinO0uafevxsu6lt1e9C8NmpdKqB0wEXu0fTFe5hMd3ei2Bfz4IeDd1rMItL/Z5
-         oPrsWQjYQJq69Rg8Ay05HKRXVIGkLcMS97ch160eaUvaNqHYlm33UH0xn13s7VgcPG6I
-         HQBn7h9HJmcWVfatt6ZopRGFbhT91sMuRMH+lf96JvNZHTOxuU6UPyMl4QYLMu60sIwt
-         jxNRMTw+Hp0Hck4+EXS81BQuv5ja2ApMXcR6ELS1vf1DNf83McDrE8xisakW/7ralwIq
-         qvEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728667884; x=1729272684;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LvRKqiDQxMChmwwfQQzV2pZodEp0URXdasfkV2jAffQ=;
-        b=hB9AhZBpqEU3s+9mogopcY3nvEcNqVdujnKFjvh/nHlGZc/0d/N1TE5YZPZ5A6KgLC
-         3k5s+l6y9PNod2hWoJKy1K3+y1LJY3k8KAMeueBdEq5cBWKp1bk9xX6/OEbPr/VKbghB
-         Ob5e31VRjDK5dwGr9x029KL4gZqN9OqV0s6+kOyWBSlUou2/zHlgIrIgXRCwx4IVQHpr
-         4LfpEjHlwnV3HOpu8z7vMTyrhfvWngGTMQYta/6WkxMmJEI/s/SWrBNdXhmkE5V4GgyM
-         rXkSOFST4/1zg9xNR/oRIUhokvH+jcYiTVM74+9jNf43Ac3snFKBzD8DJqUsxEAda1lC
-         O1ug==
-X-Forwarded-Encrypted: i=1; AJvYcCVnCPLFvpeEG8bd5JwsFciPPK/FJL044xdWX3+wfA372EWhCOZm7jdIMQrLyRXgtDyTKvLkn3LO654Jh0ochDL/NV8=@vger.kernel.org, AJvYcCX64Nt8mwXu+Gf3SB3kskJiuslBSJLtfXX67azfuqhH1wYYh4cJoDetmRg2G907LmRMZx4CF1U9fNGC+G4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9oMkF3EqbiDJzmkxQ0lFzjwmNLFVZk/HnDwNGo9tH1haNBkpD
-	40zPNMm4j2g0CmoNhiGp2XTqZ+jAGxlP1K56JKD/HcqYTz62cGv/
-X-Google-Smtp-Source: AGHT+IGv2zXgVW4ojNjjD2WUBJJsLA91ulJPLgeim0WVTbZ/7G/GhMhudylAQhsqN/5E2Nd7h9TAdA==
-X-Received: by 2002:a05:600c:45d1:b0:426:60b8:d8ba with SMTP id 5b1f17b1804b1-4311df47678mr25904805e9.28.1728667884504;
-        Fri, 11 Oct 2024 10:31:24 -0700 (PDT)
-Received: from prasmi.home ([2a00:23c8:2500:a01:2595:4364:d152:dff3])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa0asm4396516f8f.83.2024.10.11.10.31.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:31:23 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil-cisco@xs4all.nl>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-renesas-soc@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v5 22/22] media: rzg2l-cru: Move register definitions to a separate file
-Date: Fri, 11 Oct 2024 18:30:52 +0100
-Message-ID: <20241011173052.1088341-23-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20241011173052.1088341-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1728667969; c=relaxed/simple;
+	bh=9CkUuKL47esnuYB4rzdSD0YMfBXPI4yPI1K9UgwAZ30=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=IuJu5Xej1hVTzttV3YKpqXClzSE2dKIxxqnEh78J2g1PR+fIOGKZnBIi+tvNrpVR6kcus0hy+8EPujZbnWKuYJne2q0dMxe8qpujcA5nYMeZFU9Zzv+LPtIGZSfNecId0e2XD8XoPwNNeB6/tW4UKrPyWCay6GFf9TPhNWDO8q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me; spf=pass smtp.mailfrom=bjorling.me; dkim=pass (2048-bit key) header.d=bjorling.me header.i=@bjorling.me header.b=kZO5GIOs; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=AtDMQtdo; arc=none smtp.client-ip=103.168.172.145
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bjorling.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bjorling.me
+Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
+	by mailfout.phl.internal (Postfix) with ESMTP id 0CCC913803B0;
+	Fri, 11 Oct 2024 13:32:46 -0400 (EDT)
+Received: from phl-imap-13 ([10.202.2.103])
+  by phl-compute-01.internal (MEProxy); Fri, 11 Oct 2024 13:32:46 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bjorling.me; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1728667966;
+	 x=1728754366; bh=9CkUuKL47esnuYB4rzdSD0YMfBXPI4yPI1K9UgwAZ30=; b=
+	kZO5GIOsjG1Uu6g8+Uq4Nu5sa7ZPNxCvkvjubYn5JWNwUFqAakgGuYdFCnMAxIbE
+	JqZLx2zdAF+IZf8vbjA6Rf6cUXgiOrauRtLhArMFqavd0oKa2UeU1gswjYh2LFs1
+	WyQAyjt5ZzljKUY/Bfam0EVHSj/dmMY0g19Zyga12/D4eoPE8vD6Uf9F3RVK9fxf
+	nEzt0b45GwyNgkAmMqm/5TYrpwXAiri4h7THc0/m8T/xgcbNafdXNow4z09nh+12
+	htPRq/JNvMmxF42hM+rq5GSaBJsCcwJ34i1/wbVyOowwIt7BiSOYkFGOsLVd6Okp
+	ZUie/Hoc2a8bw2QkYT3n7Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728667966; x=
+	1728754366; bh=9CkUuKL47esnuYB4rzdSD0YMfBXPI4yPI1K9UgwAZ30=; b=A
+	tDMQtdog4MuyDXvTP1C6h7F9+FJbbTm9aGsabGM9HovXFhjKjOwOBYz4q2h7IZZF
+	KyJcwG5PW2qUi93W7hj0/lPgH5a088bj2eH3OeXw7Cvw8xmE9kwdf5Qc/G4vrP16
+	JQllC5kzPzloqVrvkKkniPCmTyJYkdcqbRMeN5hH6xbBjgnkXKCNyatPTT8p56ud
+	S/5GfH1THOy8oAjjibST2LO0RT7lFpuBVnxs1NCXUT7n/OWnsnAbeyeZl5TYZsJT
+	3sdbfgypJoz8azLtF8yAhqKZW6uxQHVBmfcL6qqwCrsIGZpQYGzBfCMMY0z463GY
+	teRsrK+nDyseoImg2nGRw==
+X-ME-Sender: <xms:PWEJZ3C1MGuOZgLU6Z-ANXLuCxiLC0J2ruSWE56pdJ6nFj4mHzCnvQ>
+    <xme:PWEJZ9j89RFnFQT5Qa1N9lmKIy0LIMCRJyOkDNK7QZdcHtrdO0bd6ldHDxIvP6riR
+    Dp1xIsWAhqFgLaUOHA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefkedguddufecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpefoggffhffvvefkjghfufgtgfesthhqredtredt
+    jeenucfhrhhomhepofgrthhirghsuceujhpprhhlihhnghcuoehmsegsjhhorhhlihhngh
+    drmhgvqeenucggtffrrghtthgvrhhnpeekkeevfefggeduueejleelkeduveeigfeljeff
+    udejleduteelffeuffekhfetleenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpehmsegsjhhorhhlihhnghdrmhgvpdhnsggprhgtphhtthhopedu
+    uddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepfigrnhhghihughhuihesvgduie
+    dqthgvtghhrdgtohhmpdhrtghpthhtoheptggrshhsvghlsehkvghrnhgvlhdrohhrghdp
+    rhgtphhtthhopegulhgvmhhorghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehksg
+    hushgthheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqnhhvmhgvsehl
+    ihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtohephhgthheslhhsthdrug
+    gvpdhrtghpthhtohepmhgrrhhtihhnrdhpvghtvghrshgvnhesohhrrggtlhgvrdgtohhm
+    pdhrtghpthhtohephhgrrhgvsehsuhhsvgdruggvpdhrtghpthhtoheplhhinhhugidqsg
+    hlohgtkhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:PWEJZykQZwWMORQ63au5LvuRQ9ToY6Ybxq7SH0nfbjZu_XroPa1XoQ>
+    <xmx:PWEJZ5wjFp7n-e4NxlEIIHeFqrp2b4TguTDlEjWRHIvEo7BtAskwbg>
+    <xmx:PWEJZ8QVf4tfOnbjs3-yul9cfQoRfga3A2n0Or37ax0icBPyNs2RkA>
+    <xmx:PWEJZ8b4QBzHKx2eWirZ6EsQ4TrccIQnOe57zf4uUSM55wGv3B45mQ>
+    <xmx:PmEJZxKhplYi0vd_WYDCm5t7_dAGADrEKF-3ml9u_oIJ-HXsAIuZ4jgE>
+Feedback-ID: if4314918:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 23E6C1F00073; Fri, 11 Oct 2024 13:32:45 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Date: Fri, 11 Oct 2024 20:32:23 +0300
+From: =?UTF-8?Q?Matias_Bj=C3=B8rling?= <m@bjorling.me>
+To: "Christoph Hellwig" <hch@lst.de>
+Cc: kbusch@kernel.org, dlemoal@kernel.org, cassel@kernel.org,
+ linux-nvme@lists.infradead.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, wangyugui@e16-tech.com,
+ martin.petersen@oracle.com, hare@suse.de,
+ =?UTF-8?Q?Matias_Bj=C3=B8rling?= <matias.bjorling@wdc.com>
+Message-Id: <455d17f6-ec55-4bce-b9d3-9f43eb4a056a@app.fastmail.com>
+In-Reply-To: <20241011081452.GA3337@lst.de>
+References: <20241010123951.1226105-1-m@bjorling.me>
+ <20241010123951.1226105-2-m@bjorling.me> <20241011081452.GA3337@lst.de>
+Subject: Re: [PATCH 1/3 v2] nvme: make independent ns identify default
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On Fri, Oct 11, 2024, at 11:14, Christoph Hellwig wrote:
+> On Thu, Oct 10, 2024 at 02:39:49PM +0200, Matias Bj=C3=B8rling wrote:
+>> From: Matias Bj=C3=B8rling <matias.bjorling@wdc.com>
+>>=20
+>> The NVMe 2.0 specification adds an independent identify namespace
+>> data structure that contains generic attributes that apply to all
+>> namespace types. Some attributes carry over from the NVM command set
+>> identify namespace data structure, and others are new.
+>>=20
+>> Currently, the data structure only considered when CRIMS is enabled or
+>> when the namespace type is key-value.
+>>=20
+>> However, the independent namespace data structure
+>> is mandatory for devices that implement features from the 2.0+
+>> specification. Therefore, we can check this data structure first. If
+>> unavailable, retrieve the generic attributes from the NVM command set
+>> identify namespace data structure.
+>
+> FYI, I still disagree with this for the same reason as before.
+> Assuming we're not really going to see hard drivers I'd be fine
+> with using it by default for 2.0 (or better even 2.1) by default.
 
-Move the RZ/G2L CRU register definitions from `rzg2l-video.c` to a
-dedicated header file, `rzg2l-cru-regs.h`. Separating these definitions
-into their own file improves the readability of the code.
+Sounds good. When I am back after next week, I'll update the patch set w=
+ith the version check and add the missing logic for hdd support.=20
 
-Suggested-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
----
- .../renesas/rzg2l-cru/rzg2l-cru-regs.h        | 80 +++++++++++++++++++
- .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  2 -
- .../platform/renesas/rzg2l-cru/rzg2l-ip.c     |  1 +
- .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 69 +---------------
- 4 files changed, 82 insertions(+), 70 deletions(-)
- create mode 100644 drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-new file mode 100644
-index 000000000000..1c9f22118a5d
---- /dev/null
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru-regs.h
-@@ -0,0 +1,80 @@
-+/* SPDX-License-Identifier: GPL-2.0+ */
-+/*
-+ * rzg2l-cru-regs.h--RZ/G2L (and alike SoCs) CRU Registers Definitions
-+ *
-+ * Copyright (C) 2024 Renesas Electronics Corp.
-+ */
-+
-+#ifndef __RZG2L_CRU_REGS_H__
-+#define __RZG2L_CRU_REGS_H__
-+
-+/* HW CRU Registers Definition */
-+
-+/* CRU Control Register */
-+#define CRUnCTRL			0x0
-+#define CRUnCTRL_VINSEL(x)		((x) << 0)
-+
-+/* CRU Interrupt Enable Register */
-+#define CRUnIE				0x4
-+#define CRUnIE_EFE			BIT(17)
-+
-+/* CRU Interrupt Status Register */
-+#define CRUnINTS			0x8
-+#define CRUnINTS_SFS			BIT(16)
-+
-+/* CRU Reset Register */
-+#define CRUnRST				0xc
-+#define CRUnRST_VRESETN			BIT(0)
-+
-+/* Memory Bank Base Address (Lower) Register for CRU Image Data */
-+#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
-+
-+/* Memory Bank Base Address (Higher) Register for CRU Image Data */
-+#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
-+
-+/* Memory Bank Enable Register for CRU Image Data */
-+#define AMnMBVALID			0x148
-+#define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
-+
-+/* Memory Bank Status Register for CRU Image Data */
-+#define AMnMBS				0x14c
-+#define AMnMBS_MBSTS			0x7
-+
-+/* AXI Master Transfer Setting Register for CRU Image Data */
-+#define AMnAXIATTR			0x158
-+#define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
-+#define AMnAXIATTR_AXILEN		(0xf)
-+
-+/* AXI Master FIFO Pointer Register for CRU Image Data */
-+#define AMnFIFOPNTR			0x168
-+#define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
-+#define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
-+
-+/* AXI Master Transfer Stop Register for CRU Image Data */
-+#define AMnAXISTP			0x174
-+#define AMnAXISTP_AXI_STOP		BIT(0)
-+
-+/* AXI Master Transfer Stop Status Register for CRU Image Data */
-+#define AMnAXISTPACK			0x178
-+#define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
-+
-+/* CRU Image Processing Enable Register */
-+#define ICnEN				0x200
-+#define ICnEN_ICEN			BIT(0)
-+
-+/* CRU Image Processing Main Control Register */
-+#define ICnMC				0x208
-+#define ICnMC_CSCTHR			BIT(5)
-+#define ICnMC_INF(x)			((x) << 16)
-+#define ICnMC_VCSEL(x)			((x) << 22)
-+#define ICnMC_INF_MASK			GENMASK(21, 16)
-+
-+/* CRU Module Status Register */
-+#define ICnMS				0x254
-+#define ICnMS_IA			BIT(2)
-+
-+/* CRU Data Output Mode Register */
-+#define ICnDMR				0x26c
-+#define ICnDMR_YCMODE_UYVY		(1 << 4)
-+
-+#endif /* __RZG2L_CRU_REGS_H__ */
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-index c40754732576..a83e78d9b0be 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-@@ -31,8 +31,6 @@
- #define RZG2L_CRU_MIN_INPUT_HEIGHT	240
- #define RZG2L_CRU_MAX_INPUT_HEIGHT	4095
- 
--#define ICnDMR_YCMODE_UYVY		(1 << 4)
--
- enum rzg2l_csi2_pads {
- 	RZG2L_CRU_IP_SINK = 0,
- 	RZG2L_CRU_IP_SOURCE,
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-index 982c996cc777..d935d981f9d3 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-ip.c
-@@ -9,6 +9,7 @@
- #include <media/mipi-csi2.h>
- 
- #include "rzg2l-cru.h"
-+#include "rzg2l-cru-regs.h"
- 
- static const struct rzg2l_cru_ip_format rzg2l_cru_ip_formats[] = {
- 	{
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index a686a5cd4f59..a4dc3689599c 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -20,74 +20,7 @@
- #include <media/videobuf2-dma-contig.h>
- 
- #include "rzg2l-cru.h"
--
--/* HW CRU Registers Definition */
--
--/* CRU Control Register */
--#define CRUnCTRL			0x0
--#define CRUnCTRL_VINSEL(x)		((x) << 0)
--
--/* CRU Interrupt Enable Register */
--#define CRUnIE				0x4
--#define CRUnIE_EFE			BIT(17)
--
--/* CRU Interrupt Status Register */
--#define CRUnINTS			0x8
--#define CRUnINTS_SFS			BIT(16)
--
--/* CRU Reset Register */
--#define CRUnRST				0xc
--#define CRUnRST_VRESETN			BIT(0)
--
--/* Memory Bank Base Address (Lower) Register for CRU Image Data */
--#define AMnMBxADDRL(x)			(0x100 + ((x) * 8))
--
--/* Memory Bank Base Address (Higher) Register for CRU Image Data */
--#define AMnMBxADDRH(x)			(0x104 + ((x) * 8))
--
--/* Memory Bank Enable Register for CRU Image Data */
--#define AMnMBVALID			0x148
--#define AMnMBVALID_MBVALID(x)		GENMASK(x, 0)
--
--/* Memory Bank Status Register for CRU Image Data */
--#define AMnMBS				0x14c
--#define AMnMBS_MBSTS			0x7
--
--/* AXI Master Transfer Setting Register for CRU Image Data */
--#define AMnAXIATTR			0x158
--#define AMnAXIATTR_AXILEN_MASK		GENMASK(3, 0)
--#define AMnAXIATTR_AXILEN		(0xf)
--
--/* AXI Master FIFO Pointer Register for CRU Image Data */
--#define AMnFIFOPNTR			0x168
--#define AMnFIFOPNTR_FIFOWPNTR		GENMASK(7, 0)
--#define AMnFIFOPNTR_FIFORPNTR_Y		GENMASK(23, 16)
--
--/* AXI Master Transfer Stop Register for CRU Image Data */
--#define AMnAXISTP			0x174
--#define AMnAXISTP_AXI_STOP		BIT(0)
--
--/* AXI Master Transfer Stop Status Register for CRU Image Data */
--#define AMnAXISTPACK			0x178
--#define AMnAXISTPACK_AXI_STOP_ACK	BIT(0)
--
--/* CRU Image Processing Enable Register */
--#define ICnEN				0x200
--#define ICnEN_ICEN			BIT(0)
--
--/* CRU Image Processing Main Control Register */
--#define ICnMC				0x208
--#define ICnMC_CSCTHR			BIT(5)
--#define ICnMC_INF(x)			((x) << 16)
--#define ICnMC_VCSEL(x)			((x) << 22)
--#define ICnMC_INF_MASK			GENMASK(21, 16)
--
--/* CRU Module Status Register */
--#define ICnMS				0x254
--#define ICnMS_IA			BIT(2)
--
--/* CRU Data Output Mode Register */
--#define ICnDMR				0x26c
-+#include "rzg2l-cru-regs.h"
- 
- #define RZG2L_TIMEOUT_MS		100
- #define RZG2L_RETRIES			10
--- 
-2.43.0
-
+(Apologies for double e-mail. My phone client formatted the mail in html=
+)
 
