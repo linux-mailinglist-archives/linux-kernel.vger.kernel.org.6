@@ -1,187 +1,165 @@
-Return-Path: <linux-kernel+bounces-360535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B885C999C3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:49:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41817999C47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:52:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C1A3B22E4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:49:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BFA0EB22D8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A92B1F9A97;
-	Fri, 11 Oct 2024 05:48:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5001C1F942E;
+	Fri, 11 Oct 2024 05:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="K5xphyqG"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/+WldH4"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA7E1EABA2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:48:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A09B1EABA2;
+	Fri, 11 Oct 2024 05:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728625732; cv=none; b=SztGGN/42XxsKzxe0Hni32oV5V26icmxRGZrooxTBD31/MGUoXzjwoZ0YaaYf4H3jIH++lkwzchAAhbHIjmCDGKXS6BegRa7doVAYz71QCk0FCLU5uZSUAi+rTmtbVXT/2GFahtLf9bYo7Itj1b5iDFnpqzv8iqyOkrzV8wSv2Y=
+	t=1728625960; cv=none; b=hoa9/guMx3Mpu4wOXGMYO2ltoRwK38IqFHLkR/5e4sD31/gtuNMHRnqjCEFAlyiFh2nVaRXMlVFkG5QMlvj187ycD5ShfETVFYaesUFc+SvhZGlNBi1FRHoTJF1qIqmvFIdQBQLrQjwHaLGuHQZEiTHFmOxkKVqj5xzjj/AP5yo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728625732; c=relaxed/simple;
-	bh=gSDr2qXiWunqD83kcCcfkWzmofL1UeyjfIsv5gb6YVw=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=arwDSK8Wd8hzF63ZVwCxGYjFP2vibw6Xy2p2mMkQ1YXrKV+1qmT3+ZLfhSX5HLYiB6k8U0BybIo74nS2ER4mpitXIFs5Vrs3z7Sx8ShOxlHd6WIg2N1H4UlchJ5mdX9hXN7DJWxGnyuGq03FSglI7TeOQBzCT8ksBrgx9U+furQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=K5xphyqG; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2facf481587so12885781fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:48:48 -0700 (PDT)
+	s=arc-20240116; t=1728625960; c=relaxed/simple;
+	bh=k7a/6NlISzDAoMHxrctmx0ZsXphGvGGWBsS9qxb5j44=;
+	h=From:To:Cc:Subject:Date:Message-Id; b=b0gRfuZkDB6Wh1KZqvjpZR3+OBBXpS1driEV8Nwcr7lp9OIc3bto4kVDxClxwAi6sphHAggfMF7+o9vmc+lRWhbYhrtMpkDTzetcknZwcrNuCdd1X/4MjVJi6BRrQmT0lL5Dy1Y5dFO45J25qkYLjDchALkoIh4YzHuiiL8vpO4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/+WldH4; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7db238d07b3so1543214a12.2;
+        Thu, 10 Oct 2024 22:52:39 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728625727; x=1729230527; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kAUIBKUFiqHBE7OX0O7eWG2UC2nEpnjuYCzeR97fn5c=;
-        b=K5xphyqGvesNOdZhdTEFto1ShyNHS1P1jN2zpQl4Ps5Dg2JOv+Qhg0fZB/UJmrHbcQ
-         ZqqQcOsBVBGrbRPRzY5fNdWjsa2A+j6rlWD5dQzvX1KWIjJ4hoJA3F9+jry+pZyyuApe
-         rXxLTYRDaIoaBeEbVlPHd90yly5NvTRjOF8wYaR9uxHM+7Qm2YbBvttCu9qTIdbqFS72
-         WBOQYNjzwz9k9w/ZVe3fsqdsW0wPNqvQbI9wp9E8HZdi3QQlVmKihUCfSu0UBHmKxv91
-         /LfD/BPrwd2kXofVW+k+hohhEH1pQbKYiqHYj5Fov2r0zX1I3V/WdNvhtbhESLwcyJN6
-         jXIw==
+        d=gmail.com; s=20230601; t=1728625958; x=1729230758; darn=vger.kernel.org;
+        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gubUx7YA3XH8B/MVDP0X02w0r61djF5HDUMcLAKhgk8=;
+        b=g/+WldH4hSndN5QVNlng0rD2iFpshYaBhoVXMHv90AqhRI+dR4kR56TRhw5QmMVlgu
+         x2O0WsBPWanAJAg4Fawc5owLLHG+iYSao0yGTpYYK88gwvcD1DPuWbfoSt/zCWbio48m
+         0AgUjRgW27joTfDRg4flHm2/wLh+92A7jpS6SbNAqZq2gJad1ZJG1F1cSePVVsyBrmgF
+         IXhH4wGLD54u/ZHkMJGy7cEfwsE4O/anJej2U3sM6HkZL7TTIXVvJqN39V9HIFL65YKU
+         uqMwNCN3GxSF/Tgck7RvzAVmayMfiIGMjOqO8RWXZeunDpITuBrTz2HKxI4UuEHAah0G
+         jYtQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728625727; x=1729230527;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kAUIBKUFiqHBE7OX0O7eWG2UC2nEpnjuYCzeR97fn5c=;
-        b=pgpdmaiC+Ni1EkGECyQAb9blvqRTE0ZA6HQbTO1iZuTT/S487csO99cWQeg2IKHEST
-         H3e8SwsW1X+eNppWQlBkhYwOYKGZrfSHLGvXR7OjVbXIUUakKK1E/G30H2/F/0mSDoNn
-         u1FPf8R0XSYdHX3ZOdLYUixHkHK4YW87IbhewvZk0KidYR3uQlUptg9H+igi9uBpdyux
-         UVmEMXw2idL/hBZl/TRoxFn8gxeEUlMNEuhFM3Is+rAkQSTDGT61I6imwMvYa4vjMtHv
-         Uknat5m4L5g82ho8Fh9dc5DrnHFFiWdOuKry4y/HsudYhSCFyMazhnHQKNNyuUfPmKfz
-         0lpQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWnA/RBzZ8+OGA+4I8DFDTG//BOxGt3tYH9L/0GXQqC+YI0SXKH9oxfu8vghO6B3Pb4mZeLyOuaOPdlJNI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6yOukGhP+CUbI6ppWXySmXlbIHSzctwPMkH4P5vwJjYsZNIb8
-	2paICqw5AprR1yYIa2AyXNMpfateEA6mVMmLK8V52XjY6XJSZq0qG9JWrXnq+n8=
-X-Google-Smtp-Source: AGHT+IElgnZzJUF2VeU6qLAFyoymFdQaxiQWEzvuNGs2dbyEg43CbtOA9CKVQOGhLlMEcGoNVmZPew==
-X-Received: by 2002:a2e:be13:0:b0:2fa:c46a:eb4e with SMTP id 38308e7fff4ca-2fb326fe462mr3847561fa.3.1728625726600;
-        Thu, 10 Oct 2024 22:48:46 -0700 (PDT)
-Received: from umbar.lan ([192.130.178.90])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb24770a41sm4186111fa.129.2024.10.10.22.48.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 22:48:45 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Date: Fri, 11 Oct 2024 08:48:39 +0300
-Subject: [PATCH RESEND] thermal/drivers/qcom/lmh: remove false lockdep
- backtrace
+        d=1e100.net; s=20230601; t=1728625958; x=1729230758;
+        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gubUx7YA3XH8B/MVDP0X02w0r61djF5HDUMcLAKhgk8=;
+        b=B1caTDYMt6veAjm7BZ5MAUVxUiQifc7zSSrwvSkqmkY3TfcDk6kqbM5Au+sgJi+P0p
+         LIamH5gkdTn22qP6G3Yj16+FABKkJu/H6PEqn24otInvFhT7cbfSLwfssAhzWOqjmoH3
+         jsefjLicvoetpE3sj1frTpjSZvTyPzDIJsfgbmzfjPuYL28FB2gtw5b8cVpxKSbdVA8G
+         hss5ktciM9s/7Gj7bMZ9p5OmQYF+JsQxzIbvfjbfXOrewtJAIGuwt3MuOYH3fLUjNKM9
+         wuDDqkZHRzT9eXRj8IV8+WdV6sSH1gZLZGzZWm9gh4Vz4xE4DMv5hWiLDksWKyZ+KM12
+         GFtg==
+X-Forwarded-Encrypted: i=1; AJvYcCU+ZJK39rdG8bkj26Zy6ZDXjLSCUOT/AeuiqtS7hj4jeSQ4ml4PAXPVJmrhAIm+5wzapjZgLPfeQ+Q=@vger.kernel.org, AJvYcCV+X6hqQS28YcNBZGrjW6SklhP9HLNeSjOhsxFzaY73fgxRS6J9J0/8+sRb+YbjFGBT/q561i9wQY1RjT/0@vger.kernel.org
+X-Gm-Message-State: AOJu0YxomEuk3JvIdOQmFv7IQLjCyTylqsx2cUpWdTIJjCOF/u65Omf4
+	sj0HCAZfAPHaPZOXoqwfGwvabKQEfz4/y/UmwQEkkzeUfNmJYQU=
+X-Google-Smtp-Source: AGHT+IFuXKSQzE3D4FXgPcQs86Ev89IWF58UUbrUTDSMyHazV9CkFfv59ZyhCE0poiLdoE+ciM2C+Q==
+X-Received: by 2002:a05:6a21:6e4a:b0:1d8:a9c0:8853 with SMTP id adf61e73a8af0-1d8bcf3bd6amr2724825637.23.1728625958472;
+        Thu, 10 Oct 2024 22:52:38 -0700 (PDT)
+Received: from localhost (2001-b400-e38a-6880-f424-8486-7476-9f9d.emome-ip6.hinet.net. [2001:b400:e38a:6880:f424:8486:7476:9f9d])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea44967269sm1915371a12.81.2024.10.10.22.52.37
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Oct 2024 22:52:37 -0700 (PDT)
+From: Tyrone Ting <warp5tw@gmail.com>
+X-Google-Original-From: Tyrone Ting <kfting@nuvoton.com>
+To: avifishman70@gmail.com,
+	tmaimon77@gmail.com,
+	tali.perry1@gmail.com,
+	venture@google.com,
+	yuenn@google.com,
+	benjaminfair@google.com,
+	andi.shyti@kernel.org,
+	andriy.shevchenko@linux.intel.com,
+	wsa@kernel.org,
+	rand.sec96@gmail.com,
+	wsa+renesas@sang-engineering.com,
+	warp5tw@gmail.com,
+	tali.perry@nuvoton.com,
+	Avi.Fishman@nuvoton.com,
+	tomer.maimon@nuvoton.com,
+	KWLIU@nuvoton.com,
+	JJLIU0@nuvoton.com,
+	kfting@nuvoton.com
+Cc: openbmc@lists.ozlabs.org,
+	linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/4] i2c: npcm: read/write operation, checkpatch
+Date: Fri, 11 Oct 2024 13:52:27 +0800
+Message-Id: <20241011055231.9826-1-kfting@nuvoton.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-lmh-lockdep-v1-1-495cbbe6fef1@linaro.org>
-To: Amit Kucheria <amitk@kernel.org>, 
- Thara Gopinath <thara.gopinath@gmail.com>, 
- "Rafael J. Wysocki" <rafael@kernel.org>, 
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
- Lukasz Luba <lukasz.luba@arm.com>
-Cc: Thara Gopinath <thara.gopinath@linaro.org>, linux-pm@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2582;
- i=dmitry.baryshkov@linaro.org; h=from:subject:message-id;
- bh=gSDr2qXiWunqD83kcCcfkWzmofL1UeyjfIsv5gb6YVw=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBnCLw70Pj12BWKspOc3Iexi6FaN+ED1D3pwfnZc
- rZjUEBmHieJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCZwi8OwAKCRCLPIo+Aiko
- 1ZIXB/9KZut2clhqKYo18Rw7gj6QdBb3gWOHFkHnZwIf4UKQIRvHY36O3T/LEj/iqLn6LnMhO/G
- oMx2OjPb+s6le34h63v+PU0Zj6RUbR6lJyZhBpb3PIUhh/Xb7ncNroEgagZXa101Wx9RO4CsTls
- Z9bELVN7jxZ5zni4l08TXgV6Rscm9Vz21wyTpAjytzy8zgjl38QVXbPVAxcZO76N1OOw3ZF3uoz
- ny+8AZBw8zZDCmtq+Dxoi7ZA7JtXbPMHcjEqEnx491tIFMA7Sn2xliuZbpYj7WEtd9osPi0SBit
- VqJfFGBlEVV4lDOCl0RBgJzUo7zRdNfg86xrvOnpfE+MH1KD
-X-Developer-Key: i=dmitry.baryshkov@linaro.org; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
 
-Annotate LMH IRQs with lockdep classes so that the lockdep doesn't
-report possible recursive locking issue between LMH and GIC interrupts.
+This patchset includes the following fixes:
 
-For the reference:
+- Enable the target functionality in the interrupt handling routine 
+  when the i2c transfer is about to finish.
+- Correct the read/write operation procedure.
+- Introduce a software flag to handle the bus error (BER) condition
+  which is not caused by the i2c transfer.
+- Modify timeout calculation.
+- Assign the client address earlier logically.
+- Use an i2c frequency table for the frequency parameters assignment.
+- Coding style fix.
 
-       CPU0
-       ----
-  lock(&irq_desc_lock_class);
-  lock(&irq_desc_lock_class);
+The NPCM I2C driver is tested on NPCM750 and NPCM845 evaluation boards.
 
- *** DEADLOCK ***
+Addressed comments from:
+- Andy Shevchenko : https://lore.kernel.org/lkml/CACD3sJYhAYV3zBse5ntF
+  sQmLV+TpLKtOiyyqgp3g8qeja54Ejw@mail.gmail.com/
+- Andy Shevchenko : https://lore.kernel.org/lkml/ZwVcGu3YeJ6pI0sM
+  @black.fi.intel.com/
+- Andy Shevchenko : https://lore.kernel.org/lkml/Zvv3ws1_jUMVnAAJ
+  @smile.fi.intel.com/
 
-Call trace:
- dump_backtrace+0x98/0xf0
- show_stack+0x18/0x24
- dump_stack_lvl+0x90/0xd0
- dump_stack+0x18/0x24
- print_deadlock_bug+0x258/0x348
- __lock_acquire+0x1078/0x1f44
- lock_acquire+0x1fc/0x32c
- _raw_spin_lock_irqsave+0x60/0x88
- __irq_get_desc_lock+0x58/0x98
- enable_irq+0x38/0xa0
- lmh_enable_interrupt+0x2c/0x38
- irq_enable+0x40/0x8c
- __irq_startup+0x78/0xa4
- irq_startup+0x78/0x168
- __enable_irq+0x70/0x7c
- enable_irq+0x4c/0xa0
- qcom_cpufreq_ready+0x20/0x2c
- cpufreq_online+0x2a8/0x988
- cpufreq_add_dev+0x80/0x98
- subsys_interface_register+0x104/0x134
- cpufreq_register_driver+0x150/0x234
- qcom_cpufreq_hw_driver_probe+0x2a8/0x388
- platform_probe+0x68/0xc0
- really_probe+0xbc/0x298
- __driver_probe_device+0x78/0x12c
- driver_probe_device+0x3c/0x160
- __device_attach_driver+0xb8/0x138
- bus_for_each_drv+0x84/0xe0
- __device_attach+0x9c/0x188
- device_initial_probe+0x14/0x20
- bus_probe_device+0xac/0xb0
- deferred_probe_work_func+0x8c/0xc8
- process_one_work+0x20c/0x62c
- worker_thread+0x1bc/0x36c
- kthread+0x120/0x124
- ret_from_fork+0x10/0x20
+Changes since version 5:
+- Correct "EAGAIN" to "-EAGAIN" in the commit message.
+- Configure the bus->dest_addr by calling i2c_8bit_addr_from_msg()
+  and remove the I2C_M_RD flag when calling i2c_recover_bus().
+- Fix the commit message which meets a too small wrapping limit.
 
-Fixes: 53bca371cdf7 ("thermal/drivers/qcom: Add support for LMh driver")
-Cc: stable@vger.kernel.org
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
----
- drivers/thermal/qcom/lmh.c | 7 +++++++
- 1 file changed, 7 insertions(+)
+Changes since version 4:
+- Add more description for the codes.
+- Modify the term "function" to "function()" in the commit message
+and code comments.
 
-diff --git a/drivers/thermal/qcom/lmh.c b/drivers/thermal/qcom/lmh.c
-index 5225b3621a56..d2d49264cf83 100644
---- a/drivers/thermal/qcom/lmh.c
-+++ b/drivers/thermal/qcom/lmh.c
-@@ -73,7 +73,14 @@ static struct irq_chip lmh_irq_chip = {
- static int lmh_irq_map(struct irq_domain *d, unsigned int irq, irq_hw_number_t hw)
- {
- 	struct lmh_hw_data *lmh_data = d->host_data;
-+	static struct lock_class_key lmh_lock_key;
-+	static struct lock_class_key lmh_request_key;
- 
-+	/*
-+	 * This lock class tells lockdep that GPIO irqs are in a different
-+	 * category than their parents, so it won't report false recursion.
-+	 */
-+	irq_set_lockdep_class(irq, &lmh_lock_key, &lmh_request_key);
- 	irq_set_chip_and_handler(irq, &lmh_irq_chip, handle_simple_irq);
- 	irq_set_chip_data(irq, lmh_data);
- 
+Changes since version 3:
+- Remove "Bug fixes" in the cover letter title.
+- Modify the term "function" to "func()" in the commit message and
+  code comments.
+- Correct the coding style.
 
----
-base-commit: 797012914d2d031430268fe512af0ccd7d8e46ef
-change-id: 20240721-lmh-lockdep-88de09e77089
+Changes since version 2:
+- Add more explanations in the commit message and code modification.
+- Use lower character names for declarations.
+- Remove Fixes tags in commits which are not to fix bugs.
 
-Best regards,
+Changes since version 1:
+- Restore the npcm_i2caddr array length to fix the smatch warning.
+- Remove unused variables.
+- Handle the condition where scl_table_cnt reaches to the maximum value.
+- Fix the checkpatch warning.
+
+Charles Boyer (1):
+  i2c: npcm: Enable slave in eob interrupt
+
+Tyrone Ting (3):
+  i2c: npcm: Modify timeout evaluation mechanism
+  i2c: npcm: Modify the client address assignment
+  i2c: npcm: use i2c frequency table
+
+ drivers/i2c/busses/i2c-npcm7xx.c | 428 ++++++++++++++++++++++++-------
+ 1 file changed, 332 insertions(+), 96 deletions(-)
+
+
+base-commit: 663bff1ddfe4ecbba3bcf4a74646bb388b1ad5b2
 -- 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+2.34.1
 
 
