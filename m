@@ -1,510 +1,267 @@
-Return-Path: <linux-kernel+bounces-360329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BEF799996D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:33:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A250699997C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:35:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4FBA4B227C9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:33:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264601F23860
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:35:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA56EC13D;
-	Fri, 11 Oct 2024 01:33:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A70C3171AF;
+	Fri, 11 Oct 2024 01:34:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ec/g6ApD"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
+	dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b="hjNRFRFU"
+Received: from CY4PR02CU008.outbound.protection.outlook.com (mail-westcentralusazon11021114.outbound.protection.outlook.com [40.93.199.114])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F18A8D299
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:33:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728610424; cv=none; b=Bri8xOBm0J7mB44RbOzoQDQBJLvIQwxMX6lXKAnZdZSK4xExtrD/Z53/qj3rnQjruhDk/e/s+TwNbJhJHidpKMRBSVuQo77KOFntkAliMnD0UrjnPIXJ4DtbnOf4WQVGkNoCqTmJY8xSO6Zl8S3pIraRUJKczxhZ2NUsCRJSdeA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728610424; c=relaxed/simple;
-	bh=jTNrVwIEjQnkWBfo3g/bPHwRl6jmc68ekjhnDhZwh+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NgxHIaNdXspMAAsBLCMUvqOFdaHPADstSGgLkodlH5oxMWgikWH6OtFQGdoCq07WX1RJooQniEL+jCXZ3r1mEq2wkNIY5rf7r1txSuZQq1why9mepBwH36ezJYDpgDN+qqI+WzkUS+Ozszx/uwCnk2fYdgheDL6y7o6d0IR87Ic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ec/g6ApD; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <9be3cd38-5948-4b6e-936e-f1dcc47336c2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728610418;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+Uif0kKJGynXRA3K5ZAIIoTPQBODkDCKfxiAcZpifnQ=;
-	b=ec/g6ApDBESNrKivwqMDkJ3J59v2g+xIT14+lZfaSpm1wr8Hmwr9/yVhm+sG+kGOQo6jdn
-	VwT0JF8FkJY2V12lLQNbGvItz5u6auMRReqvR/onArtNv2fmzyGWfxZ+fccQelEMnoITmY
-	wBeWyodYZHbBOoSvjCbR/jPHQeWCts0=
-Date: Fri, 11 Oct 2024 09:33:21 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D8068BE8;
+	Fri, 11 Oct 2024 01:34:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.93.199.114
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728610494; cv=fail; b=qGtKSb2bjKd1xPAWBO0Wd/2du+cqIoXvKwB9sGZDKGv8M/cJAezf/nhZaEK5wz36Y4fMgNjiLT6LxQxFXWM5HnrMUeX8+4C24i4KMBwm38+fqIyLDMQn+Xba2v4kD7ZNNYBepdsmenZ6kNpnZ13ZYktbFNM4Pq6aoPaHhqaoVrc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728610494; c=relaxed/simple;
+	bh=y78aC1MOJO1KgVzKLNy0pdE4j5F2xRW40CAPLjNwurg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=FVWT0csRBhSB5QROqZ8JkPo1eW/apbYc7eYdyuVZBqjKuGvUUzJj0Xan/gm0P18TT7kt+AeDZIxyBzLo8dGIzYkoQLdAI6TxlQ/6NNxp6n5bp+ovoYIL7rSAqC3JoNCPygsIeMiF6GnK5TxcxxzNldA5aVQenjVwEwJHbTZFMWY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com; spf=pass smtp.mailfrom=microsoft.com; dkim=pass (1024-bit key) header.d=microsoft.com header.i=@microsoft.com header.b=hjNRFRFU; arc=fail smtp.client-ip=40.93.199.114
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microsoft.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EKbHILYloUvJkW/zB8bm5KlZ5y9RHtGmkcOk/o8FUPd9kbNU3wVD3P6bx5sx9QjaL3OhM7IuG64GA/fya+SOeaM5FegS/AFhGKqz0RUpymFUd65vaS1y1zovX4Zc2IjRGJATwlqvQWVYjSgXjkmFfbeIk+EtatuIAu1wlQG75l3ectu5EVC18kTyaBs1mY2Fw8HXRqOd63YP1aiGZgMGZuMuI1y1wHCJkNOO2Xssym4Br+nFVdM9eN/x2slC2cWk3m67gIrXA1sXgiRjO21GXF8cvFhKZbtuAwaUjIAKcmIXxImK4nUAbtfP+3dH0JmsUkVUjjlULYifGL9pNGplxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=y78aC1MOJO1KgVzKLNy0pdE4j5F2xRW40CAPLjNwurg=;
+ b=cad9cFzOfE2xNq7p1Etq0DN+FfhLOw3OtZgodnvq1AFeTRXP8fgiA3u2WX0aIhbQyv3O/M36Tibp+dVZwv3Rd8m6W2qiT9NunHGqOc7h2jlpRvG7S6XMNFXnAqZRHCDQVb+wvtHM2UYKMxhJAC3XzmgUq5X97AlBh6yw5ObKhY1OvBoVJHcXW17Skqde3/pwTZOPjwaSyKkdIT3Bo8jlR6xMb/Y0pDPvmkjJ+0PJ36obPJVAbmJ6JdblbYMHxKitUPOYEo7ixzUUndyqA13gd52zJMZOr9ZYLvEix52ZyH2nRUdeOFCD1N8l+CZ1su3b7roWwwij4R7XXAFFpkomAA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=microsoft.com; dmarc=pass action=none
+ header.from=microsoft.com; dkim=pass header.d=microsoft.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=y78aC1MOJO1KgVzKLNy0pdE4j5F2xRW40CAPLjNwurg=;
+ b=hjNRFRFUwIQK5bVT8alckIuyutzt0g6/GDPmcA5i5dzyHIpeqP0ee2rz7EggUQ3jDbAI87a2imX4Ve3EykCZldQfthquadwKq3SosPXaijpARLl3CmZBGdDaAM3Nl0l7uxyj6VspwJshAbpNWfMte9UPvfhbANXu3B04uQ8knpo=
+Received: from DM6PR21MB1434.namprd21.prod.outlook.com (2603:10b6:5:25a::10)
+ by DM4PR21MB4542.namprd21.prod.outlook.com (2603:10b6:8:66::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.6; Fri, 11 Oct
+ 2024 01:34:50 +0000
+Received: from DM6PR21MB1434.namprd21.prod.outlook.com
+ ([fe80::790a:4e07:a440:55cd]) by DM6PR21MB1434.namprd21.prod.outlook.com
+ ([fe80::790a:4e07:a440:55cd%6]) with mapi id 15.20.8069.001; Fri, 11 Oct 2024
+ 01:34:50 +0000
+From: MUKESH RATHOR <mukeshrathor@microsoft.com>
+To: Michael Kelley <mhklinux@outlook.com>, Nuno Das Neves
+	<nunodasneves@linux.microsoft.com>, "linux-hyperv@vger.kernel.org"
+	<linux-hyperv@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "virtualization@lists.linux.dev"
+	<virtualization@lists.linux.dev>
+CC: KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+	"wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
+	<will@kernel.org>, "luto@kernel.org" <luto@kernel.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "joro@8bytes.org"
+	<joro@8bytes.org>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
+	<robh@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"arnd@arndb.de" <arnd@arndb.de>, "sgarzare@redhat.com" <sgarzare@redhat.com>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
+Subject: Re: [EXTERNAL] RE: [PATCH 3/5] hyperv: Add new Hyper-V headers
+Thread-Topic: [EXTERNAL] RE: [PATCH 3/5] hyperv: Add new Hyper-V headers
+Thread-Index: AQHbFc2fpELizClC20+KdB1By4J6TbKAVvmAgAB48YA=
+Date: Fri, 11 Oct 2024 01:34:50 +0000
+Message-ID: <3432a47a-0936-9d1a-896f-d1e019905131@microsoft.com>
+References:
+ <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <1727985064-18362-4-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB415716A55D46E5D4F37D7DD2D4782@SN6PR02MB4157.namprd02.prod.outlook.com>
+In-Reply-To:
+ <SN6PR02MB415716A55D46E5D4F37D7DD2D4782@SN6PR02MB4157.namprd02.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=microsoft.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM6PR21MB1434:EE_|DM4PR21MB4542:EE_
+x-ms-office365-filtering-correlation-id: f1a4eb0c-2ce5-455e-92e3-08dce994e5da
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|7416014|376014|366016|1800799024|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MnFZZDNPNFlxK0hDTzIvZ3F2YVNwbXoydzI0Q0VqL1h6Z2FlUUliYmgzZ3JU?=
+ =?utf-8?B?V0Nhb1BLZmxLS0k3TjN1S0YxcFdScFJSaHYvR3hmNlhqSzN3L2FpNE9xK1Z1?=
+ =?utf-8?B?b1ZRa00vSk5ISy93K0xTSHFNZC84N2o3SCswSnJVWXpkelJMZE8vcFg0S1J5?=
+ =?utf-8?B?d0RJdStBaE56SFdKdlV5MzliMTByS0JDOUlIeG81UUlvQkZ3cTdGQjZKTnow?=
+ =?utf-8?B?UDY3ZDJ4eVVDV3R4VDZSaGtFK0JndU8rb0dVUng1SGZ0VzlwWTVoS0lxQ3hw?=
+ =?utf-8?B?ck9UaDhIQXpZdUtNRXJHWW1LdGVMNlpsOG90bWJ5czVJaTdrL1ArMCtaRkU3?=
+ =?utf-8?B?SGhlT09wVkd1WXZ2aUZ3V0lhRFV4V0lTMmJ0Mk1US25LNmsxaHNXMEN3eVZz?=
+ =?utf-8?B?NmJjWHFVaFMyNmFtMjdqTXZlckVzZ21FYjk1RkhPUVVIcFpLNyt3ZlRSWGJK?=
+ =?utf-8?B?cVJ2MXJYSDlHcmFEMEZIUGFoYUMwWlZUN0RoUElkUVBCYVhoMjdpbnZsZVQy?=
+ =?utf-8?B?QzJQeXN0bmtyaEVjRC9UbEhaTE9Jbkw3TGlJYjZveGNaUk5QVUVDcHF3WGRF?=
+ =?utf-8?B?M1kySGQ0bXl2clBZOXBTMmtrMGxMZktmS25NQ1M5U1lPYVFSMGhQMlJmc3hI?=
+ =?utf-8?B?d1Raa1M1QUQrOVpKUW1nZ3lMNkZ1dWhlSis2UHpvMFA2Wm9Zak9pN2NwNm9u?=
+ =?utf-8?B?anFpMTFzUi9QMG1HaXJNa0Zua0c0MmREaHV1Y3VlR29HQjRFdUMya2ZPc2h2?=
+ =?utf-8?B?NHhYWi9UWnFEdjhZbzlDY0RUMTlra3c1U0RGclVrNlZEdUVXd0ZVSGp2SU5k?=
+ =?utf-8?B?cWRFT3dPaWNSajhReHhvRjVNb05LYW8xOGl0cC93RDdPSFVBRTNHNW5GdCtH?=
+ =?utf-8?B?bmR4RW0rTUhuRjNPTGNjTWIwYi8xenROM29tdDNoc1c2dWYzMldXTWtSR2c1?=
+ =?utf-8?B?UHd1bkNIZGRyTHFMOCtVVFIyNXp2UWd0UFQ3c0RQY1YxTHV3d3RObkhPNlhS?=
+ =?utf-8?B?QlhkQXZQdXlyc1pheG5PZ2NqQXpUODFLQ0xyWU5QQk9pWU92eDhQUTU3cWJJ?=
+ =?utf-8?B?NUpPNEk0eDNHb0U1L1U1WTlHa09FYUk3Y3RDWFQyRFcrNFdWY25XNVMrWWxT?=
+ =?utf-8?B?VGE5Z0pwUVY2MDdRdGp0ZHQ4QVhkaUo2Q3JLc1RCdkNhNHRiZjVUUzR2emtQ?=
+ =?utf-8?B?VmlPczROVkNXTFY1bCtrZmhQa0wxTnJvV09NUnY2VURtMHhLNnY5d2hySE50?=
+ =?utf-8?B?emdySVM5V2VDVzBya0RHYlBtaGVzSjRPYjhJQWdSWGsya2NyNHNPYXBRcHd5?=
+ =?utf-8?B?UnJQdmpFQUhGZmYvc3E4bEV0cHp6TFpBODFWampOQWR2V3JBWFRsQ0UxckRz?=
+ =?utf-8?B?RmlQcGhGUHNpUWxnblpTS25DOHR6L2Uwb0RRSEFjWWQxeStjeXlDYkZnME1Z?=
+ =?utf-8?B?SklpSG1WSVdpS0M1NlF2VE5KTTBkSUFadkFVYWlRT2lXcWxrZmZod0M4NDBD?=
+ =?utf-8?B?NnYyYUsxNDFDZ05qTjBXdGFwWDN3cndlclRpNUczWXFFWnQyNVd2OFJCTXhC?=
+ =?utf-8?B?TitVb2ZaRDVmSDFDK1RJWTdRa2hkRG1CUnh0UzVTQU0zMkY0c0k2cnZualhj?=
+ =?utf-8?B?SmhNMUNPM0t4QlBpdFZZWmJQeDQ2dzhEaUlaQnFkSkRlYkc3SVJ1cVNWOHpI?=
+ =?utf-8?B?U1UxNDY4VVhsZTJUK2R5Sm1nT1FpNnBYaW5KRGM3eCtuRDhMUm0vcUVSL2dB?=
+ =?utf-8?B?cFhHekwwcjF0bk1kaUlBV1BzMHZXWTNmNWVBOGpSQWtjWHdBK2loeE85OUNy?=
+ =?utf-8?B?SXc2UzhYY3UrTEx4d3REdz09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR21MB1434.namprd21.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?K05pTmpDSWVLNlJmT3dPaWZpQlBKTjdQYzgrUU9BRE02OHpLWlZFU1UrZlNH?=
+ =?utf-8?B?YVRtNXh4dnVuWTQrZi93WERXeGJSWGs4UGl6Q1d6dkZGQ0MwdzE3aHBnMWtN?=
+ =?utf-8?B?OVlMZWwrRnZ2UjJKQTgyWGUyUEt3bGQ2Y3Q5OVhZL3A5elpYQllhTmxtWjBq?=
+ =?utf-8?B?UVhRdmFaY3JHcWlZL0JESTF4R3VrQzBORnhjQzNqUkdMUkYwNFFlTzVTODZi?=
+ =?utf-8?B?bGdlMVFMNGhSRHJZVlI4QXc2eklKQmIxSEpVTndvYldxRFJvT0dEQTJyenFt?=
+ =?utf-8?B?eTB1SGFmTFkrVTdzUEExdkpvSFVXOG1kaVkvd0puK1pLZWlWeVdBeDNSVXND?=
+ =?utf-8?B?VHJFVHFMd3lOUGJFSEx5NzBaV2RjRExEVzFRT2tJVnF1ZUFyUjhnbXI0V2cx?=
+ =?utf-8?B?cTRhcUFUTDlrTFpGcU01SlFEK2JmcEZSVnZ6c01iaXp3bDhiT3pFKzFEQThm?=
+ =?utf-8?B?eC9URllqb1B3Nkx6TkNhK3BGdHI0S3Q2SDdpZmhIaTAyRFZGTUhZQngxMkw3?=
+ =?utf-8?B?ZjUxZ1dPRlZ2djlPYmg4TG9wNjg1OGtvRU42YnNoUkRqZTA4bDd1eVNNNHBO?=
+ =?utf-8?B?bUp5Z1FVNElCVk8wTkloYWhRUzI1Z242bjA2L1VpK25rSGpaRjIranl2MVdX?=
+ =?utf-8?B?ckpmbHorVTJRSlhoZ3FEc3RKTmtwMVV6UGZLVktUNk1GankxaTZndEZtWC96?=
+ =?utf-8?B?OW5IK3puUUl1VDVkMjY2bFdVUXJkRFl5cyt4YUhSRzhvbzlvd2JhV2F5QlBV?=
+ =?utf-8?B?aFROZTliaDRKa2RJVktFWGxvTjZicjk2UWlGbk0vQ0lPTnAvNnF0YjQ3ZDZK?=
+ =?utf-8?B?TXR4OVU4L0VKMXJYNTFUMFkvU0wxYmNZREsxaUdQamdrYVhnWFpyWWlqYnpi?=
+ =?utf-8?B?ejEydmUyYzNGd2tEbnJTL3QvRkhoc3QyMUh4UTJhQzZTRUZzZnBDcUVIU2Z3?=
+ =?utf-8?B?L0VVaC9DYlVBWW9jZ2JuQzJ0WUNPMmNuREYxeTd3V3dlYVRPR2ZSeHNGaUFx?=
+ =?utf-8?B?VjZvTjJKVTRGWkorM2dXNEFGZzRjVHArOWlScko4UU1heDllaUMwVFF6TVFk?=
+ =?utf-8?B?czBsUldIWWZFZWVIek5ycmNQejhHeHVkajB5WDBKT0RqV1ltb0JjZzY3eXRs?=
+ =?utf-8?B?dXo3NW5CSTB5THRNWVVwS29EKy8vcXlVTXdjdnZBbXBnWlpqNnNrTnRmVldO?=
+ =?utf-8?B?NnBqRGJMNnVZZUhEUmhvMTM5b0w0ckY2VkJoUERSd3BueitmdnBENVRySW5o?=
+ =?utf-8?B?RU9Fcnk4TTUwTW1vYjUxcnJGdWZKMm5xcm81ZXR5R2NmeG02VGRRalZjcmdq?=
+ =?utf-8?B?akhIRFc1S2V1eWgvVlVlNnZJUERoSjd3aTE5ZmVOZ3drTjRlMlRMUFMzdFhP?=
+ =?utf-8?B?WmljbDhOdkZ0KzlhQWpDaWdXVUY0TktWQTc1b3FiQWFUQU5WWkl1ejR5aVpm?=
+ =?utf-8?B?K2NKdGVOYzFjS2wvY09vZ2F0K0tSSmVhZlkyRFRGaWh1dWYvRDNzS2duVkU0?=
+ =?utf-8?B?S05aaGEyeEFKaHdqckgxZ3ZtVjc5VFlqSzQyRW9lWVVqSmF6YzkzN0x4K2lm?=
+ =?utf-8?B?bkF0ZHJKTG9Ob2h0Y3R3UXBCMmZmSjBEVTNpZ3R3eko3UnBwT09qRDQzbGtv?=
+ =?utf-8?B?RGVHbGkvUUZZU3IrRkE5UnY4cGszZFdLMkxTbDJGcVE1dWZnM0w2em9rdytL?=
+ =?utf-8?B?b3I2Z0UwQjBwb1NCK1dkS1lTUHFpNXZxRDZ6cEJLR1JNQlpEOXk1NkRlcDd5?=
+ =?utf-8?B?SXdVenF3bWltMHZ4U1dtMjUwQ2F2bVJxTThudzZBb3lwK05HVWZXWkFoVFlN?=
+ =?utf-8?B?VzA3NW9hbHhva29WR0ZoZXczNWlGM21aUkFtVWFvay9MWkNoR3FKdGRHeHZl?=
+ =?utf-8?B?enVkSjdidFRHdk43c0k2UWhxUHhha2s5MEIxM1JoU1VJVGRkN3ZVV1Z3MnRn?=
+ =?utf-8?B?a0NuUEl3YUpkcjFNU3dOdUcyRHVtOGNaTWkwR3h5QmVBS1g1bGYySVRQbzQr?=
+ =?utf-8?B?eGZGQmx4blpwajd3c2NRNXQyRFZobmQ4MGIwdmpTblUvYVg1NTY1MHBGcGV6?=
+ =?utf-8?Q?qx+FW4?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <5803F32AA60C3D46A97C6CC53BDD2CDC@namprd21.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v4 RESEND] Docs/zh_CN: Translate physical_memory.rst to
- Simplified Chinese
-To: jiang.kun2@zte.com.cn, alexs@kernel.org, siyanteng@loongson.cn,
- corbet@lwn.net, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- mudongliangabcd@gmail.com, seakeel@gmail.com
-Cc: wang.yaxin@zte.com.cn, fan.yu9@zte.com.cn, xu.xin16@zte.com.cn,
- he.peilin@zte.com.cn, tu.qiang35@zte.com.cn, qiu.yutan@zte.com.cn,
- zhang.yunkai@zte.com.cn
-References: <20241009094607377dUpMqBUFFrp0LP303_o5H@zte.com.cn>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Yanteng Si <si.yanteng@linux.dev>
-In-Reply-To: <20241009094607377dUpMqBUFFrp0LP303_o5H@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-OriginatorOrg: microsoft.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR21MB1434.namprd21.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f1a4eb0c-2ce5-455e-92e3-08dce994e5da
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 01:34:50.0426
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 72f988bf-86f1-41af-91ab-2d7cd011db47
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: JuDshbOl4a9qA/5W0ypo+eYvUqVrNVbmCNbU62c+vQuplPcSbAP6XHnni/YUJ6ztmQ3J5W4f4Bd0FJNTDdPKQI9GX5QRMb87oRWIFE1zR5E=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR21MB4542
 
-Hi Jiang and Yaxin,
-
-
-在 2024/10/9 09:46, jiang.kun2@zte.com.cn 写道:
-> From: Yaxin Wang <wang.yaxin@zte.com.cn>
->
-> This patch translates the "physical_memory.rst" document into
-> Simplified Chinese to improve accessibility for Chinese-speaking
-> developers and users.
->
-> The translation was done with attention to technical accuracy
-> and readability, ensuring that the document remains informative
-> and useful in its translated form.
-
-I have commented on this patch in v2, but have not received any response.
-
-Let's relax and communicate together. in v2:
-
-
-  <https://lore.kernel.org/all/6ad87d5f-a1c6-4d41-9ca4-41bd84907463@linux.dev/>
-
-
-I noticed that you mentioned in v3 'added the index for physical'memory. 
-rst
-
-in the index. rst', and I assume this is a response to my comment in v2.
-
-What I want to say is that this does not solve the problem mentioned
-
-in my comment. You can check the commit messages of other recent
-
-Chinese patches, such as:
-
-
-< https://lore.kernel.org/linux-doc/20240907070244.206808-1-dzm91 
-@Hust.edu.cn/>,
-
-
-here are what I want:
-
-
-“Update to commit 3832d1fd84b6 ("docs/core-api: expand Fedora 
-instructions for GCC plugins")”
-
-
-Thanks,
-
-Yanteng
-
-
->
-> Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
-> ---
-> v3->v4:
-> Some fixes according to:
-> https://lore.kernel.org/all/CAD-N9QWJL8xmyLXi+D1gm5fXX-9DcjuzGv=pW=oQyJyXc=GfqA@mail.gmail.com/
-> 1. Adjust the context alignment, make it more neat.
-> 2. Regenerate the patch make sure it can now be applied to the latest
-> next/master branch.
->
-> Documentation/translations/zh_CN/mm/index.rst |   1 +
-> ../translations/zh_CN/mm/physical_memory.rst | 356 ++++++++++++++++++
-> 2 files changed, 357 insertions(+)
-> create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
->
-> diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
-> index b950dd118be7..eac20a7ec9a6 100644
-> --- a/Documentation/translations/zh_CN/mm/index.rst
-> +++ b/Documentation/translations/zh_CN/mm/index.rst
-> @@ -53,6 +53,7 @@ Linux内存管理文档
-> page_migration
-> page_owner
-> page_table_check
-> +   physical_memory
-> remap_file_pages
-> split_page_table_lock
-> vmalloced-kernel-stacks
-> diff --git a/Documentation/translations/zh_CN/mm/physical_memory.rst b/Documentation/translations/zh_CN/mm/physical_memory.rst
-> new file mode 100644
-> index 000000000000..ed813e513897
-> --- /dev/null
-> +++ b/Documentation/translations/zh_CN/mm/physical_memory.rst
-> @@ -0,0 +1,356 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +.. include:: ../disclaimer-zh_CN.rst
-> +
-> +:Original: Documentation/mm/physical_memory.rst
-> +
-> +:翻译:
-> +
-> +   王亚鑫 Yaxin Wang <wang.yaxin@zte.com.cn>
-> +
-> +========
-> +物理内存
-> +========
-> +
-> +Linux可用于多种架构，因此需要一个与架构无关的抽象来表示物理内存。本章描述
-> +了管理运行系统中物理内存的结构。
-> +
-> +第一个与内存管理相关的主要概念是`非一致性内存访问(NUMA)
-> +<https://en.wikipedia.org/wiki/Non-uniform_memory_access>`
-> +
-> +在多核和多插槽机器中，内存可能被组织成不同的存储区，这些存储区根据与处理器
-> +的“不同”而有不同的访问开销。例如，可能为每个CPU分配内存存储区，或者为外围
-> +设备在附近分配一个非常适合DMA的内存存储区。
-> +
-> +每个存储区被称为一个节点，节点在Linux中表示为 ``struct pglist_data``，
-> +即使是在UMA架构中也是这样表示。该结构总是通过 ``pg_data_t`` 来引用。特
-> +定节点的 ``pg_data_t`` 结构体可以通过NODE_DATA(nid)引用，其中nid被称
-> +为该节点的ID。
-> +
-> +对于非一致性内存访问（NUMA）架构，节点数据结构在引导时由特定于架构的代码早
-> +期分配。通常，这些结构在其所在的内存区上本地分配。对于一致性内存访问（UMA）
-> +架构，只使用一个静态的 ``pg_data_t`` 结构体，称为 ``contig_page_data`` 。
-> +节点将会在 :ref:`节点 <nodes>` 章节中进一步讨论。
-> +
-> +整个物理内存被划分为一个或多个被称为区域的块，这些区域表示内存的范围。这
-> +些范围通常由访问内存的架构限制来决定。在节点内，与特定区域对应的内存范围
-> +由 ``struct zone`` 结构体描述，该结构被定义为 ``zone_t``，每种区域都
-> +属于以下描述类型的一种。
-> +
-> +* ``ZONE_DMA`` 和 ``ZONE_DMA32`` 在历史上代表适用于DMA的内存，这些
-> +  内存由那些不能访问所有可寻址内存的外设访问。多年来，已经有了更好、更稳
-> +  固的接口来获取满足特定DMA需求的内存（这些接口由
-> +  Documentation/core-api/dma-api.rst 文档描述），但是 ``ZONE_DMA``
-> +  和 ``ZONE_DMA32`` 仍然表示访问受限的内存范围。
-> +
-> +取决于架构的不同，这两种区域可以在构建时通过关闭 ``CONFIG_ZONE_DMA`` 和
-> +``CONFIG_ZONE_DMA32`` 配置选项来禁用。一些64位的平台可能需要这两种区域，
-> +因为他们支持具有不同DMA寻址限制的外设。
-> +
-> +* ``ZONE_NORMAL`` 是普通内存的区域，这种内存可以被内核随时访问。如果DMA
-> +  设备支持将数据传输到所有可寻址的内存区域，那么可在该区域的页面上执行DMA
-> +  操作。 ``ZONE_NORMAL`` 总是开启的。
-> +
-> +* ``ZONE_HIGHMEM`` 是指那些没有在内核页表中永久映射的物理内存部分。该区
-> +  域的内存只能通过临时映射被内核访问。该区域只在某些32位架构上可用，并且是
-> +  通过 ``CONFIG_HIGHMEM`` 选项开启。
-> +
-> +* ``ZONE_MOVABLE`` 是用于可访问的普通内存区域，就像 ``ZONE_NORMAL``
-> +  一样。  不同之处在于 ``ZONE_MOVABLE`` 中的大多数页面内容是可移动的。
-> +  这意味着这些页面的虚拟地址不会改变，但它们的内容可能会在不同的物理页面
-> +  之间移动。通常，在内存热插拔期间填充 ``ZONE_MOVABLE``，  在启动时也
-> +  可以使用 ``kernelcore``、 ``movablecore`` 和 ``movable_node``
-> +  这些内核命令行参数来填充。更多详细信息，请参阅内核文档
-> +  Documentation/mm/page_migration.rst 和
-> +  Documentation/admin-guide/mm/memory-hotplug.rst。
-> +
-> +* ``ZONE_DEVICE`` 表示位于持久性内存（PMEM）和图形处理单元（GPU）
-> +  等设备上的内存。它与RAM区域类型有不同的特性，并且它的存在是为了提供
-> +  :ref:`struct page<Pages>` 结构和内存映射服务，以便设备驱动程序能
-> +  识别物理地址范围。 ``ZONE_DEVICE`` 通过 ``CONFIG_ZONE_DEVICE``
-> +  选项开启。
-> +
-> +需要注意的是，许多内核操作只能使用 ``ZONE_NORMAL`` 来执行，因此它是
-> +性能最关键区域。区域在 :ref:`区域 <zones>` 章节中有更详细的讨论。
-> +
-> +节点和区域范围之间的关系由固件报告的物理内存映射决定，另外也由内存寻址
-> +的架构约束以及内核命令行中的某些参数决定。
-> +
-> +例如，在具有2GB RAM的x86统一内存架构（UMA）机器上运行32位内核时，整
-> +个内存将位于节点0，并且将有三个区域： ``ZONE_DMA``、 ``ZONE_NORMAL``
-> +和 ``ZONE_HIGHMEM``::
-> +
-> +  0                                                            2G
-> +  +-------------------------------------------------------------+
-> +  |                            node 0                           |
-> +  +-------------------------------------------------------------+
-> +
-> +  0         16M                    896M                        2G
-> +  +----------+-----------------------+--------------------------+
-> +  | ZONE_DMA |      ZONE_NORMAL      |       ZONE_HIGHMEM       |
-> +  +----------+-----------------------+--------------------------+
-> +
-> +
-> +在内核构建时关闭 ``ZONE_DMA`` 开启 ``ZONE_DMA32``，并且在具有16GB
-> +RAM平均分配在两个节点上的arm64机器上，使用 ``movablecore=80%`` 参数
-> +启动时， ``ZONE_DMA32`` 、 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE``
-> +位于节点0，而 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE`` 位于节点1::
-> +
-> +
-> + 1G                                9G                         17G
-> +  +--------------------------------+ +--------------------------+
-> +  |              node 0            | |          node 1          |
-> +  +--------------------------------+ +--------------------------+
-> +
-> +  1G       4G        4200M          9G          9320M          17G
-> +  +---------+----------+-----------+ +------------+-------------+
-> +  |  DMA32  |  NORMAL  |  MOVABLE  | |   NORMAL   |   MOVABLE   |
-> +  +---------+----------+-----------+ +------------+-------------+
-> +
-> +
-> +内存存储区可能位于交错的节点。在下面的例子中，一台x86机器有16GB的RAM分
-> +布在4个内存存储区上，偶数编号的内存存储区属于节点0，奇数编号的内存条属于
-> +节点1::
-> +
-> +  0              4G              8G             12G            16G
-> +  +-------------+ +-------------+ +-------------+ +-------------+
-> +  |    node 0   | |    node 1   | |    node 0   | |    node 1   |
-> +  +-------------+ +-------------+ +-------------+ +-------------+
-> +
-> +  0   16M      4G
-> +  +-----+-------+ +-------------+ +-------------+ +-------------+
-> +  | DMA | DMA32 | |    NORMAL   | |    NORMAL   | |    NORMAL   |
-> +  +-----+-------+ +-------------+ +-------------+ +-------------+
-> +
-> +在这种情况下，节点0将覆盖从0到12GB的内存范围，而节点1将覆盖从4GB到16GB
-> +的内存范围。
-> +
-> +.. _nodes:
-> +
-> +节点
-> +====
-> +
-> +正如我们所提到的，内存中的每个节点由 ``pg_data_t`` 描述，通过
-> +``struct pglist_data`` 结构体的类型定义。在分配页面时，默认情况下，Linux
-> +使用节点本地分配策略，从离当前运行CPU的最近节点分配内存。由于进程倾向于在同
-> +一个CPU上运行，很可能会使用当前节点的内存。分配策略可以由用户控制，如内核文
-> +档Documentation/admin-guide/mm/numa_memory_policy.rst 中所述。
-> +
-> +大多数NUMA（非统一内存访问）架构维护了一个指向节点结构的指针数组。这些实际
-> +的结构在启动过程中的早期被分配，这时特定于架构的代码解析了固件报告的物理内
-> +存映射。节点初始化的大部分工作是在由 free_area_init()实现的启动过程之后
-> +完成，该函数在后面的小节 :ref:`初始化 <initialization>` 中有详细描述。
-> +
-> +除了节点结构，内核还维护了一个名为 ``node_states`` 的 ``nodemask_t``
-> +位掩码数组。这个数组中的每个位掩码代表一组特定属性的节点，这些属性由
-> +``enum node_states`` 定义，定义如下：
-> +
-> +``N_POSSIBLE``
-> +节点可能在某个时刻上线。
-> +
-> +``N_ONLINE``
-> +节点已经上线。
-> +
-> +``N_NORMAL_MEMORY``
-> +节点拥有普通内存。
-> +
-> +``N_HIGH_MEMORY``
-> +节点拥有普通或高端内存。当关闭 ``CONFIG_HIGHMEM`` 配置时，
-> +也可以称为 ``N_NORMAL_MEMORY``。
-> +
-> +``N_MEMORY``
-> +节点拥有（普通、高端、可移动）内存。
-> +
-> +``N_CPU``
-> +节点拥有一个或多个CPU。
-> +
-> +对于具有上述属性的每个节点， ``node_states[<property>]``
-> +掩码中对应于节点ID的位会被置位。
-> +
-> +例如，对于具有常规内存和CPU的节点2，第二个bit将被设置::
-> +
-> +  node_states[N_POSSIBLE]
-> +  node_states[N_ONLINE]
-> +  node_states[N_NORMAL_MEMORY]
-> +  node_states[N_HIGH_MEMORY]
-> +  node_states[N_MEMORY]
-> +  node_states[N_CPU]
-> +
-> +有关使用节点掩码（nodemasks）可能进行的各种操作，请参考
-> +``include/linux/nodemask.h``。
-> +
-> +除此之外，节点掩码（nodemasks）提供用于遍历节点的宏，即
-> +``for_each_node()`` 和 ``for_each_online_node()``。
-> +
-> +例如，要为每个在线节点调用函数 foo()，可以这样操作::
-> +
-> +  for_each_online_node(nid) {
-> +		  pg_data_t *pgdat = NODE_DATA(nid);
-> +
-> +		  foo(pgdat);
-> +	}
-> +
-> +节点数据结构
-> +------------
-> +
-> +节点结构 ``struct pglist_data`` 在 ``include/linux/mmzone.h``
-> +中声明。这里我们将简要描述这个结构体的字段：
-> +
-> +通用字段
-> +~~~~~~~~
-> +
-> +``node_zones``
-> +表示该节点的区域列表。并非所有区域都可能被填充，但这是
-> +完整的列表。它被该节点的node_zonelists以及其它节点的
-> +node_zonelists引用。
-> +
-> +``node_zonelists``
-> +所有节点中所有区域的列表。此列表定义了分配内存时首选的区域
-> +顺序。 ``node_zonelists`` 在核心内存管理结构初始化期间，
-> +由 ``mm/page_alloc.c`` 中的 ``build_zonelists()``
-> +函数设置。
-> +
-> +``nr_zones``
-> +表示此节点中已填充区域的数量。
-> +
-> +``node_mem_map``
-> +对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_mem_map``
-> +表示每个物理帧的struct pages数组。
-> +
-> +``node_page_ext``
-> +对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_page_ext``
-> +是struct pages的扩展数组。只有在构建时开启了 ``CONFIG_PAGE_EXTENSION``
-> +选项的内核中才可用。
-> +
-> +``node_start_pfn``
-> +表示此节点中起始页面帧的页面帧号。
-> +
-> +``node_present_pages``
-> +表示此节点中存在的物理页面的总数。
-> +
-> +``node_spanned_pages``
-> +表示包括空洞在内的物理页面范围的总大小。
-> +
-> +``node_size_lock``
-> +一个保护定义节点范围字段的锁。仅在开启了 ``CONFIG_MEMORY_HOTPLUG`` 或
-> +``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 配置选项中的某一个时才定义。提
-> +供了``pgdat_resize_lock()`` 和 ``pgdat_resize_unlock()`` 用来操作
-> +``node_size_lock``，而无需检查 ``CONFIG_MEMORY_HOTPLUG`` 或
-> +``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项。
-> +
-> +``node_id``
-> +节点的节点ID（NID），从0开始。
-> +
-> +``totalreserve_pages``
-> +这是每个节点保留的页面，这些页面不可用于用户空间分配。
-> +
-> +``first_deferred_pfn``
-> +如果大型机器上的内存初始化被推迟，那么第一个PFN（页帧号）是需要初始化的。
-> +在开启了 ``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项时定义。
-> +
-> +``deferred_split_queue``
-> +每个节点的大页队列，这些大页的拆分被推迟了。仅在开启了 ``CONFIG_TRANSPARENT_HUGEPAGE``
-> +配置选项时定义。
-> +
-> +``__lruvec``
-> +每个节点的lruvec持有LRU（最近最少使用）列表和相关参数。仅在禁用了内存
-> +控制组（cgroups）时使用。它不应该直接访问，而应该使用 ``mem_cgroup_lruvec()``
-> +来查找 lruvecs。
-> +
-> +回收控制
-> +~~~~~~~~
-> +
-> +另见内核文档 Documentation/mm/page_reclaim.rst 文件。
-> +
-> +``kswapd``
-> +每个节点的kswapd内核线程实例。
-> +
-> +``kswapd_wait``, ``pfmemalloc_wait``, ``reclaim_wait``
-> +同步内存回收任务的工作队列。
-> +
-> +``nr_writeback_throttled``
-> +等待写回脏页时，被限制的任务数量。
-> +
-> +``kswapd_order``
-> +控制kswapd尝试回收的order。
-> +
-> +``kswapd_highest_zoneidx``
-> +kswapd线程可以回收的最高区域索引。
-> +
-> +``kswapd_failures``
-> +kswapd无法回收任何页面的运行次数。
-> +
-> +``min_unmapped_pages``
-> +无法回收的未映射文件支持的最小页面数量。由 ``vm.min_unmapped_ratio``
-> +系统控制台（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 配置时定义。
-> +
-> +``min_slab_pages``
-> +无法回收的SLAB页面的最少数量。由 ``vm.min_slab_ratio`` 系统控制台
-> +（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 时定义。
-> +
-> +``flags``
-> +控制回收行为的标志位。
-> +
-> +内存压缩控制
-> +~~~~~~~~~~~~
-> +
-> +``kcompactd_max_order``
-> +kcompactd应尝试实现的页面order。
-> +
-> +``kcompactd_highest_zoneidx``
-> +kcompactd可以压缩的最高区域索引。
-> +
-> +``kcompactd_wait``
-> +同步内存压缩任务的工作队列。
-> +
-> +``kcompactd``
-> +每个节点的kcompactd内核线程实例。
-> +
-> +``proactive_compact_trigger``
-> +决定是否使用主动压缩。由 ``vm.compaction_proactiveness`` 系统控
-> +制台（sysctl）参数控制。
-> +
-> +统计信息
-> +~~~~~~~~
-> +
-> +``per_cpu_nodestats``
-> +表示节点的Per-CPU虚拟内存统计信息。
-> +
-> +``vm_stat``
-> +表示节点的虚拟内存统计数据。
-> +
-> +.. _zones:
-> +
-> +区域
-> +====
-> +
-> +.. admonition:: Stub
-> +
-> +  本节内容不完整。请列出并描述相应的字段。
-> +
-> +.. _pages:
-> +
-> +页
-> +====
-> +
-> +.. admonition:: Stub
-> +
-> +  本节内容不完整。请列出并描述相应的字段。
-> +
-> +页码
-> +====
-> +
-> +.. admonition:: Stub
-> +
-> +  本节内容不完整。请列出并描述相应的字段。
-> +
-> +.. _initialization:
-> +
-> +初始化
-> +======
-> +
-> +.. admonition:: Stub
-> +
-> +  本节内容不完整。请列出并描述相应的字段。
-> +
-> +
-> --
-> 2.25.1
->
+SGkgTWljaGFlbCwNCg0KSSBjYW4gYW5zd2VyIHNvbWUgb2YgdGhlIHF1ZXN0aW9ucyBzaW5jZSBJ
+IGluc3RpZ2F0ZWQgdGhpcyBlZmZvcnQNCndoaWxlIGFnbyAoeW91IG1pZ2h0IGZpbmQgb2xkIGVt
+YWlsIGNoYWluL3MpLg0KDQoNCk9uIDEwLzEwLzI0IDExOjIxLCBNaWNoYWVsIEtlbGxleSB3cm90
+ZToNCiA+IEZyb206IE51bm8gRGFzIE5ldmVzIDxudW5vZGFzbmV2ZXNAbGludXgubWljcm9zb2Z0
+LmNvbT4gU2VudDogDQpUaHVyc2RheSwgT2N0b2JlciAzLCAyMDI0IDEyOjUxIFBNDQogPj4NCiA+
+PiBBZGQgZGVmaW5pdGlvbnMgbmVlZGVkIGZvciBwcml2aWxlZ2VkIEh5cGVyLVYgcGFydGl0aW9u
+cy4NCiA+Pg0KID4+IFRoZXNlIGZpbGVzIGFyZSBkZXJpdmVkIGZyb20gaGVhZGVycyBleHBvcnRl
+ZCBmcm9tIHRoZSBoeXBlcnZpc29yIGNvZGUuDQogPg0KID4gQ291bGQgeW91IGVsYWJvcmF0ZSBv
+biB0aGUgbmFtaW5nIGNvbnZlbnRpb25zIGZvciB0aGUgbmV3IGZpbGVzLA0KID4gYW5kIHRoZSBy
+dWxlcyB0aGF0IGdvdmVybiB3aGF0IGdvZXMgaW4gd2hhdCBmaWxlcz8gU3BlY2lmaWNhbGx5LA0K
+ID4gd2hhdCBpcyAiaHZnZGsiIHZzLiAiaHZoZGsiLCBhbmQgd2hhdCBhcmUgdGhlIF9leHQgYW5k
+IF9taW5pDQogPiBzdWZmaXhlcz8gRXZlbiBpZiB0aGUgZmlsZW5hbWVzIGFyZSBkZXJpdmVkIGZy
+b20gV2luZG93cw0KDQogICBodmhkayA6IGh5cCBob3N0IGRldmVsb3BtZW50IGtpdA0KICAgaHZn
+ZGsgOiBoeXAgZ3Vlc3QgZGV2ZWxvcG1lbnQga2l0DQoNCklPVywgaGRrIGZpbGVzIGluY2x1ZGUg
+ZGF0YSBzdHJ1Y3R1cmVzIGZvciBhIHByaXZpbGVnZWQgVk0sIGFrYQ0KZG9tMC9yb290L2hvc3Qs
+IGFuZCBnZGsgdGFyZ2V0cyBhbiB1bnByaXZpbGVnZWQgVk1zLCBpZSwgZ3Vlc3RzLg0KDQpUaGUg
+X21pbmkgaW1wbGllcyB0YXJnZXQgaXMgaG9zdC9ndWVzdCBrZXJuZWwsIGFuZCBub24tbWluaQ0K
+dGFyZ2V0cyBWTU1zLCBidXQgdGhhdCBhcHBlYXJzIG1vcmUgaGlzdG9yaWMgYXMgb3ZlciB0aW1l
+DQp0aGluZ3MgbW92ZWQgZnJvbSBrZXJuZWwgdG8gdXNlciBzcGFjZS4NCg0KVGhlIGh2Z2RrX2V4
+dCB3YXMgY3JlYXRlZCBmb3IgZXh0ZW5kZWQgaHlwZXJjYWxscy4NCg0KUGxlYXNlIG5vdGUsIHRo
+ZXNlIGhlYWRlcnMgYXJlIHB1YmxpY2x5IGV4cG9ydGVkIGJ5IHRoZSBoeXBlcnZpc29yDQphbmQg
+Y29uc3VtZWQgYXMgaXMgYnkgV2luZG93cyB0b2RheSAobm90IHN1cmUgYWJvdXQgQlNEIGFuZCBv
+dGhlcnMpLA0Kc28gY2hhbmdpbmcgdGhlbSBpcyBwcm9iIG5vdCBmZWFzaWJsZS4NCg0KLi4uDQog
+Pj4gVGhpcyBpcyBhIHN0ZXAgdG93YXJkIGltcG9ydGluZyBoZWFkZXJzIGRpcmVjdGx5LCBzaW1p
+bGFyIHRvIFhlbiBwdWJsaWMNCiA+PiBmaWxlcyBpbiBpbmNsdWRlL3hlbi9pbnRlcmZhY2UvLg0K
+ID4NCiA+IEknbSBub3QgdW5kZXJzdGFuZGluZyB0aGlzIHN0YXRlbWVudC4gVGhlIG5ldyBmaWxl
+cyBpbiB0aGlzIHBhdGNoDQogPiBhcmUgb2J2aW91c2x5IGZvbGxvd2luZyBMaW51eCBrZXJuZWwg
+Y29kaW5nIHN0eWxlLCB3aXRoIExpbnV4IGtlcm5lbA0KID4gdHlwZXMsIGV0Yy4gSSdtIGd1ZXNz
+aW5nIHRoZXJlIHdhcyBhIGxvdCBvZiAiYnVzeSB3b3JrIiB0byB0YWtlDQogPiBXaW5kb3dzIEh5
+cGVyLVYgY29kZSBhbmQgbWFrZSBpdCBsb29rIGxpa2UgTGludXgga2VybmVsIGNvZGUuIDotKA0K
+ID4gV2hhdCB3b3VsZCAiaW1wb3J0aW5nIGhlYWRlcnMgZGlyZWN0bHkiIGxvb2sgbGlrZSwgYW5k
+IGhvdyBpcyB0aGlzDQogPiBhbiBpbnRlcmltIHN0ZXA/DQoNCkNvcnJlY3QsIHRoZXkgYXJlIGN1
+cnJlbnRseSBub3QgZGlyZWN0bHkgaW1wb3J0ZWQuIFRoZSBjb2Rpbmcgc3R5bGUNCmlzIGRpZmZl
+cmVudCBhbmQgYWxzbyB0aGUgaHlwIGlzIG5vdCBidWlsdCB1c2luZyBnY2MvY2xhbmcuIFNvLCB3
+ZSd2ZQ0Kc29tZSB3b3JrIHRvIGRvIGJlZm9yZSB3ZSBjYW4gdXNlIHRoZW0gYXMgaXMuIEZvciBu
+b3csIHdlIGhhdmUNCiJtaXJyb3JlZCIgdGhlbSBtYW51YWxseSBlbmZvcmNpbmcgTGludXggc3R5
+bGUuIEdvaW5nIGZvcndhcmQsIHdlDQpoYXZlIHRvIGRlY2lkZSBpZiB3ZSBjYW4gdXNlIHRoZW0g
+YXMgaXMgKHRoZXJlIGlzIHNvbWUgcHJlY2VkZW50IGluDQpsaW51eCBmb3IgZHJpdmVycyBpbmNs
+dWRpbmcgaGVhZGVycyB3aXRoIGRpZmZlcmVudCBjb2Rpbmcgc3R5bGUpIG9yDQp3ZSBjYW4gYXV0
+byBjb252ZXJ0IHRoZW0gdmlhIHNvbWUgdG9vbCBvciB3ZSBjYW4ga2VlcCB0aGVtIG1hbnVhbA0K
+YW5kIG1vZGlmeSB0aGVtIGluIHN5bmMgd2l0aCBoeXAgbW9kaWZ5aW5nIHRoZW0uIEluIGFueSBj
+YXNlLCBpdA0Kc2hvdWxkIGJlIHJhcmUgb3BlcmF0aW9uLiBNYXRjaGluZyB0aGVtIG5vdyBhbGxv
+d3MgdXMgdG8gZ2V0IHRoZXJlLg0KDQpZb3UgYXJlIGNvcnJlY3QsIGl0IHdhcyAiYnVzeSB3b3Jr
+IiwgdG9vayBtZSBtb3JlIHRoYW4gdHdvIHdlZWtzIGluDQphZGRpdGlvbiB0byB0aW1lIE51bm8g
+YWxzbyBzcGVudC4NCg0KID4gQWxzbywgaXQgbG9va3MgbGlrZSB0aGVzZSBuZXcgZmlsZXMgdGFr
+ZSBhIGRpZmZlcmVudCBhcHByb2FjaCBmb3INCiA+IGluc3RydWN0aW9uIHNldCBhcmNoaXRlY3R1
+cmUgZGlmZmVyZW5jZXMuIFRoZXJlIGFyZSBpbmxpbmUgI2lmZGVmJ3MNCiA+IGluc3RlYWQgb2Yg
+dGhlIGN1cnJlbnQgbWV0aG9kIG9mIGhhdmluZyBhIGNvbW1vbiBmaWxlLCBhbmQgdGhlbg0KID4g
+YXJjaGl0ZWN0dXJlIHNwZWNpZmljIHZlcnNpb25zIHRoYXQgaW5jbHVkZSB0aGUgY29tbW9uIGZp
+bGUuIE15DQogPiBzZW5zZSBpcyB0aGF0IExpbnV4IGtlcm5lbCBjb2RlIHByZWZlcnMgdGhlIGN1
+cnJlbnQgYXBwcm9hY2ggaW4NCiA+IG9yZGVyIHRvIGF2b2lkICNpZmRlZidlcnksIGJ1dCBtYXli
+ZSB0aGF0J3MgbGVzcyBwcmFjdGljYWwgd2hlbiB0aGUNCiA+IGRlZmluaXRpb25zIGFyZSBkZXJp
+dmVkIGZyb20gV2luZG93cyBIeXBlci1WIGNvZGUuIEFuZCB3aXRoDQogPiBvbmx5IHR3byBhcmNo
+aXRlY3R1cmVzIHRvIGRlYWwgd2l0aCwgdGhlICNpZmRlZidzIGRvbid0IGdldA0KID4gd2lsZC1h
+bmQtY3JhenksIHdoaWNoIGlzIGdvb2QuDQoNCldlbGwsIHdlIGFyZSB0cnlpbmcgdG8ga2VlcCB0
+aGVtIGFzIGNsb3NlIHRvIHRoZSBvcmlnaW5hbHMgYXMNCnBvc3NpYmxlLiBCdXQgbm93IHRoYXQg
+bGludXggc3VwcG9ydCBpcyBoZXJlLCB3ZSB3aWxsIHdvcmsgd2l0aA0KdGhlIHByb2R1Y2VycyBv
+ZiB0aGVzZSBoZWFkZXJzLCBpZSwgdGhlIGh5cCB0ZWFtLCB0byBtYWtlIHRoZW0NCm1vcmUgbGlu
+dXggZnJpZW5kbHkgZ29pbmcgZm9yd2FyZC4gR2l2ZW4gdGhlcmUgYXJlIG90aGVyIGRpcmVjdA0K
+Y29uc3VtZXJzIG9mIHRoZSBoZWFkZXJzLCBXaW5kb3dzL0JTRC8uLiwgaXQgd29uJ3QgYmUgcmln
+aHQgYXdheSwNCmFzIHdlJ2QgaGF2ZSB0byBjb29yZGluYXRlIGFuZCBtYWtlIHN1cmUgYWxsIGFy
+ZSBoYXBweS4NCg0KSG9wZSB0aGF0IG1ha2VzIHNlbnNlLg0KDQpUaGFua3MsDQotTXVrZXNoDQoN
+Cg==
 
