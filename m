@@ -1,140 +1,263 @@
-Return-Path: <linux-kernel+bounces-361429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB2B099A813
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:42:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2138B99A81C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:44:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08E13B21474
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42E1E1C2296A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:44:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92945188CB1;
-	Fri, 11 Oct 2024 15:42:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E9D9196DA4;
+	Fri, 11 Oct 2024 15:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="sKp+XNi0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEX+jkfU"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87542194AEC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:42:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD948194AE8;
+	Fri, 11 Oct 2024 15:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728661338; cv=none; b=jpDv2nAmux/gteV7nenvnh0Xzwk9dGRwDTU5/nuLXVK5MEZ6pWAm5bQnBWKYhPrm3JuKmEV6MqPEPOu0hqx2kmlFYaLCC+HLv++rb1BsF3wY9rv3KOJmVuTWU9wPkx/TpIrKLnWFphkI3tKIO9mxktZdDDAk9Cp7iBv6hEqw1j8=
+	t=1728661442; cv=none; b=vArPoV1yOTxVXbaGFuKf9X9SJxgvVAdkIBUivDuRFCaGTZxH7eop8yvqhSgKB6fG47JNwczssNvpSq0C1M1W3orAIMYgH0uux5JTd1t7AZkuQ1K5dQkJI/b+7sDXdQ3cJgRGVxbzXo50TK3B7eCUFKjJn/sX7J9DnKCL0tz281w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728661338; c=relaxed/simple;
-	bh=FTB9gGHrl3Jgo0ca2thxV5WEisBt66Y4CiZP+f9CMcA=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=pJsJ+sEflSFr+m5itBzxMl2cAdjD3iB/8IKbxEdmI2g4oMLjWuwOS22H3E6XT+Lkw9P7b3kUQdmBn8fsdZB3vtIjOl/MJJZKLVWmGjEW9OTaRtTMuY3F938AHFamkjueOUdaRBqpy+bdSqXahW3Z6401g142HMzqagmvSE0Y7kU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=sKp+XNi0; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20b7259be6fso23415525ad.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:42:16 -0700 (PDT)
+	s=arc-20240116; t=1728661442; c=relaxed/simple;
+	bh=PooPGWvgmo1UR9R92pPvRf5+4zgiaZSygxrcEWt+qUQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JvcfSxto1seTmUSNWIr1IPClqixItdPtLtgpTFj1KgglopEF0/AtY26DGhn4v3pMK3f111LVrGpE58sg6drvSYUYMOLb3EjAyjtek6tau6IErDSeM+Ko/EjciYX2v+ZwZjEqjSfZFBsLFM0so0CFgveKjbwsRlzIvyFSsIX11CI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEX+jkfU; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5c942815197so961902a12.1;
+        Fri, 11 Oct 2024 08:44:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728661336; x=1729266136; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FTB9gGHrl3Jgo0ca2thxV5WEisBt66Y4CiZP+f9CMcA=;
-        b=sKp+XNi0BNljQwl4hJt1qpUhGymq25wIhI21H5QnPkIY8EgwgY7RFKJZ03WHCeNlaN
-         t51Z2r3pK/ESS8vavXHHz4BkSXpViHKcFJDMPtEHCFhtqZHkgxxkshzwrra+wx6YID41
-         6GMXqNgE1BLTxcm7KTS4yV60G3TgqkCQde0Oqciiw7Ne/UVGeFJr26cbDLItFB1qxdSq
-         gvNZMSLYhuXFjQRiLr8rTZpoNuuh2UO3KUd1fR/Q1opQtNmh7jcBxvXQtohc9Gg3QZ/8
-         IyhF9MDtOCEbaxPAOg2/bsj+4COOXFqiatd4yrAoMrpFdFQosVHSPqYZdRRxObFe1C0m
-         KPHg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728661336; x=1729266136;
-        h=content-transfer-encoding:mime-version:message-id:references
-         :in-reply-to:user-agent:subject:cc:to:from:date:x-gm-message-state
+        d=gmail.com; s=20230601; t=1728661439; x=1729266239; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=FTB9gGHrl3Jgo0ca2thxV5WEisBt66Y4CiZP+f9CMcA=;
-        b=ouwLNVOuGBfKUv9OrWl/7n1VNqW+OuGrPj/APbwjPjOUcLgvcYp/OI0dUUriQgW879
-         uFfKmCkKEt1ptVyEJMixcxS68nOyhSsXySFCgc2fJfxxuDlIzggtRreCV/rksQrOXi1u
-         uZP0FlV53vz3tTiyShcbGubAleKfPauHE3NFfW0WSK01M6OwG0Q/jojQCDY9xQQGOJLt
-         NsG2qHYhvzDd/5oe0jb0CZ/JWUvQ6mL7J2AT4zyd4acKb9wpNBYkBIyS70FZFY46DfNI
-         706OSZyNe9YG6+x54TMBlnY8Q0S+UTglMFxK7eVVlgJLwSa1ZqsWiBTR2IHA05vn08f1
-         iggw==
-X-Forwarded-Encrypted: i=1; AJvYcCUWiRtn2VOhZYhxyIqyVfaK/yCMrX7HEkIhjGq2oEZhyJFFcnMo2ECCGFTMwhcKmRhRFQOJD2I/nKq74AQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzEFSRpccIge1n9ZFqmqbS1p3GC6tP29z+UHkFOcSOL9XdSPX50
-	urbt2Q5v+1uO3YLB6LdTjLa6Z9yyn17W6U4hkPMZMig4CRNjgo0fnv9gBIezNQ==
-X-Google-Smtp-Source: AGHT+IHp+vfQ0g8KOlGcVVFt/8dwQEWB4fGW+orH2uW909xVMHZ0L705DG0vqVSgL8WCAKaDo4xSUw==
-X-Received: by 2002:a17:903:1c7:b0:20b:5046:354 with SMTP id d9443c01a7336-20ca16c2c0amr34930705ad.55.1728661335888;
-        Fri, 11 Oct 2024 08:42:15 -0700 (PDT)
-Received: from [127.0.0.1] ([36.255.17.48])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bada634sm24786675ad.5.2024.10.11.08.42.14
+        bh=OrxxF3yNL/neU0KeLnUooiqCBgYtc6nVU7hAyqRA2W0=;
+        b=YEX+jkfUEToiS4Yfq3TI15EgGV38mDqbL6quudSJStG0trg7ZC4e6L/UtNDBrHDESt
+         D/mQoPycT/aBarZIKIhwjsavVxHgMUR/qilOWBNhHZsJP47iaix0uyd2hzjGfmATYqWK
+         LCdZx/h1MKZYPXpnPCtE4+s+CGp68UWylKU1NQI0ywdXOKPneyXbkFxwJbP5mT2SDbKY
+         h6e2fouLrvKUSikKhnY9BaPonu51DfbxoqSBEg/bMAnSrnV1vfJrJo/oMPhLU7O5blsb
+         KuRqJGPK+xdjKAI7wZ/mm/dtF2ep2WreSmv7fpjf1lNwYyljSLSVYWirZpuq6aSNgEJL
+         UOcA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728661439; x=1729266239;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OrxxF3yNL/neU0KeLnUooiqCBgYtc6nVU7hAyqRA2W0=;
+        b=GwXfFkFrmOq62FbevCOYz5Snteo6Xz78Nk+cNXaT638dNyVADMRtQf2PT1HF3Jm665
+         TC3QzrWiw5Jcl8i/8Efaqcfc8fFOMO0Yt967ePQOjBc6rS1DCJwl01aDGAlAauHyADPl
+         +3X4ft6FJRuVYIz/saBli4zPRuNU+//qRO34kwC60nEM6lEXmjF7QZqflJzRFIZDxa9W
+         8Omwk/OpcT8WGKMFz+pC4Uefdgf4/ugaUYtKq+eWMgXwUwHNPNJN51l8fmZ0ZEgG+utH
+         gXx949qgUq3Gs3usiYSqcwprr+V/iYeA/FJ19tERflA5OBc1Xns0GV/vagyo683hbiKE
+         hYZg==
+X-Forwarded-Encrypted: i=1; AJvYcCUhGfvFac9ZLv612k8+yoNG/d2Kd7Y3rUcyLX9Ww/d2EUJUcSp71D45SpHmcciNEJ6w+ByUH3hJidJLPK458D4=@vger.kernel.org, AJvYcCVnKb4uJkirOWiW+qMPVEXls8CMl1X7nE7BP5vACK+SggK+p6y9ZUVTCFTmI2t2UbXwJ8Z4gAgC5WGyQbE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvsERrNu+0FG39ByJh60fxMEnsUhW/Ukp8/ibjnR7u1mwS0i/j
+	cYWNbwhsh1Sm9H6QDEsDuZ1+pz308EVxP6Ig+O1ue6EALerPpqWr
+X-Google-Smtp-Source: AGHT+IFY98Tc3cVGdGaOgsDFu7925UW/KVti8l3p26KH+Ng8egwPJ2H13W2ZO7izpyk7+n7RsmcfQg==
+X-Received: by 2002:a05:6402:4410:b0:5c8:7bbd:1c4f with SMTP id 4fb4d7f45d1cf-5c948c882fdmr3297711a12.7.1728661438938;
+        Fri, 11 Oct 2024 08:43:58 -0700 (PDT)
+Received: from ?IPV6:2003:df:bf0d:b400:a17a:b60f:897e:1773? (p200300dfbf0db400a17ab60f897e1773.dip0.t-ipconnect.de. [2003:df:bf0d:b400:a17a:b60f:897e:1773])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937153939sm2049178a12.47.2024.10.11.08.43.58
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 08:42:15 -0700 (PDT)
-Date: Fri, 11 Oct 2024 21:12:11 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Qiang Yu <quic_qianyu@quicinc.com>
-CC: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- mturquette@baylibre.com, sboyd@kernel.org, abel.vesa@linaro.org,
- quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
- dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
- neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
- linux-clk@vger.kernel.org
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_3/8=5D_dt-bindings=3A_PCI=3A_qc?=
- =?US-ASCII?Q?om=2Cpcie-x1e80100=3A_Add_=27global=27_interrupt?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
-References: <20241011104142.1181773-1-quic_qianyu@quicinc.com> <20241011104142.1181773-4-quic_qianyu@quicinc.com> <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
-Message-ID: <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
+        Fri, 11 Oct 2024 08:43:58 -0700 (PDT)
+Message-ID: <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com>
+Date: Fri, 11 Oct 2024 17:43:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 00/14] hrtimer Rust API
+To: Andreas Hindborg <a.hindborg@kernel.org>,
+ Boqun Feng <boqun.feng@gmail.com>, Lyude Paul <lyude@redhat.com>
+Cc: Dirk Behme <dirk.behme@de.bosch.com>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
+ =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <benno.lossin@proton.me>, Alice Ryhl <aliceryhl@google.com>,
+ rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20240917222739.1298275-1-a.hindborg@kernel.org>
+ <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
+ <ZvwKTinnLckZm8aQ@boqun-archlinux> <87a5falmjy.fsf@kernel.org>
+Content-Language: de-AT-frami
+From: Dirk Behme <dirk.behme@gmail.com>
+In-Reply-To: <87a5falmjy.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+
+Hi Andreas,
+
+Am 11.10.24 um 16:52 schrieb Andreas Hindborg:
+> 
+> Dirk, thanks for reporting!
+
+:)
+
+> Boqun Feng <boqun.feng@gmail.com> writes:
+> 
+>> On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
+>>> On 18.09.2024 00:27, Andreas Hindborg wrote:
+>>>> Hi!
+>>>>
+>>>> This series adds support for using the `hrtimer` subsystem from Rust code.
+>>>>
+>>>> I tried breaking up the code in some smaller patches, hopefully that will
+>>>> ease the review process a bit.
+>>>
+>>> Just fyi, having all 14 patches applied I get [1] on the first (doctest)
+>>> Example from hrtimer.rs.
+>>>
+>>> This is from lockdep:
+>>>
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
+>>>
+>>> Having just a quick look I'm not sure what the root cause is. Maybe mutex in
+>>> interrupt context? Or a more subtle one?
+>>
+>> I think it's calling mutex inside an interrupt context as shown by the
+>> callstack:
+>>
+>> ]  __mutex_lock+0xa0/0xa4
+>> ] ...
+>> ]  hrtimer_interrupt+0x1d4/0x2ac
+>>
+>> , it is because:
+>>
+>> +//! struct ArcIntrusiveTimer {
+>> +//!     #[pin]
+>> +//!     timer: Timer<Self>,
+>> +//!     #[pin]
+>> +//!     flag: Mutex<bool>,
+>> +//!     #[pin]
+>> +//!     cond: CondVar,
+>> +//! }
+>>
+>> has a Mutex<bool>, which actually should be a SpinLockIrq [1]. Note that
+>> irq-off is needed for the lock, because otherwise we will hit a self
+>> deadlock due to interrupts:
+>>
+>> 	spin_lock(&a);
+>> 	> timer interrupt
+>> 	  spin_lock(&a);
+>>
+>> Also notice that the IrqDisabled<'_> token can be simply created by
+>> ::new(), because irq contexts should guarantee interrupt disabled (i.e.
+>> we don't support nested interrupts*).
+> 
+> I updated the example based on the work in [1]. I think we need to
+> update `CondVar::wait` to support waiting with irq disabled. 
+
+Yes, I agree. This answers one of the open questions I had in the 
+discussion with Boqun :)
+
+What do you think regarding the other open question: In this *special* 
+case here, what do you think to go *without* any lock? I mean the 
+'while *guard != 5' loop in the main thread is read only regarding 
+guard. So it doesn't matter if it *reads* the old or the new value. 
+And the read/modify/write of guard in the callback is done with 
+interrupts disabled anyhow as it runs in interrupt context. And with 
+this can't be interrupted (excluding nested interrupts). So this 
+modification of guard doesn't need to be protected from being 
+interrupted by a lock if there is no modifcation of guard "outside" 
+the interupt locked context.
+
+What do you think?
+
+Thanks
+
+Dirk
 
 
+> Without
+> this, when we get back from `bindings::schedule_timeout` in
+> `CondVar::wait_internal`, interrupts are enabled:
+> 
+> ```rust
+> use kernel::{
+>      hrtimer::{Timer, TimerCallback, TimerPointer, TimerRestart},
+>      impl_has_timer, new_condvar, new_spinlock, new_spinlock_irq,
+>      irq::IrqDisabled,
+>      prelude::*,
+>      sync::{Arc, ArcBorrow, CondVar, SpinLock, SpinLockIrq},
+>      time::Ktime,
+> };
+> 
+> #[pin_data]
+> struct ArcIntrusiveTimer {
+>      #[pin]
+>      timer: Timer<Self>,
+>      #[pin]
+>      flag: SpinLockIrq<u64>,
+>      #[pin]
+>      cond: CondVar,
+> }
+> 
+> impl ArcIntrusiveTimer {
+>      fn new() -> impl PinInit<Self, kernel::error::Error> {
+>          try_pin_init!(Self {
+>              timer <- Timer::new(),
+>              flag <- new_spinlock_irq!(0),
+>              cond <- new_condvar!(),
+>          })
+>      }
+> }
+> 
+> impl TimerCallback for ArcIntrusiveTimer {
+>      type CallbackTarget<'a> = Arc<Self>;
+>      type CallbackTargetParameter<'a> = ArcBorrow<'a, Self>;
+> 
+>      fn run(this: Self::CallbackTargetParameter<'_>, irq: IrqDisabled<'_>) -> TimerRestart {
+>          pr_info!("Timer called\n");
+>          let mut guard = this.flag.lock_with(irq);
+>          *guard += 1;
+>          this.cond.notify_all();
+>          if *guard == 5 {
+>              TimerRestart::NoRestart
+>          }
+>          else {
+>              TimerRestart::Restart
+> 
+>          }
+>      }
+> }
+> 
+> impl_has_timer! {
+>      impl HasTimer<Self> for ArcIntrusiveTimer { self.timer }
+> }
+> 
+> 
+> let has_timer = Arc::pin_init(ArcIntrusiveTimer::new(), GFP_KERNEL)?;
+> let _handle = has_timer.clone().schedule(Ktime::from_ns(200_000_000));
+> 
+> kernel::irq::with_irqs_disabled(|irq| {
+>    let mut guard = has_timer.flag.lock_with(irq);
+> 
+>    while *guard != 5 {
+>        pr_info!("Not 5 yet, waiting\n");
+>        has_timer.cond.wait(&mut guard); // <-- we arrive back here with interrupts enabled!
+>    }
+> });
+> ```
+> 
+> I think an update of `CondVar::wait` should be part of the patch set [1].
+> 
+> 
+> Best regards,
+> Andreas
+> 
+> 
+> [1] https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/
+> 
+> 
 
-On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel=
-=2Eorg> wrote:
->On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
->> Document 'global' SPI interrupt along with the existing MSI interrupts =
-so
->> that QCOM PCIe RC driver can make use of it to get events such as PCIe
->> link specific events, safety events, etc=2E
->
->Describe the hardware, not what the driver will do=2E
->
->>=20
->> Though adding a new interrupt will break the ABI, it is required to
->> accurately describe the hardware=2E
->
->That's poor reason=2E Hardware was described and missing optional piece
->(because according to your description above everything was working
->fine) is not needed to break ABI=2E
->
-
-Hardware was described but not completely=2E 'global' IRQ let's the contro=
-ller driver to handle PCIe link specific events like Link up, Link down etc=
-=2E=2E=2E They improve user experience like the driver can use those interr=
-upts to start bus enumeration on its own=2E So breaking the ABI for good in=
- this case=2E
-
->Sorry, if your driver changes the ABI for this poor reason=2E
->
-
-Is the above reasoning sufficient?=20
-
-- Mani
-
->NAK=2E
->
->Best regards,
->Krzysztof
->
-
-=E0=AE=AE=E0=AE=A3=E0=AE=BF=E0=AE=B5=E0=AE=A3=E0=AF=8D=E0=AE=A3=E0=AE=A9=
-=E0=AF=8D =E0=AE=9A=E0=AE=A4=E0=AE=BE=E0=AE=9A=E0=AE=BF=E0=AE=B5=E0=AE=AE=
-=E0=AF=8D
 
