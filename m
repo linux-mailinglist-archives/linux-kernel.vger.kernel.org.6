@@ -1,157 +1,111 @@
-Return-Path: <linux-kernel+bounces-361505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1606599A909
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:38:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71DAE99A90A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:40:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04C6E2847CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:38:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE6F32835D3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3014019B3CB;
-	Fri, 11 Oct 2024 16:38:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53A319B3CB;
+	Fri, 11 Oct 2024 16:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="II3R02uz"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u1GVUIeM"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABE7199941;
-	Fri, 11 Oct 2024 16:38:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CE3F183CA5;
+	Fri, 11 Oct 2024 16:39:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664711; cv=none; b=KNpNbpY1d5kTg2rVqW6CHWgMnCNhep4iDbA3TWrpoQ42Btt8vQq/mhGUdGf89NH1SBil7y0oe7BZKBIBOqFUk3SSLu9mH8Ks70KeMxjIsxS1TBGhsnmYrc/G4+m1PzmqPSaTFLzWVswq4m41VOa9Uowt/7pxRHFW37nTPm0qjNE=
+	t=1728664797; cv=none; b=C5LWiTwRZ9korIMO2dQZ1jrayw3h2pDjb+W/6uwz85aOvct6s9SVQ8eUbh7e2pa8eVO+MxR2noMxKtp7WNgTEcIwrdgPSp+LAJRlWdrqphLs8+5Jz0OCr1g7JhwqoceFj+I1au+ZjfTtguLWsmYObMFlvmWzp+23+fUuOgTiCGQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664711; c=relaxed/simple;
-	bh=+bv/Ltjg3lqXdKlXUBN51U2EOvBGvrIXsXXFD++cqr8=;
+	s=arc-20240116; t=1728664797; c=relaxed/simple;
+	bh=IakEbbZ8X+FcxiHtDssW9Xz6ZmjQL3Ku8ATidKob82o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eWtDLQ7Hucx63D91gljjpDEThBnzt4Wx106Z93i/R/aCBAgVOAgAB828R2SQYRX7rd3n78V8rfNG6jPqXBODHz2LBrcgRq2SJrSnzY3MApJp2fsyhw9L0En3oiQOCuFAyrp2s/KA7wgy0ZwZJtL98cds/STgHkBb35A57g7elD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=II3R02uz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17CC9C4CEC3;
-	Fri, 11 Oct 2024 16:38:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lrogZueeh1Wql6rCBh50IkzPVVHfTl1HE6JJHdAlpzdkw8lKjBvZS+AxN+Qa4xg9/Mi3zkHA7vkypwx/+7AcWPH/IHZiJv7vnaQqV3muzmi6O0H7r895qzJvDLDf0pyPBkwhZhLHLG4wwZqoPVMi16t7kwddxC64YNcMChPf3iw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u1GVUIeM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FBC2C4CEC3;
+	Fri, 11 Oct 2024 16:39:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728664711;
-	bh=+bv/Ltjg3lqXdKlXUBN51U2EOvBGvrIXsXXFD++cqr8=;
+	s=k20201202; t=1728664796;
+	bh=IakEbbZ8X+FcxiHtDssW9Xz6ZmjQL3Ku8ATidKob82o=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=II3R02uzGMwMvzKKtwJylWdhQ043i8PxJl2XFeSN8sgOiy+lUZuHOd2+0d1zGqk5H
-	 ONxyOmgYzlaghFFkn17zDYMKcBDirq7d6Dt8rC9QThBGKGKU7ewad6uakmHphorbKX
-	 3bshmGWUZGEVi/LZQLVItmSyZXi3d+jtDEmzXjlXbH9UVIzLpNruxmgVGtpnVQxe7f
-	 u9d2hPxCPzUikkLaYdBdHAztRm39x4xqoafGvibdq4Bz9EufsdBC/ade/hCfc17hjW
-	 tQed+4nIvpn/sGmiT69OL7WmSvf+4kHRbmJm37xk1dbhtSnZ3gcKpZ94UE6AVcQmyg
-	 xBPAhOP973tcg==
-Date: Fri, 11 Oct 2024 09:38:30 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
-	linux-kernel@vger.kernel.org, dchinner@redhat.com,
-	Chandan Babu R <chandan.babu@oracle.com>,
-	Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
- extsize
-Message-ID: <20241011163830.GX21853@frogsfrogsfrogs>
-References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+	b=u1GVUIeM2kOWgMTMvT6f7dfXlCEVTZZ6iUmLI+eiq+DhBqsCbeIGENPBU85L+mbt9
+	 IUCSzLyLjVuv/X4BftzJSYOcKNKI+6ClBj0PqaH7G18bHF2UrThVh1am3/z5nOGqGJ
+	 7kbwKsBsgNdM2YeEPNPV+J4OHh/7LBhaDeQZ2Kv/9NvnJQc6YOF3qPMn2e0iTcO9EK
+	 n2KYcgg1q+DOtpq9Xo44UI3kpnf4yOKTFg/+eawBHXrjbj057YYgMX09+eNncRBuFm
+	 9QVn4BobY8kOcCC33BZ1tpfkGt5t+0i+81jwtbIaKlBozNAyR+YFJk+WWJhyG7l5Il
+	 iBSsnsJmeAtNA==
+Date: Fri, 11 Oct 2024 09:39:54 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ben Gainey <Ben.Gainey@arm.com>
+Cc: "acme@kernel.org" <acme@kernel.org>,
+	"irogers@google.com" <irogers@google.com>,
+	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
+	"jolsa@kernel.org" <jolsa@kernel.org>,
+	"peterz@infradead.org" <peterz@infradead.org>,
+	"adrian.hunter@intel.com" <adrian.hunter@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-perf-users@vger.kernel.org" <linux-perf-users@vger.kernel.org>,
+	"mingo@kernel.org" <mingo@kernel.org>
+Subject: Re: [PATCH] perf evsel: Fix missing inherit + sample read check
+Message-ID: <ZwlU2lpeekYntrGd@google.com>
+References: <20241009062250.730192-1-namhyung@kernel.org>
+ <7ced2109944c4aa773804a2d25854974b76d8fb6.camel@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <7ced2109944c4aa773804a2d25854974b76d8fb6.camel@arm.com>
 
-On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
-> Extsize is allowed to be set on files with no data in it. For this,
-> we were checking if the files have extents but missed to check if
-> delayed extents were present. This patch adds that check.
+On Fri, Oct 11, 2024 at 08:02:04AM +0000, Ben Gainey wrote:
+> On Tue, 2024-10-08 at 23:22 -0700, Namhyung Kim wrote:
+> > It should not clear the inherit bit simply because the kernel doesn't
+> > support the sample read with it.  IOW the inherit bit should be kept
+> > when the sample read is not requested for the event.
 > 
-> While we are at it, also refactor this check into a helper since
-> its used in some other places as well like xfs_inactive() or
-> xfs_ioctl_setattr_xflags()
 > 
-> **Without the patch (SUCCEEDS)**
-> 
-> $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> 
-> **With the patch (FAILS as expected)**
-> 
-> $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-> 
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> Ah, sorry. Good spot.
 
-Looks good now,
-Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+Thanks for the review, can I translate it your Acked-by?
 
---D
-
-> ---
->  fs/xfs/xfs_inode.c | 2 +-
->  fs/xfs/xfs_inode.h | 5 +++++
->  fs/xfs/xfs_ioctl.c | 4 ++--
->  3 files changed, 8 insertions(+), 3 deletions(-)
-> 
-> diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-> index bcc277fc0a83..19dcb569a3e7 100644
-> --- a/fs/xfs/xfs_inode.c
-> +++ b/fs/xfs/xfs_inode.c
-> @@ -1409,7 +1409,7 @@ xfs_inactive(
->  
->  	if (S_ISREG(VFS_I(ip)->i_mode) &&
->  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
-> -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
-> +	     xfs_inode_has_filedata(ip)))
->  		truncate = 1;
->  
->  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
-> diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-> index 97ed912306fd..03944b6c5fba 100644
-> --- a/fs/xfs/xfs_inode.h
-> +++ b/fs/xfs/xfs_inode.h
-> @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
->  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
->  }
->  
-> +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
-> +{
-> +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
-> +}
-> +
->  /*
->   * Check if an inode has any data in the COW fork.  This might be often false
->   * even for inodes with the reflink flag when there is no pending COW operation.
-> diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-> index a20d426ef021..2567fd2a0994 100644
-> --- a/fs/xfs/xfs_ioctl.c
-> +++ b/fs/xfs/xfs_ioctl.c
-> @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
->  
->  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
->  		/* Can't change realtime flag if any extents are allocated. */
-> -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
-> +		if (xfs_inode_has_filedata(ip))
->  			return -EINVAL;
->  
->  		/*
-> @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
->  	if (!fa->fsx_valid)
->  		return 0;
->  
-> -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
-> +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
->  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
->  		return -EINVAL;
->  
-> -- 
-> 2.43.5
-> 
+Thanks,
+Namhyung
+ 
+> > 
+> > Fixes: 90035d3cd876cb71 ("tools/perf: Allow inherit +
+> > PERF_SAMPLE_READ when opening events")
+> > Cc: Ben Gainey <ben.gainey@arm.com>
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  tools/perf/util/evsel.c | 3 ++-
+> >  1 file changed, 2 insertions(+), 1 deletion(-)
+> > 
+> > diff --git a/tools/perf/util/evsel.c b/tools/perf/util/evsel.c
+> > index d8fd493af01458b7..507f526ccbbcfc36 100644
+> > --- a/tools/perf/util/evsel.c
+> > +++ b/tools/perf/util/evsel.c
+> > @@ -2112,7 +2112,8 @@ static int __evsel__prepare_open(struct evsel
+> > *evsel, struct perf_cpu_map *cpus,
+> >  
+> >  static void evsel__disable_missing_features(struct evsel *evsel)
+> >  {
+> > - if (perf_missing_features.inherit_sample_read)
+> > + if (perf_missing_features.inherit_sample_read && evsel-
+> > >core.attr.inherit &&
+> > +     (evsel->core.attr.sample_type & PERF_SAMPLE_READ))
+> >   evsel->core.attr.inherit = 0;
+> >   if (perf_missing_features.branch_counters)
+> >   evsel->core.attr.branch_sample_type &=
+> > ~PERF_SAMPLE_BRANCH_COUNTERS;
 > 
 
