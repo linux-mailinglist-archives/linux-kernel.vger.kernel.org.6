@@ -1,261 +1,218 @@
-Return-Path: <linux-kernel+bounces-360520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6695C999C06
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:17:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67935999C09
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52FD1F252A5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:17:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8634D1C21D69
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8201F9AA4;
-	Fri, 11 Oct 2024 05:17:35 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68F41F4FC7;
+	Fri, 11 Oct 2024 05:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="ps5/9pzO"
+Received: from out30-130.freemail.mail.aliyun.com (out30-130.freemail.mail.aliyun.com [115.124.30.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D02F19413B;
-	Fri, 11 Oct 2024 05:17:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A57E08F58;
+	Fri, 11 Oct 2024 05:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728623855; cv=none; b=edBuhZZ6kkZRusG0s0JdGiuHK6u+tLBu2eoHItaFvCoj4Ozylp3mRG85y/Ol1LZqACMpjKf7cWfC/48ytN2zaXtKVhfREs4rCl8/VoISXeFiG/bFxuSCal9eMnrJO5hhcLZKYXrf5lchY+bFMOTftSRZTPWt3eJbhnmkxOY8fRM=
+	t=1728623971; cv=none; b=W30c9hFBZmYL4m0Aw4vaQhKcRkDSshb8Qai8wXVK2qrCOalPVYCu43UB8mHjtoOxgWmeti8Y8+uuwBJnUP7YEGlX8TJLuU5aOpBJiIFQnS04Gfk641FrrIn6D6Yg9SKzVRtjp68ZmEvoW9RVR3ox8GDTnGpyrSqyyif/WuUKXzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728623855; c=relaxed/simple;
-	bh=fyy4YIlptm8uOrcjxzHis/saN0wHpL8XX8tHYtpryeo=;
-	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JH71R2IicItJXmld7QsKx39M1FUmwjlN3g5CV0yVyGrQyHwVG1RrC7iI9CyHlWLCto+aLRhAk8mv0ZBzHoE7kgWjnw/DqLQA4ZBYxWNXN/T9j9fi6wphEnFAHHwRIOj6SlwJvXvtzpu5wp5/PiB/6lyuEvZHfog3IuIH4LQyVnU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPvsC3kLpz6LDQN;
-	Fri, 11 Oct 2024 13:13:03 +0800 (CST)
-Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4EB941400D7;
-	Fri, 11 Oct 2024 13:17:25 +0800 (CST)
-Received: from GurSIX1 (10.204.104.109) by frapeml500005.china.huawei.com
- (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
- 2024 07:17:19 +0200
-From: Gur Stavi <gur.stavi@huawei.com>
-To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
-CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
-	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>
-References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch> <20241009065837.354332-1-gur.stavi@huawei.com> <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch> <002201db1a75$9a83b420$cf8b1c60$@huawei.com> <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch> <002701db1ae3$368d9b70$a3a8d250$@huawei.com> <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch> <000101db1b2f$7410c2f0$5c3248d0$@huawei.com> <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
-In-Reply-To: <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
-Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket is not RUNNING
-Date: Fri, 11 Oct 2024 08:17:12 +0300
-Message-ID: <000201db1b9c$db32f6c0$9198e440$@huawei.com>
+	s=arc-20240116; t=1728623971; c=relaxed/simple;
+	bh=kF4Zi97F2mBPqNTaQRlaFgww7MXfO65DLKW6UZiOz1c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hs91VzytX5tyqLIN2gF4zKDbgqOelcC81ZEaLeag5YUZKuHUHg6+PsCA9IkpU8OuPIzW6ErRFt8LxtjQK6Cb0q8ypdiXCaa52mzesNIlPMkrfI2dQhSyCXEGU55dHouC8nD6Vbz38HBZon+RdhbYkB0BRtE+RHjEYQ46Op8NKYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=ps5/9pzO; arc=none smtp.client-ip=115.124.30.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1728623958; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=aAAGesr3LlXkZHRGQ5wlPZ55691z3kev5cH3VSYpE6U=;
+	b=ps5/9pzO8NAkcecKx74/bTESApq5UZo49G+R3Gm/h+guwKcOgrA+vllJbpFA2PwYQByQOs4iz7lsWNyxZFqi4EaXa90E5l6b407yeHA+dZ57sCo8sTJ5VpZY56WvEs8qtyQJMCpGLrAQ6jDtCL0oWNVckACZNyfry7qEiy9PxVQ=
+Received: from 30.27.66.120(mailfrom:hsiangkao@linux.alibaba.com fp:SMTPD_---0WGowwCK_1728623956 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 11 Oct 2024 13:19:17 +0800
+Message-ID: <71aff177-90d8-44ef-9e9d-f043eb682da9@linux.alibaba.com>
+Date: Fri, 11 Oct 2024 13:19:15 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 06/12] iomap: Introduce read_inline() function hook
+To: Dave Chinner <david@fromorbit.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+ Matthew Wilcox <willy@infradead.org>, linux-kernel@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, Goldwyn Rodrigues <rgoldwyn@suse.de>
+References: <cover.1728071257.git.rgoldwyn@suse.com>
+ <8147ae0a45b9851eacad4e8f5a71b7997c23bdd0.1728071257.git.rgoldwyn@suse.com>
+ <ZwCk3eROTMDsZql1@casper.infradead.org>
+ <20241007174758.GE21836@frogsfrogsfrogs>
+ <kplkze6blu5pmojn6ikv65qdsccyuxg4yexgkrmldv5stn2mr4@w6zj7ug63f3f>
+ <Zwh0rzp8hpCoF/or@dread.disaster.area>
+ <381c349d-2eb7-419f-a2f8-a41ca6a9e9f0@linux.alibaba.com>
+ <ZwivELSTeFI41ubf@dread.disaster.area>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
+In-Reply-To: <ZwivELSTeFI41ubf@dread.disaster.area>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-Mailer: Microsoft Outlook 16.0
-Thread-Index: AQHbGWzwQMZqw76ooUWOpIJuIeDZyLJ8x9WAgAEVHYCAAHM4AIAA1CkdgADoeFuAAINGnIAAcnow
-Content-Language: en-us
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- frapeml500005.china.huawei.com (7.182.85.13)
 
-> Gur Stavi wrote:
-> > > Gur Stavi wrote:
-> > > > > Gur Stavi wrote:
-> > > > > > > Gur Stavi wrote:
-> > > > > > > > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct
-> sock
-> > > *sk,
-> > > > > > > struct fanout_args *args)
-> > > > > > > > >>  	err = -EINVAL;
-> > > > > > > > >>
-> > > > > > > > >>  	spin_lock(&po->bind_lock);
-> > > > > > > > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
-> > > > > > > > >> -	    match->type == type &&
-> > > > > > > > >> +	if (match->type == type &&
-> > > > > > > > >>  	    match->prot_hook.type == po->prot_hook.type &&
-> > > > > > > > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
-> > > > > > > > >
-> > > > > > > > > Remaining unaddressed issue is that the socket can now be
-> > > added
-> > > > > > > > > before being bound. See comment in v1.
-> > > > > > > >
-> > > > > > > > I extended the psock_fanout test with unbound fanout test.
-> > > > > > > >
-> > > > > > > > As far as I understand, the easiest way to verify bind is
-> to
-> > > test
-> > > > > that
-> > > > > > > > po->prot_hook.dev != NULL, since we are under a bind_lock
-> > > anyway.
-> > > > > > > > But perhaps a more readable and direct approach to test
-> "bind"
-> > > > > would be
-> > > > > > > > to test po->ifindex != -1, as ifindex is commented as
-> "bound
-> > > > > device".
-> > > > > > > > However, at the moment ifindex is not initialized to -1, I
-> can
-> > > add
-> > > > > such
-> > > > > > > > initialization, but perhaps I do not fully understand all
-> the
-> > > > > logic.
-> > > > > > > >
-> > > > > > > > Any preferences?
-> > > > > > >
-> > > > > > > prot_hook.dev is not necessarily set if a packet socket is
-> bound.
-> > > > > > > It may be bound to any device. See dev_add_pack and
-> ptype_head.
-> > > > > > >
-> > > > > > > prot_hook.type, on the other hand, must be set if bound and
-> is
-> > > only
-> > > > > > > modified with the bind_lock held too.
-> > > > > > >
-> > > > > > > Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD
-> also
-> > > > > > > succeeds in case bind() was not called explicitly first to
-> bind
-> > > to
-> > > > > > > a specific device or change ptype.
-> > > > > >
-> > > > > > Please clarify the last paragraph? When you say "also succeeds"
-> do
-> > > you
-> > > > > > mean SHOULD succeed or MAY SUCCEED by mistake if "something"
-> > > happens
-> > > > > ???
-> > > > >
-> > > > > I mean it succeeds currently. Which behavior must then be
-> maintained.
-> > > > >
-> > > > > > Do you refer to the following scenario: socket is created with
-> non-
-> > > zero
-> > > > > > protocol and becomes RUNNING "without bind" for all devices. In
-> > > that
-> > > > > case
-> > > > > > it can be added to FANOUT without bind. Is that considered a
-> bug or
-> > > > > does
-> > > > > > the bind requirement for fanout only apply for all-protocol (0)
-> > > > > sockets?
-> > > > >
-> > > > > I'm beginning to think that this bind requirement is not needed.
-> > > >
-> > > > I agree with that. I think that is an historical mistake that
-> socket
-> > > > becomes implicitly bound to all interfaces if a protocol is defined
-> > > > during create. Without this bind requirement would make sense.
-> > > >
-> > > > >
-> > > > > All type and dev are valid, even if an ETH_P_NONE fanout group
-> would
-> > > > > be fairly useless.
-> > > >
-> > > > Fanout is all about RX, I think that refusing fanout for socket
-> that
-> > > > will not receive any packet is OK. The condition can be:
-> > > > if (po->ifindex == -1 || !po->num)
-> > >
-> > > Fanout is not limited to sockets bound to a specific interface.
-> > > This will break existing users.
-> >
-> > For specific interface ifindex >= 1
-> > For "any interface" ifindex == 0
-> > ifindex is -1 only if the socket was created unbound with proto == 0
-> > or for the rare race case that during re-bind the new dev became
-> unlisted.
-> > For both of these cases fanout should fail.
-> 
-> The only case where packet_create does not call __register_prot_hook
-> is if proto == 0. If proto is anything else, the socket will be bound,
-> whether to a device hook, or ptype_all. I don't think we need this
-> extra ifindex condition.
-> 
 
-Even though "unbound" is an unlikely state for such a socket the code
-Should still address this state consistently. If do_bind sets ifindex
-to -1 on the unlikely unlisted scenario so should packet_create on the
-more likely proto == 0 scenario.
 
-> > >
-> > > Binding to ETH_P_NONE is useless, but we're not going to slow down
-> > > legitimate users with branches for cases that are harmless.
-> > >
-> >
-> > With "branch", do you refer to performance or something else?
-> > As I said in other mail, ETH_P_NONE could not be used in a fanout
-> > before as well because socket cannot become RUNNING with proto == 0.
-> 
-> Good point.
-> 
-> > For performance, we removed the RUNNING condition and added this.
-> > It is not like we need to perform 5M fanout registrations/sec. It is a
-> > syscall after all.
-> 
-> It's as much about code complexity as performance. Both the patch and
-> resulting code should be as small and self-evident as possible.
-> 
-> Patch v3 introduces a lot of code churn.
+On 2024/10/11 12:52, Dave Chinner wrote:
+> [FYI, your email got classified as spam by gmail...]
 
-Did you look at a side by side comparison? There is really very little
-extra code.
+(I know.. yet that is the only permitted way to send email at work..)
 
 > 
-> If we don't care about opening up fanout groups to ETH_P_NONE, then
-> patch v2 seems sufficient. If explicitly blocking this, the ENXIO
-> return can be added, but ideally without touching the other lines.
+> On Fri, Oct 11, 2024 at 11:28:42AM +0800, Gao Xiang wrote:
+>> Hi Dave,
+>>
+>> On 2024/10/11 08:43, Dave Chinner wrote:
+>>> On Thu, Oct 10, 2024 at 02:10:25PM -0400, Goldwyn Rodrigues wrote:
+>>
+>> ...
+>>
+>>>
+>>> .... there is specific ordering needed.
+>>>
+>>> For writes, the ordering is:
+>>>
+>>> 	1. pre-write data compression - requires data copy
+>>> 	2. pre-write data encryption - requires data copy
+>>> 	3. pre-write data checksums - data read only
+>>> 	4. write the data
+>>> 	5. post-write metadata updates
+>>>
+>>> We cannot usefully perform compression after encryption -
+>>> random data doesn't compress - and the checksum must match what is
+>>> written to disk, so it has to come after all other transformations
+>>> have been done.
+>>>
+>>> For reads, the order is:
+>>>
+>>> 	1. read the data
+>>> 	2. verify the data checksum
+>>> 	3. decrypt the data - requires data copy
+>>> 	4. decompress the data - requires data copy
+>>> 	5. place the plain text data in the page cache
+>>
+>> Just random stuffs for for reference, currently fsverity makes
+>> markle tree for the plain text,
 > 
-
-I am not the one to decide if opening it is a good idea but it will be
-ironic if a patch with the intention to remove the only-RUNNING
-restriction will end up allowing never-RUNNING sockets into a fanout
-group.
-
-> > > > I realized another possible problem. We should consider adding
-> ifindex
-> > > > Field to struct packet_fanout to be used for lookup of an existing
-> > > match.
-> > > > There is little sense to bind sockets to different interfaces and
-> then
-> > > > put them in the same fanout group.
-> > > > If you agree, I can prepare a separate patch for that.
-> > > >
-> > > > > The type and dev must match that of the fanout group, and once
-> added
-> > > > > to a fanout group can no longer be changed (bind will fail).
-> > > > >
-> > > > > I briefy considered the reason might be max_num_members
-> accounting.
-> > > > > Since f->num_members counts running sockets. But that is not used
-> > > > > when tracking membership of the group, sk_ref is. Every packet
-> socket
-> > > > > whose po->rollover is increased increases this refcount.
-> > > > >
-> > > > > > What about using ifindex to detect bind? Initialize it to -1 in
-> > > > > > packet_create and ensure that packet_do_bind, on success, sets
-> it
-> > > > > > to device id or 0?
-> > > > > >
-> > > > > > psock_fanout, should probably be extended with scenarios that
-> test
-> > > > > > "all devices" and all/specific protocols. Any specific scenario
-> > > > > > suggestions?
-> > > > > >
-> > > > > >
-> > > > >
-> > > >
-> > > >
-> > >
-> >
-> >
+> Well, that is specifically an existing implementation detail -
+> the fsverity core does not care what data is asked to measure as long
+> as it is the same data that it is asked to verify.
 > 
+> Hence a filesystem could ask fsverity to measure compressed,
+> encrypted data, and as long as the filesystem also asks fsverity to
+> measure the same compressed, encrypted data as it is read from disk
+> it will work as expected.
+> 
+> We could do this quite easily - hand the compressed data record
+> to fsverity one fsblock sized chunk at a time, and treat the empty
+> regions between the end of the compressed record and the offset
+> of the start of the next compressed record as a hole....
 
+.. honestly I'm not quite sure that is an implementation detail,
+for example, currently userspace can get the root hash digest of
+files to check the identical files, such as the same data A:
+   A + LZ4 = A1
+   A + DEFLATE = A2
+   A + Zstd = A3
+All three files will have the same root digest for the current
+fsverity use cases, but if merkle trees are applied to transformed
+data, that will be difference and might not meet some users' use
+cases anyway.
+
+> 
+> So, yeah, I think that fsverity can be placed at the at the "verify
+> data on disk" layer successfully rather than at the "verify plain
+> text" layer without actually impacting on it's functionality.
+> 
+> ....
+>>> Compression is where using xattrs gets interesting - the xattrs can
+>>> have a fixed "offset" they blong to, but can store variable sized
+>>> data records for that offset.
+>>>
+>>> If we say we have a 64kB compression block size, we can store the
+>>> compressed data for a 64k block entirely in a remote xattr even if
+>>> compression fails (i.e. we can store the raw data, not the expanded
+>>> "compressed" data). The remote xattr can store any amount of smaller
+>>> data, and we map the compressed data directly into the page cache at
+>>> a high offset. Then decompression can run on the high offset pages
+>>> with the destination being some other page cache offset....
+>>
+>> but compressed data itself can also be multiple reference (reflink
+>> likewise), so currently EROFS uses a seperate pseudo inode if it
+>> decides with physical addresses as indexes.
+> 
+> Sure, but handling shared data extents and breaking of shared
+> mappings on write is not an iomap/page cache problem - that's a
+> problem the filesystem block mapping operations that iomap calls
+> need to handle.
+> 
+> EROFS uses a separate pseudo inode so taht it can share page cache
+> as well as shared blocks on disk. I don't think that compression
+> changes that at all - the page cache contents for all those blocks
+> are still going to be identical...
+> 
+> As for the case of shared compressed data extents in XFS, I think
+> that shared status just needs a shared bit to added to the remote
+> xattr extent record header. Nothing else will really have to change,
+> because xattr record overwrites are naturally copy-on-write. Hence
+> updating a record will always break sharing, and the "shared bit"
+> simply propagates into the block freeing operation to indicate a
+> refcount update for the blocks being freed is needed. I don't see
+> supporting FICLONE on compressed inodes as a major issue.
+
+Yes, I agree for XFS on-disk format it's quite easy.  My comment
+related to a minor runtime point: "compressed data directly into
+the page cache at a high offset".
+
+That is if a separate pseudo inode is used to contain cached
+compressed data, it will take the only one copy and one I/O for
+shared compressed data if cache decompression is used..  Anyway,
+that is XFS's proposal, so that was my minor comment through.
+
+> 
+>>> On the write side, compression can be done directly into the high
+>>> offset page cache range for that 64kb offset range, then we can
+>>> map that to a remote xattr block and write the xattr. The xattr
+>>> naturally handles variable size blocks.
+>>
+>> Also different from plain text, each compression fses may keep
+>> different encoded data forms (e.g. fses could add headers or
+>> trailers to the on-disk compressed data or add more informations
+>> to extent metadata) for their own needs.i
+> 
+> Sure, but that's something that the filesystem can add when encoding
+> the data into the page cache. iomap treats the contents of the page
+> caceh as entirely opaque - how "transformed" data is encoded in the
+> destination folios is completely up to the filesystem doing the
+> transformation. All iomap needs to care about is the offset and
+> length of the opaque transformed data the filesystem needs to reside
+> in the cache to perform the transformation.
+> 
+> i.e. The example I gave above for XFS compression doesn't need
+> metadata in the page cache data because it is held in an externally
+> indexed xattr btree record. That's an XFS compression implementation
+> detail, not an iomap concern.
+
+Got it.
+
+Thanks,
+Gao Xiang
+
+> 
+> -Dave.
 
 
