@@ -1,192 +1,78 @@
-Return-Path: <linux-kernel+bounces-361764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361765-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B20B399ACBB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:33:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A03899ACBF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:34:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4159B1F22D50
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:33:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03DB287680
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB771D0791;
-	Fri, 11 Oct 2024 19:33:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 977461D0485;
+	Fri, 11 Oct 2024 19:33:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="J1rHam6u"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QHM68CJx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948D61D0433;
-	Fri, 11 Oct 2024 19:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0103A1D040C;
+	Fri, 11 Oct 2024 19:33:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675188; cv=none; b=tokToSJvczxPpvflZh/bFgTIBS8t1l3YQhVFr5mhtl7dElhAOC2oNE5+gHDLeeTQ5aNviBoRHYFQJqJQJcs+AJbRDy5zYP8Y8UwcCpQFdoQrW+BilzzkvDqAQ/xMCAih5Q6mHS6mqVOk+0XvbTp0eCIiPwlVHI/7fduHkOnA6mk=
+	t=1728675229; cv=none; b=Xjr2QYgB5r7hg7DG0qw4kQ5bd9qNPE5c6zaL77vl1X1JVUgVEimtQneEpdc3ajWXpUFCEri+3takoI8hK0M3W3vhbA8KfoIA8v6M1YzSh/Xyr3ve2xUTcJgHuGzGj+w/nL84apa1Z+k+nIh3VfBKetAgeveNzQQhA0pX5NvbySQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675188; c=relaxed/simple;
-	bh=Ds+rtLhrKjivgzwXwvlCGH6IUzyK3YJZdokxICABi5w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=RqnS6DiPt3d5j7R3GFodoma8fa8xwRkAwxc/nCYUVxvKPi9nkxgAfb4VYDbvAoKkFMJvMMFgAGNdvEDAus+WN6WhdazS6P+LbNBelFQTrgwedysRrkX0cEcMPhtMkOBxrY0sY/zz2+wXiOpOj+pM/DhVh3QhNNz0qeR0v1JXXRI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=J1rHam6u; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e129c01b04so20565867b3.1;
-        Fri, 11 Oct 2024 12:33:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728675185; x=1729279985; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sdAnCzT1tEcd7rHqnIUWhK8S7C7ggzWXQDUDyBxWWgQ=;
-        b=J1rHam6uQh3MKH2sYF4k+ZRdWxyV+VWUbA0k3b8E3BggfhLPamS6r4TIJXjxas49Ng
-         nrofCdbO11r+oiGqTG2jKc3HLXSSZQ/5w9X2MOt/0ogbquZbh9ml1Oq5JFt6f/T27VDx
-         9O712D0M7XzxDTgPTVGaqLliCMzlQWu4upz7FLLC9chu0VLGMrjSeGHMkXXr+err6pNa
-         h1sVlSsmS9j/xpKpCfjHnNvnL4hgU6jIUtOxAk0ZaSUl0JkWBp8SyBAeJcNpZ00CE1go
-         xGxwDoO0pGYRtEC9DAmJr/WQgJhOiCK0aTGPzLf+9fw38e1IMiDCnF3BGjoGvPL4saj7
-         sAVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675185; x=1729279985;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sdAnCzT1tEcd7rHqnIUWhK8S7C7ggzWXQDUDyBxWWgQ=;
-        b=AHhEplAMlr5lr055ISKBgDf0p9mtCDNF9QaXbTLkZnHzcGv3RIssyCPUSEj2CX2bCF
-         YZjCkAwvZOID6g84DNQj6tpnMlELm0HRMe4c/uYJpGRv6rle44xUU/SeAfiViVgxUk78
-         yIb5BC4eBH06K6iOqr3aSS+PxYtNh8g47pqY7W/vfQLlUiU3oHKm3IJ3TY2mBMi0Ohk+
-         A+E0UUTyHzkDUOOCm64iJEGus9Cd+FNzXVZ7MfdLNvdzjQ4TUKLuh41bU5hjPL+gCAOs
-         v8as9/hjtZnJ/B5zUh9KnUMaibrWY1A+e+ealNc1Nu6nxMoBpYrlzgeK4we4izL8bl7K
-         EwUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA/Zoj8DyZgY7TBdRKmpQfrhQ3oc8UNOec9YiDUldBO5odPbt0qWnX35OiNlTSqPDkx5fzd7J9@vger.kernel.org, AJvYcCW4d+thBAwDKoU9Dq04ZzKKzVRfI/AaJzzf6qGOi+XCSb/dCm7hW2VCN6AYgxql5z7vnsu14SiFW0pdoqZh5l1R@vger.kernel.org, AJvYcCWMhCCPl3pH9/kbEOskhoB3strQPhI1cEJFDwyzYSberJYqNMU7VSILAr72cW9X1GVZpDWhoI7rwOgry+oqmm9B@vger.kernel.org, AJvYcCWZ9ySKJk7vQgkuiH+PDAdBzRRgSS+p2bNHrmO2HUPLxGRtpZX8UEic3QXMgpIz4XI5kE/yorxoQTVOSwg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw/5bZj8wnThxvYdp76hkXwe+CdjHveaZzEn/z3SWa9xdyunE5q
-	jQ/sgrtAPrjnMUc9IqkViWPAP5FhK46TZQ/SwJqbTabJbqbWnKUC2HUDgujZ
-X-Google-Smtp-Source: AGHT+IGxfrWyXC0QpDM2sh4vtw0dUvoTbJRseu/40lD+LrrD4Q1ucLOricYle+vETBE/3q0fDdDhGg==
-X-Received: by 2002:a05:690c:45c8:b0:6dd:c6e1:7570 with SMTP id 00721157ae682-6e3644c0162mr7818447b3.34.1728675185410;
-        Fri, 11 Oct 2024 12:33:05 -0700 (PDT)
-Received: from dev-ubuntu-0.. (104-15-236-76.lightspeed.rlghnc.sbcglobal.net. [104.15.236.76])
-        by smtp.googlemail.com with ESMTPSA id 00721157ae682-6e332c6f3b6sm7199127b3.115.2024.10.11.12.33.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:33:05 -0700 (PDT)
-From: Tyrone Wu <wudevelops@gmail.com>
-To: bpf@vger.kernel.org,
-	wudevelops@gmail.com
-Cc: pablo@netfilter.org,
-	kadlec@netfilter.org,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	andrii@kernel.org,
-	eddyz87@gmail.com,
-	mykolal@fb.com,
-	ast@kernel.org,
-	daniel@iogearbox.net,
-	martin.lau@linux.dev,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	shuah@kernel.org,
-	riel@surriel.com,
-	shakeel.butt@linux.dev,
-	netfilter-devel@vger.kernel.org,
-	coreteam@netfilter.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	kernel-patches-bot@fb.com
-Subject: [PATCH bpf v1 2/2] selftests/bpf: add asserts for netfilter link info
-Date: Fri, 11 Oct 2024 19:32:52 +0000
-Message-ID: <20241011193252.178997-2-wudevelops@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241011193252.178997-1-wudevelops@gmail.com>
-References: <20241011193252.178997-1-wudevelops@gmail.com>
+	s=arc-20240116; t=1728675229; c=relaxed/simple;
+	bh=xJ37platbkcxBTX091NPTak5iJC64da4gDrFcXVv3eo=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=IZMnhHbcyxYW5jS/LAJGhK4jQzr8+61cQ0hA3GhOZLsMGPw+o3ZhoVw3SfHdGtGIBsf4JodP2txhQG124o/E6sZ83TZ2IXDi2eVaACD7Lpa4+3M9CRHeh6I+0oCiEvNZNqUR8y25i2H3n2SQaTzWW/vJ2cMGFLgf6zxPcBwpWnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QHM68CJx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6807C4CEC3;
+	Fri, 11 Oct 2024 19:33:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728675228;
+	bh=xJ37platbkcxBTX091NPTak5iJC64da4gDrFcXVv3eo=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=QHM68CJxJA8nW/DU/qQ9YSlcYqJ3aDKDb93X1IEZucNSdxmoIuecqZwN6JlA7msGl
+	 IV+Iq+sIHHlKlZLKOJpjRFth6zLzWJfodJsokSrvJQG2VEFv1VRl2YGlmy9m6LGb8v
+	 /jUeB2sy/o9Hy85PWj/Tv1KY7/6E2Qmevj99YEMPALe4cpApFILkqSgnmhhG5/xgvA
+	 +tK+7jjWVqtkSvtzLA62KyAvGmDuuDuowVCjfRoXGZpHbf/uBXVvP8xkjGwvvknOeM
+	 36iNLEB6WKruDPfBgh3w0VWXoBAt53P3coKYR9+Pvu12+i1ds8UvQebqf5uiPsUZeZ
+	 uA+UFr25RtztQ==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE2CE38363FB;
+	Fri, 11 Oct 2024 19:33:54 +0000 (UTC)
+Subject: Re: [GIT PULL] MMC fixes for v6.12-rc3
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20241011101305.476157-1-ulf.hansson@linaro.org>
+References: <20241011101305.476157-1-ulf.hansson@linaro.org>
+X-PR-Tracked-List-Id: <linux-mmc.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20241011101305.476157-1-ulf.hansson@linaro.org>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.12-rc1
+X-PR-Tracked-Commit-Id: 27e8fe0da3b75520edfba9cee0030aeb5aef1505
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 7351a8793d8dc7e3aca09f2d9ec624ce46c42a0f
+Message-Id: <172867523328.2975359.11132739904544367696.pr-tracker-bot@kernel.org>
+Date: Fri, 11 Oct 2024 19:33:53 +0000
+To: Ulf Hansson <ulf.hansson@linaro.org>
+Cc: Linus <torvalds@linux-foundation.org>, linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org, Ulf Hansson <ulf.hansson@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Add assertions/tests to verify `bpf_link_info` fields for netfilter link
-are correctly populated.
+The pull request you sent on Fri, 11 Oct 2024 12:13:05 +0200:
 
-Signed-off-by: Tyrone Wu <wudevelops@gmail.com>
----
- .../bpf/prog_tests/netfilter_link_attach.c    | 40 ++++++++++++++++++-
- 1 file changed, 38 insertions(+), 2 deletions(-)
+> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/mmc.git tags/mmc-v6.12-rc1
 
-diff --git a/tools/testing/selftests/bpf/prog_tests/netfilter_link_attach.c b/tools/testing/selftests/bpf/prog_tests/netfilter_link_attach.c
-index 4297a2a4cb11..5bf98ab2e17f 100644
---- a/tools/testing/selftests/bpf/prog_tests/netfilter_link_attach.c
-+++ b/tools/testing/selftests/bpf/prog_tests/netfilter_link_attach.c
-@@ -26,10 +26,43 @@ static const struct nf_link_test nf_hook_link_tests[] = {
- 
- 	{ .pf = NFPROTO_INET, .priority = 1, .name = "invalid-inet-not-supported", },
- 
--	{ .pf = NFPROTO_IPV4, .priority = -10000, .expect_success = true, .name = "attach ipv4", },
--	{ .pf = NFPROTO_IPV6, .priority =  10001, .expect_success = true, .name = "attach ipv6", },
-+	{
-+		.pf = NFPROTO_IPV4,
-+		.hooknum = NF_INET_POST_ROUTING,
-+		.priority = -10000,
-+		.flags = 0,
-+		.expect_success = true,
-+		.name = "attach ipv4",
-+	},
-+	{
-+		.pf = NFPROTO_IPV6,
-+		.hooknum = NF_INET_FORWARD,
-+		.priority =  10001,
-+		.flags = BPF_F_NETFILTER_IP_DEFRAG,
-+		.expect_success = true,
-+		.name = "attach ipv6",
-+	},
- };
- 
-+static void verify_netfilter_link_info(struct bpf_link *link, const struct nf_link_test nf_expected)
-+{
-+	struct bpf_link_info info;
-+	__u32 len = sizeof(info);
-+	int err, fd;
-+
-+	memset(&info, 0, len);
-+
-+	fd = bpf_link__fd(link);
-+	err = bpf_link_get_info_by_fd(fd, &info, &len);
-+	ASSERT_OK(err, "get_link_info");
-+
-+	ASSERT_EQ(info.type, BPF_LINK_TYPE_NETFILTER, "info link type");
-+	ASSERT_EQ(info.netfilter.pf, nf_expected.pf, "info nf protocol family");
-+	ASSERT_EQ(info.netfilter.hooknum, nf_expected.hooknum, "info nf hooknum");
-+	ASSERT_EQ(info.netfilter.priority, nf_expected.priority, "info nf priority");
-+	ASSERT_EQ(info.netfilter.flags, nf_expected.flags, "info nf flags");
-+}
-+
- void test_netfilter_link_attach(void)
- {
- 	struct test_netfilter_link_attach *skel;
-@@ -63,6 +96,7 @@ void test_netfilter_link_attach(void)
- 
- 			if (!ASSERT_OK_PTR(link, "program attach successful"))
- 				continue;
-+			verify_netfilter_link_info(link, nf_hook_link_tests[i]);
- 
- 			link2 = bpf_program__attach_netfilter(prog, &opts);
- 			ASSERT_ERR_PTR(link2, "attach program with same pf/hook/priority");
-@@ -73,6 +107,8 @@ void test_netfilter_link_attach(void)
- 			link2 = bpf_program__attach_netfilter(prog, &opts);
- 			if (!ASSERT_OK_PTR(link2, "program reattach successful"))
- 				continue;
-+			verify_netfilter_link_info(link2, nf_hook_link_tests[i]);
-+
- 			if (!ASSERT_OK(bpf_link__destroy(link2), "link destroy"))
- 				break;
- 		} else {
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/7351a8793d8dc7e3aca09f2d9ec624ce46c42a0f
+
+Thank you!
+
 -- 
-2.43.0
-
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
