@@ -1,78 +1,129 @@
-Return-Path: <linux-kernel+bounces-361766-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA2B599ACC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:34:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17A7399ACCD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 836D11F231DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:34:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA4CF1F21402
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:36:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6CFA1D078A;
-	Fri, 11 Oct 2024 19:33:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 428DB1D0F79;
+	Fri, 11 Oct 2024 19:34:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nbGOAaub"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DvzTZeps"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD3A1D0437;
-	Fri, 11 Oct 2024 19:33:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F0A1D0F68;
+	Fri, 11 Oct 2024 19:34:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675236; cv=none; b=BW/D1BZB1Ze+ELrkjdYk8pFlAmMqI5PJfQI5vsD+m+uTBkZrHSfgBG4fSOxJUxmSeAvaJc3xtHNYmXNy+bLMIWCM4ZO6M7QY0HGucr4kZ3Y/FFg7TS+lmvz82Nni3BUv7t4VE8QxNGt7FW0+WetidhPgo2trGBppTLWpa2vv0os=
+	t=1728675259; cv=none; b=ITlTV3U1oto4q4qCx526GEL5QMBF6XzVlI+rwA6tjCQrbFToEz5/ghvGrgibvY/6vkwOGsRVRtKqcd7f0RL93AFfmEKfzSg/cf1HFMuLODDGfdqtEkf/OSj9L+2rH3TNi/aW5t9QQ0IdrcECVM7Z/lFAF12XeChv9vo4v/R3iVo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675236; c=relaxed/simple;
-	bh=tuBGNPWPkCK5d+dgCDWynTpF9YJT/7i8qnVr74vxSbw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=a5WaGJlSjFquVaYqWnxr8BNYYGxQ75AUnOz2ahFCN5VYQTvQVyHXGhn837q3vyGqwenv1LsiSIlfxtxpxEhT2wv7jQh26O/MYvg2nVvOUiTkvaGUzH+a2ZAAbPCVoy735QPtB28R0upzaxUzVpFSKJJCW1IU7MMHmR26Xk3su1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nbGOAaub; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 23111C4CEC3;
-	Fri, 11 Oct 2024 19:33:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728675236;
-	bh=tuBGNPWPkCK5d+dgCDWynTpF9YJT/7i8qnVr74vxSbw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=nbGOAaubQlcMrtvZ38yXy9WI7OCpiS9SS7qnCougFA90VvHcOQ5MjWwglyU0CJpF+
-	 y1MbdnKiQS+bKpGVbHnvtMOJKJMD0axOgjix1d1sOtg2lFfUSTyRVbjYxR2pPjc9MQ
-	 wPGx4aQMIfxJNY2awc1a6H7D2PhlW8Vw8TdzTftfvMRtxcX6BMH2D0il+cSxglmGhZ
-	 M24N6cUGKbFjuTnrDZX6JxOvvLCiS5KCu9LzRFrSsM7L/r4Mcj802xF9tbnkTCPVoG
-	 2z3xgk3XMPsgYTq3P8AdCaQF1JvE0O5/FJRfZG/rcVg2Wn098BqE9t2FIdLmrDVWAH
-	 qBybK9FwAgjFw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAD4F38363FB;
-	Fri, 11 Oct 2024 19:34:01 +0000 (UTC)
-Subject: Re: [GIT PULL] pmdomain/opp fixes for v6.12-rc3
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20241011103029.477385-1-ulf.hansson@linaro.org>
-References: <20241011103029.477385-1-ulf.hansson@linaro.org>
-X-PR-Tracked-List-Id: <linux-arm-kernel.lists.infradead.org>
-X-PR-Tracked-Message-Id: <20241011103029.477385-1-ulf.hansson@linaro.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12-rc1
-X-PR-Tracked-Commit-Id: 7738568885f2eaecfc10a3f530a2693e5f0ae3d0
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 22e6abaa7263b3cbfce3c1d1f80307571ec66f7a
-Message-Id: <172867524047.2975359.9165714631973447403.pr-tracker-bot@kernel.org>
-Date: Fri, 11 Oct 2024 19:34:00 +0000
-To: Ulf Hansson <ulf.hansson@linaro.org>
-Cc: Linus <torvalds@linux-foundation.org>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, Viresh Kumar <viresh.kumar@linaro.org>, Ulf Hansson <ulf.hansson@linaro.org>, linux-arm-kernel@lists.infradead.org
+	s=arc-20240116; t=1728675259; c=relaxed/simple;
+	bh=2Bxp5SBO/hNaAA6txUfEYpCg2c3t/Jlez5bVGWr70vc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BvuDmYL3LrMo66CWXxqatVrcpVW0BN/zGflvIbHr08Jxz8iGWCsEnKWdZbg4xRp7Zm4lNx2yNrIValc6SygXFRP1AXFOG8/ItLv+1MBSPk7CMlqyDqZBUXjY79qDfTv8n0seLjN06Wbk7EruAk7EEUt8yaoAVq38xVdm9y5PeKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DvzTZeps; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c693b68f5so24859605ad.1;
+        Fri, 11 Oct 2024 12:34:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728675257; x=1729280057; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2Bxp5SBO/hNaAA6txUfEYpCg2c3t/Jlez5bVGWr70vc=;
+        b=DvzTZepsNdLc7fIdGUYPJan5CoA1ooCRHkYmComRvdJUuknKc49wmVqMTZJdo2KD1g
+         IJclV31tBF4a1Dt2fxetF2PXxhjhd+jT9qwY9gLmcighaJcm/sazpcc7rQA28eAban7+
+         U0wfJIjXzne/dy207x1X36gi2zee8TPmt/3cgosrUMojs7n+ejusa5ivPEimaN5P0qpS
+         aFCJibeen+28/5T49cgWOCEvI3+70T2vVZa/hKpNbgs1tgc83wHiJ7l7C21h+fkM0Tcr
+         XHGJcpf4PjjQutCmVhJ7yr3mz4QTDF9orBhnEYvX0YLnJZr433cdItl4F25BqaD6zWQQ
+         Unkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728675257; x=1729280057;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2Bxp5SBO/hNaAA6txUfEYpCg2c3t/Jlez5bVGWr70vc=;
+        b=FcZKmyNABqCY0uDOQx6MH6gwBTttbw8y7fW7Jxdf1ekodfZwrCzC/prpzHBaJaPDOf
+         S1TMSOPFLjmzAH9vYnYhWDol3sVaG+X7F1yk8It6rlkAymBp69dhUMgqqnq9w1Kwxkkc
+         UKOLb8L45cFjb8v5GEihhwmsbXWvolkv32rWUcGGlN5ytVfsUhBxyQmxb6LXH38VKV3q
+         wFI3mS9Orl5UeAEMspH2ZfLMklqmNROoc3CSxg+bZ/AxFNbU1uuv+tMptOTusM3qKCKA
+         ZLtI7oMsGSlqsQt+oA/62pljashFZ3MbxWvp8X5POz8WhriOfIgNgOxssit4yzIE0+O2
+         LvKw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkYA+kwTsA4hHJupilJIkWNnBxacW9Nt2D+Fo4Ur/i3gQPwruxQjh6vWvbfb3Q75SlwgOJmzEPZw9pbWWqTc/FMotd@vger.kernel.org, AJvYcCVC8KifKmHtDAzSRhxE4PMGxAbZRzMIfVEqK8FzG7kRsKTetF9MVpvn7Bax9CokwozB8NQiLE3+3A3rAZpu@vger.kernel.org, AJvYcCWeXtn3KiC1lHNGShcB8cOWr+cRxEgVdtiN2kuXVgFhHw4JJakcjpj/7Fiya+Den+F2MKo=@vger.kernel.org, AJvYcCWijPYK6eYejEYWK+X7oajN+sbYx16Ev/pySlBimail2jFIAUcu4T9zleSlYf+fVjjZN3muxTjBjkztrgUgGD4Dqw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyp0rmceCMk0jOIF7/gI/yBjADGifaVfPxhplkWWc1kKIfKmDXk
+	31zYY09JzgSUcmFwz2J4FmIqILJgrUAd2kJjsA3XQgtSCqpfax3+l8iQle2yPLDNc4Xwom/bF6m
+	KW1qf9xAKitjFhKcVSJ+t7/r3ssY=
+X-Google-Smtp-Source: AGHT+IE2ZM5M+/QVnQkT/2SITUnPd+KQkWFrXXxbnQiWQFjfVwQ66uPXYqYvfsYfOwELDaMn5VH6AKPQvNeVlz9XfYk=
+X-Received: by 2002:a17:90a:c708:b0:2e2:b64e:f501 with SMTP id
+ 98e67ed59e1d1-2e2f0d7f1fbmr4355634a91.30.1728675257506; Fri, 11 Oct 2024
+ 12:34:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <20240815014629.2685155-1-liaochang1@huawei.com>
+ <cfa88a34-617b-9a24-a648-55262a4e8a4c@huawei.com> <20240915151803.GD27726@redhat.com>
+ <c5765c03-a584-3527-8ca4-54b646f49433@huawei.com>
+In-Reply-To: <c5765c03-a584-3527-8ca4-54b646f49433@huawei.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 11 Oct 2024 12:34:05 -0700
+Message-ID: <CAEf4BzbWLf3K4C7GT58nXZ0FJfnoeCdLeRvKtwA76oM9Jdm7jg@mail.gmail.com>
+Subject: Re: [PATCH v3 0/2] uprobes: Improve scalability by reducing the
+ contention on siglock
+To: "Liao, Chang" <liaochang1@huawei.com>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org, bpf@vger.kernel.org, 
+	Andrii Nakryiko <andrii@kernel.org>, Oleg Nesterov <oleg@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The pull request you sent on Fri, 11 Oct 2024 12:30:29 +0200:
+On Tue, Sep 17, 2024 at 7:05=E2=80=AFPM Liao, Chang <liaochang1@huawei.com>=
+ wrote:
+>
+> Hi, Peter and Masami
+>
+> I look forward to your inputs on these series. Andrii has proven they are
+> hepful for uprobe scalability.
+>
+> Thanks.
+>
+> =E5=9C=A8 2024/9/15 23:18, Oleg Nesterov =E5=86=99=E9=81=93:
+> > Hi Liao,
+> >
+> > On 09/14, Liao, Chang wrote:
+> >>
+> >> Hi, Oleg
+> >>
+> >> Kindly ping.
+> >>
+> >> This series have been pending for a month. Is thre any issue I overloo=
+k?
+> >
+> > Well, I have already acked both patches.
+> >
+> > Please resend them to Peter/Masami, with my acks included.
+> >
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ulfh/linux-pm.git tags/pmdomain-v6.12-rc1
+Hey Liao,
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/22e6abaa7263b3cbfce3c1d1f80307571ec66f7a
+I didn't see v4 from you for this patch set with Oleg's acks. Did you
+get a chance to rebase, add acks, and send the latest version?
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> > Oleg.
+> >
+> >
+>
+> --
+> BR
+> Liao, Chang
 
