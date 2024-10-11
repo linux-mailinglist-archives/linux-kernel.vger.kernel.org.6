@@ -1,235 +1,141 @@
-Return-Path: <linux-kernel+bounces-360871-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360872-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4F2B99A0CD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:08:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FB2999A0D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:09:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 032351C22178
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:08:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A75284D0A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:09:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E65202101A9;
-	Fri, 11 Oct 2024 10:08:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3529210C05;
+	Fri, 11 Oct 2024 10:09:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="a8LIDhSc"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WPUwLjE4"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F203920C476
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46649210182
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641294; cv=none; b=pSILbk36XEFhWSZJAjYyCViAaTN6R+uAqyg4dJYThQsbSuIWdTExJWRpKSvt2VCsqukUt1H846VujwY68Q6E1X0H0c0bX3jn1T+IunSdc7pMkj2avS3i9XNiA7/XCwgOnMn3tyR66wpnkv5Xm6ti5b3yrFiwhl4cawSipXH8UGU=
+	t=1728641352; cv=none; b=qa+OHu8V9KxtGAcGBAK9GKTWpHNuhSGEwhpbF86pUZMpepBBX43xSVhSaTytqxHKaKKQx+yHli1cHqQD5MgnifCGeyz7JnhRA08qoKEbJZLWfx7JKXQKS9GQl+MCGeMgNkqm40SFqUtK7tqHquWCXlatyzFICRLDfOFccgKYJqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641294; c=relaxed/simple;
-	bh=LzVn8pERo3wShMtL240piFs4IbQa4eGYVpzyVPZIcUY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PpyggrLazSQLe9+vl8Mbqapb3sHcJ44+Zpmz9tJ0v74VgS47MAP71rlkqE607to9953Vpod248K/9vzzIY5MMkqqARGZU/4RR0jP5knxniiCHBM3FqysdqU4HIQRKUgt0A3USkR6ajNXsMSC/Ogy2adjiq3M3WzraaJToqvykUg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=a8LIDhSc; arc=none smtp.client-ip=209.85.219.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-6cbc28f8e1bso14291736d6.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:08:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1728641290; x=1729246090; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yQCHUVieXC/maxrCZuriWbj4FWAgT/JMBz1Cy/ysUrU=;
-        b=a8LIDhSc4IuiQz7ZbhYEa/kZjrXHHJdn0wcchbOy0cmafBpfI88lX2kZUwRtrOLuIx
-         5zXV7FhyOe9YEJ+6pmLFlLdaAZAEVnwQPLEbAz6/tGBi1gTWvagn3xNJNh4pn75itjKo
-         7GYDpMEEznLYtj6495h4mUEMDsb8jsMlHk4IEIO0Pbtv0JTqKjLEMYjOF5+UnrNJG8T1
-         EyKNr7fSYpCg7855WZ9rflRHP1DoSdSNA3tXkSLCyLDocyRyUSCzAc3bDU3duYlubRIg
-         +EFf1+oOvst3CrCA/xw6kQ8mZq7/+OEjEUB9Ab5sQUk1elyb1zwn65xlPzxcF7v1WwBS
-         eGyg==
+	s=arc-20240116; t=1728641352; c=relaxed/simple;
+	bh=PMAPZWief1Cvlh5MnoziMG0cwFA7qKjTMEUZ3nnKxnY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qOKffjlgCLcxLqg7MAP9OJcAbz8+FtnRRATp4xcdQJK18A9AGdkGIBi2x4vl1PSEr7xRCbplUSRe5A6b2gLZ8HFpeTzTScW+JV5JEXP2ubANo49iQdytkBS/xnQNhjWFQnu96eE1FBSfxVBmwr04bDBAcjd/4LwGhO32H+zOVSA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WPUwLjE4; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728641348;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=rYX1/0xaAsVY9y/xa8IDQZuNB9RuCS/ODqECEVP3XcY=;
+	b=WPUwLjE4cr6Za6/zA3/AE/EsmyVg0exnhEHgEwbxyJhHmx9XMeQkgi2/SRCI1f9pk92t3M
+	xJoYVR9xpB6Kt3f4WzMY2LppumKL699oep46Xq5+KsTfcECnvJsU6Uhzdk/H81liKK2ilj
+	IgWB2e+Y8q+cJn3Jda1WexS51y7v3Hg=
+Received: from mail-lf1-f70.google.com (mail-lf1-f70.google.com
+ [209.85.167.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-84-k28PQQtFOa25qK2iOOyLdw-1; Fri, 11 Oct 2024 06:09:06 -0400
+X-MC-Unique: k28PQQtFOa25qK2iOOyLdw-1
+Received: by mail-lf1-f70.google.com with SMTP id 2adb3069b0e04-5398d98bea0so1283074e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:09:06 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728641290; x=1729246090;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=yQCHUVieXC/maxrCZuriWbj4FWAgT/JMBz1Cy/ysUrU=;
-        b=gihQDOo+oyT9YSSe4J+G/M7OSseWDQh0Aj18542Lz3cmSQxK0y88D/qV0f1WqnSNij
-         mpZsa2qB+e0kLOYQ4EvYzEacBov8rtyAZM0VYJIcSRX/VyfB4JkAdk7m8NgC66jhJmJz
-         Nq0OYJ2tJrbChqZt5PBpCUgq45l1vJfglh+wd5LgHp/SsSxEpbRF6sONFcj0R1LiQDK0
-         sqBh/M8d4ajqv5UHZnd0+tJuK4jzk7pYlWls3j4l+Dy0XXZItoDXfgCsU/RkNLuSyoO4
-         e5/r6I/BdT9JuqemK8Neifbm561QdsLzWHG7OT63Z17fqkLdiy0jp1oDG12HGUNnJWVu
-         EuMA==
-X-Forwarded-Encrypted: i=1; AJvYcCViE/xxpctBvmX59wrFgtxAMJCCIVlBRrXaWe38f4IiQjZKPzxDAGoQWSacUwpBsJGpId/Mr+N0Xz57qIc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZJTw15id16YMpB3TWx6FbK71+d7gNPkIFopxsj6jAW/IsXt/n
-	1rh08W5TBosOYBej0lIirUYGB4YdkIOQNcMRDe0MYOwyQNNFXS2W8iStWrbgtrVqTkRkYZzZ+xy
-	D
-X-Google-Smtp-Source: AGHT+IFu68bfj4KlZX+oQML02MqSIj4X1LzVRMFNAjcPoO3TU5Z670rBUiQ5+zSiTJ1izUVkkMuZWA==
-X-Received: by 2002:a05:6214:5b87:b0:6cb:d302:f0cf with SMTP id 6a1803df08f44-6cbeff63b0fmr33690246d6.28.1728641289721;
-        Fri, 11 Oct 2024 03:08:09 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:da5e:d3ff:fee7:26e7])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8679d3csm14030136d6.137.2024.10.11.03.08.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 03:08:08 -0700 (PDT)
-Date: Fri, 11 Oct 2024 06:08:03 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: K Prateek Nayak <kprateek.nayak@amd.com>,
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	linux-kernel@vger.kernel.org,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Klaus Kudielka <klaus.kudielka@gmail.com>,
-	Chris Bainbridge <chris.bainbridge@gmail.com>,
-	"Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>,
-	"Gautham R. Shenoy" <gautham.shenoy@amd.com>,
-	Youssef Esmat <youssefesmat@google.com>,
-	Paul Menzel <pmenzel@molgen.mpg.de>,
-	Bert Karwatzki <spasswolf@web.de>, regressions@lists.linux.dev
-Subject: Re: [PATCH 3/3] sched/core: Indicate a sched_delayed task was
- migrated before wakeup
-Message-ID: <20241011100803.GA331616@cmpxchg.org>
-References: <20241010082838.2474-1-kprateek.nayak@amd.com>
- <20241010082838.2474-4-kprateek.nayak@amd.com>
- <20241010130316.GA181795@cmpxchg.org>
- <20241010130621.GH17263@noisy.programming.kicks-ass.net>
- <20241010193712.GC181795@cmpxchg.org>
- <20241011083323.GL17263@noisy.programming.kicks-ass.net>
+        d=1e100.net; s=20230601; t=1728641345; x=1729246145;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rYX1/0xaAsVY9y/xa8IDQZuNB9RuCS/ODqECEVP3XcY=;
+        b=oUuvb3GdVne2mkh6CkGLQw+i3YZPOVaJAmErklpOH2+pNE+ZQE0KpiAK5eb0tUnXMb
+         9WtvB9skz8AY7LAK98ZCBGm2XJvpUbqAz6uspNuzwUD9/T/IPNBFm3Mah3aFdERix4to
+         a+9KU2B2GqX2TcuU70P/e5jceeMShVZq6oNnoG0XbHUJla8WYrZXmHiIfsgzhYVYN02K
+         xPgVwvHxWf2KZG+q6KaQ5OjhRFzgNP24QnMXpy+p2j59ypXbKTOShvMyCXCXwZa0p2wq
+         YeHxwteD8Ym/mcW7FL/mJ7kNCux5P8b0ztVJ6IZgp4PVD4EJdIjNwLsGNnYJOQgTh79w
+         e16A==
+X-Forwarded-Encrypted: i=1; AJvYcCWAPbIOvLzHgj7qC4FiaS2cJHxTathidSpeEUfQcsLZysOQ6bRbadeS3thVRtLDQUuTIs4Fkkqi6QqeNLc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyuvEeGfSBprNGORdIF37gLZR76R72sA/2FsjysHEKDaTf4HDlk
+	9/uaKQEJdnWN6wjuWIUgz1qeTImey1u1DR8FfSBRY2H923RjlDJF3BKAye3U7VFjGWaEjL9gAGB
+	FG4Y3oxoMGpohDb5ZQjOgKkz/kzWyxKcvhXEzNI05Dby7yqn+HRHcTiWLckRerliFKjR5rqtVig
+	QIovErf5N6NDFluUy1TDjTFurZwZXC0I4htbrF
+X-Received: by 2002:ac2:4c43:0:b0:539:93ef:9ed9 with SMTP id 2adb3069b0e04-539da4f8601mr1065152e87.36.1728641345339;
+        Fri, 11 Oct 2024 03:09:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHh9JhMluU61p9DiGJofBd50PyPZtVPQ4h/Gwn/PPd9vgOrL5ypr4hHBgPmFmh0wtP+fgFjDzk950NotpVtb30=
+X-Received: by 2002:ac2:4c43:0:b0:539:93ef:9ed9 with SMTP id
+ 2adb3069b0e04-539da4f8601mr1065125e87.36.1728641344858; Fri, 11 Oct 2024
+ 03:09:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011083323.GL17263@noisy.programming.kicks-ass.net>
+References: <ZwgYXsCDDwsOBZ4a@linux.ibm.com> <640d6536-e1b3-4ca8-99f8-676e8905cc3e@redhat.com>
+ <Zwj4AllH_JjH5xEb@linux.ibm.com>
+In-Reply-To: <Zwj4AllH_JjH5xEb@linux.ibm.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Date: Fri, 11 Oct 2024 12:08:52 +0200
+Message-ID: <CABgObfa9AjsDTTKJY5sZLcH0+-7tbpUvMnEiyq_wxhe9-fajzA@mail.gmail.com>
+Subject: Re: [RFC] powerpc/kvm: Fix spinlock member access for PREEMPT_RT
+To: Vishal Chourasia <vishalc@linux.ibm.com>
+Cc: linuxppc-dev@lists.ozlabs.org, Michael Ellerman <mpe@ellerman.id.au>, 
+	Nicholas Piggin <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
+	Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan <maddy@linux.ibm.com>, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 10:33:23AM +0200, Peter Zijlstra wrote:
-> On Thu, Oct 10, 2024 at 03:37:12PM -0400, Johannes Weiner wrote:
-> > It's slightly more invasive on the psi callback
-> > side, but I think it keeps the sched core bits simpler. Thoughts?
-> 
-> I wouldn't mind if psi_{en,de}queue() get the full flags argument in the
-> future. For now the one boolean seems to work, but perhaps it makes more
-> sense to just pass the flags along in their entirety.
+On Fri, Oct 11, 2024 at 12:04=E2=80=AFPM Vishal Chourasia <vishalc@linux.ib=
+m.com> wrote:
+> diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
+> index 8094a01974cca..568dc856f0dfa 100644
+> --- a/arch/powerpc/Kconfig
+> +++ b/arch/powerpc/Kconfig
+> @@ -168,6 +168,7 @@ config PPC
+>         select ARCH_STACKWALK
+>         select ARCH_SUPPORTS_ATOMIC_RMW
+>         select ARCH_SUPPORTS_DEBUG_PAGEALLOC    if PPC_BOOK3S || PPC_8xx
+> +       select ARCH_SUPPORTS_RT                 if !PPC || !KVM_BOOK3S_64=
+_HV
+>         select ARCH_USE_BUILTIN_BSWAP
+>         select ARCH_USE_CMPXCHG_LOCKREF         if PPC64
+>         select ARCH_USE_MEMTEST
+> I tried rebuilding with the above diff as per your suggestion
+> though it works when KVM_BOOK3S_64_HV is set to N, but for
+> pseries_le_defconfig, it's set to M, by default, which then requires sett=
+ing it
+> to N explicitly.
 
-Something like this?
+Yes, that was intentional (the "!PPC ||" part is not necessary since
+you placed this in "config PPC"). I understand however that it's hard
+to discover that you need KVM_BOOK3S_64_HV=3Dn in order to build an RT
+kernel.
 
-I like it better too. There is a weird asymmetry between passing
-ENQ_MIGRATED to one and !ENQ_SLEEP to the other both as "migrate".
+> Will something like below be a better solution? This will set
+> KVM_BOOK3S_64_HV to N if ARCH_SUPPORTS_RT is set.
+>
+> diff --git a/arch/powerpc/kvm/Kconfig b/arch/powerpc/kvm/Kconfig
+> index dbfdc126bf144..33e0d50b08b14 100644
+> --- a/arch/powerpc/kvm/Kconfig
+> +++ b/arch/powerpc/kvm/Kconfig
+> @@ -80,7 +80,7 @@ config KVM_BOOK3S_64
+>
+>  config KVM_BOOK3S_64_HV
+>         tristate "KVM for POWER7 and later using hypervisor mode in host"
+> -       depends on KVM_BOOK3S_64 && PPC_POWERNV
+> +       depends on KVM_BOOK3S_64 && PPC_POWERNV && !ARCH_SUPPORTS_RT
+>         select KVM_BOOK3S_HV_POSSIBLE
+>         select KVM_GENERIC_MMU_NOTIFIER
+>         select CMA
 
-No strong preference for whether the ENQUEUE_RESTORE check should be
-in caller or callee, but I figured if we pass the flags anyway...
+No, that would make it completely impossible to build with KVM enabled.
 
-I toyed with a separate branch for ENQUEUE_INITIAL. But it saves one
-branch during fork while adding one to repeat enqueues. The latter
-should be hotter on average, so I removed it again.
+Paolo
 
-Completely untested. But if it looks good, I'll send a proper patch.
-
----
-
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index 527502a86ff9..42cf181bf3ab 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2019,10 +2019,10 @@ void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- 	 */
- 	uclamp_rq_inc(rq, p);
- 
--	if (!(flags & ENQUEUE_RESTORE)) {
-+	psi_enqueue(p, flags);
-+
-+	if (!(flags & ENQUEUE_RESTORE))
- 		sched_info_enqueue(rq, p);
--		psi_enqueue(p, flags & ENQUEUE_MIGRATED);
--	}
- 
- 	if (sched_core_enabled(rq))
- 		sched_core_enqueue(rq, p);
-@@ -2039,10 +2039,10 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
- 	if (!(flags & DEQUEUE_NOCLOCK))
- 		update_rq_clock(rq);
- 
--	if (!(flags & DEQUEUE_SAVE)) {
-+	if (!(flags & DEQUEUE_SAVE))
- 		sched_info_dequeue(rq, p);
--		psi_dequeue(p, !(flags & DEQUEUE_SLEEP));
--	}
-+
-+	psi_dequeue(p, flags);
- 
- 	/*
- 	 * Must be before ->dequeue_task() because ->dequeue_task() can 'fail'
-diff --git a/kernel/sched/stats.h b/kernel/sched/stats.h
-index 767e098a3bd1..8ee0add5a48a 100644
---- a/kernel/sched/stats.h
-+++ b/kernel/sched/stats.h
-@@ -127,21 +127,25 @@ static inline void psi_account_irqtime(struct rq *rq, struct task_struct *curr,
-  * go through migration requeues. In this case, *sleeping* states need
-  * to be transferred.
-  */
--static inline void psi_enqueue(struct task_struct *p, bool migrate)
-+static inline void psi_enqueue(struct task_struct *p, int flags)
- {
- 	int clear = 0, set = 0;
- 
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
-+	/* Same runqueue, nothing changed for psi */
-+	if (flags & ENQUEUE_RESTORE)
-+		return;
-+
- 	if (p->se.sched_delayed) {
- 		/* CPU migration of "sleeping" task */
--		SCHED_WARN_ON(!migrate);
-+		SCHED_WARN_ON(!(flags & ENQUEUE_MIGRATED));
- 		if (p->in_memstall)
- 			set |= TSK_MEMSTALL;
- 		if (p->in_iowait)
- 			set |= TSK_IOWAIT;
--	} else if (migrate) {
-+	} else if (flags & ENQUEUE_MIGRATED) {
- 		/* CPU migration of runnable task */
- 		set = TSK_RUNNING;
- 		if (p->in_memstall)
-@@ -158,17 +162,14 @@ static inline void psi_enqueue(struct task_struct *p, bool migrate)
- 	psi_task_change(p, clear, set);
- }
- 
--static inline void psi_dequeue(struct task_struct *p, bool migrate)
-+static inline void psi_dequeue(struct task_struct *p, int flags)
- {
- 	if (static_branch_likely(&psi_disabled))
- 		return;
- 
--	/*
--	 * When migrating a task to another CPU, clear all psi
--	 * state. The enqueue callback above will work it out.
--	 */
--	if (migrate)
--		psi_task_change(p, p->psi_flags, 0);
-+	/* Same runqueue, nothing changed for psi */
-+	if (flags & DEQUEUE_SAVE)
-+		return;
- 
- 	/*
- 	 * A voluntary sleep is a dequeue followed by a task switch. To
-@@ -176,6 +177,14 @@ static inline void psi_dequeue(struct task_struct *p, bool migrate)
- 	 * TSK_RUNNING and TSK_IOWAIT for us when it moves TSK_ONCPU.
- 	 * Do nothing here.
- 	 */
-+	if (flags & DEQUEUE_SLEEP)
-+		return;
-+
-+	/*
-+	 * When migrating a task to another CPU, clear all psi
-+	 * state. The enqueue callback above will work it out.
-+	 */
-+	psi_task_change(p, p->psi_flags, 0);
- }
- 
- static inline void psi_ttwu_dequeue(struct task_struct *p)
 
