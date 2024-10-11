@@ -1,112 +1,124 @@
-Return-Path: <linux-kernel+bounces-361526-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361527-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0BE499A953
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:59:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38AD99A956
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:00:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4DE7128389B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:59:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60B042842C1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:00:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A4319F12A;
-	Fri, 11 Oct 2024 16:59:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6D221A00FA;
+	Fri, 11 Oct 2024 17:00:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="OVsJ/BEb"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gj8R9lAs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2774119F11E;
-	Fri, 11 Oct 2024 16:59:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E72D81AD7;
+	Fri, 11 Oct 2024 17:00:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728665981; cv=none; b=FkaIqp+tzmguJfmyIHoN2k6MslS9cbes1nJ8bkfmNETe5kNenXuV1GGnaLtnj6tTrptPejxEYh9DpS4HQPWB39prZC4uc8HG32sHkWuqoOYZ/Z0CPyHmYzry6n4uGzxfVyhDQuKfAMzicwx7ZSOd3nigWbdm6inlBSD/5SVWj74=
+	t=1728666023; cv=none; b=MXyfWNaXasufgWSr1/X9Zdv3W/eOsjFcdDP1PfeoWERr9hKiaqVV6TUcGC9NQMgPYlzx3A2kzX5VKbRpBF1oKPriZa4QC51Silo2zXLKQ3TMoHYPIhcdP1JM6hDDpXSRL3tuuJICpqamdG72i1kVWQ7dA0R2BR1SPMBeKrfUW4M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728665981; c=relaxed/simple;
-	bh=F3eutEqx/XX9PFy+OXqa4y2XwTxqJYt9rXz7fClXPzw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rEswADC/2ujVxbeioW3MeM84OGUOnxR/UIBdGH6ErR4ZbcpNgbcmGP/WCqQfnmtbMMmcBARlR8gGCU+9zvnmDqxTJOpf67rxwfeeT+/M80dC3r2MURCCyDJyNqMh9YOu/umvzGfyXzmbXrvPPx0e0Kit7bLfFSFRa92NF433688=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=OVsJ/BEb; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 0A6FD40E021E;
-	Fri, 11 Oct 2024 16:59:37 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Kjl4LXOMatof; Fri, 11 Oct 2024 16:59:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728665973; bh=hVINV65D3f3s0MuexXOqTcMqS5x13SFxZTTU4tIG+6I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OVsJ/BEbejMFE/I/a5IQna5Ww4fIrcVgyM24gpmQXSAG3w4K8wyFV4HuhTfLNvFlm
-	 RWolyT0JOuRAd5Vj3kwfjOQUuY1v8yOvdlqLZnKZK4uD2znmKIckuT7tQPZ7ueH8gw
-	 GV3y1a39PVXpvdGjhYGbcwdKI7JUFGTZvGof8Mxe8d8z4UJcluVutvENSQ9iI463HW
-	 4yA9V2LJ2TSi7Y5SrUDbgQES1r3dHChYqFydrzoPE0JUhkkyITXUEEGweVaBI/2XxE
-	 bZi86SiBPCu+epY29lnPyKraHS6og4qseWP58pAUJNAOB2dpB5/xXBMH1mwsUDHdAJ
-	 2bY1I+9x0Cz05klL5t4m+/ZI68/EcivomTDTQPQDZplPSrBMHnmfVQ5XGg6oMOk4yo
-	 Vuq41LlDqrWZ4WLY8YNL1/XvZDJct0WlQdV237m4HYg79s9+8q2SmI5LzAXzMMcYYY
-	 TbbYd5M1Cui0URE9tHbn7TkPiR5JaLcFcKvaB0alfdI2g+mc3Yl2BEXhMv9HK1R3vO
-	 AE9IqpOQL/UNrS2Nwh2LHMpFuVFJxqUOUd6XYJXLPg7BEs+P0+wk9ywyS6pNB6DwCY
-	 V/43D3gvNnI5jBazqlDhgMkNMMSvwjXiwZ7kJvix+98uqW6Fx16K2YMieoQJ/G+0hV
-	 Yiu7apJoTKz1Oj7em3tdBk/0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id BD71940E0169;
-	Fri, 11 Oct 2024 16:59:18 +0000 (UTC)
-Date: Fri, 11 Oct 2024 18:59:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Pavan Kumar Paluri <papaluri@amd.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-coco@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dhaval Giani <dhaval.giani@amd.com>
-Subject: Re: [PATCH v6 1/2] x86, KVM:SVM: Move sev specific parsing into
- arch/x86/virt/svm
-Message-ID: <20241011165912.GAZwlZYDO_kz3HQ_ie@fat_crate.local>
-References: <20241010121455.15795-1-papaluri@amd.com>
- <20241010121455.15795-2-papaluri@amd.com>
- <20241011162120.GDZwlQgKTFi22JZ5If@fat_crate.local>
- <f8a3a683-0cdd-d1bb-1904-521ce5a96dac@amd.com>
- <20241011164825.GEZwlW2XggpAMsZ3P9@fat_crate.local>
- <7df1961f-f120-3914-ef23-9e466cda6248@amd.com>
+	s=arc-20240116; t=1728666023; c=relaxed/simple;
+	bh=tCb1Adt6yx6LpCYAGBV57u5hT1us7wTQ1g6x8UVUOS8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JeEWGJ0/Xc0a3s+fj9HvOFe8rLfvE9+qU54JJEmtUgLr6VnhOh4ofmP2jk6WI0By+Wqs4pbpmKH4D95upVi0K250liKXdM3GteO6KTU9eiGOY1JmoXRgwW7ctACItNJqEEFTV23rGnCE5De0YwZNuPBW8g1GlwVl0Hkh02UYVHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gj8R9lAs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71108C4CEC7;
+	Fri, 11 Oct 2024 17:00:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728666022;
+	bh=tCb1Adt6yx6LpCYAGBV57u5hT1us7wTQ1g6x8UVUOS8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=gj8R9lAsMEqm144H+P5577uKJKD2sJvbLLLAIV/YwaZL9D0+LjfagcA5qOi0+q2Em
+	 BvCp+o1uxk9LNQ4UxyJseQf8MCWdF7VjaTIyYVpG6k62Oxn8G2B7q05lE5TGcXf2CB
+	 5MvgcwD/nx5OCWM4Yd+rhigAOOsTXOvQzUSpy9upd6q9eOceIcOlGI3Up0IcuD1gGS
+	 oibNk0m2AsJ0uZ7tiiTuISNA3pF9gouA6vQolIE9MmEcbLTAEUG3zVH0dViGe3AxIZ
+	 6fV+qRDvLGQHTAABQQb9tkQ6YhBGMatW98QOp4I2qw50DgXWqWVGZ5Bc2CQSjvG6N5
+	 O/VGcjrmARXPA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Andrii Nakryiko <andrii@kernel.org>,
+	Eduard Zingerman <eddyz87@gmail.com>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+	bpf@vger.kernel.org
+Subject: [PATCH] libbpf: Fix possible compiler warnings in hashmap
+Date: Fri, 11 Oct 2024 10:00:21 -0700
+Message-ID: <20241011170021.1490836-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <7df1961f-f120-3914-ef23-9e466cda6248@amd.com>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 11:55:14AM -0500, Tom Lendacky wrote:
-> Ah, that makes more sense. Looks like he's missing the include for
-> linux/cache.h 
+The hashmap__for_each_entry[_safe] is accessing 'map' as a pointer.
+But it does without parentheses so passing a static hash map with an
+ampersand (like '&slab_hash') will cause compiler warnings due
+to unmatched types as '->' operator has a higher precedence.
 
-"Changelog:
-=========
-v5:
-...
-  * Remove <asm/cache.h> stray header introduced in the previous
-    versions because of __read_mostly attribute that is now moved into
-    virt/svm/cmdline.c"
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/lib/bpf/hashmap.h | 20 ++++++++++----------
+ 1 file changed, 10 insertions(+), 10 deletions(-)
 
+diff --git a/tools/lib/bpf/hashmap.h b/tools/lib/bpf/hashmap.h
+index c12f8320e6682d50..0c4f155e8eb745d9 100644
+--- a/tools/lib/bpf/hashmap.h
++++ b/tools/lib/bpf/hashmap.h
+@@ -166,8 +166,8 @@ bool hashmap_find(const struct hashmap *map, long key, long *value);
+  * @bkt: integer used as a bucket loop cursor
+  */
+ #define hashmap__for_each_entry(map, cur, bkt)				    \
+-	for (bkt = 0; bkt < map->cap; bkt++)				    \
+-		for (cur = map->buckets[bkt]; cur; cur = cur->next)
++	for (bkt = 0; bkt < (map)->cap; bkt++)				    \
++		for (cur = (map)->buckets[bkt]; cur; cur = cur->next)
+ 
+ /*
+  * hashmap__for_each_entry_safe - iterate over all entries in hashmap, safe
+@@ -178,8 +178,8 @@ bool hashmap_find(const struct hashmap *map, long key, long *value);
+  * @bkt: integer used as a bucket loop cursor
+  */
+ #define hashmap__for_each_entry_safe(map, cur, tmp, bkt)		    \
+-	for (bkt = 0; bkt < map->cap; bkt++)				    \
+-		for (cur = map->buckets[bkt];				    \
++	for (bkt = 0; bkt < (map)->cap; bkt++)				    \
++		for (cur = (map)->buckets[bkt];				    \
+ 		     cur && ({tmp = cur->next; true; });		    \
+ 		     cur = tmp)
+ 
+@@ -190,19 +190,19 @@ bool hashmap_find(const struct hashmap *map, long key, long *value);
+  * @key: key to iterate entries for
+  */
+ #define hashmap__for_each_key_entry(map, cur, _key)			    \
+-	for (cur = map->buckets						    \
+-		     ? map->buckets[hash_bits(map->hash_fn((_key), map->ctx), map->cap_bits)] \
++	for (cur = (map)->buckets					    \
++		     ? (map)->buckets[hash_bits((map)->hash_fn((_key), (map)->ctx), (map)->cap_bits)] \
+ 		     : NULL;						    \
+ 	     cur;							    \
+ 	     cur = cur->next)						    \
+-		if (map->equal_fn(cur->key, (_key), map->ctx))
++		if ((map)->equal_fn(cur->key, (_key), (map)->ctx))
+ 
+ #define hashmap__for_each_key_entry_safe(map, cur, tmp, _key)		    \
+-	for (cur = map->buckets						    \
+-		     ? map->buckets[hash_bits(map->hash_fn((_key), map->ctx), map->cap_bits)] \
++	for (cur = (map)->buckets					    \
++		     ? (map)->buckets[hash_bits((map)->hash_fn((_key), (map)->ctx), (map)->cap_bits)] \
+ 		     : NULL;						    \
+ 	     cur && ({ tmp = cur->next; true; });			    \
+ 	     cur = tmp)							    \
+-		if (map->equal_fn(cur->key, (_key), map->ctx))
++		if ((map)->equal_fn(cur->key, (_key), (map)->ctx))
+ 
+ #endif /* __LIBBPF_HASHMAP_H */
 -- 
-Regards/Gruss,
-    Boris.
+2.47.0.rc1.288.g06298d1525-goog
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
