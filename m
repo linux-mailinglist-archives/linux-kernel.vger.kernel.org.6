@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-360991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360992-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D332A99A221
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:56:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D94499A222
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:56:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EB271C23698
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:56:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB4AE1F238F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C395212D1F;
-	Fri, 11 Oct 2024 10:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2392141C4;
+	Fri, 11 Oct 2024 10:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="APak0JPH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MpvFQaL9"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F98821503B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB0420CCE8
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728644165; cv=none; b=gNOCghJWZlXRzr9L29OTZPPsCLEnhdx7och9kydBCZwkpt8odCaoyEBE1AftHbB2r0pbB7LpVPH6pX0qjyiZEYoQqLxbAAKKUrycYxN+Bdr1EFbbh7CJLmpY5IO633jgBoHexvMqdcO1pD0iPvEBILuvRPP1sc/bXuMFkBgrJAs=
+	t=1728644171; cv=none; b=SIQylfepB+9eOzF/MiqLa0JdUBRs1RbJOITlAPirU6/yL+d44mKF/4cbaDNjtqwcLJPALGHDMZnmd1fHkn8UYBmOfiVfedg9OrfPZlK6OfIU/3yFvuix4KuAlbYqi40kcvZz9hj8YzdUuw74CrqPz/1315K/8y1nXp8slO3mgVI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728644165; c=relaxed/simple;
-	bh=cjilviGyJuljwu8i+kuDwZz6YJqTMJ0enhZ6iiPxH1Y=;
+	s=arc-20240116; t=1728644171; c=relaxed/simple;
+	bh=7kx5BMu4hgShLvRUOpkLyKNyWVIXJKkL6Fq7A3ldRCU=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=phg7EbPwK5ZZntddMHqwFfqXL+NAyv3gwAg6aHB2HNirrI5P326XyszMOqqT8e1RyIVp4slkUYgTI0U4G7RXGaLN+L4aY5knS27aXRfhndZm6bVgSm+W31k+EtSqrMtDuCe2D4nCaWwpff1uBj3RTA9IiIHFdrJbz6OPyp02MsY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=APak0JPH; arc=none smtp.client-ip=170.10.133.124
+	 MIME-Version; b=CnijL3MLdxbMsieT7HTrhh99yPGeC9tmy0J8Tkb1wDw6ENKG3bcDObS/QvLB81orMK+X31vVJkhxujdP42dB4KRJbk1XaPzFikfuP7vJ0sN56JjV+IEvSGAq5RRaXaxpfrI5qPd3i2R8NiAw0UR8LqEucMW3fikhj6mmzCsP/qk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MpvFQaL9; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728644163;
+	s=mimecast20190719; t=1728644169;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=ESAFmO5CDFEtABw+ze2jRMM8mwaGYPOwHPSKAEXy4z4=;
-	b=APak0JPHVA0zBhzvOAXQFzYty7r5KBw33bI5zunmE3uAR+4+JmQoR/oer0jBcl6PkU0ZIO
-	5ja867iA6e9SjDItKAHkYyIdCkzEm2dJU1Z7cg/1bjDy11frR3I0e8vVY++MaKk5e9IzzM
-	L12lrSHWCreczfWzLvgl/NVqc3TiGS8=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+	bh=6hf02T1aV7yZUogHl13QkgCPfci/g0M9Bx2MLqeqrk8=;
+	b=MpvFQaL9dkfiNZAZM23tjeSnzfLlXcuAatIJhxOnaJbWE+WsK7otmZxaBJJfv7WvhxLLyp
+	xrBh2/eTxcWuZUJB/tmrRMYKCr0GPnf/wWtv3oYNXbx4sIr0jfOzfrae6TPlvzclHYOaEo
+	bHRO+pQdai7v8k48USiDDvph4w9gMW8=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-696-JoxU1mbbNZWQG0H2YU9auw-1; Fri,
- 11 Oct 2024 06:56:01 -0400
-X-MC-Unique: JoxU1mbbNZWQG0H2YU9auw-1
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-439-Zexo5x07N8qb0KHzEsY_vg-1; Fri,
+ 11 Oct 2024 06:56:06 -0400
+X-MC-Unique: Zexo5x07N8qb0KHzEsY_vg-1
 Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8B5DC1954B18;
-	Fri, 11 Oct 2024 10:55:59 +0000 (UTC)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 914E9197702B;
+	Fri, 11 Oct 2024 10:56:03 +0000 (UTC)
 Received: from hydra.redhat.com (unknown [10.39.192.224])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9EFFC19560AA;
-	Fri, 11 Oct 2024 10:55:54 +0000 (UTC)
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 056A119560AA;
+	Fri, 11 Oct 2024 10:55:59 +0000 (UTC)
 From: Jocelyn Falempe <jfalempe@redhat.com>
 To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	Maxime Ripard <mripard@kernel.org>,
@@ -69,9 +69,9 @@ To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
 	dri-devel@lists.freedesktop.org,
 	linux-kernel@vger.kernel.org
 Cc: Jocelyn Falempe <jfalempe@redhat.com>
-Subject: [PATCH v4 4/7] drm/log: Do not draw if drm_master is taken
-Date: Fri, 11 Oct 2024 12:50:01 +0200
-Message-ID: <20241011105526.615812-5-jfalempe@redhat.com>
+Subject: [PATCH v4 5/7] drm/log: Color the timestamp, to improve readability
+Date: Fri, 11 Oct 2024 12:50:02 +0200
+Message-ID: <20241011105526.615812-6-jfalempe@redhat.com>
 In-Reply-To: <20241011105526.615812-1-jfalempe@redhat.com>
 References: <20241011105526.615812-1-jfalempe@redhat.com>
 Precedence: bulk
@@ -83,42 +83,102 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-When userspace takes drm_master, the drm_client buffer is no more
-visible, so drm_log shouldn't waste CPU cycle to draw on it.
+Color the timesamp prefix, similar to dmesg.
 
 Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
 ---
- drivers/gpu/drm/drm_log.c | 10 ++++++++--
- 1 file changed, 8 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/drm_log.c | 27 +++++++++++++++++++++------
+ 1 file changed, 21 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/gpu/drm/drm_log.c b/drivers/gpu/drm/drm_log.c
-index 376ee173d99d..226e206e8b6a 100644
+index 226e206e8b6a..635dff7b37ce 100644
 --- a/drivers/gpu/drm/drm_log.c
 +++ b/drivers/gpu/drm/drm_log.c
-@@ -18,6 +18,7 @@
- #include <drm/drm_print.h>
+@@ -42,6 +42,7 @@ struct drm_log_scanout {
+ 	u32 format;
+ 	u32 px_width;
+ 	u32 front_color;
++	u32 prefix_color;
+ };
  
- #include "drm_draw.h"
-+#include "drm_internal.h"
- #include "drm_log.h"
- 
- MODULE_AUTHOR("Jocelyn Falempe");
-@@ -308,8 +309,13 @@ static void drm_log_write_thread(struct console *con, struct nbcon_write_context
- 	if (!dlog->probed)
- 		drm_log_init_client(dlog);
- 
--	for (i = 0; i < dlog->n_scanout; i++)
--		drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
-+	/* Check that we are still the master before drawing */
-+	if (drm_master_internal_acquire(dlog->client.dev)) {
-+		drm_master_internal_release(dlog->client.dev);
-+
-+		for (i = 0; i < dlog->n_scanout; i++)
-+			drm_log_draw_kmsg_record(&dlog->scanout[i], wctxt->outbuf, wctxt->len);
-+	}
+ struct drm_log {
+@@ -97,7 +98,7 @@ static void drm_log_clear_line(struct drm_log_scanout *scanout, u32 line)
  }
  
- static void drm_log_lock(struct console *con, unsigned long *flags)
+ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
+-			      unsigned int len)
++			      unsigned int len, unsigned int prefix_len)
+ {
+ 	struct drm_framebuffer *fb = scanout->buffer->fb;
+ 	struct iosys_map map;
+@@ -114,9 +115,10 @@ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
+ 
+ 	iosys_map_incr(&map, r.y1 * fb->pitches[0]);
+ 	for (i = 0; i < len && i < scanout->columns; i++) {
++		u32 color = (i < prefix_len) ? scanout->prefix_color : scanout->front_color;
+ 		src = drm_draw_get_char_bitmap(font, s[i], font_pitch);
+ 		drm_log_blit(&map, fb->pitches[0], src, font_pitch, font->height, font->width,
+-			     1, px_width, scanout->front_color);
++			     1, px_width, color);
+ 		iosys_map_incr(&map, font->width * px_width);
+ 	}
+ 
+@@ -128,7 +130,7 @@ static void drm_log_draw_line(struct drm_log_scanout *scanout, const char *s,
+ }
+ 
+ static void drm_log_draw_new_line(struct drm_log_scanout *scanout,
+-				  const char *s, unsigned int len)
++				  const char *s, unsigned int len, unsigned int prefix_len)
+ {
+ 	if (scanout->line == 0) {
+ 		drm_log_clear_line(scanout, 0);
+@@ -137,23 +139,35 @@ static void drm_log_draw_new_line(struct drm_log_scanout *scanout,
+ 	} else if (scanout->line + 2 < scanout->rows)
+ 		drm_log_clear_line(scanout, scanout->line + 2);
+ 
+-	drm_log_draw_line(scanout, s, len);
++	drm_log_draw_line(scanout, s, len, prefix_len);
+ }
+ 
++/*
++ * Depends on print_time() in printk.c
++ * Timestamp is written with "[%5lu.%06lu]"
++ */
++#define TS_PREFIX_LEN 13
++
+ static void drm_log_draw_kmsg_record(struct drm_log_scanout *scanout,
+ 				     const char *s, unsigned int len)
+ {
++	u32 prefix_len = 0;
++
++	if (len > TS_PREFIX_LEN && s[0] == '[' && s[6] == '.' && s[TS_PREFIX_LEN] == ']')
++		prefix_len = TS_PREFIX_LEN + 1;
++
+ 	/* do not print the ending \n character */
+ 	if (s[len - 1] == '\n')
+ 		len--;
+ 
+ 	while (len > scanout->columns) {
+-		drm_log_draw_new_line(scanout, s, scanout->columns);
++		drm_log_draw_new_line(scanout, s, scanout->columns, prefix_len);
+ 		s += scanout->columns;
+ 		len -= scanout->columns;
++		prefix_len = 0;
+ 	}
+ 	if (len)
+-		drm_log_draw_new_line(scanout, s, len);
++		drm_log_draw_new_line(scanout, s, len, prefix_len);
+ }
+ 
+ static u32 drm_log_find_usable_format(struct drm_plane *plane)
+@@ -193,6 +207,7 @@ static int drm_log_setup_modeset(struct drm_client_dev *client,
+ 	scanout->rows = height / scanout->font->height;
+ 	scanout->columns = width / scanout->font->width;
+ 	scanout->front_color = drm_draw_color_from_xrgb8888(0xffffff, format);
++	scanout->prefix_color = drm_draw_color_from_xrgb8888(0x4e9a06, format);
+ 	return 0;
+ }
+ 
 -- 
 2.46.2
 
