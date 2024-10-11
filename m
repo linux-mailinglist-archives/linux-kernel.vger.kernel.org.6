@@ -1,138 +1,154 @@
-Return-Path: <linux-kernel+bounces-361032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5E1099A299
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:21:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD02A99A29C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D1E6CB227CF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 739371F24854
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:21:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD26E21502F;
-	Fri, 11 Oct 2024 11:21:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x6R4CK6t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wU22RYej";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="x6R4CK6t";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="wU22RYej"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726FF3D64;
-	Fri, 11 Oct 2024 11:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DC3216438;
+	Fri, 11 Oct 2024 11:21:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A5D03D64;
+	Fri, 11 Oct 2024 11:21:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728645660; cv=none; b=ghwbEPlMrI80oqQ3VznOntQ64hBVEVDqCtB4m0xFP4xtfnTL+rZa9ILp7S6z9dw+HiCJaW46Q+yEc5rqlBadi0a0l3kox/K25rX1lbbgpp7Lu3snVqoDALOdvJx+lXO4ZK0sodgSX3NFeZ73TaTNaCc7uUjpspvgv6XLMSOCwa8=
+	t=1728645699; cv=none; b=EnaOF3dSTAF5o7QrwWasCeHrM0aqGN10SdSIGf7lBUO1TI3/95qBoyCjA0/aXP0+DCQ/IAVB6nLNU5nDJZrG3p2/kQ8NTgdyryaVxLBFZ7oKZOXW/fDTCIliBUqRudQWUNfyNdeGm4P3cpAoOppWwzM1RlGyx0P19UlbWiDKMJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728645660; c=relaxed/simple;
-	bh=9WWfeF+yTw6OCEi9Dcr9BKotfZR4n7lYmVCdvL1M4rM=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=DZ9ljlKG/u+/nUrh6UF/c0yc2hClFZBzMW/Wt3evNhVP4s3j+ujQ7327kYxyyFAZ0m4cijxLYviBn3W4dIec2lMZ0y47vsnbEXKLWWUBqK37fxIfeKwSHmcU7VNY6U8/SYR+0shN4xCp56DrJH5ST5GJanws14+R3J/KxU1kfPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x6R4CK6t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wU22RYej; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=x6R4CK6t; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=wU22RYej; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from pobox.suse.cz (unknown [10.100.2.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 6D78A21FFD;
-	Fri, 11 Oct 2024 11:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728645656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mD25FBx20/otfnPWwru6uhlmMEZVnMC++97mKhAzriA=;
-	b=x6R4CK6tpW6nurAo0INPObhbR3JMBwEC1kUB382/AmXcO1E6x4w7mUG92bnO22AeXgRF+v
-	ZGjgcI6605FkdohgC15xQYBbckV3CBrwuq7luhO9efToDmxQAz3We21LaZAmjnKyt2aZ+i
-	byT6oJEiYdWGwAPbkX6VTimBYq7XLpA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728645656;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mD25FBx20/otfnPWwru6uhlmMEZVnMC++97mKhAzriA=;
-	b=wU22RYej0qxVUKf7IQaePATF/y8YxLDJyXkKVKKDxpL9+gdelt9bE1SYqJ9YqJ3p/e0RSj
-	z8IvK1VkJUuaOOBA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728645656; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mD25FBx20/otfnPWwru6uhlmMEZVnMC++97mKhAzriA=;
-	b=x6R4CK6tpW6nurAo0INPObhbR3JMBwEC1kUB382/AmXcO1E6x4w7mUG92bnO22AeXgRF+v
-	ZGjgcI6605FkdohgC15xQYBbckV3CBrwuq7luhO9efToDmxQAz3We21LaZAmjnKyt2aZ+i
-	byT6oJEiYdWGwAPbkX6VTimBYq7XLpA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728645656;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=mD25FBx20/otfnPWwru6uhlmMEZVnMC++97mKhAzriA=;
-	b=wU22RYej0qxVUKf7IQaePATF/y8YxLDJyXkKVKKDxpL9+gdelt9bE1SYqJ9YqJ3p/e0RSj
-	z8IvK1VkJUuaOOBA==
-Date: Fri, 11 Oct 2024 13:20:56 +0200 (CEST)
-From: Miroslav Benes <mbenes@suse.cz>
-To: Wardenjohn <zhangwarden@gmail.com>
-cc: jpoimboe@kernel.org, jikos@kernel.org, pmladek@suse.com, 
-    joe.lawrence@redhat.com, live-patching@vger.kernel.org, 
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 1/1] livepatch: Add stack_order sysfs attribute
-In-Reply-To: <20241008014856.3729-2-zhangwarden@gmail.com>
-Message-ID: <alpine.LSU.2.21.2410111320350.30734@pobox.suse.cz>
-References: <20241008014856.3729-1-zhangwarden@gmail.com> <20241008014856.3729-2-zhangwarden@gmail.com>
-User-Agent: Alpine 2.21 (LSU 202 2017-01-01)
+	s=arc-20240116; t=1728645699; c=relaxed/simple;
+	bh=xL0URaUxHtaSXtH5PsRUYkQ8i/Wvh6VBzDWj0/MIm4M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mms7pE4M2QcgEgOX2RoMZ1Bqxzb5WO/+o1JSRA+e/1JTMyGPtUoLlyk5I3A2NBYTP77H9E3z4QnPnuRkjWCX0AlHo2GOmghGSNTHv3wh781dhetthlzrRXY4MuH6VvhwM8oSdOVnw1cNQY0WIcLcXD6wRpaH92MddKprbIeFdy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1E1AF497;
+	Fri, 11 Oct 2024 04:22:06 -0700 (PDT)
+Received: from [10.57.85.162] (unknown [10.57.85.162])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id A2EE63F73F;
+	Fri, 11 Oct 2024 04:21:34 -0700 (PDT)
+Message-ID: <262aa3c4-fdcc-4971-bbbb-024b9086d6c3@arm.com>
+Date: Fri, 11 Oct 2024 12:21:32 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-0.999];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[7];
-	FREEMAIL_TO(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_ZERO(0.00)[0];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROMTLD(0.00)[];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/2] mm: huge_memory: add vma_thp_disabled() and
+ thp_disabled_by_hw()
+To: David Hildenbrand <david@redhat.com>, linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, kvm@vger.kernel.org,
+ Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
+ Thomas Huth <thuth@redhat.com>, "Matthew Wilcox (Oracle)"
+ <willy@infradead.org>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ Kefeng Wang <wangkefeng.wang@huawei.com>
+References: <20241011102445.934409-1-david@redhat.com>
+ <20241011102445.934409-2-david@redhat.com>
+Content-Language: en-GB
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20241011102445.934409-2-david@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 8 Oct 2024, Wardenjohn wrote:
+On 11/10/2024 11:24, David Hildenbrand wrote:
+> From: Kefeng Wang <wangkefeng.wang@huawei.com>
+> 
+> Add vma_thp_disabled() and thp_disabled_by_hw() helpers to be shared by
+> shmem_allowable_huge_orders() and __thp_vma_allowable_orders().
+> 
+> Signed-off-by: Kefeng Wang <wangkefeng.wang@huawei.com>
+> [ rename to vma_thp_disabled(), split out thp_disabled_by_hw() ]
+> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-> Add "stack_order" sysfs attribute which holds the order in which a live
-> patch module was loaded into the system. A user can then determine an
-> active live patched version of a function.
-> 
-> cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
-> 
-> means that livepatch_1 is the first live patch applied
-> 
-> cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
-> 
-> means that livepatch_module is the Nth live patch applied
-> 
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Suggested-by: Miroslav Benes <mbenes@suse.cz>
-> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+Looks like a nice tidy up on its own:
 
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Reviewed-by: Ryan Roberts <ryan.roberts@arm.com>
 
-M
+> ---
+>  include/linux/huge_mm.h | 18 ++++++++++++++++++
+>  mm/huge_memory.c        | 13 +------------
+>  mm/shmem.c              |  7 +------
+>  3 files changed, 20 insertions(+), 18 deletions(-)
+> 
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 67d0ab3c3bba..ef5b80e48599 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -322,6 +322,24 @@ struct thpsize {
+>  	(transparent_hugepage_flags &					\
+>  	 (1<<TRANSPARENT_HUGEPAGE_USE_ZERO_PAGE_FLAG))
+>  
+> +static inline bool vma_thp_disabled(struct vm_area_struct *vma,
+> +		unsigned long vm_flags)
+> +{
+> +	/*
+> +	 * Explicitly disabled through madvise or prctl, or some
+> +	 * architectures may disable THP for some mappings, for
+> +	 * example, s390 kvm.
+> +	 */
+> +	return (vm_flags & VM_NOHUGEPAGE) ||
+> +	       test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags);
+> +}
+> +
+> +static inline bool thp_disabled_by_hw(void)
+> +{
+> +	/* If the hardware/firmware marked hugepage support disabled. */
+> +	return transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED);
+> +}
+> +
+>  unsigned long thp_get_unmapped_area(struct file *filp, unsigned long addr,
+>  		unsigned long len, unsigned long pgoff, unsigned long flags);
+>  unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long addr,
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 87b49ecc7b1e..2fb328880b50 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -109,18 +109,7 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
+>  	if (!vma->vm_mm)		/* vdso */
+>  		return 0;
+>  
+> -	/*
+> -	 * Explicitly disabled through madvise or prctl, or some
+> -	 * architectures may disable THP for some mappings, for
+> -	 * example, s390 kvm.
+> -	 * */
+> -	if ((vm_flags & VM_NOHUGEPAGE) ||
+> -	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags))
+> -		return 0;
+> -	/*
+> -	 * If the hardware/firmware marked hugepage support disabled.
+> -	 */
+> -	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
+> +	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vm_flags))
+>  		return 0;
+>  
+>  	/* khugepaged doesn't collapse DAX vma, but page fault is fine. */
+> diff --git a/mm/shmem.c b/mm/shmem.c
+> index 4f11b5506363..c5adb987b23c 100644
+> --- a/mm/shmem.c
+> +++ b/mm/shmem.c
+> @@ -1664,12 +1664,7 @@ unsigned long shmem_allowable_huge_orders(struct inode *inode,
+>  	loff_t i_size;
+>  	int order;
+>  
+> -	if (vma && ((vm_flags & VM_NOHUGEPAGE) ||
+> -	    test_bit(MMF_DISABLE_THP, &vma->vm_mm->flags)))
+> -		return 0;
+> -
+> -	/* If the hardware/firmware marked hugepage support disabled. */
+> -	if (transparent_hugepage_flags & (1 << TRANSPARENT_HUGEPAGE_UNSUPPORTED))
+> +	if (thp_disabled_by_hw() || (vma && vma_thp_disabled(vma, vm_flags)))
+>  		return 0;
+>  
+>  	global_huge = shmem_huge_global_enabled(inode, index, write_end,
+
 
