@@ -1,185 +1,213 @@
-Return-Path: <linux-kernel+bounces-360819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D2199A02E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:33:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2387999A032
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:34:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FE2F28314B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:33:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5EE38B21C7E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:34:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D752220CCEC;
-	Fri, 11 Oct 2024 09:33:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B89B020CCD1;
+	Fri, 11 Oct 2024 09:33:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dXh/ESJ+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GsyBomce"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2068.outbound.protection.outlook.com [40.107.220.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24B7126AFC;
-	Fri, 11 Oct 2024 09:33:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728639205; cv=none; b=kSPerC0rZaCVrtv3P6nmi/iUhXXkqQL08BZ4c+WvGmAhX1yRZ3ch9TzuNKeWwQvB9Ek9kYycrOaqBaFYWwgGWSFCMw/QEtkXA/5/9qFVvH9T2EswdHJhmuBiQLlo8rO7uDNDrgj45eTz/f180xbnGQre5UGcazti4zd9dvsF5U8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728639205; c=relaxed/simple;
-	bh=jS7r5CiTra2sA9uavhdyfqEtuGIud+x9Fzob3lNKlUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kHcS2Wa6xDI+/jdkwAT3FI+w2r9dDwYV+d/HE1dbsNu/K+mnMeVseqjFN3Lcjb95qnCPcmDxT0fH0bGBNzfU5K40UUjtMm1JJMq0bQsC+pPsYiv4oq7D7nABRaSKHaAsd3DZ1WYLkpjDqXbZ0YDKCRLYu2d4LhzFqqdVEimqMT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dXh/ESJ+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A880DC4CEC3;
-	Fri, 11 Oct 2024 09:33:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728639204;
-	bh=jS7r5CiTra2sA9uavhdyfqEtuGIud+x9Fzob3lNKlUE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=dXh/ESJ+M6gJHsdh5J2NwQIbFLh1i0WnLafQDRP07VfHBNxyLxK6HY1+EHYfQ4pf8
-	 /pMNcxGZ8P8bQpsncHGb96mIz523tLxRVq63u/MHlKlgvhpHlfATv+JHdnF8sCYIPx
-	 KCHkKrUzLqVpayy1AERw9gIOPxkzh2Tde8sXm7TZkGnOCC13sKedL5FdDYgwoelaQF
-	 5b4LynVlMCqoIQq/2mHCVE8gUQNKTqEjLiB6AKyP/c9CDL3hbhNUo3uHboTv7Es0Zg
-	 zig3cX0sKtH3fAPGYIOdI4iccv0pumBfaHrL6d5HHRm1Kf6RNgBKzCTky5KjRgIwKH
-	 D0rpmWPFVXUzQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1szC1Z-0000000051q-3zXV;
-	Fri, 11 Oct 2024 11:33:30 +0200
-Date: Fri, 11 Oct 2024 11:33:29 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: camss NULL-deref on power on with 6.12-rc2
-Message-ID: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6654620B20B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:33:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.68
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728639232; cv=fail; b=fVKBzLGc9FN9ehmLyHzXD3+D6sbGogVA7HVifOmuYms2xxrhB6+1oqFqOSFobWzGGviWVJ4Y1xNFpfJcAq13qgw0vgwWC0DeTh/bssVx8IVVIby7cqiDKno5UBimsGsfRIlIHj84crkAnm4qZjBTQLCjfQSTYhdhinaG/ILxb2Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728639232; c=relaxed/simple;
+	bh=jtOfM3RN79vdFK+e0pyh3Ry3z4DITZSUryAgsd+yQbM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hUkLe+5xHsE1Yh4CvEbHxWsZmczaYwkc2uDoaGYyahqfzwk4+hb6ZE5jtfazSPK5SRI4LLJOozhwzsvl3+DI3rk4Gm/Tqg5u2lo2dv5Gq3HWf87decANEts01yIpMxgabue/WOZ9h9mBLhPDFI7KmWqkluMWLB+aj9ot7mBgZSI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GsyBomce; arc=fail smtp.client-ip=40.107.220.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=R4z2rIq2BLVZZsObzSlcLsjZ+YDSS2z+VoDvc9pdg7HR6uVgyIacsOwYgaf4tzKVeaHJsrb8KSI4XiLI7dCcPjBSRO71pfnk0YwBzeLYtpZTUdPRuVZRJk6hPP2b1pJIwUr9fXHJnZ3B+6/Cv3MQniTxXYahny46uV7qKrAJKE632dwpuLmNAZbxkd2I6zgbBEVdFwLv/ZGJMYeC4BjGF5yNcYCedeUJl+gtRRwTnWVlKBg1WOrYhHrPvQ2aGtpyZqo3azPsaePJF52kxxyW74rmUFau6IE0OPYYa0MQglUGLZjJQV86Blhv2GYYJpX530Wn1GngLDiyvwY2ABPLjQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jtOfM3RN79vdFK+e0pyh3Ry3z4DITZSUryAgsd+yQbM=;
+ b=YfjkCDTim4+TeCBxdq0FgeA+qsrKg8+4kpPUuetLP18Aw/fqVtFU301OMnr+WchFYjwFDo5rYYz0aHjFUFWr+RoiuOSnisPRr0ZvOE76nfoLCWURVbHCBMUE8/4P6GfdGr6sn+L1GzC9oZ9VwHVcyF5N0oVHoRFMeogDXlGm98BGXBureST+aB7I+qvC/2Wj7q0BFuH05Uz/M222ScczR3CVnH1OLuTWPSjWquLsbiuJnVSBOUeE9tqzTPeJFyxxhcVSyYjfDcEhNlQnm3bf0Z+ALioznXPgsaaa44abL0KeUjj/ggU7DbooEjxF5ue8zKH2hCn7noaHj1x+uFtM4A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=jtOfM3RN79vdFK+e0pyh3Ry3z4DITZSUryAgsd+yQbM=;
+ b=GsyBomcetffXZz/LzxiZRwvAIA/vDjM/K/nNWCXFXB9S+wlCMvUvMIFo3L8ZvtnEuvPcdHqyYFz7dlzccXCZT9pFSFtEnHciCipjD5QXoOuA/ncd2Dwuo6HD4dFCUrtwuZ/WFspOBwOvHAIvh14SxvTIsGh/qWo3hdsJZ2rB0V0=
+Received: from BL1PR12MB5849.namprd12.prod.outlook.com (2603:10b6:208:384::18)
+ by DS7PR12MB5959.namprd12.prod.outlook.com (2603:10b6:8:7e::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.16; Fri, 11 Oct
+ 2024 09:33:47 +0000
+Received: from BL1PR12MB5849.namprd12.prod.outlook.com
+ ([fe80::b77f:9333:3a5a:d285]) by BL1PR12MB5849.namprd12.prod.outlook.com
+ ([fe80::b77f:9333:3a5a:d285%4]) with mapi id 15.20.8048.017; Fri, 11 Oct 2024
+ 09:33:47 +0000
+From: "Chen, Jiqian" <Jiqian.Chen@amd.com>
+To: Jan Beulich <jbeulich@suse.com>
+CC: "xen-devel@lists.xenproject.org" <xen-devel@lists.xenproject.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	=?utf-8?B?TWFyZWsgTWFyY3p5a293c2tpLUfDs3JlY2tp?=
+	<marmarek@invisiblethingslab.com>, Juergen Gross <jgross@suse.com>, Stefano
+ Stabellini <sstabellini@kernel.org>, Oleksandr Tyshchenko
+	<oleksandr_tyshchenko@epam.com>, "Chen, Jiqian" <Jiqian.Chen@amd.com>
+Subject: Re: [PATCH v3] xen: Remove dependency between pciback and privcmd
+Thread-Topic: [PATCH v3] xen: Remove dependency between pciback and privcmd
+Thread-Index: AQHbG4+3Lfp3cJlJ4UuqoaLQId+ES7KBP0mAgACK34CAAAW/gA==
+Date: Fri, 11 Oct 2024 09:33:47 +0000
+Message-ID:
+ <BL1PR12MB584931B86739702086CDFF12E7792@BL1PR12MB5849.namprd12.prod.outlook.com>
+References: <20241011034227.1278144-1-Jiqian.Chen@amd.com>
+ <318bd8a4-a349-4e7b-8653-6995d5f9f125@suse.com>
+ <BL1PR12MB5849EFA99B7F0C55D201738AE7792@BL1PR12MB5849.namprd12.prod.outlook.com>
+In-Reply-To:
+ <BL1PR12MB5849EFA99B7F0C55D201738AE7792@BL1PR12MB5849.namprd12.prod.outlook.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-exchange-imapappendstamp: BL1PR12MB5849.namprd12.prod.outlook.com
+ (15.20.8048.017)
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-exchange-messagesentrepresentingtype: 1
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: BL1PR12MB5849:EE_|DS7PR12MB5959:EE_
+x-ms-office365-filtering-correlation-id: b2d78102-f822-4aa2-f733-08dce9d7ceca
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MDFxLy85a2NDLzR3T2o3S1NXS0hGOUhXL3ZmWUhZRENOWnVUaXlKZUE1Z1ls?=
+ =?utf-8?B?TXFOcHcyZHZmWTRsOTBKN0s3MXFlTklwajdiWVpwTU5XQmNqaTJlZ25SODBj?=
+ =?utf-8?B?aXR2VE1lbXllTUdwV0RyZVNRT0owN21zakpyK3c0QjNZYWh4a0gwNlFwR0lF?=
+ =?utf-8?B?b0lHSDBKcnp1UHhTbE9OY255QzlsY1c5UHoycWlvUnhhdnZGVmIycFhTNXJI?=
+ =?utf-8?B?T1lIMTZRdWhLRWxLbEZTS0FXLzFGb0tYczgyWjY1Z3hmT3NnTTdTenljTjFE?=
+ =?utf-8?B?UktZU1I0bGFmVy82ekkvU0MwVmlwTVdUTklGTlFXd1k0MnJDK1B6TldMa09x?=
+ =?utf-8?B?V1MyTkwwV0l2cUk5NVZyUmxQRDg0OUlhK3M3TmhGcm4rV1BTUkJEUHdQYzhN?=
+ =?utf-8?B?VTkyalR1SWNqVUJaQ2ZLbkJwN1BNbkZvVW4vT2c5WmVkcnFaamZLZW02Q0hS?=
+ =?utf-8?B?NzJtY1J3S1RhVWxpSlVvYktFZEJmRUxWUFUwRjRmVDVPdlNNWjd5WUZBL2FW?=
+ =?utf-8?B?OVUzclNSSzNiZEorSnNjdXFNQ2pHd3VRQ1BySnlQYmEzTWNST0ozY09VeFBY?=
+ =?utf-8?B?WllPR1VyQ3owL2FoRnU5VTFKejBTbXlJYmpwNUNab1lEWDIyV1haSWVPbFdx?=
+ =?utf-8?B?TGh4Y2orYUF1dm5YNmtFOS93V1ZiNHFydkdoV3oyWDc5elNTY3FuejJQNGM5?=
+ =?utf-8?B?ZFczM0tsRk5TQjFGemJqVnFKOFpZbURidDZzNW1weGJyamM4TXRFR2FLcndP?=
+ =?utf-8?B?S3dyc3U5SzBFdmF3MjlhVDludFVteENVRkNNOXMyL1dkVEYzb3BhbkVIbHdx?=
+ =?utf-8?B?TTM5MkpLdVNoQ010Mm5SYmZmK1pHUEFCZU1JT0RXRlJzVU0xT0hwV2JOS2M0?=
+ =?utf-8?B?aUVJT3h5cjZmaGtVbHJ0MEo0a1dPVzBKcFQ0UHBQR0ppUE9ZbWorUzV2RUVr?=
+ =?utf-8?B?RWpuSUIwcCtMaTlDclNuY3RoM2p2U3ZETG1jWFR3aE1od2FjYmRIZzFEYjA5?=
+ =?utf-8?B?YU85YWN5bkZLU3Q5b1FhVnhwSnBSMTNVc3BaemkvM3RsaVNxSDdKSFFrNVNT?=
+ =?utf-8?B?NXI0QzUzSGxCakV6ME5ma0ZodmhBeTJDWUJUcWFBaGpGc25lSUhDN3pZdkRK?=
+ =?utf-8?B?WVN1Tkhhd3N3bnVNRWkzdmJvZHlyK0ZJZ0E2dUdXa202bEF0a3c0aTFZWlVy?=
+ =?utf-8?B?OU9acVRVYno5QnVvOVR6NERMRUdMYXB0bGluek04TXNjZ2xCQ0EvU3lRQmhZ?=
+ =?utf-8?B?V0d6c292SkZheEw3RzhjZ2p5cnZsbXBYRHRxSVNxeGNMczBmR1kxSEV2NkZT?=
+ =?utf-8?B?WEpjRUprdU0vRnFZeFZGUnhEYnFoQVkzempxKzFBLzRjeTBuNkdnT1pKZG81?=
+ =?utf-8?B?Zng2MFQvVTZrKzZScnNzVmI5UTlqR1NPU1dYWGFhd1M4TmdtUmsxTHRmcHpi?=
+ =?utf-8?B?S2RiVUtURjNhcGduMVY3RFZOSG1PZm50SHVGQ1VZL1JDSGJjOGdLVVN4d1BY?=
+ =?utf-8?B?K3k5UUxUSHpIR3U5TTBXaXlGajh2dEJkOEZJRGRPdndZNkhab1h1R2ZUVWxD?=
+ =?utf-8?B?NWFrancrQkd6dXZ5Qjd2d09mdzNUSGpVVnVvZmNSbjVBMkpPZ3hINTh6K1pa?=
+ =?utf-8?B?V2tpMVJCRDNJcDh0TFk0RUxXdGtKZTNRM3FVU0V6ZXdoOTl3R2g0UEpxbUpp?=
+ =?utf-8?B?THRKUDZScituZE9YaFgvTzYzT0dCS21IejlQZUw0M2U2aklwSTZPZVJZN05Q?=
+ =?utf-8?B?Y0ljWGZ5NDZqdEVjYlRQTTNOYXJIWnVHUEI3dWRybE5jbG10djVzbWM1K3dL?=
+ =?utf-8?B?Rm5rVDFlWUU0ZEV1Wll1QT09?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BL1PR12MB5849.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?YXlkQmE2WkduNlZiZTgxRFZLeGRtRkVBdG5GRWhmWDljK0dJMnJnemR3RFFu?=
+ =?utf-8?B?OE5BeDkwNDBqbEhJWERFODltWSsrSHVMOEYrcHVQWkFKNE9yS2VBZWl0Tzdp?=
+ =?utf-8?B?amV5V2o4OU5SLzZzczdTYURmODZrbC82cVNONzFLVGZQYitXblV1b2M2T09z?=
+ =?utf-8?B?ZG9ZNTZ0NjFqWGErWHZZeFZOaWJsaUVHUFVnN3Y2L1RmNEdIQWRNMHExL1Z0?=
+ =?utf-8?B?d1N6YXgrdnZIL2FxUStCMVVBN2txK1BzdHNtRWI3UXRTa3IrUHhldmlPRitE?=
+ =?utf-8?B?SFd3bVFhcEJUcHJHR3NjYklQaTlxTVN1azFKYVA5akIwVWZtS2JKZzdTN2pq?=
+ =?utf-8?B?QjE4KzlVeG1ibEJQMnFaTzdpWW85TVZlRGRqL0NGbkE0SkIyS212aHIzVDZX?=
+ =?utf-8?B?M0oyMHZBbEVxQmdHTlFnaUhJWnFpNkhMSUxzeGxSaDUwUkVYSllhWFpjSmc0?=
+ =?utf-8?B?WldaSk1YWU0ycStlMzdta0tiZ3ZVRHowSDNNQ0FZNlkzTGtqRnU2NG9DTTRj?=
+ =?utf-8?B?MkRmL3pCT1E0YktiODQwZW9jSDQvSFlkejVOSW1NZmp6QWxRSm9uWlBRSDNC?=
+ =?utf-8?B?Um9oYnMrRElIVUc3S1RnNFFlTWxPZTlUYVpIK0h0L0lGcXFNYVVCcGZpUXUv?=
+ =?utf-8?B?UVo4TEtpa3pQWHRzRVNkTDlUWHMxOGhXTVlJRWNmaTZiTXBBQnFXVElmditW?=
+ =?utf-8?B?MXQ3VCtRSzg5aXF3NzFPdFUrOUZla1YybC9GVkUxOUw3Ni9GYTlFdVJ0OUlO?=
+ =?utf-8?B?MXkxdkgybnBxejQrbkRXbEdSSGw1Q29RODJ0eTFncGhiTFdYUFFwamJmYjg0?=
+ =?utf-8?B?cW1KWndnU3Zsb3BSeE5jK1NGL09uNkFQanVvdFpiZ2M3aVFiVFRYa0NNK2Zo?=
+ =?utf-8?B?Zks3T2hjVnUrNjVsdzFONVhLSmdZYnNoY1lITHFxQy91a1hQakhZdDhMQ2pM?=
+ =?utf-8?B?TDBFMUxxaVdMdktaZVFidkNCanZsVFJhVHMzL1VCQTJCY1hYOTA3U0NTRmg4?=
+ =?utf-8?B?d0FqMGF1VjZ0VGFKM2pCbW9RdTVoVXRsV0M1SmxhQXJSOUR4UWh4eHBkd1Qx?=
+ =?utf-8?B?NnpzVWZVREZxakt1VjdvQjVUZ2VONHAyWkRyODY0aTkyWUNZVmFHWUo4QndL?=
+ =?utf-8?B?QjF6MGpZUzFZbExIZFdEZ2xvdW43VVlIMzVYWjV3Zm1uU2xJUUhVanA1VER3?=
+ =?utf-8?B?N0FTWFF0YVR3MHFhbldwQXNiQW5VREcwQWY0RXZ2dTd1MUVFcEh0Wk5Rc2dQ?=
+ =?utf-8?B?QkRWYWladzhuYTl1NG1FQnRiVEpWVTRoUTBoVUJTL1lJRUpsd1FXL1RENEJx?=
+ =?utf-8?B?US9CczRYKytIclh5S1ZzNlRyemQ0MTVXRTRYeUxSSHRWcmY4YXJGeSsrVjN4?=
+ =?utf-8?B?M204Sk4ySnZHTVVkblA4Skx5Z2M4RUxEWU90Z1MzaHlMRE5XeEthSm9HV2Yz?=
+ =?utf-8?B?NmZrSG5IRFhhLytQSTFRV2YxaEpjdzNOL1pyMjdUcTdKT29rbHlFMEo2ZURz?=
+ =?utf-8?B?cUNqZkxFVGRDSDJpS3I1aGsrSEtaVjZRRGhZRTE2cjVFczdiRDZ1THl5MW53?=
+ =?utf-8?B?Q0JWbjR4REFEaWx0Uld2M3BPWXdhbithcmdMb2gxOFkzaDJ1RnFCYmQ2eW5B?=
+ =?utf-8?B?VUxCQnRJZzYxZ3F3NE41Y1F3Q0REUTFOOU9OTlVFUFY4TWo1TmV4Q0lEWEdo?=
+ =?utf-8?B?cjgvZGJRNGlyRzRidXJ0RmZ1VXNHNFF0VnBEM1ZvWmJqN0d1RkQ0K3ZVVHYz?=
+ =?utf-8?B?Mk45aUZESnJibkxLU0c0RDJxcnNZeHBaL3UxVVRYMS9zUkd3aWxuT3QzeEJZ?=
+ =?utf-8?B?UWtYaFZsRm1ORzQ0ZnY5cTZYcStqeDhoVUQzcmZUQ3hHM01LR3JkRDVZTmlX?=
+ =?utf-8?B?L1doc1E4YjlhWlFOcjA5ei9PUGZUdkFXMFhNQlRiTGtwN1o2Sm1HWUhJbkMy?=
+ =?utf-8?B?QmFMeUo2S1NmbUo1ZzdqTWdldm15bXErWWs4dUxKakk3WW1ucWhwV1JGcDJQ?=
+ =?utf-8?B?NU9NdzlKOVl4VERtQ3JXWHcvcHl3YUh6ZWxSeVlXTGMzNFVicjdHU1BaZ2RE?=
+ =?utf-8?B?UU1NL0dWZ0FhM3E5VnBQaUNqMGRDSkg0MGh3YUR2Y1lTcyt3MWoxazZoU3Bq?=
+ =?utf-8?Q?Vy7Y=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <7D98481052C5874ABA65C25A1A8765BF@amdcloud.onmicrosoft.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: BL1PR12MB5849.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b2d78102-f822-4aa2-f733-08dce9d7ceca
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 09:33:47.6069
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: LPCh1Sq1lVzVqYgpuqkhg80QYO+IrmSayV8wDib7MEbzzXP6Jl/YidNMp2vW1gQnr60+3ltkMCDwyZj5DDrnxQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR12MB5959
 
-Hi,
-
-This morning I hit the below NULL-deref in camss when booting a 6.12-rc2
-kernel on the Lenovo ThinkPad X13s.
-
-I booted the same kernel another 50 times without hitting it again it so
-it may not be a regression, but simply an older, hard to hit bug.
-
-Hopefully you can figure out what went wrong from just staring at the
-oops and code.
-
-Johan
-
-
-[    5.657860] ov5675 24-0010: failed to get HW configuration: -517
-[    5.676183] vreg_l6q: Bringing 2800000uV into 1800000-1800000uV
-
-[    6.517689] qcom-camss ac5a000.camss: Adding to iommu group 22
-
-[    6.589201] Unable to handle kernel NULL pointer dereference at virtual =
-address 0000000000000030
-[    6.589625] Mem abort info:
-[    6.589960]   ESR =3D 0x0000000096000004
-[    6.590293]   EC =3D 0x25: DABT (current EL), IL =3D 32 bits
-[    6.590630]   SET =3D 0, FnV =3D 0
-[    6.591619]   EA =3D 0, S1PTW =3D 0
-[    6.591968]   FSC =3D 0x04: level 0 translation fault
-[    6.592298] Data abort info:
-[    6.592621]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x00000000
-[    6.593112]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =3D 0
-[    6.593450]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, Xs =3D 0
-[    6.593783] user pgtable: 4k pages, 48-bit VAs, pgdp=3D000000010daef000
-[    6.594139] [0000000000000030] pgd=3D0000000000000000, p4d=3D00000000000=
-00000
-[    6.594214] Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
-[    6.594753] Modules linked in: qrtr_mhi cbc des_generic libdes algif_skc=
-ipher md5 algif_hash af_alg ip6_tables xt_LOG nf_log_syslog r8152 ipt_REJEC=
-T mii nf_reject_ipv4 libphy xt_tcpudp xt_conntrack nf_conntrack libcrc32c n=
-f_defrag_ipv6 nf_defrag_ipv4 iptable_filter qcom_pm8008_regulator ov5675 sn=
-d_q6apm(+) hci_uart btqca venus_enc venus_dec bluetooth videobuf2_dma_conti=
-g qcom_pm8008 pmic_glink_altmode qcom_spmi_adc5 leds_qcom_lpg qcom_spmi_adc=
-_tm5 mfd_core snd_soc_sc8280xp qcom_spmi_temp_alarm qcom_pon rpmsg_ctrl ecd=
-h_generic fastrpc apr rpmsg_char qrtr_smd qcom_pd_mapper rtc_pm8xxx qcom_ba=
-ttmgr ecc aux_hpd_bridge reboot_mode qcom_vadc_common industrialio nvmem_qc=
-om_spmi_sdam led_class_multicolor regmap_i2c i2c_hid_of_elan snd_soc_qcom_c=
-ommon snd_soc_qcom_sdw pwrseq_qcom_wcn ath11k_pci qcom_camss venus_core vid=
-eobuf2_dma_sg videobuf2_memops v4l2_mem2mem v4l2_fwnode videobuf2_v4l2 msm =
-v4l2_async videobuf2_common qcom_stats gpio_sbu_mux ath11k videodev drm_exe=
-c dispcc_sc8280xp snd_soc_wcd938x phy_qcom_edp gpu_sched
-[    6.594814]  snd_soc_wcd_classh snd_soc_wcd938x_sdw mac80211 drm_display=
-_helper mc snd_soc_lpass_rx_macro snd_soc_lpass_wsa_macro drm_dp_aux_bus sn=
-d_soc_lpass_tx_macro snd_soc_lpass_va_macro camcc_sc8280xp regmap_sdw video=
-cc_sm8350 i2c_qcom_cci soundwire_qcom snd_soc_wcd_mbhc libarc4 snd_soc_lpas=
-s_macro_common phy_qcom_qmp_combo cfg80211 qcom_q6v5_pas llcc_qcom aux_brid=
-ge snd_soc_core snd_compress qcom_pil_info rfkill qcom_common snd_pcm qcom_=
-glink_smem pci_pwrctl_pwrseq drm_kms_helper pci_pwrctl_core mhi typec qcom_=
-glink pwrseq_core icc_bwmon snd_timer phy_qcom_qmp_usb qrtr phy_qcom_snps_f=
-emto_v2 qcom_q6v5 gpucc_sc8280xp pinctrl_sc8280xp_lpass_lpi snd qcom_sysmon=
- pinctrl_lpass_lpi lpasscc_sc8280xp pmic_glink soundcore mdt_loader pdr_int=
-erface soundwire_bus qcom_rng rpmsg_core leds_gpio input_leds qcom_pdr_msg =
-socinfo qmi_helpers rng_core qcom_wdt pwm_bl icc_osm_l3 led_class fuse dm_m=
-od ip_tables x_tables ipv6 autofs4 pcie_qcom crc8 phy_qcom_qmp_pcie nvme nv=
-me_core hid_multitouch i2c_qcom_geni i2c_hid_of i2c_hid drm
-[    6.594866]  i2c_core
-[    6.594868] CPU: 0 UID: 0 PID: 557 Comm: v4l_id Not tainted 6.12.0-rc2 #=
-165
-[    6.594871] Hardware name: LENOVO 21BYZ9SRUS/21BYZ9SRUS, BIOS N3HET87W (=
-1.59 ) 12/05/2023
-[    6.594872] pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=
-=3D--)
-[    6.594874] pc : camss_find_sensor+0x20/0x74 [qcom_camss]
-[    6.594885] lr : camss_get_pixel_clock+0x18/0x60 [qcom_camss]
-[    6.594889] sp : ffff800082d538f0
-[    6.594890] x29: ffff800082d538f0 x28: ffff800082d53c70 x27: ffff670cc04=
-04618
-[    6.594893] x26: 0000000000000000 x25: 0000000000000000 x24: ffff670cd33=
-173d0
-[    6.594895] x23: ffff800082d539a8 x22: ffff670cd33192c8 x21: ffff800082d=
-539b8
-[    6.594898] x20: 0000000000000002 x19: 0000000000020001 x18: 00000000000=
-00000
-[    6.594900] x17: 0000000000000000 x16: ffffbf0bffbecdd0 x15: 00000000000=
-00001
-[    6.594902] x14: ffff670cc5c95300 x13: ffff670cc0b38980 x12: ffff670cc5c=
-95ba8
-[    6.594905] x11: ffffbf0c00f73000 x10: 0000000000000000 x9 : 00000000000=
-00000
-[    6.594907] x8 : ffffbf0c0085d000 x7 : 0000000000000000 x6 : 00000000000=
-00078
-[    6.594910] x5 : 0000000000000000 x4 : ffff670cd3318598 x3 : ffff670cd33=
-18468
-[    6.594912] x2 : ffff670cd3317728 x1 : ffff800082d539b8 x0 : 00000000000=
-00000
-[    6.594915] Call trace:
-[    6.594915]  camss_find_sensor+0x20/0x74 [qcom_camss]
-[    6.594920]  camss_get_pixel_clock+0x18/0x60 [qcom_camss]
-[    6.594924]  vfe_get+0xb8/0x504 [qcom_camss]
-[    6.594931]  vfe_set_power+0x30/0x58 [qcom_camss]
-[    6.594936]  pipeline_pm_power_one+0x13c/0x150 [videodev]
-[    6.594951]  pipeline_pm_power.part.0+0x58/0xf4 [videodev]
-[    6.594960]  v4l2_pipeline_pm_use+0x58/0x94 [videodev]
-[    6.594969]  v4l2_pipeline_pm_get+0x14/0x20 [videodev]
-[    6.594978]  video_open+0x78/0xf4 [qcom_camss]
-[    6.594982]  v4l2_open+0x80/0x120 [videodev]
-[    6.594991]  chrdev_open+0xb4/0x204
-[    6.594996]  do_dentry_open+0x138/0x4d0
-[    6.595000]  vfs_open+0x2c/0xe4
-[    6.595003]  path_openat+0x2b4/0x9fc
-[    6.595005]  do_filp_open+0x80/0x130
-[    6.595007]  do_sys_openat2+0xb4/0xe8
-[    6.595010]  __arm64_sys_openat+0x64/0xac
-[    6.595012]  invoke_syscall+0x48/0x110
-[    6.595016]  el0_svc_common.constprop.0+0xc0/0xe0
-[    6.595018]  do_el0_svc+0x1c/0x28
-[    6.595021]  el0_svc+0x48/0x114
-[    6.595023]  el0t_64_sync_handler+0xc0/0xc4
-[    6.595025]  el0t_64_sync+0x190/0x194
-[    6.595028] Code: 52800033 72a00053 d503201f f9402400 (f9401801)
-[    6.595029] ---[ end trace 0000000000000000 ]---
+T24gMjAyNC8xMC8xMSAxNzoyMCwgQ2hlbiwgSmlxaWFuIHdyb3RlOg0KPiBPbiAyMDI0LzEwLzEx
+IDE2OjU0LCBKYW4gQmV1bGljaCB3cm90ZToNCj4+IE9uIDExLjEwLjIwMjQgMDU6NDIsIEppcWlh
+biBDaGVuIHdyb3RlOg0KPj4+IEBAIC0xNzU3LDExICsxNzU2LDE5IEBAIHN0YXRpYyBpbnQgX19p
+bml0IHhlbl9wY2lia19pbml0KHZvaWQpDQo+Pj4gIAkJYnVzX3JlZ2lzdGVyX25vdGlmaWVyKCZw
+Y2lfYnVzX3R5cGUsICZwY2lfc3R1Yl9uYik7DQo+Pj4gICNlbmRpZg0KPj4+ICANCj4+PiArI2lm
+ZGVmIENPTkZJR19YRU5fQUNQSQ0KPj4+ICsJeGVuX2FjcGlfcmVnaXN0ZXJfZ2V0X2dzaV9mdW5j
+KHBjaXN0dWJfZ2V0X2dzaV9mcm9tX3NiZGYpOw0KPj4+ICsjZW5kaWYNCj4+PiArDQo+Pj4gIAly
+ZXR1cm4gZXJyOw0KPj4+ICB9DQo+Pj4gIA0KPj4+ICBzdGF0aWMgdm9pZCBfX2V4aXQgeGVuX3Bj
+aWJrX2NsZWFudXAodm9pZCkNCj4+PiAgew0KPj4+ICsjaWZkZWYgQ09ORklHX1hFTl9BQ1BJDQo+
+Pj4gKwl4ZW5fYWNwaV9yZWdpc3Rlcl9nZXRfZ3NpX2Z1bmMoTlVMTCk7DQo+Pj4gKyNlbmRpZg0K
+Pj4NCj4+IEp1c3Qgd29uZGVyaW5nIC0gaW5zdGVhZCBvZiB0aGVzZSB0d28gI2lmZGVmLXMsIC4u
+Lg0KPj4NCj4+PiAtLS0gYS9pbmNsdWRlL3hlbi9hY3BpLmgNCj4+PiArKysgYi9pbmNsdWRlL3hl
+bi9hY3BpLmgNCj4+PiBAQCAtOTEsMTMgKzkxLDkgQEAgc3RhdGljIGlubGluZSBpbnQgeGVuX2Fj
+cGlfZ2V0X2dzaV9pbmZvKHN0cnVjdCBwY2lfZGV2ICpkZXYsDQo+Pj4gIH0NCj4+PiAgI2VuZGlm
+DQo+Pj4gIA0KPj4+IC0jaWZkZWYgQ09ORklHX1hFTl9QQ0lfU1RVQg0KPj4+IC1pbnQgcGNpc3R1
+Yl9nZXRfZ3NpX2Zyb21fc2JkZih1bnNpZ25lZCBpbnQgc2JkZik7DQo+Pj4gLSNlbHNlDQo+Pj4g
+LXN0YXRpYyBpbmxpbmUgaW50IHBjaXN0dWJfZ2V0X2dzaV9mcm9tX3NiZGYodW5zaWduZWQgaW50
+IHNiZGYpDQo+Pj4gLXsNCj4+PiAtCXJldHVybiAtMTsNCj4+PiAtfQ0KPj4+IC0jZW5kaWYNCj4+
+PiArdHlwZWRlZiBpbnQgKCpnZXRfZ3NpX2Zyb21fc2JkZl90KSh1MzIgc2JkZik7DQo+Pj4gKw0K
+Pj4+ICt2b2lkIHhlbl9hY3BpX3JlZ2lzdGVyX2dldF9nc2lfZnVuYyhnZXRfZ3NpX2Zyb21fc2Jk
+Zl90IGZ1bmMpOw0KPj4+ICtpbnQgeGVuX2FjcGlfZ2V0X2dzaV9mcm9tX3NiZGYodTMyIHNiZGYp
+Ow0KPj4NCj4+IC4uLiB3b3VsZG4ndCBhIHN0YXRpYyBpbmxpbmUgc3R1YiAoZm9yIHRoZSAhWEVO
+X0FDUEkgY2FzZSkgYWlkIG92ZXJhbGwgcmVhZGFiaWxpdHk/DQo+IEknbSBub3Qgc3VyZSBpZiBv
+dGhlciBmaWxlcyBkbyB0aGlzLiBCdXQgZm9yIG1lLCBpdCBmZWVscyBhIGxpdHRsZSBzdHJhbmdl
+IHRvIHVzZSAiI2lmZGVmIENPTkZJR19YRU5fQUNQSSAjZWxzZSIgaW4gYXBjaS5oLCBsaWtlIHNl
+bGYtY29udGFpbm1lbnQuDQo+IEFuZCAiI2luY2x1ZGUgYXBjaS5oIiBpbiBwaWNfc3R1Yi5jIGlz
+IGFsc28gd3JhcGVkIHdpdGggQ09ORklHX1hFTl9BQ1BJLg0KT0ssIEkgc2F3IG90aGVyIGZpbGVz
+IGFsc28gZG8gdGhpcy4NCklmIHlvdSBpbnNpc3QsIEkgd2lsbCBtYWtlIG1vZGlmaWNhdGlvbnMg
+aW4gdGhlIG5leHQgdmVyc2lvbi4NClRoYW5rIHlvdSENCg0KPiANCj4+DQo+PiBKYW4NCj4gDQoN
+Ci0tIA0KQmVzdCByZWdhcmRzLA0KSmlxaWFuIENoZW4uDQo=
 
