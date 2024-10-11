@@ -1,169 +1,189 @@
-Return-Path: <linux-kernel+bounces-360770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F205999F4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:52:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3EC8D999F45
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0EDE11F25C9E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:52:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 563AA1C21F31
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:48:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDBE20C461;
-	Fri, 11 Oct 2024 08:52:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4877F20B1FE;
+	Fri, 11 Oct 2024 08:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mysXs1LR"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=witekio.com header.i=@witekio.com header.b="bEZWTI5p"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2110.outbound.protection.outlook.com [40.107.249.110])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0404620B214;
-	Fri, 11 Oct 2024 08:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636723; cv=none; b=sP5EytVsvJjAKf5PnwR0QTK58kn/UbSAQu00xG4CZPBVfUm1lFE67bjYhzv5571OFxj9MBaGjen/QIWUfG0uww898WGZHiAZAxjsknUGnVjA/sA9+sN2+Ce9x5M/sBlyTMEDLjo51zRZJ4beRa5UUrzDx+dzM1t+fZRL/q2zDlQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636723; c=relaxed/simple;
-	bh=uMFBtSJwpjFyt4XPOYTWRjCnEGz3qayb9sH9HP8Kf+A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Q6rmttw7jrjENEi7QWebdlWlTYETC7DU5ZGIZb9iKbC2QjBYpBfvNUPkefH8Yul1CMS7ud99CRiGN/5bTmpCT0hTApCeCOLN07VsHs6tNSVX2GEcGZdrG6x+AVvxpdltUpg/l8L57N8tBwqmwc1yxYk47JdCSFw4RaI0mpmAR5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mysXs1LR; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728636723; x=1760172723;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=uMFBtSJwpjFyt4XPOYTWRjCnEGz3qayb9sH9HP8Kf+A=;
-  b=mysXs1LRGK/x/RqU1ZqNTYe5SMZETjAOszee4s3zI0N4GsTiUXIlmD6h
-   u6vUj4w30v/fh+2MIwrdgTB8xpLCSFBAHmnN/X1CfGM63TYd7bJQ0b9BB
-   Mr0yiSu6p67redzFEKrIp37fvjyY0C/8dSWUwas2DWT311oRx9HWZCsTD
-   9+AtTVOyAVRHR+C1qkD6mwYvGYO6fdbJNUWrqkZtaoeiIWSy+NN+BWkAi
-   HGctzHEUKebzGtTFpRtmqIZLnUYanq8HogNpnMMkfB9zT5U4y1B2xmH8h
-   6LtQn2uaoIsDkC4bKJket6b/5IVjVkUdugoRsiL6c9lXtP0IRGKqblYlV
-   w==;
-X-CSE-ConnectionGUID: vFvfSShtTUGu8l3jpsxy/A==
-X-CSE-MsgGUID: JFqKeiV+SUa7HUjSKW4dqA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31729567"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="31729567"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 01:52:02 -0700
-X-CSE-ConnectionGUID: YW2FBySGQKSYW32O6JD87g==
-X-CSE-MsgGUID: PKap7fe8RumhHfbm5A0wqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="80854591"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 01:51:58 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  linux-cxl@vger.kernel.org,  Dan Williams
- <dan.j.williams@intel.com>,  Davidlohr Bueso <dave@stgolabs.net>,
-  Jonathan Cameron <jonathan.cameron@huawei.com>,  Alistair Popple
- <apopple@nvidia.com>,  Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>,  Bjorn Helgaas <bhelgaas@google.com>,
-  Baoquan He <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison
- Schofield <alison.schofield@intel.com>
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-In-Reply-To: <38566dbf-1293-4fd5-9cbd-385e6c35344c@redhat.com> (David
-	Hildenbrand's message of "Fri, 11 Oct 2024 10:02:43 +0200")
-References: <20241010065558.1347018-1-ying.huang@intel.com>
-	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
-	<87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<38566dbf-1293-4fd5-9cbd-385e6c35344c@redhat.com>
-Date: Fri, 11 Oct 2024 16:48:25 +0800
-Message-ID: <87zfnb81pi.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F9A282FB
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:48:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.110
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728636527; cv=fail; b=hmAthgpNN0G5LTgFOi0w9kD/86abew1IQnTGd9FotIqefBXll+Fyq05zTml4PPEKZgsvrMNadUHN2TqldXHkCdQ4O6f6Oz5VIPWnZDM+xyUe84No7sLEhl+us11EaPVjB/uuYGt5qyN7joo9Py2lpJ4tixp/8vsOdnfJvmcw9nQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728636527; c=relaxed/simple;
+	bh=RKhEeqDeH/ACcaDEXWT7RVKsDCl52MXBUSSPT5oxzQY=;
+	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=H07mzWQP/PXsIc9AtixIDopnfapcRlz4HEUnwCGDiJFG6MVsy4kjWmVXPD8wKXXb6hz1vytVKaCzIXsgDgPYPrbeooQNjkTEhUSOBu6ToECXNnDAnJGfgYBNAq6XgkHcCGoAeqEhCpydqAzcViEniuZr4Jyo+oZcaL94AzeYYwI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=witekio.com; spf=pass smtp.mailfrom=witekio.com; dkim=pass (2048-bit key) header.d=witekio.com header.i=@witekio.com header.b=bEZWTI5p; arc=fail smtp.client-ip=40.107.249.110
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=witekio.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=witekio.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=elpRSElotPRBOeTvZdJRxbar72XpcbrJW+PyteGJbILnQbFQVRZv21bmSkcBO8dcq6Cn64y4ckN8akEjEd1iMiNJDYkYPlWFo+ICSerrn16yHSwx85TwAEl1hnFA1wBdwY6823kpq5aMXenQDgviAQUoWghVl1NK3XA8n1toEP2an6U1QBAhHKwHraWWbj5Ptz2ZDUb0w2LHBWW0UCCJcvRi1DRkRXFMR5+frhtSsOsgxHxyDO0H6VWLOxsrAy63Y3Os+HkBbMJXAX5J0uMbT4AUiwp+U7OlJUoa90bidBbB0WQLb71tz7YksrooZ3EofwRjbPxjKf3fVIl5EdCuNw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=RKhEeqDeH/ACcaDEXWT7RVKsDCl52MXBUSSPT5oxzQY=;
+ b=nrsyaqQgwn0PmRVLJiP9WhZNkRYb8eW+izPw/gSo6gWBrLCzNGmCOH7e0pTKsZUjIftv7yJ4zGvgH588W3IfrvspWYeuo0AdsUONZ52m3bxhOvrWf+CAr3dzhinFwaCWMSqiM/i5y07l2GaXEFKMxvYCSERmW78Rqz9ajyuJFPosnNFN1oQAmjXtZodblr431cD0j0Dfd5np1oe3u08pBGP3l8gA2H6IvkTScIc1O/Y6xbTnS4xQ2LWunq9i8CUFVlYltjltCdRR0sNpvcj3aSUfd05KugSkRgiy8NCudqjKBrTz5NUqgC1sML38yNkduPfgVTxF3kUJ/o7awkTa6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=witekio.com; dmarc=pass action=none header.from=witekio.com;
+ dkim=pass header.d=witekio.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=witekio.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=RKhEeqDeH/ACcaDEXWT7RVKsDCl52MXBUSSPT5oxzQY=;
+ b=bEZWTI5pEthdtggvKQ9DPcSwHo3lA5ccYY5kSCGOZIsKcuAASH3rjxqEBE1NmyfuEWZ+wqsbj0WeqhHKIsvz/4crbh5P3WcDLF0iHrg2DE89RRR+o6x4/B/LVKulZ2uB91w1cVCT8S7bi1HtJ7dArqhVbHqQEDcqfkWYaRCF/fIhObet5x4cm6EHL55yj2p2P4sod+AZJxQg1gYuw1bPLxRj41MUu+bJhZdk6k5Q3MxeVeiV0fzpJ3NCU6n7qOY9MXySGWCdcvFIxcrgdOo2D5u8Vz7+FlP6yJ23Hi12cezgoqBNzubeYGHNCCdGE9z4bOSipYB1LjaGZsjoU6Ujgg==
+Received: from AM9P192MB1316.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:3af::14)
+ by AM8P192MB0883.EURP192.PROD.OUTLOOK.COM (2603:10a6:20b:1ed::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
+ 2024 08:48:39 +0000
+Received: from AM9P192MB1316.EURP192.PROD.OUTLOOK.COM
+ ([fe80::c4c5:c573:3d3e:6fd9]) by AM9P192MB1316.EURP192.PROD.OUTLOOK.COM
+ ([fe80::c4c5:c573:3d3e:6fd9%2]) with mapi id 15.20.8048.018; Fri, 11 Oct 2024
+ 08:48:39 +0000
+From: Joel GUITTET <jguittet.opensource@witekio.com>
+To: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Bad commit backported on the v5.15.y branch ?
+Thread-Topic: Bad commit backported on the v5.15.y branch ?
+Thread-Index: AQHbG7m9FAVCOgG+30u3iPoW66Acag==
+Date: Fri, 11 Oct 2024 08:48:39 +0000
+Message-ID:
+ <AM9P192MB1316ABE1A8E1D41C4243F596D7792@AM9P192MB1316.EURP192.PROD.OUTLOOK.COM>
+Accept-Language: fr-FR, en-US
+Content-Language: fr-FR
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=witekio.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AM9P192MB1316:EE_|AM8P192MB0883:EE_
+x-ms-office365-filtering-correlation-id: 50034d1e-8d3c-4b99-2102-08dce9d1807a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|10070799003|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?iso-8859-1?Q?Xn7uE41lpnInsWlaVjYkm/kliPdLnCnIJst0RWXfUdqqI5j5AIm+JSQSW1?=
+ =?iso-8859-1?Q?Dvij6LhjK8t2Ya8q3pkJ5nRaXjk1FyDGn/UvTHuijwWTUXrKEIob6EqxLK?=
+ =?iso-8859-1?Q?MOXYtH9P5twvaRFywNRt6TVPpoZwE7VoIzqM+UW+Pl2acXEXgsv2ko2b0z?=
+ =?iso-8859-1?Q?MPbpPWntAcvkQhraggUu0VamKiNQ9LCKq6utl6ScT3/nNpr+evUH1DSFwd?=
+ =?iso-8859-1?Q?3XDuw24R44Eri0K3lKV85UQq8PcqeW8vwa0lP2wcQ9mSC7EFm2PTqghiyF?=
+ =?iso-8859-1?Q?fbVDRqB0ZjQEslADTyOz0lk0b8Gvys1tOXttuNymoJjDRJxsj5lvrBI87D?=
+ =?iso-8859-1?Q?9ofVX42HtICwYz+0QzJ6irC+xnx7uAHMy6voksbeqrvKvBHe28qJoY1WhT?=
+ =?iso-8859-1?Q?mi1N2H2m6abKqFoNsKpw593RvC7jxfI6xFhODiaXXmG8gKljVGtUHMtSfu?=
+ =?iso-8859-1?Q?sRw0p5eHBqG1dkvd9P3m716S2o1WepFF/5mrFhGOARwUUWBzBUFk6zxA8N?=
+ =?iso-8859-1?Q?wLisD7fbhgQNNO0QDQeWoduabUjnveLwIPh6GgoeBbvdX2cwuGvyLeHgxO?=
+ =?iso-8859-1?Q?KhVsXcHlUShj1RLXj4qvKtzwL3mgI1iX3rah9Pa22hW3yYkQuQIncEsc3Z?=
+ =?iso-8859-1?Q?x+HlpfSFTHadwkJ/0mhic4fAVKJ03wSz4uZ/ba5gg5e6p7GSzbaHujLMO6?=
+ =?iso-8859-1?Q?+zgxES2argxK9TEY6wArFF1Wk833WIBeR8k/E8JHs83Qz07DC8l7UErGvM?=
+ =?iso-8859-1?Q?uRo9cV0eYpVOTLzb6psN7QOqFjT0MIgUu8Vpy6+UBV7iVQIyJWffb3JVpg?=
+ =?iso-8859-1?Q?dUEZYDRr0OiNna3NOsGTfZoUufcqh2t0q1DFL81WvPNY79DeVxmyoBEsm1?=
+ =?iso-8859-1?Q?vbllEYE0GjCCbnfpBxgInNVRkCcA19aZdTJ0Ph8N3avAKg/Zkx8qDee0fz?=
+ =?iso-8859-1?Q?nPudNTl8qc4Jnhpvj1ehOIeDTvd9nFZsUtWdIvf0ARnznMx3yQuHu0lRdi?=
+ =?iso-8859-1?Q?WLLdogHq//xW4iSuD1WtIgUQkxIa+d1mJDej/SLBO95ny3gfhdBlihH/GA?=
+ =?iso-8859-1?Q?5+bo7AWGXZ5h5NgouqBXflNcozmk3hK0fWYpnpVZbmStKOQBqQo3SMhkcr?=
+ =?iso-8859-1?Q?EpPkrnQhPJaqAX4D93SlGTvUsViC8E2Thdn/PORSEDLMRi7ALfKgl9vGXI?=
+ =?iso-8859-1?Q?9PDp1le3xljCjw53rHr3byuiXDyPKSxfl7TrStMf/ZmerSf+/haOhMjd+Z?=
+ =?iso-8859-1?Q?qny/9wOM9Frua2KiJ/sNwzwpaX1WYysS+QoQWaMOKwfiWPhIMwf7vV34ol?=
+ =?iso-8859-1?Q?MBMu8VrXLHqp840UcWESd11II+apQ+j6d+7jHuQFs0lFpHSB8wWAqHVQuW?=
+ =?iso-8859-1?Q?NLgqvnZTbK?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9P192MB1316.EURP192.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(10070799003)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?iso-8859-1?Q?KSFMUiZRL/zhq9AMVzQEP5rwXRaua4IvvLxI9EvfAohLhEJ99kp0kiao9y?=
+ =?iso-8859-1?Q?Z6OdetLlHO8aiPNzJTAThLDsN9R5CAvFaOr6z+6fnv28Id1WRhMG1JwyqS?=
+ =?iso-8859-1?Q?wRSYY5iXMoeapM3HQtP/yzG6Igtt2iGElprfL3B8ulOZaJWMXrnDBy5hbn?=
+ =?iso-8859-1?Q?J9nQpCgTmFoTOgs9HdjvHEnKYO9shvWjEzMpefPCG3J861tc8EgqKhbpdr?=
+ =?iso-8859-1?Q?gfAKolj0ryJTUXl7KPUsWrkKZQzmIcdcMfcL1djR95/ChQ4V5/rqOOT22D?=
+ =?iso-8859-1?Q?Td/P+GsSJYxkblkNrTjk5m66tzq6kzoTNuVMk8NKQKQNwYKCdsvM9xVcDO?=
+ =?iso-8859-1?Q?OF701tljXJYGPThLEaQCQimfxCG+RbIq0S1e86zfzHxzo29+VirgowunhQ?=
+ =?iso-8859-1?Q?Catj0qef9Qjxaah672sfQRZTDljNDzwgxfFHZc5W/9Xd0ItvbkASJJpiSm?=
+ =?iso-8859-1?Q?ZAMfFJMG7wgwhuIWKZPhLBt+Tcb3F9QJ+2JtiDVoqCj1ldE02CMC5A1kBX?=
+ =?iso-8859-1?Q?/HGVnPpPK6LSn+RmewT9s4iCca8XEZlwqr9FcAemqW0nhNpRI2a1YozEe7?=
+ =?iso-8859-1?Q?0arGeuhCiwS+j026Ua3o9CQKTjZXUADa9gYHD6L9sp66s/Ohf7BW1ZfBqk?=
+ =?iso-8859-1?Q?X/eqL/RXiVqBGc0wFYMICY11JWesXQ1aZCm+x2IyzsSEavmOm7bqB+ca2w?=
+ =?iso-8859-1?Q?vPxo6A5xjvwuIbaJN1+EK8XdyNc6x+sg7GsrTjSLnSMN/i9Vv6QK/emva6?=
+ =?iso-8859-1?Q?zTauPp4BheKoagYMSItqTaCMxsZe4lk4RF7LZKphUVTiDUB+xKjQo7GpSd?=
+ =?iso-8859-1?Q?hh197C3Xly6D4tqaiKGtvXeFE8puXrnA4G8K59jYDAy8po7O7Hjjs5kRtX?=
+ =?iso-8859-1?Q?lp83f6cqaPbyNvfVRR7FBwWBmHh7cLj4rw+Q7sBq+t5J9ZnWX3xN9HxiTs?=
+ =?iso-8859-1?Q?XIXmNKTgKILvuZ+XByxnAyuNBzdZOTQpNI4F67aIhB4wcPezYSt1hXM+Eh?=
+ =?iso-8859-1?Q?fy2/prC1aZbdYYKns6cnwQU49Xy8o2OkoTChMJEKro4dId8v3KWLjdnMXo?=
+ =?iso-8859-1?Q?7nOc658jdsj8lZd99x0xwAuo71GhQFuJrJGTOV9fRZedllyQoGMU9Q5YD1?=
+ =?iso-8859-1?Q?B9ZoavTsT5OGph3mJc6W3aYVQ+0erga4a+vBvOdDtdHrzDXFBCjxWucucm?=
+ =?iso-8859-1?Q?jXJ/Sc8YzScVMszVcPAW9oUug1br0gY9L3TWI45a6UsWYRKatrZT/cuFGv?=
+ =?iso-8859-1?Q?5Txw2lKKPQ9VhuyOCeNAds6kfPHCWpK439WRRgt8fU6ohkMcwgt8d7f3wM?=
+ =?iso-8859-1?Q?EulzSvD8vILuEmhFzEhNVi3K2GBfNjcaEHuWmDfLHRkHKXS4hDfUxwrpT2?=
+ =?iso-8859-1?Q?/f3xprUVJlRC5TcY3tMmp2iWX/bJgBmt3b786G4bhkzyWAazPcLtUN0hY2?=
+ =?iso-8859-1?Q?7KZMRj3NDIqB22pssqKqNWFxhmFWCtfEDz4iV60QXkGuUNoXFLkGv84bpy?=
+ =?iso-8859-1?Q?JLL7rEcfNu9VIKGoRU9yLCPgECjLguyL38wDLVSAsmoZdyszwL1EEA1Fg4?=
+ =?iso-8859-1?Q?swkWAm29pTseVY3NFGG3kxmpRVeXMW1dBjjFI9jlAwNJMqa/bW0L4yFzuv?=
+ =?iso-8859-1?Q?+RgSoKEnkQYDlsBnrGVysS0PRAOZcWo0XIu5MWTWJUP1k8dqob74OvZCNK?=
+ =?iso-8859-1?Q?HhR1sdpgd4AWdNHMvGCl6zVO+Ow6J/7OVRtrktll?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-OriginatorOrg: witekio.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AM9P192MB1316.EURP192.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-Network-Message-Id: 50034d1e-8d3c-4b99-2102-08dce9d1807a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 11 Oct 2024 08:48:39.2411
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 317e086a-301a-49af-9ea4-48a1c458b903
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: D3woMzgbooMI1GTWwSVk4xhmszwdcbK3ezS2jf+tsbaQRLi/zbyZgC3sveko9QHneJIHxBB2YUsh22s0PTCbVA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM8P192MB0883
 
-David Hildenbrand <david@redhat.com> writes:
-
-> On 11.10.24 03:06, Huang, Ying wrote:
->> David Hildenbrand <david@redhat.com> writes:
->> 
->>> On 10.10.24 08:55, Huang Ying wrote:
->>>> Currently, if __region_intersects() finds any overlapped but unmatched
->>>> resource, it walks the descendant resource tree to check for
->>>> overlapped and matched descendant resources.  This is achieved using
->>>> for_each_resource(), which iterates not only the descent tree, but
->>>> also subsequent sibling trees in certain scenarios.  While this
->>>> doesn't introduce bugs, it makes code hard to be understood and
->>>> potentially inefficient.
->>>> So, the patch renames next_resource() to __next_resource() and
->>>> modified it to return NULL after traversing all descent resources.
->>>> Test shows that this avoids unnecessary resource tree walking in
->>>> __region_intersects().
->>>> It appears even better to revise for_each_resource() to traverse the
->>>> descendant resource tree of "_root" only.  But that will cause "_root"
->>>> to be evaluated twice, which I don't find a good way to eliminate.
->>>
->>> I'm not sure I'm enjoying below code, it makes it harder for me to
->>> understand what's happening.
->>>
->>> I'm also not 100% sure why "p" becomes "root" and "dp" becomes "p" when
->>> calling the function :) Likely this works as intended, but it's confusing
->>> (IOW, bad naming, especially for dp).
->>>
->>>
->>> I think you should just leave next_resource() alone and rather add
->>> a new function that doesn't conditionally consume NULL pointers
->>> (and also no skip_children because you're passing false either way).
->>>
->>> static struct resource *next_resource_XXX(struct resource *root,
->>> 		struct resource *p)
->>> {
->>> 	while (!p->sibling && p->parent) {
->>> 		p = p->parent;
->>> 		if (p == root)
->>> 			return NULL;
->>> 	}
->>> 	return p->sibling;
->>> }
->>>
->>> Maybe even better, add a new for_each_resource() macro that expresses the intended semantics.
->>>
->>> #define for_each_resource_XXX(_root, _p) \
->>> 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
->> Yes.  This can improve code readability.
->> A possible issue is that "_root" will be evaluated twice in above
->> macro
->> definition. 
->
-> Do you mean that we would process it twice in the loop body, or what
-> exactly do you mean with "evaluate" ?
-
-In the macro definition above, _root is used twice.  For example, if
-"_root" is a time consuming function call, the function will run twice.
-That's not expected.
-
-> And just I understand what we want to achieve: we want to walk the
-> subtree below "root" and prevent going to root->sibling or
-> root->parent if "root" is not actually the "real root", correct?
->
-> X
-> |--------|
-> A----D   E
-> |
-> B--C
->
->
-> So assume we start walking at A, we want to evaluate A,B,C but not D,E,X.
->
-> Does that sum up what we want to achieve?
-
-Yes.
-
---
-Best Regards,
-Huang, Ying
+Hello,=0A=
+=0A=
+I faced some issue related to scaling frequency on ZynqMP device using v5.1=
+5.167 kernel.=0A=
+As an exemple setting the scaling frequency below show it's not properly se=
+t:=0A=
+=0A=
+cat /sys/devices/system/cpu/cpufreq/policy0/scaling_available_frequencies=
+=0A=
+299999 399999 599999 1199999=0A=
+=0A=
+echo 399999 > /sys/devices/system/cpu/cpufreq/policy0/scaling_setspeed=0A=
+=0A=
+cat /sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq=0A=
+399999=0A=
+=0A=
+cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq=0A=
+299999 =3D=3D=3D=3D> Should be 399999=0A=
+=0A=
+After analysis of this issue with the help of Xilinx, it appears that a com=
+mit was backported on the 5.15.y branch, but probably it should not, or not=
+ as is. The commit is 9117fc44fd3a9538261e530ba5a022dfc9519620 modifying dr=
+ivers/clk/zynqmp/divider.c.=0A=
+=0A=
+Is anybody reading this message able to answer why it was backported ? The =
+information I have until now is that it is intended recent kernel version. =
+Dependencies for this modification is currently under clarification with Xi=
+linx (maybe another commit to backport).=0A=
+=0A=
+By the way, reverting this commit fix the issue shown above.=0A=
+=0A=
+Thanks for the feedback,=0A=
+Joel=
 
