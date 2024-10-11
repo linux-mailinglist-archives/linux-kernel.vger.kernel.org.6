@@ -1,142 +1,249 @@
-Return-Path: <linux-kernel+bounces-360540-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360541-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B901D999C53
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:53:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB3BA999C57
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 44E24B23052
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:53:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF4051C22498
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB374209683;
-	Fri, 11 Oct 2024 05:52:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391A91F943C;
+	Fri, 11 Oct 2024 05:57:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ey9465Bx"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iE0GFfAQ"
 Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C634B20966D;
-	Fri, 11 Oct 2024 05:52:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2472A219FF;
+	Fri, 11 Oct 2024 05:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728625978; cv=none; b=dZ+SOz/mkGgA/RnzGScyh8SO6JXc+Ch/P29a25ReC0v6fsSnPG5qAACwQDrl9d0QazB9gEbZHVxXWEM820enrcV/48zOLpGw4tSR82QMyKs/vADT6JqimWfm3LJCOTStP+4n21IK1m1ktn4fdTUvxc0bxHxUBUXZgNlbCxLNNA4=
+	t=1728626225; cv=none; b=nGsldl4apkyLJ4xCwgo9NT/W+2SmldopZMAUhvwKO3Un6ZJ677OyilLCMIHH7f/NpQnsxHwwRmnygwlPgocTMhHZMa6FO4yrNeKXCL1xtoVxI260+R1o4C+j20teGivMiJhYimDmrEQGxcdsimMfbp7g4Kai7Aoh/4PjPnoXqjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728625978; c=relaxed/simple;
-	bh=wTrTGsvHKaRi3isg1DxlJPE/oiDwQ/kN77hKZJke7Ro=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=XD+XEadbJttkHZBb2mA+D+tI8c7PjSVrmihgbZ5mpiSyBBspY3KO9dIRu2m4MOcZNnd0i9T6OL0kqBemuwLhj+7JTk13KocfXNB3Fn0bkcsyv63auOSPjohzGYposUruxqXC4aNOSn5Gu6nsTBzcsWNZwCNheBKvt0ZXBXeBFAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ey9465Bx; arc=none smtp.client-ip=209.85.214.179
+	s=arc-20240116; t=1728626225; c=relaxed/simple;
+	bh=VIa5O4Mkdunqty1j3ijQFPaP6a0eBpH22xQkVKIqdhs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ksKOniE0vTeR/y9M+dAtNhKcBnO40Jk/3Jz7eiIuohhkzWBvFdiEpQmvwpyhBGNQVrQ7xs6b5/Ri+2W1D/xD209xEPrrUvwHR3WevwbikEx3bmELIO22hUKYLhYB8P7eMbuj5NuEIwe4uLaN2+ZPo0p517xOjSrOOcB9+HF0wtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iE0GFfAQ; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-207115e3056so13507705ad.2;
-        Thu, 10 Oct 2024 22:52:56 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c6f492d2dso17084715ad.0;
+        Thu, 10 Oct 2024 22:57:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728625976; x=1729230776; darn=vger.kernel.org;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=an4kJkObmODiz76Q4UVu1DA+oIFDSnR7hQ7Vqq3zxdA=;
-        b=ey9465BxSENjozBJ71iFmgPCOKK8bAy3Vo6da5hWRwk7m5wQ703Vr4oUPi03/fKAEg
-         DedqOj+hXeb6JEqj0Hm1Iyki3p6F/bGM+Ie19jkUzqcU06JQmuBpiNl4PSV1yOR+7HKR
-         6AhwE4Y2TknXAxVhwZnJxgj8fUE1Cy1E9RIgDaHyLaUnGZXUVMk/dIzvtqe1fF1jlPDa
-         QS+2r9tXvrQvBi5hv9qDWYel+bWazmM+wJnAZ7dyZq3QiBhq4YtxSE6TXm5wcVAcKV/Z
-         hrIFW9SsmWlg9B7CEvfebM5gLjBzc/YfAGA+WTCBbfa3siGupFaEo+g6AHVe07vu8nVx
-         4vxA==
+        d=gmail.com; s=20230601; t=1728626223; x=1729231023; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xPo5xhewKlshq8RUYllOw1URvyS0utF68/5Etae/hmo=;
+        b=iE0GFfAQ6CQbblmgJcJ5Y6fUnR3EgTzZC+X7Y75+FjGPQX14jB707V1cGO6Aa0VLms
+         QYNR9aDB0E8pRoHDkqAaFLKvNdQ89kIkna/gcvNvV0xf9BNV+bQDGVwB6tA0wbYmkNVw
+         jzB4IACAGWZDfSI/cLpqe/RmddEIDiwE7I5dpIEGi7IYs8uvlV+mQK/HSTO3wiSGka9d
+         ZrpDzJKOi8lH3AtjaxJeBN81MspuBT3nSa3O+lda3CWg1RF3fnd9bbL4BiPAIZvdeHGQ
+         En9PeGmY1SqraB74qmUjTkCx7ZtW84HTcea1u/3t3IV9mSD2WCbzKP79lv0T+mNGMXeg
+         1JAg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728625976; x=1729230776;
-        h=references:in-reply-to:message-id:date:subject:cc:to:from
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=an4kJkObmODiz76Q4UVu1DA+oIFDSnR7hQ7Vqq3zxdA=;
-        b=TAGxdrcGznokrIuwjpCb5GUw7oB+jvDnDSnWC8BKfIJoJ9TX7IIT0t9ILsiEFUuy9B
-         veT6oo0+oVU0XWrn5Btr/PVGdgYLK6akYfHpOl+6wRKoLSbp047DJCKmn+S/a+MZsUwL
-         l6LrnQqrdzg17Sr7M/bnuqlPlbuUsSFWlsrEe4bK9u673oZ4lHUGBqPMUg3fT3LEVHl2
-         p+XK/R2nSTH+SkkomiQx4FaV3wc3pXYlkbvj76M1eDfgl6pOQMgvj+i8k4GU9j+hB7XT
-         HwTeQtJFsaXQXp56ZbwFQ1pd3IJMOZg7uZZtJwnq2RW3RTgq6kuWO0zIF37OMn47iV4U
-         QD2w==
-X-Forwarded-Encrypted: i=1; AJvYcCWTSC9CyV9ZtobMfGvbC3a9+EZG05Pijx7mTN7UAvTNQDVL8C529IVMeWDpM7/rP+eth6L7NQwv1EQ=@vger.kernel.org, AJvYcCWxiCdGzewkCeyZIqZa550+edXfnE9j3SA46jIWQz6JCjLgYJdn3I5akaNDLqiftqVUg/ek41abIxFfdZsb@vger.kernel.org
-X-Gm-Message-State: AOJu0YylWTTPgDDZgw7mtRPckWtZFRfp2JWCB6lLEdES3DROsIdNhuPQ
-	bbp3yAvcPlqeKYgB8zu7Yvgin80tIAfBCJNvFWK84Nxi2hG8Hdc=
-X-Google-Smtp-Source: AGHT+IFtD2PAQaGCcS0aatXtbrM9Qrv/jGG0koL0ZE3kSwlOkv9I/91XaMLJiU2fAyxNUYLV22uZCw==
-X-Received: by 2002:a17:903:2b07:b0:207:13a3:a896 with SMTP id d9443c01a7336-20ca1466468mr20257185ad.23.1728625975936;
-        Thu, 10 Oct 2024 22:52:55 -0700 (PDT)
-Received: from localhost (2001-b400-e38a-6880-f424-8486-7476-9f9d.emome-ip6.hinet.net. [2001:b400:e38a:6880:f424:8486:7476:9f9d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc13394sm17764775ad.108.2024.10.10.22.52.55
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Thu, 10 Oct 2024 22:52:55 -0700 (PDT)
-From: Tyrone Ting <warp5tw@gmail.com>
-X-Google-Original-From: Tyrone Ting <kfting@nuvoton.com>
-To: avifishman70@gmail.com,
-	tmaimon77@gmail.com,
-	tali.perry1@gmail.com,
-	venture@google.com,
-	yuenn@google.com,
-	benjaminfair@google.com,
-	andi.shyti@kernel.org,
-	andriy.shevchenko@linux.intel.com,
-	wsa@kernel.org,
-	rand.sec96@gmail.com,
-	wsa+renesas@sang-engineering.com,
-	warp5tw@gmail.com,
-	tali.perry@nuvoton.com,
-	Avi.Fishman@nuvoton.com,
-	tomer.maimon@nuvoton.com,
-	KWLIU@nuvoton.com,
-	JJLIU0@nuvoton.com,
-	kfting@nuvoton.com
-Cc: openbmc@lists.ozlabs.org,
-	linux-i2c@vger.kernel.org,
+        d=1e100.net; s=20230601; t=1728626223; x=1729231023;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xPo5xhewKlshq8RUYllOw1URvyS0utF68/5Etae/hmo=;
+        b=lLprxnAqv/Bh1r2APpkQQbeUuuv/bwkLK4EGfvEfcrU95VJ/XZ/0h4zmyTii4w/M3n
+         qcohdPYgcgdr7VS1TawSCE+BjwhCqDovPuQoPZUdZcRygUEgVgAmlXlybGBDjJfqGFNJ
+         Y0FMuOR+hcRpXCG8kpl+TuJVe4vbkQJ9vLpDTS6e2m4hQtqNRrDuZC7wcC70FAdD+aWX
+         vFtVHqxqVf+f3UL2LRbl0JM6jk8cDz8aftqHnLlB9QAHeUCQaksp1fGjR/4U/Ska/b8O
+         rtbYtnF2Ym84dS5YzJqGnSqzOLmLpzBuKKOFuHa/E/JPqEePFAPd2bRJEEMyq90VY1sJ
+         GqXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk/vSGjC8E804Do/Z9mIBhoooyH7jP7MAWTzyrkVwFx2XzqvJxJW+RyOgkaOfB21z297+aItTd7f2rzVY=@vger.kernel.org, AJvYcCWqbefxjRM2gWkPVU8nl8GV+kGV8R5driLwgqN/XlmJ8/ufvQRUO7EDV9hiAYthy4e0hW7z4urp3O/LfPRWhmruvw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEhY76WrQXltd9VQYqyF0UUklnKZCxatPo5YwfIZnSLm0Wd+MQ
+	g/AaGKCXthkBwGU7vafXmM+T/DGP1FIMaj7BuxP+EzWWsnLj5uqJ
+X-Google-Smtp-Source: AGHT+IHuMwPgi2GTVetwUBex5heWqpQzZXPqiR+4kCoBTBCQndirFoUbMwJTC8f2Fg7CHfl7efkfLg==
+X-Received: by 2002:a17:903:2282:b0:20c:92ce:359d with SMTP id d9443c01a7336-20ca169aeb6mr22849565ad.45.1728626223379;
+        Thu, 10 Oct 2024 22:57:03 -0700 (PDT)
+Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc1c566sm17851085ad.114.2024.10.10.22.57.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 22:57:03 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: peterz@infradead.org
+Cc: mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	matt@readmodwrite.com,
+	kan.liang@linux.intel.com,
+	linux-perf-users@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Charles Boyer <Charles.Boyer@fii-usa.com>,
-	Vivekanand Veeracholan <vveerach@google.com>
-Subject: [PATCH v6 4/4] i2c: npcm: Enable slave in eob interrupt
-Date: Fri, 11 Oct 2024 13:52:31 +0800
-Message-Id: <20241011055231.9826-5-kfting@nuvoton.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20241011055231.9826-1-kfting@nuvoton.com>
-References: <20241011055231.9826-1-kfting@nuvoton.com>
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH] perf test: Delete unused Intel CQM test
+Date: Thu, 10 Oct 2024 22:57:00 -0700
+Message-ID: <20241011055700.4142694-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-From: Charles Boyer <Charles.Boyer@fii-usa.com>
+As Ian Rogers <irogers@google.com> pointed out, intel-cqm.c is neither
+used nor built. It was deleted in the following commit:
 
-Nuvoton slave enable was in user space API call master_xfer, so it is
-subject to delays from the OS scheduler. If the BMC is not enabled for
-slave mode in time for master to send response, then it will NAK the
-address match. Then the PLDM request timeout occurs.
+commit b24413180f56 ("License cleanup: add SPDX GPL-2.0 license identifier to files with no license")
 
-If the slave enable is moved to the EOB interrupt service routine, then
-the BMC can be ready in slave mode by the time it needs to receive a
-response.
+However, it resurfaced soon after in the following commit:
 
-Signed-off-by: Charles Boyer <Charles.Boyer@fii-usa.com>
-Signed-off-by: Vivekanand Veeracholan <vveerach@google.com>
-Signed-off-by: Tyrone Ting <kfting@nuvoton.com>
-Reviewed-by: Tali Perry <tali.perry1@gmail.com>
+commit 5c9295bfe6f5 ("perf tests: Remove Intel CQM perf test")
+
+It should be deleted once and for all.
+
+Suggested-by: Ian Rogers <irogers@google.com>
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
 ---
- drivers/i2c/busses/i2c-npcm7xx.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+ tools/perf/arch/x86/tests/intel-cqm.c | 128 --------------------------
+ 1 file changed, 128 deletions(-)
+ delete mode 100644 tools/perf/arch/x86/tests/intel-cqm.c
 
-diff --git a/drivers/i2c/busses/i2c-npcm7xx.c b/drivers/i2c/busses/i2c-npcm7xx.c
-index fcecb098298f..55348308b992 100644
---- a/drivers/i2c/busses/i2c-npcm7xx.c
-+++ b/drivers/i2c/busses/i2c-npcm7xx.c
-@@ -1925,6 +1925,12 @@ static int npcm_i2c_int_master_handler(struct npcm_i2c *bus)
- 	    (FIELD_GET(NPCM_I2CCST3_EO_BUSY,
- 		       ioread8(bus->reg + NPCM_I2CCST3)))) {
- 		npcm_i2c_irq_handle_eob(bus);
-+#if IS_ENABLED(CONFIG_I2C_SLAVE)
-+		/* reenable slave if it was enabled */
-+		if (bus->slave)
-+			iowrite8((bus->slave->addr & 0x7F) | NPCM_I2CADDR_SAEN,
-+				 bus->reg + NPCM_I2CADDR1);
-+#endif
- 		return 0;
- 	}
- 
+diff --git a/tools/perf/arch/x86/tests/intel-cqm.c b/tools/perf/arch/x86/tests/intel-cqm.c
+deleted file mode 100644
+index 360a082fc928..000000000000
+--- a/tools/perf/arch/x86/tests/intel-cqm.c
++++ /dev/null
+@@ -1,128 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0
+-#include "tests/tests.h"
+-#include "cloexec.h"
+-#include "debug.h"
+-#include "evlist.h"
+-#include "evsel.h"
+-#include "arch-tests.h"
+-#include <internal/lib.h> // page_size
+-
+-#include <signal.h>
+-#include <sys/mman.h>
+-#include <sys/wait.h>
+-#include <errno.h>
+-#include <string.h>
+-
+-static pid_t spawn(void)
+-{
+-	pid_t pid;
+-
+-	pid = fork();
+-	if (pid)
+-		return pid;
+-
+-	while(1)
+-		sleep(5);
+-	return 0;
+-}
+-
+-/*
+- * Create an event group that contains both a sampled hardware
+- * (cpu-cycles) and software (intel_cqm/llc_occupancy/) event. We then
+- * wait for the hardware perf counter to overflow and generate a PMI,
+- * which triggers an event read for both of the events in the group.
+- *
+- * Since reading Intel CQM event counters requires sending SMP IPIs, the
+- * CQM pmu needs to handle the above situation gracefully, and return
+- * the last read counter value to avoid triggering a WARN_ON_ONCE() in
+- * smp_call_function_many() caused by sending IPIs from NMI context.
+- */
+-int test__intel_cqm_count_nmi_context(struct test_suite *test __maybe_unused, int subtest __maybe_unused)
+-{
+-	struct evlist *evlist = NULL;
+-	struct evsel *evsel = NULL;
+-	struct perf_event_attr pe;
+-	int i, fd[2], flag, ret;
+-	size_t mmap_len;
+-	void *event;
+-	pid_t pid;
+-	int err = TEST_FAIL;
+-
+-	flag = perf_event_open_cloexec_flag();
+-
+-	evlist = evlist__new();
+-	if (!evlist) {
+-		pr_debug("evlist__new failed\n");
+-		return TEST_FAIL;
+-	}
+-
+-	ret = parse_event(evlist, "intel_cqm/llc_occupancy/");
+-	if (ret) {
+-		pr_debug("parse_events failed, is \"intel_cqm/llc_occupancy/\" available?\n");
+-		err = TEST_SKIP;
+-		goto out;
+-	}
+-
+-	evsel = evlist__first(evlist);
+-	if (!evsel) {
+-		pr_debug("evlist__first failed\n");
+-		goto out;
+-	}
+-
+-	memset(&pe, 0, sizeof(pe));
+-	pe.size = sizeof(pe);
+-
+-	pe.type = PERF_TYPE_HARDWARE;
+-	pe.config = PERF_COUNT_HW_CPU_CYCLES;
+-	pe.read_format = PERF_FORMAT_GROUP;
+-
+-	pe.sample_period = 128;
+-	pe.sample_type = PERF_SAMPLE_IP | PERF_SAMPLE_READ;
+-
+-	pid = spawn();
+-
+-	fd[0] = sys_perf_event_open(&pe, pid, -1, -1, flag);
+-	if (fd[0] < 0) {
+-		pr_debug("failed to open event\n");
+-		goto out;
+-	}
+-
+-	memset(&pe, 0, sizeof(pe));
+-	pe.size = sizeof(pe);
+-
+-	pe.type = evsel->attr.type;
+-	pe.config = evsel->attr.config;
+-
+-	fd[1] = sys_perf_event_open(&pe, pid, -1, fd[0], flag);
+-	if (fd[1] < 0) {
+-		pr_debug("failed to open event\n");
+-		goto out;
+-	}
+-
+-	/*
+-	 * Pick a power-of-two number of pages + 1 for the meta-data
+-	 * page (struct perf_event_mmap_page). See tools/perf/design.txt.
+-	 */
+-	mmap_len = page_size * 65;
+-
+-	event = mmap(NULL, mmap_len, PROT_READ, MAP_SHARED, fd[0], 0);
+-	if (event == (void *)(-1)) {
+-		pr_debug("failed to mmap %d\n", errno);
+-		goto out;
+-	}
+-
+-	sleep(1);
+-
+-	err = TEST_OK;
+-
+-	munmap(event, mmap_len);
+-
+-	for (i = 0; i < 2; i++)
+-		close(fd[i]);
+-
+-	kill(pid, SIGKILL);
+-	wait(NULL);
+-out:
+-	evlist__delete(evlist);
+-	return err;
+-}
 -- 
-2.34.1
+2.43.0
 
 
