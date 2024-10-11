@@ -1,164 +1,197 @@
-Return-Path: <linux-kernel+bounces-361380-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AF7E99A76D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:22:37 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83F4099A79C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:28:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C13285103
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:22:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0B7CFB24F16
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:27:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3A18194A44;
-	Fri, 11 Oct 2024 15:22:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57548197552;
+	Fri, 11 Oct 2024 15:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KtknwSQZ"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="LDgX+4bX"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980A728684;
-	Fri, 11 Oct 2024 15:22:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C1F6194C8D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660150; cv=none; b=cveuXBgtX+9SF49LqB5lERznl4D3Lo1hMXbNthvoO8ZY6nRyStWiILNRescZumPGWyzvRcqd5GtR5twCIVgnh45cWzc2qZewbbAf9aP1AJzO9VxNnvHceQFK6JaxVNsO7p9BVbmxs13lFEss//eh4gyqLr9tlSGjFt5/Up342ME=
+	t=1728660454; cv=none; b=qpj5UPQMCv6ZUUhGp3YwGh8eEyf4TdrSS4utENGM2mJZTjoSQ6vaQLfObOUGa50C0VDkxVKrwn/0gX+hmbQsPca5iQ26PJ66BtobcHOjUw1AqxKz8lSz7uy0WLqF3IumyBHTF1URpmVQj5aFL/nr3EDbGiYKzegfWff9AYaZrXg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660150; c=relaxed/simple;
-	bh=nxZsK46cUu2erd6rj4K0CR3q1zTnMCN9PUd+04mgaVg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=O43SUKkFZSA/cJt0cm8gz7pmuwFLbdLiL7EE2kt7nejaty8V/K226IPdEXa55D0fhdkVGgUDsS3soSXbbVYRRXC8xrnN+RyPhK+cWOE74GaQ4K5SbdWAMESXCJQrcurpZrN6kosvQINYCM+KiDQBNmyJNWMIcmeMaqAlIJsLErA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KtknwSQZ; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a99650da839so361434666b.2;
-        Fri, 11 Oct 2024 08:22:28 -0700 (PDT)
+	s=arc-20240116; t=1728660454; c=relaxed/simple;
+	bh=m279UNxDg86MeiepLCsRcDWK8TQ3a2VS5ATEvwMBUgM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LW9vcMccbwWYpHH3Ka1vvIbqpnz4V3QvDeILQExv5DOow8LHyC29DF5X0loY6ixi10HcBj3bA7Ttcvcwuay0hx/59tCrcA6Zz165W61PlKGyaiuhJ7YYblkw7jC3hG5Uc48pZHnRLoM9EPU4rY8CZQUAi5xe4u0NOQUCz4y79vg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=LDgX+4bX; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4603f64ef17so17481711cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:27:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728660147; x=1729264947; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Zq9beYF4rIsjRUvsDJVJyZp04SMnaH+OieTyD7fM/mM=;
-        b=KtknwSQZFd0MgIEJ7mfR6xk1c+OF/NPSKaldmCbznjty2W7+5/UNIzdj/py4SB4bZ0
-         YV2Ttlkz3slFoADIUKaT75fvmkgKtJ+XYnq/NyXJNPvyWd+xXAbBJI6sYnLhq1/p9qdv
-         rrrVKgq5NwNKSFzESMCEVxMFUPcAukq9xbDo34V+Oeaojd+JGTumTsr60RDgjg4tkl5C
-         AKaR2RM219EBIy8UBjhDPvs5CRiZq0invOcgUyb8opFv7mxrOQn4P7eZ31jif2Us5UQN
-         ZTJJLDI+OUqDiRhrE9nNQLDdzya3wAaiOnWtqHr7zYWGySX4sYh8TgWD+lY9TxfcCXoE
-         SKDQ==
+        d=marek.ca; s=google; t=1728660451; x=1729265251; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ENjo8WaNMM2SxgI285IjIz9pg6uqFRWPMbu3WxVYb8I=;
+        b=LDgX+4bXqQ5v/UyT/v1RwVyRnbGeiiY6nnjGiKrlQTlg+MedbMX8cw083PAjEejltd
+         gMZs8HphK9HP9U3a9hADp4FvQ8SCwgJjrbI/J2VI3jrxJ8Q4b7B+bSsT5t+iERzJYtdh
+         xatTW4X0Xvd8h4NBGA1vhDJtxRExMMts/uwXYYNgducWOKibNKFoeL+4CwdjVbRYsySA
+         85EM/e4PVhBvLGNldYidKu09zxMCkDd4CTzxQ0LDN0mT8X+oYgZSB4Y/To7gqTThZYnh
+         6IdylrTnLhoLzr4OPZ2CsV2Y5liVi+ueEtgVnGYVnizTyiZ/Y7FDg/yrrXFaomt23OB9
+         bjDg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728660147; x=1729264947;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Zq9beYF4rIsjRUvsDJVJyZp04SMnaH+OieTyD7fM/mM=;
-        b=IifMFg215QR+HBbKoSOScA3siQ9O/aFSuj2KucmtOnAyjqDYKeVVADVfxlUFtlxmWN
-         iNBCr+HVii9kn9uweCO3tTYEwRa//u6hmHRDTTf5CjP39Bx/2a6HWx91GbzxDXxojYt7
-         eMVjVmDlNHulyt4/Jm8q0kwi2ls2AH0qxLi8M0lqpCKahJaLQG0OZD6FEqjfyc1yBwyY
-         vAN+dQj4/5oX50JxvOMqnj5Zl3L3MQp3eXNIPfZF/F8z7/71tyFtOOtNxpUqRjiAUMI4
-         MAGhlxkQk4rdIXXhY4Rx4z5L9ShA1hSFNx8satiOc7ZmY3a7IauQsflCa0mbnfRdSDwH
-         ymTA==
-X-Forwarded-Encrypted: i=1; AJvYcCUfNqWbUrSrWg1/hhKNzUiqXyD9LU2M7FizmY07XUldxhmkBeRIEWa+inKJ8Pi9jVWzQ5r2KSvzDo8J34PFGhA=@vger.kernel.org, AJvYcCV7Ea6s4zvNWtgDEcCmKk0Txdy9e+0DDby3RDvBlToiQBfaSUtofzQYBLhHNmfSnwbJ7uOsydW6SGgCCaUKw0QbX+uz@vger.kernel.org, AJvYcCVW5CwcXUDkFtttZZgwAaZNnc6VwNUQXr/qw0K+KgqT48rjmUWL8xL2jxWKve8+2pFG6QvDs+xyzG7KmSzn@vger.kernel.org, AJvYcCXdlMxTOHK+7gx75T3t9Elh3DYmy835nLS5oWkF+W8r18eiXbDaiAOudCWQn098XhEcl1qRpA/dhFTp0ScfLyGS@vger.kernel.org
-X-Gm-Message-State: AOJu0YwR6iBsv/8rjaF9C47NK/7UE0r4Bnri7OYja5PSR+ikQ3RoBVEn
-	1Lrr2hSb3teBF0LyfAVgeiKA+54B8+SR56Bp4JR84269N07sCM4VTkrc38rguUrvftH2N+EsrsR
-	g1MlnkTvrNuPJKNuQq2WjCVUK0Js=
-X-Google-Smtp-Source: AGHT+IFrHoTgP4o6sHrBkw7DExcje8jOXrDOjBnraVSEKs53UdDVw3zgXivEdhUu4/PeBxqp9ArcS0Gl1eVumd4/4U0=
-X-Received: by 2002:a17:907:94ca:b0:a8d:1303:2283 with SMTP id
- a640c23a62f3a-a99e3b7c5a5mr4738466b.30.1728660146704; Fri, 11 Oct 2024
- 08:22:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728660451; x=1729265251;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ENjo8WaNMM2SxgI285IjIz9pg6uqFRWPMbu3WxVYb8I=;
+        b=n0Cj4DoqcIIa5Nh0Ux2pMxhdTCk/mlxTNZI9q6wjySQoGD66xXEOMAT+D550yitAX2
+         iR7Fulbv9nuTtETl+gGaWRVfeYeItVqQI4nDWh4AT2HCHiBzGxm3R6KPIry2hp7gxoW6
+         Y2rwUIOh2gSfvpXJEpec5dDk6OwsgdpKuASlrYNrpvOvoCaARDLqeXDpfLaYI7iG9lnQ
+         7nvwMm64XBSWDDm2iE83EIfU8J3p8wBuRc1i15LHdf6KCkDenWDJ4uohQg4FKsYJOdbk
+         HzQpNbz9Th9ykaUpKRc/jbLOR8tb4sM0nAvwkyxhZPguZ4WGwNyQ6fArJyCdHpm6fK5T
+         5zTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVEoQi4DtEtqI/NCwv9DHJxPoiAr2crbJNwcacO91BAb5u5gKllUeKWzywbKSVAG95W8gG7pOGoQgr8ffQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXEIVN5fNlGJPF2uoPd72iMpArCUdQnzQQl9zevLDzzlDljdU/
+	RojNhYuvEhN1xn6n/LokZHwzZ3WUr6DlCaM2sbKYOA7/r7df2d4VbFHlVxj8aWQV9Q/GGtTA2xT
+	Mul4=
+X-Google-Smtp-Source: AGHT+IHYNJkgaLLv/w799rZpdoAMPPyoB55wmJ3IpkehRsO0xuYABXaHyGFaAam7/8aabgIuvV/wDQ==
+X-Received: by 2002:a05:622a:15cf:b0:45f:3d1:24ad with SMTP id d75a77b69052e-4604b273053mr50520501cf.13.1728660450735;
+        Fri, 11 Oct 2024 08:27:30 -0700 (PDT)
+Received: from localhost.localdomain (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460427d5220sm16344131cf.32.2024.10.11.08.27.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 08:27:30 -0700 (PDT)
+From: Jonathan Marek <jonathan@marek.ca>
+To: linux-arm-msm@vger.kernel.org
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	linux-rtc@vger.kernel.org (open list:REAL TIME CLOCK (RTC) SUBSYSTEM),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 1/5] rtc: pm8xxx: implement no-alarm flag for non-HLOS owned alarm
+Date: Fri, 11 Oct 2024 11:22:39 -0400
+Message-ID: <20241011152244.31267-1-jonathan@marek.ca>
+X-Mailer: git-send-email 2.45.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011072509.3068328-2-davidgow@google.com> <20241011072509.3068328-5-davidgow@google.com>
- <ZwkBgkthcQM7rLl7@smile.fi.intel.com> <CAMuHMdW=MF0H8YVuY6moLomTaxFEeCHgut1fruRGEkn79sbuTA@mail.gmail.com>
- <ZwkuvKogPuik90fN@smile.fi.intel.com> <CAMuHMdU_1oZEeJ5Onrbtx-iZjrK_bQ6YWNMdRYp-E1_5E7rMSQ@mail.gmail.com>
-In-Reply-To: <CAMuHMdU_1oZEeJ5Onrbtx-iZjrK_bQ6YWNMdRYp-E1_5E7rMSQ@mail.gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 11 Oct 2024 18:21:50 +0300
-Message-ID: <CAHp75Vecwe_LaSKSprwfrdpDhoJbXgajQUVY23L+VyGoxtGH7A@mail.gmail.com>
-Subject: Re: [PATCH 3/6] lib: Move KUnit tests into tests/ subdirectory
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Andy Shevchenko <andy@kernel.org>, David Gow <davidgow@google.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Shuah Khan <skhan@linuxfoundation.org>, 
-	Brendan Higgins <brendanhiggins@google.com>, Rae Moar <rmoar@google.com>, 
-	Kees Cook <kees@kernel.org>, linux-kselftest@vger.kernel.org, 
-	kunit-dev@googlegroups.com, linux-kernel@vger.kernel.org, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Yury Norov <yury.norov@gmail.com>, 
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>, "Jason A . Donenfeld" <Jason@zx2c4.com>, 
-	"Naveen N . Rao" <naveen.n.rao@linux.ibm.com>, 
-	Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>, "David S . Miller" <davem@davemloft.net>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mark Brown <broonie@kernel.org>, 
-	linux-hardening@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	Palmer Dabbelt <palmer@rivosinc.com>, Christophe Leroy <christophe.leroy@csgroup.eu>, 
-	Charlie Jenkins <charlie@rivosinc.com>, Simon Horman <horms@kernel.org>, 
-	Jakub Kicinski <kuba@kernel.org>, Arnd Bergmann <arnd@arndb.de>, Daniel Latypov <dlatypov@google.com>, 
-	Guenter Roeck <linux@roeck-us.net>, David Howells <dhowells@redhat.com>, 
-	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Marco Elver <elver@google.com>, Mark Rutland <mark.rutland@arm.com>, 
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>, Vlastimil Babka <vbabka@suse.cz>, 
-	Nathan Chancellor <nathan@kernel.org>, Fangrui Song <maskray@google.com>, 
-	"Steven Rostedt (Google)" <rostedt@goodmis.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 5:20=E2=80=AFPM Geert Uytterhoeven <geert@linux-m68=
-k.org> wrote:
-> On Fri, Oct 11, 2024 at 3:57=E2=80=AFPM Andy Shevchenko <andy@kernel.org>=
- wrote:
-> > On Fri, Oct 11, 2024 at 03:38:00PM +0200, Geert Uytterhoeven wrote:
-> > > On Fri, Oct 11, 2024 at 12:44=E2=80=AFPM Andy Shevchenko <andy@kernel=
-.org> wrote:
-> > > > On Fri, Oct 11, 2024 at 03:25:07PM +0800, David Gow wrote:
+Qualcomm x1e80100 firmware sets the ownership of the RTC alarm to ADSP.
+Thus writing to RTC alarm registers and receiving alarm interrupts is not
+possible.
 
-...
+Add a no-alarm flag to support RTC on this platform.
 
-> > > > >  rename lib/{ =3D> tests}/bitfield_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/checksum_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/cmdline_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/cpumask_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/fortify_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/hashtable_test.c (100%)
-> > > > >  rename lib/{ =3D> tests}/is_signed_type_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/kunit_iov_iter.c (100%)
-> > > > >  rename lib/{ =3D> tests}/list-test.c (100%)
-> > > > >  rename lib/{ =3D> tests}/memcpy_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/overflow_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/siphash_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/slub_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/stackinit_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/string_helpers_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/string_kunit.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_bits.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_fprobe.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_hash.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_kprobes.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_linear_ranges.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_list_sort.c (100%)
-> > > > >  rename lib/{ =3D> tests}/test_sort.c (100%)
-> > > > >  rename lib/{ =3D> tests}/usercopy_kunit.c (100%)
-> > > >
-> > > > While I support the idea, I think this adds an additional churn in =
-creating a
-> > > > duplicate 'test' in the filenames. Why they all can't be cut while =
-removing?
-> > > > (at least this question is not answered in the commit message)
-> > >
-> > > To avoid duplicate *.ko file names?
-> >
-> > With what? Sorry, but I don't see how it's a problem. These are test ca=
-ses.
-> > Do they use kernel command line parameters? If so, shouldn't KUnit take=
- care
-> > about it in a more proper way?
->
-> If .e.g. lib/list_sort.o could be modular, its module would be called
-> "list_sort.ko", conflicting with the "list_sort.ko" test module.
+Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+---
+ drivers/rtc/rtc-pm8xxx.c | 48 ++++++++++++++++++++++++++++------------
+ 1 file changed, 34 insertions(+), 14 deletions(-)
 
-Can't this be solved by automatically adding a prefix in Makefile for
-kunit tests, for example?
+diff --git a/drivers/rtc/rtc-pm8xxx.c b/drivers/rtc/rtc-pm8xxx.c
+index c32fba550c8e0..9240844022092 100644
+--- a/drivers/rtc/rtc-pm8xxx.c
++++ b/drivers/rtc/rtc-pm8xxx.c
+@@ -61,6 +61,7 @@ struct pm8xxx_rtc {
+ 	struct rtc_device *rtc;
+ 	struct regmap *regmap;
+ 	bool allow_set_time;
++	bool no_alarm;
+ 	int alarm_irq;
+ 	const struct pm8xxx_rtc_regs *regs;
+ 	struct device *dev;
+@@ -375,6 +376,11 @@ static const struct rtc_class_ops pm8xxx_rtc_ops = {
+ 	.alarm_irq_enable = pm8xxx_rtc_alarm_irq_enable,
+ };
+ 
++static const struct rtc_class_ops pm8xxx_rtc_no_alarm_ops = {
++	.read_time	= pm8xxx_rtc_read_time,
++	.set_time	= pm8xxx_rtc_set_time,
++};
++
+ static irqreturn_t pm8xxx_alarm_trigger(int irq, void *dev_id)
+ {
+ 	struct pm8xxx_rtc *rtc_dd = dev_id;
+@@ -473,9 +479,13 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+ 	if (!rtc_dd->regmap)
+ 		return -ENXIO;
+ 
+-	rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
+-	if (rtc_dd->alarm_irq < 0)
+-		return -ENXIO;
++	rtc_dd->no_alarm = of_property_read_bool(pdev->dev.of_node, "no-alarm");
++
++	if (!rtc_dd->no_alarm) {
++		rtc_dd->alarm_irq = platform_get_irq(pdev, 0);
++		if (rtc_dd->alarm_irq < 0)
++			return -ENXIO;
++	}
+ 
+ 	rtc_dd->allow_set_time = of_property_read_bool(pdev->dev.of_node,
+ 						      "allow-set-time");
+@@ -503,7 +513,8 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+ 
+ 	platform_set_drvdata(pdev, rtc_dd);
+ 
+-	device_init_wakeup(&pdev->dev, 1);
++	if (!rtc_dd->no_alarm)
++		device_init_wakeup(&pdev->dev, 1);
+ 
+ 	rtc_dd->rtc = devm_rtc_allocate_device(&pdev->dev);
+ 	if (IS_ERR(rtc_dd->rtc))
+@@ -512,27 +523,36 @@ static int pm8xxx_rtc_probe(struct platform_device *pdev)
+ 	rtc_dd->rtc->ops = &pm8xxx_rtc_ops;
+ 	rtc_dd->rtc->range_max = U32_MAX;
+ 
+-	rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
+-					  pm8xxx_alarm_trigger,
+-					  IRQF_TRIGGER_RISING,
+-					  "pm8xxx_rtc_alarm", rtc_dd);
+-	if (rc < 0)
+-		return rc;
++	if (!rtc_dd->no_alarm) {
++		rc = devm_request_any_context_irq(&pdev->dev, rtc_dd->alarm_irq,
++						  pm8xxx_alarm_trigger,
++						  IRQF_TRIGGER_RISING,
++						  "pm8xxx_rtc_alarm", rtc_dd);
++		if (rc < 0)
++			return rc;
++	} else {
++		rtc_dd->rtc->ops = &pm8xxx_rtc_no_alarm_ops;
++	}
+ 
+ 	rc = devm_rtc_register_device(rtc_dd->rtc);
+ 	if (rc)
+ 		return rc;
+ 
+-	rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
+-	if (rc)
+-		return rc;
++	if (!rtc_dd->no_alarm) {
++		rc = dev_pm_set_wake_irq(&pdev->dev, rtc_dd->alarm_irq);
++		if (rc)
++			return rc;
++	}
+ 
+ 	return 0;
+ }
+ 
+ static void pm8xxx_remove(struct platform_device *pdev)
+ {
+-	dev_pm_clear_wake_irq(&pdev->dev);
++	struct pm8xxx_rtc *rtc_dd = platform_get_drvdata(pdev);
++
++	if (!rtc_dd->no_alarm)
++		dev_pm_clear_wake_irq(&pdev->dev);
+ }
+ 
+ static struct platform_driver pm8xxx_rtc_driver = {
+-- 
+2.45.1
 
---=20
-With Best Regards,
-Andy Shevchenko
 
