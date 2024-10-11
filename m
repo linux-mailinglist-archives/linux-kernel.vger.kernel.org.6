@@ -1,282 +1,124 @@
-Return-Path: <linux-kernel+bounces-360433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD4D4999AE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:08:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7139999AE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:08:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FD6A2822B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DFD9DB2239C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:08:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816E71F4FCC;
-	Fri, 11 Oct 2024 03:08:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12D691F4FD8;
+	Fri, 11 Oct 2024 03:08:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LzmBBDBd"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="AtbSpvr2"
+Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14DDA1F4706;
-	Fri, 11 Oct 2024 03:08:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8F91F4FA6
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:08:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728616089; cv=none; b=qNcAleIiOhtPpvDi5XyftDodK89HhkP09ATRsjYftPx0TtsU/zWehaawUJ3Kb6+1QvTH3QvnBXRKAywRD2pcNENV/FDjq1PojZGyklCc8cp53FsUS8bpyQYcaZmTrPTVg0r98tjVEGrqgeHx75yMYd43sb0OAc/TFmK8k8n3cQ4=
+	t=1728616091; cv=none; b=om4713qrNJ28TUjMC0a1KgLyvTqXhEiSgX7zHcMvbZbumOkBn/eQbZ1CUaP690JPLk6BtqvUn92B6VYXehiSg5mQgnBDoxIqE5b0Z2LbX7c77AAS/AoKrHeu15Q5lvI5Vu0GJt4Iwk69Gl/lcWK/BH6PlwyDbtstLuzRGxDrIYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728616089; c=relaxed/simple;
-	bh=ep44fxEvvsd26YIiQtzYV+4X9mE5DwAn+rEAQ9V2Mh4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=W5OAG20qRu/cyCeZWA5cOan1oxQGyR3bzf1wt9OUUaq3Kz6Ar8N95cU0H5qJlOQJztsF4EbpfZ2Wh7TMGoSrFPNRFCtdrAoV5CNzNIjw9Ale6gYGzr8tu0BT9a2tNqgzNEcbVtSfcWFLNhLymrQFWPU+gUwgg9juXGBf9Eylcnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LzmBBDBd; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B2eeUU028022;
-	Fri, 11 Oct 2024 03:07:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=dRboePwXKGLUTBGbWr5cuf
-	VJ4O8k6LsI8p1I57NNJyw=; b=LzmBBDBdcg+/Qvmk4Ni/ruTxnG28pHWh+WY9hf
-	M9A5O2mZaeVtwWYyoQYoUPB7GwX8e30qROR78j/HSXHPGxFVUvr7/A3A++E3TjvZ
-	+Cc9+t5jdduyEdmHsxXJ8WfdY7MN+Z5XMKJilEWOYXCICtAb8lyW0SJFI686+g1S
-	d/r45YAkmSGQrgQd6OZD9iRSNSTqyrWkds7UMUxd74l0PCvalRzYKw/Fb9SmXS8y
-	d0v1fNb4tzeC0S3WqraFzXiUbVBFf+cIVsgGIf5IODPPt6hQMv0/4v28td6sHdeZ
-	D8k2rrQgZwbc32u9jibwGM1ArhaZXHwnT8fVmvdIi1TR5usA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425c8qyrk3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 03:07:58 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B37vaG021192
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 03:07:57 GMT
-Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 10 Oct 2024 20:07:53 -0700
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-To: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <agross@kernel.org>, <andersson@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
-        <stanimir.k.varbanov@gmail.com>, <kvalo@kernel.org>,
-        <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
-        <dmitry.baryshkov@linaro.org>,
-        Miaoqing Pan <quic_miaoqing@quicinc.com>
-Subject: [PATCH v6] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-Date: Fri, 11 Oct 2024 11:07:33 +0800
-Message-ID: <20241011030733.2915321-1-quic_miaoqing@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728616091; c=relaxed/simple;
+	bh=YLuBWG6/qc7ga5aPtQTIDDS1RpWthIDoLcApXgrfLZ8=;
+	h=Date:Message-ID:MIME-Version:Content-Type:From:To:Cc:Subject:
+	 References:In-Reply-To; b=S5cyC6YBBuAxhobCI9Xl5Mro4TEWGDNj57StF/h+NPINEbDedstD/KZhchBGr9mllQjK6yApBoTMTW0JEMbDLxwALpZ2Ui0h2u2h/3nmtEG/X1fDdu3qGjpXCaouSCfn7Imo4uoMFzSy5amPIxcx3psKCSQYZEtpIQHqEgoXaAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=AtbSpvr2; arc=none smtp.client-ip=209.85.222.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7a9a30a0490so111471085a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:08:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1728616088; x=1729220888; darn=vger.kernel.org;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JBDimyqC4CJK4p2iBMj8GbFo0/9rbwMGrV3N2csFsfI=;
+        b=AtbSpvr2QAKK1sYFFWgs6GGhi1qeRU0pYE/OpaTzaZmoFmMCVrhXhW6IjKn+DLUIdo
+         Bq0b2Q+9CqDy6EXilVYr/HfKliG0VnrTZ/SunjhniFt2psA3+BMp11j+8BxNX6JkRb8x
+         uyMoDV2aEs6OiIsQlROXcDwNFO9e525rfKgqy+MD55HlDkl4e7lsB16q+J4tt/MjU4VJ
+         K5owi/TH0nvO4SZrkLrjXhL5cBM3oEKQL1pmGqk8XG1QskoVQuXpMMUzyNE2QC91a3E/
+         AVpslDPydCSdDJA0w9cvRliB1G8JFRnySFmKJldZlk33S6O/qWzch5e0bJULhdxFSaJA
+         EO9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728616088; x=1729220888;
+        h=in-reply-to:references:subject:cc:to:from:content-transfer-encoding
+         :mime-version:message-id:date:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=JBDimyqC4CJK4p2iBMj8GbFo0/9rbwMGrV3N2csFsfI=;
+        b=b2WMmyAYpEqMngRr6s0PRmeRlHv3m0DKpmHyqpr+y1RBZnnTQojVkim/5Xu/Q48rmR
+         gPYnURPONVlEpFuhvf30nsCYZ9FxljWmC2vyYdnCZ7iVSswQLqf8+ors1lyGDoKCEuZ6
+         2KsDP+1OmAtDcs1QCXZrQH7Zdplymna/vUca1U2hR6HXNMb+VWZXdX4gB0COLf7IDzqs
+         z4KYQwkuogCmmOdbGjQBkvivSpOaHfTRj+UDDeXdlW3a2qFdYhzaDNyToKzELVxM3JQn
+         5AA0B98S2HCDnL87aMICHYkRMCprQX1AperYpmE4vDeTFrsWA+zJn3HYHZGBFWH2j/4o
+         /PTA==
+X-Forwarded-Encrypted: i=1; AJvYcCXN6G4H6147XQnurMuujdK6ymrKV+BsdGvi2Iu83x9PdVPZlJ05dqxqk3xZjPaRrOOJgtHmzR61jMZoVa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxEW/9t2q0ftrLy9/638UF+qk5RQgpNk2uuN11ZsnZq9o0EGZxO
+	vnoXDrQDOgb/XPn6MD0miiC/PAaJf3PmDOgzqjVVw9Bc+YiyNLjDJFMDTlMK/g==
+X-Google-Smtp-Source: AGHT+IEq45tHLzd0BJhXzLGe1YJAlDo84n078XLgRxpwqpJN8UttW19ZEx28YGyczqACohCw1soA3Q==
+X-Received: by 2002:a05:620a:444c:b0:7a9:c346:382c with SMTP id af79cd13be357-7b11a35f629mr149344885a.20.1728616088451;
+        Thu, 10 Oct 2024 20:08:08 -0700 (PDT)
+Received: from localhost ([70.22.175.108])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b114956044sm97771285a.79.2024.10.10.20.08.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 20:08:07 -0700 (PDT)
+Date: Thu, 10 Oct 2024 23:08:07 -0400
+Message-ID: <1e6f94db91f0df07373ec1e0c8f3eced@paul-moore.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+MIME-Version: 1.0 
+Content-Type: text/plain; charset=UTF-8 
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: s_NgsNilO_Mgr8-wi4w8wJ4Fa2TZb-Kx
-X-Proofpoint-ORIG-GUID: s_NgsNilO_Mgr8-wi4w8wJ4Fa2TZb-Kx
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0
- lowpriorityscore=0 mlxlogscore=999 malwarescore=0 suspectscore=0
- priorityscore=1501 mlxscore=0 spamscore=0 phishscore=0 clxscore=1015
- bulkscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410110017
+From: Paul Moore <paul@paul-moore.com>
+To: Casey Schaufler <casey@schaufler-ca.com>, casey@schaufler-ca.com, linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org, serge@hallyn.com, keescook@chromium.org, john.johansen@canonical.com, penguin-kernel@i-love.sakura.ne.jp, stephen.smalley.work@gmail.com, linux-kernel@vger.kernel.org, selinux@vger.kernel.org, mic@digikod.net, apparmor@lists.ubuntu.com, bpf@vger.kernel.org
+Subject: Re: [PATCH v4 1/13] LSM: Add the lsm_prop data structure.
+References: <20241009173222.12219-2-casey@schaufler-ca.com>
+In-Reply-To: <20241009173222.12219-2-casey@schaufler-ca.com>
 
-Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
-board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
+On Oct  9, 2024 Casey Schaufler <casey@schaufler-ca.com> wrote:
+> 
+> When more than one security module is exporting data to audit and
+> networking sub-systems a single 32 bit integer is no longer
+> sufficient to represent the data. Add a structure to be used instead.
+> 
+> The lsm_prop structure definition is intended to keep the LSM
+> specific information private to the individual security modules.
+> The module specific information is included in a new set of
+> header files under include/lsm. Each security module is allowed
+> to define the information included for its use in the lsm_prop.
+> SELinux includes a u32 secid. Smack includes a pointer into its
+> global label list. The conditional compilation based on feature
+> inclusion is contained in the include/lsm files.
+> 
+> Suggested-by: Paul Moore <paul@paul-moore.com>
+> Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: apparmor@lists.ubuntu.com
+> Cc: bpf@vger.kernel.org
+> Cc: selinux@vger.kernel.org
+> Cc: linux-security-module@vger.kernel.org
+> ---
+>  include/linux/lsm/apparmor.h | 17 +++++++++++++++++
+>  include/linux/lsm/bpf.h      | 16 ++++++++++++++++
+>  include/linux/lsm/selinux.h  | 16 ++++++++++++++++
+>  include/linux/lsm/smack.h    | 17 +++++++++++++++++
+>  include/linux/security.h     | 20 ++++++++++++++++++++
+>  5 files changed, 86 insertions(+)
+>  create mode 100644 include/linux/lsm/apparmor.h
+>  create mode 100644 include/linux/lsm/bpf.h
+>  create mode 100644 include/linux/lsm/selinux.h
+>  create mode 100644 include/linux/lsm/smack.h
 
-Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
----
-v2:
-  - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
-  - relocate pcieport0 node in alphabetical order.
-v3:
-  - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
-v4:
-  - update 'ath11k-calibration-variant' to "Ride".
-v5:
-  - update 'Ride' to 'QC_SA8775P_Ride'.
-v6:
-  - no code change, fix patch version.
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 121 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
- 2 files changed, 122 insertions(+), 1 deletion(-)
+Looks good to me, thanks for the lsm_prop rename.  As a FYI, I did add
+a line to the MAINTAINERS entry for include/linux/lsm/.
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 0c1b21def4b6..c41fac1eb6c2 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -27,6 +27,83 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	vreg_conn_1p8: vreg_conn_1p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_1p8";
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8654au_1_gpios 4 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	vreg_conn_pa: vreg_conn_pa {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_pa";
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8654au_1_gpios 6 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	wcn6855-pmu {
-+		compatible = "qcom,wcn6855-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_en_state>, <&wlan_en_state>;
-+
-+		vddio-supply = <&vreg_conn_pa>;
-+		vddaon-supply = <&vreg_l2c>;
-+		vddpmu-supply = <&vreg_conn_1p8>;
-+		vddrfa0p95-supply = <&vreg_l2c>;
-+		vddrfa1p3-supply = <&vreg_l6e>;
-+		vddrfa1p9-supply = <&vreg_s5a>;
-+		vddpcie1p3-supply = <&vreg_l6e>;
-+		vddpcie1p9-supply = <&vreg_s5a>;
-+
-+		bt-enable-gpios = <&pmm8654au_1_gpios 8 GPIO_ACTIVE_HIGH>;
-+		wlan-enable-gpios = <&pmm8654au_1_gpios 7 GPIO_ACTIVE_HIGH>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -453,6 +530,20 @@ &pmm8654au_1_gpios {
- 			  "USB2_PWR_EN",
- 			  "USB2_FAULT";
- 
-+	wlan_en_state: wlan-en-state {
-+		pins = "gpio7";
-+		function = "normal";
-+		output-low;
-+		bias-pull-down;
-+	};
-+
-+	bt_en_state: bt-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		output-low;
-+		bias-pull-down;
-+	};
-+
- 	usb2_en_state: usb2-en-state {
- 		pins = "gpio9";
- 		function = "normal";
-@@ -702,6 +793,25 @@ &pcie1_phy {
- 	status = "okay";
- };
- 
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1101";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		qcom,ath11k-calibration-variant = "Ride";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &remoteproc_adsp {
- 	firmware-name = "qcom/sa8775p/adsp.mbn";
- 	status = "okay";
-@@ -744,6 +854,17 @@ &uart17 {
- 	pinctrl-0 = <&qup_uart17_default>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn6855-bt";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+	};
- };
- 
- &ufs_mem_hc {
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index e8dbc8d820a6..8d42b5e9c7d6 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -5570,7 +5570,7 @@ pcie0: pcie@1c00000 {
- 
- 		status = "disabled";
- 
--		pcie@0 {
-+		pcieport0: pcie@0 {
- 			device_type = "pci";
- 			reg = <0x0 0x0 0x0 0x0 0x0>;
- 			bus-range = <0x01 0xff>;
--- 
-2.25.1
-
+--
+paul-moore.com
 
