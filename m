@@ -1,77 +1,79 @@
-Return-Path: <linux-kernel+bounces-361320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B011699A6C8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:48:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 793A499A6CB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:49:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45045285C4D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:48:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E304B21107
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:48:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 206371885AD;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F6F019343E;
 	Fri, 11 Oct 2024 14:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="ZohZ3PRt"
-Received: from smtp-relay-internal-1.canonical.com (smtp-relay-internal-1.canonical.com [185.125.188.123])
+	dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b="a7Cfs+61"
+Received: from smtp-relay-internal-0.canonical.com (smtp-relay-internal-0.canonical.com [185.125.188.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE4BD79DC7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEB32405FB
 	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:48:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.123
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.125.188.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658119; cv=none; b=i44Yo5/qww5HHsLKP9247OHBeXSC2BJYfuGfiOrx8MSG9gKUzm+n2T3QiKmYvQ10MESFthODVhD/iNPT5as2PIZJj7fUkOvOftGV5F5AKl00usZjauf0rKa8Mmh63ZeR6Aa31sorgQpnNiLOiO6c9F+Yr0PHGcp4XPqLDuwios8=
+	t=1728658119; cv=none; b=qPf5TDDCydfUdl2lI1kiijxsUhJcBYxaok1CN0eTfB378eXWZIMpvcw1DX3pnnDwItdbLOLfsY0NXD9h73pVXsaWngTmXEWr6c5XtfBpnRLJIIYrkKSZzkXN2Q2bhoKFEc/E4wB14XxUw4Za42bNQGdyelezhBDMzYa2kD9Pn2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728658119; c=relaxed/simple;
-	bh=uQVCJTzTG+CgJBodFQTQpj6z47sYXTr+QgvgQYjK0U8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MqH5bM/A7m4wChHLijoP+cy65aBAhRdyryf9N4HmNbruEshS+OKXGmMYAoKwmTqFNNLWB/lSWSnsnFNXR2zxJiT6VISG+1sbiQctHbizwVtm60AOXStK001VBj2QjVrplfCz2uJdmjpHQfwx/bkYdi14MLkU4An2JJeljR7xyY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=ZohZ3PRt; arc=none smtp.client-ip=185.125.188.123
+	bh=TdKbIqcsYdFeh9DZu1CQupvONBITLkldWhskZ+GPwA4=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=PvBYWofTbofG0mnETPaoDAhvEZX1bT5JiMh8Tx6k23cZtdwVN3daIA3WGZE8cskmnC1HOsRRU07uqobq+q0EDjLX+aVZbUBrB0660p2yS27xK6uku8sSiL19yFDeDnMmvyq9e6lY4zDQCxIifnWGAyENqVLNB/UG5KQNx3UH3UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com; spf=pass smtp.mailfrom=canonical.com; dkim=pass (2048-bit key) header.d=canonical.com header.i=@canonical.com header.b=a7Cfs+61; arc=none smtp.client-ip=185.125.188.122
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canonical.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canonical.com
-Received: from mail-ej1-f69.google.com (mail-ej1-f69.google.com [209.85.218.69])
+Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com [209.85.218.72])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-relay-internal-1.canonical.com (Postfix) with ESMTPS id 51AA43FE51
+	by smtp-relay-internal-0.canonical.com (Postfix) with ESMTPS id E1E0E4063F
 	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:48:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canonical.com;
 	s=20210705; t=1728658109;
-	bh=ZeYY7hZCtG5ZzblFqjablxTznhCvL1wjc9Tgelu4NWY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version;
-	b=ZohZ3PRtjoo/dYtvDJL8Ar7rpoHttZacWbawJsxX8HIlUE9FU+IAvlQyxmDjums4w
-	 qF8eJBSnZBN+P94OQ6N4kZzrsgLgKL4jNJc4Qvrv23ZbAUxCSi2cgJyfPCRcARUBRq
-	 A7AbF7EzQM7sxoxkSl2RYUXm3/wITZaHxzY0Ku7a4T2YCLPbNRN3CmG382gzfwmDuL
-	 pSryAiZtwAm4iA2kdl10ATApQUZPct0NOanMJsJXsmGj9j0mlREttvISTUaTU0ZRYX
-	 RT490IjZ3+uQFuQv8LZBqBh7v29wDpqMmhJaVK9IowxeF47UUvR4Qim42Yhio3qtfW
-	 R+mAGsbZ47Fgg==
-Received: by mail-ej1-f69.google.com with SMTP id a640c23a62f3a-a996be26171so337520366b.0
+	bh=y7+YQmnss41fm/ukNbmPDdCc/cnUksMm9Me8dFSJczY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version;
+	b=a7Cfs+61OriM3ZbHncu3clYO3W6aOzVyobUCobuQwJG69joGspODINDbaXIF5fjPZ
+	 J0vpejTUXpXohFE+WmQ1nBf4Q1VCY38Ke3e47xLN3uXHDVWJDKMF62hAcvFIRU+mzc
+	 OlrJSouZNE2zIeFBZIekvo30QuldBqVP74HnZMrz8xQ1IGHikMaFskQriWUt1INEce
+	 BBKZ9Tjywjf6E8mTqH9tW70jmaZXWO+NiTeiBBx9oIhp1ZEp//bZmZpAvWvRMatY1S
+	 1+Eqa9micvSHrorOVpuzcnknaFCrMsX65/sy7FeP6oIEcwSJhdzTdOyN8NGQ7Kub/V
+	 NfiRYNO43UBaQ==
+Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-a99345b8a29so145075066b.3
         for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:48:29 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728658108; x=1729262908;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZeYY7hZCtG5ZzblFqjablxTznhCvL1wjc9Tgelu4NWY=;
-        b=iK/wA2eqp+1YAcmIyviZB0ZB1XIuHB222liS3vtX05kf/acPQcMTUvYT4oUjLufePH
-         8/C6MqFWInTFP7kCE47KpDfX4ZTV8XodEX1wbefDwh5GDPWZttvChXMRybljtssgXQxr
-         9SSMSU8+ODQu5B778B8agcejzjisWoxJ0hKypnSoDYs32a/l49OZHGGGkOWvV5NVLCS3
-         gkDx+BbcU5+058Gaq0VpcT3N4c1nC5UPsLlpBnec5LCrq8b0dF7K5A/r4v3WleiL5jIq
-         e9dsJsX9lVDZlWNs6wNrh/fYq8hDtk7oE8tDlHu2uBEI0o5QbI8kFGXYnWNTwvGnGEDH
-         VbGQ==
-X-Gm-Message-State: AOJu0YyHPlQHYUY6iwfi0J/IVA4hp1NdTFJFKiVQyDqhrk94hu6ggu5e
-	9JGol5J2UCoCyWv7YGFXxesgMZQVInE4KzIM0GfIZEgz95IcffF9edoIe6UjZnjza7i49/Q1vPC
-	Ml/lVgFsCxNtWOMXx9ornGgfV1hzRgADmpIFVYAzmZChWSc5HlncDFIaJWz7HJsvK7IZvqvq4M1
-	ZWo8whiScAwQ==
-X-Received: by 2002:a17:906:cae5:b0:a99:4ad2:acb7 with SMTP id a640c23a62f3a-a99b885cd31mr293766766b.18.1728658108451;
+        d=1e100.net; s=20230601; t=1728658109; x=1729262909;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y7+YQmnss41fm/ukNbmPDdCc/cnUksMm9Me8dFSJczY=;
+        b=RJCJrsxh50wGc6QZoIc/Z01J6yKF8f+fXWMDkBtXkGZpS5l2MxSZuNlpYqPvXgmEq/
+         oESNxlWz1P2FZ7926GXz3pSDLq70qZ8d0AK6K/noxoefGeG7jA4SlxswWlvfawqjJbvd
+         h+7wHx7vVl9e3CpLY5IEpZ1E/jLS+/JzO0X4uvlDfl/QFdqlWKZVYsE38JR5mqXZYU5X
+         I59e6265c44IM/OP0wL6+f41z0APEiyKMcYz4x+Lcjj6fIJ7zbTyYvopkXrbBMRIiyuS
+         ykhscw2ZTdfFdDT6jKya6RNv+g7fOBudSgr8EUItlO31xWPTeeSmepllD9EduiDgNS5W
+         YUMA==
+X-Gm-Message-State: AOJu0YzH1Umm9XKFUS7fohWdFX+U/glr6kfgLGEoMa7C1x6h4K+9rIAJ
+	EkQ1RSBHHgntkXkvU38pz9P51R1jDMAL39cA5UekEKdswr7YCywX06fwVANvXaMNJ6aTui129tw
+	7oNJcgbjLIyOTM6eTsNzrNCPz3rlSthVg4lDMaFVGuqSJpPt2qUu9yKpGhB1AjVwE9EOVr418ma
+	tkAPvlurRU8A==
+X-Received: by 2002:a17:907:f796:b0:a99:5cb5:6175 with SMTP id a640c23a62f3a-a99b9436b1dmr254244266b.35.1728658109129;
+        Fri, 11 Oct 2024 07:48:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE1I4NMn4gYPdo3MbVQwrz/uYAefwMxC5m+RAElwaCH4bD85EDqoY9JLmmWjwDhkrc8lxHdRw==
+X-Received: by 2002:a17:907:f796:b0:a99:5cb5:6175 with SMTP id a640c23a62f3a-a99b9436b1dmr254242066b.35.1728658108783;
         Fri, 11 Oct 2024 07:48:28 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFZJ/O4DI06C56//3e90y9WubgT52G8l84SnKYNplOkm6YFyYikVWRaSx0ajYVuWo5Sc8h+Ig==
-X-Received: by 2002:a17:906:cae5:b0:a99:4ad2:acb7 with SMTP id a640c23a62f3a-a99b885cd31mr293763666b.18.1728658107892;
-        Fri, 11 Oct 2024 07:48:27 -0700 (PDT)
 Received: from stitch.. ([194.62.169.86])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99c0c89bfasm54134666b.162.2024.10.11.07.48.27
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99c0c89bfasm54134666b.162.2024.10.11.07.48.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 07:48:27 -0700 (PDT)
+        Fri, 11 Oct 2024 07:48:28 -0700 (PDT)
 From: Emil Renner Berthing <emil.renner.berthing@canonical.com>
 To: linux-kernel@vger.kernel.org,
 	linux-gpio@vger.kernel.org,
@@ -84,10 +86,12 @@ Cc: Linus Walleij <linus.walleij@linaro.org>,
 	Paul Walmsley <paul.walmsley@sifive.com>,
 	Palmer Dabbelt <palmer@dabbelt.com>,
 	Thomas Bonnefille <thomas.bonnefille@bootlin.com>
-Subject: [PATCH v1 0/3] pinctrl: th1520: Unbreak the driver
-Date: Fri, 11 Oct 2024 16:48:22 +0200
-Message-ID: <20241011144826.381104-1-emil.renner.berthing@canonical.com>
+Subject: [PATCH v1 1/3] pinctrl: th1520: Fix pinconf return values
+Date: Fri, 11 Oct 2024 16:48:23 +0200
+Message-ID: <20241011144826.381104-2-emil.renner.berthing@canonical.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241011144826.381104-1-emil.renner.berthing@canonical.com>
+References: <20241011144826.381104-1-emil.renner.berthing@canonical.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,24 +100,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hi,
+When Drew took over the pinctrl driver he must have changed
+all the -ENOTSUPP returns into -EOPNOTSUPP. This subtle change
+was most likely not spotted because it was never mentioned in the
+changelog of the patchset, but it breaks all the places in the
+pin control and GPIO frameworks where -ENOTSUPP is expected.
 
-Here are 2 important fixes and a code improvement to the T-Head TH1520
-pinctrl driver that was either introduced or missed when Drew took over
-upstreaming it.
+Fixes: bed5cd6f8a98 ("pinctrl: Add driver for the T-Head TH1520 SoC")
+Signed-off-by: Emil Renner Berthing <emil.renner.berthing@canonical.com>
+---
+ drivers/pinctrl/pinctrl-th1520.c | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
 
-It is based on Linus' pinctrl/for-next:
-
-  6dbd1577b7dc ("Merge branch 'devel' into for-next")
-
-Emil Renner Berthing (3):
-  pinctrl: th1520: Fix pinconf return values
-  pinctrl: th1520: Update pinmux tables
-  pinctrl: th1520: Factor out casts
-
- drivers/pinctrl/pinctrl-th1520.c | 52 ++++++++++++++++++++------------
- 1 file changed, 32 insertions(+), 20 deletions(-)
-
+diff --git a/drivers/pinctrl/pinctrl-th1520.c b/drivers/pinctrl/pinctrl-th1520.c
+index c8d2ee6defa7..03326df69668 100644
+--- a/drivers/pinctrl/pinctrl-th1520.c
++++ b/drivers/pinctrl/pinctrl-th1520.c
+@@ -591,7 +591,7 @@ static int th1520_pinconf_get(struct pinctrl_dev *pctldev,
+ 	u32 arg;
+ 
+ 	if ((uintptr_t)desc->drv_data & TH1520_PAD_NO_PADCFG)
+-		return -EOPNOTSUPP;
++		return -ENOTSUPP;
+ 
+ 	value = readl_relaxed(th1520_padcfg(thp, pin));
+ 	value = (value >> th1520_padcfg_shift(pin)) & GENMASK(9, 0);
+@@ -636,7 +636,7 @@ static int th1520_pinconf_get(struct pinctrl_dev *pctldev,
+ 		arg = enabled ? 1 : 0;
+ 		break;
+ 	default:
+-		return -EOPNOTSUPP;
++		return -ENOTSUPP;
+ 	}
+ 
+ 	*config = pinconf_to_config_packed(param, arg);
+@@ -661,7 +661,7 @@ static int th1520_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 	u16 mask, value;
+ 
+ 	if ((uintptr_t)desc->drv_data & TH1520_PAD_NO_PADCFG)
+-		return -EOPNOTSUPP;
++		return -ENOTSUPP;
+ 
+ 	mask = 0;
+ 	value = 0;
+@@ -676,14 +676,14 @@ static int th1520_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_DOWN:
+ 			if (arg == 0)
+-				return -EOPNOTSUPP;
++				return -ENOTSUPP;
+ 			mask |= TH1520_PADCFG_BIAS;
+ 			value &= ~TH1520_PADCFG_BIAS;
+ 			value |= TH1520_PADCFG_PE;
+ 			break;
+ 		case PIN_CONFIG_BIAS_PULL_UP:
+ 			if (arg == 0)
+-				return -EOPNOTSUPP;
++				return -ENOTSUPP;
+ 			mask |= TH1520_PADCFG_BIAS;
+ 			value &= ~TH1520_PADCFG_BIAS;
+ 			if (arg == TH1520_PULL_STRONG_OHM)
+@@ -718,7 +718,7 @@ static int th1520_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
+ 				value &= ~TH1520_PADCFG_SL;
+ 			break;
+ 		default:
+-			return -EOPNOTSUPP;
++			return -ENOTSUPP;
+ 		}
+ 	}
+ 
 -- 
 2.43.0
 
