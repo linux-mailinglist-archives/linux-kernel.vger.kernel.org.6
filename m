@@ -1,147 +1,111 @@
-Return-Path: <linux-kernel+bounces-361412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C19799A7D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:33:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90B7399A7D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:34:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E6F681F24FFE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:33:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BDB9B21791
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:34:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 374CA19E960;
-	Fri, 11 Oct 2024 15:32:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8111957FD;
+	Fri, 11 Oct 2024 15:32:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="G25Yyrja"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7vfvnhP"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 023E219E826;
-	Fri, 11 Oct 2024 15:32:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A9E1974FE
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:32:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660749; cv=none; b=Zjc1ImgB1VeexAOhXnVbmbONqluksHdtvNWiC0G/dcXbEaum0ftefWwE9atgAQN6mtFivT3JtZOWj5z4BQ0C8eVNzk2P6lB+kMV+qaqLKPl56TOXFPL4iDusvp0Ktt6nXtG4haQ+5B89N3MEqOVuELgdSl7vQVNXv5tYjGUG+Jo=
+	t=1728660768; cv=none; b=KftMfc9b9ebb96HXo+16YoejDesW0LRUe2xHJ6ZcsvVhVEir/xDU+cHmJWIFCkWFGiv6xGCBDNTxFzwYQY4T/VY3cn660MBRwBzwB+xjPTJUE/koqnGAB4bFRlzETlgNs91UXauXbcC6dQfuMiwY2vcxK/oNxMU2tEefGEpdP2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660749; c=relaxed/simple;
-	bh=KHtMY4DnKt30qjKFk98EJeqIzi6UHuzama/rdRw5gfc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SJGs1v3jIIq8UzlI/NHRJ7R295hsHGfYN5YMacH0pdrDtX0YbEHmfkX7jEA/ph23vi9cpQzChGm73SuUTwS2aFsHsutQuM5/+WAKeKy7sJvl6t+8jTL1ixr401V5aIV2pm/K0rujEEinP4yRZ+AM6+ZrRHs0v5o07z8mdt+FgFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=G25Yyrja; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d533b5412so721914f8f.2;
-        Fri, 11 Oct 2024 08:32:27 -0700 (PDT)
+	s=arc-20240116; t=1728660768; c=relaxed/simple;
+	bh=bRJ4Y1/jdFojuUij4IeYNNekIWbJ2nzLiEuafUuGJn8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=cKp7VIMfbtOW7+2LsPwJB/xwIIf/nlt8AGGmECXa4zKe1kBYWxagVxRpOehZ9FjaKo7gnYlqeUpDS8Vtr720VQsYy5iIE4LSUBgceWTQBXQcLNSPiNFndOumQeVbMZz1QUqTWanpBvIp5CgmfPlJch/gD6qhZPm4Z+UrBaXXKH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G7vfvnhP; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c949d60d84so941788a12.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:32:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728660746; x=1729265546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1728660765; x=1729265565; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=c+vqQ/OBTPe50YYu2gHwxbM1qWgIK36UBNA7yFsEKPQ=;
-        b=G25Yyrjar0Rce6dcM4xg3rcmh4ZTDNwFjpYyVTwcq4UiU3mP6e0EVcRd13xx27YibT
-         8Bi14V2Duhi+XXz6MGl9/QxGWIFssu5klN44bYUj0fwDQri1tunhvex7rw7xiKBc/q7Y
-         V9BfYRzWJHQ7mlV8DA1MwtFFhAlUHVlL1qqSirzV6hJsQzDy8dbT0tTulXYGiEpa7yFC
-         NUzAfO9sUGWOSkpgaXbRxj+eGKgGpEVjc3GBpMzea7MxRrYoK04e0qkiBdIWIY9V6ZvW
-         YvFhT/qneGv4UpEbst35NClQ/Jphkcg0V/8WDkoR4/ruJdLkkNyE4bQKboK2n2RgpNzW
-         Ndfg==
+        bh=1Rat4MPBAsLDnNiR+W9/KxSukyb9q48U+Dl9neWjYf0=;
+        b=G7vfvnhPR+1WBPKyio3JrSyJ52wjfu/6z3FP2FHzp2HY+d5NdOIHgU6LhY+pFCMIM2
+         jnrCRYSSolupvAOFRuULP5hp0SJt039ORqaiUloFg6wTRlUIIrr56cQ3DzkW6k/yYkT7
+         NjnNalltEPMuonFbSm6+QXI0qofrBrfSQUhIn3+CmSZMwJG7QpK6yl56sTaJhoJaRaPz
+         piy051V0uMa5MpYPD6r0oJ/pAUwOPcj5BXUpOvcrJjTg/dZiiOpiu4gYZGpwsKq3pcHE
+         FuQ7kI9/DLbPPJ+Gdgvcu/k8OdDAILuADbVhd/zRqyDb+DuPmmZOuV0KbRTnrDn8H3Ux
+         03Ow==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728660746; x=1729265546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=c+vqQ/OBTPe50YYu2gHwxbM1qWgIK36UBNA7yFsEKPQ=;
-        b=gXy1a7mug7u3mXKdeJ/uFQSLnOWgUGLYUozzqFiTO8AdVNdXRdd0p/2BYXmUwiIavC
-         B1+JdgfBtnIlvs7zFV33DlIXI79fh00Jzb+CBZimVp8Gw8O9JyvQQDuEzcG3m0qrwv36
-         OK2vm13bLPp030CbZl7PnDgXQsaY6j+8aLwsgOfB8k807YAlq5q+nGvFsCS7YD5eDria
-         O6FNzrkNNSxTMsC94btGbPyYxJxGm1P1Z26txMuDaGkvhaIus8JerpzOHmIrErJBkwCk
-         o9RHx+UBcBMvygIbqWMMs74MXrgXcACYpTORh7W4z73JCDPdiORt1lqVbCSkWdzh73Dm
-         SYFg==
-X-Forwarded-Encrypted: i=1; AJvYcCV9ICvWI9DjeNif/J/V8fc/8m1XMy3HSX8MyywZ6lYDpKoi7RAs8zoEtVWP5NDXlR1KccVCrnwO@vger.kernel.org, AJvYcCVeuLl1VsItXRqDEGoqZsOatw96BT4H/CzmK9Y6YFWHnYgqgFRYtN+okfHh/rFyFWMZDUagkBPIUxc/uko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAIDzFvWwgDmF7fIL5doRvYc8h8a7+/9Yetzq0vgtxUZf1vp23
-	ja6JpdfSjVuFzfCUqy+6VK+2bwX/O9g7g/LoI4IGse1D7DWq/l94LKDRh0j0PrVc8KDUmB75InQ
-	osP4/MZu0SdmeIZYvM9blzvD7kKI=
-X-Google-Smtp-Source: AGHT+IE57rxGZ5cP6vrnw10l3HMnUtL7vF5fWf11QCy0B9FBKpLTFmE2SrVilDbiDdKBq1As6h5FmjHnjLZG3uYwa0w=
-X-Received: by 2002:adf:f805:0:b0:37d:5352:c83f with SMTP id
- ffacd0b85a97d-37d551b9618mr2001034f8f.17.1728660746066; Fri, 11 Oct 2024
- 08:32:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728660765; x=1729265565;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1Rat4MPBAsLDnNiR+W9/KxSukyb9q48U+Dl9neWjYf0=;
+        b=MMxQkz5G49cazqxbQyLUR21dO71P7uU7gCIJVB3a78QDVJLFvRSMNklBojkXBFL4cj
+         NHrpdYrn6zclLWTKBXrHl0IPMZ908P+FkSOuiejPEzNMeeqytaHxbZEkAQcV3GCmC2WM
+         g6KycJKXU+jpktxp3n/UfICn9rZPXJpuceppNIhdQTQIYUnVgHftbc2AYVauK1+GEkYV
+         3qzCxars+H10bZjdYGSJcE9JaUnnuZOEw54TYJbGw/gDw6Y77XtJXk2ce2LecNoWzbVC
+         yVnu13NHb18vS4QpLeCn+fIUjSsb1Z7+IdewajkgPO9efNRC7dFpOcA0H8L3zZAB2v6O
+         RYdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXOe5r04v+VeubBZsmkmvlKgdcIno9dQBw49Dt8mbw+DoRbSeAG8z+cUcLvcDcgNMc2M0YCJiPr42YhY3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGwXBC++0hGBh8bgRtFAe227aTsj7wP3Gcc2uxpq7qx9m93bv9
+	mnFlgcuE9/OTiiI/vrF/H1IA1qu8+vtymoGcLRogKxXtqmcszmkgoMfN/1mpJ+8=
+X-Google-Smtp-Source: AGHT+IG2RSuYoUetJ32zLi/kp0cBZ33Kg6Bh/AWm4gP1CZLAPGxS//Bmvvsy9YjdHMWJKgnFnWy8sw==
+X-Received: by 2002:a05:6402:348e:b0:5c8:8381:c308 with SMTP id 4fb4d7f45d1cf-5c948c8831fmr2027670a12.5.1728660764556;
+        Fri, 11 Oct 2024 08:32:44 -0700 (PDT)
+Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93711adacsm2049796a12.37.2024.10.11.08.32.42
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 08:32:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241008112049.2279307-1-linyunsheng@huawei.com>
- <20241008112049.2279307-7-linyunsheng@huawei.com> <CAKgT0UdgoyE0BzZoyXzxWYtAakJGWKORSZ25LbO1-=Q_Stiq9w@mail.gmail.com>
- <8bc47d27-b8ea-4573-937a-0056bdd8ea2c@huawei.com> <CAKgT0Uf0g9_P6fUBzueZ-rwq1RCu5TjruZGT+kXjsQi-=jqStQ@mail.gmail.com>
- <7c4b8aae-dcbd-4d45-b7b0-82609cf8a442@huawei.com>
-In-Reply-To: <7c4b8aae-dcbd-4d45-b7b0-82609cf8a442@huawei.com>
-From: Alexander Duyck <alexander.duyck@gmail.com>
-Date: Fri, 11 Oct 2024 08:31:49 -0700
-Message-ID: <CAKgT0UdavkCTqvNUZt6JmKK5NrMQmDbNi+S1LLrZeYfp3Ofn5w@mail.gmail.com>
-Subject: Re: [PATCH net-next v20 06/14] mm: page_frag: reuse existing space
- for 'size' and 'pfmemalloc'
-To: Yunsheng Lin <linyunsheng@huawei.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 11 Oct 2024 16:32:42 +0100
+Message-Id: <D4T33J6B5SPK.25S50D16VMDRI@linaro.org>
+Cc: <linux-sound@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
+ <linux-arm-msm@vger.kernel.org>, <stable@vger.kernel.org>,
+ <broonie@kernel.org>, <dmitry.baryshkov@linaro.org>,
+ <krzysztof.kozlowski@linaro.org>, <pierre-louis.bossart@linux.intel.com>,
+ <vkoul@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
+ <tiwai@suse.com>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] ASoC: qcom: sdm845: add missing soundwire runtime
+ stream alloc
+From: "Alexey Klimov" <alexey.klimov@linaro.org>
+To: "Steev Klimaszewski" <steev@kali.org>
+X-Mailer: aerc 0.18.2
+References: <20241009213922.999355-1-alexey.klimov@linaro.org>
+ <CAKXuJqiK3BHT-=3zyT1tbunpNF1b_gyZUAd4EE2FY2r7TbaXug@mail.gmail.com>
+In-Reply-To: <CAKXuJqiK3BHT-=3zyT1tbunpNF1b_gyZUAd4EE2FY2r7TbaXug@mail.gmail.com>
 
-On Fri, Oct 11, 2024 at 4:40=E2=80=AFAM Yunsheng Lin <linyunsheng@huawei.co=
-m> wrote:
->
-> On 2024/10/10 22:33, Alexander Duyck wrote:
->
-> ...
+Hi Steev,
+
+On Thu Oct 10, 2024 at 1:33 AM BST, Steev Klimaszewski wrote:
+> Hi Alexey,
 >
 > >
-> > For the decodes yes. I was referring to page_frag_encode_page.
-> > Basically the output from that isn't anything page frag, it is your
-> > encoded page type so you could probably just call it
-> > encoded_page_encode, or encoded_page_create or something like that.
+> Thank you so much for tracking this down!  Was experiencing the same
+> thing on my Lenovo Yoga C630, and testing with this patch, I no longer
+> see the null pointer and also have working audio.
 >
-> It is kind of confusing as there is some mix of encode/encoded/decode
-> here, but let's be more specific if it is something like below:
->
-> static unsigned long encoded_page_create(struct page *page, unsigned int =
-order,
->                                          bool pfmemalloc)
-> {
->         BUILD_BUG_ON(PAGE_FRAG_CACHE_MAX_ORDER > PAGE_FRAG_CACHE_ORDER_MA=
-SK);
->         BUILD_BUG_ON(PAGE_FRAG_CACHE_PFMEMALLOC_BIT >=3D PAGE_SIZE);
->
->         return (unsigned long)page_address(page) |
->                 (order & PAGE_FRAG_CACHE_ORDER_MASK) |
->                 ((unsigned long)pfmemalloc * PAGE_FRAG_CACHE_PFMEMALLOC_B=
-IT);
-> }
->
-> static inline bool encoded_page_decode_pfmemalloc(unsigned long encoded_p=
-age)
-> {
->         return !!(encoded_page & PAGE_FRAG_CACHE_PFMEMALLOC_BIT);
-> }
->
-> static unsigned long encoded_page_decode_order(unsigned long encoded_page=
-)
-> {
->         return encoded_page & PAGE_FRAG_CACHE_ORDER_MASK;
-> }
->
-> static void *encoded_page_decode_virt(unsigned long encoded_page)
-> {
->         return (void *)(encoded_page & PAGE_MASK);
-> }
->
-> static struct page *encoded_page_decode_page(unsigned long encoded_page)
-> {
->         return virt_to_page((void *)encoded_page);
-> }
+> Tested-by: Steev Klimaszewski <steev@kali.org> # Lenovo Yoga C630
 
-Yes, this is what I had in mind. Basically the encoded_page is the
-object you are working on so it becomes the prefix for the function
-name and the action is the suffix, so you are either doing a "create"
-to put together the object, or performing a "decode" to get the
-individual components.
+Thank you for testing! I didn't know that this affected more than one
+board but I was told that it was long-standing bug.
+
+Best regards,
+Alexey
 
