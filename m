@@ -1,141 +1,235 @@
-Return-Path: <linux-kernel+bounces-360616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFCB9999D4E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:59:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C8F999D50
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3ECE7B2112C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:59:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C64CA1F23A37
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15565209679;
-	Fri, 11 Oct 2024 06:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55F9A20967D;
+	Fri, 11 Oct 2024 06:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JHjPgaD8"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F90F635;
-	Fri, 11 Oct 2024 06:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Jeblmu9r"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B02719923C;
+	Fri, 11 Oct 2024 06:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629952; cv=none; b=MdsAc0zetmdNn/Q7y9qPb1NaVohGevMz/Zo44+vmmmWFLrue2Lf+IyylkWCW47IPzTgH10zkhVg3A1eXIW/9zqjJYiEwZ+LhRAU7UUweZOcxPcxJ5X9/5nmrn2eXTT0OczOJL824gFaJq9ISnSg7Cbi2aF6KR+VgdLt2u/84+Z0=
+	t=1728629972; cv=none; b=eXVIqIbH0jKmvScyZ87i2n/LLV4ahLIwPlmgw/NtXV3Sb9dTOek/MKUTE4mepaR5mdo00PEvN13y9KDQ87Rdyv1R4SabJfzXVBoUUHdSW6s8Rf/LuxkgtOFG11pjEaN0TEjcYZKQjKjbU2nEfg1NXG+EPGGtM35NI+UorOiI9G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629952; c=relaxed/simple;
-	bh=AnM7XamNLc2M6oVcml7mvgQSLuc6IQzUUi2epLGB8ng=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P7WpuQXVzjWDXeDchODyreBqHpIixL5/IF6+FxM6i2AkI1lOK3gxiZVMJWJfI9d7DrsPP7WcKpMvTwz/pE3lTSOM3H4LJ6h9XThH8KNEAk/OMzor0WRcgqs7mGXhFKQOpLzdFBeNXWAOoqMlAeBhZ8jc/A6eKe1TNaQhKurY+Rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JHjPgaD8; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-71927b62fa1so158689b3a.2;
-        Thu, 10 Oct 2024 23:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728629950; x=1729234750; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aNprZDujeJLDJHdRYQpNiQJhs787CFLT9EgNyD54pMo=;
-        b=JHjPgaD8+pk1ralETKao5Cp2uRBWiwOTuBcC7TgZQ8jdL8W4BoU25Cvicqo/U/OW6p
-         oYJuvMPl8JitT2GxOyeJNVTqH6iFz7ojFeupnqVPhMRZys8/3YCzNDmhvEpQsbukwZh5
-         4aE4AEdu7ApTzkJeRofOmJYfpNkVAN12Z33gaE/KBf+8iFjEzfbMAdw9WFQZAGyJ2JY4
-         zwPeaj0fxF4/sQaBFrp70ieKz7NT6rdMSJrjvTvv8N5QZMD7PGCtsabz8jgiJIpZ96al
-         IxtSnvPT0mv0ynb/SE7bapUrkdCdi8y+B9SpSLP8f3rJmzYd1iEqAsgBd123Jad6XlDy
-         6k6Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728629950; x=1729234750;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aNprZDujeJLDJHdRYQpNiQJhs787CFLT9EgNyD54pMo=;
-        b=QOXcQ75Bs4Hs5FZN6Va8D8Oc+y2kjt27IP/KMUp8HmyyQe5ykERCJoSnLLXiwzcc/H
-         3/VGXGCjLBx+TjY9rttfAAwSLDZaysJdRrXk8Nc0Jvqx9dzhB6/P50xnDG8yEf/1iGJu
-         r0x+LtQhuyarMorzQYZkvnen8e3FCC73+ykUDoQwYC2vMoUn4jOXU+i4id3V4IsWteAJ
-         SJapz9ZvnbRYx76dBImxzsAjaGnZmMhaIZIKMS0paSMkXJM38JsIQKxHj2bfnhkm0n+e
-         QCCmaxktNS4iKmtjPUy1wZnW97Ki0Pl+gNCkcukfd7hXDklUADkQfIfLyHTMzqulL8vN
-         LbkA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPuVhT2la75JJRXSpmzdHkyfhOql5WwZGuPYUccy9kZv/dgXFZu5mfJ/86uX3usJHShoimI+eH7uAPAhs=@vger.kernel.org, AJvYcCV1wbZS+rErf+raiV+z2uRqFeBHmd2SjGnKBD2xAhCjh51dtgNryluWkiu9Olkp+WsQ8HaK8wfQ1xFf+BJt6T0=@vger.kernel.org, AJvYcCWtTbi5yZA71A8JnBLlLmnRPs/bvu/RhxpRD9bm6kCco5+5HdLtpQNvpxrC2/uLkn3fLo4U0eWFFoTg6Ume@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGBKO847L24JsBPStBEQWmCakuM2rwZZQGU7Wo9X/EWo5xcpEU
-	mDmQGu7E3pO5IURvpQMuAmn7boVqpLlnv5SNoYq0eFsP8WFmrdDDe8pZQBTDRaDwvVASzxlv5X9
-	kZiZABnEF1DWPDBNlwrz2EAydFFY=
-X-Google-Smtp-Source: AGHT+IHfgp+RekBe+a33lrGFkLogwB1v4IcRvG8U0x5B9hHpF2h7NSFqzr4UUZhb7LVoGtsHegM+6k0gaj2E+Gka+m4=
-X-Received: by 2002:a05:6a21:32a0:b0:1d8:a203:95a4 with SMTP id
- adf61e73a8af0-1d8bcf12481mr1225502637.5.1728629950384; Thu, 10 Oct 2024
- 23:59:10 -0700 (PDT)
+	s=arc-20240116; t=1728629972; c=relaxed/simple;
+	bh=RXsbcIwM0bpb3OKMw3AG95muLvmersqGQsb/lSXL9d8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=riF4xeJ7/o3lRmKclw5fijPf2el3qRMLWSS1KhQ/YlF8hjpPaoewQsMfoqYw77SCcnyDzSpiygybvwcU1UKQBrWErIyJJUVOCbWpPYC5xjsa6YURJ/7l+KdF4VEoyiJUdxWF+2BgPBGdnSbtz/jkM4ylRcrp8jL2CLZq7CO1MjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Jeblmu9r; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Message-ID:Date:MIME-Version:Subject:From:
+	Content-Type; bh=tRtlnkfofpTmHCU4ZghcA6ATCzDyTL3ZqRpdapOK7sw=;
+	b=Jeblmu9r7h7dyRxogvj5t2TJmJjEXI8QjeMYqpBxYYxTnw8BRMVXd3DCs9Or+6
+	BgcW4bNY+HTepx4DDQ7VWde2apSOiX6UJY3TZ6BdKHfGJuAMEqYUC4tUG/QapG/f
+	JfdHnodHTPiJJUruUONxqGfzO5uWZqQwlHNOHx3pbR+Jc=
+Received: from [10.42.12.92] (unknown [111.48.69.246])
+	by gzga-smtp-mtada-g0-3 (Coremail) with SMTP id _____wDnr868zAhnL4aoAQ--.44197S2;
+	Fri, 11 Oct 2024 14:59:09 +0800 (CST)
+Message-ID: <a2ab9671-5095-47bf-82cf-0e167320772f@163.com>
+Date: Fri, 11 Oct 2024 14:59:08 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010-icall-detect-vers-v1-0-8f114956aa88@google.com>
- <20241010-icall-detect-vers-v1-1-8f114956aa88@google.com> <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
-In-Reply-To: <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 11 Oct 2024 08:58:57 +0200
-Message-ID: <CANiq72km-hEBvt-T9CEp6kLJMvemcW99g1hd-E62Xi3H+NX2RA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Kees Cook <kees@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	llvm@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] selftests: clone3: Use the capget and capset syscall
+ directly
+Content-Language: en-US
+To: Shuah Khan <skhan@linuxfoundation.org>, brauner@kernel.org,
+ shuah@kernel.org
+Cc: linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ zhouyuhang <zhouyuhang@kylinos.cn>
+References: <20241010121612.2601444-1-zhouyuhang1010@163.com>
+ <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
+From: zhouyuhang <zhouyuhang1010@163.com>
+In-Reply-To: <5b471a5c-c99d-42a5-943d-bb253127a202@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDnr868zAhnL4aoAQ--.44197S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxtF1kKryfXw4rJrWrAw4fZrb_yoW7XrW8pF
+	ykAF43KFsYqr1xGrW09wsrZF10yF95Xr1Iqr1UGw1Yyr1a9r1xtF40kFy8K3W7ua97uw4r
+	Zay0gFZ3uFyDJFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07j-KsUUUUUU=
+X-CM-SenderInfo: 52kr35xxkd0warqriqqrwthudrp/1tbiRR11JmcIyJoEzgABs9
 
-On Fri, Oct 11, 2024 at 4:04=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
+
+On 2024/10/10 23:50, Shuah Khan wrote:
+> On 10/10/24 06:16, zhouyuhang wrote:
+>> From: zhouyuhang <zhouyuhang@kylinos.cn>
+>>
+>> The libcap commit aca076443591 ("Make cap_t operations thread safe.") 
+>> added a
+>> __u8 mutex at the beginning of the struct _cap_struct,it changes the 
+>> offset of
+>> the members in the structure that breaks the assumption made in the 
+>> "struct libcap"
+>> definition in clone3_cap_checkpoint_restore.c.So use the capget and 
+>> capset syscall
+>> directly and remove the libcap library dependency like the commit 
+>> 663af70aabb7
+>> ("bpf: selftests: Add helpers to directly use the capget and capset 
+>> syscall") does.
+>>
 >
-> Please notice there is no reason to process
-> rustc_version and rustc_llvm_version in the same script
-> because they are completely independent.
-> It even invokes "rustc --version" twice.
+> NIT: grammar and comma spacing. Please fix those for readability.
+> e.g: Change "struct _cap_struct,it" to "struct _cap_struct, it"
+> Fix others as well.
 >
-> If you implement it this way, you do not need to
-> touch scripts/rustc-version.sh at all.
+
+Thanks, I'll fix it in V2
+
+
+>> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+>> ---
+>>   tools/testing/selftests/clone3/Makefile       |  1 -
+>>   .../clone3/clone3_cap_checkpoint_restore.c    | 60 +++++++++----------
+>>   2 files changed, 28 insertions(+), 33 deletions(-)
+>>
+>> diff --git a/tools/testing/selftests/clone3/Makefile 
+>> b/tools/testing/selftests/clone3/Makefile
+>> index 84832c369a2e..59d26e8da8d2 100644
+>> --- a/tools/testing/selftests/clone3/Makefile
+>> +++ b/tools/testing/selftests/clone3/Makefile
+>> @@ -1,6 +1,5 @@
+>>   # SPDX-License-Identifier: GPL-2.0
+>>   CFLAGS += -g -std=gnu99 $(KHDR_INCLUDES)
+>> -LDLIBS += -lcap
+>>     TEST_GEN_PROGS := clone3 clone3_clear_sighand clone3_set_tid \
+>>       clone3_cap_checkpoint_restore
+>> diff --git 
+>> a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c 
+>> b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>> index 3c196fa86c99..111912e2aead 100644
+>> --- a/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>> +++ b/tools/testing/selftests/clone3/clone3_cap_checkpoint_restore.c
+>> @@ -15,7 +15,7 @@
+>>   #include <stdio.h>
+>>   #include <stdlib.h>
+>>   #include <stdbool.h>
+>> -#include <sys/capability.h>
+>> +#include <linux/capability.h>
+>>   #include <sys/prctl.h>
+>>   #include <sys/syscall.h>
+>>   #include <sys/types.h>
+>> @@ -27,6 +27,13 @@
+>>   #include "../kselftest_harness.h"
+>>   #include "clone3_selftests.h"
+>>   +#ifndef CAP_CHECKPOINT_RESTORE
+>> +#define CAP_CHECKPOINT_RESTORE 40
+>> +#endif
+>> +
 >
-> If both rustc_version and rustc_llvm_version were
-> retrieved from the single invocation of "rustc --version",
-> I would agree "OK, it makes sense to implement it in the
-> same script". But, it isn't.
+> Why is this necessary? This is defined in linux/capability.h.
+>
+>> +int capget(cap_user_header_t header, cap_user_data_t data);
+>> +int capset(cap_user_header_t header, const cap_user_data_t data);
+>
+> In general prototypes such as these should be defined in header
+> file. Why are we defining these here?
+>
+> These are defined in sys/capability.h
+>
+> I don't understand this change. You are removing sys/capability.h
+> which requires you to add these defines here. This doesn't
+> sound like a correct solution to me.
+>
 
-Yeah, I think we can do that: one is `--verbose`, the other isn't, but
-the verbose one should (hopefully) always contain the non-verbose as
-the first line. Since it is in the first line, we can directly do the
-`set` without having to "extract" that line -- something like [1]
-below?
+I tested it on my machine without libcap-dev installed, the 
+/usr/include/linux/capability.h
 
-Independent scripts would be simpler, so that sounds good too.
+is on this machine by default. Successfully compiled using #include 
+<linux/capability.h>
 
-By the way, this is a prerequisite for an actual fix we need, so I
-would like to send it as part of a `rust-fixes` PR -- your Ack would
-be great!
+but not with #include <sys/capability.h>. This patch removes libcap 
+library dependencies.
 
-Cheers,
-Miguel
+And we don't use any part of sys/capability.h other than these two 
+syscalls. So I think that's why it's necessary.
 
-[1]
 
-if ! output=3D$("$@" --version --verbose 2>/dev/null); then
-    echo 0 0
-    exit 1
-fi
+>> +
+>>   static void child_exit(int ret)
+>>   {
+>>       fflush(stdout);
+>> @@ -87,47 +94,36 @@ static int test_clone3_set_tid(struct 
+>> __test_metadata *_metadata,
+>>       return ret;
+>>   }
+>>   -struct libcap {
+>> -    struct __user_cap_header_struct hdr;
+>> -    struct __user_cap_data_struct data[2];
+>> -};
+>> -
+>>   static int set_capability(void)
+>>   {
+>> -    cap_value_t cap_values[] = { CAP_SETUID, CAP_SETGID };
+>> -    struct libcap *cap;
+>> -    int ret = -1;
+>> -    cap_t caps;
+>> -
+>> -    caps = cap_get_proc();
+>> -    if (!caps) {
+>> -        perror("cap_get_proc");
+>> +    struct __user_cap_data_struct data[2];
+>> +    struct __user_cap_header_struct hdr = {
+>> +        .version = _LINUX_CAPABILITY_VERSION_3,
+>> +    };
+>> +    __u32 cap0 = 1 << CAP_SETUID | 1 << CAP_SETGID;
+>> +    __u32 cap1 = 1 << (CAP_CHECKPOINT_RESTORE - 32);
+>> +    int ret;
+>> +
+>> +    ret = capget(&hdr, data);
+>> +    if (ret) {
+>> +        perror("capget");
+>>           return -1;
+>>       }
+>>         /* Drop all capabilities */
+>> -    if (cap_clear(caps)) {
+>> -        perror("cap_clear");
+>> -        goto out;
+>> -    }
+>> +    memset(&data, 0, sizeof(data));
+>>   -    cap_set_flag(caps, CAP_EFFECTIVE, 2, cap_values, CAP_SET);
+>> -    cap_set_flag(caps, CAP_PERMITTED, 2, cap_values, CAP_SET);
+>> +    data[0].effective |= cap0;
+>> +    data[0].permitted |= cap0;
+>>   -    cap = (struct libcap *) caps;
+>> +    data[1].effective |= cap1;
+>> +    data[1].permitted |= cap1;
+>>   -    /* 40 -> CAP_CHECKPOINT_RESTORE */
+>> -    cap->data[1].effective |= 1 << (40 - 32);
+>> -    cap->data[1].permitted |= 1 << (40 - 32);
+>> -
+>> -    if (cap_set_proc(caps)) {
+>> -        perror("cap_set_proc");
+>> -        goto out;
+>> +    ret = capset(&hdr, data);
+>> +    if (ret) {
+>> +        perror("capset");
+>> +        return -1;
+>>       }
+>> -    ret = 0;
+>> -out:
+>> -    if (cap_free(caps))
+>> -        perror("cap_free");
+>>       return ret;
+>>   }
+>
+> thanks,
+> -- Shuah
 
-set -- $output
-rustc_version=3D$(get_rustc_canonical_version $2)
-
-if ! output=3D$(echo "$output" | grep ^LLVM); then
-    echo $rustc_version 0
-    exit 1
-fi
-
-set -- $output
-echo $rustc_version $(get_llvm_canonical_version $3)
 
