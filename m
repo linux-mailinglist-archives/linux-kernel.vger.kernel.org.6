@@ -1,90 +1,179 @@
-Return-Path: <linux-kernel+bounces-361893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5F199AE8C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:13:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3685099AE8F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C18502861DF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:13:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3425F1C2204C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:15:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729371D220E;
-	Fri, 11 Oct 2024 22:13:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC281D223D;
+	Fri, 11 Oct 2024 22:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hTfmSX7w"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zjn5h6bx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB6951CB509;
-	Fri, 11 Oct 2024 22:13:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B58E1CFEAD;
+	Fri, 11 Oct 2024 22:15:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728684794; cv=none; b=WqX/PAgaLjwTtSPxIEbbPK5Kp0HjISY0Q50K8o02A6TTNN6oq1AVvfnfibrwNX2UHt+n8Th2RGAtZirq9SbrRedhHQrCAcM/7ux0w9IOEhAq8mT2q9n1Wql1CkFrLI1iZG2/th+sAQVA36Clljigv9iCEKAtIKuSi4wHk5SmQrw=
+	t=1728684921; cv=none; b=Cq0lHPdPTSkM2aAQWzyfyUOfpWFyMHFaGW7RnFNrsWWe8Irtq+U5fS61YGmXK7HwSacqvkOUsInP987oGDlUMuTQsgGdUQyoyyTGjmfpb6+PyZJtyFeLNgvTVdoEGgwCWbfKge7ERqOKldY5Pev1pZj2VCR5DHcoJzFIaPEgy18=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728684794; c=relaxed/simple;
-	bh=Y8Xs/sQX2kS6V8xv9rjsehyhc+uRws7azTUCt8jAD9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NX3bN92OHYw9UeR/kg8mVOJbVKT0W0feXHnHN0DBHDIhXTBvqhhIqz5hD5rQ1ttXOKcI2scZDqPiadSVuwarhl67kur+fseTc87vpY8Hq/l1COszYMqMGxPvUI80NdQQiTrkKQJUu/9R1Cr+QzYLzgOBgLuPg28FgPU/eP1kPGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hTfmSX7w; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4ED6C4CEC3;
-	Fri, 11 Oct 2024 22:13:13 +0000 (UTC)
+	s=arc-20240116; t=1728684921; c=relaxed/simple;
+	bh=ELP8L478B16ztqydobuxgj5YxtYig7+S68KIYDDeqLY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k0mjjmxaSFpYrpWnpcrdgGN7kYDXJk2Zect1MV3t04vinv1Be8mFQg8edwiT6pcQabhxfm+bpXmDPeLgF8KG+dFxrsDivHSC0/bBt+Ikl+X2+O9yCHylW7PM8LrhRHIALTt79tbwxLok7Vy/ePOR+ai2hPEvaJGpbQKeuHn6inc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zjn5h6bx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A234EC4CED1;
+	Fri, 11 Oct 2024 22:15:20 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728684794;
-	bh=Y8Xs/sQX2kS6V8xv9rjsehyhc+uRws7azTUCt8jAD9c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hTfmSX7wRzybyskrZGpgB901vcZ5Ou+9exp2SaSFgWKQ2Ru7VVDGg+Dr0C+2Wskng
-	 gJohezXvM/Hj7OwPTjCewb7TLtH+YEWVNgQeE1E+d2fdJPgvP92/BDiwg578VOVcDo
-	 1aVwl9M7DcdiQxZhDfGQiCGUidIN3i2A9g7NIU44pyixwuLwFgIU69GanyatSPHkYO
-	 pHmL8PZ5+1d/t7/jmIwpiAQPPhoOye9pDR+kr6R9fa4S+h2rLEFPPpjNW8Ag8R+oBx
-	 0zjsafL2k8Ai6fNkaNPwa/fnzutXRX4Xgba4RWs/1pok/olkMgu4CnYW2eiRgYmcho
-	 TdaoWBXXBO3mA==
-Date: Fri, 11 Oct 2024 15:13:12 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
-	gary@garyguo.net, Alex Gaynor <alex.gaynor@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st,
-	j@jannau.net, asahi@lists.linux.dev, linux-modules@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [PATCH v5 13/16] export_report: Rehabilitate script
-Message-ID: <Zwmi-MEVE_E4nkzl@bombadil.infradead.org>
-References: <20240925233854.90072-1-mmaurer@google.com>
- <20240925233854.90072-14-mmaurer@google.com>
+	s=k20201202; t=1728684920;
+	bh=ELP8L478B16ztqydobuxgj5YxtYig7+S68KIYDDeqLY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Zjn5h6bxsTfHdSjmsw3xZzC9NnFt9LLBRiL1gLEZ9MPe2rHf2VFBr3wdq0x0zPlO0
+	 TmhfWnV4qr9xzLDdO5oFi0dQ6r4vsHF1GbotmtsS9f6GJnv3zfyZjIYQMMSDn3hp/k
+	 ZboIwLveYUg8zUwlImOW81JC2JSKpOSm/2gYCnynXm1r+f2phrg1TsIprInpBGxCPB
+	 R9rql6nRINUG7I0zAG+4AGCkXnwhltA2nz9nxglxlbuAmvCQ6nLY3wH+i3IvS7SFZC
+	 SoDq2bzKlC+4Cl/Ax8NoWbkJJTUKciau9ofuJsTa7IxaEekYlkjnQAc2CejxazXYkv
+	 F3I91Ig4z+ckA==
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-53997328633so4197849e87.3;
+        Fri, 11 Oct 2024 15:15:20 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUdCah1OpgQ2TVUBFQi3EpDKlJ+FEP2mAGM2omC5jcZib74QWcWxh0aUDM8vkryju/Jn0Hl7LMdr1UR@vger.kernel.org, AJvYcCWSiGZY5NwjixB38Ext7ntheO5Ee3QO+FLn9cS9+CHYT6Je7nkCKRP0d/bNSPdepyhKSTAEIJjiiURmqPMU@vger.kernel.org, AJvYcCXBDjbNe03uHnw96GQEPjxPuH3EbEXNqi0+otuTzotfphoR5AqkRsjEaOj1y9Prj11L4IF7IUzqlXY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2fVTImkw0BjrZk/Se8s7CrHKVwt3UYVseznhm5cWLhUwcUtVQ
+	UAYc+6XWifq9VrgD5jeWptEb9ZOjPsR/eXJsgzIyHaSIvMJPIk1hSD0xypOfcHaeTurv1bT2gDx
+	QNrQY2zMKc9D/zjbwF5xBFCY62w==
+X-Google-Smtp-Source: AGHT+IGF99XBUxkOenEdwmIQtOgExe7ME91mPqvFEk96liE+RiiXVBhJMUT6h/UsrdC6DJPbt++sPunoF7UITTYb8zQ=
+X-Received: by 2002:a05:6512:e9d:b0:535:6a34:b8c3 with SMTP id
+ 2adb3069b0e04-539e54d772bmr770312e87.5.1728684918931; Fri, 11 Oct 2024
+ 15:15:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240925233854.90072-14-mmaurer@google.com>
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 11 Oct 2024 17:15:05 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+F_pwhVLD1HF7=sYLp2w5kpc53UmzzffxyKzwh8WZthw@mail.gmail.com>
+Message-ID: <CAL_Jsq+F_pwhVLD1HF7=sYLp2w5kpc53UmzzffxyKzwh8WZthw@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: djakov@kernel.org, krzysztof.kozlowski+dt@linaro.org, conor+dt@kernel.org, 
+	matthias.bgg@gmail.com, lgirdwood@gmail.com, broonie@kernel.org, 
+	keescook@chromium.org, gustavoars@kernel.org, henryc.chen@mediatek.com, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org, kernel@collabora.com, wenst@chromium.org, 
+	amergnat@baylibre.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Sep 25, 2024 at 11:38:28PM +0000, Matthew Maurer wrote:
-> * modules.order has .o files when in a build dir, support this
+On Mon, Jun 10, 2024 at 3:57=E2=80=AFAM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Changes in v6:
+>  - Fixed build with clang (thanks Nathan!)
+>  - Removed unused mtk_rmw() macro in mtk-dvfsrc.c
+>  - Added MODULE_DESCRIPTION() to mtk-dvfsrc-regulator.c
+>
+> Changes in v5:
+>  - Fixed Kconfig dependencies in interconnect
+>  - Fixed module build for dvfsrc and interconnect
+>
+> Changes in v4:
+>  - Updated patch [3/7] to actually remove address/size cells
+>    as the old version got unexpectedly pushed in v3.
+>
+> Changes in v3:
+>  - Removed examples from interconnect and regulator bindings
+>    and kept example node with interconnect and regulator in
+>    the main DVFSRC binding as suggested
+>  - Removed 'reg' from interconnect and regulator, removed both
+>    address and size cells from the main DVFSRC binding as that
+>    was not really needed
+>  - Added anyOf-required entries in the regulator binding as it
+>    doesn't make sense to probe it without any regulator subnode
+>
+> Changes in v2:
+>  - Fixed issues with regulator binding about useless quotes and
+>    wrong binding path (oops)
+>  - Removed useless 'items' from DVFSRC main binding
+>  - Allowed address/size cells to DVFSRC main binding to resolve
+>    validation issues on the regulator and interconnect bindings
+>  - Changed dvfsrc node name to `system-controller`, as the DVFSRC
+>    is actually able to control multiple system components.
+>  - Added a commit to remove mtk-dvfs-regulator.c before adding the
+>    new, refactored regulator driver
+>
+>
+> This series adds support for the MediaTek Dynamic Voltage and Frequency
+> Scaling Resource Controller (DVFSRC), found on many MediaTek SoCs.
+>
+> This hardware collects requests from both software and the various remote
+> processors embededd into the SoC, and decides about a minimum operating
+> voltage and a minimum DRAM frequency to fulfill those requests, in an
+> effort to provide the best achievable performance per watt.
+>
+> Such hardware IP is capable of transparently performing direct register
+> R/W on all of the DVFSRC-controlled regulators and SoC bandwidth knobs.
+>
+> Summarizing how the DVFSRC works for Interconnect:
+>
+>              ICC provider         ICC Nodes
+>                               ----          ----
+>              _________       |CPU |   |--- |VPU |
+>     _____   |         |-----  ----    |     ----
+>    |     |->|  DRAM   |       ----    |     ----
+>    |DRAM |->|scheduler|----- |GPU |   |--- |DISP|
+>    |     |->|  (EMI)  |       ----    |     ----
+>    |_____|->|_________|---.   -----   |     ----
+>                /|\         `-|MMSYS|--|--- |VDEC|
+>                 |             -----   |     ----
+>                 |                     |     ----
+>                 | change DRAM freq    |--- |VENC|
+>              --------                 |     ----
+>     SMC --> | DVFSRC |                |     ----
+>              --------                 |--- |IMG |
+>                                       |     ----
+>                                       |     ----
+>                                       |--- |CAM |
+>                                             ----
+>
+> ...and for regulators, it's simply...
+>    SMC -> DVFSRC -> Regulator voltage decider -> (vreg) Registers R/W
+>
+> Please note that this series is based on an old (abandoned) series from
+> MediaTek [1], and reuses some parts of the code found in that.
+>
+> Besides, included in this series, there's also a refactoring of the
+> mtk-dvfsrc-regulator driver, which never got compiled at all, and would
+> not build anyway because of missing headers and typos: that commit did
+> not get any Fixes tag because, well, backporting makes no sense at all
+> as the DVFSRC support - which is critical for that driver to work - is
+> introduced with *this series*! :-)
+>
+> P.S.: The DVFSRC regulator is a requirement for the MediaTek UFSHCI
+>       controller's crypto boost feature, which is already upstream but
+>       lacking the actual regulator to work....... :-)
+>
+> [1]: https://lore.kernel.org/all/20210812085846.2628-1-dawei.chien@mediat=
+ek.com/
+>
+> AngeloGioacchino Del Regno (7):
+>   dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
+>   dt-bindings: interconnect: Add MediaTek EMI Interconnect bindings
+>   dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
+>   soc: mediatek: Add MediaTek DVFS Resource Collector (DVFSRC) driver
 
-The commit log is not clear, is it that it's always had *.o files, and
-you're adding them now, why? Why is the .ko search now removed?
+Looks like the driver got picked up, but not the binding.
+mediatek,mt8183-dvfsrc and mediatek,mt8195-dvfsrc show up in next as
+undocumented.
 
-> * .mod.c source layout has changed,
-
-When, why did this change not happen at that time?
-
-> update regexes to match
-
-Why did this not break anything before ? Is this fixing something, or
-is it prep work?
-
-> * Add a stage 3, to be more robust against additional .mod.c content
-
-Future .mod.c changes?
-
-  Luis
+Rob
 
