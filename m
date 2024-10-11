@@ -1,116 +1,102 @@
-Return-Path: <linux-kernel+bounces-361660-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880AA99AB08
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:35:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D72A099AB10
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:36:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA1ADB210AD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:35:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F02F1F22DFA
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:36:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 930771C9DDC;
-	Fri, 11 Oct 2024 18:35:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A23B1CBE94;
+	Fri, 11 Oct 2024 18:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HQJfT4ik"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RfsJBdCT"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75314125D6;
-	Fri, 11 Oct 2024 18:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1993198E7A;
+	Fri, 11 Oct 2024 18:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728671742; cv=none; b=BSCCVEjCyuuqNZaEwnd2ZiN+Wth7QKeyFJH6t6yZnDajR21+cfyiDEeqp4/3uTJQNxWnhNzoTmYJvrOL3Dq3gG9rLnyglZRV/xKXqA5tNSit2n2TlYGF+LQyuRqdKn+8tiMEfbEgaWGAt7df1EOhDyYxuPug041Plh5W57wbIpI=
+	t=1728671774; cv=none; b=D5OfBIUUneBdNB9brKOT/P6iEp0N2h/TvJJYNGD4bux3gywDSjPfmSyCiP5T9PCVvKMjKnBwnS+rUB0cK1Cfj1+ftIKq/NK2KSqhyPa2fd4ek8DefYCSLEFZS7Hh1++yG5+dok2Vs1BLr99T+/zBz7Rqr02awROyAvm7j4zO998=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728671742; c=relaxed/simple;
-	bh=h4zL0ieXGB9zJYJRf743gQUqqucWnxaLm+2rct6vqQY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ch1AGy6fR67VTFj+N0RafBEgY7e0HUah5liirLMkGHhBJTuWEBAzjPEdRq8pg8wdle5qKXoHWtX/G2cI3y7BUkOGgBiuCTH8mgm/Bf9b7o0QGAoTpP0PJzCl96nPfNnmfQvGx/hge+AJriuOkMxTgrp9ntihSze9nIfyREGFafg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HQJfT4ik; arc=none smtp.client-ip=209.85.128.47
+	s=arc-20240116; t=1728671774; c=relaxed/simple;
+	bh=rBkWPH98h9Vmzrak8POAh0AJdAU7RQ/vVuRVDh8pbos=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=fZrtGYn13tkSUMdZZaS1lJq9CLNDoMn6JQbtFFO7ZfZsKrfBvAujPqbhu1Sbzg99uIShN03ET/uCVch37v/FCFMYF4FObjLVKL9z+oYn1NitZHEfujRcIQpJ9wQujJIL47HOH8W+nDaFXvQEZTubpI52AcEpl6gZb92lo4NT15Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RfsJBdCT; arc=none smtp.client-ip=209.85.128.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-430ee5c9570so25296445e9.3;
-        Fri, 11 Oct 2024 11:35:40 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e305c2987bso22542087b3.0;
+        Fri, 11 Oct 2024 11:36:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728671739; x=1729276539; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=f17+CR3aOOh6eTbn9GMPLRytPEIkhoTDYaMcC8ki2/M=;
-        b=HQJfT4ikj7v2X3UPqTY04UGVMOoddL3Mu4JjrGP5T/vHKfHkMinvz9LiF3pE0T6hn6
-         8akzLSy8GgepSS/Ybsal/11hXm7L+GCNMNgEH40PWtuw8rNWiTHHaZw2p5dlTCNOKRs4
-         jjdlOnmRUgl/a5scahChZQIP3x4hFETAiwDZitX/7GQZ+S6AoNcGfr/ZfvUJ6XgafILc
-         g6XSkWL5inWS3LKl9viGad65yGL5LfFLFEIXqgFcgX1UzGnKUEkd9leZW43MyOn3xT9I
-         l6r2r4PcURIzlc6PeTU9ggGYfVVIHWoepV+8yWQUEVeeRZeVNv3qUs6hvJ8UgL15WELs
-         OkVg==
+        d=gmail.com; s=20230601; t=1728671771; x=1729276571; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=87JrInLPreFBjtgTZgSWBUU5IX5fdvL+2htm3aI6NSc=;
+        b=RfsJBdCT8BHoSx/adT5gxvJZKMuPmk6h4N5M/KWN9C/00EqjxqjRZezzh477HRrnWR
+         eBYAd4hP9ZEO6iBPvmkaP8Ke5+Kxz/T+sxOUl9qFQpr7b6WDDuV2VJiPEnU90Ar1Qwet
+         xWwsdQcVCtLpJ5GGf42C1gYykrxWfgGLceUmDbBltA50U0oSPqpemJXW+5+rCwqPqc5r
+         1bEmUs9t+Eh0NI+tOr+YvzG7q/KKluZ+e5S69RmP/jF0ED3h+wRoG9k4kbtP4aV6Tv0Q
+         wNhoAyu+qJl1nvklNW55hkRf/32OLJfJ08ctOyDJEpNc5CmcudetRc3haun8wcHnQ58I
+         H9Lg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728671739; x=1729276539;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=f17+CR3aOOh6eTbn9GMPLRytPEIkhoTDYaMcC8ki2/M=;
-        b=Twnl5oEiA7FWbJjGZdSL5zsqixCM1bnwpBTSB3PjtHuMOWfNRzbWGZTJbSL1fdNehJ
-         klVHG9oxj0c1k+/y5h4FueZMvio5LCcqq2/GWthpHaC0XQ0w7DBoKpB1R6WlHJj2Zfc1
-         0MkQYP51YymCrDo0DjNyXWkZdC3apyQNBCJBAzUCKCHmR4Azr1GrcbZSWKzaCD4tAjhK
-         cQPynk/D9/AjmNpU9nijTwgQ+XJ2blqSCXiCSll6Y6qfeyxXRus7bV4/OjFsnutySqdY
-         qz+jiEg2fB1ig6O2Hrg1IXyEhI5tg9JjjhDUORnZZ400Y82X0Gq0PIxKxesZJGFMvBki
-         sKpA==
-X-Forwarded-Encrypted: i=1; AJvYcCU5QLH6AhJjMnGsCxy6RJemsRw0YvCXBxigdqh1Pa/RpwBb3qwuqZfQa2RNPHrgH0lUiOz1huq/PP75ORo4@vger.kernel.org, AJvYcCUVhbIMn3OYBXVs6A6MtK7g3Ql+ylYB6yNrV3tudHh98o/MVa52amkfeidgVpUE0cH9BQQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwrcZ13AX9u+MJl70CRsmwNf88cLyCGxlSXP2qarwdCs2xU1DHM
-	FWGxiIOkBc8PkoKYuTALxFd2477B0TI9goIEYXJZdaD+1je/961qYZKrs+s8hVsFBDwS0Ut18bx
-	M0G9QtMMaZnis8i9YImdIbaEpj1s=
-X-Google-Smtp-Source: AGHT+IGZi2ojXKY51cROyUPSMxt2G0s4map61sfmzgoTA1mMLzPAGGlrJLO9s55yFhWLECl3B6S2D6QvFfDch43G/IU=
-X-Received: by 2002:a5d:498e:0:b0:37d:4eeb:7370 with SMTP id
- ffacd0b85a97d-37d601fb914mr412209f8f.56.1728671738773; Fri, 11 Oct 2024
- 11:35:38 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728671771; x=1729276571;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=87JrInLPreFBjtgTZgSWBUU5IX5fdvL+2htm3aI6NSc=;
+        b=O0IFULkWV7tx/AZqUfhAGmHWUQDQ2ZoXc5f2b+SAyAK9iIMwVnm7PUraF+nuZylaNn
+         vDWeCYceCwbM/gJBT6DUoCM+w4adcxz+qT9S7CcvQ+usFHwt7ofMQuFLz3H6hV8RLm9W
+         kPhGf+9PbnvznIj3OpBBu8ycLcLuEMv/1xIb4QaO1hiqaqBgiN0hnK+SEsk4fHmJ1E+X
+         kgUjyMHtpaFdSyP3dfs4/kdAfxSNF/ovvO0b0T3E7P7QOZt8bqASvIItShMz/6BV8OxE
+         gxgz3tvKfItANSUK2EeDrp5U9gRcioLeZdll/o9ki4Rbj91sHy/fa6lb9AyiysF8UHTu
+         kPLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQGx1onhgy3LSCv196ogCvbKVv6wQWznxQwFSdvm4TfgaXWjb/xSpWVuIjCqnZi5jzS2erqtf0cGMD0hk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw2/lJT45ls+LbeMxhSDXD4iYypXvwk5mDME3HZ3PbGEI5+Z4EA
+	3hV008S2F7pUl71WVmqlhXsMZOrmA7ctSOqzvhWwb+CQJUP6gKuQk+T2CA==
+X-Google-Smtp-Source: AGHT+IGZvXSxrjKKc1+3qdq9whigPDD9GfQq+VKngGBb5+gWIb5aVwIod7FsyJld+kZ17FQY4K9aaA==
+X-Received: by 2002:a05:690c:2f85:b0:6e2:1336:55d8 with SMTP id 00721157ae682-6e3479b3da4mr26414077b3.10.1728671771588;
+        Fri, 11 Oct 2024 11:36:11 -0700 (PDT)
+Received: from localhost (fwdproxy-nha-009.fbsv.net. [2a03:2880:25ff:9::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332cb37f9sm6824627b3.144.2024.10.11.11.36.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 11:36:11 -0700 (PDT)
+From: Daniel Zahka <daniel.zahka@gmail.com>
+To: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next 0/2] ethtool: rss: track rss ctx busy from core
+Date: Fri, 11 Oct 2024 11:35:46 -0700
+Message-ID: <20241011183549.1581021-1-daniel.zahka@gmail.com>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010232505.1339892-1-namhyung@kernel.org> <20241010232505.1339892-3-namhyung@kernel.org>
-In-Reply-To: <20241010232505.1339892-3-namhyung@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 11 Oct 2024 11:35:27 -0700
-Message-ID: <CAADnVQLN1De95WqUu2ESAdX-wNvaGhSNeboar1k-O+z_d7-dNA@mail.gmail.com>
-Subject: Re: [PATCH v5 bpf-next 2/3] mm/bpf: Add bpf_get_kmem_cache() kfunc
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>, 
-	"Paul E. McKenney" <paulmck@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
-wrote:
->
-> The bpf_get_kmem_cache() is to get a slab cache information from a
-> virtual address like virt_to_cache().  If the address is a pointer
-> to a slab object, it'd return a valid kmem_cache pointer, otherwise
-> NULL is returned.
->
-> It doesn't grab a reference count of the kmem_cache so the caller is
-> responsible to manage the access.  The returned point is marked as
-> PTR_UNTRUSTED.  And the kfunc has KF_RCU_PROTECTED as the slab object
-> might be protected by RCU.
+This series prevents deletion of rss contexts that are
+in use by ntuple filters from ethtool core.
 
-...
-> +BTF_ID_FLAGS(func, bpf_get_kmem_cache, KF_RCU_PROTECTED)
+Daniel Zahka (2):
+  ethtool: rss: prevent rss ctx deletion when in use
+  selftests: drv-net: rss_ctx: add rss ctx busy testcase
 
-This flag is unnecessary. PTR_UNTRUSTED can point to absolutely any memory.
-In this case it likely points to a valid kmem_cache, but
-the verifier will guard all accesses with probe_read anyway.
+ net/ethtool/common.c                          | 48 +++++++++++++++++++
+ net/ethtool/common.h                          |  1 +
+ net/ethtool/ioctl.c                           |  7 +++
+ .../selftests/drivers/net/hw/rss_ctx.py       | 32 ++++++++++++-
+ 4 files changed, 86 insertions(+), 2 deletions(-)
 
-I can remove this flag while applying.
+-- 
+2.43.5
+
 
