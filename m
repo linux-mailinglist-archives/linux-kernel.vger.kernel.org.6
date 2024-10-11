@@ -1,272 +1,235 @@
-Return-Path: <linux-kernel+bounces-361503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6915699A904
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:37:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F4D099A907
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:38:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1215B2854A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:37:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BE5AE1C214EE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:38:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E4019E826;
-	Fri, 11 Oct 2024 16:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADE2D19B3EE;
+	Fri, 11 Oct 2024 16:38:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="C/+2WHEP"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QnHzVntw"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A80D4199932;
-	Fri, 11 Oct 2024 16:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F36199932;
+	Fri, 11 Oct 2024 16:38:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728664615; cv=none; b=kjhUTWQkNnj65IAs4VwvLoGsymhHIRMzPqFHhqvloC28KROP3nAZbY17ayHcNRQ1VJQVvgMVsICrWaAId70kSf4amp3fbcDSXVv7qlOpjJ//B37UCXWhxwkAWHnY83TaAKwBx5A/S++8m8Cq5HFCUbLa9iKXNphKa+nrhtl2Arc=
+	t=1728664698; cv=none; b=KV6HH+t3jqhUVYH3jF5ZNQOb1g30BdFIGFk+L7sjDT0Irx+QnGqJloeHy02wa295jRDHlf8zcNjW0S07mTtcGYu/xUvVgeVAKVSohmKnh1EZKaBnAWTjFmO14eCaNr2mcRN7S2ClxjjIKK2boHh9Pp7ilUo5ls8LTt5M1sOPj70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728664615; c=relaxed/simple;
-	bh=0DOctPhcXkXwaU6mc08w+rbLhDERb4wCWL/N4+tis1E=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=uda8mfLnU6GHx8Uw8bX0gA5Xvyqy9o/dUMY66/lZEanNxE5vSVstTWSj7NjdPBP1dMgYtp0VaSafwMqfTMB0AMDParmEvef1XCIuRlEQuEi1vdiNoI3QZP5YE9OYQmRW0qacpdMjG0rjcgu9eFcfbw/V8kRHNT0AkGiWVI0+NmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=C/+2WHEP; arc=none smtp.client-ip=192.198.163.14
+	s=arc-20240116; t=1728664698; c=relaxed/simple;
+	bh=W9FTFxeHKW+H3zO9bJftr6UAwVhKYCVBgdeNnVC55Aw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZsNwU3rwSAl4SoD+sT0eA7YsTu84vk4BgnTX5aBbbni2aqVYUBGfBMqGFYRbO48PtWbD3ILOe0/sL9iJnY5k/FXMXEEzzr6AAWs9SIyv5S5dTYY9tQh1xItTMzPgCIc7/SYuMFqjEKNyATQ19VEnL/jdqN0t07SU5PyHEx7igvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QnHzVntw; arc=none smtp.client-ip=192.198.163.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728664614; x=1760200614;
-  h=message-id:subject:from:to:date:in-reply-to:references:
-   content-transfer-encoding:mime-version;
-  bh=0DOctPhcXkXwaU6mc08w+rbLhDERb4wCWL/N4+tis1E=;
-  b=C/+2WHEPX7qXTQJwtRG4oCLsz2lhdj7jsiZ5XxSGy4znEkGvaSQ+q9x7
-   Urlwbv0fg8refzpGmPn/hlp42tPRSfBkbS9ivbEs/0wi0Gdm5+qVxEnou
-   2o5nX97C/+FvrVOLr7CiM965ZQd9LwDGwf+nKd59ttSsHcoF9br8mXjFD
-   eOONePExtSq5jICI7/JuUIwGdvOS92ytRlHO9v7Pj9BTYUj6U5+r4v8Qd
-   q9xjQWPR4aa4YYC10I34bT0yBGuryzFD1q1IkIQRmsKaJHCIv8I0ki4Si
-   XqF+IjlrPr5DMa2kdrHaIHBYh5pHIctFTpLdLH9BFT23H4tclbBiG7Q9W
-   w==;
-X-CSE-ConnectionGUID: teAb+/UpSXWr261THYdhwg==
-X-CSE-MsgGUID: 0G6d1uVXQumHVnbau1fqEw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28232824"
+  t=1728664696; x=1760200696;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=W9FTFxeHKW+H3zO9bJftr6UAwVhKYCVBgdeNnVC55Aw=;
+  b=QnHzVntwocP5omFrMpSTg/d/ENOrD9KleAi67A92vWFMmAxBeyrkswKp
+   DQY72uKGCrlHzzFUpaJBW0VJan14u7F++0t62F0LmvulC8/S8N+EbfRIP
+   2iiNfiw9WTEGHwpZcc2T84eOvIZdxH3T7gWotCguIT9v/syLKUyZWYz/H
+   qoYW4z6VTUUYoDIGOGFaxfYTVE2jh7eGVXvNKW5FV0yL74jpI9btYauAF
+   fy76rJ7yHoL9ji31bKxlYcLGUBzFwQ9Oes2Z5yDxw2CJBfSoB3z0J0jfF
+   IxkobIfKxDfT4KSsJW6moWeCbFK1xr6wO42tENinwasSLtPor9xTu4jYv
+   Q==;
+X-CSE-ConnectionGUID: agZ6dnKyRoq8/X/+wywpJQ==
+X-CSE-MsgGUID: 0kyCEa2ASH+vp9tmPMMxrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="15697845"
 X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="28232824"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 09:36:53 -0700
-X-CSE-ConnectionGUID: lCFmQ9YCTWi1Aa1mt9+pKA==
-X-CSE-MsgGUID: cMQuFs0YQHCNTzvTehFA8g==
+   d="scan'208";a="15697845"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 09:38:15 -0700
+X-CSE-ConnectionGUID: dbe8p01jQPW8OG00bSVVXw==
+X-CSE-MsgGUID: MGnya2K1QnGO4qFC2EvJyA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="81738379"
-Received: from spandruv-desk1.amr.corp.intel.com ([10.125.111.157])
-  by orviesa005-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 09:36:52 -0700
-Message-ID: <462d0bd9eb9c461e01ef27a8da9cd02f92ce8f9f.camel@linux.intel.com>
-Subject: Re: [PATCH V2 2/2] platform/x86/intel/pmc: Disable C1 auto-demotion
- during suspend
-From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
-To: david.e.box@linux.intel.com, hdegoede@redhat.com, 
-	ilpo.jarvinen@linux.intel.com, rjw@rjwysocki.net, 
-	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org
-Date: Fri, 11 Oct 2024 09:36:52 -0700
-In-Reply-To: <c9410dd42e01c1ba26fbb43f97a8777f1c95b9af.camel@linux.intel.com>
-References: <20241011003640.1613812-1-david.e.box@linux.intel.com>
-	 <20241011003640.1613812-2-david.e.box@linux.intel.com>
-	 <c4513e7857b15ec9146a7b75d00e99987787ced4.camel@linux.intel.com>
-	 <c9410dd42e01c1ba26fbb43f97a8777f1c95b9af.camel@linux.intel.com>
-Autocrypt: addr=srinivas.pandruvada@linux.intel.com; prefer-encrypt=mutual;
- keydata=mQGNBGYHNAsBDAC7tv5u9cIsSDvdgBBEDG0/a/nTaC1GXOx5MFNEDL0LWia2p8Asl7igx
- YrB68fyfPNLSIgtCmps0EbRUkPtoN5/HTbAEZeJUTL8Xdoe6sTywf8/6/DMheEUzprE4Qyjt0HheW
- y1JGvdOA0f1lkxCnPXeiiDY4FUqQHr3U6X4FPqfrfGlrMmGvntpKzOTutlQl8eSAprtgZ+zm0Jiwq
- NSiSBOt2SlbkGu9bBYx7mTsrGv+x7x4Ca6/BO9o5dIvwJOcfK/cXC/yxEkr1ajbIUYZFEzQyZQXrT
- GUGn8j3/cXQgVvMYxrh3pGCq9Q0Q6PAwQYhm97ipXa86GcTpP5B2ip9xclPtDW99sihiL8euTWRfS
- TUsEI+1YzCyz5DU32w3WiXr3ITicaMV090tMg9phIZsjfFbnR8hY03n0kRNWWFXi/ch2MsZCCqXIB
- oY/SruNH9Y6mnFKW8HSH762C7On8GXBYJzH6giLGeSsbvis2ZmV/r+LmswwZ6ACcOKLlvvIukAEQE
- AAbQ5U3Jpbml2YXMgUGFuZHJ1dmFkYSA8c3Jpbml2YXMucGFuZHJ1dmFkYUBsaW51eC5pbnRlbC5j
- b20+iQHRBBMBCAA7FiEEdki2SeUi0wlk2xcjOqtdDMJyisMFAmYHNAsCGwMFCwkIBwICIgIGFQoJC
- AsCBBYCAwECHgcCF4AACgkQOqtdDMJyisMobAv+LLYUSKNuWhRN3wS7WocRPCi3tWeBml+qivCwyv
- oZbmE2LcxYFnkcj6YNoS4N1CHJCr7vwefWTzoKTTDYqz3Ma0D0SbR1p/dH0nDgN34y41HpIHf0tx0
- UxGMgOWJAInq3A7/mNkoLQQ3D5siG39X3bh9Ecg0LhMpYwP/AYsd8X1ypCWgo8SE0J/6XX/HXop2a
- ivimve15VklMhyuu2dNWDIyF2cWz6urHV4jmxT/wUGBdq5j87vrJhLXeosueRjGJb8/xzl34iYv08
- wOB0fP+Ox5m0t9N5yZCbcaQug3hSlgp9hittYRgIK4GwZtNO11bOzeCEMk+xFYUoa5V8JWK9/vxrx
- NZEn58vMJ/nxoJzkb++iV7KBtsqErbs5iDwFln/TRJAQDYrtHJKLLFB9BGUDuaBOmFummR70Rbo55
- J9fvUHc2O70qteKOt5A0zv7G8uUdIaaUHrT+VOS7o+MrbPQcSk+bl81L2R7TfWViCmKQ60sD3M90Y
- oOfCQxricddC
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+   d="scan'208";a="76855011"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa009.jf.intel.com with ESMTP; 11 Oct 2024 09:38:14 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1001)
+	id BAD45807; Fri, 11 Oct 2024 19:38:11 +0300 (EEST)
+Date: Fri, 11 Oct 2024 19:38:11 +0300
+From: Mika Westerberg <mika.westerberg@linux.intel.com>
+To: Aaron Rainbolt <arainbolt@kfocus.org>
+Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
+	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
+	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
+	Gil Fine <gil.fine@linux.intel.com>
+Subject: Re: USB-C DisplayPort display failing to stay active with Intel
+ Barlow Ridge USB4 controller, power-management related issue?
+Message-ID: <20241011163811.GU275077@black.fi.intel.com>
+References: <20241009220118.70bfedd0@kf-ir16>
+ <20241010044919.GD275077@black.fi.intel.com>
+ <20241010232656.7fc6359e@kf-ir16>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241010232656.7fc6359e@kf-ir16>
 
-On Thu, 2024-10-10 at 20:50 -0700, David E. Box wrote:
-> On Thu, 2024-10-10 at 19:09 -0700, srinivas pandruvada wrote:
-> > On Thu, 2024-10-10 at 17:36 -0700, David E. Box wrote:
-> > > On some platforms, aggressive C1 auto-demotion may lead to
-> > > failure to
-> > > enter
-> > > the deepest C-state during suspend-to-idle, causing high power
-> > > consumption.
-> > > To prevent this, disable C1 auto-demotion during suspend and re-
-> > > enable on
-> > > resume.
-> > >=20
-> > > Signed-off-by: David E. Box <david.e.box@linux.intel.com>
-> > > ---
-> > >=20
-> > > V2 - Remove #define DEBUG
-> > > =C2=A0=C2=A0 - Move refactor of cnl_resume() to separate patch
-> > > =C2=A0=C2=A0 - Use smp_call_function() to disable and restore
-> > > C1_AUTO_DEMOTE
-> > > =C2=A0=C2=A0 - Add comment that the MSR is per core, not per package.
-> > > =C2=A0=C2=A0 - Add comment that the online cpu mask remains unchanged
-> > > during
-> > > =C2=A0=C2=A0=C2=A0=C2=A0 suspend due to frozen userspace.
-> > >=20
-> > > =C2=A0drivers/platform/x86/intel/pmc/cnp.c | 53
-> > > ++++++++++++++++++++++++++++
-> > > =C2=A01 file changed, 53 insertions(+)
-> > >=20
-> > > diff --git a/drivers/platform/x86/intel/pmc/cnp.c
-> > > b/drivers/platform/x86/intel/pmc/cnp.c
-> > > index 513c02670c5a..f12d4f0f9e93 100644
-> > > --- a/drivers/platform/x86/intel/pmc/cnp.c
-> > > +++ b/drivers/platform/x86/intel/pmc/cnp.c
-> > > @@ -8,6 +8,8 @@
-> > > =C2=A0 *
-> > > =C2=A0 */
-> > > =C2=A0
-> > > +#include <linux/smp.h>
-> > > +#include <linux/suspend.h>
-> > > =C2=A0#include "core.h"
-> > > =C2=A0
-> > > =C2=A0/* Cannon Lake: PGD PFET Enable Ack Status Register(s) bitmap *=
-/
-> > > @@ -206,8 +208,52 @@ const struct pmc_reg_map cnp_reg_map =3D {
-> > > =C2=A0	.etr3_offset =3D ETR3_OFFSET,
-> > > =C2=A0};
-> > > =C2=A0
-> > > +
-> > > +/*
-> > > + * Disable C1 auto-demotion
-> > > + *
-> > > + * Aggressive C1 auto-demotion may lead to failure to enter the
-> > > deepest C-state
-> > > + * during suspend-to-idle, causing high power consumption. To
-> > > prevent this, we
-> > > + * disable C1 auto-demotion during suspend and re-enable on
-> > > resume.
-> > > + *
-> > > + * Note that, although MSR_PKG_CST_CONFIG_CONTROL has 'package'
-> > > in
-> > > its name, it
-> > > + * is actually a per-core MSR on client platforms, affecting
-> > > only a
-> > > single CPU.
-> > > + * Therefore, it must be configured on all online CPUs. The
-> > > online
-> > > cpu mask is
-> > > + * unchanged during the phase of suspend/resume as user space is
-> > > frozen.
-> > > + */
-> > > +
-> > > +static DEFINE_PER_CPU(u64, pkg_cst_config);
-> > > +
-> > > +static void disable_c1_auto_demote(void *unused)
-> > > +{
-> > > +	int cpunum =3D smp_processor_id();
-> > > +	u64 val;
-> > > +
-> > > +	rdmsrl(MSR_PKG_CST_CONFIG_CONTROL, val);
-> > > +	per_cpu(pkg_cst_config, cpunum) =3D val;
-> > > +	val &=3D ~NHM_C1_AUTO_DEMOTE;
-> > > +	wrmsrl(MSR_PKG_CST_CONFIG_CONTROL, val);
-> > > +	pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum,
-> > > val);
-> > Do you want to leave pr_debug?
->=20
-> Thought it could be useful but it can be removed.
->=20
-> >=20
-> > > +}
-> > > +
-> > > +static void restore_c1_auto_demote(void *unused)
-> > > +{
-> > > +	int cpunum =3D smp_processor_id();
-> > > +
-> > > +	pr_debug("%s: cpu:%d cst %llx\n", __func__, cpunum,
-> > > +		 per_cpu(pkg_cst_config, cpunum));
-> > > +	wrmsrl(MSR_PKG_CST_CONFIG_CONTROL,
-> > > per_cpu(pkg_cst_config,
-> > > cpunum));
-> > > +}
-> > > +
-> > > =C2=A0void cnl_suspend(struct pmc_dev *pmcdev)
-> > > =C2=A0{
-> > > +	if (!pm_suspend_via_firmware()) {
-> > > +		preempt_disable();
-> > Why do you need this?
->=20
-> To ensure that the cpu doesn't change between the next two calls.
+Hi,
 
-Correct. You need for smp_processor_id()
+On Thu, Oct 10, 2024 at 11:26:56PM -0500, Aaron Rainbolt wrote:
+> > Can you share full dmesg with the repro and "thunderbolt.dyndbg=+p" in
+> > the kernel command line?
+> 
+> The full log is very long, so I've included it as an email attachment.
+> The exact steps taken after booting with the requested kernel parameter
+> were:
+> 
+> 1. boot with thunderbolt.dyndbg=+p kernel param, no USB-C plugged in.
+> 2. After login, hot-plug two USB-C cables. This time, the displays came
+>   up and stayed resident (this happens sometimes)
+> 3. Unplugged both cables.
+> 4. Replugged both. This time, the displays did not show anything.
+> 5. lspci -k "jiggled" the displays and they came back on.
+> 6. After ~15s, the displays blacked out again.
+> 7. Save to the demsg file after about 30s.
+> 
+> The laptop's firmware is fully up-to-date. One of the fixes we tried
+> was installing Windows 11, updating the firmware, and then
+> re-installing Kubuntu 24.04. This had no effect on the issue.
+> 
+> Notes:
+> 
+> * Kernel 6.1 does not exhibit this time out. 6.5 and later do.
+> * Windows 11 had very similar behavior before installing Windows
+>   updates. After update, it was fixed.
+> * All distros and W11 were tested on the same hardware with the latest
+>   firmware, so we know this is not a hardware failure.
 
-Generally for this avoiding issue with smp_processor_id(), you can use
-get_cpu(), which gives current cpu as return value and also disable
-preemption.
+Thanks for the logs and steps!
 
-Something like this
+I now realize that
 
-                this_cpu =3D get_cpu();
-                disable_c1_auto_demote(&this_cpu);
-smp_call_function_many(cpu_online_mask, disable_c1_auto_demote, NULL,
-0);
-                put_cpu();
+  a75e0684efe5 ("thunderbolt: Keep the domain powered when USB4 port is in redrive mode")
 
+was half-baked. Yes it deals with the situation where plugging in
+monitor when the domain is powered. However, it completely misses these
+cases:
 
-But fine, this makes your code more complex as you have to pass now a
-param and use for local_cpu and use smp_procesor_id() for remote call
-via smp_call..
+* Plug in monitor to the Type-C port when the controller is runtime
+   suspended.
+* Boot with monitor plugged in to the Type-C port.
 
+At the end of this email there is a hack patch that tries to solve this.
+Can you try it out? I will be on vacation next week but I'm copying my
+colleague Gil who is familiar with this too. He should be able to help
+you out during my absense.
 
-Thanks,
-Srinivas
+Couple of notes about the dmesg you shared. They don't affect this issue
+but may cause other issues:
 
->=20
-> David
->=20
-> >=20
-> >=20
-> > Thanks,
-> > Srinivas
-> >=20
-> > > +		disable_c1_auto_demote(NULL);
-> > > +		smp_call_function(disable_c1_auto_demote, NULL,
-> > > 0);
-> > > +		preempt_enable();
-> > > +	}
-> > > +
-> > > =C2=A0	/*
-> > > =C2=A0	 * Due to a hardware limitation, the GBE LTR blocks PC10
-> > > =C2=A0	 * when a cable is attached. To unblock PC10 during
-> > > suspend,
-> > > @@ -218,6 +264,13 @@ void cnl_suspend(struct pmc_dev *pmcdev)
-> > > =C2=A0
-> > > =C2=A0int cnl_resume(struct pmc_dev *pmcdev)
-> > > =C2=A0{
-> > > +	if (!pm_suspend_via_firmware()) {
-> > > +		preempt_disable();
-> > > +		restore_c1_auto_demote(NULL);
-> > > +		smp_call_function(restore_c1_auto_demote, NULL,
-> > > 0);
-> > > +		preempt_enable();
-> > > +	}
-> > > +
-> > > =C2=A0	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
-> > > =C2=A0
-> > > =C2=A0	return pmc_core_resume_common(pmcdev);
-> >=20
->=20
->=20
+> [    1.382718] thunderbolt 0000:06:00.0: device links to tunneled native ports are missing!
 
+This is means the BIOS does not implement the USB4 power contract which
+means that USB 3.x and PCIe tunnels will not work as expected after
+power transition.
+
+> [    1.416488] thunderbolt 0000:06:00.0: 0: NVM version 14.86
+
+This is really old firmware version. My development system for example
+has 56.x so yours might have a bunch of issues that are solved in the
+later versions.
+
+The hack patch below:
+
+diff --git a/drivers/thunderbolt/tb.c b/drivers/thunderbolt/tb.c
+index 07a66594e904..0e424b7661be 100644
+--- a/drivers/thunderbolt/tb.c
++++ b/drivers/thunderbolt/tb.c
+@@ -2113,6 +2113,37 @@ static void tb_exit_redrive(struct tb_port *port)
+ 	}
+ }
+ 
++static void tb_switch_enter_redrive(struct tb_switch *sw)
++{
++	struct tb_port *port;
++
++	tb_switch_for_each_port(sw, port)
++		tb_enter_redrive(port);
++}
++
++/*
++ * Called during system and runtime suspend to forcefully exit redrive
++ * mode without querying whether the resource is available.
++ */
++static void tb_switch_exit_redrive(struct tb_switch *sw)
++{
++	struct tb_port *port;
++
++	if (!(sw->quirks & QUIRK_KEEP_POWER_IN_DP_REDRIVE))
++		return;
++
++	tb_switch_for_each_port(sw, port) {
++		if (!tb_port_is_dpin(port))
++			continue;
++
++		if (port->redrive) {
++			port->redrive = false;
++			pm_runtime_put(&sw->dev);
++			tb_port_dbg(port, "exit redrive mode\n");
++		}
++	}
++}
++
+ static void tb_dp_resource_unavailable(struct tb *tb, struct tb_port *port,
+ 				       const char *reason)
+ {
+@@ -2987,6 +3018,7 @@ static int tb_start(struct tb *tb, bool reset)
+ 	tb_create_usb3_tunnels(tb->root_switch);
+ 	/* Add DP IN resources for the root switch */
+ 	tb_add_dp_resources(tb->root_switch);
++	tb_switch_enter_redrive(tb->root_switch);
+ 	/* Make the discovered switches available to the userspace */
+ 	device_for_each_child(&tb->root_switch->dev, NULL,
+ 			      tb_scan_finalize_switch);
+@@ -3002,6 +3034,7 @@ static int tb_suspend_noirq(struct tb *tb)
+ 
+ 	tb_dbg(tb, "suspending...\n");
+ 	tb_disconnect_and_release_dp(tb);
++	tb_switch_exit_redrive(tb->root_switch);
+ 	tb_switch_suspend(tb->root_switch, false);
+ 	tcm->hotplug_active = false; /* signal tb_handle_hotplug to quit */
+ 	tb_dbg(tb, "suspend finished\n");
+@@ -3094,6 +3127,7 @@ static int tb_resume_noirq(struct tb *tb)
+ 		tb_dbg(tb, "tunnels restarted, sleeping for 100ms\n");
+ 		msleep(100);
+ 	}
++	tb_switch_enter_redrive(tb->root_switch);
+ 	 /* Allow tb_handle_hotplug to progress events */
+ 	tcm->hotplug_active = true;
+ 	tb_dbg(tb, "resume finished\n");
+@@ -3157,6 +3191,8 @@ static int tb_runtime_suspend(struct tb *tb)
+ 	struct tb_cm *tcm = tb_priv(tb);
+ 
+ 	mutex_lock(&tb->lock);
++	tb_disconnect_and_release_dp(tb);
++	tb_switch_exit_redrive(tb->root_switch);
+ 	tb_switch_suspend(tb->root_switch, true);
+ 	tcm->hotplug_active = false;
+ 	mutex_unlock(&tb->lock);
+@@ -3188,6 +3224,7 @@ static int tb_runtime_resume(struct tb *tb)
+ 	tb_restore_children(tb->root_switch);
+ 	list_for_each_entry_safe(tunnel, n, &tcm->tunnel_list, list)
+ 		tb_tunnel_activate(tunnel);
++	tb_switch_enter_redrive(tb->root_switch);
+ 	tcm->hotplug_active = true;
+ 	mutex_unlock(&tb->lock);
+ 
 
