@@ -1,113 +1,127 @@
-Return-Path: <linux-kernel+bounces-361903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38D599AEB2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:32:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C1699AEB6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:33:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD25284631
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:32:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E66F1B23697
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:33:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD16A1D0E31;
-	Fri, 11 Oct 2024 22:32:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A35B1D31AE;
+	Fri, 11 Oct 2024 22:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FEZugFtv"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UltoW1bQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C5E34CDE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:32:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5721C34CDE;
+	Fri, 11 Oct 2024 22:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728685924; cv=none; b=RzJi+wmAFtx1YodWQVPQLCYi1VuTmdZWDI5S/tQ45O0KQ2TxkQaBoh0mlTb5zobPSOlQCVxCjGb7ZPPaMrZ5TR73LPmP2ybP/seo/ZaFIL+l6Q/PsrIirKeNDra3Zd5LQbE7UCJX3/vnWNLXBRwuYHG/QeUmgfl5CDZ/E7ewi3U=
+	t=1728685983; cv=none; b=jCZ44LEszLqD+xN/gwGstZp4x3LRLQ92sjiH/3gLJxc7SNzMp53DdJ7llWoJt+7e3n/CmYZk46nCpMehr8i2BDF1+5uk86MD5jXi3ZC4NjAnlNlf7pBj8tzFhsq4LUd1egdLA+uQnXahVYruE6SJ095Xr9X3AN93zRRXGlSCV6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728685924; c=relaxed/simple;
-	bh=h8jDK5yst+t6SVTBbM8byilTslHC1KtG4mgA8TITvUA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TQyJ3QQZXs6W8vjVm8sPtKrypNr1r5epVPo39DElvhFM0a9nDw80DtpilXKdUMQsRR6uALurw6o+rtWc3JeAjHO1X1DHFJMU2phuYJes70w3Ik1Uig5883nfRKgAxaBzXooH2FHHF2bQm5sEikyA/59iBtbbW6OcmtIsV42N+NM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FEZugFtv; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a998a5ca499so350571466b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:32:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728685921; x=1729290721; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7dYEjVJeWeKBsQqV478t9ZT5xyiJzppDYZSrZjIOGlE=;
-        b=FEZugFtvl0J1+0FMamlhH9q/biPNHWhAriA4XtjU9eE2TrkZmD2AsgGyd/5b4Dwfqd
-         M8C/3n+++QiIdVNSqZ9qoR5J25Spd71NWkKV9HSeMBynuIEii1+CVgOGX4Qdx6IUcoW/
-         G9LNt9b370zP6bA4lo+DrpRGs1ymkKE70mcK32s0B5jrdnWrvySKiEe+wDrNTgNBLH86
-         uq3E+yTkJVv74UQwELT9ryfIIvf9CoLUxXHWOI/YMoRll/xjYhnlOwYKN+d+WYfBVFCM
-         /kHIXasjVWUzDXkFbOnPLdN1yWGZZyPod6gij9OkPVa07YOi4oFZrIniNrZcKwJ1C9aj
-         n3Fg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728685921; x=1729290721;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7dYEjVJeWeKBsQqV478t9ZT5xyiJzppDYZSrZjIOGlE=;
-        b=T59kukeb5yUPBE1ejUM4PDrjtrfbaxDvqBFfU5QHO/iXB9+AZuyrlA4kOWlfYifs4N
-         1c+cfzoBc1Rt1vgg+ccwsodRJLX35IzcUR7AP3cRwOQPQoAFiYjNSwkOurQqXaVbHFWi
-         2gi2BJCEgI+SGnKQ+JLHwM14/ZeQhtVphhRffabwdRhhOeEXPb4O8yjAc6EiB3rVWr2g
-         JvU0cAqV5VDVvBCR9PBDGSerR3kyaLg3PqWHmxo1Sz+3RGGV/Oc2gjlxcff849z+7vPE
-         7DNmfQlg1qtkZBKpgM5vNKVeIu93uxQ51NTviN9ygyfSfTyNRT2PMCSSn76C8fMlfR3i
-         fAhw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2Z2OA9y9dhcvMlCCYD/P5TUHqq7qQ2RMivAIojatD+VmROGCy39walkomIkyQpohNfbHabtfdxvVdJN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx5euA0+VnHS8atEDMEQG7TJOOiPaTbQ2JToSL7s4JVhxSZhe6g
-	LnW0Cby+WajDKOhZBBAx8UguXHxFDMwtXGQkEEc1RUhdFjoWMwBYQA6wPWcO7Bo=
-X-Google-Smtp-Source: AGHT+IEbKbpnTVUS0yOgo8MSx+Fpz0QB/QAoFKFpoEv8h9F3HBQ1+TmCxeZNTaHD83KXx3oJN9KijA==
-X-Received: by 2002:a17:907:1c05:b0:a86:82e2:8c64 with SMTP id a640c23a62f3a-a99e3c9d614mr104196466b.35.1728685921048;
-        Fri, 11 Oct 2024 15:32:01 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80c03b3sm256498866b.127.2024.10.11.15.31.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 15:32:00 -0700 (PDT)
-Message-ID: <20603976-907a-4254-a79e-23c1f0e06286@linaro.org>
-Date: Fri, 11 Oct 2024 23:31:58 +0100
+	s=arc-20240116; t=1728685983; c=relaxed/simple;
+	bh=Flv0GRLdeQ1gSwjTyDQi9TrDRlUCwbdIuIXC2XemiYg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rPKJxW4h4FS5H+Hwm5KuSg1j0AQsWIh+5iQjuBXZlHIaj2f2BI5eWIMb0iFimKVpqAv6D0VMKauy3ycpco29BH6J01dgekF/pQuQNoNBo6ybsn1VRsGABLJr9fPA+5L2zI+0wVDA+C/u2xdXELElF4wEJCMbbu7daSRYruYF8uw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UltoW1bQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1CBACC4CEC3;
+	Fri, 11 Oct 2024 22:33:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728685982;
+	bh=Flv0GRLdeQ1gSwjTyDQi9TrDRlUCwbdIuIXC2XemiYg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UltoW1bQhYsLEoAMKIMx73Un2N6BQyTAqiDcMjWtFMWm+EC89r2nG3jWEDkIUitKx
+	 xGmutP8SJsm2LRNo9e1HQMqCiPs9bwKHHzwni7XZ9+aVTj1WCClWpaFQ13670kp1aQ
+	 WdkadD19Kz2UEXKDu6/gszCksgxGKQL2oO2VsAW5SX0tLOWKDnmLvDlrC58Hwfymls
+	 e+RQxQlhH6O09tJfVGm/wowj2g/Kpcxu+1TiNujUaVEiSl3WWv0z72NHqYj1KjwTVy
+	 Z8/3k+m0ngf3MKY28cuCVKRDFvkGY0LCBYST1yZuLhzNSgPpZzzWx2gsIT7eNhukYj
+	 vH8ndhGsm2TPQ==
+Date: Fri, 11 Oct 2024 15:33:00 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: Matthew Maurer <mmaurer@google.com>
+Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
+	gary@garyguo.net, Michael Ellerman <mpe@ellerman.id.au>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Benjamin Gray <bgray@linux.ibm.com>,
+	Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org,
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
+	neal@gompa.dev, marcan@marcan.st, j@jannau.net,
+	asahi@lists.linux.dev, linux-modules@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Petr Pavlu <petr.pavlu@suse.com>,
+	Sami Tolvanen <samitolvanen@google.com>,
+	Daniel Gomez <da.gomez@samsung.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linuxppc-dev@lists.ozlabs.org
+Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
+Message-ID: <ZwmnnMmqVWLaelvQ@bombadil.infradead.org>
+References: <20240925233854.90072-1-mmaurer@google.com>
+ <20240925233854.90072-15-mmaurer@google.com>
+ <ZwmlEYdS0aPVF32k@bombadil.infradead.org>
+ <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/8] media: dt-bindings: Add
- qcs6490-rb3gen2-vision-mezzanine
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
- Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
- todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
- hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
- hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
- catalin.marinas@arm.com, will@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel@quicinc.com
-References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
- <20241011140932.1744124-3-quic_vikramsa@quicinc.com>
- <nsylilmzl6zzukpgih65kmeibbllek6dpgryzkso2ttpuztk2x@3q5xiujcdujo>
- <b3c1431e-9a5d-4c38-ae7d-605d4a2cf3ac@linaro.org>
- <bzszh7m52o3xzeybp4odwki6bz53aqctolrbvvbqizvk4bkj2h@k7r2i2rhgyqs>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <bzszh7m52o3xzeybp4odwki6bz53aqctolrbvvbqizvk4bkj2h@k7r2i2rhgyqs>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
 
-On 11/10/2024 22:33, Dmitry Baryshkov wrote:
-> See arch/arm64/boot/dts/qcom/Makefile:
+On Fri, Oct 11, 2024 at 03:27:30PM -0700, Matthew Maurer wrote:
+> On Fri, Oct 11, 2024 at 3:22 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
+> >
+> > On Wed, Sep 25, 2024 at 11:38:29PM +0000, Matthew Maurer wrote:
+> > > Adds a new format for MODVERSIONS which stores each field in a separate
+> > > ELF section. This initially adds support for variable length names, but
+> > > could later be used to add additional fields to MODVERSIONS in a
+> > > backwards compatible way if needed. Any new fields will be ignored by
+> > > old user tooling, unlike the current format where user tooling cannot
+> > > tolerate adjustments to the format (for example making the name field
+> > > longer).
+> > >
+> > > Since PPC munges its version records to strip leading dots, we reproduce
+> > > the munging for the new format. Other architectures do not appear to
+> > > have architecture-specific usage of this information.
+> > >
+> > > Signed-off-by: Matthew Maurer <mmaurer@google.com>
+> >
+> > I'm all for the ELF validation work so far, all that was nice, thanks
+> > for all that tidying up. This however is not considering when we really
+> > need all this at all, and not making it specific to the build times when
+> > such things are needed. That is, yes I'd like to see the need for this
+> > clearly explicitly defined through Kconfig, a *select FOO_FEATURE* for
+> > when this is needed. No need to extend a module with bloat if we don't
+> > need it, likewise if a kernel was built without needing those things,
+> > why bloat the modules with the extra information?
 > 
-> sm8650-hdk-display-card-dtbs    := sm8650-hdk.dtb sm8650-hdk-display-card.dtbo
+> To make sure I understand what you're asking for, are you suggesting:
+> 1. A config flag for supporting parsing the extended format
+> 2. A config flag for supporting parsing the existing format
+> 3. A config flag for putting the extended format into produced modules
+> 4. A config flag for putting the existing format into produced modules
+> or some combination of the above?
 > 
-> dtb-$(CONFIG_ARCH_QCOM) += sm8650-hdk-display-card.dtb
+> I'm currently reading this as #3, but figured I'd ask to be certain.
 
-Aha, yes ok _that_ makes sense to me.
+3), but if your kernel build does not require these extra things, then
+a simple if !(IS_ENABLED) sanity check could be put in place to avoid
+processing the information if the kernel didn't need it. It's a one line
+change. So at run time, we build the same kernel with all that code in,
+but it makes no sense to be processing modules with that stuff if
+kernels did not need it.
 
----
-bod
+  Luis
 
