@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-360823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BC7399A037
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:34:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A1E99A03D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 46B7E1C21FAB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:34:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1040F1F2414C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 57C2420FA9A;
-	Fri, 11 Oct 2024 09:34:44 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56A0420ADDF;
-	Fri, 11 Oct 2024 09:34:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBDE20CCD0;
+	Fri, 11 Oct 2024 09:36:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="GoFfH3pX"
+Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5BA02030A;
+	Fri, 11 Oct 2024 09:36:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728639284; cv=none; b=fyE+KCCPeuF/a3TRLxEdPwqewC+yac4YrmdG8B8j4wzlvbCotUnXxQCyatcVcsHZQ9JKuW/92Leb0kYdKu6eJRNVED3uN+t+8skt3Uw0DCZsrjnrNFYhoyrG9x3rosgd0+Gk8KTeHQmo4pPgyqUs2QUxD3eNjR7yUV3EbMy5MXI=
+	t=1728639405; cv=none; b=RQEUCsec/Vl6frjdvYaEsI0JLe7yfpYkO/06SZ8z4nOq6ZqLfGqVCyfXSv0tHQ3MywUe3d68Kx6ZlIs0hPWZ3rhiz8OX49EdyU+CXWhv+nOUAQ0FKf7hIUS0Cc9LfbRN8lpkUSyyi58wbyuwFxr3sUTo9UIF0nOHOqZW2EGJudI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728639284; c=relaxed/simple;
-	bh=R4IgQQjJnpkwQJ9cd9yA3/CN4yzPzwXpI2iQ2KWYo04=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=KT3zG3p3yqExDqDbrFhI9qyp4FWHLeseV+1nVTogC93YkgQaWdDPGDJqzylZAWhR+nB74yqE3WAK7Y+Hzvr3x2Ge+jD5UfMahw9nObhnfZdUqHP6WFDB8xbTNkIMTs7GrrGfLsxJqD4wA2aJaYXL5u0mNQ+3MLe/NpfYr84cMfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 17F9A497;
-	Fri, 11 Oct 2024 02:35:11 -0700 (PDT)
-Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 35C443F73F;
-	Fri, 11 Oct 2024 02:34:40 -0700 (PDT)
-Message-ID: <91690d5c-7f46-4f6d-8140-c6013d84a0f1@arm.com>
-Date: Fri, 11 Oct 2024 10:34:38 +0100
+	s=arc-20240116; t=1728639405; c=relaxed/simple;
+	bh=iU+RjTF2OHKKaMZg6XwXqwPEfJ9ZZTGwXVAlRTh2tvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1L7SEPLIIg3lvixOWyIphzPS5XhPpcHI0909MYJLVq8n5WC7qogTL478TercauLFDiA+l2fUwbrSG8sp/rnTZhikIjnQYvfIkk1KXyDRmZxn8VnPLTqqENsVQCRi2x5c95tZvqVelRVA00BJXwGAmLT30OIxaXqmmOi/fX2eDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=GoFfH3pX; arc=none smtp.client-ip=217.70.183.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 778932000A;
+	Fri, 11 Oct 2024 09:36:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1728639400;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=DOr1y6bkl2ESGBEAuDHnJepThp32G9brhsEAe/glmCw=;
+	b=GoFfH3pXCxEQ4cP0HBtTb/GeVfzPsPexPQ9F04GQ7cdvz7gVeh6Oanb3JYxWTGyNAdK1KX
+	9z7BVCEvmenpF+fYTIc7Zx4T0hkBQ6Bmc+HES5JROGHQS6OI/2wdC+5QGF7uqXey19YJv6
+	Os2QsSuL1KJhpMXzLbdpflFV9HfZ6I4J9eJcEVfOAKwWZfKCdW61ggBKc2/YzhEbVnxjjG
+	+dK3T7LoAUViCGsMTGz2DAoZkEKHzHmX6/SU1DI7hXlDpoNacFP6X73CGR2PHyDncpe6B9
+	gABvipThp1v5nyYyolUdX5dwNhkk6WQ+zUdQWiHqKfCh2Thppou4rt7YD0jMEw==
+Date: Fri, 11 Oct 2024 11:36:35 +0200
+From: Louis Chauvet <louis.chauvet@bootlin.com>
+To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maaara Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
+	Simona Vetter <simona.vetter@ffwll.ch>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+Subject: Re: [PATCH v12 09/15] drm/vkms: Remove useless drm_rotation_simplify
+Message-ID: <Zwjxo2TEAR3PelO9@louis-chauvet-laptop>
+Mail-Followup-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
+	Melissa Wen <melissa.srw@gmail.com>,
+	Maaara Canal <mairacanal@riseup.net>,
+	Haneen Mohammed <hamohammed.sa@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
+	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
+	Simona Vetter <simona.vetter@ffwll.ch>,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
+	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
+	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+References: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
+ <20241007-yuv-v12-9-01c1ada6fec8@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/5] libperf cpumap: Correct reference count for
- perf_cpu_map__merge()
-To: Adrian Hunter <adrian.hunter@intel.com>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>,
- James Clark <james.clark@linaro.org>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240925195325.426533-1-leo.yan@arm.com>
- <20240925195325.426533-2-leo.yan@arm.com>
- <c30c5139-6f77-4a30-bba8-b9372949aec7@intel.com>
-Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <c30c5139-6f77-4a30-bba8-b9372949aec7@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-yuv-v12-9-01c1ada6fec8@bootlin.com>
+X-GND-Sasl: louis.chauvet@bootlin.com
 
-Hi Adrian,
 
-On 10/10/24 18:41, Adrian Hunter wrote:>
-> On 25/09/24 22:53, Leo Yan wrote:
->> The perf_cpu_map__merge() function has two arguments, 'orig' and 'other',
->> and it returns results for three different cases:
->>
->>    Case 1: 'other' is a subset of 'orig'.
->>    Case 2: 'orig' is a subset of 'other'.
->>    Case 3: 'orig' and 'other' are not subsets of each other.
->>
->> The result combinations are:
->>
->>    +--------+-------------+-----------+-----------+
->>    | Cases  | Result      | orig      | other     |
->>    +--------+-------------+-----------+-----------+
->>    | Case1  | orig        | No change | No change |
->>    +--------+-------------+-----------+-----------+
->>    | Case2  | other       | No change | refcnt++  |
->>    +--------+-------------+-----------+-----------+
->>    | Case3  | New CPU map | refcnt--  | No change |
->>    +--------+-------------+-----------+-----------+
->>
->> Both Case 1 and Case 3 have a risk of releasing maps unexpectedly. This
->> is because the reference counter operations are not consistent crossing
->> different cases and leads to difficulty for callers handling them.
->>
->> For Case 1, because 'other' is a subset of 'orig', 'orig' is returned as
->> the merging result, but its refcnt is not incremented. This can lead to
->> the map being released repeatedly:
->>
->>    struct perf_cpu_map *a = perf_cpu_map__new("1,2");
->>    struct perf_cpu_map *b = perf_cpu_map__new("2");
->>
->>    /* 'm' and 'a' point to the same CPU map */
->>    struct perf_cpu_map *m = perf_cpu_map__merge(a, b);
->>
->>    ...
->>
->>    perf_cpu_map__put(m); -> Release the map
->>    perf_cpu_map__put(b);
->>    perf_cpu_map__put(a); -> Release the same merged again
->>
->> For Case 3, it is possible that the CPU map pointed to by 'orig' can be
->> released twice: within the function and outside of it.
->>
->>    struct perf_cpu_map *a = perf_cpu_map__new("1,2");
->>    struct perf_cpu_map *b = perf_cpu_map__new("3");
->>
->>    struct perf_cpu_map *m = perf_cpu_map__merge(a, b);
->>                               `> 'm' is new allocated map. But 'a' has
->>                                been released in the function.
->>    ...
->>
->>    perf_cpu_map__put(m);
->>    perf_cpu_map__put(b);
->>    perf_cpu_map__put(a); -> Release the 'a' map again
->>
->> This commit increases the reference counter if a passed map is returned.
->> For the case of a newly allocated map, it does not change the reference
->> counter for passed maps.
-> 
-> The 2 non-test uses of perf_cpu_map__merge both do:
-> 
->          a = perf_cpu_map__merge(a, b);
-> 
-> so another way to make the API less misleading would be
-> to introduce:
-> 
->          err = perf_cpu_map__merge_in(&a, b);
-> 
-> where:
-> 
-> int perf_cpu_map__merge_in(struct perf_cpu_map **orig, struct perf_cpu_map *other)
-> {
->          struct perf_cpu_map *result = perf_cpu_map__merge(*orig, other);
-> 
->          if (!result)
->                  return -ENOMEM;
-> 
->          *orig = result;
->          return 0;
-> }
-> 
-> without any changes to perf_cpu_map__merge().
+Hi all,
 
-Just wandering why we cannot do the same thing for the perf_cpu_map__merge() 
-function?
+Until this point, this series has not received any major comments since 
+v9. I will commit patches 1-9 next week if there are no further comments.
 
-   int perf_cpu_map__merge_in(struct perf_cpu_map **orig,
-                              struct perf_cpu_map *other)
-
-This can allow us to avoid any confusion in the first place. And we don't need 
-to maintain two functions for the same thing.
+For patches 10-15, I am currently waiting for feedback from Maxime to 
+send the next iteration with a fix for kunit tests.
 
 Thanks,
-Leo
+Louis Chauvet
 
+On 07/10/24 - 18:10, Louis Chauvet wrote:
+> As all the rotation are now supported by VKMS, this simplification does
+> not make sense anymore, so remove it.
+> 
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
+> ---
+>  drivers/gpu/drm/vkms/vkms_plane.c | 7 +------
+>  1 file changed, 1 insertion(+), 6 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
+> index 8875bed76410..5a028ee96c91 100644
+> --- a/drivers/gpu/drm/vkms/vkms_plane.c
+> +++ b/drivers/gpu/drm/vkms/vkms_plane.c
+> @@ -115,12 +115,7 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
+>  	frame_info->fb = fb;
+>  	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
+>  	drm_framebuffer_get(frame_info->fb);
+> -	frame_info->rotation = drm_rotation_simplify(new_state->rotation, DRM_MODE_ROTATE_0 |
+> -									  DRM_MODE_ROTATE_90 |
+> -									  DRM_MODE_ROTATE_270 |
+> -									  DRM_MODE_REFLECT_X |
+> -									  DRM_MODE_REFLECT_Y);
+> -
+> +	frame_info->rotation = new_state->rotation;
+>  
+>  	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
+>  }
+> 
+> -- 
+> 2.46.2
+> 
 
