@@ -1,94 +1,110 @@
-Return-Path: <linux-kernel+bounces-360713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85F88999E88
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:50:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803C6999E8B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:52:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 314F21F2458B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:50:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB4C4B22E71
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:52:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52937209F50;
-	Fri, 11 Oct 2024 07:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD79B20A5E9;
+	Fri, 11 Oct 2024 07:52:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="FOUI0sx1"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="W82exMp5";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1MdLcEGw"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842A720A5F0;
-	Fri, 11 Oct 2024 07:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A95BE207217
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728632964; cv=none; b=bsD4tWQcagemxPGOgEDRH2WS+sRaBYV8eWOZ9kfeXkW7St5oU85onQlrpsD910OxHw3BCmEU6yFqgogMXsKuEKY5XclR5Fg+cRtyzZSvEGx3caKC0SkBKHFOLysNa6Qv1PEW7+Jg4P15OGlc0xD7AayoW1mG4HPAraV3beLGHa4=
+	t=1728633140; cv=none; b=gD1Ht6gqhuUYly3kJEsIHEezAsLnEuqhpq0XsHM4voMzeFiVyv2zxqWPPxbMQrJAWT469LjWoGaIqzQx+OVMhNxfCBUrobe7qGNNGgqJb7nRNVuwP2Z8ZlC1/FXuLQA4r+SooGjfL6zqQ4OKTUfduQDPoKZ/O7uMEzkA5LmUN4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728632964; c=relaxed/simple;
-	bh=lAlGhwACTRPPIfz6ZBEdhegdAHWo1BlhgB4ROXVis3I=;
+	s=arc-20240116; t=1728633140; c=relaxed/simple;
+	bh=tGpTff6Yl1tcHxLLrL7+BYvKwtngLm0TlhILQ//KWEs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tw+54RB9QY8inXtdJMPijB1HxPYjvHXC3YXmY1BAvDe04vO8wT3eEcgUcxlMAT33P54Mh2DktdEFGHFPQct+gGm8unVE4kNzA3y6TNmEsrCZnHm7Dwu0pm20vkY66VTVlGuHPZbOxBu0C6UDDLeNQRW4e6XPOWncYKDjcF8WwJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=FOUI0sx1; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=oppw89lW+K9OohLBYEY/BfZDmAvR7NJuGMECnznnan0=; b=FOUI0sx1mdI/DOKOmLrWJxvPyN
-	CpXE3cQO8YpeSFBoG+B0wx95OmbVdU+6WGEXlAUbJUUhLoCkxeee2W4iTsfy69F5mw1nTKYrs3pDj
-	hfHS4rbOI6TdISMbtlersRooAWvMdWm1bZs0jLikYH0xzTf4FGeKsYo2n02tgwBN/yKY21NsTyCnF
-	WZNOrZfynMwUhpLdXHyGVvwBAbPajWWwRoDcAoTvCIkot2E7t7pfYUJ8Y07vkr0IQmpmNYUJjPVC+
-	kAUg4pof8D4/9muR14TthcgmiAkKYk7MxMIGuUkkiJkywUQD/cmy05cgpPG/WQAzEuEModMMAKTlx
-	XIpN81Kw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1szAOj-0000000Fbgx-0FbT;
-	Fri, 11 Oct 2024 07:49:17 +0000
-Date: Fri, 11 Oct 2024 00:49:17 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Julian Vetter <jvetter@kalrayinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Richard Henderson <richard.henderson@linaro.org>,
-	Niklas Schnelle <schnelle@linux.ibm.com>,
-	Takashi Iwai <tiwai@suse.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>,
-	David Laight <David.Laight@aculab.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Christoph Hellwig <hch@infradead.org>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-csky@vger.kernel.org, loongarch@lists.linux.dev,
-	linux-arch@vger.kernel.org, Yann Sionneau <ysionneau@kalrayinc.com>
-Subject: Re: [PATCH v9 1/4] Consolidate IO memcpy/memset into iomem_copy.c
-Message-ID: <ZwjYfUrHfZlxBVxQ@infradead.org>
-References: <20241010123627.695191-1-jvetter@kalrayinc.com>
- <20241010123627.695191-2-jvetter@kalrayinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=o98f2qLMEDaETOhmyGGJ8dFJQkDgcUMJ2Vq+Gs6NfEH49dalqApN3rvB4eI+vCPeGm33j76EV6d2GoYePTshJQJgf2r/kUXyxHPYLtktREbXK/ntsFtjtbyOnOBrJnKs70p7aw72QCpxXdQMYDUfnD3yZBe6sLLbQadBM5BI8ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=W82exMp5; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1MdLcEGw; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Oct 2024 09:52:15 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728633136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1yW6cQrOAdVKjwA8c6qWqeesCnQ9EMF7JJGm4eWCDgQ=;
+	b=W82exMp5Zun3epxF6y9+GQG3Gp4QnNR8C/SU5vZSC1uKA/DQkebr79H9KCaFABDCT8zDBh
+	pAzrPhufQgi+S5QScEmuA7+sVtZgRh2r0emoLJH7jSqT2Qqjn8qYig5ZjONobNRcn6CqDv
+	xzaQbN0rDtKIp4362La2CzgBY9i35iFuA8ICnxxlXW1KUCbYZxtGW4tMNoKuQaZm0FPuSh
+	UbtmHfXpnhckcYo/5cIxjI86z0kTUErktD/NRBLqoE4Eo+zOqeOS8YiyloMdywcBMvOgqK
+	pTx2Kl0myDWNYJy+0NhfS4jXcV3TAq0lJbAwknJocvUnUQGJBXLzSjZru8F/FQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728633136;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1yW6cQrOAdVKjwA8c6qWqeesCnQ9EMF7JJGm4eWCDgQ=;
+	b=1MdLcEGw7JXiHKeV/o9yH5PoceJrNEfA9jKCdXPloVwhr+TlL/2THbOieo/2+OekDsV3VD
+	zVitM+hJ1EvcibCQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: linux-kernel@vger.kernel.org, peterz@infradead.org, tglx@linutronix.de,
+	paulmck@kernel.org, mingo@kernel.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, frederic@kernel.org, efault@gmx.de
+Subject: Re: [PATCH 4/7] rcu: handle quiescent states for PREEMPT_RCU=n,
+ PREEMPT_COUNT=y
+Message-ID: <20241011075215.rEMWoctS@linutronix.de>
+References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
+ <20241009165411.3426937-5-ankur.a.arora@oracle.com>
+ <20241010065044.kszYbjKa@linutronix.de>
+ <87a5fb96zv.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241010123627.695191-2-jvetter@kalrayinc.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+In-Reply-To: <87a5fb96zv.fsf@oracle.com>
 
-On Thu, Oct 10, 2024 at 02:36:24PM +0200, Julian Vetter wrote:
-> Various architectures have almost the same implementations for
-> memcpy_{to,from}io and memset_io functions. So, consolidate them
-> into a common lib/iomem_copy.c.
+On 2024-10-10 10:56:36 [-0700], Ankur Arora wrote:
+> >
+> > PREEMPT_LAZY selects PREEMPT_BUILD which selects PREEMPTION which in
+> > turn selects PREEMPT_RCU. So this is not a valid combination. Do you
+> > have a different tree than I do? Because maybe I am missing something.
+> 
+> The second patch in the series?
 
-That might be the final intent of this seris, but what this patch does is
-to replace the trivial memset/memcpy inline implementations with a more 
-complex one that actually use the accessors.
+As long as "PREEMPT_RCU" as no text behind its bool you can't select it
+independently.
 
-So this actually changes behavior for those architectures that did not
-provide them before quite a lot.  You'll need to explain in more
-detail why that is safe and desireable.
+> >> --- a/kernel/rcu/tree_plugin.h
+> >> +++ b/kernel/rcu/tree_plugin.h
+> >> @@ -974,13 +974,16 @@ static void rcu_preempt_check_blocked_tasks(struct rcu_node *rnp)
+> >>   */
+> >>  static void rcu_flavor_sched_clock_irq(int user)
+> >>  {
+> >> -	if (user || rcu_is_cpu_rrupt_from_idle()) {
+> >> +	if (user || rcu_is_cpu_rrupt_from_idle() ||
+> >> +	     (IS_ENABLED(CONFIG_PREEMPT_COUNT) &&
+> >> +	      !(preempt_count() & (PREEMPT_MASK | SOFTIRQ_MASK)))) {
+> >
+> > couldn't you use a helper preemptible()?
+> 
+> Alas no. This check isn't trying to establish preemptibility (this is
+> called in irq context so we already know that we aren't preemptible.)
+> The check is using the preempt count to see if it can infer the state
+> of RCU read side critical section on this CPU.
 
+I see.
+
+Sebastian
 
