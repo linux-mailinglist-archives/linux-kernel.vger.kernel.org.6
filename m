@@ -1,161 +1,158 @@
-Return-Path: <linux-kernel+bounces-360961-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8FF599A1CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:44:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D163299A1A6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63173281C6D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:44:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B217284B19
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01891213EC9;
-	Fri, 11 Oct 2024 10:42:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2E6021265D;
+	Fri, 11 Oct 2024 10:41:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fzhwPZ99"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="ts6TxB/V"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2083.outbound.protection.outlook.com [40.107.100.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4717198A3F;
-	Fri, 11 Oct 2024 10:42:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643353; cv=none; b=CclrgO/jREWjuDlBSVKZ20+ebgiw8R0hjbHwypdT+0oKkNCDVVZPNcr3uzvAkG6/EFV9N8ZWuh14dzHq/uXDls07oIFvDRTK+qE3XXWPcf3HZOzK7adVd03i4ZrZGAR7XXOcKYOWOFe/MHTNgaEI5zCG4gUbIFxI/j5qUomsaXw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643353; c=relaxed/simple;
-	bh=yALbYNl0T5Trgu0DW0CUG5TdXrwzgrycJz//ZNeR8DA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=jP96RSQbjXWmcoY6Izd/DLh/GNooJemjYpDjmbnVSpsIQCR62Gla5HT7kVTABgUcP2u4IZgaUYd4ica8cQtK1zQv9d3JfMPDZuijkKLSOhSFH2kcVEdBRTSYawwjr37pfeBq3OcB3BNXQyH6DDImX8jIXY6F7j5hukIfua3evbY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fzhwPZ99; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BAAO4B021189;
-	Fri, 11 Oct 2024 10:42:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=juKH+WuNN2QXEskv3d4mxU
-	0etrgfR//XbR10xZr0gvs=; b=fzhwPZ994sM1UCWoS805Ja91yVc5rZHnFXltEY
-	ZxsRH40dmPxON+1vwc8IlmHqzaROXSZEhEQBYOZrHtV2UAssnX7iXITMlKdRpvDn
-	fYmP6ANSZMuvoD4AM/XhhRWmZ4b7WUGVKhQ35egRF7qYqWbb8WyB4szoaOZjXNL+
-	97fiKES2C3QCeKXygWtPqo7R0mxHoDmT4EP4mbbPKDpmd/9Ha4V0AVYhn07QrLNf
-	pQUUp52oUvahtZD4XcfIKXa2kwxfRN+N38Bwukvh0M+/cJNyZOosWcu0Zw6oyEU9
-	J+xduR/IWsrPf6XSGPhL5lrE5LRpw5rrZfv01GemPbZvLY5g==
-Received: from nasanppmta04.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42721c82te-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 10:42:28 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BAgR9H009465
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 10:42:27 GMT
-Received: from songxue-gv.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Fri, 11 Oct 2024 03:42:21 -0700
-From: Song Xue <quic_songxue@quicinc.com>
-Date: Fri, 11 Oct 2024 18:41:05 +0800
-Subject: [PATCH] arm64: dts: qcom: qcs615: Add LLCC support for QCS615
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA16E198A3F;
+	Fri, 11 Oct 2024 10:41:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728643305; cv=fail; b=Tq80eKK1Kh86FuJdIUXoNUjvPZvoED6FTZZYSGCEbS5nlStIHcz34qidwkOrpbw6xv363grS24FX8nK1Jax8S/gHsSIiTVvMiqPP0gR7R6W8Yp4mvQtk50OawXk8oxoElzqkrtLH5rPSYtj0KM/uYOrrUSGaHLjkIDbyX2wfoHI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728643305; c=relaxed/simple;
+	bh=xlt6+V5NES8DbSrR/QHN0/lN3gxqk6yR2UMYoUaqAEU=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FPPY0kBNVjX6Ma7rmSkqIjrfsIFu5MJ5Z7ZhuV6q2F8BVPySqvFXymJfN9tvw9+5j9IpRg4rO2OdSq/ePUuQYugTTzej5HXoiHN8T7DiMSWQaHfBdhJHGyRlNVXwW1cD1XWtB1gzeJMN2Iq0PvwQ+1s23mBwxV3tSksIunt33eU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=ts6TxB/V; arc=fail smtp.client-ip=40.107.100.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ijnBh9h2/XZQ0sArow6JjvdK28KO+B/koe6uxzKHuDJNjWgrZx4GAJOI7pwikiJprImG0+s/Wuo1/DKdgGPyS5e3Vv/c6a4b2MI9cG5CTziKdjlszCZNr2WzI2/+Y3wdqMzr3EXe/uI8neeYtco4HbFfX3J8vflcYsQ4/CXGsIRsD8eFhBuNu6LZl+1MBjy3357vAKeU8scDBHuqZLZ30xnVAESRLC9b36DUhUgxTs/nfBXxTAVq+9BcoE3dDNVwXvhJHoDe9pLNSnX2l/IpJjSBzFgQ+bieWpltDDYjzEscdb7WiRFJsOyOGw68Nre02pDyae9ZCQJ7yERdl4zvtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=lxz103hHjM3voLiCNEu0lk5b5E6+7AtxxqIqSpsPnsk=;
+ b=ckuCB9HT10ONuKp3DJ/9PShiswcwyFvYhzidw9HZPWCRydwcPrRfadT6UhMt6V24WdyTuK6hFWkJ7yIFCbRd1O+O+z+1IDcd995/K/CT1OqbMMRK0weR0ewPrrSZvKmdaPPI290bdMICQbCuPJh6rJMTnypIbqozI+WWuSlyQ5I9AeMhBHhn1kU04fd9FfRqgsuALBPsjkcygyw5nPXgGx9weYcDcX8TiqItslUAd10kDehcSQ1cQdAzlB4nIe3sCMcW7A0AQPRYZTMli5p18uK6ql6pKTdEKAtfzEJJYh3RitPHRO4ikQQjiizF5CnS0kqRFMq4n9WWUg090/RUIA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=lxz103hHjM3voLiCNEu0lk5b5E6+7AtxxqIqSpsPnsk=;
+ b=ts6TxB/VJucGj9wjd4HTqvO3I5uEhbpH3tZY+LeS3kcACFuDRIBLJED/2lKoyO06B7WlWXbjTI4UfiF3e81u66zkXAh77SZsubj2D/HhjsLML4ohdmTLxnHWuFa4YMJ9XhI5wxszJlV/ZnX+0n42IpS/K9nJoaJML0YHuQrgC0c=
+Received: from BN8PR12CA0018.namprd12.prod.outlook.com (2603:10b6:408:60::31)
+ by MN2PR12MB4389.namprd12.prod.outlook.com (2603:10b6:208:262::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
+ 2024 10:41:39 +0000
+Received: from BL02EPF00021F68.namprd02.prod.outlook.com
+ (2603:10b6:408:60:cafe::98) by BN8PR12CA0018.outlook.office365.com
+ (2603:10b6:408:60::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20 via Frontend
+ Transport; Fri, 11 Oct 2024 10:41:39 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BL02EPF00021F68.mail.protection.outlook.com (10.167.249.4) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Fri, 11 Oct 2024 10:41:39 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Oct
+ 2024 05:41:38 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Fri, 11 Oct
+ 2024 05:41:37 -0500
+Received: from xhdsneeli40.xilinx.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Fri, 11 Oct 2024 05:41:34 -0500
+From: Manikanta Guntupalli <manikanta.guntupalli@amd.com>
+To: <git@amd.com>, <michal.simek@amd.com>, <andi.shyti@kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-i2c@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: <radhey.shyam.pandey@amd.com>, <srinivas.goud@amd.com>,
+	<shubhrajyoti.datta@amd.com>, <manion05gk@gmail.com>, Manikanta Guntupalli
+	<manikanta.guntupalli@amd.com>
+Subject: [PATCH 0/2] Add atomic transfer support to i2c-xiic
+Date: Fri, 11 Oct 2024 16:11:29 +0530
+Message-ID: <20241011104131.733736-1-manikanta.guntupalli@amd.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241011-add_llcc_dts_node_for_qcs615-v1-1-e7aa45244c36@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAMEACWcC/22OQW7DIBBFr2KxrqUBPCTmKlGEBhi3SI5xwLEqR
- bl7nXiRLLp8f/Hev4vKJXEVtrmLwmuqKU8byK9GhB+avrlNcWOhQHUSpGwpRjeOIbi4VDflyG7
- IxV1DNRJbrwgjIYInFJtiLjyk35f+dN658PW2VZZ9fEds80xAr7pXIk1pSTS6epvnXJbPCIH0X
- sXYGQS7avF5dbdIgP599B+FMUccMICWXttVPRWeKrchXy5psY036gBB+0D98YAamIZgSOLQR+w
- 4RACtGViL8+PxB62dgqhDAQAA
-X-Change-ID: 20241011-add_llcc_dts_node_for_qcs615-b2a5da550ba5
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <kernel@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Song Xue
-	<quic_songxue@quicinc.com>
-X-Mailer: b4 0.15-dev-88a27
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1728643341; l=2273;
- i=quic_songxue@quicinc.com; s=20240911; h=from:subject:message-id;
- bh=yALbYNl0T5Trgu0DW0CUG5TdXrwzgrycJz//ZNeR8DA=;
- b=6yjfp/cV9hc75OJeo6P6+uCKhxMV+ilO1pF8DJcdN2TPz/CK+DElIBzhF2V2yPIfz9S8MHg0i
- L3zZc+sUj6/AhSyRMcjYPckSvDf/sp9kFd1xHSzUFkeVTt4jPiDmfa9
-X-Developer-Key: i=quic_songxue@quicinc.com; a=ed25519;
- pk=Z6tjs+BBbyg1kYqhBq0EfW2Pl/yZdOPXutG9TOVA1yc=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 37-jjRs_yI82k7LRn8rykfC3mGNNr3F0
-X-Proofpoint-GUID: 37-jjRs_yI82k7LRn8rykfC3mGNNr3F0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- impostorscore=0 mlxlogscore=877 priorityscore=1501 adultscore=0
- phishscore=0 malwarescore=0 mlxscore=0 bulkscore=0 suspectscore=0
- spamscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110073
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BL02EPF00021F68:EE_|MN2PR12MB4389:EE_
+X-MS-Office365-Filtering-Correlation-Id: 11482177-b7e8-4be9-16cd-08dce9e149b5
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?/5qlnygx3YnaCkxx9cZBg/n0D/jrSKcp8En6an12f9YXqcs0p7bboRUccIlq?=
+ =?us-ascii?Q?mVpKZUpuJa48yL++l67mwV+MCYyMqQkaS2mQpTU5sLWW8QeoDlZqDAMMSdAc?=
+ =?us-ascii?Q?ID8H7q8Sx3C9Fb1fkH9du2TYMrEj1WMOuwKkG6Z2DUmiVdD8V/EhhpDy2PZS?=
+ =?us-ascii?Q?eI8ZhQ40toMV9/gUvE0UNfucsp1d1rSs6VQtgvJJIU54LBvEfJ3ysG3afBPB?=
+ =?us-ascii?Q?pPOtur/ZRDk+VzQR117k/5/SzeLX//Qe1xp9Jsqh37dRZpY7+qopgKa/+IsD?=
+ =?us-ascii?Q?ddJyvXF4y6VC2Xiq0m0MGDiiQnS6hYm4jXrIJzUKXo99SG3kroWrc1W1ZGZa?=
+ =?us-ascii?Q?zuJOZAkhH63LgdUx5cwHlYpGn5hhceT+zHsaKAt5INnTcgBJUKz3EVcE8575?=
+ =?us-ascii?Q?n3v1gZl1nzlBOSfZY9KH4IlmG0XFFrDe5hcxLNEfrj6N3iCigp4t4NtmfIQV?=
+ =?us-ascii?Q?O2GZh78C0k2urlsYeRn2klKrEcV2/ImCSFfaLZUFKkSYkb1NxRsHQ7HXJKLV?=
+ =?us-ascii?Q?JGM3sGx3E6aAoxN//I3JN2LxFHQPSX+uh54Kw2CFsha0zXqjtnNV6Rm5xmkC?=
+ =?us-ascii?Q?1fYNAKbrjcVkyXSfDIgng03z1ZHLszpZREfvlEF8cP0m8xSiqhXihGwQOSKc?=
+ =?us-ascii?Q?D/dMk7Bran39vbnzt66V7QNDmKoW3pHNwADfQ8+aKbk01GINW30GCFcF5vrT?=
+ =?us-ascii?Q?dhnvMM41EK+Fmh8ioY2lExzJDIhihmREPx046HywQM1cDYlcFsjjvg1Wy3Ua?=
+ =?us-ascii?Q?oMBd3nVs4uw7eX7KBpbWcrPIUDgZc0qV6YezGEzKO5yZb/7yKWbBem/+Mi0T?=
+ =?us-ascii?Q?lWSx6jEUg2LLzYFS5mWoRKre+c0oHotJkBMRVq6og2NC2F6T7e1pCMvl8YaH?=
+ =?us-ascii?Q?msLE5HJperM4sDfoLckKEsnriUtFnk+uhxJY9dMAUH61+1+IcJ4XyMzRUYRw?=
+ =?us-ascii?Q?WR3uFnhS/9Vq9SeSNDFQ7r7tyOUw1e65inBkiByWZqugGDzoH3iW0eXor5/u?=
+ =?us-ascii?Q?5SbbMyURDqZh0munO1vI14DG8RG5oMJdBjhpOh3oThC2JKo2vsRM3kZFYWT1?=
+ =?us-ascii?Q?DDgoW6LwmhklxM28uGN/zyQ1lFqoEEmbv2EOUnEhAoCnYrh7pWZ6D6PvrJSS?=
+ =?us-ascii?Q?LkSZH1Iu8wyLl6TOSA5VOHT1fxh4LGkjZqsstHKs5wiAp/bM1801bNvKjVd8?=
+ =?us-ascii?Q?SyoQ+xStwCLYAQFmpFfvSPHuqOnH6pHcrwKnt59voZBUB1XXtbUtmtV2Hgqz?=
+ =?us-ascii?Q?8ldwrVEDyCVxWThMPWl3OPHyJwmAiAS3roY67jbgAargUTqU6ZEzbdfcUfIA?=
+ =?us-ascii?Q?5oE22n5VwwWVJQEIJ9yQfvkI8Q14fs4vNB7pNLgreXVX9omFm3d09qex3+0E?=
+ =?us-ascii?Q?W1u92lsKGxYsItiiog9JKbayzlcq?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 10:41:39.2660
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 11482177-b7e8-4be9-16cd-08dce9e149b5
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BL02EPF00021F68.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4389
 
-The QCS615 platform has LLCC(Last Level Cache Controller) as the system
-cache controller. It includes 1 LLCC instance and 1 LLCC broadcast
-interface.
+This patch series adds atomic transfer support to the i2c-xiic
+controller.
 
-Add LLCC node support for the QCS615 platform.
+Manikanta Guntupalli (2):
+  i2c: xiic: Relocate xiic_i2c_runtime_suspend and
+    xiic_i2c_runtime_resume to facilitate atomic mode
+  i2c: xiic: Add atomic transfer support
 
-Signed-off-by: Song Xue <quic_songxue@quicinc.com>
----
-This patch series depends on below patch series:
-https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
-https://lore.kernel.org/linux-arm-msm/20241010-add_llcc_support_for_qcs615-v2-1-044432450a75@quicinc.com/
----
- arch/arm64/boot/dts/qcom/qcs615.dtsi | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ drivers/i2c/busses/i2c-xiic.c | 287 +++++++++++++++++++++++++++-------
+ 1 file changed, 233 insertions(+), 54 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index ac4c4c751da1fbb28865877555ba317677bc6bd2..b718a4d2270d64ed43c2eca078bfe52b78ff680c 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -495,6 +495,14 @@ dc_noc: interconnect@9160000 {
- 			qcom,bcm-voters = <&apps_bcm_voter>;
- 		};
- 
-+		llcc: system-cache-controller@9200000 {
-+			compatible = "qcom,qcs615-llcc";
-+			reg = <0x0 0x9200000 0x0 0x50000>,
-+			      <0x0 0x9600000 0x0 0x50000>;
-+			reg-names = "llcc0_base",
-+				    "llcc_broadcast_base";
-+		};
-+
- 		gem_noc: interconnect@9680000 {
- 			reg = <0x0 0x9680000 0x0 0x3e200>;
- 			compatible = "qcom,qcs615-gem-noc";
-
----
-base-commit: b6270c3bca987530eafc6a15f9d54ecd0033e0e3
-change-id: 20241011-add_llcc_dts_node_for_qcs615-b2a5da550ba5
-prerequisite-change-id: 20240924-add_initial_support_for_qcs615-a01bb2dd4650:v3
-prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
-prerequisite-patch-id: 624720e543d7857e46d3ee49b8cea413772deb4c
-prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
-prerequisite-patch-id: ab88a42ec69ad90e8509c9c5b7c6bdd595a7f783
-prerequisite-patch-id: 918724fafe43acaa4c4b980bfabe36e9c3212cd1
-prerequisite-patch-id: 91cb230c6d129ff21c24d124fad9e37a66cb6a22
-prerequisite-patch-id: 57afeee80c9aa069ee243f5a5b634702867d20f1
-prerequisite-change-id: 20241009-add_llcc_support_for_qcs615-6685f5c031b3:v2
-prerequisite-patch-id: 7f93f240f926884c60a86c3ca651bb2232b88bed
-prerequisite-patch-id: 6758ca439e10ac057d7834bb42860eb58198287b
-
-Best regards,
 -- 
-Song Xue <quic_songxue@quicinc.com>
+2.34.1
 
 
