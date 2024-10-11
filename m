@@ -1,140 +1,94 @@
-Return-Path: <linux-kernel+bounces-363446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D878B99C297
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:08:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D934C99C591
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5E768281472
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:08:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161931C22B38
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:26:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34C7313AA53;
-	Mon, 14 Oct 2024 08:08:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C1A51586CF;
+	Mon, 14 Oct 2024 09:26:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="N6tKQPj9"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BQCMu73i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 178FF140E2E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A759015821A;
+	Mon, 14 Oct 2024 09:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728893321; cv=none; b=kr890iBfDOcfynXKwEd0+xF7mjaTknc9IKf8dvH3FUgB1nEO4sPeRhRiOg8D4N04brLbwZQWn21Ur10qFw3fL4Scwch89mcF6FkZsm3zoJiOxNOgTv8wWbqU5NrD4TynASf+IY+DQKhRWW7t69PS0vwyz4etrc1QqBKaAMlUJqM=
+	t=1728897966; cv=none; b=RE61Pm8uSXSceK+OT3YCnrQsdScX2kWHJrtCZl1EwmoApx9SXLLCeCUlkGOy5b1xeneTSNB30p9v82NYFnCFlHDEe3+qyCId7fa9mRJx1gx0m1FKxxsSp9exmUCxN4LFnHu4SoQwqcCn/iEvZNpzaX75CGLFKAPkLnkeWz1HmNA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728893321; c=relaxed/simple;
-	bh=TaWs/ibx85c0CtG18bNpX/cgoj6kclzeopbcQX6fQ8s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=bWE4fyU/2Fkh0obJ8uwLUG5qikEyujm0jM1BW1/a+WmZiH7ZGuqjNZLHDYgdJbRiYm8SKsolc7tr/JEBwKV7q2LAk7vWLuShR9SDs+L5jUyJnO0ZvrPligvr0NwXjk8WfP2OzvXPfUuHqMDZPg1ygD80DEXPuXoR+3LAIb3PUvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=N6tKQPj9; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728893319;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TaWs/ibx85c0CtG18bNpX/cgoj6kclzeopbcQX6fQ8s=;
-	b=N6tKQPj9zsCMEWw4zeDBVfEkkUuyo34Q39WKbRi0IW6zq6906OlXgg3B/Rwlx1uEZRfLDy
-	RJ4I1kJGNG9R9QrIx6jtdt2JVHg0nsjddrJZP/V/5SkqOVCwlW9NHCXBoSMsAJ9tObzuJA
-	a4+h9G79WLCpvdvhiUJ288jySze9LLE=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-563-Bm-3wI5bMKKlIplFL62Hyw-1; Mon, 14 Oct 2024 04:08:36 -0400
-X-MC-Unique: Bm-3wI5bMKKlIplFL62Hyw-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a99ea3e1448so111960766b.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:08:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728893315; x=1729498115;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TaWs/ibx85c0CtG18bNpX/cgoj6kclzeopbcQX6fQ8s=;
-        b=dGYrzGZZRPzV8y2SLlMEuz8K8+h5e7DdgyS5SQg71LUcaelyXeACgiBs0Qz5J9k7UT
-         yE33jiIrfCpNL8n5tO8djyLUyN/nxi9uLmwYe6GOwq6iRl6Y4gmPZby6O5SRX5TmwXQw
-         UPfKMCJpyEDc6lZtmLEnt/ftfWHupcV25hm5iIwTXGIJklYkjQ9ypHhDImjuPZFvljVs
-         WC8qxywoZ0cVLSmkYTJPZLppGPCHn5m62IzcxLrk/v4LcKTdbLvKbwWo7gmGB+jinkdM
-         oejwt82VvU+ODkbIXt4YOPoKMiHa3T4G9LeVBEA2B0s2vFCCpCxsM0fpLSYJoSmdK9dE
-         nPHA==
-X-Forwarded-Encrypted: i=1; AJvYcCXC7R0sXewxiafojg58BVp22jcZn7+jejvRpo4EOecn5BhmqSW/SedBVSqM0xIC0WwM1pwTLmt8Jyo53xM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSOIH9Y0U9vbwW1FXetyOnvF3/r0yNRdpxRzRnU1MbwdGE9joX
-	7r+wEwAO0oSqTKfxXhum0BJfg3uSQjvAuZiJCuvrQKGx1OVogOI+RDZjsFE72Jjn8T/H/mxvvn+
-	ArhFkg9DLDcP5J6hn5QanJ1QvgaLLKTJetYdXqMW0L6VPMxtfgBdWYeFj5D8HNQ==
-X-Received: by 2002:a17:907:944b:b0:a9a:296:b501 with SMTP id a640c23a62f3a-a9a0296b7f7mr310401666b.26.1728893315342;
-        Mon, 14 Oct 2024 01:08:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG1q2sRlNJ7gBIJ0qtGA/4lKRT5VNcFbD+svupkTpAqykus1uvSFx9KVJU4QLRIETgW7hI7mw==
-X-Received: by 2002:a17:907:944b:b0:a9a:296:b501 with SMTP id a640c23a62f3a-a9a0296b7f7mr310398866b.26.1728893314974;
-        Mon, 14 Oct 2024 01:08:34 -0700 (PDT)
-Received: from ?IPv6:2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3? (200116b82d3798001d5778cfc1aeb0b3.dip.versatel-1u1.de. [2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99e3e338e5sm325954766b.209.2024.10.14.01.08.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 01:08:34 -0700 (PDT)
-Message-ID: <dc9d7bd817e5c8bc88b0b8dfffcf83b2676cc225.camel@redhat.com>
-Subject: Re: [PATCH v7 4/5] gpio: Replace deprecated PCI functions
-From: Philipp Stanner <pstanner@redhat.com>
-To: Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Jens Axboe <axboe@kernel.dk>, Wu Hao <hao.wu@intel.com>, Tom Rix
- <trix@redhat.com>, Moritz Fischer <mdf@kernel.org>, Xu Yilun
- <yilun.xu@intel.com>,  Andy Shevchenko <andy@kernel.org>, Linus Walleij
- <linus.walleij@linaro.org>, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Bjorn Helgaas <bhelgaas@google.com>, Richard
- Cochran <richardcochran@gmail.com>, Damien Le Moal <dlemoal@kernel.org>,
- Hannes Reinecke <hare@suse.de>, Al Viro <viro@zeniv.linux.org.uk>,  Keith
- Busch <kbusch@kernel.org>, Li Zetao <lizetao1@huawei.com>,
- linux-block@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-fpga@vger.kernel.org,  linux-gpio@vger.kernel.org,
- netdev@vger.kernel.org, linux-pci@vger.kernel.org,  Bartosz Golaszewski
- <bartosz.golaszewski@linaro.org>
-Date: Mon, 14 Oct 2024 10:08:32 +0200
-In-Reply-To: <CAMRc=McAfEPM0b0m6oYUO9_RC=qTd1vsg4wMn1Hb4jYQbx4irA@mail.gmail.com>
-References: <20241014075329.10400-1-pstanner@redhat.com>
-	 <20241014075329.10400-5-pstanner@redhat.com>
-	 <CAMRc=McAfEPM0b0m6oYUO9_RC=qTd1vsg4wMn1Hb4jYQbx4irA@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728897966; c=relaxed/simple;
+	bh=w0+Cqw0mJHdofaP5FQwQ8u5fizWY9MZm7LMFDhyo/UA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ECUBx31AyIs0fGIPrWvWIwFauxHd7cSfOhdzvETTemrekIa8R05B53dxSBVO832hB9pzgnEIWAbZ6uzR0fwKDeYGKBDJu+VXuiIOk5zYAGF+LntS6xGoB2r/1HXNUjCl0p+h4PE+BzEV1Zaou6EXtWnYyVDPVoFwXJCuBn8/BOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BQCMu73i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2F19EC4CEC7;
+	Mon, 14 Oct 2024 09:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728897966;
+	bh=w0+Cqw0mJHdofaP5FQwQ8u5fizWY9MZm7LMFDhyo/UA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=BQCMu73io/Tmhxq+Iej/akoEQhy6ZpoZV1QxK+yMvjM0KSwRMEH0IDBfvtSvFNhao
+	 VPBC+8siPJqhKMmUH/4aRDtkuIQB/h8Q/GI5qf3e390qQjEQnToWSvyqe62kPWo12r
+	 sfrp4xSoQ4uTdfaK2Se/3IxW5XROOrq+o3NOwzJU2reZLwprwTiZciuwkUg0ysotvK
+	 xghhsp8VsKXJWFwCQRiVf324pWCVh9tBmHu+GQCFfWTrKnHraQCxtZyH4SSZfbhjAt
+	 gsD/BYTcm3YpG4QDgWnx+M+QyrC/mVLwIzpVapo8neXzYJkEVbTyteeeLh047GPWf7
+	 1MZkUWmc10kDg==
+From: Andreas Hindborg <a.hindborg@kernel.org>
+To: "Benno Lossin" <benno.lossin@proton.me>
+Cc: "Alice Ryhl" <aliceryhl@google.com>,  "Miguel Ojeda" <ojeda@kernel.org>,
+  "Boqun Feng" <boqun.feng@gmail.com>,  "Gary Guo" <gary@garyguo.net>,
+  =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+  <rust-for-linux@vger.kernel.org>,  <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4] rust: add global lock support
+In-Reply-To: <2376e7b3-42a4-4743-a5cd-83251dcc0075@proton.me> (Benno Lossin's
+	message of "Thu, 10 Oct 2024 22:14:52 +0000")
+References: <20240930-static-mutex-v4-1-c59555413127@google.com>
+	<HVPdDHj35lGMPHyA8YvYjO4hhof-vNaVDqo_ILwyCmuY13oskqVKxaIA7OK4wo6fWYeJIV_RMtbPdjVRGJcLvg==@protonmail.internalid>
+	<1f688070-66bd-450b-ba5d-b929de64ecf0@proton.me>
+ <87msjckqfw.fsf@kernel.org>
+	<84WhswqN_2lGocLpK_symjkhVOPgJQHGCnU6LbFRZ_YgY_hQsHtdHZe6yTB9XaShz4Cmym_AdOBXm4qSzkAyAg==@protonmail.internalid>
+	<2376e7b3-42a4-4743-a5cd-83251dcc0075@proton.me>
+Date: Fri, 11 Oct 2024 16:57:47 +0200
+Message-ID: <875xpylmac.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain
 
-On Mon, 2024-10-14 at 09:59 +0200, Bartosz Golaszewski wrote:
-> On Mon, Oct 14, 2024 at 9:53=E2=80=AFAM Philipp Stanner <pstanner@redhat.=
-com>
-> wrote:
-> >=20
-> > pcim_iomap_regions() and pcim_iomap_table() have been deprecated by
-> > the
-> > PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-> > pcim_iomap_table(), pcim_iomap_regions_request_all()").
-> >=20
-> > Replace those functions with calls to pcim_iomap_region().
-> >=20
-> > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > Reviewed-by: Andy Shevchenko <andy@kernel.org>
-> > Acked-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
->=20
-> This is part of a larger series so I acked it previously but at
-> second
-> glance it doesn't look like it depends on anything that comes before?
-> Should it have been sent separately to the GPIO tree? Should I pick
-> it
-> up independently?
+"Benno Lossin" <benno.lossin@proton.me> writes:
 
-Thx for the offer, but it depends on pcim_iounmap_region(), which only
-becomes a public symbol through patch No.1 of this series :)
+> On 10.10.24 16:01, Andreas Hindborg wrote:
+>> "Benno Lossin" <benno.lossin@proton.me> writes:
+>>
+>>>
+>>> Also,
+>>>
+>>>     error: type `__static_lock_ty_VALUE` should have an upper camel case name
+>>>        --> rust/kernel/sync/lock/global.rs:100:18
+>>>         |
+>>>     100 |               type [< __static_lock_ty_ $name >] = $valuety;
+>>>         |                    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: convert the identifier to upper camel case: `StaticLockTyValue`
+>>>
+>>
+>> How did you manage to get these errors?
+>
+> I added a `global_lock!` invocation to `lib.rs`. Otherwise I also don't
+> get them (they might also be emitted from the examples, but I didn't
+> compile those).
 
-P.
+I build the examples for kunit, but I did not get any warnings.
+Interesting.
 
->=20
-> Bart
->=20
+BR Andreas
 
 
