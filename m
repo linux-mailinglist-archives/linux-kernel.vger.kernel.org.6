@@ -1,190 +1,95 @@
-Return-Path: <linux-kernel+bounces-361372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC45E99A757
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:17:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9FA899A755
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:17:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 072901C224C6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:17:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D93AA1C22838
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01FF985656;
-	Fri, 11 Oct 2024 15:17:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="APqqfxJ0"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E175119412E;
+	Fri, 11 Oct 2024 15:17:04 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88795199BC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:17:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B48D199BC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:17:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728659843; cv=none; b=qXEzXKK2evLeE58U4mzxlqEymHL/lh3W7mOm+x96B1HRR6TmV2DEfOXBNF660a8KhQJ4qNDPWI+qbbTHTuwD9Azkogi3t0zqtWeh/4HnmC6k/8/9N+IdaC5jQfUSPCmt7bxnYpeR9WZwZC6IMEBrlONqcRWrQpypgsUzB42l7oo=
+	t=1728659824; cv=none; b=fPcsCvaazLlSkm5zLU1ryYMNkHz3RjMvEvOcZyYNhXpqfmxM+P7efxPnxwu7VNzt9BThHxvX/FfMzDn6mOn95nsi0orIId3RDCBU7XEYnkFKMmGYhKdqqN200einiFHKNeWcCogF77HYReozGrUnEmZrMZFvP1FFNeZpfIGslDs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728659843; c=relaxed/simple;
-	bh=pr8l274nkptFBJhIfSJgQDYSky5pF05lkT4fh+mtwTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AhIK6umS4woqyHM3jiuqWUgJVCYDsQpyd4BveUyNuuNcg4JcnM9n8Beefxv3lIxsLyj2xI0OxaUg8B/+dwBuV1TWwxMM31WORF6G834jRHfGQ554x7rha0KGrt42zsXC6rYM26Ov4wthWhvLVJz7DDMChoEEUo4AjiGIcWItumw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=APqqfxJ0; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1728659839;
-	bh=pr8l274nkptFBJhIfSJgQDYSky5pF05lkT4fh+mtwTA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=APqqfxJ0CtdltaOIew8TqJLJz8WH6QoUAYHLnrZ/grjtA7VMIhZDkqsthvsvwSTac
-	 m68MML/e21NyY2gZQJ4e3ox7Vab3N/FoLe0TZLVVVII6qvAGyd843md1yi3U32zN1/
-	 Ac5F82KhMBuJSmzq0cPYpHLokfVqEjdppa/t54KeiXN/22vnVrnvxS64Ll0rJreUGj
-	 spJATd0Za07XvssMu4Z6n244ZiGz6gBVRjXYidLz5QCYvxlPPBlY9THF7S12UQLAYk
-	 5K48YncoDNRGILzmPpRZ+QXfZxIrKTxNjS6VI+9od46DArbSQdYGqzc/CU1oL+2SSM
-	 8HrXFr/qWsMTw==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XQ9GR0mJCz12vc;
-	Fri, 11 Oct 2024 11:17:19 -0400 (EDT)
-Message-ID: <613e258c-e74b-46dc-970b-de9c78672c76@efficios.com>
-Date: Fri, 11 Oct 2024 11:15:23 -0400
+	s=arc-20240116; t=1728659824; c=relaxed/simple;
+	bh=btscBbCTnBPEIy8sGxXbXkEpBJp8NPPTiyWTgomGN1k=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=PfLJzOknwHpVzdF4x9qA5sI8Pgw0mNbLRddYJz4fKcuLiirYu6I+nCVb+0jVj+SZYhqjLvCGy0yR4BIxfhGRWiXeniH8QTn8iN2LGwKd6DSVDBX6sLjFrsujRkkoTrn+LxGvKDddfsAYb5g/OJSuUx8Xa4Xgjy/D8b2MdaKsRNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a19665ed40so13193795ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:17:02 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728659822; x=1729264622;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xkhsWbmpSIwr7KtaYgxACGZs+m9NItbxmU6IQ53lGPU=;
+        b=goqGi9nyoRiEm9nRyQBbSvsYDqmAbjsxRs9plikNrW0tetTPxpbW7ibkLsr7/poMjN
+         S/cp1vg3NfMN/haHfo0PBb7pmM86ZjgN+v9LdqyccibVZ+/+uk4aXin/1mSRnTwm5pZl
+         ClHp6OC5gLmw1L+40HJXM8S/htRt6CPpbnEOrGHyas1j4URfsVejlnzOiWul1ZOPH5ig
+         Hh9CqKFN7VgoA2LzHRcBXJ+xZ2KX4b2Dm6xdJgrtiyjN1PEXgFm8htKDh3ApFpsfaFw1
+         QxKS+yjm3E6ertoG3+aqx6BYxycpapdK30tYGIXg/zcGKsZdak0Qkh1BBGWioxWObX6M
+         hSJg==
+X-Forwarded-Encrypted: i=1; AJvYcCVnF7eJ65Rk+lfoMOoBwOO/9iZZ1Moz10SQWZ/6FzUJejcKEbVc8wEE4QiXcIQQz0uqZNsvQI3rtYUBmHc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyN5v8wOsLXjsmwfICMt56egnS4oarVejqK4mdOyM/oRGiA43cK
+	mNuGCHsscxWIoT9vmcpv7lbPJobX8IFZM5HGWNWM7+qQ99VneydT88+sHcPA+cYPEL7OlNrP8t8
+	JZRqu6CwpUAyCpzI/H0GVmjPi4UqF3ZyIokpZ/igOzfzdowAzFqjqEJA=
+X-Google-Smtp-Source: AGHT+IGmZEf0vqRnRJZkBPj6kWrDqVq/f2/pkq9A/frbUV4MWpd1ByHBxl8YzWfT/BkWNzm6c3/er26n6U/pAER1JdIghzhRJtVi
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC] Synchronized Shared Pointers for the Linux kernel
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- paulmck <paulmck@kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>,
- Maged Michael <maged.michael@gmail.com>
-References: <8b944c2b-7f89-4d05-afd8-612de852f5dd@efficios.com>
- <ZwhfPS4yyFx_Qrbu@boqun-archlinux>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <ZwhfPS4yyFx_Qrbu@boqun-archlinux>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:1a45:b0:39f:507a:6170 with SMTP id
+ e9e14a558f8ab-3a3b58aa871mr18180465ab.8.1728659822390; Fri, 11 Oct 2024
+ 08:17:02 -0700 (PDT)
+Date: Fri, 11 Oct 2024 08:17:02 -0700
+In-Reply-To: <0000000000005d16fe061fcaf338@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6709416e.050a0220.4cbc0.000b.GAE@google.com>
+Subject: Re: [syzbot] [mm?] INFO: task hung in hugetlb_wp
+From: syzbot <syzbot+c391aebb8e8e8cd95c55@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, kasan-dev@googlegroups.com, 
+	keescook@chromium.org, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	mcgrof@kernel.org, mhiramat@kernel.org, mhocko@suse.com, 
+	mike.kravetz@oracle.com, muchun.song@linux.dev, 
+	syzkaller-bugs@googlegroups.com, torvalds@linux-foundation.org, 
+	vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
-On 2024-10-11 01:11, Boqun Feng wrote:
-> On Thu, Oct 10, 2024 at 03:16:25PM -0400, Mathieu Desnoyers wrote:
->> Hi,
->>
->> I've created a new API (sharedptr.h) for the use-case of
->> providing existence object guarantees (e.g. for Rust)
->> when dereferencing pointers which can be concurrently updated.
->> I call this "Synchronized Shared Pointers".
->>
->> This should be an elegant solution to Greg's refcount
->> existence use-case as well.
->>
->> The current implementation can be found here:
->>
->> https://github.com/compudj/linux-dev/commit/64c3756b88776fe534629c70f6a1d27fad27e9ba
->>
->> Patch added inline below for feedback.
->>
->> Thanks!
->>
->> Mathieu
->>
+syzbot has bisected this issue to:
 
-[...]
+commit 3db978d480e2843979a2b56f2f7da726f2b295b2
+Author: Vlastimil Babka <vbabka@suse.cz>
+Date:   Mon Jun 8 04:40:24 2020 +0000
 
->> + */
->> +static inline
->> +struct sharedptr sharedptr_copy_from_sync(const struct syncsharedptr *ssp)
->> +{
->> +	struct sharedptr_node *spn, *hp;
->> +	struct hazptr_slot *slot;
->> +	struct sharedptr sp;
->> +
->> +	preempt_disable();
-> 
-> Disabling preemption acts as an RCU read-side critical section, so I
-> guess the immediate question is why (or when) not use RCU ;-)
+    kernel/sysctl: support setting sysctl parameters from kernel command line
 
-That's a very relevant question indeed! Why use hazard pointers rather
-than RCU in this particular use-case ?
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14c7f380580000
+start commit:   b983b271662b misc: sgi-gru: Don't disable preemption in GR..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=16c7f380580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=12c7f380580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fb6ea01107fa96bd
+dashboard link: https://syzkaller.appspot.com/bug?extid=c391aebb8e8e8cd95c55
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=118c6fd0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16b6a040580000
 
-You are right that I could add a rcu_read_lock()/rcu_read_unlock()
-around sharedptr_copy_from_sync(), and pair this with a call_rcu()
-in node_release, which would effectively replace hazard pointers
-by RCU.
+Reported-by: syzbot+c391aebb8e8e8cd95c55@syzkaller.appspotmail.com
+Fixes: 3db978d480e2 ("kernel/sysctl: support setting sysctl parameters from kernel command line")
 
-Please keep in mind that the current implementation of this API
-is minimalist. I mean to extend this, and this is where the benefits
-of hazard pointers over RCU should become clearer:
-
-1) With hazard pointers, AFAIU we can modify the sharedptr_delete
-    and syncsharedptr_delete to issue hazptr_scan() _before_
-    decrementing to 0, e.g.
-
-       unsigned int old, new;
-
-       WRITE_ONCE(sp->spn, NULL);
-       old = spn->refcount;
-       do {
-               new = old - 1;
-               if (!new)
-                       hazptr_scan(&hazptr_domain_sharedptr, spn, NULL);
-       } while (!atomic_try_cmpxchg(&spn->refcount->refs, &old, new);
-       if (!new)
-               sharedptr_node_release(spn);
-
-    And therefore modify sharedptr_copy_from_sync to use a refcount_inc
-    rather than a refcount_inc_not_zero, because the reference count
-    can never be 0 while a hazard pointer to the object exists.
-
-    This modification would make hazard pointers act as if they
-    *are* holding a reference count on the object.
-
-This improvement brings us to a more important benefit:
-
-2) If we increase the number of available hazptr slots per cpu
-    (e.g. to 8 or more), then we can start using hazard pointers as
-    reference counter replacement (fast-path).
-
-    This will allow introducing a new type of sharedptr object, which
-    could be named "thread sharedptr", meant to hold a reference for a
-    relatively short period of time, on a single thread, where the thread
-    is still allowed to be preempted or block while holding the thread
-    sharedptr.
-
-    The per-cpu hazard pointer slots would point to per-thread sharedptr
-    structures, which would hold the protected hazard pointer slot.
-
-    When the application means to keep the reference for longer,
-    to store it into a data structure or pass it around to another
-    thread, then it should copy the thread-sharedptr to a normal
-    sharedptr, which will make sure a reference is taken on the
-    object.
-
-    The thread sharedptr is tied to the thread using it. Because the
-    hazard pointer context would be in a well-defined per-thread area
-    (rather than just on the stack), we can do the following when
-    scanning for hazard pointers: force the thread sharedptr to promote
-    to a reference counter increment on the object, thus allowing the
-    hazard pointer scan to progress. This allows freeing up the per-cpu
-    slot immediately.
-
-    If all per-cpu hazard pointer slots are used, the thread sharedptr
-    would automatically fall-back to reference counter.
-
-    We could even add a per-cpu timer which would track how old are each
-    per-CPU hazard pointer slots, and promote them to a reference counter
-    increment based on their age if needed.
-
-This would effectively allow implementing a "per-thread shared pointer"
-fast-path, which would scale better than just reference counters on large
-multi-core systems.
-
-Thanks,
-
-Mathieu
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
