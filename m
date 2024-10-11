@@ -1,166 +1,149 @@
-Return-Path: <linux-kernel+bounces-361383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361386-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 658A999A775
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:23:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCFB899A77B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:25:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C37CCB21E1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:23:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 180401C2351E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:25:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FB6194AD9;
-	Fri, 11 Oct 2024 15:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BD61946DF;
+	Fri, 11 Oct 2024 15:25:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="BkKdV6cv"
-Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BK2Wx1nQ"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 258C1194A40;
-	Fri, 11 Oct 2024 15:23:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7E11946D0
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:25:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660213; cv=none; b=aMa+/tCjVZYRhZ1eAMW3OtPwHXfyFU3iI93l0WCBucQgawVSH2ERNUPzvqtVXN8JstDxYIpG05SYbhbLtqeKkK3BH4x/IaveUXiiDvxjqfEl5liLMc6PkVR58JBNd9OJCyLYUyGtJDiWim3QVcBLOKRSRHnIlmjFFGuQPYF0W1c=
+	t=1728660320; cv=none; b=nCjhMgPxi8SFbP4RAFMA2C5z+XsjuwJ+84Tmvn9A2Le/azHkDtQ2N3/x+9R2rSluAj2N9976MpINGdaTT3xQr8yibuO185F9oEJvg1bhYf30z8LXH/0pcpmNejW2pZSiIskRmuvu98gR7t8l+gmItynpmHocVDu3nGJYkPEqi2A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660213; c=relaxed/simple;
-	bh=dNkSK16lr1JQGU/ueH8/BjMoCQlHXeuOs4ScHbna40o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t74GWS1vidXAkpPpBKT4iykxKUnq7V8xzNKFdofj7hbS5fahiCtbu9aChFDp7MjyrzwLK780YAqXhGeEfKDLk1E3jwMObSUL/crxvi6krj6f/5DWo42Qauk4u3j4IsqJfm2jLvov8WWjiTSVqrO/ELNPJx/qI7PLcbF5Ij9lkJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=BkKdV6cv; arc=none smtp.client-ip=46.255.230.98
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
-Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
-	id EDC561C0087; Fri, 11 Oct 2024 17:23:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
-	t=1728660207;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=x+uzJgAZKr0aQskZeYDshW8VRu9nH9afBqYYtu8uge4=;
-	b=BkKdV6cvGSL2VVmCHgZHtvvMduAME43++YaCcGI1vW5aZhaCeH6rvzvpMZqanlABN0qGdI
-	TO5Eg6T+zPnoGSqe/eJ8Bi7AJD0AEsSm35xVOJKXHZPIxCKrIwOo9+ay2dty13XTksXixY
-	NdtBHZ5k9mYh3L9toHtex9VzwQHBipo=
-Date: Fri, 11 Oct 2024 17:23:27 +0200
-From: Pavel Machek <pavel@ucw.cz>
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Werner Sembach <wse@tuxedocomputers.com>, Armin Wolf <W_Armin@gmx.de>,
-	Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
-	lee@kernel.org, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
-	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
-	onitake@gmail.com, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
- TUXEDO NB04 devices
-Message-ID: <ZwlC750GojkprUKg@duo.ucw.cz>
-References: <b6f2244d-7567-49ac-b2db-23b632a4e181@tuxedocomputers.com>
- <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <Zvxjo/CYXmKw2jjM@duo.ucw.cz>
- <rdo2yyy5dxsxrfm7bweuuvsqjzjelyevo5xvufixuiyrdlf7pc@mprc7pzbpnla>
- <Zv0YI3qIEg88Dx4c@duo.ucw.cz>
- <hdahq2vfi3bnvaqswwdtave2kc2qm3ngvcwn6cgfiirfjfbqnz@zk77mbs3yktp>
- <Zv54/T+6znqZB3X9@duo.ucw.cz>
- <ysidntvhwmqwe5o6rpshtoam674lwnkook747ni5dbf4z5sf3a@vdf44xu2ydjz>
+	s=arc-20240116; t=1728660320; c=relaxed/simple;
+	bh=BFXrgxxhISJ+7Uaw6TVt3fItaWeUMXeer5e2tUgjZCY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WFRaAXD82DJa6+skrMd5AJKJHrudjOSMBStyK3/s3bhvFrx5hiQZpvwPOwBdDPoZy1NHlOai4SiAxnNcLyEpFh61wP6YpVgHBjXfkWAuQ7l61M2sr6mseLHegJqoJQbx6apxdbjzLaNY336WE+3hHz/szZJcZVZWyh6DF3G/bXU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BK2Wx1nQ; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a994ecf79e7so346069366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:25:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728660317; x=1729265117; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=QsXJDCgX6fwc5qsa7NPDMdUYqXNZRcpChgNHDZln06U=;
+        b=BK2Wx1nQRGRvuZEIMYjWjvA43to60f7u5AxFugiilU2Gg+SzPt9XG+2Pfp1ggqmnrm
+         B5lOZalKHxPsvr5jMXJ0i1Oyv3pYYR7rbNBIxdnRGEOq95dm47H+8r47LgRSt7ztuQF2
+         lLnGHss7COfU+WZ+34E2SNBVF+89yBM8KoEDcKubwIbwviAZgIntc0uaqzgIVsKEFO8P
+         fi7hRtLos/4wt46DV4zPQhrT33VcyRNL1Iqrt7EDBkz5hgL3cUf2P5PjYyuG/i9EdS5J
+         zXX5RwUXtSzemyJhyK5U/FvlDiJcjd1Zmg44aaLLjOjYzvUO1uakZmglX2H2tIkXzj78
+         IuOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728660317; x=1729265117;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QsXJDCgX6fwc5qsa7NPDMdUYqXNZRcpChgNHDZln06U=;
+        b=hV/D7drP7wE/9haznaX3L6mX+JByZ1ikgLNC1HxDQRhjeyLn7W2eB6Xj3mh7W0lApm
+         v01Sh3yUb1a+hsqmCiXulnlGjN8Aqq5h2nrkuAGqnJecCn9pJTDST6/cPfEMHjX0MnaT
+         k+9IOM1+0YEN11fMsXpCaZXHt8IUOSZB9PhkK6lp4rU/InFAdCFm1T+EW+iwQw/po/gA
+         prbcxbFtuOd/u7sozKOS5B2RNVWRRVPqdEFzW66NJuRaXstzL/TVhPAFnz0LTrDi48kH
+         07/Y2vgvw76Vs/LjhcMTNhlbOKMG3exOd6s4IoubSpGROiNv/YTTqmIA5T47kvquJJK4
+         DT6A==
+X-Forwarded-Encrypted: i=1; AJvYcCWNc+jkYRz7WMrFm/NyasGA8Y3cx+aOonKVApjR64lQd3BI6+S2Kv76q4g15w44PBGP8CG7rxCl3oW8zHE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQMaD3IkYqDIlEzgHNNXivr/c3JeECw0cp5uLMy061nWmy+y5Z
+	QdbpVjiAp6qAS/2FU7w+0N1c8XzbCVtT0+uL0BXBf/bsTjSM86lAcB0LHFT7cnrKyJmIvDh18Ya
+	jitE=
+X-Google-Smtp-Source: AGHT+IHcX1oM2qPUneU/fjoYGwZo8cYrdHhAfJshhNlnyAPLLinoIFd2vTte1Rw7te3MDHrTiSHbtg==
+X-Received: by 2002:a17:907:f18e:b0:a99:62a4:3fc1 with SMTP id a640c23a62f3a-a99b9630fd8mr256343266b.49.1728660316869;
+        Fri, 11 Oct 2024 08:25:16 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25dc6sm222623266b.72.2024.10.11.08.25.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 08:25:16 -0700 (PDT)
+Message-ID: <b3c1431e-9a5d-4c38-ae7d-605d4a2cf3ac@linaro.org>
+Date: Fri, 11 Oct 2024 16:25:15 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha1;
-	protocol="application/pgp-signature"; boundary="2TcMguCtEoo8TZyh"
-Content-Disposition: inline
-In-Reply-To: <ysidntvhwmqwe5o6rpshtoam674lwnkook747ni5dbf4z5sf3a@vdf44xu2ydjz>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] media: dt-bindings: Add
+ qcs6490-rb3gen2-vision-mezzanine
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org,
+ konradybcio@kernel.org, hverkuil-cisco@xs4all.nl,
+ cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com,
+ will@kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+ <20241011140932.1744124-3-quic_vikramsa@quicinc.com>
+ <nsylilmzl6zzukpgih65kmeibbllek6dpgryzkso2ttpuztk2x@3q5xiujcdujo>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <nsylilmzl6zzukpgih65kmeibbllek6dpgryzkso2ttpuztk2x@3q5xiujcdujo>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 11/10/2024 15:50, Krzysztof Kozlowski wrote:
+> On Fri, Oct 11, 2024 at 07:39:26PM +0530, Vikram Sharma wrote:
+>> The qcs6490-rb3gen2-vision-mezzanine is a mezz on top of the
+>> qcs6490-rb3gen2 core kit. The vision mezzanine includes the
+>> IMX577 camera sensor.
+>>
+>> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+>> ---
+>>   Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>>   1 file changed, 1 insertion(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> index 5de6290cd063..f00851f30d3e 100644
+>> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+>> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+>> @@ -390,6 +390,7 @@ properties:
+>>                 - fairphone,fp5
+>>                 - qcom,qcm6490-idp
+>>                 - qcom,qcs6490-rb3gen2
+>> +              - qcom,qcs6490-rb3gen2-vision-mezzanine
+> 
+> Shouldn't this be an overlay?
+> 
+> Best regards,
+> Krzysztof
+> 
 
---2TcMguCtEoo8TZyh
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Because of broken bootloaders which don't do overlays, we've been adding 
+additional dts instead.
 
-Hi!
+For preference everybody would run u-boot, grub or another reasonable 
+bootloader that can apply an overlay.
 
-> > > There is a slight difference between mouse support and LEDs on your
-> > > keyboard. The former is actually required to bring up the machine and=
- to
-> > > use it, the latter is nice to have.
-> >=20
-> > But that's not the difference that matters. Linux is not microkernel,
-> > and is trying to provide hardware abstractions. (Except for printers,
-> > I guess that's because printers are often network devices).
-> >=20
-> > Besides, mouse was not required to bring up a machine "back then".
-> >=20
-> > Besides,
-> >=20
-> > 1) using those keyboards in dark room without backlight is hard,
-> > because their labels are translucent and not having enough contrast.
-> >=20
-> > 2) rainbow effects make people ill.
->=20
-> And I agree with you here. And that's also why I agree with Werner's
-> plan: have a minimum support in kernel for that with the already
-> supported LED class, which is supported by UPower and others, and let
-> the ones who want the fancy effects be in charge of their mess.
+Last time I checked there was no support for dtbo upstream in the kernel 
+itself.
 
-But the patch being proposed does not match the this description,
-right?
+greps
 
-And for hardware I seen, "minimum driver" you describe would be
-already 90% of the full driver. (We can just use fbdev interface...)
+grep -r of_overlay_fdt_apply *
 
-Anyway, lets do it. I have rgb keyboard, you have few, and we have
-Tuxedocomputers with machines where driver can't live in userspace.
-If you have working driver, lets see it. I have posted my copy, but I
-hae problem where keyboard functionality stops working when its
-loaded. Can you help?
+Hmm, does this do what I think it does ? Its news to me if there's a way 
+to do this in the kernel now TBH.
 
-Then we can see how much of the driver is required for basic
-functionality. I suspect it will be fairly easy to turn it into "full"
-driver at that point.
+Otherwise the sad situation with shipping bootloaders means we are 
+pretty much stuck with the one blob which we can't apply an update to.
 
-> > Note how we have drivers for audio, LEDs, cameras, dunno, iio sensors,
-> > none of that is required to bring system up.
-> >=20
-> > We need driver for the WMI stuff in kernel. And that point it should
-> > be pretty clear proper driver/subsystem should be done.
->=20
-> Yes, and again, I never said we need to provide WMI to userspace.
+---
+bod
 
-Good.
-
-> What I want is:
-> - provide a minimum support on Linux using already existing APIs (LED
->   class)
-> - allow crazy people to do their thing if they want to have a rainbow
->   initiated by every key press
-> - ensure the minimum support of the LED class is not messed up when
->   people start using the HID LampArray API.
->=20
-> HID LampArray is a ratified standard by a few hardware makers already[0]
-> (Acer, Asus, HP, Logitech, Razer, SteelSeries and Twinkly apparently).
-
-I have yet to see HID LampArray device.
-
-Best regards,
-									Pavel
-
---=20
-People of Russia, stop Putin before his war on Ukraine escalates.
-
---2TcMguCtEoo8TZyh
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZwlC7wAKCRAw5/Bqldv6
-8qY2AKC+nAvGhkJI328sv8/1wPlLQa94/ACfdypXrZPZo6fWin1NoeaTgtYi2cc=
-=98+x
------END PGP SIGNATURE-----
-
---2TcMguCtEoo8TZyh--
 
