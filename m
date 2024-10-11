@@ -1,63 +1,77 @@
-Return-Path: <linux-kernel+bounces-360878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFDD99A0E2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:10:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D9EC99A0E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:10:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC7A6284F64
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:10:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6118D2853C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:10:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BF8210C09;
-	Fri, 11 Oct 2024 10:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C65EF21262A;
+	Fri, 11 Oct 2024 10:10:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="EPJ3lKWr"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bQ36qftg"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7750210C27;
-	Fri, 11 Oct 2024 10:10:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91360212622;
+	Fri, 11 Oct 2024 10:10:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641425; cv=none; b=a8iZADKrQVfvf99vqxrCirD9P8nPSjv/vM4Gy3B1ZJbV1TKGi8FoL0N8SlhtF6Qi0YwUihqx9safHrIzjUsr/Yt5XDRICPDQ4bZzH9KAn0G+HTe3/PHdboyblpaSak2r1TPk0kgnc5nVwV13q22qZN7euFVu1+tJ9pjOE4p2B9Y=
+	t=1728641430; cv=none; b=jukfQHLvlesk/X2gVeC2T+iinPimGhOU8RtYVw72MbSSl4SVb4iqY50anv4DfjERnDKykE5/CnO8N6nXIJQHjy9qxxCtviwyP8nLLJ6Y4kwx+GJqkMRwRQjMB71LBFwrCsTrJdrnEBFv3LvKEjzQPzRUdeRvSm+MM/5sJ5bm2+k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641425; c=relaxed/simple;
-	bh=tdmDXej+rruq9iIm4BoqsPRVc/PA6H40VSSFlvwIaTw=;
+	s=arc-20240116; t=1728641430; c=relaxed/simple;
+	bh=3RbFEEJnoKS/e7NOWTYtQJLCiaeAfK0OKuMjVXkA7BA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PajXbTPjoED2qVVOWoITt1R2R39NmwTH1MPPMof9gnF+gBhFXwpBNSwu3HEzBx3BFf/dO2WpxceuUeumBA0ATZ1UFFLJtyu9SJ+gpAbCEHSBjYxvonxcokZm02DxdfI7b/qNd44tF9xemdbAWB9NavdFaFTjaKwrx3fpKf+4oIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=EPJ3lKWr; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 02A7AE0005;
-	Fri, 11 Oct 2024 10:10:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728641415;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4i8ziNlMdl8ESAarVBofsjoLASi00Z6Fpv46DYhhRFw=;
-	b=EPJ3lKWr8jcFNYNEXo75/BSGhR0Mf7KNanp/+hQcwp99pScQEHSBH2Ajrvz0bxfh4OQKtp
-	klX+JrkXmUwtKlVvZ3bxVSTHI14mhnG8tVbluOxsr9g2YukEAjsL+RfWXshGMSIxO0pyXv
-	jZwZVUBBsMEO3SqAQhNwA8HcXL3dWz4xRDBljOJFdBYLByUQWdU9N79NpIJ43yM40bgnHL
-	ijV1JORHtHi3ELUQR3XI/3oj9bZ6NnPNpAkZmQlDg2/Dj5+EwWMz5nODDzcaG3ISiZXbbp
-	MDuWi8DqyT9VmkyQ9cOUZ78KE9HckDTJSaC9/7vKm6L5Gig9dhIkDymNJVmKqQ==
-Date: Fri, 11 Oct 2024 12:10:14 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Linux4Microchip@microchip.com, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Lewis Hanly <lewis.hanly@microchip.com>,
-	pierre-henry.moussay@microchip.com
-Cc: linux-rtc@vger.kernel.org, devicetree@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=uaDc4A+1ZBr8f+/UiSSHyHyV+TqC9O4rmOfqdtJ0Ad13C3r9MBgC7cGjgsm5TeETOgXvg5Sm9qFItRYYZ/LBEAePxxC6HvQH/Lrs9x3EzKg8Ylm6FJXdDWbA+WJj3isNyNkHWOPoVXzuTxOq5lYFlCnqdrjs7CXZHbURO1WgFmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bQ36qftg; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728641429; x=1760177429;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3RbFEEJnoKS/e7NOWTYtQJLCiaeAfK0OKuMjVXkA7BA=;
+  b=bQ36qftgHr048hxsOgCH84b3DZOp66qNpKUYnHTckQ/NFHgk7VA50KSj
+   nXEmj6YBHNhNEEzAQpLclVgbtbi5uof6dgDyHUvv6Wtp5NFsboJ1ZRXM4
+   5hx9lsjmNAOJ9exKtWwB1XrzaRXMSOEsqPLuNpD4pup+JEz+4PMDaRy5V
+   CHM0Zml3mTKEhvUR5a4PM6HZD6EVLDVNbygQ3pkfwVOOKjwdKZgWIniCl
+   LiCP5YH2GQMMykbpWbnqlBAyRl/4//RmqxICIiJzfTXiYrUQz62Og1wH/
+   qPOfzIuYS6+RSifaW3hmx5A5YYgGAGJERondfjjtQ8iNeXHxfu/Lv1q09
+   w==;
+X-CSE-ConnectionGUID: J4RJlz2uSHeAY1+WqjmgBQ==
+X-CSE-MsgGUID: z9KndGW/SP6A3pWThf9zlg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="45547649"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="45547649"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:10:26 -0700
+X-CSE-ConnectionGUID: M3WpYnsLRQmDT1wa9hEkBA==
+X-CSE-MsgGUID: Lszo2Nq9QNCE6gtktpDaFA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="76772806"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:10:23 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szCbE-00000001qxR-36js;
+	Fri, 11 Oct 2024 13:10:20 +0300
+Date: Fri, 11 Oct 2024 13:10:20 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: vamoirid <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: (subset) [linux][PATCH v2 13/20] dt-bindings: rtc: mfps-rtc: Add
- PIC64GX compatibility
-Message-ID: <172864134907.862705.466406904401257658.b4-ty@bootlin.com>
-References: <20240930095449.1813195-1-pierre-henry.moussay@microchip.com>
- <20240930095449.1813195-14-pierre-henry.moussay@microchip.com>
+Subject: Re: [PATCH v1 08/13] iio: chemical: bme680: add power management
+Message-ID: <Zwj5jBm-_9_FX6ms@smile.fi.intel.com>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-9-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,23 +80,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20240930095449.1813195-14-pierre-henry.moussay@microchip.com>
-X-GND-Sasl: alexandre.belloni@bootlin.com
+In-Reply-To: <20241010210030.33309-9-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, 30 Sep 2024 10:54:42 +0100, pierre-henry.moussay@microchip.com wrote:
-> PIC64GX is compatible with mfps-rtc without any additional feature
+On Thu, Oct 10, 2024 at 11:00:25PM +0200, vamoirid wrote:
+> From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > 
-> 
+> Add runtime power management to the device. To facilitate this, add also
+> a struct dev * inside the bme680_data structure to have the device
+> accesible from the data structure.
 
-Applied, thanks!
+...
 
-[13/20] dt-bindings: rtc: mfps-rtc: Add PIC64GX compatibility
-        https://git.kernel.org/abelloni/c/78f57f8c7a81
+> --- a/drivers/iio/chemical/bme680.h
+> +++ b/drivers/iio/chemical/bme680.h
+> @@ -75,6 +75,7 @@
+>  #define BME680_CALIB_RANGE_3_LEN               5
+>  
+>  extern const struct regmap_config bme680_regmap_config;
+> +extern const struct dev_pm_ops bmp280_dev_pm_ops;
 
-Best regards,
+Is pm.h being included already in this header? Otherwise you need to add it.
+
+...
+
+>  	struct regmap *regmap;
+>  	struct bme680_calib bme680;
+>  	struct mutex lock; /* Protect multiple serial R/W ops to device. */
+> +	struct device *dev;
+
+Is it the same that you may get wia regmap_get_device()?
+
+>  	u8 oversampling_temp;
+>  	u8 oversampling_press;
+>  	u8 oversampling_humid;
+
+...
+
+> +	/* Enable runtime PM */
+> +	pm_runtime_get_noresume(dev);
+> +	pm_runtime_set_active(dev);
+> +	pm_runtime_enable(dev);
+> +	pm_runtime_set_autosuspend_delay(dev, BME680_STARTUP_TIME_US * 100);
+> +	pm_runtime_use_autosuspend(dev);
+> +	pm_runtime_put(dev);
+
+Can we use devm_pm_runtime_enable() for some of the above?
+
+> +	ret = devm_add_action_or_reset(dev, bme680_pm_disable, dev);
+> +	if (ret)
+> +		return ret;
+
+...
+
+> +static int bme680_runtime_resume(struct device *dev)
+> +{
+> +	struct iio_dev *indio_dev = dev_get_drvdata(dev);
+> +	struct bme680_data *data = iio_priv(indio_dev);
+> +	int ret;
+> +
+> +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
+> +	if (ret)
+> +		return ret;
+> +
+> +	fsleep(BME680_STARTUP_TIME_US);
+> +
+> +	ret = bme680_chip_config(data);
+> +	if (ret)
+> +		return ret;
+
+> +	ret = bme680_gas_config(data);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return 0;
+
+	return bme680_gas_config(...);
+
+> +}
+
+...
+
+> +EXPORT_RUNTIME_DEV_PM_OPS(bme680_dev_pm_ops, bme680_runtime_suspend,
+> +			  bme680_runtime_resume, NULL);
+
+You also need pm.h for the macro IIRC.
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+With Best Regards,
+Andy Shevchenko
+
+
 
