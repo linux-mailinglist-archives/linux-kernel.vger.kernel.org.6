@@ -1,92 +1,103 @@
-Return-Path: <linux-kernel+bounces-361624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 567F299AA97
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:42:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6491999AA9D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03D862853B7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:42:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CCF6FB25AA7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:43:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AE2D1D0979;
-	Fri, 11 Oct 2024 17:39:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816031C1ADB;
+	Fri, 11 Oct 2024 17:40:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kJDthcDV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hq5/iFLl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0A401C9B81;
-	Fri, 11 Oct 2024 17:39:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCBAE1BD4E7;
+	Fri, 11 Oct 2024 17:40:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728668373; cv=none; b=ASMOgbtSoDSqzZEkBs8nPaAhnt1DI+q5jFr3NYvkdUaHgX2i5eJrOxZNuf1YU8Bhls0y3b/UBjZ4btbRRp2fGDk9cIVEN2r7VEAs0R/2Tdw8sDo4b/TyrIbWwwK+JJtoAY3OEWWJCQMsUiIE+G0V4dMDV7WOgN3ocBLawRNYatk=
+	t=1728668414; cv=none; b=HeZq/zrSugugKe9Y3u2YfjAiP6Io8AK2r5w08MDoGHgNciQptyJDk3z/Se6p1CYlAtHcYXRPuzt28Q5pZihbLyLlnWxMgMVWdcvCty8VtsqrEdaVP3wHzZxsryArMeRLuRX1FLThQ7NQu9V7hrffz1mVyVe1vrcLsmrkxR1fW0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728668373; c=relaxed/simple;
-	bh=VNnp30uwfjWqvy4NVapgi+LtAjMkx2x6Xh+V0F6TxJc=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=f1xRhGuIcgh966WoucX0ZuIksybc6ju3zxRVlOnS+qw9IdpRlPZ5qvKiHf9Bk5hpZF0Bc+4dJVtAAhenn6LwOKI1qk0pzr0awyQzrDCoky7wCKO8QUJ+NMhdhjw9UDIN+fS0HI0t91W9XnDfP+dwF4Txq2CeGfdL3jBIPMDzJ4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kJDthcDV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7552BC4CEE9;
-	Fri, 11 Oct 2024 17:39:33 +0000 (UTC)
+	s=arc-20240116; t=1728668414; c=relaxed/simple;
+	bh=M+hdYJlFyL0OZx5yExYHmOFQXmQgma78xTFYbCNq0io=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=DJ8ImsDZXT4Q1h7atgxfuoZ2vGp5ADAYtcT9qcpYRiQrOWpC4Vf7OSl4TNFmeoywXdACtixo13eHDqar5zp9c8GG/0bNTIstn2mAhzCApWkzKSc9YhY7yWUOVMh97ESc7ZZU05bFZaMyQ8qzDHZHKKEFeI24zGJhfmRezgncgHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hq5/iFLl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 683F1C4CED2;
+	Fri, 11 Oct 2024 17:40:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728668373;
-	bh=VNnp30uwfjWqvy4NVapgi+LtAjMkx2x6Xh+V0F6TxJc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=kJDthcDVPT+fOdB96517oOtcGm0m3SXUyyyWEK2FgWFZ8xjiGJthcTa39kt9LGO8M
-	 PE+/v8ddA1+4Q6452OBCFcbS9SzxKN0UD5TaNF+Vy9JRFSdYlOxQGhIbVL66kWVP/E
-	 mV99ayR/nKSFjbdiBvpbPbS/jek1OgZyIfMK3hte6axmB6ouN2HKnwjx8aEQq4weo7
-	 sqYkJvKkkN5xHtfaOEfm2IDIX7vsJvUfrPu3wRZabIyMNJhl/EDsmJHesuxFQsj7tB
-	 4BPBSReKsUbjEKOPmvAI8LxHjooCOTgmBCffS/jR0je7iohCqid5Ay6pTrKlDN1CF8
-	 8SpwPYInwxGNA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id BADCFCE0FEF; Fri, 11 Oct 2024 10:39:32 -0700 (PDT)
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: frederic@kernel.org,
-	rcu@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	kernel-team@meta.com,
-	rostedt@goodmis.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Subject: [PATCH v2 rcu 13/13] srcu: Improve srcu_read_lock_lite() kernel-doc comment
-Date: Fri, 11 Oct 2024 10:39:31 -0700
-Message-Id: <20241011173931.2050422-13-paulmck@kernel.org>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <3b82ac1a-8786-4a27-8eff-ecc67b50dfb6@paulmck-laptop>
-References: <3b82ac1a-8786-4a27-8eff-ecc67b50dfb6@paulmck-laptop>
+	s=k20201202; t=1728668414;
+	bh=M+hdYJlFyL0OZx5yExYHmOFQXmQgma78xTFYbCNq0io=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Hq5/iFLllAr4TOwrmWCx/OtZ6lEhPewnjt2QHTTPaiS9es2MxaPaQ9tOOPSMmatuW
+	 H5WYkBrCZWOO2TC44R1i7mJMvDnM70C9Ga+bkyDs1JYQIwp/Je6BtuEPRNysW78ZsV
+	 ZxOnRFjdbkhzobrMz0DY0/IRM/TNVQa5t9c50hlJLUPdYS4Ys3zuYVDu+nYFh2FsmH
+	 nh7yMenHDsUa6iN3s1SRsAKkVcgs9hEUJGKgisaLHPemhYd61TU4iAJs2mAZyHXwJK
+	 C4BupP+G5UfZ8BAPE90P+K1RCXjPrtD55FsNyqqGj6T3TwGsJpZfTMDFgE/fkSuwYP
+	 ry/j/vttLiRyg==
+Received: by mail-io1-f50.google.com with SMTP id ca18e2360f4ac-8354c496c90so72108739f.3;
+        Fri, 11 Oct 2024 10:40:14 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCW0Niv9xYzju7/i4/w1xpt8nGb3ARvdQ0yL54EwOzmJwkZJZttSg9VEXknmzbfpQ4iQwk8krB1ZlKL6katH@vger.kernel.org, AJvYcCXMVH2POQJcuQUVWyZzx8qV1rFbOMxufYLZ+o385v5seBGXLdFA/BMLur5vMrBeghWlZG89wYSAlmL7G7Oq@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcCS0b1ox8Vzq2kccQl776jqa9fQR7QRIGbib41scro3bUp02Y
+	fbs0Vu6fNYxwPTbvXJ47284Kz8i+2oAHQ2Bf/lgzy3rMEwUyj7qWK8gQ8/D8Qcpjfh5LEO4lYmx
+	GQ1oZ7yBMVC7FfdLR09HS/aHQQP8=
+X-Google-Smtp-Source: AGHT+IEw7zHvzixrCNkcdvbFz3a6TBhJkMVm8ycQ5AOQZEAi5W1sZlvl3yEl5OfWvfU5y3PKoFGNOr/ijiz/Acz/JZs=
+X-Received: by 2002:a05:6e02:18cd:b0:3a0:a71b:75e5 with SMTP id
+ e9e14a558f8ab-3a3bcdb421amr2020225ab.7.1728668413737; Fri, 11 Oct 2024
+ 10:40:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241002214637.3625277-1-song@kernel.org>
+In-Reply-To: <20241002214637.3625277-1-song@kernel.org>
+From: Song Liu <song@kernel.org>
+Date: Fri, 11 Oct 2024 10:40:02 -0700
+X-Gmail-Original-Message-ID: <CAPhsuW6nv=-wEaoPxB_+VQTkfnvYzBtfjbrg2EeNK7jjN6V83g@mail.gmail.com>
+Message-ID: <CAPhsuW6nv=-wEaoPxB_+VQTkfnvYzBtfjbrg2EeNK7jjN6V83g@mail.gmail.com>
+Subject: Re: [PATCH bpf-next 0/2] security.bpf xattr name prefix
+To: bpf@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, brauner@kernel.org, viro@zeniv.linux.org.uk, 
+	jack@suse.cz
+Cc: kernel-team@meta.com, andrii@kernel.org, eddyz87@gmail.com, ast@kernel.org, 
+	daniel@iogearbox.net, martin.lau@linux.dev, kpsingh@kernel.org, 
+	mattbobrowski@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Where RCU is watching is where it is OK to invoke rcu_read_lock().
+Hi Christian, Al, and Jan,
 
-Reported-by: Andrii Nakryiko <andrii@kernel.org>
-Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
----
- include/linux/srcu.h | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
+Could you please review and share your comments on this set?
 
-diff --git a/include/linux/srcu.h b/include/linux/srcu.h
-index 4ba96e2cfa405..bab1dae3f69e6 100644
---- a/include/linux/srcu.h
-+++ b/include/linux/srcu.h
-@@ -270,7 +270,8 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
-  * synchronize_rcu_expedited(), IPIs and all.
-  *
-  * Note that srcu_read_lock_lite() can be invoked only from those contexts
-- * where RCU is watching.  Otherwise, lockdep will complain.
-+ * where RCU is watching, that is, from contexts where it would be legal
-+ * to invoke rcu_read_lock().  Otherwise, lockdep will complain.
-  */
- static inline int srcu_read_lock_lite(struct srcu_struct *ssp) __acquires(ssp)
- {
--- 
-2.40.1
+Thanks,
+Song
 
+On Wed, Oct 2, 2024 at 2:47=E2=80=AFPM Song Liu <song@kernel.org> wrote:
+>
+> Follow up discussion in LPC 2024 [1], that we need security.bpf xattr
+> prefix. This set adds "security.bpf" xattr name prefix, and allows
+> bpf kfuncs bpf_get_[file|dentry]_xattr() to read these xattrs.
+>
+>
+> [1] https://lpc.events/event/18/contributions/1940/
+>
+> Song Liu (2):
+>   fs/xattr: bpf: Introduce security.bpf xattr name prefix
+>   selftests/bpf: Extend test fs_kfuncs to cover security.bpf xattr names
+>
+>  fs/bpf_fs_kfuncs.c                            | 19 ++++++++-
+>  include/uapi/linux/xattr.h                    |  4 ++
+>  .../selftests/bpf/prog_tests/fs_kfuncs.c      | 40 ++++++++++++++-----
+>  .../selftests/bpf/progs/test_get_xattr.c      | 30 ++++++++++++--
+>  4 files changed, 78 insertions(+), 15 deletions(-)
+>
+> --
+> 2.43.5
 
