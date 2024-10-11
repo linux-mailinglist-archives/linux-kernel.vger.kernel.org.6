@@ -1,80 +1,81 @@
-Return-Path: <linux-kernel+bounces-360928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89E0999A176
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:35:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28F2C99A177
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0D852808EC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:35:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3B1DD1C21215
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:35:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5215F20CCCA;
-	Fri, 11 Oct 2024 10:35:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9455C21265D;
+	Fri, 11 Oct 2024 10:35:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Xs/dNG5/"
-Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Efzr0/2M"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E8771E32BA
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 419421E379F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:35:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728642903; cv=none; b=W/3aCegGoOFNlcF3qcW1Gs5W/WyOYeYklYkH9+Gr7qrUOe0sSkXDjXdXt52Th1z4nuJKB41n8hknKtgfvrfOK8de6SeHys9D6CZriOtMhDBOEUnwQFrCiNB+9kDx16LNtIFA9fre5Mr41/jP75/ojpNeaxfOkZo9UxhAnamh3Ao=
+	t=1728642905; cv=none; b=dGNU8A8PNL8CBA/Z3ooBz1swVxzVqiexZ0fak3cxYZvLk1COmvOeHZyx3kwf4JFxuPodDC+zuV/5Yv5AIXtcqCM0pCBf0C6wS3S8EJgtfHXOZsocr6MXSNnwCBBMaOu/7lJ4DXJ4ZFYjZdBdDM0fDCRPj55LCWHo22GsV0rC9P8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728642903; c=relaxed/simple;
-	bh=nqZ0vrX/2zxXYKJcMCOl0Qb02TFK4XdFmJnEQkjxTu0=;
+	s=arc-20240116; t=1728642905; c=relaxed/simple;
+	bh=KywBnJ6zPTZmJYG3G3wLfX8yMpxHMr3g+ZUm5jRHVVc=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Q9z8VtcDtI0jV8QzTOvvwENW2XmuyaM9Cxi6TWaVpKL1qgYOs7+u3db55/n/Br1hOLh4TcaLWMaeJzOoduJKDnPJLzHPylBAEikRDLYR3L5dYa4aBMBF0X/wqH+La31H8x78n34WwTwu70gyq4XQUueHZAuVZ5esXhg9uwGdhtc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Xs/dNG5/; arc=none smtp.client-ip=209.85.208.45
+	 MIME-Version; b=SVR1oJozgtAnBJIb/VmaCXowJTdOxR8pSSCsTshNuYWWiYBdwzUAWCMlvGm9uQVRre6BNST0BmMKFTj/8Cij2rXtNlqvFiUZegIAbF7g9Yg2ztuvkMCuN1VCYjtk65KiEPMo6iJqsrFU/d3O6YCMq/5LIvteIOTrXNyEj5ZI56A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Efzr0/2M; arc=none smtp.client-ip=209.85.218.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c9150f9ed4so2377306a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:35:01 -0700 (PDT)
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a993302fa02so299500566b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:35:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1728642900; x=1729247700; darn=vger.kernel.org;
+        d=9elements.com; s=google; t=1728642901; x=1729247701; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=uN5BnFsKMozjRRq3SSZ25lyYVWbfWWj0lagNsicv9cw=;
-        b=Xs/dNG5/VLuSDtKJZXG7YKEF3WJ+fNEzonocNVuLhcqD7UoRA4Tpig2GwSliGn1OQ2
-         c6vpWZNlxNKXOmPMHLnHTa0zkIv8ZFyEKdAkj1PDtBxC926KIfyp9679qrMMYdyEcpks
-         fW2QByc3s7POsMbAciC/FRi+ejxvl9KwD0uRtOxK4F5sDVSUcTF8YtbHmDHYjE99aNss
-         OvQ40EAEevUwUK9DS/R16FGTz34oQ8QKG3WSFT560dMaIU5FyVeXDRRZupakPrjITwmc
-         oND2fsqG3E4/c3guXTQuDyOQoePnoS8uyikMVX90cjN8a/7wXbJVeOy6ynfszxdZkwUa
-         UhsA==
+        bh=/SaYY+AtVB7em+W4exLN3hxNWJekHWEFD8Olho91rT8=;
+        b=Efzr0/2Mk4HYN5xQToflDK+/blOrXjMiI9+YAY455wmZ9n51vrDvzN7khQOlr5xP9X
+         PCFCI86uLOQ+9ffBWK3oBWcrea8/OG8NjzehI/73SYdZcz5Of1LZ+Tj/aqlt0MvBWrJm
+         TS6qQs57GsOfJNb+dkP89o/uS9JM+63toOjCKCmdJhA0KbgS3HsC9r+tou+xZdySYmYu
+         fKQqOCD2SQHkze7buxsVwA3Iak2oFEKzVeoWcbZdTHBiHDifY0g+tY10AcdLX+bSWS1S
+         l4cUhz3nNt9V5wAoBclVHoBSIjQXFOHw0nIAt37oifkZ0AVoTdAQlKJQ7sTbWXYgh7aC
+         M/Iw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728642900; x=1729247700;
+        d=1e100.net; s=20230601; t=1728642901; x=1729247701;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=uN5BnFsKMozjRRq3SSZ25lyYVWbfWWj0lagNsicv9cw=;
-        b=vjRCFEp7aBWFbsuo+1Egc66E8FzrVZSx98ar7TwAxDSdjPS8pDl0USTqXMCKU8Cdij
-         4E+CFzeHrDJm7b0AqF1g7R3cioxTju+Nhf32t+IN2DsjqB4cSsSczvZNHNFU5Do5VCTl
-         GcZLR6R7567MWnvP9YYP1lX1ifrEaBc8rsnHBE5HiwP39UZWEP0f4EOBCQblnJt59ANV
-         4iJr+UXRr5FD2Bh5pVIGfosEuoGCH5ZK3IvYHkojGVsqRk5FEzO4zcjbAvmH1nvYW3iJ
-         BUjFUdp/YWaqqS85miBqKAMUgvYehGaKP2NnsF7JAl2WiuK3fF91/yXv5Gpf1TFqbqts
-         C8+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVhs008e3OCit5AfvdZSWrCojcqDDeVL004AGnZxUaCwZivMYafivrFxy5tjeEXFiGKkOL2EM3QKjqxuXk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVTHGDfw4XU7GG/kzazp+XWtUl6vjFKzhhDu9CzolfrVXu07KQ
-	8MZOKXxfNn0WW392XkgV5vQNe/xoLIRBNlQzTHLP+sxx7YMGbWnkn4JCH17hBls=
-X-Google-Smtp-Source: AGHT+IHmIweIkLJye6Erb8jP3HC9O8b8p7BBTT5AwSNsII6eU8WVB7/0uOYMUP8NBJepkMNO3R3m1g==
-X-Received: by 2002:a17:906:cadf:b0:a99:78a5:77d7 with SMTP id a640c23a62f3a-a99b941f114mr173503566b.5.1728642899722;
-        Fri, 11 Oct 2024 03:34:59 -0700 (PDT)
+        bh=/SaYY+AtVB7em+W4exLN3hxNWJekHWEFD8Olho91rT8=;
+        b=Sc56qE/1qgmKnmE7BT7MgECJmjIkwNyZimWFsjZds8Ii8wAFIG9kHtODK29pcNe0yO
+         MVJLncVdeIr8k4X6N+6p4BfV5kt6/Cggy/Ms6ngF8eM90NwN2ZfSzAZ01Vw/Du0Tc3KY
+         npUtLq+fnjfaApvJeISRP1zEw1eiV28Z74SAtO2lKrDy8/PKadHxOyHl+13lfV+PAHyC
+         W0E63a/zPvDoxljApzgd/3YXeX2R8dxzT6RDP88UUlx60Ve8sqvu0QjKp2ERs0J8gXus
+         MNX3GQ6rNNxxeJl7/isCR2BG91gan4JSeQW8Uwu6kvB9DmGb/RrKRIFd+/uPPRZNSR3o
+         gggg==
+X-Forwarded-Encrypted: i=1; AJvYcCUdJTJnFD3RZOd9izNTvpeyREAAyZN7LUwD5Lvk3HGYqHCW6TzX48Ni4FN4oNa+qjiCCi9fSLWnLTu6cPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM7XZP8mn/amY2zTDjCuLw5XpQCIleSj8ayq2FcXinaQjgUvN4
+	7RdRwMsTBT7gmcXCTHOFGCEYsztsvU8RD+tN7AE7mDEuSAfABB2o0H9+Hm4ldNzKrkg3ay5jJ1H
+	4fc8=
+X-Google-Smtp-Source: AGHT+IELx6/9afAmAU4e05SnZVhUICTVfb+96LCeVIZV6uV7pDo0nHnPRI/3W3xE5NUNttjfNY7xeQ==
+X-Received: by 2002:a17:907:970f:b0:a99:4275:baf4 with SMTP id a640c23a62f3a-a99b937a62fmr143435866b.18.1728642901573;
+        Fri, 11 Oct 2024 03:35:01 -0700 (PDT)
 Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f29besm195353466b.211.2024.10.11.03.34.59
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f29besm195353466b.211.2024.10.11.03.35.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 03:34:59 -0700 (PDT)
+        Fri, 11 Oct 2024 03:35:01 -0700 (PDT)
 From: Patrick Rudolph <patrick.rudolph@9elements.com>
 To: u-boot@lists.denx.de,
 	linux-kernel@vger.kernel.org
 Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
 	Simon Glass <sjg@chromium.org>,
 	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v7 18/37] drivers/cpu: Add generic armv8 cpu driver
-Date: Fri, 11 Oct 2024 12:22:59 +0200
-Message-ID: <20241011102419.12523-19-patrick.rudolph@9elements.com>
+Subject: [PATCH v7 19/37] arm: gic-v3-its: Rename objects
+Date: Fri, 11 Oct 2024 12:23:00 +0200
+Message-ID: <20241011102419.12523-20-patrick.rudolph@9elements.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241011102419.12523-1-patrick.rudolph@9elements.com>
 References: <20241011102419.12523-1-patrick.rudolph@9elements.com>
@@ -86,177 +87,51 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Add a generic driver that binds to armv8 CPU nodes. The generic driver allows
-- to enumerate CPUs present in a system, even when no other driver binds it
-- generates ACPI SSDT code for each CPU
-- Fill the ACPI MADT table (implemented in a follow up patch)
+The code accesses the gic-v3 node, but not the gic-v3-its node,
+thus rename the objects to clarify which node it operates on.
 
-The newly introduced code could also be reused on other CPU drivers that are
-compatible with armv8.
-
-TEST: Booted on QEMU sbsa and verify the driver binds to CPU nodes.
-      Confirmed with FWTS that all ACPI processor devices are present.
+The following commit will make use of the gic-v3-its node for real.
 
 Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
 Reviewed-by: Simon Glass <sjg@chromium.org>
-Cc: Tom Rini <trini@konsulko.com>
-Cc: Simon Glass <sjg@chromium.org>
 ---
-Changelog v4:
-- Export armv8_cpu_fill_ssdt to use it in other CPU drivers
-Changelog v6:
-- Update header order
+ arch/arm/lib/gic-v3-its.c | 10 +++++-----
+ 1 file changed, 5 insertions(+), 5 deletions(-)
 
----
- drivers/cpu/Kconfig     |  6 ++++
- drivers/cpu/Makefile    |  2 ++
- drivers/cpu/armv8_cpu.c | 73 +++++++++++++++++++++++++++++++++++++++++
- drivers/cpu/armv8_cpu.h | 21 ++++++++++++
- 4 files changed, 102 insertions(+)
- create mode 100644 drivers/cpu/armv8_cpu.c
- create mode 100644 drivers/cpu/armv8_cpu.h
-
-diff --git a/drivers/cpu/Kconfig b/drivers/cpu/Kconfig
-index 5c06cd9f60..9c0df331d7 100644
---- a/drivers/cpu/Kconfig
-+++ b/drivers/cpu/Kconfig
-@@ -26,6 +26,12 @@ config CPU_RISCV
- 	help
- 	  Support CPU cores for RISC-V architecture.
+diff --git a/arch/arm/lib/gic-v3-its.c b/arch/arm/lib/gic-v3-its.c
+index 2cc0a32f9d..22fa46a341 100644
+--- a/arch/arm/lib/gic-v3-its.c
++++ b/arch/arm/lib/gic-v3-its.c
+@@ -35,10 +35,10 @@ static int gic_v3_its_get_gic_addr(struct gic_v3_its_priv *priv)
+ 	int ret;
  
-+config CPU_ARMV8
-+	bool "Enable generic ARMv8 CPU driver"
-+	depends on CPU && ARM64
-+	help
-+	  Support CPU cores for armv8 architecture.
-+
- config CPU_MICROBLAZE
- 	bool "Enable Microblaze CPU driver"
- 	depends on CPU && MICROBLAZE
-diff --git a/drivers/cpu/Makefile b/drivers/cpu/Makefile
-index bc75d9b974..773395693a 100644
---- a/drivers/cpu/Makefile
-+++ b/drivers/cpu/Makefile
-@@ -6,10 +6,12 @@
+ 	ret = uclass_get_device_by_driver(UCLASS_IRQ,
+-					  DM_DRIVER_GET(arm_gic_v3_its), &dev);
++					  DM_DRIVER_GET(arm_gic_v3), &dev);
+ 	if (ret) {
+ 		pr_err("%s: failed to get %s irq device\n", __func__,
+-		       DM_DRIVER_GET(arm_gic_v3_its)->name);
++		       DM_DRIVER_GET(arm_gic_v3)->name);
+ 		return ret;
+ 	}
  
- obj-$(CONFIG_CPU) += cpu-uclass.o
+@@ -158,13 +158,13 @@ int gic_lpi_tables_init(u64 base, u32 num_redist)
+ 	return 0;
+ }
  
-+
- obj-$(CONFIG_ARCH_BMIPS) += bmips_cpu.o
- obj-$(CONFIG_ARCH_IMX8) += imx8_cpu.o
- obj-$(CONFIG_ARCH_AT91) += at91_cpu.o
- obj-$(CONFIG_ARCH_MEDIATEK) += mtk_cpu.o
-+obj-$(CONFIG_CPU_ARMV8) += armv8_cpu.o
- obj-$(CONFIG_CPU_IMX) += imx8_cpu.o
- obj-$(CONFIG_CPU_MPC83XX) += mpc83xx_cpu.o
- obj-$(CONFIG_CPU_RISCV) += riscv_cpu.o
-diff --git a/drivers/cpu/armv8_cpu.c b/drivers/cpu/armv8_cpu.c
-new file mode 100644
-index 0000000000..19f072be43
---- /dev/null
-+++ b/drivers/cpu/armv8_cpu.c
-@@ -0,0 +1,73 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2024 9elements GmbH
-+ */
-+#include <cpu.h>
-+#include <dm.h>
-+#include <acpi/acpigen.h>
-+#include <asm/armv8/cpu.h>
-+#include <dm/acpi.h>
-+#include <asm/io.h>
-+#include <linux/bitops.h>
-+#include <linux/printk.h>
-+#include <linux/sizes.h>
-+
-+static int armv8_cpu_get_desc(const struct udevice *dev, char *buf, int size)
-+{
-+	int cpuid;
-+
-+	cpuid = (read_midr() & MIDR_PARTNUM_MASK) >> MIDR_PARTNUM_SHIFT;
-+
-+	snprintf(buf, size, "CPU MIDR %04x", cpuid);
-+
-+	return 0;
-+}
-+
-+static int armv8_cpu_get_info(const struct udevice *dev,
-+			      struct cpu_info *info)
-+{
-+	info->cpu_freq = 0;
-+	info->features = BIT(CPU_FEAT_L1_CACHE) | BIT(CPU_FEAT_MMU);
-+
-+	return 0;
-+}
-+
-+static int armv8_cpu_get_count(const struct udevice *dev)
-+{
-+	return uclass_id_count(UCLASS_CPU);
-+}
-+
-+#ifdef CONFIG_ACPIGEN
-+int armv8_cpu_fill_ssdt(const struct udevice *dev, struct acpi_ctx *ctx)
-+{
-+	uint core_id = dev_seq(dev);
-+
-+	acpigen_write_processor_device(ctx, core_id);
-+
-+	return 0;
-+}
-+
-+struct acpi_ops armv8_cpu_acpi_ops = {
-+	.fill_ssdt	= armv8_cpu_fill_ssdt,
-+};
-+#endif
-+
-+static const struct cpu_ops cpu_ops = {
-+	.get_count = armv8_cpu_get_count,
-+	.get_desc  = armv8_cpu_get_desc,
-+	.get_info  = armv8_cpu_get_info,
-+};
-+
-+static const struct udevice_id cpu_ids[] = {
-+	{ .compatible = "arm,armv8" },
-+	{}
-+};
-+
-+U_BOOT_DRIVER(arm_cpu) = {
-+	.name		= "arm-cpu",
-+	.id		= UCLASS_CPU,
-+	.of_match	= cpu_ids,
-+	.ops		= &cpu_ops,
-+	.flags		= DM_FLAG_PRE_RELOC,
-+	ACPI_OPS_PTR(&armv8_cpu_acpi_ops)
-+};
-diff --git a/drivers/cpu/armv8_cpu.h b/drivers/cpu/armv8_cpu.h
-new file mode 100644
-index 0000000000..2c4b0252cf
---- /dev/null
-+++ b/drivers/cpu/armv8_cpu.h
-@@ -0,0 +1,21 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+/*
-+ * Copyright 2024 9elements GmbH
-+ */
-+#include <dm/acpi.h>
-+#include <dm/device.h>
-+
-+#ifndef _ARMV8_CPU_H_
-+#define _ARMV8_CPU_H_
-+
-+/**
-+ * armv8_cpu_fill_ssdt() - Fill the SSDT
-+ * Parses the FDT and writes the SSDT nodes.
-+ *
-+ * @dev: cpu device to generate ACPI tables for
-+ * @ctx: ACPI context pointer
-+ * @return:	0 if OK, or a negative error code.
-+ */
-+int armv8_cpu_fill_ssdt(const struct udevice *dev, struct acpi_ctx *ctx);
-+
-+#endif
-\ No newline at end of file
+-static const struct udevice_id gic_v3_its_ids[] = {
++static const struct udevice_id gic_v3_ids[] = {
+ 	{ .compatible = "arm,gic-v3" },
+ 	{}
+ };
+ 
+-U_BOOT_DRIVER(arm_gic_v3_its) = {
++U_BOOT_DRIVER(arm_gic_v3) = {
+ 	.name		= "gic-v3",
+ 	.id		= UCLASS_IRQ,
+-	.of_match	= gic_v3_its_ids,
++	.of_match	= gic_v3_ids,
+ };
 -- 
 2.46.2
 
