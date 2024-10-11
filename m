@@ -1,113 +1,105 @@
-Return-Path: <linux-kernel+bounces-360972-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2745E99A1EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:47:00 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0173E99A1EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:47:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A37A6286E4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:46:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83955B24EFD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:47:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4593210C11;
-	Fri, 11 Oct 2024 10:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18D20FA9A;
+	Fri, 11 Oct 2024 10:47:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="SEetEDZk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="oALMfKyY"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 906EB20FA99
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85C1A20B1E9;
+	Fri, 11 Oct 2024 10:47:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643589; cv=none; b=LKaVFUT4bKj5NU7dLTQdUZtU7cfjELG/BmnRb6kzxeky/daJQtHn0OwxuFNGhXvblzH2/sEIypcgR8B4f7MgQfQqh611i1748MwJfjItJ3vxST3T5CWDEy1+PbrYhMCGeNd6cGu0LXJkQF8YezNegSQ7/jPphojDsOOG0rLwcHA=
+	t=1728643635; cv=none; b=LcbTL50VUGl/5AvFnyKRC5XLxV6VjdgeEOY+aXBrjcI6ughL12ecKA4pXT1ak1DZNLa+riOUASd5985n/ty//150BFIVnbCDz7Gs3q/MWf0SrREDOEO0V4r0fUu+u36DilmlfUrSS52Y5CLEsFIotXlTitzedex3nIAhxHHIGYQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643589; c=relaxed/simple;
-	bh=z+hoVd7HmcKFQ/KTSjaNHnElfpGbfutvAi0O+nOwq8Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=He7BO5VLmNU38MA6euigViOUVF0FB8l4ytBjqlYGzejCpqwRtrHyCwUFhXcXjZW/rcJMBGpXEQkVlEmjZj1iTiTvfLAbVnwjIwHpT7yY7WGcVX+OZG1WHUmGnnchRZ6yK+TN3ZXo64duITP6CuOwnvFw5oXJoWV/Gp5dLG58Koc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=SEetEDZk; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728643586;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z+hoVd7HmcKFQ/KTSjaNHnElfpGbfutvAi0O+nOwq8Q=;
-	b=SEetEDZknmECjNs84g2tda2hmGutCB1vK+gIJTK/8yMfHgSaxASeGihub392da+Q0ZNI8r
-	TjM2BIWpDQFPUDQ99Yzl2zRyIZ651MxPTzbKEjPKg/b3z+v4KErPGAGKjVQwp5qpaA4S4C
-	K8olNC+N/lDKL4g5pQgRMQpAm2f7gFM=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-139-l155edFSOHmteR1o2o1EEw-1; Fri, 11 Oct 2024 06:46:25 -0400
-X-MC-Unique: l155edFSOHmteR1o2o1EEw-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a9953ddfa4fso151280566b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:46:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728643584; x=1729248384;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=z+hoVd7HmcKFQ/KTSjaNHnElfpGbfutvAi0O+nOwq8Q=;
-        b=ekoF3YILACvODPOEKZhbc0lwpU6b1sXuW7zfAi9RYGUH7bHjDIxfeHrQYpkNuQpTfK
-         TO1kzv1n9p892waXT9/N3SDKxcOxX96GrF5e4efLPfKUx5ydue4y32pHaalPT4oTrSTC
-         TLLyQ0VAcCLQRPSgyWpQTmYvj0vMJRbgcOvaL54RVjQ1Twq9Bpgw9LlHk/yLPGinH4qW
-         DFYM+dS1dCSAs7ZqgZfm+dc3s52mlqQqCNgJUPTsrSMbWLRUdQ0Ucht+iMqEotxOkoXZ
-         nNnK75yoww7kQghs9DO1jPWeg5isNa9Wl8UGGgrX7TI2DieLcWSmQp0QS5AXosiQr+nY
-         32tQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVjc0m8s4ZHHgE7gVT4w3kI4qzBWtpoKphxIX0/EsKSV8grY+dvNoMjO5f+zlVxSjysc6Dto197y0WZ3aU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqwjCpzeLj9Yo2zfUQl+bFMPNQR18OVQzfu6DTQH2oShvW7l89
-	BN36/h+9NgK6Ju83l2R5K84a4dTWQnNFbP8JOIuJghViEG2lP+kLQsPO4mWMovjddwaMO1FZ+CP
-	3Z6A7bfU+KKU/7yV3v87mmx/x1PaHUGKVbhwEuf0ncRCqbA2iPmrvK4S5AaiWRATf0LWeZWoRTH
-	GQSJKXmegswEcg8fNXOxtRgoOlKSzjR4x7NQXy
-X-Received: by 2002:a17:907:940c:b0:a8d:29b7:ecf3 with SMTP id a640c23a62f3a-a99b930e9d1mr174008266b.13.1728643584081;
-        Fri, 11 Oct 2024 03:46:24 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGtGhhBlf70YMusmFyFxV2Hg8ctO2ko4xKYjA3/oDoChs6bbjyeJoZL0B/QuxqamTFe+DEMr33r9jaigl1hvCU=
-X-Received: by 2002:a17:907:940c:b0:a8d:29b7:ecf3 with SMTP id
- a640c23a62f3a-a99b930e9d1mr174006566b.13.1728643583712; Fri, 11 Oct 2024
- 03:46:23 -0700 (PDT)
+	s=arc-20240116; t=1728643635; c=relaxed/simple;
+	bh=e4ng021xGTHS1X1b3UQjGH4+V7Gq8ouwcuISOdxjeDU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZwqLqFprCUvm9NnAuuQFp1tXOyGoRzSsz9exIEiTYqeP5R96QOKN17oGbX43BLhAiiHFnD22pbSKoM/DNsgDqEwMXy47DLtfMRnS/IeHZmVBMmhInNoNyKX0KdAP93J36EJw8wMXKD2MAMXKjL7ZIktbxaXEXITlm4WPA4UlhmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=oALMfKyY; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728643621; x=1729248421; i=wahrenst@gmx.net;
+	bh=e4ng021xGTHS1X1b3UQjGH4+V7Gq8ouwcuISOdxjeDU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=oALMfKyYHmOpqrD/UwIW+7/JP9wlq78+ZvTpp1jbnhVu/ioD0rD8jl89enIoU4Mf
+	 IqsuJlwfINvq9zAaO95h3NVO18p/Cofw//gQzOgFH5K0EbVZQr10eq/eXye9o7/IC
+	 kI3ALa67r9ONMW47D5L378yPDs5dy3/dBmzcHTqA1xJwmEIZVR9cOQYNVYZpb5RMh
+	 AfCnpPuWcStQd30wwJP7J7K96HmJz4WemV6SU0yJJw0hFMaSUd5/fmnvgxnOXV5FL
+	 Qup6t+4ZzUtcgYvYa43Q2euXY3W16sJ2/9JFpCh3sDWr5atvnoeOG/+INwtA/io8R
+	 8BVC6n6iVGkwPXTsJw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1Mel3t-1tZNT62mSD-00eNK9; Fri, 11
+ Oct 2024 12:47:01 +0200
+Message-ID: <84f5a045-de3b-48f6-8c20-f04c7f818844@gmx.net>
+Date: Fri, 11 Oct 2024 12:47:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241004095014.2492813-1-tglozar@redhat.com> <20241004095014.2492813-4-tglozar@redhat.com>
- <20241010160637.4340b269@gandalf.local.home>
-In-Reply-To: <20241010160637.4340b269@gandalf.local.home>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Fri, 11 Oct 2024 12:46:12 +0200
-Message-ID: <CAP4=nvSk1ZWM5NfU1oov+P1245BRuKuSp-6M=fFQ9Xpo1EVSSg@mail.gmail.com>
-Subject: Re: [PATCH RESEND v3 3/6] rtla/utils: Add idle state disabling via libcpupower
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	jwyatt@redhat.com, jkacur@redhat.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] staging: vchiq_core: Do not log debug in a separate
+ scope
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+References: <20241011072210.494672-1-umang.jain@ideasonboard.com>
+ <20241011072210.494672-4-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241011072210.494672-4-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Provags-ID: V03:K1:pwx38uK1X7HbvZkvkdF4TtdxfaCwr6hOdlfpMKsNG+2KaOdSMIK
+ rc5u1oRccxWAdVLvNiAY+AWYlpQcENn/eMdHWcgeX+hsCSHhrAxgkcjsulvPkCSIQJ6FS5m
+ ZToIe/jGz57MF4fs6BdviB0rpG9ygqqtaXzsai0RKy4wTWljB2CltjnQvOlQL7UCrxqJ5sP
+ 5zNIM8/M3XR3hrpH0wO/Q==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:2EeTUd2qz6o=;e4NQsPGuDRQBvDzIgvJmQq9Yyhp
+ AaCTNqtE/kfMTBAxCRShjJY/w0G2vgw7Zdv/KypE1BCqeHKgGrsb2cthzjvqqFOMPY71GeMPr
+ CsQWqP5o/aVg+fm1zDOqZXOynGha5IBCsXeF9kR7V7LReqyCR+rdpIbcXoX29p22PRJVIGD1p
+ z3kN726Ehy0msydS2RoxdQNyofT9f0Gz+mo+unSSzXLKB3Mm5+ESn3q192Adv43iUeFGGfSE2
+ cLiXA/hHHCQfcuO2k8cRIesfohJZ81gVLQ7j/0TzBLppJghkmsmnPOSrVzIpeaPBcXtIcFVoD
+ t3/XP+pRe/G6F+lxFSDBD0vtSz3WBBgQtdz5Cx2Uxn5w08ga0KEkemZrIK8t9Jq64oIZ4/qnx
+ KfBL5D0F51SnqEu304l82DpqPEks0dOAdREaFa6HNMr4x7P6j4O98/uX3itmb4sYaPDpfnucn
+ qu4g/v5HWlUQMB0SMXAD0/7HYHHTuvI2pd/UWjP3OlAqIvh5s2nNmFyUPo9CBEP9ccGLZdA02
+ yd6DxfxK4yaGMwz646SUsiYWpbtKyRWxwIRIPDJ5D/Mt2b0OohZYvTVpqioU5/VVFQ3No++qQ
+ JvDDjUU0P1aPRgfNvj+zaeg7LoymRqsbNawN0HkSJTwuxQX/NF7BBJsE9ucwlDyItbG2AZowr
+ imVMM68D4JfJ8lgdfhw4c0t+xPhUTsS3tBdF2jh1c2LTQdDabAEbfaCCN7QRi9ZknWVHyhg/N
+ XiKx8sENiE91ipSpxl+kXpvAdSttL51FC/HwUj23E3BLp13HdPQXWPcNCfr+5cfSnqsaihMgK
+ WMehLLY+A/uC3agmGU9MFrfQ==
 
-=C4=8Dt 10. 10. 2024 v 22:06 odes=C3=ADlatel Steven Rostedt <rostedt@goodmi=
-s.org> napsal:
+Am 11.10.24 um 09:22 schrieb Umang Jain:
+> Do not log a dev_dbg() with a separate scope. Drop the {..}
+> scope and align the dev_dbg() to make it more readable.
 >
-> If nr_states is zero, this returns 0 without ever allocating
-> saved_cpu_idle_disable_state.
+> No functional changes intended in this patch.
 >
->> ...
->
-> This returns -1 even if nr_states is zero. That is,
-> save_cpu_idle_disable_state() can return success, but this restore will
-> return failure.
->
-> -- Steve
-
-Oh I see: there might be no idle states to save,
-saved_cpu_idle_disable_state doesn't get allocated at all, and then
-restore_cpu_idle_disable_state behaves as the saves weren't saved
-before. Checking for nr_state should fix that; I'll send a v3.
-
-Tomas
-
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+Reviewed-by: Stefan Wahren <wahrenst@gmx.net>
 
