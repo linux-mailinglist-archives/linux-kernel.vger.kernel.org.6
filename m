@@ -1,195 +1,219 @@
-Return-Path: <linux-kernel+bounces-360762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07086999F33
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44E18999F35
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:44:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 322B61C22556
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:41:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B0A871F238BF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:43:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E2620B211;
-	Fri, 11 Oct 2024 08:41:47 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCAAC1F4FA8;
-	Fri, 11 Oct 2024 08:41:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16CC720B216;
+	Fri, 11 Oct 2024 08:43:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="Z6lvzrqv"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9FB1120ADD9;
+	Fri, 11 Oct 2024 08:43:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636107; cv=none; b=TRt3UnI0wdpFc62+CJDEjxGreUWcrAJVW8RyrM1y+THPmIoPJA04meEXYeEfhdBiOUxyPhaGB69FBLdoM2zOayhLNnEP17j24wCiXNp5liRWeljQO9RbizDiLPocNDeF4oqqjhkCmC1SxgTzUPtAeUKc1+exi7nUYxnD9zmWKKs=
+	t=1728636231; cv=none; b=Fmd/X+CH5Nsi9cDwUAHSFFdOZVM5HNQZee0bJjTbH5e4jsRlimjTM2KXpuG2CD7fLLwNANQg2MqZ+kuQzh7gi8qh66r7jmNmXrqjUezi+ryko44d75B591RO5lFZwpcpxfNN0BYLW6g9we58RFGBlOLReGST2ZEl+dEm/X0bJLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636107; c=relaxed/simple;
-	bh=TsaX9sLl/cgUZRltwcJab4+UieqnsGy4utuPV8gZMuk=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=c8t0ttC1zv6IHqKVFGAPdNvWFPk8oYGtcmghbaYEdCzzp28ZycOCq/u220U6UfbPYB8OizQBQ1Y03OhbDhFd9EIu49gye75CwiYqQl5dTQvmel/i8TUeqxO8hSzo8xB8SXk97r9+Lf+yk3+wDfjxswr2hHJQhhMed8ma2Qu7Wys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CFD77497;
-	Fri, 11 Oct 2024 01:42:07 -0700 (PDT)
-Received: from [10.1.32.10] (PF4Q20KV.arm.com [10.1.32.10])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 937593F64C;
-	Fri, 11 Oct 2024 01:41:35 -0700 (PDT)
-Message-ID: <a7d63300-27a2-4121-9327-40426a66afe3@arm.com>
-Date: Fri, 11 Oct 2024 09:41:39 +0100
+	s=arc-20240116; t=1728636231; c=relaxed/simple;
+	bh=m4iic7uKAXnsL6uCrTkkS8/BqTZS/Mc3ys/B02K28sE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=dRmwCPfqXlTbp1okYQVXBhs/bsw6cQlasgmImcK0y/SsaWYfSuyb7qO06ZbXtDS1JT2CoipmqCmAMM4BkHb6EXx2mJ11SbCSiY0UlWRZfBZhukDPNE9++wsTHXQHrpPkNhc2GL6YmOSWi3vHAPGheWxozOFHk8JVylpVqKpx9xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=Z6lvzrqv; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
+	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=reuDQlwZETnYSzS/i7ijoLlelnSTU2XRw/IvwMzVWMQ=; b=Z6lvzrqv5WpV5ajzRR/JH6hisw
+	dg1veub6KgDb9AV1WD8qUiRRk8EiTl51ZC5GVO0zbAgcMvBZwYGufCH2haBjfbx/CM3DDq7sr9dQs
+	07dztG9S5r4ggIjCqSXp8S9FiuyBDR2hNeXLh/wYw316xmyA2z65xRvwEyn5khM781blw10YTfgn5
+	UoshcCss63COWkW1F4SMHNCXXgofjrBecZF4GJoptW7KsLoKsJSazL5L15CPDnI/PoPzdthOYzc0v
+	7RbJalfaxHxJ357BL4Z23cvP/x8uJGcXo1lYSesI6xw9aLk6FCXSNll8MMPEKutfzxnQEV8Cj3X0O
+	k2L2tMpA==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1szBFP-0005Ig-7T; Fri, 11 Oct 2024 10:43:43 +0200
+From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
+To: Dragan Simic <dsimic@manjaro.org>,
+ Diederik de Haas <didi.debian@cknow.org>
+Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org
+Subject:
+ Re: [PATCH v2] arm64: dts: rockchip: Add dtsi file for RK3399S SoC variant
+Date: Fri, 11 Oct 2024 10:43:42 +0200
+Message-ID: <1999678.yKVeVyVuyW@diego>
+In-Reply-To: <D4SU6WHZCN34.2XL5W4D2T188G@cknow.org>
+References:
+ <c32622e4a6897378d9df81c8c3eda1bdb9211e0b.1728632052.git.dsimic@manjaro.org>
+ <20da65423e77e13511cc7c7bb39e0246@manjaro.org>
+ <D4SU6WHZCN34.2XL5W4D2T188G@cknow.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Leo Yan <leo.yan@arm.com>
-Subject: Re: [PATCH v1 3/3] perf probe: Generate hash event for long symbol
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, Dima Kogan <dima@secretsauce.net>,
- james.clark@linaro.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241007141116.882450-1-leo.yan@arm.com>
- <20241007141116.882450-4-leo.yan@arm.com>
- <20241011003408.f9bacf4e5899e88a94c3d7cd@kernel.org>
- <fab219bc-fabd-42b7-b42f-d92851b1d2f3@arm.com>
- <20241011120733.5660c80f8f93e9659fa5a254@kernel.org>
-Content-Language: en-US
-In-Reply-To: <20241011120733.5660c80f8f93e9659fa5a254@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 7Bit
+Content-Type: text/plain; charset="us-ascii"
 
-On 10/11/2024 4:07 AM, Masami Hiramatsu (Google) wrote:
-
-[...]
-
->>> OK, personally, I recommend you to specify event name instead of generating
->>> long event name in this case. But I understand sometimes this kind of feature
->>> is good for someone.
->>
->> Sometimes, users try to add probe for long symbol and returns error, but there
->>   have no clue for proceeding.
+Am Freitag, 11. Oktober 2024, 10:33:56 CEST schrieb Diederik de Haas:
+> Hi Dragan,
 > 
-> OK, no warning messsage is not good.
-> It should warn them to recommend adding it with their own event name too.
+> On Fri Oct 11, 2024 at 10:23 AM CEST, Dragan Simic wrote:
+> > On 2024-10-11 10:00, Diederik de Haas wrote:
+> > > On Fri Oct 11, 2024 at 9:40 AM CEST, Dragan Simic wrote:
+> > >> Following the hierarchical representation of the SoC data that's been 
+> > >> already
+> > >> established in the commit 296602b8e5f7 ("arm64: dts: rockchip: Move 
+> > >> RK3399
+> > >> OPPs to dtsi files for SoC variants"), add new SoC dtsi file for the 
+> > >> Rockchip
+> > >> RK3399S SoC, which is yet another variant of the Rockchip RK3399 SoC.
+> > >> ...
+> > >> The RK3399S variant is used in the Pine64 PinePhone Pro only, [1] 
+> > >> whose board
+> > >> dts file included the necessary adjustments to the CPU DVFS OPPs.  
+> > >> This commit
+> > >> effectively moves those adjustments into the separate RK3399S SoC dtsi 
+> > >> file,
+> > >> following the above-mentioned "encapsulation" approach.
+> > >> ...
+> > >> ---
+> > >> ...
+> > >>  .../dts/rockchip/rk3399-pinephone-pro.dts     |  23 +---
+> > >>  arch/arm64/boot/dts/rockchip/rk3399-s.dtsi    | 123 
+> > >> ++++++++++++++++++
+> > >>  2 files changed, 124 insertions(+), 22 deletions(-)
+> > >>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
+> > >> 
+> > >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts 
+> > >> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> > >> index 1a44582a49fb..eee6cfb6de01 100644
+> > >> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> > >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
+> > >> @@ -13,7 +13,7 @@
+> > >>  #include <dt-bindings/input/gpio-keys.h>
+> > >>  #include <dt-bindings/input/linux-event-codes.h>
+> > >>  #include <dt-bindings/leds/common.h>
+> > >> -#include "rk3399.dtsi"
+> > >> +#include "rk3399-s.dtsi"
+> > >> 
+> > >>  / {
+> > >>  	model = "Pine64 PinePhone Pro";
+> > >> @@ -456,27 +456,6 @@ mpu6500@68 {
+> > >>  	};
+> > >>  };
+> > >> 
+> > >> -&cluster0_opp {
+> > >> -	opp04 {
+> > >> -		status = "disabled";
+> > >> -	};
+> > >> -
+> > >> -	opp05 {
+> > >> -		status = "disabled";
+> > >> -	};
+> > >> -};
+> > >> -
+> > >> -&cluster1_opp {
+> > >> -	opp06 {
+> > >> -		opp-hz = /bits/ 64 <1500000000>;
+> > >> -		opp-microvolt = <1100000 1100000 1150000>;
+> > >> -	};
+> > >> -
+> > >> -	opp07 {
+> > >> -		status = "disabled";
+> > >> -	};
+> > >> -};
+> > >> -
+> > >>  &io_domains {
+> > >>  	bt656-supply = <&vcc1v8_dvp>;
+> > >>  	audio-supply = <&vcca1v8_codec>;
+> > >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi 
+> > >> b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
+> > >> new file mode 100644
+> > >> index 000000000000..e54f451af9f3
+> > >> --- /dev/null
+> > >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
+> > >> @@ -0,0 +1,123 @@
+> > >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> > >> +/*
+> > >> + * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
+> > >> + */
+> > >> +
+> > >> +#include "rk3399-base.dtsi"
+> > >> +
+> > >> +/ {
+> > >> +	cluster0_opp: opp-table-0 {
+> > >> +		compatible = "operating-points-v2";
+> > >> +		opp-shared;
+> > >> +
+> > >> +		opp00 {
+> > >> +			opp-hz = /bits/ 64 <408000000>;
+> > >> +			opp-microvolt = <825000 825000 1250000>;
+> > >> +			clock-latency-ns = <40000>;
+> > >> +		};
+> > >> +		opp01 {
+> > >> +			opp-hz = /bits/ 64 <600000000>;
+> > >> +			opp-microvolt = <825000 825000 1250000>;
+> > >> +		};
+> > >> +		opp02 {
+> > >> +			opp-hz = /bits/ 64 <816000000>;
+> > >> +			opp-microvolt = <850000 850000 1250000>;
+> > >> +		};
+> > > 
+> > > Is there a reason why there isn't a line separator between the various
+> > > opp nodes? Normally there is one between nodes.
+> > > Note that in rk3588-opp.dtsi there are no separator lines between the
+> > > opp nodes, while they do exist between other nodes.
+> > > And in rk356x.dtsi the opp nodes do have a separator line.
+> >
+> > That has also bothered me. :)  I already had a look around in various
+> > dts(i) files long time ago and there seems to be no preferred layout.
 
-Okay, will do this in next spin.
+I guess "with" lines in between is sort-of preferred in general.
+I sometime add them in new board-dts when applying and noticing them,
+but also sometimes miss them.
 
->> Either we automatically generate a hashed name, or a guidance in the failure
->> log for setting event name would be helpful. If you have concern for hashed
->> name, maybe we can refine the log to give info for setting event name?
+I guess empty lines are helpful when the nodes are "not the same",
+but I guess for OPPs it doesn't matter so much, as the individual nodes
+are all the same.
+
+
+But in the end, I guess just follow the other OPPs in rk3399 for now ;-)
+[as this patch does]
+
+> I'm inclined to say the opp ones are the odd ones.
 > 
-> Yeah, I think this long event name is not useful for user to type.
-
-Agreed.
-
->>> BTW, I would like to confirm. Can't we demangle the symbol name and parse it?
->>
->> I did test for C++ demangle symbols with the command:
->>
->>    perf probe -x /mnt/test_cpp_mangle -F --demangle
->>
->> The command doesn't work as I cannot see it output correctly for demangled
->> symbols. But I don't look into details why this does not work at my side.
+> > In this particular case, it's better to have no separator lines because
+> > that's what we already have lacking in rk3399.dtsi, rk3399-t.dtsi, etc.,
+> > so running something like "diff rk3399.dtsi rk3399-s.dtsi" makes it easy
+> > to see what actually differs in the RK3399 SoC variants, without having
+> > to filter out any whitespace differences.
 > 
-> Oops, that is another issue to be solved.
+> Besides that inconsistencies always seem to 'trigger' me, I especially
+> noticed it as this patch changed it from having separator lines to
+> having no separator lines.
+> 
+> Cheers,
+>   Diederik
+> 
 
-After install libiberty, then I can see the tool can show demangled symbols.
-However, I found another issue for probing demangle symbol, please see details
-in below patch and let me know if makes sense.
 
----8<---
-
-From 3b09a6f89c7e383c6b1d2b7e6bd80c6bfa658d5b Mon Sep 17 00:00:00 2001
-From: Leo Yan <leo.yan@arm.com>
-Date: Fri, 11 Oct 2024 07:58:08 +0000
-Subject: [PATCH] perf probe: Correct demangled symbols in C++ program
-
-An issue can be observed when probe C++ demangled symbol with steps:
-
-  # nm test_cpp_mangle | grep print_data
-    0000000000000c94 t _GLOBAL__sub_I__Z10print_datai
-    0000000000000afc T _Z10print_datai
-    0000000000000b38 T _Z10print_dataR5Point
-
-  # ./perf probe -x /home/niayan01/test_cpp_mangle -F --demangle
-    ...
-    print_data(Point&)
-    print_data(int)
-    ...
-
-  # ./perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
-    probe-definition(0): test=print_data(int)
-    symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
-    0 arguments
-    Open Debuginfo file: /home/niayan01/test_cpp_mangle
-    Try to find probe point from debuginfo.
-    Symbol print_data(int) address found : afc
-    Matched function: print_data [2ccf]
-    Probe point found: print_data+0
-    Found 1 probe_trace_events.
-    Opening /sys/kernel/tracing//uprobe_events write=1
-    Opening /sys/kernel/tracing//README write=0
-    Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xb38
-    ...
-
-When tried to probe symbol "print_data(int)", the log show:
-
-    Symbol print_data(int) address found : afc
-
-The found address is 0xafc - which is right if we connect with the
-output result from nm. Afterwards when write event, the command uses
-offset 0xb38 in the last log, which is a wrong address.
-
-The dwarf_diename() gets a common function name, in above case, it
-returns string "print_data". As a result, the tool parses the offset
-based on the common name. This leads to probe at the wrong symbol
-"print_data(Point&)".
-
-To fix the issue, use the die_get_linkage_name() function to retrieve
-the distinct linkage name - this is the mangled name for the C++ case.
-Based on this unique name, the tool can get a correct offset for
-probing. Based on DWARF doc, it is possible the linkage name is missed
-in the DIE, it rolls back to use dwarf_diename().
-
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/probe-finder.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 630e16c54ed5..28a14005fc1f 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -1583,8 +1583,21 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
-
-        /* Find a corresponding function (name, baseline and baseaddr) */
-        if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
--               /* Get function entry information */
--               func = basefunc = dwarf_diename(&spdie);
-+               /*
-+                * Get function entry information.
-+                *
-+                * As described in the document DWARF Debugging Information
-+                * Format Version 5, section 2.22 Linkage Names, "mangled names,
-+                * are used in various ways, ... to distinguish multiple
-+                * entities that have the same name".
-+                *
-+                * Firstly try to get distinct linkage name, if fail then
-+                * rollback to get associated name in DIE.
-+                */
-+               func = basefunc = die_get_linkage_name(&spdie);
-+               if (!func)
-+                        func = basefunc = dwarf_diename(&spdie);
-+
-                if (!func ||
-                    die_entrypc(&spdie, &baseaddr) != 0 ||
-                    dwarf_decl_line(&spdie, &baseline) != 0) {
---
-2.25.1
 
 
 
