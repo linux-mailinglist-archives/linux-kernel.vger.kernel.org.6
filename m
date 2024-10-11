@@ -1,138 +1,155 @@
-Return-Path: <linux-kernel+bounces-360491-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2613999BAC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:33:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35061999BBC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:40:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8BE1F2581D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:33:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D24E51F25B28
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:40:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D212209F21;
-	Fri, 11 Oct 2024 04:32:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16141F9428;
+	Fri, 11 Oct 2024 04:40:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NkNIeV18"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="WWmVV0SK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CAF2209685
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A8931F4FA8;
+	Fri, 11 Oct 2024 04:40:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728621143; cv=none; b=ivQthdRyDw/P7xk6PAlhZtUmZILksl/fhtXoA++RCuOhMbOQSACbHY+71gVt+p9GrRCSYdE5nGWDVwdtCFxlwXbXZjBUh1WHWKYUalto4ec8TahqRShZEJQ9em/jmQTrUflpb4borJU8hOp4TINkNyu2SW0cGV8Mynb0ETOfjRI=
+	t=1728621635; cv=none; b=i5jb+t9zldrCcmQGnTWDhJCCDBXK3XScVWV6umLtnbmum16egLsUtSmW2tBbL6iUBsT01xcwPwkywKbPL/KlFYr03+eYlyG4e+aQsdhfxj9yZZj52qZLiR6X0zKaYm1cLsClcgxvxe7XBRBmsSnBI+1yClgK+RIDcfVNJXTNnxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728621143; c=relaxed/simple;
-	bh=7l85wAhsV53A4Gthz5W2k1JJUWZgHM2JRy41YBqIVaM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LtU4kD9ajj2zKWbmGF89kDzb6UlwlyiLfHlYP71ndwqQ3j4AHgQo56LJ3izQyZHyMcbWidFvYqm0AgWMUYphI5JwD4gARHkQo9LqS7eOaRh78s+EOBYANZ9rcFfnmnjUFckMxSaGwC2YyBZRkZFxAJty76kESxBpRX/m0JpTu5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NkNIeV18; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728621142; x=1760157142;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=7l85wAhsV53A4Gthz5W2k1JJUWZgHM2JRy41YBqIVaM=;
-  b=NkNIeV18pNfEVTtyNTkr46ecJ0zPmkVsVMNT++NvwyNQA73F/d3DYmYr
-   xdtOeRS3ictqh9OcPItr0sjsM2BifzWg6OmN3BUZ9FufxO9gRKZqaJapq
-   eQiuL5poEHRAwz6K82CQN+ZD3NLFYoAEM6ZZLtfRz+NY+VyMW69aLdVvm
-   hSToa/e5DP+X76EICSLxXcVJQE37dOvROpMRYQWSUcA8ijJcmAtqZG4Zr
-   eRT8Tb+cPxiQ0do9DgjT/sC+oPB7JR9G7PX1LCwHZM5JjVi5FyISi7eNv
-   ONvuf5LR7WI4rA7GmjIDFOQMeLtSW3ciyO4IjfZFgQUuuRWxbWSVdkktJ
-   w==;
-X-CSE-ConnectionGUID: 1z/RSlTYRz67qlYGkZZp7w==
-X-CSE-MsgGUID: r0zgxQL2QYKctyhtOniD2g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="28101825"
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="28101825"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 21:32:22 -0700
-X-CSE-ConnectionGUID: yiET3efXSuW5MTeQPCTlnA==
-X-CSE-MsgGUID: mSPCexufQ8ScfnMgN9mQ0g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="81412261"
-Received: from allen-box.sh.intel.com ([10.239.159.127])
-  by fmviesa004.fm.intel.com with ESMTP; 10 Oct 2024 21:32:19 -0700
-From: Lu Baolu <baolu.lu@linux.intel.com>
-To: iommu@lists.linux.dev
-Cc: Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Kevin Tian <kevin.tian@intel.com>,
-	Yi Liu <yi.l.liu@intel.com>,
-	Vasant Hegde <vasant.hegde@amd.com>,
-	linux-kernel@vger.kernel.org,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Jason Gunthorpe <jgg@nvidia.com>
-Subject: [PATCH 7/7] iommu/vt-d: Refine intel_iommu_domain_alloc_user()
-Date: Fri, 11 Oct 2024 12:27:22 +0800
-Message-ID: <20241011042722.73930-8-baolu.lu@linux.intel.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241011042722.73930-1-baolu.lu@linux.intel.com>
-References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
+	s=arc-20240116; t=1728621635; c=relaxed/simple;
+	bh=fv7ZcG807Xn3XkqYXMc7par4sQR3IJcSD+cX+aEunVU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QLefQpamKkSBtwpEPzpQ7ctq0M14QoWcxgKTdqZt+nhm421OAq6Z/q/e05VNn1FBFfhiwgJm4gkgzHjkNLy1kWX6KASD8HJKFhklQyvY8xdEzQQ3MuRk9Q8BdIb0wYp2HqGF/4a77srg6TpcCQ4mZBO3zXuJ9ao7aECQ+cq+7/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=WWmVV0SK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F0939C4CEC3;
+	Fri, 11 Oct 2024 04:40:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728621634;
+	bh=fv7ZcG807Xn3XkqYXMc7par4sQR3IJcSD+cX+aEunVU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WWmVV0SKZrhfAKyDVF45vorJzXEuQ9GyG3iy2i+Vz7yDdoQnCEyX6gmSh8Wx21DvT
+	 PCfq2zLKOw0EVw3cJ8QLnWs8s+6uzTXfGqumlMrcEpuHpNkfnYYV242neIu3Kg2wee
+	 /dSfEi72bjjFc3iYaMF9jZK5vU7j1q8RovVPhmys=
+Date: Fri, 11 Oct 2024 06:30:58 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Guan-Yu Lin <guanyulin@google.com>
+Cc: Thinh.Nguyen@synopsys.com, mathias.nyman@intel.com,
+	stern@rowland.harvard.edu, elder@kernel.org, oneukum@suse.com,
+	yajun.deng@linux.dev, dianders@chromium.org, kekrby@gmail.com,
+	perex@perex.cz, tiwai@suse.com, tj@kernel.org,
+	stanley_chang@realtek.com, andreyknvl@gmail.com,
+	christophe.jaillet@wanadoo.fr, quic_jjohnson@quicinc.com,
+	ricardo@marliere.net, grundler@chromium.org, niko.mauno@vaisala.com,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-sound@vger.kernel.org, badhri@google.com,
+	albertccwang@google.com, quic_wcheng@quicinc.com,
+	pumahsu@google.com
+Subject: Re: [PATCH v4 3/5] usb: add apis for sideband uasge tracking
+Message-ID: <2024101104-feminist-gulf-97e3@gregkh>
+References: <20241009054429.3970438-1-guanyulin@google.com>
+ <20241009054429.3970438-4-guanyulin@google.com>
+ <2024100941-limping-dislodge-5c74@gregkh>
+ <CAOuDEK0a43yLhCoA8iq=stj+QQAmKTCVWGKHvKM6-GPEaN9C3g@mail.gmail.com>
+ <2024101021-vertigo-gopher-e487@gregkh>
+ <CAOuDEK01Ke9KZqPf6KOfXaAQRRvw-y0Vagd9NrP8e8_EG-w52g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOuDEK01Ke9KZqPf6KOfXaAQRRvw-y0Vagd9NrP8e8_EG-w52g@mail.gmail.com>
 
-The domain_alloc_user ops should always allocate a guest-compatible page
-table unless specific allocation flags are specified.
+On Fri, Oct 11, 2024 at 12:14:00AM +0800, Guan-Yu Lin wrote:
+> On Thu, Oct 10, 2024 at 2:33 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> >
+> > On Thu, Oct 10, 2024 at 01:30:00PM +0800, Guan-Yu Lin wrote:
+> > > On Wed, Oct 9, 2024 at 8:44 PM Greg KH <gregkh@linuxfoundation.org> wrote:
+> > > >
+> > > > On Wed, Oct 09, 2024 at 05:42:57AM +0000, Guan-Yu Lin wrote:
+> > > > > +             parent = parent->parent;
+> > > > > +     } while (parent);
+> > > >
+> > > > Woah, walking up the device chain?  That should not be needed, or if so,
+> > > > then each device's "usage count" is pointless.
+> > > >
+> > >
+> > > Say a hub X with usb devices A,B,C attached on it, where usb device A
+> > > is actively used by sideband now. We'd like to introduce a mechanism
+> > > so that hub X won't have to iterate through all its children to
+> > > determine sideband activities under this usb device tree.
+> >
+> > Why would a hub care?
+> >
+> 
+> Without the information of sideband activities on the usb devices
+> connected to the hub, the hub couldn't determine if it could suspend
+> or not.
 
-Currently, IOMMU_HWPT_ALLOC_NEST_PARENT and IOMMU_HWPT_ALLOC_DIRTY_TRACKING
-require special handling, as both require hardware support for scalable
-mode and second-stage translation. In such cases, the driver should select
-a second-stage page table for the paging domain.
+You are talking about an "internal" hub, right?  And isn't this already
+covered by the original sideband patchset?  If not, how is power
+management being handled there?
 
-Suggested-by: Jason Gunthorpe <jgg@nvidia.com>
-Signed-off-by: Lu Baolu <baolu.lu@linux.intel.com>
----
- drivers/iommu/intel/iommu.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+> > > This problem
+> > > is similar to runtime suspending a device, where rpm uses
+> > > power.usage_count for tracking activity of the device itself and
+> > > power.child_count to check the children's activity. In our scenario,
+> > > we don't see the need to separate activities on the device itself or
+> > > on its children.
+> >
+> > But that's exactly what is needed here, if a hub wants to know what is
+> > happening on a child device, it should just walk the list of children
+> > and look :)
+> >
+> > > So we combine two counters in rpm as sb_usage_count,
+> >
+> > Combining counters is almost always never a good idea and will come back
+> > to bite you in the end.  Memory isn't an issue here, speed isn't an
+> > issue here, so why not just do it properly?
+> >
+> 
+> By combining the two comments above, my understanding is that we should either:
+> 1. separating the counter to one recording the sideband activity of
+> itself, one for its children.
+> 2. walk the list of children to check sideband activities on demand.
+> Please correct me if I mistake your messages.
 
-diff --git a/drivers/iommu/intel/iommu.c b/drivers/iommu/intel/iommu.c
-index 70f3cbcc3160..02d0dc2c6490 100644
---- a/drivers/iommu/intel/iommu.c
-+++ b/drivers/iommu/intel/iommu.c
-@@ -3297,6 +3297,7 @@ intel_iommu_domain_alloc_user(struct device *dev, u32 flags,
- 	struct intel_iommu *iommu = info->iommu;
- 	struct dmar_domain *dmar_domain;
- 	struct iommu_domain *domain;
-+	bool first_stage;
- 
- 	/* Must be NESTING domain */
- 	if (parent) {
-@@ -3313,8 +3314,20 @@ intel_iommu_domain_alloc_user(struct device *dev, u32 flags,
- 	if (user_data || (dirty_tracking && !ssads_supported(iommu)))
- 		return ERR_PTR(-EOPNOTSUPP);
- 
--	/* Do not use first stage for user domain translation. */
--	dmar_domain = paging_domain_alloc(dev, false);
-+	/*
-+	 * Always allocate the guest compatible page table unless
-+	 * IOMMU_HWPT_ALLOC_NEST_PARENT or IOMMU_HWPT_ALLOC_DIRTY_TRACKING
-+	 * is specified.
-+	 */
-+	if (nested_parent || dirty_tracking) {
-+		if (!sm_supported(iommu) || !ecap_slts(iommu->ecap))
-+			return ERR_PTR(-EOPNOTSUPP);
-+		first_stage = false;
-+	} else {
-+		first_stage = first_level_by_default(iommu);
-+	}
-+
-+	dmar_domain = paging_domain_alloc(dev, first_stage);
- 	if (IS_ERR(dmar_domain))
- 		return ERR_CAST(dmar_domain);
- 	domain = &dmar_domain->domain;
--- 
-2.43.0
+I think 2 is better, as this is infrequent and should be pretty fast to
+do when needed, right?  But I really don't care, just don't combine
+things together that shouldn't be combined.
 
+> > > denoting the sideband activities under a specific usb device. We have
+> > > to keep a counter in each device so that we won't influence the usb
+> > > devices that aren't controlled by a sideband.
+> >
+> > I can understand that for the device being "controlled" by a sideband,
+> > but that's it.
+> >
+> > > When sideband activity changes on a usb device, its usb device parents
+> > > should all get notified to maintain the correctness of sb_usage_count.
+> >
+> > Why "should" they?  They shouldn't really care.
+> >
+> 
+> Hubs need the sideband activity information on downstream usb devices,
+> so that the hub won't suspend the upstream usb port when there is a
+> sideband accessing the usb device connected to it.
+
+Then why doesn't the sideband code just properly mark the "downstream"
+device a being used like any other normal device?  Why is this acting
+"special"?
+
+thanks,
+
+greg k-h
 
