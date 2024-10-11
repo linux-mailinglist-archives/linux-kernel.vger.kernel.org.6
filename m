@@ -1,84 +1,60 @@
-Return-Path: <linux-kernel+bounces-361329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361330-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E9399A6E1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:51:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A40D99A6E4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B50A21C228CC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:51:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C5811C21759
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 455BA1953A9;
-	Fri, 11 Oct 2024 14:50:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B089C1946D0;
+	Fri, 11 Oct 2024 14:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="STq8YSyz"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npIJN5JE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55DB7154C1E;
-	Fri, 11 Oct 2024 14:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB712BCFF;
+	Fri, 11 Oct 2024 14:50:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658213; cv=none; b=QM5k5P6xDusaBZed63idVksLk7DCEnILsc5ucU3MqXgIcpR59B5togv4euGApIDfWh252Smv6UlXhjfXwvILp1mpndEVFd+iSMPEVD3ZrIrn83bAAFeYuExl4IfZILQhWOAUze5CqW67wGAOAPZOkhZbaPE4g30c3c/742qMD/k=
+	t=1728658230; cv=none; b=iGJRU4+cyL79AltMYVZDKL9gDhPqZpVBe/y1wpfRoddxRGlkghay6Btn10f3jKhuVhb8jafLWD0d7T1OJ1mtOESbn2TzVuAIzTvXZu861lXWvcNMFSRRP3+v1y9NUzjz4p6lPfTDMiM8i9e9rUuZlOZBRo4nr6B1jivVEjl/xKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658213; c=relaxed/simple;
-	bh=g1BejgMxHi8WOL6Nwz5uzME1vA5rJHB3mKEaFaO4T8A=;
+	s=arc-20240116; t=1728658230; c=relaxed/simple;
+	bh=Eu0I87dqw5nKcLGnt7NQcvS7bSJPZZtCzimyDhAT7Og=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dKZOBSwj5fapi73ce3yRJwZJzYBi5dngJ3o425p2NHYHmkh3XGKSNvzTsaB4Xjc2/o9lrwqr1FceFZ9HJNKVMKyQ4UfQRAbYIn6liUH3eFKS/mskb2fEQunH57BYOhs64m/iFtGm6TnGysHMGOOXCEHq9jn04VMtIBLvgSp2spU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=STq8YSyz; arc=none smtp.client-ip=209.85.215.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7db637d1e4eso1572800a12.2;
-        Fri, 11 Oct 2024 07:50:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728658212; x=1729263012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=lwD/IxPjshg8sSRjxJ9nFSNy7cm9zyZxLj39yIl5YQc=;
-        b=STq8YSyz7KD5cQxG2mxlRjeYGJms2hT9gJGB4vZTyABbbWe8aqKTHPEh6p6EUZijbY
-         NBIHogRJ8cAP3pSXEzmj48oqXV0mp6V2mg/ykz+R/jog+Lwwrjlo9cw2+W6zyCCRKmQH
-         QqX8vJxW7+wZCovNTLDkGeY7F3VhravX8N5RoL3Z3sRl526dfO808L4s9xGuImncBlLW
-         INiNs5DMc1BcIGe7KsNoRuUmyK7PgjBChE6U0rXtWLadjMaFo/7eokgkpqcHt78Cul89
-         RCRu9/sr5LFkApMiF84YHTKbNjbGH5i0pARqXjMAt/tlPrwBS5k8Xqr2xSpuacoppagQ
-         d5Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728658212; x=1729263012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lwD/IxPjshg8sSRjxJ9nFSNy7cm9zyZxLj39yIl5YQc=;
-        b=qePmz0uPd8j5EAdYE2W/OMedXGaK4lbgC2PGrucZIgySovA91p5DjJkURqXtftfwb7
-         spXob4NBv/4Ax9tkquE4IB5cxKclQd1NUJR389aN+R7eWzuXND/M2DfkKXL2cYhIbT+5
-         2J7xmUqKLqyCnmt0chay5hXNkieP2xKHVGeEYlkxPkO6NNkWQ1SBkp9K/wjcatOw5H7i
-         uyzG0Le/w7DTFKF1NrGqaL8JteMRZtCWStbKIAiH6vbHiUP5doxzr1aQxkmw4xikBg8w
-         Oz1ryIysH7ZjrE/HbQj+s6FiR5ZBs0t9cBAH7G4Sh0so95vnMSo+lAwVhxeiHvsJ5Gng
-         LS7w==
-X-Forwarded-Encrypted: i=1; AJvYcCW914bunVY3oOIgUUaRdmuQaNuhwvjL2koQ1/mwb3QDLfN4+WaGj/XOSTgkn/gnG+xX8y3aMi3aZnkTtRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxBtJCE2CnSlMWnas31/EODkBpuh2rHvC9DQarQY20oix5DQd0
-	7cr19CyasptWOZBPWcdtzS4yN1ZcK0lOTirxzFSbWXEmzMXHllI=
-X-Google-Smtp-Source: AGHT+IEV58zeyrV8J5giw7NLuSrTCxdHOlRif/CN+n4wGv4pU8yCB+XqFHdLqeKJ6QAyl936SFuovA==
-X-Received: by 2002:a05:6a21:2d86:b0:1d4:fcd0:5bea with SMTP id adf61e73a8af0-1d8bcf00ccdmr4711937637.6.1728658211212;
-        Fri, 11 Oct 2024 07:50:11 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea448e4147sm2605282a12.5.2024.10.11.07.50.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 07:50:10 -0700 (PDT)
-Date: Fri, 11 Oct 2024 07:50:10 -0700
-From: Stanislav Fomichev <stfomichev@gmail.com>
-To: Hangbin Liu <liuhangbin@gmail.com>
-Cc: netdev@vger.kernel.org, Jakub Kicinski <kuba@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Jiri Pirko <jiri@resnulli.us>, Simon Horman <horms@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 net-next 3/3] selftests: rtnetlink: update netdevsim
- ipsec output format
-Message-ID: <Zwk7IjfSjWw7thjw@mini-arch>
-References: <20241010040027.21440-1-liuhangbin@gmail.com>
- <20241010040027.21440-4-liuhangbin@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=InC9+ZoGIDNsUFhgj/qtAUVyatpvXewDKOKFSzmC7ohxPi2usjmTd6Y+WlhJdZgnYizkrphPc4Ifs736xem8Tv2vG8uSV+mQ6LdUELWrsp1OjOWDT3F7+2JDXelcUjfAPw3UbIggCPxf5gEY2fVU+igge6ssaw+J3nNnyb8C9Ao=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npIJN5JE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B798C4CEC3;
+	Fri, 11 Oct 2024 14:50:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728658229;
+	bh=Eu0I87dqw5nKcLGnt7NQcvS7bSJPZZtCzimyDhAT7Og=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=npIJN5JEyTOdqoEKCaPjWFX2hVJdgQqGcJWvJpg8KxlBMalNoszi4liDk6K2tMAmE
+	 jEXKYpCFZn1YPZJOfQpV/+JeR7KaO2CWxZQjkn/4HyImFGDsoglHUzTJc1TxXWWyzY
+	 Tl74JvIEsSEGHp9qgAOSEwxgvE0MZF0+Dit+h1/hhkAAdaVFoBMStrH/9wkVYO08El
+	 TEd+3Xn1u7dq4Z4iRtWSYHD3rEhTZYsxRubVvKY53mxEa5oqHRH54yCsU9Ffa6h+wg
+	 s5Qn8SvtVMctTQCv6jCNyqvED455pdipXxHvp9weDdO7EQ8Pr4MAGKg2D5li1sAYpx
+	 WNb1bp8F2rMRQ==
+Date: Fri, 11 Oct 2024 16:50:25 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Vikram Sharma <quic_vikramsa@quicinc.com>
+Cc: rfoss@kernel.org, todor.too@gmail.com, bryan.odonoghue@linaro.org, 
+	mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	akapatra@quicinc.com, hariramp@quicinc.com, andersson@kernel.org, 
+	konradybcio@kernel.org, hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org, 
+	catalin.marinas@arm.com, will@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH v3 2/8] media: dt-bindings: Add
+ qcs6490-rb3gen2-vision-mezzanine
+Message-ID: <nsylilmzl6zzukpgih65kmeibbllek6dpgryzkso2ttpuztk2x@3q5xiujcdujo>
+References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+ <20241011140932.1744124-3-quic_vikramsa@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,18 +63,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241010040027.21440-4-liuhangbin@gmail.com>
+In-Reply-To: <20241011140932.1744124-3-quic_vikramsa@quicinc.com>
 
-On 10/10, Hangbin Liu wrote:
-> After the netdevsim update to use human-readable IP address formats for
-> IPsec, we can now use the source and destination IPs directly in testing.
-> Here is the result:
->   # ./rtnetlink.sh -t kci_test_ipsec_offload
->   PASS: ipsec_offload
+On Fri, Oct 11, 2024 at 07:39:26PM +0530, Vikram Sharma wrote:
+> The qcs6490-rb3gen2-vision-mezzanine is a mezz on top of the
+> qcs6490-rb3gen2 core kit. The vision mezzanine includes the
+> IMX577 camera sensor.
 > 
-> Signed-off-by: Hangbin Liu <liuhangbin@gmail.com>
+> Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> index 5de6290cd063..f00851f30d3e 100644
+> --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> @@ -390,6 +390,7 @@ properties:
+>                - fairphone,fp5
+>                - qcom,qcm6490-idp
+>                - qcom,qcs6490-rb3gen2
+> +              - qcom,qcs6490-rb3gen2-vision-mezzanine
 
-Acked-by: Stanislav Fomichev <sdf@fomichev.me>
+Shouldn't this be an overlay?
 
-Thank you!
+Best regards,
+Krzysztof
+
 
