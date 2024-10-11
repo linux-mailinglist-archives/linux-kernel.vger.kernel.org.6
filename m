@@ -1,139 +1,190 @@
-Return-Path: <linux-kernel+bounces-360873-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 482F199A0D6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:09:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 570C599A0D9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 781981C22627
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:09:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 01D99B24A1E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCF98210C0A;
-	Fri, 11 Oct 2024 10:09:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B51210C04;
+	Fri, 11 Oct 2024 10:09:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="L6KYr/Ho"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="S7pgaULO"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF98121018F;
-	Fri, 11 Oct 2024 10:09:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 673C721018F;
+	Fri, 11 Oct 2024 10:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641375; cv=none; b=SxDPmaPbKmd8aKSSnrHTF6LIRBqmP01sCyqlUBK1Wopvx2rBXGXulDL6SQXQdPQl5lWKSlE5M13fBlmzzmciV2F4qO8mUIy0TvHFpHvJTDLzduZ42tEZLSjjIWTFUYwqRfWyY1TkhFYnsDYUcjME3HdkA65hWA7HLQi5nbp1PAk=
+	t=1728641388; cv=none; b=obwVzfbBSFJC/YNuK0YOHcIvj4/jyUN8X0ga7G9YXf5+JimDao+jtiHf6RCOMInVFlx0q5RpZ/exx8m+uLK6zzkuwUjmgdh8sIMtUAW8ZT1gQKOLrXDiuz4LPtkgViVR/nuSnH8/CooUnloh3gETtU5eVnrZ/fju56dIg08SJdA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641375; c=relaxed/simple;
-	bh=eoav9wkO+mIe4PV1rHGpqtvnpQN84eRE/FQ5B02sO7M=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TDQJOf+iO7tWzyFYto8GKSVyjnSdx8k0QTQ8l9dLjKO3agyfPd+Gx6sDzQAY7HzGbYFi1SyM8cpJzg+t9/z21CYCJCPs6rFlED97IB7lNCMwyic+ZkHeRak+Ih5T30xvVcHKEjMAwC4rKsxchRVOKf+EHc3TTH49w28ImE5LyTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=L6KYr/Ho; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
-	s=s31663417; t=1728641337; x=1729246137; i=wahrenst@gmx.net;
-	bh=eoav9wkO+mIe4PV1rHGpqtvnpQN84eRE/FQ5B02sO7M=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=L6KYr/HotO3ODVCzjyupk3DKZ61fWxCKb1v0bpnSZL1CZPvy7oe9/5ir3ZUEuDla
-	 VQWvdKwXXPGlxsM2fwdTM3iGQxt416F6V8/MAaLmqwgXIU8XSvWsowxdnKLoUU0GB
-	 CD/wcoOy6jmxP7i8LtTkXYXiaHWAZ2usivveAZyQkJXfWpDeyvNJcadue/eAGBvGV
-	 ZIHSGPCQUs35ugrNSKiuBVpGKkIWYNuF4h4YOadT+R0/mVIRlBScS5zZisVfeWdRt
-	 d63kF6CSHjBdYyXYTmB1BHgLObVmY8yD5i8bW3HJESGrZevaLuqOXoGxSotQ9ivzH
-	 2roSznDPT2MecF+oPA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1N4hzj-1u0UKl2nkF-015B3x; Fri, 11
- Oct 2024 12:08:56 +0200
-Message-ID: <a1b72875-6224-47b9-bc68-bcc66343bf46@gmx.net>
-Date: Fri, 11 Oct 2024 12:08:52 +0200
+	s=arc-20240116; t=1728641388; c=relaxed/simple;
+	bh=GgdE/KRxmxGku8Db7OjN9ZtzylbPhfQW3JleUzMzBc4=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=TmZpIvuZSSAne0bGg3jdZpUbs2rymKBOLZMalo3oulnQaf5y/6J6YpS1ivU4vRqk6PT6DC4qN6ICVS091u+6wBPEPxj8osr4h0sh6lRFTAiyjplCIL2Uc6QDxm4lk4JZVKwtKBgAu6R0I50Po8hHAWPWRnevRMO8IGb4pH3va/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=S7pgaULO; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 09/14] pinctrl: rp1: Implement RaspberryPi RP1 gpio
- support
-To: Linus Walleij <linus.walleij@linaro.org>,
- Andrea della Porta <andrea.porta@suse.com>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Derek Kiernan <derek.kiernan@amd.com>,
- Dragan Cvetic <dragan.cvetic@amd.com>, Arnd Bergmann <arnd@arndb.de>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728641382;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SWU2UpgBCfCJMwy9JjQ8I9dxjTB9H0Tqnkcy1NXZygY=;
+	b=S7pgaULOwew5O7Z1ueadeyzswZQWrLWWkRRDEkhEwTIQHeMprTJlKAGBFoCfkfcX6u9lIj
+	C3zTQhoMe8J3FdXUD0JNHUR26HT6sz4NFsaugTLY5tgvmL8q54BFN2eAwbicfs5foExbum
+	m++VmXszaid2ZWBeFnWjJGrC0Ugw1a75gOLfgtUTLSKOr8cSX8O4f7gpdlJxqB8CWS6p7o
+	2qePQKKYAMgRydSr/MUODMBDM8FTdPIh0RsZIFZwbPZKLAK7AFXyD6rLEfgzSPmykFBZft
+	+/tXVT+5zHfesAnF84LdLiBhr+5k9DoE1AD/0eWgoWoX6R4oyzQUX3/S58oNYQ==
+Date: Fri, 11 Oct 2024 12:09:41 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>
+Cc: Jonas Karlman <jonas@kwiboo.se>, linux-rockchip@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
- Masahiro Yamada <masahiroy@kernel.org>,
- Herve Codina <herve.codina@bootlin.com>,
- Luca Ceresoli <luca.ceresoli@bootlin.com>,
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, Andrew Lunn <andrew@lunn.ch>
-References: <cover.1728300189.git.andrea.porta@suse.com>
- <199a4994312b120c73c95fa368954ad5a2a8aee6.1728300190.git.andrea.porta@suse.com>
- <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
-Content-Language: en-US
-From: Stefan Wahren <wahrenst@gmx.net>
-In-Reply-To: <CACRpkdb1muovPmKoUw=Q5sNXj3bsCt84LcKVDSLY09_5_1rXZQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LqY4jNXpUn/szfUlWjhhwIcxwRo5I0Rfv5kZ780LihSoEH5kZEs
- LBEXN1xvXO3oyM2VurBOq0JyQUCUOFbQy01ZamLt5KFsS3mw08WU1N8sDv11Pmmucpg2KuM
- mTFNN1/unuc2aK9/oBJXjQGszv4sUl2x3P9K1Qe72TdIv3JxoYwlOMlkzFcJuYkKYtNMQ9C
- WExkC/oy7cXveyEvXEVWQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:gfvBp+EhPSg=;Krp+Dt4+0xc0T3nyoXq1JLBXS+4
- ssl7ep8XjwEVmqJfN1tBRWWWZWygUXl0AWATC2RYwQpwWy8uFZn2G8A1YS77SobXzuApkCH3T
- gAujAK/+hYi09B6UIUGrxadmCvoXHScVW8fD1EbKql9k4KdtL4QL9STqL8P2WRDb/GObmbna3
- v0X4lbplDs53TY2opRzzoia/hisRmP90PlW0ACs/icw4vs8wCcO2TmrvHCtUpDbkk1q3j+XI6
- /I6m9+q9CiVZERFsOmU/lOOa2nKmYP7XN59T893soEMqrDxmc6pI8onxeFyw2xUqJhGmgVgS7
- 56xC/OT5sE1nNh2O5/uFRYkPmsyKVQT935g4W3k4XY6a7PpWZH+W71JjWxPRrzLYuz5P/DlDr
- 0PM9tPFSQO6nLkSCi9YvIFdVKCKfT+kPTfFq4cP6LrCu7l4fVq1Ky6uHS4hpPAbVpkIZYlpG7
- 2rGZhYKVppBIDMQvcxeIV3wAD/A+66/A2IvW0XYfRc6GbBjwBmm28BTBVSZjVX/MPnohHyws7
- Q3D7k+D+uI0opPMIHGy3fZsVQ8QkZ3vFV5sOWkqlx5u+gkLnUBWgZwKR0xVxzKi/ZOJXG4N57
- PaJAzG7M/e0K9mqrAhQgaavITppLM/Fc9DoUzIwbB0cvpik/tc3qBYW8F9YHgfnZU/pM/4Lb1
- OzFLFVtL/ITPMYrk3lJi9mAPR7jZlBwO5x+48aRf7JhiffhVwBEDOvKxLJT+L44kT5FOSiyzk
- aQggDfZtmYp244brhtEqY7L7zEiDqAKBQBNl9zyh/x1ZedjDMLmbnklzB8Mb9yTd5SjizUpaB
- xr4Mo6Y76DusHmA0f6y8DOKA==
+ devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: rockchip: Prevent thermal runaways in RK3308
+ SoC dtsi
+In-Reply-To: <1831993.TLkxdtWsSY@diego>
+References: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
+ <86ff39fe-cc88-4cf4-a1ad-6398a74ceb11@kwiboo.se>
+ <01e42e08965e58a337b9b531c10446fd@manjaro.org> <1831993.TLkxdtWsSY@diego>
+Message-ID: <7a189327fc87e594f4c7b8e5d745ebeb@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=UTF-8;
+ format=flowed
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-Am 11.10.24 um 11:03 schrieb Linus Walleij:
-> On Mon, Oct 7, 2024 at 2:39=E2=80=AFPM Andrea della Porta <andrea.porta@=
-suse.com> wrote:
->
->> The RP1 is an MFD supporting a gpio controller and /pinmux/pinctrl.
->> Add minimum support for the gpio only portion. The driver is in
->> pinctrl folder since upcoming patches will add the pinmux/pinctrl
->> support where the gpio part can be seen as an addition.
->>
->> Signed-off-by: Andrea della Porta <andrea.porta@suse.com>
-> This is a nice driver and I find no issues with it, what causes
-> an issue is gpiochip_set_names() as pointed out by Bartosz.
-> If you can live without the names you can remove that part for
-> now and we can merge the driver, then you can add the names
-> later when we sorted out how to share that function.
-I raised the concerns about missing gpio line names in the first version
-of patch, without knowing the real efforts.
+Hello Heiko,
 
-So I'm fine with Linus' suggestion, because I don't want to delay the
-upstreaming effort unnecessarily.
+On 2024-10-11 11:56, Heiko Stübner wrote:
+> Am Freitag, 11. Oktober 2024, 11:04:38 CEST schrieb Dragan Simic:
+>> On 2024-10-11 10:52, Jonas Karlman wrote:
+>> > On 2024-10-10 12:19, Dragan Simic wrote:
+>> >> Until the TSADC, thermal zones, thermal trips and cooling maps are
+>> >> defined
+>> >> in the RK3308 SoC dtsi, none of the CPU OPPs except the slowest one
+>> >> may be
+>> >> enabled under any circumstances.  Allowing the DVFS to scale the CPU
+>> >> cores
+>> >> up without even just the critical CPU thermal trip in place can rather
+>> >> easily
+>> >> result in thermal runaways and damaged SoCs, which is bad.
+>> >>
+>> >> Thus, leave only the lowest available CPU OPP enabled for now.
+>> >
+>> > This feel like a very aggressive limitation, to only allow the
+>> > opp-suspend rate, that is not even used under normal load.
+>> >
+>> > I let my Rock Pi S board with a RK3308B variant run "stress -c 8" for
+>> > around 10 hours and the reported temp only reach around 50-55 deg c,
+>> > ambient temp around 20 deg c and board laying flat on a table without
+>> > any enclosure or heat sink.
+>> >
+>> > This was running with performance as scaling_governor and cpu running
+>> > the 1008000 opp.
+>> 
+>> Thanks for testing all that!  That's very low CPU temperature under
+>> stress testing indeed.  Maybe the cooling gets worse and the CPU
+>> temperature goes higher if the board is installed into some small
+>> enclosure with no natural or forced airflow?
+>> 
+>> > Most RK3308 variants datasheets list 1.3 GHz as max rate for CPU,
+>> > the K-variant lists 1.2 GHz, and the -S-variants seem to have both
+>> > reduced voltage and max rate.
+>> >
+>> > The OPPs for this SoC already limits max rate to 1 GHz and is more than
+>> > likely good enough to not reach the max temperature of 115-125 deg c as
+>> > rated in datasheets and vendor DTs.
+>> >
+>> > Adding the tsadc and trips (same/similar as px30) will probably allow
+>> > us
+>> > to add/use the "missing" 1.2 and 1.3 GHz OPPs.
+>> 
+>> With these insights, I agree that the patch might have been a bit
+>> too extreme, but it also promotes good practices when it comes to
+>> upstreaming.  The general rule is not to add CPU or GPU OPPs with
+>> no proper thermal configuration already in place.
+>> 
+>> The patch has already been merged, and as I already noted, [1] I'll
+>> try to implement, test and submit the proper thermal configuration
+>> ASAP.  It's up Heiko to decide whether to drop this patch or not.
+> 
+> Hmm, interesting question ;-) .
+> 
+> Dropping the patch is of course still possible and so far we haven't
+> actually seen anyone with real-world problems.
+> 
+> And with Jonas' stress test, it does look like nobody will in the
+> (hopefully short) time till we have thermal management.
+> 
+> @Dragan, if you're in favor of that I'll drop the patch.
 
-Regards
->
-> Yours,
-> Linus Walleij
+I hope I'll have the proper RK3308 thermal configuration available
+for the 6.14 merge window, also with higher OPPs in place.  Knowing
+that we've seemingly had no RK3308 SoCs releasing the magic smoke
+(yet? :), I think we can keep the status quo for a couple of months
+or so, so let's drop this patch.
 
+Thanks again to Jonas for all the stress testing!
+
+>> [1]
+>> https://lore.kernel.org/linux-rockchip/df92710498f66bcb4580cb2cd1573fb2@manjaro.org/
+>> 
+>> >> Fixes: 6913c45239fd ("arm64: dts: rockchip: Add core dts for RK3308
+>> >> SOC")
+>> >> Cc: stable@vger.kernel.org
+>> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+>> >> ---
+>> >>  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 3 +++
+>> >>  1 file changed, 3 insertions(+)
+>> >>
+>> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+>> >> b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+>> >> index 31c25de2d689..a7698e1f6b9e 100644
+>> >> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+>> >> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
+>> >> @@ -120,16 +120,19 @@ opp-600000000 {
+>> >>  			opp-hz = /bits/ 64 <600000000>;
+>> >>  			opp-microvolt = <950000 950000 1340000>;
+>> >>  			clock-latency-ns = <40000>;
+>> >> +			status = "disabled";
+>> >>  		};
+>> >>  		opp-816000000 {
+>> >>  			opp-hz = /bits/ 64 <816000000>;
+>> >>  			opp-microvolt = <1025000 1025000 1340000>;
+>> >>  			clock-latency-ns = <40000>;
+>> >> +			status = "disabled";
+>> >>  		};
+>> >>  		opp-1008000000 {
+>> >>  			opp-hz = /bits/ 64 <1008000000>;
+>> >>  			opp-microvolt = <1125000 1125000 1340000>;
+>> >>  			clock-latency-ns = <40000>;
+>> >> +			status = "disabled";
+>> >>  		};
+>> >>  	};
+>> 
+> 
+> 
+> 
+> 
+> 
+> _______________________________________________
+> Linux-rockchip mailing list
+> Linux-rockchip@lists.infradead.org
+> http://lists.infradead.org/mailman/listinfo/linux-rockchip
 
