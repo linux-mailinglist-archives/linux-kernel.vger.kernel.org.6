@@ -1,189 +1,179 @@
-Return-Path: <linux-kernel+bounces-361812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FBBF99AD49
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F33AE99AD51
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2B3028205B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B0D2D281D16
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:02:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F901D0E30;
-	Fri, 11 Oct 2024 20:00:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959E91D0E1A;
+	Fri, 11 Oct 2024 20:01:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Wq3EwDci"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GC4d/Rm7"
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B251CFEB8
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:00:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 684B2191F6A;
+	Fri, 11 Oct 2024 20:01:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728676834; cv=none; b=TUFOYcTueUn28g9mtoPlW9mjqRXeUINK20dnMdYgjXSMCMUE1xk4Ba7ifKZ4PLEAQxwo29F/M2oZZT/MkEuVupdCabYTmAubQNkIgiwWhMjs+hcxstZEABNHLKfuJ5Ac12GWvMTYNkmpaCTqUGbXW0kxAZ+Nw4zG/lsCA52s9/c=
+	t=1728676919; cv=none; b=fTS+gQg50mmTnebswkTCJf9gEPFe2oTJscqdE9pjc/8JvX4B1mg4Y2RsG8Zzg8lsYUkYeMJnydk5p5m8xWQGu5snMV0imk6W8gShRR37HBAI8o1CDk4uRafmLish4pSjxfDR8pvjklesqjMOd7RvNbG6bBXcSc+Gj6ai6mjFKqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728676834; c=relaxed/simple;
-	bh=DuKDDGu8TSkmXBzAtZnzPczE056d+qxUX2o57Q9dSfA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=WiBE++rO4pKxc51Z7joN3YW5iZYUZxNcb37bLQZ4fWqOzrp08V8Rja9NxvZwtRbMBEpNmaVsbhsD2ticE14RsheJXLiBogffTlDcTZrGvEZG5MMPb0EWQrAXLjef9M+ySwh7qqqhvFDKwFs0bomHXb1eintPvAGdem4WAXMnLn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Wq3EwDci; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728676831;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=dbQgie+An3FsfT7/2xbvqwyjDp2Yp9ZZ+SvdAmcNQdk=;
-	b=Wq3EwDciPHBtvaLnTfG3SOWs4UDu/iygxMa/wa/th6f8aBfZATs0qa21zadqheEECybFxD
-	zW83zPMSBAhaoB1dI8QB6ZkeIOfz/hyPLAjkmhe91KtM6OMuoBoijyaHE58LPAyNtuDQgQ
-	yz1s/M75Z9plhbKoumstcESpoCvbUzc=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-113-8Kc4tQLzOWuFz6q9bkeosw-1; Fri,
- 11 Oct 2024 16:00:28 -0400
-X-MC-Unique: 8Kc4tQLzOWuFz6q9bkeosw-1
-Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5E7091955E85;
-	Fri, 11 Oct 2024 20:00:25 +0000 (UTC)
-Received: from f39.redhat.com (unknown [10.39.192.233])
-	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 233ED19560AA;
-	Fri, 11 Oct 2024 20:00:17 +0000 (UTC)
-From: Eder Zulian <ezulian@redhat.com>
-To: bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	andrii@kernel.org,
-	martin.lau@linux.dev,
-	eddyz87@gmail.com,
-	song@kernel.org,
-	yonghong.song@linux.dev,
-	john.fastabend@gmail.com,
-	kpsingh@kernel.org,
-	sdf@fomichev.me,
-	haoluo@google.com,
-	jolsa@kernel.org,
-	acme@redhat.com,
-	vmalik@redhat.com,
-	williams@redhat.com
-Subject: [PATCH] tools/resolve_btfids: Fix 'variable' may be used uninitialized warnings
-Date: Fri, 11 Oct 2024 22:00:05 +0200
-Message-ID: <20241011200005.1422103-1-ezulian@redhat.com>
+	s=arc-20240116; t=1728676919; c=relaxed/simple;
+	bh=u6x2F7kYxJShqouov78lhe2rWSGhzJklLDRR2FLJ5gU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nvR726EPgWN3H8xxEDANwc8CTARBo7gkaChA0aFc10ZXsQ4iDKqhZ+XQWYm2JvaU5y+NqOtUFtgeacBVP+biHtslyCOSb+Mn/6fWe4Na9EENQyxMAmiyc7FuzMOrWqHV3o+BqNwkIBVP/Y3Xx7lGQi74tOrQEldKQzFMcLOzvqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GC4d/Rm7; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e290222fdd0so2227012276.2;
+        Fri, 11 Oct 2024 13:01:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728676916; x=1729281716; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rFTSYYgQTrjqFPb7GzXc8fohdEBdKKLzVr+J+gh04vg=;
+        b=GC4d/Rm7b+VB4OqduEVn7uqGp5FdA72F3MmFWtzYeQFjmLa7duYajoIHgwqOYeURPP
+         WBGo1MIkxRpHHm9+f3Uu2rgk5Z1oXmINgOVifbhlSkX8ebZJkNhUOfLn4MVS9rnOGVwV
+         hJpWWxNdaPCGeYF6SmTAQVYaF3EEjxBIIdkuFgCSv+Rr4u6BwOe9UgDwMNx4MH8UQMPg
+         Ec7tKBJ47559pK3BC4qPtXziHzf7ol611ixhuM9rLn6XfYcHA1gidzUMPFGECmadYUta
+         ZyKz0SSYzuVjPMcjxsl492EdYa63usuhjO6goV8BM9aHAvh5SmgAetGn4mceiWABoz0i
+         6/4g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728676916; x=1729281716;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rFTSYYgQTrjqFPb7GzXc8fohdEBdKKLzVr+J+gh04vg=;
+        b=ISHWRRftXKOZbrWKosI61j5DPhYkeM1QOV5c+4U8ZMhNsYct13K8XdnhfDR57VgXPX
+         +o5Uwz8Xc4js+g97/Qp/1T+iBSHCQSLdKxsnZA5BXJoI4z0IlZ90MPVNcVPYXCroAKtq
+         RAabwYlLTkMIELw//7iZSIebAk/udh3NJLvPJqWLpsAaJQ56IYCPnYlp9ZVyxOAQcJeE
+         k2v5PsbuVSpO8ff9oU4GKVZlE2EIwd7Ohxg20MNIFQzJjj4CeWbaYw2xnvKtC6bZ2Rcg
+         +kM0TutkRVqZ1Ywy+sUPkDzhHZGy72BUuFLaVvCwaYkvFtxY6KramJ5JVYy+tbcNJ94j
+         /73w==
+X-Forwarded-Encrypted: i=1; AJvYcCWo3NwKTU/F0/4ntbImGCQSvTKglwAaalrsmaRtn6mFxn+JLmD8lDl3Lj+tRLn+B61+RZYRJxZd@vger.kernel.org, AJvYcCXxv2MJc0yPvMkQEebWzv8Ggl3xl6cNj9AEbv251gMf5JgsNN2ZO4cda2eJGXcbtLcw/a/zyfEopTZ53oTf@vger.kernel.org
+X-Gm-Message-State: AOJu0YyricV1wSggbz3kzdujB8ZhdcwcwUQeBRrB7ZJHJ2PIq15p37ru
+	ROtyhHejI+rmbGfsDE3MH0VrkRjxR3Z+EhN1TIbl4lK/eHueYORypd2dSDj4h/jIhlWwiH0a4z5
+	Z2Ltg9v6lr+MA3YSh3nkYIRjsXYE=
+X-Google-Smtp-Source: AGHT+IG/JCerRgXDMRDql3rEMdWpBm1gETivW5Hg7kglkNxGoToDxKLr95vvW0A1tkFPsxczILpsmiHG1AtLwVT2fvU=
+X-Received: by 2002:a05:690c:670e:b0:6e2:636:d9ee with SMTP id
+ 00721157ae682-6e3477bae02mr33006157b3.9.1728676916301; Fri, 11 Oct 2024
+ 13:01:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
+References: <linuszeng@tencent.com> <20240913084453.3605621-1-jingxiangzeng.cas@gmail.com>
+In-Reply-To: <20240913084453.3605621-1-jingxiangzeng.cas@gmail.com>
+From: Nhat Pham <nphamcs@gmail.com>
+Date: Fri, 11 Oct 2024 16:01:45 -0400
+Message-ID: <CAKEwX=N104p+yJvZEfG0B4kEURjc6CLzY1NqM09cxDFfHBzdVA@mail.gmail.com>
+Subject: Re: [PATCH V2] mm/memcontrol: add per-memcg pgpgin/pswpin counter
+To: Jingxiang Zeng <jingxiangzeng.cas@gmail.com>
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, cgroups@vger.kernel.org, 
+	hannes@cmpxchg.org, linuszeng@tencent.com, linux-kernel@vger.kernel.org, 
+	mhocko@kernel.org, muchun.song@linux.dev, roman.gushchin@linux.dev, 
+	shakeel.butt@linux.dev, yosryahmed@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-- tools/bpf/resolve_btfids/main.c: Initialize 'set' and 'set8' pointers
-  to NULL in to fix compiler warnings.
+On Fri, Sep 13, 2024 at 8:21=E2=80=AFAM Jingxiang Zeng
+<jingxiangzeng.cas@gmail.com> wrote:
+>
+> From: Jingxiang Zeng <linuszeng@tencent.com>
+>
+> In proactive memory reclamation scenarios, it is necessary to estimate th=
+e
+> pswpin and pswpout metrics of the cgroup to determine whether to continue
+> reclaiming anonymous pages in the current batch.  This patch will collect
+> these metrics and expose them.
 
-- tools/lib/bpf/btf_dump.c: Initialize 'new_off' and 'pad_bits' to 0 and
-  'pad_type' to  NULL to prevent compiler warnings.
++1 - this is also useful for zswap shrinker enablement, after which an
+anon page can be loaded back in either from swap or zswap.
+Differentiating these two situations helps a lot with performance
+regression diagnostics.
 
-- tools/lib/subcmd/parse-options.c: Initiazlide pointer 'o' to NULL
-  avoiding a compiler warning.
+We have host level metrics, but they become less useful when we
+combine workloads with different characteristics in the same host.
 
-Tested on x86_64 with clang version 17.0.6 and gcc (GCC) 13.3.1.
+>
+> Link: https://lkml.kernel.org/r/20240830082244.156923-1-jingxiangzeng.cas=
+@gmail.com
+> Signed-off-by: Jingxiang Zeng <linuszeng@tencent.com>
+> Cc: Johannes Weiner <hannes@cmpxchg.org>
+> Cc: Michal Hocko <mhocko@kernel.org>
+> Cc: Muchun Song <muchun.song@linux.dev>
+> Cc: Roman Gushchin <roman.gushchin@linux.dev>
+> Cc: Shakeel Butt <shakeel.butt@linux.dev>
+> Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
+> ---
+>  mm/memcontrol.c | 2 ++
+>  mm/page_io.c    | 4 ++++
+>  2 files changed, 6 insertions(+)
+>
+> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> index 6efbfc9399d0..dbc1d43a5c4c 100644
+> --- a/mm/memcontrol.c
+> +++ b/mm/memcontrol.c
+> @@ -418,6 +418,8 @@ static const unsigned int memcg_vm_event_stat[] =3D {
+>         PGPGIN,
+>         PGPGOUT,
+>  #endif
+> +       PSWPIN,
+> +       PSWPOUT,
+>         PGSCAN_KSWAPD,
+>         PGSCAN_DIRECT,
+>         PGSCAN_KHUGEPAGED,
+> diff --git a/mm/page_io.c b/mm/page_io.c
+> index b6f1519d63b0..4bc77d1c6bfa 100644
+> --- a/mm/page_io.c
+> +++ b/mm/page_io.c
+> @@ -310,6 +310,7 @@ static inline void count_swpout_vm_event(struct folio=
+ *folio)
+>         }
+>         count_mthp_stat(folio_order(folio), MTHP_STAT_SWPOUT);
+>  #endif
+> +       count_memcg_folio_events(folio, PSWPOUT, folio_nr_pages(folio));
+>         count_vm_events(PSWPOUT, folio_nr_pages(folio));
+>  }
+>
+> @@ -505,6 +506,7 @@ static void sio_read_complete(struct kiocb *iocb, lon=
+g ret)
+>                 for (p =3D 0; p < sio->pages; p++) {
+>                         struct folio *folio =3D page_folio(sio->bvec[p].b=
+v_page);
+>
+> +                       count_memcg_folio_events(folio, PSWPIN, folio_nr_=
+pages(folio));
+>                         folio_mark_uptodate(folio);
+>                         folio_unlock(folio);
+>                 }
+> @@ -588,6 +590,7 @@ static void swap_read_folio_bdev_sync(struct folio *f=
+olio,
+>          * attempt to access it in the page fault retry time check.
+>          */
+>         get_task_struct(current);
+> +       count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>         count_vm_event(PSWPIN);
+>         submit_bio_wait(&bio);
+>         __end_swap_bio_read(&bio);
+> @@ -603,6 +606,7 @@ static void swap_read_folio_bdev_async(struct folio *=
+folio,
+>         bio->bi_iter.bi_sector =3D swap_folio_sector(folio);
+>         bio->bi_end_io =3D end_swap_bio_read;
+>         bio_add_folio_nofail(bio, folio, folio_size(folio), 0);
+> +       count_memcg_folio_events(folio, PSWPIN, folio_nr_pages(folio));
+>         count_vm_event(PSWPIN);
 
-$ cd tools/bpf/resolve_btfids
-$ for c in gcc clang; do \
-for o in fast g s z $(seq 0 3); do \
-make clean && \
-make HOST_CC=${c} "HOSTCFLAGS=-O${o} -Wall" 2>&1 | tee ${c}-O${o}.out; \
-done; done && grep 'warning:\|error:' *.out
+Not related to this patch, but why does the global stats not take into
+account large folios here... `count_vm_event(PSWPIN);`?
 
-[...]
-clang-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-clang-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
-clang-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
-clang-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
-clang-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-clang-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-gcc-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
-gcc-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
-gcc-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
-gcc-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
-gcc-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-gcc-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
-
-The above warnings and/or errors are not observed after applying this
-patch.
-
-Signed-off-by: Eder Zulian <ezulian@redhat.com>
----
- tools/bpf/resolve_btfids/main.c  | 4 ++--
- tools/lib/bpf/btf_dump.c         | 4 ++--
- tools/lib/subcmd/parse-options.c | 2 +-
- 3 files changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
-index d54aaa0619df..bd9f960bce3d 100644
---- a/tools/bpf/resolve_btfids/main.c
-+++ b/tools/bpf/resolve_btfids/main.c
-@@ -679,8 +679,8 @@ static int sets_patch(struct object *obj)
- 
- 	next = rb_first(&obj->sets);
- 	while (next) {
--		struct btf_id_set8 *set8;
--		struct btf_id_set *set;
-+		struct btf_id_set8 *set8 = NULL;
-+		struct btf_id_set *set = NULL;
- 		unsigned long addr, off;
- 		struct btf_id *id;
- 
-diff --git a/tools/lib/bpf/btf_dump.c b/tools/lib/bpf/btf_dump.c
-index 8440c2c5ad3e..468392f9882d 100644
---- a/tools/lib/bpf/btf_dump.c
-+++ b/tools/lib/bpf/btf_dump.c
-@@ -867,8 +867,8 @@ static void btf_dump_emit_bit_padding(const struct btf_dump *d,
- 	} pads[] = {
- 		{"long", d->ptr_sz * 8}, {"int", 32}, {"short", 16}, {"char", 8}
- 	};
--	int new_off, pad_bits, bits, i;
--	const char *pad_type;
-+	int new_off = 0, pad_bits = 0, bits, i;
-+	const char *pad_type = NULL;
- 
- 	if (cur_off >= next_off)
- 		return; /* no gap */
-diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
-index eb896d30545b..555d617c1f50 100644
---- a/tools/lib/subcmd/parse-options.c
-+++ b/tools/lib/subcmd/parse-options.c
-@@ -807,7 +807,7 @@ static int option__cmp(const void *va, const void *vb)
- static struct option *options__order(const struct option *opts)
- {
- 	int nr_opts = 0, nr_group = 0, nr_parent = 0, len;
--	const struct option *o, *p = opts;
-+	const struct option *o = NULL, *p = opts;
- 	struct option *opt, *ordered = NULL, *group;
- 
- 	/* flatten the options that have parents */
--- 
-2.46.2
-
+Acked-by: Nhat Pham <nphamcs@gmail.com>
 
