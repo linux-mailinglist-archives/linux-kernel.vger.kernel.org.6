@@ -1,171 +1,171 @@
-Return-Path: <linux-kernel+bounces-361468-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDD7099A8A2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:10:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D52099A8A7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:11:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08AC81C22D06
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:10:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A670284B38
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:11:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24A91990C5;
-	Fri, 11 Oct 2024 16:10:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F08W18lJ"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0448B198E6E;
+	Fri, 11 Oct 2024 16:11:09 +0000 (UTC)
+Received: from frasgout11.his.huawei.com (frasgout11.his.huawei.com [14.137.139.23])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849E91974F4
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A434F16F27E;
+	Fri, 11 Oct 2024 16:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.23
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728663021; cv=none; b=MYpvU2TsWUYlXaoF+k/dit/gnOj35Z78+Pe2VCzBNmtMPZzmOh6atMOuo9kEU4bhhqwgObLE9Z8NdoZoQMGya6+ZepomOHh9pbDUtSkn0ZttX+k3hU5deFeV5EwPXTKm0/73yGqma/zNb8078l8h9K39SfceKJ5cgAX8DGWha/s=
+	t=1728663068; cv=none; b=pWIB7vn5MH5xiqzTP+c1uIvA26ovswc9hgCNgNdo5E2kaYV52W7Uzdk7nJp6GdbVf8Y7eHTMqH8LrSUosrS4xWXLPjfzHMqmzEWZF5TAjpjuYcxNWg4iq3xnxygSexEs4s1BGI/4UKB4UesLBABxL0emCrPYG5AJDTIojAhZC9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728663021; c=relaxed/simple;
-	bh=d5pFHwtFvdEgWUZAcnRG6GQ3fqVmE2YvgZoQxi52CO0=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=Wyhoig9tWB8Xie8slSCnJt+FfYiJzUWEqT7kVoibiDZHciZljW+Jre3aSNZ13x7b9vECgQOoajWcf/NgxM5q6Q28qny8HHX3EeL/uGzIy3lk7gK3aTSzf2K57F0dvGNZjsMIvrvYKl+IhEDojDgOXmwoCOe5iM7jtVZHNiLSc6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F08W18lJ; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e49ae1172so225833b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728663019; x=1729267819; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVwJLNw5Ps10RbGac9YYaUmT3BiISrVE9h+5ma8CIGM=;
-        b=F08W18lJobjrwkrLZrWpss9qJIzMbjneHrzttJJ79DQBbNdhOjNHqlgd/jBH7g8pL9
-         qqDXxzCk1HgD88JwHDCRBqm0qG9QK8s/TDQIDhF8pGP/MQz3q6wGeRFlj4FjARoSZirr
-         JyAo/y1n77tI2ZWAJLhE68rcXPfZBFRNFPhHYu++Pn3yWP9REKP5Knkmi2tK7XOrnbwm
-         VmdLAwN5OwQydx6K9crv4Rka4Agwx2d3ZUmECZVa8Z9f24xqGC3PFQyk5JoR2weUL3gl
-         BtQjX/1Q+e64aWP5YWm73oxJaXjdxsNhkllEcLgboIS4qeIrVn8o0qKGjT34w7deOb9W
-         Ldng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728663019; x=1729267819;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=HVwJLNw5Ps10RbGac9YYaUmT3BiISrVE9h+5ma8CIGM=;
-        b=ZN7TIE+H7m5q+Ite3zd2Jg46u7s4bS5ori4dP/CYz095sQd90OgCZQf3I9oV+M0veJ
-         s3HLstKGscvXe3Zw7EJdHnpnhWJdI/uwPIGxKPnTi4qK7AV1/bBNDS1+lPx2oUybM99M
-         LMUl7Wad5qitTV15TLRBJcVHyWCOR5nRKnrXmAHJ36ne2coUFDWikXE8NYvLljMc8Q6I
-         AYxomXBz0+dwDnQNoHQtnDTsvzcaISeVzG6FP6aPi5MhaMg5uaBPSQ+2lTdgpgDZGPNG
-         63njBrEFly8W9JzJ2+PEWxo0Ku5in1IjtIYE9THFIi6RTppLJtH5NAwdMn0eOgrNeUt3
-         Li5g==
-X-Forwarded-Encrypted: i=1; AJvYcCW972uc30cjMUCVBvenOhu+bcmTK7J03lMeRFm/wZBxxOb5fsrJD+/RaprJZRUjMP720DeV8AIEUSx+HCI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9GGctm4jFGzlUR8jqO040Q3sP+bMOk5AzfQIX25r6dp+GKjMN
-	zmGnd/oyjYRxiaSUQbOrYF8SvPpqOBYRONFl+hGZT/D66IdG71FVI5fg/3LXDj6svB2ZkN/dp+9
-	ECA==
-X-Google-Smtp-Source: AGHT+IGoDuPK1quyryPvVDgAPQ7itiit1nAYgQ/fI7GScyXvb9WdEI+uZk7WOGNdYtn/6ZPqBjhCnrVE/8g=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:6a00:66d7:b0:717:8ab0:2439 with SMTP id
- d2e1a72fcca58-71e382709f5mr5535b3a.6.1728663018282; Fri, 11 Oct 2024 09:10:18
- -0700 (PDT)
-Date: Fri, 11 Oct 2024 09:10:16 -0700
-In-Reply-To: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+	s=arc-20240116; t=1728663068; c=relaxed/simple;
+	bh=TZDn0sUuy2tinNJpUTDRdXhwz/uKpIMSWwu6/1c8yw4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=XtbL7RjwqEhk55T0WmtpKJM8e3i4U2vUPoPFfHUXZ2vV46uIavavF3UE3tOgXId11kmtmKIk078y+RecKWrEcwKxDJuvJFIFufRUHlJxu0UkKMPjqK4PG7nSk/UZyvpCUEe/BVqwDZ4+Ocjd2kybn8E9A7J9nLZd8QyfAUyxWCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.23
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.18.186.29])
+	by frasgout11.his.huawei.com (SkyGuard) with ESMTP id 4XQB1C4TTyz9v7Hl;
+	Fri, 11 Oct 2024 23:50:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [7.182.16.27])
+	by mail.maildlp.com (Postfix) with ESMTP id 200E11403D2;
+	Sat, 12 Oct 2024 00:10:52 +0800 (CST)
+Received: from [127.0.0.1] (unknown [10.204.63.22])
+	by APP2 (Coremail) with SMTP id GxC2BwB3JMX_TQlngtqsAg--.53302S2;
+	Fri, 11 Oct 2024 17:10:50 +0100 (CET)
+Message-ID: <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
+Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
+From: Roberto Sassu <roberto.sassu@huaweicloud.com>
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org
+Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com, 
+ mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>, David Howells
+ <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
+ <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe
+ <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+ keyrings@vger.kernel.org,  linux-security-module@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 11 Oct 2024 18:10:35 +0200
+In-Reply-To: <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
+References: <20240921120811.1264985-1-jarkko@kernel.org>
+	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
-Message-ID: <ZwlN6F__ls3naxJq@google.com>
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-From: Sean Christopherson <seanjc@google.com>
-To: Ashish Kalra <Ashish.Kalra@amd.com>
-Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au, 
-	x86@kernel.org, john.allen@amd.com, davem@davemloft.net, 
-	thomas.lendacky@amd.com, michael.roth@amd.com, kvm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-CM-TRANSID:GxC2BwB3JMX_TQlngtqsAg--.53302S2
+X-Coremail-Antispam: 1UD129KBjvJXoWxJF4rCFyUZF4UJrWUKrykKrg_yoW5uF15pF
+	WxKa98CFyDWw1xJ397Aw4UAFyFq34rJ34UGrykJ3s3ArWYgF1Yv3yv9rySgryUWrZ7Gr4j
+	qFsFqr1v9Fyjy3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
+	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
+	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
+	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
+	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
+	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
+	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
+	v3UUUUU
+X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAgANBGcIif8LAQABsZ
 
-On Tue, Sep 17, 2024, Ashish Kalra wrote:
-> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
-> index 564daf748293..77900abb1b46 100644
-> --- a/drivers/crypto/ccp/sev-dev.c
-> +++ b/drivers/crypto/ccp/sev-dev.c
-> @@ -73,11 +73,27 @@ static bool psp_init_on_probe = true;
->  module_param(psp_init_on_probe, bool, 0444);
->  MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initialized on module init. Else the PSP will be initialized on the first command requiring it");
->  
-> +static bool cipher_text_hiding = true;
-> +module_param(cipher_text_hiding, bool, 0444);
-> +MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable Cipher Text Hiding");
-> +
-> +static int max_snp_asid;
+On Fri, 2024-10-11 at 17:06 +0300, Jarkko Sakkinen wrote:
+> On Sat, 2024-09-21 at 15:08 +0300, Jarkko Sakkinen wrote:
+> > This patch set aims to fix:
+> > https://bugzilla.kernel.org/show_bug.cgi?id=3D219229.
+> >=20
+> > The baseline for the series is the v6.11 tag.
+> >=20
+> > v4:
+> > https://lore.kernel.org/linux-integrity/20240918203559.192605-1-jarkko@=
+kernel.org/
+> > v3:
+> > https://lore.kernel.org/linux-integrity/20240917154444.702370-1-jarkko@=
+kernel.org/
+> > v2:
+> > https://lore.kernel.org/linux-integrity/20240916110714.1396407-1-jarkko=
+@kernel.org/
+> > v1:
+> > https://lore.kernel.org/linux-integrity/20240915180448.2030115-1-jarkko=
+@kernel.org/
+> >=20
+> > Jarkko Sakkinen (5):
+> > =C2=A0 tpm: Return on tpm2_create_null_primary() failure
+> > =C2=A0 tpm: Implement tpm2_load_null() rollback
+> > =C2=A0 tpm: flush the null key only when /dev/tpm0 is accessed
+> > =C2=A0 tpm: Allocate chip->auth in tpm2_start_auth_session()
+> > =C2=A0 tpm: flush the auth session only when /dev/tpm0 is open
+> >=20
+> > =C2=A0drivers/char/tpm/tpm-chip.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0 14 ++++
+> > =C2=A0drivers/char/tpm/tpm-dev-common.c |=C2=A0=C2=A0 8 +++
+> > =C2=A0drivers/char/tpm/tpm-interface.c=C2=A0 |=C2=A0 10 ++-
+> > =C2=A0drivers/char/tpm/tpm2-cmd.c=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=
+=C2=A0=C2=A0 3 +
+> > =C2=A0drivers/char/tpm/tpm2-sessions.c=C2=A0 | 109 ++++++++++++++++++--=
+--------
+> > --
+> > =C2=A0include/linux/tpm.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 2 +
+> > =C2=A06 files changed, 102 insertions(+), 44 deletions(-)
+>=20
+> The summarize some discussions:
+>=20
+> 1. I'll address Stefan's remarks.
+> 2. We know that these patches address the desktop boot.
+> 3. IMA is too slow =3D> add a boot option for IMA default off. I.e.
+>    IMA will not use the feature unless you specifically ask.
 
-Why is this a signed int?  '0' is used as the magic "no override" value, so there's
-no reason to allow a negative value.
+Initially, I thought that maybe it would not be good to have an event
+log with unmodified and altered measurement entries. Then, I tried to
+think if we can really prevent an active interposer from injecting
+arbitrary PCR extends and pretending that those events actually
+happened.
 
-> +module_param(max_snp_asid, int, 0444);
-> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text Hiding");
-> +
->  MODULE_FIRMWARE("amd/amd_sev_fam17h_model0xh.sbin"); /* 1st gen EPYC */
->  MODULE_FIRMWARE("amd/amd_sev_fam17h_model3xh.sbin"); /* 2nd gen EPYC */
->  MODULE_FIRMWARE("amd/amd_sev_fam19h_model0xh.sbin"); /* 3rd gen EPYC */
->  MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
->  
-> +/* Cipher Text Hiding Enabled */
-> +bool snp_cipher_text_hiding;
-> +EXPORT_SYMBOL(snp_cipher_text_hiding);
-> +
-> +/* MAX_SNP_ASID */
-> +unsigned int snp_max_snp_asid;
-> +EXPORT_SYMBOL(snp_max_snp_asid);
+If I understood James's cover letter correctly, the kernel can detect
+whether a TPM reset occurred, but not that a PCR extend occurred (maybe
+with a shadow PCR?).
 
-There is zero reason to have multiple variables.  The module param varaibles
-should be the single source of true.
+Second point, do we really want to take the responsibility to disable
+the protection on behalf of users? Maybe a better choice is to let them
+consciously disable HMAC protection.
 
-I'm also not entirely sure exporting individual variables is the right interface,
-which is another reason why I want to see the entire "refactoring" in one series.
+So, maybe we should keep the HMAC protection enabled, and if the number
+of PCR extends is above a certain threshold, we can print a warning
+message in the kernel log.
 
->  static bool psp_dead;
->  static int psp_timeout;
->  
-> @@ -1064,6 +1080,38 @@ static void snp_set_hsave_pa(void *arg)
->  	wrmsrl(MSR_VM_HSAVE_PA, 0);
->  }
->  
-> +static void sev_snp_enable_ciphertext_hiding(struct sev_data_snp_init_ex *data, int *error)
-> +{
-> +	struct psp_device *psp = psp_master;
-> +	struct sev_device *sev;
-> +	unsigned int edx;
-> +
-> +	sev = psp->sev_data;
-> +
-> +	/*
-> +	 * Check if CipherTextHiding feature is supported and enabled
-> +	 * in the Platform/BIOS.
-> +	 */
-> +	if ((sev->feat_info.ecx & SNP_CIPHER_TEXT_HIDING_SUPPORTED) &&
-> +	    sev->snp_plat_status.ciphertext_hiding_cap) {
+Roberto
 
-snp_cipher_text_hiding should be set to %false if CipherTextHiding is unsupported.
-I.e. the module params need to reflect reality.
+> 4. Random generation can be optimized a lot with or without
+>    encryption. Not sure if  I have time to do ths right now
+>    but I have already patch planned for this.
+>=20
+> What is blocking me is the James' request to not include
+> functional fixes. The problem with that is that if comply
+> to that request I will have to postpone all the performacne
+> fixes and send a patch set with only functional fixes and
+> go all review rounds with that before moving forward.
+>=20
+> This is just how priorities go in kernel and doing by the
+> book. Is that really necessary?
+>=20
+> Since I've just started in a new job any patches can be
+> expected earliest next week. That's why I was rushing with
+> the patch set in the first place because I knew that there
+> will be otherwise a few week delay but we'll get there :-)
+>=20
+> BR, Jarkko
+>=20
 
-> +		/* Retrieve SEV CPUID information */
-> +		edx = cpuid_edx(0x8000001f);
-> +		/* Do sanity checks on user-defined MAX_SNP_ASID */
-> +		if (max_snp_asid >= edx) {
-> +			dev_info(sev->dev, "max_snp_asid module parameter is not valid, limiting to %d\n",
-> +				 edx - 1);
-> +			max_snp_asid = edx - 1;
-> +		}
-> +		snp_max_snp_asid = max_snp_asid ? : (edx - 1) / 2;
-> +
-> +		snp_cipher_text_hiding = 1;
-
-s/1/true
-
-> +		data->ciphertext_hiding_en = 1;
-> +		data->max_snp_asid = snp_max_snp_asid;
-> +
-> +		dev_dbg(sev->dev, "SEV-SNP CipherTextHiding feature support enabled\n");
-> +	}
-> +}
 
