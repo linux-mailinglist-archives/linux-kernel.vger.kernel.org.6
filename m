@@ -1,43 +1,43 @@
-Return-Path: <linux-kernel+bounces-360480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC156999B9A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:20:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 947DE999B85
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DFE52851B8
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:20:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C481F1C22719
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD3C21F1319;
-	Fri, 11 Oct 2024 04:20:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B44208208;
+	Fri, 11 Oct 2024 04:10:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="W7Td8R8E"
-Received: from out187-2.us.a.mail.aliyun.com (out187-2.us.a.mail.aliyun.com [47.90.187.2])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="SwHu3Eqv"
+Received: from out187-16.us.a.mail.aliyun.com (out187-16.us.a.mail.aliyun.com [47.90.187.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BE51CB506
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:20:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294511F942F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:10:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.187.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728620443; cv=none; b=ptS4RdQG6YQsQ4sWSB7JpHO6BembgyMV0XdZKnBfXeLfc/NTq2Yc8drq1Q2vvneFyb2ksc+aOATvHTjo2fWQiNDRDht+L5v/MWqXiqHKtAyRztpmUmwEtMhp5QGx0OFCcSoNTv8nKAjyULyRu43ps2ZVuUdAnVDmI8P68XZsnOg=
+	t=1728619827; cv=none; b=WmV5HWeAn9qHVLdBkyw8m7a0w1sCJl5Zr0nCOdRTTYBtwUnwBXzRDqhUFVnWTlOGFwnoM70XCdX3JjSw2HaYc+EhDsG+VYRd04k3bb9A8JpmGPhfegRKb+N5CSJKHYNXIOAX2LR90S4ksuqtLEv1GIilGHU4cANlLQbj0edvgtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728620443; c=relaxed/simple;
-	bh=Jq4jzYqKznKhRX0mWI0FKN2O5bHda7cDEW5QY8QlSSI=;
+	s=arc-20240116; t=1728619827; c=relaxed/simple;
+	bh=An5b94vrzHbchvof/Mqn7OCFdkkGopWJZjOtSg3ivn8=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CSiON2pkh8C+uDc0XRRyajwH6JTxID3H1GXGwp47PwCQ+ZFnC9K+We/UoAeIErkxhNYwVh6vSeEgTKtd/JKmMLOrDUO5miiwgu1cuC6OTZ01eRWKCH4noV1IaKFoPXqGZl1ZKMyYsx21B3QjH9NdMu7Qn/5MekRr/oOzPw9Baa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=W7Td8R8E; arc=none smtp.client-ip=47.90.187.2
+	 MIME-Version; b=LJxkrJ4z5Hx5SG3b2MilZHOec3wtGpbZGdzGxj5FAaB5pXk4T9Ec+eAfVcWRMztZ8D1F0HXtMM22Xy7RP2qkiKZNjJo0T1OO9ZFMCaYwvtEHVsLsrcYV5Y8+AXd3UiQfKgp+YvIAvgkzBCLmwSzlpo9MvTEGr8yegobUSgg3MZc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=SwHu3Eqv; arc=none smtp.client-ip=47.90.187.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=antgroup.com; s=default;
-	t=1728620429; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=UXivylKKVZoaavgHJDWP6Lp6p/IoGhjIDtQtnWzg12U=;
-	b=W7Td8R8EOtSGSUXkhdkxVtYKLq6g1Ca3h/VBz+GdV3Az/5BzXFa07DD7Ve70J+Ofn9iEd+4m66COonaSaU1ULTHa71HantfSEP11wtTEl7JrqjMt2dq9fNwmSol2FgeIGakO7XarzgpzXSES1Xpc5gNIuUzP9UMwT51SH8gjt7g=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.Ze33tzj_1728619496)
+	t=1728619814; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=Se+HDEpWKr4lq3f8uBsVRYaVltXK6GKDvy+iKLq80QQ=;
+	b=SwHu3EqvxJuJRkSuqbkUve/qZ7dD/7KLRwmkJE8TD95dAj+IM5IWpadFWluM3V4y927se/E1hhoqbkpJ2+xsSY5tgclIqLrAa/lwGeWyKnd/QJ7G4B716zyb919BN1yD0kL54zXgjybKYoMTvJFyVHLt8xJNcuKiOnKofscGb5k=
+Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.Ze33tzx_1728619496)
           by smtp.aliyun-inc.com;
-          Fri, 11 Oct 2024 12:04:56 +0800
+          Fri, 11 Oct 2024 12:04:57 +0800
 From: "Tiwei Bie" <tiwei.btw@antgroup.com>
 To: richard@nod.at,
 	anton.ivanov@cambridgegreys.com,
@@ -45,9 +45,9 @@ To: richard@nod.at,
 Cc:  <linux-um@lists.infradead.org>,
    <linux-kernel@vger.kernel.org>,
   "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH 8/9] um: hostaudio: Do not propagate mixer parameter to kernel
-Date: Fri, 11 Oct 2024 12:04:40 +0800
-Message-Id: <20241011040441.1586345-9-tiwei.btw@antgroup.com>
+Subject: [PATCH 9/9] um: Do not propagate initrd parameter to kernel
+Date: Fri, 11 Oct 2024 12:04:41 +0800
+Message-Id: <20241011040441.1586345-10-tiwei.btw@antgroup.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241011040441.1586345-1-tiwei.btw@antgroup.com>
 References: <20241011040441.1586345-1-tiwei.btw@antgroup.com>
@@ -59,25 +59,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This parameter is UML specific and is unknown to kernel. It should
-not be propagated to kernel, otherwise it will trigger a warning and
-be passed to user space as an environment option.
+This parameter is UML specific. It specifies the name of the file
+containing the initrd image, which is unknown to kernel.
 
 Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
 ---
- arch/um/drivers/hostaudio_kern.c | 1 +
+ arch/um/kernel/initrd.c | 1 +
  1 file changed, 1 insertion(+)
 
-diff --git a/arch/um/drivers/hostaudio_kern.c b/arch/um/drivers/hostaudio_kern.c
-index 09af903b75ae..0ac149de1ac0 100644
---- a/arch/um/drivers/hostaudio_kern.c
-+++ b/arch/um/drivers/hostaudio_kern.c
-@@ -57,6 +57,7 @@ __uml_setup("dsp=", set_dsp, "dsp=<dsp device>\n" DSP_HELP);
+diff --git a/arch/um/kernel/initrd.c b/arch/um/kernel/initrd.c
+index 47b8cb1a1156..99dba827461c 100644
+--- a/arch/um/kernel/initrd.c
++++ b/arch/um/kernel/initrd.c
+@@ -34,6 +34,7 @@ int __init read_initrd(void)
  
- static int set_mixer(char *name, int *add)
+ static int __init uml_initrd_setup(char *line, int *add)
  {
 +	*add = 0;
- 	mixer = name;
+ 	initrd = line;
  	return 0;
  }
 -- 
