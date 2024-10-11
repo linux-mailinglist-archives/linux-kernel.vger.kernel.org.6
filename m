@@ -1,191 +1,154 @@
-Return-Path: <linux-kernel+bounces-361273-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361274-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A48E99A60A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:14:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C7C99A60C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A8F11C23374
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:14:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47EAD1C2370B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176B621D2D6;
-	Fri, 11 Oct 2024 14:11:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFF9FD517;
+	Fri, 11 Oct 2024 14:13:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="HZvYMVbB"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a6Sz/ZOc"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743EA21A70C;
-	Fri, 11 Oct 2024 14:11:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4778218D68;
+	Fri, 11 Oct 2024 14:13:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728655873; cv=none; b=K2KOAHujEqNndmEBmZPzJM5SQc5FHOtie7pomqRPDzbrfbuqm3znjHLHkJyMC/WKCSvK/yB8wa3zJZUwqcvus68Fl61/M8BtjyFiAt9QNl785QzQ2xaazFFnKeLSyoH+Y+cLd2SlG48U6aluR7CAD/FbpKGPae8ofbapBNMcRjA=
+	t=1728655998; cv=none; b=FFD6eo+J1t89ASUOyrYMlVOi9EtnraLkP57PLkOSjHBYLgk4DIy07dcFOWZ3Wj+C/1f11iQh7H72F4OxaP5dPwemADGYa4Y4UG+Gw+6mbYKNR03FbkuVBuGGPmltiiDKryw6NFMSTJP/g9MaTJHqZ0J1Z44QSfWL0/ORvlYbrsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728655873; c=relaxed/simple;
-	bh=FqMPAU4HPBdlhTcXShKd1l0QI0kRx19jxv+S9orB7yc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oPMlEU/CbCzmgv81BdNkkp03sKnAimVJhOCUV+D7Y3dr9CbBJI9QttfJbB+xm8FbLbiq+CXTblrJJuq61oXAm7sTV4YKsnsEM0x+9xjJqPX8NII4cPj6MuNOGg1hy91DduBcd/GryQXpOSK0jdsT4+PC+RYrAVRCaaOoIoEyZrc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=HZvYMVbB; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=B4Ha4yE9lVIj1UEDH8gkFD4pDPWuVhXKTqcgGB3822Q=; b=HZvYMVbBc1H/VM2KxpTBfk/mDw
-	3hP6N4VN+hBsPTK7pfuSzBDjSkwz4ELlojbM34nEZU+TgBy2JyzZYahghsgT4XRf/hOf9cpUu8hy2
-	xmK1gmWuDOrs4qZeQIHLuYHoxIx0THnRlt+/vD1pVu70TAgeBZTA5oho251O7lCkb8VgbHoLmDlww
-	hKu61JlFarVKosdiC4eMztNueN2vcQkqtS2elmjknsCeVF8YVBuahlgV4rwMM1pfoVl2ACdFFSFtb
-	biBeknGoGo7CW+bXZkStRKF9OLTDo1SKXJ8ujNi2PK2vUdBkPdzYqLOQCz2sZhJN8KQSkuBOtmXe2
-	LWufhW3Q==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1szGMF-0000000GYJd-0xTe;
-	Fri, 11 Oct 2024 14:11:07 +0000
-Date: Fri, 11 Oct 2024 07:11:07 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christoph Hellwig <hch@lst.de>
-Cc: axboe@kernel.dk, akpm@linux-foundation.org, viro@zeniv.linux.org.uk,
-	dhowells@redhat.com, linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3] iov_iter: don't require contiguous pages in
- iov_iter_extract_bvec_pages
-Message-ID: <Zwkx-8M3oRD6Q2cQ@infradead.org>
-References: <20241011132047.1153249-1-hch@lst.de>
+	s=arc-20240116; t=1728655998; c=relaxed/simple;
+	bh=X4mWEXm/zoqmUR8oF9s0iov+PQUtjSyzuCIByL8Fo9A=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=KM9ifOVxqzM8c13jVB4cb821TZVSi5vIiMwnM5kpmn3VmGzaIvpG+iyKdH970vtPAmpvw/8DzujkJGOvi1xX6Ue1km02egVy/rfMwntfBsVIkvA77QIgi/QkZmJy0IHCeLssFjdZFy9V60mufKL6mFbedV+KYY6ulont1W7H56c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a6Sz/ZOc; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cb7088cbcso1028525ad.0;
+        Fri, 11 Oct 2024 07:13:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728655996; x=1729260796; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=66FsMpDzY3n1TA5RKpEPrNYnS6vtTzzjE/gMIB5gRHk=;
+        b=a6Sz/ZOcUaU40duDmQ4fNCaHFcchQyb+m4gU8Ax/7RAM8/qwkIXp/ZZh39vUEq/Hvl
+         YD+lwrNFAESXRPTSEs01GuOscaqNmA/wLhvSuvPE1iLMG9GKtg/KyxVR/iVF/Arjh11I
+         E6sEkv3/iojP2bLYxyox0jFwZdqCTsYBI6hRqNvs4oqyom28BoLSv99tlqcPBhlc8b5t
+         wLDM0maUVonuvJkbNTC50NTxRC/oVMvPLsAIoncgYCs5jgDmkf/s0i5beRce1/Cub4Y2
+         zbGcQRuLXjFAeiLjE7Zv6emWxV1Ai24Sp+jXI5VilJplKvjXj8mpTNRKGATrYbOwU2II
+         2gAg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728655996; x=1729260796;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=66FsMpDzY3n1TA5RKpEPrNYnS6vtTzzjE/gMIB5gRHk=;
+        b=u8B4aH3WrxqQosWAnWgmQsW+3wI/kd2GAKLoqEWX93m4D0zulFIBXveVq2lXAXByvX
+         S/hVHvVTI1EWDxKC12+2IXk9kr/ildxJP3+nJL0SJWPsDKK/1Mqz00CcNIOwx/t/ahwp
+         ewgmX1XY6xMzYg2LlXwjsI/kjvYdaTs/8W20JNqcgeNLLLvvDr/JtOWFjWmltZW6yZg5
+         ue4xc7OzBYj46UFCJnh8G3cszpjqgfSyuvAlO9bcEFep8VxRacOS7WNYvYNa+FlP0nmS
+         LNIFbpceoeP1SCXdNoYghIwibV/BfXWcLarOiHwqBxCJarJT0mGxDeBX++bVorc69+W1
+         xcRQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXG5ryZyX/2FaEaxtYdBhcyrkMyFCSbe7sx1UIMi5dcx0kypPg96Re/5yyVr8l9xYZT639fxKrG@vger.kernel.org, AJvYcCXXXhW6vdPhqipsBQE5/wNmcd9liH5PdLJ/4hTtffuUpo+n//XgUfbrCLv6/STWVr8MxuQRK50YNTMDZaRl@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdBefRCn1TiOIcIBAAnC2IlLkGlwrIzCwCbiNnWhlXRGG3LbF1
+	uQvMZlap5aba/1i4Rubi1RRb1gi2djib4muvv3g7XGzjXUJF6QZD
+X-Google-Smtp-Source: AGHT+IEWJBDMF7u+zS5p7kW4kY+0yCMo5fNez2Po0ZijRJr28hM28jSK5+GUx75Vj1mw9slGmU3YsQ==
+X-Received: by 2002:a17:902:d588:b0:20c:7898:a8f5 with SMTP id d9443c01a7336-20ca148bea0mr38351505ad.28.1728655996028;
+        Fri, 11 Oct 2024 07:13:16 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bc0546csm23757525ad.79.2024.10.11.07.13.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 07:13:15 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: akpm@linux-foundation.org,
+	hch@infradead.org
+Cc: llong@redhat.com,
+	xavier_qy@163.com,
+	lizefan.x@bytedance.com,
+	tj@kernel.org,
+	hannes@cmpxchg.org,
+	mkoutny@suse.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org,
+	cgroups@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>,
+	Waiman Long <longman@redhat.com>
+Subject: [PATCH v2] lib/Makefile: Make union-find compilation conditional on CONFIG_CPUSETS
+Date: Fri, 11 Oct 2024 22:12:14 +0800
+Message-Id: <20241011141214.87096-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <ZweggYOQtt5OUgHJ@infradead.org>
+References: <ZweggYOQtt5OUgHJ@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011132047.1153249-1-hch@lst.de>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
 
-Btw, this is a missing a:
+Currently, cpuset is the only user of the union-find implementation.
+Compiling union-find in all configurations unnecessarily increases the
+code size when building the kernel without cgroup support. Modify the
+build system to compile union-find only when CONFIG_CPUSETS is enabled.
 
-From: Ming Lei <ming.lei@redhat.com>
+Link: https://lore.kernel.org/lkml/1ccd6411-5002-4574-bb8e-3e64bba6a757@redhat.com/
+Suggested-by: Waiman Long <llong@redhat.com>
+Signed-off-by: Kuan-Wei Chiu <visitorckw@gmail.com>
+Acked-by: Waiman Long <longman@redhat.com>
+Acked-by: Tejun Heo <tj@kernel.org>
+---
+ init/Kconfig | 1 +
+ lib/Kconfig  | 3 +++
+ lib/Makefile | 3 ++-
+ 3 files changed, 6 insertions(+), 1 deletion(-)
 
-at the top of the mail as it should be credited to Ming of course.
+diff --git a/init/Kconfig b/init/Kconfig
+index 530a382ee0fe..323206ff5848 100644
+--- a/init/Kconfig
++++ b/init/Kconfig
+@@ -1153,6 +1153,7 @@ config CGROUP_HUGETLB
+ config CPUSETS
+ 	bool "Cpuset controller"
+ 	depends on SMP
++	select UNION_FIND
+ 	help
+ 	  This option will let you create and manage CPUSETs which
+ 	  allow dynamically partitioning a system into sets of CPUs and
+diff --git a/lib/Kconfig b/lib/Kconfig
+index b38849af6f13..cf303bd91dda 100644
+--- a/lib/Kconfig
++++ b/lib/Kconfig
+@@ -777,3 +777,6 @@ config POLYNOMIAL
+ 
+ config FIRMWARE_TABLE
+ 	bool
++
++config UNION_FIND
++	bool
+diff --git a/lib/Makefile b/lib/Makefile
+index 773adf88af41..03b88b501b49 100644
+--- a/lib/Makefile
++++ b/lib/Makefile
+@@ -35,8 +35,9 @@ lib-y := ctype.o string.o vsprintf.o cmdline.o \
+ 	 is_single_threaded.o plist.o decompress.o kobject_uevent.o \
+ 	 earlycpio.o seq_buf.o siphash.o dec_and_lock.o \
+ 	 nmi_backtrace.o win_minmax.o memcat_p.o \
+-	 buildid.o objpool.o union_find.o
++	 buildid.o objpool.o
+ 
++lib-$(CONFIG_UNION_FIND) += union_find.o
+ lib-$(CONFIG_PRINTK) += dump_stack.o
+ lib-$(CONFIG_SMP) += cpumask.o
+ 
+-- 
+2.34.1
 
-On Fri, Oct 11, 2024 at 03:20:22PM +0200, Christoph Hellwig wrote:
-> The iov_iter_extract_pages interface allows to return physically
-> discontiguous pages, as long as all but the first and last page
-> in the array are page aligned and page size.  Rewrite
-> iov_iter_extract_bvec_pages to take advantage of that instead of only
-> returning ranges of physically contiguous pages.
-> 
-> Signed-off-by: Ming Lei <ming.lei@redhat.com>
-> [hch: minor cleanups, new commit log]
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-> 
-> v3:
->  - open code the iterator
->  - improve commit log and comments
-> 
->  lib/iov_iter.c | 67 +++++++++++++++++++++++++++++++++-----------------
->  1 file changed, 45 insertions(+), 22 deletions(-)
-> 
-> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
-> index 1abb32c0da50bc..9fc06f5fb7489f 100644
-> --- a/lib/iov_iter.c
-> +++ b/lib/iov_iter.c
-> @@ -1677,8 +1677,8 @@ static ssize_t iov_iter_extract_xarray_pages(struct iov_iter *i,
->  }
->  
->  /*
-> - * Extract a list of contiguous pages from an ITER_BVEC iterator.  This does
-> - * not get references on the pages, nor does it get a pin on them.
-> + * Extract a list of virtually contiguous pages from an ITER_BVEC iterator.
-> + * This does not get references on the pages, nor does it get a pin on them.
->   */
->  static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
->  					   struct page ***pages, size_t maxsize,
-> @@ -1686,35 +1686,58 @@ static ssize_t iov_iter_extract_bvec_pages(struct iov_iter *i,
->  					   iov_iter_extraction_t extraction_flags,
->  					   size_t *offset0)
->  {
-> -	struct page **p, *page;
-> -	size_t skip = i->iov_offset, offset, size;
-> -	int k;
-> +	size_t skip = i->iov_offset, size = 0;
-> +	struct bvec_iter bi;
-> +	int k = 0;
->  
-> -	for (;;) {
-> -		if (i->nr_segs == 0)
-> -			return 0;
-> -		size = min(maxsize, i->bvec->bv_len - skip);
-> -		if (size)
-> -			break;
-> +	if (i->nr_segs == 0)
-> +		return 0;
-> +
-> +	if (i->iov_offset == i->bvec->bv_len) {
->  		i->iov_offset = 0;
->  		i->nr_segs--;
->  		i->bvec++;
->  		skip = 0;
->  	}
-> +	bi.bi_size = maxsize + skip;
-> +	bi.bi_bvec_done = skip;
-> +
-> +	maxpages = want_pages_array(pages, maxsize, skip, maxpages);
-> +
-> +	while (bi.bi_size && bi.bi_idx < i->nr_segs) {
-> +		struct bio_vec bv = bvec_iter_bvec(i->bvec, bi);
-> +
-> +		/*
-> +		 * The iov_iter_extract_pages interface only allows an offset
-> +		 * into the first page.  Break out of the loop if we see an
-> +		 * offset into subsequent pages, the caller will have to call
-> +		 * iov_iter_extract_pages again for the reminder.
-> +		 */
-> +		if (k) {
-> +			if (bv.bv_offset)
-> +				break;
-> +		} else {
-> +			*offset0 = bv.bv_offset;
-> +		}
->  
-> -	skip += i->bvec->bv_offset;
-> -	page = i->bvec->bv_page + skip / PAGE_SIZE;
-> -	offset = skip % PAGE_SIZE;
-> -	*offset0 = offset;
-> +		(*pages)[k++] = bv.bv_page;
-> +		size += bv.bv_len;
->  
-> -	maxpages = want_pages_array(pages, size, offset, maxpages);
-> -	if (!maxpages)
-> -		return -ENOMEM;
-> -	p = *pages;
-> -	for (k = 0; k < maxpages; k++)
-> -		p[k] = page + k;
-> +		if (k >= maxpages)
-> +			break;
-> +
-> +		/*
-> +		 * We are done when the end of the bvec doesn't align to a page
-> +		 * boundary as that would create a hole in the returned space.
-> +		 * The caller will handle this with another call to
-> +		 * iov_iter_extract_pages.
-> +		 */
-> +		if (bv.bv_offset + bv.bv_len != PAGE_SIZE)
-> +			break;
-> +
-> +		bvec_iter_advance_single(i->bvec, &bi, bv.bv_len);
-> +	}
->  
-> -	size = min_t(size_t, size, maxpages * PAGE_SIZE - offset);
->  	iov_iter_advance(i, size);
->  	return size;
->  }
-> -- 
-> 2.45.2
-> 
-> 
----end quoted text---
 
