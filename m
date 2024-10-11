@@ -1,123 +1,116 @@
-Return-Path: <linux-kernel+bounces-361810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27E6599AD46
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03CD999AD48
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581121C21104
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7945280E03
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E5A1D12EC;
-	Fri, 11 Oct 2024 19:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BED231D0F68;
+	Fri, 11 Oct 2024 19:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EHziWnCM"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cHr/btNx"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C7F1D12E5
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7F1C1D0144;
+	Fri, 11 Oct 2024 19:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728676782; cv=none; b=GSPe0DooO1quEvB9x2RChhTNIWCF/JLUQe0OhSA6fVX1+bS/D1KTDj+afeWgQemx6zg7yy0PCQN6X6H/ZfGNELZF5tUirkaYmM6r3OUbmAfEAUH37/vCrzy/m9k0JsH17sVzJ7oo71uuN38DWmdNaJgNWPEVMDfNqAZ9nfXYTHY=
+	t=1728676799; cv=none; b=TUBtbG+Hkt+STLw3rR0LScE36dTmpWGUmIxuV4SUGlvaZk2xgNIbxn3DLuZJCRkf5eWH1zR9q7rAqa/xS2DQ4pmxjra7dR7IrjYqO/2KZhqWtPkboyeIldmCQF4tuSHQRMuaRVXnCcLUt1jbaJ64KJlbQaa5B0lZjAdzY/1Ii9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728676782; c=relaxed/simple;
-	bh=b3t/6WlSF/m01dr3JqwvO6A1PNlbPysSRIdrRHqnmAY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=XiOh1tfM3pHD5gFLzEBBWSc03XN2iU/RoYoOrcHkDfZTm6OOkTFZ79m1vMC4ycUgov7K+uurFxzEEBa7PM+jM8vgQ+pTeXJu4B7dTTNPAPqsdiiT7sxuv70oip6k0Zn07PWF8+zx2+m2d5J5t+3MER1O8aBg+L6Xyq+OJG9kT0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EHziWnCM; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e305c2987bso23230227b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:59:40 -0700 (PDT)
+	s=arc-20240116; t=1728676799; c=relaxed/simple;
+	bh=vVCVoCLAV8tDG1vrmL20knT7+oenmQWjvXusuYrvcQs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Tzjq36uwK+YBq8x8JerrByTZR1PrQYMbDXGvldjE6t4EQ6+Q+OAdnv/nQgNPUAQkQPB8zEQMq3EpaYfw5dzE1XBZ2eOK+XsfOpLjWL5wN77Rj7Fm+xWZk3iehPXiLXS834b/p+7iU2ARy6ng+HHVzOEqx9a2YHjV/Hlc9yAhJWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cHr/btNx; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7d916b6a73aso1574255a12.1;
+        Fri, 11 Oct 2024 12:59:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728676780; x=1729281580; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b3t/6WlSF/m01dr3JqwvO6A1PNlbPysSRIdrRHqnmAY=;
-        b=EHziWnCMURu34idNgNXQl4xyRVcddHTweLctXq8iK+REnwjG+In+bNzFg46FA3Au2C
-         7xGhtXVC/eujF80m2u/SpW34juBEq2HGbHLRWoJX2U8SqKWFNU+//VNze0g6Zi5oH9KJ
-         UmNC6AHvUy5nMcGnasgtugL4iQ6eqMZX3Yvm/PlUgd5fWGRrPc5W4CRpa4h8lX8HUKzS
-         7BhQSdyNS870ZjMtOIdCQGKNQExRVgyM4KvW1wrYEA5iIdhmvT3xxE/mowLv/W0Vn7Ol
-         7Vvl6HGUsd3VmB7rTeJM8K762xrlsy+Hf+DsCu2axpZ4gCX6i5cQyOhk+SLljVT4StdP
-         VnAw==
+        d=gmail.com; s=20230601; t=1728676797; x=1729281597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=roNqdHIBerBblm0SB/SPGUSzXG1uDPhqyUKFuMAssw8=;
+        b=cHr/btNxrDhufSzBrQlKcF4JT3RyObCibn2amSkz0TVuGCImRZb982nbJpVR0CeNL4
+         FENbEISTbWtYqPTNJyhWMiTzQkLwId6lDRtAuBTviaMqVCRviq9htlmPpOhjlGlawKrg
+         uq6VITrFAKG4LrVxPQIebDt++sdRfF6wg3Mr3yRsJyQdFPgODYAZizJOFirXeBmclYBH
+         RwXfG7jXwWw+ibWC3KGZ7ZueQVzNGLTZDLrj+SxaJGqfsaLJ07fh3388TMYU0qbYehBL
+         1FC5vH2riu7d7qL2zj2nlnfIgUetHcWbw4T0pXfHbAWt72KVQfWhQ3WHxl+MFa0j4ZqU
+         68yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728676780; x=1729281580;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b3t/6WlSF/m01dr3JqwvO6A1PNlbPysSRIdrRHqnmAY=;
-        b=WWlaJNLIPLyd4VC7nFJBbnriqOfXr3C+ceukxXQXODFYdKvakSr/HFUMPQdY4BP8YS
-         slnO2wTZPkM6zBlA4pOFA4UAPBrQ2hBZoDFJHJRzZ+uGBbfEzbaKUWiPXuH4Ka0WLJ7g
-         qPT169nmNNExoXh/qtk5cxpbJyKAcS5aHo7BMFLRuTCBT8QDlVGgVD9JWGEfuU3QkYcs
-         7jIASHi4h5y//845EeAymm/SyF3XJeko0n8i3/rySmkCzTamHC2UUl/1UcpP9s4r3gMU
-         FMe3Ugj6OIlJVlsg3Fq52RjC1mvHIZBtu7OQKvQCNOxSpg5TSXDWRhihyP0yY1gVmJ7n
-         eOQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWBFm7HQOsgtAlcHLFuqIBtHO/Ni8cIGeP9h1QmWHFImyJFo/jAQcwQAY/3BkaAH6NCGOuZvqNcrydRMTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxM3nU9qVNKD3vD77bQHU8nupnEW1KBxIT+hvqG+nuPHuKZENl6
-	+XNCr0kWuEXrVE0Fa2dRTQe7pJNqI2PE72MsqNPgEZn8DOTMV46WZ5ypMvtV/7jwDl/x7pWXJqm
-	+tjfCpCSSnh1ysBgGU/Rb2SdsUYNV6pzWULak9g==
-X-Google-Smtp-Source: AGHT+IHjM2GvHz3Aq3fHGIQKpV063T+kfFhYOorOlX0bt74yIAWxcubkag8mG5yY3qwwQRASFB0kIRqgK4TTo+XYaUs=
-X-Received: by 2002:a05:690c:5608:b0:6e2:ada7:ab89 with SMTP id
- 00721157ae682-6e3479e1d7cmr37079067b3.26.1728676779984; Fri, 11 Oct 2024
- 12:59:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728676797; x=1729281597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=roNqdHIBerBblm0SB/SPGUSzXG1uDPhqyUKFuMAssw8=;
+        b=c1yDspgIAos18a20mPi5Bp04XeqsrPfG0mkzBZVUTJ1zYIaLTs31qoqTSrWeqQKGl4
+         x88gewNRmUbpFexDXhCGy2IyNDbUNm1qhS+Z0nOgMx8XzlSVZX660qKiNn0Ni2D1oqlr
+         VcvZfj4Dn+hyps6wEJKatnvG6qoRv+yHmpE8jpNo2MvfINkvG4X9r98E47kTaeFf62g9
+         Pl6RJ8Jbvftka0EG6eD2vHCOAQo38QJO/NJNjwyg9plLVjNerC3fh44dEn0u+ujBN3LQ
+         iJYMnsf1GDvKE35mEfj2kbqjjd9IqLMbgpI38PieRx08Lw8Nym1/obJ2rOARon/qXvyz
+         Waig==
+X-Forwarded-Encrypted: i=1; AJvYcCV0JKhJEABno7Mj5O2r84gCeWfp61MwF6cnETzk9UyOUuOcjMAeKdOXuopinGui2zBcdwZ5cqblniyxMQg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZuQUJoO3yc3/+CPNRmgbSfNZCR62yMA2iip//Mjs8X2+FIffD
+	E4ihd0GsXej4KsaLrDvcyiPhvCWHWTEYunCM8FtS7w6SPxpFn1xc9UgyKvx1
+X-Google-Smtp-Source: AGHT+IEE119MsCw3EbNt2UyGkiEU0LPU2ECsFp8kEDcIBoCpB/almBfsIhdvAl2eOSQNMyE2OGyQ7Q==
+X-Received: by 2002:a05:6a21:3514:b0:1cf:31b6:18c6 with SMTP id adf61e73a8af0-1d8bcfc7f96mr5635301637.46.1728676796947;
+        Fri, 11 Oct 2024 12:59:56 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4868e657sm740684b3a.67.2024.10.11.12.59.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:59:56 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] net: mvneta: use ethtool_puts
+Date: Fri, 11 Oct 2024 12:59:55 -0700
+Message-ID: <20241011195955.7065-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011120520.140318-1-y.oudjana@protonmail.com>
-In-Reply-To: <20241011120520.140318-1-y.oudjana@protonmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 11 Oct 2024 21:59:27 +0200
-Message-ID: <CACRpkdaWZ6R4wtTs_YqzbhSrUyfOCqd9tGWFP7dZTqp6v7ijzA@mail.gmail.com>
-Subject: Re: [PATCH v6 0/8] MediaTek pinctrl DT binding cleanup and MT6735
- pinctrl support
-To: Yassine Oudjana <yassine.oudjana@gmail.com>
-Cc: Sean Wang <sean.wang@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Yassine Oudjana <y.oudjana@protonmail.com>, Andy Teng <andy.teng@mediatek.com>, 
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Oct 11, 2024 at 2:05=E2=80=AFPM Yassine Oudjana
-<yassine.oudjana@gmail.com> wrote:
+Allows simplifying get_strings and avoids manual pointer manipulation.
 
-> From: Yassine Oudjana <y.oudjana@protonmail.com>
->
-> These patches are part of a larger effort to support the MT6735 SoC famil=
-y in
-> mainline Linux. More patches (unsent or sent and pending review or revisi=
-on) can
-> be found here[1].
->
-> This series adds a driver for the pin controller found on the MediaTek MT=
-6735
-> and MT6735M SoCs. The two differ in the last 6 physical pins, which are u=
-sed
-> for MSDC2 on MT6735 but don't exist on MT6735M (since MSDC2 doesn't exist=
- on it
-> to begin with). In preparation to document DT bindings for this pin contr=
-oller,
-> the existing documents for MT67xx SoCs are combined into one in order to
-> eliminate duplicate property definitions and standardize pin configuratio=
-n node
-> names. Necessary cleanup is done along the way.
+Tested on Turris Omnia.
 
-Once Rob is happy with all binding patches, my plan is to merge all
-except the DTS[I] changes to an immutable branch in the pin control
-tree and then you can offer that as a base for the SoC tree if it's
-needed for the DTS[I] files.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ drivers/net/ethernet/marvell/mvneta.c | 4 +---
+ 1 file changed, 1 insertion(+), 3 deletions(-)
 
-Yours,
-Linus Walleij
+diff --git a/drivers/net/ethernet/marvell/mvneta.c b/drivers/net/ethernet/marvell/mvneta.c
+index fcd89c67094f..7bb781fb93b5 100644
+--- a/drivers/net/ethernet/marvell/mvneta.c
++++ b/drivers/net/ethernet/marvell/mvneta.c
+@@ -4795,11 +4795,9 @@ static void mvneta_ethtool_get_strings(struct net_device *netdev, u32 sset,
+ 		int i;
+ 
+ 		for (i = 0; i < ARRAY_SIZE(mvneta_statistics); i++)
+-			memcpy(data + i * ETH_GSTRING_LEN,
+-			       mvneta_statistics[i].name, ETH_GSTRING_LEN);
++			ethtool_puts(&data, mvneta_statistics[i].name);
+ 
+ 		if (!pp->bm_priv) {
+-			data += ETH_GSTRING_LEN * ARRAY_SIZE(mvneta_statistics);
+ 			page_pool_ethtool_stats_get_strings(data);
+ 		}
+ 	}
+-- 
+2.47.0
+
 
