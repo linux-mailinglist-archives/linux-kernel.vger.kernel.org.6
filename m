@@ -1,171 +1,106 @@
-Return-Path: <linux-kernel+bounces-360554-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360555-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FEB3999C97
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:23:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 63070999C99
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1F1FF1F24CD2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:23:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 19D4C1F245F9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:25:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59B1C20898A;
-	Fri, 11 Oct 2024 06:23:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EF20208963;
+	Fri, 11 Oct 2024 06:24:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="T+Q9cXhn"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="fs7vdQUi"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2113208978
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 06:23:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5534A2581;
+	Fri, 11 Oct 2024 06:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728627792; cv=none; b=nsSzaOm14atOTBnFdKSX8zk0ngMGdNsV/yVepIxtPenO8v0lXrA7DxuzOTFseCINQ2HOXMsGkdd15CTIzYXuDX0JmtCBKRUbFNiwTV6vzRwmibSq+fP1wmMuVocRPyTsrjl2jvn0OFrys0rtVeZdl0RT2gOQprrfMz8jh01KRs0=
+	t=1728627891; cv=none; b=r7waowebjFpm4ZIuDDDa2+zTrsIrrBMjxhQyyaPAa/AdftuC5xGZCafEcs0WAAHCCYB1w7qXjspJV3/AbndUwFmlYu5rh3ZZkTCiHrm8jJpsK+T9CTqOO2LcMpd8MGB/o9iGId1n45d3z86TxlPU6gg0aFV/6cBNqswvTmlJrck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728627792; c=relaxed/simple;
-	bh=lGL2zudva3PRMRclo8atT5JbtWZx5V8a+DPc/vc+m6Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GYzKiSSPIlrkdLUplre1TLdqFNW94G26G7PzbM4cAU9gTQzxinBq99PJm/dlkXT87aZONt159znd/qcrUO4T99hmX/puNkEYuDZkwGLdBDi6kyrmeeQ5sCF7FEC074/9nN1HOS0olC3QVL4qkBTsfnIda6j4hLiaI66V9S4gY3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=T+Q9cXhn; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fabfc06de3so18346181fa.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 23:23:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728627789; x=1729232589; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+66qBP5RTplFkJY/8jD5uvkbysV5iQP1YfCKZCtuPZo=;
-        b=T+Q9cXhnqyR4kRiCw4O6nypQ3tBWIx5nurSdDsKt5luMJyxOId2rdiLPznpFhhws2H
-         Ys01RSy8yCt6ogBoJOi5HjI3y39qt3nvSIRcApK/u8aUuis35BTieLuC/lA/lVK4brz1
-         fpCBb0BHNsPR6dTaSaWYQMtNDgIOlBm4Gf2UQHri18ycCttO0vqbAVrmOx+PkcaXo3ty
-         WC2OMB4CKJUEyk6Ld6g5wc+YjWmGZCsKi9KC1anVFYn0+h5Zpg+FUFS9rMgzQmHha8+Q
-         a03nOX1pDX3bf9cK5wOeeDQXqQ0rnxV/ttLPboVN95dThkZw4iI9+f/85qnnlwLYvqAJ
-         mEYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728627789; x=1729232589;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+66qBP5RTplFkJY/8jD5uvkbysV5iQP1YfCKZCtuPZo=;
-        b=wkuagjuiZELAevD6NrvADdFmCVENDN3AOkYPPy6eSWzgzjl4caGF8pdoi6vZgq4KvB
-         PcUVGytiqSuu3KRyFMgc2+uc1Swynj8HZ1/G/mRRLQLZP5ufmlMD/n3ENt02sM5NFoCx
-         ZAs0S0DPBPDBbfrbtGvHHIhFBzPvYg4aV3IkOWlq6EGqNlrA1pQnVCSPt8g/dhn4b5QM
-         jSPu15pvXumEXiFb1Wc0hzZ3NRtSO9aVMfhS2OvJQs2YHJEpR229sf8eFy840d6Xn/jt
-         VhrEY2txmbOd12kWelQX2kx8wIYbExlxuuw2x1DbHqpQdBMXzJmKDzZAhC34CYBrf8Pg
-         tj6A==
-X-Forwarded-Encrypted: i=1; AJvYcCUUIuH3T0YgO+XR07iy6euTI7IBDzSXAcjqX4kr5CIsNKEx9ngy+Wz9WzQrn1pXRKN18sDMgL+TkNKTRQ8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNRFBb6+42d5DtBSyJ8CUotVv5eNvW5EVmLd5eaeNGrSntkCmb
-	EAWRX1IHdNrovhzfbD4OMCNngjGpcT656FXTuW8oyezpHO4tIDMn5XtwTzYA/wI=
-X-Google-Smtp-Source: AGHT+IHCIfQJ+SRkd4XZpTCXVrOgDK7K7sE9IEMPhnapSgMoQpsDW9JbBAmGMcFr5pJNJdu1Wq8RaQ==
-X-Received: by 2002:a2e:bc07:0:b0:2f6:484d:cd61 with SMTP id 38308e7fff4ca-2fb329b2f39mr5886351fa.43.1728627788822;
-        Thu, 10 Oct 2024 23:23:08 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb245b16cbsm4056301fa.62.2024.10.10.23.23.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 23:23:07 -0700 (PDT)
-Date: Fri, 11 Oct 2024 09:23:05 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Shiraz Hashim <quic_shashim@quicinc.com>
-Cc: neil.armstrong@linaro.org, Mukesh Ojha <quic_mojha@quicinc.com>, 
-	Bjorn Andersson <andersson@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
-	linux-arm-msm@vger.kernel.org, linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
- support
-Message-ID: <rbek5diyuwhquhbhk6pukzv474xug3pupcqqc2svrceyodvem5@obah2ahgmcox>
-References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
- <20241004212359.2263502-7-quic_mojha@quicinc.com>
- <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
- <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
- <ZwTPghV36CSIpkE4@hu-mojha-hyd.qualcomm.com>
- <dfe46653-5243-47c8-8de9-17a38d13da53@linaro.org>
- <20241011050518.GJ1421305@hu-shashim-hyd.qualcomm.com>
+	s=arc-20240116; t=1728627891; c=relaxed/simple;
+	bh=ev8dwaK6Ic152Ohf5TxY8xXkf7sJAamaomOS8SBENbk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=OfBFCzTBTU9wAsqDC/v81dm8vvPmLrqy9xZ6mlJgpmVOvEoAUWdXYuy3o8isatISyn4VdfQXDZ7I8+l3kfaJK0AYAKmLWeP9seU2TJ+qdqZtDasHD1TVye7Sk3B3LmT2qZhJ5PDO6/5O+G4QxTtFXYAq4XkjiAo9bryBFVi1LRw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=fs7vdQUi; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728627885;
+	bh=JvtMvTg3t4pAC+5A58iZT4bTryNjeLclrDnU8FPU9Ug=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fs7vdQUiHAsE1zy40qAOZn7vsvrOFSSUoEHc0AJM6yyhO7kv6DZzjAiMsXE/FAsGO
+	 E9dQhnqnJFiByyLXxI9bG5+0DzXifsGlL8WmxeQ2esmgdsoRMqcO0YFE6kr9swpggk
+	 yAjlSbe+3L3TNUn54UWqMbqmFu1Ov2LE6vv6B0IBGdYMyxwoJb6bFpe1soBLWRldLk
+	 cSaqG3+bZmc1tA88pddAn1KHJWMb9b0dXh02uHj6UeBeFlsNRyd825udSjX38SwlA+
+	 vRRVXTYdRjFrRFkn19UItR7Tv8haVhbLDm8x/ad5CUv3/pLWPn41sCuLoeTVQz3Iie
+	 7d10P8ktuwB+A==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPxRt4pqNz4xKS;
+	Fri, 11 Oct 2024 17:24:42 +1100 (AEDT)
+Date: Fri, 11 Oct 2024 17:24:42 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warning for a long time
+Message-ID: <20241011172442.3a9cc81b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011050518.GJ1421305@hu-shashim-hyd.qualcomm.com>
+Content-Type: multipart/signed; boundary="Sig_/0fCSD.8si2tWkvLeATyAbAd";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Fri, Oct 11, 2024 at 10:35:18AM GMT, Shiraz Hashim wrote:
-> On Thu, Oct 10, 2024 at 08:57:56AM +0200, neil.armstrong@linaro.org wrote:
-> > On 08/10/2024 08:21, Mukesh Ojha wrote:
-> > > On Mon, Oct 07, 2024 at 08:22:39PM +0530, Mukesh Ojha wrote:
-> > > > On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
-> > > > > On 04/10/2024 23:23, Mukesh Ojha wrote:
-> > > > > > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
-> > > > > > translation for remote processors is managed by QHEE and if the same SoC
-> > > > > > run under KVM, remoteproc carveout and devmem region should be IOMMU
-> > > > > > mapped from Linux PAS driver before remoteproc is brought up and
-> > > > > > unmapped once it is tear down and apart from this, SHM bridge also need
-> > > > > > to set up to enable memory protection on both remoteproc meta data
-> > > > > > memory as well as for the carveout region.
-> > > > > > 
-> > > > > > Enable the support required to run Qualcomm remoteprocs on non-QHEE
-> > > > > > hypervisors.
-> > > > > > 
-> > > > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
-> > > > > > ---
-> > > > > >    drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
-> > > > > >    1 file changed, 40 insertions(+), 1 deletion(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
-> > > > > > index ac339145e072..13bd13f1b989 100644
-> > > > > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
-> > > > > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
-> 
-> <snip>
-> 
-> > > > > > +		struct of_phandle_args args;
-> > > > > > +
-> > > > > > +		ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
-> > > > > > +		if (ret < 0)
-> > > > > > +			return ret;
-> > > > > > +
-> > > > > > +		rproc->has_iommu = true;
-> > > > > > +		adsp->sid = args.args[0];
-> > > > > > +		of_node_put(args.np);
-> > > > > > +		ret = adsp_devmem_init(adsp);
-> > > > > > +		if (ret)
-> > > > > > +			return ret;
-> > > > > 
-> > > > > Why don't you get this table from the firmware like presumably
-> > > > > QHEE does ?
-> > > > 
-> > > > Well, AFAIK, QHEE(EL2) has this information statically present
-> > > > and does not get it from anywhere., but will confirm this
-> > > > twice..
-> > > 
-> > > Double confirmed, device memory region required by remoteproc is
-> > > statically present with QHEE.
-> > 
-> > Right, in this case why those tables can't be embedded in the elf
-> > .resource_table like it's done with qcom_q6v5_adsp.c by calling
-> > rproc_elf_load_rsc_table() and let the remoteproc framework load the
-> > resource table and setup the devmem ssmu_map ?
-> 
-> Mainly for two reasons -
-> 
-> firmware images on platforms where we like to bring additional no-qhee
-> support do not have resource table.
-> 
-> QCOM PAS implementation for secure remoteproc supports single TZ call
-> of auth_and_rest that authenticates and brings remoteproc out of
-> reset. And we don't have provision to authenticate resource table
-> before it is used for devmem/iommu setup.
+--Sig_/0fCSD.8si2tWkvLeATyAbAd
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-So normally TZ / QHEE have the platform-specific resource table? Isn't
-it tied to the firmware binary?
+Hi all,
 
--- 
-With best wishes
-Dmitry
+=46rom before the git era, an htmldocs build (if we had such a thing back
+then) would complain like this:
+
+Documentation/driver-api/usb/usb:164: drivers/usb/core/message.c:968: WARNI=
+NG: Duplicate C declaration, also defined at driver-api/usb/gadget:804.
+Declaration is '.. c:function:: int usb_string (struct usb_device *dev, int=
+ index, char *buf, size_t size)'.
+
+I assume it is confused because we have documented both a function and a
+data type called "usb_string".  The former in drivers/usb/core/message.c
+and the latter in include/linux/usb/gadget.h.
+
+There are about 46 references to the function and 105 to the struct.
+We could rename the function to usb_string_utf8 ...
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0fCSD.8si2tWkvLeATyAbAd
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcIxKoACgkQAVBC80lX
+0GwgUgf9Hu9QIKP2sl062sQHIjXGMBWmEFOh/u12JiOEyJko71SjS2khapiAYVHb
+46W13d0/KYBCze4EO3m4negU78ATjJ8nrk1wTJ9yQZ9UiXaoLeKGM2s14V6pOEyY
+gCKYItLWfjqsNbAY4Ox1ZEJ1SmW/Q1eeSJ22P1iZsOfySZY/P4wHzNbSdmwAL7/b
+p60OEZ9K3lfqkO2HHXz4FkiHZKoM7a3N2c2agj0dn7r3f6NoF1AD1PYn+6hEmtnu
+GAPr5ubA75mIsc45e8bCWfJU3C2VfG+lXstbhbaQc8thfhK9ntZakIehPn6A1e3b
+qoVlM1O+BIJAho+yd+Fjwob8QoQHOQ==
+=WTVx
+-----END PGP SIGNATURE-----
+
+--Sig_/0fCSD.8si2tWkvLeATyAbAd--
 
