@@ -1,215 +1,171 @@
-Return-Path: <linux-kernel+bounces-360754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1C4999F1A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:34:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BB69999F1D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:34:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C16F0285AC4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:34:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3AD1C23102
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2DFA207A0C;
-	Fri, 11 Oct 2024 08:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5BC20B211;
+	Fri, 11 Oct 2024 08:34:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="FxhyWGGj"
-Received: from out-178.mta1.migadu.com (out-178.mta1.migadu.com [95.215.58.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vj5HQyPX"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34A0F209F3B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6875207A0C;
+	Fri, 11 Oct 2024 08:34:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728635653; cv=none; b=imyjHPWO2pRe15YN1NfubotxrF1ZXU4PxuPf8pzxJJCUKD1umdScbEoRF5OCpDJYu4YT0ujpT/Tue+YxIoqFDg3cshGrRQIdX099nVRtZigXqeJCu/MOqe5SzrDSKIQh4cTopaoAnGNJaaUyGBsjrqFKSocMuQ5J+XwsoRwpg4Q=
+	t=1728635678; cv=none; b=BeFljWO3PZtSRg1NdvLSU1Qkcu58ihc2DIWrj9F2HgFWDGF4fivfKmWojXnFjNSu3rS7+3GpR2IKywGj5KS5umwGORP6iOKsB87midlTCle5SfW16IRRCp//aoZbDFhKa9vC3RLB1/g7wCBKNC3PkX8AhQQCQ3Or2NvoB0zUhU0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728635653; c=relaxed/simple;
-	bh=OSwf9IZuujhLOwQqQHghAm2D235QIwK1sWlHLxUTF4U=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=r88WOrY70AgFrtYdtsYl7wS7VpggNicplUIaAFwW/TEi8vD1kdKSE433Jo1DKED660qgEyiiccj0AnYFA3ayFec3YamZx2in/yuJtdnIQIOyO6LOVbbVXM965POPK6hVdTApz96J+fPyvDijf5v9r2KX+XgnS5noyjK8K00cD1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=FxhyWGGj; arc=none smtp.client-ip=95.215.58.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1728635678; c=relaxed/simple;
+	bh=LmjhTY6GCu3+5OjscFIYDFmoiR0z3ORGCyKHXVkHpPw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p4acPXxuDYqlQYn7X5UwgEBW6IjvoQ3InihTuy/nc8tTLepWfGCwoG4rMUIbU0pMUr+neIatN7P9VYQqONuh0WWR/mEXOqM4pG8gEhrqJj46sQWK6L6oPa8WIbI1an7Mk9VYVuL/Za92Xbi7vWScEx4+w4nFrce8I5JldzpdB5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vj5HQyPX; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99422c796eso292725166b.3;
+        Fri, 11 Oct 2024 01:34:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728635675; x=1729240475; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EABHLkxzcxramcO6WPe0bwKdtq63PUVd8Arf5wK5V0E=;
+        b=Vj5HQyPXfVnGYu9JjGXX1vXIX8/I6Woxy7Ue5T/FE4eZTdohj7ciKcrNBFbShCCpLx
+         WR0ROSgvGTIIxil5HtWHJ3UEUqgQCmLLfpGxneMoJXVNACZd5kOO+Nh8Xvry/MN428eF
+         hSCWBTl3GKYMESInfuuzTiDjexOm9CIDVSXcsVkvjwdnY1JAqhVyv8n2OnVlU/uvj6ff
+         0dBkhtMS7Z9Eh5FTB/gODEDN6ojcaEfrQKGovYb3414tSE6o6b7H3cJ9BAiLnRu6Btxj
+         O8XUFMpY6WLqsHKjU2uhJ92euvYIwpk/LQV6ZNN9tWFUjVb2kPTZ9/wZVS2qJGJOQgfq
+         WbgA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728635675; x=1729240475;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EABHLkxzcxramcO6WPe0bwKdtq63PUVd8Arf5wK5V0E=;
+        b=ZZIjebM933uNcic8fr6B4rpb0j7/W17ulbnKp+JQMQj6vfUKjmqykV1miLoIAys+iC
+         9PJVLuouV/6oAsC/SfWwGTPApjh9nCdSxdtOr6KqlZt3kM9n9oLMioeDV0sBXXDpsM/e
+         ZAkfHADfyDyY1f6xQg9CoQiN0OD0w15R0ZtgYmhLEyCKk+EwkAdWwD2/3tz573ImYcMg
+         Srq70zOM/zzP/G6s9XSlgMVgbkr0u1P6KOkOrY02mXNEgqnpb6IGWPMEA2uq5WmMrDpf
+         z63N+kgu0OfaD36rrqVI1TnpNmKFs+wOJ34t6q6PlK7XwKCNy3fzpskjWpgQnZPjP3aQ
+         DMeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUQckc74jgGhYRqPHqmbLB/3jbQXfJ8XnzINMkb+650NtfrWBwwnlpZSjwX/qYn1SuybgvmvQ8l@vger.kernel.org, AJvYcCVGuYPaYU23ECX569mQKXo0GrHteNMO0pt3qQOrnALmpGzEYGCqzWGKxrOFR2WvzoaGMPjfg6OSVkAA@vger.kernel.org, AJvYcCXWR8KY4QiC6HuQxE0SRWuEdiH6vP5e5jpebWlqfWghoGenzCgl8CuzL2EnGH7Yly3bsKLIPqER6S0R8u5t@vger.kernel.org
+X-Gm-Message-State: AOJu0YwH9lv7ihDq+PqGv1Ra9R8WscpBUqCrEC2TBLgfNuJL2aJhgrDv
+	OleeDNMx25Wm5Ytae9WjU6HHTaJPnvB+pVOTM7/2yLm5WvzaS9O80mDLZXoP
+X-Google-Smtp-Source: AGHT+IEoHStOPruhFTLxbvfOGdkbObqF0fHHUkLsQl/p5cE5+vMJvg0KwdzS8imp9pLoy542WyuRJw==
+X-Received: by 2002:a17:907:9724:b0:a99:528f:2200 with SMTP id a640c23a62f3a-a99b93c8da1mr125834866b.28.1728635674572;
+        Fri, 11 Oct 2024 01:34:34 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ec54cesm186137866b.32.2024.10.11.01.34.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 01:34:33 -0700 (PDT)
+Message-ID: <07ec0837-d7a3-413e-a281-e06feafe7f34@gmail.com>
+Date: Fri, 11 Oct 2024 10:34:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1728635647;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ZPg15Y0RP+O9S/V9OEOgK1OqOrwGsfvcPsISzD4p6E8=;
-	b=FxhyWGGjp5JY+vM91T/2yr6NuAnXEteHRXJdFgJGorqnoaO79L6Ce591gR8yj1dJg/U9Ot
-	ztLsT/NhDIIhHiZwHPJpmA/OHKq4LwXfvdDl2JH8KQ4p0zTUQMqBWiQ1UffVJctfW9Xz+q
-	sSXwY7Fhr8HpTAxUKDAlKq4Jn9QhXlokawy3Txpbw3S/0Mu1tuW8tszT4AfVzNelQL+2vY
-	W+XZRerIW02tBXZow14YxXBFRcYTpaiImiL1YHpG7sRXIDfEJCNL2QwskaCpJhcU4CVfuh
-	0sDicuGD2UiOSFtA5lJEeAcgl87grLfHMyXMKEoprWkpKpDlN2agSggzzW4/og==
-Content-Type: multipart/signed;
- boundary=8137794f5a62e3778c97b3857ef924c4846dffef6a1602a5ab2839f55273;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Fri, 11 Oct 2024 10:33:56 +0200
-Message-Id: <D4SU6WHZCN34.2XL5W4D2T188G@cknow.org>
-Cc: <linux-rockchip@lists.infradead.org>, <heiko@sntech.de>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Add dtsi file for RK3399S SoC
- variant
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Dragan Simic" <dsimic@manjaro.org>
-References: <c32622e4a6897378d9df81c8c3eda1bdb9211e0b.1728632052.git.dsimic@manjaro.org> <D4STH4Z8LTHN.2X4BJJVACFSIS@cknow.org> <20da65423e77e13511cc7c7bb39e0246@manjaro.org>
-In-Reply-To: <20da65423e77e13511cc7c7bb39e0246@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
-
---8137794f5a62e3778c97b3857ef924c4846dffef6a1602a5ab2839f55273
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next 1/3] device property: Introduce
+ fwnode_for_each_available_child_node_scoped()
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
+ <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
+ <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
 Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Dragan,
+On 11/10/2024 07:39, Sakari Ailus wrote:
+> Hi Javier,
+> 
+> On Tue, Oct 08, 2024 at 06:10:27PM +0200, Javier Carrasco wrote:
+>> Introduce the scoped variant of the
+>> fwnode_for_each_available_child_node() to automatically decrement the
+>> child's refcount when it goes out of scope, removing the need for
+>> explicit calls to fwnode_handle_put().
+>>
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>  include/linux/property.h | 5 +++++
+>>  1 file changed, 5 insertions(+)
+>>
+>> diff --git a/include/linux/property.h b/include/linux/property.h
+>> index 61fc20e5f81f..b37508ecf606 100644
+>> --- a/include/linux/property.h
+>> +++ b/include/linux/property.h
+>> @@ -168,6 +168,11 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+>>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+>>  	     child = fwnode_get_next_available_child_node(fwnode, child))
+>>  
+>> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	       \
+>> +	for (struct fwnode_handle *child __free(fwnode_handle) =	       \
+>> +		fwnode_get_next_available_child_node(fwnode, NULL); child;     \
+>> +	     child = fwnode_get_next_available_child_node(fwnode, child))
+>> +
+> 
+> On OF, the implementation of the .get_next_child_node() fwnode op is:
+> 
+> static struct fwnode_handle *
+> of_fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
+>                               struct fwnode_handle *child)
+> {
+>         return of_fwnode_handle(of_get_next_available_child(to_of_node(fwnode),
+>                                                             to_of_node(child)));
+> }
+> 
+> On ACPI we currently have .device_is_available() returning false but that
+> probably should be returning true instead (it's been virtually unused
+> previously).
+> 
+> That makes fwnode_get_next_available_child_node() and
+> fwnode_get_next_child_node() equivalent on both ACPI and OF. Presumably
+> creating unavailable nodes would be useless on swnode, too.
+> 
+> So my question is: what do we gain by adding all these fwnode_*available()
+> helpers?
+> 
+>>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+>>  						 struct fwnode_handle *child);
+> 
 
-On Fri Oct 11, 2024 at 10:23 AM CEST, Dragan Simic wrote:
-> On 2024-10-11 10:00, Diederik de Haas wrote:
-> > On Fri Oct 11, 2024 at 9:40 AM CEST, Dragan Simic wrote:
-> >> Following the hierarchical representation of the SoC data that's been=
-=20
-> >> already
-> >> established in the commit 296602b8e5f7 ("arm64: dts: rockchip: Move=20
-> >> RK3399
-> >> OPPs to dtsi files for SoC variants"), add new SoC dtsi file for the=
-=20
-> >> Rockchip
-> >> RK3399S SoC, which is yet another variant of the Rockchip RK3399 SoC.
-> >> ...
-> >> The RK3399S variant is used in the Pine64 PinePhone Pro only, [1]=20
-> >> whose board
-> >> dts file included the necessary adjustments to the CPU DVFS OPPs. =20
-> >> This commit
-> >> effectively moves those adjustments into the separate RK3399S SoC dtsi=
-=20
-> >> file,
-> >> following the above-mentioned "encapsulation" approach.
-> >> ...
-> >> ---
-> >> ...
-> >>  .../dts/rockchip/rk3399-pinephone-pro.dts     |  23 +---
-> >>  arch/arm64/boot/dts/rockchip/rk3399-s.dtsi    | 123=20
-> >> ++++++++++++++++++
-> >>  2 files changed, 124 insertions(+), 22 deletions(-)
-> >>  create mode 100644 arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
-> >>=20
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts=20
-> >> b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> >> index 1a44582a49fb..eee6cfb6de01 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-pinephone-pro.dts
-> >> @@ -13,7 +13,7 @@
-> >>  #include <dt-bindings/input/gpio-keys.h>
-> >>  #include <dt-bindings/input/linux-event-codes.h>
-> >>  #include <dt-bindings/leds/common.h>
-> >> -#include "rk3399.dtsi"
-> >> +#include "rk3399-s.dtsi"
-> >>=20
-> >>  / {
-> >>  	model =3D "Pine64 PinePhone Pro";
-> >> @@ -456,27 +456,6 @@ mpu6500@68 {
-> >>  	};
-> >>  };
-> >>=20
-> >> -&cluster0_opp {
-> >> -	opp04 {
-> >> -		status =3D "disabled";
-> >> -	};
-> >> -
-> >> -	opp05 {
-> >> -		status =3D "disabled";
-> >> -	};
-> >> -};
-> >> -
-> >> -&cluster1_opp {
-> >> -	opp06 {
-> >> -		opp-hz =3D /bits/ 64 <1500000000>;
-> >> -		opp-microvolt =3D <1100000 1100000 1150000>;
-> >> -	};
-> >> -
-> >> -	opp07 {
-> >> -		status =3D "disabled";
-> >> -	};
-> >> -};
-> >> -
-> >>  &io_domains {
-> >>  	bt656-supply =3D <&vcc1v8_dvp>;
-> >>  	audio-supply =3D <&vcca1v8_codec>;
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi=20
-> >> b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
-> >> new file mode 100644
-> >> index 000000000000..e54f451af9f3
-> >> --- /dev/null
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3399-s.dtsi
-> >> @@ -0,0 +1,123 @@
-> >> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-> >> +/*
-> >> + * Copyright (c) 2016-2017 Fuzhou Rockchip Electronics Co., Ltd
-> >> + */
-> >> +
-> >> +#include "rk3399-base.dtsi"
-> >> +
-> >> +/ {
-> >> +	cluster0_opp: opp-table-0 {
-> >> +		compatible =3D "operating-points-v2";
-> >> +		opp-shared;
-> >> +
-> >> +		opp00 {
-> >> +			opp-hz =3D /bits/ 64 <408000000>;
-> >> +			opp-microvolt =3D <825000 825000 1250000>;
-> >> +			clock-latency-ns =3D <40000>;
-> >> +		};
-> >> +		opp01 {
-> >> +			opp-hz =3D /bits/ 64 <600000000>;
-> >> +			opp-microvolt =3D <825000 825000 1250000>;
-> >> +		};
-> >> +		opp02 {
-> >> +			opp-hz =3D /bits/ 64 <816000000>;
-> >> +			opp-microvolt =3D <850000 850000 1250000>;
-> >> +		};
-> >=20
-> > Is there a reason why there isn't a line separator between the various
-> > opp nodes? Normally there is one between nodes.
-> > Note that in rk3588-opp.dtsi there are no separator lines between the
-> > opp nodes, while they do exist between other nodes.
-> > And in rk356x.dtsi the opp nodes do have a separator line.
->
-> That has also bothered me. :)  I already had a look around in various
-> dts(i) files long time ago and there seems to be no preferred layout.
+Hi Sakari, thanks for your feedback.
 
-I'm inclined to say the opp ones are the odd ones.
+I thought that the difference is not in OF (which either way ends up
+calling __of_device_is_available()), but in ACPI.
 
-> In this particular case, it's better to have no separator lines because
-> that's what we already have lacking in rk3399.dtsi, rk3399-t.dtsi, etc.,
-> so running something like "diff rk3399.dtsi rk3399-s.dtsi" makes it easy
-> to see what actually differs in the RK3399 SoC variants, without having
-> to filter out any whitespace differences.
+For fwnode_for_each_child_node(), the ACPI callback is
+acpi_get_next_subnode(), and I don't see that the device_is_available()
+callback is used in that case.
 
-Besides that inconsistencies always seem to 'trigger' me, I especially
-noticed it as this patch changed it from having separator lines to
-having no separator lines.
+For fwnode_for_each_available_child_node(),
+fwnode_get_next_available_child_node() is used, which checks
+fwnode_device_is_available(), which then calls device_is_available().
 
-Cheers,
-  Diederik
+What's the catch?
 
---8137794f5a62e3778c97b3857ef924c4846dffef6a1602a5ab2839f55273
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwji+AAKCRDXblvOeH7b
-bg2RAQCj+fvzp+GUYQJcF7+6OXVPUfnmAxcAwVezTWHtzmsl+gEAy+yylI4pTDx0
-maoPJ50F/e8jwPn4UpZsxyjjSJz5ZQI=
-=epOB
------END PGP SIGNATURE-----
-
---8137794f5a62e3778c97b3857ef924c4846dffef6a1602a5ab2839f55273--
+Thanks again and best regards,
+Javier Carrasco
 
