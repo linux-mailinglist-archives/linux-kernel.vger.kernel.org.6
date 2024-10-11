@@ -1,160 +1,209 @@
-Return-Path: <linux-kernel+bounces-360824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AB899A03A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:35:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 312D9999FD8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B60821F21C07
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:35:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABC7D1F2238E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:12:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 955D8210191;
-	Fri, 11 Oct 2024 09:34:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668520CCC8;
+	Fri, 11 Oct 2024 09:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="KD7Py/Jc"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="C33ErDdy";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="1gVAczZk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Xvk+rtk0";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="aRu3PTSo"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EC8E20ADDF;
-	Fri, 11 Oct 2024 09:34:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B3120C46C;
+	Fri, 11 Oct 2024 09:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728639289; cv=none; b=arklpZ2PLaZAJa/mm1LJpBVzXw7/DSCdpMkmX90xjZ7ohUs/MxD4Rst9tUMJUaPIA31Un+ySWa5beAARRq8Qzl6ZIKG2X8bZK9gXt3r8qt9ehoT/cVnHq8pDCbyfmF8YRsDNNwzwCwWIJ9gyc/kRiu/hZkbTsbyIhD0xHAwHQD4=
+	t=1728637913; cv=none; b=nEshrVGdPTCuKpP+YB000+YWCI8OVZHoh63VgmYAbBVi7DDUrraghbL+es28DR5AyRevjbmjOzzSMuaflQIOdcDuYRIsbrq3z8EUEG3raVhpt1QHH3DsXs4bjpyQMoOWSpLgxLPVL1FgkP60jkuMxBtqZg1J9xBZeMVXo+nUw+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728639289; c=relaxed/simple;
-	bh=Gl6dPLjRLbSic9EmZnmscq1zMg/4Htr1XPejk/OM3k8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=CJGTMr9KTg27kslW3j4MhkPWxC93eqp3daUhMmKzFwPtct+99LXtcoI7gI4+eosD4sPFUMlZhn3YSBae0+iiT2PNNRWX4JsvONx4rHRGiNcHExesaRJWOpxV0ONZbp/j/nBK0R8wtPPEXZK2+Y+RHI8mG1Er16zqF5/8jurXA3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=KD7Py/Jc; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046661.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B7jxoS016451;
-	Fri, 11 Oct 2024 11:34:29 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	Cx8wCvxmonPkb1ieC6lKwP2pVMjk4uOgdXPQfU8JtJo=; b=KD7Py/Jcqjd1pUHD
-	2TCjoUJ0n/G1MuPfk/dhYKv1031rual8A0sF+d4EuwfLW1tqnYRmRAQxl/hNap5+
-	XdRvOMQlD8UPeauFIVc3ZyYy1BWj1a52Lekel5NrS73Gv2q5wBUUy6A01nOi9X9+
-	8y4l+irexXIUCpKxRnqxQ3CJmthQrk3lHEmnSHft6KIy+De/LBWdVhHl7Yh0FdJ5
-	SkUbE0Xm0/1z+Hx8TWnhVTs9PYkP+L6gPglTtJG9x9HLaZ9WK40wxTfkYMIyeaK+
-	KYO0MRx2BbTMh59+O2j0OQTAIvgP77/M90Jlhf2LgCYWXDD2p/tuEDn2Wf2VxIM1
-	ZICQJg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 425w9xh02c-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 11:34:25 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 299014005C;
-	Fri, 11 Oct 2024 11:27:58 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id B0A5D26D085;
-	Fri, 11 Oct 2024 11:12:28 +0200 (CEST)
-Received: from [10.48.87.35] (10.48.87.35) by SHFDAG1NODE3.st.com
- (10.75.129.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.37; Fri, 11 Oct
- 2024 11:12:28 +0200
-Message-ID: <20394a61-72b8-4d92-ac35-201368035bde@foss.st.com>
-Date: Fri, 11 Oct 2024 11:12:27 +0200
+	s=arc-20240116; t=1728637913; c=relaxed/simple;
+	bh=3uOl5msXhMcnmG4tD4a7j6kHeBRrApQCa2hdgtzfr/g=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BM1prP55aA4oEqA0Rte2peLcO4AuD1KdHtDlMvD6oTCOKTmiIxwNAs5SoTHiQtLNK+AHnwLEKeQQwgPt9G9g+CLoCHjKyRkThwH7+FGTs7jpE/ypCQQGvQjGX/aoY1EDnnyASxYBsDXzJ+rl7jHb1+UU0PHrKkNY61LRcfT6QXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=C33ErDdy; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=1gVAczZk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Xvk+rtk0; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=aRu3PTSo; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id EFC91219C5;
+	Fri, 11 Oct 2024 09:11:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728637910; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuZTgWdFD/hq8KR11XFrFgYR7ZkWzK+2bSpdRlLNDB4=;
+	b=C33ErDdyZbbbrhnhdFu0f7eb8QvNS+S9jrUImLemWh0zh0jPMxUqXoFG4bJ2fj9q4w2kMu
+	ewif9IzMzvQm6VhCYxvUEq56J0z9HsZcix2kQElcBZ+LxYaMCDfBP2Zw1SnSAJ/y2IAK1r
+	YOICfhHMWDA/0ckGj6TEMCXu2h5aeME=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728637910;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuZTgWdFD/hq8KR11XFrFgYR7ZkWzK+2bSpdRlLNDB4=;
+	b=1gVAczZkEGUHbYW86l5zb2Qna6WCI+Vw6rBhNEFv3W8AqWC1dJ6QI4MGIaUMwmIep64t2g
+	9DSmGHzQLxqrZDDQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=Xvk+rtk0;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=aRu3PTSo
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1728637909; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuZTgWdFD/hq8KR11XFrFgYR7ZkWzK+2bSpdRlLNDB4=;
+	b=Xvk+rtk0sJ9Rmw79SHnRifqwxFQYjGPonhj9nuESNkrdYmGhd6Lh/YgfjrJig5vFfez0S8
+	Ed5/qKV1MEE2+FQup+GCDByPCDNP49JL2BghrOa4GmE8BCZH8/bdbla35V5e5uFn8VZIE6
+	q+mqi1HVY343ksbnYH/hVJ3fDXaCIvM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1728637909;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xuZTgWdFD/hq8KR11XFrFgYR7ZkWzK+2bSpdRlLNDB4=;
+	b=aRu3PTSoGpEx6/aKAF7AGNL+FB8YBBJI+TDZliRCP4yncs3Mqecww/EdolAPqL8996ED4s
+	OBQHvQp61+CRPXBQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C5588136E0;
+	Fri, 11 Oct 2024 09:11:49 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id LSLgLtXrCGd4KQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 11 Oct 2024 09:11:49 +0000
+Date: Fri, 11 Oct 2024 11:12:46 +0200
+Message-ID: <87o73rm29d.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: linux@treblig.org
+Cc: perex@perex.cz,
+	tiwai@suse.com,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: core: Remove unused copy_from_user_toio
+In-Reply-To: <20241010205340.278133-1-linux@treblig.org>
+References: <20241010205340.278133-1-linux@treblig.org>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 06/11] dt-bindings: dma: stm32-dma3: introduce
- st,axi-max-burst-len property
-To: Rob Herring <robh@kernel.org>
-CC: Vinod Koul <vkoul@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Maxime Coquelin
-	<mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        <dmaengine@vger.kernel.org>,
-        <linux-stm32@st-md-mailman.stormreply.com>,
-        <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241010-dma3-mp25-updates-v1-0-adf0633981ea@foss.st.com>
- <20241010-dma3-mp25-updates-v1-6-adf0633981ea@foss.st.com>
- <20241010181645.GA2121939-robh@kernel.org>
-Content-Language: en-US
-From: Amelie Delaunay <amelie.delaunay@foss.st.com>
-In-Reply-To: <20241010181645.GA2121939-robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Rspamd-Queue-Id: EFC91219C5
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.51
+X-Spam-Flag: NO
 
-
-
-On 10/10/24 20:16, Rob Herring wrote:
-> On Thu, Oct 10, 2024 at 04:27:56PM +0200, Amelie Delaunay wrote:
->> DMA3 maximum burst length (in unit of beat) may be restricted depending
->> on bus interconnect.
->>
->> As mentionned in STM32MP2 reference manual [1], "the maximum allowed AXI
->> burst length is 16. The user must set [S|D]BL_1 lower or equal to 15
->> if the Source/Destination allocated port is AXI (if [S|D]AP=0)".
+On Thu, 10 Oct 2024 22:53:40 +0200,
+linux@treblig.org wrote:
 > 
-> This should be implied by the SoC specific compatible.
+> From: "Dr. David Alan Gilbert" <linux@treblig.org>
 > 
+> copy_from_user_toio() has been unused since commit
+> ce2d8ed8d809 ("ASoC: qcom: Convert to generic PCM copy ops")
+> 
+> Remove it.
 
-I took an example from snps,dw-axi-dmac.yaml (snps,axi-max-burst-len). 
-But I agree, it will be implied by st,stm32mp25-dma3 compatible in V2.
-Patch 8/11 will then be dropped.
+It's a pair of copy_to_*(), so if any, it should be dropped only after
+both users are gone.
 
-Regards,
-Amelie
 
->>
->> Introduce st,axi-max-burst-len. If used, it will clamp the burst length
->> to that value if AXI port is used, if not, the maximum burst length value
->> supported by DMA3 is used.
->>
->> [1] https://www.st.com/resource/en/reference_manual/rm0457-stm32mp2325xx-advanced-armbased-3264bit-mpus-stmicroelectronics.pdf
->>
->> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
->> ---
->>   .../devicetree/bindings/dma/stm32/st,stm32-dma3.yaml          | 11 +++++++++++
->>   1 file changed, 11 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
->> index 38c30271f732e0c8da48199a224a88bb647eeca7..90ad70bb24eb790afe72bf2085478fa4cec60b94 100644
->> --- a/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
->> +++ b/Documentation/devicetree/bindings/dma/stm32/st,stm32-dma3.yaml
->> @@ -51,6 +51,16 @@ properties:
->>     power-domains:
->>       maxItems: 1
->>   
->> +  st,axi-max-burst-len:
->> +    description: |
->> +      Restrict AXI burst length in unit of beat by value specified in this property.
->> +      The value specified in this property is clamped to the maximum burst length supported by DMA3.
->> +      If this property is missing, the maximum burst length supported by DMA3 is used.
->> +    $ref: /schemas/types.yaml#/definitions/uint32
->> +    minimum: 1
->> +    maximum: 256
->> +    default: 64
->> +
->>     "#dma-cells":
->>       const: 3
->>       description: |
->> @@ -137,5 +147,6 @@ examples:
->>                      <GIC_SPI 48 IRQ_TYPE_LEVEL_HIGH>;
->>         clocks = <&rcc CK_BUS_HPDMA1>;
->>         #dma-cells = <3>;
->> +      st,axi-max-burst-len = <16>;
->>       };
->>   ...
->>
->> -- 
->> 2.25.1
->>
+thanks,
+
+Takashi
+
+> 
+> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+> ---
+>  include/sound/core.h |  1 -
+>  sound/core/memory.c  | 20 --------------------
+>  2 files changed, 21 deletions(-)
+> 
+> diff --git a/include/sound/core.h b/include/sound/core.h
+> index 1f3f5dccd736..b5a6f3d2bff5 100644
+> --- a/include/sound/core.h
+> +++ b/include/sound/core.h
+> @@ -267,7 +267,6 @@ static inline int snd_minor_info_oss_init(void) { return 0; }
+>  /* memory.c */
+>  
+>  int copy_to_user_fromio(void __user *dst, const volatile void __iomem *src, size_t count);
+> -int copy_from_user_toio(volatile void __iomem *dst, const void __user *src, size_t count);
+>  
+>  /* init.c */
+>  
+> diff --git a/sound/core/memory.c b/sound/core/memory.c
+> index 2d2d0094c897..8222a851da87 100644
+> --- a/sound/core/memory.c
+> +++ b/sound/core/memory.c
+> @@ -63,26 +63,6 @@ int copy_to_iter_fromio(struct iov_iter *dst, const void __iomem *src,
+>  }
+>  EXPORT_SYMBOL(copy_to_iter_fromio);
+>  
+> -/**
+> - * copy_from_user_toio - copy data from user-space to mmio-space
+> - * @dst: the destination pointer on mmio-space
+> - * @src: the source pointer on user-space
+> - * @count: the data size to copy in bytes
+> - *
+> - * Copies the data from user-space to mmio-space.
+> - *
+> - * Return: Zero if successful, or non-zero on failure.
+> - */
+> -int copy_from_user_toio(volatile void __iomem *dst, const void __user *src, size_t count)
+> -{
+> -	struct iov_iter iter;
+> -
+> -	if (import_ubuf(ITER_SOURCE, (void __user *)src, count, &iter))
+> -		return -EFAULT;
+> -	return copy_from_iter_toio((void __iomem *)dst, &iter, count);
+> -}
+> -EXPORT_SYMBOL(copy_from_user_toio);
+> -
+>  /**
+>   * copy_from_iter_toio - copy data from iov_iter to mmio-space
+>   * @dst: the destination pointer on mmio-space
+> -- 
+> 2.47.0
+> 
 
