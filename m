@@ -1,60 +1,78 @@
-Return-Path: <linux-kernel+bounces-360853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867CE99A080
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:56:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4D2899A084
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:57:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 988701C239EE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:56:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6CDA51F25ADF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:57:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66E12141AE;
-	Fri, 11 Oct 2024 09:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B91D12141D1;
+	Fri, 11 Oct 2024 09:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tF5r1vt2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jLkHTrD6"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31F7E1F9415;
-	Fri, 11 Oct 2024 09:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E41C20C497;
+	Fri, 11 Oct 2024 09:55:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640485; cv=none; b=jKySVIICw/2l7KnmWIHwstKnaG2YPcvMJTr6NMVM6AFg1GYZIxH+b03UU1ud5n8VvKoA0PI9+OmBcftEC5gHSJ9wAJ+ArHBMxMjxlqGOABZpvxtoulT+A+nfs46aRn8KfjcNzzJ8AoOL353ycj2zEy6h71M8V8C9Hnm30zzboao=
+	t=1728640508; cv=none; b=kOvvG0f8Ulqwk7pftbZDf0LU5M5rARwjffv3+oyOlVzaPicbYuHJnRYDt1HV19EBGwbbgIiMPibNV38+fhp+QiCAHmLhimlO2pwulY/9QkkofrHltM2z2Ul09ekrUwLQCNI5SynSurGHS6+F96xUkTdCq6BvWh8Yk5qRHsTFY0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640485; c=relaxed/simple;
-	bh=2yzsA2kRa2zo2Cn1nrydw7a45oeTg8jRlG9l+3Lnrg8=;
+	s=arc-20240116; t=1728640508; c=relaxed/simple;
+	bh=4UhPzKAxq1htJyVXoa6Yn6iXVYNDJylwqoGp59Hnk8o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sXjPu+OQAry7XRQAksobwDxcvSmWhCGn1i02cQI7150/UhJSch13WL2ZlJxvT7Azjro5TW3QGR16045gR4AHEdOiYic7Zh84gf08Wn41dD0MjcgtBxYWIXrhE7SBedpANVH/fzPuarypoE0fhi7MyWNPZSTU6J3OUG/sCv+HD/Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tF5r1vt2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2CB0C4CEC3;
-	Fri, 11 Oct 2024 09:54:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728640484;
-	bh=2yzsA2kRa2zo2Cn1nrydw7a45oeTg8jRlG9l+3Lnrg8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tF5r1vt2su0vXxMcyDcyDnVwc+UsUya2qLP0ekw8jvaJrZgai8eeKary/RGfvVvyu
-	 ZAfA8Pk3pRONxVGf2zFcBevpyCEEIVdXKNrezJXMZrdNvo6n9n00N7RTIxY0AAWM07
-	 PVjb0GFbsaREptWAgkdTwAowPVKmZ0PkHCGNipvhdY3UQdy4Ihu0rxTTDv1j0Q5Skx
-	 JlSQf00NdTg8jDj7cQV0nY8NnAhal1/w65Z4tpOvuF70UkhcZ0Bhl7PBluq5Wur+N/
-	 NxVY0R1mZTxd6DIAtgn/aKvD6NILyqOICmG9C1BoqgHK7ui9sNNq3KotiGtkR+qWDS
-	 c7gCuCjBh4XoQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1szCME-000000005Qx-3UaV;
-	Fri, 11 Oct 2024 11:54:50 +0200
-Date: Fri, 11 Oct 2024 11:54:50 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	 Content-Type:Content-Disposition:In-Reply-To; b=b9AL47MW7e9xiw2WveW3w+LN8i5bXo8S1V2JG5SDj4b3zlm4Bv+OcdYqc5tq4U/NSI5ZnukR/1Pgrp9LtsxGeCEuI/Cow8ZnLerbDDshFvTBQCVeeO4Pa/wzcvUeo1ILzrdPFElDs8oxEUpM9JbmouEQOGvfjGfOKPcQUt3OWK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jLkHTrD6; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728640507; x=1760176507;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=4UhPzKAxq1htJyVXoa6Yn6iXVYNDJylwqoGp59Hnk8o=;
+  b=jLkHTrD6ViI4PmiRTFY166/UJT9fAWyI6WuX2yb0uMlKuVt2GzXrvaDA
+   bwInfXl0UOLe3rruXzW0KRaZKihBsbXPPcoRWpHmh0qFy7jN2Mh/p3NMr
+   Y5MI30vmxKpXzw6AVSERdk/gvcz6d7/RTarCzOm9t8Fcq9J/1OHBdKi9r
+   RNyNegrK6RpvHgmbzIdoLhxw297u+2LCi1NXielu3a4KPJSC+Y4uxUGol
+   TsG1dKT6am3oqeAJid0UZPHUID/azw/Py9J0/xUa+UdIWxxNMeL7QFsq+
+   tB0HUnALNgi5FwU2YjO9ahVPXFLTvUshXur2hmy3rxCaH8L7AjtaLqODX
+   w==;
+X-CSE-ConnectionGUID: sD1IUPHxTMuWejysG9JqkQ==
+X-CSE-MsgGUID: qUmJVpm9RSmNRgrggo7vJw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31736419"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="31736419"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:55:07 -0700
+X-CSE-ConnectionGUID: NVo8UdIuT1+BB/rfQQu3GQ==
+X-CSE-MsgGUID: p8fLXQakTo2LVPCdCw2hsg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="81686615"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:55:04 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szCMO-00000001qjM-3g4a;
+	Fri, 11 Oct 2024 12:55:00 +0300
+Date: Fri, 11 Oct 2024 12:55:00 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: vamoirid <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: camss NULL-deref on power on with 6.12-rc2
-Message-ID: <Zwj16uJxNGoPoVe-@hovoldconsulting.com>
-References: <Zwjw6XfVWcufMlqM@hovoldconsulting.com>
- <d394fb33-2fe4-4a5a-b6fa-7f5598aede9b@linaro.org>
+Subject: Re: [PATCH v1 01/13] iio: chemical: bme680: Fix indentation and
+ unnecessary spaces
+Message-ID: <Zwj19ONfbDr0f4Fh@smile.fi.intel.com>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-2-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,58 +81,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <d394fb33-2fe4-4a5a-b6fa-7f5598aede9b@linaro.org>
+In-Reply-To: <20241010210030.33309-2-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 11, 2024 at 10:41:30AM +0100, Bryan O'Donoghue wrote:
-> On 11/10/2024 10:33, Johan Hovold wrote:
-
-> > This morning I hit the below NULL-deref in camss when booting a 6.12-rc2
-> > kernel on the Lenovo ThinkPad X13s.
-> > 
-> > I booted the same kernel another 50 times without hitting it again it so
-> > it may not be a regression, but simply an older, hard to hit bug.
-> > 
-> > Hopefully you can figure out what went wrong from just staring at the
-> > oops and code.
-
-> > [    5.657860] ov5675 24-0010: failed to get HW configuration: -517
+On Thu, Oct 10, 2024 at 11:00:18PM +0200, vamoirid wrote:
+> From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > 
-> So this caused it, I guess the sensor failed to power up.
+> Fix indentation issues, line breaking and unnecessary spaces
+> reported by checkpatch.pl.
 
-The probe deferral may be involved, but we see this deferral all the
-time without things blowing up (and the driver should be able to handle
-that).
+Can we move this to be the last (or close to the end) in the series?
 
-> You've booted 50 times in a row and hit a corner case where the sensor 
-> didn't power up leading to a NULL deference.
-> 
-> So, two bugs I'd say.
-> 
-> - What is the cirumcstance where the sensor doesn't power up
+-- 
+With Best Regards,
+Andy Shevchenko
 
-Not sure what is causing it, but I have seen boots where this message
-shows up 5-6 times, which may indeed indicate that something is off. If
-this was just a provider not having probed yet, driver core should
-generally prevent the sensor from from probing until the resources (e.g.
-clocks) are available.
 
-> - What's the NULL either entity * or entity->pad I'd say.
-> 
-> <snip>
-> > [    6.594915] Call trace:
-> > [    6.594915]  camss_find_sensor+0x20/0x74 [qcom_camss]
-> Hmm, not sure looking at what we have.
-> 
->                  pad = &entity->pads[0];
->                  if (!(pad->flags & MEDIA_PAD_FL_SINK))
->                          return NULL;
-> 
-> Is pad guaranteed after entity->pads[0] ?
-> We dereference it like its guaranteed.
-> 
-> Anyway thanks for the report, should be enough start digging.
-
-Thanks.
-
-Johan
 
