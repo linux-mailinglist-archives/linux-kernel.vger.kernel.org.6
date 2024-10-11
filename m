@@ -1,157 +1,135 @@
-Return-Path: <linux-kernel+bounces-360502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1EE8999BC2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:42:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0D210999BCB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:46:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5007C1F2432B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:42:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E254E1C22A11
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:46:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2305C1F4FD8;
-	Fri, 11 Oct 2024 04:42:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8633C1F4FC7;
+	Fri, 11 Oct 2024 04:46:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VGw3h4Sf"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="swBhvHwt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217828EB;
-	Fri, 11 Oct 2024 04:42:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFF111392;
+	Fri, 11 Oct 2024 04:46:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728621770; cv=none; b=cRDy1Radl92OTH8t5K3qSmcYNvOYv1FpD1MWb08gwbzWi13IWGFLSFwLaZL0WikGrZWByTWpKRbsnqskp+o2I2fwKECdlx5gPibW876xDuNf4rT4KrUV3+0i4b0uMJqem4TqnMIDuteZ/nN67UFi5xQ5L1hKOqR/CbYGFactFYE=
+	t=1728621970; cv=none; b=hUYh0DIdtW3NbI+9bdntHPMuSEMAPTTmKr/2aiKtP1q4OilPrz02dPNeB/lQeEhbTSFKgwrj4GrFAaUS+X5W9uUWIeNi0UbNa5e4luXNgsJ4KbNOqpf9f2ApJ1tvY2KP6BuQ3qmOE/pobJIkk5lMFyRidJEpz6Lqc85c5si2XrY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728621770; c=relaxed/simple;
-	bh=WKoHtQ3Shd9jyF/7n3zw6+AuqxeuhzrjH5MwMRnLQGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=YdXhOdRqFkKUs8VTz4t8cTGzHgjZ9HgkhE/kXNpXYVeBXzj8cbuc1fkcbyTbKNqsEAp9gBNmsVijSND78zBdULeecCMULIpzEfzRpiwottDkWV5MeFieWZa7snMDIwV8H+KtoJqLVyjU+XRY9r7FkFQYsLiiEn5f5cFjq6Zuuds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VGw3h4Sf; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1728621761;
-	bh=lkwU82CX5DaBerlW7p3qaRCDFl8Xh+e50RB6heVkVwI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=VGw3h4SfWRfwcEcJHPFnjOKDn0RMEo+rXh7qaQ+sXET2dkIlV/YNfarQPNBRupZ9h
-	 qreojj1MJPo0NBBRlsVD3dS4f7NX1QWuz2/ohTwr9RPuGqbEfaL4Mtcym68K3aeLOg
-	 vrbjqnJcdp5xXJ6EX6imaHQH5XuIibDaAEi7WZ3g+6VPlRET38jK/7uTv/ICwzkYSg
-	 JPXdIx/oRyYhBYBYV+gSrPzuaDxPKnZeALoX3d5pDS/sJZ8m/aSloo68L0zfdKg6Sv
-	 EyjVUrNM5QMzXYkB63t39bWBArDK6Dul9zCX0oL//nx0B/2Q2sNLXEai6bP/V+N1b+
-	 zlxRnlfc9q2eA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPvB94NFZz4wb7;
-	Fri, 11 Oct 2024 15:42:41 +1100 (AEDT)
-Date: Fri, 11 Oct 2024 15:42:41 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Abhash Jha <abhashkumarjha123@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build failure after merge of the iio tree
-Message-ID: <20241011154241.511878bd@canb.auug.org.au>
+	s=arc-20240116; t=1728621970; c=relaxed/simple;
+	bh=V9ZExzkaPjw7sLS5aK7k8w5fJSCH/Aqbe7bVDfChCqw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dBOlwQ9fLDC5ssSSv5JxQNCeCDVt+m5aCK0igf58p+mlFiXDQxJBKQ/SkK09VXDq+Ev1akFst1uw/MNEUZ85naPigzvVdqBfgD8OIv5x6v0fkPrutzS1K/4LbOHH5N0Mq/KtwfOxAVpfUlY/avp9pcS34qfaMapfZN8vCPoxUO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=swBhvHwt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 056A9C4CEC3;
+	Fri, 11 Oct 2024 04:46:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728621969;
+	bh=V9ZExzkaPjw7sLS5aK7k8w5fJSCH/Aqbe7bVDfChCqw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=swBhvHwtDB4ctG7VsCgkyNray4VQXs34QgP0CAXSHAkbeGPn57MborrgMF588/pYQ
+	 WPu3Vp5Qkh7mE6GiRm2n+Jf6mMR6irAFpKe7TS1WYROC+azqE8Kj9xoJ6Ep9LASVC2
+	 LNyuVAQO0VoAJUNycbeYRUo+nJSTAzjwi93REW0I=
+Date: Fri, 11 Oct 2024 06:46:06 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Judith Mendez <jm@ti.com>
+Cc: Grygorii Strashko <grygorii.strashko@ti.com>,
+	Santosh Shilimkar <ssantosh@kernel.org>,
+	Kevin Hilman <khilman@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-omap@vger.kernel.org,
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org, Bin Liu <b-liu@ti.com>
+Subject: Re: [PATCH 2/2] serial: 8250: omap: Move pm_runtime_get_sync
+Message-ID: <2024101154-vest-freeing-dd4f@gregkh>
+References: <20241010184802.203441-1-jm@ti.com>
+ <20241010184802.203441-3-jm@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Ok6U.VI4ReSyob4gJbvytdw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010184802.203441-3-jm@ti.com>
 
---Sig_/Ok6U.VI4ReSyob4gJbvytdw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Thu, Oct 10, 2024 at 01:48:02PM -0500, Judith Mendez wrote:
+> Currently in omap_8250_shutdown, the dma->rx_running
+> flag is set to zero in omap_8250_rx_dma_flush. Next
+> pm_runtime_get_sync is called, which is a runtime
+> resume call stack which can re-set the flag. When the
+> call omap_8250_shutdown returns, the flag is expected
+> to be UN-SET, but this is not the case. This is causing
+> issues the next time UART is re-opened and omap_8250_rx_dma
+> is called. Fix by moving pm_runtime_get_sync before the
+> omap_8250_rx_dma_flush.
+> 
+> Fixes: 0e31c8d173ab ("tty: serial: 8250_omap: add custom DMA-RX callback")
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>  drivers/tty/serial/8250/8250_omap.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
+> index 88b58f44e4e9..0dd68bdbfbcf 100644
+> --- a/drivers/tty/serial/8250/8250_omap.c
+> +++ b/drivers/tty/serial/8250/8250_omap.c
+> @@ -776,12 +776,12 @@ static void omap_8250_shutdown(struct uart_port *port)
+>  	struct uart_8250_port *up = up_to_u8250p(port);
+>  	struct omap8250_priv *priv = port->private_data;
+>  
+> +	pm_runtime_get_sync(port->dev);
+> +
+>  	flush_work(&priv->qos_work);
+>  	if (up->dma)
+>  		omap_8250_rx_dma_flush(up);
+>  
+> -	pm_runtime_get_sync(port->dev);
+> -
+>  	serial_out(up, UART_OMAP_WER, 0);
+>  	if (priv->habit & UART_HAS_EFR2)
+>  		serial_out(up, UART_OMAP_EFR2, 0x0);
+> -- 
+> 2.46.2
+> 
+> 
 
-Hi all,
+Hi,
 
-After merging the iio tree, today's linux-next build (x86_64 allmodconfig)
-failed like this:
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-drivers/iio/dac/ad5770r.c:20:10: fatal error: asm/unaligned.h: No such file=
- or directory
-   20 | #include <asm/unaligned.h>
-      |          ^~~~~~~~~~~~~~~~~
-drivers/iio/adc/max1363.c:37:10: fatal error: asm/unaligned.h: No such file=
- or directory
-   37 | #include <asm/unaligned.h>
-      |          ^~~~~~~~~~~~~~~~~
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-Caused by commits
+- You have marked a patch with a "Fixes:" tag for a commit that is in an
+  older released kernel, yet you do not have a cc: stable line in the
+  signed-off-by area at all, which means that the patch will not be
+  applied to any older kernel releases.  To properly fix this, please
+  follow the documented rules in the
+  Documentation/process/stable-kernel-rules.rst file for how to resolve
+  this.
 
-  c2c4826cfa46 ("iio: adc: max1363: Convert to get_unaligned_be16")
-  0f87813bc338 ("iio: dac: ad5770r: Convert to get_unaligned_le16")
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-interacting with commit
+thanks,
 
-  5f60d5f6bbc1 ("move asm/unaligned.h to linux/unaligned.h")
-
-from Linus' tree (in v6.12-rc2).
-
-I have applied the following merge fix patch.
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Fri, 11 Oct 2024 15:35:57 +1100
-Subject: [PATCH] fix up for asm/unaligned inclusions in ad5770r.c and max13=
-63.c
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
----
- drivers/iio/adc/max1363.c | 2 +-
- drivers/iio/dac/ad5770r.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iio/adc/max1363.c b/drivers/iio/adc/max1363.c
-index d59cd638db96..d065b1ade95a 100644
---- a/drivers/iio/adc/max1363.c
-+++ b/drivers/iio/adc/max1363.c
-@@ -34,7 +34,7 @@
- #include <linux/iio/trigger_consumer.h>
- #include <linux/iio/triggered_buffer.h>
-=20
--#include <asm/unaligned.h>
-+#include <linux/unaligned.h>
-=20
- #define MAX1363_SETUP_BYTE(a) ((a) | 0x80)
-=20
-diff --git a/drivers/iio/dac/ad5770r.c b/drivers/iio/dac/ad5770r.c
-index 12c98f3e62a5..7d7f5110d66a 100644
---- a/drivers/iio/dac/ad5770r.c
-+++ b/drivers/iio/dac/ad5770r.c
-@@ -17,7 +17,7 @@
- #include <linux/regmap.h>
- #include <linux/regulator/consumer.h>
- #include <linux/spi/spi.h>
--#include <asm/unaligned.h>
-+#include <linux/unaligned.h>
-=20
- #define ADI_SPI_IF_CONFIG_A		0x00
- #define ADI_SPI_IF_CONFIG_B		0x01
---=20
-2.45.2
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/Ok6U.VI4ReSyob4gJbvytdw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcIrMEACgkQAVBC80lX
-0Gx7AQf/dkbjSB0PtNZnL275xXqHv+yCpMTGAWAHHztiUE8JdnUV0gRYzHWYktFb
-Av0JWl4eOL21TLXEOrQodofUNWd4OSgwx9UT/jOACyuSFLm9jNL48RY5zS4TdGcs
-oMh5e9X/RLbPdoutCT7PdexBXs80TI5RL3tATZqLpZZOApBnbN2a3/Liqi8GR5AX
-zo6jf3O4M1oUxk42cnEkE2oeDUDCH/ooLL48oTWh4rHUwkay8t7O9dO4x4UV/c8i
-WwEHtafW6qvmr+/RDqyg7vkhFNkPfS2okbnOmKbvpPwGmXPm3xR/SVq9YBnXNUvI
-CHFR+9IYArsBaYerk7kg2RgfJR8bHQ==
-=j6A6
------END PGP SIGNATURE-----
-
---Sig_/Ok6U.VI4ReSyob4gJbvytdw--
+greg k-h's patch email bot
 
