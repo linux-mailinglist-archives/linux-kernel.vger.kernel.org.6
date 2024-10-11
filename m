@@ -1,156 +1,78 @@
-Return-Path: <linux-kernel+bounces-360571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360572-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51A80999CC1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:34:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61D81999CC3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:34:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C73AE1F26506
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03C88281FD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:34:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50481FCC78;
-	Fri, 11 Oct 2024 06:33:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AF11CCB4E;
+	Fri, 11 Oct 2024 06:34:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WhWZoY6f"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jisbFQF2"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C27AF1F9409;
-	Fri, 11 Oct 2024 06:33:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4581CCB3A;
+	Fri, 11 Oct 2024 06:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728628437; cv=none; b=SNMHWTdPPFvhXNPia2uWymZulYkjvHkPzM87JxRYAAOHl8Fv6E4Qjyv/UQatVpGPXcZeKJWW+0UaIg9DIR9Ynj0FPGOvL3lAs8no16Yqocm7YgeiQbMQpy9pfbd1fFKIW4X+eVw5GmEa1am3zJlK9SrQSzDy5Y/tviLn3qM5LOw=
+	t=1728628479; cv=none; b=FY65uVHMb0gpKcF4p20D6toJL4ogh9PaBKIDQowrfS8wU9sFeUmqtt58DR14JwHEoPEF/bG7f2WkG556E3FGOK797Nc7jBu+a9c/wm7m317wAYDN84XJiDnANghaPtejJUEXBhQFI3NPdwIolG1qKQcick260QPaA/MGg4vXB7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728628437; c=relaxed/simple;
-	bh=ArjalxxQ+s6rtUD5kzrvbWQPdJuCy05+qv3EO41cnzw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UUZmkUKQZC6B9ABULwTdu0XOz5tZ8UNUD9/MTpUJySDYkwNkafkon1MESkTMm1tM0IRAyDhyJoLFQwdzX/nNpYTtQLT3/q3sNNuHmvbvabzE4sreAgdxqVbJ8p+kfZr360HKTSsi+y7Nyq4gpXsFUhH+Mg+3JZ5qai9hYWA9ER4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WhWZoY6f; arc=none smtp.client-ip=209.85.214.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20c805a0753so14710185ad.0;
-        Thu, 10 Oct 2024 23:33:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728628435; x=1729233235; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3WnRI6VJW3LMJo7XyXYei3wi8KKKDu4i1MPedhJrbTs=;
-        b=WhWZoY6fKlkmkHhr+XdkKXaP67O6mRMqzorx0TjpL+peeBTK7hP1k4Tl5FGZ1Xqhz4
-         lwMJQY8L2xcg+3Y4PTveVs9Dbrxha22+ANB4iVxkC0O8NnoiDgQ5ypj1esF/rLUo4tmq
-         fheVDQLz+tpt2vLUq9k5Fklv7DJnv/WKnA21qPFovAXj6DaXSzHwWAuEhmH4f02wxoiR
-         ZfVHglnqzZv71wgFHWBvFIPdKboVxm/NmvSYQCbLhNCAt3yi60u3NYQgECoR6trCCCE7
-         0+28WQ2wU24fQkqLAxnwhM0quiQ1yjhhz/N/087LmYSG4NSqhHOURcXCSAxaMn8KTAP5
-         1P5w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728628435; x=1729233235;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3WnRI6VJW3LMJo7XyXYei3wi8KKKDu4i1MPedhJrbTs=;
-        b=vN32zBD+He80SeNGB1LuBk5Ol7/mL90eIUhdEkOeXNHoParYQSRvH11oPDGi5ZOA0c
-         keigWg8wM2/fH9ECetGh0Wust0Jd8Vrivt2wJTwYnqGgmwwU0Je8fk84BbPaNbmyUFLk
-         /B8+Wg6ykq5nrD4RQVzPqGg36Qp0ENoLMRIzCqhF0ig5erix0AttABQp0MUw5zffamdS
-         PIPA7LYtOdBz4DcJ/pE/63vGuds/Fkp9kRM0/Vf0wMWjlW1UnwcudveVdeLGUKT25IUt
-         Sxb5aZHi6MCpKZrn4vCjtNbxkj2/QNJJBF1gu9xN0zvce+Wkz2qhC+AkdjZ5WFcHMEj9
-         s5Hg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6mwPNk/aeHObKoq6vRsGqlL3uIzYlakMS3w0809Emote5nBhcP9tnqj7MnJNxbZg+6VRQFIIrWfjGrTI=@vger.kernel.org, AJvYcCXicqqKOXnxziQYUzbv8SJZRhv4O2Sr4ptJhBG8oe4ErkbbzD3mrYWMDOUFn0qX2C90iF91AplYJOFkB4+KPa4ynT/6@vger.kernel.org
-X-Gm-Message-State: AOJu0YxobvbFt7vSVNG2UmvuVHtyRUKzP/zA0iGNb8VIVE3l5k34Yaxg
-	cVwJSReLBMNPV/AfI1OXanF7kiUUgx6V7FWmuE+TWIb3hn1JLEdBlAOXqgOa
-X-Google-Smtp-Source: AGHT+IGuBokSOGFJjSMAWGi7G5B5xEW5Hzvq7E3ESeZXv9hQ8ngmO1CJIkB5s1U2pM5S8nH44z3Zag==
-X-Received: by 2002:a17:903:2b10:b0:20b:8bf5:cd72 with SMTP id d9443c01a7336-20ca16dd70dmr24748315ad.49.1728628434968;
-        Thu, 10 Oct 2024 23:33:54 -0700 (PDT)
-Received: from ?IPV6:240d:1a:13a:f00:4b94:68e0:2d8b:3983? ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c33ffe2sm18189905ad.270.2024.10.10.23.33.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 10 Oct 2024 23:33:54 -0700 (PDT)
-Message-ID: <c6cf37dc-a2c8-4b81-bb99-1231636ea3fc@gmail.com>
-Date: Fri, 11 Oct 2024 15:34:07 +0900
+	s=arc-20240116; t=1728628479; c=relaxed/simple;
+	bh=FEAvGKhQ4zqHFICD+AMuBA5qP7NXObr933U618inJnE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vDsxVHs47OqHiRRRnzfETLcf2UkYqmOTOP17XX70dNqmpI8yODCPqZ/yRlw4icmatOWW8ji5xSjuB6E8pwNRexHttu5EEx4pgY20OxATm92uHtgHy7jaQKJp0N6skGcN0f5RatUV+b8i3roZhrcvT86u3lt8WaXa+Y1lcvfflxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jisbFQF2; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DCAFEC4CEC3;
+	Fri, 11 Oct 2024 06:34:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728628479;
+	bh=FEAvGKhQ4zqHFICD+AMuBA5qP7NXObr933U618inJnE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jisbFQF259AC5RziZDEkckO/MK8T8sWGs/uKXLA4w7zIYwE0gKlGwcp5Szjl0q91e
+	 rhWv2eL0hMX3d3D2v/XNSiF5Qqt5K+wYAGqEQy3v/pxXcjClnVJ+n9xzS4WUtUPZ9s
+	 mxTzUh1zVhbqGFXpdyiEMaz4Fi+SptDjiqKW9veFK35HO8cbVTnz5YNMRYmlRVsQxn
+	 QjyjBDwoYjhhQtXJHkF4j6oInATuO9wdhTnlT068Oda6AcgZv0mDLzAFPQgeyICZP7
+	 AmEhGvta83xdDWUoRvSVW+dUWoAPP7xKSxOIGDzd7zwcAHSfa/XIYEPwygycNtt6DE
+	 WcD18d7l9pEGQ==
+Date: Thu, 10 Oct 2024 23:34:37 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	LKML <linux-kernel@vger.kernel.org>, linux-next@vger.kernel.org
+Subject: Re: [PATCH] perf tools: Fix build failures on ppc64le
+Message-ID: <ZwjG_ZpqV4h3HifQ@google.com>
+References: <20241011102330.02bece12@canb.auug.org.au>
+ <20241010235743.1356168-1-namhyung@kernel.org>
+ <20241011114858.61ff252b@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] ftrace: Fix function name for trampoline
-To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20241010130300.2083-1-tatsuya.s2862@gmail.com>
- <20241011000347.4b16dc96221873388475cb40@kernel.org>
-Content-Language: en-US
-From: Tatsuya S <tatsuya.s2862@gmail.com>
-In-Reply-To: <20241011000347.4b16dc96221873388475cb40@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241011114858.61ff252b@canb.auug.org.au>
 
+On Fri, Oct 11, 2024 at 11:48:58AM +1100, Stephen Rothwell wrote:
+> Hi Namhyung,
+> 
+> On Thu, 10 Oct 2024 16:57:43 -0700 Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > Hi Stephen, can you please test if this patch fixes it?
+> 
+> Sorry, I still get the same errors.
 
+Ok, thanks for the test.  I'll drop the series and rebase the branch.
 
-On 10/11/24 12:03 AM, Masami Hiramatsu (Google) wrote:
-> On Thu, 10 Oct 2024 22:02:59 +0900
-> Tatsuya S <tatsuya.s2862@gmail.com> wrote:
-> 
->> The issue that unrelated function name is shown on stack trace like
->> following even though it should be trampoline code address is caused by
->> the creation of trampoline code in the area where .init.text section
->> of module was freed after module is loaded.
->>
->> bash-1344    [002] .....    43.644608: <stack trace>
->>    => (MODULE INIT FUNCTION)
->>    => vfs_write
->>    => ksys_write
->>    => do_syscall_64
->>    => entry_SYSCALL_64_after_hwframe
->>
->> To resolve this, when function address of stack trace entry is in
->> trampoline, output without looking up symbol name.
->>
->> Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
->> ---
->>   kernel/trace/trace_output.c | 5 +++++
->>   1 file changed, 5 insertions(+)
->>
->> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
->> index 868f2f912f28..32a0858373e2 100644
->> --- a/kernel/trace/trace_output.c
->> +++ b/kernel/trace/trace_output.c
->> @@ -1246,6 +1246,11 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
->>   			break;
->>   
->>   		trace_seq_puts(s, " => ");
->> +		if (is_ftrace_trampoline((*p) + delta)) {
->> +			trace_seq_printf(s, "0x%08lx", (*p) + delta);
-> 
-> If we know that address is the ftrace trampoline, we'd better show something
-> like "[FTRACE TRAMPOLINE]"
-> 
->> +			trace_seq_putc(s, '\n');
-> 
-> And this is not needed. So for example,
-> 
-> 			trace_seq_puts(s, "[FTRACE TRAMPOLINE]\n");
-> 
-> is enough.
-
-Thanks for review. OK.
-
-> 
->> +			continue;
->> +		}
->>   		seq_print_ip_sym(s, (*p) + delta, flags);
->>   		trace_seq_putc(s, '\n');
->>   	}
-> 
-> Thank you,
-> 
->> -- 
->> 2.46.2
->>
-> 
-> 
+Thanks,
+Namhyung
 
 
