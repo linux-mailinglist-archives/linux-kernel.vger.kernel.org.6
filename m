@@ -1,159 +1,172 @@
-Return-Path: <linux-kernel+bounces-361463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 655F399A892
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:05:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228B399A89A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 046A2284A48
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:05:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 813361F24868
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36075198A3F;
-	Fri, 11 Oct 2024 16:04:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F49198E8C;
+	Fri, 11 Oct 2024 16:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="gzNcBMM4"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+ltvnx0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1014780BEC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:04:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 536CB5381E;
+	Fri, 11 Oct 2024 16:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728662694; cv=none; b=AtacTSudLZWXQQ5/5EMEX88UDfuGPX//y++WtMRTayFuV5vwZnv1aUSMhZkQTWjKN0nOksYj7KLjOVXwp19yWQRwNShg2FfynJ4qhaiRyleDVGnvTFGqG8hgXDPymx8jqHf4KMXD9TLa3DocJNZA9d9PTC0qud+V7RBiYkib7fs=
+	t=1728662775; cv=none; b=QR992sTG9XCr6T3h6RYxvvYJqjp56UYdBrqwsL/dBPOB3IjvbYK/JB4/8OGCc1p55fiAjRaCKJsCDQzD0xEcCoR93pD6P8dslpEbm5cNkrVACj3Y9BuOcVAOKBOxGSioYJBNT4LK/IMauJc4I/XKxOkRzJWFA7I9/7sPVB5y/KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728662694; c=relaxed/simple;
-	bh=/WvOYSc1S4lLGzVHzV0yvKIKVV854XtzSnHOuroJvCw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=JFk9fmk7qkylh+LSwmoaErZ3jeA7/BNkN6w+2/SPVAyhq/xv7NfxxGZxdt702mfBWJ6IVnd9/xOjDK+FX/38+kiAafHWnAKTUfqRopFw62sthvyWJdauy9q+OSRvJPxCwcnq9hwEZ6YxLmq8BjZy5pMiS56vzclrzJH/z2hXy4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=gzNcBMM4; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e32f43c797so20517237b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:04:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728662692; x=1729267492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aTr2NdjN0dv7LipVyeTPEwovi9SHaz0obBqhvYr++Oc=;
-        b=gzNcBMM4TN6Nrc4/633uTrsGvQ/7HbUSRo6gC8GbnlZi+CB86X2gdOG6NEAnqVXYWm
-         9qeuEssDjf7BM5+D7q5Mqa8wIR5vrMtULt103nz2cgNJe0Kqrs6UkLYLW1L+KBrqa9TE
-         u14Ou8Ckf2NsLfbAtPMZ3Z0e/lehdgig8LY6yDNWJqvhAi5MttucKN24r9brs8U/+Gcx
-         r9omklaY69Hs6kAclRTHcGcIdjBAZA8l2X3XG/axDkVLq1u6uZz7Z6cZqSqNr7w8xVrD
-         1YmPZRPxEFYf9BZ9uFWztqJTfSBBvC8eObrbYuCDk6m6M/CpXxbXktFr4NvV+7/bBVlS
-         +VGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728662692; x=1729267492;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=aTr2NdjN0dv7LipVyeTPEwovi9SHaz0obBqhvYr++Oc=;
-        b=Pu0Fnl9HCWMoFoFmsAVeyLxrKCtrfZ341l2Izzs6Fb1ss+K+fDFyV3CUyT8t2PAXqq
-         aUHSrzK+mPX4ckTwhIyN4SDl9N61u/+jRtOjSx1+roojGwISmbLVbWRXv8MTg1qIE3tG
-         XulaPTQvQBzccNGxNdm1rjKZb2n7VSmVqo/KhsPP2z83a6Y4HrRLWC9h4PfSPeviFmaV
-         7J4mbUqJWNJ/aZYF7ItPL+obe2kNccRKwoEyV602mmAM+fRdXgNmYIgesiUojj9okWZC
-         /JR+lvqojksIIfeHxMDtGtVjpdTNQ3pWMhdwYfi3A1gDpUtEMg/e4wOHzA9sxlMFjKb/
-         KAUg==
-X-Forwarded-Encrypted: i=1; AJvYcCW7uWrRpA7rtSSdUIAaN0dP1Wx166COkcNvI2jvsNsOaqj3AfzKgA3+UlMlTUEsERpNHSCRYScyModcKgE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh7VTLf5/jtj3stJSVIbOdmUjDHoK26eG21WgLNN1I6aOnL2kI
-	93oc99byz+S40NqSqo6zMmrwlKuH/q8oHYa0TbdCvodgiS7UvrphOkpVckStSsWg5LBZaCXtW7l
-	WRA==
-X-Google-Smtp-Source: AGHT+IEFPFvz0vBCZ+g1VXJWRI0wYgSDpPxyfmUPvTa83pFlFfSeBq9osRJtahZ4BOBwU65AgtshdTp74Lo=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:6887:b0:6e2:ac0a:8982 with SMTP id
- 00721157ae682-6e32f07e518mr2515757b3.0.1728662691997; Fri, 11 Oct 2024
- 09:04:51 -0700 (PDT)
-Date: Fri, 11 Oct 2024 09:04:50 -0700
-In-Reply-To: <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com>
+	s=arc-20240116; t=1728662775; c=relaxed/simple;
+	bh=iXP9jbL2CA2gwdWaf/4lNfMMPm5b1SYlw++ZXuEjyTw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TRvnO8wbnLIkFGShRFmbQ342DBUmwo/+rnZANcJj0DQtEE3d2nqVCB1ERCthgzzyNtUcdNly2KR+Rywzi6IciFVYKAdgB/NaeDRCy4AykxKW1UIqDMghorsesz68nnLcfw/GWjLT5UWooAiYF5d8MIrlt2BMP/cM8Z6u3haePoo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+ltvnx0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 218D0C4CEC3;
+	Fri, 11 Oct 2024 16:06:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728662774;
+	bh=iXP9jbL2CA2gwdWaf/4lNfMMPm5b1SYlw++ZXuEjyTw=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m+ltvnx0PRtGDbI3dMbNn4Int8i+PMNx8D666zQLbPdi9HH1UQ/3THq820+3kpONJ
+	 JoQIcuwo/gRKF4CeEVjaDOK8xqJZZppAI2+ixaqvGy9pOGKl0+i0TLJjklgoo8V+gG
+	 G0KXjyxAi4Os+ZJw1E6dIWjRjmKByuc2vtGLHIeUXct3Ivj9LraBfNnJcg9Z4/p8rl
+	 QfNQIFkFx5PRWlzn029K/2jLsa/CR5+L9fxImJNwcZhfQjUYIKrTlSDlQy+Bi3Pue4
+	 RdK20UXGyUumS+Qcgdeuhl1wNcuOGa/gTNxgY0ze0jzvxrhuztiO/QzuaY0K4/pNXd
+	 ixZPqXkKV3ahg==
+Message-ID: <df6379c6-662a-4b35-a919-13c695a869c7@kernel.org>
+Date: Fri, 11 Oct 2024 18:06:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
- <CAMkAt6o_963tc4fiS4AFaD6Zb3-LzPZiombaetjFp0GWHzTfBQ@mail.gmail.com> <3319bfba-4918-471e-9ddd-c8d08f03e1c4@amd.com>
-Message-ID: <ZwlMojz-z0gBxJfQ@google.com>
-Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
-From: Sean Christopherson <seanjc@google.com>
-To: Ashish Kalra <ashish.kalra@amd.com>
-Cc: Peter Gonda <pgonda@google.com>, pbonzini@redhat.com, tglx@linutronix.de, 
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
-	herbert@gondor.apana.org.au, x86@kernel.org, john.allen@amd.com, 
-	davem@davemloft.net, thomas.lendacky@amd.com, michael.roth@amd.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-crypto@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 3/8] dt-bindings: PCI: qcom,pcie-x1e80100: Add 'global'
+ interrupt
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ Qiang Yu <quic_qianyu@quicinc.com>
+Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, mturquette@baylibre.com, sboyd@kernel.org,
+ abel.vesa@linaro.org, quic_msarkar@quicinc.com, quic_devipriy@quicinc.com,
+ dmitry.baryshkov@linaro.org, kw@linux.com, lpieralisi@kernel.org,
+ neil.armstrong@linaro.org, linux-arm-msm@vger.kernel.org,
+ linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-pci@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-clk@vger.kernel.org
+References: <20241011104142.1181773-1-quic_qianyu@quicinc.com>
+ <20241011104142.1181773-4-quic_qianyu@quicinc.com>
+ <eyxkgcmgv5mejjifzsevkzm2yqdknilizrvhwryd745pkfalgk@kau4lq4cd7g3>
+ <4802B12B-BAC1-4E99-BDFE-A2340F4A8F24@linaro.org>
+ <3d1d0822-da66-44c8-a328-69804210123c@kernel.org>
+ <65B34B14-76C3-491D-8A58-6D0887889018@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <65B34B14-76C3-491D-8A58-6D0887889018@linaro.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 02, 2024, Ashish Kalra wrote:
-> Hello Peter,
->=20
-> On 10/2/2024 9:58 AM, Peter Gonda wrote:
-> > On Tue, Sep 17, 2024 at 2:17=E2=80=AFPM Ashish Kalra <Ashish.Kalra@amd.=
-com> wrote:
-> >> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev=
-.c
-> >> index 564daf748293..77900abb1b46 100644
-> >> --- a/drivers/crypto/ccp/sev-dev.c
-> >> +++ b/drivers/crypto/ccp/sev-dev.c
-> >> @@ -73,11 +73,27 @@ static bool psp_init_on_probe =3D true;
-> >>  module_param(psp_init_on_probe, bool, 0444);
-> >>  MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initi=
-alized on module init. Else the PSP will be initialized on the first comman=
-d requiring it");
-> >>
-> >> +static bool cipher_text_hiding =3D true;
-> >> +module_param(cipher_text_hiding, bool, 0444);
-> >> +MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable =
-Cipher Text Hiding");
-> >> +
-> >> +static int max_snp_asid;
-> >> +module_param(max_snp_asid, int, 0444);
-> >> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Te=
-xt Hiding");
-> > My read of the spec is if Ciphertext hiding is not enabled there is no
-> > additional split in the ASID space. Am I understanding that correctly?
-> Yes that is correct.
-> > If so, I don't think we want to enable ciphertext hiding by default
-> > because it might break whatever management of ASIDs systems already
-> > have. For instance right now we have to split SEV-ES and SEV ASIDS,
-> > and SNP guests need SEV-ES ASIDS. This change would half the # of SNP
-> > enable ASIDs on a system.
->=20
-> My thought here is that we probably want to enable Ciphertext hiding by
-> default as that should fix any security issues and concerns around SNP
-> encryption as .Ciphertext hiding prevents host accesses from reading the
-> ciphertext of SNP guest private memory.
->=20
-> This patch does add a new CCP module parameter, max_snp_asid, which can b=
-e
-> used to dedicate all SEV-ES ASIDs to SNP guests.
->=20
-> >
-> > Also should we move the ASID splitting code to be all in one place?
-> > Right now KVM handles it in sev_hardware_setup().
->=20
-> Yes, but there is going to be a separate set of patches to move all ASID
-> handling code to CCP module.
->=20
-> This refactoring won't be part of the SNP ciphertext hiding support patch=
-es.
+On 11/10/2024 17:51, Manivannan Sadhasivam wrote:
+> 
+> 
+> On October 11, 2024 9:14:31 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>> On 11/10/2024 17:42, Manivannan Sadhasivam wrote:
+>>>
+>>>
+>>> On October 11, 2024 8:03:58 PM GMT+05:30, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+>>>> On Fri, Oct 11, 2024 at 03:41:37AM -0700, Qiang Yu wrote:
+>>>>> Document 'global' SPI interrupt along with the existing MSI interrupts so
+>>>>> that QCOM PCIe RC driver can make use of it to get events such as PCIe
+>>>>> link specific events, safety events, etc.
+>>>>
+>>>> Describe the hardware, not what the driver will do.
+>>>>
+>>>>>
+>>>>> Though adding a new interrupt will break the ABI, it is required to
+>>>>> accurately describe the hardware.
+>>>>
+>>>> That's poor reason. Hardware was described and missing optional piece
+>>>> (because according to your description above everything was working
+>>>> fine) is not needed to break ABI.
+>>>>
+>>>
+>>> Hardware was described but not completely. 'global' IRQ let's the controller driver to handle PCIe link specific events like Link up, Link down etc... They improve user experience like the driver can use those interrupts to start bus enumeration on its own. So breaking the ABI for good in this case.
+>>>
+>>>> Sorry, if your driver changes the ABI for this poor reason.
+>>>>
+>>>
+>>> Is the above reasoning sufficient? 
+>>
+>> I tried to look for corresponding driver change, but could not, so maybe
+>> there is no ABI break in the first place.
+> 
+> Here it is:
+> 
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=4581403f67929d02c197cb187c4e1e811c9e762a
+> 
+>  Above explanation is good, but
+>> still feels like improvement and device could work without global clock.
 
-It should, because that's not a "refactoring", that's a change of roles and
-responsibilities.  And this series does the same; even worse, this series l=
-eaves
-things in a half-baked state, where the CCP and KVM have a weird shared own=
-ership
-of ASID management.
+So there is no ABI break in the first place... Commit is misleading.
 
-I'm ok with essentially treating CipherText Hiding enablement as an extensi=
-on of
-firmware, e.g. it's better than having to go into UEFI settings to toggle t=
-he
-feature on/off.  But we need to have a clear, well-defined vision for how w=
-e want
-this all to look in the end.=20
+>>
+> 
+> It is certainly an improvement but provides a nice user experience as the devices will be enumerated when they get plugged into the slot (like hotplug). Otherwise, users have to rescan the bus every time they plug a device. Also when the device gets removed, driver could retrain the link if link went to a bad state. Otherwise, link will remain in the broken state requiring users to unload/load the driver again.
+
+OK
+
+Best regards,
+Krzysztof
+
 
