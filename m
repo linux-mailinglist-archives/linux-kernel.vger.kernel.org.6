@@ -1,217 +1,241 @@
-Return-Path: <linux-kernel+bounces-361736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D225199AC63
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:07:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E69599AC67
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:07:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 578111F214F2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:07:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA8F4B27897
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:07:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BADB01C9DC9;
-	Fri, 11 Oct 2024 19:06:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4761C6899;
+	Fri, 11 Oct 2024 19:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIjMVL/D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kS3FNF0a"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15A0B1C8FBC;
-	Fri, 11 Oct 2024 19:06:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A191A08A4;
+	Fri, 11 Oct 2024 19:07:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673575; cv=none; b=HXmWKQrE00sYR4M9vGihNA2RYljie4jkSGvnSmrkJW7i3pja9m0lmQ0hn7a4MJRJvama1PIw3F1zqrjSHw3mv8uZjBY6Pfww4LS8Gv3E7foKzMyjRCJAMu7hnxz1GrltBNIYwojDULARrVlHxi58WTqthnVzVhdLX+wBtGOZIsc=
+	t=1728673646; cv=none; b=Rzl9/SGWhf5W4dkECwFycI+N+S63DWSJAe+hMYbgea+qsw+/IcahqE6bigi2sBYChtoOX52h0J8hHbGsQe6T+HaphvXRVOLNcg5b2uHg7n9dkhfwaJ5RKMshhUGGyLHifdQJo1FQy4yOzwvXzB2GnVWvNZNlb81a/iLUQPNrmGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673575; c=relaxed/simple;
-	bh=Y8vciS4w8CNS5JknxHT9uB8xv4bvavSHUYFEFQvNuSA=;
+	s=arc-20240116; t=1728673646; c=relaxed/simple;
+	bh=d2g9d5JhVOwMn17mm+Qsi9qXxZahUJpQFOPa0Cb0N/o=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AaBQZcwZrjbNPg+pVWNomn9JpGs5PsyHcPjHyNEMLuozPpofGM1FCjWyiibSmAPSIr2iItQIhnpkPZ4ky4kZih37u5kj+hZ2nfrwNQrjq2FAloXXZH2OS0nBnFjLnipxXNVOxXKrO/XyncnEHvrU9IX5mcW8GD0nSJRvzRVd8ZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIjMVL/D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD84AC4CECD;
-	Fri, 11 Oct 2024 19:06:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728673574;
-	bh=Y8vciS4w8CNS5JknxHT9uB8xv4bvavSHUYFEFQvNuSA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KIjMVL/DCsRu9zYcVEDv5fHM/0KJCnjVZiADzglrzGerY/pmhu2xYxUdNLgyp3fQ2
-	 MW1WIdoh9mJdFCHfNoOUV+WRV0GfiaSX60Jnd2euGq728L5XwIf+GXtKzYYhIcYfZq
-	 JN6VtM00QUm3mVmVrVRQSutjNG/MAYGP9nQxAE83hXBItXs2WHXfJpG8BzGN8rVR2z
-	 fAUZLEspnQs8UOlCi48CzGvs1sLB1TJ6tPKS0IpGggY63csEWG4PqjZUIPlEUalIXK
-	 Qp6obI1/6/z0tJQ7lwD8GNMyvqNXGVHLSfANojCMRu78Fz5+VFavxZK3S06zeUjL7y
-	 8LFaFh1AbtbJQ==
-Date: Fri, 11 Oct 2024 16:06:10 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: James Clark <james.clark@linaro.org>
-Cc: Arnaldo Carvalho de Melo <arnaldo.melo@gmail.com>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Howard Chu <howardchu95@gmail.com>,
-	Alan Maguire <alan.maguire@oracle.com>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users <linux-perf-users@vger.kernel.org>
-Subject: Re: [PATCH 1/1] perf build: Require at least clang 16.0.6 to build
- BPF skeletons
-Message-ID: <Zwl3IsgE3drp7mLo@x1>
-References: <CA+JHD936J-q0-7LANQ3aW2G-PEmFP8PnXQ-TF-AMs9MtrCqfew@mail.gmail.com>
- <CAH0uvojUEXiT2mk1pknLS1nc-gA3Py+AjmEW22ETiCCyOLLr8Q@mail.gmail.com>
- <CAH0uvogXyYP1LqF3fbjZGHHDL6BFZ2ZKu5JAASnK_brgnymf0w@mail.gmail.com>
- <CAH0uvohEozKixjDM9_jJ5FFxYK7agsqVO-BrAsm=4hCTDQAx2A@mail.gmail.com>
- <9bbfe425-1f2b-4846-a5a3-a31618742e9a@oracle.com>
- <CAH0uvojJ1rME4hb6NfrA4NPj2XmGMDLOLP3wEbHh8B5-qWGvFQ@mail.gmail.com>
- <CAH0uvohW7_st0i=ek8rc_SucuQEQUgs+fWt12cc3jqiYfxAjmw@mail.gmail.com>
- <ZwcnVKn3wVSSMcaL@google.com>
- <CA+JHD93JgJL_4GJFcFUNu-FpNfFOoyDRJ7QuvO82M8G1EwM5pQ@mail.gmail.com>
- <bcf50648-3c7e-4513-8717-0d14492c53b9@linaro.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ErA6mIjuGSsjEkPiigHg9sr5EqviN8sNo5eHeJO7UTq6E85g5FgVUzrm3vlVvQlpxv7D80J7YBeY6RXnRgKjdOm2+RrNeGZd7kPyBzjrg75ftsb4fRJw1vkG4VHIKoAolyW3pc7UPnOPLIAMxRQK6SXH0fEP0KIfXy3WYw0dhYo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kS3FNF0a; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so21597915e9.0;
+        Fri, 11 Oct 2024 12:07:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728673643; x=1729278443; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oOA0LA7YZsa2SRSYHALYuA8+jEzzPs7er50SeMEGJ2c=;
+        b=kS3FNF0aUtX7aiTPRL+iS7K8wEgS+N0tiywzOIsw8prAMjjqdUfWfD2uIznVzUqFVH
+         SE8MFoFAAyDhHUE9S5qiF5EkTVSJCe9TxuBF0GNrX1c+Sw30jtNnxN0GWw7Oo7CXkvU9
+         WELZOXrfGu2oKZ8rPvM0888UycYZ8/yYNZvsFjh6hUTz10t1Yflz4M0JBzfqB0e+chaI
+         6LpI0LXbr3B6VK6XU8/438TTxVO6G/ktfhh0PfMt+x1ikyx+X/Vj9McMdiWUIS9fj2Uv
+         HxST3Z4CT5DA/PeuSEcN4jhp1gkt5mDdazsK1oW6yCJ82f6c4vHB1nPXdD1xsAOVLkq1
+         Arkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728673643; x=1729278443;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oOA0LA7YZsa2SRSYHALYuA8+jEzzPs7er50SeMEGJ2c=;
+        b=OrBQsqKLD+ZXQAOlxNMff8SrIOTVLx4EqOcdiO17nHFw49e4WHUONgbkp+QYVFhZ/T
+         AmXbOgHlWBNAADR+ruZ6DdZGFn7O4mqPYLQTDXaP9HH38V+gYHTGHAm8sdO4ojejegYW
+         x2o3EJ0ho8KkI1DDFm+ZbO8mcwzM+4bb8mi1xc7fNUi8bqGSS6MGAkTC0ZhfxzfHSJli
+         CLMhEA0yn4welgTD/QiBEXchPECOQjuwZ9KMTNXkKOim8gxcNhOJ9k4VRXhINTmlDhPK
+         AzH4QrkGlT6cgdMbS/tR7FeCqvzjEd1lLvFmg1MF0TxAohfqLJy4kAq3Z4LYwVTnnob8
+         qA5Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUivcft2qYQWqsdhvs2aOuObZnZUYvNzPR28T5qV5KfHW7MpVqjQ58X0OQN2UnLaon4IBOvNV7BgqVC@vger.kernel.org, AJvYcCUsShDOegujwWi9w3Q0Cy+glbMPcAdb/mL8KpFjOACLe4hQ+ufWvPi7w23rsFSSiPlsYsYt+J+NKf4p@vger.kernel.org, AJvYcCVkRcfO0QhgNevnOHmf3VbZ9RnhVxME/7l1IONXfWOV3SOdFnggiWKIf42smksbOKUI2ZwKQ3aZvXK4Sx5G@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZmmfgbV+Y/555lrNOR7/cywTmzMAlVgyAI/HaGdRjzo6KyY/7
+	9mZbWSzfiwTdhWs9sTGcetjkF/GV+2rIJeM/tM0VBJgTnpyp2ZOf
+X-Google-Smtp-Source: AGHT+IEUmaAXk6KOtYxzu8s5HEuadXB3JmAkBwhGr6CxNG6z+VXV3tEUp6YpdNE5862uld3wRArdkg==
+X-Received: by 2002:adf:a29a:0:b0:37d:482e:6197 with SMTP id ffacd0b85a97d-37d551b6a4fmr2301211f8f.17.1728673642959;
+        Fri, 11 Oct 2024 12:07:22 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a87d3sm4572008f8f.11.2024.10.11.12.07.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:07:22 -0700 (PDT)
+Date: Fri, 11 Oct 2024 21:07:20 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 12/13] iio: chemical: bme680: Add triggered buffer
+ support
+Message-ID: <Zwl3aBDFiLN9b0TK@vamoirid-laptop>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-13-vassilisamir@gmail.com>
+ <ZwkABN9RycsVPRwo@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <bcf50648-3c7e-4513-8717-0d14492c53b9@linaro.org>
+In-Reply-To: <ZwkABN9RycsVPRwo@smile.fi.intel.com>
 
-On Thu, Oct 10, 2024 at 10:00:41AM +0100, James Clark wrote:
-> 
-> 
-> On 10/10/2024 2:20 am, Arnaldo Carvalho de Melo wrote:
-> > On Wed, Oct 9, 2024, 10:01 PM Namhyung Kim <namhyung@kernel.org> wrote:
+On Fri, Oct 11, 2024 at 01:37:56PM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 10, 2024 at 11:00:29PM +0200, vamoirid wrote:
+> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > > 
-> > > On Tue, Oct 08, 2024 at 12:27:24AM -0700, Howard Chu wrote:
-> > > > Hi Alan, Arnaldo and James,
-> > > > 
-> > > > This problem was solved in [PATCH 0/2] perf trace: Fix support for the
-> > > > new BPF feature in clang 12 (Link:
-> > > > 
-> > > https://lore.kernel.org/linux-perf-users/20241007051414.2995674-1-howardchu95@gmail.com/T/#t
-> > > ),
-> > > > sorry I forgot to cc you two.
-> > > > 
-> > > > Alan's thought was correct. Thank you so much! :)
-> > > 
-> > > It'd be great if any of you can test this change.  Now I only have
-> > > machines with clang 16.
-> > > 
-> > 
-> > I'll test this tomorrow.
-> > 
-> > - Arnaldo
-> > 
-> > > 
-> > > Thanks,
-> > > Namhyung
-> > > 
-> > > 
-> > 
+> > Add triggered buffer and soft timestamp support. The available scan mask
+> > enables all the channels of the sensor in order to follow the operation of
+> > the sensor. The sensor basically starts to capture from all channels
+> > as long as it enters into FORCED mode.
 > 
-> Tested with clang 15:
+> ...
 > 
-> $ sudo perf trace -e write --max-events=100 -- echo hello
+> >  	struct regulator_bulk_data supplies[BME680_NUM_SUPPLIES];
+> >  	int ambient_temp;
+> >  
+> > +	u8 buffer[ALIGN(sizeof(s32) * BME680_NUM_CHANNELS, sizeof(s64))
+> > +		  + sizeof(s64)] __aligned(sizeof(s64));
 > 
->   0.000 ( 0.014 ms): echo/834165 write(fd: 1, buf: hello\10, count: 6)
+> Can it be represented as a structure?
+> We also have aligned_s64 for the timestamp.
+>
+
+Hi Andy,
+
+The same approach was used also for the bmp280 driver and since I was
+working on the bmp280 as well, I did it here. You think the
+representation as a struct would look better? Personally I like the
+nature of this one because of the ALIGN() but I have no problem of using
+a struct here.
+
+> >  	union {
+> > -		u8 buf[3];
+> > +		u8 buf[15];
+> >  		unsigned int check;
+> >  		__be16 be16;
+> >  		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
 > 
->                                            =
+> ...
 > 
-> Tested-by: James Clark <james.clark@linaro.org>
+> > +static irqreturn_t bme680_trigger_handler(int irq, void *p)
+> > +{
+> > +	struct iio_poll_func *pf = p;
+> > +	struct iio_dev *indio_dev = pf->indio_dev;
+> > +	struct bme680_data *data = iio_priv(indio_dev);
+> > +	u32 adc_temp, adc_press, adc_humid, comp_press, comp_humid;
+> 
+> > +	s32 *chans = (s32 *)data->buffer;
+> 
+> With the structure in place this becomes much more readable.
+> 
+> > +	u16 adc_gas_res, gas_regs_val;
+> > +	s32 t_fine, comp_gas_res;
+> > +	s16 comp_temp;
+> > +	u8 gas_range;
+> > +	int ret;
+> > +
+> > +	guard(mutex)(&data->lock);
+> > +
+> > +	ret = bme680_set_mode(data, BME680_FORCED);
+> > +	if (ret < 0)
+> > +		goto out;
+> > +
+> > +	ret = bme680_wait_for_eoc(data);
+> > +	if (ret)
+> > +		goto out;
+> > +
+> > +	/* Burst read data regs */
+> > +	ret = regmap_bulk_read(data->regmap, BME680_REG_MEAS_STAT_0,
+> > +			       data->buf, sizeof(data->buf));
+> > +	if (ret) {
+> > +		dev_err(data->dev, "failed to burst read sensor data\n");
+> > +		goto out;
+> > +	}
+> > +	if (data->buf[0] & BME680_GAS_MEAS_BIT) {
+> > +		dev_err(data->dev, "gas measurement incomplete\n");
+> > +		goto out;
+> > +	}
+> > +
+> > +	/* Temperature calculations */
+> > +	adc_temp = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[5]));
+> > +	if (adc_temp == BME680_MEAS_SKIPPED) {
+> > +		dev_err(data->dev, "reading temperature skipped\n");
+> > +		goto out;
+> > +	}
+> > +	comp_temp = bme680_compensate_temp(data, adc_temp);
+> > +	t_fine = bme680_calc_t_fine(data, adc_temp);
+> > +
+> > +	/* Pressure calculations */
+> > +	adc_press = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[2]));
+> > +	if (adc_press == BME680_MEAS_SKIPPED) {
+> > +		dev_err(data->dev, "reading pressure skipped\n");
+> > +		goto out;
+> > +	}
+> > +	comp_press = bme680_compensate_press(data, adc_press, t_fine);
+> 
+> > +	pr_info("comp_press: %d\n", comp_press);
+> 
+> No debugging in the production code. Or if you really need that, it should
+> use dev_dbg().
+> 
+
+ACK. I shouldn't have forgotten those here..
+
+> > +	/* Humidity calculations */
+> > +	adc_humid = get_unaligned_be16(&data->buf[8]);
+> > +	if (adc_humid == BME680_MEAS_SKIPPED) {
+> > +		dev_err(data->dev, "reading humidity skipped\n");
+> > +		goto out;
+> > +	}
+> > +	comp_humid = bme680_compensate_humid(data, adc_humid, t_fine);
+> 
+> > +	pr_info("comp_humid: %d\n", comp_humid);
+> 
+> Ditto.
+> 
+
+ACK.
+
+> > +
+> > +	/* Gas calculations */
+> > +	gas_regs_val = get_unaligned_be16(&data->buf[13]);
+> > +	adc_gas_res = FIELD_GET(BME680_ADC_GAS_RES, gas_regs_val);
+> > +	if ((gas_regs_val & BME680_GAS_STAB_BIT) == 0) {
+> > +		dev_err(data->dev, "heater failed to reach the target temperature\n");
+> > +		goto out;
+> > +	}
+> > +	gas_range = FIELD_GET(BME680_GAS_RANGE_MASK, gas_regs_val);
+> > +	comp_gas_res = bme680_compensate_gas(data, adc_gas_res, gas_range);
+> > +	pr_info("comp_gas_res: %d\n", comp_gas_res);
+> > +
+> > +	chans[0] = comp_temp;
+> > +	chans[1] = comp_press;
+> > +	chans[2] = comp_humid;
+> > +	chans[3] = comp_gas_res;
+> > +
+> > +	/* Push to buffer */
+> > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
+> > +					   iio_get_time_ns(indio_dev));
+> > +out:
+> > +	iio_trigger_notify_done(indio_dev->trig);
+> > +	return IRQ_HANDLED;
+> > +}
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
 > 
 > 
-> Unrelated to this change, I noticed that with older clangs or with
-> BUILD_BPF_SKEL=0 that commit b257fac12f38 ("perf trace: Pretty print buffer
-> data") changes the buffer address to print nothing, and the '6' return value
-> is missing. Not sure if this was intended or not:
-> 
->  $ sudo perf trace -e write --max-events=100 -- echo hello
-> 
-> Before:
->      0.000 ( 0.009 ms): echo/772951 write(fd: 1, buf: 0x58c415257440,
->         count: 6)                           = 6
-> 
-> After:
->      0.000 ( 0.009 ms): echo/760370 write(fd: 1, buf: , count: 6)
-> 
 
-I noticed this with fedora:40, and bisected it to:
-
-⬢[acme@toolbox perf-tools]$ git bisect good
-b257fac12f38d7f503b932313d704cee21092350 is the first bad commit
-commit b257fac12f38d7f503b932313d704cee21092350
-Author: Howard Chu <howardchu95@gmail.com>
-Date:   Sun Aug 25 00:33:19 2024 +0800
-
-    perf trace: Pretty print buffer data
-    
-    Define TRACE_AUG_MAX_BUF in trace_augment.h data, which is the maximum
-    buffer size we can augment. BPF will include this header too.
-    
-    Print buffer in a way that's different than just printing a string, we
-    print all the control characters in \digits (such as \0 for null, and
-    \10 for newline, LF).
-    
-    For character that has a bigger value than 127, we print the digits
-    instead of the character itself as well.
-    
-    Committer notes:
-    
-    Simplified the buffer scnprintf to avoid using multiple buffers as
-    discussed in the patch review thread.
-    
-    We can't really all 'buf' args to SCA_BUF as we're collecting so far
-    just on the sys_enter path, so we would be printing the previous 'read'
-    arg buffer contents, not what the kernel puts there.
-    
-    So instead of:
-       static int syscall_fmt__cmp(const void *name, const void *fmtp)
-      @@ -1987,8 +1989,6 @@ syscall_arg_fmt__init_array(struct syscall_arg_fmt *arg, struct tep_format_field
-      -               else if (strstr(field->type, "char *") && strstr(field->name, "buf"))
-      -                       arg->scnprintf = SCA_BUF;
-    
-    Do:
-    
-    static const struct syscall_fmt syscall_fmts[] = {
-      +       { .name     = "write",      .errpid = true,
-      +         .arg = { [1] = { .scnprintf = SCA_BUF /* buf */, from_user = true, }, }, },
-    
-    Signed-off-by: Howard Chu <howardchu95@gmail.com>
-    Cc: Adrian Hunter <adrian.hunter@intel.com>
-    Cc: Ian Rogers <irogers@google.com>
-    Cc: Jiri Olsa <jolsa@kernel.org>
-    Cc: Kan Liang <kan.liang@linux.intel.com>
-    Cc: Namhyung Kim <namhyung@kernel.org>
-    Link: https://lore.kernel.org/r/20240815013626.935097-8-howardchu95@gmail.com
-    Link: https://lore.kernel.org/r/20240824163322.60796-6-howardchu95@gmail.com
-    Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
-
-
-Just did a:
-
-⬢[acme@toolbox perf-tools]$ git checkout b257fac12f38d7f503b932313d704cee21092350
-Updating files: 100% (12326/12326), done.
-Note: switching to 'b257fac12f38d7f503b932313d704cee21092350'.
-
-You are in 'detached HEAD' state. You can look around, make experimental
-changes and commit them, and you can discard any commits you make in this
-state without impacting any branches by switching back to a branch.
-<SNIP>
-HEAD is now at b257fac12f38d7f5 perf trace: Pretty print buffer
-
-
-make clean + rebuild and the returns are gone, if I do:
-
-⬢[acme@toolbox perf-tools]$ git checkout b257fac12f38d7f503b932313d704cee21092350^
-Previous HEAD position was b257fac12f38d7f5 perf trace: Pretty print buffer data
-HEAD is now at cb32035214b9a09d perf trace: Pretty print struct data
-⬢[acme@toolbox perf-tools]$ 
-
-clean + rebuild instead I get those returns back:
-
-Now staring at it...
-
-
-- Arnaldo
-
+Cheers,
+Vasilis
 
