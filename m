@@ -1,241 +1,273 @@
-Return-Path: <linux-kernel+bounces-361114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B0F999A3A7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:15:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE9D799A3A9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:16:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C08BFB242D7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 392EA1F22F50
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A75421733B;
-	Fri, 11 Oct 2024 12:15:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6647216A1F;
+	Fri, 11 Oct 2024 12:15:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="FUorwyPo"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jV6YcTDl"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD56212F13;
-	Fri, 11 Oct 2024 12:14:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 986DB1494D4;
+	Fri, 11 Oct 2024 12:15:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648901; cv=none; b=nXplRustCiBhYhxw4cxcfigA6Gre+T8uOU86feMBO3kcpcaBwy84+MyEQfLag+TnWUiR7qKlCvqDHFtOMEg0l/oWtGiw9jvTygsloQ9Atp/QUc18Ik3ujNF92KFA61kO8TZU3nYiu9cjOg+HSXImHBuNX4GvCCMczfqA9A+Qfm8=
+	t=1728648954; cv=none; b=Yt1QQzSFNU6A7bJbmzxMtE3R6238UsqkJW2PKyP2PcPSyL33m6N2ppV9dX+zcHlZ+gHdKRw9pcEmQ5BXdBnyXHWhQMfY3Af2ipcMXWOSixz2Wbnh0A+fqJHl+wDIFp8rUIeQqjradHjN9ZM1Zdqvx+3uPsTj8Zsg9tfs2jLH1AI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648901; c=relaxed/simple;
-	bh=2Lx4BjqOxemSrgiJcPsQW8BTG3E3pVcNlidalXKGTeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aDyzLSkv8v6TgmhliE988DDFlKDy8R+X8W/kCVhnUAlWsoGprHmX5Zyps8jPgskzWhJpsxefuAbSLMNpXgGkOhp2ZBxoZdCJCJlLyMZCU/EuKTbm0XeaDtOlrYsMQgRHT2/sgkA6U9kiKIXBbJWwxESPN+/OxchC9+XJ4MOZt7E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=FUorwyPo; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1728648876; x=1729253676; i=w_armin@gmx.de;
-	bh=2Lx4BjqOxemSrgiJcPsQW8BTG3E3pVcNlidalXKGTeM=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FUorwyPoauO+1cCYbWAPION23PF9d3IfcHTiJHMzkce9y3Db8CDYL4z3/f04EN4/
-	 TDcQZzzDGnyL4bus9bQwe3eAlFe/L6TzoTIXZtAF3xeqtIHx/iQ8mCRNK7/zE8gf/
-	 B5qzw6Md/zYSrXXv74OTr29SrdHa/AgjwYHv2farxLOs0+y4UFplGK8HY1WK/d98E
-	 tyKOkSY/tH0paNjHrDwZyKzyAkaOffed0Xd/Xo7zx0xLY+sKzhC6G/YbIeTWfdh0/
-	 HDn9Swpux5Gn0x5wVpj5tu7S87u1X2g4k+im9RVZFi9SdrtHnPp3Wg+SQ/gAwcvI3
-	 t+kcruN0JZ02a3MEJA==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [172.16.154.201] ([141.76.185.172]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MfpOT-1taUAU3uif-00dHkO; Fri, 11
- Oct 2024 14:14:36 +0200
-Message-ID: <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de>
-Date: Fri, 11 Oct 2024 14:14:30 +0200
+	s=arc-20240116; t=1728648954; c=relaxed/simple;
+	bh=3u60z18D7LwxQMADWHb5vuCGXZzarwojDMy7xDHWd7Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=k1OWGvCirYS1g7E7qeKRSZC0x+AR6ysG9EE9TB/Yp0wez+2IgB0xnV7qKdJ0Kajo5IL/TjRwEqhDAw1A2gyQ9lkeOiioQPBLPG+LipxCKOx0Ksgmktd6c5SXwOoEUv5XfTc9AZ6p0ub4ku2Nrg7hQTAsQ4KzHpIkeqvVkpl36KY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jV6YcTDl; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728648952; x=1760184952;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=3u60z18D7LwxQMADWHb5vuCGXZzarwojDMy7xDHWd7Y=;
+  b=jV6YcTDlKOVC9SBUnh2Hs9mqVqgAUqA46JTWhgntcqH0K72doDLk8b6E
+   sbca6ufyoMssBLcbpUNdsnNqURTMDuWpVgTo3Up236hyHqEwqwlr4KcOB
+   9OwamTQfScw23P35WxQKiDT96wuXAYCRUAQyJfzfELPF+Lv2hCLAfI1uU
+   W+zes0PVBXfj9mZOVSN4X8O1L7IN3xZXJd/KUSmDZn+FE27JliHKOZVc/
+   xDLVhDZwmJuyBnYB+w/6pntfN0SePL86PZn51MJw+6jRyYc5FO0kSuj3N
+   ifaUIOxPT305qdAgsb9Xz8Dk8sfR5DiMLZN44bhWPmfxWPf7JQlFC1l0q
+   w==;
+X-CSE-ConnectionGUID: B3kDLGn7RDSS/GCemtdebQ==
+X-CSE-MsgGUID: clF8CiZnTuG6SyYStYblmw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="28203973"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="28203973"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 05:15:51 -0700
+X-CSE-ConnectionGUID: GyI3WlUURoerF69HxqC/1A==
+X-CSE-MsgGUID: VxECejlVQBK5cZuwuzY4Fg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="81422578"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa005.fm.intel.com with ESMTP; 11 Oct 2024 05:15:47 -0700
+Received: from pkitszel-desk.tendawifi.com (unknown [10.245.246.197])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 768E828781;
+	Fri, 11 Oct 2024 13:15:45 +0100 (IST)
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+To: linux-kernel@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>
+Cc: amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com,
+	netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Kees Cook <keescook@chromium.org>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	David Lechner <dlechner@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Subject: [PATCH v3] cleanup: adjust scoped_guard() macros to avoid potential warning
+Date: Fri, 11 Oct 2024 14:15:27 +0200
+Message-ID: <20241011121535.28049-1-przemyslaw.kitszel@intel.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Werner Sembach <wse@tuxedocomputers.com>,
- Benjamin Tissoires <bentiss@kernel.org>
-Cc: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <cflor5mz4flekn44ttlbanfigmwn5mmp3p54gkeeznzmzkyjqz@p2c6q7gulrdl>
- <84b629c6-5b26-4285-9b2f-66dd1afa99e5@tuxedocomputers.com>
- <zph6fnuaamhayivmzftowjw6klgcy2gb7vdub2v2yo7n665vpo@rkxtorfvmzph>
- <7ce4470c-a502-416a-8472-a5b606bb8fd4@tuxedocomputers.com>
- <d7gk2mgihtg6242l3isnhw3xpdt745ehpu2kvim2xxgmxdhat7@g5cqei7uqujj>
- <39f84cfe-bb89-4194-81a9-e178c93e5309@tuxedocomputers.com>
- <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
- <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
- <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
- <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
- <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
- <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:LOHS+CHWlk5R5g0WJIRAcpU4DziE7QkscDFMqDJyROhn82Qi4Sk
- B/OuZvYhdKFAsxXBu275P8ufMqEg0Dk/ajd8VYEpquFAnxUMOJ2bWpDVpi9HK1OOcn+yaSR
- UNAUuHN4z0nrPslbHjlrnA3xKPeOLqFdDLMjF53yTu68AFpt7OGCZJBMZaUsDlE/n/MDBUq
- HfxIM0sr1ehDdMmIKvnyQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:HfTPthU7cqU=;GG1fQbSAwJwoGB5clOYbHj/LRjA
- RMa7WsJzUWxiY01RkIjs1CcZTwGqqqApE93/2Xn93/g65Qn66jkWngD9Jaxc9cgVXIXlhtZlQ
- UerrMzYTMWwRredbTbyatBTuEEjzWplDa5/YWp7xTzr7CIDKVKP3uRftZqXMOpDQKaOWvMS/V
- GWujDjSPWWUUBddFyKgW4xubShh6jO9VlxOy3N1Ex+L1oXnbvnrkuBnvN2EcYY4LQ3NHQX0v+
- lbRRPUcrnqqeDC83t1CmYgwFScGwOuoTxuC57ZsYyZ/+vpyBEgwAhRAxDya9vPUMS/JeK2ILA
- sYL83jcIzEOM7cXeYPwUXhqVrHQsQ8rhWQAuN2sXdJJVMEpTbyKlKJYLAJfkLGojt7h54qe2t
- peUjBu3xu+EezY/hgTzCx+fFD6+IDAv+iWtFe1IhoKJ9U+ULP21stqpMWgKGykJBxkzbDrUdI
- 544fa4/VDw8Zi88DC9Q9hYmJQNXVR0vxQ5EfoP7YKC9FISjwPD9FsvNgYG1aoR9tB8mcrJW/L
- SAqsGxsPWhEGnQ5pu6WCNbcxIfPsIesRQyQmfANY/WGoYb7GXUUn1q4SBEii4X8Lyw+PrssAX
- ZKwZ8JLDFfFHdBB3v8bRGcdAhqZVovT5P0xtas9SZXMvpOxWZu0tsfvPOGCEZYhnm4qhi51H4
- RLzXO1JZrgrBIV55jwZ69KsKZjAWv8FkyySkVGKOWv00uw5LxsjaVaK1F7OM6jvpwf/CpCPrU
- r9GlfBCpJoHqtPadThp86PLpembWyXneDjwAYIXgkbreidL3YAKKzAtqoEXog4x6m1qHtVURx
- QNzI9CFifHtbD24kvk1ctPp+OJVsaWO7ygR+v7l3kTuDA=
+Content-Transfer-Encoding: 8bit
 
-Am 09.10.24 um 11:55 schrieb Werner Sembach:
+Change scoped_guard() and scoped_cond_guard() macros to make reasoning
+about them easier for static analysis tools (smatch, compiler
+diagnostics), especially to enable them to tell if the given usage of
+scoped_guard() is with a conditional lock class (interruptible-locks,
+try-locks) or not (like simple mutex_lock()).
 
-> Resend because HTML mail ..., but I think I now know when Thunderbird
-> does it: Every time I include a link it gets converted.
->
-> Hi
->
-> Am 08.10.24 um 17:21 schrieb Benjamin Tissoires:
->> On Oct 08 2024, Werner Sembach wrote:
->>> [...]
->> Yeah, it just means that you can query or send the data. You can also
->> use HIDIOCGINPUT() and HIDIOCSOUTPUT() to get a current input report an=
-d
->> set an output report through the hidraw ioctl...
->>
->> Internally, HIDIOCGINPUT() uses the same code path than
->> HIDIOCGFEATURE(), but with the report type being an Input instead of a
->> Feature. Same for HIDIOCSOUTPUT() and HIDIOCSFEATURE().
->
-> Ok so just a difference in definition not in implementation.
->
-> Then I use a get feature report for the device status function and use
-> it as input and output at the same time, and use a set output report
-> for the led update function (which technically has a return value but
-> i think it's always 0 anyway).
->
-> I scoured the old thread about exposing WMI calls to userspace,
-> because I remembered that something here came up already.
->
-> 1.
-> https://lore.kernel.org/all/6b32fb73-0544-4a68-95ba-e82406a4b188@gmx.de/
-> -> Should be no problem? Because this is not generally exposing wmi
-> calls, just mapping two explicitly with sanitized input (whitelisting
-> basically).
+Add compile-time error if scoped_cond_guard() is used for non-conditional
+lock class.
 
-It would be OK to expose a selected set of WMI calls to userspace and sani=
-tizing the input of protect potentially buggy firmware from userspace.
+Beyond easier tooling and a little shrink reported by bloat-o-meter
+this patch enables developer to write code like:
 
->
-> 2.
-> https://lore.kernel.org/all/b6d79727-ae94-44b1-aa88-069416435c14@redhat.=
-com/
-> -> Do this concerns this apply here? The actual API to be used is
-> LampArray and the HID mapped WMI calls are just an "internal"
-> interface for the BPF driver, but technically UAPI.
->
-I see no benefit of using BPF for creating the whole HID reports. Otherwis=
-e the HID interface exported by the driver to userspace would be a HID-map=
-ped IOCTL interface
-with no real benefit.
+int foo(struct my_drv *adapter)
+{
+	scoped_guard(spinlock, &adapter->some_spinlock)
+		return adapter->spinlock_protected_var;
+}
 
-I think it would make more sense for the driver to export a generic HID La=
-mpArray interface, which contains placeholder values for the dimensions. T=
-hose values can then
-be supplied by a HID-BPF snipped for each individual machine model. This w=
-ould indeed be a suitable use of HID-BPF, as this would allow us to omit h=
-aving a large quirk
-table inside the kernel driver.
+Current scoped_guard() implementation does not support that,
+due to compiler complaining:
+error: control reaches end of non-void function [-Werror=return-type]
 
-Regarding the basic idea of having a virtual HID interface: i would prefer=
- to create a illumination subsystem instead, but i have to agree that we s=
-hould be doing this
-only after enough drivers are inside the kernel, so we can design a suitab=
-le interface for them. For now, creating a virtual HID interface seems to =
-be good enough.
+Technical stuff about the change:
+scoped_guard() macro uses common idiom of using "for" statement to declare
+a scoped variable. Unfortunately, current logic is too hard for compiler
+diagnostics to be sure that there is exactly one loop step; fix that.
 
-Thanks,
-Armin Wolf
+To make any loop so trivial that there is no above warning, it must not
+depend on any non-const variable to tell if there are more steps. There is
+no obvious solution for that in C, but one could use the compound
+statement expression with "goto" jumping past the "loop", effectively
+leaving only the subscope part of the loop semantics.
 
-> Also at Armin and Hans: Do you have comments on this approach?
->
->>> (well as far as I can tell the hut doesn't actual specify, if they
->>> need to
->>> be feature reports, or am I missing something?)
->> They can be both actually. The HUT is missing what's expected here :(.
->>
->> However, looking at the HUT RR 84:
->> https://www.usb.org/sites/default/files/hutrr84_-_lighting_and_illumina=
-tion_page.pdf
->>
->>
->> There is an example of a report descriptor, and they are using Features=
-.
->> Not Input+Output.
->>
->> And looking even further (above), in 3.5 Usage Definitions:
->> 3.5.2, 3.5.3 and 3.5.5 all of them are meant to be a feature, like:
->> LampArrayAttributesReport CL =E2=80=93 Feature -
->> LampAttributesRequestReport CL =E2=80=93 Feature =E2=80=93
->> LampAttributesResponseReport CL =E2=80=93 Feature =E2=80=93
->> LampArrayControlReport CL =E2=80=93 Feature =E2=80=93
->>
->> 3.5.4: can be either feature or output, like:
->> LampMultiUpdateReport CL =E2=80=93 Feature/Output =E2=80=93
->> LampRangeUpdateReport CL =E2=80=93 Feature/ Output =E2=80=93
->>
->> So I guess the MS implementation can handle Feature only for all but th=
-e
->> update commands.
-> Thanks for the link, I guess for the BPF driver I will stick to
-> feature reports for the LampArray part until there is actually a hid
-> descriptor spotted in the wild defining LampMultiUpdateReport and
-> LampRangeUpdateReport as Output and not feature.
->>> and there is the pair with LampAttributesRequestReport and
->>> LampAttributesResponseReport.
->> Yeah, not a big deal. The bold IN and OUT are just to say that calling =
-a
->> setReport on a LampAttributesResponseReport is just ignored AFAIU.
->>
->>> Sorry for my confusion over the hid spec.
->> No worries. It is definitely confusing :)
->
-> On this note as I fathom:
->
-> Input Report (usually always get report): Interrupts (the ioctl just
-> there to repeat the last one?)
->
-> Output Report (usually always set report): Async write, no return
-> value (Buffer should stay untouched)
->
-> Feature report set: Sync write, no return value (Buffer should stay
-> untouched)
->
-> Feature report get: Sync read/write (intended only for read, but not
-> limited to it, uses singular buffer for both input and output)
->
-> I kind of don't get why feature report set exists, but well it's the
-> specs ^^.
->
-> Regards,
->
-> Werner
->
-> [*snip*]
->
+More impl details:
+one more level of macro indirection is now needed to avoid duplicating
+label names;
+I didn't spot any other place that is using the
+"for (...; goto label) if (0) label: break;" idiom, so it's not packed for
+reuse beyond scoped_guard() family, what makes actual macros code cleaner.
+
+There was also a need to introduce const true/false variable per lock
+class, it is used to aid compiler diagnostics reasoning about "exactly
+1 step" loops (note that converting that to function would undo the whole
+benefit).
+
+Big thanks to Andy Shevchenko for help on this patch, both internal and
+public, ranging from whitespace/formatting, through commit message
+clarifications, general improvements, ending with presenting alternative
+approaches - all despite not even liking the idea.
+
+Big thanks to Dmitry Torokhov for the idea of compile-time check for
+scoped_cond_guard(), and general improvements for the patch.
+
+Big thanks to David Lechner for idea to cover also scoped_cond_guard().
+
+CC: David Lechner <dlechner@baylibre.com>
+CC: Dan Carpenter <dan.carpenter@linaro.org>
+CC: Peter Zijlstra <peterz@infradead.org>
+CC: Andy Shevchenko <andriy.shevchenko@intel.com>
+Reviewed-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+Signed-off-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+---
+PATCH v3:
+cover also scoped_cond_guard() to be able to return from them (David Lechner);
+capitalize comment (Andy)
+
+PATCH v2:
+drop Andy's NACK,
+ (the reasons for NACK were in RFC v1; Peter backed up my idea for this
+ patch in PATCH v1 discussion, and Andy withdrawn the NACK);
+whitespace/formatting/style issues - Andy;
+additional code comments - Dmitry.
+https://lore.kernel.org/netdev/20241009114446.14873-1-przemyslaw.kitszel@intel.com
+
+PATCH v1:
+changes thanks to Dmitry Torokhov:
+ better writeup in commit msg;
+ "__" prefix added to internal macros;
+ reorder "if (0)-else" and "for" to avoid goto jumping back;
+ compile-time check for scoped_cond_guard()
+https://lore.kernel.org/netdev/20241003113906.750116-1-przemyslaw.kitszel@intel.com
+
+RFC v2:
+https://lore.kernel.org/netdev/20241001145718.8962-1-przemyslaw.kitszel@intel.com
+ remove ", 1" condition, as scoped_guard() could be used also for
+ conditional locks (try-lock, irq-lock, etc) - this was pointed out by
+ Dmitry Torokhov and Dan Carpenter;
+ reorder macros to have them defined prior to use - Markus Elfring.
+
+RFC v1:
+https://lore.kernel.org/netdev/20240926134347.19371-1-przemyslaw.kitszel@intel.com
+---
+ include/linux/cleanup.h | 41 +++++++++++++++++++++++++++++++++--------
+ 1 file changed, 33 insertions(+), 8 deletions(-)
+
+diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
+index a3d3e888cf1f..6069dd6237df 100644
+--- a/include/linux/cleanup.h
++++ b/include/linux/cleanup.h
+@@ -149,14 +149,21 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+  *      similar to scoped_guard(), except it does fail when the lock
+  *      acquire fails.
+  *
++ *	Only for conditional locks.
++ *
+  */
+ 
++#define __DEFINE_CLASS_IS_CONDITIONAL(_name, _is_cond)	\
++static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
++
+ #define DEFINE_GUARD(_name, _type, _lock, _unlock) \
++	__DEFINE_CLASS_IS_CONDITIONAL(_name, false); \
+ 	DEFINE_CLASS(_name, _type, if (_T) { _unlock; }, ({ _lock; _T; }), _type _T); \
+ 	static inline void * class_##_name##_lock_ptr(class_##_name##_t *_T) \
+ 	{ return *_T; }
+ 
+ #define DEFINE_GUARD_COND(_name, _ext, _condlock) \
++	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true); \
+ 	EXTEND_CLASS(_name, _ext, \
+ 		     ({ void *_t = _T; if (_T && !(_condlock)) _t = NULL; _t; }), \
+ 		     class_##_name##_t _T) \
+@@ -167,17 +174,32 @@ static inline class_##_name##_t class_##_name##ext##_constructor(_init_args) \
+ 	CLASS(_name, __UNIQUE_ID(guard))
+ 
+ #define __guard_ptr(_name) class_##_name##_lock_ptr
++#define __is_cond_ptr(_name) class_##_name##_is_conditional
+ 
+-#define scoped_guard(_name, args...)					\
+-	for (CLASS(_name, scope)(args),					\
+-	     *done = NULL; __guard_ptr(_name)(&scope) && !done; done = (void *)1)
++/*
++ * Helper macro for scoped_guard() and scoped_cond_guard().
++ *
++ * Note that the "__is_cond_ptr(_name)" part of the condition ensures that
++ * compiler would be sure that for the unconditional locks the body of the
++ * loop (caller-provided code glued to the else clause) could not be skipped.
++ * It is needed because the other part - "__guard_ptr(_name)(&scope)" - is too
++ * hard to deduce (even if could be proven true for unconditional locks).
++ */
++#define __scoped_guard(_name, _fail, _label, args...)				\
++	for (CLASS(_name, scope)(args);	true; ({ goto _label; }))		\
++		if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {	\
++			_fail;							\
++_label:										\
++			break;							\
++		} else
+ 
+-#define scoped_cond_guard(_name, _fail, args...) \
+-	for (CLASS(_name, scope)(args), \
+-	     *done = NULL; !done; done = (void *)1) \
+-		if (!__guard_ptr(_name)(&scope)) _fail; \
+-		else
++#define scoped_guard(_name, args...)	\
++	__scoped_guard(_name, /* empty */, __UNIQUE_ID(label), args)
+ 
++#define scoped_cond_guard(_name, _fail, args...)			\
++	__scoped_guard(_name,						\
++		       BUILD_BUG_ON(!__is_cond_ptr(_name)); _fail,	\
++		       __UNIQUE_ID(label), args)
+ /*
+  * Additional helper macros for generating lock guards with types, either for
+  * locks that don't have a native type (eg. RCU, preempt) or those that need a
+@@ -233,14 +255,17 @@ static inline class_##_name##_t class_##_name##_constructor(void)	\
+ }
+ 
+ #define DEFINE_LOCK_GUARD_1(_name, _type, _lock, _unlock, ...)		\
++__DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
+ __DEFINE_UNLOCK_GUARD(_name, _type, _unlock, __VA_ARGS__)		\
+ __DEFINE_LOCK_GUARD_1(_name, _type, _lock)
+ 
+ #define DEFINE_LOCK_GUARD_0(_name, _lock, _unlock, ...)			\
++__DEFINE_CLASS_IS_CONDITIONAL(_name, false);				\
+ __DEFINE_UNLOCK_GUARD(_name, void, _unlock, __VA_ARGS__)		\
+ __DEFINE_LOCK_GUARD_0(_name, _lock)
+ 
+ #define DEFINE_LOCK_GUARD_1_COND(_name, _ext, _condlock)		\
++	__DEFINE_CLASS_IS_CONDITIONAL(_name##_ext, true);		\
+ 	EXTEND_CLASS(_name, _ext,					\
+ 		     ({ class_##_name##_t _t = { .lock = l }, *_T = &_t;\
+ 		        if (_T->lock && !(_condlock)) _T->lock = NULL;	\
+
+base-commit: 44badc908f2c85711cb18e45e13119c10ad3a05f
+-- 
+2.46.0
+
 
