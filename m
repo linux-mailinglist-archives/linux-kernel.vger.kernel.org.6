@@ -1,135 +1,99 @@
-Return-Path: <linux-kernel+bounces-361900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 190ED99AEA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:27:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A695999AEA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:28:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20EFE1C2180B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:27:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D3462849C0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:28:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01E261D279D;
-	Fri, 11 Oct 2024 22:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4C611D26F3;
+	Fri, 11 Oct 2024 22:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vfYElzHk"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Mv65ICT0"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8E6B1A070E
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427B51A070E
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:28:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728685665; cv=none; b=keBvhZBujM+22pecX7ndM3vkMCHjsHrAnHuHmprsNXpgiF7FILX4ZRkLRAxL6PB1VxFmgO8UeAUElzTkTyB8naF7kWDKLqR14MbCLax54hA/5J63Wvv/lXRzpG/kUr7Cixy3/LInf+SNUY2A0MlacRljeB+W34saMeT3nssXHOY=
+	t=1728685726; cv=none; b=BEIcXxzN0bzmuNTwHgumryBHM/llPKbJbpl2g/+wsfOeKEKuLLfHuhKQ0rPmlBtJcua6frlfPq2ow7GgcSQrCL62oFrmoHTWSUBg2bLMNdzvoZ1to+uY4zRfFyK8a2trIisyRkP7M7eTMe/i5UdzeKMWBg/5vNSX4HosXbfw52s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728685665; c=relaxed/simple;
-	bh=XpfQ/8ANSakz+1OrHfeuAfLdOL6Di6vnxD3AKYtRJCs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VoAEWg6CUMkZQA/d8i/h6gGnYIiw4hvmjeAoz9DUCdSertBWOzHptbjdqCYyXSvWv9O3ZgqMr3294DDo57/IOEPWfi2S9JQvFtut8xdPbSlicLDiqIQqUsAtCPW1YQpWAz00/4VwyABlqdhfZCcNPLoSlCSwU6Q+kubbYpuLc7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vfYElzHk; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e617ef81so2771e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:27:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728685662; x=1729290462; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8+gUxSDkWsGEMXOFebQ5Xw/lGRc6XJ08PqAablVeqL4=;
-        b=vfYElzHkb52isYENpIwqjNg6h0yBI/F9gbmORY79m+cZT8aGM+HnCBNj+6YNOdl89k
-         XBah9H6MVef0dPSzCRDAYBfIEY//xODyXAqa52LinGavrcX7g7P9aTZNUyuCOHhDu7Y/
-         mY9G7+Om1y9QE/YfcfElQv1tz3r3Ldr3unUEnaZ8nXi4feq1ojonPIRgAmbHGJbj46k9
-         Jkv+64hHd0Y/i/WRYZTgeCJJ8/mF3LKJnTIlqEaM4T/ihG1Gj9NIRz3ri1g0bnuz5IfI
-         Lv31/ecBbMIOe0zgiaFhPQ4HP92VbCXwrMKi2CLX/S80Tl4PKQI4THPDysHz2QcmcLku
-         YBfw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728685662; x=1729290462;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8+gUxSDkWsGEMXOFebQ5Xw/lGRc6XJ08PqAablVeqL4=;
-        b=N0cBc0sVcPvpBd/TsyF9+dYAkFUCROX7OGlFpUibAdaaGIZ6EYSYbuCoQZgcnCbbly
-         JsIhs/hWF3c+oL4ZWW91lFhpaHaw2IOywxYdytigos3dOyNoBjJbw6kZv4PHIMEZXZdR
-         CdMu8Ha1t1ivvPDDTxzpwy8VDZQuoslPbZMTCO7DGqMIZ363iyu/9BzsS23NaC/+j9YO
-         8Dq/5fxnCcHjuX/zoawvCXAWERfPvBkFt6wiOc3wNThfqVFJXcVGX1Z+Nc2/HaeE43C/
-         BCIS+QfMrQI71HWVOmN915/dJS4xRlkJHjdBloG7JbMHaKkhHPWR0J/oq9EmmJ7AU0nn
-         fPUw==
-X-Forwarded-Encrypted: i=1; AJvYcCWSK2tSyf3o7FucN4WBPTT0wBpelWuLXoBDsvrfiyvq+yeRpynSF97MNb6sjQnONzGj9Iv30XBPTCvLaPw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOTqH4uoY9SjMgbkdFUHrZZJ6j7K4+/kbLqIdOYP6Pg/kM4tWy
-	qPSZ6Ihpzmhs5kLooJQQ1tl8Ofjg9bzuUu3eiSReQPInzhe3k8ovkenvlJWNpWzYLWfrnf/55/N
-	jt05ITLaUt1KjlboW8B1u4t+bBhCRtfuRp1xO
-X-Google-Smtp-Source: AGHT+IGXZUm50H+t70ubPlGJraz2/HksPndIYC+fI6Hrd+oxzT344/Iv2iwsY7fhvWCT2jXrm4nAx6oX34CJ6qkR/Wc=
-X-Received: by 2002:a05:6512:3d05:b0:535:68b2:9589 with SMTP id
- 2adb3069b0e04-539e5f0b82cmr146927e87.2.1728685661778; Fri, 11 Oct 2024
- 15:27:41 -0700 (PDT)
+	s=arc-20240116; t=1728685726; c=relaxed/simple;
+	bh=F6JLjXHUVVi0zfCY2Lznvqc4UtULEP3AD56INv2/5uE=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fHEwmwgiNzn2ph6RY7FWR3591H7GcelVdmotBYx8AvM9HnxFT6ckJX71PLQr+RDvSBDVjJOxvFjeZvzr7iKIUY2xMGn+HYFqqB61Hd5t6Cevk6ngYzjcDBON1erbuY7+7vhJNi0OBSE3JQg3jmWOymfspK+YLjAOJpTJbVdiSqo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Mv65ICT0; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728685723; x=1760221723;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=F6JLjXHUVVi0zfCY2Lznvqc4UtULEP3AD56INv2/5uE=;
+  b=Mv65ICT03hyILWmyjb6W64mM3Uwkf9Y4aKWOVM4m5Ske95CtdtoCYrYf
+   QLQTO4JHVqXFO86UDDAx8Mq+el0nPo2svVWltmQzDacVFIWNkZ/4LmIoj
+   /wIMYBF0Ix+iXZiGoT+rmp3ToWE198XBplETRSb0NxCxYKcSYo884YczQ
+   iiG7/IeJSZoqfDoB+fIZGYomERjX4HsBjK3zPc7fr3jAO8DrwsN06Wm6D
+   rMhdOEgEMsyHN5Bw9qjNifIMztwXVKNJ74TD1Y+1768aENZa0ZV9NS4Oh
+   OEnqNjNlqjsrdmetsqhABbcKhodj6mLL1OLMk/Ubzt4Cx5M6M015o8HhA
+   w==;
+X-CSE-ConnectionGUID: FlNrDwW/S2uKf8Fa1csv7w==
+X-CSE-MsgGUID: HZ4W/WvnRdSxBwtwM4/9LQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28204458"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="28204458"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 15:28:43 -0700
+X-CSE-ConnectionGUID: OJuNjMN8T6639UQbmwL9KQ==
+X-CSE-MsgGUID: rfbZGBtERMO3zZIl6bOTeQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="77346538"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 11 Oct 2024 15:28:41 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1szO7j-000Cnn-0i;
+	Fri, 11 Oct 2024 22:28:39 +0000
+Date: Sat, 12 Oct 2024 06:28:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Kees Cook <kees@kernel.org>
+Subject: ld.lld: error: unknown argument '-dp'
+Message-ID: <202410120650.7F80VaWZ-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925233854.90072-1-mmaurer@google.com> <20240925233854.90072-15-mmaurer@google.com>
- <ZwmlEYdS0aPVF32k@bombadil.infradead.org>
-In-Reply-To: <ZwmlEYdS0aPVF32k@bombadil.infradead.org>
-From: Matthew Maurer <mmaurer@google.com>
-Date: Fri, 11 Oct 2024 15:27:30 -0700
-Message-ID: <CAGSQo01o4fWYwSzZHX5dyTUKcaCSZ7z-hPQ8w63tgBPGbM_UCA@mail.gmail.com>
-Subject: Re: [PATCH v5 14/16] modules: Support extended MODVERSIONS info
-To: Luis Chamberlain <mcgrof@kernel.org>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org, 
-	gary@garyguo.net, Michael Ellerman <mpe@ellerman.id.au>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Benjamin Gray <bgray@linux.ibm.com>, Naveen N Rao <naveen@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, neal@gompa.dev, 
-	marcan@marcan.st, j@jannau.net, asahi@lists.linux.dev, 
-	linux-modules@vger.kernel.org, Nicholas Piggin <npiggin@gmail.com>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, Madhavan Srinivasan <maddy@linux.ibm.com>, 
-	Petr Pavlu <petr.pavlu@suse.com>, Sami Tolvanen <samitolvanen@google.com>, 
-	Daniel Gomez <da.gomez@samsung.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linuxppc-dev@lists.ozlabs.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Fri, Oct 11, 2024 at 3:22=E2=80=AFPM Luis Chamberlain <mcgrof@kernel.org=
-> wrote:
->
-> On Wed, Sep 25, 2024 at 11:38:29PM +0000, Matthew Maurer wrote:
-> > Adds a new format for MODVERSIONS which stores each field in a separate
-> > ELF section. This initially adds support for variable length names, but
-> > could later be used to add additional fields to MODVERSIONS in a
-> > backwards compatible way if needed. Any new fields will be ignored by
-> > old user tooling, unlike the current format where user tooling cannot
-> > tolerate adjustments to the format (for example making the name field
-> > longer).
-> >
-> > Since PPC munges its version records to strip leading dots, we reproduc=
-e
-> > the munging for the new format. Other architectures do not appear to
-> > have architecture-specific usage of this information.
-> >
-> > Signed-off-by: Matthew Maurer <mmaurer@google.com>
->
-> I'm all for the ELF validation work so far, all that was nice, thanks
-> for all that tidying up. This however is not considering when we really
-> need all this at all, and not making it specific to the build times when
-> such things are needed. That is, yes I'd like to see the need for this
-> clearly explicitly defined through Kconfig, a *select FOO_FEATURE* for
-> when this is needed. No need to extend a module with bloat if we don't
-> need it, likewise if a kernel was built without needing those things,
-> why bloat the modules with the extra information?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   1d227fcc72223cbdd34d0ce13541cbaab5e0d72f
+commit: dd3a7ee91e0ce0b03d22e974a79e8247cc99959b hardening: Adjust dependencies in selection of MODVERSIONS
+date:   13 days ago
+config: um-allmodconfig (https://download.01.org/0day-ci/archive/20241012/202410120650.7F80VaWZ-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 70e0a7e7e6a8541bcc46908c592eed561850e416)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241012/202410120650.7F80VaWZ-lkp@intel.com/reproduce)
 
-To make sure I understand what you're asking for, are you suggesting:
-1. A config flag for supporting parsing the extended format
-2. A config flag for supporting parsing the existing format
-3. A config flag for putting the extended format into produced modules
-4. A config flag for putting the existing format into produced modules
-or some combination of the above?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410120650.7F80VaWZ-lkp@intel.com/
 
-I'm currently reading this as #3, but figured I'd ask to be certain.
+All errors (new ones prefixed by >>):
 
->
->   Luis
+>> ld.lld: error: unknown argument '-dp'
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
