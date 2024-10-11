@@ -1,121 +1,148 @@
-Return-Path: <linux-kernel+bounces-360319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F20FC999908
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:20:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C48A9998F7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43F4FB23954
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11CEF1F2356D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 01:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B5E71885AD;
-	Fri, 11 Oct 2024 01:18:34 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FED15227;
+	Fri, 11 Oct 2024 01:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fp1N9iFM"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5240217BD6;
-	Fri, 11 Oct 2024 01:18:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F5F38F5B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:18:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728609514; cv=none; b=KywmqFMpUCtEkyYAdeOTPfRjDsWMf5nwciJcNtcjhKkZ4GnQYVcfM6E9XdmfMVsatSuacYumKW4Jfe05pi+l4yOTdT7VjiFOPOp4DiefHngEWlBC48bZ7QDhuU0pscrMLA9MjBicdmTwgj4T4sF/2lYVqp2bNViMQsv2d5iUNPc=
+	t=1728609485; cv=none; b=BfOpw/MbniO3gVmHRa7P1ENTak2GyEEb+XoKKeFpKc5Wj4RyLvsXqhEsQo7AB9/fo/LQl68EWFQrk8Ylu2UEksWO8rP4ioYvAVRmOcVtdz/mptcGYcNwc/jWuTjYNkHSK8nBAVUhsgx6yXgDE8EO6NcYH/RmpRyC5qvmqxfOsNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728609514; c=relaxed/simple;
-	bh=mqb2dcUZiMVko5Dx0zcblh+CR9za0lNwy3EDHZ+oe8w=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ZmstLArV74HUHAGUP9MzQVFc2NMJYFxN6aO2GPvp8wVpDJwVVRsNcMZSOrrhRjTri6JqyvbpDaZ9nHjEtr/r2Tnk4UZYCIT9eCkrbQB34u+upmKjCTBI4wz3eVzhTBUsMGyjd6Gl7VBi4J1OXFSJ3eS4h9zf4mY3NxP+siP/VSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XPpfD21RXz4f3jXl;
-	Fri, 11 Oct 2024 09:18:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 307BC1A08FC;
-	Fri, 11 Oct 2024 09:18:29 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgDH+sbefAhnm9MFDw--.55490S11;
-	Fri, 11 Oct 2024 09:18:29 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: song@kernel.org,
-	mariusz.tkaczyk@intel.com
-Cc: linux-raid@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai3@huawei.com,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH v2 7/7] md/raid5: don't set Faulty rdev for blocked_rdev
-Date: Fri, 11 Oct 2024 09:16:30 +0800
-Message-Id: <20241011011630.2002803-8-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241011011630.2002803-1-yukuai1@huaweicloud.com>
-References: <20241011011630.2002803-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1728609485; c=relaxed/simple;
+	bh=TavyVQ5+XzJ0ErkvAo0VTJYkFbyizACRMVf9hV1Eny4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IFowPEYV89+3Hy6Hs9FkSAQPBqDpBW1hthemiFyhqCXmsodP62TzCa3aZEOYEgTNc0QTJnD2IL9CydBlIpwpjBjSAeqF+RykjK3Kmd2XMM5+oINkyTpPw2PbLqUkz3AjOBOVfZmP49kpzmruInf78zgA/079WHT/NeqpOq0SOFg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fp1N9iFM; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9952ea05c5so243584866b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 18:18:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728609482; x=1729214282; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xIMYwQ/00GQeXDl91h5GpdGthiy7TyZ0ro4fruqMIHw=;
+        b=fp1N9iFMroYQnvn0TtuG3qBj6p0cpkf+PMcn2oodI0ObBDOwBOPFZuYGf4+rrXxLH8
+         +rg+nHoXHgkiBFKHPUJrbKJsjFbBg7ZebsTCzOBuF834i+S0CprYuSH6YllLbdDHJu3z
+         5IhttlE6CwyQCfA3eKHfPFHUTU4gjhkOFduh3d93bQ3w0QaPXNCIdQIh+lRGy8HwPSYf
+         fsIil5WCQD18mWG1rWyfNrh4bUT/DSAarha8vsQaWRrSfP6/x9QpmTGKyXn39DUSREK5
+         Dw/E6S4EuOfxOhIvlWWmkBuJaNSl2rhsTVfjAsC9Jxms5wTLacfWTHmysKK+SPZibrQ8
+         iEUg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728609482; x=1729214282;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=xIMYwQ/00GQeXDl91h5GpdGthiy7TyZ0ro4fruqMIHw=;
+        b=NL6NeKPLgUCn9xvd17an4AY/J1rfOEr2kCxyrZchnb9Azh6MliVXn+vyU57EkIypuC
+         Q7kiaoWbFiwePGo2J8eAvSr3l9/+XGbWm6SScI1G/u0PBsKcX000gJs9bfwYTinPlkQ3
+         SHBMaX9hBsOPJJku+l/8CLkoWf8+HA57pDvQmLGtc2gwLceyOKjJoY0ZxjPPTwKRgkz1
+         dlqrQJENfG6Z1DLqI3I9P1tHQH3CtGp6rTvNCivwrYyk5tYxBwTDJgtFkNhifOw9Rr/g
+         YG77IsmpHMdIMggT9ngiM1w/QYbetgZoqVJdcDt2hY4BkyJVYP3PCG8qFmpVURrr9mJb
+         ZZAg==
+X-Forwarded-Encrypted: i=1; AJvYcCXfEHMgvwyZSrZpgNUFWQfnzrZEVZF+6At69SGyRsWTgrnBPiSwPIc84rG4ECccbQgO0yZZAh7Cr2zlTFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycwhEaWoHymmG3/mPXLsf1QV5h/q2ymhBaroqgpTBm9fppVPqW
+	pELhrTEvN/hGLbFIAG+lFYKRfimp8XPmoSGnsOjmzemyD+KwmfR/
+X-Google-Smtp-Source: AGHT+IFxEbeV8ZR6clYaw5V7xA6JZxSn70qI6icNrFbHpM9Wg97WWgdGJMNj1YK7P8EFe9zyFBN8eQ==
+X-Received: by 2002:a17:906:c10f:b0:a86:a41c:29b with SMTP id a640c23a62f3a-a99b9415b08mr52498066b.8.1728609482146;
+        Thu, 10 Oct 2024 18:18:02 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f6655sm152111566b.225.2024.10.10.18.18.00
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Thu, 10 Oct 2024 18:18:00 -0700 (PDT)
+Date: Fri, 11 Oct 2024 01:17:59 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+Cc: linux-mm@kvack.org, Andrew Morton <akpm@linux-foundation.org>,
+	Jiazi Li <jqqlijiazi@gmail.com>, linux-kernel@vger.kernel.org,
+	maple-tree@lists.infradead.org
+Subject: Re: [PATCH 2/2] maple_tree: Add some alloc node test case
+Message-ID: <20241011011759.wbw56sqgmhzjwo4k@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20240626160631.3636515-1-Liam.Howlett@oracle.com>
+ <20240626160631.3636515-2-Liam.Howlett@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDH+sbefAhnm9MFDw--.55490S11
-X-Coremail-Antispam: 1UD129KBjvdXoW7GF4ftFy5KF47GF1xWrWruFg_yoWkAFgEka
-	4fZFZ3Gr18CFn8Zw1DWryrZrWjkr1kuFn7W3WUKFWYvr98XrWUK3yjqFyUJw4Uua9I9rW5
-	Gw10gF1fXrZ3GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUbD8FF20E14v26rWj6s0DM7CY07I20VC2zVCF04k26cxKx2IYs7xG
-	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28IrcIa0xkI8VA2jI8067AKxVWUAVCq3wA2048vs2
-	IY020Ec7CjxVAFwI0_Xr0E3s1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxSw2x7M28E
-	F7xvwVC0I7IYx2IY67AKxVW7JVWDJwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxVW8Jr0_Cr
-	1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I0E14v26rxl6s0D
-	M2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj6xIIjx
-	v20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x0Yz7v_Jr0_Gr1l
-	F7xvr2IYc2Ij64vIr41lF7I21c0EjII2zVCS5cI20VAGYxC7MxkF7I0En4kS14v26r126r
-	1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_
-	Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x
-	0EwIxGrwCI42IY6xIIjxv20xvE14v26r1I6r4UMIIF0xvE2Ix0cI8IcVCY1x0267AKxVWx
-	JVW8Jr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMI
-	IF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUvYLPUUUUU
-	=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240626160631.3636515-2-Liam.Howlett@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-From: Yu Kuai <yukuai3@huawei.com>
+On Wed, Jun 26, 2024 at 12:06:31PM -0400, Liam R. Howlett wrote:
+>From: Jiazi Li <jqqlijiazi@gmail.com>
+>
+>Add some maple_tree alloc node tese case.
+>
+>Suggested-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>Signed-off-by: Jiazi Li <jqqlijiazi@gmail.com>
+>Signed-off-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+>---
+> tools/testing/radix-tree/maple.c | 22 ++++++++++++++++++++++
+> 1 file changed, 22 insertions(+)
+>
+>diff --git a/tools/testing/radix-tree/maple.c b/tools/testing/radix-tree/maple.c
+>index 11f1efdf83f9..b4b5fd9f294d 100644
+>--- a/tools/testing/radix-tree/maple.c
+>+++ b/tools/testing/radix-tree/maple.c
+>@@ -462,6 +462,28 @@ static noinline void __init check_new_node(struct maple_tree *mt)
+> 	MT_BUG_ON(mt, mas_allocated(&mas) != 10 + MAPLE_ALLOC_SLOTS - 1);
+> 	mas_destroy(&mas);
+> 
+>+	mas.node = MA_ERROR(-ENOMEM);
+>+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS + 1); /* Request */
+>+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
 
-Faulty rdev should never be accessed anymore, hence there is no point to
-wait for bad block to be acknowledged in this case while handling write
-request.
+I am not sure why mas_nomem() is here.
 
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- drivers/md/raid5.c | 13 ++++++-------
- 1 file changed, 6 insertions(+), 7 deletions(-)
+Without this one, we still can trigger the original bug.
 
-diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
-index dc2ea636d173..f5ac81dd21b2 100644
---- a/drivers/md/raid5.c
-+++ b/drivers/md/raid5.c
-@@ -4724,14 +4724,13 @@ static void analyse_stripe(struct stripe_head *sh, struct stripe_head_state *s)
- 		if (rdev) {
- 			is_bad = rdev_has_badblock(rdev, sh->sector,
- 						   RAID5_STRIPE_SECTORS(conf));
--			if (s->blocked_rdev == NULL
--			    && (test_bit(Blocked, &rdev->flags)
--				|| is_bad < 0)) {
-+			if (s->blocked_rdev == NULL) {
- 				if (is_bad < 0)
--					set_bit(BlockedBadBlocks,
--						&rdev->flags);
--				s->blocked_rdev = rdev;
--				atomic_inc(&rdev->nr_pending);
-+					set_bit(BlockedBadBlocks, &rdev->flags);
-+				if (rdev_blocked(rdev)) {
-+					s->blocked_rdev = rdev;
-+					atomic_inc(&rdev->nr_pending);
-+				}
- 			}
- 		}
- 		clear_bit(R5_Insync, &dev->flags);
+>+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS + 1);
+>+	mas.node = MA_ERROR(-ENOMEM);
+>+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS * 2 + 2); /* Request */
+>+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
+>+	mas.status = ma_start;
+>+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS * 2 + 2);
+>+	mas_destroy(&mas);
+>+
+>+	mas.node = MA_ERROR(-ENOMEM);
+>+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS * 2 + 1); /* Request */
+>+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
+>+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS * 2 + 1);
+>+	mas.node = MA_ERROR(-ENOMEM);
+>+	mas_node_count(&mas, MAPLE_ALLOC_SLOTS * 3 + 2); /* Request */
+>+	mas_nomem(&mas, GFP_KERNEL); /* Fill request */
+>+	mas.status = ma_start;
+>+	MT_BUG_ON(mt, mas_allocated(&mas) != MAPLE_ALLOC_SLOTS * 3 + 2);
+>+	mas_destroy(&mas);
+>+
+> 	mtree_unlock(mt);
+> }
+> 
+>-- 
+>2.43.0
+>
+
 -- 
-2.39.2
-
+Wei Yang
+Help you, Help me
 
