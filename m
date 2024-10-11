@@ -1,85 +1,112 @@
-Return-Path: <linux-kernel+bounces-361302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BFED99A678
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:39:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2985E99A67B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:39:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA979B21659
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:38:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE1341F2333E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05B3C4EB51;
-	Fri, 11 Oct 2024 14:38:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96FF2129E9C;
+	Fri, 11 Oct 2024 14:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pmdA/Zqw"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TVqKtJyi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 630F317BA2;
-	Fri, 11 Oct 2024 14:38:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF63B80603;
+	Fri, 11 Oct 2024 14:38:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728657529; cv=none; b=k4DhUuTVIRCfxOTmIi5fsGQfDBZGH8w1lfSxaPRWnanNNOHhPXkHAV81schIc3kQjkQRZdaEpIe4zX6ccWFCobG3u0cOkfSAOOl/08upLHQ37A5r/VYAMkJP7f7E2VT55HDpJao4tYdbrFr7HMDKH7WlPJvWxU+0DwG+79FTBPE=
+	t=1728657531; cv=none; b=p3BXkE869de3FcYApBAkK2BVzxOIqZmu8rn0SiEJAdcP7mSzO/3qxzNJxXQyvpuG9ALZ5p0kTMvheREP24ltTa3cbY/afVAfKmMcsAcs0hGXMjY2o/Salh8PKphdCUSX7XI2Yr+2tlqeCYnyZBfZJgDKcVE3O1TIt08zsP8Fo4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728657529; c=relaxed/simple;
-	bh=Hgd6/MnZlw7QnHGiY+zYelPvbloqyZAOn1X5DsWCAek=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NfbU5f3uCspghtqx+ZDQuuIsL/37N/OMrEfQWpf5S+y5FkRWT5LOprbjQgs0dDBuMcv0SP5C2gBeJSfZ9R0oEFNNx1mgqwscaXTEqgQBViqznoN0+6GEdLXeAE/fznuUa7DChtgQ3FDv12yvtdncNU5EgUUcqS8ywvunJOMIMh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pmdA/Zqw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA666C4CEC3;
-	Fri, 11 Oct 2024 14:38:47 +0000 (UTC)
+	s=arc-20240116; t=1728657531; c=relaxed/simple;
+	bh=LzEU21kvQ/WYUwcS587liGJ+TJpJqMynD+RPNGMcEyQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:Message-ID:
+	 MIME-Version:Content-Type; b=kB3vS7dFtlq2gDyjxEBTQMmhYJhN9M+6HZ9WQoAThMyI1+bKSbPDHeG0MgRTQsEBS1qkk1ZknhLoX/pO5gT37UcPpR6aiqUma6gOQKm2Etac2iPTfVXwCISO+lXmc0l59KG1HUpKtDTmrdt2x8SoHBVgJdr+0CngX8NdnZDmA0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TVqKtJyi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 323BFC4CECE;
+	Fri, 11 Oct 2024 14:38:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728657528;
-	bh=Hgd6/MnZlw7QnHGiY+zYelPvbloqyZAOn1X5DsWCAek=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pmdA/Zqws1TABjcWPDhTbDQuItzuA1vihySaNY+7mjcOBZzRcRvcUqSg0ixVEk6aK
-	 4tKvrquUaakBeBcNaipW5ufjZXN5exR5eC5OhoaGP7s/ujVWkkeLuNrtTS/VEVXVJq
-	 I9FXtriA2VvA+qUHKtVvf8SCK5pP63PgbMf4diLaNochyxZkg8cmZ3+LBf+hULVP//
-	 ZAp8bnw75SgcyuDlRWbYsrsvecs8VGyC/O8OInb4EVU5nt0j46UuBJquZsFbR+bRk/
-	 YUEehXdWfxsF8hYyXMpAdhmCKZ5TaWC2EXGpf3irnLGdwdJH4j86Llxo0qriRDFa1I
-	 ub8dfONZU9vnA==
-Date: Fri, 11 Oct 2024 16:38:44 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Frank Wang <frawang.cn@gmail.com>
-Cc: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, heiko@sntech.de, 
-	linux-phy@lists.infradead.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-rockchip@lists.infradead.org, william.wu@rock-chips.com, 
-	tim.chen@rock-chips.com, Frank Wang <frank.wang@rock-chips.com>
-Subject: Re: [PATCH v5 2/3] dt-bindings: phy: rockchip,inno-usb2phy: add
- rk3576
-Message-ID: <vauotttw6efm6krwcn2krw47gq6zhgb4nvs3ctv2e4khvizi5z@vwsu7imdbf5t>
-References: <20241011065140.19999-1-frawang.cn@gmail.com>
- <20241011065140.19999-2-frawang.cn@gmail.com>
+	s=k20201202; t=1728657530;
+	bh=LzEU21kvQ/WYUwcS587liGJ+TJpJqMynD+RPNGMcEyQ=;
+	h=From:To:Cc:Subject:References:Date:In-Reply-To:From;
+	b=TVqKtJyimpsTwPQWNy0t/CPaza1/QLu78d8KOIzDaeSkWrw1bjEx3023I5JFFVRN7
+	 7Q/5yCwLLvi+9sXOKQPl7sEHsweToIi8I8rZLXsNIUwvS2VcassIOsaR3FfdMUaa+w
+	 XPbfdnaGG7Jdt20eSR/vgVZMlbWU2eOooUQNnnlznRUFeRlClzVrz0iAidkdO/ZEAB
+	 rgm84ADLE5RuoRaZJ1/58BG885nLiNCH4kmNOsE9szmlfRe5biY/UBi9SQb1oV07rf
+	 8NGY4be/C4kx5El1+EhIrzVEbo0M4AcNU5RH59eKi3CkIYeUuXISOXeUXXwR59/GNg
+	 QVfB8GVhEmArw==
+From: Kalle Valo <kvalo@kernel.org>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Jianhua Lu <lujianhua000@gmail.com>,  Bjorn Andersson
+ <andersson@kernel.org>,  Konrad Dybcio <konradybcio@kernel.org>,  Rob
+ Herring <robh@kernel.org>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  Jeff Johnson <jjohnson@kernel.org>,
+  linux-arm-msm@vger.kernel.org,  devicetree@vger.kernel.org,
+  linux-kernel@vger.kernel.org,  ath11k@lists.infradead.org
+Subject: Re: [PATCH v3 2/3] arm64: dts: qcom: sm8250-xiaomi-elish: Add wifi
+ node
+References: <20241010072243.10227-1-lujianhua000@gmail.com>
+	<20241010072243.10227-2-lujianhua000@gmail.com>
+	<pbsooimr6l65hgyxezyp6ha3zqibgdlphmeb7vtghgy2wti66b@fsmptbss2zvi>
+	<87h69i7v8c.fsf@kernel.org>
+	<p4j7i6fbr7htsh44vumlsziuhbl4phqok4zxnubdvyrjo2cllt@cez4iynfjayt>
+Date: Fri, 11 Oct 2024 17:38:46 +0300
+In-Reply-To: <p4j7i6fbr7htsh44vumlsziuhbl4phqok4zxnubdvyrjo2cllt@cez4iynfjayt>
+	(Dmitry Baryshkov's message of "Fri, 11 Oct 2024 16:46:14 +0300")
+Message-ID: <87ttdi66x5.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241011065140.19999-2-frawang.cn@gmail.com>
+Content-Type: text/plain
 
-On Fri, Oct 11, 2024 at 02:51:39PM +0800, Frank Wang wrote:
-> From: Frank Wang <frank.wang@rock-chips.com>
-> 
-> Add compatible for the USB2 phy in the Rockchip RK3576 SoC.
-> 
-> This change also refactor the clocks list as there are new clocks
-> adding used for the USB MMU in RK3576 SoC.
-> 
-> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
-> ---
+Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
 
-Thanks for the changes.
+> On Fri, Oct 11, 2024 at 02:08:19PM +0300, Kalle Valo wrote:
+>> Dmitry Baryshkov <dmitry.baryshkov@linaro.org> writes:
+>> 
+>> >> --- a/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+>> >> +++ b/arch/arm64/boot/dts/qcom/sm8250-xiaomi-elish-common.dtsi
+>> >> @@ -680,6 +680,25 @@ &pcie0_phy {
+>> >>  	status = "okay";
+>> >>  };
+>> >>  
+>> >> +&pcieport0 {
+>> >> +	wifi@0 {
+>> >> +		compatible = "pci17cb,1101";
+>> >> +		reg = <0x10000 0x0 0x0 0x0 0x0>;
+>> >> +
+>> >> +		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
+>> >> +		vddaon-supply = <&vreg_pmu_aon_0p59>;
+>> >> +		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
+>> >> +		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
+>> >> +		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
+>> >> +		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
+>> >> +		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
+>> >> +		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
+>> >> +		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
+>> >> +
+>> >> +		qcom,ath11k-calibration-variant = "Xiaomi_Pad_5Pro";
+>> >
+>> > Let's wait for Kalle's response.
+>> 
+>> Sorry, I don't know what you refer to here. I have been extremly busy
+>> with MLO patches so drowning with mail right now :/
+>
+> Just an ack for the calibration variant name.
 
+Ah, then ack from me for the name. Thanks for following these.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+-- 
+https://patchwork.kernel.org/project/linux-wireless/list/
 
-Best regards,
-Krzysztof
-
+https://wireless.wiki.kernel.org/en/developers/documentation/submittingpatches
 
