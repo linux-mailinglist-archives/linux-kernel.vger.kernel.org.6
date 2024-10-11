@@ -1,122 +1,150 @@
-Return-Path: <linux-kernel+bounces-361608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC5EF99AA73
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:38:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F0B99AA76
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59FC828D4F5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:38:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F54B284C35
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:38:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECA4F1CF7CA;
-	Fri, 11 Oct 2024 17:34:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0F901CFEAB;
+	Fri, 11 Oct 2024 17:35:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="EsO/1Ae/"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TMtXmRsH"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07D01CC162;
-	Fri, 11 Oct 2024 17:34:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8721A1CCB31;
+	Fri, 11 Oct 2024 17:35:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728668071; cv=none; b=LOMYbBjua2oeBJH9Zb0CacM4IYLkPq7Gdi02bEWPpTrxkWt+GU1EhNsSlZ8f96GDVKkE6ah10F87L8NeXPrfgKsy95Mu3n3MGMylDft75dLycuLL2QV/x+egs66exuwfD/Df5SHsB19zbasVjlO7HJ8I2o9gNM+zZ/oZ4/NF+Ro=
+	t=1728668157; cv=none; b=VFHjI32map04x3WmdbQ9/aLS2ETO4u+Xa5RVeqrr+uAvwUoPri+aDDRzlJNPk3rQwYd1qsMeL7NZGvmu5Il5nsbvFLqWXm+V75/WK+2Ln8VIHH6hFE97uAq0JleoQSOk3l3efha1bPsFOgKcp3huuse0LMcm+TrWfbVisnDxjaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728668071; c=relaxed/simple;
-	bh=RD4ZzEKlLEOrBh+X6FZoe88FhDQaqwaAKOjexwStVes=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YABwxusVNfvZJoZEeQorsU6mcy86o248i4CsJb0MA/xYddvf8u5kXh2UpRuA3qDsCU6TUnFtlyFNuqhnf8ECMQDmcj5gAwWopnkZ/oeJuRqpjZPRaFw+CaJmvKvj+lgbWBnpObS21v3W/YO8tXsMM3UMLwtrcWLEB9gA4N95rYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=EsO/1Ae/; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BHYEN5119920;
-	Fri, 11 Oct 2024 12:34:14 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728668054;
-	bh=fQclw3tWB9Tra3qgUeR2LSHPwufmUQ2xfW5+5A6dE6c=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=EsO/1Ae/t0rZuHZkV9WNB6spDOoFFJ3T7oMYM/cjJdNc+LqlnsgFQ46JNNLWNITtS
-	 +wVU8FPCRk0c4LCTunSqzaoet0bEGyW8ZpsST8EFriw3PvEiGMVr6ZGrFPpGqjScan
-	 L7VDKrp0z6aK455F2ZAc9yy8pF7h1BDqp02VkszI=
-Received: from DLEE114.ent.ti.com (dlee114.ent.ti.com [157.170.170.25])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BHYEvt014740
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Fri, 11 Oct 2024 12:34:14 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE114.ent.ti.com
- (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Oct 2024 12:34:14 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Fri, 11 Oct 2024 12:34:14 -0500
-Received: from judy-hp.dhcp.ti.com (judy-hp.dhcp.ti.com [128.247.81.105])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BHY47E025973;
-	Fri, 11 Oct 2024 12:34:14 -0500
-From: Judith Mendez <jm@ti.com>
-To: Santosh Shilimkar <ssantosh@kernel.org>,
-        Kevin Hilman
-	<khilman@kernel.org>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        Bartosz
- Golaszewski <brgl@bgdev.pl>
-CC: <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
-        <linux-serial@vger.kernel.org>, Judith Mendez <jm@ti.com>
-Subject: [PATCH RESEND 2/2] serial: 8250: omap: Move pm_runtime_get_sync
-Date: Fri, 11 Oct 2024 12:33:56 -0500
-Message-ID: <20241011173356.870883-3-jm@ti.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241011173356.870883-1-jm@ti.com>
-References: <20241011173356.870883-1-jm@ti.com>
+	s=arc-20240116; t=1728668157; c=relaxed/simple;
+	bh=IYbGB9zTZe3U4tbPtF6I2VuL+FdnP/iE5YbWhTENcA4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lZXTe3VPzEtUpCxCp6hVXcB59lhImp9qJmFlRi4sAhkXvjEaxOALRfEHGpUAVkLfX3iMyW5TdvdMk4UbogQomsdaSFNHqi8VF7jKZImwew7HXzTfEAUMNLOOy8bQnd7Coz9S49QUtymGzujoQtkdT5fxYi0UiPDcSejSFIyu4Ig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TMtXmRsH; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43117ed8adbso21631155e9.2;
+        Fri, 11 Oct 2024 10:35:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728668154; x=1729272954; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=lWWmMF+4cpC5c54790uxJHV+gvXu/38t3jODh8WCL1I=;
+        b=TMtXmRsHojJElYIJk5G86EsOTTcqRoB1+I0s1mLxsK7XG0P0O8k7i8f9B9HZky7GyJ
+         mXsJt6uoBFhmd4100oEO6wOlEkhwfmTYIryFO5/HVF3fUNra163IRY+QJnXhZI33YlkB
+         hlGfu3BGinVQV+U+ZUhNV3qQMs/kP+JEEVK97CsUna4+N1Y3rtxVExcoKtyV2azoqhoH
+         lUCZBL0aAv00I8tAV5TF90hq9KSqHKQ8O4J+zpyqDE1j9MwY3KEtNzxh8Qe5ewKcUZ7C
+         sKdow9M5WMeNZ0IzrPOBu4U47V+mRVXYHVeUVec7AWm9p13MQZHSQ923xM/bDEAF1sER
+         qU0w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728668154; x=1729272954;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=lWWmMF+4cpC5c54790uxJHV+gvXu/38t3jODh8WCL1I=;
+        b=cyqCaz9VdlSVNYb/7UVuPLzmJt9bGj9gyzCAYE3LqcO79vzURv7tYHcwnLmMbH8ifC
+         B9NqFyi9m11Rq1kp6JexT+Tb8d6zBHwT9uhNEyVY77iMQbNlcZYX3SQevpK9BNWcT8NC
+         pm/FXGJw305j8WAzbxUqNX1ZLJLaXPDSgkYnMomTvFXqGS+15OIMFqn7VZ9vIZ37M5CD
+         cRguGn+cuzPpqrOgxmrK5V3SfPwisPDUNUK9ol4RDwuxOxecuQHi3+rNT1+QNl/voOk7
+         /RmY+aijvLiR0TkarBa84e+FCeBk23/WFFP5ZX0gMgB8/N+k0BSu6ALtJQSKRYi0haOL
+         IURA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5+CPFpq5QKNCWZDzkwtNBICVtLMW8dqzMsCFUA3yiTl8+PJAMiPgrTPfXNwozz2/bFoCqdCqyy70v1u6r@vger.kernel.org, AJvYcCVT4FYD87XkIfgV/SUdtihXjtkyyD4u4uL6s3AD+3T6oo+iIy2kdPCTVyVUvB6LREknBk5zcEbRHCwZ@vger.kernel.org, AJvYcCWw3aAyrKMH4KTElwWcoIZJjrBylAcnPPYuaOCIbSUPHJNUqi/4hKmRRhZ5bseygL8siUUNJ+O2iVp2@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtGadWSKZuHDv8BXfE5IpnACT+gfPKgKP8iAvlnpgSbGzeWYp1
+	2G9/J/2ptrwvSp6bPadKyem9sVnn2bFAZRKrE08ffRtgCkWLxqEn
+X-Google-Smtp-Source: AGHT+IHlbWMalnq6TxqUn2FGn+wxIKQNsE0A9Dg3qiymPAAswYQzCLia0kJLFZN+dVleeD4Jm07Ezw==
+X-Received: by 2002:adf:eac4:0:b0:37d:5130:b380 with SMTP id ffacd0b85a97d-37d5ff8a2a4mr379362f8f.23.1728668153637;
+        Fri, 11 Oct 2024 10:35:53 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f25dc6sm234259266b.72.2024.10.11.10.35.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 10:35:53 -0700 (PDT)
+Date: Fri, 11 Oct 2024 19:35:50 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: kernel test robot <lkp@intel.com>, jic23@kernel.org, lars@metafoo.de,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v8 1/4] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <Zwlh9rxuEcxSu37C@vamoirid-laptop>
+References: <20241007194945.66192-2-vassilisamir@gmail.com>
+ <202410111221.YIeXHxOv-lkp@intel.com>
+ <ZwkDoSeXA1T4VD0L@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwkDoSeXA1T4VD0L@smile.fi.intel.com>
 
-Currently in omap_8250_shutdown, the dma->rx_running
-flag is set to zero in omap_8250_rx_dma_flush. Next
-pm_runtime_get_sync is called, which is a runtime
-resume call stack which can re-set the flag. When the
-call omap_8250_shutdown returns, the flag is expected
-to be UN-SET, but this is not the case. This is causing
-issues the next time UART is re-opened and omap_8250_rx_dma
-is called. Fix by moving pm_runtime_get_sync before the
-omap_8250_rx_dma_flush.
+On Fri, Oct 11, 2024 at 01:53:21PM +0300, Andy Shevchenko wrote:
+> On Fri, Oct 11, 2024 at 12:32:12PM +0800, kernel test robot wrote:
+> > Hi Vasileios,
+> > 
+> > kernel test robot noticed the following build warnings:
+> > 
+> > [auto build test WARNING on 96be67caa0f0420d4128cb67f07bbd7a6f49e03a]
+> > 
+> > url:    https://github.com/intel-lab-lkp/linux/commits/Vasileios-Amoiridis/iio-pressure-bmp280-Use-sleep-and-forced-mode-for-oneshot-captures/20241008-035238
+> > base:   96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+> > patch link:    https://lore.kernel.org/r/20241007194945.66192-2-vassilisamir%40gmail.com
+> > patch subject: [PATCH v8 1/4] iio: pressure: bmp280: Use sleep and forced mode for oneshot captures
+> > config: i386-randconfig-006-20241011 (https://download.01.org/0day-ci/archive/20241011/202410111221.YIeXHxOv-lkp@intel.com/config)
+> > compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+> > reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410111221.YIeXHxOv-lkp@intel.com/reproduce)
+> > 
+> > If you fix the issue in a separate patch/commit (i.e. not just a new version of
+> > the same patch/commit), kindly add following tags
+> > | Reported-by: kernel test robot <lkp@intel.com>
+> > | Closes: https://lore.kernel.org/oe-kbuild-all/202410111221.YIeXHxOv-lkp@intel.com/
+> > 
+> > All warnings (new ones prefixed by >>):
+> > 
+> > >> drivers/iio/pressure/bmp280-core.c:1051:3: warning: variable 'meas_time_us' is uninitialized when used here [-Wuninitialized]
+> >     1051 |                 meas_time_us += BMP280_PRESS_HUMID_MEAS_OFFSET +
+> >          |                 ^~~~~~~~~~~~
+> >    drivers/iio/pressure/bmp280-core.c:1046:32: note: initialize the variable 'meas_time_us' to silence this warning
+> >     1046 |         unsigned int reg, meas_time_us;
+> >          |                                       ^
+> >          |                                        = 0
+> >    drivers/iio/pressure/bmp280-core.c:2452:2: warning: variable 'offset' is uninitialized when used here [-Wuninitialized]
+> >     2452 |         offset += sizeof(s32);
+> >          |         ^~~~~~
+> >    drivers/iio/pressure/bmp280-core.c:2437:17: note: initialize the variable 'offset' to silence this warning
+> >     2437 |         int ret, offset;
+> >          |                        ^
+> >          |                         = 0
+> 
+> Rarely, but looks like this suggestion is okay, rather I would do it as 'else'
+> branch and convert '+=' in the 'if' part to be '='.
 
-Signed-off-by: Bin Liu <b-liu@ti.com>
-Signed-off-by: Judith Mendez <jm@ti.com>
----
- drivers/tty/serial/8250/8250_omap.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Hi Andy,
 
-diff --git a/drivers/tty/serial/8250/8250_omap.c b/drivers/tty/serial/8250/8250_omap.c
-index 88b58f44e4e9..0dd68bdbfbcf 100644
---- a/drivers/tty/serial/8250/8250_omap.c
-+++ b/drivers/tty/serial/8250/8250_omap.c
-@@ -776,12 +776,12 @@ static void omap_8250_shutdown(struct uart_port *port)
- 	struct uart_8250_port *up = up_to_u8250p(port);
- 	struct omap8250_priv *priv = port->private_data;
- 
-+	pm_runtime_get_sync(port->dev);
-+
- 	flush_work(&priv->qos_work);
- 	if (up->dma)
- 		omap_8250_rx_dma_flush(up);
- 
--	pm_runtime_get_sync(port->dev);
--
- 	serial_out(up, UART_OMAP_WER, 0);
- 	if (priv->habit & UART_HAS_EFR2)
- 		serial_out(up, UART_OMAP_EFR2, 0x0);
--- 
-2.47.0
+I though exactly the same, thanks for confirming my thoughts and thanks
+for taking the time to suggest it!
 
+Cheers,
+Vasilis
+
+> 
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
