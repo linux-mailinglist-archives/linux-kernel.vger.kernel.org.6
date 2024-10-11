@@ -1,83 +1,53 @@
-Return-Path: <linux-kernel+bounces-361550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A0A899A997
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 976A899A99D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:13:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6CA1C224B5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:13:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C17CF1C22973
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:13:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE21C3F00;
-	Fri, 11 Oct 2024 17:11:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MRsywTas"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3541C6F5E;
+	Fri, 11 Oct 2024 17:12:31 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245AE1BD00A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AF881AD7;
+	Fri, 11 Oct 2024 17:12:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728666714; cv=none; b=MWaG1RwDrlH++aPcH6FkAvqrBbx4HqObhRxQZhNKyirsP8qgEl8m+twkVRJjiaeP7rObCikkD5fMvuTLaR132k0z6eAefPJfz51I2lR64zfsLduv4k+6OLzb8VKR+r3ZDdp8rrBZpz8Af87pN/lmXPqZ7Qd7VYffVY570hvENRo=
+	t=1728666750; cv=none; b=GmW3Uvy0yEvG56ixjlPso/u1Xd1pQ5H9RJw0nigEP8JFIQEfNP6JTXBniVVOHsQLjGq6OtYeVgSRn2zeQqw9mVyvXdTr17OTTmzXf+K8GZLNp/FwMqbqGy1Tjx3nqk+R719beoDguDgt5AZDLVk2/2PmDbEcP/i55LpuzLBKiW8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728666714; c=relaxed/simple;
-	bh=aiN47lzHnJWqzKP2wtzM26gAcaTIZRCbMy1ZtpHDJls=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=thekxHUUcbQN2MvjajbvkehyWIuIMwPUfflzZqNyY1oGVtpI0G3WAGqCzadkKq737l93c8jpqu7q3RWzh2IaiHHOTL5DjckGWVByDw1lPn0aPMXMfqoPZpoNEtX6BH7B9nxKpQlSOFCO4uGs53S2ejyTtLVSqDohp/rS49uS2Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MRsywTas; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8354599fd8aso84136039f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:11:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728666712; x=1729271512; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KpbrnuNpT2hceRYe/VcgBMKHN+/sFFWJd7A/mmO9d/A=;
-        b=MRsywTasIhIfc2p7gVl5Gq/gYjwQFJVwWvHF18P8MpU28Ju/Dze+R8yYvOUfGBfVTg
-         /nIrxKaWqudYGNriKy7ZWxQeNN0t5VJyo7NJcO1MSXnbrpa67zTIHoyzLlS/0vMSBgQ8
-         RuW/9X+5+VPIBzSAeCEUlcP3MdMjzIGNtcHuYbV48d+g//EspXv7ucKkkfdljlYRGs+4
-         ZUvK1T7aKvMgQJUmNcLt01xD54nzzTb14D+6RFFqCC/gmjD8fp0Zma76K5jAESoWKl44
-         Cv2OcRY0z6cAdyHUL7zmCvzFh4ijVZFqudD0/almuQNw6FZKh8Np0YWgPCzHmdvps7CH
-         6Zug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728666712; x=1729271512;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KpbrnuNpT2hceRYe/VcgBMKHN+/sFFWJd7A/mmO9d/A=;
-        b=GVZua4s518a/leqA0iYYZWft4P6XbBwWK0jIy2OegXWt+LWRw9wWteoG3rW9vpTIX3
-         y31YyAGwy4ShvSNwRqZwiWpxTKjqiQUTuOtpsI7Lzqm0xZ2c1qdFXPixixBw9U/8f3Zy
-         ae2W7dyGr4eElG7YoUOxqwxMsVuO9i0TSP6/50fLNLpBEtuCOrroYyXdmgcXpk2OcdvB
-         /aFWVpOE89EQDR/OHHZQH3IPR5wEmKuJ5Ih9qpOk2yvTjjuq7nkL4c6OSf6KhKDG2aTD
-         ugHVfaZM3WhXtJJGbcE51brh/l5mVY7xxfOcCpibWsBRRW993ZSfJ0mKiMj+lTsPNHUr
-         EPfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvQwq5UhWv3PL6SCHcEMYRZ4WJ65C8UpaoBRoaKN5dGTnHtVU5GZAreGU40mQmktg7jy5uqoyH9Rby8kM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YynpeUPiBViMu2+n31/PUW2444jxGvEs9kUr9o3ct/Zt7W2WAtd
-	r6ur9JcpsUki54UnVF9qgapYYSoYe3G0XfycvJjBP1a7M94W94QRRNVeV8k0L+Q=
-X-Google-Smtp-Source: AGHT+IGI6wckhy8W+1rmF8si1f4MWwmV9cm88orXihhz4HO8zA71D88m2Jd/YkHmEzs3BnLxoXNMVA==
-X-Received: by 2002:a05:6602:1407:b0:82d:3c2:9118 with SMTP id ca18e2360f4ac-8379512759fmr301961139f.16.1728666712217;
-        Fri, 11 Oct 2024 10:11:52 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbada846dcsm713654173.89.2024.10.11.10.11.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:11:51 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: hch@infradead.org, Bart Van Assche <bvanassche@acm.org>, 
- "Martin K. Petersen" <martin.petersen@oracle.com>, 
- Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, 
- Breno Leitao <leitao@debian.org>
-Cc: kernel-team@meta.com, linux-block@vger.kernel.org, 
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241011155615.3361143-1-leitao@debian.org>
-References: <20241011155615.3361143-1-leitao@debian.org>
-Subject: Re: [PATCH] elevator: Remove argument from elevator_find_get
-Message-Id: <172866671104.255755.3061014354205659222.b4-ty@kernel.dk>
-Date: Fri, 11 Oct 2024 11:11:51 -0600
+	s=arc-20240116; t=1728666750; c=relaxed/simple;
+	bh=tAyqjljXvfzvMta7rhreCUqmzV06XkpJxK3Fp2fCvoY=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=mUQ6uVgzNYPyGIQ3UN5i1JASKRZEAhR8DxVQsqO3SPpVINwE4GOGXy7d+TYHC0sFcQ30fbbguC+Pl9VjIGQrsykRvi5QIWp6afy2ENRLOYYgTBDB0c6CXlJfQmM8QFxfZFbWmg0FrdaOAvfWVcp/OPIHKBATGge7VpUOKBtPTKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XQCkB51VMz6LCtW;
+	Sat, 12 Oct 2024 01:08:02 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 39133140B3C;
+	Sat, 12 Oct 2024 01:12:25 +0800 (CST)
+Received: from GurSIX1 (10.204.104.19) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
+ 2024 19:12:19 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch> <20241009065837.354332-1-gur.stavi@huawei.com> <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch> <002201db1a75$9a83b420$cf8b1c60$@huawei.com> <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch> <002701db1ae3$368d9b70$a3a8d250$@huawei.com> <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch> <000101db1b2f$7410c2f0$5c3248d0$@huawei.com> <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch> <000301db1bbc$453feae0$cfbfc0a0$@huawei.com> <670937c990fca_234aca29481@willemb.c.googlers.com.notmuch>
+In-Reply-To: <670937c990fca_234aca29481@willemb.c.googlers.com.notmuch>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket is not RUNNING
+Date: Fri, 11 Oct 2024 20:12:13 +0300
+Message-ID: <000401db1c00$bd86afe0$38940fa0$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,28 +56,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.2
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGWzwQMZqw76ooUWOpIJuIeDZyLJ8x9WAgAEVHYCAAHM4AIAA1CkdgADoeFuAAINGnIABEt/xgAAqsjA=
+Content-Language: en-us
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-
-On Fri, 11 Oct 2024 08:56:15 -0700, Breno Leitao wrote:
-> Commit e4eb37cc0f3ed ("block: Remove elevator required features")
-> removed the usage of `struct request_queue` from elevator_find_get(),
-> but didn't removed the argument.
+> Gur Stavi wrote:
+> > >
+> > > If we don't care about opening up fanout groups to ETH_P_NONE, then
+> > > patch v2 seems sufficient. If explicitly blocking this, the ENXIO
+> > > return can be added, but ideally without touching the other lines.
+> >
+> > I don't think that allowing ETH_P_NONE is relevant.
+> > In my opinion the 2 options that should be considered to fail
+> > fanout_add are:
+> > 1. Testing proto == 0
+> > 2. Testing proto == 0 || ifindex == -1
+> >
+> > The only corner case that is caught by [2] and missed by [1] is
+> > the "unlisted" case during do_bind. It is such a rare case that
+> > probably no one will ever encounter bind "unlisted" followed by
+> > FANOUT_ADD. And this is not a dangerous corner case that leads to
+> > system crash.
+> >
+> > However, being a purist, I see the major goal of code review to promote
+> > correctness by identifying corner cases while improving style is a
+> > secondary priority. Since we did identify this corner case in our
+> > discussion I think we should still use [2].
+> > I don't consider the code complex. In fact, to me, the ifindex clause
+> > is a more understandable direct reason for failure than the proto which
+> > is indirect. Having the ifindex clause helps figuring out the proto
+> > clause.
 > 
-> Remove the "struct request_queue *q" argument from elevator_find_get()
-> given it is useless.
+> It's interesting that the unlisted fix does not return ENODEV, but
+> returns success and leaves the socket in an unbound state, equivalent
+> to binding to ETH_P_NONE and ifindex 0. This seems surprising behavior
+> to the caller.
 > 
-> [...]
+> On rereading that, I still do not see a purpose of special ifindex -1.
+> 
+>
 
-Applied, thanks!
+Can this code be relevant?
 
-[1/1] elevator: Remove argument from elevator_find_get
-      commit: ee7ff15bf507d4cf9a2b11b00690dfe6046ad325
+		case NETDEV_UP:
+			if (dev->ifindex == po->ifindex) {
+				spin_lock(&po->bind_lock);
+				if (po->num)
+					register_prot_hook(sk);
+				spin_unlock(&po->bind_lock);
+			}
+			break;
 
-Best regards,
--- 
-Jens Axboe
-
+Perhaps, although the socket failed to (re) find the device, the device
+is still aware of the socket and we need the ifindex condition to fail.
 
 
 
