@@ -1,124 +1,182 @@
-Return-Path: <linux-kernel+bounces-360850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E26B99A079
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:56:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 41F3A99A05D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:51:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E94E287BBA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:56:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79ECA28305C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98D0210C29;
-	Fri, 11 Oct 2024 09:53:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A9220C496;
+	Fri, 11 Oct 2024 09:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JfGU+NTN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="sOQlE3CM";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="NsyPkt5X";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="pzjC3EbI";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1PdmC6hk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DBA210C14;
-	Fri, 11 Oct 2024 09:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 404E01A3BAD
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640431; cv=none; b=sKZAjjmJtlobdLFEMaZp2X7N5u2K6RIQ927SJXDTsiA53+5krI5Mqy4IvPJTCCmI7YQ9aRPbLbnJspOKG/0DA461bHGYn9cC2s/Bm8TpZoSFgv2nNg8yJTKbIerOeBBjYI8w3dLwnETpxZmOpTcNz+ZW4BclP9kXPtI52s1o29c=
+	t=1728640285; cv=none; b=r3g54t7gR1ceI+y1MSAne6c7lwAKckLW/159PzQD3A9gSoHBO/6yCwbwKhFU+SZwsjP5XQIOvAbvVEK035T5PFxqmlUBjEjAeYn+1vHPoVY7YgjVIW74M1JYRzM06MdCYxXqMcze68c9FN8Uf34i5FvQGmwbMlnJk5Y6Bod1brs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640431; c=relaxed/simple;
-	bh=eIZqDQo5dLLSytToQV22Rpep2s3UOmTEEKU222/W4XI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=blwVoOPKK15/f2lKsPVSG2f7c4DMEKI32JET2pvdh9ARTrgMVu5n0mG0h9oUSl47b3K1FmiYQ3AiqN0J6aOfltcOYZrFPlyiVkNR4OuT18P8HORDQF3cUf34015X89EPOBMLKl3+GtAgGDgmuH5ti2kAnJtjSALUSyTj8RhZoXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JfGU+NTN; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728640430; x=1760176430;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=eIZqDQo5dLLSytToQV22Rpep2s3UOmTEEKU222/W4XI=;
-  b=JfGU+NTNO+aea5bsmyljKOWMZ+DGVVKYVVIP32uz7jJxafarrSAUyJpk
-   V+pMkQoWzxu1bi+hK1StvL17l2TrPUdEI9GJn7TGhweajJAj2W0wGAHrd
-   8Grr5torT2X+3q6UGZGdZwlN4HhZfiFfIO5WZsZzR0VokHTKRLrZAG7lz
-   r7whdxjv+u/Beg4FTyNuZa7iJG+37y4Gwz9zJT6TXtPLp8TO0Qgi+SJbY
-   RXsS4vLgXyH5AQh7erciNrd4zHMFPFvnWsBayDwb3u7hm0VpVAVGVHqxk
-   P3PYoS6Bgy2/xAEfskzE8G+idIqAMpBXcYpZNygLLsd/wxTx6//RxUjr6
-   w==;
-X-CSE-ConnectionGUID: A4mOLC9eQtC6WRkOzTNuEw==
-X-CSE-MsgGUID: TWOICVdCRbO6Vnfe7YKMcA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="27844078"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="27844078"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:53:49 -0700
-X-CSE-ConnectionGUID: Ia+MkacoRnmGu2jnfXQXwQ==
-X-CSE-MsgGUID: 5TGN61KMRLe6uaY2CIEMqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="80871058"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 02:53:47 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1szCLA-00000001qiD-14yV;
-	Fri, 11 Oct 2024 12:53:44 +0300
-Date: Fri, 11 Oct 2024 12:53:43 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Arnd Bergmann <arnd@kernel.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
-	Len Brown <lenb@kernel.org>,
-	Mario Limonciello <mario.limonciello@amd.com>,
-	Jarred White <jarredwhite@linux.microsoft.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Easwar Hariharan <eahariha@linux.microsoft.com>,
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
-Message-ID: <Zwj1p3uMEA24a0sU@smile.fi.intel.com>
-References: <20241011061948.3211423-1-arnd@kernel.org>
- <20241011061948.3211423-2-arnd@kernel.org>
+	s=arc-20240116; t=1728640285; c=relaxed/simple;
+	bh=oo4X6H7JOcIQcAqJjmZbbDb+jEBNYczZVPQOZgpOMLM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=BP7Y1GItoLzidKgk1a9fOjYp/62OQrHtozWC0dFHLttUiJVcnpSU8+qCr655/GhDXyRmfo5Qdxo15EKZhRQwlWQrT+A8dkldm8gee96mBmSB9fx80BsgMYZqHnYVkIsW0FMVFWK5LvzOAtgvqGodqzmEIWTotW74Y8Zj5dzeAHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=sOQlE3CM; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=NsyPkt5X; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=pzjC3EbI; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1PdmC6hk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 4AF9921DB3;
+	Fri, 11 Oct 2024 09:51:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728640281; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M3NVgG2SICKyUPtdW/rnnVkSJXEFp2qEVc5fEtUfRD8=;
+	b=sOQlE3CMDRWErDnd7E8Qg6rpvUY2f7Le4XkhLZ9HbsNc+h10tdqS71TXRMeRWjgorfHhZ8
+	Orf2ecdn6auJNGjfjBwtnV3AjjmnqFuOqO2RoIF9FM29HMOIkdhgtyOcOcJQ74+wYEKHsN
+	qnZOkgBv2e9Yplul3LdS37yxc768pjQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728640281;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M3NVgG2SICKyUPtdW/rnnVkSJXEFp2qEVc5fEtUfRD8=;
+	b=NsyPkt5XGLfgzs1EOEYM0djdD/hCFzh3upWU2FZ0u0WucO/oLaUVPc3FIMqVnup7gAFJXK
+	FFiJ2Jk/ISkszSDA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=pzjC3EbI;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=1PdmC6hk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728640280; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M3NVgG2SICKyUPtdW/rnnVkSJXEFp2qEVc5fEtUfRD8=;
+	b=pzjC3EbIn/6JVPttg43x+luFh4H+cf5/8XGTkZlPZpykoVAHu5oSFYRITIaV8GFM3tciMc
+	Ey9sHrJzTLmbBGcRVzcCTThU42wu2koCZ3eyTsnyHmoZ19CVSL049GiCruR/hAePgJ9bHk
+	m1d5PvEX928GoTXN57lumBeE8bcgUGE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728640280;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=M3NVgG2SICKyUPtdW/rnnVkSJXEFp2qEVc5fEtUfRD8=;
+	b=1PdmC6hkWbfvVgsDr8kaKkDPlm9l+pgrbj45BYHXnG7zmyFPXPYzuRF2uQFqxR0rZCYIm/
+	y2AIBUwQSVga2aBg==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 1F88C1370C;
+	Fri, 11 Oct 2024 09:51:20 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 3go4Bxj1CGdxNgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 11 Oct 2024 09:51:20 +0000
+Message-ID: <c8dffa25-4fb4-486a-9587-1c7359457abc@suse.cz>
+Date: Fri, 11 Oct 2024 11:54:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011061948.3211423-2-arnd@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [mm?] INFO: task hung in hugetlb_fault
+To: syzbot <syzbot+7bb5e48f6ead66c72906@syzkaller.appspotmail.com>,
+ akpm@linux-foundation.org, dvyukov@google.com, elver@google.com,
+ glider@google.com, kasan-dev@googlegroups.com, keescook@chromium.org,
+ linux-kernel@vger.kernel.org, linux-mm@kvack.org, mcgrof@kernel.org,
+ mhiramat@kernel.org, mhocko@suse.com, mike.kravetz@oracle.com,
+ muchun.song@linux.dev, syzkaller-bugs@googlegroups.com,
+ torvalds@linux-foundation.org
+References: <67084cfa.050a0220.3e960.0005.GAE@google.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+In-Reply-To: <67084cfa.050a0220.3e960.0005.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 4AF9921DB3
+X-Spam-Score: -2.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	URI_HIDDEN_PATH(1.00)[https://syzkaller.appspot.com/x/.config?x=fb6ea01107fa96bd];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCPT_COUNT_TWELVE(0.00)[16];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	REDIRECTOR_URL(0.00)[goo.gl];
+	TAGGED_RCPT(0.00)[7bb5e48f6ead66c72906];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	SUBJECT_HAS_QUESTION(0.00)[]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
-> From: Arnd Bergmann <arnd@arndb.de>
+On 10/10/24 11:54 PM, syzbot wrote:
+> syzbot has bisected this issue to:
 > 
-> CONFIG_HAS_IOPORT will soon become optional and cause a build time
-> failure when it is disabled but a driver calls inb()/outb(). At the
-> moment, all architectures that can support ACPI have port I/O, but this
-> is not necessarily the case in the future on non-x86 architectures.
-> The result is a set of errors like:
+> commit 3db978d480e2843979a2b56f2f7da726f2b295b2
+> Author: Vlastimil Babka <vbabka@suse.cz>
+> Date:   Mon Jun 8 04:40:24 2020 +0000
 > 
-> drivers/acpi/osl.c: In function 'acpi_os_read_port':
-> include/asm-generic/io.h:542:14: error: call to '_inb' declared with attribute error: inb()) requires CONFIG_HAS_IOPORT
+>     kernel/sysctl: support setting sysctl parameters from kernel command line
+
+Hi, I see you have a number of sysctl options in CONFIG_CMDLINE
+including  sysctl.vm.nr_hugepages=4 which seems necessary to get a
+hugetlb_fault. And without the commit above, those sysctl boot options
+are not applied. So you'd have to handle sysctl differently to test any
+commits earlier than that one.
+
+Thanks,
+Vlastimil
+
+> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1499efd0580000
+> start commit:   87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
+> git tree:       upstream
+> final oops:     https://syzkaller.appspot.com/x/report.txt?x=1699efd0580000
+> console output: https://syzkaller.appspot.com/x/log.txt?x=1299efd0580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=fb6ea01107fa96bd
+> dashboard link: https://syzkaller.appspot.com/bug?extid=7bb5e48f6ead66c72906
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=17dd6327980000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d24f9f980000
 > 
-> Nothing should actually call these functions in this configuration,
-> and if it does, the result would be undefined behavior today, possibly
-> a NULL pointer dereference.
+> Reported-by: syzbot+7bb5e48f6ead66c72906@syzkaller.appspotmail.com
+> Fixes: 3db978d480e2 ("kernel/sysctl: support setting sysctl parameters from kernel command line")
 > 
-> Change the low-level functions to return a proper error code when
-> HAS_IOPORT is disabled.
-
-...
-
-> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
-> +		*value = BIT_MASK(width);
-> +		return AE_NOT_IMPLEMENTED;
-
-Perhaps it has already been discussed, but why do we need to file value with
-semi-garbage when we know it's invalid anyway?
-
-> +	}
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+> For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
