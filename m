@@ -1,160 +1,125 @@
-Return-Path: <linux-kernel+bounces-361740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E593F99AC6E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:08:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B171399AC71
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:09:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F6AFB21010
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:08:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FA99286A47
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:09:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1431CB51E;
-	Fri, 11 Oct 2024 19:08:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14F6F1CF5C6;
+	Fri, 11 Oct 2024 19:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epNstzDn"
-Received: from mail-qv1-f50.google.com (mail-qv1-f50.google.com [209.85.219.50])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BwQZHENH"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEAEA1BDAA7;
-	Fri, 11 Oct 2024 19:08:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFA6E1BDAA7;
+	Fri, 11 Oct 2024 19:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673726; cv=none; b=cSuy4Ro+/qcJNOXep8UWqPZyLJYbCvk+hBBaKy+5YQyDx+hrBXz4jChQ9VqdzeeH0ycIwOeQzAIjSOUVNLoWE0EKEcC/IR0mnb9mfxRxPbe5sDAi++oQY2Tsn6zCeFzTDdhPNcK4QUOV1BZd3ZbOtdKvS+pd0Yq3YMHhxK4ou8Q=
+	t=1728673736; cv=none; b=Vea7S+v05PDRlvaPdK8OV12fB21NLcCjmafFqr3GbDO/YyvZf7wlHXIQy2PsM0TeLgYHmsstOgfU2wm9TpBFgf2koWDalT4QlFglPgLg/k99mAsWxNkv08GB3XCUP1SmvVDjDqFWUdLDjjia/ohRxi9nbk9mnqN/ZCQfbO3H2bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673726; c=relaxed/simple;
-	bh=/g5HFJQ/qfXtxuJjeHarUEWpSdzo39LDrraUxmLlEos=;
-	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=GH+XX9LC5kKIfASioWzGM7TgCKlFpLiwlv4uuDoutbHf4U0Dg/eUmc7OfQ3FVBfBepLesC011RGfRrsjr6Piw66atwf+gkMyprP3s3NYFZzSpMefIj7veWJ2VGxBVZnMNB6qoBeXtc4KKnjK/g2XadwfA6nx31tuBkiEIfJMGTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epNstzDn; arc=none smtp.client-ip=209.85.219.50
+	s=arc-20240116; t=1728673736; c=relaxed/simple;
+	bh=Jd1Y34/j3tpJW7rG0tckaZLKTfi3GtsA1wBtCJgYtFg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kDLZvpv1+WDljqbgfQPQYs2hJrZerDBlzhuFbisXSKNfN40jq1Fk6RsAjmYreDkLFBUeeyOyuUQ5z77sFqtfgHN8lejy4VddeI+9WZ473Hnq9VgsVr12kNq7ir7PuoaKlLCGvtYq7eSzb78rJA4ii9gUlU2f4fgsAlbuglsGqRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BwQZHENH; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f50.google.com with SMTP id 6a1803df08f44-6c5ab2de184so14367226d6.0;
-        Fri, 11 Oct 2024 12:08:44 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-430558cddbeso15505005e9.1;
+        Fri, 11 Oct 2024 12:08:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728673724; x=1729278524; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3Y/geJzGabBXvfM/8UGblm0sFehSeKzBtHLuktddHvE=;
-        b=epNstzDnc6muLM7laZBh9dUAq71gztsgbFq/8+NS3lJZy8Smt75RKccCRUOGouAxVm
-         D4+bEW5eVJtCeupfTimX9PrzfhAJ9UYHvtsRHon7orUzFiiHjtDCjJ/GgzRTAh+PBFYc
-         RHrhHxW5FqrsqHJPG2QbWQGAkVDw5He/ViHvA/42+eE8Sk8F/jngUj3PWXlIGLuBXG02
-         LgUJDCkH5kH1GwQoqACcFetgj3z09bgufSoLcKPpqe46HV3POxXm8TGjXOTuNZFGZrDq
-         ufRm2isaY3kRN7c1W84J9522dn3HPbl878L2KkG7SdWaZ32ja0v/OMoKayc5sKpo1Rm+
-         YbSQ==
+        d=gmail.com; s=20230601; t=1728673733; x=1729278533; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zz1WekoT+K59oVc5HCdNd3N/gx+iU50t2zbre263N5w=;
+        b=BwQZHENHSg2M8rYJqzzED1M/L9J3DeJus3uwZDFcKZF75WuC1dgPyjzozyA4tP8K2/
+         Bfj3f46QvjdE6bRNKCIqim5UkNFUKRCtIxYCeMcIpMqwqbLYYTo4jYjky7InCOqkSZEY
+         RCJEGl19lQvnN2IfMSN+uuTE6NEQ9Z96LZ0WjfyV9h7Su3FxAM7QTKD1B35HLbmEQKD7
+         m3aYT9SOizdaZ5SpdrCcaj0wsLjlZgJHMhwxulzBlYA4ucTUThpqmBvmG94fhPorytAO
+         8L70+Mys8Fuq3SAxvFPX9dYOMwWP0igc21jmKObYlog0wRt6AK+2DxUar27gJmUXMKuH
+         r2UQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728673724; x=1729278524;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:cc:to:from:date:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3Y/geJzGabBXvfM/8UGblm0sFehSeKzBtHLuktddHvE=;
-        b=Z6D6/o2P6V8oce5zM1BIJ2GtQO7VJedx266lNuzXrFENly2/+X7y2QzN22TPVtJCtW
-         waeaTT1Y56MvwmxfXht09Wo2dw1xsL3VMJtbnxq8qUgzXOhMMe9GTDYSj/5tjjqRgvQQ
-         DU1wSHtNbsA5XIZZH1tbauY+bZ0P8MxEGFmDq3Ro3EV88OAMA/fwwI0ZIU8UOF/1oV7K
-         cQa4prTf+m6XiLC3I+WvgNrUtM0S5MB8GUET1G6eLRKglw4kaUQhC0EyXGTH/qxzKPko
-         LRw5O3e1Ow4kqHYP3PmQNRs3lt911a3Dr568E4ilhYZVSPuOStQ+/lx3wWCamd5Svwx/
-         /aeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUWEL0SMrp469g4/HiBu4MnDoG7DMwzhuyT7+X+7SFLh67+3dB2Uu2AJA0Iy14C1rw7GUEgXjBRL8iXJ6Q0w2Pw@vger.kernel.org, AJvYcCVLipPUjiZtbwaxMI3PUiGmBxanIAjBfc9xhyWiZcTryWUoZPfxwuvvEAAhk+h59Js4LjvD2SFa@vger.kernel.org, AJvYcCVda41N3RX0nfDCkFegtIN5s1CQrYIBNJ9TkoxCY7HMTSyAVLoHqQYHQHfuomZetNhdgW17UEn21IsiR68=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/e0dXtxVTvXe4U0b3Cg1agoY+61j2nECJe/ZMtnxLBd5R9BO1
-	DI39lbBRdNRTERqKn0XKd2NkmYEmKNpt9D7xkE9rwenKljFPpABk
-X-Google-Smtp-Source: AGHT+IF/SiYd5lqR3tMuI1/TV4/981yonR0uSduTSphD/IKyJ+JLfMwoMsQPJqNdLCwQHfkSTmri7g==
-X-Received: by 2002:a05:6214:390b:b0:6cb:ed3b:fab2 with SMTP id 6a1803df08f44-6cbf0074776mr45386496d6.19.1728673723674;
-        Fri, 11 Oct 2024 12:08:43 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8636f11sm18090176d6.125.2024.10.11.12.08.43
+        d=1e100.net; s=20230601; t=1728673733; x=1729278533;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zz1WekoT+K59oVc5HCdNd3N/gx+iU50t2zbre263N5w=;
+        b=c2G/tTj0HJShTmz9UHbOWwwpZywZV7Gy9OuJ/9BmxzfElM/EGKjUlPBoZ4t+M4Gbe0
+         ZBcKVZTucru+sWk2FCAKj9QPrKtMhPFKceeb7bzg4Z3eKWtlmSJgZ8bxDQ/5gcJOdLzq
+         yaciZ8cY+HWuzcDIcJtCxkh+bRBuLdfQVoSo+ilG9Ad9cpVeXoDsJPd/xu8TMrHrOL9S
+         v8vBcJD5ESQE8ZabimorgZbWKkMRfnHLlKrdHq8qU7QbGU8PL0A2Ajmk49ShIXaqdTbd
+         azDvol7X36fRtchnSBkdekAG1mkU9ZnJoTSh5RC/O+nm85cHjsqXbtgwVDpMKA3eyf8p
+         x0MQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrWjzy7O6l8EBWJX+7YGBEjhbDvmhVoyIl6CwUs/h2dZGLCGvfNtpQyXG+/hh9aApCbtyo/Pktf27x4rS/@vger.kernel.org, AJvYcCX5ibQenMuSdZevcXmYEZMDXwW1N0iAztjYRTramSYK0jImbilZc+FD8f8xD6OibvCPm+Qvpe/5Xwds@vger.kernel.org, AJvYcCXvKkDGq1sSBYOcw1ew/QHM9XRdF4moDuKY1EoaT8Z3ZIolDCeFgr30yoYsyJpjzAi7ocgl2X9h9AsB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx97WaPDZWUWqb+VTDCR9DQWe2QOtTg7qoO/sC6RiJPaWgM7ZnL
+	LWetfUDXIyGwmDf+5hlIuy9JEmG+UbJZLzuuu/fvXWCEgMaBfKei
+X-Google-Smtp-Source: AGHT+IFJ/K5PyB5o1YqUH9GG/hvf0rLF7JeP7OUjXqRnXOVbr8sQJ2OLYXqvgc3PafxIe22YhKgN7w==
+X-Received: by 2002:a05:600c:1c1d:b0:426:67f9:a7d8 with SMTP id 5b1f17b1804b1-4311d9037demr32709925e9.9.1728673733251;
+        Fri, 11 Oct 2024 12:08:53 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffd8asm48652415e9.16.2024.10.11.12.08.52
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:08:43 -0700 (PDT)
-Date: Fri, 11 Oct 2024 15:08:42 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Gur Stavi <gur.stavi@huawei.com>, 
- 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
-Cc: davem@davemloft.net, 
- edumazet@google.com, 
- kuba@kernel.org, 
- linux-kernel@vger.kernel.org, 
- linux-kselftest@vger.kernel.org, 
- netdev@vger.kernel.org, 
- pabeni@redhat.com, 
- shuah@kernel.org
-Message-ID: <670977bac8b03_247429294f6@willemb.c.googlers.com.notmuch>
-In-Reply-To: <000401db1c00$bd86afe0$38940fa0$@huawei.com>
-References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch>
- <20241009065837.354332-1-gur.stavi@huawei.com>
- <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch>
- <002201db1a75$9a83b420$cf8b1c60$@huawei.com>
- <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch>
- <002701db1ae3$368d9b70$a3a8d250$@huawei.com>
- <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch>
- <000101db1b2f$7410c2f0$5c3248d0$@huawei.com>
- <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
- <000301db1bbc$453feae0$cfbfc0a0$@huawei.com>
- <670937c990fca_234aca29481@willemb.c.googlers.com.notmuch>
- <000401db1c00$bd86afe0$38940fa0$@huawei.com>
-Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket
- is not RUNNING
+        Fri, 11 Oct 2024 12:08:52 -0700 (PDT)
+Date: Fri, 11 Oct 2024 21:08:51 +0200
+From: Vasileios Aoiridis <vassilisamir@gmail.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 13/13] iio: chemical: bme680: Add support for preheat
+ current
+Message-ID: <Zwl3w_lwdfqNRYK_@vamoirid-laptop>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-14-vassilisamir@gmail.com>
+ <ZwkAYSvmYyu1F5dU@smile.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwkAYSvmYyu1F5dU@smile.fi.intel.com>
 
-Gur Stavi wrote:
-> > Gur Stavi wrote:
-> > > >
-> > > > If we don't care about opening up fanout groups to ETH_P_NONE, then
-> > > > patch v2 seems sufficient. If explicitly blocking this, the ENXIO
-> > > > return can be added, but ideally without touching the other lines.
-> > >
-> > > I don't think that allowing ETH_P_NONE is relevant.
-> > > In my opinion the 2 options that should be considered to fail
-> > > fanout_add are:
-> > > 1. Testing proto == 0
-> > > 2. Testing proto == 0 || ifindex == -1
-> > >
-> > > The only corner case that is caught by [2] and missed by [1] is
-> > > the "unlisted" case during do_bind. It is such a rare case that
-> > > probably no one will ever encounter bind "unlisted" followed by
-> > > FANOUT_ADD. And this is not a dangerous corner case that leads to
-> > > system crash.
-> > >
-> > > However, being a purist, I see the major goal of code review to promote
-> > > correctness by identifying corner cases while improving style is a
-> > > secondary priority. Since we did identify this corner case in our
-> > > discussion I think we should still use [2].
-> > > I don't consider the code complex. In fact, to me, the ifindex clause
-> > > is a more understandable direct reason for failure than the proto which
-> > > is indirect. Having the ifindex clause helps figuring out the proto
-> > > clause.
+On Fri, Oct 11, 2024 at 01:39:29PM +0300, Andy Shevchenko wrote:
+> On Thu, Oct 10, 2024 at 11:00:30PM +0200, vamoirid wrote:
+> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
 > > 
-> > It's interesting that the unlisted fix does not return ENODEV, but
-> > returns success and leaves the socket in an unbound state, equivalent
-> > to binding to ETH_P_NONE and ifindex 0. This seems surprising behavior
-> > to the caller.
-> > 
-> > On rereading that, I still do not see a purpose of special ifindex -1.
-> > 
-> >
+> > Add functionality to inject a specified amount of current to the heating
+> > plate before the start of the gas measurement to allow the sensor to reach
+> > faster to the requested temperature.
 > 
-> Can this code be relevant?
+> ...
 > 
-> 		case NETDEV_UP:
-> 			if (dev->ifindex == po->ifindex) {
-> 				spin_lock(&po->bind_lock);
-> 				if (po->num)
-> 					register_prot_hook(sk);
-> 				spin_unlock(&po->bind_lock);
-> 			}
-> 			break;
+> > +	data->preheat_curr = 0; /* milliamps */
 > 
-> Perhaps, although the socket failed to (re) find the device, the device
-> is still aware of the socket and we need the ifindex condition to fail.
+> Instead of the comment, make it better to any appearance of the variable in the
+> code by adding unit suffix.
+> 
+> 	data->preheat_curr_mA = 0;
+> 
+> (yes, capital 'A').
+> 
 
-But the behavior is the same for ifindex -1 and 0. Devices always have
-an ifindex >= 1.
+Hi Andy,
+
+I used the comment here because it is exactly like this above and I
+though it is more consistent if I do the same. But I guess repeating a
+not so good design choice for consistency might not be the best
+decision.
+
+Cheers,
+Vasilis
+> -- 
+> With Best Regards,
+> Andy Shevchenko
+> 
+> 
 
