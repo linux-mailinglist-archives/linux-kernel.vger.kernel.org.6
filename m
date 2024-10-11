@@ -1,96 +1,129 @@
-Return-Path: <linux-kernel+bounces-360601-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360603-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E3CF999D16
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:51:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52F72999D1C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:51:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D98FB1F246A9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:51:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 620EA1C22AA0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:51:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E947209F46;
-	Fri, 11 Oct 2024 06:51:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200D2209671;
+	Fri, 11 Oct 2024 06:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="cCO8ynkF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d+Kh1/Rs"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D0FB20899E;
-	Fri, 11 Oct 2024 06:51:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728629468; cv=none; b=bWDQwBvteQqo1HlYZEhUPn24lIJxbPv0alHkUurkg5j37AbdR/sLrEBTyjgMojk3+uk8nJ0p+izvS9/yoiAnGRelZH6V4DuTnUrKZIcFVELToJxrHAuLpW2YDpoOjA/2Z6VE9qzOvkWMf4dVEJ/Zdw2dAQeiE7dS7JZgUkBY5io=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728629468; c=relaxed/simple;
-	bh=74P+u7tRaTPsSp/1l2gWS+CbNxKtgCI0rAAgfVMg+Zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QoNe5Od4Vc7AISoZ/jbGLFSjBR04cdWyU2foBp0971VNycJjxPUMNV3LZ0wxjWCzxJdBG819jgNiTn93hThH1oJ64OU7vI7pQe/xDL+2X9G2Hzh6gGyidK/+5jCP8tyJHRksndmPTpterN+kr6A3iCDCW4zPe31xzGlZ64lHI8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=cCO8ynkF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66663C4CEC7;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048811F4FC2;
 	Fri, 11 Oct 2024 06:51:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728629468;
-	bh=74P+u7tRaTPsSp/1l2gWS+CbNxKtgCI0rAAgfVMg+Zo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=cCO8ynkFqKSetj73ukAR/w2rg8FP4lN8e8+B+eZNEA8+V+zM6Uf7FG2JEL715CZ55
-	 WfQ1U9LUcRdHAEMBhZ1jFXcZ3jefBzif7adczZ6Lyf662DSdKmhPM20VQj+sbQPd39
-	 5qxeD5eZsfpFq01TsxPcF9FKMpjvd6kg0TH9S3UI=
-Date: Fri, 11 Oct 2024 08:51:04 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Li Li <dualli@chromium.org>
-Cc: dualli@google.com, corbet@lwn.net, arve@android.com, tkjos@android.com,
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-	cmllamas@google.com, surenb@google.com, arnd@arndb.de,
-	masahiroy@kernel.org, devel@driverdev.osuosl.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	hridya@google.com, smoreland@google.com, kernel-team@android.com
-Subject: Re: [PATCH v2 1/1] binder: report txn errors via generic netlink
-Message-ID: <2024101149-steadfast-skater-c567@gregkh>
-References: <20241011064427.1565287-1-dualli@chromium.org>
- <20241011064427.1565287-2-dualli@chromium.org>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728629469; cv=none; b=hTxo402v+rhpE16gFktb7H3aVuFSRvle1nmknEMwAm/uxuOhna4a/9epyzNfDdxULXzyQx7kDCrepBaS0OHGDS/xzMpduFDEPKluL3oMCj2PyW8eCNzU5jrG8+2liD5ASslkxu+d4E/ehie009fA1hKEO4AuEIfdQ93t9IbYieg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728629469; c=relaxed/simple;
+	bh=8upQEaFMUGPR4asJZ4uMH4mliRD2mg3nCcWceaOMyvg=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=sAm8EzZpb2qFk0Z3MR20STv0RND4ujI6ZbmihG/ZhVs4l06d04N8O+zEN2ph154wS5DqwlOyUOlWGJhoFL8SX7pEzg3n3ZZEiAmmTBEdig5ihzCO21peeOVQSAC/AFCYPTPeumw5YWkW6cfmUhnhMXi5S+qWgqqI7Z7ALiARvN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d+Kh1/Rs; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e050190ddso1233266b3a.0;
+        Thu, 10 Oct 2024 23:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728629467; x=1729234267; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=z/+tjJ7E9JhBsWRHBUSwfhW8GN/uEwBPBEcRmhfyDPM=;
+        b=d+Kh1/Rs+jEQgnaYcI9kwgRYgVcJzKOgUpZs+9+J0BhbN8KteKq264Q4QLvnlrASC8
+         UXI0brGcqLGthVro/+B4Oa0mz9vtwz+e6syFXAZtxNlcgvbyj/LXtj/PFn3eXd4gYQ2Z
+         bYZlsmHUrwxXAmMul/akJNg7T01dkP1sdeYldoqU9nSR5s0uRilMoug+6fB0geuZ7Vz2
+         xbFLRDmIw+hFvX2/04bwlerG50qZpCapSyXM7VUh1GObtNUKCL2kOzCQ5Vuz6A7rdQU4
+         w4rFRge/kD6phn2NSv+pdYMDMdd2wBp08NLKa0OHRyYJ+lKAX1cBw1Nb19zzF1/IFgap
+         PU0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728629467; x=1729234267;
+        h=content-transfer-encoding:in-reply-to:from:content-language:subject
+         :references:cc:to:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/+tjJ7E9JhBsWRHBUSwfhW8GN/uEwBPBEcRmhfyDPM=;
+        b=vNdM5zW7wX9q2AKJhlawKcRLJCRF5fX4emiau2JeMBc6TmCBQeCm+CuKwFFLHssSy+
+         mFes/4U2Nf2pf41oOS1WQaptfaOguhnXP0pXDjXaYii7PydsesxoiNdmNjPQuz/LsJMi
+         275DqlzjFANiTaXgQPPYlu3xstD8D4rIUvbCYbXM3iE5eb8zbyi2AY7uBswHfn3UXebx
+         J4AtTb4WTcxVmtaLsboI97nsJieHufvcLsk3P7JLXcgStle0uO0CcKvYORGnNvsppgOw
+         fR1uhlfjJ1XNLcPvwMUzwhbPp/07lJdENhFjfdTyzsiP7JhHll2MB/7uq9i0QObe7kz8
+         OV8g==
+X-Forwarded-Encrypted: i=1; AJvYcCVMk9Xzijx4cENWoeZsf47jeSvR5peM6DiN5FRnqS954QMmssIr69r8Di/bZyHsfj8qCxZgpHBc6ikU5A==@vger.kernel.org, AJvYcCXEaASbaKR8YoZYNLGHpcROCUmJE6XJKgnY1VVeOHa0H14PqmIBZVKw5IhETMhs1wmoYwmpZGzg0lSs9DA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyGiq3j/0U/AjAwVixs+wpYIg4Mp2tfM9o2ekahDeIEsSP+/E8j
+	++7+XEam8X7QDMkYPtxNEXQZUivZpCySYjyADwTac3+6nFI8blN9
+X-Google-Smtp-Source: AGHT+IGQoHcWQzUGO54cL5ac8Qnj93I5DOK+gnJbwMrgUZtK8PnoPRsYgsD+DxUgF1ccmFnwFivAoA==
+X-Received: by 2002:a05:6a00:1894:b0:71d:fbf3:f769 with SMTP id d2e1a72fcca58-71e380c113dmr2773131b3a.28.1728629466939;
+        Thu, 10 Oct 2024 23:51:06 -0700 (PDT)
+Received: from [10.0.2.15] (KD106167137155.ppp-bb.dion.ne.jp. [106.167.137.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa93918sm2035692b3a.135.2024.10.10.23.51.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 23:51:06 -0700 (PDT)
+Message-ID: <b58f2c3b-382f-46ce-b2b8-fb39a5c3b356@gmail.com>
+Date: Fri, 11 Oct 2024 15:51:05 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011064427.1565287-2-dualli@chromium.org>
+User-Agent: Mozilla Thunderbird
+To: greg@kroah.com, sfr@canb.auug.org.au
+Cc: corbet@lwn.net, linux-kernel@vger.kernel.org, linux-next@vger.kernel.org
+References: <2024101127-scrubbed-unfilled-8b47@gregkh>
+Subject: Re: linux-next: build warning for a long time
+Content-Language: en-US
+From: Akira Yokosawa <akiyks@gmail.com>
+In-Reply-To: <2024101127-scrubbed-unfilled-8b47@gregkh>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 10, 2024 at 11:44:27PM -0700, Li Li wrote:
-> From: Li Li <dualli@google.com>
-> 
-> Frozen tasks can't process binder transactions, so sync binder
-> transactions will fail with BR_FROZEN_REPLY and async binder
-> transactions will be queued in the kernel async binder buffer.
-> As these queued async transactions accumulates over time, the async
-> buffer will eventually be running out, denying all new transactions
-> after that with BR_FAILED_REPLY.
-> 
-> In addition to the above cases, different kinds of binder error codes
-> might be returned to the sender. However, the core Linux, or Android,
-> system administration process never knows what's actually happening.
-> 
-> This patch introduces the Linux generic netlink messages into the binder
-> driver so that the Linux/Android system administration process can
-> listen to important events and take corresponding actions, like stopping
-> a broken app from attacking the OS by sending huge amount of spamming
-> binder transactions.
-> 
-> To prevent making the already bloated binder.c even bigger, a new source
-> file binder_genl.c is created to host those generic netlink code.
-> 
-> Signed-off-by: Li Li <dualli@google.com>
-> ---
->  Documentation/admin-guide/binder_genl.rst |  69 ++++++
+Hi,
 
-You add a file but not to the documentation build?  Did you test-build
-the documentation to see where it shows up at?
+Sorry for the premature reply I just sent...
 
-thanks,
+On Fri, 11 Oct 2024 08:31:47 +0200, Greg KH wrote:
+> On Fri, Oct 11, 2024 at 05:24:42PM +1100, Stephen Rothwell wrote:
+>> Hi all,
+>> 
+>> From before the git era, an htmldocs build (if we had such a thing back
+>> then) would complain like this:
+>> 
+>> Documentation/driver-api/usb/usb:164: drivers/usb/core/message.c:968: WARNING: Duplicate C declaration, also defined at driver-api/usb/gadget:804.
+>> Declaration is '.. c:function:: int usb_string (struct usb_device *dev, int index, char *buf, size_t size)'.
+>> 
+>> I assume it is confused because we have documented both a function and a
+>> data type called "usb_string".  The former in drivers/usb/core/message.c
+>> and the latter in include/linux/usb/gadget.h.
+>> 
+>> There are about 46 references to the function and 105 to the struct.
+>> We could rename the function to usb_string_utf8 ...
+> 
+> But usb strings are not in utf8 format :)
+> 
+> As C can handle this just fine, odds are sphinx should also be able to
+> handle this?
+> 
+> thanks,
 
-greg k-h
+This is a well known issue of Sphinx, which is taking a looong time to be
+properly fixed.
+
+For your info, this is a short summary I posted last March:
+
+  https://lore.kernel.org/f735ce0b-db1e-49bc-86ac-b5ab8e4aec31@gmail.com/
+
+I think we need to wait patiently for a fix(es) of Sphinx.
+
+HTH,
+
+Akira
+
 
