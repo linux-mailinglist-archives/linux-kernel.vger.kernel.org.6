@@ -1,129 +1,169 @@
-Return-Path: <linux-kernel+bounces-360494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360492-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D8E999BB3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:34:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A4564999BAF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:33:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34F4BB230D2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:34:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C8F41F25B28
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:33:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFCBC1F4FAF;
-	Fri, 11 Oct 2024 04:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C2941F4736;
+	Fri, 11 Oct 2024 04:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SUKHiPyv"
-Received: from mail-ot1-f68.google.com (mail-ot1-f68.google.com [209.85.210.68])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fgZM9LAD"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C14E08F58;
-	Fri, 11 Oct 2024 04:34:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.68
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5471F4FAF;
+	Fri, 11 Oct 2024 04:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728621265; cv=none; b=CIJi8Bygk4Mxlwsom86FKpCk8fVgqhf45NojNMidl9UvwjD7/MTEvvdVoPdKyF5UZrCXH0lor1IGOdwVjczBwbkFeSh/wY3ULPH4lo9bogt2ZKKNNSvG2WyaBPTKAQ2xMY4jqefA5ABSGxxALHH/BxxFFgPa/4/E/W9XaaHDYGA=
+	t=1728621181; cv=none; b=AXBuWh1YFw2AXXHKo2cnmibjnhpQS1azhfxyXgbIUy67fXCNnPRg27s2sz0/AR7Gs+fPFS7fvOiecc45A3Aixnjj33y08P0yubIhzqgNn2/qC6NQe1Q1xSu3rguHhWaVRGVOpMBoudBPNdv5DP2zWY5HJER82fKtbgG8wFO0MZg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728621265; c=relaxed/simple;
-	bh=NajNb/I6k/6ZiFsURaEaC5lig7HGp3Cceim03PLo6c0=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=sQethlv4zEM9NlRnI7k7Wudgl4Z7hKqgzWrtRDx3wf/2vGtIT85TR6cR0o35ANVEbd933tpCBMraVtKwsYUh2PJCC3tRqGW1nvQsOTXB/LUylyBTDbAygS7Dd0LHlRWSeW5E+AsekXXqkw6yCMJmzzTkADK0kixbu+VAzt7Hrxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SUKHiPyv; arc=none smtp.client-ip=209.85.210.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f68.google.com with SMTP id 46e09a7af769-716a3e50a81so980494a34.3;
-        Thu, 10 Oct 2024 21:34:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728621263; x=1729226063; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=gTjmxcfMzkPqRPKWj2sOMpOalolsk+eot2aDuccwuS8=;
-        b=SUKHiPyvIf6bubcaQlL33wmsa4q6MbbX/GZl5KA6VSM6vI7q1T8/csKn3cWNyZ4W0p
-         EUk58tMUScEZkIo4EDXP8vRIIwfFAfRbBepjSy5cpNizm3B5tqPuaJLzXcVFE4SDEoNM
-         bB1QG5mTuY3A7fpXywSXsXNusSxUK1Z5fayQva4O0LYgwcfGBaJeEQxg3e1/0oZCtHql
-         MSFtf7aZu+oq+lhe6JqoRj26fDHPHUcn3iL/vOWtu/0twP2ZDKxE40al+xa/J4EWPDa5
-         ArttOF/gIMYP+runeN/lNSEBLtKnVCZWcS+rzIB34o5EftTiSDbZPfr1H1n3nkcmLHgx
-         14sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728621263; x=1729226063;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=gTjmxcfMzkPqRPKWj2sOMpOalolsk+eot2aDuccwuS8=;
-        b=lHXmsuFpDwhgtNzfOCTDI3u0XSwtFy2epdUD5xgy+sL1mTlmEWzcOvZrRkrhus+29t
-         AELQ8cuUg0c78cthS4yVKCqz1rcTDZu7rI5EKoE+/2p9V+kpmAgO1CzkXEB0S6FgooY4
-         n0fS8nPtB7loDRpeA8JHmb8R2xuJZVDqLH2GScaIWxI2LBkdyfEIhlI3LM65PjFdce1F
-         OTUQPUYAxs7cDUKneJ4iAUVKZSNJWo2zAHkacwc6iPXms1rEzp8HbOSHp7KuG9pBvQLM
-         P3WwB5dtW6nQkzxDKwqd9n9w32qjRtPWnIlS0lHcIsWr5S8r/sZ/mcsJrwclg+jlKL2y
-         f4tg==
-X-Forwarded-Encrypted: i=1; AJvYcCUe7R6wELR1uBQ4SJlUhFj2hON7ruU96wLQPkekCYy+mom6dUgsn0fyGkmPbnW55LOkKVkiTagnCY0Uoiw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxsRhRQDdlj8DEe3FvzcvqbAgxpdNsLG0AcjvKzbUGJCNBRjt4S
-	Uie5kzoiauNDASvcpKnUCYlFOigXaBerZT/ZeyHkSqmrO90Dy6tKMhWwdL3z424=
-X-Google-Smtp-Source: AGHT+IH8Zw8FYpCDh1vwV2hfKQzUQm4N1CVHuFmC+2X1ytWSMQo/dJ40wFJB5avhJcQ+1dh0bJR30g==
-X-Received: by 2002:a05:6830:6e17:b0:70a:94b4:6e67 with SMTP id 46e09a7af769-717d647b8efmr1455296a34.23.1728621262745;
-        Thu, 10 Oct 2024 21:34:22 -0700 (PDT)
-Received: from VM-119-80-tencentos.localdomain ([14.22.11.161])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea448f9440sm1821668a12.30.2024.10.10.21.34.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 21:34:22 -0700 (PDT)
-From: Yongliang Gao <leonylgao@gmail.com>
-To: alexandre.belloni@bootlin.com,
-	john.stultz@linaro.org
-Cc: linux-rtc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yongliang Gao <leonylgao@tencent.com>,
-	Jingqun Li <jingqunli@tencent.com>
-Subject: [PATCH] rtc: check if __rtc_read_time was successful in rtc_timer_do_work()
-Date: Fri, 11 Oct 2024 12:31:53 +0800
-Message-Id: <20241011043153.3788112-1-leonylgao@gmail.com>
-X-Mailer: git-send-email 2.39.3
+	s=arc-20240116; t=1728621181; c=relaxed/simple;
+	bh=WPsimNbw3/FLAWkS8kcN9an0/txl+7xFw5VfWVObtaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iuTh2r0Ut0TI3BH3St6WQCwu96qa6ED/U2+OCcLIfyh+NrGd1Zq8kD37Ety5Fvk0cYshwYEER0hUeKlaMqTixrYm7D2xWDtm+88GaNG4qss0CCF43a0psgF58pYOUJxUip6ltMbU03KBcLiQ4B5r3kbmmj60Tu2t5hJp1XlivDY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fgZM9LAD; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728621180; x=1760157180;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=WPsimNbw3/FLAWkS8kcN9an0/txl+7xFw5VfWVObtaw=;
+  b=fgZM9LADAOHfwsDpJBDggIFo+9aVmyAhkz+TbN1sk65676YnSeV5FGRc
+   QMaC7g61ktoX6MqYcGV5LsW5wrhV5KS9rMONmEP5+dvIlk5YoyTU1j27H
+   VZTFODxZX5GQXTH+w6mi8JZLpFi5tm49GAYTib2eeSqjEN6W162HZfXIY
+   fPQVCInPG1m3bWqLQSmByYyDey5glwVa2yMS0TklwIaYjLbFZIR6ub34y
+   a/U4XqpavEe8xvJPX77qAWvKlTvyr+TYRxDCEmL1krQXWhuJ7R8yURZ3h
+   FeGKeUnUXoxRZU/SsAoNlmSiTdRPfURw2UeXleYqp1FqmDQ+yuBpuSRIU
+   g==;
+X-CSE-ConnectionGUID: ZcRx5KkcTK24dv0DUsmbZg==
+X-CSE-MsgGUID: 4IVC8LveTOK6K5TNByvxOQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="28101891"
+X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
+   d="scan'208";a="28101891"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 21:32:59 -0700
+X-CSE-ConnectionGUID: xlrxdYeoRVCGPpSXEZMSUQ==
+X-CSE-MsgGUID: 18hiwM1BSyycpyc4jLTsYw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
+   d="scan'208";a="81412364"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 10 Oct 2024 21:32:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sz7Ke-000BnT-1j;
+	Fri, 11 Oct 2024 04:32:52 +0000
+Date: Fri, 11 Oct 2024 12:32:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Vasileios Amoiridis <vassilisamir@gmail.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	vassilisamir@gmail.com, ang.iglesiasg@gmail.com,
+	linus.walleij@linaro.org, biju.das.jz@bp.renesas.com,
+	javier.carrasco.cruz@gmail.com, semen.protsenko@linaro.org,
+	579lpy@gmail.com, ak@it-klinger.de, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v8 1/4] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <202410111221.YIeXHxOv-lkp@intel.com>
+References: <20241007194945.66192-2-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007194945.66192-2-vassilisamir@gmail.com>
 
-From: Yongliang Gao <leonylgao@tencent.com>
+Hi Vasileios,
 
-If the __rtc_read_time call fails,, the struct rtc_time tm; may contain
-uninitialized data, or an illegal date/time read from the RTC hardware.
+kernel test robot noticed the following build warnings:
 
-When calling rtc_tm_to_ktime later, the result may be a very large value
-(possibly KTIME_MAX). If there are periodic timers in rtc->timerqueue,
-they will continually expire, may causing kernel softlockup.
+[auto build test WARNING on 96be67caa0f0420d4128cb67f07bbd7a6f49e03a]
 
-Fixes: 6610e0893b8b ("RTC: Rework RTC code to use timerqueue for events")
-Signed-off-by: Yongliang Gao <leonylgao@tencent.com>
-Acked-by: Jingqun Li <jingqunli@tencent.com>
----
- drivers/rtc/interface.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Vasileios-Amoiridis/iio-pressure-bmp280-Use-sleep-and-forced-mode-for-oneshot-captures/20241008-035238
+base:   96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+patch link:    https://lore.kernel.org/r/20241007194945.66192-2-vassilisamir%40gmail.com
+patch subject: [PATCH v8 1/4] iio: pressure: bmp280: Use sleep and forced mode for oneshot captures
+config: i386-randconfig-006-20241011 (https://download.01.org/0day-ci/archive/20241011/202410111221.YIeXHxOv-lkp@intel.com/config)
+compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410111221.YIeXHxOv-lkp@intel.com/reproduce)
 
-diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
-index cca650b2e0b9..aaf76406cd7d 100644
---- a/drivers/rtc/interface.c
-+++ b/drivers/rtc/interface.c
-@@ -904,13 +904,18 @@ void rtc_timer_do_work(struct work_struct *work)
- 	struct timerqueue_node *next;
- 	ktime_t now;
- 	struct rtc_time tm;
-+	int err;
- 
- 	struct rtc_device *rtc =
- 		container_of(work, struct rtc_device, irqwork);
- 
- 	mutex_lock(&rtc->ops_lock);
- again:
--	__rtc_read_time(rtc, &tm);
-+	err = __rtc_read_time(rtc, &tm);
-+	if (err) {
-+		mutex_unlock(&rtc->ops_lock);
-+		return;
-+	}
- 	now = rtc_tm_to_ktime(tm);
- 	while ((next = timerqueue_getnext(&rtc->timerqueue))) {
- 		if (next->expires > now)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410111221.YIeXHxOv-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/iio/pressure/bmp280-core.c:1051:3: warning: variable 'meas_time_us' is uninitialized when used here [-Wuninitialized]
+    1051 |                 meas_time_us += BMP280_PRESS_HUMID_MEAS_OFFSET +
+         |                 ^~~~~~~~~~~~
+   drivers/iio/pressure/bmp280-core.c:1046:32: note: initialize the variable 'meas_time_us' to silence this warning
+    1046 |         unsigned int reg, meas_time_us;
+         |                                       ^
+         |                                        = 0
+   drivers/iio/pressure/bmp280-core.c:2452:2: warning: variable 'offset' is uninitialized when used here [-Wuninitialized]
+    2452 |         offset += sizeof(s32);
+         |         ^~~~~~
+   drivers/iio/pressure/bmp280-core.c:2437:17: note: initialize the variable 'offset' to silence this warning
+    2437 |         int ret, offset;
+         |                        ^
+         |                         = 0
+   2 warnings generated.
+
+
+vim +/meas_time_us +1051 drivers/iio/pressure/bmp280-core.c
+
+  1043	
+  1044	static int bmp280_wait_conv(struct bmp280_data *data)
+  1045	{
+  1046		unsigned int reg, meas_time_us;
+  1047		int ret;
+  1048	
+  1049		/* Check if we are using a BME280 device */
+  1050		if (data->oversampling_humid)
+> 1051			meas_time_us += BMP280_PRESS_HUMID_MEAS_OFFSET +
+  1052					BIT(data->oversampling_humid) * BMP280_MEAS_DUR;
+  1053	
+  1054		/* Pressure measurement time */
+  1055		meas_time_us += BMP280_PRESS_HUMID_MEAS_OFFSET +
+  1056				BIT(data->oversampling_press) * BMP280_MEAS_DUR;
+  1057	
+  1058		/* Temperature measurement time */
+  1059		meas_time_us += BIT(data->oversampling_temp) * BMP280_MEAS_DUR;
+  1060	
+  1061		/* Waiting time according to the BM(P/E)2 Sensor API */
+  1062		fsleep(meas_time_us);
+  1063	
+  1064		ret = regmap_read(data->regmap, BMP280_REG_STATUS, &reg);
+  1065		if (ret) {
+  1066			dev_err(data->dev, "failed to read status register.\n");
+  1067			return ret;
+  1068		}
+  1069	
+  1070		if (reg & BMP280_REG_STATUS_MEAS_BIT) {
+  1071			dev_err(data->dev, "Measurement cycle didn't complete.\n");
+  1072			return -EBUSY;
+  1073		}
+  1074	
+  1075		return 0;
+  1076	}
+  1077	
+
 -- 
-2.39.3
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
