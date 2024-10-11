@@ -1,234 +1,306 @@
-Return-Path: <linux-kernel+bounces-361950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E91F99AF48
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:21:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CA6399AF4B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569BF1C2352F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:21:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB0D52847A3
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:21:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8854D1E2821;
-	Fri, 11 Oct 2024 23:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3FF61E0B76;
+	Fri, 11 Oct 2024 23:21:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Qm/KuQ8d"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eAsh+QD/"
+Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0DCE1D12F0
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 23:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58F8B1D12F0;
+	Fri, 11 Oct 2024 23:21:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728688856; cv=none; b=PYoW1dp/b9kqD9/5DHWaYQWTyWF3rvhwWzTw9wv5Xq6Zyk+fD8xUMSPxM2wFTCvNUkZYYqIXvLWGgNZ1NuFhhasmz8LzXBg8sdrH3vksdsPRFUxHXDftkshkomCLd3zvfF7X7hLYG/BYMbu9eml4qq3zNzutaBWZWfTJH5KjEYw=
+	t=1728688905; cv=none; b=VMpMQKD1msX60/GAZy8s5Yvxq65OXIs8kUD7uPr86Dnc/ZP4JQ6sjpDXiR0KTxOSKCiu/IZiympbz00NRxOFmD7+Fks8FWcQ3ClcIr/1wdSn6Okx0JQvHStptNtLz+v5I26/D6L20zDxMnpTGnq+07rFIvS4QodQ9YoAxYnGa8s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728688856; c=relaxed/simple;
-	bh=MbAdx+mtP/JAUP/AgI9dJTIu78ff4Vht6ytXuf6CFRY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=PTLm7hgmEzR5Hv31cnpn7MTQd5wI/3GLm+iwOL2ohU3Gqqt5ON8lzPZ20cl9gjddfGcEcnHkoTlWfqa40+BLDHnwJpZVXHXoQPfBZ6WtUiTV31YjroYMKNa2aT6iM4P+QGLBZKNohdFchLY9D1KaBwwcM/fyLhOtNBAERyjwK/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Qm/KuQ8d; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e315a5b199so44760227b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:20:54 -0700 (PDT)
+	s=arc-20240116; t=1728688905; c=relaxed/simple;
+	bh=C2AlNqnSBUVSOqLqeF0NP7mqJIjEeaeU+F+j/KS6Xro=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JPd0qmlH2xAZSgN7yMZ2YgOZbWyLxD1jK/L7Xv4LIieQXnri7gtq9drdYZRP947XOrlnS+Ov+JHNQPXM8JWj9VKpDZsHYbsVIF07+9LB2nHoOHdDomQVg4a55eF5SStg25YMnTsnyFsO0URVpvNtr/gWVkmpT+CJoQuRYcMt+lE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eAsh+QD/; arc=none smtp.client-ip=209.85.160.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4603ee602a0so19178681cf.2;
+        Fri, 11 Oct 2024 16:21:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728688854; x=1729293654; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YwGhlCRXhgYSAFXqwfoqXhd5rW/XunG1cue48PxDUZE=;
-        b=Qm/KuQ8dghDOxRtusj+WV9qAaueFJvIQe7hR1TD5k1BC5QooEmXFA5ogPHHQW58nKd
-         WyJvCKQpw7BmdBhGOPb3ilun/KapQembYyusjPta62mQ0rfXM8tH8S7O7+Gucoi5KwC5
-         AhozVS0b2dSnJSukeNSgQGG+DbceLcLPamkPQhNC21OEQeJp2mVdyz28u8UwLXdawCpa
-         dxfOpIza8/ganQG4ZS7SwL0UfYmuKaSdhIosMeFbCZmoxodt29d6MRR1MLbGDfb4g5ZE
-         O79Ov6DDnsl8uAkB8SzedIwSeqIg5rNNAVttWuuYLePLJqZSLr4ZlQCIQDhelul8ZIAE
-         ddpQ==
+        d=gmail.com; s=20230601; t=1728688902; x=1729293702; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zh1JVWfYHU1MRqZ8OPdmnVMTIa6p8cHwgjzEzl4fHpw=;
+        b=eAsh+QD/bw85OnOUy/lhJdE1XfUjxxvsmMzvJEDg31H0QDFVVQ1KA46A5C7CFed18K
+         7MNa1hElNR7MmHbnTNGqusdILxTZVlhCZJe+saN7HyEg8QYhZ4OR/RJCoxVqB3waqU6E
+         UKtNTYBUeomX8GQ1ifOdtRu0JkfHzvAPyy8hUE+hGp5BmCYOVj7i5Iq8MimSBOBds0fT
+         NfFuutZLDsInTuvhlnBnY5syzwiwU+i5DOlj9/M37b708RPDDn19TqB/+UnV5NVm/TyL
+         +2al2wkIyh/Y9uRn0u2WnhnG/+ExAvEONvylF830Z8nOfhXquNLiA6UGUSzh+9jD1sMp
+         v0NA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728688854; x=1729293654;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YwGhlCRXhgYSAFXqwfoqXhd5rW/XunG1cue48PxDUZE=;
-        b=eSR2y9wHYPCyd0IzxacUzFqU79VIrig9aWZUo5YyZQ3LqC8nqRMTqIkYb09EoNk7k3
-         bQR1bm+d8/RaCTBfOisnpP+txSdR+el5Qp7MibGje6qiDuBbgV8DJox4haaoYmGxigvl
-         GQoz/EDsv9nClBpdeUeON+oJR/+R9cm0FPrcteodSnDGVg8L2tOXJsxnOF86SmdwE2rc
-         SRPucA9izjYGnDIUb75j5F2ccDg+ODeQBvYkmoxB9pzwa3G+hj5J+U5mm7+MULeaqKG4
-         1Vycc4/TyeajglR3Af6Rd5B0dSljGePtzkQ8R0Up6S0gMSCzg3aaDjTRITmxdVJjCDyK
-         r22g==
-X-Forwarded-Encrypted: i=1; AJvYcCWCpEeDVkyTLmkIo0WmXXJj4odCtVsAA39aUxrjYj71EM7sB08+Ob79tJFdkguAvqcy+wv5urchAb1p3Cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx6UagUf7hzkfdNJ4TIQrGV/OYaHOHmC9g9UrMgoEIm4I3LjnXe
-	cxEAnCkVcFAoCd5rI51lX1BXC4F+edjmsBEZCa1p8UDBr6Mw9rUeDArDDF9+phc1G0uQC7RpYQa
-	T5g==
-X-Google-Smtp-Source: AGHT+IELihX6sWiwhxOnnagxVBxOHmb47dO+Atfy25px1Zypp6MSqk5ajFTu+RvkwVw1bBpbzuIuYM5SeAw=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:4d8a:b0:6b2:6cd4:7f9a with SMTP id
- 00721157ae682-6e347c9a830mr1858947b3.8.1728688854038; Fri, 11 Oct 2024
- 16:20:54 -0700 (PDT)
-Date: Fri, 11 Oct 2024 16:20:46 -0700
-In-Reply-To: <20240927161657.68110-2-iorlov@amazon.com>
+        d=1e100.net; s=20230601; t=1728688902; x=1729293702;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zh1JVWfYHU1MRqZ8OPdmnVMTIa6p8cHwgjzEzl4fHpw=;
+        b=XP2WQLL1MbUFmmCEllmLXKJmf/MHJMmMQPOUEzG2UlF7DXzY9PrOscNZ1qv2IW3qvu
+         asx///E/0j3WSIxek0ULCd1CaM2881NBVEj4v5QfH5yU63XE97CsHMGQtHRghS8/3WIO
+         MmXRcIKCo23Tirpapgh6daL0nMXrVaNyIkPO2XoEcEZHn4VY0m0L2sU0Og+vSrr5M6JE
+         CxYDwgB0vguCpm9LrD2nB4QbKYnOAmwC23x3f+gE5d65Kvkqasz/DnsHXeBzgZ8E39YN
+         D12CdVGye+reyr2E97D3eJdfmFE6ox4mpHYHnlRwb3NQo1QJMwgAcm36hYSlDV3Ta16H
+         kySw==
+X-Forwarded-Encrypted: i=1; AJvYcCUfcq3M3k5d7PbEK6Hj0AcM5+SYGZKqcUZmK0p4+L9JJRPf/p+61Sx1Alxx0f376ce/0Mdni9cI7g/Qv9Q=@vger.kernel.org, AJvYcCXWn3BW01iSTQp6fmiacjcFMJIMOm3VETHF+ZBqQ/nIoj3tlyOfOIqlk8V+DnYvLYhKvP692UTV6Gwq1zj7B2o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzbZOTS5XABEC/ka/y+JEQJaMJhho9bvrXL2XAQPuDIjHLR+ilM
+	1saAJKsT6Xsg6XoYGKa3Xyv/CIw6VW0xVEXasZXIGGUxWnUHXsWw
+X-Google-Smtp-Source: AGHT+IHG69WWoO6Ckqz9xb3uwl928GP1mezK4t2J1VmkQcDI7lcfGbSrWurhg28RoK9emwmhfu67gw==
+X-Received: by 2002:a05:622a:4b07:b0:460:4e67:d67b with SMTP id d75a77b69052e-4604e67e375mr45776721cf.5.1728688902088;
+        Fri, 11 Oct 2024 16:21:42 -0700 (PDT)
+Received: from fauth-a1-smtp.messagingengine.com (fauth-a1-smtp.messagingengine.com. [103.168.172.200])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460428995c3sm20082351cf.81.2024.10.11.16.21.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 16:21:41 -0700 (PDT)
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 283581200043;
+	Fri, 11 Oct 2024 19:21:41 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Fri, 11 Oct 2024 19:21:41 -0400
+X-ME-Sender: <xms:BbMJZ2cE7krxAficiopxTamR5BlzaKDw-x_6srlitWwg9KIl0ZsTug>
+    <xme:BbMJZwOGNmhI-rTtYuIqEYRk-c29nLboC3mN4Se2Jzm6fnUsMV2psaz9G2yKJQIhx
+    Oa_NOEt3lYP10SGcA>
+X-ME-Received: <xmr:BbMJZ3gZwneqLRZ4_N0kIQ3wK49YZOA_BMCkQi9rClRu9LpVRC2Ej7ooFtU>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefledgvddvucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpefhtedvgfdtueekvdekieetieetjeeihedvteeh
+    uddujedvkedtkeefgedvvdehtdenucffohhmrghinhepkhgvrhhnvghlrdhorhhgnecuve
+    hluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepsghoqhhunhdo
+    mhgvshhmthhprghuthhhphgvrhhsohhnrghlihhthidqieelvdeghedtieegqddujeejke
+    ehheehvddqsghoqhhunhdrfhgvnhhgpeepghhmrghilhdrtghomhesfhhigihmvgdrnhgr
+    mhgvpdhnsggprhgtphhtthhopeduiedpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoh
+    epughirhhkrdgsvghhmhgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprgdrhhhinhgu
+    sghorhhgsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlhihuuggvsehrvgguhhgrth
+    drtghomhdprhgtphhtthhopeguihhrkhdrsggvhhhmvgesuggvrdgsohhstghhrdgtohhm
+    pdhrtghpthhtohepohhjvggurgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghlvg
+    igrdhgrgihnhhorhesghhmrghilhdrtghomhdprhgtphhtthhopegrnhhnrgdqmhgrrhhi
+    rgeslhhinhhuthhrohhnihigrdguvgdprhgtphhtthhopehfrhgvuggvrhhitgeskhgvrh
+    hnvghlrdhorhhgpdhrtghpthhtohepthhglhigsehlihhnuhhtrhhonhhigidruggv
+X-ME-Proxy: <xmx:BbMJZz8UCjCcfzD4sKtANhuvjmXYm9zK_onke4RcUSPCanrCq1hRyg>
+    <xmx:BbMJZyv90grnkgJUoLdRQudAbCTqpO_1c9edLlGYv_1OljwUamHp6w>
+    <xmx:BbMJZ6EJ1VkUcACm3wB6V88nb4-QwWpiowOG2ACN4J1tV2r_bL-DYg>
+    <xmx:BbMJZxNRZZdziaTuBoM4Q5uZ6VWjSyDlDagQiqKUipjd5Wdbqo_FpQ>
+    <xmx:BbMJZ_NjL72WkJemuTmIDgUKvXtUV4tljRiY0CCV48d3vrNFklRmBBYc>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Fri,
+ 11 Oct 2024 19:21:40 -0400 (EDT)
+Date: Fri, 11 Oct 2024 16:21:31 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Dirk Behme <dirk.behme@gmail.com>
+Cc: Andreas Hindborg <a.hindborg@kernel.org>, Lyude Paul <lyude@redhat.com>,
+	Dirk Behme <dirk.behme@de.bosch.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Frederic Weisbecker <frederic@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 00/14] hrtimer Rust API
+Message-ID: <Zwmy-2Yc7vGboYvl@boqun-archlinux>
+References: <20240917222739.1298275-1-a.hindborg@kernel.org>
+ <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
+ <ZvwKTinnLckZm8aQ@boqun-archlinux>
+ <87a5falmjy.fsf@kernel.org>
+ <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240927161657.68110-1-iorlov@amazon.com> <20240927161657.68110-2-iorlov@amazon.com>
-Message-ID: <Zwmyzg5WiKKvySS1@google.com>
-Subject: Re: [PATCH 1/3] KVM: x86, vmx: Add function for event delivery error generation
-From: Sean Christopherson <seanjc@google.com>
-To: Ivan Orlov <iorlov@amazon.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com, 
-	pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, x86@kernel.org, jalliste@amazon.com, 
-	nh-open-source@amazon.com, pdurrant@amazon.co.uk
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com>
 
-"KVM: VMX:" for the scope.  See "Shortlog" in Documentation/process/maintainer-kvm-x86.rst
-
-On Fri, Sep 27, 2024, Ivan Orlov wrote:
-> Extract KVM_INTERNAL_ERROR_DELIVERY_EV internal error generation into
-> the SVM/VMX-agnostic 'kvm_prepare_ev_delivery_failure_exit' function, as
-> it is done for KVM_INTERNAL_ERROR_EMULATION.
-
-Use the changelog to provide a human readable summary of the change.  There are
-definitely situations where calling out functions, variables, defines, etc. by
-name is necessary, but this isn't one such situation.
-
-> The order of internal.data array entries is preserved as is, so it is going
-> to be the same on VMX platforms (vectoring info, full exit reason, exit
-> qualification, GPA if error happened due to MMIO and last_vmentry_cpu of the
-> vcpu).
-
-Similar to the above, let the code speak.  The "No functional change intended"
-makes it clear that the intent is to preserve the order and behavior.
-
-> Having it as a separate function will help us to avoid code duplication
-
-Avoid pronouns as much as possible, and no "we" or "us" as a hard rule.  E.g. this
-can all be distilled down to:
-
---
-Extract VMX's code for reporting an unhandleable VM-Exit during event
-delivery to userspace, so that the boilerplate code can be shared by SVM.
-
-No functional change intended.
---
-
-> when handling the MMIO during event delivery error on SVM.
+On Fri, Oct 11, 2024 at 05:43:57PM +0200, Dirk Behme wrote:
+> Hi Andreas,
 > 
-> No functional change intended.
+> Am 11.10.24 um 16:52 schrieb Andreas Hindborg:
+> > 
+> > Dirk, thanks for reporting!
 > 
-> Signed-off-by: Ivan Orlov <iorlov@amazon.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  2 ++
->  arch/x86/kvm/vmx/vmx.c          | 15 +++------------
->  arch/x86/kvm/x86.c              | 22 ++++++++++++++++++++++
->  3 files changed, 27 insertions(+), 12 deletions(-)
+> :)
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index 6d9f763a7bb9..348daba424dd 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -2060,6 +2060,8 @@ void __kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu,
->  					  u64 *data, u8 ndata);
->  void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu);
->  
-> +void kvm_prepare_ev_delivery_failure_exit(struct kvm_vcpu *vcpu, gpa_t gpa, bool is_mmio);
+> > Boqun Feng <boqun.feng@gmail.com> writes:
+> > 
+> > > On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
+> > > > On 18.09.2024 00:27, Andreas Hindborg wrote:
+> > > > > Hi!
+> > > > > 
+> > > > > This series adds support for using the `hrtimer` subsystem from Rust code.
+> > > > > 
+> > > > > I tried breaking up the code in some smaller patches, hopefully that will
+> > > > > ease the review process a bit.
+> > > > 
+> > > > Just fyi, having all 14 patches applied I get [1] on the first (doctest)
+> > > > Example from hrtimer.rs.
+> > > > 
+> > > > This is from lockdep:
+> > > > 
+> > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
+> > > > 
+> > > > Having just a quick look I'm not sure what the root cause is. Maybe mutex in
+> > > > interrupt context? Or a more subtle one?
+> > > 
+> > > I think it's calling mutex inside an interrupt context as shown by the
+> > > callstack:
+> > > 
+> > > ]  __mutex_lock+0xa0/0xa4
+> > > ] ...
+> > > ]  hrtimer_interrupt+0x1d4/0x2ac
+> > > 
+> > > , it is because:
+> > > 
+> > > +//! struct ArcIntrusiveTimer {
+> > > +//!     #[pin]
+> > > +//!     timer: Timer<Self>,
+> > > +//!     #[pin]
+> > > +//!     flag: Mutex<bool>,
+> > > +//!     #[pin]
+> > > +//!     cond: CondVar,
+> > > +//! }
+> > > 
+> > > has a Mutex<bool>, which actually should be a SpinLockIrq [1]. Note that
+> > > irq-off is needed for the lock, because otherwise we will hit a self
+> > > deadlock due to interrupts:
+> > > 
+> > > 	spin_lock(&a);
+> > > 	> timer interrupt
+> > > 	  spin_lock(&a);
+> > > 
+> > > Also notice that the IrqDisabled<'_> token can be simply created by
+> > > ::new(), because irq contexts should guarantee interrupt disabled (i.e.
+> > > we don't support nested interrupts*).
+> > 
+> > I updated the example based on the work in [1]. I think we need to
+> > update `CondVar::wait` to support waiting with irq disabled.
+> 
+> Yes, I agree. This answers one of the open questions I had in the discussion
+> with Boqun :)
+> 
+> What do you think regarding the other open question: In this *special* case
+> here, what do you think to go *without* any lock? I mean the 'while *guard
+> != 5' loop in the main thread is read only regarding guard. So it doesn't
+> matter if it *reads* the old or the new value. And the read/modify/write of
+> guard in the callback is done with interrupts disabled anyhow as it runs in
+> interrupt context. And with this can't be interrupted (excluding nested
+> interrupts). So this modification of guard doesn't need to be protected from
+> being interrupted by a lock if there is no modifcation of guard "outside"
+> the interupt locked context.
+> 
+> What do you think?
+> 
 
-Please wrap at 80 columns.  While checkpatch doesn't complaing until 100, my
-preference is to default to wrapping at 80, and poking past 80 only when it yields
-more readable code (which is obviously subjective, but it shouldn't be too hard
-to figure out KVM x86's preferred style).
+Reading while there is another CPU is writing is data-race, which is UB.
 
->  void kvm_enable_efer_bits(u64);
->  bool kvm_valid_efer(struct kvm_vcpu *vcpu, u64 efer);
->  int kvm_get_msr_with_filter(struct kvm_vcpu *vcpu, u32 index, u64 *data);
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index c67e448c6ebd..afd785e7f3a3 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6550,19 +6550,10 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->  	     exit_reason.basic != EXIT_REASON_APIC_ACCESS &&
->  	     exit_reason.basic != EXIT_REASON_TASK_SWITCH &&
->  	     exit_reason.basic != EXIT_REASON_NOTIFY)) {
-> -		int ndata = 3;
-> +		gpa_t gpa = vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-> +		bool is_mmio = exit_reason.basic == EXIT_REASON_EPT_MISCONFIG;
+Regards,
+Boqun
 
-There's no need for is_mmio, just pass INVALID_GPA when the GPA isn't known.
-
-> -		vcpu->run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> -		vcpu->run->internal.suberror = KVM_INTERNAL_ERROR_DELIVERY_EV;
-> -		vcpu->run->internal.data[0] = vectoring_info;
-> -		vcpu->run->internal.data[1] = exit_reason.full;
-> -		vcpu->run->internal.data[2] = vmx_get_exit_qual(vcpu);
-> -		if (exit_reason.basic == EXIT_REASON_EPT_MISCONFIG) {
-> -			vcpu->run->internal.data[ndata++] =
-> -				vmcs_read64(GUEST_PHYSICAL_ADDRESS);
-> -		}
-> -		vcpu->run->internal.data[ndata++] = vcpu->arch.last_vmentry_cpu;
-> -		vcpu->run->internal.ndata = ndata;
-> +		kvm_prepare_ev_delivery_failure_exit(vcpu, gpa, is_mmio);
->  		return 0;
->  	}
->  
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index 83fe0a78146f..8ee67fc23e5d 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -8828,6 +8828,28 @@ void kvm_prepare_emulation_failure_exit(struct kvm_vcpu *vcpu)
->  }
->  EXPORT_SYMBOL_GPL(kvm_prepare_emulation_failure_exit);
->  
-> +void kvm_prepare_ev_delivery_failure_exit(struct kvm_vcpu *vcpu, gpa_t gpa, bool is_mmio)
-
-Hmm, I don't love the name.  I really don't like that event is abbreviated, and
-I suspect many readers will be misinterpret "event delivery failure" to mean that
-_KVM_ failed to deliver an event.  Which is kinda sorta true, but it's more
-accurate to say that the CPU triggered a VM-Exit when vectoring/delivery an event,
-and KVM doesn't have code to robustly handle the situation.
-
-Maybe kvm_prepare_event_vectoring_exit()?  Vectoring is quite specific in Intel
-terminology.
-
-> +{
-> +	struct kvm_run *run = vcpu->run;
-> +	int ndata = 0;
-> +	u32 reason, intr_info, error_code;
-> +	u64 info1, info2;
-
-Reverse fir/x-mas tree for variables.  See "Coding Style" in
-Documentation/process/maintainer-kvm-x86.rst (which will redirect you to
-Documentation/process/maintainer-tip.rst, specifically "Variable declarations").
-
-> +
-> +	kvm_x86_call(get_exit_info)(vcpu, &reason, &info1, &info2, &intr_info, &error_code);
-
-Wrap.  Though calling back into vendor code is silly.  Pass the necessary info
-as parameters.  E.g. error_code and intr_info are unused, so the above is wasteful
-and weird.
-
-> +
-> +	run->internal.data[ndata++] = info2;
-> +	run->internal.data[ndata++] = reason;
-> +	run->internal.data[ndata++] = info1;
-> +	if (is_mmio)
-
-And this is where keying off MMIO gets weird.
-
-> +		run->internal.data[ndata++] = (u64)gpa;
-> +	run->internal.data[ndata++] = vcpu->arch.last_vmentry_cpu;
-> +
-> +	run->exit_reason = KVM_EXIT_INTERNAL_ERROR;
-> +	run->internal.suberror = KVM_INTERNAL_ERROR_DELIVERY_EV;
-> +	run->internal.ndata = ndata;
-> +}
-> +EXPORT_SYMBOL_GPL(kvm_prepare_ev_delivery_failure_exit);
-> +
->  static int handle_emulation_failure(struct kvm_vcpu *vcpu, int emulation_type)
->  {
->  	struct kvm *kvm = vcpu->kvm;
-> -- 
-> 2.43.0
+> Thanks
+> 
+> Dirk
+> 
+> 
+> > Without
+> > this, when we get back from `bindings::schedule_timeout` in
+> > `CondVar::wait_internal`, interrupts are enabled:
+> > 
+> > ```rust
+> > use kernel::{
+> >      hrtimer::{Timer, TimerCallback, TimerPointer, TimerRestart},
+> >      impl_has_timer, new_condvar, new_spinlock, new_spinlock_irq,
+> >      irq::IrqDisabled,
+> >      prelude::*,
+> >      sync::{Arc, ArcBorrow, CondVar, SpinLock, SpinLockIrq},
+> >      time::Ktime,
+> > };
+> > 
+> > #[pin_data]
+> > struct ArcIntrusiveTimer {
+> >      #[pin]
+> >      timer: Timer<Self>,
+> >      #[pin]
+> >      flag: SpinLockIrq<u64>,
+> >      #[pin]
+> >      cond: CondVar,
+> > }
+> > 
+> > impl ArcIntrusiveTimer {
+> >      fn new() -> impl PinInit<Self, kernel::error::Error> {
+> >          try_pin_init!(Self {
+> >              timer <- Timer::new(),
+> >              flag <- new_spinlock_irq!(0),
+> >              cond <- new_condvar!(),
+> >          })
+> >      }
+> > }
+> > 
+> > impl TimerCallback for ArcIntrusiveTimer {
+> >      type CallbackTarget<'a> = Arc<Self>;
+> >      type CallbackTargetParameter<'a> = ArcBorrow<'a, Self>;
+> > 
+> >      fn run(this: Self::CallbackTargetParameter<'_>, irq: IrqDisabled<'_>) -> TimerRestart {
+> >          pr_info!("Timer called\n");
+> >          let mut guard = this.flag.lock_with(irq);
+> >          *guard += 1;
+> >          this.cond.notify_all();
+> >          if *guard == 5 {
+> >              TimerRestart::NoRestart
+> >          }
+> >          else {
+> >              TimerRestart::Restart
+> > 
+> >          }
+> >      }
+> > }
+> > 
+> > impl_has_timer! {
+> >      impl HasTimer<Self> for ArcIntrusiveTimer { self.timer }
+> > }
+> > 
+> > 
+> > let has_timer = Arc::pin_init(ArcIntrusiveTimer::new(), GFP_KERNEL)?;
+> > let _handle = has_timer.clone().schedule(Ktime::from_ns(200_000_000));
+> > 
+> > kernel::irq::with_irqs_disabled(|irq| {
+> >    let mut guard = has_timer.flag.lock_with(irq);
+> > 
+> >    while *guard != 5 {
+> >        pr_info!("Not 5 yet, waiting\n");
+> >        has_timer.cond.wait(&mut guard); // <-- we arrive back here with interrupts enabled!
+> >    }
+> > });
+> > ```
+> > 
+> > I think an update of `CondVar::wait` should be part of the patch set [1].
+> > 
+> > 
+> > Best regards,
+> > Andreas
+> > 
+> > 
+> > [1] https://lore.kernel.org/rust-for-linux/20240916213025.477225-1-lyude@redhat.com/
+> > 
+> > 
 > 
 
