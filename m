@@ -1,112 +1,144 @@
-Return-Path: <linux-kernel+bounces-361786-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AFFE99ACFF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:45:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19FFA99AD01
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:45:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41B631F21CE4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:45:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1A3F1F21F9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:45:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C3D91D0DF5;
-	Fri, 11 Oct 2024 19:43:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00A01E201D;
+	Fri, 11 Oct 2024 19:43:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MzDSImMX"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QAHYBUHA"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 321AC1D0DF2
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:43:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE13D1D0E0C;
+	Fri, 11 Oct 2024 19:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675832; cv=none; b=SS5XK4jwxclhS8OX9fdHfo50PB9d0vBBrKVLaA6QJ7qX2fMgAo59hfvFa6vIsRp/1btq0YtdeTrN+BPsOBkSuNBJxTIq+aSY5EUKochSU2DXw8PeYAeRG++kd/Q2noEehoUkYamoUTcc6rcbqG3yWMbThhcQhMptk4uszmKiSgo=
+	t=1728675838; cv=none; b=e0K1LWmb/WLqtWonPLvl0tmocUIgjuE9YllqhJKuqmwpF8KbhOKFaq34YZlEXryBRr7y2JNTyY4bXcis4ch39VeheuSx2+aipT2d2DmvqUNGXSOktqXnupl/tj/+LR6MvMd/bLK0p8vaWq2W9Y25bAVYZX/l25AiTvzboknrP6I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675832; c=relaxed/simple;
-	bh=HiP2jOYwlaN68o8fGVOSlLIUh0g94c1H626IWPYeMaA=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Oggpya0HwjIITYp+9ErW72MjWf9Ag0Ha3965OxmSMAav0W7VrUvjRn18MXi14S37MBwVS0YOPi3pVZBbumFAsVk+AdhIVWQ+VuPElYGldXsoFCBBgnxd4ST3MolK7u54nye3Led9cYgAQcC+1AbBXCfT64nxMUZpUbF2jHEFQU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MzDSImMX; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d533b5412so829873f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:43:49 -0700 (PDT)
+	s=arc-20240116; t=1728675838; c=relaxed/simple;
+	bh=QiBJpCUmHpZH8zioDdiC8bJODL+fF1cykQze124oEoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GFD7bJdpE3FZ5d2p30TfRB4duH1VWShPHw831TZu2D0HOPYBrqqRyWPWetwqVFOeUyiDqOPsbnva4J9LKWxA7oP6VkpXVr11l5WSsTM5vwv1Ne6CT1Qf8/aFUpR3+CY0k6/J7xhDnj7gR7rVctM0XMK0tN3ZLI7QwMH26c9dO10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QAHYBUHA; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e2e87153a3so1148230a91.3;
+        Fri, 11 Oct 2024 12:43:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728675828; x=1729280628; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=snxiN7FRdAtoQFX+9wj1Js2TBnmcNUFNjqb40Wms3JA=;
-        b=MzDSImMXLs6LaRdCpvtEeqnd735C5Go/xkpg+mTtaUjmqjMFMPugGnq2YKPerU2pRb
-         buVoZD+42JuYLgbIbHvJ3XQixjS2z+DPmtWC3ZbNSR813efLU3eLdeT/ckwgXOJePJe7
-         IKZ0KozpYIN2iYH3C8rRaQTxN2lRXkInYKbh+ibc8bKliCm6FFfRh16+1Q9r58F2rsMI
-         FaOBimBwPp+ELhBOsQyQuf3gyFTAh5vpBY2Zv4EP7tzrDZjCreTrGr/gQp4KCyg2C4Sk
-         mWj2Jj/BQhsWynTgRV3lglYQUtxTVTMxkIL2h5gm4CRsGcsxy3EkRVtYsgm80ORJTmcr
-         bu9A==
+        d=gmail.com; s=20230601; t=1728675836; x=1729280636; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hTT+DOTqu8ZpwPwDJCQEdCoOuIhh/yskraPW4+c1ErE=;
+        b=QAHYBUHAa4SX46AaHua5FRWPWF+YgiA4flbTZ+uX94kYgEu2g1Yd/DrUaw0izFPogM
+         0X4C+7eSPduqQSD0pWiQ8Qi9Xp4gS0yDu21/87cPQqMi+4DZaN/vzQ6EL9yaUvDr9NC7
+         oBSqvHic0v12rJSXyg+CgKyhIAugiFa837njsTLDQpdejP+FIQ+BurVaY+Ew2FYbT7yk
+         fB50hYegvzka54BCSccMnVpLse7O/8aRBfOm9OOKKU0Wb4Fjk8NasqCCwWA1x2KCakIy
+         TuWz/OX/0nxkCHlg8bcVUtmPcDw2vsJkhbPsbVaBeHA6P/60sK7k3gn9QDSsKrBmRCKX
+         QEYQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675828; x=1729280628;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=snxiN7FRdAtoQFX+9wj1Js2TBnmcNUFNjqb40Wms3JA=;
-        b=UC1vvV2TU0zbpy1g9vtrF5FoTMlsED7cHbhDLfR+/pfgNeik4ET6NaUqeCON5I+jwa
-         mb4OGtHsaPM78qtmnyrGlWbDXfn6xs8UVzGL0Y06nsBWNyDJcEFrrJDOaPp1k48fugVZ
-         a0mrRKfJaont7z3WupFpeun1EbcNUxOEIb/3JW71HsLQZ6RFXplzPlbLoTurFl1qXJt4
-         ZaznZxItCe0Mwumx0jRE6P2nap5fElNyBRnwAEFWYGFr1yrCXihOJvCvFIfiCPnGwjNG
-         jm49BSsvgHdvSXTmLMozkEbviigRZrP4Eg6rsHzgtCimrZ8P+xYnzXyZidLO6bSHTEil
-         wRvw==
-X-Forwarded-Encrypted: i=1; AJvYcCXzQSgu22dpDY2OUcVnrlMrK8VDf/VjiUF+6KbzfVZ+4GpWJoFU+oIbRgz5pp5a2i0xlGH8UqGJgM3OHuU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymNS9FUSbO+9001Js3/DcK6HDayyzS8g2spp2xxPLcGO80QKQK
-	LkenE7ZUBhnyuMtMpZ/4v0FU2+BbofWTP2O4/TXPec6XPkRUMXbW5mcGDlN03Uc=
-X-Google-Smtp-Source: AGHT+IGqnlRZZDSw4G70Cr1FwcKYeBF9aBQnwl7GGMEcvuGtDm0ChmM83BRDyWQouKHv719pFKBvZg==
-X-Received: by 2002:a05:6000:18a7:b0:374:c92e:f6b1 with SMTP id ffacd0b85a97d-37d551b9788mr3103211f8f.23.1728675828472;
-        Fri, 11 Oct 2024 12:43:48 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d748d885sm83769715e9.46.2024.10.11.12.43.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:43:47 -0700 (PDT)
-Date: Fri, 11 Oct 2024 22:43:44 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Theodore Ts'o <tytso@mit.edu>, Ritesh Harjani <riteshh@linux.ibm.com>
-Cc: Andreas Dilger <adilger.kernel@dilger.ca>, linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: [PATCH] ext4: cleanup variable name in ext4_fc_del()
-Message-ID: <96008557-8ff4-44cc-b5e3-ce242212f1a3@stanley.mountain>
+        d=1e100.net; s=20230601; t=1728675836; x=1729280636;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hTT+DOTqu8ZpwPwDJCQEdCoOuIhh/yskraPW4+c1ErE=;
+        b=e1qFB72Po/vbpAQH+Y+Hwg6Ji6AAItamYkiWu9d1o5zn1IlxF92HEapIjSZioGA4WM
+         mtcLIGLKm+pUV0k4ovh/uV6v/aRMoj1bezsltYw7lkgKu05Tv/2STpNrC2IyMwOGGh2N
+         bS5pdFNgWCTvDAINnIp4uROCUV8ZLF+zHgapWcKcdiF/WPgtKP+mlMG+75HXvkIFirQW
+         pt/ER4p7JuA/jrpkVFFB4kI74L6ooITMVUr6YMW5LKDy+bvHsNqagwE7ZZ06AGH9RJR1
+         T6LKsTithwb7q9C2Stb5yHbIB4k7XiCxu2SRqLtkoxAMVncCYie9xx2+IHU0M4HUzg6B
+         aexw==
+X-Forwarded-Encrypted: i=1; AJvYcCXEQq45dqYslDSNdkL2O9Zs7lmHXBvFK8HXBp3GfuDHUTf7EgCFz9KC7giq+IsrhI/GhwU=@vger.kernel.org, AJvYcCXb+tOnsAnBwkUovaJMPY4Jvmb/RwI+rM34rI0XsA6QYSoP/Bjt+V2EQnbWVD2E6JJmFhGdqK6bW8dt9lje@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmODDFI5XfMvSyT2n9c9INjTjpQBj6vJ2+7EUIOyoDkAICWhyd
+	1NyMW9dcNxA1uIYiqmbcvbmYsUGkyfixIWxM4fv13TnAuzuWU0710Qles2tVZ999oaUBoAVnC4T
+	CIItWi1L9p1ErsPWOT5nHMHy6BeI=
+X-Google-Smtp-Source: AGHT+IEEv+MYggNLv4dgRwOMMk7eOu9TZVK3vVYd3IVx0iPOkfChiKEqALrlX93LSx/Z1Lma33setQhb2squsITEcnE=
+X-Received: by 2002:a17:90a:2f21:b0:2e2:8299:2701 with SMTP id
+ 98e67ed59e1d1-2e3152eb849mr719284a91.20.1728675835960; Fri, 11 Oct 2024
+ 12:43:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+References: <20241010232505.1339892-1-namhyung@kernel.org> <20241010232505.1339892-2-namhyung@kernel.org>
+ <CAADnVQKpYDDsF+qjKRTxgF=UDqajGMi8BVeFD3UfUxS=_FMP0g@mail.gmail.com> <CAEf4Bza__VNwyqNdyy-aKS_eiPRThMv2SZaYRvnwr5DXzgqG3g@mail.gmail.com>
+In-Reply-To: <CAEf4Bza__VNwyqNdyy-aKS_eiPRThMv2SZaYRvnwr5DXzgqG3g@mail.gmail.com>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Fri, 11 Oct 2024 12:43:44 -0700
+Message-ID: <CAEf4Bzarmpop6o9WwjKQpkUdUH=UWY9e+xBe4cg040pdpwz9AA@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 1/3] bpf: Add kmem_cache iterator
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Namhyung Kim <namhyung@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The variables "&EXT4_SB(inode->i_sb)->s_fc_lock" and "&sbi->s_fc_lock"
-are the same lock.  This function uses a mix of both, which is a bit
-unsightly and confuses Smatch.
+On Fri, Oct 11, 2024 at 12:41=E2=80=AFPM Andrii Nakryiko
+<andrii.nakryiko@gmail.com> wrote:
+>
+> On Fri, Oct 11, 2024 at 11:44=E2=80=AFAM Alexei Starovoitov
+> <alexei.starovoitov@gmail.com> wrote:
+> >
+> > On Thu, Oct 10, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel.o=
+rg> wrote:
+> > >
+> > > +struct bpf_iter__kmem_cache {
+> > > +       __bpf_md_ptr(struct bpf_iter_meta *, meta);
+> > > +       __bpf_md_ptr(struct kmem_cache *, s);
+> > > +};
 
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- fs/ext4/fast_commit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+BTW, do we want/need to define an open-coded iterator version of this,
+so that this iteration can be done from other BPF programs? Seems like
+it has to be a sleepable BPF program, but that's probably fine?
 
-diff --git a/fs/ext4/fast_commit.c b/fs/ext4/fast_commit.c
-index b33664f6ce2a..e4cb1356e9b6 100644
---- a/fs/ext4/fast_commit.c
-+++ b/fs/ext4/fast_commit.c
-@@ -291,9 +291,9 @@ void ext4_fc_del(struct inode *inode)
- 		return;
- 
- restart:
--	spin_lock(&EXT4_SB(inode->i_sb)->s_fc_lock);
-+	spin_lock(&sbi->s_fc_lock);
- 	if (list_empty(&ei->i_fc_list) && list_empty(&ei->i_fc_dilist)) {
--		spin_unlock(&EXT4_SB(inode->i_sb)->s_fc_lock);
-+		spin_unlock(&sbi->s_fc_lock);
- 		return;
- 	}
- 
--- 
-2.45.2
-
+> >
+> > Just noticed this.
+> > Not your fault. You're copy pasting from bpf_iter__*.
+> > It looks like tech debt.
+> >
+> > Andrii, Song,
+> >
+> > do you remember why all iters are using this?
+>
+> I don't *know*, but I suspect we are doing this because of 32-bit host
+> architecture. BPF-side is always 64-bit, so to make memory layout
+> inside the kernel and in BPF programs compatible we have to do this
+> for pointers, no?
+>
+> > __bpf_md_ptr() wrap was necessary in uapi/bpf.h,
+> > but this is kernel iters that go into vmlinux.h
+> > It should be fine to remove them all and
+> > progs wouldn't need to do the ugly dance of:
+> >
+> > #define bpf_iter__ksym bpf_iter__ksym___not_used
+> > #include "vmlinux.h"
+> > #undef bpf_iter__ksym
+>
+> I don't think __bpf_md_ptr is why we are doing this ___not_used dance.
+> At some point we probably didn't want to rely on having the very
+> latest vmlinux.h available in BPF selftests, so we chose to define
+> local versions of all relevant context types.
+>
+> I think we can drop all that ___not_used dance regardless (and remove
+> local definitions in progs/bpf_iter.h).
 
