@@ -1,171 +1,170 @@
-Return-Path: <linux-kernel+bounces-360755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BB69999F1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:34:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8925999F20
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:36:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E3AD1C23102
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:34:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40163285C12
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5BC20B211;
-	Fri, 11 Oct 2024 08:34:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B9CF20B206;
+	Fri, 11 Oct 2024 08:36:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vj5HQyPX"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XidGh6YD"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6875207A0C;
-	Fri, 11 Oct 2024 08:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA1EE207A0C;
+	Fri, 11 Oct 2024 08:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728635678; cv=none; b=BeFljWO3PZtSRg1NdvLSU1Qkcu58ihc2DIWrj9F2HgFWDGF4fivfKmWojXnFjNSu3rS7+3GpR2IKywGj5KS5umwGORP6iOKsB87midlTCle5SfW16IRRCp//aoZbDFhKa9vC3RLB1/g7wCBKNC3PkX8AhQQCQ3Or2NvoB0zUhU0=
+	t=1728635774; cv=none; b=SasrxZt5UBPFfyoKdTihyZwu7VFachJdyKoY+5K4IpUV+NiXxf9vMjhLd/EyPkSeqL0CyUVu/GnBdYPZXJbOSECEaRbj0YSAE03SCBV4YjJa0n2fzEqeRF7QKxC8eUhnHLQx1qRZNmM53Ggjb7riMExsdqK91MsZznH3cKyC/Rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728635678; c=relaxed/simple;
-	bh=LmjhTY6GCu3+5OjscFIYDFmoiR0z3ORGCyKHXVkHpPw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p4acPXxuDYqlQYn7X5UwgEBW6IjvoQ3InihTuy/nc8tTLepWfGCwoG4rMUIbU0pMUr+neIatN7P9VYQqONuh0WWR/mEXOqM4pG8gEhrqJj46sQWK6L6oPa8WIbI1an7Mk9VYVuL/Za92Xbi7vWScEx4+w4nFrce8I5JldzpdB5s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vj5HQyPX; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a99422c796eso292725166b.3;
-        Fri, 11 Oct 2024 01:34:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728635675; x=1729240475; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EABHLkxzcxramcO6WPe0bwKdtq63PUVd8Arf5wK5V0E=;
-        b=Vj5HQyPXfVnGYu9JjGXX1vXIX8/I6Woxy7Ue5T/FE4eZTdohj7ciKcrNBFbShCCpLx
-         WR0ROSgvGTIIxil5HtWHJ3UEUqgQCmLLfpGxneMoJXVNACZd5kOO+Nh8Xvry/MN428eF
-         hSCWBTl3GKYMESInfuuzTiDjexOm9CIDVSXcsVkvjwdnY1JAqhVyv8n2OnVlU/uvj6ff
-         0dBkhtMS7Z9Eh5FTB/gODEDN6ojcaEfrQKGovYb3414tSE6o6b7H3cJ9BAiLnRu6Btxj
-         O8XUFMpY6WLqsHKjU2uhJ92euvYIwpk/LQV6ZNN9tWFUjVb2kPTZ9/wZVS2qJGJOQgfq
-         WbgA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728635675; x=1729240475;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EABHLkxzcxramcO6WPe0bwKdtq63PUVd8Arf5wK5V0E=;
-        b=ZZIjebM933uNcic8fr6B4rpb0j7/W17ulbnKp+JQMQj6vfUKjmqykV1miLoIAys+iC
-         9PJVLuouV/6oAsC/SfWwGTPApjh9nCdSxdtOr6KqlZt3kM9n9oLMioeDV0sBXXDpsM/e
-         ZAkfHADfyDyY1f6xQg9CoQiN0OD0w15R0ZtgYmhLEyCKk+EwkAdWwD2/3tz573ImYcMg
-         Srq70zOM/zzP/G6s9XSlgMVgbkr0u1P6KOkOrY02mXNEgqnpb6IGWPMEA2uq5WmMrDpf
-         z63N+kgu0OfaD36rrqVI1TnpNmKFs+wOJ34t6q6PlK7XwKCNy3fzpskjWpgQnZPjP3aQ
-         DMeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQckc74jgGhYRqPHqmbLB/3jbQXfJ8XnzINMkb+650NtfrWBwwnlpZSjwX/qYn1SuybgvmvQ8l@vger.kernel.org, AJvYcCVGuYPaYU23ECX569mQKXo0GrHteNMO0pt3qQOrnALmpGzEYGCqzWGKxrOFR2WvzoaGMPjfg6OSVkAA@vger.kernel.org, AJvYcCXWR8KY4QiC6HuQxE0SRWuEdiH6vP5e5jpebWlqfWghoGenzCgl8CuzL2EnGH7Yly3bsKLIPqER6S0R8u5t@vger.kernel.org
-X-Gm-Message-State: AOJu0YwH9lv7ihDq+PqGv1Ra9R8WscpBUqCrEC2TBLgfNuJL2aJhgrDv
-	OleeDNMx25Wm5Ytae9WjU6HHTaJPnvB+pVOTM7/2yLm5WvzaS9O80mDLZXoP
-X-Google-Smtp-Source: AGHT+IEoHStOPruhFTLxbvfOGdkbObqF0fHHUkLsQl/p5cE5+vMJvg0KwdzS8imp9pLoy542WyuRJw==
-X-Received: by 2002:a17:907:9724:b0:a99:528f:2200 with SMTP id a640c23a62f3a-a99b93c8da1mr125834866b.28.1728635674572;
-        Fri, 11 Oct 2024 01:34:34 -0700 (PDT)
-Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ec54cesm186137866b.32.2024.10.11.01.34.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 01:34:33 -0700 (PDT)
-Message-ID: <07ec0837-d7a3-413e-a281-e06feafe7f34@gmail.com>
-Date: Fri, 11 Oct 2024 10:34:32 +0200
+	s=arc-20240116; t=1728635774; c=relaxed/simple;
+	bh=I6FRCuV7Vnu0EvQ+TRa/KiQ5GgLAW5QMGmhXXROBoPw=;
+	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=feoGX4ihUMXLoTP4F+nx6iiEKgEwMz386svk1lWjhXp1tkmQ//zUORR3L3Vp7bjF0VSx8Xh79M6g3lCByWBPcI6JMUKOmly1lIU0MivLDuaWtRR1l9S6b8EZfKTpeVzkicwIHSxYHQy/e1D96lF+xnzTpYL6mA8MoluIotG4tDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XidGh6YD; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49B89dvI031301;
+	Fri, 11 Oct 2024 08:35:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:subject:message-id:mime-version:content-type; s=pp1;
+	 bh=IVWnUqBc7KoYC8Ep0cjezeb2FP0REpJ9XdOmTQCedXM=; b=XidGh6YDhJPF
+	l6L2PBlK/7/XEojtoEsCWGzhQOI9IRMe0f9f4jxVa7ewUVxniKPj0DsFLYWIhUCm
+	z0/LEM2k3fSw/zxl147+c2jWmbBpy0Fx8JxSblI39+Xd6LTm+cFUyeS0zRXZiOr1
+	iIpfa4wsDOoTrSLWbjJVcPgYXNId6njOmpe6PIRIlssxzwg5NBF9PLRYo1XkyQWX
+	RiJ0TjogjOzBShENXpjXcqUxZzpXlRKD6ce3q+gvGYJ0/jw4jJ93H3FoTwE5URyO
+	iAcMTZVCXWOSwCGwCHtxxP3PhhTQljg9nAjB5Fon/5NT7CpshPfQdFpIJoVqqFvZ
+	ciHGMM+MNQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42708qr3t7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 08:35:49 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49B8Zm6u019371;
+	Fri, 11 Oct 2024 08:35:48 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42708qr3t4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 08:35:48 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49B4xjXT022678;
+	Fri, 11 Oct 2024 08:35:47 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423h9kc6c2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 08:35:47 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49B8ZjeZ43712842
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Oct 2024 08:35:45 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C7B2B20043;
+	Fri, 11 Oct 2024 08:35:45 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9F3C020040;
+	Fri, 11 Oct 2024 08:35:43 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.124.219.55])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 11 Oct 2024 08:35:43 +0000 (GMT)
+Date: Fri, 11 Oct 2024 14:05:40 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: linuxppc-dev@lists.ozlabs.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: drivers/nx: Invalid wait context issue when rebooting
+Message-ID: <ZwjjXJ5UtZ28FH6s@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/3] device property: Introduce
- fwnode_for_each_available_child_node_scoped()
-To: Sakari Ailus <sakari.ailus@linux.intel.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Daniel Scally <djrscally@gmail.com>,
- Heikki Krogerus <heikki.krogerus@linux.intel.com>,
- Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
- Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org
-References: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
- <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
- <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: vxZHi6rthh7m2OtbHS_khjM-cTfgkE0e
+X-Proofpoint-ORIG-GUID: d2J60pvt6eaUPdm-uwTvgx7YbKmz78WZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-11_06,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 impostorscore=0
+ adultscore=0 mlxscore=0 suspectscore=0 spamscore=0 bulkscore=0
+ mlxlogscore=235 lowpriorityscore=0 phishscore=0 malwarescore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110055
 
-On 11/10/2024 07:39, Sakari Ailus wrote:
-> Hi Javier,
-> 
-> On Tue, Oct 08, 2024 at 06:10:27PM +0200, Javier Carrasco wrote:
->> Introduce the scoped variant of the
->> fwnode_for_each_available_child_node() to automatically decrement the
->> child's refcount when it goes out of scope, removing the need for
->> explicit calls to fwnode_handle_put().
->>
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>  include/linux/property.h | 5 +++++
->>  1 file changed, 5 insertions(+)
->>
->> diff --git a/include/linux/property.h b/include/linux/property.h
->> index 61fc20e5f81f..b37508ecf606 100644
->> --- a/include/linux/property.h
->> +++ b/include/linux/property.h
->> @@ -168,6 +168,11 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
->>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
->>  	     child = fwnode_get_next_available_child_node(fwnode, child))
->>  
->> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	       \
->> +	for (struct fwnode_handle *child __free(fwnode_handle) =	       \
->> +		fwnode_get_next_available_child_node(fwnode, NULL); child;     \
->> +	     child = fwnode_get_next_available_child_node(fwnode, child))
->> +
-> 
-> On OF, the implementation of the .get_next_child_node() fwnode op is:
-> 
-> static struct fwnode_handle *
-> of_fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
->                               struct fwnode_handle *child)
-> {
->         return of_fwnode_handle(of_get_next_available_child(to_of_node(fwnode),
->                                                             to_of_node(child)));
-> }
-> 
-> On ACPI we currently have .device_is_available() returning false but that
-> probably should be returning true instead (it's been virtually unused
-> previously).
-> 
-> That makes fwnode_get_next_available_child_node() and
-> fwnode_get_next_child_node() equivalent on both ACPI and OF. Presumably
-> creating unavailable nodes would be useless on swnode, too.
-> 
-> So my question is: what do we gain by adding all these fwnode_*available()
-> helpers?
-> 
->>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
->>  						 struct fwnode_handle *child);
-> 
+Hi,
+I am getting Invalid wait context warning printed when rebooting lpar
 
-Hi Sakari, thanks for your feedback.
+kexec/61926 is trying to acquire `of_reconfig_chain.rwsem` while holding
+spinlock `devdata_mutex`
 
-I thought that the difference is not in OF (which either way ends up
-calling __of_device_is_available()), but in ACPI.
+Note: Name of the spinlock is misleading.
 
-For fwnode_for_each_child_node(), the ACPI callback is
-acpi_get_next_subnode(), and I don't see that the device_is_available()
-callback is used in that case.
+In my case, I compiled a new vmlinux file and loaded it into the running
+kernel using `kexec -l` and then hit `reboot`
 
-For fwnode_for_each_available_child_node(),
-fwnode_get_next_available_child_node() is used, which checks
-fwnode_device_is_available(), which then calls device_is_available().
+dmesg:
+------
 
-What's the catch?
+[ BUG: Invalid wait context ]
+6.11.0-test2-10547-g684a64bf32b6-dirty #79 Not tainted
+-----------------------------
+kexec/61926 is trying to lock:
+c000000002d8b590 ((of_reconfig_chain).rwsem){++++}-{4:4}, at: blocking_notifier_chain_unregister+0x44/0xa0
+other info that might help us debug this:
+context-{5:5}
+4 locks held by kexec/61926:
+ #0: c000000002926c70 (system_transition_mutex){+.+.}-{4:4}, at: __do_sys_reboot+0xf8/0x2e0
+ #1: c00000000291af30 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x160/0x310
+ #2: c000000051011938 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x174/0x310
+ #3: c000000002d88070 (devdata_mutex){....}-{3:3}, at: nx842_remove+0xac/0x1bc
+stack backtrace:
+CPU: 2 UID: 0 PID: 61926 Comm: kexec Not tainted 6.11.0-test2-10547-g684a64bf32b6-dirty #79
+Hardware name: IBM,9080-HEX POWER10 (architected) 0x800200 0xf000006 of:IBM,FW1060.00 (NH1060_012) hv:phyp pSeries
+Call Trace:
+[c0000000bb577400] [c000000001239704] dump_stack_lvl+0xc8/0x130 (unreliable)
+[c0000000bb577440] [c000000000248398] __lock_acquire+0xb68/0xf00
+[c0000000bb577550] [c000000000248820] lock_acquire.part.0+0xf0/0x2a0
+[c0000000bb577670] [c00000000127faa0] down_write+0x70/0x1e0
+[c0000000bb5776b0] [c0000000001acea4] blocking_notifier_chain_unregister+0x44/0xa0
+[c0000000bb5776e0] [c000000000e2312c] of_reconfig_notifier_unregister+0x2c/0x40
+[c0000000bb577700] [c000000000ded24c] nx842_remove+0x148/0x1bc
+[c0000000bb577790] [c00000000011a114] vio_bus_remove+0x54/0xc0
+[c0000000bb5777c0] [c000000000c1a44c] device_shutdown+0x20c/0x310
+[c0000000bb577850] [c0000000001b0ab4] kernel_restart_prepare+0x54/0x70
+[c0000000bb577870] [c000000000308718] kernel_kexec+0xa8/0x110
+[c0000000bb5778e0] [c0000000001b1144] __do_sys_reboot+0x214/0x2e0
+[c0000000bb577a40] [c000000000032f98] system_call_exception+0x148/0x310
+[c0000000bb577e50] [c00000000000cedc] system_call_vectored_common+0x15c/0x2ec
+--- interrupt: 3000 at 0x7fffa07e7df8
+NIP:  00007fffa07e7df8 LR: 00007fffa07e7df8 CTR: 0000000000000000
+REGS: c0000000bb577e80 TRAP: 3000   Not tainted  (6.11.0-test2-10547-g684a64bf32b6-dirty)
+MSR:  800000000280f033   CR: 48022484  XER: 00000000
+IRQMASK: 0
+GPR00: 0000000000000058 00007ffff961f1e0 00007fffa08f7100 fffffffffee1dead
+GPR04: 0000000028121969 0000000045584543 0000000000000000 0000000000000003
+GPR08: 0000000000000003 0000000000000000 0000000000000000 0000000000000000
+GPR12: 0000000000000000 00007fffa0a9b360 ffffffffffffffff 0000000000000000
+GPR16: 0000000000000001 0000000000000002 0000000000000001 0000000000000001
+GPR20: 000000011710f520 0000000000000000 0000000000000000 0000000000000001
+GPR24: 0000000129be0480 0000000000000003 0000000000000003 00007ffff961f2b0
+GPR28: 00000001170f2d30 00000001170f2d28 00007fffa08f18d0 0000000129be04a0
+NIP [00007fffa07e7df8] 0x7fffa07e7df8
+LR [00007fffa07e7df8] 0x7fffa07e7df8
+--- interrupt: 3000
 
-Thanks again and best regards,
-Javier Carrasco
+
 
