@@ -1,189 +1,189 @@
-Return-Path: <linux-kernel+bounces-361338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08DAE99A6FF
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:54:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E42C99A700
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:55:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 50CE7B21604
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:54:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF79C1F23246
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:55:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4792A14D717;
-	Fri, 11 Oct 2024 14:54:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30162405FB;
+	Fri, 11 Oct 2024 14:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="j2McDrjL"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ed9tz3b2"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE624405FB;
-	Fri, 11 Oct 2024 14:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB662E403
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:54:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658484; cv=none; b=nOpV9nuTk0M1HpSV+jtj95NQUEdbRQbXz6O5aPHyB6Jy+otrWIuOccCV+/4a7nv0iYw+UuKMOjJQyTM6yQLAh8FOjDPAHV+Er1V8rS3JV0fIxwVeEvix9UZlzUpvxQVsFxPgXLhVBWYKs6ghIfuEktpJbnIbp4CZPM2b1ARvgIc=
+	t=1728658497; cv=none; b=UiAtgwNtZEh0O4TIKH5VzYA/GE/e9rQ6rk9tmeZdJ1ZecTTJzJeY/3+KIpJfm6zWXueuft7qlF+9EH3AD1h+IqO0jOUMiKWtNY3vQv7E/hirLQuodDXZV2OKq1EcAcheWghcCtX4uc7E2QYqkaj0JEKK3nv8xlEAtPY7Llq30dA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658484; c=relaxed/simple;
-	bh=HbD+0DZ7uSOon6FsWTus1Wp4ty2aeDZ8yPUIDdFm6ks=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uk9vI/HcyYT14lLIgeskQRC1UV7fJP08Q1Ri/jEVucfK/Ed6HLH/o2Lua4oQbRzkb+aBsQY72gdvMKKajxStpJwTVio/U071moVkAWRR29BI3rMX0DId+MmzG6sNXb9zNfOvOf0wMI+j77S6DQXxg9mGjqDQrH+GJ81iF+H/4T0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=j2McDrjL; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BEp9B2020953;
-	Fri, 11 Oct 2024 14:54:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=1nW3ns0be370qJXLUWaF0DIVtw
-	d5rFgqdUauE+6ZAcw=; b=j2McDrjLUoLwnCBwU/WsOJ5ZK9IwaGLGPZJ95AK48T
-	K+hop6quAfE3jEdZIZTlK0temM0NJ/0MluuVCGwhsJFjq8gdI2g4TavQusdwipFT
-	XgOwgMP/vhLrkrC0Q58j5FTPI6vTu20MgZmD1CzwGG5OLRElQxQFnMa24ayqYJ4L
-	apO/9CpAW7MsFd6eE5CXggeyoQPVkM0IgtJBR3tjNQEd6/Y+2WB+020chiydV1bg
-	mtunB7zofclI5AE33Ryu7/sEZFq7/enoJ2aekaphWjy59QCyZL7xJn+zwvaZf0tL
-	7Cwa6mCUmNbaufguMMfEzGkberVnyp3hfGooCq2UNYxA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4275gqg8gb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 14:54:35 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49BErXlk026175;
-	Fri, 11 Oct 2024 14:54:34 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4275gqg8g2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 14:54:34 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BE5N0n030152;
-	Fri, 11 Oct 2024 14:54:33 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423gsn6563-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 14:54:33 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BEsVOQ53281102
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Oct 2024 14:54:31 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 77B1920040;
-	Fri, 11 Oct 2024 14:54:31 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 10E1C20043;
-	Fri, 11 Oct 2024 14:54:30 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com.com (unknown [9.124.219.114])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 11 Oct 2024 14:54:29 +0000 (GMT)
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-xfs@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, dchinner@redhat.com,
-        Chandan Babu R <chandan.babu@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: [PATCH v3] xfs: Check for delayed allocations before setting extsize
-Date: Fri, 11 Oct 2024 20:24:27 +0530
-Message-ID: <20241011145427.266614-1-ojaswin@linux.ibm.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728658497; c=relaxed/simple;
+	bh=ayOP6kmT0Uhxqgho5scUs/ofCyaD3oPtnl1pskkLz5s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HcxjBoLSN2tnxeHlCAQPgVPVQiADsKkihGXyrmW/Jy71xchCnZvTcXv5CXWb13HmrdUXfKvdW1G1h2MJGJyUs6mYC4eunglIh37gs/e3ZZJhRKUDmyZsvXe1xzQ+8OEkb7nZo1aXjdk/WhK5JDrQiO1VfJ2vMpiSxHfTeWnSGRE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ed9tz3b2; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5398e53ca28so2375652e87.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:54:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728658494; x=1729263294; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=UqJdH6KvlGOaJs6LPdOjTJk5FO4Bru3b1GwmXSj7OG0=;
+        b=ed9tz3b2N1MfcdCGQcfVoznA64jeL8e3DVCWAatIi7fbH7XuC6x+90RWiyHdX7fwkR
+         IpgQ2a5rDA9AQesDEiaWo3iaCLPbYxU2YSmyE0qVlzm0zLP+RFsxovosiNCTRsqSsIEk
+         DL5N6blfm5CbkL1dlZF38+VNXGWxL9CFuKPiG1G8cBTo5b8U2LO2TLa6JkChyU7+pzb2
+         zNSEDTWKX7idKL7ew/jbXuJMTltOLX8YAJ/I8fF5EzNHYxY3FpLcUMIQtAf2OjHN/7oo
+         JEQ5p7s66QvJ8Sh1OC9iIRjBuDs7zJ7T9ZIodf2C+8oTCwFVnsJe0JM2OsJdRwsZHkXc
+         h0dA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728658494; x=1729263294;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UqJdH6KvlGOaJs6LPdOjTJk5FO4Bru3b1GwmXSj7OG0=;
+        b=awoHVgZQHAwreOjtk+VA1xuf0i0j7BjrsPGGcMtF+30I/SLnRi3wdRvfPvgD/csbjA
+         hY25cbIFtZpWTBIbcGuqJ/yoDQkzLKvXJtUPmkQmsJqcNXDio55q3YMlhYE5iw2R1nAw
+         zX3vzEyPUswRtcrhoDe2HrhpZ7dPYp9+qtR3VVH6Ugjw4Twvd7CvhVaoX70ppsDc3nTr
+         zNLcHLHx47bG6y4qbQSSNkMnqS2VC97NNh3TgOii/tqJ1vu2WYgp+jmpmAVH7AW3/1+A
+         w7i6F58akhikYwMMP98RZMNtFxMzJOAD1D9XkojaCs3v2NKvTvnqfgE36iwCAyd4dxeP
+         kN1w==
+X-Forwarded-Encrypted: i=1; AJvYcCU8jaty35dBJhfbQArSz7gYkbY8Q9j05FENJiKtpf/QW/5BhGcMRW+l8VVVQjIVm7E4G6GG7kHcGsT8nXw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxR601TO9N7HMhbQCwUZJ6YCgt9wSMv2efvJiGXBauDNlokZMBH
+	21rIFj7gSDjQhmJ9oY2iBScqNbPPnBAs6dEDN1fhPBlPN87CNBh4Efn7+yFZSyY=
+X-Google-Smtp-Source: AGHT+IGEqpHxLhsvoJ3aD2Hs3uY1bxru/hFDC2inGgVcpwnr5oCn1DIcDbUUVYp2qv7/GuTpsG+sdg==
+X-Received: by 2002:a05:6512:3a8d:b0:52e:7542:f469 with SMTP id 2adb3069b0e04-539da22cdf6mr1789366e87.0.1728658493944;
+        Fri, 11 Oct 2024 07:54:53 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff6d3sm44130005e9.12.2024.10.11.07.54.52
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 07:54:53 -0700 (PDT)
+Message-ID: <9513f8d7-7f42-4c1e-bdc9-d2078d46ba1f@linaro.org>
+Date: Fri, 11 Oct 2024 15:54:52 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: bPrMwPXMmJBFfcoOwa7l8cDmQG9zqlTz
-X-Proofpoint-GUID: cTJ-vbu4Cn0SE4xAfc9NRpNcVd9cWmgY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-11_12,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 spamscore=0
- impostorscore=0 priorityscore=1501 clxscore=1015 suspectscore=0
- lowpriorityscore=0 adultscore=0 mlxscore=0 mlxlogscore=912 malwarescore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] perf test: Introduce '-w --list' to list the
+ available workloads
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Ingo Molnar <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ Kan Liang <kan.liang@linux.intel.com>, Clark Williams <williams@redhat.com>,
+ linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
+ Arnaldo Carvalho de Melo <acme@redhat.com>
+References: <20241011143906.1285675-1-acme@kernel.org>
+ <20241011143906.1285675-3-acme@kernel.org>
+Content-Language: en-US
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <20241011143906.1285675-3-acme@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Extsize is allowed to be set on files with no data in it. For this,
-we were checking if the files have extents but missed to check if
-delayed extents were present. This patch adds that check.
 
-While we are at it, also refactor this check into a helper since
-its used in some other places as well like xfs_inactive() or
-xfs_ioctl_setattr_xflags()
 
-**Without the patch (SUCCEEDS)**
+On 11/10/2024 3:39 pm, Arnaldo Carvalho de Melo wrote:
+> From: Arnaldo Carvalho de Melo <acme@redhat.com>
+> 
+> Using it:
+> 
+>    $ perf test -w noplop
+>    No workload found: noplop
+>    $
+>    $ perf test -w
+>     Error: switch `w' requires a value
+>     Usage: perf test [<options>] [{list <test-name-fragment>|[<test-name-fragments>|<test-numbers>]}]
+> 
+>        -w, --workload <work>
+>                              workload to run for testing, use '-w --list' to list the available ones.
+>    $
+>    $ perf test -w --list
+>    noploop
+>    thloop
+>    leafloop
+>    sqrtloop
+>    brstack
+>    datasym
+>    landlock
+>    $
+> 
+> Would be good at some point to have a description in 'struct test_workload'.
+> 
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+> ---
+>   tools/perf/tests/builtin-test.c | 18 +++++++++++++++++-
+>   1 file changed, 17 insertions(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+> index 2201f7ed432ce9f2..f0d10d2dd0d40019 100644
+> --- a/tools/perf/tests/builtin-test.c
+> +++ b/tools/perf/tests/builtin-test.c
+> @@ -505,10 +505,26 @@ static int perf_test__list(int argc, const char **argv)
+>   	return 0;
+>   }
+>   
+> +static int workloads__fprintf_list(FILE *fp)
+> +{
+> +	struct test_workload *twl;
+> +	int printed = 0;
+> +
+> +	workloads__for_each(twl)
+> +		printed += fprintf(fp, "%s\n", twl->name);
+> +
+> +	return printed;
+> +}
+> +
+>   static int run_workload(const char *work, int argc, const char **argv)
+>   {
+>   	struct test_workload *twl;
+>   
+> +	if (!strcmp(work, "--list")) {
+> +		workloads__fprintf_list(stdout);
+> +		return 0;
+> +	}
+> +
 
-$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+Very minor nit, but I think searching the workload name for an argument 
+instead of having a 'proper' toplevel argument seems a bit weird, but I 
+can see why you did it that way.
 
-wrote 1024/1024 bytes at offset 0
-1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+But maybe something like this might be a bit more readable especially 
+when searching in the usual places for an argument. And in the future 
+might survive auto doc attempts of known arguments:
 
-**With the patch (FAILS as expected)**
+   $ perf test --list-workloads
 
-$ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+And add it with OPT_BOOLEAN() etc.
 
-wrote 1024/1024 bytes at offset 0
-1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
----
- fs/xfs/xfs_inode.c | 2 +-
- fs/xfs/xfs_inode.h | 5 +++++
- fs/xfs/xfs_ioctl.c | 4 ++--
- 3 files changed, 8 insertions(+), 3 deletions(-)
-
-diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
-index bcc277fc0a83..19dcb569a3e7 100644
---- a/fs/xfs/xfs_inode.c
-+++ b/fs/xfs/xfs_inode.c
-@@ -1409,7 +1409,7 @@ xfs_inactive(
- 
- 	if (S_ISREG(VFS_I(ip)->i_mode) &&
- 	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
--	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
-+	     xfs_inode_has_filedata(ip)))
- 		truncate = 1;
- 
- 	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
-diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
-index 97ed912306fd..03944b6c5fba 100644
---- a/fs/xfs/xfs_inode.h
-+++ b/fs/xfs/xfs_inode.h
-@@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
- 	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
- }
- 
-+static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
-+{
-+	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
-+}
-+
- /*
-  * Check if an inode has any data in the COW fork.  This might be often false
-  * even for inodes with the reflink flag when there is no pending COW operation.
-diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
-index a20d426ef021..2567fd2a0994 100644
---- a/fs/xfs/xfs_ioctl.c
-+++ b/fs/xfs/xfs_ioctl.c
-@@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
- 
- 	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
- 		/* Can't change realtime flag if any extents are allocated. */
--		if (ip->i_df.if_nextents || ip->i_delayed_blks)
-+		if (xfs_inode_has_filedata(ip))
- 			return -EINVAL;
- 
- 		/*
-@@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
- 	if (!fa->fsx_valid)
- 		return 0;
- 
--	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
-+	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
- 	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
- 		return -EINVAL;
- 
--- 
-2.43.5
+>   	workloads__for_each(twl) {
+>   		if (!strcmp(twl->name, work))
+>   			return twl->func(argc, argv);
+> @@ -544,7 +560,7 @@ int cmd_test(int argc, const char **argv)
+>   	OPT_BOOLEAN('p', "parallel", &parallel, "Run the tests in parallel"),
+>   	OPT_BOOLEAN('S', "sequential", &sequential,
+>   		    "Run the tests one after another rather than in parallel"),
+> -	OPT_STRING('w', "workload", &workload, "work", "workload to run for testing"),
+> +	OPT_STRING('w', "workload", &workload, "work", "workload to run for testing, use '-w --list' to list the available ones."),
+>   	OPT_STRING(0, "dso", &dso_to_test, "dso", "dso to test"),
+>   	OPT_STRING(0, "objdump", &test_objdump_path, "path",
+>   		   "objdump binary to use for disassembly and annotations"),
 
 
