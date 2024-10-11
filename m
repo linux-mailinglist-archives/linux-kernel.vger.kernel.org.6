@@ -1,143 +1,113 @@
-Return-Path: <linux-kernel+bounces-361902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E028F99AEAE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:29:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38D599AEB2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:32:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37C2BB24073
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:29:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FD25284631
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BAC321D2F55;
-	Fri, 11 Oct 2024 22:29:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD16A1D0E31;
+	Fri, 11 Oct 2024 22:32:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oDHAF+ne"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FEZugFtv"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 101A61D1E8F;
-	Fri, 11 Oct 2024 22:29:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9C5E34CDE
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:32:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728685786; cv=none; b=AuYyp5Ss1BQT9uVb3gVGPEWtGuOYIeVhtd5E1EzCM+Bs0Q4e7XnqI+yJDi2B/QxHjCBHw8/8MwV01vJT6qjDjNZv5W2BE5qgMuOseAfsh0uD6YC1hkLK34b9E8OKxp1GI3AuZ9LocbM2bl+oUJ+37RJuYI1d8ECFixUMtbJCvPI=
+	t=1728685924; cv=none; b=RzJi+wmAFtx1YodWQVPQLCYi1VuTmdZWDI5S/tQ45O0KQ2TxkQaBoh0mlTb5zobPSOlQCVxCjGb7ZPPaMrZ5TR73LPmP2ybP/seo/ZaFIL+l6Q/PsrIirKeNDra3Zd5LQbE7UCJX3/vnWNLXBRwuYHG/QeUmgfl5CDZ/E7ewi3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728685786; c=relaxed/simple;
-	bh=wZS4VQegsNngLJ9V7EauM0gh2ui7E6Eg3FpMuFwjhdE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VQniALRz9Jlg/eFWV2XdpR98e55WecxJN4hA/CZiLkrEMsfgmVr8+0bW8Q9zQmTGJz2d3AkG9ZTE/Bazcp8c+ZxKksJrPf6vjt20kZLoVj4QYAF79nuJ4WAZsx7MdxaGR4i0Vs0RO1eKXR3bFyMldY0jHVYyKAnMesMg8SbSr1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oDHAF+ne; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 37CCCC4CEC3;
-	Fri, 11 Oct 2024 22:29:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728685785;
-	bh=wZS4VQegsNngLJ9V7EauM0gh2ui7E6Eg3FpMuFwjhdE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oDHAF+ne/FwxRwj0AijUlHHb4TIETTUPF1XaKzprLDQyyjdE/+7UzJaCVk6KnJVjz
-	 ljfE1fQxsuQsI7uC3ssJbh8eTqCt32WIBG2V9j1nMCn5LcScM08wp2ltS5rMQXn81A
-	 aGQPwdLmtPs/1yNBIU9YAt/gpK2hqYAhe1R7M/+kVncKeeGR8JLVSANSHVw7nZmell
-	 PmFh5FPq5zHBgAX9YHiNsMwppnWB80DR+tvq8JKAB4Rm/8KyaEKLp6lhXFAG68Jo1Z
-	 qXIZ5YHbUJNBut1LunRmNZNodbZIQtYbZW3Z7T5+ef71dbagEkbiXBQebJnUjLT8Zj
-	 AOdhktTipnWgQ==
-Date: Fri, 11 Oct 2024 15:29:43 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Matthew Maurer <mmaurer@google.com>
-Cc: masahiroy@kernel.org, ndesaulniers@google.com, ojeda@kernel.org,
-	gary@garyguo.net, Alex Gaynor <alex.gaynor@gmail.com>,
-	rust-for-linux@vger.kernel.org, linux-kbuild@vger.kernel.org,
-	linux-kernel@vger.kernel.org, neal@gompa.dev, marcan@marcan.st,
-	j@jannau.net, asahi@lists.linux.dev, linux-modules@vger.kernel.org,
-	Boqun Feng <boqun.feng@gmail.com>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [PATCH v5 13/16] export_report: Rehabilitate script
-Message-ID: <Zwmm1yN1udGuGn7T@bombadil.infradead.org>
-References: <20240925233854.90072-1-mmaurer@google.com>
- <20240925233854.90072-14-mmaurer@google.com>
- <Zwmi-MEVE_E4nkzl@bombadil.infradead.org>
- <CAGSQo03H=O5id=bdRorHmRLNzGM9njcRradQUvjpngk3sXfViw@mail.gmail.com>
+	s=arc-20240116; t=1728685924; c=relaxed/simple;
+	bh=h8jDK5yst+t6SVTBbM8byilTslHC1KtG4mgA8TITvUA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=TQyJ3QQZXs6W8vjVm8sPtKrypNr1r5epVPo39DElvhFM0a9nDw80DtpilXKdUMQsRR6uALurw6o+rtWc3JeAjHO1X1DHFJMU2phuYJes70w3Ik1Uig5883nfRKgAxaBzXooH2FHHF2bQm5sEikyA/59iBtbbW6OcmtIsV42N+NM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FEZugFtv; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a998a5ca499so350571466b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:32:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728685921; x=1729290721; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7dYEjVJeWeKBsQqV478t9ZT5xyiJzppDYZSrZjIOGlE=;
+        b=FEZugFtvl0J1+0FMamlhH9q/biPNHWhAriA4XtjU9eE2TrkZmD2AsgGyd/5b4Dwfqd
+         M8C/3n+++QiIdVNSqZ9qoR5J25Spd71NWkKV9HSeMBynuIEii1+CVgOGX4Qdx6IUcoW/
+         G9LNt9b370zP6bA4lo+DrpRGs1ymkKE70mcK32s0B5jrdnWrvySKiEe+wDrNTgNBLH86
+         uq3E+yTkJVv74UQwELT9ryfIIvf9CoLUxXHWOI/YMoRll/xjYhnlOwYKN+d+WYfBVFCM
+         /kHIXasjVWUzDXkFbOnPLdN1yWGZZyPod6gij9OkPVa07YOi4oFZrIniNrZcKwJ1C9aj
+         n3Fg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728685921; x=1729290721;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7dYEjVJeWeKBsQqV478t9ZT5xyiJzppDYZSrZjIOGlE=;
+        b=T59kukeb5yUPBE1ejUM4PDrjtrfbaxDvqBFfU5QHO/iXB9+AZuyrlA4kOWlfYifs4N
+         1c+cfzoBc1Rt1vgg+ccwsodRJLX35IzcUR7AP3cRwOQPQoAFiYjNSwkOurQqXaVbHFWi
+         2gi2BJCEgI+SGnKQ+JLHwM14/ZeQhtVphhRffabwdRhhOeEXPb4O8yjAc6EiB3rVWr2g
+         JvU0cAqV5VDVvBCR9PBDGSerR3kyaLg3PqWHmxo1Sz+3RGGV/Oc2gjlxcff849z+7vPE
+         7DNmfQlg1qtkZBKpgM5vNKVeIu93uxQ51NTviN9ygyfSfTyNRT2PMCSSn76C8fMlfR3i
+         fAhw==
+X-Forwarded-Encrypted: i=1; AJvYcCW2Z2OA9y9dhcvMlCCYD/P5TUHqq7qQ2RMivAIojatD+VmROGCy39walkomIkyQpohNfbHabtfdxvVdJN8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx5euA0+VnHS8atEDMEQG7TJOOiPaTbQ2JToSL7s4JVhxSZhe6g
+	LnW0Cby+WajDKOhZBBAx8UguXHxFDMwtXGQkEEc1RUhdFjoWMwBYQA6wPWcO7Bo=
+X-Google-Smtp-Source: AGHT+IEbKbpnTVUS0yOgo8MSx+Fpz0QB/QAoFKFpoEv8h9F3HBQ1+TmCxeZNTaHD83KXx3oJN9KijA==
+X-Received: by 2002:a17:907:1c05:b0:a86:82e2:8c64 with SMTP id a640c23a62f3a-a99e3c9d614mr104196466b.35.1728685921048;
+        Fri, 11 Oct 2024 15:32:01 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80c03b3sm256498866b.127.2024.10.11.15.31.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 15:32:00 -0700 (PDT)
+Message-ID: <20603976-907a-4254-a79e-23c1f0e06286@linaro.org>
+Date: Fri, 11 Oct 2024 23:31:58 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAGSQo03H=O5id=bdRorHmRLNzGM9njcRradQUvjpngk3sXfViw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/8] media: dt-bindings: Add
+ qcs6490-rb3gen2-vision-mezzanine
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+ Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org,
+ todor.too@gmail.com, mchehab@kernel.org, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com,
+ hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org,
+ hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org,
+ catalin.marinas@arm.com, will@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-media@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel@quicinc.com
+References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+ <20241011140932.1744124-3-quic_vikramsa@quicinc.com>
+ <nsylilmzl6zzukpgih65kmeibbllek6dpgryzkso2ttpuztk2x@3q5xiujcdujo>
+ <b3c1431e-9a5d-4c38-ae7d-605d4a2cf3ac@linaro.org>
+ <bzszh7m52o3xzeybp4odwki6bz53aqctolrbvvbqizvk4bkj2h@k7r2i2rhgyqs>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <bzszh7m52o3xzeybp4odwki6bz53aqctolrbvvbqizvk4bkj2h@k7r2i2rhgyqs>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 03:22:54PM -0700, Matthew Maurer wrote:
-> On Fri, Oct 11, 2024 at 3:13 PM Luis Chamberlain <mcgrof@kernel.org> wrote:
-> >
-> > On Wed, Sep 25, 2024 at 11:38:28PM +0000, Matthew Maurer wrote:
-> > > * modules.order has .o files when in a build dir, support this
-> >
-> > The commit log is not clear, is it that it's always had *.o files, and
-> > you're adding them now, why? Why is the .ko search now removed?
+On 11/10/2024 22:33, Dmitry Baryshkov wrote:
+> See arch/arm64/boot/dts/qcom/Makefile:
 > 
-> The script was broken when I found it,
-
-My point is that commit messages should describe all this.
-
-> but it was a script that
-> analyzed MODVERSIONS, so I tried to ensure it would still work with my
-> changes.
-
-OK yes please add this informaiton into the comit log.
-
-Also expand on it as to to *why* this was not a critical issue.
-
-> This necessitated rehabilitating it first. I did not touch
-> `.modules.order` files, but they contained `.o` and so this script
-> wouldn't run correctly.
-
-Just elaborate on the commit log. We cannot guess what is happening, and
-so bringing clarity into exactly what you are doing and *why* is helpful
-to determine the impact of not applying this.
-
-> > > * .mod.c source layout has changed,
-> >
-> > When, why did this change not happen at that time?
+> sm8650-hdk-display-card-dtbs    := sm8650-hdk.dtb sm8650-hdk-display-card.dtbo
 > 
-> It was changed for readability [1] back in 2019. I assume the change
-> did not happen at that time because this script is rarely run.
+> dtb-$(CONFIG_ARCH_QCOM) += sm8650-hdk-display-card.dtb
 
-This is crucial information to include in the commit log. When *would*
-you use it? So that use case was broken since 2019? What negative
-effects has this implicated?
+Aha, yes ok _that_ makes sense to me.
 
-> If we'd
-> prefer to discard this patch and ignore the script instead (or remove
-> it?), that's fine.
-
-The feedback is for you to improve the commit logs, not to tell you to
-not do something. We cannot read your mind, and this smelled like a fix,
-but without a true evaluation and documentation of the impact of not
-having this in place. These things need to be thought out and written
-in the comit log.
-
-> 
-> [1]: https://lore.kernel.org/all/20190909113423.2289-2-yamada.masahiro@socionext.com/
-> 
-> >
-> > > update regexes to match
-> >
-> > Why did this not break anything before ? Is this fixing something, or
-> > is it prep work?
-> >
-> > > * Add a stage 3, to be more robust against additional .mod.c content
-> >
-> > Future .mod.c changes?
-> 
-> The rest of this series adds additional `.mod.c` content to support
-> the string names. This stage 3 is intended to prevent that from
-> causing the script to choke.
-
-The commit log should clarify all this.
-
-  Luis
+---
+bod
 
