@@ -1,132 +1,142 @@
-Return-Path: <linux-kernel+bounces-360935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360933-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF57499A180
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:36:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB85399A17C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:36:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 928F12839B9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:36:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 015F0B2525C
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:36:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152122139D2;
-	Fri, 11 Oct 2024 10:35:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8E3216434;
+	Fri, 11 Oct 2024 10:35:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="fNUb/Ec/"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2rXEZh+G"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFF5B212F10;
-	Fri, 11 Oct 2024 10:35:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255AA215F71
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728642924; cv=none; b=cBQqhCFZntK9Id8lHFLdo05gk+0dXcJ3nwaMFpHta8e0uJD80Ncs82XuyGIQgcd5TP2zONiV8ES9BE7Gv7EQSqIF+wBpc0CIWYRDlgDiNgr345bGHzPh6ClzsyiQuJtbqcl6i/TpQLA5560LdObYxWUt72xfRFg0IY7nYJyEggQ=
+	t=1728642917; cv=none; b=DWaO7wpFA3Lsq2dFbaMj4fhB3xC15QjqrIoglCLBrxPfVY5syfaTsWVgfLHC0vhsVvxkiirwn/4Anuo8yRKDx5lEZNEfS/KEDeV6+PLzQWJALMl9eUWWc2WHaTaBerK2wFhxL2e3iCnHmTsmG/8jbpPp9HhZCHivM2NrAUm5gLE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728642924; c=relaxed/simple;
-	bh=xDaaMV954JgOdOC3UjDHxdfq1JycgOahpeicffIuOSk=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rCVnkVVJXuGGfKiC9A/sy7IfJLdQ758hljhYp9GdJT13eVPR+PkraiV2Ry+CjLiUBuRQ2NMS1iBS9mVNirPeA1AjHdqIknX7tg9x+l1a/Wi5ckUOJRhrbRm1twjDttBH0iOr/tfXY6DTZ+ClexVz4Mv2TsRQs299zVwpjINGl0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=fNUb/Ec/; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1728642922; x=1760178922;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=xDaaMV954JgOdOC3UjDHxdfq1JycgOahpeicffIuOSk=;
-  b=fNUb/Ec/71v/1wwuxypXSItK/SLEmW7c/aw0k0CUw8bW0cl9ATLAT0gF
-   SQdy4yvWA7Z8P+D7Kp/rEZtmght2IwTYHekcRSTtbrHVjVXyRzXXGOfJZ
-   7Y4xc1QGQwfUzZXq/Q+N2DFaPhXuXRNgxXeM3LpJxWwIUlCcJl9hyVGtC
-   qLXr7oWPMa+hcmcFCHGL4m4zA5LNeIIyRTp+BXk/OQs269Qc+ZSquhEAW
-   Xg2/30p310HXmNEg5JMAd623Y4WJ2wZmk3k8BLN4OgOM/S9KhfCApEAbp
-   PLbjA1kl3RPZCn1lchzCKH+QHMVQoTyq5TfAG0vqR8mFM+1wjVodLIYwA
-   Q==;
-X-CSE-ConnectionGUID: as8QRgjNQQawwZZSMUzNlQ==
-X-CSE-MsgGUID: mmL5Iw1fTzS1MKGvv0+R2A==
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="asc'?scan'208";a="32706629"
-X-Amp-Result: UNKNOWN
-X-Amp-Original-Verdict: FILE UNKNOWN
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 11 Oct 2024 03:35:21 -0700
-Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Fri, 11 Oct 2024 03:34:41 -0700
-Received: from wendy (10.10.85.11) by chn-vm-ex01.mchp-main.com (10.10.85.143)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.35 via Frontend
- Transport; Fri, 11 Oct 2024 03:34:39 -0700
-Date: Fri, 11 Oct 2024 11:34:20 +0100
-From: Conor Dooley <conor.dooley@microchip.com>
-To: <alexandre.belloni@bootlin.com>
-CC: <pierre-henry.moussay@microchip.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Daire McNamara <daire.mcnamara@microchip.com>, Lewis Hanly
-	<lewis.hanly@microchip.com>, <linux-rtc@vger.kernel.org>,
-	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] dt-bindings: rtc: mpfs-rtc: Properly name file
-Message-ID: <20241011-jackpot-headsman-a4f3102e3117@wendy>
-References: <20241011100608.862428-1-alexandre.belloni@bootlin.com>
+	s=arc-20240116; t=1728642917; c=relaxed/simple;
+	bh=xTSQNzVx1mkE0HE6+lpI9qDDtqpAbAzz+W2S8DPkBOo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mdnIU1Qa90nsa02HuHyglfA6gmRmiIqRdqtjH/SCxWkXboh0IqOy65doAFywXo09Rqf//do19iFCfDPos3ZuZjkVAOjiycD+rtcPKMb6SPHBy8qMBleuSZpf1pTz6I6ELqOJEx6J0cgTu01VsfHQ/p7kBuZaJnmeZRe+Buq4qXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2rXEZh+G; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2facf48157dso20872261fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:35:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728642914; x=1729247714; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NphLy95X1fXZbYyERmS8gtB29uHtd/dpodXz4Nr7PKY=;
+        b=2rXEZh+GpojnEKgCI3neYw+pMMGYiNb0zGrOjQSrsTgxDOU+D46fb0yRmPuqAsxSiO
+         5lxGuC7074Mn6xhgT0aZPJ/3k2leHl2VKD6EMmTXhky6O18S6vOUdMOofFG4amGjctky
+         k3exywIsJo74b/Q8wh6ZFxPhLIW0XtctydqFQ93UFiqbUrqnwSnvaZJxqp5fbC9w/hut
+         XIdOw38BliVUX0mzrb5+JW89VRs7FiCSsbxygvoWBSjXqhghxYy7V2O8MclWtayBvlbH
+         qkCmnqzjsLhdwQ5OQp1IiN6ks9urARx1fUM3ksmI7uv5TK/bYSXpq7hwgBDUwtzQMmF8
+         DXVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728642914; x=1729247714;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NphLy95X1fXZbYyERmS8gtB29uHtd/dpodXz4Nr7PKY=;
+        b=S3VwnNz7LWtu+FZIau0edIreaLhSSsp79/JxNQI0eNig3Q36TNk8B4gPjfh8vEvCew
+         mE9V0G051DiiUO2RHzw12GivVLb98W5uwOKCnXSgHf90dpgzQ4bGKBI20qDdyQeS6PlS
+         R5RXpWp5yNsR1Vn8wY7oSusGvIMmuZxR5CYsOdKBAWYCExzb6oKWoEwWKJ2d1p4iRTPv
+         hsQqUAXcY5hXkuOmMyG38jhlGnukfHmhGkFHZgIGkngOft7pGGHtSCzgjS1ClVf2EUCt
+         QjajlXwUY362xTkCJmaOoxgLs2fxa2c4IHNQ9sfYmVX7/ECYyIDA4Nd0LOmNXE0At34l
+         3dhQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXIHvaVEP5G7ahWVA8fw6UwOTCg3Zq/w4TEkSP5aJTItoZgtRHpZ4TkbV3Oai0Fcz0YTt8VAEIOBuCeAK0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxQ8ExUr1jaCZuFW9gYmhFxpqL+3IupcfNyYUetqVFkyJOeA85r
+	4ukbyLgMVQG4xbpDlj+HDqMaouNjObku51nPrRoaOOgfLZnvyaHICVaPUdHdecvVdyZuYQqabE3
+	ci+QH5uOic11vXO5479zN5q3W9A2s4bewHunDIABKM6cwhEHnsg==
+X-Google-Smtp-Source: AGHT+IH31irHrMq4hNzplUlYw533NPegcGVZHsYYk4pFGkC+l3DH+KSU9CCl1KEiQfpInqYhiUGHe1bfiGpVyoqSqjo=
+X-Received: by 2002:a2e:b8c1:0:b0:2f7:90b8:644e with SMTP id
+ 38308e7fff4ca-2fb326ff6b6mr10778371fa.1.1728642914020; Fri, 11 Oct 2024
+ 03:35:14 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="yp2/InY8ltOqmIk6"
-Content-Disposition: inline
-In-Reply-To: <20241011100608.862428-1-alexandre.belloni@bootlin.com>
+References: <20241011095259.17345-1-niharchaithanya@gmail.com>
+In-Reply-To: <20241011095259.17345-1-niharchaithanya@gmail.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Fri, 11 Oct 2024 12:35:02 +0200
+Message-ID: <CACT4Y+YpgVYNBNn7O9kzKzS=0kViRMAnAzi6xbk0ssJpz2WnkA@mail.gmail.com>
+Subject: Re: [PATCH v2] mm:kasan: fix sparse warnings: Should it be static?
+To: Nihar Chaithanya <niharchaithanya@gmail.com>
+Cc: ryabinin.a.a@gmail.com, andreyknvl@gmail.com, kasan-dev@googlegroups.com, 
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	kernel test robot <lkp@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 
---yp2/InY8ltOqmIk6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Fri, 11 Oct 2024 at 12:09, Nihar Chaithanya
+<niharchaithanya@gmail.com> wrote:
+>
+> Sorry about that, thank you for the pointing it out, I understand now that
+> compiler might optimize and remove the assignments in case of local
+> variables where the global variables would be helpful, and making them as
+> static would be correct approach.
 
-On Fri, Oct 11, 2024 at 12:06:07PM +0200, alexandre.belloni@bootlin.com wro=
-te:
-> From: Alexandre Belloni <alexandre.belloni@bootlin.com>
->=20
-> The actual compatible string is microchip,mpfs-rtc, not microchip,mfps-rt=
-c.
->=20
-> Signed-off-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
+It should be easy for the compiler to see all uses for a static var,
+and in this case it's only assignments, so it becomes effectively
+dead, and the compiler can remove the variable and all assignments.
 
-lol.
+Fighting the compiler in such cases when we want to preserve
+non-observable behavior of the abstract C machine is hard.
 
-Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+"static volatile" may be a solution here. Does it help to remove the warnings?
 
-Thanks,
-Conor.
 
+
+> Add a fix making the global variables as static and doesn't trigger
+> the sparse warnings:
+> mm/kasan/kasan_test.c:36:6: warning: symbol 'kasan_ptr_result' was not declared. Should it be static?
+> mm/kasan/kasan_test.c:37:5: warning: symbol 'kasan_int_result' was not declared. Should it be static?
+>
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202312261010.o0lRiI9b-lkp@intel.com/
+> Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
 > ---
->  .../rtc/{microchip,mfps-rtc.yaml =3D> microchip,mpfs-rtc.yaml}      | 0
->  1 file changed, 0 insertions(+), 0 deletions(-)
->  rename Documentation/devicetree/bindings/rtc/{microchip,mfps-rtc.yaml =
-=3D> microchip,mpfs-rtc.yaml} (100%)
->=20
-> diff --git a/Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yam=
-l b/Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
-> similarity index 100%
-> rename from Documentation/devicetree/bindings/rtc/microchip,mfps-rtc.yaml
-> rename to Documentation/devicetree/bindings/rtc/microchip,mpfs-rtc.yaml
-> --=20
-> 2.46.2
->=20
-
---yp2/InY8ltOqmIk6
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZwj/LAAKCRB4tDGHoIJi
-0lUBAQDOsv1fHqDMB9UH0DYPgPNaoQMlKNyahPyNZECmJYC4ZgD/S3qT3a7q2n4r
-g8u1OXsjV6JepssUrOl+xEBz8M+P4wg=
-=dqUs
------END PGP SIGNATURE-----
-
---yp2/InY8ltOqmIk6--
+> v1 -> v2: Used the aproach of making global variables static to resolve the
+> warnings instead of local declarations.
+>
+> Link to v1: https://lore.kernel.org/all/20241011033604.266084-1-niharchaithanya@gmail.com/
+>
+>  mm/kasan/kasan_test_c.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+> index a181e4780d9d..4803a2c4d8a1 100644
+> --- a/mm/kasan/kasan_test_c.c
+> +++ b/mm/kasan/kasan_test_c.c
+> @@ -45,8 +45,8 @@ static struct {
+>   * Some tests use these global variables to store return values from function
+>   * calls that could otherwise be eliminated by the compiler as dead code.
+>   */
+> -void *kasan_ptr_result;
+> -int kasan_int_result;
+> +static void *kasan_ptr_result;
+> +static int kasan_int_result;
+>
+>  /* Probe for console output: obtains test_status lines of interest. */
+>  static void probe_console(void *ignore, const char *buf, size_t len)
+> --
+> 2.34.1
+>
+> --
+> You received this message because you are subscribed to the Google Groups "kasan-dev" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to kasan-dev+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/kasan-dev/20241011095259.17345-1-niharchaithanya%40gmail.com.
 
