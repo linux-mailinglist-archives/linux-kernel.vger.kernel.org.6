@@ -1,212 +1,118 @@
-Return-Path: <linux-kernel+bounces-360730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49420999EB6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:06:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D65F4999EB5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:06:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6AC931C22DE0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D0F91F26D3E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:06:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB0F120ADE3;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D8F20ADD9;
 	Fri, 11 Oct 2024 08:05:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JopWxbUh"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="B9xPUWXA"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7C020A5D9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:05:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01A1C1CDA31
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:05:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728633956; cv=none; b=thAmRvY1zGpJxH1Mk4hG+OsxcustFgwZHW4zuwwpor+Jat2yPNO3PNC9tdsYtfF17Q8cjyN5dD6imnFpHYwYV9kqg0UM1cQYhpcobsobaLRRfEiAh5nbNW4xUP2AgWWGI/TSwddIDdgG0n18I3u2WXdrxLWd3wDEsXErIJi8CVY=
+	t=1728633956; cv=none; b=MeyVPjn9uXPj4T7oP6QKHrfR7BCJH5lHi3/XGNRwGeIoCPb+FOja65ZLl7ntUgRLE7+IQrwfaNywqmqFWMmmyNllYMuVi1JGQFkMeUKiyrqm1nWVEFsXgjGczqkCMBDBYpYXBLlrf0bcaux+eoo0wjz3O59ScMgONyUyPfuMxGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728633956; c=relaxed/simple;
-	bh=Z67+iI2hSrIPj2oHFuxqCUY/2/HpoC+2Pkurb+74nTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=JYzD8O4gbSVNBMAeqPmPpnEi/S13qkyvDTD5rGz+TU4oG81dmxKdZaC4msEq+fjFbKxmKNbZMa/3xCVC56feCFH+TvRTkNauoMg8ev3ICbI4U2u7oR15wC56k8GJga5II/mAFHWuIatGBNBjkerR/TY3kYxu2PdWYISGqFlJO0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JopWxbUh; arc=none smtp.client-ip=209.85.210.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71df1fe11c1so1498004b3a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:05:54 -0700 (PDT)
+	bh=3tOQwfdhHnMP0MSS6J7QSkSN09vNrNJKNrPT5TcaSDs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sS+FC19BvGpEb7JRPixpySQD8V0wrL6UBrsGtPEaNb9PCkTIyS05nc1vLniM5W7dvAm2BT1vWoSwGILgA4IKtxuVfW1e8lQ/nfVRFQTIXHLG4KuICJMV2adT1wsW1atbM1flDj9P+5ileq6Uv1qL5uEqa1t67kZBoeA2LzcnB4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=B9xPUWXA; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99c0beaaa2so29260866b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 01:05:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728633954; x=1729238754; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cyTFlm4m/KDy5BUSGM2UwZPLgDsNUyTZVqJf5DcscI8=;
-        b=JopWxbUh8GMYH8VTK8Dv9+r32uup7Nh9S1eTw2jDaQyabe7KS8IfXerq3+OZqyKtAv
-         hqGo6oMAhNhT82f7qHoSGte0IaoOW07nxEJIIyIoTSR4P6mrf3lBMlVLniXfhNCl6fkX
-         SxfTJzFsAe7+sJ8Ethw8HTEjrLOzLe1RTPj4/dDBNxR5Vn4kTLC+8CzLNvos83HWai/P
-         0Up2sJ/nkvP8FjgxvMv0+zRf7wpnWkICTSvSF7MUjAhUxtjXd7F3BPhUL2WD5GjjSFCk
-         BLhGX51Nj63WxYAFvWfEQfmUcMfKbtvw73fTbCLiwLwW8LiIIDZ1grItk4CVnZcl7j9O
-         n2yA==
+        d=suse.com; s=google; t=1728633952; x=1729238752; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=mjACApyXQrxGUpFqc8LmjYOKGlYiSQDto47FI0kbrTM=;
+        b=B9xPUWXAde4vVVNGYXdL6g+MHqawyIJhj3ogvMGEVFflJFtT6PmkSyKeiMLGIBTstn
+         eqQk8L3JLUQgoCfzGstAHDHSZWfQYvP0URprZVgHsGhUCVqG80NflPqaVPH+OtjfCb6z
+         aLeNlFBURaJ7LBQKAonBYSzN3CalstSypzWK1Fljq0RpJTth+BJF/ok6+racIoyOxL/h
+         JARQQu1c3zHQsb9w9BTMBSFp7VWftVvZjF+IhzGTrGs6S3Isf/61ebX8ohzSyKEI2rHj
+         3njsb6y12eF9VWVPOlFUlqEEZ6tLxlbHgkk+0WPD2fjiG3QscLMnbbipK+qgXU5QGLy0
+         0t/w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728633954; x=1729238754;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cyTFlm4m/KDy5BUSGM2UwZPLgDsNUyTZVqJf5DcscI8=;
-        b=j9wjfnmMLF4cgEIMReujjDktDC1s2eV9xlJZVUy8BAceUDPDbLKOUOdY7yLjwJXkbf
-         hw4mifWCLqR0ouimap1E+4DWCQgQmRdopeaUKyuJew3we9CEVQHwNt7bPfAjSPtX8DjF
-         yUdFcd+Jkd8vrWwD0qMqCbZQBhPQWdGMHBBwDRCJpULTmJ7VQ6Mjo9IyvxDVCGBrV21q
-         DFeNqBPmgHADLMIGglSR5Ow5aKj4NHeIcV6A3/STPAj1G/HjSHHYhim0SemF5Q23vvNQ
-         RuY4pjpjbY1mW9QuE8ppjLBSfRDXTMzzX0cPodkfNy4//h9CKbqn/K5B0j2eiJbByFB/
-         wIMw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAvZWub1iGSYiarfZbOKLAiFAWDuBSQF/lYoraZx2H7oC5DU5JERKeA/nZIZH5lm81xyaubKmzvdfGTq4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxx7pXbKgoyA/oNRz0oyy2TitJetlTUM9iNkF61LUUqv7PvbizG
-	W2KdMgvfW8O/rJniRXDd4QlTenf1fZuZwbMMpzTjoYFP6XAUlVrJ
-X-Google-Smtp-Source: AGHT+IEPfa7gZvPRyo8ByepVRETQkhFpHB8/vsFkvFzynMFqH7IIfh9guYjrHr6K/nM9x22xyqa83A==
-X-Received: by 2002:a05:6a00:3189:b0:71e:3b8f:918 with SMTP id d2e1a72fcca58-71e3b8f11eamr1354871b3a.7.1728633953799;
-        Fri, 11 Oct 2024 01:05:53 -0700 (PDT)
-Received: from suhua-virtual-machine.localdomain ([36.112.24.11])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab10205sm2131409b3a.220.2024.10.11.01.05.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 01:05:53 -0700 (PDT)
-From: suhua <suhua.tanke@gmail.com>
-X-Google-Original-From: suhua <suhua1@kingsoft.com>
-To: muchun.song@linux.dev,
-	akpm@linux-foundation.org
-Cc: linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	suhua.tanke@gmail.com,
-	suhua <suhua1@kingsoft.com>
-Subject: [PATCH] mm/hugetlb: Concentrated releases memory when cmdline specifies node requests for large pages
-Date: Fri, 11 Oct 2024 16:05:43 +0800
-Message-Id: <20241011080543.2422-1-suhua1@kingsoft.com>
-X-Mailer: git-send-email 2.34.1
+        d=1e100.net; s=20230601; t=1728633952; x=1729238752;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=mjACApyXQrxGUpFqc8LmjYOKGlYiSQDto47FI0kbrTM=;
+        b=m9XF78Z9L4QOX3BRMrBHytr7LH8p8Dd8b4m1VIUwofLYx0gOOOLSbaZxcKP3KVNYI7
+         9KUA0X4D6/WU4R7nHzJY3bXPoEb+NEO9SqNP0rlKiwhwD4HEcAyjOQ3jnyuei/5uigDM
+         59CB2cdAijmI/+DAeQY2di5YkseIiIPzDVMUHbKsoDI4eur/hJsqQOBovifKi4XG9PvM
+         712BtlcuZ6zFqbqrSjGZF4UZzFTH0yW6jF6bhIWKMZqOeAPu5xWLR458Sgebb50Ip4CW
+         PSaC8524CplEigKVAY5WHCvqnKiDA+754MOsvWvm9D6kBBIzHTslvbbT+JIdEx5YzhWa
+         3N2A==
+X-Gm-Message-State: AOJu0YzdopECyaAyLFXe/hDQVvO1y3Oz4OXcPQlHzNS3o4zFsC3/+49V
+	RZ90fgbuOXA9twCeO7DQ4V8Hk/2BDBoP0bNlmbzKweePVCrEtocm0yy8gDgxRPQ=
+X-Google-Smtp-Source: AGHT+IHlL4OYwlNrC9fGU1p8LcVHJqipNbNTAMPO+miJyVt8Iu/S7CwvZLsWTUdg29kFc5DsZ+eCmQ==
+X-Received: by 2002:a17:907:f7a9:b0:a99:6b71:299b with SMTP id a640c23a62f3a-a99b9589568mr148510966b.37.1728633952307;
+        Fri, 11 Oct 2024 01:05:52 -0700 (PDT)
+Received: from [10.100.51.161] ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f2737sm183678566b.217.2024.10.11.01.05.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 01:05:52 -0700 (PDT)
+Message-ID: <1924e096-916a-4311-a3d5-07d3813f50da@suse.com>
+Date: Fri, 11 Oct 2024 10:05:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ring-buffer: Have the buffer update counter be atomic
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: LKML <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
+ Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+References: <20241010195849.2f77cc3f@gandalf.local.home>
+Content-Language: en-US
+From: Petr Pavlu <petr.pavlu@suse.com>
+In-Reply-To: <20241010195849.2f77cc3f@gandalf.local.home>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-When HVO is enabled and huge page memory allocs are made, the freed memory
-can be aggregated into higher order memory in the following paths, which
-facilitates further allocs for higher order memory.
+On 10/11/24 01:58, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> In order to prevent any subtle races with the buffer update counter,
+> change it to an atomic_t. Also, since atomic_t is 32 bits, move its
+> location in the ring_buffer_per_cpu structure next to "current_context" as
+> that too is only 32 bits (making 64 bit alignment).
+> 
+> The counter is only used to detect that the buffer has been updated when
+> the buffer verifier check is being done. It's not really that important
+> that it's atomic or not. But since the updates to the counter are never in
+> the fast path, having it be consistent isn't a bad thing.
+> 
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> ---
+> Note, this is based on top of:
+> 
+>   https://lore.kernel.org/linux-trace-kernel/20240715145141.5528-1-petr.pavlu@suse.com/
 
-echo 200000 > /proc/sys/vm/nr_hugepages
-echo 200000 > /sys/devices/system/node/node*/hugepages/hugepages-2048kB/nr_hugepages
-grub： default_hugepagesz=2M hugepagesz=2M hugepages=200000
+Sorry for not replying to your last comment on my patch, I was ill.
 
-Currently not support for releasing aggregations to higher order in the
-following way, which will releasing to lower order.
+The member ring_buffer_per_cpu.cnt is intended to be accessed under the
+reader_lock, same as the pages pointer which it is tied to, so this
+change shouldn't be strictly needed.
 
-grub: default_hugepagesz=2M hugepagesz=2M hugepages=0:100000,1:100000
-
-This patch supports the release of huge page optimizations aggregates to
-higher order memory.
-
-eg:
-cat /proc/cmdline
-BOOT_IMAGE=/boot/vmlinuz-xxx ... default_hugepagesz=2M hugepagesz=2M hugepages=0:100000,1:100000
-
-Before:
-Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-...
-Node    0, zone   Normal, type    Unmovable  55282  97039  99307      0      1      1      0      1      1      1      0
-Node    0, zone   Normal, type      Movable     25     11    345     87     48     21      2     20      9      3  75061
-Node    0, zone   Normal, type  Reclaimable      4      2      2      4      3      0      2      1      1      1      0
-Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-...
-Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-Node    1, zone   Normal, type    Unmovable  98888  99650  99679      2      3      1      2      2      2      0      0
-Node    1, zone   Normal, type      Movable      1      1      0      1      1      0      1      0      1      1  75937
-Node    1, zone   Normal, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
-Node    1, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-
-After:
-Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-...
-Node    0, zone   Normal, type    Unmovable    152    158     37      2      2      0      3      4      2      6    717
-Node    0, zone   Normal, type      Movable      1     37     53      3     55     49     16      6      2      1  75000
-Node    0, zone   Normal, type  Reclaimable      1      4      3      1      2      1      1      1      1      1      0
-Node    0, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-...
-Free pages count per migrate type at order       0      1      2      3      4      5      6      7      8      9     10
-Node    1, zone   Normal, type    Unmovable      5      3      2      1      3      4      2      2      2      0    779
-Node    1, zone   Normal, type      Movable      1      0      1      1      1      0      1      0      1      1  75849
-Node    1, zone   Normal, type  Reclaimable      0      0      0      0      0      0      0      0      0      0      0
-Node    1, zone   Normal, type   HighAtomic      0      0      0      0      0      0      0      0      0      0      0
-
-Signed-off-by: suhua <suhua1@kingsoft.com>
----
- mm/hugetlb.c | 37 +++++++++++++++++++++++++++++++++----
- 1 file changed, 33 insertions(+), 4 deletions(-)
-
-diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-index 190fa05635f4..3441d380c90b 100644
---- a/mm/hugetlb.c
-+++ b/mm/hugetlb.c
-@@ -2077,6 +2077,24 @@ static struct folio *only_alloc_fresh_hugetlb_folio(struct hstate *h,
- 	return folio;
- }
- 
-+static struct folio *only_alloc_and_account_fresh_hugetlb_folio(
-+		struct hstate *h, gfp_t gfp_mask,
-+		int nid, nodemask_t *nmask)
-+{
-+	struct folio *folio;
-+
-+	folio = only_alloc_fresh_hugetlb_folio(h, gfp_mask, nid, nmask, NULL);
-+	if (!folio)
-+		return NULL;
-+
-+	spin_lock_irq(&hugetlb_lock);
-+	h->nr_huge_pages++;
-+	h->nr_huge_pages_node[nid]++;
-+	spin_unlock_irq(&hugetlb_lock);
-+
-+	return folio;
-+}
-+
- /*
-  * Common helper to allocate a fresh hugetlb page. All specific allocators
-  * should use this function to get new hugetlb pages
-@@ -3301,23 +3319,34 @@ static void __init hugetlb_hstate_alloc_pages_onenode(struct hstate *h, int nid)
- {
- 	unsigned long i;
- 	char buf[32];
-+	LIST_HEAD(folio_list);
-+	struct folio *folio, *tmp_f;
- 
- 	for (i = 0; i < h->max_huge_pages_node[nid]; ++i) {
- 		if (hstate_is_gigantic(h)) {
- 			if (!alloc_bootmem_huge_page(h, nid))
- 				break;
- 		} else {
--			struct folio *folio;
- 			gfp_t gfp_mask = htlb_alloc_mask(h) | __GFP_THISNODE;
- 
--			folio = alloc_fresh_hugetlb_folio(h, gfp_mask, nid,
--					&node_states[N_MEMORY]);
-+			folio = only_alloc_and_account_fresh_hugetlb_folio(h,
-+					gfp_mask, nid, &node_states[N_MEMORY]);
- 			if (!folio)
- 				break;
--			free_huge_folio(folio); /* free it into the hugepage allocator */
-+			list_add(&folio->lru, &folio_list);
- 		}
- 		cond_resched();
- 	}
-+
-+	if (!list_empty(&folio_list)) {
-+		/* Send list for bulk vmemmap optimization processing */
-+		hugetlb_vmemmap_optimize_folios(h, &folio_list);
-+
-+		list_for_each_entry_safe(folio, tmp_f, &folio_list, lru) {
-+			free_huge_folio(folio); /* free it into the hugepage allocator */
-+		}
-+	}
-+
- 	if (i == h->max_huge_pages_node[nid])
- 		return;
- 
 -- 
-2.34.1
-
+Thanks,
+Petr
 
