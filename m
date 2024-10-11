@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-360358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A005999A08
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:09:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D362F999A0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:11:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD93F1F2411F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:09:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6830C283AA6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:11:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 697D21E9061;
-	Fri, 11 Oct 2024 02:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D950B1E9093;
+	Fri, 11 Oct 2024 02:10:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ti/J1EnJ"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zDK58HzU"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B2F51E8834;
-	Fri, 11 Oct 2024 02:09:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACAC51E882D
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:10:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612561; cv=none; b=UnXF+U9ANqZN4lANGIGby8Z+V+Ht6BJ22HvfeqJgc5I1r3I7f6YlLP2/BHJXKYOr768rfCpi70tiYUd4YDuRta2kagBSa7NtfAvVqvMgqtG8hxBqCmq8gSspNCStpWdtHr/3iHw2yUXdtSFTmTQstyKCiQXTlo+kp/ras7w7tQg=
+	t=1728612655; cv=none; b=el0pBuaRYTTerKzKevfztElccJ2Lum2ka5wNC/N5X60DcXfHzHJx8npGmRRJ2RxjKgcktM3Q65I7F6jQqmNH2ZkmmaIl1uJzMoCTAVUbZsS9r9FNqSlqxn3sqqvsfG0hMsc2+QU23VKkR+xJpUiiRFtvslPQKdhxHq8Mix8bGtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612561; c=relaxed/simple;
-	bh=aI+kVo3JrrNJ7YGaRvYFfYl3G/dHWG/G4ayXbq9TxyQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HqOsac9DA5KDjqKUq0VYiNVHyVvkqn4lcTjUBFxfb8r0rfSiSd6j5o4LqOTdCWm8AqtYOFwpPx6QRUI1Qd8dRSPjXuATejOZm2DQ2ROaPvDN2UIKrYUvy66/L73l8acSyvMbYVo5lXtvxHQqx/XH6hir9zf1ldEFuMDtycP7ffc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ti/J1EnJ; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2dc61bc41so841549a91.1;
-        Thu, 10 Oct 2024 19:09:20 -0700 (PDT)
+	s=arc-20240116; t=1728612655; c=relaxed/simple;
+	bh=zJSdJbBzdDiSwWhIJuRompQSetjqt4adgJuhI/CyVmc=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ZTlTWU7+LcSP2BVHv4VfbTpRUtcHsjMBWzQ4gK4fZmk2gmg3szL0ZWu9z9gsMgumGVQ+RgygGCTxQ2F24xFeLjZeqqM+mCA3s+A7iqT9zbxJTI3Zuw2NBjcWdfVIK65KJGLmhVb5cn26VXK23v+J5zRvJd2lbv6tHICTXf3ulRM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zDK58HzU; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e2baf2ff64so27799257b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:10:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728612560; x=1729217360; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HjWeD9HT47zkfpKbRTMi6no6+ST4z9rpRHbcw/ft7DA=;
-        b=Ti/J1EnJFmmN3EUfT4PdVSULJVCHRUqG2nqNKFPDB9VVX3BJWeTaSk5fIUURqI+WnE
-         oRZVPIiMFoOyNfvk6rIuQBGEyAhDb2O8dzQDZH1k+M8SwSJnfu37gid2kIQl1DbJh+5P
-         roqj/hNrWBZv+3NraYSMvnX3USsPrUBvVIdDlw0XH/LaL44ZAX+gdOvx2AbTWqOrv6LV
-         6lgk54Mpw+iR4bcmTeXmJKuj6ocMu+3iWX2qt7yqiKk+slAfzcWSxPX42oExxrHhZqmo
-         ikII3Haz6HRUhMLCKLAjnVAVefFuoDgl5vi3LAHfs4lRhJ2SGdSfULGf2d4VX4BbEqzd
-         9BHg==
+        d=google.com; s=20230601; t=1728612652; x=1729217452; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5/FKyHqildhGZez+hgtXv2QUQsqoQKXeEoi9o/+C1cI=;
+        b=zDK58HzU1qhD1/8FKtH63BV+Bv7zbnn3OYFEBpaiaaPzPapCfTBf56V7cNYKTpwMJX
+         wmmWgZ9rIhnWoxpI1F2FmWEO1ZOmk9a834zEUEmM03ar73nf/PySKX1FlH7o/MuZ7yBy
+         tX15jxDXD+cW3Jra3UvSuVlvGkDBLU731m9r7oN8uPnJd+lO/BfYK0Z2AqErHMwgHvca
+         XWN8qoohcrdQ1Hfr0zAsM4Ma5eP0vaFTHw90AtvidbyWs+tZc4My7B8tBYqETbl7CwXR
+         cxIEnWyLhjANZS7i0eGns/oNplznWiH0Mxr1NjoF1d243ZrisC4EZPdtej701xfLKGnP
+         iAqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728612560; x=1729217360;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HjWeD9HT47zkfpKbRTMi6no6+ST4z9rpRHbcw/ft7DA=;
-        b=pEJ/Aj6gb0aXQCEBFn2x+njlYHqWbwNH4aIyRvm4uCgVa466hxNtMn8EQIyhynhRhR
-         q9+FGjLnbzsjE4fcP1ugRcSY96xv/klkzyNwgQXzmKLU5q4/JiRMI4EPu89M/s6I8gP9
-         7pWnWSChQjtk9wFAmR53bmR6Br6Ocr1UVarCTOfbfpRrKnsVGTxz3Csp5E3mA7goETlZ
-         FqBYAAKzRx0F9PR8PUl2cPI7tLpECdyqVyWawpsiOSZF+d4X+otLUW6Hn/GKp65Gc7EB
-         Sl6j/u9S7pJg944NQTFPzzb1pcV9tKaSijK2ZUWxEs+NeA7etnkx9ULg6dB4YJ1A4T9f
-         I4NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUL5r9kIaWQ50QizSDYsVlx77vqcFL0ZZPRqvC5vDXPEC+f8ETwT28NiflZ+ShRrsCW052YCKS1v0yY1jk1@vger.kernel.org, AJvYcCV2TUSzil7V+hrizbukKFbfKBi7fSBNgTKv7JqCz/IBrDn5LHxCLFKl9sQqtLZtkcc94Ky/De9ItEjphQ==@vger.kernel.org, AJvYcCW5rfafEYP0EKZJjWGPjTmIlhJygp6bsDXAgHhTjOUH4DeSAKNybwWrGp8+H4/oaE25PdpR/eqwnyEj@vger.kernel.org, AJvYcCWHpXdM0t+4BGGUqiRPdoJHNqw6Ztq/YoMAe3PDo1wQkk4A9D8+XASlxat1uY9vpTKb+luHUYpcu6Lm@vger.kernel.org
-X-Gm-Message-State: AOJu0YzA7DZARP9TIz1/+LObdDFQ8xeOZLTwueUPRl21jqRZu8+QRv7L
-	fhvdfSy/bqHcw8eIhS8qsYw416LCgfuEzqheEz09a/PAGlcgwslr
-X-Google-Smtp-Source: AGHT+IGmMxiC+DaNWneEaWUXbx942+3srxh6SQiQYR1Tc2s2HP0uHw5IXb6QSGrhhTUBncneke8Rzw==
-X-Received: by 2002:a17:90a:db15:b0:2e2:ba35:3574 with SMTP id 98e67ed59e1d1-2e2f0a7afecmr1668241a91.11.1728612559763;
-        Thu, 10 Oct 2024 19:09:19 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2d5df1ed0sm2122410a91.19.2024.10.10.19.09.18
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 19:09:19 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id 3BB5C4374224; Fri, 11 Oct 2024 09:09:16 +0700 (WIB)
-Date: Fri, 11 Oct 2024 09:09:15 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Ira Weiny <ira.weiny@intel.com>, Dave Jiang <dave.jiang@intel.com>,
-	Fan Ni <fan.ni@samsung.com>,
-	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Navneet Singh <navneet.singh@intel.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: Dan Williams <dan.j.williams@intel.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	Alison Schofield <alison.schofield@intel.com>,
-	Vishal Verma <vishal.l.verma@intel.com>,
-	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Petr Mladek <pmladek@suse.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Sergey Senozhatsky <senozhatsky@chromium.org>
-Subject: Re: [PATCH v4 02/28] printk: Add print format (%pra) for struct range
-Message-ID: <ZwiIy-pIo_BPLtua@archie.me>
-References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
- <20241007-dcd-type2-upstream-v4-2-c261ee6eeded@intel.com>
+        d=1e100.net; s=20230601; t=1728612652; x=1729217452;
+        h=cc:to:from:subject:message-id:mime-version:date:reply-to
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5/FKyHqildhGZez+hgtXv2QUQsqoQKXeEoi9o/+C1cI=;
+        b=GfKNpPqlF/isSWAZBT+DN5AfoXLQynoNlf9S3cNf6sNjZfEBhp+hAcFKWPTznskMt7
+         ShRBKSLSXz+/SH0Q6iYc8fv7WfqO9XKo7aYHy8B/jP0daANyMpTbJu/s2MAR2M8pekg2
+         qL2i5OezVSxoDmTUhbZp1t43RFUaOuRDH1H29LAX8cvqCT/HX4SvpbMOfptI2axssFv3
+         /LcIIpA74wdLfuIRSHNEiiBsSLdmmPgMhMe53UitX8Qj4vw7oQo3rv6sYnSgqXLzCh9t
+         pgymooPXQjtk3nBFD2QCStmlYBrMX6NtwiF7hXMV/XB8wRYemhWNO2C5Rrvd79xTzLC4
+         zn+A==
+X-Forwarded-Encrypted: i=1; AJvYcCWDhkWtw2T9E3PSCR17Un0uUIbAJr50fZfrfnAZk8huQZipfOY0NT1AGIZg7oQvsUBhkiHJXwcWYDBB9Ns=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMMdrc3C5iKb3u890lMNPg58Zbf1cpp6+BkqI8NGqWvCzm9oY1
+	cSUsp/3YzTdLk+U62Teg30upq/7dVwOZILYaLXZ7MgDUKgKgc9toV+E37hmn2dSSl+GLLg7ezj7
+	z3Q==
+X-Google-Smtp-Source: AGHT+IE0XX2WG+FjtezTqk/Tu6H3cMoEAQgdFOILW3CZ3tEJw12RJ2BlCsXz43TWSq3961vu0dEm9hLeyFQ=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:4982:b0:6dd:bcce:7cd4 with SMTP id
+ 00721157ae682-6e3477b4505mr376497b3.2.1728612652667; Thu, 10 Oct 2024
+ 19:10:52 -0700 (PDT)
+Reply-To: Sean Christopherson <seanjc@google.com>
+Date: Thu, 10 Oct 2024 19:10:32 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="KmiAZmKUS8OFkhKJ"
-Content-Disposition: inline
-In-Reply-To: <20241007-dcd-type2-upstream-v4-2-c261ee6eeded@intel.com>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
+Message-ID: <20241011021051.1557902-1-seanjc@google.com>
+Subject: [PATCH 00/18] KVM: x86/mmu: A/D cleanups (on top of kvm_follow_pfn)
+From: Sean Christopherson <seanjc@google.com>
+To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
+Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Yan Zhao <yan.y.zhao@intel.com>, Sagi Shahar <sagis@google.com>, 
+	"=?UTF-8?q?Alex=20Benn=C3=A9e?=" <alex.bennee@linaro.org>, David Matlack <dmatlack@google.com>, 
+	James Houghton <jthoughton@google.com>
+Content-Type: text/plain; charset="UTF-8"
+
+This is effectively an extensive of the kvm_follow_pfn series[*] (and
+applies on top of said series), but is x86-specific and is *almost*
+entirely related to Accessed and Dirty bits.
+
+There's no central theme beyond cleaning up things that were discovered
+when digging deep for the kvm_follow_pfn overhaul, and to a lesser extent
+the series to add MGLRU support in KVM x86.
+
+[*] https://lore.kernel.org/all/20241010182427.1434605-1-seanjc@google.com
+
+Sean Christopherson (18):
+  KVM: x86/mmu: Flush remote TLBs iff MMU-writable flag is cleared from
+    RO SPTE
+  KVM: x86/mmu: Always set SPTE's dirty bit if it's created as writable
+  KVM: x86/mmu: Fold all of make_spte()'s writable handling into one
+    if-else
+  KVM: x86/mmu: Don't force flush if SPTE update clears Accessed bit
+  KVM: x86/mmu: Don't flush TLBs when clearing Dirty bit in shadow MMU
+  KVM: x86/mmu: Drop ignored return value from
+    kvm_tdp_mmu_clear_dirty_slot()
+  KVM: x86/mmu: Fold mmu_spte_update_no_track() into mmu_spte_update()
+  KVM: x86/mmu: WARN and flush if resolving a TDP MMU fault clears
+    MMU-writable
+  KVM: x86/mmu: Add a dedicated flag to track if A/D bits are globally
+    enabled
+  KVM: x86/mmu: Set shadow_accessed_mask for EPT even if A/D bits
+    disabled
+  KVM: x86/mmu: Set shadow_dirty_mask for EPT even if A/D bits disabled
+  KVM: x86/mmu: Use Accessed bit even when _hardware_ A/D bits are
+    disabled
+  KVM: x86/mmu: Process only valid TDP MMU roots when aging a gfn range
+  KVM: x86/mmu: Stop processing TDP MMU roots for test_age if young SPTE
+    found
+  KVM: x86/mmu: Dedup logic for detecting TLB flushes on leaf SPTE
+    changes
+  KVM: x86/mmu: Set Dirty bit for new SPTEs, even if _hardware_ A/D bits
+    are disabled
+  KVM: Allow arch code to elide TLB flushes when aging a young page
+  KVM: x86: Don't emit TLB flushes when aging SPTEs for mmu_notifiers
+
+ arch/x86/kvm/Kconfig       |   1 +
+ arch/x86/kvm/mmu/mmu.c     |  72 +++++++-----------------
+ arch/x86/kvm/mmu/spte.c    |  59 ++++++++------------
+ arch/x86/kvm/mmu/spte.h    |  72 ++++++++++++------------
+ arch/x86/kvm/mmu/tdp_mmu.c | 109 +++++++++++++++++--------------------
+ arch/x86/kvm/mmu/tdp_mmu.h |   2 +-
+ virt/kvm/Kconfig           |   4 ++
+ virt/kvm/kvm_main.c        |  20 ++-----
+ 8 files changed, 142 insertions(+), 197 deletions(-)
 
 
---KmiAZmKUS8OFkhKJ
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+base-commit: 3f9cf3d569fdf7fb451294b636991291965573ce
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-On Mon, Oct 07, 2024 at 06:16:08PM -0500, Ira Weiny wrote:
-> +Struct Range
-> +------------
-> +
-> +::
-> +
-> +	%pra    [range 0x0000000060000000-0x000000006fffffff]
-> +	%pra    [range 0x0000000060000000]
-> +
-> +For printing struct range.  struct range holds an arbitrary range of u64
-> +values.  If start is equal to end only 1 value is printed.
-
-Do you mean printing only start value in start=3Dequal case?
-
-Confused...
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---KmiAZmKUS8OFkhKJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZwiIxwAKCRD2uYlJVVFO
-oxaVAP9PfgNhSqeNCS9x8Z3GR7wEInL1UyyJGOr6Rl+q58Kj0wEAl3ide8qht2EY
-rGtPL8e03mtewkj3HecVC3pCWmSy/gc=
-=a0GV
------END PGP SIGNATURE-----
-
---KmiAZmKUS8OFkhKJ--
 
