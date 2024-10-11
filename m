@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-360686-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360687-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9515999E0C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:37:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB9C0999E0D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:38:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C3841F23DA4
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:37:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6A9E6289B15
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24E6D20C475;
-	Fri, 11 Oct 2024 07:36:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F87320C48D;
+	Fri, 11 Oct 2024 07:36:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="x/1WHHhc"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EVh7wXdf"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E88F920B216
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:36:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E9B20C476
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:36:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728632187; cv=none; b=ZrmoN7DRkyo97dXwq+GU3IydSqnTiQ0ReVsnNlBIGQosNhtQuZTz49eg+Ir5nwaTahzepHOVUaPyUwly5UZRHaTdSQxJduR1XD/+em4470nebu0Yv1D36DvLwuvMsjAT0FkJzNl1xTanIfjBMhnTydV4D3ORtsjSTc/YzfnCHp8=
+	t=1728632189; cv=none; b=Mpc6a3qEE5cX7tInGQyA3NeyKBtO9BN7YpGJfbCed4+dPaXsZJp2VwB9eW8E3oNnJztkhSHDyGNDFvvvODTUGFmr+ipyZmV+ulB31ywFnVDWGMHCZ6ijtuSzp6Qy3LexBb67IlT2/VnVQh6016PN9aTO+74M7OkJsoj1EYEU+jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728632187; c=relaxed/simple;
-	bh=qRJ7uobiuXa4lx58ydid8NsiY9eSUc6Dd5fam5Iq7JM=;
+	s=arc-20240116; t=1728632189; c=relaxed/simple;
+	bh=xnAMIL5v413ciitu1wkY24YCgY7LrYNUuSXRkWHF/SY=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=k8LQ3/7O/6aQ4t/oZHqW2nb+Gmy9jpkaMNEZ73ZkNIMA1PyH3Bw5QNUwOkE51skdSgZxjznoAV91wQ1LAdVfhcKYK3X3fakJgNc2/HkjDRqwPHr1GLsyPcjwKgoPC/rzg65upr8EJ0NwDuUu0BIvNfiQ1dglv8y+3KWbdJ8w6Cs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=x/1WHHhc; arc=none smtp.client-ip=209.85.128.201
+	 To:Content-Type; b=mVYGk67gOd8kk+AbdmltQqnYPUY8caX98L1aActPm51vdPNWBZ0kO1OypZ/uJx3Mm/YSOG4NNm6M3bIWh0pyo8mCY5h0VOQhzSczl2hPax7uNkdfuCfE22mdq9B+3bEl4KFT6hrX7k0DgfEkwEilmKwhLFtj2cZFbcdJszUIdHI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EVh7wXdf; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e31d9c8efcso35447607b3.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:36:25 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e34c8daef3so5203227b3.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:36:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728632185; x=1729236985; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1728632187; x=1729236987; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=sGy2stET4dPYcbIauhcjx1YKA3rAeDl4bGF/9JCbzDA=;
-        b=x/1WHHhcX5uhIxoTpgJ6UZwPYJRUF+JSEIHaOdJWNzLDZJe6aHEZe/3u+iSYX8MOlB
-         Nrk+Bfyq+S/t+w5ZOTXMXYCpMbHvoUN3BoqSGR4KR3wcO6KLTSt86R+Rc/nzuSnFJG78
-         ARnI42Sxg/65Q77Vb0iQOzCbiYXAzJ7odOkuvDh0sJa9boNgE3YU6rRWaIplJAHO8niU
-         nQ7W2z67TzFq5jNUm8Ntgdk+WAmCeEyauyjtia2NXK4bhEsYV4xPU9yADNrGtj/uuxSu
-         t7swkd2owG05q61MaFjqCy8YL2niNI8XDJOfnCUZ3lriD7U0jMXKQq90yo6nMFjwKEn4
-         ++3g==
+        bh=sInfOXsK4DHkW3UJ8a7cyPbP0ObPdFBOq3supb45AvQ=;
+        b=EVh7wXdfXe0RnpY8nfR5yQqfuXB1hROt3aBQ9TpDmWIFeJKi0XOAlK7GWLBDKA/Elh
+         WDDgTnjGWYY+mA/Zl/e8YRHXmcdJ0CtWPGijEVwWkCfRIhHLw+0Tsu1vtjngo1UEa5g9
+         wzyA1kqvzpyuado4cXCTXbJLO39OvCmaVlhtbkfsIBceo7wLsOUt3Rqk0fhGGS78OlC+
+         +Pvg5b2nnCobNFCwRA0tYwzhtG86Sd09rSDYFFRnRPgha0u3GcEXNMmBuGZsdNTb72Z4
+         tMmjcZSj9e2LTFVmVgPYbggCttW+XWwWz7D1o7QInT7F+x0dx8Lcb+SYoTrmC0N3Vb4s
+         mzjw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728632185; x=1729236985;
+        d=1e100.net; s=20230601; t=1728632187; x=1729236987;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sGy2stET4dPYcbIauhcjx1YKA3rAeDl4bGF/9JCbzDA=;
-        b=HCe2Z7LB8ZN5CSYKUzVukaXFHJt2p09Wa/DyUZSGRo93kDKkWZT590iYo6NBUTz0RU
-         llkCxXYuwxXwdQttobnRYOcGwVb0QTrXkndrWTXfRfAqP5aKB9zhBm/dwdGdKiQljoeO
-         11aFvItyUUN875FN/47mrLlgJ0fJ22HK0XlFRNFBSejYZdDxqiNA3HQAqFZP/ucUD7P6
-         21gHzcAe3r2nQttcE3Ey9txF6wV7ZTh5m2naHGF2wQ7pVnxgyy07Vi/WvLOx2bt2MYuW
-         pWmbWJLBxMoaWvwYSswaKxWOtl9HtJR/ttgrZCtKMcEL5YybLuJI8LaM3vq55IOvFaIG
-         pznA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgcmoDKLKVLm2pcnW+/+xMRgAAYXqSskyatrBdvhzu6CWQINLcMZD8kF8bWc7CqV51zkC2kzWIPJkbUmQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4zn2RbTQmyih8cBgkBlJIEdYJI8tQ86Gofet4NvG7VOIRUXcj
-	mN1a2X6fL+7d4PI0uU778wHSMaEQMXmJRFXCWMsY9gZCsLJeaifL0yhZJqRohFokZcQ/IGxASxs
-	WCbof4A==
-X-Google-Smtp-Source: AGHT+IFCnDFL9xKF8OEn5GZiOdl2eowmU59Qvp9zHwHa5EKbZlB7BPAnM/Hp0z+j/P9xYahKR4m00uHjtQKt
+        bh=sInfOXsK4DHkW3UJ8a7cyPbP0ObPdFBOq3supb45AvQ=;
+        b=RRPfv9wTbBRxjc8iQz6xFgFqjaw45daLPoH608kV5xiPTBzI4bCp9Hc2bPnWqqbE/Z
+         Yvvx+f71nIcbNCDb/nASDOkkuQ7XLEeqM4SvazcvRfDMy5wiqKRQtiYoAwHgYuaFDmtl
+         8doN9I0mj4NLnVI2D2ykeR/o5Vs17jFkgf1elNCtGfYJm74AUDmkaBEHtJplZOq4XYhC
+         O3a4FgA7p2q1xXSjT0fCX7Q5iZqS2XRTVxDgCCyY8K15NM7lHwrcrLz5mN+TdhqI4bBO
+         nvr4GfZKk5AZ5jfkrAiDu1g9iNxRnaf6MeuB3R6lIhw9Q4CH23okqa4OJ9YidBoR0RZE
+         plew==
+X-Forwarded-Encrypted: i=1; AJvYcCWlgzD7dH0VssrYmLzyBWortbMlV3y3VCF1ylDsmQFHZTugMHdDms4/BJSzsf8LyNAkmImHHfV1ZZsagVE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyqkD+xDE4p+OFl0uv9IZJjLRNQoBisMacN+GivShBaPpKiD5Sz
+	bHDM2Ovtv+hyBltlUUQNMPX5nvcYLleFklUhL937EsXVxMQQwOHX0j7gzglYAqqTnUw8myr3dDV
+	lD7+3+g==
+X-Google-Smtp-Source: AGHT+IHA2iTnHlVf+hgVhL9GrhHFp/9IHezt164Cm5YXlEKS9eEEUTgiN/fM/H+2WylpswmvDe7BHPccrB/E
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2a3:200:8144:56f:2e1e:4db])
- (user=irogers job=sendgmr) by 2002:a25:c593:0:b0:e28:ede2:d060 with SMTP id
- 3f1490d57ef6-e2919dd2c51mr1323276.4.1728632185018; Fri, 11 Oct 2024 00:36:25
- -0700 (PDT)
-Date: Fri, 11 Oct 2024 00:35:56 -0700
+ (user=irogers job=sendgmr) by 2002:a05:690c:c09:b0:6e2:6f2:efc with SMTP id
+ 00721157ae682-6e347c52d2emr463317b3.5.1728632187304; Fri, 11 Oct 2024
+ 00:36:27 -0700 (PDT)
+Date: Fri, 11 Oct 2024 00:35:57 -0700
 In-Reply-To: <20241011073559.431302-1-irogers@google.com>
-Message-Id: <20241011073559.431302-6-irogers@google.com>
+Message-Id: <20241011073559.431302-7-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241011073559.431302-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Subject: [PATCH v1 5/8] perf test: Tag parallel failing shell tests with "(exclusive)"
+Subject: [PATCH v1 6/8] perf test: Add a signal handler around running a test
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,98 +90,71 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Some shell tests compete for resources and so can't run with other
-tests, tag such tests.  The "(exclusive)" stems from shared/exclusive
-to describe how the tests run as if holding a lock.
+Add a signal handler around running a test. If a signal occurs during
+the test a siglongjmp unwinds the stack and output is flushed. The
+global run_test_jmp_buf is either unique per forked child or not
+shared during sequential execution.
 
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/perftool-testsuite_report.sh | 2 +-
- tools/perf/tests/shell/record.sh                    | 2 +-
- tools/perf/tests/shell/record_lbr.sh                | 2 +-
- tools/perf/tests/shell/record_offcpu.sh             | 2 +-
- tools/perf/tests/shell/stat_all_pmu.sh              | 2 +-
- tools/perf/tests/shell/test_intel_pt.sh             | 2 +-
- tools/perf/tests/shell/test_stat_intel_tpebs.sh     | 2 +-
- 7 files changed, 7 insertions(+), 7 deletions(-)
+ tools/perf/tests/builtin-test.c | 28 +++++++++++++++++++++++++++-
+ 1 file changed, 27 insertions(+), 1 deletion(-)
 
-diff --git a/tools/perf/tests/shell/perftool-testsuite_report.sh b/tools/perf/tests/shell/perftool-testsuite_report.sh
-index 973012ce92a7..a8cf75b4e77e 100755
---- a/tools/perf/tests/shell/perftool-testsuite_report.sh
-+++ b/tools/perf/tests/shell/perftool-testsuite_report.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# perftool-testsuite_report
-+# perftool-testsuite_report (exclusive)
- # SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/perf/tests/builtin-test.c b/tools/perf/tests/builtin-test.c
+index 6b8ef198d975..45a31376fdb0 100644
+--- a/tools/perf/tests/builtin-test.c
++++ b/tools/perf/tests/builtin-test.c
+@@ -8,6 +8,7 @@
+ #include <errno.h>
+ #include <poll.h>
+ #include <unistd.h>
++#include <setjmp.h>
+ #include <string.h>
+ #include <stdlib.h>
+ #include <sys/types.h>
+@@ -226,16 +227,41 @@ struct child_test {
+ 	int subtest;
+ };
  
- test -d "$(dirname "$0")/base_report" || exit 2
-diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
-index 8d6366d96883..f7d8c5b243a4 100755
---- a/tools/perf/tests/shell/record.sh
-+++ b/tools/perf/tests/shell/record.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# perf record tests
-+# perf record tests (exclusive)
- # SPDX-License-Identifier: GPL-2.0
++static jmp_buf run_test_jmp_buf;
++
++static void child_test_sig_handler(int sig)
++{
++	siglongjmp(run_test_jmp_buf, sig);
++}
++
+ static int run_test_child(struct child_process *process)
+ {
+-	struct child_test *child = container_of(process, struct child_test, process);
++	const int signals[] = {
++		SIGABRT, SIGBUS, SIGFPE, SIGILL, SIGINT, SIGPIPE, SIGQUIT, SIGSEGV, SIGTERM,
++	};
++	static struct child_test *child;
+ 	int err;
  
- set -e
-diff --git a/tools/perf/tests/shell/record_lbr.sh b/tools/perf/tests/shell/record_lbr.sh
-index 32314641217e..8d750ee631f8 100755
---- a/tools/perf/tests/shell/record_lbr.sh
-+++ b/tools/perf/tests/shell/record_lbr.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# perf record LBR tests
-+# perf record LBR tests (exclusive)
- # SPDX-License-Identifier: GPL-2.0
++	err = sigsetjmp(run_test_jmp_buf, 1);
++	if (err) {
++		fprintf(stderr, "\n---- unexpected signal (%d) ----\n", err);
++		err = err > 0 ? -err : -1;
++		goto err_out;
++	}
++
++	child = container_of(process, struct child_test, process);
++	for (size_t i = 0; i < ARRAY_SIZE(signals); i++)
++		signal(signals[i], child_test_sig_handler);
++
+ 	pr_debug("--- start ---\n");
+ 	pr_debug("test child forked, pid %d\n", getpid());
+ 	err = test_function(child->test, child->subtest)(child->test, child->subtest);
+ 	pr_debug("---- end(%d) ----\n", err);
++
++err_out:
+ 	fflush(NULL);
++	for (size_t i = 0; i < ARRAY_SIZE(signals); i++)
++		signal(signals[i], SIG_DFL);
+ 	return -err;
+ }
  
- set -e
-diff --git a/tools/perf/tests/shell/record_offcpu.sh b/tools/perf/tests/shell/record_offcpu.sh
-index 67c925f3a15a..678947fe69ee 100755
---- a/tools/perf/tests/shell/record_offcpu.sh
-+++ b/tools/perf/tests/shell/record_offcpu.sh
-@@ -1,5 +1,5 @@
- #!/bin/sh
--# perf record offcpu profiling tests
-+# perf record offcpu profiling tests (exclusive)
- # SPDX-License-Identifier: GPL-2.0
- 
- set -e
-diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/shell/stat_all_pmu.sh
-index 42456d89c5da..8b148b300be1 100755
---- a/tools/perf/tests/shell/stat_all_pmu.sh
-+++ b/tools/perf/tests/shell/stat_all_pmu.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# perf all PMU test
-+# perf all PMU test (exclusive)
- # SPDX-License-Identifier: GPL-2.0
- 
- set -e
-diff --git a/tools/perf/tests/shell/test_intel_pt.sh b/tools/perf/tests/shell/test_intel_pt.sh
-index 723ec501f99a..660991d17607 100755
---- a/tools/perf/tests/shell/test_intel_pt.sh
-+++ b/tools/perf/tests/shell/test_intel_pt.sh
-@@ -1,5 +1,5 @@
- #!/bin/sh
--# Miscellaneous Intel PT testing
-+# Miscellaneous Intel PT testing (exclusive)
- # SPDX-License-Identifier: GPL-2.0
- 
- set -e
-diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-index 9a11f42d153c..f95fc64bf0a7 100755
---- a/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-+++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
-@@ -1,5 +1,5 @@
- #!/bin/bash
--# test Intel TPEBS counting mode
-+# test Intel TPEBS counting mode (exclusive)
- # SPDX-License-Identifier: GPL-2.0
- 
- set -e
 -- 
 2.47.0.rc1.288.g06298d1525-goog
 
