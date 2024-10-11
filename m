@@ -1,178 +1,199 @@
-Return-Path: <linux-kernel+bounces-360895-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4633C99A119
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:17:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C04099A118
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:17:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 989D71F21672
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:17:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1161F2207B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:17:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79D2B20C465;
-	Fri, 11 Oct 2024 10:16:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B821210C12;
+	Fri, 11 Oct 2024 10:16:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DtQEfn8U";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o87QmKLb";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="DtQEfn8U";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="o87QmKLb"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="SVwlURYP"
+Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2046.outbound.protection.outlook.com [40.107.105.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1246B20FA89
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728641804; cv=none; b=QouEPKewuQ3X+A8VySZP71UiQfqSL2Mh1omny5qnRJ75HpP9qOUjzFdTi3dwYcjvd62L1vromdd0IR4/3JEopS3P7pXGmrp1OhkTK6yA3AJs2MrBG10Mz2u3D8fRJHJ+NTr1vq7cDCi1V9Ef3taj5Zaftc37P3W3n9FgE2XlLIs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728641804; c=relaxed/simple;
-	bh=TQ6kcWdqLbgNOn8WSqGTRL14Obhfy55lV11i49WhF2s=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=pYb9uINTZkLd626itlzS3cwTdQGi20s2qkb7nVdzO5nLdh6ZIDAUJYmfN+FmqPShWZiSKJR7fSaioMSX+rGs5sojNz62ZuWSn7cc1Iruf+7OkFAVE5ojtvXbwipPhQkiF2yy1m5BRhGcapo1BluzNKzOp+Nvd2AQV9PNwYJV2mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DtQEfn8U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o87QmKLb; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=DtQEfn8U; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=o87QmKLb; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 38E1F2200C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A81BC28EB;
 	Fri, 11 Oct 2024 10:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728641801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QOskVyjg0ncw+WRCtk4Z8tac+QjK2dxuHGDof2sHPEg=;
-	b=DtQEfn8UXHt4o8elirm1xLRoSfmW7kuxwUMuouzVoCTXHCkxMZf29NUDXm/5qo++jKkXyz
-	8g8OlkPAoHqRrzfntxOY66Ie8uOPHqp7+Pyfzv5GJU0vmwj7ZANVy4teL4vLa52ZAVj6a/
-	auje8Nm2GSiAKrOdFRkE7U4MwH3RZ2k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728641801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QOskVyjg0ncw+WRCtk4Z8tac+QjK2dxuHGDof2sHPEg=;
-	b=o87QmKLb1BIzNR/JMdrHa3ktGC/pCqoAEi7ZGgqw6Q9h/Ff7uSYuSDYqrM7/m11oljVrgq
-	YaczyjE6e1W+/LAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728641801; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QOskVyjg0ncw+WRCtk4Z8tac+QjK2dxuHGDof2sHPEg=;
-	b=DtQEfn8UXHt4o8elirm1xLRoSfmW7kuxwUMuouzVoCTXHCkxMZf29NUDXm/5qo++jKkXyz
-	8g8OlkPAoHqRrzfntxOY66Ie8uOPHqp7+Pyfzv5GJU0vmwj7ZANVy4teL4vLa52ZAVj6a/
-	auje8Nm2GSiAKrOdFRkE7U4MwH3RZ2k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728641801;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=QOskVyjg0ncw+WRCtk4Z8tac+QjK2dxuHGDof2sHPEg=;
-	b=o87QmKLb1BIzNR/JMdrHa3ktGC/pCqoAEi7ZGgqw6Q9h/Ff7uSYuSDYqrM7/m11oljVrgq
-	YaczyjE6e1W+/LAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 05EDD136E0;
-	Fri, 11 Oct 2024 10:16:40 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id rFPgOgj7CGfDPgAAD6G6ig
-	(envelope-from <jdelvare@suse.de>); Fri, 11 Oct 2024 10:16:40 +0000
-Message-ID: <efc8ab85e02b95ab4db09eb9142f62129a51f08c.camel@suse.de>
-Subject: Re: CVE-2024-38630: watchdog: cpu5wdt.c: Fix use-after-free bug
- caused by cpu5wdt_trigger
-From: Jean Delvare <jdelvare@suse.de>
-To: cve@kernel.org, linux-kernel@vger.kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Date: Fri, 11 Oct 2024 12:16:40 +0200
-In-Reply-To: <2024062141-CVE-2024-38630-3640@gregkh>
-References: <2024062141-CVE-2024-38630-3640@gregkh>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728641803; cv=fail; b=HoLLFOxk2iOy70jtnXzapp74fH8UbauHguKHYrvwSt5TrJcvGJnX/EL6HLdTnX11UKGeCnuJOmUkt2Hz7jBhlH0rk8SYl9o/PGi8vS8YZNg/OaOQsD8UKixkOcgcwxCwr5QRtbR/0mBPGGM89xPrhngYzxxmODccnncudVP8XU4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728641803; c=relaxed/simple;
+	bh=dtggG/3Yn9myRn7rMnK8KwnvT0EvZu/RKWqacsA6llw=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=pwZwHpRnPleM5iO9QBPDl1VtXF1piSAT+tiD9fJpHUXabvD/jyh6JZuu64WGHNKUEeyjwcJeWrWyrzWHCiybLpEuToWtCJKl2teZPPAuVfC41PZwijFvmN2Z7CgFpNW/iUkEx1O8MLGqRFcffSVzykJoDraeeQxKc52XE7MPBkA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=SVwlURYP; arc=fail smtp.client-ip=40.107.105.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=i0rxleBYhVgcaRz1/SsWAZXRpG84xwRK2i6E/zEU5dqHt0Nme7CjfwTwkPcXUO+6rFtBU0i9v3PANNZT+gsvDoj2dZsTrcllmOI8N0ixE1YvkJ+kN1MeQ7+pgQkn8vne2VUhV6ZhEz2w7hk4liGsQIIomhULK8UEeuqSqf/Wsorzt/dqP08BYOD0+WKlfYXaR2FKQL7ZVBdNZpl+4yQ3uU+Tdzwqp8QELgpVjVnvgYlvmBTqrkFi2CRrNJr2FtGeYBcOpOkUhpgHieGDsDt7VLvqKG+rH4NxSCKtIpNngKd1wJHbcXuQzf6wsK0LZysaaRs+GwONNt5JfQemNyS2wA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zjxsmJaxQynYinvF445fjQQUKe9GYZ0Yon98UalA4I8=;
+ b=l4aRyc6cl19b9tJBgU/6RwPc1eULjwt5jC4hNVWRhp8nOou/eZJFi7ysSiMcOM7YAyPEJC/Lk73IKO5ABC8fUEED298E0Z6Qyl1RbdHAFJBrmxjTomgOGCpv+/uosbTubcX4eZ2gI1t54VglOL+uIfJJP51op9a/Yd3NXj48jt2bCegLdVq8yvuBJrhfea+Cme6v3u4lWOwJbXlsx0UpmC1tRMFPYT45J171O8w/iz5h4qOY/eGpunS3DdfRdJ84O5Ov7M4DLLdL45inb/mC1rebGLRJe7P8/N/+Fry5p+Bbpvg4eX/G791sSFnTmu/Cbnn/dtln2qxMgkuvyrrtqA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zjxsmJaxQynYinvF445fjQQUKe9GYZ0Yon98UalA4I8=;
+ b=SVwlURYP2VaCFZRGGC/EY8OA4dksB6S0Q/sFVqx8SLmQV6M8phC8xdgBSGCRItRcTc6jzjPC+Ry58rlffUg6sYgC96cuJcl/M7PM+o2f526l2Y3As3uQV0gMWdNxqE3ovfWJcTFa81ANrIYo12HDyNeIUXF9wvkeSee6m4HeggRfbvJMpH0Aq5uyXYvE5+Pe2lGWxdDOj17bGnG2gCbtR81n+vXxQFHiwbkzamD1mhC6XFFA39XWRQn31KyOtd/0ajYAsmSHdRm30tVWFDYs8zB6ThVE6rwmGL7QaYrxdYizaghcrkEI6Df6go0XAjy6SpiV69nHHqnhkUuUoMVPIg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from AS8PR04MB9080.eurprd04.prod.outlook.com (2603:10a6:20b:447::16)
+ by AS8PR04MB8852.eurprd04.prod.outlook.com (2603:10a6:20b:42f::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Fri, 11 Oct
+ 2024 10:16:38 +0000
+Received: from AS8PR04MB9080.eurprd04.prod.outlook.com
+ ([fe80::93bd:316b:682f:5e59]) by AS8PR04MB9080.eurprd04.prod.outlook.com
+ ([fe80::93bd:316b:682f:5e59%6]) with mapi id 15.20.8048.018; Fri, 11 Oct 2024
+ 10:16:38 +0000
+From: guoniu.zhou@oss.nxp.com
+To: linux-media@vger.kernel.org
+Cc: laurent.pinchart@ideasonboard.com,
+	jacopo@jmondi.org,
+	mchehab@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	kernel@pengutronix.d,
+	festevam@gmail.com,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] media: nxp: imx8-isi: Add i.MX8ULP support
+Date: Fri, 11 Oct 2024 18:17:10 +0800
+Message-Id: <20241011101711.704226-1-guoniu.zhou@oss.nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: SG2PR02CA0070.apcprd02.prod.outlook.com
+ (2603:1096:4:54::34) To AS8PR04MB9080.eurprd04.prod.outlook.com
+ (2603:10a6:20b:447::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	RCPT_COUNT_THREE(0.00)[3];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS8PR04MB9080:EE_|AS8PR04MB8852:EE_
+X-MS-Office365-Filtering-Correlation-Id: 5bf9fa39-c725-4623-eeae-08dce9ddca5c
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+ BCL:0;ARA:13230040|7416014|366016|376014|1800799024|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?c2lhczE5cXdiZ2NvVmtGVDJwc1doOWtUUi9qdGlKVjBZbUlDODdyQldDMTV0?=
+ =?utf-8?B?L3h6b0hqczk0RUUvSnVlVXVHd3lvSWJkeENlQUgzaktrbnJYek8xS1hLaG9E?=
+ =?utf-8?B?NVZQdXQxQ200MDkzbnY2QzZqZ0o3TnlMMXJ2b0s1NHIvVkM3Q1RZNjFsOGMy?=
+ =?utf-8?B?bGx0ZDdSSmFYYXpLY2pwb1hQdm1ra1ZQR0lYM2I3ZlU4c2hVNnFHcWZwbWs3?=
+ =?utf-8?B?L3pibjVQNnh5ek50b00zKzRhSDlrSGZHNmZQNSsxSVZ3cUthNm0xOUF5WHdN?=
+ =?utf-8?B?VGI5d3BUMStHd0lPV09ZVVJYbzEzdi9xTU5HMlFtN3p0V21wbG1CcUdqeU9M?=
+ =?utf-8?B?WitjUHpZRzV5a1F0SHFGdkJuQTUveUVzVnVoUWRqN0Z0dFhKaTFxWjFCK3Qr?=
+ =?utf-8?B?VVkwMmF0bkw2bGF2L2tQQlAvSWNnRzBsUGtOY2xMRldpNUNnVFZxNmhuM1Zz?=
+ =?utf-8?B?TXZ4SUhKRW5jSkJTY3hpUEhCODRMODRySXBYMEJFcExncnVrNzlkczhhVU5J?=
+ =?utf-8?B?RVdsT1I5ZzRtclFpVm8vZnZObXh0NmpodExmbDZucDB3V2l4TlY0VkNQV09s?=
+ =?utf-8?B?TmI5QStXZE4rYmNCbmZzMzVFOWw0emNnZVRBZzJObkFDb045VDExbXJMVnVZ?=
+ =?utf-8?B?SDR1Rk5lWVJWSW96Yy9MZ2R5WHdqSUx1OTk4eHdmbzhTdmhEb1JFeUJuZW5I?=
+ =?utf-8?B?di91K2ZBeTYvbVBFM1VZSDBmS1dRTDFEU2gxcE1sOVEwc004cjA0N1hzVGda?=
+ =?utf-8?B?L3ZiUUxqUTdnRVZlSDNXMWNXTS9BRzViREpXWmtJeEZMYjRiU3dxWEhzWU50?=
+ =?utf-8?B?Zy9iKytMN3VuYzQyQVRxSGVLdUU0TmZiUm8xOTAzY2xIQUVVUTFHK1V1eUpO?=
+ =?utf-8?B?bEJrY3dkd2lJclN0TmdDRnZQVXpJKzFDUUdnYmZrSXAyQkw4RjNaWVFVZE56?=
+ =?utf-8?B?cWtnMjJUcW1RM1Q0RldVRnlzeStyT1lmNi9lb1ltT1hXa0hrUkR6b1VLbDNL?=
+ =?utf-8?B?S3JDM2tvdGlZakZaSGRheGxFUGI1S1B0YSt5eHZCUmNlOFFmajh4V0JNZ2Ux?=
+ =?utf-8?B?dC9ON3NIeWdqRnNtRnpsdyttUGZKS1dFS0pkN2UrcG1jL0wzS1lVcEppYnVq?=
+ =?utf-8?B?d1pSSEhrdjZwemNWYW1ldXhQZjRlcXAvNWJhUmFyc3MyNGcrVGdFaWI1cG1h?=
+ =?utf-8?B?cFFlTUR6MHFnM0U2U1RyOHlma2lsQ2Rxa0JlaHBZOENlZUhDVkNVK1dDSGtz?=
+ =?utf-8?B?YlNMcVpDQmNWRnYyczZ4ZjRKMzBPbmN0T3lsck1UM1VSdmZqZ1JSRFp4anRq?=
+ =?utf-8?B?N25Md0xEZDJDRFhpQWJpMEc1QW1kR1hISkFqaytuMDRwNmhiMHFTck13M2Mz?=
+ =?utf-8?B?N0UrRVBncnNGMWFSQjZMTnlVU1VCOVcyUU15NnBBNWZKc0VadmtQSjZGT2VW?=
+ =?utf-8?B?MXhENnA4TGpFSXg1TDFaamgrd1VpV05JT1JSMjZSN0l6d3dwbVkreFU1cDlW?=
+ =?utf-8?B?QjAzdXdtcEZDUXFVS1hRY2hyUnpCVGI1cWRwRWEzYlFYUzJDZ2hDRW5tTTlL?=
+ =?utf-8?B?WmhucEZIY0JSOE14YlBCeWs0dnd1c0didk1rU0Vudyt5R3NEWnkrVUEycG1F?=
+ =?utf-8?B?MXhMNTFnMW5uMElQUUFwb3VIcWpaRTJXaGl6dVZaUFBXWnZUaGJpY3kwZVZW?=
+ =?utf-8?B?QzRTeGl4TE95SHJSYlR6cjFlU3JrM1F3TkQ0dnBYa2RCam42YmkwNWF5WGFQ?=
+ =?utf-8?B?RzhRQWNISGNrZitlanZVYkExcmJEL1ZWWVpFdU5sV0RwTFE0N0gyWUg1QlRX?=
+ =?utf-8?B?OHl4K0ZHNG9HLzJBSksxdz09?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB9080.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(376014)(1800799024)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?dGVWVnlxeUxObXlvbHVCOEtQT2NRL1VLbDRPaHRmbkVaS2F5RlRZQ2ZHZm90?=
+ =?utf-8?B?dlZlYjNXL1lMQmVIOWNXRHpuY0hzRXhPOVQweHhKdFhjcXFJakRxRkp3STZ5?=
+ =?utf-8?B?R2FESlZ0S3EyVWVUNEM1dWxEMkNmaEhkYytqSm5oaDZFYUQ4a0I2Ri9OTEVQ?=
+ =?utf-8?B?MStUZVFVc3hDNXU5R2lBMFZLM0hEMFc1bk9oZnUyejhLdDNyL2wzUk9HcXV3?=
+ =?utf-8?B?YWx6bWJCT3pGalJVYS9HY055Ui96OS9rRjRLcUdOb3B1Wm9scDdtWjdUemg2?=
+ =?utf-8?B?d0JFWTRaZWxsNk5CNkJuZFJjMi9LS0JmaGxHK1F0M2wwbmNiZzBYU1VxUFZ3?=
+ =?utf-8?B?THZkbkV5UGRqZThJMGs0NWppRlhzV2hHT2t6NndpUWs0VjJVVU1VQU16OUpp?=
+ =?utf-8?B?Zk93MkFvaHUzWksvOWd6RGE1Q29yK0xtRXFiV1U1cHcyN3d3cnhGQUkrSnZH?=
+ =?utf-8?B?eVRhQXYzSVVldDdKenhQUnZzQVJkbzE0N1k3Mmwvb0h4Z3ROMzhnams1SUQ3?=
+ =?utf-8?B?Y2MwaFV0RmVPNTJrUytpakdQcVhhalMrYU8xNnMzc3Rqd3VqNy83R2g3WjhJ?=
+ =?utf-8?B?VXBKNVcrN3pEUzBRQWZaNmVDMy9MUE1FcDR0U1I4NzMyK2Q3b1QwYmVZZkZR?=
+ =?utf-8?B?Z0g0M21GazJSVUx3MFFFV0VWUXA3OTh4NDlQL200VDVTeDVxajFLV2RwWlps?=
+ =?utf-8?B?KytteFdFQmFYWnNjdXozeFlnZXlkTHFDMXM1R0tmT3BTUEdoQmo1Z3M3R2w3?=
+ =?utf-8?B?dFdYeDczWGFiNFE5SHIyRGtuYjNCaHEySjZZTU1SWDNkSHVyc1NHVjVFaXI0?=
+ =?utf-8?B?dE9ucVF4UGZPclNKcTBIWXBBYVpIVG5BVkRGMFBPU3FmRUZYSWlrenREeWRy?=
+ =?utf-8?B?U1hVUjdjTzBoY2hQc3BYOXlZYnpuTlRQWDUzNytLcGVjTDdhV1RYZlVlRk9B?=
+ =?utf-8?B?SjcxOEsrTzZWQ3JDSWNzaWdVdGtUWlBoT1RiRk0zZVl1K0NkUmNPZzFVdStB?=
+ =?utf-8?B?NkwyWFpueUlzS0pKTms5eFNJdmxGOTFlVmdoTWpEMUhQWXpCTWJMR0R1NVdn?=
+ =?utf-8?B?YkpSYVFjcUZpV3JHZis5dXJ2S2pmZkovZ1A4OVFLbGVNakJsaStYRHNrU3hO?=
+ =?utf-8?B?TTNlc1c4N1JYU3pvNlFsdzIwRHNJbTR3cE05Ty9pS2hZV3BqZEdVUmdlOHJi?=
+ =?utf-8?B?V3lGNmlaTE43emVtSG1zankwYnptR0ZaYkhURXhYNnRUS0tjTDdKVkJ5VFdT?=
+ =?utf-8?B?dmcxVTFIOThQWk9HTnR2ZFNEZ0hWc0NETFdxUlhDc21JRHkyM0JML0FQd3hj?=
+ =?utf-8?B?eEtuYU5MREx3cmlTTmxLMGJvcmJRM3pHZVQzWTliNitGNUhKUllZWFNyL21D?=
+ =?utf-8?B?bnhTQUpkdm9PQjdmWUtmVURWcGgvbDVtZmJsVkpkYU5aMTRZalhYM2xtN1Qr?=
+ =?utf-8?B?R1B5enhUaTdnakZ5UzkrZHQ1eW9SeFdJd3VNcjJDSVZKNzBWYVFCRFlLWkZq?=
+ =?utf-8?B?Uk9pbCtpSzh6RDhYc3JhcnRUUlYzSUNaZ1RtbC9lWkFyVmsxaHRhVGRGSVQ5?=
+ =?utf-8?B?c0JrN0pMUXNrL2tRbnJsa0dUekc0cW53TUVKMEJOMmR4Y1FCQy9QOWdublli?=
+ =?utf-8?B?RmpoZ01tNVcyaHBzdXdsbktxeFBlVzgveWFVRmQxdGRqaTFaR1pIMTUwN01u?=
+ =?utf-8?B?YWh0M2U1YWpneW9iMExjT0tOQ3VDQ0NmUHJ3Qmx0SDdONW5EenNxTkJkbXNK?=
+ =?utf-8?B?YTlwU0g1UDg5MzRQYzhWSnVjWjV4RWU4T1V6SGpDYmo4S3pNenpYdGtUcVhH?=
+ =?utf-8?B?cWNDemMyaTg0ekpuMzI5OU9UVVdQc29pOWljdXBoZmlpUXcvZ3dmclIraFlO?=
+ =?utf-8?B?NmlWYURQOEtXNUY3VnAxZ092N2swbFZ5d3ByaXozTENFc0dFREc3L2s5UGpN?=
+ =?utf-8?B?VTNQNFBBQ1pnanRZamJKVjhzM1VvOXgzeUU3UTJzcXlHdyt1Szd6b1Y0MUZh?=
+ =?utf-8?B?cjhlcFJiSDU1S3JwdlRjTThRbE1GblZjaEt6WXdncGRRMm1jZlRXT2xTeFVS?=
+ =?utf-8?B?bDRvMDcwaERDaitmc29VZElrRzE1Nyt3VXAyanl0azBtYmZXU01EZ0QzWVg5?=
+ =?utf-8?Q?nOGH5AUCPFY+Em7yXtK/8Pe3+?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 5bf9fa39-c725-4623-eeae-08dce9ddca5c
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB9080.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 11 Oct 2024 10:16:37.9240
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: EbCkmquxadI178RlycxM7qgM88GBPTfzj9LbhXEBtnZecjkJgQtHpxBNA0EXWdSKmzVxMfNqoGPXDzX/LSDfMw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8852
 
-Hi all,
+From: "Guoniu.zhou" <guoniu.zhou@nxp.com>
 
-On Fri, 2024-06-21 at 12:19 +0200, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> watchdog: cpu5wdt.c: Fix use-after-free bug caused by cpu5wdt_trigger
-> 
-> When the cpu5wdt module is removing, the origin code uses del_timer() to
-> de-activate the timer. If the timer handler is running, del_timer() could
-> not stop it and will return directly. If the port region is released by
-> release_region() and then the timer handler cpu5wdt_trigger() calls outb()
-> to write into the region that is released, the use-after-free bug will
-> happen.
-> 
-> Change del_timer() to timer_shutdown_sync() in order that the timer handler
-> could be finished before the port region is released.
-> 
-> The Linux kernel CVE team has assigned CVE-2024-38630 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
-> 
->         Issue introduced in 3.8 with commit e09d9c3e9f85 and fixed in 6.6.33 with commit 9b1c063ffc07
->         Issue introduced in 3.8 with commit e09d9c3e9f85 and fixed in 6.9.4 with commit f19686d61650
->         Issue introduced in 3.8 with commit e09d9c3e9f85 and fixed in 6.10-rc1 with commit 573601521277
+This small patch series is to add ISI support for i.MX8ULP.
 
-For the record, this is incorrect. The Fixes tag is misleading. The
-commit being "fixed" was adding a missing del_timer() call, so the
-situation was even worst before that, as the race window on module
-removal was even larger.
+Guoniu.zhou (2):
+  media: nxp: imx8-isi: Add i.MX8ULP support
+  dt-bindings: media: nxp,imx8-isi: Add i.MX8ULP ISI compatible string
 
-The bug is present since kernel v2.5.61 when the cpu5wdt driver was
-added to the kernel tree.
+ .../bindings/media/nxp,imx8-isi.yaml           |  2 ++
+ .../platform/nxp/imx8-isi/imx8-isi-core.c      | 18 ++++++++++++++++++
+ .../platform/nxp/imx8-isi/imx8-isi-core.h      |  1 +
+ 3 files changed, 21 insertions(+)
 
-Also note that the bug was fixed using timer_shutdown_sync(), which is
-documented as only being needed when the timer can be rearmed by a
-workqueue or similar scenario, which is not the case here. So I'm
-reasonably certain that using del_timer_sync() would have been
-sufficient.
-
+base-commit: 67cefecf2a039b9ed0030b9213ceafcd45e6f9e3
 -- 
-Jean Delvare
-SUSE L3 Support
+2.34.1
+
 
