@@ -1,123 +1,167 @@
-Return-Path: <linux-kernel+bounces-360958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A34A999A1BD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:43:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 21A0599A1D6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 530F6286A81
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D84C42873E9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07614217305;
-	Fri, 11 Oct 2024 10:42:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CA462141B7;
+	Fri, 11 Oct 2024 10:44:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bHa8dkLX"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSsDMCGN"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7478216437;
-	Fri, 11 Oct 2024 10:42:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6DCE1E379F;
+	Fri, 11 Oct 2024 10:44:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728643331; cv=none; b=NmSNGTqLM2IsEwWLohGAYhUrWuf4GY6BTviqYETwBSUqqtMm0ogF9Pov90WeaG2D4PC3+0FZUdtGQ1Nxgih7LihMFWLq92a4fxLsUVYLgkzOjlOvEYm8BCKe13ec+zEzPkVCuvMno42q4xBowogYytwwxNYm+yrIqiL/QysGoQ0=
+	t=1728643490; cv=none; b=r96wGM8m5VmNVn/og1AeUwqOWQxxcs9pnkOoCFcBuKvwZiy19uj1U95YT5TmYZcFd/X0/wO++wO/B1TRouBjqI6MlysvtvxSJxvIdhDWntQrQjf7p1E7xog46q9J+8eNwh95G0uwJ0kg8zt0WNpX7ShalqCbUmhpKRue9xxxJfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728643331; c=relaxed/simple;
-	bh=8oNXqdznljnXVxSrIhnhjZsB8+PHRWcyNeEXqNTFp5M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JH9rMbOVblYcNe3nHPLlztynZ3iZgJYCTr1+yeXKMHoaMgDWz7G6tpiqr2vDXWuIfBVs69KkeFrMsTSn9IaaUNE9GdBitb5tte6VRgCE16YulFIIeIxay8XyasWLNeHKLxreSAVEwY7mqaBFKXVy4WGeOFdWNSvKrdTwPnLWwMA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bHa8dkLX; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728643330; x=1760179330;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=8oNXqdznljnXVxSrIhnhjZsB8+PHRWcyNeEXqNTFp5M=;
-  b=bHa8dkLX0G83PuldQeBu1dRJs89SyQc7EpPPXKZ2W6Vr+1DxlTFG6Mzd
-   oSO8mkMpEERlfqXAB/QEIoGxlbOj/bRl+mZEwGvLvt/gqaKVgNHK0/Lqh
-   9CHU8rpa4uXgwuCLtDzk0amU0+DdC/WPwUO0Mosu900RGuXv43N9ZLBCQ
-   uH1sRWwscpoaUmjSqME+j0T8CeqtqWclJpEwjASogPSa6kB2yDVaXfLPg
-   zBeTXdQp1Tl9WKohwJYvNerqaT7RGAmAtdvCW5Nfq9M8ylpZYrMtwKfks
-   /YmZ3WIHo4iekgfSUkcXs3fC+QRWejj6JBJkMCFA9Lh44eR5aqALE52fm
-   A==;
-X-CSE-ConnectionGUID: V8roMGsgSM6+5WMZBlGH4g==
-X-CSE-MsgGUID: 9RSe+39YQBezkEOyOl0puQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="28179666"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="28179666"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:42:09 -0700
-X-CSE-ConnectionGUID: jKnUvbYTRaC+GGPdJaPf+w==
-X-CSE-MsgGUID: 4YVanIJ4R0ODcb1kcbf2MQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="76983028"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa008.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:42:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1szD5w-00000001rWt-1Wi8;
-	Fri, 11 Oct 2024 13:42:04 +0300
-Date: Fri, 11 Oct 2024 13:42:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: vamoirid <vassilisamir@gmail.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 00/13]: chemical: bme680: 2nd set of clean and add
-Message-ID: <ZwkA_NW3xLi3dxMb@smile.fi.intel.com>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
+	s=arc-20240116; t=1728643490; c=relaxed/simple;
+	bh=8YftU+J2X9J13YWxNurwa6s8iQGMItBydkLmUXRoHyc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UOqJ0/8NLTiPCORNh7ahN5X3s68+IdqWLMpXbdxr9l4SW1k/Uwen3K5bkE1QbWsBgDzuq3ZsPRuT/V+2Z622n0pjg/Q7rzTAPoRbqSIloQrQ9H49tmwK0axk7UG1475EU4sUCiGSEWK1+eX4yWOSVXHnsfCqbl7UdCaLYsaqmuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fSsDMCGN; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-431137d12a5so16827635e9.1;
+        Fri, 11 Oct 2024 03:44:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728643487; x=1729248287; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Z/gVA7B3KjKp4bEd5fzh7WW3A8WX1CDjfsltZdIaACE=;
+        b=fSsDMCGNPK0MQNaV34ORKwbAsvPzWDvmcZLbzFux6lam3mBknVuYdbU05fNFILSpiw
+         MQ+uW7kZoBNuAODtMvnfmIrErhTHuH8RUw8tumPw3WI8yzRYRiCU8M+8ge5+eXT0cR/n
+         VBGgfgn4xx6Ve7fK5uH9Sqyp9BSrx1b3OK8MmK1uco00zHktJc2L6k2Y6u+oUIuGRSts
+         EfWZjhgEZfIokQb4YVA2nVRp4nZrbbBhiDmzaSWSSGM9EkP24OuC/3oDrRryCbQ1sYPd
+         y8zqAAiU4R4tXI0TLVRgJqbBrJWocKqbhIu5py9/Onjd81yBAimrZobgZgDdrcJLbusE
+         Ve0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728643487; x=1729248287;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Z/gVA7B3KjKp4bEd5fzh7WW3A8WX1CDjfsltZdIaACE=;
+        b=fmyrQd1cpZXpdHhnptHLHTIMdsGBenFoG7HDK2lcCNcTsm1TbbbsnOr9uWyPLZcdSc
+         t/udDB+u4HKfvKeLf7gqYwoeBU9IMVP9IbFrpwUQ2donrMFJaiy2Mgi9yB7IldxCUwSC
+         1Kvh+0m7PC8QtMcX0lqWsurzO6nvjXEfnSFrTRWPQbr7oqcm4cGrZjooMpR0e1IK2NoS
+         llNa1z8v9QPAR5LaZpxgkoR5KADpFV3oQ09d0vO5eNl5ZaZM3qWHwiP8++hbF/HKtrKq
+         enCQtbCRTXpyXp435Wnfs1uC/plaW/D0zvN6D+04Pb+hru/trGrnIdrlOb/Q8kncziNr
+         yEyA==
+X-Forwarded-Encrypted: i=1; AJvYcCW9WYu9ARpH/OHB/+RqlvNPHiv3CKTKItYesNRTdC6rl0pKHnDvrWtAWT8VSwXqeGbRXHyEhwffiuKS@vger.kernel.org, AJvYcCWx7MUETfj/flqpN/SbqLzYZuQGzJX7F1xcLlEW992Km/yucK+zlmO0+r1yOwObwRZZGV+850zKsMyTZvap@vger.kernel.org, AJvYcCX/rc2Q4mrMcaYm6EZFODSP5Fh4lp2gWFQS5SfLJUqB8EbNbBZr8Mq3Lgaf8l6fIsrL4rOqg8FSupyrR7kCle0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTpwnkBv3IXucZPWBaq8PwGztEGZQSC2rI4cKF3xN7hLS+2bxh
+	nc64VF8ymnqYR3x9YZ5iO2egUSj9Art83AlnIOptXPh+rrbP8ie5
+X-Google-Smtp-Source: AGHT+IFibIrxXU3f201xBoh5E0+sJzyf4HsP7kGrZdhtjtQviMQx/+xX4KH2Zfr06Ihw5/kRTUCvCw==
+X-Received: by 2002:a05:600c:3b0d:b0:428:10d7:a4b1 with SMTP id 5b1f17b1804b1-4311df56e7bmr17577355e9.25.1728643486956;
+        Fri, 11 Oct 2024 03:44:46 -0700 (PDT)
+Received: from localhost.localdomain (93-34-90-105.ip49.fastwebnet.it. [93.34.90.105])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd23esm3642375f8f.44.2024.10.11.03.44.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 03:44:46 -0700 (PDT)
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Lorenzo Bianconi <lorenzo@kernel.org>,
+	upstream@airoha.com
+Cc: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: [PATCH v3 1/2] dt-bindings: watchdog: airoha: document watchdog for Airoha EN7581
+Date: Fri, 11 Oct 2024 12:43:52 +0200
+Message-ID: <20241011104411.28659-1-ansuelsmth@gmail.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010210030.33309-1-vassilisamir@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 11:00:17PM +0200, vamoirid wrote:
-> This patch series is continuing the work that started on [1] by
-> improving some small issues of the driver in the commits 1,2,3.
-> 
-> Commits 4,5 are refactorizing existing code.
-> 
-> Commits 6,7,8 are adding DT, regulator and PM support.
-> 
-> Commit 9 is refactorizing one macro to attribute.
-> 
-> Commit 10,11,12 are refactorizing the read/compensate functions
-> to become generic and add triggered buffer support.
-> 
-> Finally, commit 13 adds support for an *output* channel of type
-> IIO_CURRENT in order to preheat the plate that is used to measure the
-> quality of the air.
-> 
-> This and the previous series [1] started with the idea to add support
-> for the new bme688 device but due to the structure of the driver I
-> decided that it is better to restructure and improve some things before
-> adding extra funcitonalities.
+Document watchdog for Airoha EN7581. This SoC implement a simple
+watchdog that supports a max timeout of 28 seconds.
 
-Besides the small comments here and there I think you need to rearrange the
-patches layout in the series.
+The watchdog ticks on half the BUS clock and requires the BUS clock to be
+referenced.
 
-In general it should go in these blocks:
-1) bug fixes (if any);
-2) cleanups (note, whitespace-cleanup-like are the last);
-3) new feature.
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+Reviewed-by: Krzysztof Kozlowski <krzk@kernel.org>
+---
+Changes v3:
+- Add Reviewed-by tag
+Changes v2:
+- Drop clock-frequency
+- Correctly attach BUS clock
 
-Note that PM runtime belongs to the last group quite close to the patches
-where you more or less start using it more.
+ .../bindings/watchdog/airoha,en7581-wdt.yaml  | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
 
+diff --git a/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml b/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
+new file mode 100644
+index 000000000000..6bbab3cb28e5
+--- /dev/null
++++ b/Documentation/devicetree/bindings/watchdog/airoha,en7581-wdt.yaml
+@@ -0,0 +1,47 @@
++# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
++%YAML 1.2
++---
++$id: http://devicetree.org/schemas/watchdog/airoha,en7581-wdt.yaml#
++$schema: http://devicetree.org/meta-schemas/core.yaml#
++
++title: Airoha EN7581 Watchdog Timer
++
++maintainers:
++  - Christian Marangi <ansuelsmth@gmail.com>
++
++allOf:
++  - $ref: watchdog.yaml#
++
++properties:
++  compatible:
++    const: airoha,en7581-wdt
++
++  reg:
++    maxItems: 1
++
++  clocks:
++    description: BUS clock (timer ticks at half the BUS clock)
++    maxItems: 1
++
++  clock-names:
++    const: bus
++
++required:
++  - compatible
++  - reg
++  - clocks
++  - clock-names
++
++unevaluatedProperties: false
++
++examples:
++  - |
++    #include <dt-bindings/clock/en7523-clk.h>
++
++    watchdog@1fbf0100 {
++        compatible = "airoha,en7581-wdt";
++        reg = <0x1fbf0100 0x3c>;
++
++        clocks = <&scuclk EN7523_CLK_BUS>;
++        clock-names = "bus";
++    };
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.45.2
 
 
