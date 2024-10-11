@@ -1,140 +1,193 @@
-Return-Path: <linux-kernel+bounces-360578-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360581-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FCAF999CD5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:40:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D938999CDD
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4685A1C224D1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:40:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8CE5B2834C6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 06:43:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874B320898E;
-	Fri, 11 Oct 2024 06:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TwOFHQkE"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89DDE209690;
+	Fri, 11 Oct 2024 06:42:53 +0000 (UTC)
+Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95B88199FB9;
-	Fri, 11 Oct 2024 06:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52456209677;
+	Fri, 11 Oct 2024 06:42:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728628850; cv=none; b=WMfMjXvTKspm9hwPvwy6DHFXCgotwq4LQTON4n2KaF+b+otpdTWrc+h5946OQfqet70b7hTj5rbN93lJGGxP5bg6MMLdla4Lx5Bo4x1D+ZoUawZ2wBhN2GC63Z5eZ0QjFlhVhBe4TAu/8qB8i9h1wMEnIlYuLagntPNFRDVIQgE=
+	t=1728628973; cv=none; b=KpFbnUpTm3t8J9+xYovg9CPMQIVtv5Kf8yuDGkLsmywhi0/g85iYrvuzoVYbM1YU4fnGNW/9HcSZxAV9vrJGdggKeL+TxOpUyCy/6nTYN/ku1QdR9AnrzvY5XfCWlv4Ger7T4B9QsP/epPumStpx2XPhRW+QiPLPBvkzjy1iXlE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728628850; c=relaxed/simple;
-	bh=n+zxY4Rf474dyrGixT8wUjQqxiY6uFnLEoLhANImtyU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EPEQsAkx/du8cnuodYijyxwbYm6rqzbRd+tPbGwoZFhmqwAkDf5Wi6L8pGqJkguJQ1/Kk3D/4B7pmtP6CZ7hMI6m0/1PAqUSmdM1pb4M9zLwsJhutPTMYs0ZeW9yT5VzAtMac8BIJKaK4E6C4zFADSPlQVmmWfaUqCtIZiHSa6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TwOFHQkE; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1728628973; c=relaxed/simple;
+	bh=B5BF9AElxlSzgaYbHLUSKNWQRSL07hjT8G2UPti00ZY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qIhzlqrMa9ar7UQrsc45TCRkRh3z8clAFN2cLvliDtOLobWR3xsQUDJH8ndcouqbf1WGsn6/6+ckEVLw/YIzyVnvaWiCd8Qg0kcfaS8IxjAuYoUNXD2EpohmPHWD/RAzVVCbuo3be3G6C8KtCeMglW1EZ3ZxqQJk5y9KQbRETfM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e038f3835so1648117b3a.0;
-        Thu, 10 Oct 2024 23:40:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728628848; x=1729233648; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2N/8TaScJ2RN0jgasqsAf8d391FaErzcf9On+L6fPbs=;
-        b=TwOFHQkEpfQfEIVqwv3UC9on0ZlVW7u3Dw920iqp7a8O6s1Uj5aGLy5gEUHQF50Dkb
-         +4EFY4y29L/Ud1EjFE1litliAVYFAQisAqWeF2YkWt1v6svfJKxb1mTFEMLGpiORpzCn
-         ot1dspbEZR/x0qiGqL38VLiG6XEsw+GwQWhwlBCy1tlZCveQzzdhEDdJeDOIW4BnQf5l
-         WU5/H6nmjATsFFyoPUpoCGAIyHzqg4e6Kb8ftzqlqxBQNAzg3bo2MLUEB7iByK5byR4V
-         pG6jBIDjTs82u+KMMlYz//Hx6QGfCZEHzZk7hE4zaZZ/bBQmpOoX6qyTavVa/wYguRtf
-         Gxkw==
+Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e2915f00c12so816216276.0;
+        Thu, 10 Oct 2024 23:42:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728628848; x=1729233648;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728628969; x=1729233769;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=2N/8TaScJ2RN0jgasqsAf8d391FaErzcf9On+L6fPbs=;
-        b=ep3mHT+lJTSm96C6ZFAS9gxlOJCMyHruZ1kRqrT/wWStcEcgaV4ZJtsOjXSYXRrC1C
-         Sozk5D/rZG57judrSL9AoS5WEHCoUx5vP4KB5vLAnNVFExenguTKDZRhdIRUR2QLtFtG
-         RccFTUVHo8UnO+E/IDZilvOe0IvE3kwFjg2K75NyzqILGCIbqmyPEz8hOQviecVZ3g/9
-         AWHWqrL9+QuMus4UN+gC4FVtQdz+6g3UAYBhlps8ZkNciTjyy60VPRyNXwJnh/2TvFZZ
-         2fqBxqH55ee2wehCfCVj8RPz4fUKEWddUHx3ryUTpJgrBFi9NSa3h65g0+EBz7iDvKp/
-         um7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCULgiQ4Abv8Cke1taMfh7lnsu2rkaDwoPIHy6PLjj9/AWhB0Kv/Sc/nULolqtTgLWugabpg0Cs28c6B2l0=@vger.kernel.org, AJvYcCWSzmZhqD2MIUTqrqA4Eno/BVo0Mk6itbNDS2tAutJS+CVcglC1mPzNWijW9YUz2oWmYyPG0mAQDeFnEZS77PCq1/auhg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlGmDDoKb6s5o0XXBvrwCFnzJaMx75+WkNnEcU+tord3eFBGAP
-	whbQN0qjF0VA+uBGJPxuGZof2//2Jr4/x0YAnuekdQ6N0SxtcDXA
-X-Google-Smtp-Source: AGHT+IGJDSygOGHJgJcC4TgrH1GjS9gF5Lat4fZCtP6snV9njgB/bIlLoYLauuo3zpIykRB4RROTJg==
-X-Received: by 2002:aa7:8883:0:b0:71d:fad0:df28 with SMTP id d2e1a72fcca58-71e37e4be43mr2430573b3a.8.1728628847734;
-        Thu, 10 Oct 2024 23:40:47 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2ab0fcf4sm2013501b3a.219.2024.10.10.23.40.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 10 Oct 2024 23:40:47 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	W_Armin@gmx.de,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH 0/4] Dell AWCC platform_profile support
-Date: Fri, 11 Oct 2024 03:40:06 -0300
-Message-ID: <20241011064005.305038-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241007093324.49631-3-kuurtb@gmail.com>
-References: <20241007093324.49631-3-kuurtb@gmail.com>
+        bh=OI3b4NKCZIobgXcfPVHuehiSSfOdHQS+7R2fmQSiyY4=;
+        b=C9s6wN0TjEiEAOdv7W6ce2j16muiIoL7rr/e6932g9CqFMGEMfsFWXT60W9JEUvCAl
+         wT5Q/XxJTYVDP+crLTXPnAUAc+ngHk4LM146RgECiRmxU7GzJF2OP6H8jNCjhyUqgczQ
+         vkUxeh704M+uk7QKMrnyHlTyR1UBR2JpdZfsm0KHi4f9HfYKPx8ZyDYFnv1osR/Uvt79
+         r5X9TEhgQQHoEezzPAWtFklFB/m+mIw9+M3s9BI0ITzFoAj1ViMpDsE2m1EwatErG1Si
+         QSv+TyWNKdG4ibwtbAwgULwCdGrNJbQbMLHGLpFgvnOPnZdne49op1V6ck3cxi9lcsoa
+         Ky2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUWMDqururERYMxghd271SzJForvCkzzBPaseDRQfuWddAktm+a6MBvvZCI/esxTR+TlPJa/hDlGdk4YQ0=@vger.kernel.org, AJvYcCVM06Ad08OmrCNDacn5ox0wHDpOL3Kkt6N6pqeFFqIX2VQ8WWjYe4In+0uPTBNcRSUKaVj6gH2gXg0f9qQjSuP1lUw=@vger.kernel.org, AJvYcCXPdIcYQMQ3EPRtX2LGxf9o2ShikTMuukTAMIyxCFzJEGnxVbwYEc+D43SLEyLo6gDZnvKhk9vq2LMYC5o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyUwWkZNI8iUfC6JBBr63+MqauE7BUoF136I3+FP/0A/WtIHbNm
+	UO5bv7DLVT0hjBWO4/AsbGHZH6YrWOoqbOSj9EZrKAGm3DnsKh4v1LI36aMagRA=
+X-Google-Smtp-Source: AGHT+IHXY1XciuPiTc59piqKVwCaeZpufnOETwPeTkOM5/Dn6toJa0pELv6q1Pf3Jt6m6l6yinwJTw==
+X-Received: by 2002:a05:6902:240f:b0:e28:f3e7:d92b with SMTP id 3f1490d57ef6-e2919da1176mr1061686276.24.1728628969322;
+        Thu, 10 Oct 2024 23:42:49 -0700 (PDT)
+Received: from mail-yb1-f177.google.com (mail-yb1-f177.google.com. [209.85.219.177])
+        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290edff990sm680866276.15.2024.10.10.23.42.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 10 Oct 2024 23:42:48 -0700 (PDT)
+Received: by mail-yb1-f177.google.com with SMTP id 3f1490d57ef6-e2915f00c12so816184276.0;
+        Thu, 10 Oct 2024 23:42:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU7xkVl8WNSf+LMCrD5nAoRRYDKG9Gj/MHsFHk8nF7E58SFUDe+MjBhMugZnvX6rAWn4wcwvXASnr2g7l0=@vger.kernel.org, AJvYcCU8tvdpZ+JFxrhvAsvPKTxdDNlVqzLVUPL0RvkA18jzcFkDo3wDsuaURxhSrywxmv3QmN98tfJ/MD1UPKrW2WVSIN4=@vger.kernel.org, AJvYcCUOdZ+Xc4CSIWlnSRbCysKTyc2hEb1RjX7K3k8M/HdUk607ubtK5vPqJ+PK7Uao1i9ZW7/9ooS3dJ1HsLA=@vger.kernel.org
+X-Received: by 2002:a05:6902:200d:b0:e28:fa58:15c0 with SMTP id
+ 3f1490d57ef6-e2919d840dcmr1008730276.23.1728628968337; Thu, 10 Oct 2024
+ 23:42:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241010141432.716868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241010141432.716868-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 11 Oct 2024 08:42:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdV=EMnPFGJn5J85x5AtE4fYHChLVLOfk6zMR1rrJzS85g@mail.gmail.com>
+Message-ID: <CAMuHMdV=EMnPFGJn5J85x5AtE4fYHChLVLOfk6zMR1rrJzS85g@mail.gmail.com>
+Subject: Re: [PATCH] ASoC: rsnd: Fix probe failure on HiHope boards due to
+ endpoint parsing
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>, linux-sound@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds platform_profile support for Dell devices which implement
-User Selectable Thermal Tables (USTT) that are meant to be controlled by
-Alienware Command Center (AWCC). These devices may include newer Alienware
-M-Series, Alienware X-Series and Dell's G-Series. This patch, was tested
-by me on an Alienware x15 R1.
+Hi Prabhakar,
 
----
-v4:
- - Fixed indentation on previous code
- - Removed unnecessary (acpi_size) and (u32 *) casts
- - Return -EIO on ACPI_FAILURE
- - Appropiate prefixes given to macros
- - 0xFFFFFFFF named WMAX_FAILURE_CODE
- - Added support for a new set of thermal codes. Old ones now have USTT
-   in their names
- - A new quirk has been added to differantiate between the two sets.
-   thermal and thermal_ustt are mutually exclusive
- - Added documentation for WMAX interface
-v3:
- - Removed extra empty line
- - 0x0B named WMAX_ARG_GET_CURRENT_PROF
- - Removed casts to the same type on functions added in this patch
- - Thermal profile to WMAX argument is now an static function and makes
-   use of in-built kernel macros
- - Platform profile is now removed only if it was created first
- - create_platform_profile is now create_thermal_profile to avoid
-   confusion
- - profile_get and profile_set functions renamed too to match the above
-v2:
- - Moved functionality to alienware-wmi driver
- - Added thermal and gmode quirks to add support based on dmi match
- - Performance profile is now GMODE for devices that support it
- - alienware_wmax_command now is insize agnostic to support new thermal
-   methods
+On Thu, Oct 10, 2024 at 4:15=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> On the HiHope boards, we have a single port with a single endpoint define=
+d
+> as below:
+> ....
+>         rsnd_port: port {
+>                 rsnd_endpoint: endpoint {
+>                         remote-endpoint =3D <&dw_hdmi0_snd_in>;
+>
+>                         dai-format =3D "i2s";
+>                         bitclock-master =3D <&rsnd_endpoint>;
+>                         frame-master =3D <&rsnd_endpoint>;
+>
+>                         playback =3D <&ssi2>;
+>                 };
+>         };
+> ....
+>
+> With commit 547b02f74e4a ("ASoC: rsnd: enable multi Component support for
+> Audio Graph Card/Card2"), support for multiple ports was added. This caus=
+ed
+> probe failures on HiHope boards, as the endpoint could not be retrieved d=
+ue
+> to incorrect device node pointers being used.
+>
+> This patch fixes the issue by updating the `rsnd_dai_of_node()` and
+> `rsnd_dai_probe()` functions to use the correct device node pointers base=
+d
+> on the port names ('port' or 'ports'). It ensures that the endpoint is
+> properly parsed for both single and multi-port configurations, restoring
+> compatibility with HiHope boards.
+>
+> Fixes: 547b02f74e4a ("ASoC: rsnd: enable multi Component support for Audi=
+o Graph Card/Card2")
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Kurt Borja (4):
-  alienware-wmi: fixed indentation and clean up
-  alienware-wmi: alienware_wmax_command() is now input size agnostic
-  alienware-wmi: added platform profile support
-  alienware-wmi: WMAX interface documentation
+Thanks for your patch!
 
- Documentation/wmi/devices/alienware-wmi.rst | 364 ++++++++++++++++++
- drivers/platform/x86/dell/Kconfig           |   1 +
- drivers/platform/x86/dell/alienware-wmi.c   | 389 ++++++++++++++++----
- 3 files changed, 678 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
+> --- a/sound/soc/sh/rcar/core.c
+> +++ b/sound/soc/sh/rcar/core.c
+> @@ -1281,7 +1281,9 @@ static int rsnd_dai_of_node(struct rsnd_priv *priv,=
+ int *is_graph)
+>                 if (!of_node_name_eq(ports, "ports") &&
+>                     !of_node_name_eq(ports, "port"))
+>                         continue;
+> -               priv->component_dais[i] =3D of_graph_get_endpoint_count(p=
+orts);
+> +               priv->component_dais[i] =3D
+> +                       of_graph_get_endpoint_count(of_node_name_eq(ports=
+, "ports") ?
+> +                                                   ports : np);
 
--- 
-2.47.0
+As of_node_name_eq() is not inline or __pure, of_node_name_eq(ports,
+"ports") will be called twice. So it may make sense to add a helper,
+combining the selection with the validation above:
 
+    const struct device_node *pick_endpoint_node_for_ports(const
+struct device_node *np,
+                const struct device_node *e_ports, const struct
+device_node *e_port)
+    {
+            if (of_node_name_eq(ports, "ports"))
+                    return e_ports;
+            if (of_node_name_eq(ports, "port"))
+                    return e_port;
+            return NULL;
+    }
+
+>                 nr +=3D priv->component_dais[i];
+>                 i++;
+>                 if (i >=3D RSND_MAX_COMPONENT) {
+> @@ -1493,7 +1495,8 @@ static int rsnd_dai_probe(struct rsnd_priv *priv)
+>                         if (!of_node_name_eq(ports, "ports") &&
+>                             !of_node_name_eq(ports, "port"))
+>                                 continue;
+> -                       for_each_endpoint_of_node(ports, dai_np) {
+> +                       for_each_endpoint_of_node(of_node_name_eq(ports, =
+"ports") ?
+> +                                                 ports : np, dai_np) {
+
+Likewise.
+
+>                                 __rsnd_dai_probe(priv, dai_np, dai_np, 0,=
+ dai_i);
+>                                 if (!rsnd_is_gen1(priv) && !rsnd_is_gen2(=
+priv)) {
+>                                         rdai =3D rsnd_rdai_get(priv, dai_=
+i);
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
