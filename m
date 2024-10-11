@@ -1,241 +1,160 @@
-Return-Path: <linux-kernel+bounces-361738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E69599AC67
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:07:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 26CD199AC6B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:08:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DA8F4B27897
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:07:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DE181C27226
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C4761C6899;
-	Fri, 11 Oct 2024 19:07:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 031E21CF2BA;
+	Fri, 11 Oct 2024 19:07:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kS3FNF0a"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="yV2MBPgW"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A191A08A4;
-	Fri, 11 Oct 2024 19:07:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 726DF1C2327;
+	Fri, 11 Oct 2024 19:07:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673646; cv=none; b=Rzl9/SGWhf5W4dkECwFycI+N+S63DWSJAe+hMYbgea+qsw+/IcahqE6bigi2sBYChtoOX52h0J8hHbGsQe6T+HaphvXRVOLNcg5b2uHg7n9dkhfwaJ5RKMshhUGGyLHifdQJo1FQy4yOzwvXzB2GnVWvNZNlb81a/iLUQPNrmGA=
+	t=1728673667; cv=none; b=h1RcVHQ8l/Buum8suBAlQnVlk/PBEMvwGMudJUyit0h6cicQbc2z2u5MX2+NGJezZs6Soqw//6odyRgpRXjXr1Tm1fySCKBwupRKfgeSYCmK8YJDeYc3Xv3LsSqi8rwBvawLeP6C/N5KLwAhdIw+CNhdwY0jpCQx7PywdO9mY5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673646; c=relaxed/simple;
-	bh=d2g9d5JhVOwMn17mm+Qsi9qXxZahUJpQFOPa0Cb0N/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ErA6mIjuGSsjEkPiigHg9sr5EqviN8sNo5eHeJO7UTq6E85g5FgVUzrm3vlVvQlpxv7D80J7YBeY6RXnRgKjdOm2+RrNeGZd7kPyBzjrg75ftsb4fRJw1vkG4VHIKoAolyW3pc7UPnOPLIAMxRQK6SXH0fEP0KIfXy3WYw0dhYo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kS3FNF0a; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-42cae4eb026so21597915e9.0;
-        Fri, 11 Oct 2024 12:07:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728673643; x=1729278443; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oOA0LA7YZsa2SRSYHALYuA8+jEzzPs7er50SeMEGJ2c=;
-        b=kS3FNF0aUtX7aiTPRL+iS7K8wEgS+N0tiywzOIsw8prAMjjqdUfWfD2uIznVzUqFVH
-         SE8MFoFAAyDhHUE9S5qiF5EkTVSJCe9TxuBF0GNrX1c+Sw30jtNnxN0GWw7Oo7CXkvU9
-         WELZOXrfGu2oKZ8rPvM0888UycYZ8/yYNZvsFjh6hUTz10t1Yflz4M0JBzfqB0e+chaI
-         6LpI0LXbr3B6VK6XU8/438TTxVO6G/ktfhh0PfMt+x1ikyx+X/Vj9McMdiWUIS9fj2Uv
-         HxST3Z4CT5DA/PeuSEcN4jhp1gkt5mDdazsK1oW6yCJ82f6c4vHB1nPXdD1xsAOVLkq1
-         Arkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728673643; x=1729278443;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oOA0LA7YZsa2SRSYHALYuA8+jEzzPs7er50SeMEGJ2c=;
-        b=OrBQsqKLD+ZXQAOlxNMff8SrIOTVLx4EqOcdiO17nHFw49e4WHUONgbkp+QYVFhZ/T
-         AmXbOgHlWBNAADR+ruZ6DdZGFn7O4mqPYLQTDXaP9HH38V+gYHTGHAm8sdO4ojejegYW
-         x2o3EJ0ho8KkI1DDFm+ZbO8mcwzM+4bb8mi1xc7fNUi8bqGSS6MGAkTC0ZhfxzfHSJli
-         CLMhEA0yn4welgTD/QiBEXchPECOQjuwZ9KMTNXkKOim8gxcNhOJ9k4VRXhINTmlDhPK
-         AzH4QrkGlT6cgdMbS/tR7FeCqvzjEd1lLvFmg1MF0TxAohfqLJy4kAq3Z4LYwVTnnob8
-         qA5Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUivcft2qYQWqsdhvs2aOuObZnZUYvNzPR28T5qV5KfHW7MpVqjQ58X0OQN2UnLaon4IBOvNV7BgqVC@vger.kernel.org, AJvYcCUsShDOegujwWi9w3Q0Cy+glbMPcAdb/mL8KpFjOACLe4hQ+ufWvPi7w23rsFSSiPlsYsYt+J+NKf4p@vger.kernel.org, AJvYcCVkRcfO0QhgNevnOHmf3VbZ9RnhVxME/7l1IONXfWOV3SOdFnggiWKIf42smksbOKUI2ZwKQ3aZvXK4Sx5G@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZmmfgbV+Y/555lrNOR7/cywTmzMAlVgyAI/HaGdRjzo6KyY/7
-	9mZbWSzfiwTdhWs9sTGcetjkF/GV+2rIJeM/tM0VBJgTnpyp2ZOf
-X-Google-Smtp-Source: AGHT+IEUmaAXk6KOtYxzu8s5HEuadXB3JmAkBwhGr6CxNG6z+VXV3tEUp6YpdNE5862uld3wRArdkg==
-X-Received: by 2002:adf:a29a:0:b0:37d:482e:6197 with SMTP id ffacd0b85a97d-37d551b6a4fmr2301211f8f.17.1728673642959;
-        Fri, 11 Oct 2024 12:07:22 -0700 (PDT)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a87d3sm4572008f8f.11.2024.10.11.12.07.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 12:07:22 -0700 (PDT)
-Date: Fri, 11 Oct 2024 21:07:20 +0200
-From: Vasileios Aoiridis <vassilisamir@gmail.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 12/13] iio: chemical: bme680: Add triggered buffer
- support
-Message-ID: <Zwl3aBDFiLN9b0TK@vamoirid-laptop>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <20241010210030.33309-13-vassilisamir@gmail.com>
- <ZwkABN9RycsVPRwo@smile.fi.intel.com>
+	s=arc-20240116; t=1728673667; c=relaxed/simple;
+	bh=6lopcaIMFstruqReiFA3lPrI7J4lGgrUuAUosBsYMIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rEdw302fcjm0o52q4jWNmitaRIGijsIzADPp5qEOo/vVGIytoLn1Gab/fYFB1KvC09FypiAEatIPG9cKx+xKScPgQ92QnB5Z/g7fHv6uhHSkrn0Ryu+4EiCJY8Tqy1ZQi/1Ppe34jHw6+tlLQ1boOvIcXajpCvb3I+5SW5B+Ksw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=yV2MBPgW; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BJ7eBj067885;
+	Fri, 11 Oct 2024 14:07:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728673660;
+	bh=Hoe7/yzhFlr+Uf0dW/a8MOUxJrhC7yC6/D1NGWEkREg=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=yV2MBPgWI59EluInqtfAgEVci2FtiYkN5PHV6vahaQF+KYYapWFOBS7KIwuxC3Uyc
+	 SKm7753ZCDlrRLNAXcW6uMCrd5eHb2LdSH2zfxJtJNveInuFfTbqUQAU01BlAdXnyp
+	 PRmnMOpTjPqQnWxE7ZT5tGcROkO9MeiaR0p9fxT4=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BJ7eii034871;
+	Fri, 11 Oct 2024 14:07:40 -0500
+Received: from DLEE101.ent.ti.com (157.170.170.31) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Oct 2024 14:07:39 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE101.ent.ti.com
+ (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Oct 2024 14:07:39 -0500
+Received: from [10.249.42.149] ([10.249.42.149])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BJ7dLe129223;
+	Fri, 11 Oct 2024 14:07:39 -0500
+Message-ID: <89091165-74d1-442a-ab34-8e70f1a2d65b@ti.com>
+Date: Fri, 11 Oct 2024 14:07:39 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZwkABN9RycsVPRwo@smile.fi.intel.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RESEND 1/2] gpio: omap: Add omap_gpio_disable/enable_irq
+ calls
+To: Judith Mendez <jm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+        Kevin
+ Hilman <khilman@kernel.org>,
+        Linus Walleij <linus.walleij@linaro.org>,
+        Bartosz Golaszewski <brgl@bgdev.pl>
+CC: <linux-omap@vger.kernel.org>, <linux-gpio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Bin Liu <b-liu@ti.com>,
+        <linux-serial@vger.kernel.org>
+References: <20241011173356.870883-1-jm@ti.com>
+ <20241011173356.870883-2-jm@ti.com>
+Content-Language: en-US
+From: Andrew Davis <afd@ti.com>
+In-Reply-To: <20241011173356.870883-2-jm@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Fri, Oct 11, 2024 at 01:37:56PM +0300, Andy Shevchenko wrote:
-> On Thu, Oct 10, 2024 at 11:00:29PM +0200, vamoirid wrote:
-> > From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > 
-> > Add triggered buffer and soft timestamp support. The available scan mask
-> > enables all the channels of the sensor in order to follow the operation of
-> > the sensor. The sensor basically starts to capture from all channels
-> > as long as it enters into FORCED mode.
+On 10/11/24 12:33 PM, Judith Mendez wrote:
+> Add omap_gpio_disable_irq and omap_gpio_enable_irq
+> calls in gpio-omap.
 > 
-> ...
+> Currently, kernel cannot disable gpio interrupts in
+> case of a irq storm, so add omap_gpio_disable_irq
+> so that interrupts can be disabled/enabled.
 > 
-> >  	struct regulator_bulk_data supplies[BME680_NUM_SUPPLIES];
-> >  	int ambient_temp;
-> >  
-> > +	u8 buffer[ALIGN(sizeof(s32) * BME680_NUM_CHANNELS, sizeof(s64))
-> > +		  + sizeof(s64)] __aligned(sizeof(s64));
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> Signed-off-by: Judith Mendez <jm@ti.com>
+> ---
+>   drivers/gpio/gpio-omap.c | 29 +++++++++++++++++++++++++++++
+>   1 file changed, 29 insertions(+)
 > 
-> Can it be represented as a structure?
-> We also have aligned_s64 for the timestamp.
->
+> diff --git a/drivers/gpio/gpio-omap.c b/drivers/gpio/gpio-omap.c
+> index 76d5d87e9681..913e6ece1238 100644
+> --- a/drivers/gpio/gpio-omap.c
+> +++ b/drivers/gpio/gpio-omap.c
+> @@ -711,6 +711,31 @@ static void omap_gpio_unmask_irq(struct irq_data *d)
+>   	raw_spin_unlock_irqrestore(&bank->lock, flags);
+>   }
+>   
+> +static void omap_gpio_set_irq(struct irq_data *d, bool enable)
+> +{
+> +	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+> +	unsigned int offset = d->hwirq;
+> +	unsigned long flags;
+> +
+> +	raw_spin_lock_irqsave(&bank->lock, flags);
+> +	omap_set_gpio_irqenable(bank, offset, enable);
+> +	raw_spin_unlock_irqrestore(&bank->lock, flags);
+> +}
+> +
+> +static void omap_gpio_disable_irq(struct irq_data *d)
+> +{
+> +	bool enable = 1;
+> +
+> +	omap_gpio_set_irq(d, !enable);
 
-Hi Andy,
+Seems like an odd way to make "false", why not:
 
-The same approach was used also for the bmp280 driver and since I was
-working on the bmp280 as well, I did it here. You think the
-representation as a struct would look better? Personally I like the
-nature of this one because of the ALIGN() but I have no problem of using
-a struct here.
+omap_gpio_set_irq(d, false);
 
-> >  	union {
-> > -		u8 buf[3];
-> > +		u8 buf[15];
-> >  		unsigned int check;
-> >  		__be16 be16;
-> >  		u8 bme680_cal_buf_1[BME680_CALIB_RANGE_1_LEN];
-> 
-> ...
-> 
-> > +static irqreturn_t bme680_trigger_handler(int irq, void *p)
-> > +{
-> > +	struct iio_poll_func *pf = p;
-> > +	struct iio_dev *indio_dev = pf->indio_dev;
-> > +	struct bme680_data *data = iio_priv(indio_dev);
-> > +	u32 adc_temp, adc_press, adc_humid, comp_press, comp_humid;
-> 
-> > +	s32 *chans = (s32 *)data->buffer;
-> 
-> With the structure in place this becomes much more readable.
-> 
-> > +	u16 adc_gas_res, gas_regs_val;
-> > +	s32 t_fine, comp_gas_res;
-> > +	s16 comp_temp;
-> > +	u8 gas_range;
-> > +	int ret;
-> > +
-> > +	guard(mutex)(&data->lock);
-> > +
-> > +	ret = bme680_set_mode(data, BME680_FORCED);
-> > +	if (ret < 0)
-> > +		goto out;
-> > +
-> > +	ret = bme680_wait_for_eoc(data);
-> > +	if (ret)
-> > +		goto out;
-> > +
-> > +	/* Burst read data regs */
-> > +	ret = regmap_bulk_read(data->regmap, BME680_REG_MEAS_STAT_0,
-> > +			       data->buf, sizeof(data->buf));
-> > +	if (ret) {
-> > +		dev_err(data->dev, "failed to burst read sensor data\n");
-> > +		goto out;
-> > +	}
-> > +	if (data->buf[0] & BME680_GAS_MEAS_BIT) {
-> > +		dev_err(data->dev, "gas measurement incomplete\n");
-> > +		goto out;
-> > +	}
-> > +
-> > +	/* Temperature calculations */
-> > +	adc_temp = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[5]));
-> > +	if (adc_temp == BME680_MEAS_SKIPPED) {
-> > +		dev_err(data->dev, "reading temperature skipped\n");
-> > +		goto out;
-> > +	}
-> > +	comp_temp = bme680_compensate_temp(data, adc_temp);
-> > +	t_fine = bme680_calc_t_fine(data, adc_temp);
-> > +
-> > +	/* Pressure calculations */
-> > +	adc_press = FIELD_GET(BME680_MEAS_TRIM_MASK, get_unaligned_be24(&data->buf[2]));
-> > +	if (adc_press == BME680_MEAS_SKIPPED) {
-> > +		dev_err(data->dev, "reading pressure skipped\n");
-> > +		goto out;
-> > +	}
-> > +	comp_press = bme680_compensate_press(data, adc_press, t_fine);
-> 
-> > +	pr_info("comp_press: %d\n", comp_press);
-> 
-> No debugging in the production code. Or if you really need that, it should
-> use dev_dbg().
-> 
+Andrew
 
-ACK. I shouldn't have forgotten those here..
-
-> > +	/* Humidity calculations */
-> > +	adc_humid = get_unaligned_be16(&data->buf[8]);
-> > +	if (adc_humid == BME680_MEAS_SKIPPED) {
-> > +		dev_err(data->dev, "reading humidity skipped\n");
-> > +		goto out;
-> > +	}
-> > +	comp_humid = bme680_compensate_humid(data, adc_humid, t_fine);
-> 
-> > +	pr_info("comp_humid: %d\n", comp_humid);
-> 
-> Ditto.
-> 
-
-ACK.
-
-> > +
-> > +	/* Gas calculations */
-> > +	gas_regs_val = get_unaligned_be16(&data->buf[13]);
-> > +	adc_gas_res = FIELD_GET(BME680_ADC_GAS_RES, gas_regs_val);
-> > +	if ((gas_regs_val & BME680_GAS_STAB_BIT) == 0) {
-> > +		dev_err(data->dev, "heater failed to reach the target temperature\n");
-> > +		goto out;
-> > +	}
-> > +	gas_range = FIELD_GET(BME680_GAS_RANGE_MASK, gas_regs_val);
-> > +	comp_gas_res = bme680_compensate_gas(data, adc_gas_res, gas_range);
-> > +	pr_info("comp_gas_res: %d\n", comp_gas_res);
-> > +
-> > +	chans[0] = comp_temp;
-> > +	chans[1] = comp_press;
-> > +	chans[2] = comp_humid;
-> > +	chans[3] = comp_gas_res;
-> > +
-> > +	/* Push to buffer */
-> > +	iio_push_to_buffers_with_timestamp(indio_dev, &data->buffer,
-> > +					   iio_get_time_ns(indio_dev));
-> > +out:
-> > +	iio_trigger_notify_done(indio_dev->trig);
-> > +	return IRQ_HANDLED;
-> > +}
-> 
-> -- 
-> With Best Regards,
-> Andy Shevchenko
-> 
-> 
-
-Cheers,
-Vasilis
+> +}
+> +
+> +static void omap_gpio_enable_irq(struct irq_data *d)
+> +{
+> +	bool enable = 1;
+> +
+> +	omap_gpio_set_irq(d, enable);
+> +}
+> +
+>   static void omap_gpio_irq_print_chip(struct irq_data *d, struct seq_file *p)
+>   {
+>   	struct gpio_bank *bank = omap_irq_data_get_bank(d);
+> @@ -723,6 +748,8 @@ static const struct irq_chip omap_gpio_irq_chip = {
+>   	.irq_shutdown = omap_gpio_irq_shutdown,
+>   	.irq_mask = omap_gpio_mask_irq,
+>   	.irq_unmask = omap_gpio_unmask_irq,
+> +	.irq_disable = omap_gpio_disable_irq,
+> +	.irq_enable = omap_gpio_enable_irq,
+>   	.irq_set_type = omap_gpio_irq_type,
+>   	.irq_set_wake = omap_gpio_wake_enable,
+>   	.irq_bus_lock = omap_gpio_irq_bus_lock,
+> @@ -737,6 +764,8 @@ static const struct irq_chip omap_gpio_irq_chip_nowake = {
+>   	.irq_shutdown = omap_gpio_irq_shutdown,
+>   	.irq_mask = omap_gpio_mask_irq,
+>   	.irq_unmask = omap_gpio_unmask_irq,
+> +	.irq_disable = omap_gpio_disable_irq,
+> +	.irq_enable = omap_gpio_enable_irq,
+>   	.irq_set_type = omap_gpio_irq_type,
+>   	.irq_bus_lock = omap_gpio_irq_bus_lock,
+>   	.irq_bus_sync_unlock = gpio_irq_bus_sync_unlock,
 
