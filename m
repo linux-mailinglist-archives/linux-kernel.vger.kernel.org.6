@@ -1,143 +1,261 @@
-Return-Path: <linux-kernel+bounces-360518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2898999C00
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:16:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6695C999C06
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:17:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DE5F1C21618
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:16:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E52FD1F252A5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:17:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B551F4FD9;
-	Fri, 11 Oct 2024 05:16:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aqDn6Jub"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E8201F9AA4;
+	Fri, 11 Oct 2024 05:17:35 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF519413B;
-	Fri, 11 Oct 2024 05:16:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D02F19413B;
+	Fri, 11 Oct 2024 05:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728623766; cv=none; b=B7SJxVp/7z70sbjVEkDBQDg9c/7iO5f9L/ZhpDPLcfOjdTaAE1oGJU/Fy6F8TNQqCRBrYO6Yw10Yf05sz4X4j5MM3crVoj+q5X9dNpgzJcKqjRD0a2a0HOGG75NlZEFEkAmWf5hD7AEPzww8Rbsfl/Y871Q/nR0K/N/PMS61J5w=
+	t=1728623855; cv=none; b=edBuhZZ6kkZRusG0s0JdGiuHK6u+tLBu2eoHItaFvCoj4Ozylp3mRG85y/Ol1LZqACMpjKf7cWfC/48ytN2zaXtKVhfREs4rCl8/VoISXeFiG/bFxuSCal9eMnrJO5hhcLZKYXrf5lchY+bFMOTftSRZTPWt3eJbhnmkxOY8fRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728623766; c=relaxed/simple;
-	bh=oXPKp2uZEnGUtYeEYnykIZVlicObW/XIzlul2tJetiM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=D5YUyOLiC5UW8mLDUyF1yAyBZsnFu/vSKc42Xi45UYjywQ/TZj0jb7GmtJrPn1OCifh6qiPwvw6S1G66WH44Rtqtb63Ct1WVI5f7+z72SbJWTksvKYKBnAfhFXAWNCRftr0TCo9IV/PQplLxio8VUmvsWc/i7khRYb1pAgNwpwE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aqDn6Jub; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728623765; x=1760159765;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=oXPKp2uZEnGUtYeEYnykIZVlicObW/XIzlul2tJetiM=;
-  b=aqDn6Jub7ozeAIoxC89IEE0rH5sUrzxTa1FHevE35iqRvBgW9CR7FGdV
-   BZpIHQffGs+82CPwX++P6Qx8pPmpqNwP7yaBOa2hwiVmTr0qOCj2+cplU
-   hRcqaXXHPIkxCbAyJ6+pJNwTHOCHPArFwk3tK7yiqThLmQ93zwcUving4
-   R1MFYqGf358jglqN1PLuJDgXbH9W2L/iRoY5IzE7QyaeWQY0eAfKMt6ag
-   x9rgzz2RejXtsc8GPe+nRCZZ13gjKuODmRklSpNizP1CMAf82/k1wz2gv
-   sMx+JK3x6MPIpGYlaV/X2DRTR+EQwb0E4kUV6vImvXSsIMIzQF6dHZ5gB
-   A==;
-X-CSE-ConnectionGUID: MpXxEBQlQSy67j8lPbZOrA==
-X-CSE-MsgGUID: 5fk4wcPEQNy3YmIvUwiWJg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="15635861"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="15635861"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 22:16:04 -0700
-X-CSE-ConnectionGUID: OcOAqgggRkynTfXpGipgfQ==
-X-CSE-MsgGUID: FrTbE1n2TLajNJFQH08VTQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="76716322"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 10 Oct 2024 22:15:56 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sz80I-000Bq9-0p;
-	Fri, 11 Oct 2024 05:15:54 +0000
-Date: Fri, 11 Oct 2024 13:15:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Andrea della Porta <andrea.porta@suse.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Bjorn Helgaas <helgaas@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
-	Masahiro Yamada <masahiroy@kernel.org>,
-	Stefan Wahren <wahrenst@gmx.net>
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev
-Subject: Re: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
-Message-ID: <202410111247.L5n2NDAU-lkp@intel.com>
-References: <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
+	s=arc-20240116; t=1728623855; c=relaxed/simple;
+	bh=fyy4YIlptm8uOrcjxzHis/saN0wHpL8XX8tHYtpryeo=;
+	h=From:To:CC:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=JH71R2IicItJXmld7QsKx39M1FUmwjlN3g5CV0yVyGrQyHwVG1RrC7iI9CyHlWLCto+aLRhAk8mv0ZBzHoE7kgWjnw/DqLQA4ZBYxWNXN/T9j9fi6wphEnFAHHwRIOj6SlwJvXvtzpu5wp5/PiB/6lyuEvZHfog3IuIH4LQyVnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.216])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XPvsC3kLpz6LDQN;
+	Fri, 11 Oct 2024 13:13:03 +0800 (CST)
+Received: from frapeml500005.china.huawei.com (unknown [7.182.85.13])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4EB941400D7;
+	Fri, 11 Oct 2024 13:17:25 +0800 (CST)
+Received: from GurSIX1 (10.204.104.109) by frapeml500005.china.huawei.com
+ (7.182.85.13) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 11 Oct
+ 2024 07:17:19 +0200
+From: Gur Stavi <gur.stavi@huawei.com>
+To: 'Willem de Bruijn' <willemdebruijn.kernel@gmail.com>
+CC: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-kselftest@vger.kernel.org>,
+	<netdev@vger.kernel.org>, <pabeni@redhat.com>, <shuah@kernel.org>
+References: <67054127bb083_18b21e2943f@willemb.c.googlers.com.notmuch> <20241009065837.354332-1-gur.stavi@huawei.com> <67068a44bff02_1cca3129431@willemb.c.googlers.com.notmuch> <002201db1a75$9a83b420$cf8b1c60$@huawei.com> <67072012c983a_1e805629421@willemb.c.googlers.com.notmuch> <002701db1ae3$368d9b70$a3a8d250$@huawei.com> <6707e3028d844_20573a294f0@willemb.c.googlers.com.notmuch> <000101db1b2f$7410c2f0$5c3248d0$@huawei.com> <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
+In-Reply-To: <67085135e4fe2_21530629429@willemb.c.googlers.com.notmuch>
+Subject: RE: [PATCH net-next v02 1/2] af_packet: allow fanout_add when socket is not RUNNING
+Date: Fri, 11 Oct 2024 08:17:12 +0300
+Message-ID: <000201db1b9c$db32f6c0$9198e440$@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQHbGWzwQMZqw76ooUWOpIJuIeDZyLJ8x9WAgAEVHYCAAHM4AIAA1CkdgADoeFuAAINGnIAAcnow
+Content-Language: en-us
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ frapeml500005.china.huawei.com (7.182.85.13)
 
-Hi Andrea,
+> Gur Stavi wrote:
+> > > Gur Stavi wrote:
+> > > > > Gur Stavi wrote:
+> > > > > > > Gur Stavi wrote:
+> > > > > > > > >> @@ -1846,21 +1846,21 @@ static int fanout_add(struct
+> sock
+> > > *sk,
+> > > > > > > struct fanout_args *args)
+> > > > > > > > >>  	err = -EINVAL;
+> > > > > > > > >>
+> > > > > > > > >>  	spin_lock(&po->bind_lock);
+> > > > > > > > >> -	if (packet_sock_flag(po, PACKET_SOCK_RUNNING) &&
+> > > > > > > > >> -	    match->type == type &&
+> > > > > > > > >> +	if (match->type == type &&
+> > > > > > > > >>  	    match->prot_hook.type == po->prot_hook.type &&
+> > > > > > > > >>  	    match->prot_hook.dev == po->prot_hook.dev) {
+> > > > > > > > >
+> > > > > > > > > Remaining unaddressed issue is that the socket can now be
+> > > added
+> > > > > > > > > before being bound. See comment in v1.
+> > > > > > > >
+> > > > > > > > I extended the psock_fanout test with unbound fanout test.
+> > > > > > > >
+> > > > > > > > As far as I understand, the easiest way to verify bind is
+> to
+> > > test
+> > > > > that
+> > > > > > > > po->prot_hook.dev != NULL, since we are under a bind_lock
+> > > anyway.
+> > > > > > > > But perhaps a more readable and direct approach to test
+> "bind"
+> > > > > would be
+> > > > > > > > to test po->ifindex != -1, as ifindex is commented as
+> "bound
+> > > > > device".
+> > > > > > > > However, at the moment ifindex is not initialized to -1, I
+> can
+> > > add
+> > > > > such
+> > > > > > > > initialization, but perhaps I do not fully understand all
+> the
+> > > > > logic.
+> > > > > > > >
+> > > > > > > > Any preferences?
+> > > > > > >
+> > > > > > > prot_hook.dev is not necessarily set if a packet socket is
+> bound.
+> > > > > > > It may be bound to any device. See dev_add_pack and
+> ptype_head.
+> > > > > > >
+> > > > > > > prot_hook.type, on the other hand, must be set if bound and
+> is
+> > > only
+> > > > > > > modified with the bind_lock held too.
+> > > > > > >
+> > > > > > > Well, and in packet_create. But setsockopt PACKET_FANOUT_ADD
+> also
+> > > > > > > succeeds in case bind() was not called explicitly first to
+> bind
+> > > to
+> > > > > > > a specific device or change ptype.
+> > > > > >
+> > > > > > Please clarify the last paragraph? When you say "also succeeds"
+> do
+> > > you
+> > > > > > mean SHOULD succeed or MAY SUCCEED by mistake if "something"
+> > > happens
+> > > > > ???
+> > > > >
+> > > > > I mean it succeeds currently. Which behavior must then be
+> maintained.
+> > > > >
+> > > > > > Do you refer to the following scenario: socket is created with
+> non-
+> > > zero
+> > > > > > protocol and becomes RUNNING "without bind" for all devices. In
+> > > that
+> > > > > case
+> > > > > > it can be added to FANOUT without bind. Is that considered a
+> bug or
+> > > > > does
+> > > > > > the bind requirement for fanout only apply for all-protocol (0)
+> > > > > sockets?
+> > > > >
+> > > > > I'm beginning to think that this bind requirement is not needed.
+> > > >
+> > > > I agree with that. I think that is an historical mistake that
+> socket
+> > > > becomes implicitly bound to all interfaces if a protocol is defined
+> > > > during create. Without this bind requirement would make sense.
+> > > >
+> > > > >
+> > > > > All type and dev are valid, even if an ETH_P_NONE fanout group
+> would
+> > > > > be fairly useless.
+> > > >
+> > > > Fanout is all about RX, I think that refusing fanout for socket
+> that
+> > > > will not receive any packet is OK. The condition can be:
+> > > > if (po->ifindex == -1 || !po->num)
+> > >
+> > > Fanout is not limited to sockets bound to a specific interface.
+> > > This will break existing users.
+> >
+> > For specific interface ifindex >= 1
+> > For "any interface" ifindex == 0
+> > ifindex is -1 only if the socket was created unbound with proto == 0
+> > or for the rare race case that during re-bind the new dev became
+> unlisted.
+> > For both of these cases fanout should fail.
+> 
+> The only case where packet_create does not call __register_prot_hook
+> is if proto == 0. If proto is anything else, the socket will be bound,
+> whether to a device hook, or ptype_all. I don't think we need this
+> extra ifindex condition.
+> 
 
-kernel test robot noticed the following build warnings:
+Even though "unbound" is an unlikely state for such a socket the code
+Should still address this state consistently. If do_bind sets ifindex
+to -1 on the unlikely unlisted scenario so should packet_create on the
+more likely proto == 0 scenario.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on clk/clk-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.12-rc2 next-20241010]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> > >
+> > > Binding to ETH_P_NONE is useless, but we're not going to slow down
+> > > legitimate users with branches for cases that are harmless.
+> > >
+> >
+> > With "branch", do you refer to performance or something else?
+> > As I said in other mail, ETH_P_NONE could not be used in a fanout
+> > before as well because socket cannot become RUNNING with proto == 0.
+> 
+> Good point.
+> 
+> > For performance, we removed the RUNNING condition and added this.
+> > It is not like we need to perform 5M fanout registrations/sec. It is a
+> > syscall after all.
+> 
+> It's as much about code complexity as performance. Both the patch and
+> resulting code should be as small and self-evident as possible.
+> 
+> Patch v3 introduces a lot of code churn.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20241007-204440
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta%40suse.com
-patch subject: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
-config: sparc-kismet-CONFIG_OF_IRQ-CONFIG_MISC_RP1-0-0 (https://download.01.org/0day-ci/archive/20241011/202410111247.L5n2NDAU-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20241011/202410111247.L5n2NDAU-lkp@intel.com/reproduce)
+Did you look at a side by side comparison? There is really very little
+extra code.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410111247.L5n2NDAU-lkp@intel.com/
+> 
+> If we don't care about opening up fanout groups to ETH_P_NONE, then
+> patch v2 seems sufficient. If explicitly blocking this, the ENXIO
+> return can be added, but ideally without touching the other lines.
+> 
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for OF_IRQ when selected by MISC_RP1
-   WARNING: unmet direct dependencies detected for OF_IRQ
-     Depends on [n]: OF [=y] && !SPARC [=y] && IRQ_DOMAIN [=y]
-     Selected by [y]:
-     - MISC_RP1 [=y] && PCI [=y] && PCI_QUIRKS [=y]
-   
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-     Depends on [n]: SPARSEMEM [=n]
-     Selected by [y]:
-     - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+I am not the one to decide if opening it is a good idea but it will be
+ironic if a patch with the intention to remove the only-RUNNING
+restriction will end up allowing never-RUNNING sockets into a fanout
+group.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > > > I realized another possible problem. We should consider adding
+> ifindex
+> > > > Field to struct packet_fanout to be used for lookup of an existing
+> > > match.
+> > > > There is little sense to bind sockets to different interfaces and
+> then
+> > > > put them in the same fanout group.
+> > > > If you agree, I can prepare a separate patch for that.
+> > > >
+> > > > > The type and dev must match that of the fanout group, and once
+> added
+> > > > > to a fanout group can no longer be changed (bind will fail).
+> > > > >
+> > > > > I briefy considered the reason might be max_num_members
+> accounting.
+> > > > > Since f->num_members counts running sockets. But that is not used
+> > > > > when tracking membership of the group, sk_ref is. Every packet
+> socket
+> > > > > whose po->rollover is increased increases this refcount.
+> > > > >
+> > > > > > What about using ifindex to detect bind? Initialize it to -1 in
+> > > > > > packet_create and ensure that packet_do_bind, on success, sets
+> it
+> > > > > > to device id or 0?
+> > > > > >
+> > > > > > psock_fanout, should probably be extended with scenarios that
+> test
+> > > > > > "all devices" and all/specific protocols. Any specific scenario
+> > > > > > suggestions?
+> > > > > >
+> > > > > >
+> > > > >
+> > > >
+> > > >
+> > >
+> >
+> >
+> 
+
+
 
