@@ -1,112 +1,130 @@
-Return-Path: <linux-kernel+bounces-361778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3636C99ACE6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:43:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D7F99ACE8
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261B0281E19
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:43:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 969EEB23057
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCCD1D0BA2;
-	Fri, 11 Oct 2024 19:42:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C271D0DE1;
+	Fri, 11 Oct 2024 19:42:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="joLeekbU"
-Received: from sonic314-20.consmr.mail.ir2.yahoo.com (sonic314-20.consmr.mail.ir2.yahoo.com [77.238.177.146])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="dxXQKG8H"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D701D096B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:42:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88C071D0DD4
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:42:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675740; cv=none; b=FDG32v/TDeNPU9jj9niAW9GXG7maJSOAIxo3MfPuMDA8SCA/tgUy4G2OvgtgtKmWpdLV7xcAVae0zTE2ynDUvTLMwORE9KN0oz8Xmg8YegardEc2fHC4gmxMhXzv8b3MMQ8JUfWyI2/HBJdpz2+C0uYnQM8NXqFEY6k+IUpoaP0=
+	t=1728675757; cv=none; b=EznXP8QRtirrY8vAilN0N8K0/MhGYJwIoPoYsjwNsFTQJhs1KFX8xTWd+ku4vcV6TvVKwB6qvRczqRJX2jbn40ctAmG6/txdHbi31Dtab7Ta7wCfnxRNHf6TXqG2fE2JzrEuP/sRQdl6xNXCg6CVvb+fMTbeF2MTjrVbxAy+2UY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675740; c=relaxed/simple;
-	bh=QdxfIqBJgxkSu9IxavGoJTl6cPZPsvz83rW/wuE0ntA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AM6j5aoyWkaiDNuPH8LQKFVBZzY1H83PGi0zB3CdYoLTK7oHmMSqai/U/zuO34WXS8God8j96MTv11BkNzHyzwqQyMhlwX2vQZfCsK10brVhuMjCo0StQfFLQpKJKNv57mIFNhCaH/fkOHRzOxAliuZzZHzYrIQMEiApdsfc4yI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=joLeekbU; arc=none smtp.client-ip=77.238.177.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1728675730; bh=QdxfIqBJgxkSu9IxavGoJTl6cPZPsvz83rW/wuE0ntA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=joLeekbUBw+JEM/GPn2DwvG2BouFH+lBUi85EIfPm84LYW1aPC0SnLc3BmMOqpPGxHxJpSVI/VPHYWcalas3x/wXhzbZXhua2wHwwyNljQJs8GVBEjzyPLAhCz5eLiOotezFoo4VjnGQZH61aGwZt7wYF0JaYHGD0PJU8OoAljmKsCKz5OQnkhnuDkYPm1XkWwCkSvJnHSKAg743XdbhaicrsIWi2fJTIL+1734kUSkzgNrAiALTJa9Eiff+eigqn9Y+fHViyqY5stFH781IKHLEifIxqQSwWjFeL78YV4BpgUkUByLK+RPlGLCP36QSR//0H3gY4OXgfYohT41j8Q==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728675730; bh=PDEqepCN+aqz2KbFNIyZrkMWN7nMbrJjyqfRqC71czB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=pNRjErnD3tbL1YP04eq9i42ho6f5FrI0yQKA9wXuhbxaT8DMkO6lY2fz/NQ1goMPTTp+8N0K+HdHzTkLjp2XyGVJoRFHGlCbwM4wxJ4sJ6Tvv2aWTJe+3Zfi4iVMmxuUs2/sFTAfgBnl8ZiOF39y469zAOcV0bYQxMd1SIHUCf+hD9d9J0XZEIO6htR+eY8peb6YlIQltxfhlRbpUqz2Gw8YU4luanVzr4S6H/tpJvH/KsSryvKi76qakiKCwSWH05QraqYU8824suWyTGZ8EIURt3cL01taOFrSOWoHK5b/wHvYJA56n+hVIPYTKsal5mh1bwGHJl7ZAfGPfWMKpQ==
-X-YMail-OSG: MBTzprIVM1mA65Cu246_MUdx.IwNDtKyXB332rt_XiQ5wNuwIayUiKJphiKSW_w
- rwyGbqI2rysa6rare3.gy0Ig8zIh3gp2TUNLR_LnoLmwbUJ4UXiJZCYlHs0laG_K.E4WR6J.WTYs
- 1CcQgWkQ8.Mo8aFsxSd9fAgDBwtB3RVb9v_FZv2kF3EljDY9AQ8ia_zj6d6b4qfPpJAJoZQrSQfX
- sdJUrA01dcuqZlK7W_40mL6ciFhj0nvBXU8Q08LfIpLjmVFDe3.4ibxgl92hlqzWiK6PV1rJSi9B
- ypv8A1VmRPKhuPg5ktHpeg_wjcM81PFXvTkdwcfrn89QmJ9T29MKAUX96UIg7jdVfEjIggOHxht2
- Le8DC83h.l5llnls13aCRrEpEutmaVqcmJJwzM1B4CRIIVh2ZB.7VCe15lzaFW4YNCx4986RYRL5
- hVswA8YdXY8rbxPpQyIGmr6XB8qPogCrnA9rrJ9SQ5ngnDPDGOG6EyuThHgq26TxuVrrVt4uQdFd
- HtDaQX312zxPofCunYOz2CaJ2FtX9vAjxFXQSI9X2jIxYBkGtFQnoG8oLsM3a3ztPlO7PYM2dQeX
- USJzOIO6cSv6IW2VJnLSHUzyyndhzAWGRyLdef0TiONN75J.TIH4TXY.fHMrg_61.WrRK91p8rKr
- LUt9gcIRga7yc2Mh0biudRsL.e.zgJIHqlPA8xQmfaPBpQIwPofhx7EaV8XZ.JmmweqWF9CmGrgF
- yXPBwDa9.Ui3LPlkqeR8SljfkkMfoC0gCit.iY0ZPw84L5Jt5OqqWHNttJWEPritSByD3s1Y7QO2
- pV2kT9OBU9ZOP4p8bv6zdU0VzQQVcXwmxKUAlg06VrEsjlHuau245aN6sY.6q07TY4h2jajb44MZ
- U94g4JZoMLJ4MkxyQShT.uwL4_AG_p2G9iPpMgB0Cnf0JzC1RiIPq9cDIqY45ryB78eJgYrrxdHu
- 91SlsP_4lX7hN.XhKmVxow_OlYgpFZhYFsg63mboSdWNWZGAv1XbIDENzBan1ChmDQqHY8cw6oMF
- kO1.kXpj0e5xrXLLm.qRty.AeIA4oCCQr9PkCn583xCnpYEQAjvFjd3gQdu0onYH3Mwt5NQTOvVi
- 1U1j4Le4W1YvC10jMCqD55HKGj5i_2Ack98ofMjBmNnUTrnahO8V062.g8rrKkiby7my5bsFCLon
- Kzos9ytK_KHWz9wBxnz_c0Ka1Dfm5dhPtJKmixMJw_UhTqv7QHV4kR30y52zByDBBYXnZrG849Cn
- UFx7BkrsI4aGbdIJnt_8NHdWNyaflBlt4SGqL3d_WH8cfewBQmcqZM3oa3SKFqU6l.fRSHZoY_Im
- 0lhcagRyyDxMnAKBF33AVjyvsOpebeaCwVHwWPqpBWLLZPrseOryjawWw5C1OjZ0EGDNI2ji9pSb
- o6iHbNMEVMmdlQ0IqYMedgF4ZW7x6Xd6jgocUaX6hCwCECxZoOIh7OvMPiEXsNe0JtrUU4OsmYfl
- Ck5P3Chq66j68N6X6KgQ7vtPwDuyxYDsnk1rYk.V5sSmsKGpQxg3vwcgDTCwXP4pF1fXmaGhzvuv
- ix_n9u7GI.ypzYHYHdAh8X4QGChrMfBiR6BUrY3TYhE21M8AFmGSrkBvSnj_kxR41u2hs.l_iwb9
- FarTGt64uwFgXQNwrDV.46lMTFGe55y2Xjw35NZ6EF8wuSfkLS3T1mjLofRCnjeh4XYlbuOOi8Aa
- uNknwkf_mDXPr5uk2LXDSL6et4ZWFIR6iH.mDo5J1TL7fWnOk8IgNgqApIaAZ1FLK4AiiGe3p6mG
- N7s_F.ZhZ1DDzNlU9URmN8ZZfYsNj4Z9J81sF2OQsyaljaoe9eGSUJHeyfnYBsUlPCAhYdGJT7kS
- J5oJpA0BgKiOn2YvSCPjhtaTK9oWQXWFz3vrmB.tTFwmnc.r4xHD1jjmYcOaqId6JgRxunIAnfZx
- h5NlVQ7HtHFONFiEehmh_kiNfFM579McxwyuGbg51jkD3908YjzHJmNCnpNLbB4EUEp33miyZlNp
- c8rPFPsSIjDGdu8dpVmCebyCPanawdk_SrImZ3tJtoMxiLwts1vJ7okrY05hpIv_sr8mKEQw7Y8E
- 2tW7eHzzlBnd.Vapy6Wyc28mJIykXZdmJfVrx6n2Z4ZZ3NqTLHRZHfywLjgNI3ZVtEteVuOw0w0d
- AEbSw8Xv.3ZFLgimCuWyJNF2oxkvlrCKk_boBSoDXyo_MwZH7StW8xedJwm6YKOdqc1lXKSWoa42
- SxILLddwGRWedn0.j94t_KJJ72.ZkKH5KW.iaUrvA7LsQpvgH1hChrtZF73Lnts6AQN7baaLAw2D
- uS5arguiY9YRzrALHXeCeemlFomrj4UGgWQZxFZTw4l6A
-X-Sonic-MF: <jahau@rocketmail.com>
-X-Sonic-ID: 33d90e31-71f6-47e4-93fd-d85ec77e0a35
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ir2.yahoo.com with HTTP; Fri, 11 Oct 2024 19:42:10 +0000
-Received: by hermes--production-ir2-6664f499fc-ggmrm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c9e3e37c360bbb7e8327b384596edb5;
-          Fri, 11 Oct 2024 19:42:08 +0000 (UTC)
-Message-ID: <eaf1994a-a85d-4dcd-b729-2dba8354e8cc@rocketmail.com>
-Date: Fri, 11 Oct 2024 21:42:07 +0200
+	s=arc-20240116; t=1728675757; c=relaxed/simple;
+	bh=B7kyYckFT/0DJHm3tDLiNH9WM3QNDHo1rocCSnEz2WI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=tAmL1R4Bev62o5mXwm5JSFIPXSJOnqfMs4QaCKrnyT8rYZy+DDfMJ8f5shYRsO9J00LUvxQLgokErej0af7q2ysNz1rOMK6RwrU4vtSgOlL7SjVCkCHg3xFTl9GZ8/39lvFvHXm0z71UzO6JaXdEfuIRQjDvTqGYCTVjDb0fPdk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=dxXQKG8H; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37cea34cb57so1446897f8f.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:42:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728675754; x=1729280554; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9H6rXUaUQHjyd2VSgKGDs+alotbQnC2p5Cn69HNYv04=;
+        b=dxXQKG8HU1bwH2NhuFz0fSNyTBshOiaztF4OgaX2/Q00YcMPR1PzeWdw/JS8p9FXhH
+         d0YgEDWluhg6g5YzuKRbyEW+eD4aAyy66GAllToPKCU1CKgJ8eiYjeavghxRXjZGYsM3
+         xPJVsAzUQAW3RT+HRZh3tUCTor9VZ++Y5w77Jw07DMJNjimB1TkZ+DzvXNQNOwJMkbAC
+         3npLKYuQgPU41l9HO2s3/Fe+Q+EzKTOAjtl/NRLRgzBHCDjsLABCnEq/WOIFEDGWkFqp
+         A9FL+A4Vm18YYaSHazL6/su5MovelE7fWctiFGdAk1K7G+rQYmGX4vJW1I1E2k/EkcrP
+         /MAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728675754; x=1729280554;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9H6rXUaUQHjyd2VSgKGDs+alotbQnC2p5Cn69HNYv04=;
+        b=Xkxkc2GzzMBLn6B3Qi+TgqSb+2LNuXzROMMeQ0JPY3BaT4kbz/vxGtHdS4iyHlqd9X
+         XLfb1e8oj25vwzcx9CML7NcZVSvdG9aH2wlKfneEpm/XcuVdfwvM6j5KesJDmVqOcYXT
+         qqLfJBjc8wAG8EKns9HswQ0tc3SyZyvGsPBUIQlcohotyBqYUASDlGUg3oEfd9QbrhYB
+         6Xh1j0ezITbZeoZ2ilFEZh1zenxb4jjvdYWMdGIInZEzY2543xPNZBb2kGXzaFwfaTGF
+         h2s894105RJEo8N2QYDrBIZf8GWhoG5O3v8pxYQ4GuJErkzEcXHDtaNnLCxgKx57IiLI
+         KsGg==
+X-Forwarded-Encrypted: i=1; AJvYcCXEVwyUGmEmmSPPyrUygcvLR5sN1RpD3rJW56bev73cmq5W65YwAAMzdhGzeLLAM48nS2KnAtP0/MCe1z4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxA2Ob/BTA5YpOxBYx1UuKHejEbdPj7+0zFtyEXSqmQh7HBw2qG
+	P6JqaTWa5Vw6b3xyhEiHkIzERSp+Ni4kK4klDiX9AaRWltDyTo7QaSzrKimdy5Y=
+X-Google-Smtp-Source: AGHT+IFPVVvRgJhwZiV6j4xkCfdUzrR6DGnGMYo8fZws+use+5kUvfYFQjYHJ8OsNnHP8FEbLNe+OA==
+X-Received: by 2002:a5d:4d4a:0:b0:37d:4527:ba1c with SMTP id ffacd0b85a97d-37d5531a0a2mr2327244f8f.49.1728675753903;
+        Fri, 11 Oct 2024 12:42:33 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79fa79sm4686059f8f.72.2024.10.11.12.42.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:42:33 -0700 (PDT)
+Date: Fri, 11 Oct 2024 22:42:28 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Helge Deller <deller@gmx.de>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Sekhar Nori <nsekhar@ti.com>,
+	Bartlomiej Zolnierkiewicz <b.zolnierkie@samsung.com>,
+	linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH] fbdev/da8xx-fb: unlock on error paths in suspend/resume
+Message-ID: <37842441-e372-40e9-b0f5-cf69defc2db5@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] drm/panel: samsung-s6e88a0-ams427ap24: Add initial
- driver
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <cover.1728582727.git.jahau@rocketmail.com>
- <d36d0d152c509b78d02f9f7adbea665c0c863446.1728582727.git.jahau@rocketmail.com>
- <6d67c2c6-819b-481a-8cc9-e24ef8f6c142@quicinc.com>
-Content-Language: de-DE, en-US
-From: Jakob Hauser <jahau@rocketmail.com>
-In-Reply-To: <6d67c2c6-819b-481a-8cc9-e24ef8f6c142@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-SGkgSmVzc2ljYSwNCg0KT24gMTEuMTAuMjQgMTg6NTIsIEplc3NpY2EgWmhhbmcgd3JvdGU6
-DQo+IA0KPiANCj4gT24gMTAvMTAvMjAyNCAxMTozMSBBTSwgSmFrb2IgSGF1c2VyIHdyb3Rl
-Og0KDQouLi4NCg0KPj4gK3N0cnVjdCBzNmU4OGEwX2FtczQyN2FwMjQgew0KPj4gK8KgwqDC
-oCBzdHJ1Y3QgZHJtX3BhbmVsIHBhbmVsOw0KPj4gK8KgwqDCoCBzdHJ1Y3QgbWlwaV9kc2lf
-ZGV2aWNlICpkc2k7DQo+PiArwqDCoMKgIHN0cnVjdCByZWd1bGF0b3JfYnVsa19kYXRhICpz
-dXBwbGllczsNCj4+ICvCoMKgwqAgc3RydWN0IGdwaW9fZGVzYyAqcmVzZXRfZ3BpbzsNCj4+
-ICvCoMKgwqAgYm9vbCBwcmVwYXJlZDsNCj4gDQo+IEhpIEpha29iLA0KPiANCj4gSSB0aGlu
-ayB5b3UgY2FuIGRyb3AgdGhlIGBwcmVwYXJlZGAgaGVyZSBhcyBpdCBzaG91bGQgYmUgaGFu
-ZGxlZCBieSANCj4gZnJhbWV3b3JrIG5vdyBbMV0NCj4gDQo+IFRoYW5rcywNCj4gDQo+IEpl
-c3NpY2EgWmhhbmcNCj4gDQo+IFsxXSANCj4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20v
-bGludXgvdjYuMTEuMy9zb3VyY2UvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgjTDI2Mg0KPiAN
-Cj4+ICt9Ow0KDQpUaGFua3MgZm9yIHRoZSBoaW50LiBJJ2xsIGNoYW5nZSB0aGF0IGluIHYy
-Lg0KDQouLi4NCg0KS2luZCByZWdhcmRzLA0KSmFrb2INCg==
+Add a missing console_unlock() in the suspend and resume functions on
+the error paths.
+
+Fixes: 611097d5daea ("fbdev: da8xx: add support for a regulator")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/video/fbdev/da8xx-fb.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/video/fbdev/da8xx-fb.c b/drivers/video/fbdev/da8xx-fb.c
+index fad1e13c6332..66ff8456b231 100644
+--- a/drivers/video/fbdev/da8xx-fb.c
++++ b/drivers/video/fbdev/da8xx-fb.c
+@@ -1610,8 +1610,10 @@ static int fb_suspend(struct device *dev)
+ 	console_lock();
+ 	if (par->lcd_supply) {
+ 		ret = regulator_disable(par->lcd_supply);
+-		if (ret)
++		if (ret) {
++			console_unlock();
+ 			return ret;
++		}
+ 	}
+ 
+ 	fb_set_suspend(info, 1);
+@@ -1636,8 +1638,10 @@ static int fb_resume(struct device *dev)
+ 
+ 		if (par->lcd_supply) {
+ 			ret = regulator_enable(par->lcd_supply);
+-			if (ret)
++			if (ret) {
++				console_unlock();
+ 				return ret;
++			}
+ 		}
+ 	}
+ 
+-- 
+2.45.2
+
 
