@@ -1,136 +1,133 @@
-Return-Path: <linux-kernel+bounces-360857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D185F99A09D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:00:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C387899A0A0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:00:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3CF02842C0
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:00:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA8841C226D1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:00:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC0120FABF;
-	Fri, 11 Oct 2024 10:00:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5207620FAB6;
+	Fri, 11 Oct 2024 10:00:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="RAaQ2SC8";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="QEIRZFB2"
-Received: from fout-a5-smtp.messagingengine.com (fout-a5-smtp.messagingengine.com [103.168.172.148])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OytAKNR5"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87F8819DFAB;
-	Fri, 11 Oct 2024 10:00:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.148
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 357BB20A5E2;
+	Fri, 11 Oct 2024 10:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728640811; cv=none; b=XHbNi/cK27EpN/OZupaIHC2znZxdVHameymYl0IitBSvDKNGKtR28V6Q5MnKXqoEi/G6xk70r/XF/sd7g2rN/wOvehwn0/yb2budydwxq1Y32wA+wsgiRa5Mh/wcS8r91tRCY/Di5g2SpibdaW7yp7jS3iurWh08ySt4/oHoqyA=
+	t=1728640841; cv=none; b=UxZ+XSoYL1ObZ3PHiMdYnpIGQek6Pu5+ApC7zmbno5fyNasCtLm3h31Ve3/2tNNRX2YEdG0nccUBDFyqgUjHVVLJi+/dTTz6Z8O1lVuBAiJkpfkvCeuhrqnK5BiUfORzzVpUwNCkVlGyWjjm249X3JP5xs6JcSaGXB2TiI4+f1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728640811; c=relaxed/simple;
-	bh=ZpF0xQ05tkLqTlOyBDcw4AoSMq7o3KezyfCI13T1M/o=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=U09frsYGKfkACL2yoEhsB6Z9l9OhPCC12dt7060SeKA9zSW/VS7mtHTVrk/f3CAQYRUUiO0drznSEgH75Gj+nIXI3CSNU3sQ/YbdfycXKeghxZ+BIgdmh7AAe2/6BGR9SAohz1bbGlQ61VprqMCi/y5sFOxbcvrStstfiUUVDnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=RAaQ2SC8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=QEIRZFB2; arc=none smtp.client-ip=103.168.172.148
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 734DD13801A7;
-	Fri, 11 Oct 2024 06:00:07 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Fri, 11 Oct 2024 06:00:07 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728640807;
-	 x=1728727207; bh=+HfamdzghNLbAgFrpKdfwQHqTtsV9TeaWTuLB2b3cCA=; b=
-	RAaQ2SC8uu+9Q9YQiZlsiDUsVPMJBggTupPyyMk2ydV7E49DfgViNEP4DQP/F3zL
-	ZTO0wbE/2qmRasDOowvvKfoJOjvlKHz8eSHy73KkCaAY+BNkRRUbkTIhs1HeuOj7
-	4iGG7Yij4J7FV85HDcVUE00oM+dfBF7h5pu1703QxnvTWKTbSU+kHBHikLcOyWdV
-	FLP9wG2Ea+M7+2jgHxqp2tfO54uESBsRNbRdKb24m+XfD8JYiRKWBba/TuYcIj82
-	xM/Y+Anl9h0h8vg3PPqKzFj8lmh2ri//Ayy08JZYqdLDXerb7hLILlf/ob0lJIJr
-	KqcxxH/HlhJMS/s6zYkDvA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728640807; x=
-	1728727207; bh=+HfamdzghNLbAgFrpKdfwQHqTtsV9TeaWTuLB2b3cCA=; b=Q
-	EIRZFB2WN/Q+gd+oqITAsNuV+w4/ykSX5+Tw6kZZBQfbac5NaVmYoo7aE/BVW1mz
-	Hlu0FDZjqvU83RwarGLb258QeTLRbxbAYnSoTsBcEjmvHdS5lR0A7pppRYJFMp9R
-	QjnaCo2fhac6TKmo4nWKvzGHBAMpJM8m8/clUXBPgX5oFZko7wT0zUSozbjVWLq/
-	cSSXVoRlE4CJjZKqsHLu8wWBwaAyqZyJbJiCQfwLICCGXqe+YE6a1wWuCoZSXigo
-	gWzfg+NPkiYLHV7Fgig+IMfbQ7mQWRAmxaGA2HuY3Lu3gTX2qQJkx4KiS3rqqmbh
-	LUcGf/omyYS6dI2SRRG5Q==
-X-ME-Sender: <xms:J_cIZ9YiVZeBc34OMhYO-JZfji1VtJ6e7-IQx55O886Nk1sNHiVSQA>
-    <xme:J_cIZ0Y1yuXXeKIXgd2mJjCS1Fdqvyp_vacl9UPD3HjWX1HPPKVK9qDhNJGcm6d4J
-    ebX3KIN43VFuwkJxzs>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdefkedgvdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepuddt
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopehmrghrihhordhlihhmohhntghivg
-    hllhhosegrmhgurdgtohhmpdhrtghpthhtohepphgvrhhrhidrhihurghnsegrmhgurdgt
-    ohhmpdhrtghpthhtoheprghrnhgusehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlvg
-    hnsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdr
-    ohhrghdprhgtphhtthhopegrnhgurhhihidrshhhvghvtghhvghnkhhosehlihhnuhigrd
-    hinhhtvghlrdgtohhmpdhrtghpthhtohepvggrhhgrrhhihhgrsehlihhnuhigrdhmihgt
-    rhhoshhofhhtrdgtohhmpdhrtghpthhtohepjhgrrhhrvggufihhihhtvgeslhhinhhugi
-    drmhhitghrohhsohhfthdrtghomhdprhgtphhtthhopehlihhnuhigqdgrtghpihesvhhg
-    vghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:J_cIZ__q3Uq9zKvBtiTk0PhxoqUVB7MIvBQtSvn627t-b6cl0YVgew>
-    <xmx:J_cIZ7qUlUvYkTfw5UaKcKlzyn9Hzfqlj3mq0nHN64zyrzWydFB69A>
-    <xmx:J_cIZ4ozCzYe1mbEnX7Gz4Bi-tCFKsshUtzSqKteZdL3NatwKQAKXg>
-    <xmx:J_cIZxSKMcOjIJVyrQEnY-ty27ASk-OPtmAhcgmvTPeFKASL7fpE6w>
-    <xmx:J_cIZ_1XgZ3QhwvNXLGM4sDvZ7h6w1h6JwJfNOA7PQ4cqicxBGVd8Ao5>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 1FA9F2220071; Fri, 11 Oct 2024 06:00:07 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728640841; c=relaxed/simple;
+	bh=28WlqzpCpZulvXzTrsGj25L0PmmOf+eWAFDkJUIM0+Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AXxRtBRt66GMsa5TH4sEsduBuyZUA4nWpUrdQ89rX6/J5xk6cpqx2LB7mdeyW26WDrKS1wKWjPqk9gB70LrLld2UUC+dMtrqMDwVjK8/wxL8BZZFneGv8Q+ZO1bs82zBJG7nAmfkBzY2Pa+yx/ktqnEFHofyMCCYUrogiq8amEA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OytAKNR5; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728640840; x=1760176840;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=28WlqzpCpZulvXzTrsGj25L0PmmOf+eWAFDkJUIM0+Q=;
+  b=OytAKNR5+G/7jhbgAMpqNderyY/6fC2MspdK71YuxxaIwA14p2rn3hRt
+   AzXtno5yDwsj+6UdNWl3pYKbd9uwWR8Ro1z/I/x9Iz0AIWBviGfN1fVej
+   dMIHW+ur/1RO5Jy+6cRHuGdFaAmgDFw9sLyaCpKnixlbf60HKLmPy8Mas
+   WE9+jCZrT2slm7PkvC7u9jtch5mBB+u8+y6sGyA4yXbPezt+PdPJSDTU8
+   khdLsvxaKz0HEqjREzfY7kKx4lq0nbZ3NmKC4hufxj75M0ooTc5PjuVe1
+   vqAndzcW88oJhGbLSLAKJ/Mury0x/KwDt3PGryQBJe3TqL5MWQFapCW5a
+   A==;
+X-CSE-ConnectionGUID: ySvjidEwTcWfYSQfTrzZaQ==
+X-CSE-MsgGUID: vRAQ4yawTfOvrmHIYgOWbg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="45546884"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="45546884"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:00:39 -0700
+X-CSE-ConnectionGUID: DZyD5RdDScyxl0D1+h6nDg==
+X-CSE-MsgGUID: u0BzR6ISQl2q5NWZrxmncw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="76770782"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa009.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 03:00:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szCRm-00000001qoC-0Pjl;
+	Fri, 11 Oct 2024 13:00:34 +0300
+Date: Fri, 11 Oct 2024 13:00:33 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: vamoirid <vassilisamir@gmail.com>
+Cc: jic23@kernel.org, lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 02/13] iio: chemical: bme680: avoid using camel case
+Message-ID: <Zwj3QZE30juE53Vy@smile.fi.intel.com>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-3-vassilisamir@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Fri, 11 Oct 2024 09:59:46 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Arnd Bergmann" <arnd@kernel.org>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, "Len Brown" <lenb@kernel.org>,
- "Mario Limonciello" <mario.limonciello@amd.com>,
- "Jarred White" <jarredwhite@linux.microsoft.com>,
- "Perry Yuan" <perry.yuan@amd.com>,
- "Easwar Hariharan" <eahariha@linux.microsoft.com>,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <de65a5c8-1bbd-47b3-9dc5-de4ad93c41b8@app.fastmail.com>
-In-Reply-To: <Zwj1p3uMEA24a0sU@smile.fi.intel.com>
-References: <20241011061948.3211423-1-arnd@kernel.org>
- <20241011061948.3211423-2-arnd@kernel.org>
- <Zwj1p3uMEA24a0sU@smile.fi.intel.com>
-Subject: Re: [PATCH v2 2/3] acpi: allow building without CONFIG_HAS_IOPORT
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010210030.33309-3-vassilisamir@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, Oct 11, 2024, at 09:53, Andy Shevchenko wrote:
-> On Fri, Oct 11, 2024 at 06:18:18AM +0000, Arnd Bergmann wrote:
->
-> ...
->
->> +	if (!IS_ENABLED(CONFIG_HAS_IOPORT)) {
->> +		*value = BIT_MASK(width);
->> +		return AE_NOT_IMPLEMENTED;
->
-> Perhaps it has already been discussed, but why do we need to file value with
-> semi-garbage when we know it's invalid anyway?
+On Thu, Oct 10, 2024 at 11:00:19PM +0200, vamoirid wrote:
+> From: Vasileios Amoiridis <vassilisamir@gmail.com>
+> 
+> Rename camel case variable, as checkpatch.pl complains.
 
-It's not strictly necessary, just precaution for possible callers
-that use the resulting data without checking the error code.
+With given reply to the first patch...
 
-The all-ones data is what an x86 PC would see when an I/O
-port is read that is not connected to any device.
+...
 
-     Arnd
+>  	/* Look up table for the possible gas range values */
+> -	static const u32 lookupTable[16] = {2147483647u, 2147483647u,
+> +	static const u32 lookup_table[16] = {2147483647u, 2147483647u,
+>  				2147483647u, 2147483647u, 2147483647u,
+>  				2126008810u, 2147483647u, 2130303777u,
+>  				2147483647u, 2147483647u, 2143188679u,
+
+...here is the opportunity to fix indentation while at fixing the code.
+I.o.w. I would reformat the entire table to be
+
+	static const u32 lookup_table[16] = {
+		2147483647u, 2147483647u, 2147483647u, 2147483647u,
+		2147483647u, 2126008810u, 2147483647u, 2130303777u,
+		2147483647u, 2147483647u, 2143188679u, ...
+
+(also note power-of-2 number of items per line which much easier to read and
+ find one you need).
+
+...
+
+>  	var1 = ((1340 + (5 * (s64)calib->range_sw_err)) *
+> -			((s64)lookupTable[gas_range])) >> 16;
+> +			((s64)lookup_table[gas_range])) >> 16;
+
+Also an opportunity to make this neater like
+
+	var1 = (1340 + (5 * (s64)calib->range_sw_err)) * (s64)lookup_table[gas_range]);
+	var1 >>= 16;
+
+So, at bare minumym there are redundant parentheses. And looking at the table
+and the first argument of multiplication I'm puzzled why casting is needed for
+the second? Shouldn't s64 already be implied by the first one?
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
+
 
