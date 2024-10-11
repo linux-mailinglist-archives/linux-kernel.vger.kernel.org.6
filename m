@@ -1,223 +1,224 @@
-Return-Path: <linux-kernel+bounces-360375-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C27CA999A2C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:15:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ADF67999A12
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 04:11:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DDB7283E6B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D126283662
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:11:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECAD1FAC5E;
-	Fri, 11 Oct 2024 02:11:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5D51EF95D;
+	Fri, 11 Oct 2024 02:10:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CU3FIr26"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ff7clsSn"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 617A51FAC29
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:11:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D76B11E7C35;
+	Fri, 11 Oct 2024 02:10:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728612683; cv=none; b=Vd25CiF45Gfos1nF2lbCiuna2YyIZa7wVqDHKCFP0R88IHmUMC2zHKLSVXuiZ/GbCmHywPuRBBVFhHwG6kFwNYNvtwlb80UNJH92DWBxYALFc01hdAOUf5uLRCHUcbyFt799o1+ewbJmcMENPr9jfNoYvWfTRmd/ELTwx65+bjE=
+	t=1728612657; cv=none; b=qjU4k3VSCLLjDNAwxWRf63ujSlXFqGUVHut5BLDYX8OhwInWN4gkXQZoxPZulIBNjsPM0WgWZMKi7Drz95c75x9lUClUyLNzaczu7J15M+WI8BsF1ExxLidTCdeQMAxlHLGdL+63uiW35tgu+cmhWpLCCQa3dkK4fgBeSFR2uZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728612683; c=relaxed/simple;
-	bh=m/5CauBdL1nt8Fd10Sy1g4VhGuxt93poof2ffX7YAoM=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=sJOeGc0GCtw0RNQ+G31WLbNpWI+mIUkfcYQFiD6oDG3WYZyQLTZ6Ta4oOmv91fxBD1JEOKbXvrwwJ56eQPSP+fjd6IcK8hPhyAIoLfxVCN5eIv3yYj3ZLnsYeBToa0eYBXaQGQZmsTgENXR+dMt8mWmWhjCYqd7LvFLbB/iKOU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CU3FIr26; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-205529c3402so16074445ad.0
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 19:11:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728612682; x=1729217482; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:from:to:cc:subject:date:message-id:reply-to;
-        bh=F6r5K1Obxnm5Vr48TnHxk1cPnehpFcrMpqKQdTEhjUg=;
-        b=CU3FIr26OFZC3tciRj903lQGZIDMfFot9AXP+/hE9/Lm9k0hdT4VFQFWjMEjorD5W5
-         xf1Dj0fK5h57EFWI8E+p42VFraY4AnuxujbET9qI0ScB6KjZXQmnJhw+r3m4A+du/2/+
-         URv1FCIqDCqIvKpNZByY/KLcyBBC/utG5C6MkPZInS2ztuhSx2z0OgzhAZOrCHvQJ6kS
-         ba5x45lPbR9urZCEOCCInOOMnOZsgRIAvEgatGhMBQUc+V/cb3gROaGYQG06u1/I68tv
-         JuudrXaqfJLh3NOVoKmQW0BOOa04A33dZeIS59gEqn0euPaUE0GT6/a5OiYk0sNrmBHn
-         rP1Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728612682; x=1729217482;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:reply-to:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=F6r5K1Obxnm5Vr48TnHxk1cPnehpFcrMpqKQdTEhjUg=;
-        b=fuAsGEET+thWJ0mBFgIpw5R0jL+A/eqsKU2fDTaBEXZMBDtDBRw2qGHhqo+bbDVg/3
-         1anBOdfQmuwu+xkruiqchemee+375GeZHmkeXXc2885zuyMYGcCS0WqYDktImfEvAEgO
-         Yp0iNsutIZWZnEZn+Acp9aUYl7bkrk27ppS5x5n9GHrgN0lLg62MFIk0tLjt6dk53M68
-         vG4L25IhJFcYyTWZJC639yh5walmhxvG6hhPQwJibL16vPWzJYM03AwP2UjiVtwA6cpE
-         iQQLtC/QL+4Puas973tH+bQQS+B36OzflW3/26HoyqhlC9bvnJCATOF3GlhLZ72JtcWs
-         XvuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW/uy+A8uHk196bsqQWIZzxLehRF6I6GkJjDS+XUoNjdt3kHqf1/eZJPr4BTECBBLYP63ilXbsrnE+tQR0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzCv/lnV33J7TljS6vD3wb7QKogMKdZKnmRBDa5p/8yUCQUT2gc
-	/A8XchNRb6uh6/5Qkksjy/eCEm5lffS/FeuMj3b9b+E5nM7X3S1TJKFMDiKgT7xGf8alDZ1dxwL
-	rsA==
-X-Google-Smtp-Source: AGHT+IErTn43l0LgEWENkKDIgkfXKjKQt8ITh9JwTsuSnXZvVQSIOElg4tIAx1YgDCRzg3lb2AMhAmBmMyg=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a17:902:ecc7:b0:20b:9522:6564 with SMTP id
- d9443c01a7336-20ca16ddcefmr7355ad.9.1728612681515; Thu, 10 Oct 2024 19:11:21
- -0700 (PDT)
-Reply-To: Sean Christopherson <seanjc@google.com>
-Date: Thu, 10 Oct 2024 19:10:46 -0700
-In-Reply-To: <20241011021051.1557902-1-seanjc@google.com>
+	s=arc-20240116; t=1728612657; c=relaxed/simple;
+	bh=7nnM+aCJSDVx7UEfk8B2G6Xw/chlOCqKlpazAUZnBJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LIqHi5H3HLvmI3/6b8WHBAr3jpfDG6zysN1ASw9bHFeJd6nX4wQkUYJUnqBv1p7GZzVed8NuIw6ra5kWOtO8uzzVkUejrrxzQwqDii0zJiYRIJs063+35FXHVsAyecxP7RDpg0TE65+DQgu7cX6KhL6kRCij3rYRs0bah6xVgAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ff7clsSn; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1728612647;
+	bh=SD2VxmTCxFXyS73HTlXqtNjG87Nx1WLwRrvFIi82oaU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ff7clsSndCT+vBcjt+ep7cVVOsikySKc5RaS4QSnOHuLLEDk9hdDHD2Gt95kxMpGT
+	 EDbkxP5fty7EKhrrSV2m9ezwNsEkU68ibiIyeW6JLMBnF1+cQzss4rDjthKjgJFC1i
+	 9cGsrxHO4bvWLMTUfycuQ69iotUv8W1Kks54TXbYsAYbAQXafjZPMPm0LyyvO0GYfQ
+	 Cn9VWtJVYezG+rG9ajd15pn8cGaj4OiZxUWHC2yDd2TO1ixOieybNVUixtmLe91EjF
+	 nl++ivvWtLaUjy9FVqcZl/C+jBqAN/r2jblYzaalDhjP4CCFwrBPglI8qhCACItJ47
+	 PsKVP5GTYIv1g==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XPqpv3BCsz4xKS;
+	Fri, 11 Oct 2024 13:10:47 +1100 (AEDT)
+Date: Fri, 11 Oct 2024 13:10:46 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: build failure after merge of the sound tree
+Message-ID: <20241011131046.5eb3905a@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241011021051.1557902-1-seanjc@google.com>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-Message-ID: <20241011021051.1557902-15-seanjc@google.com>
-Subject: [PATCH 14/18] KVM: x86/mmu: Stop processing TDP MMU roots for
- test_age if young SPTE found
-From: Sean Christopherson <seanjc@google.com>
-To: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>
-Cc: kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Yan Zhao <yan.y.zhao@intel.com>, Sagi Shahar <sagis@google.com>, 
-	"=?UTF-8?q?Alex=20Benn=C3=A9e?=" <alex.bennee@linaro.org>, David Matlack <dmatlack@google.com>, 
-	James Houghton <jthoughton@google.com>
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: multipart/signed; boundary="Sig_/9QX6ePWzLA1/zTjnNdHYZCv";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Return immediately if a young SPTE is found when testing, but not updating,
-SPTEs.  The return value is a boolean, i.e. whether there is one young SPTE
-or fifty is irrelevant (ignoring the fact that it's impossible for there to
-be fifty SPTEs, as KVM has a hard limit on the number of valid TDP MMU
-roots).
+--Sig_/9QX6ePWzLA1/zTjnNdHYZCv
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Sean Christopherson <seanjc@google.com>
----
- arch/x86/kvm/mmu/tdp_mmu.c | 84 ++++++++++++++++++--------------------
- 1 file changed, 40 insertions(+), 44 deletions(-)
+Hi all,
 
-diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
-index e8c061bf94ec..f412bca206c5 100644
---- a/arch/x86/kvm/mmu/tdp_mmu.c
-+++ b/arch/x86/kvm/mmu/tdp_mmu.c
-@@ -1192,35 +1192,6 @@ bool kvm_tdp_mmu_unmap_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range,
- 	return flush;
- }
- 
--typedef bool (*tdp_handler_t)(struct kvm *kvm, struct tdp_iter *iter,
--			      struct kvm_gfn_range *range);
--
--static __always_inline bool kvm_tdp_mmu_handle_gfn(struct kvm *kvm,
--						   struct kvm_gfn_range *range,
--						   tdp_handler_t handler)
--{
--	struct kvm_mmu_page *root;
--	struct tdp_iter iter;
--	bool ret = false;
--
--	/*
--	 * Don't support rescheduling, none of the MMU notifiers that funnel
--	 * into this helper allow blocking; it'd be dead, wasteful code.  Note,
--	 * this helper must NOT be used to unmap GFNs, as it processes only
--	 * valid roots!
--	 */
--	for_each_valid_tdp_mmu_root(kvm, root, range->slot->as_id) {
--		rcu_read_lock();
--
--		tdp_root_for_each_leaf_pte(iter, root, range->start, range->end)
--			ret |= handler(kvm, &iter, range);
--
--		rcu_read_unlock();
--	}
--
--	return ret;
--}
--
- /*
-  * Mark the SPTEs range of GFNs [start, end) unaccessed and return non-zero
-  * if any of the GFNs in the range have been accessed.
-@@ -1229,15 +1200,10 @@ static __always_inline bool kvm_tdp_mmu_handle_gfn(struct kvm *kvm,
-  * from the clear_young() or clear_flush_young() notifier, which uses the
-  * return value to determine if the page has been accessed.
-  */
--static bool age_gfn_range(struct kvm *kvm, struct tdp_iter *iter,
--			  struct kvm_gfn_range *range)
-+static void kvm_tdp_mmu_age_spte(struct tdp_iter *iter)
- {
- 	u64 new_spte;
- 
--	/* If we have a non-accessed entry we don't need to change the pte. */
--	if (!is_accessed_spte(iter->old_spte))
--		return false;
--
- 	if (spte_ad_enabled(iter->old_spte)) {
- 		iter->old_spte = tdp_mmu_clear_spte_bits(iter->sptep,
- 							 iter->old_spte,
-@@ -1253,23 +1219,53 @@ static bool age_gfn_range(struct kvm *kvm, struct tdp_iter *iter,
- 
- 	trace_kvm_tdp_mmu_spte_changed(iter->as_id, iter->gfn, iter->level,
- 				       iter->old_spte, new_spte);
--	return true;
-+}
-+
-+static bool __kvm_tdp_mmu_age_gfn_range(struct kvm *kvm,
-+					struct kvm_gfn_range *range,
-+					bool test_only)
-+{
-+	struct kvm_mmu_page *root;
-+	struct tdp_iter iter;
-+	bool ret = false;
-+
-+	/*
-+	 * Don't support rescheduling, none of the MMU notifiers that funnel
-+	 * into this helper allow blocking; it'd be dead, wasteful code.  Note,
-+	 * this helper must NOT be used to unmap GFNs, as it processes only
-+	 * valid roots!
-+	 */
-+	for_each_valid_tdp_mmu_root(kvm, root, range->slot->as_id) {
-+		rcu_read_lock();
-+
-+		tdp_root_for_each_leaf_pte(iter, root, range->start, range->end) {
-+			if (!is_accessed_spte(iter.old_spte))
-+				continue;
-+
-+			ret = true;
-+			if (test_only)
-+				break;
-+
-+			kvm_tdp_mmu_age_spte(&iter);
-+		}
-+
-+		rcu_read_unlock();
-+
-+		if (ret && test_only)
-+			break;
-+	}
-+
-+	return ret;
- }
- 
- bool kvm_tdp_mmu_age_gfn_range(struct kvm *kvm, struct kvm_gfn_range *range)
- {
--	return kvm_tdp_mmu_handle_gfn(kvm, range, age_gfn_range);
--}
--
--static bool test_age_gfn(struct kvm *kvm, struct tdp_iter *iter,
--			 struct kvm_gfn_range *range)
--{
--	return is_accessed_spte(iter->old_spte);
-+	return __kvm_tdp_mmu_age_gfn_range(kvm, range, false);
- }
- 
- bool kvm_tdp_mmu_test_age_gfn(struct kvm *kvm, struct kvm_gfn_range *range)
- {
--	return kvm_tdp_mmu_handle_gfn(kvm, range, test_age_gfn);
-+	return __kvm_tdp_mmu_age_gfn_range(kvm, range, true);
- }
- 
- /*
--- 
-2.47.0.rc1.288.g06298d1525-goog
+After merging the sound tree, today's linux-next build (arm
+multi_v7_defconfig) failed like this:
 
+In file included from sound/pci/hda/patch_realtek.c:29:
+sound/pci/hda/hda_local.h:312:58: error: 'const struct hda_quirk' has no me=
+mber named 'name'
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                          ^~~~
+sound/pci/hda/patch_realtek.c:10759:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10759 |         HDA_CODEC_QUIRK(0x17aa, 0x3802, "DuetITL 2021", ALC287_FIXU=
+P_YOGA7_14ITL_SPEAKERS),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: warning: excess elements in struct initia=
+lizer
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10759:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10759 |         HDA_CODEC_QUIRK(0x17aa, 0x3802, "DuetITL 2021", ALC287_FIXU=
+P_YOGA7_14ITL_SPEAKERS),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: note: (near initialization for 'alc269_fi=
+xup_tbl[712]')
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10759:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10759 |         HDA_CODEC_QUIRK(0x17aa, 0x3802, "DuetITL 2021", ALC287_FIXU=
+P_YOGA7_14ITL_SPEAKERS),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:58: error: 'const struct hda_quirk' has no me=
+mber named 'name'
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                          ^~~~
+sound/pci/hda/patch_realtek.c:10764:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10764 |         HDA_CODEC_QUIRK(0x17aa, 0x3820, "IdeaPad 330-17IKB 81DM", A=
+LC269_FIXUP_ASPIRE_HEADSET_MIC),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: warning: excess elements in struct initia=
+lizer
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10764:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10764 |         HDA_CODEC_QUIRK(0x17aa, 0x3820, "IdeaPad 330-17IKB 81DM", A=
+LC269_FIXUP_ASPIRE_HEADSET_MIC),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: note: (near initialization for 'alc269_fi=
+xup_tbl[717]')
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10764:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10764 |         HDA_CODEC_QUIRK(0x17aa, 0x3820, "IdeaPad 330-17IKB 81DM", A=
+LC269_FIXUP_ASPIRE_HEADSET_MIC),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:58: error: 'const struct hda_quirk' has no me=
+mber named 'name'
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                          ^~~~
+sound/pci/hda/patch_realtek.c:10779:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10779 |         HDA_CODEC_QUIRK(0x17aa, 0x386e, "Legion Y9000X 2022 IAH7", =
+ALC287_FIXUP_CS35L41_I2C_2),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: warning: excess elements in struct initia=
+lizer
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10779:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10779 |         HDA_CODEC_QUIRK(0x17aa, 0x386e, "Legion Y9000X 2022 IAH7", =
+ALC287_FIXUP_CS35L41_I2C_2),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: note: (near initialization for 'alc269_fi=
+xup_tbl[732]')
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10779:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10779 |         HDA_CODEC_QUIRK(0x17aa, 0x386e, "Legion Y9000X 2022 IAH7", =
+ALC287_FIXUP_CS35L41_I2C_2),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:58: error: 'const struct hda_quirk' has no me=
+mber named 'name'
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                          ^~~~
+sound/pci/hda/patch_realtek.c:10781:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10781 |         HDA_CODEC_QUIRK(0x17aa, 0x386f, "Legion Pro 7 16ARX8H", ALC=
+287_FIXUP_TAS2781_I2C),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: warning: excess elements in struct initia=
+lizer
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10781:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10781 |         HDA_CODEC_QUIRK(0x17aa, 0x386f, "Legion Pro 7 16ARX8H", ALC=
+287_FIXUP_TAS2781_I2C),
+      |         ^~~~~~~~~~~~~~~
+sound/pci/hda/hda_local.h:312:65: note: (near initialization for 'alc269_fi=
+xup_tbl[734]')
+  312 |         { _SND_PCI_QUIRK_ID(vend, dev), .value =3D (val), .name =3D=
+ (xname),\
+      |                                                                 ^
+sound/pci/hda/patch_realtek.c:10781:9: note: in expansion of macro 'HDA_COD=
+EC_QUIRK'
+10781 |         HDA_CODEC_QUIRK(0x17aa, 0x386f, "Legion Pro 7 16ARX8H", ALC=
+287_FIXUP_TAS2781_I2C),
+      |         ^~~~~~~~~~~~~~~
+
+Caused by commit
+
+  5b1913a79c3e ("ALSA: hda: Use own quirk lookup helper")
+
+This build has CONFIG_SND_DEBUG_VERBOSE not set.
+
+I have used the sound tree from next-20241010 for today.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/9QX6ePWzLA1/zTjnNdHYZCv
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcIiSYACgkQAVBC80lX
+0GyYqggAhnlYJimAGA9xHOXndXh5fw1T9QymzADz6YjJQ+qh3RiAdz6QWgUB2/Iv
+Uzema9n62qwdSpt/6fWxx65ar7D+D1/YotHxpOnXwDh1wIXnhOyLwXsiTxC2DTzh
+OLclT7qPOlqP9zoRKT/LRgDMB8n2VVHvS7LviiGoG1vcsIhtX5zj0ohu9Pfw2jw6
+zepioPV/AUr4nKq9MCApIXhTb1eAcp6dTVnYHSx4aLJ6xfWuNfJJb/ZTSZpH5h4h
+vqpuyDoEwar2b4lcoQQsZy6arauPeLvaXnKwex1iwq7rbfvJOK52s4U8f8BOMGK1
+7hCJE1ZjMiUecLlGexDHHF9R376QuA==
+=Gk/F
+-----END PGP SIGNATURE-----
+
+--Sig_/9QX6ePWzLA1/zTjnNdHYZCv--
 
