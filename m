@@ -1,88 +1,252 @@
-Return-Path: <linux-kernel+bounces-361235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DF1199A565
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:51:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0972599A56D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7E1FF1C21DFD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:51:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 273701C2235A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:51:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C1AF219C86;
-	Fri, 11 Oct 2024 13:50:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5E6E219C80;
+	Fri, 11 Oct 2024 13:51:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h7JdSSVD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fZlzaVOr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAF9C1E501C;
-	Fri, 11 Oct 2024 13:50:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70FAA218D85;
+	Fri, 11 Oct 2024 13:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728654646; cv=none; b=R7moz1SbzVTDGOFtzq5VRTX5nnVF13fwz/x8dvzVXHKytZlSbTOUTlnt2wr+edC5EIv6svwZZas+8k+2KE495CFJCyD3xUQ2jk2LeXAPZOCBHQj6bCQz/frX/waDXlUhxJY/+nuMr2NKPIJsPS/gCAq9ESeBZ31ePc+b6iUbuRU=
+	t=1728654675; cv=none; b=MYvpQhTQCOtsc2CLa6BAT8usVBNX2QSvkaWo8UYl8+uD49nxjrSiRXRIr6pP5C6QWlfwqX+EXbnNIaXg+hwF1NrfiKvSRukAOpDS+sqxbQkwt1QCBcixTu6ecjlgHrZymzlCTdXVQclwxQa+XEf7GrrriA1dzfvJraA27gak/MM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728654646; c=relaxed/simple;
-	bh=wuxUEsvaJi7KnJOd4mK0B/RGGL3X6g4msSOnRDdoiik=;
+	s=arc-20240116; t=1728654675; c=relaxed/simple;
+	bh=JZpTFHIOKgsBhrK+TAyqIMe3uV9e4+zAkXpEvbByrtE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YUwDMessYD/q+8gfO51KrTHIqwkhjfhZ9lb1VJ6+V7FPWybVM0Hzwygy1a7H4V36p1DhXd9y1sHj02Wvj7qvRmrVZas/jeG2AdAZMwQzTyEZ27rAFpn/gGTo8qLfSUhqnnVM0YwbPMMXOADFDga1Ho9kKT5MQ9E1XZ7vOBdYoI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h7JdSSVD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A8B5C4CEC3;
-	Fri, 11 Oct 2024 13:50:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728654646;
-	bh=wuxUEsvaJi7KnJOd4mK0B/RGGL3X6g4msSOnRDdoiik=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=h7JdSSVDMGjVi4QlM8Wf2Ptn6rohggPoFtDYCrCY1mDWwXAFWB3GQaOT/vjiVqJaj
-	 TLukmBw2E3jOjv3sLaJpCON05bv5gDoHWpE3bP+iMtbpbymCMHAvz1v0M5t2lGtl8J
-	 VIl7PNmZ4ls+fzycBj66fdpTzQG/UApqHqfFJcl4ajDeu0+EMOnSq4GzV/KVDE2u2q
-	 QXlAW7bIeNyB9yie0pnoAC4wjAUXKhMcdlDXMnHJxQ8K6snCT1p82VQFlIua9bRcvA
-	 NOharb2bkW9sHAm3hbwhkHbvjrI+6vKW1noeiMdhG+k2vkMRatMbwjPaj7l5A5AQrI
-	 5cdgIUAz9ybWw==
-Date: Fri, 11 Oct 2024 09:50:44 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org,
-	Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>,
-	Miklos Szeredi <mszeredi@redhat.com>, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH AUTOSEL 6.10 45/70] fuse: handle idmappings properly in
- ->write_iter()
-Message-ID: <ZwktND4nnNHntKSb@sashalap>
-References: <20241004182200.3670903-1-sashal@kernel.org>
- <20241004182200.3670903-45-sashal@kernel.org>
- <CAJfpegumr4qf7MmKshr0BuQ3-KBKoujfgwtfDww4nYbyUpdzng@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=RZHAoAkl8Jo2pK9NFbUv85zGACcbvCqnTzwL9fUtN6OnGlyAo5jHBEiyj7KiZK37Pzc2b/3aN0dLWFE696u7ZBOR84BEXkhtZU8FUrEP7i2qArKCqDn9MdzZmAkZXo/F0loXqz21AUTn7LIc3EFp2lo+nQfmhPncarczAbqj+10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fZlzaVOr; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728654674; x=1760190674;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=JZpTFHIOKgsBhrK+TAyqIMe3uV9e4+zAkXpEvbByrtE=;
+  b=fZlzaVOrCRHUNF3RJPkievhkT1A1xiCeBwdl4Ync+1CmOfkfRU9QrLub
+   fzitE0w3l1VsfdStgHZEb5jG3cmynWmY8UMkM9UYYOFUCLYZgtX+F/d3M
+   pL6l+0iz1kYBk9hn+ToOVsa6HzVDlV5BlrUoaNs1/ZmVNq2JhXXbbY4Jl
+   Iri2MJJ4Ec9gumdRmoBjUTYcAnQpGdtrKRjl9B2yWuHBo5MYEPTFqc16Z
+   G58cko1qMqSloqg1yITxdVLeV0sZ4XWOzlR0BodalU6x/1nwX+Wg5V3mQ
+   8Rgqt/ewimAaA5qBm/yJsGZTn4OvBYvH0Q5f2RlLr7E2YdmlGgceP0xIB
+   A==;
+X-CSE-ConnectionGUID: gnJlkRW4TP2awSLw3E/2rw==
+X-CSE-MsgGUID: jZ6Z4kA0QU2BnSslE7bPNg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="27862192"
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="27862192"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:51:12 -0700
+X-CSE-ConnectionGUID: +v41otkISg+36h8OYkcGUw==
+X-CSE-MsgGUID: Wq59MZX2TDuGSzOxtLCdcA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
+   d="scan'208";a="76834109"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa010.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 06:50:58 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1szG2d-00000001uKQ-3BlX;
+	Fri, 11 Oct 2024 16:50:51 +0300
+Date: Fri, 11 Oct 2024 16:50:51 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Philipp Stanner <pstanner@redhat.com>
+Cc: Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+	Sergey Shtylyov <s.shtylyov@omp.ru>,
+	Basavaraj Natikar <basavaraj.natikar@amd.com>,
+	Jiri Kosina <jikos@kernel.org>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Dubov <oakad@yahoo.com>,
+	Sudarsana Kalluru <skalluru@marvell.com>,
+	Manish Chopra <manishc@marvell.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rasesh Mody <rmody@marvell.com>, GR-Linux-NIC-Dev@marvell.com,
+	Igor Mitsyanko <imitsyanko@quantenna.com>,
+	Sergey Matyukevich <geomatsi@gmail.com>,
+	Kalle Valo <kvalo@kernel.org>, Sanjay R Mehta <sanju.mehta@amd.com>,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>,
+	Jon Mason <jdmason@kudzu.us>, Dave Jiang <dave.jiang@intel.com>,
+	Allen Hubbe <allenbh@gmail.com>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Alex Williamson <alex.williamson@redhat.com>,
+	Juergen Gross <jgross@suse.com>,
+	Stefano Stabellini <sstabellini@kernel.org>,
+	Oleksandr Tyshchenko <oleksandr_tyshchenko@epam.com>,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mario Limonciello <mario.limonciello@amd.com>,
+	Chen Ni <nichen@iscas.ac.cn>, Ricky Wu <ricky_wu@realtek.com>,
+	Al Viro <viro@zeniv.linux.org.uk>, Breno Leitao <leitao@debian.org>,
+	Kevin Tian <kevin.tian@intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Mostafa Saleh <smostafa@google.com>, Hannes Reinecke <hare@suse.de>,
+	John Garry <john.g.garry@oracle.com>,
+	Soumya Negi <soumya.negi97@gmail.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>, Yi Liu <yi.l.liu@intel.com>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>,
+	Christian Brauner <brauner@kernel.org>,
+	Ankit Agrawal <ankita@nvidia.com>,
+	Reinette Chatre <reinette.chatre@intel.com>,
+	Eric Auger <eric.auger@redhat.com>, Ye Bin <yebin10@huawei.com>,
+	Marek =?iso-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Rui Salvaterra <rsalvaterra@gmail.com>,
+	Marc Zyngier <maz@kernel.org>, linux-ide@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-input@vger.kernel.org,
+	netdev@vger.kernel.org, linux-wireless@vger.kernel.org,
+	ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+	linux-staging@lists.linux.dev, kvm@vger.kernel.org,
+	xen-devel@lists.xenproject.org, linux-sound@vger.kernel.org
+Subject: Re: [RFC PATCH 01/13] PCI: Prepare removing devres from pci_intx()
+Message-ID: <ZwktO8AUmFEakhVP@smile.fi.intel.com>
+References: <20241009083519.10088-1-pstanner@redhat.com>
+ <20241009083519.10088-2-pstanner@redhat.com>
+ <ZwfnULv2myACxnVb@smile.fi.intel.com>
+ <f65e9fa01a1947782fc930876e5f84174408db67.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <CAJfpegumr4qf7MmKshr0BuQ3-KBKoujfgwtfDww4nYbyUpdzng@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <f65e9fa01a1947782fc930876e5f84174408db67.camel@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 07, 2024 at 12:05:06PM +0200, Miklos Szeredi wrote:
->On Fri, 4 Oct 2024 at 20:23, Sasha Levin <sashal@kernel.org> wrote:
->>
->> From: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
->>
->> [ Upstream commit 5b8ca5a54cb89ab07b0389f50e038e533cdfdd86 ]
->>
->> This is needed to properly clear suid/sgid.
->>
->> Signed-off-by: Alexander Mikhalitsyn <aleksandr.mikhalitsyn@canonical.com>
->> Signed-off-by: Miklos Szeredi <mszeredi@redhat.com>
->> Signed-off-by: Sasha Levin <sashal@kernel.org>
->
->AFAICS, this commit shouldn't be backported to any kernel.
->
->Hopefully it would do nothing, since idmapped fuse mounts are not
->enabled before v6.12, but still...
+On Fri, Oct 11, 2024 at 02:16:06PM +0200, Philipp Stanner wrote:
+> On Thu, 2024-10-10 at 17:40 +0300, Andy Shevchenko wrote:
+> > On Wed, Oct 09, 2024 at 10:35:07AM +0200, Philipp Stanner wrote:
+> > > pci_intx() is a hybrid function which sometimes performs devres
+> > > operations, depending on whether pcim_enable_device() has been used
+> > > to
+> > > enable the pci_dev. This sometimes-managed nature of the function
+> > > is
+> > > problematic. Notably, it causes the function to allocate under some
+> > > circumstances which makes it unusable from interrupt context.
+> > > 
+> > > To, ultimately, remove the hybrid nature from pci_intx(), it is
+> > > first
+> > > necessary to provide an always-managed and a never-managed version
+> > > of that function. Then, all callers of pci_intx() can be ported to
+> > > the
+> > > version they need, depending whether they use pci_enable_device()
+> > > or
+> > > pcim_enable_device().
 
-Dropped, thanks!
+> > > An always-managed function exists, namely pcim_intx(), for which
+> > > __pcim_intx(), a never-managed version of pci_intx() had been
+> > > implemented.
+> > 
+> > > Make __pcim_intx() a public function under the name
+> > > pci_intx_unmanaged(). Make pcim_intx() a public function.
+
+It seems I got confused by these two paragraphs. Why the double underscored
+function is even mentioned here?
+
+> > To avoid an additional churn we can make just completely new APIs,
+> > namely:
+> > pcim_int_x()
+> > pci_int_x()
+> > 
+> > You won't need all dirty dances with double underscored function
+> > naming and
+> > renaming.
+> 
+> Ähm.. I can't follow. The new version doesn't use double underscores
+> anymore. __pcim_intx() is being removed, effectively.
+> After this series, we'd end up with a clean:
+> 
+> 	pci_intx() <-> pcim_intx()
+> 
+> just as in the other PCI APIs.
+
+...
+
+> > > +	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
+> > > +
+> > > +	if (enable)
+> > > +		new = pci_command & ~PCI_COMMAND_INTX_DISABLE;
+> > > +	else
+> > > +		new = pci_command | PCI_COMMAND_INTX_DISABLE;
+> > > +
+> > > +	if (new != pci_command)
+> > 
+> > I would use positive conditionals as easy to read (yes, a couple of
+> > lines
+> > longer, but also a win is the indentation and avoiding an additional
+> > churn in
+> > the future in case we need to add something in this branch.
+> 
+> I can't follow. You mean:
+> 
+> if (new == pci_command)
+>     return;
+> 
+> ?
+> 
+> That's exactly the same level of indentation.
+
+No, the body gets one level off.
+
+> Plus, I just copied the code.
+> 
+> > > +		pci_write_config_word(pdev, PCI_COMMAND, new);
+
+	if (new == pci_command)
+		return;
+
+	pci_write_config_word(pdev, PCI_COMMAND, new);
+
+See the difference?
+Also, imaging adding a new code in your case:
+
+	if (new != pci_command)
+		pci_write_config_word(pdev, PCI_COMMAND, new);
+
+==>
+
+	if (new != pci_command) {
+		...foo...
+		pci_write_config_word(pdev, PCI_COMMAND, new);
+		...bar...
+	}
+
+And in mine:
+
+	if (new == pci_command)
+		return;
+
+	...foo...
+	pci_write_config_word(pdev, PCI_COMMAND, new);
+	...bar...
+
+I hope it's clear now what I meant.
 
 -- 
-Thanks,
-Sasha
+With Best Regards,
+Andy Shevchenko
+
+
 
