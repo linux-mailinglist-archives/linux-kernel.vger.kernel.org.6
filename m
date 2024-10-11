@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-361822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F0199AD6A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:17:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4425999AD6D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:17:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70FFA1F26A23
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:17:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88354286C85
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6435C1D1308;
-	Fri, 11 Oct 2024 20:17:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7EC91D173D;
+	Fri, 11 Oct 2024 20:17:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="nCtWOOoh"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="tiJlTzew"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694941CF295
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0FD1D0E0A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728677843; cv=none; b=lH/Rf3qo6wmRDeLtHAyiD4WwwIEGQupqPVBe24B8cPqDOEjqb5we7H0sYhNFwDuj0IsZV4xfHjaF1FrC81zhSR+X7hnif64PYJN7dXA0CAKfdgW5EpbAFPWm08cZKD6m3H0E4FNLfsqQBWvftbIL23Zw6sjvLX/BEh4D14Lbc6U=
+	t=1728677845; cv=none; b=hk4hoEsJPrG17cjfGzbNLaZwRznhdpMFaa1ik3izMSgnJD9SJM35ouXCd4aQpWOeiy6AXgLQSaska6xLjj5HOAKj3NFITdwTCzg+QjZK6Ct1aF4UrDhbRs2W29T/XLHpwlWQWznZ/fglGWe9kB3s0PUigoPGewECtSiku3Ijhm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728677843; c=relaxed/simple;
-	bh=NJN1GNR5FglhPaWtGVRtLSZ+9nR3k3nYEOBv/xPhWtw=;
+	s=arc-20240116; t=1728677845; c=relaxed/simple;
+	bh=F1JZZ3VxwsSKTg2LjGq0rUIE/gVME8qmJ40fxossfJc=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=u55iOUEJs9QKmzuo9fGXguOfQ4E/25QxhJKr8DnFD1SdYnQEjzn7Z03QQVrPj3uf0agD9PQX8KQXIcZ7tdUKo5x+n6ovEPfCz7mOpZn0r0wL69vrQXTx2W8enSFjKOqs2A5moxErXouTTaFvtq9FRB6PiuBAYI11l5q2cSSYKc0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=nCtWOOoh; arc=none smtp.client-ip=198.47.23.249
+	 MIME-Version:Content-Type; b=hFe4DsyOCIjJ1LZOlOG1CJtrGFhSQejA+uAm8ucX1vGklrszSLKvXu9jLEFHRwmtZjEY8CrwXAi5p1Slqgqokt/lQ+xDpmhY7qzp+JU//fACjec2GaNghMvDyX3d6wRbXfkfWvSfIO5DykrjUezVrO2eBiFlcKEd4WSXqj5C19U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=tiJlTzew; arc=none smtp.client-ip=198.47.19.142
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGnMO029277;
+Received: from fllv0035.itg.ti.com ([10.64.41.0])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGnDu081112;
 	Fri, 11 Oct 2024 15:16:49 -0500
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728677809;
-	bh=1hB+Rsl8dEIP80gJg1dRpUGGywa9yjHgvJWWFP9MDZc=;
+	s=ti-com-17Q1; t=1728677810;
+	bh=8gIz69rx+O7g3l2dUBVUwaQsvlZ4QBJNSMujzHzSCeo=;
 	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=nCtWOOohW6BZJk/VXaTP8AdC7WcIZTgcYxv9cw7f2CZdannIIeHVEV83yh+98u5CV
-	 d4IsyC1ZdrXTmQ4jkJBRIIqzdzEUYF1ZYivTiq12oRI6JJT5p2SqP+a7ewccwrahMX
-	 avy4vussnrnUJdJqbPGAUKKlFtDNhOu9gSPFOzeQ=
-Received: from DFLE111.ent.ti.com (dfle111.ent.ti.com [10.64.6.32])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BKGn8a106998
+	b=tiJlTzewA8RT6Ar2WrjqwVi38PgJaLnwp1K2Lf/cvbbF94QkBHP+qmy35pbumjYmK
+	 g0NfsFhGsLS864+6GIsiZhudJBjrRRkJlDPU4u3nL0e5w39x0SOO32ual8/dJ9egSp
+	 yfPzjxMDUJVjOxwnCOLeE1Rl6cwhx1FluiA+mm/E=
+Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
+	by fllv0035.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49BKGnL7028961
 	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
 	Fri, 11 Oct 2024 15:16:49 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE111.ent.ti.com
- (10.64.6.32) with Microsoft SMTP Server (version=TLS1_2,
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE113.ent.ti.com
+ (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
- Oct 2024 15:16:48 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
+ Oct 2024 15:16:49 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
  Frontend Transport; Fri, 11 Oct 2024 15:16:49 -0500
 Received: from fllvsmtp7.itg.ti.com ([10.249.42.149])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGkCJ102075;
-	Fri, 11 Oct 2024 15:16:48 -0500
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49BKGkCK102075;
+	Fri, 11 Oct 2024 15:16:49 -0500
 From: Andrew Davis <afd@ti.com>
 To: Andre Przywara <andre.przywara@arm.com>,
         Russell King
@@ -73,9 +73,9 @@ To: Andre Przywara <andre.przywara@arm.com>,
         Robert Jarzmik <robert.jarzmik@free.fr>
 CC: <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
         <imx@lists.linux.dev>, Andrew Davis <afd@ti.com>
-Subject: [PATCH v3 3/6] ARM: pxa: Switch to new sys-off handler API
-Date: Fri, 11 Oct 2024 15:16:42 -0500
-Message-ID: <20241011201645.797394-4-afd@ti.com>
+Subject: [PATCH v3 4/6] ARM: sa1100: Switch to new sys-off handler API
+Date: Fri, 11 Oct 2024 15:16:43 -0500
+Message-ID: <20241011201645.797394-5-afd@ti.com>
 X-Mailer: git-send-email 2.39.2
 In-Reply-To: <20241011201645.797394-1-afd@ti.com>
 References: <20241011201645.797394-1-afd@ti.com>
@@ -96,21 +96,21 @@ are converted to the new sys-off API.
 
 Signed-off-by: Andrew Davis <afd@ti.com>
 ---
- arch/arm/mach-pxa/spitz.c | 2 +-
+ arch/arm/mach-sa1100/generic.c | 2 +-
  1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/arch/arm/mach-pxa/spitz.c b/arch/arm/mach-pxa/spitz.c
-index 33533e35720f8..c0b1f7e6be874 100644
---- a/arch/arm/mach-pxa/spitz.c
-+++ b/arch/arm/mach-pxa/spitz.c
-@@ -1096,7 +1096,7 @@ static void __init spitz_init(void)
- 		software_node_register(&spitz_scoop_2_gpiochip_node);
+diff --git a/arch/arm/mach-sa1100/generic.c b/arch/arm/mach-sa1100/generic.c
+index 0c586047d130f..5383a26f51169 100644
+--- a/arch/arm/mach-sa1100/generic.c
++++ b/arch/arm/mach-sa1100/generic.c
+@@ -298,7 +298,7 @@ static struct platform_device *sa11x0_devices[] __initdata = {
+ static int __init sa1100_init(void)
+ {
+ 	struct resource wdt_res = DEFINE_RES_MEM(0x90000000, 0x20);
+-	pm_power_off = sa1100_power_off;
++	register_platform_power_off(sa1100_power_off);
  
- 	init_gpio_reset(SPITZ_GPIO_ON_RESET, 1, 0);
--	pm_power_off = spitz_poweroff;
-+	register_platform_power_off(spitz_poweroff);
- 
- 	PMCR = 0x00;
+ 	regulator_has_full_constraints();
  
 -- 
 2.39.2
