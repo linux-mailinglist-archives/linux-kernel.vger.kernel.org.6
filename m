@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-361862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361863-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F0DA99AE09
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:26:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01B6499AE0E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75C96B21D95
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:26:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 179B41C217C4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70A2310A1F;
-	Fri, 11 Oct 2024 21:26:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B9CC1D173A;
+	Fri, 11 Oct 2024 21:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U0ZN+L8u"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eFtmTE+j"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B911D150D
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 21:26:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70AAE1C2452
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 21:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728681990; cv=none; b=tUDyj4+OPz5Uj/5SMCUpA2spWC0Vf3DD+wwF6+sajRDL3CzokShrud4qHGTsQUAOiDnfx3IvhsP1nbX+JKSnik2+CZYm8iI5BRpDytsU0rGESx5cSYptpY3aoi2hxOqYRs8ZpNogSXOEDW5DDeeLThOyjeeKcJ9lVsa/dY4rTug=
+	t=1728682393; cv=none; b=UhZXuBqV86NmarfcIQ6uYVDCs5VO1WhUv6hjShT04XeFRAyDO5O8FrSCJ27T1c5debEamDbJ7Fe2IxDqT3Kl9hI+vZMimzv7rSUnw2yHkbNIg1JLY8svZL2Nh43hgcGfuj98mTEnhuy5Aly5EQG7rs0QzbcehXPQ06PI/lnmbkE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728681990; c=relaxed/simple;
-	bh=Ka+AjjRuR/G5QQKRrwr0FE8Ey+JDrFkkvTACYvoWcLM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BRcJTtjvw31HGwnoIk0KLEYohTPl6J/tS34W2odC2UR9X5IJ56SBFWya3FqX5LCB4B2W26iMlUk0pq9cj9+qxKAe1bQaDhOux9qT08KzCRel23HtssBYljOvmoeWs14UoGRZvUmSU5AJEpF/Uhtwk80KVnOUR1EU/4dFksm7dUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U0ZN+L8u; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-460395fb1acso71411cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:26:28 -0700 (PDT)
+	s=arc-20240116; t=1728682393; c=relaxed/simple;
+	bh=90J8LFfVsA/A4QnYFiY8gVitPPnpL5v8E1zZrxt9KC4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ui4IkxJ8+LtG1Ycf22qEP8DcG6+MES/ss6GoeC9sOV36vB9OAG0xbtBDW/fY1H6E2j4tJMaLyPl6E86Z7vw1lyvhsYVJiWtlnyQO1DEmqtUVC14UD0kLtFKBwWKV68R0fu/Z5s0v3kw8CrI0zHURyYw2Dg/awPHALTD4foPM0yQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eFtmTE+j; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fadb636abaso23667701fa.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:33:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728681988; x=1729286788; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Ka+AjjRuR/G5QQKRrwr0FE8Ey+JDrFkkvTACYvoWcLM=;
-        b=U0ZN+L8uihImO99bgGJbn6H8ka1Xgw5xwf6XJMARnqwI73Wdn0fvNXQPqzNTPakdbY
-         Rug+GWKtl+e00Xd5ELfRFvMEe+RR9CAKng/cvtr+IXqp7gqHfI0UCswCfej9Rykd9SK0
-         UqNXJ0qQdOLxuAXoB2owh3RcdawxR2D1dJrepWqKdrHwctO/Zy7RnMHyIIdZHrZHV7+n
-         92HwxlivEHuM4LCAyv3lk8JnTX69ULmtrL3sZrrB3vbBDKLDJnfB07RjFlllY//9lu11
-         011pnrmu00wm0EV0Tao2bpXNMTuoiQDqDBmpqXTn4nyijBRzj8pjh9Hoo2TRREqOJ8zz
-         2vOA==
+        d=linaro.org; s=google; t=1728682388; x=1729287188; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sut4y0KMokzCD87Bq1OudFCCPPnu4h7YKTgbeZuoxME=;
+        b=eFtmTE+jIfVKrQguYpbiJiv05P7w7f4/BT+recj6hKWk3Dd3fAd+OR0APOsH8tXnyc
+         o8/YJ2ns2cEPL484wQ2pZlwtvz8pzO6A9MRbaiZi8Zpka9w5JXnvtFUBAhnR1d1LA13j
+         TW/v4fC+Kc7VPwGMQmpg1MZWniO5IR0Bvx5VZKn5SLlfUSGaFA95jebnUVxE8Bop8taf
+         /BlYzoz2ssqSQeeiVznMsEio2EN1B1KbbJ0vhuM5tuRKjygdRRfpUuMcmHsgmqFvWYAr
+         5Ua7unXQj6LpDaJ8Wxfv6ufLfqkiOsiMSJlf5Nsw757o9BCtTT38x79xDSSke8SYtN9S
+         1pyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728681988; x=1729286788;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Ka+AjjRuR/G5QQKRrwr0FE8Ey+JDrFkkvTACYvoWcLM=;
-        b=nHlmrxKYslgW9jjaHif3xpjNSJTuU+SfjHtqur9hCpvRSb1JH5VQ62AVw+4n7GQcPJ
-         mcWIPc51feb7jtKholVfAPLDoQs+MHm7tUJ3qI3EX68AqGQhUoexkDi5XwiUsoIjHzNU
-         0iaVj41UUCRo3g8JAG5KoCysGjTA5hdy/V0JkDsjDQP4d0Wv9uMxVgBTWyaWj2EzLujN
-         3rGab27hmYPQKSDG8SrLOT8AhtVPmwtbNyw6ydfuYXnzO/0lxFpAp2fOvedz7MU//1IA
-         8A7sCoX/ZJMk7LYv7eCKm4vw2ZYJed0EUnCEcEfF0+MFdIr2Yx/GupW5O5rZExdRGeyh
-         3jlw==
-X-Forwarded-Encrypted: i=1; AJvYcCV/Pz8xeVAsTS2WZsD3bevY8S73si/vvEJDZTrDBjYlo1pg3+upJkKOAkRwYTcy1LB0+0WTH5uk4EmiwAs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHl2MNG96W7v3I7U6tVQ37fO5/YPNV0kZtX6bEp/D4zavOQXnh
-	bupO0j5OmElwvCnaMb2g0t270dAQGgeh/lDqQ3WA7Jrwr+5/YDCQYx1S5buAD+/LXCSJRPLWclr
-	IpIx5cd5r8wsrCujmCZJemWHl2jg2/hejlLG5
-X-Google-Smtp-Source: AGHT+IEKEmVjWoOqBswBr3NiTYKK5Z9SghdMPP5nc66QbnU8P8zaScBXP/19wKkNBoIcY46P8FQCMYQuouKvAahW2eQ=
-X-Received: by 2002:a05:622a:a60d:b0:460:48fc:3cd8 with SMTP id
- d75a77b69052e-46059bf45e5mr189701cf.5.1728681987767; Fri, 11 Oct 2024
- 14:26:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728682388; x=1729287188;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sut4y0KMokzCD87Bq1OudFCCPPnu4h7YKTgbeZuoxME=;
+        b=IQzsPZskuCM1qdmTg1Tbe5M9/baH89V0eX69EfIGs0WJnLiJW56Szsc8vHHbH/ysMD
+         eyPRiaWua5vdW6bZenlKx8CKnKgXAUbo4RIQdCHvzQL/XGkjSKl9RiRUnFlzcZ+f0Ns3
+         nV39wF/1gfxI4ENaR2cO2/+leBBKKNwxmz/M/z9Cnn11mhtlKzFgHJOF6UFdoM9Qsv9a
+         oqA1URua4wpTxyJ4LV04CZQUyNZ/ZNpoVvqLYlBOsumwS/OKVRbERXedWk1L6fcPTi89
+         AS/CMrI9+V3zQw6fibG2XIWz3Y5NPeYtS3a6zuGkK6apHcMiGRvn474CxCmkKK+ojRVe
+         bPNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHOZfOVMtXNsTlq4H2ZOi/7tBRVBVYHllRSJCsh2SMnxNdM88XQHkIcCCcpkbtd5Db33X4RAHS6OVjaUY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiExkNxXJnA0orrs0oCbVr25e5y583lo5LhQgme0uuTdzqFtm6
+	RreFhon76JDzNhLqg3zzpY04LcEG538fzV26M45tUOW+1N4pJIvheXOML6Y+/t0=
+X-Google-Smtp-Source: AGHT+IHnKHPZp1TtGlSCnweK3yEkryZoL86b80ByHnhzwShCDrwy06k6dcjkFunlqHFIT6cEDtR/jA==
+X-Received: by 2002:a05:6512:3d23:b0:536:568f:c5ed with SMTP id 2adb3069b0e04-539da3b41c0mr2076475e87.1.1728682388325;
+        Fri, 11 Oct 2024 14:33:08 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c13e1sm724280e87.58.2024.10.11.14.33.05
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 14:33:06 -0700 (PDT)
+Date: Sat, 12 Oct 2024 00:33:03 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, 
+	Vikram Sharma <quic_vikramsa@quicinc.com>, rfoss@kernel.org, todor.too@gmail.com, mchehab@kernel.org, 
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, akapatra@quicinc.com, 
+	hariramp@quicinc.com, andersson@kernel.org, konradybcio@kernel.org, 
+	hverkuil-cisco@xs4all.nl, cros-qcom-dts-watchers@chromium.org, catalin.marinas@arm.com, 
+	will@kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-media@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel@quicinc.com
+Subject: Re: [PATCH v3 2/8] media: dt-bindings: Add
+ qcs6490-rb3gen2-vision-mezzanine
+Message-ID: <bzszh7m52o3xzeybp4odwki6bz53aqctolrbvvbqizvk4bkj2h@k7r2i2rhgyqs>
+References: <20241011140932.1744124-1-quic_vikramsa@quicinc.com>
+ <20241011140932.1744124-3-quic_vikramsa@quicinc.com>
+ <nsylilmzl6zzukpgih65kmeibbllek6dpgryzkso2ttpuztk2x@3q5xiujcdujo>
+ <b3c1431e-9a5d-4c38-ae7d-605d4a2cf3ac@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011-tracepoint-v10-0-7fbde4d6b525@google.com>
- <20241011-tracepoint-v10-1-7fbde4d6b525@google.com> <20241011131316.5d6e5d10@eugeo>
- <CABCJKuesYQWvfScFaqv_rW5ZqAJNn4zK9iOFAmyTaYKO3S5hgw@mail.gmail.com>
- <20241011171251.0bd53f01@eugeo> <CABCJKue7qT9drhgrXPEjBO=gPw79vYELAZxz747Z8WMF=vj2MQ@mail.gmail.com>
- <CANiq72nOCkzTyJCydHOrkz3MRizb27sDO_5Y_cKEv3oZDNNqqQ@mail.gmail.com>
-In-Reply-To: <CANiq72nOCkzTyJCydHOrkz3MRizb27sDO_5Y_cKEv3oZDNNqqQ@mail.gmail.com>
-From: Sami Tolvanen <samitolvanen@google.com>
-Date: Fri, 11 Oct 2024 14:25:49 -0700
-Message-ID: <CABCJKuduZJ4aogg4A6idcMAPMa2N0d4f9aJgbR8HL0YEyTONmA@mail.gmail.com>
-Subject: Re: [PATCH v10 1/5] rust: add static_branch_unlikely for static_key_false
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Gary Guo <gary@garyguo.net>, Alice Ryhl <aliceryhl@google.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Peter Zijlstra <peterz@infradead.org>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Jason Baron <jbaron@akamai.com>, 
-	Ard Biesheuvel <ardb@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Sean Christopherson <seanjc@google.com>, Uros Bizjak <ubizjak@gmail.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Marc Zyngier <maz@kernel.org>, 
-	Oliver Upton <oliver.upton@linux.dev>, Mark Rutland <mark.rutland@arm.com>, 
-	Ryan Roberts <ryan.roberts@arm.com>, Fuad Tabba <tabba@google.com>, 
-	linux-arm-kernel@lists.infradead.org, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Anup Patel <apatel@ventanamicro.com>, 
-	Andrew Jones <ajones@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>, 
-	Conor Dooley <conor.dooley@microchip.com>, Samuel Holland <samuel.holland@sifive.com>, 
-	linux-riscv@lists.infradead.org, Huacai Chen <chenhuacai@kernel.org>, 
-	WANG Xuerui <kernel@xen0n.name>, Bibo Mao <maobibo@loongson.cn>, 
-	Tiezhu Yang <yangtiezhu@loongson.cn>, Andrew Morton <akpm@linux-foundation.org>, 
-	Tianrui Zhao <zhaotianrui@loongson.cn>, loongarch@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b3c1431e-9a5d-4c38-ae7d-605d4a2cf3ac@linaro.org>
 
-On Fri, Oct 11, 2024 at 12:48=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> On Fri, Oct 11, 2024 at 7:52=E2=80=AFPM Sami Tolvanen <samitolvanen@googl=
-e.com> wrote:
-> >
-> > It's just one line per helper, but sure, I do see your point.
->
-> I guess we will have a lot of helpers added over time, so even if it
-> is one line, it may end up being a lot of lines in total. The rules
-> should stay constant, which would be better. Having said that, it is
-> true the extra complexity of the rules isn't great either.
+On Fri, Oct 11, 2024 at 04:25:15PM +0100, Bryan O'Donoghue wrote:
+> On 11/10/2024 15:50, Krzysztof Kozlowski wrote:
+> > On Fri, Oct 11, 2024 at 07:39:26PM +0530, Vikram Sharma wrote:
+> > > The qcs6490-rb3gen2-vision-mezzanine is a mezz on top of the
+> > > qcs6490-rb3gen2 core kit. The vision mezzanine includes the
+> > > IMX577 camera sensor.
+> > > 
+> > > Signed-off-by: Vikram Sharma <quic_vikramsa@quicinc.com>
+> > > ---
+> > >   Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+> > >   1 file changed, 1 insertion(+)
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/arm/qcom.yaml b/Documentation/devicetree/bindings/arm/qcom.yaml
+> > > index 5de6290cd063..f00851f30d3e 100644
+> > > --- a/Documentation/devicetree/bindings/arm/qcom.yaml
+> > > +++ b/Documentation/devicetree/bindings/arm/qcom.yaml
+> > > @@ -390,6 +390,7 @@ properties:
+> > >                 - fairphone,fp5
+> > >                 - qcom,qcm6490-idp
+> > >                 - qcom,qcs6490-rb3gen2
+> > > +              - qcom,qcs6490-rb3gen2-vision-mezzanine
+> > 
+> > Shouldn't this be an overlay?
+> > 
+> > Best regards,
+> > Krzysztof
+> > 
+> 
+> Because of broken bootloaders which don't do overlays, we've been adding
+> additional dts instead.
+> 
+> For preference everybody would run u-boot, grub or another reasonable
+> bootloader that can apply an overlay.
+> 
+> Last time I checked there was no support for dtbo upstream in the kernel
+> itself.
 
-My only concern is that custom C build rules must be kept in sync with
-Makefile.build changes, while EXPORT_SYMBOL lines should be basically
-maintenance-free. However, perhaps this isn't really an issue since
-most of the complexity is already contained in rule_cc_o_c that we can
-conveniently reuse. Anyway, I think this is something we can worry
-about later if we actually run into problems. I was mostly interested
-in the reasoning behind these changes.
+See arch/arm64/boot/dts/qcom/Makefile:
 
-Sami
+sm8650-hdk-display-card-dtbs    := sm8650-hdk.dtb sm8650-hdk-display-card.dtbo
+
+dtb-$(CONFIG_ARCH_QCOM) += sm8650-hdk-display-card.dtb
+
+> 
+> greps
+> 
+> grep -r of_overlay_fdt_apply *
+> 
+> Hmm, does this do what I think it does ? Its news to me if there's a way to
+> do this in the kernel now TBH.
+> 
+> Otherwise the sad situation with shipping bootloaders means we are pretty
+> much stuck with the one blob which we can't apply an update to.
+> 
+-- 
+With best wishes
+Dmitry
 
