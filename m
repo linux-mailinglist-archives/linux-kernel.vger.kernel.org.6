@@ -1,92 +1,171 @@
-Return-Path: <linux-kernel+bounces-361466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1241499A89E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:09:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDD7099A8A2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:10:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7F591B22F36
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:09:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08AC81C22D06
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:10:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC1FD197A9F;
-	Fri, 11 Oct 2024 16:09:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24A91990C5;
+	Fri, 11 Oct 2024 16:10:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ktzBHSN5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="F08W18lJ"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1322C1974F4;
-	Fri, 11 Oct 2024 16:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 849E91974F4
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 16:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728662984; cv=none; b=a5q84l6wE5sAIFr/kI3WAvBY2dn/D7cKh6f0lVnGvgCaDWCGe+F/MA6+sbxzN+ESwF3r3Fkzn5l71xnkB8NOplR+wk4wcfc/SOxquMy3Hj1HsBNw2DY9PnVn/tYkv1t3PAZZcEprAPwIWG4AW3Ag3FZD/kWrzKX8RuzTodMhpBw=
+	t=1728663021; cv=none; b=MYpvU2TsWUYlXaoF+k/dit/gnOj35Z78+Pe2VCzBNmtMPZzmOh6atMOuo9kEU4bhhqwgObLE9Z8NdoZoQMGya6+ZepomOHh9pbDUtSkn0ZttX+k3hU5deFeV5EwPXTKm0/73yGqma/zNb8078l8h9K39SfceKJ5cgAX8DGWha/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728662984; c=relaxed/simple;
-	bh=D4sx2NyNQfPdLcxDUfkwiMuN3iPQBqYCDhL6Odna2es=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EyuWbsjoSTJlKTFywsynWM5Ai4r7h4zkMXC7wzK/dRkD4N9HLCirquExZc9UoT1bmv3xaV5W61/kt+DsQSnXzUMqAzX991wYk9u8fi972uUb94a4ae/aofN/QveaU5o1T7hp8dG22ieF6KTQxOAn72QJrgP4WP47PQyrHU5vY4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ktzBHSN5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A8A84C4CEC3;
-	Fri, 11 Oct 2024 16:09:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728662983;
-	bh=D4sx2NyNQfPdLcxDUfkwiMuN3iPQBqYCDhL6Odna2es=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ktzBHSN55gta6zaAV0wiWKqiDD0zVyPtuRwoLKrPcM1LGr9dTpXHyKnvFoNG0lOVL
-	 mToGgK2O4RT3Sv/mA0vSg0xMfUb3eP8mYEfh4x2S+6Wc6oL2H6doP1rdw7R3TtPrUF
-	 wzTdW1nYBBQQoOdsfeHdnsVxekfg0rjvcL2FdHJ1h5HKmOs/cUnbEg0zmHpKrnl42k
-	 aOnZqVfddUfmN9WBKK0jzy7tRgrig2aIn8mw+r1UzFI1AYKzZfHNi2NKLxlBWYAKAp
-	 yrDzF4SYMjqixIUdtHTA0uZhY8Jub6ujUNKg3AskiHlMPPaUlU0KI9WCU1MzwOAhaE
-	 /x3+GBXHGGPlw==
-Date: Fri, 11 Oct 2024 09:09:41 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Li Li <dualli@chromium.org>
-Cc: dualli@google.com, corbet@lwn.net, gregkh@linuxfoundation.org,
- arve@android.com, tkjos@android.com, maco@android.com,
- joel@joelfernandes.org, brauner@kernel.org, cmllamas@google.com,
- surenb@google.com, arnd@arndb.de, masahiroy@kernel.org,
- devel@driverdev.osuosl.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, hridya@google.com, smoreland@google.com,
- kernel-team@android.com, Donald Hunter <donald.hunter@gmail.com>
-Subject: Re: [PATCH v2 1/1] binder: report txn errors via generic netlink
-Message-ID: <20241011090941.3494f1ef@kernel.org>
-In-Reply-To: <20241011064427.1565287-2-dualli@chromium.org>
-References: <20241011064427.1565287-1-dualli@chromium.org>
-	<20241011064427.1565287-2-dualli@chromium.org>
+	s=arc-20240116; t=1728663021; c=relaxed/simple;
+	bh=d5pFHwtFvdEgWUZAcnRG6GQ3fqVmE2YvgZoQxi52CO0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=Wyhoig9tWB8Xie8slSCnJt+FfYiJzUWEqT7kVoibiDZHciZljW+Jre3aSNZ13x7b9vECgQOoajWcf/NgxM5q6Q28qny8HHX3EeL/uGzIy3lk7gK3aTSzf2K57F0dvGNZjsMIvrvYKl+IhEDojDgOXmwoCOe5iM7jtVZHNiLSc6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=F08W18lJ; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-71e49ae1172so225833b3a.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728663019; x=1729267819; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HVwJLNw5Ps10RbGac9YYaUmT3BiISrVE9h+5ma8CIGM=;
+        b=F08W18lJobjrwkrLZrWpss9qJIzMbjneHrzttJJ79DQBbNdhOjNHqlgd/jBH7g8pL9
+         qqDXxzCk1HgD88JwHDCRBqm0qG9QK8s/TDQIDhF8pGP/MQz3q6wGeRFlj4FjARoSZirr
+         JyAo/y1n77tI2ZWAJLhE68rcXPfZBFRNFPhHYu++Pn3yWP9REKP5Knkmi2tK7XOrnbwm
+         VmdLAwN5OwQydx6K9crv4Rka4Agwx2d3ZUmECZVa8Z9f24xqGC3PFQyk5JoR2weUL3gl
+         BtQjX/1Q+e64aWP5YWm73oxJaXjdxsNhkllEcLgboIS4qeIrVn8o0qKGjT34w7deOb9W
+         Ldng==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728663019; x=1729267819;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HVwJLNw5Ps10RbGac9YYaUmT3BiISrVE9h+5ma8CIGM=;
+        b=ZN7TIE+H7m5q+Ite3zd2Jg46u7s4bS5ori4dP/CYz095sQd90OgCZQf3I9oV+M0veJ
+         s3HLstKGscvXe3Zw7EJdHnpnhWJdI/uwPIGxKPnTi4qK7AV1/bBNDS1+lPx2oUybM99M
+         LMUl7Wad5qitTV15TLRBJcVHyWCOR5nRKnrXmAHJ36ne2coUFDWikXE8NYvLljMc8Q6I
+         AYxomXBz0+dwDnQNoHQtnDTsvzcaISeVzG6FP6aPi5MhaMg5uaBPSQ+2lTdgpgDZGPNG
+         63njBrEFly8W9JzJ2+PEWxo0Ku5in1IjtIYE9THFIi6RTppLJtH5NAwdMn0eOgrNeUt3
+         Li5g==
+X-Forwarded-Encrypted: i=1; AJvYcCW972uc30cjMUCVBvenOhu+bcmTK7J03lMeRFm/wZBxxOb5fsrJD+/RaprJZRUjMP720DeV8AIEUSx+HCI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9GGctm4jFGzlUR8jqO040Q3sP+bMOk5AzfQIX25r6dp+GKjMN
+	zmGnd/oyjYRxiaSUQbOrYF8SvPpqOBYRONFl+hGZT/D66IdG71FVI5fg/3LXDj6svB2ZkN/dp+9
+	ECA==
+X-Google-Smtp-Source: AGHT+IGoDuPK1quyryPvVDgAPQ7itiit1nAYgQ/fI7GScyXvb9WdEI+uZk7WOGNdYtn/6ZPqBjhCnrVE/8g=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:6a00:66d7:b0:717:8ab0:2439 with SMTP id
+ d2e1a72fcca58-71e382709f5mr5535b3a.6.1728663018282; Fri, 11 Oct 2024 09:10:18
+ -0700 (PDT)
+Date: Fri, 11 Oct 2024 09:10:16 -0700
+In-Reply-To: <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <cover.1726602374.git.ashish.kalra@amd.com> <f2b12d3c76b4e40a85da021ee2b7eaeda1dd69f0.1726602374.git.ashish.kalra@amd.com>
+Message-ID: <ZwlN6F__ls3naxJq@google.com>
+Subject: Re: [PATCH v2 3/3] x86/sev: Add SEV-SNP CipherTextHiding support
+From: Sean Christopherson <seanjc@google.com>
+To: Ashish Kalra <Ashish.Kalra@amd.com>
+Cc: pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, hpa@zytor.com, herbert@gondor.apana.org.au, 
+	x86@kernel.org, john.allen@amd.com, davem@davemloft.net, 
+	thomas.lendacky@amd.com, michael.roth@amd.com, kvm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Thu, 10 Oct 2024 23:44:27 -0700 Li Li wrote:
-> Frozen tasks can't process binder transactions, so sync binder
-> transactions will fail with BR_FROZEN_REPLY and async binder
-> transactions will be queued in the kernel async binder buffer.
-> As these queued async transactions accumulates over time, the async
-> buffer will eventually be running out, denying all new transactions
-> after that with BR_FAILED_REPLY.
-> 
-> In addition to the above cases, different kinds of binder error codes
-> might be returned to the sender. However, the core Linux, or Android,
-> system administration process never knows what's actually happening.
-> 
-> This patch introduces the Linux generic netlink messages into the binder
-> driver so that the Linux/Android system administration process can
-> listen to important events and take corresponding actions, like stopping
-> a broken app from attacking the OS by sending huge amount of spamming
-> binder transactions.
-> 
-> To prevent making the already bloated binder.c even bigger, a new source
-> file binder_genl.c is created to host those generic netlink code.
+On Tue, Sep 17, 2024, Ashish Kalra wrote:
+> diff --git a/drivers/crypto/ccp/sev-dev.c b/drivers/crypto/ccp/sev-dev.c
+> index 564daf748293..77900abb1b46 100644
+> --- a/drivers/crypto/ccp/sev-dev.c
+> +++ b/drivers/crypto/ccp/sev-dev.c
+> @@ -73,11 +73,27 @@ static bool psp_init_on_probe = true;
+>  module_param(psp_init_on_probe, bool, 0444);
+>  MODULE_PARM_DESC(psp_init_on_probe, "  if true, the PSP will be initialized on module init. Else the PSP will be initialized on the first command requiring it");
+>  
+> +static bool cipher_text_hiding = true;
+> +module_param(cipher_text_hiding, bool, 0444);
+> +MODULE_PARM_DESC(cipher_text_hiding, "  if true, the PSP will enable Cipher Text Hiding");
+> +
+> +static int max_snp_asid;
 
-Please add a YNL spec for the new family, and use it to codegen 
-the basics like policy and op tables:
-https://docs.kernel.org/next/userspace-api/netlink/specs.html
-Don't hesitate to ask if you have any questions.
+Why is this a signed int?  '0' is used as the magic "no override" value, so there's
+no reason to allow a negative value.
+
+> +module_param(max_snp_asid, int, 0444);
+> +MODULE_PARM_DESC(max_snp_asid, "  override MAX_SNP_ASID for Cipher Text Hiding");
+> +
+>  MODULE_FIRMWARE("amd/amd_sev_fam17h_model0xh.sbin"); /* 1st gen EPYC */
+>  MODULE_FIRMWARE("amd/amd_sev_fam17h_model3xh.sbin"); /* 2nd gen EPYC */
+>  MODULE_FIRMWARE("amd/amd_sev_fam19h_model0xh.sbin"); /* 3rd gen EPYC */
+>  MODULE_FIRMWARE("amd/amd_sev_fam19h_model1xh.sbin"); /* 4th gen EPYC */
+>  
+> +/* Cipher Text Hiding Enabled */
+> +bool snp_cipher_text_hiding;
+> +EXPORT_SYMBOL(snp_cipher_text_hiding);
+> +
+> +/* MAX_SNP_ASID */
+> +unsigned int snp_max_snp_asid;
+> +EXPORT_SYMBOL(snp_max_snp_asid);
+
+There is zero reason to have multiple variables.  The module param varaibles
+should be the single source of true.
+
+I'm also not entirely sure exporting individual variables is the right interface,
+which is another reason why I want to see the entire "refactoring" in one series.
+
+>  static bool psp_dead;
+>  static int psp_timeout;
+>  
+> @@ -1064,6 +1080,38 @@ static void snp_set_hsave_pa(void *arg)
+>  	wrmsrl(MSR_VM_HSAVE_PA, 0);
+>  }
+>  
+> +static void sev_snp_enable_ciphertext_hiding(struct sev_data_snp_init_ex *data, int *error)
+> +{
+> +	struct psp_device *psp = psp_master;
+> +	struct sev_device *sev;
+> +	unsigned int edx;
+> +
+> +	sev = psp->sev_data;
+> +
+> +	/*
+> +	 * Check if CipherTextHiding feature is supported and enabled
+> +	 * in the Platform/BIOS.
+> +	 */
+> +	if ((sev->feat_info.ecx & SNP_CIPHER_TEXT_HIDING_SUPPORTED) &&
+> +	    sev->snp_plat_status.ciphertext_hiding_cap) {
+
+snp_cipher_text_hiding should be set to %false if CipherTextHiding is unsupported.
+I.e. the module params need to reflect reality.
+
+> +		/* Retrieve SEV CPUID information */
+> +		edx = cpuid_edx(0x8000001f);
+> +		/* Do sanity checks on user-defined MAX_SNP_ASID */
+> +		if (max_snp_asid >= edx) {
+> +			dev_info(sev->dev, "max_snp_asid module parameter is not valid, limiting to %d\n",
+> +				 edx - 1);
+> +			max_snp_asid = edx - 1;
+> +		}
+> +		snp_max_snp_asid = max_snp_asid ? : (edx - 1) / 2;
+> +
+> +		snp_cipher_text_hiding = 1;
+
+s/1/true
+
+> +		data->ciphertext_hiding_en = 1;
+> +		data->max_snp_asid = snp_max_snp_asid;
+> +
+> +		dev_dbg(sev->dev, "SEV-SNP CipherTextHiding feature support enabled\n");
+> +	}
+> +}
 
