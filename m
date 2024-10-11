@@ -1,188 +1,120 @@
-Return-Path: <linux-kernel+bounces-361758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D41899ACAA
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:31:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 075DB99ACAB
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:32:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF20F1C24281
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:31:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACF751F22929
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:32:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 502471D0141;
-	Fri, 11 Oct 2024 19:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187BB1CF7D7;
+	Fri, 11 Oct 2024 19:32:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FODmMc0x"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="amZx6NnP"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EE778BE5;
-	Fri, 11 Oct 2024 19:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3F2919CC01
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675073; cv=none; b=fbPEv2zLCL2Xwy6g33TkjLpsAeIutSMV0nGakgtAg1nCX8e8aYNrq4xFAuglGo2IW5drK2lgUd1NETOO/mW/NCx+7gGxtgmjCaSETgdB6tJidrm3UttK5rjA4HbD1Nzc2tFfEajMq0B0deeswKd1DKMkenmEDw3v0wDsogQMBIk=
+	t=1728675128; cv=none; b=KiuxRkr3N1X20s9ypZzw52O7+7R2Rag0QMa7Z9dqQDXB3vjj5ozcD7yWVT9FHzZDMnptO1j/0MjXyNtY6cJsdHmXZL0N032uJnT3xs86jk7Xma0jFWaK5obgrCELTT4lsU4rk/Ft5WoUBrR8TXWNN5/lNPuZ5EERzwbB+MJ7Vx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675073; c=relaxed/simple;
-	bh=IwlxQ2sJ1Qhcz7dsBEssEsmbqqW/oITaZu+mKURma8M=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=P5DbXkq+rVdkgSjtjk0NgVC/8WlOvYREInqdCeSLDS5l6YCM5XBPezZUzhnsA9WF2RNYu5SbIXFS/aGewUDMrq1aaMVHqo4aHyrQoCdnJpChx1ME44ob/HRUGRRJKKDsbyyGZOWOzmLQvjLon8PxWgR5m4JByYMGJxZ2f662pOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FODmMc0x; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BITfCd010597;
-	Fri, 11 Oct 2024 19:30:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:subject:from:to:cc:date:in-reply-to:references
-	:content-type:content-transfer-encoding:mime-version; s=pp1; bh=
-	zQJWf5VdzOpF2EYAGjsfIFpAdx/RWd5wbhX21JW8MXE=; b=FODmMc0xS+voq/fK
-	meBquyIn0m69IwgC2GeULzgM22MQHFpM3aoS3kPrc2IRMQstUDHne4RUksEt3VnQ
-	vKZjhOPZyOPenBPJ/zKgMnZ0fUDbsErjV7F+Gwfc4CrBYweoYeMABKWwvOs3s13r
-	Y10gZOIQPtA3w+t/NQMITkZpxZ+wPWB4wJlHGrK6goAGQj6aoonb9TKiCH5EV5Sl
-	iKyy2UUEIhwJGT8siOjN3GaOr3euCmbyfuyjLMQXyYWvzoz/akl0ahO8XzUoriMA
-	+WU90vlcEjWUgX0hzg+KOgMimAi/+ztA2j+7VAG1dAqtpWDUaezJsfn2c+r31I3/
-	4+cPIg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4279bm88jf-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 19:30:42 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49BJUffb006524;
-	Fri, 11 Oct 2024 19:30:42 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4279bm88j6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 19:30:41 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BHECnT011512;
-	Fri, 11 Oct 2024 19:30:40 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423g5y7ehc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 19:30:40 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BJUeoj15401476
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 11 Oct 2024 19:30:40 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E803158061;
-	Fri, 11 Oct 2024 19:30:39 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 276FA58056;
-	Fri, 11 Oct 2024 19:30:39 +0000 (GMT)
-Received: from li-43857255-d5e6-4659-90f1-fc5cee4750ad.ibm.com (unknown [9.61.41.228])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri, 11 Oct 2024 19:30:39 +0000 (GMT)
-Message-ID: <92c528d8848f78869888a746643e1cf2969df62a.camel@linux.ibm.com>
-Subject: Re: [PATCH 2/3] ima: Ensure lock is held when setting iint pointer
- in inode security blob
-From: Mimi Zohar <zohar@linux.ibm.com>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>,
-        Paul Moore
-	 <paul@paul-moore.com>
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org,
-        serge@hallyn.com, linux-integrity@vger.kernel.org,
-        linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, ebpqwerty472123@gmail.com,
-        Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Fri, 11 Oct 2024 15:30:38 -0400
-In-Reply-To: <69ed92fde951b20a9b976d48803fe9b5daaa9eea.camel@huaweicloud.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <20241008165732.2603647-2-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
-	 <69ed92fde951b20a9b976d48803fe9b5daaa9eea.camel@huaweicloud.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728675128; c=relaxed/simple;
+	bh=zTuCJl699lT3we7PdIMfsdpnTRsTu6YNo5hfcLBrGO8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NL9bh9D1XKPb9nJeDn8ngRL3/DuvwUnF6AZN+STyB7TIXECNdeFvOkBx4NKE/Tlcr4p9Yfqx8xctWlD0qr8XowQyImJEuCIiRz2R5++3/eu6+9Wqu1NnJLth96J8/wO+/+7kkdq1B4hou8ODyNvbsKutu6WLlVMITLDsjevmY4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=amZx6NnP; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37ce9644daaso1569287f8f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:32:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728675125; x=1729279925; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tnri/u4Y989/puuwe3DqLSNUk9tDtYL8TcyHhYg5FEk=;
+        b=amZx6NnPh8Z2KUGrEnOyRAlZOEx518txo1wupcsli524YxtxGIXHFmPWXpk4EXggu1
+         heBt/5igNBCGcGYAVDY8VLZvp6rw+n8d4KFn/llTGYkJbXENjRzLrzALgro0dHRJhrjR
+         +0PuDBFp9O9dvTdhGHmaYwmxQzd6pDfb/Pa4gSOk0PbLI6tGHHpUjEjiuvj3R3FPCmLX
+         ECWJGRd+BeC9fE2SDgo5brgT+VnDvHAjSGTgciwQ5GU2oA/kP/26JGO7iCv7m7xv+Z4H
+         A3E4KrV5wDQKjTqIMWHsf8DVw4SA6l/r6zcT+DZGNGWZFvbZjrE4dchtjJ35C0RGfrIA
+         nGOQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728675125; x=1729279925;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tnri/u4Y989/puuwe3DqLSNUk9tDtYL8TcyHhYg5FEk=;
+        b=Y1r24pO5m3mxEs/bUAMPoV7ViWcZpUNJXr8eBa04zFEIMlZYbzpy+dagHEusN6+gJR
+         u+XWnvYUJJm4HMtYo/2LIE352wlPO+cL+9lJIaHSgwQry5fHWfxP9uzq0dNWxDKwBSJt
+         5EbND6RsSv4kmPMkPk8+2Vk/Hh0q2l+ZRov6ZkxB7YU3fenMAL3cBcPiy4PvTnDuKgfR
+         FPbXQ98u/SZyhi7EKWKDkoOc1ODD42Zb0voUDCfJsF0cESchuo/t/gUw9r654y1fjz9Z
+         xoCuIAxm3eLylUDGanZzOxOV3XbvDrmPx8HPAfaoqYKOTsW5+o1Bs4dDCKX6ZjJFQuDj
+         Cqew==
+X-Forwarded-Encrypted: i=1; AJvYcCVqPGIOVwJ33CmvsnWagnJOHCXTXmRiWKTrJenzucl5huagywRMCqpniqOWtmRlikw/s9pMB+TM8LKjtb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiFpi03+9awVIfdfRu6T2KCzF5yW+ZqtMvzj2Y10l32cQ/JGV/
+	/LBmf4bxBwUtiXAhtvuu7nwmmiH7PyqH1e/G6u0bcY77r5i+48oUlM8A4miIyq4=
+X-Google-Smtp-Source: AGHT+IF1HfsW0zD9f8h8VlXJtzc8e8BK78AE4TM04q4U77K9BjbrDcWp0eHgaafYJQLEv5xy6NaXtA==
+X-Received: by 2002:adf:e88b:0:b0:37d:452b:478f with SMTP id ffacd0b85a97d-37d551aab7amr2373070f8f.4.1728675125124;
+        Fri, 11 Oct 2024 12:32:05 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:28e9:ae3d:8a30:75a8])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf1f78csm83224935e9.6.2024.10.11.12.32.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 12:32:04 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [GIT PULL] gpio fixes for v6.12-rc3
+Date: Fri, 11 Oct 2024 21:32:01 +0200
+Message-ID: <20241011193201.4443-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: DZxyYUTIR8LDQnwha_3KegIQQZdtiSaE
-X-Proofpoint-GUID: 1T-MaBMKiaPGlCnU0zovXnFAFQ1k5Ai9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-11_16,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 impostorscore=0 phishscore=0 clxscore=1011 mlxscore=0
- spamscore=0 mlxlogscore=518 bulkscore=0 suspectscore=0 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110132
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2024-10-09 at 17:43 +0200, Roberto Sassu wrote:
-> On Wed, 2024-10-09 at 11:41 -0400, Paul Moore wrote:
-> > On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> > <roberto.sassu@huaweicloud.com> wrote:
-> > >=20
-> > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > >=20
-> > > IMA stores a pointer of the ima_iint_cache structure, containing inte=
-grity
-> > > metadata, in the inode security blob. However, check and assignment o=
-f this
-> > > pointer is not atomic, and it might happen that two tasks both see th=
-at the
-> > > iint pointer is NULL and try to set it, causing a memory leak.
-> > >=20
-> > > Ensure that the iint check and assignment is guarded, by adding a loc=
-kdep
-> > > assertion in ima_inode_get().
-> > >=20
-> > > Consequently, guard the remaining ima_inode_get() calls, in
-> > > ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the loc=
-kdep
-> > > warnings.
-> > >=20
-> > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > ---
-> > >  security/integrity/ima/ima_iint.c |  5 +++++
-> > >  security/integrity/ima/ima_main.c | 14 ++++++++++++--
-> > >  2 files changed, 17 insertions(+), 2 deletions(-)
-> > >=20
-> > > diff --git a/security/integrity/ima/ima_iint.c b/security/integrity/i=
-ma/ima_iint.c
-> > > index c176fd0faae7..fe676ccec32f 100644
-> > > --- a/security/integrity/ima/ima_iint.c
-> > > +++ b/security/integrity/ima/ima_iint.c
-> > > @@ -87,8 +87,13 @@ static void ima_iint_free(struct ima_iint_cache *i=
-int)
-> > >   */
-> > >  struct ima_iint_cache *ima_inode_get(struct inode *inode)
-> > >  {
-> > > +       struct ima_iint_cache_lock *iint_lock;
-> > >         struct ima_iint_cache *iint;
-> > >=20
-> > > +       iint_lock =3D ima_inode_security(inode->i_security);
-> > > +       if (iint_lock)
-> > > +               lockdep_assert_held(&iint_lock->mutex);
-> > > +
-> > >         iint =3D ima_iint_find(inode);
-> > >         if (iint)
-> > >                 return iint;
-> >=20
-> > Can you avoid the ima_iint_find() call here and just do the following?
-> >=20
-> >   /* not sure if you need to check !iint_lock or not? */
-> >   if (!iint_lock)
-> >     return NULL;
-> >   iint =3D iint_lock->iint;
-> >   if (!iint)
-> >     return NULL;
->=20
-> Yes, I also like it much more.
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Yes, testing iint_lock and then iint_lock->iint should be fine, but the log=
-ic
-needs to be inverted.  ima_inode_get() should return the existing iint, if =
-it
-exists, or allocate the memory.
+Linus,
 
-Mimi
+Please pull the following driver fixes for the GPIO subsystem for the next
+RC. Details are in the signed tag.
 
+Thanks
+Bartosz
 
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/brgl/linux.git tags/gpio-fixes-for-v6.12-rc3
+
+for you to fetch changes up to a6191a3d18119184237f4ee600039081ad992320:
+
+  gpio: aspeed: Use devm_clk api to manage clock source (2024-10-08 16:01:58 +0200)
+
+----------------------------------------------------------------
+gpio fixes for v6.12-rc3
+
+- fix clock handle leak in probe() error path in gpio-aspeed
+- add a dummy register read to ensure the write actually completed
+
+----------------------------------------------------------------
+Billy Tsai (2):
+      gpio: aspeed: Add the flush write to ensure the write complete.
+      gpio: aspeed: Use devm_clk api to manage clock source
+
+ drivers/gpio/gpio-aspeed.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
