@@ -1,181 +1,112 @@
-Return-Path: <linux-kernel+bounces-361227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBA1E99A54D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:45:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50B6499A552
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:45:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DB80B22FA1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:45:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14A26282880
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:45:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63EB6219488;
-	Fri, 11 Oct 2024 13:44:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SJjxuWcS"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13DAF219484;
+	Fri, 11 Oct 2024 13:45:10 +0000 (UTC)
+Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com [209.85.128.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2704C804;
-	Fri, 11 Oct 2024 13:44:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4FD8215F78;
+	Fri, 11 Oct 2024 13:45:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728654296; cv=none; b=fwXj5hgWwqMalQdDkOEaSOBkkkQmQ/LjO0fq9hk5xy8JPSIR2/KO0uxax2tO2IgBz6ifmxSJcKH22ybQ980Itlgff1DD9qyJu7YTJ+lDZ+hiXnixrvpDmIxjT/YEYLN0wpiiw2QbXeYB3VilBJcAEuWqB8zU0N/K0c+JJVdtJUQ=
+	t=1728654309; cv=none; b=FFmmk8AV3fwy4rlXrNdG4+XzRH4wvM3kl4H/2cQLvtWNBbUg7ucoL+LaMEoQNpRHR6JwjubgWniLXe2/zYE2DLsYWs7f4MXvWwvOdghZc6MMUPXwylRVM1oTmyhmjRtjFR13Z0TeQXEMJYQmnPhRyrYsNZKEup7zxvtA4p0BOR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728654296; c=relaxed/simple;
-	bh=dU3fFhFIgbYSCfGSsXuzCP67XhqLGkePBVU1S71XnZY=;
+	s=arc-20240116; t=1728654309; c=relaxed/simple;
+	bh=XRloh0YdR1F+oj3RMXyKeTDAWB5+0WV7BckTR8Fyyu4=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dET9ZbJPTRMffJAUdZfUwAkF9zS8i8aKwje56mGZFg8DBi5BXf8HxCj1f8+Rcw1Ngg1JTRwgY4Q9mDGyAvdUvSxNLWgpAwVQY443iqQfKx5wHUmTcYgXrcxVbBXyjvN9OtoxLyvKPIEHUGz9bgF+b5T8UfPT+QL0AXlWcGvqi64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SJjxuWcS; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	 To:Cc:Content-Type; b=OEiTSmZy6OaV/0m0DjqyTcCDKT+5nk3TWlRNnI3CyHC0WuK6+JYc6SBhAdUQtJopcuBWCXX9b4EQmjdNtinugVGe/BvP1V4YoO1jNXBcthC1Vupz2VNK8hJ+xRU4BAwCag7xeB7DccwHrrY1r3n4eQRZGl1+SdAi4ZdLJ4ozao4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a995f56ea2dso325893066b.1;
-        Fri, 11 Oct 2024 06:44:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728654293; x=1729259093; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VFmcATx1odRBRodNNtT/YMf8Rdbu+ncYOjMaxBgaZqo=;
-        b=SJjxuWcSm6DIHY0scPGfjknRCknsdPMFjvHGz8rC64QUlriz6Dya/f4ha+TJGv1LyX
-         sMnjZFYsINVJPjBvLRx/pNJXtDSzNzaKJxTNXstUfd5LtpEplK9RO1ahCVsv6sw/OVMV
-         CV1BYpFxoy3yQmI4zuReVzioc3X/yj3S1I21O4H+UQGUyXiGgBkxf08cYnyOXs4hVcav
-         69RmWM1QPnBEbWIMoeUt6hN2EsGDNgPph2oGGSgCPxOYo0yg0mO4d5G/0uSf2wVYOacZ
-         PgNYQftW4IvHQYdxEz1RMJ6Le/3cVmD2nwFJLuN7gH5dbMDNP3qGW4GZ5ns9v3pn+1/q
-         UQ7w==
+Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6e232e260c2so18808657b3.0;
+        Fri, 11 Oct 2024 06:45:07 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728654293; x=1729259093;
+        d=1e100.net; s=20230601; t=1728654306; x=1729259106;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=VFmcATx1odRBRodNNtT/YMf8Rdbu+ncYOjMaxBgaZqo=;
-        b=sJ9HXiuP4QPF0uycdqcd6PfhjBHums/p5wHLXzuKZAKxnN4CugQNEhSAY0+YLMbVNx
-         bOkRlNe9vikIv6uFl8Rz2aMtCSXfb6Zomxag7QbXG31cSXm8zTU4iNEeozZpygSXfE99
-         K1D8iBzTQY40G6R+L2eLWWfv2AUIuszHBX/jKgLOSOlzWuakbpzbF2aFcvHMzlXPOrDF
-         WJ9po/6FNfwj8fVCfzBNT7g7XjErspG21XWYNlOkvwnpHqs1rWq9Vf1orTa1QtoiUdvL
-         4rNW3D6sxGlWPql1+1AZXY+nKZRfo74vzK/YkMlrQwLtES8Wm4bO1rZb5w5tAoeQChnt
-         xCkA==
-X-Forwarded-Encrypted: i=1; AJvYcCWhdbqEglDfIFLJb3MuG72IEm9RMXAiWbMvkWxg7rLp8uViYaZus6Nac3KakMTrn+DXA2zNDsbehyUqtMMD@vger.kernel.org, AJvYcCXT6CqLeVetE37fO/Kn19rRsmvptqCktZqep70y7FrQzQs5fsu7cU58gNfRcw5jdZjxWnqlXvZsIOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUYX6bTHm0IOZ96IKa/JjAm8wOF3nGph51RY/GryKqIxHRONQ9
-	dFB4IYbd9OsvbIBRZuroA93QrRGCmbAX1KzFuIKIQqpWvjSOo7cxkKmUJmGXMiFTBVW2y3lvDm3
-	C6QyldsNp0jYllcqlDpsiF0W0Pw==
-X-Google-Smtp-Source: AGHT+IGDVt0dw5a0G5CT/lg3sbm+HcJzm8qRuJl8QBnUjs0jZTr5VLEwZcO2c6Bra3147lynUJXcW0UTD9RWKIUKq84=
-X-Received: by 2002:a17:907:94d2:b0:a93:d5d3:be4 with SMTP id
- a640c23a62f3a-a99b93018f2mr214011066b.13.1728654293099; Fri, 11 Oct 2024
- 06:44:53 -0700 (PDT)
+        bh=a9rv2uTZbpfulvFnPEK/huLdd2uWYJjM+4u6GaXf6VM=;
+        b=q7rHhDqpTaO3j0srmBTGj3JOhiRxFFdy91NFarPQ6fIcFwlw/Ay4cYP4aWzqDL3v2t
+         4mQsTkgksoFTNDkcU8PcnuVrWMZzSwQXen5cWZt9v1DIhZtTqOYzY3uE1Q2HDNhnGWnu
+         yhyB1LEIYzofLOIVGe5GdNXxpZ57hYl+ROQn9jg/+kT4TsnErOontpU810+tLOhipz8o
+         5YP9OIahsMVGIgbePWg7u4bjwVxhlYgrUD6yN4ZMGH8O/jFFT20EtMxz9f8w17E2+XLE
+         ZkTpLuupk80ohSEVhxW1B/T47L9sVckCPehmjGC9Ys8L0DF4vixvLUC+9ArvWSr8Y7Ui
+         YvHQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUElxWNZoRwkOJN0tFcuMdAy0yRryKnHC1ion6sPufPZWF8FV5QaZA76djd2BqMU90U6s3PHbB3kMB2WL/V@vger.kernel.org, AJvYcCUV32W2pUXMb8o5xl821S3Tmu18WkaXAfxz34l3oke+S7OM0brTgm8PbAuZfp0w5LUNCy0yg5G2P1lI9m3MPRR+bbc=@vger.kernel.org, AJvYcCVURXsfGu13r/T4BpM3uRCZsfMDd2bdnpa0hpzpmacKlCs3hjjoUePh7SjWsVl7g/vfAMwjaiScQEoU@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLaY18t/A3078B/5t8H+K6cH8WEOftwyJGB8Z4smpePMG5H1Rq
+	ITR/I5kFXhHVDHMGhqFcVP3PQ/AXY2Zm4ITc7tsfcjp0h40aNHA2dxSvNi86eA8=
+X-Google-Smtp-Source: AGHT+IGqxYgkRoYxhP4532KDTMxeJ7UDYZz42JasWqC89x3vKvt3gnKfbG+BQ03Gb0+2eFkmnaVVhQ==
+X-Received: by 2002:a05:690c:7:b0:6e3:3227:ec64 with SMTP id 00721157ae682-6e347c4e532mr19004477b3.35.1728654306004;
+        Fri, 11 Oct 2024 06:45:06 -0700 (PDT)
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332b89c71sm6018757b3.44.2024.10.11.06.45.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 06:45:05 -0700 (PDT)
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e31413a196so17939507b3.3;
+        Fri, 11 Oct 2024 06:45:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU2xl0A77EI6g5sxeqvUIX6i0xoR6gTFRIxNo61sTLwJmnnDW+BGpXu4EOZiT1Kurrlr0HT6uIkbZJz@vger.kernel.org, AJvYcCUV5NzDnSU9/VACnJtLMOLMB+LWAMQ0vlcM2MCc1+BE1b/BC/ILP65uvjCOmyRMOF4AZzuAHTQq4+AfAqxT@vger.kernel.org, AJvYcCWDpUDnETTVjcbygOqQHVJS+RaS4gH4vW8A1/MKC2Nxkr4xrjjEzXkq66Q/NlIwvwT5wnvkj51+utdjl+UkDHPAzAE=@vger.kernel.org
+X-Received: by 2002:a05:690c:4e01:b0:6e3:39ed:f029 with SMTP id
+ 00721157ae682-6e347c84073mr13905837b3.44.1728654305204; Fri, 11 Oct 2024
+ 06:45:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011055231.9826-1-kfting@nuvoton.com> <20241011055231.9826-3-kfting@nuvoton.com>
- <ZwkFWVC3_5xr6OQW@smile.fi.intel.com>
-In-Reply-To: <ZwkFWVC3_5xr6OQW@smile.fi.intel.com>
-From: Tyrone Ting <warp5tw@gmail.com>
-Date: Fri, 11 Oct 2024 21:44:42 +0800
-Message-ID: <CACD3sJY_79_VTe1EHPdh-1+FCBwb2KCW_N19==TMHAsrFL-rzg@mail.gmail.com>
-Subject: Re: [PATCH v6 2/4] i2c: npcm: Modify the client address assignment
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
-	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
-	andi.shyti@kernel.org, wsa@kernel.org, rand.sec96@gmail.com, 
-	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
-	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, 
-	JJLIU0@nuvoton.com, kfting@nuvoton.com, openbmc@lists.ozlabs.org, 
-	linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241010132726.702658-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+In-Reply-To: <20241010132726.702658-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 11 Oct 2024 15:44:53 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXGG0+J_SP4=bs_Q1PTfWCq4DuefiuQpoVRRF+hD0RW0w@mail.gmail.com>
+Message-ID: <CAMuHMdXGG0+J_SP4=bs_Q1PTfWCq4DuefiuQpoVRRF+hD0RW0w@mail.gmail.com>
+Subject: Re: [PATCH] pinctrl: renesas: Select PINCTRL_RZG2L for RZ/V2H(P) SoC
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Andy:
+On Thu, Oct 10, 2024 at 3:27=E2=80=AFPM Prabhakar <prabhakar.csengg@gmail.c=
+om> wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>
+> Add explicit selection of the PINCTRL_RZG2L config option for the
+> RZ/V2H(P) (R9A09G057) SoC, ensuring pin control driver is enabled
+> for this SoC.
+>
+> Fixes: 9bd95ac86e70 ("pinctrl: renesas: rzg2l: Add support for RZ/V2H SoC=
+")
+> Reported-by: Biju Das <biju.das.jz@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-Thank you for your comments.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-pinctrl for v6.13.
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> =E6=96=BC 2024=E5=B9=B4=
-10=E6=9C=8811=E6=97=A5 =E9=80=B1=E4=BA=94 =E4=B8=8B=E5=8D=887:00=E5=AF=AB=
-=E9=81=93=EF=BC=9A
->
-> On Fri, Oct 11, 2024 at 01:52:29PM +0800, Tyrone Ting wrote:
-> > From: Tyrone Ting <kfting@nuvoton.com>
-> >
-> > Store the client address earlier since it might get called in
-> > the i2c_recover_bus() logic flow at the early stage of
-> > npcm_i2c_master_xfer().
->
-> ...
->
-> > +     /*
-> > +      * Previously, the address was stored w/o left-shift by one bit a=
-nd
-> > +      * with that shift in the following call to npcm_i2c_master_start=
-_xmit().
-> > +      *
-> > +      * Since there are cases that the i2c_recover_bus() gets called a=
-t the
-> > +      * early stage of npcm_i2c_master_xfer(), the address is stored w=
-ith
-> > +      * the shift and used in the i2c_recover_bus().
-> > +      *
-> > +      * The address is stored from bit 1 to bit 7 in the register for
-> > +      * sending the i2c address later so it's left-shifted by 1 bit.
-> > +      */
->
-> I would rephrase it a bit like
->
->         /*
->          * Previously, the 7-bit address was stored and being converted t=
-o
->          * the address of event in the following call to npcm_i2c_master_=
-start_xmit().
->          *
->          * Since there are cases that the i2c_recover_bus() gets called a=
-t the
->          * early stage of npcm_i2c_master_xfer(), the address of event is=
- stored
->          * and then used in the i2c_recover_bus().
->          */
->
-> (E.g., the last paragraph just describes 101 about I2C 7-bit addresses us=
-age
->  and may be dropped completely.)
->
+Gr{oetje,eeting}s,
 
-Understood. I'll modify the comments and remove the last paragraph.
+                        Geert
 
-> > +     bus->dest_addr =3D i2c_8bit_addr_from_msg(msg0);
->
-> ...
->
-> > +             /*
-> > +              * Since the transfer might be a read operation, remove t=
-he I2C_M_RD flag
-> > +              * from the bus->dest_addr for the i2c_recover_bus() call=
- later.
-> > +              *
-> > +              * The i2c_recover_bus() uses the address in a write dire=
-ction to recover
-> > +              * the i2c bus if some error condition occurs.
-> > +              */
->
-> > +             if (bus->dest_addr & I2C_M_RD)
->
-> Redundant.
->
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-Just to double check. Is the code "if (bus->dest_addr & I2C_M_RD)" redundan=
-t?
-
-> > +                     bus->dest_addr &=3D ~I2C_M_RD;
->
-> --
-> With Best Regards,
-> Andy Shevchenko
->
->
-
-Thank you again.
-
-Regards,
-Tyrone
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
