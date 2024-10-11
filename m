@@ -1,111 +1,117 @@
-Return-Path: <linux-kernel+bounces-361879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893F199AE4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:51:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B67899AE50
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:55:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F0CF3B21D35
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:51:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4DA0B22EC5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:55:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B3D1D173F;
-	Fri, 11 Oct 2024 21:51:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC47F1D173A;
+	Fri, 11 Oct 2024 21:55:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BooXBpw9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lf9Vm5y6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590D819D8B7;
-	Fri, 11 Oct 2024 21:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F715194A67;
+	Fri, 11 Oct 2024 21:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728683500; cv=none; b=mqWUlkC4O2wPdm6qcVbgWNWi6ETTaqVguFMgbsgxCPbqqe47C17VNSv/rvwKMSdHhRAbgQd+yHmWeeHKC9cQIsSXQkUTPWeATHNw9xZDTOPGf3fb+WKIouiB8UnnFI9xWaqOwSs1nnTYg07GrX5Q+77CdhJXB5Ih0RUAtyllqZM=
+	t=1728683736; cv=none; b=U9FBUdMq0YSbTfCcbUTb1JmeeYGqmMy/XDWcKrEmKmbzD5fF8og0ktvQzcvj60dF2B6GSOJdJf65wIMLJ0bWq/X4YW06Qw74f9cn+0KZ1j/Idqv0CeIIDbYod36OuvQmi3zfaNxgpPhZRnI6Ws09t62LSoZhB8DoY/iIm8FZkYI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728683500; c=relaxed/simple;
-	bh=rv/UUK412IaJH/Oyc9qXtpLYwwXVGqY4xqLugFXMh9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=svFvfW2NEAtMpjg/iw8ze+xGE1rx/rFyWc0mefdDsQp9lMjaZnb2EQP67KQpgwiLxDlBpydjv/QUp/veybbi9jZmy5xGzC/734drDdfjYPCwdpxZNL2r4C0x4R6fT0KOHK892ioNIfH1nO2irv23rTedw4gLosglPEGKJKN1fGU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BooXBpw9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BCBOkn032574;
-	Fri, 11 Oct 2024 21:51:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	He2Sp5cSY8GhAI2+UY1CLa3m2O450by2VVgxnyWsAm0=; b=BooXBpw985oc68eA
-	8kKN7l8C5eJDy1Y0T7SWfQxLfmNoCzGcYj01GPSJwyefm97+uSYvDN2Oz+Fv33S5
-	zJS0Znl4uRXQTGPLtGTW6B5Lx7WEVhcVfrML4wexlJU0GtOgog+FxMQCt4AVba0w
-	SNEUIbEuGxgYYadYzdPgllzPo0kDxzMv6sBHLi3eHxee71ISAlxhifR6EV7Ol0N+
-	kCq2shCqcpHvCTiyPlaPVfw04irMH0jRrPLpzEGgBojN0X+GFoVHt3Q/3COe5Ckb
-	dT4h+fhVersA+U3491t9bl02FfEXhWRoj7BrUS6vw9ot2mmpp9AZf1d+2ByteNhm
-	H9Udmw==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 424cy7qnvy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 21:51:34 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49BLpXZK014266
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 21:51:33 GMT
-Received: from [10.110.80.117] (10.80.80.8) by nasanex01a.na.qualcomm.com
- (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Fri, 11 Oct
- 2024 14:51:32 -0700
-Message-ID: <4f11a3f8-dd77-45e8-964a-4c0935fcac8a@quicinc.com>
-Date: Fri, 11 Oct 2024 14:51:31 -0700
+	s=arc-20240116; t=1728683736; c=relaxed/simple;
+	bh=eD71LVrxqwlv2wKWxK9+4d3rK3+9jdnoxnKHogtfupg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Aq4CNwyW16cYQz831G4DARqf8IIV/1sLvjCvM1cz+jMD4uJJDmyNNzkWM5un954w24Wy1Sm11+etgU6d5IV07Y8SVzZav0sSRKqMXQESH64ajf9pV++YHK2XaigFaNTFI6oj1f+ryExWN0QjSNtglVU+h2+zwsQUV3jP/CR+deo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lf9Vm5y6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AC54FC4CEC3;
+	Fri, 11 Oct 2024 21:55:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728683735;
+	bh=eD71LVrxqwlv2wKWxK9+4d3rK3+9jdnoxnKHogtfupg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=lf9Vm5y6cv8SzrfaBMkI078RLf5Nhq4JKoktjRxkXDDifMLXzGOdEk52xZYEyf9+l
+	 SSnJec2OKLc5u1YMM+hA5ULZXb72vbr6jdVQuhkxnTwzupRQDDK83Ynbtg1u5lxbx6
+	 e+rw3MU5GLfqqUtVQH7zTctwLj1feufo6uGNLGWNLUsE7r91UjfxwYx5WKbwIHTJnp
+	 ZzQGzv2TOML3sfz06YqwNF1A7aJS4mY1bz9UfnKn1AGLNZT3+bozC6rwxAHLhDcaTm
+	 1YrRE5nmSz5aDZT/9g9lTXmbU5cCpTyNQHBf0qC+E8Oj9P+4U/Lr027D8mWh58zkNb
+	 UrGZUBIKJT61g==
+Date: Fri, 11 Oct 2024 16:55:29 -0500
+From: Rob Herring <robh@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Saravana Kannan <saravanak@google.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: [GIT PULL] Devicetree fixes for v6.12, part 1
+Message-ID: <20241011215529.GA2601838-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 2/4] remoteproc: qcom: add hexagon based WCSS secure
- PIL driver
-To: Jeff Johnson <quic_jjohnson@quicinc.com>,
-        Gokul Sriram Palanisamy
-	<quic_gokulsri@quicinc.com>,
-        <andersson@kernel.org>, <krzk+dt@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <quic_viswanat@quicinc.com>, <quic_mmanikan@quicinc.com>,
-        <quic_varada@quicinc.com>, <quic_srichara@quicinc.com>,
-        <quic_gokulsri@quiconc.com>
-References: <20240829134021.1452711-1-quic_gokulsri@quicinc.com>
- <20240829134021.1452711-3-quic_gokulsri@quicinc.com>
- <b62a851c-ffb8-475a-9de1-1211a5a6b590@quicinc.com>
-Content-Language: en-US
-From: Trilok Soni <quic_tsoni@quicinc.com>
-In-Reply-To: <b62a851c-ffb8-475a-9de1-1211a5a6b590@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: koMLBK4qJ5X5tkuka2lp2PsOfibHhWy5
-X-Proofpoint-GUID: koMLBK4qJ5X5tkuka2lp2PsOfibHhWy5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 impostorscore=0
- adultscore=0 mlxscore=0 lowpriorityscore=0 suspectscore=0 spamscore=0
- priorityscore=1501 clxscore=1011 bulkscore=0 malwarescore=0
- mlxlogscore=544 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410110154
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/11/2024 12:28 PM, Jeff Johnson wrote:
-> So I suspect this last line should be replaced with two:
->> + * Copyright (c) 2012-2018 The Linux Foundation. All rights reserved.
->> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+Linus,
 
-I agree. 
+Please pull a few fixes for 6.12.
 
--- 
----Trilok Soni
+Rob
 
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  ssh://git@gitolite.kernel.org/pub/scm/linux/kernel/git/robh/linux.git tags/devicetree-fixes-for-6.12-1
+
+for you to fetch changes up to 6e0391e48cf9fb8b1b5e27c0cbbaf2e4639f2c33:
+
+  of: Skip kunit tests when arm64+ACPI doesn't populate root node (2024-10-10 12:43:01 -0500)
+
+----------------------------------------------------------------
+Devicetree fixes for v6.12, part 1:
+
+- Disable kunit tests for arm64+ACPI
+
+- Fix refcount issue in kunit tests
+
+- Drop constraints on non-conformant 'interrupt-map' in fsl,ls-extirq
+
+- Drop type ref on 'msi-parent in fsl,qoriq-mc binding
+
+- Move elgin,jg10309-01 to its own binding from trivial-devices
+
+----------------------------------------------------------------
+Fabio Estevam (1):
+      dt-bindings: display: elgin,jg10309-01: Add own binding
+
+Frank Li (2):
+      dt-bindings: misc: fsl,qoriq-mc: remove ref for msi-parent
+      dt-bindings: interrupt-controller: fsl,ls-extirq: workaround wrong interrupt-map number
+
+Jinjie Ruan (1):
+      of: Fix unbalanced of node refcount and memory leaks
+
+Stephen Boyd (1):
+      of: Skip kunit tests when arm64+ACPI doesn't populate root node
+
+ .../bindings/display/elgin,jg10309-01.yaml         | 54 ++++++++++++++++++++++
+ .../interrupt-controller/fsl,ls-extirq.yaml        | 26 +++++++++--
+ .../devicetree/bindings/misc/fsl,qoriq-mc.yaml     |  2 +-
+ .../devicetree/bindings/trivial-devices.yaml       |  2 -
+ drivers/of/of_kunit_helpers.c                      | 15 ++++++
+ drivers/of/of_private.h                            |  3 ++
+ drivers/of/of_test.c                               |  3 ++
+ drivers/of/overlay_test.c                          |  5 +-
+ 8 files changed, 103 insertions(+), 7 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/elgin,jg10309-01.yaml
 
