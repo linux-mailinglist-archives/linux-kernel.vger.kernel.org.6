@@ -1,272 +1,94 @@
-Return-Path: <linux-kernel+bounces-360718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D52999E9D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:56:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 93D2A999E9F
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 922B51F2495A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:56:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F2401F248CE
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:58:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE11D20A5FF;
-	Fri, 11 Oct 2024 07:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 272DC20A5FC;
+	Fri, 11 Oct 2024 07:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="nTfEgFaE"
-Received: from mail-yb1-f182.google.com (mail-yb1-f182.google.com [209.85.219.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="gCOrWPcQ";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5BexOFRm"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A42420A5EC
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:55:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D573209664
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:58:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728633360; cv=none; b=e0dxEQJdDf1sqDFdH2wArqkRoiQAwe7JJqIpbvTKu21skhpxICJV6VqXzcyEOS5c3/XUufnjIXSxPN99G2VGnR2AysVS81LAi54PoNIADXscJXYDELp9uKeXHsAqgQFpBcdHBWMjXDC+esPv6YLqpwTaMQWcItqszJLYcFNHU5M=
+	t=1728633528; cv=none; b=Vv2U1UqrP0Q4hf2g0YIrtrFj9umpzwbld3TbuGTxcR0TqaQlKN5vkaf4C7oT7OD2yIC58rTVdH7Kq0zheMN3mt7VFRHGCBs8uD3j9MOs9WG2JnTyoB2/A8GT95+BFjNt+aEDnmCpxXjobxLcYFdbePgYX+c970PanWR0h4CA6Xc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728633360; c=relaxed/simple;
-	bh=7TNOKICrw09ne4r6APWOT1VcA/SrS9F99vRwBKQFO+I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A5xZ5Xez6jt7xr88p25RV3/TLJ3wWBi5KZQKbiTDj8cky0qv0CZWS5a5+HOCRDmUQ/88/AIpgdxMUP5tg6QWGHG4UNrwx2mUXLcmGBk0efhWGVmmUo/qcLSwQs/+3qCrfOJ/3Vhs97gSd9HR9pNgVcw6GPELikpJIXVBgDJs1ZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=nTfEgFaE; arc=none smtp.client-ip=209.85.219.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f182.google.com with SMTP id 3f1490d57ef6-e0875f1e9edso1547068276.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 00:55:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728633357; x=1729238157; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=C0jvr97BuxiETKruxRFgol82j0ZmSNukoUptXHdstGU=;
-        b=nTfEgFaEtsyr+EgOkEWg9FHyVuoIwIIEf+xiZkUp2d4teYY0fDilVwZ0hPdkdgT33D
-         O137+WAdjd3rxRMvhwbnEpSrTpDGv6pkz3S/VDtGf5i6Q+ZRSrnawgqYxW7ozGYOrJ12
-         PlHM0zy4KDjQgTRoAQUKKiySXyyvxYxq+un2E9LI9BK65mOgQ+E844h7g6WbqOdVjKx7
-         eb9xTDO28ywi8+lz1kcAr0xV4FinSw53CkKB2I8GhzHTNgsF0Notby+pY4SlkE1tO/oY
-         6FXclrpblWt6VvHN2aUt9If5laK1TCYKhYsxTEC9T8Wdp7oMhq1WTawvjbnwaw4X4ElH
-         Cirg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728633357; x=1729238157;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=C0jvr97BuxiETKruxRFgol82j0ZmSNukoUptXHdstGU=;
-        b=uu4mArHSQxvk97+VhD2yoWrd7KDar95Nua7jhL37U7An4cwN8F0Jv2ibIP650Of70g
-         GZ4CXnXnSbQuH85VDR/dMmbWh40CDbam0i4sTrDus56Hb4fuszwXsgrDGiyG81sqtAFZ
-         IPZIYURU99o8vjrV9EY4AlVQw/sMYsxsg7GpSDIgul8/0nXQV6gFYeMvK74NaImDq4BW
-         +w1JOAfu7xAuefkTPFAiHbxwLr6TutpMwfRStnMEP/+ExjB1AFOgwBvJMEYb03LrJFeg
-         jwjVxMJrv/5kXZvM0T6/tX09JUx87hH9P7tM+/Dd0HuIMCRSn9dCjF7bwHMPiq2Xgnqs
-         99Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCUmHYM/GfKuGkJEeu2ag6ODVLurq9HvLBTDBKvDjrw08y7loEajBpX3/BcExv/ny0Esnp/caKYj4CaNwsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0ZvNh0V79FaBxK5oqas05qBoUQdARhUgfx5374PIixJb39r9D
-	JsqEunBebDoYGxcTrHnSs4n1Y1rIATuvv71JRoMhiMuPcIDwPsM5titl10vmiLLQo3sCOY5lCyk
-	sPjOsomO/Wf2Oz2Loa6zuu1zFiJ1xVL4loeJfkw==
-X-Google-Smtp-Source: AGHT+IE/r6hzL3lwV08dSNtczgOs3siT6XXHp4kLInDfgaPgX/o70fkd03mEG5Nam6IAVjb3jN3/6DZS5fPuQ8ppxOI=
-X-Received: by 2002:a05:6902:cc9:b0:e29:e81:fe45 with SMTP id
- 3f1490d57ef6-e2919def3c5mr1403380276.35.1728633357128; Fri, 11 Oct 2024
- 00:55:57 -0700 (PDT)
+	s=arc-20240116; t=1728633528; c=relaxed/simple;
+	bh=WiEXSt+9JX0aNkrQ9JlLuemZT1ICkFVCqU2Suh9wbvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P4czU0sFwtNGZXP2IlscEeG9VI9xgH31/Xa7zLeCf83vBPPtNau6KpghkXd6sUXQXLgp9xC5fRPzbrMxGeXIwtJBk0RHeLrs7hbYJba7ribu5Wuep4NGwcxcFWUYC2xeQB/a27l8HuUE1Adpkl25qDG1+EmWce4Y6F4FyhLjb+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=gCOrWPcQ; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5BexOFRm; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 11 Oct 2024 09:58:43 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728633524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zueu+WricwTTZY5O2D3GbYsJ9exbbDuSMHoZiQ58xhA=;
+	b=gCOrWPcQzFz1rRQPL+kzwI/LDEJ7IjlWOKpHId6cA12VuvVi8gkpkMsBngzuAbZU0UtbpO
+	bWEGfGSx/Mdt3CE89zc1ck5vFeozAYTzzfdiwvfylwBA2jZAUHPrWDZhrSKmvWu8U6BAOV
+	z+TIN1kknczsQqE8E4YG5B+GyknxAxTOKvQJ4mVRm34Tef2PJWZET52oL9MDgs1qEeUhUp
+	y15f7fBvasF3vCK3HmMoUE+LphAb83Zr+wC3DQYrtatyMekroMLp4JI2J+CP5rd5nK6Cly
+	TvLakuXTqLmpOxFjYCOuNckIKxrmus/IgZT5TM0xyZahUTDmEV+OJqPYx/sbRw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728633524;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Zueu+WricwTTZY5O2D3GbYsJ9exbbDuSMHoZiQ58xhA=;
+	b=5BexOFRmQ/3fgvSaJpYBpPEgI8MkNE3xrzGRhKZq8y2SaVgmwHtBEBjjSGHjoblXuXwLKw
+	/wDtAy+8bWyTcQAQ==
+From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+To: Ankur Arora <ankur.a.arora@oracle.com>
+Cc: Peter Zijlstra <peterz@infradead.org>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
+	efault@gmx.de
+Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
+Message-ID: <20241011075843.WABHhY70@linutronix.de>
+References: <20241009165411.3426937-1-ankur.a.arora@oracle.com>
+ <20241009165411.3426937-3-ankur.a.arora@oracle.com>
+ <20241009180117.GS17263@noisy.programming.kicks-ass.net>
+ <37af80bd-a54f-4ee4-9175-6f0f27b685a0@paulmck-laptop>
+ <20241010063207.xIrynIqO@linutronix.de>
+ <20241010081032.GA17263@noisy.programming.kicks-ass.net>
+ <20241010091326.nK71dG4b@linutronix.de>
+ <878quvamjm.fsf@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-0-76d4f5d413bf@linaro.org>
- <20241009-sm8650-v6-11-hmd-pocf-mdss-quad-upstream-21-v2-10-76d4f5d413bf@linaro.org>
- <j2ws4q45uwmk4anzgz32ckzsbuc32zngmnybynxoyvgtezu6kr@5e2hxhfsmbtf>
-In-Reply-To: <j2ws4q45uwmk4anzgz32ckzsbuc32zngmnybynxoyvgtezu6kr@5e2hxhfsmbtf>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Fri, 11 Oct 2024 15:55:46 +0800
-Message-ID: <CABymUCPQA0tb1VhtbwQq8LHQMorxYf4rmC9td3oXFzvR9rTUEg@mail.gmail.com>
-Subject: Re: [PATCH v2 10/14] drm/msm/dpu: Support quad-pipe in SSPP checking
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Sean Paul <sean@poorly.run>, Marijn Suijten <marijn.suijten@somainline.org>, 
-	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, linux-arm-msm@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <878quvamjm.fsf@oracle.com>
 
-Dmitry Baryshkov <dmitry.baryshkov@linaro.org> =E4=BA=8E2024=E5=B9=B410=E6=
-=9C=8810=E6=97=A5=E5=91=A8=E5=9B=9B 21:20=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Oct 09, 2024 at 04:50:23PM GMT, Jun Nie wrote:
-> > Move requreiment check to routine of every pipe check. Because there is
->
-> s/Because there is/There will be/
->
-> > multiple SSPPs for quad-pipe case in future.
-> >
-> > Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> > ---
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h |  2 +
-> >  drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c   | 86 ++++++++++++++-------=
---------
-> >  2 files changed, 44 insertions(+), 44 deletions(-)
-> >
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h b/drivers/gpu/=
-drm/msm/disp/dpu1/dpu_hw_sspp.h
-> > index fc54625ae5d4f..05b92ff7eb529 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_sspp.h
-> > @@ -143,11 +143,13 @@ struct dpu_hw_pixel_ext {
-> >   *             such as decimation, flip etc to program this field
-> >   * @dest_rect: destination ROI.
-> >   * @rotation: simplified drm rotation hint
-> > + * @valid: notify that this pipe and config is in use
->
-> This is not related to code move, is it? And if it is, it should be
-> described in the commit message.
+On 2024-10-10 10:35:25 [-0700], Ankur Arora wrote:
+> That's odd. I have that exact configuration (PREEMPT_DYANMIC=n,
+> PREEMPT_LAZY=y, PREEMPT_RCU=n).
+> 
+> Can you share your .config?
 
-Will move this part to plane splitting patch and add commit message
-to address this valid flag.
->
-> >   */
-> >  struct dpu_sw_pipe_cfg {
-> >       struct drm_rect src_rect;
-> >       struct drm_rect dst_rect;
-> >       unsigned int rotation;
-> > +     bool valid;
-> >  };
-> >
-> >  /**
-> > diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gpu/dr=
-m/msm/disp/dpu1/dpu_plane.c
-> > index 9a8fbeec2e1e8..904ebec1c8a18 100644
-> > --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> > @@ -739,12 +739,40 @@ static int dpu_plane_check_inline_rotation(struct=
- dpu_plane *pdpu,
-> >  static int dpu_plane_atomic_check_pipe(struct dpu_plane *pdpu,
-> >               struct dpu_sw_pipe *pipe,
-> >               struct dpu_sw_pipe_cfg *pipe_cfg,
-> > -             const struct msm_format *fmt,
-> > -             const struct drm_display_mode *mode)
-> > +             const struct drm_display_mode *mode,
-> > +             struct drm_plane_state *new_plane_state)
-> >  {
-> >       uint32_t min_src_size;
-> >       struct dpu_kms *kms =3D _dpu_plane_get_kms(&pdpu->base);
-> >       int ret;
-> > +     const struct msm_format *fmt;
-> > +     uint32_t supported_rotations;
-> > +     const struct dpu_sspp_cfg *pipe_hw_caps;
-> > +     const struct dpu_sspp_sub_blks *sblk;
-> > +
-> > +     pipe_hw_caps =3D pipe->sspp->cap;
-> > +     sblk =3D pipe->sspp->cap->sblk;
-> > +
-> > +     /*
-> > +      * We already have verified scaling against platform limitations.
-> > +      * Now check if the SSPP supports scaling at all.
-> > +      */
-> > +     if (!sblk->scaler_blk.len &&
-> > +         ((drm_rect_width(&new_plane_state->src) >> 16 !=3D
-> > +           drm_rect_width(&new_plane_state->dst)) ||
-> > +          (drm_rect_height(&new_plane_state->src) >> 16 !=3D
-> > +           drm_rect_height(&new_plane_state->dst))))
-> > +             return -ERANGE;
-> > +
-> > +     fmt =3D msm_framebuffer_format(new_plane_state->fb);
-> > +
-> > +     supported_rotations =3D DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0=
-;
-> > +
-> > +     if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
-> > +             supported_rotations |=3D DRM_MODE_ROTATE_90;
-> > +
-> > +     pipe_cfg->rotation =3D drm_rotation_simplify(new_plane_state->rot=
-ation,
-> > +                                                supported_rotations);
-> >
-> >       min_src_size =3D MSM_FORMAT_IS_YUV(fmt) ? 2 : 1;
-> >
-> > @@ -920,49 +948,19 @@ static int dpu_plane_atomic_check_pipes(struct dr=
-m_plane *plane,
-> >               drm_atomic_get_new_plane_state(state, plane);
-> >       struct dpu_plane *pdpu =3D to_dpu_plane(plane);
-> >       struct dpu_plane_state *pstate =3D to_dpu_plane_state(new_plane_s=
-tate);
-> > -     const struct msm_format *fmt;
-> > -     struct dpu_sw_pipe *pipe =3D &pstate->pipe[0];
-> > -     struct dpu_sw_pipe *r_pipe =3D &pstate->pipe[1];
-> > -     struct dpu_sw_pipe_cfg *pipe_cfg =3D &pstate->pipe_cfg[0];
-> > -     struct dpu_sw_pipe_cfg *r_pipe_cfg =3D &pstate->pipe_cfg[1];
-> > -     uint32_t supported_rotations;
-> > -     const struct dpu_sspp_cfg *pipe_hw_caps;
-> > -     const struct dpu_sspp_sub_blks *sblk;
-> > -     int ret =3D 0;
-> > -
-> > -     pipe_hw_caps =3D pipe->sspp->cap;
-> > -     sblk =3D pipe->sspp->cap->sblk;
-> > -
-> > -     /*
-> > -      * We already have verified scaling against platform limitations.
-> > -      * Now check if the SSPP supports scaling at all.
-> > -      */
-> > -     if (!sblk->scaler_blk.len &&
-> > -         ((drm_rect_width(&new_plane_state->src) >> 16 !=3D
-> > -           drm_rect_width(&new_plane_state->dst)) ||
-> > -          (drm_rect_height(&new_plane_state->src) >> 16 !=3D
-> > -           drm_rect_height(&new_plane_state->dst))))
-> > -             return -ERANGE;
-> > -
-> > -     fmt =3D msm_framebuffer_format(new_plane_state->fb);
-> > -
-> > -     supported_rotations =3D DRM_MODE_REFLECT_MASK | DRM_MODE_ROTATE_0=
-;
-> > -
-> > -     if (pipe_hw_caps->features & BIT(DPU_SSPP_INLINE_ROTATION))
-> > -             supported_rotations |=3D DRM_MODE_ROTATE_90;
-> > -
-> > -     pipe_cfg->rotation =3D drm_rotation_simplify(new_plane_state->rot=
-ation,
-> > -                                                supported_rotations);
-> > -     r_pipe_cfg->rotation =3D pipe_cfg->rotation;
-> > -
-> > -     ret =3D dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg, fmt,
-> > -                                       &crtc_state->adjusted_mode);
-> > -     if (ret)
-> > -             return ret;
-> > +     struct dpu_sw_pipe *pipe;
-> > +     struct dpu_sw_pipe_cfg *pipe_cfg;
-> > +     int ret =3D 0, i;
-> >
-> > -     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0) {
-> > -             ret =3D dpu_plane_atomic_check_pipe(pdpu, r_pipe, r_pipe_=
-cfg, fmt,
-> > -                                               &crtc_state->adjusted_m=
-ode);
-> > +     for (i =3D 0; i < PIPES_PER_PLANE; i++) {
-> > +             pipe =3D &pstate->pipe[i];
-> > +             pipe_cfg =3D &pstate->pipe_cfg[i];
-> > +             if (!pipe_cfg->valid || !pipe->sspp)
-> > +                     break;
->
-> And... this check broke display support at this point, didn't it? It's
-> never set, so none of the pipes are going to be checked.
+Sent offlist.
 
-Yeah, no pipe is checked. It passes real test without the check luckily.
-Will move plane splitting patch before this check patch.
+> Ankur
 
-- Jun
-
->
-> > +             DPU_DEBUG_PLANE(pdpu, "pipe %d is in use, validate it\n",=
- i);
-> > +             ret =3D dpu_plane_atomic_check_pipe(pdpu, pipe, pipe_cfg,
-> > +                                               &crtc_state->adjusted_m=
-ode,
-> > +                                               new_plane_state);
-> >               if (ret)
-> >                       return ret;
-> >       }
-> >
-> > --
-> > 2.34.1
-> >
->
-> --
-> With best wishes
-> Dmitry
+Sebastian
 
