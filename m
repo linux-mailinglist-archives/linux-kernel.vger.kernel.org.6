@@ -1,109 +1,104 @@
-Return-Path: <linux-kernel+bounces-361933-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D708599AF1A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:11:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 381BF99AF1E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:12:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 68033287030
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:11:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D57FF1F22D72
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:12:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C98A11EBA09;
-	Fri, 11 Oct 2024 23:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7DE61E2018;
+	Fri, 11 Oct 2024 23:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7UiJCsu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R6Ym6KJO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3307A1E2019;
-	Fri, 11 Oct 2024 23:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48CD21D27A9;
+	Fri, 11 Oct 2024 23:11:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728688244; cv=none; b=lT/Qot6cpBRE/UWpqMRi9ypQAd092z+yPZkpm0nMXj/sL3GaVaL50RrzLGEG2pjaOVfKdSwAbj+fncAXRt3rCk/dSEH6xlQo5iM+cU6B79jogiWpTI2N0lhILfIN1UMNWjt6G9UAucd/YSfRVuC61APk5DpLTKD7AZ0HKks37nI=
+	t=1728688311; cv=none; b=hZRK5tqr3zMMzpTL+IYZoA7fpmZNh3MD7y4YXW/yx4ooOBkFcdHdEO+9BIUNy03FGbulIBV52WHcSe0SPv/GMlnHm3ojmzQUl1eODABzUymEBqxaWhTcEktOMI7Y2KrMFnraxDhcX6MDTMTk1GehOx+ebLEzKmnTcC4CtHWAA3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728688244; c=relaxed/simple;
-	bh=nw2jwMAeISOin6wHwGGTqPy6phtXpYNwv2/HLBphEjI=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=Ix/vkHE5SogGbOk5EHCe0TqO+RKfnBvgDqrw0I0/vbPZF9ByeaVt32ILfyDj4b80frofmTBTdnJ7+DR0hEWgapMOGAE8Q7qFqBCKESfnCniZ6eqRVvuk8jSisHUw2vkaueCZlBPsoS3rw5TTrhidbnBaoIkd76IqyRsEPrOq9os=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7UiJCsu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CADE9C4CEC3;
-	Fri, 11 Oct 2024 23:10:43 +0000 (UTC)
+	s=arc-20240116; t=1728688311; c=relaxed/simple;
+	bh=iVJ74e4tA1WxfHXS2xP4RqS7VvfQLdtn7Zy1xtIgh5A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Jtzn6bBBnEacnYghEb/bNNaU85KV8uWOt1v9xiziLT+dV/weXr8J1brl91rA9vGvMamG6p/zcoh2ACyLXkrCAbuJq3Aa/tvqWq7c/lbDnta+MeuEgkfhz9bMZiCLPHwrJy2UcbmDlDeKOtMx2y1og5O23m++Tg1VeAjlcHlupjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R6Ym6KJO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D19CC4CEC3;
+	Fri, 11 Oct 2024 23:11:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728688243;
-	bh=nw2jwMAeISOin6wHwGGTqPy6phtXpYNwv2/HLBphEjI=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=Y7UiJCsuGsF5iCgMtIzStujf6vZMgu5jh7q0fkxSZkEycI4SXz4RKgu1z7DzJ0rD7
-	 W0E+QrXPJDFLFgXwlb2t3aQ+Ok+vhHApB8UHeBFbiXEm4qiXZbOR/fbk3l2MRxdMh0
-	 ZLe+gzEWmTAfmZLxJ/jCO9veyEougKW/ekS+EWtzWL0yDE+fhH0aPrY8z8MRtX2yCO
-	 FgXsCjxsbspFgqKC+do7/GDGH9f1WBlAGGCQzhlwgt9xlPso4r0CO6Oij8PCbb1lbd
-	 8llef+d2jORgMl9pkdTOxj9J8wPlvhrw5KV9cT3I4GnTPZUVCVamtGHlq8W8H/dT/j
-	 ovM1YaDqFBFVw==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE13638363CB;
-	Fri, 11 Oct 2024 23:10:49 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=k20201202; t=1728688310;
+	bh=iVJ74e4tA1WxfHXS2xP4RqS7VvfQLdtn7Zy1xtIgh5A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=R6Ym6KJOF6tfls3kP0ehEPQZxEZLje3eMQHOk+Cd/nR4ws/cIVbd6MA5SeVoVQmKK
+	 mxx5dNMw/481In9ovH50xCEVB6pP31MVQ47e2nYl3C2Oxsuauy29+O1peg0N9/xmbq
+	 F180EP5MTAbYcFwxk9baCTKhQp6OkU2jX/OWDYssXq7xfX8l7jg6+ZhNT+sY/xZhdi
+	 II6Ij98DGQ7smljfSzMGiRKX/PseqCew3FmMuE0rE1HUkLnNWA3KbFktOSDp6z6euh
+	 WvKHXPhyfD2yFHIyQ5QYFySsVXz118y+VowWBAQhzm2diBIvUbczSC4jjVNi6WDHjk
+	 QWA7uI9pVYXzA==
+Date: Fri, 11 Oct 2024 16:11:49 -0700
+From: Luis Chamberlain <mcgrof@kernel.org>
+To: "Maciej S. Szmigiero" <mail@maciej.szmigiero.name>,
+	"Darrick J. Wong" <djwong@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,
+	Len Brown <len.brown@intel.com>, Pavel Machek <pavel@ucw.cz>,
+	linux-pm <linux-pm@vger.kernel.org>, linux-kernel@vger.kernel.org,
+	Chris Mason <clm@fb.com>, Josef Bacik <josef@toxicpanda.com>,
+	David Sterba <dsterba@suse.com>, linux-btrfs@vger.kernel.org,
+	Russ Weight <russ.weight@linux.dev>,
+	Danilo Krummrich <dakr@redhat.com>
+Subject: Re: Root filesystem read access for firmware load during hibernation
+ image writing
+Message-ID: <ZwmwtZivKP8UDx1V@bombadil.infradead.org>
+References: <3c95fb54-9cac-4b4f-8e1b-84ca041b57cb@maciej.szmigiero.name>
+ <413b1e99-8cfe-4018-9ef3-2f3e21806bad@maciej.szmigiero.name>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net-next v4 0/7] microchip_t1s: Update on Microchip 10BASE-T1S
- PHY driver
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <172868824823.3022673.9404105689070586196.git-patchwork-notify@kernel.org>
-Date: Fri, 11 Oct 2024 23:10:48 +0000
-References: <20241010082205.221493-1-parthiban.veerasooran@microchip.com>
-In-Reply-To: <20241010082205.221493-1-parthiban.veerasooran@microchip.com>
-To: Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>
-Cc: andrew@lunn.ch, hkallweit1@gmail.com, linux@armlinux.org.uk,
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- ramon.nordin.rodriguez@ferroamp.se, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, parthiban.veerasooran@microchip.com,
- UNGLinuxDriver@microchip.com, Thorsten.Kummermehr@microchip.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <413b1e99-8cfe-4018-9ef3-2f3e21806bad@maciej.szmigiero.name>
 
-Hello:
-
-This series was applied to netdev/net-next.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
-
-On Thu, 10 Oct 2024 13:51:58 +0530 you wrote:
-> This patch series contain the below updates:
-> - Restructured lan865x_write_cfg_params() and lan865x_read_cfg_params()
->   functions arguments to more generic.
-> - Updated new/improved initial settings of LAN865X Rev.B0 from latest
->   AN1760.
-> - Added support for LAN865X Rev.B1 from latest AN1760.
-> - Moved LAN867X reset handling to a new function for flexibility.
-> - Added support for LAN867X Rev.C1/C2 from latest AN1699.
-> - Disabled/enabled collision detection based on PLCA setting.
+On Sat, Oct 05, 2024 at 03:16:27PM +0200, Maciej S. Szmigiero wrote:
+> The issue below still happens on kernel version 6.11.1.
 > 
-> [...]
+> Created a kernel bugzilla entry for it:
+> https://bugzilla.kernel.org/show_bug.cgi?id=219353
+> 
+> It would be nice to at least know whether the filesystem read access supposed is
+> to be working normally at PMSG_THAW hibernation stage to assign the issue accordingly.
 
-Here is the summary with links:
-  - [net-next,v4,1/7] net: phy: microchip_t1s: restructure cfg read/write functions arguments
-    https://git.kernel.org/netdev/net-next/c/9826b9a08b9c
-  - [net-next,v4,2/7] net: phy: microchip_t1s: update new initial settings for LAN865X Rev.B0
-    https://git.kernel.org/netdev/net-next/c/d793beee2d80
-  - [net-next,v4,3/7] net: phy: microchip_t1s: add support for Microchip's LAN865X Rev.B1
-    https://git.kernel.org/netdev/net-next/c/7a0414fdccf3
-  - [net-next,v4,4/7] net: phy: microchip_t1s: move LAN867X reset handling to a new function
-    https://git.kernel.org/netdev/net-next/c/117b70e4c67b
-  - [net-next,v4,5/7] net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C1
-    https://git.kernel.org/netdev/net-next/c/662d9c5fe19d
-  - [net-next,v4,6/7] net: phy: microchip_t1s: add support for Microchip's LAN867X Rev.C2
-    https://git.kernel.org/netdev/net-next/c/6b079d8f7b95
-  - [net-next,v4,7/7] net: phy: microchip_t1s: configure collision detection based on PLCA mode
-    https://git.kernel.org/netdev/net-next/c/78341049fbcd
+No, there are races possible if you trigger IO to a fs before a suspend
+is going on. If you have *more* IO ongoing, then you are likely to stall
+suspend and not be able to recover.
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+> CC: request_firmware() maintainers
 
+If IO is ongoing suspend is broken today because of the kthread freezer
+which puts kthreads which should sleep idle, but if IO is ongoing we
+can stall. This is work which we've been working to remove for years and
+after its removal we can gracefully freeze filesystems [0] [1]
+properly on suspend.
 
+Other than that, obviously upon resume we want firmware to be present,
+and to prevent races on resume we have a firmware cache. So on suspend
+we cache used firmware so its available in cache on resume. See
+device_cache_fw_images().
+
+So.. we just now gotta respin the latest effort. I had stopped because
+I know Darrick had some changes which he needed to get in sooner but
+since this is low hanging fruit I never got around to it. So someone
+just needs to respin the series.
+
+[0] https://lwn.net/Articles/752588/
+[1] https://lwn.net/Articles/935602/
+
+  Luis
 
