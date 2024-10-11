@@ -1,80 +1,73 @@
-Return-Path: <linux-kernel+bounces-361084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7209799A337
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:04:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2663E99A33A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:05:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A0CA285ACB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:04:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74B2FB242CC
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:04:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD074217327;
-	Fri, 11 Oct 2024 12:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC52821790C;
+	Fri, 11 Oct 2024 12:04:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="K8tibi1y"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NvbF05Ki"
+Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2512120C49B
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:04:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A9C820C49B;
+	Fri, 11 Oct 2024 12:04:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728648259; cv=none; b=Xu0eMEcPMjeZtsbjk4L/rRXZ4cPF9Zb/vx7wZQzB9VAgYuerMQEyJ8e1JpDIo5QYZS5CXYcQtYu+I4KM/QXJGL87GvN6jcr/xiPbyrYCjEod3faBe846jOvHory9lu03nA/jvrdUZQTL+NZ7A6xpjD4Ybh1hO52A9Uz480eeblA=
+	t=1728648271; cv=none; b=KaHmziGNIOjLwIR+OJ1pQvmhW62lwpAl6tNSowbBzOFyZJ8TNsCz4TDyIssKfFvAQy4qeCNe1ienXUyZztzmfbC6pkzE8XhYRMVQYlBU8u7LE5DnqorbUwaPgYp/ZvetIufs4fjhyA6MWZwjva1nytIJyqHCAZ2ZltiXhE2deGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728648259; c=relaxed/simple;
-	bh=TjHiK5Q8bt/Ap+8QEjbvgZEqTB+88VHjVFDoY+3cp4Q=;
+	s=arc-20240116; t=1728648271; c=relaxed/simple;
+	bh=d2lsdLlJ23PzLx+t87PT/SQoDACaRKM+kkKERIEh25I=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dLq8KYL0JcRAAuSu3Voq2yhXU4QaqW+UttHqfZSe2cw+6ZmlARcHFUtjdF1+mbeZznPVtlQel20vLpXmFFLH2j+r5ohMtmtcLfuRx0WlrEFvaocsQJRLRP8BNB7ZiWK6XGqkbyb3Mdl1HVLW3ORM/Vt+ULtnavQeXydJNgOT9NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=K8tibi1y; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728648257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=FO3wGe3DmoLaqjoe9vy/0KU63s1XIaxHSw75zzKrsAU=;
-	b=K8tibi1yaUwx+cx2hBMzZ4EV+9ilyoUToxFAhSEuS+EhYhfwyrxNqwvubJnpqW8wknNQlA
-	Pt3BxYImrR4cSORZmhycya2PPXyS5Bme/Z3quV7OV6VLh/VeVPlbxyJlDGLTuGYg4bOULv
-	L6iF58+U1PNbwW3UP8M+sTN5bseD70M=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-616-jqv1_hgzMiWpyShz2Pgrvg-1; Fri, 11 Oct 2024 08:04:16 -0400
-X-MC-Unique: jqv1_hgzMiWpyShz2Pgrvg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4311cf79381so5415825e9.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:04:16 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=U063Nmb5AgUDJOkKFFscX6BrtXQeuDszyA9+/SO7Qo0qA8v1HAQswU3VUPNG3GRxHGn5Rlh2mwSVQiHIge9H1QVBEp5k4DS1XOAwepZExj9J9krmHDR+jgpOiK4I6EoouFJmJJaEf0XftLwDuZklFBt2zA/XcQ5DbbRPRc/TlPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NvbF05Ki; arc=none smtp.client-ip=209.85.167.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-5398e53ca28so2175172e87.3;
+        Fri, 11 Oct 2024 05:04:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728648267; x=1729253067; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AyShL+hX7deCzpof4F0fbg7eMw0Pnc7HEQfvWtO/NKM=;
+        b=NvbF05KiYYLN+x6VhpmQSaX8F3M6JPZDpqyioxOHzQ+u9P3BcelVt2acAP6hS/dFaJ
+         +vuNZhXQnHRc+KM2WK2DPbum0shqeAu/KOvIBZ0tEAt+hORzJLdHRnFEc+juq8CbOfRE
+         7v3sJ9tbSMM9ztvXodUesLvWFKygA7iF2H7Unyh5fjlq7L/eHsexEGEiZoFDxPtk4Jr8
+         DjndUI5yO/LWc0TmFiIyCAwVsdFanyeBG/+Lq66cqe4+PcLSWWOF1l8C8F6Xl+zuX+7I
+         gUYefWfW3j6T1jJtOJokeWSuLJh6QbYcYZfL30rozsg50l5ui+uTdCfTFGDMwwp7XKya
+         jOVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728648255; x=1729253055;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=FO3wGe3DmoLaqjoe9vy/0KU63s1XIaxHSw75zzKrsAU=;
-        b=aUNoEtPmzunf8Z1NkOFbju+qNEM9dSmUbRt/kYHsHmdysy4fvMnIaVm96U8e7nV/nq
-         ptk7PEuPhM7rj2Rwdpk8X8y7kr4s8LXeYt0KadXKRCVaQCOLMrlrhUr3yWyPTx6W9eMq
-         CowTBg+TxsT2/KcZ+7EUSOIcOtkQrhxaX6xkhhiHBlPfwNGdSEw27bpc1o8I6iG3Ani2
-         scymwD7VPCH/lanPjQxn0E7FzFw5z9bTlssy0ORRHIW5VVcM/XPlYn0Wwqc67Twl5Gqr
-         ChRWwntZW0Mg0lqvG4raCuS6Kmx9rnkFGfsVC9bZE37DKkaJsAlUgT+HCWjSKl9Xjo1P
-         pFHw==
-X-Forwarded-Encrypted: i=1; AJvYcCWHM/1BOU3+8wtZPqZSw3f3Ub8mQhHBb74rm+O2H0HxFAe5XQxxvCrx9At7bpcUaSgxK3qOMXnYQSB1atw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzxRZEZvq/WYUpfG/me8mxZHlJZccbf7+wm5pFmjfNkHO3QYBy
-	lKXpL2vekv8VjV77pElUHBLQ2CrSntwkQYQlksVOn+0vvspXbclyWHWYbL9WQMeds4qnG3ElMmg
-	94gbguPfxtXKLlie7jo919CzDnuqEjEihafnsFd7oZZYSHXUoyh6hFZtnTqIsQg==
-X-Received: by 2002:a05:600c:3511:b0:42c:b9a5:ebbc with SMTP id 5b1f17b1804b1-4311deeb82dmr21644115e9.16.1728648254803;
-        Fri, 11 Oct 2024 05:04:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFlfeuB8nAlpWFkyqq3l/5/SNTAJcIc1UAzpRPAo08aEFan2Um3o0PxMTwj+3rcUfvZ1UZNXw==
-X-Received: by 2002:a05:600c:3511:b0:42c:b9a5:ebbc with SMTP id 5b1f17b1804b1-4311deeb82dmr21643685e9.16.1728648254344;
-        Fri, 11 Oct 2024 05:04:14 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c749:9100:c078:eec6:f2f4:dd3b? (p200300cbc7499100c078eec6f2f4dd3b.dip0.t-ipconnect.de. [2003:cb:c749:9100:c078:eec6:f2f4:dd3b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431183062b5sm40328805e9.26.2024.10.11.05.04.12
+        d=1e100.net; s=20230601; t=1728648267; x=1729253067;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyShL+hX7deCzpof4F0fbg7eMw0Pnc7HEQfvWtO/NKM=;
+        b=qx4dTOvJlUrp3yxy1/rfUblwOtvS+lUSvf79MAFwFzjS8lwVoMUnt4TeFGfQWGaSEB
+         tt1mVqYpl8IWfTQ2OeEqZsmHCBcijYYy+PmGP8NysK+VcmEIWOO0S7PpUdLE8uikebx7
+         pz2kaiskDum+5JEY3ABWZQ5PqzDGOp7UJujIgtsbcWBaZWn38gP1pm0GktbpfHyHvz+1
+         GPZp6zBHpmymsVD2bpkY/8vBRKMec7s48a3aSK6CmjPncqncBWvF6T5ljQic3v4IAXdX
+         qzrTMXqpE3J+Nr0pskiyXTbJzMaC3/PfC2svWNkxMb4fOE/8RBoP4zg7N1Y2rxfEw/FU
+         yiIw==
+X-Forwarded-Encrypted: i=1; AJvYcCVtg4YBJbx/NpTi4t0iv4yfXLyqhldh8wzs3K74WIXSZD4VrU6kXOCZVxH84e2ccyzKimSeCnG//yu/@vger.kernel.org, AJvYcCWS7u4ZR0vh0919JoxmRmNe64RjUjoF6xK0S6SpbgrFXWr5aSkBpTvg0vcgzIvVGwrId1Sch+bv@vger.kernel.org, AJvYcCXv1y1Xo+S3TGHNMhwmajRdAwIVpEXVzOdtMEQeOZ1grFDvuMzE6ZhMIktQKmFcoV76YZ9mu/LYcZ6bGuTO@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4mhNtLMwhJzEidr8pgp3SbXZDcmMZmuHaR1FlYDStSWHtLhBd
+	203P5Ywjla7zsquNDCya9o1rq/V/r/PgpgD523jSfZvF/5snniFJT5WL5NDB
+X-Google-Smtp-Source: AGHT+IEFmewdlQ1CPXu2nV+GJbqCzq5j5B1b19TApH5sZAJ+BffXTe4lNLUiGOh2G3Wr71IqwpAF9A==
+X-Received: by 2002:a05:6512:3b24:b0:539:9717:7ea0 with SMTP id 2adb3069b0e04-539da58b296mr1527424e87.55.1728648267031;
+        Fri, 11 Oct 2024 05:04:27 -0700 (PDT)
+Received: from [10.10.12.27] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f5c4c3sm206188966b.95.2024.10.11.05.04.25
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 05:04:13 -0700 (PDT)
-Message-ID: <465ce78b-d023-40e6-b066-5e4a01e266b6@redhat.com>
-Date: Fri, 11 Oct 2024 14:04:12 +0200
+        Fri, 11 Oct 2024 05:04:26 -0700 (PDT)
+Message-ID: <105dfbaa-0b7f-4e9e-8ab8-16d35ec165d7@gmail.com>
+Date: Fri, 11 Oct 2024 14:04:24 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,231 +75,120 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 0/7] support for mm-local memory allocations and use
- it
-To: Fares Mehanna <faresx@amazon.de>
-Cc: akpm@linux-foundation.org, ardb@kernel.org, arnd@arndb.de,
- bhelgaas@google.com, broonie@kernel.org, catalin.marinas@arm.com,
- james.morse@arm.com, javierm@redhat.com, jean-philippe@linaro.org,
- joey.gouly@arm.com, kristina.martsenko@arm.com, kvmarm@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, mark.rutland@arm.com, maz@kernel.org,
- nh-open-source@amazon.com, oliver.upton@linux.dev, ptosi@google.com,
- rdunlap@infradead.org, rkagan@amazon.de, rppt@kernel.org,
- shikemeng@huaweicloud.com, suzuki.poulose@arm.com, tabba@google.com,
- will@kernel.org, yuzenghui@huawei.com
-References: <813b9bcb-afde-40b6-a604-cdb71b4b6d7a@redhat.com>
- <20241010155210.13321-1-faresx@amazon.de>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241010155210.13321-1-faresx@amazon.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH net-next 1/3] device property: Introduce
+ fwnode_for_each_available_child_node_scoped()
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "Rafael J. Wysocki" <rafael@kernel.org>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Daniel Scally <djrscally@gmail.com>,
+ Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+ Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>,
+ Vladimir Oltean <olteanv@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Linus Walleij <linus.walleij@linaro.org>, linux-acpi@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+References: <20241008-mv88e6xxx_leds_fwnode_put-v1-0-cfd7758cd176@gmail.com>
+ <20241008-mv88e6xxx_leds_fwnode_put-v1-1-cfd7758cd176@gmail.com>
+ <Zwi6Dn4yJxst4xv2@kekkonen.localdomain>
+ <07ec0837-d7a3-413e-a281-e06feafe7f34@gmail.com>
+ <Zwj12J5bTNUEnxA0@kekkonen.localdomain>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <Zwj12J5bTNUEnxA0@kekkonen.localdomain>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 10.10.24 17:52, Fares Mehanna wrote:
->>> In a series posted a few years ago [1], a proposal was put forward to allow the
->>> kernel to allocate memory local to a mm and thus push it out of reach for
->>> current and future speculation-based cross-process attacks.  We still believe
->>> this is a nice thing to have.
+On 11/10/2024 11:54, Sakari Ailus wrote:
+> Hi Javier,
+> 
+> On Fri, Oct 11, 2024 at 10:34:32AM +0200, Javier Carrasco wrote:
+>> On 11/10/2024 07:39, Sakari Ailus wrote:
+>>> Hi Javier,
 >>>
->>> However, in the time passed since that post Linux mm has grown quite a few new
->>> goodies, so we'd like to explore possibilities to implement this functionality
->>> with less effort and churn leveraging the now available facilities.
+>>> On Tue, Oct 08, 2024 at 06:10:27PM +0200, Javier Carrasco wrote:
+>>>> Introduce the scoped variant of the
+>>>> fwnode_for_each_available_child_node() to automatically decrement the
+>>>> child's refcount when it goes out of scope, removing the need for
+>>>> explicit calls to fwnode_handle_put().
+>>>>
+>>>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>>>> ---
+>>>>  include/linux/property.h | 5 +++++
+>>>>  1 file changed, 5 insertions(+)
+>>>>
+>>>> diff --git a/include/linux/property.h b/include/linux/property.h
+>>>> index 61fc20e5f81f..b37508ecf606 100644
+>>>> --- a/include/linux/property.h
+>>>> +++ b/include/linux/property.h
+>>>> @@ -168,6 +168,11 @@ struct fwnode_handle *fwnode_get_next_available_child_node(
+>>>>  	for (child = fwnode_get_next_available_child_node(fwnode, NULL); child;\
+>>>>  	     child = fwnode_get_next_available_child_node(fwnode, child))
+>>>>  
+>>>> +#define fwnode_for_each_available_child_node_scoped(fwnode, child)	       \
+>>>> +	for (struct fwnode_handle *child __free(fwnode_handle) =	       \
+>>>> +		fwnode_get_next_available_child_node(fwnode, NULL); child;     \
+>>>> +	     child = fwnode_get_next_available_child_node(fwnode, child))
+>>>> +
 >>>
->>> An RFC was posted few months back [2] to show the proof of concept and a simple
->>> test driver.
+>>> On OF, the implementation of the .get_next_child_node() fwnode op is:
 >>>
->>> In this RFC, we're using the same approach of implementing mm-local allocations
->>> piggy-backing on memfd_secret(), using regular user addresses but pinning the
->>> pages and flipping the user/supervisor flag on the respective PTEs to make them
->>> directly accessible from kernel.
->>> In addition to that we are submitting 5 patches to use the secret memory to hide
->>> the vCPU gp-regs and fp-regs on arm64 VHE systems.
+>>> static struct fwnode_handle *
+>>> of_fwnode_get_next_child_node(const struct fwnode_handle *fwnode,
+>>>                               struct fwnode_handle *child)
+>>> {
+>>>         return of_fwnode_handle(of_get_next_available_child(to_of_node(fwnode),
+>>>                                                             to_of_node(child)));
+>>> }
+>>>
+>>> On ACPI we currently have .device_is_available() returning false but that
+>>> probably should be returning true instead (it's been virtually unused
+>>> previously).
+>>>
+>>> That makes fwnode_get_next_available_child_node() and
+>>> fwnode_get_next_child_node() equivalent on both ACPI and OF. Presumably
+>>> creating unavailable nodes would be useless on swnode, too.
+>>>
+>>> So my question is: what do we gain by adding all these fwnode_*available()
+>>> helpers?
+>>>
+>>>>  struct fwnode_handle *device_get_next_child_node(const struct device *dev,
+>>>>  						 struct fwnode_handle *child);
+>>>
 >>
->> I'm a bit lost on what exactly we want to achieve. The point where we
->> start flipping user/supervisor flags confuses me :)
+>> Hi Sakari, thanks for your feedback.
 >>
->> With secretmem, you'd get memory allocated that
->> (a) Is accessible by user space -- mapped into user space.
->> (b) Is inaccessible by kernel space -- not mapped into the direct map
->> (c) GUP will fail, but copy_from / copy_to user will work.
+>> I thought that the difference is not in OF (which either way ends up
+>> calling __of_device_is_available()), but in ACPI.
 >>
+>> For fwnode_for_each_child_node(), the ACPI callback is
+>> acpi_get_next_subnode(), and I don't see that the device_is_available()
+>> callback is used in that case.
+> 
+> fwnode_get_next_available_child_node() also calls
+> fwnode_device_is_available() and that returns false on all non-device nodes
+> right now. As noted above, fwnode_device_is_available() should probably
+> return true for non-device nodes on ACPI. I'll post a patch.
+> 
+
+fwnode_device_is_available() is indeed called in
+fwnode_get_next_available_child_node(), as I stated a couple of lines below.
+
+My question on the other hand was how that is called in
+fwnode_for_each_child_node(), as I could not see any call to check
+availability in acpi_get_next_subnode().
+That is what confused me about the _available_ macros being the same as
+their counterparts without the _available_.
+
+Could you please clarify that? Thanks again.
+
 >>
->> Another way, without secretmem, would be to consider these "secrets"
->> kernel allocations that can be mapped into user space using mmap() of a
->> special fd. That is, they wouldn't have their origin in secretmem, but
->> in KVM as a kernel allocation. It could be achieved by using VM_MIXEDMAP
->> with vm_insert_pages(), manually removing them from the directmap.
+>> For fwnode_for_each_available_child_node(),
+>> fwnode_get_next_available_child_node() is used, which checks
+>> fwnode_device_is_available(), which then calls device_is_available().
 >>
->> But, I am not sure who is supposed to access what. Let's explore the
->> requirements. I assume we want:
->>
->> (a) Pages accessible by user space -- mapped into user space.
->> (b) Pages inaccessible by kernel space -- not mapped into the direct map
->> (c) GUP to fail (no direct map).
->> (d) copy_from / copy_to user to fail?
->>
->> And on top of that, some way to access these pages on demand from kernel
->> space? (temporary CPU-local mapping?)
->>
->> Or how would the kernel make use of these allocations?
->>
->> -- 
->> Cheers,
->>
->> David / dhildenb
+>> What's the catch?
 > 
-> Hi David,
-
-Hi Fares!
-
-> 
-> Thanks for taking a look at the patches!
-> 
-> We're trying to allocate a kernel memory that is accessible to the kernel but
-> only when the context of the process is loaded.
-> 
-> So this is a kernel memory that is not needed to operate the kernel itself, it
-> is to store & process data on behalf of a process. The requirement for this
-> memory is that it would never be touched unless the process is scheduled on this
-> core. otherwise any other access will crash the kernel.
-> 
-> So this memory should only be directly readable and writable by the kernel, but
-> only when the process context is loaded. The memory shouldn't be readable or
-> writable by the owner process at all.
-> 
-> This is basically done by removing those pages from kernel linear address and
-> attaching them only in the process mm_struct. So during context switching the
-> kernel loses access to the secret memory scheduled out and gain access to the
-> new process secret memory.
-> 
-> This generally protects against speculation attacks, and if other process managed
-> to trick the kernel to leak data from memory. In this case the kernel will crash
-> if it tries to access other processes secret memory.
-> 
-> Since this memory is special in the sense that it is kernel memory but only make
-> sense in the term of the owner process, I tried in this patch series to explore
-> the possibility of reusing memfd_secret() to allocate this memory in user virtual
-> address space, manage it in a VMA, flipping the permissions while keeping the
-> control of the mapping exclusively with the kernel.
-> 
-> Right now it is:
-> (a) Pages not accessible by user space -- even though they are mapped into user
->      space, the PTEs are marked for kernel usage.
-
-Ah, that is the detail I was missing, now I see what you are trying to 
-achieve, thanks!
-
-It is a bit architecture specific, because ... imagine architectures 
-that have separate kernel+user space page table hierarchies, and not a 
-simple PTE flag to change access permissions between kernel/user space.
-
-IIRC s390 is one such architecture that uses separate page tables for 
-the user-space + kernel-space portions.
-
-> (b) Pages accessible by kernel space -- even though they are not mapped into the
->      direct map, the PTEs in uvaddr are marked for kernel usage.
-> (c) copy_from / copy_to user won't fail -- because it is in the user range, but
->      this can be fixed by allocating specific range in user vaddr to this feature
->      and check against this range there.
-> (d) The secret memory vaddr is guessable by the owner process -- that can also
->      be fixed by allocating bigger chunk of user vaddr for this feature and
->      randomly placing the secret memory there.
-> (e) Mapping is off-limits to the owner process by marking the VMA as locked,
->      sealed and special.
-
-Okay, so in this RFC you are jumping through quite some hoops to have a 
-kernel allocation unmapped from the direct map but mapped into a 
-per-process page table only accessible by kernel space. :)
-
-So you really don't want this mapped into user space at all 
-(consequently, no GUP, no access, no copy_from_user ...). In this RFC 
-it's mapped but turned inaccessible by flipping the "kernel vs. user" 
-switch.
-
-> 
-> Other alternative (that was implemented in the first submission) is to track those
-> allocations in a non-shared kernel PGD per process, then handle creating, forking
-> and context-switching this PGD.
-
-That sounds like a better approach. So we would remove the pages from 
-the shared kernel direct map and map them into a separate kernel-portion 
-in the per-MM page tables?
-
-Can you envision that would also work with architectures like s390x? I 
-assume we would not only need the per-MM user space page table 
-hierarchy, but also a per-MM kernel space page table hierarchy, into 
-which we also map the common/shared-among-all-processes kernel space 
-page tables (e.g., directmap).
-
-> 
-> What I like about the memfd_secret() approach is the simplicity and being arch
-> agnostic, what I don't like is the increased attack surface by using VMAs to
-> track those allocations.
-
-Yes, but memfd_secret() was really design for user space to hold 
-secrets. But I can see how you came to this solution.
-
-> 
-> I'm thinking of working on a PoC to implement the first approach of using a
-> non-shared kernel PGD for secret memory allocations on arm64. This includes
-> adding kernel page table per process where all PGDs are shared but one which
-> will be used for secret allocations mapping. And handle the fork & context
-> switching (TTBR1 switching(?)) correctly for the secret memory PGD.
-> 
-> What do you think? I'd really appreciate opinions and possible ways forward.
-
-Naive question: does arm64 rather resemble the s390x model or the x86-64 
-model?
-
--- 
-Cheers,
-
-David / dhildenb
 
 
