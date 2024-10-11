@@ -1,121 +1,108 @@
-Return-Path: <linux-kernel+bounces-361512-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361513-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 57F4D99A91C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:49:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E9DC099A922
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:51:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1A25D283E8B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:49:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15B3A28700B
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:51:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2D08002A;
-	Fri, 11 Oct 2024 16:48:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53B4C19E97F;
+	Fri, 11 Oct 2024 16:51:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="GJUwTGDV"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l1yr6sdO"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18AF318027;
-	Fri, 11 Oct 2024 16:48:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE810199381;
+	Fri, 11 Oct 2024 16:51:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728665333; cv=none; b=t2DEJjoaAuXybHMpGLhuToMkxcfDh7EQm5EvstxCcpOV3WqsNn7xEVsviLx1Y6lva4zTeKcmegzXZ0HufHLKToNr12QiaHUfw3HxZwNPe/d8ZKSrDtp7wtcr+gunCVZVsOQ8w2DwalDhZGJvUrrrIBsjQSmPbvpQ/LyLwMh9WnU=
+	t=1728665468; cv=none; b=eY37/P8Cv7xMAgPt2qfOyNOcCDXqF9Fcqc5UQi+k2KMYB0sntu76YCxYv/dkDILW2K/BZq7e54PgFw3Dqa9Brr7fKSD1GwNv9nQxbwdnazsIpZ0I5i8FgJ0T4Ar5Ou3M8eaCCepVNOpa3YZ3wCJRmVfeujWbTBLFnWu1y81y37Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728665333; c=relaxed/simple;
-	bh=6q+1SK1xIUmK84fXEESD8ijqvjK/EpQkRalBPiLG0nA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GaDMgQ2VaE5jkE2Yuy6EfwPL99YN+BUqnv+85LiOe58kcxPgB2jn0WZmk5jGON+wd+yepKFVqfAlKve7wGkVXKwjLoI8SxcNMLHXzbTAjMr3ZVLiOxrpO2B5CVo5cwMcM+/aOCWhdqn0nI49m6C9JcMVvengABpX3WsEkFiZRLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=fail (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=GJUwTGDV reason="signature verification failed"; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 170CD40E0163;
-	Fri, 11 Oct 2024 16:48:50 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=fail (4096-bit key)
-	reason="fail (body has been altered)" header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id E04BrBy-BaBI; Fri, 11 Oct 2024 16:48:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728665325; bh=qRnUcuc6nCxtZwaXGHTGhPN7orQLIvjw2b9ZSLeZhaM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GJUwTGDVGptr0K5JCt5T7WoZjBvfOdXCZgeX5yOzZcweGf9EavIMnVM3meG00N3fG
-	 MwOrksSlw63ucwNZ8kyGIliJAN1JjrQCu8rU55FPTXLRvY/lbCITu6oZtFjxeOSWwc
-	 itnWb7KVyVCN2AKVW3f9OvftsgWjMJ/wGho/NmoHte8HHyXBiAsA2Hpxmr0FP5t0ic
-	 c42vlyMGGnenE10QUXbj/+JFb813Cta4EQXh5QUnPOOTb0LuC/TmnBJuGnG5Wt3OE1
-	 rmmtYBJqJW0SAEmYA7AmnwMSD4fcsvPM+LvZaqtfmlVAcQmODTGgIf8yfCb6/JFenp
-	 /51fuZ8X5rx7MgEhauZL2BZV6A3+ETL+oAkinnAEVU+PNlbDyAgUnCW9I4SW4z02Bg
-	 l3fQCQHRmyHZ4RAAaZw6q22XS6Za1aqOc92SGkAi2YTDIEUcl14Q+zN+0VKzydTTwz
-	 zv8tRpZdFcRy94JlzJTBurg6xRM1YMAGQG9I17hQHk54xxf9swY9flguheoJ+csF6X
-	 ADQYyyiBcBkrlNPdGbgd/NbtqbuGtG1Z1gcTYuuOagBYmMgM4MF+HL9uEIq53hHnm7
-	 tL/lBKSQsceb0YZ1UjQ+g9qECAeJ5i6tPbcxuiMO6/QrnAHhFVNeCaNc8ZpM1GRX0K
-	 n1+N3agvgFF3nmtRTHoKvbX0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 3B1FF40E0169;
-	Fri, 11 Oct 2024 16:48:31 +0000 (UTC)
-Date: Fri, 11 Oct 2024 18:48:25 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Tom Lendacky <thomas.lendacky@amd.com>
-Cc: Pavan Kumar Paluri <papaluri@amd.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-coco@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Eric Van Tassell <Eric.VanTassell@amd.com>,
-	Ashish Kalra <ashish.kalra@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Dhaval Giani <dhaval.giani@amd.com>
-Subject: Re: [PATCH v6 1/2] x86, KVM:SVM: Move sev specific parsing into
- arch/x86/virt/svm
-Message-ID: <20241011164825.GEZwlW2XggpAMsZ3P9@fat_crate.local>
-References: <20241010121455.15795-1-papaluri@amd.com>
- <20241010121455.15795-2-papaluri@amd.com>
- <20241011162120.GDZwlQgKTFi22JZ5If@fat_crate.local>
- <f8a3a683-0cdd-d1bb-1904-521ce5a96dac@amd.com>
+	s=arc-20240116; t=1728665468; c=relaxed/simple;
+	bh=VXG/GpcD4ZaPugyfbuMxoUDkz9d8ii6cVFf3ZaBPB70=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FI8KondbhWgmqGUVMrShZ7+HQyF8nmrVFR6trNlYFb+rxsT4gWXPay6ZfNmVHgExnKo9DsmbMF+pB+/mRYQnBmJjN5Cwypk4wUJMmE7aTnNIGdt5zLoUwKXxQfcugM9hneyb+Y1UjBTwSYDhn948AD9fBtQl1PIucT3spIe8bkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l1yr6sdO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5370AC4CEC3;
+	Fri, 11 Oct 2024 16:51:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728665468;
+	bh=VXG/GpcD4ZaPugyfbuMxoUDkz9d8ii6cVFf3ZaBPB70=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=l1yr6sdOtwtxKq6/CvpLss3HR9GL+5gW9//IS4hIuKQ3hKEw07J33H3cf+TUkFSn8
+	 XNLmchhs9V/FstEhmNAvNRQIcdXcsYMqTYqjjSkPljltKkXX8t30IO/yiOVV4rHpdf
+	 OuKl1+WS4NQaWVX7ShMFfLKTpD9iOZi+krbxzNmwiQAVN8yy3oBhl3LaluFdDnNVgt
+	 B5Flk0lUTGX1VnVzzl4KrVT97Tyz8A2ll5ZAF/j83ppBoNI4dqMhtiW7oYSb53dI/P
+	 EOO3VZEmaQRaH0Gyf0qJ0LCKyZ8XCfQa6IOzh4JELlOBTpd7gvDJ2yrJdxXJeSR4Ko
+	 TX5fAQ4ZOEsHg==
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-5398996acbeso2683379e87.1;
+        Fri, 11 Oct 2024 09:51:08 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWg8tCuaNlHHC+6in6b1b41bA8YUtWjXTiwssjIq+T6u1pqUDoRLmlBc6lTBi2S0pEMvDhLyN2AYifYF6J4@vger.kernel.org, AJvYcCXFY+VaPNXgxSBPp2ENXOOx38tTVHoiYXQoz27QEgUUsyWqiVDGE2x6khR9bqhImHAp0C4fLo+UH4GlrSZDSBg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUcWc9IGU42vJY5iKeqNdLjAN+0MFHQKzfdvE13vDS9Pr8j3aW
+	sBpTiKLLGgWW9pSQFN++1CC6EbOxdUqdAmRmHXHNCoxok1RKvfRnzCEMgdCx8BoqV+yzHbjLblI
+	Q2OXnvLoc+Yu/OJud+/NC8uPZOpI=
+X-Google-Smtp-Source: AGHT+IFr4QA6SziiBfUmMc6IM6gCN+OvpGX21cJkCaQ5pNTmvRVSVpgDE8qM6X49xroZhvkO4gCrrlCdYmYQgYTgTdk=
+X-Received: by 2002:a05:6512:ad4:b0:52e:9b92:4990 with SMTP id
+ 2adb3069b0e04-539da4eb2d2mr1588962e87.32.1728665466750; Fri, 11 Oct 2024
+ 09:51:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <f8a3a683-0cdd-d1bb-1904-521ce5a96dac@amd.com>
-Content-Transfer-Encoding: quoted-printable
+References: <20241010122801.1321976-7-ardb+git@google.com> <20241010122801.1321976-9-ardb+git@google.com>
+ <20241010195211.n22geblzb4ogxqcz@treble>
+In-Reply-To: <20241010195211.n22geblzb4ogxqcz@treble>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Fri, 11 Oct 2024 18:50:55 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXFaqij=OiJcPY7RcDd79V5qDKkXcxLbqNcnk7nBxiu=Bg@mail.gmail.com>
+Message-ID: <CAMj1kXFaqij=OiJcPY7RcDd79V5qDKkXcxLbqNcnk7nBxiu=Bg@mail.gmail.com>
+Subject: Re: [PATCH v2 2/5] objtool: Allow arch code to discover jump table size
+To: Josh Poimboeuf <jpoimboe@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	keescook@chromium.org, linux-hardening@vger.kernel.org, nathan@kernel.org, 
+	Peter Zijlstra <peterz@infradead.org>, Jan Beulich <jbeulich@suse.com>, 
+	"Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Oct 11, 2024 at 11:35:40AM -0500, Tom Lendacky wrote:
-> But the patch includes the new file, so how can that be?
+On Thu, 10 Oct 2024 at 21:52, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
+>
+> On Thu, Oct 10, 2024 at 02:28:04PM +0200, Ard Biesheuvel wrote:
+> > @@ -2222,7 +2234,6 @@ static void mark_func_jump_tables(struct objtool_file *file,
+> >                                   struct symbol *func)
+> >  {
+> >       struct instruction *insn, *last = NULL;
+> > -     struct reloc *reloc;
+> >
+> >       func_for_each_insn(file, func, insn) {
+> >               if (!last)
+> > @@ -2245,9 +2256,7 @@ static void mark_func_jump_tables(struct objtool_file *file,
+> >               if (insn->type != INSN_JUMP_DYNAMIC)
+> >                       continue;
+> >
+> > -             reloc = find_jump_table(file, func, insn);
+> > -             if (reloc)
+> > -                     insn->_jump_table = reloc;
+> > +             find_jump_table(file, func, insn);
+>
+> Can we detect the annotation here, and if it exists, pivot to a separate
+> generic implementation which skips all the arch-specific code and hacks?
+>
+> That way we could keep the "ugly" separate, and also have all arches
+> supported by default.
+>
 
-Ah, wrong error, sorry.
+I had a stab at this, and while the code changes are a bit intrusive,
+the end result is much better for it (IMHO).
 
-This is his error:
-
-arch/x86/virt/svm/cmdline.c:15:27: error: expected =E2=80=98=3D=E2=80=99,=
- =E2=80=98,=E2=80=99, =E2=80=98;=E2=80=99, =E2=80=98asm=E2=80=99 or =E2=80=
-=98__attribute__=E2=80=99 before =E2=80=98__read_mostly=E2=80=99
-   15 | struct sev_config sev_cfg __read_mostly;
-      |                           ^~~~~~~~~~~~~
-make[5]: *** [scripts/Makefile.build:229: arch/x86/virt/svm/cmdline.o] Er=
-ror 1
-make[4]: *** [scripts/Makefile.build:478: arch/x86/virt/svm] Error 2
-make[3]: *** [scripts/Makefile.build:478: arch/x86/virt] Error 2
-make[3]: *** Waiting for unfinished jobs....
-make[2]: *** [scripts/Makefile.build:478: arch/x86] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/mnt/kernel/kernel/2nd/linux/Makefile:1936: .] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
-
---=20
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+In the end, the logic in arch_find_switch_table() is mostly generic
+anyway, but it is the code traversal in check.c that is the "ugly". So
+I moved lots of things around. I'll send that out before signing off
+today.
 
