@@ -1,138 +1,120 @@
-Return-Path: <linux-kernel+bounces-360817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC44999A023
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:26:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 59BED99A027
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:29:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E30E2B22C1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:26:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 733AF1C22BB4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF74020CCE6;
-	Fri, 11 Oct 2024 09:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02AFA20C49E;
+	Fri, 11 Oct 2024 09:29:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L84q4j1E"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G0JYwjVO"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B601F942F;
-	Fri, 11 Oct 2024 09:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D55804
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728638774; cv=none; b=dK3kbp1OD81Vdo4xBOUIF65S5GU/zQgJkQydvLmjZsT3bBcfoAfRyLrhRB2YDNm1wY3T9DaanUnp7jZBgrVIHd6Zan8Q5R1FjwpHG5s+SzWn7OfTMunm1TdCtVYv07iAlaI2nc2vT/4B8fhcdEJpKwBVpcFxWjC2l3EOkuvXUBY=
+	t=1728638939; cv=none; b=f0jPtzxqZIJX+wdASrFEtNT8FuUyNP6jskuFc31PUar4ThStXH1d8RzbLUHud02XsSLjah3OlaNWjJ6nNKE+lFkbJlfST4jvrM3kxbQtv5goXNVc/5maATvOXe+q7gqxCHuJq9/PfVf634ZfxuIvVql2gvG7RJ22op+C6XspQSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728638774; c=relaxed/simple;
-	bh=0JZEa30zw3PPcL/DVddTSy6dEGgoUXxbAN+8nDTk8NE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NBxeN51IOIrVN95S8H9nhKC9bBMPkpfvba+H6SB/VAQUJVy3KtorCASIozhWwBNn4FJPsg0aE37Za4ak/Z6THIzWAbT3Q3Fov4W5YRLUW7Ij66vQi5Ujtad+knzX+v9BSCTeVrVBVc5UobcYgI/72k2gaqr2fDsDVN7M+u56IF8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L84q4j1E; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20bc2970df5so14558545ad.3;
-        Fri, 11 Oct 2024 02:26:12 -0700 (PDT)
+	s=arc-20240116; t=1728638939; c=relaxed/simple;
+	bh=DltDeVYJEIb6wjca1o7bFaNWh22hJNIaTsco4M0fMzU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=flbqtEWluQJ1g6/p8PfmjwraiCDK01E7YeCs3NUQLG9DPE3i5KGWD9+pVtfRYhjhSNWlVTbetyC9mSyqd+Un7szQd4JEUdmgFtI/barOJLOljJCOoTfzEgIKn1Ef+106U25ueQTUTZyJvJyj3cvU7AwukOEGcRUTjh6jyDThApM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G0JYwjVO; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d58377339so357071f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 02:28:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728638772; x=1729243572; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+        d=linaro.org; s=google; t=1728638936; x=1729243736; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=dWzersFr/wVsYoAvihIjoT0wE8hmLxZ8cWMhmFp8KNI=;
-        b=L84q4j1EFQdT4EBJ44DGsV1PUPnZ33DvsbwT/4lqmw8kSkL5B1/DJn6lRVX8gEZlmA
-         J4+6PQRPgEYtwcRZnj5EXiVqeKcgLSbv/2kXE+CiiT8vRaX8Qs2ARYm/VxymN7a8rjw5
-         S2vCmQQJsS3VwnxGofp3e64KyTLOZjnY0hLHUZ7G5uoSqaq6080LE6sY3bBDBxolkpn5
-         03Y978ccCYAnmSr2noNqOS6XfWeo8+BjDOc6BC/Fro8tzDq/ESst/JCi8Y1rkPQpr7bu
-         qisJMwN2nDAB3WJEyVPRtcN5E+/fiTPgwVCdm07NNAvFHLC4HG+H873Tnh3IZ+LKHpYq
-         3/tw==
+        bh=3TCoDAR3p+NDgfps8OlJnbGKnp0R3MeEWSzHOxiQY0I=;
+        b=G0JYwjVOmsppUfkGh2OByNk70IarIL6uyAStv2jEJCq8DSCJpanb7SMvPcYJ2/xyQ0
+         JRkGBm9ZAhnVkqdjtlRFW65Ue4D54da5VSVwkHWjM9ueHeaZzBGKw5MvWGrPv5jvqxZE
+         dmPfbKGu3x7r5btEbBttkfSncW6G27rdP7tvLJyRck0jT0yhO14Bya1azt4I/+AM4Tuf
+         NfTHcdMeaWBZBgKeLiY5aPRORKuZ6Euu8oTOPRyvqQt0A6YOlYyW8Io47v7LKFi7OFBV
+         gEpLGJQVY+kH6ce75Lx9tTsFe4NxwDU81okz+USANS2sEsTcAMWAD2Z7Vf9WxPczMSaG
+         d8jg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728638772; x=1729243572;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728638936; x=1729243736;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=dWzersFr/wVsYoAvihIjoT0wE8hmLxZ8cWMhmFp8KNI=;
-        b=DcEFq7io6ydsmxYsc0PRKS7g+KtVJg4d4DfZST9nb+vlDfKoTc6HRGJ8/tspAGWnol
-         fq3YjzWG+Vrs5fnfmnuOrhyyVc83NVxFCA+ZuMjfYZIOmaNdNc7cF75IaSJpdAeBxyS1
-         yD1SxFVgnbbXULp01NszNDo5FedM7XU/J6ivAjLuBdvyOz9LYK4C1dw9MZ5brQNfPxl1
-         xiMjBz9LzylEkkEOLyVDPCzmdTOYz95YSP8uZsnewMccanCF+Y6dXAismQpqEzYSYHso
-         bbYwx0JTWQN9Ni0q2PNg1lTsNxgj4nu1ax296IF/IhH9MVSzjWfw/lOSddk1mg8S7FCi
-         bAxg==
-X-Forwarded-Encrypted: i=1; AJvYcCVvbIsK85CjfUUkKF53jkaT/7qT3mzaTBYdfkxAa3brZsJr4Zw0iln9/kmP6w7lme7JOiaFGCZo@vger.kernel.org, AJvYcCWrWjuC2y96AXg+6asLNAa7j6jcJRoJ36hI6O/+IBMz+g2ImP8bHPwSKhxPaPQmRiPWmZeXDeQrS4pkfD0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwJnl4eoWO1BtMOWjh9ECHFV/6+7AHVeZhDqtuEtt05d+fD8YiC
-	pecB4VOEs+CEnwgMyWHLQWt25Lyn5ek8uZCcdfvXKE41HvW+l7oW
-X-Google-Smtp-Source: AGHT+IGzNaItIs7FPB7yAcQsKEDGesNKzGVBIjzitVu55tYyJFsMZZMkw5eMxIwUw0uwkdiW0uPC2A==
-X-Received: by 2002:a17:902:ce8d:b0:20b:b794:b39f with SMTP id d9443c01a7336-20ca147fa3cmr29851265ad.30.1728638771991;
-        Fri, 11 Oct 2024 02:26:11 -0700 (PDT)
-Received: from localhost ([129.146.253.192])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad99d2sm20511615ad.31.2024.10.11.02.26.08
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 02:26:11 -0700 (PDT)
-Date: Fri, 11 Oct 2024 17:26:05 +0800
-From: Furong Xu <0x1207@gmail.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, Jakub Kicinski <kuba@kernel.org>
-Cc: Ilias Apalodimas <ilias.apalodimas@linaro.org>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Jesper Dangaard
- Brouer" <hawk@kernel.org>, "David S. Miller" <davem@davemloft.net>, "Eric
- Dumazet" <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- <xfr@outlook.com>
-Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
-Message-ID: <20241011172605.0000142f@gmail.com>
-In-Reply-To: <21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
-References: <20241010114019.1734573-1-0x1207@gmail.com>
-	<601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
-	<20241011101455.00006b35@gmail.com>
-	<CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
-	<20241011143158.00002eca@gmail.com>
-	<21036339-3eeb-4606-9a84-d36bddba2b31@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+        bh=3TCoDAR3p+NDgfps8OlJnbGKnp0R3MeEWSzHOxiQY0I=;
+        b=rTfr7Nu9zoDGzs4hmcgBfTZo/qEyY+0mVVSUDtlTpquTFbm8qhF8NcnVcUAkgkBIPc
+         G6qHxMs7r/NdlJuHb5MoYCtX7CmZlfVgFpv4mESFcDaaB+0lfipwOFo7/QhvhCp/+Y+V
+         eFLat1T9h5lqmV8i5T8TMWxz2BWnnq+Pnvy6qySLAEMpFY4qY/zrquUah765JRTYk0No
+         B5pkD87S5NUmeojv4Gc8dwZjszJA2XtAABug2f7JXDM0ZtAwZS/Yrvg7e4Nj4DCR/3ay
+         GhZ9YS0RTManLXb3pdkojEBvcr+UqLf1379ER8/QvtZa80oD/s1ICSi4Q819HsTbZOWv
+         jUbw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcq2VwrLtmmwGtKYLol9CR9VCYkFaF1iNXHWbO3ZTjOthUHIAt/pjVQwoEylsob2CUzK94OpzPof5hAQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwqC48bu1kabFevo+rVNH3yCglbGWmA7cpoesYHuUMBqYGRP5oN
+	E9v4lkSfXiLCtKdcjol9RwAFvL+dZF9iN016+14L11+uXWyBPUYJ40L5Ui32FluemRntuS938gY
+	ZteqVCRD+Xoe9XwvmeZA2qTqFxjDbtMqwWsYTdw==
+X-Google-Smtp-Source: AGHT+IG8wW1q8UJWHHq4y9KQZM4c6D7AmGKumiUzVkMrFvBY3yCJMkHghO6Wg3mIMaH1uDi6/A1L+L4KOCuGGEPI4z4=
+X-Received: by 2002:a5d:5270:0:b0:374:c3e4:d6b1 with SMTP id
+ ffacd0b85a97d-37d552ade68mr1496679f8f.44.1728638936030; Fri, 11 Oct 2024
+ 02:28:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+In-Reply-To: <20241006-fix-postdiv-mask-v3-1-160354980433@mainlining.org>
+From: Christopher Obbard <christopher.obbard@linaro.org>
+Date: Fri, 11 Oct 2024 10:28:45 +0100
+Message-ID: <CACr-zFAT9tbmH+YUBLazUjzH+uyjeKSewpd=XFr3HBd7=jaMwA@mail.gmail.com>
+Subject: Re: [PATCH v3] clk: qcom: clk-alpha-pll: Fix pll post div mask when
+ width is not set
+To: =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?= <barnabas.czeman@mainlining.org>
+Cc: Bjorn Andersson <andersson@kernel.org>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Satya Priya Kakitapalli <quic_skakitap@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhishek Sahu <absahu@codeaurora.org>, 
+	linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@codeaurora.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jakub,
+On Sun, 6 Oct 2024 at 21:52, Barnab=C3=A1s Cz=C3=A9m=C3=A1n
+<barnabas.czeman@mainlining.org> wrote:
+> Many qcom clock drivers do not have .width set. In that case value of
+> (p)->width - 1 will be negative which breaks clock tree. Fix this
+> by checking if width is zero, and pass 3 to GENMASK if that's the case.
+>
+> Fixes: 1c3541145cbf ("clk: qcom: support for 2 bit PLL post divider")
+> Signed-off-by: Barnab=C3=A1s Cz=C3=A9m=C3=A1n <barnabas.czeman@mainlining=
+.org>
+> ---
+> Changes in v3:
+> - Remove one of the fixes tag.
+> - Link to v2: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v2-1-b8=
+25048b828b@mainlining.org
+>
+> Changes in v2:
+> - Pass 3 to GENMASK instead of 0.
+> - Add more Fixes tag for reference root cause.
+> - Link to v1: https://lore.kernel.org/r/20240925-fix-postdiv-mask-v1-1-f7=
+0ba55f415e@mainlining.org
+> ---
+>  drivers/clk/qcom/clk-alpha-pll.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, 11 Oct 2024 16:55:34 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
+Hi Barnab=C3=A1s,
 
-> On 2024/10/11 14:31, Furong Xu wrote:
-> > Hi Ilias,
-> > 
-> > On Fri, 11 Oct 2024 08:06:04 +0300, Ilias Apalodimas <ilias.apalodimas@linaro.org> wrote:
-> >   
-> >> Hi Furong,
-> >>
-> >> On Fri, 11 Oct 2024 at 05:15, Furong Xu <0x1207@gmail.com> wrote:  
-> >>>
-> >>> On Thu, 10 Oct 2024 19:53:39 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
-> >>>    
-> >>>> Is there any reason that those drivers not to unset the PP_FLAG_DMA_SYNC_DEV
-> >>>> when calling page_pool_create()?
-> >>>> Does it only need dma sync for some cases and not need dma sync for other
-> >>>> cases? if so, why not do the dma sync in the driver instead?    
-> >>>
-> >>> The answer is in this commit:
-> >>> https://git.kernel.org/netdev/net/c/5546da79e6cc    
-> >>
-> >> I am not sure I am following. Where does the stmmac driver call a sync
-> >> with len 0?  
-> > For now, only drivers/net/ethernet/freescale/fec_main.c does.
-> > And stmmac driver does not yet, but I will send another patch to make it call sync with
-> > len 0. This is a proper fix as Jakub Kicinski suggested.  
-> 
-> In order to support the above use case, it seems there might be two
-> options here:
-> 1. Driver calls page_pool_create() without PP_FLAG_DMA_SYNC_DEV and
->    handle the dma sync itself.
-> 2. Page_pool may provides a non-dma-sync version of page_pool_put_page()
->    API even when Driver calls page_pool_create() with PP_FLAG_DMA_SYNC_DEV.
-> 
-> Maybe option 2 is better one in the longer term as it may provide some
-> flexibility for the user and enable removing of the DMA_SYNC_DEV in the
-> future?
+This patch fixes a regression with UFS devfreq on msm8996 (introduced
+with the linked commit in your patch) so:
 
-What is your opinion about this?
-Thanks.
+Reviewed-by: Christopher Obbard <christopher.obbard@linaro.org>
+Tested-by: Christopher Obbard <christopher.obbard@linaro.org>
 
