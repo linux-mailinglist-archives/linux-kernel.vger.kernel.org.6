@@ -1,317 +1,156 @@
-Return-Path: <linux-kernel+bounces-360209-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360210-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02E739995EB
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:01:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301099995EF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 02:01:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB4F284DB1
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:00:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC58D284B40
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 00:01:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23434194A67;
-	Fri, 11 Oct 2024 00:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A17BA921;
+	Fri, 11 Oct 2024 00:01:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ef/CaSRB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fiHS1hbN"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E9512745E;
-	Fri, 11 Oct 2024 00:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A70C184;
+	Fri, 11 Oct 2024 00:01:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728604851; cv=none; b=iOW2BKi/qaAdf1fdmxb4OLclf0AXDEenvFVcpHHVVkHDfO1vbUdfDnW7w7BQ6EPyyKZ1JXM0DYdcnET/oUe1chCLhxUtfSg7SB5sCSpVf+ddg9Ol+0MAUuhlPI2iJ4FZsBDHaormkv3oHafiClmF0Obdf/GEAdFbsj5rSXzPnXA=
+	t=1728604888; cv=none; b=cInAM7rV9yhyozWSxDI3UH8AQJvw84B9nhEu/x3fQ9yy0gzqcmNpurNshhN+UBLXgMN1Rq/HBjd3T7EjAocUR/wWfYFnGkfYWXs1srd37YGgQlLNlknhbUwEkEKiOGWRhkH7GTlWcx6PXb6anTLdso1TzY7YLDPM/3I688vrGpY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728604851; c=relaxed/simple;
-	bh=/tGy3oUCpao5XYIAYrwRJW9zQx6klW4scJvsxIw2Ehg=;
+	s=arc-20240116; t=1728604888; c=relaxed/simple;
+	bh=DjIteSTidZSiBek/ASoFKrjQrBLhLEaVQuyEHfwMivY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DuPm74V7cfOBELfg8N6xG03jqQNFtVblR2QP0mlrZcRooo8b3IF+R1C/b7jGfJs/Y16B148may9f7uvztKHIHF3R3v7oAXuCXIJePfnWN46AA9HqJHM5kG/ggqH7Pcc31YwUO1sstaLK5k+q5mDO00b0dpdjdsr+QLoYEJmkArg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ef/CaSRB; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728604848; x=1760140848;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=/tGy3oUCpao5XYIAYrwRJW9zQx6klW4scJvsxIw2Ehg=;
-  b=ef/CaSRB3ij//nKR8j3iDZ/rLj/qlL0LMc+7dSs9ash0McuA+NVlcao7
-   ZuwlICJyiWdJXXHjp6ibSJJ7DfJm/mRuLIAlquUM3h/WcZOC/eOV85Znm
-   JyLqhqn+qkdjENi97lJXUS+Asqr761MqbxCvqJOox1R2I/qN9hTpfhHV0
-   FbgXprWL29WU1/Lytl8T3noGHvkbusmD6SHyG73MSTOEW12dzWxgfMaaL
-   A2m3yIix0antufsQjowu/s5MDMsnVruN5MIIryjVP6LsZjwwcidrODXLp
-   R5RgiqXPNmXAG+MlfPR2pxId4u8MnPXooEKF6rchY9nU+LZ12LsDVjB/F
-   A==;
-X-CSE-ConnectionGUID: Eeq5X2+aSbi8frSF5Zt18g==
-X-CSE-MsgGUID: ZLzgkJEtSY28voCxqtIkVw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="38564877"
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="38564877"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 17:00:47 -0700
-X-CSE-ConnectionGUID: ucytdMfNSbWmqYgF79tL9A==
-X-CSE-MsgGUID: 0+0WgprTTtaQNoh/GWyZ1A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,194,1725346800"; 
-   d="scan'208";a="81568298"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa003.jf.intel.com with ESMTP; 10 Oct 2024 17:00:40 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1sz35B-000BR5-1w;
-	Fri, 11 Oct 2024 00:00:37 +0000
-Date: Fri, 11 Oct 2024 08:00:21 +0800
-From: kernel test robot <lkp@intel.com>
-To: Steven Rostedt <rostedt@goodmis.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>,
-	linux-arm-kernel@lists.infradead.org, loongarch@lists.linux.dev,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	"linux-arch@vger.kernel.org" <linux-arch@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Huacai Chen <chenhuacai@kernel.org>,
-	WANG Xuerui <kernel@xen0n.name>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH] ftrace: Make ftrace_regs abstract from direct use
-Message-ID: <202410110707.uHvgl9S7-lkp@intel.com>
-References: <20241007204743.41314f1d@gandalf.local.home>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhaRrYzNNhSqUBngWvA2XVepyDDyKDd5xtvdrTz1X9+f9ygs3t+kAa/ovpiBo+h/Al6lHNMTv6+a3o8K8UGPjt9nr7fQKFqOdV4NP3NpFsXLXMPD9wAaicSeL5WCeON++pHZzeF+TKcPQU/RjPR/fBqVNMj6ZAj97/7Do6b8H3k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fiHS1hbN; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-5398a26b64fso1499577e87.3;
+        Thu, 10 Oct 2024 17:01:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728604885; x=1729209685; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=QR7eQHErdNfHLZS6BtpfLJOhVgMy01okWLFsgrPJ2+w=;
+        b=fiHS1hbNSrKSl47D5QmaI6HcIgDb4RbnhHI1SG7hG6VnivFsgtckqCEe+0SjFxrR39
+         waTTrMTX2TH0vEJ+eoOW5145cCEjuevI9OvLACq6awP9qHiT62ABb8ZUjWJCi5ufQT4t
+         EKjhWlvaF9q9sLiyoU51gUwl4vJuY3Egb6D/S2lC0e9CXxt2ev5kZOrMzk0Pv6Rxmi2K
+         HX7sbgrex2FiQQ5wSppP7D6WS0UekzSo2wMdrWpXVZyfZp4lEdJ8uBgkeFO3RIf/I+xb
+         /vTQOZm7Qz+5iLUpCkJxYkwnuuAUaHwRxekv4XdZf5AI2+PfI3F2Ki4TCBwjJnp5vqIG
+         cWAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728604885; x=1729209685;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=QR7eQHErdNfHLZS6BtpfLJOhVgMy01okWLFsgrPJ2+w=;
+        b=i+3IZXX0bwG4LyKmXfArEZ3xytRnLzk2wL7zmSNAJyCCow2iSpmM/DTbEw+Gf5vthj
+         J8MOl+OFQFnod98WLKzF+7GPAEEVDM++XV+8u142U5fGKaDyIW0sRWeSQzBiXAMhs0Jp
+         WFQkJGunVHbSv69wgpHJKLA46HPXr4K+pXjMJR9M8x1vQPK8FCr21dts1s0tFwX+aRSZ
+         fdP5GRi3Is7kBm2veR9G8i8UHe4ig+oeV/K563iTmhdehk0863/DNe+vdEL3LGkY1Gmq
+         lMGmHJ56YDcv4xSQv35C3xx10uEtQaK36TL4M+D8IsAZG6pE7nQbqHlSlfUgTmuYwfzz
+         3vyw==
+X-Forwarded-Encrypted: i=1; AJvYcCU8DOsmU10LT8GyBTmJqKjJWQxlpvSfrI0EaH1Lrt2Sn9Yr3AYSwYaD1jrfUoPcFU6qgnTYjeoJZgaTSu6A@vger.kernel.org, AJvYcCXKyERLv+FtS3SNfQzSfMlMoU6u34k5hNkeSygAtVN+7ZO31cwPMeVwYQU3EYDXZYPnCtA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5WQ3S9LYyPsKRbVVqQq7Sbjuj9F5ZYP12OpRAVeRFu0AlP4YG
+	0U8d+sSZa99OIaYIRUJ+xmxRogxc6+5fB+KloeJDwtQVtg7bsHp2
+X-Google-Smtp-Source: AGHT+IE4cooIMQfC+OmH1uy5ckkJ9Tp1lCSmPVvSLo7PeJxTYUKT/COn7zRsZE/36GgHwgQ8ylic2w==
+X-Received: by 2002:ac2:4c43:0:b0:536:7cfb:6998 with SMTP id 2adb3069b0e04-539da4e1f18mr271377e87.35.1728604884838;
+        Thu, 10 Oct 2024 17:01:24 -0700 (PDT)
+Received: from mobilestation ([85.249.18.22])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8d7fadsm424885e87.169.2024.10.10.17.01.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 10 Oct 2024 17:01:23 -0700 (PDT)
+Date: Fri, 11 Oct 2024 03:01:19 +0300
+From: Serge Semin <fancer.lancer@gmail.com>
+To: Jitendra Vegiraju <jitendra.vegiraju@broadcom.com>
+Cc: netdev@vger.kernel.org, alexandre.torgue@foss.st.com, 
+	joabreu@synopsys.com, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, mcoquelin.stm32@gmail.com, bcm-kernel-feedback-list@broadcom.com, 
+	richardcochran@gmail.com, ast@kernel.org, daniel@iogearbox.net, hawk@kernel.org, 
+	john.fastabend@gmail.com, rmk+kernel@armlinux.org.uk, ahalaney@redhat.com, 
+	xiaolei.wang@windriver.com, rohan.g.thomas@intel.com, Jianheng.Zhang@synopsys.com, 
+	linux-kernel@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
+	linux-arm-kernel@lists.infradead.org, bpf@vger.kernel.org, andrew@lunn.ch, linux@armlinux.org.uk, 
+	horms@kernel.org, florian.fainelli@broadcom.com
+Subject: Re: [PATCH net-next v5 2/5] net: stmmac: Add basic dw25gmac support
+ in stmmac core
+Message-ID: <wufpbnsa7w4bk57drsjywnbz2di63yfn7qrmkxfmdh57zuoaeh@6j4xgyonjy6l>
+References: <20240904054815.1341712-1-jitendra.vegiraju@broadcom.com>
+ <20240904054815.1341712-3-jitendra.vegiraju@broadcom.com>
+ <mhfssgiv7unjlpve45rznyzr72llvchcwzk4f7obnvp5edijqc@ilmxqr5gaktb>
+ <CAMdnO-+CcCAezDXLwTe7fEZPQH6_B1zLD2g1J6uWiKi12vOxzg@mail.gmail.com>
+ <CAMdnO-JZ2crBaOEtvgMupQs7nTZ8r0_7TTQdX3B3n6F_owAMZA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241007204743.41314f1d@gandalf.local.home>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMdnO-JZ2crBaOEtvgMupQs7nTZ8r0_7TTQdX3B3n6F_owAMZA@mail.gmail.com>
 
-Hi Steven,
+Hi Jitendra
 
-kernel test robot noticed the following build errors:
+On Fri, Oct 04, 2024 at 09:05:36AM GMT, Jitendra Vegiraju wrote:
+> Hi Serge,
+> 
+> On Mon, Sep 16, 2024 at 4:32 PM Jitendra Vegiraju
+> <jitendra.vegiraju@broadcom.com> wrote:
+> >
+> ...
+> 
+> When you get a chance, I would like to get your input on the approach we need
+> to take to incrementally add dw25gmac support.
+> 
+> In the last conversation there were some open questions around the case of
+> initializing unused VDMA channels and related combination scenarios.
+> 
+> The hdma mapping provides flexibility for virtualization. However, our
+> SoC device cannot use all VDMAs with one PCI function. The VDMAs are
+> partitioned for SRIOV use in the firmware. This SoC defaults to 8 functions
+> with 4 VDMA channels each. The initial effort is to support one PCI physical
+> function with 4 VDMA channels.
+> Also, currently the stmmac driver has inferred one-to-one relation between
+> netif channels and physical DMAs. It would be a complex change to support
+> each VDMA as its own netif channel and mapping fewer physical DMAs.
+> Hence, for initial submission one-to-one mapping is assumed.
+> 
+> As you mentioned, a static one-to-one mapping of VDMA-TC-PDMA doesn't
+> require the additional complexity of managing these mappings as proposed
+> in the current patch series with *struct stmmac_hdma_cfg*.
+> 
+> To introduce dw25gmac incrementally, I am thinking of two approaches,
+>   1. Take the current patch series forward using *struct stmmac_hdma_cfg*,
+>      keeping the unused VDMAs in default state. We need to fix the
+> initialization
+>      loops to only initialize the VDMA and PDMAs being used.
 
-[auto build test ERROR on next-20241004]
-[cannot apply to s390/features arm64/for-next/core powerpc/next powerpc/fixes linus/master v6.12-rc2 v6.12-rc1 v6.11 v6.12-rc2]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>   2. Simplify the initial patch by removing *struct hdma_cfg* from the patch
+>      series and still use static VDMA-TC-PDMA mapping.
+> Please share your thoughts.
+> If it helps, I can send patch series with option 2 above after
+> addressing all other
+> review comments.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Steven-Rostedt/ftrace-Make-ftrace_regs-abstract-from-direct-use/20241008-084930
-base:   next-20241004
-patch link:    https://lore.kernel.org/r/20241007204743.41314f1d%40gandalf.local.home
-patch subject: [PATCH] ftrace: Make ftrace_regs abstract from direct use
-config: um-allnoconfig (https://download.01.org/0day-ci/archive/20241011/202410110707.uHvgl9S7-lkp@intel.com/config)
-compiler: clang version 17.0.6 (https://github.com/llvm/llvm-project 6009708b4367171ccdbf4b5905cb6a803753fe18)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241011/202410110707.uHvgl9S7-lkp@intel.com/reproduce)
+IMO approach 2 seems more preferable. Please find my comments to your
+previous email in this thread:
+https://lore.kernel.org/netdev/sn5epdl4jdwj4t6mo55w4poz6vkdcuzceezsmpb7447hmaj2ot@gmlxst7gdcix/
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410110707.uHvgl9S7-lkp@intel.com/
+> 
+> Appreciate your guidance!
 
-All errors (new ones prefixed by >>):
+Always welcome. Thank you for submitting the patches and your patience
+to proceed with the review process.
 
-   In file included from kernel/time/time.c:31:
-   In file included from include/linux/timekeeper_internal.h:10:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from kernel/time/time.c:31:
-   In file included from include/linux/timekeeper_internal.h:10:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from kernel/time/time.c:31:
-   In file included from include/linux/timekeeper_internal.h:10:
-   In file included from include/linux/clocksource.h:22:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from kernel/time/time.c:33:
-   In file included from include/linux/syscalls.h:93:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:10:
-   In file included from include/linux/perf_event.h:52:
-   In file included from include/linux/ftrace.h:23:
-   In file included from ./arch/um/include/generated/asm/ftrace.h:1:
->> include/asm-generic/ftrace.h:5:2: error: unterminated conditional directive
-       5 | #ifndef __ASM_GENERIC_FTRACE_H__
-         |  ^
-   12 warnings and 1 error generated.
---
-   In file included from kernel/time/hrtimer.c:30:
-   In file included from include/linux/syscalls.h:93:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:9:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     548 |         val = __raw_readb(PCI_IOBASE + addr);
-         |                           ~~~~~~~~~~ ^
-   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
-      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
-         |                                                   ^
-   In file included from kernel/time/hrtimer.c:30:
-   In file included from include/linux/syscalls.h:93:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:9:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
-         |                                                         ~~~~~~~~~~ ^
-   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
-      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
-         |                                                   ^
-   In file included from kernel/time/hrtimer.c:30:
-   In file included from include/linux/syscalls.h:93:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:9:
-   In file included from include/linux/hardirq.h:11:
-   In file included from arch/um/include/asm/hardirq.h:5:
-   In file included from include/asm-generic/hardirq.h:17:
-   In file included from include/linux/irq.h:20:
-   In file included from include/linux/io.h:14:
-   In file included from arch/um/include/asm/io.h:24:
-   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     585 |         __raw_writeb(value, PCI_IOBASE + addr);
-         |                             ~~~~~~~~~~ ^
-   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
-         |                                                       ~~~~~~~~~~ ^
-   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     693 |         readsb(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     701 |         readsw(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     709 |         readsl(PCI_IOBASE + addr, buffer, count);
-         |                ~~~~~~~~~~ ^
-   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     718 |         writesb(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     727 |         writesw(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
-     736 |         writesl(PCI_IOBASE + addr, buffer, count);
-         |                 ~~~~~~~~~~ ^
-   In file included from kernel/time/hrtimer.c:30:
-   In file included from include/linux/syscalls.h:93:
-   In file included from include/trace/syscall.h:7:
-   In file included from include/linux/trace_events.h:10:
-   In file included from include/linux/perf_event.h:52:
-   In file included from include/linux/ftrace.h:23:
-   In file included from ./arch/um/include/generated/asm/ftrace.h:1:
->> include/asm-generic/ftrace.h:5:2: error: unterminated conditional directive
-       5 | #ifndef __ASM_GENERIC_FTRACE_H__
-         |  ^
-   kernel/time/hrtimer.c:121:21: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
-     121 |         [CLOCK_REALTIME]        = HRTIMER_BASE_REALTIME,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:119:27: note: previous initialization is here
-     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:122:22: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
-     122 |         [CLOCK_MONOTONIC]       = HRTIMER_BASE_MONOTONIC,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:119:27: note: previous initialization is here
-     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:123:21: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
-     123 |         [CLOCK_BOOTTIME]        = HRTIMER_BASE_BOOTTIME,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:119:27: note: previous initialization is here
-     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:124:17: warning: initializer overrides prior initialization of this subobject [-Winitializer-overrides]
-     124 |         [CLOCK_TAI]             = HRTIMER_BASE_TAI,
-         |                                   ^~~~~~~~~~~~~~~~
-   kernel/time/hrtimer.c:119:27: note: previous initialization is here
-     119 |         [0 ... MAX_CLOCKS - 1]  = HRTIMER_MAX_CLOCK_BASES,
-         |                                   ^~~~~~~~~~~~~~~~~~~~~~~
-   16 warnings and 1 error generated.
+-Serge(y)
 
-
-vim +5 include/asm-generic/ftrace.h
-
-38f5bf84bd588a GuanXuetao 2011-01-15 @5  #ifndef __ASM_GENERIC_FTRACE_H__
-38f5bf84bd588a GuanXuetao 2011-01-15  6  #define __ASM_GENERIC_FTRACE_H__
-38f5bf84bd588a GuanXuetao 2011-01-15  7  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> -Jitendra
 
