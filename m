@@ -1,111 +1,81 @@
-Return-Path: <linux-kernel+bounces-361866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361867-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0450099AE1D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:37:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AB8499AE20
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 23:38:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7ABE11F21AFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:37:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C182855C2
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235881D151F;
-	Fri, 11 Oct 2024 21:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D6D21D1739;
+	Fri, 11 Oct 2024 21:38:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="E+Hur7jc"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Yi2qCv7P"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F166E193436;
-	Fri, 11 Oct 2024 21:36:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E580D1CF7BC
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 21:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728682616; cv=none; b=IVZTAxitdJURiS9N9wq/dvg+twqx44BndwA7McLQ5b+95fIm88zM4K/jpagu2aTLYXDVcREm/0IdWJjJmB2NT43uSZeRXw1LSMfr9+Mc35sCDRikUroeOLcGh/GgSxlMOyjHOM+d/6Wj5MY9hmJiztffLSiDneKRsn0qiXj/pA0=
+	t=1728682681; cv=none; b=hQ1OY6UhTdhDC2P7TofCi5wJ9t+/AZDcS/LlY31yiqDn45gas4CY7VmZnw/GXORzItqYFLIaiR6n/jLHsLCei/2OF41HEwvUmwys3MlXyx030FCctpKdMRkeqDwy6I8J0PS41wjXR+OAWW9fPHlLyD9Yu/diDwXRHzHmnN8Lyo4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728682616; c=relaxed/simple;
-	bh=aDQfs9YAcUIWbWginV2/zdeeoyKXVYhIFV7RZFTGRqs=;
+	s=arc-20240116; t=1728682681; c=relaxed/simple;
+	bh=Oc8Dx+FMqT5hJ/EG4SegithSm0HDW1G7NKRjFC/WrTA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZUpQ9sc7E0sdygHo6U+9RQu/3bdZi2tR5hmrVoQe23zEzBWcuk8RnEfJ9FZcCKb14OGkYUagQgdP2anPYU3VSASVmGBAUI/RaS+8KFQR7Wq7VhpQoWBt2z/7TZD3IPtcFRYVyStsKV9tYPtAE/fyYuInBPWYz98yolmbWFu+Htw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=E+Hur7jc; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728682615; x=1760218615;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=aDQfs9YAcUIWbWginV2/zdeeoyKXVYhIFV7RZFTGRqs=;
-  b=E+Hur7jcWHT9BapI20El4UaCTb4zPUMAkBrMV9wslxuDctHIJh0iLUWF
-   CGMYgoF+g9634usfWz0t6jY5fHodrw8QPFcy4op86kPkuBW/C5JZkVWx5
-   /t4fgA2uS0rGZND76/5nyL/JTkOL2I6+jiGNHL+1zC7JsGJ1XweZYjMXf
-   lceSAirlyGsTabKHDNgJGMW/prqL95bMXhsoLJA0otn3w37OY674clneJ
-   4mOCcfH+lb8wK2NKZzjiDlJyRh4ze0wVA2s3X69gM7FbvIDownaV3J1QF
-   YlETaOKzH+r6HpZ4LRrpgfMqGfcoy5UaM5fTdJaULvEnh1cab3t56es7Z
-   A==;
-X-CSE-ConnectionGUID: TsuixL9rRQ6JXXhW8M/KOg==
-X-CSE-MsgGUID: e51fW2ZcSQiHDPXoQDz9OQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39474229"
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="39474229"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 14:36:54 -0700
-X-CSE-ConnectionGUID: K7hRfXewTnOaXLExOnuvVg==
-X-CSE-MsgGUID: KDBE7+pWT7+5SlZ//AkYug==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,196,1725346800"; 
-   d="scan'208";a="100335606"
-Received: from agluck-desk3.sc.intel.com ([172.25.222.70])
-  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 14:36:53 -0700
-Date: Fri, 11 Oct 2024 14:36:52 -0700
-From: Tony Luck <tony.luck@intel.com>
-To: babu.moger@amd.com
-Cc: "corbet@lwn.net" <corbet@lwn.net>, "Yu, Fenghua" <fenghua.yu@intel.com>,
-	"Chatre, Reinette" <reinette.chatre@intel.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>,
-	"mingo@redhat.com" <mingo@redhat.com>,
-	"bp@alien8.de" <bp@alien8.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"paulmck@kernel.org" <paulmck@kernel.org>,
-	"rdunlap@infradead.org" <rdunlap@infradead.org>,
-	"tj@kernel.org" <tj@kernel.org>,
-	"peterz@infradead.org" <peterz@infradead.org>,
-	"yanjiewtw@gmail.com" <yanjiewtw@gmail.com>,
-	"kim.phillips@amd.com" <kim.phillips@amd.com>,
-	"lukas.bulwahn@gmail.com" <lukas.bulwahn@gmail.com>,
-	"seanjc@google.com" <seanjc@google.com>,
-	"jmattson@google.com" <jmattson@google.com>,
-	"leitao@debian.org" <leitao@debian.org>,
-	"jpoimboe@kernel.org" <jpoimboe@kernel.org>,
-	"Edgecombe, Rick P" <rick.p.edgecombe@intel.com>,
-	"kirill.shutemov@linux.intel.com" <kirill.shutemov@linux.intel.com>,
-	"Joseph, Jithu" <jithu.joseph@intel.com>,
-	"Huang, Kai" <kai.huang@intel.com>,
-	"kan.liang@linux.intel.com" <kan.liang@linux.intel.com>,
-	"daniel.sneddon@linux.intel.com" <daniel.sneddon@linux.intel.com>,
-	"pbonzini@redhat.com" <pbonzini@redhat.com>,
-	"sandipan.das@amd.com" <sandipan.das@amd.com>,
-	"ilpo.jarvinen@linux.intel.com" <ilpo.jarvinen@linux.intel.com>,
-	"peternewman@google.com" <peternewman@google.com>,
-	"Wieczor-Retman, Maciej" <maciej.wieczor-retman@intel.com>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"Eranian, Stephane" <eranian@google.com>,
-	"james.morse@arm.com" <james.morse@arm.com>
-Subject: Re: [PATCH v8 08/25] x86/resctrl: Introduce interface to display
- number of monitoring counters
-Message-ID: <ZwmadFbK--Qb8qWP@agluck-desk3.sc.intel.com>
-References: <ZwcIkf_oy2oKByNu@agluck-desk3.sc.intel.com>
- <8ceeb50a-70d7-4467-b7c1-4f62b1a1eec8@amd.com>
- <SJ1PR11MB608381B9DA3AE26749070BE8FC782@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <0fedcbd4-487c-4d55-8151-69dc34f41f1d@amd.com>
- <SJ1PR11MB6083FFA19F9387F21C058A09FC782@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <d1986f3f-9db7-4ac9-9fea-56878548ad61@amd.com>
- <SJ1PR11MB608382EB9F40FBDC19DF71C4FC782@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <1baa07f6-0ccc-4365-b7b8-09fe985963cd@amd.com>
- <Zwlj5TQxZphcuDSR@agluck-desk3.sc.intel.com>
- <8af0ce3a-1327-3ffc-ac5c-e495f9cdf5d0@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=oS08ICBbiqV82y+TOhiK510zepT3Y1AuM3tNfziVtmJ7aBvaqarnuAINGEdmKv1om7a59mxDK+G68vVE1fVhkrDpQHODRRmsw9KAZMh+uISZQPIbbGijsWKvUzQyEmA6VXe3xeoaAtmdR7f2uX17bW9QAU7IuLE1/fD49zesIoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Yi2qCv7P; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso2542778e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:37:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728682677; x=1729287477; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aUIYU2FMPqvolUwnyRnf122VNl/tacRTAERvHN2HFBc=;
+        b=Yi2qCv7Phz6U5drvNJk8yNv+yJUTEA5lx2G5yZokxPhv/vxwu97hlp1CyP74E+WpTd
+         oODcnlGAswtZr2943MDqtpIA5XMs9/0EcEdC9HVwKyNQCmQLSIP+iHkBrcW1WG0hiFln
+         pjbIvD2Gxg+CwgUGcXx3/q4B3EGZLAXBzQHNBNMd8VTe9m9D+CwpQM3sMU4+im3MShVp
+         1Ecxa0EUhF1kSmfIVwjnsbCTKXxjQVptHYpzyOWB9cJjfdsyBiSVxdHnnVUVpTUaaWJK
+         6BRKutkc+ZMz6laRc6pmd8R4zdOdp5VleU6L7ybQi30eu+93qHsxBrjyKjw3J6hr00Fn
+         RUnA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728682677; x=1729287477;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aUIYU2FMPqvolUwnyRnf122VNl/tacRTAERvHN2HFBc=;
+        b=GbIk8Slh/8xnBkc2ZPKhMqdyQHzE0FtJ5fT2SswcmEIc4IG6zrb8vQ8IOcqhhCyOOX
+         hFh6/hU/0LUua9Axg7aa5XtbQpR8ajoIQXbTarrSjHoCiz4klQ7SAqTwifxF7QAJk9us
+         Xsqc5q47GAw55rbiv1DOUctN/6gOoXP9WEH51eQ/8L7iBHMfFUi33RvxnWp7/h0U0oib
+         dxw33qjvFmAglc1sLZo/biD9BO0Um8Q71Nlq++XTGRY6N9UqWZq7uQrYKcfoXTr5LPyJ
+         uryHRfkfkzs+tf7M4czibhCeUybJwAqN52OalXUpizhprU/xcBknD5xe2vdbsBMpoAc1
+         bWJg==
+X-Forwarded-Encrypted: i=1; AJvYcCV+MV34H3P+L7+R/lqisjkYv/JCMugKDp5DVUHOwtw0jprwjslth7YjI2qYV0ZbnjDx18d+ycjz/cFKVTY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSCJhGT+8FOlwteo7E75jcagg2U6XKw035Sb8wV80uxCHFmDt/
+	JYLEZkdBz80RdQIAY/tmvXdYuaEgJL1va8JyULs3zNfLg9t+Xsc4vYxQqUEyvKU=
+X-Google-Smtp-Source: AGHT+IHkvpXjqQ4Ntwp3RR3/h9wtPR8YEE/iYV3c+819m9jN+n9MkfDaHKh907oVKkugoVP+yWN5zw==
+X-Received: by 2002:a05:6512:3ca8:b0:536:741a:6bad with SMTP id 2adb3069b0e04-539e54d816amr482141e87.12.1728682676957;
+        Fri, 11 Oct 2024 14:37:56 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb6c8543sm712354e87.98.2024.10.11.14.37.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 14:37:55 -0700 (PDT)
+Date: Sat, 12 Oct 2024 00:37:54 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Jonathan Marek <jonathan@marek.ca>
+Cc: linux-arm-msm@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100-crd: enable otg on usb
+ ports
+Message-ID: <eknpk3z3isudjqa2a74cqvicrthjs6us7gx7z3itox4utkpobr@cxbxkx5h64x5>
+References: <20241011152712.31571-1-jonathan@marek.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -114,67 +84,63 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <8af0ce3a-1327-3ffc-ac5c-e495f9cdf5d0@amd.com>
+In-Reply-To: <20241011152712.31571-1-jonathan@marek.ca>
 
-On Fri, Oct 11, 2024 at 03:49:48PM -0500, Moger, Babu wrote:
-> > Is there some hardware limitation that would prevent
-> > re-using domain 1 counters 2 & 3 for some other group (RMID)?
-> >
-> > Or is this just a s/w implementation detail because
-> > you have a system wide allocator for counters?
-> >
->
-> There is no hardware limitation. It is how resctrl is designed.
-> In case of Intel(with two sockets, 16 CLOSIDs), You can only create 16
-> groups. Each group will have two domains(domain 0 for socket 0 and domain 1
-> for socket 1).
->
-> # cat schemata
->     MB:0=100;1=100
->     L3:0=ffff;1=ffff;
->
->
-> We may have to think of addressing this sometime in the future.
+On Fri, Oct 11, 2024 at 11:27:11AM -0400, Jonathan Marek wrote:
+> The 3 USB ports on x1e80100-crd are OTG-capable, change dr_mode and add
+> usb-role-switch flag to enable OTG.
+> 
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> index 6dfc85eda3540..53e76b3f0c831 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> @@ -1558,7 +1558,8 @@ &usb_1_ss0 {
+>  };
+>  
+>  &usb_1_ss0_dwc3 {
+> -	dr_mode = "host";
+> +	dr_mode = "otg";
 
-In this example, the hardware would support using the instances
-of counters 2 & 3 on socket 1 for a different group (RMID). But
-your code doesn't alllow it because the instances of counters
-2 & 3 are active on socket 0.
+There should be no need to specify "otg", it is a default if I remember
+correctly.
 
-If you had a separate counter allocation pool for each domain
-you would not have this limitation. When counters 2 & 3 are
-freed on domain 1, they could be allocated to the domain 1
-element of some other group.
+> +	usb-role-switch;
 
-Maybe that isn't an interesting use case, so not worth doing?
+Please move usb-role-switch to the x1e80100.dtsi instead.
 
-But if that is the goal, then there is no benefit in having
-/sys/fs/resctrl/info/L3_MON/mbm_assign_control allow different
-domains to choose different counter allocation policies.
+>  };
+>  
+>  &usb_1_ss0_dwc3_hs {
+> @@ -1590,7 +1591,8 @@ &usb_1_ss1 {
+>  };
+>  
+>  &usb_1_ss1_dwc3 {
+> -	dr_mode = "host";
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+>  };
+>  
+>  &usb_1_ss1_dwc3_hs {
+> @@ -1622,7 +1624,8 @@ &usb_1_ss2 {
+>  };
+>  
+>  &usb_1_ss2_dwc3 {
+> -	dr_mode = "host";
+> +	dr_mode = "otg";
+> +	usb-role-switch;
+>  };
+>  
+>  &usb_1_ss2_dwc3_hs {
+> -- 
+> 2.45.1
+> 
 
-E.g. in this example from Documentation:
-
-/child_default_mon_grp/0=tl;1=l;
-
-This group allocated two counters (because domain 0 is counting
-both total and local). Domain 1 is only counting local, but
-that means a counter on domain 1 is sitting idle. It can't
-be used because the matching counter is active on domain 0.
-
-I.e. the user who chose this simply gave up being able to
-read total bandwidth on domain 1, but didn't get an extra
-counter in exchange for this sacrifice. That doesn't seem
-like a good deal.
-
-I see two options for improvement:
-
-1) Implement per-domain allocation of counters. Then a counter
-freed in a domain becomes available for use in that domain
-for other groups.
-
-2) Go all-in on the global counter model and simplify the
-syntax of mbm_assign_control to allocate the same counters
-in all domains. That would simplify the parsing code.
-
--Tony
+-- 
+With best wishes
+Dmitry
 
