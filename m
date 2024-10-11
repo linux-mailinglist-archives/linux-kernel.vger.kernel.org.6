@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-361815-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2EA199AD54
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:02:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ED8D599AD59
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:03:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84ABB28248B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:02:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 932731F29F39
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:03:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8ACC1D0E2F;
-	Fri, 11 Oct 2024 20:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B78C81D0F4F;
+	Fri, 11 Oct 2024 20:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YuLVErl7"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="l4nqFF63"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08E3F1C3F0A;
-	Fri, 11 Oct 2024 20:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EAF1D0F4B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728676950; cv=none; b=S6iMxwuZVRr46yzC3Qzp2KCHypLpq6Hh0T5ecQFasShU5fnlIpnO3R3gFDmQeRxxQR+NcGCGcYl8+cmfODBzBYgPOeU9FC0hoMYij0Y6xdYkJ2NqNN1Wl+bUu5bq1Wozabn+7Q3fhchwSyJiqWrwNxKf5T8+UJ9cG48AV7Gyv+s=
+	t=1728676979; cv=none; b=ihDwCLzVzO9qlRbJNaEc5dzZMKvBfQ+JCPF4fm5lz2Lbx9Dk18JUwUwHAlHxhNJHQc8VO++ryp0S8flsC8Tp2FrttjRHX1LlLkAxooBUJbGpDoDSakYw8LWiQaNFxy8Fo+tW3fqeukWPsRYW8n0NRXRF9TCf9yKGesbPeAReqEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728676950; c=relaxed/simple;
-	bh=/IYrI9SFtU09li13YBlEfdAOYwPQ1R4jlGIFZ8ncf5M=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C0I5o7FXATkGFXETLhSD9krJOo4+O7SyvdTne6JQEkkz2xZ0z80CrZffBgdxYZ6mLpCn/QLi/t7VwX6+sy8b90L3EyWSJCA+oSW96JcZnaM7DmeIUenLWA26NdHRKGtcYlx7G0GLLmBrS/HN7FC1rYBmElfMRMrZdgL8a4XAWSo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YuLVErl7; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7e9f998e1e4so2028123a12.1;
-        Fri, 11 Oct 2024 13:02:28 -0700 (PDT)
+	s=arc-20240116; t=1728676979; c=relaxed/simple;
+	bh=ODV50fNLCFdjIqcFnpP2PNFAuAzMtDOje2NXbZ7Egzk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=doX5lhitfH+kdNaGo9uXr8eUd1yykS1QKVMTOoQ0ttAV4MsT8IiiTl8YV+AvQO+FTQiOtkjG+DP5CZBAnHDHCbkX4Pq6BRXyaUpq6dHo59d9YSVAcAG4/AC/obzJnz6ZQlQpfTVDxvUqpcR/183b8VGxEvg3LFluhmEDMFbuNvw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=l4nqFF63; arc=none smtp.client-ip=209.85.219.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-dff1ccdc17bso2667597276.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 13:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728676948; x=1729281748; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=kCdDB4FzZCs+ONnQuY+4pTxcyDhIhs84SvGVwh2KpEw=;
-        b=YuLVErl7OZTDedJaMflVYhKLes+v0agcNKMrKN8sA3G24AL+9q5hMhLzIcgozz3S5X
-         AK23LXXx8r55PdkgXket71htvNdMVItS+eCY0p9oCrSXixlo0kFKF3HNktA6n9Nx1kSz
-         Rflr4FrgBlZS5w8zxiNrcvdscXUfUTLDae717TpzTshvTUdv7fIISMQsC/8lVYqIES4v
-         2rNbjkiAHb/d/DGaFHdZ/BNQHoh5GNfEd6unVQlwUMtnPAiO5wOi0oQW8Ae/gtogXPkQ
-         kZrnBBvjHblCZkvZJxx36g7+fEgK8pQdS5bd3LWlCgteBHbP0BQXakuwpH2O4SQ2awGQ
-         tfAw==
+        d=linaro.org; s=google; t=1728676976; x=1729281776; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SECYkR1tH36IRXjV2hBFD0fayx6FhMErprkUBOQsJ0Q=;
+        b=l4nqFF63kCxQXyOrk0xe+vYNuFRT6J0LNqI+ujjIkJDsuuCkGWdiRVxp7P50rS2M+r
+         j9J0UTkOufhR1x4t9qMcLdh2z1dD/+5zm3XoOZVp+GKEaxuh4f7DlsnPPDWwF4zPahAO
+         LR2J+a5yVD11owkiR/weuoPaWj4uPyUVD+gZ3Lfg6iXldpI4c2bKeEsWfWdLvgAPyR2Z
+         TGfdM8urJ8VSZi62cLvHsBGMAoPwIo3w44fyShIA7RbRaZfdMZvJuub5koZ7MXMmTYnH
+         H+VcTDJQVkYRwAcpdUuBhcYvsogGxa/ckvvdQ+oFAqcK/P1QjflGMgFUQpzuMCi1/Vze
+         aV2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728676948; x=1729281748;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=kCdDB4FzZCs+ONnQuY+4pTxcyDhIhs84SvGVwh2KpEw=;
-        b=qPd6pRCqwxA3jpxCzhXQeGFnE3kTLH9cQzdKNeT5m1ba+dhZWpmmDMzSmu4z/dHdXX
-         nQqk3sYUn8J9kdA3Mlk8XQN5oxc8/Y7orcbZy2fAdc9AD3ktPaQs0kYMKQxuq5FcgGpm
-         8rHj3xHONtcw4q34XtVDhEz6PDmqYoHsnSTgY+5crLgrnV6YfKgpLZQRIXF38R1zgV0Q
-         U40kMBY6yO07ybCR1P54fDMdgcGidPX8ty648qaK8YctyF5KIzMp+W0gKbKSUcfgBVeT
-         oP4UZjmfrOxlGCAdoPmL1jHZXpIrv1gnzVkSWvhkfjuQmRMpSeVA6c7jEY3bCD5vXkx5
-         ylmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5Ph24BQwlE9pug95wQE30zfNMmNXesLd4uIsL3jAGJx5sxNZnZ9j6EF3sq+GYgxWWVIHWgboWNuA1CO8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyufYkSa7O8BNGDcthnZYWTS7MNJGqO4g1Eb8dlEoGbTSWAvUSb
-	zogSe+3uB5GuKcZntR4YCHGTPOat4NQEB2E5mUKMa3rzmRa1npIIfmddpfC4
-X-Google-Smtp-Source: AGHT+IGOd18eKj1hzHPwpzvr37oGJNs01DKuB6aPDA1ZxRfgwjuNN7VeD7FJwmq1zYNaqdVBu6/G0Q==
-X-Received: by 2002:a05:6a20:b803:b0:1d2:eaca:34ca with SMTP id adf61e73a8af0-1d8bcfb608fmr3684844637.42.1728676948064;
-        Fri, 11 Oct 2024 13:02:28 -0700 (PDT)
-Received: from ryzen.lan ([2601:644:8200:dab8::a86])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9f5271sm2966376b3a.56.2024.10.11.13.02.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 13:02:27 -0700 (PDT)
-From: Rosen Penev <rosenp@gmail.com>
-To: netdev@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>,
-	Sean Wang <sean.wang@mediatek.com>,
-	Mark Lee <Mark-MC.Lee@mediatek.com>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org (open list:ARM/Mediatek SoC support),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Mediatek SoC support),
-	linux-mediatek@lists.infradead.org (moderated list:ARM/Mediatek SoC support)
-Subject: [PATCH] net: mtk_eth_soc: use ethtool_puts
-Date: Fri, 11 Oct 2024 13:02:25 -0700
-Message-ID: <20241011200225.7403-1-rosenp@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1728676976; x=1729281776;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SECYkR1tH36IRXjV2hBFD0fayx6FhMErprkUBOQsJ0Q=;
+        b=hByESWijftfNnja16ejwyquygkh6iAkhPHNaGG1dIdB1Rj2CfEfi5fmrF3KE8OulMj
+         3uTusGGYP7+Z0KmHDVxl/9ST1xcFyNmNyNroiItj86Cq6Z6RxbHj3JAqjRoQR/w1UpEu
+         FzELWJLRGIjUTSOdzc5BeQAJxhXQoL3zIrgo4HDybBvLdc2tI3O+qHVnMoVRY16UQrBP
+         woxLXrtJY0MJVOai5NwJ7muhSbGRVavnojHriFrfsJXCgivNWVH1qdtxr4SYqmDkodHn
+         mpOjWkxdqMFUPK9WSk63jIemf0xvG9BP5V7bS5hcLyeZkB+RpSXclKFEoUU5Kpz4nkx1
+         se1g==
+X-Forwarded-Encrypted: i=1; AJvYcCVziAsoJW4opADPOUb6yu22/PTpxAQh61QMoybD9civnLW3/YEjQS8RKDe7924H3zMQB0ie8ZV0BkAlAUE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfg/U6gAm9EPBtMN3ozSAWBUZOcQYHeYtViVhpogXYxgEaSk2K
+	LxQ3VzDpGVLdcAZJmeU+icc7g5O1vRZWHXs2Xesaao85J8qoJKdPgUZVpLr/Lrt4VKrEh5Hy/Rj
+	Ni+PBwd0JGVPwugzFfD+py7ArWyJqabgnp+mGyQ==
+X-Google-Smtp-Source: AGHT+IEX50nN7GvXdtMOFV2ls3PtiyNs6ga7VtHfFp++1qOGXYlxqaeLTZx/eo82ScV1XRb/2oK53cLuuqtVKJnZo+4=
+X-Received: by 2002:a05:690c:4286:b0:6db:4536:85b9 with SMTP id
+ 00721157ae682-6e3479c297cmr29587547b3.23.1728676976485; Fri, 11 Oct 2024
+ 13:02:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241006181310.181309-1-matsievskiysv@gmail.com>
+ <20241006181310.181309-2-matsievskiysv@gmail.com> <CACRpkdbJ7xh1qOYaZOh+s+Tj_GgE4LXMFuOgL1zpxBRqJQVx6w@mail.gmail.com>
+ <ZwlG9AKToZFFPAvi@KILLINGMACHINE>
+In-Reply-To: <ZwlG9AKToZFFPAvi@KILLINGMACHINE>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Oct 2024 22:02:44 +0200
+Message-ID: <CACRpkdZh_XZOKJa1Ga5vyh3MvY_yb7hDowbuJv-LG47AoZ+UCw@mail.gmail.com>
+Subject: Re: [PATCH 1/1] pinctrl: ocelot: fix system hang on level based interrupts
+To: Sergey Matsievskiy <matsievskiysv@gmail.com>
+Cc: alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com, 
+	lars.povlsen@microchip.com, horatiu.vultur@microchip.com, 
+	andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	UNGLinuxDriver@microchip.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Allows simplifying get_strings and avoids manual pointer manipulation.
+On Fri, Oct 11, 2024 at 5:40=E2=80=AFPM Sergey Matsievskiy
+<matsievskiysv@gmail.com> wrote:
+> On Fri, Oct 11, 2024 at 11:18:55AM +0200, Linus Walleij wrote:
 
-Tested on Belkin RT1800.
+> > I'm a bit puzzled by the patch because I don't understand it.
+>
+> The current implementation only calls chained_irq_enter() and chained_irq=
+_exit()
+> if it detects pending interrupts.
+>
+> ```
+> for (i =3D 0; i < info->stride; i++) {
+>         uregmap_read(info->map, id_reg + 4 * i, &reg);
+>         if (!reg)
+>                 continue;
+>
+>         chained_irq_enter(parent_chip, desc);
+> ```
+>
+> However, in case of GPIO pin configured in level mode and the parent cont=
+roller
+> configured in edge mode, GPIO interrupt might be lowered by the hardware.=
+ In the
+> result,if the interrupt is short enough, the parent interrupt is still pe=
+nding
+> while the GPIO interrupt is cleared; chained_irq_enter() never gets calle=
+d and
+> the system hangs trying to service the parent interrupt.
+>
+> Moving chained_irq_enter() and chained_irq_exit() outside the for loop en=
+sures
+> that they are called even when GPIO interrupt is lowered by the hardware.
+>
+> The similar code with chained_irq_enter() / chained_irq_exit() functions
+> wrapping interrupt checking loop may be found in many other drivers:
+> ```
+> grep -r -A 10 chained_irq_enter drivers/pinctrl
+> ```
+>
+> > This needs to describe how moving the chained irq calls achieves
+> > this effect.
+>
+> If the explanation above satisfies you, I'll elaborate the commit message=
+ and
+> resend the patch.
 
-Signed-off-by: Rosen Penev <rosenp@gmail.com>
----
- drivers/net/ethernet/mediatek/mtk_eth_soc.c | 6 ++----
- 1 file changed, 2 insertions(+), 4 deletions(-)
+Excellent explanation Sergey, just put it all in the committ message
+and I'll apply it!
 
-diff --git a/drivers/net/ethernet/mediatek/mtk_eth_soc.c b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-index 9aaaaa2a27dc..6d93f64f8748 100644
---- a/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-+++ b/drivers/net/ethernet/mediatek/mtk_eth_soc.c
-@@ -4328,10 +4328,8 @@ static void mtk_get_strings(struct net_device *dev, u32 stringset, u8 *data)
- 	case ETH_SS_STATS: {
- 		struct mtk_mac *mac = netdev_priv(dev);
- 
--		for (i = 0; i < ARRAY_SIZE(mtk_ethtool_stats); i++) {
--			memcpy(data, mtk_ethtool_stats[i].str, ETH_GSTRING_LEN);
--			data += ETH_GSTRING_LEN;
--		}
-+		for (i = 0; i < ARRAY_SIZE(mtk_ethtool_stats); i++)
-+			ethtool_puts(&data, mtk_ethtool_stats[i].str);
- 		if (mtk_page_pool_enabled(mac->hw))
- 			page_pool_ethtool_stats_get_strings(data);
- 		break;
--- 
-2.47.0
-
+Yours,
+Linus Walleij
 
