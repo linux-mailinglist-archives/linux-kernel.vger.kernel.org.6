@@ -1,280 +1,593 @@
-Return-Path: <linux-kernel+bounces-360428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7880C999AD7
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:03:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3633D999AD9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 086FB1F23A1B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:03:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30A9D1C2202E
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 03:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DB901F473B;
-	Fri, 11 Oct 2024 03:03:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED7161F472C;
+	Fri, 11 Oct 2024 03:05:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="MqdB9Jo9"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="waYg2olW"
+Received: from mail-il1-f177.google.com (mail-il1-f177.google.com [209.85.166.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A90FEBE;
-	Fri, 11 Oct 2024 03:03:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0286A125D6
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 03:05:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728615796; cv=none; b=sO6lOZLVZMJ1NFx4aCGXLE8LloL7eFBkXVLUT6LsFVCcq5gSSE9Hn4l63uTtq6rVm59RToivE96v9QMFBaud4oxetLD68aemNkQ9CxfH3lP9WtatTPr08ogUAQMmbQiNKnJAQzo7pBxQyGfAhH7ILLQ53huOLoPdaGJmFPawza4=
+	t=1728615942; cv=none; b=DQu72mmLvlaUltW7uOCm4UoA0Jt9AV/l836je/KSv+lSrHQpx47aTDhQjFkBAoxexg9Q/aXqkYC+bXxGlwSwij/414RTt2rHpP3XAIcPaN/eCWhPLakC/FZvdIMetGJrgAD5pLni5o/D5ohfp4iex/KTtmuOzolXrD8LSTds3n0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728615796; c=relaxed/simple;
-	bh=P3TSos/91W1lViiaVUcSn2jpJ+gJDjpOvwBp2Pw/FE4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=A0om1vNUark1YmmnSImhYdFwtZ/EcvAC2G9NHAY6UQ6mQEzyQI5+Wf6BkAlVAcAK4ExVNipkRMasRlaCjwYRR/qeQnlOxFPVRotjQ9U9h+1zuhUPlpzdhCS6ix/C4Ueuqq2ZlmiKtrmN0jTunX5shzmPYxcOvKVNvW6UPtCUTSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=MqdB9Jo9; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49ACSQX0011418;
-	Fri, 11 Oct 2024 03:03:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=6f3uHrKBFZE0TezqG7rTj2
-	3m1ABTyz8fgG6j+UM3RIY=; b=MqdB9Jo9sUkxOLHvK7QpNrh+ZOX2wEIKzUEicu
-	MT6514d7zJI4z6BNgiXMhhfc06ViRBOvVO0Nj2XcshACaWwMyjCmvrxqP3WTD2vm
-	DumIX8DgJ1Pbg88hx/r6Zqztut+7Ak6TrHwseWlF+VmWND2TFKdDilI5hggCHJQL
-	a5oahs1LPsdOT7Tk0SfjH2PuzosRBpRwLhwhA5NpghDiRqx5MNrxQwBUDKIudCPC
-	0TWZRJmHmBcwR37Ows4PWYmPt54kZsjxyR9LwNwDG/XJA9eqQHmcfgKxV+QLK8Hx
-	77t9ael0fHBj6EgLG8bNfGt7O+3RzNMFQmX9CAJQav3Td6Sw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 425xthvcfa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 03:03:07 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49B336f6003325
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 11 Oct 2024 03:03:07 GMT
-Received: from Z2-SFF-G9-MQ.ap.qualcomm.com (10.80.80.8) by
- nalasex01c.na.qualcomm.com (10.47.97.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 10 Oct 2024 20:03:03 -0700
-From: Miaoqing Pan <quic_miaoqing@quicinc.com>
-To: <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <agross@kernel.org>, <andersson@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <konrad.dybcio@linaro.org>,
-        <mchehab@kernel.org>, <quic_vgarodia@quicinc.com>,
-        <stanimir.k.varbanov@gmail.com>, <kvalo@kernel.org>,
-        <quic_jjohnson@quicinc.com>, <ath11k@lists.infradead.org>,
-        <dmitry.baryshkov@linaro.org>,
-        Miaoqing Pan <quic_miaoqing@quicinc.com>
-Subject: [PATCH v4] arm64: dts: qcom: sa8775p-ride: add WiFi/BT nodes
-Date: Fri, 11 Oct 2024 11:02:54 +0800
-Message-ID: <20241011030254.2915173-1-quic_miaoqing@quicinc.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1728615942; c=relaxed/simple;
+	bh=uxG69NmxwXJn6dIMqJdUT79VOiTA3apokYe0+eaEp2w=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NLLhocjUj4wKRh5NXWMewEGZvDsrvNTUUzH6AcHiH67BK+skUFBG8CmQ1xdnDkyiWiDEvtaurdaUFUbFSBxX3Uzq1mrvLC9ZX+2X9HmvyVGiBhmdjfsvuF0fWKe2Xe1Emf/9cXn5I2n+Pqsl/Xxhsonqx7N9/Mv6WQp5/yAUvMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=waYg2olW; arc=none smtp.client-ip=209.85.166.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f177.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so91965ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 20:05:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728615939; x=1729220739; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=meR1uwBZBpIrzRLj6OlVYNic8Q9h/wDJ9Kh8qWKcx/k=;
+        b=waYg2olW/M0s88D22qwHkNFDu+QObi+7x1J/7amgvYfKg/rqqLr5RpLbNLzZkGNs48
+         eIuJbb/MvTIH8WNi2IgTLdN3lcjdwCt13nZBUniiOc3m+T3gjR2kqYIF9MC/YG2Qp8Bi
+         NDOJjHXnZKGSKRI/5nkxF+isUOTdpDaMqA8lYF9SEbrS08mMjeWaEaBuaoF59YKESYYg
+         MLhfkzz2D2pe0OoERIk6OtmKed7Q4gEeBXR+e5VUwgdstj30EfC0AeXxgRNkEMWtHmAz
+         QN/Z/73xQVu/5UN1pntMPt59pb6nYRpvMd6OVZnMOvfstnyDbEPziVSf0qJBMDtyMkYm
+         jOlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728615939; x=1729220739;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=meR1uwBZBpIrzRLj6OlVYNic8Q9h/wDJ9Kh8qWKcx/k=;
+        b=Zwr+vcIbSn28lq9mm5JBZkmFAQ0xvC3KdNqRTA1ccDgudcVSsbxKeC5fyA0r1FQrb/
+         n8mvREDoLk17/FlYlY/TyhiHFxs/vccljYATLuR3ZFaGkQc02KLnKlm5ktKTWBofDMnq
+         JEQ0XNNsVF5S6/d4MM9I5GEqJWxC8IUds37MyK0s1/smKGa7r/FWfq/kvtRtM78zCPkW
+         zBMtTlmIMVFYMHGIM+smBeFo/1KmPeL6jwWtMfwMvqNjO1e9VSZqtd2+5JNFgIRXuSX9
+         jeSbweHs5JZg79s7CIGFtzhuM817rFZoekUHTWm+CLUoVCukjeFiA6SJ7rpVsYQV9BCI
+         7+2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVR/ZTUM8576L3nRPswOVLU0qLcv20JixEMiZJRhbcK5htgVxAVIN+PvdYaokO82dz92pDPUFiTsdTtdZE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhd+xnNL0Vr8cUqvyg24Q63w0YvKw3bEpSqTbyN8c2fyT4j5aA
+	+nweI4Rp4IbTx3DuJO8SHPhLoD1VVQAdaGbDNlHBuQmdq1D61jm2WsqCSy5erlhsSAZIPOJtAnD
+	+kDUyAZcUYtJC8dTEHaZhX1uixK3kjyr03Rdq
+X-Google-Smtp-Source: AGHT+IE+amfB8Te0J5PGDb8V4pRpzwOjn87J61zV9nlqijJi80RBuSL84acxhCOcutL6UqVBNkMmuyhe3c4KXqbwJok=
+X-Received: by 2002:a92:cda4:0:b0:39f:3778:c896 with SMTP id
+ e9e14a558f8ab-3a3b64f31d1mr1090755ab.5.1728615938651; Thu, 10 Oct 2024
+ 20:05:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: uSvkxu_kZc3dlzv4VtXSbwQNcn3-QWQD
-X-Proofpoint-GUID: uSvkxu_kZc3dlzv4VtXSbwQNcn3-QWQD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- malwarescore=0 suspectscore=0 spamscore=0 priorityscore=1501 bulkscore=0
- phishscore=0 clxscore=1015 mlxlogscore=999 impostorscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410110017
+References: <20230702162802.344176-1-rui.zhang@intel.com> <20241010213136.668672-1-jmattson@google.com>
+ <f5962c02ea46c3180e7c0e6e5e1f08f4209a1ca2.camel@intel.com>
+In-Reply-To: <f5962c02ea46c3180e7c0e6e5e1f08f4209a1ca2.camel@intel.com>
+From: Jim Mattson <jmattson@google.com>
+Date: Thu, 10 Oct 2024 20:05:25 -0700
+Message-ID: <CALMp9eQ9v0Ku0Kcrb2mwz6hb5FJRPKT1axyhX5pQ-nhrLzBY4g@mail.gmail.com>
+Subject: Re: [RFC PATCH] x86/acpi: Ignore invalid x2APIC entries
+To: "Zhang, Rui" <rui.zhang@intel.com>
+Cc: "ajorgens@google.com" <ajorgens@google.com>, "myrade@google.com" <myrade@google.com>, 
+	"bp@alien8.de" <bp@alien8.de>, "x86@kernel.org" <x86@kernel.org>, 
+	"peterz@infradead.org" <peterz@infradead.org>, "Tang, Feng" <feng.tang@intel.com>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"Wysocki, Rafael J" <rafael.j.wysocki@intel.com>, 
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>, "jay.chen@amd.com" <jay.chen@amd.com>, 
+	"vladteodor@google.com" <vladteodor@google.com>, "jon.grimm@amd.com" <jon.grimm@amd.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Add a node for the PMU module of the WCN6855 present on the sa8775p-ride
-board. Assign its LDO power outputs to the existing WiFi/Bluetooth module.
+On Thu, Oct 10, 2024 at 6:37=E2=80=AFPM Zhang, Rui <rui.zhang@intel.com> wr=
+ote:
+>
+> On Thu, 2024-10-10 at 14:31 -0700, Jim Mattson wrote:
+> > > Currently, kernel enumerates the possible CPUs by parsing both ACPI
+> > > MADT
+> > > Local APIC entries and x2APIC entries. So CPUs with "valid" APIC
+> > > IDs,
+> > > even if they have duplicated APIC IDs in Local APIC and x2APIC, are
+> > > always enumerated.
+> > >
+> > > Below is what ACPI MADT Local APIC and x2APIC describes on an
+> > > Ivebridge-EP system,
+> > >
+> > > [02Ch 0044   1]                Subtable Type : 00 [Processor Local
+> > > APIC]
+> > > [02Fh 0047   1]                Local Apic ID : 00
+> > > ...
+> > > [164h 0356   1]                Subtable Type : 00 [Processor Local
+> > > APIC]
+> > > [167h 0359   1]                Local Apic ID : 39
+> > > [16Ch 0364   1]                Subtable Type : 00 [Processor Local
+> > > APIC]
+> > > [16Fh 0367   1]                Local Apic ID : FF
+> > > ...
+> > > [3ECh 1004   1]                Subtable Type : 09 [Processor Local
+> > > x2APIC]
+> > > [3F0h 1008   4]                Processor x2Apic ID : 00000000
+> > > ...
+> > > [B5Ch 2908   1]                Subtable Type : 09 [Processor Local
+> > > x2APIC]
+> > > [B60h 2912   4]                Processor x2Apic ID : 00000077
+> > >
+> > > As a result, kernel shows "smpboot: Allowing 168 CPUs, 120 hotplug
+> > > CPUs".
+> > > And this wastes significant amount of memory for the per-cpu data.
+> > > Plus this also breaks
+> > > https://lore.kernel.org/all/87edm36qqb.ffs@tglx/,
+> > > because __max_logical_packages is over-estimated by the APIC IDs in
+> > > the x2APIC entries.
+> > >
+> > > According to
+> > > https://uefi.org/specs/ACPI/6.5/05_ACPI_Software_Programming_Model.ht=
+ml#processor-local-x2apic-structure
+> > > ,
+> > > "[Compatibility note] On some legacy OSes, Logical processors with
+> > > APIC
+> > > ID values less than 255 (whether in XAPIC or X2APIC mode) must use
+> > > the
+> > > Processor Local APIC structure to convey their APIC information to
+> > > OSPM,
+> > > and those processors must be declared in the DSDT using the
+> > > Processor()
+> > > keyword. Logical processors with APIC ID values 255 and greater
+> > > must use
+> > > the Processor Local x2APIC structure and be declared using the
+> > > Device()
+> > > keyword.".
+> > >
+> > > Enumerate CPUs from x2APIC enties with APIC ID values 255 or
+> > > greater,
+> > > when valid CPU from Local APIC is already detected.
+> > >
+> > > Signed-off-by: Zhang Rui <rui.zhang@intel.com>
+> > > ---
+> > > I didn't find any clear statement in the ACPI spec about if a
+> > > mixture of
+> > > Local APIC and x2APIC entries is allowed or not. So it would be
+> > > great if
+> > > this can be clarified.
+> >
+> > Has this been clarified?
+> >
+> > The reason that I ask is that Google Cloud has a 360 vCPU Zen4 VM
+> > occupying two virtual sockets, and the corresponding MADT table has a
+> > mixture of Local APIC and X2APIC entries.
+> >
+> > All of the LPUs in virtual socket 0 have extended APIC IDs below 255,
+> > and they have Local APIC entries. All of the LPUs in virtual socket 1
+> > have extended APIC IDs above 255, and they have X2APIC entries.
+> >
+> > Prior to this change, Linux assigned CPU numbers to all even-numbered
+> > LPUs on virtual socket 0, followed by all even-numbered LPUs on
+> > virtual socket 1, followed by all odd-numbered LPUs on virtual socket
+> > 0, followed by all odd-numbered LPUs on virtual socket 1.
+> >
+> > node  #0, CPUs:          #1   #2  ...   #87  #88  #89
+> > node  #1, CPUs:    #90  #91  #92  ...  #177 #178 #179
+> > node  #0, CPUs:   #180 #181 #182  ...  #267 #268 #269
+> > node  #1, CPUs:   #270 #271 #272  ...  #357 #358 #359
+> >
+> > After this change, however, Linux assigns CPU numbers to all LPUs on
+> > virtual socket 0 before assigning any CPU numbers to LPUs on virtual
+> > socket 1.
+> >
+> > node  #0, CPUs:          #1   #2  ...   #87  #88  #89
+> > node  #1, CPUs:   #180 #181 #182  ...  #267 #268 #269
+> > node  #0, CPUs:    #90  #91  #92  ...  #177 #178 #179
+> > node  #1, CPUs:   #270 #271 #272  ...  #357 #358 #359
+> >
+> > I suspect that this is because all Local APIC MADT entries are now
+> > processed before all X2APIC MADT entries, whereas they may have been
+> > interleaved before.
+>
+> agreed.
+> can you attach the acpidump to confirm this?
 
-Signed-off-by: Miaoqing Pan <quic_miaoqing@quicinc.com>
----
-v2:
-  - fix wcn6855-pmu compatible to "qcom,wcn6855-pmu".
-  - relocate pcieport0 node in alphabetical order.
-v3:
-  - add 'qcom,ath11k-calibration-variant = "SA8775P"'.
-v4:
-  - update 'ath11k-calibration-variant' to "Ride".
-v5:
-  - update 'Ride' to 'QC_SA8775P_Ride'.
----
- arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi | 121 +++++++++++++++++++++
- arch/arm64/boot/dts/qcom/sa8775p.dtsi      |   2 +-
- 2 files changed, 122 insertions(+), 1 deletion(-)
+I'm pretty sure LKML rejects attachments. Here's the parsed MADT:
 
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-index 0c1b21def4b6..c41fac1eb6c2 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p-ride.dtsi
-@@ -27,6 +27,83 @@ aliases {
- 	chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
-+
-+	vreg_conn_1p8: vreg_conn_1p8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_1p8";
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8654au_1_gpios 4 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	vreg_conn_pa: vreg_conn_pa {
-+		compatible = "regulator-fixed";
-+		regulator-name = "vreg_conn_pa";
-+		startup-delay-us = <4000>;
-+		enable-active-high;
-+		gpio = <&pmm8654au_1_gpios 6 GPIO_ACTIVE_HIGH>;
-+	};
-+
-+	wcn6855-pmu {
-+		compatible = "qcom,wcn6855-pmu";
-+
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&bt_en_state>, <&wlan_en_state>;
-+
-+		vddio-supply = <&vreg_conn_pa>;
-+		vddaon-supply = <&vreg_l2c>;
-+		vddpmu-supply = <&vreg_conn_1p8>;
-+		vddrfa0p95-supply = <&vreg_l2c>;
-+		vddrfa1p3-supply = <&vreg_l6e>;
-+		vddrfa1p9-supply = <&vreg_s5a>;
-+		vddpcie1p3-supply = <&vreg_l6e>;
-+		vddpcie1p9-supply = <&vreg_s5a>;
-+
-+		bt-enable-gpios = <&pmm8654au_1_gpios 8 GPIO_ACTIVE_HIGH>;
-+		wlan-enable-gpios = <&pmm8654au_1_gpios 7 GPIO_ACTIVE_HIGH>;
-+
-+		regulators {
-+			vreg_pmu_rfa_cmn: ldo0 {
-+				regulator-name = "vreg_pmu_rfa_cmn";
-+			};
-+
-+			vreg_pmu_aon_0p59: ldo1 {
-+				regulator-name = "vreg_pmu_aon_0p59";
-+			};
-+
-+			vreg_pmu_wlcx_0p8: ldo2 {
-+				regulator-name = "vreg_pmu_wlcx_0p8";
-+			};
-+
-+			vreg_pmu_wlmx_0p85: ldo3 {
-+				regulator-name = "vreg_pmu_wlmx_0p85";
-+			};
-+
-+			vreg_pmu_btcmx_0p85: ldo4 {
-+				regulator-name = "vreg_pmu_btcmx_0p85";
-+			};
-+
-+			vreg_pmu_rfa_0p8: ldo5 {
-+				regulator-name = "vreg_pmu_rfa_0p8";
-+			};
-+
-+			vreg_pmu_rfa_1p2: ldo6 {
-+				regulator-name = "vreg_pmu_rfa_1p2";
-+			};
-+
-+			vreg_pmu_rfa_1p7: ldo7 {
-+				regulator-name = "vreg_pmu_rfa_1p7";
-+			};
-+
-+			vreg_pmu_pcie_0p9: ldo8 {
-+				regulator-name = "vreg_pmu_pcie_0p9";
-+			};
-+
-+			vreg_pmu_pcie_1p8: ldo9 {
-+				regulator-name = "vreg_pmu_pcie_1p8";
-+			};
-+		};
-+	};
- };
- 
- &apps_rsc {
-@@ -453,6 +530,20 @@ &pmm8654au_1_gpios {
- 			  "USB2_PWR_EN",
- 			  "USB2_FAULT";
- 
-+	wlan_en_state: wlan-en-state {
-+		pins = "gpio7";
-+		function = "normal";
-+		output-low;
-+		bias-pull-down;
-+	};
-+
-+	bt_en_state: bt-en-state {
-+		pins = "gpio8";
-+		function = "normal";
-+		output-low;
-+		bias-pull-down;
-+	};
-+
- 	usb2_en_state: usb2-en-state {
- 		pins = "gpio9";
- 		function = "normal";
-@@ -702,6 +793,25 @@ &pcie1_phy {
- 	status = "okay";
- };
- 
-+&pcieport0 {
-+	wifi@0 {
-+		compatible = "pci17cb,1101";
-+		reg = <0x10000 0x0 0x0 0x0 0x0>;
-+
-+		qcom,ath11k-calibration-variant = "Ride";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddwlcx-supply = <&vreg_pmu_wlcx_0p8>;
-+		vddwlmx-supply = <&vreg_pmu_wlmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+		vddpcie0p9-supply = <&vreg_pmu_pcie_0p9>;
-+		vddpcie1p8-supply = <&vreg_pmu_pcie_1p8>;
-+	};
-+};
-+
- &remoteproc_adsp {
- 	firmware-name = "qcom/sa8775p/adsp.mbn";
- 	status = "okay";
-@@ -744,6 +854,17 @@ &uart17 {
- 	pinctrl-0 = <&qup_uart17_default>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+
-+	bluetooth {
-+		compatible = "qcom,wcn6855-bt";
-+
-+		vddrfacmn-supply = <&vreg_pmu_rfa_cmn>;
-+		vddaon-supply = <&vreg_pmu_aon_0p59>;
-+		vddbtcmx-supply = <&vreg_pmu_btcmx_0p85>;
-+		vddrfa0p8-supply = <&vreg_pmu_rfa_0p8>;
-+		vddrfa1p2-supply = <&vreg_pmu_rfa_1p2>;
-+		vddrfa1p7-supply = <&vreg_pmu_rfa_1p7>;
-+	};
- };
- 
- &ufs_mem_hc {
-diff --git a/arch/arm64/boot/dts/qcom/sa8775p.dtsi b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-index e8dbc8d820a6..8d42b5e9c7d6 100644
---- a/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sa8775p.dtsi
-@@ -5570,7 +5570,7 @@ pcie0: pcie@1c00000 {
- 
- 		status = "disabled";
- 
--		pcie@0 {
-+		pcieport0: pcie@0 {
- 			device_type = "pci";
- 			reg = <0x0 0x0 0x0 0x0 0x0>;
- 			bus-range = <0x01 0xff>;
--- 
-2.25.1
+ACPI: APIC (v005 Google GOOGAPIC 0x00000001 GOOG 0x00000001) @ 0x(nil)
+ACPI: LAPIC (acpi_id[0x00] lapic_id[0x00] enabled)
+ACPI: LAPIC (acpi_id[0x02] lapic_id[0x02] enabled)
+ACPI: LAPIC (acpi_id[0x04] lapic_id[0x04] enabled)
+ACPI: LAPIC (acpi_id[0x06] lapic_id[0x06] enabled)
+ACPI: LAPIC (acpi_id[0x08] lapic_id[0x08] enabled)
+ACPI: LAPIC (acpi_id[0x0a] lapic_id[0x0a] enabled)
+ACPI: LAPIC (acpi_id[0x0c] lapic_id[0x0c] enabled)
+ACPI: LAPIC (acpi_id[0x0e] lapic_id[0x0e] enabled)
+ACPI: LAPIC (acpi_id[0x10] lapic_id[0x10] enabled)
+ACPI: LAPIC (acpi_id[0x12] lapic_id[0x12] enabled)
+ACPI: LAPIC (acpi_id[0x14] lapic_id[0x14] enabled)
+ACPI: LAPIC (acpi_id[0x16] lapic_id[0x16] enabled)
+ACPI: LAPIC (acpi_id[0x18] lapic_id[0x18] enabled)
+ACPI: LAPIC (acpi_id[0x1a] lapic_id[0x1a] enabled)
+ACPI: LAPIC (acpi_id[0x1c] lapic_id[0x1c] enabled)
+ACPI: LAPIC (acpi_id[0x20] lapic_id[0x20] enabled)
+ACPI: LAPIC (acpi_id[0x22] lapic_id[0x22] enabled)
+ACPI: LAPIC (acpi_id[0x24] lapic_id[0x24] enabled)
+ACPI: LAPIC (acpi_id[0x26] lapic_id[0x26] enabled)
+ACPI: LAPIC (acpi_id[0x28] lapic_id[0x28] enabled)
+ACPI: LAPIC (acpi_id[0x2a] lapic_id[0x2a] enabled)
+ACPI: LAPIC (acpi_id[0x2c] lapic_id[0x2c] enabled)
+ACPI: LAPIC (acpi_id[0x2e] lapic_id[0x2e] enabled)
+ACPI: LAPIC (acpi_id[0x30] lapic_id[0x30] enabled)
+ACPI: LAPIC (acpi_id[0x32] lapic_id[0x32] enabled)
+ACPI: LAPIC (acpi_id[0x34] lapic_id[0x34] enabled)
+ACPI: LAPIC (acpi_id[0x36] lapic_id[0x36] enabled)
+ACPI: LAPIC (acpi_id[0x38] lapic_id[0x38] enabled)
+ACPI: LAPIC (acpi_id[0x3a] lapic_id[0x3a] enabled)
+ACPI: LAPIC (acpi_id[0x3c] lapic_id[0x3c] enabled)
+ACPI: LAPIC (acpi_id[0x40] lapic_id[0x40] enabled)
+ACPI: LAPIC (acpi_id[0x42] lapic_id[0x42] enabled)
+ACPI: LAPIC (acpi_id[0x44] lapic_id[0x44] enabled)
+ACPI: LAPIC (acpi_id[0x46] lapic_id[0x46] enabled)
+ACPI: LAPIC (acpi_id[0x48] lapic_id[0x48] enabled)
+ACPI: LAPIC (acpi_id[0x4a] lapic_id[0x4a] enabled)
+ACPI: LAPIC (acpi_id[0x4c] lapic_id[0x4c] enabled)
+ACPI: LAPIC (acpi_id[0x4e] lapic_id[0x4e] enabled)
+ACPI: LAPIC (acpi_id[0x50] lapic_id[0x50] enabled)
+ACPI: LAPIC (acpi_id[0x52] lapic_id[0x52] enabled)
+ACPI: LAPIC (acpi_id[0x54] lapic_id[0x54] enabled)
+ACPI: LAPIC (acpi_id[0x56] lapic_id[0x56] enabled)
+ACPI: LAPIC (acpi_id[0x58] lapic_id[0x58] enabled)
+ACPI: LAPIC (acpi_id[0x5a] lapic_id[0x5a] enabled)
+ACPI: LAPIC (acpi_id[0x5c] lapic_id[0x5c] enabled)
+ACPI: LAPIC (acpi_id[0x60] lapic_id[0x60] enabled)
+ACPI: LAPIC (acpi_id[0x62] lapic_id[0x62] enabled)
+ACPI: LAPIC (acpi_id[0x64] lapic_id[0x64] enabled)
+ACPI: LAPIC (acpi_id[0x66] lapic_id[0x66] enabled)
+ACPI: LAPIC (acpi_id[0x68] lapic_id[0x68] enabled)
+ACPI: LAPIC (acpi_id[0x6a] lapic_id[0x6a] enabled)
+ACPI: LAPIC (acpi_id[0x6c] lapic_id[0x6c] enabled)
+ACPI: LAPIC (acpi_id[0x6e] lapic_id[0x6e] enabled)
+ACPI: LAPIC (acpi_id[0x70] lapic_id[0x70] enabled)
+ACPI: LAPIC (acpi_id[0x72] lapic_id[0x72] enabled)
+ACPI: LAPIC (acpi_id[0x74] lapic_id[0x74] enabled)
+ACPI: LAPIC (acpi_id[0x76] lapic_id[0x76] enabled)
+ACPI: LAPIC (acpi_id[0x78] lapic_id[0x78] enabled)
+ACPI: LAPIC (acpi_id[0x7a] lapic_id[0x7a] enabled)
+ACPI: LAPIC (acpi_id[0x7c] lapic_id[0x7c] enabled)
+ACPI: LAPIC (acpi_id[0x80] lapic_id[0x80] enabled)
+ACPI: LAPIC (acpi_id[0x82] lapic_id[0x82] enabled)
+ACPI: LAPIC (acpi_id[0x84] lapic_id[0x84] enabled)
+ACPI: LAPIC (acpi_id[0x86] lapic_id[0x86] enabled)
+ACPI: LAPIC (acpi_id[0x88] lapic_id[0x88] enabled)
+ACPI: LAPIC (acpi_id[0x8a] lapic_id[0x8a] enabled)
+ACPI: LAPIC (acpi_id[0x8c] lapic_id[0x8c] enabled)
+ACPI: LAPIC (acpi_id[0x8e] lapic_id[0x8e] enabled)
+ACPI: LAPIC (acpi_id[0x90] lapic_id[0x90] enabled)
+ACPI: LAPIC (acpi_id[0x92] lapic_id[0x92] enabled)
+ACPI: LAPIC (acpi_id[0x94] lapic_id[0x94] enabled)
+ACPI: LAPIC (acpi_id[0x96] lapic_id[0x96] enabled)
+ACPI: LAPIC (acpi_id[0x98] lapic_id[0x98] enabled)
+ACPI: LAPIC (acpi_id[0x9a] lapic_id[0x9a] enabled)
+ACPI: LAPIC (acpi_id[0x9c] lapic_id[0x9c] enabled)
+ACPI: LAPIC (acpi_id[0xa0] lapic_id[0xa0] enabled)
+ACPI: LAPIC (acpi_id[0xa2] lapic_id[0xa2] enabled)
+ACPI: LAPIC (acpi_id[0xa4] lapic_id[0xa4] enabled)
+ACPI: LAPIC (acpi_id[0xa6] lapic_id[0xa6] enabled)
+ACPI: LAPIC (acpi_id[0xa8] lapic_id[0xa8] enabled)
+ACPI: LAPIC (acpi_id[0xaa] lapic_id[0xaa] enabled)
+ACPI: LAPIC (acpi_id[0xac] lapic_id[0xac] enabled)
+ACPI: LAPIC (acpi_id[0xae] lapic_id[0xae] enabled)
+ACPI: LAPIC (acpi_id[0xb0] lapic_id[0xb0] enabled)
+ACPI: LAPIC (acpi_id[0xb2] lapic_id[0xb2] enabled)
+ACPI: LAPIC (acpi_id[0xb4] lapic_id[0xb4] enabled)
+ACPI: LAPIC (acpi_id[0xb6] lapic_id[0xb6] enabled)
+ACPI: LAPIC (acpi_id[0xb8] lapic_id[0xb8] enabled)
+ACPI: LAPIC (acpi_id[0xba] lapic_id[0xba] enabled)
+ACPI: LAPIC (acpi_id[0xbc] lapic_id[0xbc] enabled)
+ACPI: X2APIC (apic_id[0x100] uid[0x100] enabled)
+ACPI: X2APIC (apic_id[0x102] uid[0x102] enabled)
+ACPI: X2APIC (apic_id[0x104] uid[0x104] enabled)
+ACPI: X2APIC (apic_id[0x106] uid[0x106] enabled)
+ACPI: X2APIC (apic_id[0x108] uid[0x108] enabled)
+ACPI: X2APIC (apic_id[0x10a] uid[0x10a] enabled)
+ACPI: X2APIC (apic_id[0x10c] uid[0x10c] enabled)
+ACPI: X2APIC (apic_id[0x10e] uid[0x10e] enabled)
+ACPI: X2APIC (apic_id[0x110] uid[0x110] enabled)
+ACPI: X2APIC (apic_id[0x112] uid[0x112] enabled)
+ACPI: X2APIC (apic_id[0x114] uid[0x114] enabled)
+ACPI: X2APIC (apic_id[0x116] uid[0x116] enabled)
+ACPI: X2APIC (apic_id[0x118] uid[0x118] enabled)
+ACPI: X2APIC (apic_id[0x11a] uid[0x11a] enabled)
+ACPI: X2APIC (apic_id[0x11c] uid[0x11c] enabled)
+ACPI: X2APIC (apic_id[0x120] uid[0x120] enabled)
+ACPI: X2APIC (apic_id[0x122] uid[0x122] enabled)
+ACPI: X2APIC (apic_id[0x124] uid[0x124] enabled)
+ACPI: X2APIC (apic_id[0x126] uid[0x126] enabled)
+ACPI: X2APIC (apic_id[0x128] uid[0x128] enabled)
+ACPI: X2APIC (apic_id[0x12a] uid[0x12a] enabled)
+ACPI: X2APIC (apic_id[0x12c] uid[0x12c] enabled)
+ACPI: X2APIC (apic_id[0x12e] uid[0x12e] enabled)
+ACPI: X2APIC (apic_id[0x130] uid[0x130] enabled)
+ACPI: X2APIC (apic_id[0x132] uid[0x132] enabled)
+ACPI: X2APIC (apic_id[0x134] uid[0x134] enabled)
+ACPI: X2APIC (apic_id[0x136] uid[0x136] enabled)
+ACPI: X2APIC (apic_id[0x138] uid[0x138] enabled)
+ACPI: X2APIC (apic_id[0x13a] uid[0x13a] enabled)
+ACPI: X2APIC (apic_id[0x13c] uid[0x13c] enabled)
+ACPI: X2APIC (apic_id[0x140] uid[0x140] enabled)
+ACPI: X2APIC (apic_id[0x142] uid[0x142] enabled)
+ACPI: X2APIC (apic_id[0x144] uid[0x144] enabled)
+ACPI: X2APIC (apic_id[0x146] uid[0x146] enabled)
+ACPI: X2APIC (apic_id[0x148] uid[0x148] enabled)
+ACPI: X2APIC (apic_id[0x14a] uid[0x14a] enabled)
+ACPI: X2APIC (apic_id[0x14c] uid[0x14c] enabled)
+ACPI: X2APIC (apic_id[0x14e] uid[0x14e] enabled)
+ACPI: X2APIC (apic_id[0x150] uid[0x150] enabled)
+ACPI: X2APIC (apic_id[0x152] uid[0x152] enabled)
+ACPI: X2APIC (apic_id[0x154] uid[0x154] enabled)
+ACPI: X2APIC (apic_id[0x156] uid[0x156] enabled)
+ACPI: X2APIC (apic_id[0x158] uid[0x158] enabled)
+ACPI: X2APIC (apic_id[0x15a] uid[0x15a] enabled)
+ACPI: X2APIC (apic_id[0x15c] uid[0x15c] enabled)
+ACPI: X2APIC (apic_id[0x160] uid[0x160] enabled)
+ACPI: X2APIC (apic_id[0x162] uid[0x162] enabled)
+ACPI: X2APIC (apic_id[0x164] uid[0x164] enabled)
+ACPI: X2APIC (apic_id[0x166] uid[0x166] enabled)
+ACPI: X2APIC (apic_id[0x168] uid[0x168] enabled)
+ACPI: X2APIC (apic_id[0x16a] uid[0x16a] enabled)
+ACPI: X2APIC (apic_id[0x16c] uid[0x16c] enabled)
+ACPI: X2APIC (apic_id[0x16e] uid[0x16e] enabled)
+ACPI: X2APIC (apic_id[0x170] uid[0x170] enabled)
+ACPI: X2APIC (apic_id[0x172] uid[0x172] enabled)
+ACPI: X2APIC (apic_id[0x174] uid[0x174] enabled)
+ACPI: X2APIC (apic_id[0x176] uid[0x176] enabled)
+ACPI: X2APIC (apic_id[0x178] uid[0x178] enabled)
+ACPI: X2APIC (apic_id[0x17a] uid[0x17a] enabled)
+ACPI: X2APIC (apic_id[0x17c] uid[0x17c] enabled)
+ACPI: X2APIC (apic_id[0x180] uid[0x180] enabled)
+ACPI: X2APIC (apic_id[0x182] uid[0x182] enabled)
+ACPI: X2APIC (apic_id[0x184] uid[0x184] enabled)
+ACPI: X2APIC (apic_id[0x186] uid[0x186] enabled)
+ACPI: X2APIC (apic_id[0x188] uid[0x188] enabled)
+ACPI: X2APIC (apic_id[0x18a] uid[0x18a] enabled)
+ACPI: X2APIC (apic_id[0x18c] uid[0x18c] enabled)
+ACPI: X2APIC (apic_id[0x18e] uid[0x18e] enabled)
+ACPI: X2APIC (apic_id[0x190] uid[0x190] enabled)
+ACPI: X2APIC (apic_id[0x192] uid[0x192] enabled)
+ACPI: X2APIC (apic_id[0x194] uid[0x194] enabled)
+ACPI: X2APIC (apic_id[0x196] uid[0x196] enabled)
+ACPI: X2APIC (apic_id[0x198] uid[0x198] enabled)
+ACPI: X2APIC (apic_id[0x19a] uid[0x19a] enabled)
+ACPI: X2APIC (apic_id[0x19c] uid[0x19c] enabled)
+ACPI: X2APIC (apic_id[0x1a0] uid[0x1a0] enabled)
+ACPI: X2APIC (apic_id[0x1a2] uid[0x1a2] enabled)
+ACPI: X2APIC (apic_id[0x1a4] uid[0x1a4] enabled)
+ACPI: X2APIC (apic_id[0x1a6] uid[0x1a6] enabled)
+ACPI: X2APIC (apic_id[0x1a8] uid[0x1a8] enabled)
+ACPI: X2APIC (apic_id[0x1aa] uid[0x1aa] enabled)
+ACPI: X2APIC (apic_id[0x1ac] uid[0x1ac] enabled)
+ACPI: X2APIC (apic_id[0x1ae] uid[0x1ae] enabled)
+ACPI: X2APIC (apic_id[0x1b0] uid[0x1b0] enabled)
+ACPI: X2APIC (apic_id[0x1b2] uid[0x1b2] enabled)
+ACPI: X2APIC (apic_id[0x1b4] uid[0x1b4] enabled)
+ACPI: X2APIC (apic_id[0x1b6] uid[0x1b6] enabled)
+ACPI: X2APIC (apic_id[0x1b8] uid[0x1b8] enabled)
+ACPI: X2APIC (apic_id[0x1ba] uid[0x1ba] enabled)
+ACPI: X2APIC (apic_id[0x1bc] uid[0x1bc] enabled)
+ACPI: LAPIC (acpi_id[0x01] lapic_id[0x01] enabled)
+ACPI: LAPIC (acpi_id[0x03] lapic_id[0x03] enabled)
+ACPI: LAPIC (acpi_id[0x05] lapic_id[0x05] enabled)
+ACPI: LAPIC (acpi_id[0x07] lapic_id[0x07] enabled)
+ACPI: LAPIC (acpi_id[0x09] lapic_id[0x09] enabled)
+ACPI: LAPIC (acpi_id[0x0b] lapic_id[0x0b] enabled)
+ACPI: LAPIC (acpi_id[0x0d] lapic_id[0x0d] enabled)
+ACPI: LAPIC (acpi_id[0x0f] lapic_id[0x0f] enabled)
+ACPI: LAPIC (acpi_id[0x11] lapic_id[0x11] enabled)
+ACPI: LAPIC (acpi_id[0x13] lapic_id[0x13] enabled)
+ACPI: LAPIC (acpi_id[0x15] lapic_id[0x15] enabled)
+ACPI: LAPIC (acpi_id[0x17] lapic_id[0x17] enabled)
+ACPI: LAPIC (acpi_id[0x19] lapic_id[0x19] enabled)
+ACPI: LAPIC (acpi_id[0x1b] lapic_id[0x1b] enabled)
+ACPI: LAPIC (acpi_id[0x1d] lapic_id[0x1d] enabled)
+ACPI: LAPIC (acpi_id[0x21] lapic_id[0x21] enabled)
+ACPI: LAPIC (acpi_id[0x23] lapic_id[0x23] enabled)
+ACPI: LAPIC (acpi_id[0x25] lapic_id[0x25] enabled)
+ACPI: LAPIC (acpi_id[0x27] lapic_id[0x27] enabled)
+ACPI: LAPIC (acpi_id[0x29] lapic_id[0x29] enabled)
+ACPI: LAPIC (acpi_id[0x2b] lapic_id[0x2b] enabled)
+ACPI: LAPIC (acpi_id[0x2d] lapic_id[0x2d] enabled)
+ACPI: LAPIC (acpi_id[0x2f] lapic_id[0x2f] enabled)
+ACPI: LAPIC (acpi_id[0x31] lapic_id[0x31] enabled)
+ACPI: LAPIC (acpi_id[0x33] lapic_id[0x33] enabled)
+ACPI: LAPIC (acpi_id[0x35] lapic_id[0x35] enabled)
+ACPI: LAPIC (acpi_id[0x37] lapic_id[0x37] enabled)
+ACPI: LAPIC (acpi_id[0x39] lapic_id[0x39] enabled)
+ACPI: LAPIC (acpi_id[0x3b] lapic_id[0x3b] enabled)
+ACPI: LAPIC (acpi_id[0x3d] lapic_id[0x3d] enabled)
+ACPI: LAPIC (acpi_id[0x41] lapic_id[0x41] enabled)
+ACPI: LAPIC (acpi_id[0x43] lapic_id[0x43] enabled)
+ACPI: LAPIC (acpi_id[0x45] lapic_id[0x45] enabled)
+ACPI: LAPIC (acpi_id[0x47] lapic_id[0x47] enabled)
+ACPI: LAPIC (acpi_id[0x49] lapic_id[0x49] enabled)
+ACPI: LAPIC (acpi_id[0x4b] lapic_id[0x4b] enabled)
+ACPI: LAPIC (acpi_id[0x4d] lapic_id[0x4d] enabled)
+ACPI: LAPIC (acpi_id[0x4f] lapic_id[0x4f] enabled)
+ACPI: LAPIC (acpi_id[0x51] lapic_id[0x51] enabled)
+ACPI: LAPIC (acpi_id[0x53] lapic_id[0x53] enabled)
+ACPI: LAPIC (acpi_id[0x55] lapic_id[0x55] enabled)
+ACPI: LAPIC (acpi_id[0x57] lapic_id[0x57] enabled)
+ACPI: LAPIC (acpi_id[0x59] lapic_id[0x59] enabled)
+ACPI: LAPIC (acpi_id[0x5b] lapic_id[0x5b] enabled)
+ACPI: LAPIC (acpi_id[0x5d] lapic_id[0x5d] enabled)
+ACPI: LAPIC (acpi_id[0x61] lapic_id[0x61] enabled)
+ACPI: LAPIC (acpi_id[0x63] lapic_id[0x63] enabled)
+ACPI: LAPIC (acpi_id[0x65] lapic_id[0x65] enabled)
+ACPI: LAPIC (acpi_id[0x67] lapic_id[0x67] enabled)
+ACPI: LAPIC (acpi_id[0x69] lapic_id[0x69] enabled)
+ACPI: LAPIC (acpi_id[0x6b] lapic_id[0x6b] enabled)
+ACPI: LAPIC (acpi_id[0x6d] lapic_id[0x6d] enabled)
+ACPI: LAPIC (acpi_id[0x6f] lapic_id[0x6f] enabled)
+ACPI: LAPIC (acpi_id[0x71] lapic_id[0x71] enabled)
+ACPI: LAPIC (acpi_id[0x73] lapic_id[0x73] enabled)
+ACPI: LAPIC (acpi_id[0x75] lapic_id[0x75] enabled)
+ACPI: LAPIC (acpi_id[0x77] lapic_id[0x77] enabled)
+ACPI: LAPIC (acpi_id[0x79] lapic_id[0x79] enabled)
+ACPI: LAPIC (acpi_id[0x7b] lapic_id[0x7b] enabled)
+ACPI: LAPIC (acpi_id[0x7d] lapic_id[0x7d] enabled)
+ACPI: LAPIC (acpi_id[0x81] lapic_id[0x81] enabled)
+ACPI: LAPIC (acpi_id[0x83] lapic_id[0x83] enabled)
+ACPI: LAPIC (acpi_id[0x85] lapic_id[0x85] enabled)
+ACPI: LAPIC (acpi_id[0x87] lapic_id[0x87] enabled)
+ACPI: LAPIC (acpi_id[0x89] lapic_id[0x89] enabled)
+ACPI: LAPIC (acpi_id[0x8b] lapic_id[0x8b] enabled)
+ACPI: LAPIC (acpi_id[0x8d] lapic_id[0x8d] enabled)
+ACPI: LAPIC (acpi_id[0x8f] lapic_id[0x8f] enabled)
+ACPI: LAPIC (acpi_id[0x91] lapic_id[0x91] enabled)
+ACPI: LAPIC (acpi_id[0x93] lapic_id[0x93] enabled)
+ACPI: LAPIC (acpi_id[0x95] lapic_id[0x95] enabled)
+ACPI: LAPIC (acpi_id[0x97] lapic_id[0x97] enabled)
+ACPI: LAPIC (acpi_id[0x99] lapic_id[0x99] enabled)
+ACPI: LAPIC (acpi_id[0x9b] lapic_id[0x9b] enabled)
+ACPI: LAPIC (acpi_id[0x9d] lapic_id[0x9d] enabled)
+ACPI: LAPIC (acpi_id[0xa1] lapic_id[0xa1] enabled)
+ACPI: LAPIC (acpi_id[0xa3] lapic_id[0xa3] enabled)
+ACPI: LAPIC (acpi_id[0xa5] lapic_id[0xa5] enabled)
+ACPI: LAPIC (acpi_id[0xa7] lapic_id[0xa7] enabled)
+ACPI: LAPIC (acpi_id[0xa9] lapic_id[0xa9] enabled)
+ACPI: LAPIC (acpi_id[0xab] lapic_id[0xab] enabled)
+ACPI: LAPIC (acpi_id[0xad] lapic_id[0xad] enabled)
+ACPI: LAPIC (acpi_id[0xaf] lapic_id[0xaf] enabled)
+ACPI: LAPIC (acpi_id[0xb1] lapic_id[0xb1] enabled)
+ACPI: LAPIC (acpi_id[0xb3] lapic_id[0xb3] enabled)
+ACPI: LAPIC (acpi_id[0xb5] lapic_id[0xb5] enabled)
+ACPI: LAPIC (acpi_id[0xb7] lapic_id[0xb7] enabled)
+ACPI: LAPIC (acpi_id[0xb9] lapic_id[0xb9] enabled)
+ACPI: LAPIC (acpi_id[0xbb] lapic_id[0xbb] enabled)
+ACPI: LAPIC (acpi_id[0xbd] lapic_id[0xbd] enabled)
+ACPI: X2APIC (apic_id[0x101] uid[0x101] enabled)
+ACPI: X2APIC (apic_id[0x103] uid[0x103] enabled)
+ACPI: X2APIC (apic_id[0x105] uid[0x105] enabled)
+ACPI: X2APIC (apic_id[0x107] uid[0x107] enabled)
+ACPI: X2APIC (apic_id[0x109] uid[0x109] enabled)
+ACPI: X2APIC (apic_id[0x10b] uid[0x10b] enabled)
+ACPI: X2APIC (apic_id[0x10d] uid[0x10d] enabled)
+ACPI: X2APIC (apic_id[0x10f] uid[0x10f] enabled)
+ACPI: X2APIC (apic_id[0x111] uid[0x111] enabled)
+ACPI: X2APIC (apic_id[0x113] uid[0x113] enabled)
+ACPI: X2APIC (apic_id[0x115] uid[0x115] enabled)
+ACPI: X2APIC (apic_id[0x117] uid[0x117] enabled)
+ACPI: X2APIC (apic_id[0x119] uid[0x119] enabled)
+ACPI: X2APIC (apic_id[0x11b] uid[0x11b] enabled)
+ACPI: X2APIC (apic_id[0x11d] uid[0x11d] enabled)
+ACPI: X2APIC (apic_id[0x121] uid[0x121] enabled)
+ACPI: X2APIC (apic_id[0x123] uid[0x123] enabled)
+ACPI: X2APIC (apic_id[0x125] uid[0x125] enabled)
+ACPI: X2APIC (apic_id[0x127] uid[0x127] enabled)
+ACPI: X2APIC (apic_id[0x129] uid[0x129] enabled)
+ACPI: X2APIC (apic_id[0x12b] uid[0x12b] enabled)
+ACPI: X2APIC (apic_id[0x12d] uid[0x12d] enabled)
+ACPI: X2APIC (apic_id[0x12f] uid[0x12f] enabled)
+ACPI: X2APIC (apic_id[0x131] uid[0x131] enabled)
+ACPI: X2APIC (apic_id[0x133] uid[0x133] enabled)
+ACPI: X2APIC (apic_id[0x135] uid[0x135] enabled)
+ACPI: X2APIC (apic_id[0x137] uid[0x137] enabled)
+ACPI: X2APIC (apic_id[0x139] uid[0x139] enabled)
+ACPI: X2APIC (apic_id[0x13b] uid[0x13b] enabled)
+ACPI: X2APIC (apic_id[0x13d] uid[0x13d] enabled)
+ACPI: X2APIC (apic_id[0x141] uid[0x141] enabled)
+ACPI: X2APIC (apic_id[0x143] uid[0x143] enabled)
+ACPI: X2APIC (apic_id[0x145] uid[0x145] enabled)
+ACPI: X2APIC (apic_id[0x147] uid[0x147] enabled)
+ACPI: X2APIC (apic_id[0x149] uid[0x149] enabled)
+ACPI: X2APIC (apic_id[0x14b] uid[0x14b] enabled)
+ACPI: X2APIC (apic_id[0x14d] uid[0x14d] enabled)
+ACPI: X2APIC (apic_id[0x14f] uid[0x14f] enabled)
+ACPI: X2APIC (apic_id[0x151] uid[0x151] enabled)
+ACPI: X2APIC (apic_id[0x153] uid[0x153] enabled)
+ACPI: X2APIC (apic_id[0x155] uid[0x155] enabled)
+ACPI: X2APIC (apic_id[0x157] uid[0x157] enabled)
+ACPI: X2APIC (apic_id[0x159] uid[0x159] enabled)
+ACPI: X2APIC (apic_id[0x15b] uid[0x15b] enabled)
+ACPI: X2APIC (apic_id[0x15d] uid[0x15d] enabled)
+ACPI: X2APIC (apic_id[0x161] uid[0x161] enabled)
+ACPI: X2APIC (apic_id[0x163] uid[0x163] enabled)
+ACPI: X2APIC (apic_id[0x165] uid[0x165] enabled)
+ACPI: X2APIC (apic_id[0x167] uid[0x167] enabled)
+ACPI: X2APIC (apic_id[0x169] uid[0x169] enabled)
+ACPI: X2APIC (apic_id[0x16b] uid[0x16b] enabled)
+ACPI: X2APIC (apic_id[0x16d] uid[0x16d] enabled)
+ACPI: X2APIC (apic_id[0x16f] uid[0x16f] enabled)
+ACPI: X2APIC (apic_id[0x171] uid[0x171] enabled)
+ACPI: X2APIC (apic_id[0x173] uid[0x173] enabled)
+ACPI: X2APIC (apic_id[0x175] uid[0x175] enabled)
+ACPI: X2APIC (apic_id[0x177] uid[0x177] enabled)
+ACPI: X2APIC (apic_id[0x179] uid[0x179] enabled)
+ACPI: X2APIC (apic_id[0x17b] uid[0x17b] enabled)
+ACPI: X2APIC (apic_id[0x17d] uid[0x17d] enabled)
+ACPI: X2APIC (apic_id[0x181] uid[0x181] enabled)
+ACPI: X2APIC (apic_id[0x183] uid[0x183] enabled)
+ACPI: X2APIC (apic_id[0x185] uid[0x185] enabled)
+ACPI: X2APIC (apic_id[0x187] uid[0x187] enabled)
+ACPI: X2APIC (apic_id[0x189] uid[0x189] enabled)
+ACPI: X2APIC (apic_id[0x18b] uid[0x18b] enabled)
+ACPI: X2APIC (apic_id[0x18d] uid[0x18d] enabled)
+ACPI: X2APIC (apic_id[0x18f] uid[0x18f] enabled)
+ACPI: X2APIC (apic_id[0x191] uid[0x191] enabled)
+ACPI: X2APIC (apic_id[0x193] uid[0x193] enabled)
+ACPI: X2APIC (apic_id[0x195] uid[0x195] enabled)
+ACPI: X2APIC (apic_id[0x197] uid[0x197] enabled)
+ACPI: X2APIC (apic_id[0x199] uid[0x199] enabled)
+ACPI: X2APIC (apic_id[0x19b] uid[0x19b] enabled)
+ACPI: X2APIC (apic_id[0x19d] uid[0x19d] enabled)
+ACPI: X2APIC (apic_id[0x1a1] uid[0x1a1] enabled)
+ACPI: X2APIC (apic_id[0x1a3] uid[0x1a3] enabled)
+ACPI: X2APIC (apic_id[0x1a5] uid[0x1a5] enabled)
+ACPI: X2APIC (apic_id[0x1a7] uid[0x1a7] enabled)
+ACPI: X2APIC (apic_id[0x1a9] uid[0x1a9] enabled)
+ACPI: X2APIC (apic_id[0x1ab] uid[0x1ab] enabled)
+ACPI: X2APIC (apic_id[0x1ad] uid[0x1ad] enabled)
+ACPI: X2APIC (apic_id[0x1af] uid[0x1af] enabled)
+ACPI: X2APIC (apic_id[0x1b1] uid[0x1b1] enabled)
+ACPI: X2APIC (apic_id[0x1b3] uid[0x1b3] enabled)
+ACPI: X2APIC (apic_id[0x1b5] uid[0x1b5] enabled)
+ACPI: X2APIC (apic_id[0x1b7] uid[0x1b7] enabled)
+ACPI: X2APIC (apic_id[0x1b9] uid[0x1b9] enabled)
+ACPI: X2APIC (apic_id[0x1bb] uid[0x1bb] enabled)
+ACPI: X2APIC (apic_id[0x1bd] uid[0x1bd] enabled)
+ACPI: IOAPIC (id[0x00] address[0xfec00000] global_irq_base[0x0])
+ACPI: INT_SRC_OVR (bus 0 bus_irq 5 global_irq 5 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 9 global_irq 9 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 10 global_irq 10 high level)
+ACPI: INT_SRC_OVR (bus 0 bus_irq 11 global_irq 11 high level)
+ACPI: LAPIC_NMI (acpi_id[0xff] dfl dfl lint[0x1])
 
+> >
+> > TBH, I'm not sure that there is actually anything wrong with the new
+> > numbering scheme.
+> >  The topology is reported correctly (e.g. in
+> > /sys/devices/system/cpu/cpu0/topology/thread_siblings_list). Yet, the
+> > new enumeration does seem to contradict user expectations.
+> >
+>
+> Well, we can say this is a violation of the ACPI spec.
+> "OSPM should initialize processors in the order that they appear in the
+> MADT." even for interleaved LAPIC and X2APIC entries.
+
+Ah. Thanks. I didn't know that.
+
+> Maybe we need two steps for LAPIC/X2APIC parsing.
+> 1. check if there is valid LAPIC entry by going through all LAPIC
+> entries first
+> 2. parse LAPIC/X2APIC strictly following the order in MADT. (like we do
+> before)
+
+That makes sense to me.
+
+Thanks,
+
+--jim
 
