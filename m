@@ -1,136 +1,143 @@
-Return-Path: <linux-kernel+bounces-361341-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361342-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3788699A703
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:56:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DDC99A706
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 16:56:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7B7E28476C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:56:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6471F248AF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:56:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 090F6183CA5;
-	Fri, 11 Oct 2024 14:56:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAEFD187FE4;
+	Fri, 11 Oct 2024 14:56:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PDkYX37F"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kTJd1OuT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27B32405FB
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 14:56:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B354405FB;
+	Fri, 11 Oct 2024 14:56:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728658583; cv=none; b=t1UqeGL9dXU3AyLo3Fhy59hZdRigpEa/sM4dySDjuMfqpLxqUDhsD/tLEH+r7y3S4Oz9c0aisRaMBj14vOf0qv15miSQ4JvvRc8uP/Z1rh7SgHqi+SOlFfn8b9JkCNKU/k0iC9aEx9vP7gYxfprRs97FcNye2O/tAFNu/ZrF5c0=
+	t=1728658597; cv=none; b=t2wOrW+hErqmqcyHwLQ+GGnSTrVypCPjOjKWDOzbus8lgiH62zh/aCV5n73c9iCkRfcpKRt7yDo9oCr5Yhvewd+cXqJyH1qckfLLVgm4eFIw+emYZavlHKyYJitDZ7mnfHLo9HdWW6wMNvdefEryHLnXcNMPnHZ1TbnJ5biGUXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728658583; c=relaxed/simple;
-	bh=Gp0dRdcDw/2Hws/klO3z/53EQmGE70/7EXAiIMjd2wM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dpqVC+s9RCrOAZoGQqohvQ5moeGJ3jGn36u8quQgEGQSwkrjOHvqkV63HM0JrVMqr0DiHoM7ZayuwD2CA6HL8rHUPNYaY/BvVTvrso4/LAPiMcAhlHg52eGiXWg72SmtUN4KeUncIfzaDDq1N7usYCuiihfYhAWC/TOT4c3LqOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PDkYX37F; arc=none smtp.client-ip=209.85.210.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71df67c6881so1848394b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 07:56:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728658581; x=1729263381; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=nF9Cu1yFnAPbe7jbcVtURgq11ehq1BMyC9tPOtmnXf4=;
-        b=PDkYX37FesA7T5UFKJrg/mRVEdbkeXm52drVZcfK5KYQd0q28wh8P5tRVARB8b87kd
-         umoGzb4BVlHds7j97WhmMhgNHM15BM/L4Ja36IJBjPxUP0b0ReYtYPbE555ZZUaeDDdK
-         Dy/BPoM5S8xQayUrlvK13FxUhjnGyZCplb1Udtkt7xPE4ce0dElhHaWF6w2xDLUlpNHS
-         VDeCcVuB58+Wg4Nd1pX+Alu64dtE1FbCaB7sA99HaVfM9eIYlcoh5GCLMd95M2XztPff
-         +2XkX2++13F/6ZYiddab0KfJWEShzFLV6VYgI8/P4xRUwWMT/1MszodV18xVgVIoj+N7
-         Oohw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728658581; x=1729263381;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=nF9Cu1yFnAPbe7jbcVtURgq11ehq1BMyC9tPOtmnXf4=;
-        b=R765AGaphVvTJ/6AI3kq5B5QX9/HnViUHLt5xj7/pqUV6jTuZHjEzpg1VzynYOm0GM
-         tYfTjpbJRwRj4ndIVZWMHXv0Q8OVRVoagvAoK1ZYtpIJzbLAbhoaXbMNqVwYK/cQdcWD
-         Y2Qxw+AhREZ3epAqIYGTyHu7/p/8IH8Q9TbXg/2cz1SVYnJ4dIecFO+6NtrL3iDNpzEA
-         zKV8fv/l/LentTmb3zAH9ysdnbLt/TmsmbfRiFirJN9WFRi+rx+MRorzn2PsTDck1lf0
-         P3P1VMoSKxFFbQ8lXeHuI5zAsL2YcqSnNESx4iKoxnlt7+L6PgShBlCowOviU+9m/37L
-         YX3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUtKazlh2ihSYvculqRcK3EjfjdRzdZ9wQ43sbloGxl+BIdRn+tpaZOq2SznvlQNyhlfO+cvPCkxPqm/8o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVIEeWI/359WyroiIfju4O4HC2kQQ/umUMpNBTN5YsvDwddpf/
-	h+xuDmlUaD3q1cWqtyQ6RR4XTRhffSazJDh4qLryJ0xwfUj4X6Vb
-X-Google-Smtp-Source: AGHT+IEXGk4fmDBJI2QlMnEoAr5L68GZy2LrPDTs+tXSqId4T0CHY5gRz/s/XHjy78yvizjoCrCv3w==
-X-Received: by 2002:a05:6a00:1954:b0:71e:13ac:d835 with SMTP id d2e1a72fcca58-71e37e4ff69mr5482147b3a.11.1728658581305;
-        Fri, 11 Oct 2024 07:56:21 -0700 (PDT)
-Received: from dw-tp.. ([171.76.85.106])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9e979bsm2674320b3a.2.2024.10.11.07.56.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 07:56:20 -0700 (PDT)
-From: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-To: linux-mm@kvack.org
-Cc: linuxppc-dev@lists.ozlabs.org,
-	Sourabh Jain <sourabhjain@linux.ibm.com>,
-	Hari Bathini <hbathini@linux.ibm.com>,
-	Zi Yan <ziy@nvidia.com>,
-	David Hildenbrand <david@redhat.com>,
-	"Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
-	Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
-	Donet Tom <donettom@linux.vnet.ibm.com>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Sachin P Bappalige <sachinpb@linux.ibm.com>,
-	"Ritesh Harjani (IBM)" <ritesh.list@gmail.com>
-Subject: [RFC v3 -next] cma: Enforce non-zero pageblock_order during cma_init_reserved_mem()
-Date: Fri, 11 Oct 2024 20:26:09 +0530
-Message-ID: <054b416302486c2d3fdd5924b624477929100bf6.1728656994.git.ritesh.list@gmail.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728658597; c=relaxed/simple;
+	bh=PhKPsduoog1RfxuSrwk2Z/ASgKqlNXmshZ+VnXDX3nQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Gt9tVVcNFQKOFewV1Q96oKEGZ6yMmhDE7S6dE92waYW3nOm3J5aVQ4klt21RAfq0WYu7IZMprDyz2TLy9f90qC2tLdkFXaW1DLV7j4pQxJwUtqxxevozp9a0NMyrSWNvjtBsMzNFnQGm6eziVwaJ3auZgcpMyCFrhZJ6iZzZtS0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kTJd1OuT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D4D5C4CEC3;
+	Fri, 11 Oct 2024 14:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728658596;
+	bh=PhKPsduoog1RfxuSrwk2Z/ASgKqlNXmshZ+VnXDX3nQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kTJd1OuTSFuqz5x+9aUDWPcmbLMgpTVH5eX9ee2MfTm7LaXEM9GQhDJhqQNUSeLsA
+	 wC9xWdB+67g2he327vbGvGibb0Mj805fW4dKH3OKnle+abW022C6DxgDYQGgqka9BA
+	 CImAvHecdZj8CAy3Xr2gnCIhBw46uT7E4TadzMfJWoY6EAq4Nb20mCPSWMNujlMxEF
+	 2dsrcL4HnFe6rj9dd43+3O5MZ9G/FdJExvkAYUMS7+KKUJyBcaCLTU49nl2s04o+9D
+	 OktQcgHfa0qBP57vELtvKIHMTPq3c79Zj4AOaBjtCdudsKYXOTTcORobBQlc3YyY2F
+	 nQMzZWnOy9tzw==
+Message-ID: <6594dc3d-4abc-4507-9ff6-d1994778d701@kernel.org>
+Date: Fri, 11 Oct 2024 16:56:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] dt-bindings: phy: mediatek: tphy: add a property for
+ power-domains
+To: Macpaul Lin <macpaul.lin@mediatek.com>,
+ Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
+ Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+ Macpaul Lin <macpaul@gmail.com>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20241011064810.5103-1-macpaul.lin@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241011064810.5103-1-macpaul.lin@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-cma_init_reserved_mem() checks base and size alignment with
-CMA_MIN_ALIGNMENT_BYTES. However, some users might call this during
-early boot when pageblock_order is 0. That means if base and size does
-not have pageblock_order alignment, it can cause functional failures
-during cma activate area.
+On 11/10/2024 08:48, Macpaul Lin wrote:
+> MediaTek TPHY should be existed in a power-domains.
 
-So let's enforce pageblock_order to be non-zero during
-cma_init_reserved_mem().
+should be part of power domain, hm?
 
-Acked-by: David Hildenbrand <david@redhat.com>
-Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
----
-v2 -> v3: Separated the series into 2 as discussed in v2.
-[v2]: https://lore.kernel.org/linuxppc-dev/cover.1728585512.git.ritesh.list@gmail.com/
+> So we add property 'power-domains' and set 'maxItems: 1' in the
+> DT Schema.
 
- mm/cma.c | 9 +++++++++
- 1 file changed, 9 insertions(+)
+Entire commit msg would benefit from Google Doc/office or ChatGpt/AI
+grammar correction.
 
-diff --git a/mm/cma.c b/mm/cma.c
-index 3e9724716bad..36d753e7a0bf 100644
---- a/mm/cma.c
-+++ b/mm/cma.c
-@@ -182,6 +182,15 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
- 	if (!size || !memblock_is_region_reserved(base, size))
- 		return -EINVAL;
+Many of us, including myself, are not native speakers so use tools when
+needed for that.
 
-+	/*
-+	 * CMA uses CMA_MIN_ALIGNMENT_BYTES as alignment requirement which
-+	 * needs pageblock_order to be initialized. Let's enforce it.
-+	 */
-+	if (!pageblock_order) {
-+		pr_err("pageblock_order not yet initialized. Called during early boot?\n");
-+		return -EINVAL;
-+	}
-+
- 	/* ensure minimal alignment required by mm core */
- 	if (!IS_ALIGNED(base | size, CMA_MIN_ALIGNMENT_BYTES))
- 		return -EINVAL;
---
-2.46.0
+> 
+> A reminder is also added to the description of 'power-domains'
+> property.
+
+Use imperative. See longer explanation here:
+https://elixir.bootlin.com/linux/v5.17.1/source/Documentation/process/submitting-patches.rst#L95
+
+
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+Best regards,
+Krzysztof
 
 
