@@ -1,198 +1,204 @@
-Return-Path: <linux-kernel+bounces-361060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361062-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C9B499A2E6
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:43:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA2099A2F0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:44:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84AC61C20F46
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:43:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBB722854C7
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CEEA216A04;
-	Fri, 11 Oct 2024 11:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6F321643E;
+	Fri, 11 Oct 2024 11:43:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z/t+6sWF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aHXkdRoM"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36129804
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 11:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CBA2216A19;
+	Fri, 11 Oct 2024 11:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728646988; cv=none; b=DNpR4yzW4wau+CTDHhj5Y2DuAWwjBr5wvh/gukuu1CrUx22j1aswSOhBbKKALDwwFQDXUhWEhZ94C03dLO5a7Hn7OhN9yADOysRjq3JjsoqBNcqH2rvT6RYOIH8vdMMc4w1BooEvhnK4jN78H2c7IFTP6ZJLIzcKU0SfI7PWmyE=
+	t=1728647026; cv=none; b=a5XqNf7IsLj2ZyehznsYsz1ygKUv4XWiXIpg2muA6EPReutOOqfh5fkYS5MObbwSjCAF/tsuKwdlg8mlL+yuhrbaQQmfJHr38z10JAEMX49XGayUCVOQURB6TmUOmR41Eu0kiFWWrzZLMHiRu2KTcCHbJQTGTy+EGRfFjewfpfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728646988; c=relaxed/simple;
-	bh=Sgjt5w22q19mO2o1fLrQoj/QK7UMPU3VPOx1oyeFQFU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HnB+H5rzjOXJT3P2LlBRYoZpf3BQOHTf5xkBQ8OjANv55dgWEeNimRfkOp22uMa9kCCg/jhvdL8ukK/SvTTNpexgkv1iGecwaPVzHFMzAtYsMLqJdrmHvRPrRrek+w5rjn/xpWdqAOaUhp2AymteQBm8HF+HwHQTkKoCZ78QEmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z/t+6sWF; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728646986;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HUQa3KwdmY0rbn3/U0pdq3jH3GxVh1Y2Q3vqDK3K2Pc=;
-	b=Z/t+6sWFlDE+1CcDl3EKsdO/PJdYHM+5ss3hJ4Jn7kdy4bkN99TdRlGTu5lPw4nFMOrpma
-	+a6HQ0XQp1O15t2Ng1of5ip+FLFiGnB4JIYMaH9WM8+e9D/t/qWRQ6Iu0gmy0USKJwt3lU
-	xKsrV3JOH0IoY28dpjR9v3DJUPsBgJI=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-658-DbtP_uTBP-a9b2QTfeq0KQ-1; Fri, 11 Oct 2024 07:43:05 -0400
-X-MC-Unique: DbtP_uTBP-a9b2QTfeq0KQ-1
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d325e2b47so896399f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 04:43:04 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728646984; x=1729251784;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=HUQa3KwdmY0rbn3/U0pdq3jH3GxVh1Y2Q3vqDK3K2Pc=;
-        b=H39iazJtzNBe7rpHI/WVGJKUcwOSTam2j3qLvsjdOBPb0eFOC059OTCj/A8w8WqJIS
-         Tmorxg79SVGwf7wh6YlKEeu3I2FvJzk70zzaaH9AZcGyvNmZBVDL0QPNURM3QB2feC/W
-         J3qTSAcD+vDWP0/ykXUjGXnq4qq6INnoOEEqQx4GFnPF56AZ9Sv5ub9GQkfP6e6v6T4R
-         pvyJ+8Jfk4nqvm0yuYIBfxFKAvwgzAtPIBkbVSXguRa0LNNJGbQmoRYpnJiMK0C8xlhf
-         GnZkqAMDkPu5TUR/wFf6bEeJ6KVOu1q5ncaM6jTc5N01Cgh6XGUueUJ66VFB2xWO9bof
-         WPZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdWstJ2Po6SyrmANibRO/VAZ6oW7qpbZEKdmYWgmix1iU/XCxq6VCthM0qC6pJPLQteK6K6zju2mkFeOs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yww4EsOrVmNr8WxSFRouDxR2uRQF1VmksztxnMTWB+hOaWRrvAw
-	iinAgf38aUOJKOmf4N7gWXf7kAf08/N/SNx6kUTLD95BCRiJFficLfRLAPCaiw34zGK4IY263wr
-	8SyGFCBgia0M6GA3rtKG35lYIHOXIBhSBJ8U1pG1nyJs1hAFrBkWGGq5YAzF7hA==
-X-Received: by 2002:adf:a313:0:b0:37d:41cd:ba4e with SMTP id ffacd0b85a97d-37d5529cb36mr1540626f8f.48.1728646983891;
-        Fri, 11 Oct 2024 04:43:03 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/F6JN+8iAXfL0V9ur+rvXeWlba4pACwoQU4P3Lokk5TwcPnGkxoE62KIlS+2BBSebuXYh+A==
-X-Received: by 2002:adf:a313:0:b0:37d:41cd:ba4e with SMTP id ffacd0b85a97d-37d5529cb36mr1540607f8f.48.1728646983480;
-        Fri, 11 Oct 2024 04:43:03 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c749:9100:c078:eec6:f2f4:dd3b? (p200300cbc7499100c078eec6f2f4dd3b.dip0.t-ipconnect.de. [2003:cb:c749:9100:c078:eec6:f2f4:dd3b])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ef213sm3727034f8f.99.2024.10.11.04.43.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 04:43:03 -0700 (PDT)
-Message-ID: <cced8b33-f1f6-4bea-ac7f-08be729bd710@redhat.com>
-Date: Fri, 11 Oct 2024 13:43:02 +0200
+	s=arc-20240116; t=1728647026; c=relaxed/simple;
+	bh=e9JjOESwlcWDP1qpCkA/TT+guVU7ucugvsmUfXTVMWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LSVr7H5FVcSNkIXj2zxYZ+raX+zeXwa+uXCIt1WIQT5G4AshZU2dzB0x1MbTCHK1gk3AvvuD4RLK5z87i0BTXDkAez59b2xL2dnUNWllQ2Yig+xNuC6WrmEfhCPkyiE8h6ZTnaHhF5gQK+x8fl03isb8eeKB9WNrx0rSHmbd6EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aHXkdRoM; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49BBf4RA006987;
+	Fri, 11 Oct 2024 11:43:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=ckinwTeZFBmiUd3mxD6hrM8Uo0j
+	5hKS4JaTjoXbkxY4=; b=aHXkdRoMBPwZlpL8nMmLkZL/YdWHa3y7x3oCu2ke3g8
+	RaST7PF7jGe5mpKubZLCtDgQLJiHfbhfbBqsh2yaIQL5P17mtFrC0pvuDuDEy8S1
+	IW3VVtby3VOlaSQItJyRHJHDCEdWliEhrWsMckp5rfSG+KJ3xcMwXugYwNulRR6A
+	u6K6dNopCFD8rN4lkzg6V2m3B0UaIS9yTJHYQ6FwiRpfphzmmpPRtUo6TRkg3nq5
+	4fxgaMnWA5SXmtE214EH8vloiTUZslK/c1wm22oMydB5Da5yl342dUDczUXDF4Aa
+	cs+W3Nl5cNpK75hsXgOZvbQCTDhEnFxHSzglU5dEgcg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4273bv006e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 11:43:20 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49BBgGrR009337;
+	Fri, 11 Oct 2024 11:43:19 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4273bv006c-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 11:43:19 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49BBNLda022678;
+	Fri, 11 Oct 2024 11:43:18 GMT
+Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 423h9kd50a-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 11 Oct 2024 11:43:18 +0000
+Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
+	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49BBhG3355902658
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 11 Oct 2024 11:43:16 GMT
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AF5122004B;
+	Fri, 11 Oct 2024 11:43:16 +0000 (GMT)
+Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 27DDC20049;
+	Fri, 11 Oct 2024 11:43:14 +0000 (GMT)
+Received: from linux.ibm.com (unknown [9.124.219.55])
+	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri, 11 Oct 2024 11:43:13 +0000 (GMT)
+Date: Fri, 11 Oct 2024 17:13:11 +0530
+From: Vishal Chourasia <vishalc@linux.ibm.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: linuxppc-dev@lists.ozlabs.org, Herbert Xu <herbert@gondor.apana.org.au>,
+        "David S. Miller" <davem@davemloft.net>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Naveen N Rao <naveen@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: drivers/nx: Invalid wait context issue when rebooting
+Message-ID: <ZwkPT3H_WVd5KyZQ@linux.ibm.com>
+References: <ZwjjXJ5UtZ28FH6s@linux.ibm.com>
+ <87wmif53iw.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 0/2] mm: don't install PMD mappings when THPs are
- disabled by the hw/process/vma
-To: Thomas Huth <thuth@redhat.com>, linux-kernel@vger.kernel.org
-Cc: linux-mm@kvack.org, kvm@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>, Hugh Dickins <hughd@google.com>,
- "Matthew Wilcox (Oracle)" <willy@infradead.org>,
- Ryan Roberts <ryan.roberts@arm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- Kefeng Wang <wangkefeng.wang@huawei.com>
-References: <20241011102445.934409-1-david@redhat.com>
- <33c40562-fd22-4517-9f56-1039289a55e5@redhat.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <33c40562-fd22-4517-9f56-1039289a55e5@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmif53iw.fsf@mail.lhotse>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: OiLWvBvcBqijx_Uof_jqARTolV4kGND7
+X-Proofpoint-GUID: PZ4mSYovNXa7Ivc6ZDFVEUDb98JcSOhx
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-11_09,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=999 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 spamscore=0 malwarescore=0
+ adultscore=0 suspectscore=0 impostorscore=0 priorityscore=1501
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410110080
 
-On 11.10.24 13:39, Thomas Huth wrote:
-> On 11/10/2024 12.24, David Hildenbrand wrote:
->> During testing, it was found that we can get PMD mappings in processes
->> where THP (and more precisely, PMD mappings) are supposed to be disabled.
->> While it works as expected for anon+shmem, the pagecache is the problematic
->> bit.
->>
->> For s390 KVM this currently means that a VM backed by a file located on
->> filesystem with large folio support can crash when KVM tries accessing
->> the problematic page, because the readahead logic might decide to use
->> a PMD-sized THP and faulting it into the page tables will install a
->> PMD mapping, something that s390 KVM cannot tolerate.
->>
->> This might also be a problem with HW that does not support PMD mappings,
->> but I did not try reproducing it.
->>
->> Fix it by respecting the ways to disable THPs when deciding whether we
->> can install a PMD mapping. khugepaged should already be taking care of
->> not collapsing if THPs are effectively disabled for the hw/process/vma.
->>
->> An earlier patch was tested by Thomas Huth, this one still needs to
->> be retested; sending it out already.
+On Fri, Oct 11, 2024 at 09:37:27PM +1100, Michael Ellerman wrote:
+> Vishal Chourasia <vishalc@linux.ibm.com> writes:
+> > Hi,
+> > I am getting Invalid wait context warning printed when rebooting lpar
+> >
+> > kexec/61926 is trying to acquire `of_reconfig_chain.rwsem` while holding
+> > spinlock `devdata_mutex`
+> >
+> > Note: Name of the spinlock is misleading.
 > 
-> I just finished testing your new version of these patches here, and I can
-> confirm that they are fixing the problem that I was facing, so:
+> Oof, yeah let's rename that to devdata_spinlock at least.
 > 
-> Tested-by: Thomas Huth <thuth@redhat.com>
+> > In my case, I compiled a new vmlinux file and loaded it into the running
+> > kernel using `kexec -l` and then hit `reboot`
+> >
+> > dmesg:
+> > ------
+> >
+> > [ BUG: Invalid wait context ]
+> > 6.11.0-test2-10547-g684a64bf32b6-dirty #79 Not tainted
 > 
-> FWIW, the problem can be reproduced by running a KVM guest on a s390x host
-> like this:
+> Is that v6.11 plus ~10,000 patches? O_o
 > 
-> qemu-system-s390x -accel kvm -nographic -m 4G -d guest_errors \
->     -M s390-ccw-virtio,memory-backend=mem-machine_mem \
->     -object
-> memory-backend-file,size=4294967296,prealloc=true,mem-path=$HOME/myfile,share=true,id=mem-machine_mem
+> Ah no, 684a64bf32b6 is roughly v6.12-rc1. Maybe if you fetch tags into
+> your tree you will get a more sensible version string?
 > 
-> Without the fix, the guest crashes immediatly before being able to execute
-> the first instruction. With the fix applied, you can still see the first
-> messages of the guest firmware, indicating that the guest started successfully.
+> Could also be good to try v6.12-rc2.
+Sure.
 > 
-> Thank you very much for the fix, David!
-
-Thanks for the quick test, Thomas!
-
--- 
-Cheers,
-
-David / dhildenb
-
+> > -----------------------------
+> > kexec/61926 is trying to lock:
+> > c000000002d8b590 ((of_reconfig_chain).rwsem){++++}-{4:4}, at: blocking_notifier_chain_unregister+0x44/0xa0
+> > other info that might help us debug this:
+> > context-{5:5}
+> > 4 locks held by kexec/61926:
+> >  #0: c000000002926c70 (system_transition_mutex){+.+.}-{4:4}, at: __do_sys_reboot+0xf8/0x2e0
+> >  #1: c00000000291af30 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x160/0x310
+> >  #2: c000000051011938 (&dev->mutex){....}-{4:4}, at: device_shutdown+0x174/0x310
+> >  #3: c000000002d88070 (devdata_mutex){....}-{3:3}, at: nx842_remove+0xac/0x1bc
+>   
+> That's pretty conclusive.
+> 
+> I don't understand why you're the first person to see this. I can't see
+> that any of the relevant code has changed recently. Unless something in
+> lockdep itself changed?
+> 
+> Did you just start seeing this on recent kernels? Can you bisect?
+Yes. Sure, I will try bisecting, and get back.
+> 
+> > stack backtrace:
+> > CPU: 2 UID: 0 PID: 61926 Comm: kexec Not tainted 6.11.0-test2-10547-g684a64bf32b6-dirty #79
+> > Hardware name: IBM,9080-HEX POWER10 (architected) 0x800200 0xf000006 of:IBM,FW1060.00 (NH1060_012) hv:phyp pSeries
+> > Call Trace:
+> > [c0000000bb577400] [c000000001239704] dump_stack_lvl+0xc8/0x130 (unreliable)
+> > [c0000000bb577440] [c000000000248398] __lock_acquire+0xb68/0xf00
+> > [c0000000bb577550] [c000000000248820] lock_acquire.part.0+0xf0/0x2a0
+> > [c0000000bb577670] [c00000000127faa0] down_write+0x70/0x1e0
+> > [c0000000bb5776b0] [c0000000001acea4] blocking_notifier_chain_unregister+0x44/0xa0
+> > [c0000000bb5776e0] [c000000000e2312c] of_reconfig_notifier_unregister+0x2c/0x40
+> > [c0000000bb577700] [c000000000ded24c] nx842_remove+0x148/0x1bc
+> > [c0000000bb577790] [c00000000011a114] vio_bus_remove+0x54/0xc0
+> > [c0000000bb5777c0] [c000000000c1a44c] device_shutdown+0x20c/0x310
+> > [c0000000bb577850] [c0000000001b0ab4] kernel_restart_prepare+0x54/0x70
+> > [c0000000bb577870] [c000000000308718] kernel_kexec+0xa8/0x110
+> > [c0000000bb5778e0] [c0000000001b1144] __do_sys_reboot+0x214/0x2e0
+> > [c0000000bb577a40] [c000000000032f98] system_call_exception+0x148/0x310
+> > [c0000000bb577e50] [c00000000000cedc] system_call_vectored_common+0x15c/0x2ec
+> 
+> I don't see why of_reconfig_notifier_unregister() needs to be called
+> with the devdata_mutext held, but I haven't looked that closely at it.
+> 
+> So the change below might work.
+> 
+> cheers
+> 
+> diff --git a/drivers/crypto/nx/nx-common-pseries.c b/drivers/crypto/nx/nx-common-pseries.c
+> index 35f2d0d8507e..a2050c5fb11d 100644
+> --- a/drivers/crypto/nx/nx-common-pseries.c
+> +++ b/drivers/crypto/nx/nx-common-pseries.c
+> @@ -1122,10 +1122,11 @@ static void nx842_remove(struct vio_dev *viodev)
+>  
+>  	crypto_unregister_alg(&nx842_pseries_alg);
+>  
+> +	of_reconfig_notifier_unregister(&nx842_of_nb);
+> +
+>  	spin_lock_irqsave(&devdata_mutex, flags);
+>  	old_devdata = rcu_dereference_check(devdata,
+>  			lockdep_is_held(&devdata_mutex));
+> -	of_reconfig_notifier_unregister(&nx842_of_nb);
+>  	RCU_INIT_POINTER(devdata, NULL);
+>  	spin_unlock_irqrestore(&devdata_mutex, flags);
+>  	synchronize_rcu();
+> 
 
