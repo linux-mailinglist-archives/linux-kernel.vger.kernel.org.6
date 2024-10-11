@@ -1,221 +1,123 @@
-Return-Path: <linux-kernel+bounces-361809-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361810-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C8199AD3F
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27E6599AD46
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 22:00:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F85A1C20E5E
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581121C21104
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:00:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3042A1D150C;
-	Fri, 11 Oct 2024 19:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E5A1D12EC;
+	Fri, 11 Oct 2024 19:59:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="S2mvSDQm"
-Received: from sonic314-20.consmr.mail.ir2.yahoo.com (sonic314-20.consmr.mail.ir2.yahoo.com [77.238.177.146])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EHziWnCM"
+Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA761D12E9
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2C7F1D12E5
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:59:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728676694; cv=none; b=WhQosGgRdkBryFGUKuBEjX+OB7rJWI5vAzm7N7DKx/HJOl8eUyHkIL1ndk3IfLGoE2VKHrNNjmRCYoFh7oJxCvr+Sx99NO4h9gXOWqNfdKpT41Hlvvtbm279dCnNeAJz1UyIk0SiAuis+RmzeTBlhazBO2N3bm7vQjm9NlrwCq4=
+	t=1728676782; cv=none; b=GSPe0DooO1quEvB9x2RChhTNIWCF/JLUQe0OhSA6fVX1+bS/D1KTDj+afeWgQemx6zg7yy0PCQN6X6H/ZfGNELZF5tUirkaYmM6r3OUbmAfEAUH37/vCrzy/m9k0JsH17sVzJ7oo71uuN38DWmdNaJgNWPEVMDfNqAZ9nfXYTHY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728676694; c=relaxed/simple;
-	bh=q6WJn5V37jgaOBGQY7ynpSvLqrUUNjt+vz5O6G68050=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rsBYwKUImb/LX+svsea3C075/hVx93d8FmXVxDMkYWcTR9FIUy/ogVSEtiB8j6YTDlNm5qTNK177iaSiXrJmhPESiXw+Gl5docdNF8v7X4J1m1pKqeXfb3r1l6j6MJGVPdT+6xSR5CuYRq/dzUO3kkMtGX9bmYNuqRNC/y4HFME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=S2mvSDQm; arc=none smtp.client-ip=77.238.177.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1728676691; bh=W60cShMzR1/zWQBkEs/U2DaVpWxIfzQSToVxJLNFJ5M=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=S2mvSDQmhZhHQeuNawmXKxErmwYDw7yWru8sZkPfVgYE8I1ihAQz8PU8plfEP71kuRbO/zzt8guvQenSPizpSNltIRp9sJZ0ylXUu47BJlu8j52qgjRNbNRN+pnGuFq1Ma79o/hEoByzqNuIuSpR5/QuSuUEadA+pFIQHn/CW0eewYcffc9halERkqGr4rp0Y/skGcfTkMi+PRN9x97cK8AxsnJBDTPpXHoKDKyQZ0j3rvZ06NFhS6NghBhGssqkg4U8qw69/b0fsN+CdsgXgeyk+UsyPQOgWYo3duAGM1UgFYkrkPv1+1bE7NbyEZcPc8XhP20rQeB/ZzeapXxTQQ==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728676691; bh=LgKcZvQincNYX2dW5muYRMf6Xldzf2/KGHVeO7K/0sz=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=GAJ7mBBGdmYV3id4h4y9V3b3hUtrCu1dHV8K8oFrFAdyZjyBsmHjscHQ/wMUAwWGwmIZaqVlfg6RNR4OCDN0Kp2oehYJoP2F8ufNeeepOwq4726LL9yrUAdR6wtRYwUVT7EU7o28S6vXCh8Dr8AuE9QbYofuvgQ3FNAZThOIasKOn6plUu/SjUwWRa64lVviazVNK1G2noWPC3Lvzh5tsdzX/8XUGJgssdDtNyVTyWiTfIVwbZ9Kms7QEd1RPS8VTSuIUfDZnfCJj/Q/A+V8dR08+JUcJx3XsgJu65UCuXI5rX+XSM5/unNUqqhALm7qGvPPQT3ZoxqjGocIqcjJUw==
-X-YMail-OSG: 65BngOkVM1m5ejVn66vv6kcilrBhaEanG.LIDctCaFnaFYYHqCUiO7OcllRz1kx
- DYXpmQkzDt1gjpLm0GuupFETZLO0BXjtNHQaqVI6QJd166.7RR_JlS_M2Ly7HUN8EGDoc7NMgL9u
- VniAGBvSWR49qZKtIUDhWaMbJuDv2ySdbO3ZGi_zfRt23DRWonY.KWz2anF7Aa5qgfvf8121Tczy
- KKHRsiMV8EiH3wrTIBN98yHF9ppqRz1ElOOFdxeUWQK4R7WtiuB7HUhSMZj73001xlol9XvB_kPJ
- DtekRThTdfVnpRv6XjbOi5AG2QCTxiVhpX3JKCgbSqsZ3ErBDdzpA7far7iy8Z5FSM7JgdyG1YKD
- i8kMGJq31jOIzF_wyEvRoBrzkdnXeypx0JrucC8Xm3KODvZmcYUq7i2jWs.CcyjtbUPhHscEMiX2
- FOMiSul4MXMplS38I.enw1UtUN1_QHJiCeYlP286xry_0TAKq1XsvW1pj74sc34GnyqkGyzThfY5
- MjSy7LWEjqY_f_ZD9Z6zQJtRAJVpgq40vXZXqUTiXXw2tNHqK7i8zfmzfsXO05L4HZMlUl8d6PCE
- Qm7zIerNZuORsteQSyUf0O97cw3jfCL68rklPpaHJOqVHwP4AKNWv7vMxtykN847ixSii8sNZc4q
- E27XfJrLBivAg1FgfboBoGOAHVtBqovaJi4qq_okoPd_xpxV512TgJoZ0jwm53fykws9FkufuNrs
- Qb8wpkNAQY0RUgg3n_oJR4M9kCDbQkaN0c1fMp7lMrMJd.Ks8GynmPcBLkevHxIueKs_EcYoKDgt
- nE0l6pWyzyS6nqSduYWQHDPgSAs0dMaQyWBhubKZpvMSJdhDfTJ4u9pWUlxQQeTV6fDodhqTwZsR
- GfrBKyvBUhJQB5.YNYWnCU2xHhL4wEbLgxIPkP5egF8KUAM6tC_ZM80X.VWrXTBm_FUMrMctzazE
- WiDkPz.8BYh4jrVt5Y4LHZ1os5ibX3zm32bgZ5.5xgslBOicYDdzAEflCI3lK8q370YN0OBe1weF
- umk4Q.rpYMqj8NRY_SfxiQIcuiyYmG0XyDhLua8NTFnI.osqEIJJ5Uvcg.OircG6b2XiJz.RSpQD
- T8cFXhN0LnkQ6Yf5mhsh7pMEn26tCPgZZ7UuZDE4.gqo0Bov0fQxLhtSmOMvc.sXoNjkx37EcX7b
- o7wjXeo.2jZKs9B4ZpzXuxBubmxqS9XtlQdGNOv9s0aI0cTlSw8eV_TR2bnUEA30qQBZbW.vqWg.
- euBnnAGZ2lx2xQrDuLCDvXAghThZ5FBeFADkJQ.Wl2___k2U1HeGTxidR3fU5ZQLdabew1X5CSr.
- yfe_DYE6TzDyZmd1lY0GdQaWzoTInLSdIPSqu9qZaMAg1y11NmcZXkcWSAaln1saIxVuKDXi0Rkn
- ZlmVfsKe3gpOFn.XgK1v9NU9b2akx5DTK3zf6zu0PqRsdbogZOEJmE30rAMYBuM2r_ZCYtVkAFHT
- BIBEQNX1Hc_PWxgoMB7XH3y8Vy3Yh_rg7Ap.4_vtB7e3Ose7j46R24E8BfFL20yuuzINfOuXFv_f
- ltMLjs16j8QfoOfTKy7nWlw7n0wHski9dM9EzJ8xEVktO7ZcWd5vVlTfWpn611hDdXzr5eslbJbw
- mch0qZRHoQTG06vm4AzqREBZxfYTGTJONR2KMYsqDntOBrDJc4DHSvTZlZqYxIymR5WJZohBtsds
- 4jMxpAUwCsKQZJUFdJinXOidIcdYv6llTLuXbpnnFr6.iDC3m8am4J6rT3MZzCc_pu7ttfzJQKvU
- 8q7moIaBYGirOqswGXIwLuSObo_DTQ4mqDSzo7esT5.DqHIzvXXS7_Iw6FOHYvplD9GvgNnRjdhy
- r4JRKdHN1JDKBBrplYzrQn6P7hDM88UIzWiz7Bc8fernXYcQOjRpKyJLr8Hm6Km_bMkSQKuX5jET
- ui.atkrIhNC29Ke7tvoudIpiP2ny98lFCi4i9qGuNWfpjwamvst5xMz_UYsKjSnIsMdEh42heNko
- qqTeseQwLhbCI7W4nxXdSL2q7LJU5GIKBrqAYXxyk7r39L64s7xCHHhP7pCtFwWSpSVraM.rBuQV
- YUmCblNuhMtE4ZNYxs4L5gjTomw_FzmStuSCRZKuAkqy7exJDNxO18_afcAh8VCOL4hM8mc0ERXI
- RP6rvZUfEJSfLOL1ERx1m2R7kuyzcQDb_gd3IdqQHN6jC_mCokHEAgbxekE6WtXo0UcnBYBgSEqK
- KIRZN3mVLSk28huco6K3roUNOM9tDdljS7RHJMZNVY9q1lzuuAETOQKc3TbpKBhEThjcYCsWap0k
- Za_snsvAYjxaIBh86tox8jS84.U_1qYGx7ciN_YALzphoNsM-
-X-Sonic-MF: <jahau@rocketmail.com>
-X-Sonic-ID: acf74f57-cbbe-4bb1-b0b7-53f14ebff1c2
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ir2.yahoo.com with HTTP; Fri, 11 Oct 2024 19:58:11 +0000
-Received: by hermes--production-ir2-6664f499fc-fs9vv (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6ba60adc37f62cfbd8f0cfdc1b2d543e;
-          Fri, 11 Oct 2024 19:58:06 +0000 (UTC)
-Message-ID: <a3e214fc-43e3-4f95-b73f-5040b733c7a5@rocketmail.com>
-Date: Fri, 11 Oct 2024 21:58:05 +0200
+	s=arc-20240116; t=1728676782; c=relaxed/simple;
+	bh=b3t/6WlSF/m01dr3JqwvO6A1PNlbPysSRIdrRHqnmAY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=XiOh1tfM3pHD5gFLzEBBWSc03XN2iU/RoYoOrcHkDfZTm6OOkTFZ79m1vMC4ycUgov7K+uurFxzEEBa7PM+jM8vgQ+pTeXJu4B7dTTNPAPqsdiiT7sxuv70oip6k0Zn07PWF8+zx2+m2d5J5t+3MER1O8aBg+L6Xyq+OJG9kT0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EHziWnCM; arc=none smtp.client-ip=209.85.128.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-6e305c2987bso23230227b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:59:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728676780; x=1729281580; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=b3t/6WlSF/m01dr3JqwvO6A1PNlbPysSRIdrRHqnmAY=;
+        b=EHziWnCMURu34idNgNXQl4xyRVcddHTweLctXq8iK+REnwjG+In+bNzFg46FA3Au2C
+         7xGhtXVC/eujF80m2u/SpW34juBEq2HGbHLRWoJX2U8SqKWFNU+//VNze0g6Zi5oH9KJ
+         UmNC6AHvUy5nMcGnasgtugL4iQ6eqMZX3Yvm/PlUgd5fWGRrPc5W4CRpa4h8lX8HUKzS
+         7BhQSdyNS870ZjMtOIdCQGKNQExRVgyM4KvW1wrYEA5iIdhmvT3xxE/mowLv/W0Vn7Ol
+         7Vvl6HGUsd3VmB7rTeJM8K762xrlsy+Hf+DsCu2axpZ4gCX6i5cQyOhk+SLljVT4StdP
+         VnAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728676780; x=1729281580;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=b3t/6WlSF/m01dr3JqwvO6A1PNlbPysSRIdrRHqnmAY=;
+        b=WWlaJNLIPLyd4VC7nFJBbnriqOfXr3C+ceukxXQXODFYdKvakSr/HFUMPQdY4BP8YS
+         slnO2wTZPkM6zBlA4pOFA4UAPBrQ2hBZoDFJHJRzZ+uGBbfEzbaKUWiPXuH4Ka0WLJ7g
+         qPT169nmNNExoXh/qtk5cxpbJyKAcS5aHo7BMFLRuTCBT8QDlVGgVD9JWGEfuU3QkYcs
+         7jIASHi4h5y//845EeAymm/SyF3XJeko0n8i3/rySmkCzTamHC2UUl/1UcpP9s4r3gMU
+         FMe3Ugj6OIlJVlsg3Fq52RjC1mvHIZBtu7OQKvQCNOxSpg5TSXDWRhihyP0yY1gVmJ7n
+         eOQg==
+X-Forwarded-Encrypted: i=1; AJvYcCWBFm7HQOsgtAlcHLFuqIBtHO/Ni8cIGeP9h1QmWHFImyJFo/jAQcwQAY/3BkaAH6NCGOuZvqNcrydRMTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxM3nU9qVNKD3vD77bQHU8nupnEW1KBxIT+hvqG+nuPHuKZENl6
+	+XNCr0kWuEXrVE0Fa2dRTQe7pJNqI2PE72MsqNPgEZn8DOTMV46WZ5ypMvtV/7jwDl/x7pWXJqm
+	+tjfCpCSSnh1ysBgGU/Rb2SdsUYNV6pzWULak9g==
+X-Google-Smtp-Source: AGHT+IHjM2GvHz3Aq3fHGIQKpV063T+kfFhYOorOlX0bt74yIAWxcubkag8mG5yY3qwwQRASFB0kIRqgK4TTo+XYaUs=
+X-Received: by 2002:a05:690c:5608:b0:6e2:ada7:ab89 with SMTP id
+ 00721157ae682-6e3479e1d7cmr37079067b3.26.1728676779984; Fri, 11 Oct 2024
+ 12:59:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/4] drm/panel: samsung-s6e88a0-ams427ap24: Add flip
- option
-To: Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- ~postmarketos/upstreaming@lists.sr.ht
-References: <cover.1728582727.git.jahau@rocketmail.com>
- <70ea852342001779956905ed9002a977d1d95293.1728582727.git.jahau@rocketmail.com>
- <1e23cfa8-66c6-476b-927c-695172e76143@quicinc.com>
-Content-Language: en-US
-From: Jakob Hauser <jahau@rocketmail.com>
-In-Reply-To: <1e23cfa8-66c6-476b-927c-695172e76143@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
+References: <20241011120520.140318-1-y.oudjana@protonmail.com>
+In-Reply-To: <20241011120520.140318-1-y.oudjana@protonmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Fri, 11 Oct 2024 21:59:27 +0200
+Message-ID: <CACRpkdaWZ6R4wtTs_YqzbhSrUyfOCqd9tGWFP7dZTqp6v7ijzA@mail.gmail.com>
+Subject: Re: [PATCH v6 0/8] MediaTek pinctrl DT binding cleanup and MT6735
+ pinctrl support
+To: Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Yassine Oudjana <y.oudjana@protonmail.com>, Andy Teng <andy.teng@mediatek.com>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jessica,
+On Fri, Oct 11, 2024 at 2:05=E2=80=AFPM Yassine Oudjana
+<yassine.oudjana@gmail.com> wrote:
 
-On 11.10.24 19:17, Jessica Zhang wrote:
-> 
-> On 10/10/2024 11:31 AM, Jakob Hauser wrote:
->> The way of implementing a flip option follows the existing
->> panel-samsung-s6e8aa0.c [1][2][3].
->>
->> The value to flip the screen is taken from a downstream kernel file of
->> a similar but older panel [4]. The mipi clock [5] for the new panel
->> samsung-s6e88a0-ams427ap24 matches 461 MHz and a hardware read-out of the
->> 0xcb values corresponds to revision R01 of that older panel [6]. Although
->> for samsung-s6e88a0-ams427ap24 that's in non-flipped state while in this
->> older driver it seems to be the other way around. Further up there is a
-> 
-> Hi Jakob,
-> 
-> I'm a bit confused by the wording here. Do you mean that even though the 
-> downstream driver comments state the panel is in a non-flipped state by 
-> default, your observations suggest that it's actually defaulting to a 
-> flipped state?
-> 
-> Thanks,
-> 
-> Jessica Zhang
-> 
->> hint [7] basically saying for revision R01 to change the first word of 
->> the
->> 0xcb command from 0x06 to 0x0e, which is actually setting BIT(3) of that
->> word. This causes a horizontal flip.
->>
->> [1] 
->> https://github.com/torvalds/linux/blob/v6.11/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c#L103
->> [2] 
->> https://github.com/torvalds/linux/blob/v6.11/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c#L207-L211
->> [3] 
->> https://github.com/torvalds/linux/blob/v6.11/drivers/gpu/drm/panel/panel-samsung-s6e8aa0.c#L954-L974
->> [4] 
->> https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c
->> [5] 
->> https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L2027-L2028
->> [6] 
->> https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L137-L151
->> [7] 
->> https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L66-L74
+> From: Yassine Oudjana <y.oudjana@protonmail.com>
+>
+> These patches are part of a larger effort to support the MT6735 SoC famil=
+y in
+> mainline Linux. More patches (unsent or sent and pending review or revisi=
+on) can
+> be found here[1].
+>
+> This series adds a driver for the pin controller found on the MediaTek MT=
+6735
+> and MT6735M SoCs. The two differ in the last 6 physical pins, which are u=
+sed
+> for MSDC2 on MT6735 but don't exist on MT6735M (since MSDC2 doesn't exist=
+ on it
+> to begin with). In preparation to document DT bindings for this pin contr=
+oller,
+> the existing documents for MT67xx SoCs are combined into one in order to
+> eliminate duplicate property definitions and standardize pin configuratio=
+n node
+> names. Necessary cleanup is done along the way.
 
-In the commit message I'm referencing another downstream driver for a 
-different (similar but older) panel. The commit message is very 
-summarized. I'll try to describe the situation more detailed here. Maybe 
-this is going too far but I don't know how to dissolve it otherwise.
+Once Rob is happy with all binding patches, my plan is to merge all
+except the DTS[I] changes to an immutable branch in the pin control
+tree and then you can offer that as a base for the SoC tree if it's
+needed for the DTS[I] files.
 
-The panel AMS427AP24 of this patchset is mounted in device 
-samsung-serranove "Samsung Galaxy S4 Mini Value Edition". On this device 
-the picture by default is the wrong way around (flipped/mirrored). So it 
-needs horizontal flip to get it right. In the downstream Android kernel 
-this is done in the panel controller. Following links are just for 
-reference, no need to study them in deep: "hflip" in dtsi file [a], 
-reading "hflip" in mdss_dsi_panel.c [b], and then I'm fully not sure how 
-it continues... processing in mdss_mdp_overlay.c [d] or in 
-mdss_mdp_rotator.c [e] or in mdss_mdp_pipe.c [f].
-
-I noticed that in another downstream panel driver used by the similar 
-but older device samsung-serranolte ("Samsung Galaxy S4 Mini LTE", not 
-the "ve" Value Edition) the flip is done directly in the panel driver. 
-That driver is labelled "AMS427AP01" [f] but it seems to serve a couple 
-of different dimensions [g] and also distinguishes between an original 
-revision and a revision "r01". This driver contains a section "#if 
-defined(CONFIG_FEATURE_FLIPLR)" [h]. FLIPLR means flip left-right. That 
-section holds values for the 0xcb command for different sizes (different 
-mipi clocks) and the two different revisions.
-
-When reading out the default values of the 0xcb command on the newer 
-device samsung-serranove ("ve" Value Edition") with panel AMS427AP24, 
-they match with the values of the older driver AMS427AP01 for mipi clock 
-461 MHz revision r01 [i].
-
-However, for the newer device samsung-serranove ("ve" Value Edition") 
-with panel AMS427AP24 that's the default value. Now it needs a 
-horizontal flip to get the picture right. This can be achieved by 
-changing the first value of 0xcb command from 0x06 to 0x0e. That's what 
-I implemented in the patch as an option.
-
-For the older device samsung-serranolte (LTE, not "ve" Value Edition) 
-with panel AMS427AP01 I can't say much. That's possibly where the 
-confusion comes from. In that driver for that older panel the hint on 
-value 0x0e is just a comment [j] while the value 0x06 [k] is part of the 
-"#if defined(CONFIG_FEATURE_FLIPLR)" section. Therefore I assume that on 
-the older panel AMS427AP01 it's the other way around: value 0x0e as 
-default and 0x06 as flip option.
-
-I hope this more detailed description is comprehensible. Let me know if 
-you have questions. Also feel free to suggest improvements on the commit 
-message.
-
-[a] 
-https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi#L112
-[b] 
-https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/mdss_dsi_panel.c#L1290-L1291
-[c] 
-https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/mdss_mdp_overlay.c#L709-L711
-[d] 
-https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/mdss_mdp_rotator.c#L590-L591
-[e] 
-https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/mdss_mdp_pipe.c#L1309-L1310
-[f] 
-https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L1867
-[g] 
-https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L1980-L1995
-[h] 
-https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L65-L246
-[i] 
-https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L137-L151
-[j] 
-https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L68
-[k] 
-https://github.com/LineageOS/android_kernel_samsung_msm8930-common/blob/lineage-15.1/drivers/video/msm/mipi_samsung_oled_video_qhd_pt-8930.c#L139-L140
-
-...
-
-Kind regards,
-Jakob
-
+Yours,
+Linus Walleij
 
