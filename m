@@ -1,105 +1,143 @@
-Return-Path: <linux-kernel+bounces-360517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26F8C999BF5
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:06:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2898999C00
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 07:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55B451C21600
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DE5F1C21618
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 05:16:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBB11F9409;
-	Fri, 11 Oct 2024 05:06:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80B551F4FD9;
+	Fri, 11 Oct 2024 05:16:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="rtAru53S"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aqDn6Jub"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A8642581
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 05:06:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BFF519413B;
+	Fri, 11 Oct 2024 05:16:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728623203; cv=none; b=HBpY3MzyWuFEiZqkUvyBnbQ3I75Kb+YC8gF1SPykr4KPQ629JpAg3s0Q5/L/Ymrde4xZxwJGfIvwjG2+p1bDpAHrCg1euFApflvjC90+tMT9ECPDZ1E6Wt+Sq/16ucK4eOeHiYljFRbse6PrBZ6ueknpF+UUMkBmTkoLNNh+TCI=
+	t=1728623766; cv=none; b=B7SJxVp/7z70sbjVEkDBQDg9c/7iO5f9L/ZhpDPLcfOjdTaAE1oGJU/Fy6F8TNQqCRBrYO6Yw10Yf05sz4X4j5MM3crVoj+q5X9dNpgzJcKqjRD0a2a0HOGG75NlZEFEkAmWf5hD7AEPzww8Rbsfl/Y871Q/nR0K/N/PMS61J5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728623203; c=relaxed/simple;
-	bh=J4uZD2ticb9y1gX4UfHAeWDZG2392fPdEO/lHgBL3nI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=SiW7LRYYaKcfoYvljir6keyj9WgvrdCejC98FeDCVjoX7ho6dQTSlnFTFPYbnHxBnwJxgO7cdtO3mDL5GzEyi3mlgOHcvLvwqmaIRz0P8/SMC51YZhkDNGZaTKtxf17Xt+o9NC7KwxYN2iRU34wT+RSxayiEvSSKjhwvlwlHojQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=rtAru53S; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e188185365so1432852a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 10 Oct 2024 22:06:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728623201; x=1729228001; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=J4uZD2ticb9y1gX4UfHAeWDZG2392fPdEO/lHgBL3nI=;
-        b=rtAru53SezxPsfcHOnV/8foj5dlkKpNsVzMcMbzDWT1QHADxIii0dy+k6d7zF6dLKd
-         Xv9Hc3aTFP1t4eEbgWpXOpfBM6x2e3YE7USW78Z1Fb8Z2WyBdD9UOkBjf0ni5Fd511C4
-         GZJayvLuVrFg1UUbDnwD+GY9/aCHANFEB9kiVKMCn2XiFeV7IYBj3h4U6UruZritdNag
-         fP/37Af2QCuzmuCYqca2HZxEyJsiA6RcOwb+x6MD1A4/2eTJ/gr+NIKkQM7HXlkfZCF8
-         axo8+DntxiHoTmwFX8ozIpCUJjA0Vxj12cvRzjbz5z8WxWKn+MGieoKgc0MqrpIFM9v/
-         2wrA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728623201; x=1729228001;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=J4uZD2ticb9y1gX4UfHAeWDZG2392fPdEO/lHgBL3nI=;
-        b=XuN2UdddAqvY1TAlZTgv2ka4PZ50Lr4pz0D6Ug+5C4riLTmwaTgTWZwuk4hSzAzixB
-         wS5bOItc8AMCEovJby7asB2/ze8zDooBhM8NuHx9HdQsOD5pI4LfY2cvJRNrCZnSRTzr
-         35cyLVEOYgUNpncTfriY1uMjfHMzJpOD+5XK21ye07jx45bs5DIQm/cOmhscrfXZh/FK
-         AVRxZDYbKetfVWlRq4ccmF3sbbmIsfrh+QY/OOXZ37SFZPFnRewc/ls1Pek05o7wo2sX
-         mx9MCibMv1dCaQcZMS9MvlJDlmwJdrwfjr/MGiVu+FhZkhK9ge6ame9rn6CJKuWjygev
-         YlIw==
-X-Forwarded-Encrypted: i=1; AJvYcCXK/lRePPDCOo3i6FRjstN1aTFvtPnHcBZrVqrUay+ENy73wkinPIAL+drKVUpeuZl6TGED3ceeMDfnbZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7WPDcvNpEpoUpjle1YbB5eNH/2RKqU9T9Xf1RGxOs7rfpBuvE
-	dH7qY5hRV27pPcKIC3qxw7IM2L3X+pjjvKzwrMaI++KDobCDOAKI7ovFGK+KN8mjhOucCBDaO8r
-	8BOH4jNDsAhSlLjPOeqmtFQqn3diH/zeRD8aKHg==
-X-Google-Smtp-Source: AGHT+IF2UKkZO/KPx4VxT3b3zp+LfxkUvgapEeMAwfLsk65H8dL6bieyuMdum17C7XC0R5hWpJnsr+i4U/WOUpCeWPU=
-X-Received: by 2002:a17:90b:d97:b0:2e2:ebbb:7619 with SMTP id
- 98e67ed59e1d1-2e2f0ab98cfmr1883401a91.9.1728623201577; Thu, 10 Oct 2024
- 22:06:41 -0700 (PDT)
+	s=arc-20240116; t=1728623766; c=relaxed/simple;
+	bh=oXPKp2uZEnGUtYeEYnykIZVlicObW/XIzlul2tJetiM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=D5YUyOLiC5UW8mLDUyF1yAyBZsnFu/vSKc42Xi45UYjywQ/TZj0jb7GmtJrPn1OCifh6qiPwvw6S1G66WH44Rtqtb63Ct1WVI5f7+z72SbJWTksvKYKBnAfhFXAWNCRftr0TCo9IV/PQplLxio8VUmvsWc/i7khRYb1pAgNwpwE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aqDn6Jub; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728623765; x=1760159765;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=oXPKp2uZEnGUtYeEYnykIZVlicObW/XIzlul2tJetiM=;
+  b=aqDn6Jub7ozeAIoxC89IEE0rH5sUrzxTa1FHevE35iqRvBgW9CR7FGdV
+   BZpIHQffGs+82CPwX++P6Qx8pPmpqNwP7yaBOa2hwiVmTr0qOCj2+cplU
+   hRcqaXXHPIkxCbAyJ6+pJNwTHOCHPArFwk3tK7yiqThLmQ93zwcUving4
+   R1MFYqGf358jglqN1PLuJDgXbH9W2L/iRoY5IzE7QyaeWQY0eAfKMt6ag
+   x9rgzz2RejXtsc8GPe+nRCZZ13gjKuODmRklSpNizP1CMAf82/k1wz2gv
+   sMx+JK3x6MPIpGYlaV/X2DRTR+EQwb0E4kUV6vImvXSsIMIzQF6dHZ5gB
+   A==;
+X-CSE-ConnectionGUID: MpXxEBQlQSy67j8lPbZOrA==
+X-CSE-MsgGUID: 5fk4wcPEQNy3YmIvUwiWJg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="15635861"
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="15635861"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 10 Oct 2024 22:16:04 -0700
+X-CSE-ConnectionGUID: OcOAqgggRkynTfXpGipgfQ==
+X-CSE-MsgGUID: FrTbE1n2TLajNJFQH08VTQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
+   d="scan'208";a="76716322"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 10 Oct 2024 22:15:56 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1sz80I-000Bq9-0p;
+	Fri, 11 Oct 2024 05:15:54 +0000
+Date: Fri, 11 Oct 2024 13:15:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Andrea della Porta <andrea.porta@suse.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Bjorn Helgaas <helgaas@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+	Derek Kiernan <derek.kiernan@amd.com>,
+	Dragan Cvetic <dragan.cvetic@amd.com>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Saravana Kannan <saravanak@google.com>, linux-clk@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, linux-gpio@vger.kernel.org,
+	Masahiro Yamada <masahiroy@kernel.org>,
+	Stefan Wahren <wahrenst@gmx.net>
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
+Message-ID: <202410111247.L5n2NDAU-lkp@intel.com>
+References: <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010114019.1734573-1-0x1207@gmail.com> <601d59f4-d554-4431-81ca-32bb02fb541f@huawei.com>
- <20241011101455.00006b35@gmail.com>
-In-Reply-To: <20241011101455.00006b35@gmail.com>
-From: Ilias Apalodimas <ilias.apalodimas@linaro.org>
-Date: Fri, 11 Oct 2024 08:06:04 +0300
-Message-ID: <CAC_iWjL7Z6qtOkxXFRUnnOruzQsBNoKeuZ1iStgXJxTJ_P9Axw@mail.gmail.com>
-Subject: Re: [PATCH net-next v1] page_pool: check for dma_sync_size earlier
-To: Furong Xu <0x1207@gmail.com>
-Cc: Yunsheng Lin <linyunsheng@huawei.com>, netdev@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, xfr@outlook.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta@suse.com>
 
-Hi Furong,
+Hi Andrea,
 
-On Fri, 11 Oct 2024 at 05:15, Furong Xu <0x1207@gmail.com> wrote:
->
-> On Thu, 10 Oct 2024 19:53:39 +0800, Yunsheng Lin <linyunsheng@huawei.com> wrote:
->
-> > Is there any reason that those drivers not to unset the PP_FLAG_DMA_SYNC_DEV
-> > when calling page_pool_create()?
-> > Does it only need dma sync for some cases and not need dma sync for other
-> > cases? if so, why not do the dma sync in the driver instead?
->
-> The answer is in this commit:
-> https://git.kernel.org/netdev/net/c/5546da79e6cc
+kernel test robot noticed the following build warnings:
 
-I am not sure I am following. Where does the stmmac driver call a sync
-with len 0?
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on clk/clk-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.12-rc2 next-20241010]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Thanks
-/Ilias
+url:    https://github.com/intel-lab-lkp/linux/commits/Andrea-della-Porta/dt-bindings-clock-Add-RaspberryPi-RP1-clock-bindings/20241007-204440
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/c5b072393d2dc157d34f6dbeff6261d142d4de69.1728300190.git.andrea.porta%40suse.com
+patch subject: [PATCH v2 11/14] misc: rp1: RaspberryPi RP1 misc driver
+config: sparc-kismet-CONFIG_OF_IRQ-CONFIG_MISC_RP1-0-0 (https://download.01.org/0day-ci/archive/20241011/202410111247.L5n2NDAU-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20241011/202410111247.L5n2NDAU-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410111247.L5n2NDAU-lkp@intel.com/
+
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for OF_IRQ when selected by MISC_RP1
+   WARNING: unmet direct dependencies detected for OF_IRQ
+     Depends on [n]: OF [=y] && !SPARC [=y] && IRQ_DOMAIN [=y]
+     Selected by [y]:
+     - MISC_RP1 [=y] && PCI [=y] && PCI_QUIRKS [=y]
+   
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+     Depends on [n]: SPARSEMEM [=n]
+     Selected by [y]:
+     - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
