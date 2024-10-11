@@ -1,53 +1,80 @@
-Return-Path: <linux-kernel+bounces-360907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5447E99A13A
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:25:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFDBC99A140
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:25:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E79B11F21CC9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:25:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 733631F22C4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:25:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2DF6212F06;
-	Fri, 11 Oct 2024 10:25:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A596215F58;
+	Fri, 11 Oct 2024 10:25:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="n8isfaSX"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Eg0IZHMX"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B9420C476
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:24:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1834212D0F
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:25:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728642301; cv=none; b=HLItUIlSYz+lWMmcHXT7poa2EqQ5YRVcNH0g8BSefQq9/TNBkdCvppAGBr6wAeCypVg9nUhC3omuc4PSs+FjEWxH+q/0r2phlwOA+RBfYkGkKB8cnKCHNVTPsMYtXJyP01VYt8N4ppokv0B2QptwFB8ywbYVh9EORLheutcn860=
+	t=1728642312; cv=none; b=I329KT18D+cwHarFHFKnLFncNduwIB358RTjFcM8VbTk4kzF+3ylga+Sp512g+GC6k8czDuSO2AzmcrpUmOmf+4/hGFhfLJ1IRENc00OY5NftlDwFW42i+33jT/DVJ/LXI/40izNxkNXICOD7WbOGoD2PjSYp76sOS+EcYDcBOs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728642301; c=relaxed/simple;
-	bh=lNmpjyy3NbJcexF0zfFZIhkhxowSBnVHLFNaeSt/6QU=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=mAh7QldK8GOfJkxAIhIqVVlP7SMPyHXoT98ZhHy8jF3eNtW4Hjgw2eOiZM7MvCmcyhMArokeY4JE6h8cBE+Y77aFSAb80sdcHI7nGJ4fG62g1o5bG6l+hoozIfIQqO9Taf+D8m6cPvHmYTGYWdNIVmaEJdIrQHL8owR9bInpxn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=n8isfaSX; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728642295;
+	s=arc-20240116; t=1728642312; c=relaxed/simple;
+	bh=1C83OOgMcgqb57Ddo8ncVhTx9jAr8iuBqE28xGsal7g=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=W38vJgtJWCTsRnSgo3lrRTS9pM0oLTy8lYMElq4VA+o2fqSaVJ4x7yqBWFgR4giUr2P+8YmWgVgcDBlnxIdvxNIED8pHRKuL2IgNkZiAg3UUh34CViYclM7wW5oY/Z/b4QDy+gN+ls0+fPBvFIL+Gx4ERIW519rZXA6/T8UJdI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Eg0IZHMX; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728642308;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=OPU/lolIfM/2nS2HuFVcR3b/p8zFVUIDLipi7/SZskY=;
-	b=n8isfaSXaEpZcvLvJbBh9V/W7aNpxzht3LjGPjDhU6QskNsvtivWkDc/y1t9ndT6MGbZjE
-	zHPz0nUa6cYus+wMpHrsD984iDLXics9C6wKiu7vue47N1ihicrlu0wbQj7peHOH5a+qUr
-	2VBZpS8qsTGTnfLBE1XP+5B+osLkYew=
-From: "Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-To: Theodore Ts'o <tytso@mit.edu>,
-	Andreas Dilger <adilger.kernel@dilger.ca>
-Cc: linux-ext4@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	"Luis Henriques (SUSE)" <luis.henriques@linux.dev>
-Subject: [RFC PATCH] ext4: don't wipe data when reading inode with inlined data
-Date: Fri, 11 Oct 2024 11:24:45 +0100
-Message-ID: <20241011102445.13305-1-luis.henriques@linux.dev>
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UZ3IdlQSiC9SBRAFeIkUjQ3G20iTXPL8FgSwyp2DDL0=;
+	b=Eg0IZHMXIT2pR11GyVUKzabwVHslxYHCT9x7YwXqKVku4WrzDVACHKWinBkKlyMrq66OJR
+	h1TOgeQOWdsc0QLTUlc/VkJdn2SQCEOkHXI2TQsCeUscc/wzbhgZlU5KWsRmin1NqCunYu
+	/Vu1hg5nRxeet4FwJob+8SSSQvZA3ts=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-638-AWsUiTUhPfSrctqTbSxh0w-1; Fri,
+ 11 Oct 2024 06:25:05 -0400
+X-MC-Unique: AWsUiTUhPfSrctqTbSxh0w-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 9D7D91955F3D;
+	Fri, 11 Oct 2024 10:25:03 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.22.80.4])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id E484D1956089;
+	Fri, 11 Oct 2024 10:24:58 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org,
+	kvm@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Hugh Dickins <hughd@google.com>,
+	Thomas Huth <thuth@redhat.com>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Ryan Roberts <ryan.roberts@arm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Janosch Frank <frankja@linux.ibm.com>,
+	Claudio Imbrenda <imbrenda@linux.ibm.com>,
+	Kefeng Wang <wangkefeng.wang@huawei.com>,
+	Leo Fu <bfu@redhat.com>
+Subject: [PATCH v1 2/2] mm: don't install PMD mappings when THPs are disabled by the hw/process/vma
+Date: Fri, 11 Oct 2024 12:24:45 +0200
+Message-ID: <20241011102445.934409-3-david@redhat.com>
+In-Reply-To: <20241011102445.934409-1-david@redhat.com>
+References: <20241011102445.934409-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,60 +82,65 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-When a filesystem has inlined data feature enabled, the ->read_folio()
-callback will need to check if the read is being done within the range where
-the inline data actually is.  Since the inline data can only occur on the
-first page, this verification is done by checking if the folio index is
-zero.
+We (or rather, readahead logic :) ) might be allocating a THP in the
+pagecache and then try mapping it into a process that explicitly disabled
+THP: we might end up installing PMD mappings.
 
-However, if the index isn't zero, this callback is also zero'ing the folio,
-effectively wiping the data that was there.  This is a bug reported in the
-link bellow, and the reproducer described there can easily trigger it in a
-filesystem created with inline_data and a small block size (e.g. 1024).
+This is a problem for s390x KVM, which explicitly remaps all PMD-mapped
+THPs to be PTE-mapped in s390_enable_sie()->thp_split_mm(), before
+starting the VM.
 
-This patch fixes this issue by falling back to a regular readpages when the
-folio index isn't zero.
+For example, starting a VM backed on a file system with large folios
+supported makes the VM crash when the VM tries accessing such a mapping
+using KVM.
 
-Link: https://bugzilla.kernel.org/show_bug.cgi?id=200681
-Signed-off-by: Luis Henriques (SUSE) <luis.henriques@linux.dev>
+Is it also a problem when the HW disabled THP using
+TRANSPARENT_HUGEPAGE_UNSUPPORTED? At least on x86 this would be the case
+without X86_FEATURE_PSE.
+
+In the future, we might be able to do better on s390x and only disallow
+PMD mappings -- what s390x and likely TRANSPARENT_HUGEPAGE_UNSUPPORTED
+really wants. For now, fix it by essentially performing the same check as
+would be done in __thp_vma_allowable_orders() or in shmem code, where this
+works as expected, and disallow PMD mappings, making us fallback to PTE
+mappings.
+
+Reported-by: Leo Fu <bfu@redhat.com>
+Fixes: 793917d997df ("mm/readahead: Add large folio readahead")
+Cc: Thomas Huth <thuth@redhat.com>
+Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
+Cc: Ryan Roberts <ryan.roberts@arm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Janosch Frank <frankja@linux.ibm.com>
+Cc: Claudio Imbrenda <imbrenda@linux.ibm.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
 ---
- fs/ext4/inline.c | 18 +++++++-----------
- 1 file changed, 7 insertions(+), 11 deletions(-)
+ mm/memory.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-diff --git a/fs/ext4/inline.c b/fs/ext4/inline.c
-index 3536ca7e4fcc..d2e519920252 100644
---- a/fs/ext4/inline.c
-+++ b/fs/ext4/inline.c
-@@ -516,22 +516,18 @@ int ext4_readpage_inline(struct inode *inode, struct folio *folio)
- 	int ret = 0;
+diff --git a/mm/memory.c b/mm/memory.c
+index 2366578015ad..a2e501489517 100644
+--- a/mm/memory.c
++++ b/mm/memory.c
+@@ -4925,6 +4925,15 @@ vm_fault_t do_set_pmd(struct vm_fault *vmf, struct page *page)
+ 	pmd_t entry;
+ 	vm_fault_t ret = VM_FAULT_FALLBACK;
  
- 	down_read(&EXT4_I(inode)->xattr_sem);
--	if (!ext4_has_inline_data(inode)) {
--		up_read(&EXT4_I(inode)->xattr_sem);
--		return -EAGAIN;
--	}
- 
- 	/*
--	 * Current inline data can only exist in the 1st page,
--	 * So for all the other pages, just set them uptodate.
-+	 * Current inline data can only exist in the 1st page; for all the
-+	 * other pages simply revert to regular readpages
- 	 */
--	if (!folio->index)
--		ret = ext4_read_inline_folio(inode, folio);
--	else if (!folio_test_uptodate(folio)) {
--		folio_zero_segment(folio, 0, folio_size(folio));
--		folio_mark_uptodate(folio);
-+	if (!ext4_has_inline_data(inode) || folio->index) {
-+		up_read(&EXT4_I(inode)->xattr_sem);
-+		return -EAGAIN;
- 	}
- 
-+	ret = ext4_read_inline_folio(inode, folio);
++	/*
++	 * It is too late to allocate a small folio, we already have a large
++	 * folio in the pagecache: especially s390 KVM cannot tolerate any
++	 * PMD mappings, but PTE-mapped THP are fine. So let's simply refuse any
++	 * PMD mappings if THPs are disabled.
++	 */
++	if (thp_disabled_by_hw() || vma_thp_disabled(vma, vma->vm_flags))
++		return ret;
 +
- 	up_read(&EXT4_I(inode)->xattr_sem);
+ 	if (!thp_vma_suitable_order(vma, haddr, PMD_ORDER))
+ 		return ret;
  
- 	folio_unlock(folio);
+-- 
+2.46.1
+
 
