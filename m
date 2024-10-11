@@ -1,111 +1,177 @@
-Return-Path: <linux-kernel+bounces-361413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90B7399A7D9
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:34:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CE2E499A7E1
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BDB9B21791
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:34:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 700DC282A36
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 15:35:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA8111957FD;
-	Fri, 11 Oct 2024 15:32:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 338BB195B18;
+	Fri, 11 Oct 2024 15:35:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G7vfvnhP"
-Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="VkXuS6e4"
+Received: from mout.web.de (mout.web.de [217.72.192.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A9E1974FE
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 15:32:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AD8E129E9C;
+	Fri, 11 Oct 2024 15:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728660768; cv=none; b=KftMfc9b9ebb96HXo+16YoejDesW0LRUe2xHJ6ZcsvVhVEir/xDU+cHmJWIFCkWFGiv6xGCBDNTxFzwYQY4T/VY3cn660MBRwBzwB+xjPTJUE/koqnGAB4bFRlzETlgNs91UXauXbcC6dQfuMiwY2vcxK/oNxMU2tEefGEpdP2o=
+	t=1728660910; cv=none; b=cLxgz/EpTIyPY1b4ABqsUqWBTwKvC+1MV/7ivYDA1Gh6sOlpkv/40pcNGos8/dVUUPHc+YOklcvcLC2V48PVmhDaVKyMrody36DpM3pgi9/YHCG8wtn6WKHwjdU0/QpVFHVUjr/ppyxYIm4tvywvQbco2MG+M5gnAn+bZjKdVoQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728660768; c=relaxed/simple;
-	bh=bRJ4Y1/jdFojuUij4IeYNNekIWbJ2nzLiEuafUuGJn8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=cKp7VIMfbtOW7+2LsPwJB/xwIIf/nlt8AGGmECXa4zKe1kBYWxagVxRpOehZ9FjaKo7gnYlqeUpDS8Vtr720VQsYy5iIE4LSUBgceWTQBXQcLNSPiNFndOumQeVbMZz1QUqTWanpBvIp5CgmfPlJch/gD6qhZPm4Z+UrBaXXKH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G7vfvnhP; arc=none smtp.client-ip=209.85.208.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-5c949d60d84so941788a12.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:32:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728660765; x=1729265565; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1Rat4MPBAsLDnNiR+W9/KxSukyb9q48U+Dl9neWjYf0=;
-        b=G7vfvnhPR+1WBPKyio3JrSyJ52wjfu/6z3FP2FHzp2HY+d5NdOIHgU6LhY+pFCMIM2
-         jnrCRYSSolupvAOFRuULP5hp0SJt039ORqaiUloFg6wTRlUIIrr56cQ3DzkW6k/yYkT7
-         NjnNalltEPMuonFbSm6+QXI0qofrBrfSQUhIn3+CmSZMwJG7QpK6yl56sTaJhoJaRaPz
-         piy051V0uMa5MpYPD6r0oJ/pAUwOPcj5BXUpOvcrJjTg/dZiiOpiu4gYZGpwsKq3pcHE
-         FuQ7kI9/DLbPPJ+Gdgvcu/k8OdDAILuADbVhd/zRqyDb+DuPmmZOuV0KbRTnrDn8H3Ux
-         03Ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728660765; x=1729265565;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=1Rat4MPBAsLDnNiR+W9/KxSukyb9q48U+Dl9neWjYf0=;
-        b=MMxQkz5G49cazqxbQyLUR21dO71P7uU7gCIJVB3a78QDVJLFvRSMNklBojkXBFL4cj
-         NHrpdYrn6zclLWTKBXrHl0IPMZ908P+FkSOuiejPEzNMeeqytaHxbZEkAQcV3GCmC2WM
-         g6KycJKXU+jpktxp3n/UfICn9rZPXJpuceppNIhdQTQIYUnVgHftbc2AYVauK1+GEkYV
-         3qzCxars+H10bZjdYGSJcE9JaUnnuZOEw54TYJbGw/gDw6Y77XtJXk2ce2LecNoWzbVC
-         yVnu13NHb18vS4QpLeCn+fIUjSsb1Z7+IdewajkgPO9efNRC7dFpOcA0H8L3zZAB2v6O
-         RYdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXOe5r04v+VeubBZsmkmvlKgdcIno9dQBw49Dt8mbw+DoRbSeAG8z+cUcLvcDcgNMc2M0YCJiPr42YhY3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGwXBC++0hGBh8bgRtFAe227aTsj7wP3Gcc2uxpq7qx9m93bv9
-	mnFlgcuE9/OTiiI/vrF/H1IA1qu8+vtymoGcLRogKxXtqmcszmkgoMfN/1mpJ+8=
-X-Google-Smtp-Source: AGHT+IG2RSuYoUetJ32zLi/kp0cBZ33Kg6Bh/AWm4gP1CZLAPGxS//Bmvvsy9YjdHMWJKgnFnWy8sw==
-X-Received: by 2002:a05:6402:348e:b0:5c8:8381:c308 with SMTP id 4fb4d7f45d1cf-5c948c8831fmr2027670a12.5.1728660764556;
-        Fri, 11 Oct 2024 08:32:44 -0700 (PDT)
-Received: from localhost ([2a00:2381:fd67:101:6c39:59e6:b76d:825])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93711adacsm2049796a12.37.2024.10.11.08.32.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 08:32:43 -0700 (PDT)
+	s=arc-20240116; t=1728660910; c=relaxed/simple;
+	bh=5q2pxOJGhjxRkV6Sh/y1SW2FUUkTvUWxmQfriDkZaYg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RwwU5xub2PFdteDnEopjgXbtlraXol/iHfZzpSztvmSsokX5HHKNBc6eTe1YENCXFArPsVfeXejn0r3uj4HKZfAQsUlA6SeTfMxWVKWsgWa8HT6KRyKWXf+AFcg1BfbZmzBbU1DQCkNvSU+rgoH0EJBJyEcBTS9xwy90YxfrHNA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=VkXuS6e4; arc=none smtp.client-ip=217.72.192.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728660863; x=1729265663; i=markus.elfring@web.de;
+	bh=JEMAcjbF3FPvsYIlnj1lZs9kGTRyH0qqeK3Whe3Jzxw=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=VkXuS6e4vEcm7FBmcLsmecktpuZBhodcmhtcG1MjoaQlMBpWGSZWppe66/lzmU+P
+	 6Mj+mOW7QVD5gA/1zDDbo/QS49wuWb1RZz49iYkQiJiq5VC5Jak9yDI7IPvyZuwtk
+	 YoVeho66f1YQ5bikxqChGGrqvqwO9V43m7m6UbRL1VeyuOKeJraNwna4xuY+uEDRh
+	 dkCeC5Nn6e/bJ+gq208jUqAwWd8gKp7fZm2oggn8kJXR0HiKeBCPvK1pAjKAsZ/b3
+	 fHxHr/RvPGMa1718rQnRFmkKWQI5Y34RP7cLE1ARuYXmWU7cvYxEVAhdlOXHOwwvL
+	 Ngbs1I+SME2uAnHaAA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.85.95]) by smtp.web.de (mrweb105
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1MFJnX-1tA4DG3Kzx-00F9Oq; Fri, 11
+ Oct 2024 17:34:23 +0200
+Message-ID: <0b995a34-28c4-4ba6-8ad2-e8413c6a63f5@web.de>
+Date: Fri, 11 Oct 2024 17:34:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
+To: Kevin Chen <kevin_chen@aspeedtech.com>, linux-aspeed@lists.ozlabs.org,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ Andrew Jeffery <andrew@codeconstruct.com.au>,
+ Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>, BMC-SW <BMC-SW@aspeedtech.com>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org
+References: <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <f65dd139-1021-47d6-93a1-1477d6b4ca1d@web.de>
+ <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <PSAPR06MB4949904D1FA95DBD3EF5288A89792@PSAPR06MB4949.apcprd06.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Fri, 11 Oct 2024 16:32:42 +0100
-Message-Id: <D4T33J6B5SPK.25S50D16VMDRI@linaro.org>
-Cc: <linux-sound@vger.kernel.org>, <srinivas.kandagatla@linaro.org>,
- <linux-arm-msm@vger.kernel.org>, <stable@vger.kernel.org>,
- <broonie@kernel.org>, <dmitry.baryshkov@linaro.org>,
- <krzysztof.kozlowski@linaro.org>, <pierre-louis.bossart@linux.intel.com>,
- <vkoul@kernel.org>, <lgirdwood@gmail.com>, <perex@perex.cz>,
- <tiwai@suse.com>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] ASoC: qcom: sdm845: add missing soundwire runtime
- stream alloc
-From: "Alexey Klimov" <alexey.klimov@linaro.org>
-To: "Steev Klimaszewski" <steev@kali.org>
-X-Mailer: aerc 0.18.2
-References: <20241009213922.999355-1-alexey.klimov@linaro.org>
- <CAKXuJqiK3BHT-=3zyT1tbunpNF1b_gyZUAd4EE2FY2r7TbaXug@mail.gmail.com>
-In-Reply-To: <CAKXuJqiK3BHT-=3zyT1tbunpNF1b_gyZUAd4EE2FY2r7TbaXug@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:i9rIChLNyWYHyUTxDAbalAUCtiWIR3TehRTXM4XO7QD22dAeIcU
+ 2Je5blRBlhhl0Zu8Fe4xt31/nZvF0LqZnWssAuOLPnytex7FWgro8OETzQRTGPAkWKFWErq
+ PduH+/NIVn9OhZGSWl2zSSFzMW5gROLqxdQVoDFwdulPU9K6gtHPo14dUC3u1+rChTDKJtL
+ DUB9dP0zI/qwHYP6d/BnQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:qREi+IcNmIk=;6u/CF+JhpeuSNi2B8eBr9G1Gnsx
+ CvZzyNmfatpqrkh36kagQPFRZ8MJvhp3MxDk1VnrpA3lJsSYOjvVkwfNvvs/La6WoBezcNFE2
+ awRiKpI1MJOmtzOlnUMz/SwJ4TInqHpj7he0Aczhkx/o2mHpyzk1vDib1gXpSyJlJt7c15M/u
+ Q1arjIfzyRzFUB50BywjGO+sSy4VOVImWPVYYBKtT6rhDUuh5AonDVqrABkeLICYpJrMIX8ay
+ tSlx9Wmc++Vv499RKLX2++QWnRuhEEDPqZ3CmzMwXgIyP+1SgTmB7U8H6eVptaOkxBS9b9INH
+ llkyCmpV5u5igXtlpaWE+AYVWEQbghrShNO1KDcT4aGbZImSJPDUOP0vMwlMIk4SddF3QwpwN
+ 0Jg+V/VGv3tCBH2dZRzS5If2IdO/Io52ow2XxuP+atJ1otphVPnFoCSRYcxUUjrIIBE3hf4+N
+ StoKVjbQNTTvYtc40XP4yGwK5opBqM5skP3HRs4Z/3dzBBMrxdKiHb/Jw+TWjSsJNXrxP9fmC
+ AyOtI3obcyOyiTyEG6jCpZd5srzeDbMKCJzN5T+wDJ3Xg5G3Gr8t+9Cm5nxcyYSYMFV7LQvMW
+ YGNNjng/vKrwI6gDZDZBGsnPLhrd3djXTOVA/Qr6vzmcE17UUhCTEfxPRuvHSbkGsXtc3CVwb
+ MZWc7oDxYyI6olMudjvl+weL3q0qUxj17d2w59buC3MAq1YUSYkLeanmA8ZiH25QluLCcPw/a
+ zud8Zi5+ecyXltL/rADHaWGpKXxfB45pAND3MBEZsfraK8YM1Y0DlEXzfGEvvGXarxMLURVcn
+ eH3D6/Kh11MU8Z98HRyb43kw==
 
-Hi Steev,
+>> =E2=80=A6
+>>> +++ b/drivers/irqchip/irq-aspeed-intc.c
+>>> @@ -0,0 +1,139 @@
+>> =E2=80=A6
+>>> +static void aspeed_intc_ic_irq_handler(struct irq_desc *desc)
+>> +{
+>>> +	struct aspeed_intc_ic *intc_ic =3D irq_desc_get_handler_data(desc);
+>>> +	struct irq_chip *chip =3D irq_desc_get_chip(desc);
+>>> +	unsigned long bit, status;
+>>
+>> I suggest to reduce the scopes for three local variables.
+> May I check the scopes of bit and status usage?
+> Variables of bit and status are used in for_each_set_bit.
+> How could I reduce the scopes?
 
-On Thu Oct 10, 2024 at 1:33 AM BST, Steev Klimaszewski wrote:
-> Hi Alexey,
+I propose to move selected variable definitions into corresponding compoun=
+d statements
+(by using extra curly brackets).
+https://refactoring.com/catalog/reduceScopeOfVariable.html
+
+
+>> Would you become interested to collaborate with another scoped guard fo=
+r
+>> this programming interface?
+>> https://elixir.bootlin.com/linux/v6.12-rc2/source/include/linux/irqchip=
+/chained
+>> _irq.h#L13
 >
-> >
-> Thank you so much for tracking this down!  Was experiencing the same
-> thing on my Lenovo Yoga C630, and testing with this patch, I no longer
-> see the null pointer and also have working audio.
+> Maybe like the change in the following?
 >
-> Tested-by: Steev Klimaszewski <steev@kali.org> # Lenovo Yoga C630
+> diff --git a/drivers/irqchip/irq-aspeed-intc.c b/drivers/irqchip/irq-asp=
+eed-intc.c
+> index ef1c095ad09e..54d1881c56c6 100644
+> --- a/drivers/irqchip/irq-aspeed-intc.c
+> +++ b/drivers/irqchip/irq-aspeed-intc.c
+> @@ -32,7 +32,7 @@ static void aspeed_intc_ic_irq_handler(struct irq_desc=
+ *desc)
+>         struct irq_chip *chip =3D irq_desc_get_chip(desc);
+>         unsigned long bit, status;
+>
+> -       chained_irq_enter(chip, desc);
+> +       guard(chained_irq)(desc);
+>
+>         scoped_guard(raw_spinlock, &intc_ic->gic_lock) {
+>                 status =3D readl(intc_ic->base + INTC_INT_STATUS_REG);
 
-Thank you for testing! I didn't know that this affected more than one
-board but I was told that it was long-standing bug.
+Perhaps.
 
-Best regards,
-Alexey
+
+> @@ -41,8 +41,6 @@ static void aspeed_intc_ic_irq_handler(struct irq_desc=
+ *desc)
+>                         writel(BIT(bit), intc_ic->base + INTC_INT_STATUS=
+_REG);
+>                 }
+>         }
+> -
+> -       chained_irq_exit(chip, desc);
+>  }
+=E2=80=A6
+
+Probably, yes.
+
+
+=E2=80=A6
+> +++ b/include/linux/irqchip/chained_irq.h
+> @@ -38,4 +38,5 @@ static inline void chained_irq_exit(struct irq_chip *c=
+hip,
+>                 chip->irq_unmask(&desc->irq_data);
+>  }
+>
+> +DEFINE_GUARD (chained_irq, struct irq_desc * , chained_irq_exit ( _T ->=
+irq_data.chip, _T ), chained_irq_enter (_T->irq_data.chip, _T))
+=E2=80=A6
+
+* Such a macro call looks promising.
+  Would you like to omit any space characters before open parentheses?
+
+* Would you like to support scoped guard variants accordingly?
+
+
+Regards,
+Markus
 
