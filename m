@@ -1,169 +1,122 @@
-Return-Path: <linux-kernel+bounces-361657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361658-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A87BE99AAFC
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:32:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9658C99AB00
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 20:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 65416283373
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:32:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A6C82843B4
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 18:33:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B155B193436;
-	Fri, 11 Oct 2024 18:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C78D21C8FC0;
+	Fri, 11 Oct 2024 18:33:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CaPuo91h"
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com [209.85.221.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Qku9Teqc"
+Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6905A219FF;
-	Fri, 11 Oct 2024 18:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CA728BE5;
+	Fri, 11 Oct 2024 18:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728671531; cv=none; b=qMaOU3Rn9gvDN2+qxZuHFWabpNJdjLBumLorl6XVIHT+xU3DBbW+TFEoWAz4uF+i8daO+CGQ5CDZdlxX3YSVV1SG31mv07Kh1EYmgc+T1qzA+9/Pc0NpxY1Il0znSH9pyWcu7uoOBCacCMgsdYVCoUA5wCf/9IGwgq4OSwfbeiI=
+	t=1728671626; cv=none; b=DoOq5l9Wyp1pJKTc5yIcr4+hkxm2DqXhUJ4WGc7cAbia0w6NT7xcSa17qmXtX5pf9MfIOYhV+pNj1n1yMS6UP4C/oLRAWC8c+JP7UIx0jq22NrrS+Qy5kxfdqTn9lEwhYz/gUBdnXlj3lnOF8hkrJ5U+QlH7/L2YUlff0xTTssY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728671531; c=relaxed/simple;
-	bh=6ABpjJ5c9laXV1Mofwkc8XFAV1AdWBcZM3Tp255Plkw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VavLff9YmmJP2RNpgavr5r/3PFF2ofHthfRYHGaDEdy4R6GJZuPCC/G7YXMlmTN+R6GBsLfscurv1hq+NifKUfIB46TQx3sOanZA86dm9nZfbzqve7bFcenjTrT4ZUIVWblFT0Kmbj8MWp2RjZGqX87JepciV1fHeL4O+/KkHcU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CaPuo91h; arc=none smtp.client-ip=209.85.221.52
+	s=arc-20240116; t=1728671626; c=relaxed/simple;
+	bh=VA3dR8RjM/E+LCE1ff8cMx7LD1WV2SPf4KkoFi7tZhk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ttg+1Wk6vPKXAypWQeuZkb2Fx6FsImts41jwfrjjMutc6odmfcPRZR/JP5mvtuUmUcoU2QjHBWLs9A33UzlViqAKKyBg1RYS8bV06TuY4Rtw/YrLwWCw2PqHjbfiO9tVNOwLaN73WfoU+ahlH7g6uFO664JYv9EFQNPWrjMFk0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Qku9Teqc; arc=none smtp.client-ip=209.85.221.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d538fe5f2so845967f8f.2;
-        Fri, 11 Oct 2024 11:32:09 -0700 (PDT)
+Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so1318336f8f.2;
+        Fri, 11 Oct 2024 11:33:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728671528; x=1729276328; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hzGJQXEa8Jg8mFbIKKFv9fTv+IGcsaWIojSt7WKuh+A=;
-        b=CaPuo91hwA4EyxbwjGKArpS6SMPsqh0z1Aaazl8r4b5TXels9ScF2tcIhLBfdM6JKA
-         Jzxbpdldwb6ETYAq0xUWKCzZfnpvElu19Xe5uNPu6AInbMdSJ93/weFjaccJlARKY8dw
-         wU0RwnLnkIr6tJZJKVB/vEniIUm/sLH5jUp/+CavBOj66E3ganOTfibX/yNIYb1cg2Kt
-         Hz4agwQpcTWUjVxLxRhotmlQoLasrVV1n0odMz0fNWw926nyMyiCP5WLOBwGa7Ytwoih
-         pnjznTgVr6gcmiGtxGPUo+eX7ao7lKn08w4LTrBb9fxVI8xmtOGHnDr+MWfweM8nFDBI
-         qjEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728671528; x=1729276328;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728671623; x=1729276423; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=hzGJQXEa8Jg8mFbIKKFv9fTv+IGcsaWIojSt7WKuh+A=;
-        b=pnRUDyXzS8xbOoZQ29TDzFbE4NEUDuZr7jQzUVtVXcQIJUjtFyOuTD5zVPha7MWcXT
-         ViElkIjAdYhSdm4gQ/jtPGaxGdEdLW6Cep+JSYcxizxP5mmNnaGqCgxcg24CkxmEHgT0
-         wQySfIdQLmb1s5Cz3J927ey9gKQnKgDTgt8husTYrizkwD9wM8Zp8rnTbtdVHVECZmbf
-         V1vv63stxk7MecVjF6N1sC9YIMa+OgmARO9SvNsJenfeBxB9ae8RkIGZVs+PYJ875+bu
-         hCzqiuF+n3FEnMFK0NsQ9iwXZ8yp6hKZuwXqCHaYLVPnM62fBSA52VrNk5PjYuY9mFxY
-         ayeg==
-X-Forwarded-Encrypted: i=1; AJvYcCVC8jXCMIiZkx2Rm/QA1YcYeRuuFhclayZbh9lylNiM6OhD4cZtacH7kC7+IQPHpbkBMEm5n0Xs4vjjsJ0p@vger.kernel.org, AJvYcCVpW0/l12XB4J0kHN+Bf99vPCo22jjtZiDXdrc9s8gDRh7boRDAAN5tv35bZJ7mBGkMecqShpAIydE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzytmLaZr96BR1oS0GR0BEis09OuB9b+UeI/5YEj1WEkM6AK0cB
-	SKxXLoem6ZT1hE4rmLbr2N2UbyD/4/tQDeOENP7wf6/4P8bBHO7b
-X-Google-Smtp-Source: AGHT+IHZfchisX4gDQW0KTvSURH8Cyp5fZ6XTR97BtsqZNdAAQv/sME0MaU1UtwkGoz/6W+YdQerPg==
-X-Received: by 2002:a5d:574e:0:b0:37d:518f:995d with SMTP id ffacd0b85a97d-37d552d92c7mr2193936f8f.56.1728671527597;
-        Fri, 11 Oct 2024 11:32:07 -0700 (PDT)
-Received: from vamoirid-laptop ([2a04:ee41:82:7577:73c8:39ee:29b7:ae8c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b79faa8sm4504907f8f.66.2024.10.11.11.32.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 11:32:07 -0700 (PDT)
-Date: Fri, 11 Oct 2024 20:32:04 +0200
-From: Vasileios Aoiridis <vassilisamir@gmail.com>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	ricardo@marliere.net, skhan@linuxfoundation.org,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Angel Iglesias <ang.iglesiasg@gmail.com>,
-	Adam Rizkalla <ajarizzo@gmail.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-Subject: Re: [PATCH v2] iio: Fix uninitialized variable
-Message-ID: <ZwlvJCxdiRqRWu6Z@vamoirid-laptop>
-References: <20241011093752.30685-1-0xff07@gmail.com>
- <20241011115334.367736-1-0xff07@gmail.com>
- <26f2e35e-0a07-4b24-91a2-a48d4bc5dadc@gmail.com>
+        bh=Zqw+eRG2MYmG15ACoCDgCZaSTwDwa5xCdf5S5ibxmN0=;
+        b=Qku9Teqcrun6DBmOlN8D5Obq7KPspWbt/6Ct9nBmnslocng+TYbHrSahcOfxmdD852
+         j4O9fhzNODDWZeHI8ClesrM5gwOBnebZ9wgrQOaXjG424rcegi6OudgvHGwrLtg2EB1o
+         eGABkuZUKIxWuVL0kUnmESmC3IG5JXaRoJjR7ocRj8AJEhZOYx0SDWWkLkQSSM9NvcjC
+         YuZEn9GX/L29ccUBSrg561K8vRVu/xw3y9ztbacDAyh5W68Ulgqy4trMVEfHnmHyru8s
+         U1ltqxbm9xh/io+GsCWhXbfiYIyDZ2NKEjW4PIEex85EfVC3Fc5ufcklhRA4YqR4V9jZ
+         VMpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728671623; x=1729276423;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Zqw+eRG2MYmG15ACoCDgCZaSTwDwa5xCdf5S5ibxmN0=;
+        b=rH6ANvFSYBFm+uHI79FVrh7L5KEWnVMTVf7pWGxcNN+voa5y61PjqZ4TZqOHpfL9sv
+         Ovl4BP22s1JQ6vEKyf5upNNT+aZell0lxPuCzQIwDgD9ZEXedSjvXOPu64nBm2Hp2B5S
+         vuo/USkhxM95vcC/FAtf18jar/zsQ60FnpO70WKLdnP7lDDVkPsCku8WWLjeV36KSKHu
+         nO2fUndpSU9pGmiIlQT3Swv9UXBTyTLIfsxsEKDLL9SqxWYANNgLvVEON6umoyp/U4yY
+         Um40XryEGbkeOAhxELIs68WOgiuMfm9vGZDELnZ0nFWeOP1BJWFtyy0cyI56JrXcwNh1
+         hIwA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQfX504TJO9WWed1skbhNjsAnh227cme8ixETI06yeCFjaHlNY/iSvY/qD5NkDwNkky4GkyoqVAtkgj3sr@vger.kernel.org, AJvYcCXL92y47BKkZ0dGP9/wF5tMFavNvB694T9UT/8hPksahcUGbjCNYGeqwk7jQKVnuBul/uM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPQFfaYk1KfQcvTTGdq45UXhBoL1wpIyaLhsPXNORoFCZLGZ/F
+	UO1i2OY6IMlDb8cAO3NBtmVsBKsVYJt6N+jCvYJ0zFr7QnzKdWHCKHEToyvwu74NbQRLE+cPpWf
+	sylsN2z+iz0RPfbbWs94f/T2Uyxs=
+X-Google-Smtp-Source: AGHT+IGAj/SGj+TtqfRfGd2P3lWGKqlm+1DElS1k2FoqBelgBt3R6bLLn+m/l+x2AOLBP39wrsRkToxZgrWVZPQClGI=
+X-Received: by 2002:a05:6000:18a:b0:37d:41c5:a527 with SMTP id
+ ffacd0b85a97d-37d5feaa088mr342022f8f.13.1728671622794; Fri, 11 Oct 2024
+ 11:33:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <26f2e35e-0a07-4b24-91a2-a48d4bc5dadc@gmail.com>
+References: <20241010232505.1339892-1-namhyung@kernel.org> <20241010232505.1339892-2-namhyung@kernel.org>
+In-Reply-To: <20241010232505.1339892-2-namhyung@kernel.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 11 Oct 2024 11:33:31 -0700
+Message-ID: <CAADnVQ+5hq0g3K6B_uPWg4AzrTjus0kKyqtgd1-UyME9TPZL-w@mail.gmail.com>
+Subject: Re: [PATCH v5 bpf-next 1/3] bpf: Add kmem_cache iterator
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
+	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
+	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 02:31:00PM +0200, Javier Carrasco wrote:
-> On 11/10/2024 13:52, Yo-Jung (Leo) Lin wrote:
-> > clang found that the "offset" in bmp580_trigger_handler doesn't get
-> > initialized before access. Add proper initialization to this variable.
-> > 
-> > Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
-> > ---
-> > Change in v2:
-> > - Make value initialization immediate before its first use.
-> > - Link to v1: https://lore.kernel.org/all/20241011093752.30685-1-0xff07@gmail.com/
-> > 
-> > ---
-> >  drivers/iio/pressure/bmp280-core.c | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-> > index f4df222ed0c3..682329f81886 100644
-> > --- a/drivers/iio/pressure/bmp280-core.c
-> > +++ b/drivers/iio/pressure/bmp280-core.c
-> > @@ -2222,6 +2222,8 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
-> >  		goto out;
-> >  	}
-> >  
-> > +	offset = 0;
-> > +
-> >  	/* Pressure calculations */
-> >  	memcpy(&data->sensor_data[offset], &data->buf[3], 3);
-> >  
-> 
-> That was a quick reply. I would recommend you to wait a little bit while
-> the first version is under discussion.
-> 
-> I still see the offset thing a bit weird. data->sensor_data uses an
-> offset to avoid hard-coded numbers, but for data->buf we do exactly
-> that, in the very same lines.
-> 
-> Setting offset to 0 to access the first element i.e. no offset required,
-> and then adding the actual offset sizeof(s32), which could even be a
-> const if the first access was to sensor_data[0], looks to verbose.
-> 
-> These things are of course not critical, and the proposed fix is
-> definitely ok, but I am missing some consistency here.
+On Thu, Oct 10, 2024 at 4:25=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> The new "kmem_cache" iterator will traverse the list of slab caches
+> and call attached BPF programs for each entry.  It should check the
+> argument (ctx.s) if it's NULL before using it.
+>
+> Now the iteration grabs the slab_mutex only if it traverse the list and
 
-Hi everyone!
+traverses
 
-So if you check also the conversations that we had here [1] and in the
-previous versions, indeed the idea behind the offset is to use it as an
-self-explanatory index to a char buffer that holds in fact s32 variables.
+> releases the mutex when it runs the BPF program.  The kmem_cache entry
+> is protected by a refcount during the execution.
+>
+> It includes the internal "mm/slab.h" header to access kmem_cache,
+> slab_caches and slab_mutex.  Hope it's ok to mm folks.
 
-The data->buf here holds the values that have just been read from the
-sensor. If you check on the channel specification of this sensor,
-you will see ".realbits = 24" in both values that the sensor returns so
-hence the value 3.
+What was the reason you dropped Vlastimil's and Roman's acks
+from this patch while keeping them in patch 2 ?
 
-I am not sure if it makes sense to use a macro here for each one of the
-3's that are going to be used only one time each and in order to be more
-"consistent". But I might have a wrong view on this one so feel free to
-correct me!
+Folks pls Ack again if it looks ok.
 
-For the initialization of the offset indeed, it was already mentioned
-here [2] this morning, but on a different patch!!! I couldn't get this
-error though with gcc...
+I'm ready to apply, but would like the acks first.
 
-Cheers,
-Vasilis
-
-[1]: https://lore.kernel.org/all/20240930202353.38203-3-vassilisamir@gmail.com/
-[2]: https://lore.kernel.org/linux-iio/202410111221.YIeXHxOv-lkp@intel.com/
-
-
+Also I'd like to remove the above paragraph
+from mm/slab.h from the commit log.
+It was good to ask during v1, but looks odd at v5.
 
