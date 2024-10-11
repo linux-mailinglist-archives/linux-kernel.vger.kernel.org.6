@@ -1,146 +1,183 @@
-Return-Path: <linux-kernel+bounces-360785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B224F999FAE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:03:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF043999F61
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:54:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4469B21B18
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 09:03:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90701287E05
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1C1D20C496;
-	Fri, 11 Oct 2024 09:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36EA020B217;
+	Fri, 11 Oct 2024 08:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b="slSlc4ZM"
-Received: from smtp.forwardemail.net (smtp.forwardemail.net [149.28.215.223])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="N6YoSBhf"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1B1120C46F
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 09:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.215.223
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FE1520A5E2
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728637372; cv=none; b=fGOdBr/rXDZ7YBNjtm3YBVHqItGkRzdH5E2pnYTv5xZbxzvBG/F1vHjhF94QfV618SAVsFeZxC31JE288mXIBm+dNfVEP6akakymBafssOR+/gImill46PzcTUyo+V76+WPojGuIawYQBh91Fya0e2GVXtvAGwhb0sPVuZfxato=
+	t=1728636878; cv=none; b=iWOtBPTF4xhhx7nkTB1zE9OilC4dC16LGwE3SfeFwrlJvOoBNUij+6RBhcgnbnPsjNbJjxS8nuyPCgRfH++c547nuxoq8hgnurnJ47E1UCtwQkwWxSg4eeToHQkHnd+ZigGUWb6Ly65qtZUuUeI7im/YIH0v+ZXojyy+c104RTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728637372; c=relaxed/simple;
-	bh=19z3d0aqkHvJwN+Hk7S9ZrvGY/Nf3msL/Lxq7i9eJyA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MO2vxGkPbtcRDTX5GjltdjZL0NG2epJEDdMLO7pN35DxrE8sbFm1I78vYrJeOnk4/Fw6s7oGZf6vIMN49Z+WBxkkhgGEYDFtUf0tmhK8J2ccezZWLN3kh8nRCk6iy6IhBbUL1bW69EbmBa7YsDJ0WQyr7C+vpGicOOj1wkaCvIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se; dkim=pass (2048-bit key) header.d=kwiboo.se header.i=@kwiboo.se header.b=slSlc4ZM; arc=none smtp.client-ip=149.28.215.223
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kwiboo.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fe-bounces.kwiboo.se
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kwiboo.se;
- h=Content-Transfer-Encoding: Content-Type: In-Reply-To: From: References:
- Cc: To: Subject: MIME-Version: Date: Message-ID; q=dns/txt;
- s=fe-e1b5cab7be; t=1728637367;
- bh=PR7Qyd/O87/6PBrhIOrZqQvu9qgOrZhgZxSmRsZHQyM=;
- b=slSlc4ZMiqYtv6xtlf/LBI9QAFKlTKcLt4DfUrLKmERh+r+8WanJ04EN8W440RwtgXeN3++di
- aI9Id8C0Cl4tuOfR9MdTRs9naNavtHHmfURqpOtIS6JdmqLln6HcjFsKSQmJ2pEcgZavXSPQg4+
- +C75E8jZDHlecGNu4Up9EjuNl1UBr/ffcoJABJtCxUXO3c7Ig3h0YgdRKDPgONfaeXwqjOvUoY/
- /DDh2Cn/QfBjq7oqfsK5hmlztSQrnMQ6zCa9JTqoI79uyWIduqPyftsD7rn/btHiqGmU0KFWxcg
- RsplSa+h833d046ZVcNmq7OZTy245qifAT5i8W+Bagfg==
-Message-ID: <86ff39fe-cc88-4cf4-a1ad-6398a74ceb11@kwiboo.se>
-Date: Fri, 11 Oct 2024 10:52:19 +0200
+	s=arc-20240116; t=1728636878; c=relaxed/simple;
+	bh=0yFtKQoVOjJqZvJsyiHOb8icb0oscB8+syNQOO/JFu4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mcZvM01PLk8o3uVHqvR97WGf+W3lW/aFj45/OgYd6MP+zZTLKQ76IyZTfpNxCxFKHalUMzeaPwOsNtHl/ULKrdU0X6judS6RhMgiQI1sEpNmOVPL2v5aXU+CwPv84k8x7lM7qQDgVM09gB9RUBiy2If0OCiP9AgpwHw0YLQwm48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=N6YoSBhf; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49B8rbxh024524;
+	Fri, 11 Oct 2024 03:53:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728636817;
+	bh=+Shu2aoaU2vVehSY+LLbrY6m+HHX1k5cPbMb75n6AKY=;
+	h=From:To:CC:Subject:Date;
+	b=N6YoSBhfXO/KEWrZNVMhTG1OQ80/GWyLSbpUkh7Byvd8omCYsdkcB2QMqo85cFxhu
+	 VWPErC4HXTfUt+qdCVicPfrlrcfykHFA8wkmS1B95GNdW/tWb2LI02pik8JOGgus1j
+	 Daf0KAq4+sFdm0JyvgyXf6lfnb7QNlq7pf9Q7m8o=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49B8rbBD064864;
+	Fri, 11 Oct 2024 03:53:37 -0500
+Received: from DFLE115.ent.ti.com (10.64.6.36) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Fri, 11
+ Oct 2024 03:53:36 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE115.ent.ti.com
+ (10.64.6.36) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Fri, 11 Oct 2024 03:53:36 -0500
+Received: from lelvsmtp5.itg.ti.com ([10.250.165.138])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49B8rS0M127994;
+	Fri, 11 Oct 2024 03:53:29 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <tiwai@suse.de>
+CC: <robh+dt@kernel.org>, <andriy.shevchenko@linux.intel.com>,
+        <lgirdwood@gmail.com>, <perex@perex.cz>,
+        <pierre-louis.bossart@linux.intel.com>, <kevin-lu@ti.com>,
+        <shenghao-ding@ti.com>, <navada@ti.com>, <13916275206@139.com>,
+        <v-hampiholi@ti.com>, <v-po@ti.com>, <niranjan.hy@ti.com>,
+        <alsa-devel@alsa-project.org>, <linux-kernel@vger.kernel.org>,
+        <liam.r.girdwood@intel.com>, <yung-chuan.liao@linux.intel.com>,
+        <baojun.xu@ti.com>, <broonie@kernel.org>, <soyer@irl.hu>
+Subject: [PATCH v1] ALSA: hda/tas2781: Add speaker id check for ASUS projects
+Date: Fri, 11 Oct 2024 16:53:03 +0800
+Message-ID: <20241011085303.738-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: dts: rockchip: Prevent thermal runaways in RK3308
- SoC dtsi
-To: Dragan Simic <dsimic@manjaro.org>, heiko@sntech.de
-Cc: linux-rockchip@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, stable@vger.kernel.org
-References: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
-Content-Language: en-US
-From: Jonas Karlman <jonas@kwiboo.se>
-In-Reply-To: <d3e9dc4201d38894b09f3198368428153a3af1a4.1728555461.git.dsimic@manjaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Report-Abuse-To: abuse@forwardemail.net
-X-Report-Abuse: abuse@forwardemail.net
-X-Complaints-To: abuse@forwardemail.net
-X-ForwardEmail-Version: 0.4.40
-X-ForwardEmail-Sender: rfc822; jonas@kwiboo.se, smtp.forwardemail.net,
- 149.28.215.223
-X-ForwardEmail-ID: 6708e747ea3bbe7728966137
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Dragan,
+Add speaker id check by gpio in ACPI for ASUS projects.
 
-On 2024-10-10 12:19, Dragan Simic wrote:
-> Until the TSADC, thermal zones, thermal trips and cooling maps are defined
-> in the RK3308 SoC dtsi, none of the CPU OPPs except the slowest one may be
-> enabled under any circumstances.  Allowing the DVFS to scale the CPU cores
-> up without even just the critical CPU thermal trip in place can rather easily
-> result in thermal runaways and damaged SoCs, which is bad.
-> 
-> Thus, leave only the lowest available CPU OPP enabled for now.
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ include/sound/tas2781.h         |  3 +++
+ sound/pci/hda/tas2781_hda_i2c.c | 39 ++++++++++++++++++++++++++++++---
+ 2 files changed, 39 insertions(+), 3 deletions(-)
 
-This feel like a very aggressive limitation, to only allow the
-opp-suspend rate, that is not even used under normal load.
-
-I let my Rock Pi S board with a RK3308B variant run "stress -c 8" for
-around 10 hours and the reported temp only reach around 50-55 deg c,
-ambient temp around 20 deg c and board laying flat on a table without
-any enclosure or heat sink.
-
-This was running with performance as scaling_governor and cpu running
-the 1008000 opp.
-
-Most RK3308 variants datasheets list 1.3 GHz as max rate for CPU,
-the K-variant lists 1.2 GHz, and the -S-variants seem to have both
-reduced voltage and max rate.
-
-The OPPs for this SoC already limits max rate to 1 GHz and is more than
-likely good enough to not reach the max temperature of 115-125 deg c as
-rated in datasheets and vendor DTs.
-
-Adding the tsadc and trips (same/similar as px30) will probably allow us
-to add/use the "missing" 1.2 and 1.3 GHz OPPs.
-
-Regards,
-Jonas
-
-> 
-> Fixes: 6913c45239fd ("arm64: dts: rockchip: Add core dts for RK3308 SOC")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3308.dtsi | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3308.dtsi b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> index 31c25de2d689..a7698e1f6b9e 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3308.dtsi
-> @@ -120,16 +120,19 @@ opp-600000000 {
->  			opp-hz = /bits/ 64 <600000000>;
->  			opp-microvolt = <950000 950000 1340000>;
->  			clock-latency-ns = <40000>;
-> +			status = "disabled";
->  		};
->  		opp-816000000 {
->  			opp-hz = /bits/ 64 <816000000>;
->  			opp-microvolt = <1025000 1025000 1340000>;
->  			clock-latency-ns = <40000>;
-> +			status = "disabled";
->  		};
->  		opp-1008000000 {
->  			opp-hz = /bits/ 64 <1008000000>;
->  			opp-microvolt = <1125000 1125000 1340000>;
->  			clock-latency-ns = <40000>;
-> +			status = "disabled";
->  		};
->  	};
->  
-> 
-> _______________________________________________
-> Linux-rockchip mailing list
-> Linux-rockchip@lists.infradead.org
-> http://lists.infradead.org/mailman/listinfo/linux-rockchip
+diff --git a/include/sound/tas2781.h b/include/sound/tas2781.h
+index 8cd6da0480b7..f8a3dc13cbbc 100644
+--- a/include/sound/tas2781.h
++++ b/include/sound/tas2781.h
+@@ -107,6 +107,8 @@
+ #define TASDEVICE_CMD_DELAY		0x3
+ #define TASDEVICE_CMD_FIELD_W		0x4
+ 
++#define TAS2781_ASUS_ID			0x10430000
++
+ enum audio_device {
+ 	TAS2563,
+ 	TAS2781,
+@@ -156,6 +158,7 @@ struct tasdevice_priv {
+ 	struct tasdevice_rca rcabin;
+ 	struct calidata cali_data;
+ 	struct tasdevice_fw *fmw;
++	struct gpio_desc *speaker_id;
+ 	struct gpio_desc *reset;
+ 	struct mutex codec_lock;
+ 	struct regmap *regmap;
+diff --git a/sound/pci/hda/tas2781_hda_i2c.c b/sound/pci/hda/tas2781_hda_i2c.c
+index 370d847517f9..1f71927825b2 100644
+--- a/sound/pci/hda/tas2781_hda_i2c.c
++++ b/sound/pci/hda/tas2781_hda_i2c.c
+@@ -615,7 +615,7 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	struct tasdevice_priv *tas_priv = context;
+ 	struct tas2781_hda *tas_hda = dev_get_drvdata(tas_priv->dev);
+ 	struct hda_codec *codec = tas_priv->codec;
+-	int i, ret;
++	int i, ret, spk_id;
+ 
+ 	pm_runtime_get_sync(tas_priv->dev);
+ 	mutex_lock(&tas_priv->codec_lock);
+@@ -648,8 +648,23 @@ static void tasdev_fw_ready(const struct firmware *fmw, void *context)
+ 	tasdevice_dsp_remove(tas_priv);
+ 
+ 	tas_priv->fw_state = TASDEVICE_DSP_FW_PENDING;
+-	scnprintf(tas_priv->coef_binaryname, 64, "TAS2XXX%04X.bin",
+-		codec->core.subsystem_id & 0xffff);
++	if ((codec->core.subsystem_id & 0xffff0000) == TAS2781_ASUS_ID) {
++		// Speaker id need to be checked.
++		if (tas_priv->speaker_id)
++			spk_id = gpiod_get_value(tas_priv->speaker_id);
++		else
++			spk_id = 0;
++		if (spk_id < 0 || spk_id > 1) {
++			// Speaker id is not valid, use default.
++			dev_dbg(tas_priv->dev, "Wrong spk_id = %d\n", spk_id);
++			spk_id = 0;
++		}
++		scnprintf(tas_priv->coef_binaryname, 64, "TAS2XXX%04X%01d.bin",
++			codec->core.subsystem_id & 0xffff, spk_id);
++	} else {
++		scnprintf(tas_priv->coef_binaryname, 64, "TAS2XXX%04X.bin",
++			codec->core.subsystem_id & 0xffff);
++	}
+ 	ret = tasdevice_dsp_parser(tas_priv);
+ 	if (ret) {
+ 		dev_err(tas_priv->dev, "dspfw load %s error\n",
+@@ -787,6 +802,15 @@ static void tas2781_hda_remove(struct device *dev)
+ 	tasdevice_remove(tas_hda->priv);
+ }
+ 
++static const struct acpi_gpio_params speakerid_gpios = { 0, 0, false };
++static const struct acpi_gpio_params interrupt_gpios = { 1, 0, false };
++
++static const struct acpi_gpio_mapping tas2781_speaker_id_gpios[] = {
++	{ "speakerid-gpios", &speakerid_gpios, 1 },
++	{ "interrupt-gpios", &interrupt_gpios, 1 },
++	{ }
++};
++
+ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+ {
+ 	struct tas2781_hda *tas_hda;
+@@ -823,6 +847,15 @@ static int tas2781_hda_i2c_probe(struct i2c_client *clt)
+ 	if (ret)
+ 		return dev_err_probe(tas_hda->dev, ret,
+ 			"Platform not supported\n");
++	ret = devm_acpi_dev_add_driver_gpios(tas_hda->dev,
++					     tas2781_speaker_id_gpios);
++	if (ret)
++		dev_info(tas_hda->dev, "Unable to add GPIO mapping table\n");
++
++	tas_hda->priv->speaker_id = devm_gpiod_get(tas_hda->dev, "speakerid",
++						   GPIOD_IN);
++	if (IS_ERR(tas_hda->priv->speaker_id))
++		dev_info(tas_hda->dev, "Failed to get Speaker id gpio.\n");
+ 
+ 	ret = tasdevice_init(tas_hda->priv);
+ 	if (ret)
+-- 
+2.43.0
 
 
