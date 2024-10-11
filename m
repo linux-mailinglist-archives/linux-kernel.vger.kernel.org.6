@@ -1,137 +1,112 @@
-Return-Path: <linux-kernel+bounces-361777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D836999ACE2
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:42:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3636C99ACE6
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:43:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D67A1F21ADE
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:42:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 261B0281E19
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:43:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65CB61D0B82;
-	Fri, 11 Oct 2024 19:42:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDCCD1D0BA2;
+	Fri, 11 Oct 2024 19:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="liYI+sYZ"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="joLeekbU"
+Received: from sonic314-20.consmr.mail.ir2.yahoo.com (sonic314-20.consmr.mail.ir2.yahoo.com [77.238.177.146])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 737EB1D0960
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75D701D096B
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:42:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.146
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728675725; cv=none; b=HMidgFoJfKzFB9+jp2Uj7Pse1UrpTetgyeL9Jf1zdlp9IVoQDF7uId5UoUFaPwERO/6wirgLSroOEAzE3jVa7f+203nn4xJnHXh1i4KdRIpvsenUU0Ai7+jhVyUV9Q8lcmfxjP8Aj80qlE1ekayfJHXp+x4B+6pC32QzYFZPM1Y=
+	t=1728675740; cv=none; b=FDG32v/TDeNPU9jj9niAW9GXG7maJSOAIxo3MfPuMDA8SCA/tgUy4G2OvgtgtKmWpdLV7xcAVae0zTE2ynDUvTLMwORE9KN0oz8Xmg8YegardEc2fHC4gmxMhXzv8b3MMQ8JUfWyI2/HBJdpz2+C0uYnQM8NXqFEY6k+IUpoaP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728675725; c=relaxed/simple;
-	bh=ksr9J/NJBJ0Xuzu5HMGPsWQqNBircfh5z66J9u0hb6k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VWmUCGBDRdSz+y+Yfw2RFnCMcyD+2QVAa/a5xcPExF7jeDYIexENVznXLa+XttG4M7jgPvvIzNAu30vLIyLi9iOOM0td/0sM7BXiW24oHKiDnAUO25h+IlWeFdbrDd0IgDVSBu14gZFOW0IrBMHAj/GjagqqnbJQITzJ7lKuMCg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=liYI+sYZ; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20b64584fd4so23945135ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 12:42:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728675724; x=1729280524; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7NkHDjpnUQFEt0hD1ZaAeCZnipeCJjRzk1S+2sZ6qMc=;
-        b=liYI+sYZ0DfpC8J/aEzIYE18gIObe1zyR/rc/DFoqUy9RT+hk/da6ab0a9Wy3fIFp+
-         XMOjUFNTLtGcfuqkzjJDyhoTJ8dfZLidncqLqHX92qL4H0PJDxZGlPKbwh6o+eas1tm9
-         ynVYqeXvQmQBvClHbKriD+YVyZLPtAIxMbiSSdF+pdqb2z0eDnAWRt8yHVKzYTltGpgI
-         FRxhLAP3Enh0UjkgTO39jblKUb/8t+/UKgbODAgLocML3Du1OhL8PHAVLBm1OgLJLxh4
-         cqA/YDRRstZqrUzNCAlxtbP8gDoO7D3mk1MP78NP7bPyhnJzJf1/LC3tEfT0toQ86ZPV
-         oDSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728675724; x=1729280524;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=7NkHDjpnUQFEt0hD1ZaAeCZnipeCJjRzk1S+2sZ6qMc=;
-        b=MfIdl7RF2JymeCnuwBPUTE47XY2o/Nxv9SqCsNbFhKenZZneKzvPTP08hWS8D0lteW
-         BImve1vudg1O+wjCRANBcIT3iISSd6WKXNO5lQVjlkMqUFjX+oU3/gqhIHr1ME9DvyaB
-         Ud1m90GEMdhVdsVD+wProb8pOIhMQ2iN9RuuMw2hbLBfqOzBHqmBww/QR2KcJUT8CYD8
-         szy0ef0gyAEMBUxP0WLhUoZOZkvCq9l4Fg0dAL9/q8R3b8A3I5vcCBbpC5cdUO+rfuVl
-         auixzFGKSaJIY4oGVCqt/tB4CKvn4eM7/oycNm8LkXfggxFeldmu9fgZ++YyL8p7cBOY
-         +VLw==
-X-Forwarded-Encrypted: i=1; AJvYcCUY6sqNEbZo7GX6WYMauOtxjq1Cwd1qlNdCxVfkalz9yB+6s/SffJ4aarvm4MVm1NlP1OLBtZa3Oc5iUDw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHAr8/J4A1FDDxYeJqLP0oVx1PE3oB25Xn2GPD6PbNgTO5ixdV
-	3nYMnGnADK8cSjUtfU9sJj3xRDv79Wd8LVQKiynVhWM2b07+C8XAEwQ25XH5rfxOkvUPrZaGCqT
-	TIqTgmO3N5kYdNy0LIiDy02SGXuSnF8OPB+N5
-X-Google-Smtp-Source: AGHT+IG6TveOBF9WCeXcVTJX6s9D2yJmBXfLLU3gWSDnCN9YK113Nv3X6V0TyPbjMOSdSY14P2KDQM4XUGAKXNU7Cw8=
-X-Received: by 2002:a17:903:1103:b0:20c:5bdc:c228 with SMTP id
- d9443c01a7336-20ca1461fbbmr44130195ad.13.1728675723433; Fri, 11 Oct 2024
- 12:42:03 -0700 (PDT)
+	s=arc-20240116; t=1728675740; c=relaxed/simple;
+	bh=QdxfIqBJgxkSu9IxavGoJTl6cPZPsvz83rW/wuE0ntA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AM6j5aoyWkaiDNuPH8LQKFVBZzY1H83PGi0zB3CdYoLTK7oHmMSqai/U/zuO34WXS8God8j96MTv11BkNzHyzwqQyMhlwX2vQZfCsK10brVhuMjCo0StQfFLQpKJKNv57mIFNhCaH/fkOHRzOxAliuZzZHzYrIQMEiApdsfc4yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=joLeekbU; arc=none smtp.client-ip=77.238.177.146
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1728675730; bh=QdxfIqBJgxkSu9IxavGoJTl6cPZPsvz83rW/wuE0ntA=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=joLeekbUBw+JEM/GPn2DwvG2BouFH+lBUi85EIfPm84LYW1aPC0SnLc3BmMOqpPGxHxJpSVI/VPHYWcalas3x/wXhzbZXhua2wHwwyNljQJs8GVBEjzyPLAhCz5eLiOotezFoo4VjnGQZH61aGwZt7wYF0JaYHGD0PJU8OoAljmKsCKz5OQnkhnuDkYPm1XkWwCkSvJnHSKAg743XdbhaicrsIWi2fJTIL+1734kUSkzgNrAiALTJa9Eiff+eigqn9Y+fHViyqY5stFH781IKHLEifIxqQSwWjFeL78YV4BpgUkUByLK+RPlGLCP36QSR//0H3gY4OXgfYohT41j8Q==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728675730; bh=PDEqepCN+aqz2KbFNIyZrkMWN7nMbrJjyqfRqC71czB=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=pNRjErnD3tbL1YP04eq9i42ho6f5FrI0yQKA9wXuhbxaT8DMkO6lY2fz/NQ1goMPTTp+8N0K+HdHzTkLjp2XyGVJoRFHGlCbwM4wxJ4sJ6Tvv2aWTJe+3Zfi4iVMmxuUs2/sFTAfgBnl8ZiOF39y469zAOcV0bYQxMd1SIHUCf+hD9d9J0XZEIO6htR+eY8peb6YlIQltxfhlRbpUqz2Gw8YU4luanVzr4S6H/tpJvH/KsSryvKi76qakiKCwSWH05QraqYU8824suWyTGZ8EIURt3cL01taOFrSOWoHK5b/wHvYJA56n+hVIPYTKsal5mh1bwGHJl7ZAfGPfWMKpQ==
+X-YMail-OSG: MBTzprIVM1mA65Cu246_MUdx.IwNDtKyXB332rt_XiQ5wNuwIayUiKJphiKSW_w
+ rwyGbqI2rysa6rare3.gy0Ig8zIh3gp2TUNLR_LnoLmwbUJ4UXiJZCYlHs0laG_K.E4WR6J.WTYs
+ 1CcQgWkQ8.Mo8aFsxSd9fAgDBwtB3RVb9v_FZv2kF3EljDY9AQ8ia_zj6d6b4qfPpJAJoZQrSQfX
+ sdJUrA01dcuqZlK7W_40mL6ciFhj0nvBXU8Q08LfIpLjmVFDe3.4ibxgl92hlqzWiK6PV1rJSi9B
+ ypv8A1VmRPKhuPg5ktHpeg_wjcM81PFXvTkdwcfrn89QmJ9T29MKAUX96UIg7jdVfEjIggOHxht2
+ Le8DC83h.l5llnls13aCRrEpEutmaVqcmJJwzM1B4CRIIVh2ZB.7VCe15lzaFW4YNCx4986RYRL5
+ hVswA8YdXY8rbxPpQyIGmr6XB8qPogCrnA9rrJ9SQ5ngnDPDGOG6EyuThHgq26TxuVrrVt4uQdFd
+ HtDaQX312zxPofCunYOz2CaJ2FtX9vAjxFXQSI9X2jIxYBkGtFQnoG8oLsM3a3ztPlO7PYM2dQeX
+ USJzOIO6cSv6IW2VJnLSHUzyyndhzAWGRyLdef0TiONN75J.TIH4TXY.fHMrg_61.WrRK91p8rKr
+ LUt9gcIRga7yc2Mh0biudRsL.e.zgJIHqlPA8xQmfaPBpQIwPofhx7EaV8XZ.JmmweqWF9CmGrgF
+ yXPBwDa9.Ui3LPlkqeR8SljfkkMfoC0gCit.iY0ZPw84L5Jt5OqqWHNttJWEPritSByD3s1Y7QO2
+ pV2kT9OBU9ZOP4p8bv6zdU0VzQQVcXwmxKUAlg06VrEsjlHuau245aN6sY.6q07TY4h2jajb44MZ
+ U94g4JZoMLJ4MkxyQShT.uwL4_AG_p2G9iPpMgB0Cnf0JzC1RiIPq9cDIqY45ryB78eJgYrrxdHu
+ 91SlsP_4lX7hN.XhKmVxow_OlYgpFZhYFsg63mboSdWNWZGAv1XbIDENzBan1ChmDQqHY8cw6oMF
+ kO1.kXpj0e5xrXLLm.qRty.AeIA4oCCQr9PkCn583xCnpYEQAjvFjd3gQdu0onYH3Mwt5NQTOvVi
+ 1U1j4Le4W1YvC10jMCqD55HKGj5i_2Ack98ofMjBmNnUTrnahO8V062.g8rrKkiby7my5bsFCLon
+ Kzos9ytK_KHWz9wBxnz_c0Ka1Dfm5dhPtJKmixMJw_UhTqv7QHV4kR30y52zByDBBYXnZrG849Cn
+ UFx7BkrsI4aGbdIJnt_8NHdWNyaflBlt4SGqL3d_WH8cfewBQmcqZM3oa3SKFqU6l.fRSHZoY_Im
+ 0lhcagRyyDxMnAKBF33AVjyvsOpebeaCwVHwWPqpBWLLZPrseOryjawWw5C1OjZ0EGDNI2ji9pSb
+ o6iHbNMEVMmdlQ0IqYMedgF4ZW7x6Xd6jgocUaX6hCwCECxZoOIh7OvMPiEXsNe0JtrUU4OsmYfl
+ Ck5P3Chq66j68N6X6KgQ7vtPwDuyxYDsnk1rYk.V5sSmsKGpQxg3vwcgDTCwXP4pF1fXmaGhzvuv
+ ix_n9u7GI.ypzYHYHdAh8X4QGChrMfBiR6BUrY3TYhE21M8AFmGSrkBvSnj_kxR41u2hs.l_iwb9
+ FarTGt64uwFgXQNwrDV.46lMTFGe55y2Xjw35NZ6EF8wuSfkLS3T1mjLofRCnjeh4XYlbuOOi8Aa
+ uNknwkf_mDXPr5uk2LXDSL6et4ZWFIR6iH.mDo5J1TL7fWnOk8IgNgqApIaAZ1FLK4AiiGe3p6mG
+ N7s_F.ZhZ1DDzNlU9URmN8ZZfYsNj4Z9J81sF2OQsyaljaoe9eGSUJHeyfnYBsUlPCAhYdGJT7kS
+ J5oJpA0BgKiOn2YvSCPjhtaTK9oWQXWFz3vrmB.tTFwmnc.r4xHD1jjmYcOaqId6JgRxunIAnfZx
+ h5NlVQ7HtHFONFiEehmh_kiNfFM579McxwyuGbg51jkD3908YjzHJmNCnpNLbB4EUEp33miyZlNp
+ c8rPFPsSIjDGdu8dpVmCebyCPanawdk_SrImZ3tJtoMxiLwts1vJ7okrY05hpIv_sr8mKEQw7Y8E
+ 2tW7eHzzlBnd.Vapy6Wyc28mJIykXZdmJfVrx6n2Z4ZZ3NqTLHRZHfywLjgNI3ZVtEteVuOw0w0d
+ AEbSw8Xv.3ZFLgimCuWyJNF2oxkvlrCKk_boBSoDXyo_MwZH7StW8xedJwm6YKOdqc1lXKSWoa42
+ SxILLddwGRWedn0.j94t_KJJ72.ZkKH5KW.iaUrvA7LsQpvgH1hChrtZF73Lnts6AQN7baaLAw2D
+ uS5arguiY9YRzrALHXeCeemlFomrj4UGgWQZxFZTw4l6A
+X-Sonic-MF: <jahau@rocketmail.com>
+X-Sonic-ID: 33d90e31-71f6-47e4-93fd-d85ec77e0a35
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ir2.yahoo.com with HTTP; Fri, 11 Oct 2024 19:42:10 +0000
+Received: by hermes--production-ir2-6664f499fc-ggmrm (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 5c9e3e37c360bbb7e8327b384596edb5;
+          Fri, 11 Oct 2024 19:42:08 +0000 (UTC)
+Message-ID: <eaf1994a-a85d-4dcd-b729-2dba8354e8cc@rocketmail.com>
+Date: Fri, 11 Oct 2024 21:42:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <00000000000047eb7e060b652d9a@google.com> <d7b91d4c-8498-49a8-86ad-27eceff18ae2@kernel.dk>
- <CANp29Y6Zvqt7K9_LWEPQ4X-n1WOJbN0W83wx7a6GRhRFuX_OLw@mail.gmail.com> <4661f4ef-44a0-402b-864b-83ef8d31f07e@kernel.dk>
-In-Reply-To: <4661f4ef-44a0-402b-864b-83ef8d31f07e@kernel.dk>
-From: Aleksandr Nogikh <nogikh@google.com>
-Date: Fri, 11 Oct 2024 21:41:52 +0200
-Message-ID: <CANp29Y7HT=+R-J9tL2v0Ekebe7eKMAPccmf73jLfMa_-7myCaQ@mail.gmail.com>
-Subject: Re: [syzbot] [block?] [trace?] INFO: task hung in blk_trace_ioctl (4)
-To: Jens Axboe <axboe@kernel.dk>
-Cc: syzbot <syzbot+ed812ed461471ab17a0c@syzkaller.appspotmail.com>, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/4] drm/panel: samsung-s6e88a0-ams427ap24: Add initial
+ driver
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <cover.1728582727.git.jahau@rocketmail.com>
+ <d36d0d152c509b78d02f9f7adbea665c0c863446.1728582727.git.jahau@rocketmail.com>
+ <6d67c2c6-819b-481a-8cc9-e24ef8f6c142@quicinc.com>
+Content-Language: de-DE, en-US
+From: Jakob Hauser <jahau@rocketmail.com>
+In-Reply-To: <6d67c2c6-819b-481a-8cc9-e24ef8f6c142@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: base64
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-On Fri, Oct 11, 2024 at 9:34=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wrote:
->
-> On 10/11/24 1:32 PM, Aleksandr Nogikh wrote:
-> > (minus most people and mailing lists)
-> >
-> > On Fri, Oct 11, 2024 at 9:20=E2=80=AFPM Jens Axboe <axboe@kernel.dk> wr=
-ote:
-> >>
-> >> On Thu, Nov 30, 2023 at 2:17?PM syzbot <syzbot+ed812ed461471ab17a0c@sy=
-zkaller.appspotmail.com> wrote:
-> >>>
-> >>> Hello,
-> >>>
-> >>> syzbot found the following issue on:
-> >>>
-> >>> HEAD commit:    8c9660f65153 Add linux-next specific files for 202311=
-24
-> >>> git tree:       linux-next
-> >>> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1006f178e=
-80000
-> >>> kernel config:  https://syzkaller.appspot.com/x/.config?x=3Dca1e86555=
-05e280
-> >>> dashboard link: https://syzkaller.appspot.com/bug?extid=3Ded812ed4614=
-71ab17a0c
-> >>> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils f=
-or Debian) 2.40
-> >>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D14ec6e6=
-2e80000
-> >>> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D11964f7ce=
-80000
-> >>
-> >> syz test: git://git.kernel.dk/linux btrace-fault
-> >
-> > It should begin with a # :)
-> >
-> > #syz test: git://git.kernel.dk/linux btrace-fault
->
-> hah thanks, I always have to click the link to remember what to type.
-> Guess even with that I messed it up...
-
-FYI we've begun to include a small cheatsheet of the main syzbot
-commands at the bottom of each syzbot report. So for the newer reports
-you can just copy-paste the commands directly from the emails.
-
---=20
-Aleksandr
-
->
-> --
-> Jens Axboe
->
+SGkgSmVzc2ljYSwNCg0KT24gMTEuMTAuMjQgMTg6NTIsIEplc3NpY2EgWmhhbmcgd3JvdGU6
+DQo+IA0KPiANCj4gT24gMTAvMTAvMjAyNCAxMTozMSBBTSwgSmFrb2IgSGF1c2VyIHdyb3Rl
+Og0KDQouLi4NCg0KPj4gK3N0cnVjdCBzNmU4OGEwX2FtczQyN2FwMjQgew0KPj4gK8KgwqDC
+oCBzdHJ1Y3QgZHJtX3BhbmVsIHBhbmVsOw0KPj4gK8KgwqDCoCBzdHJ1Y3QgbWlwaV9kc2lf
+ZGV2aWNlICpkc2k7DQo+PiArwqDCoMKgIHN0cnVjdCByZWd1bGF0b3JfYnVsa19kYXRhICpz
+dXBwbGllczsNCj4+ICvCoMKgwqAgc3RydWN0IGdwaW9fZGVzYyAqcmVzZXRfZ3BpbzsNCj4+
+ICvCoMKgwqAgYm9vbCBwcmVwYXJlZDsNCj4gDQo+IEhpIEpha29iLA0KPiANCj4gSSB0aGlu
+ayB5b3UgY2FuIGRyb3AgdGhlIGBwcmVwYXJlZGAgaGVyZSBhcyBpdCBzaG91bGQgYmUgaGFu
+ZGxlZCBieSANCj4gZnJhbWV3b3JrIG5vdyBbMV0NCj4gDQo+IFRoYW5rcywNCj4gDQo+IEpl
+c3NpY2EgWmhhbmcNCj4gDQo+IFsxXSANCj4gaHR0cHM6Ly9lbGl4aXIuYm9vdGxpbi5jb20v
+bGludXgvdjYuMTEuMy9zb3VyY2UvaW5jbHVkZS9kcm0vZHJtX3BhbmVsLmgjTDI2Mg0KPiAN
+Cj4+ICt9Ow0KDQpUaGFua3MgZm9yIHRoZSBoaW50LiBJJ2xsIGNoYW5nZSB0aGF0IGluIHYy
+Lg0KDQouLi4NCg0KS2luZCByZWdhcmRzLA0KSmFrb2INCg==
 
