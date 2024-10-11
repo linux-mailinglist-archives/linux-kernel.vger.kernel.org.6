@@ -1,131 +1,121 @@
-Return-Path: <linux-kernel+bounces-361071-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8249799A305
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:54:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5600499A304
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 13:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 247A01F2381B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:54:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4193B2460A
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 11:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A258D216438;
-	Fri, 11 Oct 2024 11:54:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 95AEE216A11;
+	Fri, 11 Oct 2024 11:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DNuOc83n"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PHJIdOCB"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B450920ADD3;
-	Fri, 11 Oct 2024 11:54:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2F33216432;
+	Fri, 11 Oct 2024 11:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728647684; cv=none; b=vGXseV2mCkswmRdWhzemNCk6OnACdnhlrC8l+I9Dy236Muxss/y8m1kx05HNVMktIjR4ndwi5CYV6dklt4AMsSUa0KEKcvvFoFyEyat226M9vwDivWpQfc15Z2KSINXPEHErSTbgEuLYbZ2oJF8CfbDdYiXMxlpp3Sn9QxIOa6w=
+	t=1728647642; cv=none; b=aXSlI4qNvJ1FZmMPzuGVmnbu/wmN1RlTjcF2C0ivIfr/idnNfOXtC1Irn0hKQ2hvVn+utrplZx25xi5MqeY9s1paFsfqaBTau6nJECU4/QRZyoaZvVA5IWm9BOCNyUAOZ4FNSMLw5iiHHVkdcYvZikHiZ7iN8KH8sEXiZAPleB4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728647684; c=relaxed/simple;
-	bh=BH4DbbmMQUbDmGpkllQVRVVJhPfwORuNLGg9TXD6Tiw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cgPsfWg30Nf4Ka6pgcOkIdKkKjLaDUX/UJUDZzWYZhXbxiXwQ/7TrVQVacGLm7Izd28fayrj4Le9lr7/cyGKNWKXarBvXExljW1VTTesTBkZ1XrC6HOQrbHMIPNJUYWVTAquaFccRWU8S5l6PFGQXQvY81alEfh0kqocxmaAgDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DNuOc83n; arc=none smtp.client-ip=209.85.214.171
+	s=arc-20240116; t=1728647642; c=relaxed/simple;
+	bh=SPK6c2GAoBBXdan9Km9M5WuJLVPVEFl8rnDe//urjWY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=p4iCeQDtgNNEt3l4WXWoh8tX0YTe7CgLeJJ4NrP5A4erSBMEjXGbSuDy4CA5xlbcfdAJAXzdpB7Tf0e56V/n+cFnUYXW88lDgz/W8y/PcTkKeLQyYxCOwmxeKhy2XwMQTMk00OGAXi5mx+OKO19ZxgEN6jPXLO33nVpHvvazIGA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PHJIdOCB; arc=none smtp.client-ip=209.85.215.171
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-20c767a9c50so16591935ad.1;
-        Fri, 11 Oct 2024 04:54:42 -0700 (PDT)
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7db61fd92a1so62048a12.3;
+        Fri, 11 Oct 2024 04:54:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728647682; x=1729252482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728647640; x=1729252440; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=n0M9rAFbcV+izFFMOP8m5z+SO85I3Ch0rIJacPyB8ek=;
-        b=DNuOc83nCI3Rxq7BamMp5N1ixePQMB2MrOF4m9u9pc2oemqzz8zAp/qhoDNhYSTCll
-         lGnzGpAdPW8+/CBWhzEM8LqazSEp0YwdsSKtucWkPsbfIWVlfgUPJI8FeJ//MgzlOtHL
-         HDfTwtuSlHKgn4uSJZHLwmnLJH3ZKxEvxfvULbHGWeAQNdWAcsWt9T7x+Nz+inNq/8cR
-         E5NSjITT2zEpAy6+t6Zsc3JTKktm4LqSY7pIEVGeFIBBhrM92HMoE93zi6STeSpM4yBH
-         jMXsFbLJXkV07r3zz7gAnJRWB+zVpDHhcdhTzXeenmwS0036BqfAT77IFSsvEjxK0UPO
-         RMEA==
+        bh=SPK6c2GAoBBXdan9Km9M5WuJLVPVEFl8rnDe//urjWY=;
+        b=PHJIdOCBr95CE7lk3Gdz80EyK45UTRuTVAzaMqW/Si5Uhi0SsRk4k//ejCoqbRrDv3
+         7Ra8fsOj044MQInttQ4nr0PPzy2rwebqDZE06zZTFr90tEhIE3kLFKc7kA/kCaom/DiE
+         NiAe4FZW8tDNSARUmXyC4kp9O17oiZTlVqLdXUVxjCfSWOKLhk1rv0nBHbEDwntrzRtV
+         UBLpSfdu1EqSwCIJf9gArcA/eKqdWJHzRHuEUDXdQRbGr7oPbli3nLB+fhFzM0FGFBqc
+         MZxzcgY9PL7xlQ10Xb1QaXcrJy1uFmy9hpE7HLqL9jSeozI/d5FSUNTLB4dzziIh6bHb
+         tsiw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728647682; x=1729252482;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728647640; x=1729252440;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=n0M9rAFbcV+izFFMOP8m5z+SO85I3Ch0rIJacPyB8ek=;
-        b=NIfYvKjSYp1rROxFHlDrnOifqyKh2TYc2h1cvdTdKypf/DcKu+SqoLV1Sl5QVycOIT
-         HoV+UQPV546dAc2s/cjqSMumuy+J24W97a7vKipwHZOdTJsPbD0sISucHskSCuibJ4bc
-         wOVQGcEFbLDc/sHwA8dfGtZAuvvvUmuwsPS9wai0SNiKFvvMQPB4cb4NNn3kHtQam1rz
-         DuTvNKuN13QvX/W8COkzV/UoIuyQu8WXH7+CoHn1iSkoxRygEbe+S6Y/nz9a69SiD4H/
-         SksRarsyQKj1Ehv7FiRqe2KWR6w4ABzf9yquI5RKRhv8wwFjMBoJniAVLLmM8KZCLbW4
-         5slg==
-X-Forwarded-Encrypted: i=1; AJvYcCWRByVI1BkUj2z0KGJK7gmRkhC4oe6wTB0nWLtxJGXG+dmXDKvjGubwOmmwsVWi0IV2azl+8N04T9c=@vger.kernel.org, AJvYcCX/wg7ZDCDyEs4p6cIIzmobOuDw3zplBn0GtV+Jd0sT5bZ4OpZ4hoGzS3dHtqtHG1eyV8yT/4vyaxrtBJWv@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxv2SjtTU3Xflgpe3K+RVb66parTPITJlt22Vyz6vqV4JjpbIo
-	/zwoAWyTY1FEeEPYlObkIuIgHlVDR+Fw+WbFTyTN7CFrwAD10cQzgURXreFW
-X-Google-Smtp-Source: AGHT+IFWWVOZXb6Mget6b+bWzMDShsv+T0KKOi2cgOJQlaJd94yNCHHf+KVc/uLTiV9ebyDumvxcIQ==
-X-Received: by 2002:a17:903:191:b0:20b:9c8c:e9f3 with SMTP id d9443c01a7336-20ca1458e3amr31858825ad.14.1728647681927;
-        Fri, 11 Oct 2024 04:54:41 -0700 (PDT)
-Received: from ernestox.. (2001-b400-e2af-f494-1c09-712f-68dc-c3fd.emome-ip6.hinet.net. [2001:b400:e2af:f494:1c09:712f:68dc:c3fd])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20c8bad32a0sm22298575ad.11.2024.10.11.04.54.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 04:54:41 -0700 (PDT)
-From: "Yo-Jung (Leo) Lin" <0xff07@gmail.com>
-To: 
-Cc: linux-kernel-mentees@lists.linuxfoundation.org,
-	ricardo@marliere.net,
-	skhan@linuxfoundation.org,
-	0xff07@gmail.com,
-	Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	Vasileios Amoiridis <vassilisamir@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Angel Iglesias <ang.iglesiasg@gmail.com>,
-	Adam Rizkalla <ajarizzo@gmail.com>,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev
-Subject: [PATCH v2] iio: Fix uninitialized variable
-Date: Fri, 11 Oct 2024 19:52:24 +0800
-Message-ID: <20241011115334.367736-1-0xff07@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241011093752.30685-1-0xff07@gmail.com>
-References: <20241011093752.30685-1-0xff07@gmail.com>
+        bh=SPK6c2GAoBBXdan9Km9M5WuJLVPVEFl8rnDe//urjWY=;
+        b=XF8d2cZEi1oM/uQrOVl/7pSeFXgSBLQvEzcu6RChpufWglStBbj/9qTpF7PPppMy5W
+         znXc6t74e0WyKaLGaOUvafX+D0zDVAx3F8vhxg7aURgLOcIh86NapeDhRdqRVPKJ469S
+         QHzr+wj5KafQe5DUhsDK4GmmfHzBnen3jAtsCR7ZLMgkY8cOG89FVWisCFXx//K433sd
+         QgLjt7KyiE2augptk5vy4fVMNFeIn/f5YE9I3g5tnsU8l4SjlsT7QjRwgTJ9XTYeawQo
+         AIzZu9GIhF6QykBDNFhtXmWY9fQSPRQOlHAo3lLz/p1MD6Tz43D5SZIqyhrjD5F9Pt+O
+         Xl5A==
+X-Forwarded-Encrypted: i=1; AJvYcCU1QZ43q2iuOXRj1SJAI8lQU1OwIA78qw7K/fyGtpzqdtsE5N5Ne+kwP/Tvj5qGByS9uU4h7kNSOJlaDMV+gFQ=@vger.kernel.org, AJvYcCVqVNF7Wsx8Ai1+S+a65AjyFHlrZVJ0JPhj1d7ZqEyoas+tUgyjiLBR3s/lhU+JBsft4vMVFNDlXPyZWwdR@vger.kernel.org, AJvYcCWmM5Td1qAyHXHIWx9+VxoToVuXpzZauyhGcG3rR9Vp37l4irysrn15lkMwdzUgIvFkeELMiF+MuhpU7mE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI/YXeWvNc6CecvP7U4Zty0I4JclkIEmBt2TD3zQ2NUrEDizBZ
+	yNX/fQD/eDgUzNgjBTrWPCRkt2XEAHZmyBM2HVU+FnybD//0uYJiHQX21EVmLmt2d16Ov6fXhdt
+	9GxQkJp/CIz20xhZ7p8CiN5LHpUc=
+X-Google-Smtp-Source: AGHT+IG6mdYSQEBCdNPomgnZ5qhOSdJ27W22RJLc7pOXm6QMfyY2DvNJ+8gPgure2Y2WOI5rcCP9gbXFeGoIxKRb3d4=
+X-Received: by 2002:a05:6a00:2d09:b0:717:8b4e:98ad with SMTP id
+ d2e1a72fcca58-71e37c4fccamr1660879b3a.0.1728647639851; Fri, 11 Oct 2024
+ 04:53:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <CAK7LNARBXt=CWy5CgtHqdePw5L6EtD15emS2Fvre4QWfm_LjUg@mail.gmail.com>
+ <20241011114040.3900487-1-gary@garyguo.net>
+In-Reply-To: <20241011114040.3900487-1-gary@garyguo.net>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 11 Oct 2024 13:53:47 +0200
+Message-ID: <CANiq72ne6F1HpoA5gLYu9K0CcNB13JUFK5QgF_Cf4tAyvOm4qQ@mail.gmail.com>
+Subject: Re: [PATCH] kbuild: rust: add `CONFIG_RUSTC_LLVM_VERSION`
+To: Gary Guo <gary@garyguo.net>
+Cc: masahiroy@kernel.org, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, Tejun Heo <tj@kernel.org>, 
+	Yoann Congal <yoann.congal@smile.fr>, Randy Dunlap <rdunlap@infradead.org>, 
+	Roman Gushchin <roman.gushchin@linux.dev>, Jens Axboe <axboe@kernel.dk>, Jann Horn <jannh@google.com>, 
+	Mark Rutland <mark.rutland@arm.com>, kees@kernel.org, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	rust-for-linux@vger.kernel.org, samitolvanen@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-clang found that the "offset" in bmp580_trigger_handler doesn't get
-initialized before access. Add proper initialization to this variable.
+On Fri, Oct 11, 2024 at 1:41=E2=80=AFPM Gary Guo <gary@garyguo.net> wrote:
+>
+> The invocation of rustc-version is being moved from init/Kconfig to
+> scripts/Kconfig.include for consistency with cc-version.
 
-Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
----
-Change in v2:
-- Make value initialization immediate before its first use.
-- Link to v1: https://lore.kernel.org/all/20241011093752.30685-1-0xff07@gmail.com/
+Yeah, I am ambivalent. Dropping them would minimize changes and avoid
+introducing something only used once, which would be nice too. Happy
+either way.
 
----
- drivers/iio/pressure/bmp280-core.c | 2 ++
- 1 file changed, 2 insertions(+)
+> +if output=3D$("$@" --version --verbose 2>/dev/null | grep LLVM); then
 
-diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
-index f4df222ed0c3..682329f81886 100644
---- a/drivers/iio/pressure/bmp280-core.c
-+++ b/drivers/iio/pressure/bmp280-core.c
-@@ -2222,6 +2222,8 @@ static irqreturn_t bmp580_trigger_handler(int irq, void *p)
- 		goto out;
- 	}
- 
-+	offset = 0;
-+
- 	/* Pressure calculations */
- 	memcpy(&data->sensor_data[offset], &data->buf[3], 3);
- 
--- 
-2.43.0
+Similarly, I wonder if we should use '^LLVM version: ' here or similar
+to minimize the chances the "LLVM" string appears elsewhere in the
+future (perhaps in a custom string a vendor adds, though I would
+expect them to add it lowercase). We are relying on having a $3 when
+splitting anyway.
 
+Depending on what Masahiro prefers, I will take this one or the
+one-invocation-only one.
+
+Thanks Gary!
+
+Cheers,
+Miguel
 
