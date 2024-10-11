@@ -1,221 +1,180 @@
-Return-Path: <linux-kernel+bounces-361135-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2961B99A40B
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:38:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 649DD99A413
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 14:39:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C17C4284408
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:38:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94D941C21FE9
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 12:39:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EB621858D;
-	Fri, 11 Oct 2024 12:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uuC8Ej9X"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83BB321644D;
+	Fri, 11 Oct 2024 12:39:49 +0000 (UTC)
+Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59B6A20ADF6;
-	Fri, 11 Oct 2024 12:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF190209662;
+	Fri, 11 Oct 2024 12:39:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728650319; cv=none; b=BxGDMazKo9hOpFfsZqPrM88JoouTfwcbE//a1EgTzztypWzN8ESlavbyzlzb+3uscWoZE9Bz1FtbJN5FI3yGGekRNngfyheIgaMj8Ub1DdXRltiIynWb0DK5qMz6UI6NZ3nhDs6jFveZZxvlOzU2IpkaZULc1sB5JMsexUlSUCI=
+	t=1728650389; cv=none; b=GTJIq9n4t68y8fJuWqGG6Z9FXqoPDN3lUEjics4DItrdM+op06QiVsVJ2kJdqq/iYPFCxoqu9zAq5LS0BMJsLZHtgM/iNNYznfjWP5o3MOoSTC3MQFqwaMDV+5e4+NsyvvLI8bOFgJQoTRlyiN/KJBEcR3roQj5nqkiOg6vQVvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728650319; c=relaxed/simple;
-	bh=foG8+vckoR1mQ2glQADILcmJ6jiSNlJ3mZrxtgFpCKk=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=V/5JJ4bqBeZFQf4a6tl5X8R86z9qasHJMzGK9rtbWIyon3NDfzDb0409BAZJ7WI6+kfAsZbi/M+4uagFzgFFz2OnxQCly5nqBfU1nf/jT4tMMF3SnZHGrPZ/DzGEiB7kRhX05olV1pCLJmyzrzhA0/EUSzebE9rysCb6qKPDwAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uuC8Ej9X; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1251FC4CEC3;
-	Fri, 11 Oct 2024 12:38:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728650319;
-	bh=foG8+vckoR1mQ2glQADILcmJ6jiSNlJ3mZrxtgFpCKk=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=uuC8Ej9XJA65Q2h/HJ7zNH1oU8lvpVAtFtS48dryytT/XrVJ/LyW5MZ53lg49WCiw
-	 rNjfKelnOyschGSmq+wW+393y0CW/TtXYHJ5w4zFaWFzu/JN5pKUHG9lBgXsokOJue
-	 /CbTAfeXBbGyd4Cag+CJJAcbm0pzFf6wUDQmbzaCDZE8SYCc4R0mWWbgsXzrWm7/cn
-	 90luO8XQv/Cs4CtQhJuM7ntW7ECPYnLit7Y0bJ2EnGxTpr2Qjb1v2FMftKZylYqWh0
-	 C6zJUTpqis466BBsctvPlIsmXmhFZHRJEeWKrtHy8JMYGbAsrw9kDZ43uFanLr37wv
-	 p+pTGFdQz/X5g==
-Message-ID: <b0cf00eec77014ad473d4510904eb2d4fd084e5a.camel@kernel.org>
-Subject: Re: [PATCH v3 -next 11/15] sunrpc: use vfs_pressure_ratio() helper
-From: Jeff Layton <jlayton@kernel.org>
-To: NeilBrown <neilb@suse.de>
-Cc: Kaixiong Yu <yukaixiong@huawei.com>, akpm@linux-foundation.org, 
- mcgrof@kernel.org, ysato@users.sourceforge.jp, dalias@libc.org, 
- glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de, 
- mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com,
-  viro@zeniv.linux.org.uk, brauner@kernel.org, jack@suse.cz,
- kees@kernel.org,  j.granados@samsung.com, willy@infradead.org,
- Liam.Howlett@oracle.com,  vbabka@suse.cz, lorenzo.stoakes@oracle.com,
- trondmy@kernel.org, anna@kernel.org,  chuck.lever@oracle.com,
- okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com, 
- davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com,  paul@paul-moore.com, jmorris@namei.org,
- linux-sh@vger.kernel.org,  linux-kernel@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
- linux-nfs@vger.kernel.org, netdev@vger.kernel.org, 
- linux-security-module@vger.kernel.org, dhowells@redhat.com, 
- haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com,
- shikemeng@huaweicloud.com,  dchinner@redhat.com, bfoster@redhat.com,
- souravpanda@google.com,  hannes@cmpxchg.org, rientjes@google.com,
- pasha.tatashin@soleen.com,  david@redhat.com, ryan.roberts@arm.com,
- ying.huang@intel.com,  yang@os.amperecomputing.com, zev@bewilderbeest.net,
- serge@hallyn.com,  vegard.nossum@oracle.com, wangkefeng.wang@huawei.com,
- sunnanyong@huawei.com
-Date: Fri, 11 Oct 2024 08:38:32 -0400
-In-Reply-To: <172859659591.444407.1507982523726708908@noble.neil.brown.name>
-References: <>, <12ec5b63b17b360f2e249a4de0ac7b86e09851a3.camel@kernel.org>
-	 <172859659591.444407.1507982523726708908@noble.neil.brown.name>
-Autocrypt: addr=jlayton@kernel.org; prefer-encrypt=mutual;
- keydata=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
- QZIQXVeAA+smfTT0tDrisj1U5x6ZB9b3nBg65kc=
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728650389; c=relaxed/simple;
+	bh=h0dzVuie5Dr0zP2qL4RTf6mOZsH7Rlc95+ydTRaQ8WQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=G8vR8onWHMGBV11oYNdkUhj+bl5QWqmWRy7tz+TdEdvQTbVY4pY5gICKq9jN/Cjk2HNbCLAgVRZNpaChE5Di6ZZQqxAiYdTpzXcq1KBw9ESrEuP9a2xwiLozcvtMRuMe+/AbOVK4uLvP5jqwlEuSe3CGl5oZBSdUxpaoGOKjwxg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id C1BC02A87EB;
+	Fri, 11 Oct 2024 14:39:36 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
+	with ESMTP id AZcf_8z1_0Hw; Fri, 11 Oct 2024 14:39:36 +0200 (CEST)
+Received: from localhost (localhost [127.0.0.1])
+	by lithops.sigma-star.at (Postfix) with ESMTP id 062092A881C;
+	Fri, 11 Oct 2024 14:39:36 +0200 (CEST)
+Received: from lithops.sigma-star.at ([127.0.0.1])
+	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id Qg7UpXgRaTff; Fri, 11 Oct 2024 14:39:35 +0200 (CEST)
+Received: from foxxylove.corp.sigma-star.at (unknown [82.150.214.1])
+	by lithops.sigma-star.at (Postfix) with ESMTPSA id A1DBE2A87EB;
+	Fri, 11 Oct 2024 14:39:35 +0200 (CEST)
+From: Richard Weinberger <richard@nod.at>
+To: linux-remoteproc@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	mathieu.poirier@linaro.org,
+	andersson@kernel.org,
+	upstream+rproc@sigma-star.at,
+	Richard Weinberger <richard@nod.at>,
+	ohad@wizery.com,
+	s-anna@ti.com,
+	t-kristo@ti.com
+Subject: [PATCH] rpmsg_ns: Work around TI non-standard message
+Date: Fri, 11 Oct 2024 14:39:22 +0200
+Message-Id: <20241011123922.23135-1-richard@nod.at>
+X-Mailer: git-send-email 2.35.3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 2024-10-11 at 08:43 +1100, NeilBrown wrote:
-> On Fri, 11 Oct 2024, Jeff Layton wrote:
-> > On Thu, 2024-10-10 at 23:22 +0800, Kaixiong Yu wrote:
-> > > Use vfs_pressure_ratio() to simplify code.
-> > >=20
-> > > Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> > > Reviewed-by: Kees Cook <kees@kernel.org>
-> > > Acked-by: Anna Schumaker <anna.schumaker@oracle.com>
-> > > ---
-> > >  net/sunrpc/auth.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > >=20
-> > > diff --git a/net/sunrpc/auth.c b/net/sunrpc/auth.c
-> > > index 04534ea537c8..3d2b51d7e934 100644
-> > > --- a/net/sunrpc/auth.c
-> > > +++ b/net/sunrpc/auth.c
-> > > @@ -489,7 +489,7 @@ static unsigned long
-> > >  rpcauth_cache_shrink_count(struct shrinker *shrink, struct shrink_co=
-ntrol *sc)
-> > > =20
-> > >  {
-> > > -	return number_cred_unused * sysctl_vfs_cache_pressure / 100;
-> > > +	return vfs_pressure_ratio(number_cred_unused);
-> > >  }
-> > > =20
-> > >  static void
-> >=20
-> > Acked-by: Jeff Layton <jlayton@kernel.org>
-> >=20
->=20
-> I realise this is a bit of a tangent, and I'm not objecting to this
-> patch, but I wonder what the justification is for using
-> vfs_cache_pressure here.  The sysctl is documented as
->=20
->    This percentage value controls the tendency of the kernel to reclaim
->    the memory which is used for caching of directory and inode objects.
->=20
-> So it can sensibly be used for dentries and inode, and for anything
-> directly related like the nfs access cache (which is attached to inodes)
-> and the nfs xattr cache.
->=20
-> But the sunrpc cred cache scales with the number of active users, not
-> the number of inodes/dentries.
->=20
-> So I think this should simply "return number_cred_unused;".
->=20
-> What do others think?
->=20
-> NeilBrown
->=20
+Texas Instruments ships a patch in their vendor kernels,
+which adds a new NS message that includes a description field.
+While TI is free to do whatever they want in their copy of the kernel,
+it becomes a mess when people switch to a mainline kernel and want
+to use their existing DSP programs with it.
 
------------------8<------------------
- * @count_objects should return the number of freeable items in the cache. =
-If
- * there are no objects to free, it should return SHRINK_EMPTY, while 0 is
- * returned in cases of the number of freeable items cannot be determined
- * or shrinker should skip this cache for this time (e.g., their number
- * is below shrinkable limit)...
------------------8<------------------
+To make it easier to migrate to a mainline kernel,
+let's make the kernel aware of their non-standard extension but
+briefly ignore the description field.
 
-number_cred_unused does sound like a better way to report this.
+[0] https://patchwork.kernel.org/project/linux-remoteproc/patch/201908152=
+31448.10100-1-s-anna@ti.com/
+[1] https://stash.phytec.com/projects/PUB/repos/linux-phytec-ti/commits/a=
+eded1f439effc84aa9f4e341a6e92ce1844ab98#drivers/rpmsg/virtio_rpmsg_bus.c
 
+Cc: ohad@wizery.com
+Cc: s-anna@ti.com
+Cc: t-kristo@ti.com
+Signed-off-by: Richard Weinberger <richard@nod.at>
+---
+FWIW, this is a forward port of a patch I'm using on v6.6.
+
+Thanks,
+//richard
+---
+ drivers/rpmsg/rpmsg_ns.c | 30 ++++++++++++++++++++++--------
+ include/linux/rpmsg/ns.h |  8 ++++++++
+ 2 files changed, 30 insertions(+), 8 deletions(-)
+
+diff --git a/drivers/rpmsg/rpmsg_ns.c b/drivers/rpmsg/rpmsg_ns.c
+index bde8c8d433e0a..2fb3721eb0141 100644
+--- a/drivers/rpmsg/rpmsg_ns.c
++++ b/drivers/rpmsg/rpmsg_ns.c
+@@ -31,10 +31,11 @@ EXPORT_SYMBOL(rpmsg_ns_register_device);
+ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, void *data, int len,
+ 		       void *priv, u32 src)
+ {
+-	struct rpmsg_ns_msg *msg =3D data;
+ 	struct rpmsg_device *newch;
+ 	struct rpmsg_channel_info chinfo;
+ 	struct device *dev =3D rpdev->dev.parent;
++	__rpmsg32 ns_addr, ns_flags;
++	char *ns_name;
+ 	int ret;
+=20
+ #if defined(CONFIG_DYNAMIC_DEBUG)
+@@ -42,23 +43,36 @@ static int rpmsg_ns_cb(struct rpmsg_device *rpdev, vo=
+id *data, int len,
+ 			 data, len, true);
+ #endif
+=20
+-	if (len !=3D sizeof(*msg)) {
++	if (len =3D=3D sizeof(struct rpmsg_ns_msg)) {
++		struct rpmsg_ns_msg *msg =3D data;
++
++		ns_addr =3D msg->addr;
++		ns_flags =3D msg->flags;
++		ns_name =3D msg->name;
++	} else if (len =3D=3D sizeof(struct __rpmsg_ns_msg_ti)) {
++		struct __rpmsg_ns_msg_ti *msg =3D data;
++
++		ns_addr =3D msg->addr;
++		ns_flags =3D msg->flags;
++		ns_name =3D msg->name;
++		dev_warn(dev, "non-standard ns msg found\n");
++	} else {
+ 		dev_err(dev, "malformed ns msg (%d)\n", len);
+ 		return -EINVAL;
+ 	}
+=20
+ 	/* don't trust the remote processor for null terminating the name */
+-	msg->name[RPMSG_NAME_SIZE - 1] =3D '\0';
++	ns_name[RPMSG_NAME_SIZE - 1] =3D '\0';
+=20
+-	strscpy_pad(chinfo.name, msg->name, sizeof(chinfo.name));
++	strscpy_pad(chinfo.name, ns_name, sizeof(chinfo.name));
+ 	chinfo.src =3D RPMSG_ADDR_ANY;
+-	chinfo.dst =3D rpmsg32_to_cpu(rpdev, msg->addr);
++	chinfo.dst =3D rpmsg32_to_cpu(rpdev, ns_addr);
+=20
+ 	dev_info(dev, "%sing channel %s addr 0x%x\n",
+-		 rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY ?
+-		 "destroy" : "creat", msg->name, chinfo.dst);
++		 rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY ?
++		 "destroy" : "creat", ns_name, chinfo.dst);
+=20
+-	if (rpmsg32_to_cpu(rpdev, msg->flags) & RPMSG_NS_DESTROY) {
++	if (rpmsg32_to_cpu(rpdev, ns_flags) & RPMSG_NS_DESTROY) {
+ 		ret =3D rpmsg_release_channel(rpdev, &chinfo);
+ 		if (ret)
+ 			dev_err(dev, "rpmsg_destroy_channel failed: %d\n", ret);
+diff --git a/include/linux/rpmsg/ns.h b/include/linux/rpmsg/ns.h
+index a7804edd6d58f..60fca84ad4cea 100644
+--- a/include/linux/rpmsg/ns.h
++++ b/include/linux/rpmsg/ns.h
+@@ -26,6 +26,14 @@ struct rpmsg_ns_msg {
+ 	__rpmsg32 flags;
+ } __packed;
+=20
++/* Non-standard extended ns message by Texas Instruments */
++struct __rpmsg_ns_msg_ti {
++	char name[RPMSG_NAME_SIZE];
++	char desc[RPMSG_NAME_SIZE]; /* ignored */
++	u32 addr;
++	u32 flags;
++} __packed;
++
+ /**
+  * enum rpmsg_ns_flags - dynamic name service announcement flags
+  *
 --=20
-Jeff Layton <jlayton@kernel.org>
+2.35.3
+
 
