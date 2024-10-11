@@ -1,51 +1,51 @@
-Return-Path: <linux-kernel+bounces-361727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BB8299AC4C
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:04:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B0999AC4D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 21:05:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D64FC1F257D3
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:04:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1096B264FF
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BCD11CF5ED;
-	Fri, 11 Oct 2024 18:58:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365851CFEBA;
+	Fri, 11 Oct 2024 18:58:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=walterzollerpiano.com header.i=@walterzollerpiano.com header.b="jB77iuDO"
+	dkim=pass (2048-bit key) header.d=walterzollerpiano.com header.i=@walterzollerpiano.com header.b="MJpK9i+9"
 Received: from dd3514.kasserver.com (dd3514.kasserver.com [85.13.129.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA3401CEE86;
-	Fri, 11 Oct 2024 18:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3BC71CEE86;
+	Fri, 11 Oct 2024 18:58:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.129.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728673083; cv=none; b=DH3h7kF3YAD0FuOZwRtowihGecdv1O4nESks4m/PBAmwPM+XSdUSCO9jtKZq88fuofgthriIZn7tpb2gJfX2eKSHUtT9Cy+SwF2vHgh0jPVBAjX47p6psApoS0D70Yiq5X0GyNqZhRJITxor0CYKS1QFsoRpNotmIc8Qz8h+pWU=
+	t=1728673097; cv=none; b=o/NO211uL9FV4m7+Q0yJohsP/cr/Wopx6Dij6TQbryV2hnXEwRpTIhRJAZypOktdFnkOkhW4pX9CrVs6uRO2Q2aTGNYNpwABagbDd9q1qvKiKc3vPbNRZuV7Q4qIzmNKv5sG55R05CAXGRbEFX5tqA02khajRMzW6Lv40Uql5GY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728673083; c=relaxed/simple;
-	bh=0q0YdXypHQoS2L7yNMI6p3pr+nIDzO+5+R38LNiFp9I=;
+	s=arc-20240116; t=1728673097; c=relaxed/simple;
+	bh=8ijGK545wuqmu/N6m4EmYX5SB8wiE9GzZuk86berweg=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=DxVkIc+3OG4QoWW+ueL8MGaXV8rPquXadL2xkw08hk9pekSLWzsMY7K+93TAoVlFPCI9OCbAvir3aSyM7bBqmiCLvB7UkoJLUyIbsdSkxvC06P7v/LCwg6sR1evDEttB4slYzPCpcOK8Vie/q8dbhi3xxNDUBnjyw7PX8Hvcjh8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=walterzollerpiano.com; spf=pass smtp.mailfrom=walterzollerpiano.com; dkim=pass (2048-bit key) header.d=walterzollerpiano.com header.i=@walterzollerpiano.com header.b=jB77iuDO; arc=none smtp.client-ip=85.13.129.232
+	 In-Reply-To:To:Cc; b=RXubkaWfqt4CzOcFVcWRfEA/5BYtCsBKIpJafSjLYvUx4GeschTop101SoGpWGn1gkb+DdgUSROv+NdgqoLlwOYbsWKKvpEEwnkDTJMj0aRT8hGxVEhokXNg68uchQoCRgBYrZl5gBHqIT0EK3Rb9traUSzrGWWopjKAWIXSWZM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=walterzollerpiano.com; spf=pass smtp.mailfrom=walterzollerpiano.com; dkim=pass (2048-bit key) header.d=walterzollerpiano.com header.i=@walterzollerpiano.com header.b=MJpK9i+9; arc=none smtp.client-ip=85.13.129.232
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=walterzollerpiano.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walterzollerpiano.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=walterzollerpiano.com; s=kas202409051210; t=1728673044;
-	bh=WrqJka8i5qDvGJ+Y0RrHzdEvY1FeuQPvghnutR0w8bE=;
+	d=walterzollerpiano.com; s=kas202409051210; t=1728673045;
+	bh=Ei9FKHJhHqwmO4iRm6y9B6f2oefMSCnpI34mYCLehig=;
 	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=jB77iuDOLObA7y9Apm6haPksllgaOC4FoOGXsaV3JtF0HyQu81s+RVDkxZ5ab6jYu
-	 RRIYTWDcH8wNuUKyUADBgFmw/qOz0dNQcV4tvrha5PEbT0eIoyc/IxwPzZVDggQ5of
-	 94RCYwohBlrZnqOI6pgpFo6b3PAu819uF++8sQC5TlYwSGbfjEhafY3Sk3iGk7xd6l
-	 PCCyFiHoga2U2tAmd1ZiA+w4A7KJRbmf3sBLCi7uGNHYsPCVxxpXQjVni80HFV9tCU
-	 6sq0yHJF2G5hXaevOgRbsthYPgj1aJuTUb6k9tQ6SYlxzBEaUWQeQ+N0E1v0nAWRXB
-	 +lDQwyrxM2alA==
+	b=MJpK9i+9gOC/yzsqW0VoS+TR/bGaisii+oeF8v1FH0CGn3r8b1lkxHgqzjWbYY8rg
+	 d83+jI04fO0IZSryQC0Mhpkn7UIbgoCQryugRYLjjtnPgMeDm4fYpDzvbQqSiOfT31
+	 kiSu4WXvgZaadLzi8Pp38LdzAsr/bm1oAvjCRXvWlnFTUvP9+Lr06uIKZORm4M5L22
+	 AuIW+RrfHByQK9bv3ARC479vSXp5bOqf9DwF5oSiZyYCfs0+VsIIuXnlHe2/KMdDo7
+	 Y4uWDzpKY3eUUiiF/FzzAs5FksY3l6E27Gp/BiP/wMaMW8+pmDy0eztVwl8VXdpX3K
+	 yhbnzOyDb2qnw==
 Received: from [127.0.0.1] (31-10-158-205.cgn.dynamic.upc.ch [31.10.158.205])
-	by dd3514.kasserver.com (Postfix) with ESMTPSA id EF40A103AE0;
-	Fri, 11 Oct 2024 20:57:23 +0200 (CEST)
+	by dd3514.kasserver.com (Postfix) with ESMTPSA id AFF72103AE1;
+	Fri, 11 Oct 2024 20:57:24 +0200 (CEST)
 From: Josef Zoller <josef@walterzollerpiano.com>
-Date: Fri, 11 Oct 2024 20:55:43 +0200
-Subject: [PATCH 2/3] rust: macros: add IoctlCommand derive macro
+Date: Fri, 11 Oct 2024 20:55:44 +0200
+Subject: [PATCH 3/3] samples: rust: add character device sample
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -54,7 +54,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241011-rust-char-dev-v1-2-350225ae228b@walterzollerpiano.com>
+Message-Id: <20241011-rust-char-dev-v1-3-350225ae228b@walterzollerpiano.com>
 References: <20241011-rust-char-dev-v1-0-350225ae228b@walterzollerpiano.com>
 In-Reply-To: <20241011-rust-char-dev-v1-0-350225ae228b@walterzollerpiano.com>
 To: Arnd Bergmann <arnd@arndb.de>, 
@@ -67,511 +67,589 @@ Cc: Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
  Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
  rust-for-linux@vger.kernel.org, Josef Zoller <josef@walterzollerpiano.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15919;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=19610;
  i=josef@walterzollerpiano.com; h=from:subject:message-id;
- bh=0q0YdXypHQoS2L7yNMI6p3pr+nIDzO+5+R38LNiFp9I=;
- b=owEBbQKS/ZANAwAIAROd718OBo3IAcsmYgBnCXUSWhbnapsd0DsRQAG42iRnQlj4GIA13ovNl
- CjjQpUIx+iJAjMEAAEIAB0WIQQnwV8chXqnjaC1vcATne9fDgaNyAUCZwl1EgAKCRATne9fDgaN
- yBmuD/0WZF294zFm8cl3uzo3YMELuCJioLsL21Ex5jfgADB5TOSc5LbxDOwKPPFc6STVtIPdtFJ
- 1IJI90YpTrHTXEGw8EUrml2+rriy3D2kgncXcOs0nhpRvTlU+S8Peq3pNh2vjxO4/tdFM43+/Jg
- UR7IxoPcvOcbL0/BjwWhDWQIe28ZPpjDG7KcQwY+5Ndo2Pq9rJAGOalpMw3kobcoLZtC394JtL+
- cYg6Yih30qQucvizCOu2haTmDFSq2F+1/2rOMmDu5UurAfZBt0ZJy9mXp86t2sGMJQeFdabYaeQ
- CjP2DY8F9CVzn3kxfpDM9n5OGc7BL57yihnlgOCbe8bJS5YN3/okcBhrQFTdmccuWl+yadCA/5+
- xNQ2+TjMGGq8OJUcRU66NS7JkrxsG8ExpRDYg6yZWB4ss/ZoeyVBCQ/0dN499u1wy6qyRjjyLkL
- dFCymHSwe3TBD5ykmSKDdThPsWGpNrzBE6ZKWBQ6YkptAo/XoSnBuQTqtBweRIm2C+PuK9EA1m+
- 6Wl+/tHKCLmp6trcEmD7QSxvprg5COyd1ILOUDAPZbmNCBlZlkntD6YUSDZesKUmxuknp0RYwej
- W8oJp+B1vkveIHdl4Tk5AaZ2xlybXhB+XUieebvOr/IueZfsDEnL2u66AalOChzZQorRSl5X1bo
- HYgcKlJpajrP/Gw==
+ bh=8ijGK545wuqmu/N6m4EmYX5SB8wiE9GzZuk86berweg=;
+ b=owEBbQKS/ZANAwAIAROd718OBo3IAcsmYgBnCXUSQl1niGmIuyiF7d+TTqzLbzpKqjX4qZhfO
+ JBAAUKKhi6JAjMEAAEIAB0WIQQnwV8chXqnjaC1vcATne9fDgaNyAUCZwl1EgAKCRATne9fDgaN
+ yPKSEACfMR4jVAW5prfKySxV++jGrKiXYiFagJsN0zGYP83QtADij4I4xREJqRYsl5OmCPOn5TP
+ fd5qpk9y6UQI9n2PcL8uzGnUiVVvY6xWYrrt0H06dS6AOvxWKHobkdcCcaHHiE4Kiy3LXChGeZi
+ mLxW0XjVY3Hggkc48w5J4di0cmH4+aTthafVNtsbXb1dchTkoKmRnsIe7VJk4QaX3kJPNp5IVNQ
+ HOhAJSs5Uzuhwy2330Pf70gZz1QItNUxFlUhv8nN0m0BhQerPoGAyRW1nDqWMUwWYAZdTFvAHXz
+ oLUL2uZ/FHlDpZcjpTFhIE6C9N2BGC4OrRwTaxSmIf3p0VR2qszd0MQWYAiN4mJLRrGLPf6MpbR
+ 9ugxzy1udE2UDKUs9h0NExiQX2F2L464UzRkpNBOAJR5GaULJUHJUVOmdoD1tnEVEF02zNEfa73
+ GU1yz0rYjMfEFxmGyFMX+5kNgPtm7GbFn5R8yTn6U409VK13z6susI9YGnVhcUe4Y/R21fMz3k0
+ JwWftXtIE5dmAExIyR1LWseqiSCITuofPxfCrkF/4K4/4bR03tMb6zIxZbudZey3iJ02oNG0LDa
+ wC3dqKEd2QkIVNYLdxkv3A9UTOhyhzyscX8Sm/LEvTfxoLbiA6AY8HTxjAa9lqJWy6grxPX6Ol7
+ DlzCGyqZ5MCCDdA==
 X-Developer-Key: i=josef@walterzollerpiano.com; a=openpgp;
  fpr=27C15F1C857AA78DA0B5BDC0139DEF5F0E068DC8
-X-Spamd-Bar: ----
+X-Spamd-Bar: +++
 
-Provide a macro that derives the `IoctlCommand` trait for simple enums
-by converting every variant into a unique command.
+Provide a sample implementation of a character device in Rust, following
+the scull device from the well-known book "Linux Device Drivers".
 
-The macro can be instructed to use a specific letter or integer as the
-code. Each variant is then assigned a consecutive number starting from
-0 or a given value. The type of the command, i.e. if it is a read or
-write command, is inferred from the variant's associated data: if it
-has no data or only an integer, it is neither read nor write, if it has
-a UserSliceReader it is a write command, if it has a UserSliceWriter it
-is a read command, and if it just has a UserSlice it is a read-write
-command. The code and the variant's number and type are then combined
-to parse the command from the user-provided cmd and arg values.
+This sample uses the abstractions from the previous patches in this
+series to implement the scull device in mostly safe Rust. All of the
+unsafe code comes from the fact that the data structure used in the C
+implementation is inherently unsafe and cannot easily be represented in
+safe Rust without a lot of memory overhead.
+
+This sample should be a good starting point for people who want to start
+writing kernel code in Rust, as a character device is relatively simple
+and does not require a lot of kernel knowledge to understand.
 
 Signed-off-by: Josef Zoller <josef@walterzollerpiano.com>
 ---
- rust/kernel/ioctl.rs     | 190 ++++++++++++++++++++++++++++++++++++++++++++
- rust/kernel/prelude.rs   |   2 +-
- rust/macros/ioctl_cmd.rs | 202 +++++++++++++++++++++++++++++++++++++++++++++++
- rust/macros/lib.rs       |  21 +++++
- 4 files changed, 414 insertions(+), 1 deletion(-)
+ samples/rust/Kconfig          |  10 +
+ samples/rust/Makefile         |   1 +
+ samples/rust/rust_char_dev.rs | 506 ++++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 517 insertions(+)
 
-diff --git a/rust/kernel/ioctl.rs b/rust/kernel/ioctl.rs
-index 03359ab28495b94d98d53db2115bbbcc520c18a3..f6af9c10c0b244b8d8183cf70b4ef5ce9233c935 100644
---- a/rust/kernel/ioctl.rs
-+++ b/rust/kernel/ioctl.rs
-@@ -73,6 +73,22 @@ pub const fn _IOC_SIZE(nr: u32) -> usize {
- }
+diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
+index b0f74a81c8f9ad24c9dc1ca057f83531156084aa..a85e0c2e84c07ee9c0b965eb83c07a90011e7d0d 100644
+--- a/samples/rust/Kconfig
++++ b/samples/rust/Kconfig
+@@ -30,6 +30,16 @@ config SAMPLE_RUST_PRINT
  
- /// Types implementing this trait can be used to parse ioctl commands.
-+///
-+/// Normally, this trait is derived for a command enum.
-+///
-+/// # Example
-+///
-+/// ```
-+/// #[derive(IoctlCommand)]
-+/// #[ioctl(code = 0x18, start_num = 0)]
-+/// enum Command {
-+///     NoReadWrite,                 // No read or write access.
-+///     NoReadWriteButTakesArg(u64), // No read or write access, but takes an argument.
-+///     ReadOnly(UserSliceWriter),   // We write data for the user to read.
-+///     WriteOnly(UserSliceReader),  // We read data that the user wrote.
-+///     WriteAndRead(UserSlice),     // We read data from the user and then write data to the user.
-+/// }
-+/// ```
- #[vtable]
- pub trait IoctlCommand: Sized + Send + Sync + 'static {
-     /// The error type returned by the parse functions.
-@@ -114,3 +130,177 @@ fn parse(_cmd: ffi::c_uint, _arg: ffi::c_ulong) -> Result<Self> {
-         Err(ENOTTY)
-     }
- }
-+
-+/// Support macro for deriving the `IoctlCommand` trait.
-+#[doc(hidden)]
-+#[macro_export]
-+macro_rules! __derive_ioctl_cmd {
-+    (parse_input:
-+        @enum_name($enum_name:ident),
-+        @code($code:literal),
-+        @variants(
-+            $(
-+                @variant($i:literal, $variant:ident, $arg_type:tt),
-+            )*
-+        )
-+    ) => {
-+        #[automatically_derived]
-+        impl $crate::ioctl::IoctlCommand for $enum_name {
-+            type Err = $crate::error::Error;
-+
-+            const USE_VTABLE_ATTR: () = ();
-+
-+            const HAS_PARSE: bool = true;
-+
-+            fn parse(
-+                cmd: ::core::ffi::c_uint,
-+                arg: ::core::ffi::c_ulong,
-+            ) -> ::core::result::Result<Self, Self::Err> {
-+                let ty = $crate::ioctl::_IOC_TYPE(cmd) as u8;
-+
-+                if ty != $code {
-+                    return Err($crate::error::code::ENOTTY);
-+                }
-+
-+                let nr = $crate::ioctl::_IOC_NR(cmd) as u8;
-+                let dir = $crate::ioctl::_IOC_DIR(cmd);
-+                let size = $crate::ioctl::_IOC_SIZE(cmd);
-+
-+                // Make sure we don't get unused parameter warnings
-+                let _ = arg;
-+
-+                match (nr, dir, size) {
-+                    $(
-+                        ::kernel::__derive_ioctl_cmd!(
-+                            match_pattern:
-+                                @variant($i, $arg_type)
-+                        ) => ::kernel::__derive_ioctl_cmd!(
-+                            match_body:
-+                                @dir(dir),
-+                                @size(size),
-+                                @arg(arg),
-+                                @variant($variant, $arg_type)
-+                        ),
-+                    )*
-+                    _ => Err($crate::error::code::ENOTTY),
-+                }
-+            }
-+        }
-+    };
-+    (match_pattern:
-+        @variant($i:literal, None)
-+    ) => {
-+        ($i, $crate::uapi::_IOC_NONE, 0)
-+    };
-+    (match_body:
-+        @dir($dir:ident),
-+        @size($size:ident),
-+        @arg($arg:ident),
-+        @variant($variant:ident, None)
-+    ) => {
-+        Ok(Self::$variant)
-+    };
-+    (match_pattern:
-+        @variant($i:literal, u64)
-+    ) => {
-+        ($i, $crate::uapi::_IOC_NONE, 0)
-+    };
-+    (match_body:
-+        @dir($dir:ident),
-+        @size($size:ident),
-+        @arg($arg:ident),
-+        @variant($variant:ident, u64)
-+    ) => {
-+        Ok(Self::$variant($arg))
-+    };
-+    (match_pattern:
-+        @variant($i:literal, UserSliceWriter)
-+    ) => {
-+        ($i, $crate::uapi::_IOC_READ, _)
-+    };
-+    (match_body:
-+        @dir($dir:ident),
-+        @size($size:ident),
-+        @arg($arg:ident),
-+        @variant($variant:ident, UserSliceWriter)
-+    ) => {
-+        {
-+            let user_writer = $crate::uaccess::UserSlice::new(
-+                $arg as $crate::uaccess::UserPtr,
-+                $size
-+            )
-+            .writer();
-+
-+            Ok(Self::$variant(user_writer))
-+        }
-+    };
-+    (match_pattern:
-+        @variant($i:literal, UserSliceReader)
-+    ) => {
-+        ($i, $crate::uapi::_IOC_WRITE, _)
-+    };
-+    (match_body:
-+        @dir($dir:ident),
-+        @size($size:ident),
-+        @arg($arg:ident),
-+        @variant($variant:ident, UserSliceReader)
-+    ) => {
-+        {
-+            let user_reader = $crate::uaccess::UserSlice::new(
-+                $arg as $crate::uaccess::UserPtr,
-+                $size
-+            )
-+            .reader();
-+
-+            Ok(Self::$variant(user_reader))
-+        }
-+    };
-+    (match_pattern:
-+        @variant($i:literal, UserSlice)
-+    ) => {
-+        ($i, _, _)
-+    };
-+    (match_body:
-+        @dir($dir:ident),
-+        @size($size:ident),
-+        @arg($arg:ident),
-+        @variant($variant:ident, UserSlice)
-+    ) => {
-+        // Unfortunately, we cannot just do a match guard
-+        if $dir != $crate::uapi::_IOC_READ | $crate::uapi::_IOC_WRITE {
-+            Err($crate::error::code::ENOTTY)
-+        } else {
-+            let user_slice = $crate::uaccess::UserSlice::new(
-+                $arg as $crate::uaccess::UserPtr,
-+                $size
-+            );
-+
-+            Ok(Self::$variant(user_slice))
-+        }
-+    };
-+    (match_pattern:
-+        @variant($i:literal, $arg_type:tt)
-+    ) => {
-+        ($i, _, _)
-+    };
-+    (match_body:
-+        @dir($dir:ident),
-+        @size($size:ident),
-+        @arg($arg:ident),
-+        @variant($variant:ident, $arg_type:tt)
-+    ) => {
-+        {
-+            // We have an unsupported argument type
-+            const _: () = ::core::assert!(
-+                false,
-+                ::core::concat!(
-+                    "Invalid argument type for ioctl command ",
-+                    stringify!($variant),
-+                    ": ",
-+                    stringify!($arg_type),
-+                )
-+            );
-+            ::core::unreachable!()
-+        }
-+    };
-+}
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index 4571daec0961bb34fb6956a4e9eda8445954b719..1277d1ec5a476d3e115f6b2ba432b0fbe28941a2 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -20,7 +20,7 @@
- pub use alloc::{boxed::Box, vec::Vec};
+ 	  If unsure, say N.
  
- #[doc(no_inline)]
--pub use macros::{module, pin_data, pinned_drop, vtable, Zeroable};
-+pub use macros::{module, pin_data, pinned_drop, vtable, IoctlCommand, Zeroable};
++config SAMPLE_RUST_CHAR_DEV
++	tristate "Character device"
++	help
++	  This option builds the Rust character device module sample.
++
++	  To compile this as a module, choose M here:
++	  the module will be called rust_char_dev.
++
++	  If unsure, say N.
++
+ config SAMPLE_RUST_HOSTPROGS
+ 	bool "Host programs"
+ 	help
+diff --git a/samples/rust/Makefile b/samples/rust/Makefile
+index 03086dabbea44f4aa87f4a67ac24b8ea4e5a8f2a..cea054d71a7121a2ad991bd51b0d72caafe1d86e 100644
+--- a/samples/rust/Makefile
++++ b/samples/rust/Makefile
+@@ -2,5 +2,6 @@
  
- pub use super::build_assert;
+ obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
+ obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
++obj-$(CONFIG_SAMPLE_RUST_CHAR_DEV)		+= rust_char_dev.o
  
-diff --git a/rust/macros/ioctl_cmd.rs b/rust/macros/ioctl_cmd.rs
+ subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+= hostprogs
+diff --git a/samples/rust/rust_char_dev.rs b/samples/rust/rust_char_dev.rs
 new file mode 100644
-index 0000000000000000000000000000000000000000..366a9b1f7ba70ba764b0d78cb32d82125bc7b854
+index 0000000000000000000000000000000000000000..8df83fb31bced0870b43416d9a8dbd1d4cd118d1
 --- /dev/null
-+++ b/rust/macros/ioctl_cmd.rs
-@@ -0,0 +1,202 @@
++++ b/samples/rust/rust_char_dev.rs
+@@ -0,0 +1,506 @@
 +// SPDX-License-Identifier: GPL-2.0
 +
-+use proc_macro::{token_stream, Delimiter, Literal, TokenStream, TokenTree};
++//! Rust character device sample.
++//!
++//! This sample demonstrates how to create a simple character device in Rust,
++//! by reimplementing the `scull` device from the Linux Device Drivers book.
 +
-+fn expect_punct(input: &mut impl Iterator<Item = TokenTree>, expected: char, reason: &str) {
-+    let Some(TokenTree::Punct(punct)) = input.next() else {
-+        panic!("expected '{expected}' {reason}");
-+    };
++use core::{mem, ptr::NonNull};
 +
-+    if punct.as_char() != expected {
-+        panic!("expected '{expected}' {reason}");
-+    }
++use kernel::{
++    c_str,
++    char_dev::{CharDevice, CharDeviceID, DeviceRegistration, OpenCharDevice, Whence},
++    fs::{file::flags, File, LocalFile},
++    new_mutex,
++    prelude::*,
++    sync::{Arc, Mutex},
++    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
++};
++
++module! {
++    type: RustCharDevModule,
++    name: "rust_char_dev",
++    author: "Rust for Linux Contributors",
++    description: "Rust character device sample",
++    license: "GPL",
 +}
 +
-+fn expect_ident(input: &mut impl Iterator<Item = TokenTree>, expected: &str, reason: &str) {
-+    let Some(TokenTree::Ident(ident)) = input.next() else {
-+        panic!("expected '{expected}' {reason}");
-+    };
++const DEVICE_NAME: &CStr = c_str!("rust_scull");
++const DEFAULT_QSET_SIZE: usize = 1000;
++const DEFAULT_QUANTUM_SIZE: usize = 4000;
++const NUM_DEVS: usize = 4;
 +
-+    if ident.to_string() != expected {
-+        panic!("expected '{expected}' {reason}");
-+    }
++// This is probably too specific a function to be in the Rust standard library...
++trait OptionExt<T> {
++    fn get_or_try_insert_with<F, E>(&mut self, f: F) -> Result<&mut T, E>
++    where
++        F: FnOnce() -> Result<T, E>;
 +}
 +
-+fn expect_group(
-+    input: &mut impl Iterator<Item = TokenTree>,
-+    expected: Delimiter,
-+    reason: &str,
-+) -> token_stream::IntoIter {
-+    let Some(TokenTree::Group(group)) = input.next() else {
-+        panic!("expected group {reason}");
-+    };
-+
-+    if group.delimiter() != expected {
-+        panic!("expected group {reason}");
-+    }
-+
-+    group.stream().into_iter()
-+}
-+
-+fn parse_attribute(input: &mut impl Iterator<Item = TokenTree>) -> (u8, u8) {
-+    expect_punct(input, '#', "to start attribute");
-+
-+    let mut stream = expect_group(input, Delimiter::Bracket, "as attribute body");
-+
-+    expect_ident(&mut stream, "ioctl", "as attribute name");
-+
-+    let mut inner_stream = expect_group(
-+        &mut stream,
-+        Delimiter::Parenthesis,
-+        "as attribute arguments",
-+    );
-+
-+    expect_ident(&mut inner_stream, "code", "as ioctl attribute field");
-+    expect_punct(&mut inner_stream, '=', "in ioctl attribute field");
-+
-+    let Some(TokenTree::Literal(lit)) = inner_stream.next() else {
-+        panic!("expected ioctl attribute code value");
-+    };
-+
-+    let lit_str = lit.to_string();
-+    let code = if lit_str.starts_with("b'") {
-+        lit_str
-+            .chars()
-+            .nth(2)
-+            .expect("expected ioctl attribute code value") as u8
-+    } else if let Some(hex) = lit_str.strip_prefix("0x") {
-+        u8::from_str_radix(hex, 16).expect("expected ioctl attribute code value")
-+    } else {
-+        lit_str
-+            .parse()
-+            .expect("expected ioctl attribute code value")
-+    };
-+
-+    let start_num = if let Some(tree) = inner_stream.next() {
-+        if !matches!(tree, TokenTree::Punct(punct) if punct.as_char() == ',') {
-+            panic!("expected ioctl attribute comma");
++impl<T> OptionExt<T> for Option<T> {
++    fn get_or_try_insert_with<F, E>(&mut self, f: F) -> Result<&mut T, E>
++    where
++        F: FnOnce() -> Result<T, E>,
++    {
++        if self.is_none() {
++            *self = Some(f()?);
 +        }
 +
-+        expect_ident(&mut inner_stream, "start_num", "as ioctl attribute field");
-+        expect_punct(&mut inner_stream, '=', "in ioctl attribute field");
-+
-+        let Some(TokenTree::Literal(lit)) = inner_stream.next() else {
-+            panic!("expected ioctl attribute start number value");
-+        };
-+
-+        lit.to_string()
-+            .parse()
-+            .expect("expected ioctl attribute start number value")
-+    } else {
-+        0
-+    };
-+
-+    assert!(
-+        inner_stream.next().is_none(),
-+        "unexpected token in ioctl attribute"
-+    );
-+    assert!(
-+        stream.next().is_none(),
-+        "unexpected token in ioctl attribute"
-+    );
-+
-+    (code, start_num)
++        Ok(self.as_mut().unwrap())
++    }
 +}
 +
-+fn parse_enum_def(input: &mut impl Iterator<Item = TokenTree>) -> TokenTree {
-+    expect_ident(input, "enum", "to start enum definition");
-+
-+    let Some(ident @ TokenTree::Ident(_)) = input.next() else {
-+        panic!("expected enum name");
-+    };
-+
-+    ident
++#[derive(IoctlCommand)]
++#[ioctl(code = b'k')]
++enum Command {
++    Reset,                       // 0
++    SetQuantum(UserSliceReader), // 1
++    SetQset(UserSliceReader),    // 2
++    TellQuantum(u64),            // 3
++    TellQset(u64),               // 4
++    GetQuantum(UserSliceWriter), // 5
++    GetQset(UserSliceWriter),    // 6
++    QueryQuantum,                // 7
++    QueryQset,                   // 8
++    ExchangeQuantum(UserSlice),  // 9
++    ExchangeQset(UserSlice),     // 10
++    ShiftQuantum(u64),           // 11
++    ShiftQset(u64),              // 12
 +}
 +
-+fn parse_enum_body(
-+    input: &mut impl Iterator<Item = TokenTree>,
-+) -> Vec<(TokenTree, Option<TokenTree>)> {
-+    let mut stream = expect_group(input, Delimiter::Brace, "as enum body").peekable();
++// We implement `ScullQset` as close as possible to the `struct scull_qset` implementation from
++// the book. This means that we have to use raw pointers and some unsafe code for the data.
++// Otherwise, we'd have massive memory overhead by storing sizes/capacities unnecessarily.
++// E.g. every `ScullQset` would be 8 * qset_size bytes larger if we used `Box<[_]>` and
++// 16 * qset_size bytes larger if we used `Vec<_>`.
++// However, the knowledge that all data arrays are of the same size isn't possible to express
++// in safe Rust without this memory overhead.
++struct ScullQset {
++    data: Option<NonNull<Option<NonNull<u8>>>>,
++    quantum_size: usize,
++    qset_size: usize,
++    next: Option<Box<ScullQset>>,
++}
 +
-+    let mut variants = Vec::new();
-+
-+    while let Some(variant) = stream.next_if(|t| matches!(t, TokenTree::Ident(_))) {
-+        let arg_type = if let Some(TokenTree::Group(group)) =
-+            stream.next_if(|t| matches!(t, TokenTree::Group(_)))
-+        {
-+            if group.delimiter() != Delimiter::Parenthesis {
-+                panic!("expected group");
-+            }
-+
-+            let mut inner_stream = group.stream().into_iter();
-+
-+            let arg_type = if let Some(ident @ TokenTree::Ident(_)) = inner_stream.next() {
-+                ident
-+            } else {
-+                panic!("expected argument type")
-+            };
-+
-+            assert!(
-+                inner_stream.next().is_none(),
-+                "unexpected token in enum variant"
-+            );
-+
-+            Some(arg_type)
-+        } else {
-+            None
-+        };
-+
-+        variants.push((variant, arg_type));
-+
-+        if stream
-+            .next_if(|t| matches!(t, TokenTree::Punct(punct) if punct.as_char() == ','))
-+            .is_none()
-+        {
-+            break;
++impl ScullQset {
++    fn new(quantum_size: usize, qset_size: usize) -> Self {
++        Self {
++            data: None,
++            quantum_size,
++            qset_size,
++            next: None,
 +        }
 +    }
 +
-+    assert!(stream.next().is_none(), "unexpected token in enum body");
++    /// Returns a reference to the quantum at index `i` if it exists.
++    fn get_quantum(&self, i: usize) -> Option<&[u8]> {
++        let data_slice = NonNull::slice_from_raw_parts(self.data?, self.qset_size);
++        // SAFETY: `data_slice` points to a valid slice of `Option<NonNull<u8>>`.
++        let quantum = unsafe { data_slice.as_ref()[i] };
++        let quantum_slice = NonNull::slice_from_raw_parts(quantum?, self.quantum_size);
++        // SAFETY: `quantum_slice` points to a valid slice of `u8`.
++        Some(unsafe { quantum_slice.as_ref() })
++    }
 +
-+    variants
++    /// Returns a mutable reference to the quantum at index `i`, allocating it first if necessary.
++    fn get_quantum_mut(&mut self, i: usize) -> Option<&mut [u8]> {
++        let data = self
++            .data
++            .get_or_try_insert_with(|| {
++                let mut data =
++                    mem::ManuallyDrop::new(Vec::with_capacity(self.qset_size, GFP_KERNEL)?);
++                for _ in 0..self.qset_size {
++                    data.push(None, GFP_KERNEL)?;
++                }
++
++                assert!(data.len() == data.capacity());
++
++                // SAFETY: `data.as_mut_ptr()` is non-null.
++                Ok::<_, Error>(unsafe { NonNull::new_unchecked(data.as_mut_ptr()) })
++            })
++            .ok()?;
++
++        let mut data_slice = NonNull::slice_from_raw_parts(*data, self.qset_size);
++
++        // SAFETY: `data_slice` points to a valid slice of `Option<NonNull<u8>>`.
++        let maybe_quantum = unsafe { &mut data_slice.as_mut()[i] };
++        let quantum = maybe_quantum
++            .get_or_try_insert_with(|| {
++                let mut quantum =
++                    mem::ManuallyDrop::new(Vec::with_capacity(self.quantum_size, GFP_KERNEL)?);
++                for _ in 0..self.quantum_size {
++                    quantum.push(0, GFP_KERNEL)?;
++                }
++
++                assert!(quantum.len() == quantum.capacity());
++
++                // SAFETY: `quantum.as_mut_ptr()` is non-null.
++                Ok::<_, Error>(unsafe { NonNull::new_unchecked(quantum.as_mut_ptr()) })
++            })
++            .ok()?;
++
++        let mut quantum_slice = NonNull::slice_from_raw_parts(*quantum, self.quantum_size);
++        // SAFETY: `quantum_slice` points to a valid slice of `u8`.
++        Some(unsafe { quantum_slice.as_mut() })
++    }
 +}
 +
-+pub(crate) fn derive(input: TokenStream) -> TokenStream {
-+    let mut input = input.into_iter();
++impl Drop for ScullQset {
++    fn drop(&mut self) {
++        if let Some(data) = self.data.take() {
++            // SAFETY: `data` was created by `Vec::with_capacity` with a capacity of `qset_size`.
++            let data_vec =
++                unsafe { Vec::from_raw_parts(data.as_ptr(), self.qset_size, self.qset_size) };
 +
-+    let (code, start_num) = parse_attribute(&mut input);
-+    let enum_name = parse_enum_def(&mut input);
-+    let variants = parse_enum_body(&mut input);
++            for quantum in data_vec {
++                let Some(quantum) = quantum else { continue };
 +
-+    assert!(input.next().is_none(), "unexpected token in ioctl_cmd");
++                // SAFETY: `quantum` was created by `Vec::with_capacity` with a capacity of
++                // `quantum_size`.
++                let _ = unsafe {
++                    Vec::from_raw_parts(quantum.as_ptr(), self.quantum_size, self.quantum_size)
++                };
++            }
++        }
++    }
++}
 +
-+    let code = TokenTree::from(Literal::u8_suffixed(code));
++// SAFETY: The raw pointers are uniquely owned by `ScullQset` and not shared, so it's safe to send
++// it to another thread.
++unsafe impl Send for ScullQset {}
 +
-+    let variants = variants
-+        .into_iter()
-+        .enumerate()
-+        .map(|(i, (variant, arg_type))| {
-+            let i = i as u8 + start_num;
++struct ScullDevInner {
++    data: Option<Box<ScullQset>>,
++    quantum_size: usize,
++    qset_size: usize,
++    size: usize,
++}
 +
-+            let i = TokenTree::from(Literal::u8_suffixed(i));
++impl Default for ScullDevInner {
++    fn default() -> Self {
++        Self {
++            data: None,
++            quantum_size: DEFAULT_QUANTUM_SIZE,
++            qset_size: DEFAULT_QSET_SIZE,
++            size: 0,
++        }
++    }
++}
 +
-+            if let Some(arg_type) = arg_type {
-+                quote! {
-+                    @variant(#i, #variant, #arg_type),
++impl ScullDevInner {
++    fn trim(&mut self) {
++        mem::take(&mut self.data);
++        self.size = 0;
++    }
++
++    fn follow(&mut self, n: usize) -> Option<&mut ScullQset> {
++        let mut qs = self
++            .data
++            .get_or_try_insert_with(|| {
++                Box::new(
++                    ScullQset::new(self.quantum_size, self.qset_size),
++                    GFP_KERNEL,
++                )
++            })
++            .ok()?;
++
++        for _ in 0..n {
++            qs = qs
++                .next
++                .get_or_try_insert_with(|| {
++                    // We use `qs.quantum_size` and `qs.qset_size` here to avoid subtly
++                    // different behavior from the original C implementation.
++                    // If we used the sizes from `self`, we could end up with differently
++                    // sized qsets in the linked list (which would not be a safety problem).
++                    // Like this, we only use an updated size after `trim` has been called,
++                    // which is the same behavior as in the book.
++                    Box::new(ScullQset::new(qs.quantum_size, qs.qset_size), GFP_KERNEL)
++                })
++                .ok()?;
++        }
++
++        Some(qs)
++    }
++}
++
++#[derive(Clone)]
++struct ScullDev {
++    inner: Arc<Mutex<ScullDevInner>>,
++}
++
++#[vtable]
++impl CharDevice for ScullDev {
++    type OpenPtr = Box<Self>;
++    type Err = Error;
++
++    fn new(_dev_id: CharDeviceID) -> Result<Self> {
++        Ok(Self {
++            inner: Arc::pin_init(new_mutex!(ScullDevInner::default()), GFP_KERNEL)?,
++        })
++    }
++
++    fn open(&self, file: &File) -> Result<Self::OpenPtr> {
++        if file.flags() & flags::O_ACCMODE == flags::O_WRONLY {
++            // TODO: this should be lock_interruptible, but that's not in the Rust API yet
++            self.inner.lock().trim();
++        }
++
++        Ok(Box::new(self.clone(), GFP_KERNEL)?)
++    }
++}
++
++#[vtable]
++impl OpenCharDevice for ScullDev {
++    type IoctlCmd = Command;
++    type Err = Error;
++
++    fn read(&self, _file: &LocalFile, mut buf: UserSliceWriter, offset: &mut i64) -> Result<usize> {
++        let pos = usize::try_from(*offset).map_err(|_| EINVAL)?;
++
++        // TODO: this should be lock_interruptible, but that's not in the Rust API yet
++        let mut inner = self.inner.lock();
++
++        // To keep the behavior of the original C implementation, namely that the quantum and qset
++        // sizes are only updated after a trim, we use the sizes from the inner data if it exists.
++        let (quantum_size, qset_size) = inner
++            .data
++            .as_ref()
++            .map_or((inner.quantum_size, inner.qset_size), |qs| {
++                (qs.quantum_size, qs.qset_size)
++            });
++        let item_size = quantum_size * qset_size;
++
++        if pos >= inner.size {
++            return Ok(0);
++        }
++
++        let mut count = buf.len().min(inner.size - pos);
++        let item = pos / item_size;
++        let rest = pos % item_size;
++        let s_pos = rest / quantum_size;
++        let q_pos = rest % quantum_size;
++
++        let Some(q) = inner.follow(item).and_then(|qs| qs.get_quantum(s_pos)) else {
++            return Ok(0);
++        };
++
++        count = count.min(quantum_size - q_pos);
++
++        buf.write_slice(&q[q_pos..q_pos + count])?;
++
++        *offset += count as i64;
++
++        Ok(count)
++    }
++
++    fn write(
++        &self,
++        _file: &LocalFile,
++        mut buf: UserSliceReader,
++        offset: &mut i64,
++    ) -> Result<usize> {
++        let pos = usize::try_from(*offset).map_err(|_| EINVAL)?;
++
++        // TODO: this should be lock_interruptible, but that's not in the Rust API yet
++        let mut inner = self.inner.lock();
++
++        // To keep the behavior of the original C implementation, namely that the quantum and qset
++        // sizes are only updated after a trim, we use the sizes from the inner data if it exists.
++        let (quantum_size, qset_size) = inner
++            .data
++            .as_ref()
++            .map_or((inner.quantum_size, inner.qset_size), |qs| {
++                (qs.quantum_size, qs.qset_size)
++            });
++        let item_size = quantum_size * qset_size;
++
++        let item = pos / item_size;
++        let rest = pos % item_size;
++        let s_pos = rest / quantum_size;
++        let q_pos = rest % quantum_size;
++
++        let Some(q) = inner.follow(item).and_then(|qs| qs.get_quantum_mut(s_pos)) else {
++            return Err(ENOMEM);
++        };
++
++        let count = buf.len().min(quantum_size - q_pos);
++
++        buf.read_slice(&mut q[q_pos..q_pos + count])?;
++
++        let new_pos = pos + count;
++        *offset = new_pos as i64;
++
++        if new_pos > inner.size {
++            inner.size = new_pos;
++        }
++
++        Ok(count)
++    }
++
++    fn ioctl(
++        &self,
++        _file: &File,
++        cmd: Self::IoctlCmd,
++        #[cfg(CONFIG_COMPAT)] _compat: bool,
++    ) -> Result<u64> {
++        // The original implementation from the book actually doesn't consider the lock here at all,
++        // but Rust forces us to do so :)
++        let mut inner = self.inner.lock();
++
++        // We should definitely check if the user is trying to set a size to 0, or we'll
++        // end up with panics in the read/write functions due to division by zero.
++        // However, the original implementation doesn't account for this, so we won't either.
++        match cmd {
++            Command::Reset => {
++                inner.quantum_size = DEFAULT_QUANTUM_SIZE;
++                inner.qset_size = DEFAULT_QSET_SIZE;
++            }
++            Command::SetQuantum(mut reader) => {
++                // TODO: guard this command (and all others where a size can be set by the user)
++                // with `capability(CAP_SYS_ADMIN)`, which is not yet possible in the Rust API.
++                let quantum_size = reader.read()?;
++
++                if !reader.is_empty() {
++                    return Err(EINVAL);
 +                }
-+            } else {
-+                quote! {
-+                    @variant(#i, #variant, None),
++
++                inner.quantum_size = quantum_size;
++            }
++            Command::TellQuantum(quantum) => {
++                inner.quantum_size = quantum as usize;
++            }
++            Command::GetQuantum(mut writer) => {
++                writer.write(&inner.quantum_size)?;
++
++                if !writer.is_empty() {
++                    return Err(EINVAL);
 +                }
 +            }
-+        });
++            Command::QueryQuantum => {
++                return Ok(inner.quantum_size as u64);
++            }
++            Command::ExchangeQuantum(slice) => {
++                let (mut reader, mut writer) = slice.reader_writer();
++                let quantum_size = reader.read()?;
 +
-+    quote! {
-+        ::kernel::__derive_ioctl_cmd!(
-+            parse_input:
-+                @enum_name(#enum_name),
-+                @code(#code),
-+                @variants(#(#variants)*)
++                if !reader.is_empty() {
++                    return Err(EINVAL);
++                }
++
++                writer.write(&inner.quantum_size)?;
++
++                inner.quantum_size = quantum_size;
++            }
++            Command::ShiftQuantum(quantum) => {
++                let old_quantum = inner.quantum_size;
++                inner.quantum_size = quantum as usize;
++                return Ok(old_quantum as u64);
++            }
++            Command::SetQset(mut reader) => {
++                let qset_size = reader.read()?;
++
++                if !reader.is_empty() {
++                    return Err(EINVAL);
++                }
++
++                inner.qset_size = qset_size;
++            }
++            Command::TellQset(qset) => {
++                inner.qset_size = qset as usize;
++            }
++            Command::GetQset(mut writer) => {
++                writer.write(&inner.qset_size)?;
++
++                if !writer.is_empty() {
++                    return Err(EINVAL);
++                }
++            }
++            Command::QueryQset => {
++                return Ok(inner.qset_size as u64);
++            }
++            Command::ExchangeQset(slice) => {
++                let (mut reader, mut writer) = slice.reader_writer();
++                let qset_size = reader.read()?;
++
++                if !reader.is_empty() {
++                    return Err(EINVAL);
++                }
++
++                writer.write(&inner.qset_size)?;
++
++                inner.qset_size = qset_size;
++            }
++            Command::ShiftQset(qset) => {
++                let old_qset = inner.qset_size;
++                inner.qset_size = qset as usize;
++                return Ok(old_qset as u64);
++            }
++        }
++
++        Ok(0)
++    }
++
++    fn llseek(
++        &self,
++        _file: &LocalFile,
++        pos: &mut i64,
++        offset: i64,
++        whence: Whence,
++    ) -> Result<u64, Self::Err> {
++        let size = self.inner.lock().size as i64;
++
++        let new_offset = match whence {
++            Whence::Set => offset,
++            Whence::Cur => *pos + offset,
++            Whence::End => size + offset,
++            _ => return Err(EINVAL),
++        };
++
++        if new_offset < 0 {
++            return Err(EINVAL);
++        }
++
++        *pos = new_offset;
++
++        Ok(new_offset as u64)
++    }
++}
++
++struct RustCharDevModule {
++    reg: Pin<Box<DeviceRegistration<ScullDev, NUM_DEVS>>>,
++}
++
++impl kernel::Module for RustCharDevModule {
++    fn init(module: &'static ThisModule) -> Result<Self> {
++        pr_info!("Rust character device sample (init)\n");
++
++        let reg = Box::pin_init(
++            DeviceRegistration::register(module, DEVICE_NAME),
++            GFP_KERNEL,
++        )?;
++
++        let base_dev_id = reg.get_base_dev_id();
++        pr_info!(
++            "Registered device {DEVICE_NAME} with major {} and minors {} through {}\n",
++            base_dev_id.major(),
++            base_dev_id.minor(),
++            base_dev_id.minor() + NUM_DEVS as u32 - 1
 +        );
++
++        Ok(RustCharDevModule { reg })
 +    }
 +}
-diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index a626b1145e5c4ff00692e9d4e11fdb93500db1a8..5a33ed69b5b0b64f6720fb54e18056af9b2f7a00 100644
---- a/rust/macros/lib.rs
-+++ b/rust/macros/lib.rs
-@@ -10,6 +10,7 @@
- mod quote;
- mod concat_idents;
- mod helpers;
-+mod ioctl_cmd;
- mod module;
- mod paste;
- mod pin_data;
-@@ -412,6 +413,26 @@ pub fn paste(input: TokenStream) -> TokenStream {
-     tokens.into_iter().collect()
- }
- 
-+/// Derives the [`IoctlCommand`] trait for the given enum.
-+///
-+/// # Example
-+///
-+/// ```
-+/// #[derive(IoctlCommand)]
-+/// #[ioctl(code = 0x18, start_num = 0)]
-+/// enum Command {
-+///     NoReadWrite,                 // No read or write access.
-+///     NoReadWriteButTakesArg(u64), // No read or write access, but takes an argument.
-+///     ReadOnly(UserSliceWriter),   // We write data for the user to read.
-+///     WriteOnly(UserSliceReader),  // We read data that the user wrote.
-+///     WriteAndRead(UserSlice),     // We read data from the user and then write data to the user.
-+/// }
-+/// ```
-+#[proc_macro_derive(IoctlCommand, attributes(ioctl))]
-+pub fn derive_ioctl_cmd(input: TokenStream) -> TokenStream {
-+    ioctl_cmd::derive(input)
-+}
 +
- /// Derives the [`Zeroable`] trait for the given struct.
- ///
- /// This can only be used for structs where every field implements the [`Zeroable`] trait.
++impl Drop for RustCharDevModule {
++    fn drop(&mut self) {
++        let dev_id = self.reg.get_base_dev_id();
++        pr_info!(
++            "Device {DEVICE_NAME} had major {} and minors {} through {}\n",
++            dev_id.major(),
++            dev_id.minor(),
++            dev_id.minor() + NUM_DEVS as u32 - 1
++        );
++
++        pr_info!("Rust character device sample (exit)\n");
++    }
++}
 
 -- 
 2.47.0
