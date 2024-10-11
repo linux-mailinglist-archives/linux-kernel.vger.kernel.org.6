@@ -1,67 +1,56 @@
-Return-Path: <linux-kernel+bounces-361532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CC6199A963
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:03:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB59D99A95D
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:02:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E37491F21CDD
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:03:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E9A82832B0
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:02:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9572119FA9D;
-	Fri, 11 Oct 2024 17:03:34 +0000 (UTC)
-Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C68019F41A;
+	Fri, 11 Oct 2024 17:02:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tMWSQg4A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ADE281AD7;
-	Fri, 11 Oct 2024 17:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A961B81AD7;
+	Fri, 11 Oct 2024 17:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728666214; cv=none; b=D7oRNdgKjxuKF/2uV1AqtSQGfY2ou92FrW2AeWoRinUiq00/+X2eY5xOC7K2tb52lzMoAFeSd3KkDWVfwC6H7nEj2Yj35uM2+MKQwoBEvaR+dr6pnkMPW1DDhK2Y8sUaZ4uMjrZpv1aBLECfIzhjofBJOps4xud5Ap9eirVYUlY=
+	t=1728666119; cv=none; b=YCnUB6J7F3SFvf3DF9t/PWXqAvu5hycx0LXtrHr5T1dx1BAzGgPXkbq142kq767Hd5z6NN94BdfwF9Ilu1HddltAoYxP00nHPfYEZO8JlzabUWjk+KbVoOGxrbaiHXrpVQK3c67N8LjmXoewLWFElfBMDNv4FpSyhP1EGtBIwSU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728666214; c=relaxed/simple;
-	bh=wUUK1rQSfa96ydZdXqc0ewnp59uc09fzzahy3mtmRko=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bOAlraSTGq/DlV3MThw0hlvSPvzHO2MO1CvqqvogfnbwnmyDEJJN62ZvNNDi30cYv4MLBooJEuww1Ap0ZPI1M/jD9thzsa6pztULpsDZmdN9iQR91BaF5Wyam3ePcRsn31qWYphQ9hh54dtmbbm6vEu4grlYN3O1O/piEJVgFeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d43a9bc03so1274536f8f.2;
-        Fri, 11 Oct 2024 10:03:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728666211; x=1729271011;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vTfOyfLv8TRJcCBLxu7TtJPYlmj6NMUkEgMfr77g03M=;
-        b=P2Gie8heBshs1F92joxzWVepz5ltRT58pju2Wqs9f+0IjXpyZTnbviA41P6y/MruMO
-         hgsqOfxQVzqKsDafkHOrxt1TrGjdNpYhSXY6mwjsFZ4hk/D6yfYROm8Zun/Um26irQ6E
-         wEDdsUoDhBtq2wMZfBSIYoD2/ppV0E5zWYn/2IO8rlnxJ2xQqzmLMYXlPl3OJuuQNQxL
-         IpzovtLwRwyjNIDZPK10dHht6O7RAOeoK3N7xTIcSs3/cYt9ugN3CMfXYujwIIoke4SU
-         eW+LtPMSTQfI+cxXxLyV9Xtka0Kw0EB2m4Wp19YZ0kOKiqhbVT50do0hiI1zYWs7UWHz
-         1eyg==
-X-Forwarded-Encrypted: i=1; AJvYcCXKZjt/VGj/AXRl/8v9U2wZag/R9OyT5sUBdfuNogMcowMtrJ6g9CtfTtUSIHeMSuC4hyv045t/fT/u4A==@vger.kernel.org, AJvYcCXQEZ90fm3jA56wLQvX1v1gbshEa3syst+4ojlO2Dx6Du7mjtK8mbVxpn29sj6zSFdQcZHmJ+vtcCWHGy9o@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNcIsJZB3XSK9mnFINdhINeQEjm18NbsF4oHPMp5t6YB5xk4tq
-	pGDJv3XzVFOiA+xGrdw0Wp4htVB2+mjPgZQ9LdGq4cy63o4gycyP
-X-Google-Smtp-Source: AGHT+IHOUA1KFTI0ZqOZDgpPW54yLU9DbBd/VxpToYcNTf/LnpqwsvPC65oc5ZcryeVfGubb14pXHg==
-X-Received: by 2002:adf:fcd1:0:b0:37d:51a2:accd with SMTP id ffacd0b85a97d-37d5fd4603bmr311018f8f.0.1728666210372;
-        Fri, 11 Oct 2024 10:03:30 -0700 (PDT)
-Received: from localhost (fwdproxy-lla-006.fbsv.net. [2a03:2880:30ff:6::face:b00c])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ef4f6sm4401778f8f.107.2024.10.11.10.03.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:03:29 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-To: hch@infradead.org,
-	Jens Axboe <axboe@kernel.dk>,
-	Damien Le Moal <dlemoal@kernel.org>
-Cc: kernel-team@meta.com,
-	linux-block@vger.kernel.org (open list:BLOCK LAYER),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH v3] elevator: do not request_module if elevator exists
-Date: Fri, 11 Oct 2024 10:01:21 -0700
-Message-ID: <20241011170122.3880087-1-leitao@debian.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728666119; c=relaxed/simple;
+	bh=gfp7YcV8h6o4AkIT/Iu3gx4SXfLeUBCwrRKHKh0qodU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bhWVcJvIxaKgQ21TBIRXHRfppAjy6FOA6Ao4F2OsQbbs6Qc527cjT7zBn1dvuxSnX4UuvhRmLaLyU1/Eesx9SY1/3J5bnNiV5dvcE9Cq92u/TstYSKZ+RxTG6VDcUEBiOtVmfcwSujlSHFXWBq5PlaSk25Ikskm3mkY134X6Isg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tMWSQg4A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 637F4C4CEC3;
+	Fri, 11 Oct 2024 17:01:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728666119;
+	bh=gfp7YcV8h6o4AkIT/Iu3gx4SXfLeUBCwrRKHKh0qodU=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tMWSQg4AaHJ71TMhEXP7cwOF484TBudyd0WGvFSC5mkglBd9ROFL2GGWRoTJ/Uj1H
+	 yVEsZuOktYky3/feBj6nnDeVym8c1YxfPXe2QuP1NjTRKhq3B1a5jKGVJIKRtDIoRD
+	 rubFs7/M9sBH+9/TNsTyMsRnRLDfyJjzHlU4HZq1E6EbceXH9DZ30W/QoS0jkpYKEN
+	 1ePJJsR6NbPdM2bi413GmjEEZdU9IaM0IFGGv7Wm/zMiTOVEwSJVwHpcIDG1cpMfhp
+	 9KfJykDpvcwQXZC8xqPNevrNAZNchjdQJLRzU7bGhUtCKuX8EGdWlhQlOxZ+p2qzBG
+	 k0idpVPaZp4Tw==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: SeongJae Park <sj@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/2] Docs/damon/maintainer-profile: a couple of minor hotfixes
+Date: Fri, 11 Oct 2024 10:01:52 -0700
+Message-Id: <20241011170154.70651-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,67 +59,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Whenever an I/O elevator is changed, the system attempts to load a
-module for the new elevator. This occurs regardless of whether the
-elevator is already loaded or built directly into the kernel. This
-behavior introduces unnecessary overhead and potential issues.
+DAMON maintainer-profile.rst file patches[1] that merged into the v6.12-rc1
+have a couple of minor mistakes.  Fix those.
 
-This makes the operation slower, and more error-prone. For instance,
-making the problem fixed by [1] visible for users that doesn't even rely
-on modules being available through modules.
+[1] https://lore.kernel.org/20240826015741.80707-1-sj@kernel.org
 
-Do not try to load the ioscheduler if it is already visible.
+SeongJae Park (2):
+  Docs/damon/maintainer-profile: add missing '_' suffixes for external
+    web links
+  Docs/damon/maintainer-profile: update deprecated awslabs GitHub URLs
 
-This change brings two main benefits: it improves the performance of
-elevator changes, and it reduces the likelihood of errors occurring
-during this process.
+ Documentation/mm/damon/maintainer-profile.rst | 38 +++++++++----------
+ 1 file changed, 19 insertions(+), 19 deletions(-)
 
-[1] Commit e3accac1a976 ("block: Fix elv_iosched_local_module handling of "none" scheduler")
-Fixes: 734e1a860312 ("block: Prevent deadlocks when switching elevators")
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changelog:
- v3:
-   * Remove the helper, since it is not used anywhere else (Jens)
 
- v2:
-   * Protect __elevator_find() by elv_list_lock (Christoph Hellwig)
-   * https://lore.kernel.org/all/20241011154959.3198364-1-leitao@debian.org/
-
- v1:
-   * https://lore.kernel.org/all/20241010141509.4028059-1-leitao@debian.org/
-
- block/elevator.c | 10 +++++++++-
- 1 file changed, 9 insertions(+), 1 deletion(-)
-
-diff --git a/block/elevator.c b/block/elevator.c
-index 565807f0b1c7..640fcc891b0d 100644
---- a/block/elevator.c
-+++ b/block/elevator.c
-@@ -708,13 +708,21 @@ int elv_iosched_load_module(struct gendisk *disk, const char *buf,
- 			    size_t count)
- {
- 	char elevator_name[ELV_NAME_MAX];
-+	struct elevator_type *found;
-+	const char *name;
- 
- 	if (!elv_support_iosched(disk->queue))
- 		return -EOPNOTSUPP;
- 
- 	strscpy(elevator_name, buf, sizeof(elevator_name));
-+	name = strstrip(elevator_name);
- 
--	request_module("%s-iosched", strstrip(elevator_name));
-+	spin_lock(&elv_list_lock);
-+	found = __elevator_find(name);
-+	spin_unlock(&elv_list_lock);
-+
-+	if (!found)
-+		request_module("%s-iosched", name);
- 
- 	return 0;
- }
+base-commit: 7642dd55ac78c8050cb8142de62e32a4783020b9
 -- 
-2.43.5
+2.39.5
 
 
