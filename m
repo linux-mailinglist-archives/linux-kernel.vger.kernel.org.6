@@ -1,81 +1,83 @@
-Return-Path: <linux-kernel+bounces-361549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E00C99A994
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:12:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A0A899A997
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 19:13:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CC4EB2491D
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:12:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9C6CA1C224B5
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 17:13:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B025E1BE856;
-	Fri, 11 Oct 2024 17:11:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61EE21C3F00;
+	Fri, 11 Oct 2024 17:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="1yOUQ1E8"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="MRsywTas"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B33D819F41A
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245AE1BD00A
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728666713; cv=none; b=h8viGnLIe/rI6DoE6qLK05zqlvHo8+h9Ssae+cMmtJDxFCSQRY2ksUwZFvZDdExxJM866HvQ4EBKoOdWIGCA8m+2zh7Ta+xamSfBF0kGP1AGWDiNBO4Df0ynhaxp17XgthVkmntuNtJqwgB3JzLokRZSOjlCW+HR0bO6HHWo9qo=
+	t=1728666714; cv=none; b=MWaG1RwDrlH++aPcH6FkAvqrBbx4HqObhRxQZhNKyirsP8qgEl8m+twkVRJjiaeP7rObCikkD5fMvuTLaR132k0z6eAefPJfz51I2lR64zfsLduv4k+6OLzb8VKR+r3ZDdp8rrBZpz8Af87pN/lmXPqZ7Qd7VYffVY570hvENRo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728666713; c=relaxed/simple;
-	bh=8dDA8zUCA0ufN6YZTUcwbyZZD9nq429HiprCNeDaAes=;
+	s=arc-20240116; t=1728666714; c=relaxed/simple;
+	bh=aiN47lzHnJWqzKP2wtzM26gAcaTIZRCbMy1ZtpHDJls=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=GtHKGoG5aWjMxAD5mWzM0l6PaD+Nb/RxAqnD5IpOq2zQzTwr0tHb4/+rfMiwDAWp3S9JjTSopl/4eAiIn8SUIYEB2qIGBjpjwfmHHrY/TfbPwa56KKe5CUiMYp2bPnfTvTx61nYuFeVL9qsc0bgw3zXuudNmqSnuI23N+UdmfOM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=1yOUQ1E8; arc=none smtp.client-ip=209.85.166.178
+	 MIME-Version:Content-Type; b=thekxHUUcbQN2MvjajbvkehyWIuIMwPUfflzZqNyY1oGVtpI0G3WAGqCzadkKq737l93c8jpqu7q3RWzh2IaiHHOTL5DjckGWVByDw1lPn0aPMXMfqoPZpoNEtX6BH7B9nxKpQlSOFCO4uGs53S2ejyTtLVSqDohp/rS49uS2Sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=MRsywTas; arc=none smtp.client-ip=209.85.166.52
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3a39cabb9b8so7418635ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:11:51 -0700 (PDT)
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-8354599fd8aso84136039f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 10:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728666711; x=1729271511; darn=vger.kernel.org;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1728666712; x=1729271512; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=zl1i78brjGAuvA9ZnmYYUqyA41KtOxW10zwshpfXTuw=;
-        b=1yOUQ1E8VaMunbMkHorpGpgShRb0elV/cmDOQRIO3/i/HIo+sWFqnTIRAvNuwU3reI
-         liq/tklUbAvJqS5aUvibP69tORMTP6swIxdCoVbErlUrR6iltDG9gGYGD5SAAkqaid+Y
-         nUeNMP1JKTud1uLzfNgGAWyp5j9m4nmiO1uGGRPoRISmDjumk5xXO7e/0I5NmE+ADdTT
-         V6L2yVdBPX2Wu1mRt9Jy6hCmkLcHdrDuXqh67LtNO6IQ34tCYrOvTC7QQq+N+iruktuk
-         Xxo2uw/wObtowoF5K6Hc9YAI0Nabrhs/0Xb/xvnjQ9F5qUvZJRgbTQZnjw+TsND/zqJl
-         gspg==
+        bh=KpbrnuNpT2hceRYe/VcgBMKHN+/sFFWJd7A/mmO9d/A=;
+        b=MRsywTasIhIfc2p7gVl5Gq/gYjwQFJVwWvHF18P8MpU28Ju/Dze+R8yYvOUfGBfVTg
+         /nIrxKaWqudYGNriKy7ZWxQeNN0t5VJyo7NJcO1MSXnbrpa67zTIHoyzLlS/0vMSBgQ8
+         RuW/9X+5+VPIBzSAeCEUlcP3MdMjzIGNtcHuYbV48d+g//EspXv7ucKkkfdljlYRGs+4
+         ZUvK1T7aKvMgQJUmNcLt01xD54nzzTb14D+6RFFqCC/gmjD8fp0Zma76K5jAESoWKl44
+         Cv2OcRY0z6cAdyHUL7zmCvzFh4ijVZFqudD0/almuQNw6FZKh8Np0YWgPCzHmdvps7CH
+         6Zug==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728666711; x=1729271511;
+        d=1e100.net; s=20230601; t=1728666712; x=1729271512;
         h=content-transfer-encoding:mime-version:date:message-id:subject
          :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=zl1i78brjGAuvA9ZnmYYUqyA41KtOxW10zwshpfXTuw=;
-        b=qZwJ37OlvYfW+775F2isDKe3pFz6RK678Y2VM0RLQvvZaWO9UzhfIvHAdvEjJRNxLo
-         Mv5oWWDjWVXzNRJjQpyn1DGXHc5aYc+B6mC6HhEzzp8Vm6jXWbmN6+GdR76vuqyhdbG4
-         KTx32HDHG/eis2Sn+8wjmT3RA5nHVnQBemFxHkgZN1Q3zic2epeEr4jizUwea1i47ZTD
-         Jnw+DVrCovdNAkgGaZYI2WPKOXIK2Uu3+WUprbBd3XdKWrIRWXmd3WrFVTnEE29ZJrDT
-         SzyTWJyo0WKgSiFDgDhgo4kD8hUACeW6j2+/ehikoSc7bGD3x8B0FHFpf87JSpH2449z
-         W/uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX9Yw0WXDaxUltw2rPkJwvVL9WGpKlCnlCj3h8pKugkZ545hXVz6k13Nxv0lU55a5Y+oEd25t6qcQ+wY20=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYJYGLMhIxOslh7y6jF2uHFin6yE4TqmWNcYddW0pemt1LE08O
-	VnYUUPEPxnxd3nvPSjYzQytBPeo3TgOCB5DsPr8sseLdVrPbpdt7vP8LHM9vIh4=
-X-Google-Smtp-Source: AGHT+IEZWvr7qBTTjS/tuenU1bjvPDfbBSeZfkqk0imNClzLRq7tKeY/fBnJcfKDU9r03JNOKR3aTA==
-X-Received: by 2002:a05:6e02:1809:b0:3a3:b593:83a4 with SMTP id e9e14a558f8ab-3a3b5f9e4e3mr26348695ab.14.1728666710924;
-        Fri, 11 Oct 2024 10:11:50 -0700 (PDT)
+        bh=KpbrnuNpT2hceRYe/VcgBMKHN+/sFFWJd7A/mmO9d/A=;
+        b=GVZua4s518a/leqA0iYYZWft4P6XbBwWK0jIy2OegXWt+LWRw9wWteoG3rW9vpTIX3
+         y31YyAGwy4ShvSNwRqZwiWpxTKjqiQUTuOtpsI7Lzqm0xZ2c1qdFXPixixBw9U/8f3Zy
+         ae2W7dyGr4eElG7YoUOxqwxMsVuO9i0TSP6/50fLNLpBEtuCOrroYyXdmgcXpk2OcdvB
+         /aFWVpOE89EQDR/OHHZQH3IPR5wEmKuJ5Ih9qpOk2yvTjjuq7nkL4c6OSf6KhKDG2aTD
+         ugHVfaZM3WhXtJJGbcE51brh/l5mVY7xxfOcCpibWsBRRW993ZSfJ0mKiMj+lTsPNHUr
+         EPfA==
+X-Forwarded-Encrypted: i=1; AJvYcCUvQwq5UhWv3PL6SCHcEMYRZ4WJ65C8UpaoBRoaKN5dGTnHtVU5GZAreGU40mQmktg7jy5uqoyH9Rby8kM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YynpeUPiBViMu2+n31/PUW2444jxGvEs9kUr9o3ct/Zt7W2WAtd
+	r6ur9JcpsUki54UnVF9qgapYYSoYe3G0XfycvJjBP1a7M94W94QRRNVeV8k0L+Q=
+X-Google-Smtp-Source: AGHT+IGI6wckhy8W+1rmF8si1f4MWwmV9cm88orXihhz4HO8zA71D88m2Jd/YkHmEzs3BnLxoXNMVA==
+X-Received: by 2002:a05:6602:1407:b0:82d:3c2:9118 with SMTP id ca18e2360f4ac-8379512759fmr301961139f.16.1728666712217;
+        Fri, 11 Oct 2024 10:11:52 -0700 (PDT)
 Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbada846dcsm713654173.89.2024.10.11.10.11.49
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dbada846dcsm713654173.89.2024.10.11.10.11.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 10:11:49 -0700 (PDT)
+        Fri, 11 Oct 2024 10:11:51 -0700 (PDT)
 From: Jens Axboe <axboe@kernel.dk>
-To: hch@infradead.org, Damien Le Moal <dlemoal@kernel.org>, 
+To: hch@infradead.org, Bart Van Assche <bvanassche@acm.org>, 
+ "Martin K. Petersen" <martin.petersen@oracle.com>, 
+ Damien Le Moal <dlemoal@kernel.org>, Hannes Reinecke <hare@suse.de>, 
  Breno Leitao <leitao@debian.org>
 Cc: kernel-team@meta.com, linux-block@vger.kernel.org, 
  linux-kernel@vger.kernel.org
-In-Reply-To: <20241011170122.3880087-1-leitao@debian.org>
-References: <20241011170122.3880087-1-leitao@debian.org>
-Subject: Re: [PATCH v3] elevator: do not request_module if elevator exists
-Message-Id: <172866670924.255755.8635464713478237933.b4-ty@kernel.dk>
-Date: Fri, 11 Oct 2024 11:11:49 -0600
+In-Reply-To: <20241011155615.3361143-1-leitao@debian.org>
+References: <20241011155615.3361143-1-leitao@debian.org>
+Subject: Re: [PATCH] elevator: Remove argument from elevator_find_get
+Message-Id: <172866671104.255755.3061014354205659222.b4-ty@kernel.dk>
+Date: Fri, 11 Oct 2024 11:11:51 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -87,22 +89,20 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Fri, 11 Oct 2024 10:01:21 -0700, Breno Leitao wrote:
-> Whenever an I/O elevator is changed, the system attempts to load a
-> module for the new elevator. This occurs regardless of whether the
-> elevator is already loaded or built directly into the kernel. This
-> behavior introduces unnecessary overhead and potential issues.
+On Fri, 11 Oct 2024 08:56:15 -0700, Breno Leitao wrote:
+> Commit e4eb37cc0f3ed ("block: Remove elevator required features")
+> removed the usage of `struct request_queue` from elevator_find_get(),
+> but didn't removed the argument.
 > 
-> This makes the operation slower, and more error-prone. For instance,
-> making the problem fixed by [1] visible for users that doesn't even rely
-> on modules being available through modules.
+> Remove the "struct request_queue *q" argument from elevator_find_get()
+> given it is useless.
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] elevator: do not request_module if elevator exists
-      commit: b4ff6e93bfd0093ce3ffc7322e89fbaa8300488f
+[1/1] elevator: Remove argument from elevator_find_get
+      commit: ee7ff15bf507d4cf9a2b11b00690dfe6046ad325
 
 Best regards,
 -- 
