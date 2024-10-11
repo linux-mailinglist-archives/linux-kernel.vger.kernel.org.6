@@ -1,137 +1,96 @@
-Return-Path: <linux-kernel+bounces-360779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-360772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8148A999F68
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:55:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4183999F53
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 10:52:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27EEE1F21607
-	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:55:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52902287713
+	for <lists+linux-kernel@lfdr.de>; Fri, 11 Oct 2024 08:52:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D600520C46D;
-	Fri, 11 Oct 2024 08:55:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C120320C47D;
+	Fri, 11 Oct 2024 08:52:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TDrvYZEn"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="XX3tEEVm"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93F7320C461
-	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:55:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4E3B20ADE4
+	for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 08:52:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728636937; cv=none; b=sytFNsWWK1XeGJuPU5LWWVLH/WNo126y+pzaKcC/WOnMbK9arfqtVjMGYHtXi4IKD13yrEolDQIplhNWVSFL1XSDMCVEEKV1umvO7rLygGQB/eqm61okTAJjlISIE9URzRlYCR2gV+53iTBc1TAYes8gt9aSC8uo42qwne/+LdU=
+	t=1728636736; cv=none; b=HLyIOEuYb/SgdDIr7a5VC2BPWwaI85vurFMZZkrL/+TCf9z+rKTLjBnUs3QFBegEwziq9HmFVWog0h9JnBsYu5tnwmA7x24EKXgvDhUSJg2LRmIldY0JsLaNHbcNWh2ksHUytdstsM5izdsDtxpy96iVRD6F6eFpWRQVeEbQgIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728636937; c=relaxed/simple;
-	bh=OXxFz4k46WgARgdzHOSZugPchaB1Wk40/hefIIy7htk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=ebKC4HCP4IxCW6Qf+QqeD/qVXQIgeV3w+CZev6urE3DmvTa2as0t1PwaQZTjoc2upYIWQvouLUNGjmjtWJ4susnXRVKDK7Cw/FBeBkxniK19qsTyGpEf4JgUSrOdgr/ZDp0Tp9gzcFjustbfpi6+D9hWljS+7Gvb1QLe3k3ONw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TDrvYZEn; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728636936; x=1760172936;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=OXxFz4k46WgARgdzHOSZugPchaB1Wk40/hefIIy7htk=;
-  b=TDrvYZEncb1yvPSnwdK+FvOD7Zo/deCp/pe01puseIb1vQv9+Cvw2Gbe
-   hfyw1EgSjpcWWh8slTNruzuCjL24533CLCo0D8wrkp3qqH1aCH35GQUDd
-   xma0i7n3dG0MNvL5e76B1p/FRSZaWMJH4bluKvBM3Fl+SuM42UOtx0k0y
-   eQDVqEoNMlI36cNMCgC0UQD4jaWCCrUZOheoGMrsImpm6k6Z6cXZ9VgxF
-   +hsdbEn75JT0z1bjUASZ+Ww9SUPnSO4IBetMB8FUBeFMXZ2Eidvq4J0AZ
-   +Y+CsgOMpqpPGliGQGZDn090skBB3yb42IhP8EydsTTvAplhVLezg6Elw
-   A==;
-X-CSE-ConnectionGUID: JNjkASSARou+kkCzMK71Mg==
-X-CSE-MsgGUID: okOTXHB5THmKrOABkur35A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11221"; a="31730353"
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="31730353"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 01:55:36 -0700
-X-CSE-ConnectionGUID: GKIzN5oeTv2hJyQFiCOPvQ==
-X-CSE-MsgGUID: ZbYDYBjnRsCB03wIRpltyg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,195,1725346800"; 
-   d="scan'208";a="76472740"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 11 Oct 2024 01:55:31 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,  Ingo Molnar <mingo@redhat.com>,
-  Borislav Petkov <bp@alien8.de>,  Dave Hansen
- <dave.hansen@linux.intel.com>,  "Kirill A . Shutemov"
- <kirill.shutemov@linux.intel.com>,  x86@kernel.org,
-  linux-coco@lists.linux.dev,  linux-mm@kvack.org,
-  linux-kernel@vger.kernel.org,  Dan Williams <dan.j.williams@intel.com>,
-  Kai Huang <kai.huang@intel.com>,  "H. Peter Anvin" <hpa@zytor.com>,  Andy
- Lutomirski <luto@kernel.org>,  Oscar Salvador <osalvador@suse.de>
-Subject: Re: [PATCH -V2] tdx, memory hotplug: Check whole hot-adding memory
- range for TDX
-In-Reply-To: <71dc3853-45a6-4fa5-b3c6-b165e0ab6a1b@redhat.com> (David
-	Hildenbrand's message of "Fri, 11 Oct 2024 09:53:10 +0200")
-References: <20241010074726.1397820-1-ying.huang@intel.com>
-	<037801d9-8923-4d49-8423-072fd7c73069@redhat.com>
-	<87o73ra0p7.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<71dc3853-45a6-4fa5-b3c6-b165e0ab6a1b@redhat.com>
-Date: Fri, 11 Oct 2024 16:51:59 +0800
-Message-ID: <87v7xz81jk.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1728636736; c=relaxed/simple;
+	bh=upmVzJ9gjVfXs2ROzF7vcG7wDgAsGosonijbpss3TCk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OHr1qYpj+nJPEb/ICvhptk1obZ2FLVdaOeEv5pSMIFCgESZacepU/QGgPQs2KnGMN6ZolkMV7N0CxS3NRe412NW+oHHRL1eHzzI2hOqn2j6JfCnzvfDlqo0hx9cuYR/knHuCuMmVgoOaaxOjpOd9a9F3gfQATlWSbjAREJSN7Bw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=XX3tEEVm; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=gEggDx+qqkot51kSb68zOP3SYNMgw7OxwK3vHbK/Wv4=; b=XX3tEEVmWoAqLEaAmisxHztVTp
+	p2Ayss58pAIs1yzbofeAAbdv4rjZxU2L9Rceb2xkNWwyxVW7X2xN894ur4WFKE4wGeuPtYSk2Oiz8
+	lw1mMUN/BeFnwCOxuoeMCEU0juk/SaOlVXUNXbxLR6rKLVUzRTWaYbvlKziVrh+8R2n2cFuqrOJe+
+	Yvqw0SnVe9TluAKBcuD0KoE7ZilVLvkUynNfgMhDunBoprroFhyt78eYkk5Ntc229QZgnFtG4yNrM
+	jBrqyp/Wuv5LjQTGkogxkifI/tUZNR89ukRt4OU8a9xLAahFWLmbDlA1wdO0iAI9oKB+nZFJaJhlI
+	6UVlszPg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1szBNR-0000000AJfy-2NID;
+	Fri, 11 Oct 2024 08:52:02 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id B7833300642; Fri, 11 Oct 2024 10:52:01 +0200 (CEST)
+Date: Fri, 11 Oct 2024 10:52:01 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Xavier <xavier_qy@163.com>
+Cc: mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, yu.c.chen@intel.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] sched/eevdf: Reduce the computation frequency of
+ avg_vruntime
+Message-ID: <20241011085201.GM17263@noisy.programming.kicks-ass.net>
+References: <20240912091454.801033-1-xavier_qy@163.com>
+ <20241011062449.998696-1-xavier_qy@163.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241011062449.998696-1-xavier_qy@163.com>
 
-David Hildenbrand <david@redhat.com> writes:
+On Fri, Oct 11, 2024 at 02:24:49PM +0800, Xavier wrote:
+> The current code subtracts the value of curr from avg_vruntime and avg_load
+> during runtime. Then, every time avg_vruntime() is called, it adds the
+> value of curr to the avg_vruntime and avg_load. Afterward, it divides these
+> and adds min_vruntime to obtain the actual avg_vruntime.
+> 
+> Analysis of the code indicates that avg_vruntime only changes significantly
+> during update_curr(), update_min_vruntime(), and when tasks are enqueued or
+> dequeued. Therefore, it is sufficient to recalculate and store avg_vruntime
+> only in these specific scenarios. This optimization ensures that accessing
+> avg_vruntime() does not necessitate a recalculation each time, thereby
+> enhancing the efficiency of the code.
+> 
+> There is no need to subtract curr’s load from avg_load during runtime.
+> Instead, we only need to calculate the incremental change and update
+> avg_vruntime whenever curr’s time is updated.
+> 
+> To better represent their functions, rename the original avg_vruntime and
+> avg_load to tot_vruntime and tot_load, respectively, which more accurately
+> describes their roles in the computation.
+> 
+> Signed-off-by: Xavier <xavier_qy@163.com>
 
-> On 11.10.24 03:27, Huang, Ying wrote:
->> David Hildenbrand <david@redhat.com> writes:
->> 
->>>>    extern u64 max_mem_size;
->>>>      extern int mhp_online_type_from_str(const char *str);
->>>> diff --git a/mm/memory_hotplug.c b/mm/memory_hotplug.c
->>>> index 621ae1015106..c4769f24b1e2 100644
->>>> --- a/mm/memory_hotplug.c
->>>> +++ b/mm/memory_hotplug.c
->>>> @@ -1305,6 +1305,11 @@ int try_online_node(int nid)
->>>>    	return ret;
->>>>    }
->>>>    +int __weak arch_check_hotplug_memory_range(u64 start, u64 size)
->>>> +{
->>>> +	return 0;
->>>> +}
->>>
->>> BTW, I remember that "__weak" doesn't always behave the way it would
->>> seem, which is the reason we're usually using
->>>
->>> #define arch_check_hotplug_memory_range arch_check_hotplug_memory_range
->>>
->>> #ifndef arch_check_hotplug_memory_range
->>> ...
->>> #endif
->>>
->>>
->>> Not that I remember the details, just that it can result in rather
->>> surprising outcomes (e.g., the wrong function getting called).
->> I can replace __weak with #define/#ifndef.
->> However, it appears that "__weak" is still widely used now.
->
-> Probably better to avoid new ones.
-
-Sure.  Will do that in the future versions.
-
-> See also
-> Documentation/dev-tools/checkpatch.rst
->
-> I assume checkpatch.pl should complain as well?
-
-Double checked again.  It doesn't complain for that.
-
---
-Best Regards,
-Huang, Ying
+This makes the code more complicated for no shown benefit.
 
