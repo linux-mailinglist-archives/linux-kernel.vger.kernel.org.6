@@ -1,154 +1,156 @@
-Return-Path: <linux-kernel+bounces-362412-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 200C499B4A4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:56:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C9B299B4AA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:58:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 505C01C20CA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:56:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A165D282965
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E43418593C;
-	Sat, 12 Oct 2024 11:53:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6255F155759;
+	Sat, 12 Oct 2024 11:58:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+PNmFhw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="G0uPOVnP"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC20047F69;
-	Sat, 12 Oct 2024 11:53:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CED55154C09
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 11:58:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728734031; cv=none; b=ZT/OOHLhI8er5jTOHk+s++IX12bO8jHjO2ftnBehuAV2bFjpoLhK/YHmRSSotQGsu6WsiulBN5xTCjZ6bYb1qr5ZtRjY9WU3b7+51hCZEYlDqc0BEumJXPM1EgJJR+2qwvFH0vfR4p6cjn6wqEM4x0xOhZwOPurgTLuvPkUvamc=
+	t=1728734329; cv=none; b=s7ma1d9PY3RdbdnUF81jKoyA9Ecg8j/JVfTZ3KbJdTNhT7FccTyjbuWUjna1Hd3Su1Mr+3m1ehCGR323BOA+BCvG/pTbyosNR7683vzHgvYyXzUsnMgnKvley5BnNR3D1Cz6qcDLXFVo87uEdyRlkOfnASmaz5E/v4IQ1B2SwUc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728734031; c=relaxed/simple;
-	bh=vXiaSdRg9aRlCNkPnL1YQeRuBmCPYjv8AyNlfWRF9BU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AhD1XHpSvEOxYu4+RSgNbSYzv1bsB/cPt3OBK8bhjx2bs0RvwCRlLoFpc5MZN6GRLJQfnCKOm8udoRxXvxYxwA1VaOSZvp1Ngu/M/wWmemgr/BOEQNJiOzq85jgJuEMdyqPk+MSas1PC9vQbzuzP+VR4SDx6/6qhiYblwPT6aiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+PNmFhw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74BB6C4CEC6;
-	Sat, 12 Oct 2024 11:53:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728734031;
-	bh=vXiaSdRg9aRlCNkPnL1YQeRuBmCPYjv8AyNlfWRF9BU=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=R+PNmFhw/bh3e+ceb2rPBKLgv0ZlRtvvGRBe7PKL71ZWi2ydDYpvr+uREfpR3Hyqr
-	 cBySkKHxry7uhCBrcbZZvudi6qpIHbfuVNQF7AkaU/LjIhzbfNmcAiEO0JC23Icy3E
-	 CHFY7i48fNgJLkDVvrQhFS4mJPzm+tkauJ7klDsbtqNURjrHoLTVe39b2gj04CAd/O
-	 XTR3YvOUwhI8cij8tZ4Sygu4GR96yR07mT/xIZakwB9bPqUv7PWL0eQlPjG35dOcIG
-	 Hd2QeEh5IgcB5eQBHE+j48Fcztlw/GGb9KMUCDXRh9Ed5o6QIMPei9KZrRF4OJpUsM
-	 Mb9V4flS4gVew==
-Date: Sat, 12 Oct 2024 12:53:43 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: vamoirid <vassilisamir@gmail.com>
-Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
- andriy.shevchenko@linux.intel.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 07/13] iio: chemical: bme680: add regulators
-Message-ID: <20241012125343.729425e5@jic23-huawei>
-In-Reply-To: <20241010210030.33309-8-vassilisamir@gmail.com>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
-	<20241010210030.33309-8-vassilisamir@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728734329; c=relaxed/simple;
+	bh=eUse1WaKbLNTi+lH1lFNxvAR/3Z5+DaPJh8J6RQchok=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=WSKEWBNJCeFRxRKheILEpTHCjcLUxBcf6luFYAtS6xyZATvO3hCRB1ro0iWEesqAO1zTF0+PzJibwDjoFWgucVhDe0k30e+nqm7tA7v8jAI4nYcTWCZ92A21j3sg1tvmP2ux9K4SHea1xTOUoM3E1wY58+m4f15JH+4z38DA35U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=G0uPOVnP; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-45f0a0f9687so27239591cf.3
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:58:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek.ca; s=google; t=1728734326; x=1729339126; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Diub50GAsamJSYxMpuxJNl2q4XzBU/QQSzsDe5urvxI=;
+        b=G0uPOVnPlaEHdTMT4knYoOwCjZ8N4ezGYLG/RMmu1Tx4k8Kd5Lc6UMXyDaJ6eydT1t
+         CJTo3zyNcdeolc3SJGROQWLGOczciIJKWfbNPArt1mUu2l2VKtHR54MLjWeDRQ71solV
+         wzm2FJR46TaHphr3WKKvq+X6D6EH1TGs/gj2/BWFdnasU4wBqhPqpmN1iYK8Ww0flAqn
+         9k/Cil9ibkZGGI0ew4v7CAr4PV4dbEo2E5GxFJcA0LnqfMPf3V+gFKn1vUL8GC55lXfi
+         H0BkNq8HAhatnRPnpA2EjqObpFkmfGCicCaxwBDLn1/r1QKyV3GVz0Ur3rSJrz226D9L
+         GpAw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728734326; x=1729339126;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Diub50GAsamJSYxMpuxJNl2q4XzBU/QQSzsDe5urvxI=;
+        b=IQISgNznzNOAqIW4uAnn3dsZ9aBzMrij3mW+DTZi38/vnyL7R2Z4cFhTzqrZr/F4XI
+         zDX+YwU/dX239cXIerg49aVd5xR1BOSOGglC24Ba58bQPqew4oNLPw0WWvSAYeY/Mnx5
+         LKn834Tq+T4PffqH15xS78o/WVKRx5qnrfpsEWBaLSlr7tp2t7eiqICv8TXqOTI7rAbk
+         M94+sFOSqZatBA+m0hcEMxxYCKNkacO9+9xk+m1cr5x25KE+XDMidif12bpYdtEiInmE
+         obNF+zCyjerEBqrmms3/Ul5AJQuw6J3s8T3Y14al3aFPVk0NwbJipmS4tLZg4vpN4WA1
+         6nwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXuoYU+To1/9mdMWsq2Xj5rG55mDoDiXRIhqYHDp/jzfAuPaVzX3cuJrhJV7M6ZcbTYW3bICtGfOZ5+pH4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqNtPnbh1b1SThV+lnHpPHzgTbUnwySBXeZsqfyv+IcOcm/CLL
+	wTuKcGRLEIAZXKia0vm4Nd9E9sJfsCAxc9MJLdJy/MH/W46Ro30ht23hpOzExSl9gTkNuPV+/a/
+	Rt5k=
+X-Google-Smtp-Source: AGHT+IG48YvSRedxV9qgCtTINLv1hMQ+u3WbGEyfbf2QUOxBeV0LQCrBJBQXamJYXZzcuASZZIqS8Q==
+X-Received: by 2002:a05:622a:11d6:b0:458:3a34:b7b5 with SMTP id d75a77b69052e-4604bbccd65mr84992431cf.26.1728734326462;
+        Sat, 12 Oct 2024 04:58:46 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-46042895a9csm24040501cf.91.2024.10.12.04.58.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Oct 2024 04:58:46 -0700 (PDT)
+Subject: Re: [PATCH 1/3] efi/libstub: fix efi_parse_options() ignoring the
+ default command line
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ Ingo Molnar <mingo@kernel.org>, open list <linux-kernel@vger.kernel.org>
+References: <20241011224812.25763-1-jonathan@marek.ca>
+ <CAMj1kXFstg+2j9nYCO=_=L3LAd4PYc5vO3OX4EtHfFA90BXv5Q@mail.gmail.com>
+From: Jonathan Marek <jonathan@marek.ca>
+Message-ID: <5364ea9f-9042-3fba-5cb1-c42ae94b0d4b@marek.ca>
+Date: Sat, 12 Oct 2024 07:55:21 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+In-Reply-To: <CAMj1kXFstg+2j9nYCO=_=L3LAd4PYc5vO3OX4EtHfFA90BXv5Q@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 7bit
 
-On Thu, 10 Oct 2024 23:00:24 +0200
-vamoirid <vassilisamir@gmail.com> wrote:
-
-> From: Vasileios Amoiridis <vassilisamir@gmail.com>
+On 10/12/24 3:46 AM, Ard Biesheuvel wrote:
+> Hi Jonathan,
 > 
-> Add support for the regulators described in the dt-binding.
+> Please use a cover letter when sending more than a single patch.
 > 
-> Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
-> ---
->  drivers/iio/chemical/bme680_core.c | 30 ++++++++++++++++++++++++++++++
->  1 file changed, 30 insertions(+)
+> On Sat, 12 Oct 2024 at 00:51, Jonathan Marek <jonathan@marek.ca> wrote:
+>>
+>> efi_convert_cmdline() always returns a size of at least 1 because it counts
+>> the NUL terminator, so the "cmdline_size == 0" condition is not possible.
+>>
+>> Change it to compare against 1 to get the intended behavior: to use
+>> CONFIG_CMDLINE when load_options_size is 0.
+>>
+>> Fixes: 60f38de7a8d4 ("efi/libstub: Unify command line param parsing")
+>> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+>> ---
+>>   drivers/firmware/efi/libstub/efi-stub.c | 2 +-
+>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/firmware/efi/libstub/efi-stub.c b/drivers/firmware/efi/libstub/efi-stub.c
+>> index 958a680e0660d..709ae2d41a632 100644
+>> --- a/drivers/firmware/efi/libstub/efi-stub.c
+>> +++ b/drivers/firmware/efi/libstub/efi-stub.c
+>> @@ -129,7 +129,7 @@ efi_status_t efi_handle_cmdline(efi_loaded_image_t *image, char **cmdline_ptr)
+>>
+>>          if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) ||
+>>              IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
+>> -           cmdline_size == 0) {
+>> +           cmdline_size == 1) {
 > 
-> diff --git a/drivers/iio/chemical/bme680_core.c b/drivers/iio/chemical/bme680_core.c
-> index dedb7edaf43d..a2039b966f20 100644
-> --- a/drivers/iio/chemical/bme680_core.c
-> +++ b/drivers/iio/chemical/bme680_core.c
-> @@ -15,6 +15,7 @@
->  #include <linux/log2.h>
->  #include <linux/module.h>
->  #include <linux/regmap.h>
-> +#include <linux/regulator/consumer.h>
->  
->  #include <linux/iio/iio.h>
->  #include <linux/iio/sysfs.h>
-> @@ -100,6 +101,12 @@ enum bme680_op_mode {
->  	BME680_FORCED,
->  };
->  
-> +static const char *const bme680_supply_names[] = {
-> +	"vdd", "vddio"
-> +};
-> +
-> +#define BME680_NUM_SUPPLIES ARRAY_SIZE(bme680_supply_names)
-> +
->  struct bme680_data {
->  	struct regmap *regmap;
->  	struct bme680_calib bme680;
-> @@ -110,6 +117,8 @@ struct bme680_data {
->  	u16 heater_dur;
->  	u16 heater_temp;
->  
-> +	struct regulator_bulk_data supplies[BME680_NUM_SUPPLIES];
-> +
->  	union {
->  		u8 buf[3];
->  		unsigned int check;
-> @@ -857,6 +866,13 @@ static const struct iio_info bme680_info = {
->  	.attrs = &bme680_attribute_group,
->  };
->  
-> +static void bme680_regulators_disable(void *data)
-> +{
-> +	struct regulator_bulk_data *supplies = data;
-> +
-> +	regulator_bulk_disable(BME680_NUM_SUPPLIES, supplies);
-> +}
-> +
->  int bme680_core_probe(struct device *dev, struct regmap *regmap,
->  		      const char *name)
->  {
-> @@ -885,6 +901,20 @@ int bme680_core_probe(struct device *dev, struct regmap *regmap,
->  	data->heater_temp = 320; /* degree Celsius */
->  	data->heater_dur = 150;  /* milliseconds */
->  
-> +	regulator_bulk_set_supply_names(data->supplies, bme680_supply_names,
-> +					BME680_NUM_SUPPLIES);
-> +	ret = devm_regulator_bulk_get(dev, BME680_NUM_SUPPLIES, data->supplies);
+> I'd prefer it if we could keep the weirdness local to
+> efi_convert_cmdline(). Would the below fix things too?
+> 
+> --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
+> +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
+> @@ -395,9 +395,7 @@
+>                  }
+>          }
+> 
+> -       options_bytes++;        /* NUL termination */
+> -
+> -       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, options_bytes,
+> +       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, options_bytes + 1,
+>                               (void **)&cmdline_addr);
+>          if (status != EFI_SUCCESS)
+>                  return NULL;
+> 
+> Note that the only other caller of efi_convert_cmdline() in x86-stub.c
+> ignores this value entirely.
+> 
 
-devm_regulator_bulk_get_enable() should replace all this with functionally
-equivalent code.  You can also have the supplies list local as you don't
-then need to hang on to a copy.
+Just changing this would just make things more broken, the following 
+snprintf would remove the last character of the command line because it 
+uses options_bytes.
 
+Since this patch has a Fixes: tag, I wanted to make the fix as simple as 
+possible. If you think comparing the size to 1 is "weird", the fix could 
+instead check if cmdline[0] is non-NUL (or just strlen(cmdline)==0 if 
+you don't like that either).
 
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to get regulators\n");
-> +
-> +	ret = regulator_bulk_enable(BME680_NUM_SUPPLIES, data->supplies);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to enable regulators\n");
-> +
-> +	devm_add_action_or_reset(dev, bme680_regulators_disable, data->supplies);
-
-> +
-> +	fsleep(BME680_STARTUP_TIME_US);
-> +
->  	ret = regmap_write(regmap, BME680_REG_SOFT_RESET, BME680_CMD_SOFTRESET);
->  	if (ret < 0)
->  		return dev_err_probe(dev, ret, "Failed to reset chip\n");
-
+And then my followup cleanup patch can just remove the cmd_line_len 
+argument from efi_convert_cmdline().
 
