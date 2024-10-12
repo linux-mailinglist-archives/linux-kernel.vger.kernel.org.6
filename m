@@ -1,102 +1,107 @@
-Return-Path: <linux-kernel+bounces-362436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7958999B4FD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:51:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50C5799B4FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:59:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2A5A81F22CA1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:51:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA93283EA9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:59:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C3F195809;
-	Sat, 12 Oct 2024 12:50:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68274185E53;
+	Sat, 12 Oct 2024 12:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eoHQMVTk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGoHELhe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C9F9183CAA;
-	Sat, 12 Oct 2024 12:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85421F5FA;
+	Sat, 12 Oct 2024 12:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728737452; cv=none; b=M0u6SUGelw8To+Nr0MQsvpjtJaZslO1emW+6/3uanO+ogp1VGkgn4GvkNhTk2EUDiMoA2PYClHCJQwcXedQgRtc6HuoGkXECVCs7bkGoDfKkbwp+xxvV9PLE/iuBuZgI5QZE++H2Ta82j0wniuaqvK7hwLdztR3Nkcn6cRrI2Gg=
+	t=1728737955; cv=none; b=Hl8MN+PyVx/zy4Qd61kfpyIk4Lg359nF1dm5XPlIAqUbyjBV0fl3lams6r/w+Ug4tRKnv8ZHHnS+tNGRbdd15SMyVNdYvtfJmUz+wrMmeEqzzRra6bHE9U/G1c2gXOK+gaG+58qhdvHB90kJw3D/ZMc9Hct2E5ftzslQH1jxLy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728737452; c=relaxed/simple;
-	bh=7oQXNtNUYL0OjUtuqZC5xP1WxqiwNA7nZryyNsHdPSM=;
-	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mPi52k2eKC5Z6PEcogsWB0PZK25jvkPRPJXtb4fP21e1OEyQb0jcXXwZoroQxzpRS9Pnc8TreXU1mFidQu24c94qBB6xXvLmg77Aj/J8hSJVQeIKLZJm6Hf2HTEgYe1v4t8ZMXsr1qJuM8y4huhHSomW2UoWfeSRT79DySfHEgY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eoHQMVTk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E0E68C4CED4;
-	Sat, 12 Oct 2024 12:50:49 +0000 (UTC)
+	s=arc-20240116; t=1728737955; c=relaxed/simple;
+	bh=DZStcdS7n+z5tKJSApCjAhG+OeXNP7JddySHFlPgmaw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HvjwvqAsM1WvxywCkHm8ej3w+cHrxGXnelko+ZpGW/ksTzs8rUpfOhYanPoO8ApPNkKjOSAGVk3hO3t3m3vLevwVf/xAw9JSRRr8zFJm/DKNFmFZmdeZj5eoLT6JFC5rIZCydayeB1xFC1wGBoLhVOoL71tyuGsU0vMvN9jp24I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGoHELhe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDECC4CEC6;
+	Sat, 12 Oct 2024 12:59:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728737451;
-	bh=7oQXNtNUYL0OjUtuqZC5xP1WxqiwNA7nZryyNsHdPSM=;
-	h=From:To:In-Reply-To:References:Subject:Date:From;
-	b=eoHQMVTkXjMmrmjEkpNb3grnuq/CZrUEfg1dgSX3bokX3TBhLAT2kH52o+9fu1wbv
-	 QpotIZj26pXAvjtEsaJ3IdyOC1qndkgQBia23u2bkNgLlkqPxEZWrGuMDkyUjR+CnH
-	 oQuTwEENJjOoRzzHdYomhJ8Q4y96m8RfTMuvciZ6s5peX7qA9dgUT2Mqiki/hExP2J
-	 CIEbhna9um1ZPPFAKcw/T4pzN33H+m2Fb532GmEclfBb959SgqjK2z+2perkOJdLib
-	 CIyba/V9UmkoC9ZiZuPKbirksvLxZ+5L8Trp+UVIWo3KlUDR5t81XCnSmk7CY7PA0h
-	 N3mwI3tXpQYhQ==
-From: Mark Brown <broonie@kernel.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
- Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Alexey Klimov <alexey.klimov@linaro.org>, 
- linux-sound@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-In-Reply-To: <20241012100957.129103-1-krzysztof.kozlowski@linaro.org>
-References: <20241012100957.129103-1-krzysztof.kozlowski@linaro.org>
-Subject: Re: [PATCH] ASoC: qcom: Select missing common Soundwire module
- code on SDM845
-Message-Id: <172873744990.3950734.14854047170413382738.b4-ty@kernel.org>
-Date: Sat, 12 Oct 2024 13:50:49 +0100
+	s=k20201202; t=1728737955;
+	bh=DZStcdS7n+z5tKJSApCjAhG+OeXNP7JddySHFlPgmaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NGoHELhekbgdSG7h9nhcERjJO/+fAqpJUuajNc0ZZVGXOWNxoxAhVunSkTO2BEunw
+	 sOW7wcRr4XKKlgutvqu6+r+fnY4m9G74o46E3sCrzZmAvksdLfgkFue4TSZj5tTBde
+	 v9fsdDzJx93dK90jBWomGiW7CACfg5ERKJamhIuNFmzaY8BHCBwasjS3In3E8xOBHn
+	 QoKEIT3SVfwQdXDWDE7gAcyjC+4G/ouH3GvC6uIMFT4Mwaa5rIe/Nw+8upY/5hj786
+	 XjWFzYV7VZO33cby1NunTeU02i9UMSDmy38HysZGUCDeqyOyrLxdckIlM9O/ahLCh8
+	 XdhNT6otp2TKA==
+Date: Sat, 12 Oct 2024 13:59:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Breno Leitao <leitao@debian.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv6 net-next 2/7] net: ibm: emac: remove custom init/exit
+ functions
+Message-ID: <20241012125910.GD77519@kernel.org>
+References: <20241011195622.6349-1-rosenp@gmail.com>
+ <20241011195622.6349-3-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-99b12
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011195622.6349-3-rosenp@gmail.com>
 
-On Sat, 12 Oct 2024 12:09:57 +0200, Krzysztof Kozlowski wrote:
-> SDM845 sound card driver uses qcom_snd_sdw_startup() from the common
-> Soundwire module, so select it to fix build failures:
+On Fri, Oct 11, 2024 at 12:56:17PM -0700, Rosen Penev wrote:
+> c092d0be38f4f754cdbdc76dc6df628ca48ac0eb introduced EPROBE_DEFER
+
+The preferred way to cite commits in patch descriptions is like this:
+
+commit c092d0be38f4 ("net: ibm: emac: remove all waiting code")
+
+Something like this in gitconfig can be helpful.
+
+[core]
+	abbrev = 12
+[pretty]
+	quote = commit %h (\"%s\")
+[alias]
+	quote = log -1 --pretty=quote
+
+Then the following should work:
+
+$ git quote c092d0be38f4f754cdbdc76dc6df628ca48ac0eb
+commit 71eb7f699755 ("net: ibm: emac: use netif_receive_skb_list")
+
+> support. Because of that, we can defer initialization until all modules
+> are ready instead of handling it explicitly with custom init/exit
+> functions.
 > 
->   ERROR: modpost: "qcom_snd_sdw_startup" [sound/soc/qcom/snd-soc-sdm845.ko] undefined!
+> As a consequence of removing explicit module initialization and
+> deferring probe until everything is ready, there's no need for custom
+> init and exit functions.
 > 
+> There are now module_init and module_exit calls but no real change in
+> functionality as these init and exit functions are no longer directly
+> called by core.
 > 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-Applied to
-
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
-
-Thanks!
-
-[1/1] ASoC: qcom: Select missing common Soundwire module code on SDM845
-      commit: b930d8647869802a0d430aae6b1b05c3acb24a41
-
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
-
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
-
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
-
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
-
-Thanks,
-Mark
-
+Otherwise, LGTM.
 
