@@ -1,144 +1,102 @@
-Return-Path: <linux-kernel+bounces-361983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51D2199AFA4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:18:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5145D99AFA8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1961F2348C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:18:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26A2D285B6B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641398BFC;
-	Sat, 12 Oct 2024 00:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlfOU/S7"
-Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BD858F5C;
+	Sat, 12 Oct 2024 00:20:03 +0000 (UTC)
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDFC881E;
-	Sat, 12 Oct 2024 00:17:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C13853A7
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 00:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728692275; cv=none; b=N1PEgdJA+a97OHkWzZVXmRTXovoqV822tIKhOTX3dIbezecglTlX+kCXymDETr4k58EZgx0y3D3FAKKK/4HA/9yZ9GskapnR1XquPElOgwPWZw57XGF0+SbqWPg8L2HtVq4VcyaeeAes4AF2CLgpnn5XNqEPZz8drcd4Sz4vnSQ=
+	t=1728692403; cv=none; b=ILm8uULOPsiM7tSCPAehYRTmVhjrFaiFisNmy7GszhW85dvWF3OotlL0vAeWPEyoJ3D8Y8LNy+hnUNsPxOwkZM2LH3s/IjexWkTj7wCgGgdlmifcTv3O2tAkwOgeBWStMQ9Xu9sVHdpNvMQuxNy9PEP/kAGnCKvnGMx5HBP0/rc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728692275; c=relaxed/simple;
-	bh=MQ87IYp9mrRNBtzKIFOrG28g3sEIB6k0bR5kgwL79fo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PhabsEWfE6HM1Pn72XYxN+0E9SCed6/kzpHmjkT2i/H1jw1bKUrtHYm7MzABkdFJk3J9XFQ6GyCiPfcCzSIyBZePqdcsUEY5xm3rZ+qaKClb5iqljbWgq8LdelHzX0B7OHgwESiJ4L8Com8yUEtO1vkNYp3J+v2Bf8z1kakNNeI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlfOU/S7; arc=none smtp.client-ip=209.85.166.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-835453714cfso105428339f.1;
-        Fri, 11 Oct 2024 17:17:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728692273; x=1729297073; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gtEO9tfNf2IQiJPPJfLC/Txk/NhQko3rBAdDuN/LWyc=;
-        b=ZlfOU/S7Qkjp28nzr7oeThZEX2rsr/aVPeCQc+pmxj0GAGcMG0lLW1b87PkJR2Hn/J
-         G2iM+/NCI/APNQAZvfIRM9kMQi0mtTwKUZsTfnpLlaNZkfuKQeWg/8h84+Vo74AYmKCu
-         Qy1TV80ZzVXDFHDBl0O7Vpc87wKalXnfvSntWxGkDg0trz9S1jN06tnr3VksEeP7fJ0U
-         83wWnGxU8b8as278+rZBQN6tMdIqegzVa6xdiixjO/Whc1bjeNumGmb9uyOZ7UwjVo+U
-         J2KR33KOYJc7pzGwFk8aptr36YTGRTugZhszNuA+piLkQVFbQcQYLKMm0MC/g2lWtuUt
-         q3rw==
+	s=arc-20240116; t=1728692403; c=relaxed/simple;
+	bh=L5PU+USaOpUc4MNOsSFRpBsple5k9TASXKc5I9HuBD4=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=hjj/XbG1a+9Cf5h537d1l704xalWJa/rSLNd+Hlg/+sjVofbORdsGOQ5zpOfNMFs2YhLhI2Qzygl2YQLsoG6P+2A+tOe9GgiuA2S2dMv7uDW1q0oJvWobC2b/lo1yMrHJTbuq0nWkwAT+xY7/1I36tzf+YMtyXDlgQZeOi145F0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=baylibre.com; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20caccadbeeso10294665ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:20:01 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728692273; x=1729297073;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gtEO9tfNf2IQiJPPJfLC/Txk/NhQko3rBAdDuN/LWyc=;
-        b=dxlBX4mjjCSaKgsOqekJ3AtpZXjhNcXeBhIVnvA9hm4k2d2/TWyMCAtH7NcRX+Kyv1
-         CsxTxlfOt0yOHM+TESB8l5neOLGW7XV2XVWAPjlD6hPjDWQR8ix+zqSCO2dmZHgBpp5G
-         i/d29MzpsmMuTWMayd3J3sxK4Mc4Kp9BZS7rkqJBeM3UYMWd/5T4LEJJMP8UxAGfZBO6
-         e93c+iUxF/VdIUcKS72MYxlrddR9rbhDOwibPKjwXJxFiDAlmi1PwpnzvPRn367UBVxU
-         V54ZXAeczFRTrPjTEzBZiPXzCazdnJMsChkB7jX4bQejIXY4IZ6rJDLIsIGHpR3pJX5Z
-         aNZw==
-X-Forwarded-Encrypted: i=1; AJvYcCU6STj1Q7bfcQHIUVzQLYGbQDnzt4uPdQJgttH3ee9FxfyIrwIEU3YxLdRS9SLuvg8LXMLIG1fi@vger.kernel.org, AJvYcCUQ1kj6pUuyhMlrHI0tFK+hzZyW1Ff+DU84JcIIIMq8LvFT0NzQWRIR9eejffb4GNqlMp3OpBfjz1Eh7PU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxJ7Xcp/fel02YzhgH7mGdd+D0x0Pz70vYQCqxD2kdM6fbdXm6L
-	RFSOpH0uUgl+Ykcp9u2qCKqdDeVV8qRIVkBdgG14wsZ8gGPw5CGy43FkNNPuwkhtLjtG5DB0u5a
-	Ar0TTyWq33Sek8NfDEcTMRSc4Prc=
-X-Google-Smtp-Source: AGHT+IHDkB8Tr3KCqhvuIsu291cz4oAwnyUsoAabe1p8ofAUDsxaaZwo8RyLKmLLMenrnZ+27NC0zzfIH3SRnup8tNI=
-X-Received: by 2002:a05:6602:4886:b0:82d:835:e66d with SMTP id
- ca18e2360f4ac-837932dc7cemr331768939f.9.1728692273389; Fri, 11 Oct 2024
- 17:17:53 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728692401; x=1729297201;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=L5PU+USaOpUc4MNOsSFRpBsple5k9TASXKc5I9HuBD4=;
+        b=Cuc/1cn6sl16up9h/UWUAbMZtW5jXAf0UwkO+z+fWCoPWXkrkR9ePpjj4nExttQ6+Z
+         KUGkSn6zNjIEPd2h50BvsjFzALGtBXWRTUYU6Ge4BfrOI98zv9KMBx/cyqzm/hOxeypB
+         /cXEek9rY0zzIi/qumHLpByW8LpblnlVKT50DzM17EVDPOuopi6CZLmBgeGFl5xC+hXD
+         xlCG27KZ/N35rjR6xJ6IK7EokKyMZeKhDGCRh8vArNYRs1ejjNIwgPnjeaJU56a2eB35
+         /TKrkag6r20t5yZ7c2zpvked5CJy06LIbC5+1BStDlpoSgXF94iXEX9CMuN3cFntUdsJ
+         1xng==
+X-Forwarded-Encrypted: i=1; AJvYcCXLK/GnXvKurWnybDv1dydOygahwY9SKW73iwv28VPGdttT4TXlcb2xTVTqV37GKaCUvTDatDE+XLzW+iM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2UMc+GU2mpIAm9uG9gppGdx9Yj2n049ej72DbB8FxQc8nTMaO
+	5kcjw2OZVXXmexi9/rOH1igMbyfE6ohlJuPyCaslZwaoyJzlrxYBqsOdvDQ7o6U=
+X-Google-Smtp-Source: AGHT+IEs1zl3G4UJRzsFyVV8DcKwya9B8nUep2J3tP9kwAe7FHxNrwhmPuHfj2Ge9TUxqZRjXCuS8w==
+X-Received: by 2002:a17:902:d2cf:b0:20b:8325:5a1e with SMTP id d9443c01a7336-20ca169062fmr44133455ad.36.1728692400833;
+        Fri, 11 Oct 2024 17:20:00 -0700 (PDT)
+Received: from localhost ([71.212.170.185])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad99a0sm29023455ad.8.2024.10.11.17.19.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 17:20:00 -0700 (PDT)
+From: Kevin Hilman <khilman@kernel.org>
+To: Judith Mendez <jm@ti.com>, Santosh Shilimkar <ssantosh@kernel.org>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz
+ Golaszewski <brgl@bgdev.pl>
+Cc: linux-omap@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Bin Liu <b-liu@ti.com>,
+ linux-serial@vger.kernel.org, Judith Mendez <jm@ti.com>
+Subject: Re: [PATCH RESEND 2/2] serial: 8250: omap: Move pm_runtime_get_sync
+In-Reply-To: <20241011173356.870883-3-jm@ti.com>
+References: <20241011173356.870883-1-jm@ti.com>
+ <20241011173356.870883-3-jm@ti.com>
+Date: Fri, 11 Oct 2024 17:19:59 -0700
+Message-ID: <7h1q0mw4sw.fsf@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910190822.2407606-1-johunt@akamai.com> <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
- <1fbd0d02-6c34-4bb4-b9b8-66e121ff67e3@akamai.com>
-In-Reply-To: <1fbd0d02-6c34-4bb4-b9b8-66e121ff67e3@akamai.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Sat, 12 Oct 2024 08:17:17 +0800
-Message-ID: <CAL+tcoBCsfK0qkDe_CehmYzUzNk58UjiVj8Kk0qZGQT6gbvRxA@mail.gmail.com>
-Subject: Re: [PATCH net v3] tcp: check skb is non-NULL in tcp_rto_delta_us()
-To: Josh Hunt <johunt@akamai.com>
-Cc: Paolo Abeni <pabeni@redhat.com>, edumazet@google.com, davem@davemloft.net, 
-	kuba@kernel.org, netdev@vger.kernel.org, ncardwell@google.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Sep 25, 2024 at 2:16=E2=80=AFAM Josh Hunt <johunt@akamai.com> wrote=
-:
+Judith Mendez <jm@ti.com> writes:
+
+> Currently in omap_8250_shutdown, the dma->rx_running
+> flag is set to zero in omap_8250_rx_dma_flush. Next
+> pm_runtime_get_sync is called, which is a runtime
+> resume call stack which can re-set the flag. When the
+> call omap_8250_shutdown returns, the flag is expected
+> to be UN-SET, but this is not the case. This is causing
+> issues the next time UART is re-opened and omap_8250_rx_dma
+> is called. Fix by moving pm_runtime_get_sync before the
+> omap_8250_rx_dma_flush.
 >
-> On 9/19/24 2:05 AM, Paolo Abeni wrote:
-> > !-------------------------------------------------------------------|
-> >   This Message Is From an External Sender
-> >   This message came from outside your organization.
-> > |-------------------------------------------------------------------!
-> >
-> > On 9/10/24 21:08, Josh Hunt wrote:
-> >> diff --git a/include/net/tcp.h b/include/net/tcp.h
-> >> index 2aac11e7e1cc..196c148fce8a 100644
-> >> --- a/include/net/tcp.h
-> >> +++ b/include/net/tcp.h
-> >> @@ -2434,9 +2434,26 @@ static inline s64 tcp_rto_delta_us(const struct
-> >> sock *sk)
-> >>   {
-> >>       const struct sk_buff *skb =3D tcp_rtx_queue_head(sk);
-> >>       u32 rto =3D inet_csk(sk)->icsk_rto;
-> >> -    u64 rto_time_stamp_us =3D tcp_skb_timestamp_us(skb) +
-> >> jiffies_to_usecs(rto);
-> >> -    return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
-> >> +    if (likely(skb)) {
-> >> +        u64 rto_time_stamp_us =3D tcp_skb_timestamp_us(skb) +
-> >> jiffies_to_usecs(rto);
-> >> +
-> >> +        return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
-> >> +    } else {
-> >> +        WARN_ONCE(1,
-> >> +            "rtx queue emtpy: "
-> >> +            "out:%u sacked:%u lost:%u retrans:%u "
-> >> +            "tlp_high_seq:%u sk_state:%u ca_state:%u "
-> >> +            "advmss:%u mss_cache:%u pmtu:%u\n",
-> >> +            tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
-> >> +            tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
-> >> +            tcp_sk(sk)->tlp_high_seq, sk->sk_state,
-> >> +            inet_csk(sk)->icsk_ca_state,
-> >> +            tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
-> >> +            inet_csk(sk)->icsk_pmtu_cookie);
-> >
-> > As the underlying issue here share the same root cause as the one
-> > covered by the WARN_ONCE() in tcp_send_loss_probe(), I'm wondering if i=
-t
-> > would make sense do move the info dumping in a common helper, so that w=
-e
-> > get the verbose warning on either cases.
-> >
-> > Thanks,
-> >
-> > Paolo
->
-> Thanks for the review Paolo. Sorry for the delay in replying I was OOO.
-> I can send a follow-up commit to create a common helper.
+> Signed-off-by: Bin Liu <b-liu@ti.com>
+> Signed-off-by: Judith Mendez <jm@ti.com>
 
-I nearly forgot this helper.
+Reviewed-by: Kevin Hilman <khilman@baylibre.com>
+Tested-by: Kevin Hilman <khilman@baylibre.com>
 
-Josh, please go ahead. Thanks!
+Gave this a quick boot test on am335x-boneblack and am57xx-beagle-x15.
+
+I realize that doesn't really test the DMA paths involved here, but at
+least it doesn't break basic boot to serial console, and the change
+looks coorect.
+
+Thanks for sending a fix for this.
+
+Kevin
 
