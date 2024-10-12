@@ -1,96 +1,144 @@
-Return-Path: <linux-kernel+bounces-361982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-361983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC5E499AF9C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:06:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 51D2199AFA4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:18:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F87D1C20ED8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:06:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF1961F2348C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 00:18:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A05ED1FDD;
-	Sat, 12 Oct 2024 00:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 641398BFC;
+	Sat, 12 Oct 2024 00:17:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bmcyO5A1"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZlfOU/S7"
+Received: from mail-io1-f46.google.com (mail-io1-f46.google.com [209.85.166.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE9EAEC2
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 00:06:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FDFC881E;
+	Sat, 12 Oct 2024 00:17:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728691598; cv=none; b=AQBsZHSkq8SpTgT6YwB0R2kwKQOkeQcCfLhe/ogz4TRovtH+3YMjXR1nu22XYiS9YVufjz8/84yYY1xIKm2vl9rLah3ZhYv6x9OnQDPFaTy4phaeUb785hFwbiSxL0v9HcjBjhMe81U3gjTIcIaVSt3NsqvH0/a1Trwn80uINEw=
+	t=1728692275; cv=none; b=N1PEgdJA+a97OHkWzZVXmRTXovoqV822tIKhOTX3dIbezecglTlX+kCXymDETr4k58EZgx0y3D3FAKKK/4HA/9yZ9GskapnR1XquPElOgwPWZw57XGF0+SbqWPg8L2HtVq4VcyaeeAes4AF2CLgpnn5XNqEPZz8drcd4Sz4vnSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728691598; c=relaxed/simple;
-	bh=t3TLNz2E4rgMhV27LFTKr+9sh/ErwejAIcLrZeG/qJ8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=im/TqoyGE3TtPFZTCvNiNh+3HZQKPExT5fK1AXKRU1bLrV0Z+e1MqM3vYGF2tK/A/Duc3GVQop7LEd17yi8IJq7hRRWiAFpTKMMwOOAuRp/SKp0gNP3HhfNYsWOS8fmiOW9laIOyVfnXPuTX5lylvm3dVCaU9rwAbnHgHQWPdi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bmcyO5A1; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e28b624bfcso39771927b3.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 17:06:36 -0700 (PDT)
+	s=arc-20240116; t=1728692275; c=relaxed/simple;
+	bh=MQ87IYp9mrRNBtzKIFOrG28g3sEIB6k0bR5kgwL79fo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=PhabsEWfE6HM1Pn72XYxN+0E9SCed6/kzpHmjkT2i/H1jw1bKUrtHYm7MzABkdFJk3J9XFQ6GyCiPfcCzSIyBZePqdcsUEY5xm3rZ+qaKClb5iqljbWgq8LdelHzX0B7OHgwESiJ4L8Com8yUEtO1vkNYp3J+v2Bf8z1kakNNeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZlfOU/S7; arc=none smtp.client-ip=209.85.166.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f46.google.com with SMTP id ca18e2360f4ac-835453714cfso105428339f.1;
+        Fri, 11 Oct 2024 17:17:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728691596; x=1729296396; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=/nRmpiTGInlZNsyI3l1+i6JO6oRaqAjuAzuB7Mjk4IU=;
-        b=bmcyO5A14ORv3MUxSEyMj+QSL85zoQUr0SBHVORYZas/pjpIPtHg0mL7Yi3uWGwO5h
-         4peewKDfF5wwz4PN6M0+VB8EuIIFNKTPW/zDlIn5HE8Uz6Uit0CwTG2cGX96pSZ5202l
-         Q8BGjSn/Q85ZcVRYAn9fE9E7Gl4QEZb9vEF+J/ak/DoGhi5Wv+w2fcqRtFO7QhJEzP81
-         PfXdJmnErYj6CBhd7gqrUqE3mM5gT4IQItrROE3sXaM2OydLpJ1wBFehYcY/EbML4TZ2
-         tU+rhYGi7f3qoC88snwQS+TqU/lyaLHOiWi5VY84FsfZKUSlHYJcOFSMlKJt+tErNVbA
-         FuTg==
+        d=gmail.com; s=20230601; t=1728692273; x=1729297073; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtEO9tfNf2IQiJPPJfLC/Txk/NhQko3rBAdDuN/LWyc=;
+        b=ZlfOU/S7Qkjp28nzr7oeThZEX2rsr/aVPeCQc+pmxj0GAGcMG0lLW1b87PkJR2Hn/J
+         G2iM+/NCI/APNQAZvfIRM9kMQi0mtTwKUZsTfnpLlaNZkfuKQeWg/8h84+Vo74AYmKCu
+         Qy1TV80ZzVXDFHDBl0O7Vpc87wKalXnfvSntWxGkDg0trz9S1jN06tnr3VksEeP7fJ0U
+         83wWnGxU8b8as278+rZBQN6tMdIqegzVa6xdiixjO/Whc1bjeNumGmb9uyOZ7UwjVo+U
+         J2KR33KOYJc7pzGwFk8aptr36YTGRTugZhszNuA+piLkQVFbQcQYLKMm0MC/g2lWtuUt
+         q3rw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728691596; x=1729296396;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/nRmpiTGInlZNsyI3l1+i6JO6oRaqAjuAzuB7Mjk4IU=;
-        b=d6e1WlFS5IqabkXxsMpNHoh/97j9DhqZ3SZetJe2LgbV3lKRsJtElNMz9aOait5luG
-         yR6rDH0amdkNlle5q+nvxDcI7TbnvutzTylpHn81BIpBz69vdzmct61hGc+o6Ga5nSa/
-         ip6GQ+QtP62wseYGcMR3ymU3JNek88Vq8wxma/EVJLSCyJskTO9sSeTN3q42h3UVVANX
-         jbZnd1W3laBVOWSpKwldg8zTKBar7TQCBxTiLDcGRMmI4SYhLXS+Q24dXL1jraLTlUdZ
-         qBR8qa7eQWS3ksU8YX5Th1MYTrgEUvi4dJMqvRg5PlJvxklI3O2e5FwyJwN+9jZc9GJ9
-         91aw==
-X-Forwarded-Encrypted: i=1; AJvYcCUjwafIQR4I03+kaxMj2wt8FT925eWjOfu/h+7wrJMAhCwXN5pIsFvHJ173TYF5LEacQTlmwf3MEJB+qdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKFJBPMLALjnGv0Y9EVPauv5oWmt4MzMeWj7z5Ef51tu/7jYh3
-	RPxkZIG2jLy468iwEL/8bFmM8RrNra5lXJHmCHhrRCoJSoFYLoaCycr7233FoFApJSC0VsF3Tyb
-	Y+Q==
-X-Google-Smtp-Source: AGHT+IGmg1G8D3iaZFPKbxx+zXZg3+J8J46ueYAFXlaPRYj8EeGFAmMz8qDSVUrjhu3L0gi/qS6ZwxDhQbU=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a05:690c:63c7:b0:64a:e220:bfb5 with SMTP id
- 00721157ae682-6e3477b451dmr1379997b3.1.1728691595692; Fri, 11 Oct 2024
- 17:06:35 -0700 (PDT)
-Date: Fri, 11 Oct 2024 17:06:34 -0700
-In-Reply-To: <Zwmyzg5WiKKvySS1@google.com>
+        d=1e100.net; s=20230601; t=1728692273; x=1729297073;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gtEO9tfNf2IQiJPPJfLC/Txk/NhQko3rBAdDuN/LWyc=;
+        b=dxlBX4mjjCSaKgsOqekJ3AtpZXjhNcXeBhIVnvA9hm4k2d2/TWyMCAtH7NcRX+Kyv1
+         CsxTxlfOt0yOHM+TESB8l5neOLGW7XV2XVWAPjlD6hPjDWQR8ix+zqSCO2dmZHgBpp5G
+         i/d29MzpsmMuTWMayd3J3sxK4Mc4Kp9BZS7rkqJBeM3UYMWd/5T4LEJJMP8UxAGfZBO6
+         e93c+iUxF/VdIUcKS72MYxlrddR9rbhDOwibPKjwXJxFiDAlmi1PwpnzvPRn367UBVxU
+         V54ZXAeczFRTrPjTEzBZiPXzCazdnJMsChkB7jX4bQejIXY4IZ6rJDLIsIGHpR3pJX5Z
+         aNZw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6STj1Q7bfcQHIUVzQLYGbQDnzt4uPdQJgttH3ee9FxfyIrwIEU3YxLdRS9SLuvg8LXMLIG1fi@vger.kernel.org, AJvYcCUQ1kj6pUuyhMlrHI0tFK+hzZyW1Ff+DU84JcIIIMq8LvFT0NzQWRIR9eejffb4GNqlMp3OpBfjz1Eh7PU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJ7Xcp/fel02YzhgH7mGdd+D0x0Pz70vYQCqxD2kdM6fbdXm6L
+	RFSOpH0uUgl+Ykcp9u2qCKqdDeVV8qRIVkBdgG14wsZ8gGPw5CGy43FkNNPuwkhtLjtG5DB0u5a
+	Ar0TTyWq33Sek8NfDEcTMRSc4Prc=
+X-Google-Smtp-Source: AGHT+IHDkB8Tr3KCqhvuIsu291cz4oAwnyUsoAabe1p8ofAUDsxaaZwo8RyLKmLLMenrnZ+27NC0zzfIH3SRnup8tNI=
+X-Received: by 2002:a05:6602:4886:b0:82d:835:e66d with SMTP id
+ ca18e2360f4ac-837932dc7cemr331768939f.9.1728692273389; Fri, 11 Oct 2024
+ 17:17:53 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20240927161657.68110-1-iorlov@amazon.com> <20240927161657.68110-2-iorlov@amazon.com>
- <Zwmyzg5WiKKvySS1@google.com>
-Message-ID: <Zwm9isnme2YLcuhq@google.com>
-Subject: Re: [PATCH 1/3] KVM: x86, vmx: Add function for event delivery error generation
-From: Sean Christopherson <seanjc@google.com>
-To: Ivan Orlov <iorlov@amazon.com>
-Cc: bp@alien8.de, dave.hansen@linux.intel.com, mingo@redhat.com, 
-	pbonzini@redhat.com, shuah@kernel.org, tglx@linutronix.de, hpa@zytor.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, x86@kernel.org, jalliste@amazon.com, 
-	nh-open-source@amazon.com, pdurrant@amazon.co.uk
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+References: <20240910190822.2407606-1-johunt@akamai.com> <5632e043-bdba-4d75-bc7e-bf58014492fd@redhat.com>
+ <1fbd0d02-6c34-4bb4-b9b8-66e121ff67e3@akamai.com>
+In-Reply-To: <1fbd0d02-6c34-4bb4-b9b8-66e121ff67e3@akamai.com>
+From: Jason Xing <kerneljasonxing@gmail.com>
+Date: Sat, 12 Oct 2024 08:17:17 +0800
+Message-ID: <CAL+tcoBCsfK0qkDe_CehmYzUzNk58UjiVj8Kk0qZGQT6gbvRxA@mail.gmail.com>
+Subject: Re: [PATCH net v3] tcp: check skb is non-NULL in tcp_rto_delta_us()
+To: Josh Hunt <johunt@akamai.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, edumazet@google.com, davem@davemloft.net, 
+	kuba@kernel.org, netdev@vger.kernel.org, ncardwell@google.com, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024, Sean Christopherson wrote:
-> > +	kvm_x86_call(get_exit_info)(vcpu, &reason, &info1, &info2, &intr_info, &error_code);
-> 
-> Wrap.  Though calling back into vendor code is silly.  Pass the necessary info
-> as parameters.  E.g. error_code and intr_info are unused, so the above is wasteful
-> and weird.
+On Wed, Sep 25, 2024 at 2:16=E2=80=AFAM Josh Hunt <johunt@akamai.com> wrote=
+:
+>
+> On 9/19/24 2:05 AM, Paolo Abeni wrote:
+> > !-------------------------------------------------------------------|
+> >   This Message Is From an External Sender
+> >   This message came from outside your organization.
+> > |-------------------------------------------------------------------!
+> >
+> > On 9/10/24 21:08, Josh Hunt wrote:
+> >> diff --git a/include/net/tcp.h b/include/net/tcp.h
+> >> index 2aac11e7e1cc..196c148fce8a 100644
+> >> --- a/include/net/tcp.h
+> >> +++ b/include/net/tcp.h
+> >> @@ -2434,9 +2434,26 @@ static inline s64 tcp_rto_delta_us(const struct
+> >> sock *sk)
+> >>   {
+> >>       const struct sk_buff *skb =3D tcp_rtx_queue_head(sk);
+> >>       u32 rto =3D inet_csk(sk)->icsk_rto;
+> >> -    u64 rto_time_stamp_us =3D tcp_skb_timestamp_us(skb) +
+> >> jiffies_to_usecs(rto);
+> >> -    return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+> >> +    if (likely(skb)) {
+> >> +        u64 rto_time_stamp_us =3D tcp_skb_timestamp_us(skb) +
+> >> jiffies_to_usecs(rto);
+> >> +
+> >> +        return rto_time_stamp_us - tcp_sk(sk)->tcp_mstamp;
+> >> +    } else {
+> >> +        WARN_ONCE(1,
+> >> +            "rtx queue emtpy: "
+> >> +            "out:%u sacked:%u lost:%u retrans:%u "
+> >> +            "tlp_high_seq:%u sk_state:%u ca_state:%u "
+> >> +            "advmss:%u mss_cache:%u pmtu:%u\n",
+> >> +            tcp_sk(sk)->packets_out, tcp_sk(sk)->sacked_out,
+> >> +            tcp_sk(sk)->lost_out, tcp_sk(sk)->retrans_out,
+> >> +            tcp_sk(sk)->tlp_high_seq, sk->sk_state,
+> >> +            inet_csk(sk)->icsk_ca_state,
+> >> +            tcp_sk(sk)->advmss, tcp_sk(sk)->mss_cache,
+> >> +            inet_csk(sk)->icsk_pmtu_cookie);
+> >
+> > As the underlying issue here share the same root cause as the one
+> > covered by the WARN_ONCE() in tcp_send_loss_probe(), I'm wondering if i=
+t
+> > would make sense do move the info dumping in a common helper, so that w=
+e
+> > get the verbose warning on either cases.
+> >
+> > Thanks,
+> >
+> > Paolo
+>
+> Thanks for the review Paolo. Sorry for the delay in replying I was OOO.
+> I can send a follow-up commit to create a common helper.
 
-Ah, but the next patch invokes this from common code, i.e. can't pass in the
-necessary info.  _That_ is definitely worth calling out in the changelog.
+I nearly forgot this helper.
+
+Josh, please go ahead. Thanks!
 
