@@ -1,184 +1,227 @@
-Return-Path: <linux-kernel+bounces-362498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5856C99B5A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:42:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 630EE99B5A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:51:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB911C214A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:42:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8664F1C2113E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:51:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9399197A6E;
-	Sat, 12 Oct 2024 14:42:41 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B8D199923;
+	Sat, 12 Oct 2024 14:50:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UwLidXZ7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2488019340F;
-	Sat, 12 Oct 2024 14:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F29E1EB31;
+	Sat, 12 Oct 2024 14:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728744161; cv=none; b=WAgCeWOa6470bs/Ow22L5R5DSi+Ut40UDeIV7teZICnC3Lzx7dQ2c4lI8qwdMGVuFAXkqilKdT68S3N/wbfxk2O2h5myeDawBPkuj3xLdmjN7YfSJVR1pfFTZGQa48FplqPTfS6BD8ENI7Zic8tAoHuv4io2z0Kfu4yv9caqiI8=
+	t=1728744651; cv=none; b=QDobGfy0qymLshg5oxlVClwko9A7cgYdbr3J6+yvfa6ERPR9ve8zcmGhetzkS/9KscTOFgwPOQrGkTcoCQJY11s+EPFIJzGDFJQflep/WzsB17idHnH3Xk/aisrXKSrDqJ9eOHzOUNseqjxnzITMWug5NSjRTij1kCiigxdGHDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728744161; c=relaxed/simple;
-	bh=R6dK78ZCjOi9iaHyyZ3ftAFy+k9OcNPURj/ivYn8XaE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=b+SzX+k1XZi+2MEbmhGsxhGusQzBX3Mmlan3hrrvx+rzsTEYqNhRRhlUd9bbuPOtmDnfLtHm7x4L8FymwYFwa5MjQjOEWCNErBCq/Zsp+J8WHwrsfl16puu1+95u/NFQC7Vu/QsZiDQMvgNLsG7tpkEFhp/tuT62LfM6i0bMpFA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49CEOUjr008596;
-	Sat, 12 Oct 2024 14:42:20 GMT
-Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 427g38gd1m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
-	Sat, 12 Oct 2024 14:42:20 +0000 (GMT)
-Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
- ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sat, 12 Oct 2024 07:42:18 -0700
-Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
- ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
- 15.1.2507.39 via Frontend Transport; Sat, 12 Oct 2024 07:42:17 -0700
-From: Lizhi Xu <lizhi.xu@windriver.com>
-To: <syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com>
-CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
-        <linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
-        <tglx@linutronix.de>
-Subject: [PATCH] wifi: rtlwifi: rtl delayed work must be canceled before putting usb dev
-Date: Sat, 12 Oct 2024 22:42:16 +0800
-Message-ID: <20241012144216.433013-1-lizhi.xu@windriver.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <6709113b.050a0220.4cbc0.0003.GAE@google.com>
-References: <6709113b.050a0220.4cbc0.0003.GAE@google.com>
+	s=arc-20240116; t=1728744651; c=relaxed/simple;
+	bh=QX+E2MoqsInTymwr8gGklZcL68IiL1oR6T9l6wb+ybo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W3y0Ilyc1zGuzpMrsHeYIzqSuJKskJVUTCKw+inKr2EU9Tm1D1YMLXE7KHca8aCpimjInWzQsH71eIIlRxSaGjy5YHVl3z0Psww/9FgV+9WDFG6G05iGuDT8cVtm3lTlX0o9mtcd10yZTiu7TusSU4RYJLRigwioM1tOt9hCbUQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UwLidXZ7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12996C4CECE;
+	Sat, 12 Oct 2024 14:50:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728744651;
+	bh=QX+E2MoqsInTymwr8gGklZcL68IiL1oR6T9l6wb+ybo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=UwLidXZ79m2fTskmaOZw/yX5lu1Mw27ePOlMoV5x3e0y6Nfr5ugradOg0HXqxNw1s
+	 v7mEAhH5pk9KCj9H7HZ9kVKyO7q3Pv/V7u7JOvEz4KZOD04gvKhExlNdURqJVslHl/
+	 B4/51yQoSYRgAzt8h/Zv6dJSWg/xIJn/aWriicb4L2y0NfvpauDVwH8uhIvUpnKkv8
+	 H4QaXe7oPMdCqLRfl/X6Oehzd4hWLJdOv20+UIqeBkLBdDBrckQYxLKBR94/Q1Pa6P
+	 5QDQklXlekopWvmuc3bOmwAbWiUHwtaID7KS/lWC/dqsuIkzWwj2lol7sAnsCv8Asm
+	 3ndBGRJB1QnZA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539e4b7409fso798991e87.0;
+        Sat, 12 Oct 2024 07:50:50 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXwde2FEK3eDnAiCh56eQ99sDjfFe10L53Swt7RwThSEfXpNRRR5oA+sioP3RU3S6gcmZNgf00hz3SQ3Ak=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/y+hdegCah/hXoNPoU5e7Sx/TF0U23K4hNyrNyD67D8QgSqhr
+	S+6P4uISN0e1+y/hBpDrTlzz/irnfPmqbRfudQKn046lM9AgpaYITGePPyU+i4iVdwovcjL0neC
+	6XlVBF+ZymeZdgET4Mx+m31Yq6QU=
+X-Google-Smtp-Source: AGHT+IGIYGLIg1JCdHTfiX5YihgDZZ1OUcLk8Ql4qYpMdNT7gM3swji+/Hw07FZPnlgZIa9uCyBStQQv3Io5Sci3jUU=
+X-Received: by 2002:a05:6512:ad2:b0:539:8e58:cdb9 with SMTP id
+ 2adb3069b0e04-539c98b9632mr2385061e87.30.1728744649452; Sat, 12 Oct 2024
+ 07:50:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: ejPMqggigKlA0XrrXcv_07Tv11oTrKuR
-X-Proofpoint-ORIG-GUID: ejPMqggigKlA0XrrXcv_07Tv11oTrKuR
-X-Authority-Analysis: v=2.4 cv=DukE+3/+ c=1 sm=1 tr=0 ts=670a8acc cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=DAUX931o1VcA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=rmtfC1Nsb-6FJSrqWnsA:9 a=cQPPKAXgyycSBL8etih5:22
- a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-12_10,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
- malwarescore=0 bulkscore=0 adultscore=0 lowpriorityscore=0
- priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
- scancount=1 engine=8.21.0-2409260000 definitions=main-2410120107
+References: <20241011224812.25763-1-jonathan@marek.ca> <20241011224812.25763-3-jonathan@marek.ca>
+ <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
+ <acdd3e0d-8ce4-264d-2328-05e7dc353817@marek.ca> <CAMj1kXFe1ZYuR=45VhwMyHcZhSTQVwLrbZDWpgG7Zqw+Awws_A@mail.gmail.com>
+ <a6d0d8ae-3cd0-9888-abcd-1db5ab1df011@marek.ca>
+In-Reply-To: <a6d0d8ae-3cd0-9888-abcd-1db5ab1df011@marek.ca>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 12 Oct 2024 16:50:37 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXH_YbTR9xe7G=ZfqhZ6aBFE8O-ghUe8asd3qqEUN7vdUw@mail.gmail.com>
+Message-ID: <CAMj1kXH_YbTR9xe7G=ZfqhZ6aBFE8O-ghUe8asd3qqEUN7vdUw@mail.gmail.com>
+Subject: Re: [PATCH 3/3] efi/libstub: consider CONFIG_CMDLINE for initrd= and
+ dtb= options
+To: Jonathan Marek <jonathan@marek.ca>
+Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-rtl delayed work not be canceled before put usb device, it trigger following issue:
-ODEBUG: free active (active state 0) object: ffff88811dc037c8 object type: timer_list hint: rtl_ips_nic_off_wq_callback+0x0/0x680
-[  135.350453][    C1] RIP: 0010:debug_print_object+0x1a3/0x2b0
-[  135.350498][    C1] Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 54 48 8b 14 dd c0 fc 46 87 41 56 4c 89 e6 48 c7 c7 20 f0 46 87 e8 2e d5 c3 fe 90 <0f> 0b 90 90 58 83 05 ad 76 ff 07 01 48 83 c4 18 5b 5d 41 5c 41 5d
-[  135.350532][    C1] RSP: 0018:ffffc90001adf418 EFLAGS: 00010282
-[  135.350562][    C1] RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff811ab159
-[  135.350585][    C1] RDX: ffff88811c061d40 RSI: ffffffff811ab166 RDI: 0000000000000001
-[  135.350609][    C1] RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
-[  135.350631][    C1] R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8746f6c0
-[  135.350654][    C1] R13: ffffffff872a8e00 R14: ffffffff840306a0 R15: ffffc90001adf528
-[  135.351009][    C1]  debug_check_no_obj_freed+0x4b8/0x600
-[  135.351194][    C1]  __free_pages_ok+0x244/0xa20
-[  135.351262][    C1]  __folio_put+0x1cd/0x250
-[  135.351527][    C1]  device_release+0xa1/0x240
-[  135.351576][    C1]  kobject_put+0x1e4/0x5a0
-[  135.351624][    C1]  put_device+0x1f/0x30
-[  135.351669][    C1]  rtl_usb_disconnect+0x41c/0x5a0
-[  135.351720][    C1]  usb_unbind_interface+0x1e8/0x970
-[  135.351859][    C1]  device_remove+0x122/0x170
-[  135.351895][    C1]  device_release_driver_internal+0x44a/0x610
-[  135.351944][    C1]  bus_remove_device+0x22f/0x420
-[  135.352003][    C1]  device_del+0x396/0x9f0
-[  135.352138][    C1]  usb_disable_device+0x36c/0x7f0
-[  135.352202][    C1]  usb_disconnect+0x2e1/0x920
-[  135.352264][    C1]  hub_event+0x1bed/0x4f40
-[  135.352778][    C1]  process_one_work+0x9c5/0x1ba0
-[  135.353023][    C1]  worker_thread+0x6c8/0xf00
-[  135.353193][    C1]  kthread+0x2c1/0x3a0
-[  135.353313][    C1]  ret_from_fork+0x45/0x80
-[  135.353406][    C1]  ret_from_fork_asm+0x1a/0x30
-[  135.353474][    C1]  </TASK>
+On Sat, 12 Oct 2024 at 16:11, Jonathan Marek <jonathan@marek.ca> wrote:
+>
+> On 10/12/24 9:36 AM, Ard Biesheuvel wrote:
+> > On Sat, 12 Oct 2024 at 14:04, Jonathan Marek <jonathan@marek.ca> wrote:
+> >>
+> >>
+> >>
+> >> On 10/12/24 3:54 AM, Ard Biesheuvel wrote:
+> >>> On Sat, 12 Oct 2024 at 00:52, Jonathan Marek <jonathan@marek.ca> wrote:
+> >>>>
+> >>>> Replace cmdline with CONFIG_CMDLINE when it should be used instead of
+> >>>> load_options.
+> >>>>
+> >>>> In the EXTEND case, it may be necessary to combine both CONFIG_CMDLINE and
+> >>>> load_options. In that case, keep the old behavior and print a warning about
+> >>>> the incorrect behavior.
+> >>>>
+> >>>
+> >>> The core kernel has its own handling for EXTEND/FORCE, so while we
+> >>> should parse it in the EFI stub to look for options that affect the
+> >>> stub's own behavior, we should not copy it into the command line that
+> >>> the stub provides to the core kernel.
+> >>>
+> >>> E.g., drivers/of/fdt.c takes the bootargs from the DT and combines
+> >>> them with CONFIG_CMDLINE.
+> >>>
+> >>>
+> >>
+> >> I'm aware of that - the replacement the commit message is referring to
+> >> is specifically for handle_cmdline_files() which this commit is modifying.
+> >>
+> >
+> > Ah ok - I missed that.
+> >
+> > This is the kind of context that I'd expect in a cover letter, i.e.,
+> > that the command line handling is inconsistent, and that we obtain the
+> > command line from the loaded image twice.
+> >
+> > Also, the fact the initrd= handling and dtb= are special, because
+> > a) multiple initrd=  arguments are processed in order, and the files
+> > concatenated,
+> > b) the filenames are consumed as UTF-16 as they are plugged into the
+> > file I/O protocols
+> >
+>
+> (not relevant to this commit, but I need to say that concatenating dtb
+> files makes no sense, only the first one will be used by the kernel)
+>
 
-By moving the position of rtl_deinit_deferred_work() in rtl_usb_disconnect(),
-ensure that rtl_deinit_deferred_work() is executed before releasing the USB
-device. In addition, add a bit in "enum ttl_status" to indicate whether
-rtl_deinit_deferred_work() needs to be executed. It needs to be executed when
-set, otherwise it will not be executed.
+Sure, but this code was written for initrd= initially, and was reused for dtb=
 
-Reported-and-tested-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=90f31ac02b7ae5e8b578
-Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
----
- drivers/net/wireless/realtek/rtlwifi/base.c | 5 +++++
- drivers/net/wireless/realtek/rtlwifi/usb.c  | 2 +-
- drivers/net/wireless/realtek/rtlwifi/wifi.h | 1 +
- 3 files changed, 7 insertions(+), 1 deletion(-)
+> >> Currently efistub completely ignores initrd= and dtb= options provided
+> >> through CONFIG_CMDLINE (handle_cmdline_files() only parses the EFI options)
+> >>
+> >
+> > Indeed. You haven't explained why this is a problem. initrd= and dtb=
+> > contain references to files in the file system, and this does not seem
+> > like something CONFIG_EXTEND was intended for.
+> >
+>
+> Its not the expected/documented behavior, that should be enough to make
+> it a problem. Nowhere is it documented that these options would be
+> ignored if provided through CONFIG_CMDLINE.
+>
 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
-index aab4605de9c4..605875d21573 100644
---- a/drivers/net/wireless/realtek/rtlwifi/base.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/base.c
-@@ -449,6 +449,7 @@ static int _rtl_init_deferred_work(struct ieee80211_hw *hw)
- 	if (!wq)
- 		return -ENOMEM;
- 
-+	set_bit(RTL_STATUS_WORK_SETUP, &rtlpriv->status);
- 	/* <1> timer */
- 	timer_setup(&rtlpriv->works.watchdog_timer,
- 		    rtl_watch_dog_timer_callback, 0);
-@@ -473,6 +474,9 @@ void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq)
+Fair enough.
+
+> >> For the EXTEND case, I didn't implement the full solution because its
+> >> more complex and EXTEND is not available on arm64 anyway, so I went with
+> >> just printing a warning instead.
+> >
+> > This code is shared between all architectures, so what arm64 does or
+> > does not support is irrelevant.
+> >
+> > Can you explain your use case please?
+> >
+>
+> I boot linux as the "EFI/Boot/bootaa64.efi" on my EFI partition. The
+> firmware does not provide any load options. This system needs a dtb, so
+> I add the dtb to my EFI partition and configure it using the dtb= option
+> (using CONFIG_CMDLINE).
+
+Right.
+
+Would the below work for you? It's not the prettiest code in the
+world, but at least it keeps the weird local to the function.
+
+--- a/drivers/firmware/efi/libstub/file.c
++++ b/drivers/firmware/efi/libstub/file.c
+@@ -189,26 +189,48 @@
+                                  unsigned long *load_addr,
+                                  unsigned long *load_size)
  {
- 	struct rtl_priv *rtlpriv = rtl_priv(hw);
- 
-+	if (!test_bit(RTL_STATUS_WORK_SETUP, &rtlpriv->status))
-+		return;
-+
- 	del_timer_sync(&rtlpriv->works.watchdog_timer);
- 
- 	cancel_delayed_work_sync(&rtlpriv->works.watchdog_wq);
-@@ -484,6 +488,7 @@ void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq)
- 	cancel_delayed_work_sync(&rtlpriv->works.ps_rfon_wq);
- 	cancel_delayed_work_sync(&rtlpriv->works.fwevt_wq);
- 	cancel_delayed_work_sync(&rtlpriv->works.c2hcmd_wq);
-+	clear_bit(RTL_STATUS_WORK_SETUP, &rtlpriv->status);
- }
- EXPORT_SYMBOL_GPL(rtl_deinit_deferred_work);
- 
-diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
-index d37a017b2b81..aaa16bc23e91 100644
---- a/drivers/net/wireless/realtek/rtlwifi/usb.c
-+++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
-@@ -1064,9 +1064,9 @@ void rtl_usb_disconnect(struct usb_interface *intf)
- 		ieee80211_unregister_hw(hw);
- 		rtlmac->mac80211_registered = 0;
- 	} else {
--		rtl_deinit_deferred_work(hw, false);
- 		rtlpriv->intf_ops->adapter_stop(hw);
- 	}
-+	rtl_deinit_deferred_work(hw, false);
- 	/*deinit rfkill */
- 	/* rtl_deinit_rfkill(hw); */
- 	rtl_usb_deinit(hw);
-diff --git a/drivers/net/wireless/realtek/rtlwifi/wifi.h b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-index ae6e351bc83c..24d3dcbdf81c 100644
---- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
-+++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
-@@ -322,6 +322,7 @@ enum rt_eeprom_type {
- 
- enum ttl_status {
- 	RTL_STATUS_INTERFACE_START = 0,
-+	RTL_STATUS_WORK_SETUP = 1,
- };
- 
- enum hardware_type {
--- 
-2.43.0
+-       const efi_char16_t *cmdline = efi_table_attr(image, load_options);
+-       u32 cmdline_len = efi_table_attr(image, load_options_size);
+        unsigned long efi_chunk_size = ULONG_MAX;
+        efi_file_protocol_t *volume = NULL;
++       const efi_char16_t *cmdline;
+        efi_file_protocol_t *file;
+        unsigned long alloc_addr;
+        unsigned long alloc_size;
+        efi_status_t status;
++       bool again = false;
++       u32 cmdline_len;
+        int offset;
 
+        if (!load_addr || !load_size)
+                return EFI_INVALID_PARAMETER;
+
+-       efi_apply_loadoptions_quirk((const void **)&cmdline, &cmdline_len);
+-       cmdline_len /= sizeof(*cmdline);
+-
+        if (IS_ENABLED(CONFIG_X86) && !efi_nochunk)
+                efi_chunk_size = EFI_READ_CHUNK_SIZE;
+
+        alloc_addr = alloc_size = 0;
++
++#ifdef CONFIG_CMDLINE
++       if (IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
++           IS_ENABLED(CONFIG_CMDLINE_OVERRIDE) ||
++           (again = (IS_ENABLED(CONFIG_X86) ||
++                     IS_ENABLED(CONFIG_CMDLINE_EXTEND)))) {
++               static const efi_char16_t builtin_cmdline[] = L""
+CONFIG_CMDLINE;
++
++               cmdline = builtin_cmdline;
++               cmdline_len = sizeof(builtin_cmdline);
++       } else
++#endif
++       {
++do_load_options:
++               cmdline = efi_table_attr(image, load_options);
++               cmdline_len = efi_table_attr(image, load_options_size);
++
++               efi_apply_loadoptions_quirk((const void **)&cmdline,
++                                           &cmdline_len);
++
++               again = false;
++       }
++       cmdline_len /= sizeof(*cmdline);
++
+        do {
+                struct finfo fi;
+                unsigned long size;
+@@ -290,6 +312,9 @@
+                efi_call_proto(volume, close);
+        } while (offset > 0);
+
++       if (again)
++               goto do_load_options;
++
+        *load_addr = alloc_addr;
+        *load_size = alloc_size;
 
