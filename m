@@ -1,134 +1,120 @@
-Return-Path: <linux-kernel+bounces-362442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02DB699B509
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:17:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766E799B50B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:21:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAD81C21D49
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:17:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3AB8A2822DE
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:21:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC13184542;
-	Sat, 12 Oct 2024 13:17:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F6BA18593C;
+	Sat, 12 Oct 2024 13:21:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QumAgF0i"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vLZbPWHg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E338D1E495;
-	Sat, 12 Oct 2024 13:17:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE3CC1F5FA;
+	Sat, 12 Oct 2024 13:21:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728739055; cv=none; b=XHNL6soUQwmz5D2K8+ZZlwA8D9AjGsTAp4j0rJnxhszlSS4Zpb6iplfCouiweIPcDrYFS5VfVPozIkx+RrvmJeFj5sLvaDcKeIw57weDGHC6khJ07v5oPaiJE2QsatnjjovhHhvouBlhk8GhlZB/HGKzaVxIIj7OvUGRouGOVJU=
+	t=1728739302; cv=none; b=Tc5G8hxhnvUpjL5bIsbfclabZ36AL0MyH3V4bPiI3igtbjU9cztG22iZZCHPsXmtQMP3axwXX+TSBvXsbdH8Qt4VJL7sRuxdLbpg0gOBnqfH1n/hekX6tRC9fSKiSpxBpkPKQID8PuP/6KLXCoNlo8TfN2RIky1lK0wsXDa2c+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728739055; c=relaxed/simple;
-	bh=xgZfJNYdhhPDhtjfhoXI7CrZCDHbecxJyWC/998fJZI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZMNgzYKlFt7/vf8ZL+0MhQTRu3A2jhvqhBSTD/A9DC/dSEmW/uSOKicJVICVsRJFV7P+bJwzoacx+M5IzP6oQN0cz+cK1qL0m5BLeilktrC9+U+3gEdoCmLrgYGfVnSgH9gvBb/CvjzYQoR/gAK5P/O7P1uHINuwWVIwPEw/jJ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QumAgF0i; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2a96b242cso500338a91.3;
-        Sat, 12 Oct 2024 06:17:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728739053; x=1729343853; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xgZfJNYdhhPDhtjfhoXI7CrZCDHbecxJyWC/998fJZI=;
-        b=QumAgF0ihMEXu10ADJ6faM/YjZjJq3LcHXtG/fdxnHzOAQsdPJQI0iPdfmCIZ9YICT
-         RUebArL6tTj/Gckjg7dSgvWSYNfkVdJFG3oXV8wZGD1iKb52aymM5hxr/hWRh2VyRSGE
-         VOXFG09/8KijyCPGPdf5wjb5xl4qfAxD3V08d2eFptKboomasb6ZAjCrvy34farAmv7d
-         FeKneJEZS6l4u9hc1anC4fWIEOCwiy25tPfDOL7sdfFK0lji8qH12sgid7MLrTMRKShz
-         GudO2LrQuyTdXf265mpG0uw6/L0N3uh7nPpeNrti4WLQqySKLZt2hRdiiOVnyfGTzhDh
-         wfSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728739053; x=1729343853;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xgZfJNYdhhPDhtjfhoXI7CrZCDHbecxJyWC/998fJZI=;
-        b=Kk/X8cqh//K7oC6p8Xjwt83J5gEs61eKI8pfYVimJkojNrRO+UW2VbhFA1/EcwX/1u
-         atbFDloQKDoTycAVPDBDA883aqu8+xbns+7Tr6/RuoG7qCFhYbJgJw0MTkreNmR7qywU
-         cp3V83WG5Yob/rvC7V6lbQC9dgnGDUyhEdVl7SAeDby6CYvzclN1FvVh0SwARArhcwvY
-         JsVNUu63npZJpGLgKgKSVkLH3XXg38riXUBut0pysGD5Zaxy+oI8z9NXeQ1enYb2MZuT
-         uEUQQ9KWr0UEjW5mhZS+JngqrMxZ8AqbjB0vBreNAW/SRqjLLBl7atzziUdnF5IWR1Js
-         oY1g==
-X-Forwarded-Encrypted: i=1; AJvYcCWurJJynmuxaE36Bb+SEhxKAQrltgPfnh3hXm0HRw2c0GewfMHhMnC9Vni7lsVhoUK8dZv4FffT/v59oRGq@vger.kernel.org, AJvYcCXY1DduSc/EDoKtHRHfVrRVaghx3tOzzTE1atKN/TAB4pACv1l30wo3FQDVmz9PnX0gZMz5/UHTE6dKx+M=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKuBMXsgCwuNY50Zrty6RCYreyVwulc0eLdRmAfVf6KQ83N52M
-	8XmPK8XhKqY/2uvsnhC0WoCEDcc3teh6hLTarfQWUINOMlX9g/j6S6QQ/iZ1PTXagnL6MBxey9y
-	NTo0kBkf/7dRmRq9tAu9Mg8Pp6f4=
-X-Google-Smtp-Source: AGHT+IEZd/cwSvOoIv+mfTP+GVRyAoSKqDG7m1LDad5T0V+zDZwqhRqb8F4Mdz9mMMcSLh37aodT3DoPys/rDZM8OH0=
-X-Received: by 2002:a05:6a20:3946:b0:1cf:3130:9966 with SMTP id
- adf61e73a8af0-1d8bcefaecdmr4034221637.3.1728739053004; Sat, 12 Oct 2024
- 06:17:33 -0700 (PDT)
+	s=arc-20240116; t=1728739302; c=relaxed/simple;
+	bh=Cwunnya8q8ws4MjlycWukeX3SEmIDdSpAsgx3d35aJg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XLzoA1y+19mSzSbS/5mbBNpLlG1JkcS/S3dagGliAdBrwhZgjACuF/icBGOVUxbN5XNKIfeDTAu39ogdX/9cF/PliAInx4yRYnC7Pm3dqnFOo6ZKlBAPWh77enmdc7TH9VDrgJwKiIBfoSffDOCg/xiDuvuGgbxlZ38klMPKGHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vLZbPWHg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7258C4CEC6;
+	Sat, 12 Oct 2024 13:21:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728739302;
+	bh=Cwunnya8q8ws4MjlycWukeX3SEmIDdSpAsgx3d35aJg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vLZbPWHgfrapz2S5Nx8fqsRfJDAhWnx1B5Dk8wyiHR5qnxCC34AF1AJXKndOVENv/
+	 AFNXCK8S2863jZdE2gl5T+yurpXRbIUm8z0cTPucnipAHCZ00WNpoUrihOLAY9ZA9m
+	 kij8Fjud3YWAN/i1y9NhW+xPTPlJV+tilIOcYve2WT1NaTMO9HjOwkadQ+qtRe2OJe
+	 jYMwKQwoW2pZtfAGRoxtsx0KcLPEXAmP0t2nxWMq8YY9OFbKepGdYZ2RpeomgyB0iu
+	 VoDuw7oVaiiedpagKWCRPPnLptdcKxqZId97ngoW9KwKxvJbsC68Q0KfgP/0uCFKZr
+	 u1yb8VWWuh4JQ==
+Date: Sat, 12 Oct 2024 14:21:37 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Breno Leitao <leitao@debian.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv6 net-next 7/7] net: ibm: emac: use of_find_matching_node
+Message-ID: <20241012132137.GF77519@kernel.org>
+References: <20241011195622.6349-1-rosenp@gmail.com>
+ <20241011195622.6349-8-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <CAJ-ks9neMso9pL_LPOeOwLGZG7Wy9RxV-ixKsDv=Wfzy7yKVBA@mail.gmail.com>
- <CANiq72kM+29COB6vPQPotXqT3acdbrEgdjU2K6FG8gZC0EEhNg@mail.gmail.com> <CAJ-ks9n=Y_FAdRb=YAaCEGT-y8RP=ssOgBiQtb8T7s+LRBBBhg@mail.gmail.com>
-In-Reply-To: <CAJ-ks9n=Y_FAdRb=YAaCEGT-y8RP=ssOgBiQtb8T7s+LRBBBhg@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sat, 12 Oct 2024 15:17:20 +0200
-Message-ID: <CANiq72k=+iUEESsiv8JUYehEFjoK=hUae3kbddyb3+qaJofpAQ@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Tamir Duberstein <tamird@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
-	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011195622.6349-8-rosenp@gmail.com>
 
-On Wed, Oct 9, 2024 at 4:48=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
-wrote:
->
-> Understood. My guess is nobody will care about the process spawn in
-> scripts/generate_rust_analyzer.py. Someone might care about the one in
-> rust/Makefile, but there are already 4 others. By the way, I notice those=
- are
+On Fri, Oct 11, 2024 at 12:56:22PM -0700, Rosen Penev wrote:
+> Cleaner than using of_find_all_nodes and then of_match_node.
+> 
+> Also modified EMAC_BOOT_LIST_SIZE check to run before of_node_get to
+> avoid having to call of_node_put on failure.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/ethernet/ibm/emac/core.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
+> index faa483790b29..5265616400c2 100644
+> --- a/drivers/net/ethernet/ibm/emac/core.c
+> +++ b/drivers/net/ethernet/ibm/emac/core.c
+> @@ -3253,21 +3253,17 @@ static void __init emac_make_bootlist(void)
+>  	int cell_indices[EMAC_BOOT_LIST_SIZE];
+>  
+>  	/* Collect EMACs */
+> -	while((np = of_find_all_nodes(np)) != NULL) {
+> +	while((np = of_find_matching_node(np, emac_match))) {
+>  		u32 idx;
+>  
+> -		if (of_match_node(emac_match, np) == NULL)
+> -			continue;
+>  		if (of_property_read_bool(np, "unused"))
+>  			continue;
+>  		if (of_property_read_u32(np, "cell-index", &idx))
+>  			continue;
+>  		cell_indices[i] = idx;
+> -		emac_boot_list[i++] = of_node_get(np);
+> -		if (i >= EMAC_BOOT_LIST_SIZE) {
+> -			of_node_put(np);
+> +		if (i >= EMAC_BOOT_LIST_SIZE)
+>  			break;
+> -		}
+> +		emac_boot_list[i++] = of_node_get(np);
 
-Yeah, I was referring to the `Makefile` one (the other one, indeed,
-does not matter, as you say).
+Reading the Kernel doc for of_find_matching_node() it seems
+that of_node_put() needs to called each time it (and thus
+of_find_matching_node() returns a np. But that doesn't seem
+to be the case here. Am I mistaken?
 
-> using $(shell ...) - should I be using that form as well?
 
-Hmm... I assume you tested the patch, but how would the patch work
-without it? Or am I confused?
-
-> I guess that's not for me to say. It would be great to have basic automat=
-ion.
-
-Generally, when submitting a new feature for upstream, especially one
-that requires new testing, it is common that the submitter is asked to
-take care of it or help doing so. I guess, in this case, Daniel is the
-one handling the macOS support out-of-tree.
-
-Anyway, we may need to use variables for this, so I think it is fine
--- upstream can keep the variable working easily, and out-of-tree can
-test the overall macOS support.
-
-> My apologies for the oversight.
-
-No worries, thanks!
-
-Cheers,
-Miguel
+>  	}
+>  	max = i;
+>  
+> -- 
+> 2.47.0
+> 
 
