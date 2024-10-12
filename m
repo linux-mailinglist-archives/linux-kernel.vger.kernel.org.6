@@ -1,226 +1,300 @@
-Return-Path: <linux-kernel+bounces-362581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6AA599B69C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:39:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BCEA99B6A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BDFE2832BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:39:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 913E0B21FE4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:43:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3363713B29F;
-	Sat, 12 Oct 2024 18:39:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FA6D14D2BD;
+	Sat, 12 Oct 2024 18:43:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="MFbDg4rL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="HH+gf1/Q"
+Received: from LO2P265CU024.outbound.protection.outlook.com (mail-uksouthazon11021080.outbound.protection.outlook.com [52.101.95.80])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CD5D43173
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 18:39:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728758343; cv=none; b=bggOfhDWSewFM+2yIYhtb15Nbq4tXdK57EJR2H3CcPs113XKaHpBzGeWaAI1ibnf3BVVb5HgLYMkwVBRFC8XlvVZG/BWl4XRAUI9rD7WJwV/rTbCzn6QjkV5kNJsB7lrQmmsA17YvMN5oXpcmQ6E5EiKKk0m1LkqpBFyuiVofhw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728758343; c=relaxed/simple;
-	bh=PQjdQUW1m0VGtx+RjDDjD5UPzXvmqOokhZTruCnEUS8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=rQTeBcjjqy0/aQcfh3E1+JTU5hLrE6rg8UZ7efKgQTqIBtamXGgLHM6m68G+zuoABSe49tbSJLgywSpzPQrkTBtPL5cMI5TqaytguvFcaJxMgmbNmQviEdnsI3Jkfpg6+H8W21HmEHd0AOEtJWg9F0TbXH6KEY9VE1PmIUHzWks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=MFbDg4rL; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728758339;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=5yZK/yvBCLzERH6zINZdBHu/5E+6P2BqC7o8qaheiHY=;
-	b=MFbDg4rL/AfOf2uTjo4ilVNfPmox5wIek/WR1s3wfGPkrSvPFzRH4NVZobt8A5yQAVjYDp
-	/JI8tpS0PZYj+QFUcsWG/Mo2ibCrxsjlwm+GL0yy2a4eHpVMTeSaGdXbay4n2zLLDAWPtm
-	NmfkI7Mf9zEbvAm4cOC9Y3Lm9amTrMg=
-Received: from mail-ej1-f70.google.com (mail-ej1-f70.google.com
- [209.85.218.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-270-qvZCaHa6M_KZmuKeAZNzng-1; Sat, 12 Oct 2024 14:38:58 -0400
-X-MC-Unique: qvZCaHa6M_KZmuKeAZNzng-1
-Received: by mail-ej1-f70.google.com with SMTP id a640c23a62f3a-a99345b8a29so207363666b.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 11:38:58 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728758337; x=1729363137;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5yZK/yvBCLzERH6zINZdBHu/5E+6P2BqC7o8qaheiHY=;
-        b=kCnQX21gMFvQGECNtV36r3s+7VQyGiqVKjn1044Q+tNWOgYOE8h4VhC9rcCZ4w+r1q
-         enuzN9iC0CPrYEo8XTYc0+XLcPodwFHD1M/Zwxl9k4qVPMwtKKH6gJLmrsSIF19VVDMQ
-         cpR1gnXMolYrWLUz6+o/Ip1cueR55mXlF3dOL3XQBNFlEDTziRdH7Ug6ZBbxFkVHG481
-         lkAzYwZZoE8bjfGIrTLuYCxeiyk9HSQnqb93MlLuIO7ux6psxHhqKLTIBrp1Ga5NTu6G
-         6mINzodu227D37ZFZoh1O2gvEU9/kt6ZmXKRN8KHIFSf2TQ8hUWKqKaAMbbYV4bHXIjj
-         CDXQ==
-X-Gm-Message-State: AOJu0Yy3UUyQ3Erq87SxkCSmvXmYpJ2rW8N7S2zV+PNNjbxrJmGwo8EB
-	M0DJevcyvjSISmjJWOopNpgLu5Pdci5+wfC8zvrqSvcLSiUm/orCXwmSBRRlN/e+LLMYF06YJJ9
-	IZ0JqynbHdHCDaXbJbFegmJecfBFmMvwv69Afr5TcOZ3PDYBqGZHUh55ViHDBIg==
-X-Received: by 2002:a17:907:1c15:b0:a99:f1eb:8deb with SMTP id a640c23a62f3a-a99f1eb8e5cmr198993066b.62.1728758337030;
-        Sat, 12 Oct 2024 11:38:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGqB5CLNW+SMyZyTg1PZ4OhDpXJCXiKSrqcy8TbFNdFya1pznauy04x0FXfWpM1RduvY21JtA==
-X-Received: by 2002:a17:907:1c15:b0:a99:f1eb:8deb with SMTP id a640c23a62f3a-a99f1eb8e5cmr198991766b.62.1728758336575;
-        Sat, 12 Oct 2024 11:38:56 -0700 (PDT)
-Received: from ?IPV6:2001:1c00:c32:7800:5bfa:a036:83f0:f9ec? (2001-1c00-0c32-7800-5bfa-a036-83f0-f9ec.cable.dynamic.v6.ziggo.nl. [2001:1c00:c32:7800:5bfa:a036:83f0:f9ec])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7f5cebdsm352248366b.93.2024.10.12.11.38.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Oct 2024 11:38:55 -0700 (PDT)
-Message-ID: <1cc25b5f-edd9-4520-b89b-9b7f833fbb4c@redhat.com>
-Date: Sat, 12 Oct 2024 20:38:55 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFD5768FD;
+	Sat, 12 Oct 2024 18:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.95.80
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728758623; cv=fail; b=dEtbjW/rYPXqHVpSj7wO3lEx44TggIRHWa0d2unORcoefct01lHZEfz+v+HTeY4PbuGyoaBEsGfd3C8fpfQrWzOKsYz5PsB1qmiUHNZ01NHZSa/gxAOUy32++7XNLB3uw1vSeTWp2K5MmxCghG0x+5DijFMjsRfo/IIDEf9oifA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728758623; c=relaxed/simple;
+	bh=vQTH27tTAlCwexiROIqFxvnPLXtGAyivExTEZ7gREtY=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Gy605pODRhDZ1I4aFTT7RGrtDhP2h66ELnMNg1cd9M6gTf2nAQ4VHd6RdmPWyslb2kVCiSk/MPl40uC+02v2OzPos16xtxZklKTEPJsORJ17IFKImqAgvBcuO3rnP7AI5LxjnvV5AcFDCgIYrkdx32vJ8s8lMVtU+sJNbrQptqY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=HH+gf1/Q; arc=fail smtp.client-ip=52.101.95.80
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ERgdhog7IFKWpvMJOkCgJIMp616X/oFsaJwJwlTZTv37UUDTRH+rKkVQPiN/XbHoibpghvWs8LTYOEd8S55axnLM1BycF4ovNtPeogIV4Yg5lS3Kp7qMksLbrAtbWLdptF4zGF+dc1sqSdHDDumIqDamsRXAENjOXA855EJlfEoIvNfyYxiS1Wi4nIuzzu15iM5vx1L37dWIZMH36vF2/HC8uH3KUny6OGUuIre4nOGG7vQYOble1srxXjiea1HCf9VzygrbNb4ci7wSKOdhV91XWrsTRjyZGR65Z+vRs7jQA0TR8bXUxm2WbqJDC/pwz6vNOuzi/mjT2V1TBul+pA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3Y6qdDJZlG+BBj4YVKC73vdeUuqaPaNVAfSGcAFcQt4=;
+ b=WiSjJIZBzFgMX2eC08kXROgAthGerHRdDII994EYpYgBgKVeXQuIQJr1UUidK/GNk5aV9n85Rk0d/4GJYcsVATpzX3OMKtiLof49e/IdNsourveXpnnaQQvalIGJMtc4YKoGJukKCtUOgdo/qTHWqqCt9D7H91xfmcmz0unfALvQwwftBQtKabV/4BHTISfjsSq5t9cU4liuwG80e39llre9/0ZzilElQIwLNuzKMPlz+xdo55XAn47zWaCJiN6c6mmiHnnq463y5p29peAkUfg5ubI7hkiZWxbcE7+egznEj76vPCbtuhZMI1yqabSr3sbaoMhfF69q/2PXa5L+vw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
+ dkim=pass header.d=garyguo.net; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3Y6qdDJZlG+BBj4YVKC73vdeUuqaPaNVAfSGcAFcQt4=;
+ b=HH+gf1/QLg6tCm37Qzobmf/dQ08rBE2+9hf5aaRsN5iPScuemctpFEuc9vvgRJDsxTyqg2Y2TIr/da922BDlS9fxTSZABQUgNPgEfyqXUdCiTCLjxLj9ebQxCPEPyfwcAhk2jhtmt4pMONFZExGIvxs8TJ++I8in+V7LEookmMQ=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=garyguo.net;
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
+ by CWLP265MB3668.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:f2::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20; Sat, 12 Oct
+ 2024 18:43:39 +0000
+Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8048.020; Sat, 12 Oct 2024
+ 18:43:39 +0000
+Date: Sat, 12 Oct 2024 19:43:36 +0100
+From: Gary Guo <gary@garyguo.net>
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex
+ Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ =?UTF-8?B?QmrDtnJu?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
+ <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, Alice
+ Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, Dirk Behme
+ <dirk.behme@de.bosch.com>, Fiona Behrens <me@kloenk.dev>, Filipe Xavier
+ <felipe_life@live.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] rust: remove unnecessary header includes
+Message-ID: <20241012194336.0c9f434d@eugeo>
+In-Reply-To: <20241009162553.27845-2-tamird@gmail.com>
+References: <CANiq72=M+rgJGLOBeSYygQzJZa9XnVvaWgi3DKUyT1Z_Rq=1Kw@mail.gmail.com>
+	<20241009162553.27845-2-tamird@gmail.com>
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: LO4P123CA0565.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:33b::19) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:253::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: Regression in PMC code in 6.12-rc1
-To: =?UTF-8?Q?Marek_Ma=C5=9Blanka?= <mmaslanka@google.com>
-Cc: linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org,
- Luca Coelho <luca@coelho.fi>
-References: <40555604c3f4be43bf72e72d5409eaece4be9320.camel@coelho.fi>
- <CAGcaFA1zqcqRNNydCZwn1pXUrjgSwvpLcVrf-ecFub2CABLiUw@mail.gmail.com>
- <CAGcaFA3tZTcppfPMzrpA0W5jS1byYaDwbADMfvKOQfjw8YvMqQ@mail.gmail.com>
- <331d3a2e-d66a-4118-a6b8-cb0cfbb9b3cf@redhat.com>
- <CAGcaFA0B=8K7PTOggWkBS7A3MyWpngT6N3GLUkXGy3L_WPvjtA@mail.gmail.com>
-Content-Language: en-US, nl
-From: Hans de Goede <hdegoede@redhat.com>
-In-Reply-To: <CAGcaFA0B=8K7PTOggWkBS7A3MyWpngT6N3GLUkXGy3L_WPvjtA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|CWLP265MB3668:EE_
+X-MS-Office365-Filtering-Correlation-Id: 519867ac-4239-4807-af72-08dceaedc975
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|366016|10070799003|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?znDfkP3Sgeak1m05WhBRFjcWsYpztpD6/1Rqg4oBBOPXxrnhPMqVFBLynF96?=
+ =?us-ascii?Q?7GP7HH05Nx3QhJBDJvKbEoeE9gsLuzHB4LUX0a5jBrd7Mw6Or589Xugsob40?=
+ =?us-ascii?Q?HABHFIkUvcd05BpknYK/JXas6cQrxl4j03xO9rRkiRhCdzDZRYp/IaqnL5S2?=
+ =?us-ascii?Q?FgCNMrgPsxl0WnxB0NBPeQjS2vLOODpSyo1BHSVgpIG4FXm3W63v+nvbGDMq?=
+ =?us-ascii?Q?R0RQQzBQYc3Jrbbgym/VTKB7raKFYZaC/MDy23yMwGe1BWOMQVKPSqtKSXy0?=
+ =?us-ascii?Q?R3+byKYptaV3FmOdNWgZFRC6vYXMWhzIYDx7s0l86ZqffJpQabVGXQcTH6nY?=
+ =?us-ascii?Q?THz4zpw/HGC1nSnht4HW4fpCTx25cKAIIDIyeGK8ehp9/7VyeDLqCjtUOOyz?=
+ =?us-ascii?Q?0aKR3cl+n3ZlzAN8yVq7Tr7VSnJTq/rA5aq834/R01NaSEC5qgwUfOBRRSRy?=
+ =?us-ascii?Q?d0CFUNPZ69tI587PIq7jutSHel9WDUdHXLeSm4VLgEPfCjUSa5TGN08yHMEi?=
+ =?us-ascii?Q?8sT6f4RLiin36ZRTQ2mZ+EfmoebK342TJf1NA12q8NpXUlDRCUTWTr+aulfB?=
+ =?us-ascii?Q?QsQVPvw+65PchT2eO9KuZeY2GVQw73ikvU083etIH7LbBefYULu1yj4NZlXp?=
+ =?us-ascii?Q?Y3CXAX+lJHXYXTqtCRKVaiZLA8Yr/MjH8I+4TztsImap0jnCeyYNQ8XGEKpc?=
+ =?us-ascii?Q?gSn3Rfhj4X6OVGIXeQMZ93skR/Oqjvd6O7lSAbgSOSImCeSNmto4jWqqXX0R?=
+ =?us-ascii?Q?rI0ViT9nIv9Ijbf2MIrkfJodv0BuxWMaCR7Nl8WMRke2vDAMswBJJzSvmoCC?=
+ =?us-ascii?Q?o5sESHnM1egWJGNND4xBJ1o7qeLCcYJF+t4sslW4nMXYg0ZorzgaLmdIvdNd?=
+ =?us-ascii?Q?n0/hMKF2ResMGCDVVG90gWT+lcLttDkQJeu4dx3/fXM4f7jY8hYT0ArEPz5S?=
+ =?us-ascii?Q?LqprO3Rw2A9VXfSsdlLLtJ4BEDP1EJRE7WBaKIlj4xPnQK6D4QbZIyX7Avzo?=
+ =?us-ascii?Q?8pHtF0WAZsMnQ1916Ba7teKzaFZLvIxtDQt8zCSMhq7PXNPTvf0sSALgOKjB?=
+ =?us-ascii?Q?J1wgK0UjZwaNzTBJZf4rej6N8OFLNcZrUhLUeUWVRz22XmXuX0xGuoAvQdnt?=
+ =?us-ascii?Q?ROyAeoeV+S7DYKVSENPHGn4zNVfzytPWStGyOf1LKuNrQheGLZktHqO3QxVy?=
+ =?us-ascii?Q?Qu1NCzD0XoSmGEs0eX3p7fPTmvU1vLdfUZj3qptdkLtu98q2nIngdu5S1CpN?=
+ =?us-ascii?Q?MmHPnaB0ftDraCk7BeUG95MzYxx+NiiP6w2T4AhWSQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(10070799003)(7416014)(1800799024);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xDR4H211JRsEm7TD1KpUimi0gIUh26W9GsHYluTxiEvpK+n0upKMhekHMcOZ?=
+ =?us-ascii?Q?s/gZ/4sv15EVNrUAtpQ4fyZW3hQGEACBbjKVvFnG2jg2UhTrMuGRKEN203Rk?=
+ =?us-ascii?Q?XQpkS+rkQkfejSZVVnkxdoLyoWU3wNzhcRwS5G+vifoMsA/xNzF0JFfFBZII?=
+ =?us-ascii?Q?H8T8ku0TXtVDsd8/CrPFiEo8DjXh61ZkN9Dy5+a76cusDrfjM1QEz5oEJzVN?=
+ =?us-ascii?Q?OLgWwngoZwtfsxpEotfmEn26fQpIdLEgWB5iLp1QfguHG8ej5UdU/7BQ7qPP?=
+ =?us-ascii?Q?CQHwA6CpIvu3yukr3anmp7t1rCNn58Lfd9fdAy1toAA/sY9/0c7w4IqFb1jP?=
+ =?us-ascii?Q?ntQYEQntZKfE036Sb9tBOT2hC9wJgs+UNkmZpDVS/nGcrzCMh/OFSSD+Umru?=
+ =?us-ascii?Q?boZawTVGFg9j1p6POhB5d1LdLrZ+/Or/3kjO0Tb3r5xwRCUcM94TszminBAo?=
+ =?us-ascii?Q?UW65G1owCqnHHyxbochzxvzdfqCnDewuIIbBxqMOomSjmRy5QlNkASzGrQQZ?=
+ =?us-ascii?Q?uqdwtel74pRlMK93UL0Wr75sYyi6GeIEj+wrf84ArRY/vmgzoGzyQmfRmuZ+?=
+ =?us-ascii?Q?X4EOqe3IHQ5igoJroRJ6+aOQXJpgWwyc4uh0i8rpSIAnNl/NBtuBerRDFkuC?=
+ =?us-ascii?Q?p+A3sRnlDN1ww1MBaZyyv6nIdNnmziiw9sZdUQY6gSslC6f7ux1PlDYKMthb?=
+ =?us-ascii?Q?CUpn8//mY8vFhyzmeHAuQQFEViL8TtZmdCjdMcQn53sNVNjPFXF1O01B/0/S?=
+ =?us-ascii?Q?GnihCcZA5TP25jyzrZmJ9Ao3s1XAJwEWM+f795n7r3vG1G9d6zFH/DPwlvKg?=
+ =?us-ascii?Q?lU2hSplwlsfuhKbHZQ4WrFDjJSx3ausXcMq2NsjvYQk5ZRjt6KPl4hfl4QXU?=
+ =?us-ascii?Q?HO+oeW+N9Vg2Zez3z21IYrJaWrettNdgslzvAAUJ/57Y9y+199khKBGf6FWZ?=
+ =?us-ascii?Q?7rICf4uBJu4Bub+S0ULWCeY0T/2AN+VjNrKxULqi6bq8ab7i+03hnMO+XF/B?=
+ =?us-ascii?Q?mDV22sn/PPNMc6VsYT93Mm/T0F13Cx9RYsx8jkRaDP0ljG41XSBM/i4YKB0S?=
+ =?us-ascii?Q?ZF3mXWRR03tl4ZoDZvptzTjl8yQEeYezYEdY9VHduipR/S/b5Nhq5CFlXqBC?=
+ =?us-ascii?Q?zfPDO6SNmUagRAlsdBKMpgW+Ug0vOWh62O7qdSwX/l1UIzgknww5+70tAZJj?=
+ =?us-ascii?Q?zVGk/TcEjYfdG/3UosFWZ5X1bIlzO9qxxtrq10nEtqi6etaPgp2bg5B0Q8I2?=
+ =?us-ascii?Q?1ZfZJQE2FFjahIfUBFWtRXmCBb8mmtBCrkOnBIraIZAFPLPmjKtJt2SPMHHd?=
+ =?us-ascii?Q?YC5DWvHri4auFxTO64+XGfv551dI0HewjkFXnxUFmGOTO1FOSTpYwhd5zTqj?=
+ =?us-ascii?Q?4OBM9l55P0J08x8t4yULGc17E7iLZyWVZ9b/T1Phk1DmQs7JxrfzPHPVnoD7?=
+ =?us-ascii?Q?geu8vRJuz8cM8R9aBrrKfMfgDSqutAvt9G/TORhzHVFLcGMQjeOutX5eKgfy?=
+ =?us-ascii?Q?Kz684d47XDwEE9RRWJIoBsVVclroPX4pyypkPtWRhusCSKI4UkYIMRWyXK5s?=
+ =?us-ascii?Q?V1M3UUSUUOCfr3L9Y8YJyu261oDWZPVjLw19lyDt3g59U3Bd5RG9LdP/Cum0?=
+ =?us-ascii?Q?CQjwU453oH5UComUE51AGhoEuLjSrKzaCcqfYcd7juJ5?=
+X-OriginatorOrg: garyguo.net
+X-MS-Exchange-CrossTenant-Network-Message-Id: 519867ac-4239-4807-af72-08dceaedc975
+X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 18:43:38.9168
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: B9kxN4o9aNSZdMr8u2ctxVvCpaKlwrsO+9pzJzcYV71Ra6mRWoH4kq5AEYue2LO2bGlbVvfdDWPQNzcLQG3Kig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CWLP265MB3668
 
-Hi Marek,
+On Wed,  9 Oct 2024 12:25:30 -0400
+Tamir Duberstein <tamird@gmail.com> wrote:
 
-On 12-Oct-24 8:30 PM, Marek Maślanka wrote:
-> Hi Hans,
+> Commit e26fa546042a ("rust: kbuild: auto generate helper exports")
+> removed the need for these by automatically generating the exports; it
+> removed the explicit uses of `EXPORT_SYMBOL_GPL` but didn't remove the
+> `#include <linux/export.h>`s.
 > 
-> On Thu, Oct 10, 2024 at 4:12 PM Hans de Goede <hdegoede@redhat.com> wrote:
->>
->> Hi Marek,
->>
->> On 10-Oct-24 4:09 PM, Marek Maślanka wrote:
->>> Hi Franz,
->>
->> Franz? I guess you are trying to address me (Hans) ?
+> Signed-off-by: Tamir Duberstein <tamird@gmail.com>
+
+Reviewed-by: Gary Guo <gary@garyguo.net>
+
+> ---
+> V1 -> V2: Split grammar improvement into separate patch.
 > 
-> Yes! Forgive me for this mistake!
-
-No problem / no worries.
-
->>> I need to redesign this patch. The pmcdev->lock in the
->>> pmc_core_acpi_pm_timer_suspend_resume might already be held by the
->>> pmc_core_mphy_pg_show or pmc_core_pll_show if the userspace gets
->>> frozen when these functions are being executed, this will cause a hang.
->>>
->>> Can you instruct me how to revert this patch? Or you can just do it?
->>
->> Please submit a revert based on top of:
->>
->> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x86.git/log/?h=fixes
->>
->> with a commit message explaining why this needs to be reverted for now
->> and then I will merge the revert into the fixes branch and include
->> it in the next fixes pull-request to Torvalds.
+>  rust/helpers/build_bug.c | 1 -
+>  rust/helpers/err.c       | 1 -
+>  rust/helpers/kunit.c     | 1 -
+>  rust/helpers/mutex.c     | 1 -
+>  rust/helpers/refcount.c  | 1 -
+>  rust/helpers/signal.c    | 1 -
+>  rust/helpers/spinlock.c  | 1 -
+>  rust/helpers/task.c      | 1 -
+>  rust/helpers/wait.c      | 1 -
+>  rust/helpers/workqueue.c | 1 -
+>  10 files changed, 10 deletions(-)
 > 
-> Done.
-
-Thank you. I'll apply this and send it on its way to Linus some
-time next week.
-
-Regards,
-
-Hans
-
-
-
-
-
->>> On Mon, Oct 7, 2024 at 12:57 PM Marek Maślanka <mmaslanka@google.com <mailto:mmaslanka@google.com>> wrote:
->>>
->>>     Hi Luca,
->>>
->>>     Thanks for the report.
->>>
->>>     Seems that the tick_freeze function in the kernel/time/tick-common.c
->>>     is helding the spinlock so the pmc_core_acpi_pm_timer_suspend_resume
->>>     shouldn't try to take the mutex lock. I'll look for the solution.
->>>
->>>     Marek
->>>
->>>
->>>     On Mon, Oct 7, 2024 at 11:17 AM Luca Coelho <luca@coelho.fi <mailto:luca@coelho.fi>> wrote:
->>>     >
->>>     > Hi Marek et al,
->>>     >
->>>     > We have been facing some errors when running some of our Display CI
->>>     > tests that seem to have been introduced by the following commit:
->>>     >
->>>     > e86c8186d03a ("platform/x86:intel/pmc: Enable the ACPI PM Timer to be turned off when suspended")
->>>     >
->>>     > The errors we are getting look like this:
->>>     >
->>>     > <4> [222.857770] =============================
->>>     > <4> [222.857771] [ BUG: Invalid wait context ]
->>>     > <4> [222.857772] 6.12.0-rc1-xe #1 Not tainted
->>>     > <4> [222.857773] -----------------------------
->>>     > <4> [222.857774] swapper/4/0 is trying to lock:
->>>     > <4> [222.857775] ffff8881174c88c8 (&pmcdev->lock){+.+.}-{3:3}, at: pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
->>>     > <4> [222.857782] other info that might help us debug this:
->>>     > <4> [222.857783] context-{4:4}
->>>     > <4> [222.857784] 1 lock held by swapper/4/0:
->>>     > <4> [222.857785]  #0: ffffffff83452258 (tick_freeze_lock){....}-{2:2}, at: tick_freeze+0x16/0x110
->>>     > <4> [222.857791] stack backtrace:
->>>     > <4> [222.857793] CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Not tainted 6.12.0-rc1-xe #1
->>>     > <4> [222.857794] Hardware name: Intel Corporation Alder Lake Client Platform/AlderLake-P DDR5 RVP, BIOS RPLPFWI1.R00.4035.A00.2301200723 01/20/2023
->>>     > <4> [222.857796] Call Trace:
->>>     > <4> [222.857797]  <TASK>
->>>     > <4> [222.857798]  dump_stack_lvl+0x80/0xc0
->>>     > <4> [222.857802]  dump_stack+0x10/0x20
->>>     > <4> [222.857805]  __lock_acquire+0x943/0x2800
->>>     > <4> [222.857808]  ? stack_trace_save+0x4b/0x70
->>>     > <4> [222.857812]  lock_acquire+0xc5/0x2f0
->>>     > <4> [222.857814]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
->>>     > <4> [222.857817]  __mutex_lock+0xbe/0xc70
->>>     > <4> [222.857819]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
->>>     > <4> [222.857822]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
->>>     > <4> [222.857825]  mutex_lock_nested+0x1b/0x30
->>>     > <4> [222.857827]  ? mutex_lock_nested+0x1b/0x30
->>>     > <4> [222.857828]  pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
->>>     > <4> [222.857831]  acpi_pm_suspend+0x23/0x40
->>>     > <4> [222.857834]  clocksource_suspend+0x2b/0x50
->>>     > <4> [222.857836]  timekeeping_suspend+0x22a/0x360
->>>     > <4> [222.857839]  tick_freeze+0x89/0x110
->>>     > <4> [222.857840]  enter_s2idle_proper+0x34/0x1d0
->>>     > <4> [222.857843]  cpuidle_enter_s2idle+0xaa/0x120
->>>     > <4> [222.857845]  ? tsc_verify_tsc_adjust+0x42/0x100
->>>     > <4> [222.857849]  do_idle+0x221/0x250
->>>     > <4> [222.857852]  cpu_startup_entry+0x29/0x30
->>>     > <4> [222.857854]  start_secondary+0x12e/0x160
->>>     > <4> [222.857856]  common_startup_64+0x13e/0x141
->>>     > <4> [222.857859]  </TASK>
->>>     >
->>>     > And the full logs can be found, for example, here:
->>>     >
->>>     > https://intel-gfx-ci.01.org/tree/intel-xe/xe-2016-92d12099cc768f36cf676ee1b014442a5c5ba965/shard-adlp-3/igt@kms_flip@flip-vs-suspend-interruptible.html <https://intel-gfx-ci.01.org/tree/intel-xe/xe-2016-92d12099cc768f36cf676ee1b014442a5c5ba965/shard-adlp-3/igt@kms_flip@flip-vs-suspend-interruptible.html>
->>>     >
->>>     >
->>>     > Reverting this commit seems to prevent the problem.  Do you have any
->>>     > idea what could be causing this and, more importantly, how to fix it?
->>>     > :)
->>>     >
->>>     > Thanks!
->>>     >
->>>     > --
->>>     > Cheers,
->>>     > Luca.
->>>
->>
-> 
+> diff --git a/rust/helpers/build_bug.c b/rust/helpers/build_bug.c
+> index e994f7b5928c..44e579488037 100644
+> --- a/rust/helpers/build_bug.c
+> +++ b/rust/helpers/build_bug.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/errname.h>
+>  
+>  const char *rust_helper_errname(int err)
+> diff --git a/rust/helpers/err.c b/rust/helpers/err.c
+> index be3d45ef78a2..544c7cb86632 100644
+> --- a/rust/helpers/err.c
+> +++ b/rust/helpers/err.c
+> @@ -1,7 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+>  #include <linux/err.h>
+> -#include <linux/export.h>
+>  
+>  __force void *rust_helper_ERR_PTR(long err)
+>  {
+> diff --git a/rust/helpers/kunit.c b/rust/helpers/kunit.c
+> index 9d725067eb3b..b85a4d394c11 100644
+> --- a/rust/helpers/kunit.c
+> +++ b/rust/helpers/kunit.c
+> @@ -1,7 +1,6 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+>  #include <kunit/test-bug.h>
+> -#include <linux/export.h>
+>  
+>  struct kunit *rust_helper_kunit_get_current_test(void)
+>  {
+> diff --git a/rust/helpers/mutex.c b/rust/helpers/mutex.c
+> index a17ca8cdb50c..7e00680958ef 100644
+> --- a/rust/helpers/mutex.c
+> +++ b/rust/helpers/mutex.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/mutex.h>
+>  
+>  void rust_helper_mutex_lock(struct mutex *lock)
+> diff --git a/rust/helpers/refcount.c b/rust/helpers/refcount.c
+> index f47afc148ec3..d6adbd2e45a1 100644
+> --- a/rust/helpers/refcount.c
+> +++ b/rust/helpers/refcount.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/refcount.h>
+>  
+>  refcount_t rust_helper_REFCOUNT_INIT(int n)
+> diff --git a/rust/helpers/signal.c b/rust/helpers/signal.c
+> index 63c407f80c26..1a6bbe9438e2 100644
+> --- a/rust/helpers/signal.c
+> +++ b/rust/helpers/signal.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/sched/signal.h>
+>  
+>  int rust_helper_signal_pending(struct task_struct *t)
+> diff --git a/rust/helpers/spinlock.c b/rust/helpers/spinlock.c
+> index 775ed4d549ae..b7b0945e8b3c 100644
+> --- a/rust/helpers/spinlock.c
+> +++ b/rust/helpers/spinlock.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/spinlock.h>
+>  
+>  void rust_helper___spin_lock_init(spinlock_t *lock, const char *name,
+> diff --git a/rust/helpers/task.c b/rust/helpers/task.c
+> index 7ac789232d11..190fdb2c8e2f 100644
+> --- a/rust/helpers/task.c
+> +++ b/rust/helpers/task.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/sched/task.h>
+>  
+>  struct task_struct *rust_helper_get_current(void)
+> diff --git a/rust/helpers/wait.c b/rust/helpers/wait.c
+> index c7336bbf2750..ae48e33d9da3 100644
+> --- a/rust/helpers/wait.c
+> +++ b/rust/helpers/wait.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/wait.h>
+>  
+>  void rust_helper_init_wait(struct wait_queue_entry *wq_entry)
+> diff --git a/rust/helpers/workqueue.c b/rust/helpers/workqueue.c
+> index f59427acc323..b2b82753509b 100644
+> --- a/rust/helpers/workqueue.c
+> +++ b/rust/helpers/workqueue.c
+> @@ -1,6 +1,5 @@
+>  // SPDX-License-Identifier: GPL-2.0
+>  
+> -#include <linux/export.h>
+>  #include <linux/workqueue.h>
+>  
+>  void rust_helper_init_work_with_key(struct work_struct *work, work_func_t func,
 
 
