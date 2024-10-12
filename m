@@ -1,335 +1,193 @@
-Return-Path: <linux-kernel+bounces-362608-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362609-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AC9599B6DE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:01:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BCD899B6E0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03AD2282C98
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:01:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2F6A1F21E49
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:02:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 174391474B8;
-	Sat, 12 Oct 2024 20:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261E815252D;
+	Sat, 12 Oct 2024 20:02:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="G+Nj+eUS"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="u6fh8US+"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062D81B977;
-	Sat, 12 Oct 2024 20:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730311B977
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 20:02:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728763292; cv=none; b=WopR9F+UUGPgV/sz1EOlTdryedXEY0LJ/lx24q3Ha+ObhMqq5FLULL0d3IhJf5cMn9D7prawQjYjZwgm+mr6OTw3Ik4RUhyEiwIyQ1UeS3GXKKT3c6RhItodbtKfQBCYkxI4ntNLaQgs4/+Gjs/2Zl/BScxQdeQatCauDn3hvLw=
+	t=1728763364; cv=none; b=RHjYVxV+wR7fMxN7kQJK3+VykFv1BTGkx523roDDhvDXdy5lceiagSPS5wj35bNb+8kINAQQmV2JryrLDahaKaOx++XWEH/jEee3AmKHHJ1G3dJsmzuJr4bXO3iwzG93qrJjJBwFPYfmYXPtBCMCko+T4YqejqXs6sRWVPQp0E0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728763292; c=relaxed/simple;
-	bh=L80+O0sp1idK5a/mB0HhVR0jRvSPn08cWKXRjUMNLSM=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ovzYl0KvzLCx2qV7Bu4aAIhWY/dnB+BpnuDVby2HnPy481dEenqZD0O1TNK+xxL2xyAUvoGylQQitpP0iYNdPWw8q0A6Uaeu4w8or7gO1u41JcAIP3cytOz1/42FIwTcMk+0QTe5o1twPwK43IPqQxyNzHVxAVKifhPqOxjH/lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=G+Nj+eUS; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1728763364; c=relaxed/simple;
+	bh=PVHa9X+HNIfAtZ9K6pNvtZEk43SFZRVkQNKYwNcl4qc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=Ts9ZfzDZsU0rRsNMHaep2LMYUaf5KpqA8O1v8Ynx/9LFwJ1h2mHKRaLrtdeL8Ejmuzow8FgNjk2Vm7mlr7LtCsa2Y/n2bObisoZLkPagEcnBHB+71sutdkUTMpQuQK3MJ5UhJ8sIsZDmnvjcvv/uzqHof1cxK0/9r4f5qhv79O4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=u6fh8US+; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1728763287;
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1728763355;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=IMzLkVtpuqhbfDhxMx/Dnmpxb8+f+kODoX6QtilGTB4=;
-	b=G+Nj+eUSD5ppx1fw2MEZUoYdLD9HoMpDFs9qE3KdI5yPz5/qoKbjpXgi6cDvs5QaXcHrFS
-	szGJWmVs7EcbUkhXNZHpJshjX4jQz5A80Q33FSAHeeQZ2dGARjPJJuwb9ztmAaGR6geu2M
-	Yi2BqMbd8Qt/CkIB0AkDUaqc9jXangO7hzZbt3rKK4dtzQpTzXt8KWsBGobn5arVqa+mPO
-	oFbyzV3FYSFaaotriGqdfU6JXr5gddmhwObssiKWxF4Hif0jls3WypAgLRybfp0RPKpT9u
-	WQ4n8VuC9ztIlhp0NUtRuZLyFxPOJGGyHHTwS29JXsLB2OSCDIMb6Vf4dMxY9w==
-Date: Sat, 12 Oct 2024 22:01:27 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Subject: Re: [PATCH 2/3] arm64: dts: rockchip: Prepare RK356x SoC dtsi files
- for per-variant OPPs
-In-Reply-To: <D4U30AUOH6UR.1QPH47KN5EWE4@cknow.org>
+	bh=/OHT9QdN7wzd/CkALWfMYR0kdujeKzv+3XUMfTAODMM=;
+	b=u6fh8US+TgcJVH89X8tgPtR4yEzMKofevLFrAk0fVfDNiyzVUb4CFKruN9k4qhodNxfDXw
+	moug2pGAXgEgKCa2HqfTuwBKZEI/yy0kDAipJBs3SNsYCeKWmY7oueTAVzpt9epXUTGc1A
+	4HWO1ghZ5D0vh7RxiUB4vMLYOuHQrlcbbMibcpImcaV1+q+p78cUx7F6mWccQsv5Mj6xbg
+	S3ZUK1gDB3IVS7SUGShD6KSAREGAMhWilv3lpEudFjUNDsIYkC48jnObAiv7Gc4ggfyLxA
+	y+p0fo6CYdfc+xQ5MYZHMdFswGfgZKtOjPopEHWkJr/iUvYgNK6Ck1JCIwq5vA==
+Content-Type: multipart/signed;
+ boundary=d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Sat, 12 Oct 2024 22:02:24 +0200
+Message-Id: <D4U3GKLN5U06.6VOVFCPFN6G7@cknow.org>
+Cc: <linux-rockchip@lists.infradead.org>, <heiko@sntech.de>,
+ <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+ <devicetree@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+ <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Update CPU OPP voltages in
+ RK356x SoC dtsi
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Dragan Simic" <dsimic@manjaro.org>
 References: <cover.1728752527.git.dsimic@manjaro.org>
- <cc2aed3116a57dd50e2bb15ab41b12784adfafe3.1728752527.git.dsimic@manjaro.org>
- <D4U30AUOH6UR.1QPH47KN5EWE4@cknow.org>
-Message-ID: <e03fec2aa3bedb4710b27717cb2394df@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+ <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org> <D4U2PO4VF4ST.9SBVKYF6095M@cknow.org> <0a1f13d06ec3668c136997e72d0aea44@manjaro.org>
+In-Reply-To: <0a1f13d06ec3668c136997e72d0aea44@manjaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-Hello Diederik,
+--d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-On 2024-10-12 21:41, Diederik de Haas wrote:
-> On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
->> Rename the Rockchip RK356x SoC dtsi files and, consequently, adjust 
->> their
->> contents appropriately, to prepare them for the ability to specify 
->> different
->> CPU and GPU OPPs for each of the supported RK356x SoC variants.
->> 
->> The first new RK356x SoC variant to be introduced is the RK3566T, 
->> which the
->> Pine64 Quartz64 Zero SBC is officially based on. [1]  Some other SBCs 
->> are
->> also based on the RK3566T variant, including Radxa ROCK 3C and ZERO 
->> 3E/3W,
->> but the slight trouble is that Radxa doesn't state that officially.  
->> Though,
->> it's rather easy to spot the RK3566T on such boards, because their 
->> official
->> specifications state that the maximum frequency for the Cortex-A55 
->> cores is
->> lower than the "full-fat" RK3566's 1.8 GHz. [2][3][4]
-> 
-> I think we changed terminology from "full-fat" to something else in the
-> rk3588 variant? Would be nice to be consisten.
+Hi Dragan,
 
-Back then, it was about the naming of one of the dtsi files, [*] not
-about using "full-fat" in the commit description.  Using "full-fat"
-in one of the file names was just part of the RFC, as a temporary
-solution.  OTOH, frankly, I don't feel like using "full-fat" in this
-commit description is inappropriate or inconsistent.
+On Sat Oct 12, 2024 at 9:45 PM CEST, Dragan Simic wrote:
+> On 2024-10-12 21:27, Diederik de Haas wrote:
+> > On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
+> >> Update the lower/upper voltage limits and the exact voltages for the=
+=20
+> >> Rockchip
+> >> RK356x CPU OPPs, using the most conservative values (i.e. the highest=
+=20
+> >> per-OPP
+> >> voltages) found in the vendor kernel source. [1]
+> >>=20
+> >> Using the most conservative per-OPP voltages ensures reliable CPU=20
+> >> operation
+> >> regardless of the actual CPU binning, with the downside of possibly=20
+> >> using
+> >> a bit more power for the CPU cores than absolutely needed.
+> >>=20
+> >> Additionally, fill in the missing "clock-latency-ns" CPU OPP=20
+> >> properties, using
+> >> the values found in the vendor kernel source. [1]
+> >>=20
+> >> [1]=20
+> >> https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed5=
+61650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> >>=20
+> >> Related-to: eb665b1c06bc ("arm64: dts: rockchip: Update GPU OPP=20
+> >> voltages in RK356x SoC dtsi")
+> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> >> ---
+> >>  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  1 +
+> >>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 18 ++++++++++++------
+> >>  2 files changed, 13 insertions(+), 6 deletions(-)
+> >>=20
+> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi=20
+> >> b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> >> index 0946310e8c12..5c54898f6ed1 100644
+> >> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> >> @@ -273,6 +273,7 @@ &cpu0_opp_table {
+> >>  	opp-1992000000 {
+> >>  		opp-hz =3D /bits/ 64 <1992000000>;
+> >>  		opp-microvolt =3D <1150000 1150000 1150000>;
+> >> +		clock-latency-ns =3D <40000>;
+> >>  	};
+> >>  };
+> >>=20
+> >> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi=20
+> >> b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> >> index 0ee0ada6f0ab..534593f2ed0b 100644
+> >> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> >> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> >> @@ -134,39 +134,45 @@ cpu0_opp_table: opp-table-0 {
+> >>=20
+> >>  		opp-408000000 {
+> >>  			opp-hz =3D /bits/ 64 <408000000>;
+> >> -			opp-microvolt =3D <900000 900000 1150000>;
+> >> +			opp-microvolt =3D <850000 850000 1150000>;
+> >>  			clock-latency-ns =3D <40000>;
+> >>  		};
+> >>=20
+> >>  		opp-600000000 {
+> >>  			opp-hz =3D /bits/ 64 <600000000>;
+> >> -			opp-microvolt =3D <900000 900000 1150000>;
+> >> +			opp-microvolt =3D <850000 850000 1150000>;
+> >> +			clock-latency-ns =3D <40000>;
+> >>  		};
+> >>=20
+> >>  		opp-816000000 {
+> >>  			opp-hz =3D /bits/ 64 <816000000>;
+> >> -			opp-microvolt =3D <900000 900000 1150000>;
+> >> +			opp-microvolt =3D <850000 850000 1150000>;
+> >> +			clock-latency-ns =3D <40000>;
+> >>  			opp-suspend;
+> >>  		};
+> >=20
+> > While it felt a bit much to send a patch just to remove the blank lines
+> > between the opp nodes, this sounds like an excellent opportunity to=20
+> > make it consistent with the opp list in other DT files?
+>
+> Actually, my plan is to work on the SoC binning, which will involve
+> touching nearly every OPP in the Rockchip DTs, and will add much more
+> data to each OPP node.  Thus, having empty lines as the separators
+> between the OPP nodes is something we should actually want, because
 
-[*] 
-https://lore.kernel.org/linux-rockchip/673dcf47596e7bc8ba065034e339bb1bbf9cdcb0.1716948159.git.dsimic@manjaro.org/T/#u
+As indicated in the "arm64: dts: rockchip: Add dtsi file for RK3399S SoC
+variant" patch series, I do prefer the separator lines ...
 
->> These changes follow the approach used for the Rockchip RK3588 SoC 
->> variants,
->> which was introduced and described further in commit def88eb4d836 
->> ("arm64:
->> dts: rockchip: Prepare RK3588 SoC dtsi files for per-variant OPPs").  
->> Please
->> see that commit for a more detailed explanation.
->> 
->> No functional changes are introduced, which was validated by 
->> decompiling and
-> 
-> No functional changes ...
+> not having them will actually reduce the readability after the size
+> of the individual OPP nodes is increased.
+>
+> That's the reason why I opted for having the separator lines in this
+> patch series, i.e. because having them everywhere should be the final
+> outcome, and because in this case they were already present where the
+> OPPs were moved or copied from.
 
-This will be covered later in my response...
+... but you actually removed those lines in the other patch set.
 
->> comparing all affected board dtb files before and after these changes. 
->>  In
->> more detail, the affected dtb files have some of their blocks shuffled 
->> around
->> a bit and some of their phandles have different values, as a result of 
->> the
->> changes to the order in which the building blocks from the parent dtsi 
->> files
->> are included, but they effectively remain the same as the originals.
->> 
->> [1] https://wiki.pine64.org/wiki/Quartz64
->> [2] 
->> https://dl.radxa.com/rock3/docs/hw/3c/radxa_rock3c_product_brief.pdf
->> [3] 
->> https://dl.radxa.com/zero3/docs/hw/3e/radxa_zero_3e_product_brief.pdf
->> [4] 
->> https://dl.radxa.com/zero3/docs/hw/3w/radxa_zero_3w_product_brief.pdf
->> 
->> Related-to: def88eb4d836 ("arm64: dts: rockchip: Prepare RK3588 SoC 
->> dtsi files for per-variant OPPs")
->> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> ---
->>  .../{rk3566.dtsi => rk3566-base.dtsi}         |   2 +-
->>  arch/arm64/boot/dts/rockchip/rk3566.dtsi      | 116 
->> ++++++++++++++----
->>  arch/arm64/boot/dts/rockchip/rk3568.dtsi      | 114 +++++++++++++++--
->>  .../{rk356x.dtsi => rk356x-base.dtsi}         |  87 -------------
->>  4 files changed, 202 insertions(+), 117 deletions(-)
->>  copy arch/arm64/boot/dts/rockchip/{rk3566.dtsi => rk3566-base.dtsi} 
->> (95%)
->>  rename arch/arm64/boot/dts/rockchip/{rk356x.dtsi => rk356x-base.dtsi} 
->> (96%)
->> 
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3566.dtsi 
->> b/arch/arm64/boot/dts/rockchip/rk3566-base.dtsi
->> similarity index 95%
->> copy from arch/arm64/boot/dts/rockchip/rk3566.dtsi
->> copy to arch/arm64/boot/dts/rockchip/rk3566-base.dtsi
->> index 6c4b17d27bdc..e56e0b6ba941 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3566.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3566-base.dtsi
->> @@ -1,6 +1,6 @@
->>  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> 
->> -#include "rk356x.dtsi"
->> +#include "rk356x-base.dtsi"
->> 
->>  / {
->>  	compatible = "rockchip,rk3566";
->> diff --git a/arch/arm64/boot/dts/rockchip/rk3566.dtsi 
->> b/arch/arm64/boot/dts/rockchip/rk3566.dtsi
->> index 6c4b17d27bdc..3fcca79279f7 100644
->> --- a/arch/arm64/boot/dts/rockchip/rk3566.dtsi
->> +++ b/arch/arm64/boot/dts/rockchip/rk3566.dtsi
->> @@ -1,35 +1,107 @@
->>  // SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->> 
->> -#include "rk356x.dtsi"
->> +#include "rk3566-base.dtsi"
->> 
->>  / {
->> -	compatible = "rockchip,rk3566";
->> +	cpu0_opp_table: opp-table-0 {
->> +		compatible = "operating-points-v2";
->> +		opp-shared;
->> +
->> +		opp-408000000 {
->> +			opp-hz = /bits/ 64 <408000000>;
->> +			opp-microvolt = <850000 850000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-600000000 {
->> +			opp-hz = /bits/ 64 <600000000>;
->> +			opp-microvolt = <850000 850000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-816000000 {
->> +			opp-hz = /bits/ 64 <816000000>;
->> +			opp-microvolt = <850000 850000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +			opp-suspend;
->> +		};
-> 
-> Just like with patch 1 of this series, drop the blank line?
+While I'm looking forward to the extra data to the OPP nodes, I don't
+think the amount of properties should determine whether it should have a
+separator line or not.
 
-I believe I've already explained the reasoning behind that. [**]
+My 0.02
 
-[**] 
-https://lore.kernel.org/linux-rockchip/0a1f13d06ec3668c136997e72d0aea44@manjaro.org/
+Cheers,
+  Diederik
 
->> +
->> +		opp-1104000000 {
->> +			opp-hz = /bits/ 64 <1104000000>;
->> +			opp-microvolt = <900000 900000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-1416000000 {
->> +			opp-hz = /bits/ 64 <1416000000>;
->> +			opp-microvolt = <1025000 1025000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-1608000000 {
->> +			opp-hz = /bits/ 64 <1608000000>;
->> +			opp-microvolt = <1100000 1100000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +
->> +		opp-1800000000 {
->> +			opp-hz = /bits/ 64 <1800000000>;
->> +			opp-microvolt = <1150000 1150000 1150000>;
->> +			clock-latency-ns = <40000>;
->> +		};
->> +	};
->> +
->> +	gpu_opp_table: opp-table-1 {
->> +		compatible = "operating-points-v2";
->> +
->> +		opp-200000000 {
->> +			opp-hz = /bits/ 64 <200000000>;
->> +			opp-microvolt = <850000 850000 1000000>;
->> +		};
->> +
->> +		opp-300000000 {
->> +			opp-hz = /bits/ 64 <300000000>;
->> +			opp-microvolt = <850000 850000 1000000>;
->> +		};
->> +
->> +		opp-400000000 {
->> +			opp-hz = /bits/ 64 <400000000>;
->> +			opp-microvolt = <850000 850000 1000000>;
->> +		};
->> +
->> +		opp-600000000 {
->> +			opp-hz = /bits/ 64 <600000000>;
->> +			opp-microvolt = <900000 900000 1000000>;
->> +		};
->> +
->> +		opp-700000000 {
->> +			opp-hz = /bits/ 64 <700000000>;
->> +			opp-microvolt = <950000 950000 1000000>;
->> +		};
->> +
->> +		opp-800000000 {
->> +			opp-hz = /bits/ 64 <800000000>;
->> +			opp-microvolt = <1000000 1000000 1000000>;
->> +		};
->> +	};
->>  };
->> 
->> -&pipegrf {
->> -	compatible = "rockchip,rk3566-pipe-grf", "syscon";
-> 
-> This seems unrelated?
+--d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e
+Content-Type: application/pgp-signature; name="signature.asc"
 
-Yes, it looks completely out of place, but it's just the way this
-diff ended up looking like.  It's actually fine.
+-----BEGIN PGP SIGNATURE-----
 
->> +&cpu0 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->>  };
->> 
->> -&power {
->> -	power-domain@RK3568_PD_PIPE {
->> -		reg = <RK3568_PD_PIPE>;
->> -		clocks = <&cru PCLK_PIPE>;
->> -		pm_qos = <&qos_pcie2x1>,
->> -			 <&qos_sata1>,
->> -			 <&qos_sata2>,
->> -			 <&qos_usb3_0>,
->> -			 <&qos_usb3_1>;
->> -		#power-domain-cells = <0>;
->> -	};
-> 
-> This seems unrelated to me and possibly a functional change?
-> If this was intended, then a description in the commit message would be
-> nice why this is appropriate and possibly moved to a separate patch?
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwrV0wAKCRDXblvOeH7b
+bg9zAQDo90OyxAf/h9U4TC9xmlrPJ8gjPqJrhdXG8qyvtHSHhgEAsCvJamwLgWEP
+dQ+R1gov9Un0Jgyr4SvJ6EQfeo62cAE=
+=DvV+
+-----END PGP SIGNATURE-----
 
-Just another instance of the diff ending up looking strange,
-while there are actually no such changes.
-
->> +&cpu1 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->> +};
->> +
->> +&cpu2 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->>  };
->> 
->> -&usb_host0_xhci {
->> -	phys = <&usb2phy0_otg>;
->> -	phy-names = "usb2-phy";
->> -	extcon = <&usb2phy0>;
->> -	maximum-speed = "high-speed";
-> 
-> This also looks unrelated and a functional change?
-
-Already explained above.
-
->> +&cpu3 {
->> +	operating-points-v2 = <&cpu0_opp_table>;
->>  };
->> 
->> -&vop {
->> -	compatible = "rockchip,rk3566-vop";
-> 
-> This also looks unrelated?
-
-Already explained above.
+--d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e--
 
