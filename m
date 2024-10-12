@@ -1,105 +1,194 @@
-Return-Path: <linux-kernel+bounces-362307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BA499B35E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:16:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F9399B361
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 965A6285A27
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:16:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 775CE28586D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E90155726;
-	Sat, 12 Oct 2024 11:16:18 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A349E155726;
+	Sat, 12 Oct 2024 11:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vt26Ytds"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A69472B9A9;
-	Sat, 12 Oct 2024 11:16:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 086EB2B9A9;
+	Sat, 12 Oct 2024 11:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728731778; cv=none; b=srW/MODOoW3HgEWB5Sn9d2BSbc1e/RYq25peZMGKG3clAJJL/8oZ1/8XeFNO4+3/qk2mJUdOzv8tCQhGuku9lHr1Mh0+FsaBKPtSShK4nHT91SAlAIWs4qpTSNKluVtbRsPQGcyjFWjw0ixHr1L5cJajUE0O/4oZNktqzFRzRaU=
+	t=1728731901; cv=none; b=DQkrAoDvoH5cBq0J+FjDsNpheCeeUEGa27GyHuS2SuKhbtSeTQW2d3NCASZm7t323q6QlkmCdT1/f5ybsKEga5KPwDswY8JDYfUHySp6uncOzHAY9X0HbgNU0pf/Nn9Iw00JeiZLQodVbbmPMnPbiick2sZa/54WknFU1wcHJOA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728731778; c=relaxed/simple;
-	bh=3VkUv22cBbsez+d4gFS6qiQBa0yFs/qqI5re8YUOiT4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=J4VfLYGomlfmSIK+0e3ovTcJzHpFdlkvxqYDVhB+KJkfMMwj+a8xuw90rYpnE1oUW/O7YwOQOtd3TOs2PfWKnaWG5s1X6/EyS03VpbdWCqmAAxNvFyFk4pKGe4oHwxYQIDmbGp4z4cToyKoP9Aelw1azsouqDkhp+PMvRp+Fp1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.194])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XQgqK2Q8NzpWPj;
-	Sat, 12 Oct 2024 19:14:05 +0800 (CST)
-Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
-	by mail.maildlp.com (Postfix) with ESMTPS id 80C591402CB;
-	Sat, 12 Oct 2024 19:16:04 +0800 (CST)
-Received: from [10.174.176.245] (10.174.176.245) by
- kwepemm600001.china.huawei.com (7.193.23.3) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sat, 12 Oct 2024 19:16:03 +0800
-Message-ID: <539a13f9-d3b8-43f0-a5a4-158261408c07@huawei.com>
-Date: Sat, 12 Oct 2024 19:16:02 +0800
+	s=arc-20240116; t=1728731901; c=relaxed/simple;
+	bh=CcsvRZCNdgVxxegqP136qlXXUYtYPi47OiA8IOrfDhU=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LHo7oTFJoM3TKVAAMfCXW+LKusIIZ5vNNZAiL+rjnjKqRDSGOB4PFK1i774oGf72pLEO4tzZeUHu3aUVIOcPU53+TgLZ4G10admTIxqfai25n2LxAB1Zviu5Qph6hymBTLVax0wN+rxFB0fQBmQeCmCBqCECAUOhVelzhn7MTXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vt26Ytds; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6425C4CEC6;
+	Sat, 12 Oct 2024 11:18:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728731899;
+	bh=CcsvRZCNdgVxxegqP136qlXXUYtYPi47OiA8IOrfDhU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=Vt26YtdsO2IsPYpb/Ja/DGVck/P5GJ16VHAvApj4iFQkU4/SjHr5L8k0yE4mcaZFc
+	 wj5nOd2jP8pdduaySZT+KC1ODN64DCez0jhTOgXHn0ysTTU7efPSvMegwc6Wn+llb9
+	 DLx/korgpVW7FLx1dgcidyIO/uP5X23Qj8Y6BDlnrZU8B7mFLwE4jR/yBcwUQvOkXK
+	 JL6pFzYSNSnKNdEZjrsIta4BzIIqf7QrLr4EPNgb8Ye73V5tKE4KAJ4y1bncwUfcfh
+	 +qfkvj4SGg+dGHk+mnESYTFNbi2RQNBOyjD91yHPmzeSo+I3AvHCoCZaam324yto/W
+	 vFD8tA7XeUNig==
+Date: Sat, 12 Oct 2024 12:18:12 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
+ =?UTF-8?B?cg==?= <philm@manjaro.org>
+Subject: Re: [PATCH 2/3] iio: imu: Add triggered buffer for Bosch BMI270 IMU
+Message-ID: <20241012121812.0c62ba51@jic23-huawei>
+In-Reply-To: <20241011153751.65152-3-justin@justinweiss.com>
+References: <20241011153751.65152-1-justin@justinweiss.com>
+	<20241011153751.65152-3-justin@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ethernet: aeroflex: fix potential memory leak in
- greth_start_xmit_gbit()
-To: Gerhard Engleder <gerhard@engleder-embedded.com>
-CC: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<andreas@gaisler.com>, <davem@davemloft.net>, <kuba@kernel.org>,
-	<pabeni@redhat.com>, <edumazet@google.com>, <kristoffer@gaisler.com>
-References: <20241011113908.43966-1-wanghai38@huawei.com>
- <3d26ab3e-2a3c-4c36-b165-06a1029bb0b0@engleder-embedded.com>
-Content-Language: en-US
-From: Wang Hai <wanghai38@huawei.com>
-In-Reply-To: <3d26ab3e-2a3c-4c36-b165-06a1029bb0b0@engleder-embedded.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
- kwepemm600001.china.huawei.com (7.193.23.3)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+
+On Fri, 11 Oct 2024 08:37:48 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
+
+> Set up a triggered buffer for the accel and angl_vel values.
+> 
+> Signed-off-by: Justin Weiss <justin@justinweiss.com>
+Hi Justin
+
+A few suggestions inline. Other than the DMA safe buffer thing, looks good
+but you might want to consider using a single bulk read.
+
+My cynical view is that if someone paid for an IMU they probably want all
+the channels, so optimizing for that case is a good plan.
+
+> ---
+>  drivers/iio/imu/bmi270/Kconfig       |  1 +
+>  drivers/iio/imu/bmi270/bmi270.h      |  8 +++++
+>  drivers/iio/imu/bmi270/bmi270_core.c | 47 ++++++++++++++++++++++++++++
+>  3 files changed, 56 insertions(+)
+> 
+> diff --git a/drivers/iio/imu/bmi270/Kconfig b/drivers/iio/imu/bmi270/Kconfig
+> index 0ffd29794fda..6362acc706da 100644
+> --- a/drivers/iio/imu/bmi270/Kconfig
+> +++ b/drivers/iio/imu/bmi270/Kconfig
+> @@ -6,6 +6,7 @@
+>  config BMI270
+>  	tristate
+>  	select IIO_BUFFER
+
+Hmm. The IIO_BUFFER select shouldn't have been here as no obvious use
+in the driver. Ah well - this patch 'fixes' that :)
+
+> +	select IIO_TRIGGERED_BUFFER
+>  
+>  config BMI270_I2C
+>  	tristate "Bosch BMI270 I2C driver"
+> diff --git a/drivers/iio/imu/bmi270/bmi270.h b/drivers/iio/imu/bmi270/bmi270.h
+> index 51e374fd4290..335400c34b0d 100644
+> --- a/drivers/iio/imu/bmi270/bmi270.h
+> +++ b/drivers/iio/imu/bmi270/bmi270.h
+> @@ -11,6 +11,14 @@ struct bmi270_data {
+>  	struct device *dev;
+>  	struct regmap *regmap;
+>  	const struct bmi270_chip_info *chip_info;
+> +
+> +	/*
+> +	 * Ensure natural alignment for timestamp if present.
+> +	 * Max length needed: 2 * 3 channels + 4 bytes padding + 8 byte ts.
+> +	 * If fewer channels are enabled, less space may be needed, as
+> +	 * long as the timestamp is still aligned to 8 bytes.
+> +	 */
+> +	__le16 buf[12] __aligned(8);
+>  };
+>  
+>  enum bmi270_device_type {
+> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
+> index e5ee80c12166..f49db5d1bffd 100644
+> --- a/drivers/iio/imu/bmi270/bmi270_core.c
+> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
+> @@ -7,6 +7,8 @@
+>  #include <linux/regmap.h>
+>  
+>  #include <linux/iio/iio.h>
+> +#include <linux/iio/triggered_buffer.h>
+> +#include <linux/iio/trigger_consumer.h>
+>  
+>  #include "bmi270.h"
+>  
+> @@ -66,6 +68,7 @@ enum bmi270_scan {
+>  	BMI270_SCAN_GYRO_X,
+>  	BMI270_SCAN_GYRO_Y,
+>  	BMI270_SCAN_GYRO_Z,
+> +	BMI270_SCAN_TIMESTAMP,
+>  };
+>  
+>  const struct bmi270_chip_info bmi270_chip_info[] = {
+> @@ -82,6 +85,29 @@ const struct bmi270_chip_info bmi270_chip_info[] = {
+>  };
+>  EXPORT_SYMBOL_NS_GPL(bmi270_chip_info, IIO_BMI270);
+>  
+> +static irqreturn_t bmi270_trigger_handler(int irq, void *p)
+> +{
+> +	struct iio_poll_func *pf = p;
+> +	struct iio_dev *indio_dev = pf->indio_dev;
+> +	struct bmi270_data *bmi270_device = iio_priv(indio_dev);
+> +	int i, ret, j = 0, base = BMI270_ACCEL_X_REG;
+> +	__le16 sample;
+> +
+> +	for_each_set_bit(i, indio_dev->active_scan_mask, indio_dev->masklength) {
+> +		ret = regmap_bulk_read(bmi270_device->regmap,
+> +				       base + i * sizeof(sample),
+> +				       &sample, sizeof(sample));
+
+This is always a fun corner.
+regmap doesn't guarantee to bounce buffer the data used by the underlying
+transport. In the case of SPI that means we need a DMA safe buffer for bulk
+accesses.  In practice it may well bounce the data today but there are optmizations
+that would make it zero copy that might get applied in future.
+
+Easiest way to do that is put your sample variable in the iio_priv structure
+at the end and mark it __aligned(IIO_DMA_MINALIGN)
+
+Given you are reading a bunch of contiguous registers here it may well make
+sense to do a single bulk read directly into buf and then use
+the available_scan_masks to let the IIO core know it always gets a full set
+of samples. Then if the user selects a subset the IIO core will reorganize
+the data that they get presented with.
+
+Whether that makes sense from a performance point of view depends on
+the speed of the spi transfers vs the cost of setting up the individual ones.
+
+You could optimize contiguous reads in here, but probably not worth that
+complexity.
 
 
-On 2024/10/12 4:41, Gerhard Engleder wrote:
-> On 11.10.24 13:39, Wang Hai wrote:
->> The greth_start_xmit_gbit() returns NETDEV_TX_OK without freeing skb
->> in case of skb->len being too long, add dev_kfree_skb() to fix it.
->>
->> Fixes: d4c41139df6e ("net: Add Aeroflex Gaisler 10/100/1G Ethernet 
->> MAC driver")
->> Signed-off-by: Wang Hai <wanghai38@huawei.com>
->> ---
->>   drivers/net/ethernet/aeroflex/greth.c | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/drivers/net/ethernet/aeroflex/greth.c 
->> b/drivers/net/ethernet/aeroflex/greth.c
->> index 27af7746d645..8f6835a710b9 100644
->> --- a/drivers/net/ethernet/aeroflex/greth.c
->> +++ b/drivers/net/ethernet/aeroflex/greth.c
->> @@ -484,6 +484,7 @@ greth_start_xmit_gbit(struct sk_buff *skb, struct 
->> net_device *dev)
->>         if (unlikely(skb->len > MAX_FRAME_SIZE)) {
->>           dev->stats.tx_errors++;
->> +        dev_kfree_skb(skb);
->>           goto out;
->
-> dev_kfree_skb(skb) is already part of the error handling, one line above
-> the "out" label. Why don't you just add another label which includes
-> dev_kfree_skb(skb) and goto that label?
->
-> Gerhard
+> +		if (ret)
+> +			goto done;
+> +		bmi270_device->buf[j++] = sample;
 
-Hi, Gerhard.
+It's not a huge buffer and you aren't DMAing into it, so maybe just put this
+on the stack?
 
-Thanks for the suggestion, I just sent the v2 version.
-
-[PATCH v2 net] net: ethernet: aeroflex: fix potential memory leak in 
-greth_start_xmit_gbit()
-
-
+> +	}
+> +
+> +	iio_push_to_buffers_with_timestamp(indio_dev, bmi270_device->buf, pf->timestamp);
+> +done:
+> +	iio_trigger_notify_done(indio_dev->trig);
+> +	return IRQ_HANDLED;
+> +}
 
