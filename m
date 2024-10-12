@@ -1,158 +1,281 @@
-Return-Path: <linux-kernel+bounces-362069-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54C2999B081
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:50:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6455799B087
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:53:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130581F23101
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:50:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E5F1C211CB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:53:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14C0126C09;
-	Sat, 12 Oct 2024 03:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5325126C02;
+	Sat, 12 Oct 2024 03:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDypJi7W"
-Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csDHdqpd"
+Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A4C3FBA7
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:50:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E428A41;
+	Sat, 12 Oct 2024 03:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705030; cv=none; b=Hwezc2QAVcdDX0LI0Sb1I13G/PaTVx75e0tumpUoXGN2b0m05RGC9QI4jaa+cANTaT40Rhx0H52vpchZ83bBTJXipc26QfLsZFREL8Vh+P2Q9LtczUb0UmjT/QyIjIpYqFeiSwl0EWcdD67c1tyW0Gmsq0Uw5+IMJyYAxNiehwE=
+	t=1728705202; cv=none; b=NXFaCizuvWsRDYVvpxB79vLJg3mrtlYM7ZACqSjm5yflBlHeSsFOdo0zRmjjGBFFMItgQ/AumlMMJIdf6kqA67s9l1bTNRiRZvxnuZ167vbvLIaL2jLDbU7Oya/8Dy4XEcXb6ntBbOLGyyl+dn9iuikouuU/HFIa7xkzFTXh7H8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705030; c=relaxed/simple;
-	bh=RnF7ivMfvnzgzM8pebBvusg9gGe6XuwcoPNE0AkgY7c=;
+	s=arc-20240116; t=1728705202; c=relaxed/simple;
+	bh=AW5DZ/uxFTAsik+BDblAe2m6pQ/3cvs37Qf6PUBtKcU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MQymJj521+WIJCZtceEFLp78vaqfW7Hou61C+Ou8QnDe8FltBZothv/HNgIM3Jr20XF4LHsTGzOAtqaNDKnQRWiz7+CneFdHwT2fbNTIoYG8qztTHoVLBMTayvtZGOeeKIiN+ssfkJ+dvmKUo19ktCa62vMkrSOR+SeCz7UfpKQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wDypJi7W; arc=none smtp.client-ip=209.85.210.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e427e29c7so656589b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:50:28 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Mspvjr6/mT0olBN5bxLZACJSn2a2N5TWXm6sKBqcJD9Ndgmdj1nfeCqz8GEmLhqPGZOzM42M34T7uVj1mBtYL2Df0UnJq9njcKRmZApCKER+DKb/8qL0n5UULsSLDItMu+fmrNFjPrf4BYzLQAfFC467AtnQsM2YIlo1X3iHzrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csDHdqpd; arc=none smtp.client-ip=209.85.216.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e221a7e7baso1809917a91.0;
+        Fri, 11 Oct 2024 20:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728705028; x=1729309828; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7xd2XYFri8DksBYctsP4y3C7irgIPUJgSkvRCB5K9O8=;
-        b=wDypJi7WA+KqV0j52JVPtxh/Rfc5yhBm8+3/4Sd+7mad0tTXZhVIgjFvyzM5ApeSd+
-         57UaLp10+h0sIhpVWpJkkK+D8d1VE1euQISRQ78Og890+lO5zI6iCMhol+omkqBnL2RB
-         tgOcdMB5siPnjRJ9ul65aYsXb1w087KEyAloBO4cDGL1+mrr34e0YS7Nhj0E3j3MsqpX
-         NxXz15WwWUhBgr5xZG6trecWJyg8mB8oArglki2HgW70CNQ1vdn4EiEhnB0PcFKy7bi3
-         jjGYOGHGrxXU/i+TiA2R9LxhahO7fDYfC0nhNp4y6xHtwQRVBpDoYZwNtbqfjJOH62J3
-         F+Fw==
+        d=gmail.com; s=20230601; t=1728705198; x=1729309998; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oFlRn4ys9Cl5MtaYHqxLNUhoFIlLy79+wr8gd8xYoFI=;
+        b=csDHdqpdCr36TA/eZ7vYhOxSKHDwsj5sWeuI4GgXBelufL+bkhpbH0iTYYPgKb5G0N
+         eZk0pFdWS+DbE1ES/LFqQgchfqC1/oq06hRu/ooSwhhgUqV0AKkLOp+rrS/Y0hnUwp9a
+         349z8ndd5Xx4JD22i/VWJKHn+5eg5LAgvEyE1/FSrIx4TGKzQ2ACaWDJd6IB/i3Xxab/
+         VPVMLKK4ZzvyZodR2jjgET9sVpnovudlgR0gXjzsUpwdF1kLSsskv67afCDJHjRM+m7B
+         hminNrvQEjkj+RGeByHeJR6fA5JB3GCQqcr8umGEsf2USY6xOW6Kb+mdYnUxrglq+gXD
+         ldbg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728705028; x=1729309828;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7xd2XYFri8DksBYctsP4y3C7irgIPUJgSkvRCB5K9O8=;
-        b=Ep/SzmC7f3R5gc9++596FSVBQO3UCC9umSQc2Jm/Up11Xf48foIejJmNcmUIUm/V/y
-         WobuJR919O8+k7ulqHL7Vr3rvISj2J7C0RCdDtN8gjD+yh61DZXa6w5RibL7HqBSPZTk
-         waPCrFOS49sdhA82EI1peQ0h8E+9tzoHS4lJW4oDY49YVWELCMgDhRpltPgGWB9iDdYQ
-         e00iD0iAY4Ahg5h0hnihk8BpmQyxY9WQ5xm+xoLxBsPpUXXaMFGzWT1AZL+wdzuLt18k
-         vBp3h9V5/zS6FCie3A5GvkHzPYG/k+o6pu1uxgAk6ZqlnwE7GzRKDV+JoLa8Q1Ykjen0
-         HuBg==
-X-Forwarded-Encrypted: i=1; AJvYcCWH1EUAhTw0RzuH0yTSNdcATsQbD2BDb1pc2lGcVcQEFRKPXJeP9BK7gms/S5TJFpxhJ9KIx3YeM7c70o0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNtRniyzpMOWiFxbv8emcB4yw/qJfLbS28d+CWGqAOvH75Fw1H
-	sXievLK32i7EINptBfFgPrryamqPFBvXiQyu+f+RU1q80LOi8RNE8plqAIBPxg==
-X-Google-Smtp-Source: AGHT+IF4zz4I11EJJaQjoC63mOUtCQHTC2gvazmoA+u7+QenabiezQrabqUBp6+IGcwAVnq9Hr0H/A==
-X-Received: by 2002:a05:6a00:148b:b0:71d:f2e3:a878 with SMTP id d2e1a72fcca58-71e4c13dd50mr2364487b3a.5.1728705027717;
-        Fri, 11 Oct 2024 20:50:27 -0700 (PDT)
-Received: from thinkpad ([36.255.17.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa93e0fsm3531277b3a.140.2024.10.11.20.50.24
+        d=1e100.net; s=20230601; t=1728705198; x=1729309998;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oFlRn4ys9Cl5MtaYHqxLNUhoFIlLy79+wr8gd8xYoFI=;
+        b=KDiKOi4H3XKQdrByIsqELzLdqnWLWdHfLAr3V6U2uZoPbzEHRzbB0hW3sjhNm7AdOK
+         jv04b5ZQiddZpouE5DzgRI1QsA9p8ygp+Ts+4QoIjCG6HHcA7+jAEB/6EU6n49VVuo9n
+         qycJt3SlPyAF937qHQ9NQ3Znp+h3YpdvVKg3uy5XeqpiBWWTv7aHwHa14HS56tkRQiNp
+         LW3ykiwwrnPKNTKYJnoHlqbPi0xP2qZoXwH6fLOCDu5Iz5gFR63I/FCB1joV9nATLpU+
+         HWF+xCAkUgTStpOHQWt54C6SlsILqldjXlizmnuB0lou6ZvNtlvwIqUxx3N9PDL94Yzr
+         zf+w==
+X-Forwarded-Encrypted: i=1; AJvYcCVgz5LuTj7M7qEMP3eYMOkWhrMSqarjRKHoSqFEAoYTSkJ4vKCUF/dGEVi/gPuVmF1YxMJyEASgwpc=@vger.kernel.org, AJvYcCVlc7V9K4RGEFj7ktQV35d9nr5adMNJuNYL3YDTgbd1P3CebdvordJg7EtmsxGRCWE7YNokT6L+SqMWoA8d@vger.kernel.org, AJvYcCVoh4HYCz9G8SDyqzyg424wSWiieQkJ54dK1jPJGcwflCI1LfRbFsZIkf+SYWs6JSsuKqTAI7BKHJqsYqFcFlmGSdpW7w==@vger.kernel.org, AJvYcCWkmZ4S45vQcClY6pPM026jFvbJV2jj5fGER19hv4IZAJ3hEVOcbI8iFlU06XruyjtyE9c7ybQZ8mo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMO7k3qbGSxWNwlJEHTmeWg8x0B+TRwp1vLYWRqmaz89U6HIxA
+	2q1hpSCjUUKsmQRc5H0GrB9a1+crwDoRTmiMlrT8ngY3SlFILamZKmOpjOmY
+X-Google-Smtp-Source: AGHT+IFBRR4v4JycUj40IR+Djj+Y51UpeKooSlN57VO1csE3pWQErWmVuCZBFo15g5B2LK1eZcDxUg==
+X-Received: by 2002:a17:90a:6845:b0:2e2:eba1:a1a1 with SMTP id 98e67ed59e1d1-2e2f0d9d935mr6606210a91.36.1728705197767;
+        Fri, 11 Oct 2024 20:53:17 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3060ba4besm1739046a91.19.2024.10.11.20.53.16
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 20:50:27 -0700 (PDT)
-Date: Sat, 12 Oct 2024 09:20:22 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Mayank Rana <quic_mrana@quicinc.com>
-Cc: kevin.xie@starfivetech.com, lpieralisi@kernel.org, kw@linux.com,
-	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH v2] PCI: starfive: Enable PCIe controller's runtime PM
- before probing host bridge
-Message-ID: <20241012035022.tvcffmnqzpqb7e6q@thinkpad>
-References: <20241011235530.3919347-1-quic_mrana@quicinc.com>
+        Fri, 11 Oct 2024 20:53:16 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id D5D7345E17CA; Sat, 12 Oct 2024 10:53:13 +0700 (WIB)
+Date: Sat, 12 Oct 2024 10:53:13 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Mario Limonciello <mario.limonciello@amd.com>,
+	Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
+	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
+Subject: Re: [PATCH v2 01/13] Documentation: x86: Add AMD Hardware Feedback
+ Interface documentation
+Message-ID: <ZwnyqRF-j7Epd_kA@archie.me>
+References: <20241010193705.10362-1-mario.limonciello@amd.com>
+ <20241010193705.10362-2-mario.limonciello@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ScYld6gsAtJ/5B+U"
+Content-Disposition: inline
+In-Reply-To: <20241010193705.10362-2-mario.limonciello@amd.com>
+
+
+--ScYld6gsAtJ/5B+U
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241011235530.3919347-1-quic_mrana@quicinc.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 04:55:30PM -0700, Mayank Rana wrote:
-> PCIe controller device (i.e. PCIe starfive device) is parent to PCIe host
-> bridge device. To enable runtime PM of PCIe host bridge device (child
-> device), it is must to enable parent device's runtime PM to avoid seeing
-> WARN_ON as "Enabling runtime PM for inactive device with active children".
-
-"to avoid seeing the below warning from PM core:
-
-pcie-starfive 940000000.pcie: Enabling runtime PM for inactive device
-with active children"
-
-> Fix this issue by enabling starfive pcie controller device's runtime PM
-> before calling into pci_host_probe() through plda_pcie_host_init().
-
-"before calling pci_host_probe() in plda_pcie_host_init()"
-
-> 
-> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
-> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
-
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-
-- Mani
-
-> ---
-> v1->v2: Updated commit description based on Bjorn's feedback
-> Link to v1: https://patchwork.kernel.org/project/linux-pci/patch/20241010202950.3263899-1-quic_mrana@quicinc.com/
->  
->  drivers/pci/controller/plda/pcie-starfive.c | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
-> index 0567ec373a3e..e73c1b7bc8ef 100644
-> --- a/drivers/pci/controller/plda/pcie-starfive.c
-> +++ b/drivers/pci/controller/plda/pcie-starfive.c
-> @@ -404,6 +404,9 @@ static int starfive_pcie_probe(struct platform_device *pdev)
->  	if (ret)
->  		return ret;
->  
-> +	pm_runtime_enable(&pdev->dev);
-> +	pm_runtime_get_sync(&pdev->dev);
+On Thu, Oct 10, 2024 at 02:36:53PM -0500, Mario Limonciello wrote:
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> +Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
+> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
 > +
->  	plda->host_ops = &sf_host_ops;
->  	plda->num_events = PLDA_MAX_EVENT_NUM;
->  	/* mask doorbell event */
-> @@ -413,11 +416,12 @@ static int starfive_pcie_probe(struct platform_device *pdev)
->  	plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
->  	ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
->  				  &stf_pcie_event);
-> -	if (ret)
-> +	if (ret) {
-> +		pm_runtime_put_sync(&pdev->dev);
-> +		pm_runtime_disable(&pdev->dev);
->  		return ret;
-> +	}
->  
-> -	pm_runtime_enable(&pdev->dev);
-> -	pm_runtime_get_sync(&pdev->dev);
->  	platform_set_drvdata(pdev, pcie);
->  
->  	return 0;
-> -- 
-> 2.25.1
-> 
+> +:Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+> +
+> +:Author: Perry Yuan <perry.yuan@amd.com>
 
--- 
-மணிவண்ணன் சதாசிவம்
+Don't forget to correct the copyright reST field:
+
+diff --git a/Documentation/arch/x86/amd-hfi.rst b/Documentation/arch/x86/am=
+d-hfi.rst
+index 5ada5c5b79f4b5..82811be984799d 100644
+--- a/Documentation/arch/x86/amd-hfi.rst
++++ b/Documentation/arch/x86/amd-hfi.rst
+@@ -4,7 +4,7 @@
+ Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
+ =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+=20
+-:Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
++:Copyright: 2024 Advanced Micro Devices, Inc. All Rights Reserved.
+=20
+ :Author: Perry Yuan <perry.yuan@amd.com>
+=20
+
+> +
+> +Overview
+> +--------
+> +
+> +AMD Heterogeneous Core implementations are comprised of more than one
+> +architectural class and CPUs are comprised of cores of various efficiency
+> +and power capabilities. Power management strategies must be designed to =
+accommodate
+> +the complexities introduced by incorporating different core types.
+> +Heterogeneous systems can also extend to more than two architectural cla=
+sses as well.
+> +The purpose of the scheduling feedback mechanism is to provide informati=
+on to
+> +the operating system scheduler in real time such that the scheduler can =
+direct
+> +threads to the optimal core.
+> +
+> +``Classic cores`` are generally more performant and ``Dense cores`` are =
+generally more
+> +efficient.
+> +The goal of AMD's heterogeneous architecture is to attain power benefit =
+by sending
+> +background thread to the dense cores while sending high priority threads=
+ to the classic
+> +cores. From a performance perspective, sending background threads to den=
+se cores can free
+> +up power headroom and allow the classic cores to optimally service deman=
+ding threads.
+> +Furthermore, the area optimized nature of the dense cores allows for an =
+increasing
+> +number of physical cores. This improved core density will have positive =
+multithreaded
+> +performance impact.
+> +
+> <snipped>...
+> +
+> +The mechanism used to trigger a table update like below events:
+> +    * Thermal Stress Events
+> +    * Silent Compute
+> +    * Extreme Low Battery Scenarios
+
+What about below wording?
+
+---- >8 ----
+diff --git a/Documentation/arch/x86/amd-hfi.rst b/Documentation/arch/x86/am=
+d-hfi.rst
+index 351641ce28213c..5ada5c5b79f4b5 100644
+--- a/Documentation/arch/x86/amd-hfi.rst
++++ b/Documentation/arch/x86/amd-hfi.rst
+@@ -12,16 +12,15 @@ Overview
+ --------
+=20
+ AMD Heterogeneous Core implementations are comprised of more than one
+-architectural class and CPUs are comprised of cores of various efficiency
+-and power capabilities. Power management strategies must be designed to ac=
+commodate
+-the complexities introduced by incorporating different core types.
+-Heterogeneous systems can also extend to more than two architectural class=
+es as well.
+-The purpose of the scheduling feedback mechanism is to provide information=
+ to
+-the operating system scheduler in real time such that the scheduler can di=
+rect
+-threads to the optimal core.
++architectural class and CPUs are comprised of cores of various efficiency =
+and
++power capabilities: performance-oriented *classic cores* and power-efficie=
+nt
++*dense cores*. As such, power management strategies must be designed to
++accommodate the complexities introduced by incorporating different core ty=
+pes.
++Heterogeneous systems can also extend to more than two architectural class=
+es as
++well. The purpose of the scheduling feedback mechanism is to provide
++information to the operating system scheduler in real time such that the
++scheduler can direct threads to the optimal core.
+=20
+-``Classic cores`` are generally more performant and ``Dense cores`` are ge=
+nerally more
+-efficient.
+ The goal of AMD's heterogeneous architecture is to attain power benefit by=
+ sending
+ background thread to the dense cores while sending high priority threads t=
+o the classic
+ cores. From a performance perspective, sending background threads to dense=
+ cores can free
+@@ -78,7 +77,8 @@ Power Management FW is responsible for detecting events t=
+hat would require
+ a reordering of the performance and efficiency ranking. Table updates would
+ happen relatively infrequently and occur on the time scale of seconds or m=
+ore.
+=20
+-The mechanism used to trigger a table update like below events:
++The following events trigger a table update:
++
+     * Thermal Stress Events
+     * Silent Compute
+     * Extreme Low Battery Scenarios
+
+> diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/in=
+dex.rst
+> index 8ac64d7de4dc..7f47229f3104 100644
+> --- a/Documentation/arch/x86/index.rst
+> +++ b/Documentation/arch/x86/index.rst
+> @@ -43,3 +43,4 @@ x86-specific Documentation
+>     features
+>     elf_auxvec
+>     xstate
+> +   amd_hfi
+
+Sphinx reports mismatched toctree entry name:
+
+Documentation/arch/x86/index.rst:7: WARNING: toctree contains reference to =
+nonexisting document 'arch/x86/amd_hfi'
+
+I have to fix it up:
+
+---- >8 ----
+diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/inde=
+x.rst
+index 7f47229f3104e1..56f2923f52597c 100644
+--- a/Documentation/arch/x86/index.rst
++++ b/Documentation/arch/x86/index.rst
+@@ -43,4 +43,4 @@ x86-specific Documentation
+    features
+    elf_auxvec
+    xstate
+-   amd_hfi
++   amd-hfi
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--ScYld6gsAtJ/5B+U
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZwnypAAKCRD2uYlJVVFO
+o6+GAQDrEa+eXvEryM52GrfrRsgFJemg9iRNdruOpF5csqRb7QD/dIlwwqoqSq3N
+aEclgc9riuX7haD/M3JqTJcey6S7qQ0=
+=LzcE
+-----END PGP SIGNATURE-----
+
+--ScYld6gsAtJ/5B+U--
 
