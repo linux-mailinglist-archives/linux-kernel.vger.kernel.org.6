@@ -1,117 +1,151 @@
-Return-Path: <linux-kernel+bounces-362098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01C3999B10F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:21:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2ED399B111
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:22:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A786D1F230B3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:21:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5EA2847A1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:22:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A903812DD88;
-	Sat, 12 Oct 2024 05:20:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59972137742;
+	Sat, 12 Oct 2024 05:22:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GXZncEE0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="CtTZ2jmT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0F8B67A;
-	Sat, 12 Oct 2024 05:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD57327702
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 05:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728710459; cv=none; b=D463EtuqNn144pyONWy+7bILj0/oyVD+y77FAa9i1NOYv84CMnUfZa8x5GC+ZGb9zOBlVa0ahGOfcKETcmd22xLf2bm979ofE+lvkuK7DaoNAjTD090lT5O7W1H5sQAhWGxsMenVeLYfDxEbEuDAe3L0Omi62lMESaLVFM46ORY=
+	t=1728710542; cv=none; b=u5nlh33/h8NuZBHwk7VKN5pRPle14KqAVi/IgaKD9og6sdpUj9sIyfqPjo1HDSMy99GyabImzwIlOCp+YlILdE6YLvL0L4KBODkpJsD7BSMhihTsoTqB6x3amwxHBPNkFfWpGxaIwPeYRa3MILrAD4BPtC1Z/q6k/MuVLmyy1/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728710459; c=relaxed/simple;
-	bh=BzwsNGwWPFbLQrywGqQnb8DA672Q23+r40wwcBCKWv0=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=CIFrUn+mnh8eCHqlOdJZ42gf0ZeBnejL4B4qgLJWJ5dKUj/2vcqC+2ZTLcf3F7kC4cp+yAjkaoObrUJyG1/Lk82Z2tafBR+c0JEgdVqyRnYrqeqb9MQ78ALX3QPJMIv/ygW/jqgNcgXizI5sFnBUVMEYZa/gzLqYVEqzbec+/RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GXZncEE0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2906DC4CEC6;
-	Sat, 12 Oct 2024 05:20:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728710458;
-	bh=BzwsNGwWPFbLQrywGqQnb8DA672Q23+r40wwcBCKWv0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GXZncEE06NownrToKmaAR9eeFS8yLicRU0Wg8sHHa7yPfhVK09vpkxeGShSLAIha3
-	 46beUDZvv7QCbiqJwOjhVbJ28DtL3o5y1ZkIGKl9wlmXeOHVhqnTw6zdKZaVtagX6C
-	 KJi/1clzW5f/rERNDpCuSfFfuI5GTlAvBY2M2JwVn4IR3u/7OA7sakyMNYzSen9lfP
-	 vkepmNPFiBDgQ9/+IcJRn0M+L5GhfuGUe6iPm8vTeWHaVU9PK/2mJMY04I8X2RPC3N
-	 sugaNx8qW4FPWgKPQqR5D6U9pe9Ksicoz3EVYIYY9DqPjhcHwWzXnT4C0ZhDuN82NT
-	 gJKLkMzGVHz2A==
-Date: Sat, 12 Oct 2024 14:20:54 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH] ring-buffer: Fix refcount setting of boot mapped
- buffers
-Message-Id: <20241012142054.bc1fffb7b4829ff2e496e566@kernel.org>
-In-Reply-To: <20241011165224.33dd2624@gandalf.local.home>
-References: <20241011165224.33dd2624@gandalf.local.home>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728710542; c=relaxed/simple;
+	bh=KP48yn2zu/bvXJGE9dWPkWLMt3oDQ+5HzzzKc0IzQwg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n51nwPJUrSN9bcFIevcOkrzwIIhdAQT+wmTp7FaP7UIow4Sn6iZAAZiwaST++8N6dOTrXFacl1LE77nz1ik4YXsv6kI4VusJfOxbtKTFOlTTQanlbh8+ZoUaYfRoBWQ+kfwwfcEhPT7FYvAJbDr8sRoXqAFNt8EelOKM/BA1dv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=CtTZ2jmT; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728710538;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hvDr0hBqceMPoqKr59VTJA2PMmkK0w6bfmvafMG1XxI=;
+	b=CtTZ2jmT9bnRa+ffPANB0jpFn4JjDcpBQrXhDsWTYsCxqQr+pcfOgKNqjg6yKm7xYyPrhZ
+	uBGZ+dfi35qby9FrLL8oh1KkAmQd4RrSX/B9OpsUbRJFst2Oa3jff9W0CyeqGIKoiBGprt
+	JRgx24BKu7PSrMkcADPdUtFO1RXG+hU=
+Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com
+ [209.85.215.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-28-l52he_H_Pjy2G8v3Ixwacw-1; Sat, 12 Oct 2024 01:22:17 -0400
+X-MC-Unique: l52he_H_Pjy2G8v3Ixwacw-1
+Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-7ea59e7fb29so1026700a12.2
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:22:17 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728710536; x=1729315336;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hvDr0hBqceMPoqKr59VTJA2PMmkK0w6bfmvafMG1XxI=;
+        b=DwK73KMpwG1DZMREDDBznrQTHr/n9m9R/s1wfytwEDcEvkHJWp2gZZ5sJPg8ZLTCwT
+         4WWHg68jJyxPLaNG14JoNIgG/+4vYQJzb4BZEmnZQaS4IzIaeGN7lT89ibHyOYIXu9Gl
+         LiiVzrwhaQDNiT4aLUwFwlK3iXlN+l1X6+bunNtFGCM0LNsm49fKtEdWFX9NCS0VWiJ9
+         N8eIsfnmwLYT1Xjq+p2QbW80Tmp+ren7aKVueqHISR6eAjr+btzQ2jquqPrQFuifG7UN
+         B6elrnVWI1O+pZdhVc81/ryqYRDk2/Jw8FCS8HNRRu048PrOfFYh1OYTO1fohLAlg73K
+         TajQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUj/Kd9Qb7QT/qxWSYdrHdAkO8jVbeTUHlu7aRX+fVfGygU5GCYOQhxpOLfEwbi2AsoSU6kv3ptGf7x0SQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTJYZpZ/a6HDKiILf4QbEXhYvIaGEp6zajm73mgi83xstl4cPN
+	ZQSYQ6tE9Q1pY8wu5U/QPQFLceL1VVlH+YGZT7Q844+58wHa/WBjKzbQhN2qWmm7TDIl3j8Py2j
+	fIPoNHMjdRhfbA/zEBLK/2MewRk3JHk0Qm1E95sXMCSey9ZP+Xzlm5dfs1wikIQ==
+X-Received: by 2002:a17:903:2292:b0:20c:be0e:d47e with SMTP id d9443c01a7336-20cbe0ed77fmr27330035ad.56.1728710536125;
+        Fri, 11 Oct 2024 22:22:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGPdfPL4sLDuZbuEZ8hOCaoZXNRre8SGr7tfbn9VtHIuESumtQnMGZco/QwYJ9wvIb8IjS+5g==
+X-Received: by 2002:a17:903:2292:b0:20c:be0e:d47e with SMTP id d9443c01a7336-20cbe0ed77fmr27329915ad.56.1728710535801;
+        Fri, 11 Oct 2024 22:22:15 -0700 (PDT)
+Received: from [192.168.68.54] ([180.233.125.129])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c33fdf9sm31443385ad.260.2024.10.11.22.22.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 22:22:15 -0700 (PDT)
+Message-ID: <cfbd0cbb-bfff-41fc-b729-c8c49ce28215@redhat.com>
+Date: Sat, 12 Oct 2024 15:22:06 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 05/11] arm64: rsi: Map unprotected MMIO as decrypted
+To: Catalin Marinas <catalin.marinas@arm.com>
+Cc: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev, Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+ James Morse <james.morse@arm.com>, Oliver Upton <oliver.upton@linux.dev>,
+ Zenghui Yu <yuzenghui@huawei.com>, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Joey Gouly <joey.gouly@arm.com>,
+ Alexandru Elisei <alexandru.elisei@arm.com>,
+ Christoffer Dall <christoffer.dall@arm.com>, Fuad Tabba <tabba@google.com>,
+ linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20241004144307.66199-1-steven.price@arm.com>
+ <20241004144307.66199-6-steven.price@arm.com>
+ <e21481a9-3e36-4a5d-9428-0f5ef8083676@redhat.com> <Zwkl51C3DFEQQ0Jb@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <Zwkl51C3DFEQQ0Jb@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 11 Oct 2024 16:52:24 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+On 10/11/24 11:19 PM, Catalin Marinas wrote:
+> On Tue, Oct 08, 2024 at 10:31:06AM +1000, Gavin Shan wrote:
+>> On 10/5/24 12:43 AM, Steven Price wrote:
+>>> diff --git a/arch/arm64/kernel/rsi.c b/arch/arm64/kernel/rsi.c
+>>> index d7bba4cee627..f1add76f89ce 100644
+>>> --- a/arch/arm64/kernel/rsi.c
+>>> +++ b/arch/arm64/kernel/rsi.c
+>>> @@ -6,6 +6,8 @@
+>>>    #include <linux/jump_label.h>
+>>>    #include <linux/memblock.h>
+>>>    #include <linux/psci.h>
+>>> +
+>>> +#include <asm/io.h>
+>>>    #include <asm/rsi.h>
+>>>    struct realm_config config;
+>>> @@ -92,6 +94,16 @@ bool arm64_is_protected_mmio(phys_addr_t base, size_t size)
+>>>    }
+>>>    EXPORT_SYMBOL(arm64_is_protected_mmio);
+>>> +static int realm_ioremap_hook(phys_addr_t phys, size_t size, pgprot_t *prot)
+>>> +{
+>>> +	if (arm64_is_protected_mmio(phys, size))
+>>> +		*prot = pgprot_encrypted(*prot);
+>>> +	else
+>>> +		*prot = pgprot_decrypted(*prot);
+>>> +
+>>> +	return 0;
+>>> +}
+>>> +
+>>
+>> We probably need arm64_is_mmio_private() here, meaning arm64_is_protected_mmio() isn't
+>> sufficient to avoid invoking SMCCC call SMC_RSI_IPA_STATE_GET in a regular guest where
+>> realm capability isn't present.
 > 
-> A ring buffer which has its buffered mapped at boot up to fixed memory
-> should not be freed. Other buffers can be. The ref counting setup was
-> wrong for both. It made the not mapped buffers ref count have zero, and the
-> boot mapped buffer a ref count of 1. But an normally allocated buffer
-> should be 1, where it can be removed.
-> 
-> Keep the ref count of a normal boot buffer with its setup ref count (do
-> not decrement it), and increment the fixed memory boot mapped buffer's ref
-> count.
-> 
-
-Looks good to me.
-
-Reviewed-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> Fixes: e645535a954ad ("tracing: Add option to use memmapped memory for trace boot instance")
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  kernel/trace/trace.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
-> index c01375adc471..5ba40f39c8b5 100644
-> --- a/kernel/trace/trace.c
-> +++ b/kernel/trace/trace.c
-> @@ -10610,10 +10610,10 @@ __init static void enable_instances(void)
->  		 * cannot be deleted by user space, so keep the reference
->  		 * to it.
->  		 */
-> -		if (start)
-> +		if (start) {
->  			tr->flags |= TRACE_ARRAY_FL_BOOT;
-> -		else
-> -			trace_array_put(tr);
-> +			tr->ref++;
-> +		}
->  
->  		while ((tok = strsep(&curr_str, ","))) {
->  			early_enable_events(tr, tok, true);
-> -- 
-> 2.45.2
+> I think we get away with this since the hook won't be registered in a
+> normal guest (done from arm64_rsi_init()). So the additional check in
+> arm64_is_mmio_private() is unnecessary.
 > 
 
+Indeed. I missed the point that the hook won't be registered for a normal
+guest. So we're good and safe.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+Thanks,
+Gavin
+
 
