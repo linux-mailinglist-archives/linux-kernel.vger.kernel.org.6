@@ -1,117 +1,132 @@
-Return-Path: <linux-kernel+bounces-362655-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D3F099B7BE
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:53:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95ACE99B7C0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:55:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3A78B217EF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 23:53:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 404021F21D5D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 23:55:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9950A170A03;
-	Sat, 12 Oct 2024 23:53:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06D24199934;
+	Sat, 12 Oct 2024 23:55:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BjbjiRke"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="Bmg4o//l"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D7F04F8BB;
-	Sat, 12 Oct 2024 23:53:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7674142A8E
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 23:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728777193; cv=none; b=RsetXex4MyU3nT79oVGDvDXHPmKdOQP0jj5IjHGv395C956wW2pM2Ycr/iaZ5AEHKJJfP197l17ysZX+Zm/GMgKSZmRcYhopHiwZxljO4BG/OgG4Dw48IM4v0S6eArLXUNtqSSAIaxBTa+Vx2N0aDVvdtdvarVQFcZ+NbEPp5kQ=
+	t=1728777347; cv=none; b=VFMpX/jTeoOv0EsLSh7STyofjEWKC6Oh+6H54jcJQ/b3FACr7dvJMCKD7Ptjd+1wle5lhE6inQqlcPeysIGGDkavIYY3zsjrKPPVP9INGON9Xxuo0yzk7lppqVrU48YcIfgmCvvkODJ9RLzHrDPphnFbiexZsycep1HsoOTaq5k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728777193; c=relaxed/simple;
-	bh=KuNzdB0cvqLJdx9Zw7fwlvH3UCIdWMu+L7CAvZ6YIXg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CTgyK5nMAe2cURk68r4iMJ/9xmH+AcaW5rqulu2l2wL9xEja+BNSml5v8oF+qz1/h6ghtfqoAglbSObOw0W4VhADNBA7ouOToUI2htSRxAGqLulBBzOpuTmWhRV8YPdWiGiXmr22FQgMp8DnigoC4ZIliFmdyGao5mx4xPx6HJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BjbjiRke; arc=none smtp.client-ip=209.85.208.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso30063641fa.3;
-        Sat, 12 Oct 2024 16:53:11 -0700 (PDT)
+	s=arc-20240116; t=1728777347; c=relaxed/simple;
+	bh=Rs0WhVYlqwQ9GIF9wqpRbWP2+E5Qn796AkiW/OgXwcI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=sUl5yberjh/vgh5eUJzORn1mi9YGAM4Ga5kM5fnvR+i7cE8CMzvQiOpxREYUdg097Iwjqf3IAKevppSvHXUO7coyKFa6fYVPfOkopFZ/UJ6bjo8sYHxPDYq19KHFd/jJRHkeTc0UW4EwkaDiAPf1R9qExebTuX8dVt0q5fUOJcs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=Bmg4o//l; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-46042ee22a7so28658521cf.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 16:55:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728777189; x=1729381989; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=KuNzdB0cvqLJdx9Zw7fwlvH3UCIdWMu+L7CAvZ6YIXg=;
-        b=BjbjiRkeXXIgg4aOA8FmU+nO61ovl6XvmQFIK4IJyc/TDtsxAikDKKtllvsj8aOuA0
-         fHOJijrRCVOex9dx+t+s/5mtQmvSGsTFmunapJv/YlYgJwEi/GRHkjMPJ/IHBysiKOYx
-         wnaWYfkTmk27X/P0B1Zuuix8enT/Os0x3wDyu7o+NBt5cB9Unx0sOLKUGmQD73qC85Yz
-         WOFdpDP9Y/A7b4CUt3cWDGyPJArV3GjgCoySGK0fr7UHI0WDqhNKn6NNF1gNslnyDfgy
-         nT5u/LoGZbbB/OQN0dtGp6ai4/3dXp+Ae/0Jerm+QWmm0yyOiZjbjvRAyALtbOUt5+bH
-         UegQ==
+        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1728777343; x=1729382143; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=+sk6LUiLeleXUsSllRpsc5OH3Y6ZTlzg70lgLuDUR68=;
+        b=Bmg4o//lsNVigdXFCWLLM1H7fGmb4Fvzfno3G8QVRU0+7J/qRxsmQm385h/A5YJ1ma
+         34wz8G5pJogkwEV6bR5fEG/wAkOy0g70JNXIRftEf0trR7rDqJyskav+yPRagnaySJTS
+         TzHrL4PS9K75H7UqhkFiV1VbEuet5urZpSJChF+Gr+yKDhb1IOb7DQkiGEMq/QvjMkDy
+         Gj0IupEqbWdgPGFIkpD/RNi4ZMmp0MP+ueuiBx6+mEznmvaKJ3Lptk+m/kCOhUniCgWE
+         ors2nme+QnmNkU0UsDkaA3zqhCHN6MMIwwt6R6ZA1K3DOBVgSma1hyi6jTfYK+c7IQr9
+         z4hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728777189; x=1729381989;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=KuNzdB0cvqLJdx9Zw7fwlvH3UCIdWMu+L7CAvZ6YIXg=;
-        b=jOfHlctU0N6dr3E0hoBNPvIIl2b37jZ2amAqU2iTB2BnnmdY77OsxQo7qteuruNiDD
-         BSrA/6v3EGGdLzl2ZKK3Hz5rdZTEXFZ1bL9+mo4tLth+oW5iw97wCJe3a4FYiPthsFJM
-         dBTSGKR2jampYluxSajUrE4s5Q4eLR1Xt9EnUdJHBuGKJDNnTXiLtaw+xaB+prFrBpQD
-         yo5TRPhKVRWKkLyxY3E4OmFfam48ALXZ/NDaj6NTSBuvxenXfIlfoivvMQbqPa0qW9DQ
-         S3EOgAqa6Wkqna3P0h6/QMo7pO+dyd4rekXwAbLSnIowvCLN/5jfoIgMUE41pGHOTmFn
-         WW/A==
-X-Forwarded-Encrypted: i=1; AJvYcCUVZ+Ldb8SFMgz8PW/NlWPGLiZquUU5oBKzLW8s0GhLXOnbVNLrLwo31M5jXB+varbgTYUSV3nNzyi078MY@vger.kernel.org, AJvYcCVJVyLjKLjDredAhX8kpKJmEKvqn6Q/FcS98G64yryp+aAFUl2hB0fz160qnZz+FP7E/iRgOaLTQ6M+7Va2I6Y=@vger.kernel.org, AJvYcCVoHYtOhNQ1Jl4OnKitH3thKvBIhB6G+dqwEjmiuuDiRtnlQRXcD4QoSnr9/n186pJXqVgPAZfUzeGm0/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh0iqRW0ayv5h3l2I1ubTLOH9AuilWUViQBhWscqhi5GLXw4H/
-	Th4rCSCD7oNuGxTZpSguYpSZSOaqcgPnviqaTM7mUqLc7fVNhzIGgDkFhImhu+6Ls7nkwXJb585
-	V8gdn/FcpdO2sSB2m8SdQVxi6PGY=
-X-Google-Smtp-Source: AGHT+IHn+C2ySu0U+5Q9KLhAJr4VqYfajR30A2uza06CpeKNKIapyrDVzmOOJwKx+G9vzz9EEtbqQpyfHsBrj67Sn84=
-X-Received: by 2002:a05:651c:2120:b0:2f6:5f7b:e5cf with SMTP id
- 38308e7fff4ca-2fb32727e42mr29641551fa.14.1728777189113; Sat, 12 Oct 2024
- 16:53:09 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728777343; x=1729382143;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+sk6LUiLeleXUsSllRpsc5OH3Y6ZTlzg70lgLuDUR68=;
+        b=k61rPPxLlflnGYAAYvBX3Pg9EMnzGBRqENLGAzgJ/uoamOpOZ/d/WoyTwaJUd+m7uY
+         O+TO1J429B8QYEllOhCHs240G2UxuuOBTPqegXXP0dlOiRWCt/OQzkYj5vvorxh2JzcU
+         QKSOAt2SoE4iDFknPuG7aaqySfK8xmHwm+hT+/SIuLFjfmKJaONoEwkXOAo6vjgG/y2l
+         gp+tcyEEBoHhC9aonFeKRmVyoBDX9vg3BNfCNqxFkOA4ySoSvdUuRLC1uKqlX60k6Vv2
+         8xvdTy3Oyk7lCuiXcKylPkIKBW1X+DcnHRlzgQn5UUuC5Q+FxLgqE/XXzOcJrUKIxMTU
+         Ndtg==
+X-Forwarded-Encrypted: i=1; AJvYcCXaNhAsoY83rTbx8GsDGXMUSKpx2a5fI0bBH/ROje5YuB53tjSud0gOdbqu4DbdRx0/xlR3M+JtZjr35Yk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YziZRB5hyDQYse5qfVODTJzORK63PY5+p1+k+VDAj404tX/raFn
+	ccCvMEZ8FYVswlzNATSXyUw2/RN/DzGHESHZJ2b7Pwacmv54wtULUZi9Q/Kxhw==
+X-Google-Smtp-Source: AGHT+IHk5YHd59N8jAKWL+/oKO+RM0w7kbYnSajqFt83qDlUq2bDjS287Ot2L2/6nIQoY78Ym5jFQg==
+X-Received: by 2002:a05:6214:460d:b0:6cc:9:3205 with SMTP id 6a1803df08f44-6cc00093482mr40916936d6.45.1728777343295;
+        Sat, 12 Oct 2024 16:55:43 -0700 (PDT)
+Received: from batbytes.com ([216.212.123.7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85b7772sm30477966d6.49.2024.10.12.16.55.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Oct 2024 16:55:42 -0700 (PDT)
+From: Patrick Donnelly <batrick@batbytes.com>
+To: Xiubo Li <xiubli@redhat.com>,
+	Ilya Dryomov <idryomov@gmail.com>
+Cc: Patrick Donnelly <batrick@batbytes.com>,
+	Patrick Donnelly <pdonnell@redhat.com>,
+	ceph-devel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] ceph: correct ceph_mds_cap_item field name
+Date: Sat, 12 Oct 2024 19:55:25 -0400
+Message-ID: <20241012235529.520289-1-batrick@batbytes.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
- <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com> <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
-In-Reply-To: <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 12 Oct 2024 19:52:32 -0400
-Message-ID: <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, 
-	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 12, 2024 at 7:37=E2=80=AFPM Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
-> But before we do that, is there a way to force `rustc` to load current
-> name (or trick it to do so, say, with a symlink)? i.e. can it be
-> reasonably done out-of-tree without changes to the filename?
+The issue_seq is sent with bulk cap releases, not the current sequence number.
 
-I think the problem is that rustc produces .dylib on macOS rather than
-it _looking_ for .dylib; the path to the .so is fully specified in the
-rustc invocation of the targets that depend on it. I don't know of a way
-to control the file suffix externally.
+See also ceph.git commit: "include/ceph_fs: correct ceph_mds_cap_item field name".
 
-A symlink would possibly work (unless rustc refuses to load anything
-other than .dylib on macOS for whatever reason), but wouldn't be very
-ergonomic; you'd have to create the symlink blind or else run the build
-system until it fails, then create the symlink, and then run the build
-again.
+See-also: https://tracker.ceph.com/issues/66704
+Signed-off-by: Patrick Donnelly <pdonnell@redhat.com>
+---
+ fs/ceph/mds_client.c         | 2 +-
+ include/linux/ceph/ceph_fs.h | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/fs/ceph/mds_client.c b/fs/ceph/mds_client.c
+index c4a5fd94bbbb..0be82de8a6da 100644
+--- a/fs/ceph/mds_client.c
++++ b/fs/ceph/mds_client.c
+@@ -2362,7 +2362,7 @@ static void ceph_send_cap_releases(struct ceph_mds_client *mdsc,
+ 		item->ino = cpu_to_le64(cap->cap_ino);
+ 		item->cap_id = cpu_to_le64(cap->cap_id);
+ 		item->migrate_seq = cpu_to_le32(cap->mseq);
+-		item->seq = cpu_to_le32(cap->issue_seq);
++		item->issue_seq = cpu_to_le32(cap->issue_seq);
+ 		msg->front.iov_len += sizeof(*item);
+ 
+ 		ceph_put_cap(mdsc, cap);
+diff --git a/include/linux/ceph/ceph_fs.h b/include/linux/ceph/ceph_fs.h
+index ee1d0e5f9789..4ff3ad5e9210 100644
+--- a/include/linux/ceph/ceph_fs.h
++++ b/include/linux/ceph/ceph_fs.h
+@@ -822,7 +822,7 @@ struct ceph_mds_cap_release {
+ struct ceph_mds_cap_item {
+ 	__le64 ino;
+ 	__le64 cap_id;
+-	__le32 migrate_seq, seq;
++	__le32 migrate_seq, issue_seq;
+ } __attribute__ ((packed));
+ 
+ #define CEPH_MDS_LEASE_REVOKE           1  /*    mds  -> client */
+
+base-commit: 75b607fab38d149f232f01eae5e6392b394dd659
+-- 
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+
 
