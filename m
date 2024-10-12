@@ -1,86 +1,153 @@
-Return-Path: <linux-kernel+bounces-362275-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362276-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5027599B2E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:16:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C27B199B2E8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:18:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 101402845AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 365AB1F22BFC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:18:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A1A61514F6;
-	Sat, 12 Oct 2024 10:16:37 +0000 (UTC)
-Received: from smtp237.sjtu.edu.cn (smtp237.sjtu.edu.cn [202.120.2.237])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A017153828;
+	Sat, 12 Oct 2024 10:18:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kdV0GKgr"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591A622334;
-	Sat, 12 Oct 2024 10:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.120.2.237
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D068922334
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 10:18:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728728196; cv=none; b=b5NGtFqJx9s4yJ/S+xT/T4RXaDAlIPhR8796Ct1keCypMVuSG0InJDUHhuv5sDrHlDod6xqOtH8D3jEJKHryVSxEA+VC4O2U6hFWth+2YcJe2R9bSpbnX2PVNWhpS13QWeNmkFIb/5JSGhmaXiQplM14O3VS3v1afPBRNr8wAvs=
+	t=1728728298; cv=none; b=EJM27laOhawwYb6rEeVzXiCOn0qff3fSF7t/5Wwj5waHVg395p0nxzLXsly//HqLmsBNKxnXSGmSnBaM3RLbqaec4sdPMMrDT7yQ9OmvReDqCHV2vu/3KFa1T5HhEnQjRrU9wq1OFzOSF45Uf24BgnbjqNYWmQqiqNSmYagPFZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728728196; c=relaxed/simple;
-	bh=HS2XVm5xH/qdo18SIB6Au1GbPGHbvzB/O4WxlfNwA+E=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IJrAXh0oQdewGGumo73R9f2Lu2A1Gyrti20lqI1S7r+KTnp7zp6TcVKeyfL/5aIngU/wW9CjaZvwtOgxqnkdBp1my8CRY5z9FnWPUUuaRSyXLSL13uZreU0kHDIVahzCrD1s41XwzzyGlrFywPyje8PrGN8bNLPXc9mC23QAnIs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sjtu.edu.cn; spf=pass smtp.mailfrom=sjtu.edu.cn; arc=none smtp.client-ip=202.120.2.237
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sjtu.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sjtu.edu.cn
-Received: from proxy189.sjtu.edu.cn (smtp189.sjtu.edu.cn [202.120.2.189])
-	by smtp237.sjtu.edu.cn (Postfix) with ESMTPS id F073B7FC92;
-	Sat, 12 Oct 2024 18:08:10 +0800 (CST)
-Received: from localhost.localdomain (unknown [58.247.120.90])
-	by proxy189.sjtu.edu.cn (Postfix) with ESMTPSA id 1E3603FC4B2;
-	Sat, 12 Oct 2024 18:08:05 +0800 (CST)
-From: itewqq <shipeiqu@sjtu.edu.cn>
-To: Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	ye xingchen <ye.xingchen@zte.com.cn>,
-	itewqq <shipeiqu@sjtu.edu.cn>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] Input/mouse: cyapa - fix stack overflow bug in cyapa_gen3_get_query_data
-Date: Sat, 12 Oct 2024 18:07:56 +0800
-Message-Id: <20241012100801.1774302-1-shipeiqu@sjtu.edu.cn>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1728728298; c=relaxed/simple;
+	bh=suB/gvK3RVIdTIVj3t4mfWLPv0ww9krbFp7E65wTf2I=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=D9JdaR/SJBIWmOWvz7EHQGe0qdhB1JX5YzLju7xZTClVr8QKboX/kGjLa/9222CzWhIXT8g5AZ8cBBdtvnqZXysPpggv+yiRVIDT8B5wIzZivADMS1i89rbRGlU5eQs6FouX1VxoS5caa+OG/1MxXKf9/yZBOo8o/FQPTNjYOMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kdV0GKgr; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so3431316e87.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:18:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728728293; x=1729333093; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=TqMjcC1AHeZ0rlGgmH16x4sW7vgPdZLOnPDdmB4aH0c=;
+        b=kdV0GKgrkR6OTSbiSAd35ytNLVLJsxnzi5wlfbMBSTZ2HLCbTFssYLg59F9OaX8cYi
+         nDmAjfMc7CTEKh+kzrGEx0LVXbp7H7VICrYslyxzSVjN9aBFbEfpD72cyuKtOS1GZ0/o
+         BZ7YDh6LFbqNFn0y3c69dguQ3ed9AzlBnC0rlnar3Q0wvZA7jRr5DcJHgDKyOagSbUTm
+         tb9V/HHYzhUCeOJmqIsI3fUOgEN7/UEJEzT4IUv11Vmzp746mW/FXFm4raxaDQmWvwvV
+         qyL4FU2g6mZWOFJ/E3ZZBmgHMHJyqZlGfkyF8sm6UYlp5cahi0vlrXyNEw5DqvZPf43+
+         NWlA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728728293; x=1729333093;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TqMjcC1AHeZ0rlGgmH16x4sW7vgPdZLOnPDdmB4aH0c=;
+        b=glIFWdgYqf+HiBCmBZD7axOtfwixKqZt+fTWC2nfU8knWnLGqZnQX7tJjzBSYZtk5d
+         bqSNqsJdIX3JANunAzfFtghixofurhAc4DNHgrCeY6b+dhLRO9DdXLFwfDapqEe5CVmA
+         uERGc1Cd9b2P++zroZSPqBixzO7wYE+TlLl59jpVUGNnWv8xo6pIYIjlgqftX6uqxofO
+         v/EPpBsNNG0jbCuUd6EFmV88u5vHnRvRAkbHO/8YZ+lIclTfD4ZwM9X6kBRzWKGwg/0r
+         MW5I/jOQ4eL426fwntPLfh6qpAwprLnBghMUTzqsBKXAsRPZV7Ze7s4x9lsLdmFiKjl8
+         8yOw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmXoKVvel1Or0EZZl7NVHwzDIYK3ydAwINAvtXINCa2t62vTyDQtHH6wdXHqkx2m1YnZIWVyF8h4TwiD0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxekTarSYcNG0ftyirsfLp67UyKFZ7LtgEAj4KeN0QHsz18MqJW
+	b4lFmJFBquWFjt5dh0doXi3ESGJGhkT9wfs4F8JCwyPcsOk1o+O1++y/eDbB9nsF6oMTczOCuta
+	sQbu4ed3W2iNEkuAjIqdj2l1QhlaSFy30P1LaPQ==
+X-Google-Smtp-Source: AGHT+IGKwx5nKYmIdfK4265lwZmlfRajEDE6ymLUhhDbGn/6VtvHNpCQcZb2C0Db73mm6sCx/G3nlJDjNP9fje8CkFg=
+X-Received: by 2002:a05:6512:b9e:b0:52e:fa6b:e54a with SMTP id
+ 2adb3069b0e04-539da4d53femr2076954e87.30.1728728292983; Sat, 12 Oct 2024
+ 03:18:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <cover.1728491453.git.nicolinc@nvidia.com> <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
+ <CABQgh9Eaj_vy1=sS2Pf7RC7Vy5PopDfwoshECULEU-jK3JF_sQ@mail.gmail.com> <Zwn/4m8Ac0xEiJi8@Asurada-Nvidia>
+In-Reply-To: <Zwn/4m8Ac0xEiJi8@Asurada-Nvidia>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Sat, 12 Oct 2024 18:18:01 +0800
+Message-ID: <CABQgh9Ft=xxJK-bjS6wCZ5BN4AiKtF9fzdBkevA3x2yb_4O4Kg@mail.gmail.com>
+Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
+ related struct
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org, joro@8bytes.org, 
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org, 
+	baolu.lu@linux.intel.com, shuah@kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com, 
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com, 
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com, yi.l.liu@intel.com, 
+	aik@amd.com, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-The i2c_smbus_read_block_data function receives up to I2C_SMBUS_BLOCK_MAX
-bytes. which is typically 32. This exceeds the size of the local variable
-(u8 query_data[QUERY_DATA_SIZE]) in cyapa_gen3_get_query_data, which is
-provided to cyapa_read_block and finally reach i2c_smbus_read_block_data.
-When the cyapa module is enabled (CONFIG_MOUSE_CYAPA=m), this bug could
-cause denial-of-service (or potentially code execution). For example, by a
-physical attacker who can hijack I2C communications or plant malicious
-firmware in the Cyapa peripheral. To fix this bug, this patch change the
-size of query_data from QUERY_DATA_SIZE to I2C_SMBUS_BLOCK_MAX.
+On Sat, 12 Oct 2024 at 12:49, Nicolin Chen <nicolinc@nvidia.com> wrote:
+>
+> On Sat, Oct 12, 2024 at 11:23:07AM +0800, Zhangfei Gao wrote:
+>
+> > > diff --git a/drivers/iommu/iommufd/viommu_api.c b/drivers/iommu/iommufd/viommu_api.c
+> > > new file mode 100644
+> > > index 000000000000..c1731f080d6b
+> > > --- /dev/null
+> > > +++ b/drivers/iommu/iommufd/viommu_api.c
+> > > @@ -0,0 +1,57 @@
+> > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > +/* Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES
+> > > + */
+> > > +
+> > > +#include "iommufd_private.h"
+> > > +
+> > > +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
+> > > +                                               size_t size,
+> > > +                                               enum iommufd_object_type type)
+> > > +{
+> > > +       struct iommufd_object *obj;
+> > > +       int rc;
+> > > +
+> > > +       obj = kzalloc(size, GFP_KERNEL_ACCOUNT);
+> > > +       if (!obj)
+> > > +               return ERR_PTR(-ENOMEM);
+> > > +       obj->type = type;
+> > > +       /* Starts out bias'd by 1 until it is removed from the xarray */
+> > > +       refcount_set(&obj->shortterm_users, 1);
+> > > +       refcount_set(&obj->users, 1);
+> >
+> > here set refcont 1
+> >
+> > iommufd_device_bind -> iommufd_object_alloc(ictx, idev,
+> > IOMMUFD_OBJ_DEVICE): refcont -> 1
+> > refcount_inc(&idev->obj.users); refcount -> 2
+> > will cause iommufd_device_unbind fail.
+> >
+> > May remove refcount_inc(&idev->obj.users) in iommufd_device_bind
+>
+> Hmm, why would it fail? Or is it failing on your system?
 
-Signed-off-by: itewqq <shipeiqu@sjtu.edu.cn>
----
- drivers/input/mouse/cyapa_gen3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Not sure, still in check, it may only be on my platform.
 
-diff --git a/drivers/input/mouse/cyapa_gen3.c b/drivers/input/mouse/cyapa_gen3.c
-index fc3fb954523b..6a5ffff51922 100644
---- a/drivers/input/mouse/cyapa_gen3.c
-+++ b/drivers/input/mouse/cyapa_gen3.c
-@@ -980,7 +980,7 @@ static int cyapa_gen3_set_proximity(struct cyapa *cyapa, bool enable)
- 
- static int cyapa_gen3_get_query_data(struct cyapa *cyapa)
- {
--	u8 query_data[QUERY_DATA_SIZE];
-+	u8 query_data[I2C_SMBUS_BLOCK_MAX];
- 	int ret;
- 
- 	if (cyapa->state != CYAPA_STATE_OP)
--- 
-2.30.2
+it hit
+iommufd_object_remove:
+if (WARN_ON(obj != to_destroy))
 
+iommufd_device_bind refcount=2
+iommufd_device_attach refcount=3
+//still not sure which operation inc the count?
+iommufd_device_detach refcount=4
+
+Thanks
+
+
+
+>
+> This patch doesn't change the function but only moved it..
+>
+> Thanks
+> Nicolin
 
