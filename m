@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-362425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB99799B4D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:37:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54FAE99B4DB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:39:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 79AEC2834E5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:37:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AC4E6B2242D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:39:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D91B176AA5;
-	Sat, 12 Oct 2024 12:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 466EE17A5BE;
+	Sat, 12 Oct 2024 12:39:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dJDe4Ysv"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1+zM6JUL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A911E481;
-	Sat, 12 Oct 2024 12:37:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B92538DF9;
+	Sat, 12 Oct 2024 12:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728736658; cv=none; b=MhYT93jOSn6mfVzMv6ThHaIDUCLBNAgRU9K4EfgTHA+A/3X4WZVN4rMzKa1FAeE2Qxm70FlVls8+heigPiCKUuKGlLjCgcRnIoC2a6BjDKR2mPSvzikCJJFI7O485cW+lGco3m++eYwysl9yZA36fwIWLO/+rxthFXQJHX780+0=
+	t=1728736779; cv=none; b=fXV6JjZIgWSjbk2j40z9kcPA29iJFPOjS3S8j+O6evROiUIV+viedSYSwEiEN9uXhtPB1HWC8WcP+tD3wuBSFXx3RX2A710hWYndUwaNqM0MDdgP3IZzsTX+1Ue5wms/Iw98uaY+RvPKLkKDuLzozvdUk8ZgIWDNDzTU1b3tzKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728736658; c=relaxed/simple;
-	bh=JHv4viOqJSZDxqWiMtnrCdy5tH/5QrH6R1LyFfppnC0=;
+	s=arc-20240116; t=1728736779; c=relaxed/simple;
+	bh=Vrj4K0uK7xHkOtHOFrZzsAQEV8qw/S/KlFdTRd+vFyU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lgGI/49zrvtSu79T2w3Z4MJxbYFt4Wqpc079AsN9H3fIDKBeflqnEorZVTfv1jKPjby5ebxC1i1spsQiqGsQg+XvEwJegT1XeY9RFQ0ycnOzULnAw115n7cIZmP0dH2/Fb2QlmosOAE5tN6tZla4VzXOhBM2sRomn7Sq2+teKpU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dJDe4Ysv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 476EAC4CEC6;
-	Sat, 12 Oct 2024 12:37:37 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=AylSYBARUpwCHbeWqpslfwcWuYMNO0iR/zxhqSMOhg1TptQU+NwJnB8gz6m8kLzDYm1rG2BQniNWSFdRzO3YCaAGkIkPE2yZYiYcJOBWbvmxdThuh7/Vs9VOXRNrYhv+eW6xxPLVoWBGgi2fKecwrcCsCzys55Cedw8z5A3VyhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1+zM6JUL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CCD2C4CEC6;
+	Sat, 12 Oct 2024 12:39:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728736657;
-	bh=JHv4viOqJSZDxqWiMtnrCdy5tH/5QrH6R1LyFfppnC0=;
+	s=korg; t=1728736779;
+	bh=Vrj4K0uK7xHkOtHOFrZzsAQEV8qw/S/KlFdTRd+vFyU=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dJDe4Ysv5G5OPVY0bdd0/oer1bcvGXuFL+5Em2YT0B3L1L+RAitVtr5mYbAY/X6QX
-	 sKW33xVZIWbX+7fuWgLcnp1qmBgTih1Uwohdr0+3ikq47/OCnVg0aRpo03GvFgBKXh
-	 5eV8ir3ia8oBVawFpGax9Bz1833roHXC2iGg9HFw=
-Date: Sat, 12 Oct 2024 14:37:33 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Josef Zoller <josef@walterzollerpiano.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
-	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
-Subject: Re: [PATCH 3/3] samples: rust: add character device sample
-Message-ID: <2024101222-theatrics-enrich-ba21@gregkh>
-References: <20241011-rust-char-dev-v1-0-350225ae228b@walterzollerpiano.com>
- <20241011-rust-char-dev-v1-3-350225ae228b@walterzollerpiano.com>
+	b=1+zM6JULcckggmSvkqp3PIL7TBxzsWAgV4hiIRxWMGTad9qjtf3Ywq1yJQh3LWeDm
+	 +YolpnmtxEL5se/jgrIjJDfd72wD6k/fTKZ+tl2TVgZ9EB46MoUdceZmgmYwo1bwG5
+	 IJwieZdacj4AeRORVFeyzCwpbHsnsJ7zS7xbw2+Y=
+Date: Sat, 12 Oct 2024 14:39:34 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Duan Chenghao <duanchenghao@kylinos.cn>
+Cc: stern@rowland.harvard.edu, rafael@kernel.org, pavel@ucw.cz,
+	len.brown@intel.com, linux-usb@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	niko.mauno@vaisala.com, stanley_chang@realtek.com, tj@kernel.org,
+	xiehongyu1@kylinos.cn, xy521521@gmail.com
+Subject: Re: [PATCH v3] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+Message-ID: <2024101215-congenial-petticoat-324c@gregkh>
+References: <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
+ <20241012094633.126736-1-duanchenghao@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,568 +58,130 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011-rust-char-dev-v1-3-350225ae228b@walterzollerpiano.com>
+In-Reply-To: <20241012094633.126736-1-duanchenghao@kylinos.cn>
 
-On Fri, Oct 11, 2024 at 08:55:44PM +0200, Josef Zoller wrote:
-> Provide a sample implementation of a character device in Rust, following
-> the scull device from the well-known book "Linux Device Drivers".
+On Sat, Oct 12, 2024 at 05:46:33PM +0800, Duan Chenghao wrote:
+> When a device is inserted into the USB port and an S4 wakeup is initiated,
+> after the USB-hub initialization is completed, it will automatically enter
+> suspend mode. Upon detecting a device on the USB port, it will proceed with
+> resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state. During the S4
+> wakeup process, peripherals are put into suspend mode, followed by task
+> recovery. However, upon detecting that the hcd is in the
+> HCD_FLAG_WAKEUP_PENDING state, it will return an EBUSY status, causing the
+> S4 suspend to fail and subsequent task recovery to not proceed.
+> -
+> [   27.594598][ 1]  PM: pci_pm_freeze(): hcd_pci_suspend+0x0/0x28 returns -16
+> [   27.594601][ 1]  PM: dpm_run_callback(): pci_pm_freeze+0x0/0x100 returns -16
+> [   27.603420][ 1]  ehci-pci 0000:00:04.1: pci_pm_freeze+0x0/0x100 returned 0 after 3 usecs
+> [   27.612233][ 1]  ehci-pci 0000:00:05.1: pci_pm_freeze+0x0/0x100 returned -16 after 17223 usecs
+> [   27.810067][ 1]  PM: Device 0000:00:05.1 failed to quiesce async: error -16
+> [   27.816988][ 1]  PM: quiesce of devices aborted after 1833.282 msecs
+> [   27.823302][ 1]  PM: start quiesce of devices aborted after 1839.975 msecs
+> ......
+> [   31.303172][ 1]  PM: recover of devices complete after 3473.039 msecs
+> [   31.309818][ 1]  PM: Failed to load hibernation image, recovering.
+> [   31.348188][ 1]  PM: Basic memory bitmaps freed
+> [   31.352686][ 1]  OOM killer enabled.
+> [   31.356232][ 1]  Restarting tasks ... done.
+> [   31.360609][ 1]  PM: resume from hibernation failed (0)
+> [   31.365800][ 1]  PM: Hibernation image not present or could not be loaded.
 > 
-> This sample uses the abstractions from the previous patches in this
-> series to implement the scull device in mostly safe Rust. All of the
-> unsafe code comes from the fact that the data structure used in the C
-> implementation is inherently unsafe and cannot easily be represented in
-> safe Rust without a lot of memory overhead.
+> The "do_wakeup" is determined based on whether the controller's
+> power/wakeup attribute is set. The current issue necessitates considering
+> the type of suspend that is occurring. If the suspend type is either
+> PM_EVENT_FREEZE or PM_EVENT_QUIESCE, then "do_wakeup" should be set to
+> false.
 > 
-> This sample should be a good starting point for people who want to start
-> writing kernel code in Rust, as a character device is relatively simple
-> and does not require a lot of kernel knowledge to understand.
-> 
-> Signed-off-by: Josef Zoller <josef@walterzollerpiano.com>
+> Co-authored-by: Alan Stern <stern@rowland.harvard.edu>
+> Signed-off-by: Duan Chenghao <duanchenghao@kylinos.cn>
 > ---
->  samples/rust/Kconfig          |  10 +
->  samples/rust/Makefile         |   1 +
->  samples/rust/rust_char_dev.rs | 506 ++++++++++++++++++++++++++++++++++++++++++
-
-This feels like it could be a lot smaller, 500 lines for a sample char
-driver seems excessive.
-
-> --- /dev/null
-> +++ b/samples/rust/rust_char_dev.rs
-> @@ -0,0 +1,506 @@
-> +// SPDX-License-Identifier: GPL-2.0
-
-Again, copyright notice please.
-
-> +
-> +//! Rust character device sample.
-> +//!
-> +//! This sample demonstrates how to create a simple character device in Rust,
-> +//! by reimplementing the `scull` device from the Linux Device Drivers book.
-> +
-> +use core::{mem, ptr::NonNull};
-> +
-> +use kernel::{
-> +    c_str,
-> +    char_dev::{CharDevice, CharDeviceID, DeviceRegistration, OpenCharDevice, Whence},
-> +    fs::{file::flags, File, LocalFile},
-> +    new_mutex,
-> +    prelude::*,
-> +    sync::{Arc, Mutex},
-> +    uaccess::{UserSlice, UserSliceReader, UserSliceWriter},
-> +};
-> +
-> +module! {
-> +    type: RustCharDevModule,
-> +    name: "rust_char_dev",
-> +    author: "Rust for Linux Contributors",
-> +    description: "Rust character device sample",
-> +    license: "GPL",
+>  drivers/usb/core/hcd-pci.c | 14 ++++++++++++--
+>  include/linux/pm.h         |  3 ++-
+>  2 files changed, 14 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
+> index a08f3f228e6d..2c7d4446b82e 100644
+> --- a/drivers/usb/core/hcd-pci.c
+> +++ b/drivers/usb/core/hcd-pci.c
+> @@ -422,7 +422,12 @@ static int suspend_common(struct device *dev, pm_message_t msg)
+>  	bool			do_wakeup;
+>  	int			retval;
+>  
+> -	do_wakeup = PMSG_IS_AUTO(msg) ? true : device_may_wakeup(dev);
+> +	if (PMSG_IS_AUTO(msg))
+> +		do_wakeup = true;
+> +	else if (PMSG_NO_WAKEUP(msg))
+> +		do_wakeup = false;
+> +	else
+> +		do_wakeup = device_may_wakeup(dev);
+>  
+>  	/* Root hub suspend should have stopped all downstream traffic,
+>  	 * and all bus master traffic.  And done so for both the interface
+> @@ -521,6 +526,11 @@ static int hcd_pci_suspend(struct device *dev)
+>  	return suspend_common(dev, PMSG_SUSPEND);
+>  }
+>  
+> +static int hcd_pci_freeze(struct device *dev)
+> +{
+> +	return suspend_common(dev, PMSG_FREEZE);
 > +}
 > +
-> +const DEVICE_NAME: &CStr = c_str!("rust_scull");
-> +const DEFAULT_QSET_SIZE: usize = 1000;
-> +const DEFAULT_QUANTUM_SIZE: usize = 4000;
-> +const NUM_DEVS: usize = 4;
+>  static int hcd_pci_suspend_noirq(struct device *dev)
+>  {
+>  	struct pci_dev		*pci_dev = to_pci_dev(dev);
+> @@ -624,7 +634,7 @@ const struct dev_pm_ops usb_hcd_pci_pm_ops = {
+>  	.suspend_noirq	= hcd_pci_suspend_noirq,
+>  	.resume_noirq	= hcd_pci_resume_noirq,
+>  	.resume		= hcd_pci_resume,
+> -	.freeze		= hcd_pci_suspend,
+> +	.freeze		= hcd_pci_freeze,
+>  	.freeze_noirq	= check_root_hub_suspended,
+>  	.thaw_noirq	= NULL,
+>  	.thaw		= hcd_pci_resume,
+> diff --git a/include/linux/pm.h b/include/linux/pm.h
+> index 97b0e23363c8..0dd7f559188b 100644
+> --- a/include/linux/pm.h
+> +++ b/include/linux/pm.h
+> @@ -570,7 +570,8 @@ const struct dev_pm_ops name = { \
+>  					{ .event = PM_EVENT_AUTO_RESUME, })
+>  
+>  #define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
+> -
+> +#define PMSG_NO_WAKEUP(msg)	(((msg.event) & \
+> +				(PM_EVENT_FREEZE | PM_EVENT_QUIESCE)) != 0)
+>  /*
+>   * Device run-time power management status.
+>   *
+> -- 
+> 2.34.1
+> 
+> 
 
-Comments for what these const are for?
+Hi,
 
-> +// This is probably too specific a function to be in the Rust standard library...
-> +trait OptionExt<T> {
-> +    fn get_or_try_insert_with<F, E>(&mut self, f: F) -> Result<&mut T, E>
-> +    where
-> +        F: FnOnce() -> Result<T, E>;
-> +}
-> +
-> +impl<T> OptionExt<T> for Option<T> {
-> +    fn get_or_try_insert_with<F, E>(&mut self, f: F) -> Result<&mut T, E>
-> +    where
-> +        F: FnOnce() -> Result<T, E>,
-> +    {
-> +        if self.is_none() {
-> +            *self = Some(f()?);
-> +        }
-> +
-> +        Ok(self.as_mut().unwrap())
-> +    }
-> +}
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-What are these for?  No comments makes it confusing to me :)
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-> +
-> +#[derive(IoctlCommand)]
-> +#[ioctl(code = b'k')]
-> +enum Command {
-> +    Reset,                       // 0
-> +    SetQuantum(UserSliceReader), // 1
-> +    SetQset(UserSliceReader),    // 2
-> +    TellQuantum(u64),            // 3
-> +    TellQset(u64),               // 4
-> +    GetQuantum(UserSliceWriter), // 5
-> +    GetQset(UserSliceWriter),    // 6
-> +    QueryQuantum,                // 7
-> +    QueryQset,                   // 8
-> +    ExchangeQuantum(UserSlice),  // 9
-> +    ExchangeQset(UserSlice),     // 10
-> +    ShiftQuantum(u64),           // 11
-> +    ShiftQset(u64),              // 12
-> +}
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
-Trying to keep ioctl numbers identical from kernel/userspace means they
-should go in a .h file, putting them here is not going to work well.
-
-> +// We implement `ScullQset` as close as possible to the `struct scull_qset` implementation from
-> +// the book. This means that we have to use raw pointers and some unsafe code for the data.
-
-That's not a good idea overall, why not look at the "untrusted data"
-patch on the list and tie that into here so that things are not unsafe?
-That is ideally what we want to do for ALL rust user/kernel interfaces.
-
-> +// Otherwise, we'd have massive memory overhead by storing sizes/capacities unnecessarily.
-> +// E.g. every `ScullQset` would be 8 * qset_size bytes larger if we used `Box<[_]>` and
-> +// 16 * qset_size bytes larger if we used `Vec<_>`.
-> +// However, the knowledge that all data arrays are of the same size isn't possible to express
-> +// in safe Rust without this memory overhead.
-> +struct ScullQset {
-> +    data: Option<NonNull<Option<NonNull<u8>>>>,
-> +    quantum_size: usize,
-> +    qset_size: usize,
-> +    next: Option<Box<ScullQset>>,
-> +}
-
-I'm sorry, I don't understand why this is so odd and has to be "unsafe".
-It's just chunks of memory read from userspace.  And we do have a list
-structure somewhere (or something like that), that probably works better
-than the next pointer from what I recall.
-
-> +impl ScullQset {
-> +    fn new(quantum_size: usize, qset_size: usize) -> Self {
-> +        Self {
-> +            data: None,
-> +            quantum_size,
-> +            qset_size,
-> +            next: None,
-> +        }
-> +    }
-> +
-> +    /// Returns a reference to the quantum at index `i` if it exists.
-> +    fn get_quantum(&self, i: usize) -> Option<&[u8]> {
-> +        let data_slice = NonNull::slice_from_raw_parts(self.data?, self.qset_size);
-> +        // SAFETY: `data_slice` points to a valid slice of `Option<NonNull<u8>>`.
-> +        let quantum = unsafe { data_slice.as_ref()[i] };
-> +        let quantum_slice = NonNull::slice_from_raw_parts(quantum?, self.quantum_size);
-> +        // SAFETY: `quantum_slice` points to a valid slice of `u8`.
-> +        Some(unsafe { quantum_slice.as_ref() })
-> +    }
-> +
-> +    /// Returns a mutable reference to the quantum at index `i`, allocating it first if necessary.
-> +    fn get_quantum_mut(&mut self, i: usize) -> Option<&mut [u8]> {
-> +        let data = self
-> +            .data
-> +            .get_or_try_insert_with(|| {
-> +                let mut data =
-> +                    mem::ManuallyDrop::new(Vec::with_capacity(self.qset_size, GFP_KERNEL)?);
-> +                for _ in 0..self.qset_size {
-> +                    data.push(None, GFP_KERNEL)?;
-> +                }
-> +
-> +                assert!(data.len() == data.capacity());
-> +
-> +                // SAFETY: `data.as_mut_ptr()` is non-null.
-> +                Ok::<_, Error>(unsafe { NonNull::new_unchecked(data.as_mut_ptr()) })
-> +            })
-> +            .ok()?;
-> +
-> +        let mut data_slice = NonNull::slice_from_raw_parts(*data, self.qset_size);
-> +
-> +        // SAFETY: `data_slice` points to a valid slice of `Option<NonNull<u8>>`.
-> +        let maybe_quantum = unsafe { &mut data_slice.as_mut()[i] };
-> +        let quantum = maybe_quantum
-> +            .get_or_try_insert_with(|| {
-> +                let mut quantum =
-> +                    mem::ManuallyDrop::new(Vec::with_capacity(self.quantum_size, GFP_KERNEL)?);
-> +                for _ in 0..self.quantum_size {
-> +                    quantum.push(0, GFP_KERNEL)?;
-> +                }
-> +
-> +                assert!(quantum.len() == quantum.capacity());
-> +
-> +                // SAFETY: `quantum.as_mut_ptr()` is non-null.
-> +                Ok::<_, Error>(unsafe { NonNull::new_unchecked(quantum.as_mut_ptr()) })
-> +            })
-> +            .ok()?;
-> +
-> +        let mut quantum_slice = NonNull::slice_from_raw_parts(*quantum, self.quantum_size);
-> +        // SAFETY: `quantum_slice` points to a valid slice of `u8`.
-> +        Some(unsafe { quantum_slice.as_mut() })
-> +    }
-> +}
-> +
-> +impl Drop for ScullQset {
-> +    fn drop(&mut self) {
-> +        if let Some(data) = self.data.take() {
-> +            // SAFETY: `data` was created by `Vec::with_capacity` with a capacity of `qset_size`.
-> +            let data_vec =
-> +                unsafe { Vec::from_raw_parts(data.as_ptr(), self.qset_size, self.qset_size) };
-> +
-> +            for quantum in data_vec {
-> +                let Some(quantum) = quantum else { continue };
-> +
-> +                // SAFETY: `quantum` was created by `Vec::with_capacity` with a capacity of
-> +                // `quantum_size`.
-> +                let _ = unsafe {
-> +                    Vec::from_raw_parts(quantum.as_ptr(), self.quantum_size, self.quantum_size)
-> +                };
-> +            }
-> +        }
-> +    }
-> +}
-> +
-> +// SAFETY: The raw pointers are uniquely owned by `ScullQset` and not shared, so it's safe to send
-> +// it to another thread.
-> +unsafe impl Send for ScullQset {}
-
-What other thread are you sending this to?
-
-I don't see any "threads" here in the driver, do you mean "can be shared
-by different userspace processes"?
-
-> +struct ScullDevInner {
-> +    data: Option<Box<ScullQset>>,
-> +    quantum_size: usize,
-> +    qset_size: usize,
-> +    size: usize,
-> +}
-> +
-> +impl Default for ScullDevInner {
-> +    fn default() -> Self {
-> +        Self {
-> +            data: None,
-> +            quantum_size: DEFAULT_QUANTUM_SIZE,
-> +            qset_size: DEFAULT_QSET_SIZE,
-> +            size: 0,
-> +        }
-> +    }
-> +}
-> +
-> +impl ScullDevInner {
-> +    fn trim(&mut self) {
-> +        mem::take(&mut self.data);
-> +        self.size = 0;
-> +    }
-> +
-> +    fn follow(&mut self, n: usize) -> Option<&mut ScullQset> {
-> +        let mut qs = self
-> +            .data
-> +            .get_or_try_insert_with(|| {
-> +                Box::new(
-> +                    ScullQset::new(self.quantum_size, self.qset_size),
-> +                    GFP_KERNEL,
-> +                )
-> +            })
-> +            .ok()?;
-> +
-> +        for _ in 0..n {
-> +            qs = qs
-> +                .next
-> +                .get_or_try_insert_with(|| {
-> +                    // We use `qs.quantum_size` and `qs.qset_size` here to avoid subtly
-> +                    // different behavior from the original C implementation.
-> +                    // If we used the sizes from `self`, we could end up with differently
-> +                    // sized qsets in the linked list (which would not be a safety problem).
-> +                    // Like this, we only use an updated size after `trim` has been called,
-> +                    // which is the same behavior as in the book.
-> +                    Box::new(ScullQset::new(qs.quantum_size, qs.qset_size), GFP_KERNEL)
-
-As one of the authors of the book in reference here, I really don't
-understand this at all :)
-
-What am I missing?  Why is this so complex?
-
-You don't have to follow the implementation identically, just because
-something is simple to do in C doesn't mean you have to do the same
-thing in rust at all.  We just implemented stuff to make the concepts
-simple to follow, not to implement something specific that was trying to
-solve a real problem here.  So try to keep it simple, I think there are
-other examples of rust char drivers in other trees that might be better
-to use as an example, as this complexity probably isn't needed and will
-just confuse new people (i.e. me!) more than is needed.
-
-> +                })
-> +                .ok()?;
-> +        }
-> +
-> +        Some(qs)
-> +    }
-> +}
-> +
-> +#[derive(Clone)]
-> +struct ScullDev {
-> +    inner: Arc<Mutex<ScullDevInner>>,
-> +}
-> +
-> +#[vtable]
-> +impl CharDevice for ScullDev {
-> +    type OpenPtr = Box<Self>;
-> +    type Err = Error;
-> +
-> +    fn new(_dev_id: CharDeviceID) -> Result<Self> {
-> +        Ok(Self {
-> +            inner: Arc::pin_init(new_mutex!(ScullDevInner::default()), GFP_KERNEL)?,
-> +        })
-> +    }
-> +
-> +    fn open(&self, file: &File) -> Result<Self::OpenPtr> {
-> +        if file.flags() & flags::O_ACCMODE == flags::O_WRONLY {
-> +            // TODO: this should be lock_interruptible, but that's not in the Rust API yet
-
-I think patches for that are floating around, right?
-
-> +            self.inner.lock().trim();
-> +        }
-> +
-> +        Ok(Box::new(self.clone(), GFP_KERNEL)?)
-> +    }
-> +}
-> +
-> +#[vtable]
-> +impl OpenCharDevice for ScullDev {
-> +    type IoctlCmd = Command;
-> +    type Err = Error;
-> +
-> +    fn read(&self, _file: &LocalFile, mut buf: UserSliceWriter, offset: &mut i64) -> Result<usize> {
-> +        let pos = usize::try_from(*offset).map_err(|_| EINVAL)?;
-> +
-> +        // TODO: this should be lock_interruptible, but that's not in the Rust API yet
-> +        let mut inner = self.inner.lock();
-> +
-> +        // To keep the behavior of the original C implementation, namely that the quantum and qset
-> +        // sizes are only updated after a trim, we use the sizes from the inner data if it exists.
-> +        let (quantum_size, qset_size) = inner
-> +            .data
-> +            .as_ref()
-> +            .map_or((inner.quantum_size, inner.qset_size), |qs| {
-> +                (qs.quantum_size, qs.qset_size)
-> +            });
-> +        let item_size = quantum_size * qset_size;
-> +
-> +        if pos >= inner.size {
-> +            return Ok(0);
-> +        }
-> +
-> +        let mut count = buf.len().min(inner.size - pos);
-> +        let item = pos / item_size;
-> +        let rest = pos % item_size;
-> +        let s_pos = rest / quantum_size;
-> +        let q_pos = rest % quantum_size;
-> +
-> +        let Some(q) = inner.follow(item).and_then(|qs| qs.get_quantum(s_pos)) else {
-> +            return Ok(0);
-> +        };
-> +
-> +        count = count.min(quantum_size - q_pos);
-> +
-> +        buf.write_slice(&q[q_pos..q_pos + count])?;
-> +
-> +        *offset += count as i64;
-> +
-> +        Ok(count)
-> +    }
-> +
-> +    fn write(
-> +        &self,
-> +        _file: &LocalFile,
-> +        mut buf: UserSliceReader,
-> +        offset: &mut i64,
-> +    ) -> Result<usize> {
-> +        let pos = usize::try_from(*offset).map_err(|_| EINVAL)?;
-> +
-> +        // TODO: this should be lock_interruptible, but that's not in the Rust API yet
-> +        let mut inner = self.inner.lock();
-> +
-> +        // To keep the behavior of the original C implementation, namely that the quantum and qset
-> +        // sizes are only updated after a trim, we use the sizes from the inner data if it exists.
-> +        let (quantum_size, qset_size) = inner
-> +            .data
-> +            .as_ref()
-> +            .map_or((inner.quantum_size, inner.qset_size), |qs| {
-> +                (qs.quantum_size, qs.qset_size)
-> +            });
-> +        let item_size = quantum_size * qset_size;
-> +
-> +        let item = pos / item_size;
-> +        let rest = pos % item_size;
-> +        let s_pos = rest / quantum_size;
-> +        let q_pos = rest % quantum_size;
-> +
-> +        let Some(q) = inner.follow(item).and_then(|qs| qs.get_quantum_mut(s_pos)) else {
-> +            return Err(ENOMEM);
-> +        };
-> +
-> +        let count = buf.len().min(quantum_size - q_pos);
-> +
-> +        buf.read_slice(&mut q[q_pos..q_pos + count])?;
-> +
-> +        let new_pos = pos + count;
-> +        *offset = new_pos as i64;
-> +
-> +        if new_pos > inner.size {
-> +            inner.size = new_pos;
-> +        }
-> +
-> +        Ok(count)
-> +    }
-> +
-> +    fn ioctl(
-> +        &self,
-> +        _file: &File,
-> +        cmd: Self::IoctlCmd,
-> +        #[cfg(CONFIG_COMPAT)] _compat: bool,
-> +    ) -> Result<u64> {
-> +        // The original implementation from the book actually doesn't consider the lock here at all,
-> +        // but Rust forces us to do so :)
-> +        let mut inner = self.inner.lock();
-
-Does that mean the C implementation is wrong?  It could be, but what
-makes this so special that rust is requiring it and C doesn't?
-
-> +
-> +        // We should definitely check if the user is trying to set a size to 0, or we'll
-> +        // end up with panics in the read/write functions due to division by zero.
-> +        // However, the original implementation doesn't account for this, so we won't either.
-
-We should :)
-
-And invalid userspace data is the #1 security bug in the kernel, let's
-not copy bad examples for others to also make the same mistake wherever
-possible please.
-
-> +        match cmd {
-> +            Command::Reset => {
-> +                inner.quantum_size = DEFAULT_QUANTUM_SIZE;
-> +                inner.qset_size = DEFAULT_QSET_SIZE;
-> +            }
-> +            Command::SetQuantum(mut reader) => {
-> +                // TODO: guard this command (and all others where a size can be set by the user)
-> +                // with `capability(CAP_SYS_ADMIN)`, which is not yet possible in the Rust API.
-> +                let quantum_size = reader.read()?;
-> +
-> +                if !reader.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +
-> +                inner.quantum_size = quantum_size;
-> +            }
-> +            Command::TellQuantum(quantum) => {
-> +                inner.quantum_size = quantum as usize;
-> +            }
-> +            Command::GetQuantum(mut writer) => {
-> +                writer.write(&inner.quantum_size)?;
-> +
-> +                if !writer.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +            }
-> +            Command::QueryQuantum => {
-> +                return Ok(inner.quantum_size as u64);
-> +            }
-> +            Command::ExchangeQuantum(slice) => {
-> +                let (mut reader, mut writer) = slice.reader_writer();
-> +                let quantum_size = reader.read()?;
-> +
-> +                if !reader.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +
-> +                writer.write(&inner.quantum_size)?;
-> +
-> +                inner.quantum_size = quantum_size;
-> +            }
-> +            Command::ShiftQuantum(quantum) => {
-> +                let old_quantum = inner.quantum_size;
-> +                inner.quantum_size = quantum as usize;
-> +                return Ok(old_quantum as u64);
-> +            }
-> +            Command::SetQset(mut reader) => {
-> +                let qset_size = reader.read()?;
-> +
-> +                if !reader.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +
-> +                inner.qset_size = qset_size;
-> +            }
-> +            Command::TellQset(qset) => {
-> +                inner.qset_size = qset as usize;
-> +            }
-> +            Command::GetQset(mut writer) => {
-> +                writer.write(&inner.qset_size)?;
-> +
-> +                if !writer.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +            }
-> +            Command::QueryQset => {
-> +                return Ok(inner.qset_size as u64);
-> +            }
-> +            Command::ExchangeQset(slice) => {
-> +                let (mut reader, mut writer) = slice.reader_writer();
-> +                let qset_size = reader.read()?;
-> +
-> +                if !reader.is_empty() {
-> +                    return Err(EINVAL);
-> +                }
-> +
-> +                writer.write(&inner.qset_size)?;
-> +
-> +                inner.qset_size = qset_size;
-> +            }
-> +            Command::ShiftQset(qset) => {
-> +                let old_qset = inner.qset_size;
-> +                inner.qset_size = qset as usize;
-> +                return Ok(old_qset as u64);
-> +            }
-> +        }
-> +
-> +        Ok(0)
-> +    }
-> +
-> +    fn llseek(
-> +        &self,
-> +        _file: &LocalFile,
-> +        pos: &mut i64,
-> +        offset: i64,
-> +        whence: Whence,
-> +    ) -> Result<u64, Self::Err> {
-> +        let size = self.inner.lock().size as i64;
-> +
-> +        let new_offset = match whence {
-> +            Whence::Set => offset,
-> +            Whence::Cur => *pos + offset,
-> +            Whence::End => size + offset,
-> +            _ => return Err(EINVAL),
-> +        };
-> +
-> +        if new_offset < 0 {
-> +            return Err(EINVAL);
-> +        }
-> +
-> +        *pos = new_offset;
-> +
-> +        Ok(new_offset as u64)
-> +    }
-> +}
-> +
-> +struct RustCharDevModule {
-> +    reg: Pin<Box<DeviceRegistration<ScullDev, NUM_DEVS>>>,
-
-You really want NUM_DEVS of these statically?  I haven't read the old
-book example code, but that's really a bad example if so, the authors
-should have known better :)
-
-Ideally these are created dynamically, like what happens in the real
-world.
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
 thanks,
 
-greg k-h
+greg k-h's patch email bot
 
