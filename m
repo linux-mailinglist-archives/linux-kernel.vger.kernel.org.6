@@ -1,123 +1,135 @@
-Return-Path: <linux-kernel+bounces-362148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E26DB99B193
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:33:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF55699B185
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:25:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2B88281842
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:33:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E7C1F22EDD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:25:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6621713D600;
-	Sat, 12 Oct 2024 07:33:51 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86C713CA95;
+	Sat, 12 Oct 2024 07:25:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="K+8TIAR9"
+Received: from mail-oo1-f53.google.com (mail-oo1-f53.google.com [209.85.161.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBECD12C54D;
-	Sat, 12 Oct 2024 07:33:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC340BE65;
+	Sat, 12 Oct 2024 07:25:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728718431; cv=none; b=tQzjU79FfqdRwR7FeEcodOy9yv4lDfPiSOtpqE1Uqmm58qpGlUDgVxgUqkZUe2G2hqSPtUjGZA++jy0VNCEzCv2+77wlQFsyrPINiRM/WODL362o+s2YlbnbZa65gDJ1OV/5T8srvGmyS0RxU1ic/Zvjhwm43h0I1DGzBwP+2Uc=
+	t=1728717939; cv=none; b=UjFoEHK4kt96VXrPhz5Y1ylF87pAzJKyzsMrPxsTZTuxhd5S2Sriu/bkm7vlfxfwkU0Ub/nbERm3YmD3R5s2mp2MBLfvKibV1Ifeu/uAzI5TBPwMUx1+7LQi3DmKJdjhoDgM2hsjG7W81GH5uRYnA7xdEQ66GSoURmQ0RZdP8KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728718431; c=relaxed/simple;
-	bh=w+0T2IGafcUh9CVlp0OaufZqBPLEgPoMmmNkKvHgSU8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mlAZzM/KhKoLHv8KMHKIBwWbhHEF8oVeDXPc8rXeRx0IjEYYst9qzhpGn3rlyRJmy9zA8NNEHd1SW7Hr7Jo3V3zmvT85tUiqR7u1AvWCR5vV+oARicb4mfItItouLkZhlbskI6v5GwL/OOPW6GO6D0zqBPKRqZGI2r5w9EhtusA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XQZwf3QSCz4f3lCm;
-	Sat, 12 Oct 2024 15:33:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 31CAD1A058E;
-	Sat, 12 Oct 2024 15:33:40 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.67.174.26])
-	by APP4 (Coremail) with SMTP id gCh0CgBXjMhSJgpnHCx7Dw--.42768S2;
-	Sat, 12 Oct 2024 15:33:40 +0800 (CST)
-From: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
-To: tj@kernel.org,
-	lizefan.x@bytedance.com,
-	hannes@cmpxchg.org,
-	mkoutny@suse.com,
-	roman.gushchin@linux.dev
-Cc: cgroups@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	wangweiyang2@huawei.com
-Subject: [PATCH] cgroup: Fix potential overflow issue when checking max_depth
-Date: Sat, 12 Oct 2024 07:22:46 +0000
-Message-Id: <20241012072246.158766-1-xiujianfeng@huaweicloud.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728717939; c=relaxed/simple;
+	bh=Sh90L7XFjhTZ7aBWMOUuGd+3eneyTSVfF8BV+mVCklI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qd1iDSTjf3gb0xZbAB6lEjtuZFI+/dd5W2ArN4Vp8to8TyoZk3vIRrP/WRbz9D5IOpFgZoYCNB33eZxRcAGexPEGilJK11tYLn7LRS5QUNrQKOeG5CJ63jkC/J0C0R4PULVN00nTrws2YJJJZWkASBE92T2zkIB/Z5SLF0FfTHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=K+8TIAR9; arc=none smtp.client-ip=209.85.161.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oo1-f53.google.com with SMTP id 006d021491bc7-5e7ff3c8bbcso1293676eaf.0;
+        Sat, 12 Oct 2024 00:25:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728717937; x=1729322737; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=qFJHXmWUByEds8clTC1LQB9D0Bv72AC54JwvOCu5Qpc=;
+        b=K+8TIAR92bpU8wElc5B/g4geVoVf7+6/E88ILQsn6e5ldAZsGNhyuNYmue0U/e6E6o
+         9EDxteATi9BcRkq9dvJGq5eKIks0Vuz316yjX7oXgM8wZOMLPxoYyPQ36/mFsIhSdDot
+         KRWyD4NhV38jmIj1/UGbSHAz0+rjhYEIke/71szyH/wbVXLhAPfxbYoLPpqwFDHm+zs1
+         D5wWhTaAd6WWTlcdCR8RqEXCSDXQO+d+Ul96bvzKGhUe42sVfX2bzqftvUTBy0y5e1Lg
+         a+fhSs5LGZQ/TioA9gcuo/VSaLKipL5/P6Zb2Q9sSDsDlWTgooedt/ZHYE/nfoXSDPvi
+         gw1Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728717937; x=1729322737;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qFJHXmWUByEds8clTC1LQB9D0Bv72AC54JwvOCu5Qpc=;
+        b=cbr0F9TBoDKZqbanh+YlvAdU8KELghicsufnwEiwubZGlcahEnAvSSKmUMMTVxCQ3h
+         gVihdJSZHU1st+Qewb8IImgyuvruNl54cN25BWhX6AuWrNEnLZIUu4sT+vVGXLOEhlCi
+         21N87iGeeG6hYL1h2r39Giy9uNZGmg0l4rCvxW62ImKWm+OtKs6HKJ3k2oOD+4kOh36/
+         hJd1UA4Kfl8LSRl9l7rk0tQK4EJBBRXFzsQOnMxZh03h6q1Fn+keNLTlejc9KG6qsql9
+         jGjkWwzCOlnBkuLwWxcGVOU6vRnwPpl72L7M0GGqM9pkkcn0DOjoxsiNNG0CvYNEsRLb
+         SBLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWP6YM9Upc6DH+vm87y0o2emIsR+o48+bm0UlGj8nw9EhuMHkeZYILqPiCO3cAnrLT+m7FBQgd+tnsI@vger.kernel.org, AJvYcCXw2sh55t4DFiecXv9D6+nPyOITrASgH3ajzwg85+DO37P3EFH/wwnLmkEFlfSzw8yZi8gD+IO9Nm+QoNc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz94sIKj3PPxaQuZokc40uqiKoTEcKqZmOliROybEXstvwyNFrI
+	PZ7pdFq0NKT0CX1yTF0XqYfYVW9nCZb4pECyOpK6XjZgf02SqtiBrTPeUbirU5yU0k8pfANSISk
+	+aMTUKl+SiK2yijRXIPB59e/EDXE=
+X-Google-Smtp-Source: AGHT+IGxcoo7XIEg/2VGJljTTQoQCqCwZmD3zSNnB3DUpI3w85snogReGnHlzl7eFuZJLLQZl2U++xeT9L1aIakhcwc=
+X-Received: by 2002:a05:6870:d88e:b0:26c:5312:a145 with SMTP id
+ 586e51a60fabf-28887328507mr1145574fac.16.1728717936765; Sat, 12 Oct 2024
+ 00:25:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBXjMhSJgpnHCx7Dw--.42768S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CF1xCr1kuF18AF4DuF45Jrb_yoW8XFWfpF
-	s8Jry5J395GFZrKw4jyasFvFySg395JrW5C3Z0yw1rAr13Gw17XF9YyF1jqFyxXFWIgw42
-	qF4ay34akw4UKFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUyCb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IYc2Ij64vIr41lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij
-	64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x
-	8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI7VAKI48JMIIF0xvE
-	2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42
-	xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF
-	7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07UK2NtUUUUU=
-X-CM-SenderInfo: x0lxyxpdqiv03j6k3tpzhluzxrxghudrp/
+References: <20241012050611.1908-1-linux.amoon@gmail.com> <20241012050611.1908-2-linux.amoon@gmail.com>
+ <20241012060847.6teuutvy2u2es2qw@thinkpad>
+In-Reply-To: <20241012060847.6teuutvy2u2es2qw@thinkpad>
+From: Anand Moon <linux.amoon@gmail.com>
+Date: Sat, 12 Oct 2024 12:55:20 +0530
+Message-ID: <CANAwSgQLi5zW4+95-ZRbpm05bzs8tjr2Sr-PpgMxTPAEzjSj9Q@mail.gmail.com>
+Subject: Re: [PATCH v7 1/3] PCI: rockchip: Simplify clock handling by using
+ clk_bulk*() function
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Shawn Lin <shawn.lin@rock-chips.com>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, Heiko Stuebner <heiko@sntech.de>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, 
+	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>, 
+	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>, 
+	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-From: Xiu Jianfeng <xiujianfeng@huawei.com>
+Hi Manivannan,
 
-cgroup.max.depth is the maximum allowed descent depth below the current
-cgroup. If the actual descent depth is equal or larger, an attempt to
-create a new child cgroup will fail. However due to the cgroup->max_depth
-is of int type and having the default value INT_MAX, the condition
-'level > cgroup->max_depth' will never be satisfied, and it will cause
-an overflow of the level after it reaches to INT_MAX.
+Thanks for your review comments.
 
-Fix it by starting the level from 0 and using '>=' instead.
+On Sat, 12 Oct 2024 at 11:38, Manivannan Sadhasivam
+<manivannan.sadhasivam@linaro.org> wrote:
+>
+> On Sat, Oct 12, 2024 at 10:36:03AM +0530, Anand Moon wrote:
+> > Refactor the clock handling in the Rockchip PCIe driver,
+> > introducing a more robust and efficient method for enabling and
+> > disabling clocks using clk_bulk*() API. Using the clk_bulk APIs,
+>
+> I think I mentioned earlier to use impreative tone in commit messages.
+>
+I missed your point.
+> > the clock handling for the core clocks becomes much simpler.
+Will improve this. my focus is just I don't break the functionally.
+> >
+>
+> Could you please elaborate how? i.e., devm_clk_bulk_get_all() allows the driver
+> to get all clocks defined in the DT thereby removing the hardcoded clock names
+> in the driver.
+>
+Ok,  I will elaborate on this in the next version.
 
-It's worth mentioning that this issue is unlikely to occur in reality,
-as it's impossible to have a depth of INT_MAX hierarchy, but should be
-be avoided logically.
+> > - Replace devm_clk_get() with devm_clk_bulk_get_all().
+> > - Replace clk_prepare_enable() with clk_bulk_prepare_enable().
+> > - Replace clk_disable_unprepare() with clk_bulk_disable_unprepare().
+> >
+> > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
+>
+> With above changes,
+>
+> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>
+> - Mani
 
-Fixes: 1a926e0bbab8 ("cgroup: implement hierarchy limits")
-Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
----
- kernel/cgroup/cgroup.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I will try to improve the next version.
 
-diff --git a/kernel/cgroup/cgroup.c b/kernel/cgroup/cgroup.c
-index 5886b95c6eae..044c7ba1cc48 100644
---- a/kernel/cgroup/cgroup.c
-+++ b/kernel/cgroup/cgroup.c
-@@ -5789,7 +5789,7 @@ static bool cgroup_check_hierarchy_limits(struct cgroup *parent)
- {
- 	struct cgroup *cgroup;
- 	int ret = false;
--	int level = 1;
-+	int level = 0;
- 
- 	lockdep_assert_held(&cgroup_mutex);
- 
-@@ -5797,7 +5797,7 @@ static bool cgroup_check_hierarchy_limits(struct cgroup *parent)
- 		if (cgroup->nr_descendants >= cgroup->max_descendants)
- 			goto fail;
- 
--		if (level > cgroup->max_depth)
-+		if (level >= cgroup->max_depth)
- 			goto fail;
- 
- 		level++;
--- 
-2.34.1
+Thanks
 
+
+
+-Anand
 
