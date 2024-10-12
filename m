@@ -1,182 +1,128 @@
-Return-Path: <linux-kernel+bounces-362057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16BC799B067
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:23:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8AAA99B06C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:28:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42962B2373C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:23:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A48E283BE6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D6786250;
-	Sat, 12 Oct 2024 03:23:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FF986250;
+	Sat, 12 Oct 2024 03:28:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FH1/99Js"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="MN0sCtGM"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4025760
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:23:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FE61799F;
+	Sat, 12 Oct 2024 03:28:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728703402; cv=none; b=NO4m2nwMoR8Yv66oDxOOiDahGutzDURTcv038uIlQYUWz6kIc96cxfVOW89F9wwYrYvTWOzO4XklJ1xaSY7SJZwCSDDskF2SFHIMf6hi1m/e8QjMq8dARAfVTGjiy9AasNJpi1JxFRa5yKT8y38MNe9Zm2rhOK/0OR3FlU2fz+M=
+	t=1728703725; cv=none; b=LlkWKqbnF9J0RkkHzwK3G+Vlkv4Qu2Zr/Stg9NChEjLPJJvJUt9jI6Ey0w+qkTplrVUEOUB8z2Z6KdpFeDLqeWaI43Y6egR8P59R8kcBQYtSKiHQxoxiGYY7NOSm7Kv+mtGn8FhXELn+meI6s+ut5CBg3OTs6gz8kjnK6OAewdU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728703402; c=relaxed/simple;
-	bh=wsSaBgBTeHtBghO0cfqVgH243fy8Pa2RXxN/pZupV6Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mGBQvOo3ZF/orPPBlYO5rYXdrnQgIkoZrZhr/rgdckcw7EhKkGZ10+YqsrGWtRARBV64iWlGuEHawbP6L8sGGENj+oCx/xOen0nJ9qz/Yxjcoz7dDbHPlsMV85hfbwmcMkjHbaaiwQQxgOVcfAVCwD2gLgP8d72oosqxCn8KilM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FH1/99Js; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398df2c871so3492995e87.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:23:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728703399; x=1729308199; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=QlglIBEouENDM99FxQmO+xYhesFmMYXUSPi6sZycxFs=;
-        b=FH1/99JsGDWEPDo4/pWv3bMv0S6KN2f5ohS4D6i7LZ6PPtNCLDFouc8y/6VcAGPRNa
-         3JCom9TfAVeYldiuENdueoi0+msF81SpBNWgRe+dCop6C+LoKMgPYpbIxZiJyYwHX7ke
-         aVOP+6xJWG9UMtSJ/+6mXDU7O5pbTcfGYFDpJd+WUMsKRN/XeLpWJqZCq2OtYFQHk8Rv
-         D9Vh3MvIcfHVggd/uTWR3JUNvT3ptCMXmHvewW+eYWoHIgsSvuhMW++FD/u3W4C6M/uI
-         5kwtrYNUbPl7IQyrFTUe+sSS7dTZh80kv8dTrv+55SGVHsHRYMZy3W3x4h25xN57FNOF
-         Qtaw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728703399; x=1729308199;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QlglIBEouENDM99FxQmO+xYhesFmMYXUSPi6sZycxFs=;
-        b=CjnWWawZ4QE5ndNWzy1mDsPozQr0Ou6nhcTG+BzWFuHDZnZ5r7lw9HUidyW80Ib99T
-         PtI78ogNK1phTfq/MCfKXKvRHAccqxbcYq2oSIJ2l4OF+fl/s/kSzipt8pJEB05vLs1Z
-         eqSXMpMwKFOf80/yls+CZon9EVZEvYpxGiiXudU8A0X2YrGHkOSlWl9AMIU0sNQAOIbs
-         w1LQh2Ym79O+WtnCcvSJt8c+w8aTvbiy8aaOOIsAKnYOgoP12eVk0Db7uvFpaeylUzLh
-         T2i+sKFp5BZHpTQZPi8c7fBEeDkXsKSkTfkh2Gwy9qGCfviAetqVsG2ND8U4dERFPqCC
-         TAVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZGTyVeDFRd0EWTO6adwvwTzNML8AuXIFy4eTv0K9U0gAU0r/tV+zVdGJgvqLXJFo0HxzELX17JYumQxA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykO7Tmj6+Hu9WGUxfgz9GV2mC8QB7W0zWpGDgYXwnFlM8W30PL
-	XzYtbVEYd5LGzxMA8G0AW2GKRjB2IxacgQqG+c+3fYMV9tTrbodDS4d2K9BhAuZdYfqQrcopCnR
-	+5eyBmFNI6zIPI37CJeOZg+rWsTl8uIA8/zIe4g==
-X-Google-Smtp-Source: AGHT+IHTB9MOBFF1SVeJM6RLI2586pPtKAOHvz7bsl4p80HAofGQzLo5/TLSZAoKOlZ1GlH3ENrvOlgP85K3q2XSHPI=
-X-Received: by 2002:a05:6512:2201:b0:52f:1a0:b49 with SMTP id
- 2adb3069b0e04-539da4e2d8bmr2268383e87.31.1728703398750; Fri, 11 Oct 2024
- 20:23:18 -0700 (PDT)
+	s=arc-20240116; t=1728703725; c=relaxed/simple;
+	bh=7ctOgIZmfG1KHaGSho2VVl7rmGf1OWyxSXjOCOivKk4=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r6AmH3uys7itZ0kLex5YW7mvhprKKDiVDmPec+M1zXe0ayznJotGFO/EbDw2FXodakBlVGKcNJpC49Jq1Lg4mdJazmOH4wruGSTjY8rzRs9Son7nd027f0J9VROv84dpft6Pzrph/GxHzCPH3eTZ7qPam8IgZeYwbdqFkQdW5ok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=MN0sCtGM; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 0dd5d56a884a11ef8b96093e013ec31c-20241012
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=jEOM+uWSPEOPR7VEwN5kEOeIKQrT8FMXpA4LyF1Zbig=;
+	b=MN0sCtGMSy0CvrFl9CUzyumePRyEXWE47BgfPLh41ezOBc33QFKF07qhy99mAIVzmuZ2abj51w2SkXD0FXfHFQ4XiWHDOARakkCLNuQNy/asyIBM3q6HfbVVj6OGRtUUcfO0rE3CjB28u8j/DS+pg0hoUHwRYOIqi7bz2MCgQmU=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.41,REQID:1e27be3f-bd9a-44bb-a9c5-061b052b9c42,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:6dc6a47,CLOUDID:d7fd1e65-444a-4b47-a99a-591ade3b04b2,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 0dd5d56a884a11ef8b96093e013ec31c-20241012
+Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
+	(envelope-from <zhi.mao@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 725462293; Sat, 12 Oct 2024 11:28:31 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Sat, 12 Oct 2024 11:28:29 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Sat, 12 Oct 2024 11:28:28 +0800
+From: Zhi Mao <zhi.mao@mediatek.com>
+To: <fshao@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, "Mauro
+ Carvalho Chehab" <mchehab@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>
+CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	<shengnan.wang@mediatek.com>, <yaya.chang@mediatek.com>,
+	<teddy.chen@mediatek.com>, <yunkec@chromium.org>, <10572168@qq.com>,
+	<ot_xiaofeiw.wang@mediatek.com>, Zhi Mao <zhi.mao@mediatek.com>
+Subject: [PATCH] media: i2c: dw9768: Use runtime PM autosuspend
+Date: Sat, 12 Oct 2024 11:25:53 +0800
+Message-ID: <20241012032805.23545-1-zhi.mao@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1728491453.git.nicolinc@nvidia.com> <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
-In-Reply-To: <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Sat, 12 Oct 2024 11:23:07 +0800
-Message-ID: <CABQgh9Eaj_vy1=sS2Pf7RC7Vy5PopDfwoshECULEU-jK3JF_sQ@mail.gmail.com>
-Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
- related struct
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org, joro@8bytes.org, 
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org, 
-	baolu.lu@linux.intel.com, shuah@kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com, 
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com, 
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com, yi.l.liu@intel.com, 
-	aik@amd.com, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--0.971100-8.000000
+X-TMASE-MatchedRID: ys/FpHHmWmyiwkztVCsqbymjEOrcO6AyTJDl9FKHbrleiHO/WPO/+/4f
+	ZVz77tXZ4vM1YF6AJbbGJQ3BiiLAggtuKBGekqUpnH7sbImOEBR7VdEbWjzSg1/RgROefpJJv/j
+	eH367KZ9mU104S42Oids+iaVjws45LPkTHGoONYy7DBs4v5OL2nWfSzpWW4iP2JbScDz7h7fyNp
+	7g4PXe0BXsxz6ujBxUq1f8XSkHBUmNJXmEMVvLtpRMZUCEHkRt
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--0.971100-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	723C8014F5CA88C1ABFCEC0A728BE8073CCBC88D59AB5644A8EB391FFF02A60D2000:8
+X-MTK: N
 
-On Thu, 10 Oct 2024 at 00:40, Nicolin Chen <nicolinc@nvidia.com> wrote:
->
-> Add a new IOMMUFD_OBJ_VIOMMU with an iommufd_viommu structure to represent
-> a slice of physical IOMMU device passed to or shared with a user space VM.
-> This slice, now a vIOMMU object, is a group of virtualization resources of
-> a physical IOMMU's, such as:
->  - Security namespace for guest owned ID, e.g. guest-controlled cache tags
->  - Access to a sharable nesting parent pagetable across physical IOMMUs
->  - Virtualization of various platforms IDs, e.g. RIDs and others
->  - Delivery of paravirtualized invalidation
->  - Direct assigned invalidation queues
->  - Direct assigned interrupts
->  - Non-affiliated event reporting
->
-> Add a new viommu_alloc op in iommu_ops, for drivers to allocate their own
-> vIOMMU structures. And this allocation also needs a free(), so add struct
-> iommufd_viommu_ops.
->
-> To simplify a vIOMMU allocation, provide a iommufd_viommu_alloc() helper.
-> It's suggested that a driver should embed a core-level viommu structure in
-> its driver-level viommu struct and call the iommufd_viommu_alloc() helper,
-> meanwhile the driver can also implement a viommu ops:
->     struct my_driver_viommu {
->         struct iommufd_viommu core;
->         /* driver-owned properties/features */
->         ....
->     };
->
->     static const struct iommufd_viommu_ops my_driver_viommu_ops = {
->         .free = my_driver_viommu_free,
->         /* future ops for virtualization features */
->         ....
->     };
->
->     static struct iommufd_viommu my_driver_viommu_alloc(...)
->     {
->         struct my_driver_viommu *my_viommu =
->                 iommufd_viommu_alloc(ictx, my_driver_viommu, core,
->                                      my_driver_viommu_ops);
->         /* Init my_viommu and related HW feature */
->         ....
->         return &my_viommu->core;
->     }
->
->     static struct iommu_domain_ops my_driver_domain_ops = {
->         ....
->         .viommu_alloc = my_driver_viommu_alloc,
->     };
->
-> To make the Kernel config work between a driver and the iommufd core, put
-> the for-driver allocation helpers into a new viommu_api file building with
-> CONFIG_IOMMUFD_DRIVER.
->
-> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
+Use runtime PM autosuspend function to avoid rapid power state bouncing.
 
-> diff --git a/drivers/iommu/iommufd/viommu_api.c b/drivers/iommu/iommufd/viommu_api.c
-> new file mode 100644
-> index 000000000000..c1731f080d6b
-> --- /dev/null
-> +++ b/drivers/iommu/iommufd/viommu_api.c
-> @@ -0,0 +1,57 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/* Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES
-> + */
-> +
-> +#include "iommufd_private.h"
-> +
-> +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
-> +                                               size_t size,
-> +                                               enum iommufd_object_type type)
-> +{
-> +       struct iommufd_object *obj;
-> +       int rc;
-> +
-> +       obj = kzalloc(size, GFP_KERNEL_ACCOUNT);
-> +       if (!obj)
-> +               return ERR_PTR(-ENOMEM);
-> +       obj->type = type;
-> +       /* Starts out bias'd by 1 until it is removed from the xarray */
-> +       refcount_set(&obj->shortterm_users, 1);
-> +       refcount_set(&obj->users, 1);
+Signed-off-by: Zhi Mao <zhi.mao@mediatek.com>
+---
+ drivers/media/i2c/dw9768.c | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-here set refcont 1
+diff --git a/drivers/media/i2c/dw9768.c b/drivers/media/i2c/dw9768.c
+index 18ef2b35c9aa..9d39198a9ad4 100644
+--- a/drivers/media/i2c/dw9768.c
++++ b/drivers/media/i2c/dw9768.c
+@@ -374,7 +374,8 @@ static int dw9768_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ 
+ static int dw9768_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
+ {
+-	pm_runtime_put(sd->dev);
++	pm_runtime_mark_last_busy(sd->dev);
++	pm_runtime_put_autosuspend(sd->dev);
+ 
+ 	return 0;
+ }
+@@ -490,6 +491,8 @@ static int dw9768_probe(struct i2c_client *client)
+ 		goto err_power_off;
+ 	}
+ 
++	pm_runtime_set_autosuspend_delay(dev, 1000);
++	pm_runtime_use_autosuspend(dev);
+ 	pm_runtime_idle(dev);
+ 
+ 	return 0;
+-- 
+2.46.0
 
-iommufd_device_bind -> iommufd_object_alloc(ictx, idev,
-IOMMUFD_OBJ_DEVICE): refcont -> 1
-refcount_inc(&idev->obj.users); refcount -> 2
-will cause iommufd_device_unbind fail.
-
-May remove refcount_inc(&idev->obj.users) in iommufd_device_bind
-
-Thanks
 
