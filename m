@@ -1,251 +1,182 @@
-Return-Path: <linux-kernel+bounces-362056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02FC999B068
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16BC799B067
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:23:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D1DBB237CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:23:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42962B2373C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:23:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E53686277;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62D6786250;
 	Sat, 12 Oct 2024 03:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XhMM/G5Y"
-Received: from out-171.mta0.migadu.com (out-171.mta0.migadu.com [91.218.175.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="FH1/99Js"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3578C07
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:23:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC4025760
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:23:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728703402; cv=none; b=oDlpPmojxwBYfnCgmJt8yY2KK/nSKkyVsK0vpxcbFl2Qw3/e5CFLMaepMCE5QFVeWTEjJ0zRYLuNl2+3DBcnnwSZhxoK7UI3qw0wj/jEGQLii9tHc29YiFLXh3SuocO+tpjb0/9hPrR/BJ/RpwEDJPpEvzgdWMT3oSTNnFvNCzc=
+	t=1728703402; cv=none; b=NO4m2nwMoR8Yv66oDxOOiDahGutzDURTcv038uIlQYUWz6kIc96cxfVOW89F9wwYrYvTWOzO4XklJ1xaSY7SJZwCSDDskF2SFHIMf6hi1m/e8QjMq8dARAfVTGjiy9AasNJpi1JxFRa5yKT8y38MNe9Zm2rhOK/0OR3FlU2fz+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728703402; c=relaxed/simple;
-	bh=WZh8A8esidVq4Wdah9lhkYEjv01CeyMgH6tCJXDA91Q=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bcnuXWD0nfn1rWIIN+1yDUnsA+o47P0b1TSFMmLtvhoZj42uJCtx8h9WEn52ln04SgzRa0O6SkeYZK7mTVoVpTFJQ3iwdDYM++fXced4d1fB5NvrOhpjlo/rJs1cySOnKjy3z4OxlnAZTR5kcr1Ix7PaZWdvskmsiVNzP3VPgpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XhMM/G5Y; arc=none smtp.client-ip=91.218.175.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=utf-8
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728703397;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=79Mzw15mpNKD+frrr201ZwC3OMDjPfjgdZyLyMlzeCw=;
-	b=XhMM/G5Y3Ucc3o9uUr2OV7jmiwh7AfKajKQxx1vDgkz4UIhNyN1873N20P2ECySFu8MifW
-	+6mMVa+fuEOcMCdHLZM+w8g8USEhL7u1xEGM16JpopXTPe3DJ4owHUuCOtY+3X9MbyM1id
-	ZRYeqhWYjeyh3Sy1aiclAgquIDtrG6Q=
+	bh=wsSaBgBTeHtBghO0cfqVgH243fy8Pa2RXxN/pZupV6Q=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mGBQvOo3ZF/orPPBlYO5rYXdrnQgIkoZrZhr/rgdckcw7EhKkGZ10+YqsrGWtRARBV64iWlGuEHawbP6L8sGGENj+oCx/xOen0nJ9qz/Yxjcoz7dDbHPlsMV85hfbwmcMkjHbaaiwQQxgOVcfAVCwD2gLgP8d72oosqxCn8KilM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=FH1/99Js; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-5398df2c871so3492995e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:23:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728703399; x=1729308199; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=QlglIBEouENDM99FxQmO+xYhesFmMYXUSPi6sZycxFs=;
+        b=FH1/99JsGDWEPDo4/pWv3bMv0S6KN2f5ohS4D6i7LZ6PPtNCLDFouc8y/6VcAGPRNa
+         3JCom9TfAVeYldiuENdueoi0+msF81SpBNWgRe+dCop6C+LoKMgPYpbIxZiJyYwHX7ke
+         aVOP+6xJWG9UMtSJ/+6mXDU7O5pbTcfGYFDpJd+WUMsKRN/XeLpWJqZCq2OtYFQHk8Rv
+         D9Vh3MvIcfHVggd/uTWR3JUNvT3ptCMXmHvewW+eYWoHIgsSvuhMW++FD/u3W4C6M/uI
+         5kwtrYNUbPl7IQyrFTUe+sSS7dTZh80kv8dTrv+55SGVHsHRYMZy3W3x4h25xN57FNOF
+         Qtaw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728703399; x=1729308199;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QlglIBEouENDM99FxQmO+xYhesFmMYXUSPi6sZycxFs=;
+        b=CjnWWawZ4QE5ndNWzy1mDsPozQr0Ou6nhcTG+BzWFuHDZnZ5r7lw9HUidyW80Ib99T
+         PtI78ogNK1phTfq/MCfKXKvRHAccqxbcYq2oSIJ2l4OF+fl/s/kSzipt8pJEB05vLs1Z
+         eqSXMpMwKFOf80/yls+CZon9EVZEvYpxGiiXudU8A0X2YrGHkOSlWl9AMIU0sNQAOIbs
+         w1LQh2Ym79O+WtnCcvSJt8c+w8aTvbiy8aaOOIsAKnYOgoP12eVk0Db7uvFpaeylUzLh
+         T2i+sKFp5BZHpTQZPi8c7fBEeDkXsKSkTfkh2Gwy9qGCfviAetqVsG2ND8U4dERFPqCC
+         TAVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZGTyVeDFRd0EWTO6adwvwTzNML8AuXIFy4eTv0K9U0gAU0r/tV+zVdGJgvqLXJFo0HxzELX17JYumQxA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykO7Tmj6+Hu9WGUxfgz9GV2mC8QB7W0zWpGDgYXwnFlM8W30PL
+	XzYtbVEYd5LGzxMA8G0AW2GKRjB2IxacgQqG+c+3fYMV9tTrbodDS4d2K9BhAuZdYfqQrcopCnR
+	+5eyBmFNI6zIPI37CJeOZg+rWsTl8uIA8/zIe4g==
+X-Google-Smtp-Source: AGHT+IHTB9MOBFF1SVeJM6RLI2586pPtKAOHvz7bsl4p80HAofGQzLo5/TLSZAoKOlZ1GlH3ENrvOlgP85K3q2XSHPI=
+X-Received: by 2002:a05:6512:2201:b0:52f:1a0:b49 with SMTP id
+ 2adb3069b0e04-539da4e2d8bmr2268383e87.31.1728703398750; Fri, 11 Oct 2024
+ 20:23:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH] mm/hugetlb: Concentrated releases memory when cmdline
- specifies node requests for large pages
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <20241011080543.2422-1-suhua1@kingsoft.com>
-Date: Sat, 12 Oct 2024 11:22:20 +0800
-Cc: akpm@linux-foundation.org,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- suhua <suhua1@kingsoft.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <C1125584-8165-473F-8E11-44CD4BD90BDF@linux.dev>
-References: <20241011080543.2422-1-suhua1@kingsoft.com>
-To: suhua <suhua.tanke@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+References: <cover.1728491453.git.nicolinc@nvidia.com> <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
+In-Reply-To: <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
+From: Zhangfei Gao <zhangfei.gao@linaro.org>
+Date: Sat, 12 Oct 2024 11:23:07 +0800
+Message-ID: <CABQgh9Eaj_vy1=sS2Pf7RC7Vy5PopDfwoshECULEU-jK3JF_sQ@mail.gmail.com>
+Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
+ related struct
+To: Nicolin Chen <nicolinc@nvidia.com>
+Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org, joro@8bytes.org, 
+	suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org, 
+	baolu.lu@linux.intel.com, shuah@kernel.org, linux-kernel@vger.kernel.org, 
+	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kselftest@vger.kernel.org, eric.auger@redhat.com, 
+	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com, 
+	shameerali.kolothum.thodi@huawei.com, smostafa@google.com, yi.l.liu@intel.com, 
+	aik@amd.com, patches@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
+On Thu, 10 Oct 2024 at 00:40, Nicolin Chen <nicolinc@nvidia.com> wrote:
+>
+> Add a new IOMMUFD_OBJ_VIOMMU with an iommufd_viommu structure to represent
+> a slice of physical IOMMU device passed to or shared with a user space VM.
+> This slice, now a vIOMMU object, is a group of virtualization resources of
+> a physical IOMMU's, such as:
+>  - Security namespace for guest owned ID, e.g. guest-controlled cache tags
+>  - Access to a sharable nesting parent pagetable across physical IOMMUs
+>  - Virtualization of various platforms IDs, e.g. RIDs and others
+>  - Delivery of paravirtualized invalidation
+>  - Direct assigned invalidation queues
+>  - Direct assigned interrupts
+>  - Non-affiliated event reporting
+>
+> Add a new viommu_alloc op in iommu_ops, for drivers to allocate their own
+> vIOMMU structures. And this allocation also needs a free(), so add struct
+> iommufd_viommu_ops.
+>
+> To simplify a vIOMMU allocation, provide a iommufd_viommu_alloc() helper.
+> It's suggested that a driver should embed a core-level viommu structure in
+> its driver-level viommu struct and call the iommufd_viommu_alloc() helper,
+> meanwhile the driver can also implement a viommu ops:
+>     struct my_driver_viommu {
+>         struct iommufd_viommu core;
+>         /* driver-owned properties/features */
+>         ....
+>     };
+>
+>     static const struct iommufd_viommu_ops my_driver_viommu_ops = {
+>         .free = my_driver_viommu_free,
+>         /* future ops for virtualization features */
+>         ....
+>     };
+>
+>     static struct iommufd_viommu my_driver_viommu_alloc(...)
+>     {
+>         struct my_driver_viommu *my_viommu =
+>                 iommufd_viommu_alloc(ictx, my_driver_viommu, core,
+>                                      my_driver_viommu_ops);
+>         /* Init my_viommu and related HW feature */
+>         ....
+>         return &my_viommu->core;
+>     }
+>
+>     static struct iommu_domain_ops my_driver_domain_ops = {
+>         ....
+>         .viommu_alloc = my_driver_viommu_alloc,
+>     };
+>
+> To make the Kernel config work between a driver and the iommufd core, put
+> the for-driver allocation helpers into a new viommu_api file building with
+> CONFIG_IOMMUFD_DRIVER.
+>
+> Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
 
-
-> On Oct 11, 2024, at 16:05, suhua <suhua.tanke@gmail.com> wrote:
->=20
-> When HVO is enabled and huge page memory allocs are made, the freed =
-memory
-> can be aggregated into higher order memory in the following paths, =
-which
-> facilitates further allocs for higher order memory.
->=20
-> echo 200000 > /proc/sys/vm/nr_hugepages
-> echo 200000 > =
-/sys/devices/system/node/node*/hugepages/hugepages-2048kB/nr_hugepages
-> grub=EF=BC=9A default_hugepagesz=3D2M hugepagesz=3D2M hugepages=3D200000=
-
->=20
-> Currently not support for releasing aggregations to higher order in =
-the
-> following way, which will releasing to lower order.
->=20
-> grub: default_hugepagesz=3D2M hugepagesz=3D2M =
-hugepages=3D0:100000,1:100000
->=20
-> This patch supports the release of huge page optimizations aggregates =
-to
-> higher order memory.
->=20
-> eg:
-> cat /proc/cmdline
-> BOOT_IMAGE=3D/boot/vmlinuz-xxx ... default_hugepagesz=3D2M =
-hugepagesz=3D2M hugepages=3D0:100000,1:100000
->=20
-> Before:
-> Free pages count per migrate type at order       0      1      2      =
-3      4      5      6      7      8      9     10
-> ...
-> Node    0, zone   Normal, type    Unmovable  55282  97039  99307      =
-0      1      1      0      1      1      1      0
-> Node    0, zone   Normal, type      Movable     25     11    345     =
-87     48     21      2     20      9      3  75061
-> Node    0, zone   Normal, type  Reclaimable      4      2      2      =
-4      3      0      2      1      1      1      0
-> Node    0, zone   Normal, type   HighAtomic      0      0      0      =
-0      0      0      0      0      0      0      0
-> ...
-> Free pages count per migrate type at order       0      1      2      =
-3      4      5      6      7      8      9     10
-> Node    1, zone   Normal, type    Unmovable  98888  99650  99679      =
-2      3      1      2      2      2      0      0
-> Node    1, zone   Normal, type      Movable      1      1      0      =
-1      1      0      1      0      1      1  75937
-> Node    1, zone   Normal, type  Reclaimable      0      0      0      =
-0      0      0      0      0      0      0      0
-> Node    1, zone   Normal, type   HighAtomic      0      0      0      =
-0      0      0      0      0      0      0      0
->=20
-> After:
-> Free pages count per migrate type at order       0      1      2      =
-3      4      5      6      7      8      9     10
-> ...
-> Node    0, zone   Normal, type    Unmovable    152    158     37      =
-2      2      0      3      4      2      6    717
-> Node    0, zone   Normal, type      Movable      1     37     53      =
-3     55     49     16      6      2      1  75000
-> Node    0, zone   Normal, type  Reclaimable      1      4      3      =
-1      2      1      1      1      1      1      0
-> Node    0, zone   Normal, type   HighAtomic      0      0      0      =
-0      0      0      0      0      0      0      0
-> ...
-> Free pages count per migrate type at order       0      1      2      =
-3      4      5      6      7      8      9     10
-> Node    1, zone   Normal, type    Unmovable      5      3      2      =
-1      3      4      2      2      2      0    779
-> Node    1, zone   Normal, type      Movable      1      0      1      =
-1      1      0      1      0      1      1  75849
-> Node    1, zone   Normal, type  Reclaimable      0      0      0      =
-0      0      0      0      0      0      0      0
-> Node    1, zone   Normal, type   HighAtomic      0      0      0      =
-0      0      0      0      0      0      0      0
-
-A good result. But the subject could be changed to:
-
-	"mm/hugetlb: perform vmemmap optimization batchly for specific =
-node allocation"
-
->=20
-> Signed-off-by: suhua <suhua1@kingsoft.com>
-> ---
-> mm/hugetlb.c | 37 +++++++++++++++++++++++++++++++++----
-> 1 file changed, 33 insertions(+), 4 deletions(-)
->=20
-> diff --git a/mm/hugetlb.c b/mm/hugetlb.c
-> index 190fa05635f4..3441d380c90b 100644
-> --- a/mm/hugetlb.c
-> +++ b/mm/hugetlb.c
-> @@ -2077,6 +2077,24 @@ static struct folio =
-*only_alloc_fresh_hugetlb_folio(struct hstate *h,
-> 	return folio;
-> }
->=20
-> +static struct folio *only_alloc_and_account_fresh_hugetlb_folio(
-> + 		struct hstate *h, gfp_t gfp_mask,
-> + 		int nid, nodemask_t *nmask)
+> diff --git a/drivers/iommu/iommufd/viommu_api.c b/drivers/iommu/iommufd/viommu_api.c
+> new file mode 100644
+> index 000000000000..c1731f080d6b
+> --- /dev/null
+> +++ b/drivers/iommu/iommufd/viommu_api.c
+> @@ -0,0 +1,57 @@
+> +// SPDX-License-Identifier: GPL-2.0-only
+> +/* Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES
+> + */
+> +
+> +#include "iommufd_private.h"
+> +
+> +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
+> +                                               size_t size,
+> +                                               enum iommufd_object_type type)
 > +{
-> + 	struct folio *folio;
+> +       struct iommufd_object *obj;
+> +       int rc;
 > +
-> + 	folio =3D only_alloc_fresh_hugetlb_folio(h, gfp_mask, nid, =
-nmask, NULL);
-> + 	if (!folio)
-> + 		return NULL;
-> +
-> + 	spin_lock_irq(&hugetlb_lock);
-> + 	h->nr_huge_pages++;
-> + 	h->nr_huge_pages_node[nid]++;
-> + 	spin_unlock_irq(&hugetlb_lock);
-> +
-> + 	return folio;
-> +}
-> +
-> /*
->  * Common helper to allocate a fresh hugetlb page. All specific =
-allocators
->  * should use this function to get new hugetlb pages
-> @@ -3301,23 +3319,34 @@ static void __init =
-hugetlb_hstate_alloc_pages_onenode(struct hstate *h, int nid)
-> {
-> 	unsigned long i;
-> 	char buf[32];
-> + 	LIST_HEAD(folio_list);
-> + 	struct folio *folio, *tmp_f;
->=20
-> 	for (i =3D 0; i < h->max_huge_pages_node[nid]; ++i) {
-> 		if (hstate_is_gigantic(h)) {
-> 			if (!alloc_bootmem_huge_page(h, nid))
-> 				break;
-> 		} else {
-> - 			struct folio *folio;
-> 			gfp_t gfp_mask =3D htlb_alloc_mask(h) | =
-__GFP_THISNODE;
->=20
-> - 			folio =3D alloc_fresh_hugetlb_folio(h, gfp_mask, =
-nid,
-> - 					&node_states[N_MEMORY]);
-> + 			folio =3D =
-only_alloc_and_account_fresh_hugetlb_folio(h,
-> + 					gfp_mask, nid, =
-&node_states[N_MEMORY]);
+> +       obj = kzalloc(size, GFP_KERNEL_ACCOUNT);
+> +       if (!obj)
+> +               return ERR_PTR(-ENOMEM);
+> +       obj->type = type;
+> +       /* Starts out bias'd by 1 until it is removed from the xarray */
+> +       refcount_set(&obj->shortterm_users, 1);
+> +       refcount_set(&obj->users, 1);
 
-I think we could use only_alloc_fresh_hugetlb_folio plus =
-prep_and_add_allocated_folios
-to achieve the same goal but more simpler, right?
+here set refcont 1
 
-> 			if (!folio)
-> 				break;
-> - 			free_huge_folio(folio); /* free it into the =
-hugepage allocator */
-> + 			list_add(&folio->lru, &folio_list);
-> 		}
-> 		cond_resched();
-> 	}
-> +
-> + 	if (!list_empty(&folio_list)) {
-> + 		/* Send list for bulk vmemmap optimization processing */
-> + 		hugetlb_vmemmap_optimize_folios(h, &folio_list);
-> +
-> + 		list_for_each_entry_safe(folio, tmp_f, &folio_list, lru) =
-{
-> + 			free_huge_folio(folio); /* free it into the =
-hugepage allocator */
-> + 		}
-> + 	}
+iommufd_device_bind -> iommufd_object_alloc(ictx, idev,
+IOMMUFD_OBJ_DEVICE): refcont -> 1
+refcount_inc(&idev->obj.users); refcount -> 2
+will cause iommufd_device_unbind fail.
 
-We could use prep_and_add_allocated_folios here.
+May remove refcount_inc(&idev->obj.users) in iommufd_device_bind
 
-Thanks.
-
-> +
-> 	if (i =3D=3D h->max_huge_pages_node[nid])
-> 		return;
->=20
-> --=20
-> 2.34.1
->=20
-
+Thanks
 
