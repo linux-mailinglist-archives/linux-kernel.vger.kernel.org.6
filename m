@@ -1,180 +1,186 @@
-Return-Path: <linux-kernel+bounces-362259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42CC599B2BD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:56:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97B2A99B2A7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA7511F2261C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:56:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58CC11C213AB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B07BB1547EB;
-	Sat, 12 Oct 2024 09:55:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="T+N50k70"
-Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4695A14EC60;
+	Sat, 12 Oct 2024 09:51:31 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDE915442A;
-	Sat, 12 Oct 2024 09:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BEA610D
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 09:51:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728726917; cv=none; b=m8yG25r89R6ZPyXdFEM9ZJs/OUcSXB8qOK/kTs1v84Fnr2VpYwyxPtcBMsaOW4W/jlLpreiA8u9QzVDPV0yI/nIMb/kK/gII0CnD5/BkORagvCaDSXz3RnXPx800NNOC0kCrx23nbfsNjlxwTKWbIjhOn3xytxF69qBLoOW61Tw=
+	t=1728726690; cv=none; b=qMiUW/j6bfl4m3pDFuaMVzJBP+Z5K+ST95BpeKE0ODKA36MDAzyvPfczfePVUZkW4JqLcFtVxDLrUWzc8lvnQSJIf9ETaRFQ5L2mCLBWqajB07khRPP1LPl/dwEGIhzoEK8EUHTwWGMheyeyvjwziv7VV5UHh2n23/bGHxkF/+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728726917; c=relaxed/simple;
-	bh=LpD7nSOqL0xZBzDZAy5+pkvuurXcf9akYEhw9FqkPAA=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QoAcviJsKiKH+bPzTWhzANZnBzH9OUqHqLsLwZg0ZrvKwzUv4xzUfddeiAVeRwsz5ThOyT8sl68B4K107ap4HTnVmUto/phCb1siAszOjg7uSAaB3mDcBVgTnuK9w4fPBNL940Z7+THDaYvRSownmZmIaVmhgadRCxViG9EgHaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=T+N50k70; arc=none smtp.client-ip=109.73.34.58
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
-Received: from mx1.t-argos.ru (localhost [127.0.0.1])
-	by mx1.t-argos.ru (Postfix) with ESMTP id 9149C100006;
-	Sat, 12 Oct 2024 12:54:57 +0300 (MSK)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
-	t=1728726897; bh=JXgwjey7j0QMl4Ux8Xn13v6r0ah2NLP0LwiGYOCtAFA=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
-	b=T+N50k704BTprexf388jy4KSugh4fJkVXnz2wfqE0z/wGQhuL9ZW7kQMweyRwh8wQ
-	 AzbzpRbQ8pJk0dQpPbv+mzwNHk4nu7XjYnOCsbfiWYNYtKCjYxLTU6A2pLXe4RaAaK
-	 by9HClwG7sCRICs8Oq0ZB+W9i/iaDA2kiW7dU9Mj0WsiMmD9jmDxMXXkNcyHxY9E/F
-	 Wu9oHgiUo75gTRbZCT+VBold5ilK3Fy7D+Nfye8qQPeAQw64hw8lpAGw30ioCoc73w
-	 F0FsqmQiVjrE9RzoEl8JmdcuPBeckLIlERmsT7rkEmnCimR4JhjJwgWWssOg+ULUnz
-	 gYe8dwvM9wJGw==
-Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
-	by mx1.t-argos.ru (Postfix) with ESMTP;
-	Sat, 12 Oct 2024 12:53:55 +0300 (MSK)
-Received: from localhost.localdomain (172.17.210.7) by ta-mail-02
- (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 12 Oct
- 2024 12:53:02 +0300
-From: Aleksandr Mishin <amishin@t-argos.ru>
-To: Veerasenareddy Burru <vburru@marvell.com>, Abhijit Ayarekar
-	<aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>, Sathesh Edara
-	<sedara@marvell.com>
-CC: Aleksandr Mishin <amishin@t-argos.ru>, "David S. Miller"
-	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
-Subject: [PATCH net v4 2/2] octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
-Date: Sat, 12 Oct 2024 12:49:50 +0300
-Message-ID: <20241012094950.9438-3-amishin@t-argos.ru>
-X-Mailer: git-send-email 2.30.2
-In-Reply-To: <20241012094950.9438-1-amishin@t-argos.ru>
-References: <20241012094950.9438-1-amishin@t-argos.ru>
+	s=arc-20240116; t=1728726690; c=relaxed/simple;
+	bh=1wZHRsNIL3b+zY4gZFxYiMfK+2HIge8wzhwItDkcSuo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Er0pIyIkKtHXOGsoAO7lqh0TCRway0xAc1cbPRgURDS1hgi55hbQdi+ohJgz1BIKX0iEAHwu00uqll/Z/INwxwLQ6nQnqysus2SdBETXMXbTN5qaotp8FQfI3k+31HeDyRjYhGw6HruiSQrHupCgZbjbFbUztZwkywePg09u2DQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-832160abde4so258199739f.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:51:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728726688; x=1729331488;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ISkzNIwcxKCi4MsIw6vsqZY/ns0b+a54JSlHPYleXCs=;
+        b=hwbfnb6TMdEr5ps/cvrjyqVtiFfjGVJyEW+WCqOYb4mlyvrmgX77Ea1u8QPxWrm+eo
+         dRiL03muJzn+JbMQf+B4vx8J7B3KYoytUGPgwgOuWPnxFRONk8o2kLQl7fy39zuEKVY0
+         JoMy09jkmsF5m4GVT0FIHVH/Eycz2hMEIaUuUe9XeJJMzeIY5Fa1ggubziiHQJPgCmWX
+         fs0FNNQFVim+KCnAhcrBmvpIzLmq6yUdzIWGgdNwXNS2o9Jn0FRb9uKpPlnRZnPZCr4H
+         slwO+W3/5MMtQ8nraAhO+bf26vvV+2Q5Yb3eYri1P/KTh2D8ytI4rOxDTL27N/Z4dqTj
+         N7hA==
+X-Forwarded-Encrypted: i=1; AJvYcCX5vvtptNd1SzBMAYl00b+i2tVQjuxVxmQXXLYoS3JKj4XqcWEycDWlJIAnoB3XGvSlVjN4mYpTRECD6KE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKvAfTG+bvdbmEb4UliTmBmEdpdCVp6TUrJGbZDCV2YVoZXb9A
+	g8DhPloR5GJe7dgHyRTL/JkGk01nkTINUt1nTysnaSM/vk5+UfR6RTVpw1mZDm00+Q0Mhm52jPY
+	P2UCEEYbBK63lOWSW3gXjYhCmuofWY438DHql8L52AoyzKVUE/23GFdw=
+X-Google-Smtp-Source: AGHT+IGDY6tlmGxCjDErUZ9fIN/FYDK4Wwk0kUq8g8AHRcmWNkYpH1TsCAhMU+P84G9sojLNsiW3h/yfBnvicxZjfeUzvnES7gLV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
- (172.17.13.212)
-X-KSMG-Rule-ID: 1
-X-KSMG-Message-Action: clean
-X-KSMG-AntiSpam-Lua-Profiles: 188393 [Oct 12 2024]
-X-KSMG-AntiSpam-Version: 6.1.0.4
-X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
-X-KSMG-AntiSpam-Rate: 0
-X-KSMG-AntiSpam-Status: not_detected
-X-KSMG-AntiSpam-Method: none
-X-KSMG-AntiSpam-Auth: dkim=none
-X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, t-argos.ru:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;mx1.t-argos.ru.ru:7.1.1;lore.kernel.org:7.1.1;127.0.0.199:7.1.2, FromAlignment: s
-X-MS-Exchange-Organization-SCL: -1
-X-KSMG-AntiSpam-Interceptor-Info: scan successful
-X-KSMG-AntiPhishing: Clean, bases: 2024/10/12 09:22:00
-X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/10/12 08:26:00 #26739312
-X-KSMG-AntiVirus-Status: Clean, skipped
+X-Received: by 2002:a92:ca4b:0:b0:395:e85e:f2fa with SMTP id
+ e9e14a558f8ab-3a3b5844745mr39881005ab.1.1728726688320; Sat, 12 Oct 2024
+ 02:51:28 -0700 (PDT)
+Date: Sat, 12 Oct 2024 02:51:28 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670a46a0.050a0220.4cbc0.001e.GAE@google.com>
+Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_read_virt_blocks
+From: syzbot <syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com>
+To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
+	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-build_skb() returns NULL in case of a memory allocation failure so handle
-it inside __octep_oq_process_rx() to avoid NULL pointer dereference.
+Hello,
 
-__octep_oq_process_rx() is called during NAPI polling by the driver. If
-skb allocation fails, keep on pulling packets out of the Rx DMA queue: we
-shouldn't break the polling immediately and thus falsely indicate to the
-octep_napi_poll() that the Rx pressure is going down. As there is no
-associated skb in this case, don't process the packets and don't push them
-up the network stack - they are skipped.
+syzbot found the following issue on:
 
-Helper function is implemented to unmmap/flush all the fragment buffers
-used by the dropped packet. 'alloc_failures' counter is incremented to
-mark the skb allocation error in driver statistics.
+HEAD commit:    87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
+git tree:       upstream
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=17fbbb80580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
+dashboard link: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c117d0580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1007bb80580000
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/47c26a185f6d/disk-87d6aab2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/fe82dfdaaac4/vmlinux-87d6aab2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ecaba119a5f0/bzImage-87d6aab2.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/197dcbc41fea/mount_0.gz
 
-Fixes: 37d79d059606 ("octeon_ep: add Tx/Rx processing and interrupt support")
-Suggested-by: Paolo Abeni <pabeni@redhat.com>
-Signed-off-by: Aleksandr Mishin <amishin@t-argos.ru>
+Bisection is inconclusive: the issue happens on the oldest tested release.
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114db707980000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=134db707980000
+console output: https://syzkaller.appspot.com/x/log.txt?x=154db707980000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+
+JBD2: Ignoring recovery information on journal
+ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/extent_map.c:971!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5221 Comm: syz-executor117 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
+Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
+RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
+RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
+R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
+R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
+FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
+ ocfs2_find_dir_space_el fs/ocfs2/dir.c:3427 [inline]
+ ocfs2_prepare_dir_for_insert+0x3f2/0x5c60 fs/ocfs2/dir.c:4274
+ ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
+ ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+ lookup_open fs/namei.c:3595 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa356467d59
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe912bab08 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa356467d59
+RDX: 000000000000275a RSI: 0000000020000040 RDI: 00000000ffffff9c
+RBP: 00007fa3564e05f0 R08: 0000000000004472 R09: 000055557cd564c0
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe912bab30
+R13: 00007ffe912bad58 R14: 431bde82d7b634db R15: 00007fa3564b103b
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
+Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
+RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
+RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
+R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
+R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
+FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+
+
 ---
-Compile tested only.
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-v4:
-  - Split patch up as suggested by Jakub
-    (https://lore.kernel.org/all/20241004073311.223efca4@kernel.org/)
-v3: https://lore.kernel.org/all/20240930053328.9618-1-amishin@t-argos.ru/
-  - Optimize helper as suggested by Paolo
-    (https://lore.kernel.org/all/b9ae8575-f903-425f-aa42-0c2a7605aa94@redhat.com/)
-  - v3 has been reviewed-by Simon Horman
-    (https://lore.kernel.org/all/20240930162622.GF1310185@kernel.org/)
-v2: https://lore.kernel.org/all/20240916060212.12393-1-amishin@t-argos.ru/
-  - Implement helper instead of adding multiple checks for '!skb' and
-    remove 'rx_bytes' increasing in case of packet dropping as suggested
-    by Paolo
-    (https://lore.kernel.org/all/ba514498-3706-413b-a09f-f577861eef28@redhat.com/)
-v1: https://lore.kernel.org/all/20240906063907.9591-1-amishin@t-argos.ru/
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
- .../net/ethernet/marvell/octeon_ep/octep_rx.c | 27 +++++++++++++++++++
- 1 file changed, 27 insertions(+)
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-index 62db101b2147..2d9d95071786 100644
---- a/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-+++ b/drivers/net/ethernet/marvell/octeon_ep/octep_rx.c
-@@ -360,6 +360,27 @@ static void octep_oq_next_pkt(struct octep_oq *oq,
- 		*read_idx = 0;
- }
- 
-+/**
-+ * octep_oq_drop_rx() - Free the resources associated with a packet.
-+ *
-+ * @oq: Octeon Rx queue data structure.
-+ * @buff_info: Current packet buffer info.
-+ * @read_idx: Current packet index in the ring.
-+ * @desc_used: Current packet descriptor number.
-+ *
-+ */
-+static void octep_oq_drop_rx(struct octep_oq *oq,
-+			     struct octep_rx_buffer *buff_info,
-+			     u32 *read_idx, u32 *desc_used)
-+{
-+	int data_len = buff_info->len - oq->max_single_buffer_size;
-+
-+	do {
-+		octep_oq_next_pkt(oq, buff_info, read_idx, desc_used);
-+		data_len -= oq->buffer_size;
-+	} while (data_len > 0);
-+}
-+
- /**
-  * __octep_oq_process_rx() - Process hardware Rx queue and push to stack.
-  *
-@@ -417,6 +438,12 @@ static int __octep_oq_process_rx(struct octep_device *oct,
- 		}
- 
- 		skb = build_skb((void *)resp_hw, PAGE_SIZE);
-+		if (!skb) {
-+			octep_oq_drop_rx(oq, buff_info,
-+					 &read_idx, &desc_used);
-+			oq->stats.alloc_failures++;
-+			continue;
-+		}
- 		skb_reserve(skb, data_offset);
- 
- 		octep_oq_next_pkt(oq, buff_info, &read_idx, &desc_used);
--- 
-2.30.2
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
