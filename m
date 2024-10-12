@@ -1,89 +1,134 @@
-Return-Path: <linux-kernel+bounces-362194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25B5A99B1F4
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:03:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7A5899B1FA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:08:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE89D1F26A1D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F20DD282E69
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180291448F2;
-	Sat, 12 Oct 2024 08:03:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2FE51459E4;
+	Sat, 12 Oct 2024 08:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="G9KxV7aR"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="hSiOQwCe"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50760142E76;
-	Sat, 12 Oct 2024 08:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA7D13B293;
+	Sat, 12 Oct 2024 08:07:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728720209; cv=none; b=T5IMS1mhG3F2BeCsLSpaWrHrhKjRHNLbRXNoJLGAU53WxhrC4M/GJeNN810a7rFnxIhXxalrD7yJDU/16fbJoOWI8BJHsPVOJ3eoQ/45ptfQ18xPW71bOA+q1hMzmfMiHHU7zodWQftPYvsLLPAGJiqvTEPP9Y2sjWcSLXtAe4I=
+	t=1728720476; cv=none; b=UqGsduAp8l0VRnHErgPGFecItopwafpgF5rLsoi8ZwIAa/ov+1jZ7WbTmLmdbifFQZdIkNNQgdLgEF0bCHs5lTrpuZSMgv6MCjePk7f9R8SCB/GsEVzvY9ua6apmDxKcn4jchl6st0jc5egxf9mgY6rajfHxkwvt31SE7+JGWXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728720209; c=relaxed/simple;
-	bh=b6IVsTguK76MKOhGdPkEKxOJo0NdGyK1T4S5ZzxyIV0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FbPAXDVGGjx2m4zJM2lX0QoKXlaTQhJBUHPm7EkhAWh2pD30jvbmmgpBOCOsXtu7hdFKm5LLi0i+oXt4v5OsV6ZM0Dt+NdIvbWPJdHAt1q3NkilVW12yDpqzd/7ETo79MQFXmCi5UJ3ECO3x4BJrIxNSv3wD4h8LPC3SrgB70/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=G9KxV7aR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50EA6C4CECE;
-	Sat, 12 Oct 2024 08:03:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728720208;
-	bh=b6IVsTguK76MKOhGdPkEKxOJo0NdGyK1T4S5ZzxyIV0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=G9KxV7aRgNqAd/9onm7n72tWPcdeXZ+tMpIB4jndkP9CEFm7ROH2pi8lJCNEfTZoI
-	 X8/+48mgWNo8Y6QR6nfV0CCL/+vKnuNqz6o6hwqbyAjY8OyOj1EppX95F6IeaOLvWp
-	 8F4o5NX3CZt4jSPmkMsX1PlNuTgRDJTJj9uuTyrc=
-Date: Sat, 12 Oct 2024 10:03:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Judith Mendez <jm@ti.com>
-Cc: Santosh Shilimkar <ssantosh@kernel.org>,
-	Kevin Hilman <khilman@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-omap@vger.kernel.org,
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bin Liu <b-liu@ti.com>, linux-serial@vger.kernel.org
-Subject: Re: [PATCH RESEND 2/2] serial: 8250: omap: Move pm_runtime_get_sync
-Message-ID: <2024101218-overpay-yoga-7423@gregkh>
-References: <20241011173356.870883-1-jm@ti.com>
- <20241011173356.870883-3-jm@ti.com>
+	s=arc-20240116; t=1728720476; c=relaxed/simple;
+	bh=4OUtu+vUuFaklY8yFeTodT21IWQw/RcD0nuI88CgJ/U=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=SddnioeR65lCQQGFgTlgo9IcwsAOjHa4sgo5y37xQkm09oqAw+BrLn84WNtLuz0/OcHNpCHrw3DlCyGiVlBquFElrKetJwIRPX+aUlwGvmYENJs9IqTlQMA0GSa67Mog7rvfXo8PMlBp/Pal+fbZK8rRS2Pwwv86Zvov6F+ANpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=hSiOQwCe; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728720416; x=1729325216; i=markus.elfring@web.de;
+	bh=dwS/0fwcxAGtAx0RykHa0uJRLJTggRpPoKajc9AhU6w=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:From:
+	 Subject:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=hSiOQwCejPDHvmE1YFkYsYsNPlmS+A1tW6uSWS7e8Iq0vqrRWFy1B/kAcNn6fBXG
+	 7uFOkOjIFctsFPXBdky4zSHbsJJQKfpwzCe3sBgwrzGN1rwbdEClwx0WcZDYFpyr/
+	 tO6gC+yKS4PFK7PcyEGhl8Qurzjwhk87ZoejwTm1fVI2kgguIW7pcpUt9YQHbZz+N
+	 wdSUg3TuAgVUlFupwJ38QbhSZm0l2kHrp00yn45XC1mZE4NCGGxHlQmpUz0qmw/EQ
+	 5qUhmM7KZ5vyH5mvhNArHCCItJtbNmQOoLcNysD3pn3600TMQSrtd2I0aP2S+/l7w
+	 ecRLFXNzO6ygnwt5Ng==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb006
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MMXx5-1tI1NH3M07-00Nmir; Sat, 12
+ Oct 2024 10:06:56 +0200
+Message-ID: <80b91321-138c-41de-95c7-47c3be07fe76@web.de>
+Date: Sat, 12 Oct 2024 10:06:37 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011173356.870883-3-jm@ti.com>
+User-Agent: Mozilla Thunderbird
+To: virtualization@lists.linux.dev, linux-crypto@vger.kernel.org,
+ "David S. Miller" <davem@davemloft.net>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Gonglei <arei.gonglei@huawei.com>,
+ Herbert Xu <herbert@gondor.apana.org.au>, Jason Wang <jasowang@redhat.com>,
+ lei he <helei.sig11@bytedance.com>, "Michael S. Tsirkin" <mst@redhat.com>,
+ Nathan Chancellor <nathan@kernel.org>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, zhenwei pi <pizhenwei@bytedance.com>
+Content-Language: en-GB
+Cc: LKML <linux-kernel@vger.kernel.org>
+From: Markus Elfring <Markus.Elfring@web.de>
+Subject: [PATCH] crypto: virtio/akcipher - Move a pointer assignment in
+ virtio_crypto_rsa_set_key()
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:e9XQu3txqQMuk28YeVMcyqRiUe/NNPOYOcQnwtnCHuei9Kr5xRO
+ 1MyDfaBl8Zqwnf6mw/mIsZ4X2+s+7IMMAmvO2uxRazyGJwblRH5jcf2mLiXmvWiHg0A3K+A
+ a9AaiZ6U2F8FLtLNNS0QMtB/BbHXS2HeSHigrX1O29koDpgsE7YeGqk9QbgBWLKVr6mlvdY
+ XMj4/KRaM80yAYI0xB+lg==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:IOMWIyk3DyY=;rIoHG5fyZ8z5zYh5RR9bCEfM5d6
+ TV60ICniC71FnE+95KeOAYnbBZR9oeoLP+ws9hbT/qaVe8yai+dhWgbcEzYr9/rLzu7kmEA8U
+ 8Lv7DVWtygTmTtJ1nlenjh3FXh3xkv+G5xLwI2zh3PWe+YIDAHUx3l6sU9S5kBt2IXfWz/K1U
+ wpMHpoqt8/bV5H4j8ySYCWKvszjdiltqyPmyQCGm6ZYqYiQYfKIHEo38MjAAlLEnUChUDGDqy
+ qV9/vrvv6AOoLG2c9wmOCY44w/L6psWJJ2mVeqV3XFISViy+qAF0+4XvuQcrmkg2zSpRD1U+P
+ ulLkA3Jr8csXpHDYUObS8RE7eqBoGFwJ60UCVFC0nqTHUMtjgReLaF38UaJjADf6bJpjrnl0F
+ sN/bPeyGm1u/ukhwikVGGFLKABsnxQylL2qVO6PWPWi/c4XDT7HVqSkDEzoXRy+OCDEhxgsEl
+ IJjGT2IDeu21TyIQLbVDypvszjUxnawPM7e0w/Jyijs8Lp8kAQd/Tm/ZH+7jqIqgMs1oA6Wd0
+ hFHV/GcHbHwB/tXhVJLRshPUL9e6pFPcUO0z3gmL4edExFvusYt3ZKymIJbl8zwonnSPk2dQB
+ 4JoZA2f5K1e11NkDMzLM76TKqdYSU6MeQPaZIpwUI0JNaIM+N10DWy7WNl99KZDvImk6QAL0n
+ maY2hIK15Oou5nLAXRpBi78Fc4WPdpFROJSh22mv48B7dMHBMy6DywmfRrLRl7YVjRseGRCJZ
+ +YZKbhkYjdjd9qimeUQICwxT4FVDnGgnK4XFowlWTaRE4WaEUSUxH+M+Cuzci5sKWbTZQ1CVS
+ YFdI13IS90LB7iH0WIOo1/MA==
 
-On Fri, Oct 11, 2024 at 12:33:56PM -0500, Judith Mendez wrote:
-> Currently in omap_8250_shutdown, the dma->rx_running
-> flag is set to zero in omap_8250_rx_dma_flush. Next
-> pm_runtime_get_sync is called, which is a runtime
-> resume call stack which can re-set the flag. When the
-> call omap_8250_shutdown returns, the flag is expected
-> to be UN-SET, but this is not the case. This is causing
-> issues the next time UART is re-opened and omap_8250_rx_dma
-> is called. Fix by moving pm_runtime_get_sync before the
-> omap_8250_rx_dma_flush.
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Sat, 12 Oct 2024 09:51:58 +0200
 
-You can go to 72 columns :)
+Move the reset of the data structure member =E2=80=9Cn=E2=80=9D to a null =
+pointer
+into an if branch so that this assignment will be performed only after
+a key parsing failure.
 
-> Signed-off-by: Bin Liu <b-liu@ti.com>
-> Signed-off-by: Judith Mendez <jm@ti.com>
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+ drivers/crypto/virtio/virtio_crypto_akcipher_algs.c | 5 +++--
+ 1 file changed, 3 insertions(+), 2 deletions(-)
 
-Wait, who wrote this, Bin?  If so, there needs to be a "From:" line
-saying so.
+diff --git a/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c b/drivers=
+/crypto/virtio/virtio_crypto_akcipher_algs.c
+index 48fee07b7e51..56557d4778b0 100644
+=2D-- a/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c
++++ b/drivers/crypto/virtio/virtio_crypto_akcipher_algs.c
+@@ -355,7 +355,6 @@ static int virtio_crypto_rsa_set_key(struct crypto_akc=
+ipher *tfm,
 
-What commit id does this fix?  Do you want it backported to older
-kernels?  Why mix two different subsystems in the same patch series, who
-is supposed to take it?
+ 	/* mpi_free will test n, just free it. */
+ 	mpi_free(rsa_ctx->n);
+-	rsa_ctx->n =3D NULL;
 
-thanks,
+ 	if (private) {
+ 		keytype =3D VIRTIO_CRYPTO_AKCIPHER_KEY_TYPE_PRIVATE;
+@@ -365,8 +364,10 @@ static int virtio_crypto_rsa_set_key(struct crypto_ak=
+cipher *tfm,
+ 		ret =3D rsa_parse_pub_key(&rsa_key, key, keylen);
+ 	}
 
-greg k-h
+-	if (ret)
++	if (ret) {
++		rsa_ctx->n =3D NULL;
+ 		return ret;
++	}
+
+ 	rsa_ctx->n =3D mpi_read_raw_data(rsa_key.n, rsa_key.n_sz);
+ 	if (!rsa_ctx->n)
+=2D-
+2.46.1
+
 
