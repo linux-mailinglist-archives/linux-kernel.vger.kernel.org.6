@@ -1,143 +1,132 @@
-Return-Path: <linux-kernel+bounces-362559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362560-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A1399B65D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 695DF99B662
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:40:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C339B1C20F62
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AE66F1F22259
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:40:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 888C0823DE;
-	Sat, 12 Oct 2024 17:35:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B4684D2C;
+	Sat, 12 Oct 2024 17:40:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="uNW5X8oQ"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eZCvm5VC"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A30CC1EA65;
-	Sat, 12 Oct 2024 17:35:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C1031E529;
+	Sat, 12 Oct 2024 17:40:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728754553; cv=none; b=LEQlaKkIIfGmd5yjyRBLwu61+aL/dLdbR3e80Lc3jsYkUGPWcc3tb5zfcOQgGVRR6uyaCQCUJXEIdFwQTnNC38afPA5qLAVZIMIDuWcKb+zjk0nd12KnkgBi7LjejTAHBWEmkFCtW3T3PvwrjCAxj2NDvChsjn+loNp2/lnm00U=
+	t=1728754822; cv=none; b=Z23C0QzRJDxSFpEjDAUUcLMp5W1DfaABE67uLFuW86dcoE3xToGMz/3H9oDLWvTura6Ml5ZusobCUdqgDb+xc7vsC/4CvoOL/YWRDyenDZrA2y3j7cdoMC9hUhEcccJdP4Bg0Kl70Tmoi8YwaQ98ZI1uKoqgDgmFtzxickVi6VM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728754553; c=relaxed/simple;
-	bh=B/ZlyxiX2NnLgtqIFj15AHbmeHrL4+2HNnXLckZf1o0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Cbdk1g6XQgyaN/hjBEtwPxhuZnBxNxKtNbqy8Wa6JbEYq4ywIiKc6K3d8EcTMxTnkMGRsrfNnP8c4Hoq78uvhzmZNut7L93yr8FzlvyYdsTtXkTSa1X+TeXrZ+KdLZb5OpIdjsi+YeOUqwtFrJkvaspdCbVMxBuqCsEciC22+4I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=uNW5X8oQ; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=AQhSOcq/aIa70jmnVrqHrmUcq5CjjmXv02YVDlavj3k=; b=uNW5X8oQ7/TOXG/4sbWLaBuPTX
-	YhTRKIC5395aQiOZ1mAgpFu9zMCVrMdHEvsjMa+K18IBsUeUOB6PobQ3n8OZ+nPxV4Q27YkZe8coz
-	qcjrqQmwNZwMQU4iWqxW49gryiGIwmCUHim2VMqBPZ5+pSdfB2lOMP/SnEdQxAQExVutDL1hNZ3Mu
-	NkEmQDESZlZPLSRAbYtm/hH2zpiua1nLzyWmBXKnU00t5/6x0ArIsm6/OmjE/JZjOXRtGVoAN35nD
-	Q0rBgWgWdfCNun0FhYuVsoavbXds6RNJxe0OlHuDAA9JmVmDGwctciSJegyQVsH4FD7zdVQBf7iMF
-	uYUE3DvA==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1szg1D-00019k-IQ; Sat, 12 Oct 2024 19:35:07 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: linux-kernel@vger.kernel.org,
-	Detlev Casanova <detlev.casanova@collabora.com>
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Muhammed Efe Cetin <efectn@protonmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Elon Zhang <zhangzj@rock-chips.com>,
-	Jagan Teki <jagan@edgeble.ai>,
-	Jimmy Hon <honyuenkwun@gmail.com>,
-	linux-serial@vger.kernel.org,
-	Guenter Roeck <linux@roeck-us.net>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-watchdog@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Jamie Iles <jamie@jamieiles.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Wim Van Sebroeck <wim@linux-watchdog.org>,
-	Yifeng Zhao <yifeng.zhao@rock-chips.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jiri Slaby <jirislaby@kernel.org>,
-	Liang Chen <cl@rock-chips.com>,
-	dri-devel@lists.freedesktop.org,
-	Alexey Charkov <alchark@gmail.com>,
-	linux-i2c@vger.kernel.org,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	Maxime Ripard <mripard@kernel.org>,
-	linux-spi@vger.kernel.org,
-	Ondrej Jirman <megi@xff.cz>,
-	Andy Yan <andyshrk@163.com>,
-	kernel@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	Finley Xiao <finley.xiao@rock-chips.com>,
-	Elaine Zhang <zhangqing@rock-chips.com>,
-	Rob Herring <robh@kernel.org>,
-	Tim Lunn <tim@feathertop.org>
-Subject: Re: (subset) [PATCH v4 0/9] Add device tree for ArmSoM Sige 5 board
-Date: Sat, 12 Oct 2024 19:35:04 +0200
-Message-ID: <172875437678.35125.9831204281305504545.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240903152308.13565-1-detlev.casanova@collabora.com>
-References: <20240903152308.13565-1-detlev.casanova@collabora.com>
+	s=arc-20240116; t=1728754822; c=relaxed/simple;
+	bh=j+0eugA5qlshkzOWKhURgw3WOGiDbE79dVsJbtUFeow=;
+	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
+	 Mime-Version:Content-Type; b=oaNHgbKv8/MXQmYOqdsoC+V1SI5lRyPVwGkO4jfp/UIxbncV4mWpHQ56FnpmFZD531ZUBANXmo/2vMjVLsNDg+S03J8zcS3hGp9xKIq3R5/s6iGXyvtobUUOwxUhu8Msq3RsTGYaKcmcJvx2X7eoMrCWZsb0io3+udhCJqM3CBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eZCvm5VC; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7afc5925679so199781185a.3;
+        Sat, 12 Oct 2024 10:40:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728754820; x=1729359620; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qeQVh5vaiF4LZT4ihfN5o5UvxngIEpWBJHf7f40MegM=;
+        b=eZCvm5VCYp/LZJpGzPs060EjyOHR2THPclhS7YUG0LYAsBTFigTWV/qLfo0kO8by7S
+         E65OiJYfbL3ZesVIWzZnW1zbA8PFJyRczjMcQTplbLqWmkHacP6SnfKPvOVqOEDiITYJ
+         OfJAJ0i1v1I62yE5RPccZzDjOKLxxykYBdUHGOf/EcJ1fwxp0vTeM2Nlh/dS4VG1EhL9
+         x9goVd9FgCINdYdWE9zdaxTEVSGKe7nDYHvZt/mSHuKiFrWS/rf8L7Ec/vJwqGus9pHk
+         e2K44mNtXCsoVWSfkq7xU9tvdJEvL3LUVIdrRoKiNuMVs8IY4ojWHJcEAnG7kAdwW21Q
+         fcFQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728754820; x=1729359620;
+        h=content-transfer-encoding:mime-version:subject:references
+         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qeQVh5vaiF4LZT4ihfN5o5UvxngIEpWBJHf7f40MegM=;
+        b=VktZInrqqBtD+QyMi0+9tA1/vwGr3vafqIEOKx5RYB4S2wr2T6kSh5gYYLm6NqQ9Ru
+         TKzel2KwDZImceRc4D9AnV26neMPkPC/B0bcAe5p1lg4WrPRL1mOcNrSZJ+gte03CKhJ
+         LIFrya9zBCe5T9zOuv5f2pH3tWyBaYGvW6QT6wUDxxPLYiwmZ/W520sVDnuDaBi/Vdq0
+         ngA48WeHCJQ/pCTR2d+2uk0sOYsrY6vWvXgLFkM89zhenr0aabtQRwwq4ClKdNKgcRKx
+         qhIKL4YGAXuBIApoSDs0pYvkXevpsjopFASIHQjGy8GHfqPrjiCicoHf9fJw3QfbqDac
+         AYfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMv/N1PEvTVl61Mq5CHelYmF6mtp415xVq/A1TGb8Tqht6wWfA9AnT22VjU6GpG8q3//k=@vger.kernel.org, AJvYcCVTnuGEBOSy6KdT3vnyHQBn3wQvS5Lhawe+8IAb0MeB8Y+vs2B2IdyZzR+8pvwcOBrjrLfuxY0KnwHI@vger.kernel.org, AJvYcCViWhEfQRwpgJNYCP1neiZ8BJkyHb4eqMenuPHiSyfP1k2ubvC2oGMAs2NfjCVe65p2Ej6keuioYlyQATYY@vger.kernel.org, AJvYcCXbLqUowG7YzRhYD3kC/ZoRGeTJXmv5uxKhTy9KeOYmMNMTSPcCzzG21OkyMUoPvdvAL2JUotf064rB0nB0gUEZ@vger.kernel.org, AJvYcCXmUGvT/NtvQfOlKWQSdI7/nHMLWHgpFE/J2bdzIE2ZPyg+SolShdcw7U0uoT5Gj8b71qHlBz13@vger.kernel.org
+X-Gm-Message-State: AOJu0YxyQ1kXvi+7fbqpo2SXIQVXanKHkURLs6R9BVAUqzUXj+5PmAUr
+	h7dcw3Gl+IIwsYIyFVOvKQnTVWE5ZS03yUTimtE8tXqFu1l1/G2j
+X-Google-Smtp-Source: AGHT+IHm4Bx8DL3ED0EiIGa9UoE0AQ+a9pp5rid+2GyH7NTS4vnz6h0mFmR06lQvNNdN+JG5fbYMyg==
+X-Received: by 2002:a05:620a:4446:b0:7af:ce6e:1663 with SMTP id af79cd13be357-7b12101be7bmr436841385a.60.1728754820032;
+        Sat, 12 Oct 2024 10:40:20 -0700 (PDT)
+Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148c7129sm240855985a.19.2024.10.12.10.40.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Oct 2024 10:40:19 -0700 (PDT)
+Date: Sat, 12 Oct 2024 13:40:18 -0400
+From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
+To: Akihiko Odaki <akihiko.odaki@daynix.com>, 
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Jason Wang <jasowang@redhat.com>, 
+ "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, 
+ Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>, 
+ "Michael S. Tsirkin" <mst@redhat.com>, 
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
+ Shuah Khan <shuah@kernel.org>, 
+ linux-doc@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ netdev@vger.kernel.org, 
+ kvm@vger.kernel.org, 
+ virtualization@lists.linux-foundation.org, 
+ linux-kselftest@vger.kernel.org, 
+ Yuri Benditovich <yuri.benditovich@daynix.com>, 
+ Andrew Melnychenko <andrew@daynix.com>, 
+ Stephen Hemminger <stephen@networkplumber.org>, 
+ gur.stavi@huawei.com
+Message-ID: <670ab482ba75d_2737bf2945a@willemb.c.googlers.com.notmuch>
+In-Reply-To: <30bbebd8-1692-4b62-9a1f-070f6152061c@daynix.com>
+References: <20241008-rss-v5-0-f3cf68df005d@daynix.com>
+ <20241008-rss-v5-1-f3cf68df005d@daynix.com>
+ <67068a7261d8c_1cca3129414@willemb.c.googlers.com.notmuch>
+ <30bbebd8-1692-4b62-9a1f-070f6152061c@daynix.com>
+Subject: Re: [PATCH RFC v5 01/10] virtio_net: Add functions for hashing
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Type: text/plain;
+ charset=utf-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, 3 Sep 2024 11:22:30 -0400, Detlev Casanova wrote:
-> Add the rk3576-armsom-sige5 device tree as well as its rk3576.dtsi base
-> and pinctrl information in rk3576-pinctrl.dtsi.
+Akihiko Odaki wrote:
+> On 2024/10/09 22:51, Willem de Bruijn wrote:
+> > Akihiko Odaki wrote:
+> >> They are useful to implement VIRTIO_NET_F_RSS and
+> >> VIRTIO_NET_F_HASH_REPORT.
+> >>
+> >> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+> >> ---
+> >>   include/linux/virtio_net.h | 188 +++++++++++++++++++++++++++++++++++++++++++++
+> > 
+> > No need for these to be in header files
 > 
-> The other commits add DT bindings documentation for the devices that
-> already work with the current corresponding drivers.
-> 
-> Note that as is, the rockchip gpio driver needs the gpio nodes
-> to be children of the pinctrl node, even though this is deprecated.
-> 
-> [...]
+> I naively followed prior examples in this file. Do you have an 
+> alternative idea?
 
-Applied, thanks!
+This is long overdue really, not specific to this fuatre.
 
-[1/9] dt-bindings: arm: rockchip: Add ArmSoM Sige 5
-      commit: 78dee7b6ef085c6a1becad536035bdd39557c9b0
-[8/9] arm64: dts: rockchip: Add rk3576 SoC base DT
-      commit: 4b9dc5d536b988fbd84e68e8d8ac420752b185b6
-[9/9] arm64: dts: rockchip: Add rk3576-armsom-sige5 board
-      commit: 54a18f63eb1aaf50cad17dd64076293f2817e1d5
+And extends to your patch 4 that deduplicates tun.c and tap.c.
 
-changes:
-- added some lines between node
-- resortet regulator nodes
-- removed trailing whitespace from one line
-- drop clock-frequency from armsom sige5 rtc@51
-- drop rockchip,grf from cru (lookup is done via compatible)
-- order gpu interrupts like expected in the binding
-- adjust mmc compatible to binding
+Perhaps drivers/net/virtio_net_hdr.c.
 
+Or drivers/net/tun_vnet.c, matching your choice of drivers/net/tun_vnet.h.
 
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
 
