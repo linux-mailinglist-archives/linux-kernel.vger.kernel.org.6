@@ -1,121 +1,227 @@
-Return-Path: <linux-kernel+bounces-362181-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52BCA99B1D8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:55:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E4E099B1D9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496691F24AC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:55:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D057E284BFA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:56:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD8113B7BC;
-	Sat, 12 Oct 2024 07:54:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC25C1428E3;
+	Sat, 12 Oct 2024 07:56:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRZsYnXg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kQd4ReRH"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D2126BE1;
-	Sat, 12 Oct 2024 07:54:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B57AFBA49;
+	Sat, 12 Oct 2024 07:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728719697; cv=none; b=lFYFVx3g1x9gXfVhVLFMXT2eCtar+g1e1O9zzuzaBnyac9T7tVuie3HduPaeggA0IYK3GxtN+YCrEQQ5eLmlNB6Wew4m5s5BGiOObRhAJNP11MNNlFpsxllkgIe+93n9kZUl8PwppPExAyHdeZ8qS2p+D1fqCUJma+R+89XwUcI=
+	t=1728719772; cv=none; b=hbZocSrLE9tasejoDkoU3NvyFPODOACR0F23cUXhGPTgmR4YrDVO19IlKUdDMGbbgcap5frD9Wb13FM84+DfLGKGyKdNl+uK96zamHIGG5Hj/OFGu5d+v9EDYscx+TYkPuAaiZmhji6PsYpQj7GnQTmd6uAuvUwCWoHRsYne8ZQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728719697; c=relaxed/simple;
-	bh=Jw7PmkQmbX4v3tS4291K5+sm4U9zchTdB1uxCSg0xHE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WEmUW9MUmk4DWLW7hEhb+pi5fNa/pDqUyzXxHONTdqLKEa14m4HN1dPPqXvTOb6o7CJyQNwG4U5D3kCT5qFbwYE8eixbUHo5bnc660XCQ3x1Kmw3DaEF+TW0t0pjsyBho05USG1T+UmFqE4ifcPMZAp4qU9MuQJHvi4EGO82roU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRZsYnXg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3804FC4CECC;
-	Sat, 12 Oct 2024 07:54:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728719697;
-	bh=Jw7PmkQmbX4v3tS4291K5+sm4U9zchTdB1uxCSg0xHE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=GRZsYnXgvaRkC9YXxQDCD62TbyeM6ZlPJ91LwJjY5weU0RJNDZTPpL+KF2autY2qK
-	 FKwdtPAYZP8aRRdSPpxHCHYk6ZCJxAQk7dC75LpAZSRLmiCHvKCDspkwuY5gDAO436
-	 fIRsobRap03WCIx3TAUZqkG3U+9RiPSN+E35VYkLSLjK091Qdeh0jYAOtv1bazziRh
-	 OOb6DojaMx5/DUFTBptU9h4sHXIsJ2vF20lenMSYnKnBzKPe0OBBaBn+h9DW0onJmK
-	 BQK/PppO+nN5kekQpY6nRQ8DGfIdDu9wyKRW2I2OSUGYaS4CFp4x6hb00LmpqhKvs9
-	 cGLrr0nVEh8sQ==
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so5597031fa.3;
-        Sat, 12 Oct 2024 00:54:57 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWj5vlyI0jeU+sgV325LJFS8TYul5GoOp9VBoxMQrjHqM7vLNc7AwbbH26i23y6/OJrmxyEas+wdPSzN2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNZAhpfu26/EJLR1K23QXrLgtnxC3ejkxUphNQpniA0/AT25ZV
-	AUbmsyOIZzv0x2rsUE5WU8J5aSwXrshSxcnpuvERRj5IQe6ndZmhksgr514ToepIamKx/01/nZu
-	BM/xHShsE9V15KBrnM6MwYhAP2Wc=
-X-Google-Smtp-Source: AGHT+IEF7XGGtO9SU5vv5ZMoczydGnIfPCEvutde1lxo07Snzr8hJJcW0KC2dyM1sSBXXSpd2ewPFUqtvQRA2WTm8dk=
-X-Received: by 2002:a05:6512:12d3:b0:52c:d904:d26e with SMTP id
- 2adb3069b0e04-539da3c87f5mr2576385e87.21.1728719695575; Sat, 12 Oct 2024
- 00:54:55 -0700 (PDT)
+	s=arc-20240116; t=1728719772; c=relaxed/simple;
+	bh=gV18vE+WympxuPSQ5mO9wGJcJQHcws7Y2Wv52F6le94=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HMFQpcfi5uPPK30pTXq5qCVudr806DifoOEMa/BbAdlxDNB6350TVQY1y/FLfh1c9pWdi6ySgfXMj744qPJisTxCNe8eCRdhQnmnedLSsR02nVBeLFMKoZKvET4SkycZvXfYpUehB+8mzbqgPoCu2bLBCbW4UO64p5Fk6ePSKuQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kQd4ReRH; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728719770; x=1760255770;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=gV18vE+WympxuPSQ5mO9wGJcJQHcws7Y2Wv52F6le94=;
+  b=kQd4ReRHHzQRBrWZadUj0Av6YKMVx/faLOrTQEtyK2sp6Yd6uqBnPI9G
+   a3sLdF5Ag+vDNNnC+QfRPdOcVUtOKFcl8IBbmoE9u1MAP2dZ1rrCsX6Fd
+   gXPcmV8pIBDhhSAYVbdQ3iRcCyOq4QCVa9vR4pKp3yBqjTr7ZTOeRxUQe
+   CEK/MaLNXhyEbPDAesYcwR+Apb1+tC70qEIR9Lch27W9cvKaNn0iBrz2R
+   a3CS1utpFMfGvUHCs8oVM8QXiuWxY+iRopvDF+L28pTGoOEGy/OB8UC5u
+   Q0/ifrJOg3PBRBWXpTxVk3Ck8jMfv002RRhyp9HBDJknZ/6jU56XCNs9c
+   A==;
+X-CSE-ConnectionGUID: V3LDjKJUQfSWu6KYGqEOEA==
+X-CSE-MsgGUID: SeBnoHlKTjuThy/vQ5v7qg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39510284"
+X-IronPort-AV: E=Sophos;i="6.11,198,1725346800"; 
+   d="scan'208";a="39510284"
+Received: from orviesa004.jf.intel.com ([10.64.159.144])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 00:56:09 -0700
+X-CSE-ConnectionGUID: e1ylxZniRm2Kd32uxXX+PA==
+X-CSE-MsgGUID: a53GQsa3RQy/BxS85afHCw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,198,1725346800"; 
+   d="scan'208";a="82116736"
+Received: from ls.amr.corp.intel.com (HELO localhost) ([172.25.112.54])
+  by orviesa004-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 00:56:09 -0700
+From: Isaku Yamahata <isaku.yamahata@intel.com>
+To: kvm@vger.kernel.org,
+	pbonzini@redhat.com
+Cc: Sean Christopherson <seanjc@google.com>,
+	chao.gao@intel.com,
+	isaku.yamahata@intel.com,
+	rick.p.edgecombe@intel.com,
+	yan.y.zhao@intel.com,
+	linux-kernel@vger.kernel.org,
+	isaku.yamahata@gmail.com,
+	Nikunj A Dadhania <nikunj@amd.com>,
+	Marcelo Tosatti <mtosatti@redhat.com>
+Subject: [PATCH 0/2] KVM: kvm-coco-queue: Support protected TSC
+Date: Sat, 12 Oct 2024 00:55:54 -0700
+Message-ID: <cover.1728719037.git.isaku.yamahata@intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011224812.25763-1-jonathan@marek.ca> <20241011224812.25763-3-jonathan@marek.ca>
-In-Reply-To: <20241011224812.25763-3-jonathan@marek.ca>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 12 Oct 2024 09:54:44 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
-Message-ID: <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
-Subject: Re: [PATCH 3/3] efi/libstub: consider CONFIG_CMDLINE for initrd= and
- dtb= options
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Sat, 12 Oct 2024 at 00:52, Jonathan Marek <jonathan@marek.ca> wrote:
->
-> Replace cmdline with CONFIG_CMDLINE when it should be used instead of
-> load_options.
->
-> In the EXTEND case, it may be necessary to combine both CONFIG_CMDLINE and
-> load_options. In that case, keep the old behavior and print a warning about
-> the incorrect behavior.
->
-
-The core kernel has its own handling for EXTEND/FORCE, so while we
-should parse it in the EFI stub to look for options that affect the
-stub's own behavior, we should not copy it into the command line that
-the stub provides to the core kernel.
-
-E.g., drivers/of/fdt.c takes the bootargs from the DT and combines
-them with CONFIG_CMDLINE.
+This patch series is for the kvm-coco-queue branch.  The change for TDX KVM is
+included at the last.  The test is done by create TDX vCPU and run, get TSC
+offset via vCPU device attributes and compare it with the TDX TSC OFFSET
+metadata.  Because the test requires the TDX KVM and TDX KVM kselftests, don't
+include it in this patch series.
 
 
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->  drivers/firmware/efi/libstub/file.c | 12 ++++++++++++
->  1 file changed, 12 insertions(+)
->
-> diff --git a/drivers/firmware/efi/libstub/file.c b/drivers/firmware/efi/libstub/file.c
-> index d6a025df07dcf..2a69e2b3583d4 100644
-> --- a/drivers/firmware/efi/libstub/file.c
-> +++ b/drivers/firmware/efi/libstub/file.c
-> @@ -208,6 +208,18 @@ efi_status_t handle_cmdline_files(efi_loaded_image_t *image,
->         if (IS_ENABLED(CONFIG_X86) && !efi_nochunk)
->                 efi_chunk_size = EFI_READ_CHUNK_SIZE;
->
-> +       if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) ||
-> +           IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
-> +           cmdline_len == 0) {
-> +               if (!IS_ENABLED(CONFIG_CMDLINE_FORCE) && cmdline_len > 0) {
-> +                       /* both CONFIG_CMDLINE and load_options should be used */
-> +                       efi_warn("ignoring %ls from CONFIG_CMDLINE\n", optstr);
-> +               } else {
-> +                       cmdline = L"" CONFIG_CMDLINE;
-> +                       cmdline_len = ARRAY_SIZE(L"" CONFIG_CMDLINE) - 1;
-> +               }
-> +       }
-> +
->         alloc_addr = alloc_size = 0;
->         do {
->                 struct finfo fi;
-> --
-> 2.45.1
->
+Background
+----------
+X86 confidential computing technology defines protected guest TSC so that the
+VMM can't change the TSC offset/multiplier once vCPU is initialized and the
+guest can trust TSC.  The SEV-SNP defines Secure TSC as optional.  TDX mandates
+it.  The TDX module determines the TSC offset/multiplier.  The VMM has to
+retrieve them.
+
+On the other hand, the x86 KVM common logic tries to guess or adjust the TSC
+offset/multiplier for better guest TSC and TSC interrupt latency at KVM vCPU
+creation (kvm_arch_vcpu_postcreate()), vCPU migration over pCPU
+(kvm_arch_vcpu_load()), vCPU TSC device attributes (kvm_arch_tsc_set_attr()) and
+guest/host writing to TSC or TSC adjust MSR (kvm_set_msr_common()).
+
+
+Problem
+-------
+The current x86 KVM implementation conflicts with protected TSC because the
+VMM can't change the TSC offset/multiplier.  Disable or ignore the KVM
+logic to change/adjust the TSC offset/multiplier somehow.
+
+Because KVM emulates the TSC timer or the TSC deadline timer with the TSC
+offset/multiplier, the TSC timer interrupts are injected to the guest at the
+wrong time if the KVM TSC offset is different from what the TDX module
+determined.
+
+Originally the issue was found by cyclic test of rt-test [1] as the latency in
+TDX case is worse than VMX value + TDX SEAMCALL overhead.  It turned out that
+the KVM TSC offset is different from what the TDX module determines.
+
+
+Solution
+--------
+The solution is to keep the KVM TSC offset/multiplier the same as the value of
+the TDX module somehow.  Possible solutions are as follows.
+- Skip the logic
+  Ignore (or don't call related functions) the request to change the TSC
+  offset/multiplier.
+  Pros
+  - Logically clean.  This is similar to the guest_protected case.
+  Cons
+  - Needs to identify the call sites.
+
+- Revert the change at the hooks after TSC adjustment
+  x86 KVM defines the vendor hooks when the TSC offset/multiplier are
+  changed.  The callback can revert the change.
+  Pros
+  - We don't need to care about the logic to change the TSC offset/multiplier.
+  Cons:
+  - Hacky to revert the KVM x86 common code logic.
+
+Choose the first one.  With this patch series, SEV-SNP secure TSC can be
+supported.
+
+
+Patches:
+1: Preparation for the next patch
+2: Skip the logic to adjust the TSC offset/multiplier in the common x86 KVM logic
+
+[1] https://git.kernel.org/pub/scm/utils/rt-tests/rt-tests.git
+
+Changes for TDX KVM
+
+diff --git a/arch/x86/kvm/vmx/tdx.c b/arch/x86/kvm/vmx/tdx.c
+index 8785309ccb46..969da729d89f 100644
+--- a/arch/x86/kvm/vmx/tdx.c
++++ b/arch/x86/kvm/vmx/tdx.c
+@@ -694,8 +712,6 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+ 	vcpu->arch.cr0_guest_owned_bits = -1ul;
+ 	vcpu->arch.cr4_guest_owned_bits = -1ul;
+ 
+-	vcpu->arch.tsc_offset = kvm_tdx->tsc_offset;
+-	vcpu->arch.l1_tsc_offset = vcpu->arch.tsc_offset;
+ 	/*
+ 	 * TODO: support off-TD debug.  If TD DEBUG is enabled, guest state
+ 	 * can be accessed. guest_state_protected = false. and kvm ioctl to
+@@ -706,6 +722,13 @@ int tdx_vcpu_create(struct kvm_vcpu *vcpu)
+ 	 */
+ 	vcpu->arch.guest_state_protected = true;
+ 
++	/* VMM can't change TSC offset/multiplier as TDX module manages them. */
++	vcpu->arch.guest_tsc_protected = true;
++	vcpu->arch.tsc_offset = kvm_tdx->tsc_offset;
++	vcpu->arch.l1_tsc_offset = vcpu->arch.tsc_offset;
++	vcpu->arch.tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
++	vcpu->arch.l1_tsc_scaling_ratio = kvm_tdx->tsc_multiplier;
++
+ 	if ((kvm_tdx->xfam & XFEATURE_MASK_XTILE) == XFEATURE_MASK_XTILE)
+ 		vcpu->arch.xfd_no_write_intercept = true;
+ 
+@@ -2674,6 +2697,7 @@ static int tdx_td_init(struct kvm *kvm, struct kvm_tdx_cmd *cmd)
+ 		goto out;
+ 
+ 	kvm_tdx->tsc_offset = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_OFFSET);
++	kvm_tdx->tsc_multiplier = td_tdcs_exec_read64(kvm_tdx, TD_TDCS_EXEC_TSC_MULTIPLIER);
+ 	kvm_tdx->attributes = td_params->attributes;
+ 	kvm_tdx->xfam = td_params->xfam;
+ 
+diff --git a/arch/x86/kvm/vmx/tdx.h b/arch/x86/kvm/vmx/tdx.h
+index 614b1c3b8483..c0e4fa61cab1 100644
+--- a/arch/x86/kvm/vmx/tdx.h
++++ b/arch/x86/kvm/vmx/tdx.h
+@@ -42,6 +42,7 @@ struct kvm_tdx {
+ 	bool tsx_supported;
+ 
+ 	u64 tsc_offset;
++	u64 tsc_multiplier;
+ 
+ 	enum kvm_tdx_state state;
+ 
+diff --git a/arch/x86/kvm/vmx/tdx_arch.h b/arch/x86/kvm/vmx/tdx_arch.h
+index 861c0f649b69..be4cf65c90a8 100644
+--- a/arch/x86/kvm/vmx/tdx_arch.h
++++ b/arch/x86/kvm/vmx/tdx_arch.h
+@@ -69,6 +69,7 @@
+ 
+ enum tdx_tdcs_execution_control {
+ 	TD_TDCS_EXEC_TSC_OFFSET = 10,
++	TD_TDCS_EXEC_TSC_MULTIPLIER = 11,
+ };
+ 
+ enum tdx_vcpu_guest_other_state {
+
+---
+Isaku Yamahata (2):
+  KVM: x86: Push down setting vcpu.arch.user_set_tsc
+  KVM: x86: Don't allow tsc_offset, tsc_scaling_ratio to change
+
+ arch/x86/include/asm/kvm_host.h |  1 +
+ arch/x86/kvm/x86.c              | 21 ++++++++++++++-------
+ 2 files changed, 15 insertions(+), 7 deletions(-)
+
+
+base-commit: 909f9d422f59f863d7b6e4e2c6e57abb97a27d4d
+-- 
+2.45.2
+
 
