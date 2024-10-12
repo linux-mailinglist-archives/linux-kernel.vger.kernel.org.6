@@ -1,129 +1,105 @@
-Return-Path: <linux-kernel+bounces-362626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10F9299B71B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:55:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC60A99B6FF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:40:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 40DE61C20D27
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873421F219DC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:40:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF87613B7A3;
-	Sat, 12 Oct 2024 20:55:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="rxKluLvb"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE873199FC9;
+	Sat, 12 Oct 2024 20:40:08 +0000 (UTC)
+Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2014C12CDA5;
-	Sat, 12 Oct 2024 20:55:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8D312C7FB
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 20:40:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728766523; cv=none; b=UIbC8GMdf0/jRkgWs7M2uN+M/gSmcdWnriQ2ejpX0+ohbfbfMFZnWG97MMc8TBJzwXJ6fYROxnt8Jr/BhXA1bEegd51HfyM5LQTCd4/e9MZbl1iOGdUJJGNOWLLfYhcZqif7vk2L4fpQ/oDqnLDxUaoOXANKVebT5085A47wNt8=
+	t=1728765608; cv=none; b=AxeudezPBjV32kMWuSxINUqknyKTADjbdZxb2/vCS6s3mq/VjQ1oMlhR/Ez3R2xhcFrLjcVpPsveIqgt82zb55QBErfTbl9RORGEv8ShmWB3QNKZh3mnMRG2Nzh5Dq8BTAUv+e41EWuMohXeSSiF68ci7WiaSQACLi1dWN6vbsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728766523; c=relaxed/simple;
-	bh=/9vvY2eKL7girIMximjebAKd53ExFcJZ+ZsIsMghqU0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=u4e9O6ijB0KJTAPvCkdyP6GHeRizQyl7srdKFJ5SQUVOtOAlhwiesHSC9GCpjFHWFB/kOq+1CksJQ+ndoQt1MJ8fAfRS4SQRlH/PKR14MEKmF5Y6Jl0iT8rK4wplle8HAGYSVM+OwP/eI1ZGw8vKl6qyYm5WTw0MK2HNacV5Kh0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=rxKluLvb; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=wvYKHcFqppquqswVxJCB39KuSTx+SdhHabWlL/bm2+I=; b=rxKluLvbBH4sa5sW
-	elOpo+yQ5TAmHidGZTGFs3AQdGNz+TmHOQJcUZJ051DDSS2fa1O3ZkMsyiRoyuEU5oGaoOXnnOdbC
-	fOhNC7GHLI3QvuOxYWtCHwF1NKq5bwTWe4grAmfNIS2LoNCr6SmCmFqF+7yrvQPk+YIZopzCoSh9j
-	Mt+YDtJADLFmDYpo7YiiYJtkWYHPUQhJcsmZjowRI8zvdRlBMA2sdU8vMKEzVTW2Xjs3S+H4i9ExA
-	KhsKDGYDBtCafDXF/1upq3TqfeswNjRLSHnJOuPTAxwTEk+U3G8J+8206fUHj5bFVDu+jvXea5mNg
-	D4ikGP3Ak1R05I87Ew==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1szit3-00Aiud-0x;
-	Sat, 12 Oct 2024 20:38:53 +0000
-From: linux@treblig.org
-To: kvalo@kernel.org,
-	linux-wireless@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH] cw1200: Remove unused cw1200_queue_requeue_all
-Date: Sat, 12 Oct 2024 21:38:52 +0100
-Message-ID: <20241012203852.229151-1-linux@treblig.org>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728765608; c=relaxed/simple;
+	bh=lxyvpAm4eKdDo7emUlUPKldQCtoFggJORgo9nYw18vs=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HEnbEah/TbgvssgKhSxpRpukuTij1rQfoc7vruA590jzYWmTCJDhsje4tsGlDvO63E42NDh4eDOHjOKgv+MK0tkKVPCW76i3MdFGyGgNiTb4wJ6JmapmuYhHAv1GOPUfTmHYsVT66+JirPh7sK6eLaBWsgwcK3c93ozNL+SbV0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+Received: from localhost (88-113-26-56.elisa-laajakaista.fi [88.113.26.56])
+	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
+	id 267500f6-88da-11ef-8861-005056bdd08f;
+	Sat, 12 Oct 2024 23:40:00 +0300 (EEST)
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 12 Oct 2024 23:40:00 +0300
+To: Vasileios Aoiridis <vassilisamir@gmail.com>
+Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, jic23@kernel.org,
+	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 08/13] iio: chemical: bme680: add power management
+Message-ID: <ZwreoHXXLkf3DjMt@surfacebook.localdomain>
+References: <20241010210030.33309-1-vassilisamir@gmail.com>
+ <20241010210030.33309-9-vassilisamir@gmail.com>
+ <Zwj5jBm-_9_FX6ms@smile.fi.intel.com>
+ <Zwl2SEmDqc-PTtqp@vamoirid-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zwl2SEmDqc-PTtqp@vamoirid-laptop>
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+Fri, Oct 11, 2024 at 09:02:32PM +0200, Vasileios Aoiridis kirjoitti:
+> On Fri, Oct 11, 2024 at 01:10:20PM +0300, Andy Shevchenko wrote:
+> > On Thu, Oct 10, 2024 at 11:00:25PM +0200, vamoirid wrote:
 
-cw1200_queue_requeue_all() has been unused since it was added in 2013
-by commit
-a910e4a94f69 ("cw1200: add driver for the ST-E CW1100 & CW1200 WLAN chipsets")
+...
 
-Remove it.
+> > > +extern const struct dev_pm_ops bmp280_dev_pm_ops;
+> > 
+> > Is pm.h being included already in this header? Otherwise you need to add it.
+> 
+> No it is not, and indeed I need to add it. Probably because it was
+> included by some other file I didn't get an error from gcc?
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- drivers/net/wireless/st/cw1200/queue.c | 27 --------------------------
- drivers/net/wireless/st/cw1200/queue.h |  1 -
- 2 files changed, 28 deletions(-)
+Yeah, it's called a "proxy" header in general meaning. We should try hard not
+to use such headers (meaning not to use them in a "proxy" mode).
 
-diff --git a/drivers/net/wireless/st/cw1200/queue.c b/drivers/net/wireless/st/cw1200/queue.c
-index 805a3c1bf8fe..259739e53fc1 100644
---- a/drivers/net/wireless/st/cw1200/queue.c
-+++ b/drivers/net/wireless/st/cw1200/queue.c
-@@ -411,33 +411,6 @@ int cw1200_queue_requeue(struct cw1200_queue *queue, u32 packet_id)
- 	return ret;
- }
- 
--int cw1200_queue_requeue_all(struct cw1200_queue *queue)
--{
--	struct cw1200_queue_item *item, *tmp;
--	struct cw1200_queue_stats *stats = queue->stats;
--	spin_lock_bh(&queue->lock);
--
--	list_for_each_entry_safe_reverse(item, tmp, &queue->pending, head) {
--		--queue->num_pending;
--		++queue->link_map_cache[item->txpriv.link_id];
--
--		spin_lock_bh(&stats->lock);
--		++stats->num_queued;
--		++stats->link_map_cache[item->txpriv.link_id];
--		spin_unlock_bh(&stats->lock);
--
--		++item->generation;
--		item->packet_id = cw1200_queue_mk_packet_id(queue->generation,
--							    queue->queue_id,
--							    item->generation,
--							    item - queue->pool);
--		list_move(&item->head, &queue->queue);
--	}
--	spin_unlock_bh(&queue->lock);
--
--	return 0;
--}
--
- int cw1200_queue_remove(struct cw1200_queue *queue, u32 packet_id)
- {
- 	int ret = 0;
-diff --git a/drivers/net/wireless/st/cw1200/queue.h b/drivers/net/wireless/st/cw1200/queue.h
-index 96ac69ae97de..d46304b58747 100644
---- a/drivers/net/wireless/st/cw1200/queue.h
-+++ b/drivers/net/wireless/st/cw1200/queue.h
-@@ -85,7 +85,6 @@ int cw1200_queue_get(struct cw1200_queue *queue,
- 		     struct ieee80211_tx_info **tx_info,
- 		     const struct cw1200_txpriv **txpriv);
- int cw1200_queue_requeue(struct cw1200_queue *queue, u32 packet_id);
--int cw1200_queue_requeue_all(struct cw1200_queue *queue);
- int cw1200_queue_remove(struct cw1200_queue *queue,
- 			u32 packet_id);
- int cw1200_queue_get_skb(struct cw1200_queue *queue, u32 packet_id,
+...
+
+> > >  	struct regmap *regmap;
+> > >  	struct bme680_calib bme680;
+> > >  	struct mutex lock; /* Protect multiple serial R/W ops to device. */
+> > > +	struct device *dev;
+> > 
+> > Is it the same that you may get wia regmap_get_device()?
+> > 
+> 
+> Yes it is the same. Maybe I can try and see if I can use the following
+> 
+> 	regmap_get_device(data->regmap)
+> 
+> in the places where the pm functions are used in order to not declare a
+> new value inside the struct bme680_data. But in general, is this approach
+> prefered?
+
+Since there is a getter already available, I prefer not to shortcut it via
+adding a duplicating information to the data structure.
+
+> > >  	u8 oversampling_temp;
+> > >  	u8 oversampling_press;
+> > >  	u8 oversampling_humid;
+
 -- 
-2.47.0
+With Best Regards,
+Andy Shevchenko
+
 
 
