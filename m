@@ -1,160 +1,184 @@
-Return-Path: <linux-kernel+bounces-362497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C5799B5A1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:42:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5856C99B5A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:42:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D019F1F21C85
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:42:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AB911C214A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:42:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92D74197A68;
-	Sat, 12 Oct 2024 14:42:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Puohi0Vo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9399197A6E;
+	Sat, 12 Oct 2024 14:42:41 +0000 (UTC)
+Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C86381953A9;
-	Sat, 12 Oct 2024 14:42:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2488019340F;
+	Sat, 12 Oct 2024 14:42:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.178.238
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728744131; cv=none; b=H7vS4PmjZlub5hW6R2tLWDA5N9LbtR05ykhz3Ao5lwwpWEQK85WukeffYjuon0vEWTtJ26gOuqK4gmeq3TxROxTTjlFPlVAju0lEEE9mPESafwZ2mfxxKN56dMjt1oGKnDQaClb6hZu6yio+pp+IPt1TWiQ4knkvvP+q0lorPcA=
+	t=1728744161; cv=none; b=WAgCeWOa6470bs/Ow22L5R5DSi+Ut40UDeIV7teZICnC3Lzx7dQ2c4lI8qwdMGVuFAXkqilKdT68S3N/wbfxk2O2h5myeDawBPkuj3xLdmjN7YfSJVR1pfFTZGQa48FplqPTfS6BD8ENI7Zic8tAoHuv4io2z0Kfu4yv9caqiI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728744131; c=relaxed/simple;
-	bh=pDESQmis9pDtjBkHLgvrCUWa+t7Ogkq9kZFlr/2sfKc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DMPccaGdz1dOJUEclGU3fyO1YZ0NvgcM/fxEhv2HZgOBOb7nJHoOOIN0UIyfCqH/otZaeWEgLVSqEwqkFutth5A110L6XpuMgyhkaGe12EbX4H6yZbVnQ3VO9GKrwcrlD8drEIZ8vhp9Wq3X4NH4OaY5yGaX84ZNpBUkK8Y9NBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Puohi0Vo; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728744128; x=1760280128;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pDESQmis9pDtjBkHLgvrCUWa+t7Ogkq9kZFlr/2sfKc=;
-  b=Puohi0Vo/LH4r67Kck0kvLMesPsPEEfcXLSsN+jWu6CuW+5l6DsRb84f
-   yGPMEAcBInu9t7yB/HO6R9CDIMb44FOIAmfpgciiklmeBCc/3Z/f7mLEb
-   lcN0NqfFh6YiZ+mTNWrT9K9OxOy10g3V5SEFhuPZuK5+K7yavPeqZ/GVk
-   Glfk7+kJzmCy6gk3eee9PumTACEN2F2B74GvfAgKDAyBqL1ewuDww/lU4
-   PXdmzkd2QRpYyC8+/yhuQB+u5zabxQgMRAfX/4n+KVxT0AQixQSxYA4gP
-   W/1/LxoKuE9uWTRh9CSMdZfM7zfubrgYcQmGyhV6WWxiZvT3OsvlU+BNa
-   A==;
-X-CSE-ConnectionGUID: D01BhkqXR9etEoWW80/UdQ==
-X-CSE-MsgGUID: LA/2qdbcQ46syihdar7fTw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="38701956"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="38701956"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 07:42:08 -0700
-X-CSE-ConnectionGUID: utdfJkvhQ2yDhvLcqKNbSA==
-X-CSE-MsgGUID: fYXBx54oTSedr960HhydTA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="77043030"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 12 Oct 2024 07:42:06 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1szdJj-000DQT-29;
-	Sat, 12 Oct 2024 14:42:03 +0000
-Date: Sat, 12 Oct 2024 22:41:36 +0800
-From: kernel test robot <lkp@intel.com>
-To: Xiang Zhang <hawkxiang.cpp@gmail.com>, lduncan@suse.com,
-	cleech@redhat.com, michael.christie@oracle.com,
-	ames.Bottomley@hansenpartnership.com, martin.petersen@oracle.com
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	open-iscsi@googlegroups.com, linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Xiang Zhang <hawkxiang.cpp@gmail.com>
-Subject: Re: [PATCH] scsi: libiscsi: Set expecting_cc_ua flag when stop_conn
-Message-ID: <202410122213.bq19EI34-lkp@intel.com>
-References: <20241011081807.65027-1-hawkxiang.cpp@gmail.com>
+	s=arc-20240116; t=1728744161; c=relaxed/simple;
+	bh=R6dK78ZCjOi9iaHyyZ3ftAFy+k9OcNPURj/ivYn8XaE=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b+SzX+k1XZi+2MEbmhGsxhGusQzBX3Mmlan3hrrvx+rzsTEYqNhRRhlUd9bbuPOtmDnfLtHm7x4L8FymwYFwa5MjQjOEWCNErBCq/Zsp+J8WHwrsfl16puu1+95u/NFQC7Vu/QsZiDQMvgNLsG7tpkEFhp/tuT62LfM6i0bMpFA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=none smtp.client-ip=205.220.178.238
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
+Received: from pps.filterd (m0250812.ppops.net [127.0.0.1])
+	by mx0a-0064b401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49CEOUjr008596;
+	Sat, 12 Oct 2024 14:42:20 GMT
+Received: from ala-exchng01.corp.ad.wrs.com (ala-exchng01.wrs.com [147.11.82.252])
+	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 427g38gd1m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT);
+	Sat, 12 Oct 2024 14:42:20 +0000 (GMT)
+Received: from ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) by
+ ala-exchng01.corp.ad.wrs.com (147.11.82.252) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Sat, 12 Oct 2024 07:42:18 -0700
+Received: from pek-lpd-ccm6.wrs.com (147.11.136.210) by
+ ALA-EXCHNG02.corp.ad.wrs.com (147.11.82.254) with Microsoft SMTP Server id
+ 15.1.2507.39 via Frontend Transport; Sat, 12 Oct 2024 07:42:17 -0700
+From: Lizhi Xu <lizhi.xu@windriver.com>
+To: <syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com>
+CC: <akpm@linux-foundation.org>, <linux-kernel@vger.kernel.org>,
+        <linux-usb@vger.kernel.org>, <syzkaller-bugs@googlegroups.com>,
+        <tglx@linutronix.de>
+Subject: [PATCH] wifi: rtlwifi: rtl delayed work must be canceled before putting usb dev
+Date: Sat, 12 Oct 2024 22:42:16 +0800
+Message-ID: <20241012144216.433013-1-lizhi.xu@windriver.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <6709113b.050a0220.4cbc0.0003.GAE@google.com>
+References: <6709113b.050a0220.4cbc0.0003.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011081807.65027-1-hawkxiang.cpp@gmail.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: ejPMqggigKlA0XrrXcv_07Tv11oTrKuR
+X-Proofpoint-ORIG-GUID: ejPMqggigKlA0XrrXcv_07Tv11oTrKuR
+X-Authority-Analysis: v=2.4 cv=DukE+3/+ c=1 sm=1 tr=0 ts=670a8acc cx=c_pps a=/ZJR302f846pc/tyiSlYyQ==:117 a=/ZJR302f846pc/tyiSlYyQ==:17 a=DAUX931o1VcA:10 a=hSkVLCK3AAAA:8 a=edf1wS77AAAA:8 a=t7CeM3EgAAAA:8 a=rmtfC1Nsb-6FJSrqWnsA:9 a=cQPPKAXgyycSBL8etih5:22
+ a=DcSpbTIhAlouE1Uv7lRv:22 a=FdTzh2GWekK77mhwV6Dw:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-12_10,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 impostorscore=0 spamscore=0
+ malwarescore=0 bulkscore=0 adultscore=0 lowpriorityscore=0
+ priorityscore=1501 classifier=spam authscore=0 adjust=0 reason=mlx
+ scancount=1 engine=8.21.0-2409260000 definitions=main-2410120107
 
-Hi Xiang,
+rtl delayed work not be canceled before put usb device, it trigger following issue:
+ODEBUG: free active (active state 0) object: ffff88811dc037c8 object type: timer_list hint: rtl_ips_nic_off_wq_callback+0x0/0x680
+[  135.350453][    C1] RIP: 0010:debug_print_object+0x1a3/0x2b0
+[  135.350498][    C1] Code: fc ff df 48 89 fa 48 c1 ea 03 80 3c 02 00 75 54 48 8b 14 dd c0 fc 46 87 41 56 4c 89 e6 48 c7 c7 20 f0 46 87 e8 2e d5 c3 fe 90 <0f> 0b 90 90 58 83 05 ad 76 ff 07 01 48 83 c4 18 5b 5d 41 5c 41 5d
+[  135.350532][    C1] RSP: 0018:ffffc90001adf418 EFLAGS: 00010282
+[  135.350562][    C1] RAX: 0000000000000000 RBX: 0000000000000003 RCX: ffffffff811ab159
+[  135.350585][    C1] RDX: ffff88811c061d40 RSI: ffffffff811ab166 RDI: 0000000000000001
+[  135.350609][    C1] RBP: 0000000000000001 R08: 0000000000000001 R09: 0000000000000000
+[  135.350631][    C1] R10: 0000000000000001 R11: 0000000000000001 R12: ffffffff8746f6c0
+[  135.350654][    C1] R13: ffffffff872a8e00 R14: ffffffff840306a0 R15: ffffc90001adf528
+[  135.351009][    C1]  debug_check_no_obj_freed+0x4b8/0x600
+[  135.351194][    C1]  __free_pages_ok+0x244/0xa20
+[  135.351262][    C1]  __folio_put+0x1cd/0x250
+[  135.351527][    C1]  device_release+0xa1/0x240
+[  135.351576][    C1]  kobject_put+0x1e4/0x5a0
+[  135.351624][    C1]  put_device+0x1f/0x30
+[  135.351669][    C1]  rtl_usb_disconnect+0x41c/0x5a0
+[  135.351720][    C1]  usb_unbind_interface+0x1e8/0x970
+[  135.351859][    C1]  device_remove+0x122/0x170
+[  135.351895][    C1]  device_release_driver_internal+0x44a/0x610
+[  135.351944][    C1]  bus_remove_device+0x22f/0x420
+[  135.352003][    C1]  device_del+0x396/0x9f0
+[  135.352138][    C1]  usb_disable_device+0x36c/0x7f0
+[  135.352202][    C1]  usb_disconnect+0x2e1/0x920
+[  135.352264][    C1]  hub_event+0x1bed/0x4f40
+[  135.352778][    C1]  process_one_work+0x9c5/0x1ba0
+[  135.353023][    C1]  worker_thread+0x6c8/0xf00
+[  135.353193][    C1]  kthread+0x2c1/0x3a0
+[  135.353313][    C1]  ret_from_fork+0x45/0x80
+[  135.353406][    C1]  ret_from_fork_asm+0x1a/0x30
+[  135.353474][    C1]  </TASK>
 
-kernel test robot noticed the following build warnings:
+By moving the position of rtl_deinit_deferred_work() in rtl_usb_disconnect(),
+ensure that rtl_deinit_deferred_work() is executed before releasing the USB
+device. In addition, add a bit in "enum ttl_status" to indicate whether
+rtl_deinit_deferred_work() needs to be executed. It needs to be executed when
+set, otherwise it will not be executed.
 
-[auto build test WARNING on mkp-scsi/for-next]
-[also build test WARNING on jejb-scsi/for-next linus/master v6.12-rc2 next-20241011]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Reported-and-tested-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=90f31ac02b7ae5e8b578
+Signed-off-by: Lizhi Xu <lizhi.xu@windriver.com>
+---
+ drivers/net/wireless/realtek/rtlwifi/base.c | 5 +++++
+ drivers/net/wireless/realtek/rtlwifi/usb.c  | 2 +-
+ drivers/net/wireless/realtek/rtlwifi/wifi.h | 1 +
+ 3 files changed, 7 insertions(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Xiang-Zhang/scsi-libiscsi-Set-expecting_cc_ua-flag-when-stop_conn/20241011-161915
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mkp/scsi.git for-next
-patch link:    https://lore.kernel.org/r/20241011081807.65027-1-hawkxiang.cpp%40gmail.com
-patch subject: [PATCH] scsi: libiscsi: Set expecting_cc_ua flag when stop_conn
-config: x86_64-kexec (https://download.01.org/0day-ci/archive/20241012/202410122213.bq19EI34-lkp@intel.com/config)
-compiler: clang version 18.1.8 (https://github.com/llvm/llvm-project 3b5b5c1ec4a3095ab096dd780e84d7ab81f3d7ff)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241012/202410122213.bq19EI34-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410122213.bq19EI34-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/scsi/libiscsi.c:634:3: warning: variable 'sc' is uninitialized when used here [-Wuninitialized]
-     634 |                 sc->device->expecting_cc_ua = 1;
-         |                 ^~
-   drivers/scsi/libiscsi.c:618:22: note: initialize the variable 'sc' to silence this warning
-     618 |         struct scsi_cmnd *sc;
-         |                             ^
-         |                              = NULL
-   1 warning generated.
-
-
-vim +/sc +634 drivers/scsi/libiscsi.c
-
-   610	
-   611	/*
-   612	 * session back and frwd lock must be held and if not called for a task that
-   613	 * is still pending or from the xmit thread, then xmit thread must be suspended
-   614	 */
-   615	static void __fail_scsi_task(struct iscsi_task *task, int err)
-   616	{
-   617		struct iscsi_conn *conn = task->conn;
-   618		struct scsi_cmnd *sc;
-   619		int state;
-   620	
-   621		if (cleanup_queued_task(task))
-   622			return;
-   623	
-   624		if (task->state == ISCSI_TASK_PENDING) {
-   625			/*
-   626			 * cmd never made it to the xmit thread, so we should not count
-   627			 * the cmd in the sequencing
-   628			 */
-   629			conn->session->queued_cmdsn--;
-   630			/* it was never sent so just complete like normal */
-   631			state = ISCSI_TASK_COMPLETED;
-   632		} else if (err == DID_TRANSPORT_DISRUPTED) {
-   633			state = ISCSI_TASK_ABRT_SESS_RECOV;
- > 634			sc->device->expecting_cc_ua = 1;
-   635		} else
-   636			state = ISCSI_TASK_ABRT_TMF;
-   637	
-   638		sc = task->sc;
-   639		sc->result = err << 16;
-   640		scsi_set_resid(sc, scsi_bufflen(sc));
-   641		iscsi_complete_task(task, state);
-   642	}
-   643	
-
+diff --git a/drivers/net/wireless/realtek/rtlwifi/base.c b/drivers/net/wireless/realtek/rtlwifi/base.c
+index aab4605de9c4..605875d21573 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/base.c
++++ b/drivers/net/wireless/realtek/rtlwifi/base.c
+@@ -449,6 +449,7 @@ static int _rtl_init_deferred_work(struct ieee80211_hw *hw)
+ 	if (!wq)
+ 		return -ENOMEM;
+ 
++	set_bit(RTL_STATUS_WORK_SETUP, &rtlpriv->status);
+ 	/* <1> timer */
+ 	timer_setup(&rtlpriv->works.watchdog_timer,
+ 		    rtl_watch_dog_timer_callback, 0);
+@@ -473,6 +474,9 @@ void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq)
+ {
+ 	struct rtl_priv *rtlpriv = rtl_priv(hw);
+ 
++	if (!test_bit(RTL_STATUS_WORK_SETUP, &rtlpriv->status))
++		return;
++
+ 	del_timer_sync(&rtlpriv->works.watchdog_timer);
+ 
+ 	cancel_delayed_work_sync(&rtlpriv->works.watchdog_wq);
+@@ -484,6 +488,7 @@ void rtl_deinit_deferred_work(struct ieee80211_hw *hw, bool ips_wq)
+ 	cancel_delayed_work_sync(&rtlpriv->works.ps_rfon_wq);
+ 	cancel_delayed_work_sync(&rtlpriv->works.fwevt_wq);
+ 	cancel_delayed_work_sync(&rtlpriv->works.c2hcmd_wq);
++	clear_bit(RTL_STATUS_WORK_SETUP, &rtlpriv->status);
+ }
+ EXPORT_SYMBOL_GPL(rtl_deinit_deferred_work);
+ 
+diff --git a/drivers/net/wireless/realtek/rtlwifi/usb.c b/drivers/net/wireless/realtek/rtlwifi/usb.c
+index d37a017b2b81..aaa16bc23e91 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/usb.c
++++ b/drivers/net/wireless/realtek/rtlwifi/usb.c
+@@ -1064,9 +1064,9 @@ void rtl_usb_disconnect(struct usb_interface *intf)
+ 		ieee80211_unregister_hw(hw);
+ 		rtlmac->mac80211_registered = 0;
+ 	} else {
+-		rtl_deinit_deferred_work(hw, false);
+ 		rtlpriv->intf_ops->adapter_stop(hw);
+ 	}
++	rtl_deinit_deferred_work(hw, false);
+ 	/*deinit rfkill */
+ 	/* rtl_deinit_rfkill(hw); */
+ 	rtl_usb_deinit(hw);
+diff --git a/drivers/net/wireless/realtek/rtlwifi/wifi.h b/drivers/net/wireless/realtek/rtlwifi/wifi.h
+index ae6e351bc83c..24d3dcbdf81c 100644
+--- a/drivers/net/wireless/realtek/rtlwifi/wifi.h
++++ b/drivers/net/wireless/realtek/rtlwifi/wifi.h
+@@ -322,6 +322,7 @@ enum rt_eeprom_type {
+ 
+ enum ttl_status {
+ 	RTL_STATUS_INTERFACE_START = 0,
++	RTL_STATUS_WORK_SETUP = 1,
+ };
+ 
+ enum hardware_type {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
