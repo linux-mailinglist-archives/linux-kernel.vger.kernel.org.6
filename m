@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-362583-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D13B99B6A2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:48:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E65999B6A8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:54:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A10412833C8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:48:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C28B52831A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA355148FF9;
-	Sat, 12 Oct 2024 18:48:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E6B614A4DC;
+	Sat, 12 Oct 2024 18:54:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fBVQF915"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFE67ECF;
-	Sat, 12 Oct 2024 18:48:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.3
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="UJZKliDT"
+Received: from out-176.mta0.migadu.com (out-176.mta0.migadu.com [91.218.175.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4477C28370
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 18:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728758899; cv=none; b=fUkyBETJutapM32pHDeHEv04UOskfsquKjFF5zD0gRqR0LkopPq/LIGa0sbdQHi/X7wXc9+E2EMK0B1O4KbgC7rjpVSO3QiYD7OtQR3fFx8Ji00frbb5ZgwkbKdpxMnpu2kIyEw02XRgislUO0gut5WdS8+R+Wj/gz+JYYuJjso=
+	t=1728759254; cv=none; b=O4kPZaHspr8wop8lYgllptKhlHnn2gneFybm/hk+FwLWnDF8ZeMSuWiw1dIW8M/Wxu/zexRkCXFPz2XkuvyVvN14YqwVnOTQ5sh4wc0YrTqFnn6K2MIl+Lnm4eGslwMpOdAS8dbxDl8zXLIWLaLzN+QL3atzjO+QCbyOa7P07es=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728758899; c=relaxed/simple;
-	bh=+5ObR+YOgsLNxZXq+Wm3rjqEMzYPP67PEHb3nvrfw9Q=;
+	s=arc-20240116; t=1728759254; c=relaxed/simple;
+	bh=P0mWJTbEkMS5OvpfRwI409xqpig7kOi24bUBnGhw/NE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YazN2RksmmUTzVt8LUNQwgN0BOEM2fT7QzcK7pa4KmfGwb5pEOSrWTnm45BgF+at45/NIWi8OqNOzifVUZnkoTiqBT2MZdwAJ/khKji050Jr9GTQ2AegEm8SKv/e/cOmricP4uJmXYaqmH6PKFz9xH9BLMxYOa8sfUjPcFaP9B4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fBVQF915; arc=none smtp.client-ip=220.197.31.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
-	Content-Type; bh=ehJBOQ/wMwgBIKhb+328nTmy5efKQXASssE1QNq+1iM=;
-	b=fBVQF915dkKqqnvgiVZWj4VN9MnLSe0FFvIHjNKB8g1qAJKokuqLtyRk0h/DvS
-	7A3AL9OMobQr8DFTC4oqii15ERIPze48EMwUIerrIssP2NELbUG2ZTLBoXD9os8g
-	cNCMI+ZJWJcS6OuoJW1lKinaU709+5V1XFJ0SzE79Vcho=
-Received: from localhost (unknown [58.243.42.186])
-	by gzga-smtp-mtada-g1-0 (Coremail) with SMTP id _____wCXntY1xApnsBj3Ag--.10512S2;
-	Sun, 13 Oct 2024 02:47:18 +0800 (CST)
-Date: Sun, 13 Oct 2024 02:47:17 +0800
-From: Qianqiang Liu <qianqiang.liu@163.com>
-To: krzk@kernel.org
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com,
-	syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
-Subject: [PATCH] nfc/nci: Fix uninit-value issue in nci_ntf_packet
-Message-ID: <ZwrENfTGYG9wnap0@fedora>
-References: <ZwqEijEvP7tGGZtW@fedora>
- <670ab923.050a0220.3e960.0029.GAE@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GlVXvxTREwJYJvmNoTQd8eFy4/YRLL1roxGHimjTCOxrX3b6AUcGYf4FQCUfN6SODVc6svfglvExJ84cONtSV1JLqlifLervQ95/zY8jT++Oeik/WWipp7zcjDycWYsuaDdCBte8gP2pcR5V1emi0h4+tHnZytL7wQmPRm7TYig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=UJZKliDT; arc=none smtp.client-ip=91.218.175.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 12 Oct 2024 14:54:01 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728759249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Xfj3dGXVa+VE/Yo9UHk0Jt+MCxwR5SaN+nAcSq52thE=;
+	b=UJZKliDTosWZmQEepq7SMAGSicATuMopt8fP2TmbtlITPZE3TqYHKrdHd84oOkyNaocWrz
+	NP32FqTNzCRSRCACWQ+Mk+piChKIO4NV8SvjyeRO53DQj6k9r6eeO3bGyUEQSy+UBzOskz
+	qqTOiW8GYsh6vaPyJFHW5Q/eId6AiEA=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Sasha Levin <sashal@kernel.org>
+Cc: linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 5.4 7/7] lib/generic-radix-tree.c: Fix rare race
+ in __genradix_ptr_alloc()
+Message-ID: <g7gqwenbskp5wi7yljoaqdadmkjddouu4sez5fzryo35pu353i@fhyang5gfv7e>
+References: <20241012112948.1764454-1-sashal@kernel.org>
+ <20241012112948.1764454-7-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,42 +57,25 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <670ab923.050a0220.3e960.0029.GAE@google.com>
-X-CM-TRANSID:_____wCXntY1xApnsBj3Ag--.10512S2
-X-Coremail-Antispam: 1Uf129KBjvdXoW7JrWfZFy7ZFy5Gr17ZrW5Wrg_yoWkCrb_uF
-	yfWr15Ww1DGr12yr4DCFyayryqv347uryv9wnxtaySkayDXF18Xa1DZr4rCrnxWFWxAFZr
-	C390qr1FkrW3GjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU0JGYJUUUUU==
-X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiYA52amcKw2wJNwAAsO
+In-Reply-To: <20241012112948.1764454-7-sashal@kernel.org>
+X-Migadu-Flow: FLOW_OUT
 
-When an unsupported rf_tech_and_mode (0xe6) occurs in nci_rf_discover_ntf_packet,
-the ntf.ntf_type may be assigned an uninitialized value.
+On Sat, Oct 12, 2024 at 07:29:42AM GMT, Sasha Levin wrote:
+> From: Kent Overstreet <kent.overstreet@linux.dev>
+> 
+> [ Upstream commit b2f11c6f3e1fc60742673b8675c95b78447f3dae ]
+> 
+> If we need to increase the tree depth, allocate a new node, and then
+> race with another thread that increased the tree depth before us, we'll
+> still have a preallocated node that might be used later.
+> 
+> If we then use that node for a new non-root node, it'll still have a
+> pointer to the old root instead of being zeroed - fix this by zeroing it
+> in the cmpxchg failure path.
+> 
+> Signed-off-by: Kent Overstreet <kent.overstreet@linux.dev>
+> Signed-off-by: Sasha Levin <sashal@kernel.org>
 
-To resolve this, use the __GFP_ZERO flag when calling alloc_skb(),
-ensuring that skb->data is properly initialized.
-
-Reported-by: syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=3f8fa0edaa75710cd66e
-Tested-by: syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com
-Signed-off-by: Qianqiang Liu <qianqiang.liu@163.com>
----
- drivers/nfc/virtual_ncidev.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
-index 6b89d596ba9a..31da26287327 100644
---- a/drivers/nfc/virtual_ncidev.c
-+++ b/drivers/nfc/virtual_ncidev.c
-@@ -117,7 +117,7 @@ static ssize_t virtual_ncidev_write(struct file *file,
- 	struct virtual_nci_dev *vdev = file->private_data;
- 	struct sk_buff *skb;
- 
--	skb = alloc_skb(count, GFP_KERNEL);
-+	skb = alloc_skb(count, GFP_KERNEL | __GFP_ZERO);
- 	if (!skb)
- 		return -ENOMEM;
- 
--- 
-2.47.0
-
+there wasn't any need to backport this, bcachefs is the only thing that
+uses genradix in multithreaded mode
 
