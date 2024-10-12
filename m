@@ -1,133 +1,150 @@
-Return-Path: <linux-kernel+bounces-362192-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13A7199B1ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:02:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59DE99B1EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:03:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FED284D31
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CDAEE1C21A79
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:03:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE1A142900;
-	Sat, 12 Oct 2024 08:02:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="MZ9WXFrj"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 187B813D53F;
+	Sat, 12 Oct 2024 08:03:03 +0000 (UTC)
+Received: from CHN02-SH0-obe.outbound.protection.partner.outlook.cn (mail-sh0chn02on2097.outbound.protection.partner.outlook.cn [139.219.146.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29B2C7EF09
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:02:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728720141; cv=none; b=pnLb6DQPmkI9qqrEaXydOxUFY2ixBZwP1qSurDMn6NDRdOTb2G0oAujaOY97BTg51W00oYF1hJPDkJ5KKCQD6thTVoxRnGXB5S47YInsR5bR0amL3/PFtJ/r0UMMqEpMHYCPNQT3lRQyiqSBDzl8myWFtBwKQ0mfmKz1e8+yvRg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728720141; c=relaxed/simple;
-	bh=oUyP8qJxUiMJuPJgKHCo0Wq+ETnImS27GfAWr/6nvBk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MJ1cY0RGw7sfzxcG2kuq0La4rvQB0hY4ZGhSFlOdRzc3NYUdoOM/gu0iHWTkGT37tGOmLwOqWeVVUjPo0T7vu8Kdi2Oaw0AwyFmyVgLKwpQHtVXDVMfXc7j0h4U2W+oCxcBi9Chx24H4Ly4PNLSThiC1mchS+hVnSy+B1pJmIlM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=MZ9WXFrj; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2e87153a3so1356861a91.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:02:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728720139; x=1729324939; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=wZqk1gpDcpLbh6iDyY6xdY16qjHfIm4cSq6P6zQlQhI=;
-        b=MZ9WXFrjSFHvBqorL06sbpZ8JWlUzQiRs8UzOLCAtCUeRRKUPUg8mh2A/LIcD7BDb+
-         adnZtFYv8XSQwnAp2WO09A+pADbJVHaObcbj8JAGJBymf+ReeJhtIg2FDqiM4d/uhtl0
-         bqVwZ02IniVIsqQ7X/jRwWr6X4zFTmK5m3GNi7ItepfC4Q+7e87Xzr6VH5SJEWhznYED
-         2rD8nvmM1aclu7MYD6U1QGucPAlM0Hfi+nE8M+6mHYaOaxi1DSO/ZTk9R0QAyCmD0EPy
-         y0hg2fmUrMenKUlg9nGKvEq8hxa1mX2P4fko43RrYvkEf9vb3vO7BpmYOoxlyWahA1k9
-         4v0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728720139; x=1729324939;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wZqk1gpDcpLbh6iDyY6xdY16qjHfIm4cSq6P6zQlQhI=;
-        b=oNXZnsPM9N1oFX1m4HAKMFMs9Xf974q0anJVoqXuk39NKdq7a+ip1nIHttZjkYoDCz
-         7rR3ukiKvYQTz3mM4i9ugWm8xP8SXxnruO3FKDAa/m6QzPfLQvcZqAkU+dxn3uGzXFUv
-         10wnfIU52imIZZKq7E9WKA7dcEfs85NE9eFv/kre6LV8NK1KTfryHB1Cn05C/T+erdyF
-         YsJupVaz6dzqAyZdwcAJDAP0xHiY0QIQ1DbV2qKPW9bjrk0aEzSxeBPsqN2ugpEDY1R9
-         3mg7f+qK1s4EkfsIzPWVzSRg85cMVSc/8lUmd5QkKtZmYicmS5QxvloAdopkp7OYef5r
-         BvYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVdz8M0rmb9go6qFDnvGyXFGFxsfhe688ZQ8W3gNPVcrupsRUHml12wkqoKZ9FCWwq0U/+g9b2VMLgCBm4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqhWkZYFSj+QxhQq2mbYszB9dRhoBiCz8P6bm65oxIKxTk6dVV
-	yk+jLMhUq7bbKcWETWWzyui/127weHnrIPBBNXz7ueuOtBG1IBcunV0L3Gux6vpjjS7FdSV9fCI
-	=
-X-Google-Smtp-Source: AGHT+IGoErZ1DMvXi7PdOjqOtgBagJx8Ivw1+HU2C6hiM6DJX1nWFZSKvbxbRddh3deh5/zJxscDyg==
-X-Received: by 2002:a17:90b:1495:b0:2e2:e6c8:36a7 with SMTP id 98e67ed59e1d1-2e31536e312mr2565945a91.31.1728720139502;
-        Sat, 12 Oct 2024 01:02:19 -0700 (PDT)
-Received: from thinkpad ([220.158.156.122])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e31af38baasm869855a91.41.2024.10.12.01.02.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 01:02:19 -0700 (PDT)
-Date: Sat, 12 Oct 2024 13:32:13 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Anand Moon <linux.amoon@gmail.com>
-Cc: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-pci@vger.kernel.org>,
-	"open list:PCIE DRIVER FOR ROCKCHIP" <linux-rockchip@lists.infradead.org>,
-	"moderated list:ARM/Rockchip SoC support" <linux-arm-kernel@lists.infradead.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v7 3/3] PCI: rockchip: Refactor
- rockchip_pcie_disable_clocks() function signature
-Message-ID: <20241012080213.rxllcpofy2at5vnz@thinkpad>
-References: <20241012050611.1908-1-linux.amoon@gmail.com>
- <20241012050611.1908-4-linux.amoon@gmail.com>
- <20241012062033.2w7jbfiptvdlklzl@thinkpad>
- <CANAwSgS68sL2JE5wafq98gFV-jhWFx5594Ax6+aVW8mpiBgHnQ@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A06A7EF09;
+	Sat, 12 Oct 2024 08:02:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=139.219.146.97
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728720182; cv=fail; b=FCw4jfPV/IIo+knCl3/FAgeHt0f3jBsCx1LwDri7MIY0NGQEPNwcdNl1pkIMLCNfzWF4IT39tHacH2/z8Ew+bQCzV8NAAdVPb8hq2UfG1tBDygco/9KtkJ/CYdjy6pmNFSxo8Qg/jYIlckRAKhwYETDYYdnWvB9dxEUHZDmi/e0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728720182; c=relaxed/simple;
+	bh=4xervHejjtGaiQcL64lDeVthjZrEiXYKbQipT6wWi7w=;
+	h=From:To:CC:Subject:Date:Message-ID:Content-Type:MIME-Version; b=oEJo7Cgy6AQdfe3Ck1CZZC7juu3UgthGWpl5dJl1fi/dcviPtSJxgdIOUjHfVyZhJ3ovHSCqDKHGdULCAIgp0UV60uqTaGvYxvHIjzdW/E8BfjhM0wP9zf3u39noCgFl04r5pFU7RQQDkdtDTGeVU6lJXI8RbdV/gpSy3o4x2W8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com; spf=pass smtp.mailfrom=starfivetech.com; arc=fail smtp.client-ip=139.219.146.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=starfivetech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=starfivetech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector9901; d=microsoft.com; cv=none;
+ b=GkDXVzgcrr6sj8KjLXwjkdDgCm4jVyxXdm1XI02YG9pG3S3OBIYu5hgb6kGeOaZWdupB0a4/XYQeB0w/sp85zzJw+ymRd0y1ry2x742adC+RzeUZJzLHuf/1ejVDWJxUwZjZcx8O3cM8rHXPB/qE/p1h3o1HvqGCudps5Xx0VBPeQEb5t2IJUG+UDCEsi4vguBuPxjXbRgSeyQDcYg/7sndXkOTgBgV3Oot72q5H8wmzVr7Mh6hm2D8wOx9CRQRCfoSBS4+PMp3J7dyanseV2//XjWW2Q3BpPFjzDQdFnuctbu2cjaMTshGjMv4bQzX40/X2q6ydaM10krm9BDDFgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector9901;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=4xervHejjtGaiQcL64lDeVthjZrEiXYKbQipT6wWi7w=;
+ b=a03/9XFKPxsfCvjPUhVHSNPkYtxnyHTMiG94BzTyEw7pcRKMch9RZNZCGqEtCy7m9ieAbIyRRONZBzLYtCglnZpXgdEVenoIBW+yjAnhSUzUtICczBkTadhwEQEQ5NI8yKmTUnKbhor6tSKiSRq3wUQ/Fjq4tVglnrFcmsRDSshVjOCanv1axaF9xG3cqouMz454drZJp0QWkcIgMwI3H53w/yjLiu1bj6K0IftJhbUcd4KiB4eqFWrO6k1DEhnbEMYdMixgymgBnrjkg4TyYkD7t4dMlnJ/gMg5yW9QdOyZxwCQha/iEpQd2e4KbOHifo8zkyQBjkhqHx11wCkxEQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=starfivetech.com; dmarc=pass action=none
+ header.from=starfivetech.com; dkim=pass header.d=starfivetech.com; arc=none
+Received: from ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::8) by ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn
+ (2406:e500:c550:1b::9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20; Sat, 12 Oct
+ 2024 08:02:58 +0000
+Received: from ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn
+ ([fe80::6e83:b5ba:ad4b:3ad2]) by
+ ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn ([fe80::6e83:b5ba:ad4b:3ad2%4])
+ with mapi id 15.20.8048.020; Sat, 12 Oct 2024 08:02:57 +0000
+From: William Qiu <william.qiu@starfivetech.com>
+To: =?utf-8?B?VXdlIEtsZWluZS1Lw7ZuaWc=?= <u.kleine-koenig@baylibre.com>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Hal Feng
+	<hal.feng@starfivetech.com>, Philipp Zabel <p.zabel@pengutronix.de>
+Subject: RE: [PATCH v15] pwm: opencores: Add PWM driver support
+Thread-Index: AQHbBounjjlcGdtaekWJl+TXMzB5nLJ+OF0AgANNGRCAAWVCsA==
+Date: Sat, 12 Oct 2024 08:02:57 +0000
+Message-ID:
+ <ZQ0PR01MB12538557D7C48C3B2ABEFBA89F7A2@ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=starfivetech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: ZQ0PR01MB1253:EE_|ZQ0PR01MB1302:EE_
+x-ms-office365-filtering-correlation-id: aadb62af-6b29-47b0-3ab5-08dcea9448d1
+x-ms-exchange-senderadcheck: 1
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|1800799024|41320700013|38070700018;
+x-microsoft-antispam-message-info:
+ rrCklYtidS7t/l7pmMAZOBSw+xqzrlxwGLku20CAYT3lt6bTJyKJP2Owo3XiyM7anqUdkIZ4fNLKVX/362heqvro6k62njndiMo1hkBzXJDdhTgVpTf0KtMQvAqZ5iP7IUsuNPTMdXQoLQ546VMFkOlpUchmTAgqKE5Oe7pe48wuEEKbS1TNwrF1PoYAFaPKiNjb1kLpk5L+yWKNLp0R4FAiHPI/mjrbQW7F27DXDzEc5cdz7BcBU7somLJCEg4mopbK7znBvwUsZOcxzXS1DOUTUnFacm0Gcaj5kUeZDzxTZYjtgSDJ7AwwTZ46qQzy2U8jrar9xBIzvzhcFBWxI6leAu1uaW3hzXTmhEYPR4B21sCZIlqbKq2MtW4+U4a9MxQqyzRduccZR+XR+haeK0kIgPhjyChbJ+Hf0P+J3ryZRBIqfqblLrbMPY3PwBDrCwQPN1yaw5+sJ3GyOTwvpZYZR2b0/ioFHR+s2YpRn7ASnZJt77m2d18cPLEt86coHKeIPSJiIljngsRnsdIYfk1haafHEpdvdYM+QUsXt9vbg+XjnVaozOGMgzVz9aP1nmHhjVcInZCtP0z/f97unLKCuig9olqTBHO4katZEuKybdvtUmCJEnoYw0SXYbom
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(41320700013)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?VkkzUkJjR0x3YlFFYWxGZm1jWmdIZFpVNDYrVzByNjg4OHdBODBVK25CR0E2?=
+ =?utf-8?B?TWRaUit0QTNsL0YxalhPeXdyRE83bzVUL081SmIyTjhxSkxOODNYYzE3a1d1?=
+ =?utf-8?B?ekZhZWdYTHk4enRiMmd5UThESldWRFBmS0VRM1FjVVdydFpyaTdlUG81Sk1D?=
+ =?utf-8?B?dmR2YVhIeHVKZzBVK2c2Qmk1OHArVXlZd05uZDZiQjErQkZVZStnZkh5TEF2?=
+ =?utf-8?B?MElOYkJkL2xNb3dsTUJMYXQvR0R1TFhoMkpPWDVXMEZnN0p1TktHZHoyZkF5?=
+ =?utf-8?B?Z1NBdWYvV25uVWVIY3pZdjZqYlNFeTlROUs5S2tBdFBhV3pKcUFCMDh2YnpI?=
+ =?utf-8?B?RUxIY241WmlCZHA1aEd6Q2ZCZDhNMjAwc0F3MkY0bzM4TVFYdW1YM3ltYkwy?=
+ =?utf-8?B?dTZQZDk3V1VMRHRYVW1EZHdQMFhxMVVDUEtHNDNKMlViQ3hFeVhWcUp3QlZJ?=
+ =?utf-8?B?aG1pRStWemhpR21VNTRDNHlmSzFaSGs3aGVPWFdKcWI1TjRtMDgrWFAwanZx?=
+ =?utf-8?B?VkFxdnJqK3JHY0Z3SThrZDZPM2EycHk1Vk5yQ2FONEhHcVBSK1BJMTBVaWhG?=
+ =?utf-8?B?NDY4M2hnRjZiOVB0SWpsWXg4ems2VGZmY0VrY3ZsUmx2SFVYTzNiTDRJVFB3?=
+ =?utf-8?B?NXdXc2pQYnk2N0FwTlRONVQydkN1d2JjcnVHbys4bjU5cG5tZGEwNGxXbDNz?=
+ =?utf-8?B?WEFORkNPOU5tS2M5SGsrbG1rMkNrOERFNkNZRWI0NTlrWDdjU3ZZYmFFNVBC?=
+ =?utf-8?B?K0h0WUx0VzRQeDlST3M3Tm9OTEdud0tQVlphTkpLbk5nMFAxeDlrZnZySWsy?=
+ =?utf-8?B?ZVhjQXE5bzd1TmNoNklJRk9NeUcrRlp6MTZEU3AzTTU0RFpNaWZJTjRPMnJ1?=
+ =?utf-8?B?WkVJblJsZDVTc3ByNlhHeWRpMmtrbHdudmpqdGQ2SjlwZitvS3RVU3dOMGp3?=
+ =?utf-8?B?ZlUzV2lrQU5oS3lOcjhLQ0FZVmhDZDA1SkFMM1dDSVZoWnBIOTZONTBSS2tw?=
+ =?utf-8?B?TEV2WGtrVFJoUXkyR2U3WURCeVVPVFVZaVJHdUZwWjRVMEdjRmRrdGRXeUQ2?=
+ =?utf-8?B?OHNlbjlPTUl6ZVFRZmtSVTBvVHluczZIcDRkaWo2MjRMVVlFRUZRaithM3RV?=
+ =?utf-8?B?SFVQZlJWRmFsaUxTM2tYRUcxNEVxS3lIalBuSU5kSEJJTjVtWWZQQWdlQ2Rz?=
+ =?utf-8?B?VHVGT24zdkY3TnBRRUxwUTZLNlFvWjJIOHpxWEQ0UUFUaDk5eVZPTDEvRjRF?=
+ =?utf-8?B?RldCM0lSWkJwc1NPd3cyWGFna0lDUHhZQzFpMWVNY1FFc0xyYmVEYUNCL0pX?=
+ =?utf-8?B?YzhweWhYR01vMlNxaG1FZ0RnUThUZU00NXc4UFBMZGRTUUo3Kys0aDFvVkcy?=
+ =?utf-8?B?S0YwUDNEZzEyU1NEVGZWSTg4aGd4ZnJWaVIwa2ZRbmc0Q1A5dFBFdTErZHph?=
+ =?utf-8?B?OFYwL0JrTXNQbmhJWG9PaEx2eGdoekl3a0R2d3I4VzRFY1EzNG1UcXQ1ajZo?=
+ =?utf-8?B?V1pNa3hTcnJUUmZUOUtqY0U2N1FGUmJDLzd3OVd3STdKTC9acURWbDZTTzU5?=
+ =?utf-8?B?UTNrNncyWTdUN2w5L1RYQVB4bE52am1vNk1FZjZaWGdKdnQzUW9GbEFOeHk1?=
+ =?utf-8?B?RDA4ZDREelBMbmhmZlEvZy83cE82Z0hJQkJPckdyVkRMbWVqRFc1SlUrSG5x?=
+ =?utf-8?B?S2FhaEhPS2dIcTNNakZjREdQZ1VtcXFjVm5UeWpSSXFJdWN1dmJzU04wemdz?=
+ =?utf-8?B?QjRtQVVIcGxxMUF4c0dGN1d1cHFJbE5DUGIwRmF1T0FJeVFRNVE4MjFUM2F3?=
+ =?utf-8?B?Rk9EM3A0NUFyeFRGSy9JUVF0ZC9tNE5VUzBEdjZQVFV4czFzWlNMTm1UTUtv?=
+ =?utf-8?B?N045QlhORUk5LzZTaW9Jc1Z5Y3U2ZXYrcmI2bTFqZGF2SEt6WnpPREhxZHNR?=
+ =?utf-8?B?anhmNkN2STNUOGZPQmJWTHdQODlLejBuS0hGTkM4a29KVlJleHVSWmFvMzRD?=
+ =?utf-8?B?VU5KOWMxSG96SWdBRTAyRnArL3ZqcHZ6QlorSkFyK3IyVndpUjNJdStmUWo0?=
+ =?utf-8?B?WkJqMW5rbTRTYjhkM2JVN2FxdHhzMlRiUVYxRCt5Slh5NWZUa0xBbDZkdHFS?=
+ =?utf-8?B?cy8vOXVIS0NtL3lNbHNYc0wzbDVlbjkrWjR6RURqZnMyYklzaXRMS0s5OFd6?=
+ =?utf-8?B?U2c9PQ==?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CANAwSgS68sL2JE5wafq98gFV-jhWFx5594Ax6+aVW8mpiBgHnQ@mail.gmail.com>
+X-OriginatorOrg: starfivetech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn
+X-MS-Exchange-CrossTenant-Network-Message-Id: aadb62af-6b29-47b0-3ab5-08dcea9448d1
+X-MS-Exchange-CrossTenant-originalarrivaltime: 12 Oct 2024 08:02:57.7027
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 06fe3fa3-1221-43d3-861b-5a4ee687a85c
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: R3wKZoo1euDodlMs9+HI+h9meoPpuBRzW0Yin15Z7CMlDjry/vyfMTZ2f3xS3WEBzMKcwSFP77NSZaYnmL+wahYxYZKqGYpMKFfwMGsICNA=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: ZQ0PR01MB1302
 
-On Sat, Oct 12, 2024 at 12:55:38PM +0530, Anand Moon wrote:
-> Hi Manivannan,
-> 
-> Thanks for your review comments.
-> 
-> On Sat, 12 Oct 2024 at 11:50, Manivannan Sadhasivam
-> <manivannan.sadhasivam@linaro.org> wrote:
-> >
-> > On Sat, Oct 12, 2024 at 10:36:05AM +0530, Anand Moon wrote:
-> > > Refactor the rockchip_pcie_disable_clocks function to accept a
-> > > struct rockchip_pcie pointer instead of a void pointer. This change
-> > > improves type safety and code readability by explicitly specifying
-> > > the expected data type.
-> > >
-> > > Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > > Signed-off-by: Anand Moon <linux.amoon@gmail.com>
-> > > ---
-> > > v7: None
-> > > v6: Fix the subject, add the missing () in the function name.
-> >
-> > Did you remove it in v7? Please don't do that, it just increases the burden on
-> > reviewers.
-> >
-> > - Mani
-> Earlier, it was reported that function () should be used in the function name.
-
-Hmm. Why can't you do the same for the description also?
-
-- Mani
-
--- 
-மணிவண்ணன் சதாசிவம்
+DQoNCj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4gRnJvbTogV2lsbGlhbSBRaXUNCj4g
+U2VudDogMjAyNOW5tDEw5pyIMTHml6UgMTg6NDMNCj4gVG86IFV3ZSBLbGVpbmUtS8O2bmlnIDx1
+LmtsZWluZS1rb2VuaWdAYmF5bGlicmUuY29tPg0KPiBDYzogbGludXgta2VybmVsQHZnZXIua2Vy
+bmVsLm9yZzsgbGludXgtcHdtQHZnZXIua2VybmVsLm9yZzsgSGFsIEZlbmcNCj4gPGhhbC5mZW5n
+QHN0YXJmaXZldGVjaC5jb20+OyBQaGlsaXBwIFphYmVsIDxwLnphYmVsQHBlbmd1dHJvbml4LmRl
+Pg0KPiBTdWJqZWN0OiBSRTogW1BBVENIIHYxNV0gcHdtOiBvcGVuY29yZXM6IEFkZCBQV00gZHJp
+dmVyIHN1cHBvcnQNCj4gDQo+ID4gK3N0YXRpYyB2b2lkIF9faW9tZW0gKnN0YXJmaXZlX2dldF9j
+aF9iYXNlKHZvaWQgX19pb21lbSAqYmFzZSwNCj4gKwkJCQkJICB1bnNpZ25lZCBpbnQgY2hhbm5l
+bCkNCj4gPg0KPiA+IFdvdWxkIGJlIGdyZWF0IGlmIGFsbCBmdW5jdGlvbnMgaGFkIHRoZSBzYW1l
+IHByZWZpeC4gVGhpcyBzaW1wbGlmaWVzDQo+ID4gZGVidWdnaW5nIHdpdGggdHJhY2luZywgYmVj
+YXVzZSB5b3UgY2FuIGp1c3QgZW5hYmxlIHRyYWNlcyBmb3INCj4gIm9jb3Jlc19wd21fKiIuDQo+
+ID4NCj4gV2lsbCB1cGRhdGUuDQoNCkkgd2FudCB0byBleHBsYWluIHNvbWV0aGluZyBhYm91dCB0
+aGlzLiBUaGlzIGludGVyZmFjZSBvbmx5IHdvcmtzIG9uDQpTdGFyRml2ZSBib2FyZHMsIHNvIHRo
+ZSAic3RhcmZpdmUiIHByZWZpeCBpcyB1c2VkLCBJIGRvbid0IHRoaW5rIHRoZQ0KIm9jb3Jlc19w
+d20iIHByZWZpeCBpcyBhcHByb3ByaWF0ZSBoZXJlLg0KDQpVd2UsIHdoYXQgZG8geW91IHRoaW5r
+Pw0KDQpCZXN0IFJlZ2FyZHMsDQpXaWxsaWFtDQo=
 
