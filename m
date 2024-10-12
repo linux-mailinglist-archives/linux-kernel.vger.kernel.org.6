@@ -1,68 +1,69 @@
-Return-Path: <linux-kernel+bounces-362022-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B3D099B00A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:16:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D08B899B00B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:16:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 904822836FE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:16:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B021B23110
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:16:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82568101DE;
-	Sat, 12 Oct 2024 02:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F214263;
+	Sat, 12 Oct 2024 02:16:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p4N5svc+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMIcQXZX"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AAE17BA3
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C611BC3F
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728699375; cv=none; b=mOVEcQFs3nK92KAg5AQkmw8I4oAxRKRhR34SUujBND4o2MBkU8Es74+mZxvCpPcGUW5PtxAOVTSCTpGfMvpbAKtozxoI3oN7EfGaC2OuJzg4/Gsg93LzUWtHBU9Bu5OhFQ2ecGjdGllVo9OMSlLvU5OaIpZ/oMYdrHqBYcy+toE=
+	t=1728699382; cv=none; b=cCbmKL9wssczx+6DzN2Ak4HGUj8eqpaC267bwKPiIT+9QZZxteBC/TVNRSwkxaKc1co28j6p1fifnYQBFDcs/CA2c+HJiO52Xt/4MOrql4huSUhVtGUS4Xa5fkOd714Ia8w5h6841DRtsUHWYtB2y6W40yMsmc3ie7Y+ZfzvC/M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728699375; c=relaxed/simple;
-	bh=fs2ex6Myrxn/BuLSkwmMzK6WA09iYO2UwtMXj00+gJ4=;
+	s=arc-20240116; t=1728699382; c=relaxed/simple;
+	bh=JUodbJ31pdXwG1oR2V7v0TetHTfgjIOpHojdVIma3iI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gYt3MxFErx5njjej8mAaQLEAoeK2/zwLjrTJTIf19+IodMve7zHeg3MxpanWG75nRJp1NNGpUbdysojkoQPykqsb1u3HiOBqFLbroBnGsfShajEwqGPZJUV8hK3xVE1wS2ZVVs/HvKsU/YMfW5AlgO1NpCgLGeaKAJ9Tj+ypV24=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p4N5svc+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8ECD9C4CECF
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:14 +0000 (UTC)
+	 To:Cc:Content-Type; b=ibTbVrTcE8D+aFMJMiSiMV7kJLasz4hcb3cNVkO4QJhMyB9m9YlKdl0yUc2Pe+d8fnG5ibZKt5ZNKxQgqmKpi9CZBVIw4bZx8bM8yQoD1EqpiyVTdXydxG9faaIlPKZAoVKCQnfa1heFvYa+YYjgGMx6DVivG+CJw/ViOS2OaQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMIcQXZX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3F0C4CECD
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:21 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728699374;
-	bh=fs2ex6Myrxn/BuLSkwmMzK6WA09iYO2UwtMXj00+gJ4=;
+	s=k20201202; t=1728699381;
+	bh=JUodbJ31pdXwG1oR2V7v0TetHTfgjIOpHojdVIma3iI=;
 	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=p4N5svc+7DSQ0ui/6lqj5oaOmjFVcC+Jla40/uz5HNxGxk3rFMKScieFbB0A3JOHH
-	 LWJem7qP3V0T6+1EvegejI4FnngIM/O/CAApD552ycafQGXJKVdlcxUUKFJwNRDfo3
-	 kE8250XTJabddZVLaecNaK2F5gk5DdB6G97AznwRkGTSzUNX6HvKoTGmp93TzCiedF
-	 BTiaDqtykdRLNsinAHKaIvH1do9+EIad5tQBrzAgaCfHB6uw/VlqTCHPkYtbEHl4cg
-	 hlNwUgZSxzCclTJXBP/gmKPC1Tg3SIxIfxQE3JJVrzWi6OzRRw4rYMUSxVetksjZSj
-	 07Y7wTWY0c8yA==
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43117ed8adbso25375495e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:16:14 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUDLTrWaYgdd23zRN5gjG5FMhgVwboDA2lKgDlXOFE9mK3UGu4wSmKRNOVj1pnrCNomnzuYcShhRcZ6R0E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9s3DnCY0SteUxcTRCoFBbxj3zFd4JSKDXWeejTmoNX7t0kMgY
-	7mCez0AFiJdv57/5NbMzLYrUKKXuLdQ6K1kPrnAcUg7HTtZww/n8RNbTOAT2wQkSzT1nSMZ+kFe
-	KagMKGdEpFD9mw6Q4ORNemzC6AjY=
-X-Google-Smtp-Source: AGHT+IEc1OUAjleT+os4xzcRNciedjusj82RHLgnziGR9iE7/CnrYGfrNpINEnlEOpvTmH4FpI8KZyHmfCDrMrUFysE=
-X-Received: by 2002:adf:9bd2:0:b0:37d:51b7:5e08 with SMTP id
- ffacd0b85a97d-37d5ff5a4cemr1208845f8f.18.1728699373163; Fri, 11 Oct 2024
- 19:16:13 -0700 (PDT)
+	b=PMIcQXZXeQj5qtw0siETa1YY9ZgelydhQU6wpPqNjQ0Gt1Ivy9GYk+dv2G9F8o+TF
+	 ybSrG9j44z2r8gNPBy+f50kZIcUU5Le1nf1aFDUb8zXCfvAMI6EawCY1YdtkZo4sq9
+	 3KKPhgPlPzZju7MgGJQhawcYIz9wOlQ5zed6W+QTIEyJfB1hHBmGXpgC4p09JR1VtL
+	 dX4F7RMaxyLmP/EC7n4LJXPEIWdhteYhIglD7UBkOrHGqQHFkwRCEawc88g6bAbCcY
+	 5wf9fpgCd4mI3pL2M0nGntQSsGUnDKQ7gUaTe2/sJhk4xmm76AOON6Hyq6Bvt+Ftxp
+	 GRtR5x+dWRmOA==
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso3366984a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:16:21 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUqqnFkCH/VDDq+JJ0BAOsYfZbfL7ONP+vzjjPx3z8RJB9JobOzp5KwGEULzicXSgAFAo4/8uQmuHElh94=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNGyNp87G6YwO3GY70c1g4cS2aFaTDQbHv/8ZDqoxpfRH0tOXg
+	6E7vReGwSgrHYnbiCdsU2Hb0yxZ8XNe4lMwGw4Dg+cgMZuU4E0HrzHxzWdsc4cOTcwiETA9geNC
+	pmdaxrOHPbdAs19+AVEbkOhc0lL4=
+X-Google-Smtp-Source: AGHT+IHuFRnnHrrgkM7pYwKUrgWiOtG7kV+p2T7XJp2djiBQ20CmZvBlI9kbC33qte/eEVLx+BBS1FsMPLaHGiB9gJA=
+X-Received: by 2002:a17:907:940c:b0:a8d:29b7:ecf3 with SMTP id
+ a640c23a62f3a-a99b930e9d1mr358486566b.13.1728699380354; Fri, 11 Oct 2024
+ 19:16:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010035048.3422527-1-maobibo@loongson.cn> <20241010035048.3422527-4-maobibo@loongson.cn>
-In-Reply-To: <20241010035048.3422527-4-maobibo@loongson.cn>
+References: <20241010035048.3422527-1-maobibo@loongson.cn> <20241010035048.3422527-5-maobibo@loongson.cn>
+In-Reply-To: <20241010035048.3422527-5-maobibo@loongson.cn>
 From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 12 Oct 2024 10:16:01 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6OR_HYSF451vSk_qSt1a6froSPZKY-=YSRBQgww5a+0A@mail.gmail.com>
-Message-ID: <CAAhV-H6OR_HYSF451vSk_qSt1a6froSPZKY-=YSRBQgww5a+0A@mail.gmail.com>
-Subject: Re: [PATCH 3/4] LoongArch: Add barrier between set_pte and memory access
+Date: Sat, 12 Oct 2024 10:16:07 +0800
+X-Gmail-Original-Message-ID: <CAAhV-H5DvHcS+apFthMWNNqvvq+VMu--6bcuyGzdMz66K8Bd=g@mail.gmail.com>
+Message-ID: <CAAhV-H5DvHcS+apFthMWNNqvvq+VMu--6bcuyGzdMz66K8Bd=g@mail.gmail.com>
+Subject: Re: [PATCH 4/4] LoongArch: Use atomic operation with set_pte and
+ pte_clear function
 To: Bibo Mao <maobibo@loongson.cn>
 Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
 	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, 
@@ -75,64 +76,93 @@ Hi, Bibo,
 On Thu, Oct 10, 2024 at 11:50=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
 te:
 >
-> It is possible to return a spurious fault if memory is accessed
-> right after the pte is set. For user address space, pte is set
-> in kernel space and memory is accessed in user space, there is
-> long time for synchronization, no barrier needed. However for
-> kernel address space, it is possible that memory is accessed
-> right after the pte is set.
+> For kernel space area on LoongArch system, both two consecutive page
+> table entries should be enabled with PAGE_GLOBAL bit. So with function
+> set_pte() and pte_clear(), pte buddy entry is checked and set besides
+> its own pte entry. However it is not atomic operation to set both two
+> pte entries, there is problem with test_vmalloc test case.
 >
-> Here flush_cache_vmap/flush_cache_vmap_early is used for
-> synchronization.
+> With previous patch, all page table entries are set with PAGE_GLOBAL
+> bit at beginning. Only its own pte entry need update with function
+> set_pte() and pte_clear(), nothing to do with buddy pte entry.
 >
 > Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 > ---
->  arch/loongarch/include/asm/cacheflush.h | 14 +++++++++++++-
->  1 file changed, 13 insertions(+), 1 deletion(-)
+>  arch/loongarch/include/asm/pgtable.h | 44 ++++++++++------------------
+>  1 file changed, 15 insertions(+), 29 deletions(-)
 >
-> diff --git a/arch/loongarch/include/asm/cacheflush.h b/arch/loongarch/inc=
-lude/asm/cacheflush.h
-> index f8754d08a31a..53be231319ef 100644
-> --- a/arch/loongarch/include/asm/cacheflush.h
-> +++ b/arch/loongarch/include/asm/cacheflush.h
-> @@ -42,12 +42,24 @@ void local_flush_icache_range(unsigned long start, un=
-signed long end);
->  #define flush_cache_dup_mm(mm)                         do { } while (0)
->  #define flush_cache_range(vma, start, end)             do { } while (0)
->  #define flush_cache_page(vma, vmaddr, pfn)             do { } while (0)
-> -#define flush_cache_vmap(start, end)                   do { } while (0)
->  #define flush_cache_vunmap(start, end)                 do { } while (0)
->  #define flush_icache_user_page(vma, page, addr, len)   do { } while (0)
->  #define flush_dcache_mmap_lock(mapping)                        do { } wh=
-ile (0)
->  #define flush_dcache_mmap_unlock(mapping)              do { } while (0)
->
-> +/*
-> + * It is possible for a kernel virtual mapping access to return a spurio=
-us
-> + * fault if it's accessed right after the pte is set. The page fault han=
-dler
-> + * does not expect this type of fault. flush_cache_vmap is not exactly t=
-he
-> + * right place to put this, but it seems to work well enough.
-> + */
-> +static inline void flush_cache_vmap(unsigned long start, unsigned long e=
-nd)
-> +{
-> +       smp_mb();
+> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/includ=
+e/asm/pgtable.h
+> index 22e3a8f96213..4be3f0dbecda 100644
+> --- a/arch/loongarch/include/asm/pgtable.h
+> +++ b/arch/loongarch/include/asm/pgtable.h
+> @@ -325,40 +325,26 @@ extern void paging_init(void);
+>  static inline void set_pte(pte_t *ptep, pte_t pteval)
+>  {
+>         WRITE_ONCE(*ptep, pteval);
 > +}
-I don't know whether this is the best API to do this, and I think
-flush_cache_vunmap() also should be a smp_mb().
+>
+> -       if (pte_val(pteval) & _PAGE_GLOBAL) {
+> -               pte_t *buddy =3D ptep_buddy(ptep);
+> -               /*
+> -                * Make sure the buddy is global too (if it's !none,
+> -                * it better already be global)
+> -                */
+> -               if (pte_none(ptep_get(buddy))) {
+> -#ifdef CONFIG_SMP
+> -                       /*
+> -                        * For SMP, multiple CPUs can race, so we need
+> -                        * to do this atomically.
+> -                        */
+> -                       __asm__ __volatile__(
+> -                       __AMOR "$zero, %[global], %[buddy] \n"
+> -                       : [buddy] "+ZB" (buddy->pte)
+> -                       : [global] "r" (_PAGE_GLOBAL)
+> -                       : "memory");
+> -
+> -                       DBAR(0b11000); /* o_wrw =3D 0b11000 */
+> -#else /* !CONFIG_SMP */
+> -                       WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(buddy))=
+ | _PAGE_GLOBAL));
+> -#endif /* CONFIG_SMP */
+> -               }
+> -       }
+> +static inline unsigned long __ptep_get_and_clear(pte_t *ptep)
+> +{
+> +       return atomic64_fetch_and(_PAGE_GLOBAL, (atomic64_t *)&pte_val(*p=
+tep));
+>  }
+>
+>  static inline void pte_clear(struct mm_struct *mm, unsigned long addr, p=
+te_t *ptep)
+>  {
+> -       /* Preserve global status for the pair */
+> -       if (pte_val(ptep_get(ptep_buddy(ptep))) & _PAGE_GLOBAL)
+> -               set_pte(ptep, __pte(_PAGE_GLOBAL));
+> -       else
+> -               set_pte(ptep, __pte(0));
+> +       __ptep_get_and_clear(ptep);
+With the first patch, a kernel pte always take _PAGE_GLOBAL, so we
+don't need an expensive atomic operation, just
+"set_pte(pte_val(ptep_get(ptep)) & _PAGE_GLOBAL)" is OK here. And then
+we don't need a custom ptep_get_and_clear().
 
 
 Huacai
 
-> +#define flush_cache_vmap flush_cache_vmap
-> +#define flush_cache_vmap_early flush_cache_vmap
+> +}
 > +
->  #define cache_op(op, addr)                                             \
->         __asm__ __volatile__(                                           \
->         "       cacop   %0, %1                                  \n"     \
+> +#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
+> +static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
+> +                                       unsigned long addr, pte_t *ptep)
+> +{
+> +       unsigned long val;
+> +
+> +       val =3D __ptep_get_and_clear(ptep);
+> +       return __pte(val);
+>  }
+>
+>  #define PGD_T_LOG2     (__builtin_ffs(sizeof(pgd_t)) - 1)
 > --
 > 2.39.3
 >
