@@ -1,193 +1,435 @@
-Return-Path: <linux-kernel+bounces-362405-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 597C399B481
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:53:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8763399B48A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:54:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5CF041C20A33
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FB9A1C2374B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 082DD20966C;
-	Sat, 12 Oct 2024 11:30:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154D21946C4;
+	Sat, 12 Oct 2024 11:35:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3L+Sr2L"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nwciaWCx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56373208973;
-	Sat, 12 Oct 2024 11:30:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33FE9154C09;
+	Sat, 12 Oct 2024 11:35:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728732623; cv=none; b=HkFq6sUb5NEkn6kNGG9aNYSZ+BjXPwPLfocMVwq4P59XdF4jXVvDufSR8TCaT0IzzXpzIK65BNnx19UG/H5Cw0p2noEDLFboS5/nduXyzxnsdnhJgvkMnzGEitrvIvrGyAumoPlJjuPxJlxTJf2B3fF8WIgru84GyzTeHNasyzE=
+	t=1728732943; cv=none; b=ZgZgvoEVjhZJrcrZkCW9svE4H15nPB8xt43Lzili0aIE/TwKwYtI9zs/Z7hcb6mIrAXpXR0/NVr83O1DVo8U43I+5nA9suCw2jWJBtYV3TZW8HKBRdXxUU3Ab9mzu6+4FMH/NaQj9vmFgy+9hkevqvKgcq1dYXGRpEUicaCkQq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728732623; c=relaxed/simple;
-	bh=0d10julrv+JVE/ZtCVbnMsjMb4ZZkeAvojtApemptGQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=cutb2L8/byY53hHlhk3kPSK/FzoDDSoAu9GbxWXwGhPQKauC9T76tTGbPxEnEpCrAWrXzDmCQTdDqeYrQlRJWa9MLCB4H8hEBAFw1/5vwbkoWwN6EDU8U39yWH7iMDCnopSv3jBpWJYUZBsS1mZKaBbWUV07CrkJJKuskN7rby4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3L+Sr2L; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A604C4CEC7;
-	Sat, 12 Oct 2024 11:30:22 +0000 (UTC)
+	s=arc-20240116; t=1728732943; c=relaxed/simple;
+	bh=Mmw8E9XEJYN7Y6YwQ28MPhIkLPtQ7v0uIPyho5WVcBw=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=LjVROvsKa3SpUA41X5UpCXrYWnrfjeoTYK1ue8OibtcXaDK95qsBia41f1GJl3TNkEL9C2khRB3laImugQj6PrSFHpjzOgigurjslbofl+fACl/Prg1biOGOSQu/jt9jCrfy0XlZxXe9DXdS5CDdTqOITI3bWvKS+VJx5ru4x6s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nwciaWCx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A398C4CEC6;
+	Sat, 12 Oct 2024 11:35:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728732623;
-	bh=0d10julrv+JVE/ZtCVbnMsjMb4ZZkeAvojtApemptGQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=P3L+Sr2LdFLLidopwJywyIJwimgzhuCADifHSvjSyKznCuKMThlmoEm/Wh3MNvYaN
-	 Wi3yjb4Ea6nb6q+Hl0lAfjxGdAcg1c7FeqrLyKkdhNVnGsNgmUNQmXkBukScBm/JTj
-	 OtAMZf7PGcOPubfHE0fq0Fzz5hU3KBm+u+MigVEcuSx8/8S90ba9HQHKg8uyp/CB1e
-	 aXkkVkU2bAZI8VhFF/p4VmqOAhExXavwuHjNM+kWJDj4BmLhJeeaA6HMnk6OHuHrAs
-	 IHTuQz+qBDiyZ3Kcq3vZUILGHxaREUxwaVvbUkcuKyNRXTy7laUuIGq/65IBgb6w/t
-	 qs47mWiEt2NhQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Stefan Wiehler <stefan.wiehler@nokia.com>,
-	Rob Herring <robh@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	saravanak@google.com,
-	devicetree@vger.kernel.org
-Subject: [PATCH AUTOSEL 4.19 6/6] of/irq: Prevent device address out-of-bounds read in interrupt map walk
-Date: Sat, 12 Oct 2024 07:30:03 -0400
-Message-ID: <20241012113009.1764620-6-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241012113009.1764620-1-sashal@kernel.org>
-References: <20241012113009.1764620-1-sashal@kernel.org>
+	s=k20201202; t=1728732942;
+	bh=Mmw8E9XEJYN7Y6YwQ28MPhIkLPtQ7v0uIPyho5WVcBw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=nwciaWCxQ5uRSutiR0I/mEs7M0h8WJRLFe9eUAh5gBWz/Fvz2PDLy9H/PY4SZLKLU
+	 tAc4WRwn7w5M0EGawe29Hwj89KCRCOA/qhGdGPVNpDLWviaGqPHrnu2xKrBYgGtZu8
+	 UnXS265ezZJQjxWiYivRurskm2M+Z6kss4v8GgBW2e3OAMJb/n2lM5NfV/SkYHvBQj
+	 5zX2PMp96Xmk3X6WI+bfOxZV/69nnsuOIraL0THcH7QdjENPLO3cMm9oCopkVStvrt
+	 Ey5v8W/NRgoUwu+hDIRH68L/NWtLz1aShCc0cEj3SjiSfTef5zo4WgZtPGdL5uf2mE
+	 KOp/qve0bD0Bw==
+Date: Sat, 12 Oct 2024 12:35:35 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
+ =?UTF-8?B?cg==?= <philm@manjaro.org>
+Subject: Re: [PATCH 3/3] iio: imu: Add scale and sampling frequency to
+ BMI270 IMU
+Message-ID: <20241012123535.1abe63bd@jic23-huawei>
+In-Reply-To: <20241011153751.65152-4-justin@justinweiss.com>
+References: <20241011153751.65152-1-justin@justinweiss.com>
+	<20241011153751.65152-4-justin@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.322
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Stefan Wiehler <stefan.wiehler@nokia.com>
+On Fri, 11 Oct 2024 08:37:49 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
 
-[ Upstream commit b739dffa5d570b411d4bdf4bb9b8dfd6b7d72305 ]
+> Add read and write functions and create _available entries. Use
+> IIO_CHAN_INFO_SAMP_FREQ instead of IIO_CHAN_INFO_FREQUENCY to match
+> the BMI160 / BMI323 drivers.
 
-When of_irq_parse_raw() is invoked with a device address smaller than
-the interrupt parent node (from #address-cells property), KASAN detects
-the following out-of-bounds read when populating the initial match table
-(dyndbg="func of_irq_parse_* +p"):
+Ah.  Please break dropping _FREQUENCY change out as a separate fix
+with fixes tag etc and drag it to start of the patch. It was never
+wired to anything anyway
 
-  OF: of_irq_parse_one: dev=/soc@0/picasso/watchdog, index=0
-  OF:  parent=/soc@0/pci@878000000000/gpio0@17,0, intsize=2
-  OF:  intspec=4
-  OF: of_irq_parse_raw: ipar=/soc@0/pci@878000000000/gpio0@17,0, size=2
-  OF:  -> addrsize=3
-  ==================================================================
-  BUG: KASAN: slab-out-of-bounds in of_irq_parse_raw+0x2b8/0x8d0
-  Read of size 4 at addr ffffff81beca5608 by task bash/764
+That's a straight forward ABI bug so we want that to land ahead
+of the rest of the series.
 
-  CPU: 1 PID: 764 Comm: bash Tainted: G           O       6.1.67-484c613561-nokia_sm_arm64 #1
-  Hardware name: Unknown Unknown Product/Unknown Product, BIOS 2023.01-12.24.03-dirty 01/01/2023
-  Call trace:
-   dump_backtrace+0xdc/0x130
-   show_stack+0x1c/0x30
-   dump_stack_lvl+0x6c/0x84
-   print_report+0x150/0x448
-   kasan_report+0x98/0x140
-   __asan_load4+0x78/0xa0
-   of_irq_parse_raw+0x2b8/0x8d0
-   of_irq_parse_one+0x24c/0x270
-   parse_interrupts+0xc0/0x120
-   of_fwnode_add_links+0x100/0x2d0
-   fw_devlink_parse_fwtree+0x64/0xc0
-   device_add+0xb38/0xc30
-   of_device_add+0x64/0x90
-   of_platform_device_create_pdata+0xd0/0x170
-   of_platform_bus_create+0x244/0x600
-   of_platform_notify+0x1b0/0x254
-   blocking_notifier_call_chain+0x9c/0xd0
-   __of_changeset_entry_notify+0x1b8/0x230
-   __of_changeset_apply_notify+0x54/0xe4
-   of_overlay_fdt_apply+0xc04/0xd94
-   ...
+Does this device have a data ready interrupt and if so what affect
+do the different ODRs for each type of sensor have on that?
+If there are separate data ready signals, you probably want to 
+go with a dual buffer setup from the start as it is hard to unwind
+that later.
 
-  The buggy address belongs to the object at ffffff81beca5600
-   which belongs to the cache kmalloc-128 of size 128
-  The buggy address is located 8 bytes inside of
-   128-byte region [ffffff81beca5600, ffffff81beca5680)
+> 
+> Signed-off-by: Justin Weiss <justin@justinweiss.com>
+> ---
+>  drivers/iio/imu/bmi270/bmi270_core.c | 293 ++++++++++++++++++++++++++-
+>  1 file changed, 291 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/iio/imu/bmi270/bmi270_core.c b/drivers/iio/imu/bmi270/bmi270_core.c
+> index f49db5d1bffd..ce7873dc3211 100644
+> --- a/drivers/iio/imu/bmi270/bmi270_core.c
+> +++ b/drivers/iio/imu/bmi270/bmi270_core.c
+> @@ -7,6 +7,7 @@
+>  #include <linux/regmap.h>
+>  
+>  #include <linux/iio/iio.h>
+> +#include <linux/iio/sysfs.h>
+>  #include <linux/iio/triggered_buffer.h>
+>  #include <linux/iio/trigger_consumer.h>
+>  
+> @@ -34,6 +35,9 @@
+>  #define BMI270_ACC_CONF_BWP_NORMAL_MODE			0x02
+>  #define BMI270_ACC_CONF_FILTER_PERF_MSK			BIT(7)
+>  
+> +#define BMI270_ACC_CONF_RANGE_REG			0x41
+> +#define BMI270_ACC_CONF_RANGE_MSK			GENMASK(1, 0)
+> +
+>  #define BMI270_GYR_CONF_REG				0x42
+>  #define BMI270_GYR_CONF_ODR_MSK				GENMASK(3, 0)
+>  #define BMI270_GYR_CONF_ODR_200HZ			0x09
+> @@ -42,6 +46,9 @@
+>  #define BMI270_GYR_CONF_NOISE_PERF_MSK			BIT(6)
+>  #define BMI270_GYR_CONF_FILTER_PERF_MSK			BIT(7)
+>  
+> +#define BMI270_GYR_CONF_RANGE_REG			0x43
+> +#define BMI270_GYR_CONF_RANGE_MSK			GENMASK(2, 0)
+> +
+>  #define BMI270_INIT_CTRL_REG				0x59
+>  #define BMI270_INIT_CTRL_LOAD_DONE_MSK			BIT(0)
+>  
+> @@ -85,6 +92,236 @@ const struct bmi270_chip_info bmi270_chip_info[] = {
+>  };
+>  EXPORT_SYMBOL_NS_GPL(bmi270_chip_info, IIO_BMI270);
+>  
+> +enum bmi270_sensor_type {
+> +	BMI270_ACCEL	= 0,
+> +	BMI270_GYRO,
+> +};
+> +
+> +struct bmi270_scale {
+> +	u8 bits;
+> +	int uscale;
+> +};
+> +
+> +struct bmi270_odr {
+> +	u8 bits;
+> +	int odr;
+> +	int uodr;
+> +};
+> +
+> +static const struct bmi270_scale bmi270_accel_scale[] = {
+> +	{ 0x00, 598},
+	{ 0x00, 598 },
 
-  The buggy address belongs to the physical page:
-  page:00000000230d3d03 refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x1beca4
-  head:00000000230d3d03 order:1 compound_mapcount:0 compound_pincount:0
-  flags: 0x8000000000010200(slab|head|zone=2)
-  raw: 8000000000010200 0000000000000000 dead000000000122 ffffff810000c300
-  raw: 0000000000000000 0000000000200020 00000001ffffffff 0000000000000000
-  page dumped because: kasan: bad access detected
+So space before } for all these.
 
-  Memory state around the buggy address:
-   ffffff81beca5500: 04 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-   ffffff81beca5580: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-  >ffffff81beca5600: 00 fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-                        ^
-   ffffff81beca5680: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
-   ffffff81beca5700: 00 00 00 00 00 00 fc fc fc fc fc fc fc fc fc fc
-  ==================================================================
-  OF:  -> got it !
+> +	{ 0x01, 1197},
+> +	{ 0x02, 2394},
+> +	{ 0x03, 4788},
+> +};
+> +
+> +static const struct bmi270_scale bmi270_gyro_scale[] = {
+> +	{ 0x00, 1065},
+> +	{ 0x01, 532},
+> +	{ 0x02, 266},
+> +	{ 0x03, 133},
+> +	{ 0x04, 66},
+> +};
+> +
+> +struct bmi270_scale_item {
+> +	const struct bmi270_scale *tbl;
+> +	int num;
+> +};
+> +
+> +static const struct bmi270_scale_item bmi270_scale_table[] = {
+> +	[BMI270_ACCEL] = {
+> +		.tbl	= bmi270_accel_scale,
+> +		.num	= ARRAY_SIZE(bmi270_accel_scale),
+> +	},
+> +	[BMI270_GYRO] = {
+> +		.tbl	= bmi270_gyro_scale,
+> +		.num	= ARRAY_SIZE(bmi270_gyro_scale),
+> +	},
+> +};
+> +
+> +static const struct bmi270_odr bmi270_accel_odr[] = {
+> +	{0x01, 0, 781250},
+> +	{0x02, 1, 562500},
+> +	{0x03, 3, 125000},
+> +	{0x04, 6, 250000},
+> +	{0x05, 12, 500000},
+> +	{0x06, 25, 0},
+> +	{0x07, 50, 0},
+> +	{0x08, 100, 0},
+> +	{0x09, 200, 0},
+> +	{0x0A, 400, 0},
+> +	{0x0B, 800, 0},
+> +	{0x0C, 1600, 0},
+> +};
+> +
+> +static const struct bmi270_odr bmi270_gyro_odr[] = {
+> +	{0x06, 25, 0},
+> +	{0x07, 50, 0},
+> +	{0x08, 100, 0},
+> +	{0x09, 200, 0},
+> +	{0x0A, 400, 0},
+> +	{0x0B, 800, 0},
+> +	{0x0C, 1600, 0},
+> +	{0x0D, 3200, 0},
+> +};
+> +
+> +struct bmi270_odr_item {
+> +	const struct bmi270_odr *tbl;
+> +	int num;
+> +};
+> +
+> +static const struct  bmi270_odr_item bmi270_odr_table[] = {
+> +	[BMI270_ACCEL] = {
+> +		.tbl	= bmi270_accel_odr,
+> +		.num	= ARRAY_SIZE(bmi270_accel_odr),
+> +	},
+> +	[BMI270_GYRO] = {
+> +		.tbl	= bmi270_gyro_odr,
+> +		.num	= ARRAY_SIZE(bmi270_gyro_odr),
+> +	},
+> +};
+> +
+> +static int bmi270_set_scale(struct bmi270_data *data,
+> +			    int chan_type, int uscale)
+> +{
+> +	int i;
+> +	int reg;
+> +	struct bmi270_scale_item bmi270_scale_item;
+> +
+> +	switch (chan_type) {
+> +	case IIO_ACCEL:
+> +		reg = BMI270_ACC_CONF_RANGE_REG;
+> +		bmi270_scale_item = bmi270_scale_table[BMI270_ACCEL];
+> +		break;
+> +	case IIO_ANGL_VEL:
+> +		reg = BMI270_GYR_CONF_RANGE_REG;
+> +		bmi270_scale_item = bmi270_scale_table[BMI270_GYRO];
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	for (i = 0; i < bmi270_scale_item.num; i++)
+> +		if (bmi270_scale_item.tbl[i].uscale == uscale)
+> +			break;
+> +
+> +	if (i == bmi270_scale_item.num)
+> +		return -EINVAL;
+> +
+> +	return regmap_write(data->regmap, reg,
+> +			    bmi270_scale_item.tbl[i].bits);
+Maybe do the write in the if above, (or use the continue approach mentioned
+below + do the write in the for loop.
+Then any exit from the loop that isn't a return is a failure and you an save the check.
 
-Prevent the out-of-bounds read by copying the device address into a
-buffer of sufficient size.
+> +}
+> +
+> +static int bmi270_get_scale(struct bmi270_data *bmi270_device,
+> +			    int chan_type, int *uscale)
+> +{
+> +	int i, ret, val;
+> +	int reg;
+> +	struct bmi270_scale_item bmi270_scale_item;
+> +
+> +	switch (chan_type) {
+> +	case IIO_ACCEL:
+> +		reg = BMI270_ACC_CONF_RANGE_REG;
+> +		bmi270_scale_item = bmi270_scale_table[BMI270_ACCEL];
+> +		break;
+> +	case IIO_ANGL_VEL:
+> +		reg = BMI270_GYR_CONF_RANGE_REG;
+> +		bmi270_scale_item = bmi270_scale_table[BMI270_GYRO];
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_read(bmi270_device->regmap, reg, &val);
+> +	if (ret)
+> +		return ret;
 
-Signed-off-by: Stefan Wiehler <stefan.wiehler@nokia.com>
-Link: https://lore.kernel.org/r/20240812100652.3800963-1-stefan.wiehler@nokia.com
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/of/irq.c | 15 +++++++++++----
- 1 file changed, 11 insertions(+), 4 deletions(-)
+No masking?
 
-diff --git a/drivers/of/irq.c b/drivers/of/irq.c
-index 02ad93a304a46..f06c9df60e34d 100644
---- a/drivers/of/irq.c
-+++ b/drivers/of/irq.c
-@@ -289,7 +289,8 @@ int of_irq_parse_one(struct device_node *device, int index, struct of_phandle_ar
- 	struct device_node *p;
- 	const __be32 *addr;
- 	u32 intsize;
--	int i, res;
-+	int i, res, addr_len;
-+	__be32 addr_buf[3] = { 0 };
- 
- 	pr_debug("of_irq_parse_one: dev=%pOF, index=%d\n", device, index);
- 
-@@ -298,13 +299,19 @@ int of_irq_parse_one(struct device_node *device, int index, struct of_phandle_ar
- 		return of_irq_parse_oldworld(device, index, out_irq);
- 
- 	/* Get the reg property (if any) */
--	addr = of_get_property(device, "reg", NULL);
-+	addr = of_get_property(device, "reg", &addr_len);
-+
-+	/* Prevent out-of-bounds read in case of longer interrupt parent address size */
-+	if (addr_len > (3 * sizeof(__be32)))
-+		addr_len = 3 * sizeof(__be32);
-+	if (addr)
-+		memcpy(addr_buf, addr, addr_len);
- 
- 	/* Try the new-style interrupts-extended first */
- 	res = of_parse_phandle_with_args(device, "interrupts-extended",
- 					"#interrupt-cells", index, out_irq);
- 	if (!res)
--		return of_irq_parse_raw(addr, out_irq);
-+		return of_irq_parse_raw(addr_buf, out_irq);
- 
- 	/* Look for the interrupt parent. */
- 	p = of_irq_find_parent(device);
-@@ -334,7 +341,7 @@ int of_irq_parse_one(struct device_node *device, int index, struct of_phandle_ar
- 
- 
- 	/* Check if there are any interrupt-map translations to process */
--	res = of_irq_parse_raw(addr, out_irq);
-+	res = of_irq_parse_raw(addr_buf, out_irq);
-  out:
- 	of_node_put(p);
- 	return res;
--- 
-2.43.0
+> +
+> +	for (i = 0; i < bmi270_scale_item.num; i++)
+> +		if (bmi270_scale_item.tbl[i].bits == val) {
+Flip the condition to reduce indent
 
+		if (bmi270_scale_item.tbl[i].bits != val)
+			continue;
+
+		*uscale.
+
+> +			*uscale = bmi270_scale_item.tbl[i].uscale;
+> +			return 0;
+> +		}
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int bmi270_set_odr(struct bmi270_data *data, int chan_type,
+> +			  int odr, int uodr)
+> +{
+> +	int i;
+> +	int reg, mask;
+> +	struct bmi270_odr_item bmi270_odr_item;
+> +
+> +	switch (chan_type) {
+> +	case IIO_ACCEL:
+> +		reg = BMI270_ACC_CONF_REG;
+> +		mask = BMI270_ACC_CONF_ODR_MSK;
+> +		bmi270_odr_item = bmi270_odr_table[BMI270_ACCEL];
+> +		break;
+> +	case IIO_ANGL_VEL:
+> +		reg = BMI270_GYR_CONF_REG;
+> +		mask = BMI270_GYR_CONF_ODR_MSK;
+> +		bmi270_odr_item = bmi270_odr_table[BMI270_GYRO];
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	for (i = 0; i < bmi270_odr_item.num; i++)
+> +		if (bmi270_odr_item.tbl[i].odr == odr &&
+> +		    bmi270_odr_item.tbl[i].uodr == uodr)
+> +			break;
+> +
+> +	if (i >= bmi270_odr_item.num)
+> +		return -EINVAL;
+> +
+> +	return regmap_update_bits(data->regmap,
+> +				  reg,
+> +				  mask,
+> +				  bmi270_odr_item.tbl[i].bits);
+
+combine parameters on each line to get nearer to 80 char limit.
+
+> +}
+> +
+> +static int bmi270_get_odr(struct bmi270_data *data, int chan_type,
+> +			  int *odr, int *uodr)
+> +{
+> +	int i, val, ret;
+> +	int reg, mask;
+> +	struct bmi270_odr_item bmi270_odr_item;
+> +
+> +	switch (chan_type) {
+> +	case IIO_ACCEL:
+> +		reg = BMI270_ACC_CONF_REG;
+> +		mask = BMI270_ACC_CONF_ODR_MSK;
+> +		bmi270_odr_item = bmi270_odr_table[BMI270_ACCEL];
+> +		break;
+> +	case IIO_ANGL_VEL:
+> +		reg = BMI270_GYR_CONF_REG;
+> +		mask = BMI270_GYR_CONF_ODR_MSK;
+> +		bmi270_odr_item = bmi270_odr_table[BMI270_GYRO];
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = regmap_read(data->regmap, reg, &val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	val &= mask;
+
+I'd just duplicate the regmap_read to allow easy use FIELD_GET etc.
+
+
+	switch (chan_type) {
+	case IIO_ACCEL:
+		ret = regmap_read(data->regmap, BMI270_ACC_CONF_REG, &val);
+		if (ret)
+			return ret;		
+		val = FIELD_GET(val, BMI270_ACC_CONF_ODR_MSK);
+		bmi270_odr_item = bmi270_odr_table[BMI270_ACCEL];
+		break;
+	case IIO_ANGL_VEL:
+		ret = regmap_read(data->regmap, BMI270_GYR_CONF_REG, &val);
+		if (ret)
+			return ret;
+		val = FIELD_GET(val, BMI270_GYR_CONF_ODR_MSK);
+		bmi270_odr_item = bmi270_odr_table[BMI270_GYRO];
+		break;
+	default:
+		return -EINVAL;
+	}
+
+
+> +
+> +	for (i = 0; i < bmi270_odr_item.num; i++)
+> +		if (val == bmi270_odr_item.tbl[i].bits)
+> +			break;
+> +
+> +	if (i >= bmi270_odr_item.num)
+> +		return -EINVAL;
+> +
+> +	*odr = bmi270_odr_item.tbl[i].odr;
+> +	*uodr = bmi270_odr_item.tbl[i].uodr;
+> +
+> +	return 0;
+> +}
+> +
+> +static
+> +IIO_CONST_ATTR(in_accel_sampling_frequency_available,
+> +	       "0.78125 1.5625 3.125 6.25 12.5 25 50 100 200 400 800 1600");
+> +static
+> +IIO_CONST_ATTR(in_anglvel_sampling_frequency_available,
+> +	       "25 50 100 200 400 800 1600 3200");
+> +static
+> +IIO_CONST_ATTR(in_accel_scale_available,
+> +	       "0.000598 0.001197 0.002394 0.004788");
+> +static
+> +IIO_CONST_ATTR(in_anglvel_scale_available,
+> +	       "0.001065 0.000532 0.000266 0.000133 0.000066");
+> +
+> +static struct attribute *bmi270_attrs[] = {
+> +	&iio_const_attr_in_accel_sampling_frequency_available.dev_attr.attr,
+> +	&iio_const_attr_in_anglvel_sampling_frequency_available.dev_attr.attr,
+> +	&iio_const_attr_in_accel_scale_available.dev_attr.attr,
+> +	&iio_const_attr_in_anglvel_scale_available.dev_attr.attr,
+Please use the read_avail callback and info_mask_xxx_avail masks to specify
+these exist for all the channels.
+
+Doing this as custom attrs predates that infrastructure and we are
+slowly converting drivers over.  The main advantage beyond enforced
+ABI is that can get to the values from in kernel consumers of the data.
+
+> +	NULL,
+No comma here.
+> +};
+> +
+> +static const struct attribute_group bmi270_attrs_group = {
+> +	.attrs = bmi270_attrs,
+> +};
 
