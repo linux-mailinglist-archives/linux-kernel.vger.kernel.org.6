@@ -1,233 +1,181 @@
-Return-Path: <linux-kernel+bounces-362072-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 762C999B089
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:56:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43FD299B088
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983E81C2118E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:56:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BE1F5B22C57
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:56:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251CF86277;
-	Sat, 12 Oct 2024 03:56:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nomKBn/B"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5711A86277;
+	Sat, 12 Oct 2024 03:56:06 +0000 (UTC)
+Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11EA41
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:56:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36765A41
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705372; cv=none; b=Y6smahNTSv+8lXQONxFKf4tzGS/ot6S9YRza7QtNEhZttxyhXyIHMkyWX451olQSDvw5NhyEp4uM2HYoYw6SeWm1dAqxuZu9mpi/mv4KJG9aEalHnui6epfFOy0xYZhQ7p5rTvquFwVToHT/9Gm2d3m8vQNofkW/1pcfmlR9AWI=
+	t=1728705365; cv=none; b=lK2d0JLlwXegGMx5mvVbcmtFmnF+OwciurLvIFGqaWJzIs3/Y8g34Nl3M5HGRlOl4X2i82qThI5CMWg7rTJcyeX20el2ecFCxx4sJdaVZq3wwsbdMk0WAEnu3LJLDJQJ1plhwVtl+Lu0bxMjnGXjtfMfj31UJGu0qhvO5tghMI0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705372; c=relaxed/simple;
-	bh=/FNldQTYLRaRNdMhfffmSUO35wUxwivYkc4/7qGa9fQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cPU6PojCeGy3IqPEOieH3oimMROrmV3E0MLfqRZy2UOO39qNMgjOlcGkXyDfB3LflRnuxb7GqQ2YlPfrvnQkh2EQ/w81gfOMn+Tcey2i9AfT+alG6QSJXNdvybOyBpQGUNbCemdqBYTdML5NN3biQjngg5nxoRMuN//El1qGOHc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nomKBn/B; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539d0929f20so1796788e87.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:56:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728705368; x=1729310168; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=LU52FN+J0/hnIDa7OCRKyJ9HWXb9RLs18SXoJG1d8Ck=;
-        b=nomKBn/ButvVzrw5Yz5AlzMH8CPHMUcu3aNu1K2FjMlR3i3oi7uD4Yia6l9ia+NeiX
-         vB360x7Z+xNWf+PLhdw5ZaXN5FVxTqVuysWD9f7YrgCBZ+CuMPZhOuvPSYyIB1kX0WLP
-         ph6QMT1XoXS1MkdzcOG+5KCRHm7h4D17uwAVrSi7bx9e142/6ukisWh1qPUTUZ/7lW36
-         RnC+Xjch5XEyeDbWDJA4COp6nzQy9fQXDFqVMXg/w2NEgZsxI0ukSxDEEyA3co+qpN7k
-         14KTIZpY/+cdU/uFm/d6zKeIRBve6FB+y44usEmf66/7VQZHiwNPrXPFgtiDs0//zwdY
-         NAxA==
+	s=arc-20240116; t=1728705365; c=relaxed/simple;
+	bh=7b9Ul/gAnpIBZL8mgfEX8Vn2sR6CaekFNwe9o04w0Og=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=VvpFZ4xt59KjEVeTm1j0Iw96xdtVmNjW3eNgsok4Zi2bBRYpeZQP+WM1JiUkMgAkS7/2PkDHx52VjUzHH61/i7vmMsUXziwWRQkXfQL3TT7ppqvqgs42XdBvMDpPE9dL+H60476cesdpIkgvcHQ/4u2OnaxHezs4RLxbiiwtFMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-8354dae2e52so211655539f.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:56:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728705368; x=1729310168;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=LU52FN+J0/hnIDa7OCRKyJ9HWXb9RLs18SXoJG1d8Ck=;
-        b=jbQV6XPovqmh+z679tux9QK9PwK/KKRpATENW2zUkmaxgmyLhDUPany9tyVTIqZxDy
-         9bi/OjFD64j5QCL9Mxz++AjJDVHpW3oUYJELG69cGgr+sBDpphaw5Y0VRyNuBWwXppD3
-         YOk3fFelzPJYDE2LXtDfbpWM5CK3dqhwFESetp1r0wJ80KjO7IVxFkgCBObnOcDQl5Xv
-         C5RAlPaweLxwb8RDhHBkxCpE1Z8WZ536m1GE/XGkfZY+fCgpjxncAnqMVuBojM+3i4nj
-         d9B8uUC3YoF9InacEMtKh+5+2B28+mDGwfQ6fRuRp63H4cFaXIVMCFxh0mnjuMFYH2Ba
-         ubiA==
-X-Forwarded-Encrypted: i=1; AJvYcCVWYcGQ3voXm4NH3Q76h6QbFXEvJMOaqNiEXhslG/aGL3O3hhEplpgIwMNV3SBm2z8ktR7lnawFqH2P5Wo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDs/GxdidvO9Us7sRjCdMKY5Dt3RX8r6IKGgT1jponqHn3451Q
-	pS8lpbsnBQ9LlMH98C7MLVeB154zLlPk9hEl4JBYG+DAgAkIy0SSJvWhANdRy24WdsGHdc7f1LF
-	2TA/km0ujVfmS+hIiQ1gAL9putOg=
-X-Google-Smtp-Source: AGHT+IHJ3suir3QdeEfWYMb/Qkj1g+JwmbDCoY3KQ1qbRzkCF3cbRrKILDnEpJgSLbB+8jTEOG06fFokookQDaybnUk=
-X-Received: by 2002:a05:6512:10d4:b0:539:8ad5:50a2 with SMTP id
- 2adb3069b0e04-539c988197fmr3216740e87.14.1728705368045; Fri, 11 Oct 2024
- 20:56:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728705363; x=1729310163;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=DpqzyHfurE6XgXi2F9a1tVKCuHlinPJzI2VJhbQD/84=;
+        b=SF5T/1stey42pXzNLcLDDiPZ8iHx7Spg2zPSN29sedGFRsc8R1bWFIeQHScuemyRVZ
+         y0YUm2YI5s2l+5a34prg0Qv7uI3PaOcgb7O6W4awTZnUcz+h5ydVY7T6gY/FUEDvxEpw
+         IDZZC7dsiDy7APnrhH+pMT6XKjwZyz3aedpT8N9yW2DOlgYmoHb/f9fl6/8GYVt8zAzE
+         XB5q5a68v9qAEJQCO3ArH/Oj2/eRIS4vw88+Lez4XtNei/peLQjulxA3WQD8fnTASMl6
+         YqMo8bKubFjX66mkn61Os2jF/GuBzOQ6nvC1N3DArVBhFCT5ZaBcG3ZocCrZbKTINyV0
+         /cVw==
+X-Gm-Message-State: AOJu0YzaBwpq3IyYbaF2YjwvW3dF8lWow1Z/z6FwrK4wEtQ810lhKG79
+	KtsPL1zPV+l++Mtkm2me2UO0MEFmuoF6CvnPlS+D+aolAuNOS9NrQsHwCs08qbVthifnUiRftiU
+	3FldmwJg9jOdzy1//2tA3mspyZVrwbc/5SgLLpiPnkylXGVWjdEsqDzo=
+X-Google-Smtp-Source: AGHT+IHGtvGz6AGmep+vKMjRISpHC2Vm9oWIgGlZK9OB2UGKVBQ1S7uOKLVoEkE2X/X2jTAAnAYeRNSDDbF0X3bBisqWveyeTco/
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925110235.3157-1-suhua1@kingsoft.com> <Zvkalqx12KRjXPAE@kernel.org>
-In-Reply-To: <Zvkalqx12KRjXPAE@kernel.org>
-From: Su Hua <suhua.tanke@gmail.com>
-Date: Sat, 12 Oct 2024 11:55:31 +0800
-Message-ID: <CALe3CaBWQtGWVUnmW7Kkc7ayEEhqf=Xye0d1MymHn8c5qtx+GA@mail.gmail.com>
-Subject: Re: [PATCH v1] memblock: Initialized the memory of memblock.reserve
- to the MIGRATE_MOVABL
-To: Mike Rapoport <rppt@kernel.org>
-Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, suhua <suhua1@kingsoft.com>
+X-Received: by 2002:a05:6602:2b87:b0:82c:eeaa:b1e0 with SMTP id
+ ca18e2360f4ac-837947798bbmr482535939f.11.1728705363324; Fri, 11 Oct 2024
+ 20:56:03 -0700 (PDT)
+Date: Fri, 11 Oct 2024 20:56:03 -0700
+In-Reply-To: <20241012024727.2538384-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6709f353.050a0220.4cbc0.001c.GAE@google.com>
+Subject: Re: [syzbot] [usb?] WARNING: ODEBUG bug in corrupted (3)
+From: syzbot <syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Mike
+Hello,
 
-Thanks for your advice and sorry for taking so long to reply.
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+WARNING in call_timer_fn
 
-I looked at the logic again. deferred_init_pages is currently used to
-handle all (memory &&! reserved) area memblock=EF=BC=8Cand put that memory =
-in
-buddy.
-Change it to also handle reserved memory may involve more code
-changes. I wonder if I can change the commit message: This patch is
-mainly to
-make the migration type to MIGRATE_MOVABLE when the reserve type page
-is initialized, regardless of whether CONFIG_DEFERRED_STRUCT_PAGE_INIT
-is set or not?
+------------[ cut here ]------------
+WARNING: CPU: 1 PID: 6517 at kernel/workqueue.c:2257 __queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+Modules linked in:
+CPU: 1 UID: 0 PID: 6517 Comm: udevd Not tainted 6.12.0-rc1-syzkaller-00027-g4a9fe2a8ac53-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:__queue_work+0xc3a/0x1080 kernel/workqueue.c:2256
+Code: 07 83 c0 03 38 d0 7c 09 84 d2 74 05 e8 9f 2d 8b 00 8b 5b 2c 31 ff 83 e3 20 89 de e8 a0 b1 32 00 85 db 75 60 e8 57 af 32 00 90 <0f> 0b 90 e9 f9 f7 ff ff e8 49 af 32 00 90 0f 0b 90 e9 a8 f7 ff ff
+RSP: 0018:ffffc900001b8bf0 EFLAGS: 00010046
+RAX: 0000000000000000 RBX: 0000000000000100 RCX: ffffffff81233571
+RDX: ffff888119dbd7c0 RSI: ffffffff812335c9 RDI: 0000000000000005
+RBP: ffff88811a4e3780 R08: 0000000000000005 R09: 0000000000000000
+R10: 0000000000000100 R11: 0000000000000000 R12: 1ffff92000037190
+R13: 0000000000000001 R14: 0000000000000100 R15: ffff888119bd2000
+FS:  00007f099cc31c80(0000) GS:ffff8881f5900000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007fff415ce0a8 CR3: 0000000116684000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <IRQ>
+ call_timer_fn+0x1a0/0x610 kernel/time/timer.c:1794
+ expire_timers kernel/time/timer.c:1840 [inline]
+ __run_timers+0x56a/0x930 kernel/time/timer.c:2419
+ __run_timer_base kernel/time/timer.c:2430 [inline]
+ __run_timer_base kernel/time/timer.c:2423 [inline]
+ run_timer_base+0x111/0x190 kernel/time/timer.c:2439
+ run_timer_softirq+0x1a/0x40 kernel/time/timer.c:2449
+ handle_softirqs+0x206/0x8d0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0xac/0x110 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
+ sysvec_apic_timer_interrupt+0x90/0xb0 arch/x86/kernel/apic/apic.c:1037
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:lock_release+0x3e5/0x6f0 kernel/locking/lockdep.c:5833
+Code: 7e 83 f8 01 0f 85 fd 01 00 00 9c 58 f6 c4 02 0f 85 e8 01 00 00 48 f7 04 24 00 02 00 00 74 01 fb 48 b8 00 00 00 00 00 fc ff df <48> 01 c3 48 c7 03 00 00 00 00 c7 43 08 00 00 00 00 48 8b 84 24 88
+RSP: 0018:ffffc90001a8f8c0 EFLAGS: 00000206
+RAX: dffffc0000000000 RBX: 1ffff92000351f1a RCX: ffffc90001a8f910
+RDX: 1ffff110233b7c49 RSI: ffffffff8727f4c0 RDI: ffffffff8746eac0
+RBP: ffffffffffffffff R08: 0000000000000000 R09: fffffbfff14ac839
+R10: ffffffff8a5641cf R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000001 R14: ffff888119dbe250 R15: ffff888119dbd7c0
+ up_read+0x16/0x20 kernel/locking/rwsem.c:1619
+ kernfs_dop_revalidate+0x352/0x5a0 fs/kernfs/dir.c:1178
+ d_revalidate fs/namei.c:868 [inline]
+ d_revalidate fs/namei.c:865 [inline]
+ lookup_fast+0x239/0x540 fs/namei.c:1693
+ walk_component+0x5b/0x5b0 fs/namei.c:2049
+ link_path_walk.part.0.constprop.0+0x669/0xd40 fs/namei.c:2418
+ link_path_walk fs/namei.c:2350 [inline]
+ path_openat+0x228/0x2d60 fs/namei.c:3929
+ do_filp_open+0x1dc/0x430 fs/namei.c:3960
+ do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x175/0x210 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f099cd5c9a4
+Code: 24 20 48 8d 44 24 30 48 89 44 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2c 44 89 e2 48 89 ee bf 9c ff ff ff b8 01 01 00 00 0f 05 <48> 3d 00 f0 ff ff 76 60 48 8b 15 55 a4 0d 00 f7 d8 64 89 02 48 83
+RSP: 002b:00007fff98e1ac60 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
+RAX: ffffffffffffffda RBX: 000055f5be29ddd0 RCX: 00007f099cd5c9a4
+RDX: 0000000000080000 RSI: 00007fff98e1ad78 RDI: 00000000ffffff9c
+RBP: 00007fff98e1ad78 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000080000
+R13: 000055f5be29dec0 R14: 00007fff98e1ad78 R15: 000055f5902b8a04
+ </TASK>
+----------------
+Code disassembly (best guess):
+   0:	7e 83                	jle    0xffffff85
+   2:	f8                   	clc
+   3:	01 0f                	add    %ecx,(%rdi)
+   5:	85 fd                	test   %edi,%ebp
+   7:	01 00                	add    %eax,(%rax)
+   9:	00 9c 58 f6 c4 02 0f 	add    %bl,0xf02c4f6(%rax,%rbx,2)
+  10:	85 e8                	test   %ebp,%eax
+  12:	01 00                	add    %eax,(%rax)
+  14:	00 48 f7             	add    %cl,-0x9(%rax)
+  17:	04 24                	add    $0x24,%al
+  19:	00 02                	add    %al,(%rdx)
+  1b:	00 00                	add    %al,(%rax)
+  1d:	74 01                	je     0x20
+  1f:	fb                   	sti
+  20:	48 b8 00 00 00 00 00 	movabs $0xdffffc0000000000,%rax
+  27:	fc ff df
+* 2a:	48 01 c3             	add    %rax,%rbx <-- trapping instruction
+  2d:	48 c7 03 00 00 00 00 	movq   $0x0,(%rbx)
+  34:	c7 43 08 00 00 00 00 	movl   $0x0,0x8(%rbx)
+  3b:	48                   	rex.W
+  3c:	8b                   	.byte 0x8b
+  3d:	84 24 88             	test   %ah,(%rax,%rcx,4)
 
-When not set CONFIG_DEFERRED_STRUCT_PAGE_INIT=EF=BC=8C initializes memblock=
- of
-reserve type to MIGRATE_MOVABLE by default at memmap_init initializes
-memory.
 
-Sincerely yours=EF=BC=8C
-Su
+Tested on:
 
+commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=17246087980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=90f31ac02b7ae5e8b578
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=161d3b27980000
 
-Mike Rapoport <rppt@kernel.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8829=E6=97=A5=
-=E5=91=A8=E6=97=A5 17:18=E5=86=99=E9=81=93=EF=BC=9A
->
-> On Wed, Sep 25, 2024 at 07:02:35PM +0800, suhua wrote:
-> > After sparse_init function requests memory for struct page in memblock =
-and
-> > adds it to memblock.reserved, this memory area is present in both
-> > memblock.memory and memblock.reserved.
-> >
-> > When CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set. The memmap_init funct=
-ion
-> > is called during the initialization of the free area of the zone, this
-> > function calls for_each_mem_pfn_range to initialize all memblock.memory=
-,
-> > excluding memory that is also placed in memblock.reserved, such as the
-> > struct page metadata that describes the page, 1TB memory is about 16GB,
-> > and generally this part of reserved memory occupies more than 90% of th=
-e
-> > total reserved memory of the system. So all memory in memblock.memory i=
-s
-> > set to MIGRATE_MOVABLE according to the alignment of pageblock_nr_pages=
-.
-> > For example, if hugetlb_optimize_vmemmap=3D1, huge pages are allocated,=
- the
-> > freed pages are placed on buddy's MIGRATE_MOVABL list for use.
->
-> Please make sure you spell MIGRATE_MOVABLE and MIGRATE_UNMOVABLE correctl=
-y.
->
-> > When CONFIG_DEFERRED_STRUCT_PAGE_INIT=3Dy, only the first_deferred_pfn =
-range
-> > is initialized in memmap_init. The subsequent free_low_memory_core_earl=
-y
-> > initializes all memblock.reserved memory but not MIGRATE_MOVABL. All
-> > memblock.memory is set to MIGRATE_MOVABL when it is placed in buddy via
-> > free_low_memory_core_early and deferred_init_memmap. As a result, when
-> > hugetlb_optimize_vmemmap=3D1 and huge pages are allocated, the freed pa=
-ges
-> > will be placed on buddy's MIGRATE_UNMOVABL list (For example, on machin=
-es
-> > with 1TB of memory, alloc 2MB huge page size of 1000GB frees up about 1=
-5GB
-> > to MIGRATE_UNMOVABL). Since the huge page alloc requires a MIGRATE_MOVA=
-BL
-> > page, a fallback is performed to alloc memory from MIGRATE_UNMOVABL for
-> > MIGRATE_MOVABL.
-> >
-> > Large amount of UNMOVABL memory is not conducive to defragmentation, so
-> > the reserved memory is also set to MIGRATE_MOVABLE in the
-> > free_low_memory_core_early phase following the alignment of
-> > pageblock_nr_pages.
-> >
-> > Eg=EF=BC=9A
-> > echo 500000 > /proc/sys/vm/nr_hugepages
-> > cat /proc/pagetypeinfo
-> >
-> > before=EF=BC=9A
-> > Free pages count per migrate type at order       0      1      2      3=
-      4      5      6      7      8      9     10
-> > =E2=80=A6
-> > Node    0, zone   Normal, type    Unmovable     51      2      1     28=
-     53     35     35     43     40     69   3852
-> > Node    0, zone   Normal, type      Movable   6485   4610    666    202=
-    200    185    208     87     54      2    240
-> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
-     13      1      2      1      0      1      0
-> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Unmovable =E2=89=88 15GB
-> >
-> > after=EF=BC=9A
-> > Free pages count per migrate type at order       0      1      2      3=
-      4      5      6      7      8      9     10
-> > =E2=80=A6
-> > Node    0, zone   Normal, type    Unmovable      0      1      1      0=
-      0      0      0      1      1      1      0
-> > Node    0, zone   Normal, type      Movable   1563   4107   1119    189=
-    256    368    286    132    109      4   3841
-> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
-     13      1      2      1      0      1      0
-> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
-      0      0      0      0      0      0      0
-> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
-      0      0      0      0      0      0      0
-> >
-> > Signed-off-by: suhua <suhua1@kingsoft.com>
-> > ---
-> >  mm/mm_init.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> >
-> > diff --git a/mm/mm_init.c b/mm/mm_init.c
-> > index 4ba5607aaf19..e0190e3f8f26 100644
-> > --- a/mm/mm_init.c
-> > +++ b/mm/mm_init.c
-> > @@ -722,6 +722,12 @@ static void __meminit init_reserved_page(unsigned =
-long pfn, int nid)
-> >               if (zone_spans_pfn(zone, pfn))
-> >                       break;
-> >       }
-> > +
-> > +     if (pageblock_aligned(pfn)) {
-> > +             set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVAB=
-LE);
-> > +             cond_resched();
-> > +     }
->
-> If you are trying to make initialization of pageblock migrate type
-> consistent with or without CONFIG_DEFERRED_STRUCT_PAGE_INIT, move setting
-> of migrate type from deferred_free_pages() to deferred_init_pages().
->
-> > +
-> >       __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
-> >  }
-> >  #else
-> > --
-> > 2.34.1
-> >
->
-> --
-> Sincerely yours,
-> Mike.
 
