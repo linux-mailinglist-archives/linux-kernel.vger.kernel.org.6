@@ -1,116 +1,121 @@
-Return-Path: <linux-kernel+bounces-362180-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362181-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F4899B1D6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:55:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52BCA99B1D8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:55:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8D46728448E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:55:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 496691F24AC6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:55:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B85D14D2A6;
-	Sat, 12 Oct 2024 07:54:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AD8113B7BC;
+	Sat, 12 Oct 2024 07:54:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b="FqHbFxuO"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GRZsYnXg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E176C14A4DC
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 07:53:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53D2126BE1;
+	Sat, 12 Oct 2024 07:54:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728719639; cv=none; b=Gia31O40He0pKwxuPhh6ugs/RvhagjW9qPaKyxZuRpTc0/iwyA1BHcRrY8sUtxllOmHTv28OkvNpaZsLHHMs73EuTQvKlR36alPZWr/vGENCYvIndOlK7oVXhg5XTEOFZzT59WGzJN7Sga4PURUxVJ+MWoJq5HjD/C6OzPn7xdY=
+	t=1728719697; cv=none; b=lFYFVx3g1x9gXfVhVLFMXT2eCtar+g1e1O9zzuzaBnyac9T7tVuie3HduPaeggA0IYK3GxtN+YCrEQQ5eLmlNB6Wew4m5s5BGiOObRhAJNP11MNNlFpsxllkgIe+93n9kZUl8PwppPExAyHdeZ8qS2p+D1fqCUJma+R+89XwUcI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728719639; c=relaxed/simple;
-	bh=7VydRlK0NqRFToaBnIr5yAgnRnV43JeVPkhrXmrWZAI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JyTuAe8PWaXzckM2zCtSBi3tQM6PaKpicSX9U8XHViFaZzkPPKgsWfnereIHTts9uCDwvgXlRB2DHYco9939+PMLWye5lr1y4v3PCxZFuZVsDbIC7dvcDmS5ONVz0JoaMCUal8758THeWtVyaVkjUWSoYC4qFza9oTJFLlRyOaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de; spf=pass smtp.mailfrom=wiredspace.de; dkim=pass (1024-bit key) header.d=wiredspace.de header.i=@wiredspace.de header.b=FqHbFxuO; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=wiredspace.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wiredspace.de
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wiredspace.de;
-	s=key1; t=1728719635;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=z31BLhKlngqtvWtyf/DVK3GrL1NfGL7cZ/Q8wQQNHcA=;
-	b=FqHbFxuOXmpskA9Wfz2kpWA0Lt0ZdIRweWedDzzX8IdvrdE0YVKoWetw6mee1wfo6ALD8G
-	VJu/DSpOVZ4oVtQF0fIQYai2kjWkmNhwhMC/GAb+cvxEmOExZbERqmlpjnKCHHnxmu9QSB
-	Gh+hnuIoYhMsG18bVZVL7uXgm1zgnzM=
-From: =?UTF-8?q?Thomas=20B=C3=B6hler?= <witcher@wiredspace.de>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Jocelyn Falempe <jfalempe@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Thomas=20B=C3=B6hler?= <witcher@wiredspace.de>
-Subject: [PATCH 7/7] drm/panic: allow verbose version check
-Date: Sat, 12 Oct 2024 09:52:50 +0200
-Message-ID: <20241012075312.16342-7-witcher@wiredspace.de>
-In-Reply-To: <20241012075312.16342-1-witcher@wiredspace.de>
-References: <20241012075312.16342-1-witcher@wiredspace.de>
+	s=arc-20240116; t=1728719697; c=relaxed/simple;
+	bh=Jw7PmkQmbX4v3tS4291K5+sm4U9zchTdB1uxCSg0xHE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WEmUW9MUmk4DWLW7hEhb+pi5fNa/pDqUyzXxHONTdqLKEa14m4HN1dPPqXvTOb6o7CJyQNwG4U5D3kCT5qFbwYE8eixbUHo5bnc660XCQ3x1Kmw3DaEF+TW0t0pjsyBho05USG1T+UmFqE4ifcPMZAp4qU9MuQJHvi4EGO82roU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GRZsYnXg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3804FC4CECC;
+	Sat, 12 Oct 2024 07:54:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728719697;
+	bh=Jw7PmkQmbX4v3tS4291K5+sm4U9zchTdB1uxCSg0xHE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=GRZsYnXgvaRkC9YXxQDCD62TbyeM6ZlPJ91LwJjY5weU0RJNDZTPpL+KF2autY2qK
+	 FKwdtPAYZP8aRRdSPpxHCHYk6ZCJxAQk7dC75LpAZSRLmiCHvKCDspkwuY5gDAO436
+	 fIRsobRap03WCIx3TAUZqkG3U+9RiPSN+E35VYkLSLjK091Qdeh0jYAOtv1bazziRh
+	 OOb6DojaMx5/DUFTBptU9h4sHXIsJ2vF20lenMSYnKnBzKPe0OBBaBn+h9DW0onJmK
+	 BQK/PppO+nN5kekQpY6nRQ8DGfIdDu9wyKRW2I2OSUGYaS4CFp4x6hb00LmpqhKvs9
+	 cGLrr0nVEh8sQ==
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-2fb3debdc09so5597031fa.3;
+        Sat, 12 Oct 2024 00:54:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWj5vlyI0jeU+sgV325LJFS8TYul5GoOp9VBoxMQrjHqM7vLNc7AwbbH26i23y6/OJrmxyEas+wdPSzN2c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyNZAhpfu26/EJLR1K23QXrLgtnxC3ejkxUphNQpniA0/AT25ZV
+	AUbmsyOIZzv0x2rsUE5WU8J5aSwXrshSxcnpuvERRj5IQe6ndZmhksgr514ToepIamKx/01/nZu
+	BM/xHShsE9V15KBrnM6MwYhAP2Wc=
+X-Google-Smtp-Source: AGHT+IEF7XGGtO9SU5vv5ZMoczydGnIfPCEvutde1lxo07Snzr8hJJcW0KC2dyM1sSBXXSpd2ewPFUqtvQRA2WTm8dk=
+X-Received: by 2002:a05:6512:12d3:b0:52c:d904:d26e with SMTP id
+ 2adb3069b0e04-539da3c87f5mr2576385e87.21.1728719695575; Sat, 12 Oct 2024
+ 00:54:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241011224812.25763-1-jonathan@marek.ca> <20241011224812.25763-3-jonathan@marek.ca>
+In-Reply-To: <20241011224812.25763-3-jonathan@marek.ca>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Sat, 12 Oct 2024 09:54:44 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
+Message-ID: <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
+Subject: Re: [PATCH 3/3] efi/libstub: consider CONFIG_CMDLINE for initrd= and
+ dtb= options
+To: Jonathan Marek <jonathan@marek.ca>
+Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Clippy warns about a reimplementation of `RangeInclusive::contains`:
+On Sat, 12 Oct 2024 at 00:52, Jonathan Marek <jonathan@marek.ca> wrote:
+>
+> Replace cmdline with CONFIG_CMDLINE when it should be used instead of
+> load_options.
+>
+> In the EXTEND case, it may be necessary to combine both CONFIG_CMDLINE and
+> load_options. In that case, keep the old behavior and print a warning about
+> the incorrect behavior.
+>
 
-    error: manual `!RangeInclusive::contains` implementation
-       --> drivers/gpu/drm/drm_panic_qr.rs:986:8
-        |
-    986 |     if version < 1 || version > 40 {
-        |        ^^^^^^^^^^^^^^^^^^^^^^^^^^^ help: use: `!(1..=40).contains(&version)`
-        |
-        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#manual_range_contains
-        = note: `-D clippy::manual-range-contains` implied by `-D warnings`
-        = help: to override `-D warnings` add `#[allow(clippy::manual_range_contains)]`
+The core kernel has its own handling for EXTEND/FORCE, so while we
+should parse it in the EFI stub to look for options that affect the
+stub's own behavior, we should not copy it into the command line that
+the stub provides to the core kernel.
 
-Ignore this and keep the current implementation as that makes it easier
-to read.
+E.g., drivers/of/fdt.c takes the bootargs from the DT and combines
+them with CONFIG_CMDLINE.
 
-Reported-by: Miguel Ojeda <ojeda@kernel.org>
-Closes: https://github.com/Rust-for-Linux/linux/issues/1123
-Signed-off-by: Thomas Böhler <witcher@wiredspace.de>
----
- drivers/gpu/drm/drm_panic_qr.rs | 1 +
- 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/gpu/drm/drm_panic_qr.rs b/drivers/gpu/drm/drm_panic_qr.rs
-index 226107c02679..fe842466d8d6 100644
---- a/drivers/gpu/drm/drm_panic_qr.rs
-+++ b/drivers/gpu/drm/drm_panic_qr.rs
-@@ -981,6 +981,7 @@ fn draw_all(&mut self, data: impl Iterator<Item = u8>) {
- /// * If `url_len` = 0, only removes 3 bytes for 1 binary segment.
- #[no_mangle]
- pub extern "C" fn drm_panic_qr_max_data_size(version: u8, url_len: usize) -> usize {
-+    #[allow(clippy::manual_range_contains)]
-     if version < 1 || version > 40 {
-         return 0;
-     }
--- 
-2.46.2
-
+> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
+> ---
+>  drivers/firmware/efi/libstub/file.c | 12 ++++++++++++
+>  1 file changed, 12 insertions(+)
+>
+> diff --git a/drivers/firmware/efi/libstub/file.c b/drivers/firmware/efi/libstub/file.c
+> index d6a025df07dcf..2a69e2b3583d4 100644
+> --- a/drivers/firmware/efi/libstub/file.c
+> +++ b/drivers/firmware/efi/libstub/file.c
+> @@ -208,6 +208,18 @@ efi_status_t handle_cmdline_files(efi_loaded_image_t *image,
+>         if (IS_ENABLED(CONFIG_X86) && !efi_nochunk)
+>                 efi_chunk_size = EFI_READ_CHUNK_SIZE;
+>
+> +       if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) ||
+> +           IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
+> +           cmdline_len == 0) {
+> +               if (!IS_ENABLED(CONFIG_CMDLINE_FORCE) && cmdline_len > 0) {
+> +                       /* both CONFIG_CMDLINE and load_options should be used */
+> +                       efi_warn("ignoring %ls from CONFIG_CMDLINE\n", optstr);
+> +               } else {
+> +                       cmdline = L"" CONFIG_CMDLINE;
+> +                       cmdline_len = ARRAY_SIZE(L"" CONFIG_CMDLINE) - 1;
+> +               }
+> +       }
+> +
+>         alloc_addr = alloc_size = 0;
+>         do {
+>                 struct finfo fi;
+> --
+> 2.45.1
+>
 
