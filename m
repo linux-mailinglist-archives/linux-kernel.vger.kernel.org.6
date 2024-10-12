@@ -1,106 +1,99 @@
-Return-Path: <linux-kernel+bounces-362416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362419-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A23A99B4B6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:04:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 22E8699B4BD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:06:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AFB81C20A47
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:04:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 38A7F1C215B4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:06:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A21416DEA7;
-	Sat, 12 Oct 2024 12:04:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Va9CV0yX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8A416E886;
+	Sat, 12 Oct 2024 12:06:25 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A14C7155759;
-	Sat, 12 Oct 2024 12:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E287147F69;
+	Sat, 12 Oct 2024 12:06:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728734653; cv=none; b=Ny6kEVxDY1v0AFgxqL/ZrLehFVSBEi+ixqn5GhUVQAfdagT73fUgWWCgQIChIiRlxWMoOw5Nf+UHLvDje0QzbNC9lmJE9SSsEXeP5vJfyt1gmQ3o16YBJpwsRWM7wdn0Mmz7JsxUWqUPbroXU7wmjNGKH7DthKXcYvyOFnTCsM0=
+	t=1728734785; cv=none; b=q3axZSWP7m76Lu0yRxKv2oUOV6W7Snp8eo/e0SEp3F9r3fHnpbZHeVlvXteHUtjFO96H2w++83RVBCbpGPi30ypzJRvjTq/5Xi6EFy5v1eQcW8K/JkT8sqia6E8shaXMQ6GXbH6OPpkYVYLUsHFqzwmy+1hAHH35gVzHPxjlkaQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728734653; c=relaxed/simple;
-	bh=YSpdctYsxiigwmcz5G5bEG1McNmz5DhhFYccwPk3OR4=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rBgaYGDbAf/mQ75M00adi/PHqtMf7n2awVSoV8mDkLq3H/D1hGxPaUGaVhoRy6mJThbr7vJL6ddlMD3Fczcbl0v75hbRzCepcK7pxnhEcOO5Y7ssaiieBzaDeV3nzLu9nLuCMJh6of7FOBhS5mA/0hmEXa+jxqEbNDdmRtzG1e0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Va9CV0yX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2689FC4CEC6;
-	Sat, 12 Oct 2024 12:04:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728734653;
-	bh=YSpdctYsxiigwmcz5G5bEG1McNmz5DhhFYccwPk3OR4=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Va9CV0yXGUWjeMFRTs9DI4NZ5UE8cN5HPZCoThwbC1mdiKw8cogaVGKIm4MNR9PyG
-	 3dL7OudMCpymgYgpao9pcXxFclOsGf/BlcQsRu3Ny5qF6fzJML7ClHs8peLOki5c/k
-	 CqVrd/WPoxaeBBujCYWL8sfKcKkJQMDWD+2vpeWNaJYdVh9gkFCxikWwC1OwSEhHBN
-	 na9xOGpIvSKytgWhexqlDg5trdA+kMQd1XwLFZ4w++9hq08OL2op11VBFnZ9S09yio
-	 UkCeFheEsmx4loR8aevEi382cg1ZOktq3f+Yr6Q9KoZ5o7LHPcBNspj4vdGQKHctDf
-	 BTwF8jxCDAF1A==
-Date: Sat, 12 Oct 2024 13:04:02 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Vasileios Aoiridis <vassilisamir@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, lars@metafoo.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- anshulusr@gmail.com, gustavograzs@gmail.com, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 12/13] iio: chemical: bme680: Add triggered buffer
- support
-Message-ID: <20241012130402.450b7181@jic23-huawei>
-In-Reply-To: <Zwl3aBDFiLN9b0TK@vamoirid-laptop>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
-	<20241010210030.33309-13-vassilisamir@gmail.com>
-	<ZwkABN9RycsVPRwo@smile.fi.intel.com>
-	<Zwl3aBDFiLN9b0TK@vamoirid-laptop>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728734785; c=relaxed/simple;
+	bh=IwUtYPQKqU20Pw5cpn9ykl4bTHIrKjZbpIEJm7B8vG8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gURJaQ1P6VpZrkAFvBLiEbZ7tr2qYDSW9VqR5iaWOg9tIl+nDRznHDItxiFsmcao6kZi5FAhnYRKNH3ysdoYokmvDplAmwpYNuP4QdkzG23Wui1jkVOWWkzZzXex/MxlrZwLvBv77XDtZ9f90n0s334tGDIuJ/RNKu5V6QW49E8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XQhvv1XPnzkWcD;
+	Sat, 12 Oct 2024 20:03:07 +0800 (CST)
+Received: from dggpemf200006.china.huawei.com (unknown [7.185.36.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 66A98140393;
+	Sat, 12 Oct 2024 20:05:32 +0800 (CST)
+Received: from [10.67.120.129] (10.67.120.129) by
+ dggpemf200006.china.huawei.com (7.185.36.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 12 Oct 2024 20:05:32 +0800
+Message-ID: <b1fd5ece-b967-4e56-ad4f-64ec437e2634@huawei.com>
+Date: Sat, 12 Oct 2024 20:05:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net v2 0/2] fix two bugs related to page_pool
+To: <davem@davemloft.net>, <kuba@kernel.org>, <pabeni@redhat.com>
+CC: <liuyonglong@huawei.com>, <fanghaiqing@huawei.com>,
+	<zhangkun09@huawei.com>, Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
+	<alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Jesper
+ Dangaard Brouer <hawk@kernel.org>, John Fastabend <john.fastabend@gmail.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <netdev@vger.kernel.org>,
+	<intel-wired-lan@lists.osuosl.org>, <bpf@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>
+References: <20240925075707.3970187-1-linyunsheng@huawei.com>
+Content-Language: en-US
+From: Yunsheng Lin <linyunsheng@huawei.com>
+In-Reply-To: <20240925075707.3970187-1-linyunsheng@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
+ dggpemf200006.china.huawei.com (7.185.36.61)
 
-On Fri, 11 Oct 2024 21:07:20 +0200
-Vasileios Aoiridis <vassilisamir@gmail.com> wrote:
+On 2024/9/25 15:57, Yunsheng Lin wrote:
+> Patch 1 fix a possible time window problem for page_pool.
+> Patch 2 fix the kernel crash problem at iommu_get_dma_domain
+> reported in [1].
 
-> On Fri, Oct 11, 2024 at 01:37:56PM +0300, Andy Shevchenko wrote:
-> > On Thu, Oct 10, 2024 at 11:00:29PM +0200, vamoirid wrote:  
-> > > From: Vasileios Amoiridis <vassilisamir@gmail.com>
-> > > 
-> > > Add triggered buffer and soft timestamp support. The available scan mask
-> > > enables all the channels of the sensor in order to follow the operation of
-> > > the sensor. The sensor basically starts to capture from all channels
-> > > as long as it enters into FORCED mode.  
-> > 
-> > ...
-> >   
-> > >  	struct regulator_bulk_data supplies[BME680_NUM_SUPPLIES];
-> > >  	int ambient_temp;
-> > >  
-> > > +	u8 buffer[ALIGN(sizeof(s32) * BME680_NUM_CHANNELS, sizeof(s64))
-> > > +		  + sizeof(s64)] __aligned(sizeof(s64));  
-> > 
-> > Can it be represented as a structure?
-> > We also have aligned_s64 for the timestamp.
-> >  
+Hi, all
+
+Through the discussions, it seems there are some main concerns
+as below:
+1. Semantics changing of supporting unlimited inflight pages
+   to limited inflight pages that are as large as the pool_size
+   of page_pool.
+2. The overhead of finding available pool->items in
+   page_pool_item_add().
+
+Any other concerns I missed here?
+As it is unclear about the impact of the above concerns, which seemed
+to lead Paolo to suggest this patchset targetting net-next tree
+instead of net tree, so I am planning to target the net-next tree
+keeping the 'Fixes' tag for the next version, if there is any other
+opinion here, please let me know.
+
+Also, I still have the page_frag refactoring patchset pending in the
+nex-next, please let me know if I should wait for that patchset to
+be applied before sending this one to the net-next tree.
+
 > 
-> Hi Andy,
-> 
-> The same approach was used also for the bmp280 driver and since I was
-> working on the bmp280 as well, I did it here. You think the
-> representation as a struct would look better? Personally I like the
-> nature of this one because of the ALIGN() but I have no problem of using
-> a struct here.
-
-Depends if you can enable sufficiently few channels that the timestamp
-moves.  If that is the case, a structure is missleading as a representation
-of this buffer so I prefer the above fun as it doesn't give the wrong
-impression (by giving no impression at all of the data layout!)
-
-Jonathan
 
