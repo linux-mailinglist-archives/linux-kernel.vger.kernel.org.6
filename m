@@ -1,100 +1,100 @@
-Return-Path: <linux-kernel+bounces-362283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 99AA299B306
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD3699B2EF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:22:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 448E71F2358E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:30:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 821C11C222DF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:22:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B18C1547E2;
-	Sat, 12 Oct 2024 10:30:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b="seZ+uet6"
-Received: from bee.tesarici.cz (bee.tesarici.cz [37.205.15.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51FC8154434
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 10:29:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.15.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAE321547CE;
+	Sat, 12 Oct 2024 10:21:54 +0000 (UTC)
+Received: from mail.nfschina.com (unknown [42.101.60.213])
+	by smtp.subspace.kernel.org (Postfix) with SMTP id D7DE712D1FA;
+	Sat, 12 Oct 2024 10:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728729001; cv=none; b=iudEU9PXeEoHTAHegpDzNXh3OUiVrnCRswBNX47OHhjf8xylw8svWGrvG0N6TqF/cDO+pf/OIe1n6J1Diw9+qO9mFOxPMm9M2D6YznDtOJpVNvC1ojayg2TJgcwG/VHj6kvNRLVQ1TR7OK+c5GZgArUuqFWJJKgyc8S4ZgylueQ=
+	t=1728728514; cv=none; b=e8eWzBDVAJLd2QbNKGtxbeyjBcRcCtiUwC+nArx1qEGGQwnHTF4X93JRVZqLUvyNJd1zsipv1hRzxRTRNql03AOg86DLjEnv1BRzQPb3li3sugZ7wjWFPKvaeaGUsPj2MCocE1qCMbrz9BPTWBe1cr23lnEkXMHwNawxDImDPEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728729001; c=relaxed/simple;
-	bh=On/+Rznt90q0UfrTICfcUuUflHb78u73+P2S8+Fef7o=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QkzCDhnzRAkWSkiuPC1Ke7Kc8VmCVW8977hH8o1Y/FDpnLMR1EkToX2YFmthtQY/F9qSyx2Ikv0BVT2lnImwX3NQWHnNVNHByEgKpeivgyCGWCqXOqlgw177s7J93128pb5r8JlbaQ5gienohEzBjHi7uDhdbjF75LqirPu02xw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz; spf=pass smtp.mailfrom=tesarici.cz; dkim=pass (2048-bit key) header.d=tesarici.cz header.i=@tesarici.cz header.b=seZ+uet6; arc=none smtp.client-ip=37.205.15.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tesarici.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tesarici.cz
-Received: from meshulam.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-4427-cc85-6706-c595.ipv6.o2.cz [IPv6:2a00:1028:83b8:1e7a:4427:cc85:6706:c595])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by bee.tesarici.cz (Postfix) with ESMTPSA id 11D5A31E5F;
-	Sat, 12 Oct 2024 12:21:37 +0200 (CEST)
-Authentication-Results: mail.tesarici.cz; dmarc=fail (p=quarantine dis=none) header.from=tesarici.cz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tesarici.cz; s=mail;
-	t=1728728497; bh=iVXD6oivaFEJvIsOfoLMoofcixQB2A9pHqcyMG6+++w=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=seZ+uet6nA1Bab0yiFIHjVT307XCuzMXK3VQwkOPR+AfpCGIfEfM5mSQB1KKUYfDC
-	 VYEqY3fQJI8wtE9Btg8E1oMsQJZhcKAfjpbHauaga5iBJhzEe19qHNOlbQGPt6EtWS
-	 /+y6OEOJEoc9mG2WQhVaXF0ojWlPHsk6e/VzudyMWxfab9obhrGk5UP7GS3OE79hNZ
-	 opB66nSa8AX+BdtK6O2lE2w7fjNIlBUBUPotxFSFehCuPtvmpJUcvecZiSDdNwoWeY
-	 J7lfeybY+BZrpdNjt7EMhqT1Z0xuesHKhAK3KQFLNx82uk31yHAWQ6qz7xzPHyw+Wf
-	 uuQNO09Pk4rnA==
-Date: Sat, 12 Oct 2024 12:21:30 +0200
-From: Petr =?UTF-8?B?VGVzYcWZw61r?= <petr@tesarici.cz>
-To: Sui Jingfeng <sui.jingfeng@linux.dev>
-Cc: Michael Kelley <mhklinux@outlook.com>, Andrew Morton
- <akpm@linux-foundation.org>, Robin Murphy <robin.murphy@arm.com>, Catalin
- Marinas <catalin.marinas@arm.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] scatterlist: fix a typo
-Message-ID: <20241012122130.5ad43ff4@meshulam.tesarici.cz>
-In-Reply-To: <20241012100817.323007-1-sui.jingfeng@linux.dev>
-References: <20241012100817.323007-1-sui.jingfeng@linux.dev>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1728728514; c=relaxed/simple;
+	bh=/Sv2b9cfIk4oiF0DWFAzbO94rG6qeMRmR/0kj5NFv2o=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type; b=kNDej1YXAx9rKc7YcIlhtVwbtJv17sXA+NOplSfrpx4c55M2FCXbZVKKxnaJ5sSvBTlMACayfUSoz1Cxo3xVGZZZ3vW0UfC8Uh2wCean2SlsWma45rECfvW2oRgyziDTkLN5yFTsHxiaML7gvqtuK9PX42QIAt6lb9pgFv6uFmU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
+Received: from [172.30.20.101] (unknown [180.167.10.98])
+	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id AB3C260B23F51;
+	Sat, 12 Oct 2024 18:21:47 +0800 (CST)
+Message-ID: <a39002c0-923d-9c9d-6d42-ea6e4b9ec153@nfschina.com>
+Date: Sat, 12 Oct 2024 18:21:46 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.1
+Subject: Re: [PATCH] iio: bmi323: mark bmi323_ext_reg_savestate as maybe
+ unused
+To: Julia Lawall <julia.lawall@inria.fr>
+Cc: jagathjog1996@gmail.com, jic23@kernel.org, lars@metafoo.de,
+ nathan@kernel.org, ndesaulniers@google.com, morbo@google.com,
+ justinstitt@google.com, benato.denis96@gmail.com,
+ Jonathan.Cameron@huawei.com, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+ kernel-janitors@vger.kernel.org
+Content-Language: en-US
+X-MD-Sfrom: suhui@nfschina.com
+X-MD-SrcIP: 180.167.10.98
+From: Su Hui <suhui@nfschina.com>
+In-Reply-To: <alpine.DEB.2.22.394.2410121110540.8471@hadrien>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, 12 Oct 2024 18:08:17 +0800
-Sui Jingfeng <sui.jingfeng@linux.dev> wrote:
+On 2024/10/12 17:11, Julia Lawall wrote:
+> On Sat, 12 Oct 2024, Su Hui wrote:
+>
+>> When running 'make CC=clang drivers/iio/imu/bmi323/bmi323_core.o', there
+>> is a clang warning as follows:
+>>
+>> drivers/iio/imu/bmi323/bmi323_core.c:133:27: error:
+>> variable 'bmi323_ext_reg_savestate' is not needed and will not be emitted
+>> [-Werror,-Wunneeded-internal-declaration]
+>>    133 | static const unsigned int bmi323_ext_reg_savestate[] = {
+>>        |                           ^~~~~~~~~~~~~~~~~~~~~~~~
+>> 1 error generated.
+>>
+>> Mark bmi323_ext_reg_savestate as __maybe_unused to silent this warning.
+> Why might it be unused?
 
-> Replace the 'One' with 'On'.
+We only use the size of 'bmi323_ext_reg_savestate[]' not it's value, as 
+shown below :
 
-Yeah, that's right. Thank you!
+$ git grep  bmi323_ext_reg_savest drivers/iio/imu/
+drivers/iio/imu/bmi323/bmi323_core.c:static const unsigned int 
+bmi323_ext_reg_savestate[] = {
+drivers/iio/imu/bmi323/bmi323_core.c:   unsigned int 
+ext_reg_settings[ARRAY_SIZE(bmi323_ext_reg_savestate)];
+drivers/iio/imu/bmi323/bmi323_core.c:   for (unsigned int i = 0; i < 
+ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
+drivers/iio/imu/bmi323/bmi323_core.c:   for (unsigned int i = 0; i < 
+ARRAY_SIZE(bmi323_ext_reg_savestate); i++) {
 
-Reviewed-by: Petr Tesarik <petr@tesarici.cz>
+And I find some solutions use __maybe_unused to silent this warning. 
+Like this one:
+3034983db355 ("drm/amdgpu: Mark mmhub_v1_8_mmea_err_status_reg as 
+__maybe_unused")
 
-Petr T
+Mark this variable to __maybe_unused is  to eliminate clang's warning.
+Perhaps it is also possible to mark it as _used:).
 
-> Fixes: af2880ec4402 ("scatterlist: add dedicated config for DMA flags")
-> Signed-off-by: Sui Jingfeng <sui.jingfeng@linux.dev>
-> ---
->  include/linux/scatterlist.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/include/linux/scatterlist.h b/include/linux/scatterlist.h
-> index e61d164622db..c5e2239b550e 100644
-> --- a/include/linux/scatterlist.h
-> +++ b/include/linux/scatterlist.h
-> @@ -273,7 +273,7 @@ static inline void sg_unmark_end(struct scatterlist *sg)
->  }
->  
->  /*
-> - * One 64-bit architectures there is a 4-byte padding in struct scatterlist
-> + * On 64-bit architectures there is a 4-byte padding in struct scatterlist
->   * (assuming also CONFIG_NEED_SG_DMA_LENGTH is set). Use this padding for DMA
->   * flags bits to indicate when a specific dma address is a bus address or the
->   * buffer may have been bounced via SWIOTLB.
+Su Hui
+
+
 
 
