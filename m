@@ -1,319 +1,116 @@
-Return-Path: <linux-kernel+bounces-362471-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7350399B563
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:15:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2DE799B55E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 322BC283AC6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:15:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 682C7283A98
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9963919AD5C;
-	Sat, 12 Oct 2024 14:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436A5198A21;
+	Sat, 12 Oct 2024 14:14:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="SpKIKTEE";
-	dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b="OOQ924qw"
-Received: from e2i340.smtp2go.com (e2i340.smtp2go.com [103.2.141.84])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EUI9uz9A"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B76881990D3
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 14:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.141.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A544194A6F;
+	Sat, 12 Oct 2024 14:14:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728742452; cv=none; b=QFE2DSeWxnKj7aNhRc1XpUPoloYzkvZwmLWA3EGnNf+7SDmjScFKtFnSs0dQGiYNRr30/PKiNLJSlZ7bCssfqvW8xDV1e8/nblqEiPn/O5mpo/gWKvd3AJFJ8qDLR4nhO2yqCFV2Bu1rFl3GjUhN1wFgcvhs4DQifBRJubwzwMM=
+	t=1728742449; cv=none; b=mewTq1Tz7WRzpZIsYkvEfB8On8A8yRQUfDmTArrVj/tKqZ/6SCkitaUr3bkAUJtW7lxCUpEPe9C8LjEc8ySlGNQv5LiHVnf+bw+ztTo3P+j3qLM1w8nj1Tjcbi/R7ntxZTHU2v6/ZwrMFiVOvvCucQ+P7YtNDpaD4ezU9K5LFAA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728742452; c=relaxed/simple;
-	bh=Beq6/MIuiWX5X1j8ZGXbUpiev6/9n6SPhFFMsn9A+Ps=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=mcyYVRoQUADwnTlc4t/Fe/vKSxDlPVttKosn0xZLgH4g7LJKb5oAVwH4qWfMEEkrpFoekJ/aYritsvDYRX9pGmvF8F6LFMdWs0E08W0Iu2RdZgDIK57zZ7hg6InVDxgyTjGuvd7fYQfldX4s8dQoRKaFlHIkScpjYbBW+iTT+rU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt; spf=pass smtp.mailfrom=em510616.triplefau.lt; dkim=pass (2048-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=SpKIKTEE; dkim=pass (2048-bit key) header.d=triplefau.lt header.i=@triplefau.lt header.b=OOQ924qw; arc=none smtp.client-ip=103.2.141.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=triplefau.lt
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em510616.triplefau.lt
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=maxzs0.a1-4.dyn; x=1728743350; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-Id:Date:Subject:To:From:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=8rLniM8BoY5sp/onB7H8OkcVpspfA6/G2G0ABl2Rw5k=; b=SpKIKTEEW/csPGbmEFzwKpBASC
-	JAPrHbTO4rDPklH+5814ISkY9dco7MsAyvp4UvVBiOGTHERRtAc2TmpR1f8z1WQigNthn7FHpqc90
-	xOkUZTSv3rCbWoVIjRPQlH9x0J6vXyoRNfAl0tvXVsBPGB5GXPBOHqX9P0M8nkflht2RW5kzjU+14
-	gNK6zMOYxhUdzwmZSRk02PmjbGr/zqgtQPrHgnRiUtYa9oXwnbkG1nA7zwBDNR4qaRYVBttzs7chB
-	hl3tNH31XyIL81eWdgOzQCnjp7uu3dSUncu5zsdjwRiUQ9cB0VKg6eGYlHufvGaW8oKwz6+b2RzFz
-	AeiAe6zw==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=triplefau.lt;
- i=@triplefau.lt; q=dns/txt; s=s510616; t=1728742450; h=from : subject
- : to : message-id : date;
- bh=8rLniM8BoY5sp/onB7H8OkcVpspfA6/G2G0ABl2Rw5k=;
- b=OOQ924qwSC1uCBbjQmI6RugKWEegMhT/vWlkZkr+zh0NG4QF9avYz0MjgL5WvWnx7EkJn
- DoCqAiTwVPKecaShOe3vEfLHecsFU2bhs1AIPKi5Q2RJx4+OzKXKzxxHConWW/M8CADFaLT
- HW2ihozdaAH+2Uej7KP6/q2rRydefYczGwoOmyY6XJcEWCbc72zbP0JRX4ZoOIEQOwXd8Ga
- XREfvCiCCXR8xFyAJz5ke14ir+ungqWEYN71TCTt9+cDKLFd5QI6dPBilyyZFUCZTTL9sGY
- YqNed+QpMZESfq3ep3nUd3EGN7dOtubMLZHOwod7B/hUfASiNxMdgjcl/i0Q==
-Received: from [10.172.233.58] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <repk@triplefau.lt>)
- id 1szcsM-TRjzAX-T6; Sat, 12 Oct 2024 14:13:46 +0000
-Received: from [10.12.239.196] (helo=localhost) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <repk@triplefau.lt>)
- id 1szcsM-FnQW0hPuzbs-mf9j; Sat, 12 Oct 2024 14:13:46 +0000
-From: Remi Pommarel <repk@triplefau.lt>
-To: ath10k@lists.infradead.org, linux-wireless@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Kalle Valo <kvalo@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Cedric Veilleux <veilleux.cedric@gmail.com>,
- Remi Pommarel <repk@triplefau.lt>
-Subject: [PATCH 2/2] wifi: ath10k: Flush only requested txq in ath10k_flush()
-Date: Sat, 12 Oct 2024 16:13:55 +0200
-Message-Id: <3baf9565d72291a0b730d9a53fc1ee9610dcc91f.1728741827.git.repk@triplefau.lt>
-X-Mailer: git-send-email 2.40.0
-In-Reply-To: <cover.1728741827.git.repk@triplefau.lt>
-References: <cover.1728741827.git.repk@triplefau.lt>
+	s=arc-20240116; t=1728742449; c=relaxed/simple;
+	bh=QpvuA0tXrIusrPG8LAQQ4pQs4s+4SgLc+0UwE7FI/E4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=XjNJ8oG9OWH2XNNtiU38P64aaAtsxYGqVRaZjUvaQsvbUZWBY9UjJiMl+L3p72C6xkX3RYkIMTzJ9fgu7Ry0wGR8fhau+QdoB+h1apOs41D0k3R1TpTQoftnfI/rA8OMDiNz+1lHiOdM7dQ+uiwsY+SnRk03ke5VZjNS4vlI5Xs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EUI9uz9A; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so57141466b.0;
+        Sat, 12 Oct 2024 07:14:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728742446; x=1729347246; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tuv25M7qfPhkVq2rdwgDLlN4egguVJCUL8w07O0WP/s=;
+        b=EUI9uz9ADpFJFSXU/7S7jtFxWrW6Qr6A/ZEpAPBFhBu1lHYO7uU7/pgHYtsMB1Kuqm
+         xtCt60gHoRkAWTlljsRlarw8M4DclZNnvD3GHJn/kalSaq7PeGlmxhSLrm3+bnDMDvfL
+         t3iePG41SPsKoDCgGx+UhNX9U0uK7yMtLl7W5zZTIuR1+Coh/n3A92Mq6xIoSMylzT+4
+         bZUuOyiW9NEACvpbyI7B1isF6TF69Tt+ao4FZ/3+Bm5CwkU6hu9qUg0IoEKgSAuUPCf+
+         NGRkBaGyRAvon9K1ziy7ya8j3EmlR3wH84fBBGceOFIEvpmmcLsElD5ahtFpef55iP9j
+         nthw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728742446; x=1729347246;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tuv25M7qfPhkVq2rdwgDLlN4egguVJCUL8w07O0WP/s=;
+        b=dEfN5EcJ84TyX83lr7idJEwsmpHpfStpnG3Fr60Vv17DOIMWE6Hpyys1IkF+CHrJBI
+         kA98esudSXHL0DyRijNgGQHC6rRAARkoGcMrSf9Ab2PiAy+agx1IJK/MAyRCirqi15aV
+         qQqWIpVhJTJBAAKgteUQyuF1Kxl4FNFrO0pHtbneZ8QRgR5W0DNHHHxDU76atmzfhz9v
+         FLscVXuFiA2Zj5/VnPmMH/0ORfa0XCEVOkqVzRaJVLzI7EV7LCP3kcJeBePBI6EhgFPy
+         q7zruv3HWssR+h9Deu/+diEwoGIt8mKuy4XblPqy3GoO35srIxtGy+5EZ0DITfg/N9lM
+         u+0A==
+X-Forwarded-Encrypted: i=1; AJvYcCUekEjmcikQH+TjBs8dY9HCrDeTeswdEZzooW6jx4XYEzykX9etYYvBqtDOs0VbQFcfGDaDnO4JDYWXfVM=@vger.kernel.org, AJvYcCUfdmNMsm+fKO8BCdrydUAjwAjLioVJL56O/K7uqBTpCO5m6CD/S3VuxfWx7ZuyRPfpc50ju2brvaOm/Q0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxxwaw4cINNmpE4Kx7bklVO8f7MMnWcp3ZuolURuZ2OeNZ5QtZk
+	hJmjq85fQ8LzIjYTk0KvDiU4yLjAB2Qg0aqKMX5Oqj5H35vB9nqP
+X-Google-Smtp-Source: AGHT+IG0B8W6nRGV5gDheoL2qJhnCrgP/hIARfPGbcFt0uINpwOjZ3efVzmhEbB+wWW7eVXLEVLSMg==
+X-Received: by 2002:a17:907:7ea1:b0:a8d:250a:52a8 with SMTP id a640c23a62f3a-a99b93a8506mr426443966b.3.1728742446066;
+        Sat, 12 Oct 2024 07:14:06 -0700 (PDT)
+Received: from localhost (craw-09-b2-v4wan-169726-cust2117.vm24.cable.virginm.net. [92.238.24.70])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99fa0cc7d4sm12707566b.104.2024.10.12.07.14.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Oct 2024 07:14:04 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Andy Shevchenko <andy@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-staging@lists.linux.dev
+Subject: [PATCH] media: atomisp: remove redundant re-checking of err
+Date: Sat, 12 Oct 2024 15:14:03 +0100
+Message-Id: <20241012141403.1558513-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Smtpcorp-Track: Rldn3o8mlqji.4UzYzitaIYHe.65FcswHZ7y3
-Feedback-ID: 510616m:510616apGKSTK:510616sMQlxFZQJl
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
 
-The ieee80211 flush callback can be called to flush only part of all hw
-queues. The ath10k's flush callback implementation (i.e. ath10k_flush())
-was waiting for all pending frames of all queues to be flushed ignoring
-the queue parameter. Because only the queues to be flushed are stopped
-by mac80211, skb can still be queued to other queues meanwhile. Thus
-ath10k_flush() could fail (and wait 5sec holding ar->conf lock) even if
-the requested queues are flushed correctly.
+The check to see if err is non-zero is always false because err has
+been previously checked on whenever err has been assigned in previous
+code paths. The check is redundant and can be removed.
 
-A way to reproduce the issue is to use two different APs because
-each vdev has its own hw queue in ath10k. Connect STA0 to AP0 and STA1
-to AP1. Then generate traffic from AP0 to STA0 and kill STA0 without
-clean disassociation frame (e.g. unplug power cable, reboot -f, ...).
-Now if we were to flush AP1's queue, ath10k_flush() would fail (and
-effectively block 5 seconds with ar->conf or even wiphy's lock held)
-with the following warning:
-
- ath10k_pci 0000:01:00.0: failed to flush transmit queue (skip 0 ar-state 2): 0
-
-Wait only for pending frames of the requested queues to be flushed in
-ath10k_flush() to avoid that long blocking.
-
-Reported-by: Cedric Veilleux <veilleux.cedric@gmail.com>
-Signed-off-by: Remi Pommarel <repk@triplefau.lt>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/net/wireless/ath/ath10k/htt.h    |  7 +++--
- drivers/net/wireless/ath/ath10k/htt_tx.c | 18 ++++++++++---
- drivers/net/wireless/ath/ath10k/mac.c    | 33 +++++++++++++++++-------
- drivers/net/wireless/ath/ath10k/txrx.c   |  2 +-
- 4 files changed, 44 insertions(+), 16 deletions(-)
+ drivers/staging/media/atomisp/pci/sh_css.c | 3 ---
+ 1 file changed, 3 deletions(-)
 
-diff --git a/drivers/net/wireless/ath/ath10k/htt.h b/drivers/net/wireless/ath/ath10k/htt.h
-index d150f9330941..33054fc4d9fb 100644
---- a/drivers/net/wireless/ath/ath10k/htt.h
-+++ b/drivers/net/wireless/ath/ath10k/htt.h
-@@ -1870,6 +1870,7 @@ struct ath10k_htt {
- 	spinlock_t tx_lock;
- 	int max_num_pending_tx;
- 	int num_pending_tx;
-+	int pending_per_queue[IEEE80211_MAX_QUEUES];
- 	int num_pending_mgmt_tx;
- 	struct idr pending_tx;
- 	wait_queue_head_t empty_tx_wq;
-@@ -2447,8 +2448,10 @@ void ath10k_htt_tx_txq_update(struct ieee80211_hw *hw,
- void ath10k_htt_tx_txq_recalc(struct ieee80211_hw *hw,
- 			      struct ieee80211_txq *txq);
- void ath10k_htt_tx_txq_sync(struct ath10k *ar);
--void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt);
--int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt);
-+void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt,
-+			       struct ieee80211_txq *txq);
-+int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt,
-+			      struct ieee80211_txq *txq);
- void ath10k_htt_tx_mgmt_dec_pending(struct ath10k_htt *htt);
- int ath10k_htt_tx_mgmt_inc_pending(struct ath10k_htt *htt, bool is_mgmt,
- 				   bool is_presp);
-diff --git a/drivers/net/wireless/ath/ath10k/htt_tx.c b/drivers/net/wireless/ath/ath10k/htt_tx.c
-index 7477cb8f5d10..a87ceda86098 100644
---- a/drivers/net/wireless/ath/ath10k/htt_tx.c
-+++ b/drivers/net/wireless/ath/ath10k/htt_tx.c
-@@ -140,19 +140,26 @@ void ath10k_htt_tx_txq_update(struct ieee80211_hw *hw,
- 	spin_unlock_bh(&ar->htt.tx_lock);
- }
- 
--void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt)
-+void ath10k_htt_tx_dec_pending(struct ath10k_htt *htt,
-+			       struct ieee80211_txq *txq)
- {
-+	int num_txq = -1;
-+
- 	lockdep_assert_held(&htt->tx_lock);
- 
- 	htt->num_pending_tx--;
- 	if (htt->num_pending_tx == htt->max_num_pending_tx - 1)
- 		ath10k_mac_tx_unlock(htt->ar, ATH10K_TX_PAUSE_Q_FULL);
- 
--	if (htt->num_pending_tx == 0)
-+	if (txq)
-+		num_txq = --htt->pending_per_queue[txq->vif->hw_queue[txq->ac]];
-+
-+	if (htt->num_pending_tx == 0 || num_txq == 0)
- 		wake_up(&htt->empty_tx_wq);
- }
- 
--int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt)
-+int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt,
-+			      struct ieee80211_txq *txq)
- {
- 	lockdep_assert_held(&htt->tx_lock);
- 
-@@ -163,6 +170,11 @@ int ath10k_htt_tx_inc_pending(struct ath10k_htt *htt)
- 	if (htt->num_pending_tx == htt->max_num_pending_tx)
- 		ath10k_mac_tx_lock(htt->ar, ATH10K_TX_PAUSE_Q_FULL);
- 
-+	if (!txq)
-+		return 0;
-+
-+	htt->pending_per_queue[txq->vif->hw_queue[txq->ac]]++;
-+
- 	return 0;
- }
- 
-diff --git a/drivers/net/wireless/ath/ath10k/mac.c b/drivers/net/wireless/ath/ath10k/mac.c
-index 373a0aa6b01c..bb4a6f11dd1d 100644
---- a/drivers/net/wireless/ath/ath10k/mac.c
-+++ b/drivers/net/wireless/ath/ath10k/mac.c
-@@ -4385,7 +4385,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 	u16 airtime;
- 
- 	spin_lock_bh(&ar->htt.tx_lock);
--	ret = ath10k_htt_tx_inc_pending(htt);
-+	ret = ath10k_htt_tx_inc_pending(htt, txq);
- 	spin_unlock_bh(&ar->htt.tx_lock);
- 
- 	if (ret)
-@@ -4394,7 +4394,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 	skb = ieee80211_tx_dequeue_ni(hw, txq);
- 	if (!skb) {
- 		spin_lock_bh(&ar->htt.tx_lock);
--		ath10k_htt_tx_dec_pending(htt);
-+		ath10k_htt_tx_dec_pending(htt, txq);
- 		spin_unlock_bh(&ar->htt.tx_lock);
- 
- 		return -ENOENT;
-@@ -4416,7 +4416,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 		ret = ath10k_htt_tx_mgmt_inc_pending(htt, is_mgmt, is_presp);
- 
- 		if (ret) {
--			ath10k_htt_tx_dec_pending(htt);
-+			ath10k_htt_tx_dec_pending(htt, txq);
- 			spin_unlock_bh(&ar->htt.tx_lock);
- 			return ret;
+diff --git a/drivers/staging/media/atomisp/pci/sh_css.c b/drivers/staging/media/atomisp/pci/sh_css.c
+index ca97ea082cf4..7cee4dc35427 100644
+--- a/drivers/staging/media/atomisp/pci/sh_css.c
++++ b/drivers/staging/media/atomisp/pci/sh_css.c
+@@ -6308,9 +6308,6 @@ load_yuvpp_binaries(struct ia_css_pipe *pipe)
  		}
-@@ -4430,7 +4430,7 @@ int ath10k_mac_tx_push_txq(struct ieee80211_hw *hw,
- 		ath10k_warn(ar, "failed to push frame: %d\n", ret);
- 
- 		spin_lock_bh(&ar->htt.tx_lock);
--		ath10k_htt_tx_dec_pending(htt);
-+		ath10k_htt_tx_dec_pending(htt, txq);
- 		if (is_mgmt)
- 			ath10k_htt_tx_mgmt_dec_pending(htt);
- 		spin_unlock_bh(&ar->htt.tx_lock);
-@@ -4693,7 +4693,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
- 			is_presp = ieee80211_is_probe_resp(hdr->frame_control);
- 		}
- 
--		ret = ath10k_htt_tx_inc_pending(htt);
-+		ret = ath10k_htt_tx_inc_pending(htt, txq);
- 		if (ret) {
- 			ath10k_warn(ar, "failed to increase tx pending count: %d, dropping\n",
- 				    ret);
-@@ -4706,7 +4706,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
- 		if (ret) {
- 			ath10k_dbg(ar, ATH10K_DBG_MAC, "failed to increase tx mgmt pending count: %d, dropping\n",
- 				   ret);
--			ath10k_htt_tx_dec_pending(htt);
-+			ath10k_htt_tx_dec_pending(htt, txq);
- 			spin_unlock_bh(&ar->htt.tx_lock);
- 			ieee80211_free_txskb(ar->hw, skb);
- 			return;
-@@ -4719,7 +4719,7 @@ static void ath10k_mac_op_tx(struct ieee80211_hw *hw,
- 		ath10k_warn(ar, "failed to transmit frame: %d\n", ret);
- 		if (is_htt) {
- 			spin_lock_bh(&ar->htt.tx_lock);
--			ath10k_htt_tx_dec_pending(htt);
-+			ath10k_htt_tx_dec_pending(htt, txq);
- 			if (is_mgmt)
- 				ath10k_htt_tx_mgmt_dec_pending(htt);
- 			spin_unlock_bh(&ar->htt.tx_lock);
-@@ -8046,10 +8046,12 @@ static int ath10k_mac_op_set_frag_threshold(struct ieee80211_hw *hw, u32 value)
- 	return -EOPNOTSUPP;
- }
- 
--void ath10k_mac_wait_tx_complete(struct ath10k *ar)
-+static void _ath10k_mac_wait_tx_complete(struct ath10k *ar,
-+					 unsigned long queues)
- {
- 	bool skip;
- 	long time_left;
-+	unsigned int q;
- 
- 	/* mac80211 doesn't care if we really xmit queued frames or not
- 	 * we'll collect those frames either way if we stop/delete vdevs
-@@ -8062,7 +8064,11 @@ void ath10k_mac_wait_tx_complete(struct ath10k *ar)
- 			bool empty;
- 
- 			spin_lock_bh(&ar->htt.tx_lock);
--			empty = (ar->htt.num_pending_tx == 0);
-+			for_each_set_bit(q, &queues, ar->hw->queues) {
-+				empty = (ar->htt.pending_per_queue[q] == 0);
-+				if (!empty)
-+					break;
-+			}
- 			spin_unlock_bh(&ar->htt.tx_lock);
- 
- 			skip = (ar->state == ATH10K_STATE_WEDGED) ||
-@@ -8077,6 +8083,13 @@ void ath10k_mac_wait_tx_complete(struct ath10k *ar)
- 			    skip, ar->state, time_left);
- }
- 
-+void ath10k_mac_wait_tx_complete(struct ath10k *ar)
-+{
-+	unsigned int queues = GENMASK(ar->hw->queues - 1, 0);
-+
-+	_ath10k_mac_wait_tx_complete(ar, queues);
-+}
-+
- static void ath10k_flush(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
- 			 u32 queues, bool drop)
- {
-@@ -8098,7 +8111,7 @@ static void ath10k_flush(struct ieee80211_hw *hw, struct ieee80211_vif *vif,
  	}
  
- 	mutex_lock(&ar->conf_mutex);
--	ath10k_mac_wait_tx_complete(ar);
-+	_ath10k_mac_wait_tx_complete(ar, queues);
- 	mutex_unlock(&ar->conf_mutex);
- }
- 
-diff --git a/drivers/net/wireless/ath/ath10k/txrx.c b/drivers/net/wireless/ath/ath10k/txrx.c
-index ece56379b0f0..5b5078cff153 100644
---- a/drivers/net/wireless/ath/ath10k/txrx.c
-+++ b/drivers/net/wireless/ath/ath10k/txrx.c
-@@ -82,7 +82,7 @@ int ath10k_txrx_tx_unref(struct ath10k_htt *htt,
- 
- 	flags = skb_cb->flags;
- 	ath10k_htt_tx_free_msdu_id(htt, tx_done->msdu_id);
--	ath10k_htt_tx_dec_pending(htt);
-+	ath10k_htt_tx_dec_pending(htt, txq);
- 	spin_unlock_bh(&htt->tx_lock);
- 
- 	rcu_read_lock();
+-	if (err)
+-		goto ERR;
+-
+ ERR:
+ 	if (need_scaler)
+ 		ia_css_pipe_destroy_cas_scaler_desc(&cas_scaler_descr);
 -- 
-2.40.0
+2.39.5
 
 
