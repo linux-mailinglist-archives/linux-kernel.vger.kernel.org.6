@@ -1,146 +1,200 @@
-Return-Path: <linux-kernel+bounces-362079-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362080-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59FBA99B09B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:01:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29B9299B0C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:13:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 89A991C21EA6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:01:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F6A9B22D93
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9B613B280;
-	Sat, 12 Oct 2024 04:01:03 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.65.219])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA430126C00;
+	Sat, 12 Oct 2024 04:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Jd1k3IAW"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09E8126C09
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.65.219
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4822126C15
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:13:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705663; cv=none; b=I18ut88t5N0OqH9febO5BaYWKZPswfiVkOEUgcy0//KJAz7HcjR8wbwHv+eD7rOrwtJlWrTt8ICf9alYx1ml7kbnPn3WFAjMndc/ePJVslex1UZW1+tWX6TMDlW9umpJsL7VDGOULvjLtxYcELGlv2Prunbi1NceCeZsm1/o1I4=
+	t=1728706404; cv=none; b=Uyw0mEEVBYuzt0pdcAUshWMsY3+yLBCzwS7rQt1IXTUJo6bwKAFvGqZhhZQqzrz+CuQocVd9/4xj+mPFxH7Mim3xOnPEGaOCDfQJ7atTaBRAP9/KT9Ga2y/maIHAiskzG1UP7oKhdqUiNlsV/MQdnyv6X91tGbd09A229Vr/m0Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705663; c=relaxed/simple;
-	bh=5Yqtd0zpcPEfI0UEVC8ExUgkB7Y7yInW28amVXFiDds=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=exETtuoybkuuHKidlRnAi3r/lvJJqqqXX5cTH9Wl1BmMhm1WXUoyw9Q4GFT3HDV+t4+xU8Dgbrkg6cv6H0bFfZustzxaTDNrCu9MkZYFr5tINkzlguxW76tYbzQElKcwhQOQnbo5wwIHKOWqABua28wG+we9VO6XbnVfOLbAqWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=114.132.65.219
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz3t1728705590tix6yq9
-X-QQ-Originating-IP: 7dovD3jhNT7oLVB7Pph9jMXcYEGF/4SIvx2PoU5BIfk=
-Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 12 Oct 2024 11:59:48 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 6310943489994141295
-From: Luming Yu <luming.yu@shingroup.cn>
-To: linuxppc-dev@lists.ozlabs.org,
-	linux-kernel@vger.kernel.org,
-	mpe@ellerman.id.au,
-	npiggin@gmail.com,
-	christophe.leroy@csgroup.eu,
-	jialong.yang@shingroup.cn,
-	luming.yu@gmail.com
-Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: [PATCH 7/7] powerpc/entry: fix 32bit compile issue for common entry
-Date: Sat, 12 Oct 2024 11:56:21 +0800
-Message-ID: <837E79EAF5C5A04B+20241012035621.1245-9-luming.yu@shingroup.cn>
-X-Mailer: git-send-email 2.42.0.windows.2
-In-Reply-To: <20241012035621.1245-3-luming.yu@shingroup.cn>
-References: <20241012035621.1245-3-luming.yu@shingroup.cn>
+	s=arc-20240116; t=1728706404; c=relaxed/simple;
+	bh=Cjqq2VsIvnOWJtSBSmaGd8a62UyC2iakIp8Y/CTbhIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T+EDQ7owyIi5Z91DE8iNJw3wObsbyQXPcNVCo0ps3xPXSwmO5NHVqXxfUGeab7RTm6X934DesdjLjPS+DDJBoX2qeCyHlTAKZOiqFAXASu226qR2my4xK8tMkXQyeqsl8zRbosqBqDmyPaiBrhReGur6nskSFGc/b3nazeY2ivA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Jd1k3IAW; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20c7edf2872so21150915ad.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 21:13:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728706402; x=1729311202; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=vB16VpCDewcAwoYN49nbK+yIU/0PlYPRJKRICrTJZE8=;
+        b=Jd1k3IAWmY0PgAXQ4gbzhO2ai8ebqQG+CAtiHzXMFaKynnRTE5Pcb5jovpxvUzwsOD
+         kU/LLDfaCmTRvYTXdgvGK2pBAAQ2/cRBNovkkpD44zdAUQeSeyz+eVrQh5/1hfOHZk4v
+         zf4gnP0/DSfvKHaTV33/ukzoQQnAguh9RUQAT3Lri6wWINcloBgoxcX+fi+JZsITWm3+
+         xNi/uXgvUPbBLOjTYDK8HfanzuZarkxNJb6kWRvIAiRUATYHe3EYC8/qUEdHfQvQdKQr
+         dsMWvFs/o3os+6IS7fHbetEkN2J8PcEMDAxvAdQRaIP5CP+LicC8ZMFGmaXUyBKD3MG4
+         JO2Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728706402; x=1729311202;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vB16VpCDewcAwoYN49nbK+yIU/0PlYPRJKRICrTJZE8=;
+        b=DW8oRvbmGWrgQHl+v/1IKYE9Wb/lKRNTVMZEIM8ZgLxa1oZXX73e44sW/U2vpGrr2g
+         DXhe5Hcj+LjVPPfHWHRCcwk3FP4PeOQoRjuDDvpZGrN7ZEJrwnzlwm0Wtf3rLj/VLoq3
+         oxJ0pIiUb+Q8Vk4sqNWW8SxXTHAVAgVSOszf03u0d7UvAqA0qp7ZzgCQ4XI6AwGzuwlF
+         2DgfVafnyGSRtwBUNH1Ybe3Z6Z8wY5RITl5uicNW3Ubl6FisCDUTLb63GvRe12kRdSSI
+         gjg/wqQZCYw9pPhDh3TlgKV5HCeTCxF7XO3IEoUPJG39Fx/bC/kon9CqU+UQbBmL39I8
+         alQg==
+X-Forwarded-Encrypted: i=1; AJvYcCVhpInEEY8M0sgVmhXUhrMoI3pQ5FEP/yzjE+MawmYeyuN5vx0o6THUxQvCrE7lsX3ZqCSf88cyRWDlwTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsxppEMY3a501r054lAmmO/ehmASDyKaU13t77pT6V7nP4UWW/
+	XB8Pq0jVwzWBKK2nkcCnpyW9KYr4ueSeS/DbnWiE5c5YcLa7DDQsZEtIbpuEyw==
+X-Google-Smtp-Source: AGHT+IEUBN4nc8fDzuF7ww7X5ksu78JTjsuqiB3sE0EdJOBGzVs3tTuontBwHvcsi4XzGJlZlVJueQ==
+X-Received: by 2002:a17:902:f70c:b0:20c:c482:1d72 with SMTP id d9443c01a7336-20cc4821f28mr10112675ad.20.1728706401976;
+        Fri, 11 Oct 2024 21:13:21 -0700 (PDT)
+Received: from thinkpad ([36.255.17.101])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad32basm30934345ad.57.2024.10.11.21.13.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 21:13:21 -0700 (PDT)
+Date: Sat, 12 Oct 2024 09:43:15 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Stefan Eichenberger <eichest@gmail.com>
+Cc: hongxing.zhu@nxp.com, l.stach@pengutronix.de, lpieralisi@kernel.org,
+	kw@linux.com, robh@kernel.org, bhelgaas@google.com,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+	festevam@gmail.com, francesco.dolcini@toradex.com, Frank.li@nxp.com,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Stefan Eichenberger <stefan.eichenberger@toradex.com>
+Subject: Re: [PATCH v2] PCI: imx6: Add suspend/resume support for i.MX6QDL
+Message-ID: <20241012041315.vtmixcxbqwb63kno@thinkpad>
+References: <20241009131659.29616-1-eichest@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MO/I+lLomKsDqFHgzhl8CdB6J2fVDe+gm2ma9vRErAsYkMJnYqOvT4wj
-	EFBxhV44Swsj9sIO/9Fh4mPA22/onMta5QMWWaT/rrpcOspj7dDHz3GFTOCLX0B4IJOItvk
-	SacsQgxZc/RnQxHUAQzV/rDYvCdM7qaG1DSRIYgWR6LjZyXl1sGhreQQwnJvO/HZqVGoGLh
-	1OxNlLaq4eyvmYuT5s5SeGfqXB9ZqBBm5T8qoI6UJaWchf2Og0fNrKNPc6O61EUrGtBmrc9
-	cZzvk9Bde75Tke4uyZDvgrZR+L9hx/zAIil2QmQq6PHkmDFT8YgCH9SUSFjRUKt+iHOh55F
-	a1/ROWlXZ/r1wFOe+EtDQWn86fesqFWAOthTaEk/UppApLqwMclNsdtOowYpVwMUaPkvpCT
-	xWHmNRhHOiJpljY4oI5knvgB5PoxYfads3/sTPfYtpV0x6bdVs51YSRSax3+4QE8ckIGGeU
-	nge1YsQYvn4igKW1lbeY9gtaWSfFxlL5he3LPZjWhzwMBPcqFqSnztzXJ9jKe0NS2RqZnpX
-	U8/3RFI6DjGtvoKvrHrsdx/bBWeO688fi0CNnYf4JdqXEHiKm7QjglDXj/pobc9R1F1GsVx
-	CG72bvmpqM1vXvzhLDDhchwmnrQ1Zl81ae/oclwrH0056L3Ik1Y3X6MHnyMsck1n3A38GIf
-	gDhf4YQ+GJ0bT8E+xZeyBN3xZrQqfkiibCFX5EQUZP1Uvxg6psvZWvuH73hclStJ3XaH87g
-	yJ17FiFRdRRiXOTJbGHHKYxgV9qfb53ZFv2X3txY+3kmFOZEQ+i1a6q/RtjpaC2wWf7zhJ5
-	AjeaRghohpFjVZmB3J+GNsPMyk9ypP+nNn/UrFy5+4FI+EPUEM5MRBkn/faQ9Z1fNgnLNTe
-	28jZn9h8ukF0J1vXCiyOJsI9Vf7+zUfgDunQipGuZFK7uC3SsiGWO/9At377yxDJJ8wQ1ZL
-	SLY8lPFxQ2PgvN1PIpZxouN2Ky2bsoVUKFbE=
-X-QQ-XMRINFO: Nq+8W0+stu50PRdwbJxPCL0=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <20241009131659.29616-1-eichest@gmail.com>
 
-fix irqentry in 32bit code path and hw_irq helpers.
+On Wed, Oct 09, 2024 at 03:14:05PM +0200, Stefan Eichenberger wrote:
+> From: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> 
+> The suspend/resume support is broken on the i.MX6QDL platform. This
 
-Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
----
- arch/powerpc/include/asm/hw_irq.h | 6 ++++++
- arch/powerpc/kernel/interrupt.c   | 4 ++++
- include/linux/entry-common.h      | 1 +
- 3 files changed, 11 insertions(+)
+You mean the 'system suspend/resume'?
 
-diff --git a/arch/powerpc/include/asm/hw_irq.h b/arch/powerpc/include/asm/hw_irq.h
-index a3d591784c95..99104f95e1d7 100644
---- a/arch/powerpc/include/asm/hw_irq.h
-+++ b/arch/powerpc/include/asm/hw_irq.h
-@@ -469,6 +469,12 @@ static inline bool arch_irqs_disabled(void)
- 	return arch_irqs_disabled_flags(arch_local_save_flags());
- }
- 
-+/*for common entry*/
-+static __always_inline bool regs_irqs_disabled(struct pt_regs *regs)
-+{
-+	return arch_irqs_disabled();
-+}
-+
- #define hard_irq_disable()		arch_local_irq_disable()
- 
- static inline bool arch_irq_disabled_regs(struct pt_regs *regs)
-diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index 8e4cabb0c592..31167700f894 100644
---- a/arch/powerpc/kernel/interrupt.c
-+++ b/arch/powerpc/kernel/interrupt.c
-@@ -311,7 +311,9 @@ notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs)
- 	BUG_ON(regs_is_unrecoverable(regs));
- 	BUG_ON(arch_irq_disabled_regs(regs));
- 	CT_WARN_ON(ct_state() == CONTEXT_USER);
-+#ifdef CONFIG_PPC64
- 	local_paca->irqentry_s = irqentry_enter(regs);
-+#endif
- 
- 	/*
- 	 * We don't need to restore AMR on the way back to userspace for KUAP.
-@@ -424,7 +426,9 @@ notrace unsigned long interrupt_exit_kernel_prepare(struct pt_regs *regs)
- 	 * AMR value from the check above.
- 	 */
- 	kuap_kernel_restore(regs, kuap);
-+#ifdef CONFIG_PPC64
- 	irqentry_exit(regs, local_paca->irqentry_s);
-+#endif
- 
- 	return ret;
- }
-diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
-index 6521171469f2..b68eada65a8a 100644
---- a/include/linux/entry-common.h
-+++ b/include/linux/entry-common.h
-@@ -8,6 +8,7 @@
- #include <linux/seccomp.h>
- #include <linux/sched.h>
- 
-+#include <linux/irqentry-state.h>
- #include <asm/entry-common.h>
- 
- /*
+> patch resets the link upon resuming to recover functionality. It shares
+> most of the sequences with other i.MX devices but does not touch the
+> critical registers, which might break PCIe. This patch addresses the
+> same issue as the following downstream commit:
+> https://github.com/nxp-imx/linux-imx/commit/4e92355e1f79d225ea842511fcfd42b343b32995
+> In comparison this patch will also reset the device if possible. Without
+> this patch suspend/resume will not work if a PCIe device is connected.
+> The kernel will hang on resume and print an error:
+> ath10k_pci 0000:01:00.0: Unable to change power state from D3hot to D0, device inaccessible
+
+Looks like the device is turned off during suspend.
+
+> 8<--- cut here ---
+> Unhandled fault: imprecise external abort (0x1406) at 0x0106f944
+> 
+> Signed-off-by: Stefan Eichenberger <stefan.eichenberger@toradex.com>
+> ---
+> v1 -> v2: Share most code with other i.MX platforms and set suspend
+> 	  support flag for i.MX6QDL. Version 1 can be found here:
+> 	  https://lore.kernel.org/all/20240819090428.17349-1-eichest@gmail.com/
+> 
+>  drivers/pci/controller/dwc/pci-imx6.c | 44 +++++++++++++++++++++++++--
+>  1 file changed, 41 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/dwc/pci-imx6.c b/drivers/pci/controller/dwc/pci-imx6.c
+> index 808d1f1054173..f33bef0aa1071 100644
+> --- a/drivers/pci/controller/dwc/pci-imx6.c
+> +++ b/drivers/pci/controller/dwc/pci-imx6.c
+> @@ -1238,8 +1238,23 @@ static int imx_pcie_suspend_noirq(struct device *dev)
+>  
+>  	imx_pcie_msi_save_restore(imx_pcie, true);
+>  	imx_pcie_pm_turnoff(imx_pcie);
+> -	imx_pcie_stop_link(imx_pcie->pci);
+> -	imx_pcie_host_exit(pp);
+> +	/*
+> +	 * Do not turn off the PCIe controller because of ERR003756, ERR004490, ERR005188,
+> +	 * they all document issues with LLTSSM and the PCIe controller which
+
+LTSSM
+
+But LTSSM is for the PCIe link state, not sure how it impacts controller state.
+Can you share the link to those erratums?
+
+> +	 * does not come out of reset properly. Therefore, try to keep the controller enabled
+> +	 * and only reset the link. However, the reference clock still needs to be turned off,
+
+You are resetting the *device* below, not the link.
+
+> +	 * else the controller will freeze on resume.
+> +	 */
+
+Please use 80 columns for comments. Exception is for the code.
+
+> +	if (imx_pcie->drvdata->variant == IMX6Q) {
+> +		/* Reset the PCIe device */
+> +		gpiod_set_value_cansleep(imx_pcie->reset_gpiod, 1);
+> +
+> +		if (imx_pcie->drvdata->enable_ref_clk)
+> +			imx_pcie->drvdata->enable_ref_clk(imx_pcie, false);
+> +	} else {
+> +		imx_pcie_stop_link(imx_pcie->pci);
+> +		imx_pcie_host_exit(pp);
+> +	}
+>  
+>  	return 0;
+>  }
+> @@ -1253,6 +1268,28 @@ static int imx_pcie_resume_noirq(struct device *dev)
+>  	if (!(imx_pcie->drvdata->flags & IMX_PCIE_FLAG_SUPPORTS_SUSPEND))
+>  		return 0;
+>  
+> +	/*
+> +	 * Even though the i.MX6Q does not support proper suspend/resume, we
+> +	 * need to reset the link after resume or the memory mapped PCIe I/O
+> +	 * space will be inaccessible. This will cause the system to freeze.
+> +	 */
+
+This comment is not really needed.
+
+> +	if (imx_pcie->drvdata->variant == IMX6Q) {
+> +		if (imx_pcie->drvdata->enable_ref_clk)
+> +			imx_pcie->drvdata->enable_ref_clk(imx_pcie, true);
+> +
+> +		imx_pcie_deassert_core_reset(imx_pcie);
+
+There is no corresponding imx_pcie_assert_core_reset() in suspend.
+
+> +
+> +		/*
+> +		 * Setup the root complex again and enable msi. Without this PCIe will
+> +		 * not work in msi mode and drivers will crash if they try to access
+> +		 * the device memory area
+> +		 */
+
+This indicates that the controller state is not preserved. I think we need a bit
+more understanding on what is going on during system suspend on this platform.
+
+- Mani
+
 -- 
-2.42.0.windows.2
-
+மணிவண்ணன் சதாசிவம்
 
