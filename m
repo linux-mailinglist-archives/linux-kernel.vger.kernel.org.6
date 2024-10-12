@@ -1,137 +1,178 @@
-Return-Path: <linux-kernel+bounces-362501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8BE699B5AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:01:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47F8B99B5BA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:04:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 864AD283BEE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:01:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07820281570
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7268A1993A9;
-	Sat, 12 Oct 2024 15:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7578E1946CA;
+	Sat, 12 Oct 2024 15:04:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Y6/o8Peo"
-Received: from mout.web.de (mout.web.de [217.72.192.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="cBFjMw7o"
+Received: from mail-qv1-f53.google.com (mail-qv1-f53.google.com [209.85.219.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89DABEEB3;
-	Sat, 12 Oct 2024 15:00:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.72.192.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4856C1547C0
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 15:04:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728745262; cv=none; b=fyuttO5g19KwEcKe41Yq+dRhAD4oHqx4W14aeS1PU9gycjNyoqQBTrp2Q31OCwQ79aL2vuKAIDKOhDNMJncrXjcNByIHRz/ElKo/6ZDK5ByAmeBbZewoJjl/nc0sYKHWxXVRxbtKpBJJ3OUuiXOstLyD1Y9tx+jkPg16tZUU7Dg=
+	t=1728745457; cv=none; b=CEZYMulZhLKdDqL/QLzk4SJb04gVCPvs7XDaBp6ORYUEqsA/kML8ARUhOGgoGI9f+CZMEDBnmGbvcHj+VRF5fOKXgaKc/XMqvl5GdGrulX4If5nVlg5wTnf7sTtGhPFUAIGn2j2z+pTQtyQ3JAV1CnusCTUxObZi+O/KflERYrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728745262; c=relaxed/simple;
-	bh=JKfmqF9liqzzy2iYpeKbDBgsoMcjKO0fNtphf9lzs+s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DIRWDKByZnIex1tzBzZiWd3ITzoVhuxf+PTj7UzJ3qOOwPju1qP3KZJKFHF6Nehq7EygpPgxY2WiXxKVMHdj4/trPP1JEiQscyEuaeu+fXrG8YaThMm25kWckser7MSJXznoFy1g3NLkF8ugykfk7/4ri5NGWFlAMXFLtPKJzPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Y6/o8Peo; arc=none smtp.client-ip=217.72.192.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728745228; x=1729350028; i=markus.elfring@web.de;
-	bh=X0kQaLCXNNFr7S3GcaSa1PHybmMltmCt0iklqZF7ttE=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=Y6/o8PeoTUgmaRqlqkY3dB9pa2jDjpmcXuD0etD8OHLbYEQe+u92Dp8D1nQ/ZQE9
-	 qFWljPWNoXpdT06Q+wF6EG6yP042VO/DQVZO+wy9hWCG7oXHjp4yBQAuebkBzntD6
-	 ewCx+7JRQXsXVtZOMIniME9e+L5780JHkTbsyFCNV97ilrA/Q+63M/Z+Tki1eWsiA
-	 aYfmngqtWlqR+L5+NMdn89qr3F3JiUqRAHNwcYVpL2YoypDWTL+hl4CkeHmEM3ONu
-	 HdxPghtwzaYyagjQqpgTzOWJOHP6O21FaiLlFplhiRohgMVncK7V8M2UMsgzmHZvE
-	 NBieW/W7LLHgVxHrIA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MadzU-1tVwDR47R4-00aTok; Sat, 12
- Oct 2024 17:00:28 +0200
-Message-ID: <ee5f409e-4412-41cd-b8d8-92872770f04d@web.de>
-Date: Sat, 12 Oct 2024 17:00:26 +0200
+	s=arc-20240116; t=1728745457; c=relaxed/simple;
+	bh=CcScKOT/bGfKxDcM2dDN0KWDpZ7/aD13krHQMQfkDtk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CU5U15tA4ElMbTm9JBWv/vvF0kuBgQgi+Xw6Far2EY+umOI9p/g+SVAgx/h7vJeN9FVbsiAALh4Eh6yQTwaiPKloiabD+GiPsBKj8HEEndSeRb0TrYSaOH22np2mIQUNt8I6ijIe2cT4NKeTVeCfGO0G2WSvV4+vsRYT0mVDYpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=cBFjMw7o; arc=none smtp.client-ip=209.85.219.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qv1-f53.google.com with SMTP id 6a1803df08f44-6cbf693d794so10980286d6.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:04:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek.ca; s=google; t=1728745455; x=1729350255; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Nph+mclCXtR1xNVYmB2f5aDvXOCXqRK5sZg16zueR3I=;
+        b=cBFjMw7oGQERyXUSMnptgGiDhDG1Pv4D000QSDco7w3nebAOOSzZbWz2l3Nilvi7IQ
+         w7KP7RmVCHz4533QTMlHkE1eHKkQ9reuT1j1lyNyJM5iGg6W7cfsfdJIWnjjTt5u2Qzd
+         Q0sTC7/UxOn8zWPWnEHe04ORKFdJaPiPlpVqmbcbsJ2cz96sVCW0lijlhEbQ2xLoC6eW
+         kJLscmoF945CjDlHgfm/YJgzse4yau4Ko+nNwf8TD/lc9clWozbcCDv6yJgAUr8HJibB
+         cfi7ejHcQDH0s8O4eyvD1Ca7kLpOvTesY1nlXqYHN4LgzOFLM8qD4pd07vW6vzGTDlp1
+         F87g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728745455; x=1729350255;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Nph+mclCXtR1xNVYmB2f5aDvXOCXqRK5sZg16zueR3I=;
+        b=WX3KzCh4hj/uZ+Bb/G/O4ktnEfN/9GwsEFfJy8s5Zh9Jq/agHCud9xnh+8TZRHY8th
+         bJpb/6h0Jne0Kb8mYHReD+V+58bFHBZ2XJcD5oDGg+tHXwILaQN10tiIRVtdly4blfTq
+         sXokfipWVBiiT3a7tKcnlqDN94Uo5JWUYoNFQ1foVqasWSzzXdcy8nX1XXmilaGOfkcG
+         ZDoimUYmcLrn0xPg2MtCZ0fhArUpcsYpJGJZHgTZxgbj5EhQ62vBmeJ7XBuROcfKu0Ey
+         A2HLFg924GlYoOOVpjO0qOs6rVV4UUgzlRpuS51RoyegNMbqa5w+P6eqLHcKEAq5RIZF
+         lymA==
+X-Forwarded-Encrypted: i=1; AJvYcCXdY6VGYcpH3XoIYSvn1dz7URFDsrkiNib8OmUQlc3lC9ppre9OONJ0QPurWNWvOWAyfqTYeDt8Xkgvttk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7dCameZxUPrEhsUV0EffhwE90SgXALvAZPoq30GigHXCWB8x5
+	z7/u2URpYTvx7DHRqPI3HBSuSfrNk+xoAHHLSrRowwmxk1ALeYDj5xESV7XYxliXFA6svpYjNR5
+	ZOsU=
+X-Google-Smtp-Source: AGHT+IFiXcmpIk4eF2fx4bC/AeuonOFRkyUs4l8I4zMG+W4BXZWcffuN6J2+V1f4DXWa5Hv43fDjxw==
+X-Received: by 2002:a05:6214:62f:b0:6cb:ee9c:7045 with SMTP id 6a1803df08f44-6cbee9c7dcfmr114226706d6.2.1728745454838;
+        Sat, 12 Oct 2024 08:04:14 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608bf1sm25874166d6.91.2024.10.12.08.04.13
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Oct 2024 08:04:14 -0700 (PDT)
+Subject: Re: [PATCH 3/3] efi/libstub: consider CONFIG_CMDLINE for initrd= and
+ dtb= options
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+References: <20241011224812.25763-1-jonathan@marek.ca>
+ <20241011224812.25763-3-jonathan@marek.ca>
+ <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
+ <acdd3e0d-8ce4-264d-2328-05e7dc353817@marek.ca>
+ <CAMj1kXFe1ZYuR=45VhwMyHcZhSTQVwLrbZDWpgG7Zqw+Awws_A@mail.gmail.com>
+ <a6d0d8ae-3cd0-9888-abcd-1db5ab1df011@marek.ca>
+ <CAMj1kXH_YbTR9xe7G=ZfqhZ6aBFE8O-ghUe8asd3qqEUN7vdUw@mail.gmail.com>
+From: Jonathan Marek <jonathan@marek.ca>
+Message-ID: <149af6cb-300c-af5e-2a91-161be0dd4d43@marek.ca>
+Date: Sat, 12 Oct 2024 11:00:49 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 0/3] lib: Extending support for scope-based resource
- management
-To: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
- <202409180725.ZV8DCvII-lkp@intel.com>
- <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
- <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
- <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
- <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:04x1Qu41RKT6NrhjVRibY1avpWcRN9Pu9Z3/w2xVBhJ3tfLQcXh
- 9AnX1SEWF+sQANcWwvdXJruwbIys5kJmk11MZ5FmNEKUhESXylY1RVf3kaAVaYavlCigG0h
- /e4bfPW2Pm9t4X3pwly2vPY7U+8Oiw6J9diITObaQw659EIy8dFy43PyRYWFbwnyf4iEocu
- 0MI0m21CHD88PGORAirlw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:5op4WafLHZU=;eH58ZpmUhcb1iNkBFMw9pmDKBQi
- qteEas3R8vWZ8OGNrnKxjjqZ7+5gj/7TkBZcn779Qpb4HFQyVVMNBDJ1MqIAIhD9qsRP6g/Y+
- SaLNQxdZoUbq3iOyPCTUqJFC30X8gZHVqa2Kb3kJAynVqbmhBDYLRVeAaN3hhfB1MZD0DmHFG
- r4gLN1ZuvuhtPLNjZQ+r/g6KefV997yLUMFxIUKrX4TzB/D3wKd32MGtEw6IoYutckj/ABSMR
- g4spcXs4APIw9LhoNVYry6zVQweKvE1YGQi3Q86eQgNfIsdaRkutEYB5lPFsEl3y/CpL34glJ
- m9Y2UE5JeO1/IrzBFpdR7MMHAfO2ouA726Ier97UfNosBQQNpIxO/5QI0STnzFFuAu7eGPztj
- /pLlGBbDW7gtW1FPyMp2mO9uwAggv3jLFfLhnXS51y5dTXdo+gqh9tJx08EVT80AYY7C3wQ0h
- AnAg1ojy3SerVXAzAOi9y3oiNEF0206lAfBi+3U0U6ZfZiDC5cC2t5pD+/q7BVQqP9IRL9iB8
- Gv0mB70kFJyDrIqGognasT85vCvqxF1neJRFwTKx2FKc/dIwGmLolNoL5Gi4/LvWxiSM10uqt
- lUF21B304B4cPOMg7FqdMBI+Xpo9KK8ayrx3cN7KCsnnEXi6XARvvgxBYMLpeE/lsbXqqgIxE
- ViZqhgPsZWAZpv+mJWr2gC61mQUymB1r4vTH1P0zVYocQbyWSVU/jtcVQbDiCcF8E+HlSzYP5
- VXdKkJRsY3b3+kZ22e38h4eDpjHxZyLAh071eT8VF5xiDsvUUVi8qddoaP2j1nprq29dPs60G
- jvVTvHWiYLt9G+3AQgKNWoYg==
+In-Reply-To: <CAMj1kXH_YbTR9xe7G=ZfqhZ6aBFE8O-ghUe8asd3qqEUN7vdUw@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Oct 2024 15:48:05 +0200
+On 10/12/24 10:50 AM, Ard Biesheuvel wrote:
+...
+> 
+> Right.
+> 
+> Would the below work for you? It's not the prettiest code in the
+> world, but at least it keeps the weird local to the function.
+> 
 
-Some development ideas were taken into account according to evolving discu=
-ssions.
+Its missing the "load_options_size == 0" case, then CONFIG_CMDLINE 
+should be used even if FORCE/etc. are not set. Otherwise it looks OK. 
+(cmdline_len also shouldn't include the NUL character, but I don't think 
+that matters)
 
-Markus Elfring (3):
-  crypto: lib/mpi - Extend support for scope-based resource management
-  lib/digsig: Use scope-based resource management for two MPI variables
-    in digsig_verify_rsa()
-  lib/digsig: Use scope-based resource management for two variables
-    in digsig_verify_rsa()
-
- include/linux/mpi.h |   4 ++
- lib/digsig.c        | 107 +++++++++++++++++++++++---------------------
- 2 files changed, 59 insertions(+), 52 deletions(-)
-
-
-V3:
-* Applications were added as requested (by Herbert Xu) for the proposed
-  programming interface extension.
-
-* Further adjustments were provided for the demonstration of an evolving
-  programming interface.
-
-
-V2:
-The kernel build service pointed out that the proposed identifier =E2=80=
-=9CT_=E2=80=9D
-was not recognised by the compiler.
-Thus reserved identifiers need still be applied also at such a place inste=
-ad
-so far.
-I became curious under which circumstances corresponding development conce=
-rns
-will be reconsidered any more.
-
-=2D-
-2.46.1
-
+> --- a/drivers/firmware/efi/libstub/file.c
+> +++ b/drivers/firmware/efi/libstub/file.c
+> @@ -189,26 +189,48 @@
+>                                    unsigned long *load_addr,
+>                                    unsigned long *load_size)
+>   {
+> -       const efi_char16_t *cmdline = efi_table_attr(image, load_options);
+> -       u32 cmdline_len = efi_table_attr(image, load_options_size);
+>          unsigned long efi_chunk_size = ULONG_MAX;
+>          efi_file_protocol_t *volume = NULL;
+> +       const efi_char16_t *cmdline;
+>          efi_file_protocol_t *file;
+>          unsigned long alloc_addr;
+>          unsigned long alloc_size;
+>          efi_status_t status;
+> +       bool again = false;
+> +       u32 cmdline_len;
+>          int offset;
+> 
+>          if (!load_addr || !load_size)
+>                  return EFI_INVALID_PARAMETER;
+> 
+> -       efi_apply_loadoptions_quirk((const void **)&cmdline, &cmdline_len);
+> -       cmdline_len /= sizeof(*cmdline);
+> -
+>          if (IS_ENABLED(CONFIG_X86) && !efi_nochunk)
+>                  efi_chunk_size = EFI_READ_CHUNK_SIZE;
+> 
+>          alloc_addr = alloc_size = 0;
+> +
+> +#ifdef CONFIG_CMDLINE
+> +       if (IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
+> +           IS_ENABLED(CONFIG_CMDLINE_OVERRIDE) ||
+> +           (again = (IS_ENABLED(CONFIG_X86) ||
+> +                     IS_ENABLED(CONFIG_CMDLINE_EXTEND)))) {
+> +               static const efi_char16_t builtin_cmdline[] = L""
+> CONFIG_CMDLINE;
+> +
+> +               cmdline = builtin_cmdline;
+> +               cmdline_len = sizeof(builtin_cmdline);
+> +       } else
+> +#endif
+> +       {
+> +do_load_options:
+> +               cmdline = efi_table_attr(image, load_options);
+> +               cmdline_len = efi_table_attr(image, load_options_size);
+> +
+> +               efi_apply_loadoptions_quirk((const void **)&cmdline,
+> +                                           &cmdline_len);
+> +
+> +               again = false;
+> +       }
+> +       cmdline_len /= sizeof(*cmdline);
+> +
+>          do {
+>                  struct finfo fi;
+>                  unsigned long size;
+> @@ -290,6 +312,9 @@
+>                  efi_call_proto(volume, close);
+>          } while (offset > 0);
+> 
+> +       if (again)
+> +               goto do_load_options;
+> +
+>          *load_addr = alloc_addr;
+>          *load_size = alloc_size;
+> 
 
