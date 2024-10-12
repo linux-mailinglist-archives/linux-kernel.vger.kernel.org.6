@@ -1,173 +1,194 @@
-Return-Path: <linux-kernel+bounces-362561-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362562-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE40E99B66B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:43:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9791399B66F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:46:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 33155B2208D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:43:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 264431F22427
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:46:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EF712C54D;
-	Sat, 12 Oct 2024 17:43:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D95AA83CD2;
+	Sat, 12 Oct 2024 17:45:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ehfwWBXt"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="zzK6GAR4"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2066.outbound.protection.outlook.com [40.107.94.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B61D522083;
-	Sat, 12 Oct 2024 17:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728754987; cv=none; b=ZV6mbMFjYdeYG3HPi/CxF+iP50qCA35WgbX7vI6F7ohFA5C66TFEJ9V1HBe6Z2PgtLRixyzDB+WGOLIoLh9Ut2VTos/WE3xccOzLC2wM2RCJF1vaoCRXNQbRT1l6lWGsFEX2o9pyrifF3UmVt92QrvJMlTQP9JgmK8M0KdlQSM0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728754987; c=relaxed/simple;
-	bh=5vxHfxZTSTMr7CN7Egb8q5PbRkCrqQ/rHWP7s43dbOU=;
-	h=Date:From:To:Message-ID:In-Reply-To:References:Subject:
-	 Mime-Version:Content-Type; b=bMduMCIR83BqfxABDzbiEbeEgWUHaMRbMQ9Z/Xsx/x4AYmB8qo9nZh5exKX62KPkfhsCDh6CYUSuO3Jp9z9XWKO88nb1vhU9B7Hdb5rnSfW0s59moiu+TSNRgS/ziQDu64WRWeMfyt4R1GTYKfXUKoYA3j7HjgodlMTrlBWHmoA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ehfwWBXt; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbcc2bd800so27201736d6.0;
-        Sat, 12 Oct 2024 10:43:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728754984; x=1729359784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1AzUJHAgi6gs5kZYag+VCdUP/bZ1QS6+6Bi2y+ZtpR4=;
-        b=ehfwWBXtDHbMXWuy3Wdgkd+wUczP6bHgfZ3Jt4BKLdO2f0QiCp35sqUYuM8elnZbgj
-         9idi/R5EQMoZW2XuE7jZC3nlDjgtB/bfa5ipc4DiQ04pVFX4PyrXt6G36biI5Tpqko5G
-         MES31S2Hwpw2+LGDF9lnOzjw1eN0X7IdcdZKoZKeX3+6lLGOP1ZlgxDS6HSfU4gFhwaH
-         5JmCIth9rFkvZk5bJ6wpKuWLCjinY572LqKMsD48w7YUudUCfDIMGn36RT8ZW6fu7LE6
-         nn6Y7QTyx+Gg5NLq6p9QFaI5GN3iozloLjTV7Wp3QFS4AllKqU1ceI9qyFHOaIf8+4em
-         7ytA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728754984; x=1729359784;
-        h=content-transfer-encoding:mime-version:subject:references
-         :in-reply-to:message-id:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1AzUJHAgi6gs5kZYag+VCdUP/bZ1QS6+6Bi2y+ZtpR4=;
-        b=tbwz7iILU3GGJKOnVcqx5xQln9iLkXb4SbZIfjRoPnUvCGF9SfTUP6i78keDgLw+4Y
-         RLdsgRz/QJMPaaqgQamRxkZEf7ZIrBDvlteX6i6x/q4kD0PMiHHzAdK8ZyYnkH3de6J4
-         M002wKWch+s83B+GGQaVm0uE6mcQzJmHqiKUeHTCegALU7rVafV931kHdNvvbbpjF0xb
-         zcyOZZHOB1I/cVRM3+EnDF5saXLIdWbL/oGvWXgDfzzbt90x6W475RSu8uKzpxJpPtew
-         Qomroe2KwEE+jTfqeDeLqJJxtNhCLXdLXf1rQzYqLH1lpJtk2eNjkKgBuzXyPxWEnW2/
-         +RxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKfWSXKSMF3oodboXbV/swaK5SVOdV/rQKIvBkNf2kKkMt15Yua1XHkjgklR6gtzRH4VjfcBng7Rhg9BZK@vger.kernel.org, AJvYcCUriubLRgOfwds4SKV+7ruEoDOoN2Sf5jVzT3ZvahEulTYfQAMehGY8KrgwufAnXP2j3efb13gd@vger.kernel.org, AJvYcCUtTPf4eXMkDYercn9n7Gp77hS2cFMzKLxCVCmdzGZ3POiMtVb3x+cv+8RVasIA1eJnZVtkSCeRAxv1@vger.kernel.org, AJvYcCW9sOHetCZkEnt9jv7Wn54/foey66o3ayFJ0j7bq8hPgmFx/RSNvKiP+7Ssy3DIA2hcUoI=@vger.kernel.org, AJvYcCXYlJysxahvR31wtV+TGL+OFgIOx+wW6iRpNTZSPrS411Msv8AaG/ZoUyMPrxOKwnKzMiRbfpyy4+5mBdOJ29gy@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz0ZR5i+yoqPfjvjJyMYxclFwC7SnPWimaS8R/IvVgJ9/rX/F4q
-	iAHAN78irSMvA3Vmwn3e4iHPpWz5Wwmx3uNOZhf+yhyz6TH4HsIe
-X-Google-Smtp-Source: AGHT+IHAHXd8vAzcKkZ8geRl6Uqm1cetC8ltFNNIgXPCMaNQNaiyG1VJw/W9ZIuFbryIz9Ld3ZaETg==
-X-Received: by 2002:a05:6214:4a0a:b0:6cc:2f3:e637 with SMTP id 6a1803df08f44-6cc02f3e7a6mr17756766d6.26.1728754984406;
-        Sat, 12 Oct 2024 10:43:04 -0700 (PDT)
-Received: from localhost (86.235.150.34.bc.googleusercontent.com. [34.150.235.86])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85bab0csm27174956d6.48.2024.10.12.10.43.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 10:43:03 -0700 (PDT)
-Date: Sat, 12 Oct 2024 13:43:03 -0400
-From: Willem de Bruijn <willemdebruijn.kernel@gmail.com>
-To: Akihiko Odaki <akihiko.odaki@daynix.com>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Jason Wang <jasowang@redhat.com>, 
- "David S. Miller" <davem@davemloft.net>, 
- Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, 
- Paolo Abeni <pabeni@redhat.com>, 
- "Michael S. Tsirkin" <mst@redhat.com>, 
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, 
- Shuah Khan <shuah@kernel.org>, 
- linux-doc@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, 
- kvm@vger.kernel.org, 
- virtualization@lists.linux-foundation.org, 
- linux-kselftest@vger.kernel.org, 
- Yuri Benditovich <yuri.benditovich@daynix.com>, 
- Andrew Melnychenko <andrew@daynix.com>, 
- Stephen Hemminger <stephen@networkplumber.org>, 
- gur.stavi@huawei.com
-Message-ID: <670ab5278077a_2737bf294ad@willemb.c.googlers.com.notmuch>
-In-Reply-To: <f4501f54-875a-4c46-9e77-802bd81f4230@daynix.com>
-References: <20241008-rss-v5-0-f3cf68df005d@daynix.com>
- <20241008-rss-v5-4-f3cf68df005d@daynix.com>
- <67068b632d2d2_1cca3129484@willemb.c.googlers.com.notmuch>
- <f4501f54-875a-4c46-9e77-802bd81f4230@daynix.com>
-Subject: Re: [PATCH RFC v5 04/10] tun: Unify vnet implementation
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71CF517579;
+	Sat, 12 Oct 2024 17:45:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.66
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728755158; cv=fail; b=TnW8ANo0RIVikXrzL+Aw+y3kLp2j7y7eR1GrcY1M8VhjMpurQ55XHk/a7aQ5ah5gGnowJP/iJ6uVs2M5K6rcb5E9Dw/YGirCzr+Ms+2+UDRUsfEbdjA4q1MU9NfokAvvf+BcnJKY7FqKY/e0C89siH8gyHCF5BpRkLVQqqm1TSU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728755158; c=relaxed/simple;
+	bh=Rws0x9OTrZrU9iu4g0s3ECprm+SsDyl52nAu2LSxSk8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=IIszE7PxRk5qeKH3gWndO+p7zVGkfPAoDbm3sreNtWceJ98K7uosjsgv1O9skl6WxJaN0iOqyDTWEdGAOe5awlnr4Wv4obimLLfbyzHOytC+ac7n1pYThxxFVfTv/xD41VhI1waM9LgVNNoKDEEx5/CAlbqBQLMXNQNboH2RZvM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=zzK6GAR4; arc=fail smtp.client-ip=40.107.94.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=TMDFj6FdwsBaSIeIWuT/3wyE57EbXsR32k103Rj2tyVJnmzfWmznQEjghpm5eC7nh7a2otUf4+6XLeMB+XSeCgAwAnK6u0+Fw5+KZjn3Al9Niib+u1kiWotxrSPxRcPa4UuxCA96/gLzYoDQ6CW+g/j0yO4CBKY2HDAGDqa2nGv1IfO8VVDASNAAPRmHMkl9eUq/nF4jad0QIMUAh4ryHdWNJNbIaSGxh2WzzDAhwBpWeV5LtV7lq61ekA9O9unimnjfc71cz289q6D+7njjdONlkJIs5pDtU7zZFlvvM9dVPjja51/PbY6f83CaOD30TU/Os1XwO/sg2OetdvVltA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pe8wpd5Ju0riSwsXApkWKKcTYOnpimsaFc+E+fA4Bm0=;
+ b=v3xD+exNqWr+fMKS/E7axRqzVaHyIUQ+vOum6ATvMch/T2P70NMzaV7ymwgQY8i/9b8zPhZoJ3hnV+Fg4ZW4KmwPBWPOEVPJJjEfzLUVIR6N4pBlPCavDt7GX9p1kmGU1i7T0UHkMavQAl8XArhkwS55fLzUvxUbNzG8JeE+dA6e0s7jAwCFqWgZbGluZprV+46pbkz5f3w+Qqkr5HmwF+XPnLp9xAMfSIuzMKFbf3FfRN22mVYa5Fi2L3BtWhFcoUgfkfbG+MsKOuCd3F+nz3XbsBdPOoGme/5+RW0uhsBUqn++Pfro167qkboZD0m6+3Teos6C6ftd7epctAxWnA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pe8wpd5Ju0riSwsXApkWKKcTYOnpimsaFc+E+fA4Bm0=;
+ b=zzK6GAR40PewZRQ2Hu9FNPylDc2ObTbDrobI2mU9dtmD/DMMuHXQAYxjhmr9s6JALEVmTGZXD+N0UKZRsKUq8IaR4vB0tYrYdsjXL1BFOCsb6mtATV8LRKUuBRLdrakGaOMutJ7cHd7rnhIVNY0M2Ts2yQsKUF/clmard7ylJsY=
+Received: from MW4PR03CA0145.namprd03.prod.outlook.com (2603:10b6:303:8c::30)
+ by DM6PR12MB4433.namprd12.prod.outlook.com (2603:10b6:5:2a1::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.22; Sat, 12 Oct
+ 2024 17:45:52 +0000
+Received: from SJ1PEPF000023CB.namprd02.prod.outlook.com
+ (2603:10b6:303:8c:cafe::2f) by MW4PR03CA0145.outlook.office365.com
+ (2603:10b6:303:8c::30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.21 via Frontend
+ Transport; Sat, 12 Oct 2024 17:45:52 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SJ1PEPF000023CB.mail.protection.outlook.com (10.167.244.5) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8048.13 via Frontend Transport; Sat, 12 Oct 2024 17:45:52 +0000
+Received: from AUS-P9-MLIMONCI.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sat, 12 Oct
+ 2024 12:45:50 -0500
+From: Mario Limonciello <mario.limonciello@amd.com>
+To: "Gautham R . Shenoy" <gautham.shenoy@amd.com>
+CC: Perry Yuan <perry.yuan@amd.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+	Mario Limonciello <mario.limonciello@amd.com>, Peter Jung
+	<ptr1337@cachyos.org>
+Subject: [PATCH 1/4] cpufreq/amd-pstate: Use nominal perf for limits when boost is disabled
+Date: Sat, 12 Oct 2024 12:45:16 -0500
+Message-ID: <20241012174519.897-1-mario.limonciello@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF000023CB:EE_|DM6PR12MB4433:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0eed917a-ea3c-4c6b-24d6-08dceae5b732
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|82310400026|376014|36860700013|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?jYM5FjYOalzUxAaGFQ9GppbB3HQYR5G385mzIHgu7Wj8Q0Ur79AO06mMvhdD?=
+ =?us-ascii?Q?RlUVc1xwkq427BkgNC3diQikPDomIdZMxhvIuCJRPdiZlAHtD3YIDa3FarTQ?=
+ =?us-ascii?Q?OJg6OIPw8NMLfN3PqVytp5qzlEco6M/ttA18xjBPNLpq8QOSCbQhtbR3S3a6?=
+ =?us-ascii?Q?f93FePkDTjxZ2DPsIhwxd9f7kzXufWM7EuY2xn3H7QYHb6YfY+JJdScSo26Q?=
+ =?us-ascii?Q?smpkk6kHLWzk7rVjV1ed7STBDIvWMCCkvWTFy3nJCNV5g3n97MLg25pe7Lan?=
+ =?us-ascii?Q?PToYLNfB+LEMamqV5EUesz56fx1gf2foCWIiwCuN3LFRiBBagPpW4wtjC3/Q?=
+ =?us-ascii?Q?K+tdBH8Oqoo1Miohq22Ko04/zdShQlJrLKMtGzCYb9SQm/QZHy/M52IWyS7S?=
+ =?us-ascii?Q?u9dgjHyWxSLkCSmFgMB12wMF/SL5uGHyDcQFVSb6SIbVVgcAaFoQVAHuRGcO?=
+ =?us-ascii?Q?pRVIKow8KWysdgpbOM8T8JOh/XFnw0gv1M+uJNxdxkoHBqruNGina1zoakdQ?=
+ =?us-ascii?Q?veB79dX19R193bbXf8HtFyWr8fpTglwrgQhJxin4ohUMHkF9ivLCVgHF9tzx?=
+ =?us-ascii?Q?itO2BV0/cEdDRq4lrO9Iz7bpMlSpnvJTpv+FLC//FcngP4S+zniDvH14MZFh?=
+ =?us-ascii?Q?tUIrJSCZND5lbDMYjH7JM3Au4Lx20dH4xcOqryYmKv8vy2MAS00hThIO+4qs?=
+ =?us-ascii?Q?1QqOS4wqyiKFHJx2WjRpYBYzLFU1Yc6PAB1EcY+nSU4Nr7xrOe4bDzjYJbnS?=
+ =?us-ascii?Q?GrXlBWOQnxSnsPSI1E7QT7z2HebolTcbqMfYonERWfhk6GDY+6xNBxYasf6W?=
+ =?us-ascii?Q?KFhLUvUddavPQMPuO7S90rjG2Xe8qSt+Ci4PP9/5TMd5+gRSYAZvXkfJmwGJ?=
+ =?us-ascii?Q?yTykDGcmX3RAEyG8tdx1cfhDDkN920TfGA83RjEsKAgENbjUhKXMBqhdHZrj?=
+ =?us-ascii?Q?AMj2T0+8EqxuK7y4fGILI1wU6xk0WER9xVgkl0ficvNqN4y6pJh6IN4OFuVo?=
+ =?us-ascii?Q?lijc4J01tcmsomPKKJkfoardD7rn9CHu+zA+67GoVEC7kxaICFKFUZAc6gz3?=
+ =?us-ascii?Q?zyViNe4XshkKT+KK2OaONahskl1VtauxUF7oMq4EZtO5NkUDw+g+Hh/S3dWE?=
+ =?us-ascii?Q?pyC0ptXe78gns7L+e9bUTer/S2MEPHlMTXujilkAFYlU3mSATVzW48OsPagR?=
+ =?us-ascii?Q?kJYZgCX2JWs7AvkeCspbnrcl1HbUzsXm2T34ze7ypYN7E2fhwerTBuXlMyn3?=
+ =?us-ascii?Q?+T8q9pe1Q0GtP9DNPTEgusaMUxYor6/LHsjs2xw0FA4fD/+jgHRfwx4OBsEG?=
+ =?us-ascii?Q?BMjMn1cJUSFfDpPGfHT7WLqLI2KAJEfC+S5svYWIGzCeUePo8/IYouvevf8D?=
+ =?us-ascii?Q?wVJEm7UMK8E7bnELbkXnrQzxoXQG?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(82310400026)(376014)(36860700013)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 17:45:52.0288
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0eed917a-ea3c-4c6b-24d6-08dceae5b732
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF000023CB.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4433
 
-Akihiko Odaki wrote:
-> On 2024/10/09 22:55, Willem de Bruijn wrote:
-> > Akihiko Odaki wrote:
-> >> Both tun and tap exposes the same set of virtio-net-related features.
-> >> Unify their implementations to ease future changes.
-> >>
-> >> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
-> >> ---
-> >>   MAINTAINERS            |   1 +
-> >>   drivers/net/tap.c      | 172 ++++++----------------------------------
-> >>   drivers/net/tun.c      | 208 ++++++++-----------------------------------------
-> >>   drivers/net/tun_vnet.h | 181 ++++++++++++++++++++++++++++++++++++++++++
-> > 
-> > Same point: should not be in a header.
-> > 
-> > Also: I've looked into deduplicating code between the various tun, tap
-> > and packet socket code as well.
-> > 
-> > In general it's a good idea. The main counter arguments is that such a
-> > break in continuity also breaks backporting fixes to stable. So the
-> > benefit must outweight that cost.
-> > 
-> > In this case, the benefits in terms of LoC are rather modest. Not sure
-> > it's worth it.
-> > 
-> > Even more importantly: are the two code paths that you deduplicate
-> > exactly identical? Often in the past the two subtly diverged over
-> > time, e.g., due to new features added only to one of the two.
-> 
-> I find extracting the virtio_net-related code into functions is 
-> beneficial.
+When boost has been disabled the limit for perf should be nominal perf not
+the highest perf.  Using the latter to do calculations will lead to
+incorrect values that are still above nominal.
 
-I understand the benefits. But as I pointed out, it is a trade-off,
-not an unconditional good.
+Fixes: ad4caad58d91 ("cpufreq: amd-pstate: Merge amd_pstate_highest_perf_set() into amd_get_boost_ratio_numerator()")
+Reported-by: Peter Jung <ptr1337@cachyos.org>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219348
+Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+---
+ drivers/cpufreq/amd-pstate.c | 20 ++++++++++++++------
+ 1 file changed, 14 insertions(+), 6 deletions(-)
 
-> For example, tun_get_user() is a big function and extracting 
-> the virtio_net-related code into tun_vnet_hdr_get() will ease 
-> understanding tun_get_user() when you are not interested in virtio_net. 
-> If virtio_net is your interest, you can look at this group of functions 
-> to figure out how they interact with each other.
-> 
-> Currently, the extracted code is almost identical for tun and tap so 
-
-Almost here is the scary part. Any code that is not exactly identical
-must be called out in the commit message.
-
-What often happened is that one of the two got an improvement, whether
-fix or feature extension. Then it is likely acceptable to extend this
-to the other, too. But we have to review each case.
-
-> they can share it. We can copy the code back (but keep functions as 
-> semantic units) if they diverge in the future.
-
-There hopefully is no need to diverge in the future. I suspect that
-all previous divergences are accidental.
-
-> > 
-> > If so, call out any behavioral changes to either as a result of
-> > deduplicating explicitly.
-> 
-> This adds an error message for GSO failure, which was missing for tap. I 
-> will note that in the next version.
-
+diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c
+index 30415c30d8b4..dfa9a146769b 100644
+--- a/drivers/cpufreq/amd-pstate.c
++++ b/drivers/cpufreq/amd-pstate.c
+@@ -536,11 +536,16 @@ static int amd_pstate_verify(struct cpufreq_policy_data *policy)
+ 
+ static int amd_pstate_update_min_max_limit(struct cpufreq_policy *policy)
+ {
+-	u32 max_limit_perf, min_limit_perf, lowest_perf;
++	u32 max_limit_perf, min_limit_perf, lowest_perf, max_perf;
+ 	struct amd_cpudata *cpudata = policy->driver_data;
+ 
+-	max_limit_perf = div_u64(policy->max * cpudata->highest_perf, cpudata->max_freq);
+-	min_limit_perf = div_u64(policy->min * cpudata->highest_perf, cpudata->max_freq);
++	if (cpudata->boost_supported && !policy->boost_enabled)
++		max_perf = READ_ONCE(cpudata->nominal_perf);
++	else
++		max_perf = READ_ONCE(cpudata->highest_perf);
++
++	max_limit_perf = div_u64(policy->max * max_perf, policy->cpuinfo.max_freq);
++	min_limit_perf = div_u64(policy->min * max_perf, policy->cpuinfo.max_freq);
+ 
+ 	lowest_perf = READ_ONCE(cpudata->lowest_perf);
+ 	if (min_limit_perf < lowest_perf)
+@@ -1506,10 +1511,13 @@ static int amd_pstate_epp_update_limit(struct cpufreq_policy *policy)
+ 	u64 value;
+ 	s16 epp;
+ 
+-	max_perf = READ_ONCE(cpudata->highest_perf);
++	if (cpudata->boost_supported && !policy->boost_enabled)
++		max_perf = READ_ONCE(cpudata->nominal_perf);
++	else
++		max_perf = READ_ONCE(cpudata->highest_perf);
+ 	min_perf = READ_ONCE(cpudata->lowest_perf);
+-	max_limit_perf = div_u64(policy->max * cpudata->highest_perf, cpudata->max_freq);
+-	min_limit_perf = div_u64(policy->min * cpudata->highest_perf, cpudata->max_freq);
++	max_limit_perf = div_u64(policy->max * max_perf, policy->cpuinfo.max_freq);
++	min_limit_perf = div_u64(policy->min * max_perf, policy->cpuinfo.max_freq);
+ 
+ 	if (min_limit_perf < min_perf)
+ 		min_limit_perf = min_perf;
+-- 
+2.43.0
 
 
