@@ -1,79 +1,52 @@
-Return-Path: <linux-kernel+bounces-362483-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7D6699B57B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:25:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBB3B99B564
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:15:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ED9091C210CC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:25:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1791C21AF5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:15:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 271AA1946C4;
-	Sat, 12 Oct 2024 14:25:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jIxO+UAn"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411ED1E892;
-	Sat, 12 Oct 2024 14:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B69195FF1;
+	Sat, 12 Oct 2024 14:15:09 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2CC195809;
+	Sat, 12 Oct 2024 14:15:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728743129; cv=none; b=l7fvrn6wL0+CpETt1wC6/x7APvkqEDKeQdnQxZuuK1pISniNCtd2dgmpaSXayCKwAvwS0nZR4voKzK1eTWniZ5GcqF3ewVAtzFfAqbKLaJOhI2ThYnXtVJmApuvxbVxTziWnUjt1Ui21pd0QHvMAD6kaJe5tTEwaeppUkL1md/E=
+	t=1728742508; cv=none; b=FfmV1l9UqUX7/aI8jOLMRZFhMZVT4nFWJ91abQo6pAwr716Ixg+Ocv5+8WwwoaUvxuoiIzlKS0PkEf62xwiKb/twQear6m9tdcnWFCFaYadcjCWxqIQb+R7zydOwuHO3EMpjVQemvRYpuihdwcc3KG8V1e0LCglw+YjZZvxbMEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728743129; c=relaxed/simple;
-	bh=6s4+dR6F8h+e6rFroGl/EsRq5g/Wtl+duEVvAzC3/js=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=AxsfBfYE/iD6UUUA/rm2h8AFIXQ8iiUQwrjNvYhqA+d04Z43gVRQ5pOQKzro1S+toopRXGf+k1DkcpDke/R6JdMsomVsdAPTcT/FkelfpyY/XanD5xR0Eu18i000naZeGAbw+70MFW9rlPpCPRPe15t0iw/kKDRMwjZYPr3ggEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jIxO+UAn; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-7ea64af4bbbso123661a12.1;
-        Sat, 12 Oct 2024 07:25:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728743127; x=1729347927; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2nX2QwjAQ13tayvjTv+QasYt7kFsy2YDA8StTcMPVk=;
-        b=jIxO+UAnVem6UpNlB5ud3fXeKfawMZtC0AtGu4/QOp0iJbfONSbWv8ktK6RMb5ky93
-         XIF8uxgow/q5xQ87jOZ/7/1gYB5k57Qpq2GW7E0bRX376gBI2UbVVq/5iNw3fbkyLrJ2
-         85XA7C0O91iDEqBvWRVSMvjxeiQSLzpVK1rcZ5IzdOoIxKvaLn0ggnA3i2CNkmY4ZAu+
-         znPHrwQbgw+kq7cJ4x4eD2mN57g9hd+5HFrQ2L8JCvij8yKZaTd1jJ35o5pyEcNTmDI8
-         ZjPUWuEZR1L/nTZohTQGATdrlDkjXUp7CRRVtwpkQKlNq0AeZiO4EO1sg9HoNlbWwseY
-         7v4Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728743127; x=1729347927;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=K2nX2QwjAQ13tayvjTv+QasYt7kFsy2YDA8StTcMPVk=;
-        b=ZwhqpR0GRUaHTixcHFyOn6Y5BdZLLutZtiQBRPveyHQmNFj9A9eir0m6vTosUFGW5A
-         6L40eHkt/1MowgzIbdeagiBQAUdqfLTUV0ZvXwWdjs8XDq83vcoz8e64ACPQ2mXtT3Bl
-         2X94yI5UBSNr8X+gwDq5rBEQZkFV8GTJkIzCjzHOVAnaxHv/MAh+bAmDpg1E5/LBPobp
-         jVrO4p401tdtEqNlXz6x7fvyTgJ/T2eYzrc4cjbzyP3MUeJPL77MabKqYh14emKn9IUO
-         72dJHWaRL+QZu8tgzEmXMHaQm8lziDlqRx15xRARnneXpisNzE9Nk2UBCLOGRAInRJJH
-         I2PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV5LQxwletbeLN0r1Ixfj1ZMQ39bK+PDHS5tgLU+rIixubQjlrPmeDerS75+z7oRWid0e5FlcPODi4=@vger.kernel.org, AJvYcCW8NdV9MAm2QrbpkceM68x3OjANmbdGhS3nvtPA7EY2IOeTYZB3bibVlSfXHtEoos20kYKlDvQ1APwWQbg1@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv2xT/bUwwoaL717Oo8bw9Az5mkpNee/Zmzv1ngWqhy6lgvxHQ
-	SPX8tXyw+kUl2jQya5BJAyFl54Cufdp3cZb/7nxn6FMPWZPOCAfQcEhlYu8pBbw=
-X-Google-Smtp-Source: AGHT+IHv+vHrBtdpveO9ZnYW27upHTDCr/ovYCldf0BlIuPbzgrXjgySGiUZ3ouPGeCiKQnVNotpfQ==
-X-Received: by 2002:a05:6a00:3e1d:b0:714:2051:89ea with SMTP id d2e1a72fcca58-71e37e25dedmr4098848b3a.1.1728743127353;
-        Sat, 12 Oct 2024 07:25:27 -0700 (PDT)
-Received: from ice.. ([171.76.87.218])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa9394csm4192999b3a.123.2024.10.12.07.25.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 07:25:27 -0700 (PDT)
-From: Nihar Chaithanya <niharchaithanya@gmail.com>
-To: corbet@lwn.net
-Cc: workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	skhan@linuxfoundation.org,
-	Nihar Chaithanya <niharchaithanya@gmail.com>
-Subject: [PATCH] docs:process:changes: fix version command for btrfs-progs
-Date: Sat, 12 Oct 2024 19:44:28 +0530
-Message-Id: <20241012141425.11852-1-niharchaithanya@gmail.com>
+	s=arc-20240116; t=1728742508; c=relaxed/simple;
+	bh=CJkF3zBomhtzLlCt1D+413uZmOsbuYAGu4PXv44SuGE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VLrZ2dLsuw8JREb0evsL+8hH3TL27NxRC9eRWhnZnqJK5evzpplJO5/ecfAyAc8doc+HMmsQSUaNatMoTD4v+XF1IIavmtq8wyLdjxTO8wYsaqSmR0a6GWsFJVq1Bu159OcA3YPn0/lKoHfetLKLzbRTHvv2PyVXwzIkuf1G3vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4268DA7;
+	Sat, 12 Oct 2024 07:15:28 -0700 (PDT)
+Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8BD453F71E;
+	Sat, 12 Oct 2024 07:14:57 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Leo Yan <leo.yan@arm.com>
+Subject: [PATCH] perf probe: Correct demangled symbols in C++ program
+Date: Sat, 12 Oct 2024 15:14:32 +0100
+Message-Id: <20241012141432.877894-1-leo.yan@arm.com>
 X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -83,34 +56,132 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The command given in the changes.rst document to check the version of
-btrfs-progs is:
--> btrfsck
-which does not output the version, and according to manual page of the
-btrfs-progs the command to check the version of btrfs-progs is:
--> btrfs --version
+An issue can be observed when probe C++ demangled symbol with steps:
 
-Add a fix changing the command to check the version of btrfs-progs.
+  # nm test_cpp_mangle | grep print_data
+    0000000000000c94 t _GLOBAL__sub_I__Z10print_datai
+    0000000000000afc T _Z10print_datai
+    0000000000000b38 T _Z10print_dataR5Point
 
-Signed-off-by: Nihar Chaithanya <niharchaithanya@gmail.com>
+  # perf probe -x /home/niayan01/test_cpp_mangle -F --demangle
+    ...
+    print_data(Point&)
+    print_data(int)
+    ...
+
+  # perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
+    probe-definition(0): test=print_data(int)
+    symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
+    0 arguments
+    Open Debuginfo file: /home/niayan01/test_cpp_mangle
+    Try to find probe point from debuginfo.
+    Symbol print_data(int) address found : afc
+    Matched function: print_data [2ccf]
+    Probe point found: print_data+0
+    Found 1 probe_trace_events.
+    Opening /sys/kernel/tracing//uprobe_events write=1
+    Opening /sys/kernel/tracing//README write=0
+    Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xb38
+    ...
+
+When tried to probe symbol "print_data(int)", the log shows:
+
+    Symbol print_data(int) address found : afc
+
+The found address is 0xafc - which is right with verifying the output
+result from nm. Afterwards when write event, the command uses offset
+0xb38 in the last log, which is a wrong address.
+
+The dwarf_diename() gets a common function name, in above case, it
+returns string "print_data". As a result, the tool parses the offset
+based on the common name. This leads to probe at the wrong symbol
+"print_data(Point&)".
+
+To fix the issue, use the die_get_linkage_name() function to retrieve
+the distinct linkage name - this is the mangled name for the C++ case.
+Based on this unique name, the tool can get a correct offset for
+probing. Based on DWARF doc, it is possible the linkage name is missed
+in the DIE, it rolls back to use dwarf_diename().
+
+After:
+
+  # perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
+    probe-definition(0): test=print_data(int)
+    symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
+    0 arguments
+    Open Debuginfo file: /home/niayan01/test_cpp_mangle
+    Try to find probe point from debuginfo.
+    Symbol print_data(int) address found : afc
+    Matched function: print_data [2d06]
+    Probe point found: print_data+0
+    Found 1 probe_trace_events.
+    Opening /sys/kernel/tracing//uprobe_events write=1
+    Opening /sys/kernel/tracing//README write=0
+    Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xafc
+    Added new event:
+      probe_test_cpp_mangle:test (on print_data(int) in /home/niayan01/test_cpp_mangle)
+
+    You can now use it in all perf tools, such as:
+
+            perf record -e probe_test_cpp_mangle:test -aR sleep 1
+
+  # perf --debug verbose=3 probe -x test_cpp_mangle --add "test2=print_data(Point&)"
+    probe-definition(0): test2=print_data(Point&)
+    symbol:print_data(Point&) file:(null) line:0 offset:0 return:0 lazy:(null)
+    0 arguments
+    Open Debuginfo file: /home/niayan01/test_cpp_mangle
+    Try to find probe point from debuginfo.
+    Symbol print_data(Point&) address found : b38
+    Matched function: print_data [2ccf]
+    Probe point found: print_data+0
+    Found 1 probe_trace_events.
+    Opening /sys/kernel/tracing//uprobe_events write=1
+    Parsing probe_events: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0x0000000000000afc
+    Group:probe_test_cpp_mangle Event:test probe:p
+    Opening /sys/kernel/tracing//README write=0
+    Writing event: p:probe_test_cpp_mangle/test2 /home/niayan01/test_cpp_mangle:0xb38
+    Added new event:
+      probe_test_cpp_mangle:test2 (on print_data(Point&) in /home/niayan01/test_cpp_mangle)
+
+    You can now use it in all perf tools, such as:
+
+            perf record -e probe_test_cpp_mangle:test2 -aR sleep 1
+
+Fixes: fb1587d869a3 ("perf probe: List probes with line number and file name")
+Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- Documentation/process/changes.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/perf/util/probe-finder.c | 17 +++++++++++++++--
+ 1 file changed, 15 insertions(+), 2 deletions(-)
 
-diff --git a/Documentation/process/changes.rst b/Documentation/process/changes.rst
-index 00f1ed7c59c3..82b5e378eebf 100644
---- a/Documentation/process/changes.rst
-+++ b/Documentation/process/changes.rst
-@@ -46,7 +46,7 @@ jfsutils               1.1.3            fsck.jfs -V
- reiserfsprogs          3.6.3            reiserfsck -V
- xfsprogs               2.6.0            xfs_db -V
- squashfs-tools         4.0              mksquashfs -version
--btrfs-progs            0.18             btrfsck
-+btrfs-progs            0.18             btrfs --version
- pcmciautils            004              pccardctl -V
- quota-tools            3.09             quota -V
- PPP                    2.4.0            pppd --version
+diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+index 630e16c54ed5..498ccfb0be6f 100644
+--- a/tools/perf/util/probe-finder.c
++++ b/tools/perf/util/probe-finder.c
+@@ -1583,8 +1583,21 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+ 
+ 	/* Find a corresponding function (name, baseline and baseaddr) */
+ 	if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
+-		/* Get function entry information */
+-		func = basefunc = dwarf_diename(&spdie);
++		/*
++		 * Get function entry information.
++		 *
++		 * As described in the document DWARF Debugging Information
++		 * Format Version 5, section 2.22 Linkage Names, "mangled names,
++		 * are used in various ways, ... to distinguish multiple
++		 * entities that have the same name".
++		 *
++		 * Firstly try to get distinct linkage name, if fail then
++		 * rollback to get associated name in DIE.
++		 */
++		func = basefunc = die_get_linkage_name(&spdie);
++		if (!func)
++			func = basefunc = dwarf_diename(&spdie);
++
+ 		if (!func ||
+ 		    die_entrypc(&spdie, &baseaddr) != 0 ||
+ 		    dwarf_decl_line(&spdie, &baseline) != 0) {
 -- 
-2.34.1
+2.25.1
 
 
