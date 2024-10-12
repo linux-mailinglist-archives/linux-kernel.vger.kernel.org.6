@@ -1,147 +1,177 @@
-Return-Path: <linux-kernel+bounces-362095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362096-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F08D199B10B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:07:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C338799B10C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:09:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28E301C2025F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:07:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7E09C283480
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F5AA139CEF;
-	Sat, 12 Oct 2024 05:06:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 710864642D;
+	Sat, 12 Oct 2024 05:08:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SwEeW8NH"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NGgU7j5A"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E92012F588;
-	Sat, 12 Oct 2024 05:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290EE1F5FA
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 05:08:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728709607; cv=none; b=cMdIP/3mgYEc7b27wfAcOBfTDVeUJ9rA0lEuqLnDzY0jYqSy8UvJGSekdWdnP1YXD5gbgl2Swi4S6NpqGm7/y4jt6DdbS3PZSBS+x6ZtEuHh6dRDn2+fuFAb6OTUugAlGG2CGGLPhTXKMBE2DqzqbizgG8a40oEO6E94FU0IOWA=
+	t=1728709733; cv=none; b=UgPydwznqslHrImo/JXts6F2rW2fSqAU/br6xUCkCALC5TTEibyRjSYrOKktEMq5P+oBQMBzt8qdhGuiQ0RzNFaXvViQ4b4B0jzKlYEMESRpZjRXLvsAyuPIB/zmIswDiVeoBKFj9l1uRxfsu7oqeOogihzkUwq2ncQ0jJ1p/CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728709607; c=relaxed/simple;
-	bh=TvbJoRWmZ3IE3J8cwVIHQKM4m47ajNC1mqy4uVaJVCU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fEdqX9H1K64TRPWle9Hv0CGQHMbOX+p+3gt8DsjzHb4i0fuH9TOZdU4IACbhCGTnf10vvr2+tu/p7UbJyngY1YBTtoz6wM9W3xYEAbgi+boANsM1akS/Rdr9aZ3wkEB42jB/9ztRqQXnXgYeIHU2fl+V/ec3wLN4OBHRvilov98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SwEeW8NH; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1728709733; c=relaxed/simple;
+	bh=aBVW3SQyE0zqfNHXFgMNjAiAp3AJ9GFBop3pmTFWLYw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KaPgquIAMLRsjonyv3BnXSQrvGe/DB8omTOtOy9N/q+EnM+R7srZL7c0RUOIgv+vlPPkQwzeZ2GIOOUJRbk7PMSFZD1u6FBEKIaImN8BLJLQjdb6TS7MKMvhQQo1dGbrM11L+nZwRivx14eqr/VGHyCM8TlrzgK/n2IJbUV4Vwk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NGgU7j5A; arc=none smtp.client-ip=209.85.208.178
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e053cf1f3so2436214b3a.2;
-        Fri, 11 Oct 2024 22:06:45 -0700 (PDT)
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2f75c56f16aso24678191fa.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 22:08:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728709605; x=1729314405; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728709730; x=1729314530; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=myoEO0ww2czFo+NDaKnAm+OqHSFtr4LH3EKBGNBM3z4=;
-        b=SwEeW8NHNTnNijyAM4AAjG+rDWMq83Deim7EHgyN9NdYVfoRXUca8VzQOoI6cUjkhb
-         IE8dzsfRZbO1aMKPJlVeITfZ63z91AtKtLkcNaf18/roOfYU6zcVVFqvgCwfMb3T9rGo
-         /cyXEQOHf2r6i+msU4hf/qF+ksKF4AqJGTaAnPjsgubREzqvL/F6SnOE9G+MZQ0i3yWX
-         nJVUQEL0IsoXgOXG0suU/4KBHW9yIQ4Lp1d2LGljcOGin9Qgc3PmaCjIbsMFA6LKxXjn
-         h8lJqoENIel/49cLfcd0k3jsYge0f4vhVfUM3PEya4jbWPiFpinpycWGNqqgwuVpHIiT
-         Hmqw==
+        bh=JNtdbvyx4u7PmRsUXDr0pbN27HikJwX4DWxT/0fngAg=;
+        b=NGgU7j5AbhE1rlamugDchW9oZ7WVYzoCYnp+Bp8uLa8SwlsA3HgVefH5VOxiO5V440
+         ADUre7FQCngssrrrf3PQvMfRvWqE54RGSEqX8Edz+aHGUrmRBjvem9Qcg/EytBwu5eQc
+         1NKLjmdcPBwX3ISyTOYBRHhEp7dtsx7w3LEUzvmsLqsF3kaOJh2bGqJHmcL631Z8fMuZ
+         tmW2TEMACBY26C3bqqjRKV44vg9nlRHRwlM1fFTWnjfb4gv96o6J4ZOGDbJAbiIaBqDJ
+         A1KbKuFJy0PwQztdd42eKlM6PgyJG73n7jpEzwFyfUxR9p1vxBEaWyBIIbsFGVVF3a0p
+         EjzA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728709605; x=1729314405;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728709730; x=1729314530;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=myoEO0ww2czFo+NDaKnAm+OqHSFtr4LH3EKBGNBM3z4=;
-        b=ANkjzWEnZ4BTJ/JdO5oMMPIEDq5Rqxccn8H/nl6qMDCbjSxQhEMSJMMiuTnOTiIooG
-         0+aJI98tUDnnRfy6FE/oq9KH8+FP9P0Ktr3Aa6EXsPQ/77hsdQMAbqxMO/dzpFM84Mys
-         hGPxTG0tyUKb6oK/XK8mdensyDrGrxIEI4+HeL5kXQOO1pvhE9ChyfZsfwsaHsq5VarX
-         BO6eVzDTLm54ZUZ7psVk6jduJCMrLvRydd72Z5+aSUoAERKobJ5jCok0XWus6KofMq99
-         AVlNI7exFN9gqfGDTW/PgOiCX/Ur9LzFY1+vHLdxl1A93Wx6obEc5wAHuJtD/yRqCKNZ
-         nLbw==
-X-Forwarded-Encrypted: i=1; AJvYcCW2HP1v2FoxLsyuXwHOYjsygEd/6GE/rQOT7P/zotNE2Oc8FEXwxJHqw5NrMruvGE4VM23PPNlA/3FOkEw=@vger.kernel.org, AJvYcCWMEZ5SNTVTvPiIzJxwsfKg21QNYgEoIgic57oN47Z29Sv2H+cvo7JHyqUbOcoz3tOMYvNfcUmI1ZgZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzjyn6NsDm7tYT3/Py4sUVjsNSavQVCAgaPH9DrhaFLxZkEzePK
-	W/i8dXD1324FbULzNhmZsUS0gBrPAB128z7lTG61cvgpB8gQhICL
-X-Google-Smtp-Source: AGHT+IHbWnSJOFSlNgJF4OYXyX8KdfVCrRAO9/1mq47VYfOabgDCcVZ58F7Tw4bhokGiBoTcmX26tg==
-X-Received: by 2002:a05:6a20:c997:b0:1d7:1277:8d22 with SMTP id adf61e73a8af0-1d8bcfb296dmr8295467637.43.1728709605470;
-        Fri, 11 Oct 2024 22:06:45 -0700 (PDT)
-Received: from localhost.localdomain ([113.30.217.221])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4ad1b9f7sm859809b3a.190.2024.10.11.22.06.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 22:06:45 -0700 (PDT)
-From: Anand Moon <linux.amoon@gmail.com>
-To: Shawn Lin <shawn.lin@rock-chips.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
-	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR ROCKCHIP),
-	linux-rockchip@lists.infradead.org (open list:PCIE DRIVER FOR ROCKCHIP),
-	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
-	linux-kernel@vger.kernel.org (open list)
-Cc: Anand Moon <linux.amoon@gmail.com>
-Subject: [PATCH v7 3/3] PCI: rockchip: Refactor rockchip_pcie_disable_clocks() function signature
-Date: Sat, 12 Oct 2024 10:36:05 +0530
-Message-ID: <20241012050611.1908-4-linux.amoon@gmail.com>
-X-Mailer: git-send-email 2.44.0
-In-Reply-To: <20241012050611.1908-1-linux.amoon@gmail.com>
-References: <20241012050611.1908-1-linux.amoon@gmail.com>
+        bh=JNtdbvyx4u7PmRsUXDr0pbN27HikJwX4DWxT/0fngAg=;
+        b=G93qIbp3/dABeCPQ1tAEWsIFFY+9zIfjj28KlW5W5E0E2qm+4y9s+Qnl6qqeD6lX6Q
+         rZUguETjRhNUjEFpnQwDbre/DmKjP4rBDXCcS2q0/cNcN8yxulC+nCyIj+M1iQbEn0ko
+         Jyt36vwq0hJNtTE1q+HfoLhBnGlOU74RFV9dCqDAq6Klrld7/JpKHYFCobJBEUNDk9T3
+         ANjPTeEkoUVvMtUWUKaS3/fHH5mTq9xdgx9/mAC6zHvjJWz4TghbNKWZdYJ32u+byY3c
+         kcYHljrkjnRoZSnsbVSf0irruLusCltAMDbwIOMD4quoodDxp0jRLTdmpo8z7zTzg9lR
+         mwSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVmxwwniv4rkGGghOT/aY9cA77szt11Kf8nHpQm5MDkjoW8eomKWrsmnI3GPiALkuKGi94kIgyh1lvVPw8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YydA1FdvegOcjwwScGjnQYzymnxROGaj/nofuZ6WJUBXUYNidn+
+	b/N0T8Yngea11AUppT2hfwe+F5bpfX2eBwOeMQG0kc6liXQMmfRTk8yAox1OYzINRZG6rUuc/Uv
+	b+Pt54YapRpsSs81CtcaF73oux0U=
+X-Google-Smtp-Source: AGHT+IGrs/xVb53uh/iaB0+AM1qJ9DJ+UtjgSlB1WMXrx+bbJdDfv0kPbGzsYVBhu2SEMs+6REzBiNgrUsGDNQG6kqo=
+X-Received: by 2002:a05:651c:b29:b0:2f7:4e8c:9bfa with SMTP id
+ 38308e7fff4ca-2fb329a79bfmr19302571fa.33.1728709730030; Fri, 11 Oct 2024
+ 22:08:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241011171950.62684-1-ryncsn@gmail.com> <CAJD7tkaZgEHUNce5c8LWpWXKnTZ7geOuBym41t+UoZax_nky7Q@mail.gmail.com>
+ <20241011182831.GC351101@cmpxchg.org> <CAMgjq7Ajen_XQHGznNp3hFWOes+K=fn6HssW3-SUL8i4xDebhQ@mail.gmail.com>
+ <CAJD7tkaDEizi63vWSLVZk7RXRiKs6xyDG7pFA-bcLLcG15bUxQ@mail.gmail.com>
+In-Reply-To: <CAJD7tkaDEizi63vWSLVZk7RXRiKs6xyDG7pFA-bcLLcG15bUxQ@mail.gmail.com>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Sat, 12 Oct 2024 13:08:33 +0800
+Message-ID: <CAMgjq7Dt-prvfpPiSRkYBskSxiDndMNosxrN54VqKzSenLLafQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/zswap: avoid touching XArray for unnecessary invalidation
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Refactor the rockchip_pcie_disable_clocks function to accept a
-struct rockchip_pcie pointer instead of a void pointer. This change
-improves type safety and code readability by explicitly specifying
-the expected data type.
+On Sat, Oct 12, 2024 at 11:27=E2=80=AFAM Yosry Ahmed <yosryahmed@google.com=
+> wrote:
+>
+> On Fri, Oct 11, 2024 at 8:05=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wr=
+ote:
+> >
+> > Johannes Weiner <hannes@cmpxchg.org> =E4=BA=8E 2024=E5=B9=B410=E6=9C=88=
+12=E6=97=A5=E5=91=A8=E5=85=AD 02:28=E5=86=99=E9=81=93=EF=BC=9A
+> > >
+> > > On Fri, Oct 11, 2024 at 10:53:31AM -0700, Yosry Ahmed wrote:
+> > > > On Fri, Oct 11, 2024 at 10:20=E2=80=AFAM Kairui Song <ryncsn@gmail.=
+com> wrote:
+> > > > >
+> > > > > From: Kairui Song <kasong@tencent.com>
+> > > > >
+> > > > > zswap_invalidation simply calls xa_erase, which acquires the Xarr=
+ay
+> > > > > lock first, then does a look up. This has a higher overhead even =
+if
+> > > > > zswap is not used or the tree is empty.
+> > > > >
+> > > > > So instead, do a very lightweight xa_empty check first, if there =
+is
+> > > > > nothing to erase, don't touch the lock or the tree.
+> > >
+> > > Great idea!
+> > >
+> > > > XA_STATE(xas, ..);
+> > > >
+> > > > rcu_read_lock();
+> > > > entry =3D xas_load(&xas);
+> > > > if (entry) {
+> > > >     xas_lock(&xas);
+> > > >     WARN_ON_ONCE(xas_reload(&xas) !=3D entry);
+> > > >     xas_store(&xas, NULL);
+> > > >     xas_unlock(&xas);
+> > > > }
+> > > > rcu_read_unlock():
+> > >
+> > > This does the optimization more reliably, and I think we should go
+> > > with this version.
+> >
+> > Hi Yosry and Johannes,
+> >
+> > This is a good idea. But xa_empty is just much lighweighter, it's just
+> > a inlined ( =3D=3D NULL ) check, so unsurprising it has better performa=
+nce
+> > than xas_load.
+> >
+> > And surprisingly it's faster than zswap_never_enabled. So I think it
+> > could be doable to introduce something like zswap_may_have_swpentry as
+> > Yosry suggested.
+>
+> That is surprising indeed, but it is cleaner anyway to use the xarray
+> check than the static key.
+>
+> >
+> > So how about a combined version with xas_load and xa_empty? Check
+> > xa_empty first as a faster path, then xas_load, then xas_store.
+>
+> Yeah I think having an additional xa_empty() check before xas_load() is f=
+ine.
+>
+> >
+> > Here is the benchmark result (time of swapin 2G zero pages in us):
+> >
+> > Before:   1908944 1905870 1905322 1905627 1901667
+> > xa_empty: 1835343 1827367 1828402 1831841 1832719
+> > z.._enabled: 1838428 1831162 1838205 1837287 1840980
+> > xas_load: 1874606 1878971 1870182 1875852 1873403
+> > combined: 1845309 1832919 1831904 1836455 1842570
+> >
+> > `combined` is xa_empty + xas_load.
+>
+> Is this with SSD swap? If you are using brd, it bypasses the swapcache
+> so the benefit from the xas_load() optimization won't be much visible
+> (see my earlier email as well as Johannes's).
 
-Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-Signed-off-by: Anand Moon <linux.amoon@gmail.com>
----
-v7: None
-v6: Fix the subject, add the missing () in the function name.
-v5: Fix the commit message and add r-b Manivannan.
-v4: None
-v3: None
-v2: No
----
- drivers/pci/controller/pcie-rockchip.c | 3 +--
- drivers/pci/controller/pcie-rockchip.h | 2 +-
- 2 files changed, 2 insertions(+), 3 deletions(-)
+Hi, I'm using brd indeed.
 
-diff --git a/drivers/pci/controller/pcie-rockchip.c b/drivers/pci/controller/pcie-rockchip.c
-index 9a118e2b8cbd..c3147111f1a7 100644
---- a/drivers/pci/controller/pcie-rockchip.c
-+++ b/drivers/pci/controller/pcie-rockchip.c
-@@ -269,9 +269,8 @@ int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip)
- }
- EXPORT_SYMBOL_GPL(rockchip_pcie_enable_clocks);
- 
--void rockchip_pcie_disable_clocks(void *data)
-+void rockchip_pcie_disable_clocks(struct rockchip_pcie *rockchip)
- {
--	struct rockchip_pcie *rockchip = data;
- 
- 	clk_bulk_disable_unprepare(rockchip->num_clks, rockchip->clks);
- }
-diff --git a/drivers/pci/controller/pcie-rockchip.h b/drivers/pci/controller/pcie-rockchip.h
-index 2761699f670b..7f0f938e9195 100644
---- a/drivers/pci/controller/pcie-rockchip.h
-+++ b/drivers/pci/controller/pcie-rockchip.h
-@@ -347,7 +347,7 @@ int rockchip_pcie_init_port(struct rockchip_pcie *rockchip);
- int rockchip_pcie_get_phys(struct rockchip_pcie *rockchip);
- void rockchip_pcie_deinit_phys(struct rockchip_pcie *rockchip);
- int rockchip_pcie_enable_clocks(struct rockchip_pcie *rockchip);
--void rockchip_pcie_disable_clocks(void *data);
-+void rockchip_pcie_disable_clocks(struct rockchip_pcie *rockchip);
- void rockchip_pcie_cfg_configuration_accesses(
- 		struct rockchip_pcie *rockchip, u32 type);
- 
--- 
-2.44.0
+This test is trying to show the zswap disabled case, so I think swap
+cache has no effect here?
 
+For the zswap enabled case I do believe xas_load will work better,
+I'll add some test info in the combined V2, will test some other
+workload with the brd SYNC flag removed, sequential swapin with zswap
+enabled have almost no performance change with this commit.
 
