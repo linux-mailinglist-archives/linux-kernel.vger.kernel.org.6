@@ -1,128 +1,160 @@
-Return-Path: <linux-kernel+bounces-362060-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8AAA99B06C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:28:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E94699B06B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:27:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A48E283BE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:28:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7BE282638
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:27:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66FF986250;
-	Sat, 12 Oct 2024 03:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161191272A6;
+	Sat, 12 Oct 2024 03:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="MN0sCtGM"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b4wqVVAY"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64FE61799F;
-	Sat, 12 Oct 2024 03:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40B81799F
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:27:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728703725; cv=none; b=LlkWKqbnF9J0RkkHzwK3G+Vlkv4Qu2Zr/Stg9NChEjLPJJvJUt9jI6Ey0w+qkTplrVUEOUB8z2Z6KdpFeDLqeWaI43Y6egR8P59R8kcBQYtSKiHQxoxiGYY7NOSm7Kv+mtGn8FhXELn+meI6s+ut5CBg3OTs6gz8kjnK6OAewdU=
+	t=1728703634; cv=none; b=aEyAs5ml4KNmTkOzpEp/5Bmg5uE0Snk8OGc2yMf8QDzN50p+7kh+nZHdbQkCChr5vHzknZusJbkz6j+O0KTip4HVBZO83doSeyeQeehPuOFHfBCgpI+BmxWPGcwE8MGsmKKe2r+/ODAPpuwvHkHSWPAAiceb8hTbCwOp+/wRyVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728703725; c=relaxed/simple;
-	bh=7ctOgIZmfG1KHaGSho2VVl7rmGf1OWyxSXjOCOivKk4=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=r6AmH3uys7itZ0kLex5YW7mvhprKKDiVDmPec+M1zXe0ayznJotGFO/EbDw2FXodakBlVGKcNJpC49Jq1Lg4mdJazmOH4wruGSTjY8rzRs9Son7nd027f0J9VROv84dpft6Pzrph/GxHzCPH3eTZ7qPam8IgZeYwbdqFkQdW5ok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=MN0sCtGM; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 0dd5d56a884a11ef8b96093e013ec31c-20241012
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=jEOM+uWSPEOPR7VEwN5kEOeIKQrT8FMXpA4LyF1Zbig=;
-	b=MN0sCtGMSy0CvrFl9CUzyumePRyEXWE47BgfPLh41ezOBc33QFKF07qhy99mAIVzmuZ2abj51w2SkXD0FXfHFQ4XiWHDOARakkCLNuQNy/asyIBM3q6HfbVVj6OGRtUUcfO0rE3CjB28u8j/DS+pg0hoUHwRYOIqi7bz2MCgQmU=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:1e27be3f-bd9a-44bb-a9c5-061b052b9c42,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6dc6a47,CLOUDID:d7fd1e65-444a-4b47-a99a-591ade3b04b2,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 0dd5d56a884a11ef8b96093e013ec31c-20241012
-Received: from mtkmbs10n2.mediatek.inc [(172.21.101.183)] by mailgw02.mediatek.com
-	(envelope-from <zhi.mao@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 725462293; Sat, 12 Oct 2024 11:28:31 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 12 Oct 2024 11:28:29 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 12 Oct 2024 11:28:28 +0800
-From: Zhi Mao <zhi.mao@mediatek.com>
-To: <fshao@chromium.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, "Mauro
- Carvalho Chehab" <mchehab@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>
-CC: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	<linux-media@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<shengnan.wang@mediatek.com>, <yaya.chang@mediatek.com>,
-	<teddy.chen@mediatek.com>, <yunkec@chromium.org>, <10572168@qq.com>,
-	<ot_xiaofeiw.wang@mediatek.com>, Zhi Mao <zhi.mao@mediatek.com>
-Subject: [PATCH] media: i2c: dw9768: Use runtime PM autosuspend
-Date: Sat, 12 Oct 2024 11:25:53 +0800
-Message-ID: <20241012032805.23545-1-zhi.mao@mediatek.com>
-X-Mailer: git-send-email 2.46.0
+	s=arc-20240116; t=1728703634; c=relaxed/simple;
+	bh=F8DFHqv1+dGqlCxt8XMF4a/WhTcYfXPdcxkvKn+qs6M=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=P59PPuc/V4Sbh0bvAwhqy6hOHKFSIZA1MWft1vuJ+P8i41iNCK2fzP8MoA5nRmTcsRaoRnLrfSBB84FyS88SI6b5FSA86c4YkGbCStGHl/ZNWhCUjjyn3wiAeL9RluSipslP3gOYKGUVei6J1PNWca12gShoPPVnSn+Vrj/GGuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b4wqVVAY; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99b1f43aceso311316366b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:27:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728703631; x=1729308431; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=nWTezJHR9Vq4+Q9HVaoXpPlGXcBP8rtz9ZwlcdC9EN4=;
+        b=b4wqVVAYs+fdonnVOzMVMFccII299Rlj1EyUyqrjOtESexNA5EgVxu+WLS9f5H9Cen
+         0DiSlVS+c4JOZFo5jHWI7bOr+bkpqK6xru6HvLxUeXT3/rzRQsryid9DfdwbRJw/lHSt
+         snjD6wt9zRy3eIbqTx3AhAowOogd9F8ckxveZUM3veYJnAFqnO/j9zb+7fFfS+g7H7bH
+         nTqShhZspqqQMmZA1B9InBZOgB+W8YI6kTneJwTqHZ19JobT9x16i8Mt/37RquEwsaI3
+         ID8W97qa+tc/WEUooJuibCgJMNUmFvIiKEmMHXWbGV5PF/mRh3gpzuvc9eCP3sH6iuU4
+         FqeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728703631; x=1729308431;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=nWTezJHR9Vq4+Q9HVaoXpPlGXcBP8rtz9ZwlcdC9EN4=;
+        b=RvUhA3rQUvuPsvYKf1KQbuWNowDI/ZDLS7euL+F2vNxfZgpeeaU2EPHy/LP5azHQ4/
+         9gzniSnmyp/PcthM+l1i4z0fOc00mbTq1j40vd5EzKDWPd7TdE/JvVCw3lUvwAysh/3r
+         WiV/l/9ly7unGN+rIQ59v+S0Kq5K7Gvct8qJGPvB7mgTnHAZtqF29zciN2BKkW31/xd5
+         e+SxrQsFcR/k9J+IsWRGB03XeuQwKaWxQG7NaGFOjnjj4/zRQysEZQ0pMlMCxUsXiOA7
+         L73PSh73GrKRXGbMUPb2gu56Tez6LQ3KgqP0S1h9cKbG3+wQb4wJu4AWlvtph/LREbTk
+         OQQw==
+X-Forwarded-Encrypted: i=1; AJvYcCWD0R12+Nhfp5+C2owhchB3eqUsU1JMhhu4UVMJV7fnzJOsZcQYN89IfXo7MUFR5sPmh+YlLTrV+dHGe1k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8JY9jiFf9va0+Bt5pykSUY46YjQ24/FMKqVYIZ1a+ySKoskIJ
+	i/Tqgsv/CYCXPllzGbNTQRvBeptR3DDs9USUuUKXb3ypM/wHxf0TGnrgd5KVYPs4NdT7S9Ip9iz
+	/zy9ENhoJXnoMFPMJGyyDN+ptOY1ERSOeOSyU
+X-Google-Smtp-Source: AGHT+IFTZZoruKvDa4wWJWY4hwy38IqKlTFgrtJMgUvabVxU/vEEAu7T75+M5mSUOo9XTzDZeNZFdKP//gpGOey5wNc=
+X-Received: by 2002:a17:907:3e14:b0:a99:f209:cea3 with SMTP id
+ a640c23a62f3a-a99f209cf34mr6850166b.11.1728703630697; Fri, 11 Oct 2024
+ 20:27:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--0.971100-8.000000
-X-TMASE-MatchedRID: ys/FpHHmWmyiwkztVCsqbymjEOrcO6AyTJDl9FKHbrleiHO/WPO/+/4f
-	ZVz77tXZ4vM1YF6AJbbGJQ3BiiLAggtuKBGekqUpnH7sbImOEBR7VdEbWjzSg1/RgROefpJJv/j
-	eH367KZ9mU104S42Oids+iaVjws45LPkTHGoONYy7DBs4v5OL2nWfSzpWW4iP2JbScDz7h7fyNp
-	7g4PXe0BXsxz6ujBxUq1f8XSkHBUmNJXmEMVvLtpRMZUCEHkRt
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--0.971100-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP:
-	723C8014F5CA88C1ABFCEC0A728BE8073CCBC88D59AB5644A8EB391FFF02A60D2000:8
-X-MTK: N
+References: <20241011171950.62684-1-ryncsn@gmail.com> <CAJD7tkaZgEHUNce5c8LWpWXKnTZ7geOuBym41t+UoZax_nky7Q@mail.gmail.com>
+ <20241011182831.GC351101@cmpxchg.org> <CAMgjq7Ajen_XQHGznNp3hFWOes+K=fn6HssW3-SUL8i4xDebhQ@mail.gmail.com>
+In-Reply-To: <CAMgjq7Ajen_XQHGznNp3hFWOes+K=fn6HssW3-SUL8i4xDebhQ@mail.gmail.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Fri, 11 Oct 2024 20:26:33 -0700
+Message-ID: <CAJD7tkaDEizi63vWSLVZk7RXRiKs6xyDG7pFA-bcLLcG15bUxQ@mail.gmail.com>
+Subject: Re: [PATCH] mm/zswap: avoid touching XArray for unnecessary invalidation
+To: Kairui Song <ryncsn@gmail.com>
+Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, Nhat Pham <nphamcs@gmail.com>, 
+	Chengming Zhou <chengming.zhou@linux.dev>, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, "Huang, Ying" <ying.huang@intel.com>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Use runtime PM autosuspend function to avoid rapid power state bouncing.
+On Fri, Oct 11, 2024 at 8:05=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
+e:
+>
+> Johannes Weiner <hannes@cmpxchg.org> =E4=BA=8E 2024=E5=B9=B410=E6=9C=8812=
+=E6=97=A5=E5=91=A8=E5=85=AD 02:28=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > On Fri, Oct 11, 2024 at 10:53:31AM -0700, Yosry Ahmed wrote:
+> > > On Fri, Oct 11, 2024 at 10:20=E2=80=AFAM Kairui Song <ryncsn@gmail.co=
+m> wrote:
+> > > >
+> > > > From: Kairui Song <kasong@tencent.com>
+> > > >
+> > > > zswap_invalidation simply calls xa_erase, which acquires the Xarray
+> > > > lock first, then does a look up. This has a higher overhead even if
+> > > > zswap is not used or the tree is empty.
+> > > >
+> > > > So instead, do a very lightweight xa_empty check first, if there is
+> > > > nothing to erase, don't touch the lock or the tree.
+> >
+> > Great idea!
+> >
+> > > XA_STATE(xas, ..);
+> > >
+> > > rcu_read_lock();
+> > > entry =3D xas_load(&xas);
+> > > if (entry) {
+> > >     xas_lock(&xas);
+> > >     WARN_ON_ONCE(xas_reload(&xas) !=3D entry);
+> > >     xas_store(&xas, NULL);
+> > >     xas_unlock(&xas);
+> > > }
+> > > rcu_read_unlock():
+> >
+> > This does the optimization more reliably, and I think we should go
+> > with this version.
+>
+> Hi Yosry and Johannes,
+>
+> This is a good idea. But xa_empty is just much lighweighter, it's just
+> a inlined ( =3D=3D NULL ) check, so unsurprising it has better performanc=
+e
+> than xas_load.
+>
+> And surprisingly it's faster than zswap_never_enabled. So I think it
+> could be doable to introduce something like zswap_may_have_swpentry as
+> Yosry suggested.
 
-Signed-off-by: Zhi Mao <zhi.mao@mediatek.com>
----
- drivers/media/i2c/dw9768.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+That is surprising indeed, but it is cleaner anyway to use the xarray
+check than the static key.
 
-diff --git a/drivers/media/i2c/dw9768.c b/drivers/media/i2c/dw9768.c
-index 18ef2b35c9aa..9d39198a9ad4 100644
---- a/drivers/media/i2c/dw9768.c
-+++ b/drivers/media/i2c/dw9768.c
-@@ -374,7 +374,8 @@ static int dw9768_open(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
- 
- static int dw9768_close(struct v4l2_subdev *sd, struct v4l2_subdev_fh *fh)
- {
--	pm_runtime_put(sd->dev);
-+	pm_runtime_mark_last_busy(sd->dev);
-+	pm_runtime_put_autosuspend(sd->dev);
- 
- 	return 0;
- }
-@@ -490,6 +491,8 @@ static int dw9768_probe(struct i2c_client *client)
- 		goto err_power_off;
- 	}
- 
-+	pm_runtime_set_autosuspend_delay(dev, 1000);
-+	pm_runtime_use_autosuspend(dev);
- 	pm_runtime_idle(dev);
- 
- 	return 0;
--- 
-2.46.0
+>
+> So how about a combined version with xas_load and xa_empty? Check
+> xa_empty first as a faster path, then xas_load, then xas_store.
 
+Yeah I think having an additional xa_empty() check before xas_load() is fin=
+e.
+
+>
+> Here is the benchmark result (time of swapin 2G zero pages in us):
+>
+> Before:   1908944 1905870 1905322 1905627 1901667
+> xa_empty: 1835343 1827367 1828402 1831841 1832719
+> z.._enabled: 1838428 1831162 1838205 1837287 1840980
+> xas_load: 1874606 1878971 1870182 1875852 1873403
+> combined: 1845309 1832919 1831904 1836455 1842570
+>
+> `combined` is xa_empty + xas_load.
+
+Is this with SSD swap? If you are using brd, it bypasses the swapcache
+so the benefit from the xas_load() optimization won't be much visible
+(see my earlier email as well as Johannes's).
 
