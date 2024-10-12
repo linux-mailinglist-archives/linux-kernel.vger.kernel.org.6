@@ -1,185 +1,111 @@
-Return-Path: <linux-kernel+bounces-362058-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362061-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7686A99B06A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:27:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB9099B070
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:31:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 370A5B21D0F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:27:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3F0E1F22AE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92AD84E04;
-	Sat, 12 Oct 2024 03:27:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C3641C6E;
+	Sat, 12 Oct 2024 03:31:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sY5V+3NV";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sY5V+3NV"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="imjyCaNA"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50301799F;
-	Sat, 12 Oct 2024 03:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00688139D
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728703627; cv=none; b=oQbVPqnrM/vRaGeQARVNd73mBCPctaJWSTpWILYPkKbEdlTi1ZW7qlT22j68IrUTUlAEwd6exQPeL24PRAWPkKnT+OJmO12v8VLkO+B9t9ujmj1ApJBbl9R0wmjlaytPBTlhKVNVpAm92XD/qO7CVyw4RJOjguWpQi5f4Gps/Lw=
+	t=1728703885; cv=none; b=o0iKTDNKGl9v9SRmRjSJHiK1RhLrYoPTIqlQmFNXpA55vnYPQkOvCdeKV/ylmZ9Bpd00fAPYN1YvRd/z5U91fJBglBqWICwi4/UQIlXtvBDO4sXaSWjQy8lRT/R/vKRsBeG/senpNqURxotoaGOP2pp6PFfk7stU43nuehB0QzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728703627; c=relaxed/simple;
-	bh=yXK1u5PItF4Ot2af8coMY40M905Rki8UymkHhymTln8=;
-	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=gLRGXFN4X9Ev/s1TZnNLUVK2v83ZMdGtt5ZnFC0tkb47Hh3useLsN/SPAZxEyO8zMUUpsDJ7oYNaaR8xMVIMDYCYnv9LoloFBh2UrI7FyBuhnM12k7qYv+f/pk5mIHgDgnR97Udot2T81Yqb0ZpzRE1IgwH2lFZEUT1reRk0YMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=sY5V+3NV; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=sY5V+3NV; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1728703623;
-	bh=yXK1u5PItF4Ot2af8coMY40M905Rki8UymkHhymTln8=;
-	h=Message-ID:Subject:From:To:Date:From;
-	b=sY5V+3NVaRCtWkAhcfIxi/iNb9ZTL5F5Yg8YDVALTcQIHTpLjcyPE5orsWjSIQbOQ
-	 qIbdpzTUmJEKJSVOS2rp8QpLgAl8hUmVMLeMlQ2icRcCPIaEikJDLmUl6QoEsLglJV
-	 qCn8txz857NUcJc6YbIcor0gySTVtTnxgrdoxxvw=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id DCC781287451;
-	Fri, 11 Oct 2024 23:27:03 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id hxWRwQPyqFxc; Fri, 11 Oct 2024 23:27:03 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1728703623;
-	bh=yXK1u5PItF4Ot2af8coMY40M905Rki8UymkHhymTln8=;
-	h=Message-ID:Subject:From:To:Date:From;
-	b=sY5V+3NVaRCtWkAhcfIxi/iNb9ZTL5F5Yg8YDVALTcQIHTpLjcyPE5orsWjSIQbOQ
-	 qIbdpzTUmJEKJSVOS2rp8QpLgAl8hUmVMLeMlQ2icRcCPIaEikJDLmUl6QoEsLglJV
-	 qCn8txz857NUcJc6YbIcor0gySTVtTnxgrdoxxvw=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4444F12873D4;
-	Fri, 11 Oct 2024 23:27:03 -0400 (EDT)
-Message-ID: <edf88708320d05c4b2f654a06a7fdbba9f9a868c.camel@HansenPartnership.com>
-Subject: [GIT PULL] SCSI fixes for 6.12-rc2
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
-	 <torvalds@linux-foundation.org>
-Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
-	 <linux-kernel@vger.kernel.org>
-Date: Fri, 11 Oct 2024 23:27:01 -0400
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1728703885; c=relaxed/simple;
+	bh=VmRsLzwtG2EZpUQJV8TqCwnZQn1czf1t4o8pSzBcuOQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WY0iM3u41aLrScwPOEpvTfS22TGxyXmw2WvnKJMBUK7H+RECZrpqc4zRwKqHSMBYz+12cyiEk2Ro1KJu9agEZgPedNFHbKD3KV8WvnthC8HeEqxDu/sn2642BB+rIO829RLWCYB5tHQXMAEpCEwI1xeiJo6isjBkMEZI3MZYvls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=imjyCaNA; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a993a6348e0so173489166b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:31:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728703882; x=1729308682; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AnO9v4vTKeXZqPVPayJt3fFn+BABsrVfLqW1dC+xfSs=;
+        b=imjyCaNAAjdYjQV0b3O9W0+A+Az1cySB1GHTmtaLdlaHBcR/N+muhEEuAtUaARUn2f
+         kyMZ5Vpt3OrMG4xX+JR7zp6RVkVWZNZ2m4zZJ776thSQlNMdvLVRdI7xbm5yGD9Whbi5
+         pRtppz+UhffCMonCw3f151VmfIP1P71T0FoWCAa7fYVmhfL96mTPoAAtiw3uu84iC8j6
+         h38NdIX5b9nxGEPxVCnN3WpmZMonZXKudGPW61yOxSYTYcfG8Bok5ZnTNBnRD3/EI7vU
+         A7Po3zs9cwacrGBtZGg3ltCPdcnL5KuQjfPizTAHFsRwzsNZ8i02j9wSteT2YjrS8qr5
+         NlGQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728703882; x=1729308682;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=AnO9v4vTKeXZqPVPayJt3fFn+BABsrVfLqW1dC+xfSs=;
+        b=Z8gH/i5dZhTnX6Sro9LISBAInXAbO7ezZpjDu+9eEHXDVC+oCWD+PgwdZ6kdzNUBSi
+         sDrYOucNTKiE6aSXnoteP+YZr0OhKnP2VqLC3H9kXj+Rt6BfPHDfT29eE4htFzJxofrh
+         CKo6sQZtmtqCids9Naq8xQhPHOwTvsb0UiCeoI/7YVwMcHGfd34ejw9QpjuVkTdrjqmC
+         LiWciFnAO3LRwasSyFdYjXYiZPODcJ5x7IwXHWuHQxmyNjqfyPucclAh/Ye3WW8qDx9d
+         vvs5dYUZu0kXycnqJAaDrTzSCztK8Uwen9IdkYMEhn+q6d2ugwcwSKoJ/00QW34B3hqw
+         Da8g==
+X-Gm-Message-State: AOJu0Yzw0XkEo/K/C6huoO/Ejtfumnmyl5cblg9otxvRjMRapxDydYy5
+	Floh15Tr1XFCvfzeI7CdTTVbCbxVBD2SmuhQrwQ/a6DSt7LuJ+Ly
+X-Google-Smtp-Source: AGHT+IFWKCcdncpjIaFs5v+Y86kKPqO+J51NoGA0v1xXk9JslHDM9Qot9xCwQEIiLbnhyYKCowWKGA==
+X-Received: by 2002:a05:6402:42c4:b0:5c8:7bbd:1c4f with SMTP id 4fb4d7f45d1cf-5c95ac09972mr1447843a12.7.1728703881964;
+        Fri, 11 Oct 2024 20:31:21 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f292146fsm2682166b.118.2024.10.11.20.31.19
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Fri, 11 Oct 2024 20:31:20 -0700 (PDT)
+Date: Sat, 12 Oct 2024 03:31:18 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+Cc: linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+	linux-mm@kvack.org, akpm@linux-foundation.org,
+	liam.howlett@oracle.com, willy@infradead.org,
+	richard.weiyang@gmail.com
+Subject: Re: [PATCH 1/2] maple_tree: check for MA_STATE_BULK on setting
+ wr_rebalance
+Message-ID: <20241012033118.33rqa6xlpgxcuidj@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20241011214451.7286-1-sidhartha.kumar@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011214451.7286-1-sidhartha.kumar@oracle.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-four small fixes, three in drivers and one in the FC transport class to
-add idempotence to state setting.
+On Fri, Oct 11, 2024 at 05:44:50PM -0400, Sidhartha Kumar wrote:
+>It is possible for a bulk operation (MA_STATE_BULK is set) to enter the
+>new_end < mt_min_slots[type] case and set wr_rebalance as a store type.
+>This is incorrect as bulk stores do not rebalance per write, but rather
+>after the all of the writes are done through the mas_bulk_rebalance()
+>path. Therefore, add a check to make sure MA_STATE_BULK is not set
+>before we return wr_rebalance as the store type.
+>
+>Also add a test to make sure wr_rebalance is never the store type when
+>doing bulk operations via mas_expected_entries()
+>
+>Fixes: 5d659bbb52a2 ("maple_tree: introduce mas_wr_store_type()")
+>Suggested-by: Liam Howlett <liam.howlett@oracle.com>
+>Signed-off-by: Sidhartha <sidhartha.kumar@oracle.com>
 
-The patch is available here:
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
-git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
-
-The short changelog is:
-
-Avri Altman (1):
-      scsi: ufs: Use pre-calculated offsets in ufshcd_init_lrb()
-
-Benjamin Marzinski (1):
-      scsi: scsi_transport_fc: Allow setting rport state to current state
-
-Daniel Palmer (1):
-      scsi: wd33c93: Don't use stale scsi_pointer value
-
-Martin Wilck (1):
-      scsi: fnic: Move flush_work initialization out of if block
-
-
-And the diffstat:
-
- drivers/scsi/fnic/fnic_main.c    | 2 +-
- drivers/scsi/scsi_transport_fc.c | 4 ++--
- drivers/scsi/wd33c93.c           | 2 +-
- drivers/ufs/core/ufshcd.c        | 5 ++---
- 4 files changed, 6 insertions(+), 7 deletions(-)
-
-With full diff below.
-
-James
-
----
-
-diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
-index 0044717d4486..adec0df24bc4 100644
---- a/drivers/scsi/fnic/fnic_main.c
-+++ b/drivers/scsi/fnic/fnic_main.c
-@@ -830,7 +830,6 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 		spin_lock_init(&fnic->vlans_lock);
- 		INIT_WORK(&fnic->fip_frame_work, fnic_handle_fip_frame);
- 		INIT_WORK(&fnic->event_work, fnic_handle_event);
--		INIT_WORK(&fnic->flush_work, fnic_flush_tx);
- 		skb_queue_head_init(&fnic->fip_frame_queue);
- 		INIT_LIST_HEAD(&fnic->evlist);
- 		INIT_LIST_HEAD(&fnic->vlans);
-@@ -948,6 +947,7 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
- 
- 	INIT_WORK(&fnic->link_work, fnic_handle_link);
- 	INIT_WORK(&fnic->frame_work, fnic_handle_frame);
-+	INIT_WORK(&fnic->flush_work, fnic_flush_tx);
- 	skb_queue_head_init(&fnic->frame_queue);
- 	skb_queue_head_init(&fnic->tx_queue);
- 
-diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
-index 62ea7e44460e..082f76e76721 100644
---- a/drivers/scsi/scsi_transport_fc.c
-+++ b/drivers/scsi/scsi_transport_fc.c
-@@ -1250,7 +1250,7 @@ static ssize_t fc_rport_set_marginal_state(struct device *dev,
- 		 */
- 		if (rport->port_state == FC_PORTSTATE_ONLINE)
- 			rport->port_state = port_state;
--		else
-+		else if (port_state != rport->port_state)
- 			return -EINVAL;
- 	} else if (port_state == FC_PORTSTATE_ONLINE) {
- 		/*
-@@ -1260,7 +1260,7 @@ static ssize_t fc_rport_set_marginal_state(struct device *dev,
- 		 */
- 		if (rport->port_state == FC_PORTSTATE_MARGINAL)
- 			rport->port_state = port_state;
--		else
-+		else if (port_state != rport->port_state)
- 			return -EINVAL;
- 	} else
- 		return -EINVAL;
-diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
-index a44b60c9004a..dd1fef9226f2 100644
---- a/drivers/scsi/wd33c93.c
-+++ b/drivers/scsi/wd33c93.c
-@@ -831,7 +831,7 @@ wd33c93_intr(struct Scsi_Host *instance)
- 		/* construct an IDENTIFY message with correct disconnect bit */
- 
- 		hostdata->outgoing_msg[0] = IDENTIFY(0, cmd->device->lun);
--		if (scsi_pointer->phase)
-+		if (WD33C93_scsi_pointer(cmd)->phase)
- 			hostdata->outgoing_msg[0] |= 0x40;
- 
- 		if (hostdata->sync_stat[cmd->device->id] == SS_FIRST) {
-diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-index 24a32e2fd75e..6a71ebf953e2 100644
---- a/drivers/ufs/core/ufshcd.c
-+++ b/drivers/ufs/core/ufshcd.c
-@@ -2933,9 +2933,8 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
- 	struct utp_transfer_req_desc *utrdlp = hba->utrdl_base_addr;
- 	dma_addr_t cmd_desc_element_addr = hba->ucdl_dma_addr +
- 		i * ufshcd_get_ucd_size(hba);
--	u16 response_offset = offsetof(struct utp_transfer_cmd_desc,
--				       response_upiu);
--	u16 prdt_offset = offsetof(struct utp_transfer_cmd_desc, prd_table);
-+	u16 response_offset = le16_to_cpu(utrdlp[i].response_upiu_offset);
-+	u16 prdt_offset = le16_to_cpu(utrdlp[i].prd_table_offset);
- 
- 	lrb->utr_descriptor_ptr = utrdlp + i;
- 	lrb->utrd_dma_addr = hba->utrdl_dma_addr +
-
+-- 
+Wei Yang
+Help you, Help me
 
