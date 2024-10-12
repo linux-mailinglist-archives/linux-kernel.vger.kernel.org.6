@@ -1,148 +1,101 @@
-Return-Path: <linux-kernel+bounces-362462-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362463-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5888E99B54D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:07:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3EEB99B550
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:09:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 873BD1C2182D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24261F2276D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:09:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C82E19343D;
-	Sat, 12 Oct 2024 14:07:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA7119308A;
+	Sat, 12 Oct 2024 14:08:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hKoY0pfq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIQjLMPc"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF0FD1E481;
-	Sat, 12 Oct 2024 14:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2C8178395;
+	Sat, 12 Oct 2024 14:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728742059; cv=none; b=YXDCUKRx4hrx2NkT7JVcrMmuh8DMBJG8YcZasoc+vx1Fh3MJAgDOoHfJa21aMxm+mUgtxtEMaYxlUCF+TZh/pPGh5HflCGLuTb0+kREG4LNsz0zCb+7Vlj3zSGqig8uInWQqql+988orfiAjQh3FrLDGqt61Ry/SrlOyIvO+4pU=
+	t=1728742136; cv=none; b=USpQpn4/esa4Q2AO10rQvBGW79+JCKgptP59ouFZLhDsFwFBExx9Cjs0ZI/M1YzhQouj2J9BNibRlGD7R78ah4usgF5EA+T0qtTesQ1G+vtQybI3MJzfPf1XBwvfQkOOgIFZFu2CDd0tgPWyDKuJEVMSA4Ji10W/NkIX+babYp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728742059; c=relaxed/simple;
-	bh=ltuFTzzWTb1qew2dBIqX+X7BaJwPp5wJl+AbxE9dT/k=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X3A69elwkAdLm9+wVj250XOxwLDxO1lXgVigjd3ro96gAS5ahCrPhtInCW3j3pbFM4oGNaNm4/TnjP9POfFJFDvyDeUei8g9TsrJP2oUnm4/o8dQK8MaV1WOGumla9Cg/pu//fvWyUh3roiIEZfV9a5QvVhnmn7TSJ6TYsgt2go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hKoY0pfq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5919EC4CEC6;
-	Sat, 12 Oct 2024 14:07:35 +0000 (UTC)
+	s=arc-20240116; t=1728742136; c=relaxed/simple;
+	bh=NEnfYZi9+H7rxaWUXDBIp1Q4trpVdsL34YQitu2ViY8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LFWyyX/BsOif5vJSCUlaixzjHgdoi19gwyBYUOnCU9+yIacKFtXUI7D7iAM/f7k4SbCdmJSbbZ2gKLkW1WoJ03TtzADZwzDL5Egr/aIwz1zdCNaHIslyn5B7Ixgh6UJVf5y5r/2JV7N+p3yMJyGc9XVjPhVC39nWlVLb+tYm+z4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIQjLMPc; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5F8C4CEC6;
+	Sat, 12 Oct 2024 14:08:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728742058;
-	bh=ltuFTzzWTb1qew2dBIqX+X7BaJwPp5wJl+AbxE9dT/k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=hKoY0pfqXnps6ba9Wm5oem4oS6YfeH7THxFHBWkaacZ845cNb9O8JQYKDK+3QUZCp
-	 Sx6KyE5Fejq1fWPsmf/7h7oy31KAH/8ZRoALiaxzoLo0PoNm9y8FJDMRyXy3NPxuO+
-	 sg8z84VqEbDRKBsjPQA0ql0KSaVodPVjbWBMiutIQPE2IAT32TreIiffqV4LDtpzEo
-	 DdsgU7GpApY0eSJYK0gl7dqoseOYYwTRB53s0Vo2iMh3kQdkUcQPdn4MedStcWPONf
-	 t66+wOTJ6D4Bq9RKZC7vueuJt/p5Npmo/uA3Y0o/FTwiPpvdCfgvR3FFFLx0fcFZAS
-	 BU4sisSp2fwwg==
-Date: Sat, 12 Oct 2024 15:07:09 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Angelo Dureghello <adureghello@baylibre.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich
- <Michael.Hennerich@analog.com>, Nuno Sa <nuno.sa@analog.com>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- dletchner@baylibre.com, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v5 09/10] iio: dac: ad3552r: add high-speed platform
- driver
-Message-ID: <20241012150709.1278066c@jic23-huawei>
-In-Reply-To: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-9-3d410944a63d@baylibre.com>
-References: <20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-0-3d410944a63d@baylibre.com>
-	<20241008-wip-bl-ad3552r-axi-v0-iio-testing-v5-9-3d410944a63d@baylibre.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728742136;
+	bh=NEnfYZi9+H7rxaWUXDBIp1Q4trpVdsL34YQitu2ViY8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=WIQjLMPc8Ph4WuWJzS9gku1YXkkuL+lrhkEWeiVfpWzKdjB3fs0Ch6FzsU/nApk+o
+	 Pwtzhuuipgh/uD7r6x+JJDzMS4BVUYc+SZTwDzms5Q48JCv+NJVlZUVdlYXD7IO0sS
+	 wLt40NW3EZz5C6ovS/mTO6a1TufMch0Hk/Lj4/Zbx+hajgDsGmp0RMvV+xT5iYKBWR
+	 6Ynr2swy7t0uR2IFxUS/hbaqIc/e2DrYfUAsMyelhlJZMcCGZ3v7cigdILqcRkd+5h
+	 phpIWYNK1JUoVeCvzixHV99p0X3PT4MIzTAkPfCGXOjr7qRbQip0D5mfwR5C+bYDqL
+	 Ywd26PvnAJjBA==
+Date: Sat, 12 Oct 2024 09:08:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+Cc: Mayank Rana <quic_mrana@quicinc.com>, kevin.xie@starfivetech.com,
+	lpieralisi@kernel.org, kw@linux.com,
+	manivannan.sadhasivam@linaro.org, robh@kernel.org,
+	bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH] PCI: starfive: Enable PCIe controller's PM runtime
+ before probing host bridge
+Message-ID: <20241012140852.GA603197@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a2872d91-039b-399c-af88-c20bf605e172@quicinc.com>
 
-On Tue, 08 Oct 2024 17:43:41 +0200
-Angelo Dureghello <adureghello@baylibre.com> wrote:
-
-> From: Angelo Dureghello <adureghello@baylibre.com>
+On Fri, Oct 11, 2024 at 04:14:10PM +0530, Krishna Chaitanya Chundru wrote:
 > 
-> Add High Speed ad3552r platform driver.
 > 
-> The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
-> through the current AXI backend, or similar alternative IIO backend.
-> 
-> Compared to the existing driver (ad3552r.c), that is a simple SPI
-> driver, this driver is coupled with a DAC IIO backend that finally
-> controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
-> maximum transfer rate of 33MUPS using dma stream capabilities.
-> 
-> All commands involving QSPI bus read/write are delegated to the backend
-> through the provided APIs for bus read/write.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> ---
->  drivers/iio/dac/Kconfig                  |  14 +
->  drivers/iio/dac/Makefile                 |   1 +
->  drivers/iio/dac/ad3552r-hs.c             | 526 +++++++++++++++++++++++++++++++
->  drivers/iio/dac/ad3552r.h                |   7 +
->  include/linux/platform_data/ad3552r-hs.h |  18 ++
-I'd missed this before.  No obvious reason to put the include in a 'global' location
-when for now at least only includers re in drivers/iio/dac/
+> On 10/11/2024 2:22 AM, Bjorn Helgaas wrote:
+> > On Thu, Oct 10, 2024 at 01:29:50PM -0700, Mayank Rana wrote:
+> > > Commit 02787a3b4d10 ("PCI/PM: Enable runtime power management for host
+> > > bridges") enables runtime PM for host bridge enforcing dependency chain
+> > > between PCIe controller, host bridge and endpoint devices. With this,
+> > > Starfive PCIe controller driver's probe enables host bridge (child device)
+> > > PM runtime before parent's PM runtime (Starfive PCIe controller device)
+> > > causing below warning and callstack:
+> > 
+> > I don't want the bisection hole that would result if we kept
+> > 02787a3b4d10 ("PCI/PM: Enable runtime power management for host
+> > bridges") and applied this patch on top of it.
+> > 
+> > If this is the fix, we'll apply it *first*, followed by 02787a3b4d10
+> > (which will obviously become a different commit), so the locking
+> > problem below described below should never exist in -next or the
+> > upstream tree.
+> > 
+> > So we need to audit other drivers to make sure they don't have theBjorn, I have checked all the drivers in the controller folder where
+> they are using pm_runtime_enable(), this is the only driver which needs
+> to be fixed. once this patched was taken can we take "PCI/PM: Enable
+>  runtime power management for host bridges"
 
-So please move it there.
+Since these need to be applied in order, the usual process is to post
+them together in one series.  Please work with Mayank to revise the
+commit log of the starfive patch so it explains why the change is
+necessary *independent* of your patch, and then post it and your
+"enable runtime PM for host bridges" together as v6 of your patch.
 
-Some stuff include/linux/platform_data/ is ancient things dating back to board file
-days.
+In the cover letter include a note about why no other drivers need a
+change like starfive does and how we can verify that.
 
-Other than that and things bit Nuno raised, this series looks good to me.
-Please drop the first 2 patches from v6 as I've applied those now.
-
-Jonathan
-
-
-> diff --git a/include/linux/platform_data/ad3552r-hs.h b/include/linux/platform_data/ad3552r-hs.h
-> new file mode 100644
-> index 000000000000..4e3213a0c73b
-> --- /dev/null
-> +++ b/include/linux/platform_data/ad3552r-hs.h
-
-This isn't what we'd think of as 'platform_data' normally and it is only used
-in drivers/iio/dac/ so I would simply move the header to drivers/iio/dac/ad3552r-hs.h
-
-> @@ -0,0 +1,18 @@
-> +/* SPDX-License-Identifier: GPL-2.0-or-later */
-> +/*
-> + * Copyright (c) 2010-2024 Analog Devices Inc.
-
-Generous on the years.  This one should probably just be new copyright given
-the code is effectively new.
-
-> + * Copyright (c) 2024 Baylibre, SAS
-> + */
-> +#ifndef __LINUX_PLATFORM_DATA_AD3552R_HS_H__
-> +#define __LINUX_PLATFORM_DATA_AD3552R_HS_H__
-> +
-> +#include <linux/iio/backend.h>
-For this use a forwards reference
-
-struct iio_backend;
-
-Nice to avoid nests of includes where we can easily do so.
-
-> +
-> +struct ad3552r_hs_platform_data {
-> +	int (*bus_reg_read)(struct iio_backend *back, u32 reg, u32 *val,
-> +			    size_t data_size);
-> +	int (*bus_reg_write)(struct iio_backend *back, u32 reg, u32 val,
-> +			     size_t data_size);
-> +};
-> +
-> +#endif /* __LINUX_PLATFORM_DATA_AD3552R_HS_H__ */
-> 
-
+Bjorn
 
