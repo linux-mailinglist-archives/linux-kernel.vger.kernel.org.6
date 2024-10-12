@@ -1,160 +1,185 @@
-Return-Path: <linux-kernel+bounces-362059-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E94699B06B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:27:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7686A99B06A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:27:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB7BE282638
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:27:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 370A5B21D0F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:27:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 161191272A6;
-	Sat, 12 Oct 2024 03:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C92AD84E04;
+	Sat, 12 Oct 2024 03:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="b4wqVVAY"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sY5V+3NV";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="sY5V+3NV"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A40B81799F
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:27:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D50301799F;
+	Sat, 12 Oct 2024 03:27:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728703634; cv=none; b=aEyAs5ml4KNmTkOzpEp/5Bmg5uE0Snk8OGc2yMf8QDzN50p+7kh+nZHdbQkCChr5vHzknZusJbkz6j+O0KTip4HVBZO83doSeyeQeehPuOFHfBCgpI+BmxWPGcwE8MGsmKKe2r+/ODAPpuwvHkHSWPAAiceb8hTbCwOp+/wRyVc=
+	t=1728703627; cv=none; b=oQbVPqnrM/vRaGeQARVNd73mBCPctaJWSTpWILYPkKbEdlTi1ZW7qlT22j68IrUTUlAEwd6exQPeL24PRAWPkKnT+OJmO12v8VLkO+B9t9ujmj1ApJBbl9R0wmjlaytPBTlhKVNVpAm92XD/qO7CVyw4RJOjguWpQi5f4Gps/Lw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728703634; c=relaxed/simple;
-	bh=F8DFHqv1+dGqlCxt8XMF4a/WhTcYfXPdcxkvKn+qs6M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=P59PPuc/V4Sbh0bvAwhqy6hOHKFSIZA1MWft1vuJ+P8i41iNCK2fzP8MoA5nRmTcsRaoRnLrfSBB84FyS88SI6b5FSA86c4YkGbCStGHl/ZNWhCUjjyn3wiAeL9RluSipslP3gOYKGUVei6J1PNWca12gShoPPVnSn+Vrj/GGuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=b4wqVVAY; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a99b1f43aceso311316366b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:27:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728703631; x=1729308431; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nWTezJHR9Vq4+Q9HVaoXpPlGXcBP8rtz9ZwlcdC9EN4=;
-        b=b4wqVVAYs+fdonnVOzMVMFccII299Rlj1EyUyqrjOtESexNA5EgVxu+WLS9f5H9Cen
-         0DiSlVS+c4JOZFo5jHWI7bOr+bkpqK6xru6HvLxUeXT3/rzRQsryid9DfdwbRJw/lHSt
-         snjD6wt9zRy3eIbqTx3AhAowOogd9F8ckxveZUM3veYJnAFqnO/j9zb+7fFfS+g7H7bH
-         nTqShhZspqqQMmZA1B9InBZOgB+W8YI6kTneJwTqHZ19JobT9x16i8Mt/37RquEwsaI3
-         ID8W97qa+tc/WEUooJuibCgJMNUmFvIiKEmMHXWbGV5PF/mRh3gpzuvc9eCP3sH6iuU4
-         FqeQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728703631; x=1729308431;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nWTezJHR9Vq4+Q9HVaoXpPlGXcBP8rtz9ZwlcdC9EN4=;
-        b=RvUhA3rQUvuPsvYKf1KQbuWNowDI/ZDLS7euL+F2vNxfZgpeeaU2EPHy/LP5azHQ4/
-         9gzniSnmyp/PcthM+l1i4z0fOc00mbTq1j40vd5EzKDWPd7TdE/JvVCw3lUvwAysh/3r
-         WiV/l/9ly7unGN+rIQ59v+S0Kq5K7Gvct8qJGPvB7mgTnHAZtqF29zciN2BKkW31/xd5
-         e+SxrQsFcR/k9J+IsWRGB03XeuQwKaWxQG7NaGFOjnjj4/zRQysEZQ0pMlMCxUsXiOA7
-         L73PSh73GrKRXGbMUPb2gu56Tez6LQ3KgqP0S1h9cKbG3+wQb4wJu4AWlvtph/LREbTk
-         OQQw==
-X-Forwarded-Encrypted: i=1; AJvYcCWD0R12+Nhfp5+C2owhchB3eqUsU1JMhhu4UVMJV7fnzJOsZcQYN89IfXo7MUFR5sPmh+YlLTrV+dHGe1k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8JY9jiFf9va0+Bt5pykSUY46YjQ24/FMKqVYIZ1a+ySKoskIJ
-	i/Tqgsv/CYCXPllzGbNTQRvBeptR3DDs9USUuUKXb3ypM/wHxf0TGnrgd5KVYPs4NdT7S9Ip9iz
-	/zy9ENhoJXnoMFPMJGyyDN+ptOY1ERSOeOSyU
-X-Google-Smtp-Source: AGHT+IFTZZoruKvDa4wWJWY4hwy38IqKlTFgrtJMgUvabVxU/vEEAu7T75+M5mSUOo9XTzDZeNZFdKP//gpGOey5wNc=
-X-Received: by 2002:a17:907:3e14:b0:a99:f209:cea3 with SMTP id
- a640c23a62f3a-a99f209cf34mr6850166b.11.1728703630697; Fri, 11 Oct 2024
- 20:27:10 -0700 (PDT)
+	s=arc-20240116; t=1728703627; c=relaxed/simple;
+	bh=yXK1u5PItF4Ot2af8coMY40M905Rki8UymkHhymTln8=;
+	h=Message-ID:Subject:From:To:Cc:Date:Content-Type:MIME-Version; b=gLRGXFN4X9Ev/s1TZnNLUVK2v83ZMdGtt5ZnFC0tkb47Hh3useLsN/SPAZxEyO8zMUUpsDJ7oYNaaR8xMVIMDYCYnv9LoloFBh2UrI7FyBuhnM12k7qYv+f/pk5mIHgDgnR97Udot2T81Yqb0ZpzRE1IgwH2lFZEUT1reRk0YMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=sY5V+3NV; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=sY5V+3NV; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1728703623;
+	bh=yXK1u5PItF4Ot2af8coMY40M905Rki8UymkHhymTln8=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=sY5V+3NVaRCtWkAhcfIxi/iNb9ZTL5F5Yg8YDVALTcQIHTpLjcyPE5orsWjSIQbOQ
+	 qIbdpzTUmJEKJSVOS2rp8QpLgAl8hUmVMLeMlQ2icRcCPIaEikJDLmUl6QoEsLglJV
+	 qCn8txz857NUcJc6YbIcor0gySTVtTnxgrdoxxvw=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id DCC781287451;
+	Fri, 11 Oct 2024 23:27:03 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id hxWRwQPyqFxc; Fri, 11 Oct 2024 23:27:03 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1728703623;
+	bh=yXK1u5PItF4Ot2af8coMY40M905Rki8UymkHhymTln8=;
+	h=Message-ID:Subject:From:To:Date:From;
+	b=sY5V+3NVaRCtWkAhcfIxi/iNb9ZTL5F5Yg8YDVALTcQIHTpLjcyPE5orsWjSIQbOQ
+	 qIbdpzTUmJEKJSVOS2rp8QpLgAl8hUmVMLeMlQ2icRcCPIaEikJDLmUl6QoEsLglJV
+	 qCn8txz857NUcJc6YbIcor0gySTVtTnxgrdoxxvw=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::db7])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 4444F12873D4;
+	Fri, 11 Oct 2024 23:27:03 -0400 (EDT)
+Message-ID: <edf88708320d05c4b2f654a06a7fdbba9f9a868c.camel@HansenPartnership.com>
+Subject: [GIT PULL] SCSI fixes for 6.12-rc2
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Andrew Morton <akpm@linux-foundation.org>, Linus Torvalds
+	 <torvalds@linux-foundation.org>
+Cc: linux-scsi <linux-scsi@vger.kernel.org>, linux-kernel
+	 <linux-kernel@vger.kernel.org>
+Date: Fri, 11 Oct 2024 23:27:01 -0400
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011171950.62684-1-ryncsn@gmail.com> <CAJD7tkaZgEHUNce5c8LWpWXKnTZ7geOuBym41t+UoZax_nky7Q@mail.gmail.com>
- <20241011182831.GC351101@cmpxchg.org> <CAMgjq7Ajen_XQHGznNp3hFWOes+K=fn6HssW3-SUL8i4xDebhQ@mail.gmail.com>
-In-Reply-To: <CAMgjq7Ajen_XQHGznNp3hFWOes+K=fn6HssW3-SUL8i4xDebhQ@mail.gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Fri, 11 Oct 2024 20:26:33 -0700
-Message-ID: <CAJD7tkaDEizi63vWSLVZk7RXRiKs6xyDG7pFA-bcLLcG15bUxQ@mail.gmail.com>
-Subject: Re: [PATCH] mm/zswap: avoid touching XArray for unnecessary invalidation
-To: Kairui Song <ryncsn@gmail.com>
-Cc: Johannes Weiner <hannes@cmpxchg.org>, linux-mm@kvack.org, 
-	Andrew Morton <akpm@linux-foundation.org>, Nhat Pham <nphamcs@gmail.com>, 
-	Chengming Zhou <chengming.zhou@linux.dev>, Chris Li <chrisl@kernel.org>, 
-	Barry Song <v-songbaohua@oppo.com>, "Huang, Ying" <ying.huang@intel.com>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 8:05=E2=80=AFPM Kairui Song <ryncsn@gmail.com> wrot=
-e:
->
-> Johannes Weiner <hannes@cmpxchg.org> =E4=BA=8E 2024=E5=B9=B410=E6=9C=8812=
-=E6=97=A5=E5=91=A8=E5=85=AD 02:28=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > On Fri, Oct 11, 2024 at 10:53:31AM -0700, Yosry Ahmed wrote:
-> > > On Fri, Oct 11, 2024 at 10:20=E2=80=AFAM Kairui Song <ryncsn@gmail.co=
-m> wrote:
-> > > >
-> > > > From: Kairui Song <kasong@tencent.com>
-> > > >
-> > > > zswap_invalidation simply calls xa_erase, which acquires the Xarray
-> > > > lock first, then does a look up. This has a higher overhead even if
-> > > > zswap is not used or the tree is empty.
-> > > >
-> > > > So instead, do a very lightweight xa_empty check first, if there is
-> > > > nothing to erase, don't touch the lock or the tree.
-> >
-> > Great idea!
-> >
-> > > XA_STATE(xas, ..);
-> > >
-> > > rcu_read_lock();
-> > > entry =3D xas_load(&xas);
-> > > if (entry) {
-> > >     xas_lock(&xas);
-> > >     WARN_ON_ONCE(xas_reload(&xas) !=3D entry);
-> > >     xas_store(&xas, NULL);
-> > >     xas_unlock(&xas);
-> > > }
-> > > rcu_read_unlock():
-> >
-> > This does the optimization more reliably, and I think we should go
-> > with this version.
->
-> Hi Yosry and Johannes,
->
-> This is a good idea. But xa_empty is just much lighweighter, it's just
-> a inlined ( =3D=3D NULL ) check, so unsurprising it has better performanc=
-e
-> than xas_load.
->
-> And surprisingly it's faster than zswap_never_enabled. So I think it
-> could be doable to introduce something like zswap_may_have_swpentry as
-> Yosry suggested.
+four small fixes, three in drivers and one in the FC transport class to
+add idempotence to state setting.
 
-That is surprising indeed, but it is cleaner anyway to use the xarray
-check than the static key.
+The patch is available here:
 
->
-> So how about a combined version with xas_load and xa_empty? Check
-> xa_empty first as a faster path, then xas_load, then xas_store.
+git://git.kernel.org/pub/scm/linux/kernel/git/jejb/scsi.git scsi-fixes
 
-Yeah I think having an additional xa_empty() check before xas_load() is fin=
-e.
+The short changelog is:
 
->
-> Here is the benchmark result (time of swapin 2G zero pages in us):
->
-> Before:   1908944 1905870 1905322 1905627 1901667
-> xa_empty: 1835343 1827367 1828402 1831841 1832719
-> z.._enabled: 1838428 1831162 1838205 1837287 1840980
-> xas_load: 1874606 1878971 1870182 1875852 1873403
-> combined: 1845309 1832919 1831904 1836455 1842570
->
-> `combined` is xa_empty + xas_load.
+Avri Altman (1):
+      scsi: ufs: Use pre-calculated offsets in ufshcd_init_lrb()
 
-Is this with SSD swap? If you are using brd, it bypasses the swapcache
-so the benefit from the xas_load() optimization won't be much visible
-(see my earlier email as well as Johannes's).
+Benjamin Marzinski (1):
+      scsi: scsi_transport_fc: Allow setting rport state to current state
+
+Daniel Palmer (1):
+      scsi: wd33c93: Don't use stale scsi_pointer value
+
+Martin Wilck (1):
+      scsi: fnic: Move flush_work initialization out of if block
+
+
+And the diffstat:
+
+ drivers/scsi/fnic/fnic_main.c    | 2 +-
+ drivers/scsi/scsi_transport_fc.c | 4 ++--
+ drivers/scsi/wd33c93.c           | 2 +-
+ drivers/ufs/core/ufshcd.c        | 5 ++---
+ 4 files changed, 6 insertions(+), 7 deletions(-)
+
+With full diff below.
+
+James
+
+---
+
+diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
+index 0044717d4486..adec0df24bc4 100644
+--- a/drivers/scsi/fnic/fnic_main.c
++++ b/drivers/scsi/fnic/fnic_main.c
+@@ -830,7 +830,6 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 		spin_lock_init(&fnic->vlans_lock);
+ 		INIT_WORK(&fnic->fip_frame_work, fnic_handle_fip_frame);
+ 		INIT_WORK(&fnic->event_work, fnic_handle_event);
+-		INIT_WORK(&fnic->flush_work, fnic_flush_tx);
+ 		skb_queue_head_init(&fnic->fip_frame_queue);
+ 		INIT_LIST_HEAD(&fnic->evlist);
+ 		INIT_LIST_HEAD(&fnic->vlans);
+@@ -948,6 +947,7 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
+ 
+ 	INIT_WORK(&fnic->link_work, fnic_handle_link);
+ 	INIT_WORK(&fnic->frame_work, fnic_handle_frame);
++	INIT_WORK(&fnic->flush_work, fnic_flush_tx);
+ 	skb_queue_head_init(&fnic->frame_queue);
+ 	skb_queue_head_init(&fnic->tx_queue);
+ 
+diff --git a/drivers/scsi/scsi_transport_fc.c b/drivers/scsi/scsi_transport_fc.c
+index 62ea7e44460e..082f76e76721 100644
+--- a/drivers/scsi/scsi_transport_fc.c
++++ b/drivers/scsi/scsi_transport_fc.c
+@@ -1250,7 +1250,7 @@ static ssize_t fc_rport_set_marginal_state(struct device *dev,
+ 		 */
+ 		if (rport->port_state == FC_PORTSTATE_ONLINE)
+ 			rport->port_state = port_state;
+-		else
++		else if (port_state != rport->port_state)
+ 			return -EINVAL;
+ 	} else if (port_state == FC_PORTSTATE_ONLINE) {
+ 		/*
+@@ -1260,7 +1260,7 @@ static ssize_t fc_rport_set_marginal_state(struct device *dev,
+ 		 */
+ 		if (rport->port_state == FC_PORTSTATE_MARGINAL)
+ 			rport->port_state = port_state;
+-		else
++		else if (port_state != rport->port_state)
+ 			return -EINVAL;
+ 	} else
+ 		return -EINVAL;
+diff --git a/drivers/scsi/wd33c93.c b/drivers/scsi/wd33c93.c
+index a44b60c9004a..dd1fef9226f2 100644
+--- a/drivers/scsi/wd33c93.c
++++ b/drivers/scsi/wd33c93.c
+@@ -831,7 +831,7 @@ wd33c93_intr(struct Scsi_Host *instance)
+ 		/* construct an IDENTIFY message with correct disconnect bit */
+ 
+ 		hostdata->outgoing_msg[0] = IDENTIFY(0, cmd->device->lun);
+-		if (scsi_pointer->phase)
++		if (WD33C93_scsi_pointer(cmd)->phase)
+ 			hostdata->outgoing_msg[0] |= 0x40;
+ 
+ 		if (hostdata->sync_stat[cmd->device->id] == SS_FIRST) {
+diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
+index 24a32e2fd75e..6a71ebf953e2 100644
+--- a/drivers/ufs/core/ufshcd.c
++++ b/drivers/ufs/core/ufshcd.c
+@@ -2933,9 +2933,8 @@ static void ufshcd_init_lrb(struct ufs_hba *hba, struct ufshcd_lrb *lrb, int i)
+ 	struct utp_transfer_req_desc *utrdlp = hba->utrdl_base_addr;
+ 	dma_addr_t cmd_desc_element_addr = hba->ucdl_dma_addr +
+ 		i * ufshcd_get_ucd_size(hba);
+-	u16 response_offset = offsetof(struct utp_transfer_cmd_desc,
+-				       response_upiu);
+-	u16 prdt_offset = offsetof(struct utp_transfer_cmd_desc, prd_table);
++	u16 response_offset = le16_to_cpu(utrdlp[i].response_upiu_offset);
++	u16 prdt_offset = le16_to_cpu(utrdlp[i].prd_table_offset);
+ 
+ 	lrb->utr_descriptor_ptr = utrdlp + i;
+ 	lrb->utrd_dma_addr = hba->utrdl_dma_addr +
+
 
