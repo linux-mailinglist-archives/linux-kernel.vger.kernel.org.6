@@ -1,95 +1,74 @@
-Return-Path: <linux-kernel+bounces-362195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362197-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C199A99B1F7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:07:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DCF6499B1FD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:08:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5A5D71F269AD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:07:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0521C21313
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:08:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F05C613E41A;
-	Sat, 12 Oct 2024 08:07:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92B1E145A05;
+	Sat, 12 Oct 2024 08:08:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Wvyzlfdp"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YWj5M9fB"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA3C4137742
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:07:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90EAB13C69E
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:08:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728720450; cv=none; b=J6biui/uyoGsMaJxc1riauOCFTxamPvaF+zO+He7Mac2sQkWaxxHuJZV6eRuBKJ+7TFvpILe/v9MYLy4q4f8fOpDNAVwDdL/vXbLMaHXKdGx0yscoGOUeW+opCtTGgMBJARdOPHIycG7V0SWZayH/qMy+lY+YT4WS0OkhLW5hxY=
+	t=1728720519; cv=none; b=JuQk6TnUf9/TaRCZVyHMTclLljDiUDfu+INiKLt9YPb13/IbpaXOQXKoCVnL8NHZLuvCUzUgCw9+GzBEfkSozdoBiLs7ANGgsRkrdDACJjxhfE/aPB2zZumR/zE65J/zZ6awChwphhZN5s88QAHfJNns9WC+zxbpf3qljMkIHRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728720450; c=relaxed/simple;
-	bh=o7rni39hEpKDVx9/9AJng7nBJrUeVm0W7UCzOPMFcFE=;
+	s=arc-20240116; t=1728720519; c=relaxed/simple;
+	bh=+662Nqn05brFni8K4FmaOmVPV12ZcVS2MPNDRPrZdLg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DKMPqNYBwdpFTK7FzCsrS1ybDPC3o/fUYE5T2AesWWwcsvczKV3GUxxK8fO0wX0vgN6cfrtRK1PTdARNFBmfi5Pt7IjsOqafTasn3KYRXgYnl3XmXdy2Jyu7efQB33EbHycjgJ3EYd9Cdbs7iwE4GL+VDPxPESICtkqB9MgoeLo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Wvyzlfdp; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fad100dd9eso27424241fa.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:07:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728720447; x=1729325247; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=HxxIMIxHhIuN3Y4k3DLau9HTuUBGd+U2wnXX9xJ8EMM=;
-        b=WvyzlfdpPmhANX6OKfQAZ5pAbjz/cI8gIg9jxVhx/ZozWBF7295YTwBxWTMBOCK58m
-         ScKZ3Cvm9x4kIYyPZTcSNBNwRW4xAT5QIdwVDhaCqcmihcvXUOPQmV4iGBVPlv68xo34
-         iTwnfYswLqtqMoy0Xb94RkXQREUJgB8uMI1P87tHLFbK9fbYHwjLjP3YQfjw+qmqIFE8
-         AI5jPNLT7cuJPtKusQ1UFPFllOamKU3868f/Q0jYiAZd8/O9lSTEh/8AvhHJL7x9qf0J
-         fjiBRwQ1amkyfD0sirz3ATdJaq1muGjK2bzYlEwex0nnml8J5W+9sPBfDQ0KQN7+gH/g
-         R9kw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728720447; x=1729325247;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HxxIMIxHhIuN3Y4k3DLau9HTuUBGd+U2wnXX9xJ8EMM=;
-        b=HbYtjyHeSKtvGY31s8hjuFhjY5se8scUQwvpwUE2RQGEc96JLN+7p3ByS4spkZpCV8
-         510WBoWNRIeQ3NLpxkvHCGYcAlgv5YymST1EP/kbTxjIxg5DP3Vzfr/Cv+9s8RRc34f/
-         jKIqJ78AZeha/KVGS5gzfDDqMXJGUg8/mfNmdwYgSxAGRjpTewUZZQC+DekH3wIWS2wM
-         nUEfXcmUsPqfSrx5FNKDbiwnXdv12NkCwfLJcyAJwbNcyceHV1P2MdUR6kXdFsGSGF05
-         WQi8kVHF6Zg1qvvMx5jzZkIGmAF6nhqLC/XOp7mvRgZDNkyiHiMSs1VMTOhGzeBa5QCX
-         zfuA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBRXQsmcN3ha1mBfTMupnBOgG85KuBKU2djdRjO6fJdtNtyv7S0QyRS3DAsiWiMgWKkT4a5gOdptzszw0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxvjSsrVTZiNbcVPgy3SiFfUph7bj80H2prLxOP6KCjbILYhf8
-	pjcN96bQQ2VuJIYBGmf5qGp+e1VAHhASwVcMg/2zMxpDBOE4x2ZpkwTm7KX3R30=
-X-Google-Smtp-Source: AGHT+IFPL2CtCEwCTz92r494aEdLKqkcoe2mNIoQB4/KO8yuI/vw8UKQ8ZaDNAPm0kR4gfHNNuXaaA==
-X-Received: by 2002:a2e:be9e:0:b0:2f5:806:5cee with SMTP id 38308e7fff4ca-2fb32727e37mr23391671fa.11.1728720446499;
-        Sat, 12 Oct 2024 01:07:26 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb2474d255sm7461541fa.119.2024.10.12.01.07.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 01:07:24 -0700 (PDT)
-Date: Sat, 12 Oct 2024 11:07:22 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
-Cc: Jan Kiszka <jan.kiszka@siemens.com>, 
-	Alexander Stein <alexander.stein@ew.tq-group.com>, Aradhya Bhatia <a-bhatia1@ti.com>, 
-	dri-devel@lists.freedesktop.org, Marek Vasut <marex@denx.de>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Daniel Vetter <daniel@ffwll.ch>, Sam Ravnborg <sam@ravnborg.org>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] drm/bridge: tc358767: Fix
- DRM_BRIDGE_ATTACH_NO_CONNECTOR case
-Message-ID: <oxij35feivahxndatf5jpkgdfghk5e7gu3pi7zzf36xcjmoz3o@lwhwln5t2wcy>
-References: <f6af46e0-aadb-450a-9349-eec1337ea870@ti.com>
- <b221c978-2ce0-4d31-8146-ab43a9f86a1f@ti.com>
- <st6vgd2k6dxo4vd3pmqmqlc5haofhbym2jeb2eeh2pa2n6zcca@tradpzxrzexl>
- <2469374.jE0xQCEvom@steina-w>
- <CAA8EJpraKjBZRLL5U+BVQRf98_EBa5b=nSPxZATU+yvvq9Kfmw@mail.gmail.com>
- <4133a684-61a1-4d18-bb25-212d5fdc5620@siemens.com>
- <5bb0459a-ec3a-487f-a9b5-28ee643a1215@ideasonboard.com>
- <9b0e99f5-554b-428f-856c-cc32f4520c73@siemens.com>
- <lxcxo3y7z6emrpvisibj6ccr6qx5nozchuyy5aizfvkvvlp44m@jecj6k5y6z2t>
- <1ea19ca9-25fd-42c3-b495-5df0ab6c3ea3@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kib9+hnMZR20dXCwhHlzzfsSITAeSStaJSLa8bLccAEeMREK0WuBmj+HsGTxwfJCA7ZwXFps+vpu6naWGtp6r+bev60UGS7ClyizQpkzHjP0pUPxX4NIBvg3G/r2WxAVjEj+OL8KOujomcQjsDV62ewcdd3zpFHm0KS8kzW+/50=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YWj5M9fB; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728720516;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CPK9aJLtYxWcNZ87x/vwtTK8ResMtxOxLzaOKNA/rkQ=;
+	b=YWj5M9fB7c6s9vBEAM489uwvbfHsa0jXuRXEqCeBV220417WK6GWGESyRKc+zr5xki5QMW
+	8qeJdQby7aZheif4HUTFnUHqIiPI9rl5/RGEXR7o4JvB2JFPZoY7mUP7mGC/X49mMnr+96
+	QOUAb+e1nlOmuv0plUSXbTy837222Gk=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-694-XxzSXZg1NcShQ_uObO8D2g-1; Sat,
+ 12 Oct 2024 04:08:33 -0400
+X-MC-Unique: XxzSXZg1NcShQ_uObO8D2g-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1791119560A5;
+	Sat, 12 Oct 2024 08:08:29 +0000 (UTC)
+Received: from f39 (unknown [10.39.192.36])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8647B19560AA;
+	Sat, 12 Oct 2024 08:08:20 +0000 (UTC)
+Date: Sat, 12 Oct 2024 10:08:15 +0200
+From: Eder Zulian <ezulian@redhat.com>
+To: Sam James <sam@gentoo.org>
+Cc: acme@redhat.com, andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org,
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com,
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org,
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me,
+	song@kernel.org, vmalik@redhat.com, williams@redhat.com,
+	yonghong.song@linux.dev,
+	Michael =?iso-8859-1?Q?Wei=DF?= <michael.weiss@aisec.fraunhofer.de>
+Subject: Re: [PATCH] tools/resolve_btfids: Fix 'variable' may be used
+ uninitialized warnings
+Message-ID: <Zwoub8GniNhTF1gu@f39>
+References: <20241011200005.1422103-1-ezulian@redhat.com>
+ <87frp2yn2y.fsf@gentoo.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,28 +77,26 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <1ea19ca9-25fd-42c3-b495-5df0ab6c3ea3@ideasonboard.com>
+In-Reply-To: <87frp2yn2y.fsf@gentoo.org>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Fri, Oct 11, 2024 at 03:02:56PM +0300, Tomi Valkeinen wrote:
-> Hi,
-> 
-> On 23/09/2024 15:25, Dmitry Baryshkov wrote:
-> 
-> > > As Dmitry asked me during Plumbers to revalidate if our setup still
-> > > needs patch 2, I just did that over 6.11.0-next-20240923 (where patch 1
-> > > is now included). No surprise, it is still needed for our iot2050 device
-> > > series, otherwise the display remains black.
-> > 
-> > Granted that nobody with the DRM_BRIDGE_ATTACH_NO_CONNECTOR + DSI-DP
-> > spoke in the last several months, I think we'd better merge the patch as
-> > it is now. If noone objects (last call), I'll do that in one or two
-> > days.
-> 
-> No one has objected, are we ready to merge?
+Hi Sam, thank you for pointing it out.
 
-Applied
+On Sat, Oct 12, 2024 at 05:14:29AM +0100, Sam James wrote:
+> The parse-options change was sent before as
+> https://lore.kernel.org/all/20240731085217.94928-1-michael.weiss@aisec.fraunhofer.de/
 
--- 
-With best wishes
-Dmitry
+Sorry, I missed Michael's patch.
+My suggestion is to initialize 'o' to NULL instead. An illegal dereferencing
+(if any) would then be evident.
+
+> but seems to have fallen through the cracks.
+> 
+> 
+Would it be better to revert this part and wait a bit for Michael's patch to
+be merged, please let me know.
+
+Thank you,
+Eder
+
 
