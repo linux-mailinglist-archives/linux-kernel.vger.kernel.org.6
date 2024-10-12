@@ -1,115 +1,145 @@
-Return-Path: <linux-kernel+bounces-362290-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 816F499B32C
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:56:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 95BDD99B332
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:57:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 20B232849CA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:56:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46AC8284826
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:57:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF06D155315;
-	Sat, 12 Oct 2024 10:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E00C15575C;
+	Sat, 12 Oct 2024 10:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nS87PGIk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b="CSeLt16K"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B626136330;
-	Sat, 12 Oct 2024 10:56:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 196B815443C
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 10:57:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728730572; cv=none; b=qJMjc4gi5ask7ZS2Xoa/Rs0GQXPKP3w0iE+fAlFHx/FXe4P38kiDCPBNQs86nLSRMZZzQ3XYNWxHRnQQtBg3FDQeixNxImiMZ7jypg6Y+b1VsQBhALPDLQzViYigXa7acpSxUof38ZK3BHDIFIJPenA6Lmkxmhrk/WIIBCzGc38=
+	t=1728730651; cv=none; b=iBIvPMO0hzqv8DMUr8xI7KIq/FGgmWjvg9lJPFnQi9OkuJJXhL9ao5XNncMgO1z3XmCTBzUtkonIPw2UH11uv9OqXiO8MvqahcKv+5IZOqwsEHLnXIZligzxnecto5G8s/23buzjR/+r12FdNJRxkZd0Q/PgeYCxkxJVJsINd80=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728730572; c=relaxed/simple;
-	bh=zszbQppB/+KNbhCJ4wgFW64onx8DPG8wPG1jytjeIgw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fXin4Axh+3SA1HZt/ZHD9W4rANtjWTWIXk7aa38dp5LtAUHO+cM2ApfPZxX8xHaIkfgcGvu1hm7s/SzCLFZsg/D1Z65ZTY8xxbK0RYTEbpJNzCsQLhup5c4PPGmOaJTvMlOcWozJmzGiCyR7sqNoPKJHfc3WWfLcRaBN/JBEMlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nS87PGIk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4AE0BC4CEC6;
-	Sat, 12 Oct 2024 10:56:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728730571;
-	bh=zszbQppB/+KNbhCJ4wgFW64onx8DPG8wPG1jytjeIgw=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=nS87PGIkc5IhYumerFajBV4hZKRaSXPoRKJ7W1fGupvQ6Cb3O0dh7/qkvmgja1Ijz
-	 QXaVyVUOQecLadb3lk6x78vzejD+swZ5RTU5QkVa8gRhXekjKxCIgDzsthZpjxmrF1
-	 /fxACYTT/flIlgofC2P27jC5TMOINGXFHd7BncuZTry2wHtlSKAt+UEsMqBZA51kXm
-	 YyP40gipIWvz0tKZ+lkZO82xIBquTgAyLdRgO5Cfz8ohWumYXE7EwfEkUNu1mCcpu4
-	 OcsEH9FYvDA655B4uLGyyOAwhwElEY27Y4JC5HRAhHrekh2PrwDika2qRBUat/wAgb
-	 W/a/jQRnShjDA==
-Message-ID: <e70c55c6edea2a5be7786ee04a85778193237444.camel@kernel.org>
-Subject: Re: [PATCH v5 0/5] Lazy flush for the auth session
-From: Jarkko Sakkinen <jarkko@kernel.org>
-To: Roberto Sassu <roberto.sassu@huaweicloud.com>, 
-	linux-integrity@vger.kernel.org
-Cc: James.Bottomley@HansenPartnership.com, roberto.sassu@huawei.com, 
- mapengyu@gmail.com, Mimi Zohar <zohar@linux.ibm.com>, David Howells
- <dhowells@redhat.com>, Paul Moore <paul@paul-moore.com>, James Morris
- <jmorris@namei.org>, "Serge E. Hallyn" <serge@hallyn.com>, Peter Huewe
- <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
- keyrings@vger.kernel.org,  linux-security-module@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Date: Sat, 12 Oct 2024 13:56:07 +0300
-In-Reply-To: <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
-References: <20240921120811.1264985-1-jarkko@kernel.org>
-	 <f69e08167d8354db31013018edf064a2876f8d1c.camel@kernel.org>
-	 <21b46f4882f0b9b12304d7786bd88f33a7ad2b97.camel@huaweicloud.com>
-	 <a0068539450a81fdd363d078521cb3822c54608b.camel@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
+	s=arc-20240116; t=1728730651; c=relaxed/simple;
+	bh=yzj48cWj4L8LiQC5ox1BGXI/Tjjq1Nx6uec3CrMVcKI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=XQFmUo11UsJjDNbPfMTOSrx9jrVg8Yom+8ovicXsBp2so0gi0HWnhwnnyZTmsm9hlae8+X6Q9KOdx/z5sik4kSUStlAJYdZDUCEo41ESFT4zThxzbjB/ggiTT5waTjVJN1yYzvKBJ5UYI+vjqPhGPuVzBXEKPu8tUQVpOSGfsNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com; spf=none smtp.mailfrom=daynix.com; dkim=pass (2048-bit key) header.d=daynix-com.20230601.gappssmtp.com header.i=@daynix-com.20230601.gappssmtp.com header.b=CSeLt16K; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=daynix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=daynix.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e02249621so2294475b3a.1
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:57:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=daynix-com.20230601.gappssmtp.com; s=20230601; t=1728730648; x=1729335448; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=RQHS9P9S9IhAfq2pHjdIrMEoP4ui2SXVS05dgp3eWDo=;
+        b=CSeLt16KDtXf38VTmxWsiaFLnugXTgimirMnF9N8sJe5GkzloTe+Cf2vHLD/+aTL3/
+         jsYZjwPHHeORE8nXdtkqDJmjwzhBQ8Vo2ESaQGb4lg/z6XYjXSqrk9a9r8xdJnPEKeHu
+         oAs2XGtt3uDAd9xGGQIvAlhmIEl51dgY4MCz6uTwGtyejn7w1eehw2/2Zc6hHT9YUK0y
+         zQL0NkzuObzhHwzwzsfCiahehxbzWJ8nHn1zWa1BhRnChTSau1gK81t2YlxnEE+/Mwx8
+         txJMD0M59MeuoRP5soEe/L+6zeOpBGCa47wkL0A/pWzorP2KXjci/My5fYT9f8dAAxLv
+         3roA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728730648; x=1729335448;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RQHS9P9S9IhAfq2pHjdIrMEoP4ui2SXVS05dgp3eWDo=;
+        b=MXbxTZOeIU3DrtbVMnbtrSc2UiGFp9Rd3op7hout3t94L26TMZaISgx0EeVM22Evg7
+         Ti/LCxfLk7Xt0F98/nRoxj6Qm1qA0JoftKxYGHIl58GwVL2x/6nt4wdnCtvjLx959EcY
+         eDFYGx+DOaIuVKSlnssWUBBqZe+vgq9RdEvq52OIcgVGD8cu3O4jE2weHzLXFBQF1HHv
+         0fjhWS9/vH+j0H3Vv4MKyaU0n49p6uiIBfxu/lfFUdQ1+w0nWCMpSsKeyzrkj47MGM9R
+         gyP7rlYztuIshLXz+LY7oZ4gqg+X0XAfGgwpruoFfiCOLKFD+GAtxBCfcg/yr8BqvDws
+         Oo1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXFqCrs7b6CXYuchYNjaa8h+RfUk85ntJaX5YixC6p5fe23ER+guooTtSq66HDaEhtX+IkEI4bcrsdNTFs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhPIrewSoSplE5CSQuy990sI6ShWWx7M7rUAUmlYIsJgz8Wul5
+	8KoZHsG71H48LoWiueTND38BkPmPv1GL4TXNPXu9GWtF3wKarv/BK5/NB2V2QbQ=
+X-Google-Smtp-Source: AGHT+IFekv1Jof5V0rzE74khJL3aujdAI4lCz36fIxAEe87tyEoPh3HrVVeYVj30VhB4bKJv7WvZZQ==
+X-Received: by 2002:a05:6a20:e617:b0:1d8:aade:dae8 with SMTP id adf61e73a8af0-1d8c96c477bmr3811262637.49.1728730648461;
+        Sat, 12 Oct 2024 03:57:28 -0700 (PDT)
+Received: from [157.82.207.107] ([157.82.207.107])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea6ed5f6d0sm676332a12.53.2024.10.12.03.57.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Oct 2024 03:57:28 -0700 (PDT)
+Message-ID: <f4501f54-875a-4c46-9e77-802bd81f4230@daynix.com>
+Date: Sat, 12 Oct 2024 19:57:22 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v5 04/10] tun: Unify vnet implementation
+To: Willem de Bruijn <willemdebruijn.kernel@gmail.com>,
+ Jonathan Corbet <corbet@lwn.net>, Jason Wang <jasowang@redhat.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Xuan Zhuo
+ <xuanzhuo@linux.alibaba.com>, Shuah Khan <shuah@kernel.org>,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, kvm@vger.kernel.org,
+ virtualization@lists.linux-foundation.org, linux-kselftest@vger.kernel.org,
+ Yuri Benditovich <yuri.benditovich@daynix.com>,
+ Andrew Melnychenko <andrew@daynix.com>,
+ Stephen Hemminger <stephen@networkplumber.org>, gur.stavi@huawei.com
+References: <20241008-rss-v5-0-f3cf68df005d@daynix.com>
+ <20241008-rss-v5-4-f3cf68df005d@daynix.com>
+ <67068b632d2d2_1cca3129484@willemb.c.googlers.com.notmuch>
+Content-Language: en-US
+From: Akihiko Odaki <akihiko.odaki@daynix.com>
+In-Reply-To: <67068b632d2d2_1cca3129484@willemb.c.googlers.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, 2024-10-11 at 19:25 +0300, Jarkko Sakkinen wrote:
-> On Fri, 2024-10-11 at 18:10 +0200, Roberto Sassu wrote:
-> > Initially, I thought that maybe it would not be good to have an
-> > event
-> > log with unmodified and altered measurement entries. Then, I tried
-> > to
-> > think if we can really prevent an active interposer from injecting
-> > arbitrary PCR extends and pretending that those events actually
-> > happened.
-> >=20
-> > If I understood James's cover letter correctly, the kernel can
-> > detect
-> > whether a TPM reset occurred, but not that a PCR extend occurred
-> > (maybe
-> > with a shadow PCR?).
->=20
-> We can detect TPM reset indirectly. I.e. null seed re-randomizes
-> per reset.
->=20
-> >=20
-> > Second point, do we really want to take the responsibility to
-> > disable
-> > the protection on behalf of users? Maybe a better choice is to let
-> > them
-> > consciously disable HMAC protection.
->=20
-> So when IMA is not used already with these fixes we get good
-> results. And for tpm2_get_random() we can make the algorithm
-> smarter. All in all we have good path ongoing for "desktop
-> use case" that I would keep thing way there are or at least
-> postpone any major decisions just a bit.
->=20
-> For server/IMA use case I'll add a boot parameter it can be
-> either on or off by default, I will state that in the commit
-> message and we'll go from there.
+On 2024/10/09 22:55, Willem de Bruijn wrote:
+> Akihiko Odaki wrote:
+>> Both tun and tap exposes the same set of virtio-net-related features.
+>> Unify their implementations to ease future changes.
+>>
+>> Signed-off-by: Akihiko Odaki <akihiko.odaki@daynix.com>
+>> ---
+>>   MAINTAINERS            |   1 +
+>>   drivers/net/tap.c      | 172 ++++++----------------------------------
+>>   drivers/net/tun.c      | 208 ++++++++-----------------------------------------
+>>   drivers/net/tun_vnet.h | 181 ++++++++++++++++++++++++++++++++++++++++++
+> 
+> Same point: should not be in a header.
+> 
+> Also: I've looked into deduplicating code between the various tun, tap
+> and packet socket code as well.
+> 
+> In general it's a good idea. The main counter arguments is that such a
+> break in continuity also breaks backporting fixes to stable. So the
+> benefit must outweight that cost.
+> 
+> In this case, the benefits in terms of LoC are rather modest. Not sure
+> it's worth it.
+> 
+> Even more importantly: are the two code paths that you deduplicate
+> exactly identical? Often in the past the two subtly diverged over
+> time, e.g., due to new features added only to one of the two.
 
-Up until legit fixes are place distributors can easily disable
-the feature. It would be worse if TCG_TPM2_HMAC did not exist.
+I find extracting the virtio_net-related code into functions is 
+beneficial. For example, tun_get_user() is a big function and extracting 
+the virtio_net-related code into tun_vnet_hdr_get() will ease 
+understanding tun_get_user() when you are not interested in virtio_net. 
+If virtio_net is your interest, you can look at this group of functions 
+to figure out how they interact with each other.
 
-So I think it is better to focus on doing right things right,
-since the feature itself is useful objectively, and make sure
-that those fixes bring the wanted results.
+Currently, the extracted code is almost identical for tun and tap so 
+they can share it. We can copy the code back (but keep functions as 
+semantic units) if they diverge in the future.
 
-BR, Jarkko
+> 
+> If so, call out any behavioral changes to either as a result of
+> deduplicating explicitly.
+
+This adds an error message for GSO failure, which was missing for tap. I 
+will note that in the next version.
 
