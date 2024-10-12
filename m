@@ -1,195 +1,109 @@
-Return-Path: <linux-kernel+bounces-362612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8F04499B6E9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:21:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 27C8F99B6EB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:23:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6ACC1F2200A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:21:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B3EE01F220C5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:23:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79BB8188905;
-	Sat, 12 Oct 2024 20:20:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C59419308A;
+	Sat, 12 Oct 2024 20:23:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="qUzbdLHn"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tv6cZJnP"
+Received: from mail-yb1-f178.google.com (mail-yb1-f178.google.com [209.85.219.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0004A57CAC;
-	Sat, 12 Oct 2024 20:20:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 138251946B;
+	Sat, 12 Oct 2024 20:23:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728764456; cv=none; b=qBHbEfdZ+HoAAHNcVTMXJKBh1b6gNlVtJXj93CGmQ7qSURH3j/suoesPrVDGa/WRrlgeKBxPjQ3PtWqDMZUk1twhPiRLrpsk/D86x8RbOOpeINg2zedmPfzVbB6/jW2Sw1yrWrDVC9NjozypHpvnpA7HvbBtjxTPUaQCm2Yns6c=
+	t=1728764629; cv=none; b=aoxmwq+ndF/m7OsksOkjGpWAe57gq/vu8Ts8a0Cx2BjSTdFEVAu7LPGpU3MAvCH/pX6o55L2oybxQ+Bnqq4B5X7XzL9FMyxXZZNcexPfbKSq1qXwRMftHM2Fm39+TLLddw80QLkhZvTyy/uxdxlJFjItmoejEHfDWoy3NmY6ebQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728764456; c=relaxed/simple;
-	bh=+uGp7x6Z33R9yq6AzM9JDurFi1vot7zaI9OYhle9pD4=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=rWCx2XrcGK2Bazx0l0twwhbDrmPMreDM8+XPeNYeAHSqaE+ESmBGBn98b99W4XL6FhvqAaZqj78XZLFg680Ji29Y5aNx1FRK68rmlUVuu3T1TcDZL0IVRT0sHzIM51EgCG9fNR4Vht+8+vUYu+lRPtqDwxYea1Lphkh9xqAlAks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=qUzbdLHn; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1728764629; c=relaxed/simple;
+	bh=2n10WYiBxiaYL+UX3as60lZrsbGDNy0wmFYExLXhKrE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nOIWfvXDJXN9BJ5m6HUK193Skr+mrjOzqTAyITEC6FlB8eEbKAIcFu4jMoUrm6HQ1/cJCi9NOnAI7hbQgHDBTz1ndQUXxwbpoizVfraVxNpoTIWf3P746u55/+byOhWrEzmLQp9xHcjBKs8KLNT9pf5Y11FMQDTL+kqmxXlUqBc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tv6cZJnP; arc=none smtp.client-ip=209.85.219.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f178.google.com with SMTP id 3f1490d57ef6-e2910d4a247so2334162276.2;
+        Sat, 12 Oct 2024 13:23:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728764627; x=1729369427; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2n10WYiBxiaYL+UX3as60lZrsbGDNy0wmFYExLXhKrE=;
+        b=Tv6cZJnPTqVfLRSEgZoQwEW5HrfE0xsXZyNXg3lc+RcK+E9a7BMri1S3uCY25D+E/P
+         LDzD4AM6P4oGwlsGiS0A3UXNHoLomqal9YwkokjbKNuu40eHe3VlxsR4+r/ZY/XYzccF
+         RA3tzo8fwO044h6rP1u2kPizTlnurTOoMLgNn7s9QxE4xl27NLPPEeFVko3xRO04pbqO
+         xJwB4vueLrakAxEw3TqREIRwrgJwpOjO4vxQRci0U1xe27spX7yWYN0FaAJ7+pOmxI8j
+         otZROZcpIY3Z4Q9sQSUiEk+1bD1KjRMYnuFxwWUeIedufdW795paqzGAYsUl+Zijp8AR
+         9bTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728764627; x=1729369427;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2n10WYiBxiaYL+UX3as60lZrsbGDNy0wmFYExLXhKrE=;
+        b=WykKCtrTJUJ7TFsYfvKjOpFT+Beu9WjbK6MkPfHUxontS1vrN3F5HoAHtqvimywdkB
+         CCgYYR5dw5Stsehv1RKYxLKhVVCzXFiDyAD+OTQePonJVAIX2nceXCo7NoYf0SHZbiXG
+         9B7b4vtbxZZbPutxBlBrma+pE3qsL4c5WcHJKQei7GmXsWf0CveblMvpxWMVv30iMh4J
+         I0OrEIUU3PLjyen4HBdVPseLp7ueBKh/0krvVWLt4U5MKwkAQK8jzSU3JMfMyAcQeAPk
+         iyX2WyJmeUkbjFqamllhhNL5gdA0a2dHqUZe1n0l2Xe0yUpS9Bde90jfQCFJzC4wDK0R
+         UXKg==
+X-Forwarded-Encrypted: i=1; AJvYcCV0p+5LFJaSCV50iXkcQgjkx38Z2zUGYCbSkigvmyzU9VrZo2oEnsqSDMIZBj6FqUTC9fzJppyf3EtI5/4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySnarwIwwMWVUEdkb6ZRY+8J79zwx3oEctYGmCp9xntwQht4xg
+	EjqUS+RJSHNkAnH1I51hcYFPFtyiHMMghMjap51GQkbnPkndZvkkNswUXnyrm1VjkfLFqM3Bgvb
+	crXUT4XZTUaGI5xN+7UZrvaG91Ag=
+X-Google-Smtp-Source: AGHT+IGw0lVq1he2N1DXarK1ZmiYhStuv7vGnXSCXhuZs58LreJdA0RwXnt7nASls3rVAB9c/5/AZo4iq8gfQv+ETDM=
+X-Received: by 2002:a05:6902:1007:b0:e29:310a:6878 with SMTP id
+ 3f1490d57ef6-e2931b15435mr2769752276.3.1728764627020; Sat, 12 Oct 2024
+ 13:23:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1728764452;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ueGfS9O2UFxaYTzR7snUif34QAcEL+PBvOxPQLQLi8c=;
-	b=qUzbdLHninY4NAX9Sm3zOx4Pg4vHpUnsr7mbkYjXEUW3AnmI5p3T7+Zuza+rjcMN/vtCG2
-	dSKsMGI/ETLaWQ+Shvc6Stbc2K2F9alEXCZSjoZ+ASap/8WPgcXxEZf9o79TdfJdY29eyQ
-	qnBbhxe38X/SxiFpVE+WYFiGctBXudXMSIFVIZ8oPvPuwIvBLkZk6SxQB6Xrc+fbpMpMmM
-	jwbe5xlxmWe8WBTuVJmkGJ4ePmt29CuXrFMwe8CHMBqbFJFSl1WiYxFHyYjd614aFiYcSi
-	pOLIOwUwYItnRg5+UfycSL6uS/HkZdiSq7mKn5cOQEgOAiYrrdRhFFrniewnXw==
-Date: Sat, 12 Oct 2024 22:20:52 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Update CPU OPP voltages in
- RK356x SoC dtsi
-In-Reply-To: <D4U3GKLN5U06.6VOVFCPFN6G7@cknow.org>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org>
- <D4U2PO4VF4ST.9SBVKYF6095M@cknow.org>
- <0a1f13d06ec3668c136997e72d0aea44@manjaro.org>
- <D4U3GKLN5U06.6VOVFCPFN6G7@cknow.org>
-Message-ID: <76b5a5548b4cb8b6d8ae92ec92b57bc1@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+References: <20241008104657.3549151-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20241008104657.3549151-1-vladimir.oltean@nxp.com>
+From: =?UTF-8?Q?Pawe=C5=82_Dembicki?= <paweldembicki@gmail.com>
+Date: Sat, 12 Oct 2024 22:23:35 +0200
+Message-ID: <CAJN1KkyFgHSDydUN5CBhDpEkG2kEJd5iaA1TK24ynjYpVvK7aA@mail.gmail.com>
+Subject: Re: [RFC PATCH net-next] net: dsa: vsc73xx: remove
+ ds->untag_bridge_pvid request
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Florian Fainelli <f.fainelli@gmail.com>, 
+	Linus Walleij <linus.walleij@linaro.org>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello Diederik,
+wt., 8 pa=C5=BA 2024 o 12:47 Vladimir Oltean <vladimir.oltean@nxp.com> napi=
+sa=C5=82(a):
+>
+> Similar to the situation described for sja1105 in commit 1f9fc48fd302
+> ("net: dsa: sja1105: fix reception from VLAN-unaware bridges") from the
+> 'net' tree, the vsc73xx driver uses tag_8021q.
+>
+> The ds->untag_bridge_pvid option strips VLANs from packets received on
+> VLAN-unaware bridge ports. But those VLANs should already be stripped by
+> tag_vsc73xx_8021q.c as part of vsc73xx_rcv(). It is even plausible that
+> the same bug that existed for sja1105 also exists for vsc73xx:
+> dsa_software_untag_vlan_unaware_bridge() tries to untag a VLAN that
+> doesn't exist, corrupting the packet.
+>
+> Only compile tested, as I don't have access to the hardware.
+>
 
-On 2024-10-12 22:02, Diederik de Haas wrote:
-> On Sat Oct 12, 2024 at 9:45 PM CEST, Dragan Simic wrote:
->> On 2024-10-12 21:27, Diederik de Haas wrote:
->> > On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
->> >> Update the lower/upper voltage limits and the exact voltages for the
->> >> Rockchip
->> >> RK356x CPU OPPs, using the most conservative values (i.e. the highest
->> >> per-OPP
->> >> voltages) found in the vendor kernel source. [1]
->> >>
->> >> Using the most conservative per-OPP voltages ensures reliable CPU
->> >> operation
->> >> regardless of the actual CPU binning, with the downside of possibly
->> >> using
->> >> a bit more power for the CPU cores than absolutely needed.
->> >>
->> >> Additionally, fill in the missing "clock-latency-ns" CPU OPP
->> >> properties, using
->> >> the values found in the vendor kernel source. [1]
->> >>
->> >> [1]
->> >> https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->> >>
->> >> Related-to: eb665b1c06bc ("arm64: dts: rockchip: Update GPU OPP
->> >> voltages in RK356x SoC dtsi")
->> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->> >> ---
->> >>  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  1 +
->> >>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 18 ++++++++++++------
->> >>  2 files changed, 13 insertions(+), 6 deletions(-)
->> >>
->> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->> >> b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->> >> index 0946310e8c12..5c54898f6ed1 100644
->> >> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->> >> @@ -273,6 +273,7 @@ &cpu0_opp_table {
->> >>  	opp-1992000000 {
->> >>  		opp-hz = /bits/ 64 <1992000000>;
->> >>  		opp-microvolt = <1150000 1150000 1150000>;
->> >> +		clock-latency-ns = <40000>;
->> >>  	};
->> >>  };
->> >>
->> >> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> >> b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> >> index 0ee0ada6f0ab..534593f2ed0b 100644
->> >> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> >> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
->> >> @@ -134,39 +134,45 @@ cpu0_opp_table: opp-table-0 {
->> >>
->> >>  		opp-408000000 {
->> >>  			opp-hz = /bits/ 64 <408000000>;
->> >> -			opp-microvolt = <900000 900000 1150000>;
->> >> +			opp-microvolt = <850000 850000 1150000>;
->> >>  			clock-latency-ns = <40000>;
->> >>  		};
->> >>
->> >>  		opp-600000000 {
->> >>  			opp-hz = /bits/ 64 <600000000>;
->> >> -			opp-microvolt = <900000 900000 1150000>;
->> >> +			opp-microvolt = <850000 850000 1150000>;
->> >> +			clock-latency-ns = <40000>;
->> >>  		};
->> >>
->> >>  		opp-816000000 {
->> >>  			opp-hz = /bits/ 64 <816000000>;
->> >> -			opp-microvolt = <900000 900000 1150000>;
->> >> +			opp-microvolt = <850000 850000 1150000>;
->> >> +			clock-latency-ns = <40000>;
->> >>  			opp-suspend;
->> >>  		};
->> >
->> > While it felt a bit much to send a patch just to remove the blank lines
->> > between the opp nodes, this sounds like an excellent opportunity to
->> > make it consistent with the opp list in other DT files?
->> 
->> Actually, my plan is to work on the SoC binning, which will involve
->> touching nearly every OPP in the Rockchip DTs, and will add much more
->> data to each OPP node.  Thus, having empty lines as the separators
->> between the OPP nodes is something we should actually want, because
-> 
-> As indicated in the "arm64: dts: rockchip: Add dtsi file for RK3399S 
-> SoC
-> variant" patch series, I do prefer the separator lines ...
+Thanks Vladimir for this patch. This fix is required for the proper
+functioning of vsc73xx.
 
-Oh, I also prefer them.  I just opted for introducing fewer changes
-in the RK3399S patch series, to keep the size of the series smaller,
-and to end up with easier diffing of the SoC variant dtsi files.
-
->> not having them will actually reduce the readability after the size
->> of the individual OPP nodes is increased.
->> 
->> That's the reason why I opted for having the separator lines in this
->> patch series, i.e. because having them everywhere should be the final
->> outcome, and because in this case they were already present where the
->> OPPs were moved or copied from.
-> 
-> ... but you actually removed those lines in the other patch set.
-
-Well, I didn't remove them in place, but en route to another, much
-larger file, :) which originally didn't have them.  As described
-above, that was my choice to keep the things a bit more consistent
-(in the "RK3399 way"), and to reduce the amount of "code churn"
-a bit.  I'll try to explain it further below.
-
-> While I'm looking forward to the extra data to the OPP nodes, I don't
-> think the amount of properties should determine whether it should have 
-> a
-> separator line or not.
-
-True, the size of the node shouldn't be the determining factor.
-The reason why I emphasized the node size was because other people
-may be a bit "allergic" to whitespace changes and such "cosmetic"
-code layout changes, so justifying such changes can only help.
-
-See, just as you're "triggered" by whitespace inconsistency, some
-other people may be "triggered" by cosmetic code changes.   It's
-quite tough to strike some kind of balance there. :)
+Tested-by: Pawel Dembicki <paweldembicki@gmail.com>
 
