@@ -1,148 +1,218 @@
-Return-Path: <linux-kernel+bounces-362100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E86EC99B112
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:30:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD01E99B113
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:30:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402391F230B2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:30:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 83EA21F227EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:30:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9136D137750;
-	Sat, 12 Oct 2024 05:30:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9C8013AA5D;
+	Sat, 12 Oct 2024 05:30:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GI39MUvR"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dIIaU9ak"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49B61B67A;
-	Sat, 12 Oct 2024 05:30:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1623A84D12;
+	Sat, 12 Oct 2024 05:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728711002; cv=none; b=ruGY8XDHcly2MsgdWqvhaxE/CHPDFUz5xf7/otLsbVYUD0v/OcpM8SXIuGWH+OwoX5rna/oCCKXMksk332Gj/t2sNMQWjkzni1AzmlCOQU7IGTQ5ukFOQXOHJXMCsocPXuZguZ+S+8xns91IZF+p5SaUlh2as0J7KiLq3Rx5quc=
+	t=1728711008; cv=none; b=PU1nE4xeTi1PzCUKeOLkwxbIK4VHmsJRDB8zKIjorv7HXXxYopG+0NUuX48DFOjYFepYni6o5iGPydAENdlwdDBlrMkwlylA0a/X6ik0mULsUaaWvzKqfv9+0JxQxK1cEORJplYDnx3ET6shnSIF0q3mNO6TJ8YkmwPIcM2g1kk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728711002; c=relaxed/simple;
-	bh=OPt7fIctfqI+7wLn2jbpl74nQtbjxpgKpI5tOjNS8d4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RbbHYiLIvt29dh9mtskvQ6vE3+sfEwyLyXZdsGLV75Y+sjmKclGrboNGEsXWz649GL/UB5pXQM87dt6Ks9wXuNNDBRSEnvS4mSoj+04FQve3hbDO9RxY4CpZrKC1rMS+p+LcgXMD1Aul9u0eyRtDwkrf7H0iHmpeUVyX9H87ly0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GI39MUvR; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99388e3009so360419666b.3;
-        Fri, 11 Oct 2024 22:30:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728710998; x=1729315798; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Tymw2sNE4Ea4ARYbRwO2NdxK761NUNbBl9SQkfgAh0g=;
-        b=GI39MUvRKRo2jxY40hUCKhxF939s0b0RRCjGQOK2FYAClr5Ua1m7BQNayK+O9vok6V
-         yHfwQFfkrdRN3N50g4+Gj7i5I17HmyX3nI7BY0RwE2LVeZQmd5z1oSeaEf950Cw+BElS
-         vIH+ZmsTwg0kbMqYVFnCIN8B7h1VkimbqkuAAkzEYB6R91ZvqhBxdclHFUCxGpz9gU39
-         GfHhL6HQXT+vZ2U3NgDGvXpZs1iBp9/CAhriOff3CcR62J1KHp8PHA6CI0CMtjPchgvF
-         /HT4iLB1GJeigHSaO0/y6GrXfY2tS5cLk3HkUqcOx5Gfpje14Z8OfSqZ0VitwzDug0X3
-         UphQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728710998; x=1729315798;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tymw2sNE4Ea4ARYbRwO2NdxK761NUNbBl9SQkfgAh0g=;
-        b=mNZ9vXTZhxIIi8eCJvxzXEzfEuHuPQCrk+D+8uL/wMKM7osGgIyiSMAeqFvqWPiaF2
-         EzI2nQQATmEnOPslfTPzAB/ibuBz879tpA8GinvqZkgLDQ/kiFxA9gq3nL3T03Raf8du
-         ue74NYPywTbjc+JQomWsmHHQk6NbOLxbh5m6ksepg8AuAfg7KMWuEFVFLJrD33il5yJo
-         RAJAAzM9P9Xw+qCWRVt4VMlBhdZsieSCa0WYDu5r45lXzOffy39p1uvJ30DOLFAYeQlS
-         GkPU9WnlETD0SxlqyUiWbij8YZYmls1YH1ui4l5IxgGH0/eXG9URs6IjBHPUSN70Qd4N
-         5nXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUvwpQ1p/BwF3MRVsg9eV1+ssJcR1TAiDc1NhPqIzOyoTWwx6sV03fh6rhx1OgON1LWq5JrHhDN5ZNwVDw=@vger.kernel.org, AJvYcCWi+4ivN8WZdbZLt7is3/tKDflfpu2FEafOBAYum+ba7o8yTfU/89b2IbzXKM/Z2rz9RkiVJT8sF3OatmPF0q8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyoQrw2PZI/sE28sLwNE4UOY4AggqNJGynAfLWXcrq3pqRx71BX
-	B2nmJyQOkW2PZzTXF8dURrsq0xiC16GoKaQWDOcnAZwOJcoWMNad
-X-Google-Smtp-Source: AGHT+IEWtqUXJoySnT6/Tk2kgdO9OsK8tBc+CVcKtle0zlVkwBwN87AIrEeDiZkBPZWMDUwjC6M9Vw==
-X-Received: by 2002:a17:907:6eac:b0:a99:529d:8199 with SMTP id a640c23a62f3a-a99b9754a81mr347328766b.62.1728710998319;
-        Fri, 11 Oct 2024 22:29:58 -0700 (PDT)
-Received: from ?IPV6:2003:df:bf0d:b400:7350:36ae:6e0c:c598? (p200300dfbf0db400735036ae6e0cc598.dip0.t-ipconnect.de. [2003:df:bf0d:b400:7350:36ae:6e0c:c598])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99ec5aeceasm36343866b.224.2024.10.11.22.29.57
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 11 Oct 2024 22:29:58 -0700 (PDT)
-Message-ID: <aef35907-b92a-4f56-a330-b4be06f11984@gmail.com>
-Date: Sat, 12 Oct 2024 07:29:57 +0200
+	s=arc-20240116; t=1728711008; c=relaxed/simple;
+	bh=lwMtfMetb3BPs5V7gdpNnfStcauoM2ooH5DPFTWdtnM=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=QjnJJPJwFUh31IVukldR62BHjD51++/AbyJ7JZcgj7PBTj3F9Qs7U8Y3h+npKTfcATdb+vk80YgV9bFwVlNTAAwgdWOHMA+Eu/UgSdvxE4t/Y4hHlD6ZFSF6NH06cS7JWqkgJaaXUhTHUCCsq+hA8ar85YjxyQiipbGMmFOIRIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dIIaU9ak; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFFCAC4CEC6;
+	Sat, 12 Oct 2024 05:30:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728711007;
+	bh=lwMtfMetb3BPs5V7gdpNnfStcauoM2ooH5DPFTWdtnM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dIIaU9ak5tAN3tmoYL0OA6WtUYZYF+svt/IUA7l42Pi6Gp8iKfZG0s+ih4RjpSy0c
+	 geNmRHA1WK12uDKq7B2i4oWtZWHbJw5sAYrAeu8dGwzQKTm3GGMSI5jIoHCac4ZKNn
+	 TiNZ5hFRC6HvSVeHWbxYp34Q+OxEQEVw0OIFDgIVAtOGQLMNQdImXhwT79uwfl2rHu
+	 gBgTXgWsQiejWA7ef2Ehg+0apJMtDCQpGbdHJjkteHY2v540x8BeDgnv1HSY8NxSCU
+	 /itLKLj3ZrmJ7K3GPOyadkkpTwhGiiqgmweI1ZxlgHjLtTKnXx1YbbT7T9q6eJeOfr
+	 BkApdf/+DmTqg==
+Date: Sat, 12 Oct 2024 14:30:03 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Leo Yan <leo.yan@arm.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim
+ <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa
+ <jolsa@kernel.org>, Ian Rogers <irogers@google.com>, Adrian Hunter
+ <adrian.hunter@intel.com>, "Liang, Kan" <kan.liang@linux.intel.com>, Dima
+ Kogan <dima@secretsauce.net>, james.clark@linaro.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1 3/3] perf probe: Generate hash event for long symbol
+Message-Id: <20241012143003.eeb8d3eb43e45494193bbfd4@kernel.org>
+In-Reply-To: <a7d63300-27a2-4121-9327-40426a66afe3@arm.com>
+References: <20241007141116.882450-1-leo.yan@arm.com>
+	<20241007141116.882450-4-leo.yan@arm.com>
+	<20241011003408.f9bacf4e5899e88a94c3d7cd@kernel.org>
+	<fab219bc-fabd-42b7-b42f-d92851b1d2f3@arm.com>
+	<20241011120733.5660c80f8f93e9659fa5a254@kernel.org>
+	<a7d63300-27a2-4121-9327-40426a66afe3@arm.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 0/3] rust: Add irq abstraction, SpinLockIrq
-To: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org
-Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
- Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
- Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>, linux-kernel@vger.kernel.org,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun Feng
- <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@samsung.com>, Alice Ryhl
- <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-References: <20240916213025.477225-1-lyude@redhat.com>
-Content-Language: de-AT-frami
-From: Dirk Behme <dirk.behme@gmail.com>
-In-Reply-To: <20240916213025.477225-1-lyude@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Hi Lyude,
+On Fri, 11 Oct 2024 09:41:39 +0100
+Leo Yan <leo.yan@arm.com> wrote:
 
-On 16.09.24 23:28, Lyude Paul wrote:
-> This adds a simple interface for disabling and enabling CPUs, along with
-> the ability to mark a function as expecting interrupts be disabled -
-> along with adding bindings for spin_lock_irqsave/spin_lock_irqrestore().
+> On 10/11/2024 4:07 AM, Masami Hiramatsu (Google) wrote:
 > 
-> Current example usecase (very much WIP driver) in rvkms:
+> [...]
 > 
-> https://gitlab.freedesktop.org/lyudess/linux/-/commits/rvkms-example-08012024
+> >>> OK, personally, I recommend you to specify event name instead of generating
+> >>> long event name in this case. But I understand sometimes this kind of feature
+> >>> is good for someone.
+> >>
+> >> Sometimes, users try to add probe for long symbol and returns error, but there
+> >>   have no clue for proceeding.
+> > 
+> > OK, no warning messsage is not good.
+> > It should warn them to recommend adding it with their own event name too.
 > 
-> specifically drivers/gpu/drm/rvkms/crtc.rs
+> Okay, will do this in next spin.
 > 
-> This series depends on
-> https://lore.kernel.org/rust-for-linux/ZuKNszXSw-LbgW1e@boqun-archlinux/
+> >> Either we automatically generate a hashed name, or a guidance in the failure
+> >> log for setting event name would be helpful. If you have concern for hashed
+> >> name, maybe we can refine the log to give info for setting event name?
+> > 
+> > Yeah, I think this long event name is not useful for user to type.
 > 
-> Lyude Paul (3):
->    rust: Introduce irq module
->    rust: sync: Introduce lock::Backend::Context
->    rust: sync: Add SpinLockIrq
+> Agreed.
+> 
+> >>> BTW, I would like to confirm. Can't we demangle the symbol name and parse it?
+> >>
+> >> I did test for C++ demangle symbols with the command:
+> >>
+> >>    perf probe -x /mnt/test_cpp_mangle -F --demangle
+> >>
+> >> The command doesn't work as I cannot see it output correctly for demangled
+> >> symbols. But I don't look into details why this does not work at my side.
+> > 
+> > Oops, that is another issue to be solved.
+> 
+> After install libiberty, then I can see the tool can show demangled symbols.
+> However, I found another issue for probing demangle symbol, please see details
+> in below patch and let me know if makes sense.
 
+Yeah, I think that will fixes a mangled symbol problem.
+But I have one comment below.
 
-To have it in this thread as well I just want to mention the discussion in
+> 
+> ---8<---
+> 
+> From 3b09a6f89c7e383c6b1d2b7e6bd80c6bfa658d5b Mon Sep 17 00:00:00 2001
+> From: Leo Yan <leo.yan@arm.com>
+> Date: Fri, 11 Oct 2024 07:58:08 +0000
+> Subject: [PATCH] perf probe: Correct demangled symbols in C++ program
+> 
+> An issue can be observed when probe C++ demangled symbol with steps:
+> 
+>   # nm test_cpp_mangle | grep print_data
+>     0000000000000c94 t _GLOBAL__sub_I__Z10print_datai
+>     0000000000000afc T _Z10print_datai
+>     0000000000000b38 T _Z10print_dataR5Point
+> 
+>   # ./perf probe -x /home/niayan01/test_cpp_mangle -F --demangle
+>     ...
+>     print_data(Point&)
+>     print_data(int)
+>     ...
+> 
+>   # ./perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
+>     probe-definition(0): test=print_data(int)
+>     symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
+>     0 arguments
+>     Open Debuginfo file: /home/niayan01/test_cpp_mangle
+>     Try to find probe point from debuginfo.
+>     Symbol print_data(int) address found : afc
+>     Matched function: print_data [2ccf]
+>     Probe point found: print_data+0
+>     Found 1 probe_trace_events.
+>     Opening /sys/kernel/tracing//uprobe_events write=1
+>     Opening /sys/kernel/tracing//README write=0
+>     Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xb38
+>     ...
+> 
+> When tried to probe symbol "print_data(int)", the log show:
+> 
+>     Symbol print_data(int) address found : afc
+> 
+> The found address is 0xafc - which is right if we connect with the
+> output result from nm. Afterwards when write event, the command uses
+> offset 0xb38 in the last log, which is a wrong address.
+> 
+> The dwarf_diename() gets a common function name, in above case, it
+> returns string "print_data". As a result, the tool parses the offset
+> based on the common name. This leads to probe at the wrong symbol
+> "print_data(Point&)".
+> 
+> To fix the issue, use the die_get_linkage_name() function to retrieve
+> the distinct linkage name - this is the mangled name for the C++ case.
+> Based on this unique name, the tool can get a correct offset for
+> probing. Based on DWARF doc, it is possible the linkage name is missed
+> in the DIE, it rolls back to use dwarf_diename().
 
-https://lore.kernel.org/rust-for-linux/87a5falmjy.fsf@kernel.org/
+Can you add the result after applying this patch here?
 
-which results in the impression that this patch series needs to update 
-`CondVar::wait` to support waiting with irq disabled.
+Thank you,
 
-Best regards
-
-Dirk
-
-
->   rust/helpers/helpers.c            |   1 +
->   rust/helpers/irq.c                |  22 +++++++
->   rust/kernel/irq.rs                |  96 +++++++++++++++++++++++++++
->   rust/kernel/lib.rs                |   1 +
->   rust/kernel/sync.rs               |   2 +-
->   rust/kernel/sync/lock.rs          |  17 ++++-
->   rust/kernel/sync/lock/mutex.rs    |   1 +
->   rust/kernel/sync/lock/spinlock.rs | 105 ++++++++++++++++++++++++++++++
->   8 files changed, 242 insertions(+), 3 deletions(-)
->   create mode 100644 rust/helpers/irq.c
->   create mode 100644 rust/kernel/irq.rs
+> 
+> Signed-off-by: Leo Yan <leo.yan@arm.com>
+> ---
+>  tools/perf/util/probe-finder.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
+> index 630e16c54ed5..28a14005fc1f 100644
+> --- a/tools/perf/util/probe-finder.c
+> +++ b/tools/perf/util/probe-finder.c
+> @@ -1583,8 +1583,21 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+> 
+>         /* Find a corresponding function (name, baseline and baseaddr) */
+>         if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
+> -               /* Get function entry information */
+> -               func = basefunc = dwarf_diename(&spdie);
+> +               /*
+> +                * Get function entry information.
+> +                *
+> +                * As described in the document DWARF Debugging Information
+> +                * Format Version 5, section 2.22 Linkage Names, "mangled names,
+> +                * are used in various ways, ... to distinguish multiple
+> +                * entities that have the same name".
+> +                *
+> +                * Firstly try to get distinct linkage name, if fail then
+> +                * rollback to get associated name in DIE.
+> +                */
+> +               func = basefunc = die_get_linkage_name(&spdie);
+> +               if (!func)
+> +                        func = basefunc = dwarf_diename(&spdie);
+> +
+>                 if (!func ||
+>                     die_entrypc(&spdie, &baseaddr) != 0 ||
+>                     dwarf_decl_line(&spdie, &baseline) != 0) {
+> --
+> 2.25.1
 > 
 > 
-> base-commit: a2f11547052001bd448ccec81dd1e68409078fbb
-> prerequisite-patch-id: 926565461e47df321ce1bed92894cc1f265896ef
 
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
