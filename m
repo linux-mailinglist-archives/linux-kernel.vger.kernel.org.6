@@ -1,49 +1,56 @@
-Return-Path: <linux-kernel+bounces-362144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E961999B18A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:26:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B89599B18C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:29:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A8FE92845F3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:26:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F1D1EB22264
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:29:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CDC413C9C0;
-	Sat, 12 Oct 2024 07:26:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B0B113CF8E;
+	Sat, 12 Oct 2024 07:29:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="LiyUwOTd"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nUiE0emP"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76C2913BAEE
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 07:26:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB932581;
+	Sat, 12 Oct 2024 07:29:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728717996; cv=none; b=k5xvdXgBnCI7yhr8FRuMEWT+ZhN6oeoG1pXkvFCniuCKJj99RXHs1baydIUvOmPRTnlxTLgvvyytt1lPtIvsy5rIAZnMXWGwn5bmGegcPVjCCEJKqu/3r8G9eh8hpxQUiIvinMMUhFaw/zF0jSJeVGbVSexcyfQfpV2LQCOW4kM=
+	t=1728718175; cv=none; b=MXWip7zr3zchMYBj4jsYeo3R6Utyj5g2SvfKe76VzZOHbrQfp449iwyo3VWgfogQAjsfWBG1+4y7Ug25myaUpYBBOR8/X3jYNibwdFtQNftZvrHcnvrFAlvSNW1+VgZg1kl3oqZK5sgRYchdaOsDuNTlSRomZ9aVcHUmvyxPsrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728717996; c=relaxed/simple;
-	bh=gI1ih95moOKJ9npRm7WLk/FmhUmmslPpZnuYyfrwxhw=;
+	s=arc-20240116; t=1728718175; c=relaxed/simple;
+	bh=hzbLQKjNNbMl8Bsoa7a6J/6lgjpI06e59QNz+XS41Yk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tmogF89DdBdR/dwdPSyY9GEk3P4e6qHcnWHisMb72VIawyLbtysittnt0pr3PpQVVqby02FMxbXXdof30ueb5j0ZSat7/EUHSbhS5r/RJc6Q5Psc4yBiP55evRfA7YwRILbMlSgh5OkCkswphsN4U5gcF7nG0EIGooBQA+QPnyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=LiyUwOTd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D76EC4CECC;
-	Sat, 12 Oct 2024 07:26:35 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=gv/MUrJng6agiHNx7bEdZ5JBC4Ft9sNecq/a/+CqhXStZLZOcs/2QvYDUjmuj9sEczwtX98ipqcv1PJUA/j/muoXbqTfgY0MZSbpCBPTkuxh6TUSqzJZSfL1MUnuWQVQdQCzBHgFTIJcRJf3kklSluaxggZw+NWOCA6HQerLxWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nUiE0emP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93C09C4CEC6;
+	Sat, 12 Oct 2024 07:29:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728717996;
-	bh=gI1ih95moOKJ9npRm7WLk/FmhUmmslPpZnuYyfrwxhw=;
+	s=korg; t=1728718175;
+	bh=hzbLQKjNNbMl8Bsoa7a6J/6lgjpI06e59QNz+XS41Yk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LiyUwOTd4XdstwNo+Xt58sWTyXLfaqfktP00ITRBQ5gFozsgbNW2/iS5Vb7H42ed0
-	 KEAWhopgbqpSqiuBLSEhErJYAUIZAnvupGU+qbMK0OHehVUWFThGBTwSV0onHYZe0c
-	 J0ifwrBQl1MZNdVaWAbmZ4wqsDHBJkTTv2dH31mo=
-Date: Sat, 12 Oct 2024 09:26:33 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Gerhard Engleder <gerhard@engleder-embedded.com>
-Cc: linux-kernel@vger.kernel.org, arnd@arndb.de
-Subject: Re: [PATCH v2 0/8] misc: keba: Add support for additional devices
-Message-ID: <2024101204-proximity-hardiness-ff0a@gregkh>
-References: <20241011191257.19702-1-gerhard@engleder-embedded.com>
+	b=nUiE0emPTqdb2/ZpbRmSX5jX0nv01ty7uZ3HSVXNlCz8Vd2wuLwNcWsasTFPCQKqG
+	 Ht3dHj3aoQB4W4U6i4tUa5j2sFjmz/BpEhzhOtw4Pzc27cGtBP4Kuc1eNGbRIjmjeK
+	 r1uFT4SgDUmQ6vrfSbTeMoPGgReoI4Xv7+V4qi7s=
+Date: Sat, 12 Oct 2024 09:29:32 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Josef Zoller <josef@walterzollerpiano.com>
+Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>,
+	linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org
+Subject: Re: [PATCH 0/3] Character device abstractions for Rust
+Message-ID: <2024101256-amplifier-joylessly-6ca9@gregkh>
+References: <20241011-rust-char-dev-v1-0-350225ae228b@walterzollerpiano.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,31 +59,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011191257.19702-1-gerhard@engleder-embedded.com>
+In-Reply-To: <20241011-rust-char-dev-v1-0-350225ae228b@walterzollerpiano.com>
 
-On Fri, Oct 11, 2024 at 09:12:49PM +0200, Gerhard Engleder wrote:
-> Add SPI controller auxiliary device. The SPI controller driver is not
-> part of this series, because it should target spi-next and not
-> char-misc. Additionally a driver for the LAN9252 chip, which is
-> connected to the SPI controller, is included. This driver only
-> configures the LAN9252 chip in the right mode and provides no user space
-> interface.
-> 
-> The main EEPROM of the CP500 devices is divided into two sections by
-> design/factory. Therefore, provide the two section as separate NVMEM
-> devices.
-> 
-> Add fan, battery and UART auxiliary devices. Similar to the SPI
-> controller, this is some prepartion work, because the drivers will
-> target other branches than char-misc.
-> 
-> The series starts with two small cleanups.
-> 
-> v2:
-> - separate commits for clean up (Greg KH)
+On Fri, Oct 11, 2024 at 08:55:41PM +0200, Josef Zoller wrote:
+> Writing character devices is a common way to start writing kernel code,
+> especially because of the book "Linux Device Drivers", which is still
+> one of the best resources to learn about Linux kernel programming. To
+> allow an easier entry into Rust kernel programming specifically, this
+> series adds abstractions for these kinds of devices to the Rust API.
 
-Ah, I wasn't saying "this must be done" at all, it was just a minor
-comment.  But thanks for doing it!
+I understand this, but if at all possible, I would prefer that people
+stick to using the misc char device interface instead.  It's much
+simpler and integrates better into the overall system (handles sysfs for
+you automatically, etc.)
+
+I've already merged the misc device rust bindings into my tree, so why
+not just stick with them?
+
+> I also included a sample that demonstrates how to use these abstractions
+> to create the simplest example from LDD3, the "scull" device.
+
+This is great, but why not just provide the scull example using misc
+device?
+
+> I'm also aware of the patch series about misc devices that was sent
+> recently. I think these are both valuable additions to the Rust API, and
+> could even be combined in some way, in which case the file operations
+> abstractions in both series should probably be separated and
+> generalized. But I'm still sending this series as it is, because it is
+> my first ever patch and I could use some feedback on my approach.
+
+That's great, but I'd prefer to stick with the misc code for now until
+someone really really really proves that they want a "raw" char
+interface.
+
+thanks,
 
 greg k-h
 
