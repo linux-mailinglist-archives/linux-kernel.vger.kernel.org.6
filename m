@@ -1,230 +1,106 @@
-Return-Path: <linux-kernel+bounces-362579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D66B99B69A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C3C99B6A4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2CC751F220B7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4C04B1C20E81
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDD7C83CDB;
-	Sat, 12 Oct 2024 18:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778CE14A4DC;
+	Sat, 12 Oct 2024 18:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2NPp4Px0"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b="ccdlqy93"
+Received: from mx06lb.world4you.com (mx06lb.world4you.com [81.19.149.116])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BA6282FE
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 18:30:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2306A43173;
+	Sat, 12 Oct 2024 18:49:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.19.149.116
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728757850; cv=none; b=D842x6P04cKuEth6BRZA6hfZSqsVjdsCcH9w7DaA4NZO2fLQcdsqWpzjH+84wFpsinkh4H0jHLiKp7kud6VGMehsBSIFbsVXiKbxqM5VolBylmMWxDKGDDM0CzjXQp2vt4z0ZDdrx/DBtZrVA7Dy2v0CizpZR0YNM8gAwVVdzig=
+	t=1728758959; cv=none; b=m3B8QI9F5whrHYN45WLPazKWPEniABdWnlMJi2PaeqOAWj6irG3M2QE/OBUuQNs+p3IahmU0u2aLMKykOnBWAcr5eTOnewM9KAN3k83q7med/82XGXmw+R6i5pXZjrhi28cduh8PSJT+CivsWSTXRdutKxU0hAIp48VfhKtrf+o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728757850; c=relaxed/simple;
-	bh=q9993wst7hUX2uvPC2obwbdFvU7C2cYsKZb7zVOxNRQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=odCzoF4fTTxHtyDURjKgQhfvf3iR7WetRwgIDPOG7y0lzNx8b/031phiSXJ7D9V/mYF2J9H2Q6iay+CfJn9Ou/KJJubA4D8FLZK9QXDU+v//dQrKLCq/iny2JSe2JN2HGMUB91pNQfvUQ9L5sh1SofozKPesbqUM6MwEpBpB4WI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2NPp4Px0; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20ca03687fdso123385ad.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 11:30:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728757848; x=1729362648; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=J4TtbF54eQ1KffXHH0El+WnO6LU402j+y/dLj0ft5oc=;
-        b=2NPp4Px0v3B3v7rJtvZTX4Qs4Ckkb+EC2JEWW8dZIQavdRP5lr39T0/p6INhdpEaF1
-         4hP2vd2N/GXKvIGwYqm+E7kL3PyJBAMqQdb/NzJ2D0xshk5fwFpa6DBzVparxQKC8TsG
-         dtgiXkjbCVxNfatUr8uKCEMhlWSw4ACIT6pnV4wIxEcK+rjYXXWWeMKWvN7OdnkoyQDP
-         mN58NVdrKUmHwtFc9/kIdJtzYeSAkF5dGc29L668MgN3kaItU2yAo9GSp9xbabwlar7E
-         LDD2q92NG+4k8F2XwuaIPGgCfuIlD4bCNuJYHn+HsQ+DvtVGcShUfmAV6p2HD5O6LM9l
-         LoKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728757848; x=1729362648;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=J4TtbF54eQ1KffXHH0El+WnO6LU402j+y/dLj0ft5oc=;
-        b=hasCv8e4bi7OR1AhpTZCZYElGDnxOxJuP0CtOU7hOrwEeA1CN4bGRAlbdXoKjuLZdj
-         tSrhlbBezvjX6GnsyvBnYyOKzzFS/xAU+NA6+rXK8nnRVETeaF+Idr0vIgmlG0vPjYEk
-         MnIqAymIafWLmCLEwJk/JeLvpN1+R9H2vtaN3BLynFMICq3864B+g4slaWkVNeauL70o
-         /OVpQm7wVVYXKlOkmyjIbyu62ikSINPijvwyUeEtHN3sKf/5ZQ8xwa5fs2GA6WJrgqdo
-         V607pe4QHtlFNT+I9aLAzYAe9XF/VtU9lxi/MllHxVeKAvRTMqA5kQZHCY02iVRWEdvS
-         ljvQ==
-X-Gm-Message-State: AOJu0YyWU8VP9C+UGD3CzI2t69zee5S5qof0R9Jpqhf6eGvNHPj+7+Ou
-	AjFyHwWNUZYZIXnFRbaCDG5Qe3tZCAhKnMGZ94JojqznYGz9/FnbfEl5dctLXsNJiMH2RdA2NE/
-	Ud7YqvOizwQC5FiVxM7ls99vujb2SCvwdFNm4
-X-Google-Smtp-Source: AGHT+IE2vp0liuTEphEI33DUfS1AUAvd0C1WtDAPNMQ3JfRvM6Qn27MJxTO1lD+HvQOVHygPav4JQtWy16VN1t7wbzE=
-X-Received: by 2002:a17:902:c40b:b0:20c:6c50:dc80 with SMTP id
- d9443c01a7336-20cc02a3e48mr1115075ad.9.1728757847509; Sat, 12 Oct 2024
- 11:30:47 -0700 (PDT)
+	s=arc-20240116; t=1728758959; c=relaxed/simple;
+	bh=WTOAJxAmlJGtHrKLllDBenmOvdMX8ckNkVnWU2XR9jY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BlsV9auQAB2QvksSLoJ87p7x/cPaGZBDixCMC6jDCcHIPX1mXQFXttsv7VArmlnX3OMVZnl+78JkjpQIE5fiEmsdw2qIdUJqMTog45hFAQ8/MVm1wrScS2gCN20sl8bzgdKE/eiYGxanmpIeZiB8gc2koraMFhuItHRetEbcwLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com; spf=pass smtp.mailfrom=engleder-embedded.com; dkim=pass (1024-bit key) header.d=engleder-embedded.com header.i=@engleder-embedded.com header.b=ccdlqy93; arc=none smtp.client-ip=81.19.149.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=engleder-embedded.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=engleder-embedded.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=engleder-embedded.com; s=dkim11; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=whpQlU3hR2/YXN1DhRTRvCI/ym7MCRC4OzO6uxuM/GY=; b=ccdlqy93TurNdfokQXprfkjeRQ
+	mc8SGfgQPyrQlQ6y/VhI/h77wySjL0a/4yYvPYQfG33Nzi956lZT+DpN1QaA2tEBkKtDrxfVDs9vz
+	EAJoW82c82G5McGn+0hLK6QCkVxqGGk7e9xHIlef4FcMvK0L40roOwyfaTxvM9bFtWEU=;
+Received: from [88.117.56.173] (helo=[10.0.0.160])
+	by mx06lb.world4you.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.97.1)
+	(envelope-from <gerhard@engleder-embedded.com>)
+	id 1szgsn-000000002LP-2rRm;
+	Sat, 12 Oct 2024 20:30:29 +0200
+Message-ID: <75072c5d-9145-492c-b99a-4f47ae88b069@engleder-embedded.com>
+Date: Sat, 12 Oct 2024 20:30:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <40555604c3f4be43bf72e72d5409eaece4be9320.camel@coelho.fi>
- <CAGcaFA1zqcqRNNydCZwn1pXUrjgSwvpLcVrf-ecFub2CABLiUw@mail.gmail.com>
- <CAGcaFA3tZTcppfPMzrpA0W5jS1byYaDwbADMfvKOQfjw8YvMqQ@mail.gmail.com> <331d3a2e-d66a-4118-a6b8-cb0cfbb9b3cf@redhat.com>
-In-Reply-To: <331d3a2e-d66a-4118-a6b8-cb0cfbb9b3cf@redhat.com>
-From: =?UTF-8?Q?Marek_Ma=C5=9Blanka?= <mmaslanka@google.com>
-Date: Sat, 12 Oct 2024 20:30:20 +0200
-Message-ID: <CAGcaFA0B=8K7PTOggWkBS7A3MyWpngT6N3GLUkXGy3L_WPvjtA@mail.gmail.com>
-Subject: Re: Regression in PMC code in 6.12-rc1
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org, 
-	Luca Coelho <luca@coelho.fi>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 net] net: ethernet: aeroflex: fix potential memory leak
+ in greth_start_xmit_gbit()
+To: Wang Hai <wanghai38@huawei.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kristoffer@gaisler.com, zhangxiaoxu5@huawei.com, pabeni@redhat.com,
+ kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+ andreas@gaisler.com
+References: <20241012110434.49265-1-wanghai38@huawei.com>
+Content-Language: en-US
+From: Gerhard Engleder <gerhard@engleder-embedded.com>
+In-Reply-To: <20241012110434.49265-1-wanghai38@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AV-Do-Run: Yes
 
-Hi Hans,
+On 12.10.24 13:04, Wang Hai wrote:
+> The greth_start_xmit_gbit() returns NETDEV_TX_OK without freeing skb
+> in case of skb->len being too long, add dev_kfree_skb() to fix it.
+> 
+> Fixes: d4c41139df6e ("net: Add Aeroflex Gaisler 10/100/1G Ethernet MAC driver")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+> ---
+> v1->v2: Using dev_kfree_skb() in error handling.
+>   drivers/net/ethernet/aeroflex/greth.c | 3 ++-
+>   1 file changed, 2 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/aeroflex/greth.c b/drivers/net/ethernet/aeroflex/greth.c
+> index 27af7746d645..adf6f67c5fcb 100644
+> --- a/drivers/net/ethernet/aeroflex/greth.c
+> +++ b/drivers/net/ethernet/aeroflex/greth.c
+> @@ -484,7 +484,7 @@ greth_start_xmit_gbit(struct sk_buff *skb, struct net_device *dev)
+>   
+>   	if (unlikely(skb->len > MAX_FRAME_SIZE)) {
+>   		dev->stats.tx_errors++;
+> -		goto out;
+> +		goto len_error;
+>   	}
+>   
+>   	/* Save skb pointer. */
+> @@ -575,6 +575,7 @@ greth_start_xmit_gbit(struct sk_buff *skb, struct net_device *dev)
+>   map_error:
+>   	if (net_ratelimit())
+>   		dev_warn(greth->dev, "Could not create TX DMA mapping\n");
+> +len_error:
+>   	dev_kfree_skb(skb);
+>   out:
+>   	return err;
 
-On Thu, Oct 10, 2024 at 4:12=E2=80=AFPM Hans de Goede <hdegoede@redhat.com>=
- wrote:
->
-> Hi Marek,
->
-> On 10-Oct-24 4:09 PM, Marek Ma=C5=9Blanka wrote:
-> > Hi Franz,
->
-> Franz? I guess you are trying to address me (Hans) ?
-
-Yes! Forgive me for this mistake!
-
->
->
-> > I need to redesign this patch. The pmcdev->lock in the
-> > pmc_core_acpi_pm_timer_suspend_resume might already be held by the
-> > pmc_core_mphy_pg_show or pmc_core_pll_show if the userspace gets
-> > frozen when these functions are being executed, this will cause a hang.
-> >
-> > Can you instruct me how to revert this patch? Or you can just do it?
->
-> Please submit a revert based on top of:
->
-> https://git.kernel.org/pub/scm/linux/kernel/git/pdx86/platform-drivers-x8=
-6.git/log/?h=3Dfixes
->
-> with a commit message explaining why this needs to be reverted for now
-> and then I will merge the revert into the fixes branch and include
-> it in the next fixes pull-request to Torvalds.
-
-Done.
-
->
-> Regards,
->
-> Hans
->
->
->
->
-> > On Mon, Oct 7, 2024 at 12:57=E2=80=AFPM Marek Ma=C5=9Blanka <mmaslanka@=
-google.com <mailto:mmaslanka@google.com>> wrote:
-> >
-> >     Hi Luca,
-> >
-> >     Thanks for the report.
-> >
-> >     Seems that the tick_freeze function in the kernel/time/tick-common.=
-c
-> >     is helding the spinlock so the pmc_core_acpi_pm_timer_suspend_resum=
-e
-> >     shouldn't try to take the mutex lock. I'll look for the solution.
-> >
-> >     Marek
-> >
-> >
-> >     On Mon, Oct 7, 2024 at 11:17=E2=80=AFAM Luca Coelho <luca@coelho.fi=
- <mailto:luca@coelho.fi>> wrote:
-> >     >
-> >     > Hi Marek et al,
-> >     >
-> >     > We have been facing some errors when running some of our Display =
-CI
-> >     > tests that seem to have been introduced by the following commit:
-> >     >
-> >     > e86c8186d03a ("platform/x86:intel/pmc: Enable the ACPI PM Timer t=
-o be turned off when suspended")
-> >     >
-> >     > The errors we are getting look like this:
-> >     >
-> >     > <4> [222.857770] =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> >     > <4> [222.857771] [ BUG: Invalid wait context ]
-> >     > <4> [222.857772] 6.12.0-rc1-xe #1 Not tainted
-> >     > <4> [222.857773] -----------------------------
-> >     > <4> [222.857774] swapper/4/0 is trying to lock:
-> >     > <4> [222.857775] ffff8881174c88c8 (&pmcdev->lock){+.+.}-{3:3}, at=
-: pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0 [intel_pmc_core]
-> >     > <4> [222.857782] other info that might help us debug this:
-> >     > <4> [222.857783] context-{4:4}
-> >     > <4> [222.857784] 1 lock held by swapper/4/0:
-> >     > <4> [222.857785]  #0: ffffffff83452258 (tick_freeze_lock){....}-{=
-2:2}, at: tick_freeze+0x16/0x110
-> >     > <4> [222.857791] stack backtrace:
-> >     > <4> [222.857793] CPU: 4 UID: 0 PID: 0 Comm: swapper/4 Not tainted=
- 6.12.0-rc1-xe #1
-> >     > <4> [222.857794] Hardware name: Intel Corporation Alder Lake Clie=
-nt Platform/AlderLake-P DDR5 RVP, BIOS RPLPFWI1.R00.4035.A00.2301200723 01/=
-20/2023
-> >     > <4> [222.857796] Call Trace:
-> >     > <4> [222.857797]  <TASK>
-> >     > <4> [222.857798]  dump_stack_lvl+0x80/0xc0
-> >     > <4> [222.857802]  dump_stack+0x10/0x20
-> >     > <4> [222.857805]  __lock_acquire+0x943/0x2800
-> >     > <4> [222.857808]  ? stack_trace_save+0x4b/0x70
-> >     > <4> [222.857812]  lock_acquire+0xc5/0x2f0
-> >     > <4> [222.857814]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0x=
-e0 [intel_pmc_core]
-> >     > <4> [222.857817]  __mutex_lock+0xbe/0xc70
-> >     > <4> [222.857819]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0x=
-e0 [intel_pmc_core]
-> >     > <4> [222.857822]  ? pmc_core_acpi_pm_timer_suspend_resume+0x50/0x=
-e0 [intel_pmc_core]
-> >     > <4> [222.857825]  mutex_lock_nested+0x1b/0x30
-> >     > <4> [222.857827]  ? mutex_lock_nested+0x1b/0x30
-> >     > <4> [222.857828]  pmc_core_acpi_pm_timer_suspend_resume+0x50/0xe0=
- [intel_pmc_core]
-> >     > <4> [222.857831]  acpi_pm_suspend+0x23/0x40
-> >     > <4> [222.857834]  clocksource_suspend+0x2b/0x50
-> >     > <4> [222.857836]  timekeeping_suspend+0x22a/0x360
-> >     > <4> [222.857839]  tick_freeze+0x89/0x110
-> >     > <4> [222.857840]  enter_s2idle_proper+0x34/0x1d0
-> >     > <4> [222.857843]  cpuidle_enter_s2idle+0xaa/0x120
-> >     > <4> [222.857845]  ? tsc_verify_tsc_adjust+0x42/0x100
-> >     > <4> [222.857849]  do_idle+0x221/0x250
-> >     > <4> [222.857852]  cpu_startup_entry+0x29/0x30
-> >     > <4> [222.857854]  start_secondary+0x12e/0x160
-> >     > <4> [222.857856]  common_startup_64+0x13e/0x141
-> >     > <4> [222.857859]  </TASK>
-> >     >
-> >     > And the full logs can be found, for example, here:
-> >     >
-> >     > https://intel-gfx-ci.01.org/tree/intel-xe/xe-2016-92d12099cc768f3=
-6cf676ee1b014442a5c5ba965/shard-adlp-3/igt@kms_flip@flip-vs-suspend-interru=
-ptible.html <https://intel-gfx-ci.01.org/tree/intel-xe/xe-2016-92d12099cc76=
-8f36cf676ee1b014442a5c5ba965/shard-adlp-3/igt@kms_flip@flip-vs-suspend-inte=
-rruptible.html>
-> >     >
-> >     >
-> >     > Reverting this commit seems to prevent the problem.  Do you have =
-any
-> >     > idea what could be causing this and, more importantly, how to fix=
- it?
-> >     > :)
-> >     >
-> >     > Thanks!
-> >     >
-> >     > --
-> >     > Cheers,
-> >     > Luca.
-> >
->
+Reviewed-by: Gerhard Engleder <gerhard@engleder-embedded.com>
 
