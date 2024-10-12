@@ -1,163 +1,98 @@
-Return-Path: <linux-kernel+bounces-362596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECC8999B6BC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 21:27:42 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F23C999B6C0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 21:35:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18891F21A0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:27:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7FEBEB220ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548CB153BE4;
-	Sat, 12 Oct 2024 19:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84A8B189B8E;
+	Sat, 12 Oct 2024 19:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="kOU0k4rv"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b="qHLvsdL/"
+Received: from smtp1.ms.mff.cuni.cz (smtp-in1.ms.mff.cuni.cz [195.113.20.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2092B2F34;
-	Sat, 12 Oct 2024 19:27:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14C1F81AD7;
+	Sat, 12 Oct 2024 19:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.113.20.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728761254; cv=none; b=OPBVclO6hIy/9YhHdhZqCJJEBUkbiZIfRK3yeQNVpMEjwKSYsssCFi5V11m1SA5elGHR9Fc9cY8z7BeUcX9sUPtNcQAxMUHHOstdzL2y1mhEbQQUa3ojQ9U5blXLZ2jTVCLGwdTpNuJ5xtUm1j51ThrUqVcwhk1LFnf71IaUJ6c=
+	t=1728761684; cv=none; b=Ej2TnqmD5m9+tcvI7x0G/6erBKHeOnVUtPtYBx1MYD3djSU05YtQlZkKSPwLkqSm1yuoaS+tRJJdS4fqVCcpAdNN8c1/3yB4tTCiAWSuwA2v4pWZnBEOhKugd5rhmQlDiOwhZY7eFo3/KftFzV17GerqR5Lw3OLM1AyUY0JnBzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728761254; c=relaxed/simple;
-	bh=WEo4U+tZc+K067P6DOJ7oXo95DPkhPbifxm86CULLUU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=rCdjQgfv2362DA3PHYQd4A1yyCkPUWLCaev4HAm6OKXiC7w/+f0fFuQJGmxWJTAx5f94OzZxGGNbPh2+c0zXSRmyuDE55/k4cq+Z0m6n9R438sZ/R2Ik1+JtLGElOyaXZrD2iwqw0rkpoiSUC2WWX/8K7Jrbf9chnjkQqfi70a4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=kOU0k4rv; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1728761684; c=relaxed/simple;
+	bh=Xzh8LSdDSmKjoRzY+Q8KoyXfit0wRItAgB7kTdNOMHs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YtqeCcsNhjSDeuEpAsmd2BfNPRevhYn4rI0EPvav+V+cVEkej1UJPZYdBac5XuJJ0qdn3pp/U5wbpcU25eM31T/ENcxCgORSoY6zijd0RHkbw8Fs1OWYnQrkeZO6IsW/wLjhGLtVWSHGNIpmehLOSpr6dDxNjikcPAaXDwzxQ3A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz; spf=pass smtp.mailfrom=matfyz.cz; dkim=pass (2048-bit key) header.d=mff.cuni.cz header.i=@mff.cuni.cz header.b=qHLvsdL/; arc=none smtp.client-ip=195.113.20.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=matfyz.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=matfyz.cz
+X-SubmittedBy: id balejk@matfyz.cz subject /postalCode=110+2000/O=Univerzita+20Karlova/street=Ovocn+5CxC3+5CxBD+20trh+20560/5/ST=Praha,+20Hlavn+5CxC3+5CxAD+20m+5CxC4+5Cx9Bsto/C=CZ/CN=Karel+20Balej/emailAddress=balejk@matfyz.cz
+	serial F5FD910E8FE2121B897F7E55B84E351D
+	issued by /C=NL/O=GEANT+20Vereniging/CN=GEANT+20Personal+20CA+204
+	auth type TLS.CUNI
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mff.cuni.cz;
+	s=submission; t=1728761647; x=1730061647;
+	bh=xMK/ULefJOKcVOGvdm5HBqtWSL+Yu2XMd5io6AH9Omo=; h=From;
+	b=qHLvsdL/v1FYqgmu86vVbwFYku/oHlHUX0OHNgK5MJVgzQQ4DJYyamPrjcQnd4Q+6
+	 n7TuJQcOgyU2981glYz3GHjq0rxxF3FO+/og3kQUB6mf34tNZlkxhqE/RisoOyGU4q
+	 YsWZwt8DmuLc7jhLXxuCvj40fde3VNjwtZov898DtFlSlnAwTALEm103Pn0dDCML3C
+	 f8oTbAmMzIowgiPqS0BXrtk11d3K94hCSJJX2bAX8FY9k2vTFitcyDoLCN5C9ffHSD
+	 Q4jJMmSpgZqfcaSdR9FbM/H2HpZvCmoW/P6a4O+cRrn8JvwljMnbTfQr6LDQn1Ow0z
+	 ZY22JYbewszXA==
+Received: from localhost (internet5.mraknet.com [185.200.108.250])
+	(authenticated)
+	by smtp1.ms.mff.cuni.cz (8.16.1/8.16.1) with ESMTPS id 49CJY5ZO082920
+	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
+	Sat, 12 Oct 2024 21:34:06 +0200 (CEST)
+	(envelope-from balejk@matfyz.cz)
+From: Karel Balej <balejk@matfyz.cz>
+To: Lee Jones <lee@kernel.org>,
+        Alexandre Belloni <alexandre.belloni@bootlin.com>,
+        linux-kernel@vger.kernel.org, linux-rtc@vger.kernel.org
+Cc: duje.mihanovic@skole.hr, balejk@matfyz.cz, phone-devel@vger.kernel.org,
+        ~postmarketos/upstreaming@lists.sr.ht
+Subject: [RFC PATCH v2 1/2] mfd: 88pm886: add the RTC cell
+Date: Sat, 12 Oct 2024 21:31:38 +0200
+Message-ID: <20241012193345.18594-1-balejk@matfyz.cz>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1728761249;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bujrQMHu5eqJ7ou03hpDUMEsTeDy5i9ppr3HwnSleTY=;
-	b=kOU0k4rvuMUbQ+pEacsgUS923FabL+2SsWQMWGwGZxRtkIZeY8F1UIKmL0LZbvMnZycliJ
-	wv6NN/6+RV5tmsyVCeQWColxmscVDeoGnwABP28bE6AozIbQ6KqfLB5zsdIE/JeQB89rGt
-	Cr7hYTMRPRmm6N2c8wTfUVRl2CQpD3FSatEhgg3vDtSppOyRYljG2aQMDDp9NoFLYiHRhM
-	O1USVJ0+sEsu1+0Ui8RAZjVAJd9UvywYAKra96u/TRtNiieCrCyq5MWMvJ0gPwKM49fbCD
-	Na2OdvakhwVYNwPX3Yf+z5QUS/ySeit0luLeQK2Wv9zRFVjGtV9/QK7+QAoahg==
-Content-Type: multipart/signed;
- boundary=612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Sat, 12 Oct 2024 21:27:16 +0200
-Message-Id: <D4U2PO4VF4ST.9SBVKYF6095M@cknow.org>
-Cc: <heiko@sntech.de>, <linux-arm-kernel@lists.infradead.org>,
- <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
- <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Update CPU OPP voltages in
- RK356x SoC dtsi
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Dragan Simic" <dsimic@manjaro.org>,
- <linux-rockchip@lists.infradead.org>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org>
-In-Reply-To: <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
---612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
+Add a MFD cell for the chip's real-time clock.
 
-Hi Dragan,
+Signed-off-by: Karel Balej <balejk@matfyz.cz>
+---
 
-On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
-> Update the lower/upper voltage limits and the exact voltages for the Rock=
-chip
-> RK356x CPU OPPs, using the most conservative values (i.e. the highest per=
--OPP
-> voltages) found in the vendor kernel source. [1]
->
-> Using the most conservative per-OPP voltages ensures reliable CPU operati=
-on
-> regardless of the actual CPU binning, with the downside of possibly using
-> a bit more power for the CPU cores than absolutely needed.
->
-> Additionally, fill in the missing "clock-latency-ns" CPU OPP properties, =
-using
-> the values found in the vendor kernel source. [1]
->
-> [1] https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed=
-561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->
-> Related-to: eb665b1c06bc ("arm64: dts: rockchip: Update GPU OPP voltages =
-in RK356x SoC dtsi")
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  1 +
->  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 18 ++++++++++++------
->  2 files changed, 13 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/d=
-ts/rockchip/rk3568.dtsi
-> index 0946310e8c12..5c54898f6ed1 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> @@ -273,6 +273,7 @@ &cpu0_opp_table {
->  	opp-1992000000 {
->  		opp-hz =3D /bits/ 64 <1992000000>;
->  		opp-microvolt =3D <1150000 1150000 1150000>;
-> +		clock-latency-ns =3D <40000>;
->  	};
->  };
-> =20
-> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/d=
-ts/rockchip/rk356x.dtsi
-> index 0ee0ada6f0ab..534593f2ed0b 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> @@ -134,39 +134,45 @@ cpu0_opp_table: opp-table-0 {
-> =20
->  		opp-408000000 {
->  			opp-hz =3D /bits/ 64 <408000000>;
-> -			opp-microvolt =3D <900000 900000 1150000>;
-> +			opp-microvolt =3D <850000 850000 1150000>;
->  			clock-latency-ns =3D <40000>;
->  		};
-> =20
->  		opp-600000000 {
->  			opp-hz =3D /bits/ 64 <600000000>;
-> -			opp-microvolt =3D <900000 900000 1150000>;
-> +			opp-microvolt =3D <850000 850000 1150000>;
-> +			clock-latency-ns =3D <40000>;
->  		};
-> =20
->  		opp-816000000 {
->  			opp-hz =3D /bits/ 64 <816000000>;
-> -			opp-microvolt =3D <900000 900000 1150000>;
-> +			opp-microvolt =3D <850000 850000 1150000>;
-> +			clock-latency-ns =3D <40000>;
->  			opp-suspend;
->  		};
+Notes:
+    RFC v2:
+    - Break out the register definitions and reword the commit message
+      accordingly.
+    - RFC v1: https://lore.kernel.org/r/20240920161518.32346-1-balejk@matfyz.cz/
 
-While it felt a bit much to send a patch just to remove the blank lines
-between the opp nodes, this sounds like an excellent opportunity to make
-it consistent with the opp list in other DT files?
+ drivers/mfd/88pm886.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-Cheers,
-  Diederik
+diff --git a/drivers/mfd/88pm886.c b/drivers/mfd/88pm886.c
+index dbe9efc027d2..891fdce5d8c1 100644
+--- a/drivers/mfd/88pm886.c
++++ b/drivers/mfd/88pm886.c
+@@ -37,6 +37,7 @@ static struct resource pm886_onkey_resources[] = {
+ static struct mfd_cell pm886_devs[] = {
+ 	MFD_CELL_RES("88pm886-onkey", pm886_onkey_resources),
+ 	MFD_CELL_NAME("88pm886-regulator"),
++	MFD_CELL_NAME("88pm886-rtc"),
+ };
+ 
+ static int pm886_power_off_handler(struct sys_off_data *sys_off_data)
+-- 
+2.47.0
 
---612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwrNmgAKCRDXblvOeH7b
-biZ5AQCk8eE/SBHvOmxyKoThrXIzVKJWtgfKhOownzNqeMgT3wEA0SQCyymQQ/nZ
-fuymSUIvicdEH1WptzV7GJlEF6/TaAQ=
-=QmNY
------END PGP SIGNATURE-----
-
---612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b--
 
