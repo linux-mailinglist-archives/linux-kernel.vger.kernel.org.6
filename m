@@ -1,163 +1,125 @@
-Return-Path: <linux-kernel+bounces-362294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B5C799B33B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:58:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ABD6F99B335
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:57:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0B023284DB6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:58:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D158284F16
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:57:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFF83156C69;
-	Sat, 12 Oct 2024 10:58:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFD19155330;
+	Sat, 12 Oct 2024 10:57:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hS3mKbNg"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e1nDcz0b"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6845D15534D;
-	Sat, 12 Oct 2024 10:58:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA121DFE3;
+	Sat, 12 Oct 2024 10:57:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728730697; cv=none; b=YQq28wyxee1wHNcVOrN/8wDJgkiNxeWwYyyMshtg4YKjyCwKz+QUijIf+b5YfQBkLo5LXHnLV5FZY9jAqm95jRQ0jhRCKlYklppcxJkhKBZClDvSIuPN9JbZ0omq+t4BrHsrbeZfk6OeNTiW2H25zCHUIqBXurTLcYzbbk6pwEU=
+	t=1728730671; cv=none; b=Or2uw0b3e2fIPJ7UEDMT5Dddn4m7Tbq0vHq2VNK3DCGLkJ63mxe8Rf9HQP8KKGxgnWJaLuQP4CqrivdMX9pL/7zBTsieAKxjXrBZKiN6AjR9v3LRT2GEYZHUw2jZn/OOliF3oZ0d0zKqRr/VxQSP852Y7PaTbtqeKXRBca7F+z4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728730697; c=relaxed/simple;
-	bh=z4IaITTfM9CLQeC30kewCLBTMVVQFXjBlqESR37Y9Mg=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ACZg6kBVx4gz3uEFJ6sSrkrHEDQoAeNFYVkedCpWJQez5y2/uWvaPAOpERy01xpRhToy20TqN7SRPvQP8T1PuqHd2uYSA9uIKHf3NPhZrmkyTPsG1zkGGiJviQbfnhDqUQom6qPm1vDtpu8KB5fy5YfjtXloC092aoO3mhp4AzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hS3mKbNg; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-5398e7dda5fso2804074e87.0;
-        Sat, 12 Oct 2024 03:58:15 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728730693; x=1729335493; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Av7Zzf1fZtUDBL1oRh0TlfThGawFwtPaU6RDJ7RcuD8=;
-        b=hS3mKbNgg69uNlMVIjtNI2w3S6e9jHuPfUZtLPQEf03MmgVyU3cbdqyv2sc8BcaH0H
-         J4x1VSm8CvU5MTVwv3nw/+W18EgMrjgTy6j4EfjAbmLfqOENG1JGHSqZ7Y7ko24fPWy4
-         r6x4gxpKNIx7ovEOfhHVcF+HHnvKgbYhhfV1RiRrZmUKYr/NAXatu/QF1Ud4kse6lzD3
-         37o7mbjV0cGVlg9D4CyzA1e3W5ra/FJ+WFCiQKSCQe3mg2gV3Ul9NWzlQLA2/MJGhcBY
-         Mz88EnldeRJvJfVi5CikFh7HgPhVOYAGJj4Wh9Q6xy1NQ3OrZi+8p530Vt10ZfoRDZEv
-         icng==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728730694; x=1729335494;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Av7Zzf1fZtUDBL1oRh0TlfThGawFwtPaU6RDJ7RcuD8=;
-        b=nDJIZruPUHZoNoEhxAjRQlmM2iRUbpSyWV9IIAI6kYG5SxRyPw4qOFpHEAvcqAie0P
-         5gWqDWCsCPJsb8EKbMYznpeexIHIXTAfQ6oj66pwTvAI3piHzPedHYKC3R3NonEmaOio
-         3qZSWWf1ciMKvfJNeXBgXxUMC6S4EgnfGYvDnKAuQAe96qmGJ68uZXyLDgUE36MeXNhf
-         YkFBQZDEAXEbmMWRHYDcxg9PkXEz85x+XEfPW+krW749VdhY9wblghUvw2VlNlu2Vmdq
-         l6XJ8agxnCaoAglZIxJsmW5BttB2t+HQb70aQeQAjZECUdX8MnJuS7b8iYPPyoljyL6K
-         iSfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWRL2vRSVY6QXYoPGSNcI7NYXSRFJPjEuzS/ijvwx2WDnXd1r03GLOGV1r/labMyaGoeVkwE2FWTWHv@vger.kernel.org, AJvYcCXR04fuCP3z+Bv2q2APMzVGGuwy70tU/DNUGJYNCD5Bv1N+3V4wpOIbXJ0qbiFFzA5PBg0rIzZ4mB7nvV9M@vger.kernel.org, AJvYcCXlceXk1nzoTGKIh+srqx5Z5eR1K1Tsw2TsFiCW+nP6/y/ZxA5Ev28o2sy0RJHLH4OM2Bwxysb9yGatDw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQ8UZgQXCi4NgDxXlK017Gh0UqV+IzZGd0AGGKj5CYwzokO/C5
-	FXyNBkEl2g/b3e5SZQEg2bHRLYkoctbn7wuNeRkbRBbz+4mvXc+m
-X-Google-Smtp-Source: AGHT+IGLbCeJX8FV+q8Hc0+59ht/muVlxi7z0cHYmSPz/j1h0Ez6+43ddnI5dKt9TchS7gJHNnjOIA==
-X-Received: by 2002:a05:6512:b11:b0:539:8d9b:b624 with SMTP id 2adb3069b0e04-539e5742bdamr1026898e87.55.1728730693273;
-        Sat, 12 Oct 2024 03:58:13 -0700 (PDT)
-Received: from KILLINGMACHINE.itotolink.net ([46.188.27.115])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539e2a59408sm396944e87.206.2024.10.12.03.58.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 03:58:12 -0700 (PDT)
-From: Sergey Matsievskiy <matsievskiysv@gmail.com>
-To: linus.walleij@linaro.org
-Cc: alexandre.belloni@bootlin.com,
-	quentin.schulz@bootlin.com,
-	lars.povlsen@microchip.com,
-	horatiu.vultur@microchip.com,
-	andriy.shevchenko@linux.intel.com,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org,
-	UNGLinuxDriver@microchip.com,
-	Sergey Matsievskiy <matsievskiysv@gmail.com>
-Subject: [PATCH v2 1/1] pinctrl: ocelot: fix system hang on level based interrupts
-Date: Sat, 12 Oct 2024 13:57:43 +0300
-Message-Id: <20241012105743.12450-2-matsievskiysv@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241012105743.12450-1-matsievskiysv@gmail.com>
-References: <20241012105743.12450-1-matsievskiysv@gmail.com>
+	s=arc-20240116; t=1728730671; c=relaxed/simple;
+	bh=9UghHgWpS2nZIYJzy2EdHZv9DA9q+aDgXC0Uf/Q/JVs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lWU4OoEoxdZ6YE4eweXxZ5sRLcnpRXMxNXTPGUVLkb9iJEa30t73fx47swAcOO/APfF274tAd1TOZOPA58u/PxSFQxQADD2aQo/R2JCYMKM99xgMV02Vx0Hl9YYMOD/hFWCHTAxVDih13TbDE2xozd5omKa4U/IJ5GnAvAy/zbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e1nDcz0b; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CDD9DC4CEC6;
+	Sat, 12 Oct 2024 10:57:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728730670;
+	bh=9UghHgWpS2nZIYJzy2EdHZv9DA9q+aDgXC0Uf/Q/JVs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=e1nDcz0bVjIKCucAzGUkQdtiWJe7vDfdR4ysfJxN/pnvNdavO0/Fg3WT+npGdCU0i
+	 TqUH7MmLPeqCcLX15yzhJpn4/aHeW70MCkhSU6mj/2wFGtOy7lxolt0kwGs6R++0lK
+	 tdIe+V4rKVJuOWk9qbfa5JXJmo7c1brIhw0/phS6DPwpq1321paw8vwjQrwxr19gNe
+	 jP+HkFfHK3yytu74DMKGSCz/LdtceK06meB751o2Eizdj2p6IGyc8yQpLbzZIY2tZ2
+	 leycK96jZgF3e7vUOzfAPDrLvOpaKTT6VbrNaaO14pw2arfOxyGKJQocoZ5r/Xx+yW
+	 LtYXLc5DYiA7A==
+Date: Sat, 12 Oct 2024 11:57:43 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
+ =?UTF-8?B?cg==?= <philm@manjaro.org>
+Subject: Re: [PATCH 0/3] Add i2c driver for Bosch BMI260 IMU
+Message-ID: <20241012115743.4a878daa@jic23-huawei>
+In-Reply-To: <20241011153751.65152-1-justin@justinweiss.com>
+References: <20241011153751.65152-1-justin@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-The current implementation only calls chained_irq_enter() and
-chained_irq_exit() if it detects pending interrupts.
+On Fri, 11 Oct 2024 08:37:46 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
 
-```
-for (i = 0; i < info->stride; i++) {
-	uregmap_read(info->map, id_reg + 4 * i, &reg);
-	if (!reg)
-		continue;
+> Add support for the Bosch BMI260 IMU to the BMI270 device driver.
+> 
+> The BMI270 and BMI260 have nearly identical register maps, but have
+> different chip IDs and firmware.
+> 
+> The BMI260 is the IMU on a number of handheld PCs. Unfortunately,
+> these devices often misidentify it in ACPI as a BMI160 ("BMI0160," for
+> example), and it can only be correctly identified using the chip
+> ID. I've changed the driver to fail if the chip ID isn't recognized so
+> the firmware initialization data isn't sent to incompatible devices.
 
-	chained_irq_enter(parent_chip, desc);
-```
+So just to check, is the firmware always specific to an individual chip?
 
-However, in case of GPIO pin configured in level mode and the parent
-controller configured in edge mode, GPIO interrupt might be lowered by the
-hardware. In the result, if the interrupt is short enough, the parent
-interrupt is still pending while the GPIO interrupt is cleared;
-chained_irq_enter() never gets called and the system hangs trying to
-service the parent interrupt.
+Normally we strongly resist hard checks on mismatched IDs because they break
+the option for using fallback compatibles to get some support on older
+kernels for newer devices, but if the firmware is locked to a
+device then that is a good justification.  Fallback compatibles in DT
+will never work here.
 
-Moving chained_irq_enter() and chained_irq_exit() outside the for loop
-ensures that they are called even when GPIO interrupt is lowered by the
-hardware.
+Note that means you need a specific compatible in
+Documentation/devicetree/bindings/iio/imu/bosch,bmi270.yaml
 
-The similar code with chained_irq_enter() / chained_irq_exit() functions
-wrapping interrupt checking loop may be found in many other drivers:
-```
-grep -r -A 10 chained_irq_enter drivers/pinctrl
-```
+Technically you could match on a single ID and figure it out, but that
+will lead to potential confusion if an older kernel is used with a binding
+written against current kernel and the driver just doesn't work. Not a regression
+but in my view inelegant.
 
-Signed-off-by: Sergey Matsievskiy <matsievskiysv@gmail.com>
-Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
----
- drivers/pinctrl/pinctrl-ocelot.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
 
-diff --git a/drivers/pinctrl/pinctrl-ocelot.c b/drivers/pinctrl/pinctrl-ocelot.c
-index be9b8c010167..d1ab8450ea93 100644
---- a/drivers/pinctrl/pinctrl-ocelot.c
-+++ b/drivers/pinctrl/pinctrl-ocelot.c
-@@ -1955,21 +1955,21 @@ static void ocelot_irq_handler(struct irq_desc *desc)
- 	unsigned int reg = 0, irq, i;
- 	unsigned long irqs;
- 
-+	chained_irq_enter(parent_chip, desc);
-+
- 	for (i = 0; i < info->stride; i++) {
- 		regmap_read(info->map, id_reg + 4 * i, &reg);
- 		if (!reg)
- 			continue;
- 
--		chained_irq_enter(parent_chip, desc);
--
- 		irqs = reg;
- 
- 		for_each_set_bit(irq, &irqs,
- 				 min(32U, info->desc->npins - 32 * i))
- 			generic_handle_domain_irq(chip->irq.domain, irq + 32 * i);
--
--		chained_irq_exit(parent_chip, desc);
- 	}
-+
-+	chained_irq_exit(parent_chip, desc);
- }
- 
- static int ocelot_gpiochip_register(struct platform_device *pdev,
--- 
-2.39.5
+Make sure you include this detail about specific firmware selection in there
+as well.
+
+Jonathan
+
+> 
+> Also add triggered buffer and scale / sampling frequency attributes,
+> which the input tools commonly used on handheld PCs require to support
+> IMUs.
+> 
+> Like the BMI270, the BMI260 requires firmware to be provided.
+> 
+> Signed-off-by: Justin Weiss <justin@justinweiss.com>
+> ---
+> 
+> Justin Weiss (3):
+>   iio: imu: Add i2c driver for bmi260 imu
+>   iio: imu: Add triggered buffer for Bosch BMI270 IMU
+>   iio: imu: Add scale and sampling frequency to BMI270 IMU
+> 
+>  drivers/iio/imu/bmi270/Kconfig       |   1 +
+>  drivers/iio/imu/bmi270/bmi270.h      |  24 +-
+>  drivers/iio/imu/bmi270/bmi270_core.c | 369 ++++++++++++++++++++++++++-
+>  drivers/iio/imu/bmi270/bmi270_i2c.c  |  22 +-
+>  drivers/iio/imu/bmi270/bmi270_spi.c  |  11 +-
+>  5 files changed, 413 insertions(+), 14 deletions(-)
+> 
+> 
+> base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
 
 
