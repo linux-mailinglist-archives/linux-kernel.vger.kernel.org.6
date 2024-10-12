@@ -1,108 +1,185 @@
-Return-Path: <linux-kernel+bounces-362575-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362576-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7EE99B691
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:15:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 824F499B695
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8B31F2247D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:15:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 119C41F21C2B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:23:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD5D1487DD;
-	Sat, 12 Oct 2024 18:14:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="R49lbYXW"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56136811EB;
+	Sat, 12 Oct 2024 18:23:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7396C81AC6;
-	Sat, 12 Oct 2024 18:14:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 590337FBC2
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 18:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728756895; cv=none; b=Bqhx84HDvnUazgErltYzYKObs7tPCngt+lL8XMh1N4XVhZFJPIwryaLHnTALxQCgmlzJ5NvrWBh8vLHaHTucoNDjijz5HXxl9idAQUFayWvXZvctWDvbj9tte63wnrWOouOiifBVkxIIyHFTNL6i/1vkXeCXNgUOLhIuYGDoHFQ=
+	t=1728757384; cv=none; b=SoRzN6/8ly731AgSOyRtPk7yrF9Qi8NbVelyXjKnnlSej+PKJcDaDcfe1GlAeN9prbAhz7H4IpSOnw9FGKvN4Fc7CjKjADYmvG6SjynGkRg+KUfvmITo3UlWlBJRd910Q/Wh+8qs7+5IJoUnpdFykHSzSAIZSDqe9TX/ItBTIVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728756895; c=relaxed/simple;
-	bh=F43Ef2FxRFG2dCTICzYZwwxEWCgji1udsNDsdvVtJew=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cKnHbPw5aJCyNQIEUZ9DLnCh5eU05D6R1dZmZb88CGyVPDIAYO0dy2O+vsaB0Vjon6jTECVNWYPb2tJestmoC1DRwRPPiHaTZQb9kUz529fe7WuJuTKcrS23CF53Es6IBG/XlV9G7RPAff9od3Qorswn0rzuBRyUS9NmvJdjihw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=R49lbYXW; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=RtgkYBkKn4YW6WOs02680DjsXE7fPjhLxXICoPrpxqw=; b=R49lbYXWwnbo9n/i4DeXA3tKMQ
-	K6I0iJX7idZZv6xm1cu+oFSn86FjQDZLXRH6mJ9+9Li3PytyveNr0P81f6kIyHovjL0lXB00tIt6c
-	tizGXNc4KOU9EtetST6KAp6CVwfLrSpDxXAt3K0l7fHz9TyIyM3n9N5VLYgFa6HJOOIM=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1szgdX-009oQI-Rh; Sat, 12 Oct 2024 20:14:43 +0200
-Date: Sat, 12 Oct 2024 20:14:43 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Oleksij Rempel <o.rempel@pengutronix.de>
-Cc: Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	stable@vger.kernel.org, kernel@pengutronix.de,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	Codrin Ciubotariu <codrin.ciubotariu@microchip.com>
-Subject: Re: [PATCH net v1 1] net: macb: Avoid 20s boot delay by skipping
- MDIO bus registration for fixed-link PHY
-Message-ID: <379d10d5-468c-4d88-984e-df9ddc52f28e@lunn.ch>
-References: <20241010105101.3128090-1-o.rempel@pengutronix.de>
+	s=arc-20240116; t=1728757384; c=relaxed/simple;
+	bh=GWbB7fRyXwr7Z5coBut5INEfTb69Jph3OYTvb4KNdbs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=tG4HKQRZhRxoZ5383/uiWDi+RP13iQN8Owbkq5OxCg7VUJ427Ekn4vFiMqelYF8JjfxJ1Hbe1x7rc/l9PlBFz3ddpJ+jQsegC8XJrQAOH9/R+UAOCfRpCbLnSkMTQO7DWgb/5JYl7mGXR4N4yY5ibo4QzAV1STqACXq589+h8MM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3ba4fcf24so14180665ab.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 11:23:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728757382; x=1729362182;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6F3oT7I5J4dUyWfQIzunPD7Rjaq0aWuGYg8SCn+tlD8=;
+        b=fR000IR8mqIwN4Pg3J+KnFXMRZjQmOREDZVBjkd6nJrTqHXXgXC2pCWkKLve4wiDXp
+         i1vY7YfuTPp+X66oUsx/2QAGA6pY0zJon3p4deMwLZi3STCGnOX1zYOE5uFoU4AOcV5W
+         +Ly5QHEqbJU3xHbOdbcC40adHv+nvk7EdaMObK5AcYfekH4wp4umoYNjwkkgJt+AftQL
+         MjC+IyieqSH/JjpphtFiCdsuQ0weM27i5A4YR21IEIt3EFUIzW5vk1R9QNJFQjD7nI/D
+         oQR/KnK78m8HMExjHqusZKGQ4CytfnkEjdgzjtn9cIEqGvHfwLz5J7V51PU13VEZ75E3
+         +2HQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV63pJ99moM32Nvs0VtQOfG/W1tKeVrHMQXeL758S34cD5utnr8BM/OyH05uInTAxaR10SBH850tHwe9ws=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVjDyyQE7zHi5WTy7a9rCswh292wgjWOA6l4keuywHnx5zipFT
+	ITdHUc/qeGtNUKlpnohWwodFoaqHaj69nsz8PdFLf/+rewGfA9wVUDWEzu3W3PmcwRDPRC69UdU
+	GS/w1qEkxZ1N623AjK1avByVGWg8qNE+nREB4/iFjQdoL7JUmH7sgL+I=
+X-Google-Smtp-Source: AGHT+IFIbNVnu63cIwFcSLSJZZTVhN6vkayHOzQLYBC4Eo6f+SOkLPILvtHzVbOlqGUhf2lXgrlzAS2rp5iAdODNzWYx9gc6qvAP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010105101.3128090-1-o.rempel@pengutronix.de>
+X-Received: by 2002:a05:6e02:188e:b0:3a3:afa3:5155 with SMTP id
+ e9e14a558f8ab-3a3b6050e70mr57727995ab.25.1728757382438; Sat, 12 Oct 2024
+ 11:23:02 -0700 (PDT)
+Date: Sat, 12 Oct 2024 11:23:02 -0700
+In-Reply-To: <CAHiZj8jQ4OHmkKKMbvo-sFYBb_19C-z+n5tf_V0-qkG-ijam-g@mail.gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670abe86.050a0220.4cbc0.0026.GAE@google.com>
+Subject: Re: [syzbot] [exfat?] KMSAN: uninit-value in __exfat_get_dentry_set
+From: syzbot <syzbot+01218003be74b5e1213a@syzkaller.appspotmail.com>
+To: linkinjeon@kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sj1557.seo@samsung.com, 
+	surajsonawane0215@gmail.com, syzkaller-bugs@googlegroups.com, 
+	yuezhang.mo@sony.com
+Content-Type: text/plain; charset="UTF-8"
 
-> diff --git a/drivers/net/ethernet/cadence/macb_main.c b/drivers/net/ethernet/cadence/macb_main.c
-> index f06babec04a0b..e4ee55bc53ba7 100644
-> --- a/drivers/net/ethernet/cadence/macb_main.c
-> +++ b/drivers/net/ethernet/cadence/macb_main.c
-> @@ -930,9 +930,6 @@ static int macb_mdiobus_register(struct macb *bp)
->  		return ret;
->  	}
-> 
-> -	if (of_phy_is_fixed_link(np))
-> -		return mdiobus_register(bp->mii_bus);
-> -
->  	/* Only create the PHY from the device tree if at least one PHY is
->  	 * described. Otherwise scan the entire MDIO bus. We do this to support
->  	 * old device tree that did not follow the best practices and did not
-> @@ -953,8 +950,19 @@ static int macb_mdiobus_register(struct macb *bp)
-> 
->  static int macb_mii_init(struct macb *bp)
->  {
-> +	struct device_node *child, *np = bp->pdev->dev.of_node;
->  	int err = -ENXIO;
-> 
-> +	/* With fixed-link, we don't need to register the MDIO bus,
-> +	 * except if we have a child named "mdio" in the device tree.
-> +	 * In that case, some PHYs may be attached to the MACB's MDIO bus.
+Hello,
 
-nitpick. It could be a switch on the MDIO bus, so "some devices may
-be"
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KMSAN: uninit-value in __exfat_get_dentry_set
 
-> +	 */
-> +	child = of_get_child_by_name(np, "mdio");
-> +	if (child)
-> +		of_node_put(child);
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0x726052d3, utbl_chksum : 0xe619d30d)
+=====================================================
+BUG: KMSAN: uninit-value in __exfat_get_dentry_set+0x1148/0x1540 fs/exfat/dir.c:811
+ __exfat_get_dentry_set+0x1148/0x1540 fs/exfat/dir.c:811
+ exfat_get_dentry_set+0x58/0xec0 fs/exfat/dir.c:866
+ __exfat_write_inode+0x3c1/0xe30 fs/exfat/inode.c:46
+ __exfat_truncate+0x7f3/0xbb0 fs/exfat/file.c:211
+ exfat_truncate+0xee/0x2a0 fs/exfat/file.c:257
+ exfat_write_failed fs/exfat/inode.c:421 [inline]
+ exfat_direct_IO+0x5a3/0x900 fs/exfat/inode.c:485
+ generic_file_direct_write+0x275/0x6a0 mm/filemap.c:3977
+ __generic_file_write_iter+0x242/0x460 mm/filemap.c:4141
+ exfat_file_write_iter+0x894/0xfb0 fs/exfat/file.c:598
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-The code now gets this node twice. You could add an optimisation patch
-which passed child to macb_mdiobus_register().
+Uninit was stored to memory at:
+ memcpy_to_iter lib/iov_iter.c:65 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ _copy_to_iter+0xe53/0x2b30 lib/iov_iter.c:185
+ copy_page_to_iter+0x419/0x880 lib/iov_iter.c:362
+ shmem_file_read_iter+0xa09/0x12b0 mm/shmem.c:3167
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_read+0x278/0x760 fs/read_write.c:923
+ lo_read_simple drivers/block/loop.c:283 [inline]
+ do_req_filebacked drivers/block/loop.c:516 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x20fc/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Uninit was stored to memory at:
+ memcpy_from_iter lib/iov_iter.c:73 [inline]
+ iterate_bvec include/linux/iov_iter.h:123 [inline]
+ iterate_and_advance2 include/linux/iov_iter.h:304 [inline]
+ iterate_and_advance include/linux/iov_iter.h:328 [inline]
+ __copy_from_iter lib/iov_iter.c:249 [inline]
+ copy_page_from_iter_atomic+0x12b7/0x3100 lib/iov_iter.c:481
+ copy_folio_from_iter_atomic include/linux/uio.h:201 [inline]
+ generic_perform_write+0x8d1/0x1080 mm/filemap.c:4066
+ shmem_file_write_iter+0x2ba/0x2f0 mm/shmem.c:3221
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_iter_write+0x44d/0xd40 fs/read_write.c:988
+ lo_write_bvec drivers/block/loop.c:243 [inline]
+ lo_write_simple drivers/block/loop.c:264 [inline]
+ do_req_filebacked drivers/block/loop.c:511 [inline]
+ loop_handle_cmd drivers/block/loop.c:1910 [inline]
+ loop_process_work+0x15e6/0x3750 drivers/block/loop.c:1945
+ loop_workfn+0x48/0x60 drivers/block/loop.c:1969
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xae0/0x1c40 kernel/workqueue.c:3310
+ worker_thread+0xea7/0x14f0 kernel/workqueue.c:3391
+ kthread+0x3e2/0x540 kernel/kthread.c:389
+ ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
 
-    Andrew
+Uninit was created at:
+ __alloc_pages_noprof+0x9a7/0xe00 mm/page_alloc.c:4756
+ alloc_pages_mpol_noprof+0x299/0x990 mm/mempolicy.c:2265
+ alloc_pages_noprof mm/mempolicy.c:2345 [inline]
+ folio_alloc_noprof+0x1db/0x310 mm/mempolicy.c:2352
+ filemap_alloc_folio_noprof+0xa6/0x440 mm/filemap.c:1010
+ __filemap_get_folio+0xac4/0x1550 mm/filemap.c:1952
+ block_write_begin+0x6e/0x2b0 fs/buffer.c:2226
+ exfat_write_begin+0xfb/0x400 fs/exfat/inode.c:434
+ exfat_extend_valid_size fs/exfat/file.c:553 [inline]
+ exfat_file_write_iter+0x474/0xfb0 fs/exfat/file.c:588
+ do_iter_readv_writev+0x88a/0xa30
+ vfs_writev+0x56a/0x14f0 fs/read_write.c:1064
+ do_pwritev fs/read_write.c:1165 [inline]
+ __do_sys_pwritev2 fs/read_write.c:1224 [inline]
+ __se_sys_pwritev2+0x280/0x470 fs/read_write.c:1215
+ __x64_sys_pwritev2+0x11f/0x1a0 fs/read_write.c:1215
+ x64_sys_call+0x2edb/0x3ba0 arch/x86/include/generated/asm/syscalls_64.h:329
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x1e0 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+CPU: 0 UID: 0 PID: 5959 Comm: syz.0.15 Not tainted 6.12.0-rc2-syzkaller-00305-g7234e2ea0edd-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+=====================================================
+
+
+Tested on:
+
+commit:         7234e2ea Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1552705f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=981fe2ff8a1e457a
+dashboard link: https://syzkaller.appspot.com/bug?extid=01218003be74b5e1213a
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=16ebf840580000
+
 
