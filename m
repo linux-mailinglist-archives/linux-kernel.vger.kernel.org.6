@@ -1,244 +1,157 @@
-Return-Path: <linux-kernel+bounces-362513-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362514-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7927C99B5CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:10:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B81A699B5D2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D97CCB2314E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:10:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 34AB8B2327D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:11:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6000199EA7;
-	Sat, 12 Oct 2024 15:10:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D80C199EA7;
+	Sat, 12 Oct 2024 15:10:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="Ioltwjoz"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZN6wHfa1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 245DB15B0EE;
-	Sat, 12 Oct 2024 15:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B97A81991BF;
+	Sat, 12 Oct 2024 15:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728745839; cv=none; b=gW5bzHW6hsUsq3o2hHaRDRpgLeaietVf3C+VV42S7qA2P65X8HsBUmzkWS4GiIWokxnqzCj2zjenTGpu3tBC26xe4e1LWxg5lrGV7YrtQCtm21cpu8zLdNHAZlFzktBfP5uTzlD9Fe1e+kEHObHkiEFeruBr67tqAtwjZnTb29I=
+	t=1728745849; cv=none; b=nFXkFYPLhO6quBiCQ7hTRBG9e2y/qXIgcC43EbADaqK0tUdHFdn0knQJLoicHWnU7WczZ8uZnFPHKxI+2NWG3fpG7eCdIAPe1f/oClA/Oh3plBpl4oTbI65CZUXgXLYJBfpc0P6NYKTestecj13JeJzNAhi+mF2S1AgWh4ZdjXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728745839; c=relaxed/simple;
-	bh=/PCxFFAaF1m//nYXUNMx5IP4iLUwwwmK+3x70nITbV8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dp+KbtCNzbdDX1aYC/7JPd7jIYxmd+oerhOsVGnprbq1hf8Gvnfoo03ionBDeibeYrO0ruJRYAWiYJh55WmxLqeUWZfj7qE78YO52lbC8vjCdPU81ns2USyoCnjCfPeZhKB15A/s+DikzIm2MGNUU2H1Z32tUqm5Tm9K+O3Wp6Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=Ioltwjoz; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728745827; x=1729350627; i=markus.elfring@web.de;
-	bh=DlSdXGpy+rAqW6JENRFezwf99OG3UwW64T1E+6AzVOo=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=IoltwjozG+h9OoUIB9QHJWsJU76T+QNy/VbkP+MfcQZLLyvkQ0MbEa9v1CGdCQ19
-	 dxx0bXOPFnc0Q7F+N2ozzh8hwPk1TAvQJ0/bWqM6BjfLR+cP5M+5AECcyTRL8pmkq
-	 z0upp8xl6garUJCxZ+odxvx4m77M6D6xwSxm8TId9KOj+g1gk/oyBHvKeC8t9R/M/
-	 wusdSU3kFr4XehnQyegN0Vm/nOQRLupeamrFvcAK6PPaJ2LxciWg8F5WeWBnQxMlf
-	 0lotPUsci7ULUyaZFp9fYf0y++R4n1S3Sh3wpWXFtn7PKYhCVEk041goruwTNvx24
-	 hUz2HFuvuXMK6Jxgtw==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb105
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1Mmhjw-1ti5iP04u6-00kOXY; Sat, 12
- Oct 2024 17:10:27 +0200
-Message-ID: <3ac3fd6a-755e-4829-bc56-234f5b0f35e4@web.de>
-Date: Sat, 12 Oct 2024 17:10:26 +0200
+	s=arc-20240116; t=1728745849; c=relaxed/simple;
+	bh=gcNbMJ4Gd2izwSIIWqm/hjsuE/w9FW79EmcBGXtchag=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Mx/dlTE9a0RMjuwxk4HvzLY2difjyMB+HBKc5I/tG9uym5BdPkUcW+n4kYh+BVDUwkzId5u4MmTTHmsZCrgEYPkl3jalWcl0p/jx4LMz/XRmOuffdyXuFypaniwIBMTxw5wL21ly/754Cowtcm1/UUvqTewabiJxGwgZwUge9BM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZN6wHfa1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 404D5C4CEC6;
+	Sat, 12 Oct 2024 15:10:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728745849;
+	bh=gcNbMJ4Gd2izwSIIWqm/hjsuE/w9FW79EmcBGXtchag=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZN6wHfa1x4FE1+M18/tYMEzEdHz+XJMkbPjTXduySTpAaayHu1xN0+TJ+C0NXGo5q
+	 DP2WCINjN2zH7H1Qbxpv76tvI6j5Z8F/xrqz195Go4RJXWj/59fvkXM2u78gXUnWoU
+	 jqCiFpQZyyqF+QmnJMjn4qdYem73sF/b0ZK/JbemLVJuk47jeeN7L/sF+5N5QQrL+d
+	 3OAj0LuZzYDGziYpF22Gi1Wj68LmM8LR3yOnRuOzDPMh2F9FCV6CFUOwUbAuwGQYPA
+	 Jgy9pSO+MEybHuSiP6vX4coVcICm6C3ZHdC1vWmabPuzw9nbgFB7JpY4S22E4EhWAl
+	 Hekgag8vSiDIw==
+Date: Sat, 12 Oct 2024 16:10:40 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Emil Gedenryd <Emil.Gedenryd@axis.com>
+Cc: "linux-iio@vger.kernel.org" <linux-iio@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "robh@kernel.org" <robh@kernel.org>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, "dannenberg@ti.com" <dannenberg@ti.com>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>, "lars@metafoo.de"
+ <lars@metafoo.de>, "conor+dt@kernel.org" <conor+dt@kernel.org>, Kernel
+ <Kernel@axis.com>
+Subject: Re: [PATCH v4 2/2] iio: light: opt3001: add support for TI's
+ opt3002 light sensor
+Message-ID: <20241012161040.1506a7a4@jic23-huawei>
+In-Reply-To: <fab164228b4d567a147cd8d93150e687c6db0c70.camel@axis.com>
+References: <20241003-add_opt3002-v4-0-c550dc4591b4@axis.com>
+	<20241003-add_opt3002-v4-2-c550dc4591b4@axis.com>
+	<20241006141624.3fa5bf34@jic23-huawei>
+	<b40d22b5bdf487b40207e676d35a0507c47cbb26.camel@axis.com>
+	<20241010184742.1747bfe2@jic23-huawei>
+	<fab164228b4d567a147cd8d93150e687c6db0c70.camel@axis.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 3/3] lib/digsig: Use scope-based resource management for
- two variables in digsig_verify_rsa()
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
- <202409180725.ZV8DCvII-lkp@intel.com>
- <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
- <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
- <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
- <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
- <ee5f409e-4412-41cd-b8d8-92872770f04d@web.de>
-Content-Language: en-GB
-In-Reply-To: <ee5f409e-4412-41cd-b8d8-92872770f04d@web.de>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:jy9gvAsARK9RH2Eoa6TDFRNiAGZTVdUZINJCF0Aut73t3yzNbfx
- YPizUqBxSZtKp5cwsRlYIDOswZ36BiAKEk6kU2VuuWUcBIlfzyX7Ag+2tBJyGoJNjKY+ply
- ewMbDI0yuSB6AzJ6hYpFmg/w/kDs7ajLufKPssOKVXJS+6OtVeuFEFJJbD0N4T7X+7jxpGk
- WiB9JWh6TI+pYtXJ2bPbA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:65jadcM2DZU=;PsmqeLCjJhQb18BI4XEaySKlGRZ
- qHa9koyo3WCDh+HfNrsdXHLen/InFx4lyPAETTFhRVMwj9weaTFbJOOK66/o/WDlH9UD/9Nxc
- E6SSM7IE/Yax3sBmp2BVZUxl+W3fVUF8cNxknbR4bkPoStSS9RRBnaKM+bt5C3CUo3MIQ9lEF
- 5s+QCjVH+QWo8TGv7QoMzG5oX4Qri2KRfis5lznxjd+ILDkFYf5kSAJVytU0d6a5qioLrg44T
- SPQoV8p73BkymhvNfc1jk+UlRS2Mgcb8EQHL6M9lGIqNUOA5TjrK9BGsnudhNjGVYNgXU3R32
- jUNxvTmEFjKJp+kUQJ/9cBFtlZgI/LK3aEx2n+Xnm1w15QWokQb8MD9dRtOQi78lAIUYvxtlw
- TsFLLZc2GtNggUCZ6jngpmB3aBPiS3PUmXPnfYufTViqjgmYXcu6hFSyIvxT87XH3UpvLJ1MV
- sYr7X1y3hrDPjZHDaASkwiE0qU/qAETCMesi4n1FR2o1PAk2x3Zb60ttaXhaoLj2rxpcliWvX
- uYJk22XW0zJLa1nAwsZMjoUHORiPRYSM5eBmTZfd3J0zHErPUqgYKvvE/QG9aGJmDF/omjuOF
- aRoEI9xsb9+p76xAuDzhkcFhN9LMZTaSUC8zyR0Et909KwZGeJpVKO3lawz0T67CgFTTw4dPy
- W7kg4WQpI2QRo9imoCrmOs2fD5mvIxOFDdVht67vlFhLIEWMbZkZMQ9NFGXWjEDmAYeXSXKor
- zapI1i5X1sSbW/bkipmV3+Ot5wALpXs1WCd9HEpamnbPTg/iFfG7OOnP6b7j3YQ4Bh0Ct30xZ
- MNST0sXAB0VajX2RWmJS8lwA==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Sat, 12 Oct 2024 15:28:22 +0200
+On Fri, 11 Oct 2024 07:12:05 +0000
+Emil Gedenryd <Emil.Gedenryd@axis.com> wrote:
 
-Scope-based resource management became supported for some
-programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
-See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-Introduce __cleanup() based infrastructure").
+> On Thu, 2024-10-10 at 18:47 +0100, Jonathan Cameron wrote:
+> > On Mon, 7 Oct 2024 07:19:06 +0000
+> > Emil Gedenryd <Emil.Gedenryd@axis.com> wrote:
+> >  =20
+> > > On Sun, 2024-10-06 at 14:16 +0100, Jonathan Cameron wrote: =20
+> > > > On Thu, 3 Oct 2024 14:22:17 +0200
+> > > > Emil Gedenryd <emil.gedenryd@axis.com> wrote:   =20
+> > > > >=20
+> > > > > +struct opt3001_chip_info {
+> > > > > +	const struct iio_chan_spec (*channels)[2];
+> > > > > +	enum iio_chan_type chan_type;
+> > > > > +	int num_channels;
+> > > > > +
+> > > > > +	const struct opt3001_scale (*scales)[12];   =20
+> > > > This doesn't compile for me as one of the two options only
+> > > > has 11 entries.  You could either force them to be 12
+> > > > entries each or use a pointer without the size and
+> > > > add a num_scales entry in here.
+> > > >=20
+> > > > Jonathan   =20
+> > >=20
+> > > Hi Jonathan,
+> > >=20
+> > > Are you building on top of the patch that was accepted in earlier ver=
+sions of this
+> > > patch set? That patch adds the twelfth missing scale value for the op=
+t3001.
+> > > See:=C2=A0https://lore.kernel.org/all/20240916-add_opt3002-v3-1-984b1=
+90cd68c@axis.com/
+> > >=20
+> > > Should I have added some tag to highlight the dependency for this ver=
+sion of the
+> > > patch set? =20
+> > Ah.  Yes, I was half asleep.
+> > They are going via different branches (slow and fast) so I'll have to
+> > sit on this series until after that fix is in the upstream for the togr=
+eg
+> > branch of iio.git.
+> >=20
+> > If I seem to have lost it after that is the case feel free to give me a=
+ poke.
+> >=20
+> > Jonathan
+> >  =20
+> Hi,
+>=20
+> No worries. Just to clarify, do you mean sit on it as that you will conti=
+nue reviewing
+> the code after the fix is in upstream, or should I consider this patch to=
+ be approved?
+Assuming not other review comes in, I consider this ready to go.
+>=20
+> Also, do you have an approximation of what time frame we're talking about?
+2 weeks most likely.
 
-* Thus use the attribute =E2=80=9C__free(kfree)=E2=80=9D.
+I've just sent Greg KH a pull request with the fix in it. He will hopefully
+pick that up and then send a pull request on to Linus.  Then we wait for the
+next rc after that at which point Greg will probably pull it into char-misc=
+-next or
+I can always merge it into my togreg branch once it is in a release candida=
+te of
+Linus' tree.
 
-* Reduce the scopes for the local variables =E2=80=9Cout1=E2=80=9D and =E2=
-=80=9Cp=E2=80=9D.
+In parallel with that I'll probably do a pull request for what is already i=
+n the
+togreg tree to get a lot of stuff in char-misc-next for the next cycle. Tha=
+t makes
+the history a little cleaner as I can fast forward my tree and end up with
+whatever is in char-misc-next (hopefully including this).
 
-* Omit explicit kfree() calls accordingly.
+Anyhow, a bit of tree juggling for me, but we have plenty of time as rc3 wi=
+ll probably
+be out tomorrow and it normally goes to rc7 at one rc a week
 
-* Add a jump target.
+Thanks,
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-V3:
-Further adjustments were provided for the demonstration of an evolving
-programming interface.
-
-
- lib/digsig.c | 87 +++++++++++++++++++++++++---------------------------
- 1 file changed, 42 insertions(+), 45 deletions(-)
-
-diff --git a/lib/digsig.c b/lib/digsig.c
-index 2481120094ab..1a24677af643 100644
-=2D-- a/lib/digsig.c
-+++ b/lib/digsig.c
-@@ -73,10 +73,9 @@ static int digsig_verify_rsa(struct key *key,
- 	unsigned long mlen, mblen;
- 	unsigned int l;
- 	int head, i;
--	unsigned char *out1 =3D NULL;
- 	const char *m;
- 	MPI pkey[2];
--	uint8_t *p, *datap;
-+	uint8_t *datap;
- 	const uint8_t *endp;
- 	const struct user_key_payload *ukp;
- 	struct pubkey_hdr *pkh;
-@@ -126,58 +125,56 @@ static int digsig_verify_rsa(struct key *key,
- 	}
-
- 	err =3D -ENOMEM;
--
--	out1 =3D kzalloc(mlen, GFP_KERNEL);
--	if (!out1)
--		goto free_keys;
--
- 	{
--		unsigned int nret =3D siglen;
--		MPI in __free(mpi_free) =3D mpi_read_from_buffer(sig, &nret);
--
--		if (IS_ERR(in)) {
--			err =3D PTR_ERR(in);
--			goto in_exit;
--		}
-+		unsigned char *out1 __free(kfree) =3D kzalloc(mlen, GFP_KERNEL);
-
-+		if (out1)
- 		{
--			MPI res __free(mpi_free) =3D mpi_alloc(mpi_get_nlimbs(in) * 2);
--
--			if (!res)
--				goto res_exit;
--
--			err =3D mpi_powm(res, in, pkey[1], pkey[0]);
--			if (err)
--				goto res_exit;
--
--			if (mpi_get_nlimbs(res) * BYTES_PER_MPI_LIMB > mlen) {
--				err =3D -EINVAL;
--				goto res_exit;
--			}
-+			unsigned int nret =3D siglen;
-+			MPI in __free(mpi_free) =3D mpi_read_from_buffer(sig, &nret);
-
--			p =3D mpi_get_buffer(res, &l, NULL);
--			if (!p) {
--				err =3D -EINVAL;
--				goto res_exit;
-+			if (IS_ERR(in)) {
-+				err =3D PTR_ERR(in);
-+				goto in_exit;
- 			}
-
--			len =3D mlen;
--			head =3D len - l;
--			memset(out1, 0, head);
--			memcpy(out1 + head, p, l);
--
--			kfree(p);
--
--			m =3D pkcs_1_v1_5_decode_emsa(out1, len, mblen, &len);
--
--			if (!m || len !=3D hlen || memcmp(m, h, hlen))
--				err =3D -EINVAL;
-+			{
-+				MPI res __free(mpi_free) =3D mpi_alloc(mpi_get_nlimbs(in) * 2);
-+
-+				if (!res)
-+					goto res_exit;
-+
-+				err =3D mpi_powm(res, in, pkey[1], pkey[0]);
-+				if (err)
-+					goto res_exit;
-+
-+				if (mpi_get_nlimbs(res) * BYTES_PER_MPI_LIMB > mlen) {
-+					err =3D -EINVAL;
-+					goto res_exit;
-+				}
-+
-+				{
-+					uint8_t *p __free(kfree) =3D mpi_get_buffer(res, &l, NULL);
-+
-+					if (!p) {
-+						err =3D -EINVAL;
-+						goto p_exit;
-+					}
-+
-+					len =3D mlen;
-+					head =3D len - l;
-+					memset(out1, 0, head);
-+					memcpy(out1 + head, p, l);
-+					m =3D pkcs_1_v1_5_decode_emsa(out1, len, mblen, &len);
-+					if (!m || len !=3D hlen || memcmp(m, h, hlen))
-+						err =3D -EINVAL;
-+p_exit:
-+				}
- res_exit:
--		}
-+			}
- in_exit:
-+		}
- 	}
--
--	kfree(out1);
- free_keys:
- 	while (--i >=3D 0)
- 		mpi_free(pkey[i]);
-=2D-
-2.46.1
+Jonathan
+> Best Regards,
+> Emil=20
+>=20
 
 
