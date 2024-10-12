@@ -1,362 +1,144 @@
-Return-Path: <linux-kernel+bounces-362012-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CBB399AFF0
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:58:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 796A199AFF3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:00:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C1DD1F24237
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:58:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389DF2832A5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:00:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA9BEAD7;
-	Sat, 12 Oct 2024 01:58:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E72ADDCD;
+	Sat, 12 Oct 2024 01:59:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b="Z/0WUiBW"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OooCudZ2"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A06D3C13C
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69F1A4C83;
+	Sat, 12 Oct 2024 01:59:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728698303; cv=none; b=Dqj3Zc1JWljQyn1Vk+BI3tks15qP38hL0jfU5cH53098/g2FEGtKWag/PBH78g/IpNhs60D//DEUnhCpwJBRUUOriygchyTsPDzH13d5YVvaVizVochIeffZO0dtxEoOnXkrHVb1aS3kSaiTLQb0DRXuugSlIMjQ91vLfHn/0wo=
+	t=1728698398; cv=none; b=N5q0JP1kIt+907JC/59LhkE+yTsSS6UiSLWp2iZHbkdROUmcAtxoa24Drb1dhR/Pli5YFsgcgPw4SdVM9YZ8PjbVbnpCRpTaNsMd5lLfRgy5nPqxtl4HjLQw3w0HfRE5ZR5izTQTvhBKbJfipU73uHyZl3htw0cASW/eJ8mlCK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728698303; c=relaxed/simple;
-	bh=JYyhdjLuK+sa9K5bjE1c35qX1akVAJs5ZAijfqzQmpI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KNa23E5GZOnVyvkkGzJWt9W0C3gQroHFOcx4WmPLikM0U+fLQYvB10O3YfxoTvhxmrTXwvjBvhRJJn9Xio0twcvgNvaFsR4rISefBuU1BbcDoanYvH/95KsFqoxyPKszeIEIyjYZrs3iWQAFAF4DriZUsmRMpb2Y7MG8bQ5ilDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com; spf=pass smtp.mailfrom=fastly.com; dkim=pass (1024-bit key) header.d=fastly.com header.i=@fastly.com header.b=Z/0WUiBW; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fastly.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fastly.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c7edf2872so20826935ad.1
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:58:21 -0700 (PDT)
+	s=arc-20240116; t=1728698398; c=relaxed/simple;
+	bh=DFD9Y+f2RlNx6ManSa6m5r0PIKgGmKBd2kF+wtLcwwI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=T52wFmv53tDOcWyzBngxg2McUelMVg/dgMmShOnEID2v2PzszZVm/ol2GXmw4BJlsXlavb2nMW765icM/iOCpmH+braIDBWqJLJa9OGmFSSbBWWPUPzziD1LNAaFLK53G2K9Gr5jicvxFBYMKg8jOb0aXBFpwjtxFnDINphA1nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OooCudZ2; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea6a4f287bso327394a12.3;
+        Fri, 11 Oct 2024 18:59:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fastly.com; s=google; t=1728698301; x=1729303101; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sPTxo3VFYU4gU7ufZRtzjpXalxztZVEPSaPzwsbMAL4=;
-        b=Z/0WUiBWQSuZ2BqmSHQ1tFPqHEc2V4hRBCWntI1URq1lEfG0GZ6+HmLZgsff+4xeWt
-         1lbWez7Co1Gx7ozPYGN4YDFk0n1Y9gsj2rTXg+LFLfl6zYX9FjmwdjZ14aa50BvkegQE
-         PRoKvZutJcn4jkZEkS99lQmHY9rPW4VCU0cFc=
+        d=gmail.com; s=20230601; t=1728698397; x=1729303197; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dfzA/lgqAF/5GaOTJU8o318tCaS9kYyQ2ESNMptb9ck=;
+        b=OooCudZ2dGc94ZIsKuQ3bA2RuaCaZ5TBcF3iXR6Eh11uF/74gwPYgHhKr4+kVJEi+o
+         YzOCk9InZZiaCjIZBYr79vH92HENwL4cx1xCDNBQTiv1qx/bN3RZk86EwPEhcRykOmjQ
+         jJWn6I4Th+UkYRceubPKvu4JJu+DbgghgESv7L45D+iswBA4iMtaIKy7eS0P710fLWR6
+         kbVFneBi8mfemh+u7Bz1gjXGZrBGDe/WjXaomwYLF7mYWwqX8DGiTQF2thNLEOQHJHo7
+         Dary2eYEHINxo1LudsyDg6is/7S58d+dQnh7T+yHabeE071HEniqzMaSopDwB6a0aSTD
+         1SmA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728698301; x=1729303101;
-        h=in-reply-to:content-disposition:mime-version:references
-         :mail-followup-to:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sPTxo3VFYU4gU7ufZRtzjpXalxztZVEPSaPzwsbMAL4=;
-        b=cxgnA4RCi5XdHZ73rM0/mWnWfdQsWPIWS37lJaGf8qq5U7k6k3H0FoS/nn5dXGMsrt
-         2n2YFgRPKLhdxyDjCevANfeA2MjrBS0AvwQuXoR2x7nNiEEksOTM+DKpCwX+MVJlHmHS
-         K4FRtzWAMXmN2RyBJ88jfEotdkn21GnMW1yB8w7zhKzPZxRf0cnd7GZD4JMXWI48Qepe
-         ghle017m8NI50UOEn6S/lItJL4QBJDMFYgUllT9ZXNuGpFD1AqQoTPlfn7dD1snoAKJV
-         7wfUiOMTHiiow9QeEJli3/nSzT2po+DBSgBnWVb1bfkAgRICRKjfuJuALVxlbvZGN8A4
-         sZlg==
-X-Forwarded-Encrypted: i=1; AJvYcCUH/E3qwdagGPasBtt7aiJez62gDDMcPYDs3+RP+jCPJf0SnglBWbbW6hvagV8Bxn81AoKdlIWqX6D30cs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy75tkluaakgAtRZSis8J3w5hOVX3Y7V5H8uMI0kkts3kjHWJ0Y
-	L2wM+yidCYc4HFwL7KWR6SzuL8VqNB4cfU0GzfsG38nAOCgNa4osODK17mtB/rd4E9sQusjxsh/
-	A
-X-Google-Smtp-Source: AGHT+IFVwIQ6PMGM56eLlaZkrc08o6k3Sy0bydvPmDgSTXAqrEzreKcjXkDt2YW3st/N3yNRzoCaPA==
-X-Received: by 2002:a17:902:c403:b0:20b:c043:3873 with SMTP id d9443c01a7336-20ca03d6844mr64920765ad.21.1728698300799;
-        Fri, 11 Oct 2024 18:58:20 -0700 (PDT)
-Received: from LQ3V64L9R2 (c-24-6-151-244.hsd1.ca.comcast.net. [24.6.151.244])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8bad9b4asm29730905ad.45.2024.10.11.18.58.19
+        d=1e100.net; s=20230601; t=1728698397; x=1729303197;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dfzA/lgqAF/5GaOTJU8o318tCaS9kYyQ2ESNMptb9ck=;
+        b=fB9Ns/bLArcQT1LKyCyQWnbe1iWcQDoAF9zoiOpv6BXYwV+rjcDiVMg+Qplg5i60T9
+         k6NUKZZy0TPEC5DARvmeYzaObyFgYUHxbJ3LpY4yT5+ygCM9wYZmEHnzkZHMQeniSo9Y
+         JifIydTYIy4gcgTE/JvFyBdbyrXwLFAciMZ/dY60NcENuCn7OiZoxnsLspyfVWCfuI4/
+         0wWRpS87cgeDKiJ33PGpXiBOkzgG8rQ3nhEKHHtiRSgN/P7aVQWU//AXc92N2pUaamg7
+         jsAvHuxDNLcs+UZvapmMwDfwsTVYvb8NN2jr8Dj2EHgTdqPqUhGCHzgWAxvFMpCNNgho
+         vMEg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyuVFwNz+CbvJu3LASD+A6P7qaPeAJCUnqcH3Yas7Q2Rq6t/Yer2zA2ejjjhtOedP0RKFxptY063y/nkGec62UObETag==@vger.kernel.org, AJvYcCXc1v2AHv9h6YVF8A+yU2QrjHdGCy5qAe74sKO1mRwj21iBXI+JCygktyfurSy9h8DKi1RYxjB1ZmUjcwo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBw7prE1b+xb/ujY+mVHs82GyBNE2LAf3IZsmhsGH5X8bpaBd7
+	Q9I8RM1wPIAn+k92NdGy/0/EqFo+O+QViOj2BsgfXfTWoqkXQLk6
+X-Google-Smtp-Source: AGHT+IHh6ckkyWCcRsd6gl7A78coSQwUpbZQWsfbI59KOaf2AwZomLhAt361YeAy9WQ4ciRoBeQMqg==
+X-Received: by 2002:a05:6a20:c997:b0:1d6:fe5e:176e with SMTP id adf61e73a8af0-1d8c96c2fa0mr1761407637.46.1728698396588;
+        Fri, 11 Oct 2024 18:59:56 -0700 (PDT)
+Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9e9526sm3428340b3a.12.2024.10.11.18.59.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 18:58:20 -0700 (PDT)
-Date: Fri, 11 Oct 2024 18:58:17 -0700
-From: Joe Damato <jdamato@fastly.com>
-To: Kurt Kanzenbach <kurt@linutronix.de>
-Cc: netdev@vger.kernel.org, Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [RFC net-next 2/2] igc: Link queues to NAPI instances
-Message-ID: <ZwnXuSUbaFiyGn52@LQ3V64L9R2>
-Mail-Followup-To: Joe Damato <jdamato@fastly.com>,
-	Kurt Kanzenbach <kurt@linutronix.de>, netdev@vger.kernel.org,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	"moderated list:INTEL ETHERNET DRIVERS" <intel-wired-lan@lists.osuosl.org>,
-	open list <linux-kernel@vger.kernel.org>
-References: <20241003233850.199495-1-jdamato@fastly.com>
- <20241003233850.199495-3-jdamato@fastly.com>
- <87msjg46lw.fsf@kurt.kurt.home>
- <Zwa3sW-4s7oqktX3@LQ3V64L9R2>
- <87wmig3063.fsf@kurt.kurt.home>
+        Fri, 11 Oct 2024 18:59:56 -0700 (PDT)
+From: Kurt Borja <kuurtb@gmail.com>
+To: kuurtb@gmail.com
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org
+Subject: [PATCH v5 0/4] Dell AWCC platform_profile support
+Date: Fri, 11 Oct 2024 22:58:51 -0300
+Message-ID: <20241012015849.19036-3-kuurtb@gmail.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241007093324.49631-3-kuurtb@gmail.com>
+References: <20241007093324.49631-3-kuurtb@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87wmig3063.fsf@kurt.kurt.home>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10, 2024 at 09:08:20AM +0200, Kurt Kanzenbach wrote:
-> On Wed Oct 09 2024, Joe Damato wrote:
-> > On Mon, Oct 07, 2024 at 11:14:51AM +0200, Kurt Kanzenbach wrote:
-> >> Hi Joe,
-> >> 
-> >> On Thu Oct 03 2024, Joe Damato wrote:
-> >> > Link queues to NAPI instances via netdev-genl API so that users can
-> >> > query this information with netlink:
-> >> >
-> >> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> >> >                          --dump queue-get --json='{"ifindex": 2}'
-> >> >
-> >> > [{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> >> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
-> >> >  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'rx'},
-> >> >  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'rx'},
-> >> >  {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
-> >> >  {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'tx'},
-> >> >  {'id': 2, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
-> >> >  {'id': 3, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-> >> >
-> >> > Since igc uses only combined queues, you'll note that the same NAPI ID
-> >> > is present for both rx and tx queues at the same index, for example
-> >> > index 0:
-> >> >
-> >> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
-> >> > {'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'tx'},
-> >> >
-> >> > Signed-off-by: Joe Damato <jdamato@fastly.com>
-> >> > ---
-> >> >  drivers/net/ethernet/intel/igc/igc_main.c | 30 ++++++++++++++++++++---
-> >> >  1 file changed, 26 insertions(+), 4 deletions(-)
-> >> >
-> >> > diff --git a/drivers/net/ethernet/intel/igc/igc_main.c b/drivers/net/ethernet/intel/igc/igc_main.c
-> >> > index 7964bbedb16c..b3bd5bf29fa7 100644
-> >> > --- a/drivers/net/ethernet/intel/igc/igc_main.c
-> >> > +++ b/drivers/net/ethernet/intel/igc/igc_main.c
-> >> > @@ -4955,6 +4955,7 @@ static int igc_sw_init(struct igc_adapter *adapter)
-> >> >  void igc_up(struct igc_adapter *adapter)
-> >> >  {
-> >> >  	struct igc_hw *hw = &adapter->hw;
-> >> > +	struct napi_struct *napi;
-> >> >  	int i = 0;
-> >> >  
-> >> >  	/* hardware has been reset, we need to reload some things */
-> >> > @@ -4962,8 +4963,17 @@ void igc_up(struct igc_adapter *adapter)
-> >> >  
-> >> >  	clear_bit(__IGC_DOWN, &adapter->state);
-> >> >  
-> >> > -	for (i = 0; i < adapter->num_q_vectors; i++)
-> >> > -		napi_enable(&adapter->q_vector[i]->napi);
-> >> > +	for (i = 0; i < adapter->num_q_vectors; i++) {
-> >> > +		napi = &adapter->q_vector[i]->napi;
-> >> > +		napi_enable(napi);
-> >> > +		/* igc only supports combined queues, so link each NAPI to both
-> >> > +		 * TX and RX
-> >> > +		 */
-> >> 
-> >> igc has IGC_FLAG_QUEUE_PAIRS. For example there may be 2 queues
-> >> configured, but 4 vectors active (and 4 IRQs). Is your patch working
-> >> with that?  Can be tested easily with `ethtool -L <inf> combined 2` or
-> >> by booting with only 2 CPUs.
-> >
-> > I tested what you asked, here's what it looks like on my system:
-> 
-> Thanks.
-> 
-> >
-> > 16 core Intel(R) Core(TM) i7-1360P
-> >
-> > lspci:
-> > Ethernet controller: Intel Corporation Device 125c (rev 04)
-> >                      Subsystem: Intel Corporation Device 3037
-> >
-> > ethtool -i:
-> > firmware-version: 2017:888d
-> >
-> > $ sudo ethtool -L enp86s0 combined 2
-> > $ sudo ethtool -l enp86s0
-> > Channel parameters for enp86s0:
-> > Pre-set maximums:
-> > RX:		n/a
-> > TX:		n/a
-> > Other:		1
-> > Combined:	4
-> > Current hardware settings:
-> > RX:		n/a
-> > TX:		n/a
-> > Other:		1
-> > Combined:	2
-> >
-> > $ cat /proc/interrupts | grep enp86s0 | cut --delimiter=":" -f1
-> >  144
-> >  145
-> >  146
-> >  147
-> >  148
-> >
-> > Note that IRQ 144 is the "other" IRQ, so if we ignore that one...
-> > /proc/interrupts shows 4 IRQs, despite there being only 2 queues.
-> >
-> > Querying netlink to see which IRQs map to which NAPIs:
-> >
-> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-> >                          --dump napi-get --json='{"ifindex": 2}'
-> > [{'id': 8200, 'ifindex': 2, 'irq': 148},
-> >  {'id': 8199, 'ifindex': 2, 'irq': 147},
-> >  {'id': 8198, 'ifindex': 2, 'irq': 146},
-> >  {'id': 8197, 'ifindex': 2, 'irq': 145}]
-> >
-> > This suggests that all 4 IRQs are assigned to a NAPI (this mapping
-> > happens due to netif_napi_set_irq in patch 1).
-> >
-> > Now query the queues and which NAPIs they are associated with (which
-> > is what patch 2 adds):
-> >
-> > $ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \ 
-> >                          --dump queue-get --json='{"ifindex": 2}'
-> > [{'id': 0, 'ifindex': 2, 'napi-id': 8197, 'type': 'rx'},
-> >  {'id': 1, 'ifindex': 2, 'napi-id': 8198, 'type': 'rx'},
-> >  {'id': 0, 'ifindex': 2, 'napi-id': 8197, 'type': 'tx'},
-> >  {'id': 1, 'ifindex': 2, 'napi-id': 8198, 'type': 'tx'}]
-> >
-> > As you can see above, since the queues are combined and there are
-> > only 2 of them, NAPI IDs 8197 and 8198 (which are triggered via IRQ
-> > 145 and 146) are displayed.
-> 
-> Is that really correct?
+This patch adds platform_profile support for Dell devices which implement
+User Selectable Thermal Tables (USTT) that are meant to be controlled by
+Alienware Command Center (AWCC). These devices may include newer Alienware
+M-Series, Alienware X-Series and Dell's G-Series. This patch, was tested
+by me on an Alienware x15 R1.
 
-So I definitely think the case where IGC_FLAG_QUEUE_PAIRS is enabled is
-correct, that case is highlighted by the original commit message.
+---
+v5:
+ - Better commit messages
+ - insize renamed to in_size in alienware_wmax_command() to match other
+   arguments.
+ - Kudos in documentation now at the end of the file
+v4:
+ - Fixed indentation on previous code
+ - Removed unnecessary (acpi_size) and (u32 *) casts
+ - Return -EIO on ACPI_FAILURE
+ - Appropiate prefixes given to macros
+ - 0xFFFFFFFF named WMAX_FAILURE_CODE
+ - Added support for a new set of thermal codes. Old ones now have USTT
+   in their names
+ - A new quirk has been added to differantiate between the two sets.
+   thermal and thermal_ustt are mutually exclusive
+ - Added documentation for WMAX interface
+v3:
+ - Removed extra empty line
+ - 0x0B named WMAX_ARG_GET_CURRENT_PROF
+ - Removed casts to the same type on functions added in this patch
+ - Thermal profile to WMAX argument is now an static function and makes
+   use of in-built kernel macros
+ - Platform profile is now removed only if it was created first
+ - create_platform_profile is now create_thermal_profile to avoid
+   confusion
+ - profile_get and profile_set functions renamed too to match the above
+v2:
+ - Moved functionality to alienware-wmi driver
+ - Added thermal and gmode quirks to add support based on dmi match
+ - Performance profile is now GMODE for devices that support it
+ - alienware_wmax_command now is insize agnostic to support new thermal
+   methods
 
-I think IGC_FLAG_QUEUE_PAIRS disabled was buggy, as you pointed out, and I've
-made a change I'll include in the next RFC, which I believe fixes it.
+Kurt Borja (4):
+  alienware-wmi: fixed indentation and clean up
+  alienware-wmi: alienware_wmax_command() is now input size agnostic
+  alienware-wmi: added platform profile support
+  alienware-wmi: WMAX interface documentation
 
-Please see below for the case where IGC_FLAG_QUEUE_PAIRS is disabled and a
-walk-through.
+ Documentation/wmi/devices/alienware-wmi.rst | 366 ++++++++++++++++++
+ drivers/platform/x86/dell/Kconfig           |   1 +
+ drivers/platform/x86/dell/alienware-wmi.c   | 389 ++++++++++++++++----
+ 3 files changed, 680 insertions(+), 76 deletions(-)
+ create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
 
-> There are four NAPI IDs which are triggered by
-> the four IRQs.
+-- 
+2.47.0
 
-I'm not an IGC expert and I appreciate your review/comments very much, so thank
-you!
-
-I don't think the number of queues I create with ethtool factors into whether
-or not IGC_FLAG_QUEUE_PAIRS is enabled or not. Please forgive me for the length
-of my message, but let me walk through the code to see if I've gotten it right,
-including some debug output I added:
-
-In igc_init_queue_configuration:
-
-max_rss_queues = IGC_MAX_RX_QUEUES (4)
-
-and
-
-adapter->rss_queues = min of 4 or num_online_cpus
-
-which I presume is 16 on my 16 core machine, so:
-
-adapter->rss_queues = 4 (see below for debug output which verifies this)
-
-In igc_set_flag_queue_pairs, the flag IGC_FLAG_QUEUE_PAIRS is set only if:
-
-(adapter->rss_queues (4) > max_rss_queues(4) / 2) which simplifies
-to (4 > 2), meaning the flag would be enabled regardless of the
-number of queues I create with ethtool, as long as I boot my machine
-with 16 cores available.
-
-I verified this by adding debug output to igc_set_flag_queue_pairs and
-igc_init_queue_configuration, which outputs:
-
-igc 0000:56:00.0: IGC_FLAG_QUEUE_PAIRS on
-igc 0000:56:00.0: max_rss_queues: 4, rss_queues: 4
-
-That's at boot with the default number of combined queues of 4 (which is also
-the hardware max).
-
-The result of IGC_FLAG_QUEUE_PAIRS on was the result posted in the
-original commit message of this patch and I believe that to be
-correct.
-
-The only place I can see that IGC_FLAG_QUEUE_PAIRS has any impact
-(aside from ethtool IRQ coalescing, which we can ignore) is
-igc_set_interrupt_capability:
-
-  /* start with one vector for every Rx queue */
-  numvecs = adapter->num_rx_queues;
-  
-  /* if Tx handler is separate add 1 for every Tx queue */
-  if (!(adapter->flags & IGC_FLAG_QUEUE_PAIRS))
-    numvecs += adapter->num_tx_queues;
-
-In this case, the flag only has impact if it is _off_.
-
-It impacts the number of vectors allocated, so I made a small change
-to the driver, which I'll include in the next RFC to deal with the
-IGC_FLAG_QUEUE_PAIRS off case.
-
-In order to get IGC_FLAG_QUEUE_PAIRS off, I boot my machine with the grub
-command line option "maxcpus=2", which should force the flag off.
-
-Checking my debug output at boot to make sure:
-
-igc 0000:56:00.0: IGC_FLAG_QUEUE_PAIRS off
-igc 0000:56:00.0: max_rss_queues: 4, rss_queues: 2
-
-So, now IGC_FLAG_QUEUE_PAIRS is off which should impact
-igc_set_interrupt_capability and the vector calculation.
-
-Let's check how things look at boot:
-
-$ ethtool -l enp86s0 | tail -5
-Current hardware settings:
-RX:		n/a
-TX:		n/a
-Other:		1
-Combined:	2
-
-2 combined queues by default when I have 2 CPUs.
-
-$ cat /proc/interrupts  | grep enp
- 127:  enp86s0
- 128:  enp86s0-rx-0
- 129:  enp86s0-rx-1
- 130:  enp86s0-tx-0
- 131:  enp86s0-tx-1
-
-1 other IRQ, and 2 IRQs for each of RX and TX.
-
-Compare to netlink:
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                       --dump napi-get --json='{"ifindex": 2}'
-[{'id': 8196, 'ifindex': 2, 'irq': 131},
- {'id': 8195, 'ifindex': 2, 'irq': 130},
- {'id': 8194, 'ifindex': 2, 'irq': 129},
- {'id': 8193, 'ifindex': 2, 'irq': 128}]
-
-So the driver has 4 IRQs linked to 4 different NAPIs, let's check queues:
-
-$ ./tools/net/ynl/cli.py --spec Documentation/netlink/specs/netdev.yaml \
-                         --dump queue-get --json='{"ifindex": 2}'
-
-[{'id': 0, 'ifindex': 2, 'napi-id': 8193, 'type': 'rx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8194, 'type': 'rx'},
- {'id': 0, 'ifindex': 2, 'napi-id': 8195, 'type': 'tx'},
- {'id': 1, 'ifindex': 2, 'napi-id': 8196, 'type': 'tx'}]
-
-In this case you can see that each RX and TX queue has a unique NAPI.
-
-I think this is correct, but slightly confusing :) as ethtool
-reports n/a for RX and TX and only reports a combined queue count,
-but you were correct that there was a bug for this case in the code
-I proposed in this RFC.
-
-I think this new output looks correct and will include the adjusted
-patch and a detailed commit message in the next RFC.
-
-Let me know if you think the output looks right to you now?
 
