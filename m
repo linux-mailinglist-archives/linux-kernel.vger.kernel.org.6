@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-362492-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362493-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48AB499B594
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D46FB99B596
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F37FC1F21BF6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 121341C215E5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4630199934;
-	Sat, 12 Oct 2024 14:40:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2670195F17;
+	Sat, 12 Oct 2024 14:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="uHURsS6v"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="ITYfrMzt"
+Received: from mail-ed1-f45.google.com (mail-ed1-f45.google.com [209.85.208.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ABB5195F17
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 14:40:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 422E8199FC1
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 14:40:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728744024; cv=none; b=Nob56UrYb4Fx6MLR8npPRThD87CXG3a5HfJEMUapSCdVwnjOnG7dFtVN9loLMA0zgz2OkbBQVDN47hWXkH442Sn9+3R27FmI5Fb7+vq7s2xSUFh5H1JpJI/u7TbURKhIqBbE78HtkfxcRMtQg/Iu8PvX43Ig8or53kcZFCwtXAE=
+	t=1728744027; cv=none; b=cqaSmc6hsea/j+XIDdWgxPfonmhxqT/RtNlIFZEKlcF5EZQxYj+LPanfNfSY2k4SYvW2fUipTLv6dSA/KnoB/bF2vxYiOWaz0g9APqw4yUrl5An1/PlsolKE617pcqeDWy+WFAjmBCjIQjTictAFypq5VanDuoDq3JuV5yyzqlQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728744024; c=relaxed/simple;
-	bh=raNMV7XctJIbSEmg1aR+IsRod9wfbi2q0jEtotc1h3A=;
+	s=arc-20240116; t=1728744027; c=relaxed/simple;
+	bh=XhzApypE5f+qCrdy/4fKvPPdyBST0xn9vF9MGvotmC4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Icup92td+SPoeKlFZ/u9UFdsGy71TRGzbv+YauI9d25Zy7MQ4kAsea62eNCtVDhc4lqk8JfHy4wB3CqJ+RnQnRd7eQ9M7SNQwUx9509Cdt8f5vHSvUBd0WjN7nMv2nwHOej6HmNiu/x/lhYjFJagV8GbLfcsbpaCr+7F0lgUKRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=uHURsS6v; arc=none smtp.client-ip=209.85.218.53
+	 In-Reply-To:To:Cc; b=hdhT69F+gj5Hf34dlFontiEgCC45TID+4c5+f0sv1hq4G/guJKYS5xzfZwJXiCdoJ2Bx4M+HPRM6zjoUmSn1qxq4n4Z4PN+4PrVwJwb5tDa8N8t7+Z6YH1/Lt6au2nrlMFf5sDmeE27eGzp4Uz8Xvmj7/9TsJUf7WVfHjzyd9Bc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=ITYfrMzt; arc=none smtp.client-ip=209.85.208.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so59743166b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 07:40:22 -0700 (PDT)
+Received: by mail-ed1-f45.google.com with SMTP id 4fb4d7f45d1cf-5c928611371so4139841a12.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 07:40:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728744021; x=1729348821; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728744023; x=1729348823; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=ULCkiQ8VoXo6ciE6Elqk4HCN1p6ytUWA5waL2W1UArY=;
-        b=uHURsS6v2tEGk+6UMqxWafuAshLNmmtAQevKrUrrSQ8uN/tztD6rK77VtEiuhmDI+P
-         fZpyWj2skQjN0xS4AkEzkO22qffNt449sSXWSuBC3vUCSktSA7NSTSLsTCaKu0/biwwK
-         zARWQIjeg53jIQkUeDHKwecPjKKw6Qx1+Rk1Aeg4zLDHSdnZVaCaiBe60wH//D0bmUOm
-         zgMH7lZHZid97xBmFuC6II1eE6JSA80wlI3sZttNYnGJdkKzeO17SxsdMNIWX4wmc3q4
-         9CeQW/eIhVt2xpakzThVGHvk7mjrbYk70N8795m4jTqkBVk+X2tkPlMCQIAGue35Tpei
-         jqrA==
+        bh=9N1QRWG1+vGqch+tHQPBAnNZwJAl+Fys3rUYZOZKJwk=;
+        b=ITYfrMztTNroca9k/qIOS2xCVyaMqOpdXPkAF0GwiMOHgLDFJVrEXC38aGuChA3DN0
+         Er0ILh2eZitIqp8zEtVkjXB6+bl65iv31r9OggfFW29lZYZv4Vs1TL+5KQNuwhT/4hLg
+         Nj1zKiWkaCGY9rcFlgkFOu5GNfH6wVapVFDEutNs/fdS5hm54SawiyD/Xm/YUagrO1A/
+         AXnWRwHcKNevFGq6ICETyStnVYNAAFhV+U0oTB6wkh89YamyVgpoZEtmjyYnU2JxCzoq
+         6Bw6AA+Vd3+F2L1FNK5FFNufXonmulRvy+x1qRijrEcAzKjk4KSWOhLJ7n+QqPjcvIHk
+         9JnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728744021; x=1729348821;
+        d=1e100.net; s=20230601; t=1728744023; x=1729348823;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=ULCkiQ8VoXo6ciE6Elqk4HCN1p6ytUWA5waL2W1UArY=;
-        b=VqhnYlKEFv5JmcJWE300krzgRswRrYBpwKHaTJN0qb3ehffEwufAE91pCHSNKiXQs8
-         aeMizpWqhZk31uZ7tKdmwuRF0CZpTZVzkfp9nrwQxlmgtVQmzeihhjRPwYjZnKKIywhx
-         Wo2SRZMnqdVgYVzo67Fac8RLn5UFQnwG7yK4VlmZlXz3D9n4RI9GeKkqoMTQU8dizz9E
-         JudmUiR9/J9a6D80teqTPEANIzE2lwSm1lMeB5StYQgq8QT1wKZBH3Jf63yiW5sHgiFW
-         aD/zz9L6vvBS7MpJ3CIbk65v+NBbGEcX0WYFWgfab2AeI2ohfyUZSoYzEiW94E8AmpZ9
-         JJlQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUSwit8U4wQxgcOLO9Yr0W0t5np/dPd9cb9aG614VqSu9htEUGunMsN7neC+tIkK3x18+oyec1pyVqxCYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3/UZ+d0VpiOhWH6l9VI7B2m3KxaUsIBQq4zXFbcd+Lzh9pC5B
-	LgvzljGm3vwt0MRmZfr/iDq2a6SnazFqommajsYwsJrPKg3vuxVE0wtvsXinZhc=
-X-Google-Smtp-Source: AGHT+IGWlpkwYPvczR/HmMNrTZLwB3u77RjG+9e11crQIzq8pDrWM2fLtcRa72Csddc7F8rgokMxAA==
-X-Received: by 2002:a17:907:9489:b0:a99:e98f:e73d with SMTP id a640c23a62f3a-a99e9900010mr139675266b.37.1728744020855;
-        Sat, 12 Oct 2024 07:40:20 -0700 (PDT)
+        bh=9N1QRWG1+vGqch+tHQPBAnNZwJAl+Fys3rUYZOZKJwk=;
+        b=DH3vq3YXUoNDEOuhGyqjb5R2jOu4B6vEK2Y8kXfJP2KeBYY4yfeEQgn75Q5mgIaFkS
+         g5W6wEi6NPnUb+jYcFaW8EB++bLwMi8g3ZY2gKhyxlfcCOcgaJ6dtK2mX/LzjTXm2ajr
+         K5iHVH7WmSt2Ye/QJ72Tax4Ot+l0ios9lEDUcRQUcGfJfrSNFfJ9/brnIY8JaqZna32Z
+         sF4Zpo4Tp/IrKTxr3GkBbMh/E8RXiLAVsmiZYVwdV1IfFD7EMlFqCL4eXDc83Jh0ksaP
+         1rv8gpF//+9PiGHSbEOmnfE65xVGmm3/TAdPe2oxexw4+epQxCs0vhZ55eFsvvQ25Whq
+         BfWA==
+X-Forwarded-Encrypted: i=1; AJvYcCWrxvf6xe62ddF0riCN3WdiiOkiHsbhpVmaNd1xkpqFuXJPZjHIgKF9KlEjm5K7cKQm2DpPYwPStX1ZZ/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyrwvba/417d/jiUcIIZGevAsG2ifj6NGqPqzOyli4xfQ1PwpZI
+	i3JHeHwuTR7vNZbS/8Mcl9HeTOBFAOJju4K7HRUeTc4rTPi9F7NDcLeSOi2B9rE=
+X-Google-Smtp-Source: AGHT+IFB/80TsoIFcqOP89wUuKPAaBM6QE7qOspyWm7HaILKW2tXt8EZeLi+xkFDPhSFFTfLKDwO9g==
+X-Received: by 2002:a05:6402:42d4:b0:5c9:4281:451e with SMTP id 4fb4d7f45d1cf-5c948c88378mr4204260a12.1.1728744023446;
+        Sat, 12 Oct 2024 07:40:23 -0700 (PDT)
 Received: from localhost ([2001:4090:a244:83ae:2517:2666:43c9:d0d3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80dcd55sm332162666b.173.2024.10.12.07.40.20
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9370d22fesm2905032a12.19.2024.10.12.07.40.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 07:40:20 -0700 (PDT)
+        Sat, 12 Oct 2024 07:40:22 -0700 (PDT)
 From: Markus Schneider-Pargmann <msp@baylibre.com>
-Date: Sat, 12 Oct 2024 16:39:29 +0200
-Subject: [PATCH v3 3/6] arm64: dts: ti: k3-pinctrl: Add WKUP_EN flag
+Date: Sat, 12 Oct 2024 16:39:30 +0200
+Subject: [PATCH v3 4/6] arm64: dts: ti: am62-lp-sk: Add vcc_3v3_sys
+ regulator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241012-topic-am62-partialio-v6-12-b4-v3-3-f7c6c2739681@baylibre.com>
+Message-Id: <20241012-topic-am62-partialio-v6-12-b4-v3-4-f7c6c2739681@baylibre.com>
 References: <20241012-topic-am62-partialio-v6-12-b4-v3-0-f7c6c2739681@baylibre.com>
 In-Reply-To: <20241012-topic-am62-partialio-v6-12-b4-v3-0-f7c6c2739681@baylibre.com>
 To: Nishanth Menon <nm@ti.com>, Tero Kristo <kristo@kernel.org>, 
@@ -90,44 +91,60 @@ Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
  Kevin Hilman <khilman@baylibre.com>, Dhruva Gole <d-gole@ti.com>, 
  Markus Schneider-Pargmann <msp@baylibre.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1051; i=msp@baylibre.com;
- h=from:subject:message-id; bh=raNMV7XctJIbSEmg1aR+IsRod9wfbi2q0jEtotc1h3A=;
- b=owGbwMvMwCGm0rPl0RXRdfaMp9WSGNK5umxevT6yTL1ugqjsyZ/d/gXll499jDv17/NM91mRA
- g/81Q/v6ShlYRDjYJAVU2S5+2Hhuzq56wsi1j1yhJnDygQyhIGLUwAmciyI4b+Xjcjhd2Hbfn+Y
- YHWNQa/HelKKjP3cHhmW5P9ZJz6kbHvO8L+yxdmtIUVko07zn7THwmUHvl0PeBMcwM21vePLNi+
- zw3wA
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1572; i=msp@baylibre.com;
+ h=from:subject:message-id; bh=XhzApypE5f+qCrdy/4fKvPPdyBST0xn9vF9MGvotmC4=;
+ b=owGbwMvMwCGm0rPl0RXRdfaMp9WSGNK5uhzdZY6nmczOe3lfMv7Imklsn4+8eJuk97Xwg2aR5
+ KbnfNrvO0pZGMQ4GGTFFFnuflj4rk7u+oKIdY8cYeawMoEMYeDiFICJvI5i+F+ce/demWLfp8UV
+ m3Ywsyh0Cp9Yrr/qt1Yd4+JJghss799mZHiXGDxlHrf5ddeO2zYrr/M57Ohdx1pw77p58Z9PRz8
+ tOMgJAA==
 X-Developer-Key: i=msp@baylibre.com; a=openpgp;
  fpr=BADD88DB889FDC3E8A3D5FE612FA6A01E0A45B41
 
-WKUP_EN is a flag to enable pin wakeup. Any activity will wakeup the SoC
-in that case.
+vcc_3v3_main is currently modeled slightly wrong. vcc_3v3_main has a
+parent called vcc_3v3_sys which is currently not present. Add the
+regulator for vcc_3v3_sys to be able to describe other regulators in the
+next patch.
 
+Fixes: e6a51ffabfc1 ("arm64: ti: dts: Add support for AM62x LP SK")
 Signed-off-by: Markus Schneider-Pargmann <msp@baylibre.com>
 ---
- arch/arm64/boot/dts/ti/k3-pinctrl.h | 3 +++
- 1 file changed, 3 insertions(+)
+ arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts | 14 ++++++++++++--
+ 1 file changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/ti/k3-pinctrl.h b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-index 22b8d73cfd3264735ddf91874e60a0c5fc7ade5b..dd4d53e8420a1d671e04a70d4af8b0ea1b75b2b2 100644
---- a/arch/arm64/boot/dts/ti/k3-pinctrl.h
-+++ b/arch/arm64/boot/dts/ti/k3-pinctrl.h
-@@ -12,6 +12,7 @@
- #define PULLTYPESEL_SHIFT	(17)
- #define RXACTIVE_SHIFT		(18)
- #define DEBOUNCE_SHIFT		(11)
-+#define WKUP_EN_SHIFT		(29)
+diff --git a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+index 8e9fc00a6b3c7459a360f9e1d6bbb60e68c460ab..529360b5e6fe052dd99f04b74c129193922f76ac 100644
+--- a/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am62-lp-sk.dts
+@@ -34,10 +34,10 @@ vcc_5v0: regulator-1 {
+ 		regulator-boot-on;
+ 	};
  
- #define PULL_DISABLE		(1 << PULLUDEN_SHIFT)
- #define PULL_ENABLE		(0 << PULLUDEN_SHIFT)
-@@ -38,6 +39,8 @@
- #define PIN_DEBOUNCE_CONF5	(5 << DEBOUNCE_SHIFT)
- #define PIN_DEBOUNCE_CONF6	(6 << DEBOUNCE_SHIFT)
- 
-+#define WKUP_EN			(1 << WKUP_EN_SHIFT)
+-	vcc_3v3_sys: regulator-2 {
++	vcc_3v3_main: regulator-2 {
+ 		/* output of LM61460-Q1 */
+ 		compatible = "regulator-fixed";
+-		regulator-name = "vcc_3v3_sys";
++		regulator-name = "vcc_3v3_main";
+ 		regulator-min-microvolt = <3300000>;
+ 		regulator-max-microvolt = <3300000>;
+ 		vin-supply = <&vmain_pd>;
+@@ -70,6 +70,16 @@ vddshv_sdio: regulator-4 {
+ 		states = <1800000 0x0>,
+ 			 <3300000 0x1>;
+ 	};
 +
- /* Default mux configuration for gpio-ranges to use with pinctrl */
- #define PIN_GPIO_RANGE_IOPAD	(PIN_INPUT | 7)
++	vcc_3v3_sys: regulator-5 {
++		compatible = "regulator-fixed";
++		regulator-name = "vcc_3v3_sys";
++		regulator-min-microvolt = <3300000>;
++		regulator-max-microvolt = <3300000>;
++		vin-supply = <&vcc_3v3_main>;
++		regulator-always-on;
++		regulator-boot-on;
++	};
+ };
  
+ &main_pmx0 {
 
 -- 
 2.45.2
