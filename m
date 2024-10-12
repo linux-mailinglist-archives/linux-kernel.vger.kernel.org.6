@@ -1,322 +1,168 @@
-Return-Path: <linux-kernel+bounces-362447-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B1E199B513
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:29:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2673399B545
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:00:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA7761F22038
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:29:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BCFD31F225E3
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E06DF186E3A;
-	Sat, 12 Oct 2024 13:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19C39189B8F;
+	Sat, 12 Oct 2024 14:00:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="msyXhhU9"
-Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
+	dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b="zZyBVo6B"
+Received: from hall.aurel32.net (hall.aurel32.net [195.154.113.88])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E86217838C
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 13:29:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 705CA149DF0;
+	Sat, 12 Oct 2024 14:00:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.154.113.88
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728739746; cv=none; b=lUPtCwheOHEA8YIwLjvpuOXRMCTbtWmg1EHiNeHrWr1b1M+L4gvRzegYSgwCl226fABiPzF8JpIvElR9HCEwI/1VJNP9pc5G71X1AFy57DNKAUZs5AP5qXgjKuH0Au8hkhlv9dUS2r9maAM0Cb1JlNdUgcnC7MVn/022pneNFkg=
+	t=1728741633; cv=none; b=FKfOOxPPTWxGtWv6DrIJSv+YOoHoU6CSATHYEG1vdiGpj7HAoMd/q9Yj9j+7MpnRyYraeD2Bzz4d9GpRx1Qq82kJPtGKTXOTR+jttrZtRnxxYhaJ1z1iflJT/0HJcmPq6WHaZ/W/T0CTjgSa98Wxj8n00Q8NZbcRu+7OQwCPya8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728739746; c=relaxed/simple;
-	bh=JV6MT53oaz7P1SWla3pSTWFc705TGRG2TfNUAqSxsLQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=F6VUblwV7B5X6urSN83ykK0TbIU80z9u7/nr63C2CuiVDyyZkHPJ8xBEnj2aMeFvYODHNbiTKXPyl8Gk24GcfM9cQhUwgN7RGdRrz3Lrb+ho9sBNcKoA8Nptpnr/LK2i/kFrrlL0MxMv1UiJuk2x4VcFmDGGLYYMh+CcY/8F7CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=msyXhhU9; arc=none smtp.client-ip=91.218.175.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728739740;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=8xQ1cpoFxTjd6+Ci/Gn0fA5RplMHTRH0u5UMBlDVpnA=;
-	b=msyXhhU9UnbAPfGu+OsgvCHL4bGc943gYPHAeQJG1yIHaQpUroOGSl7/qkNdhQYle0Of5t
-	nlIVwSANdVALSKCg+kCkLaavEaMCe0kfGP+p1BiNaEYtmswe0GDMzudYOP74WKfljVJWSb
-	hpn4bXu5Vu7kDIgB/iZpjq877xSVQzk=
-From: Yajun Deng <yajun.deng@linux.dev>
-To: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: aleksander.lobakin@intel.com,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yajun Deng <yajun.deng@linux.dev>
-Subject: [PATCH v2 net-next] net: vlan: Use vlan_prio instead of vlan_qos in mapping
-Date: Sat, 12 Oct 2024 21:28:26 +0800
-Message-Id: <20241012132826.2224-1-yajun.deng@linux.dev>
+	s=arc-20240116; t=1728741633; c=relaxed/simple;
+	bh=Oko5pEJSjCqvkp/hXyJplBKuu7k81GI8vfiRbw3SQBI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BiEJsYKx0bzsx9slHvdorocsDWWy3yjWMBZ91MvUCKbwSeeU9f1N3Q3iazymlGpB+TU4XD111tAct8dasDwY3ewln/mZbgTtq94DNyZ/b63QXcLHd8ErlSG/ea60mXMx7qjP7Hkecv5eKHsouU+7Ch1tgut1FXQ6EojZPgNElSQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net; spf=pass smtp.mailfrom=aurel32.net; dkim=pass (2048-bit key) header.d=aurel32.net header.i=@aurel32.net header.b=zZyBVo6B; arc=none smtp.client-ip=195.154.113.88
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=aurel32.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aurel32.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=aurel32.net
+	; s=202004.hall; h=In-Reply-To:Content-Transfer-Encoding:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:From:Reply-To:
+	Subject:Content-ID:Content-Description:X-Debbugs-Cc;
+	bh=86LUFeiSctauCmIBlqHrJmZxrAIYPqEdqsSwFAfU0sE=; b=zZyBVo6BMQP1cuNJ6PGdOOkOVo
+	ypvs/AkLg6J+QUOI6bBBIAxsFKMy1cfReTMN6clE7w0+77K4uGRINpQQfUGAAt2qqg/S5zunkUHh6
+	uwsrsThwmHi/OsUz/w5E0TaWs+jfgyoTPWpVTHTH/2Xtwd5cxwUjUvR4M+UUJMZif/9p98mLAs+9G
+	Fa8Z88v1Io4Ir1/1Pbe4AfOz+UFIGK7yT+ZGtbJl+/Xpn/g7pasfUzPJn9CFuV1mL949km3xx42VX
+	ED6524KlLqGBqX39OOWN3q1ABwJMSkzxg7Fcy4aCa06yP8ebAAEHWsyHA/dbsrbeY2X/Pe+ZgUJ4b
+	Ayo0vBAQ==;
+Received: from ohm.aurel32.net ([2001:bc8:30d7:111::2] helo=ohm.rr44.fr)
+	by hall.aurel32.net with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <aurelien@aurel32.net>)
+	id 1szcBV-000lVG-0Q;
+	Sat, 12 Oct 2024 15:29:29 +0200
+Date: Sat, 12 Oct 2024 15:29:28 +0200
+From: Aurelien Jarno <aurelien@aurel32.net>
+To: Changhuang Liang <changhuang.liang@starfivetech.com>
+Cc: Conor Dooley <conor+dt@kernel.org>,
+	Jack Zhu <jack.zhu@starfivetech.com>, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	E Shattow <lucent@gmail.com>
+Subject: Re: [v3] riscv: dts: starfive: jh7110: Add camera subsystem nodes
+Message-ID: <Zwp5uFiGqxQa-yC9@aurel32.net>
+Mail-Followup-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jack Zhu <jack.zhu@starfivetech.com>, linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+	E Shattow <lucent@gmail.com>
+References: <20240219032741.18387-1-changhuang.liang@starfivetech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20240219032741.18387-1-changhuang.liang@starfivetech.com>
+User-Agent: Mutt/2.2.13 (2024-03-09)
 
-The vlan_qos member is used to save the vlan qos, but we only save the
-priority. Also, we will get the priority in vlan netlink and proc.
-We can just save the vlan priority using vlan_prio, so we can use vlan_prio
-to get the priority directly.
+Hi,
 
-For flexibility, we introduced vlan_dev_get_egress_priority() helper
-function. After this patch, we will call vlan_dev_get_egress_priority()
-instead of vlan_dev_get_egress_qos_mask() in irdma.ko and rdma_cm.ko.
-Because we don't need the shift and mask operations anymore.
+On 2024-02-18 19:27, Changhuang Liang wrote:
+> Add camera subsystem nodes for the StarFive JH7110 SoC. They contain the
+> dphy-rx, csi2rx, camss nodes.
+>=20
+> Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
+> ---
+>  .../jh7110-starfive-visionfive-2.dtsi         | 49 ++++++++++++++
+>  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 67 +++++++++++++++++++
+>  2 files changed, 116 insertions(+)
 
-At the same time, we defined VLAN_PRIO_MAX to limit the vlan priority to
-a maximum of 7. The vlan priority above 7 is meaningless.
+We have been asked to enable CONFIG_VIDEO_STARFIVE_CAMSS in the Debian
+kernel, which from my understanding and given the device tree shown
+below also requires enabling CONFIG_VIDEO_CADENCE_CSI2RX. That said
+doing so triggers the following error in dmesg:
 
-Before:
+[   25.143282] cdns-csi2rx 19800000.csi: probe with driver cdns-csi2rx fail=
+ed with error -22
 
- # ip link add link enp1s0 name enp1s0.10 type vlan id 10
- # ip link set enp1s0.10 type vlan ingress 8:8
- # ip link set enp1s0.10 type vlan egress 8:8
- # cat /proc/net/vlan/enp1s0.10
-   enp1s0.10  VID: 10	 REORDER_HDR: 1  dev->priv_flags: 81021
-            total frames received            0
-             total bytes received            0
-         Broadcast/Multicast Rcvd            0
+=46rom a quick look it seems there is something in the port@0 csi2rx
+entry. Do you happen to know what is wrong?
 
-         total frames transmitted            0
-          total bytes transmitted            0
-   Device: enp1s0
-   INGRESS priority mappings: 0:8  1:0  2:0  3:0  4:0  5:0  6:0 7:0
-    EGRESS priority mappings: 8:0
+Thanks
+Aurelien
 
-After:
+> diff --git a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dt=
+si b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> index b89e9791efa7..737ee97a3577 100644
+> --- a/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> +++ b/arch/riscv/boot/dts/starfive/jh7110-starfive-visionfive-2.dtsi
+> @@ -125,6 +125,55 @@ &tdm_ext {
+>  	clock-frequency =3D <49152000>;
+>  };
+>=20
+> +&camss {
+> +	assigned-clocks =3D <&ispcrg JH7110_ISPCLK_DOM4_APB_FUNC>,
+> +			  <&ispcrg JH7110_ISPCLK_MIPI_RX0_PXL>;
+> +	assigned-clock-rates =3D <49500000>, <198000000>;
+> +	status =3D "okay";
+> +
+> +	ports {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		port@0 {
+> +			reg =3D <0>;
+> +		};
+> +
+> +		port@1 {
+> +			reg =3D <1>;
+> +
+> +			camss_from_csi2rx: endpoint {
+> +				remote-endpoint =3D <&csi2rx_to_camss>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+> +&csi2rx {
+> +	assigned-clocks =3D <&ispcrg JH7110_ISPCLK_VIN_SYS>;
+> +	assigned-clock-rates =3D <297000000>;
+> +	status =3D "okay";
+> +
+> +	ports {
+> +		#address-cells =3D <1>;
+> +		#size-cells =3D <0>;
+> +
+> +		port@0 {
+> +			reg =3D <0>;
+> +
+> +			/* remote MIPI sensor endpoint */
+> +		};
+> +
+> +		port@1 {
+> +			reg =3D <1>;
+> +
+> +			csi2rx_to_camss: endpoint {
+> +				remote-endpoint =3D <&camss_from_csi2rx>;
+> +			};
+> +		};
+> +	};
+> +};
+> +
+>  &gmac0 {
+>  	phy-handle =3D <&phy0>;
+>  	phy-mode =3D "rgmii-id";
+=20
 
- # ip link add link enp1s0 name enp1s0.10 type vlan id 10
- # ip link set enp1s0.10 type vlan ingress 8:8
- # ip link set enp1s0.10 type vlan egress 8:8
-   RTNETLINK answers: Invalid argument
- # cat /proc/net/vlan/enp1s0.10
-   enp1s0.10  VID: 10	 REORDER_HDR: 1  dev->priv_flags: 81021
-            total frames received            0
-             total bytes received            0
-         Broadcast/Multicast Rcvd            0
-
-         total frames transmitted            0
-          total bytes transmitted            0
-   Device: enp1s0
-   INGRESS priority mappings: 0:0  1:0  2:0  3:0  4:0  5:0  6:0 7:0
-    EGRESS priority mappings:
-
-Signed-off-by: Yajun Deng <yajun.deng@linux.dev>
----
-v2: Add more detailed comments and tests.
-v1: https://lore.kernel.org/all/20241009132302.2902-1-yajun.deng@linux.dev/
----
- include/linux/if_vlan.h  | 27 ++++++++++++++++++++-------
- net/8021q/vlan.h         |  4 ++--
- net/8021q/vlan_dev.c     | 27 ++++++++++++++++-----------
- net/8021q/vlan_netlink.c |  4 ++--
- net/8021q/vlanproc.c     |  4 ++--
- 5 files changed, 42 insertions(+), 24 deletions(-)
-
-diff --git a/include/linux/if_vlan.h b/include/linux/if_vlan.h
-index c1645c86eed9..98a4c1418ad8 100644
---- a/include/linux/if_vlan.h
-+++ b/include/linux/if_vlan.h
-@@ -72,6 +72,7 @@ static inline struct vlan_ethhdr *skb_vlan_eth_hdr(const struct sk_buff *skb)
- 
- #define VLAN_PRIO_MASK		0xe000 /* Priority Code Point */
- #define VLAN_PRIO_SHIFT		13
-+#define VLAN_PRIO_MAX		7
- #define VLAN_CFI_MASK		0x1000 /* Canonical Format Indicator / Drop Eligible Indicator */
- #define VLAN_VID_MASK		0x0fff /* VLAN Identifier */
- #define VLAN_N_VID		4096
-@@ -150,12 +151,12 @@ extern __be16 vlan_dev_vlan_proto(const struct net_device *dev);
- /**
-  *	struct vlan_priority_tci_mapping - vlan egress priority mappings
-  *	@priority: skb priority
-- *	@vlan_qos: vlan priority: (skb->priority << 13) & 0xE000
-+ *	@vlan_prio: vlan priority
-  *	@next: pointer to next struct
-  */
- struct vlan_priority_tci_mapping {
- 	u32					priority;
--	u16					vlan_qos;
-+	u8					vlan_prio;
- 	struct vlan_priority_tci_mapping	*next;
- };
- 
-@@ -204,8 +205,8 @@ static inline struct vlan_dev_priv *vlan_dev_priv(const struct net_device *dev)
- 	return netdev_priv(dev);
- }
- 
--static inline u16
--vlan_dev_get_egress_qos_mask(struct net_device *dev, u32 skprio)
-+static inline u8
-+vlan_dev_get_egress_priority(struct net_device *dev, u32 skprio)
- {
- 	struct vlan_priority_tci_mapping *mp;
- 
-@@ -214,15 +215,21 @@ vlan_dev_get_egress_qos_mask(struct net_device *dev, u32 skprio)
- 	mp = vlan_dev_priv(dev)->egress_priority_map[(skprio & 0xF)];
- 	while (mp) {
- 		if (mp->priority == skprio) {
--			return mp->vlan_qos; /* This should already be shifted
--					      * to mask correctly with the
--					      * VLAN's TCI */
-+			return mp->vlan_prio;
- 		}
- 		mp = mp->next;
- 	}
- 	return 0;
- }
- 
-+static inline u16
-+vlan_dev_get_egress_qos_mask(struct net_device *dev, u32 skprio)
-+{
-+	u8 vlan_prio = vlan_dev_get_egress_priority(dev, skprio);
-+
-+	return (vlan_prio << VLAN_PRIO_SHIFT) & VLAN_PRIO_MASK;
-+}
-+
- extern bool vlan_do_receive(struct sk_buff **skb);
- 
- extern int vlan_vid_add(struct net_device *dev, __be16 proto, u16 vid);
-@@ -269,6 +276,12 @@ static inline __be16 vlan_dev_vlan_proto(const struct net_device *dev)
- 	return 0;
- }
- 
-+static inline u8 vlan_dev_get_egress_priority(struct net_device *dev,
-+					      u32 skprio)
-+{
-+	return 0;
-+}
-+
- static inline u16 vlan_dev_get_egress_qos_mask(struct net_device *dev,
- 					       u32 skprio)
- {
-diff --git a/net/8021q/vlan.h b/net/8021q/vlan.h
-index 5eaf38875554..b28875c4ac86 100644
---- a/net/8021q/vlan.h
-+++ b/net/8021q/vlan.h
-@@ -126,9 +126,9 @@ void vlan_filter_drop_vids(struct vlan_info *vlan_info, __be16 proto);
- 
- /* found in vlan_dev.c */
- void vlan_dev_set_ingress_priority(const struct net_device *dev,
--				   u32 skb_prio, u16 vlan_prio);
-+				   u32 skb_prio, u8 vlan_prio);
- int vlan_dev_set_egress_priority(const struct net_device *dev,
--				 u32 skb_prio, u16 vlan_prio);
-+				 u32 skb_prio, u8 vlan_prio);
- void vlan_dev_free_egress_priority(const struct net_device *dev);
- int vlan_dev_change_flags(const struct net_device *dev, u32 flag, u32 mask);
- void vlan_dev_get_realdev_name(const struct net_device *dev, char *result,
-diff --git a/net/8021q/vlan_dev.c b/net/8021q/vlan_dev.c
-index 458040e8a0e0..61021ecf1532 100644
---- a/net/8021q/vlan_dev.c
-+++ b/net/8021q/vlan_dev.c
-@@ -155,35 +155,40 @@ static int vlan_dev_change_mtu(struct net_device *dev, int new_mtu)
- }
- 
- void vlan_dev_set_ingress_priority(const struct net_device *dev,
--				   u32 skb_prio, u16 vlan_prio)
-+				   u32 skb_prio, u8 vlan_prio)
- {
- 	struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
- 
--	if (vlan->ingress_priority_map[vlan_prio & 0x7] && !skb_prio)
-+	if (vlan_prio > VLAN_PRIO_MAX)
-+		return;
-+
-+	if (vlan->ingress_priority_map[vlan_prio] && !skb_prio)
- 		vlan->nr_ingress_mappings--;
--	else if (!vlan->ingress_priority_map[vlan_prio & 0x7] && skb_prio)
-+	else if (!vlan->ingress_priority_map[vlan_prio] && skb_prio)
- 		vlan->nr_ingress_mappings++;
- 
--	vlan->ingress_priority_map[vlan_prio & 0x7] = skb_prio;
-+	vlan->ingress_priority_map[vlan_prio] = skb_prio;
- }
- 
- int vlan_dev_set_egress_priority(const struct net_device *dev,
--				 u32 skb_prio, u16 vlan_prio)
-+				 u32 skb_prio, u8 vlan_prio)
- {
- 	struct vlan_dev_priv *vlan = vlan_dev_priv(dev);
- 	struct vlan_priority_tci_mapping *mp = NULL;
- 	struct vlan_priority_tci_mapping *np;
--	u32 vlan_qos = (vlan_prio << VLAN_PRIO_SHIFT) & VLAN_PRIO_MASK;
-+
-+	if (vlan_prio > VLAN_PRIO_MAX)
-+		return -EINVAL;
- 
- 	/* See if a priority mapping exists.. */
- 	mp = vlan->egress_priority_map[skb_prio & 0xF];
- 	while (mp) {
- 		if (mp->priority == skb_prio) {
--			if (mp->vlan_qos && !vlan_qos)
-+			if (mp->vlan_prio && !vlan_prio)
- 				vlan->nr_egress_mappings--;
--			else if (!mp->vlan_qos && vlan_qos)
-+			else if (!mp->vlan_prio && vlan_prio)
- 				vlan->nr_egress_mappings++;
--			mp->vlan_qos = vlan_qos;
-+			mp->vlan_prio = vlan_prio;
- 			return 0;
- 		}
- 		mp = mp->next;
-@@ -197,14 +202,14 @@ int vlan_dev_set_egress_priority(const struct net_device *dev,
- 
- 	np->next = mp;
- 	np->priority = skb_prio;
--	np->vlan_qos = vlan_qos;
-+	np->vlan_prio = vlan_prio;
- 	/* Before inserting this element in hash table, make sure all its fields
- 	 * are committed to memory.
- 	 * coupled with smp_rmb() in vlan_dev_get_egress_qos_mask()
- 	 */
- 	smp_wmb();
- 	vlan->egress_priority_map[skb_prio & 0xF] = np;
--	if (vlan_qos)
-+	if (vlan_prio)
- 		vlan->nr_egress_mappings++;
- 	return 0;
- }
-diff --git a/net/8021q/vlan_netlink.c b/net/8021q/vlan_netlink.c
-index cf5219df7903..f62d8320c5b4 100644
---- a/net/8021q/vlan_netlink.c
-+++ b/net/8021q/vlan_netlink.c
-@@ -261,11 +261,11 @@ static int vlan_fill_info(struct sk_buff *skb, const struct net_device *dev)
- 		for (i = 0; i < ARRAY_SIZE(vlan->egress_priority_map); i++) {
- 			for (pm = vlan->egress_priority_map[i]; pm;
- 			     pm = pm->next) {
--				if (!pm->vlan_qos)
-+				if (!pm->vlan_prio)
- 					continue;
- 
- 				m.from = pm->priority;
--				m.to   = (pm->vlan_qos >> 13) & 0x7;
-+				m.to   = pm->vlan_prio;
- 				if (nla_put(skb, IFLA_VLAN_QOS_MAPPING,
- 					    sizeof(m), &m))
- 					goto nla_put_failure;
-diff --git a/net/8021q/vlanproc.c b/net/8021q/vlanproc.c
-index fa67374bda49..a5a5b8fbb054 100644
---- a/net/8021q/vlanproc.c
-+++ b/net/8021q/vlanproc.c
-@@ -266,8 +266,8 @@ static int vlandev_seq_show(struct seq_file *seq, void *offset)
- 		const struct vlan_priority_tci_mapping *mp
- 			= vlan->egress_priority_map[i];
- 		while (mp) {
--			seq_printf(seq, "%u:%d ",
--				   mp->priority, ((mp->vlan_qos >> 13) & 0x7));
-+			seq_printf(seq, "%u:%u ",
-+				   mp->priority, mp->vlan_prio);
- 			mp = mp->next;
- 		}
- 	}
--- 
-2.25.1
-
+--=20
+Aurelien Jarno                          GPG: 4096R/1DDD8C9B
+aurelien@aurel32.net                     http://aurel32.net
 
