@@ -1,169 +1,153 @@
-Return-Path: <linux-kernel+bounces-362023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D08B899B00B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:16:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 69A5899B00C
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3B021B23110
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:16:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7DDDF1C209E4
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:16:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14F214263;
-	Sat, 12 Oct 2024 02:16:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6145812E5D;
+	Sat, 12 Oct 2024 02:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PMIcQXZX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="BO4k+qw0"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26C611BC3F
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E99FF17BB6
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728699382; cv=none; b=cCbmKL9wssczx+6DzN2Ak4HGUj8eqpaC267bwKPiIT+9QZZxteBC/TVNRSwkxaKc1co28j6p1fifnYQBFDcs/CA2c+HJiO52Xt/4MOrql4huSUhVtGUS4Xa5fkOd714Ia8w5h6841DRtsUHWYtB2y6W40yMsmc3ie7Y+ZfzvC/M=
+	t=1728699402; cv=none; b=ocUmbj/bc45cehHgd6mP8y5HO+eEFxUkrMHlz0YGjkyvLJlvETcuQBoSE6GHA0eUNfS4MMf3kIk5Qwab32JJMBekiSnlcbrRokZN5aWFeNWSnbT0msxsZlb7HMkR9PG8Wyr15shDUr4KRHNSAcYA8nxsccJf5AnETryoibgNscY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728699382; c=relaxed/simple;
-	bh=JUodbJ31pdXwG1oR2V7v0TetHTfgjIOpHojdVIma3iI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ibTbVrTcE8D+aFMJMiSiMV7kJLasz4hcb3cNVkO4QJhMyB9m9YlKdl0yUc2Pe+d8fnG5ibZKt5ZNKxQgqmKpi9CZBVIw4bZx8bM8yQoD1EqpiyVTdXydxG9faaIlPKZAoVKCQnfa1heFvYa+YYjgGMx6DVivG+CJw/ViOS2OaQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PMIcQXZX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD3F0C4CECD
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:16:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728699381;
-	bh=JUodbJ31pdXwG1oR2V7v0TetHTfgjIOpHojdVIma3iI=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=PMIcQXZXeQj5qtw0siETa1YY9ZgelydhQU6wpPqNjQ0Gt1Ivy9GYk+dv2G9F8o+TF
-	 ybSrG9j44z2r8gNPBy+f50kZIcUU5Le1nf1aFDUb8zXCfvAMI6EawCY1YdtkZo4sq9
-	 3KKPhgPlPzZju7MgGJQhawcYIz9wOlQ5zed6W+QTIEyJfB1hHBmGXpgC4p09JR1VtL
-	 dX4F7RMaxyLmP/EC7n4LJXPEIWdhteYhIglD7UBkOrHGqQHFkwRCEawc88g6bAbCcY
-	 5wf9fpgCd4mI3pL2M0nGntQSsGUnDKQ7gUaTe2/sJhk4xmm76AOON6Hyq6Bvt+Ftxp
-	 GRtR5x+dWRmOA==
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c8af23a4fcso3366984a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:16:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUqqnFkCH/VDDq+JJ0BAOsYfZbfL7ONP+vzjjPx3z8RJB9JobOzp5KwGEULzicXSgAFAo4/8uQmuHElh94=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNGyNp87G6YwO3GY70c1g4cS2aFaTDQbHv/8ZDqoxpfRH0tOXg
-	6E7vReGwSgrHYnbiCdsU2Hb0yxZ8XNe4lMwGw4Dg+cgMZuU4E0HrzHxzWdsc4cOTcwiETA9geNC
-	pmdaxrOHPbdAs19+AVEbkOhc0lL4=
-X-Google-Smtp-Source: AGHT+IHuFRnnHrrgkM7pYwKUrgWiOtG7kV+p2T7XJp2djiBQ20CmZvBlI9kbC33qte/eEVLx+BBS1FsMPLaHGiB9gJA=
-X-Received: by 2002:a17:907:940c:b0:a8d:29b7:ecf3 with SMTP id
- a640c23a62f3a-a99b930e9d1mr358486566b.13.1728699380354; Fri, 11 Oct 2024
- 19:16:20 -0700 (PDT)
+	s=arc-20240116; t=1728699402; c=relaxed/simple;
+	bh=JEw3qMomfgQzA69BRmUZmsPsqL/cV5mhyuTOurGZk7Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Jh+RErjf0iq0mZaYFum/wyzKuqKHtB0uhUz3Epl9M9scrKMGMSKW86e4h1sJiXB9SQKVwgmrKDlzcsz7U4fETd9bG/UEBDBNMmq6xXmFLZelwZ6yVNVMW8QDjGIMKcDcdR0wihWvYfZQ9DCx7NFFRq1usZadZKM4Y6Ne5t6oPWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=BO4k+qw0; arc=none smtp.client-ip=209.85.215.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-7ea0ff74b15so1649623a12.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 19:16:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1728699399; x=1729304199; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JIpgGULhRMFB311FDWvWmP5IfvB3HTG59Wut79DELzU=;
+        b=BO4k+qw0nh7SXdyzO4j5dEUD3ujqmFGzQU/kMZPTy6Ln6RaCvlwt9n0Z7ocDoGXXht
+         MwnAFdH//d5ozimpTpez5PGjxvQwgM+e+BXb/IDRRlIlKSkADg0qbMp4tzO8DwQMNznB
+         cbMPJ+6cRsuKf15JMWS3ftFYWNIwLeqVXdLd85KWMRuZtgh3DxPeTbIjR5wjqK2VLF0f
+         F4rlf++b9kQKewShf0AlJAyL+l0tYmN2rGuyrQJR5SU9uLEvGl77h+vzVgpjCIE40LxF
+         OBPrQ3jqURgJHWspQt1kuqW2Wdc8e4JtYZhDiAbrDBew/6aeLp4M2N0Dw/tMHKYIUYE+
+         DOdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728699399; x=1729304199;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JIpgGULhRMFB311FDWvWmP5IfvB3HTG59Wut79DELzU=;
+        b=SLhat1mo+nr1VNdtbkNmpt1hI3BmjeplTxOW6Ee7JGw9XfoxbocC/CKjREqcwrebvu
+         DHLe6vmxtJTD8o6i8UVR7OwWttGZXhmOnI4tVKdVgvH7lDhU5faD1UAVicsHBvpySyYa
+         8N44mTc5M4H1w1RNn+jpt1mgAR6uKr99A4JUHgsHHB4gkNo2ypKxiYvl+OTRUgwZbPSY
+         RqvuaCkTRRcD58YqEr8chgAllgPcIczWor+Br8jN+TAeBqh89OA93fSWKsPdR5ADGMGQ
+         BuiRltjGWWM/X2gIqko8mQUQ/mzbCmgljYe90uCkU/s5nmEeIAhTPMMQNIhlqA/WLQXQ
+         2hzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWlsrWzStNMFL/Mow/Wz3Zcu8hsiYD1dIngvR5yVlNrZlRR7w3vx+OR6N2cVm2shT5OsWxLxukNQnyDRpI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyJXw5X46R2qCOApWaD7my/8lUZcvsltp+Vbi5TQEFxIaDZ5BlE
+	UyYpFlAYe9xguQ3f6y/rUV07zgvkl3bMPDFiF1ykO/9/J0Vpr4UypEiT+Ni2avY=
+X-Google-Smtp-Source: AGHT+IH9VIofSm2MjZ1/qlSwo6NShX9cLA2C/KbhDfW9rAR746IidW/T3BSEvyuDXnIpopM7RDxnPQ==
+X-Received: by 2002:a05:6a20:c6ce:b0:1cf:3f2a:d1dd with SMTP id adf61e73a8af0-1d8bcf29a9bmr6890777637.12.1728699399062;
+        Fri, 11 Oct 2024 19:16:39 -0700 (PDT)
+Received: from [10.84.149.95] ([63.216.146.178])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2a9e98c1sm3319287b3a.9.2024.10.11.19.16.34
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 11 Oct 2024 19:16:38 -0700 (PDT)
+Message-ID: <3647f368-7901-4fd8-9eb0-edc35bffb520@bytedance.com>
+Date: Sat, 12 Oct 2024 10:16:30 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010035048.3422527-1-maobibo@loongson.cn> <20241010035048.3422527-5-maobibo@loongson.cn>
-In-Reply-To: <20241010035048.3422527-5-maobibo@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Sat, 12 Oct 2024 10:16:07 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H5DvHcS+apFthMWNNqvvq+VMu--6bcuyGzdMz66K8Bd=g@mail.gmail.com>
-Message-ID: <CAAhV-H5DvHcS+apFthMWNNqvvq+VMu--6bcuyGzdMz66K8Bd=g@mail.gmail.com>
-Subject: Re: [PATCH 4/4] LoongArch: Use atomic operation with set_pte and
- pte_clear function
-To: Bibo Mao <maobibo@loongson.cn>
-Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>, loongarch@lists.linux.dev, 
-	linux-kernel@vger.kernel.org, kasan-dev@googlegroups.com, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH] mm: shrinker: avoid memleak in alloc_shrinker_info
+To: Chen Ridong <chenridong@huaweicloud.com>
+Cc: akpm@linux-foundation.org, david@fromorbit.com, roman.gushchin@linux.dev,
+ muchun.song@linux.dev, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ chenridong@huawei.com, wangweiyang2@huawei.com
+References: <20241011142105.391157-1-chenridong@huaweicloud.com>
+From: Qi Zheng <zhengqi.arch@bytedance.com>
+Content-Language: en-US
+In-Reply-To: <20241011142105.391157-1-chenridong@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi, Bibo,
 
-On Thu, Oct 10, 2024 at 11:50=E2=80=AFAM Bibo Mao <maobibo@loongson.cn> wro=
-te:
->
-> For kernel space area on LoongArch system, both two consecutive page
-> table entries should be enabled with PAGE_GLOBAL bit. So with function
-> set_pte() and pte_clear(), pte buddy entry is checked and set besides
-> its own pte entry. However it is not atomic operation to set both two
-> pte entries, there is problem with test_vmalloc test case.
->
-> With previous patch, all page table entries are set with PAGE_GLOBAL
-> bit at beginning. Only its own pte entry need update with function
-> set_pte() and pte_clear(), nothing to do with buddy pte entry.
->
-> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+
+On 2024/10/11 22:21, Chen Ridong wrote:
+> From: Chen Ridong <chenridong@huawei.com>
+> 
+> A memleak was found as bellow:
+> 
+> unreferenced object 0xffff8881010d2a80 (size 32):
+>    comm "mkdir", pid 1559, jiffies 4294932666
+>    hex dump (first 32 bytes):
+>      00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  ................
+>      40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  @...............
+>    backtrace (crc 2e7ef6fa):
+>      [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
+>      [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
+>      [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
+>      [<ffffffff81198dd9>] online_css+0x29/0xa0
+>      [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
+>      [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
+>      [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
+>      [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
+>      [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
+>      [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
+>      [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
+>      [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
+> 
+> In the alloc_shrinker_info function, when shrinker_unit_alloc return
+> err, the info won't be freed. Just fix it.
+> 
+> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for shrinker_info::{map, nr_deferred}")
+
+I think this also needs to be cc'd to the stable mailing list:
+
+Cc: stable@vger.kernel.org
+
+> Signed-off-by: Chen Ridong <chenridong@huawei.com>
 > ---
->  arch/loongarch/include/asm/pgtable.h | 44 ++++++++++------------------
->  1 file changed, 15 insertions(+), 29 deletions(-)
->
-> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/includ=
-e/asm/pgtable.h
-> index 22e3a8f96213..4be3f0dbecda 100644
-> --- a/arch/loongarch/include/asm/pgtable.h
-> +++ b/arch/loongarch/include/asm/pgtable.h
-> @@ -325,40 +325,26 @@ extern void paging_init(void);
->  static inline void set_pte(pte_t *ptep, pte_t pteval)
->  {
->         WRITE_ONCE(*ptep, pteval);
-> +}
->
-> -       if (pte_val(pteval) & _PAGE_GLOBAL) {
-> -               pte_t *buddy =3D ptep_buddy(ptep);
-> -               /*
-> -                * Make sure the buddy is global too (if it's !none,
-> -                * it better already be global)
-> -                */
-> -               if (pte_none(ptep_get(buddy))) {
-> -#ifdef CONFIG_SMP
-> -                       /*
-> -                        * For SMP, multiple CPUs can race, so we need
-> -                        * to do this atomically.
-> -                        */
-> -                       __asm__ __volatile__(
-> -                       __AMOR "$zero, %[global], %[buddy] \n"
-> -                       : [buddy] "+ZB" (buddy->pte)
-> -                       : [global] "r" (_PAGE_GLOBAL)
-> -                       : "memory");
-> -
-> -                       DBAR(0b11000); /* o_wrw =3D 0b11000 */
-> -#else /* !CONFIG_SMP */
-> -                       WRITE_ONCE(*buddy, __pte(pte_val(ptep_get(buddy))=
- | _PAGE_GLOBAL));
-> -#endif /* CONFIG_SMP */
-> -               }
-> -       }
-> +static inline unsigned long __ptep_get_and_clear(pte_t *ptep)
-> +{
-> +       return atomic64_fetch_and(_PAGE_GLOBAL, (atomic64_t *)&pte_val(*p=
-tep));
->  }
->
->  static inline void pte_clear(struct mm_struct *mm, unsigned long addr, p=
-te_t *ptep)
->  {
-> -       /* Preserve global status for the pair */
-> -       if (pte_val(ptep_get(ptep_buddy(ptep))) & _PAGE_GLOBAL)
-> -               set_pte(ptep, __pte(_PAGE_GLOBAL));
-> -       else
-> -               set_pte(ptep, __pte(0));
-> +       __ptep_get_and_clear(ptep);
-With the first patch, a kernel pte always take _PAGE_GLOBAL, so we
-don't need an expensive atomic operation, just
-"set_pte(pte_val(ptep_get(ptep)) & _PAGE_GLOBAL)" is OK here. And then
-we don't need a custom ptep_get_and_clear().
+>   mm/shrinker.c | 4 +++-
+>   1 file changed, 3 insertions(+), 1 deletion(-)
 
+Other than that, LGTM.
 
-Huacai
+Acked-by: Qi Zheng <zhengqi.arch@bytedance.com>
 
-> +}
-> +
-> +#define __HAVE_ARCH_PTEP_GET_AND_CLEAR
-> +static inline pte_t ptep_get_and_clear(struct mm_struct *mm,
-> +                                       unsigned long addr, pte_t *ptep)
-> +{
-> +       unsigned long val;
-> +
-> +       val =3D __ptep_get_and_clear(ptep);
-> +       return __pte(val);
->  }
->
->  #define PGD_T_LOG2     (__builtin_ffs(sizeof(pgd_t)) - 1)
-> --
-> 2.39.3
->
+Thanks!
+
+> 
+> diff --git a/mm/shrinker.c b/mm/shrinker.c
+> index dc5d2a6fcfc4..e4b795ee6d2e 100644
+> --- a/mm/shrinker.c
+> +++ b/mm/shrinker.c
+> @@ -87,8 +87,10 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
+>   		if (!info)
+>   			goto err;
+>   		info->map_nr_max = shrinker_nr_max;
+> -		if (shrinker_unit_alloc(info, NULL, nid))
+> +		if (shrinker_unit_alloc(info, NULL, nid)) {
+> +			kvfree(info);
+>   			goto err;
+> +		}
+>   		rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
+>   	}
+>   	mutex_unlock(&shrinker_mutex);
 
