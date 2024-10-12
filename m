@@ -1,423 +1,955 @@
-Return-Path: <linux-kernel+bounces-362207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 621DE99B21E
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:30:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C267E99B227
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:34:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F39DB283FBA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:30:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16115B225D6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E52A1149DF0;
-	Sat, 12 Oct 2024 08:30:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="c/VHJWgM"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBFFE1494B3;
+	Sat, 12 Oct 2024 08:34:32 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3662147C71
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:30:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CB701459E4
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:34:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728721808; cv=none; b=sJsVJaE+gsXATNDSg6s2HSuPTfFX2G+aH/zWFXdZOO5QxYpAEMeq121CsAGaDAxOuwgMKSAqYUYTY5Bjhm63lBBZvrighSZViM3W3mM3goAthU5tJMxApu+l3uGjrG1xWka59iOW0z7P7d4bsJmhVcCRxzx4q4REmech0+ntSU0=
+	t=1728722071; cv=none; b=RqbpGcfljY84lcKwCZ6b2IbbNg6clXOaWV3eIQy1z/fWeaLH1Rjb4HGQqoEqU7NLoIeg6HCizRgtdQJC7Vb7bhyHwI0QE7gxOc112BPSAUtaRw9yKZ40JhUD+ekXH9RKZcvncUiE2RReOKbZB1Yc3Hh5qqr0JEHtTUs4dXG7Tbk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728721808; c=relaxed/simple;
-	bh=ECKjD322h2x/x1D0PQXhbiPVfusYChI9stDd+/nkoOs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s4zGCzpPLPQ+JjKNOeyg3djynCtoIppAHLQlso5ssOAn7gywNTEV4JN2tqgbbmD2FE/EEHnVIvGHG9Thvbb5U161QJKRNpvvJyT00TwzHo3eNofquAOg3OTIAbkYXZyEIF5eFiSzbjibQMHn5j6v+SJ8rVSaOBejrADBdfcpQJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=c/VHJWgM; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-5398939d29eso3502014e87.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:30:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728721804; x=1729326604; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=MP4KFkmYV5Eq1PrBTBYXNpEp1k4YLWjyfkpnHuTd1Lc=;
-        b=c/VHJWgMTCW+Tw4Zvr152xA8a5jM1t2iCsII/tw2HIlnmrqrd3pad3Y//Fe+rzTbP+
-         V2AyfLYuhTLKtK/ZAdAgNRhg6AAK9MevumeE1iTPcC+fiyBlILFEtt2oZIobeqRR6Le+
-         ml9VD9umyFPjA0cswSjWfwosWs3NZGWxksVslxalJSkQKvFVOaJmHl4hMMtH1JMQ99W4
-         wu3RPNdPCawyyjDEXTZAedNXtWZr9j8uSZLiIXlldzcaC7Z2KNmRQnIVdhCY6mmJND1u
-         cH3IGvl38g1eEcvFKcRFIEFVGUK8f0gYswO73dPRTczwN5AWBZA8aU9XRGg4hRsekB54
-         QlkA==
+	s=arc-20240116; t=1728722071; c=relaxed/simple;
+	bh=rv49wGh1/QmFtAnrQkZY3p/SBA8pmnfmdfa2mLg5lS8=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=dMZlcCLOZUYaQpfaIHQbrsyauVbVM9wbBSm2nNMKbw4QzZYdDbS9OVNwutGWogPWelNcm7fHh8b5JtsNAciVZIiQnva8tNCUzZA6jNBLIBxhmB9DdqAh7r1QI+wYcGqw4Zhm92YfKJ+TBAOov5lfa50ASoWbkVVYRUBguA0zx5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-8377e901e67so232164139f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:34:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728721804; x=1729326604;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MP4KFkmYV5Eq1PrBTBYXNpEp1k4YLWjyfkpnHuTd1Lc=;
-        b=TG9MkGSea4uJXgfUgxdSh29cEI3g5i6z4dfR7HSgjdVXLZxRis/I7ApeTv4YiybgH2
-         yXllRYSpNQ5MNo7QolihKmpUszoXLPNLU/LB1RMjlVlOf1Ct1VGS4EsSbGE4IrPCaWCU
-         457JXBqAV3M47Hr5Y7ZmWilLrIsgjry5x5pTPt+WizQndLHCwW4yF/95jcitmXPTT1vz
-         KZrG8+fDGSlz1QV7yoGyXE1XVs/WLavuXXwC7gHY72x1pPqVkv00SnW0Q6DHpaoBUZfY
-         YI9cFVyTC9U98fJ9Tnz2G1ePgS2JywkUPZnVhtM+MBSMWZLAjKiE8p4irYMI5N7bT29I
-         8oIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxBwYDFB/WCrvp3O6YrrDXSpJDHRxU7XOrrY3BBQgyIAPMsVR+3nRMOgWSa8TctFX8xN8Gnqa6vEMhEWs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNONmPyNptaB7J/9dM0gEk7rfb1Izcxt6g97pByCVsaBfSA6W7
-	+FIFdQefmHI0uz+zm9jGc85+rZnKrbKB75eQEWCOcn7/k9+E6ZVkZTtAYGlltAw=
-X-Google-Smtp-Source: AGHT+IHLv5GDCadGxROtRejetHoIpCiA0KJzpQKNcKouYrzzeD7NOgvOAieIJcz/jmNDgwbTZoWugA==
-X-Received: by 2002:a05:6512:630d:b0:539:da76:4832 with SMTP id 2adb3069b0e04-539da764c75mr2047352e87.37.1728721803976;
-        Sat, 12 Oct 2024 01:30:03 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539ea075c47sm25695e87.209.2024.10.12.01.30.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 01:30:03 -0700 (PDT)
-Date: Sat, 12 Oct 2024 11:30:01 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Liu Ying <victor.liu@nxp.com>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	andrzej.hajda@intel.com, neil.armstrong@linaro.org, rfoss@kernel.org, 
-	Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se, jernej.skrabec@gmail.com, airlied@gmail.com, 
-	simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
-	tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
-	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de, 
-	festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org, 
-	quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de, nfraprado@collabora.com, 
-	o.rempel@pengutronix.de, y.moog@phytec.de, marex@denx.de, isaac.scott@ideasonboard.com, 
-	biju.das.jz@bp.renesas.com
-Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
- to HDMI converter
-Message-ID: <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
-References: <20241012073543.1388069-1-victor.liu@nxp.com>
- <20241012073543.1388069-6-victor.liu@nxp.com>
+        d=1e100.net; s=20230601; t=1728722068; x=1729326868;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yuHTE3FluW7u+rC3Obg26prCVyoJThK5guIvMwTLac0=;
+        b=CunwPu2rPK1mhT8VMHVbrQ3psPfgezaa94FO6SVtVyT+4Gr8mP6J1v2XWJlKs8daHp
+         GCDhndMZC9fpe5W4EUidpnYkEDEezDWATt89ajeSTdJRlwcTw+X/YttuF1Qb9HIgi+SB
+         42oNWqEZJQ4jwPV3C1Y6CTv6Jf2Z/YU2n6JshIWyeAb7sNv2Yzuv32QMU3d4VQ0+pelt
+         ISqpTsxmcmfB3j4E7Un5Rge7vx9Pso1nF/Gt6pZy6csZpkDiWhJwSCM8vDkhrKmzjYbR
+         6DKs2FrZEyNYjATuVygWmPQeX5JaWXbeZlsgGIeVxLijYtHFupBM4L6dmO1pfWaNnv1K
+         GAOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWd9NX/81S5odR/vfs2iHBDKCm0rXj8Vrq3IfNcaatw7TDBLzYHEqBHamGLD30ANRcQzt8EKsNd9ugd4RQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMfbOCscKSjcB7D+1mGZYL4FsiJ2LApLfhX1lYt1U0WM0sSaKq
+	91Z8VMsYSR+b3K7jrPvpPqrnnh2QDxI1kFF+DEZxxGQnsr9uNhG9M6Ha9xjkUxoGB5FhpjWMduw
+	Ms6IfrXIpcfef+ms+waKAPxg1PyrWxhXGDVHDM1llvzx+a+XDo6E7X9A=
+X-Google-Smtp-Source: AGHT+IFcbLbZYObyJ4gR2M6vTJ1UPob+aAXFJNJUXba008fSrukhTdwhY2jFem+Jao07tkNYNxkqC406Rfz0yG9OfEjEjbV12bV9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241012073543.1388069-6-victor.liu@nxp.com>
+X-Received: by 2002:a05:6602:1653:b0:835:42ce:933d with SMTP id
+ ca18e2360f4ac-8379202d4cdmr465156339f.1.1728722067744; Sat, 12 Oct 2024
+ 01:34:27 -0700 (PDT)
+Date: Sat, 12 Oct 2024 01:34:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670a3493.050a0220.3e960.0022.GAE@google.com>
+Subject: [syzbot] [input?] [usb?] INFO: rcu detected stall in do_syscall_64
+From: syzbot <syzbot+a3bc6ce74afdd295fe4b@syzkaller.appspotmail.com>
+To: bp@alien8.de, dave.hansen@linux.intel.com, hpa@zytor.com, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, luto@kernel.org, mingo@redhat.com, 
+	syzkaller-bugs@googlegroups.com, tglx@linutronix.de, x86@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Oct 12, 2024 at 03:35:39PM +0800, Liu Ying wrote:
-> Document ITE IT6263 LVDS to HDMI converter.
-> 
-> Product link:
-> https://www.ite.com.tw/en/product/cate1/IT6263
-> 
-> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> ---
-> v2:
-> * Document number of LVDS link data lanes.  (Biju)
-> * Simplify ports property by dropping "oneOf".  (Rob)
-> 
->  .../bindings/display/bridge/ite,it6263.yaml   | 276 ++++++++++++++++++
->  1 file changed, 276 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> new file mode 100644
-> index 000000000000..bc2bbec07623
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> @@ -0,0 +1,276 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: ITE IT6263 LVDS to HDMI converter
-> +
-> +maintainers:
-> +  - Liu Ying <victor.liu@nxp.com>
-> +
-> +description: |
-> +  The IT6263 is a high-performance single-chip De-SSC(De-Spread Spectrum) LVDS
-> +  to HDMI converter.  Combined with LVDS receiver and HDMI 1.4a transmitter,
-> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
-> +  The built-in LVDS receiver can support single-link and dual-link LVDS inputs,
-> +  and the built-in HDMI transmitter is fully compliant with HDMI 1.4a/3D, HDCP
-> +  1.2 and backward compatible with DVI 1.0 specification.
-> +
-> +  The IT6263 also encodes and transmits up to 8 channels of I2S digital audio,
-> +  with sampling rate up to 192KHz and sample size up to 24 bits. In addition,
-> +  an S/PDIF input port takes in compressed audio of up to 192KHz frame rate.
-> +
-> +  The newly supported High-Bit Rate(HBR) audio by HDMI specifications v1.3 is
-> +  provided by the IT6263 in two interfaces: the four I2S input ports or the
-> +  S/PDIF input port.  With both interfaces the highest possible HBR frame rate
-> +  is supported at up to 768KHz.
-> +
-> +properties:
+Hello,
 
-No LVDS data-mapping support?
+syzbot found the following issue on:
 
-> +  compatible:
-> +    const: ite,it6263
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  clocks:
-> +    maxItems: 1
-> +    description: audio master clock
-> +
-> +  clock-names:
-> +    const: mclk
-> +
-> +  reset-gpios:
-> +    maxItems: 1
-> +
-> +  ivdd-supply:
-> +    description: 1.8V digital logic power
-> +
-> +  ovdd-supply:
-> +    description: 3.3V I/O pin power
-> +
-> +  txavcc18-supply:
-> +    description: 1.8V HDMI analog frontend power
-> +
-> +  txavcc33-supply:
-> +    description: 3.3V HDMI analog frontend power
-> +
-> +  pvcc1-supply:
-> +    description: 1.8V HDMI frontend core PLL power
-> +
-> +  pvcc2-supply:
-> +    description: 1.8V HDMI frontend filter PLL power
-> +
-> +  avcc-supply:
-> +    description: 3.3V LVDS frontend power
-> +
-> +  anvdd-supply:
-> +    description: 1.8V LVDS frontend analog power
-> +
-> +  apvdd-supply:
-> +    description: 1.8V LVDS frontend PLL power
-> +
-> +  "#sound-dai-cells":
-> +    const: 0
-> +
-> +  ite,lvds-link-num-data-lanes:
-> +    $ref: /schemas/types.yaml#/definitions/uint8
-> +    enum: [3, 4, 5]
-> +    description: number of data lanes per LVDS link
+HEAD commit:    4a9fe2a8ac53 dt-bindings: usb: dwc3-imx8mp: add compatible..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+console output: https://syzkaller.appspot.com/x/log.txt?x=1385a327980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
+dashboard link: https://syzkaller.appspot.com/bug?extid=a3bc6ce74afdd295fe4b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14936707980000
 
-Please use data-lanes property inside the OF graph.
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/883c5319cb52/disk-4a9fe2a8.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/caf4421ed2ef/vmlinux-4a9fe2a8.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/d8e3beb01d49/bzImage-4a9fe2a8.xz
 
-> +
-> +  ite,i2s-audio-fifo-sources:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 4
-> +    items:
-> +      enum: [0, 1, 2, 3]
-> +    description:
-> +      Each array element indicates the pin number of an I2S serial data input
-> +      line which is connected to an audio FIFO, from audio FIFO0 to FIFO3.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a3bc6ce74afdd295fe4b@syzkaller.appspotmail.com
 
-What does that mean from the board point of view? Routed audio links for
-the multichannel audio?
+rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { 0-...D
+ } 2669 jiffies s: 1049 root: 0x1/.
+rcu: blocking rcu_node structures (internal RCU debug):
 
-> +
-> +  ite,rl-channel-swap-audio-sources:
-> +    $ref: /schemas/types.yaml#/definitions/uint32-array
-> +    minItems: 1
-> +    maxItems: 4
-> +    uniqueItems: true
-> +    items:
-> +      enum: [0, 1, 2, 3]
-> +    description:
-> +      Each array element indicates an audio source whose right channel and left
-> +      channel are swapped by this converter. For I2S, the element is the pin
-> +      number of an I2S serial data input line. For S/PDIF, the element is always
-> +      0.
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0
+CPU: 0 UID: 0 PID: 2532 Comm: acpid Not tainted 6.12.0-rc1-syzkaller-00027-g4a9fe2a8ac53 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:io_serial_out+0x8f/0xb0 drivers/tty/serial/8250/8250_port.c:413
+Code: 48 8d 7d 40 44 89 e1 48 b8 00 00 00 00 00 fc ff df 48 89 fa d3 e3 48 c1 ea 03 80 3c 02 00 75 1c 66 03 5d 40 44 89 e8 89 da ee <5b> 5d 41 5c 41 5d c3 cc cc cc cc e8 f1 eb 0d ff eb a0 e8 7a ec 0d
+RSP: 0018:ffffc90000006f60 EFLAGS: 00000002
+RAX: 0000000000000033 RBX: 00000000000003f8 RCX: 0000000000000000
+RDX: 00000000000003f8 RSI: ffffffff82a076c5 RDI: ffffffff936356a0
+RBP: ffffffff93635660 R08: 0000000000000001 R09: 000000000000001f
+R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000000
+R13: 0000000000000033 R14: ffffffff82a07660 R15: 0000000000000000
+FS:  00007f7aac918740(0000) GS:ffff8881f5800000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ff922a80068 CR3: 0000000115d2e000 CR4: 00000000003506f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <NMI>
+ </NMI>
+ <IRQ>
+ serial_out drivers/tty/serial/8250/8250.h:142 [inline]
+ serial8250_console_fifo_write drivers/tty/serial/8250/8250_port.c:3322 [inline]
+ serial8250_console_write+0xf9e/0x17c0 drivers/tty/serial/8250/8250_port.c:3393
+ console_emit_next_record kernel/printk/printk.c:3092 [inline]
+ console_flush_all+0x800/0xc60 kernel/printk/printk.c:3180
+ __console_flush_and_unlock kernel/printk/printk.c:3239 [inline]
+ console_unlock+0xd9/0x210 kernel/printk/printk.c:3279
+ vprintk_emit+0x424/0x6f0 kernel/printk/printk.c:2407
+ vprintk+0x7f/0xa0 kernel/printk/printk_safe.c:68
+ _printk+0xc8/0x100 kernel/printk/printk.c:2432
+ printk_stack_address arch/x86/kernel/dumpstack.c:72 [inline]
+ show_trace_log_lvl+0x1b7/0x3d0 arch/x86/kernel/dumpstack.c:285
+ sched_show_task kernel/sched/core.c:7582 [inline]
+ sched_show_task+0x3f0/0x5f0 kernel/sched/core.c:7557
+ show_state_filter+0xee/0x320 kernel/sched/core.c:7627
+ k_spec drivers/tty/vt/keyboard.c:667 [inline]
+ k_spec+0xed/0x150 drivers/tty/vt/keyboard.c:656
+ kbd_keycode drivers/tty/vt/keyboard.c:1522 [inline]
+ kbd_event+0xcbd/0x17a0 drivers/tty/vt/keyboard.c:1541
+ input_handler_events_default+0x116/0x1b0 drivers/input/input.c:2549
+ input_pass_values+0x777/0x8e0 drivers/input/input.c:126
+ input_event_dispose drivers/input/input.c:352 [inline]
+ input_handle_event+0xb30/0x14d0 drivers/input/input.c:369
+ input_event drivers/input/input.c:398 [inline]
+ input_event+0x83/0xa0 drivers/input/input.c:390
+ hidinput_hid_event+0xa12/0x2410 drivers/hid/hid-input.c:1719
+ hid_process_event+0x4b7/0x5e0 drivers/hid/hid-core.c:1540
+ hid_input_array_field+0x535/0x710 drivers/hid/hid-core.c:1652
+ hid_process_report drivers/hid/hid-core.c:1694 [inline]
+ hid_report_raw_event+0xa02/0x11c0 drivers/hid/hid-core.c:2040
+ __hid_input_report.constprop.0+0x341/0x440 drivers/hid/hid-core.c:2110
+ hid_irq_in+0x35e/0x870 drivers/hid/usbhid/hid-core.c:285
+ __usb_hcd_giveback_urb+0x389/0x6e0 drivers/usb/core/hcd.c:1650
+ usb_hcd_giveback_urb+0x396/0x450 drivers/usb/core/hcd.c:1734
+ dummy_timer+0x17c3/0x38d0 drivers/usb/gadget/udc/dummy_hcd.c:1988
+ __run_hrtimer kernel/time/hrtimer.c:1691 [inline]
+ __hrtimer_run_queues+0x20a/0xae0 kernel/time/hrtimer.c:1755
+ hrtimer_run_softirq+0x17d/0x350 kernel/time/hrtimer.c:1772
+ handle_softirqs+0x206/0x8d0 kernel/softirq.c:554
+ __do_softirq kernel/softirq.c:588 [inline]
+ invoke_softirq kernel/softirq.c:428 [inline]
+ __irq_exit_rcu kernel/softirq.c:637 [inline]
+ irq_exit_rcu+0xac/0x110 kernel/softirq.c:649
+ instr_sysvec_apic_timer_interrupt arch/x86/kernel/apic/apic.c:1037 [inline]
+ sysvec_apic_timer_interrupt+0x90/0xb0 arch/x86/kernel/apic/apic.c:1037
+ </IRQ>
+ <TASK>
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:syscall_enter_from_user_mode_work include/linux/entry-common.h:165 [inline]
+RIP: 0010:syscall_enter_from_user_mode include/linux/entry-common.h:198 [inline]
+RIP: 0010:do_syscall_64+0x9a/0x250 arch/x86/entry/common.c:79
+Code: 00 48 8b 7d 08 e8 26 46 00 00 0f 1f 44 00 00 0f 1f 44 00 00 90 e8 f6 54 6f fa 90 90 e8 cf 52 6f fa fb 65 48 8b 05 06 90 15 79 <48> 8b 50 08 f6 c2 3f 0f 85 3c 01 00 00 90 90 41 81 fc ce 01 00 00
+RSP: 0018:ffffc90001abff28 EFLAGS: 00000206
+RAX: ffff888115b59d40 RBX: ffffc90001abff58 RCX: 1ffffffff14ac111
+RDX: 0000000000000000 RSI: ffffffff8727f1c0 RDI: ffffffff8746eac0
+RBP: ffffc90001abff48 R08: 0000000000000001 R09: 0000000000000001
+R10: ffffffff8a56418f R11: 0000000000000000 R12: 000000000000010e
+R13: 000000000000010e R14: 0000000000000000 R15: 0000000000000000
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7aac9e7591
+Code: 89 44 24 20 4c 8d 64 24 20 48 89 54 24 28 64 8b 04 25 18 00 00 00 85 c0 75 2d 45 31 c9 4d 89 e0 4c 89 f2 b8 0e 01 00 00 0f 05 <48> 89 c3 48 3d 00 f0 ff ff 76 69 48 8b 05 65 58 0d 00 f7 db 64 89
+RSP: 002b:00007fffa0c34210 EFLAGS: 00000246 ORIG_RAX: 000000000000010e
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f7aac9e7591
+RDX: 0000000000000000 RSI: 00007fffa0c34308 RDI: 000000000000000b
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000560d1cee5178 R14: 0000000000000000 R15: 000000000000000a
+ </TASK>
+ </TASK>
+task:kworker/u8:7    state:R  running task     stack:32568 pid:7398  tgid:7398  ppid:2692   flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7402  tgid:7402  ppid:37     flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2034997a90
+RSP: 002b:00007ffd4dee5738 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f2034a88860 RCX: 00007f2034997a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f2034a88860 R08: 0000000000000001 R09: aa7250b017b69c93
+R10: 00007ffd4dee55f0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f2034a8c658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:3    state:R  running task     stack:28656 pid:7403  tgid:7403  ppid:46     flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:6854
+ __cond_resched+0x1b/0x30 kernel/sched/core.c:7192
+ _cond_resched include/linux/sched.h:2031 [inline]
+ stop_one_cpu+0x112/0x190 kernel/stop_machine.c:151
+ sched_exec+0x1dc/0x270 kernel/sched/core.c:5446
+ bprm_execve fs/exec.c:1838 [inline]
+ bprm_execve+0x46c/0x1950 fs/exec.c:1821
+ kernel_execve+0x2ef/0x3b0 fs/exec.c:2012
+ call_usermodehelper_exec_async+0x255/0x4c0 kernel/umh.c:110
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+task:modprobe        state:R  running task     stack:24416 pid:7414  tgid:7414  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa3eccaba90
+RSP: 002b:00007fff3243bb08 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fa3ecd9c860 RCX: 00007fa3eccaba90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007fa3ecd9c860 R08: 0000000000000001 R09: 80d8236fd4dd26f2
+R10: 00007fff3243b9c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fa3ecda0658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:6    state:R  running task     stack:32568 pid:7415  tgid:7415  ppid:1489   flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:kworker/u8:7    state:R  running task     stack:32568 pid:7419  tgid:7419  ppid:2692   flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7421  tgid:7421  ppid:37     flags:0x00000008
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:kworker/u8:2    state:R  running task     stack:28784 pid:7424  tgid:7424  ppid:37     flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:6854
+ __cond_resched+0x1b/0x30 kernel/sched/core.c:7192
+ _cond_resched include/linux/sched.h:2031 [inline]
+ stop_one_cpu+0x112/0x190 kernel/stop_machine.c:151
+ sched_exec+0x1dc/0x270 kernel/sched/core.c:5446
+ </TASK>
+task:kworker/u8:6    state:R  running task     stack:32568 pid:7429  tgid:7429  ppid:1489   flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:kworker/u8:7    state:R  running task     stack:28656 pid:7433  tgid:7433  ppid:2692   flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:6854
+ __cond_resched+0x1b/0x30 kernel/sched/core.c:7192
+ _cond_resched include/linux/sched.h:2031 [inline]
+ stop_one_cpu+0x112/0x190 kernel/stop_machine.c:151
+ sched_exec+0x1dc/0x270 kernel/sched/core.c:5446
+ bprm_execve fs/exec.c:1838 [inline]
+ bprm_execve+0x46c/0x1950 fs/exec.c:1821
+ kernel_execve+0x2ef/0x3b0 fs/exec.c:2012
+ call_usermodehelper_exec_async+0x255/0x4c0 kernel/umh.c:110
+ ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7440  tgid:7440  ppid:46     flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ </TASK>
+task:modprobe        state:R  running task     stack:25344 pid:7442  tgid:7442  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7444  tgid:7444  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:kworker/u8:4    state:R  running task     stack:32568 pid:7445  tgid:7445  ppid:51     flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:23984 pid:7454  tgid:7454  ppid:46     flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9fcc43ba90
+RSP: 002b:00007ffe8d8a77b8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f9fcc52c860 RCX: 00007f9fcc43ba90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f9fcc52c860 R08: 0000000000000001 R09: 3076a9a1f07aef27
+R10: 00007ffe8d8a7670 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f9fcc530658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7462  tgid:7462  ppid:46     flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7473  tgid:7473  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8ff4594a90
+RSP: 002b:00007ffe4f12e748 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f8ff4685860 RCX: 00007f8ff4594a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f8ff4685860 R08: 0000000000000001 R09: a679481a8b3ca446
+R10: 00007ffe4f12e600 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f8ff4689658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7481  tgid:7481  ppid:2692   flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ __schedule_loop kernel/sched/core.c:6752 [inline]
+ schedule+0xe7/0x350 kernel/sched/core.c:6767
+ </TASK>
+task:modprobe        state:R  running task     stack:25136 pid:7482  tgid:7482  ppid:1489   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ </TASK>
+task:modprobe        state:R  running task     stack:23984 pid:7485  tgid:7485  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe8fb2efa90
+RSP: 002b:00007ffc4af6bb08 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fe8fb3e0860 RCX: 00007fe8fb2efa90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007fe8fb3e0860 R08: 0000000000000001 R09: 82b62935d707582e
+R10: 00007ffc4af6b9c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fe8fb3e4658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7492  tgid:7492  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fa0156dca90
+RSP: 002b:00007ffe729c7668 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fa0157cd860 RCX: 00007fa0156dca90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007fa0157cd860 R08: 0000000000000001 R09: 3d8632c9608ef0f4
+R10: 00007ffe729c7520 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fa0157d1658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7499  tgid:7499  ppid:46     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fecfa6a9a90
+RSP: 002b:00007fff833256d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fecfa79a860 RCX: 00007fecfa6a9a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007fecfa79a860 R08: 0000000000000001 R09: 970988f50c2afe23
+R10: 00007fff83325590 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fecfa79e658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7506  tgid:7506  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:kworker/u8:6    state:R  running task     stack:32568 pid:7508  tgid:7508  ppid:1489   flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:24416 pid:7515  tgid:7515  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7521  tgid:7521  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:24720 pid:7525  tgid:7525  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7537  tgid:7537  ppid:46     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4806810a90
+RSP: 002b:00007fff9aa13d08 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f4806901860 RCX: 00007f4806810a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f4806901860 R08: 0000000000000001 R09: b3a15a0de2c1b27b
+R10: 00007fff9aa13bc0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f4806905658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7544  tgid:7544  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f417757aa90
+RSP: 002b:00007fff35597f98 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f417766b860 RCX: 00007f417757aa90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f417766b860 R08: 0000000000000001 R09: d6e29ef7cba51477
+R10: 00007fff35597e50 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f417766f658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7551  tgid:7551  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:23984 pid:7559  tgid:7559  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7565  tgid:7565  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0d44de5a90
+RSP: 002b:00007ffc77475048 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f0d44ed6860 RCX: 00007f0d44de5a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f0d44ed6860 R08: 0000000000000001 R09: 09f99504fd216a3e
+R10: 00007ffc77474f00 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f0d44eda658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7571  tgid:7571  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f5137ee5a90
+RSP: 002b:00007ffe7b16d2f8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f5137fd6860 RCX: 00007f5137ee5a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f5137fd6860 R08: 0000000000000001 R09: 39f2e79377276fcd
+R10: 00007ffe7b16d1b0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f5137fda658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7579  tgid:7579  ppid:51     flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f2e9aff3a90
+RSP: 002b:00007fff752231d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f2e9b0e4860 RCX: 00007f2e9aff3a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f2e9b0e4860 R08: 0000000000000001 R09: c71f2d5dd6629748
+R10: 00007fff75223090 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f2e9b0e8658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24416 pid:7585  tgid:7585  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe8f2539a90
+RSP: 002b:00007ffd45f4b5a8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fe8f262a860 RCX: 00007fe8f2539a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007fe8f262a860 R08: 0000000000000001 R09: afbf0fa71a8c0678
+R10: 00007ffd45f4b460 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fe8f262e658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:25344 pid:7592  tgid:7592  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f0106c7ca90
+RSP: 002b:00007ffe1498d728 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f0106d6d860 RCX: 00007f0106c7ca90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f0106d6d860 R08: 0000000000000001 R09: 353918f062f66546
+R10: 00007ffe1498d5e0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f0106d71658 R15: 0000000000000001
+ </TASK>
+task:modprobe        state:R  running task     stack:24416 pid:7594  tgid:7594  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7605  tgid:7605  ppid:1489   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7612  tgid:7612  ppid:1489   flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f3fa77efa90
+RSP: 002b:00007ffe57825798 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f3fa78e0860 RCX: 00007f3fa77efa90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f3fa78e0860 R08: 0000000000000001 R09: 9cdd8f821dd9d0a3
+R10: 00007ffe57825650 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f3fa78e4658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:6    state:R  running task     stack:32568 pid:7619  tgid:7619  ppid:1489   flags:0x00004000
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7623  tgid:7623  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7632  tgid:7632  ppid:2692   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4083162a90
+RSP: 002b:00007ffd085d5df8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f4083253860 RCX: 00007f4083162a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f4083253860 R08: 0000000000000001 R09: 8afaf3669ee4b4d5
+R10: 00007ffd085d5cb0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f4083257658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:2    state:R  running task     stack:32568 pid:7639  tgid:7639  ppid:37     flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7641  tgid:7641  ppid:1489   flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8b97a56a90
+RSP: 002b:00007ffe1ad71498 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f8b97b47860 RCX: 00007f8b97a56a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f8b97b47860 R08: 0000000000000001 R09: e3c1353c4b4c05fa
+R10: 00007ffe1ad71350 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f8b97b4b658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:4    state:R  running task     stack:32568 pid:7646  tgid:7646  ppid:51     flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7649  tgid:7649  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:23984 pid:7659  tgid:7659  ppid:51     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fb87cea7a90
+RSP: 002b:00007ffead957488 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007fb87cf98860 RCX: 00007fb87cea7a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007fb87cf98860 R08: 0000000000000001 R09: 008e9db68798e101
+R10: 00007ffead957340 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007fb87cf9c658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:2    state:R  running task     stack:32568 pid:7662  tgid:7662  ppid:37     flags:0x00004000
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7668  tgid:7668  ppid:51     flags:0x00004002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f282d7baa90
+RSP: 002b:00007ffce0371718 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f282d8ab860 RCX: 00007f282d7baa90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f282d8ab860 R08: 0000000000000001 R09: f5b88b55439439fc
+R10: 00007ffce03715d0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f282d8af658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:4    state:R  running task     stack:28784 pid:7674  tgid:7674  ppid:51     flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5318 [inline]
+ __schedule+0x1067/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:26144 pid:7682  tgid:7682  ppid:51     flags:0x00000000
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25136 pid:7700  tgid:7700  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7707  tgid:7707  ppid:2692   flags:0x00000000
+Call Trace:
+ <TASK>
+ </TASK>
+task:kworker/u8:6    state:R  running task     stack:28784 pid:7709  tgid:7709  ppid:1489   flags:0x00004000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7717  tgid:7717  ppid:1489   flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:kworker/u8:4    state:R  running task     stack:28784 pid:7720  tgid:7720  ppid:51     flags:0x00004000
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:26144 pid:7732  tgid:7732  ppid:37     flags:0x00000000
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:24704 pid:7747  tgid:7747  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f724bebea90
+RSP: 002b:00007fffd8d26b08 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f724bfaf860 RCX: 00007f724bebea90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f724bfaf860 R08: 0000000000000001 R09: bca1ddf9b70ed6c7
+R10: 00007fffd8d269c0 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f724bfb3658 R15: 0000000000000001
+ </TASK>
+task:kworker/u8:2    state:R  running task     stack:32568 pid:7755  tgid:7755  ppid:37     flags:0x00004000
+Call Trace:
+ <TASK>
+ __switch_to_asm+0x70/0x70
+ </TASK>
+task:modprobe        state:R  running task     stack:24416 pid:7756  tgid:7756  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7762  tgid:7762  ppid:2692   flags:0x00000002
+Call Trace:
+ <TASK>
+ </TASK>
+task:kworker/u8:7    state:R  running task     stack:32568 pid:7772  tgid:7772  ppid:2692   flags:0x00004000
+Call Trace:
+ <TASK>
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+task:modprobe        state:R  running task     stack:25952 pid:7776  tgid:7776  ppid:51     flags:0x00000000
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ preempt_schedule_common+0x44/0xc0 kernel/sched/core.c:6854
+ __cond_resched+0x1b/0x30 kernel/sched/core.c:7192
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ </TASK>
+task:modprobe        state:R  running task     stack:25408 pid:7784  tgid:7784  ppid:37     flags:0x00000002
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5315 [inline]
+ __schedule+0x105f/0x34b0 kernel/sched/core.c:6675
+ do_task_dead+0xd6/0x110 kernel/sched/core.c:6691
+ do_exit+0x1de7/0x2ce0 kernel/exit.c:990
+ do_group_exit+0xd3/0x2a0 kernel/exit.c:1088
+ __do_sys_exit_group kernel/exit.c:1099 [inline]
+ __se_sys_exit_group kernel/exit.c:1097 [inline]
+ __x64_sys_exit_group+0x3e/0x50 kernel/exit.c:1097
+ x64_sys_call+0x14a9/0x16a0 arch/x86/include/generated/asm/syscalls_64.h:232
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xcd/0x250 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f677e186a90
+RSP: 002b:00007fff375d3ef8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+RAX: ffffffffffffffda RBX: 00007f677e277860 RCX: 00007f677e186a90
+RDX: 00000000000000e7 RSI: 000000000000003c RDI: 0000000000000001
+RBP: 00007f677e277860 R08: 0000000000000001 R09: 5e270266d015c889
+R10: 00007fff375d3db0 R11: 0000000000000246 R12: 0000000000000000
 
-Why?
 
-> +
-> +  ports:
-> +    $ref: /schemas/graph.yaml#/properties/ports
-> +
-> +    properties:
-> +      port@0:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description:
-> +          The first LVDS input link.
-> +          In dual-link LVDS mode, this link works together with the second LVDS
-> +          input link, and one link receives odd pixels while the other receives
-> +          even pixels. Specify the pixels with one of the dual-lvds-odd-pixels
-> +          and dual-lvds-even-pixels properties when and only when dual-link LVDS
-> +          mode is used.
-> +
-> +        properties:
-> +          dual-lvds-odd-pixels:
-> +            type: boolean
-> +            description: the first sink port for odd pixels
-> +
-> +          dual-lvds-even-pixels:
-> +            type: boolean
-> +            description: the first sink port for even pixels
-> +
-> +      port@1:
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +        description: the second LVDS input link
-> +
-> +        properties:
-> +          dual-lvds-even-pixels:
-> +            type: boolean
-> +            description: the second sink port for even pixels
-> +
-> +          dual-lvds-odd-pixels:
-> +            type: boolean
-> +            description: the second sink port for odd pixels
-> +
-> +        oneOf:
-> +          - required: [dual-lvds-even-pixels]
-> +          - required: [dual-lvds-odd-pixels]
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-This still allows one to specify that both ports provide odd pixels. Is
-that expected? Also why do you need two properties which specify the
-same option.
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-My suggestion would be to add a single root-level property which
-specifies which port provides even pixel data.
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
-> +
-> +      port@2:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: video port for the HDMI output
-> +
-> +      port@3:
-> +        $ref: /schemas/graph.yaml#/properties/port
-> +        description: sound input port
-> +
-> +    required:
-> +      - port@0
-> +      - port@2
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +  - ivdd-supply
-> +  - ovdd-supply
-> +  - txavcc18-supply
-> +  - txavcc33-supply
-> +  - pvcc1-supply
-> +  - pvcc2-supply
-> +  - avcc-supply
-> +  - anvdd-supply
-> +  - apvdd-supply
-> +  - ite,lvds-link-num-data-lanes
-> +  - ports
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    /* single-link LVDS input */
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        hdmi@4c {
-> +            compatible = "ite,it6263";
-> +            reg = <0x4c>;
-> +            reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-> +            ivdd-supply = <&reg_buck5>;
-> +            ovdd-supply = <&reg_vext_3v3>;
-> +            txavcc18-supply = <&reg_buck5>;
-> +            txavcc33-supply = <&reg_vext_3v3>;
-> +            pvcc1-supply = <&reg_buck5>;
-> +            pvcc2-supply = <&reg_buck5>;
-> +            avcc-supply = <&reg_vext_3v3>;
-> +            anvdd-supply = <&reg_buck5>;
-> +            apvdd-supply = <&reg_buck5>;
-> +            ite,lvds-link-num-data-lanes = /bits/ 8 <4>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +
-> +                    it6263_lvds_link1: endpoint {
-> +                        remote-endpoint = <&ldb_lvds_ch0>;
-> +                    };
-> +                };
-> +
-> +                port@2 {
-> +                    reg = <2>;
-> +
-> +                    it6263_out: endpoint {
-> +                        remote-endpoint = <&hdmi_in>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> +
-> +  - |
-> +    /* dual-link LVDS input */
-> +    #include <dt-bindings/gpio/gpio.h>
-> +
-> +    i2c {
-> +        #address-cells = <1>;
-> +        #size-cells = <0>;
-> +
-> +        hdmi@4c {
-> +            compatible = "ite,it6263";
-> +            reg = <0x4c>;
-> +            reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
-> +            ivdd-supply = <&reg_buck5>;
-> +            ovdd-supply = <&reg_vext_3v3>;
-> +            txavcc18-supply = <&reg_buck5>;
-> +            txavcc33-supply = <&reg_vext_3v3>;
-> +            pvcc1-supply = <&reg_buck5>;
-> +            pvcc2-supply = <&reg_buck5>;
-> +            avcc-supply = <&reg_vext_3v3>;
-> +            anvdd-supply = <&reg_buck5>;
-> +            apvdd-supply = <&reg_buck5>;
-> +            ite,lvds-link-num-data-lanes = /bits/ 8 <4>;
-> +
-> +            ports {
-> +                #address-cells = <1>;
-> +                #size-cells = <0>;
-> +
-> +                port@0 {
-> +                    reg = <0>;
-> +                    dual-lvds-odd-pixels;
-> +
-> +                    it6263_lvds_link1_dual: endpoint {
-> +                        remote-endpoint = <&ldb_lvds_ch0>;
-> +                    };
-> +                };
-> +
-> +                port@1 {
-> +                    reg = <1>;
-> +                    dual-lvds-even-pixels;
-> +
-> +                    it6263_lvds_link2_dual: endpoint {
-> +                        remote-endpoint = <&ldb_lvds_ch1>;
-> +                    };
-> +                };
-> +
-> +                port@2 {
-> +                    reg = <2>;
-> +
-> +                    it6263_out_dual: endpoint {
-> +                        remote-endpoint = <&hdmi_in>;
-> +                    };
-> +                };
-> +            };
-> +        };
-> +    };
-> -- 
-> 2.34.1
-> 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
--- 
-With best wishes
-Dmitry
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
