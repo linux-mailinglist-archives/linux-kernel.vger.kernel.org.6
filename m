@@ -1,403 +1,190 @@
-Return-Path: <linux-kernel+bounces-362033-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362030-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86F3399B029
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:40:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9058E99B01E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:37:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B426B1C219AA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:40:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BF0C284813
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:37:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7263B17BCE;
-	Sat, 12 Oct 2024 02:39:58 +0000 (UTC)
-Received: from trager.us (trager.us [52.5.81.116])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0D0171AA;
+	Sat, 12 Oct 2024 02:37:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="AzGVVc94"
+Received: from IND01-MAX-obe.outbound.protection.outlook.com (mail-maxind01olkn2048.outbound.protection.outlook.com [40.92.102.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D58B171AA;
-	Sat, 12 Oct 2024 02:39:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.5.81.116
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728700797; cv=none; b=DWGOwtrajoB+WrDUcLIIyq6moc8MJewowA+GbCXVXOC7+QNjLuhtgWywRUZez6IwmSUjSDFKOwIj73OkdhTvvCcf5sec8DSnBdvvYY5qeTRuxEH3ubAB1D3+Q2pNappt+8iEskaOS1gy6fKDy3EiX1i+bL1gIgkDa8ERQwqEiZI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728700797; c=relaxed/simple;
-	bh=8OERmuYJLC96clMNISMjG1RlHs20BVp7aY+U3fmctW4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=aYUdaWzKh7Wk+8VrGhzHU1QgSK5fUJwFK0V414pHq1xH7M78pAB1mQx5vsmE1ycYHJNJZiJUVQVx0aG2/akgzALI0MRkeczTTnMHYKUoReTvw3rQTj2taIjTnbO/ZCrx3he7rKGnJo+Pgjuu4DU1tXzhsuL0q9No9RgrqTkFbhc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us; spf=pass smtp.mailfrom=trager.us; arc=none smtp.client-ip=52.5.81.116
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=trager.us
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=trager.us
-Received: from c-76-104-255-50.hsd1.wa.comcast.net ([76.104.255.50] helo=localhost)
-	by trager.us with esmtpsa (TLSv1.3:TLS_AES_256_GCM_SHA384:256)
-	(Exim 4.92.3)
-	(envelope-from <lee@trager.us>)
-	id 1szS2m-0005hn-BX; Sat, 12 Oct 2024 02:39:48 +0000
-From: Lee Trager <lee@trager.us>
-To: Alexander Duyck <alexanderduyck@fb.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	kernel-team@meta.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Mohsin Bashir <mohsin.bashr@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Vadim Fedorenko <vadim.fedorenko@linux.dev>,
-	Lee Trager <lee@trager.us>,
-	Sanman Pradhan <sanmanpradhan@meta.com>,
-	Al Viro <viro@zeniv.linux.org.uk>
-Cc: netdev@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net-next 2/2] eth: fbnic: Add devlink dev flash support
-Date: Fri, 11 Oct 2024 19:34:04 -0700
-Message-ID: <20241012023646.3124717-3-lee@trager.us>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <20241012023646.3124717-1-lee@trager.us>
-References: <20241012023646.3124717-1-lee@trager.us>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8003D531;
+	Sat, 12 Oct 2024 02:37:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.102.48
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728700651; cv=fail; b=dbFkq0jBAu/W8ZPhkmtH65DdS9+EPv0Mhhkb97naz+9W2kRTFcbQhUf3yJTKPJo5zjj7qiaM8dTGcehCVKtKy6ZE7VktXb7n8GLZmnI01wvXy9AGCGsYG7a1QV5d9u6ou0AUVuJGBUxU9iCusKiRWNMBTlrI30X5htWFPLO8Zkk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728700651; c=relaxed/simple;
+	bh=3nTBRo6amDt7IPOYrZ/sQl0J131jod1YOZAM8B295+o=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=Gj7mlsPW22NHnK323MpjcPwl1i9zdLRsg3fGG1qhAV+vJrP5JygKSqXcbsg5cLSzyMnVwsInESv/rKSIitMdUk4HHnvLjh4A8qh/mwqWN83inhc427Mtf8GbfY6YJWnS18DZek5lTh00uofJdOd6vSGM6T9o+JwPn5+150n+3B0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=AzGVVc94; arc=fail smtp.client-ip=40.92.102.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=O/dKsOzRRRRVidNR6UtNiSW6F3a7L1eZ8FJ6AnWfWhzF3bod6UYaR/42/QsE481+B0pcqzJLruqyiaRz1mNOO4TuJ3LTmrCM8lf4krElbXobrSCV+YVNiVxS7J2qAZt24x/iUFsWnqPJZ3gLnhNEHBU0hjPvWsc8uiX7bIEIx7FQnVlmD6GGPnlOuZQWGRnUHA7Hio31Cja60S20WbR8ahchVA2LedxVY8vD54qg5JSbYE+FqfWEbC4sHXXtARjL+zNPWmRZvODhPEg7C4F+43iTTNog8UOpQZtpdk2zWDK2m7TMQ9ylmeEmel5SV69+YPsvykRtUBVT8+SAlnJP/w==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=rv2/We7U4AXwNWfsjUjDDNuSIZu1LTS7FalcHJ3vXdc=;
+ b=PpT5OfeRUZqZPuu/tHFxj+Y06CiuyRTpRgkO8e0FTys+hqKxtjr8+FAGcRe71x3U0qfw7jXiyjP0aPYbE4L5gIRRbFgcfMey2DblxIZUOE4Fx3fp4rdunHBaGNIJikOrkhkPYGkHP+pNI3Ge8GjeZkzXnhiO3KE49Hqm3UmmpEMl5mdK/YSdkdjhpVp84tu6fpdAA2pz7SyXn9YAFzq3hjVJMC+Yrn3T2ottNB8tahLl2fM7/5XJfF5MATkv0V87mtz4AKoUJWgZHlPHFnA6WGiXsXCigeGVU6nVfHISAW/Hcb3b/p5W0BHF5+n9VJMly6Xl9Qx4U1FKX9NQK0yVhg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=rv2/We7U4AXwNWfsjUjDDNuSIZu1LTS7FalcHJ3vXdc=;
+ b=AzGVVc94ebbtlsP+8VBUmsyDtH9v11sXRgUejgXD23OQ9YLdtBgzi/1ny5GFUcommuHrpoJckHlHqvjwDRiZQt2vcUn3qreqmt8842ePWxBTS6xHimiVelZVQv38vSZzEggHwExkxlfbpmc+MmSSwI4ECECqacmPku3gcvX5h647G4QKHcVByfmGdjdZk+mSkdL+7a0f2v0jSffDMVxvs7QTqglR1cI8I+nsnMhwPAbbbA/0IqWlIZSp8Ru8VfeEwsuhMQkfNErCxB0Jqvg77n8JpZfPPX8H6Z9n1ubvk+zDSuDNgssKd3W4Beb5Rbz+Jm+rLtnYJgmeJNUR4tFUtQ==
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM (2603:1096:a01:138::5)
+ by PN3P287MB0057.INDP287.PROD.OUTLOOK.COM (2603:1096:c01:91::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20; Sat, 12 Oct
+ 2024 02:34:28 +0000
+Received: from MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c]) by MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ ([fe80::a94:ad0a:9071:806c%3]) with mapi id 15.20.8048.020; Sat, 12 Oct 2024
+ 02:34:28 +0000
+Message-ID:
+ <MA0P287MB2822E1F15C9C2FD25847316AFE7A2@MA0P287MB2822.INDP287.PROD.OUTLOOK.COM>
+Date: Sat, 12 Oct 2024 10:34:24 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] pwm: sophgo: add driver for Sophgo SG2042 PWM
+To: Sean Young <sean@mess.org>
+Cc: ukleinek@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, inochiama@outlook.com, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+ linux-riscv@lists.infradead.org, chao.wei@sophgo.com,
+ haijiao.liu@sophgo.com, xiaoguang.xing@sophgo.com, chunzhi.lin@sophgo.com
+References: <cover.1728355974.git.unicorn_wang@outlook.com>
+ <57cf7ac3b4c092df1a6962d310b6d2603ca26995.1728355974.git.unicorn_wang@outlook.com>
+ <ZwTsTQiTkFFu3pwX@gofer.mess.org>
+From: Chen Wang <unicorn_wang@outlook.com>
+In-Reply-To: <ZwTsTQiTkFFu3pwX@gofer.mess.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: TYBP286CA0028.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:404:10a::16) To MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:a01:138::5)
+X-Microsoft-Original-Message-ID:
+ <a8d31b73-2e87-4973-8bd8-ba641335f6d0@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MA0P287MB2822:EE_|PN3P287MB0057:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0990507c-9f68-4fcf-8b08-08dcea6664b0
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|8060799006|461199028|15080799006|7092599003|5072599009|6090799003|19110799003|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	Hkqs4B4mbAKUdSx+h8EXOBksGLybj6cNRmL+fujlchZaHcVH2o1TPmo/9sAZRQq9dhWlJDDRyoqy3jqJMXwRf7T1Xe0R02JwxJJkMquRx7+wUtfW19bYWCMXhohjsLAnaD4f0XxTmUwu+c2vpGED2CiTHupeMUglD7yoquxHcMUzMWVGa13ZTQbifW9L6omys8VhlJxaO9GFDTs+IkJaFv8Qf6rhXTFlZMDtuSFIli6PUhHHcdHbIWPkZZ3Sjx/PuMIAlZt+04ow8VEPJ0wl8eI2ts2618CY2H4D451PMZDkiXCXZivIgtNXbNDVHMLO+Ues3WtxVtYanuiTyMxIf8Zi571k0tlI1i5oH9nBL6o8eG5xDiXDQqWSxD2YnNLj1896k3B4LOh+bUww6A6e6Zb0iiXqRPfbxlKhx6VwvqrS/HkRdJtPgyDz7lN4ZDaiEeH8svxuSM13DWM5obG3REC6mvwkPIFeWgj1h7qJ9Zk9tkOQ6HyABJXQDbPEJIKSJQDZjajspZMF4CIc87El+fmts4rEFwyZ5Lc4AkMdcOtIUgV1y5/ybpNlN5h9tv/j0C9vCZyBfhDO9zOQaGbwHpJH310ZJVsBBKgpy7OYtyDmz3NMCE0k9MNNIeYroMaB6rdk8HTH0ZOlU2KUJZZW6vR+3a3cRa3d5VhnfutEKiOCDGN4f0PPAsjHG25uET64LlRv5SbDV37UVxS8X1HrnE/w934A6szBqfw+SJna7S7zFsWW4gA94JsHwPo5bHdQBf7h/fYk2T+pYJbtgVYFYA==
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ekJ1dTA0UFU5T0c5NDMxUVUwcXdNNGhCNUdIaHhLQUpxZDR0Z3hPbVJwNjE4?=
+ =?utf-8?B?cnVsNm1MekVNVkNMQmtGTlIxVysyL2NYaUZ0QXpwRmlWdTBFYnhHVVplSnBM?=
+ =?utf-8?B?Lzd2OC9jS1VSazVBcVFXNS90c29lcURKZDJGa3dya1paY2lCQ2ZRbEhQSVpY?=
+ =?utf-8?B?YnQ4cE9OYlkrL0twUVUxbWtsdTNCQmVEVWJna3R3RWxJUGhVTnh4Y2h6djNn?=
+ =?utf-8?B?RTdGSnN6elRjK1BHRnVPaGFRVW1wTVpOM3lYcHQ2WHRaMWFJZE5PdVB3cW84?=
+ =?utf-8?B?RzE2bHNwa3I1SENkMzlQZmtLakpaOFFFV0NHb3lkcTdZeHBHS2hON0xacWhN?=
+ =?utf-8?B?aDVXSzFzTUlkM1J6WC9ZZ014UitiQ3I0ZTcrdElJV3JKblBuQkdnSlVxL205?=
+ =?utf-8?B?TVNiVWxsZG9XcnMySVhIdVhYQ2hqeFhlMTRKc0hmYjREcldkOUJvUzVMNit2?=
+ =?utf-8?B?dE5LRVI0WUR4QVRsTy9iQVg4UzVHUUpSb0pGYWthMFFLbkxpY2oybFFQVDdY?=
+ =?utf-8?B?TDY2YjRYVk5UaW9tcmVTd1U2Sk5mQW5SSTJkSEE2U3Q1NWR2Qi9BUzdIWUd4?=
+ =?utf-8?B?MWJ0VE5xM3dhWitvU1hVODZ2NERkMkJ6aGRBVkFaL3F4SlE4S1FkSEtlOHVV?=
+ =?utf-8?B?Uyt0M1FEb2d5VW9GT01ERkdUNW9uZm4rMjU1ZHVaNEplVzUyditQSnFIUnFi?=
+ =?utf-8?B?RXBrZDZpNFZiSm5ubFMxaWZmNVZnTDYzYWNkM1ZDTGRSSkJ4R1doa09Rakx1?=
+ =?utf-8?B?K3hlcDNVUnRCTEFad3FLUGY5aktveVk3OEtSNW4yQXBVMldSY0VzbUJGV1Zm?=
+ =?utf-8?B?dlRQbzZPMG1rMmI0TGV1cG4wM1FXZG1LVk4vN2NmZ3NIRWFiYUFPeE9wNXFi?=
+ =?utf-8?B?QkNPZzBXR0k2QlhDb0ZUSVlEYjJpYThGZnE1NTV6N0dHVlJWMFBjYUFVNUF5?=
+ =?utf-8?B?aXd4UG50c1d2ZHc5WlVhT2oyQTZZV3g2ZUU1bzJSSHFJN3pnM3VwZEgrSVB2?=
+ =?utf-8?B?V0pjNEtwMk92ekVZRzRwcnI5STVGYzM4SmNiWTVDamNLam8zOVpNTmV4VUxT?=
+ =?utf-8?B?Y2l4dmJVNDhvai9OSnlzT3h2UWU5QkNiK3FOdWZFVTFKRjBUVkllWThVczBT?=
+ =?utf-8?B?VUFhdElBam1EeUxuS2kzdGNpZFZQYlpSYmVtNUI5ZmZFZU4xcXV1UXZHcExQ?=
+ =?utf-8?B?ZkJwUk9lRjBzc0g2OVoraVRRQ2JQVGZIQWt2NHNKaHhqMlFOdE12Z01NTjUy?=
+ =?utf-8?B?aXF2U211RzNuR2hCNHZjS2VQMWFlR0hKaXJxS0RlSWtEdnNYVmdiQUM3cTRR?=
+ =?utf-8?B?eUlzOFBWTDVEU1cvckR6cDZsejNrMmZhcFJxNWtySS8yN3FEVmNHbkdFU3l5?=
+ =?utf-8?B?QXF2OWFOZWJ3enk4OUtHWEN3NitRTER1NFR5SDNDNE9yeUV0WlNFYW5HZGc2?=
+ =?utf-8?B?ZUdiZHF1aGJyeWhYN0RNbm56M1BmcGN2ZVM2TS9OM0F2dkp2MFFWTlpBU1p3?=
+ =?utf-8?B?RmdmaDA4ckZOLysyc2FYQ1VVZFk2SitzbndKcElPbkxKaWZSbktsQ1piamtW?=
+ =?utf-8?B?dC9mL1FTbnRCcGxvUGx4MlJVUEFlSFA2QTlSU3lxM281akhCZXMxNlJVVlp6?=
+ =?utf-8?B?T2ZvQzBpb2tsVUoyUXV5QmlIWnpOYlNqT1NncWdyOWZEdXRFRmtkQlBkTTlt?=
+ =?utf-8?Q?n2CPcSOzJZa9PDxe1cgP?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0990507c-9f68-4fcf-8b08-08dcea6664b0
+X-MS-Exchange-CrossTenant-AuthSource: MA0P287MB2822.INDP287.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 02:34:28.0119
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PN3P287MB0057
 
-fbnic supports updating firmware using a PLDM image signed and distributed
-by Meta. PLDM images are written into stored flashed. Flashing does not
-interrupt operation.
 
-On host reboot the newly flashed UEFI driver will be used. To run new
-control or cmrt firmware the NIC must be power cycled.
+On 2024/10/8 16:24, Sean Young wrote:
+> On Tue, Oct 08, 2024 at 11:04:14AM +0800, Chen Wang wrote:
+>> From: Chen Wang <unicorn_wang@outlook.com>
+>>
+>> Add a PWM driver for PWM controller in Sophgo SG2042 SoC.
+[......]
+>> +static int pwm_sg2042_probe(struct platform_device *pdev)
+>> +{
+>> +	struct device *dev = &pdev->dev;
+>> +	struct sg2042_pwm_ddata *ddata;
+>> +	struct pwm_chip *chip;
+>> +	struct clk *clk;
+>> +	int ret;
+>> +
+>> +	chip = devm_pwmchip_alloc(dev, SG2042_PWM_CHANNELNUM, sizeof(*ddata));
+>> +	if (IS_ERR(chip))
+>> +		return PTR_ERR(chip);
+>> +	ddata = pwmchip_get_drvdata(chip);
+>> +
+>> +	ddata->base = devm_platform_ioremap_resource(pdev, 0);
+>> +	if (IS_ERR(ddata->base))
+>> +		return PTR_ERR(ddata->base);
+>> +
+>> +	clk = devm_clk_get_enabled(dev, "apb");
+>> +	if (IS_ERR(clk))
+>> +		return dev_err_probe(dev, PTR_ERR(clk), "failed to get base clk\n");
+>> +
+>> +	ret = devm_clk_rate_exclusive_get(dev, clk);
+>> +	if (ret)
+>> +		return dev_err_probe(dev, ret, "failed to get exclusive rate\n");
+>> +
+>> +	ddata->clk_rate_hz = clk_get_rate(clk);
+>> +	if (!ddata->clk_rate_hz || ddata->clk_rate_hz > NSEC_PER_SEC)
+>> +		return dev_err_probe(dev, -EINVAL,
+>> +				     "Invalid clock rate: %lu\n", ddata->clk_rate_hz);
+>> +
+>> +	chip->ops = &pwm_sg2042_ops;
+> I think you can add here:
+>
+> 	chip->atomic = true;
+>
+> As far as I can see, the driver does not do any sleeping operations
+> in pwm_sg2042_apply(). This probably should be tested with
+> CONFIG_PWM_DEBUG and CONFIG_DEBUG_ATOMIC_SLEEP just to be sure.
+>
+> Thanks,
+> Sean
 
-Signed-off-by: Lee Trager <lee@trager.us>
----
- .../device_drivers/ethernet/meta/fbnic.rst    |  11 +
- drivers/net/ethernet/meta/Kconfig             |   1 +
- .../net/ethernet/meta/fbnic/fbnic_devlink.c   | 270 +++++++++++++++++-
- 3 files changed, 281 insertions(+), 1 deletion(-)
+Thank you Sean. We don't sleep when apply, so atomic should be needed.
 
-diff --git a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-index 32ff114f5c26..d6726c254818 100644
---- a/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-+++ b/Documentation/networking/device_drivers/ethernet/meta/fbnic.rst
-@@ -27,3 +27,14 @@ driver takes over.
- devlink dev info provides version information for all three components. In
- addition to the version the hg commit hash of the build is included as a
- separate entry.
-+
-+Upgrading Firmware
-+------------------
-+
-+fbnic supports upgrading firmware using devlink dev flash. Firmware images
-+are signed and distributed by Meta. All firmware is bundled into a single
-+PLDM image which is written into stored flash. Flashing firmware does not
-+interrupt operation.
-+
-+On host reboot the newly flashed UEFI driver will be used. To run new control
-+or cmrt firmware the NIC must be power cycled.
-diff --git a/drivers/net/ethernet/meta/Kconfig b/drivers/net/ethernet/meta/Kconfig
-index 85519690b837..f5d2c6b6399f 100644
---- a/drivers/net/ethernet/meta/Kconfig
-+++ b/drivers/net/ethernet/meta/Kconfig
-@@ -26,6 +26,7 @@ config FBNIC
- 	select NET_DEVLINK
- 	select PAGE_POOL
- 	select PHYLINK
-+	select PLDMFW
- 	help
- 	  This driver supports Meta Platforms Host Network Interface.
+[......]
 
-diff --git a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-index 0072d612215e..d487ae7f1126 100644
---- a/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-+++ b/drivers/net/ethernet/meta/fbnic/fbnic_devlink.c
-@@ -3,6 +3,7 @@
 
- #include <linux/unaligned.h>
- #include <linux/pci.h>
-+#include <linux/pldmfw.h>
- #include <linux/types.h>
- #include <net/devlink.h>
-
-@@ -109,8 +110,275 @@ static int fbnic_devlink_info_get(struct devlink *devlink,
- 	return 0;
- }
-
-+/**
-+ * fbnic_send_package_data - Send record package data to firmware
-+ * @context: PLDM FW update structure
-+ * @data: pointer to the package data
-+ * @length: length of the package data
-+ *
-+ * Send a copy of the package data associated with the PLDM record matching
-+ * this device to the firmware.
-+ *
-+ * Return: zero on success
-+ *	    negative error code on failure
-+ */
-+static int fbnic_send_package_data(struct pldmfw *context, const u8 *data,
-+				   u16 length)
-+{
-+	struct device *dev = context->dev;
-+
-+	/* Temp placeholder required by devlink */
-+	dev_info(dev,
-+		 "Sending %u bytes of PLDM record package data to firmware\n",
-+		 length);
-+
-+	return 0;
-+}
-+
-+/**
-+ * fbnic_send_component_table - Send PLDM component table to the firmware
-+ * @context: PLDM FW update structure
-+ * @component: The component to send
-+ * @transfer_flag: Flag indication location in component tables
-+ *
-+ * Read relevant data from component table and forward it to the firmware.
-+ * Check response to verify if the firmware indicates that it wishes to
-+ * proceed with the update.
-+ *
-+ * Return: zero on success
-+ *	    negative error code on failure
-+ */
-+static int fbnic_send_component_table(struct pldmfw *context,
-+				      struct pldmfw_component *component,
-+				      u8 transfer_flag)
-+{
-+	struct device *dev = context->dev;
-+	u16 id = component->identifier;
-+	u8 test_string[80];
-+
-+	switch (id) {
-+	case QSPI_SECTION_CMRT:
-+	case QSPI_SECTION_CONTROL_FW:
-+	case QSPI_SECTION_OPTION_ROM:
-+		break;
-+	default:
-+		dev_err(dev, "Unknown component ID %u\n", id);
-+		return -EINVAL;
-+	}
-+
-+	dev_dbg(dev, "Sending PLDM component table to firmware\n");
-+
-+	/* Temp placeholder */
-+	memcpy(test_string, component->version_string,
-+	       min_t(u8, component->version_len, 79));
-+	test_string[min_t(u8, component->version_len, 79)] = 0;
-+	dev_info(dev, "PLDMFW: Component ID: %u version %s\n",
-+		 id, test_string);
-+
-+	return 0;
-+}
-+
-+/**
-+ * fbnic_flash_component - Flash a component of the QSPI
-+ * @context: PLDM FW update structure
-+ * @component: The component table to send to FW
-+ *
-+ * Map contents of component and make it available for FW to download
-+ * so that it can update the contents of the QSPI Flash.
-+ *
-+ * Return: zero on success
-+ *	    negative error code on failure
-+ */
-+static int fbnic_flash_component(struct pldmfw *context,
-+				 struct pldmfw_component *component)
-+{
-+	const u8 *data = component->component_data;
-+	u32 size = component->component_size;
-+	struct fbnic_fw_completion *fw_cmpl;
-+	struct device *dev = context->dev;
-+	struct pci_dev *pdev = to_pci_dev(dev);
-+	u16 id = component->identifier;
-+	const char *component_name;
-+	int retries = 2;
-+	int err;
-+
-+	struct devlink *devlink;
-+	struct fbnic_dev *fbd;
-+
-+	switch (id) {
-+	case QSPI_SECTION_CMRT:
-+		component_name = "boot1";
-+		break;
-+	case QSPI_SECTION_CONTROL_FW:
-+		component_name = "boot2";
-+		break;
-+	case QSPI_SECTION_OPTION_ROM:
-+		component_name = "option-rom";
-+		break;
-+	default:
-+		dev_err(dev, "Unknown component ID %u\n", id);
-+		return -EINVAL;
-+	}
-+
-+	fw_cmpl = kzalloc(sizeof(*fw_cmpl), GFP_KERNEL);
-+	if (!fw_cmpl)
-+		return -ENOMEM;
-+
-+	pdev = to_pci_dev(dev);
-+	fbd = pci_get_drvdata(pdev);
-+	devlink = priv_to_devlink(fbd);
-+
-+	/* Initialize completion and queue it for FW to process */
-+	fw_cmpl->msg_type = FBNIC_TLV_MSG_ID_FW_WRITE_CHUNK_REQ;
-+	init_completion(&fw_cmpl->done);
-+
-+	fw_cmpl->fw_update.last_offset = 0;
-+	fw_cmpl->fw_update.data = data;
-+	fw_cmpl->fw_update.size = size;
-+
-+	err = fbnic_fw_xmit_fw_start_upgrade(fbd, fw_cmpl, id, size);
-+	if (err)
-+		goto cmpl_free;
-+
-+	/* Monitor completions and report status of update */
-+	while (fw_cmpl->fw_update.data) {
-+		u32 offset = fw_cmpl->fw_update.last_offset;
-+
-+		devlink_flash_update_status_notify(devlink, "Flashing",
-+						   component_name, offset,
-+						   size);
-+
-+		/* Allow 5 seconds for reply, resend and try up to 2 times */
-+		if (wait_for_completion_timeout(&fw_cmpl->done, 5 * HZ)) {
-+			reinit_completion(&fw_cmpl->done);
-+			/* If we receive a reply, reinit our retry counter */
-+			retries = 2;
-+		} else if (--retries == 0) {
-+			dev_err(fbd->dev, "Timed out waiting on update\n");
-+			err = -ETIMEDOUT;
-+			goto cmpl_cleanup;
-+		}
-+	}
-+
-+	err = fw_cmpl->result;
-+	if (err)
-+		goto cmpl_cleanup;
-+
-+	devlink_flash_update_status_notify(devlink, "Flashing",
-+					   component_name, size, size);
-+
-+cmpl_cleanup:
-+	fbd->cmpl_data = NULL;
-+cmpl_free:
-+	kfree(fw_cmpl);
-+
-+	return err;
-+}
-+
-+/**
-+ * fbnic_finalize_update - Perform last steps to complete device update
-+ * @context: PLDM FW update structure
-+ *
-+ * Notify FW that update is complete and that it can take any actions
-+ * needed to finalize the FW update.
-+ *
-+ * Return: zero on success
-+ *	    negative error code on failure
-+ */
-+static int fbnic_finalize_update(struct pldmfw *context)
-+{
-+	struct device *dev = context->dev;
-+
-+	/* Temp placeholder required by devlink */
-+	dev_info(dev, "PLDMFW: Finalize update\n");
-+
-+	return 0;
-+}
-+
-+static const struct pldmfw_ops fbnic_pldmfw_ops = {
-+	.match_record = pldmfw_op_pci_match_record,
-+	.send_package_data = fbnic_send_package_data,
-+	.send_component_table = fbnic_send_component_table,
-+	.flash_component = fbnic_flash_component,
-+	.finalize_update = fbnic_finalize_update,
-+};
-+
-+static void fbnic_devlink_flash_update_report_err(struct fbnic_dev *fbd,
-+						  struct devlink *devlink,
-+						  const char *err_msg,
-+						  int err)
-+{
-+	char err_str[128];
-+
-+	snprintf(err_str, sizeof(err_str),
-+		 "Failed to flash PLDM Image: %s (error: %d)",
-+		 err_msg, err);
-+	devlink_flash_update_status_notify(devlink, err_str, NULL, 0, 0);
-+	dev_err(fbd->dev, "%s\n", err_str);
-+}
-+
-+static int
-+fbnic_devlink_flash_update(struct devlink *devlink,
-+			   struct devlink_flash_update_params *params,
-+			   struct netlink_ext_ack *extack)
-+{
-+	struct fbnic_dev *fbd = devlink_priv(devlink);
-+	const struct firmware *fw = params->fw;
-+	struct device *dev = fbd->dev;
-+	struct pldmfw context;
-+	char *err_msg;
-+	int err;
-+
-+	if (!fw || !fw->data || !fw->size)
-+		return -EINVAL;
-+
-+	devlink_flash_update_status_notify(devlink, "Preparing to flash",
-+					   NULL, 0, 0);
-+
-+	context.ops = &fbnic_pldmfw_ops;
-+	context.dev = dev;
-+
-+	err = pldmfw_flash_image(&context, fw);
-+	if (err) {
-+		switch (err) {
-+		case -EINVAL:
-+			err_msg = "Invalid image";
-+			break;
-+		case -EOPNOTSUPP:
-+			err_msg = "Unsupported image";
-+			break;
-+		case -ENOMEM:
-+			err_msg = "Out of memory";
-+			break;
-+		case -EFAULT:
-+			err_msg = "Invalid header";
-+			break;
-+		case -ENOENT:
-+			err_msg = "No matching record";
-+			break;
-+		case -ENODEV:
-+			err_msg = "No matching device";
-+			break;
-+		case -ETIMEDOUT:
-+			err_msg = "Timed out waiting for reply";
-+			break;
-+		default:
-+			err_msg = "Unknown error";
-+			break;
-+		}
-+		fbnic_devlink_flash_update_report_err(fbd, devlink,
-+						      err_msg, err);
-+	} else {
-+		devlink_flash_update_status_notify(devlink, "Flashing done",
-+						   NULL, 0, 0);
-+	}
-+
-+	return err;
-+}
-+
- static const struct devlink_ops fbnic_devlink_ops = {
--	.info_get = fbnic_devlink_info_get,
-+	.info_get	= fbnic_devlink_info_get,
-+	.flash_update	= fbnic_devlink_flash_update,
- };
-
- void fbnic_devlink_free(struct fbnic_dev *fbd)
---
-2.43.5
 
