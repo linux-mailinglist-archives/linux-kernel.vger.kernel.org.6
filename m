@@ -1,127 +1,168 @@
-Return-Path: <linux-kernel+bounces-362201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D895599B208
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:16:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A30A599B20B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:20:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5DCEFB223A3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:16:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37DF8B222EA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:20:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15C98145B07;
-	Sat, 12 Oct 2024 08:15:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4C5914601C;
+	Sat, 12 Oct 2024 08:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="w86uTF17"
-Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mGhD2UdA"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C475113211C
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:15:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF3D1143723;
+	Sat, 12 Oct 2024 08:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728720956; cv=none; b=WZH8FzPtJrkQBB6POiAE3AB76jrZgtxlAou9bNMNwbWZPMdGPb6ZJUC5To+K6NYgU/JBnQJXeSyOaav/gEdTclCt/Vo9v2asf9naGTFC073d1l+MqN40SovHKChSLqwjmRyAiE+czngER18VE4cUs1VkinswFHqO+U9kh9/I6k4=
+	t=1728721204; cv=none; b=jLN+5CQW31YLdalpYC1+L2vGZTzijS/oSrMKTvZ9mCdAn9LEqlICP0cJpG/Nj4OWbjqBhTZPKdI3oFu2hrDxTwo5DeM5Rvmm38nlDYYnX2+6ulXS86EO4wIbpouSvJsP8f10af63N0a0SydYgV6+S5MX0uDXuJlFFT17zkn/9Vc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728720956; c=relaxed/simple;
-	bh=PWHU5fzEo5gAnHKkrItOxCsgYv5K3qCVxg4l4+hAF6o=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AMG5BeAT91/L0taPD09l9IgWqyrPqn2Goa4FS8Yzk7JZZ7smTynThWtux9rFO9l+Ml2O17dhHyIBHc0cRLVh1YNNE2QPXCqTulzoKBPArM9Uemb1W6mkD+yXVXuQtnXZqq/ylYZER+E2kKZPIPHuC7q020cNpUM6gRPsKz2FCSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=w86uTF17; arc=none smtp.client-ip=209.85.167.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e7e73740so167929e87.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:15:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728720953; x=1729325753; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=98Avhm8RF4Q1UREJOF0ug2jybyp+VJAFuutUoDh5cao=;
-        b=w86uTF17QPhECQQYzJzoQfR3eewnbj3OjvXp8fHYJ8Vhblxq6OfBbT4ldMISq2ywFI
-         bSk7VX8dbLfwk9TpOPK8qxOlwTS57AF66zJcPG36keCDO+s5JDKAS7FlWjhHf/O4aCFN
-         7TJvis9Lw7sJQlppkyvSwMa4qfcxtiVLy8e3BipJq4Vce1kPb9OWBeSk8zSDAom2xoYS
-         X0r1XWtC+qbkdkznVQT2dJSxvB7uCX5cxoAdYBgz9lVZYLyRgSxc5Qr68I+MgOguFenk
-         ngSArGSuRBpkPIPK7PM+3tzPGlmL3GjR5r8GRi38pd/JJdEdjNNKQPGK+ac9EZahW6Cm
-         zxSw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728720953; x=1729325753;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=98Avhm8RF4Q1UREJOF0ug2jybyp+VJAFuutUoDh5cao=;
-        b=dw3Z+k5ILkSf1NR7OZ4oePwhx27UHyF+ewcwtgvIOsoHwylNO2U/nfbNnbezYMtsuK
-         +YNEy9whjSVSE3xFzFmdXCO2m7dUrBxYE9xyrERzOOI8IpODEmMQDydQgFAAU/OYac1f
-         63EP2JZ2z2dzjth6WNUkMgL+/OvHKzq5zPfeA53XZfldgR4maXf40E4gHEsVwiYQ7rZW
-         Kg3vBANvKktovQ4G2uBOrJsGCB+WGVkbrVucLCOOzRJf39G2w+9+qjjuaRU+n3mtwadw
-         iIs+BfkVDqnlAvW0hYo2hrdIbfZw4vtdjx4IMQd72E8c6aNhn4z91WaqkyIOzDb/gkc7
-         E8AA==
-X-Forwarded-Encrypted: i=1; AJvYcCVI65eO1b7oh8ZSYh2FIXy/n44x0jrFbNxe5LBinrL7Ip1mThWr3DIBEBXfMxfgRVrXIwPMrD9++kAOTDA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/qZD5gWN38Sw9Y/RJXtJTJf79lj6az9oRgeudyuPOLf6o4YkA
-	1+5+RfFBV/UgUnpzDt0+kK1nj/Fwwc+yg6/TJRaNPaZkYqwKt0KbMW3pQ/K+xB0=
-X-Google-Smtp-Source: AGHT+IGgU2DIDo2BCzgiYQv6VUZx5oN0m+5FPxjeT4o7Oi65BfD6CL0NSjctE1q+BkuYP1KMk5kOfg==
-X-Received: by 2002:a05:6512:3e05:b0:539:95f0:a05d with SMTP id 2adb3069b0e04-539da5b344cmr2428747e87.58.1728720952823;
-        Sat, 12 Oct 2024 01:15:52 -0700 (PDT)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539cb8f0ea9sm862700e87.186.2024.10.12.01.15.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 01:15:52 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-sound@vger.kernel.org
-Subject: Re: (subset) [PATCH RFC 0/5] drm: add DRM HDMI Codec framework
-Date: Sat, 12 Oct 2024 11:15:50 +0300
-Message-ID: <172872070672.2226967.8196347515267088542.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org>
-References: <20240615-drm-bridge-hdmi-connector-v1-0-d59fc7865ab2@linaro.org>
+	s=arc-20240116; t=1728721204; c=relaxed/simple;
+	bh=qiNaSkFLsiZlpmEX7fbpzHz/timLHlWrozlUIAzDUaI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TlUUdv1GDl1UDJMLOLr0rC9pZY0T7kRJ7y01nij7xHbuZR7dGE1iJPVb8whRZ3sL+XtbjX+/KLmqvX9IA2tWQM9N434emq2pTVG3fQGg6FuRY/L9Ees+s/4MTSzYYSuMHtdclsUfuIqIdJIQOuv2cNX8reBC0vxLdqAyUChFtn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mGhD2UdA; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728721202; x=1760257202;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=qiNaSkFLsiZlpmEX7fbpzHz/timLHlWrozlUIAzDUaI=;
+  b=mGhD2UdAkVIuvXy/RWHm6Ft/hUlH4cI8ZbamGoFXlHvVpG8yv2b1LSYA
+   AhBJBEXxo5GHevGvWgdqHC8wvjErHanYyvlaTX5hVvwjawD94RGhjusRs
+   Je20m5MEymyr61LWv8T9WxIVN6plu/ZHzu+AS0JbRtNPJJMUN61PRC/tS
+   1H51+MPZWkZOHg9ZFCS+gKqLC/+YTkdRwSW877YFRU2piSr+wsKBY4R7v
+   NHe1iqCsb9Dbg1bfe1mfF3QX5+MUBXNsPz5hHnxg+vhcTICfnbG8xFouK
+   I4GtniJR5eQpuqQ3gUI/LlmbSNJByliXIYrfpy4FNcU3jFA1KkwotKPO6
+   A==;
+X-CSE-ConnectionGUID: EdBdsoeHTfSqHTwGsVbMpA==
+X-CSE-MsgGUID: Hltc1LNCQi6W1dOg/Egvyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="53546795"
+X-IronPort-AV: E=Sophos;i="6.11,198,1725346800"; 
+   d="scan'208";a="53546795"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 01:20:01 -0700
+X-CSE-ConnectionGUID: viBG/oxRREOEnhV0oyHeAA==
+X-CSE-MsgGUID: 81gwA3J1Sg+6tqid8/OKdw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,198,1725346800"; 
+   d="scan'208";a="77428329"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 12 Oct 2024 01:19:57 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1szXLv-000DCD-0Y;
+	Sat, 12 Oct 2024 08:19:55 +0000
+Date: Sat, 12 Oct 2024 16:19:41 +0800
+From: kernel test robot <lkp@intel.com>
+To: Michal Wilczynski <m.wilczynski@samsung.com>, drew@pdp7.com,
+	guoren@kernel.org, wefu@redhat.com, jassisinghbrar@gmail.com,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+	m.szyprowski@samsung.com
+Cc: oe-kbuild-all@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Michal Wilczynski <m.wilczynski@samsung.com>
+Subject: Re: [PATCH v3 1/3] mailbox: Introduce support for T-head TH1520
+ Mailbox driver
+Message-ID: <202410121547.KF1WUbP1-lkp@intel.com>
+References: <20241008174852.222374-2-m.wilczynski@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008174852.222374-2-m.wilczynski@samsung.com>
 
-On Sat, 15 Jun 2024 20:53:29 +0300, Dmitry Baryshkov wrote:
-> While porting lt9611 DSI-to-HDMI bridge driver to use HDMI Connector
-> framework, I stumbled upon an issue while handling the Audio InfoFrames.
-> The HDMI codec callbacks weren't receiving the drm_atomic_state, so
-> there was no simple way to get the drm_connector that stayed at the end
-> of the bridge chain. At the same point the drm_hdmi_connector functions
-> expected to get drm_connector instance.
-> 
-> [...]
+Hi Michal,
 
-Applied to drm-misc-next, thanks!
+kernel test robot noticed the following build warnings:
 
-[1/5] drm/bridge: lt9611: use HDMI Connector helper to set InfoFrames
-      commit: ac4627c304e7a09068d0e2dba34d21e492649f8d
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on linus/master v6.12-rc2]
+[cannot apply to next-20241011]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I'm pushing this patch separately from the rest of the series, it provides an
-example of converting DRM bridge driver to the HDMI Connector framework.
+url:    https://github.com/intel-lab-lkp/linux/commits/Michal-Wilczynski/mailbox-Introduce-support-for-T-head-TH1520-Mailbox-driver/20241009-015033
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20241008174852.222374-2-m.wilczynski%40samsung.com
+patch subject: [PATCH v3 1/3] mailbox: Introduce support for T-head TH1520 Mailbox driver
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20241012/202410121547.KF1WUbP1-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241012/202410121547.KF1WUbP1-lkp@intel.com/reproduce)
 
-Best regards,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410121547.KF1WUbP1-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   drivers/mailbox/mailbox-th1520.c: In function 'th1520_mbox_chan_id_to_mapbit':
+>> drivers/mailbox/mailbox-th1520.c:196:34: warning: unused variable 'priv' [-Wunused-variable]
+     196 |         struct th1520_mbox_priv *priv = to_th1520_mbox_priv(cp->chan->mbox);
+         |                                  ^~~~
+   drivers/mailbox/mailbox-th1520.c: In function 'th1520_mbox_xlate':
+   drivers/mailbox/mailbox-th1520.c:381:34: warning: unused variable 'priv' [-Wunused-variable]
+     381 |         struct th1520_mbox_priv *priv = to_th1520_mbox_priv(mbox);
+         |                                  ^~~~
+   drivers/mailbox/mailbox-th1520.c: In function 'th1520_mbox_probe':
+>> drivers/mailbox/mailbox-th1520.c:441:26: warning: unused variable 'res' [-Wunused-variable]
+     441 |         struct resource *res;
+         |                          ^~~
+>> drivers/mailbox/mailbox-th1520.c:439:29: warning: unused variable 'np' [-Wunused-variable]
+     439 |         struct device_node *np = dev->of_node;
+         |                             ^~
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for MODVERSIONS
+   Depends on [n]: MODULES [=y] && !COMPILE_TEST [=y]
+   Selected by [y]:
+   - RANDSTRUCT_FULL [=y] && (CC_HAS_RANDSTRUCT [=n] || GCC_PLUGINS [=y]) && MODULES [=y]
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+
+
+vim +/priv +196 drivers/mailbox/mailbox-th1520.c
+
+   193	
+   194	static int th1520_mbox_chan_id_to_mapbit(struct th1520_mbox_con_priv *cp)
+   195	{
+ > 196		struct th1520_mbox_priv *priv = to_th1520_mbox_priv(cp->chan->mbox);
+   197		int mapbit = 0;
+   198		int i;
+   199	
+   200		for (i = 0; i < TH_1520_MBOX_CHANS; i++) {
+   201			if (i == cp->idx)
+   202				return mapbit;
+   203	
+   204			if (i != TH_1520_MBOX_ICU_KERNEL_CPU0)
+   205				mapbit++;
+   206		}
+   207	
+   208		if (i == TH_1520_MBOX_CHANS)
+   209			dev_err(cp->chan->mbox->dev, "convert to mapbit failed\n");
+   210	
+   211		return 0;
+   212	}
+   213	
+
 -- 
-With best wishes
-Dmitry
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
