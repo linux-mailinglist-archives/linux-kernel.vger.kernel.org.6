@@ -1,86 +1,134 @@
-Return-Path: <linux-kernel+bounces-362244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA6B799B298
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:39:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB47299B2A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78F211F25505
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:39:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 770D3283429
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 650D414BF8F;
-	Sat, 12 Oct 2024 09:39:05 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A77414EC60;
+	Sat, 12 Oct 2024 09:44:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V13BGWhE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F6AD8BE5
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 09:39:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71949610D;
+	Sat, 12 Oct 2024 09:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728725945; cv=none; b=ZD16STijGgxT1jYzpj4j6gLOWJa/JMMaDtNWIVZqDSAVX7oQngeJMnWteh1yeGGhSTPP1/ozhAw6edADbzlq8AVroCEqeWXw+gJKLDJ+ea9zLcdP7MPjrmql7bd7Mdgy0ykRoDU2QzuAHMxI91fsHh2G9aOciXGy3xJfBNnK1Bk=
+	t=1728726239; cv=none; b=GUcGdP/sKBqgmtJsY4bDtZjsg1T69m5zcJLMX5LjanL7hMkJyODPCHtPRFzJn+W9q4wtJh+vPQYU0mNDX4A1drI+eOayZoMtMcgcQnMD2b9mD7hYn5J0ugRlJixUhELgVWQnSv7qo4ClZmwDvCpaKKTcdZael2mAkJ3r5/z1fHQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728725945; c=relaxed/simple;
-	bh=cbR/N4XjPXJw1v8crxbXfhcBf7pNvKf7ONARooIn7zU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=arDDTtbUVTxlHBFS2u8EJXKpqOZ798BAyUpH4imDpjW9LjUG0wsH8TKDm6OCxMGfhEW9GOd1ZluOYSmTzRF9QgbKsndGWmxW1HLQ7TDmXZFQYXoO6UxwIL3W8JDTNyFS6RJNRvDPpuwUsEis4XRf1Yac6UM2NfUESnDSFD8sIsk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-835439ecbd3so225922439f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:39:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728725942; x=1729330742;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KIEtbSinH1yiJIz5fBHM7Fih60iDpMZZnn2eAwPH0Vs=;
-        b=MP8upfyIQX7vDKqVwOKhO1GfsN95UFSbPeeVyyZ1D4RB2CZvBeXTdW18apJ4GSiEq6
-         QPxz+P5VpeHoo9zSjpQleTmocjJMI7qJyBd6t3w0Y46MJR/PHXw9o0rf5D7/GGGb0mJS
-         iU0QvHZECjsHgQZ0RvBa/F7tseYRhOcoiJx8NNuq9q6O14FIYHXpGBWmpPYmzrgGu/YN
-         /NuRoexUP88t6hKcvs00UmeMKSRszYgtCXVCBFVhYLwqEPjKVIh5xroV0Y0kJmeweY5o
-         8pvhfYXwzKoUQcX/cMLrAQyHKzbc86bJf+wMVDfQCf+IGaUD02WMGu8gt+gdDFzWG/l1
-         jtJg==
-X-Gm-Message-State: AOJu0YyDuLxrfjb2fsWgRdupXf/hYoS6FjPZEDLWpbWZgh88ft//Q5UH
-	3OcGBQrEGkUMsa7wiIDew0rqyzx9hEVvxPi9dsM/194z310jB7wmlticAdXz2DMraVwL+ErnUlO
-	ZhXftTOIZqhnIUq7AuubYMvSI0x4Cjmp0iT9AJxiW4ab0EUeTQp9pz5w=
-X-Google-Smtp-Source: AGHT+IG1Zay6hEfDdJjstvdvoPr5NNjoNywFVNd4nHOKZy8ZoTIwSilMNYFuiq1OX0w+C/zWEhkMx+xRFZu8YbS+TfE5INIHtkMo
+	s=arc-20240116; t=1728726239; c=relaxed/simple;
+	bh=u6SCTW34m77+SZUJ4QfQ2fTZnVyo3HQiIoWzpjlrB3M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nrDob5pmGO9GnlCEJIWou8Rk4q7FA1ND7Q6qsIhju4v1MJPOX5pmcEFJaptQVFLuVtoVKFlIA4mis4sTWvyw+qYdh9NqxPEUscrGmSyECmnT9pXAOlHMVOXZi+yD932rUOkqvxSB97hjF/cs1FNpZg13C/ZpNID+/Y6M7DM+L1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V13BGWhE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A385CC4CEC6;
+	Sat, 12 Oct 2024 09:43:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728726239;
+	bh=u6SCTW34m77+SZUJ4QfQ2fTZnVyo3HQiIoWzpjlrB3M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=V13BGWhEhtf//dQLaHxYjMqELcEd+sP9fFD9Qjv5kGJ5eDpgGJxOXU+wW4YPl4J7O
+	 1UcnmHBR0EssqKzOGNdS6f7j13OWS8Sf2vQ3uwn7cmuIA6O1OjzFHosuZtzk0dK8kG
+	 Cwr5BZxDsirUbDGBaajWVQBxrBaLEhHm82lOtDo/gvLN54yEIL2MDP0VcWu+AVl5kd
+	 LTiasKXeeXz/k8U0lHTA5nOxliCS1TY/4J6UjLDyukJ+hrIhSksM5fItmg1TVFqbht
+	 inh0T92ZzG7rya0por/4dIG+H8gmPBWaQnLZaEC0e7lLpGEw0h4gKBBPqkeQqJv1PP
+	 iNSkM6V9l2pyA==
+Date: Sat, 12 Oct 2024 10:43:52 +0100
+From: Simon Horman <horms@kernel.org>
+To: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
+Cc: davem@davemloft.net, Liam.Howlett@oracle.com, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, mingo@redhat.com,
+	peterz@infradead.org, juri.lelli@redhat.com,
+	vincent.guittot@linaro.org, dietmar.eggemann@arm.com,
+	rostedt@goodmis.org, bsegall@google.com, mgorman@suse.de,
+	vschneid@redhat.com, jiri@resnulli.us, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, akpm@linux-foundation.org, shuah@kernel.org,
+	linux-kselftest@vger.kernel.org, peili.io@oracle.com
+Subject: Re: [PATCH net-next 1/3] connector/cn_proc: Add hash table for
+ threads
+Message-ID: <20241012094352.GA77519@kernel.org>
+References: <20241012004532.2071738-1-anjali.k.kulkarni@oracle.com>
+ <20241012004532.2071738-2-anjali.k.kulkarni@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:26d1:b0:82a:2053:e715 with SMTP id
- ca18e2360f4ac-83794b59828mr435129239f.14.1728725942468; Sat, 12 Oct 2024
- 02:39:02 -0700 (PDT)
-Date: Sat, 12 Oct 2024 02:39:02 -0700
-In-Reply-To: <20241012091415.2172948-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670a43b6.050a0220.3e960.0024.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING: ODEBUG bug in corrupted (3)
-From: syzbot <syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012004532.2071738-2-anjali.k.kulkarni@oracle.com>
 
-Hello,
+On Fri, Oct 11, 2024 at 05:45:30PM -0700, Anjali Kulkarni wrote:
+> Add a new type PROC_CN_MCAST_NOTIFY to proc connector API, which allows a
+> thread to notify the kernel that it has exited abnormally. Thread can also
+> send the exit status code it wants returned in the notification with it.
+> Exiting thread can call this either when it wants to call pthread_exit()
+> with non-zero value or from signal handler.
+> 
+> Add a new file cn_hash.c which implements a hash table storing the exit
+> codes of abnormally exiting threads, received by the system call above.
+> The key used for the hash table is the pid of the thread, so when the
+> thread actually exits, we lookup it's pid in the hash table and retrieve
+> the exit code sent by user. If the exit code in struct task is 0, we
+> then replace it with the user supplied non-zero exit code.
+> 
+> cn_hash.c implements the hash table add, delete, lookup operations.
+> mutex_lock() and mutex_unlock() operations are used to safeguard the
+> integrity of the hash table while adding or deleting elements.
+> connector.c has the API calls, called from cn_proc.c, as well as calls
+> to allocate, initialize and free the hash table.
+> 
+> Add a new flag in PF_* flags of task_struct - EXIT_NOTIFY. This flag is
+> set when user sends the exit code via PROC_CN_MCAST_NOTIFY. While
+> exiting, this flag is checked and the hash table add or delete calls
+> are only made if this flag is set.
+> 
+> A refcount field hrefcnt is added in struct cn_hash_dev, to keep track
+> of number of threads which have added an entry in hash table. Before
+> freeing the struct cn_hash_dev, this value must be 0.
+> 
+> Signed-off-by: Anjali Kulkarni <anjali.k.kulkarni@oracle.com>
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+...
 
-Reported-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
-Tested-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
+> diff --git a/drivers/connector/cn_proc.c b/drivers/connector/cn_proc.c
+> index 44b19e696176..8c6e002069d9 100644
+> --- a/drivers/connector/cn_proc.c
+> +++ b/drivers/connector/cn_proc.c
 
-Tested on:
+...
 
-commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=17fedfd0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=90f31ac02b7ae5e8b578
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=115ebb27980000
+> @@ -326,9 +328,16 @@ void proc_exit_connector(struct task_struct *task)
+>  	struct proc_event *ev;
+>  	struct task_struct *parent;
+>  	__u8 buffer[CN_PROC_MSG_SIZE] __aligned(8);
+> +	__u32 uexit_code;
+> +	int err;
+>  
+> -	if (atomic_read(&proc_event_num_listeners) < 1)
+> +	if (atomic_read(&proc_event_num_listeners) < 1) {
+> +		if (likely(!(task->flags & PF_EXIT_NOTIFY)))
+> +			return;
+> +
+> +		err = cn_del_elem(task->pid);
 
-Note: testing is done by a robot and is best-effort only.
+Hi Anjali,
+
+err is set but otherwise unused in this function; probably it can be removed.
+
+>  		return;
+> +	}
+>  
+>  	msg = buffer_to_cn_msg(buffer);
+>  	ev = (struct proc_event *)msg->data;
+
+...
 
