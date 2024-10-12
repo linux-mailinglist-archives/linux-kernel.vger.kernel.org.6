@@ -1,144 +1,103 @@
-Return-Path: <linux-kernel+bounces-362507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02D6B99B5BE
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:06:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0515A99B5C1
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:06:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33FAE1C219ED
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:06:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AF52A1F222A0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:06:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 985CE199934;
-	Sat, 12 Oct 2024 15:06:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01057199EA7;
+	Sat, 12 Oct 2024 15:06:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="mB5gCau/"
-Received: from mout.web.de (mout.web.de [212.227.17.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="rFeMQl8i"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE00A11CA0;
-	Sat, 12 Oct 2024 15:05:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4EC15C13F
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 15:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728745563; cv=none; b=WZNrY8UyjVaJ/vV5Ppf6gSbEI2Oki2Cm0LIkdpuYwtGlcCsez0C6EuRkYirfFZMFCXfRk7nwil+x7Hu3r3GQSWT2MaxNZTpPkWUg6Ki6ihrGD6mXy8w5azDexKOEUZ1LnzYdeIkZatMw8K5CCoezLoif0n9Qr3p0dCPj7VkEdYw=
+	t=1728745583; cv=none; b=p7IzuaF+3adyjpCyACZpsAjtexQCV4Kisas7du2gYTQqgs7KxlseyIyeRZo83j/xz98h7O8rob5MCIGUADat19seMZ5W8ZE70e8Kn+rVEckXxWzRyvlpixDe6bu3XXyilJ+Mhvr0ZMtSnR8wmllAUODYv1MeCoeD2WwxdXlMphc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728745563; c=relaxed/simple;
-	bh=S7tpWXAulEfXczQ3Q38hJ+twqbJoVUYqxTYPsyXWQAs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MgF5GIOhk6KtoUmHmXUEhKeGrrA4I+XfEKATHkQMBN993HBW0P6CwXDqW/GEUmBEK20gmViWmTHMGsc2kYXUO+cjkJ3jlNpCGryupG7P4WUMd9egozTma4keCYxxxaEBiO76m/tziWQkvR2Ld7xCta1xrsaXImKTwkQ8sphSBhs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=mB5gCau/; arc=none smtp.client-ip=212.227.17.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1728745546; x=1729350346; i=markus.elfring@web.de;
-	bh=+ooXuq3xV3z4uSkz3ZVk+MJfz76w0jaExrA46M+2cv0=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:From:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=mB5gCau/k1VhxMqmcYv/PZYNtCN2vdaUlOrNAp2UpK3D/qKpAkZsygM5BlJpPrxv
-	 qaK8ynBvXwLIudN/9DUvCm9b2HfBo/u67xkO9Sefp0/wNfBvk+clD1i1jDS9e5eXz
-	 SlKhyc2XiiMMfAbW0td0odw/Mo2gUjBgxo8/KmMlIQpafpzzOk930cSzwgAxMaetn
-	 vx9WrTj+A06er38BfMptKertQTpyF7kkTF9zy6GH2qkjyHsGeQosfMUHf6lfEwKJZ
-	 ENBvMd7/lKRCBPClFcIlEZqNuSFK9nMYWbsflHVTtoLRPFvSQNLda38CRvk/JSNZT
-	 +RtdAPQ8WfNovrV9CQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.89.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1MsaRt-1tnu7d2fc3-00qzpE; Sat, 12
- Oct 2024 17:05:46 +0200
-Message-ID: <265021be-5349-4bda-88af-80b3796a4b88@web.de>
-Date: Sat, 12 Oct 2024 17:05:44 +0200
+	s=arc-20240116; t=1728745583; c=relaxed/simple;
+	bh=BFjY+9tjTvetqvmsSk1MQmSm+Ev3FqY5RW3ciHsvl6k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PM/k9BXzF48UGZb2QmDD09IQHihHNwqMHm6FZwXpmnjJOky7LFIsS2ahgVpRw7VwZhhiF9rpl+Sw4UhLOyYHY5fg88wNInlOqu3+zWP16RuMapjsZRsLzot2iopcWMUcGCrXDkQuai9rjB1szvw+hjnrF3tcmXFqiiGb0oTtBac=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=rFeMQl8i; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7b10ed5e7cdso318706085a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 08:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1728745580; x=1729350380; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=NINyfAb50pmkBk+kkIj7HlbrUnyqF2VBG1K5cJtrRiQ=;
+        b=rFeMQl8irS+yTLhr610XsGrbWtiP+DA2vz6eGXZC6x6sEyUUCg1g3GOo5s51rBtUGT
+         nB6AKvXFnsj6R+NdRkF3zNpv97ybJQ4Od7eJJXuc9kfwpwJutkCNRnd7s93j/J0sTPzl
+         ylRELrUvNRu1x3+dd724UQgNRUTUlqWCABtMnVKj7uYmuwHvDawj/ceGukr3om9zU/We
+         i1+dx+c45UG3fu1r6pU6n+NwaNdjdkxEavgpY7o6ipZVm9spi99XIJCdVrRDz+KlBk+r
+         kknJ/83hctWHQ7uCYnOham0/ENWzUPrjcvafKj6IIlIChwIkvpHu8S4UvHgsr59DYkeO
+         Tekg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728745580; x=1729350380;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=NINyfAb50pmkBk+kkIj7HlbrUnyqF2VBG1K5cJtrRiQ=;
+        b=Z4goUoVCmVWa3vyQUKGHj1a972xTzzg2CyVrjg31gEq03zT4rI3/FjP86pmXHXQoHe
+         eVbAJqGkl/z5lKWc9ajoF/c2fo+j5hSeNv0efh6jaPc60mzhVUf0pLuZ+K9sEBiYfOvt
+         fSNmlyCImwgZ1MBbfraJ29t7TgFfS6JYN2gqsD0QczZV6HXzBDFOOi7T6idkjv8ab/2g
+         yHCEaX/sImMdiHLGxItlS1Jf1bNx75SX6YJzQh/N7ws66blzvkg92MPE8WgLCqIN5y3s
+         IQCt3ppXPZ10UoMeyz4jgm2N8DvQTvDcplNw9gl7JlSKHkGYoi4MyC0YKB6R5+83bqiG
+         LGZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVMWPVcsjxgWb9xMxx4DSNlwiIN8G3eyelgpJ0tqhAY6N0/1kvuXYc0WJr4sOfl8SRSQhcZXA4JMtMSiIw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkSfEhwY45/UtAMArmxSdq/7We17ui9rXQJ60tWrMW1QY/s/Z8
+	+g5rZbq150JH5CMlfvKrZkU2K0E0C7EZ7frD33+QBKL8QIpRwFelet9CnX9+fw==
+X-Google-Smtp-Source: AGHT+IHrisRUB56YJBvz9UexR7H/m5FwaKEHSIsmCdbht8BvKNB/srOGvdRUwwwajZMX0P6PDOKkVQ==
+X-Received: by 2002:a05:6214:5784:b0:6cb:b7ea:2072 with SMTP id 6a1803df08f44-6cbf9cb30camr42652966d6.1.1728745580035;
+        Sat, 12 Oct 2024 08:06:20 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::31c2])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe842280csm26150636d6.0.2024.10.12.08.06.18
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 12 Oct 2024 08:06:19 -0700 (PDT)
+Date: Sat, 12 Oct 2024 11:06:16 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: Duan Chenghao <duanchenghao@kylinos.cn>, rafael@kernel.org,
+	pavel@ucw.cz, len.brown@intel.com, linux-usb@vger.kernel.org,
+	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+	niko.mauno@vaisala.com, stanley_chang@realtek.com, tj@kernel.org,
+	xiehongyu1@kylinos.cn, xy521521@gmail.com
+Subject: Re: [PATCH v3] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+Message-ID: <489805e7-c19c-4b57-9cd7-713e075261cd@rowland.harvard.edu>
+References: <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
+ <20241012094633.126736-1-duanchenghao@kylinos.cn>
+ <2024101239-deprive-upstate-3275@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v3 1/3] crypto: lib/mpi - Extend support for scope-based
- resource management
-From: Markus Elfring <Markus.Elfring@web.de>
-To: linux-crypto@vger.kernel.org, kernel-janitors@vger.kernel.org,
- Andrew Morton <akpm@linux-foundation.org>,
- Herbert Xu <herbert@gondor.apana.org.au>,
- Peter Zijlstra <peterz@infradead.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-References: <bc5ce9ad-acbd-4f3b-91d6-10cf62bf5afc@web.de>
- <202409180725.ZV8DCvII-lkp@intel.com>
- <91d10516-4ba9-4fe0-8f63-86205cc4f88c@web.de>
- <ZwDPp4bU1J5uEgQe@gondor.apana.org.au>
- <9ddc71e7-e98a-4fa8-b140-4035dd2874b6@web.de>
- <ZweTCO8cFtP_pvOu@gondor.apana.org.au>
- <ee5f409e-4412-41cd-b8d8-92872770f04d@web.de>
-Content-Language: en-GB
-In-Reply-To: <ee5f409e-4412-41cd-b8d8-92872770f04d@web.de>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:e/7I/RLhJfIa7NP5KTPnYC8Kqi2cfRLkbKskE2NubKjz4YbgJ6f
- R1G2FFVIS6kyL28qv6EBJpUDTGg7tZwNTMqSYcAxkyFxQloOeBTOHYHF5mDeTFW59nxN+MW
- 2jXMGHF1zCQ6XHCBLOd0UDUdzhYibRrmW7w9XTd/h3kPKSPAUAzQUbin/UYsuzcp+Pd2uSD
- wayQdPB6xOFa+/+JTOrBw==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:dHaS+jlx2Us=;48wLR3yji6IMcPOw0nB/ENK2lgy
- caUPnTBDAK/Cj4XieFzJ+fbMGIXASzp3pBr/AZEa6fWEJATEVtA77wqHFDK41Xe52IvMcUGbi
- ECl5D5Q7A+QPQy/j19ItORRss3YUBSQDXBN6zJ1Pe36Lp6VaS06iTa88Kj5gQlVu2pJ6vmTaD
- h0p+qk5NHGeF4TFC3lwExKQDBNLIswyTiYqRcyB+K8hgB2Ibdfa2yqx47i2D7d8AL7ar0eppX
- m9ywun8TD8RdH6sH6qdm9noES9X/omFkqITAM75Jdzu399HDrvTO1HTbQZX7xoRIZox4EzGC+
- hY+a+HzvT8JFVbHUvgqEzHa5vRGzKz3EVeN7LwSk6h/VI5fkDFZaYqmjxK1CR23ACV9GQsxB0
- lEzjGn2p4U88980Q6EfTWdTekC4kLv4mQr8YOltffnvqPuj0ODyTW5qaCFhcFFJwvNKvnMDFg
- LI50eYdPw62bntLuDYv0hiwVci0zk8Qa/q4zJzXxS9KLyOG87dTh++5B+ESS9CanQEi4DiYa9
- +eUKoa1hTfcgtWzHVy9PPhISdRnqNsebKuIQnvKA3IrD2MnGTig416PDiep7DOtEh6dz1B4Qh
- 85Agz/FW3ru8bLJ38GBBu1RLa3819cuu5NzLvYvWTCd5NCsD3i/E4KYn3Si1y7Cly5124aftM
- lDui95omwvwIguXK8uBbNwSjHj3Ylx40A4Cp8vJgNeuEw5TL0oXgXD35soF2qclh0ViMjcoGb
- aA8EQdwQ5p0/CsJZ0PMb5lUBj3Ed2PPWDAAqmkaELv7vc6rExWIT2esYHv13Lf+jKnoLR9lAy
- PJcchPiGbbS64I0aCQjcUIkQ==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024101239-deprive-upstate-3275@gregkh>
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 18 Sep 2024 11:06:35 +0200
+On Sat, Oct 12, 2024 at 02:40:01PM +0200, Greg KH wrote:
+> On Sat, Oct 12, 2024 at 05:46:33PM +0800, Duan Chenghao wrote:
+> > Co-authored-by: Alan Stern <stern@rowland.harvard.edu>
+> > Signed-off-by: Duan Chenghao <duanchenghao@kylinos.cn>
+> 
+> That's not how to use a co-authored-by tag, please read the
+> documentation for how to do so properly.
 
-Scope-based resource management became supported for some
-programming interfaces by contributions of Peter Zijlstra on 2023-05-26.
-See also the commit 54da6a0924311c7cf5015533991e44fb8eb12773 ("locking:
-Introduce __cleanup() based infrastructure").
+Duan, you can add my Signed-off-by: when you resubmit the patch.
 
-Thus add a macro call so that the attribute =E2=80=9C__free(mpi_free)=E2=
-=80=9D can be
-applied accordingly.
-
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-V3:
-This suggestion was integrated into a patch series.
-
-
- include/linux/mpi.h | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/include/linux/mpi.h b/include/linux/mpi.h
-index 47be46f36435..6fbcb88ce296 100644
-=2D-- a/include/linux/mpi.h
-+++ b/include/linux/mpi.h
-@@ -19,6 +19,8 @@
-
- #include <linux/types.h>
- #include <linux/scatterlist.h>
-+#include <linux/cleanup.h>
-+#include <linux/err.h>
-
- #define BYTES_PER_MPI_LIMB	(BITS_PER_LONG / 8)
- #define BITS_PER_MPI_LIMB	BITS_PER_LONG
-@@ -44,6 +46,8 @@ typedef struct gcry_mpi *MPI;
- /*-- mpiutil.c --*/
- MPI mpi_alloc(unsigned nlimbs);
- void mpi_free(MPI a);
-+DEFINE_FREE(mpi_free, MPI, if (!IS_ERR_OR_NULL(_T)) mpi_free(_T))
-+
- int mpi_resize(MPI a, unsigned nlimbs);
-
- MPI mpi_copy(MPI a);
-=2D-
-2.46.1
-
+Alan Stern
 
