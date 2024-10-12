@@ -1,473 +1,545 @@
-Return-Path: <linux-kernel+bounces-362233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7982A99B277
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:14:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2F4299B274
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:14:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E81DFB22D19
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:14:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C53C41C21B2A
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:14:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40FDE14B08C;
-	Sat, 12 Oct 2024 09:14:22 +0000 (UTC)
-Received: from mxde.zte.com.cn (mxde.zte.com.cn [209.9.37.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D8314B084;
+	Sat, 12 Oct 2024 09:13:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Xsz+C5dj"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2041.outbound.protection.outlook.com [40.107.20.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1101114A099;
-	Sat, 12 Oct 2024 09:14:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.9.37.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728724461; cv=none; b=BWGMo8Id8Yyu+fGzmzzK657YfjjQz6LQai/uk7ArLwdq7hRi1U374tB0YZm92u51oLLgdTJ5WY394PUqb0ybSNrK4waggIPyJFn0nGI27v94K8xwddcmOsqM22yJZ4I73vUgR6CblAAgFFGV75l2NPcFk/NwX7K3N11Rj9AqDkY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728724461; c=relaxed/simple;
-	bh=NPsyfu8aAbTg7SkWIpdWY4qmV2RarZ/zZ22RhYoTlVc=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=AWbBGqmxYZSQ619tY+u8gHOQbtVUSwactnrvDdlsd4RHoAV6GVUdZmSx5Mh+G9Yd3QRUEF+xQLr32lshYNBBDKqni6vQgzJ2c3HjbXqBe38y3ltdhO3P74Dww/FFMHUgyuZQ7uR9S2sc+QBleDYeTjPl53l1bphv+sh/odGg6gc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=209.9.37.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxhk.zte.com.cn (unknown [192.168.250.138])
-	(using TLSv1.2 with cipher AECDH-AES256-SHA (256/256 bits))
-	(No client certificate requested)
-	by mxde.zte.com.cn (FangMail) with ESMTPS id 4XQd8z12p4zBRHKP;
-	Sat, 12 Oct 2024 17:14:11 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4XQd8n4BCPz5B1DK;
-	Sat, 12 Oct 2024 17:14:01 +0800 (CST)
-Received: from njy2app01.zte.com.cn ([10.40.12.136])
-	by mse-fl2.zte.com.cn with SMTP id 49C9DsLB077233;
-	Sat, 12 Oct 2024 17:13:54 +0800 (+08)
-	(envelope-from jiang.kun2@zte.com.cn)
-Received: from mapi (njy2app01[null])
-	by mapi (Zmail) with MAPI id mid204;
-	Sat, 12 Oct 2024 17:13:57 +0800 (CST)
-Date: Sat, 12 Oct 2024 17:13:57 +0800 (CST)
-X-Zmail-TransId: 2af9670a3dd5ffffffffb18-1b404
-X-Mailer: Zmail v1.0
-Message-ID: <20241012171357153parWX6Has5WheQyGlP0kP@zte.com.cn>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C17C112DD88;
+	Sat, 12 Oct 2024 09:13:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728724436; cv=fail; b=Tmmw1dJrRs+7LnjzLiUitCkWdsAerRaGwIDjmmf8Cm5nxAgFnGctLKdnlzDjDxwgVizaGCidi4X04Dxad4Fjh8s8HifjocE+VpmcnLHrOxqrqrNc7zqNhrj6JRX/xhTNWRVtPafKogRRQIpL/GaYrtLDyFX8kZj8YKOVhLhCG+c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728724436; c=relaxed/simple;
+	bh=OX945y6jsEd9miVaQPRh04LPBn1kUjmVejJ1qx0E7Zw=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=d/q6ZSkfjTkMlIukrxeropDdbZ0YpWjTKwNejKMCLp828al92QnabzutG1CkIXeGIYLCNlffcu3bxVlJjx7lfDQ3EmAeyz+AvWAHQR3pwS4tugMwzRa3vgdAtc4qLAJwFyK1aILEMaKGEQdNF4QC3C5m8G9nh46JS5sgTQuXflk=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Xsz+C5dj; arc=fail smtp.client-ip=40.107.20.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=B86v/uYEhR1EN+Bcp+z6tzTEjuwNE0y37/DXuQ1mEYuJGy2mJlNhva2fv3OKm1v7/pV47h38ULaMwSkB0NbJMZ3+Xf2eQ7YZiA3zAeIrPGLqyq+WbxkdaHdC8VCgyg4WKHMbblufZ55qdl+ZHRnfBOWvla4cF0JFRXGDlpBALnp6gjiFw9pY5hiy3kXNP4c4sWZfNDNffE7KpmyR449gkuJSPfKFynu/vSKlx9jZdTqzheC/W1k0pYjzuFKaUkHT/C4tF95sDFE39ZG0IvPnuou1imtrecJ4cs4nWPP3/uWCCG56Qu2Qw608tfhOCkojIY5Hduy/wETOh8OPtoKRzA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SeB5/bD83LybU3JC++izIdjveH+4EdODm1z43xFFYf4=;
+ b=CuNSYfCo/4+9BZFwVpWStAJ+uptfutgt4xa6HqokKVNk6n1PBJBkTcHp5E32UAPqq3Yl5iz7UOaeLf6gWbtxNm6otniZCbKiRzMISUIRtr8hCMMxcYsCekBjUHwu91asinfBd4nkVF7xRnBJM+zfVmZJ1Axxbkmp4xkbqhnIgwmWqc38gqKoCdRmTWSRoCqLNWp67jufwJOeCv8Lkw8aNJvBODUyh22lkBmifPn9Ze418FCOVjTyiR2ZVu65hb/wtWVDjD36oMovXBGllNWedy1S7uV/AbRuWkJ9KSyaIIMnYDJKC58UyuWQ7YzQKlVTkrblngJgf4ojvv+g4wyf9Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SeB5/bD83LybU3JC++izIdjveH+4EdODm1z43xFFYf4=;
+ b=Xsz+C5dj0ihj5lyJlfxT0/N16tPCD+JW30F/IlBlo2/KZGSarFl57NwJX+UaSJGNKunYxt73P/6f9OoHZJna/M5F1mtbkYfV9PLyTRVTaEc1JRIvP3p3610g/Afn9ObzyTQw2456+3PAF8y869yMsjjF1HNVenRnsfHECVTgXmJv9CdilXkAPse9ohg8kbH60PYEMCVRRfUvJUV3TI7Xh15X0HhAcVfMaH1YpuZrf54Id5UO0ldjRhrXDMmCW1qXe37+7XGnAVT31E8ijugTiKAGkrp1RMBKtZZbYdpz+vFfjYcAb/dKHIsXK7rmqKQoT0x4hhBST4VS0RR/+tEZbg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB8990.eurprd04.prod.outlook.com (2603:10a6:102:20d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.22; Sat, 12 Oct
+ 2024 09:13:50 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.020; Sat, 12 Oct 2024
+ 09:13:50 +0000
+Message-ID: <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com>
+Date: Sat, 12 Oct 2024 17:14:13 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
+ to HDMI converter
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
+ festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org,
+ quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de,
+ nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de,
+ marex@denx.de, isaac.scott@ideasonboard.com, biju.das.jz@bp.renesas.com
+References: <20241012073543.1388069-1-victor.liu@nxp.com>
+ <20241012073543.1388069-6-victor.liu@nxp.com>
+ <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
+Content-Type: text/plain; charset=UTF-8
+X-ClientProxiedBy: SI1PR02CA0011.apcprd02.prod.outlook.com
+ (2603:1096:4:1f7::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
+ (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <jiang.kun2@zte.com.cn>
-To: <alexs@kernel.org>, <siyanteng@loongson.cn>, <corbet@lwn.net>,
-        <linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <mudongliangabcd@gmail.com>, <seakeel@gmail.com>
-Cc: <wang.yaxin@zte.com.cn>, <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <he.peilin@zte.com.cn>, <tu.qiang35@zte.com.cn>,
-        <qiu.yutan@zte.com.cn>, <zhang.yunkai@zte.com.cn>
-Subject: =?UTF-8?B?wqBbUEFUQ0ggdjVdIERvY3MvemhfQ046IFRyYW5zbGF0ZSBwaHlzaWNhbF9tZW1vcnkucnN0IHRvIFNpbXBsaWZpZWTCoENoaW5lc2U=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 49C9DsLB077233
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 670A3DE2.000/4XQd8z12p4zBRHKP
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB8990:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0ec122ad-f3ef-4c55-d314-08dcea9e2f95
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?Ujc5eWhHTGg1YUl0eGIraks1eFdKWjVwV29ackNEOGs5eUx6d0RpeklEbmFK?=
+ =?utf-8?B?MWxnU2Vxc0dYZVFKTEU5RnUySkpGN1JVY1RlaXBqWUVvVFV5MnVtd2dNT25k?=
+ =?utf-8?B?R1RQNkF0TDFLeS93Q2VjaVRkSWxQd1BaamFPWjhMUUpCc0lHRHk0clFuVWlu?=
+ =?utf-8?B?NTlXcWthSDhtdzF1Q1JJUmU0UjA4clVWSmtjRW5Cd0R4aGN3VzJZcERrSlM3?=
+ =?utf-8?B?TnNoUWVZK0x5ZXgzZmg1bWNQU0prUkg5bUpkQ09xaTliYVRYQ09MUXFhNks2?=
+ =?utf-8?B?cndoSVQ3SWcvZWJyWGpVUTZOS2RSVVhGOHN1OHNZRVRXM2ZEUmNqeUErdEpk?=
+ =?utf-8?B?eUliTVNyZUpmdDVYcmhrTkVMWVI4QThGd01EQkdzeTU0R1VIMmRiL0pyK1VS?=
+ =?utf-8?B?MXZlRmwzdmRTUkVxdXk4RmpKUSs0VVJwb04zZGlXaUI3aTRPQkgyWTZwQWZN?=
+ =?utf-8?B?Y040ajBwZkRuR2FsZjZES1hrUUF3V1M5M1dweVB6akdkQ1NCNFRoMnZ3dWZ2?=
+ =?utf-8?B?SnZYMDROY3QyYkx3K0I4NXc2VUplMWlXSlZkakgzclRvbWkvZmRwUFhQQkt2?=
+ =?utf-8?B?eUVoWFg2dUpZTTJBSzNwOXZEOUNBM2dKNGRUdWxyNjQ5UXdlSEtOTVFVUlQv?=
+ =?utf-8?B?R0ZldVQxNXlTVUtGSk03ZWwyd2tuUkZLZ2x2d29ZUUhETVd3NFcrZVlLZVU5?=
+ =?utf-8?B?K0dKa1FKcktlUG5GKzh1TjZCY290UU5EakF4enI5bG9aQ0lLTm9NRlNhcjlK?=
+ =?utf-8?B?WHlaZW1ZOVlNcmVEM2JiYk5vQXorc25RMjBxdVNRMHc2NzJKcmZGMFhPNGJa?=
+ =?utf-8?B?ZTBGVFNhRjgvS1ZvUW5RZUllMlJMVG1pQ0k5aGNKTUJoLzdaVENlRDk3TzQ1?=
+ =?utf-8?B?a05hb01Sa2dRTkMwVEZGQmN4MzRBM25jdW1zbllQdEgvWXNLenFiTTRNazZt?=
+ =?utf-8?B?T0hNNk1QQnNPRTFDZlNBSTZIUlltaFZzSzZZS28yNXhTbVI1ME9UOHM3RllP?=
+ =?utf-8?B?SjQvMTRpd2UzdndNK2pPS3QxU1AveUJQOHVLQmpCNEJQenRlKzFBVmtmbzJi?=
+ =?utf-8?B?djRMUmI3d3dOOEc1aG02OGhTYXliQytCZ0tNSFBmRWtsSnNuNWJIRjRwSWNC?=
+ =?utf-8?B?VXoxTXEzUis1VVFvWFZ0cGo4MEozOGZKaFRFeldCb2JXYXRJU1pRUDE5ci9k?=
+ =?utf-8?B?WFBDa003SUozRXg2emh4b3ZqVWtvRkRLVFN6dGFtN3RtNkhxMWpYU0p5MVFL?=
+ =?utf-8?B?ZFFsQkdDQnVHV0VSdWE0RDVsbktENWxaS2RQRjFQTGlKbUpPU2FQejNsY0RX?=
+ =?utf-8?B?M2hHOWxlZVdDNGc4aVVwLy9IK1NjcHZ6SjFLZWwrNjBOanVTTWdwNUhJZ3Y4?=
+ =?utf-8?B?UDY4S05zZi9BQkoyMnVhbjNzSzVuUmJFRitkUzAya01iaFhpb3NTNzh0dExG?=
+ =?utf-8?B?RTlZMkdZL2pXeXFyaTlRUzg5NSsrQ3BjengzQVVoZnc0dHpJYUxaMXI1SmZr?=
+ =?utf-8?B?cXVvdTVPTnJYalBONlNoQ3hZL0JTek9hclhzTThHUDkrdG5MeGZlT1hlUnZ4?=
+ =?utf-8?B?Y2h4WkNhRVNmRjFvdEdjdW16azUvWXhGTXRVV3VoeVI2T2MxZVhRNGVwTkVt?=
+ =?utf-8?Q?NRzaW/QiqeSBF1NIBOqZvrAen2/HD4JL9XS0E0Mu/kBQ=3D?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?R1RHUWZkb3Z1cTdXaTc4K0x5Si9aNS9iZjYzNThCNkQvSjRucFJseEFuL1Zs?=
+ =?utf-8?B?MEorZ3pIWGh2Zm1QUWF3ZFdkY0pQeXhkaWdoVG80cW02R3JRN25uNEx0OTlB?=
+ =?utf-8?B?M0dKNVRjdjI5OHBSbEFXdkcydGhBb0t6UC9PTVhReng5cldkSkhYb3BhMVFu?=
+ =?utf-8?B?WWpzNTJrZXUyK3RITkJkY1IvNXhWTExZbytNamFQQkNGQlJpamwybHBULzZV?=
+ =?utf-8?B?djdjQnVjTkRXVGN1eEZIV1M5N0tURFRwRks4RzhkdHVKV3dSSnFNMDFZOXpD?=
+ =?utf-8?B?cTk1d01LdzhRQzY4L3BQT2czdWVKVXJIRGY0MXhjQUJMeVpFZzhKTG9tMFJi?=
+ =?utf-8?B?a2dyWHdHbXozT1ZldXprNTJaTXl5NXVWUDFMYk9sL0txQkpTTTA1ZkFVZnZV?=
+ =?utf-8?B?cU95VTg2VmpYM1MzbXFQOEpZR0RRVUpBSUN1TVdsc3RDSjQxcitTQ09UcW5I?=
+ =?utf-8?B?MFR6cVN6bzgrSWI0Wlh0bUpTcXdIczVXS3lDWnhpd3VBT1lQNTFiZzdmTVZ4?=
+ =?utf-8?B?cVZOck16cy9Dck0vekxwaC9HMm84cnVhTzhReEJFZjN4ZmpyNmpIdDNNVExI?=
+ =?utf-8?B?Zm0yZkU1SzZPRnhRZ0RpeU9rdTRRVlQ5TnR2QkVDL0xSQ1FNSnVDQmwzMGJm?=
+ =?utf-8?B?S1FtdDBZS2JNWkFHNEJyRThwUTY2OEZTbWNUUllUeUZ6dkZ4ZmxPS2YxQ3dW?=
+ =?utf-8?B?VjhYSXVZK0RrRHVvaHRSTjQxcFN6ZWR3UjdMWFF0S3lMbFk3bnFDRXpyRFVZ?=
+ =?utf-8?B?eUJWLytjYWpidGVwcHp6YXpwZFZCM0lCWk1qZXQydDdmcnlrNjNUd3R2OXlB?=
+ =?utf-8?B?T3dBZit4dzFVT3JIZW1qODdOR1oyU0xQTndhVWhNMmVMZ2E4bCtvb2hBb2Rq?=
+ =?utf-8?B?SFJOMmZpaWZyUFFGY2k5V1huM3lXNFRaZnlsdk5ZQ2lJd2dmMXNrMVZGVVFF?=
+ =?utf-8?B?QzZFdjYzQ0RWUGJxR3RVTEtneHU0N0pZUVcxdklmUmUrelJSZSt3RElBaHFO?=
+ =?utf-8?B?cnN3RTZUMHZrUWhOT1crMG1jTXVMT2xWYjZWdjM3ZElpR1RiUzJ0SEZFVjFv?=
+ =?utf-8?B?N3JaSC9CTGw1NVNDZ1pETDAyZUpqUnQ5SmJxMDIvS3JyZjBVMktLN3AxbURi?=
+ =?utf-8?B?bkY1YnpjdytLVmxwN0d3V2RlMWVaajBOdkhlYkJYdlFwNy9nbWxocklBU092?=
+ =?utf-8?B?V3dNRmJORUlabS9haGFQbGFRMjZ6U2JJb2x2VkJGQW9BMlZGWEhIUDRmeTJq?=
+ =?utf-8?B?ZU1jbmgzaFM1VFQ0VndHSFRxd0ExYm9ub3VYNzdXMVU4bWF4WmJmWEliWHZv?=
+ =?utf-8?B?ZlBueUdYOHRTTGhMenZVR0VIb0NVWWl3akwzR0FnZlFHWDNVWVZWbHltTS9y?=
+ =?utf-8?B?aHR0WjlBVnp1ZElKWEVPRElwanc3WERaeDhJTENGS1hyeWdUa04vbHZDVDk1?=
+ =?utf-8?B?K1hBeUJoWEpEMDNaZmUweHlpQlJjUGViNkpyREFsKzY0cWM4ZTJSOWFLT2xv?=
+ =?utf-8?B?WFNEeXhyVEhPT2Mzc2phQ05Bck15Wktqb0JtampYYXc1ODFRL0FVSGQrQTFz?=
+ =?utf-8?B?YVdHcG4rQUFTOTRJRy9jaVUwK0RROWpQb0J4K1d6Y0RjZThISWZyWDl4c2lp?=
+ =?utf-8?B?TVJyTG44RmdieE03dDk0RlhnT2pSUnhpMnU1a29Jd0lvMkc2Y2lSTHJJaEVx?=
+ =?utf-8?B?V0hWRHdhc3c3amZXSWl0SUYrZFJWNS9VTUsrRXBhak9lVFZKZzQzZFdBUnlY?=
+ =?utf-8?B?UCtKQ3ppdUhLTVAwQytCcUFidjFSYVEwM0VibEoyMU9hb0VWVWdUY255b3Za?=
+ =?utf-8?B?VzZEUkdzc2gyM0wrY3E2NDV4dEdCbzBUK01UVTJUSmdGMFF4dDN2b1pzNWR1?=
+ =?utf-8?B?WU9hUG12TDM3NG9oYnV5NFB4QkVSYjZZUDRvSFhWN0Uzcm55NFdBWkpuUDls?=
+ =?utf-8?B?ZHViVy9PNWhZckNyRHFOY0hCVThwQ2JDdGhUeS9pRnFCVmRXZjVoR3kreko4?=
+ =?utf-8?B?c2VVS0hydzVmLzhBL2dtNUREeW5NUHlKS0gwb1VERWRKWGlXOTQ4RDB1cFhn?=
+ =?utf-8?B?N1o1c2Nwdllqd0gzWndyWTdJQWlzbTZycFBXMU1yYVpYSXdBMjkwODRmNzhY?=
+ =?utf-8?Q?gVydMfOpyA/+zs2iWoqwrpJMn?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0ec122ad-f3ef-4c55-d314-08dcea9e2f95
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 09:13:50.4855
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: gLqaX7qB8s/fUX3BseVCh7+r9dVRuEYOwaQqo0oVrd3sN9bbsf/xdcPfbuwohJV6ldd1J+uCvzgP3PQf5B4ElA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8990
 
-From: Yaxin Wang <wang.yaxin@zte.com.cn>
-This patch translates the "physical_memory.rst" document into
-Simplified Chinese to improve accessibility for Chinese-speaking
-developers and users.
+On 10/12/2024, Dmitry Baryshkov wrote:
+> On Sat, Oct 12, 2024 at 03:35:39PM +0800, Liu Ying wrote:
+>> Document ITE IT6263 LVDS to HDMI converter.
+>>
+>> Product link:
+>> https://www.ite.com.tw/en/product/cate1/IT6263
+>>
+>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>> ---
+>> v2:
+>> * Document number of LVDS link data lanes.  (Biju)
+>> * Simplify ports property by dropping "oneOf".  (Rob)
+>>
+>>  .../bindings/display/bridge/ite,it6263.yaml   | 276 ++++++++++++++++++
+>>  1 file changed, 276 insertions(+)
+>>  create mode 100644 Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>> new file mode 100644
+>> index 000000000000..bc2bbec07623
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
+>> @@ -0,0 +1,276 @@
+>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: ITE IT6263 LVDS to HDMI converter
+>> +
+>> +maintainers:
+>> +  - Liu Ying <victor.liu@nxp.com>
+>> +
+>> +description: |
+>> +  The IT6263 is a high-performance single-chip De-SSC(De-Spread Spectrum) LVDS
+>> +  to HDMI converter.  Combined with LVDS receiver and HDMI 1.4a transmitter,
+>> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
+>> +  The built-in LVDS receiver can support single-link and dual-link LVDS inputs,
+>> +  and the built-in HDMI transmitter is fully compliant with HDMI 1.4a/3D, HDCP
+>> +  1.2 and backward compatible with DVI 1.0 specification.
+>> +
+>> +  The IT6263 also encodes and transmits up to 8 channels of I2S digital audio,
+>> +  with sampling rate up to 192KHz and sample size up to 24 bits. In addition,
+>> +  an S/PDIF input port takes in compressed audio of up to 192KHz frame rate.
+>> +
+>> +  The newly supported High-Bit Rate(HBR) audio by HDMI specifications v1.3 is
+>> +  provided by the IT6263 in two interfaces: the four I2S input ports or the
+>> +  S/PDIF input port.  With both interfaces the highest possible HBR frame rate
+>> +  is supported at up to 768KHz.
+>> +
+>> +properties:
+> 
+> No LVDS data-mapping support?
 
-The translation was done with attention to technical accuracy
-and readability, ensuring that the document remains informative
-and useful in its translated form.
+It is enough to document number of LVDS link data lanes
+because OS should be able to determine the data-mapping
+by looking at the number and the data-mapping capability
+of the other side of the LVDS link. 
 
-Update to commit 7332f9e45d2e("docs/mm: Physical Memory: Fix grammar")
+> 
+>> +  compatible:
+>> +    const: ite,it6263
+>> +
+>> +  reg:
+>> +    maxItems: 1
+>> +
+>> +  clocks:
+>> +    maxItems: 1
+>> +    description: audio master clock
+>> +
+>> +  clock-names:
+>> +    const: mclk
+>> +
+>> +  reset-gpios:
+>> +    maxItems: 1
+>> +
+>> +  ivdd-supply:
+>> +    description: 1.8V digital logic power
+>> +
+>> +  ovdd-supply:
+>> +    description: 3.3V I/O pin power
+>> +
+>> +  txavcc18-supply:
+>> +    description: 1.8V HDMI analog frontend power
+>> +
+>> +  txavcc33-supply:
+>> +    description: 3.3V HDMI analog frontend power
+>> +
+>> +  pvcc1-supply:
+>> +    description: 1.8V HDMI frontend core PLL power
+>> +
+>> +  pvcc2-supply:
+>> +    description: 1.8V HDMI frontend filter PLL power
+>> +
+>> +  avcc-supply:
+>> +    description: 3.3V LVDS frontend power
+>> +
+>> +  anvdd-supply:
+>> +    description: 1.8V LVDS frontend analog power
+>> +
+>> +  apvdd-supply:
+>> +    description: 1.8V LVDS frontend PLL power
+>> +
+>> +  "#sound-dai-cells":
+>> +    const: 0
+>> +
+>> +  ite,lvds-link-num-data-lanes:
+>> +    $ref: /schemas/types.yaml#/definitions/uint8
+>> +    enum: [3, 4, 5]
+>> +    description: number of data lanes per LVDS link
+> 
+> Please use data-lanes property inside the OF graph.
 
-Signed-off-by: Yaxin Wang <wang.yaxin@zte.com.cn>
-Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
----
-v4->v5:
-Some fixes according to:
-https://lore.kernel.org/all/9be3cd38-5948-4b6e-936e-f1dcc47336c2@linux.dev/
-1. add Signed-off-by: Jiang Kun <jiang.kun2@zte.com.cn>
-2. add commit tag
-3. use a capable email client
+In both port@0 and port@1?
 
- Documentation/translations/zh_CN/mm/index.rst |   1 +
- .../translations/zh_CN/mm/physical_memory.rst | 356 ++++++++++++++++++
- 2 files changed, 357 insertions(+)
- create mode 100644 Documentation/translations/zh_CN/mm/physical_memory.rst
+> 
+>> +
+>> +  ite,i2s-audio-fifo-sources:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
+>> +    maxItems: 4
+>> +    items:
+>> +      enum: [0, 1, 2, 3]
+>> +    description:
+>> +      Each array element indicates the pin number of an I2S serial data input
+>> +      line which is connected to an audio FIFO, from audio FIFO0 to FIFO3.
+> 
+> What does that mean from the board point of view? Routed audio links for
+> the multichannel audio?
 
-diff --git a/Documentation/translations/zh_CN/mm/index.rst b/Documentation/translations/zh_CN/mm/index.rst
-index b950dd118be7..eac20a7ec9a6 100644
---- a/Documentation/translations/zh_CN/mm/index.rst
-+++ b/Documentation/translations/zh_CN/mm/index.rst
-@@ -53,6 +53,7 @@ Linux内存管理文档
-    page_migration
-    page_owner
-    page_table_check
-+   physical_memory
-    remap_file_pages
-    split_page_table_lock
-    vmalloced-kernel-stacks
-diff --git a/Documentation/translations/zh_CN/mm/physical_memory.rst b/Documentation/translations/zh_CN/mm/physical_memory.rst
-new file mode 100644
-index 000000000000..ed813e513897
---- /dev/null
-+++ b/Documentation/translations/zh_CN/mm/physical_memory.rst
-@@ -0,0 +1,356 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+.. include:: ../disclaimer-zh_CN.rst
-+
-+:Original: Documentation/mm/physical_memory.rst
-+
-+:翻译:
-+
-+   王亚鑫 Yaxin Wang <wang.yaxin@zte.com.cn>
-+
-+========
-+物理内存
-+========
-+
-+Linux可用于多种架构，因此需要一个与架构无关的抽象来表示物理内存。本章描述
-+了管理运行系统中物理内存的结构。
-+
-+第一个与内存管理相关的主要概念是`非一致性内存访问(NUMA)
-+<https://en.wikipedia.org/wiki/Non-uniform_memory_access>`
-+
-+在多核和多插槽机器中，内存可能被组织成不同的存储区，这些存储区根据与处理器
-+的“不同”而有不同的访问开销。例如，可能为每个CPU分配内存存储区，或者为外围
-+设备在附近分配一个非常适合DMA的内存存储区。
-+
-+每个存储区被称为一个节点，节点在Linux中表示为 ``struct pglist_data``，
-+即使是在UMA架构中也是这样表示。该结构总是通过 ``pg_data_t`` 来引用。特
-+定节点的 ``pg_data_t`` 结构体可以通过NODE_DATA(nid)引用，其中nid被称
-+为该节点的ID。
-+
-+对于非一致性内存访问（NUMA）架构，节点数据结构在引导时由特定于架构的代码早
-+期分配。通常，这些结构在其所在的内存区上本地分配。对于一致性内存访问（UMA）
-+架构，只使用一个静态的 ``pg_data_t`` 结构体，称为 ``contig_page_data`` 。
-+节点将会在 :ref:`节点 <nodes>` 章节中进一步讨论。
-+
-+整个物理内存被划分为一个或多个被称为区域的块，这些区域表示内存的范围。这
-+些范围通常由访问内存的架构限制来决定。在节点内，与特定区域对应的内存范围
-+由 ``struct zone`` 结构体描述，该结构被定义为 ``zone_t``，每种区域都
-+属于以下描述类型的一种。
-+
-+* ``ZONE_DMA`` 和 ``ZONE_DMA32`` 在历史上代表适用于DMA的内存，这些
-+  内存由那些不能访问所有可寻址内存的外设访问。多年来，已经有了更好、更稳
-+  固的接口来获取满足特定DMA需求的内存（这些接口由
-+  Documentation/core-api/dma-api.rst 文档描述），但是 ``ZONE_DMA``
-+  和 ``ZONE_DMA32`` 仍然表示访问受限的内存范围。
-+
-+取决于架构的不同，这两种区域可以在构建时通过关闭 ``CONFIG_ZONE_DMA`` 和
-+``CONFIG_ZONE_DMA32`` 配置选项来禁用。一些64位的平台可能需要这两种区域，
-+因为他们支持具有不同DMA寻址限制的外设。
-+
-+* ``ZONE_NORMAL`` 是普通内存的区域，这种内存可以被内核随时访问。如果DMA
-+  设备支持将数据传输到所有可寻址的内存区域，那么可在该区域的页面上执行DMA
-+  操作。 ``ZONE_NORMAL`` 总是开启的。
-+
-+* ``ZONE_HIGHMEM`` 是指那些没有在内核页表中永久映射的物理内存部分。该区
-+  域的内存只能通过临时映射被内核访问。该区域只在某些32位架构上可用，并且是
-+  通过 ``CONFIG_HIGHMEM`` 选项开启。
-+
-+* ``ZONE_MOVABLE`` 是用于可访问的普通内存区域，就像 ``ZONE_NORMAL``
-+  一样。  不同之处在于 ``ZONE_MOVABLE`` 中的大多数页面内容是可移动的。
-+  这意味着这些页面的虚拟地址不会改变，但它们的内容可能会在不同的物理页面
-+  之间移动。通常，在内存热插拔期间填充 ``ZONE_MOVABLE``，  在启动时也
-+  可以使用 ``kernelcore``、 ``movablecore`` 和 ``movable_node``
-+  这些内核命令行参数来填充。更多详细信息，请参阅内核文档
-+  Documentation/mm/page_migration.rst 和
-+  Documentation/admin-guide/mm/memory-hotplug.rst。
-+
-+* ``ZONE_DEVICE`` 表示位于持久性内存（PMEM）和图形处理单元（GPU）
-+  等设备上的内存。它与RAM区域类型有不同的特性，并且它的存在是为了提供
-+  :ref:`struct page<Pages>` 结构和内存映射服务，以便设备驱动程序能
-+  识别物理地址范围。 ``ZONE_DEVICE`` 通过 ``CONFIG_ZONE_DEVICE``
-+  选项开启。
-+
-+需要注意的是，许多内核操作只能使用 ``ZONE_NORMAL`` 来执行，因此它是
-+性能最关键区域。区域在 :ref:`区域 <zones>` 章节中有更详细的讨论。
-+
-+节点和区域范围之间的关系由固件报告的物理内存映射决定，另外也由内存寻址
-+的架构约束以及内核命令行中的某些参数决定。
-+
-+例如，在具有2GB RAM的x86统一内存架构（UMA）机器上运行32位内核时，整
-+个内存将位于节点0，并且将有三个区域： ``ZONE_DMA``、 ``ZONE_NORMAL``
-+和 ``ZONE_HIGHMEM``::
-+
-+  0                                                            2G
-+  +-------------------------------------------------------------+
-+  |                            node 0                           |
-+  +-------------------------------------------------------------+
-+
-+  0         16M                    896M                        2G
-+  +----------+-----------------------+--------------------------+
-+  | ZONE_DMA |      ZONE_NORMAL      |       ZONE_HIGHMEM       |
-+  +----------+-----------------------+--------------------------+
-+
-+
-+在内核构建时关闭 ``ZONE_DMA`` 开启 ``ZONE_DMA32``，并且在具有16GB
-+RAM平均分配在两个节点上的arm64机器上，使用 ``movablecore=80%`` 参数
-+启动时， ``ZONE_DMA32`` 、 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE``
-+位于节点0，而 ``ZONE_NORMAL`` 和 ``ZONE_MOVABLE`` 位于节点1::
-+
-+
-+ 1G                                9G                         17G
-+  +--------------------------------+ +--------------------------+
-+  |              node 0            | |          node 1          |
-+  +--------------------------------+ +--------------------------+
-+
-+  1G       4G        4200M          9G          9320M          17G
-+  +---------+----------+-----------+ +------------+-------------+
-+  |  DMA32  |  NORMAL  |  MOVABLE  | |   NORMAL   |   MOVABLE   |
-+  +---------+----------+-----------+ +------------+-------------+
-+
-+
-+内存存储区可能位于交错的节点。在下面的例子中，一台x86机器有16GB的RAM分
-+布在4个内存存储区上，偶数编号的内存存储区属于节点0，奇数编号的内存条属于
-+节点1::
-+
-+  0              4G              8G             12G            16G
-+  +-------------+ +-------------+ +-------------+ +-------------+
-+  |    node 0   | |    node 1   | |    node 0   | |    node 1   |
-+  +-------------+ +-------------+ +-------------+ +-------------+
-+
-+  0   16M      4G
-+  +-----+-------+ +-------------+ +-------------+ +-------------+
-+  | DMA | DMA32 | |    NORMAL   | |    NORMAL   | |    NORMAL   |
-+  +-----+-------+ +-------------+ +-------------+ +-------------+
-+
-+在这种情况下，节点0将覆盖从0到12GB的内存范围，而节点1将覆盖从4GB到16GB
-+的内存范围。
-+
-+.. _nodes:
-+
-+节点
-+====
-+
-+正如我们所提到的，内存中的每个节点由 ``pg_data_t`` 描述，通过
-+``struct pglist_data`` 结构体的类型定义。在分配页面时，默认情况下，Linux
-+使用节点本地分配策略，从离当前运行CPU的最近节点分配内存。由于进程倾向于在同
-+一个CPU上运行，很可能会使用当前节点的内存。分配策略可以由用户控制，如内核文
-+档Documentation/admin-guide/mm/numa_memory_policy.rst 中所述。
-+
-+大多数NUMA（非统一内存访问）架构维护了一个指向节点结构的指针数组。这些实际
-+的结构在启动过程中的早期被分配，这时特定于架构的代码解析了固件报告的物理内
-+存映射。节点初始化的大部分工作是在由 free_area_init()实现的启动过程之后
-+完成，该函数在后面的小节 :ref:`初始化 <initialization>` 中有详细描述。
-+
-+除了节点结构，内核还维护了一个名为 ``node_states`` 的 ``nodemask_t``
-+位掩码数组。这个数组中的每个位掩码代表一组特定属性的节点，这些属性由
-+``enum node_states`` 定义，定义如下：
-+
-+``N_POSSIBLE``
-+节点可能在某个时刻上线。
-+
-+``N_ONLINE``
-+节点已经上线。
-+
-+``N_NORMAL_MEMORY``
-+节点拥有普通内存。
-+
-+``N_HIGH_MEMORY``
-+节点拥有普通或高端内存。当关闭 ``CONFIG_HIGHMEM`` 配置时，
-+也可以称为 ``N_NORMAL_MEMORY``。
-+
-+``N_MEMORY``
-+节点拥有（普通、高端、可移动）内存。
-+
-+``N_CPU``
-+节点拥有一个或多个CPU。
-+
-+对于具有上述属性的每个节点， ``node_states[<property>]``
-+掩码中对应于节点ID的位会被置位。
-+
-+例如，对于具有常规内存和CPU的节点2，第二个bit将被设置::
-+
-+  node_states[N_POSSIBLE]
-+  node_states[N_ONLINE]
-+  node_states[N_NORMAL_MEMORY]
-+  node_states[N_HIGH_MEMORY]
-+  node_states[N_MEMORY]
-+  node_states[N_CPU]
-+
-+有关使用节点掩码（nodemasks）可能进行的各种操作，请参考
-+``include/linux/nodemask.h``。
-+
-+除此之外，节点掩码（nodemasks）提供用于遍历节点的宏，即
-+``for_each_node()`` 和 ``for_each_online_node()``。
-+
-+例如，要为每个在线节点调用函数 foo()，可以这样操作::
-+
-+  for_each_online_node(nid) {
-+		  pg_data_t *pgdat = NODE_DATA(nid);
-+
-+		  foo(pgdat);
-+	}
-+
-+节点数据结构
-+------------
-+
-+节点结构 ``struct pglist_data`` 在 ``include/linux/mmzone.h``
-+中声明。这里我们将简要描述这个结构体的字段：
-+
-+通用字段
-+~~~~~~~~
-+
-+``node_zones``
-+表示该节点的区域列表。并非所有区域都可能被填充，但这是
-+完整的列表。它被该节点的node_zonelists以及其它节点的
-+node_zonelists引用。
-+
-+``node_zonelists``
-+所有节点中所有区域的列表。此列表定义了分配内存时首选的区域
-+顺序。 ``node_zonelists`` 在核心内存管理结构初始化期间，
-+由 ``mm/page_alloc.c`` 中的 ``build_zonelists()``
-+函数设置。
-+
-+``nr_zones``
-+表示此节点中已填充区域的数量。
-+
-+``node_mem_map``
-+对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_mem_map``
-+表示每个物理帧的struct pages数组。
-+
-+``node_page_ext``
-+对于使用FLATMEM内存模型的UMA系统，0号节点的 ``node_page_ext``
-+是struct pages的扩展数组。只有在构建时开启了 ``CONFIG_PAGE_EXTENSION``
-+选项的内核中才可用。
-+
-+``node_start_pfn``
-+表示此节点中起始页面帧的页面帧号。
-+
-+``node_present_pages``
-+表示此节点中存在的物理页面的总数。
-+
-+``node_spanned_pages``
-+表示包括空洞在内的物理页面范围的总大小。
-+
-+``node_size_lock``
-+一个保护定义节点范围字段的锁。仅在开启了 ``CONFIG_MEMORY_HOTPLUG`` 或
-+``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 配置选项中的某一个时才定义。提
-+供了``pgdat_resize_lock()`` 和 ``pgdat_resize_unlock()`` 用来操作
-+``node_size_lock``，而无需检查 ``CONFIG_MEMORY_HOTPLUG`` 或
-+``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项。
-+
-+``node_id``
-+节点的节点ID（NID），从0开始。
-+
-+``totalreserve_pages``
-+这是每个节点保留的页面，这些页面不可用于用户空间分配。
-+
-+``first_deferred_pfn``
-+如果大型机器上的内存初始化被推迟，那么第一个PFN（页帧号）是需要初始化的。
-+在开启了 ``CONFIG_DEFERRED_STRUCT_PAGE_INIT`` 选项时定义。
-+
-+``deferred_split_queue``
-+每个节点的大页队列，这些大页的拆分被推迟了。仅在开启了 ``CONFIG_TRANSPARENT_HUGEPAGE``
-+配置选项时定义。
-+
-+``__lruvec``
-+每个节点的lruvec持有LRU（最近最少使用）列表和相关参数。仅在禁用了内存
-+控制组（cgroups）时使用。它不应该直接访问，而应该使用 ``mem_cgroup_lruvec()``
-+来查找 lruvecs。
-+
-+回收控制
-+~~~~~~~~
-+
-+另见内核文档 Documentation/mm/page_reclaim.rst 文件。
-+
-+``kswapd``
-+每个节点的kswapd内核线程实例。
-+
-+``kswapd_wait``, ``pfmemalloc_wait``, ``reclaim_wait``
-+同步内存回收任务的工作队列。
-+
-+``nr_writeback_throttled``
-+等待写回脏页时，被限制的任务数量。
-+
-+``kswapd_order``
-+控制kswapd尝试回收的order。
-+
-+``kswapd_highest_zoneidx``
-+kswapd线程可以回收的最高区域索引。
-+
-+``kswapd_failures``
-+kswapd无法回收任何页面的运行次数。
-+
-+``min_unmapped_pages``
-+无法回收的未映射文件支持的最小页面数量。由 ``vm.min_unmapped_ratio``
-+系统控制台（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 配置时定义。
-+
-+``min_slab_pages``
-+无法回收的SLAB页面的最少数量。由 ``vm.min_slab_ratio`` 系统控制台
-+（sysctl）参数决定。在开启 ``CONFIG_NUMA`` 时定义。
-+
-+``flags``
-+控制回收行为的标志位。
-+
-+内存压缩控制
-+~~~~~~~~~~~~
-+
-+``kcompactd_max_order``
-+kcompactd应尝试实现的页面order。
-+
-+``kcompactd_highest_zoneidx``
-+kcompactd可以压缩的最高区域索引。
-+
-+``kcompactd_wait``
-+同步内存压缩任务的工作队列。
-+
-+``kcompactd``
-+每个节点的kcompactd内核线程实例。
-+
-+``proactive_compact_trigger``
-+决定是否使用主动压缩。由 ``vm.compaction_proactiveness`` 系统控
-+制台（sysctl）参数控制。
-+
-+统计信息
-+~~~~~~~~
-+
-+``per_cpu_nodestats``
-+表示节点的Per-CPU虚拟内存统计信息。
-+
-+``vm_stat``
-+表示节点的虚拟内存统计数据。
-+
-+.. _zones:
-+
-+区域
-+====
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+.. _pages:
-+
-+页
-+====
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+页码
-+====
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+.. _initialization:
-+
-+初始化
-+======
-+
-+.. admonition:: Stub
-+
-+  本节内容不完整。请列出并描述相应的字段。
-+
-+
+Yes, also for single channel audio.
+
+> 
+>> +
+>> +  ite,rl-channel-swap-audio-sources:
+>> +    $ref: /schemas/types.yaml#/definitions/uint32-array
+>> +    minItems: 1
+>> +    maxItems: 4
+>> +    uniqueItems: true
+>> +    items:
+>> +      enum: [0, 1, 2, 3]
+>> +    description:
+>> +      Each array element indicates an audio source whose right channel and left
+>> +      channel are swapped by this converter. For I2S, the element is the pin
+>> +      number of an I2S serial data input line. For S/PDIF, the element is always
+>> +      0.
+> 
+> Why?
+
+Because this converter has the capability to swap right channel
+and left channel and S/PDIF always uses audio source0. 
+
+> 
+>> +
+>> +  ports:
+>> +    $ref: /schemas/graph.yaml#/properties/ports
+>> +
+>> +    properties:
+>> +      port@0:
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description:
+>> +          The first LVDS input link.
+>> +          In dual-link LVDS mode, this link works together with the second LVDS
+>> +          input link, and one link receives odd pixels while the other receives
+>> +          even pixels. Specify the pixels with one of the dual-lvds-odd-pixels
+>> +          and dual-lvds-even-pixels properties when and only when dual-link LVDS
+>> +          mode is used.
+>> +
+>> +        properties:
+>> +          dual-lvds-odd-pixels:
+>> +            type: boolean
+>> +            description: the first sink port for odd pixels
+>> +
+>> +          dual-lvds-even-pixels:
+>> +            type: boolean
+>> +            description: the first sink port for even pixels
+>> +
+>> +      port@1:
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +        description: the second LVDS input link
+>> +
+>> +        properties:
+>> +          dual-lvds-even-pixels:
+>> +            type: boolean
+>> +            description: the second sink port for even pixels
+>> +
+>> +          dual-lvds-odd-pixels:
+>> +            type: boolean
+>> +            description: the second sink port for odd pixels
+>> +
+>> +        oneOf:
+>> +          - required: [dual-lvds-even-pixels]
+>> +          - required: [dual-lvds-odd-pixels]
+> 
+> This still allows one to specify that both ports provide odd pixels. Is
+> that expected? Also why do you need two properties which specify the
+> same option.
+
+No, that is not expected. Description for port@0 already mentions
+one link receives odd pixels while the other receives even pixels.
+
+Two options are supported for dual-link LVDS, not the same option:
+1) LVDS link1(port@0) gets odd pixels
+   and
+   LVDS link2(port@1) gets even pixels.
+
+2) LVDS link1(port@0) gets even pixels
+   and
+   LVDS link2(port@1) gets odd pixels.
+That's the reason why each port needs two properties to define
+odd/even pixels.
+
+> 
+> My suggestion would be to add a single root-level property which
+> specifies which port provides even pixel data.
+
+That won't work.  The LVDS source side expects the ports of
+the sink side specify dual-lvds-{odd,even}-pixels properties.
+
+> 
+>> +
+>> +      port@2:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: video port for the HDMI output
+>> +
+>> +      port@3:
+>> +        $ref: /schemas/graph.yaml#/properties/port
+>> +        description: sound input port
+>> +
+>> +    required:
+>> +      - port@0
+>> +      - port@2
+>> +
+>> +required:
+>> +  - compatible
+>> +  - reg
+>> +  - ivdd-supply
+>> +  - ovdd-supply
+>> +  - txavcc18-supply
+>> +  - txavcc33-supply
+>> +  - pvcc1-supply
+>> +  - pvcc2-supply
+>> +  - avcc-supply
+>> +  - anvdd-supply
+>> +  - apvdd-supply
+>> +  - ite,lvds-link-num-data-lanes
+>> +  - ports
+>> +
+>> +additionalProperties: false
+>> +
+>> +examples:
+>> +  - |
+>> +    /* single-link LVDS input */
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        hdmi@4c {
+>> +            compatible = "ite,it6263";
+>> +            reg = <0x4c>;
+>> +            reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+>> +            ivdd-supply = <&reg_buck5>;
+>> +            ovdd-supply = <&reg_vext_3v3>;
+>> +            txavcc18-supply = <&reg_buck5>;
+>> +            txavcc33-supply = <&reg_vext_3v3>;
+>> +            pvcc1-supply = <&reg_buck5>;
+>> +            pvcc2-supply = <&reg_buck5>;
+>> +            avcc-supply = <&reg_vext_3v3>;
+>> +            anvdd-supply = <&reg_buck5>;
+>> +            apvdd-supply = <&reg_buck5>;
+>> +            ite,lvds-link-num-data-lanes = /bits/ 8 <4>;
+>> +
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +
+>> +                    it6263_lvds_link1: endpoint {
+>> +                        remote-endpoint = <&ldb_lvds_ch0>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@2 {
+>> +                    reg = <2>;
+>> +
+>> +                    it6263_out: endpoint {
+>> +                        remote-endpoint = <&hdmi_in>;
+>> +                    };
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> +
+>> +  - |
+>> +    /* dual-link LVDS input */
+>> +    #include <dt-bindings/gpio/gpio.h>
+>> +
+>> +    i2c {
+>> +        #address-cells = <1>;
+>> +        #size-cells = <0>;
+>> +
+>> +        hdmi@4c {
+>> +            compatible = "ite,it6263";
+>> +            reg = <0x4c>;
+>> +            reset-gpios = <&gpio1 10 GPIO_ACTIVE_LOW>;
+>> +            ivdd-supply = <&reg_buck5>;
+>> +            ovdd-supply = <&reg_vext_3v3>;
+>> +            txavcc18-supply = <&reg_buck5>;
+>> +            txavcc33-supply = <&reg_vext_3v3>;
+>> +            pvcc1-supply = <&reg_buck5>;
+>> +            pvcc2-supply = <&reg_buck5>;
+>> +            avcc-supply = <&reg_vext_3v3>;
+>> +            anvdd-supply = <&reg_buck5>;
+>> +            apvdd-supply = <&reg_buck5>;
+>> +            ite,lvds-link-num-data-lanes = /bits/ 8 <4>;
+>> +
+>> +            ports {
+>> +                #address-cells = <1>;
+>> +                #size-cells = <0>;
+>> +
+>> +                port@0 {
+>> +                    reg = <0>;
+>> +                    dual-lvds-odd-pixels;
+>> +
+>> +                    it6263_lvds_link1_dual: endpoint {
+>> +                        remote-endpoint = <&ldb_lvds_ch0>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@1 {
+>> +                    reg = <1>;
+>> +                    dual-lvds-even-pixels;
+>> +
+>> +                    it6263_lvds_link2_dual: endpoint {
+>> +                        remote-endpoint = <&ldb_lvds_ch1>;
+>> +                    };
+>> +                };
+>> +
+>> +                port@2 {
+>> +                    reg = <2>;
+>> +
+>> +                    it6263_out_dual: endpoint {
+>> +                        remote-endpoint = <&hdmi_in>;
+>> +                    };
+>> +                };
+>> +            };
+>> +        };
+>> +    };
+>> -- 
+>> 2.34.1
+>>
+> 
+
 -- 
-2.25.1
+Regards,
+Liu Ying
+
 
