@@ -1,101 +1,168 @@
-Return-Path: <linux-kernel+bounces-362463-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E3EEB99B550
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:09:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FDC099B555
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:11:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F24261F2276D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:09:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 439141C21A73
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:11:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DA7119308A;
-	Sat, 12 Oct 2024 14:08:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8AD19308A;
+	Sat, 12 Oct 2024 14:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WIQjLMPc"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="LiYkiAYk"
+Received: from mail-qk1-f169.google.com (mail-qk1-f169.google.com [209.85.222.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB2C8178395;
-	Sat, 12 Oct 2024 14:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EF4D186E43
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 14:11:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728742136; cv=none; b=USpQpn4/esa4Q2AO10rQvBGW79+JCKgptP59ouFZLhDsFwFBExx9Cjs0ZI/M1YzhQouj2J9BNibRlGD7R78ah4usgF5EA+T0qtTesQ1G+vtQybI3MJzfPf1XBwvfQkOOgIFZFu2CDd0tgPWyDKuJEVMSA4Ji10W/NkIX+babYp0=
+	t=1728742273; cv=none; b=jAGrs5ERFqHY+FjkZvvp6ESzRKSdOpX82dD8DIZasxIwb7JlHoQ4iWEACAcXlytVMsK0cKPP9UCOFp5cE91xcJF9TyIM00aqzsiey7fCT44nBWG3nYNTOQYxCQqd9l2Y6R9SaWiSvs1Esek1TfdTbw21xYWDJDlMPH+vAeSO8bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728742136; c=relaxed/simple;
-	bh=NEnfYZi9+H7rxaWUXDBIp1Q4trpVdsL34YQitu2ViY8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=LFWyyX/BsOif5vJSCUlaixzjHgdoi19gwyBYUOnCU9+yIacKFtXUI7D7iAM/f7k4SbCdmJSbbZ2gKLkW1WoJ03TtzADZwzDL5Egr/aIwz1zdCNaHIslyn5B7Ixgh6UJVf5y5r/2JV7N+p3yMJyGc9XVjPhVC39nWlVLb+tYm+z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WIQjLMPc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A5F8C4CEC6;
-	Sat, 12 Oct 2024 14:08:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728742136;
-	bh=NEnfYZi9+H7rxaWUXDBIp1Q4trpVdsL34YQitu2ViY8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=WIQjLMPc8Ph4WuWJzS9gku1YXkkuL+lrhkEWeiVfpWzKdjB3fs0Ch6FzsU/nApk+o
-	 Pwtzhuuipgh/uD7r6x+JJDzMS4BVUYc+SZTwDzms5Q48JCv+NJVlZUVdlYXD7IO0sS
-	 wLt40NW3EZz5C6ovS/mTO6a1TufMch0Hk/Lj4/Zbx+hajgDsGmp0RMvV+xT5iYKBWR
-	 6Ynr2swy7t0uR2IFxUS/hbaqIc/e2DrYfUAsMyelhlJZMcCGZ3v7cigdILqcRkd+5h
-	 phpIWYNK1JUoVeCvzixHV99p0X3PT4MIzTAkPfCGXOjr7qRbQip0D5mfwR5C+bYDqL
-	 Ywd26PvnAJjBA==
-Date: Sat, 12 Oct 2024 09:08:52 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
-Cc: Mayank Rana <quic_mrana@quicinc.com>, kevin.xie@starfivetech.com,
-	lpieralisi@kernel.org, kw@linux.com,
-	manivannan.sadhasivam@linaro.org, robh@kernel.org,
-	bhelgaas@google.com, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Marek Szyprowski <m.szyprowski@samsung.com>
-Subject: Re: [PATCH] PCI: starfive: Enable PCIe controller's PM runtime
- before probing host bridge
-Message-ID: <20241012140852.GA603197@bhelgaas>
+	s=arc-20240116; t=1728742273; c=relaxed/simple;
+	bh=vKIelkdbzjdJSmhqYKlQmWBZ8iWFrRCJDY7RyMoUXDQ=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=ZcissNw/MNN894A2YEm+hRRwujBBRJ92xkXhVl8rGAuNmX1A2Tp2Vp1GtVT06hiumsLu0y4Hiz1T18XfpmFmrno8FlI4nzhmxY4IrYkPyhhq9fiSJ1D+UL7C7ig5XdIbwtl0yQsX3UGqici8C2Jhj+nZIYJy4PJTdXAIzc6HVoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=LiYkiAYk; arc=none smtp.client-ip=209.85.222.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qk1-f169.google.com with SMTP id af79cd13be357-7b1205e0e03so70545785a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 07:11:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek.ca; s=google; t=1728742270; x=1729347070; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=vYQbwUiBKcS0gLPVZjqboA3w83qp/wQEz3Nd5sYHBZ4=;
+        b=LiYkiAYkYXushcIAQbWd/hXJag0JSiyrKWSQBtGt4L6cREpzBit3r2RI7jcwYIQojL
+         nsP0BNwjggGRzXVkDVEoaSsiWeybNiQ1giC3+iFDxzgkMpRACtul6qOwGZl8YViLcuLL
+         SvLhROk/H4NB3PGKmtoof5TNPJUc5Yi3P0X2ebOUsvzhBIMyoCaRXdMnhUTu1yD1tMwM
+         SdhkPUEe0QpUrFRITAJTKUPxtBYu6MO/eCegtthbggXq+ms8Q/uo8mOicdOrIacDOBTh
+         aqotcH1L8nSbzbZbMOZXbz+aQbIFTJOu9cKYrnkySmQfbs87iVG4Z9cdBVlgBMStJSU9
+         AQCA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728742270; x=1729347070;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vYQbwUiBKcS0gLPVZjqboA3w83qp/wQEz3Nd5sYHBZ4=;
+        b=p+pft2ZKmY/oRwHYcki9D9ZpfVUU1VGYClgqlZGZc2tmABgYJWZPNGpp8l3MZonime
+         R8btzsh3tJDkS8HR9s3wJpEQU/S026+IchyNqgpQiYeU5j/MRHe6KYcYXyGjxv3LFIgl
+         CaKf6a7DZb6MheDJz1NrIi7IfwTiBhR+CbMqhsvgi0BrTo0WZP/dw2LHTAohwVRxhOBO
+         dNctlFAMIhhvwwXtTlrLtTQzl+++emiBAFSi1T3y/t+r5gOJXiS9CMhEYX/4jkKfNPO8
+         jcXjuUAIXpc80UNtBxMQmHQRSQ5GgguxUMlrqd5g6XV4RYsuz1LBn/7QB8XqLb17+Xm/
+         Fa6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW7rv1K5bcvhCCVQm/QvvpgKpb1JLtd7ozfd2fek7sLDX/ewx37bl1kBW3cynqPhwTsIRXq6/s8R8TETW8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/eNmyY7LsGPYKlt+cG0W53/2EERkLa8M16lv//ko3d1+kK3hr
+	hpiIUFsCsPgoas5YBg1GxDpcInjVOcJzb7ImE+XJCesG7X2GwaOq52Low+2rZOj2NaVtyREeX3O
+	uFaA=
+X-Google-Smtp-Source: AGHT+IF8BfzJbLBs0XUAplbv0RrinthQzFyiG8dSxJGuojgDu9lDiWoTMC08ApTcv3ds7pcB4Id4hQ==
+X-Received: by 2002:a05:620a:4454:b0:7ab:ec86:c91f with SMTP id af79cd13be357-7b11a37feb6mr1071825785a.36.1728742270047;
+        Sat, 12 Oct 2024 07:11:10 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148d69f3sm226623585a.29.2024.10.12.07.11.08
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 12 Oct 2024 07:11:09 -0700 (PDT)
+Subject: Re: [PATCH 3/3] efi/libstub: consider CONFIG_CMDLINE for initrd= and
+ dtb= options
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, open list <linux-kernel@vger.kernel.org>
+References: <20241011224812.25763-1-jonathan@marek.ca>
+ <20241011224812.25763-3-jonathan@marek.ca>
+ <CAMj1kXHgFVs5Gt5hNao6DTZxqw4dO89OuUMH2tvdWPY1kxfc0Q@mail.gmail.com>
+ <acdd3e0d-8ce4-264d-2328-05e7dc353817@marek.ca>
+ <CAMj1kXFe1ZYuR=45VhwMyHcZhSTQVwLrbZDWpgG7Zqw+Awws_A@mail.gmail.com>
+From: Jonathan Marek <jonathan@marek.ca>
+Message-ID: <a6d0d8ae-3cd0-9888-abcd-1db5ab1df011@marek.ca>
+Date: Sat, 12 Oct 2024 10:07:44 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a2872d91-039b-399c-af88-c20bf605e172@quicinc.com>
+In-Reply-To: <CAMj1kXFe1ZYuR=45VhwMyHcZhSTQVwLrbZDWpgG7Zqw+Awws_A@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-On Fri, Oct 11, 2024 at 04:14:10PM +0530, Krishna Chaitanya Chundru wrote:
+On 10/12/24 9:36 AM, Ard Biesheuvel wrote:
+> On Sat, 12 Oct 2024 at 14:04, Jonathan Marek <jonathan@marek.ca> wrote:
+>>
+>>
+>>
+>> On 10/12/24 3:54 AM, Ard Biesheuvel wrote:
+>>> On Sat, 12 Oct 2024 at 00:52, Jonathan Marek <jonathan@marek.ca> wrote:
+>>>>
+>>>> Replace cmdline with CONFIG_CMDLINE when it should be used instead of
+>>>> load_options.
+>>>>
+>>>> In the EXTEND case, it may be necessary to combine both CONFIG_CMDLINE and
+>>>> load_options. In that case, keep the old behavior and print a warning about
+>>>> the incorrect behavior.
+>>>>
+>>>
+>>> The core kernel has its own handling for EXTEND/FORCE, so while we
+>>> should parse it in the EFI stub to look for options that affect the
+>>> stub's own behavior, we should not copy it into the command line that
+>>> the stub provides to the core kernel.
+>>>
+>>> E.g., drivers/of/fdt.c takes the bootargs from the DT and combines
+>>> them with CONFIG_CMDLINE.
+>>>
+>>>
+>>
+>> I'm aware of that - the replacement the commit message is referring to
+>> is specifically for handle_cmdline_files() which this commit is modifying.
+>>
 > 
+> Ah ok - I missed that.
 > 
-> On 10/11/2024 2:22 AM, Bjorn Helgaas wrote:
-> > On Thu, Oct 10, 2024 at 01:29:50PM -0700, Mayank Rana wrote:
-> > > Commit 02787a3b4d10 ("PCI/PM: Enable runtime power management for host
-> > > bridges") enables runtime PM for host bridge enforcing dependency chain
-> > > between PCIe controller, host bridge and endpoint devices. With this,
-> > > Starfive PCIe controller driver's probe enables host bridge (child device)
-> > > PM runtime before parent's PM runtime (Starfive PCIe controller device)
-> > > causing below warning and callstack:
-> > 
-> > I don't want the bisection hole that would result if we kept
-> > 02787a3b4d10 ("PCI/PM: Enable runtime power management for host
-> > bridges") and applied this patch on top of it.
-> > 
-> > If this is the fix, we'll apply it *first*, followed by 02787a3b4d10
-> > (which will obviously become a different commit), so the locking
-> > problem below described below should never exist in -next or the
-> > upstream tree.
-> > 
-> > So we need to audit other drivers to make sure they don't have theBjorn, I have checked all the drivers in the controller folder where
-> they are using pm_runtime_enable(), this is the only driver which needs
-> to be fixed. once this patched was taken can we take "PCI/PM: Enable
->  runtime power management for host bridges"
+> This is the kind of context that I'd expect in a cover letter, i.e.,
+> that the command line handling is inconsistent, and that we obtain the
+> command line from the loaded image twice.
+> 
+> Also, the fact the initrd= handling and dtb= are special, because
+> a) multiple initrd=  arguments are processed in order, and the files
+> concatenated,
+> b) the filenames are consumed as UTF-16 as they are plugged into the
+> file I/O protocols
+> 
 
-Since these need to be applied in order, the usual process is to post
-them together in one series.  Please work with Mayank to revise the
-commit log of the starfive patch so it explains why the change is
-necessary *independent* of your patch, and then post it and your
-"enable runtime PM for host bridges" together as v6 of your patch.
+(not relevant to this commit, but I need to say that concatenating dtb 
+files makes no sense, only the first one will be used by the kernel)
 
-In the cover letter include a note about why no other drivers need a
-change like starfive does and how we can verify that.
+>> Currently efistub completely ignores initrd= and dtb= options provided
+>> through CONFIG_CMDLINE (handle_cmdline_files() only parses the EFI options)
+>>
+> 
+> Indeed. You haven't explained why this is a problem. initrd= and dtb=
+> contain references to files in the file system, and this does not seem
+> like something CONFIG_EXTEND was intended for.
+> 
 
-Bjorn
+Its not the expected/documented behavior, that should be enough to make 
+it a problem. Nowhere is it documented that these options would be 
+ignored if provided through CONFIG_CMDLINE.
+
+>> For the EXTEND case, I didn't implement the full solution because its
+>> more complex and EXTEND is not available on arm64 anyway, so I went with
+>> just printing a warning instead.
+> 
+> This code is shared between all architectures, so what arm64 does or
+> does not support is irrelevant.
+> 
+> Can you explain your use case please?
+> 
+
+I boot linux as the "EFI/Boot/bootaa64.efi" on my EFI partition. The 
+firmware does not provide any load options. This system needs a dtb, so 
+I add the dtb to my EFI partition and configure it using the dtb= option 
+(using CONFIG_CMDLINE).
 
