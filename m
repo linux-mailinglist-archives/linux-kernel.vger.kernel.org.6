@@ -1,146 +1,130 @@
-Return-Path: <linux-kernel+bounces-362440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5765999B504
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:15:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2602D99B507
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:17:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BBD431F22210
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:15:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DE6283096
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E8A155A53;
-	Sat, 12 Oct 2024 13:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14FA18453C;
+	Sat, 12 Oct 2024 13:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lqnObH4Z"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNam9Yvd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103D01E495;
-	Sat, 12 Oct 2024 13:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7971E495;
+	Sat, 12 Oct 2024 13:16:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728738948; cv=none; b=KipX2qaQgXetMTXjeB5oax8N8Eo/c3gsw4suGsSZbPlzMTdXm9vd7FoiRryIVlmjS233D4Nmnpe9bh8+idMpBQLp4Gxh5eaY26BTJ9bxcOBUJv0wH0paB9rYweTyZH3lwrBpRjQ4HEy7OCfr7IksupX4OkgqJ+L5ShCg5SSXoGw=
+	t=1728739016; cv=none; b=ALjQEIHto6MskygcNseqDKPiCprxTIZBo43/pFbgLucbpCvcEATXPY0/pulJvd73mdWjV34tLjBsXNlG8gwr5EPF0VAv9LeLSUifVYq3c9vpWpJ/vBPQFiPL0dsG/bPfI6lCIRgYU8hTMqqmZ7DKpzKej3xpJNxjm9t7PSdjxfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728738948; c=relaxed/simple;
-	bh=xhpmq/jAkz4+lzWho40DMr1lgdzon7t3cdhanbBy6EA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KRAqGfjklqdtfRPumkrmVqimqqozVDUDmoXwsNCL6xeoZfX8X5Vc+wtEU4/hQadihr+1KwHams2K2HK4Jqbh7kWQ3J+fpGoZemXtVGp+nAElAd3gC5jmsvAYQ21bXdsUGgn/R2bCaZLa5x1tA4Pli3KMoW4bp5fPFMAZLXpiekk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lqnObH4Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816CAC4CED0;
-	Sat, 12 Oct 2024 13:15:47 +0000 (UTC)
+	s=arc-20240116; t=1728739016; c=relaxed/simple;
+	bh=vQYV4mQ3jh3/qlh27NffOGGKqKitgAbdpNmmqkj2fBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A9kSspX9CRbC+zjusei2zi3BzvQmAZjdDwssfOA3j30SUO2xU7M96YluOdNlbE/TpouP0WEL09KFS46rJXKKuCTzM3o0Sn99ewOTeK5iniXsArd+8McOdfCEUI2dcfE8GK64j9X7vWlGL9uVJTD7u1iZEKYJRDE8zTjp5W4M7fQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNam9Yvd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 665B8C4CEC6;
+	Sat, 12 Oct 2024 13:16:53 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728738947;
-	bh=xhpmq/jAkz4+lzWho40DMr1lgdzon7t3cdhanbBy6EA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=lqnObH4ZVyrppPhPGKGTvgNloFhLLC/Wind+gmayL0otPsJXrjp42XoB5WT1diy2A
-	 jOSYmwHyRFbghV/wX+Y8fA9cB5XbP3DqGCLXq/EQM2lWodCe/ZG30Sq5gujIoSWq+a
-	 13HrwibU73jKy0DNH91HkQcWv84WcrfApcYC2P8ga+fjdS5LS1+srGN9Ss4uOa7anq
-	 J4fXb5kH1dNc+8b+xCwaxf/chNeuuZAG//zXPm29ojHzZgsojzUmX5qHSL+B7BugEf
-	 qCbM8Tb+tEYvoKUnel1BYwv4BeT85+nGR2/0uqeggXBZXLnVdh0Ro1bGbr0h96jScH
-	 osZOwLyDbPBcw==
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e13375d3so1609482e87.3;
-        Sat, 12 Oct 2024 06:15:47 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXolEcGgKIUtgAeD0M2g+bLmnAOCK2pLc3o9tpoxUiJAR+4p/9r/3H01qNmHbzL5LSV8T0G8wL6rzShokI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZOrPlT22/HZpxe2FVHZiWu22/h1eaZDfLfZlsLA0m07xZ53xN
-	pi3yBd1JfizLy5YBIVbCl0HE7Dnmfsd98c9DZisTnACCrfswobSl2+TQQ/BMvGVGkUtnVQiXJml
-	0JnVsps+SDbiAP27ZdTwh4x6/7VQ=
-X-Google-Smtp-Source: AGHT+IGqinu0nCzGIyDmJkUkKWigiOSbL5q4aqBAQM3t9hP0a6MjlCleqcH3TuKXSSec/DEx11BbZ/JSZj/T80SNJ0I=
-X-Received: by 2002:a05:6512:3f22:b0:538:9eef:918d with SMTP id
- 2adb3069b0e04-539da3c1d59mr2670022e87.11.1728738945842; Sat, 12 Oct 2024
- 06:15:45 -0700 (PDT)
+	s=k20201202; t=1728739015;
+	bh=vQYV4mQ3jh3/qlh27NffOGGKqKitgAbdpNmmqkj2fBU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LNam9YvddedmJaXeR2LVkfk/2aN0tBfsRmpRtZrzm+QVwYPC4l0THYaKvAlmiEy1a
+	 J4ctvQem4X0Hq8ShslwvmEiGdhn0KN6FOltV/eWsPydnRmw/KlSaGoCSdW0fruv6gD
+	 hu2+B5MoXXgn94YHAdl9/ymxiv/OgJlBCQZzWlrsVgoBzAaLRgG5Cwsh9JRNx/ZPOz
+	 qBX8EX3bYWrRLQCcG0Du+2rPHY5NP86MCPlBu3n9UFzClZ2zslGUv/j/97hqLgTx5K
+	 EHE1KbRkPxodRYLZeq9Oy1dwCW55bVK+g5SexOYmtaRCQv2SI8CJjlDuIwKp9gX6yE
+	 wvD7uqUaKKuEw==
+Date: Sat, 12 Oct 2024 14:16:51 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Shannon Nelson <shannon.nelson@amd.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Breno Leitao <leitao@debian.org>,
+	Jeff Johnson <quic_jjohnson@quicinc.com>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCHv6 net-next 6/7] net: ibm: emac: generate random MAC if
+ not found
+Message-ID: <20241012131651.GE77519@kernel.org>
+References: <20241011195622.6349-1-rosenp@gmail.com>
+ <20241011195622.6349-7-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241011224812.25763-1-jonathan@marek.ca> <CAMj1kXFstg+2j9nYCO=_=L3LAd4PYc5vO3OX4EtHfFA90BXv5Q@mail.gmail.com>
- <5364ea9f-9042-3fba-5cb1-c42ae94b0d4b@marek.ca>
-In-Reply-To: <5364ea9f-9042-3fba-5cb1-c42ae94b0d4b@marek.ca>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sat, 12 Oct 2024 15:15:34 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFfsjPy9UxtC4f6n+FBBYRdyGw6h0b9fkn3_NDxTL7nPg@mail.gmail.com>
-Message-ID: <CAMj1kXFfsjPy9UxtC4f6n+FBBYRdyGw6h0b9fkn3_NDxTL7nPg@mail.gmail.com>
-Subject: Re: [PATCH 1/3] efi/libstub: fix efi_parse_options() ignoring the
- default command line
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-efi@vger.kernel.org, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, Ingo Molnar <mingo@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011195622.6349-7-rosenp@gmail.com>
 
-On Sat, 12 Oct 2024 at 13:58, Jonathan Marek <jonathan@marek.ca> wrote:
->
-> On 10/12/24 3:46 AM, Ard Biesheuvel wrote:
-> > Hi Jonathan,
-> >
-> > Please use a cover letter when sending more than a single patch.
-> >
-> > On Sat, 12 Oct 2024 at 00:51, Jonathan Marek <jonathan@marek.ca> wrote:
-> >>
-> >> efi_convert_cmdline() always returns a size of at least 1 because it counts
-> >> the NUL terminator, so the "cmdline_size == 0" condition is not possible.
-> >>
-> >> Change it to compare against 1 to get the intended behavior: to use
-> >> CONFIG_CMDLINE when load_options_size is 0.
-> >>
-> >> Fixes: 60f38de7a8d4 ("efi/libstub: Unify command line param parsing")
-> >> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> >> ---
-> >>   drivers/firmware/efi/libstub/efi-stub.c | 2 +-
-> >>   1 file changed, 1 insertion(+), 1 deletion(-)
-> >>
-> >> diff --git a/drivers/firmware/efi/libstub/efi-stub.c b/drivers/firmware/efi/libstub/efi-stub.c
-> >> index 958a680e0660d..709ae2d41a632 100644
-> >> --- a/drivers/firmware/efi/libstub/efi-stub.c
-> >> +++ b/drivers/firmware/efi/libstub/efi-stub.c
-> >> @@ -129,7 +129,7 @@ efi_status_t efi_handle_cmdline(efi_loaded_image_t *image, char **cmdline_ptr)
-> >>
-> >>          if (IS_ENABLED(CONFIG_CMDLINE_EXTEND) ||
-> >>              IS_ENABLED(CONFIG_CMDLINE_FORCE) ||
-> >> -           cmdline_size == 0) {
-> >> +           cmdline_size == 1) {
-> >
-> > I'd prefer it if we could keep the weirdness local to
-> > efi_convert_cmdline(). Would the below fix things too?
-> >
-> > --- a/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > +++ b/drivers/firmware/efi/libstub/efi-stub-helper.c
-> > @@ -395,9 +395,7 @@
-> >                  }
-> >          }
-> >
-> > -       options_bytes++;        /* NUL termination */
-> > -
-> > -       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, options_bytes,
-> > +       status = efi_bs_call(allocate_pool, EFI_LOADER_DATA, options_bytes + 1,
-> >                               (void **)&cmdline_addr);
-> >          if (status != EFI_SUCCESS)
-> >                  return NULL;
-> >
-> > Note that the only other caller of efi_convert_cmdline() in x86-stub.c
-> > ignores this value entirely.
-> >
->
-> Just changing this would just make things more broken, the following
-> snprintf would remove the last character of the command line because it
-> uses options_bytes.
->
+On Fri, Oct 11, 2024 at 12:56:21PM -0700, Rosen Penev wrote:
+> On this Cisco MX60W, u-boot sets the local-mac-address property.
+> Unfortunately by default, the MAC is wrong and is actually located on a
+> UBI partition. Which means nvmem needs to be used to grab it.
+> 
+> In the case where that fails, EMAC fails to initialize instead of
+> generating a random MAC as many other drivers do.
+> 
+> Match behavior with other drivers to have a working ethernet interface.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> ---
+>  drivers/net/ethernet/ibm/emac/core.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
+> index b9ccaae61c48..faa483790b29 100644
+> --- a/drivers/net/ethernet/ibm/emac/core.c
+> +++ b/drivers/net/ethernet/ibm/emac/core.c
+> @@ -2937,9 +2937,12 @@ static int emac_init_config(struct emac_instance *dev)
+>  
+>  	/* Read MAC-address */
+>  	err = of_get_ethdev_address(np, dev->ndev);
+> -	if (err)
+> -		return dev_err_probe(&dev->ofdev->dev, err,
+> -				     "Can't get valid [local-]mac-address from OF !\n");
+> +	if (err == -EPROBE_DEFER)
+> +		return err;
+> +	if (err) {
+> +		dev_warn(&dev->ofdev->dev, "Can't get valid mac-address. Generating random.");
+> +		eth_hw_addr_random(dev->ndev);
+> +	}
 
-Ugh, you're right. So just use options_bytes - 1 in the assignment then.
+The above seems to take the random path for all errors other than
+-EPROBE_DEFER. That seems too broad to me, and perhaps it would
+be better to be more specific. Assuming the case that needs
+to be covered is -EINVAL (a guess on my part), perhaps something like this
+would work? (Completely untested!)
 
-> Since this patch has a Fixes: tag, I wanted to make the fix as simple as
-> possible. If you think comparing the size to 1 is "weird", the fix could
-> instead check if cmdline[0] is non-NUL (or just strlen(cmdline)==0 if
-> you don't like that either).
->
+	err = of_get_ethdev_address(np, dev->ndev);
+	if (err == -EINVAL) {
+		/* An explanation should go here, mentioning Cisco MX60W
+		 * Maybe the logic should even be specific to that hw?
+		 */
+		dev_warn(&dev->ofdev->dev, "Can't get valid mac-address. Generating random.");
+		eth_hw_addr_random(dev->ndev);
+	} else if (err) {
+		return dev_err_probe(&dev->ofdev->dev, err,
+				     "Can't get valid [local-]mac-address from OF !\n");
+	}
 
-Checking the value of the first byte is reasonable I think.
+Also, should this be a bug fix with a Fixes tag for net?
 
-> And then my followup cleanup patch can just remove the cmd_line_len
-> argument from efi_convert_cmdline().
-
-Yes that would be fine - it is not really useful in any case.
+>  
+>  	/* IAHT and GAHT filter parameterization */
+>  	if (emac_has_feature(dev, EMAC_FTR_EMAC4SYNC)) {
+> -- 
+> 2.47.0
+> 
 
