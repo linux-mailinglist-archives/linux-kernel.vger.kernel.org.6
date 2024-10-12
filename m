@@ -1,84 +1,65 @@
-Return-Path: <linux-kernel+bounces-362247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC9BC99B2A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:47:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D908799B2C7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:01:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B27901C21371
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:47:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67F8FB22731
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:01:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3395014F9F7;
-	Sat, 12 Oct 2024 09:47:10 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F0D154434;
+	Sat, 12 Oct 2024 10:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b="hlMze5gT"
+Received: from mx1.t-argos.ru (mx1.t-argos.ru [109.73.34.58])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D26D22064;
-	Sat, 12 Oct 2024 09:47:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57E2814F9F8;
+	Sat, 12 Oct 2024 10:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=109.73.34.58
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728726429; cv=none; b=qPiPizQOhiyL8BqFPTKWp9/r9V1g5v0ZvAjv3HdA8ozyYmOqFufMyINAdJK9F0Lp06EYC1jdIGt6nx4KCNzeqj2EwH5jQEvCfzLAnWlqmhI89yWEeZXvTQIm6muOJY+MHJcZYXXK1/VnDdG/jJmKQrDEYEyNpDV3EZ+fSh9Uqqs=
+	t=1728727289; cv=none; b=OTkoEh4mJu2uqILbiHDj1k7Bd1i/3hvrhyiKOYcC0+2+wKlID4JfHkeVwbqYN71dGabjRTwXygwvZWZ+WiStzYtj+M/TBYEQwJmxiK8hznIANL23EN9PG9sGcu+CK66CrsjMHcvHIW2yTlokjLHdzFe9H2c7QDQ3Qc4N9whczAE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728726429; c=relaxed/simple;
-	bh=aow+ZvCVaf34tfmqrAGOMLfdLPrTE988VL3b2CLE0s0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=CFAVL5o+Z4qb0Auv3KXTKHR7lkTTvS6/kdNB6dJfAkZzelBMh9wtx2KugcJ9QgZTFBl9DEum99nbqVQS0l/urV2qWWH13H5cz4EOqRgNVdQ5UjkaraTkCqO3VbS1r3TvDeXCF1TtebMtNIIzQv52y2Wgh4IZE956VHEGbN4FpxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: e6b9f508887e11efa216b1d71e6e1362-20241012
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME, HR_SJ_DIGIT_LEN
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_TRUSTED, SA_EXISTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:71e524cc-2c9d-437f-a45c-23ce2d61d35a,IP:15,
-	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-19
-X-CID-INFO: VERSION:1.1.38,REQID:71e524cc-2c9d-437f-a45c-23ce2d61d35a,IP:15,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-19
-X-CID-META: VersionHash:82c5f88,CLOUDID:77216fdf73ac2bb9d7dc63384849c262,BulkI
-	D:2410121746509QEVB7HD,BulkQuantity:0,Recheck:0,SF:19|43|74|66|38|24|17|10
-	2,TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:
-	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI
-X-UUID: e6b9f508887e11efa216b1d71e6e1362-20241012
-X-User: duanchenghao@kylinos.cn
-Received: from chenghao.. [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 850007511; Sat, 12 Oct 2024 17:46:48 +0800
-From: Duan Chenghao <duanchenghao@kylinos.cn>
-To: stern@rowland.harvard.edu,
-	gregkh@linuxfoundation.org,
-	rafael@kernel.org,
-	pavel@ucw.cz,
-	len.brown@intel.com,
-	linux-usb@vger.kernel.org,
-	linux-pm@vger.kernel.org
-Cc: duanchenghao@kylinos.cn,
-	linux-kernel@vger.kernel.org,
-	niko.mauno@vaisala.com,
-	stanley_chang@realtek.com,
-	tj@kernel.org,
-	xiehongyu1@kylinos.cn,
-	xy521521@gmail.com
-Subject: [PATCH v3] USB: Fix the issue of task recovery failure caused by USB status when S4 wakes up
-Date: Sat, 12 Oct 2024 17:46:33 +0800
-Message-Id: <20241012094633.126736-1-duanchenghao@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
-References: <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
+	s=arc-20240116; t=1728727289; c=relaxed/simple;
+	bh=7TfbiSh7h/FvoSgfkSAdJUsaQDbGBFzhDxW9+YGHlnQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=dFlksXQgGFVMCGBwqaT9EXAxMM0dDFKbw/Zk5L7+UavfEprffeQok0IhdoNb2qEJgY3+0FQ9KDt+BvP4Q/DsJCDlZVV34b28LUysVxQvBTkNGd1MGttQqq49mrdnsLBEL22nny7UveJA5Xbq5U5oSDCl4yamg9ai1U2M6PL7uBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru; spf=pass smtp.mailfrom=t-argos.ru; dkim=pass (2048-bit key) header.d=t-argos.ru header.i=@t-argos.ru header.b=hlMze5gT; arc=none smtp.client-ip=109.73.34.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=t-argos.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=t-argos.ru
+Received: from mx1.t-argos.ru (localhost [127.0.0.1])
+	by mx1.t-argos.ru (Postfix) with ESMTP id F117B100003;
+	Sat, 12 Oct 2024 12:51:47 +0300 (MSK)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=t-argos.ru; s=mail;
+	t=1728726708; bh=V7SirxrsBs4GfKTT3SldwSArpY7B0gckaI0s57IsTCU=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	b=hlMze5gT6xZmYIdjQTdcSG+VzOjK6xKT7hxq+RAbaEVJUYn5JuIhS3OMgbX0sbJF5
+	 i6iENO1/+6iD8wWk1afbowx3Mq7ZmXQM09LcNuShlfJsTXQlVlRaLHqEXZnWLDe4qG
+	 QMg5+nsKOB0i8hgCV1xNs7dJQ4ASZczhUSNl3x4vMfI3fpC+0HWeoNFlLfTBQT3ncl
+	 jhW2BlCA7MPAXFunETbhxYmyi77eDd0QuZGICPmBgguSvqXMoYvfCjNZfo01iTindq
+	 JqMsTB43UtCFxbsL1oWQ+cZaRx0anZ6DhPnD2Jin1c/a6v6CG4IbGiIf3U5FHeoCwW
+	 sjtBIOGRjuWCw==
+Received: from mx1.t-argos.ru.ru (ta-mail-02.ta.t-argos.ru [172.17.13.212])
+	by mx1.t-argos.ru (Postfix) with ESMTP;
+	Sat, 12 Oct 2024 12:50:40 +0300 (MSK)
+Received: from localhost.localdomain (172.17.210.7) by ta-mail-02
+ (172.17.13.212) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Sat, 12 Oct
+ 2024 12:50:19 +0300
+From: Aleksandr Mishin <amishin@t-argos.ru>
+To: Veerasenareddy Burru <vburru@marvell.com>, Abhijit Ayarekar
+	<aayarekar@marvell.com>, Satananda Burla <sburla@marvell.com>, Sathesh Edara
+	<sedara@marvell.com>
+CC: Aleksandr Mishin <amishin@t-argos.ru>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <lvc-project@linuxtesting.org>
+Subject: [PATCH net v4 0/2] octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
+Date: Sat, 12 Oct 2024 12:49:48 +0300
+Message-ID: <20241012094950.9438-1-amishin@t-argos.ru>
+X-Mailer: git-send-email 2.30.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,99 +67,67 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: ta-mail-02.ta.t-argos.ru (172.17.13.212) To ta-mail-02
+ (172.17.13.212)
+X-KSMG-Rule-ID: 1
+X-KSMG-Message-Action: clean
+X-KSMG-AntiSpam-Lua-Profiles: 188393 [Oct 12 2024]
+X-KSMG-AntiSpam-Version: 6.1.0.4
+X-KSMG-AntiSpam-Envelope-From: amishin@t-argos.ru
+X-KSMG-AntiSpam-Rate: 0
+X-KSMG-AntiSpam-Status: not_detected
+X-KSMG-AntiSpam-Method: none
+X-KSMG-AntiSpam-Auth: dkim=none
+X-KSMG-AntiSpam-Info: LuaCore: 39 0.3.39 e168d0b3ce73b485ab2648dd465313add1404cce, {Tracking_uf_ne_domains}, {Tracking_from_domain_doesnt_match_to}, mx1.t-argos.ru.ru:7.1.1;lore.kernel.org:7.1.1;d41d8cd98f00b204e9800998ecf8427e.com:7.1.1;127.0.0.199:7.1.2;t-argos.ru:7.1.1, FromAlignment: s
+X-MS-Exchange-Organization-SCL: -1
+X-KSMG-AntiSpam-Interceptor-Info: scan successful
+X-KSMG-AntiPhishing: Clean, bases: 2024/10/12 09:22:00
+X-KSMG-AntiVirus: Kaspersky Secure Mail Gateway, version 1.1.2.30, bases: 2024/10/12 08:26:00 #26739312
+X-KSMG-AntiVirus-Status: Clean, skipped
 
-When a device is inserted into the USB port and an S4 wakeup is initiated,
-after the USB-hub initialization is completed, it will automatically enter
-suspend mode. Upon detecting a device on the USB port, it will proceed with
-resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state. During the S4
-wakeup process, peripherals are put into suspend mode, followed by task
-recovery. However, upon detecting that the hcd is in the
-HCD_FLAG_WAKEUP_PENDING state, it will return an EBUSY status, causing the
-S4 suspend to fail and subsequent task recovery to not proceed.
--
-[   27.594598][ 1]  PM: pci_pm_freeze(): hcd_pci_suspend+0x0/0x28 returns -16
-[   27.594601][ 1]  PM: dpm_run_callback(): pci_pm_freeze+0x0/0x100 returns -16
-[   27.603420][ 1]  ehci-pci 0000:00:04.1: pci_pm_freeze+0x0/0x100 returned 0 after 3 usecs
-[   27.612233][ 1]  ehci-pci 0000:00:05.1: pci_pm_freeze+0x0/0x100 returned -16 after 17223 usecs
-[   27.810067][ 1]  PM: Device 0000:00:05.1 failed to quiesce async: error -16
-[   27.816988][ 1]  PM: quiesce of devices aborted after 1833.282 msecs
-[   27.823302][ 1]  PM: start quiesce of devices aborted after 1839.975 msecs
-......
-[   31.303172][ 1]  PM: recover of devices complete after 3473.039 msecs
-[   31.309818][ 1]  PM: Failed to load hibernation image, recovering.
-[   31.348188][ 1]  PM: Basic memory bitmaps freed
-[   31.352686][ 1]  OOM killer enabled.
-[   31.356232][ 1]  Restarting tasks ... done.
-[   31.360609][ 1]  PM: resume from hibernation failed (0)
-[   31.365800][ 1]  PM: Hibernation image not present or could not be loaded.
+__octep_oq_process_rx() is called during NAPI polling by the driver and
+calls build_skb() which may return NULL as skb pointer in case of memory
+allocation error. This pointer is dereferenced later without checking for
+NULL.
 
-The "do_wakeup" is determined based on whether the controller's
-power/wakeup attribute is set. The current issue necessitates considering
-the type of suspend that is occurring. If the suspend type is either
-PM_EVENT_FREEZE or PM_EVENT_QUIESCE, then "do_wakeup" should be set to
-false.
+In this series, we introduce two helpers to make the fix more readable and
+avoid code duplication. Also we handle build_skb() errors inside
+__octep_oq_process_rx() to avoid NULL pointer dereference.
 
-Co-authored-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Duan Chenghao <duanchenghao@kylinos.cn>
----
- drivers/usb/core/hcd-pci.c | 14 ++++++++++++--
- include/linux/pm.h         |  3 ++-
- 2 files changed, 14 insertions(+), 3 deletions(-)
+A similar situation is present in the __octep_vf_oq_process_rx() of the
+Octeon VF driver. First we want to try the fix on __octep_oq_process_rx().
 
-diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
-index a08f3f228e6d..2c7d4446b82e 100644
---- a/drivers/usb/core/hcd-pci.c
-+++ b/drivers/usb/core/hcd-pci.c
-@@ -422,7 +422,12 @@ static int suspend_common(struct device *dev, pm_message_t msg)
- 	bool			do_wakeup;
- 	int			retval;
- 
--	do_wakeup = PMSG_IS_AUTO(msg) ? true : device_may_wakeup(dev);
-+	if (PMSG_IS_AUTO(msg))
-+		do_wakeup = true;
-+	else if (PMSG_NO_WAKEUP(msg))
-+		do_wakeup = false;
-+	else
-+		do_wakeup = device_may_wakeup(dev);
- 
- 	/* Root hub suspend should have stopped all downstream traffic,
- 	 * and all bus master traffic.  And done so for both the interface
-@@ -521,6 +526,11 @@ static int hcd_pci_suspend(struct device *dev)
- 	return suspend_common(dev, PMSG_SUSPEND);
- }
- 
-+static int hcd_pci_freeze(struct device *dev)
-+{
-+	return suspend_common(dev, PMSG_FREEZE);
-+}
-+
- static int hcd_pci_suspend_noirq(struct device *dev)
- {
- 	struct pci_dev		*pci_dev = to_pci_dev(dev);
-@@ -624,7 +634,7 @@ const struct dev_pm_ops usb_hcd_pci_pm_ops = {
- 	.suspend_noirq	= hcd_pci_suspend_noirq,
- 	.resume_noirq	= hcd_pci_resume_noirq,
- 	.resume		= hcd_pci_resume,
--	.freeze		= hcd_pci_suspend,
-+	.freeze		= hcd_pci_freeze,
- 	.freeze_noirq	= check_root_hub_suspended,
- 	.thaw_noirq	= NULL,
- 	.thaw		= hcd_pci_resume,
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 97b0e23363c8..0dd7f559188b 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -570,7 +570,8 @@ const struct dev_pm_ops name = { \
- 					{ .event = PM_EVENT_AUTO_RESUME, })
- 
- #define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
--
-+#define PMSG_NO_WAKEUP(msg)	(((msg.event) & \
-+				(PM_EVENT_FREEZE | PM_EVENT_QUIESCE)) != 0)
- /*
-  * Device run-time power management status.
-  *
+Compile tested only.
+
+Changelog:
+v4:
+  - Split patch up as suggested by Jakub
+    (https://lore.kernel.org/all/20241004073311.223efca4@kernel.org/)
+v3: https://lore.kernel.org/all/20240930053328.9618-1-amishin@t-argos.ru/
+  - Implement helper which frees current packet resources and increase
+    index and descriptor as suggested by Simon
+    (https://lore.kernel.org/all/20240919134812.GB1571683@kernel.org/)
+  - Optimize helper as suggested by Paolo
+    (https://lore.kernel.org/all/b9ae8575-f903-425f-aa42-0c2a7605aa94@redhat.com/)
+  - v3 has been reviewed-by Simon Horman
+    (https://lore.kernel.org/all/20240930162622.GF1310185@kernel.org/)
+v2: https://lore.kernel.org/all/20240916060212.12393-1-amishin@t-argos.ru/
+  - Implement helper instead of adding multiple checks for '!skb' and
+    remove 'rx_bytes' increasing in case of packet dropping as suggested
+    by Paolo
+    (https://lore.kernel.org/all/ba514498-3706-413b-a09f-f577861eef28@redhat.com/)
+v1: https://lore.kernel.org/all/20240906063907.9591-1-amishin@t-argos.ru/
+
+Aleksandr Mishin (2):
+  octeon_ep: Implement helper for iterating packets in Rx queue
+  octeon_ep: Add SKB allocation failures handling in
+    __octep_oq_process_rx()
+
+ .../net/ethernet/marvell/octeon_ep/octep_rx.c | 82 +++++++++++++------
+ 1 file changed, 59 insertions(+), 23 deletions(-)
+
 -- 
-2.34.1
+2.30.2
 
 
