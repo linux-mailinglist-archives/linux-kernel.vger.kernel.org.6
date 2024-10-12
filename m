@@ -1,163 +1,103 @@
-Return-Path: <linux-kernel+bounces-362647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DE3399B7AA
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:13:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AD48699B7AD
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:19:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C961F21B56
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 23:13:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 78A801F21356
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 23:19:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C95719C546;
-	Sat, 12 Oct 2024 23:13:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B86BE1487ED;
+	Sat, 12 Oct 2024 23:19:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ij6iD3Ae"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="INMHSXTR"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC61013D29A;
-	Sat, 12 Oct 2024 23:13:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF55942A8E
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 23:19:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728774796; cv=none; b=LXChQpFkTu8kiy9DBsgfJErhDkjMzk2tM8zvQneT3G7vacpHGQucaJXwgRurckqEGK89/6KFvrmbPCgInUkPiXF4Te7pWc4q+hpxC4qk/X1zCI1PmOJgsfCbFPx/w8a/O19lKhO3mfPHC74CZHO0cY6H4RaxnL9vyLXRJZndWDM=
+	t=1728775177; cv=none; b=O/i00zTtNQB0pCwLitqov1PH1CPjzUO/dr0zP7nfb79IY9WdHZjQ7vIzwWBlXxAE3lrFwvKirIOfpyqkHD+xox2AOnR7lXVLbsm+jv56kncbukqMqJ3KBEd2au+i5MT0ilsv4FTa0kYUxV0Nmkizs2vsTz46yuxajAKA0aS+VS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728774796; c=relaxed/simple;
-	bh=AzeLI7/qmt92QUnf/gSnV2p9Yej95L5XnCrB93d6HHw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Fv/gG2AcphLgeWbOrU9JcDCQWUG5xL2fVkJ0o8XYiyx7YMjgtUCw3JYv+hfA27KPzwT4cHnQpKvZRrXSz8eSS+qyOurQfKPYhFA+oRL+6oaDjieQygWhBfWS1TOSbO+dMC9qNk6NcndJ2gt54KCLvrDhGLAAwHl9ZBbhL9G6uQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ij6iD3Ae; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2CE91C4CEC6;
-	Sat, 12 Oct 2024 23:13:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728774796;
-	bh=AzeLI7/qmt92QUnf/gSnV2p9Yej95L5XnCrB93d6HHw=;
+	s=arc-20240116; t=1728775177; c=relaxed/simple;
+	bh=/Et6MeuY7EpIZdnZNyj+l5TOWOl0OlqEDpHKXlMWZd8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jXaffvBYKPnLzPbK2Jt2GCuTc0YLsexucnYh3L4VSMlG3YIdswGh3Mrxcy5gddmKufEyqx/5aMWW6ZSuo1ebHszVJd0bcZx7hA0w85OWWON9VEzMHg9XGbvNSl6fscGrd0c1rX0qH87hCuOPO0ADxl4THAsI0CHOA25sh0embtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=INMHSXTR; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1728775172;
+	bh=iPe6bARDbmutmL/3UO+PHaMpdoI/drRBAgwzRmjlJxw=;
 	h=From:To:Cc:Subject:Date:From;
-	b=Ij6iD3Ae2X0np//wdjkNu8Ffx1HFTa9RaD6+2ZjJEigh9yjk6l6hddthkpYAETzCQ
-	 /WLKWOGF+7PTfmqIFUdE0mDhRGgjy3nSxqMhgTXx/k3U9z1sfI5qzhsIyptfACUXMt
-	 hHSu2qxWmA01Wb4ascaBcPltGf6RV8kAb5idS4x8jCQXgjlrWm4MyITCR0uxg0Mzym
-	 3yInJBE+0lrUfZkWhZBMhq1fEPCXFTigZw8ioQv5VF9Vy3JD58a/YU/s1lH9Bg5TNW
-	 ZN0pc+AfKo6YQMcTUCrRKzi1CmNiVtM4bkrD+Ig5kaIzRTOjhnTbN9boVh38UTeLuT
-	 Zn0psdwiSJSIQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [RFC PATCH] rust: kernel: clean explicit lifetimes that can be elided
-Date: Sun, 13 Oct 2024 01:13:00 +0200
-Message-ID: <20241012231300.397010-1-ojeda@kernel.org>
+	b=INMHSXTRcx1fU9CHXGZGhH70HQ1sy0kCKGE0AtZJyVnnwhwJu03JaXfh/Rb3apAuI
+	 nJZ7wtjyob94jH6RSzZ2xkcoWgie8SioGYgGoRrxHzofY7gK/tJHlX64ylPd4rm/+X
+	 p4YiCSctCucgN/CeB4e77OnlcPPv0ZeK2vGNJSo9IsIHWIgt+HjHP8+rffBg0YIot6
+	 QNG3eBulue8sfk9C2Oeq5V0Eaw9BaszRawvsCSqSfuW/FrLntg1+To6ZuhFo2lKgY2
+	 ssHiaorVKP7tb4VEJSskNyJ5XPosXEVUd4pL75sUUMY1+V/2Z/nmY0Swl/vw97A0Pc
+	 3TIYrTvbiWB6w==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XQzwN1KN0z4xG8;
+	Sun, 13 Oct 2024 10:19:32 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: christophe.leroy@csgroup.eu, linux-kernel@vger.kernel.org,
+ linuxppc-dev@lists.ozlabs.org
+Subject: [GIT PULL] Please pull powerpc/linux.git powerpc-6.12-4 tag
+Date: Sun, 13 Oct 2024 10:19:32 +1100
+Message-ID: <87ldys6ha3.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-In nightly Clippy (i.e. Rust 1.83.0), the `needless_lifetimes` lint has
-been extended [1] to suggest eliding `impl` lifetimes, e.g.
+-----BEGIN PGP SIGNED MESSAGE-----
+Hash: SHA512
 
-    error: the following explicit lifetimes could be elided: 'a
-    --> rust/kernel/list.rs:647:6
-        |
-    647 | impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'a, T, ID> {}
-        |      ^^                                                                  ^^
-        |
-        = help: for further information visit https://rust-lang.github.io/rust-clippy/master/index.html#needless_lifetimes
-        = note: `-D clippy::needless-lifetimes` implied by `-D warnings`
-        = help: to override `-D warnings` add `#[allow(clippy::needless_lifetimes)]`
-    help: elide the lifetimes
-        |
-    647 - impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'a, T, ID> {}
-    647 + impl<T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'_, T, ID> {}
+Hi Linus,
 
-Thus clean them.
+Please pull another powerpc fix for 6.12:
 
-Link: https://github.com/rust-lang/rust-clippy/pull/13286 [1]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
-Do we want this in general, or just in some cases? There is an issue about this
-where we may want to leave some feedback:
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
 
-    https://github.com/rust-lang/rust-clippy/issues/13514
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
 
- rust/kernel/list.rs   |  2 +-
- rust/kernel/rbtree.rs | 14 +++++++-------
- 2 files changed, 8 insertions(+), 8 deletions(-)
+are available in the git repository at:
 
-diff --git a/rust/kernel/list.rs b/rust/kernel/list.rs
-index 5b4aec29eb67..cbccd932fa43 100644
---- a/rust/kernel/list.rs
-+++ b/rust/kernel/list.rs
-@@ -644,7 +644,7 @@ pub fn remove(self) -> ListArc<T, ID> {
-     }
- }
+  https://git.kernel.org/pub/scm/linux/kernel/git/powerpc/linux.git tags/powerpc-6.12-4
 
--impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'a, T, ID> {}
-+impl<T: ?Sized + ListItem<ID>, const ID: u64> FusedIterator for Iter<'_, T, ID> {}
+for you to fetch changes up to 8956c582ac6b1693a351230179f898979dd00bdf:
 
- impl<'a, T: ?Sized + ListItem<ID>, const ID: u64> IntoIterator for &'a List<T, ID> {
-     type IntoIter = Iter<'a, T, ID>;
-diff --git a/rust/kernel/rbtree.rs b/rust/kernel/rbtree.rs
-index 25eb36fd1cdc..232a5eefa6f9 100644
---- a/rust/kernel/rbtree.rs
-+++ b/rust/kernel/rbtree.rs
-@@ -729,13 +729,13 @@ pub struct Cursor<'a, K, V> {
- // SAFETY: The [`Cursor`] has exclusive access to both `K` and `V`, so it is sufficient to require them to be `Send`.
- // The cursor only gives out immutable references to the keys, but since it has excusive access to those same
- // keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the user.
--unsafe impl<'a, K: Send, V: Send> Send for Cursor<'a, K, V> {}
-+unsafe impl<K: Send, V: Send> Send for Cursor<'_, K, V> {}
+  powerpc/8xx: Fix kernel DTLB miss on dcbz (2024-10-11 15:53:06 +1100)
 
- // SAFETY: The [`Cursor`] gives out immutable references to K and mutable references to V,
- // so it has the same thread safety requirements as mutable references.
--unsafe impl<'a, K: Sync, V: Sync> Sync for Cursor<'a, K, V> {}
-+unsafe impl<K: Sync, V: Sync> Sync for Cursor<'_, K, V> {}
+- ------------------------------------------------------------------
+powerpc fixes for 6.12 #4
 
--impl<'a, K, V> Cursor<'a, K, V> {
-+impl<K, V> Cursor<'_, K, V> {
-     /// The current node
-     pub fn current(&self) -> (&K, &V) {
-         // SAFETY:
-@@ -948,11 +948,11 @@ pub struct Iter<'a, K, V> {
+ - Fix crash in memcpy on 8xx due to dcbz workaround since recent changes.
 
- // SAFETY: The [`Iter`] gives out immutable references to K and V, so it has the same
- // thread safety requirements as immutable references.
--unsafe impl<'a, K: Sync, V: Sync> Send for Iter<'a, K, V> {}
-+unsafe impl<K: Sync, V: Sync> Send for Iter<'_, K, V> {}
+Thanks to: Christophe Leroy.
 
- // SAFETY: The [`Iter`] gives out immutable references to K and V, so it has the same
- // thread safety requirements as immutable references.
--unsafe impl<'a, K: Sync, V: Sync> Sync for Iter<'a, K, V> {}
-+unsafe impl<K: Sync, V: Sync> Sync for Iter<'_, K, V> {}
+- ------------------------------------------------------------------
+Christophe Leroy (1):
+      powerpc/8xx: Fix kernel DTLB miss on dcbz
 
- impl<'a, K, V> Iterator for Iter<'a, K, V> {
-     type Item = (&'a K, &'a V);
-@@ -983,11 +983,11 @@ pub struct IterMut<'a, K, V> {
- // SAFETY: The [`IterMut`] has exclusive access to both `K` and `V`, so it is sufficient to require them to be `Send`.
- // The iterator only gives out immutable references to the keys, but since the iterator has excusive access to those same
- // keys, `Send` is sufficient. `Sync` would be okay, but it is more restrictive to the user.
--unsafe impl<'a, K: Send, V: Send> Send for IterMut<'a, K, V> {}
-+unsafe impl<K: Send, V: Send> Send for IterMut<'_, K, V> {}
 
- // SAFETY: The [`IterMut`] gives out immutable references to K and mutable references to V, so it has the same
- // thread safety requirements as mutable references.
--unsafe impl<'a, K: Sync, V: Sync> Sync for IterMut<'a, K, V> {}
-+unsafe impl<K: Sync, V: Sync> Sync for IterMut<'_, K, V> {}
+ arch/powerpc/kernel/head_8xx.S | 1 +
+ 1 file changed, 1 insertion(+)
+-----BEGIN PGP SIGNATURE-----
 
- impl<'a, K, V> Iterator for IterMut<'a, K, V> {
-     type Item = (&'a K, &'a mut V);
-
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
---
-2.47.0
+iHUEARYKAB0WIQRjvi15rv0TSTaE+SIF0oADX8seIQUCZwsDnwAKCRAF0oADX8se
+IUiFAPwIQZD7X3Mpo3dgmVEJCGf+Nlk2ClikbZYQ4ylWKDt1GwEAplRpNFLhXioN
+J1Jxc6kZ6s42alDWXfj0xVTo1/hsnwI=
+=xWuO
+-----END PGP SIGNATURE-----
 
