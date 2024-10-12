@@ -1,292 +1,300 @@
-Return-Path: <linux-kernel+bounces-362639-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60AED99B786
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 00:45:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A483F99B788
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 00:46:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 196DB282152
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:45:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 202A31F21EBD
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:46:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F1BF154C17;
-	Sat, 12 Oct 2024 22:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 991E514F102;
+	Sat, 12 Oct 2024 22:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aNh/IU+w"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Q2YkF9ws"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2FC13213A;
-	Sat, 12 Oct 2024 22:45:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1037079B8E
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 22:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728773149; cv=none; b=tASAnjPIu/cpJrskQ5hOkY3bMHqaVqVoQBUJwq88gB7cMKNIoKXqFWbP3BvM2c8NPq2qxy+hXZFaQuVU0hS4AAXncnDkTYWoJ5GjtmWheJ3zolC3EdyFs3bVRMsDfWTSXsa1dboaTq7ghDFxFC9QsX1h6C9vxlAdIXg0caNKPQo=
+	t=1728773190; cv=none; b=g6zsaMahFi3Fkjinn+YjtbZGQ2Om3Gkf5tzDCcK211PbScgTy5NzH9NTtqQxIGCjj7UuMBidePiBCQAPxTV8hBr3JBI4rWzYrbtxnEpoGTE3e0o4sBsq0cmxZL2hUu0iYP06smPyemiKaLiTbeGr2ZnWi3fqlrSAFSLBn+/2Fik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728773149; c=relaxed/simple;
-	bh=apSETmSgP0hyh84sbZkXkLGAl9I4pwPXGMrb1597kao=;
+	s=arc-20240116; t=1728773190; c=relaxed/simple;
+	bh=kyRvRNB2QcMxgJ2NMSTOtLIP32wk56QeHyflBQ5vHKM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QHBNDW3HEb7lWUjuCy1iyfcHZZMz8rGuccmfwJXMp8eurEwYTj9CMXMyL+5KHwm5NR+GAyAslbr5hCEXuhyDUYNRDyl8zaFQ71GGJz9WJkIOsSnpcSwoihFRREM0iZRGMLsRv3a7krN26nWeUlibR9k26OfVaLktXFgv34M4Omw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aNh/IU+w; arc=none smtp.client-ip=209.85.128.45
+	 To:Cc:Content-Type; b=DR/yP7rI6FEprc3XR5bmksw7cdXn1nKFyTESaShYKfplNQ0TxzEtelcMc0HDvMiNR/ibRfep1qIY6mQlrZ3xNGOQr6XyhtetpqHxH2FUTD8SbUxVcgEaMyJdXO3VRhHuDFkIWbNyn3Uc5FqMlz2OGcLSxs6qhj1gtIsHVKR26B8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Q2YkF9ws; arc=none smtp.client-ip=209.85.128.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-43056d99a5aso26324485e9.0;
-        Sat, 12 Oct 2024 15:45:47 -0700 (PDT)
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-43117917eb9so26110375e9.0
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 15:46:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728773146; x=1729377946; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1728773186; x=1729377986; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=QrAqah5calgIhNd5J2K0kgxnrRY1RxWPFw2HfKMPoO0=;
-        b=aNh/IU+wOQk94hCRPa5Yf+09c4U6hLe7FxtQ+mPXeqAOA3V0GIegYgAKwpCTkBfa0a
-         MRba11sEPmnWVMqt+G9RUzd13B8yUFbIo9XPRbrUdt3jEvr0U+w4dBhirVJbx5UyG2Fx
-         tcoMgnxMoY/5Z2xlgKG8x0m3HvdB4IGz66xaeMoFjj0eA7nmWIUzCTFnKnZc0pTIDItT
-         Li2Z8Y1aUUBCzyGj9sKt0jiXApsWEaFrDke5vgT/0Ko/Or8k9tKBJHOqcxTHa1ZGyrPw
-         tCxPQDsIIfmyb+YonXw1QLVMq7ncfluipnXjDlomeQr3GvXvZ7Dg7wPKpaRPMCuPxMwp
-         XNhA==
+        bh=g/aqTd2ota1+xNkB76pwMkxv208Q7EfGMyB/sMwBaR8=;
+        b=Q2YkF9wsEXZVNVBatfTg01NoU93NGclxnA/nw6rijow6TJA/LdFq2bHz5iClr9Tuzn
+         emZzP3nAxZtvTtpFg6GnyyIzISLqcxcqaM2H7BAVrmB1uL+3oA5gPx23pDe+EAi77VhJ
+         PAVoghFnmh0ihIhmEPuetbFtuuP08c27N+5Z22AQr8yO9tykeK2To/haM6oRr+GaOCkf
+         MnZCHAbklBnZ584ikJagh2aVl9WSSXUQ9UZHexQXb4I2hGNZJFUrn4nvh8CJoebpUHJW
+         I8Ppk1md4vxsOGQMP4sQOq7L//9mI3UuYjz/7JESQ1IG2IsY8JRmiRccoLBZpwtrPrAh
+         JndQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728773146; x=1729377946;
+        d=1e100.net; s=20230601; t=1728773186; x=1729377986;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=QrAqah5calgIhNd5J2K0kgxnrRY1RxWPFw2HfKMPoO0=;
-        b=OTZRo6paJ1UXUc13k7W4zrs06ynMQDpEcFAlJaLY7qoC8Id7Ul/zNeftQydtF4pYFj
-         W0nPE8czF91u1g9mer9vVQuJqP7HYLp7DfF2yRy7NFzw9qEHWTcBfz9JrFswSvx6nW5V
-         3/crGSMeMSjsjqs4x2NHwI1ofPQDTi07BpkOlKZ7NPrg9U5pqfyo+z7LuxkMrrj9Fw/x
-         G2txT5L6AyvJ5fDm1AaS2d5nDKzQKKv1HjakLK7zRMFij6jU6gUymmFov6M+rmqLC31W
-         JewnPNPZZEqOBHWRDfhBqAqTYH3UaY/L7IyXymMcKUoaJPLcXbgYVB+IX7/J388reNfb
-         UWVw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJJPxyJlNnTRNzIYG8A545vr7Xe9GwrB+Po2VhW90zk1tdv6FB6qIR91zJcFG3PhCGzq0=@vger.kernel.org, AJvYcCWEtRgFDb6T9dTVdiUVuejyGE5egqtT8AQ7C9mq8Ef+B7Bzb3hHQBbA6Rq6wDi48fv6JFD9uRBu7FpQUs/j@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNxtJAHrD3K6gPRVSsbOdZk9OKAbgxZTRWIpu1hh12JwvPH0mz
-	Y1bz+UzGM05sg2cajkIk7HwbVIWsrh1C5LJwoaObcg2VQ3t5F58ugpZlNRtjr8s3iuHtPcH6Qft
-	V9eniCo1fNa8i5FBbv8061pNN/AE=
-X-Google-Smtp-Source: AGHT+IGbcU9EC65nnFvAa8jfBrfCQ1EvPVm0o/Tx0/F8uhISXF7+3QUzIEj0yWFxxEvXX3i4aKdgfbllJE1itf00xW0=
-X-Received: by 2002:a05:6000:18e:b0:37d:3f81:153f with SMTP id
- ffacd0b85a97d-37d551fc17cmr5735258f8f.17.1728773145741; Sat, 12 Oct 2024
- 15:45:45 -0700 (PDT)
+        bh=g/aqTd2ota1+xNkB76pwMkxv208Q7EfGMyB/sMwBaR8=;
+        b=X0RbOZkgfGhgy42OWoaGambBQl+giSy4+eG0ilR4I6k2UI5yHYRZzVy2BRK8HJjnsK
+         cjbBWH/xlsN+M/6UHJW70v6wdlnKTmswFUXOznvoaKsamGPMsRh4x5fWSLehrP36mJqq
+         cQRIgxyK7uW1kJziEoDabXjvr+I7nhMQHBtt7S/gvILXar6OUycX9x0Br6S0m4J3n36f
+         HtnRTDHzSNdM2xS2PhUOWEld3UuW+g1uslcInO0gaWY/XLcieE5A67o5gjQk9LN7ucVH
+         /yfrjL5oaRjIti/AC3CFGH5hyuOEf/HadrCA58cHiNtzRClbzSwn8nUHZTEUQiY04+GP
+         jCbw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzq1/OSpFUGz3QhQ0OYGCjru5uJDzHaevnlZkpbyhJuN7HOwEmQfxwwO9qhL+UW180m8vVHPMM1m/Ybdk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxLswsxaiitSjOYcEH9mjJopoVPrKU61P0UoKtNqVU2tq1Vd6oH
+	ndv0866NcL7/IF2a0Ezp9jIrclr7fdHlb2/LrPC4k/iST9mVOvjLBafyjT9ngxbVAMSkCTViNXP
+	tVws2D7l6U5/tOF+ZZKDfLqjrf8Q=
+X-Google-Smtp-Source: AGHT+IFQDhsjoczFd/HucVui8g/n7We+1fcmDmWmgWcowZra5er+x4uBhnF+NUqnwkjOSaJepHJ/ID6CosAmrKJzyow=
+X-Received: by 2002:a05:600c:3589:b0:42c:b55f:f7c with SMTP id
+ 5b1f17b1804b1-4311dee58dfmr52756185e9.15.1728773186082; Sat, 12 Oct 2024
+ 15:46:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZfs6bwdxkKPWWdNCjFH6H6hs0pFjaic12=HgB4b=Vv-xw@mail.gmail.com>
- <20241011035310.2982017-1-snovitoll@gmail.com>
-In-Reply-To: <20241011035310.2982017-1-snovitoll@gmail.com>
+References: <20241011071657.3032690-1-snovitoll@gmail.com>
+In-Reply-To: <20241011071657.3032690-1-snovitoll@gmail.com>
 From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Sun, 13 Oct 2024 00:45:34 +0200
-Message-ID: <CA+fCnZfznvJ-zaJg+Oeddt7OOPhnvkJ4z4N35rq5KXx2N=HBFw@mail.gmail.com>
-Subject: Re: [PATCH v6] mm, kasan, kmsan: copy_from/to_kernel_nofault
+Date: Sun, 13 Oct 2024 00:46:15 +0200
+Message-ID: <CA+fCnZdeuNxTmGaYniiRMhS-TtNhiwj_MwW53K73a5Wiui+8RQ@mail.gmail.com>
+Subject: Re: [PATCH] kasan: migrate copy_user_test to kunit
 To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: akpm@linux-foundation.org, bpf@vger.kernel.org, dvyukov@google.com, 
-	elver@google.com, glider@google.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, ryabinin.a.a@gmail.com, 
-	syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com, 
-	vincenzo.frascino@arm.com
+Cc: akpm@linux-foundation.org, ryabinin.a.a@gmail.com, glider@google.com, 
+	dvyukov@google.com, vincenzo.frascino@arm.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, linux-mm@kvack.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 5:52=E2=80=AFAM Sabyrzhan Tasbolatov
+On Fri, Oct 11, 2024 at 9:16=E2=80=AFAM Sabyrzhan Tasbolatov
 <snovitoll@gmail.com> wrote:
 >
-> Instrument copy_from_kernel_nofault() with KMSAN for uninitialized kernel
-> memory check and copy_to_kernel_nofault() with KASAN, KCSAN to detect
-> the memory corruption.
+> Migrate the copy_user_test to the KUnit framework to verify out-of-bound
+> detection via KASAN reports in copy_from_user(), copy_to_user() and
+> their static functions.
 >
-> syzbot reported that bpf_probe_read_kernel() kernel helper triggered
-> KASAN report via kasan_check_range() which is not the expected behaviour
-> as copy_from_kernel_nofault() is meant to be a non-faulting helper.
+> This is the last migrated test in kasan_test_module.c, therefore delete
+> the file.
 >
-> Solution is, suggested by Marco Elver, to replace KASAN, KCSAN check in
-> copy_from_kernel_nofault() with KMSAN detection of copying uninitilaized
-> kernel memory. In copy_to_kernel_nofault() we can retain
-> instrument_write() explicitly for the memory corruption instrumentation.
-
-For future reference: please write commit messages in a way that is
-readable standalone. I.e. without obscured references to the
-discussions or problems in the previous versions of the patch. It's
-fine to give such references in itself, but you need to give enough
-context in the commit message to make it understandable without
-looking up those discussions.
-
-> copy_to_kernel_nofault() is tested on x86_64 and arm64 with
-> CONFIG_KASAN_SW_TAGS. On arm64 with CONFIG_KASAN_HW_TAGS,
-> kunit test currently fails. Need more clarification on it.
+> In order to detect OOB access in strncpy_from_user(), we need to move
+> kasan_check_write() to the function beginning to cover
+> if (can_do_masked_user_access()) {...} branch as well.
 >
-> Link: https://lore.kernel.org/linux-mm/CANpmjNMAVFzqnCZhEity9cjiqQ9CVN1X7=
-qeeeAp_6yKjwKo8iw@mail.gmail.com/
-> Reviewed-by: Marco Elver <elver@google.com>
-> Reported-by: syzbot+61123a5daeb9f7454599@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D61123a5daeb9f7454599
 > Reported-by: Andrey Konovalov <andreyknvl@gmail.com>
-> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D210505
+> Closes: https://bugzilla.kernel.org/show_bug.cgi?id=3D212205
 > Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 > ---
-> v2:
-> - squashed previous submitted in -mm tree 2 patches based on Linus tree
-> v3:
-> - moved checks to *_nofault_loop macros per Marco's comments
-> - edited the commit message
-> v4:
-> - replaced Suggested-by with Reviewed-by
-> v5:
-> - addressed Andrey's comment on deleting CONFIG_KASAN_HW_TAGS check in
->   mm/kasan/kasan_test_c.c
-> - added explanatory comment in kasan_test_c.c
-> - added Suggested-by: Marco Elver back per Andrew's comment.
-> v6:
-> - deleted checks KASAN_TAG_MIN, KASAN_TAG_KERNEL per Andrey's comment.
-> - added empty line before kfree.
-> ---
->  mm/kasan/kasan_test_c.c | 34 ++++++++++++++++++++++++++++++++++
->  mm/kmsan/kmsan_test.c   | 17 +++++++++++++++++
->  mm/maccess.c            | 10 ++++++++--
->  3 files changed, 59 insertions(+), 2 deletions(-)
+>  lib/strncpy_from_user.c      |  3 +-
+>  mm/kasan/kasan_test_c.c      | 39 +++++++++++++++++
+>  mm/kasan/kasan_test_module.c | 81 ------------------------------------
+>  3 files changed, 41 insertions(+), 82 deletions(-)
+>  delete mode 100644 mm/kasan/kasan_test_module.c
 >
+> diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
+> index 989a12a67872..55c33e4f3c70 100644
+> --- a/lib/strncpy_from_user.c
+> +++ b/lib/strncpy_from_user.c
+> @@ -120,6 +120,8 @@ long strncpy_from_user(char *dst, const char __user *=
+src, long count)
+>         if (unlikely(count <=3D 0))
+>                 return 0;
+>
+> +       kasan_check_write(dst, count);
+> +
+>         if (can_do_masked_user_access()) {
+>                 long retval;
+>
+> @@ -142,7 +144,6 @@ long strncpy_from_user(char *dst, const char __user *=
+src, long count)
+>                 if (max > count)
+>                         max =3D count;
+>
+> -               kasan_check_write(dst, count);
+>                 check_object_size(dst, count, false);
+
+I think we better put both kasan_check_write and check_object_size
+into do_strncpy_from_user, as the latter is now (post 2865baf54077)
+called from two different places.
+
+Also, please put this change into a separate commit with a Fixes:
+2865baf54077 tag.
+
+>                 if (user_read_access_begin(src, max)) {
+>                         retval =3D do_strncpy_from_user(dst, src, count, =
+max);
 > diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-> index a181e4780d9d..716f2cac9708 100644
+> index a181e4780d9d..e71a16d0dfb9 100644
 > --- a/mm/kasan/kasan_test_c.c
 > +++ b/mm/kasan/kasan_test_c.c
-> @@ -1954,6 +1954,39 @@ static void rust_uaf(struct kunit *test)
+> @@ -1954,6 +1954,44 @@ static void rust_uaf(struct kunit *test)
 >         KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
 >  }
 >
-> +static void copy_to_kernel_nofault_oob(struct kunit *test)
+> +static void copy_user_test_oob(struct kunit *test)
 > +{
-> +       char *ptr;
-> +       char buf[128];
-> +       size_t size =3D sizeof(buf);
+> +       char *kmem;
+> +       char __user *usermem;
+> +       unsigned long useraddr;
+> +       size_t size =3D 128 - KASAN_GRANULE_SIZE;
+> +       int __maybe_unused unused;
 > +
-> +       /* This test currently fails with the HW_TAGS mode.
-> +        * The reason is unknown and needs to be investigated. */
-> +       KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_HW_TAGS);
+> +       kmem =3D kunit_kmalloc(test, size, GFP_KERNEL);
+> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, kmem);
 > +
-> +       ptr =3D kmalloc(size - KASAN_GRANULE_SIZE, GFP_KERNEL);
-> +       KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
-> +       OPTIMIZER_HIDE_VAR(ptr);
+> +       useraddr =3D kunit_vm_mmap(test, NULL, 0, PAGE_SIZE,
+> +                                       PROT_READ | PROT_WRITE | PROT_EXE=
+C,
+> +                                       MAP_ANONYMOUS | MAP_PRIVATE, 0);
+> +       KUNIT_ASSERT_NE_MSG(test, useraddr, 0,
+> +               "Could not create userspace mm");
+> +       KUNIT_ASSERT_LT_MSG(test, useraddr, (unsigned long)TASK_SIZE,
+> +               "Failed to allocate user memory");
 > +
-> +       /*
-> +       * We test copy_to_kernel_nofault() to detect corrupted memory tha=
-t is
-> +       * being written into the kernel. In contrast, copy_from_kernel_no=
-fault()
-> +       * is primarily used in kernel helper functions where the source a=
-ddress
-> +       * might be random or uninitialized. Applying KASAN instrumentatio=
-n to
-> +       * copy_from_kernel_nofault() could lead to false positives.
-> +       * By focusing KASAN checks only on copy_to_kernel_nofault(),
-> +       * we ensure that only valid memory is written to the kernel,
-> +       * minimizing the risk of kernel corruption while avoiding
-> +       * false positives in the reverse case.
-> +       */
+> +       OPTIMIZER_HIDE_VAR(size);
+> +       usermem =3D (char __user *)useraddr;
+> +
 > +       KUNIT_EXPECT_KASAN_FAIL(test,
-> +               copy_to_kernel_nofault(&buf[0], ptr, size));
+> +               unused =3D copy_from_user(kmem, usermem, size + 1));
 > +       KUNIT_EXPECT_KASAN_FAIL(test,
-> +               copy_to_kernel_nofault(ptr, &buf[0], size));
-> +
-> +       kfree(ptr);
+> +               unused =3D copy_to_user(usermem, kmem, size + 1));
+> +       KUNIT_EXPECT_KASAN_FAIL(test,
+> +               unused =3D __copy_from_user(kmem, usermem, size + 1));
+> +       KUNIT_EXPECT_KASAN_FAIL(test,
+> +               unused =3D __copy_to_user(usermem, kmem, size + 1));
+> +       KUNIT_EXPECT_KASAN_FAIL(test,
+> +               unused =3D __copy_from_user_inatomic(kmem, usermem, size =
++ 1));
+> +       KUNIT_EXPECT_KASAN_FAIL(test,
+> +               unused =3D __copy_to_user_inatomic(usermem, kmem, size + =
+1));
+> +       KUNIT_EXPECT_KASAN_FAIL(test,
+> +               unused =3D strncpy_from_user(kmem, usermem, size + 1));
 > +}
 > +
 >  static struct kunit_case kasan_kunit_test_cases[] =3D {
 >         KUNIT_CASE(kmalloc_oob_right),
 >         KUNIT_CASE(kmalloc_oob_left),
-> @@ -2027,6 +2060,7 @@ static struct kunit_case kasan_kunit_test_cases[] =
+> @@ -2028,6 +2066,7 @@ static struct kunit_case kasan_kunit_test_cases[] =
 =3D {
->         KUNIT_CASE(match_all_not_assigned),
 >         KUNIT_CASE(match_all_ptr_tag),
 >         KUNIT_CASE(match_all_mem_tag),
-> +       KUNIT_CASE(copy_to_kernel_nofault_oob),
 >         KUNIT_CASE(rust_uaf),
+> +       KUNIT_CASE(copy_user_test_oob),
 >         {}
 >  };
-> diff --git a/mm/kmsan/kmsan_test.c b/mm/kmsan/kmsan_test.c
-> index 13236d579eba..9733a22c46c1 100644
-> --- a/mm/kmsan/kmsan_test.c
-> +++ b/mm/kmsan/kmsan_test.c
-> @@ -640,6 +640,22 @@ static void test_unpoison_memory(struct kunit *test)
->         KUNIT_EXPECT_TRUE(test, report_matches(&expect));
->  }
 >
-> +static void test_copy_from_kernel_nofault(struct kunit *test)
-> +{
-> +       long ret;
-> +       char buf[4], src[4];
-> +       size_t size =3D sizeof(buf);
-> +
-> +       EXPECTATION_UNINIT_VALUE_FN(expect, "copy_from_kernel_nofault");
-> +       kunit_info(
-> +               test,
-> +               "testing copy_from_kernel_nofault with uninitialized memo=
-ry\n");
-> +
-> +       ret =3D copy_from_kernel_nofault((char *)&buf[0], (char *)&src[0]=
-, size);
-> +       USE(ret);
-> +       KUNIT_EXPECT_TRUE(test, report_matches(&expect));
-> +}
-> +
->  static struct kunit_case kmsan_test_cases[] =3D {
->         KUNIT_CASE(test_uninit_kmalloc),
->         KUNIT_CASE(test_init_kmalloc),
-> @@ -664,6 +680,7 @@ static struct kunit_case kmsan_test_cases[] =3D {
->         KUNIT_CASE(test_long_origin_chain),
->         KUNIT_CASE(test_stackdepot_roundtrip),
->         KUNIT_CASE(test_unpoison_memory),
-> +       KUNIT_CASE(test_copy_from_kernel_nofault),
->         {},
->  };
->
-> diff --git a/mm/maccess.c b/mm/maccess.c
-> index 518a25667323..3ca55ec63a6a 100644
-> --- a/mm/maccess.c
-> +++ b/mm/maccess.c
-> @@ -13,9 +13,14 @@ bool __weak copy_from_kernel_nofault_allowed(const voi=
-d *unsafe_src,
->         return true;
->  }
->
-> +/*
-> + * The below only uses kmsan_check_memory() to ensure uninitialized kern=
-el
-> + * memory isn't leaked.
-> + */
->  #define copy_from_kernel_nofault_loop(dst, src, len, type, err_label)  \
->         while (len >=3D sizeof(type)) {                                  =
- \
-> -               __get_kernel_nofault(dst, src, type, err_label);         =
-       \
-> +               __get_kernel_nofault(dst, src, type, err_label);        \
-> +               kmsan_check_memory(src, sizeof(type));                  \
->                 dst +=3D sizeof(type);                                   =
- \
->                 src +=3D sizeof(type);                                   =
- \
->                 len -=3D sizeof(type);                                   =
- \
-> @@ -49,7 +54,8 @@ EXPORT_SYMBOL_GPL(copy_from_kernel_nofault);
->
->  #define copy_to_kernel_nofault_loop(dst, src, len, type, err_label)    \
->         while (len >=3D sizeof(type)) {                                  =
- \
-> -               __put_kernel_nofault(dst, src, type, err_label);         =
-       \
-> +               __put_kernel_nofault(dst, src, type, err_label);        \
-> +               instrument_write(dst, sizeof(type));                    \
->                 dst +=3D sizeof(type);                                   =
- \
->                 src +=3D sizeof(type);                                   =
- \
->                 len -=3D sizeof(type);                                   =
- \
+> diff --git a/mm/kasan/kasan_test_module.c b/mm/kasan/kasan_test_module.c
+> deleted file mode 100644
+> index 27ec22767e42..000000000000
+> --- a/mm/kasan/kasan_test_module.c
+> +++ /dev/null
+> @@ -1,81 +0,0 @@
+> -// SPDX-License-Identifier: GPL-2.0-only
+> -/*
+> - *
+> - * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+> - * Author: Andrey Ryabinin <a.ryabinin@samsung.com>
+> - */
+> -
+> -#define pr_fmt(fmt) "kasan: test: " fmt
+> -
+> -#include <linux/mman.h>
+> -#include <linux/module.h>
+> -#include <linux/printk.h>
+> -#include <linux/slab.h>
+> -#include <linux/uaccess.h>
+> -
+> -#include "kasan.h"
+> -
+> -static noinline void __init copy_user_test(void)
+> -{
+> -       char *kmem;
+> -       char __user *usermem;
+> -       size_t size =3D 128 - KASAN_GRANULE_SIZE;
+> -       int __maybe_unused unused;
+> -
+> -       kmem =3D kmalloc(size, GFP_KERNEL);
+> -       if (!kmem)
+> -               return;
+> -
+> -       usermem =3D (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
+> -                           PROT_READ | PROT_WRITE | PROT_EXEC,
+> -                           MAP_ANONYMOUS | MAP_PRIVATE, 0);
+> -       if (IS_ERR(usermem)) {
+> -               pr_err("Failed to allocate user memory\n");
+> -               kfree(kmem);
+> -               return;
+> -       }
+> -
+> -       OPTIMIZER_HIDE_VAR(size);
+> -
+> -       pr_info("out-of-bounds in copy_from_user()\n");
+> -       unused =3D copy_from_user(kmem, usermem, size + 1);
+> -
+> -       pr_info("out-of-bounds in copy_to_user()\n");
+> -       unused =3D copy_to_user(usermem, kmem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_from_user()\n");
+> -       unused =3D __copy_from_user(kmem, usermem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_to_user()\n");
+> -       unused =3D __copy_to_user(usermem, kmem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
+> -       unused =3D __copy_from_user_inatomic(kmem, usermem, size + 1);
+> -
+> -       pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
+> -       unused =3D __copy_to_user_inatomic(usermem, kmem, size + 1);
+> -
+> -       pr_info("out-of-bounds in strncpy_from_user()\n");
+> -       unused =3D strncpy_from_user(kmem, usermem, size + 1);
+> -
+> -       vm_munmap((unsigned long)usermem, PAGE_SIZE);
+> -       kfree(kmem);
+> -}
+> -
+> -static int __init kasan_test_module_init(void)
+> -{
+> -       /*
+> -        * Temporarily enable multi-shot mode. Otherwise, KASAN would onl=
+y
+> -        * report the first detected bug and panic the kernel if panic_on=
+_warn
+> -        * is enabled.
+> -        */
+> -       bool multishot =3D kasan_save_enable_multi_shot();
+> -
+> -       copy_user_test();
+> -
+> -       kasan_restore_multi_shot(multishot);
+> -       return -EAGAIN;
+> -}
+> -
+> -module_init(kasan_test_module_init);
+> -MODULE_LICENSE("GPL");
+
+Please also remove the corresponding entries from mm/kasan/Makefile
+and lib/Kconfig.kasan and update Documentation/dev-tools/kasan.rst.
+
+
 > --
 > 2.34.1
 >
-
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
-Tested-by: Andrey Konovalov <andreyknvl@gmail.com>
-
-For KASAN parts.
-
-Thank you!
 
