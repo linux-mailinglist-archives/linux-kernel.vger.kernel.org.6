@@ -1,86 +1,113 @@
-Return-Path: <linux-kernel+bounces-362464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE8B99B553
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:11:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A823299B558
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35F472839B8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:11:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 004F4B21658
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0C7F189B8F;
-	Sat, 12 Oct 2024 14:11:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C6F6194124;
+	Sat, 12 Oct 2024 14:11:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZMShh00Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B601482F5
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 14:11:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F681E481;
+	Sat, 12 Oct 2024 14:11:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728742264; cv=none; b=NA4BP+d2VPGMMD85JOYOKUV3LTjiMiWPszVXj0N3X8PxwxA6yyBXOA4rHxQVPZWb0gzl7kgvdW0GqSvvDi6jmwyN6bgshMEpF4In1nh3DcZbDCw4zfonnOJpwsWWrNx0kQf1N2aZIVM1tg9jGWpgZ+8xjTzfrDTWRJXU1BEaUnU=
+	t=1728742315; cv=none; b=G7DuGY0FXISUtsTk4O+geH6feI+Wx7HrmZ/4SJwQ3fFZwPH75MJrLUK5I2ZuKCnK8R25TSp+HcNNkUDkmWsiDRPpRCp00I/o8g4SooJQ3AgZkWb3Qz+/1MKLn2TFNAF4/w860TyNzj+HdIVi4CBcn4IxUD4QktrhQl1G5zxVhcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728742264; c=relaxed/simple;
-	bh=HlaRvSdvuVu/meZUMxK6B1kzJNvjGz+w443XMMZJ9VM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=TEG4Gt4BvnNaLoo7S5liGB3qF5okmIpQLTjkasRBqcwzhKmKTlI08L6NGVSmkkeHmOJUnvHXToB8vK9aVoo2rbiNLRbNupKN+W5S+wKTApcGg0QZ4jI3KCpFf225pEe1UXDD/8Ey1ouZPfD4ahB+IlwgXnuX+o31X36XxqvxjHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so1271195ab.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 07:11:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728742262; x=1729347062;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iX1rWbC+lSi9sg7wS50ujMJH6io9uB+vixPgCgPPD3Y=;
-        b=dfln+MQqc7ttpG3/q8noiCzJivm2PYQoncntcqGkMvay9QxW1Fh7laQpYHpUH0MdWw
-         mauHHndzHZMdwgbrVeNitz3312bYRcML1AIXNJdomnH4ZLki7GZNb8D44gYSDaedYw3q
-         GaC/MUJgBOLX7RW3KzRc8K2Ye6Jj3lj2WOjsf8+mO0PqjgCQH4U1U1c1TRQRwHNLzNhR
-         mFer5JF+d9waK1stf0Wy9dHVPp/ypzsLhh34S6ejlmDNtFyrJXUgqEoAOC80spKPwIXY
-         HV4FLtuNuSibXkJPcBO52N+aJLdIKxr/2Na8zUXPPK5SvBmwZ3r368velqru3dmNDVSE
-         JmvQ==
-X-Gm-Message-State: AOJu0YwkhiufvWuR6wKZ4DMoSv0k5Kmsa9MQwZf9uausMUCC2qzgode1
-	GxDWtRSDkEGsVglibmb/GkM+pA8/W2JqAwq8ExfwXCowNZKVuZ3fM9J0PAGLhBHfZ/DZW5A+HxT
-	lpN/fd5QJB43dgtWfPWBo8S9sEmOs+O+AiJkSZV4ExqBQyRZ2/a7/vV8=
-X-Google-Smtp-Source: AGHT+IFrjo3Q+d+z4SnmmOTW5iX3VKnENyXYG64PN1+JrrPajcyeH1mAeLPt7uw5uptdgLpkZttacQpKtMN/pJda2jQenTuY0n3M
+	s=arc-20240116; t=1728742315; c=relaxed/simple;
+	bh=JJmVD95mi9UZD5zEzeQNiy9tp+Bk7gw4BLSwv44/Zww=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SD71Iddhs0nycRNKAffySBY7sBhVClsvIbBrG27e6D9p82Lbq0ik8IahYDokxG7X6lzRt9fysO9A/8l3vZDtcFatiAhMGOAPr8gcOQjgy6TtQFJrcoPbAtEp0oem/z+45/x9PXU6MdENHRL5tXXAtd3n/wk/EBqWAbuP/MvBkzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZMShh00Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78096C4CEC6;
+	Sat, 12 Oct 2024 14:11:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728742314;
+	bh=JJmVD95mi9UZD5zEzeQNiy9tp+Bk7gw4BLSwv44/Zww=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=ZMShh00YU55ALa1BXqIDW4WEdiUyNA8ESpwXWRr+S0/4d13gjaSeD/R8v2t8iOxCm
+	 uWxx0thxieS/FJSw98zw0BmWV4Q5zC2IXYqStz3eDlk3iztYADAbLcwprLBGFQuq9S
+	 aIRXfkKI9erlO8hNxPhRoorS94JXilGnI1CkqsWBzKd8QeDDXXthCYoen5VIDvknFO
+	 NmW78O958AVm/f42874o5ciMBGTowIOwAY42TVt5i/tjXY0zPDOWxxy/wlfD2BUq4F
+	 tpZGC6jbEx6Tf1CV84w7OMkUuL/kJjoqc7epA2Zq312pA4UN44bZgcwBz9oVCgB7ft
+	 HzxHgVL2MFEIw==
+Date: Sat, 12 Oct 2024 15:11:46 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>, Jonathan Cameron
+ <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH 0/3] iio: light: veml6030: add support for veml7700
+Message-ID: <20241012151146.3cd5464b@jic23-huawei>
+In-Reply-To: <20241007-veml7700-v1-0-fb85dd839d63@gmail.com>
+References: <20241007-veml7700-v1-0-fb85dd839d63@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1caf:b0:3a3:778e:45cd with SMTP id
- e9e14a558f8ab-3a3b5fbc20cmr53040895ab.21.1728742262101; Sat, 12 Oct 2024
- 07:11:02 -0700 (PDT)
-Date: Sat, 12 Oct 2024 07:11:02 -0700
-In-Reply-To: <20241012133220.4121757-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670a8376.050a0220.3e960.0027.GAE@google.com>
-Subject: Re: [syzbot] [usb?] WARNING: ODEBUG bug in corrupted (3)
-From: syzbot <syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On Mon, 07 Oct 2024 22:36:35 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+> This series adds support for the veml7700 ALS sensor, which is basically
+> a vem6030 within a different package, with no pins for the interrupt and
+> the I2C address. The changes introduced are meant to hide the event
+> functionality in that case, while borrowing the rest from the veml6030.
+> 
+> In theory, the interrupt functionality would still be available as all
+> the registers are the same, and some polling could be done to read the
+> threshold indicators to generate events. I did not find examples in iio
+> where the INIT_DELAYED_WORK() queue_delayed_work() mechanism is used for
+> that (some drivers do it to read results), so I am not sure if that
+> would be the desired approach. I am open for discussions about that, but
+> probably to be applied later on.
+> 
+> While testing this "no_irq" device, I noticed that the veml6035 is still
+> using dedicated structs for the iio_info, which were there to account
+> for the device-specific attribute values before read_avail() was
+> introduced in the driver in later versions of the patch series, and they
+> managed to survive until v3 was applied.
+> Once read_avail() was introduced, the device-specific structs were not
+> required anymore, and they are repetitive. Moreover, the initialization
+> of the no_irq iio_info for the veml6035 was not updated to account for
+> the new read_avail(), which is a bug if no irq is provided, as there is
+> no callback to retrieve the available values.
+> 
+> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Series applied to the to togreg branch of iio.git. Pushed out as testing for 
+0-day to take a first look at it.
 
-Reported-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
-Tested-by: syzbot+90f31ac02b7ae5e8b578@syzkaller.appspotmail.com
+Jonathan
 
-Tested on:
+> ---
+> Javier Carrasco (3):
+>       iio: light: veml6035: fix read_avail in no_irq case for veml6035
+>       dt-bindings: iio: light: veml6030: add veml7700
+>       iio: light: veml6030: add support for veml7700
+> 
+>  .../bindings/iio/light/vishay,veml6030.yaml        |  16 ++-
+>  drivers/iio/light/veml6030.c                       | 130 ++++++++++++++-------
+>  2 files changed, 106 insertions(+), 40 deletions(-)
+> ---
+> base-commit: 96be67caa0f0420d4128cb67f07bbd7a6f49e03a
+> change-id: 20241007-veml7700-83f54cf94262
+> 
+> Best regards,
 
-commit:         4a9fe2a8 dt-bindings: usb: dwc3-imx8mp: add compatible..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=1022e087980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=90f31ac02b7ae5e8b578
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1467dfd0580000
-
-Note: testing is done by a robot and is best-effort only.
 
