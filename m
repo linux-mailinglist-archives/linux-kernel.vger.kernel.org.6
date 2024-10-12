@@ -1,130 +1,134 @@
-Return-Path: <linux-kernel+bounces-362441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2602D99B507
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:17:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DB699B509
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:17:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6DE6283096
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:17:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AAD81C21D49
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:17:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F14FA18453C;
-	Sat, 12 Oct 2024 13:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEC13184542;
+	Sat, 12 Oct 2024 13:17:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LNam9Yvd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QumAgF0i"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7971E495;
-	Sat, 12 Oct 2024 13:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E338D1E495;
+	Sat, 12 Oct 2024 13:17:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728739016; cv=none; b=ALjQEIHto6MskygcNseqDKPiCprxTIZBo43/pFbgLucbpCvcEATXPY0/pulJvd73mdWjV34tLjBsXNlG8gwr5EPF0VAv9LeLSUifVYq3c9vpWpJ/vBPQFiPL0dsG/bPfI6lCIRgYU8hTMqqmZ7DKpzKej3xpJNxjm9t7PSdjxfA=
+	t=1728739055; cv=none; b=XHNL6soUQwmz5D2K8+ZZlwA8D9AjGsTAp4j0rJnxhszlSS4Zpb6iplfCouiweIPcDrYFS5VfVPozIkx+RrvmJeFj5sLvaDcKeIw57weDGHC6khJ07v5oPaiJE2QsatnjjovhHhvouBlhk8GhlZB/HGKzaVxIIj7OvUGRouGOVJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728739016; c=relaxed/simple;
-	bh=vQYV4mQ3jh3/qlh27NffOGGKqKitgAbdpNmmqkj2fBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A9kSspX9CRbC+zjusei2zi3BzvQmAZjdDwssfOA3j30SUO2xU7M96YluOdNlbE/TpouP0WEL09KFS46rJXKKuCTzM3o0Sn99ewOTeK5iniXsArd+8McOdfCEUI2dcfE8GK64j9X7vWlGL9uVJTD7u1iZEKYJRDE8zTjp5W4M7fQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LNam9Yvd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 665B8C4CEC6;
-	Sat, 12 Oct 2024 13:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728739015;
-	bh=vQYV4mQ3jh3/qlh27NffOGGKqKitgAbdpNmmqkj2fBU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LNam9YvddedmJaXeR2LVkfk/2aN0tBfsRmpRtZrzm+QVwYPC4l0THYaKvAlmiEy1a
-	 J4ctvQem4X0Hq8ShslwvmEiGdhn0KN6FOltV/eWsPydnRmw/KlSaGoCSdW0fruv6gD
-	 hu2+B5MoXXgn94YHAdl9/ymxiv/OgJlBCQZzWlrsVgoBzAaLRgG5Cwsh9JRNx/ZPOz
-	 qBX8EX3bYWrRLQCcG0Du+2rPHY5NP86MCPlBu3n9UFzClZ2zslGUv/j/97hqLgTx5K
-	 EHE1KbRkPxodRYLZeq9Oy1dwCW55bVK+g5SexOYmtaRCQv2SI8CJjlDuIwKp9gX6yE
-	 wvD7uqUaKKuEw==
-Date: Sat, 12 Oct 2024 14:16:51 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Breno Leitao <leitao@debian.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv6 net-next 6/7] net: ibm: emac: generate random MAC if
- not found
-Message-ID: <20241012131651.GE77519@kernel.org>
-References: <20241011195622.6349-1-rosenp@gmail.com>
- <20241011195622.6349-7-rosenp@gmail.com>
+	s=arc-20240116; t=1728739055; c=relaxed/simple;
+	bh=xgZfJNYdhhPDhtjfhoXI7CrZCDHbecxJyWC/998fJZI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZMNgzYKlFt7/vf8ZL+0MhQTRu3A2jhvqhBSTD/A9DC/dSEmW/uSOKicJVICVsRJFV7P+bJwzoacx+M5IzP6oQN0cz+cK1qL0m5BLeilktrC9+U+3gEdoCmLrgYGfVnSgH9gvBb/CvjzYQoR/gAK5P/O7P1uHINuwWVIwPEw/jJ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QumAgF0i; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2a96b242cso500338a91.3;
+        Sat, 12 Oct 2024 06:17:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728739053; x=1729343853; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xgZfJNYdhhPDhtjfhoXI7CrZCDHbecxJyWC/998fJZI=;
+        b=QumAgF0ihMEXu10ADJ6faM/YjZjJq3LcHXtG/fdxnHzOAQsdPJQI0iPdfmCIZ9YICT
+         RUebArL6tTj/Gckjg7dSgvWSYNfkVdJFG3oXV8wZGD1iKb52aymM5hxr/hWRh2VyRSGE
+         VOXFG09/8KijyCPGPdf5wjb5xl4qfAxD3V08d2eFptKboomasb6ZAjCrvy34farAmv7d
+         FeKneJEZS6l4u9hc1anC4fWIEOCwiy25tPfDOL7sdfFK0lji8qH12sgid7MLrTMRKShz
+         GudO2LrQuyTdXf265mpG0uw6/L0N3uh7nPpeNrti4WLQqySKLZt2hRdiiOVnyfGTzhDh
+         wfSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728739053; x=1729343853;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xgZfJNYdhhPDhtjfhoXI7CrZCDHbecxJyWC/998fJZI=;
+        b=Kk/X8cqh//K7oC6p8Xjwt83J5gEs61eKI8pfYVimJkojNrRO+UW2VbhFA1/EcwX/1u
+         atbFDloQKDoTycAVPDBDA883aqu8+xbns+7Tr6/RuoG7qCFhYbJgJw0MTkreNmR7qywU
+         cp3V83WG5Yob/rvC7V6lbQC9dgnGDUyhEdVl7SAeDby6CYvzclN1FvVh0SwARArhcwvY
+         JsVNUu63npZJpGLgKgKSVkLH3XXg38riXUBut0pysGD5Zaxy+oI8z9NXeQ1enYb2MZuT
+         uEUQQ9KWr0UEjW5mhZS+JngqrMxZ8AqbjB0vBreNAW/SRqjLLBl7atzziUdnF5IWR1Js
+         oY1g==
+X-Forwarded-Encrypted: i=1; AJvYcCWurJJynmuxaE36Bb+SEhxKAQrltgPfnh3hXm0HRw2c0GewfMHhMnC9Vni7lsVhoUK8dZv4FffT/v59oRGq@vger.kernel.org, AJvYcCXY1DduSc/EDoKtHRHfVrRVaghx3tOzzTE1atKN/TAB4pACv1l30wo3FQDVmz9PnX0gZMz5/UHTE6dKx+M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwKuBMXsgCwuNY50Zrty6RCYreyVwulc0eLdRmAfVf6KQ83N52M
+	8XmPK8XhKqY/2uvsnhC0WoCEDcc3teh6hLTarfQWUINOMlX9g/j6S6QQ/iZ1PTXagnL6MBxey9y
+	NTo0kBkf/7dRmRq9tAu9Mg8Pp6f4=
+X-Google-Smtp-Source: AGHT+IEZd/cwSvOoIv+mfTP+GVRyAoSKqDG7m1LDad5T0V+zDZwqhRqb8F4Mdz9mMMcSLh37aodT3DoPys/rDZM8OH0=
+X-Received: by 2002:a05:6a20:3946:b0:1cf:3130:9966 with SMTP id
+ adf61e73a8af0-1d8bcefaecdmr4034221637.3.1728739053004; Sat, 12 Oct 2024
+ 06:17:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241011195622.6349-7-rosenp@gmail.com>
+References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
+ <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
+ <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
+ <CAJ-ks9neMso9pL_LPOeOwLGZG7Wy9RxV-ixKsDv=Wfzy7yKVBA@mail.gmail.com>
+ <CANiq72kM+29COB6vPQPotXqT3acdbrEgdjU2K6FG8gZC0EEhNg@mail.gmail.com> <CAJ-ks9n=Y_FAdRb=YAaCEGT-y8RP=ssOgBiQtb8T7s+LRBBBhg@mail.gmail.com>
+In-Reply-To: <CAJ-ks9n=Y_FAdRb=YAaCEGT-y8RP=ssOgBiQtb8T7s+LRBBBhg@mail.gmail.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 12 Oct 2024 15:17:20 +0200
+Message-ID: <CANiq72k=+iUEESsiv8JUYehEFjoK=hUae3kbddyb3+qaJofpAQ@mail.gmail.com>
+Subject: Re: [PATCH] rust: query the compiler for dylib path
+To: Tamir Duberstein <tamird@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, Daniel Gomez <da.gomez@samsung.com>, 
+	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
+	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
+	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Vegard Nossum <vegard.nossum@oracle.com>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Oct 11, 2024 at 12:56:21PM -0700, Rosen Penev wrote:
-> On this Cisco MX60W, u-boot sets the local-mac-address property.
-> Unfortunately by default, the MAC is wrong and is actually located on a
-> UBI partition. Which means nvmem needs to be used to grab it.
-> 
-> In the case where that fails, EMAC fails to initialize instead of
-> generating a random MAC as many other drivers do.
-> 
-> Match behavior with other drivers to have a working ethernet interface.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  drivers/net/ethernet/ibm/emac/core.c | 9 ++++++---
->  1 file changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ibm/emac/core.c b/drivers/net/ethernet/ibm/emac/core.c
-> index b9ccaae61c48..faa483790b29 100644
-> --- a/drivers/net/ethernet/ibm/emac/core.c
-> +++ b/drivers/net/ethernet/ibm/emac/core.c
-> @@ -2937,9 +2937,12 @@ static int emac_init_config(struct emac_instance *dev)
->  
->  	/* Read MAC-address */
->  	err = of_get_ethdev_address(np, dev->ndev);
-> -	if (err)
-> -		return dev_err_probe(&dev->ofdev->dev, err,
-> -				     "Can't get valid [local-]mac-address from OF !\n");
-> +	if (err == -EPROBE_DEFER)
-> +		return err;
-> +	if (err) {
-> +		dev_warn(&dev->ofdev->dev, "Can't get valid mac-address. Generating random.");
-> +		eth_hw_addr_random(dev->ndev);
-> +	}
+On Wed, Oct 9, 2024 at 4:48=E2=80=AFPM Tamir Duberstein <tamird@gmail.com> =
+wrote:
+>
+> Understood. My guess is nobody will care about the process spawn in
+> scripts/generate_rust_analyzer.py. Someone might care about the one in
+> rust/Makefile, but there are already 4 others. By the way, I notice those=
+ are
 
-The above seems to take the random path for all errors other than
--EPROBE_DEFER. That seems too broad to me, and perhaps it would
-be better to be more specific. Assuming the case that needs
-to be covered is -EINVAL (a guess on my part), perhaps something like this
-would work? (Completely untested!)
+Yeah, I was referring to the `Makefile` one (the other one, indeed,
+does not matter, as you say).
 
-	err = of_get_ethdev_address(np, dev->ndev);
-	if (err == -EINVAL) {
-		/* An explanation should go here, mentioning Cisco MX60W
-		 * Maybe the logic should even be specific to that hw?
-		 */
-		dev_warn(&dev->ofdev->dev, "Can't get valid mac-address. Generating random.");
-		eth_hw_addr_random(dev->ndev);
-	} else if (err) {
-		return dev_err_probe(&dev->ofdev->dev, err,
-				     "Can't get valid [local-]mac-address from OF !\n");
-	}
+> using $(shell ...) - should I be using that form as well?
 
-Also, should this be a bug fix with a Fixes tag for net?
+Hmm... I assume you tested the patch, but how would the patch work
+without it? Or am I confused?
 
->  
->  	/* IAHT and GAHT filter parameterization */
->  	if (emac_has_feature(dev, EMAC_FTR_EMAC4SYNC)) {
-> -- 
-> 2.47.0
-> 
+> I guess that's not for me to say. It would be great to have basic automat=
+ion.
+
+Generally, when submitting a new feature for upstream, especially one
+that requires new testing, it is common that the submitter is asked to
+take care of it or help doing so. I guess, in this case, Daniel is the
+one handling the macOS support out-of-tree.
+
+Anyway, we may need to use variables for this, so I think it is fine
+-- upstream can keep the variable working easily, and out-of-tree can
+test the overall macOS support.
+
+> My apologies for the oversight.
+
+No worries, thanks!
+
+Cheers,
+Miguel
 
