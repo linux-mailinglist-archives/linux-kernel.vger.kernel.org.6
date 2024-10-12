@@ -1,105 +1,119 @@
-Return-Path: <linux-kernel+bounces-362616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC60A99B6FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:40:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E85B499B702
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 873421F219DC
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:40:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E430B218CF
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:41:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE873199FC9;
-	Sat, 12 Oct 2024 20:40:08 +0000 (UTC)
-Received: from fgw20-7.mail.saunalahti.fi (fgw20-7.mail.saunalahti.fi [62.142.5.81])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF63019AD93;
+	Sat, 12 Oct 2024 20:41:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="Gi7cBFC/"
+Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8D312C7FB
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 20:40:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.142.5.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38E0113D893;
+	Sat, 12 Oct 2024 20:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728765608; cv=none; b=AxeudezPBjV32kMWuSxINUqknyKTADjbdZxb2/vCS6s3mq/VjQ1oMlhR/Ez3R2xhcFrLjcVpPsveIqgt82zb55QBErfTbl9RORGEv8ShmWB3QNKZh3mnMRG2Nzh5Dq8BTAUv+e41EWuMohXeSSiF68ci7WiaSQACLi1dWN6vbsg=
+	t=1728765705; cv=none; b=tcFcyj07eCw+tSWWXnds3psiO7C1kiasPLa5uKXn0b92RJT0bWYrtT2U95/HM6XP+aDR9bsipR40DVp85+/VuIFRfKHp/cSH/Q4xHOL6h8u8eEIWukhQAQt5hZJ8vrEM7lpdyMZa6GFfZjiA1ZevxY4/xk78uXStqzB2/kNczTM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728765608; c=relaxed/simple;
-	bh=lxyvpAm4eKdDo7emUlUPKldQCtoFggJORgo9nYw18vs=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HEnbEah/TbgvssgKhSxpRpukuTij1rQfoc7vruA590jzYWmTCJDhsje4tsGlDvO63E42NDh4eDOHjOKgv+MK0tkKVPCW76i3MdFGyGgNiTb4wJ6JmapmuYhHAv1GOPUfTmHYsVT66+JirPh7sK6eLaBWsgwcK3c93ozNL+SbV0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=62.142.5.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-Received: from localhost (88-113-26-56.elisa-laajakaista.fi [88.113.26.56])
-	by fgw21.mail.saunalahti.fi (Halon) with ESMTP
-	id 267500f6-88da-11ef-8861-005056bdd08f;
-	Sat, 12 Oct 2024 23:40:00 +0300 (EEST)
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 12 Oct 2024 23:40:00 +0300
-To: Vasileios Aoiridis <vassilisamir@gmail.com>
-Cc: Andy Shevchenko <andriy.shevchenko@linux.intel.com>, jic23@kernel.org,
-	lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, anshulusr@gmail.com, gustavograzs@gmail.com,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1 08/13] iio: chemical: bme680: add power management
-Message-ID: <ZwreoHXXLkf3DjMt@surfacebook.localdomain>
-References: <20241010210030.33309-1-vassilisamir@gmail.com>
- <20241010210030.33309-9-vassilisamir@gmail.com>
- <Zwj5jBm-_9_FX6ms@smile.fi.intel.com>
- <Zwl2SEmDqc-PTtqp@vamoirid-laptop>
+	s=arc-20240116; t=1728765705; c=relaxed/simple;
+	bh=LUAb/bnCuXPOamJNLWrcAmFhiWgp72QPq3+3/6SO4Uo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MLkIs6hjWYAX3DIUs0515v1LvJzosCyVA0g9ivRvl0ThIPyJf0LALpVqviyroaG0HdXkNvJbMeN7pqBkrWHcC6nS5bu2Us5gKPU+w+WPYGE4yNjTQlHnmbCu0LwHuNrBHDB7fncVHL4Cy0yfr0bhLkMeNrwFktmPjjowBzPn+ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=Gi7cBFC/; arc=none smtp.client-ip=46.235.229.95
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
+	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
+	:Subject; bh=9nQnvUNqLj5H+Y0nFu2kyl8MicBMFcVe8wMOjKJMWsU=; b=Gi7cBFC/QRxdIL7i
+	9MhupQ1JWsxKhbRRccBsxEsjVgtwJp0vId3YVwtDPdL4FIH0t9k5/BUsUapYh0jqxSulZtuFJm0Cw
+	mqEeoqBaJETveswsoDviZ4JxiEGl3MPDrfnrM0YyuM7E9Zgy8qERwobLoDno7W7likwNNA7mAdQii
+	lFcYp3XHKnD5UoAmJhy2aifysbF41yZORPChH2MCHOnqkEy7i+/uYYVVJPvdoOoIS7C2uwab1rGHr
+	Vrwgpmr94JOIu2ygtJ5XvR4W9pxUQ/WKtAYinOy7JK1haw4My66g5oi1vu75j/46g9GvvN/uiiVUm
+	M4utqNq5C7KtjsMsgQ==;
+Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
+	by mx.treblig.org with esmtp (Exim 4.96)
+	(envelope-from <linux@treblig.org>)
+	id 1szivg-00Aivd-2Q;
+	Sat, 12 Oct 2024 20:41:36 +0000
+From: linux@treblig.org
+To: awalls@md.metrocast.net,
+	mchehab@kernel.org,
+	linux-media@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: [PATCH] media: cx18: Remove unused cx18_reset_ir_gpio
+Date: Sat, 12 Oct 2024 21:41:36 +0100
+Message-ID: <20241012204136.229335-1-linux@treblig.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zwl2SEmDqc-PTtqp@vamoirid-laptop>
+Content-Transfer-Encoding: 8bit
 
-Fri, Oct 11, 2024 at 09:02:32PM +0200, Vasileios Aoiridis kirjoitti:
-> On Fri, Oct 11, 2024 at 01:10:20PM +0300, Andy Shevchenko wrote:
-> > On Thu, Oct 10, 2024 at 11:00:25PM +0200, vamoirid wrote:
+From: "Dr. David Alan Gilbert" <linux@treblig.org>
 
-...
+cx18_reset_ir_gpio() has been unused in tree since 2009 commit
+eefe1010a465 ("V4L/DVB (10759): cx18: Convert GPIO connected functions to act as v4l2_subdevices")
 
-> > > +extern const struct dev_pm_ops bmp280_dev_pm_ops;
-> > 
-> > Is pm.h being included already in this header? Otherwise you need to add it.
-> 
-> No it is not, and indeed I need to add it. Probably because it was
-> included by some other file I didn't get an error from gcc?
+It has a comment saying it's exported for use by 'lirc_pvr150' but I don't
+see any sign of it in the lirc git, and I see it removed support
+for lirc_i2c.c 'Flavors of the Hauppage PVR-150...' in 2014.
 
-Yeah, it's called a "proxy" header in general meaning. We should try hard not
-to use such headers (meaning not to use them in a "proxy" mode).
+Remove it.
 
-...
+Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+---
+ drivers/media/pci/cx18/cx18-gpio.c | 15 ---------------
+ drivers/media/pci/cx18/cx18-gpio.h |  1 -
+ 2 files changed, 16 deletions(-)
 
-> > >  	struct regmap *regmap;
-> > >  	struct bme680_calib bme680;
-> > >  	struct mutex lock; /* Protect multiple serial R/W ops to device. */
-> > > +	struct device *dev;
-> > 
-> > Is it the same that you may get wia regmap_get_device()?
-> > 
-> 
-> Yes it is the same. Maybe I can try and see if I can use the following
-> 
-> 	regmap_get_device(data->regmap)
-> 
-> in the places where the pm functions are used in order to not declare a
-> new value inside the struct bme680_data. But in general, is this approach
-> prefered?
-
-Since there is a getter already available, I prefer not to shortcut it via
-adding a duplicating information to the data structure.
-
-> > >  	u8 oversampling_temp;
-> > >  	u8 oversampling_press;
-> > >  	u8 oversampling_humid;
-
+diff --git a/drivers/media/pci/cx18/cx18-gpio.c b/drivers/media/pci/cx18/cx18-gpio.c
+index c85eb8d25837..485a6cbeb15a 100644
+--- a/drivers/media/pci/cx18/cx18-gpio.c
++++ b/drivers/media/pci/cx18/cx18-gpio.c
+@@ -305,21 +305,6 @@ int cx18_gpio_register(struct cx18 *cx, u32 hw)
+ 	return v4l2_device_register_subdev(&cx->v4l2_dev, sd);
+ }
+ 
+-void cx18_reset_ir_gpio(void *data)
+-{
+-	struct cx18 *cx = to_cx18(data);
+-
+-	if (cx->card->gpio_i2c_slave_reset.ir_reset_mask == 0)
+-		return;
+-
+-	CX18_DEBUG_INFO("Resetting IR microcontroller\n");
+-
+-	v4l2_subdev_call(&cx->sd_resetctrl,
+-			 core, reset, CX18_GPIO_RESET_Z8F0811);
+-}
+-EXPORT_SYMBOL(cx18_reset_ir_gpio);
+-/* This symbol is exported for use by lirc_pvr150 for the IR-blaster */
+-
+ /* Xceive tuner reset function */
+ int cx18_reset_tuner_gpio(void *dev, int component, int cmd, int value)
+ {
+diff --git a/drivers/media/pci/cx18/cx18-gpio.h b/drivers/media/pci/cx18/cx18-gpio.h
+index 0fa4c7ad2286..8d5797dea7f5 100644
+--- a/drivers/media/pci/cx18/cx18-gpio.h
++++ b/drivers/media/pci/cx18/cx18-gpio.h
+@@ -17,5 +17,4 @@ enum cx18_gpio_reset_type {
+ 	CX18_GPIO_RESET_XC2028  = 2,
+ };
+ 
+-void cx18_reset_ir_gpio(void *data);
+ int cx18_reset_tuner_gpio(void *dev, int component, int cmd, int value);
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.47.0
 
 
