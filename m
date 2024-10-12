@@ -1,113 +1,108 @@
-Return-Path: <linux-kernel+bounces-362484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0378A99B57D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:26:12 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B83099B582
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:31:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B304A283BEB
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:26:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DC11DB22982
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A0B19755A;
-	Sat, 12 Oct 2024 14:26:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D37D6186E2E;
+	Sat, 12 Oct 2024 14:31:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTjrmj5A"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c4860NO7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3286A195811;
-	Sat, 12 Oct 2024 14:25:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 360858F66;
+	Sat, 12 Oct 2024 14:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728743161; cv=none; b=iAWWJjOdAXuEZCaAbjda+wwknNGDYOMfybZb1rycmlqE+nSjiF5uQUR23i59MMaqvVzHaXdHtumxq5qcToCk8rK1OxLcM+GFBcTrubJ0v8AmjgmfpjaKkaUppH8U+wb9vQTFywy9zCiUZR0LkALLaVXZKjfveHMgGI2oEEZdd4E=
+	t=1728743484; cv=none; b=TosqJcGqIyxIDTQSAbRvPkkSBkbdIqfwd1IZhwFJZmA234kTKrZJ2F/ZN1RVj8uXO/Go/f/vIFZVrX3e/bLPyI7HUfDpD4ZYVz7lXywZ1Qo6EHCNoZ30QZk3OXc4dn24RJt1c+VB1/6tOwRtEQohye4NwWXvJy2c+5B5zly315U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728743161; c=relaxed/simple;
-	bh=g19ZF4NfxaZkMR50deDEpuIYJHiJELegRWTzAoKqkek=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BpozoRNJE9z1DV3H2Dw44T3Ra6flOY+gC112xjQEXwCgAyxPbSDIYvzwLJOzW7ZAcvYwizyrLiVWt9rjxT0pmTRyIinFKTcS4Y1oAWbg9YBgApgvJIIDNJYTYRqT+iLYhiK6qLCZ5MVS67k6fjRucI4WIiHDGSmcvebr0/QzJ4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTjrmj5A; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so333361fa.1;
-        Sat, 12 Oct 2024 07:25:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728743158; x=1729347958; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=g19ZF4NfxaZkMR50deDEpuIYJHiJELegRWTzAoKqkek=;
-        b=PTjrmj5Aw+5CKLBUMO7JwHQuZdnyigkH6nYT2YTu+PBtkpXSKEcZj3wPEGsKPBfMAJ
-         rWvoOqzay/Uz++uK96RRDNmanX4RTfIj90e/mTZvd3X0muaG9Un1RcFcp798NGy36UFB
-         PkpnWbl9+X2usEmsPvPOMRczOUPUV4JxyPYp6kVr5g9LTxrg076jAToEhMbrHc0op+Ev
-         8y1iroihARPJN9AKywrjYaVy2pKgbfObX4uqNUChKJLtGGMLdk2ipngBXvawxQS9iKOu
-         eAw+DdZu3J0t0ISD8etwM8Ls++H6r5GIBvCtqUpkPYWAd6z8AhQqbWRj0/C4MbGkcLyM
-         9HWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728743158; x=1729347958;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=g19ZF4NfxaZkMR50deDEpuIYJHiJELegRWTzAoKqkek=;
-        b=l360ru/JOaguK34aXwpaSF4pS4V+aFX3X7g3Wcz5ylDilSPGcGWZITxn+gI/MYItEZ
-         btHce06LXR8btM33YnmBCerhozcpTICnIWaT8wjYvmPz+2+Ut4Kgu2q12NrLP/7MUFaA
-         GTbt2IXz5l1nXwDfMYuBWXwac0CCUYe7heuUGwppSu3HGqkLGmvu5TubgHaG9Fw6+c2O
-         q9aAJV0SIBhE+E0C7/TyEzqBHkg9H8RdTo8YcH5R2RibS4jT2hSR+Q5qg77omHOcZPHB
-         pdoPsuzY3hMw+FZBJQqr/4v6MLUNP3h33NEIqlUWWztUB7uWJ6WeQQ1LktLPc+EzdcMD
-         ELsA==
-X-Forwarded-Encrypted: i=1; AJvYcCVBtlKAUR8EsJibDLlziEVE6m+AaQw5jttyRDikZ4NnIxEWeCZ+bd4zuqP/NZ5tfsAizTxo/eIWxo85tevU@vger.kernel.org, AJvYcCVchVZ6uhEL6cuZ/HETahMQiUvcAsGZm/HNQRWBwRHPJfuHTdwgJZmRI3i2zV0y4cefb6d9FmMz+lbX45gf3Nc=@vger.kernel.org, AJvYcCXchJgi/4o5Iug/BOPdtqtpP7RvU77elhU2+IoHj5mIKTwYm4QwC9/y1QLDucIqCTIqkgwCzZAmsJTig/g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMCf/TJTq9w1w+3dy64l9lr2Rdvouyps73Tm9Cf3fZjVt58eQh
-	tP7Xbto7vIRD2HrkQrHH2ZYQR081aP1ik6x4zFE4+TVcj2wgEv8rq33fW6c+4XqJ7O5DusKlemF
-	2n0lC4XfVsB1AUjzvU+tjHEnwiBs=
-X-Google-Smtp-Source: AGHT+IFLoGSwV7ic4etZ3B32N24F1Bh08Bry9PDbJ3YCptlzJ5QtwiU1BB6lm9FUoBOU4G+Sy7VYGfLYi1On4LVMMxM=
-X-Received: by 2002:a05:651c:1992:b0:2fa:e52f:4460 with SMTP id
- 38308e7fff4ca-2fb207ad4ecmr35362501fa.1.1728743157957; Sat, 12 Oct 2024
- 07:25:57 -0700 (PDT)
+	s=arc-20240116; t=1728743484; c=relaxed/simple;
+	bh=OEZ6In6GkYgQcrycvWPs1B+R/1sB9svySFgGOdmlr/U=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=LOfh7PpdKj0go+cQeypSMUZeZ+kCaHFvawR2+e0irXp/HirbFZI1XtNYO9rhG6OOPZKZ5sRP3GvyQpjZ4jeOXxWATndLlpyHCCdbXYXuBx3ICtdgXdPPX7QjEEkT8pMgiXj18A9z5nprKajgpkaBtc300Pf6P1kKr5QsyicJ27I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c4860NO7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CD1BC4CEC6;
+	Sat, 12 Oct 2024 14:31:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728743483;
+	bh=OEZ6In6GkYgQcrycvWPs1B+R/1sB9svySFgGOdmlr/U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=c4860NO71RMJTwQmRNYsGKUTHMpfZle16JeC3H+OEKKWHeJ1C4PcIaKr1iS/4DsMY
+	 jyf5iwPeiGzIRMHAsUR3swQR1z8Hj46t+gKR4Ak3OHrQXXuVawLovPXdMrag0s02nO
+	 FUTTyq2zDXO6Nx0sCHYYjQPUlT3U261MTOU4cNWeQqDq0VCGMp6KtIIupN8NGKOEtK
+	 6Df9wW0ILoW/2QiHyy5EuC4+yTZzCvAtKl/9XvB6RdLAUxswKyrV0vkHu08gi7r/i0
+	 kQ5QeRWNkr5zpDvukywruULcxOTB58xHjh8QQDkhXgt/qR+ZRbOIfPlb3V9TxHxrwu
+	 xdFIKskYzVecw==
+Date: Sat, 12 Oct 2024 09:31:19 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Subject: Re: [PATCH v2] PCI: take the rescan lock when adding devices during
+ host probe
+Message-ID: <20241012143119.GA604156@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
-In-Reply-To: <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
-From: Tamir Duberstein <tamird@gmail.com>
-Date: Sat, 12 Oct 2024 10:25:22 -0400
-Message-ID: <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Cc: Daniel Gomez <da.gomez@samsung.com>, rust-for-linux@vger.kernel.org, 
-	Fiona Behrens <me@kloenk.dev>, Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAMRc=MeUW3jsOPTxxu38+w_ps2FQFYR-PmgGY=V+vjnqNs0RYw@mail.gmail.com>
 
-On Sat, Oct 12, 2024, 09:41 Miguel Ojeda
-<miguel.ojeda.sandonis@gmail.com> wrote:
->
-> In other words, it sounds to me like the solution here is to simply
-> provide a variable with the current name as the default, and let
-> out-of-tree override that if they need, rather than query `rustc`.
+On Thu, Oct 10, 2024 at 11:17:47AM +0200, Bartosz Golaszewski wrote:
+> On Thu, Oct 3, 2024 at 10:43 AM Bartosz Golaszewski <brgl@bgdev.pl> wrote:
+> >
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > Since adding the PCI power control code, we may end up with a race
+> > between the pwrctl platform device rescanning the bus and the host
+> > controller probe function. The latter needs to take the rescan lock when
+> > adding devices or we may end up in an undefined state having two
+> > incompletely added devices and hit the following crash when trying to
+> > remove the device over sysfs:
+> >
+> > Unable to handle kernel NULL pointer dereference at virtual address 0000000000000000
+> > Internal error: Oops: 0000000096000004 [#1] SMP
+> > Call trace:
+> >   __pi_strlen+0x14/0x150
+> >   kernfs_find_ns+0x80/0x13c
+> >   kernfs_remove_by_name_ns+0x54/0xf0
+> >   sysfs_remove_bin_file+0x24/0x34
+> >   pci_remove_resource_files+0x3c/0x84
+> >   pci_remove_sysfs_dev_files+0x28/0x38
+> >   pci_stop_bus_device+0x8c/0xd8
+> >   pci_stop_bus_device+0x40/0xd8
+> >   pci_stop_and_remove_bus_device_locked+0x28/0x48
+> >   remove_store+0x70/0xb0
+> >   dev_attr_store+0x20/0x38
+> >   sysfs_kf_write+0x58/0x78
+> >   kernfs_fop_write_iter+0xe8/0x184
+> >   vfs_write+0x2dc/0x308
+> >   ksys_write+0x7c/0xec
+> >
+> > Reported-by: Konrad Dybcio <konradybcio@kernel.org>
+> > Tested-by: Konrad Dybcio <konradybcio@kernel.org>
+> > Fixes: 4565d2652a37 ("PCI/pwrctl: Add PCI power control core code")
+> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> > ---
+> 
+> It's been a week, so gentle ping - can this be picked up into v6.12?
 
-In order for this to be reasonably maintainable we'd want the variable
-to be something like DYLIB_SUFFIX so that we don't have to revisit this
-if macros are ever provided by more than one crate (or worse, have to
-provide N variables).
+I hoped we could fix the similar latent issues in other drivers, but
+yes, we can get this in v6.12.  Thanks for the hint that it should go
+there.  I'll pick it up when I return from vacation on Wednesday.
 
-If this is the preferred path, I can rework this patch in that direction.
-
-Tamir
+Bjorn
 
