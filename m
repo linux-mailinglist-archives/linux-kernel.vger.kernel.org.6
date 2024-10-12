@@ -1,220 +1,240 @@
-Return-Path: <linux-kernel+bounces-362032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362034-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D067A99B026
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:39:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 831CE99B02B
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9259D281E15
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:39:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3252810D5
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 02:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5159017BBF;
-	Sat, 12 Oct 2024 02:39:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="IHMNVQlA"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2128.outbound.protection.outlook.com [40.107.93.128])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BD08C07;
-	Sat, 12 Oct 2024 02:39:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.128
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728700782; cv=fail; b=rAT1y3DYCvEYbCq0r/j/kbGdSVvzatnDeUvJ2144zVgYo2RUbdFxm3pmtZx0fByPP9qM+5r4i8Q+4llKIqQ3vHPoL7kX7oBB2rAGCFvzsis+2iE4W4RSmlUaL9cbOpof+cMDZ/saE6E+QVLey5F2/RKYJM/HEZm1w7RQ3q+aVrw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728700782; c=relaxed/simple;
-	bh=v7+192q3QHijRfNgxajKyCHYfP+hJjp3ErLaIpktOtE=;
-	h=Message-ID:Date:Subject:To:References:Cc:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=Wjep7MVITnHCZiwAN5mHwm+xBfs89+DUS+CDOUsuR5XuuOpbQSRSUnE/8V3odviATA6MdyOTqIwpwrr5/xze0CKSoGAQOhUT+hSgAcW00rJhgB4O71APpJCBHkOEn8nXf9Nu0UfmgPxNuP+G9MnkbN8mAul1IGh9ACg6v9kgsUc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=IHMNVQlA; arc=fail smtp.client-ip=40.107.93.128
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ddQfHrLMf1ATxuBi8iC6WbD7aw2NusrnTTWj1n7Jdkm6ddnhpQ12fErey7EbcQB2fICH/X7pTVgav52nNRdrpm2xSNnUEPrLirmyPFm1/jacxrIl/Q9LClrha/1rGorsQ7DqfxHwVqV0KeMC09hB6qQeY4ed8A1LHKiKc062OVlCz0ERlYhewWa/MShCgFrxP0/It/gA5VcTP36qDAz6EP6WN/1ZpLFjZrSWh0V2Hvfpe7EudguVHBJ9XCW8XJsoISk+TkjXfwcuFDu+bjje3e5W6QyP3Y18w+PVPoTuNw8XwaueBLyUUm+qH9O05rYrt8uqQ1aB/xhkXaSiKEPZaw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=yw4+x+Yb7gfk1pE0gnfBi4UFlYXqUWvpsOpFQmOl4Wk=;
- b=cpJgLNBF4UxhfW/JPjxmhLHXp1Bf/KtkLPMFuLfX7jCIjg0jB+kxyB+X//5zuZNBQfSc5MInBgqr8ELWbZLmhqy0ZgdhpsdZT08vf9y/6s0vBro6w+AVR9tsVCARk2dNZ1pV4odXfebOdaXA2GZ9otIEsQNghkW2MKKhAqMHRkCxBW68MdmTVY9vekUFgwdFgCKJJiGQfNF6J1G0aw2c4Vae4TyeIre9yqEmLBhs55xCliunCgRs0FS17Wz1K4iJVJ+uMucVGcwgbYSw8X28D4yez5mxw4nQ9hKqkeJZYgc5gOv1cqaR3hlActT4opZj+eCQRWbpUwxigHgpWIMe1Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
- header.from=os.amperecomputing.com; dkim=pass
- header.d=os.amperecomputing.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=os.amperecomputing.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=yw4+x+Yb7gfk1pE0gnfBi4UFlYXqUWvpsOpFQmOl4Wk=;
- b=IHMNVQlA8+XQni9g6WtgoHYsD5xWKrfXN/grO27ImF++DxLz4L7YYFS/a1u1gCro9YbA0uqiTZiCGeK5PzMecRjnIr1yRLlgU9KefZNzf90hF2MSp1nluiTTY8U1CKeqc2qzrFYgV/Sr25sNnrwM1FoLXYLgV3fURIrlLhSOYa8=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
-Received: from SJ0PR01MB6445.prod.exchangelabs.com (2603:10b6:a03:2a1::14) by
- DS0PR01MB8011.prod.exchangelabs.com (2603:10b6:8:150::12) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.7982.34; Sat, 12 Oct 2024 02:39:38 +0000
-Received: from SJ0PR01MB6445.prod.exchangelabs.com
- ([fe80::223:9849:bfff:b119]) by SJ0PR01MB6445.prod.exchangelabs.com
- ([fe80::223:9849:bfff:b119%5]) with mapi id 15.20.7982.033; Sat, 12 Oct 2024
- 02:39:35 +0000
-Message-ID: <9782df45-b0da-46fa-9e0d-1c8f8b0e05d0@os.amperecomputing.com>
-Date: Sat, 12 Oct 2024 10:39:45 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] net/mlx5: Node-aware allocation for mlx5_buf_list
-To: Saeed Mahameed <saeed@kernel.org>
-References: <20240906061115.522074-1-adamli@os.amperecomputing.com>
- <ZuCv8VyJqoChZLIx@x130>
-Content-Language: en-US
-Cc: leon@kernel.org, tariqt@nvidia.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
- netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org, patches@amperecomputing.com,
- "Lameter, Christopher" <cl@os.amperecomputing.com>,
- shijie@os.amperecomputing.com, cl@linux.com,
- Adam Li <adam.li@amperecomputing.com>
-From: Adam Li <adamli@os.amperecomputing.com>
-In-Reply-To: <ZuCv8VyJqoChZLIx@x130>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI2PR01CA0053.apcprd01.prod.exchangelabs.com
- (2603:1096:4:193::7) To SJ0PR01MB6445.prod.exchangelabs.com
- (2603:10b6:a03:2a1::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AABB917991;
+	Sat, 12 Oct 2024 02:40:32 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 808C264A
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:40:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728700832; cv=none; b=mdaEnZjoxWxlpTTZsdyManul5tAWcZqF3VmFzSVgqUgCDCdTTYakup6MO0/906Yx7zskzYTaII7hKXlCgqoxlQM5ELot6htfFsGhE5TnFV6IxkKFG70fxmAXFMDIsIqiB9SbpMWISJmoFltxqm1UBxChA/lxEWQoYmdhW2t7JNw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728700832; c=relaxed/simple;
+	bh=MZoGFxD0+h1bTVN1oZ1B2Ra3agFKg88pWhWyB3aZYDk=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=uabJTPM01kkJotC1lgTC14rnTiV1jrgiOmK79qrnGrwqcJFMY3BErCVew8f7B2llaGYzr+OrB76Q6qFcNfsP2lGkDnkg5D8+8f2flTsZZRjVC/tl3SE236l455QVAxB8liJFy3CxkNgy6d5x2e6o3nZYWM+Qpc5njoXVugchA9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8BxHLOZ4QlnQmgUAA--.31360S3;
+	Sat, 12 Oct 2024 10:40:25 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowMBxXuSV4QlnS54kAA--.51895S3;
+	Sat, 12 Oct 2024 10:40:23 +0800 (CST)
+Subject: Re: [PATCH 1/4] LoongArch: Set pte entry with PAGE_GLOBAL for kernel
+ space
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>, Barry Song <baohua@kernel.org>,
+ loongarch@lists.linux.dev, linux-kernel@vger.kernel.org,
+ kasan-dev@googlegroups.com, linux-mm@kvack.org
+References: <20241010035048.3422527-1-maobibo@loongson.cn>
+ <20241010035048.3422527-2-maobibo@loongson.cn>
+ <CAAhV-H4q_P1HL74k5k+er9QEvZjMaa2kTYz8N+7aJ1vDii=GKQ@mail.gmail.com>
+From: maobibo <maobibo@loongson.cn>
+Message-ID: <56c7ae02-1426-b503-9afa-5a87a2b4bd21@loongson.cn>
+Date: Sat, 12 Oct 2024 10:40:03 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ0PR01MB6445:EE_|DS0PR01MB8011:EE_
-X-MS-Office365-Filtering-Correlation-Id: 2db3252b-a6f0-4e74-a170-08dcea671bd9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?eUJmZnRqZ0xZU3YrZE04NCtWQ2pYMEZKMDZPQjNQRjBGZDFYU3dSZTA3SU8y?=
- =?utf-8?B?SGRwVEJZM3ZTSjNhT0crWXpicEZsbmdWMlBGVkZaTXJTUDRzWkc0R1hLeDhC?=
- =?utf-8?B?U2l6cTQrekRLYkcxaU9vemdnVWZwV0dlTnRTbnhJS2x2ZVFpdHgwR1lBUUFK?=
- =?utf-8?B?VzFCai83aVVGWnVjcm5XRGIwNWUyZ0NVVnVBMWtXMDg0dFc4K0RxYzJ3WHJl?=
- =?utf-8?B?Rm5OQjhzb2Z3OVpaZ0RFRERVVzc5WjlBSVVEWi93VzVCY3pmajNGbmt6aXVq?=
- =?utf-8?B?QmVPcDl4Ykt1WTlhaGpvdWNqOGJETHlNQTY3WWZEQmFGRklCVzQ5eUU0aUJY?=
- =?utf-8?B?bWQ1am9HdmRyczdTandZbXJPYlFmWnhZWHRicTRob1d3Q1o1bGF4bE5vdzFG?=
- =?utf-8?B?S1kzVkFZQVo4NTJ2bDQ3R25EQ1F3eldjekowVUR3cVhSUWNVc3N4NXpSL3dv?=
- =?utf-8?B?ZXVxaVRWZk5LYklXQ1FjODl0MmdlV1hxYjFxSzVyQ0xsblhjeUFGZ0tKaEJF?=
- =?utf-8?B?b0NPLzFoNlRnbTB4RVhjUlVJQVdkTjBQOHNNcGtLWU05Z2lwS3dqQTZBRGk2?=
- =?utf-8?B?TGFMUjZnUTd5cWFWWXVJYkhOZlhjOUpVeE5aQ1JVek9lWGl3NGtMOHFyaWxu?=
- =?utf-8?B?WmtwN3U2ZHdCUUdRcm8rS2dIbVVGZjFROHpNem5HN0xCZklUY3RrM0tGcnBK?=
- =?utf-8?B?ZWtkN1c3ODV0bytxeHhDRWNISTFacDlmTm1mNlpTSmY3bjZmbndmN3R4eTdM?=
- =?utf-8?B?SFBoeEcwZDI3bzBQSFpEQndYclFMQXVqRGd3STFjRWprMm5NSjEzQU1sR2dh?=
- =?utf-8?B?aVF3VE5HbFJ6Mm4ra3ZaTTB6bWJvMlhDV3REU1VmV29lZ3E1b3FBc0hvOXpC?=
- =?utf-8?B?U3pubGJha2xhWEliTnVSeDZPRDV2UWY2V1RtRVRzY3drV0ppWGI0TXlzbTNX?=
- =?utf-8?B?SkJGb3M1ZDBVbXZONkVlK0hha1VrR0NmZndIbkpjaHJMZlBMN3pzZGxKTFV2?=
- =?utf-8?B?Y1k3VituQzNVL3JYTktWRHc2RGZvT1c3Nk9Wc0hZQkRGZHBEdERrcnYxb1Zx?=
- =?utf-8?B?ek1YUVJaTnZDYmpRZXcxcGpoOEcrSDFnZUR6ajBlaGFYZDhhZHBjS205dkFx?=
- =?utf-8?B?TklhUW9HbFZBZEpCM1BYSitKWWtPVTZlUTNGMEQwaS9SNndhY0duRnZaQ3U0?=
- =?utf-8?B?Y2lnc21tWmRXQUJSb0JoUk1VUnNCdjUyYkZXWDkvZUdQcDJxK2xYYmhxd2ZH?=
- =?utf-8?B?RittMzRYVkFNVEVldytPL3NWRGtJUlFpNzlOT213RTdGc3l0UXpwemE1NzE2?=
- =?utf-8?B?YnZ5Wkc0VXpMZVlsNkd6N3Vwdy81ZDlOSWxBYjZ0SlZOUnQzeGVXbEJrNkc4?=
- =?utf-8?B?Yk9zZExjVWo4TG5Zbk44LzFTYWdDKzVQY2RjMHRIRENYUUZJcUZDenVQWGFp?=
- =?utf-8?B?K1VRaHhDbHJreHlydmRYSlZGU2o3YWcyR0NaZ2lJK01nZlNiUXNtQ01aeFdC?=
- =?utf-8?B?QWg5YW5mUlFaMWlka2hPc3FCYXJuN3dVVTcrb2JCcHBLUjhhdTRtaDdDbE50?=
- =?utf-8?B?cnRkV2ZaMHNkZmtxMk5va2xjeE43K3FzY216Nzh2dUFic0sraDVSdmlxbCtG?=
- =?utf-8?B?L3NDTElLSU14Sk12OEVRV0dNQVpwM3RaOVFhTkFWOUxqZHdPbnlEdFJvVVRT?=
- =?utf-8?B?d1MrUGFLc2Mza2xBbldsd1hNRjVGK0ttMjVsWHlTTDFrTVpETWpkRjVBPT0=?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR01MB6445.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?RHdpWUF6UWtYcFBjMDE2dWVaRWtDRnNZRnFDeWMwb1UzZDhLcG9zcjJYRGZO?=
- =?utf-8?B?ZVB0MFRpOTlORlRhVzQwcGY5WWlHQmg3d2VjRjIxVDdjalNaTm5EVExmVGJx?=
- =?utf-8?B?UW5yWHJzWHJoS3RFb3NTWkh5cHRaSnBJdEIxWnZpNlBGSFRIOWY2cDV6T2tp?=
- =?utf-8?B?ckZnNERVS0dKc2pvVUNxK0Y2R1NIbFNJMENlSm9Bd29PS3k4MnNlbHQ3T0Ns?=
- =?utf-8?B?YWxJNWF0dndxVzg0a0hHRk9ySTNFaHZzMWg4d2hWRS9yMWppaUp2U25leEht?=
- =?utf-8?B?OE5YRUduN0pObFdFbDMvdTk3S281SUJFazhuWVF1clN5dFpOdjhEWFNtbWVI?=
- =?utf-8?B?RDZ1MHJwbDk0ZE8yaUVJMG9nT2JEV2FsNFRKRGNhRm83ODkwOEN2ZHlhc2JT?=
- =?utf-8?B?QkhQZWdOM1lRaFNGOTFXSm1UemJyQzJwK0ZmbStYY2J4Y3h6VWNTM1RWQUdW?=
- =?utf-8?B?cWYvQ29BSDBXSWZDTjZKWjYrWFRKei95NTJUU052QWEwZ1IzNTVxckkrNU1x?=
- =?utf-8?B?dW9La1VsbUhYcjVmRmw2NHdZck01MjFsUDJZenMrYzVQRDFsMElDQUo5MWEz?=
- =?utf-8?B?NDg3U01zamRQcmVQUm1KbVgwQkI2aEQ3WTNBMXFvMjZ4UnM5QXFQYTZ4RFZM?=
- =?utf-8?B?cVNOeW5INXBRTWN5RlpnM2tiUG53K1AxbG5lR0RpWGVIYmVJYVhva0JIOHlJ?=
- =?utf-8?B?ajcweWhvNklaSm1RMkYraVRiNHBzVGl0MGowQnNXSklEODVpQWJDcUg2OWRw?=
- =?utf-8?B?Q1I0SDJ4VktQaHpLYzdFeVY0SDZtYVMycDYvNTFhTkRMNW5hZFlRcWpWUm9t?=
- =?utf-8?B?RG9yTEY5SEhNaFpxc0F4OG1Fb210ZEQwTHJvS0d5dDJUTkRWZTZMb1c5WTV2?=
- =?utf-8?B?RHNiV0VaRjd2eEM0WUUzNnFHM002THErWmk1RXlIY3Y3YUd0emVKbmtpR0R1?=
- =?utf-8?B?REF4TjBDQW9tRG50VVpPVTZRU3hZdHZpZCswY2dWUEpTNDd3QjBoN29DWWk2?=
- =?utf-8?B?T1NXdzhBc3g2cXdkZndnTUJQNDVCd1JRa1RrbmkxZHRTRFArQjh1KzI0c243?=
- =?utf-8?B?bFF4WmsySkNndWtpZmhPTjBBd1VidldDNE1rMzRWZm0vbktwK0U1d1huTjFE?=
- =?utf-8?B?c1hRUm1KM3NMUGNWTW91c1daaFlEckFIUlZaYUgzSGExemJkTURVQk9xcE1V?=
- =?utf-8?B?ZCsyNGxDQWN5b2RWYlJFb2lWV2pyeVNQdlM5NlZaVncxKzAxY0I4RWNCbC82?=
- =?utf-8?B?ZndSb1ZKa1dNSmV2emFEUWp1MkFsTUp1MlNrdU81RWJHSncwMHA1S0l6UnUy?=
- =?utf-8?B?eE50WnIycE84N0VJTDl2WU5zVmZUNkFoeXdrU0JVZ0E1TFpIT0JhNWk0OElj?=
- =?utf-8?B?RC9BU3QzYnBUM1lZeUxDZVhIK3hvOTRGN0hXMElITUJNWTRXVyt2WlBiN0VL?=
- =?utf-8?B?UHhuWWVkWVdldm51N3lZQXZVTkJNbDFOMDVRQnpYOXBaK3RTU3I3VStEWjVD?=
- =?utf-8?B?bHo1R1ZKcTNSaEJEMk5kY1dpMjd1SU5SWWhrS2pxRnZzbGVHcThMSWNlckFT?=
- =?utf-8?B?Mmx6RXZ4bWYrTm9OdUVLRUtsbWo0LzFXQWtvQVlyQzdNRjJlRG1SZXNDSVpD?=
- =?utf-8?B?d0NNekxFTG5DdHplOWFzUlZydmhSKzUzY2NOZE02K0RWdC9veUtxMVp0T0lq?=
- =?utf-8?B?UDd1dkVCUXFLKzY2eExqVE5IMXpTSTdJSVZVemxCUmZBaDFtSjUrWXVLS2U4?=
- =?utf-8?B?ckwzNWs2NTBaUTV2YUVIRGJIU3ljUUNrczZyK3VMV1E0OGxidlBZUGRkT3lr?=
- =?utf-8?B?ZjZkZE5VRFhCR3JQMitoRWZOSEkzNzlsZ2Q1QlVUbEh6QllURFhGcklTTEph?=
- =?utf-8?B?eUkvUWVpNUVMQVJsTm96VmhOMGZLZU9RZVZqN0Q0R2I0VDArbzZQN1lyN2Nt?=
- =?utf-8?B?NndZVi82TnNpcW10eFE1MEFZOW1ickFDZTFKTFFRY1ZPb2w2VXRpU2NsSU9W?=
- =?utf-8?B?NkdOMHp0L3ZRMnZkYWJqRGZXd3VKcjlYclcySFoxZkxVcnE4RnpuUjlDNHlR?=
- =?utf-8?B?Vys4b29YSXNvUGdJSnVsUXlORmR0MVdYeFZqNDBMNllLUHo1di9oSlpZbk9D?=
- =?utf-8?B?U3lqNHBuZ3hFdWwwTmtOMW9Hd3hrYjFFNlJZTkJaSUxITlNSTXMxVXlQZDhn?=
- =?utf-8?Q?osp2pUb2njSCWbuj5cysCvI=3D?=
-X-OriginatorOrg: os.amperecomputing.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2db3252b-a6f0-4e74-a170-08dcea671bd9
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR01MB6445.prod.exchangelabs.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 02:39:35.2962
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: HCv1coy8azckK+dbH7/I2lzNaM8ywlXYliUwOMwnSk91hEeujm0NZv8YSGuaZ/w10Vi2FcN5HnqMw7liurN36P8jeiK1a8zU6xiNio+apOe6G14AQ7BXaawlrbSP1WmS
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR01MB8011
+In-Reply-To: <CAAhV-H4q_P1HL74k5k+er9QEvZjMaa2kTYz8N+7aJ1vDii=GKQ@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowMBxXuSV4QlnS54kAA--.51895S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3XryDZrW3Cr4kCr48Kw1UCFX_yoW7ZrWDpr
+	9rAFn5WF48Wr97Aa97tF1qgr15Xws3KF42gF1akFWrAFnF9r1kWr1kG3sxuFy8XayUCayF
+	9r1rKa43XF4UtagCm3ZEXasCq-sJn29KB7ZKAUJUUUU7529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUPYb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r106r15M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_JFI_Gr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_
+	Gr0_Gr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07AIYI
+	kI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUAVWU
+	twAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMx
+	k0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_JF0_Jw1l42xK82IYc2Ij64vIr41l
+	4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxV
+	WUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIYrxkI
+	7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r
+	1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI
+	42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jOxhLUUUUU=
 
-Hi Saeed,
+Huacai,
 
-Very sorry for the slow reply.
-
-On 9/11/2024 4:45 AM, Saeed Mahameed wrote:
-> On 06 Sep 06:11, Adam Li wrote:
->> Allocation for mlx5_frag_buf.frags[i].buf is node-aware.
->> Make mlx5_frag_buf.frags allocation node-aware too.
+On 2024/10/12 上午10:15, Huacai Chen wrote:
+> Hi, Bibo,
+> 
+> On Thu, Oct 10, 2024 at 11:50 AM Bibo Mao <maobibo@loongson.cn> wrote:
 >>
-> 
-> Why ? buf is accessed by the device but "frags" only accessed by CPU.
-> 
-Yes, this patch hopes to minimize CPU cross node memory access.
-I observed 'frags' is accessed on RX path from mlx5e_alloc_rx_mpwqe().
+>> Unlike general architectures, there are two pages for one TLB entry
+>> on LoongArch system. For kernel space, it requires both two pte
+>> entries with PAGE_GLOBAL set, else HW treats it as non-global tlb,
+>> there will be potential problems if tlb entry for kernel space is
+>> not global. Such as fail to flush kernel tlb with function
+>> local_flush_tlb_kernel_range() which only flush tlb with global bit.
+>>
+>> Here function kernel_pte_init() is added, it can be used to init
+>> pte table when it is created, so the default inital pte is
+>> PAGE_GLOBAL rather than zero at beginning.
+> I think kernel_pte_init() is also needed in zero_pmd_populate() in
+> mm/kasan/init.c. And moreover, the second patch should be squashed in
+yes, it is needed in zero_pmd_populate() in mm/kasan/init.c, will add it
+in next version.
 
->> Signed-off-by: Adam Li <adamli@os.amperecomputing.com>
->> Reviewed-by: Christoph Lameter (Ampere) <cl@linux.com>
+> this one because they should be as a whole. Though the second one
+> touches the common code, I can merge it with mm maintainer's acked-by.
+Sure, will merge it with the second one into one patch.
+
+Regards
+Bibo Mao
+> 
+> 
+> Huacai
+> 
+>>
+>> Kernel space areas includes fixmap, percpu, vmalloc and kasan areas
+>> set default pte entry with PAGE_GLOBAL set.
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
 >> ---
->> drivers/net/ethernet/mellanox/mlx5/core/alloc.c | 4 ++--
->> 1 file changed, 2 insertions(+), 2 deletions(-)
+>>   arch/loongarch/include/asm/pgalloc.h | 13 +++++++++++++
+>>   arch/loongarch/include/asm/pgtable.h |  1 +
+>>   arch/loongarch/mm/init.c             |  4 +++-
+>>   arch/loongarch/mm/kasan_init.c       |  4 +++-
+>>   arch/loongarch/mm/pgtable.c          | 22 ++++++++++++++++++++++
+>>   5 files changed, 42 insertions(+), 2 deletions(-)
 >>
->> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/alloc.c b/drivers/net/ethernet/mellanox/mlx5/core/alloc.c
->> index 6aca004e88cd..fda17b41ff17 100644
->> --- a/drivers/net/ethernet/mellanox/mlx5/core/alloc.c
->> +++ b/drivers/net/ethernet/mellanox/mlx5/core/alloc.c
->> @@ -79,8 +79,8 @@ int mlx5_frag_buf_alloc_node(struct mlx5_core_dev *dev, int size,
->>     buf->size = size;
->>     buf->npages = DIV_ROUND_UP(size, PAGE_SIZE);
->>     buf->page_shift = PAGE_SHIFT;
->> -    buf->frags = kcalloc(buf->npages, sizeof(struct mlx5_buf_list),
->> -                 GFP_KERNEL);
->> +    buf->frags = kcalloc_node(buf->npages, sizeof(struct mlx5_buf_list),
->> +                  GFP_KERNEL, node);
->>     if (!buf->frags)
->>         goto err_out;
+>> diff --git a/arch/loongarch/include/asm/pgalloc.h b/arch/loongarch/include/asm/pgalloc.h
+>> index 4e2d6b7ca2ee..b2698c03dc2c 100644
+>> --- a/arch/loongarch/include/asm/pgalloc.h
+>> +++ b/arch/loongarch/include/asm/pgalloc.h
+>> @@ -10,8 +10,21 @@
 >>
->> -- 
->> 2.25.1
+>>   #define __HAVE_ARCH_PMD_ALLOC_ONE
+>>   #define __HAVE_ARCH_PUD_ALLOC_ONE
+>> +#define __HAVE_ARCH_PTE_ALLOC_ONE_KERNEL
+>>   #include <asm-generic/pgalloc.h>
 >>
+>> +static inline pte_t *pte_alloc_one_kernel(struct mm_struct *mm)
+>> +{
+>> +       pte_t *pte;
+>> +
+>> +       pte = (pte_t *) __get_free_page(GFP_KERNEL);
+>> +       if (!pte)
+>> +               return NULL;
+>> +
+>> +       kernel_pte_init(pte);
+>> +       return pte;
+>> +}
+>> +
+>>   static inline void pmd_populate_kernel(struct mm_struct *mm,
+>>                                         pmd_t *pmd, pte_t *pte)
+>>   {
+>> diff --git a/arch/loongarch/include/asm/pgtable.h b/arch/loongarch/include/asm/pgtable.h
+>> index 9965f52ef65b..22e3a8f96213 100644
+>> --- a/arch/loongarch/include/asm/pgtable.h
+>> +++ b/arch/loongarch/include/asm/pgtable.h
+>> @@ -269,6 +269,7 @@ extern void set_pmd_at(struct mm_struct *mm, unsigned long addr, pmd_t *pmdp, pm
+>>   extern void pgd_init(void *addr);
+>>   extern void pud_init(void *addr);
+>>   extern void pmd_init(void *addr);
+>> +extern void kernel_pte_init(void *addr);
 >>
-
-Thanks,
--adam
+>>   /*
+>>    * Encode/decode swap entries and swap PTEs. Swap PTEs are all PTEs that
+>> diff --git a/arch/loongarch/mm/init.c b/arch/loongarch/mm/init.c
+>> index 8a87a482c8f4..9f26e933a8a3 100644
+>> --- a/arch/loongarch/mm/init.c
+>> +++ b/arch/loongarch/mm/init.c
+>> @@ -198,9 +198,11 @@ pte_t * __init populate_kernel_pte(unsigned long addr)
+>>          if (!pmd_present(pmdp_get(pmd))) {
+>>                  pte_t *pte;
+>>
+>> -               pte = memblock_alloc(PAGE_SIZE, PAGE_SIZE);
+>> +               pte = memblock_alloc_raw(PAGE_SIZE, PAGE_SIZE);
+>>                  if (!pte)
+>>                          panic("%s: Failed to allocate memory\n", __func__);
+>> +
+>> +               kernel_pte_init(pte);
+>>                  pmd_populate_kernel(&init_mm, pmd, pte);
+>>          }
+>>
+>> diff --git a/arch/loongarch/mm/kasan_init.c b/arch/loongarch/mm/kasan_init.c
+>> index 427d6b1aec09..34988573b0d5 100644
+>> --- a/arch/loongarch/mm/kasan_init.c
+>> +++ b/arch/loongarch/mm/kasan_init.c
+>> @@ -152,6 +152,8 @@ static void __init kasan_pte_populate(pmd_t *pmdp, unsigned long addr,
+>>                  phys_addr_t page_phys = early ?
+>>                                          __pa_symbol(kasan_early_shadow_page)
+>>                                                : kasan_alloc_zeroed_page(node);
+>> +               if (!early)
+>> +                       kernel_pte_init(__va(page_phys));
+>>                  next = addr + PAGE_SIZE;
+>>                  set_pte(ptep, pfn_pte(__phys_to_pfn(page_phys), PAGE_KERNEL));
+>>          } while (ptep++, addr = next, addr != end && __pte_none(early, ptep_get(ptep)));
+>> @@ -287,7 +289,7 @@ void __init kasan_init(void)
+>>                  set_pte(&kasan_early_shadow_pte[i],
+>>                          pfn_pte(__phys_to_pfn(__pa_symbol(kasan_early_shadow_page)), PAGE_KERNEL_RO));
+>>
+>> -       memset(kasan_early_shadow_page, 0, PAGE_SIZE);
+>> +       kernel_pte_init(kasan_early_shadow_page);
+>>          csr_write64(__pa_symbol(swapper_pg_dir), LOONGARCH_CSR_PGDH);
+>>          local_flush_tlb_all();
+>>
+>> diff --git a/arch/loongarch/mm/pgtable.c b/arch/loongarch/mm/pgtable.c
+>> index eb6a29b491a7..228ffc1db0a3 100644
+>> --- a/arch/loongarch/mm/pgtable.c
+>> +++ b/arch/loongarch/mm/pgtable.c
+>> @@ -38,6 +38,28 @@ pgd_t *pgd_alloc(struct mm_struct *mm)
+>>   }
+>>   EXPORT_SYMBOL_GPL(pgd_alloc);
+>>
+>> +void kernel_pte_init(void *addr)
+>> +{
+>> +       unsigned long *p, *end;
+>> +       unsigned long entry;
+>> +
+>> +       entry = (unsigned long)_PAGE_GLOBAL;
+>> +       p = (unsigned long *)addr;
+>> +       end = p + PTRS_PER_PTE;
+>> +
+>> +       do {
+>> +               p[0] = entry;
+>> +               p[1] = entry;
+>> +               p[2] = entry;
+>> +               p[3] = entry;
+>> +               p[4] = entry;
+>> +               p += 8;
+>> +               p[-3] = entry;
+>> +               p[-2] = entry;
+>> +               p[-1] = entry;
+>> +       } while (p != end);
+>> +}
+>> +
+>>   void pgd_init(void *addr)
+>>   {
+>>          unsigned long *p, *end;
+>> --
+>> 2.39.3
+>>
 
 
