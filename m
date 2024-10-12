@@ -1,108 +1,106 @@
-Return-Path: <linux-kernel+bounces-362433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A39899B4F2
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:48:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF8E499B4F6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:50:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD9F3283989
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:48:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 598D9B216CA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 056551865E5;
-	Sat, 12 Oct 2024 12:48:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE99018453C;
+	Sat, 12 Oct 2024 12:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q7rOlrTF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIptPkVk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4991F1F5FA;
-	Sat, 12 Oct 2024 12:48:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 394CC1F5FA;
+	Sat, 12 Oct 2024 12:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728737326; cv=none; b=US+Nh5BgSMrw5u/qOLOLz5L6rHy6TI2fTMHH29Enbr0MyYN0HmrmKehLwztv0cR60T3ao9OlbnhHKDF8l5uGV3bZacargtIW3SEVyn5SWpnrGLmHg5fE1mCXvgV84T1lL9NAR42RdD6M/fzpPcLmGhROPZGvvGfeQfChZkgYBf4=
+	t=1728737445; cv=none; b=KhH4xaT50txis1GVSScijZYGKUga2XWK/61T4mprUVNljJxyXpxjxYZAhRoBHVlo/vTFh6BY2xnDvhzWyhFkg+f6mAP0fJIbP4t6hvZ+pFdgdv+Q/IIMZCxcZ/qCWFeBAHeO77jRSF2UqFdFJT/KjSIGf1Qed1zuInTBa14y9z8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728737326; c=relaxed/simple;
-	bh=kEHSPvWvZBqgdTZFy+tP0oWL6gH6iFh2YX2nHzfWWqM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=j3wd28P88JWXdidHI/aAEfCDObyU0vpx4EsMUUczZfWnh765Ueq1qj6NK9gwD5sd49pTFI1MbIgrC65FNT5aXK/d1r7A/PUG3bQTyHPLLIT38rZqjhbYmBD+y7v3dbDnxuS2HoextnW3uDnsIM+f0fgUASEWLOCIyTGH58iCXYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q7rOlrTF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6A749C4CEC6;
-	Sat, 12 Oct 2024 12:48:38 +0000 (UTC)
+	s=arc-20240116; t=1728737445; c=relaxed/simple;
+	bh=v8NCU068r9dRn1DQIRAWChXlgs5/3w1Xkzg3alhshIk=;
+	h=From:To:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=MmqNUqIk4HFSSRTY6VbnR4p7QJdKd1Km08vK5dsY2TZokRmiEqoIPx19dBFplhiJjdqPhIXnlcKLGf91Mdlrwy2SZ+bWau7tDEkdkmSOHpRjIayXcaJhqpSQkjmPCSoKjHgLkRBbOO0zVZZSq5kbPUyK0psFVlHxdbd0Qxy8VDM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIptPkVk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7E4AC4CEC6;
+	Sat, 12 Oct 2024 12:50:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728737325;
-	bh=kEHSPvWvZBqgdTZFy+tP0oWL6gH6iFh2YX2nHzfWWqM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q7rOlrTFiXnLisjmjCE7GIIup2AbY82CuRDY4hyYlMPLFUSbKgEv1aAf4TNfH4a+9
-	 wOPTir+U+zi9juEBWzdH5N6wMSRLbBJHWCR7LWsdry3ta0vuk+hYgfh0kK69eyI+YG
-	 7FpmkVNM0iBNY/yA2swQGaAYev87YBX6cs6xYQJvQUHqpaH+Si6WiU/iEntw+/+Q6u
-	 1KtR+/NS2GW25tL0vjLBr7VB19p457skL8zJnypB4fJsznhldjzV06KO91+mYSOezg
-	 ZpLIqo9MjvDDr3yBd7YXN7MORvMhc1j8sygpIQqN91TavjFt8keqxR3SlEocElxJlj
-	 MBVo2ypKDoutw==
-Date: Sat, 12 Oct 2024 13:48:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Nuno =?UTF-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Guillaume Stols <gstols@baylibre.com>, Uwe =?UTF-8?B?S2xlaW5lLUvDtm5p?=
- =?UTF-8?B?Zw==?= <ukleinek@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Rob
- Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
- Dooley <conor+dt@kernel.org>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>,
- Jonathan Corbet <corbet@lwn.net>, linux-pwm@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-fbdev@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-doc@vger.kernel.org, aardelean@baylibre.com, dlechner@baylibre.com,
- jstephan@baylibre.com, Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Subject: Re: [PATCH v4 8/8] iio: adc: ad7606: Disable PWM usage for non
- backend version
-Message-ID: <20241012134833.31531e18@jic23-huawei>
-In-Reply-To: <bff897a52650dbd499a83d955645cbc2290f80ce.camel@gmail.com>
-References: <20241009-ad7606_add_iio_backend_support-v4-0-6971a8c0f1d5@baylibre.com>
-	<20241009-ad7606_add_iio_backend_support-v4-8-6971a8c0f1d5@baylibre.com>
-	<bff897a52650dbd499a83d955645cbc2290f80ce.camel@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=k20201202; t=1728737444;
+	bh=v8NCU068r9dRn1DQIRAWChXlgs5/3w1Xkzg3alhshIk=;
+	h=From:To:In-Reply-To:References:Subject:Date:From;
+	b=EIptPkVkRSmm/GUI3d9hQ5wMrt2rbjdH63dw8268TGBhzLxitDTkOFy5aHDLDY5pk
+	 Dn1ZOlGIRRf+S55RhnHmr9W+YDDuUmaiWnSOAnHp6NyYVAiCfk8jJ4UJTupIx08RKM
+	 vbwiZolNs2DVrbm8UmElREWMuIH4quCjSEGpuGg62URhot6Sxp4iKMcMkvj6xHOUCR
+	 5Nw3IrtffKh3gAm0/BtXW3Lz2rt01ZGBtJnjgGOKFWyrnXi9CCmdCgms9wFeUM4yac
+	 RdBrjqb4sUcXSr4en4tI+OdMK+nLb3iB5YxnyGD9e8HWn3oOFMIIBQQBdUSQmh7nLO
+	 TL5AxSfxFoW3Q==
+From: Mark Brown <broonie@kernel.org>
+To: shengjiu.wang@gmail.com, Xiubo.Lee@gmail.com, festevam@gmail.com, 
+ nicoleotsuka@gmail.com, lgirdwood@gmail.com, perex@perex.cz, tiwai@suse.com, 
+ alsa-devel@alsa-project.org, linuxppc-dev@lists.ozlabs.org, 
+ linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ chancel.liu@nxp.com, Shengjiu Wang <shengjiu.wang@nxp.com>
+In-Reply-To: <1728460004-364-1-git-send-email-shengjiu.wang@nxp.com>
+References: <1728460004-364-1-git-send-email-shengjiu.wang@nxp.com>
+Subject: Re: [PATCH 0/2] ASoC: imx-card: add cs42888 codec support
+Message-Id: <172873744192.3950734.11628347626617222095.b4-ty@kernel.org>
+Date: Sat, 12 Oct 2024 13:50:41 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.15-dev-99b12
 
-On Wed, 09 Oct 2024 16:45:40 +0200
-Nuno S=C3=A1 <noname.nuno@gmail.com> wrote:
+On Wed, 09 Oct 2024 15:46:42 +0800, Shengjiu Wang wrote:
+> add cs42888 codec support
+> 
+> Chancel Liu (2):
+>   ASoC: imx-card: Set mclk for codec
+>   ASoC: imx-card: Add CS42888 support
+> 
+> sound/soc/fsl/imx-card.c | 59 +++++++++++++++++++++++++++++++++++-----
+>  1 file changed, 52 insertions(+), 7 deletions(-)
+> 
+> [...]
 
-> On Wed, 2024-10-09 at 09:19 +0000, Guillaume Stols wrote:
-> > Since the pwm was introduced before backend, there was a mock use, with
-> > a GPIO emulation. Now that iio backend is introduced, the mock use can
-> > be removed.
-> >=20
-> > Signed-off-by: Guillaume Stols <gstols@baylibre.com>
-> > --- =20
->=20
-> Maybe this was agreed on the previous iterations but I wonder if we shoul=
-dn't just
-> bring PWM support in the same patch as backend support is added...
->=20
+Applied to
 
-I can't remember why we ended up in this position (might have been me
-who asked for it!) but I'm fine with the logical steps we have in the
-series, and it will all merge together. So probably not worth rethinking
-now!
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
 
-I took another look and other than the stuff Nuno has raised this series
-looks good to me.
+Thanks!
 
-Figures crossed for v5 :)
+[1/2] ASoC: imx-card: Set mclk for codec
+      commit: 892373e4de626c61e91816e3d3970d82beb50c4b
+[2/2] ASoC: imx-card: Add CS42888 support
+      commit: b39eec95b84d5dc326c3d7c89e4e08b898dbc73c
 
-Jonathan
+All being well this means that it will be integrated into the linux-next
+tree (usually sometime in the next 24 hours) and sent to Linus during
+the next merge window (or sooner if it is a bug fix), however if
+problems are discovered then the patch may be dropped or reverted.
 
+You may get further e-mails resulting from automated or manual testing
+and review of the tree, please engage with people reporting problems and
+send followup patches addressing any issues that are reported if needed.
 
-> - Nuno S=C3=A1
->=20
->=20
->=20
+If any updates are required or you are submitting further changes they
+should be sent as incremental updates against current git, existing
+patches will not be replaced.
+
+Please add any relevant lists and maintainers to the CCs when replying
+to this mail.
+
+Thanks,
+Mark
 
 
