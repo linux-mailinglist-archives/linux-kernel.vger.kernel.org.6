@@ -1,187 +1,83 @@
-Return-Path: <linux-kernel+bounces-362472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBB3B99B564
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:15:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8979599B573
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:17:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC1791C21AF5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 20081B21633
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:17:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07B69195FF1;
-	Sat, 12 Oct 2024 14:15:09 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D2CC195809;
-	Sat, 12 Oct 2024 14:15:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD2219580A;
+	Sat, 12 Oct 2024 14:16:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="fuNp9oMw"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23FA5193439;
+	Sat, 12 Oct 2024 14:16:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728742508; cv=none; b=FfmV1l9UqUX7/aI8jOLMRZFhMZVT4nFWJ91abQo6pAwr716Ixg+Ocv5+8WwwoaUvxuoiIzlKS0PkEf62xwiKb/twQear6m9tdcnWFCFaYadcjCWxqIQb+R7zydOwuHO3EMpjVQemvRYpuihdwcc3KG8V1e0LCglw+YjZZvxbMEY=
+	t=1728742603; cv=none; b=epWbHGbckvNjOdEThMTYEVc12EiZ4mz7hwJoq6zfGlB8L2cFEub2Wv8swK6HYoEzAazHDGy5pgMr7tWmcO3KIDfjzQckbjdOkrTHYjbJDW3eMq/tZl29eRNg3s85PEx1R7UPynTnny+PgugUhhYUMBGXbaqAaXoGOstwg3Dn/84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728742508; c=relaxed/simple;
-	bh=CJkF3zBomhtzLlCt1D+413uZmOsbuYAGu4PXv44SuGE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VLrZ2dLsuw8JREb0evsL+8hH3TL27NxRC9eRWhnZnqJK5evzpplJO5/ecfAyAc8doc+HMmsQSUaNatMoTD4v+XF1IIavmtq8wyLdjxTO8wYsaqSmR0a6GWsFJVq1Bu159OcA3YPn0/lKoHfetLKLzbRTHvv2PyVXwzIkuf1G3vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E4268DA7;
-	Sat, 12 Oct 2024 07:15:28 -0700 (PDT)
-Received: from e132581.cambridge.arm.com (e132581.arm.com [10.2.76.71])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 8BD453F71E;
-	Sat, 12 Oct 2024 07:14:57 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Leo Yan <leo.yan@arm.com>
-Subject: [PATCH] perf probe: Correct demangled symbols in C++ program
-Date: Sat, 12 Oct 2024 15:14:32 +0100
-Message-Id: <20241012141432.877894-1-leo.yan@arm.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1728742603; c=relaxed/simple;
+	bh=hnjqJAicNpi1ppzn2fCTsk0vmq+3hV5cnMIY8X713jk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T5n9qCDtlNowRXgtuapsLxpCH26320559c13h1EmGOkzDYFe5V+H3N2MbHXogoviSRRk3+x39ha9VUSsB37kbziDiw9QHHvelPjYUq1AvY6ZRviueCwYynsVAuvEbwlfVj1xxzHMYBN+j/EigPi2YJI7h8KHHXuqhjdpJlRJimA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=fuNp9oMw; arc=none smtp.client-ip=117.135.210.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Message-ID:MIME-Version:
+	Content-Type; bh=24tjo+rrRkBg2Z20Lxo6DBsmtNmJsyIj1nNDj4+ZmG0=;
+	b=fuNp9oMwlZ2QZrIqqrzWkofbhGW2rfFqrQT24XixgfG0QmA0E+hKZrfQQHJs4t
+	tn/VmUmbs8DWAFBSOHklnso6ZSN7B8tQAM/lSfHUe2IMdc3FYdpBh8HlzR0GagGs
+	9PAf8Tb6fKWwUMv8ecb/M9ArmFktkBGB3eKBSb4NBKKU8=
+Received: from localhost (unknown [58.243.42.186])
+	by gzsmtp1 (Coremail) with SMTP id sCgvCgAHOnGKhApnaRqWAA--.26891S2;
+	Sat, 12 Oct 2024 22:15:38 +0800 (CST)
+Date: Sat, 12 Oct 2024 22:15:38 +0800
+From: Qianqiang Liu <qianqiang.liu@163.com>
+To: syzbot <syzbot+3f8fa0edaa75710cd66e@syzkaller.appspotmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, krzk@kernel.org,
+	kuba@kernel.org, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org, pabeni@redhat.com,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] [nfc?] KMSAN: uninit-value in nci_ntf_packet (3)
+Message-ID: <ZwqEijEvP7tGGZtW@fedora>
+References: <000000000000dbc80e061b01a34f@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <000000000000dbc80e061b01a34f@google.com>
+X-CM-TRANSID:sCgvCgAHOnGKhApnaRqWAA--.26891S2
+X-Coremail-Antispam: 1Uf129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7v73
+	VFW2AGmfu7bjvjm3AaLaJ3UbIYCTnIWIevJa73UjIFyTuYvjxU8Q6JUUUUU
+X-CM-SenderInfo: xtld01pldqwhxolxqiywtou0bp/1tbiRRB2amcKfY1iugAAsM
 
-An issue can be observed when probe C++ demangled symbol with steps:
+#syz test
 
-  # nm test_cpp_mangle | grep print_data
-    0000000000000c94 t _GLOBAL__sub_I__Z10print_datai
-    0000000000000afc T _Z10print_datai
-    0000000000000b38 T _Z10print_dataR5Point
-
-  # perf probe -x /home/niayan01/test_cpp_mangle -F --demangle
-    ...
-    print_data(Point&)
-    print_data(int)
-    ...
-
-  # perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
-    probe-definition(0): test=print_data(int)
-    symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
-    0 arguments
-    Open Debuginfo file: /home/niayan01/test_cpp_mangle
-    Try to find probe point from debuginfo.
-    Symbol print_data(int) address found : afc
-    Matched function: print_data [2ccf]
-    Probe point found: print_data+0
-    Found 1 probe_trace_events.
-    Opening /sys/kernel/tracing//uprobe_events write=1
-    Opening /sys/kernel/tracing//README write=0
-    Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xb38
-    ...
-
-When tried to probe symbol "print_data(int)", the log shows:
-
-    Symbol print_data(int) address found : afc
-
-The found address is 0xafc - which is right with verifying the output
-result from nm. Afterwards when write event, the command uses offset
-0xb38 in the last log, which is a wrong address.
-
-The dwarf_diename() gets a common function name, in above case, it
-returns string "print_data". As a result, the tool parses the offset
-based on the common name. This leads to probe at the wrong symbol
-"print_data(Point&)".
-
-To fix the issue, use the die_get_linkage_name() function to retrieve
-the distinct linkage name - this is the mangled name for the C++ case.
-Based on this unique name, the tool can get a correct offset for
-probing. Based on DWARF doc, it is possible the linkage name is missed
-in the DIE, it rolls back to use dwarf_diename().
-
-After:
-
-  # perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
-    probe-definition(0): test=print_data(int)
-    symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
-    0 arguments
-    Open Debuginfo file: /home/niayan01/test_cpp_mangle
-    Try to find probe point from debuginfo.
-    Symbol print_data(int) address found : afc
-    Matched function: print_data [2d06]
-    Probe point found: print_data+0
-    Found 1 probe_trace_events.
-    Opening /sys/kernel/tracing//uprobe_events write=1
-    Opening /sys/kernel/tracing//README write=0
-    Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xafc
-    Added new event:
-      probe_test_cpp_mangle:test (on print_data(int) in /home/niayan01/test_cpp_mangle)
-
-    You can now use it in all perf tools, such as:
-
-            perf record -e probe_test_cpp_mangle:test -aR sleep 1
-
-  # perf --debug verbose=3 probe -x test_cpp_mangle --add "test2=print_data(Point&)"
-    probe-definition(0): test2=print_data(Point&)
-    symbol:print_data(Point&) file:(null) line:0 offset:0 return:0 lazy:(null)
-    0 arguments
-    Open Debuginfo file: /home/niayan01/test_cpp_mangle
-    Try to find probe point from debuginfo.
-    Symbol print_data(Point&) address found : b38
-    Matched function: print_data [2ccf]
-    Probe point found: print_data+0
-    Found 1 probe_trace_events.
-    Opening /sys/kernel/tracing//uprobe_events write=1
-    Parsing probe_events: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0x0000000000000afc
-    Group:probe_test_cpp_mangle Event:test probe:p
-    Opening /sys/kernel/tracing//README write=0
-    Writing event: p:probe_test_cpp_mangle/test2 /home/niayan01/test_cpp_mangle:0xb38
-    Added new event:
-      probe_test_cpp_mangle:test2 (on print_data(Point&) in /home/niayan01/test_cpp_mangle)
-
-    You can now use it in all perf tools, such as:
-
-            perf record -e probe_test_cpp_mangle:test2 -aR sleep 1
-
-Fixes: fb1587d869a3 ("perf probe: List probes with line number and file name")
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- tools/perf/util/probe-finder.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
-
-diff --git a/tools/perf/util/probe-finder.c b/tools/perf/util/probe-finder.c
-index 630e16c54ed5..498ccfb0be6f 100644
---- a/tools/perf/util/probe-finder.c
-+++ b/tools/perf/util/probe-finder.c
-@@ -1583,8 +1583,21 @@ int debuginfo__find_probe_point(struct debuginfo *dbg, u64 addr,
+diff --git a/drivers/nfc/virtual_ncidev.c b/drivers/nfc/virtual_ncidev.c
+index 6b89d596ba9a..31da26287327 100644
+--- a/drivers/nfc/virtual_ncidev.c
++++ b/drivers/nfc/virtual_ncidev.c
+@@ -117,7 +117,7 @@ static ssize_t virtual_ncidev_write(struct file *file,
+ 	struct virtual_nci_dev *vdev = file->private_data;
+ 	struct sk_buff *skb;
  
- 	/* Find a corresponding function (name, baseline and baseaddr) */
- 	if (die_find_realfunc(&cudie, (Dwarf_Addr)addr, &spdie)) {
--		/* Get function entry information */
--		func = basefunc = dwarf_diename(&spdie);
-+		/*
-+		 * Get function entry information.
-+		 *
-+		 * As described in the document DWARF Debugging Information
-+		 * Format Version 5, section 2.22 Linkage Names, "mangled names,
-+		 * are used in various ways, ... to distinguish multiple
-+		 * entities that have the same name".
-+		 *
-+		 * Firstly try to get distinct linkage name, if fail then
-+		 * rollback to get associated name in DIE.
-+		 */
-+		func = basefunc = die_get_linkage_name(&spdie);
-+		if (!func)
-+			func = basefunc = dwarf_diename(&spdie);
-+
- 		if (!func ||
- 		    die_entrypc(&spdie, &baseaddr) != 0 ||
- 		    dwarf_decl_line(&spdie, &baseline) != 0) {
+-	skb = alloc_skb(count, GFP_KERNEL);
++	skb = alloc_skb(count, GFP_KERNEL | __GFP_ZERO);
+ 	if (!skb)
+ 		return -ENOMEM;
+ 
 -- 
-2.25.1
+Best,
+Qianqiang Liu
 
 
