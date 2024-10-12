@@ -1,111 +1,121 @@
-Return-Path: <linux-kernel+bounces-362009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7679599AFE8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:51:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EEB799AFEA
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 204E81F22BD0
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:51:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA5A91F22C72
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87DDED528;
-	Sat, 12 Oct 2024 01:50:53 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75FDCDDC1
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D09DDC1;
+	Sat, 12 Oct 2024 01:54:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="YNdubWUF"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB260DDA8;
+	Sat, 12 Oct 2024 01:53:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728697853; cv=none; b=u5/qrsY5PJ0W6M+q+V5hD4yGY4SC+Bgs0VJNM5URlPgeCL5toHrixby8vzF81UlBe2rlRGHB/JgBpoMsN4DEnSuTDccnit0EUlHfNM/952fp1Fob4k4Q20dkkCqTbxU4ssJwhHgI6eqsrPVqLkvmykY9HX8MiWQTJucSbalXrpk=
+	t=1728698041; cv=none; b=tvt+Gr8nfl6Js/hk3qUscdhwv49tMigunvNW9IcQnmo7uYTMxZRhuyWH3oTCvRtYIsCmuT5Vx5GZbeFr6kCtXLjCLEoMFWLOJn9XTmVMlqvXr5LSSFe59Md3kKEVegEAtJNkm8Nr6Ch+kA9F19Ktx/TEo5NnkFOLcvQv44IiAy4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728697853; c=relaxed/simple;
-	bh=XwUA4HQVTLWftHWbWzgeRtBz5HBj2L4N/TNdDvOxFME=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=Z7l5BzO39k7Ve55oGEsbGdOfHOVrMx+QBzupcXhMCaYxuB/Hq71gSqy63nd51EsBDV6cSCPt4VIm4ZWU2C5t1IeK0ozJIpjYqfi0wQOsryoSV8mBF7PNU/BaKIR6EBT6MxJ8n024Gx7FDGFA2IyhBV70CsstT4Y8NidWLZZ9prE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XQRH32vLqzpWf9;
-	Sat, 12 Oct 2024 09:48:47 +0800 (CST)
-Received: from dggpemf100006.china.huawei.com (unknown [7.185.36.228])
-	by mail.maildlp.com (Postfix) with ESMTPS id A8C92180AE9;
-	Sat, 12 Oct 2024 09:50:46 +0800 (CST)
-Received: from [10.174.178.55] (10.174.178.55) by
- dggpemf100006.china.huawei.com (7.185.36.228) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Sat, 12 Oct 2024 09:50:46 +0800
-Subject: Re: [patch 03/25] debugobjects: Dont destroy kmem cache in init()
-To: Thomas Gleixner <tglx@linutronix.de>, LKML <linux-kernel@vger.kernel.org>
-CC: Waiman Long <longman@redhat.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164913.137021337@linutronix.de>
- <c118dad2-4e39-78f2-c09b-0fe771feb86a@huawei.com> <878quwi3jb.ffs@tglx>
- <02904743-8c39-5a44-78cd-a41715bf2f0b@huawei.com> <87plo6gyug.ffs@tglx>
-From: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>
-Message-ID: <e8a845d4-bab7-33ae-07e9-89c38e6f19cc@huawei.com>
-Date: Sat, 12 Oct 2024 09:50:45 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.7.0
+	s=arc-20240116; t=1728698041; c=relaxed/simple;
+	bh=pTo9MTWv0QsKaFyXt4UL/Xq5ps9nXBmmaRoAwXWw0o4=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=KxZtv0nqRuTKMDSQ1AX1mLUA7M3ZS8wTgsUXsVaZTdgKm5EpqOPZwjyzdMj+EkIb0hiWuMJlFvfAmFWtbZNxJ6aY0womjXZgKXye6WUjklWOiHJ6h/qzNRs+MEkag5j3nZqEUyNY04/oCzakY9F/XhbqAmPrecXQ9ZBAOu4MpLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=YNdubWUF; arc=none smtp.client-ip=220.197.31.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=NOty4
+	fg+Ho7VaI0cQHA/jory4kn7TXlj/j4VXAzH1Ak=; b=YNdubWUFSuGPCHvX+eynp
+	v8Z6hxu5AH4cq5p2AaM0Z8JxY+6lUWhYGfEAiyH6FmkEKvWC1oFgWDPr5WV8SHqe
+	LS7GP1Ia0DavKw+9Y4wF3Gyj9Xlih3gNomU+GOgoEM/1VoTOEMtD/aiOlvuobWty
+	z91ft/iZNfnMU7AZTPSoPc=
+Received: from localhost.localdomain (unknown [111.48.69.246])
+	by gzsmtp1 (Coremail) with SMTP id sCgvCgAHRFWf1glnqnpaAA--.15848S2;
+	Sat, 12 Oct 2024 09:53:37 +0800 (CST)
+From: Chi Zhiling <chizhiling@163.com>
+To: cem@kernel.org,
+	djwong@kernel.org,
+	hch@lst.de
+Cc: linux-xfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Chi Zhiling <chizhiling@kylinos.cn>
+Subject: [PATCH v3] xfs_logprint: Fix super block buffer interpretation issue
+Date: Sat, 12 Oct 2024 09:52:35 +0800
+Message-Id: <20241012015235.1706690-1-chizhiling@163.com>
+X-Mailer: git-send-email 2.27.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87plo6gyug.ffs@tglx>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- dggpemf100006.china.huawei.com (7.185.36.228)
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:sCgvCgAHRFWf1glnqnpaAA--.15848S2
+X-Coremail-Antispam: 1Uf129KBjvJXoW7Ar48Wr1kJr1fGw45XF4rAFb_yoW8Zw4xpF
+	1Sgay7XrZxZ34Yg3y7ZrWjvw4rKwn3Jr9rGrZFyr1rZr98Ar4Yvr9xua48uFW5GrWDtFs0
+	v345KryY9w4Dua7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jeYL9UUUUU=
+X-CM-SenderInfo: hfkl6xxlol0wi6rwjhhfrp/xtbBoRd2nWcJzyV4AwAAsi
 
+From: Chi Zhiling <chizhiling@kylinos.cn>
 
+When using xfs_logprint to interpret the buffer of the super block, the
+icount will always be 6360863066640355328 (0x5846534200001000). This is
+because the offset of icount is incorrect, causing xfs_logprint to
+misinterpret the MAGIC number as icount.
+This patch fixes the offset value of the SB counters in xfs_logprint.
 
-On 2024/10/12 4:37, Thomas Gleixner wrote:
-> On Thu, Oct 10 2024 at 21:31, Leizhen wrote:
->> On 2024/10/10 19:46, Thomas Gleixner wrote:
->>> On Thu, Oct 10 2024 at 10:14, Leizhen wrote:
->>>> On 2024/10/8 0:49, Thomas Gleixner wrote:
->>>>> -	if (!obj_cache || debug_objects_replace_static_objects()) {
->>>>> +	if (!cache || !debug_objects_replace_static_objects(cache)) {
->>>>>  		debug_objects_enabled = 0;
->>>>> -		kmem_cache_destroy(obj_cache);
->>>>
->>>> kmem_cache_destroy(cache) should be kept, or move it into debug_objects_replace_static_objects()
->>>> and place it above 'return false'.
->>>
->>> At that point it can't be destroyed. See the backtrace.
->>>
->>> So we just give the objects back and leak the kmem_cache.
->>
->> Oh, sorry, I didn't figure it out before, but now I do.
->> But shouldn't we add kmemleak_ignore(cache) ?
-> 
-> I don't know if it's worth the trouble. With the follow up changes the
-> only reason why this can happen is that the static object conversion
-> cannot allocate memory. Leaking the kmemcache in that case is the least
-> of the worries.
-> 
-> I just tripped over that back trace because I intentionally triggered
-> the error path.
+Before this patch:
+icount: 6360863066640355328  ifree: 5242880  fdblks: 0  frext: 0
 
-Yes, that's an error path that almost never goes to.
-OK, so keep it still.
+After this patch:
+icount: 10240  ifree: 4906  fdblks: 37  frext: 0
 
-> 
-> Thanks,
-> 
->         tglx
-> 
-> 
-> .
-> 
+Suggested-by: Darrick J. Wong <djwong@kernel.org>
+Signed-off-by: Chi Zhiling <chizhiling@kylinos.cn>
+Reviewed-by: Christoph Hellwig <hch@lst.de>
+Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+---
+ logprint/log_misc.c | 17 +++++------------
+ 1 file changed, 5 insertions(+), 12 deletions(-)
 
+diff --git a/logprint/log_misc.c b/logprint/log_misc.c
+index 8e86ac34..e366f8f5 100644
+--- a/logprint/log_misc.c
++++ b/logprint/log_misc.c
+@@ -282,22 +282,15 @@ xlog_print_trans_buffer(char **ptr, int len, int *i, int num_ops)
+ 		if (be32_to_cpu(head->oh_len) < 4*8) {
+ 			printf(_("Out of space\n"));
+ 		} else {
+-			__be64		 a, b;
++			struct xfs_dsb	*dsb = (struct xfs_dsb *) *ptr;
+ 
+ 			printf("\n");
+-			/*
+-			 * memmove because *ptr may not be 8-byte aligned
+-			 */
+-			memmove(&a, *ptr, sizeof(__be64));
+-			memmove(&b, *ptr+8, sizeof(__be64));
+ 			printf(_("icount: %llu  ifree: %llu  "),
+-			       (unsigned long long) be64_to_cpu(a),
+-			       (unsigned long long) be64_to_cpu(b));
+-			memmove(&a, *ptr+16, sizeof(__be64));
+-			memmove(&b, *ptr+24, sizeof(__be64));
++			       (unsigned long long) be64_to_cpu(dsb->sb_icount),
++			       (unsigned long long) be64_to_cpu(dsb->sb_ifree));
+ 			printf(_("fdblks: %llu  frext: %llu\n"),
+-			       (unsigned long long) be64_to_cpu(a),
+-			       (unsigned long long) be64_to_cpu(b));
++			       (unsigned long long) be64_to_cpu(dsb->sb_fdblocks),
++			       (unsigned long long) be64_to_cpu(dsb->sb_frextents));
+ 		}
+ 		super_block = 0;
+ 	} else if (be32_to_cpu(*(__be32 *)(*ptr)) == XFS_AGI_MAGIC) {
 -- 
-Regards,
-  Zhen Lei
+2.43.0
+
 
