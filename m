@@ -1,158 +1,177 @@
-Return-Path: <linux-kernel+bounces-362481-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9483099B578
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:21:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BB6F899B579
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 16:21:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C62EB22798
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:21:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F8F1B22BEB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:21:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A108038384;
-	Sat, 12 Oct 2024 14:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="g/SSccDz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04467178395;
-	Sat, 12 Oct 2024 14:20:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD32E1946C4;
+	Sat, 12 Oct 2024 14:21:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A27D189905;
+	Sat, 12 Oct 2024 14:21:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728742859; cv=none; b=Ok/SmhW9lYD5g+xJjIBPyKR7J+lb76mVTQ9k0HUSO9UuILZnPmd+HQd7E7vHg9KxOB0ROlsqJxrQpUMHayVgGRD++eQxpic0y43OuMaSlydnt3EtXs2kzi1w4Er4teXCJuwithx48Tg/KNPhACJU3Dhd1tLq63OOj8hDnYMIxIM=
+	t=1728742879; cv=none; b=R2fO2UOWJoOpbjOaLmiwfT3sYWXck6/OwsCvFXOvj5ouY2YVOp08sOeEOr7NR4HhI8+VGcPfcpmLl+wCpxhvAHGnNGpajBMAEGcOEyB2du/9AGG6lFAiXwoKNMjacwIE1x8n4INJ51PD0c7xN8xN8ryDqVL/jn4LxJJEWrXl5XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728742859; c=relaxed/simple;
-	bh=Oucwl7VO0c/qyXQ84nDnFdXohCCFgLKsGT1zcZyNoRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=tVCZhmI/8zsEP/g7ILIlpTjT/IUHDOtXTHWsMd6xBxgDUDEE5Li3ZODqYqNxzpOZgkYMzN5y7ym5d57qP7smMDBYCn/dkqVxkyRhuCWyQRSObW+kGH5PwBU2SsmAHCYhHssQTym5IIosSOaxXh8Lfj8dBDj9aWr3O3rCAvJ6OnI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=g/SSccDz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F83FC4CECC;
-	Sat, 12 Oct 2024 14:20:55 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728742858;
-	bh=Oucwl7VO0c/qyXQ84nDnFdXohCCFgLKsGT1zcZyNoRs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=g/SSccDzctQHZoyM1gsyDSpqpCGPttWZ12HRK01ElEillWIUC1CpFzG2ZPfcd/sfJ
-	 Xb3mCpALfG8r8Fhl4uwl3t2xeoo/lxhYVBJ5pkmKAHA9AwsG9NfRS+9lQF0Cz/Fgsx
-	 HeaeHL9Mz4Pn0JzKTwrd22Diz1HNGAO3wrbw3RsM4g20BJrcpJ6wggtsenP+WOMasl
-	 b7trgv3HFet91cIJhf83DItn/0DTzzO7kYs3v+zxv7NE8T0o7RuqlVXizuLFRr9OoO
-	 uQ5o5cYfn24j2i/pxJXHbA5tPfLee4csMTgWMk8pr7Ifs2gjbbQEXaRTV4dQX5cWLl
-	 O3viedFGG929A==
-Date: Sat, 12 Oct 2024 15:20:51 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org
-Subject: Re: [PATCH 2/3] dt-bindings: iio: magnetometer: document the
- Allegro MicroSystems ALS31300 3-D Linear Hall Effect Sensor
-Message-ID: <20241012152051.644e0e61@jic23-huawei>
-In-Reply-To: <20241007-topic-input-upstream-als31300-v1-2-2c240ea5cb77@linaro.org>
-References: <20241007-topic-input-upstream-als31300-v1-0-2c240ea5cb77@linaro.org>
-	<20241007-topic-input-upstream-als31300-v1-2-2c240ea5cb77@linaro.org>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728742879; c=relaxed/simple;
+	bh=epfl+o3RiUcg7aZ2+/9YFb3b8qbuphICbRWY0ddwO4E=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=hERZkbkKwx7IEwYh6X2LzQcfP1RQmspx3gQbG+1tNmGuILYiF8Y3DaeQv/gmFqr+yymfBfrefauI5dFKM+zZtEqsQCQ2WCm0gPUQDeWbAQvtbjVnFOYL+KkgGyuUuwJGWIPDWgLljj2PAuhFP5iOCPy3oDslBu2sqni0Qre7kuY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B6610DA7;
+	Sat, 12 Oct 2024 07:21:45 -0700 (PDT)
+Received: from [10.2.76.71] (e132581.arm.com [10.2.76.71])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 59A233F71E;
+	Sat, 12 Oct 2024 07:21:14 -0700 (PDT)
+Message-ID: <d53477c1-9c74-4578-8d74-281b95dee11e@arm.com>
+Date: Sat, 12 Oct 2024 15:21:12 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+From: Leo Yan <leo.yan@arm.com>
+Subject: Re: [PATCH v1 3/3] perf probe: Generate hash event for long symbol
+To: "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
+ Adrian Hunter <adrian.hunter@intel.com>,
+ "Liang, Kan" <kan.liang@linux.intel.com>, Dima Kogan <dima@secretsauce.net>,
+ james.clark@linaro.org, linux-perf-users@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241007141116.882450-1-leo.yan@arm.com>
+ <20241007141116.882450-4-leo.yan@arm.com>
+ <20241011003408.f9bacf4e5899e88a94c3d7cd@kernel.org>
+ <fab219bc-fabd-42b7-b42f-d92851b1d2f3@arm.com>
+ <20241011120733.5660c80f8f93e9659fa5a254@kernel.org>
+ <a7d63300-27a2-4121-9327-40426a66afe3@arm.com>
+ <20241012143003.eeb8d3eb43e45494193bbfd4@kernel.org>
+Content-Language: en-US
+In-Reply-To: <20241012143003.eeb8d3eb43e45494193bbfd4@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Mon, 07 Oct 2024 15:14:39 +0200
-Neil Armstrong <neil.armstrong@linaro.org> wrote:
+On 10/12/24 06:30, Masami Hiramatsu (Google) wrote:
 
-> Document the bindings for the Allegro MicroSystems ALS31300 3-D Linear Hall
-> Effect Sensor controller by an I2C interface, mainly used in 3D head-on
-> motion sensing applications.
+[...]
+
+>> ---8<---
+>>
+>>  From 3b09a6f89c7e383c6b1d2b7e6bd80c6bfa658d5b Mon Sep 17 00:00:00 2001
+>> From: Leo Yan <leo.yan@arm.com>
+>> Date: Fri, 11 Oct 2024 07:58:08 +0000
+>> Subject: [PATCH] perf probe: Correct demangled symbols in C++ program
+>>
+>> An issue can be observed when probe C++ demangled symbol with steps:
+>>
+>>    # nm test_cpp_mangle | grep print_data
+>>      0000000000000c94 t _GLOBAL__sub_I__Z10print_datai
+>>      0000000000000afc T _Z10print_datai
+>>      0000000000000b38 T _Z10print_dataR5Point
+>>
+>>    # ./perf probe -x /home/niayan01/test_cpp_mangle -F --demangle
+>>      ...
+>>      print_data(Point&)
+>>      print_data(int)
+>>      ...
+>>
+>>    # ./perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
+>>      probe-definition(0): test=print_data(int)
+>>      symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
+>>      0 arguments
+>>      Open Debuginfo file: /home/niayan01/test_cpp_mangle
+>>      Try to find probe point from debuginfo.
+>>      Symbol print_data(int) address found : afc
+>>      Matched function: print_data [2ccf]
+>>      Probe point found: print_data+0
+>>      Found 1 probe_trace_events.
+>>      Opening /sys/kernel/tracing//uprobe_events write=1
+>>      Opening /sys/kernel/tracing//README write=0
+>>      Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xb38
+>>      ...
+>>
+>> When tried to probe symbol "print_data(int)", the log show:
+>>
+>>      Symbol print_data(int) address found : afc
+>>
+>> The found address is 0xafc - which is right if we connect with the
+>> output result from nm. Afterwards when write event, the command uses
+>> offset 0xb38 in the last log, which is a wrong address.
+>>
+>> The dwarf_diename() gets a common function name, in above case, it
+>> returns string "print_data". As a result, the tool parses the offset
+>> based on the common name. This leads to probe at the wrong symbol
+>> "print_data(Point&)".
+>>
+>> To fix the issue, use the die_get_linkage_name() function to retrieve
+>> the distinct linkage name - this is the mangled name for the C++ case.
+>> Based on this unique name, the tool can get a correct offset for
+>> probing. Based on DWARF doc, it is possible the linkage name is missed
+>> in the DIE, it rolls back to use dwarf_diename().
 > 
-> The device can be configured with different sensitivities in factory,
-> but the sensitivity value used to calculate value into the Gauss
-> unit is not available from registers, thus the sensitivity is
-> provided by the compatible/device-id string which is based
-> on the part number as described in the datasheet page 2.
-> 
-> The datasheet is available on the product website at [1].
-> 
-> [1] https://www.allegromicro.com/en/products/sense/linear-and-angular-position/linear-position-sensor-ics/als31300
-Use Datasheet tag. It's not that common but it makes it clear what this is and some scripting
-can pick it up.
+> Can you add the result after applying this patch here?
 
-> 
-Datasheet: https://www.allegromicro.com/en/products/sense/linear-and-angular-position/linear-position-sensor-ics/als31300
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-Hi Neil,
+Sure. The result with this patch is:
 
-> ---
->  .../iio/magnetometer/allegro,als31300.yaml         | 43 ++++++++++++++++++++++
->  1 file changed, 43 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml b/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml
-> new file mode 100644
-> index 000000000000..0a08e769f3aa
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/magnetometer/allegro,als31300.yaml
+   # perf --debug verbose=3 probe -x test_cpp_mangle --add "test=print_data(int)"
+     probe-definition(0): test=print_data(int)
+     symbol:print_data(int) file:(null) line:0 offset:0 return:0 lazy:(null)
+     0 arguments
+     Open Debuginfo file: /home/niayan01/test_cpp_mangle
+     Try to find probe point from debuginfo.
+     Symbol print_data(int) address found : afc
+     Matched function: print_data [2d06]
+     Probe point found: print_data+0
+     Found 1 probe_trace_events.
+     Opening /sys/kernel/tracing//uprobe_events write=1
+     Opening /sys/kernel/tracing//README write=0
+     Writing event: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0xafc
+     Added new event:
+       probe_test_cpp_mangle:test (on print_data(int) in /home/niayan01/test_cpp_mangle)
+                                                                                                                                                                                                                                                        
+     You can now use it in all perf tools, such as:
+                                                                                                                                                                                                                                                        
+             perf record -e probe_test_cpp_mangle:test -aR sleep 1
+                                                                                                                                                                                                                                                        
+   # perf --debug verbose=3 probe -x test_cpp_mangle --add "test2=print_data(Point&)"
+     probe-definition(0): test2=print_data(Point&)
+     symbol:print_data(Point&) file:(null) line:0 offset:0 return:0 lazy:(null)
+     0 arguments
+     Open Debuginfo file: /home/niayan01/test_cpp_mangle
+     Try to find probe point from debuginfo.
+     Symbol print_data(Point&) address found : b38
+     Matched function: print_data [2ccf]
+     Probe point found: print_data+0
+     Found 1 probe_trace_events.
+     Opening /sys/kernel/tracing//uprobe_events write=1
+     Parsing probe_events: p:probe_test_cpp_mangle/test /home/niayan01/test_cpp_mangle:0x0000000000000afc
+     Group:probe_test_cpp_mangle Event:test probe:p
+     Opening /sys/kernel/tracing//README write=0
+     Writing event: p:probe_test_cpp_mangle/test2 /home/niayan01/test_cpp_mangle:0xb38
+     Added new event:
+       probe_test_cpp_mangle:test2 (on print_data(Point&) in /home/niayan01/test_cpp_mangle)
+                                                                                                                                                                                                                                                        
+     You can now use it in all perf tools, such as:
+                                                                                                                                                                                                                                                        
+             perf record -e probe_test_cpp_mangle:test2 -aR sleep 1
 
-Rob's bot has better eyes than me.  Filename needs to be allegromicro,als31300.yaml
+I have sent out a formal patch (with fixed tag):
+https://lore.kernel.org/linux-perf-users/20241012141432.877894-1-leo.yan@arm.com/T/#u
 
-> @@ -0,0 +1,43 @@
-> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/iio/magnetometer/allegromicro,als31300.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Allegro MicroSystems ALS31300 3-D Linear Hall Effect sensor
-> +
-> +maintainers:
-> +  - Neil Armstrong <neil.armstrong@linaro.org>
-> +
-> +properties:
-> +  $nodename:
-> +    pattern: '^magnetometer@[0-9a-f]+$'
-> +
-> +  compatible:
-> +    enum:
-> +      - allegromicro,als31300-500 # Factory configured at 500 Gauss input range
-> +      - allegromicro,als31300-1000 # Factory configured at 1000 Gauss input range
-> +      - allegromicro,als31300-2000 # Factory configured at 2000 Gauss input range
+Thanks for review!
 
-I was wondering if the range should be a separate property, but given these
-are the part numbers the parts are sold under, I think compatibles are fine.
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  vcc-supply:
-> +    description: 5.5V supply
-A quick glance at the pinout google fed me suggests an interrupt pin.
-Even though the driver doesn't yet support it (I assume as I've not looked at that yet)
-the binding should include it.
-
-> +
-> +required:
-> +  - compatible
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    i2c {
-> +      #address-cells = <1>;
-> +      #size-cells = <0>;
-> +      sensor@61 {
-
-magnetometer@61 {
-
-> +        compatible = "allegromicro,als31300";
-> +        reg = <0x61>;
-> +        vcc-supply = <&hall_vcc>;
-> +      };
-> +    };
-> 
-
+Leo
 
