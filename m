@@ -1,123 +1,100 @@
-Return-Path: <linux-kernel+bounces-362154-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C474199B1A6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:37:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E0099B172
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:15:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 419C6280A0D
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:37:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2F841C220B8
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:15:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB32A146D40;
-	Sat, 12 Oct 2024 07:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6B313BAE7;
+	Sat, 12 Oct 2024 07:15:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="azW55Rto"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Fv5HbSLW"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82B99130E57;
-	Sat, 12 Oct 2024 07:36:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C98DC12CDA5;
+	Sat, 12 Oct 2024 07:15:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728718617; cv=none; b=PgNegqzZaXTc5vm7cZQPL/PRjqyQm/OUKogU3+jJPnrKND0DWYC4dQHlkzlI8sPSM2WXLhLpkXLeCh+/RFbCYjjpqmkBL6NcdeFEADLLgzafRuS4xkF1mUTkQUt2x4jpbMDgTK0d3gHenPc6kg5v9x+PSCvKWYO9n6t9y8dVBHY=
+	t=1728717321; cv=none; b=JB+jpjxq6nDRRQHHnHA93yjT3RZgfZAPVgnY66gadS+98FLHiMm+51XqCtKV4Ms211Fqx7JFLiXffcMRMc8dk9lt+nDgNpZ3u/geDiZcHPMMay+9i1MnT5phN4lHuMw3o98nj+9Qr5e0raGiKPwyallWFS9KraTR7Woqn5IjN7E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728718617; c=relaxed/simple;
-	bh=6QYVydsJgmTUPzv4kPZhKTADS2dkg5kJ9nXjJn5lMOk=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OVC18mlqM/kt+QnhlSLhTgcfFQ6mS43+BylLfMcdUR/ealsjEklVlMng2psNXShNmAfogXiPgpeZQYONqoXd0fJhVZ25XypAD/itbgqWa6g/EHp0AvMLW9MPtu+i0v1us4fIH/bjFZqHZCNHRnCoM5hVTtv+haTTOtUQDU2I6EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=azW55Rto; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728718616; x=1760254616;
-  h=from:to:cc:subject:date:message-id;
-  bh=6QYVydsJgmTUPzv4kPZhKTADS2dkg5kJ9nXjJn5lMOk=;
-  b=azW55RtoFxrAwwz5X4HiGyUyV8eH597EplS9b02mTEy9u74kpS89RGVA
-   nAur9bFqBbDmq+d2qH2xAKBdgLq2gqk6iYlsXyR1Hdhnx8c4wocf/C1gb
-   NSKFkI2Lx5LA5UQi3/O4FMyvOAb+YSsRUW76KGPxhBhwqnPwxS0zK/6iP
-   cVNmPMp07ylzHFehqryLGc0k3Wn7Q8u+FVyX7YXbL/NG8TNDUNtXyyz9l
-   OW1TIbaJ02yyreaMxqQitXYRCZSf295wUUmw7kLqLVaTjnX1orLVo4oDg
-   s6RaOvP0B/mlDViSphHwntFjxgiT72NTVE948gyobV5bR+aD0iUAp12lB
-   g==;
-X-CSE-ConnectionGUID: xIa/9aToTTWcU6IVPPzs/Q==
-X-CSE-MsgGUID: hO4d0OsoRBGFRlWCvv5CRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31825951"
-X-IronPort-AV: E=Sophos;i="6.11,198,1725346800"; 
-   d="scan'208";a="31825951"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 00:36:55 -0700
-X-CSE-ConnectionGUID: kgOhXKc8SQa3mRMZVfuARg==
-X-CSE-MsgGUID: SC/64dXoTmSWO71hzlhIsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,198,1725346800"; 
-   d="scan'208";a="77116427"
-Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 00:36:52 -0700
-From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-To: Tony Luck <tony.luck@intel.com>
-Cc: Lili Li <lili.li@intel.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/1] EDAC/igen6: Add Intel Panther Lake-H SoCs support
-Date: Sat, 12 Oct 2024 15:14:39 +0800
-Message-Id: <20241012071439.54165-1-qiuxu.zhuo@intel.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728717321; c=relaxed/simple;
+	bh=DlGndp0ryosAmmwi+KPu6DMY2uOf8LabQmxNj896WJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q0NHF2b/0PMFJe6XhlcsYJW9zEaTsjFVc/q7++EbRlNXurC6mre8PzrKlIj4ZQ8z7MIMG1FbCPdccw9EhXzjrQ5GJMwTeMqwFn1Hf9a9QgrHqNsDIhowt7hB66hAXuB30gYJehMScAKpBte3oih/fO13LfF102rqtM1czacvQVk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Fv5HbSLW; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Transfer-Encoding:
+	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=eKVPThxvf989v7DtzxaKQzLXa5qNtAiRX3s8s9yAlHA=; b=Fv5HbSLWfV5EjjJf5I4hXM/fl6
+	9NoEikqbc6ST/MAgVg9YhMH1t+OEcTUq9hUmoraPJ4VZJAfy39UPGDedI/NJDrkQEDxknP+z+Cfiz
+	Z9RZTgEma9+i4QWKjrqX/P9+m5nKTpRbLbQlQ6HvHKa4rdExB/jzzh2KQtDkpLcG8Ma0d4cOoWPIQ
+	L4GcKjVBnpUa7kSTeBE9m7F4jrTLplLK0D4QJzOIfKRBSFMSZ217DGQ162R0wjc5hV2bKqklBpxGt
+	B8ENowmQa/nf8VCmqY9bOnHOIfUmp292uBV88DDm6NVoyVHSQ74cXDT8LQwu/PEePmIC0XJnzTW+o
+	4ySAGaNw==;
+Received: from willy by casper.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1szWL2-0000000Cxxw-1P51;
+	Sat, 12 Oct 2024 07:14:59 +0000
+Date: Sat, 12 Oct 2024 08:14:56 +0100
+From: Matthew Wilcox <willy@infradead.org>
+To: Qun-wei Lin =?utf-8?B?KOael+e+pOW0tCk=?= <Qun-wei.Lin@mediatek.com>
+Cc: "ying.huang@intel.com" <ying.huang@intel.com>,
+	Andrew Yang =?utf-8?B?KOaliuaZuuW8tyk=?= <Andrew.Yang@mediatek.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"baohua@kernel.org" <baohua@kernel.org>,
+	"linux-block@vger.kernel.org" <linux-block@vger.kernel.org>,
+	"linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	wsd_upstream <wsd_upstream@mediatek.com>,
+	"david@redhat.com" <david@redhat.com>,
+	"schatzberg.dan@gmail.com" <schatzberg.dan@gmail.com>,
+	Chinwen Chang =?utf-8?B?KOW8temMpuaWhyk=?= <chinwen.chang@mediatek.com>,
+	John Hsu =?utf-8?B?KOioseawuOe/sCk=?= <John.Hsu@mediatek.com>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"axboe@kernel.dk" <axboe@kernel.dk>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"kasong@tencent.com" <kasong@tencent.com>,
+	Casper Li =?utf-8?B?KOadjuS4reamrik=?= <casper.li@mediatek.com>,
+	"chrisl@kernel.org" <chrisl@kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>
+Subject: Re: [PATCH 0/2] Add BLK_FEAT_READ_SYNCHRONOUS and
+ SWP_READ_SYNCHRONOUS_IO
+Message-ID: <Zwoh8DrKgSD99xVQ@casper.infradead.org>
+References: <20240919112952.981-1-qun-wei.lin@mediatek.com>
+ <87frporxtt.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <17b30f253172cce94d1e2ec86d00e82eea077bde.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <17b30f253172cce94d1e2ec86d00e82eea077bde.camel@mediatek.com>
 
-From: Lili Li <lili.li@intel.com>
+On Fri, Oct 11, 2024 at 09:08:10AM +0000, Qun-wei Lin (林群崴) wrote:
+> The primary motivation for these new feature flags is to handle
+> scenarios where we want read operations to be completed within the
+> submit context, while write operations are handled in a different
+> context.
+> 
+> This does not necessarily imply that the write operations are slow;
+> rather, it is about optimizing the handling of read and write
+> operations based on their specific characteristics and requirements.
 
-Panther Lake-H SoCs share same IBECC registers with Meteor Lake-P
-SoCs. Add Panther Lake-H SoC compute die IDs for EDAC support.
-
-Signed-off-by: Lili Li <lili.li@intel.com>
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Signed-off-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
-Tested this patch on a real Panther Lake-H device.
-
- drivers/edac/igen6_edac.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/edac/igen6_edac.c b/drivers/edac/igen6_edac.c
-index 189a2fc29e74..dd29a8d33b4e 100644
---- a/drivers/edac/igen6_edac.c
-+++ b/drivers/edac/igen6_edac.c
-@@ -263,6 +263,11 @@ static struct work_struct ecclog_work;
- #define DID_ARL_UH_SKU2	0x7d20
- #define DID_ARL_UH_SKU3	0x7d30
- 
-+/* Compute die IDs for Panther Lake-H with IBECC */
-+#define DID_PTL_H_SKU1	0xb000
-+#define DID_PTL_H_SKU2	0xb001
-+#define DID_PTL_H_SKU3	0xb002
-+
- static int get_mchbar(struct pci_dev *pdev, u64 *mchbar)
- {
- 	union  {
-@@ -605,6 +610,9 @@ static const struct pci_device_id igen6_pci_tbl[] = {
- 	{ PCI_VDEVICE(INTEL, DID_ARL_UH_SKU1), (kernel_ulong_t)&mtl_p_cfg },
- 	{ PCI_VDEVICE(INTEL, DID_ARL_UH_SKU2), (kernel_ulong_t)&mtl_p_cfg },
- 	{ PCI_VDEVICE(INTEL, DID_ARL_UH_SKU3), (kernel_ulong_t)&mtl_p_cfg },
-+	{ PCI_VDEVICE(INTEL, DID_PTL_H_SKU1), (kernel_ulong_t)&mtl_p_cfg },
-+	{ PCI_VDEVICE(INTEL, DID_PTL_H_SKU2), (kernel_ulong_t)&mtl_p_cfg },
-+	{ PCI_VDEVICE(INTEL, DID_PTL_H_SKU3), (kernel_ulong_t)&mtl_p_cfg },
- 	{ },
- };
- MODULE_DEVICE_TABLE(pci, igen6_pci_tbl);
-
-base-commit: 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b
--- 
-2.17.1
-
+So why wouldn't we always want to do that instead of making it a
+per-bdev flag?
 
