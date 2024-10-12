@@ -1,179 +1,135 @@
-Return-Path: <linux-kernel+bounces-362091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362092-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF7E99B0DD
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2429199B105
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 07:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8FD15B227A8
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:56:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F51E1C21896
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A7B86277;
-	Sat, 12 Oct 2024 04:56:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3707A12F5B3;
+	Sat, 12 Oct 2024 05:06:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Rvh832T4"
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (mail-mw2nam12on2047.outbound.protection.outlook.com [40.107.244.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rx2ZrkbJ"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7456C27702;
-	Sat, 12 Oct 2024 04:56:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.244.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728709003; cv=fail; b=ZyL+nEdQqv4PHBwiFgWWemkOWlxcchsoXmyuEUImiLAiiW+V3OMIom8JfNgahgg018m0nYouJkM1L4nOX05DTuXjOS6NEcBAb289GwM0isC7b42LR8iLpMcUY3e3Z8qsSrsuWXtqXmqvZRzmBt4Kafv3WRiNIb05dPQFuPZkZ/k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728709003; c=relaxed/simple;
-	bh=8UGbL/4+XtkZsfy7tdqr68u2gl7CpyaN++YJdB4dK3U=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=J22UOJFYu8DeO3Y508AM2O1uWZWBqF7dRG2fjlWzyUgvymmTTBzNsL4oSImewEF9mQrvRW3JMRmJ1mah9oUptGnmT8RnqgwKoU57Hm9KY1nuKNHqi6kImL5UhHtYldKLzfhT58JkrqraLbzYKakJlhJBG5++lubQ5kUIT2MIBvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Rvh832T4; arc=fail smtp.client-ip=40.107.244.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CJhvhjUZUtTTpsx8C67kSM32ovIHEBw0i9mg6Q2KBs4/T9in2gjW9RmFGYQi3DbAgYFIYkkwayAi2WmMCxVvqMbqOpO8EI3azb2ZWC31rAo9hy4QxlZtr91UIaKBM1msEI5hts53osqYImd9BVpLMyjPLl23o24I8HPB9rmIy5aRt56sa6zvP5+8Me9IC1GPiX1k9sh4AG+JDDEvBfPLYMbRB+jNyVFgw0cy9WRKeVIxWSDGn9lYeqQVYiV958ZmRBDbk/weVW7i2JnNrVgcrs9qPT0PY/3qNkU/SPqE/gaypI79YfCiF60q0uCmbfdmXuuCBQsBtve2RVNn1uvTGA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=+GrOwLyfIS97I8J5B6KE+GSTCG3rf3UHVkzsxHAKe84=;
- b=zO2sD6GJOufI6I25KcrZi4A2UgMbVNDyrydVHzDJyRCuk0s08N7ySjSih2e7BVJ9PpI9PtkWLBdaFJ7KH/T2qCKPv3Z27JOCeYc3CLEou1Y4a7qEY7v8WvjKKjp7mjWXM/34t4S6zjKjyunvFIHl9ExOwOHjMEXGqGWKEnW1A6LEoEk/VZsVLZYBt3LAvV805ICz+EUcuOnt1CFwNBohLOGbkKOuCLldCwp09SCSnIf/XR5teQgGY13Nc49HQXhAn4nk9dBbiBDRrm6eZtWoLngJ49c63yccSsIBqneVfwZvu4KvpHKr9/br2DAlkDkSIxPImFQi8Y7wys3yhgsTRQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=+GrOwLyfIS97I8J5B6KE+GSTCG3rf3UHVkzsxHAKe84=;
- b=Rvh832T4kjtEzL3GZ2FfuvuMjg1QsqJY0uBQeCm6EDG5RbE6SjDOQ5SRTkNvYTrJC5ECMSErrS/Zlsibpa4PtBxtyAA7n8fY4mWimWfkwBYi1nb5ZqjpWEE6J8QYStt4XGKjF89csBKxaYfrQKfegJSxesDUR0vFsBJsD5DaZet/Xv6Qekn1oDRHN9+VNqYvktD0ra62jzdbPD+Pu4LGGdgjty8EaUvTAjLvS/F3gd+efjOG+8HLIJNUuwM6ajmpyUVjDTZN6OpTxHYoVKoxj2h5PbIlzNXXGkYgcyAtvKXpVj6OmHc6SxsYV52eQ+AveKY6D8i6IGepJWbDoivMeg==
-Received: from PH8PR07CA0041.namprd07.prod.outlook.com (2603:10b6:510:2cf::29)
- by DS0PR12MB8575.namprd12.prod.outlook.com (2603:10b6:8:164::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Sat, 12 Oct
- 2024 04:56:39 +0000
-Received: from CY4PEPF0000EDD4.namprd03.prod.outlook.com
- (2603:10b6:510:2cf::4) by PH8PR07CA0041.outlook.office365.com
- (2603:10b6:510:2cf::29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20 via Frontend
- Transport; Sat, 12 Oct 2024 04:56:38 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000EDD4.mail.protection.outlook.com (10.167.241.200) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.13 via Frontend Transport; Sat, 12 Oct 2024 04:56:38 +0000
-Received: from rnnvmail205.nvidia.com (10.129.68.10) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Oct
- 2024 21:56:21 -0700
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by rnnvmail205.nvidia.com
- (10.129.68.10) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Fri, 11 Oct
- 2024 21:56:21 -0700
-Received: from Asurada-Nvidia (10.127.8.9) by mail.nvidia.com (10.129.68.6)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Fri, 11 Oct 2024 21:56:19 -0700
-Date: Fri, 11 Oct 2024 21:56:18 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
-	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<smostafa@google.com>, <yi.l.liu@intel.com>, <aik@amd.com>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v3 14/16] iommu/arm-smmu-v3: Add
- arm_vsmmu_cache_invalidate
-Message-ID: <ZwoBcm8XRgn5JoRa@Asurada-Nvidia>
-References: <cover.1728491532.git.nicolinc@nvidia.com>
- <d714a9d107696194cc63e5f6c2b6bf5877b37f68.1728491532.git.nicolinc@nvidia.com>
- <CABQgh9E1rfA8i+x+6VRgyFb41n+n_F6-gqnT-TfqLqVeYaYmew@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B641F5FA;
+	Sat, 12 Oct 2024 05:06:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728709589; cv=none; b=gJhIFLrZ6Z3UFBflMvrf4lR5UJlV0tIRNkHEk3nmPhOdqgK0PnJd0qHALT86WLYjFIEChCjqx1GUvjKvdbEqTlEfn1D7JSdsvRNWadbBOTeoBkb+Dyt36qutlbqEdcdAUGnArxSQce4b3uc/yFUDE8CW6Ch8Kdj+iEehlvIyHZQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728709589; c=relaxed/simple;
+	bh=s70t+eSEc0ePHXCRkOzgi/KsljvHLiLNgDdPbL/ufP0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=HbzfIZkBf1F/EWG35tEJnQ8PMTJRHSNVypU53RCKyyrrhUDkNzE88FAY3+DvSWIiMxDfLemFJGyxP0DmMh2J+eo6Pqw+3ANCrQ7HRKnEOCwJPCTb4tnGiVATYELusW3IK9OkX8md3HzjNQndNCIdk+0GBXctJ7gGXHlWYRa6g98=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rx2ZrkbJ; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71df2b0a2f7so2363322b3a.3;
+        Fri, 11 Oct 2024 22:06:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728709586; x=1729314386; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yrMwgAq1e1++de4Zz3jYukz8cz/GmaA5v1778Sh7EeI=;
+        b=Rx2ZrkbJTxA9oICBCGfQpdDS2dXrQ1dX8utW6grBYLyS4wL8I+8UQpD74Wyxnsoxfd
+         pNGW6pnZov4iyAImS3W2VyAgu9tn33SZ/N/E2QV7qCx2RNPJDtINz2NACyLtIdEgxohf
+         8S2gBx3gwdZ1+NjHJpgLA5XxMudK4Y55s8rsoxjU8ny+s4lgTuIye9zCGH78Q2DKvfZy
+         NJzYjcH4SWGxjPezyczg876qU8wjNmsiSMOF512VstMmU/DhOiD+Yz7ge+3Din6R197Z
+         6TrVLyUohVvM9yvFAebVf1pOsbbHUaTC8LbvrsncqF/zCaFVKT6XBNo2XEQjc7sI66+8
+         /Pew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728709586; x=1729314386;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yrMwgAq1e1++de4Zz3jYukz8cz/GmaA5v1778Sh7EeI=;
+        b=S2wEvqxwqiG5HGYp3z6AdSsQp85zxFvhDX+n6r4oMK6sjFSS4elQBlEmwIn8cS/2em
+         zqGG915mfsHXit84R3xVOzPy+U3MqRXzA0f4e2IKky1KCyTglpRvSNz0qbNrb/yLwadH
+         EAUc/Y4dZfHxD7jnu/f2I1u/vpkvdzREoH98LAWMA+abc6JZRi8ijdCzoRe5Ll67OAT8
+         MAqPJ4Egp6ncm1AlQ3+iAWo6qywn8QULjutuFtpvgSOrtcyzKBw4dChytaNZ3QM4x7as
+         kLVmaPe3e+i7oGatzk9ZoNzAv6wpp4Z/FnmlPB4x/GB3fH6w0GNi9DCqjObk8BVxkQoz
+         T8Dg==
+X-Forwarded-Encrypted: i=1; AJvYcCUDGktBT+SH35ui/TV2knEHzs2ejnMI0XURzdqQ5VHor6VK2wVThUT4b+TCmKL0h6f3HrwKgRQK6CsadCk=@vger.kernel.org, AJvYcCXqr3CMiDEFGsQ+H1JjaG52s6iarhdSt/MWcDxEC8lugwXese620Nscipe8SOQSyKE8cwzdHRnLH1GN@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEpp0cOG1w62wde8KUZ30Kofhv4awLOUc+CZ5UUA4PznGGsylZ
+	NTE8F5B71AGBarnurp7NCAxUlAY72FCpIWWbyfoRiV8dBrbbsagy
+X-Google-Smtp-Source: AGHT+IF45l0QU4CAqS/7Bll3KH41T+leZDJyL2cSSYzvPDtV6bK37nxDLXTgJxAecdk2smkhcmrKSw==
+X-Received: by 2002:a05:6a20:2450:b0:1d6:d330:2417 with SMTP id adf61e73a8af0-1d8bcfb27b6mr7532680637.40.1728709586432;
+        Fri, 11 Oct 2024 22:06:26 -0700 (PDT)
+Received: from localhost.localdomain ([113.30.217.221])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4ad1b9f7sm859809b3a.190.2024.10.11.22.06.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 22:06:26 -0700 (PDT)
+From: Anand Moon <linux.amoon@gmail.com>
+To: Shawn Lin <shawn.lin@rock-chips.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	=?UTF-8?q?Krzysztof=20Wilczy=C5=84ski?= <kw@linux.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	linux-pci@vger.kernel.org (open list:PCIE DRIVER FOR ROCKCHIP),
+	linux-rockchip@lists.infradead.org (open list:PCIE DRIVER FOR ROCKCHIP),
+	linux-arm-kernel@lists.infradead.org (moderated list:ARM/Rockchip SoC support),
+	linux-kernel@vger.kernel.org (open list)
+Cc: Anand Moon <linux.amoon@gmail.com>
+Subject: [PATCH v7 0/3] PCIe RK3399 clock and reset using new helper functions
+Date: Sat, 12 Oct 2024 10:36:02 +0530
+Message-ID: <20241012050611.1908-1-linux.amoon@gmail.com>
+X-Mailer: git-send-email 2.44.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CABQgh9E1rfA8i+x+6VRgyFb41n+n_F6-gqnT-TfqLqVeYaYmew@mail.gmail.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EDD4:EE_|DS0PR12MB8575:EE_
-X-MS-Office365-Filtering-Correlation-Id: 311e08ca-ea69-499c-cc5e-08dcea7a417f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|82310400026|7416014|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?8A2vgnW3O4ysfcmqzCA5Q8YPH51LWJCdrxAQHA0omOPl8Igywyd0bWbMJOwW?=
- =?us-ascii?Q?PCIZnGfUBjKoDkmIeP47KS6Q678pkub9ELrjjxgQ63c8KyggpZeOSrxCZLOW?=
- =?us-ascii?Q?qJbRn8oRvimohAk8y1hZ5ViaGD0zxXJwq5aGYawk44629ecuWQsG83oyBgVL?=
- =?us-ascii?Q?vSxa/atLPzFax3N9PsUs4Qp1Qkp0rGVBVlN5mxdxWcoki3XkfIaNdIWqE8RQ?=
- =?us-ascii?Q?np/Aezo8B9aAIdIsmTDXFPZywv+cVAvH2ICbMs+AFOPy1tPfsWA+Puae94aP?=
- =?us-ascii?Q?W9ie41hocP83rDI5g7emwr8f6DyxR4GaKRn/+kZUaWGFOf+yGg3J10+91JWm?=
- =?us-ascii?Q?vfRB2cUzk+Pbr9lbjucsnK7Zz9bnzvifP8edVPMb/o5xpa7jZAI2dWbhtNqi?=
- =?us-ascii?Q?CvX8i31c0gCQWbT7RklhmLqUMFZi8wEEBUoM1HXZ20re1jYadSp4udoxL65W?=
- =?us-ascii?Q?12q/BkNMpGgtUVf5sWkGUxkuaoo+ac+0a5pUDZM4UMlSa419VlDyMAzBCEsv?=
- =?us-ascii?Q?/BCzH/cMxQGTLnGTIu8HDUEL+Rn6WbulL7MPknptbgw88R7Zo8pSthRMw4La?=
- =?us-ascii?Q?nxO0waP2sEUUFrhjijmFM27294FPH7G9dIsp8u6VUrcluuLgsT3BBHr4aaB+?=
- =?us-ascii?Q?eho5FmhoitlkTSsmskGsDpAxoD3TSk+10MfEMydT7erh/ak+g2EEKMtgvywJ?=
- =?us-ascii?Q?cn1uQ/Fb+MiRZDPS/0Ww73pkK+g/ZL2p7w1PvUPaJHPNR/9DdE423tublMQS?=
- =?us-ascii?Q?9unNQl4rnGdFdmIlWPpD4zvcFXNSv+V5jE35Zyd9u0LH2R2ILT4sZXAz5zMi?=
- =?us-ascii?Q?IMH0JO4HAoHOYmK41Yg3M+UruawOuI2qRpcNH2pFp86J62hNIQHLP/RIOvcn?=
- =?us-ascii?Q?wstmHoLxaqRETECeaHlZcMSelNBNTlu/JzoWmPGO74jeWkJenz4rfYQGtZCj?=
- =?us-ascii?Q?H0cazL74Hs5i2rlcavWTHyEX9Ii5dROqxfNqVAf/YtCaKfFX7XWOF/JPyn2c?=
- =?us-ascii?Q?kq5VQKhdvE7vp98WOOZ2y8Z2U08bdeH96qJDpDkDTrnDmANj2b12+XmjnFfj?=
- =?us-ascii?Q?X0RFDlF3MD/FiH+kLbU3ZcqOr16gBpc9VR/cnIqzx9bSoDbwTSnzBKboJiz9?=
- =?us-ascii?Q?SCH/IGPdOTzR8bwfevHp/WogR8wXz/uf+rauS7VPIRWSd2ak/wD3/gRN+Vve?=
- =?us-ascii?Q?xO0KsK13v81Rm3C2QYeqBULUR49XPcd6HRmhcUWfg9l3kzLoxTI1x2bTSXvM?=
- =?us-ascii?Q?2gYCjr7p/SabQvtlkjxJbgVHsfNEW/ABWFh/axKAXshY8rVJOu1616K3tvaN?=
- =?us-ascii?Q?rMHW/hKXlWTTOUJ3Te4ymYsnFsTVE7WTM49NCp+lRWEsKE+7GbJQgra3W5IV?=
- =?us-ascii?Q?x9xxZO4=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(82310400026)(7416014)(376014);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 04:56:38.4165
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 311e08ca-ea69-499c-cc5e-08dcea7a417f
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EDD4.namprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB8575
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 12, 2024 at 11:12:09AM +0800, Zhangfei Gao wrote:
-> > +       case CMDQ_OP_ATC_INV:
-> > +       case CMDQ_OP_CFGI_CD:
-> > +       case CMDQ_OP_CFGI_CD_ALL:
-> > +               u32 sid, vsid = FIELD_GET(CMDQ_CFGI_0_SID, cmd->cmd[0]);
-> 
-> Here got build error
-> 
-> drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3-iommufd.c:302:3: error: a
-> label can only be part of a statement and a declaration is not a
-> statement
->   302 |   u32 sid, vsid = FIELD_GET(CMDQ_CFGI_0_SID, cmd->cmd[0]);
->       |   ^~~
-> 
-> Need {} to include.
-> case CMDQ_OP_CFGI_CD_ALL: {
-> ...
-> }
+Following changes are used to reduce the code and used new
+clk_bulk and reset_control_bulk helper functions.
 
-Oh, yea. Will fix.
+Additional to the PCie core controller changes
+added some new PHY changes to help improve and clean up
+the code.
 
-Thanks!
-Nicolin
+Made lots of silly mistakes.
+
+Previous changes.
+v6:
+https://lore.kernel.org/r/20241006182445.3713-2-linux.amoon@gmail.com/
+v5:
+https://lore.kernel.org/all/20240901183221.240361-2-linux.amoon@gmail.com/
+V4:
+ https://lore.kernel.org/all/20240625104039.48311-1-linux.amoon@gmail.com/
+V3:
+ https://lore.kernel.org/all/20240622061845.3678-1-linux.amoon@gmail.com/
+V2:
+ https://lore.kernel.org/all/20240621064426.282048-1-linux.amoon@gmail.com/
+V1:
+ https://lore.kernel.org/all/20240618164133.223194-2-linux.amoon@gmail.com/
+
+Thanks
+-Anand
+
+Anand Moon (3):
+  PCI: rockchip: Simplify clock handling by using clk_bulk*() function
+  PCI: rockchip: Simplify reset control handling by using
+    reset_control_bulk*() function
+  PCI: rockchip: Refactor rockchip_pcie_disable_clocks() function
+    signature
+
+ drivers/pci/controller/pcie-rockchip.c | 219 +++++--------------------
+ drivers/pci/controller/pcie-rockchip.h |  35 ++--
+ 2 files changed, 61 insertions(+), 193 deletions(-)
+
+
+base-commit: 09f6b0c8904bfaa1e0601bc102e1b6aa6de8c98f
+-- 
+2.44.0
+
 
