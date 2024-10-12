@@ -1,281 +1,233 @@
-Return-Path: <linux-kernel+bounces-362070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6455799B087
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:53:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 762C999B089
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82E5F1C211CB
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:53:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 983E81C2118E
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:56:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5325126C02;
-	Sat, 12 Oct 2024 03:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251CF86277;
+	Sat, 12 Oct 2024 03:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="csDHdqpd"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nomKBn/B"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E428A41;
-	Sat, 12 Oct 2024 03:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A11EA41
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:56:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705202; cv=none; b=NXFaCizuvWsRDYVvpxB79vLJg3mrtlYM7ZACqSjm5yflBlHeSsFOdo0zRmjjGBFFMItgQ/AumlMMJIdf6kqA67s9l1bTNRiRZvxnuZ167vbvLIaL2jLDbU7Oya/8Dy4XEcXb6ntBbOLGyyl+dn9iuikouuU/HFIa7xkzFTXh7H8=
+	t=1728705372; cv=none; b=Y6smahNTSv+8lXQONxFKf4tzGS/ot6S9YRza7QtNEhZttxyhXyIHMkyWX451olQSDvw5NhyEp4uM2HYoYw6SeWm1dAqxuZu9mpi/mv4KJG9aEalHnui6epfFOy0xYZhQ7p5rTvquFwVToHT/9Gm2d3m8vQNofkW/1pcfmlR9AWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705202; c=relaxed/simple;
-	bh=AW5DZ/uxFTAsik+BDblAe2m6pQ/3cvs37Qf6PUBtKcU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mspvjr6/mT0olBN5bxLZACJSn2a2N5TWXm6sKBqcJD9Ndgmdj1nfeCqz8GEmLhqPGZOzM42M34T7uVj1mBtYL2Df0UnJq9njcKRmZApCKER+DKb/8qL0n5UULsSLDItMu+fmrNFjPrf4BYzLQAfFC467AtnQsM2YIlo1X3iHzrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=csDHdqpd; arc=none smtp.client-ip=209.85.216.43
+	s=arc-20240116; t=1728705372; c=relaxed/simple;
+	bh=/FNldQTYLRaRNdMhfffmSUO35wUxwivYkc4/7qGa9fQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cPU6PojCeGy3IqPEOieH3oimMROrmV3E0MLfqRZy2UOO39qNMgjOlcGkXyDfB3LflRnuxb7GqQ2YlPfrvnQkh2EQ/w81gfOMn+Tcey2i9AfT+alG6QSJXNdvybOyBpQGUNbCemdqBYTdML5NN3biQjngg5nxoRMuN//El1qGOHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nomKBn/B; arc=none smtp.client-ip=209.85.167.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e221a7e7baso1809917a91.0;
-        Fri, 11 Oct 2024 20:53:18 -0700 (PDT)
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539d0929f20so1796788e87.0
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:56:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728705198; x=1729309998; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=oFlRn4ys9Cl5MtaYHqxLNUhoFIlLy79+wr8gd8xYoFI=;
-        b=csDHdqpdCr36TA/eZ7vYhOxSKHDwsj5sWeuI4GgXBelufL+bkhpbH0iTYYPgKb5G0N
-         eZk0pFdWS+DbE1ES/LFqQgchfqC1/oq06hRu/ooSwhhgUqV0AKkLOp+rrS/Y0hnUwp9a
-         349z8ndd5Xx4JD22i/VWJKHn+5eg5LAgvEyE1/FSrIx4TGKzQ2ACaWDJd6IB/i3Xxab/
-         VPVMLKK4ZzvyZodR2jjgET9sVpnovudlgR0gXjzsUpwdF1kLSsskv67afCDJHjRM+m7B
-         hminNrvQEjkj+RGeByHeJR6fA5JB3GCQqcr8umGEsf2USY6xOW6Kb+mdYnUxrglq+gXD
-         ldbg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728705198; x=1729309998;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1728705368; x=1729310168; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=oFlRn4ys9Cl5MtaYHqxLNUhoFIlLy79+wr8gd8xYoFI=;
-        b=KDiKOi4H3XKQdrByIsqELzLdqnWLWdHfLAr3V6U2uZoPbzEHRzbB0hW3sjhNm7AdOK
-         jv04b5ZQiddZpouE5DzgRI1QsA9p8ygp+Ts+4QoIjCG6HHcA7+jAEB/6EU6n49VVuo9n
-         qycJt3SlPyAF937qHQ9NQ3Znp+h3YpdvVKg3uy5XeqpiBWWTv7aHwHa14HS56tkRQiNp
-         LW3ykiwwrnPKNTKYJnoHlqbPi0xP2qZoXwH6fLOCDu5Iz5gFR63I/FCB1joV9nATLpU+
-         HWF+xCAkUgTStpOHQWt54C6SlsILqldjXlizmnuB0lou6ZvNtlvwIqUxx3N9PDL94Yzr
-         zf+w==
-X-Forwarded-Encrypted: i=1; AJvYcCVgz5LuTj7M7qEMP3eYMOkWhrMSqarjRKHoSqFEAoYTSkJ4vKCUF/dGEVi/gPuVmF1YxMJyEASgwpc=@vger.kernel.org, AJvYcCVlc7V9K4RGEFj7ktQV35d9nr5adMNJuNYL3YDTgbd1P3CebdvordJg7EtmsxGRCWE7YNokT6L+SqMWoA8d@vger.kernel.org, AJvYcCVoh4HYCz9G8SDyqzyg424wSWiieQkJ54dK1jPJGcwflCI1LfRbFsZIkf+SYWs6JSsuKqTAI7BKHJqsYqFcFlmGSdpW7w==@vger.kernel.org, AJvYcCWkmZ4S45vQcClY6pPM026jFvbJV2jj5fGER19hv4IZAJ3hEVOcbI8iFlU06XruyjtyE9c7ybQZ8mo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMO7k3qbGSxWNwlJEHTmeWg8x0B+TRwp1vLYWRqmaz89U6HIxA
-	2q1hpSCjUUKsmQRc5H0GrB9a1+crwDoRTmiMlrT8ngY3SlFILamZKmOpjOmY
-X-Google-Smtp-Source: AGHT+IFBRR4v4JycUj40IR+Djj+Y51UpeKooSlN57VO1csE3pWQErWmVuCZBFo15g5B2LK1eZcDxUg==
-X-Received: by 2002:a17:90a:6845:b0:2e2:eba1:a1a1 with SMTP id 98e67ed59e1d1-2e2f0d9d935mr6606210a91.36.1728705197767;
-        Fri, 11 Oct 2024 20:53:17 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e3060ba4besm1739046a91.19.2024.10.11.20.53.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 11 Oct 2024 20:53:16 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id D5D7345E17CA; Sat, 12 Oct 2024 10:53:13 +0700 (WIB)
-Date: Sat, 12 Oct 2024 10:53:13 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Mario Limonciello <mario.limonciello@amd.com>,
-	Borislav Petkov <bp@alien8.de>, Hans de Goede <hdegoede@redhat.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
-Cc: x86@kernel.org, "Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, linux-pm@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org,
-	Shyam Sundar S K <Shyam-sundar.S-k@amd.com>
-Subject: Re: [PATCH v2 01/13] Documentation: x86: Add AMD Hardware Feedback
- Interface documentation
-Message-ID: <ZwnyqRF-j7Epd_kA@archie.me>
-References: <20241010193705.10362-1-mario.limonciello@amd.com>
- <20241010193705.10362-2-mario.limonciello@amd.com>
+        bh=LU52FN+J0/hnIDa7OCRKyJ9HWXb9RLs18SXoJG1d8Ck=;
+        b=nomKBn/ButvVzrw5Yz5AlzMH8CPHMUcu3aNu1K2FjMlR3i3oi7uD4Yia6l9ia+NeiX
+         vB360x7Z+xNWf+PLhdw5ZaXN5FVxTqVuysWD9f7YrgCBZ+CuMPZhOuvPSYyIB1kX0WLP
+         ph6QMT1XoXS1MkdzcOG+5KCRHm7h4D17uwAVrSi7bx9e142/6ukisWh1qPUTUZ/7lW36
+         RnC+Xjch5XEyeDbWDJA4COp6nzQy9fQXDFqVMXg/w2NEgZsxI0ukSxDEEyA3co+qpN7k
+         14KTIZpY/+cdU/uFm/d6zKeIRBve6FB+y44usEmf66/7VQZHiwNPrXPFgtiDs0//zwdY
+         NAxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728705368; x=1729310168;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=LU52FN+J0/hnIDa7OCRKyJ9HWXb9RLs18SXoJG1d8Ck=;
+        b=jbQV6XPovqmh+z679tux9QK9PwK/KKRpATENW2zUkmaxgmyLhDUPany9tyVTIqZxDy
+         9bi/OjFD64j5QCL9Mxz++AjJDVHpW3oUYJELG69cGgr+sBDpphaw5Y0VRyNuBWwXppD3
+         YOk3fFelzPJYDE2LXtDfbpWM5CK3dqhwFESetp1r0wJ80KjO7IVxFkgCBObnOcDQl5Xv
+         C5RAlPaweLxwb8RDhHBkxCpE1Z8WZ536m1GE/XGkfZY+fCgpjxncAnqMVuBojM+3i4nj
+         d9B8uUC3YoF9InacEMtKh+5+2B28+mDGwfQ6fRuRp63H4cFaXIVMCFxh0mnjuMFYH2Ba
+         ubiA==
+X-Forwarded-Encrypted: i=1; AJvYcCVWYcGQ3voXm4NH3Q76h6QbFXEvJMOaqNiEXhslG/aGL3O3hhEplpgIwMNV3SBm2z8ktR7lnawFqH2P5Wo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDs/GxdidvO9Us7sRjCdMKY5Dt3RX8r6IKGgT1jponqHn3451Q
+	pS8lpbsnBQ9LlMH98C7MLVeB154zLlPk9hEl4JBYG+DAgAkIy0SSJvWhANdRy24WdsGHdc7f1LF
+	2TA/km0ujVfmS+hIiQ1gAL9putOg=
+X-Google-Smtp-Source: AGHT+IHJ3suir3QdeEfWYMb/Qkj1g+JwmbDCoY3KQ1qbRzkCF3cbRrKILDnEpJgSLbB+8jTEOG06fFokookQDaybnUk=
+X-Received: by 2002:a05:6512:10d4:b0:539:8ad5:50a2 with SMTP id
+ 2adb3069b0e04-539c988197fmr3216740e87.14.1728705368045; Fri, 11 Oct 2024
+ 20:56:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="ScYld6gsAtJ/5B+U"
-Content-Disposition: inline
-In-Reply-To: <20241010193705.10362-2-mario.limonciello@amd.com>
-
-
---ScYld6gsAtJ/5B+U
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+References: <20240925110235.3157-1-suhua1@kingsoft.com> <Zvkalqx12KRjXPAE@kernel.org>
+In-Reply-To: <Zvkalqx12KRjXPAE@kernel.org>
+From: Su Hua <suhua.tanke@gmail.com>
+Date: Sat, 12 Oct 2024 11:55:31 +0800
+Message-ID: <CALe3CaBWQtGWVUnmW7Kkc7ayEEhqf=Xye0d1MymHn8c5qtx+GA@mail.gmail.com>
+Subject: Re: [PATCH v1] memblock: Initialized the memory of memblock.reserve
+ to the MIGRATE_MOVABL
+To: Mike Rapoport <rppt@kernel.org>
+Cc: akpm@linux-foundation.org, muchun.song@linux.dev, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, suhua <suhua1@kingsoft.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 10, 2024 at 02:36:53PM -0500, Mario Limonciello wrote:
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
-> +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> +
-> +:Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
-> +
-> +:Author: Perry Yuan <perry.yuan@amd.com>
+Hi Mike
 
-Don't forget to correct the copyright reST field:
+Thanks for your advice and sorry for taking so long to reply.
 
-diff --git a/Documentation/arch/x86/amd-hfi.rst b/Documentation/arch/x86/am=
-d-hfi.rst
-index 5ada5c5b79f4b5..82811be984799d 100644
---- a/Documentation/arch/x86/amd-hfi.rst
-+++ b/Documentation/arch/x86/amd-hfi.rst
-@@ -4,7 +4,7 @@
- Hardware Feedback Interface For Hetero Core Scheduling On AMD Platform
- =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-=20
--:Copyright (C) 2024 Advanced Micro Devices, Inc. All Rights Reserved.
-+:Copyright: 2024 Advanced Micro Devices, Inc. All Rights Reserved.
-=20
- :Author: Perry Yuan <perry.yuan@amd.com>
-=20
+I looked at the logic again. deferred_init_pages is currently used to
+handle all (memory &&! reserved) area memblock=EF=BC=8Cand put that memory =
+in
+buddy.
+Change it to also handle reserved memory may involve more code
+changes. I wonder if I can change the commit message: This patch is
+mainly to
+make the migration type to MIGRATE_MOVABLE when the reserve type page
+is initialized, regardless of whether CONFIG_DEFERRED_STRUCT_PAGE_INIT
+is set or not?
 
-> +
-> +Overview
-> +--------
-> +
-> +AMD Heterogeneous Core implementations are comprised of more than one
-> +architectural class and CPUs are comprised of cores of various efficiency
-> +and power capabilities. Power management strategies must be designed to =
-accommodate
-> +the complexities introduced by incorporating different core types.
-> +Heterogeneous systems can also extend to more than two architectural cla=
-sses as well.
-> +The purpose of the scheduling feedback mechanism is to provide informati=
-on to
-> +the operating system scheduler in real time such that the scheduler can =
-direct
-> +threads to the optimal core.
-> +
-> +``Classic cores`` are generally more performant and ``Dense cores`` are =
-generally more
-> +efficient.
-> +The goal of AMD's heterogeneous architecture is to attain power benefit =
-by sending
-> +background thread to the dense cores while sending high priority threads=
- to the classic
-> +cores. From a performance perspective, sending background threads to den=
-se cores can free
-> +up power headroom and allow the classic cores to optimally service deman=
-ding threads.
-> +Furthermore, the area optimized nature of the dense cores allows for an =
-increasing
-> +number of physical cores. This improved core density will have positive =
-multithreaded
-> +performance impact.
-> +
-> <snipped>...
-> +
-> +The mechanism used to trigger a table update like below events:
-> +    * Thermal Stress Events
-> +    * Silent Compute
-> +    * Extreme Low Battery Scenarios
+When not set CONFIG_DEFERRED_STRUCT_PAGE_INIT=EF=BC=8C initializes memblock=
+ of
+reserve type to MIGRATE_MOVABLE by default at memmap_init initializes
+memory.
 
-What about below wording?
+Sincerely yours=EF=BC=8C
+Su
 
----- >8 ----
-diff --git a/Documentation/arch/x86/amd-hfi.rst b/Documentation/arch/x86/am=
-d-hfi.rst
-index 351641ce28213c..5ada5c5b79f4b5 100644
---- a/Documentation/arch/x86/amd-hfi.rst
-+++ b/Documentation/arch/x86/amd-hfi.rst
-@@ -12,16 +12,15 @@ Overview
- --------
-=20
- AMD Heterogeneous Core implementations are comprised of more than one
--architectural class and CPUs are comprised of cores of various efficiency
--and power capabilities. Power management strategies must be designed to ac=
-commodate
--the complexities introduced by incorporating different core types.
--Heterogeneous systems can also extend to more than two architectural class=
-es as well.
--The purpose of the scheduling feedback mechanism is to provide information=
- to
--the operating system scheduler in real time such that the scheduler can di=
-rect
--threads to the optimal core.
-+architectural class and CPUs are comprised of cores of various efficiency =
+
+Mike Rapoport <rppt@kernel.org> =E4=BA=8E2024=E5=B9=B49=E6=9C=8829=E6=97=A5=
+=E5=91=A8=E6=97=A5 17:18=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On Wed, Sep 25, 2024 at 07:02:35PM +0800, suhua wrote:
+> > After sparse_init function requests memory for struct page in memblock =
 and
-+power capabilities: performance-oriented *classic cores* and power-efficie=
-nt
-+*dense cores*. As such, power management strategies must be designed to
-+accommodate the complexities introduced by incorporating different core ty=
-pes.
-+Heterogeneous systems can also extend to more than two architectural class=
-es as
-+well. The purpose of the scheduling feedback mechanism is to provide
-+information to the operating system scheduler in real time such that the
-+scheduler can direct threads to the optimal core.
-=20
--``Classic cores`` are generally more performant and ``Dense cores`` are ge=
-nerally more
--efficient.
- The goal of AMD's heterogeneous architecture is to attain power benefit by=
- sending
- background thread to the dense cores while sending high priority threads t=
-o the classic
- cores. From a performance perspective, sending background threads to dense=
- cores can free
-@@ -78,7 +77,8 @@ Power Management FW is responsible for detecting events t=
-hat would require
- a reordering of the performance and efficiency ranking. Table updates would
- happen relatively infrequently and occur on the time scale of seconds or m=
-ore.
-=20
--The mechanism used to trigger a table update like below events:
-+The following events trigger a table update:
-+
-     * Thermal Stress Events
-     * Silent Compute
-     * Extreme Low Battery Scenarios
-
-> diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/in=
-dex.rst
-> index 8ac64d7de4dc..7f47229f3104 100644
-> --- a/Documentation/arch/x86/index.rst
-> +++ b/Documentation/arch/x86/index.rst
-> @@ -43,3 +43,4 @@ x86-specific Documentation
->     features
->     elf_auxvec
->     xstate
-> +   amd_hfi
-
-Sphinx reports mismatched toctree entry name:
-
-Documentation/arch/x86/index.rst:7: WARNING: toctree contains reference to =
-nonexisting document 'arch/x86/amd_hfi'
-
-I have to fix it up:
-
----- >8 ----
-diff --git a/Documentation/arch/x86/index.rst b/Documentation/arch/x86/inde=
-x.rst
-index 7f47229f3104e1..56f2923f52597c 100644
---- a/Documentation/arch/x86/index.rst
-+++ b/Documentation/arch/x86/index.rst
-@@ -43,4 +43,4 @@ x86-specific Documentation
-    features
-    elf_auxvec
-    xstate
--   amd_hfi
-+   amd-hfi
-
-Thanks.
-
---=20
-An old man doll... just what I always wanted! - Clara
-
---ScYld6gsAtJ/5B+U
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZwnypAAKCRD2uYlJVVFO
-o6+GAQDrEa+eXvEryM52GrfrRsgFJemg9iRNdruOpF5csqRb7QD/dIlwwqoqSq3N
-aEclgc9riuX7haD/M3JqTJcey6S7qQ0=
-=LzcE
------END PGP SIGNATURE-----
-
---ScYld6gsAtJ/5B+U--
+> > adds it to memblock.reserved, this memory area is present in both
+> > memblock.memory and memblock.reserved.
+> >
+> > When CONFIG_DEFERRED_STRUCT_PAGE_INIT is not set. The memmap_init funct=
+ion
+> > is called during the initialization of the free area of the zone, this
+> > function calls for_each_mem_pfn_range to initialize all memblock.memory=
+,
+> > excluding memory that is also placed in memblock.reserved, such as the
+> > struct page metadata that describes the page, 1TB memory is about 16GB,
+> > and generally this part of reserved memory occupies more than 90% of th=
+e
+> > total reserved memory of the system. So all memory in memblock.memory i=
+s
+> > set to MIGRATE_MOVABLE according to the alignment of pageblock_nr_pages=
+.
+> > For example, if hugetlb_optimize_vmemmap=3D1, huge pages are allocated,=
+ the
+> > freed pages are placed on buddy's MIGRATE_MOVABL list for use.
+>
+> Please make sure you spell MIGRATE_MOVABLE and MIGRATE_UNMOVABLE correctl=
+y.
+>
+> > When CONFIG_DEFERRED_STRUCT_PAGE_INIT=3Dy, only the first_deferred_pfn =
+range
+> > is initialized in memmap_init. The subsequent free_low_memory_core_earl=
+y
+> > initializes all memblock.reserved memory but not MIGRATE_MOVABL. All
+> > memblock.memory is set to MIGRATE_MOVABL when it is placed in buddy via
+> > free_low_memory_core_early and deferred_init_memmap. As a result, when
+> > hugetlb_optimize_vmemmap=3D1 and huge pages are allocated, the freed pa=
+ges
+> > will be placed on buddy's MIGRATE_UNMOVABL list (For example, on machin=
+es
+> > with 1TB of memory, alloc 2MB huge page size of 1000GB frees up about 1=
+5GB
+> > to MIGRATE_UNMOVABL). Since the huge page alloc requires a MIGRATE_MOVA=
+BL
+> > page, a fallback is performed to alloc memory from MIGRATE_UNMOVABL for
+> > MIGRATE_MOVABL.
+> >
+> > Large amount of UNMOVABL memory is not conducive to defragmentation, so
+> > the reserved memory is also set to MIGRATE_MOVABLE in the
+> > free_low_memory_core_early phase following the alignment of
+> > pageblock_nr_pages.
+> >
+> > Eg=EF=BC=9A
+> > echo 500000 > /proc/sys/vm/nr_hugepages
+> > cat /proc/pagetypeinfo
+> >
+> > before=EF=BC=9A
+> > Free pages count per migrate type at order       0      1      2      3=
+      4      5      6      7      8      9     10
+> > =E2=80=A6
+> > Node    0, zone   Normal, type    Unmovable     51      2      1     28=
+     53     35     35     43     40     69   3852
+> > Node    0, zone   Normal, type      Movable   6485   4610    666    202=
+    200    185    208     87     54      2    240
+> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
+     13      1      2      1      0      1      0
+> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
+      0      0      0      0      0      0      0
+> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
+      0      0      0      0      0      0      0
+> > Unmovable =E2=89=88 15GB
+> >
+> > after=EF=BC=9A
+> > Free pages count per migrate type at order       0      1      2      3=
+      4      5      6      7      8      9     10
+> > =E2=80=A6
+> > Node    0, zone   Normal, type    Unmovable      0      1      1      0=
+      0      0      0      1      1      1      0
+> > Node    0, zone   Normal, type      Movable   1563   4107   1119    189=
+    256    368    286    132    109      4   3841
+> > Node    0, zone   Normal, type  Reclaimable      2      2      1     23=
+     13      1      2      1      0      1      0
+> > Node    0, zone   Normal, type   HighAtomic      0      0      0      0=
+      0      0      0      0      0      0      0
+> > Node    0, zone   Normal, type      Isolate      0      0      0      0=
+      0      0      0      0      0      0      0
+> >
+> > Signed-off-by: suhua <suhua1@kingsoft.com>
+> > ---
+> >  mm/mm_init.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> >
+> > diff --git a/mm/mm_init.c b/mm/mm_init.c
+> > index 4ba5607aaf19..e0190e3f8f26 100644
+> > --- a/mm/mm_init.c
+> > +++ b/mm/mm_init.c
+> > @@ -722,6 +722,12 @@ static void __meminit init_reserved_page(unsigned =
+long pfn, int nid)
+> >               if (zone_spans_pfn(zone, pfn))
+> >                       break;
+> >       }
+> > +
+> > +     if (pageblock_aligned(pfn)) {
+> > +             set_pageblock_migratetype(pfn_to_page(pfn), MIGRATE_MOVAB=
+LE);
+> > +             cond_resched();
+> > +     }
+>
+> If you are trying to make initialization of pageblock migrate type
+> consistent with or without CONFIG_DEFERRED_STRUCT_PAGE_INIT, move setting
+> of migrate type from deferred_free_pages() to deferred_init_pages().
+>
+> > +
+> >       __init_single_page(pfn_to_page(pfn), pfn, zid, nid);
+> >  }
+> >  #else
+> > --
+> > 2.34.1
+> >
+>
+> --
+> Sincerely yours,
+> Mike.
 
