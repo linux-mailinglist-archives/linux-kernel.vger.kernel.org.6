@@ -1,95 +1,129 @@
-Return-Path: <linux-kernel+bounces-362219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 756E699B245
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:53:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EFC799B20F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 10:20:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 283231F22B35
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:53:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACCA41C21654
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 08:20:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FA5814A084;
-	Sat, 12 Oct 2024 08:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="V04ItqHi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8796D146A73;
+	Sat, 12 Oct 2024 08:20:22 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78E30D517;
-	Sat, 12 Oct 2024 08:53:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C51B2145B0F;
+	Sat, 12 Oct 2024 08:20:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728723225; cv=none; b=uTjahVwEtLlM2YeqNQeedqcApWsX0jM/K+T6PdOg5oYZELBu6mgJ2E0bhXiO6ldgzQ1wjl5StE+5nZO6KT+MteE/ocB1ppIgvEL+J6lWtBYywv1eppoSmNGyb44Icf699iZYjguYNk+jSogH+RCs50BYgJzFtcncLtv802XnCaY=
+	t=1728721222; cv=none; b=sy9iBs13e7fY+faKOSowwUaG1RCG0d+IkpODKlYTZuGy40wTaz8r4jlbr37iN1lKdThWnAqGGAsWCl2LgrWxNtS7q8740OqUaHLFaiSNPzlPZjaRfEVBlB35V7iobwTBWPvl4n0EvkgJ+9TdhlwHsMSZRjxhw3Xxz0ZI4x0dN3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728723225; c=relaxed/simple;
-	bh=/OoY6xvI/5m2JRxXEl7Hmm9CfxwT6gT9p8SXvk4YVp4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l3PFdtPrC9SAihL+MvXm2VJyV7HUTKk6xxMSMFCi5sXdHlT2N3I00CrwE8XYr7lJcSyOzaVYxXKQsUPVza7qnymeK1oDDuByPvZCcumLZW3gRzjOY1oZ1TNGaLBL5q/YsqXYdLPVb+wQdynOtPFu9YSGjUvaAJNRLNRujnNsuZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=V04ItqHi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DDBE7C4CECF;
-	Sat, 12 Oct 2024 08:53:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728723225;
-	bh=/OoY6xvI/5m2JRxXEl7Hmm9CfxwT6gT9p8SXvk4YVp4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=V04ItqHiE0BQ0kW/2vURrtUY27YN0kIPdGouZAlaJNZOlI2nWqTmVVZ7CIHJkoMRo
-	 /eBwMkRa0J0/lJEzQ19WoB/LcqbpY+pkfZOX/iZcHuaDHBTugWv/mroiuXsYPDC5An
-	 gbAey7TyK/ARLYs7WbVdGWKrC/E63mT+bb5xsIgY06kitEeJA2xET4juWiaXTkj23e
-	 qxI9vBoH55s31nXQI4AUM2OwXrXzxL0fbq/tmMci7aYxaUdSP50BEKYiLalUGa0wwj
-	 uVspSfws5ZzbQXLz7EnjfwN4ZWxFWunxyhtdhZs7PY8RIUZu1EegwKugF1buTgpYbD
-	 /9PtvrMhmQfSQ==
-Received: by pali.im (Postfix)
-	id 7FD8B7BD; Sat, 12 Oct 2024 10:53:38 +0200 (CEST)
-From: =?UTF-8?q?Pali=20Roh=C3=A1r?= <pali@kernel.org>
-To: Steve French <sfrench@samba.org>,
-	Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>
-Cc: linux-cifs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 0/7] Allow to choose symlink and socket type
-Date: Sat, 12 Oct 2024 10:52:45 +0200
-Message-Id: <20241012085252.560-1-pali@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241006100046.30772-1-pali@kernel.org>
-References: <20241006100046.30772-1-pali@kernel.org>
+	s=arc-20240116; t=1728721222; c=relaxed/simple;
+	bh=9wa2bJh2biaS1qUjXKCo5Jv/750/vTldRH50evS7ekE=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TCz0vCypEF9akwE3Nily+x4NsQI7Wl9yYuR1uauyJBQsieU+Cb+vZGWwqyPizYu09+qwrLQZ8PIr448kh41E62f1uYulDw4u2eXUqN1TRadvBJlp8cWazciluxKQxSA1MMfBnJipiKVGbCRSQ7EyhlpUtjY1TrTfJZRkXbO2Dzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.234])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XQbt033J8z1HKrB;
+	Sat, 12 Oct 2024 16:16:08 +0800 (CST)
+Received: from kwepemd200010.china.huawei.com (unknown [7.221.188.124])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4AA741403D2;
+	Sat, 12 Oct 2024 16:20:17 +0800 (CST)
+Received: from huawei.com (10.175.113.25) by kwepemd200010.china.huawei.com
+ (7.221.188.124) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1258.34; Sat, 12 Oct
+ 2024 16:20:00 +0800
+From: Zheng Zengkai <zhengzengkai@huawei.com>
+To: <lpieralisi@kernel.org>, <guohanjun@huawei.com>, <sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>, <maz@kernel.org>, <rafael@kernel.org>,
+	<lenb@kernel.org>
+CC: <daniel.lezcano@linaro.org>, <tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <zhengzengkai@huawei.com>
+Subject: [PATCH v2] ACPI: GTDT: Tighten the check for the array of platform timer structures
+Date: Sat, 12 Oct 2024 16:53:43 +0800
+Message-ID: <20241012085343.6594-1-zhengzengkai@huawei.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemd200010.china.huawei.com (7.221.188.124)
 
-This patch series improves choosing reparse format when creating new
-special files.
+As suggested by Marc and Lorenzo, first we need to check whether the
+platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+de-referencing what it points at to detect the length of the platform
+timer struct and then check that the length of current platform_timer
+struct is within gtdt_end too. Now next_platform_timer() only checks
+against gtdt_end for the entry of subsequent platform timer without
+checking the length of it and will not report error if the check failed.
 
-Changes since v1:
-* Instead of new -o reparse= mount option is now a new -o symlink= mount
-  option for choosing symlink type during creation, and new option
-  -o nonativesocket for choosing socket type
+Add check against table length (gtdt_end) for each element of platform
+timer array in acpi_gtdt_init() early, making sure that both their entry
+and length actually fit in the table.
 
-Pali Rohár (7):
-  cifs: Add mount option -o symlink= for choosing symlink create type
-  cifs: Add mount option -o reparse=none
-  cifs: Add support for creating native Windows sockets
-  cifs: Add support for creating NFS-style symlinks
-  cifs: Improve guard for excluding $LXDEV xattr
-  cifs: Add support for creating WSL-style symlinks
-  cifs: Validate content of WSL reparse point buffers
+For the first platform timer, keep the check against the end of the
+acpi_table_gtdt struct, it is unnecessary for subsequent platform timer.
 
- fs/smb/client/cifsfs.c     |   4 +
- fs/smb/client/cifsglob.h   |  36 +++++++
- fs/smb/client/connect.c    |   4 +
- fs/smb/client/fs_context.c |  82 +++++++++++++++
- fs/smb/client/fs_context.h |  19 ++++
- fs/smb/client/link.c       |  60 ++++++++---
- fs/smb/client/reparse.c    | 201 +++++++++++++++++++++++++++++++------
- fs/smb/client/reparse.h    |   2 +
- 8 files changed, 364 insertions(+), 44 deletions(-)
+Suggested-by: Marc Zyngier <maz@kernel.org>
+Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+---
+Changes in v2:
+- Check against gtdt_end for both entry and len of each array element
 
+v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@huawei.com/
+---
+ drivers/acpi/arm64/gtdt.c | 19 +++++++++++++++----
+ 1 file changed, 15 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+index c0e77c1c8e09..f5f62643899d 100644
+--- a/drivers/acpi/arm64/gtdt.c
++++ b/drivers/acpi/arm64/gtdt.c
+@@ -157,6 +157,8 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+ {
+ 	void *platform_timer;
+ 	struct acpi_table_gtdt *gtdt;
++	struct acpi_gtdt_header *gh;
++	void *struct_end;
+ 
+ 	gtdt = container_of(table, struct acpi_table_gtdt, header);
+ 	acpi_gtdt_desc.gtdt = gtdt;
+@@ -177,11 +179,20 @@ int __init acpi_gtdt_init(struct acpi_table_header *table,
+ 	}
+ 
+ 	platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+-	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt)) {
+-		pr_err(FW_BUG "invalid timer data.\n");
+-		return -EINVAL;
++	struct_end = (void *)table + sizeof(struct acpi_table_gtdt);
++	for (int i = 0; i < gtdt->platform_timer_count; i++) {
++		gh = platform_timer;
++		if (((i == 0 && platform_timer >= struct_end) || i != 0) &&
++			platform_timer < acpi_gtdt_desc.gtdt_end &&
++			platform_timer + gh->length <= acpi_gtdt_desc.gtdt_end) {
++			platform_timer += gh->length;
++		} else {
++			pr_err(FW_BUG "invalid timer data.\n");
++			return -EINVAL;
++		}
+ 	}
+-	acpi_gtdt_desc.platform_timer = platform_timer;
++
++	acpi_gtdt_desc.platform_timer = (void *)gtdt + gtdt->platform_timer_offset;
+ 	if (platform_timer_count)
+ 		*platform_timer_count = gtdt->platform_timer_count;
+ 
 -- 
 2.20.1
 
