@@ -1,33 +1,33 @@
-Return-Path: <linux-kernel+bounces-362548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B0F999B633
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF6899B638
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:24:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59D1D2821F1
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:20:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5DCDF282FA0
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:24:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 592BC770E5;
-	Sat, 12 Oct 2024 17:19:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4939F77112;
+	Sat, 12 Oct 2024 17:24:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="G1hrBF1g"
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="hKe8W7b4"
 Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1DEBFC133;
-	Sat, 12 Oct 2024 17:19:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 322EDC133;
+	Sat, 12 Oct 2024 17:24:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728753594; cv=none; b=OA8MWq25a11AAZl9S3f6Ct/V86NLMu7/9g4zjS8DY4JKLDbAzdnrP5eg9LM6sh3CUP2UTiuRGoawLJG1jb/vxm89pa4i75N8n+83oBqY77FlJDm6AaJLymNb8h/pDTsOaf/sp1MpQgydsc0KBAHUyjMkHXnmlFnrzLw0ojOo42Y=
+	t=1728753858; cv=none; b=oGlMCoZOo5nZo977HVyhvEvKICklCXkbPuY4mLyVLyb/WFucahmNi8lougfFbNJcdmYnoR7SL4dEtra+uLn1QM5PTzVGPOh4rYjt7YO1UbwIi5LmgvApD6Invtg1UQUKMn5QphJFlP/wFXqcx3xL//d8/M1QAr4eKH7H8QTZOaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728753594; c=relaxed/simple;
-	bh=E5EA3yaO7IT/VzWRUHmP/Bp4fD30YgNPM8dQ/IhI4Ek=;
+	s=arc-20240116; t=1728753858; c=relaxed/simple;
+	bh=N4XoqOD8j/6yjqCTP1nue5zspW8mIRlcm5amoIbTYgw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M3OJLi3khleqzjKxyJdzk/UPUpk9Oe2mBjbrQaAGCkbrpoOBgHzDngUg/TpiW+dxI60oKtPm2tqn4DXDvZGlpbS7FZ0RWMKraXPQ6a988bktameRlCNM4JYqjV9B6TvHAmPppGDtdq0p+K9NMfvbD2Wm/TF68MAKFn+NTLrnIWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=G1hrBF1g; arc=none smtp.client-ip=156.67.10.101
+	 Content-Type:Content-Disposition:In-Reply-To; b=RMVp//anwWTPSTx36VYSnzlIj9qZ9NQqDDwglyviVhZuux+jNcSX7ZaiFpWCtDfvHtfobo9gOOQxNFIloscYLhmmjkay7iK3EfDbqxiw2xIEn+kDX6jSuDZtZN9BFsyqQvpDSvIZBj5Cj3LkD5WBme4QFdLan2dCZjZEJpBcVto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=hKe8W7b4; arc=none smtp.client-ip=156.67.10.101
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
@@ -35,29 +35,37 @@ DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
 	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
 	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
 	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=XKaJLtZDVliGjLJYfhaXiQTeTZJZyVMiRKaSEE2p3qM=; b=G1hrBF1gxqg1Zl4K8+0ov+vPxP
-	gaVytrEBkhRk60KA3xdbP5vvGXhsf7lH6s7kvV5bnlKKxOngng2Jnrqr/8OiR60um3Em8/6jg2SwU
-	F/BOIikl2HrUbfILd/2qchL6SSIOldEWKC4iWn70NzQB2BA+k1KxQaVmd3C/0fKsdDyM=;
+	bh=E5Z1C8i4Znj4Wos9XAj0tRvPohxc/FM9zyA5QqXLAPY=; b=hKe8W7b4fFYXayoWX7fH2HW824
+	2e5VfVdWshRGmST7sODJ+KZIrzJsmhWcF6gKdnVlCVWUoKo1UmajOvED8wjW1uOEx+xTNP8/ZQb4+
+	VcX/pfkxQNZCBkeMUk80B1PAb/Fbfv7sIzmKK5G2rvdIVSsY9ApmLcTajW6ushGd7w4I=;
 Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
 	(envelope-from <andrew@lunn.ch>)
-	id 1szfmE-009oFS-6q; Sat, 12 Oct 2024 19:19:38 +0200
-Date: Sat, 12 Oct 2024 19:19:38 +0200
+	id 1szfqU-009oGL-D1; Sat, 12 Oct 2024 19:24:02 +0200
+Date: Sat, 12 Oct 2024 19:24:02 +0200
 From: Andrew Lunn <andrew@lunn.ch>
 To: Daniel Golle <daniel@makrotopia.org>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
+Cc: Pavel Machek <pavel@ucw.cz>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
 	Russell King <linux@armlinux.org.uk>,
 	"David S. Miller" <davem@davemloft.net>,
 	Eric Dumazet <edumazet@google.com>,
 	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Xu Liang <lxu@maxlinear.com>,
 	Christian Marangi <ansuelsmth@gmail.com>,
 	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	Abhishek Chauhan <quic_abchauha@quicinc.com>,
-	Robert Marko <robimarko@gmail.com>, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next] net: phy: aquantia: fix return value check in
- aqr107_config_mdi()
-Message-ID: <29cd3478-378f-43de-8733-28369b6c02bc@lunn.ch>
-References: <3c469f3b62fe458f19dc28e005968d73392f9fa3.1728682260.git.daniel@makrotopia.org>
+	Robert Marko <robimarko@gmail.com>,
+	Russell King <rmk+kernel@armlinux.org.uk>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	linux-leds@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org
+Subject: Re: [PATCH net-next v2 2/5] net: phy: support 'active-high' property
+ for PHY LEDs
+Message-ID: <89eb6d9e-a22a-4300-81c6-9cb27feb11ea@lunn.ch>
+References: <e9b15613a81129ceecb07ec51f71bbe75425ad2e.1728558223.git.daniel@makrotopia.org>
+ <91598487773d768f254d5faf06cf65b13e972f0e.1728558223.git.daniel@makrotopia.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,16 +74,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3c469f3b62fe458f19dc28e005968d73392f9fa3.1728682260.git.daniel@makrotopia.org>
+In-Reply-To: <91598487773d768f254d5faf06cf65b13e972f0e.1728558223.git.daniel@makrotopia.org>
 
-On Fri, Oct 11, 2024 at 10:33:52PM +0100, Daniel Golle wrote:
-> of_property_read_u32() returns -EINVAL in case the property cannot be
-> found rather than -ENOENT. Fix the check to not abort probing in case
-> of the property being missing.
+On Thu, Oct 10, 2024 at 01:54:19PM +0100, Daniel Golle wrote:
+> In addition to 'active-low' and 'inactive-high-impedance' also
+> support 'active-high' property for PHY LED pin configuration.
+> As only either 'active-high' or 'active-low' can be set at the
+> same time, WARN and return an error in case both are set.
 > 
-> Fixes: a2e1ba275eae ("net: phy: aquantia: allow forcing order of MDI pairs")
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Closes: https://lore.kernel.org/all/114b4c03-5d16-42ed-945d-cf78eabea12b@nvidia.com/
 > Signed-off-by: Daniel Golle <daniel@makrotopia.org>
 
 Reviewed-by: Andrew Lunn <andrew@lunn.ch>
