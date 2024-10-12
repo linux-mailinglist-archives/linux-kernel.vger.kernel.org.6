@@ -1,276 +1,163 @@
-Return-Path: <linux-kernel+bounces-362595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DD099B6B9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 21:16:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECC8999B6BC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 21:27:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB634B21BEA
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:16:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A18891F21A0D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:27:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA9D7481CD;
-	Sat, 12 Oct 2024 19:16:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548CB153BE4;
+	Sat, 12 Oct 2024 19:27:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="lu3sXJkS"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2042.outbound.protection.outlook.com [40.107.93.42])
+	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="kOU0k4rv"
+Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 375292F34;
-	Sat, 12 Oct 2024 19:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728760580; cv=fail; b=uy7ZMPf6IabWn7+gIyDiTJWWpUpOyBx0+DQmls6R8ydkHQDe4iQzuEYzWzZoRhaH0H1b8sANo3mhZnNbZvVw9++17ASIOcoQlQXpOOLgbotaJ1vJ2a75xSTKWFAlaLGq+Xqo/HSD9xKBj+bLrITdj/CO+lsjLeymVlStI/lOcv8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728760580; c=relaxed/simple;
-	bh=hhFRwAeTrN+DyRg7V7VbtBibAlhrgt2/UFxR4m/M2Do=;
-	h=From:To:Subject:Date:Message-ID:Content-Type:MIME-Version; b=XijgiYLLm+fyWBJt9Pnf/XqjnMUC7QYoAxcqvWJNmDxswe8nhS4zJI/NaEIeAjcJoxGYaU7QVHE4mEnWPtEA9ZvNlG36jCeU8qRkxy55YMCIkEbURXSQEwjrgu6wPpdGcUYGYb7PHy/TE6XeHLOi54dvKSThJkZNzz00Bjiby6E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=lu3sXJkS; arc=fail smtp.client-ip=40.107.93.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KXFROlSaFrhbj7wyFAVlvKAdvWWNbH8OLRxx0Le2Pa89DZNz8dHk/OmOrgluP1bqY4uBcAsOUG+gpHWdOGv5FksxrbT5kwAEwa9UuhrBxag+Q7PeMLztLwJUElHzrydRq2Wjx8GLPC3RcobRAMSOpeaOx7dkMmeTsarkh82tCQezC9olDqrrjmgfzM56dElelIZsFZbOHUmMLavN8P0UX7+wx6GG7emm8CFmmanZyQ8DuNPEiBie4Mh4OBFC3RrgEPkr5bl2TzI/XpF+PCuWzNZodFVks8jYZPc7N1OlTmbYpU2c8P3lRmdsiOlmeYjIMKZGJyLNnuUjzdkohwAfdw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=twmcl1Y9Wa56xh4avz0ozBO04biuVxSP2slcDmSrOc4=;
- b=R4BWWi3tRb2FZHnZh21JTi9HaujCROpdZqwgr6ceOw+LGbbvf6VLL8Ee30dF2SNbOKwJeWH3gzVY7c+05sSf1LtoYx4Mr/2VtUFBythL/z2LpjBK/X0l6kv/nkaZgQ6iDE5mFn3MlK4+fr3ysEoOLgI8aQZBHy+EDFg24qPY0BSv1o4XGu9+n2alh0+B0Tep/rHIiavQDzJhjf4sEcmJRKsQ+drxTT3CgmdfJWUQjnEi3eRML+kKa1s1ImFrPFCgL9G/2LASS6BZq8OehfjhdDgpA/lssYosa3+mRsBMPS0aPHURHRj25qbELPKnDJQHh7sEFOKvj+aJjdKlnTIJ0A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=twmcl1Y9Wa56xh4avz0ozBO04biuVxSP2slcDmSrOc4=;
- b=lu3sXJkSTc8X5hleGMa+WettjfH5ARwI25MUnFHoB97rM8vYUKpVQeodMGdPEBoUCzZ4spCGk/i3q3nmvnd+R537dn1pH+uisdCYq71rxVYi8usjnLKugHIwlvjNQmpDiF1xuv7ozb9R0t4BVo+eAeynlNqsHdBbUhDHl4gkC7vONZEVH11ZoddNL3z5XwBpSrYSOda5nNJXWlLAqUmfY/cd6/+a7O8zg08WLvn1pqvZwI8pZKsYcaCIj0IIutjDaW86Rplz/0M+qaliy/ghVg460zkO3wYlKjathGvTsa9K2H2X8qViLxDWfnCf1PmUZgX1hnLFgkfFXQiSBx5NLQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from IA0PR12MB7579.namprd12.prod.outlook.com (2603:10b6:208:43c::14)
- by PH7PR12MB9103.namprd12.prod.outlook.com (2603:10b6:510:2f5::18) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Sat, 12 Oct
- 2024 19:16:16 +0000
-Received: from IA0PR12MB7579.namprd12.prod.outlook.com
- ([fe80::da98:f83b:ca75:64d5]) by IA0PR12MB7579.namprd12.prod.outlook.com
- ([fe80::da98:f83b:ca75:64d5%7]) with mapi id 15.20.8048.020; Sat, 12 Oct 2024
- 19:16:15 +0000
-From: KobaK <kobak@nvidia.com>
-To: Matt Ochs <mochs@nvidia.com>,
-	James Morse <james.morse@arm.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	Len Brown <lenb@kernel.org>,
-	linux-acpi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Zhang Rui <rui.zhang@intel.com>,
-	linux-efi@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>
-Subject: [PATCH V8] acpi/prmt: find block with specific type
-Date: Sun, 13 Oct 2024 03:16:12 +0800
-Message-ID: <20241012191612.3586797-1-kobak@nvidia.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: SJ0PR13CA0100.namprd13.prod.outlook.com
- (2603:10b6:a03:2c5::15) To IA0PR12MB7579.namprd12.prod.outlook.com
- (2603:10b6:208:43c::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2092B2F34;
+	Sat, 12 Oct 2024 19:27:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728761254; cv=none; b=OPBVclO6hIy/9YhHdhZqCJJEBUkbiZIfRK3yeQNVpMEjwKSYsssCFi5V11m1SA5elGHR9Fc9cY8z7BeUcX9sUPtNcQAxMUHHOstdzL2y1mhEbQQUa3ojQ9U5blXLZ2jTVCLGwdTpNuJ5xtUm1j51ThrUqVcwhk1LFnf71IaUJ6c=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728761254; c=relaxed/simple;
+	bh=WEo4U+tZc+K067P6DOJ7oXo95DPkhPbifxm86CULLUU=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=rCdjQgfv2362DA3PHYQd4A1yyCkPUWLCaev4HAm6OKXiC7w/+f0fFuQJGmxWJTAx5f94OzZxGGNbPh2+c0zXSRmyuDE55/k4cq+Z0m6n9R438sZ/R2Ik1+JtLGElOyaXZrD2iwqw0rkpoiSUC2WWX/8K7Jrbf9chnjkQqfi70a4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=kOU0k4rv; arc=none smtp.client-ip=91.218.175.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR12MB7579:EE_|PH7PR12MB9103:EE_
-X-MS-Office365-Filtering-Correlation-Id: 764b906a-f2b1-4fdc-4eeb-08dceaf257b5
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?1ftIBm2WgmyKmoAfCgS76yFlb7+y9Ifh3jd4+V8dIB/ztfxo1Xjmadi35KD5?=
- =?us-ascii?Q?CBurHQKU3TnbymY8XZjywuwZUbBQdTxt1v2GvS4BkYHrMUOEFjCXt2onWSIu?=
- =?us-ascii?Q?ezXMd7ZSwQjekK7bnyQ1RjSOE1HYKspKuRMhZPHrxaVgWgrL0hOvZsdD2EF1?=
- =?us-ascii?Q?0XmHq2hKu3xIPIVr2YcOb53AUfEvIrniqOB9Vg468fgM2KY4bAYI0PvWsOi0?=
- =?us-ascii?Q?GufVsEouquHJB4LOMjUP0A0HNNcrrOoN+lTQlwQxVdlrYEbJfmBMWCAUtneS?=
- =?us-ascii?Q?T4p4npwFXBlriX1V7Rkgr5N+xoUXFM5eARgg4ZIy0Et9/ueIGVrFA4tocq5D?=
- =?us-ascii?Q?JFoGEdIymQruPVzL20tJ+HQ/2hWX0fj5ilt+EDhHb64NDXPOXqqaIhhuFSR9?=
- =?us-ascii?Q?UI3UCjkun2ymJu5ExtePR3jwOfXseTpwgZFgMgWre7zs10rwSlk2SBAr9Y08?=
- =?us-ascii?Q?QdcSEmxtu5ggKpOoKclpw+Cxn8BokA0IB1rj/WLt4ujTiUc6FmePRuaQoehX?=
- =?us-ascii?Q?hOClo8dg0LHUV9GXVNaoNQdEbKx32tKRoPurVHaKTsohAsUQP0Ui0JhlV4iu?=
- =?us-ascii?Q?wywtIaXkV5yz/B/eJSxsisnm936lz6YM0cZKmC1SQEBONCdyXtsC66c3FSoB?=
- =?us-ascii?Q?EMKEV/pO+s/CHKWhqgiRAYH1i5L8usZCbHkEGOdHRCsKWPIP8Rk8JGUm7jz7?=
- =?us-ascii?Q?lc8D+9/gjx7GIamjY+1dG57UXJXYPP3fkWvZD2prxRo4SSSPb37dm8559ZUb?=
- =?us-ascii?Q?TZo3OvD4CDQi3Zmv5M56+KogskM8zvhTOANjTYNZL+rdEOBW0KK1cMeWHql6?=
- =?us-ascii?Q?bAhx/L6jfiOjEmZ56l7t22rkvl1FhKcxsuiDHhRG6fp+MLrncCBMCUl7phNM?=
- =?us-ascii?Q?i98iFAxXxx03bM43/zEPT5fyR0rAp3d+Zf9Q8CiJu5Av/Tegg14lKJE0Ogwu?=
- =?us-ascii?Q?/AtxeX+pB7kxZrRBIZ63shPmWne4qmp+T15zzPC0kNYfd/Ko0JgCoZ2xWUOc?=
- =?us-ascii?Q?j6GPclhYZdX/xFV4WprodMmj0v2EW9wZOOGf7XBIov0uY+CVygEpxajxCcr6?=
- =?us-ascii?Q?f3rls00rrSK2uIjJdZ+p+gpbcOdKdX7r524h1DpGCtqZzDP52lMylv9lgV3g?=
- =?us-ascii?Q?fxobEnIFm+ykeNaxfoWxvcueVosvukcMw3ousUB2ZDKNOisb8mTSIDTYqyK8?=
- =?us-ascii?Q?vDWaDCffO41Yjjq46xKj5kktDX8gg9KgjNm5ZGH8pU8yECEV2zMuiAkdZLHT?=
- =?us-ascii?Q?LwnOaHNHuD9ZhmEiHUnBKO82/GzmOwZXjL2kaLGl6g=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR12MB7579.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?I+PckpwiqweXGkgr6onhs6+6wvneAR+4pem9Jx6H0Rqf6PGUW/Jn4XfK2gXz?=
- =?us-ascii?Q?V6DKMENOaO/E3Hv0ThA9b8T8/lXS/lFlLgI9/1M2/C+sqG0B55f/rOkdt3ui?=
- =?us-ascii?Q?p290AZqrQVCzdbZCZNQIaNkeGbVNZH3qZh+Pmc4q9m3h302EXr1+EFtHPi7+?=
- =?us-ascii?Q?SKFIKoGcTQqRhdzo69DEWRp/LvxpUE6VZcTKEwTrSplh17yIkIcWhC4FM5Yp?=
- =?us-ascii?Q?pfQpbRF88XNsBvF013ai4IJt6b947RyJHoZHo8DdCAuJalZoJdz8N5Z25SNE?=
- =?us-ascii?Q?lllkB4uDnnFR2WFpWH+3EsX5cJ+rBvt5rV5zrWzaTwl2xd17xgWliHlHjigR?=
- =?us-ascii?Q?CDUTwqLsvitWv6Dp5Nogqen2tFpj3MRmAF1qPFuuQ79yfeDQWuxTBzlq8vff?=
- =?us-ascii?Q?d83Mrldl7L4dHa2tlKqQgFJRFoKHgQm9GVgOXPSoPnq9cLtSnkdL1FxOEiTO?=
- =?us-ascii?Q?10BzZeMCmJEnrnhfvqWs9Ky6fvTiAMfIWgIjUcE9bm/FrZjhgTSWTI9KRu6h?=
- =?us-ascii?Q?68NpgrGBKaLvWoIErhbudxYWhbPrc0hcWgqPatXZE2klTm07bmFdo2SZ1KlO?=
- =?us-ascii?Q?8tS3Rlm7N0xvqGO7/bKkbENQEDCz9qeEwJWcytdRQySTTTsUo3SXy5Ir4VRT?=
- =?us-ascii?Q?LHMWFmZVvHHwNg+flnkhm1TX8cKy8jpqOS/7TAOKeBMcKIvUvEZQKhlP7p0n?=
- =?us-ascii?Q?eAxQSeCPGQFeFaE3Ppt7RlKR7rtXZDTLMtutN5mxoAemk4Q+7IqQn5NMXhow?=
- =?us-ascii?Q?M6GVbablgypRnNg4Fg7YEIUJxy2tDV8SdgxXO6ww7UAkLYmc8gN7OpVG4KSQ?=
- =?us-ascii?Q?SZ91i1oE43M3flCw2Eb12yf7/B87rEMOX3FAHDn0jwMTvjLDevo6g7zC/vPX?=
- =?us-ascii?Q?0NzW1pvcqb7zzTEAv3QW5Kwt2TibCHHSYaXVOv3TGPCY/hyKi8a6QXZ4U9h4?=
- =?us-ascii?Q?ajZbo+NLeLB+uJf+rVvrS5YFHgM251FtUvubf35OZ6liGaFHpGMyC6ECv62W?=
- =?us-ascii?Q?Yk8G+N/gl5Bz+S/UNBzXkGGBSV6phExnkFzbQSew2+IQR0udCsIPAFocitAz?=
- =?us-ascii?Q?O2Sn0dLjEi7dPSY1sgVjut9io+SqgEYPzT8A/T/arRFmiQwwW22QUgQwiZsL?=
- =?us-ascii?Q?+HFFAFK+9OVQWhzKPjqm5CzqQ3w5wnoG6IRgQ0mE87Jj5QiXWtezVkSPx2Sl?=
- =?us-ascii?Q?1/lE4B5xKYuUO1hMLmBc0rz3JTsNlhJTPbmyj7OayXeBkFT63zqpbP4yMoQU?=
- =?us-ascii?Q?dwD/qRHlCCxFCyFOCX0Y6xQNhPy4tHnT1AUDK8WH1eug7BkN/ssE3a6yQYPm?=
- =?us-ascii?Q?Zpg7GiO7rLiZPFTTsQ0bWEFMm/oJdeRyzUEKc/c7mcPFsNT/lyEY6E7aLtT6?=
- =?us-ascii?Q?Pl0cMugd2JIGITI8nE9JoLL/QaRibeYpGv84xV9rWwksG+Zv2aa3oHGmtaYE?=
- =?us-ascii?Q?MLXWhfn+mzjQmEqgmbdD4toBYjzTsex494JlsXyi4z9NsCd51ZZuJMi7Dd4f?=
- =?us-ascii?Q?S7EQpHG5UWlhZKH6Deivo8aD2YrOkXUiVwAXrL0vDTU5iHS+CHkjga4s2cVm?=
- =?us-ascii?Q?m+fqWrKA/5DhJSrud64f432LACmEILWzOL4Pu6DO?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 764b906a-f2b1-4fdc-4eeb-08dceaf257b5
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR12MB7579.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 19:16:15.7286
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Kr3lYM1y6DxA0Dma2zJxy3vFHhjo3XLVJ36EbJWEQN5Jw0Y8zBbOXlCiwfE8h5tyjWOeS6EhJxU9FOR7nCHFVg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB9103
+Mime-Version: 1.0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
+	t=1728761249;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bujrQMHu5eqJ7ou03hpDUMEsTeDy5i9ppr3HwnSleTY=;
+	b=kOU0k4rvuMUbQ+pEacsgUS923FabL+2SsWQMWGwGZxRtkIZeY8F1UIKmL0LZbvMnZycliJ
+	wv6NN/6+RV5tmsyVCeQWColxmscVDeoGnwABP28bE6AozIbQ6KqfLB5zsdIE/JeQB89rGt
+	Cr7hYTMRPRmm6N2c8wTfUVRl2CQpD3FSatEhgg3vDtSppOyRYljG2aQMDDp9NoFLYiHRhM
+	O1USVJ0+sEsu1+0Ui8RAZjVAJd9UvywYAKra96u/TRtNiieCrCyq5MWMvJ0gPwKM49fbCD
+	Na2OdvakhwVYNwPX3Yf+z5QUS/ySeit0luLeQK2Wv9zRFVjGtV9/QK7+QAoahg==
+Content-Type: multipart/signed;
+ boundary=612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b;
+ micalg=pgp-sha256; protocol="application/pgp-signature"
+Date: Sat, 12 Oct 2024 21:27:16 +0200
+Message-Id: <D4U2PO4VF4ST.9SBVKYF6095M@cknow.org>
+Cc: <heiko@sntech.de>, <linux-arm-kernel@lists.infradead.org>,
+ <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+ <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>
+Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Update CPU OPP voltages in
+ RK356x SoC dtsi
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: "Diederik de Haas" <didi.debian@cknow.org>
+To: "Dragan Simic" <dsimic@manjaro.org>,
+ <linux-rockchip@lists.infradead.org>
+References: <cover.1728752527.git.dsimic@manjaro.org>
+ <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org>
+In-Reply-To: <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org>
+X-Migadu-Flow: FLOW_OUT
 
-From: Koba Ko <kobak@nvidia.com>
+--612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
 
-PRMT needs to find the correct type of block to
-translate the PA-VA mapping for EFI runtime services.
+Hi Dragan,
 
-The issue arises because the PRMT is finding a block of
-type EFI_CONVENTIONAL_MEMORY, which is not appropriate for
-runtime services as described in Section 2.2.2 (Runtime
-Services) of the UEFI Specification [1]. Since the PRM handler is
-a type of runtime service, this causes an exception
-when the PRM handler is called.
+On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
+> Update the lower/upper voltage limits and the exact voltages for the Rock=
+chip
+> RK356x CPU OPPs, using the most conservative values (i.e. the highest per=
+-OPP
+> voltages) found in the vendor kernel source. [1]
+>
+> Using the most conservative per-OPP voltages ensures reliable CPU operati=
+on
+> regardless of the actual CPU binning, with the downside of possibly using
+> a bit more power for the CPU cores than absolutely needed.
+>
+> Additionally, fill in the missing "clock-latency-ns" CPU OPP properties, =
+using
+> the values found in the vendor kernel source. [1]
+>
+> [1] https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed=
+561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+>
+> Related-to: eb665b1c06bc ("arm64: dts: rockchip: Update GPU OPP voltages =
+in RK356x SoC dtsi")
+> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
+> ---
+>  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  1 +
+>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 18 ++++++++++++------
+>  2 files changed, 13 insertions(+), 6 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk3568.dtsi
+> index 0946310e8c12..5c54898f6ed1 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
+> @@ -273,6 +273,7 @@ &cpu0_opp_table {
+>  	opp-1992000000 {
+>  		opp-hz =3D /bits/ 64 <1992000000>;
+>  		opp-microvolt =3D <1150000 1150000 1150000>;
+> +		clock-latency-ns =3D <40000>;
+>  	};
+>  };
+> =20
+> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi b/arch/arm64/boot/d=
+ts/rockchip/rk356x.dtsi
+> index 0ee0ada6f0ab..534593f2ed0b 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
+> @@ -134,39 +134,45 @@ cpu0_opp_table: opp-table-0 {
+> =20
+>  		opp-408000000 {
+>  			opp-hz =3D /bits/ 64 <408000000>;
+> -			opp-microvolt =3D <900000 900000 1150000>;
+> +			opp-microvolt =3D <850000 850000 1150000>;
+>  			clock-latency-ns =3D <40000>;
+>  		};
+> =20
+>  		opp-600000000 {
+>  			opp-hz =3D /bits/ 64 <600000000>;
+> -			opp-microvolt =3D <900000 900000 1150000>;
+> +			opp-microvolt =3D <850000 850000 1150000>;
+> +			clock-latency-ns =3D <40000>;
+>  		};
+> =20
+>  		opp-816000000 {
+>  			opp-hz =3D /bits/ 64 <816000000>;
+> -			opp-microvolt =3D <900000 900000 1150000>;
+> +			opp-microvolt =3D <850000 850000 1150000>;
+> +			clock-latency-ns =3D <40000>;
+>  			opp-suspend;
+>  		};
 
-    [Firmware Bug]: Unable to handle paging request in EFI runtime service
-    WARNING: CPU: 22 PID: 4330 at drivers/firmware/efi/runtime-wrappers.c:341
-        __efi_queue_work+0x11c/0x170
-    Call trace:
+While it felt a bit much to send a patch just to remove the blank lines
+between the opp nodes, this sounds like an excellent opportunity to make
+it consistent with the opp list in other DT files?
 
-Find a block with specific type to fix this.
-PRMT find a block with EFI_MEMORY_RUNTIME for PRM handler and PRM context.
-If no suitable block is found, a warning message will be prompted
-but the procedure continues to manage the next PRM handler.
-However, if the PRM handler is actually called without proper allocation,
-it would result in a failure during error handling.
+Cheers,
+  Diederik
 
-By using the correct memory types for runtime services,
-ensure that the PRM handler and the context are
-properly mapped in the virtual address space during runtime,
-preventing the paging request error.
+--612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b
+Content-Type: application/pgp-signature; name="signature.asc"
 
-The issue is really that only memory that has been remapped for
-runtime by the firmware can be used by the PRM handler, and so the
-region needs to have the EFI_MEMORY_RUNTIME attribute.
+-----BEGIN PGP SIGNATURE-----
 
-[1] https://uefi.org/sites/default/files/resources/UEFI_Spec_2_10_Aug29.pdf
-Fixes: cefc7ca46235 ("ACPI: PRM: implement OperationRegion handler for the PlatformRtMechanism subtype")
-cc: stable@vger.kernel.org
-Signed-off-by: Koba Ko <kobak@nvidia.com>
-Reviewed-by: Matthew R. Ochs <mochs@nvidia.com>
-Reviewed-by: Zhang Rui <rui.zhang@intel.com>
-Reviewed-by: Ard Biesheuvel <ardb@kernel.org>
----
-V2:
-1. format the changelog and add more about error handling.
-2. replace goto
-V3: Warn if parts of handler are missed during va-pa translating.
-V4: Fix the 0day
-V5: Fix typo and pr_warn warning
-V6: use EFI_MOMOERY_RUNTIME to find block and split goto refactor as a single
-patch
-V7:
-1. refine the codes and commit description as per comments
-2. drop goto refacotr
-V8: Fix 0day and cc to stable
----
- drivers/acpi/prmt.c | 27 ++++++++++++++++++++++-----
- 1 file changed, 22 insertions(+), 5 deletions(-)
+iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwrNmgAKCRDXblvOeH7b
+biZ5AQCk8eE/SBHvOmxyKoThrXIzVKJWtgfKhOownzNqeMgT3wEA0SQCyymQQ/nZ
+fuymSUIvicdEH1WptzV7GJlEF6/TaAQ=
+=QmNY
+-----END PGP SIGNATURE-----
 
-diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-index 1cfaa5957ac4..552442bc10fd 100644
---- a/drivers/acpi/prmt.c
-+++ b/drivers/acpi/prmt.c
-@@ -72,17 +72,21 @@ struct prm_module_info {
- 	struct prm_handler_info handlers[] __counted_by(handler_count);
- };
- 
--static u64 efi_pa_va_lookup(u64 pa)
-+static u64 efi_pa_va_lookup(efi_guid_t *guid, u64 pa)
- {
- 	efi_memory_desc_t *md;
- 	u64 pa_offset = pa & ~PAGE_MASK;
- 	u64 page = pa & PAGE_MASK;
- 
- 	for_each_efi_memory_desc(md) {
--		if (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)
-+		if ((md->attribute & EFI_MEMORY_RUNTIME) &&
-+		    (md->phys_addr < pa && pa < md->phys_addr + PAGE_SIZE * md->num_pages)) {
- 			return pa_offset + md->virt_addr + page - md->phys_addr;
-+		}
- 	}
- 
-+	pr_warn("Failed to find VA for GUID: %pUL, PA: %p", guid, (void *)pa);
-+
- 	return 0;
- }
- 
-@@ -148,9 +152,15 @@ acpi_parse_prmt(union acpi_subtable_headers *header, const unsigned long end)
- 		th = &tm->handlers[cur_handler];
- 
- 		guid_copy(&th->guid, (guid_t *)handler_info->handler_guid);
--		th->handler_addr = (void *)efi_pa_va_lookup(handler_info->handler_address);
--		th->static_data_buffer_addr = efi_pa_va_lookup(handler_info->static_data_buffer_address);
--		th->acpi_param_buffer_addr = efi_pa_va_lookup(handler_info->acpi_param_buffer_address);
-+		th->handler_addr =
-+			(void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
-+
-+		th->static_data_buffer_addr =
-+			efi_pa_va_lookup(&th->guid, handler_info->static_data_buffer_address);
-+
-+		th->acpi_param_buffer_addr =
-+			efi_pa_va_lookup(&th->guid, handler_info->acpi_param_buffer_address);
-+
- 	} while (++cur_handler < tm->handler_count && (handler_info = get_next_handler(handler_info)));
- 
- 	return 0;
-@@ -277,6 +287,13 @@ static acpi_status acpi_platformrt_space_handler(u32 function,
- 		if (!handler || !module)
- 			goto invalid_guid;
- 
-+		if (!handler->handler_addr ||
-+		    !handler->static_data_buffer_addr ||
-+		    !handler->acpi_param_buffer_addr) {
-+			buffer->prm_status = PRM_HANDLER_ERROR;
-+			return AE_OK;
-+		}
-+
- 		ACPI_COPY_NAMESEG(context.signature, "PRMC");
- 		context.revision = 0x0;
- 		context.reserved = 0x0;
--- 
-2.43.0
-
+--612e9eccb1d9b10348795f9b0a79da4e37f0e17d73b69b857acd40a05d2b--
 
