@@ -1,107 +1,113 @@
-Return-Path: <linux-kernel+bounces-362437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50C5799B4FF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:59:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C4CF99B500
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 15:04:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FA93283EA9
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:59:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84EE01C21CDC
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 13:04:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68274185E53;
-	Sat, 12 Oct 2024 12:59:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53545174EFC;
+	Sat, 12 Oct 2024 13:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NGoHELhe"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lDIrha+8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85421F5FA;
-	Sat, 12 Oct 2024 12:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14AB14D457
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 13:04:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728737955; cv=none; b=Hl8MN+PyVx/zy4Qd61kfpyIk4Lg359nF1dm5XPlIAqUbyjBV0fl3lams6r/w+Ug4tRKnv8ZHHnS+tNGRbdd15SMyVNdYvtfJmUz+wrMmeEqzzRra6bHE9U/G1c2gXOK+gaG+58qhdvHB90kJw3D/ZMc9Hct2E5ftzslQH1jxLy4=
+	t=1728738269; cv=none; b=ruvTGCuIJJRsDXC3SG0YUAJ8FJiQ8sTrvo37CLEBv1TBaX8JMmO3LISMiJV9vKBAzdqjF/vu2bI0/C80YpGTbw9h2UdIemXl64mI3XwxrYgGAfzed44nlAtJwwvkiwYyMeRbEjYciVF8OMjwZtJp1eJgk+SJVJTCigYPtehfzmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728737955; c=relaxed/simple;
-	bh=DZStcdS7n+z5tKJSApCjAhG+OeXNP7JddySHFlPgmaw=;
+	s=arc-20240116; t=1728738269; c=relaxed/simple;
+	bh=+crhYsEbhfiekCM6xN4Pla2tPOTYJE8juC5MgQ622mM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HvjwvqAsM1WvxywCkHm8ej3w+cHrxGXnelko+ZpGW/ksTzs8rUpfOhYanPoO8ApPNkKjOSAGVk3hO3t3m3vLevwVf/xAw9JSRRr8zFJm/DKNFmFZmdeZj5eoLT6JFC5rIZCydayeB1xFC1wGBoLhVOoL71tyuGsU0vMvN9jp24I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NGoHELhe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFDECC4CEC6;
-	Sat, 12 Oct 2024 12:59:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728737955;
-	bh=DZStcdS7n+z5tKJSApCjAhG+OeXNP7JddySHFlPgmaw=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=qE2kgIXhW2er8hrak6lAfKmz/4nncV+cnkelQGZmWSJ7JFbcgmDLHy/cyfV7moeU5ybM2jIhxvcvb/fE1I8sqDZUrUQJa+GZSQYUkeae5QlzUP+cXboWECc/VgHfhCFKaMakfWJhn/ZIcfFCx8gWKOz1yaSU/Yphbv6jUDxA/BU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lDIrha+8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A95D3C4CEC6;
+	Sat, 12 Oct 2024 13:04:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728738269;
+	bh=+crhYsEbhfiekCM6xN4Pla2tPOTYJE8juC5MgQ622mM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NGoHELhekbgdSG7h9nhcERjJO/+fAqpJUuajNc0ZZVGXOWNxoxAhVunSkTO2BEunw
-	 sOW7wcRr4XKKlgutvqu6+r+fnY4m9G74o46E3sCrzZmAvksdLfgkFue4TSZj5tTBde
-	 v9fsdDzJx93dK90jBWomGiW7CACfg5ERKJamhIuNFmzaY8BHCBwasjS3In3E8xOBHn
-	 QoKEIT3SVfwQdXDWDE7gAcyjC+4G/ouH3GvC6uIMFT4Mwaa5rIe/Nw+8upY/5hj786
-	 XjWFzYV7VZO33cby1NunTeU02i9UMSDmy38HysZGUCDeqyOyrLxdckIlM9O/ahLCh8
-	 XdhNT6otp2TKA==
-Date: Sat, 12 Oct 2024 13:59:10 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Shannon Nelson <shannon.nelson@amd.com>,
-	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Breno Leitao <leitao@debian.org>,
-	Jeff Johnson <quic_jjohnson@quicinc.com>,
-	Christian Marangi <ansuelsmth@gmail.com>,
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCHv6 net-next 2/7] net: ibm: emac: remove custom init/exit
- functions
-Message-ID: <20241012125910.GD77519@kernel.org>
-References: <20241011195622.6349-1-rosenp@gmail.com>
- <20241011195622.6349-3-rosenp@gmail.com>
+	b=lDIrha+85mTIC14W7FTeoec+9c9SQv9U9o5V34xNb2c0wWBBYzM8j/wUP83r/diB5
+	 1fxXKIm931sE9GQp1xV29v+QGtrQzKsrlDCMghUVmOqETIyaFtv3eaCM4UC0AqYT5d
+	 irrY8L6uWuKQMIv/Q4frwGiN+4P/CyiWyNWkn32E=
+Date: Sat, 12 Oct 2024 15:04:26 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jean Delvare <jdelvare@suse.de>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: CVE-2024-38630: watchdog: cpu5wdt.c: Fix use-after-free bug
+ caused by cpu5wdt_trigger
+Message-ID: <2024101207-ducktail-jokester-f681@gregkh>
+References: <2024062141-CVE-2024-38630-3640@gregkh>
+ <efc8ab85e02b95ab4db09eb9142f62129a51f08c.camel@suse.de>
+ <2024101130-underfoot-hungrily-f432@gregkh>
+ <20241011172723.46827821@endymion.delvare>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <20241011195622.6349-3-rosenp@gmail.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241011172723.46827821@endymion.delvare>
 
-On Fri, Oct 11, 2024 at 12:56:17PM -0700, Rosen Penev wrote:
-> c092d0be38f4f754cdbdc76dc6df628ca48ac0eb introduced EPROBE_DEFER
-
-The preferred way to cite commits in patch descriptions is like this:
-
-commit c092d0be38f4 ("net: ibm: emac: remove all waiting code")
-
-Something like this in gitconfig can be helpful.
-
-[core]
-	abbrev = 12
-[pretty]
-	quote = commit %h (\"%s\")
-[alias]
-	quote = log -1 --pretty=quote
-
-Then the following should work:
-
-$ git quote c092d0be38f4f754cdbdc76dc6df628ca48ac0eb
-commit 71eb7f699755 ("net: ibm: emac: use netif_receive_skb_list")
-
-> support. Because of that, we can defer initialization until all modules
-> are ready instead of handling it explicitly with custom init/exit
-> functions.
+On Fri, Oct 11, 2024 at 05:27:23PM +0200, Jean Delvare wrote:
+> Hi Greg,
 > 
-> As a consequence of removing explicit module initialization and
-> deferring probe until everything is ready, there's no need for custom
-> init and exit functions.
+> On Fri, 11 Oct 2024 15:34:18 +0200, Greg Kroah-Hartman wrote:
+> > On Fri, Oct 11, 2024 at 12:16:40PM +0200, Jean Delvare wrote:
+> > > On Fri, 2024-06-21 at 12:19 +0200, Greg Kroah-Hartman wrote:  
+> > > > Description
+> > > > ===========
+> > > > 
+> > > > In the Linux kernel, the following vulnerability has been resolved:
+> > > > 
+> > > > watchdog: cpu5wdt.c: Fix use-after-free bug caused by cpu5wdt_trigger
+> > > > 
+> > > > When the cpu5wdt module is removing, the origin code uses del_timer() to
+> > > > de-activate the timer. If the timer handler is running, del_timer() could
+> > > > not stop it and will return directly. If the port region is released by
+> > > > release_region() and then the timer handler cpu5wdt_trigger() calls outb()
+> > > > to write into the region that is released, the use-after-free bug will
+> > > > happen.
+> > > > 
+> > > > Change del_timer() to timer_shutdown_sync() in order that the timer handler
+> > > > could be finished before the port region is released.
+> > > > 
+> > > > The Linux kernel CVE team has assigned CVE-2024-38630 to this issue.
+> > > > 
+> > > > 
+> > > > Affected and fixed versions
+> > > > ===========================
+> > > > 
+> > > >         Issue introduced in 3.8 with commit e09d9c3e9f85 and fixed in 6.6.33 with commit 9b1c063ffc07
+> > > >         Issue introduced in 3.8 with commit e09d9c3e9f85 and fixed in 6.9.4 with commit f19686d61650
+> > > >         Issue introduced in 3.8 with commit e09d9c3e9f85 and fixed in 6.10-rc1 with commit 573601521277  
+> > > 
+> > > For the record, this is incorrect. The Fixes tag is misleading. The
+> > > commit being "fixed" was adding a missing del_timer() call, so the
+> > > situation was even worst before that, as the race window on module
+> > > removal was even larger.
+> > > 
+> > > The bug is present since kernel v2.5.61 when the cpu5wdt driver was
+> > > added to the kernel tree.  
+> > 
+> > So should I change the "vulnerable" commit to be the root of git, commit
+> > 1da177e4c3f4 ("Linux-2.6.12-rc2"), instead?
 > 
-> There are now module_init and module_exit calls but no real change in
-> functionality as these init and exit functions are no longer directly
-> called by core.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> Yes.
 
-Otherwise, LGTM.
+Great, now done, and the json entry on cve.org is updated.
+
+thanks for the review.
+
+greg k-h
 
