@@ -1,39 +1,50 @@
-Return-Path: <linux-kernel+bounces-362625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9C0799B712
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:52:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64F9499B71F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 23:14:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC5F928218B
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:52:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8D9871C20FAB
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 21:14:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A170147C96;
-	Sat, 12 Oct 2024 20:52:08 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1BF61B978;
-	Sat, 12 Oct 2024 20:52:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46A7114D6ED;
+	Sat, 12 Oct 2024 21:14:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=walterzollerpiano.com header.i=@walterzollerpiano.com header.b="k4sZw0C9"
+Received: from dd3514.kasserver.com (dd3514.kasserver.com [85.13.129.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 370458F49;
+	Sat, 12 Oct 2024 21:14:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.13.129.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728766328; cv=none; b=pvswZXBnGo6uRHNGvLXjS9mcaKnCQsWZEgw6nOcjM28/jBBUB/cqX+lx1lzJhWSyZwORIC8xmm5ls6PCQHQUrGrDNNXWKfV+xtU4OPTNCV8Fd5TSBEiIqnEwC5E/vygvlR3cBgIUa+SsvFm3ltEDE/wT1Rh9YbJkYpC2KlZqOfc=
+	t=1728767687; cv=none; b=evjT8M3vmEFKc0t0S6w4AqwQwxHn3OTjshdTCQ3+xDmSONjDc6lrABMWJckriCVUv5FtGrw0DIYe7ng1Qe8SdyLwsKEo1o1Htk8b9Voa44m1WT9a57PBWfipbOdQ7mlkuVAplEshKX/hp1U72fAmnR6wWWQtEIcPt4vol8Aw2gc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728766328; c=relaxed/simple;
-	bh=KoWpYjfSgjsxVdsNj8a688jDCeDuesQdzp11PyvM6lU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=kCSKO3g7SWuKW2Ogx3kBvwqkeEt4KlDBkgF3GLyNcaFhQR8dW38WPBgJtUM437Dp4f7QWu4MDthabA3LIuNQiNG7/2qtyk0n9F10+GvVLD0BZWZgcb4zNOLYoVMngOGtNfuI9r7prpRq8PXnrINKEWwRMsfkoVA7XWnIXKRo+9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 97EE3DA7;
-	Sat, 12 Oct 2024 13:52:35 -0700 (PDT)
-Received: from [10.57.23.14] (unknown [10.57.23.14])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 052293F58B;
-	Sat, 12 Oct 2024 13:52:03 -0700 (PDT)
-Message-ID: <0e98dea9-cdd1-445c-813b-1fa652b72a7d@arm.com>
-Date: Sat, 12 Oct 2024 21:52:04 +0100
+	s=arc-20240116; t=1728767687; c=relaxed/simple;
+	bh=/NUcAbKwbXJ/iTal7F66He+nrF+0nzhzv/w9IiUiG6s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JawadwcSSQBUKC8G33aJ3WHiph6qWTlly4tMXprFjVk8bHoWNWKisG2+UHEaqUY0MAzuAHlSj+Op/aX2H8nQmUXgPiBNeILCtF46Tz/+5vSnUYCQvCdhmnehd4xdy8ryMhDioJPq0lEGHnBUuMNtrOY2IBX135hLT38sDHfMS9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=walterzollerpiano.com; spf=pass smtp.mailfrom=walterzollerpiano.com; dkim=pass (2048-bit key) header.d=walterzollerpiano.com header.i=@walterzollerpiano.com header.b=k4sZw0C9; arc=none smtp.client-ip=85.13.129.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=walterzollerpiano.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=walterzollerpiano.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=walterzollerpiano.com; s=kas202409051210; t=1728767675;
+	bh=Zm8qSnzI2p/5ZwMZ87hk/+G3XVX5j1FDxMimTthXlxE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=k4sZw0C9nIKaTnI3R3tlqol+Pv/jYgN8fLvlNTaDsTnJ/jZw/dkcVMt9ZCfL2RCxP
+	 g7MYnLzeGuz2lt5w2VsNh8lW0lB4/bLNfZ08/XRwOqAL9CPfRDpRd8VTd0nxkUizMq
+	 pM39HH0P5h1bKgKIFznLczCMs7dYEgyxkrjsnMjkxReXNnPcAsV34pWnGqIWv7LIoT
+	 etJz++8erBukkSqI03Ov7l2tPLfyoPKLxJoaf0V8gRB5lkBFXSRFFcnwn/3AQi/ogt
+	 JbuZZr8RIMdMk1iBniqq6sjy5+8QHeiyBxFq9lbFEsFoMdPuUaUDe4uU76A+XFS7No
+	 oi4XAGG8UpMEg==
+Received: from [192.168.1.124] (31-10-158-205.cgn.dynamic.upc.ch [31.10.158.205])
+	by dd3514.kasserver.com (Postfix) with ESMTPA id 408091023B6;
+	Sat, 12 Oct 2024 23:14:35 +0200 (CEST)
+Message-ID: <654edb82-759e-4845-8698-5257fe69a27c@walterzollerpiano.com>
+Date: Sat, 12 Oct 2024 23:14:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,70 +52,78 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] perf probe: Improve log for long event name
- failure
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
- Masami Hiramatsu <mhiramat@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Jiri Olsa <jolsa@kernel.org>, Ian Rogers <irogers@google.com>,
- Adrian Hunter <adrian.hunter@intel.com>,
- "Liang, Kan" <kan.liang@linux.intel.com>, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241012154428.888373-1-leo.yan@arm.com>
- <20241012154428.888373-4-leo.yan@arm.com>
+Subject: Re: [PATCH 0/3] Character device abstractions for Rust
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org
+References: <20241011-rust-char-dev-v1-0-350225ae228b@walterzollerpiano.com>
+ <2024101256-amplifier-joylessly-6ca9@gregkh>
 Content-Language: en-US
-From: Leo Yan <leo.yan@arm.com>
-In-Reply-To: <20241012154428.888373-4-leo.yan@arm.com>
-Content-Type: text/plain; charset=UTF-8
+From: Josef Zoller <josef@walterzollerpiano.com>
+In-Reply-To: <2024101256-amplifier-joylessly-6ca9@gregkh>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Spamd-Bar: +
 
-On 10/12/2024 4:44 PM, Leo Yan wrote:
-> If a symbol name is longer than the maximum event length (64 bytes), the
-> perf tool reports error:
-> 
->   # perf probe -x test_cpp_mangle --add "this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyz(int)"
->     snprintf() failed: -7; the event name nbase='this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyz(int)' is too long
->     Error: Failed to add events.
-> 
-> An information is missed in the log that the symbol name and the event
-> name can be set separately. Especially, this is recommended for adding
-> probe for a long symbol.
-> 
-> This commit refines the log for reminding event syntax.
-> 
-> After:
-> 
->   # perf probe -x test_cpp_mangle --add "this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyz(int)"
->     snprintf() failed: -7; the event name is too long (>= 64 bytes)
->       Try to set event with syntax "[GROUP:]EVENT=this_is_a_very_very_long_print_data_abcdefghijklmnopqrstuvwxyz(int)"
->       Error: Failed to add events.
 
-As the printed log is not suitable for all cases in this patch, please
-ignore this patch and directly review version 3 for a updated log.
 
-Thanks,
-Leo
+On 12.10.24 09:29, Greg Kroah-Hartman wrote:
+> On Fri, Oct 11, 2024 at 08:55:41PM +0200, Josef Zoller wrote:
+>> Writing character devices is a common way to start writing kernel code,
+>> especially because of the book "Linux Device Drivers", which is still
+>> one of the best resources to learn about Linux kernel programming. To
+>> allow an easier entry into Rust kernel programming specifically, this
+>> series adds abstractions for these kinds of devices to the Rust API.
+>
+> I understand this, but if at all possible, I would prefer that people
+> stick to using the misc char device interface instead.  It's much
+> simpler and integrates better into the overall system (handles sysfs for
+> you automatically, etc.)
+>
+> I've already merged the misc device rust bindings into my tree, so why
+> not just stick with them?
 
-> 
-> Signed-off-by: Leo Yan <leo.yan@arm.com>
-> ---
->  tools/perf/util/probe-event.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
-> 
-> diff --git a/tools/perf/util/probe-event.c b/tools/perf/util/probe-event.c
-> index 224ec6818803..441daf4fb321 100644
-> --- a/tools/perf/util/probe-event.c
-> +++ b/tools/perf/util/probe-event.c
-> @@ -2760,7 +2760,9 @@ static int get_new_event_name(char *buf, size_t len, const char *base,
->  	/* Try no suffix number */
->  	ret = e_snprintf(buf, len, "%s%s", nbase, ret_event ? "__return" : "");
->  	if (ret < 0) {
-> -		pr_warning("snprintf() failed: %d; the event name nbase='%s' is too long\n", ret, nbase);
-> +		pr_warning("snprintf() failed: %d; the event name is too long (>= %d bytes)\n"
-> +			   "  Try to set event with syntax \"[GROUP:]EVENT=%s\"\n",
-> +			   ret, MAX_EVENT_NAME_LEN, nbase);
->  		goto out;
->  	}
->  	if (!strlist__has_entry(namelist, buf))
+Aaaah, I should probably have done some proper 'market research' before
+just blindly diving into and implementing this. So, if I understand you
+correctly, you're saying that only very niche use cases would benefit
+from being implemented as a raw char device, and that the misc device
+interface is the way to go for most cases?
+
+>> I also included a sample that demonstrates how to use these abstractions
+>> to create the simplest example from LDD3, the "scull" device.
+>
+> This is great, but why not just provide the scull example using misc
+> device?
+
+I don't remember seeing a misc device implementation in the book. Are
+you just saying that the scull device could be easily implemented as a
+misc device instead, or am I missing something?
+
+>> I'm also aware of the patch series about misc devices that was sent
+>> recently. I think these are both valuable additions to the Rust API, and
+>> could even be combined in some way, in which case the file operations
+>> abstractions in both series should probably be separated and
+>> generalized. But I'm still sending this series as it is, because it is
+>> my first ever patch and I could use some feedback on my approach.
+>
+> That's great, but I'd prefer to stick with the misc code for now until
+> someone really really really proves that they want a "raw" char
+> interface.
+
+Fair enough. So, it seems like I should probably just drop this series,
+right? I will probably still address the other feedback you gave me in
+a second version, but putting much more effort into this series seems
+like a waste of time now.
+
+Anyway, thanks for the honest and early feedback! I could have easily
+spent much more time on this series without knowing that it's not what
+you're looking for.
+
+Cheers,
+Josef
 
