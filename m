@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-362076-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFBF599B098
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:01:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 21CE999B091
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:00:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5A9B1F23205
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:01:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D837228375F
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:00:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3811126BFA;
-	Sat, 12 Oct 2024 04:00:57 +0000 (UTC)
-Received: from smtpbgbr1.qq.com (smtpbgbr1.qq.com [54.207.19.206])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940B7126C02;
+	Sat, 12 Oct 2024 04:00:53 +0000 (UTC)
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078FA1272A6
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:00:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.19.206
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5560583A17
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:00:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705657; cv=none; b=b/pPwaS+hGd8d5A/lMHXPdmoGOGv007JW7IfJbow9RlbIRocCagW7RgUm50WqlBW2FUrG552aiFdK9Sq+G0bdtA9yvo273VQmyeHIi/hiqMnJNSFUoYELe4XZtKxiFhgCnkafQ7bD5DWZQF5vWns5Itl4qx1RVx7I+LrhRxHCS8=
+	t=1728705653; cv=none; b=PW/O3gHSIf33Q9g1uVhlm+V58k2jm0ckeW4ZCxsz3dZVrHEAWMPwdmoWl5pmO9D9bHxeSjY4BxAT/7mPlTLkWAn8qzjStVh5s6EouepIzYw/EVXS0+JRHze7DON8Jyd67UhMsCe+IpgC6ZSaH7Fnc4pG1LiQVPSPnosvZCq2waA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705657; c=relaxed/simple;
-	bh=9KblgAsYVI2n1L6mUfV09C68nu5X/YYPJt6qKw1plIM=;
+	s=arc-20240116; t=1728705653; c=relaxed/simple;
+	bh=n66PREUZe5sBsGJvC/ADrLsD+s0ZPK7C/kcYlrLntdY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=hWpyfOYYvfwduuicVdgLMZHG8bY6VMYVuiIRdyx0AtNh8/v5MDt2k/Gu1JfxIXeG5N1D7ILCH4wxfGq/fMe0/UGJiTHJgj33UQ4tMenvTE6P5t1nznYzfEiEoc7HIsInf+VfvjjjT2wAObmgMfD/++gAtTae2YaJWSKxQM9HZ1k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.207.19.206
+	 MIME-Version; b=AH9Vod2rhXjIcnV0YhsZNG4YP5sws4pW5omVvq7ExwdQ8R+kYF76MptVuPCZWm82zvLxhABs9k5LZSVZcEHiwnFrnZdiaTzaS1wzJ6Jtkzg85yY52eh96py4Y6l05or4tcUo0wczUH0r+CtuzPK5Lscj5ZXUcIrgBeGF2v88aYM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=15.184.224.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz3t1728705580tlyfyuz
-X-QQ-Originating-IP: yVwmqMbLCoQX6+2lfjY3FDbo/wQXr232dPvID4ttcbQ=
+X-QQ-mid: bizesmtpsz3t1728705582tk7m42q
+X-QQ-Originating-IP: nay6J2rnSh8/fr9ad6cH/OzGHRpt+W0/xSrLa82pQw8=
 Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 12 Oct 2024 11:59:38 +0800 (CST)
+	id ; Sat, 12 Oct 2024 11:59:41 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 7210153061131760617
+X-BIZMAIL-ID: 6882828675209662917
 From: Luming Yu <luming.yu@shingroup.cn>
 To: linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
@@ -45,9 +45,9 @@ To: linuxppc-dev@lists.ozlabs.org,
 	jialong.yang@shingroup.cn,
 	luming.yu@gmail.com
 Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: [PATCH 3/7] powerpc/debug: implement HAVE_USER_RETURN_NOTIFIER
-Date: Sat, 12 Oct 2024 11:56:17 +0800
-Message-ID: <7D68F1E553E8E06D+20241012035621.1245-5-luming.yu@shingroup.cn>
+Subject: [PATCH 4/7] powerpc/debug: hook to user return notifier infrastructure
+Date: Sat, 12 Oct 2024 11:56:18 +0800
+Message-ID: <557E9D5F2DDB7601+20241012035621.1245-6-luming.yu@shingroup.cn>
 X-Mailer: git-send-email 2.42.0.windows.2
 In-Reply-To: <20241012035621.1245-3-luming.yu@shingroup.cn>
 References: <20241012035621.1245-3-luming.yu@shingroup.cn>
@@ -60,110 +60,52 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MFdGPHhuqhNobOzPmY/+W4OuHqcSrgD/oOqbwsEa7/lTHvv9nqmqFVtL
-	iHIbt4TvSplBzMH3hnqjHhX4vW5f6Wwh71E3c+a+YWhih76s0ktKLRJGl9IQco0PksZYdeR
-	XRKB6Hq5uLdM0eN9I9eYyfVSnVlFqYiPTZws/ctVabroO6OaZaeD0J3AbEvFkFVZVTnfuDP
-	8xLYr03y6JqeVXIy5TwHpWX/wctKmGPH/HOhaazNbDyTsSbSq9WDqNCr9rypKwTEe8m/9DY
-	/BMDryeQnhCt5+kQ2T+Uzemb4Es6RDjbfvVsBHFE50Luzx4bZbXOBS5MTnDBlw9mlb2CMvH
-	GXegcMrS70TMNA4jSaPa9q5eCu6E5ZjTGgHsoqc2Sf+IZnE9Yw4xQAgvls/rVklfeVDJpFs
-	a3IodAsKUkFfLr9Qb+4t0+X3YxfrFCo5ip8JADNTF+h1u0cXTBfxeD4qX7af/oItDgvZDsz
-	/Wx1kw/OUA4x2JGcFh2qjkTnYIn7ilN1WAlXLX2ZntbAWOtz+tzFcRFgFxSLyeQ4QVaz9Vu
-	JqeziRRYS6VUdvE5bcNlsNp3qZu8VhahSTjLB3rhGZKci8/FZ43VWcDVtD6OG2ub8fi2qr4
-	l0Hyz3gRL3KmG9X77Gvg+OsSu7ReyruiPVaTYx5LCWt0JKHpvKL3AFYMhTWjXHBPM26mco0
-	yh3SGAyYh/bnuS655L10ZN317HM6lEREX6+144UHlOuoDVMJDv3QNum7JAcOMj7212UEF63
-	CqJr1viDgbv2rCQUqJsmJdifxHywMZPyEKlxV2ShaSaCoyDY9OWfzjh0NYPUZsCtQT7guYM
-	AQtNoWp1iUzurm5j+z0ljIH1IPiqoKiSuaM1FZhasmgTlTNvSKldAatWJo3NBnj4uuGhteY
-	ox9GqUgUK8P5qVtlV74KoRJIHgLmw51p9aajbJXS/I6L68foovAvjB1L09VIO9IAYIWgJqm
-	YHdZeeYskblZqdtvfccJ7TRIAhoBeFL+R3qmoCHld0m90fA==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: NMGzQWUSIfvTBNmgq298LwTJNBU4hR70Xkg0x2ylvLYoEQCMsw9ueXM7
+	ym7lVkc/kI0G+6tgujj7ivyQcdnrjO0G9U99b/LlrVyHhaKJUIZmxvdDEzGVzoaYInkycc0
+	LoSpyG9If6hcN/4ye/xnxfhSzbEF30B3nVsf8x4rtB/4RGHm+0j7KqFfs5JINp4gR6YFoBG
+	g+wDTN6uCMXYPXlo4IPVcPegwrbYZoZOFGqxZZwNUoPAJtrXg5XmM1Q1jZFyZd/7OjZfQqy
+	w48orhfcMNYAq4Nnsv5aQM/bzNaOiFshFaS9mrwb1oO8+VtaX7oYqN0XTMuj03uK7dpcXwp
+	SK3dXFsbSc1IX1V+ae0Txl+ZIhdnGl/AcROxu+ANP59x5aGPGKm3smdG9D6H/P8b86FRZUM
+	av4fftUN5paBkc7V4ISvS7BoHJFDw4eNfrutPP48MCC0BmaTEdlNGCZkR1wVlMPzfhPNJd3
+	o0Efnm1dub4UUu5GddbNUpkXBe7PFRT+KeK3VTpncIaRu3E8AZ7qi+JN53JhLAB/sAZaBrY
+	j5HonQowZcE0utOPxNJIcFnQAYuQ3+SoBkvJBGPFuexmm0sksfdnnjyWyEn15CRihBUqDKb
+	+f3vU1dKeMP6FpfiymECdcybULv2Qwb0g7mq9i78l59+B8LO3kGeuDEGD4LOX7ZxoJ3E9Dh
+	vtsGglwh5Z0g/ESZHByKBetXsWdW70eplaaHMPsPtH1A5fX2s3c0zfFdamLPDhJ+qsxfkMT
+	MTq43jzw6NHBMcxHumCYIBWuyOE1KXUkSMjVEHnMmsDo33Wr6foUIiVMX0NsCtzHqaaJRap
+	pwwJn8YfG4QOwF7H7OOqPLdzodTUKFZ8Tp/hOWoKsz0ccWu5ptxBLII41sb/t8RksxeqL3e
+	C4xOKUOzxEzdygluXPcxUXtUkd1EQxtxrsOqKpJWNJJXb2GZ2lhRLTfzQgT60neYPYGvzA2
+	Yy9tluX495W3XFL/1CcP8lKwoOrZV7AdRYzjGDS6MId6UEQ==
+X-QQ-XMRINFO: MSVp+SPm3vtS1Vd6Y4Mggwc=
 X-QQ-RECHKSPAM: 0
 
-enable the common entry of user return notifier for powerpc as
-a debug feature.
+calls back to all registered user return notifier functions.
 
-Signed-off-by Luming Yu <luming.yu@shingroup.cn>
+Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
 ---
- arch/powerpc/Kconfig                    |  1 +
- arch/powerpc/include/asm/entry-common.h | 16 ++++++++++++++++
- arch/powerpc/include/asm/thread_info.h  |  2 ++
- arch/powerpc/kernel/process.c           |  2 ++
- 4 files changed, 21 insertions(+)
- create mode 100644 arch/powerpc/include/asm/entry-common.h
+ arch/powerpc/kernel/interrupt.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-diff --git a/arch/powerpc/Kconfig b/arch/powerpc/Kconfig
-index 261c9116d6fa..9a1e6669fa24 100644
---- a/arch/powerpc/Kconfig
-+++ b/arch/powerpc/Kconfig
-@@ -277,6 +277,7 @@ config PPC
- 	select HAVE_STACKPROTECTOR		if PPC64 && $(cc-option,-mstack-protector-guard=tls -mstack-protector-guard-reg=r13)
- 	select HAVE_STATIC_CALL			if PPC32
- 	select HAVE_SYSCALL_TRACEPOINTS
-+	select HAVE_USER_RETURN_NOTIFIER
- 	select HAVE_VIRT_CPU_ACCOUNTING
- 	select HAVE_VIRT_CPU_ACCOUNTING_GEN
- 	select HOTPLUG_SMT			if HOTPLUG_CPU
-diff --git a/arch/powerpc/include/asm/entry-common.h b/arch/powerpc/include/asm/entry-common.h
-new file mode 100644
-index 000000000000..51f1eb767696
---- /dev/null
-+++ b/arch/powerpc/include/asm/entry-common.h
-@@ -0,0 +1,16 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+#ifndef ARCH_POWERPC_ENTRY_COMMON_H
-+#define ARCH_POWERPC_ENTRY_COMMON_H
-+
-+#include <linux/user-return-notifier.h>
-+
-+static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
-+						  unsigned long ti_work)
-+{
-+	if (ti_work & _TIF_USER_RETURN_NOTIFY)
-+		fire_user_return_notifiers();
-+}
-+
-+#define arch_exit_to_user_mode_prepare arch_exit_to_user_mode_prepare
-+
-+#endif
-diff --git a/arch/powerpc/include/asm/thread_info.h b/arch/powerpc/include/asm/thread_info.h
-index 9df2bcf28544..c52ca3aaebb5 100644
---- a/arch/powerpc/include/asm/thread_info.h
-+++ b/arch/powerpc/include/asm/thread_info.h
-@@ -118,6 +118,7 @@ void arch_setup_new_exec(void);
- #endif
- #define TIF_POLLING_NRFLAG	19	/* true if poll_idle() is polling TIF_NEED_RESCHED */
- #define TIF_32BIT		20	/* 32 bit binary */
-+#define TIF_USER_RETURN_NOTIFY	21	/* notify kernel of userspace return */
+diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
+index 8c532cecbc60..609ba48034de 100644
+--- a/arch/powerpc/kernel/interrupt.c
++++ b/arch/powerpc/kernel/interrupt.c
+@@ -19,6 +19,7 @@
+ #include <asm/time.h>
+ #include <asm/tm.h>
+ #include <asm/unistd.h>
++#include <asm/entry-common.h>
  
- /* as above, but as bit values */
- #define _TIF_SYSCALL_TRACE	(1<<TIF_SYSCALL_TRACE)
-@@ -126,6 +127,7 @@ void arch_setup_new_exec(void);
- #define _TIF_NOTIFY_SIGNAL	(1<<TIF_NOTIFY_SIGNAL)
- #define _TIF_POLLING_NRFLAG	(1<<TIF_POLLING_NRFLAG)
- #define _TIF_32BIT		(1<<TIF_32BIT)
-+#define _TIF_USER_RETURN_NOTIFY	(1<<TIF_USER_RETURN_NOTIFY)
- #define _TIF_RESTORE_TM		(1<<TIF_RESTORE_TM)
- #define _TIF_PATCH_PENDING	(1<<TIF_PATCH_PENDING)
- #define _TIF_SYSCALL_AUDIT	(1<<TIF_SYSCALL_AUDIT)
-diff --git a/arch/powerpc/kernel/process.c b/arch/powerpc/kernel/process.c
-index 392404688cec..70a9ea949798 100644
---- a/arch/powerpc/kernel/process.c
-+++ b/arch/powerpc/kernel/process.c
-@@ -38,6 +38,7 @@
- #include <linux/uaccess.h>
- #include <linux/pkeys.h>
- #include <linux/seq_buf.h>
-+#include <linux/user-return-notifier.h>
+ #if defined(CONFIG_PPC_ADV_DEBUG_REGS) && defined(CONFIG_PPC32)
+ unsigned long global_dbcr0[NR_CPUS];
+@@ -245,6 +246,8 @@ interrupt_exit_user_prepare_main(unsigned long ret, struct pt_regs *regs)
+ 	/* Restore user access locks last */
+ 	kuap_user_restore(regs);
  
- #include <asm/interrupt.h>
- #include <asm/io.h>
-@@ -1386,6 +1387,7 @@ struct task_struct *__switch_to(struct task_struct *prev,
- 	if (current->thread.regs)
- 		restore_math(current->thread.regs);
- #endif /* CONFIG_PPC_BOOK3S_64 */
-+	propagate_user_return_notify(prev, new);
- 
- 	return last;
++	arch_exit_to_user_mode_prepare(regs, ti_flags);
++
+ 	return ret;
  }
+ 
 -- 
 2.42.0.windows.2
 
