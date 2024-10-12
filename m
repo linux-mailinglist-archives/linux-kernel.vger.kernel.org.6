@@ -1,131 +1,158 @@
-Return-Path: <linux-kernel+bounces-362068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5673099B080
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:50:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C2999B081
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 05:50:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E50232848CF
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:50:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 130581F23101
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:50:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D3C8126BFC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A14C0126C09;
 	Sat, 12 Oct 2024 03:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="f+DeCIvd"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="wDypJi7W"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38178A41;
-	Sat, 12 Oct 2024 03:50:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82A4C3FBA7
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 03:50:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705029; cv=none; b=ZC2r3NSvoKqIAN3bkhpjHgNKTd1uj/Qj91lL4z/5XytIz1wtsoJ4r9vWzsI6dHZLafzfPIEYyx6F4fur35n8T3Lng6l3yhJayUbpOevW5sFIkIIHBqfTufIODnoYzWqKvjRvVx9FTYp/WktsVBYjbld4GyDQlKwbRbShDszI/j0=
+	t=1728705030; cv=none; b=Hwezc2QAVcdDX0LI0Sb1I13G/PaTVx75e0tumpUoXGN2b0m05RGC9QI4jaa+cANTaT40Rhx0H52vpchZ83bBTJXipc26QfLsZFREL8Vh+P2Q9LtczUb0UmjT/QyIjIpYqFeiSwl0EWcdD67c1tyW0Gmsq0Uw5+IMJyYAxNiehwE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705029; c=relaxed/simple;
-	bh=2aWyOCTiycY0OHnMiy+jkUklLt62crYBJspTOZ/wcfQ=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TfrMFQU18j4clzGb5OnsngF2VmWN6hR6o3lYLz9PZ5dX5EB7WnuTUZJeWIvCqMUOsuQEX0j97IgWh1DbAJvn70CKUAkaPXeZFisj1wMM2k6eTftH5jzZUWdr98tLjESJ3T9PAD8emNYUYZbOioDtOcrom2pSgDhdo9vnOYTMkUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=f+DeCIvd; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 1c51d082884d11ef88ecadb115cee93b-20241012
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=c4LvdEEHLpX8RMbvMLOgpoWf9QYjGh9Wl1Flol3Dlpg=;
-	b=f+DeCIvd6hWYZKDgMtH2QyYJSiwXdWwoKcqH2fUDZ7566oEM6EPi3zAvwKv/SUCxcsTztTazWO98jYAZA9rbmRB6pBOnDyIL9dzkLgP5BmFn8attcoSmTs9mY6K2CZFx1w99bK3x42b0tpfYBruL7OdiblKBdc/uUiL9MF65xXw=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.41,REQID:457bf41c-efe0-48e1-b103-206cfd7a29e3,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:6dc6a47,CLOUDID:504ba906-3d5c-41f6-8d90-a8be388b5b5b,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 1c51d082884d11ef88ecadb115cee93b-20241012
-Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 923235726; Sat, 12 Oct 2024 11:50:24 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Sat, 12 Oct 2024 11:50:22 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Sat, 12 Oct 2024 11:50:22 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Chunfeng Yun <chunfeng.yun@mediatek.com>, Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<linux-phy@lists.infradead.org>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>
-Subject: [PATCH v3] dt-bindings: phy: mediatek: tphy: add a property for power-domains
-Date: Sat, 12 Oct 2024 11:50:16 +0800
-Message-ID: <20241012035016.17667-1-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
+	s=arc-20240116; t=1728705030; c=relaxed/simple;
+	bh=RnF7ivMfvnzgzM8pebBvusg9gGe6XuwcoPNE0AkgY7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=MQymJj521+WIJCZtceEFLp78vaqfW7Hou61C+Ou8QnDe8FltBZothv/HNgIM3Jr20XF4LHsTGzOAtqaNDKnQRWiz7+CneFdHwT2fbNTIoYG8qztTHoVLBMTayvtZGOeeKIiN+ssfkJ+dvmKUo19ktCa62vMkrSOR+SeCz7UfpKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=wDypJi7W; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e427e29c7so656589b3a.3
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 20:50:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728705028; x=1729309828; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=7xd2XYFri8DksBYctsP4y3C7irgIPUJgSkvRCB5K9O8=;
+        b=wDypJi7WA+KqV0j52JVPtxh/Rfc5yhBm8+3/4Sd+7mad0tTXZhVIgjFvyzM5ApeSd+
+         57UaLp10+h0sIhpVWpJkkK+D8d1VE1euQISRQ78Og890+lO5zI6iCMhol+omkqBnL2RB
+         tgOcdMB5siPnjRJ9ul65aYsXb1w087KEyAloBO4cDGL1+mrr34e0YS7Nhj0E3j3MsqpX
+         NxXz15WwWUhBgr5xZG6trecWJyg8mB8oArglki2HgW70CNQ1vdn4EiEhnB0PcFKy7bi3
+         jjGYOGHGrxXU/i+TiA2R9LxhahO7fDYfC0nhNp4y6xHtwQRVBpDoYZwNtbqfjJOH62J3
+         F+Fw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728705028; x=1729309828;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7xd2XYFri8DksBYctsP4y3C7irgIPUJgSkvRCB5K9O8=;
+        b=Ep/SzmC7f3R5gc9++596FSVBQO3UCC9umSQc2Jm/Up11Xf48foIejJmNcmUIUm/V/y
+         WobuJR919O8+k7ulqHL7Vr3rvISj2J7C0RCdDtN8gjD+yh61DZXa6w5RibL7HqBSPZTk
+         waPCrFOS49sdhA82EI1peQ0h8E+9tzoHS4lJW4oDY49YVWELCMgDhRpltPgGWB9iDdYQ
+         e00iD0iAY4Ahg5h0hnihk8BpmQyxY9WQ5xm+xoLxBsPpUXXaMFGzWT1AZL+wdzuLt18k
+         vBp3h9V5/zS6FCie3A5GvkHzPYG/k+o6pu1uxgAk6ZqlnwE7GzRKDV+JoLa8Q1Ykjen0
+         HuBg==
+X-Forwarded-Encrypted: i=1; AJvYcCWH1EUAhTw0RzuH0yTSNdcATsQbD2BDb1pc2lGcVcQEFRKPXJeP9BK7gms/S5TJFpxhJ9KIx3YeM7c70o0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNtRniyzpMOWiFxbv8emcB4yw/qJfLbS28d+CWGqAOvH75Fw1H
+	sXievLK32i7EINptBfFgPrryamqPFBvXiQyu+f+RU1q80LOi8RNE8plqAIBPxg==
+X-Google-Smtp-Source: AGHT+IF4zz4I11EJJaQjoC63mOUtCQHTC2gvazmoA+u7+QenabiezQrabqUBp6+IGcwAVnq9Hr0H/A==
+X-Received: by 2002:a05:6a00:148b:b0:71d:f2e3:a878 with SMTP id d2e1a72fcca58-71e4c13dd50mr2364487b3a.5.1728705027717;
+        Fri, 11 Oct 2024 20:50:27 -0700 (PDT)
+Received: from thinkpad ([36.255.17.101])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e2aa93e0fsm3531277b3a.140.2024.10.11.20.50.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 11 Oct 2024 20:50:27 -0700 (PDT)
+Date: Sat, 12 Oct 2024 09:20:22 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Mayank Rana <quic_mrana@quicinc.com>
+Cc: kevin.xie@starfivetech.com, lpieralisi@kernel.org, kw@linux.com,
+	robh@kernel.org, bhelgaas@google.com, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org, quic_krichai@quicinc.com,
+	Marek Szyprowski <m.szyprowski@samsung.com>
+Subject: Re: [PATCH v2] PCI: starfive: Enable PCIe controller's runtime PM
+ before probing host bridge
+Message-ID: <20241012035022.tvcffmnqzpqb7e6q@thinkpad>
+References: <20241011235530.3919347-1-quic_mrana@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-MTK: N
+In-Reply-To: <20241011235530.3919347-1-quic_mrana@quicinc.com>
 
-Include the MediaTek TPHY in a power domain.  Add the 'power-domains'
-property in the Device Tree (DT) Schema and set 'maxItems: 1'.
+On Fri, Oct 11, 2024 at 04:55:30PM -0700, Mayank Rana wrote:
+> PCIe controller device (i.e. PCIe starfive device) is parent to PCIe host
+> bridge device. To enable runtime PM of PCIe host bridge device (child
+> device), it is must to enable parent device's runtime PM to avoid seeing
+> WARN_ON as "Enabling runtime PM for inactive device with active children".
 
-Also, include a reminder in the description of the 'power-domains'
-property.
+"to avoid seeing the below warning from PM core:
 
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- .../devicetree/bindings/phy/mediatek,tphy.yaml         | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+pcie-starfive 940000000.pcie: Enabling runtime PM for inactive device
+with active children"
 
-Changes for v2:
- - Add a reminder in description of 'power-domains' property.
- - Fix commit message from v1.
+> Fix this issue by enabling starfive pcie controller device's runtime PM
+> before calling into pci_host_probe() through plda_pcie_host_init().
 
-Changes for v3:
- - Use 'imperative mood' keyword in the prompt of chatGPT to refine the commit
-   message.
- - Add 'Acked-by:' tag, thanks for the review and grammer tool sharing.
+"before calling pci_host_probe() in plda_pcie_host_init()"
 
-diff --git a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
-index 423b7c4e62f2..6be3aa4557e5 100644
---- a/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
-+++ b/Documentation/devicetree/bindings/phy/mediatek,tphy.yaml
-@@ -125,6 +125,16 @@ properties:
-     $ref: /schemas/types.yaml#/definitions/uint32
-     default: 28
- 
-+  power-domains:
-+    description:
-+      The TPHY of MediaTek should exist within a power domain. The
-+      developer should be aware that the hardware design of MediaTek TPHY
-+      does not require the addition of MTCMOS. If the power to the TPHY
-+      is turned off, it will impact other functions. From the current
-+      perspective of USB hardware design, even if MTCMOS is added to the
-+      TPHY, it should remain always on.
-+    maxItems: 1
-+
- # Required child node:
- patternProperties:
-   "^(usb|pcie|sata)-phy@[0-9a-f]+$":
+> 
+> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+
+Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+
+- Mani
+
+> ---
+> v1->v2: Updated commit description based on Bjorn's feedback
+> Link to v1: https://patchwork.kernel.org/project/linux-pci/patch/20241010202950.3263899-1-quic_mrana@quicinc.com/
+>  
+>  drivers/pci/controller/plda/pcie-starfive.c | 10 +++++++---
+>  1 file changed, 7 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/plda/pcie-starfive.c b/drivers/pci/controller/plda/pcie-starfive.c
+> index 0567ec373a3e..e73c1b7bc8ef 100644
+> --- a/drivers/pci/controller/plda/pcie-starfive.c
+> +++ b/drivers/pci/controller/plda/pcie-starfive.c
+> @@ -404,6 +404,9 @@ static int starfive_pcie_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		return ret;
+>  
+> +	pm_runtime_enable(&pdev->dev);
+> +	pm_runtime_get_sync(&pdev->dev);
+> +
+>  	plda->host_ops = &sf_host_ops;
+>  	plda->num_events = PLDA_MAX_EVENT_NUM;
+>  	/* mask doorbell event */
+> @@ -413,11 +416,12 @@ static int starfive_pcie_probe(struct platform_device *pdev)
+>  	plda->events_bitmap <<= PLDA_NUM_DMA_EVENTS;
+>  	ret = plda_pcie_host_init(&pcie->plda, &starfive_pcie_ops,
+>  				  &stf_pcie_event);
+> -	if (ret)
+> +	if (ret) {
+> +		pm_runtime_put_sync(&pdev->dev);
+> +		pm_runtime_disable(&pdev->dev);
+>  		return ret;
+> +	}
+>  
+> -	pm_runtime_enable(&pdev->dev);
+> -	pm_runtime_get_sync(&pdev->dev);
+>  	platform_set_drvdata(pdev, pcie);
+>  
+>  	return 0;
+> -- 
+> 2.25.1
+> 
+
 -- 
-2.45.2
-
+மணிவண்ணன் சதாசிவம்
 
