@@ -1,186 +1,134 @@
-Return-Path: <linux-kernel+bounces-362248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97B2A99B2A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:51:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C38F099B2A9
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 11:52:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 58CC11C213AB
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:51:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79FE51F21FA6
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 09:52:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4695A14EC60;
-	Sat, 12 Oct 2024 09:51:31 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A40A9150981;
+	Sat, 12 Oct 2024 09:52:15 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40BEA610D
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 09:51:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E1610D;
+	Sat, 12 Oct 2024 09:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728726690; cv=none; b=qMiUW/j6bfl4m3pDFuaMVzJBP+Z5K+ST95BpeKE0ODKA36MDAzyvPfczfePVUZkW4JqLcFtVxDLrUWzc8lvnQSJIf9ETaRFQ5L2mCLBWqajB07khRPP1LPl/dwEGIhzoEK8EUHTwWGMheyeyvjwziv7VV5UHh2n23/bGHxkF/+8=
+	t=1728726735; cv=none; b=RMNQUCiZzXyGEEUm1bVeNA0sM3EZihpVG9kLjQsVT6hs8uVyPUIvIURVGnbL4HqswYLUZv2w8ASC4dyoXfb8TqDCtLf0WCBvxRwIgAosKrTfjNERu17a6GTSvm26Uxedk9my7/YEvo7HMWlgaDfMt1y28iWcBX2UvuBtcqcSN28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728726690; c=relaxed/simple;
-	bh=1wZHRsNIL3b+zY4gZFxYiMfK+2HIge8wzhwItDkcSuo=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Er0pIyIkKtHXOGsoAO7lqh0TCRway0xAc1cbPRgURDS1hgi55hbQdi+ohJgz1BIKX0iEAHwu00uqll/Z/INwxwLQ6nQnqysus2SdBETXMXbTN5qaotp8FQfI3k+31HeDyRjYhGw6HruiSQrHupCgZbjbFbUztZwkywePg09u2DQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-832160abde4so258199739f.1
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 02:51:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728726688; x=1729331488;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ISkzNIwcxKCi4MsIw6vsqZY/ns0b+a54JSlHPYleXCs=;
-        b=hwbfnb6TMdEr5ps/cvrjyqVtiFfjGVJyEW+WCqOYb4mlyvrmgX77Ea1u8QPxWrm+eo
-         dRiL03muJzn+JbMQf+B4vx8J7B3KYoytUGPgwgOuWPnxFRONk8o2kLQl7fy39zuEKVY0
-         JoMy09jkmsF5m4GVT0FIHVH/Eycz2hMEIaUuUe9XeJJMzeIY5Fa1ggubziiHQJPgCmWX
-         fs0FNNQFVim+KCnAhcrBmvpIzLmq6yUdzIWGgdNwXNS2o9Jn0FRb9uKpPlnRZnPZCr4H
-         slwO+W3/5MMtQ8nraAhO+bf26vvV+2Q5Yb3eYri1P/KTh2D8ytI4rOxDTL27N/Z4dqTj
-         N7hA==
-X-Forwarded-Encrypted: i=1; AJvYcCX5vvtptNd1SzBMAYl00b+i2tVQjuxVxmQXXLYoS3JKj4XqcWEycDWlJIAnoB3XGvSlVjN4mYpTRECD6KE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKvAfTG+bvdbmEb4UliTmBmEdpdCVp6TUrJGbZDCV2YVoZXb9A
-	g8DhPloR5GJe7dgHyRTL/JkGk01nkTINUt1nTysnaSM/vk5+UfR6RTVpw1mZDm00+Q0Mhm52jPY
-	P2UCEEYbBK63lOWSW3gXjYhCmuofWY438DHql8L52AoyzKVUE/23GFdw=
-X-Google-Smtp-Source: AGHT+IGDY6tlmGxCjDErUZ9fIN/FYDK4Wwk0kUq8g8AHRcmWNkYpH1TsCAhMU+P84G9sojLNsiW3h/yfBnvicxZjfeUzvnES7gLV
+	s=arc-20240116; t=1728726735; c=relaxed/simple;
+	bh=YM2nOJDHQqCe4ZN10QsJPlTS9MzeI3IK14jzmJprcCs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=hj4Jo8vVa0Hl7iXbvf5A8r/9Rc/dgVBmYVUouGRYMp3cROeKa+Pmg1638aUHZpIMDl4hrlhccy/qJV0W0yoM7291cH2NLi3prBVry7cLxvJh9g1djoZ/VxlTy9r7TtY+8WOGtjDrOUv7r/kBdbTIe/pODMkFy2Fo82/gFIuUvtU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: a45f3154887f11efa216b1d71e6e1362-20241012
+X-CTIC-Tags:
+	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
+	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
+	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
+	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
+	HR_TO_DOMAIN_COUNT, HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
+	SA_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
+	DMARC_NOPASS, CIE_BAD, CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS
+	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
+	AMN_C_BU, ABX_MISS_RDNS
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.38,REQID:f0b1919e-98f5-4f16-8e46-58bd1e6aba64,IP:15,
+	URL:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,AC
+	TION:release,TS:23
+X-CID-INFO: VERSION:1.1.38,REQID:f0b1919e-98f5-4f16-8e46-58bd1e6aba64,IP:15,UR
+	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:-15,FILE:0,BULK:28,RULE:Release_Ham,ACTI
+	ON:release,TS:23
+X-CID-META: VersionHash:82c5f88,CLOUDID:091d50f0acaa3a031b102810ab794131,BulkI
+	D:2409062205428B690IWE,BulkQuantity:49,Recheck:0,SF:19|44|64|66|24|17|102,
+	TC:nil,Content:0,EDM:-3,IP:-2,URL:0,File:nil,RT:nil,Bulk:40|20,QS:nil,BEC:
+	nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
+	TF_CID_SPAM_OBB,TF_CID_SPAM_FCD
+X-UUID: a45f3154887f11efa216b1d71e6e1362-20241012
+X-User: duanchenghao@kylinos.cn
+Received: from [172.30.80.21] [(39.156.73.13)] by mailgw.kylinos.cn
+	(envelope-from <duanchenghao@kylinos.cn>)
+	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
+	with ESMTP id 2075062559; Sat, 12 Oct 2024 17:52:07 +0800
+Message-ID: <f27bcdb6c5ddd4e91a1dc9f86b4f0c55c50671a8.camel@kylinos.cn>
+Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
+ USB status when S4 wakes up
+From: duanchenghao <duanchenghao@kylinos.cn>
+To: Alan Stern <stern@rowland.harvard.edu>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hongyu Xie
+ <xy521521@gmail.com>,  gregkh@linuxfoundation.org,
+ linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org,
+ linux-usb@vger.kernel.org, niko.mauno@vaisala.com,  pavel@ucw.cz,
+ stanley_chang@realtek.com, tj@kernel.org, Hongyu Xie <xiehongyu1@kylinos.cn>
+Date: Sat, 12 Oct 2024 17:51:41 +0800
+In-Reply-To: <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
+References: <8068130ce4ece6078b2893c4c6333c06c792b6c0.camel@kylinos.cn>
+	 <b8dc326b-8aee-4903-bbb6-64083cf66b4d@rowland.harvard.edu>
+	 <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
+	 <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
+	 <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
+	 <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
+	 <2c368013-8363-4a4e-bfee-2f0b14d01162@rowland.harvard.edu>
+	 <5f2f6b979e95e4c2bc33ea0277112939164f6024.camel@kylinos.cn>
+	 <d70e070f-5224-402c-ac27-0703b4010b18@rowland.harvard.edu>
+	 <0ad92e8fef2f07672aa8e97bc04f20657469ac6e.camel@kylinos.cn>
+	 <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.44.4-0ubuntu2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4b:0:b0:395:e85e:f2fa with SMTP id
- e9e14a558f8ab-3a3b5844745mr39881005ab.1.1728726688320; Sat, 12 Oct 2024
- 02:51:28 -0700 (PDT)
-Date: Sat, 12 Oct 2024 02:51:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670a46a0.050a0220.4cbc0.001e.GAE@google.com>
-Subject: [syzbot] [ocfs2?] kernel BUG in ocfs2_read_virt_blocks
-From: syzbot <syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com>
-To: jlbec@evilplan.org, joseph.qi@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, mark@fasheh.com, ocfs2-devel@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    87d6aab2389e Merge tag 'for_linus' of git://git.kernel.org..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=17fbbb80580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
-dashboard link: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=13c117d0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1007bb80580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/47c26a185f6d/disk-87d6aab2.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fe82dfdaaac4/vmlinux-87d6aab2.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/ecaba119a5f0/bzImage-87d6aab2.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/197dcbc41fea/mount_0.gz
-
-Bisection is inconclusive: the issue happens on the oldest tested release.
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=114db707980000
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=134db707980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=154db707980000
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
-
-JBD2: Ignoring recovery information on journal
-ocfs2: Mounting device (7,0) on (node local, slot 0) with ordered data mode.
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/extent_map.c:971!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5221 Comm: syz-executor117 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
-Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
-RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
-RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
-R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
-R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
-FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
- ocfs2_find_dir_space_el fs/ocfs2/dir.c:3427 [inline]
- ocfs2_prepare_dir_for_insert+0x3f2/0x5c60 fs/ocfs2/dir.c:4274
- ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
- ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fa356467d59
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe912bab08 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007fa356467d59
-RDX: 000000000000275a RSI: 0000000020000040 RDI: 00000000ffffff9c
-RBP: 00007fa3564e05f0 R08: 0000000000004472 R09: 000055557cd564c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffe912bab30
-R13: 00007ffe912bad58 R14: 431bde82d7b634db R15: 00007fa3564b103b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
-Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
-RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
-RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
-R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
-R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
-FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Hi Alan,
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+The V3 patch has been sent. Please review it to check if it aligns with
+the solution you described.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Thanks
+Duan Chenghao
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+=E5=9C=A8 2024-10-11=E6=98=9F=E6=9C=9F=E4=BA=94=E7=9A=84 09:53 -0400=EF=BC=
+=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
+> On Fri, Oct 11, 2024 at 09:42:11AM +0800, duanchenghao wrote:
+> > Hi Alan,
+> >=20
+> > I roughly understand now.
+> >=20
+> > In your previous email, you mentioned assigning a value to
+> > do_wakeup
+> > based on the judgment of PMSG in suspend_common, but there is no
+> > parameter passing of PMSG in suspend_common.
+>=20
+> In my kernel tree, the first line of code in suspend_common()
+> (following=20
+> all the variable definitions) is this:
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0do_wakeup =3D PMSG_IS_AUT=
+O(msg) ? true :
+> device_may_wakeup(dev);
+>=20
+> That's what I was talking about.
+>=20
+> > Do you mean using the global parameter pm_transition.event for the
+> > judgment?
+>=20
+> No, I meant what I wrote.
+>=20
+> Alan Stern
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
