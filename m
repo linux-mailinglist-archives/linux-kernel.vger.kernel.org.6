@@ -1,204 +1,142 @@
-Return-Path: <linux-kernel+bounces-362572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F24D499B68A
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:00:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6FBD99B683
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1FCF21C211E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 18:00:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5CEA9B213ED
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21A514A4DC;
-	Sat, 12 Oct 2024 18:00:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F280136328;
+	Sat, 12 Oct 2024 17:58:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gw6ghBew"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Jiq+xQzM"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 003E5770F1;
-	Sat, 12 Oct 2024 18:00:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A7FC17579;
+	Sat, 12 Oct 2024 17:58:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728756022; cv=none; b=aOFa7gxF4h8PXb8pLYDHg7BX+tMvfD/BcXwjzYV8b5zt05HoB8UOZJvYXrJRMsgLhxYQ8wqleQQ17QAccZy5mg4ibfLcUsFQlQffpgdtxw3JLAooDd2IRFcpC83F5nIhub/SA4CDFdm/ykLyOSyuEB/aVQhZ36D87NHzy7kM9y4=
+	t=1728755898; cv=none; b=qD9j/9NEM+TVYqH1TkZQ51VmoUAs2QC4OMqo8qRIlvaNDQjf/AKofEX20MSVHFdtOOqzFoeS6sdNgd5f4V5vtnRVaNUxZy3wNXpJRsuZSM8TZ9xFiqLvFLSPO5MmsZjNA1hmyWM5Ai+92HmSphzYk/rdIWn3lg6sfB/eg5os4Ss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728756022; c=relaxed/simple;
-	bh=QZbghKMG5mddRcnYL0oUUjDtFdAbMtMB+WmbxAp1KO4=;
+	s=arc-20240116; t=1728755898; c=relaxed/simple;
+	bh=15gCM9S2JouQKwZ6bpeCSvqPmDnvWYI4O9Av/Wz4i4s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HuT7QqkixvuM8ahuf8wleIbfFhnp0ivGLLcmyTg9Fh3+Fo1NO9kktuY/9Wzwj8YUqMXSzS+fk+Rs8gFMGTXg1HfmjwUFEOW8HAiAYsL/cysVn/EkiSgljmO+ZQfr7B2rk2Ql/gatdXX5IFPoi2AxE3SkJAWOgSRpjFycvZ9yxRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gw6ghBew; arc=none smtp.client-ip=192.198.163.14
+	 Content-Type:Content-Disposition:In-Reply-To; b=JagKfyjjTx2QsuFSVCGiYYN7hBPN5pq2VAaHuJ9iZ+hXJ3xHaiF0ctFev7dmaJECIFsQOV7c9vTOyGUbs0WcbjsWmdsbkwssPdK9VyZuSRMHowtJsVuWB/zwRqiG4VWOlj3dxVPXXUH6jz3vey/nRZ/BYgEkfFHYeY30IhzGeew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Jiq+xQzM; arc=none smtp.client-ip=192.198.163.10
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728756020; x=1760292020;
+  t=1728755897; x=1760291897;
   h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=QZbghKMG5mddRcnYL0oUUjDtFdAbMtMB+WmbxAp1KO4=;
-  b=gw6ghBewjHzh+ut3aEyT0SIi1sunUOzQYFcWLfg0f6bVjzol78/nh8h5
-   2RkGlIBHCucBn5jiOcKGdoa7IQcQKF/7HfFHg80H/Ic6Wn+Pfp/P8+oKZ
-   TlTQIjohZaVwngcIePcwDhkMC4rExF7BT+rNBEWwkauULN2HwJ8elY+yo
-   E6zjwkIPd+XApb3eFdV4qv8g8ZTCxquaEME4f/wbflKR9vytShXg6XrLe
-   YnhkKOn7b8FwCOizS2+4e5ZcuSo1IQb/+igzsxYwae0O7j66xYRaj6oao
-   P21mxCPxixaG+AZ7J/yG5/sde499/2ey65mSnw606T9mG/jajsq97x8+9
+   mime-version:in-reply-to;
+  bh=15gCM9S2JouQKwZ6bpeCSvqPmDnvWYI4O9Av/Wz4i4s=;
+  b=Jiq+xQzMtiDCl0Kph5ThzPOg46/IzVvwPMP3xSgTZ8MVJIc2XPS2WMc5
+   QYd8Y+hqsrqmCvrY0yeBmsrd0KTXC9DD2P4Ld7bofDVLlHSeC8a2h+CBv
+   A1/K922BjDcVMcDKxkwPvcR/LsLMtU8wOLk+pFN1zmtHHpFlm7w3mG2iP
+   Y7Tyij4e1umKOahFODMdCk1EU+6rugSqdSGagLSczLGRpe79ifoyVUDWE
+   vYUzh9fuL4GXg9g56pn6VFalDnXeAX7Wnbi7f7djQtuxKR5piquPzExnL
+   jcsT6JD4TH4/Z+sl8tnhe2jGODLI+SGuBRjHM9TkOe2NWqnxganMpwhpA
    g==;
-X-CSE-ConnectionGUID: fv5Cc8DEQkaIQzB5+tM6lA==
-X-CSE-MsgGUID: +trNSOIsR2m9o1MmF2ZKfQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28315437"
+X-CSE-ConnectionGUID: rJX6ILBRThCEBHVNZaBYRQ==
+X-CSE-MsgGUID: bP8hyf3aQ+mOoHf090FPCw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39526010"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28315437"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 11:00:18 -0700
-X-CSE-ConnectionGUID: 2TXqMIK5QayDULncJRh8vA==
-X-CSE-MsgGUID: 9KGUO9srSdGv0XhB8YEqRg==
+   d="scan'208";a="39526010"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 10:58:16 -0700
+X-CSE-ConnectionGUID: KHTYUdtQR+WsaJkMVhiykQ==
+X-CSE-MsgGUID: QzJgkvyCTS+Jtt+3cRG+vA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="81974009"
+   d="scan'208";a="78011615"
 Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 12 Oct 2024 10:58:12 -0700
+  by orviesa008.jf.intel.com with ESMTP; 12 Oct 2024 10:58:12 -0700
 Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
 	(envelope-from <lkp@intel.com>)
-	id 1szgNV-000DaJ-2b;
+	id 1szgNV-000DaH-2X;
 	Sat, 12 Oct 2024 17:58:09 +0000
-Date: Sun, 13 Oct 2024 01:57:12 +0800
+Date: Sun, 13 Oct 2024 01:57:13 +0800
 From: kernel test robot <lkp@intel.com>
-To: Md Sadre Alam <quic_mdalam@quicinc.com>, broonie@kernel.org,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	andersson@kernel.org, konradybcio@kernel.org,
-	miquel.raynal@bootlin.com, richard@nod.at, vigneshr@ti.com,
-	manivannan.sadhasivam@linaro.org, arnd@arndb.de, esben@geanix.com,
-	nikita.shubin@maquefel.me, linux-arm-msm@vger.kernel.org,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mtd@lists.infradead.org
-Cc: oe-kbuild-all@lists.linux.dev, quic_srichara@quicinc.com,
-	quic_varada@quicinc.com
-Subject: Re: [PATCH v11 4/8] mtd: nand: Add qpic_common API file
-Message-ID: <202410130129.M8J7VJoG-lkp@intel.com>
-References: <20241010070510.1504250-5-quic_mdalam@quicinc.com>
+To: KobaK <kobak@nvidia.com>, Matt Ochs <mochs@nvidia.com>,
+	James Morse <james.morse@arm.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>,
+	Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Zhang Rui <rui.zhang@intel.com>,
+	linux-efi@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH V7] acpi/prmt: find block with specific type
+Message-ID: <202410130153.COiJzh3R-lkp@intel.com>
+References: <20241009064517.2678456-1-kobak@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241010070510.1504250-5-quic_mdalam@quicinc.com>
+In-Reply-To: <20241009064517.2678456-1-kobak@nvidia.com>
 
-Hi Md,
+Hi KobaK,
 
-kernel test robot noticed the following build errors:
+kernel test robot noticed the following build warnings:
 
-[auto build test ERROR on mtd/nand/next]
-[also build test ERROR on broonie-spi/for-next robh/for-next linus/master v6.12-rc2 next-20241011]
+[auto build test WARNING on rafael-pm/linux-next]
+[also build test WARNING on rafael-pm/bleeding-edge linus/master v6.12-rc2 next-20241011]
 [If your patch is applied to the wrong git tree, kindly drop us a note.
 And when submitting patch, we suggest to use '--base' as documented in
 https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Md-Sadre-Alam/spi-dt-bindings-Introduce-qcom-spi-qpic-snand/20241010-161236
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/mtd/linux.git nand/next
-patch link:    https://lore.kernel.org/r/20241010070510.1504250-5-quic_mdalam%40quicinc.com
-patch subject: [PATCH v11 4/8] mtd: nand: Add qpic_common API file
-config: csky-randconfig-r123-20241012 (https://download.01.org/0day-ci/archive/20241013/202410130129.M8J7VJoG-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241013/202410130129.M8J7VJoG-lkp@intel.com/reproduce)
+url:    https://github.com/intel-lab-lkp/linux/commits/KobaK/acpi-prmt-find-block-with-specific-type/20241009-144658
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/rafael/linux-pm.git linux-next
+patch link:    https://lore.kernel.org/r/20241009064517.2678456-1-kobak%40nvidia.com
+patch subject: [PATCH V7] acpi/prmt: find block with specific type
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241013/202410130153.COiJzh3R-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241013/202410130153.COiJzh3R-lkp@intel.com/reproduce)
 
 If you fix the issue in a separate patch/commit (i.e. not just a new version of
 the same patch/commit), kindly add following tags
 | Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410130129.M8J7VJoG-lkp@intel.com/
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410130153.COiJzh3R-lkp@intel.com/
 
-All errors (new ones prefixed by >>):
+All warnings (new ones prefixed by >>):
 
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_remove':
->> drivers/mtd/nand/raw/qcom_nandc.c:2347:(.text+0x3ce): undefined reference to `nand_cleanup'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `config_nand_page_write':
-   drivers/mtd/nand/raw/qcom_nandc.c:377:(.text+0x538): undefined reference to `nand_cleanup'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_parse_instructions':
->> drivers/mtd/nand/raw/qcom_nandc.c:1626:(.text+0x756): undefined reference to `nand_subop_get_addr_start_off'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1627:(.text+0x766): undefined reference to `nand_subop_get_num_addr_cyc'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_misc_cmd_type_exec':
-   drivers/mtd/nand/raw/qcom_nandc.c:1823:(.text+0x8a8): undefined reference to `nand_subop_get_addr_start_off'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1823:(.text+0x8ac): undefined reference to `nand_subop_get_num_addr_cyc'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_param_page_type_exec':
->> drivers/mtd/nand/raw/qcom_nandc.c:1917:(.text+0xa3e): undefined reference to `nand_subop_get_data_len'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1951:(.text+0xb64): undefined reference to `nand_subop_get_data_len'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_read_status_exec':
-   drivers/mtd/nand/raw/qcom_nandc.c:1747:(.text+0xcc6): undefined reference to `nand_subop_get_data_len'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1752:(.text+0xd14): undefined reference to `nand_subop_get_data_len'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_read_id_type_exec':
-   drivers/mtd/nand/raw/qcom_nandc.c:1794:(.text+0xdee): undefined reference to `nand_subop_get_data_len'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nand_attach_chip':
->> drivers/mtd/nand/raw/qcom_nandc.c:1393:(.text+0xe4c): undefined reference to `nand_ecc_choose_conf'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1403:(.text+0xed8): undefined reference to `nand_subop_get_data_len'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1403:(.text+0xee8): undefined reference to `nand_ecc_choose_conf'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_write_page_raw':
->> drivers/mtd/nand/raw/qcom_nandc.c:1054:(.text+0x10cc): undefined reference to `nand_prog_page_begin_op'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1109:(.text+0x11fe): undefined reference to `nand_prog_page_end_op'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1110:(.text+0x1218): undefined reference to `nand_prog_page_begin_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1110:(.text+0x1238): undefined reference to `nand_prog_page_end_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_read_cw_raw':
->> drivers/mtd/nand/raw/qcom_nandc.c:482:(.text+0x1266): undefined reference to `nand_read_page_op'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:542:(.text+0x1468): undefined reference to `nand_read_page_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `check_for_erased_page':
->> drivers/mtd/nand/raw/qcom_nandc.c:600:(.text+0x15bc): undefined reference to `nand_check_erased_ecc_chunk'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:613:(.text+0x1618): undefined reference to `nand_check_erased_ecc_chunk'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `nand_scan':
->> include/linux/mtd/rawnand.h:1592:(.text+0x1af6): undefined reference to `nand_scan_with_ids'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nand_host_parse_boot_partitions':
->> drivers/mtd/nand/raw/qcom_nandc.c:2091:(.text+0x1bb0): undefined reference to `nand_scan_with_ids'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nand_host_init_and_register':
-   drivers/mtd/nand/raw/qcom_nandc.c:2195:(.text+0x1c88): undefined reference to `nand_cleanup'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_check_op':
-   drivers/mtd/nand/raw/qcom_nandc.c:2008:(.text+0x1d4c): undefined reference to `nand_cleanup'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nand_exec_op':
->> drivers/mtd/nand/raw/qcom_nandc.c:2017:(.text+0x1d60): undefined reference to `nand_op_parser_exec_op'
->> csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:2018:(.text+0x1d94): undefined reference to `nand_op_parser_exec_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_read_page':
-   drivers/mtd/nand/raw/qcom_nandc.c:905:(.text+0x20fe): undefined reference to `nand_read_page_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:919:(.text+0x2198): undefined reference to `nand_read_page_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_block_markbad':
->> drivers/mtd/nand/raw/qcom_nandc.c:1234:(.text+0x228c): undefined reference to `nand_prog_page_end_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_write_oob':
-   drivers/mtd/nand/raw/qcom_nandc.c:1158:(.text+0x239a): undefined reference to `nand_prog_page_end_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1159:(.text+0x23cc): undefined reference to `nand_prog_page_end_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_write_page':
-   drivers/mtd/nand/raw/qcom_nandc.c:980:(.text+0x2410): undefined reference to `nand_prog_page_begin_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1036:(.text+0x2524): undefined reference to `nand_prog_page_end_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.o: in function `qcom_nandc_block_bad':
-   drivers/mtd/nand/raw/qcom_nandc.c:1167:(.text+0x2648): undefined reference to `nand_prog_page_begin_op'
-   csky-linux-ld: drivers/mtd/nand/raw/qcom_nandc.c:1167:(.text+0x2668): undefined reference to `nand_prog_page_end_op'
+   In file included from include/linux/kernel.h:31,
+                    from drivers/acpi/prmt.c:17:
+   drivers/acpi/prmt.c: In function 'efi_pa_va_lookup':
+>> include/linux/kern_levels.h:5:25: warning: format '%p' expects argument of type 'void *', but argument 3 has type 'u64' {aka 'long long unsigned int'} [-Wformat=]
+       5 | #define KERN_SOH        "\001"          /* ASCII Start Of Header */
+         |                         ^~~~~~
+   include/linux/printk.h:462:25: note: in definition of macro 'printk_index_wrap'
+     462 |                 _p_func(_fmt, ##__VA_ARGS__);                           \
+         |                         ^~~~
+   include/linux/printk.h:543:9: note: in expansion of macro 'printk'
+     543 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+         |         ^~~~~~
+   include/linux/kern_levels.h:12:25: note: in expansion of macro 'KERN_SOH'
+      12 | #define KERN_WARNING    KERN_SOH "4"    /* warning conditions */
+         |                         ^~~~~~~~
+   include/linux/printk.h:543:16: note: in expansion of macro 'KERN_WARNING'
+     543 |         printk(KERN_WARNING pr_fmt(fmt), ##__VA_ARGS__)
+         |                ^~~~~~~~~~~~
+   drivers/acpi/prmt.c:88:9: note: in expansion of macro 'pr_warn'
+      88 |         pr_warn("Failed to find VA for GUID: %pUL, PA: %p", guid, pa);
+         |         ^~~~~~~
 
 
-vim +2347 drivers/mtd/nand/raw/qcom_nandc.c
+vim +5 include/linux/kern_levels.h
 
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2334  
-ec185b18c22323 drivers/mtd/nand/raw/qcom_nandc.c Uwe Kleine-König 2023-04-11  2335  static void qcom_nandc_remove(struct platform_device *pdev)
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2336  {
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2337  	struct qcom_nand_controller *nandc = platform_get_drvdata(pdev);
-7330fc505af4af drivers/mtd/nand/raw/qcom_nandc.c Arnd Bergmann    2018-07-17  2338  	struct resource *res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2339  	struct qcom_nand_host *host;
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2340  	struct nand_chip *chip;
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2341  	int ret;
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2342  
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2343  	list_for_each_entry(host, &nandc->host_list, node) {
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2344  		chip = &host->chip;
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2345  		ret = mtd_device_unregister(nand_to_mtd(chip));
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2346  		WARN_ON(ret);
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19 @2347  		nand_cleanup(chip);
-0a2bc9919cf74e drivers/mtd/nand/raw/qcom_nandc.c Miquel Raynal    2020-05-19  2348  	}
-7330fc505af4af drivers/mtd/nand/raw/qcom_nandc.c Arnd Bergmann    2018-07-17  2349  
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2350  	qcom_nandc_unalloc(nandc);
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2351  
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2352  	clk_disable_unprepare(nandc->aon_clk);
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2353  	clk_disable_unprepare(nandc->core_clk);
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2354  
-7330fc505af4af drivers/mtd/nand/raw/qcom_nandc.c Arnd Bergmann    2018-07-17  2355  	dma_unmap_resource(&pdev->dev, nandc->base_dma, resource_size(res),
-7330fc505af4af drivers/mtd/nand/raw/qcom_nandc.c Arnd Bergmann    2018-07-17  2356  			   DMA_BIDIRECTIONAL, 0);
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2357  }
-c76b78d8ec05a2 drivers/mtd/nand/qcom_nandc.c     Archit Taneja    2016-02-03  2358  
+314ba3520e513a Joe Perches 2012-07-30  4  
+04d2c8c83d0e3a Joe Perches 2012-07-30 @5  #define KERN_SOH	"\001"		/* ASCII Start Of Header */
+04d2c8c83d0e3a Joe Perches 2012-07-30  6  #define KERN_SOH_ASCII	'\001'
+04d2c8c83d0e3a Joe Perches 2012-07-30  7  
 
 -- 
 0-DAY CI Kernel Test Service
