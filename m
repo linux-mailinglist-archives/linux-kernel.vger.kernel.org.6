@@ -1,143 +1,229 @@
-Return-Path: <linux-kernel+bounces-362429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE10599B4E6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:40:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E4B499B4E7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 14:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 891AE1F216A7
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:40:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45A9D283631
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 12:41:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14DBB187330;
-	Sat, 12 Oct 2024 12:40:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEDAB17837A;
+	Sat, 12 Oct 2024 12:41:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="w5dNrZpB"
-Received: from mail-ed1-f43.google.com (mail-ed1-f43.google.com [209.85.208.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I679Wmet"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECE4176AA5
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 12:40:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E6838DF9;
+	Sat, 12 Oct 2024 12:41:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728736822; cv=none; b=HrgxIRcUvg6zD9G6O55kEUp1saB1XdGC0NNYOFcH7B1Cs9Zgs17Xdj1nfZ6Wao4noHSzHirmTyWbkJakxRmsCvKc3brKJwEAMzwUHnoNQdbo1guGPxqerNxo+ozPHXCp7KNFVNArtHN4I0Fo5D/sUMcRL37QWMVSCxhtzJrw/no=
+	t=1728736904; cv=none; b=qD9J3347VwtMXBdmAHZgwxcYhD5GqXr1kd9GY8fdAFKfzeAExBjWUGqkyOcQavOxngiPsNl5+doSBYDozEJ60R/HPJawCY0RxAXQdwM5elIBri3T4NiXvTRTDSU6roXjHDLY+m1bAfwwAUE4dcm3AJwdBIz4HNbvLl6BLa6u8qc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728736822; c=relaxed/simple;
-	bh=V1Puqdghk72pzDDFphZLuyqAk3pi1ZW07Pb9Y7Gz9b8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WidkFMVszCxxbMbKa/U3cWR+uXFKbOljD6lrCMuiZWIV5DBsKaXJ3sUmwUsgFClIjHrcOS/w71DWLNgY88LOHaKNQZNC38ETTf3yUtWQM1lTsjnUJJ0Y0YmWXB7zDSIODCdS2B6Lbdep3nutSQsuWilyKoT/ZJR5dVgNdgfqOHY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=w5dNrZpB; arc=none smtp.client-ip=209.85.208.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ed1-f43.google.com with SMTP id 4fb4d7f45d1cf-5c960af31daso366687a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 05:40:19 -0700 (PDT)
+	s=arc-20240116; t=1728736904; c=relaxed/simple;
+	bh=bIfNOF6Jk/MXPc4iLJ77NvfIvrKcQSCzG5poXqD/Has=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Y6h+x1ezgWE7dpjNfDWEzkOBINqPFAEDfV2kY6tepBwjZqyw6XfR5fTVtuQUOSNsLcuYpxFxpsG3CdxTS11Mv76l2uvV7kvKDgaP5IFtwoBDdOwh3pxb0GMyIOP4t9YJI+Xb32Mua2+YCaCVJdqB8KhDzkN0+Ux0IW9AM18FmdY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I679Wmet; arc=none smtp.client-ip=209.85.210.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so2492867b3a.1;
+        Sat, 12 Oct 2024 05:41:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728736818; x=1729341618; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=+rG8KtQ9bLGvJOAcuyD/foz5GNktrddWbP01zgWiWtI=;
-        b=w5dNrZpBVao0XjXiLeCYcyWon0yR5VDETwYAyjR0bjx8fmaEy5z7jCENKUXnFMa8dI
-         xBNk+ursdyNYZuuOpGn1BQaAIigrEOsJBqwkFMokriyM6LnW28koMKHlst9gLkNtJ2Fi
-         e8cJF0CzxFpYRIQOz4/doPimFblKxnGoUv5RAdHuGBxdEvjcBUVcK/WYIf5TWge/NRbb
-         0o8+gsnJWbPWj3g5x1Jw70hc0c7YNphHYVGdDpEPcBo54OvQ0oZNAtF/0CKZ7Y5nkNp3
-         7eDLcHZR3ChJyfXR9H6nfPYEDjCg5GvQVqKa3Gtg+Y9Fk5wYE78/MoUOEDASlKR2Tpzm
-         CZwQ==
+        d=gmail.com; s=20230601; t=1728736901; x=1729341701; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4FD2wGJZT6I9y7WNlt+/YB0Oal9xLTsrHNVQtFhZohE=;
+        b=I679WmetpooS/ymmGvfy0lK10QzmCwF2UaYloMHc7A3+r0VVsPosi7Elrn0XCXCgdP
+         KMAK3CLQleNRlpNjAY+TkWOi4CupIgn8EApug1URGkPeEPWbMkdhkqGsTCgEoFsS8/1K
+         NF+agn1+QYO+uOvuYkaN3dZgFB5Gc3Ttpm62ndP0gUyI258XvFw6stdxXzvLG9gpcIK6
+         +DC5IBKN0otl7MW97Dff219uFjMv1/feZ2WaQh1kopoau09+9wUhqnRXQiQhbwqWQxNN
+         RJkH4wVVmF8F1iZ0fess5z75DhrC1ZEyeBwSUf73TDzfWFtrYSkvacCwVoSqzJVlClJQ
+         +9yA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728736818; x=1729341618;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+rG8KtQ9bLGvJOAcuyD/foz5GNktrddWbP01zgWiWtI=;
-        b=t8Z4buiU43irVt8TimxDKluTu85QCgR56sW319wA9NK6XZX8s3iekwx4VeG5UTUCsO
-         o0NVTpWsCwOIQfwRD9x/gEj+9RDhbgjwJzjGqM+1k1F4Dy/WT9LmY4BspWPY77vJOgHw
-         qAcnn0HwZcayFyHJb0V2/AY9mkiNalZSR1Eeb09u18yEdx62mKDXT3HnXqZ3CIR5Csgo
-         JPMPdW/TpJjlySunKSuDO2HI5GEtyNsli7Kttr2NngTkv402jAWLAlHUeGTZKsFiabQk
-         Dx35ld5ebYATYhtxsG49zq5ElMJWcC1G62288FLDlNr0nMRcw4ZzGxiGuQ19dtFqTJYi
-         7ksg==
-X-Gm-Message-State: AOJu0YzAO7JebEhAGhaMKfh8CjK61dMzm+vIKukfwE6ooJJgY+xG5pZL
-	lYsLCaNKS93ezvCLfCoZiJJkxEmlFp9kHo/4LfeJH15CeY3Wr1cKFHjejrt/cPo=
-X-Google-Smtp-Source: AGHT+IF4mu9w8S9hKbzqQm4czFhZ2yVLNuU9Fl98nzVzJRXAZ3huvwGn2C81CVNaqQGtSqCqQCmiYQ==
-X-Received: by 2002:a17:907:f70b:b0:a8d:4d76:a760 with SMTP id a640c23a62f3a-a99b95e86c3mr493081066b.35.1728736817861;
-        Sat, 12 Oct 2024 05:40:17 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:eee4:9efa:9b7d:f254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f8bdadd1sm12231766b.153.2024.10.12.05.40.16
+        d=1e100.net; s=20230601; t=1728736901; x=1729341701;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4FD2wGJZT6I9y7WNlt+/YB0Oal9xLTsrHNVQtFhZohE=;
+        b=ahDRwFGHjzDGmn++9+NqoaQt0ZUOMRKquBxun93T7t/kFbK4397zlXEM1WZMbgo8XV
+         vrOT+d9uHzjH4nhNoHgogdMe0YjO8fC5JBxXuJRBoDTuV5P511vMoaWv9lc96v9VE3UE
+         leGLjlnJf3+wrP7V894bjAoQqM4UcP2Jidn6mrWz3EDg2pXx3Bi1n0xBsyW9uEPLI7Ry
+         +7TKBP36BclPhTiF5laREX0bSXsK+xUDpWdoSqHB/whoaWyUARy3RDKsCil0W5A8Bwbc
+         VmKtxMTuECcAMjmZIq46G+gWBkfWdk/UygRSh+UUW03xhiD5XLrlpw9iLrCOOINtVGGk
+         EzfQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU63NRSzhaHsWyzL4qOxDY0xt6XAu7UgqeWzPTMnS0DNRyta71YARqwpsKUKcms/o2Z+wPWJH1HW/Ep1e/63+CM5DMd@vger.kernel.org, AJvYcCVEqaksqBDhQXxRsMGXqzEUEAe6c+3WZicAC8eKN1+uFxslmJBebUeHFx+hRX9+rkMRU7cE0PSQSCLbwts=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySpC6VXMWUAJI2zyoYTAwf+J9SmC4rGB9+oQx76oe3CMHw9fR6
+	6MwHstA0bM0WqZgsdY78emZfY6SxY/L9trGL1VnLnttkAQ1jeN34
+X-Google-Smtp-Source: AGHT+IHcM0JqqDd0asn12HnxhrTExL2cgKA2A+vtYxbib3UbJVwToHvWvJlto+y7b4bs9pZkigiXCA==
+X-Received: by 2002:a05:6a20:f82:b0:1d8:d194:b11 with SMTP id adf61e73a8af0-1d8d1940b38mr522449637.2.1728736901392;
+        Sat, 12 Oct 2024 05:41:41 -0700 (PDT)
+Received: from localhost.localdomain ([240d:1a:13a:f00:4b94:68e0:2d8b:3983])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e4ad1b9f7sm1437423b3a.190.2024.10.12.05.41.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 12 Oct 2024 05:40:17 -0700 (PDT)
-Date: Sat, 12 Oct 2024 14:40:14 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: William Qiu <william.qiu@starfivetech.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-pwm@vger.kernel.org" <linux-pwm@vger.kernel.org>, Hal Feng <hal.feng@starfivetech.com>, 
-	Philipp Zabel <p.zabel@pengutronix.de>
-Subject: Re: [PATCH v15] pwm: opencores: Add PWM driver support
-Message-ID: <b6izzukutuhrbgxrhyu6be2wcs364rtrpvp4lenxsq47f5nwjv@bb2d54hjw6ao>
-References: <ZQ0PR01MB12538557D7C48C3B2ABEFBA89F7A2@ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn>
+        Sat, 12 Oct 2024 05:41:41 -0700 (PDT)
+From: Tatsuya S <tatsuya.s2862@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Tatsuya S <tatsuya.s2862@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org
+Subject: [PATCH v2] ftrace: Fix function name for trampoline
+Date: Sat, 12 Oct 2024 21:41:51 +0900
+Message-ID: <20241012124152.2078-1-tatsuya.s2862@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="onmps4ud7ka742jx"
-Content-Disposition: inline
-In-Reply-To: <ZQ0PR01MB12538557D7C48C3B2ABEFBA89F7A2@ZQ0PR01MB1253.CHNPR01.prod.partner.outlook.cn>
+Content-Transfer-Encoding: 8bit
 
+The issue that unrelated function name is shown on stack trace like
+following even though it should be trampoline code address is caused by
+the creation of trampoline code in the area where .init.text section
+of module was freed after module is loaded.
 
---onmps4ud7ka742jx
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v15] pwm: opencores: Add PWM driver support
-MIME-Version: 1.0
+bash-1344    [002] .....    43.644608: <stack trace>
+  => (MODULE INIT FUNCTION)
+  => vfs_write
+  => ksys_write
+  => do_syscall_64
+  => entry_SYSCALL_64_after_hwframe
 
-On Sat, Oct 12, 2024 at 08:02:57AM +0000, William Qiu wrote:
->=20
->=20
-> > -----Original Message-----
-> > From: William Qiu
-> > Sent: 2024=E5=B9=B410=E6=9C=8811=E6=97=A5 18:43
-> > To: Uwe Kleine-K=C3=B6nig <u.kleine-koenig@baylibre.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-pwm@vger.kernel.org; Hal Feng
-> > <hal.feng@starfivetech.com>; Philipp Zabel <p.zabel@pengutronix.de>
-> > Subject: RE: [PATCH v15] pwm: opencores: Add PWM driver support
-> >=20
-> > > +static void __iomem *starfive_get_ch_base(void __iomem *base,
-> > +					  unsigned int channel)
-> > >
-> > > Would be great if all functions had the same prefix. This simplifies
-> > > debugging with tracing, because you can just enable traces for
-> > "ocores_pwm_*".
-> > >
-> > Will update.
->=20
-> I want to explain something about this. This interface only works on
-> StarFive boards, so the "starfive" prefix is used, I don't think the
-> "ocores_pwm" prefix is appropriate here.
->=20
-> Uwe, what do you think?
+To resolve this, when function address of stack trace entry is in
+trampoline, output without looking up symbol name.
 
-This function is part of the opencores pwm driver, so ocores_pwm_ is an
-appropriate prefix.
+Signed-off-by: Tatsuya S <tatsuya.s2862@gmail.com>
+---
+V1 -> V2: Instead of checking trampoline when displaying "trace" results,
+	  it stores trampoline when generating the stacktrace entry.
 
-Best regards
-Uwe
+ kernel/trace/trace.c         | 24 ++++++++++++++++--------
+ kernel/trace/trace_entries.h |  2 ++
+ kernel/trace/trace_output.c  |  7 +++++++
+ 3 files changed, 25 insertions(+), 8 deletions(-)
 
---onmps4ud7ka742jx
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/kernel/trace/trace.c b/kernel/trace/trace.c
+index 1c69ca1f1088..92a8e76a0cd7 100644
+--- a/kernel/trace/trace.c
++++ b/kernel/trace/trace.c
+@@ -988,7 +988,8 @@ static inline void trace_access_lock_init(void)
+ #endif
+ 
+ #ifdef CONFIG_STACKTRACE
+-static void __ftrace_trace_stack(struct trace_buffer *buffer,
++static void __ftrace_trace_stack(struct trace_array *tr,
++				 struct trace_buffer *buffer,
+ 				 unsigned int trace_ctx,
+ 				 int skip, struct pt_regs *regs);
+ static inline void ftrace_trace_stack(struct trace_array *tr,
+@@ -997,7 +998,8 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+ 				      int skip, struct pt_regs *regs);
+ 
+ #else
+-static inline void __ftrace_trace_stack(struct trace_buffer *buffer,
++static inline void __ftrace_trace_stack(struct trace_array *tr,
++					struct trace_buffer *buffer,
+ 					unsigned int trace_ctx,
+ 					int skip, struct pt_regs *regs)
+ {
+@@ -2928,7 +2930,8 @@ struct ftrace_stacks {
+ static DEFINE_PER_CPU(struct ftrace_stacks, ftrace_stacks);
+ static DEFINE_PER_CPU(int, ftrace_stack_reserve);
+ 
+-static void __ftrace_trace_stack(struct trace_buffer *buffer,
++static void __ftrace_trace_stack(struct trace_array *tr,
++				 struct trace_buffer *buffer,
+ 				 unsigned int trace_ctx,
+ 				 int skip, struct pt_regs *regs)
+ {
+@@ -2986,6 +2989,11 @@ static void __ftrace_trace_stack(struct trace_buffer *buffer,
+ 	memcpy(&entry->caller, fstack->calls,
+ 	       flex_array_size(entry, caller, nr_entries));
+ 
++#ifdef CONFIG_DYNAMIC_FTRACE
++	entry->trampoline = tr->ops ? tr->ops->trampoline : 0;
++	entry->trampoline_size = tr->ops ? tr->ops->trampoline_size : 0;
++#endif
++
+ 	if (!call_filter_check_discard(call, entry, buffer, event))
+ 		__buffer_unlock_commit(buffer, event);
+ 
+@@ -3005,7 +3013,7 @@ static inline void ftrace_trace_stack(struct trace_array *tr,
+ 	if (!(tr->trace_flags & TRACE_ITER_STACKTRACE))
+ 		return;
+ 
+-	__ftrace_trace_stack(buffer, trace_ctx, skip, regs);
++	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, regs);
+ }
+ 
+ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+@@ -3014,7 +3022,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+ 	struct trace_buffer *buffer = tr->array_buffer.buffer;
+ 
+ 	if (rcu_is_watching()) {
+-		__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
++		__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+ 		return;
+ 	}
+ 
+@@ -3031,7 +3039,7 @@ void __trace_stack(struct trace_array *tr, unsigned int trace_ctx,
+ 		return;
+ 
+ 	ct_irq_enter_irqson();
+-	__ftrace_trace_stack(buffer, trace_ctx, skip, NULL);
++	__ftrace_trace_stack(tr, buffer, trace_ctx, skip, NULL);
+ 	ct_irq_exit_irqson();
+ }
+ 
+@@ -3048,8 +3056,8 @@ void trace_dump_stack(int skip)
+ 	/* Skip 1 to skip this function. */
+ 	skip++;
+ #endif
+-	__ftrace_trace_stack(printk_trace->array_buffer.buffer,
+-			     tracing_gen_ctx(), skip, NULL);
++	__ftrace_trace_stack(printk_trace, printk_trace->array_buffer.buffer,
++				tracing_gen_ctx(), skip, NULL);
+ }
+ EXPORT_SYMBOL_GPL(trace_dump_stack);
+ 
+diff --git a/kernel/trace/trace_entries.h b/kernel/trace/trace_entries.h
+index c47422b20908..81b84241e3b3 100644
+--- a/kernel/trace/trace_entries.h
++++ b/kernel/trace/trace_entries.h
+@@ -190,6 +190,8 @@ FTRACE_ENTRY(kernel_stack, stack_entry,
+ 
+ 	F_STRUCT(
+ 		__field(	int,		size	)
++		__field(	unsigned long,	trampoline	)
++		__field(	unsigned long,	trampoline_size	)
+ 		__stack_array(	unsigned long,	caller,	FTRACE_STACK_ENTRIES, size)
+ 	),
+ 
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 868f2f912f28..fbd066e9c9fa 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -1246,6 +1246,13 @@ static enum print_line_t trace_stack_print(struct trace_iterator *iter,
+ 			break;
+ 
+ 		trace_seq_puts(s, " => ");
++		if (field->trampoline && field->trampoline_size &&
++			(*p) + delta >= field->trampoline &&
++			(*p) + delta < field->trampoline + field->trampoline_size) {
++			trace_seq_printf(s, "0x%08lx", (*p) + delta);
++			trace_seq_puts(s, " [FTRACE TRAMPOLINE]\n");
++			continue;
++		}
+ 		seq_print_ip_sym(s, (*p) + delta, flags);
+ 		trace_seq_putc(s, '\n');
+ 	}
+-- 
+2.46.2
 
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcKbiwACgkQj4D7WH0S
-/k79EAf8CgFKy4qpPxymtEsbDtSCyBfT2/4bNhOd3D4eyZEUnd5Oci2lTa6Na/PA
-KQsBzzGZHfDZg+Bd9hm3H2Ly9bx+vwLyaepI7L2FpCbXMXvxlPoNfmyq7oSzIN7D
-Pmue1JT0GodFxECQZTOQm+ul4MlV7M0vy1fjgj0JbhxicsE00gpNNO+BCRLJH3rS
-70BbyJoGmXlot4OuWENDleWhcwvRbWwfZ2Dybe48BrufUuE7u4zfXi71kD4wb4Ey
-ntSmmRRGDIDB0SHaHiEFsRJbjbGRXuGBs63Q4TIgVpD1aaUl8NHSB6fcuiDxzZPz
-3gvjDWfpdWnTC/yUf5jRk67F0z85wA==
-=P7Y/
------END PGP SIGNATURE-----
-
---onmps4ud7ka742jx--
 
