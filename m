@@ -1,281 +1,102 @@
-Return-Path: <linux-kernel+bounces-362542-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362543-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EDED99B61F
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:01:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 69E7299B622
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 19:05:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 858AC1F21AB3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:01:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B3DA1F21B67
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 17:05:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F1B1E892;
-	Sat, 12 Oct 2024 17:01:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE4C07604F;
+	Sat, 12 Oct 2024 17:04:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ayjMe0HW"
-Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="cylJN7TP"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 011A01E511
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 17:01:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6444175BF;
+	Sat, 12 Oct 2024 17:04:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728752492; cv=none; b=iZEivAhCanXgDsm21I17lEPr9nPuV0+hJORNGLbfOxSNIFATA7CQ5se9TZ686b/1ah65YwXYN2I7zrpe+r1dlT0dpK9NQPE2rZsluoEOvySzSRH17HKmtD53ANgx+WpVj9eBm4Qk5LoeaXNxje7VPst0LvxTr9LaFYlRIXpiPPs=
+	t=1728752693; cv=none; b=EnsA/nsZ8e2eci6ng2dq657vt9SGmm4sw62OYv3aYT6jE5rf5/VzNctgKFr6OCIKUBvMMJIiEfFGErq6/hCDIEBEE9lAbxECrU9vF2ubSXopQBcD7ZN8HnyXbut3v8Hj8u8O9AHGn0IEnoTACuQTO1ip19aCb/yN716sHvQJd7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728752492; c=relaxed/simple;
-	bh=OrFTEk4OJ5/oC7f++K7QTVGGih9HPx9szWtkAxs8OI0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=T+4UEEtxnMs1Y+9rYOFLIYQe+5uxO4yE+CLGpe9LYPUfyoHGCcbxTrLwAtAaaJJx93YQ9tKMSV/pmiwcINBarLt9AfOtZoN5iQitm/5ooNQMB8bEfczRW+6BXFbbj7qyWUEejHYB4s4I52qVzDnZLJ4RKTH/AxCGtVTNbertj4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ayjMe0HW; arc=none smtp.client-ip=209.85.218.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99e3b3a411so133976466b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 10:01:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1728752488; x=1729357288; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=eLK0SWU0DV/lYestXMEbl8Q5Iv6txd4W8a4XPICpv8U=;
-        b=ayjMe0HW6lydpN8UC4NN7laUP5F+c0a1/haLvbVrGmsFdCAIoXg+dZt3Q10VAd8An1
-         FMtMn5cFUgFl7+WDccxtAj50T2zAndJAp2WpAe0/Hus3Pz6MPHt8+Ki1Elxr0JPv3OWG
-         GkVVsAKjrhdwXczleHG5KgzboUC8AUe/0TxBQ=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728752488; x=1729357288;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eLK0SWU0DV/lYestXMEbl8Q5Iv6txd4W8a4XPICpv8U=;
-        b=je9fLn54+iI+QYzg4R39YPTpnhR3Lm43tSYsb374bcOP+0ndCaWAAregeBChgGt6rx
-         XEJKD72xVgNAoNU8iBjLSFuf3l46Pfhz3sZCUR2G2nbl56vDtADMzc/ucC018zsseuQ3
-         SXzzx41ok9aU+GjFnuB8ytHjMIgeD+awLzLR2AyT6Ckd8T5dHFB/qWBYUy/PXIZAmUZG
-         vMA7YXdncMoemHpfYGX/QKBmgWTPNT/+xucy7dJ1zqXDyz/ewZxuxFf9jmGbC7QGwvgz
-         oOZM7hVeOgQrphwgfs9bDXSJjWBJcDLzQpoEhzyuh8FJqQRdgBweUiLyJzlEfrNhuw9D
-         MPcw==
-X-Forwarded-Encrypted: i=1; AJvYcCUB342vyp/5rwskLQHs4zUvurhLOqa7+w0tCZUGgdgYvd6MjvCdkyS8wTUTQKgq14+qVFWei3JGAVBFgx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZcgauv03OXM8ugjozfHeqfL9yKxTeYXeu6vzuP/itLiqX6SaC
-	EzgtCvfjHwLyXGLOwjIa5YuMbgj29eXgplOWEJ8qjGVr3CZtBuOwIEGtYKznfWUR3HqEjJfM0vZ
-	1Z4w=
-X-Google-Smtp-Source: AGHT+IGnUZkfmmJXWbAETJ2PjchsphEsCmPAtiRfZq5nydKXLWfOAd4WSXPIdiO7KVMhfQffu7XtWQ==
-X-Received: by 2002:a17:907:3f07:b0:a99:5587:2a1f with SMTP id a640c23a62f3a-a99a11087b9mr1097119066b.15.1728752487739;
-        Sat, 12 Oct 2024 10:01:27 -0700 (PDT)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com. [209.85.218.54])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a7ec549csm341144166b.27.2024.10.12.10.01.25
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 12 Oct 2024 10:01:26 -0700 (PDT)
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99e3b3a411so133968866b.0
-        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 10:01:25 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVPPLamQ4RZeN6UAdoMulz/eDA4fUqs1zLrFN8pT33PsN+dKaBJQC8J1v0kGAoNqV9dkzMBqrnui5XZRbY=@vger.kernel.org
-X-Received: by 2002:a17:907:720f:b0:a98:f44d:a198 with SMTP id
- a640c23a62f3a-a99b8775a40mr639248066b.1.1728752485597; Sat, 12 Oct 2024
- 10:01:25 -0700 (PDT)
+	s=arc-20240116; t=1728752693; c=relaxed/simple;
+	bh=cehPu9F8GEfyS6AFYDXu9M4zY0McfXYpr7xbHOPtizc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kMSam7X8rik/d/07vQQEpr4naTAQFT8UpevvBHloBx382zo3mLiIKLAFFW6c3Ru9z5E/Rfb3vv1NP42ghbzJYGfrTwmLSEm3/3dXgLDrHL2pyUNPkzEUW3Bt7x6kSPuUbkEZ6iC8vUsGqT8lkZUm9yE6M73oHYuV2wgYKdwodWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=cylJN7TP; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+From: Dragan Simic <dsimic@manjaro.org>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1728752680;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=iM3UE8DQe02WAdlGsdyyi6qgsRCUdBbEF5+N10Dhsd0=;
+	b=cylJN7TPl6anhfCNNFwta7cxiuu7tDHpjk5QkhyU+VPsd3/GOGi7uAf2Uc6XnXXSg0fL5F
+	lKEK1SY1ZhmYrQweEsPCcSnhNOPESvRo4QHaq1E7c8xg2uQqTPoplE+S6GLzOBGPJA3C8T
+	O7DwbIyi4+zOsyKlom+pcz3TIhxWWQTdn93CPaN7xQnqoeA0lBgcXoPQjDpZEQmf/Pj+Vf
+	DnFzc9bCrA8Fbd3U4dON0evcTf6Xrw7cr6vX/73M3JyKYIOfv1vZOeEM8qrN13zge6C8DE
+	U04nbhNP3o0ETT7utXNl9Hm0GENZoaNJwr4duP09Q9kabQBNkrws98ffMa027g==
+To: linux-rockchip@lists.infradead.org
+Cc: heiko@sntech.de,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Subject: [PATCH 0/3] Update, encapsulate and expand the RK356x SoC dtsi files
+Date: Sat, 12 Oct 2024 19:04:33 +0200
+Message-Id: <cover.1728752527.git.dsimic@manjaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wh5LRp6Tb2oLKv1LrJWuXKOvxcucMfRMmYcT-npbo0=_A@mail.gmail.com>
- <ZulMlPFKiiRe3iFd@casper.infradead.org> <52d45d22-e108-400e-a63f-f50ef1a0ae1a@meta.com>
- <ZumDPU7RDg5wV0Re@casper.infradead.org> <5bee194c-9cd3-47e7-919b-9f352441f855@kernel.dk>
- <459beb1c-defd-4836-952c-589203b7005c@meta.com> <ZurXAco1BKqf8I2E@casper.infradead.org>
- <ZuuBs762OrOk58zQ@dread.disaster.area> <CAHk-=wjsrwuU9uALfif4WhSg=kpwXqP2h1ZB+zmH_ORDsrLCnQ@mail.gmail.com>
- <CAHk-=wgQ_OeAaNMA7A=icuf66r7Atz1-NNs9Qk8O=2gEjd=qTw@mail.gmail.com>
- <E6728F3E-374A-4A86-A5F2-C67CCECD6F7D@flyingcircus.io> <CAHk-=wgtHDOxi+1uXo8gJcDKO7yjswQr5eMs0cgAB6=mp+yWxw@mail.gmail.com>
- <D49C9D27-7523-41C9-8B8D-82B2A7CBE97B@flyingcircus.io> <02121707-E630-4E7E-837B-8F53B4C28721@flyingcircus.io>
- <f8232f8b-06e0-4d1a-bee4-cfc2ac23194e@meta.com> <E07B71C9-A22A-4C0C-B4AD-247CECC74DFA@flyingcircus.io>
- <381863DE-17A7-4D4E-8F28-0F18A4CEFC31@flyingcircus.io> <0A480EBE-9B4D-49CC-9A32-3526F32426E6@flyingcircus.io>
- <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
-In-Reply-To: <c6d723ca-457a-4f97-9813-a75349225e85@meta.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 12 Oct 2024 10:01:08 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
-Message-ID: <CAHk-=wjty_0NfiZn2HVzT0Ye-RR09+Rqbd1azwJLOTJrX+V5MQ@mail.gmail.com>
-Subject: Re: Known and unfixed active data loss bug in MM + XFS with large
- folios since Dec 2021 (any kernel from 6.1 upwards)
-To: Chris Mason <clm@meta.com>
-Cc: Christian Theune <ct@flyingcircus.io>, Dave Chinner <david@fromorbit.com>, 
-	Matthew Wilcox <willy@infradead.org>, Jens Axboe <axboe@kernel.dk>, linux-mm@kvack.org, 
-	"linux-xfs@vger.kernel.org" <linux-xfs@vger.kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Daniel Dao <dqminh@cloudflare.com>, 
-	regressions@lists.linux.dev, regressions@leemhuis.info
-Content-Type: multipart/mixed; boundary="000000000000cf77a306244a8d90"
+Content-Transfer-Encoding: 8bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
---000000000000cf77a306244a8d90
-Content-Type: text/plain; charset="UTF-8"
+This series tackles the Rockchip RK356x SoC dtsi files in a few different
+ways.  First, it updates the lower and upper voltage limits and the exact
+voltages for the Rockchip RK356x CPU OPPs, using the most conservative
+per-OPP values for different SoC bins.  This is rather similar to the
+already performed adjustment of the GPU OPP voltages. [1]
 
-On Fri, 11 Oct 2024 at 06:06, Chris Mason <clm@meta.com> wrote:
->
-> - Linus's starvation observation.  It doesn't feel like there's enough
-> load to cause this, especially given us sitting in truncate, where it
-> should be pretty unlikely to have multiple procs banging on the page in
-> question.
+Next, this series prepares the RK356x SoC dtsi files for per-variant OPPs,
+with the RK3566T being the first new RK356x SoC variant to be introduced.
+This follows the approach used for the RK3588 SoC variants. [2]
 
-Yeah, I think the starvation can only possibly happen in
-fdatasync-like paths where it's waiting for existing writeback without
-holding the page lock. And while Christian has had those backtraces
-too, the truncate path is not one of them.
+Lastly, this series introduces new SoC dtsi for the RK3566T variant, which
+is capable of operating at the CPU and GPU OPPs/frequencies lower than the
+"full-fat" RK3566 variant's.  The RK3566T is found on some of the already
+supported boards and rather importantly, this stops the CPU cores and the
+GPU from being overclocked on these boards.
 
-That said, just because I wanted to see how nasty it is, I looked into
-changing the rules for folio_wake_bit().
+[1] https://lore.kernel.org/linux-rockchip/cover.1719763100.git.dsimic@manjaro.org/T/#m786f0e0a45377d29aea826f05c95b5052a8bb3d9
+[2] https://lore.kernel.org/all/9ffedc0e2ca7f167d9d795b2a8f43cb9f56a653b.1717923308.git.dsimic@manjaro.org/T/#u
 
-Christian, just to clarify, this is not for  you to test - this is
-very experimental - but maybe Willy has comments on it.
+Dragan Simic (3):
+  arm64: dts: rockchip: Update CPU OPP voltages in RK356x SoC dtsi
+  arm64: dts: rockchip: Prepare RK356x SoC dtsi files for per-variant
+    OPPs
+  arm64: dts: rockchip: Add new SoC dtsi for the RK3566T variant
 
-Because it *might* be possible to do something like the attached,
-where we do the page flags changes atomically but without any locks if
-there are no waiters, but if there is a waiter on the page, we always
-clear the page flag bit atomically under the waitqueue lock as we wake
-up the waiter.
+ .../{rk3566.dtsi => rk3566-base.dtsi}         |   2 +-
+ .../dts/rockchip/rk3566-radxa-zero-3.dtsi     |   2 +-
+ .../boot/dts/rockchip/rk3566-rock-3c.dts      |   2 +-
+ arch/arm64/boot/dts/rockchip/rk3566.dtsi      | 116 ++++++++++++++----
+ arch/arm64/boot/dts/rockchip/rk3566t.dtsi     |  90 ++++++++++++++
+ arch/arm64/boot/dts/rockchip/rk3568.dtsi      | 113 ++++++++++++++++-
+ .../{rk356x.dtsi => rk356x-base.dtsi}         |  81 ------------
+ 7 files changed, 294 insertions(+), 112 deletions(-)
+ copy arch/arm64/boot/dts/rockchip/{rk3566.dtsi => rk3566-base.dtsi} (95%)
+ create mode 100644 arch/arm64/boot/dts/rockchip/rk3566t.dtsi
+ rename arch/arm64/boot/dts/rockchip/{rk356x.dtsi => rk356x-base.dtsi} (96%)
 
-I changed the name (and the return value) of the
-folio_xor_flags_has_waiters() function to just not have any
-possibility of semantic mixup, but basically instead of doing the xor
-atomically and unconditionally (and returning whether we had waiters),
-it now does it conditionally only if we do *not* have waiters, and
-returns true if successful.
-
-And if there were waiters, it moves the flag clearing into the wakeup function.
-
-That in turn means that the "while whiteback" loop can go back to be
-just a non-looping "if writeback", and folio_wait_writeback() can't
-get into any starvation with new writebacks always showing up.
-
-The reason I say it *might* be possible to do something like this is
-that it changes __folio_end_writeback() to no longer necessarily clear
-the writeback bit under the XA lock. If there are waiters, we'll clear
-it later (after releasing the lock) in the caller.
-
-Willy? What do you think? Clearly this now makes PG_writeback not
-synchronized with the PAGECACHE_TAG_WRITEBACK tag, but the reason I
-think it might be ok is that the code that *sets* the PG_writeback bit
-in __folio_start_writeback() only ever starts with a page that isn't
-under writeback, and has a
-
-        VM_BUG_ON_FOLIO(folio_test_writeback(folio), folio);
-
-at the top of the function even outside the XA lock. So I don't think
-these *need* to be synchronized under the XA lock, and I think the
-folio flag wakeup atomicity might be more important than the XA
-writeback tag vs folio writeback bit.
-
-But I'm not going to really argue for this patch at all - I wanted to
-look at how bad it was, I wrote it, I'm actually running it on my
-machine now and it didn't *immediately* blow up in my face, so it
-*may* work just fine.
-
-The patch is fairly simple, and apart from the XA tagging issue is
-seems very straightforward. I'm just not sure it's worth synchronizing
-one part just to at the same time de-synchronize another..
-
-                   Linus
-
---000000000000cf77a306244a8d90
-Content-Type: text/x-patch; charset="US-ASCII"; 
-	name="0001-Test-atomic-folio-bit-waiting.patch"
-Content-Disposition: attachment; 
-	filename="0001-Test-atomic-folio-bit-waiting.patch"
-Content-Transfer-Encoding: base64
-Content-ID: <f_m26e2grp0>
-X-Attachment-Id: f_m26e2grp0
-
-RnJvbSA5ZDRmMGQ2MGFiYzRkY2U1YjdjZmJhZDQ1NzZhMjgyOTgzMmJiODM4IE1vbiBTZXAgMTcg
-MDA6MDA6MDAgMjAwMQpGcm9tOiBMaW51cyBUb3J2YWxkcyA8dG9ydmFsZHNAbGludXgtZm91bmRh
-dGlvbi5vcmc+CkRhdGU6IFNhdCwgMTIgT2N0IDIwMjQgMDk6MzQ6MjQgLTA3MDAKU3ViamVjdDog
-W1BBVENIXSBUZXN0IGF0b21pYyBmb2xpbyBiaXQgd2FpdGluZwoKLS0tCiBpbmNsdWRlL2xpbnV4
-L3BhZ2UtZmxhZ3MuaCB8IDI2ICsrKysrKysrKysrKysrKystLS0tLS0tLS0tCiBtbS9maWxlbWFw
-LmMgICAgICAgICAgICAgICB8IDI4ICsrKysrKysrKysrKysrKysrKysrKysrKysrLS0KIG1tL3Bh
-Z2Utd3JpdGViYWNrLmMgICAgICAgIHwgIDYgKysrLS0tCiAzIGZpbGVzIGNoYW5nZWQsIDQ1IGlu
-c2VydGlvbnMoKyksIDE1IGRlbGV0aW9ucygtKQoKZGlmZiAtLWdpdCBhL2luY2x1ZGUvbGludXgv
-cGFnZS1mbGFncy5oIGIvaW5jbHVkZS9saW51eC9wYWdlLWZsYWdzLmgKaW5kZXggMWIzYTc2NzEw
-NDg3Li5iMzBhNzNlMWMyYzcgMTAwNjQ0Ci0tLSBhL2luY2x1ZGUvbGludXgvcGFnZS1mbGFncy5o
-CisrKyBiL2luY2x1ZGUvbGludXgvcGFnZS1mbGFncy5oCkBAIC03MzAsMjIgKzczMCwyOCBAQCBU
-RVNUUEFHRUZMQUdfRkFMU0UoS3NtLCBrc20pCiB1NjQgc3RhYmxlX3BhZ2VfZmxhZ3MoY29uc3Qg
-c3RydWN0IHBhZ2UgKnBhZ2UpOwogCiAvKioKLSAqIGZvbGlvX3hvcl9mbGFnc19oYXNfd2FpdGVy
-cyAtIENoYW5nZSBzb21lIGZvbGlvIGZsYWdzLgorICogZm9saW9feG9yX2ZsYWdzX25vX3dhaXRl
-cnMgLSBDaGFuZ2UgZm9saW8gZmxhZ3MgaWYgbm8gd2FpdGVycwogICogQGZvbGlvOiBUaGUgZm9s
-aW8uCi0gKiBAbWFzazogQml0cyBzZXQgaW4gdGhpcyB3b3JkIHdpbGwgYmUgY2hhbmdlZC4KKyAq
-IEBtYXNrOiBXaGljaCBmbGFncyB0byBjaGFuZ2UuCiAgKgotICogVGhpcyBtdXN0IG9ubHkgYmUg
-dXNlZCBmb3IgZmxhZ3Mgd2hpY2ggYXJlIGNoYW5nZWQgd2l0aCB0aGUgZm9saW8KLSAqIGxvY2sg
-aGVsZC4gIEZvciBleGFtcGxlLCBpdCBpcyB1bnNhZmUgdG8gdXNlIGZvciBQR19kaXJ0eSBhcyB0
-aGF0Ci0gKiBjYW4gYmUgc2V0IHdpdGhvdXQgdGhlIGZvbGlvIGxvY2sgaGVsZC4gIEl0IGNhbiBh
-bHNvIG9ubHkgYmUgdXNlZAotICogb24gZmxhZ3Mgd2hpY2ggYXJlIGluIHRoZSByYW5nZSAwLTYg
-YXMgc29tZSBvZiB0aGUgaW1wbGVtZW50YXRpb25zCi0gKiBvbmx5IGFmZmVjdCB0aG9zZSBiaXRz
-LgorICogVGhpcyBkb2VzIHRoZSBvcHRpbWlzdGljIGZhc3QtY2FzZSBvZiBjaGFuZ2luZyBwYWdl
-IGZsYWcgYml0cworICogdGhhdCBoYXMgbm8gd2FpdGVycy4gT25seSBmbGFncyBpbiB0aGUgZmly
-c3Qgd29yZCBjYW4gYmUgbW9kaWZpZWQsCisgKiBhbmQgdGhlIG9sZCB2YWx1ZSBtdXN0IGJlIHN0
-YWJsZSAodHlwaWNhbGx5IHRoaXMgY2xlYXJzIHRoZQorICogbG9ja2VkIG9yIHdyaXRlYmFjayBi
-aXQgb3Igc2ltaWxhcikuCiAgKgotICogUmV0dXJuOiBXaGV0aGVyIHRoZXJlIGFyZSB0YXNrcyB3
-YWl0aW5nIG9uIHRoZSBmb2xpby4KKyAqIFJldHVybjogdHJ1ZSBpZiBpdCBzdWNjZWVkZWQKICAq
-Lwotc3RhdGljIGlubGluZSBib29sIGZvbGlvX3hvcl9mbGFnc19oYXNfd2FpdGVycyhzdHJ1Y3Qg
-Zm9saW8gKmZvbGlvLAorc3RhdGljIGlubGluZSBib29sIGZvbGlvX3hvcl9mbGFnc19ub193YWl0
-ZXJzKHN0cnVjdCBmb2xpbyAqZm9saW8sCiAJCXVuc2lnbmVkIGxvbmcgbWFzaykKIHsKLQlyZXR1
-cm4geG9yX3VubG9ja19pc19uZWdhdGl2ZV9ieXRlKG1hc2ssIGZvbGlvX2ZsYWdzKGZvbGlvLCAw
-KSk7CisJY29uc3QgdW5zaWduZWQgbG9uZyB3YWl0ZXJfbWFzayA9IDF1bCA8PCBQR193YWl0ZXJz
-OworCXVuc2lnbmVkIGxvbmcgKmZsYWdzID0gZm9saW9fZmxhZ3MoZm9saW8sIDApOworCXVuc2ln
-bmVkIGxvbmcgdmFsID0gUkVBRF9PTkNFKCpmbGFncyk7CisJZG8geworCQlpZiAodmFsICYgd2Fp
-dGVyX21hc2spCisJCQlyZXR1cm4gZmFsc2U7CisJfSB3aGlsZSAoIXRyeV9jbXB4Y2hnX3JlbGVh
-c2UoZmxhZ3MsICZ2YWwsIHZhbCBeIG1hc2spKTsKKwlyZXR1cm4gdHJ1ZTsKIH0KIAogLyoqCmRp
-ZmYgLS1naXQgYS9tbS9maWxlbWFwLmMgYi9tbS9maWxlbWFwLmMKaW5kZXggNjY0ZTYwN2E3MWVh
-Li41ZmJhZjZjZWE5NjQgMTAwNjQ0Ci0tLSBhL21tL2ZpbGVtYXAuYworKysgYi9tbS9maWxlbWFw
-LmMKQEAgLTExNjQsNiArMTE2NCwxNCBAQCBzdGF0aWMgaW50IHdha2VfcGFnZV9mdW5jdGlvbih3
-YWl0X3F1ZXVlX2VudHJ5X3QgKndhaXQsIHVuc2lnbmVkIG1vZGUsIGludCBzeW5jLAogCXJldHVy
-biAoZmxhZ3MgJiBXUV9GTEFHX0VYQ0xVU0lWRSkgIT0gMDsKIH0KIAorLyoKKyAqIENsZWFyIHRo
-ZSBmb2xpbyBiaXQgYW5kIHdha2Ugd2FpdGVycyBhdG9taWNhbGx5IHVuZGVyCisgKiB0aGUgZm9s
-aW8gd2FpdHF1ZXVlIGxvY2suCisgKgorICogTm90ZSB0aGF0IHRoZSBmYXN0LXBhdGggYWx0ZXJu
-YXRpdmUgdG8gY2FsbGluZyB0aGlzIGlzCisgKiB0byBhdG9taWNhbGx5IGNsZWFyIHRoZSBiaXQg
-YW5kIGNoZWNrIHRoYXQgdGhlIFBHX3dhaXRlcnMKKyAqIGJpdCB3YXMgbm90IHNldC4KKyAqLwog
-c3RhdGljIHZvaWQgZm9saW9fd2FrZV9iaXQoc3RydWN0IGZvbGlvICpmb2xpbywgaW50IGJpdF9u
-cikKIHsKIAl3YWl0X3F1ZXVlX2hlYWRfdCAqcSA9IGZvbGlvX3dhaXRxdWV1ZShmb2xpbyk7CkBA
-IC0xMTc1LDYgKzExODMsNyBAQCBzdGF0aWMgdm9pZCBmb2xpb193YWtlX2JpdChzdHJ1Y3QgZm9s
-aW8gKmZvbGlvLCBpbnQgYml0X25yKQogCWtleS5wYWdlX21hdGNoID0gMDsKIAogCXNwaW5fbG9j
-a19pcnFzYXZlKCZxLT5sb2NrLCBmbGFncyk7CisJY2xlYXJfYml0X3VubG9jayhiaXRfbnIsIGZv
-bGlvX2ZsYWdzKGZvbGlvLCAwKSk7CiAJX193YWtlX3VwX2xvY2tlZF9rZXkocSwgVEFTS19OT1JN
-QUwsICZrZXkpOwogCiAJLyoKQEAgLTE1MDcsNyArMTUxNiw3IEBAIHZvaWQgZm9saW9fdW5sb2Nr
-KHN0cnVjdCBmb2xpbyAqZm9saW8pCiAJQlVJTERfQlVHX09OKFBHX3dhaXRlcnMgIT0gNyk7CiAJ
-QlVJTERfQlVHX09OKFBHX2xvY2tlZCA+IDcpOwogCVZNX0JVR19PTl9GT0xJTyghZm9saW9fdGVz
-dF9sb2NrZWQoZm9saW8pLCBmb2xpbyk7Ci0JaWYgKGZvbGlvX3hvcl9mbGFnc19oYXNfd2FpdGVy
-cyhmb2xpbywgMSA8PCBQR19sb2NrZWQpKQorCWlmICghZm9saW9feG9yX2ZsYWdzX25vX3dhaXRl
-cnMoZm9saW8sIDEgPDwgUEdfbG9ja2VkKSkKIAkJZm9saW9fd2FrZV9iaXQoZm9saW8sIFBHX2xv
-Y2tlZCk7CiB9CiBFWFBPUlRfU1lNQk9MKGZvbGlvX3VubG9jayk7CkBAIC0xNTM1LDEwICsxNTQ0
-LDI1IEBAIHZvaWQgZm9saW9fZW5kX3JlYWQoc3RydWN0IGZvbGlvICpmb2xpbywgYm9vbCBzdWNj
-ZXNzKQogCVZNX0JVR19PTl9GT0xJTyghZm9saW9fdGVzdF9sb2NrZWQoZm9saW8pLCBmb2xpbyk7
-CiAJVk1fQlVHX09OX0ZPTElPKGZvbGlvX3Rlc3RfdXB0b2RhdGUoZm9saW8pLCBmb2xpbyk7CiAK
-KwkvKgorCSAqIFRyeSB0byBjbGVhciAnbG9ja2VkJyBhdCB0aGUgc2FtZSB0aW1lIGFzIHNldHRp
-bmcgJ3VwdG9kYXRlJworCSAqCisJICogTm90ZSB0aGF0IGlmIHdlIGhhdmUgbG9jayBiaXQgd2Fp
-dGVycyBhbmQgdGhpcyBmYXN0LWNhc2UgZmFpbHMsCisJICogd2UnbGwgaGF2ZSB0byBjbGVhciB0
-aGUgbG9jayBiaXQgYXRvbWljYWxseSB1bmRlciB0aGUgZm9saW8gd2FpdAorCSAqIHF1ZXVlIGxv
-Y2ssIHNvIHRoZW4gd2UnbGwgc2V0ICd1cGRhdGUnIHNlcGFyYXRlbHkuCisJICoKKwkgKiBOb3Rl
-IHRoYXQgdGhpcyBpcyBwdXJlbHkgYSAiYXZvaWQgbXVsdGlwbGUgYXRvbWljcyBpbiB0aGUKKwkg
-KiBjb21tb24gY2FzZSIgLSB3aGlsZSB0aGUgbG9ja2VkIGJpdCBuZWVkcyB0byBiZSBjbGVhcmVk
-CisJICogc3luY2hyb25vdXNseSB3cnQgd2FpdGVycywgdGhlIHVwdG9kYXRlIGJpdCBoYXMgbm8g
-c3VjaAorCSAqIHJlcXVpcmVtZW50cy4KKwkgKi8KIAlpZiAobGlrZWx5KHN1Y2Nlc3MpKQogCQlt
-YXNrIHw9IDEgPDwgUEdfdXB0b2RhdGU7Ci0JaWYgKGZvbGlvX3hvcl9mbGFnc19oYXNfd2FpdGVy
-cyhmb2xpbywgbWFzaykpCisJaWYgKCFmb2xpb194b3JfZmxhZ3Nfbm9fd2FpdGVycyhmb2xpbywg
-bWFzaykpIHsKKwkJaWYgKHN1Y2Nlc3MpCisJCQlzZXRfYml0KFBHX3VwdG9kYXRlLCBmb2xpb19m
-bGFncyhmb2xpbywgMCkpOwogCQlmb2xpb193YWtlX2JpdChmb2xpbywgUEdfbG9ja2VkKTsKKwl9
-CiB9CiBFWFBPUlRfU1lNQk9MKGZvbGlvX2VuZF9yZWFkKTsKIApkaWZmIC0tZ2l0IGEvbW0vcGFn
-ZS13cml0ZWJhY2suYyBiL21tL3BhZ2Utd3JpdGViYWNrLmMKaW5kZXggZmNkNGMxNDM5Y2I5Li4z
-Mjc3YmMzY2VmZjkgMTAwNjQ0Ci0tLSBhL21tL3BhZ2Utd3JpdGViYWNrLmMKKysrIGIvbW0vcGFn
-ZS13cml0ZWJhY2suYwpAQCAtMzA4MSw3ICszMDgxLDcgQEAgYm9vbCBfX2ZvbGlvX2VuZF93cml0
-ZWJhY2soc3RydWN0IGZvbGlvICpmb2xpbykKIAkJdW5zaWduZWQgbG9uZyBmbGFnczsKIAogCQl4
-YV9sb2NrX2lycXNhdmUoJm1hcHBpbmctPmlfcGFnZXMsIGZsYWdzKTsKLQkJcmV0ID0gZm9saW9f
-eG9yX2ZsYWdzX2hhc193YWl0ZXJzKGZvbGlvLCAxIDw8IFBHX3dyaXRlYmFjayk7CisJCXJldCA9
-ICFmb2xpb194b3JfZmxhZ3Nfbm9fd2FpdGVycyhmb2xpbywgMSA8PCBQR193cml0ZWJhY2spOwog
-CQlfX3hhX2NsZWFyX21hcmsoJm1hcHBpbmctPmlfcGFnZXMsIGZvbGlvX2luZGV4KGZvbGlvKSwK
-IAkJCQkJUEFHRUNBQ0hFX1RBR19XUklURUJBQ0spOwogCQlpZiAoYmRpLT5jYXBhYmlsaXRpZXMg
-JiBCRElfQ0FQX1dSSVRFQkFDS19BQ0NUKSB7CkBAIC0zMDk5LDcgKzMwOTksNyBAQCBib29sIF9f
-Zm9saW9fZW5kX3dyaXRlYmFjayhzdHJ1Y3QgZm9saW8gKmZvbGlvKQogCiAJCXhhX3VubG9ja19p
-cnFyZXN0b3JlKCZtYXBwaW5nLT5pX3BhZ2VzLCBmbGFncyk7CiAJfSBlbHNlIHsKLQkJcmV0ID0g
-Zm9saW9feG9yX2ZsYWdzX2hhc193YWl0ZXJzKGZvbGlvLCAxIDw8IFBHX3dyaXRlYmFjayk7CisJ
-CXJldCA9ICFmb2xpb194b3JfZmxhZ3Nfbm9fd2FpdGVycyhmb2xpbywgMSA8PCBQR193cml0ZWJh
-Y2spOwogCX0KIAogCWxydXZlY19zdGF0X21vZF9mb2xpbyhmb2xpbywgTlJfV1JJVEVCQUNLLCAt
-bnIpOwpAQCAtMzE4NCw3ICszMTg0LDcgQEAgRVhQT1JUX1NZTUJPTChfX2ZvbGlvX3N0YXJ0X3dy
-aXRlYmFjayk7CiAgKi8KIHZvaWQgZm9saW9fd2FpdF93cml0ZWJhY2soc3RydWN0IGZvbGlvICpm
-b2xpbykKIHsKLQl3aGlsZSAoZm9saW9fdGVzdF93cml0ZWJhY2soZm9saW8pKSB7CisJaWYgKGZv
-bGlvX3Rlc3Rfd3JpdGViYWNrKGZvbGlvKSkgewogCQl0cmFjZV9mb2xpb193YWl0X3dyaXRlYmFj
-ayhmb2xpbywgZm9saW9fbWFwcGluZyhmb2xpbykpOwogCQlmb2xpb193YWl0X2JpdChmb2xpbywg
-UEdfd3JpdGViYWNrKTsKIAl9Ci0tIAoyLjQ2LjEuNjA4LmdjNTZmMmMxMWM4Cgo=
---000000000000cf77a306244a8d90--
 
