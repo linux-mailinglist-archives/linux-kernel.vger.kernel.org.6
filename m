@@ -1,193 +1,128 @@
-Return-Path: <linux-kernel+bounces-362609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BCD899B6E0
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:02:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9642C99B6E2
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 22:04:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2F6A1F21E49
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:02:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5A867282A6D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 20:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 261E815252D;
-	Sat, 12 Oct 2024 20:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1BB1891B2;
+	Sat, 12 Oct 2024 20:04:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b="u6fh8US+"
-Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="mJVFxTt9"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 730311B977
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 20:02:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98C612C7FB
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 20:04:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728763364; cv=none; b=RHjYVxV+wR7fMxN7kQJK3+VykFv1BTGkx523roDDhvDXdy5lceiagSPS5wj35bNb+8kINAQQmV2JryrLDahaKaOx++XWEH/jEee3AmKHHJ1G3dJsmzuJr4bXO3iwzG93qrJjJBwFPYfmYXPtBCMCko+T4YqejqXs6sRWVPQp0E0=
+	t=1728763485; cv=none; b=TTl4tRqYctY9+hLEBMPSXDxmtFTIWLr847ZOp03fucBwcm6X2HXES8H/HTTFxo59Z00Ec9E7Qsp5XPHzI6IpOQpSWwL+ozQ5DU4McceqnKf649Z8yFqXyTxs+JsM3Uly0G9KyrKzqbZqVM7YakU+IXW2CrnKft9eGFUR1UU4wTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728763364; c=relaxed/simple;
-	bh=PVHa9X+HNIfAtZ9K6pNvtZEk43SFZRVkQNKYwNcl4qc=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=Ts9ZfzDZsU0rRsNMHaep2LMYUaf5KpqA8O1v8Ynx/9LFwJ1h2mHKRaLrtdeL8Ejmuzow8FgNjk2Vm7mlr7LtCsa2Y/n2bObisoZLkPagEcnBHB+71sutdkUTMpQuQK3MJ5UhJ8sIsZDmnvjcvv/uzqHof1cxK0/9r4f5qhv79O4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org; spf=pass smtp.mailfrom=cknow.org; dkim=pass (2048-bit key) header.d=cknow.org header.i=@cknow.org header.b=u6fh8US+; arc=none smtp.client-ip=95.215.58.183
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cknow.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cknow.org
+	s=arc-20240116; t=1728763485; c=relaxed/simple;
+	bh=+hwDZaE3yuZt9vzeZthmLQI6V9yR8jL9Lanqpbf5zyA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=c5VsfFVfRqifuxp4s2rBBaWbz7R0RLzkW45KfgYow23vXLG4t8gSNeeqMmeuuUNz3s9+O0/v/o6cOIPxtN8DkF1Ll5RX7C/qYexhNw0LMcQ06rBUuYKfxbm/m+yjQsCydDjnjgSDNHTmy5T24Qd+a7YFVX4vWW+ZflPedctVFCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=mJVFxTt9; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539eb97f26aso222228e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 13:04:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728763482; x=1729368282; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7ciER1RAhj6UxGN+QOMhjY+VHtJCV5IkRQu/ipXf70g=;
+        b=mJVFxTt9ypcfY/K1geBC6yYKPzjTSzU9bxjxUkH9cn4FhA3xUGqjtyPydgZw5OUK7X
+         UzqMYF1/LXgPlvpPmV/eJt3VYR7Bqlx908YDAPRj3OTx11LGkZ6WzB0mTqRZmQ3BC5Sv
+         iLRNrYVhxyOUjOWVEN2pgdREpGHf1FFocDNe1SLQrfG34rX2VIlt37zfKSfipbB3WtlJ
+         NapzrvLymW2ealCBLSCqds3xOr7Q29QeXGhI0VePrK7UJKCf2TUyeVdMGcVp0w/MIh2h
+         NwZNo+t0Y0UaMV+l3sAKzplUwnTkxDysLX6d+odIQETGkuZ8W8sffGJKo7RAKdya6kDU
+         GoaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728763482; x=1729368282;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7ciER1RAhj6UxGN+QOMhjY+VHtJCV5IkRQu/ipXf70g=;
+        b=D+omOU7HRT5KxslCzRoORhf/QYrb1VFTx5g1qrGtNQKQI/WvxhtepQ+sWmJbd08oa/
+         HoXnkBP0+yxfkzgWTd1gakc3/fgraJQdq/etPY8OOlc0qtM48qJs3M9efUT9P6P1pgHB
+         gJz/EL4hOv2ZXiUSAUV4fUfYqr0aP+XratFtXLrUWtYd5PpbIvqGXaG7MrlvuV9ONLaV
+         bXMluoC8l5dsft33RUU4C/Dm5YmdeEb/K6B3gPJNqBlnsA53S5UtFK8eeHKj5UpR6AzA
+         qf9MHdE59azeSwgVTfic86sOurWY63ofufuPc+aBUqxeVmx2MF+//3KrFeeXoDVcJsLG
+         yIlA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCTPi7EpRY7fIom0ZMrivlnUhmP9usPYCAsMu3Te1sNEWc7kYzAMVE+Nl5DZS7fu90AN8Z6bFbzn7ZiyE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbAVJtdZBCsRoAKr0g59EwKhz3f3zkJqelnmcNeburjBhtwb8V
+	LwH/bxHlw4ynNt2jocrfOQ70T/sZuM/WVCR5vd/5ZMyJtOnkrR9P6Yx0LVlxeaVLIADj2rhly0Z
+	MYhOgeNBzRUWpgr1MjLoMKvlt+pneoxZFh4Aoyg==
+X-Google-Smtp-Source: AGHT+IG/ELgjIgEx+R/BAXvPNIpE0fvyJmngo/5bMIK8gL9M1DCkIU3s9GUQNTn52WN5JfUcGc1E7sPXQ4NdxPfSNRU=
+X-Received: by 2002:a05:6512:3da4:b0:539:a3eb:cfff with SMTP id
+ 2adb3069b0e04-539da5ab2e6mr2914165e87.49.1728763481918; Sat, 12 Oct 2024
+ 13:04:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cknow.org; s=key1;
-	t=1728763355;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=/OHT9QdN7wzd/CkALWfMYR0kdujeKzv+3XUMfTAODMM=;
-	b=u6fh8US+TgcJVH89X8tgPtR4yEzMKofevLFrAk0fVfDNiyzVUb4CFKruN9k4qhodNxfDXw
-	moug2pGAXgEgKCa2HqfTuwBKZEI/yy0kDAipJBs3SNsYCeKWmY7oueTAVzpt9epXUTGc1A
-	4HWO1ghZ5D0vh7RxiUB4vMLYOuHQrlcbbMibcpImcaV1+q+p78cUx7F6mWccQsv5Mj6xbg
-	S3ZUK1gDB3IVS7SUGShD6KSAREGAMhWilv3lpEudFjUNDsIYkC48jnObAiv7Gc4ggfyLxA
-	y+p0fo6CYdfc+xQ5MYZHMdFswGfgZKtOjPopEHWkJr/iUvYgNK6Ck1JCIwq5vA==
-Content-Type: multipart/signed;
- boundary=d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e;
- micalg=pgp-sha256; protocol="application/pgp-signature"
-Date: Sat, 12 Oct 2024 22:02:24 +0200
-Message-Id: <D4U3GKLN5U06.6VOVFCPFN6G7@cknow.org>
-Cc: <linux-rockchip@lists.infradead.org>, <heiko@sntech.de>,
- <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
- <devicetree@vger.kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
- <conor+dt@kernel.org>
-Subject: Re: [PATCH 1/3] arm64: dts: rockchip: Update CPU OPP voltages in
- RK356x SoC dtsi
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: "Diederik de Haas" <didi.debian@cknow.org>
-To: "Dragan Simic" <dsimic@manjaro.org>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <2e1e100284b1edb470d6e7fde021a0f1779336c8.1728752527.git.dsimic@manjaro.org> <D4U2PO4VF4ST.9SBVKYF6095M@cknow.org> <0a1f13d06ec3668c136997e72d0aea44@manjaro.org>
-In-Reply-To: <0a1f13d06ec3668c136997e72d0aea44@manjaro.org>
-X-Migadu-Flow: FLOW_OUT
-
---d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e
+MIME-Version: 1.0
+References: <20241012105743.12450-1-matsievskiysv@gmail.com> <20241012105743.12450-2-matsievskiysv@gmail.com>
+In-Reply-To: <20241012105743.12450-2-matsievskiysv@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Sat, 12 Oct 2024 22:04:30 +0200
+Message-ID: <CACRpkdbCVFEgP3ZchLtM8KgDVVbCiK7ZgGha=iVfTBveRstDkA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] pinctrl: ocelot: fix system hang on level based interrupts
+To: Sergey Matsievskiy <matsievskiysv@gmail.com>
+Cc: alexandre.belloni@bootlin.com, quentin.schulz@bootlin.com, 
+	lars.povlsen@microchip.com, horatiu.vultur@microchip.com, 
+	andriy.shevchenko@linux.intel.com, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org, 
+	UNGLinuxDriver@microchip.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
 
-Hi Dragan,
+On Sat, Oct 12, 2024 at 12:58=E2=80=AFPM Sergey Matsievskiy
+<matsievskiysv@gmail.com> wrote:
 
-On Sat Oct 12, 2024 at 9:45 PM CEST, Dragan Simic wrote:
-> On 2024-10-12 21:27, Diederik de Haas wrote:
-> > On Sat Oct 12, 2024 at 7:04 PM CEST, Dragan Simic wrote:
-> >> Update the lower/upper voltage limits and the exact voltages for the=
-=20
-> >> Rockchip
-> >> RK356x CPU OPPs, using the most conservative values (i.e. the highest=
-=20
-> >> per-OPP
-> >> voltages) found in the vendor kernel source. [1]
-> >>=20
-> >> Using the most conservative per-OPP voltages ensures reliable CPU=20
-> >> operation
-> >> regardless of the actual CPU binning, with the downside of possibly=20
-> >> using
-> >> a bit more power for the CPU cores than absolutely needed.
-> >>=20
-> >> Additionally, fill in the missing "clock-latency-ns" CPU OPP=20
-> >> properties, using
-> >> the values found in the vendor kernel source. [1]
-> >>=20
-> >> [1]=20
-> >> https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed5=
-61650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> >>=20
-> >> Related-to: eb665b1c06bc ("arm64: dts: rockchip: Update GPU OPP=20
-> >> voltages in RK356x SoC dtsi")
-> >> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> >> ---
-> >>  arch/arm64/boot/dts/rockchip/rk3568.dtsi |  1 +
-> >>  arch/arm64/boot/dts/rockchip/rk356x.dtsi | 18 ++++++++++++------
-> >>  2 files changed, 13 insertions(+), 6 deletions(-)
-> >>=20
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk3568.dtsi=20
-> >> b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> >> index 0946310e8c12..5c54898f6ed1 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> >> @@ -273,6 +273,7 @@ &cpu0_opp_table {
-> >>  	opp-1992000000 {
-> >>  		opp-hz =3D /bits/ 64 <1992000000>;
-> >>  		opp-microvolt =3D <1150000 1150000 1150000>;
-> >> +		clock-latency-ns =3D <40000>;
-> >>  	};
-> >>  };
-> >>=20
-> >> diff --git a/arch/arm64/boot/dts/rockchip/rk356x.dtsi=20
-> >> b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> >> index 0ee0ada6f0ab..534593f2ed0b 100644
-> >> --- a/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> >> +++ b/arch/arm64/boot/dts/rockchip/rk356x.dtsi
-> >> @@ -134,39 +134,45 @@ cpu0_opp_table: opp-table-0 {
-> >>=20
-> >>  		opp-408000000 {
-> >>  			opp-hz =3D /bits/ 64 <408000000>;
-> >> -			opp-microvolt =3D <900000 900000 1150000>;
-> >> +			opp-microvolt =3D <850000 850000 1150000>;
-> >>  			clock-latency-ns =3D <40000>;
-> >>  		};
-> >>=20
-> >>  		opp-600000000 {
-> >>  			opp-hz =3D /bits/ 64 <600000000>;
-> >> -			opp-microvolt =3D <900000 900000 1150000>;
-> >> +			opp-microvolt =3D <850000 850000 1150000>;
-> >> +			clock-latency-ns =3D <40000>;
-> >>  		};
-> >>=20
-> >>  		opp-816000000 {
-> >>  			opp-hz =3D /bits/ 64 <816000000>;
-> >> -			opp-microvolt =3D <900000 900000 1150000>;
-> >> +			opp-microvolt =3D <850000 850000 1150000>;
-> >> +			clock-latency-ns =3D <40000>;
-> >>  			opp-suspend;
-> >>  		};
-> >=20
-> > While it felt a bit much to send a patch just to remove the blank lines
-> > between the opp nodes, this sounds like an excellent opportunity to=20
-> > make it consistent with the opp list in other DT files?
+> The current implementation only calls chained_irq_enter() and
+> chained_irq_exit() if it detects pending interrupts.
 >
-> Actually, my plan is to work on the SoC binning, which will involve
-> touching nearly every OPP in the Rockchip DTs, and will add much more
-> data to each OPP node.  Thus, having empty lines as the separators
-> between the OPP nodes is something we should actually want, because
-
-As indicated in the "arm64: dts: rockchip: Add dtsi file for RK3399S SoC
-variant" patch series, I do prefer the separator lines ...
-
-> not having them will actually reduce the readability after the size
-> of the individual OPP nodes is increased.
+> ```
+> for (i =3D 0; i < info->stride; i++) {
+>         uregmap_read(info->map, id_reg + 4 * i, &reg);
+>         if (!reg)
+>                 continue;
 >
-> That's the reason why I opted for having the separator lines in this
-> patch series, i.e. because having them everywhere should be the final
-> outcome, and because in this case they were already present where the
-> OPPs were moved or copied from.
+>         chained_irq_enter(parent_chip, desc);
+> ```
+>
+> However, in case of GPIO pin configured in level mode and the parent
+> controller configured in edge mode, GPIO interrupt might be lowered by th=
+e
+> hardware. In the result, if the interrupt is short enough, the parent
+> interrupt is still pending while the GPIO interrupt is cleared;
+> chained_irq_enter() never gets called and the system hangs trying to
+> service the parent interrupt.
+>
+> Moving chained_irq_enter() and chained_irq_exit() outside the for loop
+> ensures that they are called even when GPIO interrupt is lowered by the
+> hardware.
+>
+> The similar code with chained_irq_enter() / chained_irq_exit() functions
+> wrapping interrupt checking loop may be found in many other drivers:
+> ```
+> grep -r -A 10 chained_irq_enter drivers/pinctrl
+> ```
+>
+> Signed-off-by: Sergey Matsievskiy <matsievskiysv@gmail.com>
+> Reviewed-by: Alexandre Belloni <alexandre.belloni@bootlin.com>
 
-... but you actually removed those lines in the other patch set.
+Patch applied and tagged for stable!
 
-While I'm looking forward to the extra data to the OPP nodes, I don't
-think the amount of properties should determine whether it should have a
-separator line or not.
-
-My 0.02
-
-Cheers,
-  Diederik
-
---d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQT1sUPBYsyGmi4usy/XblvOeH7bbgUCZwrV0wAKCRDXblvOeH7b
-bg9zAQDo90OyxAf/h9U4TC9xmlrPJ8gjPqJrhdXG8qyvtHSHhgEAsCvJamwLgWEP
-dQ+R1gov9Un0Jgyr4SvJ6EQfeo62cAE=
-=DvV+
------END PGP SIGNATURE-----
-
---d7dfdf25674c7fbf2f24ab8bc09bc74052d5606ff79667bdf6e09fe52f2e--
+Yours,
+Linus Walleij
 
