@@ -1,195 +1,237 @@
-Return-Path: <linux-kernel+bounces-362007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBA799AFE6
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:48:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 71BD399AFE7
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 03:50:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8D896B227A5
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:48:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7EADB22A3D
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 01:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B25FD528;
-	Sat, 12 Oct 2024 01:47:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD89F14012;
+	Sat, 12 Oct 2024 01:50:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b="fITEmszb"
-Received: from GBR01-CWX-obe.outbound.protection.outlook.com (mail-cwxgbr01on2105.outbound.protection.outlook.com [40.107.121.105])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eUX2SMo9"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0759053A7
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.121.105
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728697676; cv=fail; b=NZmDz9xeyGsevdmk4RCZO4qpYIeQCKo+r4fujHq3ZBtDoRhIPZ23a4CMJ3/TmODRbTykmMrzgM5vgRoxQ8VpHDuMAPAK/YqvJcEyEabMr3YUC7xf5wOBM+aRmy/ZOrFb3T4jDCawgM5FcZYXlKZrnsL35pzKNrFB4/CAkkPJZqM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728697676; c=relaxed/simple;
-	bh=NJ4pW2O0HO+g0v/IXlFB9BXTzDDDjjVYzSfQxKtTwyc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sgdsSZBttjbEhf4soiU7dpO1I7NYgtDFQMzhZ2zlzqBVwB8M/U4CkWBGGHB+04U4nZJSMgp9kplhmhI/3S+oQYGsMUo9mWoqwWnl3pMhvmB9MGB/0xB5FDaoaeTHeYYlDDLUhqgfDNKKcBwEGbH0O8YiT4yPmODEbXNlYDPbiFc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net; spf=pass smtp.mailfrom=garyguo.net; dkim=pass (1024-bit key) header.d=garyguo.net header.i=@garyguo.net header.b=fITEmszb; arc=fail smtp.client-ip=40.107.121.105
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=garyguo.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=garyguo.net
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nckgqjLFMSb0RetvmZB6MxPt0SUlgRkhXN5Nh/3NCwR4wg0kOcF2ogLuYVjTGRgIQXiT6AWRSKEMbCDIqgZj6YlmWfX/89NlgpbOH7xPPzu7pmAeT7YFlohsdAqML+13BuoGVmSf42f+su74q0hrRKji+OuZ3R65yN+1O2dGa+xxiO9KNdatWAS8gJMPtXUkkGjs7S7epJDDXTZcNlv3QVWrhgpzvDdEPN7YS0kS5mkQpwDGL5l1DVbuRYpJUkVn/5TjrU12yhgBslzORMVSmgiRdhs0HYbo3u1hk/RzINHKxMQ/PAGYzPA2I0RMJuzBtvY62hf918cjK0QjSPGoxg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=0wjx57DGsljkFbvnSw3RHXy3gf6W0Y8/jGxWoqb7fPg=;
- b=Kj2MFm8m7C/p+xnKyeouEBslwFvm3Ex5IYC/BQh0O29ILXaYhCrMB80hIrVSHs7Yh9d17b4IH5maf4TGLy2hEtzjLlC/w6IYzGwxBf0D4RYpLUt0jc28ODT7INllBUS2Qxm5thBnp9/R5ojfpO4i7jiUULzZ6cU9EpEzYcm3KzZF8OKDy9z9nnolZhuz0HLfIcbOPKi5Hy+puUhhaS2KyprmAf+GPX8IMnDX+wkApx7+yjO1mHva+XCptH0Ps8/sY2Xxhqby13z/leGF8ELzSNA6qTy/ND/XQQKR8hPaCKv2445HsGGebMXhxZKxS59viNnXewCpvjAZyaeLl7s4VQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=garyguo.net; dmarc=pass action=none header.from=garyguo.net;
- dkim=pass header.d=garyguo.net; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=garyguo.net;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=0wjx57DGsljkFbvnSw3RHXy3gf6W0Y8/jGxWoqb7fPg=;
- b=fITEmszb2H7wZ9Vyl+HxHFSn0O+0lwSXA/PgGweImjmE4pjF8jQJL+yDqjZeuXkTu7DedNzZp75VqowWZRYHQ5N9rYxmvwg3ZLRf14A41lGcF1HAUph253Hogfnkyl+6z/z3rR3XXlkP2DyGrQGhSBQx2eVb0ebR51vIhZxTBHs=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=garyguo.net;
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:253::10)
- by LO2P265MB5545.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:25c::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.20; Sat, 12 Oct
- 2024 01:47:51 +0000
-Received: from LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7]) by LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- ([fe80::1818:a2bf:38a7:a1e7%3]) with mapi id 15.20.8048.013; Sat, 12 Oct 2024
- 01:47:51 +0000
-Date: Sat, 12 Oct 2024 02:47:45 +0100
-From: Gary Guo <gary@garyguo.net>
-To: Matthew Wilcox <willy@infradead.org>
-Cc: Zheng Yejian <zhengyejian@huaweicloud.com>, arnd@arndb.de,
- kees@kernel.org, mcgrof@kernel.org, masahiroy@kernel.org,
- ndesaulniers@google.com, ardb@kernel.org, jannh@google.com,
- song@kernel.org, boqun.feng@gmail.com, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org, yeweihua4@huawei.com
-Subject: Re: [PATCH v2] kallsyms: Fix wrong "big" kernel symbol type read
- from procfs
-Message-ID: <20241012024745.3807a071.gary@garyguo.net>
-In-Reply-To: <ZwmgKHxgl2BQuKp6@casper.infradead.org>
-References: <20241011143853.3022643-1-zhengyejian@huaweicloud.com>
-	<ZwmgKHxgl2BQuKp6@casper.infradead.org>
-X-Mailer: Claws Mail 4.2.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: LO4P123CA0211.GBRP123.PROD.OUTLOOK.COM
- (2603:10a6:600:1a5::18) To LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:253::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35EC5DDAB
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 01:50:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728697804; cv=none; b=TXpp17Z9z4H+Vm8JtZr9ClLb6PR/PQHp2k/qTMB9Ovv/ESa1jnkkuJ2pJCurKowqDk6si593jT4yXTUP9nj2+/Usk//3wHTEHo8F7kueaYYwwgmgtpvLKm5juHi5+ArMsSS8TTHTpvyF7cU4kYVEqWkkGdhLNGHcw9ESXLvjVkg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728697804; c=relaxed/simple;
+	bh=SFdZGufBedxmFnaVsVo7SFHDIrhrg6GpJtpJobHuRk0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fZZbnL8Q+t8R5Pr4f/ZfH4L7VZG4ssG9APsf04zF0u3eum1X4F/TbFspByLVmEO3yyelyXXYUaPyTHhGn4IcFxi/zSiDdRAPL1BK/h9yHZ3D/z7mIAKeHDyw3ALV7EjZ+sTDwfiq9Rk9GWA2kknkb26AcJl1CXgjXWx3r5XYBzo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eUX2SMo9; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539e576d665so65684e87.1
+        for <linux-kernel@vger.kernel.org>; Fri, 11 Oct 2024 18:50:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728697800; x=1729302600; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Yl7QDmPgNR+ZcJpmQPpgGsdoXyoruwuzooaCriza/tA=;
+        b=eUX2SMo99O99Ncnas+cRaCsfof9LbnRSTAYU5J4oOHFWX1ag067exAOnTocx1U+/5N
+         mD0/lP49BXfrvrp9+e8RRKGrdR9K3H5mGJAYm5WXUui6ygMAmpDLPj0wODMbAO2YWtRW
+         BsIkdlXZiVXVOpk3pkDSXio/TUkHyZkM04myd/PUNWvXXpUrpf2hMeEjP54mOvIWBrZR
+         5SsoBC4i0xHMeya6WAZcK2y/CNa6nw/TqJ1YfuHlHi1RwC9eij585UjjPR64QhXF12eE
+         EO7aWHUQ1H6ZeOoGSzu+bO7lSpQJYD2YaCgLIWRXY5ycAko5DbWuTqqQOPyPW3/+LbFm
+         riVQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728697800; x=1729302600;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Yl7QDmPgNR+ZcJpmQPpgGsdoXyoruwuzooaCriza/tA=;
+        b=nCICBRgmZjQqvX0cV3HKXQDa/fUjE53QrYtJ9ujxLcz+QAdFhOmUCXEZ+3QrWPTrsA
+         yMNgaQ3/GfuScEy4td8OCvw1LBOfOWCmEw0ZKwGG910CJgicE3eTDgoSgH86iu7VqlN6
+         zaG7TGOBaVejIBBmaRu3piSMl4e/QLRBxHUr5GV9T0WXgLB43ED0CYsY6NZwE7bwAsYu
+         6WLl76kDVvzmzNbe0FUYwJsXssGKv72GIuBb7XDzwLgygRCaiuKGqh9U8nCKcW78D6EK
+         i64ENWnMLsPplqD1y/zsVooxvXacN8CgwEmITPFuSZD2hBRPZxzWseGpzYpsntPYmhQ/
+         VSsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFRcXGA0hcmGvGJ+oCuSBFqT70ASGeuLlxTUSvnQlqbcBtKVbuLul0ZHHNYzdVH1utycxFyfOR6g6Z4Yw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1GxlN4yb2KCIIjiZKi/Tisr0jqE6dSDguWRDmr1q7jZMcnP4j
+	EvpWj+qc5Zq9b3jzq2iKOUMfaCGamz6e4YccFne+aSeghJ/1HgiH16bnugLlEbBMhudrQWCRxRr
+	xHzUx1Fm2cb96TTYxULoLMi1tPhnhPdGw
+X-Google-Smtp-Source: AGHT+IHB+od3iobMStznhsxyUZcmRWuTmW1+fVXNwkMP2XOPNOBlhhSrPEYYGlJbixmYlA/eq/gKxGP5ilfgOLFWp0I=
+X-Received: by 2002:a05:6512:33c1:b0:535:6a7b:9c03 with SMTP id
+ 2adb3069b0e04-539da5c6eb3mr619866e87.6.1728697799881; Fri, 11 Oct 2024
+ 18:49:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: LO2P265MB5183:EE_|LO2P265MB5545:EE_
-X-MS-Office365-Filtering-Correlation-Id: 86c0a418-b93e-43bc-70be-08dcea5fe1fa
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|7416014|10070799003|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?2fXa15m03qb+dRnLKtqYS5KgUe5qv3gB0bQapeYUF6pgI5MtmhzfPF7r5uhE?=
- =?us-ascii?Q?viOsavbszpE2eYcMdrqObuh0u3K3BsPb6jy1RYWiUxF46R8HUcCKl6ObXwMK?=
- =?us-ascii?Q?9O5Xvx6IwvwB7fcniqNwu2jGB8aNfs972EkexIh2dKd2CeilwJ1C57SQdMlx?=
- =?us-ascii?Q?oNkFBDdlmM+Ea5xDUJ57P3Iboq3KPmHNpofaD86ckXEYMzpQcMesHH2qhSM7?=
- =?us-ascii?Q?p00y6U+wzgg/aobSdELnTKZ2KBZmNcRhPGjnN4XGprbRqFukq3xuG1ImyoZo?=
- =?us-ascii?Q?pW1/tvLObrhphKQSzq2xQBBWk4ouZ11cpIUBpO5dq5Jqi2+1Ct4RKyV3As4E?=
- =?us-ascii?Q?ufvCUqbGRgdE16RZauj9tgwG714gdnfY9Ta/Xz03VRfMLEQEw6CpXiGdqaZb?=
- =?us-ascii?Q?BdR3+p0v3e657p57JkmtCW6SRB7v68lB19REueZ2jI7+R2AYdZu8cAdhxCE3?=
- =?us-ascii?Q?JQlb0Q9Uswv4t56vQGMq3dce5QdWkHIGRz5xj/RyqVo2X94c05P9xe0XlRRf?=
- =?us-ascii?Q?A/YL9gizBTQlE+fPBFkNHDSKtmQ4CHng/QqW2uznDVZzMltDTuMjAdGNHOQr?=
- =?us-ascii?Q?4NSRcDLdii1/J0/f33YqieTweOdaEStmCshM5WkKcYbh1Vu48n90NhivPRha?=
- =?us-ascii?Q?odoIt9TTaei4XqFDe4huILYoaPyTRwYolzQ3ZQpkueWat/LpcqbzEKfsG4nH?=
- =?us-ascii?Q?rNn3QvcOJdRW0ObsKJ5v54zm9z6y5yM3cSWY6TS6bBiBlJ5uj9eNIMAivVDU?=
- =?us-ascii?Q?NDl9vMzL9WwHnBZrJj20WOFaSRh8kg7dPvJA6j153s6iOfL8ttADH018skeU?=
- =?us-ascii?Q?SwgUVqPanvUOeQcTaS6yxT0sBAYY916aEYGREJ+LL+zIp5RlGnUtSGuoomNd?=
- =?us-ascii?Q?IHziXogEKVNXK/QpxYEHcRYZ7X5Q0BEVa4gJgwn8KYh/+jOWypCy94F5HsNr?=
- =?us-ascii?Q?BtpMxiEpNwyqUpKBpCAyUmpuTiIyNXhDKkS/loldcJltT1E74HdJR8Nwup2n?=
- =?us-ascii?Q?//Xhk12MWKGtNmhFAqRW7VEAFytCJEMxv62B2Ny/e80yyPLq4cslU1FL9+9H?=
- =?us-ascii?Q?MrytNqx8h7D120iE8HIRHJ1wwlbwNiDfcBPVYhK11nbGm7hbvDXH2lcGuEq+?=
- =?us-ascii?Q?JvlMS8UqdMr8IShDSCLMnCk5Nx7uUlTPilopqjgEdxaz1B8Dg1p/0KhO3ihw?=
- =?us-ascii?Q?R41UHCuzsv5Wcg6klmbQliVNpS/Te5gRM0f3n9snwJRRgNFsltFBzrDEvpSv?=
- =?us-ascii?Q?EAuAzbe2d/MWQ65u5vW/GHkAFEQWldVV3UuGkfZTgA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(10070799003)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?RY1YHCBbi9hColEWjsCgsVD74Hxtv9Lv4rP0UqBlaodBO3INq3YiDBHNWQFr?=
- =?us-ascii?Q?/goBp9uSS+XUhE7YgIkTWOaGS3nrYKl7woesImYAvpXDQenDiuYNIZqP/4qn?=
- =?us-ascii?Q?rYVgNesjWiTJex9t8ZVAtB6Cm8na4gDeHc1+OL5/8yWf55/NuXZf1CqeqHU6?=
- =?us-ascii?Q?kQxCrSL8blYFCekx3BOm9b11qGc5qRHPOiGPshD5usS6sqy4Gdr6pmBvxDWs?=
- =?us-ascii?Q?yppb536nZUPLHSbAcr1V9AjYTEV0dKr5Ot2qoh5gzDl69RfBrykFEUhEqtnf?=
- =?us-ascii?Q?NL5lXKOEKJ8LbpOJMKvUGByucP0xLtqIZjrIh8jutW1YRPuH6XGjCHsebDm7?=
- =?us-ascii?Q?QYQhN8n7sZ0AN2UQMtIWgoIPD8HzJasrnxuu+oMotiePVRZHdBjtv6QlX8+i?=
- =?us-ascii?Q?/ywxioAauvjYW3OMdDQxJiiuYBnWNWp6K37PANzmG7TjCQIVCAOQNzd108pj?=
- =?us-ascii?Q?e3NqWdFiKB/JiPOSzDCwezAbHpdZh8yX2C5t/DbJMPg4uZv05tVjeZLoZWH/?=
- =?us-ascii?Q?grUBY1lzR4Q2aFMq+LaCgRqTwnP5aTWvwzIHolNFpMAP6Lj/xWr+/U42+GXG?=
- =?us-ascii?Q?DTCQT6ONfjT/VUONNJj6nTp7tkwvpd6pV/4IJtfUnj8hj7pJW7ZBth8HpSZM?=
- =?us-ascii?Q?JzXJTd5gZJoZTS5q22W/ajUbiOoCPi7eJFlvN6DdHgnb313jvVGDNpH4Hi6U?=
- =?us-ascii?Q?tEYDA6u7D6U7D1Af5kQBhaJPiG0D9OoBwf8QfJxH+udTfICtee6e+kzjvgPS?=
- =?us-ascii?Q?xyN9tp32NcekklGiozc7iQsWoXGpJBrwj9oIVOA31OJQ2MaveCtN6UA0GcUx?=
- =?us-ascii?Q?5XlCgvOy/ZqG/aZNlsiBFV2Zn6TaugnOj4dwD7d+20J8ZTILePKzBxmfras8?=
- =?us-ascii?Q?RgfjRD7g6VEpOCaN9EeuHlsyl1zTemozucydadGRUiO5IxxjluDgzOSuKQxV?=
- =?us-ascii?Q?BBfxVB6VHR+rdDEQmF+iW0IZCqSnarSJ09GIgdMdtKQULgpiyIJLCP68Wsu6?=
- =?us-ascii?Q?JK/dsr4CzlkLjImN3aXV1ayyPFqGAb/mBAsSPG6R0NFDgeJ9MsKbkTLH1dKE?=
- =?us-ascii?Q?iDCYuhmj4Bfe28qqEYrQkV42zEbZj/pRJekvntkmCjiOtJ4CM0lSBSJX13S6?=
- =?us-ascii?Q?dLhkUEoSW6+amgSQXmviHr96iZZ7nB+AXkkTUWkZkPshYeoOPQzLTPy2iqKA?=
- =?us-ascii?Q?AoAgXcpajVUgFexOEAP5tSwC0t5OKSVsIa/bl82MJ+XJgQVp6dkLon2jdHol?=
- =?us-ascii?Q?Nt/p7qJMvCooRhxiPIzOJNPYAU9cF6wcjV+8IHViZ6V9h1DJn3fjXZ2yqm2a?=
- =?us-ascii?Q?1OnKyb3xAccKGkLKcFx6iBslJ6guzoQW9GvnBnb7DM5xvhmztYNSOC7XUf5s?=
- =?us-ascii?Q?M5Z4SjCqb63gmUgvlRw2iJJqR2U1ckzOYx3oBrOMJyBLxuTS3kf6X1ZL/xuV?=
- =?us-ascii?Q?/cYO8FM2Gn6tt+ckxX8WF/HMLeR+PViG2Qydw0tHb4qqxGIcl9saJrqPDoAt?=
- =?us-ascii?Q?gD9bZAM56tVrsL4D8j9usQrfQkQ2w+x9aUkg7p86T6VcwKV5DA1HjWX/NxMd?=
- =?us-ascii?Q?ohoO6A8ehGnAdhJsbOYA8AACd8v2plR2zV0I6hpE?=
-X-OriginatorOrg: garyguo.net
-X-MS-Exchange-CrossTenant-Network-Message-Id: 86c0a418-b93e-43bc-70be-08dcea5fe1fa
-X-MS-Exchange-CrossTenant-AuthSource: LO2P265MB5183.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 12 Oct 2024 01:47:51.5420
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: bbc898ad-b10f-4e10-8552-d9377b823d45
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: lrUeWfceypwpdFe0roRMqrtKRPWWsNXNnopVK2LRhCdR7Ya/o8KzkL+BJYwDYp322KXxCql8DS76lZDr/ALG6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO2P265MB5545
+References: <20241009074953.608591-1-zhaoyang.huang@unisoc.com>
+ <CAOUHufaiKFZ6LjoQ8SChK+m0-nPzT6RYpDfLHp69vn1OYm3qhQ@mail.gmail.com> <CAGWkznGBWxVD0La5PArU1F2Q1Tqk40EGP1V0+jRiLNaxWy5zbg@mail.gmail.com>
+In-Reply-To: <CAGWkznGBWxVD0La5PArU1F2Q1Tqk40EGP1V0+jRiLNaxWy5zbg@mail.gmail.com>
+From: Zhaoyang Huang <huangzhaoyang@gmail.com>
+Date: Sat, 12 Oct 2024 09:49:48 +0800
+Message-ID: <CAGWkznEsesvbaRqOeqOaYJnD5BYxNOuO57pNt+cM7yOQrdk1Pg@mail.gmail.com>
+Subject: Re: [PATCH] mm: throttle and inc min_seq when both page types reach MIN_NR_GENS
+To: Yu Zhao <yuzhao@google.com>
+Cc: "zhaoyang.huang" <zhaoyang.huang@unisoc.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, steve.kang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 11 Oct 2024 23:01:12 +0100
-Matthew Wilcox <willy@infradead.org> wrote:
+On Fri, Oct 11, 2024 at 4:02=E2=80=AFPM Zhaoyang Huang <huangzhaoyang@gmail=
+.com> wrote:
+>
+> On Fri, Oct 11, 2024 at 12:37=E2=80=AFAM Yu Zhao <yuzhao@google.com> wrot=
+e:
+> >
+> > On Wed, Oct 9, 2024 at 1:50=E2=80=AFAM zhaoyang.huang <zhaoyang.huang@u=
+nisoc.com> wrote:
+> > >
+> > > From: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > >
+> > > The test case of [1] leads to system hang which caused by a local
+> > > watchdog thread starved over 20s on a 5.5GB RAM ANDROID15(v6.6)
+> > > system. This commit solve the issue by have the reclaimer be throttle=
+d
+> > > and increase min_seq if both page types reach MIN_NR_GENS, which may
+> > > introduce a livelock of switching type with holding lruvec->lru_lock.
+> > >
+> > > [1]
+> > > launch below script 8 times simutanously which allocates 1GB virtual
+> > > memory and access it from user space by each thread.
+> > > $ costmem -c1024000 -b12800 -o0 &
+> > >
+> > > Signed-off-by: Zhaoyang Huang <zhaoyang.huang@unisoc.com>
+> > > ---
+> > >  mm/vmscan.c | 16 ++++++++++++++--
+> > >  1 file changed, 14 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/mm/vmscan.c b/mm/vmscan.c
+> > > index cfa839284b92..83e450d0ce3c 100644
+> > > --- a/mm/vmscan.c
+> > > +++ b/mm/vmscan.c
+> > > @@ -4384,11 +4384,23 @@ static int scan_folios(struct lruvec *lruvec,=
+ struct scan_control *sc,
+> > >         int remaining =3D MAX_LRU_BATCH;
+> > >         struct lru_gen_folio *lrugen =3D &lruvec->lrugen;
+> > >         struct mem_cgroup *memcg =3D lruvec_memcg(lruvec);
+> > > +       struct pglist_data *pgdat =3D lruvec_pgdat(lruvec);
+> > >
+> > >         VM_WARN_ON_ONCE(!list_empty(list));
+> > >
+> > > -       if (get_nr_gens(lruvec, type) =3D=3D MIN_NR_GENS)
+> > > -               return 0;
+> > > +       if (get_nr_gens(lruvec, type) =3D=3D MIN_NR_GENS) {
+> > > +               /*
+> > > +                * throttle for a while and then increase the min_seq=
+ since
+> > > +                * both page types reach the limit.
+> > > +                */
+> >
+> > Sorry but this isn't going to work because in try_to_inc_min_seq(), the=
+re is
+> >    `while (min_seq[type] + MIN_NR_GENS <=3D lrugen->max_seq) {`
+> > to prevent reclaimers from evicting hot memory -- they need to do aging=
+ first.
+> Thanks for heads up. What I thought was assuming there is a running
+> reclaimer will do the aging and the throttled reclaimers increase the
+> min_seq when scheduled back and move on. Or could we just drop the
+> lock and throttle for a while to avoid a livelock on 'type =3D !type'
+> with holding the lock?
+please find below for the lru_lock contention information[2] which we
+get from syzkaller test. if the patch[1] is worth discussing which
+introduces throttling direct reclaimer by judging the number of
+isolated folios.
 
-> On Fri, Oct 11, 2024 at 10:38:53PM +0800, Zheng Yejian wrote:
-> > The root cause is that, after commit 73bbb94466fd ("kallsyms: support
-> > "big" kernel symbols"), ULEB128 was used to encode symbol name length.
-> > That is, for "big" kernel symbols of which name length is longer than
-> > 0x7f characters, the length info is encoded into 2 bytes.  
-> 
-> Technically, at least two.  If we ever have a symbol larger than
-> 16kB, we'll use three bytes.
+[1]
+https://lore.kernel.org/all/20240716094348.2451312-1-zhaoyang.huang@unisoc.=
+com/
 
-Let's not worry about things that would not happen.
+[2]
+[  295.163779][T8447@C5] preemptoff_warn: C5 T:<8447>syz.2.17
+D:40.429ms F:295.123341s E:6.660 ms
+[  295.165000][T8447@C5] preemptoff_warn: C5 enabled preempt at:
+[  295.165000][T8447@C5] _raw_spin_unlock_irq+0x2c/0x5c
+[  295.165000][T8447@C5] evict_folios+0x2504/0x3050
+[  295.165000][T8447@C5] try_to_shrink_lruvec+0x40c/0x594
+[  295.165000][T8447@C5] shrink_one+0x174/0x4cc
+[  295.165000][T8447@C5] shrink_node+0x1c50/0x2088
+[  295.165000][T8447@C5] do_try_to_free_pages+0x560/0xef8
+[  295.165000][T8447@C5] try_to_free_pages+0x4e8/0xaf0
+[  295.165000][T8447@C5] __alloc_pages_slowpath+0x92c/0x1c78
+[  295.165000][T8447@C5] __alloc_pages+0x404/0x48c
+[  295.166277][T298@C0] C0 T:<298>logd.writer D:42.389ms F:295.123885s
+[  295.166337][T298@C0] C0 enabled IRQ at:
+[  295.166337][T298@C0] _raw_spin_unlock_irq+0x20/0x5c
+[  295.166337][T298@C0] evict_folios+0x2504/0x3050
+[  295.166337][T298@C0] shrink_one+0x174/0x4cc
+[  295.166337][T298@C0] shrink_node+0x1c50/0x2088
+[  295.166337][T298@C0] do_try_to_free_pages+0x560/0xef8
+[  295.166337][T298@C0] try_to_free_pages+0x4e8/0xaf0
+[  295.166337][T298@C0] __alloc_pages_slowpath+0x92c/0x1c78
+[  295.166337][T298@C0] __alloc_pages+0x404/0x48c
+[  295.166337][T298@C0] erofs_allocpage+0x90/0xb0
+[  295.167317][T298@C0] preemptoff_warn: C0 T:<298>logd.writer
+D:43.424ms F:295.123888s
+[  295.168484][T8210@C7] C7 T:<8210>syz-executor D:32.816ms F:295.135666s
+[  295.168507][T8210@C7] C7 enabled IRQ at:
+[  295.168507][T8210@C7] _raw_spin_unlock_irq+0x20/0x5c
+[  295.168507][T8210@C7] evict_folios+0x2504/0x3050
+[  295.168507][T8210@C7] shrink_one+0x174/0x4cc
+[  295.168507][T8210@C7] shrink_node+0x1c50/0x2088
+[  295.168507][T8210@C7] do_try_to_free_pages+0x560/0xef8
+[  295.168507][T8210@C7] try_to_free_pages+0x4e8/0xaf0
+[  295.168507][T8210@C7] __alloc_pages_slowpath+0x92c/0x1c78
+[  295.168507][T8210@C7] __alloc_pages+0x404/0x48c
+[  295.168507][T8210@C7] __get_free_pages+0x24/0x3c
+[  295.168625][T8210@C7] preemptoff_warn: C7 T:<8210>syz-executor
+D:32.956ms F:295.135666s
+[  295.168645][T8210@C7] preemptoff_warn: C7 enabled preempt at:
+[  295.168645][T8210@C7] _raw_spin_unlock_irq+0x2c/0x5c
+[  295.168645][T8210@C7] evict_folios+0x2504/0x3050
+[  295.168645][T8210@C7] try_to_shrink_lruvec+0x40c/0x594
+[  295.168645][T8210@C7] shrink_one+0x174/0x4cc
+[  295.168645][T8210@C7] shrink_node+0x1c50/0x2088
+[  295.168645][T8210@C7] do_try_to_free_pages+0x560/0xef8
+[  295.168645][T8210@C7] try_to_free_pages+0x4e8/0xaf0
+[  295.168645][T8210@C7] __alloc_pages_slowpath+0x92c/0x1c78
+[  295.168645][T8210@C7] __alloc_pages+0x404/0x48c
+[  295.178291][T8441@C2] C2 T:<8441>syz.3.18 D:42.290ms F:295.135998s
+[  295.178356][T8441@C2] C2 enabled IRQ at:
+[  295.178356][T8441@C2] _raw_spin_unlock_irq+0x20/0x5c
+[  295.178356][T8441@C2] evict_folios+0x2504/0x3050
+[  295.178356][T8441@C2] shrink_one+0x174/0x4cc
+[  295.178356][T8441@C2] shrink_node+0x1c50/0x2088
+[  295.178356][T8441@C2] do_try_to_free_pages+0x560/0xef8
+[  295.178356][T8441@C2] try_to_free_pages+0x4e8/0xaf0
+[  295.178356][T8441@C2] __alloc_pages_slowpath+0x92c/0x1c78
+[  295.178356][T8441@C2] __alloc_pages+0x404/0x48c
+[  295.178356][T8441@C2] bpf_ringbuf_alloc+0x22c/0x434
+[  295.179135][T8441@C2] preemptoff_warn: C2 T:<8441>syz.3.18
+D:43.128ms F:295.136000s
 
-scripts/kallsyms.c have a check to ensure that symbol names don't get
-longer than 0x3FFF.
-
-Best,
-Gary
-
-> 
-> > +++ b/kernel/kallsyms.c
-> > @@ -103,8 +103,11 @@ static char kallsyms_get_symbol_type(unsigned int off)
-> >  {
-> >  	/*
-> >  	 * Get just the first code, look it up in the token table,
-> > -	 * and return the first char from this token.
-> > +	 * and return the first char from this token. If MSB of length
-> > +	 * is 1, it is a "big" symbol, so needs an additional byte.
-> >  	 */
-> > +	if (kallsyms_names[off] & 0x80)
-> > +		off++;  
-> 
-> So this "if" should be a "while" for maximum future proofing against the
-> day that we have a 16kB function ...
-> 
-
+>
+> >
+> > >
+> > > +               if (get_nr_gens(lruvec, !type) =3D=3D MIN_NR_GENS) {
+> > > +                       spin_unlock_irq(&lruvec->lru_lock);
+> > > +                       reclaim_throttle(pgdat, VMSCAN_THROTTLE_ISOLA=
+TED);
+> > > +                       spin_lock_irq(&lruvec->lru_lock);
+> > > +                       try_to_inc_min_seq(lruvec, get_swappiness(lru=
+vec, sc));
+> > > +               } else
+> > > +                       return 0;
+> > > +       }
+> > >
+> > >         gen =3D lru_gen_from_seq(lrugen->min_seq[type]);
+> > >
+> > > --
+> > > 2.25.1
+> > >
 
