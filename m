@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-362073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362075-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C69A499B093
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:00:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 172CC99B096
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 06:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46FA4283EA3
-	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:00:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD0421F23042
+	for <lists+linux-kernel@lfdr.de>; Sat, 12 Oct 2024 04:01:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE882126C0A;
-	Sat, 12 Oct 2024 04:00:53 +0000 (UTC)
-Received: from smtpbg150.qq.com (smtpbg150.qq.com [18.132.163.193])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B43D012C552;
+	Sat, 12 Oct 2024 04:00:54 +0000 (UTC)
+Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.58.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A477A11185
-	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.132.163.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636CD85656
+	for <linux-kernel@vger.kernel.org>; Sat, 12 Oct 2024 04:00:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.58.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728705653; cv=none; b=O4q5slsObd4JrcPkPCGcK3P1NaFyWPVpJGT1wVf4jDCXrlFpCEyolarSPhNEpUkS2ZqrXhAKYV8MlAlTICDgMLO67xgjgl6RtxEMPzhQMAy+XEKv46DG7h0Rh/erMVi70cYmxH+e5HfZ4A2vb1ny5YoU++fCYrbhZcrEPVw1aO8=
+	t=1728705654; cv=none; b=d2grlUjBkbiLh8ofCf7Sk+0Ip2VAgHh7YdW2s8Q0e4qnn45c8E4QW2fV95kmgbKZAZZryTKQXUp61uWRUiuNr+Qby4dI/OAQPZXwLMqlVi5qzd3OPDLPXVg0CsLn6YyG0C+lRgb2RNImohKpDMqpGirHn/fPp9a89FADdSXG9z0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728705653; c=relaxed/simple;
-	bh=e8ww/Zus1+spRjzRNLU0FqhxMa8zhQSa2/Vns/ZOFSY=;
+	s=arc-20240116; t=1728705654; c=relaxed/simple;
+	bh=CNualBh+6zKfNfBry8KERKoILgyCwRF37DMX+DsK9Qg=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=tz/SS/qHDRcLKaoUopamAPWj2aPynaZ5MV/K87F3k/bmR0D8wWvdFRXXgjCUDS0xBr8PuXkxJcZVh4ad/p/sVCovNh5VwytKkjMbfFrvfVT0f7xwVlEZ7GdbwlgkacNVMqrdTeXjN87keZXfn8b3gsjLEek8C3Q4qDX+e2HPeqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=18.132.163.193
+	 MIME-Version; b=h3tSIzWLsjddDkYcD6lw+DeR4DMMz4CZUE3QCyoMIwp7LospmpMERed3a6Bkg54ld6B8bdLwjZX1vfRGi+lmkxVFJelOZPHHAt6yKkB/izYybtD3R333yPW3DyYnNsFLMHfA4wEqcnLgoc+BQhWNqh75l6js1g0rNT6d6fkAmxA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=114.132.58.6
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
-X-QQ-mid: bizesmtpsz3t1728705585tru68vi
-X-QQ-Originating-IP: dPzeGZMY/guyAa0JyerkWJKSZdNWTaVlJKwJFdT4Hu0=
+X-QQ-mid: bizesmtpsz3t1728705587t36gh90
+X-QQ-Originating-IP: 2FaNmLZVeGG3UdHWFWpVZfwY+GrSvchhrlU49rvVvmU=
 Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
 	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sat, 12 Oct 2024 11:59:43 +0800 (CST)
+	id ; Sat, 12 Oct 2024 11:59:46 +0800 (CST)
 X-QQ-SSF: 0000000000000000000000000000000
 X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 1889317134298449464
+X-BIZMAIL-ID: 707350123968797831
 From: Luming Yu <luming.yu@shingroup.cn>
 To: linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org,
@@ -45,9 +45,9 @@ To: linuxppc-dev@lists.ozlabs.org,
 	jialong.yang@shingroup.cn,
 	luming.yu@gmail.com
 Cc: Luming Yu <luming.yu@shingroup.cn>
-Subject: [PATCH 5/7] powerpc/entry: add irqentry_state and generic entry support
-Date: Sat, 12 Oct 2024 11:56:19 +0800
-Message-ID: <5ADB50C5F6678977+20241012035621.1245-7-luming.yu@shingroup.cn>
+Subject: [PATCH 6/7] powerpc/entry: factout irqentry-state
+Date: Sat, 12 Oct 2024 11:56:20 +0800
+Message-ID: <E6FB8D32FAAFC3BE+20241012035621.1245-8-luming.yu@shingroup.cn>
 X-Mailer: git-send-email 2.42.0.windows.2
 In-Reply-To: <20241012035621.1245-3-luming.yu@shingroup.cn>
 References: <20241012035621.1245-3-luming.yu@shingroup.cn>
@@ -60,200 +60,147 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-QQ-SENDSIZE: 520
 Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OZOGECUHcopq1p3DJjt/esgaKLlu2WyzxeCTRpWsGWmve4b86vYBJV4i
-	rpcODtBuXPYhIO7Yp4pisJCPhW1ksDwfgjgKoOYhbilQzwvQFPrzLsRgpBBrJ3RDCCp9EdU
-	yWKLQY0a/U8wrUk0V7p0sZET4wR4AaYv1c9QyzsXsZbE2Q+DoKtppy0281TjKZ4xwhho5Cc
-	429Mh9a124OPhfYqdWZd9T3eMiw0ies4ArXkltGFoygkd/jxv77Tw5qG0fjbx4qysqbaOZf
-	JL+bIE3ViJbLosNHpSVQ0V90/LQRipEZBigyba+pascyHSQpCOkiL0nJiA7ohIWf7k/KL28
-	rBDkBG6dlS3bYzLPEihZp/FcDkwJa8bLy7+mFrJXA02pgaCQ1r8hDG+jt8+7V44C5movm6t
-	JB1C4KgarRcxy9SSF5q1SEtVq3scUbTmLlSmi149C5Qi/6be1pl1s6GOTOX1RdlRI0k7JsU
-	HnsfnsMl73XvGivQs31iQ6bp2sg1SNm4RO4SLtx4NlLtnzKjvhBTUjCCrNfLlsV20SXGOS+
-	KUkI/phKg6H4SjOCjnq7FBf4pMtyaBjJ5l6Ej81Ar/ZKiuscfIsoqj3IE6WNLmixMkIWfbP
-	rMGV4L04T4+RaLUoH2cCHVUR7CwE4jH9n+SJimYLp/owO9/c/x2nr2P5rnqICYcJNec7GHS
-	dk6kFB6l/XmTQDpksiI6iAuG2GXGgeaBLRd3VwI4Q+Xj4xfxucsS2kp1MsAKXKIQNSKZ/sP
-	bGjwL4BhysC6rX6jejpsFt4RpjxSBaQsieoKb83wPDpXZSYyckVzmM0eTjj0OFJUpGnosIo
-	NcHw7ri3eBXuyDkMH2iHg+PZINbmCHOSalHOOIhcqOY6/4heKa+7FRsAxYyBqzk3NsbRKrw
-	3UPps9e9D0qaDhKYwUX4Dlk9ShsB/4h2rTXje1bJm7ZxHOByEL1eR24N9FlvlHbROmzWfbk
-	vqaNtYbzn0N8W7Q==
-X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+X-QQ-XMAILINFO: N4FDxPgVXe+s1c+wgvBYQyvtkSz9EaR/aPZ579CFzI9V2Od2jM6nFLW9
+	9tlKJQWNChNK+IUQH3uxJo2qIqW8HMM5XNxkA+Ydgh3PTN5fXQ7E9VhAjGOW6nCY27NyCY/
+	TqM65n1+kWwYZ2b0GWCHE5Z1JpNKOgjtNJP4wa8Xj+7drBdoWF5mBE7gge7BtvMWSwoIUVp
+	j3m7Oh0bNzY+B/CNepWYT3qNIsIteOyeu8k8vue6Fo5NdmFiTq0jMWgcCZjvPvTFFZyKOIr
+	l8HTepxdIKuojjMxfsEsQ/YxSFsawWeMCuBl+llnFDNODnidKNxwSdsSE8ZZ9PZ/PGCjf+P
+	u5HAZWpccU7KHb+1lpolqnasuNFUZiD+Jv4f9IMeKtUscT/+kz4aFscqpbSUmd0EwEVdC4D
+	mWYB+xYN+4ce9Eo+0vB+uOGBW/v4KnvzFToeuiNz7d0b0cFaA8i3t7mWj+W5CnpIj1N8J50
+	AVXnKUlTWA4nNgES+87mULNhsckxj0DAzxMvjsFQ7o/NWnQygfdQYjS36oj8drPSFmu9jHl
+	v9nv02BO7yhANG1BD5eVncqM5I9hofiJqF31XMalA7KhR/xcoH7BoiwGlobSQ7uHSATWyP8
+	1YaWTUNl9nax+6JiXJOy9JyEiaH47cr3SZUUPc6YPR1V9x8+5GmXhqRs7BG2JnONfPFbfeQ
+	jzbIgLS39rbdUxapKosJ+UfyCq9HnYIMBEqeSIZJP3Q7tw6LHEMqv2L983Ln7TVDViDbPkL
+	REiAa1+NdaOkk9bz4BdBVB6BazAtvDI9z8GOQrTTNG3cw+6AQ7mJFn3s0EiXEphyUwp0xTG
+	t44bghKQL1NWBowQXhAnshA4gaWBn21stYsW/IJkc/Da1TfkM5lWGM/k/ka3v2smbXVRN2E
+	E9iWuD99aoC4DsWAKTL1SWYMcbcjnl88NGJ/b6p1z9F2EC3oap5PbJaySFS+fS17kz1UdcF
+	XWts/houi6dKdrQ3/E2z03baqywLm4lMMpj7LZgW82Qa3fmpAYH6nz7DGCabFFUtcYVqJh1
+	LAdDZGjA==
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
 X-QQ-RECHKSPAM: 0
 
-generic irq entry support via generic irqentry is added for powerpc.
-There may be duplciate calls and missing callbacks requires further
-work.
+To have lowlevel paca.h include high level entry-common.h cause
+include file dependency mess. Split irqentry-state.h to have
+the irqentry_state.h can be included in low level paca.h
 
 Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
 ---
- arch/powerpc/include/asm/entry-common.h | 32 ++++++++++++++++
- arch/powerpc/kernel/interrupt.c         | 51 +++++--------------------
- arch/powerpc/kernel/signal.c            |  7 ++++
- arch/powerpc/kernel/syscall.c           |  2 -
- 4 files changed, 49 insertions(+), 43 deletions(-)
+ arch/powerpc/include/asm/paca.h |  2 ++
+ arch/powerpc/kernel/interrupt.c |  2 ++
+ include/linux/entry-common.h    | 24 ------------------------
+ include/linux/irqentry-state.h  | 28 ++++++++++++++++++++++++++++
+ 4 files changed, 32 insertions(+), 24 deletions(-)
+ create mode 100644 include/linux/irqentry-state.h
 
-diff --git a/arch/powerpc/include/asm/entry-common.h b/arch/powerpc/include/asm/entry-common.h
-index 51f1eb767696..faa829e15b5d 100644
---- a/arch/powerpc/include/asm/entry-common.h
-+++ b/arch/powerpc/include/asm/entry-common.h
-@@ -3,6 +3,7 @@
- #define ARCH_POWERPC_ENTRY_COMMON_H
+diff --git a/arch/powerpc/include/asm/paca.h b/arch/powerpc/include/asm/paca.h
+index e667d455ecb4..83ebe8e914b7 100644
+--- a/arch/powerpc/include/asm/paca.h
++++ b/arch/powerpc/include/asm/paca.h
+@@ -13,6 +13,7 @@
+ #ifdef CONFIG_PPC64
  
- #include <linux/user-return-notifier.h>
-+#include <asm/switch_to.h>
+ #include <linux/cache.h>
++#include <linux/irqentry-state.h>
+ #include <linux/string.h>
+ #include <asm/types.h>
+ #include <asm/mmu.h>
+@@ -282,6 +283,7 @@ struct paca_struct {
+ 	struct mce_info *mce_info;
+ 	u8 mce_pending_irq_work;
+ #endif /* CONFIG_PPC_BOOK3S_64 */
++	irqentry_state_t irqentry_s;
+ } ____cacheline_aligned;
  
- static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
- 						  unsigned long ti_work)
-@@ -13,4 +14,35 @@ static inline void arch_exit_to_user_mode_prepare(struct pt_regs *regs,
- 
- #define arch_exit_to_user_mode_prepare arch_exit_to_user_mode_prepare
- 
-+static inline void arch_exit_to_user_mode_work(struct pt_regs *regs,
-+						unsigned long ti_work)
-+{
-+
-+	if (IS_ENABLED(CONFIG_PPC_BOOK3S_64) && IS_ENABLED(CONFIG_PPC_FPU)) {
-+		if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
-+				unlikely((ti_work & _TIF_RESTORE_TM))) {
-+			restore_tm_state(regs);
-+		} else {
-+			unsigned long mathflags = MSR_FP;
-+
-+			if (cpu_has_feature(CPU_FTR_VSX))
-+				mathflags |= MSR_VEC | MSR_VSX;
-+			else if (cpu_has_feature(CPU_FTR_ALTIVEC))
-+				mathflags |= MSR_VEC;
-+
-+			/*
-+			 * If userspace MSR has all available FP bits set,
-+			 * then they are live and no need to restore. If not,
-+			 * it means the regs were given up and restore_math
-+			 * may decide to restore them (to avoid taking an FP
-+			 * fault).
-+			 */
-+			if ((regs->msr & mathflags) != mathflags)
-+				restore_math(regs);
-+		}
-+	}
-+}
-+
-+#define arch_exit_to_user_mode_work arch_exit_to_user_mode_work
-+
- #endif
+ extern void copy_mm_to_paca(struct mm_struct *mm);
 diff --git a/arch/powerpc/kernel/interrupt.c b/arch/powerpc/kernel/interrupt.c
-index 609ba48034de..42af9217136d 100644
+index 42af9217136d..8e4cabb0c592 100644
 --- a/arch/powerpc/kernel/interrupt.c
 +++ b/arch/powerpc/kernel/interrupt.c
-@@ -3,6 +3,7 @@
- #include <linux/context_tracking.h>
- #include <linux/err.h>
- #include <linux/compat.h>
-+#include <linux/entry-common.h>
- #include <linux/sched/debug.h> /* for show_regs */
+@@ -311,6 +311,7 @@ notrace unsigned long interrupt_exit_user_prepare(struct pt_regs *regs)
+ 	BUG_ON(regs_is_unrecoverable(regs));
+ 	BUG_ON(arch_irq_disabled_regs(regs));
+ 	CT_WARN_ON(ct_state() == CONTEXT_USER);
++	local_paca->irqentry_s = irqentry_enter(regs);
  
- #include <asm/kup.h>
-@@ -183,47 +184,11 @@ interrupt_exit_user_prepare_main(unsigned long ret, struct pt_regs *regs)
- 
- again:
- 	ti_flags = read_thread_flags();
--	while (unlikely(ti_flags & (_TIF_USER_WORK_MASK & ~_TIF_RESTORE_TM))) {
--		local_irq_enable();
--		if (ti_flags & _TIF_NEED_RESCHED) {
--			schedule();
--		} else {
--			/*
--			 * SIGPENDING must restore signal handler function
--			 * argument GPRs, and some non-volatiles (e.g., r1).
--			 * Restore all for now. This could be made lighter.
--			 */
--			if (ti_flags & _TIF_SIGPENDING)
--				ret |= _TIF_RESTOREALL;
--			do_notify_resume(regs, ti_flags);
--		}
--		local_irq_disable();
--		ti_flags = read_thread_flags();
--	}
- 
--	if (IS_ENABLED(CONFIG_PPC_BOOK3S_64) && IS_ENABLED(CONFIG_PPC_FPU)) {
--		if (IS_ENABLED(CONFIG_PPC_TRANSACTIONAL_MEM) &&
--				unlikely((ti_flags & _TIF_RESTORE_TM))) {
--			restore_tm_state(regs);
--		} else {
--			unsigned long mathflags = MSR_FP;
--
--			if (cpu_has_feature(CPU_FTR_VSX))
--				mathflags |= MSR_VEC | MSR_VSX;
--			else if (cpu_has_feature(CPU_FTR_ALTIVEC))
--				mathflags |= MSR_VEC;
--
--			/*
--			 * If userspace MSR has all available FP bits set,
--			 * then they are live and no need to restore. If not,
--			 * it means the regs were given up and restore_math
--			 * may decide to restore them (to avoid taking an FP
--			 * fault).
--			 */
--			if ((regs->msr & mathflags) != mathflags)
--				restore_math(regs);
--		}
--	}
-+	if (ti_flags & _TIF_SIGPENDING)
-+		ret |= _TIF_RESTOREALL;
-+	if (unlikely(ti_flags & EXIT_TO_USER_MODE_WORK))
-+		ti_flags = exit_to_user_mode_loop(regs, ti_flags);
- 
- 	check_return_regs_valid(regs);
- 
-@@ -297,11 +262,15 @@ notrace unsigned long syscall_exit_prepare(unsigned long r3,
- 	}
- 
- 	local_irq_disable();
--	ret = interrupt_exit_user_prepare_main(ret, regs);
-+	if (ti_flags & _TIF_RESTOREALL)
-+		ret |= _TIF_RESTOREALL;
- 
-+	if (ti_flags & _TIF_SIGPENDING)
-+		ret |= _TIF_RESTOREALL;
- #ifdef CONFIG_PPC64
- 	regs->exit_result = ret;
- #endif
-+	syscall_exit_to_user_mode(regs);
- 
- 	return ret;
- }
-diff --git a/arch/powerpc/kernel/signal.c b/arch/powerpc/kernel/signal.c
-index aa17e62f3754..da21e7fef46a 100644
---- a/arch/powerpc/kernel/signal.c
-+++ b/arch/powerpc/kernel/signal.c
-@@ -11,6 +11,7 @@
- #include <linux/uprobes.h>
- #include <linux/key.h>
- #include <linux/context_tracking.h>
-+#include <linux/entry-common.h>
- #include <linux/livepatch.h>
- #include <linux/syscalls.h>
- #include <asm/hw_breakpoint.h>
-@@ -368,3 +369,9 @@ void signal_fault(struct task_struct *tsk, struct pt_regs *regs,
- 		printk_ratelimited(regs->msr & MSR_64BIT ? fm64 : fm32, tsk->comm,
- 				   task_pid_nr(tsk), where, ptr, regs->nip, regs->link);
- }
-+
-+void arch_do_signal_or_restart(struct pt_regs *regs)
-+{
-+	BUG_ON(regs != current->thread.regs);
-+	do_signal(current);
-+}
-diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
-index e0338bd8d383..97f158d13944 100644
---- a/arch/powerpc/kernel/syscall.c
-+++ b/arch/powerpc/kernel/syscall.c
-@@ -185,8 +185,6 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
- 	 * So the resulting 6 or 7 bits of entropy is seen in SP[9:4] or SP[9:3].
+ 	/*
+ 	 * We don't need to restore AMR on the way back to userspace for KUAP.
+@@ -423,6 +424,7 @@ notrace unsigned long interrupt_exit_kernel_prepare(struct pt_regs *regs)
+ 	 * AMR value from the check above.
  	 */
- 	choose_random_kstack_offset(mftb());
--	/*common entry*/
--	syscall_exit_to_user_mode(regs);
+ 	kuap_kernel_restore(regs, kuap);
++	irqentry_exit(regs, local_paca->irqentry_s);
  
  	return ret;
  }
+diff --git a/include/linux/entry-common.h b/include/linux/entry-common.h
+index d95ab85f96ba..6521171469f2 100644
+--- a/include/linux/entry-common.h
++++ b/include/linux/entry-common.h
+@@ -352,30 +352,6 @@ void irqentry_enter_from_user_mode(struct pt_regs *regs);
+  */
+ void irqentry_exit_to_user_mode(struct pt_regs *regs);
+ 
+-#ifndef irqentry_state
+-/**
+- * struct irqentry_state - Opaque object for exception state storage
+- * @exit_rcu: Used exclusively in the irqentry_*() calls; signals whether the
+- *            exit path has to invoke ct_irq_exit().
+- * @lockdep: Used exclusively in the irqentry_nmi_*() calls; ensures that
+- *           lockdep state is restored correctly on exit from nmi.
+- *
+- * This opaque object is filled in by the irqentry_*_enter() functions and
+- * must be passed back into the corresponding irqentry_*_exit() functions
+- * when the exception is complete.
+- *
+- * Callers of irqentry_*_[enter|exit]() must consider this structure opaque
+- * and all members private.  Descriptions of the members are provided to aid in
+- * the maintenance of the irqentry_*() functions.
+- */
+-typedef struct irqentry_state {
+-	union {
+-		bool	exit_rcu;
+-		bool	lockdep;
+-	};
+-} irqentry_state_t;
+-#endif
+-
+ /**
+  * irqentry_enter - Handle state tracking on ordinary interrupt entries
+  * @regs:	Pointer to pt_regs of interrupted context
+diff --git a/include/linux/irqentry-state.h b/include/linux/irqentry-state.h
+new file mode 100644
+index 000000000000..d4ddeb1c6ab6
+--- /dev/null
++++ b/include/linux/irqentry-state.h
+@@ -0,0 +1,28 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++#ifndef __LINUX_IRQENTRYCOMMON_H
++#define __LINUX_IRQENTRYCOMMON_H
++
++#ifndef irqentry_state
++/**
++ * struct irqentry_state - Opaque object for exception state storage
++ * @exit_rcu: Used exclusively in the irqentry_*() calls; signals whether the
++ *            exit path has to invoke ct_irq_exit().
++ * @lockdep: Used exclusively in the irqentry_nmi_*() calls; ensures that
++ *           lockdep state is restored correctly on exit from nmi.
++ *
++ * This opaque object is filled in by the irqentry_*_enter() functions and
++ * must be passed back into the corresponding irqentry_*_exit() functions
++ * when the exception is complete.
++ *
++ * Callers of irqentry_*_[enter|exit]() must consider this structure opaque
++ * and all members private.  Descriptions of the members are provided to aid in
++ * the maintenance of the irqentry_*() functions.
++ */
++typedef struct irqentry_state {
++	union {
++		bool	exit_rcu;
++		bool	lockdep;
++	};
++} irqentry_state_t;
++#endif
++#endif
 -- 
 2.42.0.windows.2
 
