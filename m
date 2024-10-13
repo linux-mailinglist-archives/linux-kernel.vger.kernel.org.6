@@ -1,90 +1,144 @@
-Return-Path: <linux-kernel+bounces-362877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87DBB99BA8B
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:31:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78E1999BA95
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:39:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F140C281A71
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:31:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BBDB1C20B0B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:39:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE321474A2;
-	Sun, 13 Oct 2024 17:30:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940051494A7;
+	Sun, 13 Oct 2024 17:39:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbyV66Ko"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="lwsSZcDE"
+Received: from out-175.mta1.migadu.com (out-175.mta1.migadu.com [95.215.58.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1C013D508;
-	Sun, 13 Oct 2024 17:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 452BD1487E3
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 17:39:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728840658; cv=none; b=SeutuNK9mpXMaYb7bHg/4ih8oU6Ge79gn7HxCeZbsDHf/ggyL+qs5+zlEO2bik52+IRMmDhrWlYHrrJLjaiDZjlGgRE3+q83BADO19H37Mj5yhn3MWerd8wFVYsgheSVgwz0mSo7+9QtsclPk1z4VFYLqMHt6ZGngzcROna8y/c=
+	t=1728841177; cv=none; b=bzscKYR5C0rPGgOcLGVd32qX0y1bDVw9GGok1BRYzss2FDIaXGi74+HkFgnQC9JeqmJ9o3vN6SLtnuuBoedUMUvRSM8iqLhPZVVsqKTbceQXDGOAd1UnKujfON/4ae1M8KX167ADr206Vn5+OXiHR35NnyDx5pIZ+jwddhiC9LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728840658; c=relaxed/simple;
-	bh=SnPScOCb71pfmlidyIdszTJzOuwQmlyc0aA02tY0cfA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mml0AKGEBfQJYCSIvzUiwl3taHPILtVGe+By6+v5IxzTFlphFVh666MonnVNn+IRMfDYmYfapZMHjKKvp3QBoLRSesg6x1QBm+cmbWz1s+HyuozUhy8yOcBgsOih7QJP8VX8TpD1/LmlZPxqiC2OkTcnm37OMVnsoNNY6wVLF20=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SbyV66Ko; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31AE9C4AF09;
-	Sun, 13 Oct 2024 17:30:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728840658;
-	bh=SnPScOCb71pfmlidyIdszTJzOuwQmlyc0aA02tY0cfA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=SbyV66KoQwbmyQyS8Guhyjjn1lLPw6Mf9FjT1dCeOLEdrLAdkeornO19BmWachNy1
-	 SiruhUbtCM4xoPN6NfIQNo7dTcfcZl8wRU8QQ/bo5ADt03njzv4S5afh1+wVG6YdIz
-	 M8XjrFPPxd4m/8w05PLuID36ArebvQRFpH4nlUf69E3VP+/naJOoyyaKTAOkhFpyle
-	 3k20dPnq7A/gH2MsRaJ7kpT0KlSvqTUVuF8xsMnIZCbEHlCt+qe2GuivjW241t7Tz7
-	 dnYBHkxL5M1PGKSLwLs5rHevTTBb1Lxax6ONfR6TnpVhO688qbBff9JKIzWRrSbTYn
-	 Qzf+6MOgAzRXQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f8490856so58072e87.2;
-        Sun, 13 Oct 2024 10:30:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU9BaqVKlGsgWy6tkQts78NZxQ47m/3nOVw/W70ObEYq9KYfZh0oz8CoqZcTa5saEt+77ue7ydNTMKU0BI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyk/yhrvgIACuqkC1mubEzfs8baNdQaqbwKJskxjZor06kecJpK
-	we+ch1B0gV35Tz/pOk1yz+rZ3wkzJy+/+MfxOrT+24ZMv7oVNlbBaIk4osAQbO99pn1X8b7LGGD
-	6P8WbSKD6qUxRMcLxT68WQRuBDmI=
-X-Google-Smtp-Source: AGHT+IECelgcESbRmPsRqehda3GFvVUbEDY5jU9ogdAPc7VgE0w4gWikxv6zLqCYCPjJ/ZSU1vf7dUhb5fNz7xOHLCo=
-X-Received: by 2002:a05:6512:2213:b0:539:e6fc:4170 with SMTP id
- 2adb3069b0e04-539e6fc43aamr1805927e87.32.1728840656497; Sun, 13 Oct 2024
- 10:30:56 -0700 (PDT)
+	s=arc-20240116; t=1728841177; c=relaxed/simple;
+	bh=XfZfMzw30WnicN3a1qE9PuEGVSuYQuX/oCyayE7NgWw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Kva0r0AWjdKt8qyXdXQYdE5ZpH9HeplmiZVGf1S/21F0M5xqYva4rDvHldGcvPz1ZpOJg1LkKUWbBMdvRCQYJ/pJGo24VkPuyJNyO+eKqfO6isJ0oXA+N5pVcFYE5j1QowojoSttguki8R46Ti9oAY7vDgK1/v6QWtkBBsLIST8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=lwsSZcDE; arc=none smtp.client-ip=95.215.58.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728841173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=P4vayhhJlhZN3GgkGgPuAI8sSuIdRw4HReRwmMjKpO0=;
+	b=lwsSZcDEqH99tfQWS451EzNmMz5V61QRAfc0bUkP7264lS5oHst/6uKvFZUdM8iJxtWvp8
+	3GrJh184t+ArC8f3G7XR4pgmwhQ++9BJ9lEamc+x2cf6pQ5A0EmuzP0+/EsGqPD7O3XZmm
+	V3PFtTNgdybNxhbC6YZn5amZ9WcZ1rw=
+From: Andrea Righi <andrea.righi@linux.dev>
+To: Tejun Heo <tj@kernel.org>,
+	David Vernet <void@manifault.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>
+Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] sched_ext: Always call put_prev_task() with scx enabled
+Date: Sun, 13 Oct 2024 19:39:28 +0200
+Message-ID: <20241013173928.20738-1-andrea.righi@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241013051239.22564-1-jonathan@marek.ca>
-In-Reply-To: <20241013051239.22564-1-jonathan@marek.ca>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Sun, 13 Oct 2024 19:30:38 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXHvOgGysdPSNNk1bUR2f5tzRaxr4=saqF8KFXq+q6gDCA@mail.gmail.com>
-Message-ID: <CAMj1kXHvOgGysdPSNNk1bUR2f5tzRaxr4=saqF8KFXq+q6gDCA@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] efi/libstub: fix efi_parse_options() ignoring the
- default command line
-To: Jonathan Marek <jonathan@marek.ca>
-Cc: linux-efi@vger.kernel.org, Aditya Garg <gargaditya08@live.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>, 
-	Kees Cook <kees@kernel.org>, "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
-	Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
-	open list <linux-kernel@vger.kernel.org>, Nikolay Borisov <nik.borisov@suse.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-On Sun, 13 Oct 2024 at 07:16, Jonathan Marek <jonathan@marek.ca> wrote:
->
-> v2:
->  - changed to check for NUL character instead of size==1
->  - reworked cleanup patch to remove cmd_line_len
->  - moved 3rd commit out of this series
->
-> Jonathan Marek (2):
->   efi/libstub: fix efi_parse_options() ignoring the default command line
->   efi/libstub: remove unnecessary cmd_line_len from
->     efi_convert_cmdline()
->
+With the consolidation of put_prev_task/set_next_task(), we are now
+skipping the sched_ext ops.stopping/running() transitions when the
+previous and next tasks are the same, see commit 436f3eed5c69 ("sched:
+Combine the last put_prev_task() and the first set_next_task()").
 
-Thanks. I'm inclined to fold these together and just merge them as a
-single patch. Any objections?
+While this optimization makes sense in general, it can negatively impact
+performance in some user-space schedulers, that expect to handle such
+transitions when tasks exhaust their timeslice (see SCX_OPS_ENQ_LAST).
+
+For example, scx_rustland suffers a significant performance regression
+(e.g., gaming benchmarks drop from ~60fps to ~10fps).
+
+To fix this, ensure that put_prev_task()/set_next_task() are never
+skipped when the scx scheduling class is enabled, allowing the scx class
+to handle such transitions.
+
+This change restores the previous behavior, fixing the performance
+regression in scx_rustland.
+
+Link: https://github.com/sched-ext/scx/issues/788
+Fixes: 7c65ae81ea86 ("sched_ext: Don't call put_prev_task_scx() before picking the next task")
+Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
+---
+ kernel/sched/sched.h | 30 +++++++++++++++---------------
+ 1 file changed, 15 insertions(+), 15 deletions(-)
+
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 6085ef50febf..44d736e49d06 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2470,21 +2470,6 @@ __put_prev_set_next_dl_server(struct rq *rq,
+ 	rq->dl_server = NULL;
+ }
+ 
+-static inline void put_prev_set_next_task(struct rq *rq,
+-					  struct task_struct *prev,
+-					  struct task_struct *next)
+-{
+-	WARN_ON_ONCE(rq->curr != prev);
+-
+-	__put_prev_set_next_dl_server(rq, prev, next);
+-
+-	if (next == prev)
+-		return;
+-
+-	prev->sched_class->put_prev_task(rq, prev, next);
+-	next->sched_class->set_next_task(rq, next, true);
+-}
+-
+ /*
+  * Helper to define a sched_class instance; each one is placed in a separate
+  * section which is ordered by the linker script:
+@@ -2523,6 +2508,21 @@ DECLARE_STATIC_KEY_FALSE(__scx_switched_all);	/* all fair class tasks on SCX */
+ #define scx_switched_all()	false
+ #endif /* !CONFIG_SCHED_CLASS_EXT */
+ 
++static inline void put_prev_set_next_task(struct rq *rq,
++					  struct task_struct *prev,
++					  struct task_struct *next)
++{
++	WARN_ON_ONCE(rq->curr != prev);
++
++	__put_prev_set_next_dl_server(rq, prev, next);
++
++	if (next == prev && !scx_enabled())
++		return;
++
++	prev->sched_class->put_prev_task(rq, prev, next);
++	next->sched_class->set_next_task(rq, next, true);
++}
++
+ /*
+  * Iterate only active classes. SCX can take over all fair tasks or be
+  * completely disabled. If the former, skip fair. If the latter, skip SCX.
+-- 
+2.47.0
+
 
