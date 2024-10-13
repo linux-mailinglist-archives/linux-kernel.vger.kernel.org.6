@@ -1,59 +1,52 @@
-Return-Path: <linux-kernel+bounces-362841-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362842-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47FF399B9DF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:55:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C69799B9E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:00:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DAE62815DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:55:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C13D7281775
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:00:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8EF1465AB;
-	Sun, 13 Oct 2024 14:55:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96DFD1EB2E;
+	Sun, 13 Oct 2024 15:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s15h6lrC"
-Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="nrrmxv7i"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6379314601C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 14:55:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9748145A07;
+	Sun, 13 Oct 2024 15:00:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728831332; cv=none; b=IliN+ZFZuoEazY4bV5/n9vaaQmnE4Jqp+N5UiDApng9H/Qz8lMiPIjdKUNNq2W0ImuvrcjxqrwxKGwXeH9Mj/QIBKgJ5KrlX3YhX0Ism34+iUDAm7LNl7VH1UrjwmdOt0QxQLzJP97kpVpMXCl8ibbigQXXFAgtZaHAyRGyHmog=
+	t=1728831621; cv=none; b=XS44UYLSGnLcAZ2B0C6actYdd7P7o0LW315IF4VccHUwlq9+o2tCqEot53ZOKrFZ1FIn06nY8Wh50TuTUOn68rIF1bGfXGDVRxHLX0Uv4+L2y0O+rRtykWQxxxgLSOEDU0hnyF8XF2jev+s0UjxGRXrd+H3WeRnSyq7D7QOEaO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728831332; c=relaxed/simple;
-	bh=RkAcVw7imkH83Lnz9Bl0fGaXr29lw9m1rZVlseqBl4Y=;
+	s=arc-20240116; t=1728831621; c=relaxed/simple;
+	bh=oeWYAEUcd4WSXlgWqfX2kUJ0/1+J5uZulgzHfxS3sM4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Lo5Kd6G8IwPlNHkVmeZbkIRAa1p/Hg8Sk/3l5T2Q2/YaSEp900R+9GhSocO9BfRXAxQR2fpHFRRyYJPeMAMJHhP6xi28y6OtJabJa8eZZ80eO1kKR4DPNzwe2IaRbkYckVBzJLqjreVwOMRpKPd6YfVmdwEJVYVozg2ClT74NAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s15h6lrC; arc=none smtp.client-ip=95.215.58.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 13 Oct 2024 22:55:24 +0800
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728831327;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uYqRfss1NBTVeKYiNPPzCz5FIOGRLaUuCoy3A+BmjfQ=;
-	b=s15h6lrC6VPLqgaN7mFH23tSUn6W8ayRJVR8GxXO409adtjdnhAfQ7h5dW7Ce4YjmDLgpL
-	DSf2xWD2kKeqBNxE3gNLi1Wrt3bv1hSvrOZkfFhf2daQZFWJHMntQRuIVVw1bP7sD8H59q
-	t7oEJnp2V64HZZfecGHOpEiV+TAff+g=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Leo Yan <leo.yan@linux.dev>
-To: Julien Meunier <julien.meunier@nokia.com>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Mike Leach <mike.leach@linaro.org>,
-	James Clark <james.clark@linaro.org>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	stable@vger.kernel.org, coresight@lists.linaro.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] coresight: etm4x: Fix PID tracing when perf is run in
- an init PID namespace
-Message-ID: <20241013145524.GB45976@debian-dev>
-References: <20240925131357.9468-1-julien.meunier@nokia.com>
- <20241008200226.12229-1-julien.meunier@nokia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MF6Z+yzZhBJnP98sTS8UHxca9WOhm/M7d0O3GwUuUyYOO92/fCtiunioZynaG8qmo7h5J2nQQdqIPXcklOT95ICyXezFz5z0oWyPkfJkNTZgfBuluCVi/Pi+ykDX9bgPHXujsS1bGqLRnO1txox4vJ+ZRIrJ4fn7CM5StIiNTrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=nrrmxv7i; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99ED6C4CEC7;
+	Sun, 13 Oct 2024 15:00:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728831620;
+	bh=oeWYAEUcd4WSXlgWqfX2kUJ0/1+J5uZulgzHfxS3sM4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nrrmxv7isohxfktURheDOpWAib2r5E28LfrZYQDba1kppMn+rkKHYlUHHf2OoPsvI
+	 AMLAXAsyzqaR7bkdlXAvED1tc3AWUhR+csBN5MjnN6DNs4KoN3xztP4tiJr57sJoxA
+	 P4cQKcvBh8oEfr5WD1iBs/FOlBos4MRISpDzmep0=
+Date: Sun, 13 Oct 2024 17:00:15 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Dan Williams <dan.j.williams@intel.com>
+Cc: rafael.j.wysocki@intel.com, tj@kernel.org, linux-kernel@vger.kernel.org,
+	regressions@lists.linux.dev
+Subject: Re: [PATCH v2] driver core: Fix userspace expectations of
+ uevent_show() as a probe barrier
+Message-ID: <2024101356-gauntlet-sludge-7b76@gregkh>
+References: <172790598832.1168608.4519484276671503678.stgit@dwillia2-xfh.jf.intel.com>
+ <67047c516045d_964fe294b1@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,59 +55,23 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008200226.12229-1-julien.meunier@nokia.com>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <67047c516045d_964fe294b1@dwillia2-xfh.jf.intel.com.notmuch>
 
-On Tue, Oct 08, 2024 at 10:02:25PM +0200, Julien Meunier wrote:
-> The previous implementation limited the tracing capabilities when perf
-> was run in the init PID namespace, making it impossible to trace
-> applications in non-init PID namespaces.
+On Mon, Oct 07, 2024 at 05:26:57PM -0700, Dan Williams wrote:
+> Dan Williams wrote:
+> > Changes since v1 [1]:
+> > - Move the new "locked" infrastructure to private header files to make
+> >   it clear it is not approved for general usage (Greg)
 > 
-> This update improves the tracing process by verifying the event owner.
-> This allows us to determine whether the user has the necessary
-> permissions to trace the application.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: aab473867fed ("coresight: etm4x: Don't trace PID for non-root PID namespace")
-> Signed-off-by: Julien Meunier <julien.meunier@nokia.com>
+> Greg, per the 0day report and further testing I am missing something
+> subtle in using kernfs open files to pin device objects. So hold off on
+> this for now until I can get that root caused. If someone else can spot
+> what I missed feel free to chime in, but otherwise I will circle back.
 
-Reviewed-by: Leo Yan <leo.yan@linux.dev>
+Ok, I'll drop this for now and wait for a follow-on patch to come for
+whatever you decide.
 
-> ---
-> Changes in v2:
-> * Update comments
-> ---
->  drivers/hwtracing/coresight/coresight-etm4x-core.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> index 66d44a404ad0..cf41c42399e1 100644
-> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
-> @@ -693,9 +693,9 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->  		config->cfg |= TRCCONFIGR_TS;
->  	}
->  
-> -	/* Only trace contextID when runs in root PID namespace */
-> +	/* Only trace contextID when the event owner is in root PID namespace */
->  	if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
-> -	    task_is_in_init_pid_ns(current))
-> +	    task_is_in_init_pid_ns(event->owner))
->  		/* bit[6], Context ID tracing bit */
->  		config->cfg |= TRCCONFIGR_CID;
->  
-> @@ -709,8 +709,8 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
->  			ret = -EINVAL;
->  			goto out;
->  		}
-> -		/* Only trace virtual contextID when runs in root PID namespace */
-> -		if (task_is_in_init_pid_ns(current))
-> +		/* Only trace virtual contextID when the event owner is in root PID namespace */
-> +		if (task_is_in_init_pid_ns(event->owner))
->  			config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
->  	}
->  
-> -- 
-> 2.34.1
-> 
+thanks,
+
+greg k-h
 
