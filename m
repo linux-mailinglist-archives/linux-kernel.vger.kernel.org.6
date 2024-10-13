@@ -1,78 +1,74 @@
-Return-Path: <linux-kernel+bounces-362917-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362918-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52B6699BB2E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:02:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BFE799BB2F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 814281C20EDA
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:02:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C47C81C20A15
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47E6F148302;
-	Sun, 13 Oct 2024 19:02:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 700AA1494C3;
+	Sun, 13 Oct 2024 19:06:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nPbanFlY";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xrN0snCj"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="MYe/s0EU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="Q7NGCNrk"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 384F8126BF2
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:02:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76FED126BF2;
+	Sun, 13 Oct 2024 19:06:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728846141; cv=none; b=FhRhPGq4J9jNy3mUHM3Y6uHMtOD8T/PKvQiWDrxZpUYciSxF0jH4nqDc5L8L9UO5cAN8+hoBGGynKQdYiB1RsgR2h2wDyKmghthTHEyQKXuqr/oR5nvEY+kkjHI3VHceqg4LrWcbB8KayYbuZI5UpTeQK1x5yJyDPoV7KKSEHmo=
+	t=1728846364; cv=none; b=ffQuQQvYcOVmOWw9Gc96cvsl/bbnj6a5Uqr2w6dKg1BTs7nhteoKv5OwCCG07iw1qJ3y1HEsfUYbiEJHl/Zt3tAgOBgO8g2zF4zC94zf5MMPoT2JoJx9cLBfnhlZ24SPDBHAhO4gpZYIT/XdDH7st8/FNpAo2oK5bvFEeJTB28o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728846141; c=relaxed/simple;
-	bh=nOinyig7KnokC/BQbob8LbgmeMITg2b9nmE/OTGMSIY=;
+	s=arc-20240116; t=1728846364; c=relaxed/simple;
+	bh=LWUt83+72p94OQBvu7LDpY8JmXsbW3JX7rQCpLqvzIc=;
 	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HchKQTrYGs0cjEszhHhpypszuaV8Ks3pd7IQY3PbRTwH4D7OJzwhO9wMsJCowP0fpsPCoIVTjuGPUD0dDRMxTn+ZUbHx6a6znAfCEp6ya6hf7jKLzrOxchevliSlos6uU61nrVUN+YNx9y29dCwrYFKrqD97MuboP+RUxyu1ikQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nPbanFlY; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xrN0snCj; arc=none smtp.client-ip=193.142.43.55
+	 MIME-Version:Content-Type; b=O1iphNzn8WhEWsYHtgA1lpjnZTtGs4nG/knkRLVg9iasoaSQn5k/rCf8mwtRnHYATDURVgbWJUirTqkD4wAPqBuEyLhfe0ydbLtrq1GaExAfXZ4OhCaEz0BB3GcdNi/Giz8P9qIkfE0FrQVpG2Jle2ljlkEbaRdFmWaDnYOg+Pk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=MYe/s0EU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=Q7NGCNrk; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Thomas Gleixner <tglx@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728846137;
+	s=2020; t=1728846361;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UJX6KrnrJtu42HEdJXarSbGs/RtOSlZ6fSizcPT7CKM=;
-	b=nPbanFlYHBBgTZ9bRpN8MBV4dnggJt/7KjWbDcXY0bICS+guJ8EcwWvag6VnLfa8/teo+8
-	PLGXTdBQqHHI0rsA0inlXJUOf2ENs8XDl55VK3nLutlSpbtb5bK2xbPkrF+9D4XEE660zu
-	ra7NSKpSLIc9l66Fbiair9O+JjZZpwbLUeshBu8ygGEfQv775c+QiWz4YypP3lR2iVXZc3
-	QFf8qvIgawgfkRNhW0GduMJvKB4O+yBGKirGM+KkIRHRnHpwfpJpN49xzSZSa7J7U+G2Hs
-	Nv8QyBJs+TnvifSFLGwlLsJl8aHnudUB2tevjQwQUO+JXKPZjpjQY5F+fGKADQ==
+	bh=HX93gLvvVYNZTz0n+RbjU7CdU6pUjX+YaKABzt1dakc=;
+	b=MYe/s0EUp/S+Yz44ZaJ36e1oIv8xGSCGMxaGq+6RAoHdNouIo7z/XKX1El8qcYRPXHh5kf
+	9zD/f0YxO0m5tzt6SWEDgYn0ZoCYyXWAiv/DxT417mTOcOjbkyXwprI+7UBk+aLhYetB3c
+	wRsS2Ns8gTmG0u7ETyIsf/pHaTNXxohl4McaaiA7LFQRySG107KfTARAIy3T+JUQLpc8NO
+	OsIy5HBGIANNVYRa2LGUP5eT9mugmjscxJldqZnYj8KIsmoEAB6NZGiyiFEotaEs4L8NPz
+	Z9Fx5z88+VSxaWYHJpWqbiv/lfkD59xcmpLRxB+bbXyy6Jjwj9QAg8N0rSGPfA==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728846137;
+	s=2020e; t=1728846361;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 in-reply-to:in-reply-to:references:references;
-	bh=UJX6KrnrJtu42HEdJXarSbGs/RtOSlZ6fSizcPT7CKM=;
-	b=xrN0snCjtW4MtBzPmyAZh/jAT5pYhRHv0ec94fpMZAzQCGpK3OUtfA6zIGeEod9WT28ETK
-	JjvnFr7ZWk+WxYCw==
-To: David Laight <David.Laight@ACULAB.COM>, Steven Rostedt
- <rostedt@goodmis.org>
-Cc: Peter Zijlstra <peterz@infradead.org>, Sebastian Andrzej Siewior
- <bigeasy@linutronix.de>, Ankur Arora <ankur.a.arora@oracle.com>,
- "mingo@kernel.org" <mingo@kernel.org>, "linux-kernel@vger.kernel.org"
- <linux-kernel@vger.kernel.org>, "juri.lelli@redhat.com"
- <juri.lelli@redhat.com>, "vincent.guittot@linaro.org"
- <vincent.guittot@linaro.org>, "dietmar.eggemann@arm.com"
- <dietmar.eggemann@arm.com>, "bsegall@google.com" <bsegall@google.com>,
- "mgorman@suse.de" <mgorman@suse.de>, "vschneid@redhat.com"
- <vschneid@redhat.com>, "efault@gmx.de" <efault@gmx.de>
-Subject: RE: [PATCH 0/5] sched: Lazy preemption muck
-In-Reply-To: <ea496d1ea02049e88a701f984b0f2a6b@AcuMS.aculab.com>
-References: <20241007074609.447006177@infradead.org>
- <20241008153232.YwZfzF0r@linutronix.de> <87wmihdh3u.fsf@oracle.com>
- <20241009062019.1FJYnQL1@linutronix.de>
- <20241009080202.GJ17263@noisy.programming.kicks-ass.net>
- <20241009100133.2569e2a7@gandalf.local.home> <87h69lqbk0.ffs@tglx>
- <20241009164355.1ca1d3d3@gandalf.local.home> <87ed4pq953.ffs@tglx>
- <ea496d1ea02049e88a701f984b0f2a6b@AcuMS.aculab.com>
-Date: Sun, 13 Oct 2024 21:02:17 +0200
-Message-ID: <878qurhlmu.ffs@tglx>
+	bh=HX93gLvvVYNZTz0n+RbjU7CdU6pUjX+YaKABzt1dakc=;
+	b=Q7NGCNrkkzLxvrOMLOdfkpQECOBDL/DL57W6opOUV3DPXYc3zu80Qqah4+bvx57r8Oh/qc
+	1Nk96r2amPDtUIAw==
+To: Dirk Behme <dirk.behme@gmail.com>, Lyude Paul <lyude@redhat.com>,
+ rust-for-linux@vger.kernel.org
+Cc: Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar
+ <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long
+ <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+ linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
+ <alex.gaynor@gmail.com>, Wedson Almeida Filho <wedsonaf@gmail.com>, Boqun
+ Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, =?utf-8?Q?Bj?=
+ =?utf-8?Q?=C3=B6rn?= Roy Baron
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, Andreas
+ Hindborg <a.hindborg@samsung.com>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>
+Subject: Re: [PATCH v6 0/3] rust: Add irq abstraction, SpinLockIrq
+In-Reply-To: <aef35907-b92a-4f56-a330-b4be06f11984@gmail.com>
+References: <20240916213025.477225-1-lyude@redhat.com>
+ <aef35907-b92a-4f56-a330-b4be06f11984@gmail.com>
+Date: Sun, 13 Oct 2024 21:06:01 +0200
+Message-ID: <875xpvhlgm.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,51 +77,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
 
-On Thu, Oct 10 2024 at 10:23, David Laight wrote:
-> ...
->> And once all the problems with LAZY are sorted then this cond_resched()
->> line just goes away and the loop looks like this:
+On Sat, Oct 12 2024 at 07:29, Dirk Behme wrote:
+
+> Hi Lyude,
+>
+> On 16.09.24 23:28, Lyude Paul wrote:
+>> This adds a simple interface for disabling and enabling CPUs, along with
+>> the ability to mark a function as expecting interrupts be disabled -
+>> along with adding bindings for spin_lock_irqsave/spin_lock_irqrestore().
 >> 
->>     while ($cond) {
->>           spin_lock(L);
->>           do_stuff();
->>           spin_unlock(L);
->>     }
+>> Current example usecase (very much WIP driver) in rvkms:
+>> 
+>> https://gitlab.freedesktop.org/lyudess/linux/-/commits/rvkms-example-08012024
+>> 
+>> specifically drivers/gpu/drm/rvkms/crtc.rs
+>> 
+>> This series depends on
+>> https://lore.kernel.org/rust-for-linux/ZuKNszXSw-LbgW1e@boqun-archlinux/
+>> 
+>> Lyude Paul (3):
+>>    rust: Introduce irq module
+>>    rust: sync: Introduce lock::Backend::Context
+>>    rust: sync: Add SpinLockIrq
 >
-> The problem with that pattern is the cost of the atomics.
-> Thay can easily be significant especially if there are
-> a lot of iterations and do_stuff() is cheap;
 >
-> If $cond needs the lock, the code is really:
-> 	spin_lock(L);
-> 	while ($cond) {
-> 		do_stuff();
-> 		spin_unlock(L);
-> 		spin_lock(L);
-> 	}
-> 	spin_unlock(L);
+> To have it in this thread as well I just want to mention the discussion in
 >
-> which make it even more obvious that you need a cheap
-> test to optimise away the unlock/lock pair.
+> https://lore.kernel.org/rust-for-linux/87a5falmjy.fsf@kernel.org/
+>
+> which results in the impression that this patch series needs to update 
+> `CondVar::wait` to support waiting with irq disabled.
 
-You cannot optimize the unlock/lock pair away for a large number of
-iterations because then you bring back the problem of extended
-latencies.
+What means waiting with interrupts disabled?
 
-It does not matter whether $cond is cheap and do_stuff() is cheap. If
-you have enough iterations then even a cheap do_stuff() causes massive
-latencies, unless you keep the horrible cond_resched() mess, which we
-are trying to remove.
+Spinning? Why would you want to do that in the first place?
 
-What you are proposing is a programming antipattern and the lock/unlock
-around do_stuff() in the clean loop I outlined is mostly free when there
-is no contention, unless you use a pointless micro benchmark which has
-an empty (or almost empty) do_stuff() implementation. We are not
-optimizing for completely irrelevant theoretical nonsense.
+There are not a lot of use cases to do so, except for core code.
 
 Thanks,
 
         tglx
-
-
 
