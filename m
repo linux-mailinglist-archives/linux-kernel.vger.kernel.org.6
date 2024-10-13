@@ -1,145 +1,174 @@
-Return-Path: <linux-kernel+bounces-362679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362681-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD15199B7F6
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 04:24:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D531599B7FD
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 04:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2A021C212FB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 02:24:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 791D4B20EA1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 02:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 218C46FDC;
-	Sun, 13 Oct 2024 02:23:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC4418C06;
+	Sun, 13 Oct 2024 02:28:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="CC7XrcKv"
-Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WrGhdZ5A"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25D017C9;
-	Sun, 13 Oct 2024 02:23:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BF6B231CB4;
+	Sun, 13 Oct 2024 02:28:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728786236; cv=none; b=L9P2uZm6CgWRlGq3OC/nZbgY8GOFBc6OUFVsfCi9Ayi2BfTrTAYX67/aT4HQ/n6lLMnUAcGTKmqKBvYFZbb/Olg9GRLC9dxI2LsxDjAKp4OAgmdsu2eLHTFwfu9AgmXX0bCxq8Q9YtlLbAflVZrjwUwD5Y7X5NV6/pPTh993G4o=
+	t=1728786519; cv=none; b=WZNJvP/XDC6z4S0P8ZPlkKLwc41VsmO18Jacuu2ydgyOk7OPbJApwa+zI09a4V5ED8v4gT2bul0TEM3nPt8Ylwg572Hb9dH31Zw/SY23rFa7ClQjzXQ4TlNg2FufbLenXrj5GIUocpFQvYk+K2VTvXW62SITUW0wPCSStZz56JM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728786236; c=relaxed/simple;
-	bh=Id3b4OChEeEWEa/SlZuDWsSVwqlKveSdPvqc+lK/CZI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SYQpGtjw2EZmIveufaG9YvXe6ReYI1E87Ak/7vi7QbY0v9n07TMl5J9nejtfjm9rHILIlLFuyn1Ve0hapARlo0C8wSzsQ1YStqXQNVU3ZTDcUqf9g9bI2cgylHP+Qx0ugyDJvpAIeYN55ThYVV/DERvIGXQRghl/AVyK2y1pr+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=CC7XrcKv; arc=none smtp.client-ip=54.243.244.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1728786124;
-	bh=6i+CZeniLVHL//OkWrbBnihzv00EfEX/9KZ4U14pjhE=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=CC7XrcKvCg1M09+lyWFtX4rhd0ZwWhMd7yjM1j63AcCBQnA5AlZNGZgLFioBa3nDx
-	 ya9cqSkcnt4UYhTpjdvtm7DR7vRLTPZ/cvxQtuXdQ0IHpl4RePz7jTs+rha0Fh25xT
-	 asSC+xvJINXC4t+ThD1rU/KhLc34z8pSqQ8Kvx6Y=
-X-QQ-mid: bizesmtpip4t1728786101to0n30e
-X-QQ-Originating-IP: kFr3Gnjj9upqWNurIfWhLUarrIlikvQORTMvas81gZ8=
-Received: from avenger-OMEN-by-HP-Gaming-Lapto ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Sun, 13 Oct 2024 10:21:39 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 5663206268251501140
-From: WangYuli <wangyuli@uniontech.com>
-To: gregkh@linuxfoundation.org,
-	sashal@kernel.org,
-	stable@vger.kernel.org
-Cc: helugang@uniontech.com,
-	jkosina@suse.com,
-	bentiss@kernel.org,
-	linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH 6.1+] HID: multitouch: Add support for lenovo Y9000P Touchpad
-Date: Sun, 13 Oct 2024 10:21:26 +0800
-Message-ID: <219F185A4FC20A60+20241013022126.44197-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1728786519; c=relaxed/simple;
+	bh=kxw0/5KQqdN8nbP5+1lX3aIizA0MM7Ku7mcSHuuSt78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pfRNniVbwgyDqa9gsiW9kggoJNDalfkUrpa9MnT6DSqLcY5EEgyLVUad2xl4x2JlwgrahdFS4p9zEjAY5TTkqr39LszECLgg9zUixypzbmPU3+n37CbiBFzrFJA2yoJ/YkojGDnQarebqiDglGXu8PUVG1Z8Efn8QXXqtNN9fZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WrGhdZ5A; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728786517; x=1760322517;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=kxw0/5KQqdN8nbP5+1lX3aIizA0MM7Ku7mcSHuuSt78=;
+  b=WrGhdZ5AosXWjiZOSFaMtToHiFij0gvT1WZ4p2gR0ui5X1+7VztdCtae
+   proKltb9ZHkdec2Lkpp+7nO3PXKEehyL3ZISX6TP6PIInjNG3+8Kbgkkn
+   6DQn4WTucTt21rZvqFVciFESRTb4NlMgwslJflFITKxFXpGPnZrhSXKaE
+   +WfBlreK82gMioCsQdSYKqaE5llbKInDKxH17AAv3r02Nyax+qJ4j3M9w
+   CSJCThAy0z1FxxU8emEIiFihUO94WXMlec9v+8jDCjbnA8qqnSzfpXoU+
+   JvnoemjKwTiZhd5ofU7qOak8TI25BP5bkyrJhAfKIA57mDiAJQa/jk//V
+   g==;
+X-CSE-ConnectionGUID: CS5TS9tHTUitzBFIhjFP7g==
+X-CSE-MsgGUID: jv2in9R0S8uMllx732FifQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="38731315"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="38731315"
+Received: from orviesa010.jf.intel.com ([10.64.159.150])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 19:28:37 -0700
+X-CSE-ConnectionGUID: do3bFO2CTB68Q54myxA8Nw==
+X-CSE-MsgGUID: pH9+hgyLT8y7Svldl/1AxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="77172345"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa010.jf.intel.com with ESMTP; 12 Oct 2024 19:28:32 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1szoLN-000E0B-1Z;
+	Sun, 13 Oct 2024 02:28:29 +0000
+Date: Sun, 13 Oct 2024 10:27:32 +0800
+From: kernel test robot <lkp@intel.com>
+To: Wei Fang <wei.fang@nxp.com>, davem@davemloft.net, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, vladimir.oltean@nxp.com,
+	claudiu.manoil@nxp.com, xiaoning.wang@nxp.com, Frank.Li@nxp.com,
+	christophe.leroy@csgroup.eu, linux@armlinux.org.uk,
+	bhelgaas@google.com
+Cc: oe-kbuild-all@lists.linux.dev, imx@lists.linux.dev,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org
+Subject: Re: [PATCH net-next 05/11] net: enetc: add enetc-pf-common driver
+ support
+Message-ID: <202410131001.KjFCfYWr-lkp@intel.com>
+References: <20241009095116.147412-6-wei.fang@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NpWR2/YALQX3DXJLAfdsrsrxj3ckTgaFD+YLrdKtdkbQMKCFgQetw+Y2
-	ZcdvKt5QfRSUnD6Cs14H1wep1hiwbZzwRclWIl6+N/ec9ohGPnrW+/tQI11EnTJ8/+lQEEL
-	//MSxOvVA61WBAbfJ2HezA3YbI7cioQtJEL5GlZONl/w53Tmv3EgxTVWzTapDIB61lNxcMO
-	OOnGJjNl5lgX3RdPxhGfJureI9/MHh7S5ysvEPDlVOoWknZVbm7/vq5usPDxwKfTNlaatwg
-	DqqbVpNxdCYKCMQBw6L490i8/0VI7YD9RvkNjSsV6h+ZlMP1BUP95T7jbN5izmqBs8B/1IT
-	FzTgnWvVfkdczcfR+btogKVeSqomptUd1n3UJn3CCSdBTP6ec452ulLNC2DG1BgqXy4bxZY
-	zr8enJb5AGtey37wQgQN+v8HNtbPctTT2DEZd8B6iKXkY8iDWdmdpw/BFB4D0VSDyX7VKqy
-	GMrl2I7emNIpgPSH0YcRNCL5jo/F/+OHuTGfew98QRtvXr8pRAMMXgjPqeuAiNuIkjdkXj+
-	Z2QDgJ+Yz9dpypa1w6Z4yl96Ll4ys++AGcVkbXR3DsI6m5wf+jiURc7STLA4372eRSYMkDS
-	gtW18cFBta6PrksgZX8o3j7cO/qbIE6hEs/lx0PHG5VEVaV0xMkK1p24PU0xnsL7rbL7vb8
-	ZNW+Tt+uQN+f/sOYD9TjO4cR6YSE6AQuVoTORRo/IS5aWLExXeMrBMOlCVuYi7PDlZx+sR0
-	A0r7kWrIqr7p+f2EshvLg1G1VUHxIgqoVjHfRdS0K4uxX5fwPGe87xYKWD32ZQa8cnbHGOZ
-	AlTxHSEZsMV1TnpfjuEqMr6CZ7JLhkGIZFK1vuuzieHnaKuT+9ikla+GG3HcrUDNcOND/mW
-	vADdQdt7ylaG/v3LT+HkRfjJQzmwHPh2bcXXUTOOgxr8D+iQzrr3ToEdVV+medExVmNVhl6
-	Huc0LXu/YJJpBeUtwQSb9yLTi+wp6Nxx9gqU=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009095116.147412-6-wei.fang@nxp.com>
 
-From: He Lugang <helugang@uniontech.com>
+Hi Wei,
 
-[ Upstream commit 251efae73bd46b097deec4f9986d926813aed744 ]
+kernel test robot noticed the following build errors:
 
-The 2024 Lenovo Y9000P which use GT7868Q chip also needs a fixup.
-The information of the chip is as follows:
-I2C HID v1.00 Mouse [GXTP5100:00 27C6:01E0]
+[auto build test ERROR on net-next/main]
 
-Signed-off-by: He Lugang <helugang@uniontech.com>
-Signed-off-by: Jiri Kosina <jkosina@suse.com>
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/hid/hid-ids.h        | 1 +
- drivers/hid/hid-multitouch.c | 8 ++++++--
- 2 files changed, 7 insertions(+), 2 deletions(-)
+url:    https://github.com/intel-lab-lkp/linux/commits/Wei-Fang/dt-bindings-net-add-compatible-string-for-i-MX95-EMDIO/20241009-181113
+base:   net-next/main
+patch link:    https://lore.kernel.org/r/20241009095116.147412-6-wei.fang%40nxp.com
+patch subject: [PATCH net-next 05/11] net: enetc: add enetc-pf-common driver support
+config: powerpc-randconfig-r062-20241013 (https://download.01.org/0day-ci/archive/20241013/202410131001.KjFCfYWr-lkp@intel.com/config)
+compiler: powerpc-linux-gcc (GCC) 14.1.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241013/202410131001.KjFCfYWr-lkp@intel.com/reproduce)
 
-diff --git a/drivers/hid/hid-ids.h b/drivers/hid/hid-ids.h
-index 06104a4e0fdc..86820a3d9766 100644
---- a/drivers/hid/hid-ids.h
-+++ b/drivers/hid/hid-ids.h
-@@ -505,6 +505,7 @@
- #define USB_DEVICE_ID_GENERAL_TOUCH_WIN8_PIT_E100 0xe100
- 
- #define I2C_VENDOR_ID_GOODIX		0x27c6
-+#define I2C_DEVICE_ID_GOODIX_01E0	0x01e0
- #define I2C_DEVICE_ID_GOODIX_01E8	0x01e8
- #define I2C_DEVICE_ID_GOODIX_01E9	0x01e9
- #define I2C_DEVICE_ID_GOODIX_01F0	0x01f0
-diff --git a/drivers/hid/hid-multitouch.c b/drivers/hid/hid-multitouch.c
-index c4a6908bbe54..847462650549 100644
---- a/drivers/hid/hid-multitouch.c
-+++ b/drivers/hid/hid-multitouch.c
-@@ -1446,7 +1446,8 @@ static __u8 *mt_report_fixup(struct hid_device *hdev, __u8 *rdesc,
- {
- 	if (hdev->vendor == I2C_VENDOR_ID_GOODIX &&
- 	    (hdev->product == I2C_DEVICE_ID_GOODIX_01E8 ||
--	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9)) {
-+	     hdev->product == I2C_DEVICE_ID_GOODIX_01E9 ||
-+		 hdev->product == I2C_DEVICE_ID_GOODIX_01E0)) {
- 		if (rdesc[607] == 0x15) {
- 			rdesc[607] = 0x25;
- 			dev_info(
-@@ -2065,7 +2066,10 @@ static const struct hid_device_id mt_devices[] = {
- 		     I2C_DEVICE_ID_GOODIX_01E8) },
- 	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
- 	  HID_DEVICE(BUS_I2C, HID_GROUP_ANY, I2C_VENDOR_ID_GOODIX,
--		     I2C_DEVICE_ID_GOODIX_01E8) },
-+		     I2C_DEVICE_ID_GOODIX_01E9) },
-+	{ .driver_data = MT_CLS_WIN_8_FORCE_MULTI_INPUT_NSMU,
-+	  HID_DEVICE(BUS_I2C, HID_GROUP_ANY, I2C_VENDOR_ID_GOODIX,
-+		     I2C_DEVICE_ID_GOODIX_01E0) },
- 
- 	/* GoodTouch panels */
- 	{ .driver_data = MT_CLS_NSMU,
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410131001.KjFCfYWr-lkp@intel.com/
+
+All errors (new ones prefixed by >>):
+
+   powerpc-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_pf_common.o: in function `enetc_sriov_configure':
+>> drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:336:(.text+0x55c): undefined reference to `enetc_msg_psi_free'
+>> powerpc-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:349:(.text+0x5e4): undefined reference to `enetc_msg_psi_init'
+>> powerpc-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:365:(.text+0x658): undefined reference to `enetc_msg_psi_free'
+   powerpc-linux-ld: drivers/net/ethernet/freescale/enetc/enetc_pf_common.o: in function `enetc_pf_netdev_setup':
+   drivers/net/ethernet/freescale/enetc/enetc_pf_common.c:106:(.text+0xb00): undefined reference to `enetc_set_ethtool_ops'
+
+
+vim +336 drivers/net/ethernet/freescale/enetc/enetc_pf_common.c
+
+   324	
+   325	int enetc_sriov_configure(struct pci_dev *pdev, int num_vfs)
+   326	{
+   327		struct enetc_si *si = pci_get_drvdata(pdev);
+   328		struct enetc_pf *pf = enetc_si_priv(si);
+   329		int err;
+   330	
+   331		if (!IS_ENABLED(CONFIG_PCI_IOV))
+   332			return 0;
+   333	
+   334		if (!num_vfs) {
+   335			pci_disable_sriov(pdev);
+ > 336			enetc_msg_psi_free(pf);
+   337			kfree(pf->vf_state);
+   338			pf->num_vfs = 0;
+   339		} else {
+   340			pf->num_vfs = num_vfs;
+   341	
+   342			pf->vf_state = kcalloc(num_vfs, sizeof(struct enetc_vf_state),
+   343					       GFP_KERNEL);
+   344			if (!pf->vf_state) {
+   345				pf->num_vfs = 0;
+   346				return -ENOMEM;
+   347			}
+   348	
+ > 349			err = enetc_msg_psi_init(pf);
+   350			if (err) {
+   351				dev_err(&pdev->dev, "enetc_msg_psi_init (%d)\n", err);
+   352				goto err_msg_psi;
+   353			}
+   354	
+   355			err = pci_enable_sriov(pdev, num_vfs);
+   356			if (err) {
+   357				dev_err(&pdev->dev, "pci_enable_sriov err %d\n", err);
+   358				goto err_en_sriov;
+   359			}
+   360		}
+   361	
+   362		return num_vfs;
+   363	
+   364	err_en_sriov:
+ > 365		enetc_msg_psi_free(pf);
+   366	err_msg_psi:
+   367		kfree(pf->vf_state);
+   368		pf->num_vfs = 0;
+   369	
+   370		return err;
+   371	}
+   372	EXPORT_SYMBOL_GPL(enetc_sriov_configure);
+   373	
+
 -- 
-2.45.2
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
