@@ -1,57 +1,58 @@
-Return-Path: <linux-kernel+bounces-362674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E48599B7EC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 03:47:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4ADC799B7ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 03:47:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC9B61C218CB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:47:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 005CD1F21F98
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CBD3FEC;
-	Sun, 13 Oct 2024 01:47:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ECF8BA41;
+	Sun, 13 Oct 2024 01:47:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="lSzuIXBf"
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="de/j69qd"
 Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B1A17C9;
-	Sun, 13 Oct 2024 01:47:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 681E41876;
+	Sun, 13 Oct 2024 01:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728784064; cv=pass; b=JqAlkDnVTcVLjS5IIt+uIdFCAU/XpJEIDwpZarj52kNERkBFzrBKAp0n4/Phe7TMghZRu8Y4v9UBYqK7n6JitqCMiy0Buz0E1NTSRM/11XWGjKa8vqQLEYhoC9jtcEoNmrwETw1qgL7ynF5glSa4NgfgXxUFOkIoI9Oe3m+qoCk=
+	t=1728784066; cv=pass; b=GmNM/FwGKjtpjjV0gSP6KuU3A4LVIDAOm0mp/lXNGwtYGFNpTyva88fN0dRB12Fg4C3agYKMW13i3TUgakQwVufYJfTLAT0tOj3Vh+LIsiBG29hWNhQIWQNjdCUZgPDzU38LdL857iW+WvE4z/qT/swyRVTKCoduydlT7mvDqOE=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728784064; c=relaxed/simple;
-	bh=aKzvzxILTzxEmE0TZZI6Q40SUjVKIobJ6VAIQ+PGjN4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uwx2KuuJXeOAv4CZNIjlB+h6r+Eu1R+I19163s17wQTPB9WGiCYmIF7Wly/VmkQQnXmRmN6r6g4O6UXBjckKmJA5IHOl1EelZ3qIK5pRMKGO+uJy3rRkA0/YIl+mzt04R0xPl3zlI1eYCbRFr8e0ETzF4Opyc/PhbnYD3h69tmc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=lSzuIXBf; arc=pass smtp.client-ip=136.143.188.15
+	s=arc-20240116; t=1728784066; c=relaxed/simple;
+	bh=BbOxdWKhpLVzaYXvnM8PyOpEFG0kwbdh/Uc0c81WyqM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=tNEtRBGO4dtj6JOWmAprWQXxNPLOlWFfvTMS8IRMTtktJqYXhM2TpqirE/qjcy7JnhohmjeHWBNpKe1vCHhh3QEOrUFLGIsbmRLoFRxpPvKkqza3C8YYePabr7eUnfFarXyq70L5qov14xInAbKdOTi8r3eMsG7xfpZv/dsUbXw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=de/j69qd; arc=pass smtp.client-ip=136.143.188.15
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1728784050; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1728784058; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=It0thPt1SNcT8/gZ9ipba0KPZkvMcO0yhXewdMhc5q6qiOuxvp8A04fO99bauARfPxc6oN6hOCl6boFVj5IeoiP0xZXhQDGmFpvuEkRKh2lXncrWO+koLOnd95YRe4NvSUAmOF1qTpZsilKl0KUpR+OrZpotS5YFMOFa/jJOFNY=
+	b=NRO3vf2rcxXnRP3nDngSxzzlP7HPphu9WLsxal3CQv/s3zh6QYT560Cn1JB9paiJ7AVp2FFLw+LTwch0YqvHAp2WH1vFE2yz5nnp0kcRKzC7pLp6qeoal5l+fSsxzILWP38ZKKHa4wHDB0RkmC4n15E/jRehdusWScvUWPN/fyQ=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1728784050; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=3CF9QHK0q8CqBiP+xU9cGsEZFeH+jlJV0LlwJo+Juxw=; 
-	b=S4zRqjfveUXpTi3ioluhChRcYrSIz13jfhUxNYplj1fQt08P6/D/n3H4xt/HhaS+h09GBLWZ5oGv1LFWSKNcIwxOb/7+IFst+A8JAwxJvKO10Hb5fUMlBYtIHQK+Mk5KM2bFAe+9rkNl48RSIaY75WPrldxq/DDlFTgS+6Nikbs=
+	t=1728784058; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=CUYtkfv8mbtLw7Sh5EkronI+TRK5znHbED/xa2TUKFc=; 
+	b=jCo95K744kYsZkb1ierupyYbyxQJ5LiUpf27qgIzuV/ua/2Ki+u4lX2FljrNGW01wsIPoC8rK2iUZnEYKuQLABy3G0tdq1ytk3lThXmGTPQEJY7CpM0anPsQjKmk9MF3ZAAIRkJAD5hqb+g8fU3HUpO7T0bUogqIUJiXdn1OXZk=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=icenowy.me;
 	spf=pass  smtp.mailfrom=uwu@icenowy.me;
 	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728784050;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728784058;
 	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=3CF9QHK0q8CqBiP+xU9cGsEZFeH+jlJV0LlwJo+Juxw=;
-	b=lSzuIXBfeygqicWnIYnIEXKy0XUXV9uFb50uXnYYH9yX17Wq62TVXBWY8O41F2wJ
-	9GFbDxfj7dbcRa1RbneejTiXZRYG35OtGbBFI0Z1abuJ6GmQK/HddCjcgtV35X8DOaw
-	wU5ZIghd9wVBturficgWo9I7K6gjql13rTcxTfxWjB1GCrLBkgdpTk7WPAle2arykZH
-	gVzDAs3X0hRZ4egL9pVrEhfzKPbDot3msRZQguvhsN0ddkLDco308KTMcGcHYhLBi1F
-	x1e3qPjNV+OkmAH4RElo501fgQ8ieZs21T5qZYhTa5UqGYsdX2t2BsAAB9JL2s01Jxe
-	TUr1gqixyQ==
-Received: by mx.zohomail.com with SMTPS id 1728784048103929.370436072698;
-	Sat, 12 Oct 2024 18:47:28 -0700 (PDT)
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=CUYtkfv8mbtLw7Sh5EkronI+TRK5znHbED/xa2TUKFc=;
+	b=de/j69qdONX9YBvP9R6TsHg+964XeNt2UmDkavj4Q+H4bCfpdMd0uAzY/CNE21nA
+	eCkzALnSroJHIfVUF4LVMivbBjmSeDmZDz/ibTF04jTBZiopPLpfoClMjpBJ/Z2C/C6
+	S5RUcxGPOZjrbkeavZqrmrr4WhHdiMCmzz0nP1OFo7LZRXefFgcyACX3ui9GAYpiIIw
+	Jg9yIKCEeJurIPq8Evcp7VRalnCqzAXi/sQ8MlRX4L4UEvxutSgHoqmRUpRM0ErAHAj
+	L6380cv4PeQ/BjslukxQnThIhFc+gxs6l5pryWWjO0x6VcSqfMYfBZyChQXLWW1hhGR
+	e0q7qIVvxg==
+Received: by mx.zohomail.com with SMTPS id 1728784056489318.16807738624493;
+	Sat, 12 Oct 2024 18:47:36 -0700 (PDT)
 From: Icenowy Zheng <uwu@icenowy.me>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>
@@ -59,10 +60,12 @@ Cc: Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
 	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
 	Icenowy Zheng <uwu@icenowy.me>
-Subject: [PATCH 0/2] ALSA: emu10k1: hide MPU-401 ports for Audigy Rx
-Date: Sun, 13 Oct 2024 09:47:11 +0800
-Message-ID: <20241013014714.7686-1-uwu@icenowy.me>
+Subject: [PATCH 1/2] ALSA: emu10k1: add a capability bit for no MIDI
+Date: Sun, 13 Oct 2024 09:47:12 +0800
+Message-ID: <20241013014714.7686-2-uwu@icenowy.me>
 X-Mailer: git-send-email 2.47.0
+In-Reply-To: <20241013014714.7686-1-uwu@icenowy.me>
+References: <20241013014714.7686-1-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,21 +75,46 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-ZohoMailClient: External
 
-The Audigy Rx card HW has no external MIDI ports (either directly on the
-card or as an optional breakout), however the current drivers still
-create MPU-401 MIDI ports on it, leads to confusion of DAW software.
+Audigy Rx is a card born in the era that USB MIDI has been the
+mainstream form of PC MIDI interface, and no external MIDI I/O is made
+available on Audigy Rx.
 
-Hide the MPU-401 MIDI ports for it.
+Add a capability bit for emu10k1 driver to be able to hide the MPU-401
+ports.
 
-Icenowy Zheng (2):
-  ALSA: emu10k1: add a capability bit for no MIDI
-  ALSA: emu10k1: hide ext. MIDI ports for Audigy Rx
+Signed-off-by: Icenowy Zheng <uwu@icenowy.me>
+---
+ include/sound/emu10k1.h     | 1 +
+ sound/pci/emu10k1/emu10k1.c | 4 +++-
+ 2 files changed, 4 insertions(+), 1 deletion(-)
 
- include/sound/emu10k1.h          | 1 +
- sound/pci/emu10k1/emu10k1.c      | 4 +++-
- sound/pci/emu10k1/emu10k1_main.c | 1 +
- 3 files changed, 5 insertions(+), 1 deletion(-)
-
+diff --git a/include/sound/emu10k1.h b/include/sound/emu10k1.h
+index 38db50b280eba..9172674838627 100644
+--- a/include/sound/emu10k1.h
++++ b/include/sound/emu10k1.h
+@@ -1673,6 +1673,7 @@ struct snd_emu_chip_details {
+ 	unsigned int i2c_adc:1;		/* I2C interface for ADC; requires ca0108_chip */
+ 	unsigned int adc_1361t:1;	/* Use Philips 1361T ADC */
+ 	unsigned int invert_shared_spdif:1;  /* analog/digital switch inverted */
++	unsigned int no_midi:1;		/* Has no MIDI */
+ 	const char *driver;
+ 	const char *name;
+ 	const char *id;		/* for backward compatibility - can be NULL if not needed */
+diff --git a/sound/pci/emu10k1/emu10k1.c b/sound/pci/emu10k1/emu10k1.c
+index dadeda7758cee..d323ebbc0368f 100644
+--- a/sound/pci/emu10k1/emu10k1.c
++++ b/sound/pci/emu10k1/emu10k1.c
+@@ -133,7 +133,9 @@ static int snd_card_emu10k1_probe(struct pci_dev *pci,
+ 		if (err < 0)
+ 			return err;
+ 	}
+-	if (emu->audigy) {
++	if (emu->card_capabilities->no_midi) {
++		dev_info(emu->card->dev, "Card has no ext. MIDI ports.\n");
++	} else if (emu->audigy) {
+ 		err = snd_emu10k1_audigy_midi(emu);
+ 		if (err < 0)
+ 			return err;
 -- 
 2.47.0
 
