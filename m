@@ -1,231 +1,177 @@
-Return-Path: <linux-kernel+bounces-362731-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43D5899B8C0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:34:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C343999B8C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED6D81F21A32
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 07:33:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A96C81C20EF3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 07:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7220D1304AB;
-	Sun, 13 Oct 2024 07:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B30713A3F3;
+	Sun, 13 Oct 2024 07:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="IUgrHdl7"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="Minycx4A"
+Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2085.outbound.protection.outlook.com [40.107.237.85])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A30042AA5
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 07:33:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728804834; cv=none; b=mTh4wMw0CkkRV1dqAWj5+Cqt37Wur7ciSLAX6gX+nsQ+7pCm5KSQ9UIH4xeLwYsHJGx8r2M+P33UbicvYLDqplrqmCjSdlhdc9Yr8JaofeNbut1Tt1fq7qGH40YwEL09D8R0fi5erQhCDVzlQV5LEgSvRZC4VdLaiF9xne4W+YM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728804834; c=relaxed/simple;
-	bh=S8Z2vfvb5UddMxMoUsWfKcFwQE36b6S7gfQZSeQlW3c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RpaXk84QhGWnjXGkVbUs67dXlFW0+HOZWqGtQkCNaqEN6Pb7EYwCnNBcBWF+TXIExCX3hyG0ZAAit5EqFuydI0AN1lnaenc8aKQ0yK+B6S09Mr8t+kIRoXdU1DIgPQnKmpOa7J87mOlwDaad7yvO0TljHvjH9fm7MpRq4qjn07w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=IUgrHdl7; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from [IPV6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f] (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 74BF382E;
-	Sun, 13 Oct 2024 09:32:09 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728804731;
-	bh=S8Z2vfvb5UddMxMoUsWfKcFwQE36b6S7gfQZSeQlW3c=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IUgrHdl7J10CiwhelK+fB90yMM2kVYcCPsjb1SHN3zkO+V2uBgv4xYotOXgm89i/C
-	 /G3TPWX8PAEUZV3JgCyZSICcwOxgExtzeRuYwEvKYon4XWSqRq9z1P25zsMoP7IqSC
-	 yGc+XZnIcWEJxFPZld+JRYdvFZ/wDfWjAH4Fy0do=
-Message-ID: <14912c78-32c4-4c61-97db-c9f6dbbd3bb1@ideasonboard.com>
-Date: Sun, 13 Oct 2024 13:03:45 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF4628FD;
+	Sun, 13 Oct 2024 07:52:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.85
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728805964; cv=fail; b=UGL39siXKcbBQEOcQL1jNLTn/CW7B3cQPrfXQd5OwgQusINsncY5KCgaw9y/S/85cTsm2ebU8hCi2WngO+ZIym6AGjU9lBRb3UTkF5OPUQ7zSVZ8c/us3fk84iQZZpaAxOBHrBJFYdacxb2jroKOvDGUwMRYD8XRx+ue30jOHng=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728805964; c=relaxed/simple;
+	bh=5WcdAzwFeMljvMFTEJIOSg7dgsZzcPCNMhBfqyTeMMc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EPTUE5ZtKbNYFduyD//Ii5tyxnqB8iJOE81F9Ro4WcyqHTN3AlNGDUVmPbgBmzoKk00NKg7oq5ZiDv+wEEXHWiskeYa2IORH4k5F5uAzi/oQGD7hJ33KSN8l5C+hqGUT5p0ZSqH8dfby38TIgmoMY3wPuPy7dKXDaddAePNjyGI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=Minycx4A; arc=fail smtp.client-ip=40.107.237.85
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Eze/ClyGaACnUKXTuQJXqYtKACwTcK8HJPx5VqZpQ6Im7il05MrZkhJZ6WcN+J6ZeOgN8fL0FChYvkyIV3u2V5XDlKZoyX4dqa9KgwNPJv5iAam25/Q+GAyzK4/tWxN+qVwPKpVfKFnSSocKZiGhZIHZxloj13sZ9IheM7GJZ3/4038/mJWIJmsTl9xx+1A/MZLNuVaydUkZhIWlEGjbOH3ZLFAtE0mPbru3VwhsjgKdChbgRPio8Z19u/kJoAXE8suzL8gJFxCrBx+GRP9hGLDBqC8PMUxbgPI3bf+Ew4rtuQXG2ZDm1ukE6Tykxpe2v84ha/BvF5uhdX81a/bRzQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=tL2tz/DmAHGn5CT9wHUysn+fOtKuURaDn3KZ0YtQ+IU=;
+ b=kgGJDqAIMVL+B8K2bsBXfz2IZqwuiQk24sJtbRDW7uzkX4hbRx1s/i0URS1U5NKlieA7+mJvtz7F84/yZjljr8JDzaeIsgZYIPdovrYhKz+QCvHoEVPgiYbSMnAhVw8Bkmgm2qn4TySV3TvMzES9KwnJihbyZ7q8qKAtqih6mJF5phUQ3rxkRtRmwA8cx3qUuHPyWpT9UbG7MnuYaR/HvvdJ3XpQ4Q83DtEE2hB46JYYBZVtgMFGKwcGSHvL2prrqQ4OQThkhz91B4kY55XvEfeB+3bxTQ4nMshlSXF81vmELMz1NMTssQWiYEu0ziGojOPWS/c2z9C+Y5jeo1dLhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=intel.com smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=tL2tz/DmAHGn5CT9wHUysn+fOtKuURaDn3KZ0YtQ+IU=;
+ b=Minycx4An0airT272+dGNcMyOaDRYu1UimPatluk/NmlBBLtuZZkXKh4ocmBF297+kjG/r0tK5geYw0YsrL1PE2x6dJbbg/rVCrYfZOdGtNUPKLQ4MHbMsapoMmXn3c00+XGx4HNjswW2DfbQ7uohHaGw+kQcTKg4Ao9eo6/gYs0Y5OSXszCGSE+HORoBo0BmS2uqeSgcWZj85uh6EonjOZKD/nVPb/wUhUqYI9Cg9Y+bZWAhPu11Q6sAXsQ98bJTL0VI7rNwqQx4zSirzr4mQTV+wcX6EK3ooIJVQoh3scs5BqDtMZTgmFWu6kb5oNos1mwMvVjDnHddJaup6f4Dw==
+Received: from MW4PR03CA0280.namprd03.prod.outlook.com (2603:10b6:303:b5::15)
+ by SA1PR12MB7200.namprd12.prod.outlook.com (2603:10b6:806:2bb::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.24; Sun, 13 Oct
+ 2024 07:52:38 +0000
+Received: from SJ1PEPF00002324.namprd03.prod.outlook.com
+ (2603:10b6:303:b5:cafe::52) by MW4PR03CA0280.outlook.office365.com
+ (2603:10b6:303:b5::15) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.24 via Frontend
+ Transport; Sun, 13 Oct 2024 07:52:37 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ1PEPF00002324.mail.protection.outlook.com (10.167.242.87) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.13 via Frontend Transport; Sun, 13 Oct 2024 07:52:37 +0000
+Received: from rnnvmail201.nvidia.com (10.129.68.8) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 13 Oct
+ 2024 00:52:21 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail201.nvidia.com
+ (10.129.68.8) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Sun, 13 Oct
+ 2024 00:52:20 -0700
+Received: from localhost.nvidia.com (10.127.8.11) by mail.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Sun, 13 Oct 2024 00:52:19 -0700
+From: <ankita@nvidia.com>
+To: <ankita@nvidia.com>, <jgg@nvidia.com>, <alex.williamson@redhat.com>,
+	<yishaih@nvidia.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<kevin.tian@intel.com>, <zhiw@nvidia.com>
+CC: <aniketa@nvidia.com>, <cjia@nvidia.com>, <kwankhede@nvidia.com>,
+	<targupta@nvidia.com>, <vsethi@nvidia.com>, <acurrid@nvidia.com>,
+	<apopple@nvidia.com>, <jhubbard@nvidia.com>, <danw@nvidia.com>,
+	<anuaggarwal@nvidia.com>, <mochs@nvidia.com>, <kvm@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: [PATCH v1 1/1] vfio/nvgrace-gpu: Add a new GH200 SKU to the devid table
+Date: Sun, 13 Oct 2024 07:52:16 +0000
+Message-ID: <20241013075216.19229-1-ankita@nvidia.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 4/6] staging: vchiq_core: Refactor notify_bulks()
-To: Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, Dan Carpenter <dan.carpenter@linaro.org>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- kernel-list@raspberrypi.com, Stefan Wahren <wahrenst@gmx.net>
-References: <20241012185652.316172-1-umang.jain@ideasonboard.com>
- <20241012185652.316172-5-umang.jain@ideasonboard.com>
- <172880414537.1925926.9488617715642757683@ping.linuxembedded.co.uk>
-Content-Language: en-US
-From: Umang Jain <umang.jain@ideasonboard.com>
-In-Reply-To: <172880414537.1925926.9488617715642757683@ping.linuxembedded.co.uk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ1PEPF00002324:EE_|SA1PR12MB7200:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96be4a37-fdc3-4be4-a7ea-08dceb5c0180
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?lySbv3e1QyvSqk9ItYOxDuaamV6DDVb3m+TUbiaUXmdFBzzprRHpvyma4l86?=
+ =?us-ascii?Q?BpLlVM1Esvr60Aq0C6xvL/SdzM3uvrVFdEm+YAWNRjEV+2MGjOBQr4LYaamT?=
+ =?us-ascii?Q?PkfoBJ2hoMpUYYaggigStQdn7lw4+XSu0ydSW0gCotua6qPxQ265yDRxZa2X?=
+ =?us-ascii?Q?uZ2Jih/s3KWYgcoP3MO2lAypHGjPwvZMY8kbEJihtoZ4gXdQUj7jQ0PV/Pqd?=
+ =?us-ascii?Q?3XNUKmGuF82n492xjNtEgp4zk6FH90s3KX6t9fAI4gmE2B4xa5qROTYLRTY9?=
+ =?us-ascii?Q?YsAU+GTXCDIAqTpaxmrvy/bsRWJ9Ec8CBmmflI45lyGYMn7y7ekshS6VuQku?=
+ =?us-ascii?Q?kNjlf//jXhXVtTOyVnWzcT2hmD2G5dlVlPtr8ZPDn07yYIebBYpPFe4VxK8I?=
+ =?us-ascii?Q?a3Q++c7ZZlwm+2/TNkqE19co3SNkHypo4XODVz3SBiN5n7wcu0fogcvMxvg+?=
+ =?us-ascii?Q?mfEFxQPqJLR2BMsvxl9m5cihZgzOoTeitkm92/Vc78wZNfOusdzeY3zovlpn?=
+ =?us-ascii?Q?2euPTw6QSlq9pqnJ8yX4oNQjTZmnKH4ijT4XwIcXBQEWL4Ts13VWxtpxku3x?=
+ =?us-ascii?Q?Qa+XEYmrKgVO0EtERuK9wviVusTiWkH9IK0QQEO9A5Eg1Cr54FaXIdinEsFS?=
+ =?us-ascii?Q?AZVYJvBA5YYXP34NBJHFyFvZELqwWRGJN3x8Iw4UnOKlI5+b0p+w0QSotr18?=
+ =?us-ascii?Q?EJ4EfaYZxgF8rdLrbEQgLl7d6Wuez0jYNYtSv7W1MRbGDoPAUDpYxeDmJfJM?=
+ =?us-ascii?Q?abYxQjtHujMcFg2iv3ezvfBClktOIdRE+JvpeLee/xOQeoegfxBhA/hiQM6F?=
+ =?us-ascii?Q?VOJid4pIZHIWmnJwIb/k0Mi0lyAupaPOenTiWj39HLS3W5StedOoR6fQwIyb?=
+ =?us-ascii?Q?JDyLudfECu0xR2Uzns9Lz15AeeJVkkLZzRSOCysUIB9g4Krx/oDt6IzwHzmA?=
+ =?us-ascii?Q?eqBjmHQATkLxNckR0ZKQc3aDmalUcOvxp3mmj+WwDf6G+bbDU4BRj3UpExHg?=
+ =?us-ascii?Q?t3Ec7Ax9hjTnyh/dyaBrTEm+jpJKKurYNB8oK9a8q4ks+DfjcU1Hg84C6ODc?=
+ =?us-ascii?Q?cZIIT+zGvgPPKwfdQESColMIt4bdky1QITNrVLP5Qq2AJfikMMhXQPLlusDE?=
+ =?us-ascii?Q?VkPAD4MJvG9WKoSLEsPU28k+PKrCqQTALubAP/LFVnrJ30QelPa4EQAwW6xt?=
+ =?us-ascii?Q?5jWofLfGybwUgqlBQnHwdkCvTYnaAE+Ghr+n0IWAVYNAI+/b5l+TkXhkY0/e?=
+ =?us-ascii?Q?yTlfjYLeHyeXEBWwODIMiKS8iY6k3JDVTrRJhmjgXGrrbfg5H80YOi9smGkd?=
+ =?us-ascii?Q?YoXVjLRmlogVkC3vyX+xoli1qVMaJabhzdckNquu5iwHoGycjd3w3r/2RGGx?=
+ =?us-ascii?Q?W8KqsmLIO/IuxI/n84bw/J9+gbg2?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2024 07:52:37.3245
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96be4a37-fdc3-4be4-a7ea-08dceb5c0180
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ1PEPF00002324.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB7200
 
+From: Ankit Agrawal <ankita@nvidia.com>
 
+NVIDIA is planning to productize a new Grace Hopper superchip
+SKU with device ID 0x2348.
 
-On 13/10/24 12:52 pm, Kieran Bingham wrote:
-> Quoting Umang Jain (2024-10-12 19:56:50)
->> Move the statistics and bulk completion events handling  to a separate
->> function. This helps to improve readability for notify_bulks().
->>
->> No functional changes intended in this patch.
->>
->> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
->> ---
->>   .../interface/vchiq_arm/vchiq_core.c          | 77 +++++++++++--------
->>   1 file changed, 46 insertions(+), 31 deletions(-)
->>
->> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
->> index e9cd012e2b5f..19dfcd98dcde 100644
->> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
->> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
->> @@ -1309,6 +1309,49 @@ get_bulk_reason(struct vchiq_bulk *bulk)
->>          return VCHIQ_BULK_RECEIVE_DONE;
->>   }
->>   
->> +static int service_notify_bulk(struct vchiq_service *service,
->> +                              struct vchiq_bulk *bulk)
->> +{
->> +       int status = -EINVAL;
->> +
->> +       if (!service || !bulk)
->> +               return status;
-> Both of these are guaranteed by the (only) caller so I'm not sure they're
-> needed ?
->
-> But maybe it would be used elsewhere later?
->
-> If these checks were kept, and the int status removed as mentioned below
-> this would just be ' return -EINVAL;' of course.
->
-> Or just drop them if it's easier and guaranteed.
->
->> +
->> +       if (bulk->actual != VCHIQ_BULK_ACTUAL_ABORTED) {
->> +               if (bulk->dir == VCHIQ_BULK_TRANSMIT) {
->> +                       VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
->> +                       VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
->> +                                               bulk->actual);
->> +               } else {
->> +                       VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
->> +                       VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
->> +                                               bulk->actual);
->> +                               }
-> I think the indentation on this } has gone wrong here.
->
->> +       } else {
->> +               VCHIQ_SERVICE_STATS_INC(service, bulk_aborted_count);
->> +       }
->> +
->> +       if (bulk->mode == VCHIQ_BULK_MODE_BLOCKING) {
->> +               struct bulk_waiter *waiter;
->> +
->> +               spin_lock(&service->state->bulk_waiter_spinlock);
->> +               waiter = bulk->userdata;
->> +               if (waiter) {
->> +                       waiter->actual = bulk->actual;
->> +                       complete(&waiter->event);
->> +               }
->> +               spin_unlock(&service->state->bulk_waiter_spinlock);
->> +
->> +               status = 0;
-> This just looks odd here. If it weren't for this I'd have probably been
-> fine with the initialisation of status
->
->> +       } else if (bulk->mode == VCHIQ_BULK_MODE_CALLBACK) {
->> +               enum vchiq_reason reason = get_bulk_reason(bulk);
->> +               status = make_service_callback(service, reason, NULL,
->> +                                              bulk->userdata);
-> I think I would probably just drop the int status altogether and make this
->
-> 		return make_service_callback(service, reason, NULL,
-> 					     bulk->userdata);
->
->> +       }
->> +
->> +       return status;
-> And return 0 here. Then we get rid of the awkward initialisation and
-> usages above.
+Add the SKU devid to nvgrace_gpu_vfio_pci_table.
 
-I usually have the tendency to minimise return  statements in a routine 
-and ideally target for single return statement at the end.
+Signed-off-by: Ankit Agrawal <ankita@nvidia.com>
+---
+ drivers/vfio/pci/nvgrace-gpu/main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-  But I do agree on the awkward initialisation of status = 0
-
->
->> +}
->> +
->>   /* Called by the slot handler - don't hold the bulk mutex */
->>   static int
->>   notify_bulks(struct vchiq_service *service, struct vchiq_bulk_queue *queue,
->> @@ -1333,37 +1376,9 @@ notify_bulks(struct vchiq_service *service, struct vchiq_bulk_queue *queue,
->>                   * requests, and non-terminated services
->>                   */
->>                  if (bulk->data && service->instance) {
->> -                       if (bulk->actual != VCHIQ_BULK_ACTUAL_ABORTED) {
->> -                               if (bulk->dir == VCHIQ_BULK_TRANSMIT) {
->> -                                       VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
->> -                                       VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
->> -                                                               bulk->actual);
->> -                               } else {
->> -                                       VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
->> -                                       VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
->> -                                                               bulk->actual);
->> -                               }
->> -                       } else {
->> -                               VCHIQ_SERVICE_STATS_INC(service, bulk_aborted_count);
->> -                       }
->> -                       if (bulk->mode == VCHIQ_BULK_MODE_BLOCKING) {
->> -                               struct bulk_waiter *waiter;
->> -
->> -                               spin_lock(&service->state->bulk_waiter_spinlock);
->> -                               waiter = bulk->userdata;
->> -                               if (waiter) {
->> -                                       waiter->actual = bulk->actual;
->> -                                       complete(&waiter->event);
->> -                               }
->> -                               spin_unlock(&service->state->bulk_waiter_spinlock);
->> -                       } else if (bulk->mode == VCHIQ_BULK_MODE_CALLBACK) {
->> -                               enum vchiq_reason reason =
->> -                                               get_bulk_reason(bulk);
->> -                               status = make_service_callback(service, reason, NULL,
->> -                                                              bulk->userdata);
->> -                               if (status == -EAGAIN)
->> -                                       break;
->> -                       }
->> +                       status = service_notify_bulk(service, bulk);
->> +                       if (status == -EAGAIN)
->> +                               break;
-> This now reads as
->                   if (bulk->data && service->instance) {
->                           status = service_notify_bulk(service, bulk);
->                           if (status == -EAGAIN)
->                                   break;
-> 		}
->
-> which is much nicer.
-
-agreed, will address this
->
-> With the updates above handled, then I think we're more accurately at no
-> functional changes:
->
-> Reviewed-by: Kieran Bingham <kieran.bingham@ideasonboard.com>
->
->
->
->>                  }
->>   
->>                  queue->remove++;
->> -- 
->> 2.45.2
->>
+diff --git a/drivers/vfio/pci/nvgrace-gpu/main.c b/drivers/vfio/pci/nvgrace-gpu/main.c
+index a7fd018aa548..a467085038f0 100644
+--- a/drivers/vfio/pci/nvgrace-gpu/main.c
++++ b/drivers/vfio/pci/nvgrace-gpu/main.c
+@@ -866,6 +866,8 @@ static const struct pci_device_id nvgrace_gpu_vfio_pci_table[] = {
+ 	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2342) },
+ 	/* GH200 480GB */
+ 	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2345) },
++	/* GH200 SKU */
++	{ PCI_DRIVER_OVERRIDE_DEVICE_VFIO(PCI_VENDOR_ID_NVIDIA, 0x2348) },
+ 	{}
+ };
+ 
+-- 
+2.34.1
 
 
