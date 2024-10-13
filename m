@@ -1,76 +1,204 @@
-Return-Path: <linux-kernel+bounces-362765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D9B999B91F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:54:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CACF99B921
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:01:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 483D71C20AD8
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 10:54:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EAF21F2169C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13ABA13CA8A;
-	Sun, 13 Oct 2024 10:54:16 +0000 (UTC)
-Received: from mail-io1-f69.google.com (mail-io1-f69.google.com [209.85.166.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EBC513D520;
+	Sun, 13 Oct 2024 11:01:29 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DB48136330
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 10:54:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E1CB3EA71
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:01:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728816855; cv=none; b=DkuqeQlwWGjrsbtVCNleJZYVCdM5TaTn1WghclixWRZTI0TBUTE306jf7aoaqg7IHCSCosxEDwB5ubzEzaP+qjfGAuLdH71iqaiSkvFCKam0YgFwytcbYJJKAiwrsbMACd4OPxoGgXzk/7jGU/QKOOB/0LmaBppm9uU38xhphGo=
+	t=1728817288; cv=none; b=I/T4pEADxT/GJIyGwmhcMGB7Ybs5dqKk49bLf3IkswnXMLx/2+hyQ/zfLgYHsuy37dTUj27jbo9gIfJ6Z4U4cQDBzqjhzZ14/hZM+w7ikjxR4QOTaXtFLSUxf2hSvvCuVnDdohh/mkbxXOmPGOk3PTvt1L69T55dwsqlRqixjbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728816855; c=relaxed/simple;
-	bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=rs99KuwZizzTaVzz1yW9M6dEcCsy8ub/gqtF2Ocz+SNlpXUCFp+s8MDlz7c9D+yuwHI9b+acw1YfqDsyJgkoR5P/GGcFEZoyiZTKXuB+dfu11QU7v28rp/LbWZufp2ngvlxGQA7LGxOQVYoJVHGNP2L+6uSvHbmVm2vufr3R8dY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.69
+	s=arc-20240116; t=1728817288; c=relaxed/simple;
+	bh=KPjG1LZ3JecgPCj4gbqAFmyTj1Kpk74LRtOBa9dy7Cg=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Js7Z54tK310/l9q+LqbTsaE0JaxAd/MQrniH5YTfEomI4LzK9XowityxYbT/zmkEboI6OO+ZdubSQNiBr/aJpE3DCU0WfBA0GjOvp5MkAP0I6xnyGqwEAti/qTEH+cXJD0P5WvAoBRfFSNPl0LOT1X+SZw2LZunZazgfX30MSQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f69.google.com with SMTP id ca18e2360f4ac-83540797827so236880539f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 03:54:14 -0700 (PDT)
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83a709455a7so104829639f.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 04:01:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728816853; x=1729421653;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UhXQFHs84V8s6kt/M2mBog53NsfNJ/wX6DTO1iRzP/c=;
-        b=n8IBEu1xRbjGmcvWMz1polR9kIn50iN67mY7stDn/BL2NzosJ6OKDX9ezo0qhFzk6E
-         bkxw6kUwHu0vouPnl7fRr1UqIHhtLMtzVlH4oU/MK6wmiR9B1DviuF4wSZKhG5YtPJNn
-         xmI09f5QmGvNNA9J2SFGpBnWhHuKgSzxBHLDwldnJwd+Cb5cVk79DaPshJ7lUUnRfLc6
-         ifur9QjcnPZFSIcNACfG4KWd7Zpv7Nczrg1GwHl89ZraF/4VwIYYlOJVXAenbtXhKlqd
-         ETYCLtxxiu6xnlX8dSX1/oK1fciv3x1h6HItW9vqEajS6HRIsXgR9hMT2D2AvbDp/Zze
-         pbDA==
-X-Gm-Message-State: AOJu0YxO2Rc9fNwPGqIPw2hNUEMY/xtIXae3QNz7ofh0CnMZS8oyHXcG
-	BIjFFJPUXqlFg42SpTwiHhY3PqNNJB2NPbZ5RaW/8mCY4S6dzXHyb1SeeHsBQ9TR6DT1EKczHSU
-	n9eqtbWD4ykiMJJ/SAcPP4mZaIAxa1atthFhtpQC0syR902rdvqScHx0=
-X-Google-Smtp-Source: AGHT+IGRt+NSTfUjQgHpEqIhmAyd8pgLdZibcd4TXYa/G1Uu60yLZTue1y4UOZ7Kdn7Stk4yiyn7dK2NMsM7feTu9jSrT6Al8M79
+        d=1e100.net; s=20230601; t=1728817285; x=1729422085;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=aA6mngKz8osMABg6wVdCD799DQaePOTL3/3lWFrsL5Q=;
+        b=Lvu1gAVlu1vWFjnX20dEdUboDXFZ2J8Jxx5ZvWbxzXXwECq6N14mcxWTDHLNdKikXe
+         2rRBD7tVY3Y6d4hkF6GYKDU17F65LXBjS91Xwp+3PZvSa+GmDxMFPx7xAhUAnpZMarev
+         UIkREVoZhlOcOCSsaJ803PTd+B7UvhvZ1lTCZomM8GymzqUtvNekxxaWvXMU6fuoQQ+A
+         SYBRTwcyVooOjpcwKMsPgqMlYak1qbG2PdOCAl20TRmd1BdzdaLiMFoX5mkXdLxfNEJB
+         Bg7/RsR1rPqk/E2wgMuvX4N73jw+D77A3zKMgFM13mF1rJbfQ7TmqdA9gSR/PbKI042o
+         ygGA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMeNou8EyvyypLYWyIMNYWy1bt6G8d3dPZKmJJ5rmDNqWL+tjDO2bZAyk8czasF9E5sKy24042NOV6yfA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxzQXnnmm3N4WaNerOLEX6XpbCnzSNcv0jtJIToA2nSJ94AZ9mX
+	RiEX+X7DjfSjFEk6K0ky2V3spjvjp7Bw6KBgnJiK5rFLIpWcdYW5aifJak53fQInyD55GuUxklp
+	z0mB73a+pflkf6TFag3xrgCjHZUHvZBmIXgHUi3ckkSv/7gowTjaDx5I=
+X-Google-Smtp-Source: AGHT+IFLQ76rP8rV1ADl/0WbPdng0phbjcTAgYb1E6BpO5Yz19ZqoHPmLWTjw7TmxgMpvf5ymUG0HKrAMla2Q156F5tAgXxbRt26
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1786:b0:3a2:6cd7:3250 with SMTP id
- e9e14a558f8ab-3a3b5f54d02mr50869005ab.10.1728816853364; Sun, 13 Oct 2024
- 03:54:13 -0700 (PDT)
-Date: Sun, 13 Oct 2024 03:54:13 -0700
-In-Reply-To: <000000000000657ecd0614456af8@google.com>
+X-Received: by 2002:a05:6e02:1c0a:b0:3a3:aff3:a02b with SMTP id
+ e9e14a558f8ab-3a3bcdba90bmr33920635ab.6.1728817285209; Sun, 13 Oct 2024
+ 04:01:25 -0700 (PDT)
+Date: Sun, 13 Oct 2024 04:01:25 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670ba6d5.050a0220.3e960.0039.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Message-ID: <670ba885.050a0220.4cbc0.002e.GAE@google.com>
+Subject: [syzbot] [fs?] [mm?] stack segment fault in folio_wait_writeback
+From: syzbot <syzbot+8cb2efaaad483f65f56c@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	syzkaller-bugs@googlegroups.com, willy@infradead.org
 Content-Type: text/plain; charset="UTF-8"
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+Hello,
 
-***
+syzbot found the following issue on:
 
-Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
-Author: cmeiohas@nvidia.com
+HEAD commit:    7234e2ea0edd Merge tag 'scsi-fixes' of git://git.kernel.or..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=157a085f980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=8cb2efaaad483f65f56c
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=146c7fd0580000
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-7234e2ea.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/aa111520a0b7/vmlinux-7234e2ea.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/07889fadba3b/bzImage-7234e2ea.xz
+mounted in repro #1: https://storage.googleapis.com/syzbot-assets/178fe4a5f5e7/mount_1.gz
+mounted in repro #2: https://storage.googleapis.com/syzbot-assets/7847e1862894/mount_2.gz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+8cb2efaaad483f65f56c@syzkaller.appspotmail.com
+
+loop0: detected capacity change from 0 to 256
+exFAT-fs (loop0): failed to load upcase table (idx : 0x00010000, chksum : 0xcc9b7de9, utbl_chksum : 0xe619d30d)
+Oops: stack segment: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5340 Comm: syz.0.50 Not tainted 6.12.0-rc2-syzkaller-00305-g7234e2ea0edd #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:PageTail include/linux/page-flags.h:281 [inline]
+RIP: 0010:const_folio_flags include/linux/page-flags.h:309 [inline]
+RIP: 0010:folio_test_writeback include/linux/page-flags.h:555 [inline]
+RIP: 0010:folio_wait_writeback+0x2f/0x1e0 mm/page-writeback.c:3187
+Code: 41 57 41 56 41 55 41 54 53 48 83 ec 18 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 ac 7e c4 ff 4c 8d 73 08 4c 89 f5 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 f7 e8 11 2f 2e 00 4d 8b 3e 4c 89 fe
+RSP: 0018:ffffc900025a7190 EFLAGS: 00010202
+RAX: ffffffff81d068a4 RBX: 0000000000000000 RCX: ffff888000c3c880
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff81cc460e R09: 1ffffd4000003328
+R10: dffffc0000000000 R11: fffff94000003329 R12: dffffc0000000000
+R13: dffffc0000000000 R14: 0000000000000008 R15: 0000000000000001
+FS:  00007f7a897816c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7a88a75c60 CR3: 000000003f406000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ __filemap_fdatawait_range+0x17c/0x2b0 mm/filemap.c:533
+ file_write_and_wait_range+0x1e3/0x280 mm/filemap.c:792
+ __generic_file_fsync+0x6f/0x1a0 fs/libfs.c:1528
+ exfat_file_fsync+0xf9/0x1d0 fs/exfat/file.c:524
+ exfat_file_write_iter+0x312/0x3f0 fs/exfat/file.c:608
+ iter_file_splice_write+0xbfa/0x1510 fs/splice.c:743
+ do_splice_from fs/splice.c:941 [inline]
+ direct_splice_actor+0x11b/0x220 fs/splice.c:1164
+ splice_direct_to_actor+0x586/0xc80 fs/splice.c:1108
+ do_splice_direct_actor fs/splice.c:1207 [inline]
+ do_splice_direct+0x289/0x3e0 fs/splice.c:1233
+ do_sendfile+0x561/0xe10 fs/read_write.c:1388
+ __do_sys_sendfile64 fs/read_write.c:1455 [inline]
+ __se_sys_sendfile64+0x17c/0x1e0 fs/read_write.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f7a8897dff9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f7a89781038 EFLAGS: 00000246 ORIG_RAX: 0000000000000028
+RAX: ffffffffffffffda RBX: 00007f7a88b35f80 RCX: 00007f7a8897dff9
+RDX: 0000000000000000 RSI: 0000000000000005 RDI: 0000000000000004
+RBP: 00007f7a889f0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000100001 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f7a88b35f80 R15: 00007fffbdf78608
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:PageTail include/linux/page-flags.h:281 [inline]
+RIP: 0010:const_folio_flags include/linux/page-flags.h:309 [inline]
+RIP: 0010:folio_test_writeback include/linux/page-flags.h:555 [inline]
+RIP: 0010:folio_wait_writeback+0x2f/0x1e0 mm/page-writeback.c:3187
+Code: 41 57 41 56 41 55 41 54 53 48 83 ec 18 48 89 fb 49 bd 00 00 00 00 00 fc ff df e8 ac 7e c4 ff 4c 8d 73 08 4c 89 f5 48 c1 ed 03 <42> 80 7c 2d 00 00 74 08 4c 89 f7 e8 11 2f 2e 00 4d 8b 3e 4c 89 fe
+RSP: 0018:ffffc900025a7190 EFLAGS: 00010202
+RAX: ffffffff81d068a4 RBX: 0000000000000000 RCX: ffff888000c3c880
+RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
+RBP: 0000000000000001 R08: ffffffff81cc460e R09: 1ffffd4000003328
+R10: dffffc0000000000 R11: fffff94000003329 R12: dffffc0000000000
+R13: dffffc0000000000 R14: 0000000000000008 R15: 0000000000000001
+FS:  00007f7a897816c0(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007f7a8975ff98 CR3: 000000003f406000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	41 57                	push   %r15
+   2:	41 56                	push   %r14
+   4:	41 55                	push   %r13
+   6:	41 54                	push   %r12
+   8:	53                   	push   %rbx
+   9:	48 83 ec 18          	sub    $0x18,%rsp
+   d:	48 89 fb             	mov    %rdi,%rbx
+  10:	49 bd 00 00 00 00 00 	movabs $0xdffffc0000000000,%r13
+  17:	fc ff df
+  1a:	e8 ac 7e c4 ff       	call   0xffc47ecb
+  1f:	4c 8d 73 08          	lea    0x8(%rbx),%r14
+  23:	4c 89 f5             	mov    %r14,%rbp
+  26:	48 c1 ed 03          	shr    $0x3,%rbp
+* 2a:	42 80 7c 2d 00 00    	cmpb   $0x0,0x0(%rbp,%r13,1) <-- trapping instruction
+  30:	74 08                	je     0x3a
+  32:	4c 89 f7             	mov    %r14,%rdi
+  35:	e8 11 2f 2e 00       	call   0x2e2f4b
+  3a:	4d 8b 3e             	mov    (%r14),%r15
+  3d:	4c 89 fe             	mov    %r15,%rsi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
