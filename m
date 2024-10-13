@@ -1,158 +1,95 @@
-Return-Path: <linux-kernel+bounces-362718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EBF499B86F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 08:16:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F419E99B898
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 08:32:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8690AB21BAF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 06:16:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8179B282632
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 06:32:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D181A12D1F1;
-	Sun, 13 Oct 2024 06:16:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D85A77104;
+	Sun, 13 Oct 2024 06:32:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HQa436zD"
-Received: from out-171.mta1.migadu.com (out-171.mta1.migadu.com [95.215.58.171])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="Ej3bX+Df"
+Received: from out162-62-58-211.mail.qq.com (out162-62-58-211.mail.qq.com [162.62.58.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3659D45C1C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 06:16:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A1C17557
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 06:32:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.58.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728800170; cv=none; b=tYdp3bubv4xA5HbkRcjrSFjbzMjEgSkOjZDMjTDkfkIDJISFiZgcf4AF6sqQl4xZonHNfM5fKaXp0tYkPyeBbnNvkcK6HJRyyUqUdH84G83vY0Z3yBreKeP+GYDTY/ZEgjgwSRZ7zOav9OGt6bRTN6gwT0VctWDYfaKojUJmFxo=
+	t=1728801151; cv=none; b=VIvMnMeTLn/eZA5Y9y4XANkNO7aeL/GxULgPUCAshxYTbvKgczJ8nxtR7hsjwqF9TpCX8r0Cm2UMNUAp8XLqgfMVxFDdWAHUiDHkLOmD7+Reha5yOY5PoEprXb1v4qU1M+CFLo48x8mM8UGaO0iSWg6KahwCONjH+JQOkgtl+A0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728800170; c=relaxed/simple;
-	bh=etsTbxVmRxXbrqH1Qp9DHH8lnH71FNLBz0At0Vtt2Dg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VADZKCJy9mP3bLY/BqVfKPULwfTSov4K6LBm2iIR4yZEcCLm7UGVpQZZC84oqVgmeDAtCpaHa/yofs30Qlv5sbsqgJmGEHlVgols/nMe19tzDynZQsLb1q4gm2uMVbXzey7QrOEofH1ATeMM5S96jOiTbOpXrxgpMWA/pP2Qwt4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HQa436zD; arc=none smtp.client-ip=95.215.58.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e4d71ae6-0a90-4fed-9ab2-6c0abec52756@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728800161;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qmdUU/Ns1Liy81kYj6oLsm/ff69KJenMJwBJC0zggRI=;
-	b=HQa436zDRrmRXaA/sWdTbQ6KW1bI8X2PB4N4v00IhDi+U6wf0obcHscW32hShx8acxPCf6
-	QpsBPSadBAVV+muPZLt071SIH+JMkOOtL51YCBDrgK0OgIBomEaDjmDiG74DeEAYX79aB4
-	cUS1Pak2yajffHLR/4ELIXzLCU07Nks=
-Date: Sun, 13 Oct 2024 14:15:33 +0800
+	s=arc-20240116; t=1728801151; c=relaxed/simple;
+	bh=7+dOgtcx49/fQEvF7hM6Gh/KpvfePNXzh4+lbzLUt1k=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=dXIMuNKrDTrptejScEz6PvjJCFyCYlbRXSD/M691+vM94WG2PBe3NpGTHtlerLlcV/mp2b7Ghi3dLRW5ajzApJWbNpI0O/DjV6QJJ91G+mHEin1LtYgmk0mD5aAOV9R5bNDIx4hbyp8UAmXV/op3pB2G04h2VuQJbRJu+F4YFeI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=Ej3bX+Df; arc=none smtp.client-ip=162.62.58.211
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728801139; bh=5j1nFwUMRoP4O40Gn/efBdjIEx+72pkMHcuGBMyU+/o=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=Ej3bX+DfIcmMJf+TjY6LYSRVRDT8XwxnY9u96AedXvRAC4BXKET/Gotlf4Jf3J97O
+	 GFhpqhtCKf7wUvHU0jyJFa/mDp0/WIf2CMQ/z7K3zq82HOqBMgxaH/fgWpTh0XOsm4
+	 gdARA64tQGyCBQT/DVDsANNne34B39UuSweHDEB4=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id 4F42DA65; Sun, 13 Oct 2024 14:19:52 +0800
+X-QQ-mid: xmsmtpt1728800392t5kfmmyox
+Message-ID: <tencent_D10C2E5D6C0C9404EB3EED72CF4878F66F0A@qq.com>
+X-QQ-XMAILINFO: MBhxx2BUoWsxiYHy1wjW4owB2zScaGdKpsYAbl5UP+HIP18HznGZTYcyOOz8Ou
+	 /MCkLAwVaxWIXm3ts875mPmO2+3KFIsGPCzY9f+4kh/ZQJrJEwueRum998Xij14MAV1nGJraifKN
+	 Ye6g0BbPOD0+jzPNQTZ5UTeB4nk3ZWuihLUi/gV2Yew/cBnn480mJo6hVQPvgYfwRACr44k83+xk
+	 unRyytmasW2siIOmYJfJ2Nu1VdDRiyqA+0qYWTNMlRXK0utmWmaKwZTYO3KYS/H1B1/sBpdz2xej
+	 wcgi1MO1TjvUyoOZEiYKFiFz4Gc8QkQsSLXpfLwwkx2XltfSu+YFT/WfOQokplnt9gxObVdE6wRh
+	 51lsxeBfYyUghAtgiJC4nEyeSZuPgrNTTqJ2F09V1hIemXA1WEM+7Lu5KDs5sswjZD+nw8UEaTFv
+	 D7IWw6+oqCglC3lKxWfSZ2/QJ+FPJCk2EfhkIowZCQTXMGYPbOcEW28WiPmGDf5btAd8TvIUIhxU
+	 b13/xx0UCe+6R29mNvlD/xEb1G0L0iueoCxYXWnxPIH9EZ6cYu3dHkc3d/2gkHajer6piEx93eCM
+	 6FI/2tfnJZioEsryQuoMp22xBUyF1S2Ni/Cl9qdPIsjEdCuKMfgOmYtpvfu5osbcbJLP8BTWJiY8
+	 j4FM4B3tZVxNoYDN/DVfMbwmrukBsOHV16J+Emlc8kStdvowMRxludAOpY0C+ST2eNtX1klXZN3x
+	 xddnsYO6A7IVZajeOu4mbKn/Hxf2oRwgtJvGSPXFSXgsvK4mImGsiPu0zOzVv8YIBkqDTHfs7OxW
+	 k4Dh+5OhpqIeoVdvtzzam06vHpo1Qeti90YJ2DMBkvrrZZ579iQV5/3/+sSbHnpxSVRZMEC4BL+T
+	 4jKFyDHBfZwleFPM3xSjtNN77UqGEbBlRJSiDZZZA3/kMFKWS5tkkSYlv5ruuS2w==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [ocfs2?] kernel BUG in ocfs2_read_virt_blocks
+Date: Sun, 13 Oct 2024 14:19:47 +0800
+X-OQ-MSGID: <20241013061946.2378266-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <670a46a0.050a0220.4cbc0.001e.GAE@google.com>
+References: <670a46a0.050a0220.4cbc0.001e.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-next v8 3/6] RDMA/rxe: Add page invalidation support
-To: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>,
- linux-rdma@vger.kernel.org, leon@kernel.org, jgg@ziepe.ca,
- zyjzyj2000@gmail.com
-Cc: linux-kernel@vger.kernel.org, rpearsonhpe@gmail.com, lizhijian@fujitsu.com
-References: <20241009015903.801987-1-matsuda-daisuke@fujitsu.com>
- <20241009015903.801987-4-matsuda-daisuke@fujitsu.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20241009015903.801987-4-matsuda-daisuke@fujitsu.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
 
-在 2024/10/9 9:59, Daisuke Matsuda 写道:
-> On page invalidation, an MMU notifier callback is invoked to unmap DMA
-> addresses and update the driver page table(umem_odp->dma_list). It also
-> sets the corresponding entries in MR xarray to NULL to prevent any access.
-> The callback is registered when an ODP-enabled MR is created.
-> 
-> Signed-off-by: Daisuke Matsuda <matsuda-daisuke@fujitsu.com>
-> ---
->   drivers/infiniband/sw/rxe/Makefile  |  2 +
->   drivers/infiniband/sw/rxe/rxe_odp.c | 57 +++++++++++++++++++++++++++++
->   2 files changed, 59 insertions(+)
->   create mode 100644 drivers/infiniband/sw/rxe/rxe_odp.c
-> 
-> diff --git a/drivers/infiniband/sw/rxe/Makefile b/drivers/infiniband/sw/rxe/Makefile
-> index 5395a581f4bb..93134f1d1d0c 100644
-> --- a/drivers/infiniband/sw/rxe/Makefile
-> +++ b/drivers/infiniband/sw/rxe/Makefile
-> @@ -23,3 +23,5 @@ rdma_rxe-y := \
->   	rxe_task.o \
->   	rxe_net.o \
->   	rxe_hw_counters.o
-> +
-> +rdma_rxe-$(CONFIG_INFINIBAND_ON_DEMAND_PAGING) += rxe_odp.o
-> diff --git a/drivers/infiniband/sw/rxe/rxe_odp.c b/drivers/infiniband/sw/rxe/rxe_odp.c
-> new file mode 100644
-> index 000000000000..ea55b79be0c6
-> --- /dev/null
-> +++ b/drivers/infiniband/sw/rxe/rxe_odp.c
-> @@ -0,0 +1,57 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR Linux-OpenIB
-> +/*
-> + * Copyright (c) 2022-2023 Fujitsu Ltd. All rights reserved.
-> + */
-> +
-> +#include <linux/hmm.h>
-> +
-> +#include <rdma/ib_umem_odp.h>
-> +
-> +#include "rxe.h"
-> +
-> +static void rxe_mr_unset_xarray(struct rxe_mr *mr, unsigned long start,
-> +				unsigned long end)
-> +{
-> +	unsigned long upper = rxe_mr_iova_to_index(mr, end - 1);
-> +	unsigned long lower = rxe_mr_iova_to_index(mr, start);
-> +	void *entry;
-> +
-> +	XA_STATE(xas, &mr->page_list, lower);
-> +
-> +	/* make elements in xarray NULL */
-> +	xas_lock(&xas);
-> +	xas_for_each(&xas, entry, upper)
-> +		xas_store(&xas, NULL);
-> +	xas_unlock(&xas);
-> +}
-> +
-> +static bool rxe_ib_invalidate_range(struct mmu_interval_notifier *mni,
-> +				    const struct mmu_notifier_range *range,
-> +				    unsigned long cur_seq)
-> +{
-> +	struct ib_umem_odp *umem_odp =
-> +		container_of(mni, struct ib_umem_odp, notifier);
-> +	struct rxe_mr *mr = umem_odp->private;
-> +	unsigned long start, end;
-> +
-> +	if (!mmu_notifier_range_blockable(range))
-> +		return false;
-> +
-> +	mutex_lock(&umem_odp->umem_mutex);
+if the value of flags is 0, it is meaningless to check it contains OCFS2_BH_READAHEAD
 
-guard(mutex)(&umem_odp->umem_mutex);
+#syz test
 
-It seems that the above is more popular.
-
-Zhu Yanjun
-> +	mmu_interval_set_seq(mni, cur_seq);
-> +
-> +	start = max_t(u64, ib_umem_start(umem_odp), range->start);
-> +	end = min_t(u64, ib_umem_end(umem_odp), range->end);
-> +
-> +	rxe_mr_unset_xarray(mr, start, end);
-> +
-> +	/* update umem_odp->dma_list */
-> +	ib_umem_odp_unmap_dma_pages(umem_odp, start, end);
-> +
-> +	mutex_unlock(&umem_odp->umem_mutex);
-> +	return true;
-> +}
-> +
-> +const struct mmu_interval_notifier_ops rxe_mn_ops = {
-> +	.invalidate = rxe_ib_invalidate_range,
-> +};
+diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+index f7672472fa82..0043c2428ef2 100644
+--- a/fs/ocfs2/extent_map.c
++++ b/fs/ocfs2/extent_map.c
+@@ -968,7 +968,8 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+ 
+ 	if (((v_block + nr - 1) << inode->i_sb->s_blocksize_bits) >=
+ 	    i_size_read(inode)) {
+-		BUG_ON(!(flags & OCFS2_BH_READAHEAD));
++		BUG_ON(flags && !(flags & OCFS2_BH_READAHEAD));
++		rc = flags ?: -EIO;
+ 		goto out;
+ 	}
+ 
 
 
