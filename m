@@ -1,56 +1,54 @@
-Return-Path: <linux-kernel+bounces-362859-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA71099BA36
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:58:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9BEE99BA3A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:00:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7422E1F21AFD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:58:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0596281CE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:00:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1840D147C86;
-	Sun, 13 Oct 2024 15:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08DB3145B11;
+	Sun, 13 Oct 2024 16:00:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YQN55DUY"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="lQ8xc/4R"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD9A145B1F;
-	Sun, 13 Oct 2024 15:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D22C231CB0
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 16:00:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728835117; cv=none; b=mcLVqnGUhv8AczMyvmB8IqSaHMQaCOKQSy70kheXEi6XG5pmDnPDCugrAxCjBqh4er7XJVq6W3pm7eyVOMZ3VaZZM5eMPh/JDUrAh61Us8ECfTfsipYrnjKHeNAFfKI9sSueY3jzP3/S0RjZsEpnRhKPn9ulT4em9iSposlbYpY=
+	t=1728835229; cv=none; b=ubgP6dTko6SqxocNB6olk2T64q+Fq753fSeTk7rx9WeSnZW+bV6B0hpx8nUl5MuEcJ01ZaPPDcOIcquV81TSfu3PyQENf2a5bVGCYNJpZcTDBvipOliRhr2a9ihDfnhTA3o31naSoCBh82aysYmAWym0zxR3lTgeMwzrMGC9J1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728835117; c=relaxed/simple;
-	bh=Sj76r7XqRUyXlV5pB6AePNQPILfWU/XU/2fmpIPRtII=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=kwi3kcbGyHA8onMEF2XpwdKF4hG4xTMn5KFjFF52ATvrQlpVnfVkiZeJGeL3BYQq7fkh5DGxC8UXBEoDz0F5ibjbAQGK/JtV94bZ6ypz9TPbi4vM1zsZN7QUbbp/IXxJKG6A0BTP+9kK8HhbSMy9skFkisRRYO73kHuRcIlZ7i8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YQN55DUY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA5A4C4CEC5;
-	Sun, 13 Oct 2024 15:58:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728835117;
-	bh=Sj76r7XqRUyXlV5pB6AePNQPILfWU/XU/2fmpIPRtII=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=YQN55DUYQ2ZGpgBoXn2YIb9BRXqsa58llbNpQMSKVq2rd/kiM4x/rBmHGU6mOj6YL
-	 ny1pp3hfCuBRqgK6AgG/BK+axjPdofQgY40FTT5ovdT0aoSZIJhRFThJIqWdUS1IGL
-	 lzB4mvZRfNw1F0AvOFOiYQR0mUWOt/yoI1jNzGfWi5ToaQbJJKG38LPJc1sM4fSl0u
-	 Um0F2TzYa16f3Ek4co//OqBZISwaiN9mU7EAv+GGwtQoPDWlT1nI/mWGkyujlApEKi
-	 i3pDUjg1nS3N8y8YGnkt9l0qrL8nC619kkVxAo4c3zq8+Zk3bVgTHwvmbnb55WaNiL
-	 IxxpF8NQFvIxQ==
-Date: Sun, 13 Oct 2024 10:58:34 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-pci@vger.kernel.org, linux-cxl@vger.kernel.org,
-	linux-kernel@vger.kernel.org, lukas@wunner.de,
-	dan.j.williams@intel.com, bhelgaas@google.com, dave@stgolabs.net,
-	dave.jiang@intel.com, vishal.l.verma@intel.com,
-	Jonathan.Cameron@huawei.com
-Subject: Re: [PATCH] PCI/DOE: Poll DOE Busy bit for up to 1 second in
- pci_doe_send_req
-Message-ID: <20241013155834.GA607803@bhelgaas>
+	s=arc-20240116; t=1728835229; c=relaxed/simple;
+	bh=2imGcvW/fAXcgVEqqB7pALBYT9vZSd/9jluI5/HcHaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FyzwfSOElIbsvbMe4Aw0dOaol0aZrVZgwzwX2ui97w0Ja2FYWE9OsnnaqXNOccqTsrknkDLj+5Ea5lntuifUU6LHhWiCW+Jp2QgkFfPPHFkK1TnboT7weEIBofweERIsegS0Xrp48tmISp6BXY/Dg2m8hr4bZP0v4wmj24WXmKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=lQ8xc/4R; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 51327C4CEC5;
+	Sun, 13 Oct 2024 16:00:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728835228;
+	bh=2imGcvW/fAXcgVEqqB7pALBYT9vZSd/9jluI5/HcHaQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lQ8xc/4RzascR4N5/AWjoQAnVUSeSRAvNgOdUlI/X7MvUYA5AvEOXU8id7LTfPcVO
+	 ADpYx/bJxBay+wiTfjG9BtEsTVBhrH7rrk81aoni82t9ousFIBvdrtsNGJCImxXhTG
+	 8M/GXFMqKma1Kw1lVzX9N8Mf+SZ2CW+8nHBS6cbs=
+Date: Sun, 13 Oct 2024 18:00:23 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Zijun Hu <zijun_hu@icloud.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org,
+	Zijun Hu <quic_zijuhu@quicinc.com>
+Subject: Re: [PATCH v2] driver core: bus: Remove an impossible error handling
+ path in bus_add_driver()
+Message-ID: <2024101333-unrented-bobsled-3ec6@gregkh>
+References: <20240917-bus_add_driver_fix-v2-1-a94026443444@quicinc.com>
+ <420b202e-e094-4e82-bf77-dd1c62119aa7@icloud.com>
+ <2024101316-designing-renegade-6f00@gregkh>
+ <c155f97e-b466-4740-ae8e-ce56bcdddf65@icloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,57 +57,69 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZwkvMIqC2DjLZJrg@PC2K9PVX.TheFacebook.com>
+In-Reply-To: <c155f97e-b466-4740-ae8e-ce56bcdddf65@icloud.com>
 
-On Fri, Oct 11, 2024 at 09:59:12AM -0400, Gregory Price wrote:
-> On Thu, Oct 10, 2024 at 05:16:28PM -0500, Bjorn Helgaas wrote:
-> > On Fri, Oct 04, 2024 at 12:28:28PM -0400, Gregory Price wrote:
-> > > During initial device probe, the PCI DOE busy bit for some CXL
-> > > devices may be left set for a longer period than expected by the
-> > > current driver logic. Despite local comments stating DOE Busy is
-> > > unlikely to be detected, it appears commonly specifically during
-> > > boot when CXL devices are being probed.
-> > > 
-> > > This was observed on a single socket AMD platform with 2 CXL memory
-> > > expanders attached to the single socket. It was not the case that
-> > > concurrent accesses were being made, as validated by monitoring
-> > > mailbox commands on the device side.
-> > > 
-> > > This behavior has been observed with multiple CXL memory expanders
-> > > from different vendors - so it appears unrelated to the model.
-> > > 
-> > > In all observed tests, only a small period of the retry window is
-> > > actually used - typically only a handful of loop iterations.
-> > > 
-> > > Polling on the PCI DOE Busy Bit for (at max) one PCI DOE timeout
-> > > interval (1 second), resolves this issues cleanly.
-> > > 
-> > > Per PCIe r6.2 sec 6.30.3, the DOE Busy Bit being cleared does not
-> > > raise an interrupt, so polling is the best option in this scenario.
-> > > 
-> > > Subsqeuent code in doe_statemachine_work and abort paths also wait
-> > > for up to 1 PCI DOE timeout interval, so this order of (potential)
-> > > additional delay is presumed acceptable.
+On Sun, Oct 13, 2024 at 11:46:46PM +0800, Zijun Hu wrote:
+> On 2024/10/13 23:02, Greg Kroah-Hartman wrote:
+> > On Tue, Sep 17, 2024 at 02:53:32PM +0800, Zijun Hu wrote:
+> >> On 2024/9/17 14:49, Zijun Hu wrote:
+> >>> From: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>>
+> >>> For the following function call chain:
+> >>> API driver_register() -> bus_add_driver() -> driver_attach()
+> >>>
+> >>> There is an error handling path for driver_attach() returning non-zero
+> >>> or failure in bus_add_driver(), remove it with below reasons:
+> >>>
+> >>> - It is impossible for driver_attach() to have failure in bus_add_driver()
+> >>>   For int driver_attach(const struct device_driver *drv), the only factor
+> >>>   which makes it failed is that bus_to_subsys(@drv->bus) is NULL, but
+> >>>   the factor has been excluded by bus_add_driver() before calling it.
+> >>>
+> >>> - driver_attach() is irrelevant with driver_register(), so the former's
+> >>>   result should not also have an impact on the later.
+> >>>
+> >>> Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
+> >>> ---
+> >>> Changes in v2:
+> >>> - Remove the error handling path instead of WARN_ON() it.
+> >>> - Correct title and commit message
+> >>> - Link to v1: https://lore.kernel.org/r/20240915-bus_add_driver_fix-v1-1-ce5cf1f66601@quicinc.com
+> >>> ---
+> >>>  drivers/base/bus.c | 4 ++--
+> >>>  1 file changed, 2 insertions(+), 2 deletions(-)
+> >>>
+> >>> diff --git a/drivers/base/bus.c b/drivers/base/bus.c
+> >>> index 657c93c38b0d..54ff92aece92 100644
+> >>> --- a/drivers/base/bus.c
+> >>> +++ b/drivers/base/bus.c
+> >>> @@ -674,7 +674,8 @@ int bus_add_driver(struct device_driver *drv)
+> >>>  	if (sp->drivers_autoprobe) {
+> >>>  		error = driver_attach(drv);
+> >>>  		if (error)
+> >>> -			goto out_del_list;
+> >>> +			pr_warn("%s: failed to attach driver '%s' to bus '%s'\n",
+> >>> +				__func__, drv->name, sp->bus->name);
+> >>
+> >> driver_attach() has __must_check attribute and this error may be
+> >> inconsequential for driver_register(), so give pr_warn() here
 > > 
-> > I provisionally applied this to pci/doe for v6.13 with Lukas and
-> > Jonathan's reviewed-by.  
+> > Yes, but you  now ignore the error, so someone will come back and add
+> > that error handling in.  I'd just leave it as-is.
 > > 
-> > Can we include a sample of any dmesg logging or other errors users
-> > would see because of this problem?  I'll update the commit log with
-> > any of this information to help users connect an issue with this fix.
-> >
 > 
-> The only indication in dmesg you will see is a line like
-> 
-> [   24.542625] endpoint6: DOE failed -EBUSY
-> 
-> produced by cxl_cdat_get_length or cxl_cdat_read_table
-> 
-> 
-> Do you want an updated patch with the nits fixed?
+> driver API driver_attach() may ONLY have below error -EINVAL.
+> is it worthy of a __must_check attribute ?
 
-No need, I fixed the nits and added the dmesg line to the commit log.
-Thank you!
+Yes.
 
-Bjorn
+> i agree with you to leave it as-is if your answer is "YES".
+> otherwise, i would like to also simply remove __must_check attribute.
+
+Please don't.  If you do that, then callers will end up not checking the
+results, and we do not want that.
+
+thanks,
+
+greg k-h
 
