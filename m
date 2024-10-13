@@ -1,102 +1,115 @@
-Return-Path: <linux-kernel+bounces-362751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 06BD699B8FC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:48:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E3D7A99B8FF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:54:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A90A4282176
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:48:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60525B21565
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A940A13C67E;
-	Sun, 13 Oct 2024 09:48:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE9513BACB;
+	Sun, 13 Oct 2024 09:54:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bM29k5wV"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=oswald.buddenhagen@gmx.de header.b="FWpAQ3n/"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF7522907;
-	Sun, 13 Oct 2024 09:48:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF847804;
+	Sun, 13 Oct 2024 09:54:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728812901; cv=none; b=MzkcnlA8VhZvXSMW6+b9jZzHNSvuskyMig5jrDslQw1P4g3U+CFJCzqie5nwQYLQRJNq/BqfIgmEct74rm0Vy1ht9bEbJy450e29Ol4UfxYIE4IX64mGKsd1D7dpXUVMEjm5XLfSoanUEcuGcWYc3/DAxZaahWjCk+eDKQwQ4Js=
+	t=1728813265; cv=none; b=CgSa9PKjF+jNwgY9/YGca+XxBkMJp8V+d83+swA10iZ87eQZKGyob7cyRFE+2SndyXy1UL3VE1OhBeQC/Njuejj4txIlL5OKS8xmcP/ZLqWYFr5/xleOyp1HzHnjaVxnJ8NLq+l1EPr7lIkGlkoP/2Y+7VMyZo9qKnScPCC0jdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728812901; c=relaxed/simple;
-	bh=lq/opFnvxZGVI7pWJkWGv6eRRNGzujrS1QRDQCBJkTg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X+pNHWQV6bvDFyBFkB0uVhhMNiqPWSxAX5vjqKD8lb7rwTWWzhHMv8+8GY6Rl/wtvzVX18TKtvpFugcnF3EPMfAUqrw+qlcUynarLxCD60j0KXmzM9CRhQi9OuTo0PIMo7IidQvVR9Sxnuyj1Mp5quxvyIO52uf3GLOdAA910Lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bM29k5wV; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-2e2b4110341so574183a91.1;
-        Sun, 13 Oct 2024 02:48:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728812898; x=1729417698; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lq/opFnvxZGVI7pWJkWGv6eRRNGzujrS1QRDQCBJkTg=;
-        b=bM29k5wV5dXmmr4SZycJDBwodmjiO8Mhom1L0oX6vh8VilJbKuZcSL5hTSFD0ETIkc
-         tqHyW5EG/S2tNTuLDl/81oceMyKIa97NebOg1D4Px/56VZM4XkbGDJGm6ShUtEjdAqhE
-         dF50/quB35rBYCcn9UHFtQlIkXEf6J6/eBSX7BP3UGyUuGpQWoSqMP8RmfFLlEtsqRRL
-         xGl5rQ6it7VcMkhSqHW7xBkyrjrPGRZNwbZXBwgT1/BGknuZzGdz2RdzvMvu9omAEGnZ
-         KpnQ9n5kCZ/PWOPKSB+pZbMX2ixOHjNwhcmQ5pKRDEDaUnF+wasrco9CbkJfF7K/GW7f
-         ZR6A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728812898; x=1729417698;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lq/opFnvxZGVI7pWJkWGv6eRRNGzujrS1QRDQCBJkTg=;
-        b=bsbwz+GyR/nRmz4GpOKXDj+1XUfCQXddZiUoQcMoEh3Z/OboEltwh7NhGqdHDAm2kO
-         bmoEJPMlzJ9thmlrWCcy3pC3EQn5m2yYx5K2E/ype9BqIXEF0SVLFe7uxKuoCN7p8Qrv
-         DtSST8GYE+lNaUTuEkWLhsQT4W5/T5ZJ7mJcvTJ4nRxUac1CJswCJ2xYKRMreWlpDAdT
-         6V+YeJp1eMG1RDIkdH8F6EmJEQ+0IouM4BF4HQISB6m1l2A5Z1e8+0Vx+xOeyX4Ro9TG
-         zq9Q5y0Mp6t/MEseSsks4M/qUpUj5s+sn/zauEFjOBHyfxpU0T0Mmd9UNlCCvByqxa5E
-         C0PQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUYeuJpdgPhDpypJLe61WCCjAIZM9aVSovX5yLcDbpPuUFS5cc4CMEKmH5ZG4RgRg14q8m+O4pRm6sQzSJqYBg=@vger.kernel.org, AJvYcCVkY6dAXtuTmDxRw6MjyN2mwqgGDhB8UM3MC72/0RKCOlAm3a8jg3pnswNyeFEZUvDRG+AJUjdq@vger.kernel.org, AJvYcCXRsuftgKQIYUs+xlOy9HOhB9t63Q8gK/YpOf+I19L7QA7xWgPDZUyRbkpa57oOq0QRMc+2xabbaFw95TY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSYnf36R5yvtBbBuFzN6IF2S340lu8GKYxsIYuUkdLtIFJRBQO
-	LLabjG/LRJ5mVwviyPJsT8t0YBswORSkBWneiKVFZ+4zWKi1LCCCqRLFOTYfYM0ylEnXfop/oC0
-	7utcvrQFD6gLFNp0Y50n46Ed+f0s=
-X-Google-Smtp-Source: AGHT+IFTWgyck+SK903gIAugnj/pVYE/NlAxOB3/1UrP2RXy7SFep7yMJ9rsMP+xGfsD1Ry3RHH55vn4NwwQ6lUiGAk=
-X-Received: by 2002:a05:6a21:6d8a:b0:1cf:308f:f87b with SMTP id
- adf61e73a8af0-1d8bcf9bb16mr6126576637.4.1728812898013; Sun, 13 Oct 2024
- 02:48:18 -0700 (PDT)
+	s=arc-20240116; t=1728813265; c=relaxed/simple;
+	bh=OJ5AhyLgRm7P2UuNNp3mRuuJI7IvSY7HTNsSc7zNEPo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NKNttktFOPZjDVTO2ApadOcK4u1JfJnTulSERedVQSOrwC2mT8t3cHowfU3GDYsaeTiwOxN9WOKpqbNABqJfLsHieNcci2yshTHOHv98KLzNklEV5dAXUCObOLFq/q4GvUnwtuc0vwlaimEqJ2jVnEQP/72cjz21UhBwlWHoMBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=oswald.buddenhagen@gmx.de header.b=FWpAQ3n/; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1728813251; x=1729418051;
+	i=oswald.buddenhagen@gmx.de;
+	bh=vqeZVm15JugonPdtajp4jH6eT/ju9QoLRzHPHcnPjEA=;
+	h=X-UI-Sender-Class:Date:From:To:Cc:Subject:Message-ID:References:
+	 MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=FWpAQ3n/NBw+0RLSgrUSXd0cyfh9tYsQrcYlDg9ZkLKG6OmXVgOwa5Mm0ixaGrcY
+	 dUoJ/6pRkeDOJcOkWJSvbVe5e+MCLFbEiR0Uc1kMFeFYtwjJZaDOWjn+bSEhtSb27
+	 M8XZc1cDwEA6kv5jpUKrcM+whuQhWq53rMpY1q9DXDxTtcf5/GsmlrBrQdsZS+Tfq
+	 azUGjmWm+4exJXT7W/2jp6XfREN1ygpIIJMRyJUD2xl1VjOB3BCfHG/H5VOfitN1N
+	 4xwRbeSAbPa9lR0VH8vw2SRuZcwMNKknpm8Pkmv2QONmIfSEZQThEu4ssLcw0VTUs
+	 7+/wQTVmR9V7GLqH3w==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from ugly.fritz.box ([89.247.162.121]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MbAh0-1tWm553FI8-00gPkw; Sun, 13
+ Oct 2024 11:54:11 +0200
+Received: by ugly.fritz.box (MasqMail 0.3.5-13-g85b6fce-plus, from userid 1000)
+	id 1szvIh-Lqi-00; Sun, 13 Oct 2024 11:54:11 +0200
+Date: Sun, 13 Oct 2024 11:54:11 +0200
+From: Oswald Buddenhagen <oswald.buddenhagen@gmx.de>
+To: Icenowy Zheng <uwu@icenowy.me>
+Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] ALSA: emu10k1: add a capability bit for no MIDI
+Message-ID: <ZwuYw27Y1YQy-DQJ@ugly>
+References: <20241013014714.7686-1-uwu@icenowy.me>
+ <20241013014714.7686-2-uwu@icenowy.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241013.101505.2305788717444047197.fujita.tomonori@gmail.com>
- <20241013.115033.709062352209779601.fujita.tomonori@gmail.com>
- <Zws7nK549LWOccEj@Boquns-Mac-mini.local> <20241013.141506.1304316759533641692.fujita.tomonori@gmail.com>
-In-Reply-To: <20241013.141506.1304316759533641692.fujita.tomonori@gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 13 Oct 2024 11:48:04 +0200
-Message-ID: <CANiq72=yW6rHSjRS_bDveeq+qm4xwitDLhP4KThQoQGXZzC8BA@mail.gmail.com>
-Subject: Re: [PATCH net-next v2 0/6] rust: Add IO polling
-To: FUJITA Tomonori <fujita.tomonori@gmail.com>
-Cc: boqun.feng@gmail.com, netdev@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, andrew@lunn.ch, hkallweit1@gmail.com, 
-	tmgross@umich.edu, ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net, 
-	bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com, 
-	aliceryhl@google.com, anna-maria@linutronix.de, frederic@kernel.org, 
-	tglx@linutronix.de, arnd@arndb.de, linux-kernel@vger.kernel.org, 
-	jstultz@google.com, sboyd@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241013014714.7686-2-uwu@icenowy.me>
+X-Provags-ID: V03:K1:NuEU3kD24d9l3aRyLqs9wY99swTUS3wu9/T0+UNrdmN/kp+BDn7
+ At0YP59XmSuZjsru7/NtgtBkp4T5Rji1gqdWAMJqed//iuohLdcw4qi3dh2MRgQU8Pt8dya
+ TqpldtrzcwRIa3Z+fy0G/XLZuFI9PAtV5usx4MXS50uO1n8rfOwALVySVT6AXT0e/Qh6Nn6
+ FnyJCcXEcmH6XdJGwl7fA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:KT7geH487rc=;oiqomaDc4TIErBF7A0Gi7/Lf+MJ
+ cZ8yUvOHayUqzJwXbmc3MnoMHI5yu7w3IcOxVJXcVBt9A0IALSr+rlWpWOWwHvsPqrlz+ssUk
+ i1kA8ltBbUgdVcLAL7fHqY/YmyF7ZgUDFR3d8PTitTGhD/wvLLqbE/DohdpcSkXvWyRCSby+3
+ kV+YVhrkcUuVL5Gr627K5/xlgWeKg82rKOth9PKA7sa4KSX86Q+yvWJUMEmOzDN6VLFti4AlO
+ jtYF32sV6AnLD3Mh3x7c19ctZdMhAKdUXkP5BYAQUc5dbJPnMOEcmn3qPpfYNGz/fEbCgelm3
+ 6N9iGeb7epvHRzfN640N0X4gDhaIYcAeEDPdIbC0JZDN6qGb5f/T5msAao9vsdYsJMV6R+Kv0
+ RVgMv/V55IDr8uWbYSSgEPWfuAhMo4NP45ZEHfQT2Q2clFJOnJ7+iPC0Ha1LYzC+UXehZ3l0S
+ 8FnJc+gYx2bcy/tKyGDyZMGYYLhqiCogIt9gEb4aWLUal0/09HngQ3wWpMqNS1QQKtoYa0Tug
+ ypVYBEJChWoKqJ6FC6a7qHCczDSkWTZX9DL05NQpf0v5VlQRzd1Qqu3R17eER6kfc0NGJ1q3v
+ lig3VDelLdV2pv8Hb2wNvSv2mbFuPxs2ua0PGiTp4lMRWN4wU9mmzhaUsQUWDz3Lypj/WV6xW
+ iNGMeqvx4uhgKMjGQ0d8Rj139VLCAFFcdSLKEgj0JBws5MhNbmtv4uieJyf26jKZs1UNoSmrz
+ CGeddS3REzfufLb3cPI5xFubZrO2u9J04xNCJulB9GUe5YKmY8ssRCj28jGxnlItRwJXrPWub
+ mulZzk+3VxH1Meqf8O8/JHfA==
 Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 13, 2024 at 7:15=E2=80=AFAM FUJITA Tomonori
-<fujita.tomonori@gmail.com> wrote:
+On Sun, Oct 13, 2024 at 09:47:12AM +0800, Icenowy Zheng wrote:
+>+++ b/sound/pci/emu10k1/emu10k1.c
+>@@ -133,7 +133,9 @@ static int snd_card_emu10k1_probe(struct pci_dev *pci=
+,
+> 		if (err < 0)
+> 			return err;
+> 	}
+>-	if (emu->audigy) {
+>+	if (emu->card_capabilities->no_midi) {
+>+		dev_info(emu->card->dev, "Card has no ext. MIDI ports.\n");
 >
-> Seems that I misunderstood. The plan for the future layout is
-> documented somewhere?
+seems like excess verbosity. there are much more important things that
+are not reported.
 
-Not yet, but I think either would be fine.
+>+	} else if (emu->audigy) {
+>
+i would eliminate that, and instead populate the card table properly.
+that's a bit more code, but it's more uniform, and the resulting binary
+is even a tiny bit smaller.
 
-Cheers,
-Miguel
+also, i would squash the patches, as i see no point in having them
+separate, given their size.
+
+regards
 
