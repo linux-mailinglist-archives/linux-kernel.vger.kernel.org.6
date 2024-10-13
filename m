@@ -1,118 +1,192 @@
-Return-Path: <linux-kernel+bounces-362923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50BBC99BB3D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:25:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D5B399BB3B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847EA1C21177
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:25:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1B93E1F21A75
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C409148314;
-	Sun, 13 Oct 2024 19:25:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D44C148314;
+	Sun, 13 Oct 2024 19:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="SwxOSpZX"
-Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="WZBtCr6Z"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EF212C54B
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:25:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3734712C54B
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:24:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728847531; cv=none; b=AQ8YHuNZjut95yvOGvnc0tojA0s0LXAocr/4KKnBrg0Wyw101F9+DEsSWpj8NpMwoQsf6ACywoCjTcCcfhTy/rHwf1rXW+OT6d0JdRY5jNaOiP2kl19HWWzgLzKz6FARi5hFSPtiBAf5THSjkPRrYARAXuDS0tpbp8iPGFyKgl0=
+	t=1728847461; cv=none; b=BJOhLlRLJ8znYNr5aWP8e9UdiAGISy7bTjpCyhODAPNJfI8xD/4Ny16o96X8AmBtGJqoxSclVyltP2xqL5bc0a9aQwATZmOQqeoYOfvvxnDqFBnbaK6tTHy2kGHHpQqTtJMXfkXStT7YgRXzWekC/5Qp7xePlGVxdcWfqK1R2Is=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728847531; c=relaxed/simple;
-	bh=pXVFMnSbHvGZWIWCxCZxNXJPAsc5cwNlWqgPr6lSV0M=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=EB+VuHAAffD0XbL1s7VNlxPkdVhgjTZSoNTU4O0LAM1l3c3jODLgqms5rw2xW/spBZfFIE7G6Pi/06QIbBmGkAN0sR2JCD1ufxlzGObKFZEXhShHKczKs60Svci+192sKbj/uHc2uAkN+SiYIudm0Tq+ecXPwgMX13YnZLby80U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=SwxOSpZX; arc=none smtp.client-ip=209.85.160.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
-Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460464090d5so33940311cf.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:25:28 -0700 (PDT)
+	s=arc-20240116; t=1728847461; c=relaxed/simple;
+	bh=UoinomxZryOOdSWiFeKT7nns0U2y0SKMK2nrNKBev7c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=p26opvkyVuF0jBE4xFGeH2e16foCKEMmGV5Nyh+TFtMzzZ5nXUkbwPmcyoULG0QUiWozWBQtFTjIDaaHO529GHZ1n9C3XYt/WzauSfiCmN6faSpsomh4E6o8BwmRyVrQE4JVgF3VLixcu6sgsCEpCFMalBgTm7y2S++OOK4ZOBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=WZBtCr6Z; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbe90c7c95so34473356d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:24:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=marek.ca; s=google; t=1728847527; x=1729452327; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+zrIznS7Q8l18arQCJjGYNCqnOxcKuCFvr5eSQ24gEg=;
-        b=SwxOSpZXD4rPWDyQrn39H9k8aaY7KyjhwGr/2t/EsVmEqmnaYix6LoOLiQOgkpiuRX
-         azkPqtFZN/tUZOUx0fCeSS6RDpkUykMiA+3BYSG5ikdOXMUdXHUXr1wvn+DSKViDrEsM
-         VSMfMQcDD0Wp2hgwWJGhy9T/fk258Jo3nN5+23V/Y8X5hD9OVOKby5M9n52GVTTSLN0D
-         LkQ15RFwKf10NbfKz7YS1rNIRUVw5ytL7Lul7NG2hcTjKi0Fnj0qJnXJZHl4zHOB00m2
-         e2qtET0xhdajk/IYcRM6clxDkKeP1MbmRbE3U9DLS2zrb61cW8iRBhsB1KdDWMCcQ9Zp
-         8l5w==
+        d=rowland.harvard.edu; s=google; t=1728847458; x=1729452258; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iRVwu6bWIn9AV99AJHz9Pv5GxwIR9LqRGHICqynMQic=;
+        b=WZBtCr6ZCjB6kZ7oicldZa2mXLMfs4PrNPct5dzcR7sfbjkeP6JyYQg+m2KOBaRREq
+         gkUV3gKKpvJlgDev85uYHR2xpveBihTg5l5OEvfVTH54YGMKSdIkzzpIf65kjWysxd2J
+         QTbglT1pmX49DzcY9TvS2e+r4OW2LphxflxHd8Mx7Tw9thldvWs0G8Q8eLRxVvTuxida
+         TM44NzfSm9sU5TKTsAehWYbdR/mhc2OB7lS3aavMovEBl3y7nj54NfGjYu2O91cs8ZnM
+         md79c0i9p2AMrg08PxImTjcL0ZZRHC7zBaziey72+KBpWyOZDbxaFE7t1Qkyinkh7nJy
+         ncRQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728847527; x=1729452327;
-        h=content-transfer-encoding:content-language:in-reply-to:mime-version
-         :user-agent:date:message-id:from:references:cc:to:subject
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=+zrIznS7Q8l18arQCJjGYNCqnOxcKuCFvr5eSQ24gEg=;
-        b=QVRiD6zH+C2HoXwL3RoXPD6R8WfgAB5ezfCGMB8URIkfOA3KXSl91pESfYlIOtOw/M
-         Ct46P+G9EVXprlIwwalgqRKr9BYXEtO4fmcMwW5ZVw6FEaUtFE+6qP6E+Z7w/o9dmRpP
-         CN20A74R+1z+ZqbJeH8Atdzhn7BJgiuuiTzMjHt0y6V9Utt+wIlUMAIPIp46yNxcPFR2
-         Mm64KcWQP+0759LBuBeYjTIr++ykKpTm+d026SnIQAzfytmd98cNxDzuzqRN+iSyyCx0
-         Vin91fAbRzPYl9i3poM8IUvA42sBmqlEBMr1CxauhH1oYQDKfcnm2bcBFO6vfZfGoGvW
-         cjVA==
-X-Forwarded-Encrypted: i=1; AJvYcCUFwtAcjQX/CRqk/+PDGj7xkk/AeMFDLzDvuC4+m7ZxIGIwKgT/m0rT9JxsjcnEU3GW9gPPzD+hePF1U74=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy5hY/WrByeSMNjJcsGkzm6QnpjnvYzoy0LioMYDWWD29G7B3B8
-	/EGFshcE/3L2kJnxq5Vu1CoPADPfVeO7jjew2v+VltxJaIChd95w4cxQn8psIps=
-X-Google-Smtp-Source: AGHT+IEJNYlsyx8T+jvHzQldZj2f3S8SmxEhhWozD8TMDGZMQODrTJu3Q0sDXFRzrKhgTK03uXP+/Q==
-X-Received: by 2002:a05:6214:2b93:b0:6cb:99db:bdbf with SMTP id 6a1803df08f44-6cbf0051da6mr133964626d6.43.1728847527282;
-        Sun, 13 Oct 2024 12:25:27 -0700 (PDT)
-Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85b695fsm37792116d6.37.2024.10.13.12.25.26
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 12:25:26 -0700 (PDT)
-Subject: Re: [PATCH v2 0/2] efi/libstub: fix efi_parse_options() ignoring the
- default command line
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: linux-efi@vger.kernel.org, Aditya Garg <gargaditya08@live.com>,
- Andrew Morton <akpm@linux-foundation.org>,
- "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
- Kees Cook <kees@kernel.org>,
- "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
- open list <linux-kernel@vger.kernel.org>,
- Nikolay Borisov <nik.borisov@suse.com>
-References: <20241013051239.22564-1-jonathan@marek.ca>
- <CAMj1kXHvOgGysdPSNNk1bUR2f5tzRaxr4=saqF8KFXq+q6gDCA@mail.gmail.com>
-From: Jonathan Marek <jonathan@marek.ca>
-Message-ID: <b13dc40b-cb72-02f6-0379-358499696eb2@marek.ca>
-Date: Sun, 13 Oct 2024 15:22:00 -0400
-User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
- Thunderbird/68.2.2
+        d=1e100.net; s=20230601; t=1728847458; x=1729452258;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iRVwu6bWIn9AV99AJHz9Pv5GxwIR9LqRGHICqynMQic=;
+        b=lgXgxdgabsXirX7FEb8PFXi363Pjcgr5zZTCQ/4C3r9lKOaa9bD+5rW3ojprX+wu5g
+         8xb0KEI3R6OSVQHvF6nr2ArrLpHnAao99d41RfaIy9eQf2KkzWS18XwIeZqQI56MqoZs
+         /A1aznCEIiBK9U2YBlPkHAyF86xaBYOeDCeRbCvAMRMXQX9l9uCYXfgA/17Dq3ul9dRn
+         13GD2+jznqQcrt2Kwl6WEkcFAdWzNLcxs3B+80T6Xy7t6zDKKmCsxSdFzvTDHfDFGzQv
+         v8Wih3AlDoZYq4iRKhjXZ8xC8neha9XYBkcrNpiVYeJhOrpoCfI3TE8qC0vcSrEVrqpc
+         +vzQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVOWrUUaFv5Tr4EQWCQ4P0aQu6+w+1x3lftCXZ5VZBGuC9gnna9N4BVfeKVDrZh1oR/kdETWegtfvcUNlU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/Zdzn8EsDlXbl9vf3xZmQX/4ujKiJgn8E+K00LTFJ7nWoDN9e
+	HymfJPV92CzKb1lbBn1/XgSD11lNPRrvL4hQF79NQkzluoBJa9P5q3XtXmrryQ==
+X-Google-Smtp-Source: AGHT+IHyD3EuTqc2dltgjMvligqWWHbJujvIyC2ZSkIegJmmaWOJWXaw0/wPab5fQJpMPfW0rzsHRw==
+X-Received: by 2002:a05:6214:5346:b0:6c5:ab33:5244 with SMTP id 6a1803df08f44-6cbf9d24a55mr76273086d6.31.1728847458116;
+        Sun, 13 Oct 2024 12:24:18 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::267d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608d73sm37856366d6.89.2024.10.13.12.24.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 12:24:17 -0700 (PDT)
+Date: Sun, 13 Oct 2024 15:24:14 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, sylv@sylv.io,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <6751f648-a622-4562-9ca4-5bdf79dd72fb@rowland.harvard.edu>
+References: <2329dfa9-ef76-491a-a4aa-277230a0a96a@rowland.harvard.edu>
+ <670c138b.050a0220.4cbc0.0038.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAMj1kXHvOgGysdPSNNk1bUR2f5tzRaxr4=saqF8KFXq+q6gDCA@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670c138b.050a0220.4cbc0.0038.GAE@google.com>
 
-On 10/13/24 1:30 PM, Ard Biesheuvel wrote:
-> On Sun, 13 Oct 2024 at 07:16, Jonathan Marek <jonathan@marek.ca> wrote:
->>
->> v2:
->>   - changed to check for NUL character instead of size==1
->>   - reworked cleanup patch to remove cmd_line_len
->>   - moved 3rd commit out of this series
->>
->> Jonathan Marek (2):
->>    efi/libstub: fix efi_parse_options() ignoring the default command line
->>    efi/libstub: remove unnecessary cmd_line_len from
->>      efi_convert_cmdline()
->>
+On Sun, Oct 13, 2024 at 11:38:03AM -0700, syzbot wrote:
+> Hello,
 > 
-> Thanks. I'm inclined to fold these together and just merge them as a
-> single patch. Any objections?
-> 
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-No objections (its not important to me, but if you want to get the fix 
-into stable I think the separate commits makes that easier?)
+Evidently there's still too much debugging output.  Reduce it even more.
+
+Alan Stern
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
+usb-testing
+
+Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+===================================================================
+--- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
++++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,7 +50,7 @@
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
+ #define POWER_BUDGET_3	900	/* in mA */
+ 
+-#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
++#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
+ 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -257,6 +257,8 @@ struct dummy_hcd {
+ 	unsigned			active:1;
+ 	unsigned			old_active:1;
+ 	unsigned			resuming:1;
++
++	bool				alanflag;
+ };
+ 
+ struct dummy {
+@@ -1304,7 +1306,7 @@ static int dummy_urb_enqueue(
+ 
+ 	/* kick the scheduler, it'll do the rest */
+ 	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+ 
+  done:
+@@ -1325,9 +1327,15 @@ static int dummy_urb_dequeue(struct usb_
+ 
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+-			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+-
++			!list_empty(&dum_hcd->urbp_list)) {
++		dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++				HRTIMER_MODE_REL_SOFT);
++	} else {
++		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %p\n",
++				rc, urb);
++	}
++	dum_hcd->alanflag = true;
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+ }
+@@ -1813,6 +1821,8 @@ static enum hrtimer_restart dummy_timer(
+ 
+ 	/* look at each urb queued by the host side driver */
+ 	spin_lock_irqsave(&dum->lock, flags);
++	if (dum_hcd->alanflag)
++		dev_info(dummy_dev(dum_hcd), "Timer handler\n");
+ 
+ 	if (!dum_hcd->udev) {
+ 		dev_err(dummy_dev(dum_hcd),
+@@ -1984,6 +1994,8 @@ return_urb:
+ 			ep->already_seen = ep->setup_stage = 0;
+ 
+ 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
++		if (dum_hcd->alanflag)
++			dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
+ 		spin_unlock(&dum->lock);
+ 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
+ 		spin_lock(&dum->lock);
+@@ -1995,11 +2007,11 @@ return_urb:
+ 		usb_put_dev(dum_hcd->udev);
+ 		dum_hcd->udev = NULL;
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+-		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+ 	}
+ 
++	dum_hcd->alanflag = false;
+ 	spin_unlock_irqrestore(&dum->lock, flags);
+ 
+ 	return HRTIMER_NORESTART;
+@@ -2391,7 +2403,8 @@ static int dummy_bus_resume(struct usb_h
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+ 		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
++			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++					HRTIMER_MODE_REL_SOFT);
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
 
