@@ -1,94 +1,139 @@
-Return-Path: <linux-kernel+bounces-363010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363011-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D90199BCB5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:17:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0F2499BCB8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:25:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C7EFB20E85
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:17:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2EDB20F3C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:25:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F8E154C04;
-	Sun, 13 Oct 2024 23:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6563513D2B8;
+	Sun, 13 Oct 2024 23:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0XNVRBF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UAz2lTvz"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AC713D291;
-	Sun, 13 Oct 2024 23:17:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15EC42F34
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728861428; cv=none; b=mtOArOR9RfIiEblxy2FmJlSaV/EBnQ2IE44bhjdd3LEz/sB+Agj6PHv5uiPfF3NB3N0iwSEf9/BUybQXY1kAUYtcTEF5bbf9aHR4wjhZ0/u/IPDy7UEWAnVANCFjrJ5PvFlnI3tx99Al7UWo1IRN0/3WhlMNWrL0sgNQ+buDVrg=
+	t=1728861937; cv=none; b=h1FIEqazeBnlQ2g8fvUD3ZLzgHASnKxb1zyeMpJH5yzIXq9uy+3CXvb2O/2Z1RWMIGl6nVlrLSQtmSMeIKTNiI/FinUxjUdJ3Sdk9D8SguZIvdOudrlodtEBkOvJ3GrAFQBQyCasGJYojW6QflVI/h5iM3c0s5LIRvUx+bQB8h8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728861428; c=relaxed/simple;
-	bh=T6fCpxQByFMxCFovCaie3y6UnkKaE2UUQlMk06KTWYo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DMKEzb2PKOguTpTgof/BK9vi0BE0JpKmrQTAYKfx1OfEks+rzDuKUk9Eq0uNCFprP1xR3WfO2P9okR7NJF3ivAdQTroakx7wSQxkqQ3WopgiSnKPcZly7HVEhqNWmn3MmS7RA0QJVlkqF6pzY3AZTKGY2D33af/NJG6nXpil3TE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0XNVRBF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C057C4CEC5;
-	Sun, 13 Oct 2024 23:17:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728861427;
-	bh=T6fCpxQByFMxCFovCaie3y6UnkKaE2UUQlMk06KTWYo=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=n0XNVRBFUzrd5VvWsK2rIxro/ZetKbPWL43Y5ze+kyoS4mHeibbbTEjPcgqhMyBzf
-	 1zy5oWZAdQjRuBSRNPf39QPbJ0Qca4HMYi2tQqmj83AbnKpOAxYfvmFipicEiAhb/V
-	 J9TgBfQSPMg6toy7l3AfEYfQFKjQQ1GhzuQMeX9875ILJfcSxoeU5EombIQ9+fCOqw
-	 LsSDlsqgmTxrHtZYTmymNrTMuYZqr3G9r/ybi/IU9+sOD5RkcIFxZZEZ+3hKAkM1jX
-	 Fg8wpHXSZzd4GuE+bGMQWoWuS1NtDwbePH/MKXdXWkiDW9igjEG4P9E9EdpWRb9fPN
-	 LEdz3fOYP/UUw==
-From: cel@kernel.org
-To: Julia Lawall <Julia.Lawall@inria.fr>
-Cc: Chuck Lever <chuck.lever@oracle.com>,
-	kernel-janitors@vger.kernel.org,
-	vbabka@suse.cz,
-	paulmck@kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 12/17] nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun, 13 Oct 2024 19:16:55 -0400
-Message-ID: <172886139200.172644.2516274640298579379.b4-ty@oracle.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241013201704.49576-13-Julia.Lawall@inria.fr>
-References: <20241013201704.49576-1-Julia.Lawall@inria.fr> <20241013201704.49576-13-Julia.Lawall@inria.fr>
+	s=arc-20240116; t=1728861937; c=relaxed/simple;
+	bh=p9stHoOH8kkpzFCF4Mbrh0/N0hNI0ALhcvny2+V1ViA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JHMCPCZnK5+BEk3kYY0fpE08h0z0p1zc9Bhjb1Ff2IkoEqGqI/SapNXv1b6kVwB9Z5QELkmRfU6TSpXn+dWHbelLID0lcKXoG8SJ/rhgEHnySbLw1tMUw/VzpHcOt/Qu4yUtVLC/5QAi3KpiYa/g+RziuIa2vgy2OjlTcVb3aCQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UAz2lTvz; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f1292a9bso646969e87.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 16:25:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728861934; x=1729466734; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=f7ppDo8eXEXiW7XbxyYtkiDxlhQRgo6UTY3wAxOKzT0=;
+        b=UAz2lTvz5jxVSa+o2Nhp6bb3Q60E3YPvvnACnedOjOvh1/88jDBbHVwcoFuVWdvUYK
+         dAXAdES3er5JeehXa2ZYdqhcjq8hV/VmygL3z4g7h2CEnvyr+HhbjNg8cIFGDyE45k2S
+         Zt1fMVN1dVKWGqMzkhj961nz25T12CDKj95iuh4WnQJgbxMkzj0AwraRsOF7fdoIuJzM
+         xA7h6bpInaDpPGe0U20nbSc4N7OIYFoVZZlORPu+upS5zGkQJq5bRl8HHjxKKyEDMNGV
+         AI4Uvut3LUsyzWf/ENpeqBOHyRiOvh1jiTeNTl6KcF8qiNehGk69Pi+jPwP6YDD6yhMl
+         wuvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728861934; x=1729466734;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f7ppDo8eXEXiW7XbxyYtkiDxlhQRgo6UTY3wAxOKzT0=;
+        b=gH5/Cbs7wNcX5jPGxggImuU5SnP8SziHVRdUprX9uaVS5B+dwf95SPk88y++194RGi
+         U9mqaYJOJNDgM2Dg3AtQmCRjdjoh5pEOWBgrLmucyJ81Mk9Bwexrax8xgm6kDCaJeYoG
+         cZYRptxPV7GZpjGI3ZB1Dr+TVSCLBgsTCbP1JcazW6LVacIBy7ea2jydLP4scQP2In3F
+         MD/0k90BMi/y+yAJdlUIQydKGDkW2f65YRm4wxe8Rf5zb0KuTt2rG7rRzD9IKRLK9D9b
+         3VrU/QXyuzaLBLkpApUv0+jO/dRIWMtAE0yI3tCkdIWsxmCSDDyJ+FAD9GjMm/8uarAc
+         SKyw==
+X-Forwarded-Encrypted: i=1; AJvYcCUOhg3rk2tQchrEL2bnbLu540vT6z6BXKBQBDUJr95RkDxoAHN2jCxzrEzVnJJFRPvh6wbwKTlIFT8AFCw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw7F5A68iZ9icg2IVQJrk+4U6y2wNJXkH4ZN2GP0y4fmPuTLtK6
+	uez/0Mmy5oDsKsNpqCRfkUHEgX6nmh5nKu9dhuWDjZwR4snx69dAU6c3tOE6uEM=
+X-Google-Smtp-Source: AGHT+IG5vye8bbxSx+nbimIrHZrTf8ydt2CJhidqMxft9FquUHUFUTAFYexvP92VmmkXD6RHLn00zg==
+X-Received: by 2002:a05:6512:1256:b0:539:ea7a:7688 with SMTP id 2adb3069b0e04-539ea7a76dbmr1188496e87.1.1728861934157;
+        Sun, 13 Oct 2024 16:25:34 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539f37134c3sm323013e87.109.2024.10.13.16.25.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 16:25:32 -0700 (PDT)
+Date: Mon, 14 Oct 2024 02:25:30 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+Cc: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konrad.dybcio@linaro.org>, 
+	Rob Herring <robh+dt@kernel.org>, Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_vbadigan@quicinc.com, quic_ramkri@quicinc.com, 
+	quic_nitegupt@quicinc.com, quic_skananth@quicinc.com, quic_parass@quicinc.com
+Subject: Re: [PATCH] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
+Message-ID: <7yzjgqitjvfwricftcpelktwjbgwkjuibwkpodjd6x4gwkjkw3@wkeqp6lqwfqv>
+References: <CAA8EJprRF0tVFZK9c=MT8bSRcBdRvcugBaeEzpX5-wfRyNgc3Q@mail.gmail.com>
+ <c8be2bbf-a51c-a38f-6e6f-a88801f953d5@quicinc.com>
+ <20240209075716.GA12035@thinkpad>
+ <CAA8EJppfzc_dM9c9mHPVWheVxi-1gJxCmaWPvreELijEQDDSyA@mail.gmail.com>
+ <20241001101622.ys36slymgjbaz26q@thinkpad>
+ <8459161B-87B8-481F-AE71-3D5156B1CA56@linaro.org>
+ <20241001141948.g74rn6777ywvtcmx@thinkpad>
+ <CFF89D4D-8131-47C2-95B8-A0E130A16E46@linaro.org>
+ <9c24ba5d-431a-c45e-ce1c-3541eac7d017@quicinc.com>
+ <20241012124334.4gsspgtuud4uudop@thinkpad>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=893; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=/8YJRV9GFMeDkrzw3g6+IoigkBWNyS0S4UeL7zCFMTA=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnDFTpEVs+lhLtZ9DMdFOdQYmEVyL0j1AnwYCn8 oz7Ed3epMCJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZwxU6QAKCRAzarMzb2Z/ l6T9D/98US6txOa/yiNCF9hDbrzwgk7MHT21FDI6/B4kt+/Uj21+mRN1U1D+iEfSlgIgg81OGKK sdH1NMATBHY5hX3La8Atd2jSB5Whm1u2HDgsN+zVY30V5tVaNkIAbvYKkhKHoAgZ3yDo+Ym/Sqd ET3xX8H3MxX846KLzdL+P1a+Om2qwMVTx6OqhcSD2vAFUZhSyYCHaIexqPraPvyo6CE65hrdyJo 6nedWwQLVsLhN2/p207FtQNStzvbm3gxnaZOXXrsboaRlckB1q5iBaQi3jj1VbQCNJcG0Ys0VP/ 8+92TThM72bBYuwdLgTxS4o+fCmG3LiCS5U+lo99DdEpfcnlSXWTGBwL00vduqiPSrx3cAFFqLy PtZOOuTfe7nDN4pDHPgWWYnfuIGQZ+tZFgBFhOEplhWdKtvPi4PNmX29SNshPDzdaCNXOSMhn/t y2VsBXAn1jvbamJzFju3tB8ihgSo7fTK/VfripbUwbGwlFXZTj4E7bBhUEaWW1ad8S0wbSZgSaW icpP8fzfUUi5ZLxoFggdpcbCF7QH8POkKgcWsgciEl1zm+hy+BSl1DaG/5Ocg0XRjZ/YckXgZYz gSKn4Lan+2FdSXbI/9G+OKOVAbOE9YrQSl+DOSWgxju0BPhZAisfjET35Y+NraQB6NONlsJriw8 0fU8K0L
- V4ov383Q==
-X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012124334.4gsspgtuud4uudop@thinkpad>
 
-From: Chuck Lever <chuck.lever@oracle.com>
-
-On Sun, 13 Oct 2024 22:16:59 +0200, Julia Lawall wrote:                                              
-> Since SLOB was removed and since
-> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
-> it is not necessary to use call_rcu when the callback only performs
-> kmem_cache_free. Use kfree_rcu() directly.
+On Sat, Oct 12, 2024 at 06:13:34PM +0530, Manivannan Sadhasivam wrote:
+> On Fri, Oct 11, 2024 at 05:24:29PM +0530, Krishna Chaitanya Chundru wrote:
 > 
-> The changes were made using Coccinelle.
+> [...]
 > 
-> [...]                                                                        
+> > > > The logic here is that the fixed endpoints in the switch will get an unique SID
+> > > > and the devices getting attached to slots will share the same SID of the bus
+> > > > (this is the usual case with all Qcom SoCs).
+> > > > 
+> > > > But I guess we would need 'iommu-map-mask' as well. Hope this addresses your
+> > > > concern.
+> > > 
+> > > Yes, thank you!
+> > > 
+> > Hi dimitry & mani,
+> > 
+> > This particular board variant doesn't expose any open slots to connect
+> > a different endpoints like another switch(which might have BDF unknown
+> > to us) so static table should be fine for this board variant.
+> > 
+> > I tries to add iommu-map-mask property, the issue with that property is
+> > that the driver is applying the mask to the bdf before searching for the
+> > entry in the table. If I use a mask value which satisfies all the
+> > entries in the table ( mask as 0x718) and if a new bdf is enumerated
+> > lets say 0x600 due to mask 0x718 its value is again 0x600 only.
+> > 
+> > Can we skip iommu-map-mask property and use only static table for this
+> > board as we know this board doesn't expose any open slots.
+> > 
+> 
+> Hmm, I was not aware that it doesn't have open slots. Fine with me then.
 
-Applied to nfsd-next for v6.13, thanks!                                                                
+It doesn't feature open slots, but it has two PCIe connections on HS2 /
+HS3. Users might attach external PCIe devices.
 
-[12/17] nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-        commit: 4159ced48564c9e6565e88a4774ff7456123f9d8                                                                      
+Krishna, could you please clarify, how those two connections are routed?
 
---                                                                              
-Chuck Lever
-
+-- 
+With best wishes
+Dmitry
 
