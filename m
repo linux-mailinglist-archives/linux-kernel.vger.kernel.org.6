@@ -1,72 +1,55 @@
-Return-Path: <linux-kernel+bounces-362953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2164099BBAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:29:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBFCE99BBAF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB960281864
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:29:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFF1E1C20C22
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621CD14F12D;
-	Sun, 13 Oct 2024 20:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4906414A099;
+	Sun, 13 Oct 2024 20:29:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cShxu2Fb"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="efblilPo"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F79214A619;
-	Sun, 13 Oct 2024 20:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37A701494DC;
+	Sun, 13 Oct 2024 20:29:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728851333; cv=none; b=sXgSAHIGRNp8xQWifD/50fyIpvmuGQ2Q///3wGBSt61fYK0P8Dvuwrzsy5tX1ZG0kG2VJVgEnW+npDnzchGGjy3UgYaSkNWTEzckujq99BI7hAKRJzxDO/RedrUJTL640AA4780ou8GR0Jujx/co39OCoBQJ6HqVY5OdEl+y7zc=
+	t=1728851370; cv=none; b=UBudumjK1vEOyzNtn1j1etiCXl6GaOHgFvmLJdCobD5I3zFVfmnIVFW+yPreEKJ8W285gBt4bue3z1lbpJNPbMh7i4CGZ7X5CuFbcgfdZeBZITF7/PbhfiltaXJhE143jNvajyCNnDEz0Y9V279M9+B2J8DCvciRp+HznGTFyRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728851333; c=relaxed/simple;
-	bh=B14erMBGVuq9kG+SORUOBD0xFZqGRijfqMUyrsc3wOA=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=fLVqcYobBnEQnhkNSZNxSDSNcdAyHr8DiJd5BLWQC4eb7v8y4fcra1ABB/eGReo0YDGKhCHwBSDxCOfFSG29WnMfam2pS+F0XSIPL2gWttpemgFn04l8oINBxwDCwLKmDpkg6sqZSeiTpSzXxsUcoURhdvgEfyurk6jNg7iRrjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cShxu2Fb; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a999521d0c3so604820166b.1;
-        Sun, 13 Oct 2024 13:28:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728851330; x=1729456130; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3wRWCdVZVlOXVVV3K+TnOo4abj1WCau4sw4RIKpf2YQ=;
-        b=cShxu2FbXj2xhKH5gCqtitsy8u5PdnnZrMIv5EWuVU61A9/qsT3JgxCJNWgxEfkuTl
-         0I+irojyVzwfUZFtY1gzSDHp8nSpBKKdcp0eS0MQum+GgCQ+uNtzb0InKoWtiefziidb
-         hqux6Lj8fNmq9QMh0Ov7WZWr7NN8PUCusQfWfGnNwtI7W7Gmql1D7dAG38GdaWdg8WPH
-         KTuehP10V5VFUzy7bKrrfuA+UUtoO035YeUXAXo3PHpF2Nuvym0X529Cn5s/jcRZIqGt
-         jTs5EgjhxcDvuGHM1w7aAUvSGLzt2akYkA3Jys7apjxYhSP+ab1qOb9mPzwNNNgSLVcg
-         wybw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728851330; x=1729456130;
-        h=content-transfer-encoding:cc:to:subject:from:content-language
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=3wRWCdVZVlOXVVV3K+TnOo4abj1WCau4sw4RIKpf2YQ=;
-        b=r5M7Z8pv0DELi05QoNDVZ1cEP1iY3DjtVrkr7VFcgd15TZ1Uzaaqfu7vfnMfTDgZGN
-         mhd6vMsBbu9L74NSbLGF/zAZsDMD2MyqycQB5XS4ou8N3YWNESvgoznAfynl9rDHsKaW
-         S8QkVdyLkEOvk8LYpjHLUdp3/emUnt6JUwITMfBUfyYszTM5ektHtTxDJxyZJjZrvsgK
-         /vCFwv12z4kSCCWF6SfWrHK6Ar5JvenDLxGejQRKqkglszrqrttqsjHzvl244aMiNd8A
-         1nQkp7jZafwfQio0LU8D8xke6W1KDxofxEBm3P56F2J7mTpkjX9vV/MPD739cNHVXPhK
-         uMgA==
-X-Forwarded-Encrypted: i=1; AJvYcCXKrOXwF36I1mg2PNZ5fyjnHnHdWhg0qwsSEK91LMSVLXqAVhDVmHmmQGVvFnZ1qcmDENED5l+AnDhRgEQR2w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YytuDaRg5VGq5PENKlXn784h9HGJz+Qry8xScyy6sVorwKyBpdP
-	fb93M0/R1hAqVWEMcs35rghEi/KRQBohEChzrJ/Jk4sOCRMydxNW6fxprP5+
-X-Google-Smtp-Source: AGHT+IFs8k6ARM1XBsiAlApkPDu0TO2sAvbk/FEu1+/7bODbqmT00VImgLMaitpFuy+TrqJfC18XtQ==
-X-Received: by 2002:a17:907:86ab:b0:a99:f887:ec09 with SMTP id a640c23a62f3a-a99f887ee29mr376832566b.35.1728851330052;
-        Sun, 13 Oct 2024 13:28:50 -0700 (PDT)
-Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a06169967sm114645266b.97.2024.10.13.13.28.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 13:28:49 -0700 (PDT)
-Message-ID: <a7eb3db4-ad0d-451a-9106-90d481bd3231@gmail.com>
-Date: Sun, 13 Oct 2024 22:28:48 +0200
+	s=arc-20240116; t=1728851370; c=relaxed/simple;
+	bh=0gMXlYpnIPAuJgx2PAz1Y+xtbMNK0rxJnrXsXAV5+O4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=t/fJ4tY7/W7c13Hk/z/5jWZbWffqxpGUAaE+arSLtgyhSTGVhoepM17Qmk4eso8qJ/dn/u1Evj1rfRe6CHbOAXhsgma1FS+xF+QbEQSRq2dD5/KfP/V3U8HNdY7xcchCFeWcD+mDkKYamv3SLTtFLcmytyxY+dcgkn5fhuhGsz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=efblilPo; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728851357; x=1729456157; i=wahrenst@gmx.net;
+	bh=kZp4oZNcSAAVej1Qag41DuMe8LJUyQ0UO62YYClJjt0=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=efblilPoRYsJRMDDke5Z6vgo/bilWLUr31qX8t8oydM3hPrtgh5hHjqzgl+0Hu7a
+	 BWMdv+1xrSaXL3Tsg5wov2cewpuA8HvAB3gPIrl4iwXNIMfqR2kOoDHGwX14j5uz1
+	 jfQvcbqyLZVUUXER1M/oNKMaiUZZQy56lI2eNlpB7ZubATj6wRqR2OWovcGHu8v+j
+	 Jl+OiyFqPO18RHD0IntC0xklIu0VIhARuKPamZIBAGew7CgbLlkaUgLcwCnkfV2MF
+	 kBdKDiNFKAGra6nri87OgRDbfg0I/mgXmgaVeqTd6vObiAVTxip3nsCRwjQ65bOT3
+	 0/+ky+k7qGbR6T7Oxg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MVeMA-1tPPbN2l2y-00Wg3p; Sun, 13
+ Oct 2024 22:29:17 +0200
+Message-ID: <b176520b-5578-40b0-9d68-b1051810c5bb@gmx.net>
+Date: Sun, 13 Oct 2024 22:29:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,104 +57,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-Subject: [RFC] ipw2100 ipw2200 ps3_gelic rtl8712 --- Are we ready for wext
- cleanup?
-To: linux-kernel@vger.kernel.org
-Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
- Alexandre Belloni <alexandre.belloni@bootlin.com>,
- Claudiu Beznea <claudiu.beznea@tuxon.dev>,
- Geert Uytterhoeven <geert@linux-m68k.org>, Geoff Levand
- <geoff@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Jakub Kicinski <kuba@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- Larry Finger <Larry.Finger@lwfinger.net>,
- Nicolas Ferre <nicolas.ferre@microchip.com>, Pavel Machek <pavel@ucw.cz>,
- Stanislaw Gruszka <stf_xl@wp.pl>,
- Gregory Greenman <gregory.greenman@intel.com>,
- linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+Subject: Re: [PATCH] staging: vchiq_arm: Utilize devm_kzalloc in the probe()
+ function
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
  linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-wireless@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
- Stefan Lippers-Hollmann <s.l-h@gmx.de>
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ kernel-list@raspberrypi.com, Javier Carrasco
+ <javier.carrasco.cruz@gmail.com>, stable@vger.kernel.org
+References: <20241013171613.457070-1-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241013171613.457070-1-umang.jain@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:o9jjF+w3KoP0/0RAbm/FdeAV+qPWlYVd+WBzsUBqMhM20aPAXUW
+ 8ZUHnI5ZJHAaxIe9OcysTndkA/+gOET7NDvG8cmFOD6KbrqMcJh9pku6/AMWudq3YeQvWps
+ H6MtYX+ba4gEf3PPY3k/T7Rjt5nWD3DyAoRkjmwycX8JDR4Z0FQLZkLgQM1IXhb9WXccODK
+ l0KW+lhKu58dOgnoUXKKQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:1+62h/DBdPI=;XwHz3UcBoVhQo7w2bYTTKyAEfYW
+ vru6Tp/68/ilNsSAHZyBY1RK/vkCIHmenl8+zaWXepCQsyP0/sXKDOEqLOMh0GURo8Y4tfAO7
+ gVxcE6KP2van52uYN4dF4MWMR43nl3D1ct7mExZWDV4ExTbJZyrcvXOefYnwaLOpRDLJ8KvOk
+ +/WuONwQ0GjNt9ZEYqSuL+xxFTRalTE6RcJU9e1nyuPqeJxT+wbQlIPyZhA2U07Qsmel2jEEb
+ z58wZfcicmgi20BWuhkngJDf1YM4cGuL3BC1sgfDh/cGEBtXMMsdA1TcJkEAk9EYzNGpMZ/H7
+ gaky6T7EB2dGwn93siFLE+Gu/Ed6nWAalbv18WNSvZM3GIQ+ffHDf+BUePgcQnbzt3hPwIZDh
+ nSIog7FVmjTisY8PfZsB40plmcBMxzT9mT6cVj+0LCYfZx4pQPKtu0oE8y6rfVDUDxTzHQSY1
+ z5DNh/jrStKoXuqo9CO55y23fe4gumr8kQx3GtasAIixMHdU6KYTwOQY4gQ8AAHZqdzNxn3zc
+ 4qUjSndmqYRXgvtbogubboX8EvEpgIispZ56xqEfKD0gfhu1zk5u/ojVt2tbkhVgBa01ooNcK
+ ZmWHsvlvPz0sE2wbcbk6Mfyk33NxZZB7svi1GoCUVq+J7hsWL8LUVx28F/s+uPcvdZj4InhVb
+ ZoFFfGR4KerLg44odVSRvrWIVy3CNjZ6MdWWOqm2HnWcKRSO+p2QvkNgRmmejlg4HFc3OCXYs
+ BSjuKGLJQmYM9F7NDMgmht8b8A6Kp3rdUOmaEs1BZPc4DZlEXuWLRkY8yy0hdS2E1WCxXAgAH
+ NJIVCOm2uV1SJA2Yiwvb5Q+Q==
 
-Hi,
+Hi Umang,
 
-origin of this question was the following patch series from Arnd Bergmann
-[PATCH 00/10] Remove obsolete and orphaned wifi drivers
-https://lore.kernel.org/linux-staging/20231023131953.2876682-1-arnd@kernel.org/
+Am 13.10.24 um 19:16 schrieb Umang Jain:
+> The two resources, 'mgmt' and 'platform_state' are currently allocated
+> dynamically using kzalloc(). Unfortunately, both are subject to memory
+> leaks in the error handling paths of the probe() function.
+>
+> To address this issue, use device resource management helper devm_kzallo=
+c()
+> for proper cleanup during allocation.
+>
+> Cc: stable@vger.kernel.org
+> Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver st=
+atic and runtime data")
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+> ---
+>   .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c   | 6 ++----
+>   1 file changed, 2 insertions(+), 4 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm=
+.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index 29e78700463f..373cfdd5b020 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -285,7 +285,7 @@ vchiq_platform_init_state(struct vchiq_state *state)
+>   {
+>   	struct vchiq_arm_state *platform_state;
+>
+> -	platform_state =3D kzalloc(sizeof(*platform_state), GFP_KERNEL);
+> +	platform_state =3D devm_kzalloc(state->dev, sizeof(*platform_state), G=
+FP_KERNEL);
+ From my understand this leak has been there from the beginning and
+platform_state is never freed. So I think this patch should be splitted,
+because the Fixes applies only to the rest of the patch.
 
-Here the remaining files that use iw_handler_def:
-drivers/net/ethernet/toshiba/ps3_gelic_wireless.c:static const struct 
-iw_handler_def gelic_wl_wext_handler_def = {
-drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct 
-iw_handler_def ipw2100_wx_handler_def;
-drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct 
-iw_handler_def ipw2100_wx_handler_def = {
-drivers/net/wireless/intel/ipw2x00/ipw2200.c:static const struct 
-iw_handler_def ipw_wx_handler_def = {
-drivers/staging/rtl8712/os_intfs.c:     pnetdev->wireless_handlers = 
-(struct iw_handler_def *)
-drivers/staging/rtl8712/rtl871x_ioctl.h:extern struct iw_handler_def 
-r871x_handlers_def;
-drivers/staging/rtl8712/rtl871x_ioctl_linux.c:struct iw_handler_def 
-r871x_handlers_def = {
-
-
-In this Email Greg writes over rtl8192e:
-https://lore.kernel.org/linux-staging/2024100810-payback-suds-8c15@gregkh/
-"...
-No staging driver should ever get in the way of api changes elsewhere in
-the kernel, that's one of the rules of this part of the tree.  So from
-my opinion, it's fine to delete it now.  It can always come back in a
-new way later on.
-..."
-
-So it should not be an issue to remove rtl8712.
-
-Stefan Lippers-Hollmann was one year ago still using the ipw2200.
-https://lore.kernel.org/linux-staging/20231024014302.0a0b79b0@mir/
-
-Here my opinion why I think we should reconsider this:
-
-I really like to use old hardware. One of my computers is from trash and 
-the other one is bought for 50€ three years ago. But non of my hardware 
-is from before 2012. Do we as a community really need to support 
-hardware from 2003 in kernel 6.13 for WLAN that evolved so rapidly? I do 
-not think so.
-
-People around me are complaining that the 2,4GHz WLAN is difficult to 
-use because so many devices are using it. Such slow devices consume a 
-lot of time to send and receive the data and block therefore other devices.
-
-The longterm kernels will still support this hardware for years.
-
-Please explain to our very high value resources (Maintainers, Developers 
-with wext and mac80211 expierience) that you cannot find any other 
-solution that is within technical possibility and budget (USB WLAN Stick 
-or exchange of WLAN module) and that they need to invest their time for 
-maintenance.
-Here the example of invested time from Johannes Berg:
-https://lore.kernel.org/all/20241007213525.8b2d52b60531.I6a27aaf30bded9a0977f07f47fba2bd31a3b3330@changeid/
-
-I cannot ask the Linux kernel community to support my test hardware just 
-because I bought it some time ago. Rather, I have to show that I use it 
-for private or business purposes on a regular basis and that I cannot 
-easily change.
-
-Using this hardware is security wise not state of the art as WPA3 is not 
-supported. We put so much effort into security. Why not here?
-
-Thanks for your response.
-
-Bye Philipp
-
-
-
-
-
-
+Regards
+>   	if (!platform_state)
+>   		return -ENOMEM;
+>
+> @@ -1344,7 +1344,7 @@ static int vchiq_probe(struct platform_device *pde=
+v)
+>   		return -ENOENT;
+>   	}
+>
+> -	mgmt =3D kzalloc(sizeof(*mgmt), GFP_KERNEL);
+> +	mgmt =3D devm_kzalloc(&pdev->dev, sizeof(*mgmt), GFP_KERNEL);
+>   	if (!mgmt)
+>   		return -ENOMEM;
+>
+> @@ -1402,8 +1402,6 @@ static void vchiq_remove(struct platform_device *p=
+dev)
+>
+>   	arm_state =3D vchiq_platform_get_arm_state(&mgmt->state);
+>   	kthread_stop(arm_state->ka_thread);
+> -
+> -	kfree(mgmt);
+>   }
+>
+>   static struct platform_driver vchiq_driver =3D {
 
 
