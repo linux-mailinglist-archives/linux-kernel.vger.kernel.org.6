@@ -1,85 +1,51 @@
-Return-Path: <linux-kernel+bounces-362788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94F6899B94D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3867A99B950
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:04:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A6A39281BDD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E55E1C2037D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:04:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D119B13E88C;
-	Sun, 13 Oct 2024 11:59:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3BAA14037F;
+	Sun, 13 Oct 2024 12:03:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ynVlWhdS"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="KUs6IFh0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A8E413D50C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:59:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E55CF13AD0F;
+	Sun, 13 Oct 2024 12:03:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728820796; cv=none; b=UQ2D7Ne5n+FWRFlJQduQFdMBnSERDr3JYRkbqFSHKpOzdOm3TJLPTi5eiM/gJlb25IEnDxCHza8qFrQbA1v+7nB7nrT9JtygpR+55TaZqRTsxaeqcLWi2t841IvHm52YtiWEk7KP4rVlEoGtj+jE5ocJl2X3u9/AGWoFeyX06+U=
+	t=1728821036; cv=none; b=rVozAB1wxnT9yZL/jMei9cEcXNdcYB6mb295VNQjsifwStcYljpk6silI3+ZDU9mJjA0WsFJdbfkVYTFfEdBHrllWHogm+cHcuf0bY2UtZ9YgE0rx+70hQN/fvpKEi09QWatzpoXXcLR2QzPHdRbPdNJksbxDqoJM1r2Z9s9DWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728820796; c=relaxed/simple;
-	bh=dBqHoJCLZRA1I6ILaOk1lEkDfPZsCfUEqNQP5Nbk14E=;
+	s=arc-20240116; t=1728821036; c=relaxed/simple;
+	bh=GXhoBn8G3dY7XSzGK0FJllzywqPAP+aarGbodaM40WI=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GBF4DFodAhZ/wo8q9AqdGFL44BdI1gdNN8vIvBbn5DpAOqOYSbk4vSxBiJm4WX4BulfVSDCJUqnPLo2BZU1v6piMGAv1oLV9AeA+5ShLUuvI0Z5i9DoZ0r9OQMkg+Y5OB/SLZF8DR2x7AC0vyvkkTk6UtRqi6uGTQnUBAhIq2/4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ynVlWhdS; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43120f65540so13214725e9.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 04:59:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728820791; x=1729425591; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=mHkkyDKC9jM/ugAi4FO1PJaa+9PRYsrHLgdKnQxGMbU=;
-        b=ynVlWhdSqpmWaG8UnyFa5LXLiwBvqwIjy1ZSy0ZmkeNymVvE+7pnwoBYNiSYwJ0Ox1
-         dxJ7XBGAUueNBl+rYkjsA/5Bi+oqdXK7F17CG5XRIVRppiBhWzJ0u1vWMvkRZhP6eSVO
-         jEEmyyOdn8+69iMcXa1E1XfTwpaokkcjZhS/iEuAyiVE527MDW35Za3oLyworDwxoeG/
-         x559MLRFesGzWsubLX07Gn61u6J2d8I04jdyxsPvi4QCDgN5FBLnOrL7TBbYSff63wlZ
-         DVqiQmC7qnT0FCPvl0U6pFyvHCJ+YuIawsxlxTL/oenhy2jHv8QrtB2edWxKD+xXzVPA
-         vYcw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728820791; x=1729425591;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=mHkkyDKC9jM/ugAi4FO1PJaa+9PRYsrHLgdKnQxGMbU=;
-        b=lJRQLwv/e4lUNRLkcjdY7F6vx+hMJDL1uI7F6rGQsIo8w6u4/6tq9BJHdXnoFJDXV8
-         xpc7tTB62nKyO0bj+D9cxgwgrJXt1rqPRziCYx8uyQR3n1I/wa1QF5uGH/utUJMEl+s7
-         n5kFN9+BPtgmpneiqAssdlxdvvOAUSLsso3hR2vRi0XxBBBeb+lCPRRfmL6tR+EAMFPz
-         G8l4hzgPSoPo9+i5hrMnjW9nk9HxJRBg6PWZM9UWFZztCQjFxwEq5uIQDGyVgtqKFnA0
-         dKoylOQYQvYXWZF488mR4HDuixVtk6FjCsjuBE1bEQZEdrMBfUiv2oUFg4OBHyCRvAnb
-         /8yg==
-X-Forwarded-Encrypted: i=1; AJvYcCV6tex9xaUyS629jhBEXaM7XSDelx3tesSFCqkXr/ceKQS4Txy2S95/1DFy8/UQ8VHzs/PV8W7X9zroiNs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw2uLcyQuN/0X+Z6n6Qq7wbnLeJOuL/P79PMVKTWQoFAlwUyNsL
-	j44fzVmn8WkJUpTe3cfl5dCRIGMo7Ey6z8MnmnepgKp3vUTuN8gsiziMk88dm8Y=
-X-Google-Smtp-Source: AGHT+IGTHTWoEetbHJHhk+MuiM1p3gpUVQ6kSkHyeXY9xdSvulussmgA6QK40F90KB/JXPu8nE1bCA==
-X-Received: by 2002:a05:600c:1c9c:b0:426:6f27:379a with SMTP id 5b1f17b1804b1-431255dcb1dmr48705055e9.13.1728820791285;
-        Sun, 13 Oct 2024 04:59:51 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835696esm91419745e9.37.2024.10.13.04.59.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 04:59:50 -0700 (PDT)
-Date: Sun, 13 Oct 2024 14:59:46 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Umang Jain <umang.jain@ideasonboard.com>
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	kernel-list@raspberrypi.com, Stefan Wahren <wahrenst@gmx.net>
-Subject: Re: [PATCH v3 4/6] staging: vchiq_core: Refactor notify_bulks()
-Message-ID: <bfe6dc7b-d34a-444b-98dd-a4b63e0bb751@stanley.mountain>
-References: <20241012185652.316172-1-umang.jain@ideasonboard.com>
- <20241012185652.316172-5-umang.jain@ideasonboard.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=H/fLaqkh628Ibkh1rDV9hlqXhzJc4UxjghDohD4KiAnesjMOX4kXiedM2RMsCvK3tuyd50alq6JOlg/z+8qIKYjTwkKQonHNs68l3+gb25X+Z2SzXExGDxnCta/ONJ6DAK7nGhDIt/CXDIJ6J8R1ffBWle1C0li8qOjCCQULIIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=KUs6IFh0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 15E1EC4CEC5;
+	Sun, 13 Oct 2024 12:03:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728821035;
+	bh=GXhoBn8G3dY7XSzGK0FJllzywqPAP+aarGbodaM40WI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KUs6IFh0j5SzhKAECbba9AyRoNFAagcZjrD/L8RihoLhmGoXW8Pus6Vjkb4M5gjak
+	 R0GIOQlez8DSTFyy7dmetGAoToYq70ZzgDCbXvDt5IW33eUVRO26+PdK81r/2zqh4W
+	 eN789HnqFC0idrjmO5d2q7Qg9DEC2+6gbj8Bhsx0=
+Date: Sun, 13 Oct 2024 14:03:50 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Oliver Neukum <oneukum@suse.com>, Keith Packard <keithp@keithp.com>,
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH next] USB: chaoskey: fix deadlock in release
+Message-ID: <2024101330-atom-womanhood-456a@gregkh>
+References: <8c34cb8d-faaf-4134-851d-78db678d535f@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,42 +54,39 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241012185652.316172-5-umang.jain@ideasonboard.com>
+In-Reply-To: <8c34cb8d-faaf-4134-851d-78db678d535f@stanley.mountain>
 
-On Sun, Oct 13, 2024 at 12:26:50AM +0530, Umang Jain wrote:
-> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> index e9cd012e2b5f..19dfcd98dcde 100644
-> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-> @@ -1309,6 +1309,49 @@ get_bulk_reason(struct vchiq_bulk *bulk)
->  	return VCHIQ_BULK_RECEIVE_DONE;
+On Fri, Oct 11, 2024 at 10:43:50PM +0300, Dan Carpenter wrote:
+> This lock should was intended to be an unlock.  It will lead to a hang.
+> 
+> Fixes: 422dc0a4d12d ("USB: chaoskey: fail open after removal")
+> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+> ---
+> >From static analysis.  Not tested.
+> 
+>  drivers/usb/misc/chaoskey.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/usb/misc/chaoskey.c b/drivers/usb/misc/chaoskey.c
+> index e8b63df5f975..4025f386ba6b 100644
+> --- a/drivers/usb/misc/chaoskey.c
+> +++ b/drivers/usb/misc/chaoskey.c
+> @@ -319,7 +319,7 @@ static int chaoskey_release(struct inode *inode, struct file *file)
+>  bail:
+>  	mutex_unlock(&dev->lock);
+>  destruction:
+> -	mutex_lock(&chaoskey_list_lock);
+> +	mutex_unlock(&chaoskey_list_lock);
+>  	usb_dbg(interface, "release success");
+>  	return rv;
 >  }
->  
-> +static int service_notify_bulk(struct vchiq_service *service,
-> +			       struct vchiq_bulk *bulk)
-> +{
-> +	int status = -EINVAL;
-> +
-> +	if (!service || !bulk)
-> +		return status;
+> -- 
 
-I mean, I still wish you would return -EINVAL directly here.  :/
+The commit at:
+	https://lore.kernel.org/r/tencent_84EB865C89862EC22EE94CB3A7C706C59206@qq.com
+was tested, so I'll take that one :)
 
-> +
-> +	if (bulk->actual != VCHIQ_BULK_ACTUAL_ABORTED) {
-> +		if (bulk->dir == VCHIQ_BULK_TRANSMIT) {
-> +			VCHIQ_SERVICE_STATS_INC(service, bulk_tx_count);
-> +			VCHIQ_SERVICE_STATS_ADD(service, bulk_tx_bytes,
-> +						bulk->actual);
-> +		} else {
-> +			VCHIQ_SERVICE_STATS_INC(service, bulk_rx_count);
-> +			VCHIQ_SERVICE_STATS_ADD(service, bulk_rx_bytes,
-> +						bulk->actual);
-> +				}
-                                ^
-Indented too far.
+thanks,
 
-regards,
-dan carpenter
-
+greg k-h
 
