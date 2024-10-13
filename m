@@ -1,154 +1,108 @@
-Return-Path: <linux-kernel+bounces-363014-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363015-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2962E99BCBF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:31:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC13499BCC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:36:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C4CA71F216C3
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:31:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43DE12816C1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:36:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586A5126F0A;
-	Sun, 13 Oct 2024 23:31:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5279214AD38;
+	Sun, 13 Oct 2024 23:36:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="QKS6y3iF"
-Received: from out203-205-221-173.mail.qq.com (out203-205-221-173.mail.qq.com [203.205.221.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NLuYY3sT"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20017139E
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:31:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03E571304AB
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728862297; cv=none; b=T0q2rcQtqW+S7APn/VkXS/9krLq4MdOLuqvC4giZt/nGHKVkopoRTTXGeCPVbHfaoQzDMG2ERR1ezVHT7rMU2OE/LoVqoaE4QH056iahjmHbwIrhrdqoJt8JT1Fi97NntR/hm+HfoVLcxMjPb3OfxArmWs6xlxzXAYptSid3uA4=
+	t=1728862587; cv=none; b=XNTfEaEEF7MJC56xbJKKrGSsczrM2KvTRhLJl3FETW4lO3tXlku7dodthDRTuoo+oxb9vnZ+uxd15T+2e45mYsyH9Dqt34Ntwu0C9OlrC/C8e4F1xC+vBBTnIcJhmdo2OVjbzwIsCm9M+orHUVQNuKVV4kpyZVHsdU/8VNBB0qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728862297; c=relaxed/simple;
-	bh=jGBFm8DMVRl+cIY9ik911TDLmRtGw1gRGfluIuBTu50=;
-	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
-	 MIME-Version; b=Q/IdTxAXWXuODrXXN6YdPjFiL13B9duMRNT6kdm7+H9Ezl3rr5nnGYCuAbdw0YL9FfNWcFMePe/tz4KuQ/jYKIE4ileN+YLRlKGp7MdIcHl85hnnZd+ubnnyJFHj2sldEhxklQShkUOYBw88NhN3s9Rvg8oxfKS1Z1I2Jbaf2iA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=QKS6y3iF; arc=none smtp.client-ip=203.205.221.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
-	t=1728862291; bh=XgZ2Qa49k9aedugWqM8fyjuzPj2TUY+YDIuYoW1HvKQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=QKS6y3iFqmSjrKttogO/aFRaIi4Ofabvv0gJe98vXXzPYFfnLssix63r0GkFSApzT
-	 s5OBpzmx8vW9iVX8KF24E8s+VFdq7dk8OjqCcpy3VHe73ChLhNadA7HYYEdaqEDfkW
-	 hpYiaFvGs1f04baoaC4coXVU1wVI9+Cm2yBb6S24=
-Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
-	by newxmesmtplogicsvrszb20-0.qq.com (NewEsmtp) with SMTP
-	id 7DCA7EAA; Mon, 14 Oct 2024 07:31:28 +0800
-X-QQ-mid: xmsmtpt1728862288taar3kl0i
-Message-ID: <tencent_9D4C78EA6D442CB56C2C97D4EB8EEC26CC0A@qq.com>
-X-QQ-XMAILINFO: MHMAY6vlphTX6XyXC55uj4E8fpoHQg/ZXEe/hS1KFNm1+NahFbJBRIjLh55sjA
-	 6Ki78I0cZJse6XOR9kN88c8wHvhenGXs160BhK+yqdIbzO6knO4UH75AnkvB/cAz5br317cCl2gS
-	 bnAVYhV1efWM1W+8U+bS0KVbLMWNKGcGGTAD3nqQKskfba++8u+K9aPuQ+HTWbR5fMzOwStujB9p
-	 NgZ4xere46d1FDdHJH/RbXFt3/tfXJUdmskeclcWlInymzmgGGG0QyL+q6npjpMZ07p1ZuFGhNeo
-	 oh63dmQjAZ7N0QZL5HS0uw2JPRBPcSYc8mxGVnNG+/pZBiA+UI7u1sOX6i/O76CFwlOKXcvNuFj3
-	 xEyDaEA/jI4q20WGel2qyQZqWQSvzgR91HCR27i1Cg4HzXsLVjPuaPN6Z8YrTov8D694dhBxZF+N
-	 mcTxgiYbyB46sE1GGuUaoJMrlyCoA4jtmx6FhbRXa6QwsTkO+7gJ3OzM35uD8WUIvGih4ouBfVga
-	 aEgIAlpUIKWInEGqETej8btPuQuGLjVj54IZdnoGSkhRiRHX4sQCBqOcjEw22HjPdIRqC9EdICFD
-	 HGUSBYf0wfBSFKzQur5j0utMlfZ4SSDzqHfWrJtLuObsO4ApklaH07VCEntoCy8NQUsw1pQAl5bI
-	 Q92otsuNDib6Eio4Jy5XoWCyJAfpIGuJsRlDNHOZjnE5fpyriZK2O6/jMCHUBz3IIFp5vt0b/Ocy
-	 yqk0/PV32uWGskQcHc8rw7mWq8Z3qEUr+009eS9TW+yuoL6dyzm+df/T2LDUjI2WP7z9XxRlkwp9
-	 YAuazHwQblrG6Vy6UxiaCxLCyYWQdgrBOs+GHSv3MQqdgGD8QIsqbn2l63pEoOBE63Dm8hcueXym
-	 bfYqhEbgB1fSEYbWFGMhZ9oSmWmfcT5KNV1n70Ojjrg85vA/fH5KwCrEG3mOtTHuojuldBzwDoPR
-	 RmhWUxd60tXifbo9tfDArq6eIPGCEAp5ioaaRkKjl2p+UekxrXC7K1SgHGYyEEDAIFHq0+LPo=
-X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
-From: Edward Adam Davis <eadavis@qq.com>
-To: eadavis@qq.com
-Cc: jlbec@evilplan.org,
-	joseph.qi@linux.alibaba.com,
-	linux-kernel@vger.kernel.org,
-	mark@fasheh.com,
-	ocfs2-devel@lists.linux.dev,
-	syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com,
-	syzkaller-bugs@googlegroups.com
-Subject: [PATCH V2] ocfs2: BUG is meaningless when the flags is 0
-Date: Mon, 14 Oct 2024 07:31:28 +0800
-X-OQ-MSGID: <20241013233127.2836641-2-eadavis@qq.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <tencent_10694B411BC625A4BA1BBB8033959EA31B08@qq.com>
-References: <tencent_10694B411BC625A4BA1BBB8033959EA31B08@qq.com>
+	s=arc-20240116; t=1728862587; c=relaxed/simple;
+	bh=U6mUU9ML+IfU7BfS7G5ec2FacFT+nLptq76PCY/rxWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VVVZ6vWiQLAAJPXgAaoUg2W0Q36avIwfQlTFuBx0q29S5bF/jVr/QRHwmqXSrNIWdfmQj5K3XUuZLJ2AzlFYQdw2VbZr2Q1fOaYkC/MKdR8j70oX0Q5IZAgV0+m0rjT4u5BTkaoVpQTTh3tgmaUF4Bfhuy7k9Zx3T/K8NEyZp1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NLuYY3sT; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so630191e87.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 16:36:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728862584; x=1729467384; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=gtsIDsXd14fK/gP7UyoWpxQjzyKDGOWRk0Y+VS/K1j8=;
+        b=NLuYY3sTGgdMxwW6j4IF3Uo2o6C/TCSvt958H4ktt0g4u6qI+Xh3pRS6pwCCu88ySP
+         VSwBYJid+I/dvxzDS+jVnzZ33syjRpgs35qfvWQU8kTJ/xBZ0UNgsHS2LcQPgzkd4nyf
+         jlHfYMyR8NYO80BZ3w6w2vfNy8gQ8tLveb80I/1sg9NoWmHpjOLJ6kxDd5OfV+j83LXy
+         FIZgZ58ldHsEx8RB6v2oLaVwn3xR2WhT0kEwaRSSt76YMrO9JcHBfJCfjaFuc9Ge/QlM
+         T4huc6s/yLdBCbOREOmbpjkKuDZhbaAYk4NJGijqKLiPHJ33IPutSKYesssKZHqxHzoa
+         d73A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728862584; x=1729467384;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gtsIDsXd14fK/gP7UyoWpxQjzyKDGOWRk0Y+VS/K1j8=;
+        b=FXZc/YvB0aT+ukN77PQ2Y1ap1IUi2Br2Rxddjxl8SNIj+5oDdfER49oNBcG+k57zEt
+         kBk1WY1BwGNws+tYZ8c6N0OyDjyFF774btuoBKT8JkXz4CFlZG1gGQ3OSrFX8dGb3StC
+         0DjeT1TUoASwizB7qBLNXfQ72ozEXVRgRxuthefOXndC6EguZ26noed2nhYRk1bvfLf0
+         oD8bDvVcSjzDIpHrOysTQxeI8Lb1wx1Rxn9ufHrVTgagN+PlQpo2uOjgsGFNMCsQxuHy
+         2a7Mi/VaDSl3f4AtdjVpRPEL76sUSKz9ZqzuOGbEMoBpmZ2fngwHNfebQ3oUdO2JYkNF
+         pk+g==
+X-Forwarded-Encrypted: i=1; AJvYcCVSDzbC718w4h4pL902FSabPK6Ldk6nyjWhw80yflzHTY0zwrnuukZFikrVcJCGIpy/o5ZSiajAhuyfS7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxd/iCqSyfi21i9tDoEzMcZHvhn5YXb8fD1KW58Otlc0DV23VHq
+	rka3n5R68GLveCwNPrKUAQ4zFhcVMiHDii74WxSjab1XRB/+sEckqMR/fSYh1z8=
+X-Google-Smtp-Source: AGHT+IHFwXgR5icPxsw2kqPcp+dhlQDcfwPu1bgHs8JR0lE4su8aTVs0S0kQ1stHQt0GuBsK4gz6+Q==
+X-Received: by 2002:a05:6512:3b9c:b0:530:aa3f:7889 with SMTP id 2adb3069b0e04-539da57f62fmr3626492e87.56.1728862584125;
+        Sun, 13 Oct 2024 16:36:24 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539f1bb45ccsm363614e87.273.2024.10.13.16.36.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 16:36:22 -0700 (PDT)
+Date: Mon, 14 Oct 2024 02:36:21 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Danila Tikhonov <danila@jiaxyga.com>
+Cc: neil.armstrong@linaro.org, quic_jesszhan@quicinc.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, 
+	simona@ffwll.ch, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux@mainlining.org
+Subject: Re: [PATCH 2/2] drm/panel: Add Samsung AMS581VF01 panel driver
+Message-ID: <gdan5zalxmcvtobhizxefemfevn3qkqiflwcmfdhw3v5fwdlex@ozfpn3ejaeub>
+References: <20241013212402.15624-1-danila@jiaxyga.com>
+ <20241013212402.15624-3-danila@jiaxyga.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241013212402.15624-3-danila@jiaxyga.com>
 
-Syzbot reported a BUG in ocfs2_read_virt_blocks.
-------------[ cut here ]------------
-kernel BUG at fs/ocfs2/extent_map.c:971!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
-CPU: 1 UID: 0 PID: 5221 Comm: syz-executor117 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
-Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
-RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
-RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
-R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
-R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
-FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
- ocfs2_find_dir_space_el fs/ocfs2/dir.c:3427 [inline]           // status = ocfs2_read_dir_block(dir, 0, &bh, 0);
- ocfs2_prepare_dir_for_insert+0x3f2/0x5c60 fs/ocfs2/dir.c:4274
- ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
- ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
- lookup_open fs/namei.c:3595 [inline]
- open_last_lookups fs/namei.c:3694 [inline]
- path_openat+0x1c03/0x3590 fs/namei.c:3930
- do_filp_open+0x235/0x490 fs/namei.c:3960
- do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
+On Mon, Oct 14, 2024 at 12:24:02AM +0300, Danila Tikhonov wrote:
+> Add the driver for Samsung AMS581VF01 SOFEF01-based 5.81" FHD Plus CMD
+> mode OLED panel support found in Google Pixel 4a (sm7150-google-sunfish)
+> 
+> Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
+> ---
+>  drivers/gpu/drm/panel/Kconfig                 |   9 +
+>  drivers/gpu/drm/panel/Makefile                |   1 +
+>  .../gpu/drm/panel/panel-samsung-ams581vf01.c  | 283 ++++++++++++++++++
+>  3 files changed, 293 insertions(+)
+>  create mode 100644 drivers/gpu/drm/panel/panel-samsung-ams581vf01.c
+> 
 
-It is because the parameter v_block passed to ocfs2_read_virt_blocks() is 0,
-nr is 1, and inode->i_size is 0, and flags are also 0.
-In this path, v_block, flags, and nr are fixed values that are hard coded,
-so if i_size is 0, the bug will be triggered.
-Therefore, it is more meaningful to check if the flags contain the READHEAD
-bit when their value is non-zero.
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-Reported-and-tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
-Signed-off-by: Edward Adam Davis <eadavis@qq.com>
----
-V1 -> V2: keep rc to 0 when falgs contains READHEAD
-
- fs/ocfs2/extent_map.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
-index f7672472fa82..0043c2428ef2 100644
---- a/fs/ocfs2/extent_map.c
-+++ b/fs/ocfs2/extent_map.c
-@@ -968,7 +968,8 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
- 
- 	if (((v_block + nr - 1) << inode->i_sb->s_blocksize_bits) >=
- 	    i_size_read(inode)) {
--		BUG_ON(!(flags & OCFS2_BH_READAHEAD));
-+		BUG_ON(flags && !(flags & OCFS2_BH_READAHEAD));
-+		rc = flags ? 0 : -EIO;
- 		goto out;
- 	}
- 
 -- 
-2.43.0
-
+With best wishes
+Dmitry
 
