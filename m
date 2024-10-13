@@ -1,105 +1,110 @@
-Return-Path: <linux-kernel+bounces-362920-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362921-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3135B99BB35
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:07:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA499BB39
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:21:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB248281A0E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DE81F2156A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F3FD1465AB;
-	Sun, 13 Oct 2024 19:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="AvLUGWza"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D558B1474B9;
+	Sun, 13 Oct 2024 19:21:28 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0D318E20;
-	Sun, 13 Oct 2024 19:07:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116D612EBDB
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728846431; cv=none; b=gM3odIz+t1euYaKzsBhmWDZcQ3w57m1apKPpTJFrLgaLC2OccWPs/NOJmTOTZH3iaVqYVERbYlal8Zj2VfW2xoB+NkeyKEDguzeg04tC+BFwTrJW0N8WWeQV4F5M3YA18mKMeH3rCBUx08iJ/ijrPj5YFNY2xIByGvcu3p9gYvE=
+	t=1728847288; cv=none; b=LJg16uKqwzaeD4nSp/Y9gMarnioMW/sLgdFyJBELxDLYYMf+tAftWY1GEwxTp1+0R0Y/LdZM0m6WlT+4W+W4nY9cXemqSnUMZCIfxHNhHK+gxGUuHUHWoRpT5Z2LLEa7gqykkA8+k1A3xDZXBVLseQ8yQTN7T/45lUCVtVry9/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728846431; c=relaxed/simple;
-	bh=WGChKk/v2bPtQT9tEv5O167MmakFHiIXP3SY1CjcKp4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jiltFl8tKG2q6/xN/kRVYe5lcirzlRj3TOPInahZTqphEe4J8ljEo+jmXduUkNVj5y1Fj7Z85AtJhH6Yi+h42hpgOdWRi+GyNjNsxHJvSvUpM7K5vBD83xcgRyqyvLNgVtejVEXFymc3kofOUcblBu2DAegfMjpJTrFI5qjKUZA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=AvLUGWza; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728846431; x=1760382431;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WGChKk/v2bPtQT9tEv5O167MmakFHiIXP3SY1CjcKp4=;
-  b=AvLUGWzaBS8bn76fGcDtKxUB26QJj5VcfIkXE7QXKuTKKBbp/0RCAIEp
-   zwtBZeUDdvTkB0cKQqaUVI+L9n5nbuWcRuK5JlygUoQ2OT5ry0GB5zSg/
-   pZWV4kS+BDFObytYkuBQHzxTpKwcMADW6+02Hqiis2YF9kWFPDaQkEebp
-   4w7ovol9NcFUC5BxrImdbThei+xBQGrdg3+A6Dm/WyIws6X/1FSR9ykaq
-   Ka671gCH54xIEX1kBDuhaubHREhjo5Z6wedt3w4QKSTogwGcgIdnGj2Og
-   yCjESzn0FwkdWEX5PP4NXmRK2AZeumVtqOzxduas4NcKEtC0/ayLo+qEb
-   A==;
-X-CSE-ConnectionGUID: y/muvMTORo+pnykSNHhA5A==
-X-CSE-MsgGUID: GmMTZspwT9udFIqSAD0I9A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28284787"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28284787"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 12:07:10 -0700
-X-CSE-ConnectionGUID: rvoJPcVARkW8LU9GiA/URw==
-X-CSE-MsgGUID: /QRixkdfQrOwfc40emSk8A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="82167393"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 12:07:07 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t03vk-00000002eal-22tz;
-	Sun, 13 Oct 2024 22:07:04 +0300
-Date: Sun, 13 Oct 2024 22:07:04 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Sergey Matsievskiy <matsievskiysv@gmail.com>
-Cc: linus.walleij@linaro.org, alexandre.belloni@bootlin.com,
-	quentin.schulz@bootlin.com, lars.povlsen@microchip.com,
-	horatiu.vultur@microchip.com, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-mips@vger.kernel.org,
-	UNGLinuxDriver@microchip.com
-Subject: Re: [PATCH v2 1/1] pinctrl: ocelot: fix system hang on level based
- interrupts
-Message-ID: <ZwwaWLT_A8LoVsbl@smile.fi.intel.com>
-References: <20241012105743.12450-1-matsievskiysv@gmail.com>
- <20241012105743.12450-2-matsievskiysv@gmail.com>
+	s=arc-20240116; t=1728847288; c=relaxed/simple;
+	bh=e9B1GYr7X704oC5pS3YuyF4rXsyj7DNqUwwBpXLsiIs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XM8l7cqZxh/9DvIs56kNRetGIj+4SvHEfDl6l1b6p+M2exfWkMqoVHHsKejn8EhQOVT/QiyP7CWWlBJMYh5NS+ByY0Y/JDC6R6RQIe/ld53PwYQ5ddkDX5vu2qmFOCwIm3xCiv1l1KCgt23b/C1kFNg4CAbCZblqsA8cU1QPVOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3ae3c2cacso31240375ab.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:21:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728847286; x=1729452086;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4WU3kgEtTuMHg+8jTGa/m3Y0xT7Aassavqo9KaNTKhI=;
+        b=DHAPrHVUnSjdFVGekeIvu32ZxkIpZNC0D+6O/jH4CCMwEgJLYvLDgXHhtZLWVZ9LBy
+         FdUGrUws4o4oigb2SPtQAQHTuKF0IdF8kL4xK5BivsOauWYnIg6TmdMjhCe+LRIn0XQ2
+         rJhOh1xfCxD/RPvXTLo+E51RIvZmeEYeNOYLWgH1sBWzT1EPhXmCBNB/Q/1S5MANxLnF
+         NGiQd8bVy/PLQ10yJqVt2E93IrDTCl7ZbxxJ6pFK7pzRCuFWSO3qQSDl8t9NJBCZuDSY
+         CqHw1/rGHV/nmHVxu+ODXHqgIX3AcrzFpHQfmGPguZeWuklWjJaYDEDbkYccFy7MsUTN
+         YYaw==
+X-Forwarded-Encrypted: i=1; AJvYcCXRry+Vy3R5iUL6Wxr3sCfttE5phaDzswhFRRLy3N3wKwfl2WkkjlssYI47zKanKk+0ES3i6u2JVSKDh50=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjrqKiBp2qnwv4BOisIPg+NL8uUSteS9SpSlBHmtBrCJgYd6cx
+	TBBg0Ss5DN8K00KwQoDff0jvpJ62Mo+2pvWuYcDfPRuQxb01M7elOWmnKg9wHA2WRWOzSaitOEN
+	2YSTngoNnqj0rFW9TcZvj95rWeob9ZC6179HNDmk6Uze/dsIsRbPo+W8=
+X-Google-Smtp-Source: AGHT+IGM4P8g+P/xqgXlXPSOvSrmB/PNQ5Z6EW/IhzqSts0VYfiRKjLcz9UzpoSi75CVfI2RA6WVolB06KQIoaS4L4eU0xTQFoId
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241012105743.12450-2-matsievskiysv@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-Received: by 2002:a05:6e02:1a8a:b0:3a0:c15f:7577 with SMTP id
+ e9e14a558f8ab-3a3b5f4976fmr78978865ab.9.1728847286172; Sun, 13 Oct 2024
+ 12:21:26 -0700 (PDT)
+Date: Sun, 13 Oct 2024 12:21:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670c1db6.050a0220.3e960.0044.GAE@google.com>
+Subject: [syzbot] Monthly dri report (Oct 2024)
+From: syzbot <syzbot+list6f950335a4c56f56249b@syzkaller.appspotmail.com>
+To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Sat, Oct 12, 2024 at 01:57:43PM +0300, Sergey Matsievskiy wrote:
+Hello dri maintainers/developers,
 
-...
+This is a 31-day syzbot report for the dri subsystem.
+All related reports/information can be found at:
+https://syzkaller.appspot.com/upstream/s/dri
 
-> The similar code with chained_irq_enter() / chained_irq_exit() functions
-> wrapping interrupt checking loop may be found in many other drivers:
-> ```
-> grep -r -A 10 chained_irq_enter drivers/pinctrl
-> ```
+During the period, 0 new issues were detected and 0 were fixed.
+In total, 18 issues are still open and 31 have been fixed so far.
 
-Side note: `git grep ...` is much much faster if you have a Git tree at hand.
+Some of the still happening issues:
 
--- 
-With Best Regards,
-Andy Shevchenko
+Ref Crashes Repro Title
+<1> 650     Yes   WARNING in drm_syncobj_array_find
+                  https://syzkaller.appspot.com/bug?extid=95416f957d84e858b377
+<2> 298     Yes   WARNING in vkms_get_vblank_timestamp (2)
+                  https://syzkaller.appspot.com/bug?extid=93bd128a383695391534
+<3> 55      No    INFO: task hung in drm_atomic_get_plane_state
+                  https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
+<4> 18      Yes   WARNING in drm_gem_prime_fd_to_handle
+                  https://syzkaller.appspot.com/bug?extid=268d319a7bfd92f4ae01
+<5> 17      Yes   WARNING in drm_wait_one_vblank (2)
+                  https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
+<6> 11      Yes   divide error in drm_mode_vrefresh
+                  https://syzkaller.appspot.com/bug?extid=622bba18029bcde672e1
+<7> 4       Yes   divide error in drm_mode_debug_printmodeline
+                  https://syzkaller.appspot.com/bug?extid=2e93e6fb36e6fdc56574
+<8> 3       Yes   KASAN: slab-use-after-free Read in drm_atomic_helper_wait_for_vblanks (2)
+                  https://syzkaller.appspot.com/bug?extid=0f999d26a4fd79c3a23b
+<9> 2       Yes   WARNING in drm_prime_destroy_file_private (2)
+                  https://syzkaller.appspot.com/bug?extid=59dcc2e7283a6f5f5ba1
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
+To disable reminders for individual bugs, reply with the following command:
+#syz set <Ref> no-reminders
+
+To change bug's subsystems, reply with:
+#syz set <Ref> subsystems: new-subsystem
+
+You may send multiple commands in a single email message.
 
