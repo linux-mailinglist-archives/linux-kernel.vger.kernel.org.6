@@ -1,276 +1,195 @@
-Return-Path: <linux-kernel+bounces-362883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890FD99BAAD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:56:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F19D99BAB0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:03:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A09771C208C7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:56:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52608B20FE9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B26D1487F4;
-	Sun, 13 Oct 2024 17:56:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB4E1487E3;
+	Sun, 13 Oct 2024 18:02:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lkKe53qU"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="HsLDe8e5"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95888231C88;
-	Sun, 13 Oct 2024 17:56:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82BB32F5E
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 18:02:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728842198; cv=none; b=T3tsPr7m24B4VF94gVoEvQwKTlVDKUweVta0yFmScN6x+A7j5FutCUYplJ2Qp/tLHurChe8FtAjDruwmjRtlgVCkAR8F4yiERKYzasznTB7LsJchzVkdfP8IwjhZk6eljhAFRe6fR62B0dzQHH06dPhnn0gbU4vKOQBCFteaxSc=
+	t=1728842579; cv=none; b=gJixvV6X1L53t1aV6gJBlytO7d/jbYWUxWnzTgxMCQhBFuDJYZMqKpI/gN+Viq91U5SvvPgYVS6baDtLIrOJbeS+NybQE71hNoj58IJJFj0ajzSVjY1N7q1+YjAeXLZpnJL3vSuuufzOynH8Auy1RHWUQhLc39XpSA2amuR7ygA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728842198; c=relaxed/simple;
-	bh=b7hHCrOEhpE7yCW9KJU8T4YwEehdQgxGVvHQ/HZRM1k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E2qX0CCe7VgD2N15URVi6d0QMOHKuqxLQ3Jo3nBrl83kAaO2uNlmloqVPiVUMYI23+EE9t9Xx29tEi+k+cwC7UuF16GAf2+No8zJ/ZtB905mRxrV+krT2Fb3+S9+TG48PN6xeQxQM2eI22qdpJJgD7SWPFeE4n8Vy7WAUlPihns=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lkKe53qU; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f58c68c5so396726e87.3;
-        Sun, 13 Oct 2024 10:56:36 -0700 (PDT)
+	s=arc-20240116; t=1728842579; c=relaxed/simple;
+	bh=yvzAYY08lrsrWYdWSRrpl7xU9X+yuiNiBpMyXHFOSvw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bivhENOhjHfKQRj/rDFnbrM+KHQvId/fqvgyVTL4FVtuZbIwQWrgM1WeXojuLsYnj2PgN8IYdH1suKu22BsbEpagnhWmyA6ZKTosKmvr6cDrv1ae/OL+W31tAmbskTaWUAmJEVhvIrmWL95aWY0oSvksvqMek9XuvZNDLOzRJYA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=HsLDe8e5; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7afcf0625a9so418729185a.0
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:02:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728842195; x=1729446995; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pl+3AhcUP+NWxOHXU/ZeBD+x4G+Ef6uF0ibzfuXPS+4=;
-        b=lkKe53qURJkH2wNF2vwzTSDraS3Wye+ra9GTv+MqFo2sUJb2jvwLF/58mZkeWKR7CC
-         qPQhAS1vUeKnvkLUudZUg1LY5O2crh432ect4VBEWkQLywg+I0aTC7HVEAk4ak+QJgJE
-         r4F6p/MV3Verirjdi2eokKXTck8xDMHrY4Gb7niOet8tRCgK41tmoUN3+qgOSPqX3tC5
-         W+7rLYIU5hOiaj8yJFQ+y8YoMEQXivdZP0KBAiTZC9AnePShsgAL4VVuVd5oOd4uak3B
-         CrUF+WyWdmqjdQc1XnZRWeejBsbmMTJVAmpQhigjS0JZruvpJezvOmWK11NuQQ2T764E
-         dtDg==
+        d=rowland.harvard.edu; s=google; t=1728842576; x=1729447376; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jzbcs4JBSNqBkEy18MgzokPzqXLuAN+IENP7NwJBwy0=;
+        b=HsLDe8e5Lie70yca+Lr7SjmL007xO8eyJu2fSij/herE435wJ6PkK3U3nbVkDFax+O
+         w8utSSBtLr4pl3tc3OcNXni6A7S+pNygDdbPp79fnhdq6Yl/r3yLWyf/dAjqnYSQqN98
+         /39GGL2l6iwyKucp39mdpJtE+eUFE9VR2Qne/rcmcoFtrzCF2wzxLzsI7GbdhSvR5QUH
+         8eYg/5pY0RIhythTZ9+gketyupF2qkN9xrDNbI2GpmhA91enwfPuAL+xslz8i31a0Pf0
+         jdGs3/y4Ad7diDSmmThWHGivYO6CDBa8vmNPanuNs1y27qq6o9hl0TPlybIuMH04283o
+         rzPw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728842195; x=1729446995;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pl+3AhcUP+NWxOHXU/ZeBD+x4G+Ef6uF0ibzfuXPS+4=;
-        b=GOSFPMNZ7kpKGsse1T1p9hWE94BKx6Q4CXQNc5Igwjan/fp9eFBbYiQaVPykTUs1gE
-         4UAfKsQ74hBEOc2WmveL4N4YjpNlq93gGdEfVBI98E/boWQIbVphfXD1mgLKzh46PNMB
-         9X8ICfTrQwdbcTe5wblGGm/LDFRA0rzmLlZpvUqPXX8OPDn9M8vubS4cLfSXO3ljlAgv
-         t1qBFI9EbS0jFsVqFj+CNTfVKKJJuiIPvsP8CW/pOukXCVtAog5d6H4BxlHHTCOep5SZ
-         CdOuKZt2dwnJrUSBwSOrbud5Str6MAepcx6fw/I+V6FW5vtgln2tHvscZdHmFMxod7lJ
-         gBFA==
-X-Forwarded-Encrypted: i=1; AJvYcCUjrd0VnlIKDzlOkDJQHhTPCn9Ddy5kVvbrLz+KmLfYBAgnVM272EMxItAYTwK+TefsJeFEx+2L86bCRAyz@vger.kernel.org, AJvYcCWyqWrP7HSdUaTFrQHGCfjbhx02u6wGzWVpgkppEJi7e333uZuCULr1RJp6cHDmfI0T6qz2JOnVgJ0c@vger.kernel.org
-X-Gm-Message-State: AOJu0YynztGfAkrwTh0KsIxKJAuYHUwZ4TxUPs8Bn7hKuMgl4/cU1WHq
-	rM6lcr1zcfrz//F7gdSBb/Tf5IpisEbuDo3+dUoqUdtqv13OcDin4+FLYJjmQDSAnDtBYwslmiB
-	XClJLcAtYeYOBus8MGfWJXeNT87E=
-X-Google-Smtp-Source: AGHT+IG4SGT3ARa561UTDFQp3WxJ74zZCBv/ajjJV+4IL+dBQrarHnw9L7ADk0i4WYiOeSbHxXQ2haHZbT/rQdejIzk=
-X-Received: by 2002:a05:6512:3402:b0:533:4505:5b2a with SMTP id
- 2adb3069b0e04-539e5515238mr2383721e87.28.1728842194378; Sun, 13 Oct 2024
- 10:56:34 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728842576; x=1729447376;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jzbcs4JBSNqBkEy18MgzokPzqXLuAN+IENP7NwJBwy0=;
+        b=jOgeBpOsw/b+kG0IJFPGtQtG+d5UD1hg1EU8KCkxI1xnF15/FaIKyGocw3LtZ1k58D
+         HRSeFqkMC39mih00WJRZabKGNF5rcwA00x1k20xTFRIKwgs8zKLo0WjRDS9+3asQLWCD
+         /1FsiNMrdOywzm+0JKculDtgRBC9RqRIsJvCqQTvtWH0UVdRtOZ+dupz5mtPSzANjA2w
+         yBzFhdTb9IIenIFXETX4zrJmCx0kelNEubTDpwfacxw9ndpaX56t4Y7eY5ksHgOD0eex
+         WB+5+/65mnyGaQAKh1SaD8hbRu9eHC3SHYqDACDY+QhJBpB7z1xX62fksjmXYgGf9nRO
+         Z6cA==
+X-Forwarded-Encrypted: i=1; AJvYcCUOxkx3cus5GQ905kj9mxEhrT2xvEdDZNJZUZwOzDMwtzp4D7AWLKZKm9O85+KExUOYZ0n0fx7DgQNovVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyM4XINiRQsiDBzqy7d/S8aU612XCnbFGAYoJfmzLPtNMK/Bso2
+	2ZEaTiterOV2SSt17fz84TJK/OQx+Pwb3Wo63lyRCKWeCTi9RYBGhZRawnWiAQ==
+X-Google-Smtp-Source: AGHT+IEtESLFCqotPyM1PSwE8LG3Crbk52UEyOdRfx4tg0ktLurZiXKSFlOFWy0ip6VeygvlG3rEEw==
+X-Received: by 2002:a05:620a:170e:b0:7b1:184f:caba with SMTP id af79cd13be357-7b121006418mr1110810985a.40.1728842576413;
+        Sun, 13 Oct 2024 11:02:56 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::267d])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11497704dsm333523785a.101.2024.10.13.11.02.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 11:02:55 -0700 (PDT)
+Date: Sun, 13 Oct 2024 14:02:52 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, sylv@sylv.io,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <2329dfa9-ef76-491a-a4aa-277230a0a96a@rowland.harvard.edu>
+References: <11dd2a9d-2f1d-4cac-976c-90a1b0ee667e@rowland.harvard.edu>
+ <670bf1cd.050a0220.4cbc0.0034.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240929185053.10554-1-pali@kernel.org> <20241005140300.19416-1-pali@kernel.org>
- <20241005140300.19416-5-pali@kernel.org>
-In-Reply-To: <20241005140300.19416-5-pali@kernel.org>
-From: Steve French <smfrench@gmail.com>
-Date: Sun, 13 Oct 2024 12:56:23 -0500
-Message-ID: <CAH2r5mtbK7vRVHs6rosrvGuer52cyfdsyCt1FL3TFg4RXxULuA@mail.gmail.com>
-Subject: Re: [PATCH v2 4/6] cifs: Fix parsing native symlinks directory/file type
-To: =?UTF-8?Q?Pali_Roh=C3=A1r?= <pali@kernel.org>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>, 
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>, linux-cifs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670bf1cd.050a0220.4cbc0.0034.GAE@google.com>
 
-Would this break any pure Linux client example, mounted to Windows,
-where previously the Linux client created all symlinks as file
-symlinks?  e.g. If there were two Linux clients writing to the share,
-one that included this fix and one that did not.
+On Sun, Oct 13, 2024 at 09:14:05AM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On Sat, Oct 5, 2024 at 9:03=E2=80=AFAM Pali Roh=C3=A1r <pali@kernel.org> wr=
-ote:
->
-> As SMB protocol distinguish between symlink to directory and symlink to
-> file, add some mechanism to disallow resolving incompatible types.
->
-> When SMB symlink is of the directory type, ensure that its target path en=
-ds
-> with slash. This forces Linux to not allow resolving such symlink to file=
-.
->
-> And when SMB symlink is of the file type and its target path ends with
-> slash then returns an error as such symlink is unresolvable. Such symlink
-> always points to invalid location as file cannot end with slash.
->
-> As POSIX server does not distinguish between symlinks to file and symlink
-> directory, do not apply this change for symlinks from POSIX SMB server. F=
-or
-> POSIX SMB servers, this change does nothing.
->
-> This mimics Windows behavior of native SMB symlinks.
->
-> Signed-off-by: Pali Roh=C3=A1r <pali@kernel.org>
-> ---
->  fs/smb/client/inode.c     |  5 ++++
->  fs/smb/client/smb2file.c  | 55 +++++++++++++++++++++++++++++++++++++++
->  fs/smb/client/smb2inode.c |  4 +++
->  fs/smb/client/smb2proto.h |  1 +
->  4 files changed, 65 insertions(+)
->
-> diff --git a/fs/smb/client/inode.c b/fs/smb/client/inode.c
-> index 0fe54b2d2561..aa38a3935f8f 100644
-> --- a/fs/smb/client/inode.c
-> +++ b/fs/smb/client/inode.c
-> @@ -1110,6 +1110,11 @@ static int reparse_info_to_fattr(struct cifs_open_=
-info_data *data,
->                                                               full_path,
->                                                               iov, data);
->                 }
-> +
-> +               if (data->reparse.tag =3D=3D IO_REPARSE_TAG_SYMLINK && !r=
-c) {
-> +                       bool directory =3D le32_to_cpu(data->fi.Attribute=
-s) & ATTR_DIRECTORY;
-> +                       rc =3D smb2_fix_symlink_target_type(&data->symlin=
-k_target, directory, cifs_sb);
-> +               }
->                 break;
->         }
->
-> diff --git a/fs/smb/client/smb2file.c b/fs/smb/client/smb2file.c
-> index dc52995f5591..149449d9c1c0 100644
-> --- a/fs/smb/client/smb2file.c
-> +++ b/fs/smb/client/smb2file.c
-> @@ -63,6 +63,56 @@ static struct smb2_symlink_err_rsp *symlink_data(const=
- struct kvec *iov)
->         return sym;
->  }
->
-> +int smb2_fix_symlink_target_type(char **target, bool directory, struct c=
-ifs_sb_info *cifs_sb)
-> +{
-> +       char *buf;
-> +       int len;
-> +
-> +       /*
-> +        * POSIX server does not distinguish between symlinks to file and
-> +        * symlink directory. So nothing is needed to fix on the client s=
-ide.
-> +        */
-> +       if (cifs_sb->mnt_cifs_flags & CIFS_MOUNT_POSIX_PATHS)
-> +               return 0;
-> +
-> +       len =3D strlen(*target);
-> +       if (!len)
-> +               return -EIO;
-> +
-> +       /*
-> +        * If this is directory symlink and it does not have trailing sla=
-sh then
-> +        * append it. Trailing slash simulates Windows/SMB behavior which=
- do not
-> +        * allow resolving directory symlink to file.
-> +        */
-> +       if (directory && (*target)[len-1] !=3D '/') {
-> +               buf =3D kzalloc(len+2, GFP_KERNEL);
-> +               if (!buf)
-> +                       return -ENOMEM;
-> +               memcpy(buf, *target, len);
-> +               buf[len] =3D '/';
-> +               kfree(*target);
-> +               *target =3D buf;
-> +       }
-> +
-> +       /*
-> +        * If this is a symlink which points to file name with trailing s=
-lash,
-> +        * or to file named "." or file named ".." then this symlink cann=
-ot be
-> +        * resolved on Linux because Linux does not allow files with such=
- names.
-> +        * So return an error to prevent resolving this file type symlink=
- to
-> +        * directory, as it do not point to directory at all.
-> +        */
-> +       if (!directory) {
-> +               const char *basename =3D kbasename(*target);
-> +               int basename_len =3D strlen(basename);
-> +               if (basename_len =3D=3D 0 || /* symname ends with slash *=
-/
-> +                   (basename_len =3D=3D 1 && basename[0] =3D=3D '.') || =
-/* last component is "." */
-> +                   (basename_len =3D=3D 2 && basename[0] =3D=3D '.' && b=
-asename[1] =3D=3D '.')) /* or ".." */
-> +                       return -EIO;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
->  int smb2_parse_symlink_response(struct cifs_sb_info *cifs_sb, const stru=
-ct kvec *iov,
->                                 const char *full_path, char **path)
->  {
-> @@ -133,6 +183,11 @@ int smb2_open_file(const unsigned int xid, struct ci=
-fs_open_parms *oparms, __u32
->                                                NULL, NULL, NULL);
->                                 oparms->create_options &=3D ~OPEN_REPARSE=
-_POINT;
->                         }
-> +                       if (!rc) {
-> +                               bool directory =3D le32_to_cpu(data->fi.A=
-ttributes) & ATTR_DIRECTORY;
-> +                               rc =3D smb2_fix_symlink_target_type(&data=
-->symlink_target,
-> +                                                                 directo=
-ry, oparms->cifs_sb);
-> +                       }
->                 }
->         }
->
-> diff --git a/fs/smb/client/smb2inode.c b/fs/smb/client/smb2inode.c
-> index 9a28a30ec1a3..06bb6f7fbf0f 100644
-> --- a/fs/smb/client/smb2inode.c
-> +++ b/fs/smb/client/smb2inode.c
-> @@ -960,6 +960,10 @@ int smb2_query_path_info(const unsigned int xid,
->                 rc =3D smb2_compound_op(xid, tcon, cifs_sb, full_path,
->                                       &oparms, in_iov, cmds, num_cmds,
->                                       cfile, NULL, NULL, NULL);
-> +               if (data->reparse.tag =3D=3D IO_REPARSE_TAG_SYMLINK && !r=
-c) {
-> +                       bool directory =3D le32_to_cpu(data->fi.Attribute=
-s) & ATTR_DIRECTORY;
-> +                       rc =3D smb2_fix_symlink_target_type(&data->symlin=
-k_target, directory, cifs_sb);
-> +               }
->                 break;
->         case -EREMOTE:
->                 break;
-> diff --git a/fs/smb/client/smb2proto.h b/fs/smb/client/smb2proto.h
-> index aa01ae234732..1828b825c7d3 100644
-> --- a/fs/smb/client/smb2proto.h
-> +++ b/fs/smb/client/smb2proto.h
-> @@ -113,6 +113,7 @@ extern int smb3_query_mf_symlink(unsigned int xid, st=
-ruct cifs_tcon *tcon,
->                           struct cifs_sb_info *cifs_sb,
->                           const unsigned char *path, char *pbuf,
->                           unsigned int *pbytes_read);
-> +int smb2_fix_symlink_target_type(char **target, bool directory, struct c=
-ifs_sb_info *cifs_sb);
->  int smb2_parse_native_symlink(char **target, const char *buf, unsigned i=
-nt len,
->                               bool unicode, bool relative,
->                               const char *full_path,
-> --
-> 2.20.1
->
->
+No good.  The console log shows too many prints from the timer handler.  
+Let's just print the message when a dequeue is pending.
 
+Alan Stern
 
---=20
-Thanks,
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
 
-Steve
+Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+===================================================================
+--- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
++++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,7 +50,7 @@
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
+ #define POWER_BUDGET_3	900	/* in mA */
+ 
+-#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
++#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
+ 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -257,6 +257,8 @@ struct dummy_hcd {
+ 	unsigned			active:1;
+ 	unsigned			old_active:1;
+ 	unsigned			resuming:1;
++
++	bool				alanflag;
+ };
+ 
+ struct dummy {
+@@ -1301,10 +1303,12 @@ static int dummy_urb_enqueue(
+ 		dum_hcd->next_frame_urbp = urbp;
+ 	if (usb_pipetype(urb->pipe) == PIPE_CONTROL)
+ 		urb->error_count = 1;		/* mark as a new urb */
++	dev_info(dummy_dev(dum_hcd), "Enqueue %p type %d\n", urb,
++		usb_pipetype(urb->pipe));
+ 
+ 	/* kick the scheduler, it'll do the rest */
+ 	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+ 
+  done:
+@@ -1325,9 +1329,15 @@ static int dummy_urb_dequeue(struct usb_
+ 
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+-			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+-
++			!list_empty(&dum_hcd->urbp_list)) {
++		dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++				HRTIMER_MODE_REL_SOFT);
++	} else {
++		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %p\n",
++				rc, urb);
++	}
++	dum_hcd->alanflag = true;
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+ }
+@@ -1813,6 +1823,10 @@ static enum hrtimer_restart dummy_timer(
+ 
+ 	/* look at each urb queued by the host side driver */
+ 	spin_lock_irqsave(&dum->lock, flags);
++	if (dum_hcd->alanflag) {
++		dum_hcd->alanflag = false;
++		dev_info(dummy_dev(dum_hcd), "Timer handler\n");
++	}
+ 
+ 	if (!dum_hcd->udev) {
+ 		dev_err(dummy_dev(dum_hcd),
+@@ -1984,6 +1998,7 @@ return_urb:
+ 			ep->already_seen = ep->setup_stage = 0;
+ 
+ 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
++		dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
+ 		spin_unlock(&dum->lock);
+ 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
+ 		spin_lock(&dum->lock);
+@@ -1995,8 +2010,7 @@ return_urb:
+ 		usb_put_dev(dum_hcd->udev);
+ 		dum_hcd->udev = NULL;
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+-		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+ 	}
+ 
+@@ -2391,7 +2405,8 @@ static int dummy_bus_resume(struct usb_h
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+ 		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
++			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++					HRTIMER_MODE_REL_SOFT);
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
+
 
