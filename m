@@ -1,118 +1,141 @@
-Return-Path: <linux-kernel+bounces-362742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8128799B8E1
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 10:59:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D90399B8E2
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:02:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC581F219E8
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 08:59:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA05D2823CE
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:01:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C775E13B2A2;
-	Sun, 13 Oct 2024 08:59:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5YJWuD6"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B6A13AD2A;
+	Sun, 13 Oct 2024 09:01:53 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF4F42AA5;
-	Sun, 13 Oct 2024 08:59:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40035804;
+	Sun, 13 Oct 2024 09:01:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728809964; cv=none; b=h7zTpr4B/lsblD+c4hXa/4aT4ntyRZIjehov6cW5+JXaxbMyzYasSH/khgMUQTHpZNTGvZK2UwoTProUc6UrJCzT/hRGHtyvyIWf8qtIfQNhxgHGmFSN3CXZoUFYpYlYSvS0xf6TGJXnfS4z+KjUsx9V5u+aGbV3gXTBOPIB08c=
+	t=1728810113; cv=none; b=LSv3Tdxu6C2DW+9ghIQBMXfYJ/psGCYZLbYOnNnVK7lyGqBuTcmcO+kUxBMwJtZgfclQogPZlkrTX5ytJHqeIRwMaXAJzHYbfJIWe76EFmSpsZfEBgHvXDtEogI8wU3STMkKoZGYBdyOBsgsEB9tjO1tMAbNiy01jAHBWYrCr0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728809964; c=relaxed/simple;
-	bh=MGPp+p+dxUmjH0cnQhkoeaR5EG/K95IWnJ4xLOSAOqQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MSV8uUYKHCokSXy0R9DfJo/XFMWV3Xnz8l1GUGLx8tVW7KVha3zwK8boH2LQGffxdfwPCmeN6/HOFzQbcF/aOCisA38RFIpVyFu1jSclAlg9zfDD9AE5gq6lwSzeQcDhvNRpec2p2Eq+qW2j471V6AEfVBZNd47B2fN0gx6pb5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5YJWuD6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E19C4CEC5;
-	Sun, 13 Oct 2024 08:59:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728809963;
-	bh=MGPp+p+dxUmjH0cnQhkoeaR5EG/K95IWnJ4xLOSAOqQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t5YJWuD6Aoics6ECGmsTwbHwSqToeSi/1LZB5VZbIwzy8V4l3Z/yu2VAZsAwYJDuI
-	 YCPPvUgM5FjLOUVz33dYAPvTUtl4Xrk2HXstq9GKJbxLZlmX+oOAFFKjn8YnpYI1xJ
-	 ezJeyVQ/ZPFFu6sSyk0fiulS9bp94WxUOukLIuyFjv5RUIra6wuXNuQ7FXISfky/Uv
-	 Ew3Vx4y8cF/aSm9ceFwBo3iX7GAEjjR6zsRBAANuPUnPGk5EZw9XAMNllz+0+GpQyP
-	 Ril9VZcfnzG9py9nUe5LE8u5izFspdFemZLtkPNMRYY/FWE8dAhCZPtVdfbrqQdUWM
-	 uhTFeoUFEilgQ==
-Received: by pali.im (Postfix)
-	id 7E08A5F9; Sun, 13 Oct 2024 10:59:16 +0200 (CEST)
-Date: Sun, 13 Oct 2024 10:59:16 +0200
-From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
-To: Steve French <smfrench@gmail.com>
-Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
-	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
-	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 0/7] Allow to choose symlink and socket type
-Message-ID: <20241013085916.tcpz6oclalqv6aan@pali>
-References: <20241006100046.30772-1-pali@kernel.org>
- <20241012085252.560-1-pali@kernel.org>
- <CAH2r5mtGqqM35Cy5k9NN=X05rTZPk-adhb7LgoV8PGNVL9P6FQ@mail.gmail.com>
+	s=arc-20240116; t=1728810113; c=relaxed/simple;
+	bh=rauAsYdONhYsT5hDvf7/b86dTBwmMtPrN/bkxgb2qlA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZIVSAz78hbT/AyhcAWmpj9QrXfLKibRMxOiLEHs8pcezWZQ1ihXnJant4HMOPqxuf41htgjfBJUecmDT8LcCOn3IsdEvrnKspkPwV8kxgn+363uvNajYlbGrzpPh+kj85NBPepDZL5pszJca0nBRtxdHPwzHdsJ+/A5jyH36B+0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA18C4CEC5;
+	Sun, 13 Oct 2024 09:01:49 +0000 (UTC)
+From: Huacai Chen <chenhuacai@loongson.cn>
+To: Paolo Bonzini <pbonzini@redhat.com>,
+	Huacai Chen <chenhuacai@kernel.org>,
+	Tianrui Zhao <zhaotianrui@loongson.cn>,
+	Bibo Mao <maobibo@loongson.cn>
+Cc: kvm@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Xuerui Wang <kernel@xen0n.name>,
+	Jiaxun Yang <jiaxun.yang@flygoat.com>,
+	Huacai Chen <chenhuacai@loongson.cn>
+Subject: [PATCH] LoongArch: KVM: Mark hrtimer to expire in hard interrupt context
+Date: Sun, 13 Oct 2024 17:01:36 +0800
+Message-ID: <20241013090136.1254036-1-chenhuacai@loongson.cn>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2r5mtGqqM35Cy5k9NN=X05rTZPk-adhb7LgoV8PGNVL9P6FQ@mail.gmail.com>
-User-Agent: NeoMutt/20180716
 
-Well, if server explicitly disallow user to create symlink due to
-missing permissions, I am not sure if it is a good idea to obey it by
-creating symlink in format unsupported by the server...
+Like commit 2c0d278f3293fc5 ("KVM: LAPIC: Mark hrtimer to expire in hard
+interrupt context"), On PREEMPT_RT enabled kernels unmarked hrtimers are
+moved into soft interrupt expiry mode by default.
 
-On Saturday 12 October 2024 23:18:13 Steve French wrote:
-> after doing more experiments with native windows symlinks (and how
-> difficult it is to get permission to set them over the wire to Windows),
-> was wondering if we should allow fall back strategy if creating windows
-> style symlinks fails with STATUS_PRIVILEGE_NOT_HELD then we should try NFS
-> reparse point symlink.  Any opinions?
-> 
-> On Sat, Oct 12, 2024 at 3:53 AM Pali Rohár <pali@kernel.org> wrote:
-> 
-> > This patch series improves choosing reparse format when creating new
-> > special files.
-> >
-> > Changes since v1:
-> > * Instead of new -o reparse= mount option is now a new -o symlink= mount
-> >   option for choosing symlink type during creation, and new option
-> >   -o nonativesocket for choosing socket type
-> >
-> > Pali Rohár (7):
-> >   cifs: Add mount option -o symlink= for choosing symlink create type
-> >   cifs: Add mount option -o reparse=none
-> >   cifs: Add support for creating native Windows sockets
-> >   cifs: Add support for creating NFS-style symlinks
-> >   cifs: Improve guard for excluding $LXDEV xattr
-> >   cifs: Add support for creating WSL-style symlinks
-> >   cifs: Validate content of WSL reparse point buffers
-> >
-> >  fs/smb/client/cifsfs.c     |   4 +
-> >  fs/smb/client/cifsglob.h   |  36 +++++++
-> >  fs/smb/client/connect.c    |   4 +
-> >  fs/smb/client/fs_context.c |  82 +++++++++++++++
-> >  fs/smb/client/fs_context.h |  19 ++++
-> >  fs/smb/client/link.c       |  60 ++++++++---
-> >  fs/smb/client/reparse.c    | 201 +++++++++++++++++++++++++++++++------
-> >  fs/smb/client/reparse.h    |   2 +
-> >  8 files changed, 364 insertions(+), 44 deletions(-)
-> >
-> > --
-> > 2.20.1
-> >
-> >
-> >
-> 
-> -- 
-> Thanks,
-> 
-> Steve
+While that's not a functional requirement for the KVM constant timer
+emulation, it is a latency issue which can be avoided by marking the
+timer so hard interrupt context expiry is enforced.
+
+This fix a "scheduling while atomic" bug for PREEMPT_RT enabled kernels:
+
+ BUG: scheduling while atomic: qemu-system-loo/1011/0x00000002
+ Modules linked in: amdgpu rfkill nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat ns
+ CPU: 1 UID: 0 PID: 1011 Comm: qemu-system-loo Tainted: G        W          6.12.0-rc2+ #1774
+ Tainted: [W]=WARN
+ Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A5000-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
+ Stack : ffffffffffffffff 0000000000000000 9000000004e3ea38 9000000116744000
+         90000001167475a0 0000000000000000 90000001167475a8 9000000005644830
+         90000000058dc000 90000000058dbff8 9000000116747420 0000000000000001
+         0000000000000001 6a613fc938313980 000000000790c000 90000001001c1140
+         00000000000003fe 0000000000000001 000000000000000d 0000000000000003
+         0000000000000030 00000000000003f3 000000000790c000 9000000116747830
+         90000000057ef000 0000000000000000 9000000005644830 0000000000000004
+         0000000000000000 90000000057f4b58 0000000000000001 9000000116747868
+         900000000451b600 9000000005644830 9000000003a13998 0000000010000020
+         00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
+         ...
+ Call Trace:
+ [<9000000003a13998>] show_stack+0x38/0x180
+ [<9000000004e3ea34>] dump_stack_lvl+0x84/0xc0
+ [<9000000003a71708>] __schedule_bug+0x48/0x60
+ [<9000000004e45734>] __schedule+0x1114/0x1660
+ [<9000000004e46040>] schedule_rtlock+0x20/0x60
+ [<9000000004e4e330>] rtlock_slowlock_locked+0x3f0/0x10a0
+ [<9000000004e4f038>] rt_spin_lock+0x58/0x80
+ [<9000000003b02d68>] hrtimer_cancel_wait_running+0x68/0xc0
+ [<9000000003b02e30>] hrtimer_cancel+0x70/0x80
+ [<ffff80000235eb70>] kvm_restore_timer+0x50/0x1a0 [kvm]
+ [<ffff8000023616c8>] kvm_arch_vcpu_load+0x68/0x2a0 [kvm]
+ [<ffff80000234c2d4>] kvm_sched_in+0x34/0x60 [kvm]
+ [<9000000003a749a0>] finish_task_switch.isra.0+0x140/0x2e0
+ [<9000000004e44a70>] __schedule+0x450/0x1660
+ [<9000000004e45cb0>] schedule+0x30/0x180
+ [<ffff800002354c70>] kvm_vcpu_block+0x70/0x120 [kvm]
+ [<ffff800002354d80>] kvm_vcpu_halt+0x60/0x3e0 [kvm]
+ [<ffff80000235b194>] kvm_handle_gspr+0x3f4/0x4e0 [kvm]
+ [<ffff80000235f548>] kvm_handle_exit+0x1c8/0x260 [kvm]
+
+Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
+---
+ arch/loongarch/kvm/timer.c | 7 ++++---
+ arch/loongarch/kvm/vcpu.c  | 2 +-
+ 2 files changed, 5 insertions(+), 4 deletions(-)
+
+diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
+index 74a4b5c272d6..32dc213374be 100644
+--- a/arch/loongarch/kvm/timer.c
++++ b/arch/loongarch/kvm/timer.c
+@@ -161,10 +161,11 @@ static void _kvm_save_timer(struct kvm_vcpu *vcpu)
+ 	if (kvm_vcpu_is_blocking(vcpu)) {
+ 
+ 		/*
+-		 * HRTIMER_MODE_PINNED is suggested since vcpu may run in
+-		 * the same physical cpu in next time
++		 * HRTIMER_MODE_PINNED_HARD is suggested since vcpu may run in
++		 * the same physical cpu in next time, and the timer should run
++		 * in hardirq context even in the PREEMPT_RT case.
+ 		 */
+-		hrtimer_start(&vcpu->arch.swtimer, expire, HRTIMER_MODE_ABS_PINNED);
++		hrtimer_start(&vcpu->arch.swtimer, expire, HRTIMER_MODE_ABS_PINNED_HARD);
+ 	}
+ }
+ 
+diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
+index 0697b1064251..174734a23d0a 100644
+--- a/arch/loongarch/kvm/vcpu.c
++++ b/arch/loongarch/kvm/vcpu.c
+@@ -1457,7 +1457,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
+ 	vcpu->arch.vpid = 0;
+ 	vcpu->arch.flush_gpa = INVALID_GPA;
+ 
+-	hrtimer_init(&vcpu->arch.swtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
++	hrtimer_init(&vcpu->arch.swtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
+ 	vcpu->arch.swtimer.function = kvm_swtimer_wakeup;
+ 
+ 	vcpu->arch.handle_exit = kvm_handle_exit;
+-- 
+2.43.5
+
 
