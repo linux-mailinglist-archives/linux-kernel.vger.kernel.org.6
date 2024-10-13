@@ -1,228 +1,137 @@
-Return-Path: <linux-kernel+bounces-362897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBD0199BADD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:46:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B521E99BAE1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:47:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 129CC1C209BA
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:46:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4D4272818A1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:47:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 515DF1487ED;
-	Sun, 13 Oct 2024 18:46:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065D3149C55;
+	Sun, 13 Oct 2024 18:47:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CEDXhFsm";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TRaiBUFS"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIm2cNnN"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8823231CA8
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 18:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF5F811E2;
+	Sun, 13 Oct 2024 18:47:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728845169; cv=none; b=JXKFIIjAUSStiPg/eMNWBw7Fg0Qf5wkLLK3zu5s6v0Kh06z/v80A7Zgb9XKSJTslAH02jwGHNcomxNN4ltk2y2pvLVNBHxh/SsCdUUy5wc5zMfJx2RrP6nZN8H07qHxxDkSVow3jTKqnDIcdyg9rVC4s4Yko+dddAxuFkrhj8xg=
+	t=1728845249; cv=none; b=LSyDINtw/sTedizWqTtwPvY6A62yMfB++EIJFie7mhKVlgj0QNVi13NfKuePMJpyVOOzTXG/nh4L5Sup+4gTU6bE5zVqachxlejpKqaBp1x9RYZBuAb96L3TLorTCX7acswZ2Z5pDUMwv9QZ0FIyabM8IoiBeIaYDiVY8R6XV7k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728845169; c=relaxed/simple;
-	bh=ZUUE6w9XqTzrS9c117PlPCvS9snJEfp9O+s5IZaYj4s=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bdkgKRtbY7kAG52EVJoeAqmx++hg6UXhD6a9jHVj81FlQlCJWFyTXeMzM3cq32D0BnNN93vv6CKCDVaqQfhiGd8McpJ/GQ1egLbKGM2hrE9FFa23XIUo2mOQqVWUstTUrI4J8gkYNl31llVKBBH5m0RAna6UTDjnSve2vVI4gMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CEDXhFsm; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TRaiBUFS; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1728845158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VLWspbZVHLhgKlWgflGBy75KbQWaJx31B1gB7cguB2M=;
-	b=CEDXhFsmpPWl5aSCpPObDL/sW7v/KMgVqpeLwI2GjbH3e1dGgY+os0F3PD2bRLW2XJK+4r
-	0GDZIQ72R8Ij13nTaU8ZYfOJubM9K/HJAt4omtB/umxbbkkCJYTVWioKF9t09keIb0o2vk
-	TKVEs9Pf71ckofODy1VOh6tJ/1hv4XZX+tFPus8OaqI9HwtUBYjWpVhCeYbZ8P0V6Okf+c
-	N5q82ZToOTGQTS6UdehgyDPNr2RvRk8FdTepuamUX/sF2/ci7Jt7ZNOO8W77HdoVZ8kY/y
-	ty7Xbih7AucMFH5cUQkWxgvLP2p784YJKBnAB2PYjr1kI8bhwg13IYzCiXzDyA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1728845158;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=VLWspbZVHLhgKlWgflGBy75KbQWaJx31B1gB7cguB2M=;
-	b=TRaiBUFSHbz+d5tEbH0qxHso55Wvn5Dr3PLLrtsYGCLF6LD7FOzvgUnYVW7JK4u3AZjd6p
-	CEfsdxSXXzxRSwBA==
-To: "Leizhen (ThunderTown)" <thunder.leizhen@huawei.com>, LKML
- <linux-kernel@vger.kernel.org>
-Cc: Waiman Long <longman@redhat.com>
-Subject: Re: [patch 25/25] debugobjects: Track object usage to avoid
- premature freeing of objects
-In-Reply-To: <33d4dca7-3a1b-c99d-7e76-160a5fca61c2@huawei.com>
-References: <20241007163507.647617031@linutronix.de>
- <20241007164914.499184215@linutronix.de>
- <33d4dca7-3a1b-c99d-7e76-160a5fca61c2@huawei.com>
-Date: Sun, 13 Oct 2024 20:45:57 +0200
-Message-ID: <87bjznhme2.ffs@tglx>
+	s=arc-20240116; t=1728845249; c=relaxed/simple;
+	bh=Kb7aX7slRhx0WODloa6fxT3r3WjHydojQpLCssKONZg=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=gftd6e4GWlElHjajg68MmDWtfOB0EnUo898DMVl/Cf1H5gYssQZjEQJ0tYq2VvdL+0PNFZPC+CWxEHm1T4LkzquS9E76hGXnWIwUsVmGNky1O5drrl6iCCvRpdmEsnMFu9OObItmn66nQ14N2zrTIu2RMS2tDLzKjeEuqTE0vVw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIm2cNnN; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c77459558so27458705ad.0;
+        Sun, 13 Oct 2024 11:47:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728845246; x=1729450046; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=AcT+988WrW3AMkjQ8YktZMykd7mkHA4KLE0Ju/bOgnY=;
+        b=CIm2cNnNXddGZlcoXclWlCIM1vyeAT3aNgCyMZ7LAcb3mS+rFoYIoPwejJVoqM9tRB
+         DRjd274QyX9WRdXB6vOFLtC3l7zhzjcwjSNnd41+3OrNBPvpbwDDkv2ZD4vY0I+rodCI
+         FO9l0WRIYjzXR0o+FSKEHjG2ElFhCfVC6dSfsesiIcQi4CvN/lgFGZTTTd/6kW9kbhJX
+         o3VNENiADngGCtXxCWRKP1QxLZ5URjr9oBYEtNEpF3jfvD2iFSGv61+zLFBajHforS45
+         DnnsewKzJgn1ZzjrkFqObb7G622vcXhSXJ/a8Pbb4qOmaMowvXZ96pI+r+pueqvtJi7d
+         FKTA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728845246; x=1729450046;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=AcT+988WrW3AMkjQ8YktZMykd7mkHA4KLE0Ju/bOgnY=;
+        b=pglezg0pPH+kzDcCzR0UC/AxNZ2XZtm7+RUnc3sHEJzm+eh1qKSY6pr1xxnP3bLGd8
+         IZpe8N2J/f/ggoJgxu4JezG47AbbFUsLFDTBb+Mv0/v/wdwLzGEp//5A8qtWLNMGU4w+
+         HTqQEFimM6w1DC/8Wf7xRRsbQL0MBKCWyWXJ032fhKdpE6l5leL5MWoImRY6i4I0PwR2
+         5satvnknO1LjSfROVAkkjSS+2k8Yk336ADX6rTsOnyMrOJ+1d30QdDfUtgWVkTWCpSjs
+         TxxvXZYNO8aRZ8MPFz4Gp5TpKq+6X/5FBcHU5RfUllm+32YIOq0rqYenchG0WaXrWLiK
+         cZzA==
+X-Forwarded-Encrypted: i=1; AJvYcCV/rZvW1K+fYQ7fOC56FVMiB7KmaLN30OhtyziMLE8UL3cr6ut0KDECfOnDMSXQU6ZZAslVjuHgS1Ww@vger.kernel.org, AJvYcCV41PF7jlek5o35vsCAqJ3qXSCZIow/zrq4C205U3/3grdQOy6KYLTJqa4tfuDzCO2nL1HGatK1jKIvoRfHBCo=@vger.kernel.org, AJvYcCVNACbcoRSsDjh2u08OrtRd80UiNe4DumZMeIJ1wqi6TljH1r5ALKrps+WM3SEuPteNIIXjuRf/iMMMsB3k9J/6ww==@vger.kernel.org, AJvYcCW8dAUyYA9jmi2uEy9hZBwq8w0iNyzVq6vABkPMCIOG0hWdiaAF5r4+QuyU2fNe0SH/zqxgThdA6pUbBpA=@vger.kernel.org, AJvYcCWsopT6BEQxiT2idrv9mcC5khkXnBTpARWfLYPkhCW+xhqnQMcIbMb1feqM8qrWmgM9OmHauMpXFPpt7Ko8@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywza5hZ28UAn4sW6YifLQ1AtoeUPy32wPVdveweViW/qkIErNVn
+	w7YiMFc4W8g9gSNYHRYgusO7MWNe70bv0v4erWyavTWvl8IQ0bzq
+X-Google-Smtp-Source: AGHT+IEe7vhlIAeDY/l9HRi57nmdwBnO4mPv9Nua8spEcdISEd1nxQi0dLK2zEHQj5HT3Dg6I+5azw==
+X-Received: by 2002:a17:902:ecc3:b0:20c:f3be:2f8b with SMTP id d9443c01a7336-20cf3be31f0mr10163475ad.30.1728845246588;
+        Sun, 13 Oct 2024 11:47:26 -0700 (PDT)
+Received: from visitorckw-System-Product-Name.. ([140.113.216.168])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c348f41sm52681965ad.289.2024.10.13.11.47.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 11:47:26 -0700 (PDT)
+From: Kuan-Wei Chiu <visitorckw@gmail.com>
+To: colyli@suse.de,
+	kent.overstreet@linux.dev,
+	msakai@redhat.com,
+	corbet@lwn.net,
+	peterz@infradead.org,
+	mingo@redhat.com,
+	acme@kernel.org,
+	namhyung@kernel.org,
+	akpm@linux-foundation.org
+Cc: mark.rutland@arm.com,
+	alexander.shishkin@linux.intel.com,
+	jolsa@kernel.org,
+	irogers@google.com,
+	adrian.hunter@intel.com,
+	kan.liang@linux.intel.com,
+	jserv@ccns.ncku.edu.tw,
+	linux-kernel@vger.kernel.org,
+	linux-bcache@vger.kernel.org,
+	dm-devel@lists.linux.dev,
+	linux-bcachefs@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Kuan-Wei Chiu <visitorckw@gmail.com>
+Subject: [PATCH 0/3] Enhance min heap API with non-inline functions and optimizations
+Date: Mon, 14 Oct 2024 02:47:00 +0800
+Message-Id: <20241013184703.659652-1-visitorckw@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 10 2024 at 21:13, Leizhen wrote:
->> +static bool pool_can_fill(struct obj_pool *dst, struct obj_pool *src)
->> +{
->> +	unsigned int cnt = pool_count(dst);
->> +
->> +	if (cnt >= dst->min_cnt)
->> +		return true;
->
-> There's already an interception in function debug_objects_fill_pool().
-> It's unlikely to be true.
->
-> debug_objects_fill_pool() --> fill_pool() --> pool_can_fill()
-> :
-> 	if (likely(!pool_should_refill(&pool_global)))
-> 		return;
+Add non-inline versions of the min heap API functions in lib/min_heap.c
+and updates all users outside of kernel/events/core.c to use these
+non-inline versions. Additionally, it micro-optimizes the efficiency of
+the min heap by pre-scaling the counter, following the same approach as
+in lib/sort.c. Documentation for the min heap API has also been added
+to the core-api section.
 
-While they are different checks, you're right.
+Regards,
+Kuan-Wei
 
-If fill_pool_from_freelist() reused objects and was no able to refill
-the global pool above the threshold level, then fill_pool() won't find
-objects enough objects in the to free pool to refill, so it's just
-checking for a completely unlikely corner case.
+Kuan-Wei Chiu (3):
+  lib/min_heap: Introduce non-inline versions of min heap API functions
+  lib min_heap: Optimize min heap by prescaling counters for better
+    performance
+  Documentation/core-api: Add min heap API introduction
 
-I just validated that it does not make a difference. Updated patch below
+ Documentation/core-api/index.rst    |   1 +
+ Documentation/core-api/min_heap.rst | 291 ++++++++++++++++++++++++++++
+ drivers/md/bcache/Kconfig           |   1 +
+ drivers/md/dm-vdo/Kconfig           |   1 +
+ fs/bcachefs/Kconfig                 |   1 +
+ include/linux/min_heap.h            | 202 ++++++++++++-------
+ kernel/events/core.c                |   6 +-
+ lib/Kconfig                         |   3 +
+ lib/Kconfig.debug                   |   1 +
+ lib/Makefile                        |   1 +
+ lib/min_heap.c                      |  70 +++++++
+ 11 files changed, 508 insertions(+), 70 deletions(-)
+ create mode 100644 Documentation/core-api/min_heap.rst
+ create mode 100644 lib/min_heap.c
 
-Thanks for spotting this!
+-- 
+2.34.1
 
-       tglx
----
-Subject: debugobjects: Track object usage to avoid premature freeing of objects
-From: Thomas Gleixner <tglx@linutronix.de>
-Date: Sat, 14 Sep 2024 21:33:19 +0200
-
-The freelist is freed at a constant rate independent of the actual usage
-requirements. That's bad in scenarios where usage comes in bursts. The end
-of a burst puts the object on the free list and freeing proceeds even when
-the next burst which requires objects started again.
-
-Keep track of the usage with a exponentially wheighted moving average and
-take that into account in the worker function which frees objects from the
-free list.
-
-This further reduces the kmem_cache allocation/free rate for a full kernel
-compile:
-
-   	    kmem_cache_alloc()	kmem_cache_free()
-Baseline:   225k		245k
-Usage:	    170k		117k
-
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
----
- lib/debugobjects.c |   45 ++++++++++++++++++++++++++++++++++++++++-----
- 1 file changed, 40 insertions(+), 5 deletions(-)
-
---- a/lib/debugobjects.c
-+++ b/lib/debugobjects.c
-@@ -13,6 +13,7 @@
- #include <linux/hash.h>
- #include <linux/kmemleak.h>
- #include <linux/sched.h>
-+#include <linux/sched/loadavg.h>
- #include <linux/sched/task_stack.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
-@@ -86,6 +87,7 @@ static struct obj_pool pool_to_free = {
- 
- static HLIST_HEAD(pool_boot);
- 
-+static unsigned long		avg_usage;
- static bool			obj_freeing;
- 
- static int __data_racy			debug_objects_maxchain __read_mostly;
-@@ -427,11 +429,31 @@ static struct debug_obj *lookup_object(v
- 	return NULL;
- }
- 
-+static void calc_usage(void)
-+{
-+	static DEFINE_RAW_SPINLOCK(avg_lock);
-+	static unsigned long avg_period;
-+	unsigned long cur, now = jiffies;
-+
-+	if (!time_after_eq(now, READ_ONCE(avg_period)))
-+		return;
-+
-+	if (!raw_spin_trylock(&avg_lock))
-+		return;
-+
-+	WRITE_ONCE(avg_period, now + msecs_to_jiffies(10));
-+	cur = READ_ONCE(pool_global.stats.cur_used) * ODEBUG_FREE_WORK_MAX;
-+	WRITE_ONCE(avg_usage, calc_load(avg_usage, EXP_5, cur));
-+	raw_spin_unlock(&avg_lock);
-+}
-+
- static struct debug_obj *alloc_object(void *addr, struct debug_bucket *b,
- 				      const struct debug_obj_descr *descr)
- {
- 	struct debug_obj *obj;
- 
-+	calc_usage();
-+
- 	if (static_branch_likely(&obj_cache_enabled))
- 		obj = pcpu_alloc();
- 	else
-@@ -450,14 +472,26 @@ static struct debug_obj *alloc_object(vo
- /* workqueue function to free objects. */
- static void free_obj_work(struct work_struct *work)
- {
--	bool free = true;
-+	static unsigned long last_use_avg;
-+	unsigned long cur_used, last_used, delta;
-+	unsigned int max_free = 0;
- 
- 	WRITE_ONCE(obj_freeing, false);
- 
-+	/* Rate limit freeing based on current use average */
-+	cur_used = READ_ONCE(avg_usage);
-+	last_used = last_use_avg;
-+	last_use_avg = cur_used;
-+
- 	if (!pool_count(&pool_to_free))
- 		return;
- 
--	for (unsigned int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
-+	if (cur_used <= last_used) {
-+		delta = (last_used - cur_used) / ODEBUG_FREE_WORK_MAX;
-+		max_free = min(delta, ODEBUG_FREE_WORK_MAX);
-+	}
-+
-+	for (int cnt = 0; cnt < ODEBUG_FREE_WORK_MAX; cnt++) {
- 		HLIST_HEAD(tofree);
- 
- 		/* Acquire and drop the lock for each batch */
-@@ -468,9 +502,10 @@ static void free_obj_work(struct work_st
- 			/* Refill the global pool if possible */
- 			if (pool_move_batch(&pool_global, &pool_to_free)) {
- 				/* Don't free as there seems to be demand */
--				free = false;
--			} else if (free) {
-+				max_free = 0;
-+			} else if (max_free) {
- 				pool_pop_batch(&tofree, &pool_to_free);
-+				max_free--;
- 			} else {
- 				return;
- 			}
-@@ -1110,7 +1145,7 @@ static int debug_stats_show(struct seq_f
- 	for_each_possible_cpu(cpu)
- 		pcp_free += per_cpu(pool_pcpu.cnt, cpu);
- 
--	pool_used = data_race(pool_global.stats.cur_used);
-+	pool_used = READ_ONCE(pool_global.stats.cur_used);
- 	pcp_free = min(pool_used, pcp_free);
- 	pool_used -= pcp_free;
- 
 
