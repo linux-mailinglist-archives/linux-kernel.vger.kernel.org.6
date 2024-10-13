@@ -1,123 +1,117 @@
-Return-Path: <linux-kernel+bounces-362881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65A5499BAA1
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:42:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA3999BAA9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 187062815E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:42:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1231281644
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E93F91487ED;
-	Sun, 13 Oct 2024 17:41:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68BCB1487ED;
+	Sun, 13 Oct 2024 17:50:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="KexFyJvr"
-Received: from out-184.mta1.migadu.com (out-184.mta1.migadu.com [95.215.58.184])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mOiPU3Ez"
+Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C983D6A
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 17:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37E3F231C88;
+	Sun, 13 Oct 2024 17:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728841319; cv=none; b=Cx9bBXZpzaMYyqopDXKMvoyH1oEDE7+Ibq1hdW8/b8gV9TVnfC1nJZvXal+Hwuww4dWiKxstxCH1W4C3r3EPCA83MMpiIFIzTAYgeVH2CMnMNYp/o0TihOh59BLIsJcuujP95dccvBiNrKpto3Rr+/fdO27H2zqK1ynlED8lNFs=
+	t=1728841844; cv=none; b=r5g12qYCbXcQqrMb9Ehg++R25F6GUXUXNuFYycFHb9dvkPZlUCJtgG/yAMqeClTyCbO7nGuE9LxcY0MXWHCo1O39QQakfodZpEUzDu/zzp+phOT3p0w/y2mN8dpFfSOl2qvu7mDqYr/Cvp3kCqhVfbKkVV/EIGgVFX95Q48ognA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728841319; c=relaxed/simple;
-	bh=O4uW8akvvmzAo72QeAFXUtgDelr8w/chh5v8VoD+qq0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ARhMIb4NtWOZtZEbIfJ9AN6iMdf7X9+9KQEFXhoo2uJ6SJxXCvepd7hxdivrp2nnjaO/P3JIr2zCh4YGavMe4JZXuGNHTTzpPINnJ5/xGm01577XI/Ip6ZpC5sutFnO8moa/vO4IZDjQtGwZrBucPGFBYqZvFTsVdUjriArwe6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=KexFyJvr; arc=none smtp.client-ip=95.215.58.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 13 Oct 2024 13:41:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728841315;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uUu58mQSkd3A6BWUP5j1gRYOiio92hZ5GCB80tr8lOg=;
-	b=KexFyJvr3IJg740RuSSDImNJz3TYXHI8t0HPVsPRJlEj5MKSuE7W0Zwn2E7yHS1573Hkge
-	aGPdShX/myjRU8NxKXYRAOOas9PLgew9+TSEOBbGMQ/xr2DArYfMvpZRO9xhn6DaOFARUW
-	lSB4qCD6SAUpNWUPSchsEDcRbotoyRs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: syzbot <syzbot+e6ea15c610261d2106ba@syzkaller.appspotmail.com>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [bcachefs?] kernel panic: bcachefs (loop3): panic after
- error
-Message-ID: <emzzftryhlyksbc7w5sx7rn3vrrp4rwnwwa45fn4o3rexdk6z7@umhqszrnbsnp>
-References: <670bd8cc.050a0220.4cbc0.0031.GAE@google.com>
+	s=arc-20240116; t=1728841844; c=relaxed/simple;
+	bh=EJZPfUC7yVWYpSlmhm/M8EuNozKvte0LBSNsHfH1MG4=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=fqNmgDSsBGOSf0/k3oDEFymH3xvnNcSWEZueL2LKo7c/ff1mlrmmAW5HTLn7yxDQyr+7KL1gbhP/335n16VphAm0HFEv1Oo9vcFiPquJGs+oQCFvOv03kD1Bj+K6xjMyu5z39VCAG97wSX2hMgeWn5DdfgEcwdNQVLfaO+KGVu4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mOiPU3Ez; arc=none smtp.client-ip=209.85.167.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f6e1f756so271928e87.0;
+        Sun, 13 Oct 2024 10:50:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728841841; x=1729446641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hxbACub/5iilf5Pw609ubUMZh8eS5xKN+hjQXWQCpqs=;
+        b=mOiPU3EzCWNQhH869qJ6lirj8E+9xZe3Mj1HSBluwHEcCcwkL9m+zfrkIVFkzTMzs1
+         WoOPHvXUhhb91VDCo/aSDoa+MnEfkaN95NVlt5frHnWgDJhmYFvKQDB2BULrnHIB7HpW
+         Hy9pdEa+HD0Efw82ze9smNkanMWcVtMX3u9SLvLzFUmZ14kl+u/EN/mJo+V3UfGfIVlr
+         /XhNOyz2jVAiGSQ59rBHxoKaNKITApjOU73cYN98Zxmk7H/NOwIga26kP4lN9Y1stss9
+         qhLSF0/yUI19x6JUlDco9F3Biz6lbUJdSaSK9/0xOb6AYXG+sTpc7Ur7dizhuYnoysqv
+         ErSQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728841841; x=1729446641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hxbACub/5iilf5Pw609ubUMZh8eS5xKN+hjQXWQCpqs=;
+        b=P8baDhyEpuXX3QYQVBhonanZwFPm7/eelgigdVR/sYuyqkhFApk6/MoPMb5B8MpNt7
+         cGOTpc+nM2H1usAHnLEdqxIspPvSMZXN7YyG4HlGL9Gc1W0oTx0K2Ncazxvpk78t7M0P
+         XvWED3gIQW1GbVUgAMesnSPPL9P5tFyAVKXWIN9LU/I4tIfu+RQ2WeD/4uAQipZVgiqt
+         SS+33gXfJoSwKl5jIxAZ+VmLARWnh7l+tOC3jLZD4tvDwu4X2BltEPH2SLev+T/ht490
+         LaX9hqtJlQ6hktpUsOr554MgqWqF1ShqVB/JLyOd/e+I9KjTVVqyCzvQ2e0ULiOcloZy
+         2b0w==
+X-Forwarded-Encrypted: i=1; AJvYcCULWYEbArZQ+nseBPkPPgMaLQJUVmkzw9NXBI8W61NZ2v3zksWU8+CEnfZiEyFtD7r/heMBSD9Hr/uaICw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywn5GzxM9b+PQ3MrtJDWvV0C6bWQYdqHGj6ZH0nUuB8GSEzWD7a
+	S04LCd/tJCEPcERQ8obfTcXi5sGsAYNg0WRhwkyxS+ZkDslWWUXWMyKwj+3VEkNDAKdMGS/72Hv
+	JPBcov3XBhYUojokDimp5uV0Sz1gwL6BgwH4=
+X-Google-Smtp-Source: AGHT+IEFrbAv8qcNSwcd/9/FNA7YAbEwDHSSc5CItDDH9QzK7uVGMad5ZGxTk4Iu62JLA8P5QrJgc8bQBKIDoDyOckg=
+X-Received: by 2002:a05:6512:128e:b0:539:920a:f886 with SMTP id
+ 2adb3069b0e04-539da58a9afmr4020700e87.50.1728841840947; Sun, 13 Oct 2024
+ 10:50:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670bd8cc.050a0220.4cbc0.0031.GAE@google.com>
-X-Migadu-Flow: FLOW_OUT
+From: Steve French <smfrench@gmail.com>
+Date: Sun, 13 Oct 2024 12:50:29 -0500
+Message-ID: <CAH2r5mtWduOymGy1QSUycG-v6k4p9g=gamROOsrs_dF9SLMbyw@mail.gmail.com>
+Subject: [GIT PULL] smb3 client fixes
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: CIFS <linux-cifs@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 13, 2024 at 07:27:24AM GMT, syzbot wrote:
-> Hello,
-> 
-> syzbot found the following issue on:
-> 
-> HEAD commit:    75b607fab38d Merge tag 'sched_ext-for-6.12-rc2-fixes' of g..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=10d35780580000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=7a3fccdd0bb995
-> dashboard link: https://syzkaller.appspot.com/bug?extid=e6ea15c610261d2106ba
-> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14560f07980000
-> 
-> Downloadable assets:
-> disk image: https://storage.googleapis.com/syzbot-assets/283eaf72a57c/disk-75b607fa.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/a721235f5b80/vmlinux-75b607fa.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/f5219ace4d70/bzImage-75b607fa.xz
-> mounted in repro: https://storage.googleapis.com/syzbot-assets/c65430058ea3/mount_0.gz
-> 
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+e6ea15c610261d2106ba@syzkaller.appspotmail.com
-> 
-> bcachefs (loop3): starting version 1.7: mi_btree_bitmap opts=errors=panic,metadata_checksum=crc64,data_checksum=none,compression=lz4,background_compression=gzip,no_splitbrain_check,nocow
-> superblock marked clean but clean section not present, shutting down
-> Kernel panic - not syncing: bcachefs (loop3): panic after error
-> CPU: 1 UID: 0 PID: 5433 Comm: syz.3.18 Not tainted 6.12.0-rc2-syzkaller-00058-g75b607fab38d #0
-> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-> Call Trace:
->  <TASK>
->  __dump_stack lib/dump_stack.c:94 [inline]
->  dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
->  panic+0x349/0x880 kernel/panic.c:354
->  bch2_inconsistent_error+0x146/0x150 fs/bcachefs/error.c:26
->  __bch2_fsck_err+0x1167/0x15f0 fs/bcachefs/error.c:422
->  bch2_read_superblock_clean+0x3b4/0x520 fs/bcachefs/sb-clean.c:152
->  bch2_fs_recovery+0x1f4/0x39c0 fs/bcachefs/recovery.c:639
->  bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
->  bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2080
->  vfs_get_tree+0x90/0x2b0 fs/super.c:1800
->  do_new_mount+0x2be/0xb40 fs/namespace.c:3507
->  do_mount fs/namespace.c:3847 [inline]
->  __do_sys_mount fs/namespace.c:4055 [inline]
->  __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
->  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
->  do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
->  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> RIP: 0033:0x7fb67417f79a
-> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-> RSP: 002b:00007fb674f20e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-> RAX: ffffffffffffffda RBX: 00007fb674f20ef0 RCX: 00007fb67417f79a
-> RDX: 00000000200058c0 RSI: 0000000020000100 RDI: 00007fb674f20eb0
-> RBP: 00000000200058c0 R08: 00007fb674f20ef0 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020000100
-> R13: 00007fb674f20eb0 R14: 0000000000005957 R15: 0000000020000080
->  </TASK>
-> Kernel Offset: disabled
-> Rebooting in 86400 seconds..
+Please pull the following changes since commit
+8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
 
-This isn't a bug, you enabled errors=panic. You'll want to update the
-syzbot driver...
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.samba.org/sfrench/cifs-2.6.git tags/6.12-rc2-cifs-fixes
+
+for you to fetch changes up to 63271b7d569fbe924bccc7dadc17d3d07a4e5f7a:
+
+  cifs: Fix creating native symlinks pointing to current or parent
+directory (2024-10-06 22:57:12 -0500)
+
+----------------------------------------------------------------
+Two fixes for symlink creation that address some interoperability
+scenarios e.g. to Windows targets
+- Fix symlink creation for directories
+- Fix for symlink creation when path begins with . or ..
+----------------------------------------------------------------
+Pali Roh=C3=A1r (2):
+      cifs: Improve creating native symlinks pointing to directory
+      cifs: Fix creating native symlinks pointing to current or parent dire=
+ctory
+
+ fs/smb/client/cifs_unicode.c |  17 ++++-
+ fs/smb/client/reparse.c      | 164 +++++++++++++++++++++++++++++++++++++++=
++++-
+ fs/smb/client/smb2inode.c    |   3 +-
+ fs/smb/client/smb2proto.h    |   1 +
+ 4 files changed, 178 insertions(+), 7 deletions(-)
+
+
+--=20
+Thanks,
+
+Steve
 
