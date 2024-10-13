@@ -1,110 +1,118 @@
-Return-Path: <linux-kernel+bounces-362921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CFA499BB39
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:21:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50BBC99BB3D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:25:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71DE81F2156A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:21:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 847EA1C21177
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 19:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D558B1474B9;
-	Sun, 13 Oct 2024 19:21:28 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C409148314;
+	Sun, 13 Oct 2024 19:25:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b="SwxOSpZX"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 116D612EBDB
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:21:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EF212C54B
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 19:25:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728847288; cv=none; b=LJg16uKqwzaeD4nSp/Y9gMarnioMW/sLgdFyJBELxDLYYMf+tAftWY1GEwxTp1+0R0Y/LdZM0m6WlT+4W+W4nY9cXemqSnUMZCIfxHNhHK+gxGUuHUHWoRpT5Z2LLEa7gqykkA8+k1A3xDZXBVLseQ8yQTN7T/45lUCVtVry9/A=
+	t=1728847531; cv=none; b=AQ8YHuNZjut95yvOGvnc0tojA0s0LXAocr/4KKnBrg0Wyw101F9+DEsSWpj8NpMwoQsf6ACywoCjTcCcfhTy/rHwf1rXW+OT6d0JdRY5jNaOiP2kl19HWWzgLzKz6FARi5hFSPtiBAf5THSjkPRrYARAXuDS0tpbp8iPGFyKgl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728847288; c=relaxed/simple;
-	bh=e9B1GYr7X704oC5pS3YuyF4rXsyj7DNqUwwBpXLsiIs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=XM8l7cqZxh/9DvIs56kNRetGIj+4SvHEfDl6l1b6p+M2exfWkMqoVHHsKejn8EhQOVT/QiyP7CWWlBJMYh5NS+ByY0Y/JDC6R6RQIe/ld53PwYQ5ddkDX5vu2qmFOCwIm3xCiv1l1KCgt23b/C1kFNg4CAbCZblqsA8cU1QPVOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3ae3c2cacso31240375ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:21:26 -0700 (PDT)
+	s=arc-20240116; t=1728847531; c=relaxed/simple;
+	bh=pXVFMnSbHvGZWIWCxCZxNXJPAsc5cwNlWqgPr6lSV0M=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=EB+VuHAAffD0XbL1s7VNlxPkdVhgjTZSoNTU4O0LAM1l3c3jODLgqms5rw2xW/spBZfFIE7G6Pi/06QIbBmGkAN0sR2JCD1ufxlzGObKFZEXhShHKczKs60Svci+192sKbj/uHc2uAkN+SiYIudm0Tq+ecXPwgMX13YnZLby80U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca; spf=pass smtp.mailfrom=marek.ca; dkim=pass (2048-bit key) header.d=marek.ca header.i=@marek.ca header.b=SwxOSpZX; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=marek.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marek.ca
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-460464090d5so33940311cf.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:25:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=marek.ca; s=google; t=1728847527; x=1729452327; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+zrIznS7Q8l18arQCJjGYNCqnOxcKuCFvr5eSQ24gEg=;
+        b=SwxOSpZXD4rPWDyQrn39H9k8aaY7KyjhwGr/2t/EsVmEqmnaYix6LoOLiQOgkpiuRX
+         azkPqtFZN/tUZOUx0fCeSS6RDpkUykMiA+3BYSG5ikdOXMUdXHUXr1wvn+DSKViDrEsM
+         VSMfMQcDD0Wp2hgwWJGhy9T/fk258Jo3nN5+23V/Y8X5hD9OVOKby5M9n52GVTTSLN0D
+         LkQ15RFwKf10NbfKz7YS1rNIRUVw5ytL7Lul7NG2hcTjKi0Fnj0qJnXJZHl4zHOB00m2
+         e2qtET0xhdajk/IYcRM6clxDkKeP1MbmRbE3U9DLS2zrb61cW8iRBhsB1KdDWMCcQ9Zp
+         8l5w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728847286; x=1729452086;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4WU3kgEtTuMHg+8jTGa/m3Y0xT7Aassavqo9KaNTKhI=;
-        b=DHAPrHVUnSjdFVGekeIvu32ZxkIpZNC0D+6O/jH4CCMwEgJLYvLDgXHhtZLWVZ9LBy
-         FdUGrUws4o4oigb2SPtQAQHTuKF0IdF8kL4xK5BivsOauWYnIg6TmdMjhCe+LRIn0XQ2
-         rJhOh1xfCxD/RPvXTLo+E51RIvZmeEYeNOYLWgH1sBWzT1EPhXmCBNB/Q/1S5MANxLnF
-         NGiQd8bVy/PLQ10yJqVt2E93IrDTCl7ZbxxJ6pFK7pzRCuFWSO3qQSDl8t9NJBCZuDSY
-         CqHw1/rGHV/nmHVxu+ODXHqgIX3AcrzFpHQfmGPguZeWuklWjJaYDEDbkYccFy7MsUTN
-         YYaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRry+Vy3R5iUL6Wxr3sCfttE5phaDzswhFRRLy3N3wKwfl2WkkjlssYI47zKanKk+0ES3i6u2JVSKDh50=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwjrqKiBp2qnwv4BOisIPg+NL8uUSteS9SpSlBHmtBrCJgYd6cx
-	TBBg0Ss5DN8K00KwQoDff0jvpJ62Mo+2pvWuYcDfPRuQxb01M7elOWmnKg9wHA2WRWOzSaitOEN
-	2YSTngoNnqj0rFW9TcZvj95rWeob9ZC6179HNDmk6Uze/dsIsRbPo+W8=
-X-Google-Smtp-Source: AGHT+IGM4P8g+P/xqgXlXPSOvSrmB/PNQ5Z6EW/IhzqSts0VYfiRKjLcz9UzpoSi75CVfI2RA6WVolB06KQIoaS4L4eU0xTQFoId
+        d=1e100.net; s=20230601; t=1728847527; x=1729452327;
+        h=content-transfer-encoding:content-language:in-reply-to:mime-version
+         :user-agent:date:message-id:from:references:cc:to:subject
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+zrIznS7Q8l18arQCJjGYNCqnOxcKuCFvr5eSQ24gEg=;
+        b=QVRiD6zH+C2HoXwL3RoXPD6R8WfgAB5ezfCGMB8URIkfOA3KXSl91pESfYlIOtOw/M
+         Ct46P+G9EVXprlIwwalgqRKr9BYXEtO4fmcMwW5ZVw6FEaUtFE+6qP6E+Z7w/o9dmRpP
+         CN20A74R+1z+ZqbJeH8Atdzhn7BJgiuuiTzMjHt0y6V9Utt+wIlUMAIPIp46yNxcPFR2
+         Mm64KcWQP+0759LBuBeYjTIr++ykKpTm+d026SnIQAzfytmd98cNxDzuzqRN+iSyyCx0
+         Vin91fAbRzPYl9i3poM8IUvA42sBmqlEBMr1CxauhH1oYQDKfcnm2bcBFO6vfZfGoGvW
+         cjVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUFwtAcjQX/CRqk/+PDGj7xkk/AeMFDLzDvuC4+m7ZxIGIwKgT/m0rT9JxsjcnEU3GW9gPPzD+hePF1U74=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy5hY/WrByeSMNjJcsGkzm6QnpjnvYzoy0LioMYDWWD29G7B3B8
+	/EGFshcE/3L2kJnxq5Vu1CoPADPfVeO7jjew2v+VltxJaIChd95w4cxQn8psIps=
+X-Google-Smtp-Source: AGHT+IEJNYlsyx8T+jvHzQldZj2f3S8SmxEhhWozD8TMDGZMQODrTJu3Q0sDXFRzrKhgTK03uXP+/Q==
+X-Received: by 2002:a05:6214:2b93:b0:6cb:99db:bdbf with SMTP id 6a1803df08f44-6cbf0051da6mr133964626d6.43.1728847527282;
+        Sun, 13 Oct 2024 12:25:27 -0700 (PDT)
+Received: from [192.168.0.189] (modemcable125.110-19-135.mc.videotron.ca. [135.19.110.125])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85b695fsm37792116d6.37.2024.10.13.12.25.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Oct 2024 12:25:26 -0700 (PDT)
+Subject: Re: [PATCH v2 0/2] efi/libstub: fix efi_parse_options() ignoring the
+ default command line
+To: Ard Biesheuvel <ardb@kernel.org>
+Cc: linux-efi@vger.kernel.org, Aditya Garg <gargaditya08@live.com>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "Borislav Petkov (AMD)" <bp@alien8.de>, Ingo Molnar <mingo@kernel.org>,
+ Kees Cook <kees@kernel.org>,
+ "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>,
+ open list <linux-kernel@vger.kernel.org>,
+ Nikolay Borisov <nik.borisov@suse.com>
+References: <20241013051239.22564-1-jonathan@marek.ca>
+ <CAMj1kXHvOgGysdPSNNk1bUR2f5tzRaxr4=saqF8KFXq+q6gDCA@mail.gmail.com>
+From: Jonathan Marek <jonathan@marek.ca>
+Message-ID: <b13dc40b-cb72-02f6-0379-358499696eb2@marek.ca>
+Date: Sun, 13 Oct 2024 15:22:00 -0400
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:68.0) Gecko/20100101
+ Thunderbird/68.2.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a8a:b0:3a0:c15f:7577 with SMTP id
- e9e14a558f8ab-3a3b5f4976fmr78978865ab.9.1728847286172; Sun, 13 Oct 2024
- 12:21:26 -0700 (PDT)
-Date: Sun, 13 Oct 2024 12:21:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670c1db6.050a0220.3e960.0044.GAE@google.com>
-Subject: [syzbot] Monthly dri report (Oct 2024)
-From: syzbot <syzbot+list6f950335a4c56f56249b@syzkaller.appspotmail.com>
-To: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+In-Reply-To: <CAMj1kXHvOgGysdPSNNk1bUR2f5tzRaxr4=saqF8KFXq+q6gDCA@mail.gmail.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
+Content-Transfer-Encoding: 7bit
 
-Hello dri maintainers/developers,
+On 10/13/24 1:30 PM, Ard Biesheuvel wrote:
+> On Sun, 13 Oct 2024 at 07:16, Jonathan Marek <jonathan@marek.ca> wrote:
+>>
+>> v2:
+>>   - changed to check for NUL character instead of size==1
+>>   - reworked cleanup patch to remove cmd_line_len
+>>   - moved 3rd commit out of this series
+>>
+>> Jonathan Marek (2):
+>>    efi/libstub: fix efi_parse_options() ignoring the default command line
+>>    efi/libstub: remove unnecessary cmd_line_len from
+>>      efi_convert_cmdline()
+>>
+> 
+> Thanks. I'm inclined to fold these together and just merge them as a
+> single patch. Any objections?
+> 
 
-This is a 31-day syzbot report for the dri subsystem.
-All related reports/information can be found at:
-https://syzkaller.appspot.com/upstream/s/dri
-
-During the period, 0 new issues were detected and 0 were fixed.
-In total, 18 issues are still open and 31 have been fixed so far.
-
-Some of the still happening issues:
-
-Ref Crashes Repro Title
-<1> 650     Yes   WARNING in drm_syncobj_array_find
-                  https://syzkaller.appspot.com/bug?extid=95416f957d84e858b377
-<2> 298     Yes   WARNING in vkms_get_vblank_timestamp (2)
-                  https://syzkaller.appspot.com/bug?extid=93bd128a383695391534
-<3> 55      No    INFO: task hung in drm_atomic_get_plane_state
-                  https://syzkaller.appspot.com/bug?extid=eee643fdccb7c015b3a6
-<4> 18      Yes   WARNING in drm_gem_prime_fd_to_handle
-                  https://syzkaller.appspot.com/bug?extid=268d319a7bfd92f4ae01
-<5> 17      Yes   WARNING in drm_wait_one_vblank (2)
-                  https://syzkaller.appspot.com/bug?extid=147ba789658184f0ce04
-<6> 11      Yes   divide error in drm_mode_vrefresh
-                  https://syzkaller.appspot.com/bug?extid=622bba18029bcde672e1
-<7> 4       Yes   divide error in drm_mode_debug_printmodeline
-                  https://syzkaller.appspot.com/bug?extid=2e93e6fb36e6fdc56574
-<8> 3       Yes   KASAN: slab-use-after-free Read in drm_atomic_helper_wait_for_vblanks (2)
-                  https://syzkaller.appspot.com/bug?extid=0f999d26a4fd79c3a23b
-<9> 2       Yes   WARNING in drm_prime_destroy_file_private (2)
-                  https://syzkaller.appspot.com/bug?extid=59dcc2e7283a6f5f5ba1
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-To disable reminders for individual bugs, reply with the following command:
-#syz set <Ref> no-reminders
-
-To change bug's subsystems, reply with:
-#syz set <Ref> subsystems: new-subsystem
-
-You may send multiple commands in a single email message.
+No objections (its not important to me, but if you want to get the fix 
+into stable I think the separate commits makes that easier?)
 
