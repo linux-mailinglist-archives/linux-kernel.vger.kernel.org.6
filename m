@@ -1,298 +1,291 @@
-Return-Path: <linux-kernel+bounces-362889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259B799BABF
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:19:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 243C799BABE
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D4ED31C20D3A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:19:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 355B91C208E6
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 969B11494BF;
-	Sun, 13 Oct 2024 18:19:27 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65853148304;
+	Sun, 13 Oct 2024 18:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BMs/EBa6"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B85B36B
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 18:19:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1AF8148308;
+	Sun, 13 Oct 2024 18:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728843567; cv=none; b=HOH0Bpsu/MjG48VMDHJ1vCV45ILYBVptdLY07qWy1sVVGPA9EBSaJNO+9qhuwMxJU83FvhFsFhkaNY+fGKi1TnIQUy2gbRbe/yP31May1sGInm4/L0QrjWVWUKNWy3T5MUgW7eQpvAqU0Y57EpMkbl5HXetmdlJKE7x+yYDdvjE=
+	t=1728843561; cv=none; b=UJiHt3Uyv18ssVrPr4ZbLfPB2C5wBQNOo7ejSWbK0EOiXsoR8JHKLGw4PZk0inGZU+mlh53hVgHvfWOYA0Rc8H91KPo+AJoakvrVm1I8WMfYMxY1fgTyPT0aRDf3j3K8ejjSRhvsYfRlMcmubPzTPxGmtjZ6KtPLo8uazCc5IQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728843567; c=relaxed/simple;
-	bh=9etvFx7yX/ZsBToZEYffoAOOhfHzzk8pLG31IJceM8c=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Db29rKYI73etRECbphRuyR5XCaE88f6NCRGVUpq2zvCmshAPtnyyAZcP4dysMNDqPVik4k5j3cjSIZg3wL6U4xqaXM9qGHSm+n0Ujoq3nX69Lr/wUr3b6xjL4ZvJkw+wyENM2kil+Lkr79NCpnLVEI2+OKCB7qh0JoknehJVM0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c38d2b91so5782215ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:19:24 -0700 (PDT)
+	s=arc-20240116; t=1728843561; c=relaxed/simple;
+	bh=ru2Ad8Dlv3l1WvgpQf0mf8wNVEUpc32oxgOvikO/3+k=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Q1CycqtsWdHvYl1IpVdNvBqw+/HD0aY8PvyhOq/IjnderwvWhuf+Xgn9Kpb4dSTx3wzm+V8gym5phDmlbj4PW7yNx8E/BXcCkLM9vx//L0pU1z23hgJXgoaDG/H1RiqzD+HWuTqbEX8apleAWUCiT09WqI7ACPwsZ+hb1izrocM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BMs/EBa6; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9a0cee600aso39108366b.1;
+        Sun, 13 Oct 2024 11:19:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728843558; x=1729448358; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=X56ki4zUkTbfkScVrmia1mDMQKgiUsSq+BtzwCXhyN8=;
+        b=BMs/EBa6WfrfkW5acLWQAQP7uZrQSmBvc+Tq7P6A7nGdOS/9nEirXb1yzW70wsQTZY
+         B+2wieFfp3BtHKpq+rddtydJEV6JyAdxr9X3K9HpLD7p592QFsKTgGq3cKJNUbsGtIqS
+         XzKhrFiiDwbqrCvwd5IiJ294lmpV3wyOVbqVGHF1zeIcSGu3m6FCcEcra7siDNEpzp+l
+         mfhCd862eaLXOfOHOjgyjd5lqgT9FZE8EmLVSozXbsPvBHnUFzaQMkGuJHE7aTm+aNwJ
+         xsaen6P08Z/0fhkZyTBeyhP8QnrItDt/v5AxPAw9f5fON8i1ASWIBNc+Yu52+9PmLa4M
+         fTSQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728843564; x=1729448364;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xaF4XcpBOE9V7Z6TWObcGa0rmb9UlvcMo91J0iUggAA=;
-        b=OpcRfqTS7xvwWMRRKq+q6wwxVlp8ELBXJT33LLcwyJ8ONx+Xhxgf7NX5RNSYYwMpFc
-         Q5a9j7WqzimvcasDWZn7GAss4rS5nim/PGNmX/WqSVcz2yidzZbeZj6o9W3eAA+Lyc2f
-         CL2QXLVc0cT0jNDUyNSXpTiz84hkukRtXblHy9zo5WBN9ncxZ5ocQ+Cgfbo70vm4Gzrv
-         Hh6MphnKEg2BwZ5P6rpitHy/e1w/46WbAjVyyzzdYFblTH9j5pTkkFBAPHJVzzEIhK1y
-         hmjk844muw/h9G1kcQbpHkEDwcKQdKNdq3KlUoFJV9gCVC8zaFtLv7lwBoo0RsWGMrZ3
-         QYkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIlErGNLZ/Vth7vexQKuG0GBzLz/snMLKOgABxIuI+RSA9Kv9qtbDjO6gNocLfSJtVc4WoHwwcvgRMc4w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykirBkfGBFfufIN+2A4FFb5YYz2zqh/WKCryYZ1UEdbpGaiayX
-	VAG1Wcw5hK1TsqmY+LzngIFGaTZ06ktNO3nHZOHJol5N8G4kz/cxg0ivuItQDW4MWnK4lKT7Zlj
-	OGT7kQutvXKKJAjZuGd69aMVdolXYSFlXKaBz7XSWovz95A0SrZfJeTw=
-X-Google-Smtp-Source: AGHT+IGbxZmju9/d8YkTLqDSx5JYszTXJL9kDcxpUUf+bFFQNpDL7KYeBWtqKxNJtOcC+O5NC4fABrO1VdxB5CrIvLvpV7gakF5r
+        d=1e100.net; s=20230601; t=1728843558; x=1729448358;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X56ki4zUkTbfkScVrmia1mDMQKgiUsSq+BtzwCXhyN8=;
+        b=DAKRVsyenZPP8Gkhs96OLeUjljAKlD4KGC+2w0RO+o2sGToTvP4xBDPfANeyh6trt9
+         1xWNOErlhlTcavNK5asaYuqJ73cGgoeoew3LABHcwH2KVpoa0s0sYhtD3KYKlZLhf+nz
+         ijmoA5qhRe/ueURZcSAeJURqsr4RDwYI2Mbr1/5dXCju51FdvD9tiIp+nuX9gB0hglsL
+         yRbL7J/0Wku6btf+3miRnGJVv44nEx3bE41SMU8tuv9H6eRy8BMgk9GPIALP7V0LSUMX
+         0sc+FCG7iT//n4MxZOmJilYoWavlFpmcTFSbF5JPBfJ0TpfTW4c4r8fHS5tO0bEhlP5T
+         QUWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVwxPKBa4/gEooi3WEmZIuMOD/vft/olt++OntT+0427+DYv32mIq6RV8XRRE4liMszhHx08hZF0CY=@vger.kernel.org, AJvYcCWGCwGIOsC0R6rN0t6ySgkFNRpIoAriLRfO1lnVDk1lFGBwEPu7BO/pQln09cG5FMd3U9PS7TMv+79PlKiR@vger.kernel.org, AJvYcCWaZWw9doIhcBC/AiBD+27Ib2OCiwygq8ffyWL+xCWbzHjyPj2Mux7GWm5qo0zyZOwRxnIioJAfPL/S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yycq8VLywxP0AndK0EzwrG4juq++svxjE+BkJtIV1xEVhp20/1q
+	3FX2yFKfsnIG5T4o0sBJM6g/Pzpt8XKlQ5GmJeM/hvPNkmy2wRb9
+X-Google-Smtp-Source: AGHT+IEPuqRk1fF+DzXKNYdEqvVLvn9/MKGMqgO/l9jzR0cpo8qxe+FtFoILPmStmwoQA5yi91dqsQ==
+X-Received: by 2002:a17:906:fe41:b0:a99:c075:6592 with SMTP id a640c23a62f3a-a99c075952emr779610666b.56.1728843557929;
+        Sun, 13 Oct 2024 11:19:17 -0700 (PDT)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99e57f763bsm249937066b.85.2024.10.13.11.19.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 11:19:17 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: andreyknvl@gmail.com
+Cc: 2023002089@link.tyut.edu.cn,
+	akpm@linux-foundation.org,
+	alexs@kernel.org,
+	corbet@lwn.net,
+	dvyukov@google.com,
+	elver@google.com,
+	glider@google.com,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com,
+	siyanteng@loongson.cn,
+	snovitoll@gmail.com,
+	vincenzo.frascino@arm.com,
+	workflows@vger.kernel.org
+Subject: [PATCH v3 2/3] kasan: migrate copy_user_test to kunit
+Date: Sun, 13 Oct 2024 23:20:16 +0500
+Message-Id: <20241013182016.3074875-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CA+fCnZfL2LHP7rBqCK5ZbsYu-jJ+2YbV4f0ijjDd_gQGiivNWg@mail.gmail.com>
+References: <CA+fCnZfL2LHP7rBqCK5ZbsYu-jJ+2YbV4f0ijjDd_gQGiivNWg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:198f:b0:3a3:9792:e9f5 with SMTP id
- e9e14a558f8ab-3a3bcd9589emr42996365ab.5.1728843564330; Sun, 13 Oct 2024
- 11:19:24 -0700 (PDT)
-Date: Sun, 13 Oct 2024 11:19:24 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670c0f2c.050a0220.3e960.0042.GAE@google.com>
-Subject: [syzbot] [mm?] possible deadlock in vma_prepare
-From: syzbot <syzbot+f25246115d09ea7e956b@syzkaller.appspotmail.com>
-To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
-	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Migrate the copy_user_test to the KUnit framework to verify out-of-bound
+detection via KASAN reports in copy_from_user(), copy_to_user() and
+their static functions.
 
-syzbot found the following issue on:
+This is the last migrated test in kasan_test_module.c, therefore delete
+the file.
 
-HEAD commit:    33ce24234fca Add linux-next specific files for 20241008
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=17670f07980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4750ca93740b938d
-dashboard link: https://syzkaller.appspot.com/bug?extid=f25246115d09ea7e956b
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ee8dc2df0c57/disk-33ce2423.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/dc473c0fa06e/vmlinux-33ce2423.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4671f1ca2e61/bzImage-33ce2423.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f25246115d09ea7e956b@syzkaller.appspotmail.com
-
-ima: No TPM chip found, activating TPM-bypass!
-Loading compiled-in module X.509 certificates
-Loaded X.509 cert 'Build time autogenerated kernel key: 5a5c91671060ad0cbe3fbddde7d37e27f262e8ee'
-ima: Allocated hash algorithm: sha256
-ima: No architecture policies found
-evm: Initialising EVM extended attributes:
-evm: security.selinux (disabled)
-evm: security.SMACK64 (disabled)
-evm: security.SMACK64EXEC (disabled)
-evm: security.SMACK64TRANSMUTE (disabled)
-evm: security.SMACK64MMAP (disabled)
-evm: security.apparmor
-evm: security.ima
-evm: security.capability
-evm: HMAC attrs: 0x1
-PM:   Magic number: 12:674:139
-video4linux video39: hash matches
-nfc nfc1: hash matches
-block ram4: hash matches
-acpi device:10: hash matches
-printk: legacy console [netcon0] enabled
-netconsole: network logging started
-gtp: GTP module loaded (pdp ctx size 128 bytes)
-rdma_rxe: loaded
-cfg80211: Loading compiled-in X.509 certificates for regulatory database
-Loaded X.509 cert 'sforshee: 00b28ddf47aef9cea7'
-Loaded X.509 cert 'wens: 61c038651aabdcf94bd0ac7ff06c7248db18c600'
-clk: Disabling unused clocks
-ALSA device list:
-  #0: Dummy 1
-  #1: Loopback 1
-  #2: Virtual MIDI Card 1
-md: Waiting for all devices to be available before autodetect
-md: If you don't use raid, use raid=noautodetect
-md: Autodetecting RAID arrays.
-md: autorun ...
-md: ... autorun DONE.
-EXT4-fs (sda1): mounted filesystem b4773fba-1738-4da0-8a90-0fe043d0a496 ro with ordered data mode. Quota mode: none.
-VFS: Mounted root (ext4 filesystem) readonly on device 8:1.
-devtmpfs: mounted
-Freeing unused kernel image (initmem) memory: 26724K
-Write protecting the kernel read-only data: 219136k
-Freeing unused kernel image (rodata/data gap) memory: 1100K
-x86/mm: Checked W+X mappings: passed, no W+X pages found.
-x86/mm: Checking user space page tables
-x86/mm: Checked W+X mappings: passed, no W+X pages found.
-Failed to set sysctl parameter 'max_rcu_stall_to_panic=1': parameter not found
-Run /sbin/init as init process
-
-======================================================
-WARNING: possible circular locking dependency detected
-6.12.0-rc2-next-20241008-syzkaller #0 Not tainted
-------------------------------------------------------
-init/1 is trying to acquire lock:
-ffff88802fece5c8 (&anon_vma->rwsem){++++}-{3:3}, at: anon_vma_lock_write include/linux/rmap.h:121 [inline]
-ffff88802fece5c8 (&anon_vma->rwsem){++++}-{3:3}, at: vma_prepare+0x26c/0x4c0 mm/vma.c:181
-
-but task is already holding lock:
-ffff888025b4d608 (&mapping->i_mmap_rwsem){+.+.}-{3:3}, at: i_mmap_lock_write include/linux/fs.h:507 [inline]
-ffff888025b4d608 (&mapping->i_mmap_rwsem){+.+.}-{3:3}, at: vma_prepare+0x13e/0x4c0 mm/vma.c:167
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&mapping->i_mmap_rwsem){+.+.}-{3:3}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       i_mmap_lock_write include/linux/fs.h:507 [inline]
-       dma_resv_lockdep+0x4ec/0x8e0 drivers/dma-buf/dma-resv.c:794
-       do_one_initcall+0x248/0x880 init/main.c:1266
-       do_initcall_level+0x157/0x210 init/main.c:1328
-       do_initcalls+0x3f/0x80 init/main.c:1344
-       kernel_init_freeable+0x435/0x5d0 init/main.c:1577
-       kernel_init+0x1d/0x2b0 init/main.c:1466
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #1 (fs_reclaim){+.+.}-{0:0}:
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       __fs_reclaim_acquire mm/page_alloc.c:3870 [inline]
-       fs_reclaim_acquire+0x88/0x140 mm/page_alloc.c:3884
-       might_alloc include/linux/sched/mm.h:327 [inline]
-       prepare_alloc_pages+0x147/0x5d0 mm/page_alloc.c:4529
-       __alloc_pages_noprof+0x166/0x6c0 mm/page_alloc.c:4758
-       alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
-       pagetable_alloc_noprof include/linux/mm.h:2898 [inline]
-       pmd_alloc_one_noprof include/asm-generic/pgalloc.h:138 [inline]
-       __pmd_alloc+0x91/0x620 mm/memory.c:6342
-       pmd_alloc include/linux/mm.h:2861 [inline]
-       alloc_new_pmd mm/mremap.c:96 [inline]
-       move_page_tables+0x1c37/0x1f80 mm/mremap.c:610
-       relocate_vma_down+0x3ff/0x630 mm/mmap.c:2308
-       setup_arg_pages+0x668/0xc10 fs/exec.c:810
-       load_elf_binary+0xb7d/0x2710 fs/binfmt_elf.c:1014
-       search_binary_handler fs/exec.c:1752 [inline]
-       exec_binprm fs/exec.c:1794 [inline]
-       bprm_execve+0xaf8/0x1770 fs/exec.c:1845
-       kernel_execve+0x931/0xa50 fs/exec.c:2012
-       try_to_run_init_process init/main.c:1394 [inline]
-       kernel_init+0xed/0x2b0 init/main.c:1522
-       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
-       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
--> #0 (&anon_vma->rwsem){++++}-{3:3}:
-       check_prev_add kernel/locking/lockdep.c:3161 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
-       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
-       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
-       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
-       down_write+0x99/0x220 kernel/locking/rwsem.c:1577
-       anon_vma_lock_write include/linux/rmap.h:121 [inline]
-       vma_prepare+0x26c/0x4c0 mm/vma.c:181
-       __split_vma+0x9b7/0xc50 mm/vma.c:419
-       split_vma mm/vma.c:460 [inline]
-       vma_modify+0x153a/0x1a80 mm/vma.c:1433
-       vma_modify_flags+0x3a9/0x420 mm/vma.c:1451
-       mprotect_fixup+0x45a/0xaa0 mm/mprotect.c:664
-       do_mprotect_pkey+0x8e0/0xd80 mm/mprotect.c:838
-       __do_sys_mprotect mm/mprotect.c:859 [inline]
-       __se_sys_mprotect mm/mprotect.c:856 [inline]
-       __x64_sys_mprotect+0x80/0x90 mm/mprotect.c:856
-       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-other info that might help us debug this:
-
-Chain exists of:
-  &anon_vma->rwsem --> fs_reclaim --> &mapping->i_mmap_rwsem
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  lock(&mapping->i_mmap_rwsem);
-                               lock(fs_reclaim);
-                               lock(&mapping->i_mmap_rwsem);
-  lock(&anon_vma->rwsem);
-
- *** DEADLOCK ***
-
-2 locks held by init/1:
- #0: ffff88802e138198 (&mm->mmap_lock){++++}-{3:3}, at: mmap_write_lock_killable include/linux/mmap_lock.h:122 [inline]
- #0: ffff88802e138198 (&mm->mmap_lock){++++}-{3:3}, at: do_mprotect_pkey+0x21b/0xd80 mm/mprotect.c:740
- #1: ffff888025b4d608 (&mapping->i_mmap_rwsem){+.+.}-{3:3}, at: i_mmap_lock_write include/linux/fs.h:507 [inline]
- #1: ffff888025b4d608 (&mapping->i_mmap_rwsem){+.+.}-{3:3}, at: vma_prepare+0x13e/0x4c0 mm/vma.c:167
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 1 Comm: init Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
- check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
- check_prev_add kernel/locking/lockdep.c:3161 [inline]
- check_prevs_add kernel/locking/lockdep.c:3280 [inline]
- validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
- __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
- lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
- down_write+0x99/0x220 kernel/locking/rwsem.c:1577
- anon_vma_lock_write include/linux/rmap.h:121 [inline]
- vma_prepare+0x26c/0x4c0 mm/vma.c:181
- __split_vma+0x9b7/0xc50 mm/vma.c:419
- split_vma mm/vma.c:460 [inline]
- vma_modify+0x153a/0x1a80 mm/vma.c:1433
- vma_modify_flags+0x3a9/0x420 mm/vma.c:1451
- mprotect_fixup+0x45a/0xaa0 mm/mprotect.c:664
- do_mprotect_pkey+0x8e0/0xd80 mm/mprotect.c:838
- __do_sys_mprotect mm/mprotect.c:859 [inline]
- __se_sys_mprotect mm/mprotect.c:856 [inline]
- __x64_sys_mprotect+0x80/0x90 mm/mprotect.c:856
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f7347f7dbb7
-Code: 00 00 00 b8 0b 00 00 00 0f 05 48 3d 01 f0 ff ff 73 01 c3 48 8d 0d b9 46 01 00 f7 d8 89 01 48 83 c8 ff c3 b8 0a 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8d 0d 99 46 01 00 f7 d8 89 01 48 83
-RSP: 002b:00007ffde248d688 EFLAGS: 00000206 ORIG_RAX: 000000000000000a
-RAX: ffffffffffffffda RBX: 00007f7347f5a5c0 RCX: 00007f7347f7dbb7
-RDX: 0000000000000001 RSI: 0000000000004000 RDI: 00007f7347e84000
-RBP: 00007ffde248d7a0 R08: 00007ffde2480000 R09: 00007f7347f91ab0
-R10: 00007f7347ceaab8 R11: 0000000000000206 R12: 00007f7347f5a5c0
-R13: 00007f7347f85eda R14: 00007f7347e87bf8 R15: 00007f7347e87b70
- </TASK>
-
-
+Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+Changes v2 -> v3:
+- added a long string in usermem for strncpy_from_user. Suggested by Andrey.
+---
+ mm/kasan/Makefile            |  2 -
+ mm/kasan/kasan_test_c.c      | 47 +++++++++++++++++++++
+ mm/kasan/kasan_test_module.c | 81 ------------------------------------
+ 3 files changed, 47 insertions(+), 83 deletions(-)
+ delete mode 100644 mm/kasan/kasan_test_module.c
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+diff --git a/mm/kasan/Makefile b/mm/kasan/Makefile
+index b88543e5c0c..1a958e7c8a4 100644
+--- a/mm/kasan/Makefile
++++ b/mm/kasan/Makefile
+@@ -46,7 +46,6 @@ endif
+ 
+ CFLAGS_kasan_test_c.o := $(CFLAGS_KASAN_TEST)
+ RUSTFLAGS_kasan_test_rust.o := $(RUSTFLAGS_KASAN)
+-CFLAGS_kasan_test_module.o := $(CFLAGS_KASAN_TEST)
+ 
+ obj-y := common.o report.o
+ obj-$(CONFIG_KASAN_GENERIC) += init.o generic.o report_generic.o shadow.o quarantine.o
+@@ -59,4 +58,3 @@ ifdef CONFIG_RUST
+ endif
+ 
+ obj-$(CONFIG_KASAN_KUNIT_TEST) += kasan_test.o
+-obj-$(CONFIG_KASAN_MODULE_TEST) += kasan_test_module.o
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index a181e4780d9..382bc64e42d 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1954,6 +1954,52 @@ static void rust_uaf(struct kunit *test)
+ 	KUNIT_EXPECT_KASAN_FAIL(test, kasan_test_rust_uaf());
+ }
+ 
++static void copy_user_test_oob(struct kunit *test)
++{
++	char *kmem;
++	char __user *usermem;
++	unsigned long useraddr;
++	size_t size = 128 - KASAN_GRANULE_SIZE;
++	int __maybe_unused unused;
++
++	kmem = kunit_kmalloc(test, size, GFP_KERNEL);
++	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, kmem);
++
++	useraddr = kunit_vm_mmap(test, NULL, 0, PAGE_SIZE,
++					PROT_READ | PROT_WRITE | PROT_EXEC,
++					MAP_ANONYMOUS | MAP_PRIVATE, 0);
++	KUNIT_ASSERT_NE_MSG(test, useraddr, 0,
++		"Could not create userspace mm");
++	KUNIT_ASSERT_LT_MSG(test, useraddr, (unsigned long)TASK_SIZE,
++		"Failed to allocate user memory");
++
++	OPTIMIZER_HIDE_VAR(size);
++	usermem = (char __user *)useraddr;
++
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = copy_from_user(kmem, usermem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = copy_to_user(usermem, kmem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_from_user(kmem, usermem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_to_user(usermem, kmem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_from_user_inatomic(kmem, usermem, size + 1));
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = __copy_to_user_inatomic(usermem, kmem, size + 1));
++
++	/*
++	* Prepare a long string in usermem to avoid the strncpy_from_user test
++	* bailing out on '\0' before it reaches out-of-bounds.
++	*/
++	memset(kmem, 'a', size);
++	KUNIT_EXPECT_EQ(test, copy_to_user(usermem, kmem, size), 0);
++
++	KUNIT_EXPECT_KASAN_FAIL(test,
++		unused = strncpy_from_user(kmem, usermem, size + 1));
++}
++
+ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(kmalloc_oob_right),
+ 	KUNIT_CASE(kmalloc_oob_left),
+@@ -2028,6 +2074,7 @@ static struct kunit_case kasan_kunit_test_cases[] = {
+ 	KUNIT_CASE(match_all_ptr_tag),
+ 	KUNIT_CASE(match_all_mem_tag),
+ 	KUNIT_CASE(rust_uaf),
++	KUNIT_CASE(copy_user_test_oob),
+ 	{}
+ };
+ 
+diff --git a/mm/kasan/kasan_test_module.c b/mm/kasan/kasan_test_module.c
+deleted file mode 100644
+index 27ec22767e4..00000000000
+--- a/mm/kasan/kasan_test_module.c
++++ /dev/null
+@@ -1,81 +0,0 @@
+-// SPDX-License-Identifier: GPL-2.0-only
+-/*
+- *
+- * Copyright (c) 2014 Samsung Electronics Co., Ltd.
+- * Author: Andrey Ryabinin <a.ryabinin@samsung.com>
+- */
+-
+-#define pr_fmt(fmt) "kasan: test: " fmt
+-
+-#include <linux/mman.h>
+-#include <linux/module.h>
+-#include <linux/printk.h>
+-#include <linux/slab.h>
+-#include <linux/uaccess.h>
+-
+-#include "kasan.h"
+-
+-static noinline void __init copy_user_test(void)
+-{
+-	char *kmem;
+-	char __user *usermem;
+-	size_t size = 128 - KASAN_GRANULE_SIZE;
+-	int __maybe_unused unused;
+-
+-	kmem = kmalloc(size, GFP_KERNEL);
+-	if (!kmem)
+-		return;
+-
+-	usermem = (char __user *)vm_mmap(NULL, 0, PAGE_SIZE,
+-			    PROT_READ | PROT_WRITE | PROT_EXEC,
+-			    MAP_ANONYMOUS | MAP_PRIVATE, 0);
+-	if (IS_ERR(usermem)) {
+-		pr_err("Failed to allocate user memory\n");
+-		kfree(kmem);
+-		return;
+-	}
+-
+-	OPTIMIZER_HIDE_VAR(size);
+-
+-	pr_info("out-of-bounds in copy_from_user()\n");
+-	unused = copy_from_user(kmem, usermem, size + 1);
+-
+-	pr_info("out-of-bounds in copy_to_user()\n");
+-	unused = copy_to_user(usermem, kmem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_from_user()\n");
+-	unused = __copy_from_user(kmem, usermem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_to_user()\n");
+-	unused = __copy_to_user(usermem, kmem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_from_user_inatomic()\n");
+-	unused = __copy_from_user_inatomic(kmem, usermem, size + 1);
+-
+-	pr_info("out-of-bounds in __copy_to_user_inatomic()\n");
+-	unused = __copy_to_user_inatomic(usermem, kmem, size + 1);
+-
+-	pr_info("out-of-bounds in strncpy_from_user()\n");
+-	unused = strncpy_from_user(kmem, usermem, size + 1);
+-
+-	vm_munmap((unsigned long)usermem, PAGE_SIZE);
+-	kfree(kmem);
+-}
+-
+-static int __init kasan_test_module_init(void)
+-{
+-	/*
+-	 * Temporarily enable multi-shot mode. Otherwise, KASAN would only
+-	 * report the first detected bug and panic the kernel if panic_on_warn
+-	 * is enabled.
+-	 */
+-	bool multishot = kasan_save_enable_multi_shot();
+-
+-	copy_user_test();
+-
+-	kasan_restore_multi_shot(multishot);
+-	return -EAGAIN;
+-}
+-
+-module_init(kasan_test_module_init);
+-MODULE_LICENSE("GPL");
+-- 
+2.34.1
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
