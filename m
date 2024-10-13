@@ -1,186 +1,151 @@
-Return-Path: <linux-kernel+bounces-362802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D44C99B971
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:55:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 46DA699B974
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:01:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CBE7B212F3
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:55:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 947C4B211E0
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:01:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119C3143C63;
-	Sun, 13 Oct 2024 12:55:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C24321EB44;
+	Sun, 13 Oct 2024 13:01:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqLEetsD"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CNkPFXxT"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE5E36B;
-	Sun, 13 Oct 2024 12:55:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733A33DF;
+	Sun, 13 Oct 2024 13:01:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728824138; cv=none; b=XliEUHno8MV7zYdwfUQ0we9j4sH9y9gCLRvzsjjxazvlzWAB0ZFIpyPCL3H7/xqA2VIBVD2qAD+Ifdg/m4GeewReoFcup8jm91mO9qErU6+fV0gABY9ARIKpvG4JWb++8QWpPsN9zQ+FUl/N2pZWkAYAusdiyK8BaxhMJRSSKoI=
+	t=1728824482; cv=none; b=RmN7Io0aStc9c5k5jA6My6cFiHybSt5LmdNOz/YYZx0LaMZvDS4RSvLGv6zFQ1Sau/M3mPGqqOuoj6McbiF4f5T1vmuyi6GYzgVvMO/vaB9spHaMSlbaRMam1imxCIYvZN3tn+zEwkKVzlbNzLS2zbN3pizexWw/Hcm9QFAet5A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728824138; c=relaxed/simple;
-	bh=PGHjAbYs47V3IL/rq2kwUEzf4WBrICwxIJb375H0MdE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s2KK3QdxoMn45M6UVn1f1TCwvLezDHF+sQjXTV+YrW0WUmqomJS99TLwO5VoUy4XwiT97EIRS+xFWIocH3AZYb1Z9Aqup1G+a0LtTBteY5jcY6zUZjCrrDGA8e1iWq16c0ebkDb9bvuiuv4RN3kEieBMK/nNPYPE68c2uDtr8FY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqLEetsD; arc=none smtp.client-ip=209.85.128.43
+	s=arc-20240116; t=1728824482; c=relaxed/simple;
+	bh=w0SCvYmH0gix/VuAGbAzwqfCt4xQjLOxkiWD+XeYSjc=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=rAyYPTc4OzVMenP7J/uOkVN9Xsq2SHMcpG3gGua9Z6bz/MmnSNBruGSts+bavsr4hAWR+3M7pm2BpePa6UGbRkctRGgbNZULpl1e+mXhtDdPAzKyABTt+0r5EF/PWgtoVbkM0uaUPE2SAM2J5vDREL3leSqINy06H03ju5K5J+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CNkPFXxT; arc=none smtp.client-ip=209.85.218.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43115887867so22440155e9.0;
-        Sun, 13 Oct 2024 05:55:36 -0700 (PDT)
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9952ea05c5so533376366b.2;
+        Sun, 13 Oct 2024 06:01:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728824135; x=1729428935; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=YWMT5lNGu1xTshtgdsecoS6+Z5F56R0HKb2/GtovXRw=;
-        b=mqLEetsDTIr1UDulA9knxy8wOnqTaBU9RpAYqASbYFKA/CAeCju37qzyIgO1ySvQ3B
-         M+8SzI9TX2z/1H5ABdqjmQ6szv3LwL0T/rRbMBSisjbONKZ6T0Gb2RH6mEvGcVDl4+je
-         XMo2Bx2ISfxfG43cWnXWycyPcPf9UYXOxYr38MG/T3liF/RZI8mnlfsV0rPSdfaki+/K
-         6PpOOV4lLNe3qXfnzOelS4l5mfrOAPA9v7VYpex6gIZSyzMSkBaH95MJZCg74wB82as8
-         Ifv9tpGnGqUY9RYREZoyhx6XlemuM9MK0r7brdOQbGxjcnSyd5MidIo7cvxMe5b7nbIc
-         J0Vw==
+        d=gmail.com; s=20230601; t=1728824478; x=1729429278; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PnmJ9PN1MwOJi0VN46gDmOuqLJjC2HT4OQkYN0N47z8=;
+        b=CNkPFXxTq21WgNEkZbZslrG2OoUGdCn+P3ffphD6q/yGFRRIbw/q5iU4/DyFc1qQBe
+         Kw6dOjomawTxZ/hlAUNselpSgO6Uu8SQnmyPwmaAMeHQuYR4vgHdW1OGZxnD6TCU8KI1
+         PVA16JAO3q5rQ/Amh9ilZsL/kv0z38jsejX+2FzOm9ksPZ843rc9MBiFQyoYtGsKs4Kt
+         WtlxIJgWfvAPl6vLp5zPK9xDsAhWbbN84tR1d3zTRiA1hqaF3bhGKflBl2DjcTDU9oOe
+         1dorgAmCIMRl/UsLe3P4ZD3OBx1EBZHNNIUJHdLoKk0kPUGVOU9Ii18n+Uv+aK83s/dw
+         yrFw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728824135; x=1729428935;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YWMT5lNGu1xTshtgdsecoS6+Z5F56R0HKb2/GtovXRw=;
-        b=j/gpj2gAIazo/mj/P4Y73MOFU53KdqCCfVyh6+JB1eQHJBWzTG8RPM1DeaYs9lNLtb
-         JEVW1SE1zmAFd2Yd9ZpH8kkpnSu16wyXG6JEE2IcfkwkmEnzr/S3a5IjcuA3udS6VJvf
-         xjErtrqly47FoRxpQ0gi1S/qsvX0HlhylfLMtgqFSrEhv22j0GBgU1XWxxxltBP7FXm6
-         ZmF9EZ/T5QV6/GhjE96e2fg3GOVbQPRQLwQUO1GkCOAZWtWsIDlr1pQd/pxnsqgapFkD
-         YxB+J6emi37BekY7eC9aVhhXzzgkzSGbQNpTs+/sWaHfl/AH/lhVjtAbuJ8mXbgZfr2e
-         JVeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVfB4Dpo2MM5vRaxCpsnXCXDJqDXNFZkj8LGffIec6NUD3mC7VQzCnJhSZhoN2307OzxaXgsUC9@vger.kernel.org, AJvYcCXLEa3t6QHIjgbRh1+9ywS769/w7YBksgVG5jPqNzDFLUqY8hKCGhJo8BCJSG5SfXoJv9dWkIsv5q22kWk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyS1GQrdRmC41uW0rapVkaL28kQKo5zzoVk4bfSFiDTieQo6iiS
-	OZbsBF+q/tcIXlXZSosDEXlNkbRRLvT+5KOk1DdCOvqe6JcP08as
-X-Google-Smtp-Source: AGHT+IGx9lvPuk/IEYQT+CiW4c6HxwiL9K8/Y3t0ehXw4g7CKJ3aTbBceq7YmC9Lx1M/KpvT7OODvw==
-X-Received: by 2002:a05:600c:b9a:b0:42f:84ec:3f9 with SMTP id 5b1f17b1804b1-4311d884328mr70492185e9.3.1728824134850;
-        Sun, 13 Oct 2024 05:55:34 -0700 (PDT)
-Received: from ?IPV6:2a02:8389:41cf:e200:a034:352b:6ceb:bf05? (2a02-8389-41cf-e200-a034-352b-6ceb-bf05.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:a034:352b:6ceb:bf05])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd3e7sm8582567f8f.39.2024.10.13.05.55.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 05:55:33 -0700 (PDT)
-Message-ID: <4c190f41-eac4-4dfa-8667-368f57b9f445@gmail.com>
-Date: Sun, 13 Oct 2024 14:55:30 +0200
+        d=1e100.net; s=20230601; t=1728824478; x=1729429278;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PnmJ9PN1MwOJi0VN46gDmOuqLJjC2HT4OQkYN0N47z8=;
+        b=FBTFdaJoCI7zfPFM/9zeLz7yRDy354yWn82c7NgkEfgB3mpcXrCP42SPYPFiijwZ1T
+         tdNPsDh3vYbobbHCFsWkW0u5ckm7DP3qVFx4DnPYnZCErB8F8IsRzzLGdHULood9+hQK
+         hJlaqSm2WuhHBQW0Ru6IOxUoJ9gNcObAVqhfvf+iRd1hwbiHHfEhzvYqW5cwywgX30j4
+         YU2NHfgXo3Ffl0ixNH0HEguQk1RjK/7Z38YFpqsesdW2kuosCOoMxycjVHBGY+4s7cQf
+         qDVa+s+vFeYaCpWQnZCRTL3XGzAqrMtY3GSXtYRj4Vidg/oGjqf8VfS7kX0IvBfdX/CH
+         VLrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDaz81VmhwGMDFbU6PAXqjorCoY3F/SU8n7sHTnu0CHRbKNMfCvgpihV+2tbDPgQx3ya3WwOZQigQfV+so@vger.kernel.org, AJvYcCUdYfkGJPULYNDmH4UhijxbRDXQ2VaLk7Et6f4kdHAeYKXXn/1ZzzIYIndbiyOesK9ZgxECczBevlg=@vger.kernel.org, AJvYcCWgB+D2aSlASnmHPwYpJ4y4mbgAtwd9tzXbH0LTTN/J3MjgTUiAUtVvAIyc8kyhHeKLGm1ujBq/GH9S@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr+m/aQjJ+VnjcR/vxU4pa8NRaGkpGbVBYAbBEB+MmC4jeB6EE
+	8GCLPKVrW0tNgPGfUBPtJ0JgT3+s9eiUm0dYGzOOTr73Zd7JSHjR
+X-Google-Smtp-Source: AGHT+IHXdVRsJajrbxhYVhpri5+mS+Hg+hbAd/CFrQh2ABK8/018Uy8GEmA0GGHi1h4YJtX3MXXJvQ==
+X-Received: by 2002:a17:907:1c08:b0:a9a:b4e:b9eb with SMTP id a640c23a62f3a-a9a0b4ecbbamr74879866b.46.1728824477537;
+        Sun, 13 Oct 2024 06:01:17 -0700 (PDT)
+Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a0d9de967sm19209666b.139.2024.10.13.06.01.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 06:01:16 -0700 (PDT)
+From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
+To: andreyknvl@gmail.com
+Cc: akpm@linux-foundation.org,
+	dvyukov@google.com,
+	glider@google.com,
+	kasan-dev@googlegroups.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	ryabinin.a.a@gmail.com,
+	snovitoll@gmail.com,
+	vincenzo.frascino@arm.com,
+	elver@google.com,
+	corbet@lwn.net,
+	alexs@kernel.org,
+	siyanteng@loongson.cn,
+	2023002089@link.tyut.edu.cn,
+	workflows@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH v2 0/3] kasan: migrate the last module test to kunit
+Date: Sun, 13 Oct 2024 18:02:08 +0500
+Message-Id: <20241013130211.3067196-1-snovitoll@gmail.com>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CA+fCnZdeuNxTmGaYniiRMhS-TtNhiwj_MwW53K73a5Wiui+8RQ@mail.gmail.com>
+References: <CA+fCnZdeuNxTmGaYniiRMhS-TtNhiwj_MwW53K73a5Wiui+8RQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
- error path for fw_node
-To: Umang Jain <umang.jain@ideasonboard.com>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Stefan Wahren <wahrenst@gmx.net>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
- <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-On 13/10/2024 13:36, Umang Jain wrote:
-> Hi Javier,
-> 
-> Thank you for the patch.
-> 
-> On 13/10/24 4:12 pm, Javier Carrasco wrote:
->> An error path was introduced without including the required call to
->> of_node_put() to decrement the node's refcount and avoid leaking memory.
->> If the call to kzalloc() for 'mgmt' fails, the probe returns without
->> decrementing the refcount.
->>
->> Use the automatic cleanup facility to fix the bug and protect the code
->> against new error paths where the call to of_node_put() might be missing
->> again.
->>
->> Cc: stable@vger.kernel.org
->> Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver
->> static and runtime data")
->> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
->> ---
->>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 +
->> +----
->>   1 file changed, 2 insertions(+), 4 deletions(-)
->>
->> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/
->> vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/
->> vchiq_arm.c
->> index 27ceaac8f6cc..792cf3a807e1 100644
->> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
->> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
->> @@ -1332,7 +1332,8 @@ MODULE_DEVICE_TABLE(of, vchiq_of_match);
->>     static int vchiq_probe(struct platform_device *pdev)
->>   {
->> -    struct device_node *fw_node;
->> +    struct device_node *fw_node __free(device_node) =
->> +        of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-
->> firmware");
-> 
-> How about :
-> 
-> +    struct device_node *fw_node __free(device_node) = NULL;
-> 
->>       const struct vchiq_platform_info *info;
->>       struct vchiq_drv_mgmt *mgmt;
->>       int ret;
->> @@ -1341,8 +1342,6 @@ static int vchiq_probe(struct platform_device
->> *pdev)
->>       if (!info)
->>           return -EINVAL;
->>   -    fw_node = of_find_compatible_node(NULL, NULL,
->> -                      "raspberrypi,bcm2835-firmware");
-> 
-> And undo this (i.e. keep the of_find_compatible_node() call here
-> 
-> This helps with readability as there is a NULL check just after this.
->>       if (!fw_node) {
->>           dev_err(&pdev->dev, "Missing firmware node\n");
->>           return -ENOENT;
->> @@ -1353,7 +1352,6 @@ static int vchiq_probe(struct platform_device
->> *pdev)
->>           return -ENOMEM;
->>         mgmt->fw = devm_rpi_firmware_get(&pdev->dev, fw_node);
->> -    of_node_put(fw_node);
-> 
-> And this change remains the same.
->>       if (!mgmt->fw)
->>           return -EPROBE_DEFER;
->>  
->> ---
->> base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
->> change-id: 20241013-vchiq_arm-of_node_put-60a5eaaafd70
->>
->> Best regards,
-> 
+copy_user_test() is the last KUnit-incompatible test with
+CONFIG_KASAN_MODULE_TEST requirement, which we are going to migrate to KUnit
+framework and delete the former test and Kconfig as well.
 
+In this patch series:
 
-Hi Umang,
+	- [1/3] move kasan_check_write() and check_object_size() to
+		do_strncpy_from_user() to cover with KASAN checks with
+		multiple conditions	in strncpy_from_user().
 
-Sure, I am fine with that too.
+	- [2/3] migrated copy_user_test() to KUnit, where we can also test
+		strncpy_from_user() due to [1/4].
 
-Depending on the maintainer, the preferred approach varies: a single
-initialization at the top whenever possible, a declaration right before
-its first usage (not my favorite), or a NULL initialization first. I
-will send a v2 with the latter i.e. what you suggested, as it keeps
-everything more similar to what it used to be.
+		KUnits have been tested on:
+		- x86_64 with CONFIG_KASAN_GENERIC. Passed
+		- arm64 with CONFIG_KASAN_SW_TAGS. 1 fail. See [1]
+		- arm64 with CONFIG_KASAN_HW_TAGS. 1 fail. See [1]
+		[1] https://lore.kernel.org/linux-mm/CACzwLxj21h7nCcS2-KA_q7ybe+5pxH0uCDwu64q_9pPsydneWQ@mail.gmail.com/
 
-Thanks and best regards,
-Javier Carrasco
+	- [3/3] delete CONFIG_KASAN_MODULE_TEST and documentation occurrences.
+
+Changes v1 -> v2:
+- moved the sanitization to do_strncpy_from_user and as the separate commit
+per Andrey's review.
+- deleted corresponding entries of kasan_test_module.o in Makefile
+- deleted CONFIG_KASAN_MODULE_TEST at all with the documentation in separate
+  commit.
+- added Documentation maintainers in CC.
+
+Sabyrzhan Tasbolatov (3):
+  kasan: move checks to do_strncpy_from_user
+  kasan: migrate copy_user_test to kunit
+  kasan: delete CONFIG_KASAN_MODULE_TEST
+
+ Documentation/dev-tools/kasan.rst             |  9 +--
+ .../translations/zh_CN/dev-tools/kasan.rst    |  6 +-
+ .../translations/zh_TW/dev-tools/kasan.rst    |  6 +-
+ lib/Kconfig.kasan                             |  7 --
+ lib/strncpy_from_user.c                       |  5 +-
+ mm/kasan/Makefile                             |  2 -
+ mm/kasan/kasan.h                              |  2 +-
+ mm/kasan/kasan_test_c.c                       | 39 +++++++++
+ mm/kasan/kasan_test_module.c                  | 81 -------------------
+ mm/kasan/report.c                             |  2 +-
+ 10 files changed, 48 insertions(+), 111 deletions(-)
+ delete mode 100644 mm/kasan/kasan_test_module.c
+
+-- 
+2.34.1
+
 
