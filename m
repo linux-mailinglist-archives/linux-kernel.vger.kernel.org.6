@@ -1,64 +1,64 @@
-Return-Path: <linux-kernel+bounces-362944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B23CE99BB8F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:22:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 614CC99BB92
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3A3F1C20994
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:22:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6332817AE
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E56A15D5CE;
-	Sun, 13 Oct 2024 20:18:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B7E1A4F07;
+	Sun, 13 Oct 2024 20:18:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="HhY4jvr6"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="BjEE0w0C"
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DABB19D07C;
-	Sun, 13 Oct 2024 20:18:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13886149C4A;
+	Sun, 13 Oct 2024 20:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728850701; cv=none; b=R8DRHUvXVCvNCV8b5JOpE9mDeNJU/V9yu+EPuNirpI8LCR3kPga9QO+1TDn0S8n7ATs+/iOCpvSli8pzA1zuiSttBfTwC7ymY/W9LL6+yOV+AUdnxEe0Dha23PVJ36xT8kZjvPejGKYxR6sIpNkiB+B7m7jZ6MPDy7bOxtRMkfE=
+	t=1728850703; cv=none; b=Wb5Ya+cyp9xEt+vfioXEd3fMgORJ1VW40YWPKrGFvC4zI7hIWn/EiYF9kizm/xnyb+sXLdoOA+zGDk5wzaitR1C8g14XWeGwyelaoCzVEbG9Wz8CYbmw+dJ6nxMXi20MsxRux2DqebgebQvkcbRh5y+DzrX9ijoYjliRg28UGck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728850701; c=relaxed/simple;
-	bh=DrJQTO35gURIzMWDA1Xrtl/GnXXrzdIRvR4rdWuMifo=;
+	s=arc-20240116; t=1728850703; c=relaxed/simple;
+	bh=vMJfnVodG7JCqHrEDQ3Q01QvpSiNIoX2WLWWcUybw9c=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=M3+KzDAvIP9vnyyr0MoGbScRG0s2S+te17Ye5j2ruyvlfgNO/1yrzqyafMCypMK1v5LB0SryNDBvE7tyXEEH7Ze3B/Fmutv0BuNebvGc72ylbTZGc425tPlLsAY1eT+FiRbIxipYYGK9CpCmOr/gvAA8DI9ZygfcB8EXtlk6WZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=HhY4jvr6; arc=none smtp.client-ip=192.134.164.104
+	 MIME-Version; b=usl7kNnfF+Ag8fYCDiBGTZgHB2Vr7YsvKrRfKbcH6mXtxybyG+TeeNpTbdUSVBKjBFf67wNizuBWhVr9Zp6Ot6vqi5wTQC5gcaHcr43o+wZeg8UA7hQjKspQrctgtYQuP9sCRDqz553WpPsKWU+Rzs7C6Ya58ARfAzriUXaWYEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=BjEE0w0C; arc=none smtp.client-ip=192.134.164.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=sv/0c64ZMldzQnp+VPu6f+qECJKfFHacvG3dPrFNe/M=;
-  b=HhY4jvr6wjh9gdw8jNn5cgYZtU5y2f+uR+Ggvyb3tU4hwYuXq24iCpCu
-   v0sPMzF7Y1k0e2wTPtok4giLBGsH8VV6JAlMi1ipC9+Nba+h7x7vLmxtN
-   8cdX7u9E5tGyPF20Oc89Ez/+60ix0I/Lalhj3nC/DRhZ+40/XlMGm79qO
-   M=;
+  bh=fZBINeODAqFt0yXVx70sf+neXSqrWQCexwg4fqNcrVs=;
+  b=BjEE0w0C1UE0dff3FmRZ6xajer7q+nb21CHSMK9f8c1lLjt6/yeyZjHH
+   y+SLuXnqlDQOC0O12siE/8WDEQJqwj9UaNUDRNxSAyTKbwIpMuHXfi68y
+   bJivpTd3/YtK8ocBUBIcJq0vIm0c7B9a8VxSkF9QSHoQZvo6PMh0Bp+WJ
+   k=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,201,1725314400"; 
-   d="scan'208";a="98968287"
+   d="scan'208";a="98968288"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:18:00 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:18:01 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Chuck Lever <chuck.lever@oracle.com>
+To: Michael Ellerman <mpe@ellerman.id.au>
 Cc: kernel-janitors@vger.kernel.org,
 	vbabka@suse.cz,
 	paulmck@kernel.org,
-	Jeff Layton <jlayton@kernel.org>,
-	Neil Brown <neilb@suse.de>,
-	Olga Kornievskaia <okorniev@redhat.com>,
-	Dai Ngo <Dai.Ngo@oracle.com>,
-	Tom Talpey <tom@talpey.com>,
-	linux-nfs@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 12/17] nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun, 13 Oct 2024 22:16:59 +0200
-Message-Id: <20241013201704.49576-13-Julia.Lawall@inria.fr>
+Subject: [PATCH 13/17] KVM: PPC: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 22:17:00 +0200
+Message-Id: <20241013201704.49576-14-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
 References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
@@ -80,35 +80,34 @@ The changes were made using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- fs/nfsd/nfs4state.c |    9 +--------
- 1 file changed, 1 insertion(+), 8 deletions(-)
+ arch/powerpc/kvm/book3s_mmu_hpte.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
-index 9a3ec916fb14..02adf1d551df 100644
---- a/fs/nfsd/nfs4state.c
-+++ b/fs/nfsd/nfs4state.c
-@@ -572,13 +572,6 @@ opaque_hashval(const void *ptr, int nbytes)
- 	return x;
+diff --git a/arch/powerpc/kvm/book3s_mmu_hpte.c b/arch/powerpc/kvm/book3s_mmu_hpte.c
+index ce79ac33e8d3..d904e13e069b 100644
+--- a/arch/powerpc/kvm/book3s_mmu_hpte.c
++++ b/arch/powerpc/kvm/book3s_mmu_hpte.c
+@@ -92,12 +92,6 @@ void kvmppc_mmu_hpte_cache_map(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+ 	spin_unlock(&vcpu3s->mmu_lock);
  }
  
--static void nfsd4_free_file_rcu(struct rcu_head *rcu)
+-static void free_pte_rcu(struct rcu_head *head)
 -{
--	struct nfs4_file *fp = container_of(rcu, struct nfs4_file, fi_rcu);
--
--	kmem_cache_free(file_slab, fp);
+-	struct hpte_cache *pte = container_of(head, struct hpte_cache, rcu_head);
+-	kmem_cache_free(hpte_cache, pte);
 -}
 -
- void
- put_nfs4_file(struct nfs4_file *fi)
+ static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
  {
-@@ -586,7 +579,7 @@ put_nfs4_file(struct nfs4_file *fi)
- 		nfsd4_file_hash_remove(fi);
- 		WARN_ON_ONCE(!list_empty(&fi->fi_clnt_odstate));
- 		WARN_ON_ONCE(!list_empty(&fi->fi_delegations));
--		call_rcu(&fi->fi_rcu, nfsd4_free_file_rcu);
-+		kfree_rcu(fi, fi_rcu);
- 	}
+ 	struct kvmppc_vcpu_book3s *vcpu3s = to_book3s(vcpu);
+@@ -126,7 +120,7 @@ static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+ 
+ 	spin_unlock(&vcpu3s->mmu_lock);
+ 
+-	call_rcu(&pte->rcu_head, free_pte_rcu);
++	kfree_rcu(pte, rcu_head);
  }
  
+ static void kvmppc_mmu_pte_flush_all(struct kvm_vcpu *vcpu)
 
 
