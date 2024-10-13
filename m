@@ -1,131 +1,155 @@
-Return-Path: <linux-kernel+bounces-362966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 083C899BBC7
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:45:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC43999BBCC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:46:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6CB21F21417
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:45:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1316E1C20CC3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:46:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 776361547CE;
-	Sun, 13 Oct 2024 20:45:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EB23147C9B;
+	Sun, 13 Oct 2024 20:46:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="bIrWRZvq"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0h7plLNB"
+Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E2AB1531F2;
-	Sun, 13 Oct 2024 20:45:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050C32AF1E
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 20:46:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728852312; cv=none; b=fXLcFZ8h9z8vog0sbYhgwaY2SpBs2Jcx1Y+uw6w5Qx10jPDJRyDEIN5NlUKzD3MAWLLkXYCD08dUfhopHAf4aqec5iAk1vXK0CCFJOpaLZTzFofU07YeCzSTVbS7xSnBGRch9WVXsL7fGlNZ+yIMYjBmfglRHgUYenc0ncFO5PI=
+	t=1728852377; cv=none; b=sF/uRXEt6dEx4ASXyslDKcsBGyuWb/ia0cD1j9MbgjOzMYJNTD+bldv723J3mOGBgLEz8sQuFkJaypnFWrR9piEBWkaCWSUBbrp1lgEwUrAy+Vkof+623jiYEtMpm+HQs7uAQPDokga/5Sn3EgYeiFqpvdbP5UiHBSKbLVpyfRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728852312; c=relaxed/simple;
-	bh=pHUprJJUm+kOD8ILCnwS/XICc6ujwvZL6GeC8rTuTj8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bmaa4NtgRSwU8C2zwKIPGweQOnTIBNtBytPNEkL7qj8NthcD4H5zEhq85koH9YNNIYcTLyplBgYooE8HZ/nEQJGmaaFqqwPi99a+/ZeD2A/f8NOt5TUHngZHv0fCxut/NR+5o9W/pJ5bzSz/E5tH4LTmcbd+f/s5v4/9TWn07Vk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=bIrWRZvq; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5c94861ee25so2087331a12.0;
-        Sun, 13 Oct 2024 13:45:10 -0700 (PDT)
+	s=arc-20240116; t=1728852377; c=relaxed/simple;
+	bh=yI3chi67vc41fo3CXhT/TlzKTkgLqcT0IPa7i3PC/0Y=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=l22uKEbFvAL/YGv/PPo3NCZm9ZJQQx4JLPXnoJ5bH9WgQRLGjzvtxws1Hi2LbB1142vfHyVFoYTOaJTkpSfZ2SfdiVyLMqt4FQHrG2lWOS6oPMl7cDqwOUIlIAjD7ELDLnrD2itYgeT1xabx1wNjxWrmGm901D2CvaZv9WfIb04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0h7plLNB; arc=none smtp.client-ip=209.85.166.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so511095ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 13:46:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1728852309; x=1729457109; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sytY2FNkkLBnOCAcfUv9hkr9CctUcl1zNo07NA/NCoo=;
-        b=bIrWRZvqcPIhqgFgLG40U7iS0tir2qQCHHrjkIYkeXzFoNhaogWBVD+zYfHWIyrzkm
-         g7CHEkl3qMkWBOTR2fcsR11TpdKLCdzgIHqae8Ray8zcX9tiTR8xjjauX3BSvJYFm151
-         HxyHK2K77yQUfdSj+ge+1K3c7spLEGcnT6QylXS2u4qilA8IHe1D8owbYJljgUCCvbsE
-         lYTySriaQHq0t+XcoTjxSS2QgHaClroHKFA++5pkfcPSc2mo1sbl1sS1EFqvcnShk6rr
-         NSIaiqd/AIZJEgo6lgjZRvk+MXvJSrl6C8flBEGezcwXweJ2Su7iJNZukyOfVOXRdeYW
-         59sQ==
+        d=google.com; s=20230601; t=1728852375; x=1729457175; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hzrPGSF9sPSxB1fjq+78A8m6tr308rxiQmG+priBswo=;
+        b=0h7plLNBG3xOtUaokT+a73lZlDS7rDv2JCOta9XIgILIP6wyqo34DDCutZRBxGm8Bm
+         DBBcEgZXTILKUY4dfObKGAdJ4WnKncDokNaBKHZU9frR7jg5eyHIjo9GDqqDuiN1fKl9
+         n/xi7C6sQX78u8oTIRHOoRkMPTO9x5lhDD4MgleBthmOSPBTDmRxKOEG5x7O2Eby4oRF
+         /xCGGEbphie0jedFBcv9oMJz+EoCYyrWp4vvGVIc59CbgbtLr3OvSCJlYqt+qTM+2KUC
+         xzDuLM1+2x39UAk/noyQ3oRIbbY6BjrwuooOs56Yw0zExIbzG+E9TJX1D/sYhbQBxUZ3
+         olhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728852309; x=1729457109;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sytY2FNkkLBnOCAcfUv9hkr9CctUcl1zNo07NA/NCoo=;
-        b=T0keKV2bkwIcF3jjoL++koCTSBQl2cZ3auAmpSahwVSV7LIcNs6ZVFlYsw1ghAbYh0
-         pjKJif/VZ5I4fvs0rcc9C4DMBzVqNi3753Rmdi8I4m/aa66gtBm6OFQJLkU4eZcjZ0tu
-         0VaKFv4HocVi1cow3tciybApoH76ZLMNcVfKHwDtO9fNrhm4F713KlfmvDCClfqRFeaE
-         7bzrw2IjMq5H69dpIa7CWdohemyFZXawDI9Q72z2SWJhdr34FUj5Nwv+oUH0SNs9w83B
-         GNVTXoo+8D2lsQBKyetTYW5Oxgu+OWhV2LBWPa9ZC/igHsEIvTktDveGT/uOJzxVqOZe
-         hSBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVq7GSOlBs17yqemcs/RG/8zxuMPb+MDX7MugZi+OhxfgmZwQ5kcDtKNSLnD5fgt5fFlxsjTavu7LngsGyJ@vger.kernel.org, AJvYcCXbnRNzawCQpjG+3MXKDC8sry4BSAckpDCl1YGWnr9NN7YtG3XXcijGIHT7zgF69sYm0LP+lXByu/6o@vger.kernel.org
-X-Gm-Message-State: AOJu0YxfNwQYSbZjFi6/0AEKgTnt35Np0JOGEP5oKgZTZpr1EOIIAumR
-	rVwRFwntAe8gKlRfdRzFC7Nc1IXpNiJp6O7+CuEN/LkxrS/9M3Uf
-X-Google-Smtp-Source: AGHT+IG6hjVN41eeX/ukLBNVoBT3VqnYSYGyiAQdyRNtjxLf1w1mNS+qSGuF+dQPFS2mvhgSf0IuqA==
-X-Received: by 2002:a05:6402:8c3:b0:5c9:55aa:4285 with SMTP id 4fb4d7f45d1cf-5c95ac63c95mr10120852a12.34.1728852309459;
-        Sun, 13 Oct 2024 13:45:09 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:908:1587:1e60:ba33:7ef4:2f9b:8303])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c93729adcdsm4132770a12.89.2024.10.13.13.45.08
+        d=1e100.net; s=20230601; t=1728852375; x=1729457175;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hzrPGSF9sPSxB1fjq+78A8m6tr308rxiQmG+priBswo=;
+        b=O2bJOxjubGeM+7ev+AiyZpmtDBGY68JXxlqAVdlBZ9MivWew5twUiER/OnAo8sQUCV
+         TN1+KtaJKSl9/6MW0hCUYeQMPrVOjvaCseYtsN6uTW1FkJnF/l2SrcG2FdQOI80JkABU
+         dZFoHqjDFEPG0qRe7gZRG4V38GtcyNDtXTWyAAovYW2g1xvZU4VDv2NVlyXGQH/LJB1P
+         gjPEIr7LEneertYEdJ1NYnt26sUIFIAdkjzdbWvyq2yeV/JClovGbEDUx74Q8RYu+tLK
+         S7Q/1Y00T85ZmpPWaCMMCqPzno2lYw5DqBVFhtY7gIDGGHgYiDaidDES1Vmw+LNVhJLH
+         hB7w==
+X-Forwarded-Encrypted: i=1; AJvYcCUq9774SHPVJ/3a0ZdqjeubfdnzJW6M3leglqvp05Oko1is11eUXhh0k8E8+gHK6ZNCZdfXxbS/klnN+C0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmpNcBdnvQZc0wwLpEn2h1Xs9IA9NAy/w2pbfVF7aXLFs6ECam
+	qCaAsfeFQP97BslKuLYLUCMhbkj8Um9+yZocT1A/Cn7arAqdQBieANvfy7wJlw==
+X-Google-Smtp-Source: AGHT+IEHGQO8HxKY7uuhKGsoLz1zdLwZN2fc1QCZousb1o7sa+WqVyaK5FBaPWGNo3cek8C6TYaC6Q==
+X-Received: by 2002:a05:6e02:1562:b0:3a3:b07b:6d3 with SMTP id e9e14a558f8ab-3a3bdd3457dmr5846485ab.9.1728852374974;
+        Sun, 13 Oct 2024 13:46:14 -0700 (PDT)
+Received: from [2620:0:1008:15:278e:7bb9:ac44:ba28] ([2620:0:1008:15:278e:7bb9:ac44:ba28])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea448f9380sm5560091a12.26.2024.10.13.13.46.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 13:45:09 -0700 (PDT)
-From: Cenk Uluisik <cenk.uluisik@googlemail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Tim Lunn <tim@feathertop.org>,
-	Andy Yan <andyshrk@163.com>,
-	Jagan Teki <jagan@edgeble.ai>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	Cenk Uluisik <cenk.uluisik@googlemail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2] dt-bindings: arm: rockchip: Add Orange Pi 5b
-Date: Sun, 13 Oct 2024 22:44:24 +0200
-Message-ID: <20241013204446.303727-2-cenk.uluisik@googlemail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241013204446.303727-1-cenk.uluisik@googlemail.com>
-References: <20241013204446.303727-1-cenk.uluisik@googlemail.com>
+        Sun, 13 Oct 2024 13:46:14 -0700 (PDT)
+Date: Sun, 13 Oct 2024 13:46:13 -0700 (PDT)
+From: David Rientjes <rientjes@google.com>
+To: "yuan.gao" <yuan.gao@ucloud.cn>
+cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, penberg@kernel.org, 
+    iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, vbabka@suse.cz, 
+    roman.gushchin@linux.dev, 42.hyeyoo@gmail.com, linux-mm@kvack.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] mm/slub: Avoid list corruption when removing a slab
+ from the full list
+In-Reply-To: <i5vqm2ucpjzfbeteamphorouzoep3qxmh3prq5d76g4sazjarf@d3rfku3r5735>
+Message-ID: <572f7473-1781-388b-103e-d4382f58f2f9@google.com>
+References: <20241011102020.58087-1-yuan.gao@ucloud.cn> <c7b03b1e-e000-279d-f845-5808653ac3bf@gentwo.org> <i5vqm2ucpjzfbeteamphorouzoep3qxmh3prq5d76g4sazjarf@d3rfku3r5735>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
 
-This commit adds the Xunlong Orange Pi 5b entry to the device tree
-bindings inside the Documentation folder. I know you said I
-should extend the Orange Pi 5 one with an enum, but I made a whole new
-entry, because looking at all the other entries, they also create new
-entries in a case "like this". I hope this is okay, or maybe I misunderstand something.
-Thank you in advance.
+On Sat, 12 Oct 2024, yuan.gao wrote:
 
-Signed-off-by: Cenk Uluisik <cenk.uluisik@googlemail.com>
----
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+> On 24/10/11 11:07AM, Christoph Lameter (Ampere) wrote:
+> > On Fri, 11 Oct 2024, yuan.gao wrote:
+> > 
+> > > When an object belonging to the slab got freed later, the remove_full()
+> > > function is called. Because the slab is neither on the partial list nor
+> > > on the full list, it eventually lead to a list corruption.
+> > 
+> > We detect list poison....
+> > 
+> > > diff --git a/mm/slab.h b/mm/slab.h
+> > > index 6c6fe6d630ce..7681e71d9a13 100644
+> > > --- a/mm/slab.h
+> > > +++ b/mm/slab.h
+> > > @@ -73,6 +73,10 @@ struct slab {
+> > >  						struct {
+> > >  							unsigned inuse:16;
+> > >  							unsigned objects:15;
+> > > +							/*
+> > > +							 * Reuse frozen bit for slab with debug enabled:
+> > 
+> > "If slab debugging is enabled then the frozen bit can bereused to
+> >  indicate that the slab was corrupted"
+> > 
+> > > index 5b832512044e..b9265e9f11aa 100644
+> > > --- a/mm/slub.c
+> > > +++ b/mm/slub.c
+> > > @@ -1423,6 +1423,11 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
+> > >  			slab->inuse, slab->objects);
+> > >  		return 0;
+> > >  	}
+> > > +	if (slab->frozen) {
+> > > +		slab_err(s, slab, "Corrupted slab");
+> > 
+> > 
+> > "Slab folio disabled due to metadata corruption" ?
+> > 
+> > 
+> 
+> Yes, that's what I meant. 
+> Perhaps I should change the description from "Corrupted slab" to
+> "Metadata corrupt"?
+> 
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 687823e58c22..130f6ccc1658 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1053,6 +1053,11 @@ properties:
-         items:
-           - const: xunlong,orangepi-5
-           - const: rockchip,rk3588s
-+      
-+      - description: Xunlong Orange Pi 5B
-+        items:
-+          - const: xunlong,orangepi-5b
-+          - const: rockchip,rk3588s
- 
-       - description: Zkmagic A95X Z2
-         items:
--- 
-2.46.0
+I think the point here is that slab page corruption is different from slab 
+metadata corruption :)
 
+The suggested phrasing, "Slab folio disabled due to metadata corruption", 
+sounds good to me.
+
+> > > @@ -2744,7 +2750,10 @@ static void *alloc_single_from_partial(struct kmem_cache *s,
+> > >  	slab->inuse++;
+> > >
+> > >  	if (!alloc_debug_processing(s, slab, object, orig_size)) {
+> > > -		remove_partial(n, slab);
+> > > +		if (folio_test_slab(slab_folio(slab))) {
+> > 
+> > 
+> > Does folio_test_slab test for the frozen bit??
+> > 
+> 
+> For slab folios, slab->fronzen has been set to 1.
+> For non-slab folios, we should not call remove_partial().
+> I'm not sure if I understand this correctly.
+> 
+> Thanks
+> 
 
