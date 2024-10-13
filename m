@@ -1,152 +1,130 @@
-Return-Path: <linux-kernel+bounces-362715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B7DD99B866
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 07:39:33 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD74099B868
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 07:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4D951F21C73
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 05:39:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EC3F1F2214C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 05:57:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB12130ADA;
-	Sun, 13 Oct 2024 05:39:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F2078281;
+	Sun, 13 Oct 2024 05:57:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="lcxtwBn+"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b="j+Jssuon"
+Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 815A6186A;
-	Sun, 13 Oct 2024 05:39:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C88F21870;
+	Sun, 13 Oct 2024 05:57:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728797965; cv=none; b=tElQThSWZh4tdlZYndI2dc46qinnTf1/bTHdzIfmkUjlD3O/0HiNs7Zgb9TsJJtzJfn4OjK6+ADthMdV7nago3w3xl2+Fgeed++0OPQdkzoT5AHt/vonXuwxjbmVN0Jut8d/HbgCu8vkZT0B9k0mDgSvM4V835NcZ3mdzBh1G5E=
+	t=1728799066; cv=none; b=Z/t41HUUlRdQ/hBfnBMpHFtWLcErhDT20ZbCY6wY9pEXXkPnX5WhL+2r2gN/mkodKvOFEdR384fsIkWWM9sDBau4jOYYOVCkkf8TvFwGYB5smC5pp0X8mJ4N4JtbPnqk5EaeZvu1OyJXC4l/AsC16iNHBU0jWuGcMdcLzGl5Ykk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728797965; c=relaxed/simple;
-	bh=ql0cqCjfWF3jG2jnyhm5/ewcg1XGtUBZ4D1Xm0snQ8Q=;
-	h=Content-Type:Subject:From:In-Reply-To:Date:Cc:Message-Id:
-	 References:To:MIME-Version; b=a3dQ09iM3JtMoIUHfWNfUZujFVThZHB78KvakE8QKBAgHjh35ufmHv34h6mq3KhO3cl95DXwtL0cFun5hT9vA7U0qgOIPwIZAsjnhE5r6Ew9etWES3aIBe4oNaotWGFv6oPeFegEsNcw5SAe8Ff+e5/7497WSymN1KvD2LOQyUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com; spf=none smtp.mailfrom=linux.vnet.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=lcxtwBn+; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.vnet.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.vnet.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49D4uC5J012520;
-	Sun, 13 Oct 2024 05:38:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	content-type:subject:from:in-reply-to:date:cc:message-id
-	:references:to:content-transfer-encoding:mime-version; s=pp1;
-	 bh=K9bzlZAp7xjuv4GNuF5KdigbRFP9c80iG0D8UnRR/MY=; b=lcxtwBn+mhpn
-	U932aSeu3KvWeKWek+DakoXPspUgxw46nLzmCTdUdMCFozRA0d/l7z8L3TGGCxqv
-	A4SLx/EFf/53FBwW0gM4hn/piwBDXi6GhvKyOOlu5tDrrjmJweypczGP0/U+tUG8
-	yrjHDoygkyDSWasc2CizkB0BoV8SItHSMU9bz9RHhHPygkS/SOaY3awJPagPjmaY
-	iSuaH6MAc7BbQIBEWa6b7YzpUkX1FUjOGgTa1OJPV1KWBZwqJACUUeJxhJFyR3TS
-	0R8ce6heanS2oOmfuf2Spy14xxeaJb35utrbZX+Y1md57o9uV8qNdV//5N6rgzSO
-	9LIGnRsyaw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4287kug37d-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 13 Oct 2024 05:38:48 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49D5clMA025012;
-	Sun, 13 Oct 2024 05:38:48 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4287kug379-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 13 Oct 2024 05:38:47 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49D2gGgK004965;
-	Sun, 13 Oct 2024 05:38:46 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nhrdhs-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 13 Oct 2024 05:38:46 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49D5cj8Z20578764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 13 Oct 2024 05:38:45 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id EA0B120043;
-	Sun, 13 Oct 2024 05:38:44 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 441AD20040;
-	Sun, 13 Oct 2024 05:38:37 +0000 (GMT)
-Received: from smtpclient.apple (unknown [9.61.243.56])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Sun, 13 Oct 2024 05:38:36 +0000 (GMT)
-Content-Type: text/plain;
-	charset=utf-8
-Subject: Re: [PATCH v1 0/3] Make a "Setup struct perf_event_attr" a shell test
-From: Athira Rajeev <atrajeev@linux.vnet.ibm.com>
-In-Reply-To: <20241011064824.1432562-1-namhyung@kernel.org>
-Date: Sun, 13 Oct 2024 11:08:23 +0530
-Cc: acme@kernel.org, adrian.hunter@intel.com,
-        alexander.shishkin@linux.intel.com, howardchu95@gmail.com,
-        irogers@google.com, james.clark@linaro.org, jolsa@kernel.org,
-        kan.liang@linux.intel.com, leo.yan@linux.dev,
-        linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org,
-        mark.rutland@arm.com, mingo@redhat.com, peterz@infradead.org,
-        tmricht@linux.ibm.com, vmolnaro@redhat.com, weilin.wang@intel.com,
-        zegao2021@gmail.com, zhaimingbing@cmss.chinamobile.com
-Message-Id: <DB114AFD-C80A-4789-80EC-715F7B0CC6A1@linux.vnet.ibm.com>
-References: <172857541969.1131797.2693392463657578240.b4-ty@kernel.org>
- <20241011064824.1432562-1-namhyung@kernel.org>
-To: Namhyung Kim <namhyung@kernel.org>
-X-Mailer: Apple Mail (2.3818.100.11.1.3)
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: yC_6lOOla4_WyQYWN2lJGf7K03aZ75yr
-X-Proofpoint-GUID: BN6yxtjmh-RtjGLdP0Vp0vnZVCqOUy7Y
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1728799066; c=relaxed/simple;
+	bh=hbnHy3CM893xXthutfl6xjPVYnVPszH8zqS1CvCrTJo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=on4FzHJG5FmAinmwyliv09uz9XI8jKlneAjkJIbiXBxAGKgcB6jOb+YBCznKRrKOWgIddQwmdNvFc+N3Qh672M+GSx4qQFmPXtabCiWFIbWibBoPjE/N255AXP727UwBU3xtx++HCXyuw0SHt7Ebqgj7MAaCjMRWTmf1Qlw3MFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com; spf=pass smtp.mailfrom=cyphar.com; dkim=pass (2048-bit key) header.d=cyphar.com header.i=@cyphar.com header.b=j+Jssuon; arc=none smtp.client-ip=80.241.56.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cyphar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cyphar.com
+Received: from smtp202.mailbox.org (smtp202.mailbox.org [IPv6:2001:67c:2050:b231:465::202])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4XR8lf2JBpz9thy;
+	Sun, 13 Oct 2024 07:57:34 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cyphar.com; s=MBO0001;
+	t=1728799054;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hbnHy3CM893xXthutfl6xjPVYnVPszH8zqS1CvCrTJo=;
+	b=j+JssuonmqvEuh4alQQ41RBn+8QW67fQ2wLdAkJXIDyKRvfzgQKXPVwrs0X1vzpdzjL2X/
+	jTqoUFfihzNHBSKsOYDd0dfmbgVHAzTKwmqx+/MCV7yWTpjoMWLI760LK50+9xkiN1CPIW
+	RFRji4v0VajgbwEaQP0tmztQ1bA4aR948Hpi2c6AN0XxwCSmk7ullkUGN7X1HTnwxcKFi7
+	mQtC/gRAgF+EqFlxbJYX1gjLoZcxjw6Mi/stsQk4LY2dEU8hXkvfiMtl3bHuLBAs8ZrXYK
+	YKS/m5ipzp7BCzqJ68GVqHit8slKGyEeU5xAmRxaEm/JVF8Ycyu0Dl68zonwkg==
+Date: Sun, 13 Oct 2024 16:57:21 +1100
+From: Aleksa Sarai <cyphar@cyphar.com>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: luca.boccassi@gmail.com, linux-fsdevel@vger.kernel.org, 
+	christian@brauner.io, linux-kernel@vger.kernel.org, oleg@redhat.com
+Subject: Re: [PATCH v9] pidfd: add ioctl to retrieve pid info
+Message-ID: <20241013.055429-secure.silencer.dark.pedicure-WXX4G1ZqtUcP@cyphar.com>
+References: <20241008121930.869054-1-luca.boccassi@gmail.com>
+ <87msjd9j7n.fsf@trenco.lwn.net>
+ <20241009.205256-lucid.nag.fast.fountain-SP1kB7k0eW1@cyphar.com>
+ <20241009.210353-murky.mole.elite.putt-JnYGYHfGrAtK@cyphar.com>
+ <87y12x7wzt.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-13_04,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 clxscore=1011
- lowpriorityscore=0 malwarescore=0 mlxlogscore=999 priorityscore=1501
- adultscore=0 bulkscore=0 mlxscore=0 spamscore=0 suspectscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410130038
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="ointlgaftsxrbtmi"
+Content-Disposition: inline
+In-Reply-To: <87y12x7wzt.fsf@trenco.lwn.net>
+X-Rspamd-Queue-Id: 4XR8lf2JBpz9thy
 
 
+--ointlgaftsxrbtmi
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-> On 11 Oct 2024, at 12:18=E2=80=AFPM, Namhyung Kim <namhyung@kernel.org> w=
-rote:
+On 2024-10-09, Jonathan Corbet <corbet@lwn.net> wrote:
+> Aleksa Sarai <cyphar@cyphar.com> writes:
 >=20
-> On 2024-10-10 15:50 -0700, Namhyung Kim wrote:
->> On Tue, 01 Oct 2024 10:19:47 -0700, Ian Rogers wrote:
->>> The path detection for "Setup struct perf_event_attr" test is brittle
->>> and leads to the test frequently not running. Running shell tests is
->>> reasonably robust, so make the test a shell test. Move the test files
->>> to reflect this.
->>>=20
->>> Ian Rogers (3):
->>>  perf test: Add a shell wrapper for "Setup struct perf_event_attr"
->>>  perf test: Remove C test wrapper for attr.py
->>>  perf test: Move attr files into shell directory where they are used
->>>=20
->>> [...]
->>=20
->> Applied to perf-tools-next, thanks!
+> >> In fairness, this is how statx works and statx does this to not require
+> >> syscall retries to figure out what flags the current kernel supports a=
+nd
+> >> instead defers that to stx_mask.
+> >>=20
+> >> However, I think verifying the value is slightly less fragile -- as lo=
+ng
+> >> as we get a cheap way for userspace to check what flags are supported
+> >> (such as CHECK_FIELDS[1]). It would kind of suck if userspace would ha=
+ve
+> >> to do 50 syscalls to figure out what request_mask values are valid.
+> >
+> > Unfortunately, we probably need to find a different way to do
+> > CHECK_FIELDS for extensible-struct ioctls because CHECK_FIELDS uses the
+> > top bit in a u64 but we can't set a size that large with ioctl
+> > numbers...
 >=20
-> Dropped from perf-tools-next due to build failures on PPC.
+> Add a separate PIDFD_GET_VALID_REQUEST_MASK ioctl()?
 >=20
-> https://lore.kernel.org/r/20241011102330.02bece12@canb.auug.org.au
+> But then I'm bad at designing interfaces...
 
-Hi Namhyung
+This might be a good argument for making CHECK_FIELDS just (-size)
+instead of setting the highest bit because that would work for any bit
+size (though admittedly, doing (-size) for a 14-bit number would still
+be a little weird).
 
-I am checking this on powerpc. Will respond with the findings
-
-Thanks
-Athira
 >=20
-> Thanks,
-> Namhyung
->=20
+> jon
 
+--=20
+Aleksa Sarai
+Senior Software Engineer (Containers)
+SUSE Linux GmbH
+<https://www.cyphar.com/>
+
+--ointlgaftsxrbtmi
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQS2TklVsp+j1GPyqQYol/rSt+lEbwUCZwthQQAKCRAol/rSt+lE
+b+0uAP4wasxgG46nfzxxYQ3fkwaDytplrluwSVkOwxZKCEmbVQEAg3mO/cDK5/sN
+XAfXnKsBY0VGpVjQyiZIaNUPGx3lwAQ=
+=MrRZ
+-----END PGP SIGNATURE-----
+
+--ointlgaftsxrbtmi--
 
