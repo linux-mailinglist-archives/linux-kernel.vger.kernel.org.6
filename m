@@ -1,88 +1,108 @@
-Return-Path: <linux-kernel+bounces-362866-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362868-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3C8F99BA4E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:14:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DDEE99BA54
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:24:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FF271C20C58
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:14:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FC2A1C20A4E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:24:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5AD1482E7;
-	Sun, 13 Oct 2024 16:14:07 +0000 (UTC)
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com [209.85.166.70])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05EF51487F4;
+	Sun, 13 Oct 2024 16:24:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="bR+1dp+G"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F24C514601C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 16:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF17414831D;
+	Sun, 13 Oct 2024 16:24:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728836047; cv=none; b=ft7WFEk5pgvz9X93IKKz2nRr6HxPD7tnXuewu0rpizBSEtt+zUZGxsARpkyor+w7jTualTbtyjkdlN7WjWcS4nODQNOc6EwueoxHs3q81l7NQ5njHYQ5M2fghvUcJ6USRPOjZtCa8W4WiWrU6qGrZRvsftstXjovmMoH5SJb7GU=
+	t=1728836673; cv=none; b=hGoto7rTJ04ldgoeF1eXogAjpqAmRLh6pi2IfHY4GQ3r9q1thzg+a9d7OhH13bvA58ZFaL5GVCkOjc4zOHx0pa6AVPVmQtX+O2PaMsO9Nxy2NU+BJ2/eVe790dg2bGsxlzHcl0JCM86k/mYOp5sZU2ERU3Q7slJjwnWoD50MGXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728836047; c=relaxed/simple;
-	bh=cxyDziBMrcbpClpT7sQKHSXjaYosTfXj8LBRDPk17AU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=iLmIj7eQOjyrF4ezP8mwCY3qCDhs7idf1H700mbsHoRhhZmeDx33+HCzrqxwF6rvCV7B6UZaj251tDgnaklaYjeNhzmuaPXtsxSOPLIi8cwsCQSGyGYzHAuOLokmsOLbVYdEfTurOxop3PBel0FQJWrJ0AvtY+SwhEh8PP6UAWg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83542e22fd7so275863439f.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 09:14:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728836045; x=1729440845;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jsOc3y9Oz5HGogm4560/p/dh8cnJBNPbUcw760E4xTY=;
-        b=jlPSwB8EL7FumYxampHOoQW7ohC3bBM2+QU8OfjfzSq6tH23OjqciIOkmzji96BQqc
-         I9HHFaoaQwSAxPaTsOQVfXmDq+IPQ9CS86txgjStMSzw63x8emBRcyEZeFKjxS+w5iHV
-         N/w4vIasm8BCN9OglEdPv0gkas6ULZAbYy7EhIyyhWEfDjsayI/4OU6dezwyOGCPTPJJ
-         aobj6R7WPQ839ku9f110iyQ7j32MogxaRPj7FG1PTZTgWjwdkemv26AYhmF/YF6FPWEL
-         vgb6CeNsA/XBXPbJ/K+vq85Xa4AIXa076rNqk5berbLbGEzmBgtgF7WtoJGUOtiwMmfp
-         qCoA==
-X-Forwarded-Encrypted: i=1; AJvYcCUM8kj94kKYqMBNF2HWTbhiasrKih/TZ1AEmsNalHU5ugVhZUPhQXf0nqhjBY2zay9ldcpylDH6Cjfd/mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywfxb2ln9OIIAGRRZEGRytSMhmy42AXUW3jhEdMWfb+FnY6q2Z0
-	j37mo57kw8HYZ6wILrq56FiTew3Zg/sOCDq5+1OaN1rbz9RjA8WMaGbq5m5qKmLPcwQkTv0pABm
-	jhKX2n2PpGA2DDRX/Cd9fWPPS1ZHnmSzpaJHk9WVjX7GTJihB9T+VrOI=
-X-Google-Smtp-Source: AGHT+IGaBLNObaP8lW/vvvhGno9pbGMmUbe+3hsP3j5e4q8spuiUpuMd/GXq+5/yOO4w7gxbUAs/bdq9Y54qYG0W2dnF6A26atqR
+	s=arc-20240116; t=1728836673; c=relaxed/simple;
+	bh=NE4FbCOloT4eH5vN817TuK0z5R9di0EBvDq7W5Sn73U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oVTzrLq0uBkJNbryKIsQTWMmG4vLXU1vulZuy/wFz/UOoyxW6Y+JPeWWGNfvwpfFmnRThigzsWfW2yavq6KITy2DxG0FuxuI//L9AKTdqaYWt85ZIVO7eRUJ929NdF42/wj9xKTwuSUpk8gMX7AieY5qKvc6bUG+4K2jb48kP6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=bR+1dp+G; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [23.233.251.139])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 7336882E;
+	Sun, 13 Oct 2024 18:22:48 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728836569;
+	bh=NE4FbCOloT4eH5vN817TuK0z5R9di0EBvDq7W5Sn73U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=bR+1dp+GIl4PTHoXhkmQCE84uMDZH/Q2T+6RZ4g3kURHmZopOTYzTdcN2oMeWhWOD
+	 HadkG+VNrP13ODUJLVxGfFywRvsbmlqjBuO2g3DOy0UQdjI7Zr8ZbEmSHHu/DPgERJ
+	 iLZX78BCmGGP0ON4E5+AVGom+DZA1iFZ2M0jvajE=
+Date: Sun, 13 Oct 2024 19:24:22 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: linux-media@vger.kernel.org, jacopo@jmondi.org, mchehab@kernel.org,
+	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+	shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.d,
+	festevam@gmail.com, devicetree@vger.kernel.org, imx@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: media: nxp,imx8-isi: Add i.MX8ULP
+ ISI compatible string
+Message-ID: <20241013162422.GE5212@pendragon.ideasonboard.com>
+References: <20241012084732.1036652-1-guoniu.zhou@oss.nxp.com>
+ <20241012084732.1036652-3-guoniu.zhou@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a08:b0:3a3:9792:e9e8 with SMTP id
- e9e14a558f8ab-3a3bcd9c979mr32522925ab.5.1728836045133; Sun, 13 Oct 2024
- 09:14:05 -0700 (PDT)
-Date: Sun, 13 Oct 2024 09:14:05 -0700
-In-Reply-To: <11dd2a9d-2f1d-4cac-976c-90a1b0ee667e@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670bf1cd.050a0220.4cbc0.0034.GAE@google.com>
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-From: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, stern@rowland.harvard.edu, sylv@sylv.io, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241012084732.1036652-3-guoniu.zhou@oss.nxp.com>
 
-Hello,
+Hi Guoniu,
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Thank you for the patch.
 
-Reported-by: syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com
-Tested-by: syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com
+On Sat, Oct 12, 2024 at 04:47:35PM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: "Guoniu.zhou" <guoniu.zhou@nxp.com>
+> 
+> Add the compatible string support for i.MX8ULP ISI.
+> 
+> Signed-off-by: Guoniu.zhou <guoniu.zhou@nxp.com>
 
-Tested on:
+Reviewed-by: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
 
-commit:         d73dc7b1 USB: chaoskey: Fix possible deadlock chaoskey..
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-console output: https://syzkaller.appspot.com/x/log.txt?x=14c45087980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=f342ea16c9d06d80b585
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=16768727980000
+> ---
+>  Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> index 4d5348d456a1..f43b91984f01 100644
+> --- a/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> +++ b/Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml
+> @@ -21,6 +21,7 @@ properties:
+>      enum:
+>        - fsl,imx8mn-isi
+>        - fsl,imx8mp-isi
+> +      - fsl,imx8ulp-isi
+>        - fsl,imx93-isi
+>  
+>    reg:
+> @@ -75,6 +76,7 @@ allOf:
+>            contains:
+>              enum:
+>                - fsl,imx8mn-isi
+> +              - fsl,imx8ulp-isi
+>                - fsl,imx93-isi
+>      then:
+>        properties:
 
-Note: testing is done by a robot and is best-effort only.
+-- 
+Regards,
+
+Laurent Pinchart
 
