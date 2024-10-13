@@ -1,230 +1,130 @@
-Return-Path: <linux-kernel+bounces-362806-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 166E399B97D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:02:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8259D99B97F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:04:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C927E2818FD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:02:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 390D6281A5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 707F5145B0B;
-	Sun, 13 Oct 2024 13:02:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D1714037F;
+	Sun, 13 Oct 2024 13:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b/BUkZK4"
-Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=hfdevel@gmx.net header.b="Awux4AiT"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6D721459FD;
-	Sun, 13 Oct 2024 13:02:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FAE71EEE9;
+	Sun, 13 Oct 2024 13:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728824549; cv=none; b=JVHsmL1pGwAAMQbYf7mGW20d6ekuKTM+JDP5mL+Xj6ih8UUOMeY1ZVtMqYwt5LOnf6DXlUxf3QCsEzgoRB4ltEQoilOxLFw3BZc1IJUjH7XeR/+LhXHnIpz7V0QjLUoBrAGNsPaO7rONDQzEuUNW4DT3WJdS7boE5xlBTFWjmb4=
+	t=1728824649; cv=none; b=ABgM20Xw9jgdwQ24TE3BBw5xJ31eMK4bzMfeTnpsxo3THkEsofyo3xFM0FsY4IQ93T4FNohbCD/iWsGNobK2rGcRuiWCSmo6v2Q2/q5BsDCD7FMqrZNrsSfQ4FlSdloa/4Sb7Ry1ojTPLWxaEzwZauGaX7aP5dZ3ZrqUs1x8X0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728824549; c=relaxed/simple;
-	bh=lDXbQwkkaPxMIXDbVLFhS8GkBnxi0Gxz701uf9q5oR0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PV41K+BSggQHJlvIayy5mhYW/oLP5bH121xkEVDMppT1m0CcOQRYEK26Y3sGUqnw8cK7jqJL0ZhK6lfoHoa7uHITgAl17ZZEmUE9uarw+Id1e41zKe/pDKCS3d1kzALLs5DZMa52QytCwpRraERicE9UgpO9lgHZyZDRWGqJoWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b/BUkZK4; arc=none smtp.client-ip=209.85.218.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a99d1b7b5f5so215858466b.0;
-        Sun, 13 Oct 2024 06:02:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728824545; x=1729429345; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pqumvoIyJhkt9W5HwjJwb/i/n9g4P9IeX/TAEyTfGvM=;
-        b=b/BUkZK48/1tjKmhKbxa3pf2eFusTmWi+/ggr+ycX3LrgBu5Dmez48b6LAEQj7qp6O
-         s66bw+GtXZcjypAfcSPMy5aF0rPMybEDAsNs0tkcnT6ZT06096JBAPo033mmv4XRncru
-         xNok1Ido4Y1Jo4+zxGKfo+EuOH2TFJuMB7r4sGpqzZJ+S8VL0LftVsHllFFh0UDgcWQ2
-         ow2H0dVN8OHtxl7EPxkEM/UJOaZwEDogTpYPO4H0vzntWu3WF/4FCu8hqr4Z+p8/urxS
-         eFYqUyfBK72oN6WYhek0G1yiDYbnUtIBzJNTfzCO+Mm4peAOepq456PKiJw8y0X67LYH
-         m9kg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728824545; x=1729429345;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=pqumvoIyJhkt9W5HwjJwb/i/n9g4P9IeX/TAEyTfGvM=;
-        b=CsU01Pqup+EIexYF7pZxtpYUjcosfXFSbC7PMgaOLfj2HareUj3O5Nv/WtWbX4gvt9
-         0FXO3AZGACQVz2a2uuRhK+CzXPw9zBsg6aL4vkC6biMJUKMcyDbmiY12E41QVXfk25l8
-         8Ek5PGaPGa0QkJcnK3N0SFlnPJ7kxWfJmXm+vqNT6JYp8qPYeJ1JrMzPGPmqLk+Scr/J
-         1FNpl0jgaqVGNS2sqJa+d2JjP3VhyLC0pgVWjhMChuMYEd9M8KzzTssi519Ujev6GJcE
-         bssxs/Rls+t5m2tPEUhF0wNuZ+4TTjdhbO6Fxx9qC2rwcolnBXemHsw1U6neifwuMZL9
-         49Lg==
-X-Forwarded-Encrypted: i=1; AJvYcCUbSRbx04pAJgztGNlicNhbTxTCXnTdQSpxFamgIw5T4RhEtz5Z+8J+JQXD4pgz7kv0j9CmondNHma5a1ll@vger.kernel.org, AJvYcCUmVcay2c84AsBh+QIGLTWS0HyN6737xnMZecBKHKzHFljBeYYChScKS21GF3ub8jZpcg3OF3RZAN/X@vger.kernel.org, AJvYcCWpfOADCvWzSCA7EBvNyJhnGnsUCMPQmSLvxl76d6LXPr+Bmg9xWnovLhuFk4/50EfL9ifaeltrHnU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbPrILH2PVYCqKVoeeJ4Cru70nwdg2+cJ5zHvGxdc3q9QvhUeS
-	ML2rCDggdHtNvFNHY3bc+ssi8FiQxULHZZh9LRVaDw+/ImX29N8S
-X-Google-Smtp-Source: AGHT+IH3hBQZELCO27froLhmQMniGAn0bBg1HgfDg+xB1ADD1RL5C7wQdwmHKKqPnxl1b745khWtcw==
-X-Received: by 2002:a17:907:9723:b0:a99:ef41:33db with SMTP id a640c23a62f3a-a99ef4137ebmr460504966b.19.1728824544896;
-        Sun, 13 Oct 2024 06:02:24 -0700 (PDT)
-Received: from work.. (2.133.25.254.dynamic.telecom.kz. [2.133.25.254])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a0d9de967sm19209666b.139.2024.10.13.06.02.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 06:02:24 -0700 (PDT)
-From: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-To: andreyknvl@gmail.com
-Cc: akpm@linux-foundation.org,
-	dvyukov@google.com,
-	glider@google.com,
-	kasan-dev@googlegroups.com,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	ryabinin.a.a@gmail.com,
-	snovitoll@gmail.com,
-	vincenzo.frascino@arm.com,
-	elver@google.com,
-	corbet@lwn.net,
-	alexs@kernel.org,
-	siyanteng@loongson.cn,
-	2023002089@link.tyut.edu.cn,
-	workflows@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH v2 3/3] kasan: delete CONFIG_KASAN_MODULE_TEST
-Date: Sun, 13 Oct 2024 18:02:11 +0500
-Message-Id: <20241013130211.3067196-4-snovitoll@gmail.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241013130211.3067196-1-snovitoll@gmail.com>
-References: <CA+fCnZdeuNxTmGaYniiRMhS-TtNhiwj_MwW53K73a5Wiui+8RQ@mail.gmail.com>
- <20241013130211.3067196-1-snovitoll@gmail.com>
+	s=arc-20240116; t=1728824649; c=relaxed/simple;
+	bh=rDnuUa1HAwng3cbVtXHRzJs9QAMxLEm5dhuzU+UhQqA=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=UThDhmt4ENlO+Lt84byJnEYSzi6k1aWKiGg81s26BTay03ebfM+jspuRTGtbRALv3Rkit4O2vEHSIw+0rP3IG5SxH1NAvMmgep8+Ry/Z/eviyHXAcIDQNYkR1X4qC7FLqvArHBE1DPlTR8Gd1c26EvzvOp4eCs7Ix2orqhJlzqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=hfdevel@gmx.net header.b=Awux4AiT; arc=none smtp.client-ip=212.227.15.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728824618; x=1729429418; i=hfdevel@gmx.net;
+	bh=AMxDGO15Or5yoSXKAsGKE5Aa2LASf14ueWnfYn0zK9c=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=Awux4AiTha10GxxR3eVQ8h0rJSoHfgWsp8Tskq151C40s+WmTwtoyK9dbaKUjWqr
+	 pC2TqMFC0Q+MqUbeTB8M8ZZEbjIpE2U0zCPH9bD4gfrc2c8yhAD5GHTrjI6IjfzFe
+	 u03M7zUuqOfCQb8dXEZqNQ67xc9hX5EZmm9MRZbG4QHDuAXZx+6GTcvBqzyWUZ7ni
+	 6r24WiAeTGyZ87cGnovVmygjpmExyppPAq0MZTcrcmBQshLhZdilalMMPNpAY7zKn
+	 F3GNlnCWwOWEQe8M2u6MC8CT2gpoPPJ1UwK3xOGJxHmZUraFDNNyddUAtTY4TTo1L
+	 POJokLambUAfyA2cjg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [10.0.0.23] ([77.33.175.99]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MuDXz-1tpBrg387J-00zRxO; Sun, 13
+ Oct 2024 15:03:37 +0200
+Message-ID: <2ba308ae-4aba-46ff-8187-ba9a69a26e4c@gmx.net>
+Date: Sun, 13 Oct 2024 15:03:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: daniel@makrotopia.org
+Cc: andrew@lunn.ch, ansuelsmth@gmail.com, bartosz.golaszewski@linaro.org,
+ davem@davemloft.net, edumazet@google.com, hkallweit1@gmail.com,
+ kuba@kernel.org, linux-kernel@vger.kernel.org, linux@armlinux.org.uk,
+ netdev@vger.kernel.org, pabeni@redhat.com, quic_abchauha@quicinc.com,
+ robimarko@gmail.com
+References: <3c469f3b62fe458f19dc28e005968d73392f9fa3.1728682260.git.daniel@makrotopia.org>
+Subject: Re: [PATCH net-next] net: phy: aquantia: fix return value check in
+ aqr107_config_mdi()
+Content-Language: en-US
+From: Hans-Frieder Vogt <hfdevel@gmx.net>
+In-Reply-To: <3c469f3b62fe458f19dc28e005968d73392f9fa3.1728682260.git.daniel@makrotopia.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:ON3Bgijp4Vimy6c0UekcvWcB9g+sYG11jLAfWl7hVnk7AUzvFVo
+ 4aVuYOuLx3Lsgdqgdk0RecKGrpa39krdgzv4oP0dDxXtgMwadghWkiP3CJ6q6Nc1kXz412W
+ o0opw1l0Lr/7tTrRoBSjnZGbgTPAz46majjaRp0ZmHex9glWe5GmOxmEjIETl8fIGbsgCik
+ yt5mPZkhckVBzCkYOkviQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:wrgOdMHkwmg=;VxGi8cofJ8g9p6ncEcWEF0ohtlG
+ 1G1LxfuDsmvihOO1FFAqiqDX/uYblcw3rGC15Cas0cOUdrkFSxMKbrubXOizOb9n5dv8gpHUA
+ AJLGVhEUf7p+my4Y0ungg8RL1wk7Hux5uBBdYsbizxtN1KQGhpI1p6zbUix7l+aaEAKA6H7TC
+ RvRfuTY4IKFPSdaa29dvm3Tsm4vjhbx9mJIH6nvy1nTEPXIxBa3odZ7r0G0usrEoW6thb+4k0
+ onYndIrR3xNZ3BYr8EpRlrfRPeR8BjwZa6kTadE9ToJaC9WWmq6uvXzbfDPXcBRMqd2UAm5IV
+ ZLtBTJXG7gzCaBNSW37UIC8pygKniQxLtgr0ee5SyNV5JqNs9ammpol08C7z12ovJVRHl2RTJ
+ u+h2tMzBGRmQhyowUFBs2rULk1NuwVb5WRIFGC/miPnB3eVXFXtuauLQ7VfSH+5kYjH79SgJN
+ asy6y4I1O0tBiRkgexDSt4PszzPzEMHx8K7Xpu2M1EheWo91FuBX8gz5a/j/QsG+1RyoA3Hi0
+ qvjHPi1bZt6dqeb28U2bOCm/8rgWoUV2zafxpRvUsghqYfDar4N6zylF/+pThnSvFYkWLHuhI
+ 0XdgBDnOanF8PZIysgvzwom04Y6HEw0g1jkFqskBTVahPbK9Fni3X2nJahlGXKjTRUDxXogix
+ PGLn1vK75siDhjSbFKdpAoUETnwkvntoKLY77iiX64xW4MLB+cXM9AARs2WH0TIEIjSrls1H3
+ gdTSKCpYfVpOdI+Ofcihpaxplgm0WSK6DHi3ColihTQ93v6YAWwWBdDsdJhTL/wANk9RMkgsW
+ DlsFx4Si6h9O3WjjAC4rXKpw==
 
-Since we've migrated all tests to the KUnit framework,
-we can delete CONFIG_KASAN_MODULE_TEST and mentioning of it in the
-documentation as well.
-
-I've used the online translator to modify the non-English documentation.
-
-Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
----
- Documentation/dev-tools/kasan.rst                    | 9 ++-------
- Documentation/translations/zh_CN/dev-tools/kasan.rst | 6 +-----
- Documentation/translations/zh_TW/dev-tools/kasan.rst | 6 +-----
- lib/Kconfig.kasan                                    | 7 -------
- mm/kasan/kasan.h                                     | 2 +-
- mm/kasan/report.c                                    | 2 +-
- 6 files changed, 6 insertions(+), 26 deletions(-)
-
-diff --git a/Documentation/dev-tools/kasan.rst b/Documentation/dev-tools/kasan.rst
-index d7de44f5339..52fdd6b5ef6 100644
---- a/Documentation/dev-tools/kasan.rst
-+++ b/Documentation/dev-tools/kasan.rst
-@@ -511,17 +511,12 @@ Tests
- ~~~~~
- 
- There are KASAN tests that allow verifying that KASAN works and can detect
--certain types of memory corruptions. The tests consist of two parts:
-+certain types of memory corruptions.
- 
--1. Tests that are integrated with the KUnit Test Framework. Enabled with
-+Tests that are integrated with the KUnit Test Framework. Enabled with
- ``CONFIG_KASAN_KUNIT_TEST``. These tests can be run and partially verified
- automatically in a few different ways; see the instructions below.
- 
--2. Tests that are currently incompatible with KUnit. Enabled with
--``CONFIG_KASAN_MODULE_TEST`` and can only be run as a module. These tests can
--only be verified manually by loading the kernel module and inspecting the
--kernel log for KASAN reports.
--
- Each KUnit-compatible KASAN test prints one of multiple KASAN reports if an
- error is detected. Then the test prints its number and status.
- 
-diff --git a/Documentation/translations/zh_CN/dev-tools/kasan.rst b/Documentation/translations/zh_CN/dev-tools/kasan.rst
-index 4491ad2830e..f968d262be1 100644
---- a/Documentation/translations/zh_CN/dev-tools/kasan.rst
-+++ b/Documentation/translations/zh_CN/dev-tools/kasan.rst
-@@ -422,14 +422,10 @@ KASAN连接到vmap基础架构以懒清理未使用的影子内存。
- ~~~~
- 
- 有一些KASAN测试可以验证KASAN是否正常工作并可以检测某些类型的内存损坏。
--测试由两部分组成:
- 
--1. 与KUnit测试框架集成的测试。使用 ``CONFIG_KASAN_KUNIT_TEST`` 启用。
-+与KUnit测试框架集成的测试。使用 ``CONFIG_KASAN_KUNIT_TEST`` 启用。
- 这些测试可以通过几种不同的方式自动运行和部分验证；请参阅下面的说明。
- 
--2. 与KUnit不兼容的测试。使用 ``CONFIG_KASAN_MODULE_TEST`` 启用并且只能作为模块
--运行。这些测试只能通过加载内核模块并检查内核日志以获取KASAN报告来手动验证。
--
- 如果检测到错误，每个KUnit兼容的KASAN测试都会打印多个KASAN报告之一，然后测试打印
- 其编号和状态。
- 
-diff --git a/Documentation/translations/zh_TW/dev-tools/kasan.rst b/Documentation/translations/zh_TW/dev-tools/kasan.rst
-index ed342e67d8e..19457860486 100644
---- a/Documentation/translations/zh_TW/dev-tools/kasan.rst
-+++ b/Documentation/translations/zh_TW/dev-tools/kasan.rst
-@@ -404,14 +404,10 @@ KASAN連接到vmap基礎架構以懶清理未使用的影子內存。
- ~~~~
- 
- 有一些KASAN測試可以驗證KASAN是否正常工作並可以檢測某些類型的內存損壞。
--測試由兩部分組成:
- 
--1. 與KUnit測試框架集成的測試。使用 ``CONFIG_KASAN_KUNIT_TEST`` 啓用。
-+與KUnit測試框架集成的測試。使用 ``CONFIG_KASAN_KUNIT_TEST`` 啓用。
- 這些測試可以通過幾種不同的方式自動運行和部分驗證；請參閱下面的說明。
- 
--2. 與KUnit不兼容的測試。使用 ``CONFIG_KASAN_MODULE_TEST`` 啓用並且只能作爲模塊
--運行。這些測試只能通過加載內核模塊並檢查內核日誌以獲取KASAN報告來手動驗證。
--
- 如果檢測到錯誤，每個KUnit兼容的KASAN測試都會打印多個KASAN報告之一，然後測試打印
- 其編號和狀態。
- 
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index 98016e137b7..f82889a830f 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -195,13 +195,6 @@ config KASAN_KUNIT_TEST
- 	  For more information on KUnit and unit tests in general, please refer
- 	  to the KUnit documentation in Documentation/dev-tools/kunit/.
- 
--config KASAN_MODULE_TEST
--	tristate "KUnit-incompatible tests of KASAN bug detection capabilities"
--	depends on m && KASAN && !KASAN_HW_TAGS
--	help
--	  A part of the KASAN test suite that is not integrated with KUnit.
--	  Incompatible with Hardware Tag-Based KASAN.
--
- config KASAN_EXTRA_INFO
- 	bool "Record and report more information"
- 	depends on KASAN
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index f438a6cdc96..b7e4b81421b 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -568,7 +568,7 @@ static inline void kasan_kunit_test_suite_end(void) { }
- 
- #endif /* CONFIG_KASAN_KUNIT_TEST */
- 
--#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST) || IS_ENABLED(CONFIG_KASAN_MODULE_TEST)
-+#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
- 
- bool kasan_save_enable_multi_shot(void);
- void kasan_restore_multi_shot(bool enabled);
-diff --git a/mm/kasan/report.c b/mm/kasan/report.c
-index b48c768acc8..3e48668c3e4 100644
---- a/mm/kasan/report.c
-+++ b/mm/kasan/report.c
-@@ -132,7 +132,7 @@ static bool report_enabled(void)
- 	return !test_and_set_bit(KASAN_BIT_REPORTED, &kasan_flags);
- }
- 
--#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST) || IS_ENABLED(CONFIG_KASAN_MODULE_TEST)
-+#if IS_ENABLED(CONFIG_KASAN_KUNIT_TEST)
- 
- bool kasan_save_enable_multi_shot(void)
- {
--- 
-2.34.1
+On Fri, 11 Oct 2024 22:33:52 +0100, Daniel Golle wrote:
+> of_property_read_u32() returns -EINVAL in case the property cannot be
+> found rather than -ENOENT. Fix the check to not abort probing in case
+> of the property being missing.
+there is another failure case, which is not properly covered:
+if the system is non-device-tree, the function of_property_read_u32 return=
+s -ENOSYS.
+While you are correcting the return value, you may also correct this case.
+>
+> Fixes: a2e1ba275eae ("net: phy: aquantia: allow forcing order of MDI pai=
+rs")
+> Reported-by: Jon Hunter <jonathanh@nvidia.com>
+> Closes: https://lore.kernel.org/all/114b4c03-5d16-42ed-945d-cf78eabea12b=
+@nvidia.com/
+> Signed-off-by: Daniel Golle <daniel@makrotopia.org>
+> ---
+>   drivers/net/phy/aquantia/aquantia_main.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/net/phy/aquantia/aquantia_main.c b/drivers/net/phy/=
+aquantia/aquantia_main.c
+> index 4fe757cd7dc7..49fd21d1b3c9 100644
+> --- a/drivers/net/phy/aquantia/aquantia_main.c
+> +++ b/drivers/net/phy/aquantia/aquantia_main.c
+> @@ -513,7 +513,7 @@ static int aqr107_config_mdi(struct phy_device *phyd=
+ev)
+>   	ret =3D of_property_read_u32(np, "marvell,mdi-cfg-order", &mdi_conf);
+>
+>   	/* Do nothing in case property "marvell,mdi-cfg-order" is not present=
+ */
+> -	if (ret =3D=3D -ENOENT)
+> +	if (ret =3D=3D -EINVAL)
+the non-device-tree case could be simply covered by this:
+	if (ret =3D=3D -EINVAL || ret =3D=3D -ENOSYS)
+>   		return 0;
+>
+>   	if (ret)
 
 
