@@ -1,96 +1,186 @@
-Return-Path: <linux-kernel+bounces-362801-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362802-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C758899B96F
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:47:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D44C99B971
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 724D61F2181D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:47:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8CBE7B212F3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61F9D143C5D;
-	Sun, 13 Oct 2024 12:47:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119C3143C63;
+	Sun, 13 Oct 2024 12:55:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b="baiiGgVk"
-Received: from mail.ispras.ru (mail.ispras.ru [83.149.199.84])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mqLEetsD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1622336B;
-	Sun, 13 Oct 2024 12:46:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.149.199.84
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE5E36B;
+	Sun, 13 Oct 2024 12:55:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728823619; cv=none; b=sDPocrN+8Q4bxk/AJ2kzX6+Y6Y/0+G8GMxBqeSDLl9IYBQpCBOaz18gZ9/udo+wzTcjz9FNaHp6UypLRmGpWap9SQwYO1ZMXDsZ7uMqvdYbS7331NaALsOjdQU7oKtSx3A99VVmIapjtyhfJJ39CUaw7OCBWRMCIRjz2m4zCocY=
+	t=1728824138; cv=none; b=XliEUHno8MV7zYdwfUQ0we9j4sH9y9gCLRvzsjjxazvlzWAB0ZFIpyPCL3H7/xqA2VIBVD2qAD+Ifdg/m4GeewReoFcup8jm91mO9qErU6+fV0gABY9ARIKpvG4JWb++8QWpPsN9zQ+FUl/N2pZWkAYAusdiyK8BaxhMJRSSKoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728823619; c=relaxed/simple;
-	bh=F7g/vq7HceSS0Kuvc/HfkkfnvYzJC17Isl5FKGg5DY8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MpuWT4ml6vNNn7vH9ZmpHrmPT6qsNvnD+FpQnWkpqJWtPEMelmnykeAuFlSScfWxHQvJujRADaJf5rRe8K5WrTeEz/uFkpeVj+N4AXrl0pNt0RJnd0HEnaNDg3BMe8BzfJw+lkZIMyHnM1lH/Ai6a8jnogsuhhxNncwZoGIh0lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru; spf=pass smtp.mailfrom=ispras.ru; dkim=pass (1024-bit key) header.d=ispras.ru header.i=@ispras.ru header.b=baiiGgVk; arc=none smtp.client-ip=83.149.199.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ispras.ru
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ispras.ru
-Received: from localhost.localdomain (unknown [109.252.171.178])
-	by mail.ispras.ru (Postfix) with ESMTPSA id 12CB14078507;
-	Sun, 13 Oct 2024 12:46:48 +0000 (UTC)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.ispras.ru 12CB14078507
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ispras.ru;
-	s=default; t=1728823608;
-	bh=RbI4xvpLlIIRDNbMXmNSQos0V7si5yEzs9WRtwQbybI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=baiiGgVkTMctq/PRPAZNIreKz7/eHFHE6DunvachhEXMN2tLwgHi5e1oKT31vZtRP
-	 Rvc/79wmGlOSPThP1UgcbhwXj2Yk2IpVBgQgeZ/+hQH1hyYvUOuRMhVwxZn9TPsP60
-	 JikPJxGtJBA4RncQ068iWy+eo+3APow6YqPC6uvM=
-From: Elena Salomatkina <esalomatkina@ispras.ru>
-To: Jamal Hadi Salim <jhs@mojatatu.com>
-Cc: Elena Salomatkina <esalomatkina@ispras.ru>,
-	Cong Wang <xiyou.wangcong@gmail.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Leandro Dorileo <leandro.maciel.dorileo@intel.com>,
-	Vedang Patel <vedang.patel@intel.com>,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	lvc-project@linuxtesting.org
-Subject: [PATCH net] net/sched: cbs: Fix integer overflow in cbs_set_port_rate()
-Date: Sun, 13 Oct 2024 15:45:29 +0300
-Message-Id: <20241013124529.1043-1-esalomatkina@ispras.ru>
-X-Mailer: git-send-email 2.33.0
+	s=arc-20240116; t=1728824138; c=relaxed/simple;
+	bh=PGHjAbYs47V3IL/rq2kwUEzf4WBrICwxIJb375H0MdE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=s2KK3QdxoMn45M6UVn1f1TCwvLezDHF+sQjXTV+YrW0WUmqomJS99TLwO5VoUy4XwiT97EIRS+xFWIocH3AZYb1Z9Aqup1G+a0LtTBteY5jcY6zUZjCrrDGA8e1iWq16c0ebkDb9bvuiuv4RN3kEieBMK/nNPYPE68c2uDtr8FY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mqLEetsD; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43115887867so22440155e9.0;
+        Sun, 13 Oct 2024 05:55:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728824135; x=1729428935; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YWMT5lNGu1xTshtgdsecoS6+Z5F56R0HKb2/GtovXRw=;
+        b=mqLEetsDTIr1UDulA9knxy8wOnqTaBU9RpAYqASbYFKA/CAeCju37qzyIgO1ySvQ3B
+         M+8SzI9TX2z/1H5ABdqjmQ6szv3LwL0T/rRbMBSisjbONKZ6T0Gb2RH6mEvGcVDl4+je
+         XMo2Bx2ISfxfG43cWnXWycyPcPf9UYXOxYr38MG/T3liF/RZI8mnlfsV0rPSdfaki+/K
+         6PpOOV4lLNe3qXfnzOelS4l5mfrOAPA9v7VYpex6gIZSyzMSkBaH95MJZCg74wB82as8
+         Ifv9tpGnGqUY9RYREZoyhx6XlemuM9MK0r7brdOQbGxjcnSyd5MidIo7cvxMe5b7nbIc
+         J0Vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728824135; x=1729428935;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YWMT5lNGu1xTshtgdsecoS6+Z5F56R0HKb2/GtovXRw=;
+        b=j/gpj2gAIazo/mj/P4Y73MOFU53KdqCCfVyh6+JB1eQHJBWzTG8RPM1DeaYs9lNLtb
+         JEVW1SE1zmAFd2Yd9ZpH8kkpnSu16wyXG6JEE2IcfkwkmEnzr/S3a5IjcuA3udS6VJvf
+         xjErtrqly47FoRxpQ0gi1S/qsvX0HlhylfLMtgqFSrEhv22j0GBgU1XWxxxltBP7FXm6
+         ZmF9EZ/T5QV6/GhjE96e2fg3GOVbQPRQLwQUO1GkCOAZWtWsIDlr1pQd/pxnsqgapFkD
+         YxB+J6emi37BekY7eC9aVhhXzzgkzSGbQNpTs+/sWaHfl/AH/lhVjtAbuJ8mXbgZfr2e
+         JVeA==
+X-Forwarded-Encrypted: i=1; AJvYcCVfB4Dpo2MM5vRaxCpsnXCXDJqDXNFZkj8LGffIec6NUD3mC7VQzCnJhSZhoN2307OzxaXgsUC9@vger.kernel.org, AJvYcCXLEa3t6QHIjgbRh1+9ywS769/w7YBksgVG5jPqNzDFLUqY8hKCGhJo8BCJSG5SfXoJv9dWkIsv5q22kWk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS1GQrdRmC41uW0rapVkaL28kQKo5zzoVk4bfSFiDTieQo6iiS
+	OZbsBF+q/tcIXlXZSosDEXlNkbRRLvT+5KOk1DdCOvqe6JcP08as
+X-Google-Smtp-Source: AGHT+IGx9lvPuk/IEYQT+CiW4c6HxwiL9K8/Y3t0ehXw4g7CKJ3aTbBceq7YmC9Lx1M/KpvT7OODvw==
+X-Received: by 2002:a05:600c:b9a:b0:42f:84ec:3f9 with SMTP id 5b1f17b1804b1-4311d884328mr70492185e9.3.1728824134850;
+        Sun, 13 Oct 2024 05:55:34 -0700 (PDT)
+Received: from ?IPV6:2a02:8389:41cf:e200:a034:352b:6ceb:bf05? (2a02-8389-41cf-e200-a034-352b-6ceb-bf05.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:a034:352b:6ceb:bf05])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd3e7sm8582567f8f.39.2024.10.13.05.55.32
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Oct 2024 05:55:33 -0700 (PDT)
+Message-ID: <4c190f41-eac4-4dfa-8667-368f57b9f445@gmail.com>
+Date: Sun, 13 Oct 2024 14:55:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
+ error path for fw_node
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stefan Wahren <wahrenst@gmx.net>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
+ <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
+Content-Language: en-US, de-AT
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+In-Reply-To: <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-The subsequent calculation of port_rate = speed * 1000 * BYTES_PER_KBIT,
-where the BYTES_PER_KBIT is of type LL, may cause an overflow.
-At least when speed = SPEED_20000, the expression to the left of port_rate
-will be greater than INT_MAX.
+On 13/10/2024 13:36, Umang Jain wrote:
+> Hi Javier,
+> 
+> Thank you for the patch.
+> 
+> On 13/10/24 4:12 pm, Javier Carrasco wrote:
+>> An error path was introduced without including the required call to
+>> of_node_put() to decrement the node's refcount and avoid leaking memory.
+>> If the call to kzalloc() for 'mgmt' fails, the probe returns without
+>> decrementing the refcount.
+>>
+>> Use the automatic cleanup facility to fix the bug and protect the code
+>> against new error paths where the call to of_node_put() might be missing
+>> again.
+>>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver
+>> static and runtime data")
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 +
+>> +----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
+>>
+>> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/
+>> vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/
+>> vchiq_arm.c
+>> index 27ceaac8f6cc..792cf3a807e1 100644
+>> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>> @@ -1332,7 +1332,8 @@ MODULE_DEVICE_TABLE(of, vchiq_of_match);
+>>     static int vchiq_probe(struct platform_device *pdev)
+>>   {
+>> -    struct device_node *fw_node;
+>> +    struct device_node *fw_node __free(device_node) =
+>> +        of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-
+>> firmware");
+> 
+> How about :
+> 
+> +    struct device_node *fw_node __free(device_node) = NULL;
+> 
+>>       const struct vchiq_platform_info *info;
+>>       struct vchiq_drv_mgmt *mgmt;
+>>       int ret;
+>> @@ -1341,8 +1342,6 @@ static int vchiq_probe(struct platform_device
+>> *pdev)
+>>       if (!info)
+>>           return -EINVAL;
+>>   -    fw_node = of_find_compatible_node(NULL, NULL,
+>> -                      "raspberrypi,bcm2835-firmware");
+> 
+> And undo this (i.e. keep the of_find_compatible_node() call here
+> 
+> This helps with readability as there is a NULL check just after this.
+>>       if (!fw_node) {
+>>           dev_err(&pdev->dev, "Missing firmware node\n");
+>>           return -ENOENT;
+>> @@ -1353,7 +1352,6 @@ static int vchiq_probe(struct platform_device
+>> *pdev)
+>>           return -ENOMEM;
+>>         mgmt->fw = devm_rpi_firmware_get(&pdev->dev, fw_node);
+>> -    of_node_put(fw_node);
+> 
+> And this change remains the same.
+>>       if (!mgmt->fw)
+>>           return -EPROBE_DEFER;
+>>  
+>> ---
+>> base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+>> change-id: 20241013-vchiq_arm-of_node_put-60a5eaaafd70
+>>
+>> Best regards,
+> 
 
-Found by Linux Verification Center (linuxtesting.org) with SVACE.
 
-Fixes: e0a7683d30e9 ("net/sched: cbs: fix port_rate miscalculation")
-Signed-off-by: Elena Salomatkina <esalomatkina@ispras.ru>
----
- net/sched/sch_cbs.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Umang,
 
-diff --git a/net/sched/sch_cbs.c b/net/sched/sch_cbs.c
-index 2eaac2ff380f..db92ae819fd2 100644
---- a/net/sched/sch_cbs.c
-+++ b/net/sched/sch_cbs.c
-@@ -309,7 +309,7 @@ static void cbs_set_port_rate(struct net_device *dev, struct cbs_sched_data *q)
- {
- 	struct ethtool_link_ksettings ecmd;
- 	int speed = SPEED_10;
--	int port_rate;
-+	s64 port_rate;
- 	int err;
- 
- 	err = __ethtool_get_link_ksettings(dev, &ecmd);
--- 
-2.33.0
+Sure, I am fine with that too.
 
+Depending on the maintainer, the preferred approach varies: a single
+initialization at the top whenever possible, a declaration right before
+its first usage (not my favorite), or a NULL initialization first. I
+will send a v2 with the latter i.e. what you suggested, as it keeps
+everything more similar to what it used to be.
+
+Thanks and best regards,
+Javier Carrasco
 
