@@ -1,64 +1,62 @@
-Return-Path: <linux-kernel+bounces-362945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 614CC99BB92
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:22:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2DDD99BB96
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:23:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D6332817AE
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:22:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BF251F213BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B7E1A4F07;
-	Sun, 13 Oct 2024 20:18:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88A5D1A7060;
+	Sun, 13 Oct 2024 20:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="BjEE0w0C"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="BwT0Mkp0"
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13886149C4A;
-	Sun, 13 Oct 2024 20:18:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDD401A01BD;
+	Sun, 13 Oct 2024 20:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728850703; cv=none; b=Wb5Ya+cyp9xEt+vfioXEd3fMgORJ1VW40YWPKrGFvC4zI7hIWn/EiYF9kizm/xnyb+sXLdoOA+zGDk5wzaitR1C8g14XWeGwyelaoCzVEbG9Wz8CYbmw+dJ6nxMXi20MsxRux2DqebgebQvkcbRh5y+DzrX9ijoYjliRg28UGck=
+	t=1728850703; cv=none; b=Xmw+mPrCSZbzH6kmjmWB9oTxdiHhlW17chvd5jZwbsZuBKCFaXfJF0R1ipncDSrl92rI5RK1qWTct+09em+ayX2LLy3s3iilNQZfS+5cJUTWNmqfBWlv46XrLCfhkZ3BPZsegLL5lnONlOPfrjDKMr5T0YsezcgEv7R4nGOZlBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1728850703; c=relaxed/simple;
-	bh=vMJfnVodG7JCqHrEDQ3Q01QvpSiNIoX2WLWWcUybw9c=;
+	bh=htI9EsWsu8314B/PUvBjBsrP6HkmbEqFi+D8XQiMNkM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=usl7kNnfF+Ag8fYCDiBGTZgHB2Vr7YsvKrRfKbcH6mXtxybyG+TeeNpTbdUSVBKjBFf67wNizuBWhVr9Zp6Ot6vqi5wTQC5gcaHcr43o+wZeg8UA7hQjKspQrctgtYQuP9sCRDqz553WpPsKWU+Rzs7C6Ya58ARfAzriUXaWYEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=BjEE0w0C; arc=none smtp.client-ip=192.134.164.104
+	 MIME-Version; b=CFmzpBg03DFGrl/jIMeRGC9+eaMh9OdD/3Ki9lGdxaENualAF3MoKlbjP3Eg6OUUGx45MDn/iwu0dfXBoVO2jAqDfYobdNdHFu7WLmMvs1clf7y3sbOQ2RqLApTGN+iIDa34FpICfvsofB5yFsf2E0ZKxajvr0EiPM3ns3H44Q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=BwT0Mkp0; arc=none smtp.client-ip=192.134.164.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=fZBINeODAqFt0yXVx70sf+neXSqrWQCexwg4fqNcrVs=;
-  b=BjEE0w0C1UE0dff3FmRZ6xajer7q+nb21CHSMK9f8c1lLjt6/yeyZjHH
-   y+SLuXnqlDQOC0O12siE/8WDEQJqwj9UaNUDRNxSAyTKbwIpMuHXfi68y
-   bJivpTd3/YtK8ocBUBIcJq0vIm0c7B9a8VxSkF9QSHoQZvo6PMh0Bp+WJ
-   k=;
+  bh=R/D7+Ex7Pf63xwXU1HkOBgoErAFQ+xvEU7fj82vnitk=;
+  b=BwT0Mkp0mhBl6ZMiS34UPba1KegNecSUOhYfJgwANrW0fpoepAHB3hov
+   m5lj0bo5QQXLEU5x4d4zFpYJYv1A+sppaYFtGeMw/CZCnjYCZx2URoJjY
+   IJ5T5D1D3Gv8luHTn9zIrHkl98iGA6nd4TijDfHBfd9gsp9yRVsPmps+7
+   w=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,201,1725314400"; 
-   d="scan'208";a="98968288"
+   d="scan'208";a="98968289"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:18:01 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Michael Ellerman <mpe@ellerman.id.au>
+To: "David S. Miller" <davem@davemloft.net>
 Cc: kernel-janitors@vger.kernel.org,
 	vbabka@suse.cz,
 	paulmck@kernel.org,
-	Nicholas Piggin <npiggin@gmail.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Naveen N Rao <naveen@kernel.org>,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	linuxppc-dev@lists.ozlabs.org,
-	kvm@vger.kernel.org,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 13/17] KVM: PPC: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun, 13 Oct 2024 22:17:00 +0200
-Message-Id: <20241013201704.49576-14-Julia.Lawall@inria.fr>
+Subject: [PATCH 14/17] kcm: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 22:17:01 +0200
+Message-Id: <20241013201704.49576-15-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
 References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
@@ -80,34 +78,36 @@ The changes were made using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- arch/powerpc/kvm/book3s_mmu_hpte.c |    8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
+ net/kcm/kcmsock.c |   10 +---------
+ 1 file changed, 1 insertion(+), 9 deletions(-)
 
-diff --git a/arch/powerpc/kvm/book3s_mmu_hpte.c b/arch/powerpc/kvm/book3s_mmu_hpte.c
-index ce79ac33e8d3..d904e13e069b 100644
---- a/arch/powerpc/kvm/book3s_mmu_hpte.c
-+++ b/arch/powerpc/kvm/book3s_mmu_hpte.c
-@@ -92,12 +92,6 @@ void kvmppc_mmu_hpte_cache_map(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
- 	spin_unlock(&vcpu3s->mmu_lock);
+diff --git a/net/kcm/kcmsock.c b/net/kcm/kcmsock.c
+index d4118c796290..24aec295a51c 100644
+--- a/net/kcm/kcmsock.c
++++ b/net/kcm/kcmsock.c
+@@ -1584,14 +1584,6 @@ static int kcm_ioctl(struct socket *sock, unsigned int cmd, unsigned long arg)
+ 	return err;
  }
  
--static void free_pte_rcu(struct rcu_head *head)
+-static void free_mux(struct rcu_head *rcu)
 -{
--	struct hpte_cache *pte = container_of(head, struct hpte_cache, rcu_head);
--	kmem_cache_free(hpte_cache, pte);
+-	struct kcm_mux *mux = container_of(rcu,
+-	    struct kcm_mux, rcu);
+-
+-	kmem_cache_free(kcm_muxp, mux);
 -}
 -
- static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+ static void release_mux(struct kcm_mux *mux)
  {
- 	struct kvmppc_vcpu_book3s *vcpu3s = to_book3s(vcpu);
-@@ -126,7 +120,7 @@ static void invalidate_pte(struct kvm_vcpu *vcpu, struct hpte_cache *pte)
+ 	struct kcm_net *knet = mux->knet;
+@@ -1619,7 +1611,7 @@ static void release_mux(struct kcm_mux *mux)
+ 	knet->count--;
+ 	mutex_unlock(&knet->mutex);
  
- 	spin_unlock(&vcpu3s->mmu_lock);
- 
--	call_rcu(&pte->rcu_head, free_pte_rcu);
-+	kfree_rcu(pte, rcu_head);
+-	call_rcu(&mux->rcu, free_mux);
++	kfree_rcu(mux, rcu);
  }
  
- static void kvmppc_mmu_pte_flush_all(struct kvm_vcpu *vcpu)
+ static void kcm_done(struct kcm_sock *kcm)
 
 
