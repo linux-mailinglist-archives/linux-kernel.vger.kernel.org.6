@@ -1,137 +1,177 @@
-Return-Path: <linux-kernel+bounces-362952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362953-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78FBF99BBAB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2164099BBAD
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:29:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B26781C20DBD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DB960281864
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:29:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 176C814D2A0;
-	Sun, 13 Oct 2024 20:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 621CD14F12D;
+	Sun, 13 Oct 2024 20:28:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="JPGZWtCs"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cShxu2Fb"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A887F48C;
-	Sun, 13 Oct 2024 20:27:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F79214A619;
+	Sun, 13 Oct 2024 20:28:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728851265; cv=none; b=tZiJNfDf0/QxocjXMbJATqDP3x9QDs0gLk3x697v05VWxdmenINZE3mivHd3NwOCqd9pZakUJGkPYIJrOKVAq7ZLYRQ1J7sfyPzxcyd9MdF8/Oa0jZCy6v/l7dd5WsBcgUr+QcNui6bFhpLVjzHkR6bMDb4vevxjcuHRyJ//d+E=
+	t=1728851333; cv=none; b=sXgSAHIGRNp8xQWifD/50fyIpvmuGQ2Q///3wGBSt61fYK0P8Dvuwrzsy5tX1ZG0kG2VJVgEnW+npDnzchGGjy3UgYaSkNWTEzckujq99BI7hAKRJzxDO/RedrUJTL640AA4780ou8GR0Jujx/co39OCoBQJ6HqVY5OdEl+y7zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728851265; c=relaxed/simple;
-	bh=62/V9eJs/KS7YDoVYFGQZpWGLYhSj9R84vJQsQA0k0Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M5gO5RIG/XmGK8/uIhTaDQ4fsTmEJuQsTfZ4tCINJ3NUhrVIDgTLn7SN/8rfJ1mzj9PCKV4gr3xKnXW+QO9UNBkN11OVIH4zeZbMwsFwYsLyagxUuvtVDtcWTayCh59KbSxMkFO7q3/rze5JbV0VLMyc7odmwn2mXXxjIL70Kp0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=JPGZWtCs; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=QrBSdPL+PTvkNQLckrp23vyrqP/UgjfKLUytwWKGKho=; b=JPGZWtCsTMq3gEqBJj9Ed6XPaF
-	O/Mx9hNnb4alm+ViB/ARZTLca7ji8OJ5szNaH5Itwcg+eHXtYUI8ToRVkPjWGqpIKUDo2bOOdjJmN
-	dGaHoKmUzC5Y157E2hWFK/j0C6BtelRJSC6vD13dhcSJ65qnpZML39fGw6rsLrdzx8G6AQCN9/R6J
-	HqMLzAOheY1kKJmuXleyaD6qs91RKee+xlQ5HRPjWb0tNgOSfA+rsS0TXHXW5Gqo4wM4VOJZ+jRDD
-	C0ryetmMDOG2Nd79YBn+oiS1yyyVWDrs178iy7cKHx4mckcf3cu8q1EAMyK2zi9FWGA4noPq2o+6k
-	HuH0WY9A==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t05Bj-0001Q6-WF; Sun, 13 Oct 2024 22:27:40 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: Dragan Simic <dsimic@manjaro.org>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org
-Subject: Re: [PATCH v4 0/5] Binding and driver for gated-fixed-clocks
-Date: Sun, 13 Oct 2024 22:27:39 +0200
-Message-ID: <2342287.ElGaqSPkdT@diego>
-In-Reply-To: <3dd94272e827703c2a2a390fcbd9ff5b@manjaro.org>
-References:
- <20240906082511.2963890-1-heiko@sntech.de>
- <3dd94272e827703c2a2a390fcbd9ff5b@manjaro.org>
+	s=arc-20240116; t=1728851333; c=relaxed/simple;
+	bh=B14erMBGVuq9kG+SORUOBD0xFZqGRijfqMUyrsc3wOA=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=fLVqcYobBnEQnhkNSZNxSDSNcdAyHr8DiJd5BLWQC4eb7v8y4fcra1ABB/eGReo0YDGKhCHwBSDxCOfFSG29WnMfam2pS+F0XSIPL2gWttpemgFn04l8oINBxwDCwLKmDpkg6sqZSeiTpSzXxsUcoURhdvgEfyurk6jNg7iRrjU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cShxu2Fb; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a999521d0c3so604820166b.1;
+        Sun, 13 Oct 2024 13:28:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728851330; x=1729456130; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3wRWCdVZVlOXVVV3K+TnOo4abj1WCau4sw4RIKpf2YQ=;
+        b=cShxu2FbXj2xhKH5gCqtitsy8u5PdnnZrMIv5EWuVU61A9/qsT3JgxCJNWgxEfkuTl
+         0I+irojyVzwfUZFtY1gzSDHp8nSpBKKdcp0eS0MQum+GgCQ+uNtzb0InKoWtiefziidb
+         hqux6Lj8fNmq9QMh0Ov7WZWr7NN8PUCusQfWfGnNwtI7W7Gmql1D7dAG38GdaWdg8WPH
+         KTuehP10V5VFUzy7bKrrfuA+UUtoO035YeUXAXo3PHpF2Nuvym0X529Cn5s/jcRZIqGt
+         jTs5EgjhxcDvuGHM1w7aAUvSGLzt2akYkA3Jys7apjxYhSP+ab1qOb9mPzwNNNgSLVcg
+         wybw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728851330; x=1729456130;
+        h=content-transfer-encoding:cc:to:subject:from:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=3wRWCdVZVlOXVVV3K+TnOo4abj1WCau4sw4RIKpf2YQ=;
+        b=r5M7Z8pv0DELi05QoNDVZ1cEP1iY3DjtVrkr7VFcgd15TZ1Uzaaqfu7vfnMfTDgZGN
+         mhd6vMsBbu9L74NSbLGF/zAZsDMD2MyqycQB5XS4ou8N3YWNESvgoznAfynl9rDHsKaW
+         S8QkVdyLkEOvk8LYpjHLUdp3/emUnt6JUwITMfBUfyYszTM5ektHtTxDJxyZJjZrvsgK
+         /vCFwv12z4kSCCWF6SfWrHK6Ar5JvenDLxGejQRKqkglszrqrttqsjHzvl244aMiNd8A
+         1nQkp7jZafwfQio0LU8D8xke6W1KDxofxEBm3P56F2J7mTpkjX9vV/MPD739cNHVXPhK
+         uMgA==
+X-Forwarded-Encrypted: i=1; AJvYcCXKrOXwF36I1mg2PNZ5fyjnHnHdWhg0qwsSEK91LMSVLXqAVhDVmHmmQGVvFnZ1qcmDENED5l+AnDhRgEQR2w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YytuDaRg5VGq5PENKlXn784h9HGJz+Qry8xScyy6sVorwKyBpdP
+	fb93M0/R1hAqVWEMcs35rghEi/KRQBohEChzrJ/Jk4sOCRMydxNW6fxprP5+
+X-Google-Smtp-Source: AGHT+IFs8k6ARM1XBsiAlApkPDu0TO2sAvbk/FEu1+/7bODbqmT00VImgLMaitpFuy+TrqJfC18XtQ==
+X-Received: by 2002:a17:907:86ab:b0:a99:f887:ec09 with SMTP id a640c23a62f3a-a99f887ee29mr376832566b.35.1728851330052;
+        Sun, 13 Oct 2024 13:28:50 -0700 (PDT)
+Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a06169967sm114645266b.97.2024.10.13.13.28.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Oct 2024 13:28:49 -0700 (PDT)
+Message-ID: <a7eb3db4-ad0d-451a-9106-90d481bd3231@gmail.com>
+Date: Sun, 13 Oct 2024 22:28:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+Subject: [RFC] ipw2100 ipw2200 ps3_gelic rtl8712 --- Are we ready for wext
+ cleanup?
+To: linux-kernel@vger.kernel.org
+Cc: Kalle Valo <kvalo@kernel.org>, "David S . Miller" <davem@davemloft.net>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Geoff Levand
+ <geoff@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jakub Kicinski <kuba@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Larry Finger <Larry.Finger@lwfinger.net>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Pavel Machek <pavel@ucw.cz>,
+ Stanislaw Gruszka <stf_xl@wp.pl>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-wireless@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Stefan Lippers-Hollmann <s.l-h@gmx.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Am Sonntag, 13. Oktober 2024, 21:58:41 CEST schrieb Dragan Simic:
-> Hello Heiko,
-> 
-> On 2024-09-06 10:25, Heiko Stuebner wrote:
-> > Rockchip boards with PCIe3 controllers inside the soc (rk3568, rk3588) 
-> > have
-> > external oscillators on the board to generate the needed 100MHz 
-> > reference
-> > clock the PCIe3 controller needs.
-> > 
-> > Often these clock generators need supplies to be enabled to run.
-> > 
-> > Modelling this clock has taken a number of shapes:
-> > - The rk3568 Rock-3a modelled the generator-regulator as "phy-supply" 
-> > [0]
-> >   &pcie30phy {
-> >   	phy-supply = <&vcc3v3_pi6c_03>;
-> >   	status = "okay";
-> >   };
-> >   which is of course not part of the binding
-> > 
-> > - On the Rock-5-ITX the supply of the clock generator is controlled by
-> >   the same gpio as the regulator supplying the the port connected to 
-> > the
-> >   pcie30x4 controller, so if this controller probes first, both
-> >   controllers will just run. But if the pcie30x2 controller probes 
-> > first
-> >   (which has a different supply), the controller will stall at the 
-> > first
-> >   dbi read.
-> > 
-> > There are other types too, where an 25MHz oscillator supplies a PLL
-> > chip like the diodes,pi6c557 used on Theobroma Jaguar and Tiger boards.
-> > 
-> > As we established in v1 [1], these are essentially different types, so
-> > this series attempts to solve the first case of "voltage controlled
-> > oscillators" as Stephen called them.
-> > 
-> > With the discussion in v2, gated-fixed-clock was deemed one possible
-> > nice naming, so I did go with that.
-> 
-> Thanks, I find "gated-fixed-clock" a much better choice.
-> 
-> > Stephen also suggested reusing more of clk-gpio to not re-implement the
-> > gpio handling wrt. sleeping and non-sleeping gpios.
-> > 
-> > Though instead of exporting masses of structs and ops, 
-> > gated-fixed-clock
-> > is quite close to the other gpio-clocks, so I've put it into the 
-> > clk-gpio
-> > file.
-> 
-> Just checking, what's the current state of this patch series?
-> Would another review help with getting it accepted?
+Hi,
 
-I guess me needing to ping Stephen to look at it now that the
-merge window is done ;-) .
+origin of this question was the following patch series from Arnd Bergmann
+[PATCH 00/10] Remove obsolete and orphaned wifi drivers
+https://lore.kernel.org/linux-staging/20231023131953.2876682-1-arnd@kernel.org/
 
-In the previous version he sounded ok with the naming, so hopefully
-it'll just need a tiny ping.
+Here the remaining files that use iw_handler_def:
+drivers/net/ethernet/toshiba/ps3_gelic_wireless.c:static const struct 
+iw_handler_def gelic_wl_wext_handler_def = {
+drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct 
+iw_handler_def ipw2100_wx_handler_def;
+drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct 
+iw_handler_def ipw2100_wx_handler_def = {
+drivers/net/wireless/intel/ipw2x00/ipw2200.c:static const struct 
+iw_handler_def ipw_wx_handler_def = {
+drivers/staging/rtl8712/os_intfs.c:     pnetdev->wireless_handlers = 
+(struct iw_handler_def *)
+drivers/staging/rtl8712/rtl871x_ioctl.h:extern struct iw_handler_def 
+r871x_handlers_def;
+drivers/staging/rtl8712/rtl871x_ioctl_linux.c:struct iw_handler_def 
+r871x_handlers_def = {
 
 
-Heiko
+In this Email Greg writes over rtl8192e:
+https://lore.kernel.org/linux-staging/2024100810-payback-suds-8c15@gregkh/
+"...
+No staging driver should ever get in the way of api changes elsewhere in
+the kernel, that's one of the rules of this part of the tree.  So from
+my opinion, it's fine to delete it now.  It can always come back in a
+new way later on.
+..."
+
+So it should not be an issue to remove rtl8712.
+
+Stefan Lippers-Hollmann was one year ago still using the ipw2200.
+https://lore.kernel.org/linux-staging/20231024014302.0a0b79b0@mir/
+
+Here my opinion why I think we should reconsider this:
+
+I really like to use old hardware. One of my computers is from trash and 
+the other one is bought for 50€ three years ago. But non of my hardware 
+is from before 2012. Do we as a community really need to support 
+hardware from 2003 in kernel 6.13 for WLAN that evolved so rapidly? I do 
+not think so.
+
+People around me are complaining that the 2,4GHz WLAN is difficult to 
+use because so many devices are using it. Such slow devices consume a 
+lot of time to send and receive the data and block therefore other devices.
+
+The longterm kernels will still support this hardware for years.
+
+Please explain to our very high value resources (Maintainers, Developers 
+with wext and mac80211 expierience) that you cannot find any other 
+solution that is within technical possibility and budget (USB WLAN Stick 
+or exchange of WLAN module) and that they need to invest their time for 
+maintenance.
+Here the example of invested time from Johannes Berg:
+https://lore.kernel.org/all/20241007213525.8b2d52b60531.I6a27aaf30bded9a0977f07f47fba2bd31a3b3330@changeid/
+
+I cannot ask the Linux kernel community to support my test hardware just 
+because I bought it some time ago. Rather, I have to show that I use it 
+for private or business purposes on a regular basis and that I cannot 
+easily change.
+
+Using this hardware is security wise not state of the art as WPA3 is not 
+supported. We put so much effort into security. Why not here?
+
+Thanks for your response.
+
+Bye Philipp
+
+
+
+
+
 
 
 
