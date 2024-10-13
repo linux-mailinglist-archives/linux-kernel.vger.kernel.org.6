@@ -1,139 +1,82 @@
-Return-Path: <linux-kernel+bounces-362848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2C5E99B9E9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:15:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D0A5B99B9ED
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 199C21F218B9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:15:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8836A1F21A1B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6AC61474B9;
-	Sun, 13 Oct 2024 15:15:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE922145B22;
+	Sun, 13 Oct 2024 15:16:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k3ojjKLz"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="XsQxax/W"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15BF91465BE;
-	Sun, 13 Oct 2024 15:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BB311E4BE
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 15:16:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728832505; cv=none; b=OreFirI4BXZXvm86dgBXXUdz4877ongKFBE8VGQnADJU4YssWWWPqPLbohELfVZC2PxCfgD3ObtKbMIepU9tVn+kITixdJoZAVBkx5KZVrJJYF89m6RCb0P7E8L0AmbJX2NCCk1i0hwo2W4gZysIbXvVQn/bH1qb1/wIOQuHM4w=
+	t=1728832573; cv=none; b=DXmHfAWPdkafRX4SmsByUoTf4sc4CuAApvgPSdjVrh8z9SaQVA4p3YpRnlkf4Xd+f+uDLsoZATjowzU+6YSykzBVCNh8WrC+7LRu22Z54zk5zjJoEHBwY8YVXw+524MDJ/lt1plQD2r6w/gGzQMTnUV00O0fAxAhlc3z5TvVFKI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728832505; c=relaxed/simple;
-	bh=vkJo+KKJH8jayrJLeIZKAJjSZEELKwa+qrp4QZQxzcw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=qg7HsNdRvPO75bK1XDpOvQxt3eZSWF9gMXOLV8XYwaojRHvuciuyD9tRu/h1UTmp4KxVMzqETWL/7CepmNO+JgJZoCyzLwrPFOSvboISeWHGFLSLzFONVarGI5N+WzPrhRls3tmxklZAijEkYijwVQvYRNoVFTtC31EYp4baNqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k3ojjKLz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9834CC4CEC5;
-	Sun, 13 Oct 2024 15:15:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728832504;
-	bh=vkJo+KKJH8jayrJLeIZKAJjSZEELKwa+qrp4QZQxzcw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=k3ojjKLzsHxtMwwEBGCanAIRTnPaFgpECZ0TSkU/8vSuVJITEKqJrBsDK7XcDA0CK
-	 kxfa6eRmNiIthtrhPJSro2mN1MgYuUORs5hDfYiQxblJH7lWFXo2rry+IAJ4C/WXtv
-	 B5mHu0KH+tzTpBtwrtNpEBVj/EeIk6G8rZk/zFpwEHcINeJ0YeibvGY0XaciE5QUOt
-	 VywFlN0R1iUlTJpanTRT40288dC5zRG18CpbeNy/p+5HGvLP+HgBWmdWX+/o+iYUT5
-	 K5F3zkvMlwR8tBn89h/b2sb+FxeWAsyL9qIOqdH3jd2v90ADJXlF8lzQZ0B7OBvLvl
-	 9uD+Sae7BrpKw==
-Date: Sun, 13 Oct 2024 16:14:57 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Justin Weiss <justin@justinweiss.com>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
- <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
- "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
- =?UTF-8?B?cg==?= <philm@manjaro.org>
-Subject: Re: [PATCH 1/3] iio: imu: Add i2c driver for bmi260 imu
-Message-ID: <20241013161457.506c2296@jic23-huawei>
-In-Reply-To: <874j5grafd.fsf@justinweiss.com>
-References: <20241011153751.65152-1-justin@justinweiss.com>
-	<20241011153751.65152-2-justin@justinweiss.com>
-	<20241012120830.338aca19@jic23-huawei>
-	<874j5grafd.fsf@justinweiss.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728832573; c=relaxed/simple;
+	bh=LwNQhxVUo6C1sCl1q1TNCHwrJYruJN7+sWF3cLpi/P8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dt6UGglCrpHXqbNC1iHDKq4/P/oNlAIDqYW1fOx1+Hvhm4fN5lRJWLA2Wszh299bDd46orUHvGL9r9Hpa468QnPn3mHrIW15THMattFkpL7m4SixINIpl8/UrWNPeAzpLzrC3UBImXFG7gljmMZsx+rZpSMuIDXbzMsh+4uPyoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=XsQxax/W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71FAFC4CEC5;
+	Sun, 13 Oct 2024 15:16:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728832572;
+	bh=LwNQhxVUo6C1sCl1q1TNCHwrJYruJN7+sWF3cLpi/P8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XsQxax/WtwkAMY0zSV5grYDW51P8Y5eGCxMDu3U0zM2+4AQ6UC4Uj8MI8crk5qH+n
+	 aHjVy0AD8hXimTuSZNMUlCSXZXyq5mXzkIVBmNp8VPOwWHspAX2AhkcpciFO7N8pte
+	 g2lonbcjvR4l0RHkBUzPbp2FxfoN8qrI9lxRUGAE=
+Date: Sun, 13 Oct 2024 17:16:08 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Charles Han <hanchunchao@inspur.com>
+Cc: alexandru.ardelean@analog.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] uio: uio_fsl_elbc_gpcm: Add check devm_kasprintf()
+ returned value
+Message-ID: <2024101339-femur-juniper-3b77@gregkh>
+References: <20240929034223.59209-1-hanchunchao@inspur.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240929034223.59209-1-hanchunchao@inspur.com>
 
-
-> >> +static const struct acpi_device_id bmi270_acpi_match[] = {
-> >> +	{ "BOSC0260", (kernel_ulong_t)&bmi270_chip_info[BMI260] },
-> >> +	{ "BMI0260",  (kernel_ulong_t)&bmi270_chip_info[BMI260] },
-> >> +	{ "BOSC0160", (kernel_ulong_t)&bmi270_chip_info[BMI260] },
-> >> +	{ "BMI0160",  (kernel_ulong_t)&bmi270_chip_info[BMI260] },  
-> >
-> > Sigh.  That's not a valid ACPI ID or PNP ID.
-> > (Well technically it is, but it belongs to the Benson Instrument Company
-> > not Bosch)
-> >
-> > Which of these have been seen in the wild?
-> > For any that are not of the BOSC0160 type form add a comment giving
-> > a device on which they are in use.  
+On Sun, Sep 29, 2024 at 11:42:23AM +0800, Charles Han wrote:
+> devm_kasprintf() can return a NULL pointer on failure but this
+> returned value in uio_fsl_elbc_gpcm_probe() is not checked.
 > 
-> I know of the BMI0160 (this seems to be the most common way the BMI260
-> is identified on handheld PCs), and the 10EC5280 has been seen in the
-> wild, as described here:
-> https://lore.kernel.org/all/CAFqHKTm2WRNkcSoBEE=oNbfu_9d9RagQHLydmv6q1=snO_MXyA@mail.gmail.com/
+> Fixes: d57801c45f53 ("uio: uio_fsl_elbc_gpcm: use device-managed allocators")
+> Signed-off-by: Charles Han <hanchunchao@inspur.com>
+> ---
+>  drivers/uio/uio_fsl_elbc_gpcm.c | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> I have not personally seen any devices using BMI0260, but I'll add
-> comments to the BMI0160 and 10EC5280 entries with some examples of
-> devices that use those IDs.
+> diff --git a/drivers/uio/uio_fsl_elbc_gpcm.c b/drivers/uio/uio_fsl_elbc_gpcm.c
+> index 496caff66e7e..6378e752f828 100644
+> --- a/drivers/uio/uio_fsl_elbc_gpcm.c
+> +++ b/drivers/uio/uio_fsl_elbc_gpcm.c
+> @@ -384,6 +384,9 @@ static int uio_fsl_elbc_gpcm_probe(struct platform_device *pdev)
+>  
+>  	/* set all UIO data */
+>  	info->mem[0].name = devm_kasprintf(&pdev->dev, GFP_KERNEL, "%pOFn", node);
+> +	if (!info->mem[0].name)
+> +		return -ENOMEM;
 
-Drop any we don't have evidence are out there.
-
-Do we have any confirmation from Bosch (or products in the wild) for
-the structurally correct BOSC0160 etc?  Those would normally have
-to be tracked by Bosch as allocated for this purpose.
-
-> 
-> >> +	{ "10EC5280", (kernel_ulong_t)&bmi270_chip_info[BMI260] },  
-> >
-> > What's this one?  There is no such vendor ID.
-> >  
->
-...
-
-> >>  
-> >>  static const struct of_device_id bmi270_of_match[] = {
-> >> -	{ .compatible = "bosch,bmi270" },
-> >> +	{ .compatible = "bosch,bmi270", .data = &bmi270_chip_info[BMI270] },  
-> >
-> > If the bmi260 supports SPI, should be added here as well. (I've no idea if it does!)
-> >
-> > Or is this because you can't test it?  
-> 
-> Yeah, it was because I can't test it, the BMI260 does support SPI. I can
-> add entries here, though.
-> 
-> Should the ACPI match entries from I2C also go here? All of the devices
-> with mismatched IDs seem to use I2C so there might not be as much of a
-> problem here.
-We want the incorrect formatted ones to be as hard to use as possible to discourage
-them going into new products.  Can't do anything to solve the i2c cases
-but definitely don't want to allow them for SPI as well if no evidence
-of products where it yet matters.
-
-If we have confirmation from Bosch of the BOSC forms, then those I would like
-in the SPI drivers as well (to point to the correct option for anyone using
-this in future!)
-
-Jonathan
- 
-> 
-> >>  	{ }
-> >>  };
-> >>    
-> 
-> Thanks again,
-> Justin
+This is wrong, please fix your tools that created such a patch as it now
+leaks memory :(
 
 
