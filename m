@@ -1,83 +1,61 @@
-Return-Path: <linux-kernel+bounces-362771-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362772-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E1199B92D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:19:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CE3F99B92E
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:21:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E2491C20B3E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:19:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AEB6CB212C3
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:21:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD78913D89D;
-	Sun, 13 Oct 2024 11:19:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D48B13A3F4;
+	Sun, 13 Oct 2024 11:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="Mp00CnmF"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="TtoE8TDG"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E7E61E495;
-	Sun, 13 Oct 2024 11:19:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CEE713C8FF
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728818381; cv=none; b=TWOinhZ4QQlgSmNtv8oDlkBWQeZ0f1GDEcxAl2m5V7Us6q60n3S9oQavLC3iRj1XRAYhoxG0RBt7w/iMurjyZn9bnhxunCIBu/xlYyrc61RmZXl8Dj9kyrSyofUiMRYHTBkr7VwgSIPf5laqqYA3n6n3uoJ72UgbKzaAoSKisIc=
+	t=1728818499; cv=none; b=QWGTiL53jhQDQlGOozn6njBDMyGFLkZFSB6GelPBT/W7AHj1bo4Ll1jmW74dgQOpnfiUZOmkkL9LzzDKtGAOp4IdR1r23YFZdmNOtcHN0MZUbVXHTBC5RqkHhnjx5kTpe3UT9QYeRvo0JgrraFkdJdqKd5J2mq4Xwh6QTI7x6U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728818381; c=relaxed/simple;
-	bh=dQIhx85P5+avHvO6BNKpI2DsjSrClwyn3dzCv19zTLc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZOkn9oupuGZTVa7BQkdk8NYQWhfGFhff1hzG9Zy/UkSqudBFD8djgDaDPPHe47yE+aQAcfKzp2KJW78oCC8cV+15ytKMLUZpcQgudgDMtfwGGII8hlLLniOn4eadc3hISHJR/y1U+ts7WMweHg5EyfeQEZcE0OndOLG2phgLyZg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=Mp00CnmF; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c94c4ad9d8so2622256a12.2;
-        Sun, 13 Oct 2024 04:19:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1728818377; x=1729423177; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=a78jCwD07IIr0zzbJdTp9e6+G/hl6TYZEf6UvVEfM8c=;
-        b=Mp00CnmF3D89I7WflRb33xeyv6KNOQt5RrVT7cCcJx9m11AurHinuhd/LBQ6IHliH2
-         YcL64O5rxn0DH03abVF3n9Q6pstC8+l+No4fIXnjws+NTRzyiClgaPrx54NrVg8D8596
-         nDXOz7CaXbDsfIepSBSPG0xh409DsARbjPLWOyDEI24mIPhpN6TSkC1NzTVqgTYwrdNa
-         pqLwWtBIsI6CGYXSQNPpN8SDuC6wrGkDVYmdIj4CYfKeI16sTJkEdZK7oy5F6Z+tjJrL
-         xsz75KdcLum34A2CAnaub2NMgmRvAGfc3aemo4t1BY3mugDp6SLb8zee/4fRtK6crccs
-         BuBg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728818377; x=1729423177;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=a78jCwD07IIr0zzbJdTp9e6+G/hl6TYZEf6UvVEfM8c=;
-        b=FzArJWDHCko5KVOoZQbfU6AWYughpsnCVyHvnZQDuMeGxU12PXSuJo1FJsPPnaH8vw
-         4JQD9s5FsYhDeY+M0D/HZcHt/z+KFhvYR4QqaKm37ORegl179/Dcjb0MrYOgOnVvOfFe
-         oGjRh/QUncO3RS5LErHJfYWr47QiFZN18msX8fRlWo0bFQZsB7cdtXAKutzCvyrbvtzP
-         Cd/Pg3TYF5UvUBTFeSe1ViHk87SaRT+kngnLz1YM/nuZRLLo3a9PcmwySbQu3Gwep192
-         CbTuD9G446NX5SkrYcGVlkgmKs9zQTKC9MmRpdBUV85lsAcHCy8GlZeETipMUhGaj4HI
-         deSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXUBMOiwBX93dnWyf6R6oK5WBCya77pQdwje8EFIoMyLxfHXot+MXxPbCNf4yWpwOjpZDNeXr/1pAz5o3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy01I4JVXMoPaFvnboiLRpkCe6ypKp+ZDwDgQGVn9vP/pMqtAhh
-	GPyK5tjXV81hxWiTEp0J3lDcuqQcaLmcR3TYHgDLh5MuEVkh4zjEZ4+Jbw==
-X-Google-Smtp-Source: AGHT+IHJ6a9mQsJnncdL0rnghqhEUMCPwK/kDBKoEWEsI2SsB6487fRFXbL4XVwWNHCkWXHsgVrblA==
-X-Received: by 2002:a17:907:961e:b0:a9a:835:b4eb with SMTP id a640c23a62f3a-a9a0835b5c3mr117395766b.38.1728818376857;
-        Sun, 13 Oct 2024 04:19:36 -0700 (PDT)
-Received: from localhost.localdomain (dynamic-2a02-3100-ad8f-1500-0000-0000-0000-0e63.310.pool.telefonica.de. [2a02:3100:ad8f:1500::e63])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a99ea321959sm189788666b.194.2024.10.13.04.19.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 04:19:36 -0700 (PDT)
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-To: linux-wireless@vger.kernel.org
-Cc: Felix Fietkau <nbd@nbd.name>,
-	Lorenzo Bianconi <lorenzo@kernel.org>,
-	Ryder Lee <ryder.lee@mediatek.com>,
-	Shayne Chen <shayne.chen@mediatek.com>,
-	Sean Wang <sean.wang@mediatek.com>,
+	s=arc-20240116; t=1728818499; c=relaxed/simple;
+	bh=aEqNrPaE63M64VMK/rPodTd8i4FSi7lNmVtMM001xQ4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VyMVSc58alxpGe4hMdOKfZKX98HiWbdasHA1rjciD7WaAVJb7QrEHqMMTc683aBREpiizxOXTRLfCzA//jIj/QM76UC2jFhVyGK8kTwwSMeLtLwyQozpQIbBX+mOoxj0Nd02LVMmS1s2h/Z+QTtbBRpGYeWPlTJGYpRK9IEoB/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=TtoE8TDG; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id B7E7582E;
+	Sun, 13 Oct 2024 13:19:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728818395;
+	bh=aEqNrPaE63M64VMK/rPodTd8i4FSi7lNmVtMM001xQ4=;
+	h=From:To:Cc:Subject:Date:From;
+	b=TtoE8TDGiwX5eaZl/D+kkfQIj9kkzX5cdEMoEEQtnbPF8FZh6bR6lD44CHaXW6Crs
+	 rJcoZMEzFcy53qXgVoHvc/88bbWL7vxGILUTJxYKRzDJTlufPjyY8dZ4csZTdnH4wh
+	 YOx77U7RdGk6mh1cOS+9aj4jf/Z4RBohpwepVBG4=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Subject: wifi: mt76: mt7921 Survey is missing noise floor
-Date: Sun, 13 Oct 2024 13:19:20 +0200
-Message-ID: <20241013111920.679188-1-martin.blumenstingl@googlemail.com>
-X-Mailer: git-send-email 2.47.0
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	kernel-list@raspberrypi.com,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Umang Jain <umang.jain@ideasonboard.com>
+Subject: [PATCH v4 0/6] staging: vchiq: Lower indentation at various
+Date: Sun, 13 Oct 2024 16:51:22 +0530
+Message-ID: <20241013112128.397249-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,34 +64,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+Series is attempted to fix few alignments issues.                               
+Also, it aims to lower indentation of various nested `if` conditional           
+blocks without introducing any functional changes.                              
+                                                                                
+Changes in v4:
+- Improve return value from service_notify_bulks(3/6)
+- Drop 'service' and 'bulk' null check from 3/6 
 
-I'm using an MT7921 PCIe card in AP mode on the 5GHz band.
-It works well when I manually set a channel in hostapd.conf.
+Changes in v3:
+- fix status (return value) in 4/6
 
-Setting channel=0 or channel=acs_survey (both have the same meaning)
-should make hostapd check for a suitable channel and pick that
-automatically.
-Unfortunately this does not work as hostapd reports the following (for
-all frequencies/channels):
-    ACS: Survey for freq 5180 is missing noise floor
-    ACS: Survey for freq 5180 is missing noise floor
-    ACS: Survey for freq 5180 is missing noise floor
-    ACS: Survey for freq 5180 is missing noise floor
-    ACS: Survey for freq 5180 is missing noise floor
-    ACS: Channel 36 has insufficient survey data
+Changes in v2:                                                                  
+- Assimilated fixes from v1 which can make independent progress                 
+- drop following patches from v1:                                               
+  - [PATCH 2/8] staging: vchiq_core: Properly log dev_err()                     
+  - [PATCH 6/8] staging: vchiq_arm: Lower indentation of a conditional block    
+  - Will be handled separately                                                  
+- Rework 4/8 from v1                                                            
+  - Now included as "staging: vchiq_core: Refactor notify_bulks()"              
+                                                                                
+Link to v1:                                                                     
+https://lore.kernel.org/linux-staging/20241011072210.494672-1-umang.jain@ideasonboard.com/T/#t
 
-I suspect that this is due to mt792x_phy_update_channel() (from
-drivers/net/wireless/mediatek/mt76/mt792x_mac.c) which calls
-mt792x_phy_get_nf(). The latter just returns zero - so it seems
-reading the noise floor from the hardware/firmware is not
-supported yet.
+Umang Jain (6):
+  staging: vchiq_core: Locally cache cache_line_size information
+  staging: vchiq_core: Do not log debug in a separate scope
+  staging: vchiq_core: Indent copy_message_data() on a single line
+  staging: vchiq_core: Refactor notify_bulks()
+  staging: vchiq_core: Lower indentation in parse_open()
+  staging: vchiq_core: Lower indentation in vchiq_close_service_internal
 
-What is needed to implement this? I can test patches or - if
-someone describes which registers to program - I can also write
-a patch and submit it upstream.
+ .../interface/vchiq_arm/vchiq_core.c          | 184 ++++++++++--------
+ 1 file changed, 99 insertions(+), 85 deletions(-)
 
+-- 
+2.45.2
 
-Thank you and best regards,
-Martin
 
