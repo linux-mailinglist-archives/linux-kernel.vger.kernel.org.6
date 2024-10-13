@@ -1,142 +1,182 @@
-Return-Path: <linux-kernel+bounces-362834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDCBC99B9C2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:31:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB6A999B9BF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:30:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F34F11C20E31
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:31:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231D0281B6C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:30:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6447146D65;
-	Sun, 13 Oct 2024 14:30:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE70B13E02A;
+	Sun, 13 Oct 2024 14:30:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="jHqiDTmQ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="Q+Nv4bS9"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD0F804;
-	Sun, 13 Oct 2024 14:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F1F6804
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 14:30:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728829843; cv=none; b=XePjGSdVbhxSrl0Wqw2QgBfrBmJSmoPHVC/s2lCs2H03wM5THEGKuvBBYDA/JreeQVp7N3NgtSo6nafS1jcqpedIRAz1aToJyMeCR5+UDFJNeAxHvaLTP7zMtfJMjfkCSzJywO4SL6VyXeMGqs8oqLuYtjfbmy4qGnFIjGpkVNU=
+	t=1728829828; cv=none; b=LZl2Kq8b6SjFXcbUveB48wPK5EX3aHu3fq+NAm/ijifj+TKdV0+ZOEBQI9AGoN0GPbBT1OZQb1qrHKSa6sy4HCiI4x2oR8klRd3c4Kb+0uWSjHveZD8NxsIxcUP6FSjkO2xSvHJCgUmbjQKczxhF8eH3gkHSagzlcrm1XCPiPKE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728829843; c=relaxed/simple;
-	bh=AEmoM+EFuaT+288e1DXK4XYKWCGrIOxbGOJ/+zJg9lI=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=uCwJSuDhj4bjA4cQ4If2wBCUgCYfEtVUhDRzix+a5KeYaQ7/iNeNCGCcVoejy8xCqDOJ5A+tRU9vZvJA1TiHG4PZRcW9a3g4H8oR54q3LQdnUCmUmI9PCETXvpYMg6Nvmtpbz3qiRzc8jnlvIeuqD9x4DmOsrs5bBe71zSWYpys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=jHqiDTmQ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a99f646ff1bso146022466b.2;
-        Sun, 13 Oct 2024 07:30:40 -0700 (PDT)
+	s=arc-20240116; t=1728829828; c=relaxed/simple;
+	bh=KeXv3hCzSFiidY4IrwMesS2T/dxagoQkhkn6CIR4PMk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Py1tXx8UBZK1fvRq4wxwBg765SFPZbcCha+D4GSvTYiufUDU+X1CMM4iHOD4tOoRUMmjLC+4P/5dlO1EMGT5/VR0P5nwODQG8B1sRxKxqbMzTm9u3+8Zyoz4ufKeQ0+f+x+q2Kbu+EKo8Fdit8NO8UvUCzTFehQEoZjw3969pxc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=Q+Nv4bS9; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbcd8ce5f9so32280216d6.2
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 07:30:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1728829839; x=1729434639; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0glNYA5rVjsDnyfMCJSUHAQP7BmZHrAonKDRalhrkE=;
-        b=jHqiDTmQpBNw59UrmJINrX/dPWVvu/dz0b7HLEZwJs0/w+Cd2i1aA3lh27hgvfjJPF
-         3t9BKYOHgEV37/NQaze4cHylm2/vgxiuEsTheq17Ej8bsf0kXtJnXQeWLEGLwphmzi9N
-         spV9mPlUKlcm1AYbDn8K5uslX2VmrLAPljki+0ykHED9aZZGSI8AanA369lTrhXaFORt
-         FwXTulEkq24Nri1/qOhHJ2W/XMU+wF26JUj7a8A4rJ9KqQc7MeuCVRLp0tye5b/3HY/D
-         Hy6wPpa1C1F5pIbs3lvt0s0sY4fDXzM6gR/AkGUIRbgFB6qZU50lanPDh0Xa3a9Uo/qB
-         FKkw==
+        d=rowland.harvard.edu; s=google; t=1728829825; x=1729434625; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uABAPjV9+/b3KG2CCvAjSvJfENsBnDWYVNvtO1z0LFc=;
+        b=Q+Nv4bS9Atty4pfERk47aMaY6Wr/TQ030WufD787axiWPTcfPPDDnXOwcpMDJLUY54
+         DVGXpGwZogfm4jR6aAio8zyxtw1xEtjUOy/GS0MkFfiMwttkab9ejbWNQZP1FdX3jS1I
+         E1w0HzncYF2bimFZ6TioGipbQLyZPnuhneSVVXXAX9rl3z2btTTaCeVoyw7vF7NusTL4
+         73hojoybn3YsbXoOzVa2jhQztynFxiJXKpTKFG9yt0H+JchBI6J244xDfI4sQMB0G3z5
+         PBlaDuHQYqE0g64uyKQLjfzvXJec1op3Bbao4sMOzzeV+HhvVz1V05gBVwkMFk2FCHTX
+         29iA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728829839; x=1729434639;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=L0glNYA5rVjsDnyfMCJSUHAQP7BmZHrAonKDRalhrkE=;
-        b=Mmgl4R7vAfJ7aLm7LRz3H2Wb/fgHQfgfk2uvTF/SRqdTxSwvXvuGxGL68T8PHtOIIa
-         XCjScsagjDKJXbYZfcVOgdBkFrkRF6rRRWkXgx96vIcBcSKb3OiPWr/kjQUqvJZZPDQL
-         Mvne05LDYBPx0hYOmOURYXvk2+dTkMHvyfhzIiqutyGkni/pXBS14mlnwi74gmd6tQKu
-         Z26ylgUhT7s22Cqj0zbn++LWeYV/xJs5oPmo/MSyrHQF2Wp0SGDDz6VxalxCDM2dlQug
-         dz0/3qVGT3jog6reb1dSqWBoPC9YSj3PEr+6ujBFp7O9lv9eYygJlhp26IANMg7c8v8M
-         W7wA==
-X-Forwarded-Encrypted: i=1; AJvYcCUmoEFNgc9/nSHBblcExwVxJBJFWrj9lxQiPeFbZaqMS1BVCNw93NnnwFUMKin88EV7a8hkavZMdUCV@vger.kernel.org, AJvYcCX3OzFWgZUEXd/8tiduyCqJCseQiU9WeX7NEG80pczfeuSkmOykXkRgrzVhmaOVLl9d6f01qnilw1ePUj4P@vger.kernel.org
-X-Gm-Message-State: AOJu0YymPbNWpQ7XsQCT77nGX2zRaUBAieT6J8u6e0XXjCDKHDesBlay
-	eVvulG6uPgAL2qjatQezRIruZ8yxnO7X4vdv0kZffTsWJdBewLF6
-X-Google-Smtp-Source: AGHT+IFKXJhAqy3N9LwfreF+1hi3YEC45npDa52jeGv4glBoubxV5vad2zdUq+GQY4jnDZUy2Xchzg==
-X-Received: by 2002:a17:907:3689:b0:a99:5021:bcf0 with SMTP id a640c23a62f3a-a99b93cb817mr918249966b.34.1728829838441;
-        Sun, 13 Oct 2024 07:30:38 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:908:1587:1e60:ba33:7ef4:2f9b:8303])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99ef5d6b93sm192205866b.80.2024.10.13.07.30.37
+        d=1e100.net; s=20230601; t=1728829825; x=1729434625;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uABAPjV9+/b3KG2CCvAjSvJfENsBnDWYVNvtO1z0LFc=;
+        b=q8T0Dcc+udiVMK7b9r8PWPla31yjRxDlcpqSkmUuicAEpkEYBoaa2r43KkJG4/y8HG
+         VGxnM0phc3Fci5cYy1NShNXmkD4ODN8IAhkPFpCnlI/1l2rdrGyzrTSnXPxZpRsfX2By
+         625YyktEwSonmYVUcaeXvfe3zhneB0J/n4ZYuoycTmCBdVNeCeSirJ0hXWxRgG03cPd3
+         x3MfrIBuCf8YAiw9DqSB3VKjJgNN0j7HMWlpbIDVSRaYZXTq6TZcALwzY7ymTfgw1/SW
+         jpIF2iq+UuT+z0UXS5zIO+2ew6Dx5hhhqVFnfYLlStLEyjUNsTRoPZJNXdpwDNvDBe+5
+         K04w==
+X-Forwarded-Encrypted: i=1; AJvYcCVglIgtixfzuvP6nQfbwuNWjUnJSBO8BoEImu+pYScJVed22BQYuwE2hzCkDVHqr+Czylb9d+CqWXOyr8Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR+EyFZ+tgvTvOdIy6+gLL0ZSQOFNBJ4g+zfXuTwwvJ0usOFpj
+	nvID0Ey5ZOEQOoY2CtT+tKpOiqMTeA8HdPN18ALpwQTovugsgVt2ZbnnBwBBmA==
+X-Google-Smtp-Source: AGHT+IFl/5QKdPn+p65hu1eNNc2nrOM30wd1T0WBClKGGFxfpqpQH7woUzTY6u3DzdyX670dvk5t7w==
+X-Received: by 2002:a05:6214:44a1:b0:6cb:9b65:5c75 with SMTP id 6a1803df08f44-6cbf9e76eb2mr89835136d6.32.1728829824934;
+        Sun, 13 Oct 2024 07:30:24 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::267d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85b7767sm35506776d6.34.2024.10.13.07.30.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 07:30:38 -0700 (PDT)
-From: Cenk Uluisik <cenk.uluisik@googlemail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	Andy Yan <andyshrk@163.com>,
-	"GitAuthor: Cenk Uluisik" <cenk.uluisik@googlemail.com>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] arm64: dts: rockchip: Add board device tree for rk3588-orangepi-5b
-Date: Sun, 13 Oct 2024 16:30:09 +0200
-Message-ID: <20241013143016.16145-1-cenk.uluisik@googlemail.com>
-X-Mailer: git-send-email 2.46.0
+        Sun, 13 Oct 2024 07:30:24 -0700 (PDT)
+Date: Sun, 13 Oct 2024 10:30:20 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, sylv@sylv.io,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
+Message-ID: <5d7f23a2-dd39-432c-9908-174f6fffda0b@rowland.harvard.edu>
+References: <d6ec3898-b225-4c92-a381-46b111b6ddcf@rowland.harvard.edu>
+ <670b38de.050a0220.3e960.0032.GAE@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <670b38de.050a0220.3e960.0032.GAE@google.com>
 
----
- arch/arm64/boot/dts/rockchip/Makefile         |  1 +
- .../boot/dts/rockchip/rk3588s-orangepi-5b.dts | 26 +++++++++++++++++++
- 2 files changed, 27 insertions(+)
- create mode 100644 arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts
+On Sat, Oct 12, 2024 at 08:05:02PM -0700, syzbot wrote:
+> Hello,
+> 
+> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+> INFO: task hung in usb_register_dev
 
-diff --git a/arch/arm64/boot/dts/rockchip/Makefile b/arch/arm64/boot/dts/rockchip/Makefile
-index 09423070c992..45249ce15175 100644
---- a/arch/arm64/boot/dts/rockchip/Makefile
-+++ b/arch/arm64/boot/dts/rockchip/Makefile
-@@ -154,3 +154,4 @@ dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-nanopi-r6c.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-rock-5a.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-odroid-m2.dtb
- dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-orangepi-5.dtb
-+dtb-$(CONFIG_ARCH_ROCKCHIP) += rk3588s-orangepi-5b.dtb
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts
-new file mode 100644
-index 000000000000..107b65a5e7ea
---- /dev/null
-+++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts
-@@ -0,0 +1,26 @@
-+// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
-+
-+/dts-v1/;
-+
-+#include "rk3588s-orangepi-5.dts"
-+
-+/ {
-+	model = "Xunlong Orange Pi 5B";
-+	compatible = "rockchip,rk3588s-orangepi-5", "rockchip,rk3588";
-+};
-+
-+&sdhci {
-+	status = "okay";
-+};
-+
-+&sfc {
-+	status = "disabled";
-+};
-+
-+&wireless_bluetooth {
-+	status = "okay";
-+};
-+
-+&wireless_wlan {
-+	status = "okay";
-+};
--- 
-2.46.0
+That wasn't particularly helpful.  In fact, it gives the impression
+that the problem is caused by something else, not a bad dequeue.  None
+of the tasks listed in the console log are waiting inside usb_kill_urb().
 
+This time let's see all the enqueues, dequeues, and givebacks for
+non-control URBs.  I don't know that the problem is related to a
+non-control URB, but I do know that a bunch of control URBs succeed so
+it might help to keep the focus away from them.
+
+Alan Stern
+
+#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
+
+Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+===================================================================
+--- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
++++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
+@@ -50,7 +50,7 @@
+ #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
+ #define POWER_BUDGET_3	900	/* in mA */
+ 
+-#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
++#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
+ 
+ static const char	driver_name[] = "dummy_hcd";
+ static const char	driver_desc[] = "USB Host+Gadget Emulator";
+@@ -1301,10 +1301,12 @@ static int dummy_urb_enqueue(
+ 		dum_hcd->next_frame_urbp = urbp;
+ 	if (usb_pipetype(urb->pipe) == PIPE_CONTROL)
+ 		urb->error_count = 1;		/* mark as a new urb */
++	else
++		dev_info(dummy_dev(dum_hcd), "Enqueue %p\n", urb);
+ 
+ 	/* kick the scheduler, it'll do the rest */
+ 	if (!hrtimer_active(&dum_hcd->timer))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+ 
+  done:
+@@ -1325,9 +1327,15 @@ static int dummy_urb_dequeue(struct usb_
+ 
+ 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
+ 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
+-			!list_empty(&dum_hcd->urbp_list))
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
+-
++			!list_empty(&dum_hcd->urbp_list)) {
++		if (usb_pipetype(urb->pipe) != PIPE_CONTROL)
++			dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++				HRTIMER_MODE_REL_SOFT);
++	} else if (usb_pipetype(urb->pipe) != PIPE_CONTROL) {
++		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %p\n",
++				rc, urb);
++	}
+ 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
+ 	return rc;
+ }
+@@ -1984,6 +1992,8 @@ return_urb:
+ 			ep->already_seen = ep->setup_stage = 0;
+ 
+ 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
++		if (usb_pipetype(urb->pipe) != PIPE_CONTROL)
++			dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
+ 		spin_unlock(&dum->lock);
+ 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
+ 		spin_lock(&dum->lock);
+@@ -1995,8 +2005,7 @@ return_urb:
+ 		usb_put_dev(dum_hcd->udev);
+ 		dum_hcd->udev = NULL;
+ 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
+-		/* want a 1 msec delay here */
+-		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
++		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
+ 				HRTIMER_MODE_REL_SOFT);
+ 	}
+ 
+@@ -2391,7 +2400,8 @@ static int dummy_bus_resume(struct usb_h
+ 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
+ 		set_link_state(dum_hcd);
+ 		if (!list_empty(&dum_hcd->urbp_list))
+-			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
++			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
++					HRTIMER_MODE_REL_SOFT);
+ 		hcd->state = HC_STATE_RUNNING;
+ 	}
+ 	spin_unlock_irq(&dum_hcd->dum->lock);
 
