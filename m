@@ -1,176 +1,182 @@
-Return-Path: <linux-kernel+bounces-363002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363003-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DCA0199BC75
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:09:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 75DAD99BC96
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:36:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5605D281708
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:09:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1E6D31F2138B
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:36:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 200F01547EC;
-	Sun, 13 Oct 2024 22:09:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 293E813BAD5;
+	Sun, 13 Oct 2024 22:36:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bJue6bXK"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b="qbTzr8za"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD33612DD88;
-	Sun, 13 Oct 2024 22:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E3A231CAE
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 22:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728857345; cv=none; b=LlhQtqn+CuHbkoM5QrmqzkVgYf1oMFGG4vRMXq+iNv7wNCu2Tck2dZyLcBpItsifVOCG9dcnQPkp5M8OTWLoDczq/Z2g0/H9KvB9xL24+ZKBpZUdfAb352Pvassyn6oHma98HLpmP9JczWel7Ng0/9Mm1VJ8Mn/nsoxcTn1wAGo=
+	t=1728858985; cv=none; b=DPX+BoKiZRk7jbfz1LPEWxlTm2hplhqixW066wDnb+FHeRRNUklhvwmDzdvfzEz29rpyu++0QlViThdkckOhqDmuR4flSxXfwnuC8y+fR+Rjli5O19vRpiMjofzlQ93bObSpy3jHUKUejBnzuHtDXxnoBSNdTEjTLF5mUeQ0OiE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728857345; c=relaxed/simple;
-	bh=/GKPgCdm1mBgRK9eIeQBYqyP6YXxB870epx4GpO1es0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HmmChkZ9js4xg6zBf6BWEUmCbJtxKxSA07AweBnXUTDpzJomy23eWDR9y15Eadc9pyvf5vUfhWX4IoxLj1VBbvgQTENPWAhjjeOo5jzb9YGtuy9wONHMhokBcONP+qghvQXoNY8pKuDdxXNvOpgPXcU0JaV/kNOYrDC+D4QNMqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bJue6bXK; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a156513a1so7830966b.0;
-        Sun, 13 Oct 2024 15:09:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728857342; x=1729462142; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=g8IgltpRl4YdaKKPHMOvORvjaB1Lk4/3OAMCCKkqtZQ=;
-        b=bJue6bXKSlmrVa77viAZ7/QAwXi0i2OUIdxd3lpil3bQj1w9sP4eTM6Yz5OxmWDVeV
-         Z2YvVs5OPmC7fTy9P5grhsWNVq8mx5In2leq7iGlvPFe1AGDgrX2kIfC+PiV/XvVFASO
-         AMRwdWVxfaNUJCorWkkm9C9hikh2uAf/dS4B5Y/a1HNmzBbgrMdPpI18ZwViwKMfrCrW
-         128YBHBuheJb+KCJ5ujOWTe5+vZcVeXLjM27on55+LdRp8Ix4qDXSbilRwOLXFmvI+aQ
-         1Fg9p61QBhCsGP6DL4nkXI4Y7jm6gqAXBJdxZDvqh6RHNn0Aw9L0SrzFCG0vXbVtC59W
-         MDwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728857342; x=1729462142;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=g8IgltpRl4YdaKKPHMOvORvjaB1Lk4/3OAMCCKkqtZQ=;
-        b=M50y8c2NS1zsYWBnu0w9KRxvTbTUGji9KEt8muF7/23ak/atEOOfw1DSZeMHcThTcA
-         tGIrLDbyUeXQfyWQipRlE1JSDnu0buh48UkGvU81sFhQOJghcDOSYyOCGjTEYhlgLoN/
-         HeBIjuIWs+d/l0Q1BcfMkp5QU09aayO9uX8s2T9gywOQkg1s3AtAH6U3g0n/USRwRH+m
-         ijZxaomtVD5d8XyhcNwb6QmG6d+oaLqUm2oTq68mnZcNXRik0n5GWUUGuHOKDg8kUyxz
-         +m+oqrAyZe/K3e3VYRz1iT7+l9YhSrvAiUf7qV16Rl7xNripdRCCj05sLXkuN57yoeCy
-         ubbg==
-X-Forwarded-Encrypted: i=1; AJvYcCVMlCVFJMoqWNwhsgqaG96nrCkQTkIewuN+roxjB4Tw4+vRSMPSwmLTAWzub+XAC+BnjtCohRzV@vger.kernel.org, AJvYcCWpDTL1K7hdRoAqm1e9F1P10nktXHtFzj02KAOvDMHxSH+i3uGuHkaZABl+pEOlZEz96oKdoujL2kjPTfM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKUak25T4QItlv+iqLWomtPtHEZ2sEuYP341QY8rMbkRt0x8mS
-	YXtpgHgxYfX/gbF83OPnZQ1afiEb0ndvcjNOVj0rybA3DZhfxK8Oi07gsA==
-X-Google-Smtp-Source: AGHT+IEGLyOM9C6DNXIBOKCeb/9MUxexlVdY381v+Z5lTKKj+ty/Y1PjUGzpDB4miMsIbPpVfVS5kA==
-X-Received: by 2002:a17:907:7e9b:b0:a9a:1092:b10d with SMTP id a640c23a62f3a-a9a1092b228mr94415166b.33.1728857341814;
-        Sun, 13 Oct 2024 15:09:01 -0700 (PDT)
-Received: from ?IPV6:2a02:3100:aefe:d400:f8ab:214a:795a:fa3? (dynamic-2a02-3100-aefe-d400-f8ab-214a-795a-0fa3.310.pool.telefonica.de. [2a02:3100:aefe:d400:f8ab:214a:795a:fa3])
-        by smtp.googlemail.com with ESMTPSA id a640c23a62f3a-a9a1413fa91sm17260066b.131.2024.10.13.15.09.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 15:09:01 -0700 (PDT)
-Message-ID: <c7176768-1999-4167-b657-3afba97b81b7@gmail.com>
-Date: Mon, 14 Oct 2024 00:09:00 +0200
+	s=arc-20240116; t=1728858985; c=relaxed/simple;
+	bh=Peb6bcYmsijxQdZrKdqDRK3r6A3NRfXS5629e+5g/1E=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hqkQqOp+vv9Yg9lSU6lMGFiPGlzCkF0ZNC2Nd3dobnfnhkhcN9ljC8wKsslN1+03EfUMfHPY5ZLxHi6epHRvnALVjWDSQ+0klkdFD9NE22xUiyyEnLXwqUTdkkSIDb1JODYLYG+25ZLosIiaTcXlCRNCbnznVQux1qugqhMNxSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=spasswolf@web.de header.b=qbTzr8za; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1728858964; x=1729463764; i=spasswolf@web.de;
+	bh=aCw1oeSw8vSXVmoCunY1TVWsQxtjHFr3wh/NLJTUJag=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:In-Reply-To:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=qbTzr8zajSx1qrBlhxOQaq8a+ttJ31wT+DyOB/WhPiT5nZIJeuAt7LAQxvkrZsQs
+	 2/1mSqYTgpQg8JvuTtQLmw+zsciSOP2h7EzUUAV7/mkUE2lWZSGfMCA14dhw3/ar1
+	 cM9h8PPdetnzigRVEz1ZN/HIsoO+HiJzzGR6wIF8bFavEXknPgoW3F7pQUcqJoThP
+	 NrTvNZtAHp4hbbiMKSL3WfO9N6G4TwmdzlUpEW0kEKqTIbUfZXe9rlqcWhK6LHoXb
+	 8yGFCGdff/5bMrnTW1LCVeJBzWMDRY+atHcoCavwRI1daNdiJ9qdq14J3OSQLIuG6
+	 dJHg3mWE/FqYWQ2fWg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from localhost.localdomain ([84.119.92.193]) by smtp.web.de
+ (mrweb106 [213.165.67.124]) with ESMTPSA (Nemesis) id
+ 1N45xz-1u05Y23Ycz-012VC3; Mon, 14 Oct 2024 00:36:03 +0200
+From: Bert Karwatzki <spasswolf@web.de>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Bert Karwatzki <spasswolf@web.de>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v8 14/21] mm/mmap: Avoid zeroing vma tree in mmap_region()
+Date: Mon, 14 Oct 2024 00:35:59 +0200
+Message-ID: <20241013223601.3823-1-spasswolf@web.de>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: 2394412b-3037-4867-b16e-f155740d062c@lucifer.local
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 net-next] net: bgmac: use devm for register_netdev
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: =?UTF-8?B?UmFmYcWCIE1pxYJlY2tp?= <rafal@milecki.pl>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241013213400.9627-1-rosenp@gmail.com>
-Content-Language: en-US
-From: Heiner Kallweit <hkallweit1@gmail.com>
-Autocrypt: addr=hkallweit1@gmail.com; keydata=
- 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
-In-Reply-To: <20241013213400.9627-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:oeMJEhKzrJsasXR6f69El1Xi2vIV63h9KHEIkU+jCc6RQZyZdDE
+ GYMgWEYq0LKPmbmeTATny5/IRV6LpIZissNZ5b4Tg90U54EYVfZ8avPOJO5oCH1uq+n1fq/
+ eNj/isjcPAHjZKIZ36v7ChngQFa1vo+XvFlwl5MyG5BfBFlTyyEwRzDy6q13ozaEZUDkBXc
+ mYbJYpSmtYSq9s6q2ByNw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:6HqD0nUwwxQ=;96cZdo5uH9Aug1ItOI7oT9ISc7E
+ unzrB9Q39ACym07tq1L6ZCGNPOUgNJWnQQr82ypjP4drK84EkIDbp0slXJ5lgoM/sGdeXKjTc
+ nljzvlrlFNstzO/dZ9x/4IzlDB7+5VYa1eblMHOFA35/FRe8lLBAAtgMwyijR4iqT3T48to0Z
+ WrifDao4P97DClTKNhj7tcofIZPs4fK6ezia6RPtf3bQ2j639OQdwYQChFDfqxaCLo4aVnnVk
+ vBfzG6i/bQVLWECzLG0dwloELo9OW7XjBUF5KxuMtA0IdBd7HNqge/wGyHiNUPvUgD9DX5O+2
+ eLHmiSOuMOPsZUwk/ze5NPlk/p6VzhGZHBQFYIQjT3OeS6raydTw3W8UxjZZvWM0y1j09TYpR
+ 6jakVkIsw4EUsTmM5RaMjmet13+Pmt97ffHEGEkTE5SeIob5IQd1vBqH6bUPWZWXtXuArmPre
+ auRFPiRVe7HQXDWUXCxFdJpUeEu26HiXalltK5zpA+oFNIqeNN1aNYNikNIqifaxtxVahDa91
+ y6HXkNWqP1TK9wDANKD2fe+8vxQqPBbegEob//UWI/NDK0Fw6qq9ZPICncLOZuqX1Zd8Y8jPo
+ 0hEPHpJRCNMMTajPXU76LsERdbNDqQDH8dVka74GcPNeln5cvkr4G/trHQ15aGuDPTgE1a9id
+ aWn0F3F9FM8xrHirNJigExv2BUpi6sCjoVqOLGromdD/oZAUOqIYZGsKFuT5SmjZPxXBTVEyC
+ cP1FfL/2+knAPMAj6LhoO7N/g2e/rmpttnUexDWF7/cx7iy+TbI2zRk3gZLHxeSVjQUoBhATs
+ OdF94OTixX/rhcNXZPiZylbQ==
 
-On 13.10.2024 23:34, Rosen Penev wrote:
-> Removes need to unregister in _remove.
-> 
-> Tested on ASUS RT-N16. No change in behavior.
-> 
-This patch changes the order of calls. unregister_netdev() is now called
-only after remove(). Shouldn't there be some words about why this is safe
-and doesn't e.g. possibly result in race windows?
+I created a program which can trigger the bug on newer kernel (after the
+"Avoid zeroing vma tree in mmap_region()" patch and before the fix).
+My original goal was to trigger the bug on older kernels,
+but that does not work, yet.
 
-> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->  v2: added reviewed/tested-by broadcom.
->  drivers/net/ethernet/broadcom/bgmac.c | 3 +--
->  1 file changed, 1 insertion(+), 2 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/broadcom/bgmac.c b/drivers/net/ethernet/broadcom/bgmac.c
-> index 6ffdc4229407..2599ffe46e27 100644
-> --- a/drivers/net/ethernet/broadcom/bgmac.c
-> +++ b/drivers/net/ethernet/broadcom/bgmac.c
-> @@ -1546,7 +1546,7 @@ int bgmac_enet_probe(struct bgmac *bgmac)
->  
->  	bgmac->in_init = false;
->  
-> -	err = register_netdev(bgmac->net_dev);
-> +	err = devm_register_netdev(bgmac->dev, bgmac->net_dev);
->  	if (err) {
->  		dev_err(bgmac->dev, "Cannot register net device\n");
->  		goto err_phy_disconnect;
-> @@ -1568,7 +1568,6 @@ EXPORT_SYMBOL_GPL(bgmac_enet_probe);
->  
->  void bgmac_enet_remove(struct bgmac *bgmac)
->  {
-> -	unregister_netdev(bgmac->net_dev);
->  	phy_disconnect(bgmac->net_dev->phydev);
->  	netif_napi_del(&bgmac->napi);
->  	bgmac_dma_free(bgmac);
+Bert Karwatzki
+
+#define _GNU_SOURCE
+#include <stdlib.h>
+#include <stdio.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <errno.h>
+#include <sys/mman.h>
+
+int main()
+{
+	int ret, prot;
+	void *addr, *tmp =3D NULL;
+
+	// Create a lot of consecutive mappings to create a sufficiently deep map=
+le tree
+	for (int i =3D 0; i < 224; i++) {
+		// We're creating mappings with different PROT_ to
+		// avoid the vmas getting merged.
+		if (i % 2)
+			prot =3D PROT_READ;
+		else
+			prot =3D PROT_WRITE;
+
+			// These mappings are all at very low addresses in the virtual address =
+space so
+			// they are mapped before the text and data sections of the executable =
+and
+			// the library and stack mappings
+			tmp =3D mmap(tmp + 0x100000, 0x100000, prot, MAP_PRIVATE|MAP_ANONYMOUS,=
+ -1, 0);
+	}
+
+	//
+	// The maple node we're targetting has the range 0x7800000-0x86fffff (and=
+ 15 entries of size 0x100000 each)
+	//
+	//    Here is the layout of the tree before the spanning store:
+	//
+        //                     [0 - ffffffffffffffff]
+	//			/		\
+	//		       /		 \
+	//		[0-86fffff]		[8700000-ffffffffffffffff]
+	//	       /   |	   \               /         |
+	//	      /    |	    \		  /          |
+	//	   ... [6900000-  [7800000-     [8700000-   ...
+	//	     	77fffff]   86fffff]      87fffff]
+	//
+	// Do we always need a spanning_store AND a merge? Yes, and we must be ca=
+refull that we do not merge
+	// with the first vma of the next node.
+	//
+	// This gives a spanning_store because the newly created mapping can be m=
+erge with
+	// with the last mapping (0x7700000-0x77fffff) in the previous node as bo=
+th have PROT_WRITE.
+	// No corruption here! Why? This merges with the next node, too! (0x87000=
+00-0x87fffff is PROT_WRITE, too)
+	//addr =3D mmap((void *) 0x7800000, 0x1000000 - 0x100000, PROT_WRITE, MAP=
+_FIXED|MAP_PRIVATE|MAP_ANONYMOUS, -1, 0);
+
+	// This give a spanning_store, but no merge as the PROT_ flags do not fit=
+, no maple tree corruption here!
+	//addr =3D mmap((void *) 0x7700000, 0x1000000, PROT_NONE, MAP_FIXED|MAP_P=
+RIVATE|MAP_ANONYMOUS, -1, 0);
+
+	// this give a spanning store, but no merge, no corruption here!
+	//addr =3D mmap((void *) 0x7700000, 0x1000000, PROT_WRITE, MAP_FIXED|MAP_=
+PRIVATE|MAP_ANONYMOUS, -1, 0);
+
+	// This last example give the maple tree corruption and the validate_mm()=
+ error:
+
+	// The mapping from 0x7600000 to 0x7700000 has PROT_READ, so this gives t=
+he needed merge
+	addr =3D mmap((void *) 0x7700000, 0x1000000, PROT_READ, MAP_FIXED|MAP_PRI=
+VATE|MAP_ANONYMOUS, -1, 0);
+
+	// Just for waiting (to examine the mappings in /proc/PID/maps)
+	for (;;) {
+	}
+
+	return 0;
+}
+
+
 
 
