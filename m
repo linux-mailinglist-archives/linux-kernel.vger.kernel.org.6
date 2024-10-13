@@ -1,291 +1,140 @@
-Return-Path: <linux-kernel+bounces-362973-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1990E99BBEE
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:06:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1274C99BC55
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:43:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 44DCA1C20E95
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:06:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C2BFB21155
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:43:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9F6214F9E2;
-	Sun, 13 Oct 2024 21:06:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 050C814A60A;
+	Sun, 13 Oct 2024 21:43:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IyIr9xwX"
-Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="Ezg1B+X8";
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="TqyKREel"
+Received: from fallback24.i.mail.ru (fallback24.i.mail.ru [79.137.243.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 635A8136345;
-	Sun, 13 Oct 2024 21:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E30D1465BE;
+	Sun, 13 Oct 2024 21:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728853596; cv=none; b=UJJ/sug/9P/a6om7wTy/M3uoYCcT+hZMjrAMYNjJOCSoKUJ0Bp5VaYPwQCLYPnUyp4F/WWwb4oVRHW8qgd8d/eWj4H3S+VxNdiUTa9AmMUOHZTFIN9kaM/bW+7n6f3aH/JfPSZxR2o1GgajHbgnYY656qpzsB9vf0QVWsjk5u00=
+	t=1728855817; cv=none; b=q+YsV1RU2oM9vzWy9Hn2AqHDGiWagYSPsIMEZSiReVLNWdaqIsIcWSUIPdbdMpRPxXSl+TNaaAstQFZmpHLv2hzuO6jtk5oOE3L7KXUpfq7/EaJMjifZen5Vagkss1XLHWw1a7tOBqh+u4ZPRObbFxE1UA9dVojitekrRy9EvL0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728853596; c=relaxed/simple;
-	bh=4enJs+9RxNE+8mra+dRMKLHtA4hTVRm1HaNbX6EyVok=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bWxexyodMV00QsPdlux2oH8IjkDvf2Kelbb+9MLxPvGIKoxlZiddIc3xBbUg1R5hajK+jn95ZzlBpfgR5I8Drn6mmwdZU1zaU75oOs6NfmFqflgJ2jp5pJcP8WzxUuBofeFQbnG1yXeHwcdfr+tJO9mxZjbRuK9wOXKbhx+CA78=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IyIr9xwX; arc=none smtp.client-ip=209.85.222.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7afcf50e2d0so172629885a.3;
-        Sun, 13 Oct 2024 14:06:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728853593; x=1729458393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BsunMYkfbJcInqW9YDQzMawO9br1XEya0LYUq1wZSso=;
-        b=IyIr9xwXfwWSW9mPNvgPLqEuw6OEjHe6vZMM4rDImMGK/s0cgioREaPSGzh7/bRXz2
-         PrNlPQI7MJeG+GWl9LZ6P9az65X+OvAQelvSJSx4tlU79lcvv3/m2ZmmRVxGyw+uU/Hs
-         FiAAE7gtaI2lHGGkjovsKQqAeeklqJFTdNVGtWfQWGEvzExaPqLBx3ONsmPHCm9lGfe+
-         tAjwcZ0RIhzGh3QikxjDkGZYQz2Pl/bJH0e7kSgoAHZG5Bj3fPpGVXf8DTzi5paXo5En
-         dx7qphf5LLBYUXn7QdQWQLccc0fSymEubQxNjQuMZePzzO/NbLUwQve3vHkoZVJon6UP
-         82cQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728853593; x=1729458393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BsunMYkfbJcInqW9YDQzMawO9br1XEya0LYUq1wZSso=;
-        b=kZjOzjsDdeHud3MxqY1IaMyeYGoYeCR2gIuBjusrLAKnbOg2EBVUm/1udRayLl9orm
-         8WviNp3CQDEokpn/vvRW+25QHLYC59s9VbFV8WEO/oaqg77yIPAzufVluAes1oeidfAw
-         zSXSoZnBP8OYkwZNtErU0P1XRhucn2io9enejv0yt2pMVtdLrisJ4BLhBeLN9AjQhiCU
-         it9wlXcpxqUrKqNCTcn6HVEiqx3op643i2LiT4IPXaVJ4MQkcQCvc+5H4MaZEstx472Q
-         FkrqdcSluCX8SNvAhiGut+hOrhMjjmU+QXmnh4jLxtBjnHwnMKJid3LqMdBz2vInkv8k
-         NL6g==
-X-Forwarded-Encrypted: i=1; AJvYcCU7DdpmS3QZAlCjYszCcpAH1n7ZWteDUh8x5oHdLVij79Czw0JVI3PCgIq3bKtdw23trKOraQXB4nrLArg+9TE=@vger.kernel.org, AJvYcCXld9E0M/WkBJDydEr/826Zp6UAT9S86dtnoffte6pwphuMIFdhXJu96ZYZa2as1n/v6vjRrcRwE0Q3Vsw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPQey5dYU7jLY1+vcY6u/bLsEFeb5l35e+tbbW+g8xD3OzMaDU
-	QeZmiYYYGwv2TeYw7DGVicz4dv3Ja9WqBoa8vbCxVZ3sJlVPaio+
-X-Google-Smtp-Source: AGHT+IH3wyivp7AnI21rgqNvRf9ks6SjPA2swaVQ8uj8VmLPqX6iWNH9xNYxGXNGE0uebX1Ob648SA==
-X-Received: by 2002:a05:620a:8006:b0:7b1:1cc2:8238 with SMTP id af79cd13be357-7b11cc28247mr1540714685a.39.1728853593059;
-        Sun, 13 Oct 2024 14:06:33 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1149894efsm344451685a.131.2024.10.13.14.06.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 14:06:32 -0700 (PDT)
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailfauth.phl.internal (Postfix) with ESMTP id D7B861200076;
-	Sun, 13 Oct 2024 17:06:31 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-09.internal (MEProxy); Sun, 13 Oct 2024 17:06:31 -0400
-X-ME-Sender: <xms:VzYMZ0r4O1jLCuv096rwTyGtVFe54Bih4I9D-Fo-yD_PnnqLpzR88g>
-    <xme:VzYMZ6pPycpeLnxWUVqyHCG4EOfq_WQhOjTGOfwQHwhS8zxz3wsZsElkK5kIQ467q
-    _a9D9bMxsWajzYDEA>
-X-ME-Received: <xmr:VzYMZ5P_YQlAn3cDp93JHN0yGigS9AQ4j1qTFUT4oSGHIH7rza8-75Gpuwc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdegfedgudehlecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
-    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddv
-    necuhfhrohhmpeeuohhquhhnucfhvghnghcuoegsohhquhhnrdhfvghnghesghhmrghilh
-    drtghomheqnecuggftrfgrthhtvghrnhephfetvdfgtdeukedvkeeiteeiteejieehvdet
-    heduudejvdektdekfeegvddvhedtnecuffhomhgrihhnpehkvghrnhgvlhdrohhrghenuc
-    evlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpegsohhquhhn
-    odhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdeiledvgeehtdeigedqudejje
-    ekheehhedvqdgsohhquhhnrdhfvghngheppehgmhgrihhlrdgtohhmsehfihigmhgvrdhn
-    rghmvgdpnhgspghrtghpthhtohepudeipdhmohguvgepshhmthhpohhuthdprhgtphhtth
-    hopeguihhrkhdrsggvhhhmvgesghhmrghilhdrtghomhdprhgtphhtthhopegrrdhhihhn
-    uggsohhrgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhihuhguvgesrhgvughhrg
-    htrdgtohhmpdhrtghpthhtohepughirhhkrdgsvghhmhgvseguvgdrsghoshgthhdrtgho
-    mhdprhgtphhtthhopehojhgvuggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegrlh
-    gvgidrghgrhihnohhrsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprghnnhgrqdhmrghr
-    ihgrsehlihhnuhhtrhhonhhigidruggvpdhrtghpthhtohepfhhrvgguvghrihgtsehkvg
-    hrnhgvlhdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-X-ME-Proxy: <xmx:VzYMZ75Pv2QIOxdHzX9r0FxV-pPpfNbKF_qk87AGE6WIchA0wwi9_Q>
-    <xmx:VzYMZz5shUr5jAVaiZBz54mDad9BMVADq1pUMdnAvwIHC-hLD8V3jw>
-    <xmx:VzYMZ7hmHagvKB0YJQzn4g5y80zFFu8zwbzSDlEwZTBtDXE8z5Cziw>
-    <xmx:VzYMZ96dC7Ntiwvs-XW0RVsKLKT2ujbuDn7BAw3LqtFrKarRUhObaw>
-    <xmx:VzYMZ2J4IMGTXA73fiiUvulPQn2_vsF5w8f3Iuu_f7iheL8qBySRwwN6>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 13 Oct 2024 17:06:31 -0400 (EDT)
-Date: Sun, 13 Oct 2024 14:06:30 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Dirk Behme <dirk.behme@gmail.com>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Lyude Paul <lyude@redhat.com>,
-	Dirk Behme <dirk.behme@de.bosch.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Alice Ryhl <aliceryhl@google.com>, rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 00/14] hrtimer Rust API
-Message-ID: <Zww2Vhsl9sutNm0s@Boquns-Mac-mini.local>
-References: <e644aec7-02b3-4faf-9a80-629055c5a27a@de.bosch.com>
- <ZvwKTinnLckZm8aQ@boqun-archlinux>
- <87a5falmjy.fsf@kernel.org>
- <dae08234-c9ba-472d-b769-1d07e579a8ac@gmail.com>
- <Zwmy-2Yc7vGboYvl@boqun-archlinux>
- <d2ce38a3-9a32-4f4c-88f2-22864b66afe5@gmail.com>
- <ZwooHrqIiirl1so7@boqun-archlinux>
- <4dd93603-04fa-4da4-b867-bd12ece4b391@gmail.com>
- <Zwr3i4x7J5qyjFog@Boquns-Mac-mini.local>
- <c19edf2d-2b53-403f-abcc-a5e81e7613f8@gmail.com>
+	s=arc-20240116; t=1728855817; c=relaxed/simple;
+	bh=OJeB8nrZGQlyZrA4yg3ZWNlOiZLt8SHzBSZYmrNUP9Q=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iEd6QqA4gaMSPHCks7illEJ7WoxZhb62018CnK4yplgIJQXOP7mkKpqhg2ZFV/InoXtB8x/JrzlPUcSi4d9Sl/NT7J7B0ga33PzHNCQwkX2MECh8n/RioVtz+OkqXl8h5f8Qw7p9PbTVg/68MUkpRdd2mlAnQ/vOvuSitrnDkl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=Ezg1B+X8; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=TqyKREel; arc=none smtp.client-ip=79.137.243.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
+	h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=DJsoerbn2g9YnhOA+aAVi/ROcgeH/2vbVJReRJZRy0M=;
+	t=1728855814;x=1728945814; 
+	b=Ezg1B+X89+rKGz6sYrR9ZkUcb3gW+mIQNVDiNfKybl2yCfV5LwnAhxUoNQ01EezsxNCP/dTt0qVG5NCzd4rwcJihS+Po8nA46whP/I7p9mHCceR+Da5VdbakRdNO+BskA6W/keAk5p9iUGIndHZ0RNkFKxuoYNtdenypz1+OIX0=;
+Received: from [10.113.254.35] (port=55274 helo=smtp46.i.mail.ru)
+	by fallback24.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
+	id 1t064e-00CSOB-AR; Mon, 14 Oct 2024 00:24:24 +0300
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
+	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:
+	Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:In-Reply-To:References:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
+	X-Cloud-Ids:Disposition-Notification-To;
+	bh=DJsoerbn2g9YnhOA+aAVi/ROcgeH/2vbVJReRJZRy0M=; t=1728854664; x=1728944664; 
+	b=TqyKREelPumxFR0urMFbvaXlGYk9g9yUEvFP3sPKZchW0T1ShNJ7Nj9PBC5qA4hz2EaWgoZT9oU
+	OoPuKAkEbLqdNNwDiqHQhRX/uE/BCuMA0l943WDewkVBjHCccnRVieQYZFKn+iMRx1caeyWSsfqo9
+	NJsP53nK6frA6ce/Mus=;
+Received: by exim-smtp-57f79c7799-ff99r with esmtpa (envelope-from <danila@jiaxyga.com>)
+	id 1t064M-00000000ArH-0rF3; Mon, 14 Oct 2024 00:24:08 +0300
+From: Danila Tikhonov <danila@jiaxyga.com>
+To: neil.armstrong@linaro.org,
+	quic_jesszhan@quicinc.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux@mainlining.org,
+	danila@jiaxyga.com
+Subject: [PATCH 0/2] Add Samsung AMS581VF01 panel support
+Date: Mon, 14 Oct 2024 00:24:00 +0300
+Message-ID: <20241013212402.15624-1-danila@jiaxyga.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <c19edf2d-2b53-403f-abcc-a5e81e7613f8@gmail.com>
+Content-Transfer-Encoding: 8bit
+X-Mailru-Src: smtp
+X-7564579A: 646B95376F6C166E
+X-77F55803: 4F1203BC0FB41BD9B01871A0ED523BBFF2944416096D9CA3AE14DD4C63332AA4182A05F53808504013DD3176E971EEAA3DE06ABAFEAF67056BC648B22CFE4DC16FE32FC68D7A26215E6CE7239E2C5700
+X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE70CB15FA6C489297DEA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637040380BD28C1B15C8638F802B75D45FF36EB9D2243A4F8B5A6FCA7DBDB1FC311F39EFFDF887939037866D6147AF826D8EC40544D673B9D93B209FDF25BDF1A94320F95A1A5734699CC7F00164DA146DAFE8445B8C89999728AA50765F7900637F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637BA939FD1B3BAB99B389733CBF5DBD5E9B5C8C57E37DE458BD9DD9810294C998ED8FC6C240DEA76428AA50765F79006374DE940E1D5066CFBD32BA5DBAC0009BE395957E7521B51C2330BD67F2E7D9AF1090A508E0FED6299176DF2183F8FC7C028765F5520A300B2B3661434B16C20ACC84D3B47A649675FE827F84554CEF5019E625A9149C048EE140C956E756FBB7A2E808ACE2090B5E1725E5C173C3A84C3D6B8D1F75A55B56D75ECD9A6C639B01B78DA827A17800CE7DBBA001AFC1C4016731C566533BA786AA5CC5B56E945C8DA
+X-C1DE0DAB: 0D63561A33F958A581E5C18D857CD09F5002B1117B3ED696151D57D9E149EAF803803A57F48E4E5A823CB91A9FED034534781492E4B8EEAD05E80F4396618BB2C79554A2A72441328621D336A7BC284946AD531847A6065A17B107DEF921CE79BDAD6C7F3747799A
+X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF77DD89D51EBB7742D3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CF831D47FB02EB9A09BFDF06F2C0A4555CDFBFAD9B7E637E2BA4B00099E5EAAFC086260C86DC1AF1467C85317C21026A4916A324304D278F70E9F78341A6FF8F0F2B26EEB1B55DE588457F7985AD47CF5C02C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojbL9S8ysBdXh4Yk9t5uvvwexZDSZUiMG1
+X-Mailru-Sender: 9EB879F2C80682A09F26F806C7394981D35572ECED80C0D408AF9BFB128101EEF65C61FAEF2CAEDAECD8E3C9D15857412C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
+X-Mras: Ok
+X-7564579A: 646B95376F6C166E
+X-77F55803: 6242723A09DB00B42DA9BE0E4F7CCE4C920C9969AF7F7D50DA10E0C0C57A2ACB049FFFDB7839CE9E3928B87FA8A99B4499D9CF92E70DFBBC20C89EA2BDA1295B54D21228237775D6
+X-7FA49CB5: 0D63561A33F958A5CA61BECD78F80F474B52209FD31D9DB26365B2346D0CB40A8941B15DA834481FA18204E546F3947C27087801AC92D1FAF6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637E86CBEAED33ED63B389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3D8B0ABA717EF295735872C767BF85DA2F004C90652538430E4A6367B16DE6309
+X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojTJ02HBIKT7IGXOCpeSUWww==
+X-Mailru-MI: 8000000000000800
+X-Mras: Ok
 
-On Sun, Oct 13, 2024 at 07:39:29PM +0200, Dirk Behme wrote:
-> On 13.10.24 00:26, Boqun Feng wrote:
-> > On Sat, Oct 12, 2024 at 09:50:00AM +0200, Dirk Behme wrote:
-> > > On 12.10.24 09:41, Boqun Feng wrote:
-> > > > On Sat, Oct 12, 2024 at 07:19:41AM +0200, Dirk Behme wrote:
-> > > > > On 12.10.24 01:21, Boqun Feng wrote:
-> > > > > > On Fri, Oct 11, 2024 at 05:43:57PM +0200, Dirk Behme wrote:
-> > > > > > > Hi Andreas,
-> > > > > > > 
-> > > > > > > Am 11.10.24 um 16:52 schrieb Andreas Hindborg:
-> > > > > > > > 
-> > > > > > > > Dirk, thanks for reporting!
-> > > > > > > 
-> > > > > > > :)
-> > > > > > > 
-> > > > > > > > Boqun Feng <boqun.feng@gmail.com> writes:
-> > > > > > > > 
-> > > > > > > > > On Tue, Oct 01, 2024 at 02:37:46PM +0200, Dirk Behme wrote:
-> > > > > > > > > > On 18.09.2024 00:27, Andreas Hindborg wrote:
-> > > > > > > > > > > Hi!
-> > > > > > > > > > > 
-> > > > > > > > > > > This series adds support for using the `hrtimer` subsystem from Rust code.
-> > > > > > > > > > > 
-> > > > > > > > > > > I tried breaking up the code in some smaller patches, hopefully that will
-> > > > > > > > > > > ease the review process a bit.
-> > > > > > > > > > 
-> > > > > > > > > > Just fyi, having all 14 patches applied I get [1] on the first (doctest)
-> > > > > > > > > > Example from hrtimer.rs.
-> > > > > > > > > > 
-> > > > > > > > > > This is from lockdep:
-> > > > > > > > > > 
-> > > > > > > > > > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/kernel/locking/lockdep.c#n4785
-> > > > > > > > > > 
-> > > > > > > > > > Having just a quick look I'm not sure what the root cause is. Maybe mutex in
-> > > > > > > > > > interrupt context? Or a more subtle one?
-> > > > > > > > > 
-> > > > > > > > > I think it's calling mutex inside an interrupt context as shown by the
-> > > > > > > > > callstack:
-> > > > > > > > > 
-> > > > > > > > > ]  __mutex_lock+0xa0/0xa4
-> > > > > > > > > ] ...
-> > > > > > > > > ]  hrtimer_interrupt+0x1d4/0x2ac
-> > > > > > > > > 
-> > > > > > > > > , it is because:
-> > > > > > > > > 
-> > > > > > > > > +//! struct ArcIntrusiveTimer {
-> > > > > > > > > +//!     #[pin]
-> > > > > > > > > +//!     timer: Timer<Self>,
-> > > > > > > > > +//!     #[pin]
-> > > > > > > > > +//!     flag: Mutex<bool>,
-> > > > > > > > > +//!     #[pin]
-> > > > > > > > > +//!     cond: CondVar,
-> > > > > > > > > +//! }
-> > > > > > > > > 
-> > > > > > > > > has a Mutex<bool>, which actually should be a SpinLockIrq [1]. Note that
-> > > > > > > > > irq-off is needed for the lock, because otherwise we will hit a self
-> > > > > > > > > deadlock due to interrupts:
-> > > > > > > > > 
-> > > > > > > > > 	spin_lock(&a);
-> > > > > > > > > 	> timer interrupt
-> > > > > > > > > 	  spin_lock(&a);
-> > > > > > > > > 
-> > > > > > > > > Also notice that the IrqDisabled<'_> token can be simply created by
-> > > > > > > > > ::new(), because irq contexts should guarantee interrupt disabled (i.e.
-> > > > > > > > > we don't support nested interrupts*).
-> > > > > > > > 
-> > > > > > > > I updated the example based on the work in [1]. I think we need to
-> > > > > > > > update `CondVar::wait` to support waiting with irq disabled.
-> > > > > > > 
-> > > > > > > Yes, I agree. This answers one of the open questions I had in the discussion
-> > > > > > > with Boqun :)
-> > > > > > > 
-> > > > > > > What do you think regarding the other open question: In this *special* case
-> > > > > > > here, what do you think to go *without* any lock? I mean the 'while *guard
-> > > > > > > != 5' loop in the main thread is read only regarding guard. So it doesn't
-> > > > > > > matter if it *reads* the old or the new value. And the read/modify/write of
-> > > > > > > guard in the callback is done with interrupts disabled anyhow as it runs in
-> > > > > > > interrupt context. And with this can't be interrupted (excluding nested
-> > > > > > > interrupts). So this modification of guard doesn't need to be protected from
-> > > > > > > being interrupted by a lock if there is no modifcation of guard "outside"
-> > > > > > > the interupt locked context.
-> > > > > > > 
-> > > > > > > What do you think?
-> > > > > > > 
-> > > > > > 
-> > > > > > Reading while there is another CPU is writing is data-race, which is UB.
-> > > > > 
-> > > > > Could you help to understand where exactly you see UB in Andreas' 'while
-> > > > > *guard != 5' loop in case no locking is used? As mentioned I'm under the
-> > > > 
-> > > > Sure, but could you provide the code of what you mean exactly, if you
-> > > > don't use a lock here, you cannot have a guard. I need to the exact code
-> > > > to point out where the compiler may "mis-compile" (a result of being
-[...]
-> > > I thought we are talking about anything like
-> > > 
-> > > #[pin_data]
-> > > struct ArcIntrusiveTimer {
-> > >        #[pin]
-> > >        timer: Timer<Self>,
-> > >        #[pin]
-> > > -      flag: SpinLockIrq<u64>,
-> > > +      flag: u64,
-> > >        #[pin]
-> > >        cond: CondVar,
-> > > }
-> > > 
-> > > ?
-> > > 
-> > 
-> > Yes, but have you tried to actually use that for the example from
-> > Andreas? I think you will find that you cannot write to `flag` inside
-> > the timer callback, because you only has a `Arc<ArcIntrusiveTimer>`, so
-> > not mutable reference for `ArcIntrusiveTimer`. You can of course use
-> > unsafe to create a mutable reference to `flag`, but it won't be sound,
-> > since you are getting a mutable reference from an immutable reference.
-> 
-> Yes, of course. But, hmm, wouldn't that unsoundness be independent on the
-> topic we discuss here? I mean we are talking about getting the compiler to
+This patch series adds support for the Samsung AMS581VF01 panel, used in
+the Google Pixel 4a (sm7150-google-sunfish). Unlike many other devices,
+which may use different panels in various revisions, the Pixel 4a has only
+one possible panel option. Also this panel is not used in other devices.
+Testing has been done by me.
 
-What do you mean? If the code is unsound, you won't want to use it in an
-example, right?
+The driver initializes the panel in normal mode (High Brightness Mode and
+Brightness Dimming are disabled). High Brightness Mode and Brightness
+Dimming are not supported yet.
 
-> read/modify/write 'flag' in the TimerCallback. *How* we tell him to do so
-> should be independent on the result what we want to look at regarding the
-> locking requirements of 'flag'?
-> 
-> Anyhow, my root motivation was to simplify Andreas example to not use a lock
-> where not strictly required. And with this make Andreas example independent
+In the downstream device tree, the panel is named as
+"dsi-panel-sofef01-1080p-cmd".
 
-Well, if you don't want to use a lock then you need to use atomics,
-otherwise it's likely a UB, but atomics are still WIP, so that why I
-suggested Andreas to use a lock first. But I guess I didn't realise the
-lock needs to be irq-safe when I suggested that.
+To: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: Maxime Ripard <mripard@kernel.org>
+To: Thomas Zimmermann <tzimmermann@suse.de>
+To: David Airlie <airlied@gmail.com>
+To: Simona Vetter <simona@ffwll.ch>
+To: Rob Herring <robh@kernel.org>
+To: Krzysztof Kozlowski <krzk+dt@kernel.org>
+To: Conor Dooley <conor+dt@kernel.org>
+Cc: dri-devel@lists.freedesktop.org
+Cc: devicetree@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Cc: linux@mainlining.org
+Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
 
-Regards,
-Boqun
+Danila Tikhonov (2):
+  dt-bindings: display: panel: Add Samsung AMS581VF01
+  drm/panel: Add Samsung AMS581VF01 panel driver
 
-> on mutex lockdep issues, SpinLockIrq changes and possible required CondVar
-> updates. But maybe we find an other way to simplify it and decrease the
-> dependencies. In the end its just example code ;)
-> 
-> Best regards
-> 
-> Dirk
-> 
-> 
-> > Regards,
-> > Boqun
-> > 
-[...]
+ .../display/panel/samsung,ams581vf01.yaml     |  79 +++++
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../gpu/drm/panel/panel-samsung-ams581vf01.c  | 283 ++++++++++++++++++
+ 4 files changed, 372 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,ams581vf01.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-ams581vf01.c
+
+-- 
+2.47.0
+
 
