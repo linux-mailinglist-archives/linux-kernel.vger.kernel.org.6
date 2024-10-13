@@ -1,138 +1,200 @@
-Return-Path: <linux-kernel+bounces-362863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362864-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CDD3099BA47
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:04:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA63499BA4A
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 18:08:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B13E1C20D62
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:04:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 358391F21B93
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE21A1474C5;
-	Sun, 13 Oct 2024 16:04:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l1LylkWo"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8083146D6E;
+	Sun, 13 Oct 2024 16:08:05 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 990C7231CB0;
-	Sun, 13 Oct 2024 16:04:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A9B231CB0
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 16:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728835464; cv=none; b=Jd1aZAnr7yopHjGFFpdZJtuLMIyqeZPE4h3NmtpadmlmN7x+1h4TKax8cU+exayDCSyyl7a563ioPh01VTl7D/GOK6xMUrkEOuf9IDJjNoG/rt2w+XvV2mhg4MRCe1JiquuFjgtjKhqC5t0faYCI80H/8RPy04cverMyJe9LFBk=
+	t=1728835685; cv=none; b=JX9u9jHKxXxbZs0a0wWgVjp3DOLVkQk1/TpQfRIPvppJyp9tUGotcPk+AHHx7Jjb+Z+rEfJBG2mLcvmErbQZEtRc6uigUvawyxpd6yTnteQ4otpet6kEihbrpGh9evxD1MAVh5r4yJpO8AJYLYCodXPYmA/Fo6izI8MMJ2DsfWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728835464; c=relaxed/simple;
-	bh=Rgqj9KqJRVNtDFthVWkXCI3CDWKP0NGV+HW4m8PVIOA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rav5nwrQjPMgcmmDlFCXA/HfZBf/LN78p7/hnus5n2JvUwsLTGg2AEvdEV9uG14eY6WXSaTafdkClFJrmKHEM07U9z9s4Nzjovl8mMyXYdpX0mhngXIeGjGXWsNg3GaKlub3pVACHYk3Z4h+yvAHBsgm2N2ZvkxbHA6umiwW4KE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l1LylkWo; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-430558cddbeso22917205e9.1;
-        Sun, 13 Oct 2024 09:04:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728835461; x=1729440261; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5gMpna/8AYXdCR0wRcOc/2xASvv+nmGVic53OMYWL0o=;
-        b=l1LylkWotX3MdTgl+ASCcroe5/+PjPwSrS7zEplUA3lm3t0er/v82dIuWowHQhhsq/
-         y3tfP3Frtw7EUJwopm7Wdj9MdMG/J3hCluUFpwZSqe3aTHtjzzrPqiWNXZri7OvSgz1G
-         z1PnljrnsiSDouqrYfXtMS0gvtQPlnquUHQTn6nNRyLhN6tLlMJOvFsyq7MGXyrXk+UU
-         9tskmH00AC5O4bjilTHBa54J1ZN5wsK/ODawit1+y6A7Xu3/i4WpS8hq+/LrzrLm3kAt
-         doBo0chaDzHMPCAbuCCTjLJNFcdLnfv0fznMOnaEUii2BHJ7RNgv0Nrj6JbtXirlThIy
-         YlyA==
+	s=arc-20240116; t=1728835685; c=relaxed/simple;
+	bh=J9ytW0yYtK0d2y28INGlpMNqMbENvamTFIUIHD+U8jA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Yyi/ILJx2y3vnWvv1VKHFx6Xi35Cm/KtiKwhgEfJcjaE6irtKkW095diV39p/0KnoqwXeCzjA1J2G8KEZXD83ySWy3R0hzmAbMsVPnvjSsBtWWicR4ezawRkzU4Co1N1VvmNv66NeV2lef+JBUe7W+bRhx+tzGVh4IIOBSxELtk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3a6afd01eso27205585ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 09:08:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728835461; x=1729440261;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5gMpna/8AYXdCR0wRcOc/2xASvv+nmGVic53OMYWL0o=;
-        b=wRC1SUcp410Ll/tjAZ0ZwzrYX1+hjSlNsWUrFBvcUNl6u5AE6bo1I7irhJfmPUHJA9
-         AzRKlxZxWOYHV+Y8ebixEKSMr+mNiuRmj3vfMjesOdF9CIvMUrVA0fYiKOf9uuqZj8gN
-         Boqaz/nhCCvp7kMGGL1HwYE2wKbhac1ZqTW18mDUJn3msi6XDcH9QSCEO3mKMram1blc
-         FoZOppC63bnTb8aJEozNG3PAfz7n7//Fd1S2Iglrg9ZLcQZ4Evs7FDvBUFqWLcoYJZHe
-         KZLiaeE2EQFlJsB1jxDhR3m2/ttxG9QU3iiSjBA1ckuwBkiN+mNuU5pL2/pMlGonlpdr
-         mAOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTvCCVBq3QGMkVxhCIEF9VbpVifbalfk5JNizp8TNVyuHVZoZDKgfrygVHOcuRg5T2Ehoz3ePNutMo@vger.kernel.org, AJvYcCWP0fZSufPICeeZ1nley3VrvdUH/XUmw1gdibte8oOLdikNriOwWYXTjCSlD7ppW2dwEPT9pAX1ts5EYb9K@vger.kernel.org, AJvYcCXQlcHxcTBaMq78I2+mAuLWfKWlPtGOV3llpsxj52wcQojabZiKg2uHmhUtDFYBtGg6A7H1bRV9YDk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzy/AHcnSROLGCwRVgBmFpH828hE4erYr2t/Uv/nqV+BW8L7AR5
-	uLgHrfvFEFeeQnn/Id5+r1nxDrng6qnOxOPBJw8G6dUdIW63jNmgvHAwKs7BndvXFDEhlPtYKn1
-	x4tZ+Ld5By/OVVpZAocn43nIMZww=
-X-Google-Smtp-Source: AGHT+IFnhmlYgpEhWeyPYax2Xt7ebzE0H4KnqzeDfB8AqkfjBNX4rSLlp5VGE2NO4VU+LCR1OkSF/cZoTAfjMs9zl4E=
-X-Received: by 2002:a05:600c:1c9f:b0:42c:ba81:117c with SMTP id
- 5b1f17b1804b1-4311d8914ecmr69774385e9.6.1728835460697; Sun, 13 Oct 2024
- 09:04:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728835682; x=1729440482;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ikrtxkf2WWvsBECTnbcnMW6mXXhsa0PYGQaLwwh8nyI=;
+        b=arfuJIN3IGaakOPS2koizULkWTXtnQA65proXD1euDgMdPT3zxhOvnUMqQzG+9vtOy
+         58pmtrOucWhJHxZpdLvtDQz1Nbfa5Q5vSLGZMMIH+eBX81VnHgLoz4jGmrknIyiNOSUs
+         ceNxsbVdtDHnB46xa4AzPna9yunzD0KxRzYmBnG5GppS4P2NQKaF9rMTggofFjFHlZcM
+         n0E9AkNwiCgZwMPXXj0orYtbawpvgXkXCKn0y4+zZAJK8cWwqTBn7tATSRMjdZRwoZcU
+         CwQEwpAZBtMUURrvlrKp4jSlTJaA3sIKrNJ0o8LNa8suSnZUOk/PD06thsLW3L/09qoV
+         5a8g==
+X-Forwarded-Encrypted: i=1; AJvYcCUQV1e3FCNZl0bacAM6+PhGYEu45T40CQtR7lgbx3LLOamQK6BvgRk6ZSlkpXIaLQwX1MDRoD4SN+zii7w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+UrLB41BM5i7jFtgu6u3BJZAp3RuB5ojxSYVgpVtDjHdhideR
+	JYMSFxCD5l6yXOdPOFh6B/nCgnPCWpchyVdtZW+EAgWkr1flIU7WPwtWWDpzOPKgK0cqTsHsnZ9
+	1fVnP8Ujw7sp0ItsRDQj/v/ZDfuWmRq7J/fzLSY+6U8l0PuMYIjO0Sj0=
+X-Google-Smtp-Source: AGHT+IGzcAGKbZjorkL2XMRfzRkPghTWl7NFHwugNuq+TnOLnUSfToHh/Ku2XrWx8WLyXkDu1MTPhxNBpKJNNLVoBi0ThV5qqoV8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+fCnZdeuNxTmGaYniiRMhS-TtNhiwj_MwW53K73a5Wiui+8RQ@mail.gmail.com>
- <20241013130211.3067196-1-snovitoll@gmail.com> <20241013130211.3067196-2-snovitoll@gmail.com>
-In-Reply-To: <20241013130211.3067196-2-snovitoll@gmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Sun, 13 Oct 2024 18:04:10 +0200
-Message-ID: <CA+fCnZd2pANBuapU4akh3a1+K2ytk+7t2B64Z_x2Xj4Wh_ELSw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] kasan: move checks to do_strncpy_from_user
-To: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-Cc: akpm@linux-foundation.org, dvyukov@google.com, glider@google.com, 
-	kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	ryabinin.a.a@gmail.com, vincenzo.frascino@arm.com, elver@google.com, 
-	corbet@lwn.net, alexs@kernel.org, siyanteng@loongson.cn, 
-	2023002089@link.tyut.edu.cn, workflows@vger.kernel.org, 
-	linux-doc@vger.kernel.org
+X-Received: by 2002:a05:6e02:4a3:b0:3a3:c07e:e21b with SMTP id
+ e9e14a558f8ab-3a3c07ee30amr22302595ab.1.1728835682703; Sun, 13 Oct 2024
+ 09:08:02 -0700 (PDT)
+Date: Sun, 13 Oct 2024 09:08:02 -0700
+In-Reply-To: <d21ac7f8-ab23-4b37-80f6-43836bbdbf12@nvidia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670bf062.050a0220.4cbc0.0033.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Sun, Oct 13, 2024 at 3:01=E2=80=AFPM Sabyrzhan Tasbolatov
-<snovitoll@gmail.com> wrote:
->
-> Since in the commit 2865baf54077("x86: support user address masking inste=
-ad
-> of non-speculative conditional") do_strncpy_from_user() is called from
-> multiple places, we should sanitize the kernel *dst memory and size
-> which were done in strncpy_from_user() previously.
->
-> Fixes: 2865baf54077 ("x86: support user address masking instead of non-sp=
-eculative conditional")
-> Signed-off-by: Sabyrzhan Tasbolatov <snovitoll@gmail.com>
-> ---
->  lib/strncpy_from_user.c | 5 +++--
->  1 file changed, 3 insertions(+), 2 deletions(-)
->
-> diff --git a/lib/strncpy_from_user.c b/lib/strncpy_from_user.c
-> index 989a12a6787..f36ad821176 100644
-> --- a/lib/strncpy_from_user.c
-> +++ b/lib/strncpy_from_user.c
-> @@ -31,6 +31,9 @@ static __always_inline long do_strncpy_from_user(char *=
-dst, const char __user *s
->         const struct word_at_a_time constants =3D WORD_AT_A_TIME_CONSTANT=
-S;
->         unsigned long res =3D 0;
->
-> +       kasan_check_write(dst, count);
-> +       check_object_size(dst, count, false);
-> +
->         if (IS_UNALIGNED(src, dst))
->                 goto byte_at_a_time;
->
-> @@ -142,8 +145,6 @@ long strncpy_from_user(char *dst, const char __user *=
-src, long count)
->                 if (max > count)
->                         max =3D count;
->
-> -               kasan_check_write(dst, count);
-> -               check_object_size(dst, count, false);
->                 if (user_read_access_begin(src, max)) {
->                         retval =3D do_strncpy_from_user(dst, src, count, =
-max);
->                         user_read_access_end();
-> --
-> 2.34.1
->
+Hello,
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+BUG: workqueue leaked atomic, lock or RCU: kworker/NUM:NUM[NUM]
+
+BUG: workqueue leaked atomic, lock or RCU: kworker/1:5[6129]
+     preempt=0x00000000 lock=0->1 RCU=0->0 workfn=smc_ib_port_event_work
+1 lock held by kworker/1:5/6129:
+ #0: ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
+CPU: 1 UID: 0 PID: 6129 Comm: kworker/1:5 Not tainted 6.12.0-rc2-syzkaller-00002-g615b94746a54-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events smc_ib_port_event_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ process_one_work kernel/workqueue.c:3250 [inline]
+ process_scheduled_works+0x1158/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc2-syzkaller-00002-g615b94746a54-dirty #0 Not tainted
+------------------------------------------------------
+kworker/1:5/6129 is trying to acquire lock:
+ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3204 [inline]
+ffff88801ac80948 ((wq_completion)events){+.+.}-{0:0}, at: process_scheduled_works+0x93b/0x1850 kernel/workqueue.c:3310
+
+but task is already holding lock:
+ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #1 (rtnl_mutex){+.+.}-{3:3}:
+       reacquire_held_locks+0x3eb/0x690 kernel/locking/lockdep.c:5350
+       __lock_release kernel/locking/lockdep.c:5539 [inline]
+       lock_release+0x396/0xa30 kernel/locking/lockdep.c:5846
+       process_one_work kernel/workqueue.c:3236 [inline]
+       process_scheduled_works+0xb70/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #0 ((wq_completion)events){+.+.}-{0:0}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       process_one_work kernel/workqueue.c:3204 [inline]
+       process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(rtnl_mutex);
+                               lock((wq_completion)events);
+                               lock(rtnl_mutex);
+  lock((wq_completion)events);
+
+ *** DEADLOCK ***
+
+1 lock held by kworker/1:5/6129:
+ #0: ffffffff8fcd1d48 (rtnl_mutex){+.+.}-{3:3}, at: ib_get_eth_speed+0x13c/0x800 drivers/infiniband/core/verbs.c:1991
+
+stack backtrace:
+CPU: 1 UID: 0 PID: 6129 Comm: kworker/1:5 Not tainted 6.12.0-rc2-syzkaller-00002-g615b94746a54-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events psi_avgs_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ process_one_work kernel/workqueue.c:3204 [inline]
+ process_scheduled_works+0x950/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+BUG: workqueue leaked atomic, lock or RCU: kworker/1:5[6129]
+     preempt=0x00000000 lock=1->0 RCU=0->0 workfn=psi_avgs_work
+INFO: lockdep is turned off.
+CPU: 1 UID: 0 PID: 6129 Comm: kworker/1:5 Not tainted 6.12.0-rc2-syzkaller-00002-g615b94746a54-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events psi_avgs_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ process_one_work kernel/workqueue.c:3250 [inline]
+ process_scheduled_works+0x1158/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+Tested on:
+
+commit:         615b9474 RDMA/hns: Disassociate mmap pages for all uct..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=131e8727980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=17f7085f980000
+
 
