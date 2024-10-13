@@ -1,153 +1,143 @@
-Return-Path: <linux-kernel+bounces-362661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 076E199B7CC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 02:23:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2163399B7CF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 02:40:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5E91FB229E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 00:23:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 518CE1C210A9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 00:40:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C31E528E8;
-	Sun, 13 Oct 2024 00:23:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69BE2256D;
+	Sun, 13 Oct 2024 00:40:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oeWrSY0g"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bNVYLfmx"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4C0819;
-	Sun, 13 Oct 2024 00:23:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC961EC2;
+	Sun, 13 Oct 2024 00:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728778981; cv=none; b=IpRqFJr3uU3SbJM/PXKn7Amf3LVdbpHdttpMl7Tj2b/QP9Av1TtSNyF7Q6d1NUqqIsBfbW8eQn7PW2p6kwK67VqRz7fd4asyk28xzzIQcD6uSAgD4Zj3ZkBhh+vsSb5AGEqY4HHf6bNKIrMPR1rTPIkzmphJI6/exeT4xnw/lhw=
+	t=1728780017; cv=none; b=B2WA6tcmuMGx20tmUnBcWroqgO/3VFWg3AfOj0M1iOpJaJPQsIpxPU7slmj8cWnTBiSop6jekjv8J07LPHKaDDg5l5v4KmSTynQ+h2MOvG2+YUhjw28viyvsh7uUAhpLAGNKZ8mS09lNCuCJpwdHEefqkFuC/mPqE4sB9X/3kKw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728778981; c=relaxed/simple;
-	bh=rEzJzobjxqPB3qyg2IMyvh87zgno3Ga2EHEkOAM7yd4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d/a4/HMlqatk9lgObG+foy0/Lhe+LaPgoEo+8GwIaPZLTZBvBJJdObah/eul7hyN1BTkwMmPNcXWj+T3xBTo8M/m3IVHYvyyf5cgrYYWLgoSEMWG7z4j1kEr9QpMH2bQ6lJW7HxO5cM1jpr2TJEcxuu7ER+/6KKRB130BbrQ9pU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oeWrSY0g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F350EC4CEC6;
-	Sun, 13 Oct 2024 00:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728778980;
-	bh=rEzJzobjxqPB3qyg2IMyvh87zgno3Ga2EHEkOAM7yd4=;
-	h=From:To:Cc:Subject:Date:From;
-	b=oeWrSY0gxznVTGjDFVkfdFHWB3YjzUD3AQarRSa9Mw6V6GdW067x3V4EBytbc81J2
-	 am2DeBgwCPhd2vl2fvX5LuL4c7cW2ndvRDUOQKPF7R49O1tiMAbVusuKPK2xogqmUF
-	 nAeIgHQr2LjZX6fEPSVpLa+815A3a8SNB5P5PWrbikkIWmcreYixhix0CFb0vy7MEP
-	 TmbVXV+GZpP8Cedu3LsrAfi871moIunrsTLB/5mdF9/HIrugfdPYAGOCXyfkA4qXXN
-	 kkuuGOeM9cwFQQxwiNuCWDK0skE9jQQnAwwi9/yxiwT1FZQk03+4JonG2D7CqBzVk7
-	 lXIvMH84UH9Sw==
-From: Song Liu <song@kernel.org>
-To: linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-security-module@vger.kernel.org
-Cc: viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	jack@suse.cz,
-	paul@paul-moore.com,
-	jmorris@namei.org,
-	serge@hallyn.com,
-	kernel-team@fb.com,
-	song@kernel.org
-Subject: [PATCH v2] fsnotify, lsm: Decouple fsnotify from lsm
-Date: Sat, 12 Oct 2024 17:22:48 -0700
-Message-ID: <20241013002248.3984442-1-song@kernel.org>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728780017; c=relaxed/simple;
+	bh=EdDY7m4DSdswW+hjUfbZCCBQaNAxJNHZsjvDGFbAhfQ=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=cHuOviYnZH6AJ0bjSASLMCJDcj+h2FQoMESSQ+x1Ts/lNZ6Cdsw94tukl1/YKFVr28/JhcrzUHxXRvrp1Y/i9ynWYr2L3FoDcSzlBIWwYCpV0AeJwuVUxmY9rDEpxX4V8MdHzB2jUXwcUDmyOOcZGqv02tfsPjepME/UZZNVTDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bNVYLfmx; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728780016; x=1760316016;
+  h=message-id:subject:from:to:cc:date:in-reply-to:
+   references:content-transfer-encoding:mime-version;
+  bh=EdDY7m4DSdswW+hjUfbZCCBQaNAxJNHZsjvDGFbAhfQ=;
+  b=bNVYLfmxJQzjhp3lELjLqOlkcwbt9kGPHOasG7sgcRHua1vhu94RbLcI
+   lK7ApBKXt91BkZpG0APn8smaqvAkyNiTaYi6W4ns/jsQb7D9Q9Fh0/LW2
+   MDCfOER+9RaL6zqsc5ZNmualBtVbRFJzWOM7QMJX1L0qy/kKjtl/s5OE3
+   aD2y/V74vYPwFrgZK4eCjbAHZavRmAoFIYIjnTGyxIcnmBlh+p4H4mk50
+   5wU2ACNu4214S+WZiEioSoYwtwn2U+Gx7htOvWQ8XbBNnHTZc6k+V+ukF
+   ym0V7WckMkgqDSioIGNRUJv4t1p6cPTl7Rnf7CALUhRD9YX/11MOwND9R
+   Q==;
+X-CSE-ConnectionGUID: jdL12EFlRK2YvEUFzLbM7A==
+X-CSE-MsgGUID: 2fw2EvjQQvqEqV7FrtfHDw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="31032851"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="31032851"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 17:40:14 -0700
+X-CSE-ConnectionGUID: GmzJtsU7RcC5+XsB/hf7Ew==
+X-CSE-MsgGUID: nDCzEvJTSg6scgpDQcja+A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="81865735"
+Received: from bjrankin-mobl3.amr.corp.intel.com ([10.124.220.147])
+  by fmviesa004-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 12 Oct 2024 17:40:13 -0700
+Message-ID: <ab13c87c800fe03d5045ae3fb7442a7f050be9ba.camel@linux.intel.com>
+Subject: Re: [PATCH V2 2/2] platform/x86/intel/pmc: Disable C1 auto-demotion
+ during suspend
+From: srinivas pandruvada <srinivas.pandruvada@linux.intel.com>
+To: "David E. Box" <david.e.box@linux.intel.com>, hdegoede@redhat.com, 
+	ilpo.jarvinen@linux.intel.com, rjw@rjwysocki.net, 
+	platform-driver-x86@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-pm@vger.kernel.org
+Cc: ricardo.neri-calderon@linux.intel.com
+Date: Sat, 12 Oct 2024 17:40:11 -0700
+In-Reply-To: <20241011003640.1613812-2-david.e.box@linux.intel.com>
+References: <20241011003640.1613812-1-david.e.box@linux.intel.com>
+	 <20241011003640.1613812-2-david.e.box@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.3-0ubuntu1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-Currently, fsnotify_open_perm() is called from security_file_open(). This
-is not right for CONFIG_SECURITY=n and CONFIG_FSNOTIFY=y case, as
-security_file_open() in this combination will be a no-op and not call
-fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
++Ricardo
 
-After this, CONFIG_FANOTIFY_ACCESS_PERMISSIONS does not require
-CONFIG_SECURITY any more. Remove the dependency in the config.
+On Thu, 2024-10-10 at 17:36 -0700, David E. Box wrote:
+> On some platforms, aggressive C1 auto-demotion may lead to failure to
+> enter
+> the deepest C-state during suspend-to-idle, causing high power
+> consumption.
+> To prevent this, disable C1 auto-demotion during suspend and re-
+> enable on
+> resume.
+>=20
+> Signed-off-by: David E. Box <david.e.box@linux.intel.com>
+> ---
+>=20
 
-Signed-off-by: Song Liu <song@kernel.org>
-Acked-by: Paul Moore <paul@paul-moore.com>
+[...]
 
----
 
-v1: https://lore.kernel.org/linux-fsdevel/20241011203722.3749850-1-song@kernel.org/
+> =C2=A0void cnl_suspend(struct pmc_dev *pmcdev)
+> =C2=A0{
+> +	if (!pm_suspend_via_firmware()) {
+> +		preempt_disable();
+> +		disable_c1_auto_demote(NULL);
+> +		smp_call_function(disable_c1_auto_demote, NULL, 0);
+> +		preempt_enable();
+> +	}
+>=20
+As suggested by Ricardo using the following will work avoiding separate
+local CPU call. Preemption will be disabled, no need separate call.
+Also cpu_online_mask can't be changed during these callbacks.
 
-As far as I can tell, it is necessary to back port this to stable. Because
-CONFIG_FANOTIFY_ACCESS_PERMISSIONS is the only user of fsnotify_open_perm,
-and CONFIG_FANOTIFY_ACCESS_PERMISSIONS depends on CONFIG_SECURITY.
-Therefore, the following tags are not necessary. But I include here as
-these are discussed in v1.
+if (!pm_suspend_via_firmware())
+	on_each_cpu(disable_c1_auto_demote, NULL, true);
 
-Fixes: c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for access decisions")
-Depends-on: 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks")
-Depends-on: d9e5d31084b0 ("fsnotify: optionally pass access range in file permission hooks")
----
- fs/notify/fanotify/Kconfig | 1 -
- fs/open.c                  | 4 ++++
- security/security.c        | 9 +--------
- 3 files changed, 5 insertions(+), 9 deletions(-)
+I think you need wait=3Dtrue. I have seen on some occasions you will miss
+msr write as we called mwait before before async calls finished.=20
 
-diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-index a511f9d8677b..0e36aaf379b7 100644
---- a/fs/notify/fanotify/Kconfig
-+++ b/fs/notify/fanotify/Kconfig
-@@ -15,7 +15,6 @@ config FANOTIFY
- config FANOTIFY_ACCESS_PERMISSIONS
- 	bool "fanotify permissions checking"
- 	depends on FANOTIFY
--	depends on SECURITY
- 	default n
- 	help
- 	   Say Y here is you want fanotify listeners to be able to make permissions
-diff --git a/fs/open.c b/fs/open.c
-index acaeb3e25c88..6c4950f19cfb 100644
---- a/fs/open.c
-+++ b/fs/open.c
-@@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
- 	if (error)
- 		goto cleanup_all;
- 
-+	error = fsnotify_open_perm(f);
-+	if (error)
-+		goto cleanup_all;
-+
- 	error = break_lease(file_inode(f), f->f_flags);
- 	if (error)
- 		goto cleanup_all;
-diff --git a/security/security.c b/security/security.c
-index 6875eb4a59fc..a72cc62c0a07 100644
---- a/security/security.c
-+++ b/security/security.c
-@@ -19,7 +19,6 @@
- #include <linux/kernel.h>
- #include <linux/kernel_read_file.h>
- #include <linux/lsm_hooks.h>
--#include <linux/fsnotify.h>
- #include <linux/mman.h>
- #include <linux/mount.h>
- #include <linux/personality.h>
-@@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
-  */
- int security_file_open(struct file *file)
- {
--	int ret;
--
--	ret = call_int_hook(file_open, file);
--	if (ret)
--		return ret;
--
--	return fsnotify_open_perm(file);
-+	return call_int_hook(file_open, file);
- }
- 
- /**
--- 
-2.43.5
+
+Thanks,
+Srinivas
+
+> +
+> =C2=A0	/*
+> =C2=A0	 * Due to a hardware limitation, the GBE LTR blocks PC10
+> =C2=A0	 * when a cable is attached. To unblock PC10 during suspend,
+> @@ -218,6 +264,13 @@ void cnl_suspend(struct pmc_dev *pmcdev)
+> =C2=A0
+> =C2=A0int cnl_resume(struct pmc_dev *pmcdev)
+> =C2=A0{
+> +	if (!pm_suspend_via_firmware()) {
+> +		preempt_disable();
+> +		restore_c1_auto_demote(NULL);
+> +		smp_call_function(restore_c1_auto_demote, NULL, 0);
+> +		preempt_enable();
+> +	}
+> +
+> =C2=A0	pmc_core_send_ltr_ignore(pmcdev, 3, 0);
+> =C2=A0
+> =C2=A0	return pmc_core_resume_common(pmcdev);
 
 
