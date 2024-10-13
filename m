@@ -1,124 +1,195 @@
-Return-Path: <linux-kernel+bounces-362755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362756-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44A999B904
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:05:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 237F599B905
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:14:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3EAA1C20BDC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 10:05:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0C5501C20B30
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 10:14:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79ED313BACB;
-	Sun, 13 Oct 2024 10:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="hVvX2NRU"
-Received: from sender4-op-o12.zoho.com (sender4-op-o12.zoho.com [136.143.188.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05E6413C8FF;
+	Sun, 13 Oct 2024 10:14:29 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0291F12C54D;
-	Sun, 13 Oct 2024 10:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.12
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728813897; cv=pass; b=Mpo5tQfiZdrmETx0zY8QClzQ7zZVjXsUSB/HrlnHOwInJX13V2oKdW3kCjX0sGW0YRYz8mTvA87lZgARR/QR9tbnTo7dbGEeA3PDzjb++uxSx43XtnjCwBGwin85/XydWwpCrnCz6KFmUgtIiboypNnl0aU00mIGnnYw/9wRVgw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728813897; c=relaxed/simple;
-	bh=oowMGgvsSUKUqQmvbNYYKAxPF2sE/579CQdaH2P0nz8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=sbgm6l87/5Kf8lhV3Wxc/AV+/WIhia1goklGF4VL4YUXbkVgsJ/Ietiifk68GGoEPZgMA8Q+o//kIL52OOqUd6iaGlnsmrA619a79tJFqbaOj8NKpWOfa27D61RmwuYiBJbymLL6jwWnXDqhD+iNVtxIsxepotj15sSf5/CT9LE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=hVvX2NRU; arc=pass smtp.client-ip=136.143.188.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
-ARC-Seal: i=1; a=rsa-sha256; t=1728813885; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=YgvTr+PgJj9LrbkUSOjHmD6tdvmBExKM15qCESoZeZlAe97uLaIJ8H/RpNKNYRfupyHcwLBxegGwVeobtROlp+RylFmj2LR4AQsuCQd22O+X8CxAq7KsJem32LTcdvnsq7NDTfRS05WlBWg3OGBElSmVmiTGQShuxtC/C2DFtT0=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1728813885; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=wkkHBr0u8fnHFJ7VpZD/I6fU+VrYj7525CWQ+F99E+4=; 
-	b=O2PZWkdZV8VJOB3EWepul4LoWx44XqC9e3jfqGL/iP3Az7cme69IS2sV//otxLRSYRbh/BUybyOpatJHCftOCcOQV/D9bfRhkvNOkz2gmSANKLzke0S7lwHTxyTXboEXjPkrPGSYxYFzQ2YrthU/tfnLt3SioWhor8nwNoXYdnI=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=icenowy.me;
-	spf=pass  smtp.mailfrom=uwu@icenowy.me;
-	dmarc=pass header.from=<uwu@icenowy.me>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728813885;
-	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
-	h=Message-ID:Subject:Subject:From:From:To:To:Cc:Cc:Date:Date:In-Reply-To:References:Content-Type:Content-Transfer-Encoding:MIME-Version:Message-Id:Reply-To;
-	bh=wkkHBr0u8fnHFJ7VpZD/I6fU+VrYj7525CWQ+F99E+4=;
-	b=hVvX2NRUlrjdvgxxFJMg3UUadqRf7eNoSFEY5RcpyKUQzeOjnZIit762OWVFAM5/
-	k37XyoxHEG2omeY/6pQP2t3fyzk0xP+qDJsWqrMgF2ve/8K3FOgtKMP/p+Iey149B3e
-	jxOd/S+14zW9ovAYwmZzdB/bSxhYgpoKR/iD3mBmVck977o4JypfZuuH5+DMZkfJAu+
-	eZ5BeYfS3FxMiOnY8YXgAm/J8TXpvuODBXfkd1gHYlF7lVIt/WCI7Jt1AzshyBofxxA
-	v6e9oUkNGih3iptgEw1M3R1VciDfSlmb8C4jeLzSk3giDa6w0o9TZFbN2BZ+fFWxLQc
-	d2M0Zr01nA==
-Received: by mx.zohomail.com with SMTPS id 1728813882781587.9842715185621;
-	Sun, 13 Oct 2024 03:04:42 -0700 (PDT)
-Message-ID: <0c8264f56944c9e739bb494fd98df65b227ca30f.camel@icenowy.me>
-Subject: Re: [PATCH 1/2] ALSA: emu10k1: add a capability bit for no MIDI
-From: Icenowy Zheng <uwu@icenowy.me>
-To: Oswald Buddenhagen <oswald.buddenhagen@gmx.de>
-Cc: Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Sun, 13 Oct 2024 18:04:34 +0800
-In-Reply-To: <ZwuYw27Y1YQy-DQJ@ugly>
-References: <20241013014714.7686-1-uwu@icenowy.me>
-	 <20241013014714.7686-2-uwu@icenowy.me> <ZwuYw27Y1YQy-DQJ@ugly>
-Organization: Anthon Open-Source Community
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3EB312C54D
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 10:14:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728814468; cv=none; b=MGyERb4Bo2MR9iryIZsQsLDLRD94ogZEadL1mmknEnR3SV+eWJufCSDYDC4jcJpd/ajQ8ZUFV0FdXC859IYplobv8/kDFPCSaAxBzSHc10tbZTJ24fNVJvo2a79ZcxM5MMQL9WB0paT9J6U9osY1DMhw19XYmd5YK/0IUjQveao=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728814468; c=relaxed/simple;
+	bh=y5mpwZfkOxo2JFbA1LuPV3cn8EYOrYBePaBQMZQViyo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=pUWsH8fb56EhKy8vBWXVC5lkZpVflLrsrK5gNDzU/yys04enDbD/4R4KUcVwDOEroN6bLoJ2ntQJgXIvetkuZSqbhOW8TZo5kZnJvqAoGxh5USa+MGjQzAfsk0znXsG+3Q6+1Yh0qwg5GxyqOk6+LrXA/wKPiKRDtLA80G7A0H4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b4395dedso23868165ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 03:14:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728814466; x=1729419266;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wfaQulymYnC8oCbwRSN1pMqbyZ0WJbqyTy3xy/A0104=;
+        b=RgvfHvr7vauEDaGq3TjpE+rZ5J89TI6sDbrqVavhWjzLI/w8DnZmdTqdUVcYUjvJ3d
+         yAJeskwZR8S94uST20RQA61WhhIxnpdHpamAqr2CI52Yski++qJSa5Yb2yvcMjtZYD2+
+         sV3MG9f+7WPTrBV7v03Ng8VCZRwokEzOzSbtFw9furwWCR1gRpxfrl4qt9uH5EV536SO
+         MJukRK5SfQW5qvPkSWHt9oDnrkjuMyJmAt5Jl2kxAavin3O7IBPULDUvKz4BL+1Hbj4v
+         MgELu/NJIOMeqckybXGKxX9fD22YGx75HMfsbZ1fpQYqlBv2E7FT4B2CPWEZ7nJgB5VL
+         ychQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdyivhxfUM4U28H0wG5aNITbkbOTCcqWenCP1v1onWHerJKJKe8IqaCY2VdyrsXMIczQz9p5zMXEYTFAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzctcE9IHgsTYntLKAMoIWWFpJjK1G26Z/X8D56FAoKedtnSQP2
+	tdNy4a/wjq/L9ed9+HekdXYlFluxhXGQ2/vFcXMC03nmS1c2XQaJzy9rgwvvOvmH7akUA+T8elD
+	QBccWWtcCAN4nfVhl2gixeCUMsbZIrbJpTJCPxTGBhXQN2i64F9daxE4=
+X-Google-Smtp-Source: AGHT+IFpEdHnC3XYmJC6x2f5wwLVTMLyuem6p6Jlb27Sd9GrtHQvU9SA/C1T3iJij+YgNBVk8sAC7+1z/M0Ok4YuwsOwLGpI7ygG
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ZohoMailClient: External
+X-Received: by 2002:a05:6e02:2163:b0:3a3:b143:98 with SMTP id
+ e9e14a558f8ab-3a3b5faabf5mr52246425ab.15.1728814466077; Sun, 13 Oct 2024
+ 03:14:26 -0700 (PDT)
+Date: Sun, 13 Oct 2024 03:14:26 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670b9d82.050a0220.3e960.0037.GAE@google.com>
+Subject: [syzbot] [usb?] INFO: task hung in chaoskey_release
+From: syzbot <syzbot+7c04149f25df31636533@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, keithp@keithp.com, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-=E5=9C=A8 2024-10-13=E6=98=9F=E6=9C=9F=E6=97=A5=E7=9A=84 11:54 +0200=EF=BC=
-=8COswald Buddenhagen=E5=86=99=E9=81=93=EF=BC=9A
-> On Sun, Oct 13, 2024 at 09:47:12AM +0800, Icenowy Zheng wrote:
-> > +++ b/sound/pci/emu10k1/emu10k1.c
-> > @@ -133,7 +133,9 @@ static int snd_card_emu10k1_probe(struct
-> > pci_dev *pci,
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0if (err < 0)
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-return err;
-> > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0}
-> > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (emu->audigy) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0if (emu->card_capabilities->=
-no_midi) {
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0dev_info(emu->card->dev, "Card has no ext. MIDI
-> > ports.\n");
-> >=20
-> seems like excess verbosity. there are much more important things
-> that
-> are not reported.
->=20
-> > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0} else if (emu->audigy) {
-> >=20
-> i would eliminate that, and instead populate the card table properly.
-> that's a bit more code, but it's more uniform, and the resulting
-> binary
-> is even a tiny bit smaller.
+Hello,
 
-Well in fact I just insert this here to prevent a re-indent of the
-following MIDI code.
+syzbot found the following issue on:
 
-Well it could be better to be a=20
-```
-if (!emu->card_capabilities->no_midi) {
-        The original code
-}
-```
+HEAD commit:    33ce24234fca Add linux-next specific files for 20241008
+git tree:       linux-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=1209afd0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=4750ca93740b938d
+dashboard link: https://syzkaller.appspot.com/bug?extid=7c04149f25df31636533
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
->=20
-> also, i would squash the patches, as i see no point in having them
-> separate, given their size.
->=20
-> regards
+Unfortunately, I don't have any reproducer for this issue yet.
 
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ee8dc2df0c57/disk-33ce2423.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/dc473c0fa06e/vmlinux-33ce2423.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4671f1ca2e61/bzImage-33ce2423.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+7c04149f25df31636533@syzkaller.appspotmail.com
+
+INFO: task syz.0.1141:10263 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.1141      state:D stack:26544 pid:10263 tgid:10262 ppid:8755   flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0x1895/0x4b30 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6774
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ chaoskey_release+0x79/0x2f0 drivers/usb/misc/chaoskey.c:299
+ __fput+0x23f/0x880 fs/file_table.c:431
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ get_signal+0x15e8/0x1740 kernel/signal.c:2690
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f769ff7dff9
+RSP: 002b:00007f76a0d92038 EFLAGS: 00000246 ORIG_RAX: 0000000000000000
+RAX: fffffffffffffe00 RBX: 00007f76a0135f80 RCX: 00007f769ff7dff9
+RDX: 0000000000000080 RSI: 0000000020000200 RDI: 000000000000000a
+RBP: 00007f769fff0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f76a0135f80 R15: 00007ffefc59c0a8
+ </TASK>
+INFO: task syz.0.1141:10290 blocked for more than 143 seconds.
+      Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
+"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
+task:syz.0.1141      state:D stack:26640 pid:10290 tgid:10262 ppid:8755   flags:0x00004004
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5322 [inline]
+ __schedule+0x1895/0x4b30 kernel/sched/core.c:6682
+ __schedule_loop kernel/sched/core.c:6759 [inline]
+ schedule+0x14b/0x320 kernel/sched/core.c:6774
+ schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:6831
+ __mutex_lock_common kernel/locking/mutex.c:684 [inline]
+ __mutex_lock+0x6a7/0xd70 kernel/locking/mutex.c:752
+ chaoskey_release+0x169/0x2f0 drivers/usb/misc/chaoskey.c:322
+ __fput+0x23f/0x880 fs/file_table.c:431
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ resume_user_mode_work include/linux/resume_user_mode.h:50 [inline]
+ exit_to_user_mode_loop kernel/entry/common.c:114 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0x168/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f769ff7dff9
+RSP: 002b:00007f76a0d71038 EFLAGS: 00000246 ORIG_RAX: 00000000000001b4
+RAX: 0000000000000000 RBX: 00007f76a0136058 RCX: 00007f769ff7dff9
+RDX: 0000000000000000 RSI: ffffffffffffffff RDI: 0000000000000003
+RBP: 00007f769fff0296 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000001 R14: 00007f76a0136058 R15: 00007ffefc59c0a8
+ </TASK>
+INFO: lockdep is turned off.
+NMI backtrace for cpu 1
+CPU: 1 UID: 0 PID: 30 Comm: khungtaskd Not tainted 6.12.0-rc2-next-20241008-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ nmi_cpu_backtrace+0x49c/0x4d0 lib/nmi_backtrace.c:113
+ nmi_trigger_cpumask_backtrace+0x198/0x320 lib/nmi_backtrace.c:62
+ trigger_all_cpu_backtrace include/linux/nmi.h:162 [inline]
+ check_hung_uninterruptible_tasks kernel/hung_task.c:223 [inline]
+ watchdog+0xff4/0x1040 kernel/hung_task.c:379
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+Sending NMI from CPU 1 to CPUs 0:
+NMI backtrace for cpu 0 skipped: idling at native_safe_halt arch/x86/include/asm/irqflags.h:48 [inline]
+NMI backtrace for cpu 0 skipped: idling at arch_safe_halt arch/x86/include/asm/irqflags.h:106 [inline]
+NMI backtrace for cpu 0 skipped: idling at acpi_safe_halt+0x21/0x30 drivers/acpi/processor_idle.c:111
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
