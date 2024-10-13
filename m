@@ -1,86 +1,120 @@
-Return-Path: <linux-kernel+bounces-362840-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362841-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4799399B9DC
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:54:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47FF399B9DF
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 16:55:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79C951C21E72
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DAE62815DB
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:55:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277AC146D5A;
-	Sun, 13 Oct 2024 14:53:52 +0000 (UTC)
-Received: from angie.orcam.me.uk (angie.orcam.me.uk [78.133.224.34])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D1D214658D;
-	Sun, 13 Oct 2024 14:53:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.133.224.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8EF1465AB;
+	Sun, 13 Oct 2024 14:55:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="s15h6lrC"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6379314601C
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 14:55:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728831231; cv=none; b=hqiJmPDQWWP5AuJQSx4yMcjMj4bHnsqVYT9m+Glq/MXpbfszwQMhJ+miBVHs/ykLtQFIlCEZtdGESe65NActfgg+ULLZRx4Ik3U7Ex4btqCsZYnyfCUhRCwDQs29Ne4Rl2ZUU47dHHjbjLdWkIexTh27nYs+lsuSK3f4rHvlV9k=
+	t=1728831332; cv=none; b=IliN+ZFZuoEazY4bV5/n9vaaQmnE4Jqp+N5UiDApng9H/Qz8lMiPIjdKUNNq2W0ImuvrcjxqrwxKGwXeH9Mj/QIBKgJ5KrlX3YhX0Ism34+iUDAm7LNl7VH1UrjwmdOt0QxQLzJP97kpVpMXCl8ibbigQXXFAgtZaHAyRGyHmog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728831231; c=relaxed/simple;
-	bh=ZPrqktIBvEbSoUkJg5cCHO2AotiBkdlWwb2MZNJ+MOE=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=W8LYT7x5XIqW1iN+bNezrPlLaEP3eSZTqke1NoPgo9sLYlN0woe9DvEL0S0Rz7cIREr0/sokmYAIu2/J/f48Je2fADLe2C1QFvaIvQEjpHWZ5JAKF3VB2bSBrcveqwWyDqMwebSDBJoeY6Jg53OcErRsLwg37U7kxo0n+y31UBk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk; spf=none smtp.mailfrom=orcam.me.uk; arc=none smtp.client-ip=78.133.224.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=orcam.me.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=orcam.me.uk
-Received: by angie.orcam.me.uk (Postfix, from userid 500)
-	id D39F592009D; Sun, 13 Oct 2024 16:53:48 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by angie.orcam.me.uk (Postfix) with ESMTP id CF7EB92009C;
-	Sun, 13 Oct 2024 15:53:48 +0100 (BST)
-Date: Sun, 13 Oct 2024 15:53:48 +0100 (BST)
-From: "Maciej W. Rozycki" <macro@orcam.me.uk>
-To: Niklas Schnelle <schnelle@linux.ibm.com>
-cc: Brian Cain <bcain@quicinc.com>, Marcel Holtmann <marcel@holtmann.org>, 
-    Luiz Augusto von Dentz <luiz.dentz@gmail.com>, 
-    Patrik Jakobsson <patrik.r.jakobsson@gmail.com>, 
-    Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-    Maxime Ripard <mripard@kernel.org>, 
-    Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-    Simona Vetter <simona@ffwll.ch>, Dave Airlie <airlied@redhat.com>, 
-    Gerd Hoffmann <kraxel@redhat.com>, 
-    Lucas De Marchi <lucas.demarchi@intel.com>, 
-    =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>, 
-    Rodrigo Vivi <rodrigo.vivi@intel.com>, 
-    Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-    Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-    Heiko Carstens <hca@linux.ibm.com>, linux-kernel@vger.kernel.org, 
-    linux-hexagon@vger.kernel.org, linux-bluetooth@vger.kernel.org, 
-    dri-devel@lists.freedesktop.org, virtualization@lists.linux.dev, 
-    spice-devel@lists.freedesktop.org, intel-xe@lists.freedesktop.org, 
-    linux-serial@vger.kernel.org, linux-arch@vger.kernel.org, 
-    Arnd Bergmann <arnd@kernel.org>
-Subject: Re: [PATCH v8 4/5] tty: serial: handle HAS_IOPORT dependencies
-In-Reply-To: <20241008-b4-has_ioport-v8-4-793e68aeadda@linux.ibm.com>
-Message-ID: <alpine.DEB.2.21.2410131553340.40463@angie.orcam.me.uk>
-References: <20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com> <20241008-b4-has_ioport-v8-4-793e68aeadda@linux.ibm.com>
-User-Agent: Alpine 2.21 (DEB 202 2017-01-01)
+	s=arc-20240116; t=1728831332; c=relaxed/simple;
+	bh=RkAcVw7imkH83Lnz9Bl0fGaXr29lw9m1rZVlseqBl4Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Lo5Kd6G8IwPlNHkVmeZbkIRAa1p/Hg8Sk/3l5T2Q2/YaSEp900R+9GhSocO9BfRXAxQR2fpHFRRyYJPeMAMJHhP6xi28y6OtJabJa8eZZ80eO1kKR4DPNzwe2IaRbkYckVBzJLqjreVwOMRpKPd6YfVmdwEJVYVozg2ClT74NAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=s15h6lrC; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sun, 13 Oct 2024 22:55:24 +0800
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728831327;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uYqRfss1NBTVeKYiNPPzCz5FIOGRLaUuCoy3A+BmjfQ=;
+	b=s15h6lrC6VPLqgaN7mFH23tSUn6W8ayRJVR8GxXO409adtjdnhAfQ7h5dW7Ce4YjmDLgpL
+	DSf2xWD2kKeqBNxE3gNLi1Wrt3bv1hSvrOZkfFhf2daQZFWJHMntQRuIVVw1bP7sD8H59q
+	t7oEJnp2V64HZZfecGHOpEiV+TAff+g=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Leo Yan <leo.yan@linux.dev>
+To: Julien Meunier <julien.meunier@nokia.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	stable@vger.kernel.org, coresight@lists.linaro.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] coresight: etm4x: Fix PID tracing when perf is run in
+ an init PID namespace
+Message-ID: <20241013145524.GB45976@debian-dev>
+References: <20240925131357.9468-1-julien.meunier@nokia.com>
+ <20241008200226.12229-1-julien.meunier@nokia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008200226.12229-1-julien.meunier@nokia.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 8 Oct 2024, Niklas Schnelle wrote:
-
-> In a future patch HAS_IOPORT=n will disable inb()/outb() and friends at
-> compile time. We thus need to add HAS_IOPORT as dependency for those
-> drivers using them unconditionally. Some 8250 serial drivers support
-> MMIO only use, so fence only the parts requiring I/O ports and print an
-> error message if a device can't be supported with the current
-> configuration.
+On Tue, Oct 08, 2024 at 10:02:25PM +0200, Julien Meunier wrote:
+> The previous implementation limited the tracing capabilities when perf
+> was run in the init PID namespace, making it impossible to trace
+> applications in non-init PID namespaces.
 > 
-> Co-developed-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Arnd Bergmann <arnd@kernel.org>
-> Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+> This update improves the tracing process by verifying the event owner.
+> This allows us to determine whether the user has the necessary
+> permissions to trace the application.
+> 
+> Cc: stable@vger.kernel.org
+> Fixes: aab473867fed ("coresight: etm4x: Don't trace PID for non-root PID namespace")
+> Signed-off-by: Julien Meunier <julien.meunier@nokia.com>
+
+Reviewed-by: Leo Yan <leo.yan@linux.dev>
+
 > ---
-
-Reviewed-by: Maciej W. Rozycki <macro@orcam.me.uk>
-
-  Maciej
+> Changes in v2:
+> * Update comments
+> ---
+>  drivers/hwtracing/coresight/coresight-etm4x-core.c | 8 ++++----
+>  1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> index 66d44a404ad0..cf41c42399e1 100644
+> --- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> +++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+> @@ -693,9 +693,9 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>  		config->cfg |= TRCCONFIGR_TS;
+>  	}
+>  
+> -	/* Only trace contextID when runs in root PID namespace */
+> +	/* Only trace contextID when the event owner is in root PID namespace */
+>  	if ((attr->config & BIT(ETM_OPT_CTXTID)) &&
+> -	    task_is_in_init_pid_ns(current))
+> +	    task_is_in_init_pid_ns(event->owner))
+>  		/* bit[6], Context ID tracing bit */
+>  		config->cfg |= TRCCONFIGR_CID;
+>  
+> @@ -709,8 +709,8 @@ static int etm4_parse_event_config(struct coresight_device *csdev,
+>  			ret = -EINVAL;
+>  			goto out;
+>  		}
+> -		/* Only trace virtual contextID when runs in root PID namespace */
+> -		if (task_is_in_init_pid_ns(current))
+> +		/* Only trace virtual contextID when the event owner is in root PID namespace */
+> +		if (task_is_in_init_pid_ns(event->owner))
+>  			config->cfg |= TRCCONFIGR_VMID | TRCCONFIGR_VMIDOPT;
+>  	}
+>  
+> -- 
+> 2.34.1
+> 
 
