@@ -1,169 +1,209 @@
-Return-Path: <linux-kernel+bounces-362931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 907C299BB5D
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:16:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B7E6299BB72
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:19:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46DB6281749
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:16:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B0C81F217B1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:19:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98951487D6;
-	Sun, 13 Oct 2024 20:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF1E14A4D1;
+	Sun, 13 Oct 2024 20:18:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Dxe5xpZ8"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="exIvs+i/"
+Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E969278289
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 20:16:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 581047F48C;
+	Sun, 13 Oct 2024 20:18:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728850601; cv=none; b=aw4LX2WKpx2QP9MoB5t1jdsp064uLQPGtEgaQPAvGPSvHGZaWe/XugHrM7ysg3mLuDIJSutk98zlqrUcHrluyQUUEV7uYVlhRPHhj1g9WJFtrTKexPMNnB/6ApFvYyPzRldHx68q5xUOOeX00sWoja3sUerGrDuSlfn67OrjrpE=
+	t=1728850693; cv=none; b=HfBruTqb7LNmJUiO4htNyniHlxe8R8otcYTeado2p2kykbJRcUj6rTMiYNrMd1hmjmna15fcZ3COAuOgexZphAIM8j/a0dKz/0hh0ztfYuo9Q8hdOfVNNlxNoFok5gbsHP/G8dl4f308Vebp9JPjXfzxIXLeAH9a7/Dohv0Cp9w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728850601; c=relaxed/simple;
-	bh=n3aL7QBd93HecoBZ3RrysFWa7UAjV/qiZF42VjSVfxo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oRxw7zmwl/Z6PgLXhP/Zj+Nj6bfsZNTXazz/8+d0jLyEHCr/H6D/fHUqVGlyTk/FGTY+jgburExfDyy/Evd89stg0dNhhCKsG29RVqfJdEGdpovhbPIpV7TKT+b6KPjuNX9alfcCoREwWftPBf0z/j8JHHpXnAtBtQIPeEm0gCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Dxe5xpZ8; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id AC1502C0404;
-	Mon, 14 Oct 2024 09:16:29 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728850589;
-	bh=CviG87Gxw+/eZ9A7f0iznUZ3zcPHLQqJBw0vRPoGROo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Dxe5xpZ8leZBnCIiS1eFizgkxuXMIaZfFXWiieMnTuTkYiuIA6lEpy3BCwVK6Jml3
-	 w4mjy8a/s1/E4MW3FADLK38Bf/B5QcMaChKM0+je2nBLKSOBkdgQ/w2VImjrDe+pDh
-	 iGOxuMsBHZFTSgj/S81UsYmP+aTb4kZkLUHAaXN7iMmzJaE8StxRF9cWShAaX6+bWu
-	 +ClSIhsbhC+CofKfRluAN0X5XYhPtgIQquyQa7Fcf7BbsCRLim86uPiNyRYILFFjgx
-	 H6MHcxIEqa0H+ACOdGVjGBdr62afdnhe+GaS9+3WG+MTuQmRkAr7mIrfS6YaE8x57y
-	 zzShfL+NJJsog==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670c2a9d0000>; Mon, 14 Oct 2024 09:16:29 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 8CBFC13ED7B;
-	Mon, 14 Oct 2024 09:16:29 +1300 (NZDT)
-Message-ID: <0b717cbb-ad89-4d3a-a795-080dd716f06d@alliedtelesis.co.nz>
-Date: Mon, 14 Oct 2024 09:16:29 +1300
+	s=arc-20240116; t=1728850693; c=relaxed/simple;
+	bh=2uXmFeIEmUi172m67TxMp84JNKzsDgsI9o/AeKyM2yc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ResDTWNsgJvHCWHNpBfkWHFiYGyNcQzG3Tvro7hAjRNjYGfZ3YsuWd/s2/77VW3nPiYGPNL/Gkro6wAPWnNtwhxzVsylwhAy3XlRnCHOENMbDolvurAinI2hltmlTOCw/U06xSi5ebtpEy2+LLaXEf4B1ZA1e5qRK3MISLGnkKo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=exIvs+i/; arc=none smtp.client-ip=192.134.164.104
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Sja7FWx2J2pFF7H03F4ldwixL8Qb/r4LwdjP0v1pkNc=;
+  b=exIvs+i/vmrrOC1BhG1dWTdYhowcV77JbThYwDdjK0/Wqiaqq9Fr0cce
+   rNzCFJlH0Zl3Gc94qiLI1s9PCSVuCYpsLvZjcvp+ULtzzTXbcfRvMqOYM
+   ncj7g6L1s1poZOa9BL666TBGtZjDcSWk9IcDnPVvWZAmigUTgCebAcAqC
+   Y=;
+Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.11,201,1725314400"; 
+   d="scan'208";a="98968275"
+Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:17:57 +0200
+From: Julia Lawall <Julia.Lawall@inria.fr>
+To: linux-nfs@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	vbabka@suse.cz,
+	paulmck@kernel.org,
+	Tom Talpey <tom@talpey.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Neil Brown <neilb@suse.de>,
+	linux-can@vger.kernel.org,
+	bridge@lists.linux.dev,
+	b.a.t.m.a.n@lists.open-mesh.org,
+	linux-kernel@vger.kernel.org,
+	wireguard@lists.zx2c4.com,
+	netdev@vger.kernel.org,
+	ecryptfs@vger.kernel.org,
+	linux-block@vger.kernel.org,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	linuxppc-dev@lists.ozlabs.org,
+	kvm@vger.kernel.org,
+	netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org
+Subject: [PATCH 00/17] replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 22:16:47 +0200
+Message-Id: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH 1/3] dt-bindings: spi: Add realtek,rtl9300-snand
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
- <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
- <3tu6x2644lxvvbk74nv5qva7qupsvgxyxkwc5g5n7n4bh3mbwi@457wbps4kpns>
- <963a57ec-c09d-4a4e-b8b8-a89354cf3264@alliedtelesis.co.nz>
- <93c4dfe6-8ddf-425d-bf9c-245e94c4290e@kernel.org>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <93c4dfe6-8ddf-425d-bf9c-245e94c4290e@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670c2a9d a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=62ntRvTiAAAA:8 a=gEfo2CItAAAA:8 a=nxSgMk7qIiEtrF1QXo4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 8bit
 
+Since SLOB was removed and since
+commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+it is not necessary to use call_rcu when the callback only performs
+kmem_cache_free. Use kfree_rcu() directly.
 
-On 8/10/24 19:59, Krzysztof Kozlowski wrote:
-> On 07/10/2024 21:58, Chris Packham wrote:
->> On 7/10/24 19:40, Krzysztof Kozlowski wrote:
->>> On Mon, Oct 07, 2024 at 12:33:45PM +1300, Chris Packham wrote:
->>>> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
->>>> controller supports
->>>>    * Serial/Dual/Quad data with
->>>>    * PIO and DMA data read/write operation
->>>>    * Configurable flash access timing
->>>>
->>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
->>>> ---
->>>>    .../bindings/spi/realtek,rtl9300-snand.yaml   | 58 +++++++++++++++++++
->>>>    1 file changed, 58 insertions(+)
->>>>    create mode 100644 Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->>>>
->>>> diff --git a/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->>>> new file mode 100644
->>>> index 000000000000..c66aea24cb35
->>>> --- /dev/null
->>>> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
->>>> @@ -0,0 +1,58 @@
->>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->>>> +%YAML 1.2
->>>> +---
->>>> +$id: http://scanmail.trustwave.com/?c=20988&d=2tiE5xx2mR7Mo-BCj_ZnEp9_tDM1bfG85uPlEm-9ag&u=http%3a%2f%2fdevicetree%2eorg%2fschemas%2fspi%2frealtek%2crtl9300-snand%2eyaml%23
->>>> +$schema: http://scanmail.trustwave.com/?c=20988&d=2tiE5xx2mR7Mo-BCj_ZnEp9_tDM1bfG85uCwRjixZQ&u=http%3a%2f%2fdevicetree%2eorg%2fmeta-schemas%2fcore%2eyaml%23
->>>> +
->>>> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
->>>> +
->>>> +maintainers:
->>>> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
->>>> +
->>>> +description:
->>>> +  The Realtek RTL9300 SoCs have a built in SPI-NAND controller. It supports
->>>> +  typical SPI-NAND page cache operations in single, dual or quad IO mode.
->>>> +
->>>> +properties:
->>>> +  compatible:
->>>> +    items:
->>> Why 9300 cannot be alone? What does 9300 mean even? Wildcards and family
->>> models are not allowed in general.
->> The main thing about the RTL9300 is that that is what all the Realtek
->> documents use to refer to these chips and the specific numbers are akin
->> to the manufacturing part number that you'd actually order (maybe that's
->> a bit of a stretch).
->>
->> The SoC/CPU block probably does exist as a separate silicon die that
->> they connect to the different switch blocks in the chips that they sell
->> but I don't think you can get "just" the SoC. There is every chance that
->> we'll see that same SoC/CPU block pop up in new chips (I see references
->> to a RTL9302D in some documents). I'd like to be able to support these
->> chips using "rtl9300" but if that's violating the wildcard rule I can
->> drop it.
-> Yeah, that's violating the wildcard rule. You cannot even guarantee that
-> 9300 will match future designs.
+The changes were done using the following Coccinelle semantic patch.
+This semantic patch is designed to ignore cases where the callback
+function is used in another way.
 
-When the dust settles I'll try do clean up the things I've already had 
-in flight. Hopefully it's not too late to just change things rather than 
-needing to support the incorrect wildcards as deprecated.
+// <smpl>
+#spatch --all-includes --include-headers
 
-I have been meaning to clean up the mips dtsi files so that there is one 
-for each of the rtl9301, rtl9302b etc but wanted to wait for my other 
-changes to land. Sorry for creating a bit of a mess.
+@r@
+expression e;
+local idexpression e2;
+identifier cb,f,g;
+position p;
+@@
 
->>>> +      - enum:
->>>> +          - realtek,rtl9301-snand
->>>> +          - realtek,rtl9302b-snand
->>>> +          - realtek,rtl9302c-snand
->>>> +          - realtek,rtl9303-snand
->>>> +      - const: realtek,rtl9300-snand
->>>> +
->>>> +  reg:
->>>> +    items:
->>>> +      - description: SPI NAND controller registers address and size
->>> Also: why no clocks? Binding is supposed to be complete. If it cannot,
->>> you should explain it in the commit msg.
->> I didn't add it because I had no need for it in my driver. But as you've
->> said previously the binding shouldn't care what the driver does.
->>
->> I do have the clocking info from the datasheets. I'll add it in v2.
->
-> Best regards,
-> Krzysztof
->
+(
+call_rcu(...,e2)
+|
+call_rcu(&e->f,cb@p)
+|
+call_rcu(&e->f.g,cb@p)
+)
+
+@r1@
+type T,T1;
+identifier x,r.cb;
+@@
+
+ cb(...) {
+(
+   kmem_cache_free(...);
+|
+   T x = ...;
+   kmem_cache_free(...,(T1)x);
+|
+   T x;
+   x = ...;
+   kmem_cache_free(...,(T1)x);
+)
+ }
+
+@s depends on r1@
+position p != r.p;
+identifier r.cb;
+@@
+
+ cb@p
+
+@script:ocaml@
+cb << r.cb;
+p << s.p;
+@@
+
+Printf.eprintf "Other use of %s at %s:%d\n" cb (List.hd p).file (List.hd p).line
+
+@depends on r1 && !s@
+expression e;
+identifier r.cb,f,g;
+position r.p;
+@@
+
+(
+- call_rcu(&e->f,cb@p)
++ kfree_rcu(e,f)
+|
+- call_rcu(&e->f.g,cb@p)
++ kfree_rcu(e,f.g)
+)
+
+@r1a depends on !s@
+type T,T1;
+identifier x,r.cb;
+@@
+
+- cb(...) {
+(
+-  kmem_cache_free(...);
+|
+-  T x = ...;
+-  kmem_cache_free(...,(T1)x);
+|
+-  T x;
+-  x = ...;
+-  kmem_cache_free(...,(T1)x);
+)
+- }
+
+@r2 depends on !r1@
+identifier r.cb;
+@@
+
+cb(...) {
+ ...
+}
+
+@script:ocaml depends on !r1 && !r2@
+cb << r.cb;
+@@
+
+Printf.eprintf "need definition for %s\n" cb
+// </smpl>
+
+---
+
+ arch/powerpc/kvm/book3s_mmu_hpte.c  |    8 ------
+ block/blk-ioc.c                     |    9 ------
+ drivers/net/wireguard/allowedips.c  |    9 +-----
+ fs/ecryptfs/dentry.c                |    8 ------
+ fs/nfsd/nfs4state.c                 |    9 ------
+ kernel/time/posix-timers.c          |    9 ------
+ net/batman-adv/translation-table.c  |   47 ++----------------------------------
+ net/bridge/br_fdb.c                 |    9 ------
+ net/can/gw.c                        |   13 ++-------
+ net/ipv4/fib_trie.c                 |    8 ------
+ net/ipv4/inetpeer.c                 |    9 +-----
+ net/ipv6/ip6_fib.c                  |    9 ------
+ net/ipv6/xfrm6_tunnel.c             |    8 ------
+ net/kcm/kcmsock.c                   |   10 -------
+ net/netfilter/nf_conncount.c        |   10 -------
+ net/netfilter/nf_conntrack_expect.c |   10 -------
+ net/netfilter/xt_hashlimit.c        |    9 ------
+ 17 files changed, 23 insertions(+), 171 deletions(-)
 
