@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-362743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D90399B8E2
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:02:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65F0099B8E5
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:09:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BA05D2823CE
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:01:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D4071C20C34
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:09:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4B6A13AD2A;
-	Sun, 13 Oct 2024 09:01:53 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BBDD13AD2A;
+	Sun, 13 Oct 2024 09:09:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="ufsDYMRk"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40035804;
-	Sun, 13 Oct 2024 09:01:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7CB12CD88;
+	Sun, 13 Oct 2024 09:09:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728810113; cv=none; b=LSv3Tdxu6C2DW+9ghIQBMXfYJ/psGCYZLbYOnNnVK7lyGqBuTcmcO+kUxBMwJtZgfclQogPZlkrTX5ytJHqeIRwMaXAJzHYbfJIWe76EFmSpsZfEBgHvXDtEogI8wU3STMkKoZGYBdyOBsgsEB9tjO1tMAbNiy01jAHBWYrCr0k=
+	t=1728810547; cv=none; b=AAv+xcO/jI9KjlyVMUuwD1rRb4h7LEbLqOJ2xKpKHplHJfPkmLp+wCSIQPc9mWqvHm49L5eBSWRbjJTqDsygd97DcY5KLPlBEt18YD85odMa7LQ4oG/LkIVTjgqqYanPycPuG83rdS3QGP/YDkBmxzEZVVNtV8GvR+cVJCcgIbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728810113; c=relaxed/simple;
-	bh=rauAsYdONhYsT5hDvf7/b86dTBwmMtPrN/bkxgb2qlA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZIVSAz78hbT/AyhcAWmpj9QrXfLKibRMxOiLEHs8pcezWZQ1ihXnJant4HMOPqxuf41htgjfBJUecmDT8LcCOn3IsdEvrnKspkPwV8kxgn+363uvNajYlbGrzpPh+kj85NBPepDZL5pszJca0nBRtxdHPwzHdsJ+/A5jyH36B+0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBA18C4CEC5;
-	Sun, 13 Oct 2024 09:01:49 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Paolo Bonzini <pbonzini@redhat.com>,
-	Huacai Chen <chenhuacai@kernel.org>,
-	Tianrui Zhao <zhaotianrui@loongson.cn>,
-	Bibo Mao <maobibo@loongson.cn>
-Cc: kvm@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [PATCH] LoongArch: KVM: Mark hrtimer to expire in hard interrupt context
-Date: Sun, 13 Oct 2024 17:01:36 +0800
-Message-ID: <20241013090136.1254036-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1728810547; c=relaxed/simple;
+	bh=bk1Cmpp8hfSOZ8cDEqEfiHXDRPHWrqf+C5g/tx1Cc+s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fCt+9CHisMuYKDQNlF7UaL7GRiQarA/jdH6oKTfhkaC2QaOvkqV6K94kof51HeqQ9fHEzTwCzbCM5gMCav1Isgtpk3EFeUfQgM+mO1flJ6IaBLEYkxZE0rAltDuwPaMahBUBZAr3yox/4oUrsk0bI/vW5L3tkHlIhPF8pQqEd6A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=ufsDYMRk; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728810532; x=1729415332; i=wahrenst@gmx.net;
+	bh=UsAIdWe5potvvua1FVV0w8R2E6NW4K544p9dIWK0Ggc=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=ufsDYMRkcHPiORHNiZ97uStt4t4voQoks4nci7YgOA9zry7VpRTVgx+f8hWMGtdb
+	 OIf8yF+KflG6qUaQVZM6mLGARFrEDv+W0Ul0UZDBA/CYq8w+DaiWbmoaF+yUKddax
+	 jxOh4tSZNsejXLLpImDdEN11EWKqsdkN0er7xD0Z3UdzwuevrTsU2cNb5G13Rn4K8
+	 cM01To1+zXBOMn4r8Klw3JfLIshnBdKq7V29gFMYqt5iSVfiDxH9CymDfr9nFdqun
+	 GIY/rFxi4ET4m+mfB1zJmNd3SrpjZOAax0TqXmyUDh6GkqArehGHOuOR9NLJ5Req+
+	 ZTMb73fH4q/Lk+3cZw==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx005
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MiJZE-1tdvuc2ijG-00aKr6; Sun, 13
+ Oct 2024 11:08:52 +0200
+Message-ID: <43abc7cd-89ca-4129-8f0b-f46c26e43510@gmx.net>
+Date: Sun, 13 Oct 2024 11:08:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] staging: vchiq_arm: Drop blank lines
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ kernel-list@raspberrypi.com
+References: <20241013084529.377488-1-umang.jain@ideasonboard.com>
+ <20241013084529.377488-2-umang.jain@ideasonboard.com>
+Content-Language: en-US
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241013084529.377488-2-umang.jain@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:pK1zUEGVKR7Z1EZLbRnzRHlXym1WTMruNtQCWtnHGQT7DE8uElW
+ e42eMnfChgCGKwO74vheivFfj35lt585vI/b4iadJwU06dwCPCbWlGNbEnYbzsy6x148Akx
+ iNa8Vt832MtrSCg2c6YHEWhAdubSIuARmTlQ65yhmN2iClnEuSMZxpAuzm//qwgFnEhsRmp
+ N85GLH3qHPTY/WhmbxWFw==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:mQ7Bjz7PYuw=;5WNqnyOkuI5Eu2XYGNfeoYvZLQw
+ BipwRxyxdz9L6h8LXASjABRnidWhnuH/gkWDuMqflxbxTX442pAOOfnNl6THDAVoWOvp5lFta
+ pLvsyEa6j2F9C1AeMekoys0fKDx1MckuOSJuuWeCUMwBQv0LNSrAzwyAAn6+ZWzP6HdEKswAi
+ BUJWcGiHr57Ky7bmU8yXSNcR1QRYstGp2FSv7SodiaFrQLmSlaYL5CTPELjVxi2vI06rfbMG+
+ eNDo0KtfMgEsGjifXWQLBZo6Fp+6RX03woHFbk/c4K1EiIbHJ+pd5ZBM5xAqKRE4gX1cpptwF
+ TN4wPeNeIzma8A2XG/jhz1QefVHNXnzVYEksCQgxNdHvZDUP/uuvCWSwtyPMaS3ybc/Ew6s+u
+ bFMATC1HmSoVdGMWOBTpriGUhwBAIFSOsHr66yYEvdgp7YRl4vn6XbuUzADPLRBfFfu7BZQOe
+ 1I6uAN3g30fyPcO1N4xn6U5pM1NnaxrRyaXPRKkh6YSHIND1TyqLGEqAyrUpN62Ep8Ex64TtY
+ 3VKkviobElSHzVO8ggvGroWSlm2oZb2HJ5Eg3akZH3k9E/U4FBd5+B6xjOuHIVyM3oUZhg71K
+ fJNz8B+eMGSC2JNt+Hh9LzuBzXNvr20ZI8K00sE+veCdSN3wlAMx+QNFMhraLWy1Lq43AUW/v
+ 65rhMAt5ytJX0l1o7VODuSCPI4c3cZRP8suXcVC/p7+OL4d+nNk4pbOopB0ukSyng764IMM0j
+ MVu1sRKpDHF96oeGElUw9bmGMeDAH5GHfn5/LLd2MOn22fPfgjbE1A6UZraS0Xk89AJq4/in0
+ rwX51qMTfib/C9KIvG7+Fp/w==
 
-Like commit 2c0d278f3293fc5 ("KVM: LAPIC: Mark hrtimer to expire in hard
-interrupt context"), On PREEMPT_RT enabled kernels unmarked hrtimers are
-moved into soft interrupt expiry mode by default.
+Hi Umang,
 
-While that's not a functional requirement for the KVM constant timer
-emulation, it is a latency issue which can be avoided by marking the
-timer so hard interrupt context expiry is enforced.
+Am 13.10.24 um 10:45 schrieb Umang Jain:
+> Drop unnecessary blank lines from vchiq_arm.c.
+>
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+Danilo was a little bit faster [1], so I think you shouldn't care about
+this.
 
-This fix a "scheduling while atomic" bug for PREEMPT_RT enabled kernels:
+Regards
 
- BUG: scheduling while atomic: qemu-system-loo/1011/0x00000002
- Modules linked in: amdgpu rfkill nft_fib_inet nft_fib_ipv4 nft_fib_ipv6 nft_fib nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nft_chain_nat ns
- CPU: 1 UID: 0 PID: 1011 Comm: qemu-system-loo Tainted: G        W          6.12.0-rc2+ #1774
- Tainted: [W]=WARN
- Hardware name: Loongson Loongson-3A5000-7A1000-1w-CRB/Loongson-LS3A5000-7A1000-1w-CRB, BIOS vUDK2018-LoongArch-V2.0.0-prebeta9 10/21/2022
- Stack : ffffffffffffffff 0000000000000000 9000000004e3ea38 9000000116744000
-         90000001167475a0 0000000000000000 90000001167475a8 9000000005644830
-         90000000058dc000 90000000058dbff8 9000000116747420 0000000000000001
-         0000000000000001 6a613fc938313980 000000000790c000 90000001001c1140
-         00000000000003fe 0000000000000001 000000000000000d 0000000000000003
-         0000000000000030 00000000000003f3 000000000790c000 9000000116747830
-         90000000057ef000 0000000000000000 9000000005644830 0000000000000004
-         0000000000000000 90000000057f4b58 0000000000000001 9000000116747868
-         900000000451b600 9000000005644830 9000000003a13998 0000000010000020
-         00000000000000b0 0000000000000004 0000000000000000 0000000000071c1d
-         ...
- Call Trace:
- [<9000000003a13998>] show_stack+0x38/0x180
- [<9000000004e3ea34>] dump_stack_lvl+0x84/0xc0
- [<9000000003a71708>] __schedule_bug+0x48/0x60
- [<9000000004e45734>] __schedule+0x1114/0x1660
- [<9000000004e46040>] schedule_rtlock+0x20/0x60
- [<9000000004e4e330>] rtlock_slowlock_locked+0x3f0/0x10a0
- [<9000000004e4f038>] rt_spin_lock+0x58/0x80
- [<9000000003b02d68>] hrtimer_cancel_wait_running+0x68/0xc0
- [<9000000003b02e30>] hrtimer_cancel+0x70/0x80
- [<ffff80000235eb70>] kvm_restore_timer+0x50/0x1a0 [kvm]
- [<ffff8000023616c8>] kvm_arch_vcpu_load+0x68/0x2a0 [kvm]
- [<ffff80000234c2d4>] kvm_sched_in+0x34/0x60 [kvm]
- [<9000000003a749a0>] finish_task_switch.isra.0+0x140/0x2e0
- [<9000000004e44a70>] __schedule+0x450/0x1660
- [<9000000004e45cb0>] schedule+0x30/0x180
- [<ffff800002354c70>] kvm_vcpu_block+0x70/0x120 [kvm]
- [<ffff800002354d80>] kvm_vcpu_halt+0x60/0x3e0 [kvm]
- [<ffff80000235b194>] kvm_handle_gspr+0x3f4/0x4e0 [kvm]
- [<ffff80000235f548>] kvm_handle_exit+0x1c8/0x260 [kvm]
-
-Signed-off-by: Huacai Chen <chenhuacai@loongson.cn>
----
- arch/loongarch/kvm/timer.c | 7 ++++---
- arch/loongarch/kvm/vcpu.c  | 2 +-
- 2 files changed, 5 insertions(+), 4 deletions(-)
-
-diff --git a/arch/loongarch/kvm/timer.c b/arch/loongarch/kvm/timer.c
-index 74a4b5c272d6..32dc213374be 100644
---- a/arch/loongarch/kvm/timer.c
-+++ b/arch/loongarch/kvm/timer.c
-@@ -161,10 +161,11 @@ static void _kvm_save_timer(struct kvm_vcpu *vcpu)
- 	if (kvm_vcpu_is_blocking(vcpu)) {
- 
- 		/*
--		 * HRTIMER_MODE_PINNED is suggested since vcpu may run in
--		 * the same physical cpu in next time
-+		 * HRTIMER_MODE_PINNED_HARD is suggested since vcpu may run in
-+		 * the same physical cpu in next time, and the timer should run
-+		 * in hardirq context even in the PREEMPT_RT case.
- 		 */
--		hrtimer_start(&vcpu->arch.swtimer, expire, HRTIMER_MODE_ABS_PINNED);
-+		hrtimer_start(&vcpu->arch.swtimer, expire, HRTIMER_MODE_ABS_PINNED_HARD);
- 	}
- }
- 
-diff --git a/arch/loongarch/kvm/vcpu.c b/arch/loongarch/kvm/vcpu.c
-index 0697b1064251..174734a23d0a 100644
---- a/arch/loongarch/kvm/vcpu.c
-+++ b/arch/loongarch/kvm/vcpu.c
-@@ -1457,7 +1457,7 @@ int kvm_arch_vcpu_create(struct kvm_vcpu *vcpu)
- 	vcpu->arch.vpid = 0;
- 	vcpu->arch.flush_gpa = INVALID_GPA;
- 
--	hrtimer_init(&vcpu->arch.swtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED);
-+	hrtimer_init(&vcpu->arch.swtimer, CLOCK_MONOTONIC, HRTIMER_MODE_ABS_PINNED_HARD);
- 	vcpu->arch.swtimer.function = kvm_swtimer_wakeup;
- 
- 	vcpu->arch.handle_exit = kvm_handle_exit;
--- 
-2.43.5
+[1] -
+https://lore.kernel.org/linux-staging/20241012233931.30720-1-dpereira@lkca=
+mp.dev/T/#u
+> ---
+>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 3 ---
+>   1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm=
+.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index 27ceaac8f6cc..e780ed714a14 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -309,9 +309,6 @@ static struct vchiq_arm_state *vchiq_platform_get_ar=
+m_state(struct vchiq_state *
+>   	return (struct vchiq_arm_state *)state->platform_state;
+>   }
+>
+> -
+> -
+> -
+>   void vchiq_dump_platform_state(struct seq_file *f)
+>   {
+>   	seq_puts(f, "  Platform: 2835 (VC master)\n");
 
 
