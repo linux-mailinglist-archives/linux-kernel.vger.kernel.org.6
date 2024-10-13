@@ -1,96 +1,82 @@
-Return-Path: <linux-kernel+bounces-362993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EADB99BC4A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:34:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13FBD99BC4C
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:34:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D87A9281155
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:34:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B337F1F23015
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 21:34:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F7C314B956;
-	Sun, 13 Oct 2024 21:33:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCEB1154C19;
+	Sun, 13 Oct 2024 21:34:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="In+6rOGh"
-Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pt4knkEo"
+Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F01F913A868;
-	Sun, 13 Oct 2024 21:33:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0BAC80027;
+	Sun, 13 Oct 2024 21:34:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728855234; cv=none; b=N+F7wEUReHleoIKEj0MDSt+LwXzR0935RTxqrL8g2Gy8KyxiPjpnCwTVdRp2mxbwYWelsJnU8TTSjBrWND27zkXVBegsz0cJsecxz93DqGVLz3fKVxZgHOU0p7Z3V8iQhX4el9m8vf0XRv8Gjpe/wkv1ws9tCHsBk9rVsweM08w=
+	t=1728855244; cv=none; b=RB5av3v7ehTAHiRE9CUPOADygURLFwfLqUqzXMETB2O0EI6eI2qIMhBAptOjPPAFGubgVsIbFOQKMUzgRNRvRg8wHYggKklisC2XLgqz8Vw78BonOpcIKZO69YnEANy2Q6e4l32Sly9DbLbpE3ndfW8zvUc131q6gWnFig1Ib6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728855234; c=relaxed/simple;
-	bh=pHUprJJUm+kOD8ILCnwS/XICc6ujwvZL6GeC8rTuTj8=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EtRvqLfviTT+q0gmF18A1cKWkHfUn09QtZM2DgzCyOD/jiLKjfHwFYfEAv46QHGUAl2a2i5r1Jx7pfTKrE7t8K8R7Aw5YFiMhmh0TA4VPVhfHIH1InYiq+ar15c0d4J+RLLGj81N0NcmrXJrHQFrye6bmre273encnLPi4egR+w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=In+6rOGh; arc=none smtp.client-ip=209.85.218.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0472306cso97327166b.3;
-        Sun, 13 Oct 2024 14:33:52 -0700 (PDT)
+	s=arc-20240116; t=1728855244; c=relaxed/simple;
+	bh=zy9QIcZHwGlwMlEbmwL4jXr6ASVlwLHHZ48z3b0BAPk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EKeD8r41pOjnEfhKoyTE8CJz6zvBQG1g37p1RINjWE4/nig3vBatpOz1KWupGSMJnEgKQD+NE7ukiquV+gjsH0q8OpBrQPr8Kj79JZ5AL3/UopORquavJx4XBIt3/qBEi8Noh1vGr5Blqqsl09wCGO0lc/tOwYYbZllQwKQiTpY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pt4knkEo; arc=none smtp.client-ip=209.85.214.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-20ca7fc4484so13702165ad.3;
+        Sun, 13 Oct 2024 14:34:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1728855231; x=1729460031; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sytY2FNkkLBnOCAcfUv9hkr9CctUcl1zNo07NA/NCoo=;
-        b=In+6rOGh2eTqFhOaR9r14nU4IJu5qoudPT9F9nKL87loPF+AahbCuNuc9KveNFRMUF
-         i+k/QONdpuy6we2C7yIC734yVCXKRgkN2EaUIKhigLxFRUFs5CoUzEnVXiFYUvwGTl0/
-         p7hvxfjwlHiuZ/t4ccuDjKlKLS0H9puwlBhupvVBafpRDsbvm01K459CN115mnKolhG3
-         kGHW7XhL/f0x0CWoqII/vU9XMThVOGQM63UN2b7JfcpO6h0m0nd0U9pII5Ub9g0fNapT
-         VqvZLK912kIXt2sV3iB6x5gxhkxLGmWUAosjRDZ8MINallxM8BCWznsdztHUVoplMATm
-         iPrg==
+        d=gmail.com; s=20230601; t=1728855242; x=1729460042; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=nB1bZmyvGxTgHvpG7TUo9JYKjyZnq7O7z9cIIFMGfFs=;
+        b=Pt4knkEoDHlmXGst8LBQ1oUJqo+4IRm/iBoyK/QApCRNwT41GMM6+iI1vRoMgHAvXy
+         BYU2tpkApZv2H+omlB8GGEQj2HZczWIxLekRyi+Hep7DB3CtaZWFErv0Md6FcZ73i0xg
+         5b/4kC+tKSa7LJ/YCoMlcazG6b9h0s5OpQFtsINtraP426peMBAD+xr1DQwpm8DjCAbm
+         qW1G5tybsbByqqauQ/7C3Ho8dr5/1p9EZmBXZ1iEoqBFMP+WaoGSpUAPWsAGSlvOFBRU
+         cVEYjuOlzEDkxwL8beaCTiV4f8EAlXpWTzYcrqTktpn5wYT3MsSjk6mpl7Iq2AddzASu
+         +bVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728855231; x=1729460031;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sytY2FNkkLBnOCAcfUv9hkr9CctUcl1zNo07NA/NCoo=;
-        b=liuf4Rmeik8Awgt0CGyvnzyPPBcXosPzIamdzjjlO05rYRFOZ8xcSDp96/3ustS+P5
-         qTcuwg5QVueL97oWicZj+uHyoIac1a4/M+XItBUlPsTSRAjgxVEDMM/o+k3MKJeG3OPg
-         xfSHdLvzhi4VgBAnGLLygiycUKsBdAK0/0Wdl/rx6fcZvkdXNo2SH3ATQmbmDpKo+S4F
-         m/zgM+dSMrG7OuqnpIlXostFu3SotojRd7lKzSK0CMXz4gsKruyd+jw6e88a82+LwvVS
-         +yDSkxwYQ/wweTylpfLFPMf6KjAw0zvqPk64Mgpq6Ke39i/atV1NX0j0EiNa2YJlTDN3
-         BLsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUFcIpqM1K5K7U0ef5mit9tHG0yqAdTItmmBL3K1l1/zKCQ1/QnlD15P2aiyMhMwBAxRZJE9+jRgCq4@vger.kernel.org, AJvYcCXsgzx2ntDHpIwJRFHN+zIsPFHOw7PKjDad2S/VhrLwUvot/Nk7UlupCuIL9FS8mvNbNElrQWbXOEjZNmQq@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNz97sqIKC1Cn7/sKw4DGNEGrT9LtxrgL8rAkTouB4wgpm97ML
-	tJlLRUET/tpEeWsYV5No3prmVuV+fXB6jGmImHWnc5gbaGXfY8+G
-X-Google-Smtp-Source: AGHT+IG7ExnbcS3+M2fgUbQl6n1Tt8baiJ5a7KWvoXfWNem7QdFcbv71w/NQPB0td9aTVoU+aU5Jug==
-X-Received: by 2002:a17:907:7b95:b0:a9a:d2a:be39 with SMTP id a640c23a62f3a-a9a0d2ac035mr162886066b.25.1728855230903;
-        Sun, 13 Oct 2024 14:33:50 -0700 (PDT)
-Received: from localhost.localdomain ([2a02:908:1587:1e60:ba33:7ef4:2f9b:8303])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99a80f2752sm492798166b.213.2024.10.13.14.33.50
+        d=1e100.net; s=20230601; t=1728855242; x=1729460042;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=nB1bZmyvGxTgHvpG7TUo9JYKjyZnq7O7z9cIIFMGfFs=;
+        b=BrccJ0ZKwSGr0UiOhZb7pxP+KZaelNOuN9N8q+1YQgXKNQVXFbNU3yXwEPN4DiG3Nx
+         quTmGyGW4P/ADI1jLI7XFrPP0VP8II3TQrqeK8B9v+FH+IGn5SRaG9YvyUMFbH1rclBp
+         WDusEHcklHawiTJ6VwsOcl2cZVnp5rQ05ZULg3wS6+CtMdCPhQJgxYZzhP3njk/Z6diC
+         MaAQ9pb4dyvTGIwehWKaqnHNl5bYZwsNOshzFmVotKv7HKYqnIYLBMd0b8VwOY816jnb
+         N8iGEwh/5nvtBAFmqhyW6cvM0n8Pb3SKbu1A2AAyqiPsGgTeUNc4KQqg9zJwz+ram3+W
+         aNhg==
+X-Forwarded-Encrypted: i=1; AJvYcCVAqwvuELEt9Z5e5sxL5DOEemqurGddxobhIqKy9okFg/uxMlbmwR+T5ua2JOQK/4Rie7PXAGcnSiTv7HQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMw3i5W9J4VDj98L7GYhaOtRZNcWMRslYOfR7M/SMNRNFwe97s
+	Ki8Bs5BunDE2hMCh7zEOOjEz+tVPBvEjnPevEzckqB6aeoKFSTkNvf7KXA==
+X-Google-Smtp-Source: AGHT+IEgi5051N/5Zun0iXakUIGf15GbwDgOYReUSIhbx5GOdMdeMWmLo94XReQKaUGGJula3JtIEA==
+X-Received: by 2002:a17:902:ecc9:b0:20b:b75d:e8c1 with SMTP id d9443c01a7336-20cbb17d002mr114681165ad.4.1728855242001;
+        Sun, 13 Oct 2024 14:34:02 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8badc3bdsm54136595ad.61.2024.10.13.14.34.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 13 Oct 2024 14:33:50 -0700 (PDT)
-From: Cenk Uluisik <cenk.uluisik@googlemail.com>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Chris Morgan <macromorgan@hotmail.com>,
-	Dragan Simic <dsimic@manjaro.org>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Tim Lunn <tim@feathertop.org>,
-	Andy Yan <andyshrk@163.com>,
-	Jagan Teki <jagan@edgeble.ai>,
-	Michael Riesch <michael.riesch@wolfvision.net>,
-	Jimmy Hon <honyuenkwun@gmail.com>,
-	Cenk Uluisik <cenk.uluisik@googlemail.com>,
-	Jing Luo <jing@jing.rocks>,
-	devicetree@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH V3 2/2] dt-bindings: arm: rockchip: Add Orange Pi 5b
-Date: Sun, 13 Oct 2024 23:32:37 +0200
-Message-ID: <20241013213305.310844-2-cenk.uluisik@googlemail.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241013213305.310844-1-cenk.uluisik@googlemail.com>
-References: <20241013213305.310844-1-cenk.uluisik@googlemail.com>
+        Sun, 13 Oct 2024 14:34:01 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: =?UTF-8?q?Rafa=C5=82=20Mi=C5=82ecki?= <rafal@milecki.pl>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv2 net-next] net: bgmac: use devm for register_netdev
+Date: Sun, 13 Oct 2024 14:34:00 -0700
+Message-ID: <20241013213400.9627-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -99,35 +85,40 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This commit adds the Xunlong Orange Pi 5b entry to the device tree
-bindings inside the Documentation folder. I know you said I
-should extend the Orange Pi 5 one with an enum, but I made a whole new
-entry, because looking at all the other entries, they also create new
-entries in a case "like this". I hope this is okay, or maybe I misunderstand something.
-Thank you in advance.
+Removes need to unregister in _remove.
 
-Signed-off-by: Cenk Uluisik <cenk.uluisik@googlemail.com>
+Tested on ASUS RT-N16. No change in behavior.
+
+Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
- Documentation/devicetree/bindings/arm/rockchip.yaml | 5 +++++
- 1 file changed, 5 insertions(+)
+ v2: added reviewed/tested-by broadcom.
+ drivers/net/ethernet/broadcom/bgmac.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/Documentation/devicetree/bindings/arm/rockchip.yaml b/Documentation/devicetree/bindings/arm/rockchip.yaml
-index 687823e58c22..130f6ccc1658 100644
---- a/Documentation/devicetree/bindings/arm/rockchip.yaml
-+++ b/Documentation/devicetree/bindings/arm/rockchip.yaml
-@@ -1053,6 +1053,11 @@ properties:
-         items:
-           - const: xunlong,orangepi-5
-           - const: rockchip,rk3588s
-+      
-+      - description: Xunlong Orange Pi 5B
-+        items:
-+          - const: xunlong,orangepi-5b
-+          - const: rockchip,rk3588s
+diff --git a/drivers/net/ethernet/broadcom/bgmac.c b/drivers/net/ethernet/broadcom/bgmac.c
+index 6ffdc4229407..2599ffe46e27 100644
+--- a/drivers/net/ethernet/broadcom/bgmac.c
++++ b/drivers/net/ethernet/broadcom/bgmac.c
+@@ -1546,7 +1546,7 @@ int bgmac_enet_probe(struct bgmac *bgmac)
  
-       - description: Zkmagic A95X Z2
-         items:
+ 	bgmac->in_init = false;
+ 
+-	err = register_netdev(bgmac->net_dev);
++	err = devm_register_netdev(bgmac->dev, bgmac->net_dev);
+ 	if (err) {
+ 		dev_err(bgmac->dev, "Cannot register net device\n");
+ 		goto err_phy_disconnect;
+@@ -1568,7 +1568,6 @@ EXPORT_SYMBOL_GPL(bgmac_enet_probe);
+ 
+ void bgmac_enet_remove(struct bgmac *bgmac)
+ {
+-	unregister_netdev(bgmac->net_dev);
+ 	phy_disconnect(bgmac->net_dev->phydev);
+ 	netif_napi_del(&bgmac->napi);
+ 	bgmac_dma_free(bgmac);
 -- 
-2.46.0
+2.47.0
 
 
