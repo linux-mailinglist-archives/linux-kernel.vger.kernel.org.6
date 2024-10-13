@@ -1,67 +1,59 @@
-Return-Path: <linux-kernel+bounces-362938-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 718E299BB7E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:20:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D63D99BB81
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:21:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E14BD1F21835
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:20:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE3C61C20CCD
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:21:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F009A171671;
-	Sun, 13 Oct 2024 20:18:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F4881990C4;
+	Sun, 13 Oct 2024 20:18:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="kXXFX4IR"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="kBhJiAsJ"
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13539155CBA;
-	Sun, 13 Oct 2024 20:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88344158531;
+	Sun, 13 Oct 2024 20:18:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728850696; cv=none; b=jKcLIIDoING9wEneYjz+4tQGeiDLznnD0Twa/gtK1JpgKCA7x8ZXYLu3lyjrN7o5OM00w8dKmJMgFvY8QYWKU10AwS2tqEgRHG+2+hKN47lpx6XZEB4h4XYy447SYq1hd/uJGak4sYNPFiTUUz5DltvVj3Ng2YUyLSshOm1zGmE=
+	t=1728850697; cv=none; b=k9huYunrH/rByZ+sm3Jpwc6PmnxIjh6ec7F/cfkjHsJxKxhSHyGGXPwld+O4Gvd+ZpHDNMCPy8fpqgG9bxv+JMJHg91/NhugRbqQSGvMywo6MctfPJyaqNBHJXPdbLILnxxAi2PgfLx2/8CtU5w91nf9rZI3YucJaWr2dJ4c8UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728850696; c=relaxed/simple;
-	bh=FEepbngzweBJWbQS1bNQaCR4LhH3IgCf1v/h/s+3Dn4=;
+	s=arc-20240116; t=1728850697; c=relaxed/simple;
+	bh=S7pHQi8X4RZymqCk8YJqv27rty/iMunvKNGwHN3L2Mk=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bxnqUxVJmrfv6sN+bmsqmghCoQhhYFqlcKufJpFCYh7BC0iiypd3pRqrqo9QgV+8zgRhGxnFTyOCM5XaG3vrl/K9hbvJ31h6+JpzFPABMiaZdcVZlkIED41/nip5MozSBXOzWwuuuIsVzEvMtU61f37MWbtoO+BJk6KXAgw97qA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=kXXFX4IR; arc=none smtp.client-ip=192.134.164.104
+	 MIME-Version; b=HhW+JcU72ux1DPZnf/daKuNPV+gVTm3LaaJtHf9R7lxL8QYE60/tjZ75INbT3gsVTrZPe0Kl9gtR8dISic9Ti2L2xjC01oehGd3yrshrzs09bEIP0V3Eov1Itd3y4aP3utBuXjq2YddL4hC7+5BJtUEQZEM9lnMd6C6L1Rc2eeQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=kBhJiAsJ; arc=none smtp.client-ip=192.134.164.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=CLSnrUkA/mLqsKxxUG6thrG2qHqY5krv2SYxozk1k4c=;
-  b=kXXFX4IRCytaJ+MTepjAKZ93wQGatywXpWWN05HVq5drkzKt5IqJD6D3
-   8hhgyv0Kx6yGhOOx97YtBcrkuWywMK/wQ0Mhv6XZpex5uHrP0BW1QQ7eX
-   1HhVF0IULT8QHAzGQ+VlKN2wpf88tru1deXGO5PGqNfBvoeccjzxWD4xg
-   Y=;
+  bh=Ivq+yKVATTsAlI4yKIH4VcgPKbBNdKJviYwzBHfTnik=;
+  b=kBhJiAsJw3Dq2dT5NHZUa54RmSa+vEUz4UEbjD2YV2bpjjNC2GlPAjCt
+   7oFcmZvoasAo+k1dZdicu8PVYUNE8rSE5vNyLX98XNMoDsThkZhU/9+sd
+   waq8kvTgcUwlWFsPPQSaYuWpGppAk3MPeUIWw2RV2i79MkYcPOCN7UWJT
+   A=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,201,1725314400"; 
-   d="scan'208";a="98968281"
+   d="scan'208";a="98968282"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
   by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:17:59 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Marek Lindner <mareklindner@neomailbox.ch>
+To: Tyler Hicks <code@tyhicks.com>
 Cc: kernel-janitors@vger.kernel.org,
 	vbabka@suse.cz,
 	paulmck@kernel.org,
-	Simon Wunderlich <sw@simonwunderlich.de>,
-	Antonio Quartulli <a@unstable.cc>,
-	Sven Eckelmann <sven@narfation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	b.a.t.m.a.n@lists.open-mesh.org,
-	netdev@vger.kernel.org,
+	ecryptfs@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 06/17] batman-adv: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun, 13 Oct 2024 22:16:53 +0200
-Message-Id: <20241013201704.49576-7-Julia.Lawall@inria.fr>
+Subject: [PATCH 07/17] eCryptfs: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 22:16:54 +0200
+Message-Id: <20241013201704.49576-8-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
 References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
@@ -83,101 +75,34 @@ The changes were made using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- net/batman-adv/translation-table.c |   47 ++-----------------------------------
- 1 file changed, 3 insertions(+), 44 deletions(-)
+ fs/ecryptfs/dentry.c |    8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-index 2243cec18ecc..b21ff3c36b07 100644
---- a/net/batman-adv/translation-table.c
-+++ b/net/batman-adv/translation-table.c
-@@ -208,20 +208,6 @@ batadv_tt_global_hash_find(struct batadv_priv *bat_priv, const u8 *addr,
- 	return tt_global_entry;
- }
+diff --git a/fs/ecryptfs/dentry.c b/fs/ecryptfs/dentry.c
+index acaa0825e9bb..49d626ff33a9 100644
+--- a/fs/ecryptfs/dentry.c
++++ b/fs/ecryptfs/dentry.c
+@@ -51,12 +51,6 @@ static int ecryptfs_d_revalidate(struct dentry *dentry, unsigned int flags)
  
--/**
-- * batadv_tt_local_entry_free_rcu() - free the tt_local_entry
-- * @rcu: rcu pointer of the tt_local_entry
-- */
--static void batadv_tt_local_entry_free_rcu(struct rcu_head *rcu)
+ struct kmem_cache *ecryptfs_dentry_info_cache;
+ 
+-static void ecryptfs_dentry_free_rcu(struct rcu_head *head)
 -{
--	struct batadv_tt_local_entry *tt_local_entry;
--
--	tt_local_entry = container_of(rcu, struct batadv_tt_local_entry,
--				      common.rcu);
--
--	kmem_cache_free(batadv_tl_cache, tt_local_entry);
+-	kmem_cache_free(ecryptfs_dentry_info_cache,
+-		container_of(head, struct ecryptfs_dentry_info, rcu));
 -}
 -
  /**
-  * batadv_tt_local_entry_release() - release tt_local_entry from lists and queue
-  *  for free after rcu grace period
-@@ -236,7 +222,7 @@ static void batadv_tt_local_entry_release(struct kref *ref)
- 
- 	batadv_softif_vlan_put(tt_local_entry->vlan);
- 
--	call_rcu(&tt_local_entry->common.rcu, batadv_tt_local_entry_free_rcu);
-+	kfree_rcu(tt_local_entry, common.rcu);
+  * ecryptfs_d_release
+  * @dentry: The ecryptfs dentry
+@@ -68,7 +62,7 @@ static void ecryptfs_d_release(struct dentry *dentry)
+ 	struct ecryptfs_dentry_info *p = dentry->d_fsdata;
+ 	if (p) {
+ 		path_put(&p->lower_path);
+-		call_rcu(&p->rcu, ecryptfs_dentry_free_rcu);
++		kfree_rcu(p, rcu);
+ 	}
  }
  
- /**
-@@ -254,20 +240,6 @@ batadv_tt_local_entry_put(struct batadv_tt_local_entry *tt_local_entry)
- 		 batadv_tt_local_entry_release);
- }
- 
--/**
-- * batadv_tt_global_entry_free_rcu() - free the tt_global_entry
-- * @rcu: rcu pointer of the tt_global_entry
-- */
--static void batadv_tt_global_entry_free_rcu(struct rcu_head *rcu)
--{
--	struct batadv_tt_global_entry *tt_global_entry;
--
--	tt_global_entry = container_of(rcu, struct batadv_tt_global_entry,
--				       common.rcu);
--
--	kmem_cache_free(batadv_tg_cache, tt_global_entry);
--}
--
- /**
-  * batadv_tt_global_entry_release() - release tt_global_entry from lists and
-  *  queue for free after rcu grace period
-@@ -282,7 +254,7 @@ void batadv_tt_global_entry_release(struct kref *ref)
- 
- 	batadv_tt_global_del_orig_list(tt_global_entry);
- 
--	call_rcu(&tt_global_entry->common.rcu, batadv_tt_global_entry_free_rcu);
-+	kfree_rcu(tt_global_entry, common.rcu);
- }
- 
- /**
-@@ -407,19 +379,6 @@ static void batadv_tt_global_size_dec(struct batadv_orig_node *orig_node,
- 	batadv_tt_global_size_mod(orig_node, vid, -1);
- }
- 
--/**
-- * batadv_tt_orig_list_entry_free_rcu() - free the orig_entry
-- * @rcu: rcu pointer of the orig_entry
-- */
--static void batadv_tt_orig_list_entry_free_rcu(struct rcu_head *rcu)
--{
--	struct batadv_tt_orig_list_entry *orig_entry;
--
--	orig_entry = container_of(rcu, struct batadv_tt_orig_list_entry, rcu);
--
--	kmem_cache_free(batadv_tt_orig_cache, orig_entry);
--}
--
- /**
-  * batadv_tt_orig_list_entry_release() - release tt orig entry from lists and
-  *  queue for free after rcu grace period
-@@ -433,7 +392,7 @@ static void batadv_tt_orig_list_entry_release(struct kref *ref)
- 				  refcount);
- 
- 	batadv_orig_node_put(orig_entry->orig_node);
--	call_rcu(&orig_entry->rcu, batadv_tt_orig_list_entry_free_rcu);
-+	kfree_rcu(orig_entry, rcu);
- }
- 
- /**
 
 
