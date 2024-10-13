@@ -1,65 +1,59 @@
-Return-Path: <linux-kernel+bounces-362940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0232299BB85
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:21:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2807C99BB87
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:21:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C8D61F211DB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:21:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0888280DBC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:21:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 713DE19CD0E;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9134F155C83;
 	Sun, 13 Oct 2024 20:18:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="C+HSxQvR"
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="bemVBM66"
 Received: from mail3-relais-sop.national.inria.fr (mail3-relais-sop.national.inria.fr [192.134.164.104])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A881E15C15F;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DDA15D5CE;
 	Sun, 13 Oct 2024 20:18:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.104
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728850698; cv=none; b=XZ/j2B6QEZuA54xEzKXb5PpAx2jWBhQK73sW8+9+WQWik93A0h3GIEBSpXXXM5L9U98M0lMt1v9+zn5KaC0JVrM4kj0qUVxMc3+J4aZb4Cz1+qB2rCObrCgGPKdntC1MvaMdY8Q1B+iWVWypLVE8s1M1mSxKmnkrvHLQU7CZyYI=
+	t=1728850699; cv=none; b=DOfll+G4VScF49ODzQXJJfu6R8fP7VQa4AnaSJGBB0TAKQNk6vb80+0IYrLaNNvytQ/jhhCXLEeP4l8W/ZKuVfcqAKOprFuc7Inv8dC72t/VKlY3Nui5AYkuBW8Q3kJdL6Mf5jE3rKCXV/mF5PBKaKwiYXTDma9ZStpfH8ekIJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728850698; c=relaxed/simple;
-	bh=Z82CmxfDK5BS5lQmiwyd/7ImOVR5p0mfJAVBFbLGRpA=;
+	s=arc-20240116; t=1728850699; c=relaxed/simple;
+	bh=DX8sXR905kdqIHrrtAmWLDbbRSoCZy6ytgo/x8v5TaM=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Ff68L70TPsOabTcnhA9XX8KTS0UQxeM0C4W3SMm9NtCO07bN8V/JLDwwimw4ec2KgbtFQ7JAKTEHX1P6ZzeGeojDoqpYhL7eu73SOcvwV21ZAFGLitTihVAZD98Q3ZUpKN/5ck+tga5NmP3ABa7nsAngzuSD43XiMClcbRueK3o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=C+HSxQvR; arc=none smtp.client-ip=192.134.164.104
+	 MIME-Version; b=fZmfjXHrr+KMX/lnFRo/nH0GEvBQ/G2Vbb5O+19QOQgnAAx+KRSYcTs2oSD/gn+ekJDgXb1/tASGEQELqW/IOhjA1zgxuMqc/s4wP1P48eSM+8aWENfYc+IDfjkILaSEDKZreAPAvU+gukx/BTc35ZHJGMj7Onha/YLB1j9VRnk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=bemVBM66; arc=none smtp.client-ip=192.134.164.104
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=inria.fr; s=dc;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=FK90KUJINoR7t0vKjdCV12p4ymRbra9jrc+9hi9Ry+Q=;
-  b=C+HSxQvRcaca+Y8xr/eNMSLnio2nl7u+JGJNGQdqr/GfN1iQj2s5mHFI
-   g8Ojsh99Sn3oPKiLNQj/QQSL5ENUgFKLJ8l+gUpvsjycV3dJA2ZRZxfFp
-   EDWMhbG05QA/hBqBYI4hYt5wHu7mDxMqzzcd2CRO9/H1tRYhEZoJQg70v
-   4=;
+  bh=uWq5kHOQ0g6AmeD+JbSoxmUBjLV0iBM1hR5RLyN4lME=;
+  b=bemVBM664HQotiDljOFdEe3nOWqNpd+lJtjitHV1Ncs3j9wSjAcqOsIE
+   +0hFguhESPjlBDLlGPnivlwps/s6DhdbWnCLntVdW/b0jAB+aC0t32/Q9
+   PCkekxrqQzcs6c5UT1llylAiGOKjRi1ILcm4BYnKxrg3EeMPqFr7V2Di1
+   I=;
 Authentication-Results: mail3-relais-sop.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=Julia.Lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
 X-IronPort-AV: E=Sophos;i="6.11,201,1725314400"; 
-   d="scan'208";a="98968283"
+   d="scan'208";a="98968284"
 Received: from i80.paris.inria.fr (HELO i80.paris.inria.fr.) ([128.93.90.48])
-  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:17:59 +0200
+  by mail3-relais-sop.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 22:18:00 +0200
 From: Julia Lawall <Julia.Lawall@inria.fr>
-To: Roopa Prabhu <roopa@nvidia.com>
+To: Jens Axboe <axboe@kernel.dk>
 Cc: kernel-janitors@vger.kernel.org,
 	vbabka@suse.cz,
 	paulmck@kernel.org,
-	Nikolay Aleksandrov <razor@blackwall.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	bridge@lists.linux.dev,
-	netdev@vger.kernel.org,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 08/17] net: bridge: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
-Date: Sun, 13 Oct 2024 22:16:55 +0200
-Message-Id: <20241013201704.49576-9-Julia.Lawall@inria.fr>
+Subject: [PATCH 09/17] block: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 22:16:56 +0200
+Message-Id: <20241013201704.49576-10-Julia.Lawall@inria.fr>
 X-Mailer: git-send-email 2.20.1
 In-Reply-To: <20241013201704.49576-1-Julia.Lawall@inria.fr>
 References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
@@ -81,35 +75,35 @@ The changes were made using Coccinelle.
 Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 
 ---
- net/bridge/br_fdb.c |    9 +--------
+ block/blk-ioc.c |    9 +--------
  1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
-index 642b8ccaae8e..1cd7bade9b3b 100644
---- a/net/bridge/br_fdb.c
-+++ b/net/bridge/br_fdb.c
-@@ -73,13 +73,6 @@ static inline int has_expired(const struct net_bridge *br,
- 	       time_before_eq(fdb->updated + hold_time(br), jiffies);
+diff --git a/block/blk-ioc.c b/block/blk-ioc.c
+index 25dd4db11121..ce82770c72ab 100644
+--- a/block/blk-ioc.c
++++ b/block/blk-ioc.c
+@@ -32,13 +32,6 @@ static void get_io_context(struct io_context *ioc)
+ 	atomic_long_inc(&ioc->refcount);
  }
  
--static void fdb_rcu_free(struct rcu_head *head)
+-static void icq_free_icq_rcu(struct rcu_head *head)
 -{
--	struct net_bridge_fdb_entry *ent
--		= container_of(head, struct net_bridge_fdb_entry, rcu);
--	kmem_cache_free(br_fdb_cache, ent);
+-	struct io_cq *icq = container_of(head, struct io_cq, __rcu_head);
+-
+-	kmem_cache_free(icq->__rcu_icq_cache, icq);
 -}
 -
- static int fdb_to_nud(const struct net_bridge *br,
- 		      const struct net_bridge_fdb_entry *fdb)
- {
-@@ -329,7 +322,7 @@ static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
- 	if (test_and_clear_bit(BR_FDB_DYNAMIC_LEARNED, &f->flags))
- 		atomic_dec(&br->fdb_n_learned);
- 	fdb_notify(br, f, RTM_DELNEIGH, swdev_notify);
--	call_rcu(&f->rcu, fdb_rcu_free);
-+	kfree_rcu(f, rcu);
+ /*
+  * Exit an icq. Called with ioc locked for blk-mq, and with both ioc
+  * and queue locked for legacy.
+@@ -102,7 +95,7 @@ static void ioc_destroy_icq(struct io_cq *icq)
+ 	 */
+ 	icq->__rcu_icq_cache = et->icq_cache;
+ 	icq->flags |= ICQ_DESTROYED;
+-	call_rcu(&icq->__rcu_head, icq_free_icq_rcu);
++	kfree_rcu(icq, __rcu_head);
  }
  
- /* Delete a local entry if no other port had the same address.
+ /*
 
 
