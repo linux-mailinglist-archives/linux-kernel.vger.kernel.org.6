@@ -1,209 +1,159 @@
-Return-Path: <linux-kernel+bounces-362749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8A2299B8F9
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:38:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3E8F999B8FA
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:44:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D8FB2157A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:38:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 161461C20C70
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:44:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CDC913BAC3;
-	Sun, 13 Oct 2024 09:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4666F13B588;
+	Sun, 13 Oct 2024 09:44:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U7LI0dAa"
-Received: from mail-qt1-f178.google.com (mail-qt1-f178.google.com [209.85.160.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VPA/PJ9U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D05336B;
-	Sun, 13 Oct 2024 09:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E706936B
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 09:44:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728812325; cv=none; b=urNo0sYCKXWotUIO5I/JMqx4iuvlF4Vw/a88m/HAMZ3vxlddrPD7UvYoO8gyK2oeSKPmoSaxpTeMGhfcpWQXHHUT9WLfPXgfhgCK6VXOU52lEMjwoCdm/9PZcwcfAUZ2CYXFR65HDbZcWyeMe8sx0PlOjU7oGs59/Ld8pCRAbh4=
+	t=1728812689; cv=none; b=haZ8MJJ27nx1pgqU7vXMJw7A/+tTBiWllAY+UHrMC93HaaGqBqrK15omDrzIZ4wdyVad2rHBf3h7AKZ1D5NtJ9BwQEJLFYPT1ECW+PEaeySG9A/19Sb1BTnO8SZiRArxnkhnIOJVkzY/4xSgUBgkOV2CF3iaL2GHBfkF5DXYy6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728812325; c=relaxed/simple;
-	bh=ns3eiogOPJ10pUA+Drn7hHsSYuxX+yqW/UpkfRM+kuI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rhUGa9J87B2UCdbmFWxWVxIh176ZSYOpDBJxQsyiZdIIWx0bTiMoJ/8YZkhN9MgUv5mIY9O4Lyzu78NFexRAMMlQH35GEyOmKrDqhV3WK7nvaL7CARfFpla2c5e+J0uEQMh2fndUGwu5o8fnH6oTBadVPQthyCk7tILGnowZwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U7LI0dAa; arc=none smtp.client-ip=209.85.160.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f178.google.com with SMTP id d75a77b69052e-4606347c791so6110141cf.2;
-        Sun, 13 Oct 2024 02:38:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728812323; x=1729417123; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rbljh3QBLaCEU55EyQRUgUXIT24/JvrPOPpKACKjoVM=;
-        b=U7LI0dAafhgt7lz4ObKMeOHFYdHeTSFzdjYDoy7AeJvCKZ7Jz99Ju/XIfu2UzDjaIR
-         3ClhP4Plou39N+Chj7prn+67D0woYqhiDNh6me1ZJlqPwSrt8b0iFEz+2sbZW8xXDNs2
-         lmmTyD7bYoNa8oO3zipmAxVmnuxj1YZaH3zV0TbWuZWB5MUN3vKAS1MmTBznO7/XGp3a
-         hejsQFhqDk0jZLwKeXLB6lnRin3Y5r6CZixG0sadDWcLQW7xxss95V6oV1HTUTQx1WBQ
-         r1mTf0tktZjkslgdySIJRALg9WE0qIM+0HGninWC5+SNdq8CdKP/ekijq/E/Yo9aTaiK
-         tDXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728812323; x=1729417123;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=rbljh3QBLaCEU55EyQRUgUXIT24/JvrPOPpKACKjoVM=;
-        b=iCvxIFYRKpRTOxwulIDEB8YesLqXntjAM3x+/59goJp5x8CYb654Fhabvk3Va+pymS
-         aq+dErPp5RZxh4jTc0w4wfyK1GPfz45UZEhnPTbq5B4KAXCje/ZjaVCe//G/Am0bNgzR
-         jCD1R/oXNTeOHTrloPHknV1WZxd5QSoSwuIrDJ7IYKZvnTHc24DaWEL0GtieixCW6PMj
-         cyHKpgnK8G7isUwk6tle3g+klz/S52/h8kcM1PPf/YapaObHcxpccA2PT0ZLuR63zL3u
-         bzPs2yxQ6eHp7ArIejuHXOMHwiTXhr92lBxTYweOkggkd/Z+Bgh1mizQhddJ6znz4Ib5
-         CzkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzIrg+YrMTjMofDMgL2HXu8znGv0TMfn9QIvNkWx4WwaizkyfzTssAsFON9X/dloXpTontxVUCI4P4GuNRd5ejzJiHfE9m@vger.kernel.org, AJvYcCXkWNMXyxitFjLjAKOIGVu0b2q+lni+6vGJrdUO9wLrzRQRTyWk+2GXcuTQT1VNprJAzqj1BHKm6sU+KYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhFR+ug7A8Auw3f464dXL6dsnk8hPOwoTGxy9fwRLPXhGJ5iQD
-	BlHjPsoNTUOoGZFrtnsF09EdlDorItfdXu7w2uim21rUww0SzvqGcsxzGNZezR69j5y6foxwdJH
-	FTqcyziIS31ghBzVVcvSHte9dCcI=
-X-Google-Smtp-Source: AGHT+IFFYUgMvy7TB/FUVUEQ0wgIT3dNYRe2MOn8pw3I6QUuDAkJLQbEVKAqzDvmp+MiR7ldZlrSEeZsSSwzAqDLdeU=
-X-Received: by 2002:a05:622a:11c5:b0:45f:d8e0:a380 with SMTP id
- d75a77b69052e-460583fc690mr83389321cf.16.1728812322783; Sun, 13 Oct 2024
- 02:38:42 -0700 (PDT)
+	s=arc-20240116; t=1728812689; c=relaxed/simple;
+	bh=uBh92F6JFgErLzEACrOrk1aa/hShSBYHX/+Zn8wCgPQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NMrQ/XenACjKoapVvBfeWTS6mW0tHkc4mnUWvJ7+v2Vb19KNtDv5yhs54a+wvz0RE+6y0dNr4a5riJRgDsfP0b5XcPwPTrgyeretvVZQ3wJZtkZ5EOLXE5Tw+BYzUBghGD88YibAxGQCDXhi0Ogtqbh473TSCi4ST/FPyemM/TA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VPA/PJ9U; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728812687; x=1760348687;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=uBh92F6JFgErLzEACrOrk1aa/hShSBYHX/+Zn8wCgPQ=;
+  b=VPA/PJ9UPP3qWdZdS21MJFGip7X9lNlHWuZ/+MpVBV2eA4LRQvhb7ywv
+   Vycco08igcmH2ZbLe5Qpoqa2PBfNS3+dYddJsrFapBcVXI2tLWFHkzRxh
+   I7nHnXKLrxMYEjgmrJRKYb9/TaPWBWSR+0iWdLhtOfVapWv8MMbYlVPvS
+   t+Q/SuyIRKUpXjoC00YaDeobVsqYFkJd/5SabNwVsoH3iHsLRcAeoFpB+
+   s7jSe6UXQImxvKE8BMyXNBzWvvNZLUJhs8FjxjVkIRLUmBvKznBj6PUOX
+   ikvuDYYfKs7fVuIlkxcUF/JudQMAZhnvqjtmtZPR0nQ3CIy9W/zOH9RyO
+   A==;
+X-CSE-ConnectionGUID: tc62fzFRR629/gtgAYX5uA==
+X-CSE-MsgGUID: obNcA1hMRx6ZRcgiLjo+Kg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28256608"
+X-IronPort-AV: E=Sophos;i="6.11,200,1725346800"; 
+   d="scan'208";a="28256608"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 02:44:47 -0700
+X-CSE-ConnectionGUID: GdDPtMZiRtybfBx8A0/+vg==
+X-CSE-MsgGUID: gt+o3uyTQeuG3HZxrC9BQw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,200,1725346800"; 
+   d="scan'208";a="114757632"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa001.jf.intel.com with ESMTP; 13 Oct 2024 02:44:43 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1szv9U-000EGR-0n;
+	Sun, 13 Oct 2024 09:44:40 +0000
+Date: Sun, 13 Oct 2024 17:44:24 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ankur Arora <ankur.a.arora@oracle.com>, linux-kernel@vger.kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, peterz@infradead.org, tglx@linutronix.de,
+	paulmck@kernel.org, mingo@kernel.org, bigeasy@linutronix.de,
+	juri.lelli@redhat.com, vincent.guittot@linaro.org,
+	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
+	ankur.a.arora@oracle.com, efault@gmx.de
+Subject: Re: [PATCH 1/7] sched: warn for high latency with
+ TIF_NEED_RESCHED_LAZY
+Message-ID: <202410131715.HYC3WK5i-lkp@intel.com>
+References: <20241009165411.3426937-2-ankur.a.arora@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241013002248.3984442-1-song@kernel.org>
-In-Reply-To: <20241013002248.3984442-1-song@kernel.org>
-From: Amir Goldstein <amir73il@gmail.com>
-Date: Sun, 13 Oct 2024 11:38:31 +0200
-Message-ID: <CAOQ4uxjQ--cBoNNHQYz+AFz2z8g=pCZ0CFDHujuCELOJBg8wzw@mail.gmail.com>
-Subject: Re: [PATCH v2] fsnotify, lsm: Decouple fsnotify from lsm
-To: Song Liu <song@kernel.org>
-Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, paul@paul-moore.com, jmorris@namei.org, 
-	serge@hallyn.com, kernel-team@fb.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009165411.3426937-2-ankur.a.arora@oracle.com>
 
-On Sun, Oct 13, 2024 at 2:23=E2=80=AFAM Song Liu <song@kernel.org> wrote:
->
-> Currently, fsnotify_open_perm() is called from security_file_open(). This
-> is not right for CONFIG_SECURITY=3Dn and CONFIG_FSNOTIFY=3Dy case, as
-> security_file_open() in this combination will be a no-op and not call
-> fsnotify_open_perm(). Fix this by calling fsnotify_open_perm() directly.
+Hi Ankur,
 
-Maybe I am missing something.
-I like cleaner interfaces, but if it is a report of a problem then
-I do not understand what the problem is.
-IOW, what does "This is not right" mean?
+kernel test robot noticed the following build errors:
 
->
-> After this, CONFIG_FANOTIFY_ACCESS_PERMISSIONS does not require
-> CONFIG_SECURITY any more. Remove the dependency in the config.
->
-> Signed-off-by: Song Liu <song@kernel.org>
-> Acked-by: Paul Moore <paul@paul-moore.com>
->
-> ---
->
-> v1: https://lore.kernel.org/linux-fsdevel/20241011203722.3749850-1-song@k=
-ernel.org/
->
-> As far as I can tell, it is necessary to back port this to stable. Becaus=
-e
-> CONFIG_FANOTIFY_ACCESS_PERMISSIONS is the only user of fsnotify_open_perm=
-,
-> and CONFIG_FANOTIFY_ACCESS_PERMISSIONS depends on CONFIG_SECURITY.
-> Therefore, the following tags are not necessary. But I include here as
-> these are discussed in v1.
+[auto build test ERROR on paulmck-rcu/dev]
+[also build test ERROR on powerpc/next powerpc/fixes tip/sched/core linus/master v6.12-rc2 next-20241011]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I did not understand why you claim that the tags are or not necessary.
-The dependency is due to removal of the fsnotify.h include.
+url:    https://github.com/intel-lab-lkp/linux/commits/Ankur-Arora/sched-warn-for-high-latency-with-TIF_NEED_RESCHED_LAZY/20241010-005819
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/paulmck/linux-rcu.git dev
+patch link:    https://lore.kernel.org/r/20241009165411.3426937-2-ankur.a.arora%40oracle.com
+patch subject: [PATCH 1/7] sched: warn for high latency with TIF_NEED_RESCHED_LAZY
+config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241013/202410131715.HYC3WK5i-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241013/202410131715.HYC3WK5i-lkp@intel.com/reproduce)
 
-Anyway, I don't think it is critical to backport this fix.
-The dependencies would probably fail to apply cleanly to older kernels,
-so unless somebody cares, it would stay this way.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410131715.HYC3WK5i-lkp@intel.com/
 
->
-> Fixes: c4ec54b40d33 ("fsnotify: new fsnotify hooks and events types for a=
-ccess decisions")
+All errors (new ones prefixed by >>):
 
-Because I am not sure what the problem is, I am not sure that a Fixes:
-tag is called for.
+   kernel/sched/core.c: In function 'cpu_resched_latency':
+>> kernel/sched/core.c:5528:34: error: implicit declaration of function 'tif_need_resched_lazy'; did you mean 'tif_need_resched'? [-Werror=implicit-function-declaration]
+    5528 |         if ((!need_resched() && !tif_need_resched_lazy()) || !latency_warn_ms)
+         |                                  ^~~~~~~~~~~~~~~~~~~~~
+         |                                  tif_need_resched
+   cc1: some warnings being treated as errors
 
-> Depends-on: 36e28c42187c ("fsnotify: split fsnotify_perm() into two hooks=
-")
-> Depends-on: d9e5d31084b0 ("fsnotify: optionally pass access range in file=
- permission hooks")
 
-These need to be in the commit message in case AUTOSEL or a developer
-would decide to backport your change.
+vim +5528 kernel/sched/core.c
 
-Thanks,
-Amir.
+  5517	
+  5518	#ifdef CONFIG_SCHED_DEBUG
+  5519	static u64 cpu_resched_latency(struct rq *rq)
+  5520	{
+  5521		int latency_warn_ms = READ_ONCE(sysctl_resched_latency_warn_ms);
+  5522		u64 resched_latency, now = rq_clock(rq);
+  5523		static bool warned_once;
+  5524	
+  5525		if (sysctl_resched_latency_warn_once && warned_once)
+  5526			return 0;
+  5527	
+> 5528		if ((!need_resched() && !tif_need_resched_lazy()) || !latency_warn_ms)
+  5529			return 0;
+  5530	
+  5531		if (system_state == SYSTEM_BOOTING)
+  5532			return 0;
+  5533	
+  5534		if (!rq->last_seen_need_resched_ns) {
+  5535			rq->last_seen_need_resched_ns = now;
+  5536			rq->ticks_without_resched = 0;
+  5537			return 0;
+  5538		}
+  5539	
+  5540		rq->ticks_without_resched++;
+  5541		resched_latency = now - rq->last_seen_need_resched_ns;
+  5542		if (resched_latency <= latency_warn_ms * NSEC_PER_MSEC)
+  5543			return 0;
+  5544	
+  5545		warned_once = true;
+  5546	
+  5547		return resched_latency;
+  5548	}
+  5549	
 
-> ---
->  fs/notify/fanotify/Kconfig | 1 -
->  fs/open.c                  | 4 ++++
->  security/security.c        | 9 +--------
->  3 files changed, 5 insertions(+), 9 deletions(-)
->
-> diff --git a/fs/notify/fanotify/Kconfig b/fs/notify/fanotify/Kconfig
-> index a511f9d8677b..0e36aaf379b7 100644
-> --- a/fs/notify/fanotify/Kconfig
-> +++ b/fs/notify/fanotify/Kconfig
-> @@ -15,7 +15,6 @@ config FANOTIFY
->  config FANOTIFY_ACCESS_PERMISSIONS
->         bool "fanotify permissions checking"
->         depends on FANOTIFY
-> -       depends on SECURITY
->         default n
->         help
->            Say Y here is you want fanotify listeners to be able to make p=
-ermissions
-> diff --git a/fs/open.c b/fs/open.c
-> index acaeb3e25c88..6c4950f19cfb 100644
-> --- a/fs/open.c
-> +++ b/fs/open.c
-> @@ -946,6 +946,10 @@ static int do_dentry_open(struct file *f,
->         if (error)
->                 goto cleanup_all;
->
-> +       error =3D fsnotify_open_perm(f);
-> +       if (error)
-> +               goto cleanup_all;
-> +
->         error =3D break_lease(file_inode(f), f->f_flags);
->         if (error)
->                 goto cleanup_all;
-> diff --git a/security/security.c b/security/security.c
-> index 6875eb4a59fc..a72cc62c0a07 100644
-> --- a/security/security.c
-> +++ b/security/security.c
-> @@ -19,7 +19,6 @@
->  #include <linux/kernel.h>
->  #include <linux/kernel_read_file.h>
->  #include <linux/lsm_hooks.h>
-> -#include <linux/fsnotify.h>
->  #include <linux/mman.h>
->  #include <linux/mount.h>
->  #include <linux/personality.h>
-> @@ -3102,13 +3101,7 @@ int security_file_receive(struct file *file)
->   */
->  int security_file_open(struct file *file)
->  {
-> -       int ret;
-> -
-> -       ret =3D call_int_hook(file_open, file);
-> -       if (ret)
-> -               return ret;
-> -
-> -       return fsnotify_open_perm(file);
-> +       return call_int_hook(file_open, file);
->  }
->
->  /**
-> --
-> 2.43.5
->
->
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
