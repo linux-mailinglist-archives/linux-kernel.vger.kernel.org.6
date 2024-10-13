@@ -1,59 +1,67 @@
-Return-Path: <linux-kernel+bounces-362673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C85C599B7EB
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 03:30:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E48599B7EC
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 03:47:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82DE028288E
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:30:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC9B61C218CB
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 01:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5EE4C9A;
-	Sun, 13 Oct 2024 01:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7CBD3FEC;
+	Sun, 13 Oct 2024 01:47:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b="FnwmDu39"
-Received: from mx.treblig.org (mx.treblig.org [46.235.229.95])
+	dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b="lSzuIXBf"
+Received: from sender4-op-o15.zoho.com (sender4-op-o15.zoho.com [136.143.188.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 191E517C9;
-	Sun, 13 Oct 2024 01:30:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.235.229.95
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728783003; cv=none; b=pmzjE8b+AAJmT/HaIDJFocETGV4wcw9p3WP2pMsf3LjRqL13JX1NK50/JwrETAjr/SJ44p6+H6SaPg1ZSidXcsbEitPkYfuNCY5c0JdtWKjIqCrbU2mx7jtr9UTPXHParTST5t/Z9ZxNsZuyPqrisxorJZJwtM+5zpAQI7WRqAI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728783003; c=relaxed/simple;
-	bh=B+G1ePAoG6zIOvr2BdtmD3pf5geReJjQGtNTzBr1aKg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o9e/lWy661S9Lp+R+xCpCKrKsA/cEMcvHoDAn82W/0/66nmAd8wtakMgvI1qJQRPe5KsYQ5ZN3PdQXItlcro61IQvAQ59dhqD7/2f6LSA6Zqz1Pu36brgOK6cVxQb7YK09CT0FpNPFNRM/2qkEaBnKeYHGWwmWy0Mgk8dURrfXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org; spf=pass smtp.mailfrom=treblig.org; dkim=pass (2048-bit key) header.d=treblig.org header.i=@treblig.org header.b=FnwmDu39; arc=none smtp.client-ip=46.235.229.95
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=treblig.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=treblig.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=treblig.org
-	; s=bytemarkmx; h=MIME-Version:Message-ID:Date:Subject:From:Content-Type:From
-	:Subject; bh=fO53weLP+Aw4ySdODx/4ElwMlhKm+tjgTNBZRL+OdFA=; b=FnwmDu39IlX8Br5U
-	BzCHEjquG6BL45N9Y+vaxtNHime5RvvyHnsuZPEhynjH3RjVU+S1gDuDGXwB/Hvi+4xnarmrXTNhq
-	g4HzhYJuePkhem+1AhStaEcBUppFl1lchKUivW0cgL9yBTL9PHt070CidzGvfPglq0cnOVRTuqDZX
-	CHRv3jP5o/cFcaTc6UoBHupmXuyeCqGjBvQdH4Gk3uiaKcezFo2D92Z3ytsLxelJPZNW7IaSSgNe6
-	yuy5z4GpFRbXk//sjN74zV1GH5jlAg/HRA7MpysNjgIcaZY5ldPFJoNA651RLJDUa2gZvHpQFQr3t
-	LJFVqIfc7JKJUVFWlg==;
-Received: from localhost ([127.0.0.1] helo=dalek.home.treblig.org)
-	by mx.treblig.org with esmtp (Exim 4.96)
-	(envelope-from <linux@treblig.org>)
-	id 1sznQY-00Ajk1-2u;
-	Sun, 13 Oct 2024 01:29:46 +0000
-From: linux@treblig.org
-To: bharat@chelsio.com,
-	davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com
-Cc: netdev@vger.kernel.org,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B1A17C9;
+	Sun, 13 Oct 2024 01:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.15
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728784064; cv=pass; b=JqAlkDnVTcVLjS5IIt+uIdFCAU/XpJEIDwpZarj52kNERkBFzrBKAp0n4/Phe7TMghZRu8Y4v9UBYqK7n6JitqCMiy0Buz0E1NTSRM/11XWGjKa8vqQLEYhoC9jtcEoNmrwETw1qgL7ynF5glSa4NgfgXxUFOkIoI9Oe3m+qoCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728784064; c=relaxed/simple;
+	bh=aKzvzxILTzxEmE0TZZI6Q40SUjVKIobJ6VAIQ+PGjN4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uwx2KuuJXeOAv4CZNIjlB+h6r+Eu1R+I19163s17wQTPB9WGiCYmIF7Wly/VmkQQnXmRmN6r6g4O6UXBjckKmJA5IHOl1EelZ3qIK5pRMKGO+uJy3rRkA0/YIl+mzt04R0xPl3zlI1eYCbRFr8e0ETzF4Opyc/PhbnYD3h69tmc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me; spf=pass smtp.mailfrom=icenowy.me; dkim=pass (2048-bit key) header.d=icenowy.me header.i=uwu@icenowy.me header.b=lSzuIXBf; arc=pass smtp.client-ip=136.143.188.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=icenowy.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icenowy.me
+ARC-Seal: i=1; a=rsa-sha256; t=1728784050; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=It0thPt1SNcT8/gZ9ipba0KPZkvMcO0yhXewdMhc5q6qiOuxvp8A04fO99bauARfPxc6oN6hOCl6boFVj5IeoiP0xZXhQDGmFpvuEkRKh2lXncrWO+koLOnd95YRe4NvSUAmOF1qTpZsilKl0KUpR+OrZpotS5YFMOFa/jJOFNY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1728784050; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=3CF9QHK0q8CqBiP+xU9cGsEZFeH+jlJV0LlwJo+Juxw=; 
+	b=S4zRqjfveUXpTi3ioluhChRcYrSIz13jfhUxNYplj1fQt08P6/D/n3H4xt/HhaS+h09GBLWZ5oGv1LFWSKNcIwxOb/7+IFst+A8JAwxJvKO10Hb5fUMlBYtIHQK+Mk5KM2bFAe+9rkNl48RSIaY75WPrldxq/DDlFTgS+6Nikbs=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=icenowy.me;
+	spf=pass  smtp.mailfrom=uwu@icenowy.me;
+	dmarc=pass header.from=<uwu@icenowy.me>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1728784050;
+	s=zmail2; d=icenowy.me; i=uwu@icenowy.me;
+	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:MIME-Version:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=3CF9QHK0q8CqBiP+xU9cGsEZFeH+jlJV0LlwJo+Juxw=;
+	b=lSzuIXBfeygqicWnIYnIEXKy0XUXV9uFb50uXnYYH9yX17Wq62TVXBWY8O41F2wJ
+	9GFbDxfj7dbcRa1RbneejTiXZRYG35OtGbBFI0Z1abuJ6GmQK/HddCjcgtV35X8DOaw
+	wU5ZIghd9wVBturficgWo9I7K6gjql13rTcxTfxWjB1GCrLBkgdpTk7WPAle2arykZH
+	gVzDAs3X0hRZ4egL9pVrEhfzKPbDot3msRZQguvhsN0ddkLDco308KTMcGcHYhLBi1F
+	x1e3qPjNV+OkmAH4RElo501fgQ8ieZs21T5qZYhTa5UqGYsdX2t2BsAAB9JL2s01Jxe
+	TUr1gqixyQ==
+Received: by mx.zohomail.com with SMTPS id 1728784048103929.370436072698;
+	Sat, 12 Oct 2024 18:47:28 -0700 (PDT)
+From: Icenowy Zheng <uwu@icenowy.me>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Cc: Oswald Buddenhagen <oswald.buddenhagen@gmx.de>,
+	linux-sound@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	"Dr. David Alan Gilbert" <linux@treblig.org>
-Subject: [PATCH net-next] net: cxgb3: Remove stid deadcode
-Date: Sun, 13 Oct 2024 02:29:46 +0100
-Message-ID: <20241013012946.284721-1-linux@treblig.org>
+	Icenowy Zheng <uwu@icenowy.me>
+Subject: [PATCH 0/2] ALSA: emu10k1: hide MPU-401 ports for Audigy Rx
+Date: Sun, 13 Oct 2024 09:47:11 +0800
+Message-ID: <20241013014714.7686-1-uwu@icenowy.me>
 X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -62,93 +70,23 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-ZohoMailClient: External
 
-From: "Dr. David Alan Gilbert" <linux@treblig.org>
+The Audigy Rx card HW has no external MIDI ports (either directly on the
+card or as an optional breakout), however the current drivers still
+create MPU-401 MIDI ports on it, leads to confusion of DAW software.
 
-cxgb3_alloc_stid() and cxgb3_free_stid() have been unused since
-commit 30e0f6cf5acb ("RDMA/iw_cxgb3: Remove the iw_cxgb3 module
-from kernel")
+Hide the MPU-401 MIDI ports for it.
 
-Remove them.
+Icenowy Zheng (2):
+  ALSA: emu10k1: add a capability bit for no MIDI
+  ALSA: emu10k1: hide ext. MIDI ports for Audigy Rx
 
-Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
----
- .../ethernet/chelsio/cxgb3/cxgb3_offload.c    | 39 -------------------
- .../ethernet/chelsio/cxgb3/cxgb3_offload.h    |  3 --
- 2 files changed, 42 deletions(-)
+ include/sound/emu10k1.h          | 1 +
+ sound/pci/emu10k1/emu10k1.c      | 4 +++-
+ sound/pci/emu10k1/emu10k1_main.c | 1 +
+ 3 files changed, 5 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c
-index 89256b866840..5a9f6925e1fa 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.c
-@@ -515,23 +515,6 @@ void *cxgb3_free_atid(struct t3cdev *tdev, int atid)
- 
- EXPORT_SYMBOL(cxgb3_free_atid);
- 
--/*
-- * Free a server TID and return it to the free pool.
-- */
--void cxgb3_free_stid(struct t3cdev *tdev, int stid)
--{
--	struct tid_info *t = &(T3C_DATA(tdev))->tid_maps;
--	union listen_entry *p = stid2entry(t, stid);
--
--	spin_lock_bh(&t->stid_lock);
--	p->next = t->sfree;
--	t->sfree = p;
--	t->stids_in_use--;
--	spin_unlock_bh(&t->stid_lock);
--}
--
--EXPORT_SYMBOL(cxgb3_free_stid);
--
- void cxgb3_insert_tid(struct t3cdev *tdev, struct cxgb3_client *client,
- 		      void *ctx, unsigned int tid)
- {
-@@ -671,28 +654,6 @@ int cxgb3_alloc_atid(struct t3cdev *tdev, struct cxgb3_client *client,
- 
- EXPORT_SYMBOL(cxgb3_alloc_atid);
- 
--int cxgb3_alloc_stid(struct t3cdev *tdev, struct cxgb3_client *client,
--		     void *ctx)
--{
--	int stid = -1;
--	struct tid_info *t = &(T3C_DATA(tdev))->tid_maps;
--
--	spin_lock_bh(&t->stid_lock);
--	if (t->sfree) {
--		union listen_entry *p = t->sfree;
--
--		stid = (p - t->stid_tab) + t->stid_base;
--		t->sfree = p->next;
--		p->t3c_tid.ctx = ctx;
--		p->t3c_tid.client = client;
--		t->stids_in_use++;
--	}
--	spin_unlock_bh(&t->stid_lock);
--	return stid;
--}
--
--EXPORT_SYMBOL(cxgb3_alloc_stid);
--
- /* Get the t3cdev associated with a net_device */
- struct t3cdev *dev2t3cdev(struct net_device *dev)
- {
-diff --git a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.h b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.h
-index 929c298115ca..7419824f9926 100644
---- a/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.h
-+++ b/drivers/net/ethernet/chelsio/cxgb3/cxgb3_offload.h
-@@ -95,10 +95,7 @@ struct cxgb3_client {
-  */
- int cxgb3_alloc_atid(struct t3cdev *dev, struct cxgb3_client *client,
- 		     void *ctx);
--int cxgb3_alloc_stid(struct t3cdev *dev, struct cxgb3_client *client,
--		     void *ctx);
- void *cxgb3_free_atid(struct t3cdev *dev, int atid);
--void cxgb3_free_stid(struct t3cdev *dev, int stid);
- void cxgb3_insert_tid(struct t3cdev *dev, struct cxgb3_client *client,
- 		      void *ctx, unsigned int tid);
- void cxgb3_queue_tid_release(struct t3cdev *dev, unsigned int tid);
 -- 
 2.47.0
 
