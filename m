@@ -1,167 +1,247 @@
-Return-Path: <linux-kernel+bounces-362790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362791-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 983D499B953
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:05:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E4CB99B954
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:05:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F7D61C20C74
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:05:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CE731F2185F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:05:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3FF0140360;
-	Sun, 13 Oct 2024 12:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="h3PS/9/y"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2DEB142E77;
+	Sun, 13 Oct 2024 12:05:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E87482499;
-	Sun, 13 Oct 2024 12:05:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728821107; cv=fail; b=cwKZN7xv41eR0CCMM2Y3elZAMCwtsebSv3hJNV2mgEzXOIEP1KoKRRJ51UoP/x8MEJonMfZNFKmXz1rN7J0viUcPeV+/IouYET1l/yIo9Pbh68iLs85MKvBMXCtHW7cNBGLP9yGZuK4PBUE1p4rU8nTd9WNl9sLlt2+HCOjqBI0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728821107; c=relaxed/simple;
-	bh=D9DAfIAlpoCSA+Ie3gvm4+S6LCUGbmDGYD6FjZUexz8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=i89UnyD2rI5J8HjRUWLTGr2aXHOWt75Y7eXLrjtea8sZ6fPSRoXcdwNcCyWb9bQIyMWKCF9EEs2NGQ6dddggbwXAX1uqWtgNkaczsfRzK6k/xASA2m7PCXQxoXI9/6Qmyi1gcV73cJwmzTqU7TvVzVQNuus6Kd6c1dl3uPymv9E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=h3PS/9/y; arc=fail smtp.client-ip=40.107.243.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SVv0DHAjt9dqhx5SYa+YNcMOC4sp/c7VlvcaflHUnKmF7Z1xQs2sMJMq36MGDEDF6Jgt7Q8CWi2KIORykYGmaPFUJhAjqHIlpBKNk56gK3o8146qo2Cmj5vJ2FMl26CRGwLR/uP/pIFqcH46MTxm8OUY5MNVtdGAimv5m6BmQ7jfAFVIHIkm02mnkXj770TfYDvVhwSPyZcIk7SluxUQfpwgs+nLY6wx/GqgPW4rm7Im7icFnw4o+W3gQYLSwe8RxgxDTFR9nihWeBnWEJtUDEo/e071ipMsJ4GvxS1tBVZVN5+7IG8jUhUe0CY+bSGGmlDcYKWzv6Oebn5kAJiwZQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=jyOCXJ5ZgdQhJtNretjaVNZ0AvV2MRKh4kkPx8BRXi0=;
- b=k1ORzXcWFDPYhRCMtAOQpD9aNXpN5uDD0kIHtQLs2DOzWFzqrUq+z2+ELFqzGKe4JKX9uQtr1JFiehkJbTrX/t33cYC6boIlyFmihMPeq4f4ULSkHoZHwi76MqO+Q9MyWW7LzIfLUzN5/syAcnzfOTwJ/tk0JPojl/Ihkrq1sqB9Jjl05uRvYs1jF0sTNkH8idHRqL2aq6zaaZR0OfJIExfdQEuAjqSdnL0clcXaerkkPheKh5xoA5jwAYerNpKySFolXJu+vU18ewkskhDxdBAyWDfMnaaBUNh4dijexTBD3Z8NCgYW7orPh480mh8y/ZYS+yKr7cLjuqlu2mbMoQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=jyOCXJ5ZgdQhJtNretjaVNZ0AvV2MRKh4kkPx8BRXi0=;
- b=h3PS/9/y+j8QYDacBj6MmI/EyIyFgZY4LlrFiUpAT5b/2bmTaclhzXPyiZu8H/TSYSLQEUCYtrNp1F1HczhWOwAW9hQgUQ+fpdGLGN7hFW0b/CXt7HQvHfl7B48Z0Mal7qBjYktytnQipapWr8kP6L0CC3DlSdtdMT4yR7cEkxgaQG9RQX/9Gq2JVwpG1K/gCQ6ocQnzF7ERdmFwmPc2dId3v9t5ZAchW2u9s+DvZkdB+8iI9usCtB4SrVLCNjwiDUuFwMxYhaCXykaCm5D644NsxXgDHYiXMDozG7uBM5/yukI//XEtq2jzZ38sXOa6xsR5ATbn+GiMunJtBb5J4Q==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com (2603:10b6:806:306::12)
- by MW3PR12MB4380.namprd12.prod.outlook.com (2603:10b6:303:5a::19) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.25; Sun, 13 Oct
- 2024 12:05:02 +0000
-Received: from SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8]) by SA3PR12MB7901.namprd12.prod.outlook.com
- ([fe80::66fc:f8a2:1bfb:6de8%3]) with mapi id 15.20.8048.020; Sun, 13 Oct 2024
- 12:05:01 +0000
-Date: Sun, 13 Oct 2024 15:04:52 +0300
-From: Ido Schimmel <idosch@nvidia.com>
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: kuba@kernel.org, aleksander.lobakin@intel.com, horms@kernel.org,
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com,
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com,
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com,
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org
-Subject: Re: [PATCH net-next v7 07/12] net: vxlan: make vxlan_set_mac()
- return drop reasons
-Message-ID: <Zwu3ZMdTHGv4t3eo@shredder.mtl.com>
-References: <20241009022830.83949-1-dongml2@chinatelecom.cn>
- <20241009022830.83949-8-dongml2@chinatelecom.cn>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241009022830.83949-8-dongml2@chinatelecom.cn>
-X-ClientProxiedBy: FR2P281CA0011.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:a::21) To SA3PR12MB7901.namprd12.prod.outlook.com
- (2603:10b6:806:306::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C75813AD0F
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:05:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728821108; cv=none; b=jiOxssOFdhOILMmqZxpJUoumZseODAsYIDm9P0ZmdckKWFER2ZAoofU7J3XBDlggHb4nH/Y86xBkxAwtu2pmfH3TB+wjDmgOR4KYfAd5VK+nSd7YcbLtBfsIi5J+/DFVtWZF0Fn8iBGlNW6kjCvLiGmPF89RELCrftsjq8o+BJU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728821108; c=relaxed/simple;
+	bh=LTVs1pt0k5VNPUSdey8HMQePRVZmXO4v7ZXsSakpPvg=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=sz8tWs5zMiaaE58myAWH5gStlc94T2i3zXyt+0UOgZHkUr4JjN72Rs2coFJ/v8K+qgINn5qKc7Pb6dZvmFLFeg48rDbhBi3qZsSCK84pQXXzRVX3579a6BjbiG9W6l7q/sAZO69GA+Ywvv/1fhty03SZHy6h0xKuY3DiNNP+ir8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b483e30bso28156875ab.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 05:05:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728821106; x=1729425906;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sjBO/FBI0/bCaXAoDHd7K4QXI+OkNeAcbnNibtPRYwc=;
+        b=ODSSczhw0F1hdOa1FNWzsuicd8tmGCHrasipQVuWkqkW2rDxVTCtA0DmV4PaNwPTs8
+         lZ7RLWmvl/zTy5vKXQcbG1lFT+smxjqgXlr0HbkHOOuPTARMlVL4UQ2+XrvhF9a0G34Z
+         LJiX095FeTxdJYH4DDAnfuTic6IwRh7zP94edvovxAmzZKROBtXbwScQ6wM4EWQhknIR
+         Vmqwy31gEbrl/nCjYGy/efsTDSiqtueeOmof1n1ajkZ6WMxzw/3Ksq7V+Qz1/h8Eh5n5
+         eWV6XCgucnFCWNfrJzq73878ec0tk6SD87Ivre2yodDKAd9pjeR7TaKMu63QDmIcNA32
+         T3+A==
+X-Forwarded-Encrypted: i=1; AJvYcCVE7sT/xYPzdAQciayhG/6TgtdyDkzbyVzpwWivjQKzYetIX3bGVIQvRmwzxdu4ktHyR5R93JFh0mqw8zQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvgYeN24+4eK9O5t4Rc1gzX47WGXo/J6K+OylXfMXKTzpIERx3
+	bBHfXyuq4EgDzqhto9D83EaXLp2x31ZQf4KZt2sExsaj4d+6AJ/0pH7nKMhMvoKqn+vUYXjLC4i
+	Q/WwlLIx2DZqBwoq1C5+eBxfooE2y0l8blzH6P6gKmZuwZcWKdloq7Mk=
+X-Google-Smtp-Source: AGHT+IG2fn4kutRjAQtGEt0ilhPJLVWZt0g4o4cTYNF7mMrX9dTX076xVRrtWsxDG9CJhS1xth5QXwoSibp6gYuxsN9ywkPX8RJ3
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA3PR12MB7901:EE_|MW3PR12MB4380:EE_
-X-MS-Office365-Filtering-Correlation-Id: f2b683d0-7f25-4ac6-a063-08dceb7f4433
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?jKml+ldy1MExlATfQe8sPrl+v3oIWXsNi/BUWUnZgtIevH03jpS+I2c2mdct?=
- =?us-ascii?Q?oS+u1gUspikvTp5BZEqek1Ok9wBsNyuzeIKVMiN3c1rZPQ+QluyuH4a4i19+?=
- =?us-ascii?Q?91Ss/Q74IM0BWYNZNOKGPywuIT8AuLjGY1DgLP5AyknK9atFbhJWo05nsPWT?=
- =?us-ascii?Q?py22+lcAId6E8UecB0AbZKq6thfPEIHUglTekzrZdNcT00xqLYJps6HlNkPW?=
- =?us-ascii?Q?8voMqjSciWYLdkMx865YG+xedWtNiU4EX3N3HD59Yx6SlVcgsxY2xC6CUW9u?=
- =?us-ascii?Q?Acu2+WobNsVkZDSNngit2RPkLlPUPGTrY4cBt4wxhRvNdsQDM0fRM5CzXnQG?=
- =?us-ascii?Q?HztSj/0IeniK5R4y5iLU7TEiqk3M5ttswB0v2cO5JsTTuRiVTNBZvZcI1pUE?=
- =?us-ascii?Q?1f1DtYpdVWv+PE+w/SvFKs9t2xKxwcJHgjLPQNQB/r7bqxpesFOHfsutCyZv?=
- =?us-ascii?Q?wn/mOla05rolz9ObBzutXbCThdS0n08kNcvzPBqVB8W3yl0GtF9H95Phsvm/?=
- =?us-ascii?Q?yE9yldAxoWXEgaN623VBVpALKaZEkAigIQIMAOOBbXac4ERHtvG9CPbDWooo?=
- =?us-ascii?Q?DW3edpztjaR+hkBKfHtHwUrs+yW+VBAn3P8xJcv+DFqj0rmL1FQLfgF57d1k?=
- =?us-ascii?Q?NQ9ZdpYaFFjUjsuuTH6O/j0ud0KvKiUo2DiR9iAvQldPsOBRMLPC+AIkWHX2?=
- =?us-ascii?Q?4tJnegv0aGlDid4V79DZ1ZZMHWbcqo7lJIUWkOwiMiX1/AU0tCL/Mkx9aNRG?=
- =?us-ascii?Q?7X7OcRO0f28Iv4oGPA90qiTvC22izMBZmez3ePo+xkIG5x28PPp2ARC4/lep?=
- =?us-ascii?Q?e9lPGn92O3CHFN49NWuIrFMdwvWlV8hsFqJe8yNuFDIlCKeaRFfl0kpzxjr9?=
- =?us-ascii?Q?ULJb4rI1ZQBUSVujOgCQQ/WaKnnQAq2uXhyHtg4flUuJHsGYFBwfP2vL/Vlw?=
- =?us-ascii?Q?ogVAHttD3wqiXpkMvYg3OCiv5FWKaJ5rUmYKivMRXGUoE3hnzE5vZBFlsPvH?=
- =?us-ascii?Q?DgEu0HgTylSV3cttVnvKGWEymbRoVDHzEEzgeq5nJYmVUEiD1mF9c5+BZYBF?=
- =?us-ascii?Q?w6IVA1y0z7VBFYy6dGx4CXTdVcLy0S4NT3/4swTJXIvEmlHduh/8nXULkXG+?=
- =?us-ascii?Q?sx7obELoaqlmLZabkIf9qrrspVZ1wOELV6Ipj+WHGDK5Kuu9F6j5m9+xJwYk?=
- =?us-ascii?Q?Oi9AOpilcMSNFtE2kr7kUuwRPbN1PQiISWAwAyGjniJGjg/CtGMS6bIbvRxu?=
- =?us-ascii?Q?xtYPfq6pWjP+i4JRNvBFZxCPa4P+ITgnEQnVMPUdOw=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA3PR12MB7901.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yJZq1YimJpXQ6EnpyMmdSIDkrVdzMVeAVCKw1Iy9FGtsUC5eCscELCngTwgf?=
- =?us-ascii?Q?8tDXnypO/BF0rXeSdG4fAAwAooktJXJbqQBaL8yZAuqaZYCkXWMDByd5gBM/?=
- =?us-ascii?Q?skagItUuDR1D61dpz2Zl8LD7PVZNwqBH9oH2ZI5gJwrboSRG/jDBQDSYUH8b?=
- =?us-ascii?Q?al0/gVG0b5S5zK4q8ANDiv6ZCbwEkumMRsNSTG/m1r84VSsy5tX02dy1BHWB?=
- =?us-ascii?Q?tmDJtXlsq0QEGZfty4yPtnkkBSf/BJkMncuD33rnQkCEdQXqDNmaPTyI96xs?=
- =?us-ascii?Q?6FWLajkuOmY2JtuG48xUA8sP+egoZ+9YZz3lQR/UJB7mnHpX5vIY7wGw47AC?=
- =?us-ascii?Q?aQGkpPieW1/Mj9x5uiZjx+xln0E1us0n9sbYQB44KnpO3iuSAJBxw8Et8vKN?=
- =?us-ascii?Q?rf6MoK4RSUFF9F3D+FJyRnuuRZ6HpIVFlGFSdFSlrWKMmSWHd+RxzkFm2/rK?=
- =?us-ascii?Q?iGUnarKCgcVVANVGdGukr1oTRyYNowEyvFCx/wKZ+BAsD7nTF5x+qixLXhK9?=
- =?us-ascii?Q?cvPUFpix6gsDbs0Pva2/jf+z2Vjk7UEPk9JtFUpPuJAUmpyYvn3/qOezapFo?=
- =?us-ascii?Q?u4gGGBATQPlG+qrPEL0y7+Dg3mIPryKe08TtEcuHkLb/x9Pt2uCPG3/SaRg+?=
- =?us-ascii?Q?bKbee6bnQB9j9VMKm9Hhn905wJgXdgBxGTPUadWyGfyP8Nycaqbz0hX/iXdk?=
- =?us-ascii?Q?WFt2AwkIbsnAYGI0sLI1Hl0wrNXxmti1x/uReiFg/T0HqZGKghD6q4pVHBiv?=
- =?us-ascii?Q?jYUCCj2HXEX/4MvFAQkZtFwstmQ5AC93u7PrXsbjqjwOn/Ov7DksBMWN/ZsW?=
- =?us-ascii?Q?DUTZISgOOwWqoEex8DnFbFQHFwb2F06M0rmMKSDhVl40T/BDis9dMTaSCKjD?=
- =?us-ascii?Q?/Uwzy5y5yjwhe+8aSqPO1qgDPmHvb8UF0ejVETuzuq8MOI0uaNXipdQSMBEz?=
- =?us-ascii?Q?l2cFZqHEvyyy4GqJtLfqepL1SIijRXCmss7377gqdqFrDNF41O5o16u6Xeny?=
- =?us-ascii?Q?h4oRcL+bTaFsLkJRk/LkC+6D3q8fotAVxaZqTvuxmA5QNxdb6YOuAqTjW+ez?=
- =?us-ascii?Q?NcSGEo36WTu0VTBA5k9hG5R1+mhng+8clv91yaRNuY+3arBVJlAGS2X0zpOJ?=
- =?us-ascii?Q?R9TNSvhRDqL3MSt2VR9IyHQabrtGmsQIKFxb5L0aLkJXSLdLhk9us7yK3XWi?=
- =?us-ascii?Q?61lI6d0Z4N+8TKSyqSWixO0439UlmpCN6OwuuictYElbuqt2H1Jcvgnpl/KL?=
- =?us-ascii?Q?/yUxd6wavALlksu6rEGHR0zuwOjCg1fPKW6bKUDtiy0xq0elwu2QQOzuEHsO?=
- =?us-ascii?Q?9jyfXmyzV9RCfoVdZFdtjWZJv2ZNcMTkO1pELMZrtHwyAAa/m3d0iW7qA/hE?=
- =?us-ascii?Q?DKeDitNm4PpuadFh4xZtrHytu7jVkGrPmdCJ9O6+d6xgyV/3PAN839u2cGTC?=
- =?us-ascii?Q?sVH/Er5QzeziiKstwTThd4DQFhgdihnX9vqOBigr8tH7hOAtB4TYHEyEIx+p?=
- =?us-ascii?Q?MDSxvLygWW75y5jK8T+QcSKiSB+CDtjCQ8KtFbQMRguuVh+mxOdrVBEdtROO?=
- =?us-ascii?Q?ruKAF53ZYc2CK7ehHPnOjZvzlE7N/3Cn9tn2K1sU?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f2b683d0-7f25-4ac6-a063-08dceb7f4433
-X-MS-Exchange-CrossTenant-AuthSource: SA3PR12MB7901.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 13 Oct 2024 12:05:01.8664
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: COjC1JYLq3YfeMy1K/YJmV08E4ppzfEz9j0GxPYRyiXq/1ME4+FYyln6hFsAeAi4aUm5vxCg0T3/YB3ADv/73w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR12MB4380
+X-Received: by 2002:a92:c243:0:b0:3a0:c7f9:29e2 with SMTP id
+ e9e14a558f8ab-3a3b603e232mr56708435ab.19.1728821105681; Sun, 13 Oct 2024
+ 05:05:05 -0700 (PDT)
+Date: Sun, 13 Oct 2024 05:05:05 -0700
+In-Reply-To: <170d194b-686e-482d-a2f0-151a12887545@nvidia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670bb771.050a0220.3e960.003c.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, Oct 09, 2024 at 10:28:25AM +0800, Menglong Dong wrote:
-> Change the return type of vxlan_set_mac() from bool to enum
-> skb_drop_reason. In this commit, the drop reason
-> "SKB_DROP_REASON_LOCAL_MAC" is introduced for the case that the source
-> mac of the packet is a local mac.
-> 
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> Reviewed-by: Simon Horman <horms@kernel.org>
+Hello,
 
-Reviewed-by: Ido Schimmel <idosch@nvidia.com>
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+
+==================================================================
+BUG: KASAN: slab-use-after-free in __ethtool_get_link_ksettings+0x6e/0x190 net/ethtool/ioctl.c:442
+Read of size 8 at addr ffff88805df9e308 by task kworker/0:0/8
+
+CPU: 0 UID: 0 PID: 8 Comm: kworker/0:0 Not tainted 6.12.0-rc2-syzkaller-00002-g615b94746a54-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Workqueue: events smc_ib_port_event_work
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ __ethtool_get_link_ksettings+0x6e/0x190 net/ethtool/ioctl.c:442
+ ib_get_eth_speed+0x160/0x800 drivers/infiniband/core/verbs.c:1996
+ rxe_query_port+0x76/0x260 drivers/infiniband/sw/rxe/rxe_verbs.c:55
+ __ib_query_port drivers/infiniband/core/device.c:2105 [inline]
+ ib_query_port+0x208/0x870 drivers/infiniband/core/device.c:2147
+ smc_ib_remember_port_attr net/smc/smc_ib.c:364 [inline]
+ smc_ib_port_event_work+0x14e/0xa50 net/smc/smc_ib.c:388
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+Allocated by task 5966:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_node_noprof+0x22a/0x440 mm/slub.c:4270
+ __kvmalloc_node_noprof+0x72/0x190 mm/util.c:658
+ alloc_netdev_mqs+0x9b/0x1000 net/core/dev.c:11097
+ rtnl_create_link+0x2f9/0xc20 net/core/rtnetlink.c:3374
+ rtnl_newlink_create net/core/rtnetlink.c:3500 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x1423/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6646
+ netlink_rcv_skb+0x1e3/0x430 net/netlink/af_netlink.c:2550
+ netlink_unicast_kernel net/netlink/af_netlink.c:1331 [inline]
+ netlink_unicast+0x7f6/0x990 net/netlink/af_netlink.c:1357
+ netlink_sendmsg+0x8e4/0xcb0 net/netlink/af_netlink.c:1901
+ sock_sendmsg_nosec net/socket.c:729 [inline]
+ __sock_sendmsg+0x221/0x270 net/socket.c:744
+ __sys_sendto+0x39b/0x4f0 net/socket.c:2209
+ __do_sys_sendto net/socket.c:2221 [inline]
+ __se_sys_sendto net/socket.c:2217 [inline]
+ __x64_sys_sendto+0xde/0x100 net/socket.c:2217
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 64:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4727
+ device_release+0x99/0x1c0
+ kobject_cleanup lib/kobject.c:689 [inline]
+ kobject_release lib/kobject.c:720 [inline]
+ kref_put include/linux/kref.h:65 [inline]
+ kobject_put+0x22f/0x480 lib/kobject.c:737
+ netdev_run_todo+0xe79/0x1000 net/core/dev.c:10816
+ default_device_exit_batch+0xa24/0xaa0 net/core/dev.c:11949
+ ops_exit_list net/core/net_namespace.c:178 [inline]
+ cleanup_net+0x89d/0xcc0 net/core/net_namespace.c:626
+ process_one_work kernel/workqueue.c:3229 [inline]
+ process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+ worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+The buggy address belongs to the object at ffff88805df9e000
+ which belongs to the cache kmalloc-cg-4k of size 4096
+The buggy address is located 776 bytes inside of
+ freed 4096-byte region [ffff88805df9e000, ffff88805df9f000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x5df98
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+memcg:ffff888028f67841
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801ac4f500 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000040004 00000001f5000000 ffff888028f67841
+head: 00fff00000000040 ffff88801ac4f500 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000040004 00000001f5000000 ffff888028f67841
+head: 00fff00000000003 ffffea000177e601 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd20c0(__GFP_IO|__GFP_FS|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5966, tgid 5966 (syz-executor), ts 106703177356, free_ts 104254916301
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x256/0x6c0 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __kmalloc_cache_noprof+0x1d5/0x2c0 mm/slub.c:4290
+ kmalloc_noprof include/linux/slab.h:878 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ snmp6_alloc_dev net/ipv6/addrconf.c:359 [inline]
+ ipv6_add_dev+0x570/0x1220 net/ipv6/addrconf.c:409
+ addrconf_notify+0x6a7/0x1020 net/ipv6/addrconf.c:3655
+ notifier_call_chain+0x19f/0x3e0 kernel/notifier.c:93
+ call_netdevice_notifiers_extack net/core/dev.c:2034 [inline]
+ call_netdevice_notifiers net/core/dev.c:2048 [inline]
+ register_netdevice+0x167f/0x1b00 net/core/dev.c:10524
+ virt_wifi_newlink+0x3ba/0x7c0 drivers/net/wireless/virtual/virt_wifi.c:567
+ rtnl_newlink_create net/core/rtnetlink.c:3510 [inline]
+ __rtnl_newlink net/core/rtnetlink.c:3730 [inline]
+ rtnl_newlink+0x1591/0x20a0 net/core/rtnetlink.c:3743
+ rtnetlink_rcv_msg+0x73f/0xcf0 net/core/rtnetlink.c:6646
+page last free pid 5937 tgid 5937 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ vfree+0x186/0x2e0 mm/vmalloc.c:3361
+ kcov_put kernel/kcov.c:439 [inline]
+ kcov_close+0x28/0x50 kernel/kcov.c:535
+ __fput+0x23f/0x880 fs/file_table.c:431
+ task_work_run+0x24f/0x310 kernel/task_work.c:228
+ exit_task_work include/linux/task_work.h:40 [inline]
+ do_exit+0xa2f/0x28e0 kernel/exit.c:939
+ do_group_exit+0x207/0x2c0 kernel/exit.c:1088
+ get_signal+0x16a3/0x1740 kernel/signal.c:2917
+ arch_do_signal_or_restart+0x96/0x860 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop kernel/entry/common.c:111 [inline]
+ exit_to_user_mode_prepare include/linux/entry-common.h:328 [inline]
+ __syscall_exit_to_user_mode_work kernel/entry/common.c:207 [inline]
+ syscall_exit_to_user_mode+0xc9/0x370 kernel/entry/common.c:218
+ do_syscall_64+0x100/0x230 arch/x86/entry/common.c:89
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff88805df9e200: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88805df9e280: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88805df9e300: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                      ^
+ ffff88805df9e380: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88805df9e400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+==================================================================
+
+
+Tested on:
+
+commit:         615b9474 RDMA/hns: Disassociate mmap pages for all uct..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=138f0727980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=117a4440580000
+
 
