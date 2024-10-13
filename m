@@ -1,92 +1,89 @@
-Return-Path: <linux-kernel+bounces-362793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C7F599B957
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:09:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF18599B958
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 14:14:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 056BC1F21594
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:09:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3D561C20AE8
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 12:14:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 360151411C8;
-	Sun, 13 Oct 2024 12:09:05 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A33A140360;
+	Sun, 13 Oct 2024 12:14:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="dFhLa2Eq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 627AD13C9A4
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:09:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA17F13D89D
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 12:14:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728821344; cv=none; b=Fk44laPpPjFe8kI7B1MX474x1SpYAi9dWKAkWpSEeKEyxF4yOZfH7BDlswwzVzbHdFySPePM1j1sRp6/81DSf41/gPt2G/6jUz+zqP3Y8ueXOa6IArYUDKtwAJf50K7NxcaaFZ/tXFsYEbOJMhiOzxhCXPKgFO+1TT8WcYL0i3Y=
+	t=1728821656; cv=none; b=LqSFR8dD4wksiLvc+wEYQC+yQj885ngjdX9IfEOoxs4aT25KZSpqxVSuuiWsvWihgFcXmLk2h7jmNn+XsF54JnO8JY+8VKiyaYfOpRUEyzjrtsPQEKP4kYRLshEHPRZo+S2gIMqrofk19ln4xyURJCNzwvLC8LsQsPQC5kYT/VI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728821344; c=relaxed/simple;
-	bh=1//wjsvC56hpGTmDuUZ2T4oScL4MK6KvU3Wv/21Pn9U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=bNnneS5TIPo8Dgy72NWNty6vpsuW+iEAl0Y1Xnza1glEwW1lNB3Olz6MAtMYpw1AfCsHBjsogk42HVNFjwBf4/p5Af0u2NSXbFT7rYyHnZ1J6R1UU8uZ5znL2ZHDBxqxIopFqThnAon0ei+1gLkXqcMs4Xy4YtzAycdPDfgcdZw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3c9886eccso1938755ab.2
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 05:09:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728821342; x=1729426142;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=gH0baQP6BUi4dgqAeAGb6JNew30La5RpjGfm2LRlP8s=;
-        b=csXTA0D4SM/nw/zASlgCwPhdw9lQUAAAsOH8o5MJNifaC7pO9d6kQxOnzeRmSC/8Mn
-         tFkK6h1sKrNy7QudsAIgJfevznOH6RfDYctyRBnOZSJxs6P5tSrNG6KoEFOtTLAavNua
-         wyLe5TYOTWN6i2CprZVT9vSB4RhVmJSMxsFc4hHV2n2f4vgtBTLUBw47kAeWKO9bfXNG
-         UYJDP6+NweHHCGR5PLfjbGg8G/l7xUwaiA41zx1gn3qYVDBHk2vplcB945V/DJ6WtLQX
-         VO1/m12i+PYhYjSNIVy1Ew472Pzfbh1e94GYCHZMZz34EFQh89Ip5fR+3PjcD5Ulkb5k
-         rnfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVAFTC6Q/Tojduf3guTW0+OfRreXJDwaayhagSwr0bLelxbxzHINIsX0oHyF7+bET46c2W8MTYjQ8a/0Lc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXC5cwdE8nWjHLlGeB4rqRmg8tcF+Y9tGUbzuUtI0pme1bywE9
-	p7n0J+zJ+AXH7hpLWheA8Q+N7mWUI68hT5uveGQlYoyUXuyQnDnOxDscSv9krQh453D0H3aA4qC
-	mrEdAxyNt441wgwIqOYr+az5oRwVHNekpe0iHAqfxKfR/aJn8fdwgorw=
-X-Google-Smtp-Source: AGHT+IF/PQtax4BS4UuOZQYDSpFuOwh/Ub4zyOY+zZbI0lfBW9YcyDGFYqECkoz/W0ode9TC7Z9zGRA0iZ3Vf1KoBOKAGXdSVFMo
+	s=arc-20240116; t=1728821656; c=relaxed/simple;
+	bh=U08OR/iLY0KeIsejOyZ8U7fhp2ijcfrP2jngReqqUZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YzRD4msm7s1/TV9JIME305P0h7f2C0yvFvojX+/zvsj2F9Qynsp3iP02+WOW38GMojLhTNDFjLUIzf1gIJ1RRmFnq1MTCjQg/RWQGlr/IAvpK4IlfANyirg6XeMyMHB1c48q64izqEA1EKYNyejdIs2U5jFHtPv8apbPFpx6y2E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=dFhLa2Eq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21E0CC4CEC5;
+	Sun, 13 Oct 2024 12:14:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728821655;
+	bh=U08OR/iLY0KeIsejOyZ8U7fhp2ijcfrP2jngReqqUZo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dFhLa2EqIhSkRz0oMA85pGiK+WYEAQcahUp4ZtDmQgSGcf73L+9E9vc+9Ss1FA59K
+	 0/U+JewQzd/pr+Db7Q9nb1tQYChfpeaGpJ/0FLQMO0KZoLP7dsEjuwGeBnUlVRD7EE
+	 oa7Vtkaj7vniz4q+PV5fVryyud/KW+GCUV5Ahb7M=
+Date: Sun, 13 Oct 2024 14:14:10 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Alexander Usyskin <alexander.usyskin@intel.com>
+Cc: Oren Weil <oren.jer.weil@intel.com>, Tomas Winkler <tomasw@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [char-misc-next] mei: use kvmalloc for read buffer
+Message-ID: <2024101343-proposal-gatherer-8c43@gregkh>
+References: <20241013115314.1290051-1-alexander.usyskin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b05:b0:3a0:4d1f:519c with SMTP id
- e9e14a558f8ab-3a3b5f78525mr68063645ab.3.1728821342534; Sun, 13 Oct 2024
- 05:09:02 -0700 (PDT)
-Date: Sun, 13 Oct 2024 05:09:02 -0700
-In-Reply-To: <0000000000004b09b90621e1e9e9@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670bb85e.050a0220.3e960.003d.GAE@google.com>
-Subject: Re: [syzbot] [kernfs?] possible deadlock in kernfs_path_from_node
-From: syzbot <syzbot+0772686ab2731ef3b722@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, mhiramat@kernel.org, netdev@vger.kernel.org, 
-	rostedt@goodmis.org, syzkaller-bugs@googlegroups.com, takayas@chromium.org, 
-	tj@kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241013115314.1290051-1-alexander.usyskin@intel.com>
 
-syzbot suspects this issue was fixed by commit:
+On Sun, Oct 13, 2024 at 02:53:14PM +0300, Alexander Usyskin wrote:
+> Read buffer is allocated according to max message size,
+> reported by the firmware and may reach 64K in systems
+> with pxp client.
+> Contiguous 64k allocation may fail under memory pressure.
+> Read buffer is used as in-driver message storage and
+> not required to be contiguous.
+> Use kvmalloc to allow kernel to allocate non-contiguous
+> memory in this case.
+> 
+> Signed-off-by: Alexander Usyskin <alexander.usyskin@intel.com>
+> ---
+>  drivers/misc/mei/client.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
 
-commit b6273b55d88539c6a7127a697c61d3f89c5831fe
-Author: Takaya Saeki <takayas@chromium.org>
-Date:   Tue Aug 13 10:03:12 2024 +0000
+What about this thread:
+	https://lore.kernel.org/all/20240813084542.2921300-1-rohiagar@chromium.org/
 
-    filemap: add trace events for get_pages, map_pages, and fault
+No attribution for the reporter?  Does it solve their problem?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=10f59087980000
-start commit:   8a3f14bb1e94 libbpf: Workaround (another) -Wmaybe-uninitia..
-git tree:       bpf-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=eb19570bf3f0c14f
-dashboard link: https://syzkaller.appspot.com/bug?extid=0772686ab2731ef3b722
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10aa1ffb980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15b1abc7980000
+And why such a short line-length in the changelog?
 
-If the result looks correct, please mark the issue as fixed by replying with:
+Also, where is this memory pressure coming from, what is the root cause
+and what commit does this fix?  Stable backports needed?  Anything else?
 
-#syz fix: filemap: add trace events for get_pages, map_pages, and fault
+And who inside Intel reviewed this before sending this out?  Why are
+they not credited here properly?
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+thanks,
+
+greg k-h
 
