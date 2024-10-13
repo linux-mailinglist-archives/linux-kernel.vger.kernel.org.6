@@ -1,73 +1,55 @@
-Return-Path: <linux-kernel+bounces-362745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD76F99B8E6
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:09:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1DCC99B8E9
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0758D1C20C92
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:09:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20CC71C20C39
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 09:14:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 239B813C67E;
-	Sun, 13 Oct 2024 09:09:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20D4813AD2A;
+	Sun, 13 Oct 2024 09:14:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GQtbFA7O"
-Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b="d+6+9evX"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35E113B590
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 09:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DD95139E;
+	Sun, 13 Oct 2024 09:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728810550; cv=none; b=KLLHVg0qz5i0zSSo/tbnMULj6Y7134t/3dKuk72UWjzKOx6a/CC5FtobEEFIw5pxm7NGpvF8DyH3b0Pa3RKCZ35B8h9IbJRkMfD7sMUjL/Kml5RCPlOu8fSRCr8glIrWvedTrz4x13R3k5094qDqu0hOaur9ETAYQKeTkHZp/cg=
+	t=1728810846; cv=none; b=Go280DJZEsahm6Zf8fLUtQwRRq6Y2zZdU8SU7tzLa17oAGfpCGo4cHdi19oAOv46UlX9x2U+rR2p/kpDSKVJiYOUYhMhCytczTLLuXgKSpkrjWeXXK+GHl4prZHXapwqEHVOg8FgyNYXhuHCZCD74PJL1+OGuebugsn4tFcoxdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728810550; c=relaxed/simple;
-	bh=2QFwAmINshp3nFb9f4R52q/8DsxqhGyQw+G+fI/kXEY=;
+	s=arc-20240116; t=1728810846; c=relaxed/simple;
+	bh=1o7iMamMCrsZrEcXMcRKASpSB4EQTsxME4lcLBIFuSQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=baPjqP4Re63XW+58tvb9hY3B5kcKjFfbwNd68ZhXKe/XwItsN+MGTuA1GiVBCjxOx1rkLINhmidgB6HaQXaaD9a3bI3Yq4gG1fNrz0Q+o1vcZCpF5L2X2eb5QeVROtx25NCCdkmJ6GNQtUlWTNLhV18+qtG8L3VsFc4f4HSqKBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GQtbFA7O; arc=none smtp.client-ip=209.85.208.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c948c41edeso2522311a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 02:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728810547; x=1729415347; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7BfrRcVJ20ZnXl/B+pe9Sl7RD9b+bmhTOEzMh+q3RBY=;
-        b=GQtbFA7Of89DUBhYsRtblad5G8upsHQnMJSNWNJuEYcJbEDXd6fs4WDkoWfpATrB/X
-         KT5K5g4jlfS6QxvmqWcXtVUTFvkTiyp/9sPvThWaOZAO6gE7GEvP9w0VSS5e8+8bLK5A
-         fA5omak/cxMPHr1RXJBrZbLP9Zz3PsCFtwe0QmHWqQRL3hJYVdaegpsRiQx9iTM5J1O0
-         NIu6Acvr6v5UPGKQ6pqlVypYnU1Qyke8pK6ZyOK5/mVh6JF5CIZ2vbAM6spi6aLXtfjl
-         3BdzZUdZrkJWEF4wn74i5Srnru+E/j3cYDpKeLPJuBXyGXfl+LtGylsm05Mq3tJ2I+Yp
-         eSWw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728810547; x=1729415347;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7BfrRcVJ20ZnXl/B+pe9Sl7RD9b+bmhTOEzMh+q3RBY=;
-        b=efy18MgwGqrz3eGRSRqdQhS8dBRiYgjpy14L8ZKvrXvYrvsWhY8+Rr6kWh5KP5USt5
-         trPt+WJ8+XfbnaqCsJobjrw2kWz4RzRDvgyopHtmsP2LjhtU00eNlhphRyqC94E6ZePb
-         cYfBWBDx+4obJsIyI58eBSbL42098d9cMWXe7RNQZ2eW5X7rT29hctIN05nmwQNrGWrv
-         RqKl5DDzZUagcBbxNbxAi+JJy77JW1qwd2oGXWjC9bZxxqYX/bfKr85vivljEHGp1cWP
-         0s6L6nvBZSI5X5/TuENYonnNSUo9Pfpmz3AUproA/BmsnHruNQTXBZ8PDwbvrdphBAPE
-         AO9g==
-X-Forwarded-Encrypted: i=1; AJvYcCW9ab5M3uyETQpw1XA2qSEY24Yi2WRJtTOYAtrNjERWx4gwZFYcyY5rMxF6KEwibrKeX7w7SWmMHPtdUgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfZW/Lz0eI57rV86SUfulqZo0AoDes6LXhpuHWdGRxmmXTFLxe
-	cq1zGSCTC3euzwV/88blcdcj1qUdn8gZ0KBUtG6mtJwNZER4CPG+
-X-Google-Smtp-Source: AGHT+IE6t+rDwJ/A3tHo7fWNZk2kIEa7LKUPQ86QgstwCWEnG9Zsqz3YDiE7FPIjIUYpxT6q8MCUrg==
-X-Received: by 2002:a17:907:2da4:b0:a99:ffb5:1db6 with SMTP id a640c23a62f3a-a99ffb55507mr161462666b.24.1728810546894;
-        Sun, 13 Oct 2024 02:09:06 -0700 (PDT)
-Received: from [192.168.0.103] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f86fa986sm117128466b.92.2024.10.13.02.09.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 02:09:06 -0700 (PDT)
-Message-ID: <0afd7977-ccee-4d03-9d26-f55822adcbf8@gmail.com>
-Date: Sun, 13 Oct 2024 11:09:04 +0200
+	 In-Reply-To:Content-Type; b=g+9gokwFggo8/pOF9Gy0Ug3WMi5geQ0rTfyA3/qzEs6wqP2VB9QLZS3/HMupSnwlIESi8VU3u8mikVcKYOXswDKecqCtYgT2ljrtTLiOWqpQDSBEyAazBVV6CfpvddIVNt+e246wEBA37fuNApUPMEbIrGvvb8z6RzXXnAsRug0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=wahrenst@gmx.net header.b=d+6+9evX; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1728810835; x=1729415635; i=wahrenst@gmx.net;
+	bh=3f5st3SI8g7riNop+IV34A1PUOHxIKWQrT/BtOSwtH8=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=d+6+9evXf7Rg7xFwTEpC7i39O/UGb4rF/NFD3wDOQxFUk5+ohqfEydfluvjTVIMu
+	 LK1WQ85bcGoef/OYPzko9xhfPOBcKLi4UAgJyvEMRw3pE9xWGZLOY0Wz9F4JcD1cE
+	 6q4fjp16d9MVWNtm2MVm2N/YSynR2/izmnvlDF6YRCgIIZm0EA1UDQFOHIF9/zYDb
+	 HBuDsBmQlkcntCk+YoVd8Wpbgxo9owSOorx/KiYwodaUzlugXzTTvguTLm6zv6trZ
+	 b3vHNyk4f4blEioQbVigZfwjAKV1KErRVyXrPr0WVQdbAFCkpwdH2m/iMiuoNbvUm
+	 3eGLOfw2u8ZFhRgpEQ==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [192.168.1.104] ([37.4.248.43]) by mail.gmx.net (mrgmx004
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MLi8g-1tHa311M3s-00Llin; Sun, 13
+ Oct 2024 11:13:55 +0200
+Message-ID: <50425e82-2a41-4a3b-a983-2560ab0ccab2@gmx.net>
+Date: Sun, 13 Oct 2024 11:13:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,41 +57,82 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] staging: rtl8712: Tidy-up *Algrthm variables
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?=
- <dominik.karol.piatkowski@protonmail.com>,
- florian.c.schilhabel@googlemail.com, gregkh@linuxfoundation.org,
- ayushtiw0110@gmail.com, dan.carpenter@linaro.org
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241012161638.67030-1-dominik.karol.piatkowski@protonmail.com>
+Subject: Re: [PATCH 2/2] staging: vchiq_arm: Use devm_kzalloc for mgmt
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org,
+ Kieran Bingham <kieran.bingham@ideasonboard.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ kernel-list@raspberrypi.com
+References: <20241013084529.377488-1-umang.jain@ideasonboard.com>
+ <20241013084529.377488-3-umang.jain@ideasonboard.com>
 Content-Language: en-US
-From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
-In-Reply-To: <20241012161638.67030-1-dominik.karol.piatkowski@protonmail.com>
+From: Stefan Wahren <wahrenst@gmx.net>
+In-Reply-To: <20241013084529.377488-3-umang.jain@ideasonboard.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:mSxpv6OUZVJICGtqE2ZRqmKOeGyL014blcjFiWj3/0YWUEeoOdE
+ +AnssgLEFaY2nB0Ul7+3v0OlrmK+S0MN0GLyl5NUbQEVbDoTjPj5ZmpeK75yjEIOZt9gSMJ
+ XnOPFZ4yNeKEMi7/ycf60vxYEWnOt8mlpYPJnebsC8NFoqytPGwfFevPglTtRnWRuaXABQq
+ lbB1gqpa0pIPPmSV1qpCQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:oLRW5sPinvw=;HuMOyxa8dwLEXLUuJaRtmfhkWP1
+ hSqcTo8qtDohQyfEBQHaNA9KaJ7//gZokvPkxHR1Q14nmwB2VZt2jIQOQAhxHTc9xlMvoQxgg
+ cJt2AQyG3abrwtX3O5+lmAJVXHAq1sqnLf/qRUGJYz53Hcp8elhcXrvNI1gbAjEbF2OJOwPBq
+ CDCFTAHPsMye3UcjOlQCYnR1JR9GKYC3VrDnkLmxzVjZA7Kg0DJMi/96LpLRYSCvzW43O4sBc
+ NCKOcZEiFAJsgkDGrCywKXtvi0+bs+UjMCK2YIunY9tc4rkMV8a8Slo20CLp2xjWOS+ZrzNpj
+ FrT5jDX7OJ5tr0pEQF34rRNyzNz8t7rYLTGeEOa4PTmf6Z/RSLIG6Vm0YlOH5dQjGsxj3mPDC
+ AQB0HLHXtyWbp3XkbLPrXlH+zuF3YxhIS9Bu/9vIw9IjsuGD4/th9AdpV5g/en2b1S7KgGjzs
+ jZerwEoxPIIWL/EKm9lrU+Qz7rIxuGytICslWyGhVXYN9B9lJ4haslKM/8X2bO8/EKCA07JKL
+ kQZSl6+cy14Aa5D64nTmt2tmkjh9XEOWgxB++0RNjkNPrddRwmw13e2a01xNAlcm/9444SyMo
+ RKdlu5bLOvFwLDW6yP7AhFmEUco69RxZ4vaNkA1InDHRE94fTp8iNR0Wbw47Xtt2siZM+9ZZ5
+ cX/CvgD384MWi5ofGuXFtMAds5Z7X5w2c5a8J0vACIjsufHFW+iHgHwDtgFdvKo1QGuUpDjEp
+ MRBN7D9OcWK8DOFfwvwKrMxJSLpVtFoDpYoW1hhKCYQropQLqr6l1lNA8htKLzuGLXlhfpsk9
+ /f2zlxfJgnzuo6usANAeEx/w==
 
-On 12.10.24 18:17, Dominik Karol Piątkowski wrote:
-> This series renames *Algrthm variables in order to avoid using camel case.
-> 
-> While at it, introduce auth_algorithm macros to increase readability by
-> replacing hardcoded numbers in assignments and comparisons.
-> 
-> Signed-off-by: Dominik Karol Piątkowski <dominik.karol.piatkowski@protonmail.com>
-> 
-> Dominik Karol Piątkowski (3):
->    staging: rtl8712: Rename AuthAlgrthm variable
->    staging: rtl8712: Rename PrivacyAlgrthm variable
->    staging: rtl8712: Introduce auth_algorithm macros
-> 
->   drivers/staging/rtl8712/mlme_linux.c          |  7 ++-
->   drivers/staging/rtl8712/rtl871x_cmd.c         |  6 +-
->   drivers/staging/rtl8712/rtl871x_ioctl_linux.c | 61 ++++++++++---------
->   drivers/staging/rtl8712/rtl871x_ioctl_set.c   |  9 +--
->   drivers/staging/rtl8712/rtl871x_mlme.c        | 23 +++----
->   drivers/staging/rtl8712/rtl871x_recv.c        |  2 +-
->   drivers/staging/rtl8712/rtl871x_security.h    | 13 ++--
->   7 files changed, 65 insertions(+), 56 deletions(-)
-> 
+Hi Umang,
 
-Tested-by: Philipp Hortmann <philipp.g.hortmann@gmail.com> AW-NU120
+Am 13.10.24 um 10:45 schrieb Umang Jain:
+> Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+except of the missing commit message, this patch looks good to me. I
+understand the concerns about devm_kzalloc, but I think this doesn't
+apply in this case.
+
+Since this should be treated as RFC, is it already tested?
+
+Regards
+> ---
+>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 4 +---
+>   1 file changed, 1 insertion(+), 3 deletions(-)
+>
+> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm=
+.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> index e780ed714a14..334fb7037766 100644
+> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+> @@ -1345,7 +1345,7 @@ static int vchiq_probe(struct platform_device *pde=
+v)
+>   		return -ENOENT;
+>   	}
+>
+> -	mgmt =3D kzalloc(sizeof(*mgmt), GFP_KERNEL);
+> +	mgmt =3D devm_kzalloc(&pdev->dev, sizeof(*mgmt), GFP_KERNEL);
+>   	if (!mgmt)
+>   		return -ENOMEM;
+>
+> @@ -1403,8 +1403,6 @@ static void vchiq_remove(struct platform_device *p=
+dev)
+>
+>   	arm_state =3D vchiq_platform_get_arm_state(&mgmt->state);
+>   	kthread_stop(arm_state->ka_thread);
+> -
+> -	kfree(mgmt);
+>   }
+>
+>   static struct platform_driver vchiq_driver =3D {
+
 
