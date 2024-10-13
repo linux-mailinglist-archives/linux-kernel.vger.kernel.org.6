@@ -1,120 +1,87 @@
-Return-Path: <linux-kernel+bounces-362778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362779-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5BDB299B934
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:23:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3AC599B935
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 13:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2C70B2173C
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:23:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D9BF281E9D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 11:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C74E1482E9;
-	Sun, 13 Oct 2024 11:21:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="og26mZeB"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FD9113D50A;
+	Sun, 13 Oct 2024 11:29:08 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21B2A146A62
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:21:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E4512C54D
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 11:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728818511; cv=none; b=BQJmQutpgSy8GRE5GF+1eKa1GW2Hxqu9/+aAnwuPcGjT7XsYC5+xK+cO+qTqVbIY0o35/6lliild45tSMLUd7hzppjkTk4HzIYJzTlAESWUFHCdcj8bvmaxKzpvO8Bgf5bp0cdwVvclGSQf8vUJZonD8n3bq1aiSAiH88f/WK7Y=
+	t=1728818947; cv=none; b=MXCaqbbXksj/LPP0cL6TeAs0U2ANUBvJr0NPvUvrlo4zXjDXGQhWWd9yeir2uWp10IWfhnttd+1yPYpW2A/BzmQsaZTCFrRXJ/wodg9/mBkdx+tlzb2cpQcrkKa6PwuNesEK+7wiXoGkjpLifxjxv1LT/gAgHCJNcPxNDBlrnfo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728818511; c=relaxed/simple;
-	bh=gS6DbTXaVFqTwbbf8NQXEgOqBrparLUJCPWHfcZcNlc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Hb8cF5a8+YV0/sUTMmYcv6klqqrMDgxodsFR+3Q93pb6iRbdropSJE7Vwp97mzKpxucO2+UG1hQnShfsDQwK0Qn7cIz51l5SspJPIgRne6mFt1bazfD03VSR6Osn/c8gpLP+hs+dsG3tMjJLInSudlt1RnVLFnTPbPR1h3hgupE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=og26mZeB; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
-	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 29415A06;
-	Sun, 13 Oct 2024 13:20:07 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1728818409;
-	bh=gS6DbTXaVFqTwbbf8NQXEgOqBrparLUJCPWHfcZcNlc=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=og26mZeBEHJ0xo3oWjPowkxPyL1hEons2aKPaWQHlXwaDMAvpM/tU2DI2UNy+SxBO
-	 m9IpAre76sK+ZjbLeKPvDdyqsGyanHk/IlD8rZzDjZdwlPrJwE3W8lELKWCrASs1E0
-	 RLJD3crFyR/qnkPM2LMiOrL2bpuGHOAMTCKpkxbM=
-From: Umang Jain <umang.jain@ideasonboard.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
-Cc: linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	Kieran Bingham <kieran.bingham@ideasonboard.com>,
-	Dan Carpenter <dan.carpenter@linaro.org>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	kernel-list@raspberrypi.com,
-	Stefan Wahren <wahrenst@gmx.net>,
-	Umang Jain <umang.jain@ideasonboard.com>
-Subject: [PATCH v4 6/6] staging: vchiq_core: Lower indentation in vchiq_close_service_internal
-Date: Sun, 13 Oct 2024 16:51:28 +0530
-Message-ID: <20241013112128.397249-7-umang.jain@ideasonboard.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241013112128.397249-1-umang.jain@ideasonboard.com>
-References: <20241013112128.397249-1-umang.jain@ideasonboard.com>
+	s=arc-20240116; t=1728818947; c=relaxed/simple;
+	bh=q5D27+PQ5Xr7kDgYqT6MXacyBy+lN2JJUiMC4pKC6xc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=CVSA0j1/q6BCungPgI9tosS7iHfJp9En+zaouXJBTWrAEaIAUldMeFAhPxmQfEChRN+cGgOa6echOgAGAhbFSzd0Weh5uBsygnuLsRR++4R8Ba05WZgcl44DSYeB/4cuHDeptML4opdem5Vk/dbX5+652TwgAm+E1DLuUUqknKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b506c87cso19004245ab.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 04:29:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728818945; x=1729423745;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=djz9nv65ykHTvVn/h40fceG0zy2B8YxvLP8jP1RyeMc=;
+        b=Q/iuvWScDXC8XcIIqsaxT037JLlcLbvvN+b9Aft3eNGMVlIAaZl7e6HjOCkJUsZGHH
+         hwx6euT/8+CCpGWZlND/VZ3G3iUvbCLAaq5raIa4k2BCysfd94WH/1WkCoB5EDwxG5ff
+         rgJXiuYHZuhzOxjA+4EAEfq4kI1vV2R6X98mhV+gAOSA2sKRrWcoxX+kUsPWZappcQgx
+         eNLa286Hi9U59WV8AcN/sPW7d7ouX6Kf0mMHaw1kTBsk6CSJjjNJkTiljVMd1u1YWZwg
+         oyRrPyVGHP4AFRLfLrrPbUmyq9S//xMbcH2EAJry7PJJvsSQuLE5rnmynUQdGgOVCG/f
+         LnGA==
+X-Forwarded-Encrypted: i=1; AJvYcCXCxYBiCV4z7knHYFT1x7+Np/zrw0awulEfSAzkm3mwbPox2JwLOOWIh2Ezj1CjeqQr3mSESf5sqtZ3vaU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfbKhFjABWp7l8cf5lYbaceCbh+Ub5/xvifxczhKZnTfnGNvcE
+	4krt9UXYX7h82/JFWcnrh6TFQv9j+XKaTZ9rBi7a3XGvhJY3rWBfRhpuZ+NCF17/3KnrLkpXhJa
+	sJh/hk+KrQs4h636AJAliD02SYhJmmiDR7sbEvCl58+rPFMmMRx543u0=
+X-Google-Smtp-Source: AGHT+IG62+TItTLPr2vlpo1EBf1AL3FlWXPK1UofEJpKh6XjfgIJXE2nwiULRN1gNPcTxqhVl1J7g2e1+psK0kEOrYlaDEgO6wbx
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:190a:b0:3a3:449b:5989 with SMTP id
+ e9e14a558f8ab-3a3b5fc38a0mr52856265ab.21.1728818945375; Sun, 13 Oct 2024
+ 04:29:05 -0700 (PDT)
+Date: Sun, 13 Oct 2024 04:29:05 -0700
+In-Reply-To: <68d66e2d-78f8-4a7c-890e-ca81af38984a@nvidia.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670baf01.050a0220.3e960.003b.GAE@google.com>
+Subject: Re: [syzbot] [net?] KASAN: slab-use-after-free Read in __ethtool_get_link_ksettings
+From: syzbot <syzbot+5fe14f2ff4ccbace9a26@syzkaller.appspotmail.com>
+To: cmeiohas@nvidia.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Reduce indentation of the conditional nesting in
-vchiq_close_service_internal() switch case by checking the error paths
-first and break early. This helps to reduce conditional branching and
-reduce indentation levels.
+Hello,
 
-Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
----
- .../interface/vchiq_arm/vchiq_core.c          | 24 ++++++++++---------
- 1 file changed, 13 insertions(+), 11 deletions(-)
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+unregister_netdevice: waiting for DEV to become free
 
-diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-index 36f08f078564..3d347b425f20 100644
---- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-+++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_core.c
-@@ -3163,19 +3163,21 @@ vchiq_close_service_internal(struct vchiq_service *service, int close_recvd)
- 		if (close_recvd) {
- 			dev_err(state->dev, "core: (1) called in state %s\n",
- 				srvstate_names[service->srvstate]);
--		} else if (is_server) {
--			if (service->srvstate == VCHIQ_SRVSTATE_LISTENING) {
--				status = -EINVAL;
--			} else {
--				service->client_id = 0;
--				service->remoteport = VCHIQ_PORT_FREE;
--				if (service->srvstate == VCHIQ_SRVSTATE_CLOSEWAIT)
--					set_service_state(service, VCHIQ_SRVSTATE_LISTENING);
--			}
--			complete(&service->remove_event);
--		} else {
-+			break;
-+		} else if (!is_server) {
- 			vchiq_free_service_internal(service);
-+			break;
-+		}
-+
-+		if (service->srvstate == VCHIQ_SRVSTATE_LISTENING) {
-+			status = -EINVAL;
-+		} else {
-+			service->client_id = 0;
-+			service->remoteport = VCHIQ_PORT_FREE;
-+			if (service->srvstate == VCHIQ_SRVSTATE_CLOSEWAIT)
-+				set_service_state(service, VCHIQ_SRVSTATE_LISTENING);
- 		}
-+		complete(&service->remove_event);
- 		break;
- 	case VCHIQ_SRVSTATE_OPENING:
- 		if (close_recvd) {
--- 
-2.45.2
+unregister_netdevice: waiting for ipvlan1 to become free. Usage count = 2
+
+
+Tested on:
+
+commit:         615b9474 RDMA/hns: Disassociate mmap pages for all uct..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/rdma/rdma.git for-next
+console output: https://syzkaller.appspot.com/x/log.txt?x=16bb0727980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=7cd9e7e4a8a0a15b
+dashboard link: https://syzkaller.appspot.com/bug?extid=5fe14f2ff4ccbace9a26
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11d30727980000
 
 
