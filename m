@@ -1,110 +1,94 @@
-Return-Path: <linux-kernel+bounces-363009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74CAF99BCAE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:05:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D90199BCB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74BAB1C20CB0
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:05:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7C7EFB20E85
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 23:17:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13E7C14AD3F;
-	Sun, 13 Oct 2024 23:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4F8E154C04;
+	Sun, 13 Oct 2024 23:17:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="A+j51JSt"
-Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n0XNVRBF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F3DA13CA9C
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:05:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32AC713D291;
+	Sun, 13 Oct 2024 23:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728860748; cv=none; b=anB1MO3rODKK9FwKqaScvfNlnhvmpaJ5O2Wj3Sawh98DguBmslszU/PG3qQ7xu1grOBV2X2GqIVTtSs13ElF+JcRR8SXKqWazVNdi2kxpvdXixquW54nHgYIC1/pth7VPnUTCi5v6ZuWiuDdwYStL0rP86tKVk3AgfabNJ85Td0=
+	t=1728861428; cv=none; b=mtOArOR9RfIiEblxy2FmJlSaV/EBnQ2IE44bhjdd3LEz/sB+Agj6PHv5uiPfF3NB3N0iwSEf9/BUybQXY1kAUYtcTEF5bbf9aHR4wjhZ0/u/IPDy7UEWAnVANCFjrJ5PvFlnI3tx99Al7UWo1IRN0/3WhlMNWrL0sgNQ+buDVrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728860748; c=relaxed/simple;
-	bh=vVFuco5IkUVZm6+4vPSvWvWGw6JLz15lWSmvpfk6Nx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z2oLtgxmh5h65LHvdgdvhb89ICw5JZgucerPUxqnbBbDNIJzOgr5BndxI7+PQV2urAnQiL/BRKxSuDkoVSvzG7gLj0cR3JZ62SXy89dFzcLJSEwVYKc+3ag8MX7hwM0L20jBWSFNhdEVA/sXo2tlnXnyprUwxgBQ6/FGrmJuPEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=A+j51JSt; arc=none smtp.client-ip=91.218.175.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Sun, 13 Oct 2024 19:05:38 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728860744;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OwnQUpfLFyhtFnNBmva4jZ85PzjV+X96ARhGEi0eXec=;
-	b=A+j51JSt0HCazZp0xxO5iuW/zKv6+/vmeMyNkpJt6J7mQR/Zsf0GIKajQ3UV6PZJpL4cor
-	4vLXRxz6HjSu+F/2mKr7Fkm35XhRlZZRIGh7L0wjoRRiPW8LSra04bewcEaokEdTwMDUr+
-	xRD5n5H3f/p5GD2pQI0K7YaOIrAuAGE=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: colyli@suse.de, msakai@redhat.com, corbet@lwn.net, 
-	peterz@infradead.org, mingo@redhat.com, acme@kernel.org, namhyung@kernel.org, 
-	akpm@linux-foundation.org, mark.rutland@arm.com, alexander.shishkin@linux.intel.com, 
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com, 
-	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw, linux-kernel@vger.kernel.org, 
-	linux-bcache@vger.kernel.org, dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 0/3] Enhance min heap API with non-inline functions and
- optimizations
-Message-ID: <uisaqjn2ttzhohe3a5qrdw4x6m7rhuoxxuhfoz5szufynuz5fz@4wicz52jydwz>
-References: <20241013184703.659652-1-visitorckw@gmail.com>
+	s=arc-20240116; t=1728861428; c=relaxed/simple;
+	bh=T6fCpxQByFMxCFovCaie3y6UnkKaE2UUQlMk06KTWYo=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=DMKEzb2PKOguTpTgof/BK9vi0BE0JpKmrQTAYKfx1OfEks+rzDuKUk9Eq0uNCFprP1xR3WfO2P9okR7NJF3ivAdQTroakx7wSQxkqQ3WopgiSnKPcZly7HVEhqNWmn3MmS7RA0QJVlkqF6pzY3AZTKGY2D33af/NJG6nXpil3TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n0XNVRBF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8C057C4CEC5;
+	Sun, 13 Oct 2024 23:17:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728861427;
+	bh=T6fCpxQByFMxCFovCaie3y6UnkKaE2UUQlMk06KTWYo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=n0XNVRBFUzrd5VvWsK2rIxro/ZetKbPWL43Y5ze+kyoS4mHeibbbTEjPcgqhMyBzf
+	 1zy5oWZAdQjRuBSRNPf39QPbJ0Qca4HMYi2tQqmj83AbnKpOAxYfvmFipicEiAhb/V
+	 J9TgBfQSPMg6toy7l3AfEYfQFKjQQ1GhzuQMeX9875ILJfcSxoeU5EombIQ9+fCOqw
+	 LsSDlsqgmTxrHtZYTmymNrTMuYZqr3G9r/ybi/IU9+sOD5RkcIFxZZEZ+3hKAkM1jX
+	 Fg8wpHXSZzd4GuE+bGMQWoWuS1NtDwbePH/MKXdXWkiDW9igjEG4P9E9EdpWRb9fPN
+	 LEdz3fOYP/UUw==
+From: cel@kernel.org
+To: Julia Lawall <Julia.Lawall@inria.fr>
+Cc: Chuck Lever <chuck.lever@oracle.com>,
+	kernel-janitors@vger.kernel.org,
+	vbabka@suse.cz,
+	paulmck@kernel.org,
+	Jeff Layton <jlayton@kernel.org>,
+	Neil Brown <neilb@suse.de>,
+	Olga Kornievskaia <okorniev@redhat.com>,
+	Dai Ngo <Dai.Ngo@oracle.com>,
+	Tom Talpey <tom@talpey.com>,
+	linux-nfs@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 12/17] nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+Date: Sun, 13 Oct 2024 19:16:55 -0400
+Message-ID: <172886139200.172644.2516274640298579379.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241013201704.49576-13-Julia.Lawall@inria.fr>
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr> <20241013201704.49576-13-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013184703.659652-1-visitorckw@gmail.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=893; i=chuck.lever@oracle.com; h=from:subject:message-id; bh=/8YJRV9GFMeDkrzw3g6+IoigkBWNyS0S4UeL7zCFMTA=; b=owEBbQKS/ZANAwAIATNqszNvZn+XAcsmYgBnDFTpEVs+lhLtZ9DMdFOdQYmEVyL0j1AnwYCn8 oz7Ed3epMCJAjMEAAEIAB0WIQQosuWwEobfJDzyPv4zarMzb2Z/lwUCZwxU6QAKCRAzarMzb2Z/ l6T9D/98US6txOa/yiNCF9hDbrzwgk7MHT21FDI6/B4kt+/Uj21+mRN1U1D+iEfSlgIgg81OGKK sdH1NMATBHY5hX3La8Atd2jSB5Whm1u2HDgsN+zVY30V5tVaNkIAbvYKkhKHoAgZ3yDo+Ym/Sqd ET3xX8H3MxX846KLzdL+P1a+Om2qwMVTx6OqhcSD2vAFUZhSyYCHaIexqPraPvyo6CE65hrdyJo 6nedWwQLVsLhN2/p207FtQNStzvbm3gxnaZOXXrsboaRlckB1q5iBaQi3jj1VbQCNJcG0Ys0VP/ 8+92TThM72bBYuwdLgTxS4o+fCmG3LiCS5U+lo99DdEpfcnlSXWTGBwL00vduqiPSrx3cAFFqLy PtZOOuTfe7nDN4pDHPgWWYnfuIGQZ+tZFgBFhOEplhWdKtvPi4PNmX29SNshPDzdaCNXOSMhn/t y2VsBXAn1jvbamJzFju3tB8ihgSo7fTK/VfripbUwbGwlFXZTj4E7bBhUEaWW1ad8S0wbSZgSaW icpP8fzfUUi5ZLxoFggdpcbCF7QH8POkKgcWsgciEl1zm+hy+BSl1DaG/5Ocg0XRjZ/YckXgZYz gSKn4Lan+2FdSXbI/9G+OKOVAbOE9YrQSl+DOSWgxju0BPhZAisfjET35Y+NraQB6NONlsJriw8 0fU8K0L
+ V4ov383Q==
+X-Developer-Key: i=chuck.lever@oracle.com; a=openpgp; fpr=28B2E5B01286DF243CF23EFE336AB3336F667F97
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 02:47:00AM GMT, Kuan-Wei Chiu wrote:
-> Add non-inline versions of the min heap API functions in lib/min_heap.c
-> and updates all users outside of kernel/events/core.c to use these
-> non-inline versions. Additionally, it micro-optimizes the efficiency of
-> the min heap by pre-scaling the counter, following the same approach as
-> in lib/sort.c. Documentation for the min heap API has also been added
-> to the core-api section.
+From: Chuck Lever <chuck.lever@oracle.com>
 
-Nice, has it been tested - do you need a CI account?
-
-I'd like to start seeing links to CI results in patch postings (and I
-need to tweak the CI to add git fetch links, as well).
-
-Coly, there's ktest tests for bcache that need to be updated - if you
-wanted to take that on it'd be lovely to consolidate how our subsystems
-are getting tested; I can give you a CI account as well.
-
+On Sun, 13 Oct 2024 22:16:59 +0200, Julia Lawall wrote:                                              
+> Since SLOB was removed and since
+> commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
+> it is not necessary to use call_rcu when the callback only performs
+> kmem_cache_free. Use kfree_rcu() directly.
 > 
-> Regards,
-> Kuan-Wei
+> The changes were made using Coccinelle.
 > 
-> Kuan-Wei Chiu (3):
->   lib/min_heap: Introduce non-inline versions of min heap API functions
->   lib min_heap: Optimize min heap by prescaling counters for better
->     performance
->   Documentation/core-api: Add min heap API introduction
-> 
->  Documentation/core-api/index.rst    |   1 +
->  Documentation/core-api/min_heap.rst | 291 ++++++++++++++++++++++++++++
->  drivers/md/bcache/Kconfig           |   1 +
->  drivers/md/dm-vdo/Kconfig           |   1 +
->  fs/bcachefs/Kconfig                 |   1 +
->  include/linux/min_heap.h            | 202 ++++++++++++-------
->  kernel/events/core.c                |   6 +-
->  lib/Kconfig                         |   3 +
->  lib/Kconfig.debug                   |   1 +
->  lib/Makefile                        |   1 +
->  lib/min_heap.c                      |  70 +++++++
->  11 files changed, 508 insertions(+), 70 deletions(-)
->  create mode 100644 Documentation/core-api/min_heap.rst
->  create mode 100644 lib/min_heap.c
+> [...]                                                                        
+
+Applied to nfsd-next for v6.13, thanks!                                                                
+
+[12/17] nfsd: replace call_rcu by kfree_rcu for simple kmem_cache_free callback
+        commit: 4159ced48564c9e6565e88a4774ff7456123f9d8                                                                      
+
+--                                                                              
+Chuck Lever
 
 
