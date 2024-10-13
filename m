@@ -1,239 +1,130 @@
-Return-Path: <linux-kernel+bounces-362851-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BF7F99BA1A
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:33:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FF1B99BA1F
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 17:40:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3D96281970
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2C9D1F21876
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 15:40:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD3DB1474B9;
-	Sun, 13 Oct 2024 15:33:24 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 340D7146D78;
+	Sun, 13 Oct 2024 15:40:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GzlxZ8et"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 662B22F855;
-	Sun, 13 Oct 2024 15:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1A713C9A6;
+	Sun, 13 Oct 2024 15:40:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728833604; cv=none; b=Q5HDNW3YpgdOmYa/2UNWjkMjZDrtsWx/W2HrklLEOz47UsoX/Qxgwi0QNm1IQBibWxvCBX4LKEX4eEtI+RFj6bV/Ehi6CCMA7A42VpKPnc9kcv1nNcYZvBG0aDAJ2LWdB1gsLvy56m+BZKwUA0Qs1oVeZOWfKX5Fn7WFsmOxWA8=
+	t=1728834007; cv=none; b=QLHv+bifGqTOmHZX0/ExfGD9ZLpMvy/jX2ej2bOyk/MHVJ5Hl/GLbjwbrlxErKqZf9c5en3gRkxeD5aS5PmziDqb0K27NGUJdpgpizOlnNkpUjfnmw3qW7Y46USnwEjxNsBFJ9lpOJdVXEsLl1apMyNOhfGEjtaF8J2VGroBJK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728833604; c=relaxed/simple;
-	bh=fJkul6k+1xkEG6jqLAyJbONQ+3rSxf+oxu/+tMfJTrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U1xM0RrR7CkqZnyd7yU1vZ4XqPSIP5HMh7kRu3j870t1Y9Jaz7YkZG7UvI7jvOStQuCnhnzja6ZZpSQNaKuv0dTX337MJF+pGr7aPUOA5MFR65YNxNs5eslshGSx76ZELdeSvwNTxC6RDiK3aSkuY39Olcb5g2U59STaHuInk+U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 0C6EA1A13F7;
-	Sun, 13 Oct 2024 17:33:15 +0200 (CEST)
-Received: from inva024.eu-rdc02.nxp.com (inva024.eu-rdc02.nxp.com [134.27.226.22])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 052241A1C55;
-	Sun, 13 Oct 2024 17:33:15 +0200 (CEST)
-Received: from lsv051416.swis.nl-cdc01.nxp.com (lsv051416.swis.nl-cdc01.nxp.com [10.168.48.122])
-	by inva024.eu-rdc02.nxp.com (Postfix) with ESMTP id C72CB20406;
-	Sun, 13 Oct 2024 17:33:15 +0200 (CEST)
-Date: Sun, 13 Oct 2024 17:33:14 +0200
-From: Jan Petrous <jan.petrous@oss.nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	"netdev@vger.kernel.org" <netdev@vger.kernel.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-stm32@st-md-mailman.stormreply.com" <linux-stm32@st-md-mailman.stormreply.com>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	dl-S32 <S32@nxp.com>
-Subject: Re: [PATCH v2 3/7] dt-bindings: net: Add DT bindings for DWMAC on
- NXP S32G/R SoCs
-Message-ID: <ZwvoOpgApLQWWY05@lsv051416.swis.nl-cdc01.nxp.com>
-References: <AM9PR04MB8506A1FAC2DA26F27771D039E2832@AM9PR04MB8506.eurprd04.prod.outlook.com>
- <7bbd48c8-7fa6-4d41-9560-3de0a2394c55@kernel.org>
+	s=arc-20240116; t=1728834007; c=relaxed/simple;
+	bh=Rn31IjsiYcrrEXbqeFmwqVweK4SdvTGrY5WWcOYt7OI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=eRFrmp4sovK4LybMugA+cjTC3KPfGjFuts/WmsDyc6C7Ea5bRBA5qvkagS2u3M4wDdRwao/xWrL2464nKAGUtBC7hoOAozXIaZbMAwQ9gWMXsJTqflGSnT9joeAoTNqaQIDCrSWNBcDOvPFL8Y7SC1dU5HU5JW6e/ZA11qGY3+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GzlxZ8et; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A771C4CEC5;
+	Sun, 13 Oct 2024 15:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728834007;
+	bh=Rn31IjsiYcrrEXbqeFmwqVweK4SdvTGrY5WWcOYt7OI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GzlxZ8etSHfS+rEK7+0v0jKY6skXWH6b+t3A9uxk9VA2UIqJklRm19QTIKn6xTneB
+	 gVCc7H3k9GOMxDmcoV4nekMmcYrS/K8/PnszcfbDQTqWmRvo9051pjQS64pvrlKOFU
+	 WvdTUkTd+5Em29X8jwT53vOpoxO87JvTi1uog9VhkRMw276faD+6ToQ7BIvlo1d3fD
+	 CX9HF2SZ0uuH+d8XPQ8SX4BUMuhKFhWUWctTVN3uiw3mSuIjD7HOaBNwhPscA+OPX0
+	 VhtU1MmLL5OXJIczb8afsUfrRYURI+VhO79RDJ5UZEDwQfKS9gMX6a4HvIDWm1dhlV
+	 tW8RmmdjzBPRA==
+Date: Sun, 13 Oct 2024 16:40:00 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
+ =?UTF-8?B?cg==?= <philm@manjaro.org>
+Subject: Re: [PATCH 3/3] iio: imu: Add scale and sampling frequency to
+ BMI270 IMU
+Message-ID: <20241013164000.19087833@jic23-huawei>
+In-Reply-To: <87jzecpvpd.fsf@justinweiss.com>
+References: <20241011153751.65152-1-justin@justinweiss.com>
+	<20241011153751.65152-4-justin@justinweiss.com>
+	<20241012123535.1abe63bd@jic23-huawei>
+	<87jzecpvpd.fsf@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7bbd48c8-7fa6-4d41-9560-3de0a2394c55@kernel.org>
-X-Virus-Scanned: ClamAV using ClamSMTP
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 19, 2024 at 08:21:03AM +0200, Krzysztof Kozlowski wrote:
-> On 18/08/2024 23:50, Jan Petrous (OSS) wrote:
-> > Add basic description for DWMAC ethernet IP on NXP S32G2xx, S32G3xx
-> > and S32R45 automotive series SoCs.
-> 
-> Fix your email threading. b4 handle everything correctly, so start using it.
-> 
+On Sat, 12 Oct 2024 19:45:18 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
 
-Done. V3 will be sent by b4/msmtp.
-
-> > 
-> > Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > ---
-> >  .../bindings/net/nxp,s32cc-dwmac.yaml         | 127 ++++++++++++++++++
-> >  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
-> >  2 files changed, 128 insertions(+)
-> >  create mode 100644 Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml
-> > 
-> > diff --git a/Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml b/Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml
-> > new file mode 100644
-> > index 000000000000..443ad918a9a5
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/net/nxp,s32cc-dwmac.yaml
+> Jonathan Cameron <jic23@kernel.org> writes:
 > 
-> Filename based on compatible, so what does "cc" stand for?
-
-Ok, removed 'cc'.
-
+> > On Fri, 11 Oct 2024 08:37:49 -0700
+> > Justin Weiss <justin@justinweiss.com> wrote:
+> >  
+> >> Add read and write functions and create _available entries. Use
+> >> IIO_CHAN_INFO_SAMP_FREQ instead of IIO_CHAN_INFO_FREQUENCY to match
+> >> the BMI160 / BMI323 drivers.  
+> >
+> > Ah.  Please break dropping _FREQUENCY change out as a separate fix
+> > with fixes tag etc and drag it to start of the patch. It was never
+> > wired to anything anyway
+> >
+> > That's a straight forward ABI bug so we want that to land ahead
+> > of the rest of the series.  
 > 
-> > @@ -0,0 +1,127 @@
-> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > +# Copyright 2021-2024 NXP
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/net/nxp,s32cc-dwmac.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: NXP S32G2xx/S32G3xx/S32R45 GMAC ethernet controller
-> > +
-> > +maintainers:
-> > +  - Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
-> > +
-> > +description: |
+> Thanks, I'll pull that into its own change and make it the first patch.
 > 
-> Do not need '|' unless you need to preserve formatting.
+> > Does this device have a data ready interrupt and if so what affect
+> > do the different ODRs for each type of sensor have on that?
+> > If there are separate data ready signals, you probably want to 
+> > go with a dual buffer setup from the start as it is hard to unwind
+> > that later.  
+> 
+> It has data ready interrupts for both accelerometer and gyroscope and a
+> FIFO interrupt. I had held off on interrupts to keep this change
+> simpler, but if it's a better idea to get it in earlier, I can add it
+> alongside the triggered buffer change.
 
-Removed.
+Ok. So the challenge is that IIO buffers are only described by external
+metadata.  We don't carry tags within them.  Hence if you are using
+either effectively separate datastreams (the two data ready interrupts)
+or a fifo that is tagged data (how this difference of speed is normally handled
+if it's one buffer) then when we push them into IIO buffers, they have
+to go into separate buffers.
 
-> 
-> > +  This device is a platform glue layer for stmmac.
-> 
-> Drop description of driver and instead describe the hardware.
+In older drivers this was done via the heavy weight option of registering
+two separate IIO devices. Today we have the ability to support multiple buffers
+in one driver. I'm not sure we've yet used it for this case, so I think
+there may still be some gaps around triggering that will matter for the
+separate dataready interrupt case (fifo is fine as no trigger involved).
+Looking again at that code, it looks like there may need to be quite
+a bit more work to cover this case proeprly.
 
-Changed in v3.
+We may be able to have a migration path from the simple case you have
+(where timing is an external trigger) to multiple buffers.
+It would involve:
+1) Initial solution where the frequencies must match if the fifo is in use.
+   Non fifo trigger from data ready might work but we'd need to figure out
+   if they run in close enough timing.
+2) Solution where we add a second buffer and if the channels are enabled
+   in that we can allow separate timing for the two sensor types.
 
-> 
-> > +  Please see snps,dwmac.yaml for the other unchanged properties.
-> > +
-> > +properties:
-> > +  compatible:
-> > +    enum:
-> > +      - nxp,s32g2-dwmac
-> > +      - nxp,s32g3-dwmac
-> > +      - nxp,s32r45-dwmac
-> > +
-> > +  reg:
-> > +    items:
-> > +      - description: Main GMAC registers
-> > +      - description: GMAC PHY mode control register
-> > +
-> > +  interrupts:
-> > +    description: Common GMAC interrupt
-> 
-> No, instead maxItems: 1
-> 
+This is one of those hardware features that seems like a good idea
+from the hardware design point of view but assumes a very specific
+sort of software model :(
 
-Done.
+Jonathan
 
-> > +
-> > +  interrupt-names:
-> > +    const: macirq
-> > +
-> > +  clocks:
-> > +    items:
-> > +      - description: Main GMAC clock
-> > +      - description: Transmit clock
-> > +      - description: Receive clock
-> > +      - description: PTP reference clock
-> > +
-> > +  clock-names:
-> > +    items:
-> > +      - const: stmmaceth
-> > +      - const: tx
-> > +      - const: rx
-> > +      - const: ptp_ref
-> > +
-> > +required:
-> > +  - compatible
-> > +  - reg
-> > +  - interrupts
-> > +  - interrupt-names
-> > +  - clocks
-> > +  - clock-names
-> > +  - phy-mode
-> 
-> Drop, snps,dwmac requires this.
-
-Compressed to 'clocks' and 'clock-names'.
-
-> 
-> > +
-> > +allOf:
-> > +  - $ref: snps,dwmac.yaml#
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> > +    #include <dt-bindings/interrupt-controller/irq.h>
-> > +    #include <dt-bindings/phy/phy.h>
-> > +    bus {
-> > +      #address-cells = <2>;
-> > +      #size-cells = <2>;
-> > +
-> > +      ethernet@4033c000 {
-> > +        compatible = "nxp,s32cc-dwmac";
-> > +        reg = <0x0 0x4033c000 0x0 0x2000>, /* gmac IP */
-> > +              <0x0 0x4007c004 0x0 0x4>;    /* GMAC_0_CTRL_STS */
-> > +        interrupt-parent = <&gic>;
-> > +        interrupts = <GIC_SPI 57 IRQ_TYPE_LEVEL_HIGH>;
-> > +        interrupt-names = "macirq";
-> > +        snps,mtl-rx-config = <&mtl_rx_setup>;
-> > +        snps,mtl-tx-config = <&mtl_tx_setup>;
-> > +        clocks = <&clks 24>, <&clks 17>, <&clks 16>, <&clks 15>;
-> > +        clock-names = "stmmaceth", "tx", "rx", "ptp_ref";
-> > +        phy-mode = "rgmii-id";
-> > +        phy-handle = <&phy0>;
-> > +
-> > +        mtl_rx_setup: rx-queues-config {
-> > +          snps,rx-queues-to-use = <5>;
-> > +
-> > +          queue0 {
-> > +          };
-> > +          queue1 {
-> > +          };
-> 
-> 
-> Why listing empty nodes?
-
-Removed in v3.
-
-> 
-> Best regards,
-> Krzysztof
-> 
-
-Thanks.
-/Jan
 
