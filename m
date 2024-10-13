@@ -1,117 +1,118 @@
-Return-Path: <linux-kernel+bounces-362741-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362742-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6515199B8DD
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 10:52:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8128799B8E1
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 10:59:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91E7E282332
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 08:52:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2AC581F219E8
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 08:59:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3E1413AD22;
-	Sun, 13 Oct 2024 08:52:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C775E13B2A2;
+	Sun, 13 Oct 2024 08:59:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UDWN/lL0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t5YJWuD6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8DBF2907
-	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 08:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CF4F42AA5;
+	Sun, 13 Oct 2024 08:59:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728809566; cv=none; b=Ubhie9z5CYQ5J6U5Ht1L32QTTExyfOkjaUc1Kgqz/qay8mN3ez/KvkqsUywhZlW7WYCMbMsJJ0CtLJMucz4qw/mx48hmf381VafNk3qMGb4sGiJF5aIrinVMyPzNm7fSIN8aWtasl0CrpPLjQKYxTYnKocofafi9rQtd/BlDU3k=
+	t=1728809964; cv=none; b=h7zTpr4B/lsblD+c4hXa/4aT4ntyRZIjehov6cW5+JXaxbMyzYasSH/khgMUQTHpZNTGvZK2UwoTProUc6UrJCzT/hRGHtyvyIWf8qtIfQNhxgHGmFSN3CXZoUFYpYlYSvS0xf6TGJXnfS4z+KjUsx9V5u+aGbV3gXTBOPIB08c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728809566; c=relaxed/simple;
-	bh=UD1YqoqLreHhFyS6vfSFUekwTj19fHkIF7YoEsutagU=;
+	s=arc-20240116; t=1728809964; c=relaxed/simple;
+	bh=MGPp+p+dxUmjH0cnQhkoeaR5EG/K95IWnJ4xLOSAOqQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YNmR0wktIcydMvXK2Gw1EOWoEgWsW8KBkgD/iOtqmtG9IaNGT2n4XUZyI/YwhNDIYjyRpHmpj7S3bSJDafZnB8nedbIrHLdA+LOkNoonI5i1PMFdHwDLMM6B/OCbW01Beg1WJ55FXh8c7TtTLIFjUrc6RYZU3Zhbbr/fWRWElIg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UDWN/lL0; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728809562; x=1760345562;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=UD1YqoqLreHhFyS6vfSFUekwTj19fHkIF7YoEsutagU=;
-  b=UDWN/lL0whQS4esajX6gtQqCZ7anHFo2xbn+rKhtuSWGJ1lytBb6cNfX
-   upEWtIDLCnKmrmeAO5sQ+FV/NPW76kHWWkRBJ1BFEMiKoTH43JYGAlkLJ
-   SqXDh4rakiDUXXtfZvL50R0BTIOjOAbFoKfaS9b7ZPLw9DJ3jiFEzqSvA
-   9nlikRao0CVORfqJqq7oLgv6t3N/Z5KhuxR1ARXxAJ5qbrX9r7IkAsDzF
-   BzzefsteXVW+q/wwx4gVx8xuK9reRi6Nv6hhLmQwGnyIqlA0Jy2hTf2kc
-   kacL4Y6y3v2J0h3rCNuHufE/WJ/9N3b49oqbJ7n2u6shJohls5ls7eLxn
-   g==;
-X-CSE-ConnectionGUID: alBH3IiSRna5U9+DiyFGhQ==
-X-CSE-MsgGUID: A9hlWOW3TAO9zAn9G3cjLw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39286045"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39286045"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 01:52:42 -0700
-X-CSE-ConnectionGUID: d8Ms5SUTQ3CLDWNJqd11eA==
-X-CSE-MsgGUID: XUuHBGDETSqEQiu3Hs9Xxw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,200,1725346800"; 
-   d="scan'208";a="77221890"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa010.jf.intel.com with ESMTP; 13 Oct 2024 01:52:42 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1szuL8-000EEB-31;
-	Sun, 13 Oct 2024 08:52:38 +0000
-Date: Sun, 13 Oct 2024 16:52:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Gerhard Engleder <gerhard@engleder-embedded.com>,
-	linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, arnd@arndb.de,
-	gregkh@linuxfoundation.org,
-	Gerhard Engleder <gerhard@engleder-embedded.com>
-Subject: Re: [PATCH 3/6] misc: keba: Support EEPROM sections as separate
- devices
-Message-ID: <202410131655.SZLsBJYD-lkp@intel.com>
-References: <20241009202949.20164-4-gerhard@engleder-embedded.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=MSV8uUYKHCokSXy0R9DfJo/XFMWV3Xnz8l1GUGLx8tVW7KVha3zwK8boH2LQGffxdfwPCmeN6/HOFzQbcF/aOCisA38RFIpVyFu1jSclAlg9zfDD9AE5gq6lwSzeQcDhvNRpec2p2Eq+qW2j471V6AEfVBZNd47B2fN0gx6pb5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t5YJWuD6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73E19C4CEC5;
+	Sun, 13 Oct 2024 08:59:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728809963;
+	bh=MGPp+p+dxUmjH0cnQhkoeaR5EG/K95IWnJ4xLOSAOqQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t5YJWuD6Aoics6ECGmsTwbHwSqToeSi/1LZB5VZbIwzy8V4l3Z/yu2VAZsAwYJDuI
+	 YCPPvUgM5FjLOUVz33dYAPvTUtl4Xrk2HXstq9GKJbxLZlmX+oOAFFKjn8YnpYI1xJ
+	 ezJeyVQ/ZPFFu6sSyk0fiulS9bp94WxUOukLIuyFjv5RUIra6wuXNuQ7FXISfky/Uv
+	 Ew3Vx4y8cF/aSm9ceFwBo3iX7GAEjjR6zsRBAANuPUnPGk5EZw9XAMNllz+0+GpQyP
+	 Ril9VZcfnzG9py9nUe5LE8u5izFspdFemZLtkPNMRYY/FWE8dAhCZPtVdfbrqQdUWM
+	 uhTFeoUFEilgQ==
+Received: by pali.im (Postfix)
+	id 7E08A5F9; Sun, 13 Oct 2024 10:59:16 +0200 (CEST)
+Date: Sun, 13 Oct 2024 10:59:16 +0200
+From: Pali =?utf-8?B?Um9ow6Fy?= <pali@kernel.org>
+To: Steve French <smfrench@gmail.com>
+Cc: Steve French <sfrench@samba.org>, Paulo Alcantara <pc@manguebit.com>,
+	Ronnie Sahlberg <ronniesahlberg@gmail.com>,
+	linux-cifs@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 0/7] Allow to choose symlink and socket type
+Message-ID: <20241013085916.tcpz6oclalqv6aan@pali>
+References: <20241006100046.30772-1-pali@kernel.org>
+ <20241012085252.560-1-pali@kernel.org>
+ <CAH2r5mtGqqM35Cy5k9NN=X05rTZPk-adhb7LgoV8PGNVL9P6FQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241009202949.20164-4-gerhard@engleder-embedded.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAH2r5mtGqqM35Cy5k9NN=X05rTZPk-adhb7LgoV8PGNVL9P6FQ@mail.gmail.com>
+User-Agent: NeoMutt/20180716
 
-Hi Gerhard,
+Well, if server explicitly disallow user to create symlink due to
+missing permissions, I am not sure if it is a good idea to obey it by
+creating symlink in format unsupported by the server...
 
-kernel test robot noticed the following build errors:
-
-[auto build test ERROR on char-misc/char-misc-testing]
-[also build test ERROR on char-misc/char-misc-next char-misc/char-misc-linus soc/for-next linus/master v6.12-rc2 next-20241011]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Gerhard-Engleder/misc-keba-Add-SPI-controller-device/20241010-051016
-base:   char-misc/char-misc-testing
-patch link:    https://lore.kernel.org/r/20241009202949.20164-4-gerhard%40engleder-embedded.com
-patch subject: [PATCH 3/6] misc: keba: Support EEPROM sections as separate devices
-config: csky-randconfig-r123-20241012 (https://download.01.org/0day-ci/archive/20241013/202410131655.SZLsBJYD-lkp@intel.com/config)
-compiler: csky-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241013/202410131655.SZLsBJYD-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410131655.SZLsBJYD-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   csky-linux-ld: drivers/misc/keba/cp500.o: in function `cp500_nvmem_match':
-   drivers/misc/keba/cp500.c:481:(.text+0x19a): undefined reference to `i2c_verify_client'
->> csky-linux-ld: drivers/misc/keba/cp500.c:489:(.text+0x1f4): undefined reference to `i2c_verify_client'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+On Saturday 12 October 2024 23:18:13 Steve French wrote:
+> after doing more experiments with native windows symlinks (and how
+> difficult it is to get permission to set them over the wire to Windows),
+> was wondering if we should allow fall back strategy if creating windows
+> style symlinks fails with STATUS_PRIVILEGE_NOT_HELD then we should try NFS
+> reparse point symlink.  Any opinions?
+> 
+> On Sat, Oct 12, 2024 at 3:53 AM Pali Rohár <pali@kernel.org> wrote:
+> 
+> > This patch series improves choosing reparse format when creating new
+> > special files.
+> >
+> > Changes since v1:
+> > * Instead of new -o reparse= mount option is now a new -o symlink= mount
+> >   option for choosing symlink type during creation, and new option
+> >   -o nonativesocket for choosing socket type
+> >
+> > Pali Rohár (7):
+> >   cifs: Add mount option -o symlink= for choosing symlink create type
+> >   cifs: Add mount option -o reparse=none
+> >   cifs: Add support for creating native Windows sockets
+> >   cifs: Add support for creating NFS-style symlinks
+> >   cifs: Improve guard for excluding $LXDEV xattr
+> >   cifs: Add support for creating WSL-style symlinks
+> >   cifs: Validate content of WSL reparse point buffers
+> >
+> >  fs/smb/client/cifsfs.c     |   4 +
+> >  fs/smb/client/cifsglob.h   |  36 +++++++
+> >  fs/smb/client/connect.c    |   4 +
+> >  fs/smb/client/fs_context.c |  82 +++++++++++++++
+> >  fs/smb/client/fs_context.h |  19 ++++
+> >  fs/smb/client/link.c       |  60 ++++++++---
+> >  fs/smb/client/reparse.c    | 201 +++++++++++++++++++++++++++++++------
+> >  fs/smb/client/reparse.h    |   2 +
+> >  8 files changed, 364 insertions(+), 44 deletions(-)
+> >
+> > --
+> > 2.20.1
+> >
+> >
+> >
+> 
+> -- 
+> Thanks,
+> 
+> Steve
 
