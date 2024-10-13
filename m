@@ -1,258 +1,169 @@
-Return-Path: <linux-kernel+bounces-362930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-362931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE60099BB59
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:08:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 907C299BB5D
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 22:16:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0C0E1C20D34
-	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:08:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46DB6281749
+	for <lists+linux-kernel@lfdr.de>; Sun, 13 Oct 2024 20:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FC9514EC71;
-	Sun, 13 Oct 2024 20:07:56 +0000 (UTC)
-Received: from lithops.sigma-star.at (mailout.nod.at [116.203.167.152])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B98951487D6;
+	Sun, 13 Oct 2024 20:16:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="Dxe5xpZ8"
+Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A8614D2A0;
-	Sun, 13 Oct 2024 20:07:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.167.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E969278289
+	for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 20:16:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728850075; cv=none; b=YL/WPKg3VHDEPqMAmNcoC+yFaDIfy97OqUa6Go57InR5eZ1DhQlzgF1wl3Zph52darX0NI+tMG4nDgQfqSd6qP4Ubv2zcObcdR7btIXpEj30cDyyUwfAgSbWF7x5V2V6B9FIs8sl9fWSWgqDHybbcSxIY79UW0oDifIFO7P+To4=
+	t=1728850601; cv=none; b=aw4LX2WKpx2QP9MoB5t1jdsp064uLQPGtEgaQPAvGPSvHGZaWe/XugHrM7ysg3mLuDIJSutk98zlqrUcHrluyQUUEV7uYVlhRPHhj1g9WJFtrTKexPMNnB/6ApFvYyPzRldHx68q5xUOOeX00sWoja3sUerGrDuSlfn67OrjrpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728850075; c=relaxed/simple;
-	bh=90I2fuD9YWOIJcMHf8E8wy1P0jLpFA5kttYn4pIZUr4=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TurqDgybMXQsfa6RmQxFGedN/U6BXlkWz7usDP6thwh8B6yXEEL0uEmYobTTPdSKLPW4R4x75ElTplOsaSRSjs0wu3AbI3edGFjdIooalJ76y0OnVKMYuwJQWL/Oef/+lR2APUSMOqxlgvCsfLCXDbfSZQeMPP8YfZarZL0vms0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at; spf=fail smtp.mailfrom=nod.at; arc=none smtp.client-ip=116.203.167.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nod.at
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nod.at
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id 7E7422BFA56;
-	Sun, 13 Oct 2024 22:07:44 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10032)
-	with ESMTP id aZe6T3Uwd3uL; Sun, 13 Oct 2024 22:07:44 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by lithops.sigma-star.at (Postfix) with ESMTP id EBEEF2BFA5A;
-	Sun, 13 Oct 2024 22:07:43 +0200 (CEST)
-Received: from lithops.sigma-star.at ([127.0.0.1])
-	by localhost (lithops.sigma-star.at [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id Zox0Bmbm1GV6; Sun, 13 Oct 2024 22:07:43 +0200 (CEST)
-Received: from foxxylove.corp.sigma-star.at (unknown [82.150.214.1])
-	by lithops.sigma-star.at (Postfix) with ESMTPSA id A9B382BFA56;
-	Sun, 13 Oct 2024 22:07:43 +0200 (CEST)
-From: Richard Weinberger <richard@nod.at>
-To: devicetree@vger.kernel.org
-Cc: robh@kernel.org,
-	saravanak@google.com,
-	linux-kernel@vger.kernel.org,
-	upstream+devicetree@sigma-star.at,
-	Richard Weinberger <richard@nod.at>
-Subject: [PATCH] [RFC] of: Add debug aid to find unused device tree properties
-Date: Sun, 13 Oct 2024 22:07:30 +0200
-Message-Id: <20241013200730.20542-1-richard@nod.at>
-X-Mailer: git-send-email 2.35.3
+	s=arc-20240116; t=1728850601; c=relaxed/simple;
+	bh=n3aL7QBd93HecoBZ3RrysFWa7UAjV/qiZF42VjSVfxo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oRxw7zmwl/Z6PgLXhP/Zj+Nj6bfsZNTXazz/8+d0jLyEHCr/H6D/fHUqVGlyTk/FGTY+jgburExfDyy/Evd89stg0dNhhCKsG29RVqfJdEGdpovhbPIpV7TKT+b6KPjuNX9alfcCoREwWftPBf0z/j8JHHpXnAtBtQIPeEm0gCI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=Dxe5xpZ8; arc=none smtp.client-ip=202.36.163.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
+Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id AC1502C0404;
+	Mon, 14 Oct 2024 09:16:29 +1300 (NZDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
+	s=mail181024; t=1728850589;
+	bh=CviG87Gxw+/eZ9A7f0iznUZ3zcPHLQqJBw0vRPoGROo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Dxe5xpZ8leZBnCIiS1eFizgkxuXMIaZfFXWiieMnTuTkYiuIA6lEpy3BCwVK6Jml3
+	 w4mjy8a/s1/E4MW3FADLK38Bf/B5QcMaChKM0+je2nBLKSOBkdgQ/w2VImjrDe+pDh
+	 iGOxuMsBHZFTSgj/S81UsYmP+aTb4kZkLUHAaXN7iMmzJaE8StxRF9cWShAaX6+bWu
+	 +ClSIhsbhC+CofKfRluAN0X5XYhPtgIQquyQa7Fcf7BbsCRLim86uPiNyRYILFFjgx
+	 H6MHcxIEqa0H+ACOdGVjGBdr62afdnhe+GaS9+3WG+MTuQmRkAr7mIrfS6YaE8x57y
+	 zzShfL+NJJsog==
+Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
+	id <B670c2a9d0000>; Mon, 14 Oct 2024 09:16:29 +1300
+Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
+	by pat.atlnz.lc (Postfix) with ESMTP id 8CBFC13ED7B;
+	Mon, 14 Oct 2024 09:16:29 +1300 (NZDT)
+Message-ID: <0b717cbb-ad89-4d3a-a795-080dd716f06d@alliedtelesis.co.nz>
+Date: Mon, 14 Oct 2024 09:16:29 +1300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH 1/3] dt-bindings: spi: Add realtek,rtl9300-snand
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
+ <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
+ <3tu6x2644lxvvbk74nv5qva7qupsvgxyxkwc5g5n7n4bh3mbwi@457wbps4kpns>
+ <963a57ec-c09d-4a4e-b8b8-a89354cf3264@alliedtelesis.co.nz>
+ <93c4dfe6-8ddf-425d-bf9c-245e94c4290e@kernel.org>
+Content-Language: en-US
+From: Chris Packham <chris.packham@alliedtelesis.co.nz>
+In-Reply-To: <93c4dfe6-8ddf-425d-bf9c-245e94c4290e@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670c2a9d a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=62ntRvTiAAAA:8 a=gEfo2CItAAAA:8 a=nxSgMk7qIiEtrF1QXo4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=sptkURWiP4Gy88Gu7hUp:22
+X-SEG-SpamProfiler-Score: 0
+x-atlnz-ls: pat
 
-This is a proof-of-concept patch that introduces a debug feature I find
-particularly useful.  I frequently encounter situations where I'm
-uncertain if my device tree configuration is correct or being utilized
-by the kernel.  This is especially common when porting device trees
-from vendor kernels, as some properties may have slightly different
-names in the upstream kernel, or upstream drivers may not use certain
-properties at all.
 
-By writing 'y' to <debugfs>/of_mark_queried, every queried device tree
-property will gain S_IWUSR in sysfs.  While abusing S_IWUSR is
-admittedly a crude hack, it works for now.   I'm open to better ideas,
-perhaps using an xattr?
+On 8/10/24 19:59, Krzysztof Kozlowski wrote:
+> On 07/10/2024 21:58, Chris Packham wrote:
+>> On 7/10/24 19:40, Krzysztof Kozlowski wrote:
+>>> On Mon, Oct 07, 2024 at 12:33:45PM +1300, Chris Packham wrote:
+>>>> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
+>>>> controller supports
+>>>>    * Serial/Dual/Quad data with
+>>>>    * PIO and DMA data read/write operation
+>>>>    * Configurable flash access timing
+>>>>
+>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>>> ---
+>>>>    .../bindings/spi/realtek,rtl9300-snand.yaml   | 58 +++++++++++++++++++
+>>>>    1 file changed, 58 insertions(+)
+>>>>    create mode 100644 Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
+>>>>
+>>>> diff --git a/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..c66aea24cb35
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
+>>>> @@ -0,0 +1,58 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://scanmail.trustwave.com/?c=20988&d=2tiE5xx2mR7Mo-BCj_ZnEp9_tDM1bfG85uPlEm-9ag&u=http%3a%2f%2fdevicetree%2eorg%2fschemas%2fspi%2frealtek%2crtl9300-snand%2eyaml%23
+>>>> +$schema: http://scanmail.trustwave.com/?c=20988&d=2tiE5xx2mR7Mo-BCj_ZnEp9_tDM1bfG85uCwRjixZQ&u=http%3a%2f%2fdevicetree%2eorg%2fmeta-schemas%2fcore%2eyaml%23
+>>>> +
+>>>> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
+>>>> +
+>>>> +maintainers:
+>>>> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
+>>>> +
+>>>> +description:
+>>>> +  The Realtek RTL9300 SoCs have a built in SPI-NAND controller. It supports
+>>>> +  typical SPI-NAND page cache operations in single, dual or quad IO mode.
+>>>> +
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    items:
+>>> Why 9300 cannot be alone? What does 9300 mean even? Wildcards and family
+>>> models are not allowed in general.
+>> The main thing about the RTL9300 is that that is what all the Realtek
+>> documents use to refer to these chips and the specific numbers are akin
+>> to the manufacturing part number that you'd actually order (maybe that's
+>> a bit of a stretch).
+>>
+>> The SoC/CPU block probably does exist as a separate silicon die that
+>> they connect to the different switch blocks in the chips that they sell
+>> but I don't think you can get "just" the SoC. There is every chance that
+>> we'll see that same SoC/CPU block pop up in new chips (I see references
+>> to a RTL9302D in some documents). I'd like to be able to support these
+>> chips using "rtl9300" but if that's violating the wildcard rule I can
+>> drop it.
+> Yeah, that's violating the wildcard rule. You cannot even guarantee that
+> 9300 will match future designs.
 
-That way, dtc can easily add an annotation to unused device trees when
-reading from /proc/device-tree.
+When the dust settles I'll try do clean up the things I've already had 
+in flight. Hopefully it's not too late to just change things rather than 
+needing to support the incorrect wildcards as deprecated.
 
-Signed-off-by: Richard Weinberger <richard@nod.at>
----
- drivers/of/Kconfig      |  9 +++++
- drivers/of/Makefile     |  1 +
- drivers/of/base.c       |  2 +
- drivers/of/debug.c      | 83 +++++++++++++++++++++++++++++++++++++++++
- drivers/of/of_private.h |  6 +++
- include/linux/of.h      |  3 ++
- 6 files changed, 104 insertions(+)
- create mode 100644 drivers/of/debug.c
+I have been meaning to clean up the mips dtsi files so that there is one 
+for each of the rtl9301, rtl9302b etc but wanted to wait for my other 
+changes to land. Sorry for creating a bit of a mess.
 
-diff --git a/drivers/of/Kconfig b/drivers/of/Kconfig
-index 0e2d608c3e207..39079ab9f1dc9 100644
---- a/drivers/of/Kconfig
-+++ b/drivers/of/Kconfig
-@@ -90,6 +90,15 @@ config OF_IRQ
- 	def_bool y
- 	depends on !SPARC && IRQ_DOMAIN
-=20
-+config OF_DEBUG
-+	bool "Device Tree debug features"
-+	select DEBUG_FS
-+	help
-+	 This option enables device tree debug features.
-+	 Currently only <debugfs>/of_mark_queried, writing 'y' to this file
-+	 causes setting S_IWUSR on each device tree property in sysfs that
-+	 was queried by a device driver.  This is useful to find dead propertie=
-s.
-+
- config OF_RESERVED_MEM
- 	def_bool OF_EARLY_FLATTREE
-=20
-diff --git a/drivers/of/Makefile b/drivers/of/Makefile
-index 379a0afcbdc0b..041502125e897 100644
---- a/drivers/of/Makefile
-+++ b/drivers/of/Makefile
-@@ -25,3 +25,4 @@ obj-$(CONFIG_OF_OVERLAY_KUNIT_TEST) +=3D overlay-test.o
- overlay-test-y :=3D overlay_test.o kunit_overlay_test.dtbo.o
-=20
- obj-$(CONFIG_OF_UNITTEST) +=3D unittest-data/
-+obj-$(CONFIG_OF_DEBUG) +=3D debug.o
-diff --git a/drivers/of/base.c b/drivers/of/base.c
-index 20603d3c9931b..00807da2187aa 100644
---- a/drivers/of/base.c
-+++ b/drivers/of/base.c
-@@ -202,6 +202,8 @@ static struct property *__of_find_property(const stru=
-ct device_node *np,
- 		if (of_prop_cmp(pp->name, name) =3D=3D 0) {
- 			if (lenp)
- 				*lenp =3D pp->length;
-+			of_debug_mark_queried(pp);
-+
- 			break;
- 		}
- 	}
-diff --git a/drivers/of/debug.c b/drivers/of/debug.c
-new file mode 100644
-index 0000000000000..ceb88062e9dec
---- /dev/null
-+++ b/drivers/of/debug.c
-@@ -0,0 +1,83 @@
-+// SPDX-License-Identifier: GPL-2.0+
-+#include <linux/debugfs.h>
-+#include <linux/kstrtox.h>
-+#include <linux/of.h>
-+
-+#include "of_private.h"
-+
-+void of_debug_mark_queried(struct property *pp)
-+{
-+	pp->queried =3D true;
-+}
-+
-+static int dtmq_update_node_sysfs(struct device_node *np)
-+{
-+	struct property *pp;
-+	int ret =3D 0;
-+
-+	if (!IS_ENABLED(CONFIG_SYSFS) || !of_kset)
-+		goto out;
-+
-+	for_each_property_of_node(np, pp) {
-+		if (pp->queried) {
-+			ret =3D sysfs_chmod_file(&np->kobj, &pp->attr.attr,
-+					       pp->attr.attr.mode | S_IWUSR);
-+			if (ret)
-+				break;
-+		}
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static int dtmq_update_sysfs(void)
-+{
-+	struct device_node *np;
-+	int ret =3D 0;
-+
-+	mutex_lock(&of_mutex);
-+	for_each_of_allnodes(np) {
-+		ret =3D dtmq_update_node_sysfs(np);
-+		if (ret)
-+			break;
-+	}
-+	mutex_unlock(&of_mutex);
-+
-+	return ret;
-+}
-+
-+static ssize_t dtmq_file_write(struct file *file, const char __user *use=
-r_buf,
-+			       size_t count, loff_t *ppos)
-+{
-+	bool do_it;
-+	int ret;
-+
-+	ret =3D kstrtobool_from_user(user_buf, count, &do_it);
-+	if (ret)
-+		goto out;
-+
-+	if (do_it) {
-+		ret =3D dtmq_update_sysfs();
-+		if (!ret)
-+			ret =3D count;
-+	} else {
-+		ret =3D -EINVAL;
-+	}
-+
-+out:
-+	return ret;
-+}
-+
-+static const struct file_operations dtmq_fops =3D {
-+	.write  =3D dtmq_file_write,
-+	.open	=3D simple_open,
-+	.owner  =3D THIS_MODULE,
-+};
-+
-+static int __init of_debug_init(void)
-+{
-+	return PTR_ERR_OR_ZERO(debugfs_create_file("of_mark_queried", 0644, NUL=
-L, NULL,
-+			       &dtmq_fops));
-+}
-+late_initcall(of_debug_init);
-diff --git a/drivers/of/of_private.h b/drivers/of/of_private.h
-index 04aa2a91f851a..55a21ef292064 100644
---- a/drivers/of/of_private.h
-+++ b/drivers/of/of_private.h
-@@ -184,4 +184,10 @@ void fdt_init_reserved_mem(void);
-=20
- bool of_fdt_device_is_available(const void *blob, unsigned long node);
-=20
-+#if defined(CONFIG_OF_DEBUG)
-+void of_debug_mark_queried(struct property *pp);
-+#else
-+static inline void of_debug_mark_queried(struct property *pp) { }
-+#endif
-+
- #endif /* _LINUX_OF_PRIVATE_H */
-diff --git a/include/linux/of.h b/include/linux/of.h
-index 85b60ac9eec50..3b7afa252fca3 100644
---- a/include/linux/of.h
-+++ b/include/linux/of.h
-@@ -39,6 +39,9 @@ struct property {
- #if defined(CONFIG_OF_KOBJ)
- 	struct bin_attribute attr;
- #endif
-+#if defined(CONFIG_OF_DEBUG)
-+	bool	queried;
-+#endif
- };
-=20
- #if defined(CONFIG_SPARC)
---=20
-2.35.3
-
+>>>> +      - enum:
+>>>> +          - realtek,rtl9301-snand
+>>>> +          - realtek,rtl9302b-snand
+>>>> +          - realtek,rtl9302c-snand
+>>>> +          - realtek,rtl9303-snand
+>>>> +      - const: realtek,rtl9300-snand
+>>>> +
+>>>> +  reg:
+>>>> +    items:
+>>>> +      - description: SPI NAND controller registers address and size
+>>> Also: why no clocks? Binding is supposed to be complete. If it cannot,
+>>> you should explain it in the commit msg.
+>> I didn't add it because I had no need for it in my driver. But as you've
+>> said previously the binding shouldn't care what the driver does.
+>>
+>> I do have the clocking info from the datasheets. I'll add it in v2.
+>
+> Best regards,
+> Krzysztof
+>
 
