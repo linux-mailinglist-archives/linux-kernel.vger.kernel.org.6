@@ -1,131 +1,180 @@
-Return-Path: <linux-kernel+bounces-364621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42DE699D707
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:09:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E036B99D70B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7530F1C2221A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:09:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6221A1F239C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FEB1CBE85;
-	Mon, 14 Oct 2024 19:09:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87421CBEBA;
+	Mon, 14 Oct 2024 19:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fCZDFyLO"
-Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WL/bS+0z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44C5D20323;
-	Mon, 14 Oct 2024 19:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4237B1CB317;
+	Mon, 14 Oct 2024 19:11:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932952; cv=none; b=Eicf+gYu5/siiaaPPZ/B7yK+TRmBjWh/sXS5BwKEx2UN2lcWzvIa0wOX66HiA/Fu/olITqelz95KJCSJL1II39IkSQpDUEZfgxsemDRVqixJ6FXh+0baAeP3SA0AJOpk4sVU0a+mHtZ9fB3jAAARvrbjYK5ypSLbiBeX4D22gAY=
+	t=1728933091; cv=none; b=JAfOKHzOeQdgPUzmV7jwxRYwY/e2txOrU0x9yDJM2WHYssbFoyAH3d88rEYo5OdNF7H0gXgg5ElvZwgifgkrLDtCKw57w1lwIRa29T+9hVmT7ZezTb/sKHNqRCnSRigFRnjeL3vwaIuof+FFF+6brmzGTUNcnoYgbsq4qHbC/Qo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932952; c=relaxed/simple;
-	bh=3pvO1LZVU1YaxMovJ4az+6Y16JrWH/5UT3MSdDpJ4dk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ioXSRcBmcxtgJ5jTssUSnopJ5GswIb/lNN5YObLKeVF4qE8XTGldO7lSJMiNtqTs7yqCAJsvi3jISVJQ+LiUtlu0YuZMIMFzEpjJmGyj6LViIgX0CEeRm13jRh2TAu7XC/bAcu7VjRXkw3olQRpLurbO87YQx1f09Uso24t8TK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fCZDFyLO; arc=none smtp.client-ip=209.85.215.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7dafb321dbcso202064a12.1;
-        Mon, 14 Oct 2024 12:09:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728932951; x=1729537751; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q60RaXz2nFoV/SB0SpsusqvRdIF4ug3FUDcLDSRiYN4=;
-        b=fCZDFyLOKvXHhcXY8mT/ZCgec8o45oyHz/WMDTnwuIih1YNgjNIxh+OJcVY+wHlgxu
-         02dMYdVm32jio9GVrlNRK1oxqukPS/D4PWWi6MOFF4TxgPsfsu0UbTAqpAFyWDozE6Ja
-         lp5F44nCxVKL7E5FxVkw3VT7Wz9GeNnQ3flMa0t7ThRJFjkaDaEFWZiM8cfXpPr6NpNX
-         0PR3pz+WkOgGxpRN8Vv6+m9sIpwb6kEVBi5rGdYbw6qm+LeI2fxy3zRKfd/a7H3Qy6Le
-         hS1e/IJ531aqYUMn9XJZqy5GCLIMEuPFNabYw7kfF91wzdIIuEw4AMSzhtagSVWlhhnw
-         8Dsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728932951; x=1729537751;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q60RaXz2nFoV/SB0SpsusqvRdIF4ug3FUDcLDSRiYN4=;
-        b=pGW4ks+46i80cUQM6s/yLgN3QaH/eOaDFO3YUhu1grRGS6HdBydlntMykNQS3JhjmQ
-         BOKt+1brlSV4veKKjFpKA0IcOaMi82JgDZGrU9DyMwmnilH7rVU7ba8H8T7tAS5nSYI1
-         xfdIaYXNcweYV9llr/LgykLZMnSN/v1XRSlSaRc8L7AL4Y0w2nQjiIx/8df3ZPrbCCRg
-         tpbSQ0PC4yX0x6CWQnYRH5xmnJASfEWru0mYkRU02EBGgJuN+2Ns9Cp7d2XXuUG9mk0t
-         d6VDyrGIPKtciOkILoktuD51i4BPEZHf+J+bP0J3XlVllC/CJVS3JRl2ing8QkHX8lD8
-         W+hg==
-X-Forwarded-Encrypted: i=1; AJvYcCVKfA+EessCto913gAOcD/CwT+tasBQ+2fzBJXzNVGLUFbYgVXyDyeGqG5n21xHwmI7ohVZ5kHpcf4VzZKS@vger.kernel.org, AJvYcCVlFT1iOMPtLI5FUaLzHX8coD5rXTIPK4vfaiGtc0q+ITcrk1e879Ls0E8Vf/ePX8HbqINDPvzKb6+kn+Epvp8=@vger.kernel.org, AJvYcCW7JMasGDiXsUSRWDKByrI8qihE9STkF/gFWfV+IJSvYWFeGtuGIr4hfs000MdFMMBiidDGV5y+tESRCbg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxqZdT17Tp6qkTGL7rVzpa4X4oyAOfVrJe6vMlbM9AgGUjxuQv
-	cdSl7GGU+9FF4h0J84hxGm/Jkw6iijBTeL1aett70rEZBX1aw2m9Xe0YBE3NJq1Ztnves1IunLl
-	um9OGo8R75e3gJqch6ZMlgR5r+SQ=
-X-Google-Smtp-Source: AGHT+IFcs1hnOVWkbU7W7pL3lVTs1S62xOh5BV54q3Qfo2wQlCQL+HMQFd4NIwesXuvcVpHMey4ivxNCGKyR+LbguDU=
-X-Received: by 2002:a17:902:ce89:b0:20c:da9a:d5b9 with SMTP id
- d9443c01a7336-20cda9ad822mr34560025ad.5.1728932950545; Mon, 14 Oct 2024
- 12:09:10 -0700 (PDT)
+	s=arc-20240116; t=1728933091; c=relaxed/simple;
+	bh=QH4aG1NnqGam4iwN7T37IahTXtsCUUsMTD/WBrPMO2k=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ca8IWJau+3RM0SplqUNZW7lD+iHSxlYcOFtTqmlM79qOTK9il+dO+wFk8g3Z98QQ96vqxomxJnnCtdajBrA3KKku5QNFBdLMBmG79/KYr4NRN4d+LhOCisbWWqyqBtlDWanJrt0i4TaMxhJn+5SBQBzVIpyKli/r4r3nRlIDpQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WL/bS+0z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B1A0C4CEC3;
+	Mon, 14 Oct 2024 19:11:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728933090;
+	bh=QH4aG1NnqGam4iwN7T37IahTXtsCUUsMTD/WBrPMO2k=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=WL/bS+0zRqv27kx/DivpZ3MlxGTw2TuSHHSA1qE4dhpyH7b7JfO3PEHM/NS4hu2ve
+	 Bu2/qkWFbVIR+W1AxwY3WvTia+oxsInf1ilp4d2WudHEjvw1Zv5EucyWxjyqMiRRr1
+	 lSgzIuGtLAEAmt6f+t91qbm8GdUVklmFR5/7sNBCFsjUF6tqE0bBgB3g1SyXtFRH7u
+	 e65E0Ndfy99qq+pH8CMasosZlFUX4+DlgPKv+n85BimT7EoczVtlLSJZgEA+HD9aIG
+	 w0DsZ3igWGfb68+laMFBw9wCxFmXRXL4J93HYjq/w0nFye3GbZvsebdGFe+Oxq1A4b
+	 50yWHyXGhCIXw==
+Date: Mon, 14 Oct 2024 20:11:24 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Justin Weiss <justin@justinweiss.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Derek J . Clark" <derekjohn.clark@gmail.com>, Philip =?UTF-8?B?TcO8bGxl?=
+ =?UTF-8?B?cg==?= <philm@manjaro.org>
+Subject: Re: [PATCH 3/3] iio: imu: Add scale and sampling frequency to
+ BMI270 IMU
+Message-ID: <20241014201124.5621c4aa@jic23-huawei>
+In-Reply-To: <87ttdfn2nr.fsf@justinweiss.com>
+References: <20241011153751.65152-1-justin@justinweiss.com>
+	<20241011153751.65152-4-justin@justinweiss.com>
+	<20241012123535.1abe63bd@jic23-huawei>
+	<87jzecpvpd.fsf@justinweiss.com>
+	<20241013164000.19087833@jic23-huawei>
+	<87ttdfn2nr.fsf@justinweiss.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008224810.84024-1-tamird@gmail.com> <CANiq72=QimAkV0_n2nDiPSXT0N3sWxVeapze9FPPhirmoagbug@mail.gmail.com>
- <CAJ-ks9=sxVfjmbE+MuZg=7atpKFj-LJ4i7pk1ex+ZfvrUnvKqQ@mail.gmail.com>
- <CGME20241010083123eucas1p2432a0bbbf37e85599b477d92965d9514@eucas1p2.samsung.com>
- <CANiq72=geQY8f1J4rEfb-2UP+MOTY031tc=t1wuPNTVzS6tiSQ@mail.gmail.com>
- <D4RZIDTJFVX5.16Z4XSB5IW6D1@samsung.com> <CANiq72n+mWOP3xNUU4Mep-n5QtJ8zQiwP9JZ-KX68+fOC0GMmw@mail.gmail.com>
- <CAJ-ks9mrY0eWjagq7hnHzY9jMRzV_4NS1cBfg4ad0v9Q3aV38A@mail.gmail.com>
- <CANiq72kzEdyQYhsw10h7qVaT2d=0z1qKsOUo-NzZw5xYrn1nuw@mail.gmail.com>
- <CAJ-ks9myRR1PgER6UtkFBE_mmgA7YGFjU11+JZXbjKVcra-sfg@mail.gmail.com> <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com>
-In-Reply-To: <CAK7LNARg=ZvD14ARKw40uk0XNfE5qgWqsrM6H4jBJu0m5XYCWQ@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Mon, 14 Oct 2024 21:08:58 +0200
-Message-ID: <CANiq72n6zkCZdUJ0A8enLW3BgmA_=eJKgDKwNCfs-q3dfeR2BA@mail.gmail.com>
-Subject: Re: [PATCH] rust: query the compiler for dylib path
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Tamir Duberstein <tamird@gmail.com>, Daniel Gomez <da.gomez@samsung.com>, 
-	rust-for-linux@vger.kernel.org, Fiona Behrens <me@kloenk.dev>, 
-	Nathan Chancellor <nathan@kernel.org>, Nicolas Schier <nicolas@fjasle.eu>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	"David S. Miller" <davem@davemloft.net>, Kris Van Hees <kris.van.hees@oracle.com>, 
-	=?UTF-8?B?w43DsWlnbyBIdWd1ZXQ=?= <ihuguet@redhat.com>, 
-	=?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Vegard Nossum <vegard.nossum@oracle.com>, 
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, linux-kernel@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Mon, Oct 14, 2024 at 8:46=E2=80=AFPM Masahiro Yamada <masahiroy@kernel.o=
-rg> wrote:
->
-> rustc ignores --emit=3Dlink=3Drust/libmacro.so
-> and produces rust/libmacro.dylib.
->
-> Is this a bug in rustc?
+On Sun, 13 Oct 2024 13:55:36 -0700
+Justin Weiss <justin@justinweiss.com> wrote:
 
-Hmm... From a quick test in Linux and macOS (in a GitHub runner):
+> Jonathan Cameron <jic23@kernel.org> writes:
+> 
+> > On Sat, 12 Oct 2024 19:45:18 -0700
+> > Justin Weiss <justin@justinweiss.com> wrote:
+> >  
+> >> Jonathan Cameron <jic23@kernel.org> writes:
+> >>   
+> >> > On Fri, 11 Oct 2024 08:37:49 -0700
+> >> > Justin Weiss <justin@justinweiss.com> wrote:
+> >> >    
+> >> >> Add read and write functions and create _available entries. Use
+> >> >> IIO_CHAN_INFO_SAMP_FREQ instead of IIO_CHAN_INFO_FREQUENCY to match
+> >> >> the BMI160 / BMI323 drivers.    
+> >> >
+> >> > Ah.  Please break dropping _FREQUENCY change out as a separate fix
+> >> > with fixes tag etc and drag it to start of the patch. It was never
+> >> > wired to anything anyway
+> >> >
+> >> > That's a straight forward ABI bug so we want that to land ahead
+> >> > of the rest of the series.    
+> >> 
+> >> Thanks, I'll pull that into its own change and make it the first patch.
+> >>   
+> >> > Does this device have a data ready interrupt and if so what affect
+> >> > do the different ODRs for each type of sensor have on that?
+> >> > If there are separate data ready signals, you probably want to 
+> >> > go with a dual buffer setup from the start as it is hard to unwind
+> >> > that later.    
+> >> 
+> >> It has data ready interrupts for both accelerometer and gyroscope and a
+> >> FIFO interrupt. I had held off on interrupts to keep this change
+> >> simpler, but if it's a better idea to get it in earlier, I can add it
+> >> alongside the triggered buffer change.  
+> >
+> > Ok. So the challenge is that IIO buffers are only described by external
+> > metadata.  We don't carry tags within them.  Hence if you are using
+> > either effectively separate datastreams (the two data ready interrupts)
+> > or a fifo that is tagged data (how this difference of speed is normally handled
+> > if it's one buffer) then when we push them into IIO buffers, they have
+> > to go into separate buffers.
+> >
+> > In older drivers this was done via the heavy weight option of registering
+> > two separate IIO devices. Today we have the ability to support multiple buffers
+> > in one driver. I'm not sure we've yet used it for this case, so I think
+> > there may still be some gaps around triggering that will matter for the
+> > separate dataready interrupt case (fifo is fine as no trigger involved).
+> > Looking again at that code, it looks like there may need to be quite
+> > a bit more work to cover this case proeprly.
+> >
+> > We may be able to have a migration path from the simple case you have
+> > (where timing is an external trigger) to multiple buffers.
+> > It would involve:
+> > 1) Initial solution where the frequencies must match if the fifo is in use.
+> >    Non fifo trigger from data ready might work but we'd need to figure out
+> >    if they run in close enough timing.
+> > 2) Solution where we add a second buffer and if the channels are enabled
+> >    in that we can allow separate timing for the two sensor types.
+> >
+> > This is one of those hardware features that seems like a good idea
+> > from the hardware design point of view but assumes a very specific
+> > sort of software model :(
+> >
+> > Jonathan  
+> 
+> Hm, that does sound tricky. If there's an example I can follow, I can
+> make an attempt at it.
 
-    uname
-    echo | rustc --crate-type=3Dproc-macro --emit=3Dlink=3Da.so -
-    echo | rustc --crate-type=3Dproc-macro --emit=3Dlink=3Db.dylib -
-    file a.so
-    file b.dylib
+I don't think it ever got used for a device like this - so probably no
+examples, but I might have forgotten one. (this was a few years back).
 
-gives:
+> Otherwise, if there's a change I can make now
+> that would help with migrating in the future, I can do that instead.
+> 
+> Of the devices I've looked at, only one has had the interrupts usable
+> and that one only had a single pin available.
+Lovely!  
 
-    Darwin
-    a.so: Mach-O 64-bit dynamically linked shared library arm64
-    b.dylib: Mach-O 64-bit dynamically linked shared library arm64
+> So if this change doesn't
+> make it harder to add later if it's necessary, I would still be OK going
+> without full support for now.
+I stopped being lazy and opened the datasheet.
 
-    Linux
-    a.so: ELF 64-bit LSB shared object, x86-64, version 1...
-    b.dylib: ELF 64-bit LSB shared object, x86-64, version 1...
+Hmm. We have auxiliary channels as well.  oh goody.
+Considering just the fifo as that's the high performance route.
 
-Cheers,
-Miguel
+Basically we can do headerless mode trivially as that's just one buffer.
+(same ODR for all sensors).
+We could do headered version but without messing with multiple buffers
+that would be only when all sensors have same ODR (after a messy
+transition period perhaps - that bit of the datasheet is less than
+intuitive!) The reason we might do headered mode is to support the
+timestamps but we can probably get those via a quick read of other
+registers after draining the fifo.
+
+So I'm fine with just not supporting the weird corner cases unless
+we get someone turning up who
+a) cares
+b) if foolish (or motivated) enough to do the necessary work 
+c) (if they are lucky) we have the infrastructure in place because someone
+   else needed the missing bits.
+
+Jonathan
+
+
+> 
+> Justin
+
 
