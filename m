@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-363939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B98599C8B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:23:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4A8899C8B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:23:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1731D28AB4A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B8141F223C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BA301A3AA6;
-	Mon, 14 Oct 2024 11:22:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC9321A4F15;
+	Mon, 14 Oct 2024 11:22:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="EhBknwcJ"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="LEP99TSz"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A58DE19CD16
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:22:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B366F1A01C5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904929; cv=none; b=GSdhJkMesLC3DX9KzmWg9VQJBf6O0X0yZD9dSpBO2djoJXsRKU5pTg1FgKd9wFaCuVUORJL0zfYygsUpAZ2JTdup94DZJMYpSz2Rj45wBUOARQA6nqIPFULVI+fKw34FxzHMz5bflVGKu2CJO148hpJjJNcP90d7jj8ocz5CBD8=
+	t=1728904930; cv=none; b=rSSH1sxKAR3i4tCR74SOY2MGNuCZT7dabJGyRmTj01X6gZOvenz8JpJb8pYw6dtVAsi++MyKD2L5YozjFP7JPSdASRl0iFHXkxsIunXdQl6HUB1o5c0WuJ8QtiZDwb5+aa/daNQYXWgzm6p+XTqCfwWsgf2jgG7Xdno9gypp4VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904929; c=relaxed/simple;
-	bh=huuKwES/cF9ed1PG1Dp6LLcM8G3XLbe2d1p8Txn3uKE=;
+	s=arc-20240116; t=1728904930; c=relaxed/simple;
+	bh=5j7RWbokREf3/yVv+64zXc+WC7gGHZ0KTGF/8hvreSM=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=FaRtMozlneNnN65e6ldXqtZR3tQ5d3IHL39UFvhNVoeW59mOY5ygPMl9rlVRV5D9QayjJYSAmnZxWHRfE5QspgwU0Bhqw3PmhKWVdP/D9reWC7hgHbvcRbBo0POegStLgAqyT5ieyWH77G12QrRzqoocpELcXHEaCL6gSvQBgd4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=EhBknwcJ; arc=none smtp.client-ip=209.85.221.48
+	 In-Reply-To:To:Cc; b=ggDLhNMSr6kklKgyb3jhk9wbfSWm8BdhYCZUqRp8ur2heBqXp0Vjr8gSDKGse3+cuxvUR4pyVBRyfcYB/kRlDPeZAukwfvZ21MgqvvPZpA5mjDq0OEuHGHCeqC3D2oqdffktl2H5uResgTL9PFk6FKEnka5y389tnhhvMdqvtgg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=LEP99TSz; arc=none smtp.client-ip=209.85.221.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so3603124f8f.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:22:06 -0700 (PDT)
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d325beee2so2499425f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:22:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728904925; x=1729509725; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728904926; x=1729509726; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=olZ5gRgNTPPzNeZAbmY0eEAkkRdL9Boc1GfiFZ+n8vE=;
-        b=EhBknwcJx3vFkmaX6GTAhIwTFp0QGtrF9BsTbsp16XoMXq681sQDAYS+hexA0UB5+D
-         C2R2NzfvuiPLFHJhAichMlGWuytD+fwUYD9JP/cYWVmT9mSsoNX2FfVKc1EVGWQDHnPp
-         iqYUS8q8cioHf4fWin5u6rtJCiw/T+EbLn3aP3rwXSADNd4m9RBozex0DnjQjXLo7Tdx
-         8PVVNwN+TgIRuO+79qIdCNLlVsDgWXYhCrFOPKIQTvYihaSq9V8DuWvEQ1j5Pxwvu/7X
-         LGpL1w5Yu5vmvk/BVBQDwahJOa5GcmSwTZL2UPG0zmju9L/6ev3uYGase4aVLsWkqK8L
-         zIzQ==
+        bh=jV/pGOZ7jki2Dt++ge2j58v/V+/bbaCGx8cjzODRBdU=;
+        b=LEP99TSz1xpEKoPTBCr3D/+LlrcJ1nnGruEP8Ktwip1C/9PBLD/7BjIhj83cCXk3hz
+         GGV9D8ozQxCpXbB1y6fHefbcayXQHa8RnXAbpf7jBcjt0e4urNqOJR2TocePaBOfn0hC
+         QZFQF4pdQr8J6P74atZ6oUk7z6kKDvBKaDlR3D8Ad41khr5CSeKcVAye9w5pRhILg0rf
+         NSfsZBrT59XMmEUIR90FYz439Xf7VHHumhUfzCd4TAFh3oRTEAX2PsyEtXaVvkU5rFLb
+         /9imRcsxUDYpJs2AtFhQv4ZzIo1etqA/6O7LITVDnggSsaMSC1In9FcdgtIqzQH340JR
+         RjXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728904925; x=1729509725;
+        d=1e100.net; s=20230601; t=1728904926; x=1729509726;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=olZ5gRgNTPPzNeZAbmY0eEAkkRdL9Boc1GfiFZ+n8vE=;
-        b=h1N2FOGxM5d8LeQU//w4V+T4/N8CUpItxcI75FiHKDMHrsBpEnoJQmh3oa52gokBHs
-         BuCr+hQp5aG+TUJO+hs6hj4Y72iaZRHnVpCRvlX1H7SWVQIb5wefGSgmfiU5E97Tk22R
-         hvbHp9zNOsRfJnWxHyGfjM7Dt9MvZShcZvfzd2n5U6EiucK+E43aeHCY/dAQV7wN9G9n
-         CslwcwqHInbUnqBGZ7lYlilpg4GulUnpe6P1kNRshimZUjEHelizdxu+AepN91FLGV1f
-         AbaU7Zy3OpADd6Rbat7IJ+ix2KQBdgv3nUYO63ZWdaRVltyGclTTGC7ExRZpn7th3QTV
-         9ucg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc2VUU8HmJNaI71nHZA4fkZnWckjqjZAxtWKkPSrqEGjoyNlDooCmYVN5Ty9mSvJvtvOMX+9+I6AB9Jz8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/66mK18RqN3WrIMvSSXSInc+kQxARZW7AuEO1+5LeqKq0IWDq
-	eW9vZmDK07Hn9vQ9Vg/DAfZo225M4/mKRm3xlNizdXI+j2/CSG4nRQfgqGgGTCo=
-X-Google-Smtp-Source: AGHT+IGiC89HONHqf/hzy8YyXylx/pE0yi8XqZDGzJs001OKJryNysL6JrtDDTUdjNon4ZWTw00p8w==
-X-Received: by 2002:a5d:688c:0:b0:37d:46fa:d1d7 with SMTP id ffacd0b85a97d-37d601fc3c2mr6330831f8f.57.1728904924842;
-        Mon, 14 Oct 2024 04:22:04 -0700 (PDT)
+        bh=jV/pGOZ7jki2Dt++ge2j58v/V+/bbaCGx8cjzODRBdU=;
+        b=uXjoSm2Oh8FFQzWmdKaYZhbs3yUv1KvglELpb7ujNE11AG5lSiuaQFaPVuvtIBtwel
+         8l5xLUBhrhK0VBmsdKAi7Ln6mbYTSN25eDnPrclUq2A7EvvRHlhJ+objAueZCtSZFOxL
+         kzn3jIZAVWRGlz8rFPCSWZytx2k/kumDJ6A84KWQ8wbLRc0D/kkT8Rw1bsNX2XpekHQm
+         5WmIiv7mzgCytHgW96YCfIf/+FR61I33JTLhwwt2JFxQJYP8idtEaIe0q/5sPnswKcp3
+         3Q0HmqSzlte4aIUpwsQCJ46py5kfHex55OgQ/DNzA/rGLnGhOt52KQ1u+3Cd0pk1B0V+
+         SJlw==
+X-Forwarded-Encrypted: i=1; AJvYcCUafAA/Ril0bLQ0LDdL/UQpsF1nuWau4QlaX4Gm/5/nJUjk1HlD76GfVNADN3sYeiGCaV7Nt0XYIjHhQms=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9vU1L5QbDZQyFcen+eT/SCOz+e8E9DHZUBOQeYZOTCsZapiZ6
+	HpKQkqgUR3Dw93/i61g4405dkPdr1lzuaYMbut34YOrw9kGUGM67FF8sMbeAMpI=
+X-Google-Smtp-Source: AGHT+IGfSE9dQTcADr9Wnv4UAhYoxwFIKKy8ClV/SB0O2U7/2LnGTJ6xYUNY+Iv4r50STsabEmDbng==
+X-Received: by 2002:a5d:62cc:0:b0:37d:4c8f:2e1 with SMTP id ffacd0b85a97d-37d5ff2c395mr4827225f8f.22.1728904926082;
+        Mon, 14 Oct 2024 04:22:06 -0700 (PDT)
 Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8666sm11098702f8f.22.2024.10.14.04.22.03
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6a8666sm11098702f8f.22.2024.10.14.04.22.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:22:04 -0700 (PDT)
+        Mon, 14 Oct 2024 04:22:05 -0700 (PDT)
 From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 14 Oct 2024 14:21:48 +0300
-Subject: [PATCH 1/2] arm64: dts: qcom: x1e80100-slim7x: Drop
+Date: Mon, 14 Oct 2024 14:21:49 +0300
+Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100-vivobook-s15: Drop
  orientation-switch from USB SS[0-1] QMP PHYs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -78,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241014-x1e80100-dts-drop-orientation-switch-v1-1-26afa6d4afd9@linaro.org>
+Message-Id: <20241014-x1e80100-dts-drop-orientation-switch-v1-2-26afa6d4afd9@linaro.org>
 References: <20241014-x1e80100-dts-drop-orientation-switch-v1-0-26afa6d4afd9@linaro.org>
 In-Reply-To: <20241014-x1e80100-dts-drop-orientation-switch-v1-0-26afa6d4afd9@linaro.org>
 To: Bjorn Andersson <andersson@kernel.org>, 
@@ -90,37 +90,37 @@ Cc: Johan Hovold <johan@kernel.org>,
  linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
 X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1066; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=huuKwES/cF9ed1PG1Dp6LLcM8G3XLbe2d1p8Txn3uKE=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDP7XXopuTGjM+skPFe7jrek5RkLqaEhJnd3iP
- h/72wpJ/1SJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZwz+1wAKCRAbX0TJAJUV
- Vg7lEACcCeIl2kFX9Q7qsQzvdF1cyYmGZosHNM421+ogp3DVZ3FYMVWGE07Guv7WthDpFcgZoJs
- g67/hb0obGEm0gd/qnH5dKquyIkSgfMC2cdLssOMQUrgevu3S9awpE1dCUzKxqPVIwTYlttN//g
- c0CkGkqb4Vvq1vWJ3HCAo3x6FGz4hNA9MKD93pX+0Ftt8O8lSF+TPWCpF/AkQkkD3FLVK6HCc0B
- vhhQeo1RKP4iWHr/qr1ttF4TXMwGMTLe4Y+2Us632GRTp2gKEMYo+DQReRp8u51dNfSUhTbA8FF
- sWsNNtr074ARUxGDUUwckcmD11ENx/gl4C6kAt9M099Yu+K467XW16UKmzU+9pIfsFTydW+mU7e
- UWwtSrp7kvVVcRtHhsfrOsmfiECB1ltKP3CBUYg4Cv3R79NnOpj4iyrY9OvrPmWHJE5qA0JoKho
- k3GKC+UeeIsKNsZ0sFvEbYAlj6tzT/0zT4YfWe8P6G29Rpe+xd4pcwHdpXj9ZmKWEjbby8XpBBa
- CePrL7yMjf4YWxodiRPvVrnbXDECyU/qqhO08tWmDW1X2/E2DhddyUV4sLf0YN9B8nzKvgf7+8W
- /2r9lVnGmiGvCGwonWjwAWaegoDkJ1MX4ZorGVhE9AfGNoaED+IkgU45pp3Cd/edjG6tQorg0Oj
- oqMUNbuWOcAB/Mg==
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1051; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=5j7RWbokREf3/yVv+64zXc+WC7gGHZ0KTGF/8hvreSM=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDP7ZDGL6UG+uoxoZGoo0NfoYAFiOwyo+YdNkc
+ 5kdtBG+pcOJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZwz+2QAKCRAbX0TJAJUV
+ VuptEADNoRbQrFkBrNYvH0t+n+KlGB1+WP066An+9VKvQmwI2W54Hms64DNQ5SxrvhGv42JIE2N
+ yhDDjCJsFJuRmanHm3ZHAlZsJkfZhMf1uHeEGXOOkMOPWe56PNHhCjeKvsXb3GJGGCzsm7oTckJ
+ stXMXe1iWeXc2nCPxOtltOoNQ8x82xd0Jouct32pFb4ynolVXDh76JQ9CAR/Qz+hl6RR2/GFVtF
+ /qT0f8AX7IoZGhZnULGhrdUnFKhN46f/tUxnqxJotUb6po0/Dgi1zMCwP2RkGmDpSm0QN0UowWj
+ 3+WXoQeSG9dBorL4S+QKPm8QA1ere4YdN8nzN8udSGVVgSgaRYvaaBHUmzGhFZZIR2+G5Bwdggp
+ w0EsEQX4tPaShuverd+SOh6h05zoqesdUlSY6602fcpvsuul+9xXMDIFSV/aJaqn7WkM/YBsM7f
+ IoajM0NQVzBL2BlLNSi4xGTzp733lG7EAiQumCsIBy2hVlGeomrpciDr8f36EttBJYxv/YsWrLr
+ MBTDehaiN7161uHV+sUVHu2KK+N4KmVruQs0R7JwbB6TXCEHFCMfNSpXh2nlBc6f1vH/U13+Q2b
+ oES9TLAwppF99XAVfzAm6+rv7D6ZlHOI+FrbCWlprsVTOOo9Ux82pgj0jtsL8QdGG0u20ZfALPY
+ 2szirTUXFy31ITQ==
 X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
  fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
 The orientation-switch is already set in the x1e80100 SoC dtsi,
-so drop from Slim 7X dts.
+so drop from Vivobook S15 dts.
 
-Fixes: 45247fe17db2 ("arm64: dts: qcom: x1e80100: add Lenovo Thinkpad Yoga slim 7x devicetree")
+Fixes: d0e2f8f62dff ("arm64: dts: qcom: Add device tree for ASUS Vivobook S 15")
 Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts | 4 ----
+ arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts | 4 ----
  1 file changed, 4 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-index 1f292cd4a71305e81edcd1aa87f100881ad9dedd..257907df5a649d5208bc9ca6c02f65f38b848da4 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-+++ b/arch/arm64/boot/dts/qcom/x1e80100-lenovo-yoga-slim7x.dts
-@@ -909,8 +909,6 @@ &usb_1_ss0_qmpphy {
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+index 20616bd4aa6c5c10ee989f1b98d22502b8834c0d..b54fe61002033188d0b95515a8cf19cdf9cdb11b 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
++++ b/arch/arm64/boot/dts/qcom/x1e80100-asus-vivobook-s15.dts
+@@ -592,8 +592,6 @@ &usb_1_ss0_qmpphy {
  	vdda-phy-supply = <&vreg_l3e_1p2>;
  	vdda-pll-supply = <&vreg_l1j_0p8>;
  
@@ -129,7 +129,7 @@ index 1f292cd4a71305e81edcd1aa87f100881ad9dedd..257907df5a649d5208bc9ca6c02f65f3
  	status = "okay";
  };
  
-@@ -943,8 +941,6 @@ &usb_1_ss1_qmpphy {
+@@ -626,8 +624,6 @@ &usb_1_ss1_qmpphy {
  	vdda-phy-supply = <&vreg_l3e_1p2>;
  	vdda-pll-supply = <&vreg_l2d_0p9>;
  
