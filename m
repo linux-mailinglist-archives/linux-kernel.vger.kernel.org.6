@@ -1,217 +1,86 @@
-Return-Path: <linux-kernel+bounces-363966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A47399C905
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:35:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9627299C914
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A83F1C22DAA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:35:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0A113B2F510
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:36:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DD75194136;
-	Mon, 14 Oct 2024 11:33:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA8A519340F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA4AB1A0714;
+	Mon, 14 Oct 2024 11:34:21 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B269199FC9;
+	Mon, 14 Oct 2024 11:34:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728905613; cv=none; b=PXoyPJx29p57IamkWLXlyuLGMm+NQXZtLQ3SWD2eaKp1GZiaYiM2inZ3tbGn7XTnrXwYLXVIFTyT98tABx4/t4tujq02SsC+H2XOOl7KCybeRwP0swcU4Zd0SGFaPHY6qSExEesks7kg84Wad79uSnl8hu3MBjLbIrVYz7rTPmc=
+	t=1728905661; cv=none; b=e7CYRMEUPQUw+FOyEenH5GqO7BQZnvBQKeFF0Oeww2KJ7kDP36CoM+c5LLlxylQzu0j9ayZY9/Xn1SyUlWxQLX/Oezq/xohVBGuqirwGR9E8tJimhbGKs97YIkuHoHdD/Oe/b9KzduzNx4DVNK8g3Tmeep+TSnJCCtBipT8m0wE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728905613; c=relaxed/simple;
-	bh=Tx1VvYK07XZ81PXcF8k0/TFw2EiAs5sAgXOJg1i0AVs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sfgXOJ1Mdtg1kCcWMnNGGRDncUsXSmEbdcU/+K/gJcB5d2bkhN/0W6A+MNEXV+e84KbZydzBSxFQ4DE75GI9VcCblvXhunr3beOKwaLHh+nxqX+Bs2g+x1aR4fhnUw8qjCq5Zniogw9/IDppF6na458o12eJcsTis6v+4tbPFTQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D3ACE1424;
-	Mon, 14 Oct 2024 04:33:59 -0700 (PDT)
-Received: from [10.57.86.130] (unknown [10.57.86.130])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 77B9E3F51B;
-	Mon, 14 Oct 2024 04:33:28 -0700 (PDT)
-Message-ID: <38469540-2759-4a65-8e7f-e2b309d58614@arm.com>
-Date: Mon, 14 Oct 2024 12:33:26 +0100
+	s=arc-20240116; t=1728905661; c=relaxed/simple;
+	bh=leC8yKlYH4VNPM2C4uhTqo+xy0aVd69hjV1pJDYe5Fs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sDAAZqG/WnxsAnWs7wnWmezu1so2z55aGFXNenz2vX1AmxMMN6MtidYMmuCMiXT8rejbq1xLQAELtIuDHwNjPBaCNrMb1bFzjhnqExE/se2pHBFlhT807yuSondMKG9c3+rjkW/XyWgFhzAI3TQtuHZEdVNk1Nk5poq7i/1mTOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: x5PXqk6DQmWgUouKkadjQA==
+X-CSE-MsgGUID: 0WcgFxLAQf+V7bv1/HFEzg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="28380889"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="28380889"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:34:19 -0700
+X-CSE-ConnectionGUID: olEkw6FRREO1uaLlY8DPUg==
+X-CSE-MsgGUID: o6UvEGmNSW6p3Fona3Ulkg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="77199106"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:34:17 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t0JL4-00000002sjn-2dPK;
+	Mon, 14 Oct 2024 14:34:14 +0300
+Date: Mon, 14 Oct 2024 14:34:14 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org, linux-staging@lists.linux.dev
+Subject: Re: [PATCH] media: atomisp: remove redundant re-checking of err
+Message-ID: <Zw0Btri2dydmt3W3@smile.fi.intel.com>
+References: <20241012141403.1558513-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/5] arm64/mm: Replace PXD_TABLE_BIT with
- PXD_TYPE_[MASK|SECT]
-Content-Language: en-GB
-To: Anshuman Khandual <anshuman.khandual@arm.com>,
- linux-arm-kernel@lists.infradead.org
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org
-References: <20241005123824.1366397-1-anshuman.khandual@arm.com>
- <20241005123824.1366397-3-anshuman.khandual@arm.com>
- <bb1dcfcf-302a-4932-a0d5-3abf5ed958c5@arm.com>
- <61203419-014e-4815-823c-62079aea93c9@arm.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <61203419-014e-4815-823c-62079aea93c9@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012141403.1558513-1-colin.i.king@gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On 14/10/2024 11:48, Anshuman Khandual wrote:
-> 
-> 
-> On 10/9/24 18:58, Ryan Roberts wrote:
->> On 05/10/2024 13:38, Anshuman Khandual wrote:
->>> This modifies existing block mapping related helpers e.g [pmd|pud]_mkhuge()
->>> , mk_[pmd|pud]_sect_prot() and pmd_trans_huge() to use PXD_TYPE_[MASK|SECT]
->>> instead of corresponding PXD_TABLE_BIT. This also moves pmd_sect() earlier
->>> for the symbol's availability preventing a build warning.
->>>
->>> While here this also drops pmd_val() check from pmd_trans_huge() helper, as
->>> pmd_present() returning true already ensures that pmd_val() cannot be false
->>>
->>> Cc: Catalin Marinas <catalin.marinas@arm.com>
->>> Cc: Will Deacon <will@kernel.org>
->>> Cc: Ard Biesheuvel <ardb@kernel.org>
->>> Cc: Ryan Roberts <ryan.roberts@arm.com>
->>> Cc: Mark Rutland <mark.rutland@arm.com>
->>> Cc: linux-arm-kernel@lists.infradead.org
->>> Cc: linux-kernel@vger.kernel.org
->>> Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
->>> ---
->>>  arch/arm64/include/asm/pgtable.h | 15 ++++++++-------
->>>  1 file changed, 8 insertions(+), 7 deletions(-)
->>>
->>> diff --git a/arch/arm64/include/asm/pgtable.h b/arch/arm64/include/asm/pgtable.h
->>> index fa4c32a9f572..45c49c5ace80 100644
->>> --- a/arch/arm64/include/asm/pgtable.h
->>> +++ b/arch/arm64/include/asm/pgtable.h
->>> @@ -484,12 +484,12 @@ static inline pmd_t pte_pmd(pte_t pte)
->>>  
->>>  static inline pgprot_t mk_pud_sect_prot(pgprot_t prot)
->>>  {
->>> -	return __pgprot((pgprot_val(prot) & ~PUD_TABLE_BIT) | PUD_TYPE_SECT);
->>> +	return __pgprot((pgprot_val(prot) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT);
->>>  }
->>>  
->>>  static inline pgprot_t mk_pmd_sect_prot(pgprot_t prot)
->>>  {
->>> -	return __pgprot((pgprot_val(prot) & ~PMD_TABLE_BIT) | PMD_TYPE_SECT);
->>> +	return __pgprot((pgprot_val(prot) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT);
->>>  }
->>>  
->>>  static inline pte_t pte_swp_mkexclusive(pte_t pte)
->>> @@ -554,10 +554,13 @@ static inline int pmd_protnone(pmd_t pmd)
->>>   * THP definitions.
->>>   */
->>>  
->>> +#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
->>> +				 PMD_TYPE_SECT)
->>> +
->>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>  static inline int pmd_trans_huge(pmd_t pmd)
->>>  {
->>> -	return pmd_val(pmd) && pmd_present(pmd) && !(pmd_val(pmd) & PMD_TABLE_BIT);
->>> +	return pmd_present(pmd) && pmd_sect(pmd);
->>
->> Bug? Prevously we would have returned true for a "present-invalid" PMD block
->> mapping - that's one which is formatted as a PMD block mapping except the
->> PTE_VALID bit is clear and PTE_PRESENT_INVALID is set. But now, due to
->> pmd_sect() testing VALID is set (via PMD_TYPE_SECT), we no longer return true in
->> this case.
-> 
-> Agreed, that will be problematic but the situation can be rectified by decoupling
-> pmd_present_invalid() from pte_present_invalid() by checking for both last bits
-> instead of just the valid bit against PTE_PRESENT_INVALID.
-> 
-> #define pmd_sect(pmd)          ((pmd_val(pmd) & PMD_TYPE_MASK) == \
->                                 PMD_TYPE_SECT)
+On Sat, Oct 12, 2024 at 03:14:03PM +0100, Colin Ian King wrote:
+> The check to see if err is non-zero is always false because err has
+> been previously checked on whenever err has been assigned in previous
+> code paths. The check is redundant and can be removed.
 
-I know this is pre-existing, but the fact that this depends on PMD_VALID being
-set feels like something waiting to bite us. From the SW's PoV, we should get
-the same answer regardless of whether PMD_VALID xor PTE_PRESENT_INVALID is set.
-I know there is nobody depending on that right now, but it feels like a bug
-waiting to happen. I'm not sure how you would fix that without having the SW
-explcitly know about the table bit's existance though.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
 
-> 
-> #define pmd_present_invalid(pmd) \
->        ((pmd_val(pmd) & (PMD_TYPE_MASK | PTE_PRESENT_INVALID)) == PTE_PRESENT_INVALID)
+All patches that end up in 100% minus lines statistics for this driver are so good!
 
-I read this as "if the type field is 0 and PTE_PRESENT_INVALID is 1 then it's
-present-invalid". That doesn't really feel any better to me than the code
-knowing there is a table bit. What's the benefit of doing this vs what the code
-already does? It all feels quite hacky to me.
+-- 
+With Best Regards,
+Andy Shevchenko
 
-> 
->  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->  static inline int pmd_trans_huge(pmd_t pmd)
->  {
-> 	return pmd_sect(pmd) || pmd_present_invalid(pmd);
->  }
->  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
-> >>
->>>  }
->>>  #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->>>  
->>> @@ -586,7 +589,7 @@ static inline int pmd_trans_huge(pmd_t pmd)
->>>  
->>>  #define pmd_write(pmd)		pte_write(pmd_pte(pmd))
->>>  
->>> -#define pmd_mkhuge(pmd)		(__pmd(pmd_val(pmd) & ~PMD_TABLE_BIT))
->>> +#define pmd_mkhuge(pmd)		(__pmd((pmd_val(pmd) & ~PMD_TYPE_MASK) | PMD_TYPE_SECT))
->>
->> I'm not sure if this also suffers from a similar problem? Is it possible that a
->> present-invalid pmd would be passed to pmd_mkhuge()? If so, then we are now
->> incorrectly setting the PTE_VALID bit.
-> pmd_mkhuge() converts a regular pmd into a huge page and on arm64
-> creating a huge page also involves setting PTE_VALID. Why would a
-> present-invalid pmd is passed into pmd_mkhuge() without intending
-> to make a huge entry ?
-> 
-> There just two generic use cases for pmd_mkhuge().
-> 
-> insert_pfn_pmd
-> 	   entry = pmd_mkhuge(pfn_t_pmd(pfn, prot));
-> 
-> set_huge_zero_folio
->         entry = mk_pmd(&zero_folio->page, vma->vm_page_prot);
->         entry = pmd_mkhuge(entry);
-> 
-> As instances in mm/debug_vm_pgtable.c, pmd_mkinvalid() should be
-> called on a PMD entry after pmd_mkhuge() not the other way around.
-
-I guess it depends on your perspective. I agree there is no issue today. But
-from the core-mm's PoV, a present-invalid PMD should be indistinguishable from a
-present (-valid) one.
-
-
-> 
->>
->>>  
->>>  #ifdef CONFIG_TRANSPARENT_HUGEPAGE
->>>  #define pmd_devmap(pmd)		pte_devmap(pmd_pte(pmd))
->>> @@ -614,7 +617,7 @@ static inline pmd_t pmd_mkspecial(pmd_t pmd)
->>>  #define pud_mkyoung(pud)	pte_pud(pte_mkyoung(pud_pte(pud)))
->>>  #define pud_write(pud)		pte_write(pud_pte(pud))
->>>  
->>> -#define pud_mkhuge(pud)		(__pud(pud_val(pud) & ~PUD_TABLE_BIT))
->>> +#define pud_mkhuge(pud)		(__pud((pud_val(pud) & ~PUD_TYPE_MASK) | PUD_TYPE_SECT))
->>>  
->>>  #define __pud_to_phys(pud)	__pte_to_phys(pud_pte(pud))
->>>  #define __phys_to_pud_val(phys)	__phys_to_pte_val(phys)
->>> @@ -712,8 +715,6 @@ extern pgprot_t phys_mem_access_prot(struct file *file, unsigned long pfn,
->>>  
->>>  #define pmd_table(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
->>>  				 PMD_TYPE_TABLE)
->>> -#define pmd_sect(pmd)		((pmd_val(pmd) & PMD_TYPE_MASK) == \
->>> -				 PMD_TYPE_SECT)
->>>  #define pmd_leaf(pmd)		(pmd_present(pmd) && !pmd_table(pmd))
->>>  #define pmd_bad(pmd)		(!pmd_table(pmd))
->>>  
->>
 
 
