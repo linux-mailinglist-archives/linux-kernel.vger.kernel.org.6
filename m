@@ -1,147 +1,237 @@
-Return-Path: <linux-kernel+bounces-363699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5345599C5C1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:32:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5283B99C5CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:34:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 857261C214D1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:32:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D99A72848B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:33:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A56E815539F;
-	Mon, 14 Oct 2024 09:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04C12156F27;
+	Mon, 14 Oct 2024 09:33:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="dORX6Fse"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="WlsLcCs9"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ED8713DDAA
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39ED815C122;
+	Mon, 14 Oct 2024 09:33:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898359; cv=none; b=q7YasiY2r57J7n2xlsPyXTM2WPu/+ooV/Ny6eSb0YUmIF6Nwym39Lg1CNHs85WG+aFwh07Ysd1njrl3oBKMXJR+jg8FBuQzIE2TLpzcYdkCymCbZ5WvLP6/v1M5fwovo3et/La9dAKNXtg8KvxcHxM7RqAE0+SJ4h36RTkP9FQ8=
+	t=1728898383; cv=none; b=I8+AG5wOcBEcOBJE3clGadNvE147OdNxdYy1NUwiIRENh/Vp1inphyGALfbEusDZqMPsX/ezfGig88lnmMpSK6sZr1Di9FeHVMjefRgVSzNnDJd6eB0OYRZY0aEvEuOuXGRAE3V12ItG/6C+APgBjcDzL08UYi8hwsf5jFFr5iE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898359; c=relaxed/simple;
-	bh=Keaah5l1gMY79cEpIH5DcFLPpE/5+8Tm2Fy2JXm1Zc0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cRoChWl25kpR+35/ddlnpd6TbAsPiaJkWNpMxVZrEZ+ILelZwVncDqbErfsviwsA+NTGBeUV0Wb3tRW3/yKFsFHHsQiZ/8LCxXVKOoUmp8C6IiJHlP+mauVIcz5CCriTNyCd2JU3uqCPIIkT+3xUzH2N7zJhoAVEhuL0yYTP95U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=dORX6Fse; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbbadf83so378775e87.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:32:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728898356; x=1729503156; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lfneKJD9s7n0cg97Ymqk1c8gEskV7vajSDux8+eET10=;
-        b=dORX6FseS8h9NrgTjRMSrr9p3O4P9+8ZwLE2agjvE5Ka4j9yZYqNA0NDJ8bnMZonWz
-         owFfQ2F1QlL91Ir5SdQLdlNisvX/KDl6XGZa/cQ2bsfWLU/4TySkoRSmYung++QNyvEU
-         7sLiLPFwcDPRBmRwenD748KR2+Dm//iPpFlL2o+790+xNX69O1dhr4HZva03BFnm9pD9
-         rxtgeh00bKblYzjxh67fRTpNpFJ6F5IGgOXSksVppGY1nkUBTgbrNxexm/fGPn0Tzyec
-         XJmVHRWochZmAtoFBBOOmzCg38JqAYpGlMYG7ptx42Cydoi+wOfVjL5n02KePb2KyBRX
-         TZEg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728898356; x=1729503156;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lfneKJD9s7n0cg97Ymqk1c8gEskV7vajSDux8+eET10=;
-        b=p1lyHfe5Uq0hJ6RGYlG6JBZks1nPhHGKsUwToUEYN/lKUCk7jcYN1pLY7lRxvMAiRa
-         FDRQlphPBgoh0Aeptvz3ALlpHzRknnqtCryC6pa5gOFh/LIi8/pm6dVkK8QSYp6+k9ZZ
-         0CSm6Hav7yW9CDq608vFSTksf/u9aVxuW0rOo2a/KQqF2VsyUAk3iOoOFbw2aFILGqnl
-         dqUGzpdnKtu03TL+pHcdUW2ntMCF4SwdvgEt+wtNxYXLhFtl0/wL+JLJ7K38t+nqs4XB
-         qDNJL/i4PA44p+9/1B3VASxUDjJUlauyW0iXA94NleSQhikIuaOpJEkVU42dHO6Kb16j
-         rANA==
-X-Forwarded-Encrypted: i=1; AJvYcCVQRPybM45nZmaLPIiFsppC8SsfilcF29smVUBwML3SGEW3250HylrZGKuIP15lhVZaUVedV00LCTBbVQM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzEXkFIG3IkjWKsT5RwwwjQ+7YHknUHvduxNasMHBdseELvC6W
-	YHCT78fh+d8WA7fFR+kntYAPgI2NRA5VSN2cm2neOKjUnsb72eb7dpZptZSouv2HFyw0vSY+4zg
-	3ogBea3YIhW5MtIrcS8HzNsBjtA2rw9QVUU8QaA==
-X-Google-Smtp-Source: AGHT+IGu1aLp2QUS44YRhbYBzcW5nnGJeO4uvh3RAPV4KBMUBfnkkM0lJ8FNAJMJ8lPe5CqA316xRMYuygZp+o4WVZA=
-X-Received: by 2002:a05:6512:6d2:b0:539:f4c1:71d3 with SMTP id
- 2adb3069b0e04-539f4c17406mr1425450e87.29.1728898355652; Mon, 14 Oct 2024
- 02:32:35 -0700 (PDT)
+	s=arc-20240116; t=1728898383; c=relaxed/simple;
+	bh=/MZxwR2Jy8r1v9STI3AXC+3dGArpe3j9UUXV2ctEDXU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DtuhCL2lETizlwn75UOJjAm1lln/pwNKA67657RLLpXl0seZZ/7RxZX7ziAJ/vS2os2CURgzT+pTLAV5qAcE9XGaq6dEq4cfXKBsK+jCyvHvWcYvl4rBpMJJycw76Jo2WMwY5lTJA7nXeV/ZoiE4RfMPZiPw9TQ/LaEcGV+c6xw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=WlsLcCs9; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E9P7RO003739;
+	Mon, 14 Oct 2024 09:32:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
+	:from:to:cc:subject:message-id:references:mime-version
+	:content-type:in-reply-to; s=pp1; bh=NHKQH511JNsUmcUxObbCKcHyBLI
+	aFmLlUWCNl6FCQvI=; b=WlsLcCs9n8v25iNsO/UU8DZfEQk9o4KYvleTcdynpgO
+	oDJt1stRiPJ8w/mYqupW0R5mmu3eLPrfZN9S5Z5PDV2FdpmqfXYH/B5XBol4qjN7
+	irbfrdcNh4B8JrxcAJEXMsvZ02vAeubZpJrdFhjVojkW+ahkXZLQBe8zWjPzCKQR
+	vd3bYTcGuyN0DPBG9+077i8ky5dXCmQv1K/ayJmBnRnm2nISD2ppqmPmVOvpqE5w
+	Dp+26H+/u6QQJFkmsvCY4RUnXFRQYbqjG6LwxedgOn4HoTfVq9Qzz2BHHpfY/3+n
+	xGbGuvXj0v7movU1OCFxuy7FTvaLDKzuCSdiV7WKnsA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4290n5r14y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:32:52 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49E9WqdT021032;
+	Mon, 14 Oct 2024 09:32:52 GMT
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4290n5r14t-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:32:52 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E7nnl6001940;
+	Mon, 14 Oct 2024 09:32:51 GMT
+Received: from smtprelay05.fra02v.mail.ibm.com ([9.218.2.225])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284emdp4q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 09:32:50 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay05.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49E9WnLS55968030
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 14 Oct 2024 09:32:49 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EDF112004B;
+	Mon, 14 Oct 2024 09:32:48 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 824FE20043;
+	Mon, 14 Oct 2024 09:32:47 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Mon, 14 Oct 2024 09:32:47 +0000 (GMT)
+Date: Mon, 14 Oct 2024 15:02:45 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        linux-kernel@vger.kernel.org, dchinner@redhat.com,
+        Chandan Babu R <chandan.babu@oracle.com>,
+        Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
+ extsize
+Message-ID: <ZwzlPR6044V/Siph@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+ <20241011163830.GX21853@frogsfrogsfrogs>
+ <20241011164057.GY21853@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org>
- <20241010-gpio-notify-in-kernel-events-v2-5-b560411f7c59@linaro.org>
- <20241014021140.GC20620@rigel> <CAMRc=MeoSnr-z=fmfRoTU-vdL_BAkTAE+0HiBaVUWmFG-bOTPw@mail.gmail.com>
- <20241014092450.GA101913@rigel> <CAMRc=Mdf8CLQDPL8RMyWPyx8362xS3jEBe4zM=JL_dzRgF5wow@mail.gmail.com>
- <20241014092955.GA105498@rigel>
-In-Reply-To: <20241014092955.GA105498@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 14 Oct 2024 11:32:24 +0200
-Message-ID: <CAMRc=MchnY==2vLFUaOEJSTqaLvimkyNSixNpqbPkNyzSGew9g@mail.gmail.com>
-Subject: Re: [PATCH v2 5/6] gpiolib: switch the line state notifier to atomic
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241011164057.GY21853@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: AfoN_S8K2Tv9fiypcSn1cPW_fR44YV3S
+X-Proofpoint-ORIG-GUID: zOfp8KspInsjnjjor8XCXGEfjv1YiAhD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-14_08,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 phishscore=0 malwarescore=0
+ spamscore=0 impostorscore=0 suspectscore=0 adultscore=0 priorityscore=1501
+ mlxscore=0 clxscore=1015 bulkscore=0 mlxlogscore=999 lowpriorityscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410140066
 
-On Mon, Oct 14, 2024 at 11:30=E2=80=AFAM Kent Gibson <warthog618@gmail.com>=
- wrote:
->
-> On Mon, Oct 14, 2024 at 11:27:05AM +0200, Bartosz Golaszewski wrote:
-> > On Mon, Oct 14, 2024 at 11:24=E2=80=AFAM Kent Gibson <warthog618@gmail.=
-com> wrote:
-> > >
-> > > On Mon, Oct 14, 2024 at 09:48:16AM +0200, Bartosz Golaszewski wrote:
-> > > > On Mon, Oct 14, 2024 at 4:11=E2=80=AFAM Kent Gibson <warthog618@gma=
-il.com> wrote:
-> > > > > >
-> > > > > > +     /*
-> > > > > > +      * This is called from atomic context (with a spinlock ta=
-ken by the
-> > > > > > +      * atomic notifier chain). Any sleeping calls must be don=
-e outside of
-> > > > > > +      * this function in process context of the dedicated work=
-queue.
-> > > > > > +      *
-> > > > > > +      * Let's gather as much info as possible from the descrip=
-tor and
-> > > > > > +      * postpone just the call to pinctrl_gpio_can_use_line() =
-until the work
-> > > > > > +      * is executed.
-> > > > > > +      */
-> > > > > > +
-> > > > >
-> > > > > Should be in patch 4?  You aren't otherwise changing that functio=
-n here.
-> > > > >
-> > > >
-> > > > Until this patch, the comment isn't really true, so I figured it ma=
-kes
-> > > > more sense here.
-> > > >
-> > >
-> > > So the validity of the comment depends on how the function is being c=
-alled?
-> > > Then perhaps you should reword it as well.
-> > >
-> >
-> > The validity of the comment depends on the type of the notifier used.
-> > As long as it's a blocking notifier, it's called with a mutex taken -
-> > it's process context. When we switch to the atomic notifier, this
-> > function is now called with a spinlock taken, so it's considered
-> > atomic.
-> >
->
-> Indeed - so the comment is brittle.
->
+On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
+> On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
+> > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
+> > > Extsize is allowed to be set on files with no data in it. For this,
+> > > we were checking if the files have extents but missed to check if
+> > > delayed extents were present. This patch adds that check.
+> > > 
+> > > While we are at it, also refactor this check into a helper since
+> > > its used in some other places as well like xfs_inactive() or
+> > > xfs_ioctl_setattr_xflags()
+> > > 
+> > > **Without the patch (SUCCEEDS)**
+> > > 
+> > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > 
+> > > wrote 1024/1024 bytes at offset 0
+> > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > 
+> > > **With the patch (FAILS as expected)**
+> > > 
+> > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > 
+> > > wrote 1024/1024 bytes at offset 0
+> > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+> > > 
+> > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > 
+> > Looks good now,
+> > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> 
+> That said, could you add a fixes tag for the xfs_ioctl_setattr_*
+> changes, please?
 
-I'm not sure what you're saying. We know it's an atomic notifier, we
-assign this callback to the block and register by calling
-atomic_notifier_chain_register(). I fail to see why you consider it
-"brittle".
+Actually a small doubt Darrick regarding the Fixes commit (asked inline
+below):
 
-Bart
+> 
+> --D
+> 
+> > --D
+> > 
+> > > ---
+> > >  fs/xfs/xfs_inode.c | 2 +-
+> > >  fs/xfs/xfs_inode.h | 5 +++++
+> > >  fs/xfs/xfs_ioctl.c | 4 ++--
+> > >  3 files changed, 8 insertions(+), 3 deletions(-)
+> > > 
+> > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > index bcc277fc0a83..19dcb569a3e7 100644
+> > > --- a/fs/xfs/xfs_inode.c
+> > > +++ b/fs/xfs/xfs_inode.c
+> > > @@ -1409,7 +1409,7 @@ xfs_inactive(
+> > >  
+> > >  	if (S_ISREG(VFS_I(ip)->i_mode) &&
+> > >  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
+> > > -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
+> > > +	     xfs_inode_has_filedata(ip)))
+> > >  		truncate = 1;
+> > >  
+> > >  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
+> > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > > index 97ed912306fd..03944b6c5fba 100644
+> > > --- a/fs/xfs/xfs_inode.h
+> > > +++ b/fs/xfs/xfs_inode.h
+> > > @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
+> > >  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
+> > >  }
+> > >  
+> > > +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
+> > > +{
+> > > +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
+> > > +}
+> > > +
+> > >  /*
+> > >   * Check if an inode has any data in the COW fork.  This might be often false
+> > >   * even for inodes with the reflink flag when there is no pending COW operation.
+> > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > > index a20d426ef021..2567fd2a0994 100644
+> > > --- a/fs/xfs/xfs_ioctl.c
+> > > +++ b/fs/xfs/xfs_ioctl.c
+> > > @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
+> > >  
+> > >  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
+> > >  		/* Can't change realtime flag if any extents are allocated. */
+> > > -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
+> > > +		if (xfs_inode_has_filedata(ip))
+> > >  			return -EINVAL;
+> > >  
+> > >  		/*
+> > > @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
+> > >  	if (!fa->fsx_valid)
+> > >  		return 0;
+> > >  
+> > > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> > > +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
+
+So seems like there have been lots of changes to this particular line
+mostly as a part of refactoring other areas but seems like the actual
+commit that introduced it was:
+
+  commit e94af02a9cd7b6590bec81df9d6ab857d6cf322f
+  Author: Eric Sandeen <sandeen@sgi.com>
+  Date:   Wed Nov 2 15:10:41 2005 +1100
+  
+      [XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not
+      using xfs rt
+
+Before this we were actually checking ip->i_delayed_blks correctly. So just wanted 
+to confirm that the fixes would have the above commit right?
+
+If this looks okay I'll send a revision with this above tags:
+
+Fixes: e94af02a9cd7 ("[XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not using xfs rt")
+
+Thanks,
+Ojaswin
+
+> > >  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+> > >  		return -EINVAL;
+> > >  
+> > > -- 
+> > > 2.43.5
+> > > 
+> > > 
+> > 
 
