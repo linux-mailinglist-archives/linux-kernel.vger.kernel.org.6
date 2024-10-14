@@ -1,138 +1,128 @@
-Return-Path: <linux-kernel+bounces-364837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAECC99DA08
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:16:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B61799DA10
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:21:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 199BB282F73
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:16:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB17C1F232C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:21:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67BA11D5AA4;
-	Mon, 14 Oct 2024 23:16:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F8A61D967E;
+	Mon, 14 Oct 2024 23:21:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ts21/p3x"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lqsR0seM"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64DB920323;
-	Mon, 14 Oct 2024 23:16:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC59B17BD3;
+	Mon, 14 Oct 2024 23:21:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728947793; cv=none; b=eSIJdgZzZk0XtTXOoLwIZlJtShc06Op5/54CYgowaaMv8Nn4oSk9oUUa6Y64SlFKYQ8ApYMj2d2kzSZTQgYdhaKrBMeI/o5uaZCC94M+qaywzAtHUhZ7Iv6ZAx1M3K2x7mAmD7pddSO3lnaVoMTUmJ+0OuI/M3LoGtjUe1H8ubY=
+	t=1728948091; cv=none; b=Bcp2vpBIPnpjnAbHDFf/XWCIbLLBX7AvNhYXqbBQLrUdi0F2cYT7X0XFmexdAeFw+pDb6tdN8SescPjCpXN1h96tRZk3t+/QKp2NDB5x6+8/YlI20qrJDMPLdRe5hBZzTLLaUz0x/R5XPTdw6br6jflHxoZT5QSZunA8NYwCovI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728947793; c=relaxed/simple;
-	bh=XsyRd9j07T8HoPKbHrQZGPgE/ewJ2mD/zTuF8VZMJx0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=c/BUzzKyz9LlqesD0kOlhBI3Qz3uWAjmHZEBLiIqzZJ7UD+EyL3s284d44yyAc7DZOFGEsRMZp4JrIMvogCIK5bXRwTp4BqdKoUNQFAbFT5SNWwvBjK3kYuXDB18D+De8XTZA1NQkpPXkv2JJOH7qziX425m80mYJutuzOUvkac=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ts21/p3x; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1728948091; c=relaxed/simple;
+	bh=e3vtLygN+A7fWhOV1HYkrGuJR8zj2S9HSnc2RW2JCeE=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=Q2yieUxBiOqn4dEdpzVQQmrhAzCXpgVkdgHU0FwP894whJqaZ58G0sqflVfCaWECVp4lkzkt+bcRmjND9GHXLtshrvUBeKmmHCqczv6SWUjkxYIuUiCQXdlmK5l+ZlEx4g/fWJ18SqrfXZ0TIhQpEpVR/PX+gcHsUElTSdcQK0g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lqsR0seM; arc=none smtp.client-ip=209.85.208.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-71e6f085715so858110b3a.2;
-        Mon, 14 Oct 2024 16:16:32 -0700 (PDT)
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb443746b8so13255761fa.0;
+        Mon, 14 Oct 2024 16:21:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728947791; x=1729552591; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=K2B0FW8ZH5nWjEg/AXzAlnKbTbSdi9xuM3Vgwwr8KQQ=;
-        b=Ts21/p3xtUe/yGgLhR5mdvWeEFdE16M98z5iWEhYriI1hTYOy8Vf6HmLjf4oo0hT7J
-         qJT1UPvfJYrqFiMcapFtwOsSnkgrNY88UvShNKSrzMN6rr1CJ24jrDFQpXIxGhvMsTnK
-         dvIIuF7OlaASwsydYm5sjBN6+uHRRJN7hRlAdTksaJYoBK/NZwkBZMzn3fh3YTYPpJB/
-         NoGb/tk1Cfs7QFDlgTHoX1JuKqNjPNPwzyvV9uAnUcBieErLEuwOu76hucEEuQSF5vGr
-         ViF0J2Ksx1uj3UHSQvOtYeeM5aqqgpMZvxebmhZI+9x7Qjkv3CUuFOeQBXAsmxzWcmdH
-         WfCA==
+        d=gmail.com; s=20230601; t=1728948088; x=1729552888; darn=vger.kernel.org;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=IR5NLMkMxMxIfFeu/xX+td4K3oA4NaFGATD7ANclrqA=;
+        b=lqsR0seM+3KO4o6sfz1UveS1hIyD6BGBQTZD6HkFjU/RKK5LqN5cvWejrmAY1JpbWj
+         cEvBw7ZsrU1nFCW6OvjvgLiCxW8Q4BsyDenvKKX9B6SvgaoWK32d6KABxPGx0vFj9owP
+         SWU/MgMt8mcI1PFSf/hbiTKu23xqSOF8AVZzymYMxv9NXl52oqv7aab34wfp4s3BzfqL
+         4+PyMKpKFrI2OTwxoYDsdXCsgTqsx8PIIfLGUyTwvha0sNiSEuK9eY+p+njk3UQZwuNj
+         pTbUW6mrDIQbS6DLRNBV1p8PHCycUtEx0qNLbLhFHMbzRK+syJEbV5gHi+ErvSQdK6M3
+         nPGg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728947791; x=1729552591;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=K2B0FW8ZH5nWjEg/AXzAlnKbTbSdi9xuM3Vgwwr8KQQ=;
-        b=IFlUN7O8yShBZuWJlBFGRXRy4yPHRiA4dAY0Sor2RleI8zjJhK6Vxg62JLz+JMo1x1
-         mqYNAOu5yDika5iFIfhuQS6baSsI3+0xEAYsP5ojokTlwEtCeKQJtp9z9owdYbAWw6im
-         RF/wtC2x8LIeipx2W/OMgpG/B0c+zfNaAFErMvA1YdHsYMWGCEFvORF3AHHxljr7SHZ8
-         1mfpb+7BSpeL86hYyubWw93q09OKVplZxPHwuCp4FaOfbGh3ySIW45rcwbiA+reTKguk
-         B/czxnqli0fmGnxpzWz0hvbNb6ZvgqikkK51fCyITlWLxY/XtdFdxoGloUWGDFFY8E1Y
-         wzZg==
-X-Forwarded-Encrypted: i=1; AJvYcCU1WsiwYBW2Wg5pJhSJDUe7NTknqtNdQOGQu0rM24ivSguT3CoJSTdqNf7NcXeGPQJCfC76bvsAvxhzWEE=@vger.kernel.org, AJvYcCURXRDMcYJeYTayb5NHYnbc2yhF/gD3r3o4i1YiWDIlekYDAsAuP3xxyvtqCHag2bddszqkr1FF@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5jL/LaU5o2WhBtY0VMQy+qeOdEe63nGk1FUbjJjDr2gu3uXA8
-	7jHZBya76qZkGi6cCwM2Vb63CRrkFyUZ0y1xi0y00+Gdegc0jdho7vITWCEESZw=
-X-Google-Smtp-Source: AGHT+IGIPxJJ9r2kB4BtcvYdvYR1x/+1ppYNz4QAE9m866VfOGdYSYuQYWDJmxVzEMp3VVIrPaFjEg==
-X-Received: by 2002:a05:6a00:a93:b0:71e:b8:1930 with SMTP id d2e1a72fcca58-71e4c17bb0dmr16083237b3a.16.1728947790938;
-        Mon, 14 Oct 2024 16:16:30 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:f281:80d8:4268:4a6])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7ea9c6c1948sm82872a12.27.2024.10.14.16.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 16:16:30 -0700 (PDT)
-Date: Mon, 14 Oct 2024 17:16:29 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] igb: Fix styling in enable/disable SR-IOV
-Message-ID: <Zw2mTeDYEkWnh36A@Fantasy-Ubuntu>
+        d=1e100.net; s=20230601; t=1728948088; x=1729552888;
+        h=content-transfer-encoding:subject:from:cc:to:content-language
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=IR5NLMkMxMxIfFeu/xX+td4K3oA4NaFGATD7ANclrqA=;
+        b=JFV/7PpOssOmYFwwP2gcgMMbg1EK5XGOoLeMPFAx5BS8cxJ/TmhTsjfIp5Wge9L1o5
+         B7vdThKRy4xuwh04dKKBV/SNXOXmUfyntOjf24gtyNC1lH/OC1y8asrnGk+I6NHb1qR7
+         mKdsAS9BUEyaeUY9fG82GL1j4XjW+417c3SKooSScRsOSH9rkW6O1iNVcWTX4EEMWCDr
+         zU23T4wvOj/fum4Xwg6z/UQrdTv5iGqt/CIlk9ARV4gIDiZF2PHm+YJjIQbv4qtFZmAo
+         fHkTrVfKZIWXaoC6tZ9Lj7LQMtFHaRjOchD8nGomnljnWPOUPqjz816/h4jueDcB3z2t
+         pHCw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6OXpUSLx+fOk5y+I1OyROr5JFcFopdOYFcAjyEyIl4JaE5by9M9CSs7iAjE2EVXvoD5xN5MXCL5G/Mw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrknzVQG3Kj7gjihCTxefNwqs3bQdtX1Yu7BdupL8FucVQVRF3
+	5H+Q99X6Js09Nz96NU16AbgT6sVgyGR/b3zkvhP0wAEA5oip9TFq
+X-Google-Smtp-Source: AGHT+IF32rTh1P/xwRaa+CjhSTWMPT0O4AGlkShdMJru3Zw7gGdbgbQNIpWyQZHhtjI6Sq1w38oEsA==
+X-Received: by 2002:a05:651c:b1e:b0:2fb:527a:815b with SMTP id 38308e7fff4ca-2fb527abcbfmr24906201fa.28.1728948087596;
+        Mon, 14 Oct 2024 16:21:27 -0700 (PDT)
+Received: from [192.168.1.240] ([194.120.133.80])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4313f6c564csm1339875e9.47.2024.10.14.16.21.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 16:21:26 -0700 (PDT)
+Message-ID: <63c91051-3cad-409f-a1d5-ee8ed89e4de1@gmail.com>
+Date: Tue, 15 Oct 2024 00:21:23 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Michael Krufky <mkrufky@linuxtv.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "mailing list: linux-media" <linux-media@vger.kernel.org>
+From: "Colin King (gmail)" <colin.i.king@gmail.com>
+Subject: shift/mask issue in drivers/media/dvb/dvb-usb/mxl111sf-demod.c
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-This patch fixes the checks and warnings for igb_enable_sriov and
-igb_disable_sriov function reported by checkpatch.pl
+Hi,
 
-Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
----
- drivers/net/ethernet/intel/igb/igb_main.c | 13 ++++++++-----
- 1 file changed, 8 insertions(+), 5 deletions(-)
+Static analysis has found a shift/mask issue in 
+drivers/media/dvb/dvb-usb/mxl111sf-demod.c in function 
+mxl1x1sf_demod_get_tps_hierarchy(), as described as follows:
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..5a3b10b81848 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -3703,10 +3703,10 @@ static int igb_disable_sriov(struct pci_dev *pdev, bool reinit)
- 			dev_warn(&pdev->dev,
- 				 "Cannot deallocate SR-IOV virtual functions while they are assigned - VFs will not be deallocated\n");
- 			return -EPERM;
--		} else {
--			pci_disable_sriov(pdev);
--			msleep(500);
- 		}
-+
-+		pci_disable_sriov(pdev);
-+		msleep(500);
- 		spin_lock_irqsave(&adapter->vfs_lock, flags);
- 		kfree(adapter->vf_mac_list);
- 		adapter->vf_mac_list = NULL;
-@@ -3739,6 +3739,7 @@ static int igb_enable_sriov(struct pci_dev *pdev, int num_vfs, bool reinit)
- 		err = -EPERM;
- 		goto out;
- 	}
-+
- 	if (!num_vfs)
- 		goto out;
- 
-@@ -3746,11 +3747,13 @@ static int igb_enable_sriov(struct pci_dev *pdev, int num_vfs, bool reinit)
- 		dev_info(&pdev->dev, "%d pre-allocated VFs found - override max_vfs setting of %d\n",
- 			 old_vfs, max_vfs);
- 		adapter->vfs_allocated_count = old_vfs;
--	} else
-+	} else {
- 		adapter->vfs_allocated_count = num_vfs;
-+	}
- 
- 	adapter->vf_data = kcalloc(adapter->vfs_allocated_count,
--				sizeof(struct vf_data_storage), GFP_KERNEL);
-+				   sizeof(struct vf_data_storage),
-+				   GFP_KERNEL);
- 
- 	/* if allocation failed then we do not support SR-IOV */
- 	if (!adapter->vf_data) {
--- 
-2.43.0
+         /* bit<6:4> - 000:Non hierarchy, 001:1, 010:2, 011:4 */
+         if (mxl_fail(ret))
+                 goto fail;
 
+         switch ((val & V6_TPS_HIERARCHY_INFO_MASK) >> 6) {
+         case 0:
+                 *hierarchy = HIERARCHY_NONE;
+                 break;
+         case 1:
+                 *hierarchy = HIERARCHY_1;
+                 break;
+         case 2:
+                 *hierarchy = HIERARCHY_2;
+                 break;
+         case 3:
+                 *hierarchy = HIERARCHY_4;
+                 break;
+         }
+
+There are two issues. First, the comment states the bits of interest are 
+bits <6:4> and yet the shift is by 6 bits, I suspect that should be a 4 
+bit shift. Secondly, V6_TPS_HIERARCHY_INFO_MASK is defined in 
+drivers/media/usb/dvb-usb-v2/mxl111sf-reg.h as:
+
+#define V6_TPS_HIERARCHY_INFO_MASK  0x40
+
+..so only one bit is being masked, I suspect it should be (0x7 << 4) or 
+0x70 for the 3 bits <6:3> or maybe just (0x3 << 4) or 0x30 if we're just 
+interested in the bottom two bits for the case 0..3.
+
+Anyhow, I don't have the hardware manual or hardware to test specific 
+fixes and I'm 100% about making a fix based on the comment w/o the 
+hardware to test this on.
+
+Colin
 
