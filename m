@@ -1,91 +1,185 @@
-Return-Path: <linux-kernel+bounces-364207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEA8D99CCE5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:26:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBA5B99CCE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:26:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9A3741F2216B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:26:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7899F1F2127A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:26:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD8C1AB53A;
-	Mon, 14 Oct 2024 14:26:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E7C41AB501;
+	Mon, 14 Oct 2024 14:26:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AiH2KDdv"
-Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OeUihHqb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E45B1AAE08;
-	Mon, 14 Oct 2024 14:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AC37E571;
+	Mon, 14 Oct 2024 14:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915974; cv=none; b=N+Mmx+C7/PwnlunENMZRw3exByXKUOTGY/LQDLfucHrSn1iBqK94A57BIviCn5xEnXXvg0I1nn+vavhJ4F07U5far5E5+vw6kSBpTOiRWKZXiGjwQAwgJST0zdMUuFjAFkc7P+ce4J9DzOE6wYD7SXfnplYd9+Koyo4nIJWcyQ8=
+	t=1728915983; cv=none; b=CE/8VYWfNNFBlHdGPbTu9IQPKjz2I8xzOEVOtgdvtroC3zGER2dVzm4hrzbReFyiqb/a1rwEV8VsRaUtSF3lMHpboAHtE56Y6S8/oWXe1Lj5Xf+1GZFv5DUNE8UlX9+mGvYicRPG+4vrZG8D58dsERdROfAu++Q1KH9qiMp+w2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915974; c=relaxed/simple;
-	bh=LLkv87xy+203XARJ82huUVgbq0i4Rn77CtkC6ufSqqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Igrr6mz22Z85xiIQVjeUpo5TR30uLCYIBok0/8grrWnycdD8AdOYktHjQ3CFPud1gWGHnFGttPsbNC8kVMMITsKBSZJrQi9/NwDCveeYTsPH22+Bfvg2zgmqhqSSZ4KpvN5DeUJTi4iURSkCtO9lscDVWTt0U4Lo6+gDBwierdA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AiH2KDdv; arc=none smtp.client-ip=209.85.128.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-6e2d36343caso32245517b3.2;
-        Mon, 14 Oct 2024 07:26:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728915972; x=1729520772; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LLkv87xy+203XARJ82huUVgbq0i4Rn77CtkC6ufSqqI=;
-        b=AiH2KDdvPsPA5Zcv541mU9ou58L6RS+QnrMjd35Ka6tz38KoPc+dpBcPgb6IueM3r2
-         bqWgBUSVI8Y1z8H8N6oojgA8fgMfU6QLR1RT0yNoM7WQK68U3P+PGLMR7JfyQnk1zqjg
-         Pn6AkZP2obb38fWCPsT9e7IQlUnJk7z3TE5zOzTFmkb/toU2/2ZvZqtJh1pOk7VIuc31
-         Pn8aaQxQQA+6uqL/KTljkBpoFR6+B8ab5/6MHsaqJLdz4OkvqzA3KaZITVXkNSrPS97k
-         x6I7YJycCWwKl3JMdWZLg5YzRnGulB4OtDkyODN1z0As77DdmCsk26JSRftu0h0SpaMD
-         gzkg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728915972; x=1729520772;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LLkv87xy+203XARJ82huUVgbq0i4Rn77CtkC6ufSqqI=;
-        b=XQnBLqk5XtSmiUnouOsyUbmXugQbA6IZ2TFj6BPmpX/i8Buqu5wQ72A2dZZgFKreIR
-         eVvhuCoO+iGLqlJxTQnIDkKWgEw+gHuO6lrkyr++Nja7NkVi5ezNu2DYMy0+yNAwyLLo
-         9pTPjbhy4KosspiLM1tn7rvt8nXK2iF0RYRPi1ZgZfHpMHShJ+8VoV8n2PjVFZF/ZY46
-         z6qQ8OzspOApSrcuoxczxFgiLvHaVK5JUVmenY6BRdHEgnAKERRSVsudcMEUZbubcpoN
-         CvsvHHEYeqM9HR8wJmZVDK00OM9TNk5zmxNho+hoIRB5rM3O5sUjk9mFNjx4He10Q/HQ
-         rTZg==
-X-Forwarded-Encrypted: i=1; AJvYcCUXdjmuyd0RNHoGKafIHD45Lwl2qaG/N3B72XKapqfpCI2t5Ik23RsImsH/JFXdS96LsCVK89wTu7CruvA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUwcYtKYZuwho8yUAmxSlUg1kiX6ioDUOiPh9XaiUpuYMRTgDX
-	t6fKPOcLBMcEL+n5fwoPM8e8jK1ZA9B2niKkp9y18vVfvunwMEsJAIemAw==
-X-Google-Smtp-Source: AGHT+IFH3anUzwoQuBivPedCcdK9bVhcO9jxOtgmBll+zPoumxoC0Dyc5nI8v3sk3S90U8vqI/XnAA==
-X-Received: by 2002:a05:690c:2d88:b0:6e3:3508:e32e with SMTP id 00721157ae682-6e3644d414emr40450027b3.41.1728915972060;
-        Mon, 14 Oct 2024 07:26:12 -0700 (PDT)
-Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332b6166fsm15637827b3.8.2024.10.14.07.26.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 07:26:11 -0700 (PDT)
-Message-ID: <5c3db3be-370a-44ff-8474-0c3b4fe71e03@gmail.com>
-Date: Mon, 14 Oct 2024 10:26:09 -0400
+	s=arc-20240116; t=1728915983; c=relaxed/simple;
+	bh=htdeMYqzZVZ1IWH4JC74fCThAQafoLo4kvCLkF7l+Y4=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=J7lJJJAsVfIhF4PrTdN26ERxrNE3L2pbkH2MGBlMHvgCDT33FLIbxP9JOee2Bo7jEqMiNj4ag5BQNcri0jidVKI7GO9vHhw1u14vzbAL4cO0kbIBdzXUPa74upwt1DdnK5j3FCsLdkwPIWEGmzREekuKr++wLnuEy5nbEbcLAkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OeUihHqb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 05B8EC4CECF;
+	Mon, 14 Oct 2024 14:26:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728915983;
+	bh=htdeMYqzZVZ1IWH4JC74fCThAQafoLo4kvCLkF7l+Y4=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=OeUihHqb+rrucxLsD4KW4jlYjtEDlaTjvP8pzGsCOu0ve24Oj0oKsPiNE2LlPvFWy
+	 HdvJF1n26PPZ9q88Nr3CWzRABDvjUihArskESDdkKnuEuDaaoqOULk4uNmx4FCEZGs
+	 8sywtn6RhmW98Hw6yz7SIqjQKodJ40Cf2Kv81AKWypkYazwsBDD7kqir7z2iUccnqb
+	 PmGHmsARMGBHemXWvv9REOPBkJxp/MHy9FgTBVTecVkS3yUOAIfBZWpYNDr9Lr/Tfd
+	 fdsR9LehB6jfBWP5ZAcQakA045u8IaKWNhZj0nzhXhfRb+Q08Hx/c1yLa5fcwg6teu
+	 GjH8W4oNxxTtQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t0M1c-003Q59-PO;
+	Mon, 14 Oct 2024 15:26:20 +0100
+Date: Mon, 14 Oct 2024 15:26:19 +0100
+Message-ID: <868quq69ro.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Zheng Zengkai <zhengzengkai@huawei.com>
+Cc: <lpieralisi@kernel.org>,
+	<guohanjun@huawei.com>,
+	<sudeep.holla@arm.com>,
+	<mark.rutland@arm.com>,
+	<rafael@kernel.org>,
+	<lenb@kernel.org>,
+	<daniel.lezcano@linaro.org>,
+	<tglx@linutronix.de>,
+	<linux-acpi@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v2] ACPI: GTDT: Tighten the check for the array of platform timer structures
+In-Reply-To: <f316e8b5-c4c9-da6f-26e8-395cb7500f1d@huawei.com>
+References: <20241012085343.6594-1-zhengzengkai@huawei.com>
+	<8734l1usxe.wl-maz@kernel.org>
+	<f316e8b5-c4c9-da6f-26e8-395cb7500f1d@huawei.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] linux-kbuild: fix: missing variable operator
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org, javier.carrasco.cruz@gmail.com
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
- <20240913171205.22126-3-david.hunter.linux@gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <20240913171205.22126-3-david.hunter.linux@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: zhengzengkai@huawei.com, lpieralisi@kernel.org, guohanjun@huawei.com, sudeep.holla@arm.com, mark.rutland@arm.com, rafael@kernel.org, lenb@kernel.org, daniel.lezcano@linaro.org, tglx@linutronix.de, linux-acpi@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-https://lore.kernel.org/all/20241014141345.5680-2-david.hunter.linux@gmail.com/
+On Mon, 14 Oct 2024 13:22:26 +0100,
+Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+>=20
+> Hi Marc,
+>=20
+> =E5=9C=A8 2024/10/13 1:34, Marc Zyngier =E5=86=99=E9=81=93:
+> > On Sat, 12 Oct 2024 09:53:43 +0100,
+> > Zheng Zengkai <zhengzengkai@huawei.com> wrote:
+> >> As suggested by Marc and Lorenzo, first we need to check whether the
+> >> platform_timer entry pointer is within gtdt bounds (< gtdt_end) before
+> >> de-referencing what it points at to detect the length of the platform
+> >> timer struct and then check that the length of current platform_timer
+> >> struct is within gtdt_end too. Now next_platform_timer() only checks
+> >> against gtdt_end for the entry of subsequent platform timer without
+> >> checking the length of it and will not report error if the check faile=
+d.
+> >>=20
+> >> Add check against table length (gtdt_end) for each element of platform
+> >> timer array in acpi_gtdt_init() early, making sure that both their ent=
+ry
+> >> and length actually fit in the table.
+> >>=20
+> >> For the first platform timer, keep the check against the end of the
+> >> acpi_table_gtdt struct, it is unnecessary for subsequent platform time=
+r.
+> > Really?
+> >=20
+> >> Suggested-by: Marc Zyngier <maz@kernel.org>
+> >> Suggested-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> >> Signed-off-by: Zheng Zengkai <zhengzengkai@huawei.com>
+> >> ---
+> >> Changes in v2:
+> >> - Check against gtdt_end for both entry and len of each array element
+> >>=20
+> >> v1: https://lore.kernel.org/all/20241010144703.113728-1-zhengzengkai@h=
+uawei.com/
+> >> ---
+> >>   drivers/acpi/arm64/gtdt.c | 19 +++++++++++++++----
+> >>   1 file changed, 15 insertions(+), 4 deletions(-)
+> >>=20
+> >> diff --git a/drivers/acpi/arm64/gtdt.c b/drivers/acpi/arm64/gtdt.c
+> >> index c0e77c1c8e09..f5f62643899d 100644
+> >> --- a/drivers/acpi/arm64/gtdt.c
+> >> +++ b/drivers/acpi/arm64/gtdt.c
+> >> @@ -157,6 +157,8 @@ int __init acpi_gtdt_init(struct acpi_table_header=
+ *table,
+> >>   {
+> >>   	void *platform_timer;
+> >>   	struct acpi_table_gtdt *gtdt;
+> >> +	struct acpi_gtdt_header *gh;
+> >> +	void *struct_end;
+> >>     	gtdt =3D container_of(table, struct acpi_table_gtdt, header);
+> >>   	acpi_gtdt_desc.gtdt =3D gtdt;
+> >> @@ -177,11 +179,20 @@ int __init acpi_gtdt_init(struct acpi_table_head=
+er *table,
+> >>   	}
+> >>     	platform_timer =3D (void *)gtdt + gtdt->platform_timer_offset;
+> >> -	if (platform_timer < (void *)table + sizeof(struct acpi_table_gtdt))=
+ {
+> >> -		pr_err(FW_BUG "invalid timer data.\n");
+> >> -		return -EINVAL;
+> >> +	struct_end =3D (void *)table + sizeof(struct acpi_table_gtdt);
+> >> +	for (int i =3D 0; i < gtdt->platform_timer_count; i++) {
+> >> +		gh =3D platform_timer;
+> >> +		if (((i =3D=3D 0 && platform_timer >=3D struct_end) || i !=3D 0) &&
+> > Why is only index 0 checked against the end of the table? Shouldn't
+> > int be an invariant that all timer descriptions must not intersect
+> > with the non-variable part of the GTDT table?
+>=20
+>=20
+> AFAICS, after checking against the end of the acpi_table_gtdt struct for =
+the
+> first platform timer, the subsequent platform_timer pointer value
+> computed via "platform_timer + gh->length" will also pass the check,
+> as the gh->length is of u16 type.
+
+But this is something that isn't obvious to the casual reader of this
+code, and you want to keep validation code simple and localised, with
+as few separate cases as you can. This isn't performance critical
+code, and there is nothing to be gained by "optimising" this.
+
+>=20
+>=20
+> >> +			platform_timer < acpi_gtdt_desc.gtdt_end &&
+> >> +			platform_timer + gh->length <=3D acpi_gtdt_desc.gtdt_end) {
+> > Surely, assuming that length isn't zero, if the last term is true, the
+> > previous one also is? And what if it is 0?
+>=20
+>=20
+> Agree , the length should also be checked against 0,
+> but I think we should first check the platform_timer entry pointer,
+> then check the size of the same platform_timer structure,
+> not check them in the opposite order.
+
+Correct, that's something that needs fixing. Run with it.
+
+	M.
+
+--=20
+Without deviation from the norm, progress is not possible.
 
