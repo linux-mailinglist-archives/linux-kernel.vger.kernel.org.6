@@ -1,111 +1,119 @@
-Return-Path: <linux-kernel+bounces-364473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C83D599D511
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:57:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 955C399D514
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0392D1C22490
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:57:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3DFD3B265C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:58:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C752A1BE223;
-	Mon, 14 Oct 2024 16:57:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C69B61C2DB2;
+	Mon, 14 Oct 2024 16:57:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EOl/8S8N"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GgiUybSY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF7928FC;
-	Mon, 14 Oct 2024 16:57:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2241F28FC;
+	Mon, 14 Oct 2024 16:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728925070; cv=none; b=GkoWzRmPSbclzq5coVKlN76t4pPj32qmz/kD+Vf2cUU9YfOqKaf1o8tuvpejn4ZSWd6lboh0ndSB7cQesV40n7IOue2VF7IjPI99lpvL05Qx9DymaYkp2QGziof+DRA1KIhVKCl4yPWgQQ9P0oJPr/es/eKmEmjjwBsatpeWXbo=
+	t=1728925075; cv=none; b=WIPNMuxytWDmEhJkB3iF9X+jlx/MkunaJdGqRbJSezKtCwgbYuE0bzYdDE7lLLtnvlLvsOJNpIkzoFkbJuWgiKjN9wtM4XkdCzYAc63lXwAfzz4RGsmYTpcm/crcZ7ZpZleh9z5Yd4DCrQD65WhA5DP3j88Fws7N/AiXRpKu4dk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728925070; c=relaxed/simple;
-	bh=uVgNkMnd/3ACRkYOJdqI9kVTo9dWEW5ZuZS2b8xr1Jk=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fBlROyhJ15IPnS8z1kNdVgzjxlBGI/AW6xuE2/1rN86iCSQkRiaMcERxaVhNpyRSviCpSV9Y2L5Va/m5W0TkZeXEIJRnMZh/s3+Q1EPBt94Mn6RSLmrhkJKPZx73utWlgQmbxNlWvuR96NMTnzPVBgc8/uYbXLWe1NKS/i8ZNBA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EOl/8S8N; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80CBEC4CEC3;
-	Mon, 14 Oct 2024 16:57:48 +0000 (UTC)
+	s=arc-20240116; t=1728925075; c=relaxed/simple;
+	bh=wXWzMdrUxolDFmjz40s5QfHgXPCyiA7KBOB9gExbNoo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=YwlLSCdMaBWfPVcBDzb//4iKs0kK9DZwNk4AcwYxKP6vDSvgx7vmjI9XFjMYN1VgWYLECXPEUIJnSEPrel6v9ENSHGtSug7m/OFPrMxUITfKZWKet0swa/EcxtD/GluFZV/NgS7FVeT172jWJrMS3x1KEWa/NS/KBONXlrOkK20=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GgiUybSY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C67EC4CEC3;
+	Mon, 14 Oct 2024 16:57:54 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728925069;
-	bh=uVgNkMnd/3ACRkYOJdqI9kVTo9dWEW5ZuZS2b8xr1Jk=;
-	h=From:To:Subject:Date:In-Reply-To:References:From;
-	b=EOl/8S8NThqlGNFzJlhSi61S4VMB5E/59kQ0OMsnMqAT8y19uC1LS4jSDxlphozkS
-	 cB68GkYmirTKMY9I5nmMnHvt3uFxA0lscpBDCtA1IX/wfjuuPkEQhQp6YYi2bLwV80
-	 U8qwxwuXtYsbF+4Cw1ykQ5UUvEM/FFtFgydD5Q1y9DRRTP9WZDaHYTVrZK4uqtOW6D
-	 +IfOb8z68LvuJ20H+sQDPwGxbViMcCPLSCthfCe4kQC6Go8Y3MAbO6vPUVz9R+ZE9s
-	 FCOvgKiFVaRAyEw5MOIF+4lmcnE8NH25QMj4HtPoymTubBT85hU8WATztKNZz8uEzS
-	 oBCdOGzZ5EYrA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	John Garry <john.g.garry@oracle.com>,
-	Will Deacon <will@kernel.org>,
-	James Clark <james.clark@linaro.org>,
-	Mike Leach <mike.leach@linaro.org>,
-	Leo Yan <leo.yan@linux.dev>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Xu Yang <xu.yang_2@nxp.com>,
-	Benjamin Gray <bgray@linux.ibm.com>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Veronika Molnarova <vmolnaro@redhat.com>,
-	"Dr. David Alan Gilbert" <linux@treblig.org>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>,
-	"Steinar H. Gunderson" <sesse@google.com>,
-	Ze Gao <zegao2021@gmail.com>,
-	Dominique Martinet <asmadeus@codewreck.org>,
-	=?UTF-8?q?Cl=C3=A9ment=20Le=20Goffic?= <clement.legoffic@foss.st.com>,
-	Sun Haiyong <sunhaiyong@loongson.cn>,
-	Junhao He <hejunhao3@huawei.com>,
-	Tiezhu Yang <yangtiezhu@loongson.cn>,
-	Yicong Yang <yangyicong@hisilicon.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
+	s=k20201202; t=1728925074;
+	bh=wXWzMdrUxolDFmjz40s5QfHgXPCyiA7KBOB9gExbNoo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=GgiUybSYshbUNzejaSCnPLicOmznG3IXLZs0Ne0pYdd0FwUTMy5rnBRB7PvARVe7o
+	 rgVV3XvNr15M+ceo4vir7M+oPOiSp4xszzdfBWjx3rHAW2eQts4smdBQDg3gxJscNB
+	 rBvsube5oReuK32CkktFMqviLgNBavmqlYx7A0hrp7R4gC3SC/EunDoww1pBEnGS/q
+	 UdiOS+236BW8VU4+kKTissW9IkdTxTFNihEBGNV+lhh7wOrDFsEby24zuexmXWbN/J
+	 vu3uEBWPiZRON8OJlMqut4O8AWDxXj2rYe2orUSBQtHz81yPVo6LdnokYqDBH3DQJu
+	 63NmYkBzN2d9w==
+Date: Mon, 14 Oct 2024 11:57:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Stanimir Varbanov <svarbanov@suse.de>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
-	Ian Rogers <irogers@google.com>
-Subject: Re: (subset) [PATCH v3 00/13] Tool and hwmon PMUs
-Date: Mon, 14 Oct 2024 09:57:44 -0700
-Message-ID: <172892501876.15689.3033776452114241279.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-In-Reply-To: <20241002032016.333748-1-irogers@google.com>
-References: <20241002032016.333748-1-irogers@google.com>
+	linux-rpi-kernel@lists.infradead.org, linux-pci@vger.kernel.org,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Thomas Gleixner <tglx@linutronix.de>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Jim Quinlan <jim2101024@gmail.com>,
+	Nicolas Saenz Julienne <nsaenz@kernel.org>,
+	Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, kw@linux.com,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Andrea della Porta <andrea.porta@suse.com>,
+	Phil Elwell <phil@raspberrypi.com>,
+	Jonathan Bell <jonathan@raspberrypi.com>
+Subject: Re: [PATCH v3 04/11] PCI: brcmstb: Expand inbound size calculation
+ helper
+Message-ID: <20241014165752.GA611670@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014130710.413-5-svarbanov@suse.de>
 
+On Mon, Oct 14, 2024 at 04:07:03PM +0300, Stanimir Varbanov wrote:
+> BCM2712 memory map can supports up to 64GB of system
+> memory, thus expand the inbound size calculation in
+> helper function up to 64GB.
 
-On Tue, 01 Oct 2024 20:20:03 -0700, Ian Rogers wrote:
-> Rather than have fake and tool PMUs being special flags in an evsel,
-> create special PMUs. This allows, for example, duration_time to also
-> be tool/duration_time/. Once adding events to the tools PMU is just
-> adding to an array, add events for nearly all the expr literals like
-> num_cpus_online. Rather than create custom logic for finding and
-> describing the tool events use json and add a notion of common json
-> for the tool events.
+The fact that the calculation is done in a helper isn't important
+here.  Can you make the subject line say something about supporting
+DMA for up to 64GB of system memory?
+
+This is being done specifically for BCM2712, but I assume it's safe
+for *all* brcmstb devices, right?
+
+s/can supports/can support/
+
+Rewrap commit log to fill 75 columns.
+
+> Signed-off-by: Stanimir Varbanov <svarbanov@suse.de>
+> Reviewed-by: Florian Fainelli <florian.fainelli@broadcom.com>
+> ---
+> v2 -> v3:
+>  - Added Reviewed-by tags.
+>  - Improved patch description (Florian).
 > 
-> [...]
-
-Applied patch 1-10 to perf-tools-next, thanks!
-
-Best regards,
-Namhyung
+>  drivers/pci/controller/pcie-brcmstb.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/pci/controller/pcie-brcmstb.c b/drivers/pci/controller/pcie-brcmstb.c
+> index 9321280f6edb..b0ef2f31914d 100644
+> --- a/drivers/pci/controller/pcie-brcmstb.c
+> +++ b/drivers/pci/controller/pcie-brcmstb.c
+> @@ -309,8 +309,8 @@ static int brcm_pcie_encode_ibar_size(u64 size)
+>  	if (log2_in >= 12 && log2_in <= 15)
+>  		/* Covers 4KB to 32KB (inclusive) */
+>  		return (log2_in - 12) + 0x1c;
+> -	else if (log2_in >= 16 && log2_in <= 35)
+> -		/* Covers 64KB to 32GB, (inclusive) */
+> +	else if (log2_in >= 16 && log2_in <= 36)
+> +		/* Covers 64KB to 64GB, (inclusive) */
+>  		return log2_in - 15;
+>  	/* Something is awry so disable */
+>  	return 0;
+> -- 
+> 2.43.0
+> 
 
