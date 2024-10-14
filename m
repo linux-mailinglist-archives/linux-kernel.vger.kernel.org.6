@@ -1,166 +1,117 @@
-Return-Path: <linux-kernel+bounces-363431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 89A4899C257
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:59:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DD4399C259
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:00:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DB69AB24EDD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:59:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 43E171F218C1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:00:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F2F6154C0C;
-	Mon, 14 Oct 2024 07:59:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A9CB155725;
+	Mon, 14 Oct 2024 07:59:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o9TDCI8u"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="kT6Uvwc1"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 925CC15383F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:59:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29E1A155359;
+	Mon, 14 Oct 2024 07:59:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892751; cv=none; b=cUBjz/ScqQuEXeaB12ZlAWRStcyeYs16y/usvj5BQYrVDIjm6Giby3yOl/q2oJnNZaKle3usQ+MiXubQNULxh2aisYl+cp4T70vxtCDBLFPt1lXRwcrrOn+Xtfqcb0sinIzNbPumLAt3gxE1o4iamsDu8EKAgANO/wZDuaTXoRk=
+	t=1728892755; cv=none; b=IJWRPeAqMPC090B7J/uKRvepscJQFMn5kVFSKbru4ZbdxDKj4MGsQJBWcPZ8SOsznhTBQJC9mTckKopl/T/Q0+igMbfsbcOIG917fVswAcuC/aP0Ax1ZID0DtPNjlCArdM3aSP6YNyGKlPb8psf9Fjs8mLXFnyjLCbxwDigGjhc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892751; c=relaxed/simple;
-	bh=oFF6VHGttnHusqmr3FN2QG++jdlGO4+8p6CDui+ULbk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=u4OjiFekCZt27T+nePVu74I6DO2az53FvPhjT3GgbkwCl0p/B7Yo4A0TlaKBrFn/Ty4JDs9tBA/+MB3Psygt/pXyffs523cWXU1uBrn1hMCX/vDkNHrGdbBFqpfkl/3Xm3VNxtya9KvzOQQZ6BXMWtUZr/vERtcAopHGgnYgtk0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o9TDCI8u; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-539f1292a9bso948492e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:59:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728892747; x=1729497547; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=ScjclWrKfNDFbBysTklj+SJ3rFHMGEWxbh3si/BH/Zk=;
-        b=o9TDCI8uYdE8bghe9DJ03+YaGJYMSgN/XTBXs4N/EutsP9/OF7mWXqiDevOdbsrXNZ
-         bl+pJjxhSPi8EtW8MQ5hyi3/uXSJUlgEeLXi2Svt0xOJNck6ERBuSFjiZr/v8K7hYWim
-         4szAFuZCp89lSx7ZwMG3EWDSDNJtHayHBk3EesPgklFkDQ0a+67YY3RSQtIxfA+xaHks
-         clLQLEGTnynb8JzzOrhXn0psy3yArNCfTEFHhsAnXIoTwzZJn0paajQm5NPglrg/0Ciu
-         kyht2LBrIhR5M5D+QwZF2IhWa9R1WEZI3zS011z7ZDFCzh6L/Y6t5D1lq3K55CKCGk9L
-         Rnhw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728892747; x=1729497547;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ScjclWrKfNDFbBysTklj+SJ3rFHMGEWxbh3si/BH/Zk=;
-        b=mwHgdKTL6cZEE8omkdVt8b0k2cqGZvRxDa1gaTl0zYylRh11gP+4nvyFP/D3NLjWYA
-         vo/zpUfsiU3Ynm7VPPm7vejYkZVOuJwkSC6sCxqNjsOIbN7dyaCqoUG0+ofTCSFtpLS7
-         VCFXvCkQ3ZbDhF4sX0tdxDhkPO0koyHvy6TqyKGUHO+UuY5gnc/UTVMQn3XC2a4gEPYi
-         FTf8I7KINie45VnU3mgeCaea9XE57nltMqhy3vDKrPoRTtok3oP7j26++IHwQtwRwOZg
-         bU5LaipLreZX3qIVnIpYjuPr1qWEha7ZKOefze5wnEXBjkQE13wKPH+Yw6yLPZufOXiP
-         lqIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIVC/f+UuizjeGyPMSze8Gilkbk7ygzzgMqpoOu4fmZvZV2G5MpMxeDYLZlTQDuPWkR1qgT5V8Zb1GGUE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxw09AgACo4KdGbHgSJTFA5nYdnQpKhZ6k5iV40e8kutl/xV4+d
-	d3phyLXHfR2j6UnwApc5LBFh6Ghf14FyMDkxWXIlHPyJV6TKBKG3o8OKLS2ySgldu9C9dLMZwvM
-	hf6WHttL6Zvy+Wn0zJhD2YtTkANar0sbgsOeApA==
-X-Google-Smtp-Source: AGHT+IEKyEtol/S+SVKZojpSYhC7ViJe62dDg31X0hlm2J4WIW4keP+c77Z9R7yIc1BX887mjL23tAglKwfPJlsZKB8=
-X-Received: by 2002:a05:6512:3e21:b0:539:ebb6:7b36 with SMTP id
- 2adb3069b0e04-539ebb67d8cmr1600580e87.25.1728892746567; Mon, 14 Oct 2024
- 00:59:06 -0700 (PDT)
+	s=arc-20240116; t=1728892755; c=relaxed/simple;
+	bh=lszqkzooi/14FP99VptZF43wt7uBIMlNx7+MBmNiqIc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SxlkbwsLZBY4HHW3O5zKZ9SmAotkr6HTYygooftMRV7WNDYChDsbGpkAOpNjpiE3guj0MWnMtH6CdHJAnL1Wypccr7AuPCB7gX1DqaGKDrYs9aH9GHfdmoUe787ui/wzDP1Kz6cZ4UA+MYVyMs5WFM3EQJ75yosMRNZ6nfNLQq4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=kT6Uvwc1; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from umang.jain (unknown [IPv6:2405:201:2015:f873:55d7:c02e:b2eb:ee3f])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id 0718C667;
+	Mon, 14 Oct 2024 09:57:28 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728892651;
+	bh=lszqkzooi/14FP99VptZF43wt7uBIMlNx7+MBmNiqIc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=kT6Uvwc1VoOMx3WJ0Y8lQoateub1sA/c+//xoPAMtNhZKQCnq+JtkyZ1aQCOe2iKj
+	 d4jPffbVa2r1gMPIMbeuqSMdEnNUkc7naY7aMswECj5VLHskuk923UQnd5XmJx95Bk
+	 flqgP+VtnLpdUWQ13tmgf6KOnnwowqEEdSODeH/w=
+From: Umang Jain <umang.jain@ideasonboard.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	kernel-list@raspberrypi.com,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	stable@vger.kernel.org
+Subject: [PATCH] staging: vchiq_arm: Utilize devm_kzalloc in the probe() function
+Date: Mon, 14 Oct 2024 13:29:00 +0530
+Message-ID: <20241014075900.86537-1-umang.jain@ideasonboard.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1728491453.git.nicolinc@nvidia.com> <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
- <CABQgh9Eaj_vy1=sS2Pf7RC7Vy5PopDfwoshECULEU-jK3JF_sQ@mail.gmail.com>
- <Zwn/4m8Ac0xEiJi8@Asurada-Nvidia> <CABQgh9Ft=xxJK-bjS6wCZ5BN4AiKtF9fzdBkevA3x2yb_4O4Kg@mail.gmail.com>
-In-Reply-To: <CABQgh9Ft=xxJK-bjS6wCZ5BN4AiKtF9fzdBkevA3x2yb_4O4Kg@mail.gmail.com>
-From: Zhangfei Gao <zhangfei.gao@linaro.org>
-Date: Mon, 14 Oct 2024 15:58:55 +0800
-Message-ID: <CABQgh9HP1M8GAXMwf0ZNn5EpMBAvJU3JLRWcN5H1wfGrqXSe1Q@mail.gmail.com>
-Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
- related struct
-To: Nicolin Chen <nicolinc@nvidia.com>
-Cc: jgg@nvidia.com, kevin.tian@intel.com, will@kernel.org, joro@8bytes.org, 
-	suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org, 
-	baolu.lu@linux.intel.com, shuah@kernel.org, linux-kernel@vger.kernel.org, 
-	iommu@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
-	linux-kselftest@vger.kernel.org, eric.auger@redhat.com, 
-	jean-philippe@linaro.org, mdf@kernel.org, mshavit@google.com, 
-	shameerali.kolothum.thodi@huawei.com, smostafa@google.com, yi.l.liu@intel.com, 
-	aik@amd.com, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hi, Nico
+The two resources, 'mgmt' and 'platform_state' are currently allocated
+dynamically using kzalloc(). Unfortunately, both are subject to memory
+leaks in the error handling paths of the probe() function.
 
-On Sat, 12 Oct 2024 at 18:18, Zhangfei Gao <zhangfei.gao@linaro.org> wrote:
->
-> On Sat, 12 Oct 2024 at 12:49, Nicolin Chen <nicolinc@nvidia.com> wrote:
-> >
-> > On Sat, Oct 12, 2024 at 11:23:07AM +0800, Zhangfei Gao wrote:
-> >
-> > > > diff --git a/drivers/iommu/iommufd/viommu_api.c b/drivers/iommu/iommufd/viommu_api.c
-> > > > new file mode 100644
-> > > > index 000000000000..c1731f080d6b
-> > > > --- /dev/null
-> > > > +++ b/drivers/iommu/iommufd/viommu_api.c
-> > > > @@ -0,0 +1,57 @@
-> > > > +// SPDX-License-Identifier: GPL-2.0-only
-> > > > +/* Copyright (c) 2024, NVIDIA CORPORATION & AFFILIATES
-> > > > + */
-> > > > +
-> > > > +#include "iommufd_private.h"
-> > > > +
-> > > > +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
-> > > > +                                               size_t size,
-> > > > +                                               enum iommufd_object_type type)
-> > > > +{
-> > > > +       struct iommufd_object *obj;
-> > > > +       int rc;
-> > > > +
-> > > > +       obj = kzalloc(size, GFP_KERNEL_ACCOUNT);
-> > > > +       if (!obj)
-> > > > +               return ERR_PTR(-ENOMEM);
-> > > > +       obj->type = type;
-> > > > +       /* Starts out bias'd by 1 until it is removed from the xarray */
-> > > > +       refcount_set(&obj->shortterm_users, 1);
-> > > > +       refcount_set(&obj->users, 1);
-> > >
-> > > here set refcont 1
-> > >
-> > > iommufd_device_bind -> iommufd_object_alloc(ictx, idev,
-> > > IOMMUFD_OBJ_DEVICE): refcont -> 1
-> > > refcount_inc(&idev->obj.users); refcount -> 2
-> > > will cause iommufd_device_unbind fail.
-> > >
-> > > May remove refcount_inc(&idev->obj.users) in iommufd_device_bind
-> >
-> > Hmm, why would it fail? Or is it failing on your system?
->
-> Not sure, still in check, it may only be on my platform.
->
-> it hit
-> iommufd_object_remove:
-> if (WARN_ON(obj != to_destroy))
->
-> iommufd_device_bind refcount=2
-> iommufd_device_attach refcount=3
-> //still not sure which operation inc the count?
-> iommufd_device_detach refcount=4
->
+To address this issue, use device resource management helper devm_kzalloc()
+for proper cleanup during allocation.
 
-Have a question,
-when should iommufd_vdevice_destroy be called, before or after
-iommufd_device_unbind.
+Cc: stable@vger.kernel.org
+Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver static and runtime data")
+Signed-off-by: Umang Jain <umang.jain@ideasonboard.com>
+---
+ .../staging/vc04_services/interface/vchiq_arm/vchiq_arm.c   | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
 
-Now iommufd_vdevice_destroy (ref--) is after unbind, hits the if
-(!refcount_dec_if_one(&obj->users)) check.
+diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+index 29e78700463f..373cfdd5b020 100644
+--- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
++++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+@@ -285,7 +285,7 @@ vchiq_platform_init_state(struct vchiq_state *state)
+ {
+ 	struct vchiq_arm_state *platform_state;
+ 
+-	platform_state = kzalloc(sizeof(*platform_state), GFP_KERNEL);
++	platform_state = devm_kzalloc(state->dev, sizeof(*platform_state), GFP_KERNEL);
+ 	if (!platform_state)
+ 		return -ENOMEM;
+ 
+@@ -1344,7 +1344,7 @@ static int vchiq_probe(struct platform_device *pdev)
+ 		return -ENOENT;
+ 	}
+ 
+-	mgmt = kzalloc(sizeof(*mgmt), GFP_KERNEL);
++	mgmt = devm_kzalloc(&pdev->dev, sizeof(*mgmt), GFP_KERNEL);
+ 	if (!mgmt)
+ 		return -ENOMEM;
+ 
+@@ -1402,8 +1402,6 @@ static void vchiq_remove(struct platform_device *pdev)
+ 
+ 	arm_state = vchiq_platform_get_arm_state(&mgmt->state);
+ 	kthread_stop(arm_state->ka_thread);
+-
+-	kfree(mgmt);
+ }
+ 
+ static struct platform_driver vchiq_driver = {
+-- 
+2.45.2
 
-iommufd_device_bind
-iommufd_device_attach
-iommufd_vdevice_alloc_ioctl
-
-iommufd_device_detach
-iommufd_device_unbind // refcount check fail
-iommufd_vdevice_destroy ref--
-
-Thanks
 
