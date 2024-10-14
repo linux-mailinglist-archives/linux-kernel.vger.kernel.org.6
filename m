@@ -1,127 +1,124 @@
-Return-Path: <linux-kernel+bounces-363566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1353899C414
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:52:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47D8D99C41A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:53:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6C57282F0C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:52:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78EB21C22803
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:53:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88FEE15666A;
-	Mon, 14 Oct 2024 08:51:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3B1531E3;
+	Mon, 14 Oct 2024 08:52:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="fiIpGZUD"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="k6bE0d/L";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eik0b+53"
+Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D61621531E1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4288D14F126;
+	Mon, 14 Oct 2024 08:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895916; cv=none; b=bi61HupttH/Vw+fKKir/qp1sBGKFgJsFxiiee3lZgH8GCI3K2JGOF/MvCPWlkgaGsRq4c6kXuxP00rtJP0HOPWzTvpJnWdgf2vy6bwUxuLlwdQ/iFe52Gf1zAhQUbC+C7YP2b36a9vwli9lYspfEHC930kwGCB21oHr1fsvGEf0=
+	t=1728895946; cv=none; b=g67v6MMSX+xVwU/mjdx0rRfgemelyJQ6dRrcATF4/gpN/Ou8wzSKjQ88f9wIm007Ki40znZeMiZqtdDDwJ6crfittqucDl3BxcbC8MUnzYfD/74d1Di19YZWrzb2uRkrt4gce8C07DQBgG96IAzhE6nMASukFTqpenaS4WYzpls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895916; c=relaxed/simple;
-	bh=7y3i8RI0B9xeH/V6pkYoLkhTjNtFrZO1Xsun3cPjRYw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IK6Nxsad3lON8NEbQP6SVJACm3WMKQD/pLP1h7xuvHEKqVKHeDAIgrlfLqrZP6w+NW5W3/nFJvU1wwdWB4u7Jv3ID3j+WR02DmAEgrbqRLqiKvGNQhfjWrpSkbMRs0Eg/rayJVq70XwMvbB/Mqoij3bLmoae17bMPcJQJhSW+PY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=fiIpGZUD; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-43115887867so26679035e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:51:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sigma-star.at; s=google; t=1728895913; x=1729500713; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=50tK4yvCZ1zBy7QMujeB5OZr1BzENlZ/OjW/RDqvA4U=;
-        b=fiIpGZUDWtcLS/X8Ss3W9RUpifunZZWmkN7rbh0/R5mn+qC0+oT5VOf2k1y5VntYnF
-         yZxmwVBJgqu6nsHrl1isIawjKFfiEK8gqgeT60365+6j3KFTSKmBqRQsmzfxitebFnA5
-         ZKj8m12pGXyiYf4/7qO3fwdPmdRk6VNLGiFO9PboWBTAcggXZFjm0sMoO7hCvhcqXmMJ
-         ZAmQe5osgccH2PHh1hw1C0EEtUkPYqSI9KfwvOYS8ko6ioKVUeiSLKtOf7DvL5jEeaN/
-         CGHiPQpos0BFpsRLsZKYrXX9ssv2JmH543aDqMMUp7orASSpXBg7U1R9yfFB/mAy90BZ
-         wdoQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728895913; x=1729500713;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=50tK4yvCZ1zBy7QMujeB5OZr1BzENlZ/OjW/RDqvA4U=;
-        b=C/l4l0c1qCmv6TEDAQGkXOWT3VH/e6EjvyLXFBa/Ah+EG5BtzZPYMQQwpth3c5JCgc
-         YlwV9+CdPnzG5plhGfy38Ygvtz5qWPEJ9kfSATKdnUEZU9egoYq4RZEBt+tC9HQNwxoi
-         iTxCIYL3sMR/MBFsfSOaXNtWqk6gfsPnKa15T4FUzTaYKpKRFjwarJS81yogJWZ10LJR
-         Kt5oXnaSOh8+KErcObPgswEKCssVwa/1QYxMArtVSpQtQIvVIFHbu79OAAvdv7WUMh4V
-         UsmRHV1cLNVJnUTfCk6QNwfu3M67jhVuXCxII+cl2mzdhHvba5GtZx/Iop4+oG/nqyvd
-         6GaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXVCuU9YrDX3gRTsixNNlcfbnF03VDL6tCaQkuzDllOhgQJJ9EWvZDzXMQnOzmBENtqz+BVwtpHoR6s/ck=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/Ey4ImaJlKkkOSTyjJ+4N3oy/40Y1hFJBjDzB2L6UBU68bqe1
-	zWte/fu4D/0USNTRle4s5d3sBR3Kdcz+j9RW8PqnoRgjUDH3vO9Td6xC2Y+b+Xg=
-X-Google-Smtp-Source: AGHT+IEU0Ii92En2nBlsoOH0pa0j37alp117gc0n9MfzbJE/bM8tD/pJayX7UozgKh/NuroT/DJw3w==
-X-Received: by 2002:a05:600c:5486:b0:430:56f5:4d1f with SMTP id 5b1f17b1804b1-43115a96f4bmr123435565e9.2.1728895912833;
-        Mon, 14 Oct 2024 01:51:52 -0700 (PDT)
-Received: from blindfold.localnet ([82.150.214.1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4311835d78fsm113754245e9.43.2024.10.14.01.51.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 01:51:52 -0700 (PDT)
-From: Richard Weinberger <richard@sigma-star.at>
-To: Richard Weinberger <richard@nod.at>, devicetree@vger.kernel.org
-Cc: robh@kernel.org, saravanak@google.com, linux-kernel@vger.kernel.org, upstream+devicetree@sigma-star.at, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH] [RFC] of: Add debug aid to find unused device tree properties
-Date: Mon, 14 Oct 2024 10:51:51 +0200
-Message-ID: <3247761.5fSG56mABF@somecomputer>
-In-Reply-To: <7aq4nedii5jgrlg54kzyi3plri6ivheeo2kpxxg7q6ofr3wfsc@acsrg5rzzmzg>
-References: <20241013200730.20542-1-richard@nod.at> <7aq4nedii5jgrlg54kzyi3plri6ivheeo2kpxxg7q6ofr3wfsc@acsrg5rzzmzg>
+	s=arc-20240116; t=1728895946; c=relaxed/simple;
+	bh=UhYaUzHVY8nMAfdeHenLnAfjyBjBpTQSNCFScqg6X/Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bPdn32mFXIBdwrVKKL/4HyC77w0TuhkbT0B+azYR1qudXFf52lxsHUyE2fprNiPt6KaubzyKbcOFza+9UjeBuagxiakSknbeGjcWKpT18hhe9JABW/nfTVaGPSw+xu7Kxj1Klue1qKP40/to7osbg1Nl63ryr8VJj9nvovCRObs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=k6bE0d/L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eik0b+53; arc=none smtp.client-ip=202.12.124.150
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id F3010114008E;
+	Mon, 14 Oct 2024 04:52:21 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-05.internal (MEProxy); Mon, 14 Oct 2024 04:52:22 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
+	:cc:content-type:content-type:date:date:from:from:in-reply-to
+	:in-reply-to:message-id:mime-version:references:reply-to:subject
+	:subject:to:to; s=fm2; t=1728895941; x=1728982341; bh=2cZybKjM9D
+	cFIqUkv4bmvjg5bZFx69NeviweXujIacs=; b=k6bE0d/L0a807uJPUsp6sSsLJF
+	2IqzoA+AzrJth2GPI2YkSJuTg5As6fxjr06pt8qylyvHrY7E2NIhvm5150xZKCyM
+	AxMEeqwAY2n+cvHSIJSaMrviWhIyxeSdozv47I+qf1e6RA+xBegJH28baIFoWQWT
+	9friiwdltOUC0c1VNS4LJRys0XflkGEm48D+jbtd8lDyYtGElzCsZByGMf5/3IM4
+	QJDAtNEqsE4OgmfvffbDDQBjD8gyGgYH6yenK7HtVHIO0575Ex3WMhSUHOQQiRvg
+	wCWw2Pc5nLXffwG6NHqim5NNpTwdjdL5/hUVW8gzfDsHI1hLYa40MhNRr9Ug==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm2; t=1728895941; x=1728982341; bh=2cZybKjM9DcFIqUkv4bmvjg5bZFx
+	69NeviweXujIacs=; b=eik0b+53T9C6lSMzhzxiNF0ujMifij6WxBkUONSy8qNk
+	WW+M/ZxqM41w5D/X7aqDPH+RXyHm7HicpAFaWnH1iLSgqQNPvyaP4g54/TPH6dMO
+	TWVMFl4yIAtsW6k4MKoqQ1VpsyRHXXpdXnEkPDZHoolynYBQrolVVxlEfA+Qtn5y
+	1esUjjn9DkKs1fd43IhFo3M26w77U9fTNyj+ugwMaeRlLBXiF+HxoTo8oT7v3T8Q
+	QPIxUKOmHTuWh1t2hRsaMPzOylFIXOvfjXVo02M6/A11ataPF9FERxUu0KzOqYll
+	MlsJrvzCK6T3+ImLDB6/wU28ORyk3u03Z5wYpJyk7w==
+X-ME-Sender: <xms:xdsMZ6COQCb4QDLse78uYTQFE_d7fqK1ONvAGeh40GollnnpDJ3png>
+    <xme:xdsMZ0iWFs3qxnqOroiVIr0ACdOl3HpLeLBubMDOxjZzbAi_gg9kJxWgjtm3LJ-cG
+    _TClzHEkijXjg>
+X-ME-Received: <xmr:xdsMZ9kEY4_6c0L807LwkjQDxXlZ8LYx53iRcFMNE6zC82Z429KEpaBWzRIlHgqTK-bKybV3H1G6Ywzerir1iDOqgBCBbfhscMCvtQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgtdekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
+    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
+    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
+    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhm
+    thhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprh
+    gtphhtthhopeguphgvnhhklhgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhn
+    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
+    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:xdsMZ4xyc-48AIDtuzPEFeQlWgW4OfGjwGFlpx7q1ine2_2cACdrLQ>
+    <xmx:xdsMZ_RRZX2MZkx10pXa5ry-DgAHUvVu0WZoCXcUWBwbTcZrd3xVtA>
+    <xmx:xdsMZza5mxHD2bpCtzHgue5Inw6bBVCO5DmvjvB8hMClLAeSXuM5OQ>
+    <xmx:xdsMZ4TxGWw7O2QllnIjEm32Oq70SZWYmtmdxwyzTU4lzcjN100C_A>
+    <xmx:xdsMZ6HVMPjWY3wWeyNtXN8OejL5wK43baWqJV3js68cdR8warmj8AW4>
+Feedback-ID: i787e41f1:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 14 Oct 2024 04:52:20 -0400 (EDT)
+Date: Mon, 14 Oct 2024 10:52:19 +0200
+From: Greg KH <greg@kroah.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Dave Penkler <dpenkler@gmail.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the staging tree
+Message-ID: <2024101453-ladybug-esteemed-66b2@gregkh>
+References: <20241014162054.2b91b5af@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014162054.2b91b5af@canb.auug.org.au>
 
-Krzysztof,
+On Mon, Oct 14, 2024 at 04:20:54PM +1100, Stephen Rothwell wrote:
+> Hi all,
+> 
+> After merging the staging tree, today's linux-next build (x86_64
+> allmodconfig) failed like this:
+> 
+> ERROR: modpost: "isapnp_read_byte" [drivers/staging/gpib/hp_82341/hp_82341.ko] undefined!
+> 
+> Caused by commit
+> 
+>   6d4f8749cd5d ("staging: gpib: Add hp82341x GPIB driver")
+> 
+> isapnp_read_byte() is not exported to modules.
+> 
+> I have used the staging tree from next-20241011 for today.
 
-Am Montag, 14. Oktober 2024, 09:49:14 CEST schrieb 'Krzysztof Kozlowski' vi=
-a upstream:
-> On Sun, Oct 13, 2024 at 10:07:30PM +0200, Richard Weinberger wrote:
-> > This is a proof-of-concept patch that introduces a debug feature I find
-> > particularly useful.  I frequently encounter situations where I'm
-> > uncertain if my device tree configuration is correct or being utilized
-> > by the kernel.  This is especially common when porting device trees
-> > from vendor kernels, as some properties may have slightly different
-> > names in the upstream kernel, or upstream drivers may not use certain
-> > properties at all.
->=20
-> In general I don't mind, but I have a comment about above rationale.
-> It's just wrong. The point of DT is to describe hardware, not the one
-> given, fixed in time implementation.
+Thanks for this, I'll go mark this driver as BROKEN right now until it
+can be properly cleaned up to use exported functions.
 
-I agree with you, sorry for being imprecise.
-
-> What's more, writing bindings mentions this explicit: make binding
-> complete, even if it is not used.
-
-Yes, with this aid, it is IMHO easier to find bindings that need attention.
-Just as an example, lately the device tree of a vendor used the property "t=
-imers",
-but in mainline it is "ti,timers".  With this debug feature, it is easy to =
-see that
-"timers" is not being used, and somebody has to decide whether the property=
- is
-really not used by a driver, or if the binding needs more work.
-
-Thanks,
-//richard
-
-
-=2D-=20
-=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
-=2DGasse 6, 6020 Innsbruck, AUT
-UID/VAT Nr: ATU 66964118 | FN: 374287y
-
-
+greg k-h
 
