@@ -1,139 +1,207 @@
-Return-Path: <linux-kernel+bounces-364708-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364709-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDB8A99D839
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:31:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF1F99D83B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:31:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58280B21611
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED3A51F21A40
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:31:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5940E1CCB42;
-	Mon, 14 Oct 2024 20:31:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EC8F1C9B7A;
+	Mon, 14 Oct 2024 20:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gBcUVaQn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="EqgfvISm"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D674C7C;
-	Mon, 14 Oct 2024 20:31:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E3F4C7C;
+	Mon, 14 Oct 2024 20:31:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937873; cv=none; b=t8HwokQ7yE2CUW4AwZPPJaIDcQLzubUflEdxUq4wYNyTnDYRURRtMWQQnKTIpQRYL1epWJ0vREO4xwRbCv7E1UDtEVOO02Iukyvv16Dp3/dmtLaw6annH5r8Vllgkx9I4S4zAev2pjSIqVza5AijsRiUW+Z8zP/cfSYlZsJpJVI=
+	t=1728937904; cv=none; b=tg/zM3mhXDLot8+glj4JD8c4arNKIhPUFu1EPLqYaS6lNsjwtQwBd/W/0cm9DgSo5BiLuqtdtciVY58PD7WRed0FSD7mcCuewp0Lfo3t/22dsb7+1k5QgCMcDV6i+jUA3andQxm29oxW3bCAaO4Z0g05hrHNsLCksuD6y53FErA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937873; c=relaxed/simple;
-	bh=/519vrXSCEBrD8167XIHl1Q+dorXR1ZPGe+dQgXTbfc=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K8U3xIV+3ET+M3AWdAUvagcbNN+gw2meT/l85mKiKcycXFhDkk8hcgIkAh+UF7aNsRULzmhqaaEiDqWH/90dTx/ZRT3tQe7srIdF6FYtpPhgpB/fFW/lFmD+8I+HQF42KN7d0e9vny3tZo9pFSHszw48K1YxutFUI7OQtEt0wso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gBcUVaQn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D16EAC4CEC3;
-	Mon, 14 Oct 2024 20:31:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728937873;
-	bh=/519vrXSCEBrD8167XIHl1Q+dorXR1ZPGe+dQgXTbfc=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=gBcUVaQnHhFUCe5WUEVgYCtrlI6M6a4O80Q7mJz7rcdfmE5/Y9G7vBFwQw+xP7q/9
-	 72ferCcQ0dXgfgYy9nKixtl+b+opIuj+lMuIAw41KW427fJr0wNFLZC8mS2RTMiYEH
-	 S/OLWWvBI5oQDz/XannhpYf1VvJ+IbBlfdVnbMhvSxvlT2txZyVCe934sIWrHhhnGj
-	 y/TQf8jm4UIlBxOGxXAx38KZlScBZlAuZQSFsulAeZEFaMoSTw35whA/clFMGxaaWx
-	 x52SEQucqS4W1J0OmxADkMtH/R2GbjZVIMRvyBm8EUXsx4+MVoHT+aQN1O4LUOkaKQ
-	 90PE0zwzzgxAg==
-Date: Mon, 14 Oct 2024 21:31:09 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jack Zhu <jack.zhu@starfivetech.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
-	E Shattow <lucent@gmail.com>
-Subject: Re: =?utf-8?B?5Zue5aSNOiBbdjM=?= =?utf-8?Q?=5D?= riscv: dts:
- starfive: jh7110: Add camera subsystem nodes
-Message-ID: <20241014-roamer-cinnamon-1e100b485052@spud>
-References: <ZQ0PR01MB13026F78B2580376095AF7E7F2442@ZQ0PR01MB1302.CHNPR01.prod.partner.outlook.cn>
- <Zw1-vcN4CoVkfLjU@aurel32.net>
+	s=arc-20240116; t=1728937904; c=relaxed/simple;
+	bh=8RhocmSe7dX1sQwAZJ2/SxXeMUL01SeBNhAa8AQUBNQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=M4geYTfZlKYFrO7hXMWrH1sFdoJnz6oY5YhwEIea4ueoVbG6I6H0rQMcWd1P07Y4470uYH8Tl5scDRSteaiknvmJA7TySwK53mNXkuF56iJ0VYDgnC9jGSP45T+m7L02Qf2/XoYhRDFNVINcPhUmUcaXVLMjmX9Xwliam5Bomqg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=EqgfvISm; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EFsekp021192;
+	Mon, 14 Oct 2024 20:31:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=XUUdF3x+n/LuHMoEeKJqT7
+	6Jw2pJSrtq4t0/PcYwFI8=; b=EqgfvISmMzP8BdqMY0Vw/BPIvwh8xZHtlVpvA5
+	sQpfChR12kbeSyOMHKMCBAAKEkJafrEm3Ncedb5MH2oF+QzIwUAomETBGgUmzxbE
+	I8BTM7VYhHuquDwiINPRr8Gb5LviPUVjotss1BiQst0nqWe139qBH1b632cVOzND
+	FXVJCRpG73r7fiUj1lS7MtJW77BAvawTA3Yi/G5iEqThW/7gn7dGonfRnXpNFzxs
+	2Dx/QcOu/+NSV6Fa3SZEdZuSsbGfVGni6rfErRjNU+vlmCrfZz5uMd7Hv3xj4Xd6
+	x7mqnZ/SCel4LAK4ksUX87MeO4je2QG2S49+gI1CIUhgvmtQ==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4296b7rjq6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 20:31:38 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EKVbXx013222
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 20:31:37 GMT
+Received: from hu-mojha-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 14 Oct 2024 13:31:35 -0700
+From: Mukesh Ojha <quic_mojha@quicinc.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>
+CC: <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        "Mukesh Ojha" <quic_mojha@quicinc.com>
+Subject: [PATCH v2] remoteproc: Add a new remoteproc state RPROC_DEFUNCT
+Date: Tue, 15 Oct 2024 02:01:18 +0530
+Message-ID: <20241014203118.1580024-1-quic_mojha@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="Bjrafg8s2P5yt9cp"
-Content-Disposition: inline
-In-Reply-To: <Zw1-vcN4CoVkfLjU@aurel32.net>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wXE3ACpU5HmiaD4VjehJpZKvrDDrLBm_
+X-Proofpoint-ORIG-GUID: wXE3ACpU5HmiaD4VjehJpZKvrDDrLBm_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 impostorscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 mlxscore=0 malwarescore=0 clxscore=1015 phishscore=0
+ mlxlogscore=999 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140145
 
+Multiple call to glink_subdev_stop() for the same remoteproc can happen
+if rproc_stop() fails from Process-A that leaves the rproc state to
+RPROC_CRASHED state later a call to recovery_store from user space in
+Process B triggers rproc_trigger_recovery() of the same remoteproc to
+recover it results in NULL pointer dereference issue in
+qcom_glink_smem_unregister().
 
---Bjrafg8s2P5yt9cp
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+There is other side to this issue if we want to fix this via adding a
+NULL check on glink->edge which does not guarantees that the remoteproc
+will recover in second call from Process B as it has failed in the first
+Process A during SMC shutdown call and may again fail at the same call
+and rproc can not recover for such case.
 
-On Mon, Oct 14, 2024 at 10:27:41PM +0200, Aurelien Jarno wrote:
-> Hi,
->=20
-> On 2024-10-14 01:08, Changhuang Liang wrote:
-> > Hi, Aurelien
-> >=20
-> > >=20
-> > > Hi,
-> > >=20
-> > > On 2024-02-18 19:27, Changhuang Liang wrote:
-> > > > Add camera subsystem nodes for the StarFive JH7110 SoC. They contain
-> > > > the dphy-rx, csi2rx, camss nodes.
-> > > >
-> > > > Signed-off-by: Changhuang Liang <changhuang.liang@starfivetech.com>
-> > > > ---
-> > > >  .../jh7110-starfive-visionfive-2.dtsi         | 49 ++++++++++++++
-> > > >  arch/riscv/boot/dts/starfive/jh7110.dtsi      | 67
-> > > +++++++++++++++++++
-> > > >  2 files changed, 116 insertions(+)
-> > >=20
-> > > We have been asked to enable CONFIG_VIDEO_STARFIVE_CAMSS in the
-> > > Debian kernel, which from my understanding and given the device tree =
-shown
-> > > below also requires enabling CONFIG_VIDEO_CADENCE_CSI2RX. That said
-> > > doing so triggers the following error in dmesg:
-> > >=20
-> > > [   25.143282] cdns-csi2rx 19800000.csi: probe with driver cdns-csi2rx
-> > > failed with error -22
-> > >=20
-> > > From a quick look it seems there is something in the port@0 csi2rx en=
-try. Do
-> > > you happen to know what is wrong?
-> > >=20
-> >=20
-> > You need to add your sensor node. You can refer to this patch:
-> > https://patchwork.kernel.org/project/linux-riscv/patch/20240119100639.8=
-4029-3-changhuang.liang@starfivetech.com/
-> >=20
-> > We suggest that using the imx219
->=20
-> Thanks for your answer. I do not have any sensor attached, the goal is
-> to build a generic kernel, and people can use overlays or patch their
-> device tree to add support for additional devices.
->=20
-> In that regard, I have the impression that csi2rx device (and maybe the
-> camss device?) should not be marked as enabled in the default device
-> tree. I think they could be enabled by users as part of the change need
-> to add the sensor node.
+Add a new rproc state RPROC_DEFUNCT i.e., non recoverable state of
+remoteproc and the only way to recover from it via system restart.
 
-Yeah, that's probably what should've been done when the imx219 node was
-removed. Feel free to send a patch with a Fixes: tag for that removal
-and a cc: stable on it - otherwise I'll send one out tomorrow or w/e.
+	Process-A                			Process-B
 
---Bjrafg8s2P5yt9cp
-Content-Type: application/pgp-signature; name="signature.asc"
+  fatal error interrupt happens
 
------BEGIN PGP SIGNATURE-----
+  rproc_crash_handler_work()
+    mutex_lock_interruptible(&rproc->lock);
+    ...
 
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZw1/jQAKCRB4tDGHoIJi
-0q8FAQDgeLWFLXi0q6X4bNcfHbUpz10qI/NjWDXGcvylrBjMCgEA7y/5Vki87xQ+
-/7MuPhrTacNGUSIwcbhKT8B2yd/OnQg=
-=AKJE
------END PGP SIGNATURE-----
+       rproc->state = RPROC_CRASHED;
+    ...
+    mutex_unlock(&rproc->lock);
 
---Bjrafg8s2P5yt9cp--
+    rproc_trigger_recovery()
+     mutex_lock_interruptible(&rproc->lock);
+
+      adsp_stop()
+      qcom_q6v5_pas 20c00000.remoteproc: failed to shutdown: -22
+      remoteproc remoteproc3: can't stop rproc: -22
+     mutex_unlock(&rproc->lock);
+
+						echo enabled > /sys/class/remoteproc/remoteprocX/recovery
+						recovery_store()
+						 rproc_trigger_recovery()
+						  mutex_lock_interruptible(&rproc->lock);
+						   rproc_stop()
+						    glink_subdev_stop()
+						      qcom_glink_smem_unregister() ==|
+                                                                                     |
+                                                                                     V
+						      Unable to handle kernel NULL pointer dereference
+                                                                at virtual address 0000000000000358
+
+Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+---
+Changes in v2:
+ - Removed NULL pointer check instead added a new state to signify
+   non-recoverable state of remoteproc.
+
+ drivers/remoteproc/remoteproc_core.c  | 3 ++-
+ drivers/remoteproc/remoteproc_sysfs.c | 1 +
+ include/linux/remoteproc.h            | 5 ++++-
+ 3 files changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/remoteproc/remoteproc_core.c b/drivers/remoteproc/remoteproc_core.c
+index f276956f2c5c..494c8fcc63ca 100644
+--- a/drivers/remoteproc/remoteproc_core.c
++++ b/drivers/remoteproc/remoteproc_core.c
+@@ -1727,6 +1727,7 @@ static int rproc_stop(struct rproc *rproc, bool crashed)
+ 	/* power off the remote processor */
+ 	ret = rproc->ops->stop(rproc);
+ 	if (ret) {
++		rproc->state = RPROC_DEFUNCT;
+ 		dev_err(dev, "can't stop rproc: %d\n", ret);
+ 		return ret;
+ 	}
+@@ -1839,7 +1840,7 @@ int rproc_trigger_recovery(struct rproc *rproc)
+ 		return ret;
+ 
+ 	/* State could have changed before we got the mutex */
+-	if (rproc->state != RPROC_CRASHED)
++	if (rproc_start == RPROC_DEFUNCT || rproc->state != RPROC_CRASHED)
+ 		goto unlock_mutex;
+ 
+ 	dev_err(dev, "recovering %s\n", rproc->name);
+diff --git a/drivers/remoteproc/remoteproc_sysfs.c b/drivers/remoteproc/remoteproc_sysfs.c
+index 138e752c5e4e..5f722b4576b2 100644
+--- a/drivers/remoteproc/remoteproc_sysfs.c
++++ b/drivers/remoteproc/remoteproc_sysfs.c
+@@ -171,6 +171,7 @@ static const char * const rproc_state_string[] = {
+ 	[RPROC_DELETED]		= "deleted",
+ 	[RPROC_ATTACHED]	= "attached",
+ 	[RPROC_DETACHED]	= "detached",
++	[RPROC_DEFUNCT]		= "defunct",
+ 	[RPROC_LAST]		= "invalid",
+ };
+ 
+diff --git a/include/linux/remoteproc.h b/include/linux/remoteproc.h
+index b4795698d8c2..3e4ba06c6a9a 100644
+--- a/include/linux/remoteproc.h
++++ b/include/linux/remoteproc.h
+@@ -417,6 +417,8 @@ struct rproc_ops {
+  *			has attached to it
+  * @RPROC_DETACHED:	device has been booted by another entity and waiting
+  *			for the core to attach to it
++ * @RPROC_DEFUNCT:	device neither crashed nor responding to any of the
++ * 			requests and can only recover on system restart.
+  * @RPROC_LAST:		just keep this one at the end
+  *
+  * Please note that the values of these states are used as indices
+@@ -433,7 +435,8 @@ enum rproc_state {
+ 	RPROC_DELETED	= 4,
+ 	RPROC_ATTACHED	= 5,
+ 	RPROC_DETACHED	= 6,
+-	RPROC_LAST	= 7,
++	RPROC_DEFUNCT	= 7,
++	RPROC_LAST	= 8,
+ };
+ 
+ /**
+-- 
+2.34.1
+
 
