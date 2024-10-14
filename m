@@ -1,205 +1,108 @@
-Return-Path: <linux-kernel+bounces-364043-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADD6B99CA69
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:40:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05BF199CA72
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFA2D2812B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:40:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE0592812AB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:42:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F851A7271;
-	Mon, 14 Oct 2024 12:40:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF6F1A76A5;
+	Mon, 14 Oct 2024 12:42:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PHGUumH8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9xAPvqnV";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="PHGUumH8";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="9xAPvqnV"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Enr1Xx8T"
+Received: from mail-pj1-f50.google.com (mail-pj1-f50.google.com [209.85.216.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F5571A7249;
-	Mon, 14 Oct 2024 12:40:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690AE1A725A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728909629; cv=none; b=nEhg4f/W3qLwi9t68zep3I4EyV8hdXs1GNUfvHnwjUlP0e/6PW7/AFKGWmUUQCEpinW+To8FDyYTm1KpQ8ltFlP1U1r52z9sOSuLqyuUDVCwEAGzEySFKtsE07o/pBZD9Nw86+1vXYODw+P6yqJ0IoIFG4J++dillBfOt3nTpEk=
+	t=1728909769; cv=none; b=TtJ4XCjCB0Q6gWCVVbVDdrL6sA8ksrKHwRXlTfft/9XLZrBF7eR1jIsRO3vLBAcqKFiMdALG7bg4zBgjPZ+vSWkqemIFaL2ToqJdVd+U9c5F/KMVwrnRuMty10MP0PlSInWAKLRmw2QBEkLcTKFp8XW20jqYog8hqckHH8hLNRM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728909629; c=relaxed/simple;
-	bh=eLv93g+XA//OTp2safLqFz4/KQcBzg9Js76cf3suyXc=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=eQKK00LCwFuVmbld3XbL48MMw7S8rPVjyBECKXUCdr0XoVAkkvdAPwa2YGknLDpW8v+epeOtPYjL5QwKoQ+yEoUAwO3BnKnmMdgrdoD6FAsqfxdAYVS/W7L2z/P8w78NcdPh3fZ0AFSElRe8rx2FrGToLpWnvxTar6RRLYqefyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PHGUumH8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9xAPvqnV; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=PHGUumH8; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=9xAPvqnV; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 5CE161FDF9;
-	Mon, 14 Oct 2024 12:40:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728909625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
-	b=PHGUumH8nj5isCuPAQnE4eYR5dihMZdP7zvegGPfRu+qTFJZVJYhvq15ZiV2V9k1hB154c
-	GG8HKcOnHJeeDSASCBeRlpaqCYxD6rVU8vXoc+rRNBck6FubfFFyh6fSQ7sRzYIiJaqlvr
-	Gk19R6YhPHsb91hLtAPq5NNRfuPGXqg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728909625;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
-	b=9xAPvqnViW03ecvj5tWuJNz4ilkQOcf5wIaUHnifeZcnuht5FjCTnnu1CdZhWD2J8OJgav
-	8i15gyza3wbwqWCA==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=PHGUumH8;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=9xAPvqnV
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1728909625; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
-	b=PHGUumH8nj5isCuPAQnE4eYR5dihMZdP7zvegGPfRu+qTFJZVJYhvq15ZiV2V9k1hB154c
-	GG8HKcOnHJeeDSASCBeRlpaqCYxD6rVU8vXoc+rRNBck6FubfFFyh6fSQ7sRzYIiJaqlvr
-	Gk19R6YhPHsb91hLtAPq5NNRfuPGXqg=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1728909625;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7ZJ2fMmVlwHb5HvH9xU5iseMxVbY4QfNNlC3OaZlj+w=;
-	b=9xAPvqnViW03ecvj5tWuJNz4ilkQOcf5wIaUHnifeZcnuht5FjCTnnu1CdZhWD2J8OJgav
-	8i15gyza3wbwqWCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B39C313A42;
-	Mon, 14 Oct 2024 12:40:24 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id kGUyKjgRDWctRgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Mon, 14 Oct 2024 12:40:24 +0000
-Date: Mon, 14 Oct 2024 14:41:22 +0200
-Message-ID: <8734kyyhzh.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Mark Brown <broonie@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg Marsden
- <greg.marsden@oracle.com>,
-	Ivan Ivanov <ivan.ivanov@suse.com>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Kalesh Singh <kaleshsingh@google.com>,
-	Marc Zyngier <maz@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Matthias Brugger <mbrugger@suse.com>,
-	Miroslav Benes <mbenes@suse.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	Will Deacon <will@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-sound@vger.kernel.org
-Subject: Re: [RFC PATCH v1 22/57] sound: Remove PAGE_SIZE compile-time constant assumption
-In-Reply-To: <6926988e-5532-457f-9e1a-135b03585c5d@arm.com>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
-	<20241014105912.3207374-1-ryan.roberts@arm.com>
-	<20241014105912.3207374-22-ryan.roberts@arm.com>
-	<Zw0CyAlSmaxOCZJl@finisterre.sirena.org.uk>
-	<6926988e-5532-457f-9e1a-135b03585c5d@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1728909769; c=relaxed/simple;
+	bh=gJGl+8wX1EZ9yO8oCw96wVlkUots97NzABVWJYyJnq0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nS5s4cPvzXp79nnr1/m9GAPLGSJhLAu+er7Y7Ob5pC4Y8086vp2fXJzY6mbOBDnPYaFutjxDQtQOWs5LR0PKuVdKsxkcgytaPODDSy97gqOgsF9dIs9yeau3IM5r9fp79ryGomqP4xzOj+zdfiDKPLKX2vyYvE3c4K69uP/0KKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Enr1Xx8T; arc=none smtp.client-ip=209.85.216.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pj1-f50.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso2628155a91.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728909768; x=1729514568; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=gJGl+8wX1EZ9yO8oCw96wVlkUots97NzABVWJYyJnq0=;
+        b=Enr1Xx8TBkG2p30Cp+qpmEyzShsjfQJpRR/Bfwot3q+GNOPkDoyxyOwsmU7f6qCltS
+         0ItpdrmqEPDXc1ht4ylz0F0F4gQWNu0ZRVVa8XSM+6TqK51d1cyyXXqNv6xKaQh9M9em
+         xooX5HkaGJVZl45yjAZsnOM4RjJIH6EeuxgISXY6NfYzgUcjshPy//kn/qE9wS0D4yGp
+         f8CQmhvgmrnqxBA9pM7v8rI3KTAaagaaFmpW9KgJecqo9M2I9/ES7HJZgm8puRSZJgKe
+         0ABqHvAPTNkQhh3lHCHoCyAEGAifQ3MN+chS8yKWOHuOnq07LgqsKrND6Bfr9mvKbmfF
+         zSXQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728909768; x=1729514568;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=gJGl+8wX1EZ9yO8oCw96wVlkUots97NzABVWJYyJnq0=;
+        b=H68oLvoGtLjsuKUut578bpLrSdaYOuqJxaFDX5XkpmbmE6LcQDhpWVw9qMnxZXaS5N
+         d+mte2/RJWKuF9Udeqy1JTrutTGrxx3xovDEM8Qk+24jei1SPDrhFOqK1DQe9bISd8G2
+         s3jd612+pQwAQaPy8BBq7oebxd2MGz5Xz0T1Lrsk+g87R+vGkx6qUBPIjVX/GpbjOEVr
+         23PnR7xmocPnFp1l1pLZ9Hb2rD6sT/oQz8vQ5W4ecregZJcBcceMKuA27dXocac2k/MF
+         itzXSEgDhwovOMp5PMcXjG4BjSaqADUOjfG8N0uGkwcjnew8galowxslO8hVswVwvvNM
+         ZEwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVKu7s43IFuRkacWmEe+nvCxSIlCoHR9ayezhKxROgm9KTEu0dg7pz9+bplMfKTiLGib+XPn9USJivk7YI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8b9VkwqeXKMNhIwII4n/GfT6iao6CaJwlA+9w7Q2do3EnJTBh
+	2+CakstJJDmrT8YFow9dWbvuE1JfMrdg2GIcm/3kAldgVLVUG5rGBklepKbpWvTibrXU1l28M5U
+	D9+ZeCJi1cDkhOZtkQAEmuvVZQPhLT+byvKMHfo80DGuHrF2XKqFL
+X-Google-Smtp-Source: AGHT+IHqsr/P4FQKdWTxi0rovMGf9JyEsX7S20eZuyXx2VDQ/rgWFXmVREgt+5mWhxTduWqegrfMu+idUtZLsLcHJU0=
+X-Received: by 2002:a17:90a:5588:b0:2e2:d3e1:f863 with SMTP id
+ 98e67ed59e1d1-2e2f0a49376mr13518183a91.12.1728909767291; Mon, 14 Oct 2024
+ 05:42:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Rspamd-Queue-Id: 5CE161FDF9
-X-Spam-Score: -3.51
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCPT_COUNT_TWELVE(0.00)[21];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <670cb595.050a0220.4cbc0.0043.GAE@google.com> <CACT4Y+ZQzOQZqGZ17KsPmsTNTtZx1k8iQDdpggdEhBqoWBo3qg@mail.gmail.com>
+ <CANpmjNP=7q2aX2O5_HVLvW9PnqAM79FpN-Oer-TbG_rAz5B5kA@mail.gmail.com> <CACT4Y+asVHVjKSC3YxwdeoAwxhWzp1K7hU4spdxQjN==N34+eQ@mail.gmail.com>
+In-Reply-To: <CACT4Y+asVHVjKSC3YxwdeoAwxhWzp1K7hU4spdxQjN==N34+eQ@mail.gmail.com>
+From: Marco Elver <elver@google.com>
+Date: Mon, 14 Oct 2024 14:42:07 +0200
+Message-ID: <CANpmjNO9LKPvyPaebk8JcGEg5jjkm6iz3x6hPqsRLgOetkzSnA@mail.gmail.com>
+Subject: Re: [syzbot] [perf?] KCSAN: data-race in _free_event /
+ perf_pending_task (2)
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: syzbot <syzbot+e75157f5b04f8ff40e17@syzkaller.appspotmail.com>, acme@kernel.org, 
+	adrian.hunter@intel.com, alexander.shishkin@linux.intel.com, 
+	irogers@google.com, jolsa@kernel.org, kan.liang@linux.intel.com, 
+	linux-kernel@vger.kernel.org, linux-perf-users@vger.kernel.org, 
+	mark.rutland@arm.com, mingo@redhat.com, namhyung@kernel.org, 
+	peterz@infradead.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 14 Oct 2024 14:24:02 +0200,
-Ryan Roberts wrote:
-> 
-> On 14/10/2024 12:38, Mark Brown wrote:
-> > On Mon, Oct 14, 2024 at 11:58:29AM +0100, Ryan Roberts wrote:
-> >> -static const struct snd_pcm_hardware dummy_dma_hardware = {
-> >> +static DEFINE_GLOBAL_PAGE_SIZE_VAR_CONST(struct snd_pcm_hardware, dummy_dma_hardware, {
-> >>  	/* Random values to keep userspace happy when checking constraints */
-> >>  	.info			= SNDRV_PCM_INFO_INTERLEAVED |
-> >>  				  SNDRV_PCM_INFO_BLOCK_TRANSFER,
-> >> @@ -107,7 +107,7 @@ static const struct snd_pcm_hardware dummy_dma_hardware = {
-> >>  	.period_bytes_max	= PAGE_SIZE*2,
-> >>  	.periods_min		= 2,
-> >>  	.periods_max		= 128,
-> >> -};
-> >> +});
-> > 
-> > It's probably better to just use PAGE_SIZE_MAX here and avoid the
-> > deferred patching, like the comment says we don't particularly care what
-> > the value actually is here given that it's a dummy.
-> 
-> OK, so would that be:
-> 
-> 	.buffer_bytes_max	= 128*1024,
-> 	.period_bytes_min	= PAGE_SIZE_MAX,      <<<<<
-> 	.period_bytes_max	= PAGE_SIZE_MAX*2,    <<<<<
-> 	.periods_min		= 2,
-> 	.periods_max		= 128,
-> 
-> ?
-> 
-> It's not really clear to me how all the parameters interact; the buffer size
-> 128K, which, if PAGE_SIZE_MAX is 64K, would hold 1 period of the maximum size.
-> But periods_min is 2. So not sure that works? Or perhaps I'm trying to apply too
-> much meaning to the param names...
+On Mon, 14 Oct 2024 at 12:30, Dmitry Vyukov <dvyukov@google.com> wrote:
+[...]
+> But that task is later using 'current' to do something with regard to
+> this event:
+>
+> /*
+> * If the task is queued to the current task's queue, we
+> * obviously can't wait for it to complete. Simply cancel it.
+> */
+> if (task_work_cancel(current, head)) {
+>
+> Is this current wrong here? So it may both not cancel it for the real
+> owner, and cancel something else for itself (?).
 
-Right, when PAGE_SIZE_MAX is 64k, 128k won't be used because of the
-constrant of periods_min=2.
-
-As Mark mentioned, here the actual size itself doesn't matter much.
-So I suppose it'd be even simpler to define just 4096 and 4096 * 2 for
-period_bytes_min and *_max instead of sticking with PAGE_SIZE.  Then
-it would become platform-agnostic, too.
-
-
-thanks,
-
-Takashi
+That's fine - task_work_cancel() looks for the event in the passed
+task_struct, and does nothing if not found. If the task_work is owned
+by another task, task_work_cancel() will never find a match, and this
+is a no-op. The later rcuwait_wait_event() will wait for the task_work
+to complete in the other task.
 
