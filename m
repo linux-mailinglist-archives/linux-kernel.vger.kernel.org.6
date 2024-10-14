@@ -1,184 +1,172 @@
-Return-Path: <linux-kernel+bounces-364309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B01E99D187
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:17:59 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38D3099D195
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:18:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F8BA1F245A8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:17:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9EBD4B247F7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:18:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C760F1ABEB1;
-	Mon, 14 Oct 2024 15:14:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6DD1C3050;
+	Mon, 14 Oct 2024 15:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZLTcR1L0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="V2QSMtnm"
+Received: from sonic314-26.consmr.mail.ne1.yahoo.com (sonic314-26.consmr.mail.ne1.yahoo.com [66.163.189.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 200AD1B85D0
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:14:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0E401C2439
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:15:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=66.163.189.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728918869; cv=none; b=scIdAwmQeIty0adqSer1kP3so2XpdOwjDHqrxM3FOyTPkZ/fEmx+LgOO0ffvGTPehFnOzxCviZ8N/uKqZZP8JUgqyFNNd7Aos+1EtVTa3FOOgG1JbxNDZZuotl4TuJuhZLPSeLUtJFa01sm20u1SNBn+3ZmJFj+pkUxakqpvxzo=
+	t=1728918904; cv=none; b=IwCJuAQRrxp3NadG3U4JSWrPAFQiqPGaxklm52iIdR3YE2Kkqmmcum59Eb82H4Th4d8gvS0xwu90l+t8OpAFZljZLeekmoC7+/iYNnHbDKy5Ke7ZOvi1Mx97lu7P1OoYfb8zWiUBxcr5tlloaBieGxHMCFChHVPSUBmO+pirxaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728918869; c=relaxed/simple;
-	bh=nY5g2YHgpdatItZ1mP7yVZRj0wBocZETzf2AagyWRHw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=lks6aqBNe2GHvHp4oRajSy1Qjh4agiskLOgp6c6NXU7FBe4Dm0E19t1AdbOA9toXz6jtb4cXETk8cNB3C+slXLMMmj0fHjYovq/ketxSfnGU+niQHTnh8VTW0FqLMeUqVAV722ATpsZPD3lpb9OGREhJOBjb5AdD7aTdaiEEaJU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZLTcR1L0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B508C4CEC3;
-	Mon, 14 Oct 2024 15:14:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728918869;
-	bh=nY5g2YHgpdatItZ1mP7yVZRj0wBocZETzf2AagyWRHw=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=ZLTcR1L0xSwRBTa2M8HOiQ+f9yAde+Pa/d7Vn6kEr5OKWKZvbHSq3zI/Nfz0hmACC
-	 T9LophHT+mUITmoOzCiG1UEL4gx7u5rcfpjc66iyArBIL/vTLPYRF8SjmVDNYIIBWm
-	 KFchoCkGwyr32QIESzKfDdD/67TKxGAg35fy7WTHeTi6A/MiIKhLNadnUKY9LsVX7r
-	 pzRX/+315foJK3vnZhuqweQinP9eelK9ZlNnrVWJCAhOTiXQwl+jLNTa4WTM3zQtsJ
-	 uJUZ8NXvkpwrBuxv8LuliV+t5luLC9ia6rQqzB9ow04nKeLQKscyhGxnOkRMOuV39E
-	 kjExaklycbhQQ==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Sunil V L <sunilvl@ventanamicro.com>, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-Cc: Anup Patel <anup@brainfault.org>, Thomas Gleixner <tglx@linutronix.de>,
- Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
- <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, "Rafael J .
- Wysocki" <rafael.j.wysocki@intel.com>, Sunil V L
- <sunilvl@ventanamicro.com>, Alexandre Ghiti <alexghiti@rivosinc.com>
-Subject: Re: [PATCH] irqchip/riscv-intc: Fix no-SMP boot with ACPI
-In-Reply-To: <20241014065739.656959-1-sunilvl@ventanamicro.com>
-References: <20241014065739.656959-1-sunilvl@ventanamicro.com>
-Date: Mon, 14 Oct 2024 17:14:26 +0200
-Message-ID: <87cyk2zpgt.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1728918904; c=relaxed/simple;
+	bh=kJxFi3BqgCkSILZ7kWET0J04ko2NYzGeGNiWP9CMtjs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=TiS37kl10opQa96TE1/tV2f9vLojKDfwxh6Lvb1pI4eJ19mnHDWHUHadqZqC7N1pH4MekvXvX1OEwpYRVgzFTWi8tYU4aCB78iWrC0ciMv/YmTkzUQ5NFrfAP8kkO4vddQVVVU9jMBEDDg4mx9JeA4/T5iu8ZadbIa342Xc92e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=V2QSMtnm; arc=none smtp.client-ip=66.163.189.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728918896; bh=UnEEKf+Qio82nsMEVpo64j2xeMEZV543kJXLF+rLtnc=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=V2QSMtnmsMG3T9aeQE7AeXnnXQqPsutdcif35AJ2U7I8lnQ5rkmWEzACc6oNK0rwWS3guksw2exXnjIQP8BZNNi6N9j0foYHAnMs7waAvHsgghojvaLeapujIGF9Qno8t0IDcr4DpAU/8EX5yyoVmP8PVUN8uJT/qYyfZ3TuUn4KLT/eXf0VOiOQcBKK/oxJU9i89PqllsCHYwVtFmpY26Lhxn89zic5RPkL2i0mlOUAexDwqL+fl/bLGdfQLk7Femdxc4EbAmFobBsFfgDh/Y0M3g834teJvTmpySkx7RzcjXxnMUlVd/quphOvu+BJAUgd1ym5DLeMwgv0bf98Kg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1728918896; bh=V2saP3X/U4NA1dwGROI62oFndbG8LvcsO8+rxvyLgX9=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=cchENhSMHiWvfJN5okfmq4dpyMYUWL8YkSNWr0Kn+6mHLmNfcauAjEIcBc5e8xmIzin90akFk+hr6Jd3ugdrudJLzQtups2Y4PKTuBgMfCx2y5uzxgxwcs/1j7e3KlXG+e44wXQmVd3pCDFfxZfAFKopBAIo2LCC3K3s76g+LlGMdjguwVo4jcpIVoIweTw7e8vaMb0M7t3cN1QQEpYWOJflvEi/ZdISJqeIvRmU9d288rUiiJhQ84fRkGTfqgrqLUX9rh9Di31yxF2cthLPdu+aAps3C+BQLQ7+NL5pvvLVd13bkD3iSSnrpERM6bRNmDQloo9M+USpzUcWckT6sQ==
+X-YMail-OSG: j62v95oVM1mAQarmHmK_j38oGFD7zBW5j2Dlv6R9zt42ikCM2WrltP9hG3._pjf
+ J6k4b3pvF4.4P0_.qmbMVdGZdxQn8pbsTkKiRhWNb.Z9bsaPUrsmuIXuh1nXi40s.JcfelcZ0HcY
+ w57BUY6edqVaflnUy0ALzIwvq9gykxzDYDxIm9Koxj0oMBcxoEQt_EXm388IqUzdnqMHiFUBMtBc
+ o6NgGmjseptmAaigjS9OdUJVPVSzu6MJQqiMt02Ng4c9uGSXj50ayd0dKnpT8vOVbdWJhZjeD9BB
+ eU2Cucu19heuJODvpL2P0v2Yc6oD.MSRVbRENqCIp66swas0HU0XVZGrwaFD_9kDQaoKin1kuput
+ REv2wbxXwN3vhNHpV3oUUig3K9ueEPJmuGagDb8bl86bNJtWwBmwU4QkyKUmpyb6EW3LkPIDjrOF
+ dKIQOJIdncoFaK81nl4BwgMVb.O2GjOPy7.tsueKCMwwuwxaPI0G7QWzrAmOLFd1EDEbRXbHttbw
+ swe.d8SwDVybWV6YaBWd0iZKUBloBBXbgmRQVup_qTQMdYCQvtz1x5UHMNow5WESwb4_3Z19JEAc
+ CQK88KheCzK.kZKgo4zFILl73yc3b_q81h2tZI_08I.RzgVb8tuPoMU7tKlCtKC5UxtyY.a6HeUe
+ qNhZ.z7MbkmfonueC5ndKSejOExqszfhDLaj8HD7qkvtJq35YwQhweHOlV8sYzUFsxhMctNors7B
+ g_rfrnu5tjXylfH2Lk4432DkxfVTTAwx_lR1ElXQlW5bn8cWctWTxNOkSxNJ7cT.hE2UoqVUgs1O
+ Z71l8ZP.gkLtQFxu03ETrAXJQOVLtf2PERP2k_4.L2YMRTrJ7jBHSi9TakMBgSbLuvlZB3e3f6Nh
+ LIR5vcBvaQXqb1eZqxLhSEkCMli88ZKEukCw_3ybZozVQl6ReRk7BVQ8eTks4RMMLILHGqB_04Ox
+ I2IJytR0yOjdJdi6Os2qQE4lvQDfGHlovblG7I8LLJj2ZHD9rFZei6JnutlD_hUffmGm8uiYJtR6
+ y9wBUkCBRPYoUVX87rUCOuBxcz9H_.D47klyadJPl0_VyW5p66j.EVrggeyPnego5RKTi4vjoUOf
+ 64.EP72M561E6r9i8FDEZb2iaAcCxHL4XitXGDrmKFX.7DELtNfW9CHNXbcmfo_tV_uS9bk93l0O
+ aoxpTdPNI1PrZGoBiRpqaMLLaWLdQktcLy0iAwtwYe7LTuMKtPKdHss0vx8bR4xhBPDMfXdaV5BP
+ SxraGYs4J4I5K6W63vT9pFNJOYWg_rXkS23MR6NtQIpkKCz91uqF9P5uoqav.TaKsZQSbdN_mZeS
+ z3M7avWRrT8HgazQCpCSeopGH4FFSSNUS.wPbpFqyMlLNTWlLS8vnEPMFb0RGXOG7UC50we.YtRU
+ WDpgUktC_DiaY32m5tQL6_K2FP.yfJGXyn0lxGb3uCqk896yfg11Cp2geVNiFUrx3sm96MBmwnVr
+ ObH.DdPTz57HyCeN6r19SsW.ABbO9AHqe6p3isYVn3JGnH.O03dmlExgc1e.BeCDfAieyO9pLUqA
+ h0JC4nB_1TZBOAZCFvP6WBJ3yfRenr_f.mjQLe_wZr0OiqKIufU9PjCis3axLgZIeapP3tRrbJY7
+ _a7CIvG06CLSAfR277yNOc_BN30N_oNsb0BBFwzoGnYsC.vQp6nD20S9wpjXxQYLHJ6lGHr6aL8a
+ m48Dy89JPnTgFVtNNm6oqzmBu6yJbfMHQsugrDB9NTMyBybbztUtJhdnGOmLeYjtxsyXTC.MDYUo
+ gJw81QXo3QLehTEpBplq2WmwtTR8qb78l0fN9BipRRJPYqePsnu5BCV05eFGvMj6bF3Q6TjM6enI
+ sukNgjO0qyVTRLCY4c5GNfYFz02OSXpkuK0tLUF7CYD_WhMokwP9gasBdGiejSMyqnb5cynmRYZA
+ G4cvqqctTER9202uEXqdhUcBQmIH_PsMWDMqzU19TD4rFtVycUniEYLbI9ULlVZOsGePa6S5SSFN
+ _46AuJ63LTkws1KdvJxNOIlRXdXVZJs.H4rkcCggIx.OS7WVvRF_zw1suBvoOB4qcW_tTeonObL.
+ 2qEuwQkQ83rkyAS9C0Bgu8qYH966rNxstOk8TdBH9wzseU0ljapPSokqhPzwVBkYQglj25EYkrSb
+ wOdCopuIea4V5_KNYxQR9q0WYPXUBrsOW526xF73J64rnb9vbUl3kgzvSm7ma0xFH1eJKMODkhy2
+ T0PuMn06jGMQ5njMm_D1AgQsJoEb3TAgadECPEWdbuOMebPdA6UIdfUhZ8l_imR0gh2owzU63ra8
+ 0gLSKRZ0UshR9W77RIE_21dA-
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: c0a3c97a-b036-4a9b-bad8-23e85f169727
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.ne1.yahoo.com with HTTP; Mon, 14 Oct 2024 15:14:56 +0000
+Received: by hermes--production-gq1-5d95dc458-4tw7n (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 6c392927ea0eb898578ed262d71f570d;
+          Mon, 14 Oct 2024 15:14:54 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	mic@digikod.net
+Subject: [PATCH v2 0/6] LSM: Replace secctx/len pairs with lsm_context
+Date: Mon, 14 Oct 2024 08:14:44 -0700
+Message-ID: <20241014151450.73674-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+References: <20241014151450.73674-1-casey.ref@schaufler-ca.com>
 
-Thanks for fixing this, Sunil!
+LSM: Replace secctx/len pairs with lsm_context
 
-Sunil V L <sunilvl@ventanamicro.com> writes:
+Several of the Linux Security Module (LSM) interfaces use a pair of
+pointers for transmitting security context data and data length. The
+data passed is refered to as a security context.  While all existing
+modules provide nul terminated strings, there is no requirement that
+they to so. Hence, the length is necessary.
 
-> When CONFIG_SMP is disabled, the static array rintc_acpi_data with size
-> NR_CPUS will not be sufficient to hold all RINTC structures passed from
-> the firmware. All RINTC structures are required to configure
-> IMSIC/APLIC/PLIC properly irrespective of SMP in the OS. So, allocate
-> dynamic memory based on the number of RINTC structures in MADT to fix
-> this issue.
+Security contexts are provided by a number of interfaces. The interface
+security_release_secctx() is used when the caller is finished with the
+data. Each of the security modules that provide security contexts manages
+them differently. This was safe in the past, because only one security
+module that provides security contexts is allowed to be active. To allow
+multiple active modules that use security contexts it is necessary to
+identify which security module created a security context. Adding a third
+pointer to the interfaces for the LSM identification is not appealing.
 
-To clarify; QEMU is constructing an ACPI table for multiple harts
-(multiple RINTC), but the kernel build is NO_SMP.
+A new structure, lsm_context, is created for use in these interfaces.
+It includes three members: the data pointer, the data length and
+the LSM ID of its creator. The interfaces that create contexts and
+security_release_secctx() now use a pointer to an lsm_context instead
+of a pointer pair.
 
-> Fixes: f8619b66bdb1 ("irqchip/riscv-intc: Add ACPI support for AIA")
-> Reported-by: Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org>
-> Closes: https://github.com/linux-riscv/linux-riscv/actions/runs/112809975=
-11/job/31375229012
-> Signed-off-by: Sunil V L <sunilvl@ventanamicro.com>
-> ---
->  drivers/irqchip/irq-riscv-intc.c | 19 ++++++++++++++++++-
->  1 file changed, 18 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/irqchip/irq-riscv-intc.c b/drivers/irqchip/irq-riscv=
--intc.c
-> index 8c5411386220..f653c13de62b 100644
-> --- a/drivers/irqchip/irq-riscv-intc.c
-> +++ b/drivers/irqchip/irq-riscv-intc.c
-> @@ -265,7 +265,7 @@ struct rintc_data {
->  };
->=20=20
->  static u32 nr_rintc;
-> -static struct rintc_data *rintc_acpi_data[NR_CPUS];
-> +static struct rintc_data **rintc_acpi_data;
->=20=20
->  #define for_each_matching_plic(_plic_id)				\
->  	unsigned int _plic;						\
-> @@ -329,13 +329,30 @@ int acpi_rintc_get_imsic_mmio_info(u32 index, struc=
-t resource *res)
->  	return 0;
->  }
->=20=20
-> +static int __init riscv_intc_acpi_match(union acpi_subtable_headers *hea=
-der,
-> +					const unsigned long end)
-> +{
-> +	return 0;
-> +}
-> +
->  static int __init riscv_intc_acpi_init(union acpi_subtable_headers *head=
-er,
->  				       const unsigned long end)
->  {
->  	struct acpi_madt_rintc *rintc;
->  	struct fwnode_handle *fn;
-> +	int count;
->  	int rc;
->=20=20
-> +	if (!rintc_acpi_data) {
-> +		count =3D acpi_table_parse_madt(ACPI_MADT_TYPE_RINTC, riscv_intc_acpi_=
-match, 0);
-> +		if (count <=3D 0)
-> +			return -EINVAL;
-> +
-> +		rintc_acpi_data =3D kcalloc(count, sizeof(*rintc_acpi_data), GFP_KERNE=
-L);
-> +		if (!rintc_acpi_data)
-> +			return -ENOMEM;
-> +	}
-> +
->  	rintc =3D (struct acpi_madt_rintc *)header;
->  	rintc_acpi_data[nr_rintc] =3D kzalloc(sizeof(*rintc_acpi_data[0]), GFP_=
-KERNEL);
->  	if (!rintc_acpi_data[nr_rintc])
-> --=20
-> 2.43.0
+The changes are mostly mechanical, and some scaffolding is used within
+the patch set to allow for smaller individual patches.
 
-For context, this is the splat:
+This patch set depends on the patch set LSM: Move away from secids:
+	https://github.com/cschaufler/lsm-stacking.git#lsmprop-6.12-rc1-v4
 
-  | Unable to handle kernel paging request at virtual address ff60000000000=
-00c
-  | Oops [#1]
-  | Modules linked in:
-  | CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-rc2-g2255fe696ded=
- #1
-  | epc : acpi_rintc_index_to_hartid+0x2c/0x3c
-  |  ra : imsic_get_parent_hartid+0x54/0xb6
-  | epc : ffffffff8046b788 ra : ffffffff80a1fe74 sp : ffffffff81403af0
-  |  gp : ffffffff815181b8 tp : ffffffff8140c780 t0 : ffffffff81403b58
-  |  t1 : 00000000000003ff t2 : 0000000000000004 s0 : ffffffff81403b90
-  |  s1 : ff60000080057060 a0 : 0000000000000008 a1 : 0000000000000000
-  |  a2 : 0000000000000000 a3 : ffffffff81403b58 a4 : ffffffff80e0dd80
-  |  a5 : ff60000000000004 a6 : 0000000000000001 a7 : 0000000000000400
-  |  s2 : ffffffff81403bb0 s3 : 0000000000000001 s4 : ff1bfffffea790e8
-  |  s5 : ffffffff81403da0 s6 : 0000000000000000 s7 : ffffffff8151c9e8
-  |  s8 : 0000000000000001 s9 : 0000000000000003 s10: 0000000000000000
-  |  s11: ffffffff81403da0 t3 : 0000000000000400 t4 : 0000000000000401
-  |  t5 : 0000000000000001 t6 : 0000000000000400
-  | status: 0000000200000100 badaddr: ff6000000000000c cause: 0000000000000=
-00d
-  | [<ffffffff8046b788>] acpi_rintc_index_to_hartid+0x2c/0x3c
-  | [<ffffffff80a20008>] imsic_setup_state+0xe8/0x83a
-  | [<ffffffff80a208f8>] imsic_early_acpi_init+0x50/0xd2
-  | [<ffffffff80a23536>] acpi_match_madt+0x2e/0x5a
-  | [<ffffffff80a1f5f4>] acpi_parse_entries_array+0x164/0x230
-  | [<ffffffff80a222ba>] acpi_table_parse_entries_array+0x86/0xc2
-  | [<ffffffff80a2234a>] acpi_table_parse_entries+0x54/0x7c
-  | [<ffffffff80a22410>] acpi_table_parse_madt+0x22/0x2a
-  | [<ffffffff80a2389c>] __acpi_probe_device_table+0x78/0xc8
-  | [<ffffffff80a1f98a>] irqchip_init+0x36/0x3e
-  | [<ffffffff80a03d2e>] init_IRQ+0x30/0x52
-  | [<ffffffff80a00c08>] start_kernel+0x4b4/0x800
-  | Code: d513 01d7 1797 010b 8793 2507 97aa 639c 60a2 6402 (6788) 0141=20
-  | ---[ end trace 0000000000000000 ]---
+https://github.com/cschaufler/lsm-stacking.git#context-6.12-rc1-v2
 
-(Alex just kicked a build w/ this patch)
+Revisons:
+	v2: Rebase for static calls in LSM infrastructure
 
+Casey Schaufler (6):
+  LSM: Ensure the correct LSM context releaser
+  LSM: Replace context+len with lsm_context
+  LSM: Use lsm_context in security_inode_getsecctx
+  LSM: lsm_context in security_dentry_init_security
+  LSM: secctx provider check on release
+  LSM: Use lsm_context in security_inode_notifysecctx
 
-Bj=C3=B6rn
+ drivers/android/binder.c                | 25 +++++----
+ fs/ceph/super.h                         |  3 +-
+ fs/ceph/xattr.c                         | 12 ++---
+ fs/fuse/dir.c                           | 35 +++++++------
+ fs/nfs/dir.c                            |  2 +-
+ fs/nfs/inode.c                          | 16 +++---
+ fs/nfs/internal.h                       |  8 +--
+ fs/nfs/nfs4proc.c                       | 16 +++---
+ fs/nfs/nfs4xdr.c                        | 22 ++++----
+ fs/nfsd/nfs4xdr.c                       | 22 ++++----
+ include/linux/lsm_hook_defs.h           | 16 +++---
+ include/linux/nfs4.h                    |  8 +--
+ include/linux/nfs_fs.h                  |  2 +-
+ include/linux/security.h                | 41 +++++++++------
+ include/net/scm.h                       | 12 ++---
+ kernel/audit.c                          | 33 ++++++------
+ kernel/auditsc.c                        | 27 +++++-----
+ net/ipv4/ip_sockglue.c                  | 12 ++---
+ net/netfilter/nf_conntrack_netlink.c    | 16 +++---
+ net/netfilter/nf_conntrack_standalone.c | 11 ++--
+ net/netfilter/nfnetlink_queue.c         | 22 ++++----
+ net/netlabel/netlabel_unlabeled.c       | 44 +++++++---------
+ net/netlabel/netlabel_user.c            | 10 ++--
+ security/apparmor/include/secid.h       |  7 ++-
+ security/apparmor/secid.c               | 31 +++++------
+ security/security.c                     | 70 +++++++++++--------------
+ security/selinux/hooks.c                | 52 ++++++++++++------
+ security/smack/smack_lsm.c              | 55 +++++++++++--------
+ 28 files changed, 325 insertions(+), 305 deletions(-)
+
+-- 
+2.46.0
+
 
