@@ -1,119 +1,150 @@
-Return-Path: <linux-kernel+bounces-363994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1ACBF99C98B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:55:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68DDC99C993
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:57:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C40861F25418
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:55:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1FC0B283E42
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:57:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3669419E96E;
-	Mon, 14 Oct 2024 11:55:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3210819F410;
+	Mon, 14 Oct 2024 11:57:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OGqlRace"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Vo/X2Rli"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D245913B7A1
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:55:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D57313C67C;
+	Mon, 14 Oct 2024 11:57:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906944; cv=none; b=DPoFc+4mjFupz3JtjCJ31HOYDAzB2PwQkgWbEHOGOLMGqu9ABK6cMGI2KUBuzWEy3tjElrKMXKmYv8JWsaFznb+eHk0GTHBUXEU5WFCOh9BUj8b6aLSaI59sVNR43r+nk4Fv8xvUMTTcquYnN1+GTiEEG+s8AvCoFQvNVRe8QVQ=
+	t=1728907043; cv=none; b=qXk6rWsJAJvcNvnypb/WVpZTc/APjSm628DYfDFl6x01Ni84Qvhq3IQ9oJb19kP/8Wo+2pk3UaiuQytpUrHLbDd9xfqVEtHAxeS0TTGngPJl8xBSqvezihdkM2+lqmGXpgXootuBW9//2hFYDyyzToT5/f35k8OmzlLvs6uxqvU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906944; c=relaxed/simple;
-	bh=iCJf2BvQKHMkT1neGc/lIBFFPg3x0mhnsRiA2u32SRA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TIDUyo6ZX3S40GNYA4wQanAkFXz0DZe3fJCOXARxFxReS4Z1tvdJv+y/Q7mTt23dGh6wYjtykH+bi1tFullEOgIsJLUkIfoJjA+5TrOHulCRTEgWk+fhljvM8y56ldWqKLVQy8MCxG+6DFrmPs2E/H3JXCZdi1feDndcu3jqjR0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OGqlRace; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e1543ab8so3867423e87.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:55:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728906941; x=1729511741; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=T/oxXTAg0PlYJqkRYS1FLak4rA2aWJDGdiaDrP2NuKQ=;
-        b=OGqlRaceVBPrN78qLo/w+8MQkP3lAkKuQ2h95b8o/BDuyV6ZGuk1BMbsyPWG+YZhXW
-         X2iJyRT4jP1q03hGZNT+CMvrqKWJDMChEBGQQW5w6sJ9kMRH8OZ38vXZglGFz/swSil1
-         i7itr8aqcck0SoYO7XYK99BvG0fQJeekCbZeq0XMu802RwIrJPfUqCLM9mTHY9tF+oSa
-         JJIJ8o3enozOkarig1bzWkOu+ZO5lUPP7wQDhpW8BTLwfVhwLpzJEQCCNMS2TK+XAX5V
-         ksX85F7+ze9zckyOLhSfyAjgk68r5P1YqFOzt3YLV7NrSOEQ7kqHsgiygnxn7R5lyHDd
-         Gn/w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728906941; x=1729511741;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T/oxXTAg0PlYJqkRYS1FLak4rA2aWJDGdiaDrP2NuKQ=;
-        b=qLdATIxlFNKe6i3Uah1XQBhOqw379RR48dHzNO1PFPwUnFhLxS0LXUjBABKVZ81Uxs
-         3XoHdA70nfL/bjxIUp+glALhUrAAB24Q5qW+PzsCY2rKjqACby13jYGYch0PgwNRWZQc
-         9urG/MdvA0Z2Y0zMci5Fykn4SA6QJMpZBIrLLTL2tJ8ff8+mELawZPctW3gS7QJzyhzS
-         K9Dg9DyYr8YwrVYlA8ZjtRW0Oo95RcZ8N49/ZyFnPmaeYWdmpg2tP6Shcv/KaQJTKLy8
-         JCV6ZvoSsCZrNB+7JZSJLdx94Xwh90Vs/kItWYF0NNy7iTt7di7FrlurXF+hJRUBeplY
-         q3pA==
-X-Forwarded-Encrypted: i=1; AJvYcCXt2alSfBd17UhLtE8D17YWUNzpOIvKZz7HYUQYNa/AhZQY7Yaq0alW8amBqgODuarmdaGv9UwW33UuMkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw0ow2I4zrRplYXxFhWOetLi/0fp3JRLlmeb5pMavZJpJ+BToof
-	SFlksicgfdqiIsBMq+u9ceBN12eWBvykVyRmPwtAsvXjsBKF+M0OF0rio0jp3g8=
-X-Google-Smtp-Source: AGHT+IH8rPkujKntCd/jKdFy7EZluu4nWyB6i94v8ZAP9Vh+vAG8UNERp3kK/+VzRBL9Ts67/Mhryg==
-X-Received: by 2002:a05:6512:2202:b0:533:4620:ebec with SMTP id 2adb3069b0e04-539e54d7713mr3536430e87.3.1728906940999;
-        Mon, 14 Oct 2024 04:55:40 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539fa326de4sm211972e87.55.2024.10.14.04.55.39
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:55:39 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:55:38 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hermes Wu <Hermes.Wu@ite.com.tw>
-Cc: Pin-yen Lin <treapking@chromium.org>, 
-	Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
-	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 07/10] drm/bridge: it6505: fix HDCP CTS KSV list read
- with UNIGRAF DPR-100.
-Message-ID: <s25g54atrkqjv6pfhege6eekd5fkx2orxwddevkotpoaphrldc@57mf46ksd4fo>
-References: <20241001064346.32269-1-Hermes.Wu@ite.com.tw>
- <20241001064346.32269-3-Hermes.Wu@ite.com.tw>
+	s=arc-20240116; t=1728907043; c=relaxed/simple;
+	bh=v4o35weX78c4/KH4VRpqRNZ2ilJKUTY41ENoYVMZJuU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Wf7yQRIOh3x5MlB7zaVLvU/coHjs6CVIM8FAgeyGSHeN919+8KEAGTaltJ1X6rfjkUeqC/kScrBYb9fPOhd2e61SSXDZXntg0B2KhWN0uaNuZ+KWpBJRq5SVQn4Gg+I5BA4Xo2LbLRXPYv95Sc7qfdPHVHQNg65MfxweFQW/JkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Vo/X2Rli; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C01DAC4CEC3;
+	Mon, 14 Oct 2024 11:57:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728907043;
+	bh=v4o35weX78c4/KH4VRpqRNZ2ilJKUTY41ENoYVMZJuU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Vo/X2Rli/jOr3XdnZ0mRdm3gGaHzIPnLq/7jlVusw210/GMO9vRHUm/pIOQfk53kN
+	 xOvt43RxiXkBHb+OirrCHvMGeQ1iB/p/nFRhS0CjVEGVq46H4cMgWNB6k2ofwNe3fk
+	 Ay3OAJT4lV982T1yrM7cWomdGmbR0R6lyw8S2z/Q8OLBPX97/4iBe9YD9aToyAdVH9
+	 IayFCHFRmLdXt47NqS8MfxVl3WyzOe6jPwimvkmChEWxETK2eJyucujlZ9uV2ltu4t
+	 A4gWlphg4ja+IFNvWiaTKApLpVnjkKNn2caQVCXTes11y1tUVO7Ylq9KiE3MlBEQC/
+	 6zdOzpuMr4JxQ==
+Message-ID: <8fa9f6d3-bd1f-4242-a4c0-7b7022576f73@kernel.org>
+Date: Mon, 14 Oct 2024 13:57:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001064346.32269-3-Hermes.Wu@ite.com.tw>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 01/28] dt-bindings: media: Add video support for QCOM
+ SM8550 SoC
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-1-c5eaa4e9ab9e@quicinc.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-1-c5eaa4e9ab9e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 01, 2024 at 02:43:44PM +0800, Hermes Wu wrote:
-> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> 
-> When running the HDCP CTS test with UNIGRAF DPR-100.
-> KSV list must be read from DP_AUX_HDCP_KSV_FIFO in an AUX request, and can not separate with multiple read requests.
-> 
-> The AUX operation command "CMD_AUX_GET_KSV_LIST" reads the KSV list with AUX FIFO and is able to read DP_AUX_HDCP_KSV_FIFO in an AUX request.
-> 
-> Add it6505_get_ksvlist() which uses CMD_AUX_GET_KSV_LIST operation to read the KSV list.
+On 14/10/2024 11:07, Dikshita Agarwal wrote:
+> Introduce support for Qualcomm new video acceleration
+> hardware i.e. iris, used for video stream decoding and
+> encoding on QCOM SM8550 SoC.
 
-Please keep the commit message wrapped at 72-75 chars.
+Please wrap commit message according to Linux coding style / submission
+process (neither too early nor over the limit):
+https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
 
-> 
-> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 48 +++++++++++++++++++++--------
->  1 file changed, 36 insertions(+), 12 deletions(-)
-> 
+No need to resend just for this.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
--- 
-With best wishes
-Dmitry
+
+---
+
+<form letter>
+This is an automated instruction, just in case, because many review tags
+are being ignored. If you know the process, you can skip it (please do
+not feel offended by me posting it here - no bad intentions intended).
+If you do not know the process, here is a short explanation:
+
+Please add Acked-by/Reviewed-by/Tested-by tags when posting new
+versions, under or above your Signed-off-by tag. Tag is "received", when
+provided in a message replied to you on the mailing list. Tools like b4
+can help here. However, there's no need to repost patches *only* to add
+the tags. The upstream maintainer will do that for tags received on the
+version they apply.
+
+https://elixir.bootlin.com/linux/v6.5-rc3/source/Documentation/process/submitting-patches.rst#L577
+</form letter>
+
+Best regards,
+Krzysztof
+
 
