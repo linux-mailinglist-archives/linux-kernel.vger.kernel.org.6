@@ -1,170 +1,121 @@
-Return-Path: <linux-kernel+bounces-364572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id D018C99D64A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:17:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 642B999D647
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EBFFB20CFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:17:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29AED283B4D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:17:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F2E11CACCF;
-	Mon, 14 Oct 2024 18:17:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A03D1C8781;
+	Mon, 14 Oct 2024 18:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="MTPMgIde"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hnQMm361"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2709B1FAA;
-	Mon, 14 Oct 2024 18:17:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D40561C3054;
+	Mon, 14 Oct 2024 18:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728929845; cv=none; b=Q0dQkZLOosDf+NFWgQgzNCVPA24MtVqeANyQjUX+/EVE/WvoU28VdTsMYeSc3e8Uj2KyLmJY1HV9IPAQ0VbYgcuQS78no7BwjOwx/3sxJBkKqtk5A47YjY0P+7QrbyMIy/fz6Sn9xF8Q2NfW9hmwV0yXxncgVDFMFkbBVVPlZao=
+	t=1728929843; cv=none; b=nBz68GOyGL9YmRpS4oTBAm5Tg19Q8oPUEdpuwMbppTU8MW/FX1X/hTYNVSmrF5gv3RP+ioEDZJvIM/Ho/cGmmbrOHl8DDUTrhNh27bHjvZHZ5A/e92EAjPYqU/bbY8SOQQgjy8nix8+D6Kb1qc/p+BAabVG3XAIeOiXn6WNiP9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728929845; c=relaxed/simple;
-	bh=P3Pzj722a0qn2KFz7CJfgBKO+JfL3dlBqaxecPwjeek=;
+	s=arc-20240116; t=1728929843; c=relaxed/simple;
+	bh=QWiRryJ/QG6fnd6dxHqKiW+T+tf+bGfWNopSJcn6c1A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aSs82ZBhn5+N8AOCnxg7RPAvs3WBgKgijn/zeTWxQCG1xBCF7x4RRpZ0+/Nv+nQMwA99vBOPHJcbFeQcBWC/uxprHUHOXelGeQ+uH7KWq5lG0KFFf+tVLzMMS8CtqghMa8o7xU77ozdzeBWtkscH+QwAGjJzx4JVSGaGjUZdI7s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=MTPMgIde; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9DA5440E0184;
-	Mon, 14 Oct 2024 18:17:20 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id FdZTbS5Yi9uB; Mon, 14 Oct 2024 18:17:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1728929835; bh=rRulwwslaCiKpYQiRcp3k5u/GU44D2gHabFxhCGCe2k=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=H5VQ4VPKX0ydQ8n80Ra9RYtT/7q7a4DYqedPX9wRvdy8DjSKVREu34eTo8g8ae0GEzPjPOSDrgAWNCf1sMrhxyG/vEn+QwiUfIUCaM1UVq8rLKZT1y00vezFBM3ACT7jRqN8bMt+rEg6GTcZ31CdnsMqCPT+8OLP1iIz+DS4YrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hnQMm361; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A36FFC4CEC3;
+	Mon, 14 Oct 2024 18:17:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728929843;
+	bh=QWiRryJ/QG6fnd6dxHqKiW+T+tf+bGfWNopSJcn6c1A=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MTPMgIdelKAHQlU+HXCBeAaSxV0Ui/L3cr6Xmo31ldIIcLmnP7D4yadrMwJr3I6DK
-	 x5aRFKCygueVgCT4ABt6WkPjIxfTQtJzn8scvo7XLEWuY0MP3ryR+G1mU5+x39zRxy
-	 0qTqJs2sr8nTWfEW4A7rDf55zuMOCqrTx65nAnEaRGkxsw+Xeq3XJopNq+hv2+NZ0w
-	 zEtzEVBvFR4S5lKwKvOmwJ/gr9Samx+3Pmtkg+yd1ffZCRx3J4xoSKA9Xwh4LhGBzY
-	 EssseZkPgIMoGB/ZkMXGcSdK2LhUYkqOfWJVZTz/ztw+PpEio9q6ZDI27wv3pvAxon
-	 P1VUpTRXcW/ouQ1U+cD96In1NZp4abLzIxWHUDR8XuYHvnY+Szuk1LxXSS5hvNVYH6
-	 SFjQD+1N7hCHFHBbVRfzIvxQ2EUjsCIMzYOn1y9Iw6g6YO+hbBU5DodBMmsoOQl4zF
-	 tzxkkFFTbOiwpmsu+zHwtih92WPYNA0LSE+Yq/iMZu8XiVlF7LoVHuwaTYeM+H8hOB
-	 MA0rljcPbgb5E6hGaRfnWzViLNb/ASRRL2utzBls+bEOA/tWIKGttv/AneXcKt0gzT
-	 0Cxt6mJKJ/wkS+n5PXZ2t+zpKTrmVwtv6Da+sWW5OQBbWRvQISXRcNnQh8lsey/uOZ
-	 yPUGFx3OJTY7fvqQ4Y2BFTLk=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E5E4140E0163;
-	Mon, 14 Oct 2024 18:16:52 +0000 (UTC)
-Date: Mon, 14 Oct 2024 20:16:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: York Sun <york.sun@nxp.com>, Tony Luck <tony.luck@intel.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>, linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	Priyanka Singh <priyanka.singh@nxp.com>,
-	Sherry Sun <sherry.sun@nxp.com>, Li Yang <leoyang.li@nxp.com>
-Subject: Re: [PATCH v2 3/6] EDAC/fsl_ddr: Fix bad bit shift operations
-Message-ID: <20241014181647.GQZw1gDwIhBdnFnleH@fat_crate.local>
-References: <20241011-imx95_edac-v2-0-011b68290951@nxp.com>
- <20241011-imx95_edac-v2-3-011b68290951@nxp.com>
+	b=hnQMm361amkyUEEOYwQ3KBXQ/JiSGM8R0reD0By9pOeYWHivhDYUw1wrLmrT+CeW2
+	 qdY32gi0iHbmeyU8iicKw2F1M+RlydJRVos2DYpkBRuifK6JHmPOr59kXeUPnQQa9x
+	 F/yMNSi2o2+sxq+Vk0CwuzW+0XwQzDuFjdKQi+TBaoz+xPM7cXIBjCyU42xoflnEqe
+	 Y7BSVLGjIoaL1Pm0JIOQpMWTAzslHP6JxQENKRPKbfkCgadIphb4vr+yQKwutXn9sc
+	 Wg65PITqOYVJCWpfyWXgQaIsfRIkkXmf72Ow1NwfoXGL9IfE1OldXHHIiVa3Z4K8uH
+	 UHTjVHshZ6Maw==
+Date: Mon, 14 Oct 2024 23:47:19 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Fenghua Yu <fenghua.yu@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, dmaengine@vger.kernel.org,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] dmaengine: idxd: Move DSA/IAA device IDs to IDXD driver
+Message-ID: <Zw1gL22McDhFfgnk@vaman>
+References: <20241004195200.3398664-1-fenghua.yu@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241011-imx95_edac-v2-3-011b68290951@nxp.com>
+In-Reply-To: <20241004195200.3398664-1-fenghua.yu@intel.com>
 
-On Fri, Oct 11, 2024 at 11:31:31AM -0400, Frank Li wrote:
-> From: Priyanka Singh <priyanka.singh@nxp.com>
-> 
-> Fix undefined behavior caused by left-shifting a negative value in the
-> expression:
-> 
->     cap_high ^ (1 << (bad_data_bit - 32))
-> 
-> The variable `bad_data_bit` ranges from 0 to 63. When `bad_data_bit` is
-> less than 32, `bad_data_bit - 32` becomes negative, and left-shifting by a
-> negative value in C is undefined behavior.
-> 
-> Fix this by checking the range of `bad_data_bit` before performing the
-> shift.
-> 
-> Fixes: ea2eb9a8b620 ("EDAC, fsl-ddr: Separate FSL DDR driver from MPC85xx")
+On 04-10-24, 12:52, Fenghua Yu wrote:
+> Since the DSA/IAA device IDs are only used by the IDXD driver, there is
+> no need to define them as public IDs. Move their definitions to the IDXD
+> driver to limit their scope. This change helps reduce unnecessary
+> exposure of the device IDs in the global space, making the codebase
+> cleaner and better encapsulated.
 
-Is this an urgent fix which needs to go to stable or someone just caught it
-from code review?
+That is good
 
-Does it trigger in real life, IOW?
+> 
+> There is no functional change.
 
-> Signed-off-by: Priyanka Singh <priyanka.singh@nxp.com>
-> Reviewed-by: Sherry Sun <sherry.sun@nxp.com>
-> Signed-off-by: Li Yang <leoyang.li@nxp.com>
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+Ok
+
+> 
+> Fixes: 4fecf944c051 ("dmaengine: idxd: Add new DSA and IAA device IDs for Diamond Rapids platform")
+> Fixes: f91f2a9879cc ("dmaengine: idxd: Add a new DSA device ID for Granite Rapids-D platform")
+
+How is this a fix?
+
+> Signed-off-by: Fenghua Yu <fenghua.yu@intel.com>
 > ---
->  drivers/edac/fsl_ddr_edac.c | 17 ++++++++++++-----
->  1 file changed, 12 insertions(+), 5 deletions(-)
+>  drivers/dma/idxd/registers.h | 4 ++++
+>  include/linux/pci_ids.h      | 3 ---
+>  2 files changed, 4 insertions(+), 3 deletions(-)
 > 
-> diff --git a/drivers/edac/fsl_ddr_edac.c b/drivers/edac/fsl_ddr_edac.c
-> index 7a9fb1202f1a0..ccc13c2adfd6f 100644
-> --- a/drivers/edac/fsl_ddr_edac.c
-> +++ b/drivers/edac/fsl_ddr_edac.c
-> @@ -338,11 +338,18 @@ static void fsl_mc_check(struct mem_ctl_info *mci)
->  			fsl_mc_printk(mci, KERN_ERR,
->  				"Faulty ECC bit: %d\n", bad_ecc_bit);
+> diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
+> index e16dbf9ab324..c426511f2104 100644
+> --- a/drivers/dma/idxd/registers.h
+> +++ b/drivers/dma/idxd/registers.h
+> @@ -6,6 +6,10 @@
+>  #include <uapi/linux/idxd.h>
 >  
-> -		fsl_mc_printk(mci, KERN_ERR,
-> -			"Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
-> -			cap_high ^ (1 << (bad_data_bit - 32)),
-> -			cap_low ^ (1 << bad_data_bit),
-> -			syndrome ^ (1 << bad_ecc_bit));
-> +		if ((bad_data_bit > 0 && bad_data_bit < 32) && bad_ecc_bit > 0) {
-> +			fsl_mc_printk(mci, KERN_ERR,
-> +				      "Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
-> +				      cap_high, cap_low ^ (1 << bad_data_bit),
-> +				      syndrome ^ (1 << bad_ecc_bit));
-> +		}
-> +		if (bad_data_bit >= 32 && bad_ecc_bit > 0) {
-> +			fsl_mc_printk(mci, KERN_ERR,
-> +				      "Expected Data / ECC:\t%#8.8x_%08x / %#2.2x\n",
-> +				      cap_high ^ (1 << (bad_data_bit - 32)),
-> +				      cap_low, syndrome ^ (1 << bad_ecc_bit));
-> +		}
-
-This is getting unnecessarily clumsy than it should be. Please do the
-following:
-
-	if (bad_data_bit != 1 && bad_ecc_bit != -1) {
-
-		// prep the values you need to print
-
-		// do an exactly one fsl_mc_printk() with the prepared values.
-
-	}
-
-Not have 4 fsl_mc_printks with a bunch of silly if-checks in front.
-
-Thx.
+>  /* PCI Config */
+> +#define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
+> +#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
+> +#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
+> +
+>  #define DEVICE_VERSION_1		0x100
+>  #define DEVICE_VERSION_2		0x200
+>  
+> diff --git a/include/linux/pci_ids.h b/include/linux/pci_ids.h
+> index 4cf6aaed5f35..e4bddb927795 100644
+> --- a/include/linux/pci_ids.h
+> +++ b/include/linux/pci_ids.h
+> @@ -2709,9 +2709,6 @@
+>  #define PCI_DEVICE_ID_INTEL_82815_MC	0x1130
+>  #define PCI_DEVICE_ID_INTEL_82815_CGC	0x1132
+>  #define PCI_DEVICE_ID_INTEL_SST_TNG	0x119a
+> -#define PCI_DEVICE_ID_INTEL_DSA_GNRD	0x11fb
+> -#define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
+> -#define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
+>  #define PCI_DEVICE_ID_INTEL_82092AA_0	0x1221
+>  #define PCI_DEVICE_ID_INTEL_82437	0x122d
+>  #define PCI_DEVICE_ID_INTEL_82371FB_0	0x122e
+> -- 
+> 2.37.1
 
 -- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
+~Vinod
 
