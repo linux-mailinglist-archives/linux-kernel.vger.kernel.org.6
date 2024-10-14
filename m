@@ -1,135 +1,192 @@
-Return-Path: <linux-kernel+bounces-364627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7003E99D726
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:16:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0751F99D72A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:17:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 862BC1C20CEC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:16:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FD841F24014
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:17:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 023861CC177;
-	Mon, 14 Oct 2024 19:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E0C1CC163;
+	Mon, 14 Oct 2024 19:16:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EjG/5WZA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="atCsLEbG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F6202F34;
-	Mon, 14 Oct 2024 19:16:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C52D1AE00E
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:16:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728933384; cv=none; b=cegl1BPXxppRW+41dCHi4URIL/7h7UWCtx3dEusPGgu0lK5uOtYsd0vXEv3SYq196pZc5UYYUX35xTCZqi1loe6+uq5C973RpUhkwpidnsd7NpT+22gAbmg+NeWHv9SA81S+W3TJukmRz1uOwnJ3pEjJ00CgH+KEyX2H8hRQ7wY=
+	t=1728933413; cv=none; b=rW64gMcwtkZ7OR0Ex23QI6TynzSxioZoOrLOReKLBI6jk/9gwXtyPmxwnbLz+QrYlZQZupbM9GdMduEVgdGWtDVJiykLWy9Yhxzx/9leuIVorvB1IduyW15XF5HBXaJO7Us846O3thQnS1w42TsmSQJ37psAaiVEz+m3Uvw2m4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728933384; c=relaxed/simple;
-	bh=UuppSLaM0kOzMrDSh2RloHR9IgCcKKb57FBSLEkEUWY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FFCOuTgz8sD7Ed/Kud9QCetDjIUNalCJp7fx5uHw1Lmy9rz4nHQDEuyQ/Js8mUYGIu7NDMob76aKmnNJiOi2L4O9SXpk56EaNsy0we+WKWwieq1Sco/q44kKRl8QMxa9zBx62PKRSDUFlxYPAUQCHyOzRrL463Nm1OvZadSbpoI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EjG/5WZA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2DC60C4CEC3;
-	Mon, 14 Oct 2024 19:16:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728933383;
-	bh=UuppSLaM0kOzMrDSh2RloHR9IgCcKKb57FBSLEkEUWY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=EjG/5WZADaXhvwARHnqKg67eiuXX7gTWxPoitBNELLTxxDNviuMSsmlu/en6P6ED8
-	 zpJ52uHjqiz/g2IcIGwuziTngHnAXDzicRERzVAAIDP4l2L6y33KAuyIagMcpMXzl4
-	 9dBRK2tjgLlrX3Ons9R5vBST3i3yiewblKFLfAI64WB5+23Fn5KkJljDLeTWRKDZ84
-	 jnexNcW9vYFK3px9crwCiVYgH/8ctiyb/DdHjxU96pqWdOL1lwHrwqpz6qzLtvvsU8
-	 7pmIeyrMmskmV1mcXKss65BVVX6VBxafQdYx2gdNsA2KwzhcBEiTj2VcG0YSmjPMmN
-	 oCmkdGtrERExg==
-Date: Mon, 14 Oct 2024 12:16:20 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	Petr Pavlu <petr.pavlu@suse.com>,
-	Sami Tolvanen <samitolvanen@google.com>
-Cc: Mike Rapoport <rppt@kernel.org>, Christoph Hellwig <hch@infradead.org>,
-	Andreas Larsson <andreas@gaisler.com>,
-	Andy Lutomirski <luto@kernel.org>, Ard Biesheuvel <ardb@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>, Borislav Petkov <bp@alien8.de>,
-	Brian Cain <bcain@quicinc.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Dinh Nguyen <dinguyen@kernel.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
-	Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Matt Turner <mattst88@gmail.com>, Max Filippov <jcmvbkbc@gmail.com>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Richard Weinberger <richard@nod.at>,
-	Russell King <linux@armlinux.org.uk>, Song Liu <song@kernel.org>,
-	Stafford Horne <shorne@gmail.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>,
-	Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
-	bpf@vger.kernel.org, linux-alpha@vger.kernel.org,
-	linux-arch@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org, linux-mm@kvack.org,
-	linux-modules@vger.kernel.org, linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org, linux-riscv@lists.infradead.org,
-	linux-sh@vger.kernel.org, linux-snps-arc@lists.infradead.org,
-	linux-trace-kernel@vger.kernel.org, linux-um@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org, loongarch@lists.linux.dev,
-	sparclinux@vger.kernel.org, x86@kernel.org
-Subject: Re: [PATCH v5 7/8] execmem: add support for cache of large ROX pages
-Message-ID: <Zw1uBBcG-jAgxF_t@bombadil.infradead.org>
-References: <20241009180816.83591-1-rppt@kernel.org>
- <20241009180816.83591-8-rppt@kernel.org>
- <Zwd7GRyBtCwiAv1v@infradead.org>
- <ZwfPPZrxHzQgYfx7@kernel.org>
- <ZwjXz0dz-RldVNx0@infradead.org>
- <ZwuIPZkjX0CfzhjS@kernel.org>
- <20241013202626.81f430a16750af0d2f40d683@linux-foundation.org>
+	s=arc-20240116; t=1728933413; c=relaxed/simple;
+	bh=4dLSC1AqyzV3uC10Q3HwD5XOgaZY1SpinKQv+dE8wno=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GFSzmt0+vk+U4ftTcpEyOBPtSbHGuy3rI00CHj/9NyKr9ITH7va9a+Tj9y+hS/CVJz6ycnfC+CvzYvbI0Mw3co+yaC6CRno5ecw8JqEKbrIWNTEGlqx+s6R1HmVBcOfJ4uqI/KKG+4sWTa7wgtCKbwZxewQFiJPcxWJCOgnKpPY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=atCsLEbG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728933410;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=sQIx8Zvd1bi6csR0yDCe7VkAynOD+MUuQmAi1iHX0fA=;
+	b=atCsLEbG5K0KPyrsuMhHD0kB5z9oDNmvIxp+L4SrCKlYFQ8/NCviR0nWcU7lIsSt4PHCDV
+	G7Gz71QXNNs0vh7SvemvFFDpTte+CCd+Q6MLLOAI8TbyyRVCeE1QF/fbVETC8S7l/bhi7F
+	/QW8ErMxO0eYiqNoCvghlFtBAss/PmA=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-509-dHK6tPRCPiKoQ5MvqlZQqA-1; Mon, 14 Oct 2024 15:16:49 -0400
+X-MC-Unique: dHK6tPRCPiKoQ5MvqlZQqA-1
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-37d4854fa0eso2232157f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:16:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728933408; x=1729538208;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=sQIx8Zvd1bi6csR0yDCe7VkAynOD+MUuQmAi1iHX0fA=;
+        b=bbjsiWUn05Ycnqo4WO5Mshd8JklLA8rwAzleyKhtXXoFPeE5uZ6xdzl0lYiCHZ7ltP
+         6ibjJatIqrq8xegmSbv/+lLtplTHUbACQ1MmBxxXi8qp77lGzhHf693LEu7UJWJV6d4m
+         sWx7nsEwFoBoTk4UhYOtPF7/wpaoOwe0Vucav4hQYCsbgdsbbnGPhDkmd3vw9rg2a2UA
+         a4ZQ6r47ppoQVvkSgUwUV5ePHTT0iqr3QpnGWP+Lz7mdNEHv0U/r3JDXUWMIvwzenEPx
+         tYSdlZMQO9cP7j/Piub8KzdFlsGrbmhdMN4G8yOAwuiMCsFFm82Of89tBCetWpmBl29s
+         39pQ==
+X-Gm-Message-State: AOJu0YyZdbYqicjshwjN5gInpfxqBFB9bliZX73XMRmt9JLQgqzZ9Rtm
+	b2oX4tUiHuDypIzVOuExGJN6gHCUxYhoLF/P+KWPnC8dEkLpA+cNo13aAQABV20GOkzjOYfUnZw
+	0czAwz+a7DECIDSnPn1Zm6TOVNFrOhpw8e1cywEjhecmggWImnEgf2rm/zCg9RQ==
+X-Received: by 2002:a5d:4348:0:b0:371:8319:4dbd with SMTP id ffacd0b85a97d-37d551e3d0cmr8006258f8f.17.1728933408036;
+        Mon, 14 Oct 2024 12:16:48 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IE6sBThr6RdJ9UzUqBJZ/Z2oXOcyxnQX4PJcKNdIkMaURe8S9HvwixtiT1L8Zrvsmei+/RVow==
+X-Received: by 2002:a5d:4348:0:b0:371:8319:4dbd with SMTP id ffacd0b85a97d-37d551e3d0cmr8006241f8f.17.1728933407562;
+        Mon, 14 Oct 2024 12:16:47 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c71e:600:9fbb:f0bf:d958:5c70? (p200300cbc71e06009fbbf0bfd9585c70.dip0.t-ipconnect.de. [2003:cb:c71e:600:9fbb:f0bf:d958:5c70])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6cffa5sm12197664f8f.53.2024.10.14.12.16.46
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 12:16:47 -0700 (PDT)
+Message-ID: <ebce486f-71a0-4196-b52a-a61d0403e384@redhat.com>
+Date: Mon, 14 Oct 2024 21:16:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013202626.81f430a16750af0d2f40d683@linux-foundation.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 5/7] virtio-mem: s390 support
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
+ linux-doc@vger.kernel.org, kvm@vger.kernel.org,
+ Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
+ <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
+ Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
+ Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
+ Claudio Imbrenda <imbrenda@linux.ibm.com>,
+ "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
+ Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
+ <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
+References: <20241014144622.876731-1-david@redhat.com>
+ <20241014144622.876731-6-david@redhat.com>
+ <20241014184824.10447-F-hca@linux.ibm.com>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241014184824.10447-F-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 13, 2024 at 08:26:26PM -0700, Andrew Morton wrote:
-> On Sun, 13 Oct 2024 11:43:41 +0300 Mike Rapoport <rppt@kernel.org> wrote:
+On 14.10.24 20:48, Heiko Carstens wrote:
+> On Mon, Oct 14, 2024 at 04:46:17PM +0200, David Hildenbrand wrote:
+>> The special s390 kdump mode, whereby the 2nd kernel creates the ELF
+>> core header, won't currently dump virtio-mem memory. The virtio-mem
+>> driver has a special kdump mode, from where we can detect memory ranges
+>> to dump. Based on this, support for dumping virtio-mem memory can be
+>> added in the future fairly easily.
 > 
-> > > > The idea is to keep everything together and have execmem_info describe all
-> > > > that architecture needs. 
-> > > 
-> > > But why?  That's pretty different from our normal style of arch hooks,
-> > > and introduces an indirect call in a security sensitive area.
-> > 
-> > Will change to __weak hook. 
-> > 
-> 
-> Thanks, I'll drop the v1 series;
-> 
-> The todos which I collected are:
-> 
-> https://lkml.kernel.org/r/CAPhsuW66etfdU3Fvk0KsELXcgWD6_TkBFjJ-BTHQu5OejDsP2w@mail.gmail.com
-> https://lkml.kernel.org/r/Zwd6vH0rz0PVedLI@infradead.org
-> https://lkml.kernel.org/r/ZwjXz0dz-RldVNx0@infradead.org
-> https://lkml.kernel.org/r/202410111408.8fe6f604-lkp@intel.com
 
-BTW Andrew I'd like to pick this up through the modules tree, and while
-at it, also beat it up with some more testing as we're expanding also
-with the modversions stuff for Rust modules.
+Thanks for the review.
 
-  Luis
+> Hm.. who will add this support? This looks like a showstopper to me.
+
+The cover letter is clearer on that: "One remaining work item is kdump 
+support for virtio-mem memory. This will be sent out separately once 
+initial support landed."
+
+I had a prototype, but need to spend some time to clean it up -- or find 
+someone to hand it over to clean it up.
+
+I have to chose wisely what I work on nowadays, and cannot spend that 
+time if the basic support won't get ACKed.
+
+> Who is supposed to debug crash dumps where memory parts are missing?
+
+For many production use cases it certainly needs to exist.
+
+But note that virtio-mem can be used with ZONE_MOVABLE, in which case 
+mostly only user data (e.g., pagecache,anon) ends up on hotplugged 
+memory, that would get excluded from makedumpfile in the default configs 
+either way.
+
+It's not uncommon to let kdump support be added later (e.g., AMD SNP 
+variants).
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
