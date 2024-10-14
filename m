@@ -1,94 +1,117 @@
-Return-Path: <linux-kernel+bounces-364230-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7162699CE37
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:41:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 390B899CE45
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:42:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0BB81C230CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:41:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F23D8285C14
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BECF71ABEBF;
-	Mon, 14 Oct 2024 14:41:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1171B1ABEC7;
+	Mon, 14 Oct 2024 14:41:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PTUGCUT/"
-Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com [209.85.219.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcsgqAGP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA31E1AB6DD;
-	Mon, 14 Oct 2024 14:41:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3271AA7A5;
+	Mon, 14 Oct 2024 14:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916881; cv=none; b=KhYUTpEYacQBrL6a9nCdeMmRSZ7/4buZOo5G0TvAUWy0zlVsG9aP3u2W+Fla/y6Zh9hrLdFaxbem/UdNJBwDHd8fgfivSygAOALYZqEQ9p9CfVvKHv6UabTuz1HcQMmxeCPnad8kTBK+DdMBNn24Xsv6kEECW0M/OI6/DuqEExA=
+	t=1728916913; cv=none; b=nf1Yg8+4+vgOu1I8bVJ8fhWK3+AzO9KPkM6r5eYDxgwIPbnjOgSagquqCW7TmEEPoQRKLYTfQgpJXyLd5IgNaVOTgkLNfTj4/nBtSLCG9kxfGbofsS002NuK7JoDVpAVCLVww8Opakw2532gBhVIYBKJJMaSpCOBRmecNl4UECc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916881; c=relaxed/simple;
-	bh=poO1b4aOOl4KxcNSMPtHE5c3OpdVVV7KBRYV8RfpmPQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BGKCNoAM2YVFJVDMVj7UNWPLi7UaL1dtXljUqvrXhqeALtvWbHbGr7+vXdIpzcF4eL3e6UN4HmVExkelNsH0IR1mHZkuc4Jtp7G7dD3IbmKBDKvY0qwkoLgqgU3i3d4OGnSMdfNpKbVlUc2g12upDAkcAhezj+/jg507jeniuvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PTUGCUT/; arc=none smtp.client-ip=209.85.219.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e28fd8cdfb8so3690607276.3;
-        Mon, 14 Oct 2024 07:41:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728916879; x=1729521679; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=S+RUbcnctgVo0yHfaNa75XTL/Dsjylm+oWJiYZAGfmI=;
-        b=PTUGCUT/1Qnckdr5VRB6h/hRmEYvtMn5LluuHf4r9w4MqFL4LclP61VW2LNzIgEw7E
-         IZsqKKFxpDQU/ypzKmypXzqZpH4e1zBrGlGW7xvUsg/9guswi6NelOzRuyfoTOdo0cl1
-         xV0jbCZSKXHUncSD6ApX4Wv/qsAVHd9spbc5gOsvj085cWmROZdx4yTikqFI82hZvKDs
-         kk/d+8T0hnZPboVwg9N97sGzIMbdaj2dcZoe7XFdtTH/2vKcN02k7e96yyIc9JR1aac/
-         gQzgGY0g0z+EVFwpUMxOP+bcQU6/jZRd7roy5TWs7TwgyPYud4E9Z/haGhvc7l8ZJ+iG
-         j7jQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916879; x=1729521679;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=S+RUbcnctgVo0yHfaNa75XTL/Dsjylm+oWJiYZAGfmI=;
-        b=waxemJJwaPhZc6wTqscqwi+po3Cl2l7MH/sX4YX533VVQLSnOtxpvXScQKD6VA9Y1z
-         VJ8YIpolS0jaDoSOoxVKZyXcrHUQDZlRffqVTRQmtWAfIGXmC83EN7T68aXNawS+XvbW
-         qPu9mgU/DGm3pbfRKK/CTHljj+7opVH1CZyMRP2mBx6QEVji0FSi+AnGR5f4hmf2JJtj
-         ZEOaP0J2m/ukp8Gq9Exp5uVA9fTvGdlmHc1oyklZe2Hdtm0b232nBy/s2sB2C2UE84rE
-         8G3K4r9q4R7a4JEPRDGIEFDgVvr7Fs5Qvd4KBo5D1OxamM7r+vxd8FCxLK1hyzO9PeUL
-         6gog==
-X-Forwarded-Encrypted: i=1; AJvYcCXWKOrCrcuyTcbnOznU166RdSVezGqy0iQgIu72LeCDuQ1oqSxzSqqx/3tHv0LdFSasY/8pBN84LK+yOT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeMyksdvq+47gRp+r82fISv6Zt6WfJlrsUfUc8kuDeeDEUgWy/
-	Z5+WGs5NxiOBA/ZN5up5Lw7kP77xQipm70v0ALFaMh3BzSx3rsLt
-X-Google-Smtp-Source: AGHT+IGQubHr9ZiXzGYy4dV7cpuxvQehMmYCUwhCmcdGah8JYEzV/e0Q7ah7aEsKhuP87W15U1rgJQ==
-X-Received: by 2002:a05:6902:1607:b0:e29:492:72ef with SMTP id 3f1490d57ef6-e2919d83eefmr7517932276.20.1728916878799;
-        Mon, 14 Oct 2024 07:41:18 -0700 (PDT)
-Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef1e3d5sm2370041276.39.2024.10.14.07.41.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 07:41:18 -0700 (PDT)
-Message-ID: <7d59b479-9fa4-49a1-906a-ef6a30951faa@gmail.com>
-Date: Mon, 14 Oct 2024 10:41:16 -0400
+	s=arc-20240116; t=1728916913; c=relaxed/simple;
+	bh=rY79BUgN/CM94jWFNT2ZlFSCTcGsA4bn1sRBiJL2Rpo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sHELJCtK3qV1o6RBL4TcfiFoevZg1IOoCa+O8Hi+HjdQpOI8yOLD+T2uoHl6+jAreTonuCqI1I1IRxbx/BBiib15GR518xmFUfOpgXHrNDfaElwmWl0l+AOaKiDL/fI9NvgvTVHOAqLXOGuX/9lHylEoB7dKIZjZAI+D4zE5nL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcsgqAGP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 105AFC4CED4;
+	Mon, 14 Oct 2024 14:41:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728916913;
+	bh=rY79BUgN/CM94jWFNT2ZlFSCTcGsA4bn1sRBiJL2Rpo=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=XcsgqAGPN4aV8UNs4VooexXNpBSjGq1WdDtdt2s+B/8OKnMKH24/WoPrd+ktoauhe
+	 6fZePnK65u0+sgqU6CX2eJi+wofJ12WeINGEZoL49DpHjvG3oXUbbbfb0M4Diy5/Ju
+	 nSpCL6UeWTEphr3fXcsET4dSMFeFtXu3zlvgkmtSade8Ur8Y8+ag3uNUWO7eA96WWr
+	 igI7dqYnFxYSJDxEFuqab06aLBtyis//8I2okdF4wSogH+PbPvxYw1oLQrTALinuq8
+	 jcBiH0kmidrUw7pgiEiTNHVGHgr12pvFLqyd000qGxn+uUrINJlouTQaawEX4cOBZA
+	 LcdzbfnnZos4Q==
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539983beb19so4675902e87.3;
+        Mon, 14 Oct 2024 07:41:52 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU6qPlMzMPRbRrPiy/iNGbOBRGqjJHv17jPuXBIZYfFF8jJwlO4XvuMhMRXpe0CB6Rytb4gzeBfiWorAuMe@vger.kernel.org, AJvYcCUbuYYlaLoBHmLtSR/4qGEDTOPH3u9iAk2jXlNC1ttDvPuc6C6VGlBTiI3B/QRbMoPvybKHlYN+0TWv@vger.kernel.org
+X-Gm-Message-State: AOJu0YzktDvGkSxadaEja2OojtcTviJjWE+T3a1kGhaEUgg6mSgkTkdV
+	jM/Sjv/Z2OXbvNBUZE1Y9POC+PeIeFbdWHx9PtTcphx6/6UC+ef3PzTOV1VuWdtmljEWJBXEuEE
+	eXgdczTbIFP4JWJfQMw2+rZgm6Q==
+X-Google-Smtp-Source: AGHT+IFIr+RKLmlCBPzIpUAU5sgJpFk4qmvwBGFFQfHfWEInjzOGd25FCcWiN2Rh205ppryrUv13+0Wq5bSjDYLzBp4=
+X-Received: by 2002:ac2:4e03:0:b0:536:553f:3ef9 with SMTP id
+ 2adb3069b0e04-539da4e0b9bmr5115879e87.27.1728916911416; Mon, 14 Oct 2024
+ 07:41:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 6/7] linux-kbuild: fix: configs with defaults do not need
- a prompt
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org, javier.carrasco.cruz@gmail.com
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
- <20240913171205.22126-7-david.hunter.linux@gmail.com>
- <CAK7LNARNteNvrbTeNTz71XTFjjL4XjLC-CT2UjVsGRpP_ToPKg@mail.gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <CAK7LNARNteNvrbTeNTz71XTFjjL4XjLC-CT2UjVsGRpP_ToPKg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241013200730.20542-1-richard@nod.at> <7aq4nedii5jgrlg54kzyi3plri6ivheeo2kpxxg7q6ofr3wfsc@acsrg5rzzmzg>
+ <3247761.5fSG56mABF@somecomputer>
+In-Reply-To: <3247761.5fSG56mABF@somecomputer>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 14 Oct 2024 09:41:38 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqLJ9+cd9En051uRW0=r_NtXgh11KNEqys538Hsg3wcTmA@mail.gmail.com>
+Message-ID: <CAL_JsqLJ9+cd9En051uRW0=r_NtXgh11KNEqys538Hsg3wcTmA@mail.gmail.com>
+Subject: Re: [PATCH] [RFC] of: Add debug aid to find unused device tree properties
+To: Richard Weinberger <richard@sigma-star.at>
+Cc: Richard Weinberger <richard@nod.at>, devicetree@vger.kernel.org, saravanak@google.com, 
+	linux-kernel@vger.kernel.org, upstream+devicetree@sigma-star.at, 
+	Krzysztof Kozlowski <krzk@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-version 2: 
-https://lore.kernel.org/all/20241014141345.5680-4-david.hunter.linux@gmail.com/
+On Mon, Oct 14, 2024 at 3:51=E2=80=AFAM Richard Weinberger
+<richard@sigma-star.at> wrote:
+>
+> Krzysztof,
+>
+> Am Montag, 14. Oktober 2024, 09:49:14 CEST schrieb 'Krzysztof Kozlowski' =
+via upstream:
+> > On Sun, Oct 13, 2024 at 10:07:30PM +0200, Richard Weinberger wrote:
+> > > This is a proof-of-concept patch that introduces a debug feature I fi=
+nd
+> > > particularly useful.  I frequently encounter situations where I'm
+> > > uncertain if my device tree configuration is correct or being utilize=
+d
+> > > by the kernel.  This is especially common when porting device trees
+> > > from vendor kernels, as some properties may have slightly different
+> > > names in the upstream kernel, or upstream drivers may not use certain
+> > > properties at all.
+> >
+> > In general I don't mind, but I have a comment about above rationale.
+> > It's just wrong. The point of DT is to describe hardware, not the one
+> > given, fixed in time implementation.
+>
+> I agree with you, sorry for being imprecise.
+>
+> > What's more, writing bindings mentions this explicit: make binding
+> > complete, even if it is not used.
+>
+> Yes, with this aid, it is IMHO easier to find bindings that need attentio=
+n.
+> Just as an example, lately the device tree of a vendor used the property =
+"timers",
+> but in mainline it is "ti,timers".  With this debug feature, it is easy t=
+o see that
+> "timers" is not being used, and somebody has to decide whether the proper=
+ty is
+> really not used by a driver, or if the binding needs more work.
+
+Paying attention to the schema warnings would have found this issue.
+Assuming there is a schema for the node...
+
+That's not to say this type of run-time check is not also useful.
+
+Rob
 
