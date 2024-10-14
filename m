@@ -1,64 +1,81 @@
-Return-Path: <linux-kernel+bounces-364268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8424499CFA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:56:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4171899CC77
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2BDDA1F210AE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:56:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AAA70B234B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:14:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC1B1AC458;
-	Mon, 14 Oct 2024 14:53:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF6481AA793;
+	Mon, 14 Oct 2024 14:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="m3N/hZUO"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mAgK2I6P"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8475E4595B;
-	Mon, 14 Oct 2024 14:53:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD2004A24;
+	Mon, 14 Oct 2024 14:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917626; cv=none; b=JCvEErKVaCHpNZaT373E8gKlJeh7sK5FFAvFG7XVC6LkouX9F3OCJxEUwYDQpngIi4QgCugJHFA60lDoivNv6jGNGxR8htyNtNm2qu1W5zu7cMDzGHWTOws7RPO1XrLD5Dg16z+COSjgfv60OAy2rMeXiKhsQMMRbctwCsxqqzo=
+	t=1728915240; cv=none; b=kiEz79ZKVucIU2lIext/z5mOlhs51mor6ePd+lyUDDbziS0YUzzNdEEtEt17RKNdf8L9dzA4Cy96qyFdF4O+uigExtO/7kVRDu45ND+dNV8mszoDsA0FB/iLpjvNUyynJ3O+YtzY2flFUaIfuWh/aL8ipplb/hoIzx0VQL949VE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917626; c=relaxed/simple;
-	bh=8fVr6gzTsVSd9RJTj3DDOtYEVKuodxZash/T0KweiBw=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=k0GwR7fDY3WzyPqApTjoYqBFHiEeghLIkgt0ki0IIrueT+M0bMLE1E7etiYmwK1iS2coruqefFl8Fy1LUXe8EFvlYcfzRVj+DW+Zq5+QeMJSl7g/Po7PaLXPkMlsrJONexcj8TJqmUNTHKyseVl9ppogj0CDDlE17EUJPy94tio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=m3N/hZUO; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:From:Sender:Reply-To:Cc:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=tEHKWSYZzrPud4eXjIaCbUyCf6H6XReStSM2EiV1xCk=; b=m3N/hZUOAZgKVqJ4STMDBZ0Rpp
-	oqj6R4bYf+U08CcHux+/PgpLknRmBcxJUe6bzXKupy5H7fy+8A/sSgql/Mu5Z6DMMiOlKJbEqXGdo
-	bAHEojeqXPirMCkTIG+qcxoIcY38uE91q8GeXEjGPeTCUmwZj56e6Qaswx+vBW9FLRcACYSK4s6iU
-	QieP3cbOOuzCnuKc8QxdZh5iZ0RfQRh+tlvEj8aqsf5PLqliwTffMv2aQ21fk34CTdnnejrRPn7LX
-	LHy6IjXo1cPfJWbFIvVkUTsFkTGgXH84Gteei0Rai23dbH4sy+gc2KrQqtUjWrGWknPff4dPD9SK5
-	yiom9F/Q==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: khilman@baylibre.com,
-	devicetree@vger.kernel.org,
-	Tony Lindgren <tony@atomide.com>,
+	s=arc-20240116; t=1728915240; c=relaxed/simple;
+	bh=5/Z5dqyXg5jlFQ7ytpBrSMgGNpnlq04mCdJcYBztBPU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lBCGieEJgvDE72X860gmp6oZiCNkkw/EZGh7AIuenMfgmr1KtL7eheoTidySmIyPgAQhqNe43hmJrNKCzMtKMNOygtEa2XOE0VNK5VQMb1FtFC0N/7O+7rR/D5hcKly162pdTIW/nVT4HM3qrNa8XHxXerNNeF/tME9W2yeQzdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mAgK2I6P; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e35f08e23eso18754207b3.2;
+        Mon, 14 Oct 2024 07:13:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728915238; x=1729520038; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ElJpmFDBIcg9p0cl22GstqdvIhCGOnOiusM5ikdJTOo=;
+        b=mAgK2I6P7q/MTfIAriNFCQ69aaVbrUre3tp3oOjqS1N5wqZO3j/Mdg9W9zV8Tp2UrP
+         vzvPSapUV1zuFGLIFycBeCHbpGOikPrpdRBOQF7oZErGeVJEyvcHvIYuz+fafBI3Bwvo
+         gwaJQOpi9nyvUWq8N+0TqAIoAUqGseqvKtDe7aiQI2N5v26sGw7qQGDYyH2WiyHkRwRS
+         xgO1/2PImh9eJQOi7FV67vrFzIF62A0ANz3WFTYQvvDgL+hB2FIZSAF8t0sUYiUh1eiF
+         HFmRsKh+GQ0Ju/69NIzNxxZCvMElWxVhjTa6m+vOwNl/rOrhaalbsgIyvKN/K+OQlp/J
+         Fakw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728915238; x=1729520038;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=ElJpmFDBIcg9p0cl22GstqdvIhCGOnOiusM5ikdJTOo=;
+        b=Fi/p60Z9zgIRRgt9M0nMuTAlhj8h0djjCufcsZ2rVWEEQRt1m/ig58MggxpCCEbyTH
+         yXb/ok5sR6uDuDYboNtZ/mBZht9GNtFLnIVOxhL8oSk9hi93Ff/5NK5+Wuk2PSv05A4K
+         lGA0nhgvnB6YbEnX4v2CPt7jdtYOWkxw0OMVk2gjlR2qv35HDY8A4PCj86s4oNylCN0x
+         1Xne7JQatLm/KQwn6mqs6/lzLPwW7ukBhpSH0yFmDZgiFvGfMgHczhMAC3s4WaQoXRdG
+         YclybmPDfExbzxov6jp5Pfa9O3OEugutfNebCycesMMdCOL7cMtozBVONckbfta2En3b
+         AK/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVCstvJhKwtrvq3b7GOho5Q/i8Tl7dtbH6A8eDrLVQtUYh+teccT2iPJjH9jwH5vBF0RbrLI5ndXWyoyyk=@vger.kernel.org, AJvYcCWMYB5qxNvwQd9x104yn59QtpgC0nNUKepH80fkMGYk8d9GQocYsw2fn2bd6hxWHahbKgQIY/A/ZBoRteFG@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2YbKr7q4HJ8GSfEZGilhtOqJeOKOI21SdjJh+Vna6VMbAr492
+	AMa+A/VNNDDV50RfNFTbJpkpovt55Ha5QxXmmAyrfWkaMODse/A0E5nfkQ==
+X-Google-Smtp-Source: AGHT+IH/nC4Ue/xZxNU3z9NFFzoJiHUphoW8a5/ow/otYBcWaLdrADrXXI8TLgrZgBDnQAPqTlCIrA==
+X-Received: by 2002:a05:690c:d8a:b0:6e3:39c1:1692 with SMTP id 00721157ae682-6e3477bfb3emr80363407b3.6.1728915237720;
+        Mon, 14 Oct 2024 07:13:57 -0700 (PDT)
+Received: from localhost (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332cabeeesm15528337b3.131.2024.10.14.07.13.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 07:13:57 -0700 (PDT)
+From: David Hunter <david.hunter.linux@gmail.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: David Hunter <david.hunter.linux@gmail.com>,
+	linux-kbuild@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Andreas Kemnade <andreas@kemnade.info>,
-	Conor Dooley <conor+dt@kernel.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	linux-input@vger.kernel.org,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	linux-omap@vger.kernel.org
-Subject: [PATCH 2/2] ARM: dts: ti/omap: omap3-gta04: use proper touchscreen properties
-Date: Mon, 14 Oct 2024 16:12:40 +0200
-Message-Id: <20241014141240.92072-3-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241014141240.92072-1-andreas@kemnade.info>
-References: <20241014141240.92072-1-andreas@kemnade.info>
+	shuah@kernel.org,
+	javier.carrasco.cruz@gmail.com,
+	Steven Rostedt <rostedt@goodmis.org>
+Subject: [PATCH v3 0/7] streamline_config.pl: fix: process configs set to "y"
+Date: Mon, 14 Oct 2024 10:13:30 -0400
+Message-ID: <20241014141345.5680-1-david.hunter.linux@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -67,38 +84,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Specify the dimensions of the touchscreen propertly so that
-no userspace configuration is needed for it.
-Tested with x11 and weston on Debian bookworm.
+An assumption made in this script is that the config options do not need
+to be processed because they will simply be in the new config file. This
+assumption is incorrect.
 
-What is in now is some debris from earlier tries to handle
-scaling in kernel:
+Process the config entries set to "y" because those config entries might
+have dependencies set to "m". If a config entry is set to "m" and is not
+loaded directly into the machine, the script will currently turn off
+that config entry; however, if that turned off config entry is a
+dependency for a "y" option. that means the config entry set to "y"
+will also be turned off later when the conf executive file is called.
 
-https://lore.kernel.org/linux-input/cover.1482936802.git.hns@goldelico.com/
+Here is a model of the problem (arrows show dependency):
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
+Original config file
+Config_1 (m) <-- Config_2 (y)
+
+Config_1 is not loaded in this example, so it is turned off.
+After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (y)
+
+After  scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (n)
+
+
+It should also be noted that any module in the dependency chain will
+also be turned off, even if that module is loaded directly onto the
+computer. Here is an example:
+
+Original config file
+Config_1 (m) <-- Config_2 (y) <-- Config_3 (m)
+
+Config_3 will be loaded in this example.
+After scripts/kconfig/streamline_config.pl, but before scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (y) <-- Config_3 (m)
+
+After scripts/kconfig/conf
+Config_1 (n) <-- Config_2 (n) <-- Config_3 (n)
+
+
+I discovered this problem when I ran "make localmodconfig" on a generic
+Ubuntu config file. Many hardware devices were not recognized once the
+kernel was installed and booted. Another way to reproduced the error I
+had is to run "make localmodconfig" twice. The standard error might display
+warnings that certain modules should be selected but no config files are
+turned on that select that module.
+
+With the changes in this series patch, all modules are loaded properly
+and all of the hardware is loaded when the kernel is installed and
+booted.
+
+
+David Hunter (7):
+  streamline_config.pl: fix missing variable operator in debug print
+  streamline_config.pl: ensure all defaults are tracked
+  streamline_config.pl: remove prompt warnings for configs with defaults
+  streamline_config.pl: include tool to learn about a config option
+  streamline_config.pl: fix: implement choice for kconfigs
+  streamline_config.pl: process config options set to "y"
+  streamline_config.pl: check prompt for bool
+
 ---
- arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+V1: https://lore.kernel.org/all/20240913171205.22126-1-david.hunter.linux@gmail.com/
 
-diff --git a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
-index 3661340009e7a..6e25db29a4bb9 100644
---- a/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
-+++ b/arch/arm/boot/dts/ti/omap/omap3-gta04.dtsi
-@@ -591,8 +591,10 @@ tsc2007@48 {
- 		interrupts = <0 IRQ_TYPE_EDGE_FALLING>; /* GPIO_160 */
- 		gpios = <&gpio6 0 GPIO_ACTIVE_LOW>;	/* GPIO_160 */
- 		ti,x-plate-ohms = <600>;
--		touchscreen-size-x = <480>;
--		touchscreen-size-y = <640>;
-+		touchscreen-size-x = <0xf00>;
-+		touchscreen-size-y = <0xf00>;
-+		touchscreen-min-x = <0x100>;
-+		touchscreen-min-y = <0x100>;
- 		touchscreen-max-pressure = <1000>;
- 		touchscreen-fuzz-x = <3>;
- 		touchscreen-fuzz-y = <8>;
+V2: https://lore.kernel.org/all/20240916142939.754911-1-david.hunter.linux@gmail.com/
+        - Put in subject.
+
+V3: 
+	- changed the order of patches 
+	- removed a patch that was unneccessary
+	- added a patch for a debugging tool  
+---
+
+ scripts/kconfig/streamline_config.pl | 130 ++++++++++++++++++++++++---
+ 1 file changed, 119 insertions(+), 11 deletions(-)
+
 -- 
-2.39.2
+2.43.0
 
 
