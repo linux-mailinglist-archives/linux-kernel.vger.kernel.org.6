@@ -1,150 +1,262 @@
-Return-Path: <linux-kernel+bounces-363423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27CAC99C23E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:57:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8165199C144
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25AEA1C26257
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:57:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4089A28136D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:29:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24BD156644;
-	Mon, 14 Oct 2024 07:55:54 +0000 (UTC)
-Received: from baptiste.telenet-ops.be (baptiste.telenet-ops.be [195.130.132.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2807B1494A7;
+	Mon, 14 Oct 2024 07:28:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4lQx7GdE";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eKX1kyXL"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4B4156238
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.130.132.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5A7914830A;
+	Mon, 14 Oct 2024 07:28:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892554; cv=none; b=nnjyROZE5KsOn2G5nVhY4Louiy1IwyEEd3DTobLsnDaYcYYctjsU7YjueFGz0/bYrvkLqKBF9kjog0ks/f3WR//K7s/Q9u9SrQzQ6bsCe3WsCaOIBuNga5M+PHapvoYS5Z7ihC9zzR1ypXQEoo4yTFXi8RvDTepUdLYpyFlfJTk=
+	t=1728890929; cv=none; b=cTR2Uw1/yRGcY4Knicu69c7FLwUeHa3bpqCQG9cuPpFSlfgFbsHDfqY0KvTInyXq1j3KOgK3EXMhj3fhoChWgYuK5luBZqJZqEWgNV+GvYrUc810TbRjx8BkrUZStpM5hVJTtGRvX9tNNqIkHiDL0nqsObdVvGSul30WXrJlnZE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892554; c=relaxed/simple;
-	bh=AO5MfO8Mz4E6eCOjZBvEUWWNm1eCNHLSd1lIV4ZDa8E=;
-	h=From:To:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=uyJeQWDeZq7Mp43hf280JDlprn8JEs//JjNSMbtAq3cNR7N4xflpGy75cnP171P1+KLN9MvQ00gA+3ybz8FMtKNuv1954E+WEhJSsHj4IN/YvMCXaBodzO4w3frPj+UgZN8UkSIj00VvdA6cMXDwmz2TTT8JzK3a7K0lTiQ59Pw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=none smtp.mailfrom=linux-m68k.org; arc=none smtp.client-ip=195.130.132.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux-m68k.org
-Received: from ramsan.of.borg ([IPv6:2a02:1810:ac12:ed80:3f20:7967:2d40:9ad2])
-	by baptiste.telenet-ops.be with cmsmtp
-	id Q7vk2D00C54R7sz017vkUN; Mon, 14 Oct 2024 09:55:44 +0200
-Received: from rox.of.borg ([192.168.97.57])
-	by ramsan.of.borg with esmtp (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t0FvP-003ji2-7c
-	for linux-kernel@vger.kernel.org;
-	Mon, 14 Oct 2024 09:55:44 +0200
-Received: from geert by rox.of.borg with local (Exim 4.95)
-	(envelope-from <geert@linux-m68k.org>)
-	id 1t0FUJ-00FyRD-4T
-	for linux-kernel@vger.kernel.org;
-	Mon, 14 Oct 2024 09:27:31 +0200
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-To: linux-kernel@vger.kernel.org
-Subject: Build regressions/improvements in v6.12-rc3
-Date: Mon, 14 Oct 2024 09:27:31 +0200
-Message-Id: <20241014072731.3807160-1-geert@linux-m68k.org>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAHk-=wg061j_0+a0wen8E-wxSzKx_TGCkKw-r1tvsp5fLeT0pA@mail.gmail.com>
-References: <CAHk-=wg061j_0+a0wen8E-wxSzKx_TGCkKw-r1tvsp5fLeT0pA@mail.gmail.com>
+	s=arc-20240116; t=1728890929; c=relaxed/simple;
+	bh=o9edveVwNe6IQQ4YcH86irGXfYoMvqmVH52UK3XBGfI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=VrL0FjDDQ5C3mH+sXhTPI/p2m0xVeHYHuplx1uF0DLZ3tOiCnf8gd1mhAv5WKWM0l8X0FavxTBU6/kGUu6yfyz8kaenqazJQHSOCv9NHB+YjMbaTzvVoJqRDXGm/aJdK+oosY2GBXYNaIWHlvm4Qafrmcby1Kdpel0gpi3ZkXUI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4lQx7GdE; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eKX1kyXL; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 14 Oct 2024 07:28:43 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1728890924;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nkRToY+k04xXFkwWQ/SfVA6D9ssh9EPt4TbqptN0ZQs=;
+	b=4lQx7GdE54Oy/4lqVeIw4a/OADeCahN2JKwJWTWkrK7yqCCEFRzG55P0Cr59jsdLVh0H8K
+	I8x9S+gENjpXgRZGhbUD6GE2RURB+I3TRaIyMdUN/Wfnq4Dqlyg24k3QEhxtJQd8VNl20M
+	fsb3T+t3bchCYpeDCPg7m2NtgcuutlxTN/yNoaoGy9AJTgaWGZ3QwaikUz/aP6zToQjAVX
+	jhapClPQjhOWYjaSjBAEv62XG6gqHrM8sCB1uBwzrEU3oZ9Am8JgKWogaDkkZ1tg54xH9l
+	CHzuc5D6Zd9NTcI9UufzEErXFfUXS1DePuGOAPqkhAMtYoTIKrzPahgb7y8PWg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1728890924;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nkRToY+k04xXFkwWQ/SfVA6D9ssh9EPt4TbqptN0ZQs=;
+	b=eKX1kyXLTrQksz3i2pxiGK9eR+Cw493kLhpY5TM4/VrZwTlbU/sDJoLDQMOcp7EUeiGX00
+	f3bPm99UCs9mVqDQ==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: sched/urgent] sched/fair: Fix external p->on_rq users
+Cc: Sean Christopherson <seanjc@google.com>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Ingo Molnar <mingo@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241010091843.GK33184@noisy.programming.kicks-ass.net>
+References: <20241010091843.GK33184@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Message-ID: <172889092385.1442.13511131954955317922.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-Below is the list of build error/warning regressions/improvements in
-v6.12-rc3[1] compared to v6.11[2].
+The following commit has been merged into the sched/urgent branch of tip:
 
-Summarized:
-  - build errors: +4/-3
-  - build warnings: +33/-3
+Commit-ID:     cd9626e9ebc77edec33023fe95dab4b04ffc819d
+Gitweb:        https://git.kernel.org/tip/cd9626e9ebc77edec33023fe95dab4b04ffc819d
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Thu, 10 Oct 2024 11:38:10 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Mon, 14 Oct 2024 09:14:35 +02:00
 
-JFYI, when comparing v6.12-rc3[1] to v6.12-rc2[3], the summaries are:
-  - build errors: +3/-1
-  - build warnings: +31/-0
+sched/fair: Fix external p->on_rq users
 
-Note that there may be false regressions, as some logs are incomplete.
-Still, they're build errors/warnings.
+Sean noted that ever since commit 152e11f6df29 ("sched/fair: Implement
+delayed dequeue") KVM's preemption notifiers have started
+mis-classifying preemption vs blocking.
 
-Happy fixing! ;-)
+Notably p->on_rq is no longer sufficient to determine if a task is
+runnable or blocked -- the aforementioned commit introduces tasks that
+remain on the runqueue even through they will not run again, and
+should be considered blocked for many cases.
 
-Thanks to the linux-next team for providing the build service.
+Add the task_is_runnable() helper to classify things and audit all
+external users of the p->on_rq state. Also add a few comments.
 
-[1] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8e929cb546ee42c9a61d24fae60605e9e3192354/ (all 194 configs)
-[2] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/98f7e32f20d28ec452afb208f9cffc08448a2652/ (131 out of 194 configs)
-[3] http://kisskb.ellerman.id.au/kisskb/branch/linus/head/8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b/ (131 out of 194 configs)
+Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+Reported-by: Sean Christopherson <seanjc@google.com>
+Tested-by: Sean Christopherson <seanjc@google.com>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Link: https://lkml.kernel.org/r/20241010091843.GK33184@noisy.programming.kicks-ass.net
+---
+ include/linux/sched.h         |  5 +++++
+ kernel/events/core.c          |  2 +-
+ kernel/freezer.c              |  7 ++++++-
+ kernel/rcu/tasks.h            |  9 +++++++++
+ kernel/sched/core.c           | 12 +++++++++---
+ kernel/time/tick-sched.c      |  6 ++++++
+ kernel/trace/trace_selftest.c |  2 +-
+ virt/kvm/kvm_main.c           |  2 +-
+ 8 files changed, 38 insertions(+), 7 deletions(-)
 
-
-*** ERRORS ***
-
-4 error regressions:
-  + /kisskb/src/crypto/async_tx/async_tx.c: error: no previous prototype for '__async_tx_find_channel' [-Werror=missing-prototypes]:  => 43:1
-  + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t {aka long long unsigned int}' [-Werror=format=]:  => 126:37
-  + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: error: format '%x' expects argument of type 'unsigned int', but argument 4 has type 'resource_size_t' {aka 'long long unsigned int'} [-Werror=format=]:  => 126:46
-  + /kisskb/src/include/linux/err.h: error: cast to pointer from integer of different size [-Werror=int-to-pointer-cast]:  => 28:49
-
-3 error improvements:
-  - /kisskb/src/drivers/md/dm-integrity.c: error: logical not is only applied to the left hand side of comparison [-Werror=logical-not-parentheses]: 4720:45 => 
-  - /kisskb/src/drivers/media/platform/nxp/imx-pxp.h: error: initializer element is not constant: 582:38 => 
-  - {standard input}: Error: unknown pseudo-op: `.siz': 1273 => 
-
-
-*** WARNINGS ***
-
-33 warning regressions:
-  + .config: warning: override: reassigning to symbol MIPS_CPS_NS16550_SHIFT: 15216, 15210 => 15343, 15345, 15351
-  + .config: warning: override: reassigning to symbol UML_NET_MCAST:  => 14880, 15123
-  + /kisskb/src/arch/mips/cavium-octeon/executive/cvmx-helper-errata.c: warning: no previous prototype for '__cvmx_helper_errata_qlm_disable_2nd_order_cdr' [-Wmissing-prototypes]:  => 49:6
-  + /kisskb/src/arch/mips/cavium-octeon/executive/cvmx-interrupt-decodes.c: warning: no previous prototype for '__cvmx_interrupt_gmxx_rxx_int_en_enable' [-Wmissing-prototypes]:  => 53:6
-  + /kisskb/src/arch/mips/cavium-octeon/octeon-platform.c: warning: no previous prototype for 'octeon_fill_mac_addresses' [-Wmissing-prototypes]:  => 701:13
-  + /kisskb/src/arch/mips/cavium-octeon/smp.c: warning: no previous prototype for 'octeon_send_ipi_single' [-Wmissing-prototypes]:  => 100:6
-  + /kisskb/src/arch/mips/kernel/cevt-bcm1480.c: warning: no previous prototype for 'sb1480_clockevent_init' [-Wmissing-prototypes]:  => 96:6
-  + /kisskb/src/arch/mips/kernel/csrc-bcm1480.c: warning: no previous prototype for 'sb1480_clocksource_init' [-Wmissing-prototypes]:  => 37:13
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'cache_parity_error_octeon_non_recoverable' [-Wmissing-prototypes]:  => 351:17
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'cache_parity_error_octeon_recoverable' [-Wmissing-prototypes]:  => 342:17
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'register_co_cache_error_notifier' [-Wmissing-prototypes]:  => 297:5
-  + /kisskb/src/arch/mips/mm/c-octeon.c: warning: no previous prototype for 'unregister_co_cache_error_notifier' [-Wmissing-prototypes]:  => 303:5
-  + /kisskb/src/arch/mips/mm/cerr-sb1.c: warning: no previous prototype for 'sb1_cache_error' [-Wmissing-prototypes]:  => 165:17
-  + /kisskb/src/arch/mips/pci/msi-octeon.c: warning: no previous prototype for 'octeon_msi_initialize' [-Wmissing-prototypes]:  => 343:12
-  + /kisskb/src/arch/mips/pci/pci-octeon.c: warning: no previous prototype for 'octeon_pci_pcibios_map_irq' [-Wmissing-prototypes]:  => 234:12
-  + /kisskb/src/arch/mips/pci/pcie-octeon.c: warning: no previous prototype for 'octeon_pcie_pcibios_map_irq' [-Wmissing-prototypes]:  => 1471:5
-  + /kisskb/src/arch/mips/sibyte/bcm1480/irq.c: warning: no previous prototype for 'init_bcm1480_irqs' [-Wmissing-prototypes]:  => 200:13
-  + /kisskb/src/arch/mips/sibyte/bcm1480/setup.c: warning: no previous prototype for 'bcm1480_setup' [-Wmissing-prototypes]:  => 104:13
-  + /kisskb/src/arch/mips/sibyte/bcm1480/smp.c: warning: no previous prototype for 'bcm1480_mailbox_interrupt' [-Wmissing-prototypes]:  => 158:6
-  + /kisskb/src/arch/mips/sibyte/bcm1480/smp.c: warning: no previous prototype for 'bcm1480_smp_init' [-Wmissing-prototypes]:  => 49:6
-  + /kisskb/src/arch/mips/sibyte/bcm1480/time.c: warning: no previous prototype for 'plat_time_init' [-Wmissing-prototypes]:  => 10:13
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_get_time' [-Wmissing-prototypes]:  => 186:10
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_probe' [-Wmissing-prototypes]:  => 219:5
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_m41t81.c: warning: no previous prototype for 'm41t81_set_time' [-Wmissing-prototypes]:  => 139:5
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_get_time' [-Wmissing-prototypes]:  => 167:10
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_probe' [-Wmissing-prototypes]:  => 203:5
-  + /kisskb/src/arch/mips/sibyte/swarm/rtc_xicor1241.c: warning: no previous prototype for 'xicor_set_time' [-Wmissing-prototypes]:  => 108:5
-  + /kisskb/src/arch/mips/sibyte/swarm/setup.c: warning: no previous prototype for 'swarm_be_handler' [-Wmissing-prototypes]:  => 59:5
-  + /kisskb/src/drivers/net/ethernet/sgi/meth.c: warning: no previous prototype for 'meth_reset' [-Wmissing-prototypes]:  => 271:5
-  + /kisskb/src/drivers/watchdog/octeon-wdt-main.c: warning: no previous prototype for 'octeon_wdt_nmi_stage3' [-Wmissing-prototypes]:  => 210:6
-  + warning: unmet direct dependencies detected for GET_FREE_REGION:  => N/A
-  + warning: unmet direct dependencies detected for HOTPLUG_CPU:  => N/A
-  + {standard input}: Warning: macro instruction expanded into multiple instructions:  => 339, 338, 285
-
-3 warning improvements:
-  - .config: warning: override: reassigning to symbol UML_NET_SLIRP: 14765, 15006 => 
-  - /kisskb/src/fs/ext4/readpage.c: warning: the frame size of 1120 bytes is larger than 1024 bytes [-Wframe-larger-than=]: 391:1 => 
-  - modpost: WARNING: modpost: lib/test_bitmap: section mismatch in reference: find_next_bit+0x40 (section: .text.unlikely) -> test_print (section: .init.rodata): N/A => 
-
-Gr{oetje,eeting}s,
-
-						Geert
-
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-							    -- Linus Torvalds
+diff --git a/include/linux/sched.h b/include/linux/sched.h
+index e6ee425..8a9517e 100644
+--- a/include/linux/sched.h
++++ b/include/linux/sched.h
+@@ -2133,6 +2133,11 @@ static inline void set_task_cpu(struct task_struct *p, unsigned int cpu)
+ 
+ #endif /* CONFIG_SMP */
+ 
++static inline bool task_is_runnable(struct task_struct *p)
++{
++	return p->on_rq && !p->se.sched_delayed;
++}
++
+ extern bool sched_task_on_rq(struct task_struct *p);
+ extern unsigned long get_wchan(struct task_struct *p);
+ extern struct task_struct *cpu_curr_snapshot(int cpu);
+diff --git a/kernel/events/core.c b/kernel/events/core.c
+index e3589c4..cdd0976 100644
+--- a/kernel/events/core.c
++++ b/kernel/events/core.c
+@@ -9251,7 +9251,7 @@ static void perf_event_switch(struct task_struct *task,
+ 		},
+ 	};
+ 
+-	if (!sched_in && task->on_rq) {
++	if (!sched_in && task_is_runnable(task)) {
+ 		switch_event.event_id.header.misc |=
+ 				PERF_RECORD_MISC_SWITCH_OUT_PREEMPT;
+ 	}
+diff --git a/kernel/freezer.c b/kernel/freezer.c
+index 44bbd7d..8d530d0 100644
+--- a/kernel/freezer.c
++++ b/kernel/freezer.c
+@@ -109,7 +109,12 @@ static int __set_task_frozen(struct task_struct *p, void *arg)
+ {
+ 	unsigned int state = READ_ONCE(p->__state);
+ 
+-	if (p->on_rq)
++	/*
++	 * Allow freezing the sched_delayed tasks; they will not execute until
++	 * ttwu() fixes them up, so it is safe to swap their state now, instead
++	 * of waiting for them to get fully dequeued.
++	 */
++	if (task_is_runnable(p))
+ 		return 0;
+ 
+ 	if (p != current && task_curr(p))
+diff --git a/kernel/rcu/tasks.h b/kernel/rcu/tasks.h
+index 6333f4c..4d7ee95 100644
+--- a/kernel/rcu/tasks.h
++++ b/kernel/rcu/tasks.h
+@@ -986,6 +986,15 @@ static bool rcu_tasks_is_holdout(struct task_struct *t)
+ 		return false;
+ 
+ 	/*
++	 * t->on_rq && !t->se.sched_delayed *could* be considered sleeping but
++	 * since it is a spurious state (it will transition into the
++	 * traditional blocked state or get woken up without outside
++	 * dependencies), not considering it such should only affect timing.
++	 *
++	 * Be conservative for now and not include it.
++	 */
++
++	/*
+ 	 * Idle tasks (or idle injection) within the idle loop are RCU-tasks
+ 	 * quiescent states. But CPU boot code performed by the idle task
+ 	 * isn't a quiescent state.
+diff --git a/kernel/sched/core.c b/kernel/sched/core.c
+index 71232f8..7db711b 100644
+--- a/kernel/sched/core.c
++++ b/kernel/sched/core.c
+@@ -548,6 +548,11 @@ sched_core_dequeue(struct rq *rq, struct task_struct *p, int flags) { }
+  *   ON_RQ_MIGRATING state is used for migration without holding both
+  *   rq->locks. It indicates task_cpu() is not stable, see task_rq_lock().
+  *
++ *   Additionally it is possible to be ->on_rq but still be considered not
++ *   runnable when p->se.sched_delayed is true. These tasks are on the runqueue
++ *   but will be dequeued as soon as they get picked again. See the
++ *   task_is_runnable() helper.
++ *
+  * p->on_cpu <- { 0, 1 }:
+  *
+  *   is set by prepare_task() and cleared by finish_task() such that it will be
+@@ -4317,9 +4322,10 @@ static bool __task_needs_rq_lock(struct task_struct *p)
+  * @arg: Argument to function.
+  *
+  * Fix the task in it's current state by avoiding wakeups and or rq operations
+- * and call @func(@arg) on it.  This function can use ->on_rq and task_curr()
+- * to work out what the state is, if required.  Given that @func can be invoked
+- * with a runqueue lock held, it had better be quite lightweight.
++ * and call @func(@arg) on it.  This function can use task_is_runnable() and
++ * task_curr() to work out what the state is, if required.  Given that @func
++ * can be invoked with a runqueue lock held, it had better be quite
++ * lightweight.
+  *
+  * Returns:
+  *   Whatever @func returns
+diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
+index 753a184..f203f00 100644
+--- a/kernel/time/tick-sched.c
++++ b/kernel/time/tick-sched.c
+@@ -434,6 +434,12 @@ static void tick_nohz_kick_task(struct task_struct *tsk)
+ 	 *   smp_mb__after_spin_lock()
+ 	 *   tick_nohz_task_switch()
+ 	 *     LOAD p->tick_dep_mask
++	 *
++	 * XXX given a task picks up the dependency on schedule(), should we
++	 * only care about tasks that are currently on the CPU instead of all
++	 * that are on the runqueue?
++	 *
++	 * That is, does this want to be: task_on_cpu() / task_curr()?
+ 	 */
+ 	if (!sched_task_on_rq(tsk))
+ 		return;
+diff --git a/kernel/trace/trace_selftest.c b/kernel/trace/trace_selftest.c
+index c4ad7cd..1469dd8 100644
+--- a/kernel/trace/trace_selftest.c
++++ b/kernel/trace/trace_selftest.c
+@@ -1485,7 +1485,7 @@ trace_selftest_startup_wakeup(struct tracer *trace, struct trace_array *tr)
+ 	/* reset the max latency */
+ 	tr->max_latency = 0;
+ 
+-	while (p->on_rq) {
++	while (task_is_runnable(p)) {
+ 		/*
+ 		 * Sleep to make sure the -deadline thread is asleep too.
+ 		 * On virtual machines we can't rely on timings,
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 05cbb25..0c666f1 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -6387,7 +6387,7 @@ static void kvm_sched_out(struct preempt_notifier *pn,
+ 
+ 	WRITE_ONCE(vcpu->scheduled_out, true);
+ 
+-	if (current->on_rq && vcpu->wants_to_run) {
++	if (task_is_runnable(current) && vcpu->wants_to_run) {
+ 		WRITE_ONCE(vcpu->preempted, true);
+ 		WRITE_ONCE(vcpu->ready, true);
+ 	}
 
