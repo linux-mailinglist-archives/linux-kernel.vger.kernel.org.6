@@ -1,58 +1,54 @@
-Return-Path: <linux-kernel+bounces-364329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6C1899D291
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:27:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F89599D2BA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7051F24516
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:27:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D92DB23132
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:29:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB1D81CC8AC;
-	Mon, 14 Oct 2024 15:25:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0821C0DCB;
+	Mon, 14 Oct 2024 15:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="QeI6S4SU"
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="1cNjZ6C/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353B1C7617;
-	Mon, 14 Oct 2024 15:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3FF619E98B;
+	Mon, 14 Oct 2024 15:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728919503; cv=none; b=nJynzR0E99ULzwNADRGafMxPOdR8/wATGYQgFS5fHEo+2TXFbTWCAZKhHhGnDMfGWc45djuOXzuMsAQrvQCPZ1L4fPB6BGuZ8ZO5q1oCAZ+7tzCqpbQ6AH9ECo20kY91zdtR8geXJ8vJTP58B126WmbFYtyYlbxeHfyFmBDyYJ4=
+	t=1728919605; cv=none; b=o/qP0zwLxp3wEoa4l7c/DJY9vUvhUYBtRcYW07s/eRaUWZj7rhNkvk20SXuikhvu4eImOY0q4SRLvUURDQugVrvYACWcUoGeqcgLJR+biZuTx/2ENCObYVo67xRyM6CxdjEfV6ghZ3dPNoZy9Al0v1Wtqu2bvIpi5TaOdnosz9g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728919503; c=relaxed/simple;
-	bh=1GoaPfLQ84iWGdlMtTwtwD5xjUpqEJmFCGIhxXHA0q0=;
+	s=arc-20240116; t=1728919605; c=relaxed/simple;
+	bh=6yjZbBK3T2HbJsV73tsSnmUNlCWw5+vv4P+RFm0kf/g=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=kMm3pZkILHYfewCpchaYLkPwF9bWHxS/RFQMfTY2088l9K2Cu138QXmJSe17hHEuCJUoVW9i08xNtuTTyz+XBHugq9vfL6Nto6v5MQWM7t1SPsK9Ymk+sL3c+5S0uxxxuOAUS9WLjDR+Q79lwxaZeSEP/UYJcQ63w25TxcCf3eo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=QeI6S4SU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FFD7C4CEC3;
-	Mon, 14 Oct 2024 15:25:02 +0000 (UTC)
+	 MIME-Version; b=Y+uWJvn7n40pxEk+Cadx0rM/uMTC8s045fpIvR7zUGfr+R/CVx24wiBLUQifVIZwWQsRu87a6xWBRXYNhoG0rLoxoa5ZWzqQdYPLVWiIyw/PfpDSEo2k1MY9O6LSpcUDpDRqAVx7VxbKeR3U3riUiHt1zDasX42/gKqufmIyNzE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=1cNjZ6C/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2466BC4CEC3;
+	Mon, 14 Oct 2024 15:26:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1728919502;
-	bh=1GoaPfLQ84iWGdlMtTwtwD5xjUpqEJmFCGIhxXHA0q0=;
+	s=korg; t=1728919604;
+	bh=6yjZbBK3T2HbJsV73tsSnmUNlCWw5+vv4P+RFm0kf/g=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QeI6S4SUhYpSgimP4UGiLNrCdTShZ2vhFcqoiR3Q47fh5YlBhE0U49sfN98EoUztx
-	 vq21kJImqh9R3WTPuT99R7l9sxA5jhR02oaeEgG80ew8nvhDTEXtmYeD4KZ4zMQckK
-	 d1UQitE9ZdU0Y519GEqfyN6x95GFAQ1rG7VLSQX0=
+	b=1cNjZ6C/ocSszgOFIgFqbz2rRq08F+pnk+NdlkYEtHT7nCcIJmOxzDjOK6th84tMp
+	 BATB8I07Vuy88kfUjYuhW38MmQFYsub8EGx9icwZKIWtAy/pWG7kXb7te1rnXafI/P
+	 PUzP1vrASLBuBwS4x4GcViwFhdAzhEUiCxnOj1l0=
 From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 To: stable@vger.kernel.org
 Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
 	patches@lists.linux.dev,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	James Morse <james.morse@arm.com>,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Anshuman Khandual <anshuman.khandual@arm.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Sasha Levin <sashal@kernel.org>
-Subject: [PATCH 6.1 624/798] arm64: Add Cortex-715 CPU part definition
-Date: Mon, 14 Oct 2024 16:19:38 +0200
-Message-ID: <20241014141242.554119006@linuxfoundation.org>
+	"linux-erofs@lists.ozlabs.org, LKML" <linux-kernel@vger.kernel.org>,
+	Yue Hu <huyue2@coolpad.com>,
+	Jingbo Xu <jefflexu@linux.alibaba.com>,
+	Chao Yu <chao@kernel.org>,
+	Gao Xiang <hsiangkao@linux.alibaba.com>
+Subject: [PATCH 6.1 654/798] erofs: get rid of erofs_inode_datablocks()
+Date: Mon, 14 Oct 2024 16:20:08 +0200
+Message-ID: <20241014141243.744899671@linuxfoundation.org>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20241014141217.941104064@linuxfoundation.org>
 References: <20241014141217.941104064@linuxfoundation.org>
@@ -71,52 +67,93 @@ Content-Transfer-Encoding: 8bit
 
 ------------------
 
-From: Anshuman Khandual <anshuman.khandual@arm.com>
+From: Gao Xiang <hsiangkao@linux.alibaba.com>
 
-[ Upstream commit 07e39e60bbf0ccd5f895568e1afca032193705c0 ]
+commit 4efdec36dc9907628e590a68193d6d8e5e74d032 upstream.
 
-Add the CPU Partnumbers for the new Arm designs.
+erofs_inode_datablocks() has the only one caller, let's just get
+rid of it entirely.  No logic changes.
 
-Cc: Catalin Marinas <catalin.marinas@arm.com>
-Cc: Will Deacon <will@kernel.org>
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>
-Cc: James Morse <james.morse@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org
-Cc: linux-kernel@vger.kernel.org
-Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-Signed-off-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Link: https://lore.kernel.org/r/20221116140915.356601-2-anshuman.khandual@arm.com
-Signed-off-by: Will Deacon <will@kernel.org>
-[ Mark: Trivial backport ]
-Signed-off-by: Mark Rutland <mark.rutland@arm.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Reviewed-by: Yue Hu <huyue2@coolpad.com>
+Reviewed-by: Jingbo Xu <jefflexu@linux.alibaba.com>
+Reviewed-by: Chao Yu <chao@kernel.org>
+Stable-dep-of: 9ed50b8231e3 ("erofs: fix incorrect symlink detection in fast symlink")
+Link: https://lore.kernel.org/r/20230204093040.97967-1-hsiangkao@linux.alibaba.com
+[ Gao Xiang: apply this to 6.6.y to avoid further backport twists
+             due to obsoleted EROFS_BLKSIZ. ]
+Signed-off-by: Gao Xiang <hsiangkao@linux.alibaba.com>
+Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
 ---
- arch/arm64/include/asm/cputype.h | 2 ++
- 1 file changed, 2 insertions(+)
+Obsoleted EROFS_BLKSIZ impedes efforts to backport
+ 9ed50b8231e3 ("erofs: fix incorrect symlink detection in fast symlink")
+ 9e2f9d34dd12 ("erofs: handle overlapped pclusters out of crafted images properly")
 
-diff --git a/arch/arm64/include/asm/cputype.h b/arch/arm64/include/asm/cputype.h
-index a0a028a6b9670..9916346948ba2 100644
---- a/arch/arm64/include/asm/cputype.h
-+++ b/arch/arm64/include/asm/cputype.h
-@@ -82,6 +82,7 @@
- #define ARM_CPU_PART_CORTEX_A510	0xD46
- #define ARM_CPU_PART_CORTEX_A520	0xD80
- #define ARM_CPU_PART_CORTEX_A710	0xD47
-+#define ARM_CPU_PART_CORTEX_A715	0xD4D
- #define ARM_CPU_PART_CORTEX_X2		0xD48
- #define ARM_CPU_PART_NEOVERSE_N2	0xD49
- #define ARM_CPU_PART_CORTEX_A78C	0xD4B
-@@ -156,6 +157,7 @@
- #define MIDR_CORTEX_A510 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A510)
- #define MIDR_CORTEX_A520 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A520)
- #define MIDR_CORTEX_A710 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A710)
-+#define MIDR_CORTEX_A715 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A715)
- #define MIDR_CORTEX_X2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_X2)
- #define MIDR_NEOVERSE_N2 MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_NEOVERSE_N2)
- #define MIDR_CORTEX_A78C	MIDR_CPU_MODEL(ARM_CPU_IMP_ARM, ARM_CPU_PART_CORTEX_A78C)
--- 
-2.43.0
+To avoid further bugfix conflicts due to random EROFS_BLKSIZs
+around the whole codebase, just backport the dependencies for 6.1.y.
 
+ fs/erofs/internal.h |    6 ------
+ fs/erofs/namei.c    |   18 +++++-------------
+ 2 files changed, 5 insertions(+), 19 deletions(-)
+
+--- a/fs/erofs/internal.h
++++ b/fs/erofs/internal.h
+@@ -347,12 +347,6 @@ static inline erofs_off_t erofs_iloc(str
+ 		(EROFS_I(inode)->nid << sbi->islotbits);
+ }
+ 
+-static inline unsigned long erofs_inode_datablocks(struct inode *inode)
+-{
+-	/* since i_size cannot be changed */
+-	return DIV_ROUND_UP(inode->i_size, EROFS_BLKSIZ);
+-}
+-
+ static inline unsigned int erofs_bitrange(unsigned int value, unsigned int bit,
+ 					  unsigned int bits)
+ {
+--- a/fs/erofs/namei.c
++++ b/fs/erofs/namei.c
+@@ -5,7 +5,6 @@
+  * Copyright (C) 2022, Alibaba Cloud
+  */
+ #include "xattr.h"
+-
+ #include <trace/events/erofs.h>
+ 
+ struct erofs_qstr {
+@@ -87,19 +86,13 @@ static struct erofs_dirent *find_target_
+ 	return ERR_PTR(-ENOENT);
+ }
+ 
+-static void *find_target_block_classic(struct erofs_buf *target,
+-				       struct inode *dir,
+-				       struct erofs_qstr *name,
+-				       int *_ndirents)
++static void *erofs_find_target_block(struct erofs_buf *target,
++		struct inode *dir, struct erofs_qstr *name, int *_ndirents)
+ {
+-	unsigned int startprfx, endprfx;
+-	int head, back;
++	int head = 0, back = DIV_ROUND_UP(dir->i_size, EROFS_BLKSIZ) - 1;
++	unsigned int startprfx = 0, endprfx = 0;
+ 	void *candidate = ERR_PTR(-ENOENT);
+ 
+-	startprfx = endprfx = 0;
+-	head = 0;
+-	back = erofs_inode_datablocks(dir) - 1;
+-
+ 	while (head <= back) {
+ 		const int mid = head + (back - head) / 2;
+ 		struct erofs_buf buf = __EROFS_BUF_INITIALIZER;
+@@ -180,8 +173,7 @@ int erofs_namei(struct inode *dir, const
+ 	qn.end = name->name + name->len;
+ 
+ 	ndirents = 0;
+-
+-	de = find_target_block_classic(&buf, dir, &qn, &ndirents);
++	de = erofs_find_target_block(&buf, dir, &qn, &ndirents);
+ 	if (IS_ERR(de))
+ 		return PTR_ERR(de);
+ 
 
 
 
