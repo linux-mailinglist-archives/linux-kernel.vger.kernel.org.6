@@ -1,157 +1,184 @@
-Return-Path: <linux-kernel+bounces-363256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363237-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 115EB99BFB0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:02:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8360699BF73
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A4E61C22144
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:02:10 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF096B212C3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:49:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F6813C83D;
-	Mon, 14 Oct 2024 06:02:06 +0000 (UTC)
-Received: from inva020.nxp.com (inva020.nxp.com [92.121.34.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D097E13BC18;
+	Mon, 14 Oct 2024 05:49:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="zA8OwGZW"
+Received: from out203-205-221-164.mail.qq.com (out203-205-221-164.mail.qq.com [203.205.221.164])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0534E4C7E;
-	Mon, 14 Oct 2024 06:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=92.121.34.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85EB84A2F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:49:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.164
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728885725; cv=none; b=KyRkis10e0FMlL0TlSnCWe0gyVn3Plzulb3MuQSNyruzyCd7LYJDCBkEXBSpCCdKs7zlLccfInd7wjST1fvJpdBve9jFFGWW/DftX/pm/0y6RDleI+x0FEzChU8ntCwH5+nnU7AwAjPD/2AehKbNN442rvI958CLOO6xwRdxetQ=
+	t=1728884976; cv=none; b=EHPQZjV9lLLP6iw+/ndjSZHwN1XCgV8fycerAc8OjRY67KLb0MITZ/bhDt6RdIQFL7ThTYk+qGDajZYiUnrj4sMLhHEDUysQWjooJY0jmWtQjmemrDggBWJJDGBQAgDNKOuisoQLfJy1SvdV5+sG/pyb5ayXSlkc800M2Aoe+/I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728885725; c=relaxed/simple;
-	bh=zkIqdZum/IGaRw9kiHLzNgVY56MJxqryiegzsUheLfE=;
-	h=From:To:Subject:Date:Message-Id; b=NEfQNCY6YxIXJICE3igWzZMFz5LXVbWGj95nnMV3wncLa1SHQEdTn7OrR3aIrHVsrAKrBGcvExvIeJ7tzfI7BHBuEj6azcK9kQ49dve3+ceUHFmowko6ELLlKwsNm/HQwMyhpNFv5sTWZe2KBPEjXd4IaVl/1AHyjxhm+kDCzJ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; arc=none smtp.client-ip=92.121.34.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-Received: from inva020.nxp.com (localhost [127.0.0.1])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 590D51A1440;
-	Mon, 14 Oct 2024 08:02:02 +0200 (CEST)
-Received: from aprdc01srsp001v.ap-rdc01.nxp.com (aprdc01srsp001v.ap-rdc01.nxp.com [165.114.16.16])
-	by inva020.eu-rdc02.nxp.com (Postfix) with ESMTP id 1F2501A1281;
-	Mon, 14 Oct 2024 08:02:02 +0200 (CEST)
-Received: from localhost.localdomain (shlinux2.ap.freescale.net [10.192.224.44])
-	by aprdc01srsp001v.ap-rdc01.nxp.com (Postfix) with ESMTP id 906AF183DC03;
-	Mon, 14 Oct 2024 14:02:00 +0800 (+08)
-From: Shengjiu Wang <shengjiu.wang@nxp.com>
-To: shengjiu.wang@gmail.com,
-	Xiubo.Lee@gmail.com,
-	festevam@gmail.com,
-	nicoleotsuka@gmail.com,
-	lgirdwood@gmail.com,
-	broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] ASoC: fsl_micfil: Add sample rate constraint
-Date: Mon, 14 Oct 2024 13:38:33 +0800
-Message-Id: <1728884313-6778-1-git-send-email-shengjiu.wang@nxp.com>
-X-Mailer: git-send-email 2.7.4
-X-Virus-Scanned: ClamAV using ClamSMTP
+	s=arc-20240116; t=1728884976; c=relaxed/simple;
+	bh=A3SsPtjELHjf0XPV9pBjDTL4MKNQLICWboT88ToXqbo=;
+	h=Message-ID:From:To:Cc:Subject:Date:MIME-Version; b=iUayd/tFW6l6jYVoAu/pOqY2qiOdmSBU7kb8g8Q5XUR8+oO5qb9YkICe30UFFxj3c45gWWJDFF0V6tpghi/7W/bAdQeRVX2bcC6vC3cb4M88kKY4o1YiuQqy7OedGD5Uhu9vWt12542tN3eIpRlBfIsorUOiQ+bWc7uwuByEiY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=zA8OwGZW; arc=none smtp.client-ip=203.205.221.164
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728884664; bh=zykUKuNup4jjj1keaoTageR77Aw8N8gLKffRUfbNM1M=;
+	h=From:To:Cc:Subject:Date;
+	b=zA8OwGZWXCukl/ydwSbcvqyD8yX/nPrr3rRtOKEUbdDO9HAr1pikZpE0tgtpNKz75
+	 6K4iwAWtUoDWrmTnkQQ/sjxBLdby+g2f9ZF3Td/wEgu/tZp8kJqX/onO4D8rQTURT7
+	 tQXfZ3wYw13T1cP85vcnGbwMi8QqySuP/wY6Unes=
+Received: from localhost ([58.246.87.66])
+	by newxmesmtplogicsvrsza29-0.qq.com (NewEsmtp) with SMTP
+	id B163EEA5; Mon, 14 Oct 2024 13:44:22 +0800
+X-QQ-mid: xmsmtpt1728884662tem01wy8w
+Message-ID: <tencent_6BF819F333D995B4D3932826194B9B671207@qq.com>
+X-QQ-XMAILINFO: MtZ4zLDUQmWftoaGVfpgi0UBPJG43WK+AXmPEzJmz8wRePCudnUm7nInAQ5bbP
+	 3bpr52/zBq3Ol7pFuvMCyrXQ3A4gTGwORfQbtUhisKL62AXBaEbJbVheb56+27TdtetLkvW2GKGi
+	 op4Y56NyLqjeYzDRZYQZkBL+d21TC1K48LCW2mysmVPWwefd8kmXJXsOtoItoC2GBFqJa+9lgr8m
+	 GilFcQxjLyCigjY+4Pqg5a3aeD5ilzCcul5Ah+wPdWM5ACM9U7ohwkaQ61/UUkIiI3kDnDDiqnVa
+	 UWkq/PMynrkF7GY+Y/GAIy14GbikmFiqUC3XD9VNrvRW8ITkGarq2eZXC0EvLd2q9W800xNA2Wo4
+	 8wrxZ/hc8B2Hjw1ywaPrcIban+k7LuUfXOQaTdEdZB5V0gcPYKqFmYILMmal9En8JpCARi3J4Tsm
+	 7bHilsC7nJvp/TaSCFGBZXQvTZJ+kxAM18XEy6VoI1lhf71xBAbQYvvS+pQx8VX2FKre2pM3vx4w
+	 lxXswVSQctN4fevpryZJ4v4YnbNkq1DfwFDvtFUt9PIuAbHerM/9JN2f76/fy/iaRnfJo3b+Eaq7
+	 MMocBE5Ju2uZshXUKUp+CWaMJK+Sde0/oMKLyQg3YZAsN5lb1bhOgyJwDUhb6gQAOssII7TiA4zq
+	 KHhcYW7XFsvZgmb+uhDK8ngWv0hFwUoyut7mLtnDzSzE/HLZDdIWdohdRCX4UTtTO7NYA+lqTRur
+	 Ohj15rS+Ro6opPCj0c5EEAdn3xnxuxJT5mjrG6NYKPZ1lDMAMmyvjbMUMTvjFMtwudG68BndRDFD
+	 UAzL+EtP/2TgsUgQZ56TO+rb1NOoourF+UH2mrEeiG97wEz6DoPhMODT6mMcLJ/ZemoDHMfuOkmR
+	 QA9nzeCHZqmCVm8ynt8XSZKmiDckIOKsm5GIgatZ7s62RlukwuTMdSCasPT8ACxJyXoujIw19mYI
+	 8U19seLMrdQMnsLB9bu4dfzh3X/LzR
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+From: 2694439648@qq.com
+To: alexandre.torgue@foss.st.com,
+	joabreu@synopsys.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	mcoquelin.stm32@gmail.com
+Cc: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	hailong.fan@siengine.com
+Subject: [PATCH] net: stmmac: enable MAC after MTL configuring
+Date: Mon, 14 Oct 2024 13:44:03 +0800
+X-OQ-MSGID: <20241014054403.71750-1-2694439648@qq.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On some platforms, for example i.MX93, there is only one
-audio PLL source, so some sample rate can't be supported.
-If the PLL source is used for 8kHz series rates, then 11kHz
-series rates can't be supported.
+From: "hailong.fan" <hailong.fan@siengine.com>
 
-So add constraints according to the frequency of available
-clock sources, then alsa-lib will help to convert the
-unsupported rate for the driver.
+DMA maybe block while ETH is opening,
+Adjust the enable sequence, put the MAC enable last
 
-Signed-off-by: Shengjiu Wang <shengjiu.wang@nxp.com>
+Signed-off-by: hailong.fan <hailong.fan@siengine.com>
 ---
- sound/soc/fsl/fsl_micfil.c | 38 ++++++++++++++++++++++++++++++++++++++
- 1 file changed, 38 insertions(+)
+ drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c   |  8 --------
+ drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c | 12 ------------
+ drivers/net/ethernet/stmicro/stmmac/stmmac_main.c  |  6 +++---
+ 3 files changed, 3 insertions(+), 23 deletions(-)
 
-diff --git a/sound/soc/fsl/fsl_micfil.c b/sound/soc/fsl/fsl_micfil.c
-index 4e65966d54fc..619ee7a5b867 100644
---- a/sound/soc/fsl/fsl_micfil.c
-+++ b/sound/soc/fsl/fsl_micfil.c
-@@ -28,6 +28,13 @@
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
+index 0d185e54e..92448d858 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac4_lib.c
+@@ -50,10 +50,6 @@ void dwmac4_dma_start_tx(struct stmmac_priv *priv, void __iomem *ioaddr,
  
- #define MICFIL_OSR_DEFAULT	16
- 
-+#define MICFIL_NUM_RATES	7
-+#define MICFIL_CLK_SRC_NUM	3
-+/* clock source ids */
-+#define MICFIL_AUDIO_PLL1	0
-+#define MICFIL_AUDIO_PLL2	1
-+#define MICFIL_CLK_EXT3		2
-+
- enum quality {
- 	QUALITY_HIGH,
- 	QUALITY_MEDIUM,
-@@ -45,9 +52,12 @@ struct fsl_micfil {
- 	struct clk *mclk;
- 	struct clk *pll8k_clk;
- 	struct clk *pll11k_clk;
-+	struct clk *clk_src[MICFIL_CLK_SRC_NUM];
- 	struct snd_dmaengine_dai_dma_data dma_params_rx;
- 	struct sdma_peripheral_config sdmacfg;
- 	struct snd_soc_card *card;
-+	struct snd_pcm_hw_constraint_list constraint_rates;
-+	unsigned int constraint_rates_list[MICFIL_NUM_RATES];
- 	unsigned int dataline;
- 	char name[32];
- 	int irq[MICFIL_IRQ_LINES];
-@@ -450,12 +460,34 @@ static int fsl_micfil_startup(struct snd_pcm_substream *substream,
- 			      struct snd_soc_dai *dai)
- {
- 	struct fsl_micfil *micfil = snd_soc_dai_get_drvdata(dai);
-+	unsigned int rates[MICFIL_NUM_RATES] = {8000, 11025, 16000, 22050, 32000, 44100, 48000};
-+	int i, j, k = 0;
-+	u64 clk_rate;
- 
- 	if (!micfil) {
- 		dev_err(dai->dev, "micfil dai priv_data not set\n");
- 		return -EINVAL;
- 	}
- 
-+	micfil->constraint_rates.list = micfil->constraint_rates_list;
-+	micfil->constraint_rates.count = 0;
-+
-+	for (j = 0; j < MICFIL_NUM_RATES; j++) {
-+		for (i = 0; i < MICFIL_CLK_SRC_NUM; i++) {
-+			clk_rate = clk_get_rate(micfil->clk_src[i]);
-+			if (clk_rate != 0 && do_div(clk_rate, rates[j]) == 0) {
-+				micfil->constraint_rates_list[k++] = rates[j];
-+				micfil->constraint_rates.count++;
-+				break;
-+			}
-+		}
-+	}
-+
-+	if (micfil->constraint_rates.count > 0)
-+		snd_pcm_hw_constraint_list(substream->runtime, 0,
-+					   SNDRV_PCM_HW_PARAM_RATE,
-+					   &micfil->constraint_rates);
-+
- 	return 0;
+ 	value |= DMA_CONTROL_ST;
+ 	writel(value, ioaddr + DMA_CHAN_TX_CONTROL(dwmac4_addrs, chan));
+-
+-	value = readl(ioaddr + GMAC_CONFIG);
+-	value |= GMAC_CONFIG_TE;
+-	writel(value, ioaddr + GMAC_CONFIG);
  }
  
-@@ -1160,6 +1192,12 @@ static int fsl_micfil_probe(struct platform_device *pdev)
- 	fsl_asoc_get_pll_clocks(&pdev->dev, &micfil->pll8k_clk,
- 				&micfil->pll11k_clk);
+ void dwmac4_dma_stop_tx(struct stmmac_priv *priv, void __iomem *ioaddr,
+@@ -77,10 +73,6 @@ void dwmac4_dma_start_rx(struct stmmac_priv *priv, void __iomem *ioaddr,
+ 	value |= DMA_CONTROL_SR;
  
-+	micfil->clk_src[MICFIL_AUDIO_PLL1] = micfil->pll8k_clk;
-+	micfil->clk_src[MICFIL_AUDIO_PLL2] = micfil->pll11k_clk;
-+	micfil->clk_src[MICFIL_CLK_EXT3] = devm_clk_get(&pdev->dev, "clkext3");
-+	if (IS_ERR(micfil->clk_src[MICFIL_CLK_EXT3]))
-+		micfil->clk_src[MICFIL_CLK_EXT3] = NULL;
+ 	writel(value, ioaddr + DMA_CHAN_RX_CONTROL(dwmac4_addrs, chan));
+-
+-	value = readl(ioaddr + GMAC_CONFIG);
+-	value |= GMAC_CONFIG_RE;
+-	writel(value, ioaddr + GMAC_CONFIG);
+ }
+ 
+ void dwmac4_dma_stop_rx(struct stmmac_priv *priv, void __iomem *ioaddr,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+index 7840bc403..cba12edc1 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwxgmac2_dma.c
+@@ -288,10 +288,6 @@ static void dwxgmac2_dma_start_tx(struct stmmac_priv *priv,
+ 	value = readl(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+ 	value |= XGMAC_TXST;
+ 	writel(value, ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_TX_CONFIG);
+-	value |= XGMAC_CONFIG_TE;
+-	writel(value, ioaddr + XGMAC_TX_CONFIG);
+ }
+ 
+ static void dwxgmac2_dma_stop_tx(struct stmmac_priv *priv, void __iomem *ioaddr,
+@@ -302,10 +298,6 @@ static void dwxgmac2_dma_stop_tx(struct stmmac_priv *priv, void __iomem *ioaddr,
+ 	value = readl(ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+ 	value &= ~XGMAC_TXST;
+ 	writel(value, ioaddr + XGMAC_DMA_CH_TX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_TX_CONFIG);
+-	value &= ~XGMAC_CONFIG_TE;
+-	writel(value, ioaddr + XGMAC_TX_CONFIG);
+ }
+ 
+ static void dwxgmac2_dma_start_rx(struct stmmac_priv *priv,
+@@ -316,10 +308,6 @@ static void dwxgmac2_dma_start_rx(struct stmmac_priv *priv,
+ 	value = readl(ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+ 	value |= XGMAC_RXST;
+ 	writel(value, ioaddr + XGMAC_DMA_CH_RX_CONTROL(chan));
+-
+-	value = readl(ioaddr + XGMAC_RX_CONFIG);
+-	value |= XGMAC_CONFIG_RE;
+-	writel(value, ioaddr + XGMAC_RX_CONFIG);
+ }
+ 
+ static void dwxgmac2_dma_stop_rx(struct stmmac_priv *priv, void __iomem *ioaddr,
+diff --git a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+index e21404822..c19ca62a4 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
++++ b/drivers/net/ethernet/stmicro/stmmac/stmmac_main.c
+@@ -3437,9 +3437,6 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
+ 		priv->hw->rx_csum = 0;
+ 	}
+ 
+-	/* Enable the MAC Rx/Tx */
+-	stmmac_mac_set(priv, priv->ioaddr, true);
+-
+ 	/* Set the HW DMA mode and the COE */
+ 	stmmac_dma_operation_mode(priv);
+ 
+@@ -3523,6 +3520,9 @@ static int stmmac_hw_setup(struct net_device *dev, bool ptp_register)
+ 	/* Start the ball rolling... */
+ 	stmmac_start_all_dma(priv);
+ 
++	/* Enable the MAC Rx/Tx */
++	stmmac_mac_set(priv, priv->ioaddr, true);
 +
- 	/* init regmap */
- 	regs = devm_platform_get_and_ioremap_resource(pdev, 0, &res);
- 	if (IS_ERR(regs))
+ 	stmmac_set_hw_vlan_mode(priv, priv->hw);
+ 
+ 	return 0;
 -- 
 2.34.1
 
