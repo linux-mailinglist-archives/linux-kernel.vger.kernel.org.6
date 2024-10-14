@@ -1,162 +1,201 @@
-Return-Path: <linux-kernel+bounces-364195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3FB1099CC93
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:17:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3C499CC99
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:17:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 03C321F20EAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:17:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3D4DB23576
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:17:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6136A1AA7A5;
-	Mon, 14 Oct 2024 14:17:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AC6D1AB507;
+	Mon, 14 Oct 2024 14:17:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="sDGyU9dh"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GBJwmJo/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Z0Ig7Qp";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GBJwmJo/";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="1Z0Ig7Qp"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CC417C8D;
-	Mon, 14 Oct 2024 14:17:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CE401AAC4;
+	Mon, 14 Oct 2024 14:17:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915427; cv=none; b=QA9ihZ6zwJSbm2L+96En4cA9bgBhfE9LbLmu1GxPc41+HnLVfdB/+OUMPkOpp8jy4oKueO3coFODIOuwpTRNn67Pyk9ZrFVtwz3mM8J/QJAZHVxEf3ZZeE+4hw47SxmzCzUZEBbNiKhE62vxzoWH2rUvDty6ChnisqjzzL/RPXY=
+	t=1728915428; cv=none; b=MoHbMnMRlYhTtjK1q2NJO1hvJNi+CAAjxKvEaeFDRz/hBk+M79gLcaeSF/0mj2og1bRDu/KUd4xUArfVif9ycyex9I1SXOE3kDDb0oM9kA3m2Bx3WxDvXlMr1qHNLjEHQt7Ql2YJz1k0G3hlNUfBQogVi+Xvu0NtcUonLSVw2kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915427; c=relaxed/simple;
-	bh=ju4Mt8h2px3i7lcvR8qIN2n/WdXKkrr7yZo8Squbmg0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RAsgUmE2a9cwJ52Acgw5IuFfZ+WdfVsYZskhAQSEzIImB0cIkWeJw3vm+8Pxrz0j4XFSscyRgGXmAWmChiUcXLqnx5dRxVzW0aRArtFZMwjo1viYwiJFCDm8RLTu4S4FxXAPF9ZclqI6D1tJtut5v0RGHTeogZlQll0vPQPWCW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=sDGyU9dh; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EDo2Ur025375;
-	Mon, 14 Oct 2024 14:16:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=from
-	:to:cc:subject:date:message-id:mime-version
-	:content-transfer-encoding; s=pp1; bh=V4ZSJh+/gINXd1XQOEDszc54S6
-	0PZh0QEq00yayxAHg=; b=sDGyU9dh+SuUWfYRzRCNWixcdxcacaebP5R8sCvDut
-	XLvXwayQHy/6FDSKyk3qH6kmYbUJJiS0/frNdLe/Nwr203rXSjRjFjCkT5WwoSrd
-	9I8u5hQZRW5b/3T5sP6rlpYC4DtfzdSA9UV26CpKjkLPPsbht2LlKUzFeZ+Z6W1W
-	24YAF/d9rExQ1pBdEeqAl0t/W28YTrfEDlNGR+zJkwAu1mmRIwcdEZM1RarNhKAz
-	Nlo+QLxPK4G7j0Vs4W9Y5TeBOwZGhvhKrFdHIoQB/1um20kWkMf25qnfvKBfZxPR
-	C3tXa4WWcm47Nir49Hy5y/oahxnRx66uXGXyBZAX+QJw==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4294heg4kx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 14:16:58 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EDmwnB027452;
-	Mon, 14 Oct 2024 14:16:57 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txf2ee-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 14:16:57 +0000
-Received: from smtpav03.dal12v.mail.ibm.com (smtpav03.dal12v.mail.ibm.com [10.241.53.102])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EEGutp48497024
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 14:16:56 GMT
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6873558056;
-	Mon, 14 Oct 2024 14:16:56 +0000 (GMT)
-Received: from smtpav03.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 110005803F;
-	Mon, 14 Oct 2024 14:16:56 +0000 (GMT)
-Received: from sbct-3.pok.ibm.com (unknown [9.47.158.153])
-	by smtpav03.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 14 Oct 2024 14:16:55 +0000 (GMT)
-From: Stefan Berger <stefanb@linux.ibm.com>
-To: linux-integrity@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
-        jarkko@kernel.org
-Cc: linux-kernel@vger.kernel.org, Stefan Berger <stefanb@linux.ibm.com>
-Subject: [PATCH] tpm: ibmvtpm: Set TPM_OPS_AUTO_STARTUP flag on driver
-Date: Mon, 14 Oct 2024 10:16:43 -0400
-Message-ID: <20241014141643.3101129-1-stefanb@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1728915428; c=relaxed/simple;
+	bh=uJiW21VT/6sXu7kavh+EaHIp1K7jbTfhuf/zhASzkDQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NNUVPq7GI/57AdKr863CBazehGjW8Y5UcT2WnQ+xgsT/xkoYxspBqlhwginjCn6OAtD7qRrDRJbTKsB4FI/64GSkGYHO7i+mR1jVfcsdFhySQmGTY3CS2Fl5DvjJog/DvszPz5NtZH9CUvfEoYbwJORDuzyOKmaEQkxAv5Y+Osg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GBJwmJo/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Z0Ig7Qp; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GBJwmJo/; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=1Z0Ig7Qp; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 42A2521D30;
+	Mon, 14 Oct 2024 14:17:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728915425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f03tn5Xd/oNwILhzo86YWC/s6SaJxCfglgrDR0HP1Ts=;
+	b=GBJwmJo/6xVbLCo+wiS8rDl5cngkHlmRQdQl/RuowI+Whx8EE6PArHOHSD3DHnAC0AjE2q
+	tLk755t9CPU7HDrnYHCzr//J0BJZMLkQEm4umnd8fZFP89mCif7WUZ1gn2iqYWwihxJyn5
+	jEe2CkZnGzRCIaUJuFrM5C6M2GAlRhc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728915425;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f03tn5Xd/oNwILhzo86YWC/s6SaJxCfglgrDR0HP1Ts=;
+	b=1Z0Ig7QpDP8DhSzyebrDaIXdKyz50/cL7JT4VCk674zD7W16zV8X8bFbg7qstNj3Cz44X6
+	XpKh8RF+nF2VHVBw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728915425; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f03tn5Xd/oNwILhzo86YWC/s6SaJxCfglgrDR0HP1Ts=;
+	b=GBJwmJo/6xVbLCo+wiS8rDl5cngkHlmRQdQl/RuowI+Whx8EE6PArHOHSD3DHnAC0AjE2q
+	tLk755t9CPU7HDrnYHCzr//J0BJZMLkQEm4umnd8fZFP89mCif7WUZ1gn2iqYWwihxJyn5
+	jEe2CkZnGzRCIaUJuFrM5C6M2GAlRhc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728915425;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=f03tn5Xd/oNwILhzo86YWC/s6SaJxCfglgrDR0HP1Ts=;
+	b=1Z0Ig7QpDP8DhSzyebrDaIXdKyz50/cL7JT4VCk674zD7W16zV8X8bFbg7qstNj3Cz44X6
+	XpKh8RF+nF2VHVBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3592413A51;
+	Mon, 14 Oct 2024 14:17:05 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 73YPDeEnDWcCZQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 14:17:05 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id DCA57A0896; Mon, 14 Oct 2024 16:17:04 +0200 (CEST)
+Date: Mon, 14 Oct 2024 16:17:04 +0200
+From: Jan Kara <jack@suse.cz>
+To: Zhihao Cheng <chengzhihao@huaweicloud.com>
+Cc: tytso@mit.edu, jack@suse.com, linux-ext4@vger.kernel.org,
+	linux-kernel@vger.kernel.org, chengzhihao1@huawei.com,
+	yi.zhang@huawei.com
+Subject: Re: [PATCH] jbd2: Make b_frozen_data allocation always succeed
+Message-ID: <20241014141704.lz5r7nn6bzjzcyhn@quack3>
+References: <20241012085530.2147846-1-chengzhihao@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0aBf7fkdgq3XZUQFyWYEQFy7zRSFB2aG
-X-Proofpoint-GUID: 0aBf7fkdgq3XZUQFyWYEQFy7zRSFB2aG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- priorityscore=1501 lowpriorityscore=0 phishscore=0 clxscore=1011
- mlxscore=0 spamscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
- adultscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140103
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012085530.2147846-1-chengzhihao@huaweicloud.com>
+X-Spam-Score: -3.80
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[7];
+	RCVD_COUNT_THREE(0.00)[3];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,huawei.com:email,suse.com:email,suse.cz:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Set the TPM_OPS_AUTO_STARTUP on the driver so that the ibmvtpm driver now
-uses tpm2_auto_startup and tpm1_auto_startup like many other drivers do.
-Remove tpm_get_timeouts, tpm2_get_cc_attrs_tbl, and tpm2_sessions_init
-calls from it since these will all be called in tpm2_auto_startup and
-tpm1_auto_startup.
+On Sat 12-10-24 16:55:30, Zhihao Cheng wrote:
+> From: Zhihao Cheng <chengzhihao1@huawei.com>
+> 
+> The b_frozen_data allocation should not be failed during journal
+> committing process, otherwise jbd2 will abort.
+> Since commit 490c1b444ce653d("jbd2: do not fail journal because of
+> frozen_buffer allocation failure") already added '__GFP_NOFAIL' flag
+> in do_get_write_access(), just add '__GFP_NOFAIL' flag for all allocations
+> in jbd2_journal_write_metadata_buffer(), like 'new_bh' allocation does.
+> Besides, remove all error handling branches for do_get_write_access().
+> 
+> Signed-off-by: Zhihao Cheng <chengzhihao1@huawei.com>
 
-The exporting of the tpm2_session_init symbol was only necessary while the
-ibmvtpm driver was calling this function. Since this is not the case
-anymore, remove this symbol from being exported.
+Looks good. Feel free to add:
 
-What is new for the ibmvtpm driver is that now tpm2_do_selftest and
-tpm1_do_selftest will be called that send commands to the TPM to perform
-or continue its selftest. However, the firmware should already have sent
-these commands so that the TPM will not do much work at this time.
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Stefan Berger <stefanb@linux.ibm.com>
----
- drivers/char/tpm/tpm2-sessions.c |  1 -
- drivers/char/tpm/tpm_ibmvtpm.c   | 15 +--------------
- 2 files changed, 1 insertion(+), 15 deletions(-)
+								Honza
 
-diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
-index 511c67061728..b1a0a37f14d7 100644
---- a/drivers/char/tpm/tpm2-sessions.c
-+++ b/drivers/char/tpm/tpm2-sessions.c
-@@ -1362,5 +1362,4 @@ int tpm2_sessions_init(struct tpm_chip *chip)
- 
- 	return rc;
- }
--EXPORT_SYMBOL(tpm2_sessions_init);
- #endif /* CONFIG_TCG_TPM2_HMAC */
-diff --git a/drivers/char/tpm/tpm_ibmvtpm.c b/drivers/char/tpm/tpm_ibmvtpm.c
-index 1e5b107d1f3b..76d048f63d55 100644
---- a/drivers/char/tpm/tpm_ibmvtpm.c
-+++ b/drivers/char/tpm/tpm_ibmvtpm.c
-@@ -450,6 +450,7 @@ static bool tpm_ibmvtpm_req_canceled(struct tpm_chip *chip, u8 status)
- }
- 
- static const struct tpm_class_ops tpm_ibmvtpm = {
-+	.flags = TPM_OPS_AUTO_STARTUP,
- 	.recv = tpm_ibmvtpm_recv,
- 	.send = tpm_ibmvtpm_send,
- 	.cancel = tpm_ibmvtpm_cancel,
-@@ -690,20 +691,6 @@ static int tpm_ibmvtpm_probe(struct vio_dev *vio_dev,
- 	if (!strcmp(id->compat, "IBM,vtpm20"))
- 		chip->flags |= TPM_CHIP_FLAG_TPM2;
- 
--	rc = tpm_get_timeouts(chip);
--	if (rc)
--		goto init_irq_cleanup;
--
--	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
--		rc = tpm2_get_cc_attrs_tbl(chip);
--		if (rc)
--			goto init_irq_cleanup;
--
--		rc = tpm2_sessions_init(chip);
--		if (rc)
--			goto init_irq_cleanup;
--	}
--
- 	return tpm_chip_register(chip);
- init_irq_cleanup:
- 	do {
+> ---
+>  fs/jbd2/commit.c  | 4 ----
+>  fs/jbd2/journal.c | 8 +-------
+>  2 files changed, 1 insertion(+), 11 deletions(-)
+> 
+> diff --git a/fs/jbd2/commit.c b/fs/jbd2/commit.c
+> index 4305a1ac808a..9153ff3a08e7 100644
+> --- a/fs/jbd2/commit.c
+> +++ b/fs/jbd2/commit.c
+> @@ -662,10 +662,6 @@ void jbd2_journal_commit_transaction(journal_t *journal)
+>  		JBUFFER_TRACE(jh, "ph3: write metadata");
+>  		escape = jbd2_journal_write_metadata_buffer(commit_transaction,
+>  						jh, &wbuf[bufs], blocknr);
+> -		if (escape < 0) {
+> -			jbd2_journal_abort(journal, escape);
+> -			continue;
+> -		}
+>  		jbd2_file_log_bh(&io_bufs, wbuf[bufs]);
+>  
+>  		/* Record the new block's tag in the current descriptor
+> diff --git a/fs/jbd2/journal.c b/fs/jbd2/journal.c
+> index 97f487c3d8fc..29d30eddf727 100644
+> --- a/fs/jbd2/journal.c
+> +++ b/fs/jbd2/journal.c
+> @@ -318,7 +318,6 @@ static inline void jbd2_data_do_escape(char *data)
+>   *
+>   *
+>   * Return value:
+> - *  <0: Error
+>   *  =0: Finished OK without escape
+>   *  =1: Finished OK with escape
+>   */
+> @@ -386,12 +385,7 @@ int jbd2_journal_write_metadata_buffer(transaction_t *transaction,
+>  			goto escape_done;
+>  
+>  		spin_unlock(&jh_in->b_state_lock);
+> -		tmp = jbd2_alloc(bh_in->b_size, GFP_NOFS);
+> -		if (!tmp) {
+> -			brelse(new_bh);
+> -			free_buffer_head(new_bh);
+> -			return -ENOMEM;
+> -		}
+> +		tmp = jbd2_alloc(bh_in->b_size, GFP_NOFS | __GFP_NOFAIL);
+>  		spin_lock(&jh_in->b_state_lock);
+>  		if (jh_in->b_frozen_data) {
+>  			jbd2_free(tmp, bh_in->b_size);
+> -- 
+> 2.39.2
+> 
 -- 
-2.43.0
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
