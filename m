@@ -1,198 +1,102 @@
-Return-Path: <linux-kernel+bounces-364422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364423-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DE4A99D46F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:14:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEEC199D473
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:16:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA5E01F233F6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:14:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96AC01F23C47
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:16:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D79E81AC8AE;
-	Mon, 14 Oct 2024 16:14:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9691AC450;
+	Mon, 14 Oct 2024 16:16:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="fL+jI8Ft"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="cOFwW2Rr"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6504314AA9
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:14:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 998BA20323;
+	Mon, 14 Oct 2024 16:16:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728922489; cv=none; b=Fjw7KEtMXJsR9suj6GWmoF7UA4dO5fhKe2Oaej1P3YtsmIj+J86S/TA94bNpTBaijTHCOQ+UFTuy89493cbOkb+XTS8i/riqAOft4PMlER9Q646AofJij3cN0GA5+uu62ygbb74zizY8ZksyyoOB7VRTd9Ckt4rQR/xBGFWGIXM=
+	t=1728922573; cv=none; b=aApCj4HKbugyPvQB1Q4l2xX6j//su7dqiQqiSLkMQQJNUlsuhhS8auG62lvQOzA3zDh4awCMp2SDg1yd1ddcImYGdv74GWIL87YbGw0X9prmwyCvziHU5vJRG0D1PVjfa+H8Y9vplDDftOObspu2+du6ebeTIxn9Yz/vsYiTYqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728922489; c=relaxed/simple;
-	bh=d+i7rz0v/lYhzDT8S7U2kztGhbofW2nOLWBFt6tMbxo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qwJtmwm5fxCiBWLhk+QDkFbJVELPTNgSmZAaSSaGG5SLXBB6779PW1ZjUdEXd6UJSfEXzuZjFHpAYNaquQWX7E8rcg7+seVoGEQnq/JcSCprxx3h/U1Ak3NPVGCM3bGCo6dynUV68VqONERxkCUYUI89zKP3Qe+3Y5ohYxbKrfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=fL+jI8Ft; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7afcf96affaso229436985a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:14:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1728922486; x=1729527286; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+z5rpFItk6hQgTy6bORhF+SgqBTinir6Gfegnb3yHE=;
-        b=fL+jI8FtLRh458X5XbkE/GpoaSVmrlshbFy8qRziGZm6qV/D5YLOyu3tTFiTsBcjta
-         yihlPsIhM4kleN2Q5zxdnRWr31RNdk8NK1olrIdRt0TXPReJvENkjQMeSykWW3ZOrcP5
-         nmTKaoZ3Q5Gchn55uSL+WVCckI1zgDKeI6nq1TY56hfNKGK+aiwri6d5ShEhVnt/H8WT
-         6wz4AvlBLnISKUcXmCEbsVmSAF1UguiBxF1siwEkTmoJqYCQB8Dp1lVBrdRNW9PkfMNT
-         4tXDAQhayJ2u3ySkm5w5OCvIr78zHWcGTulgr0VHCIIOgKJIJxwGX8LbExKqQHsnfvqu
-         O0aw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728922486; x=1729527286;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8+z5rpFItk6hQgTy6bORhF+SgqBTinir6Gfegnb3yHE=;
-        b=BvM+MtBjlMJSiH3beeEDxvtM2aWHw44rFlZChEP00rgteYDDt17J8nhTlUmK6qedjE
-         LlVOv6zHjfEixksp55FtQkMhP/QCWmmN3vyb5aqVXbwlVXrJECAwwOWfrChprP7YMMIh
-         OFWY0wtQhbkfEF1OeP9wShPIMnxJEyFwO3ASg/S++Ws61ig5+ee+NmiYBsI5FsiMb2df
-         O9q9wwak8Wtq60DVe65nKLcnlIabRTxjGiid9IEFk5btWDcpc2GJEsE4waMQiRkadFWw
-         GYjuQizprMbLZCkfgacrQE6jP8QN9o8ROE5uFwAZbdsbS6Yo+WEegvjAewFXgCi40tuQ
-         r2Cw==
-X-Gm-Message-State: AOJu0Yw7q3OjwEvueDnfQzFqoK6X8E3V6ncHidl7biXgzI07K19xEbl/
-	T+Iri5zLlGb1fiGRXeCNECTTXrIRyYjVve/cCEuG8GTZnHsOKrtRBXYwfIaiOFT2RZoypqT/qqI
-	=
-X-Google-Smtp-Source: AGHT+IFiWvyQHPw52VbxejgOs1jzzUybj5lACemxxUJIvDLtI0pYTAU28T0GKhme31JWd+fsvKQJrQ==
-X-Received: by 2002:a05:620a:24c9:b0:7b1:10ba:2ac0 with SMTP id af79cd13be357-7b11a37c2acmr1955757685a.35.1728922486285;
-        Mon, 14 Oct 2024 09:14:46 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::c666])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1148de09fsm436477685a.49.2024.10.14.09.14.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 09:14:45 -0700 (PDT)
-Date: Mon, 14 Oct 2024 12:14:43 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-Cc: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Message-ID: <f1a79484-2ee0-4160-a2f0-dbfa7b90eece@rowland.harvard.edu>
-References: <b9bea8cd-effc-484f-ac46-1644093adffe@rowland.harvard.edu>
- <670c7aaa.050a0220.3e960.004e.GAE@google.com>
+	s=arc-20240116; t=1728922573; c=relaxed/simple;
+	bh=zRv+5ICbmICC8lLulQye0gpcpQRjLqfBK4wwQxCwFQc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iZ/PPWlz3sQW7n//74mEwe5LvNIwkCbhtMHWCJZLmRqlAdpDZPWjh5Nmm6x5UGh3+OPDw0bO1ob6wsTkeEOyXtldIUnQdQbmm85NLCAwrCfWxabm+mejQPCXulbEoJ+Dass1U+My8sEQcKwz+o41OCYKAB/3d77QCRGaAXPZB14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=cOFwW2Rr; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net C05DB42BFE
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1728922571; bh=J5fEbVcW0uhdB55dqfS20FIGCPc2N2MZWHsQ7Tw263g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cOFwW2RrwnpKbDtI2QeHkx6bihLVWvRtqbpp/Q2vHulf40/tz7F8TlPa8W23yvkp6
+	 LIReYzHmciHVpGhDF89YR0vBpi+xTvQxWhUGPOheHZP5tAUSvMlOjn2Mv2cfvtwzds
+	 2cdLurU18gXDKZ67PcJuUAH3ILa/cck5H2Rc1N/11ai1tWacsqbys5Xm7WlgPWuIeF
+	 n97wKpW6l4dt5W8+uU+SMEmRsHATSKnUOoZvh09OJYECof95D6fZqbchtisvg9+9YF
+	 Vyudk8jSkCZNScoqnHXmOOMHC9KgaWu1LX0+xkgNNkxhk16lGOrnHiXQ0Qqi2qGkts
+	 W/hZ+/+b5y7tg==
+Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id C05DB42BFE;
+	Mon, 14 Oct 2024 16:16:11 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Pengyu Zhang <zpenya1314@gmail.com>
+Cc: rppt@kernel.org, linus.walleij@linaro.org, fmdefrancesco@gmail.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ yaxin_wang_uestc@163.com, Pengyu Zhang <zpenya1314@gmail.com>
+Subject: Re: [PATCH v2] Docs/mm: Fix a mistake for pfn in page_tables.rst
+In-Reply-To: <20241009144135.12453-1-zpenya1314@gmail.com>
+References: <20241009144135.12453-1-zpenya1314@gmail.com>
+Date: Mon, 14 Oct 2024 10:16:10 -0600
+Message-ID: <87msj6slrp.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <670c7aaa.050a0220.3e960.004e.GAE@google.com>
+Content-Type: text/plain
 
-On Sun, Oct 13, 2024 at 06:58:02PM -0700, syzbot wrote:
-> Hello,
-> 
-> syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Pengyu Zhang <zpenya1314@gmail.com> writes:
 
-It seems that the problem occurs when the timer isn't active in spite of 
-the fact that the root hub is running and there are URBs queued.  But 
-this shouldn't happen; I need to find the reason why it does and not 
-just work around it.
+> The documentation incorrectly calculate the pfn value as 0x3fffff,
+> which should be 0x3ffff instead. It is obtained by right-shifting
+> 0xffffc000 by 14 bits.
+>
+> This patch corrects the value to prevent any potential confusion
+> for developers referencing this document.
+>
+> Signed-off-by: Pengyu Zhang <zpenya1314@gmail.com>
+> ---
+>  Documentation/mm/page_tables.rst | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/Documentation/mm/page_tables.rst b/Documentation/mm/page_tables.rst
+> index be47b192a596..e7c69cc32493 100644
+> --- a/Documentation/mm/page_tables.rst
+> +++ b/Documentation/mm/page_tables.rst
+> @@ -29,7 +29,7 @@ address.
+>  With a page granularity of 4KB and a address range of 32 bits, pfn 0 is at
+>  address 0x00000000, pfn 1 is at address 0x00001000, pfn 2 is at 0x00002000
+>  and so on until we reach pfn 0xfffff at 0xfffff000. With 16KB pages pfs are
+> -at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3fffff.
+> +at 0x00004000, 0x00008000 ... 0xffffc000 and pfn goes from 0 to 0x3ffff.
+>  
 
-First make sure that it really is the cause.
+Applied, thanks.
 
-Alan Stern
+For future reference, when you submit an updated version of a patch,
+please make a note of what has changed below the "---" line.  Also, you
+didn't pick up Mike's Reviewed-by from the first version; I've added it.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-usb-testing
+Thanks,
 
-Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
-+++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -50,7 +50,7 @@
- #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
- #define POWER_BUDGET_3	900	/* in mA */
- 
--#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
-+#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
- 
- static const char	driver_name[] = "dummy_hcd";
- static const char	driver_desc[] = "USB Host+Gadget Emulator";
-@@ -257,6 +257,8 @@ struct dummy_hcd {
- 	unsigned			active:1;
- 	unsigned			old_active:1;
- 	unsigned			resuming:1;
-+
-+	bool				alanflag;
- };
- 
- struct dummy {
-@@ -1301,10 +1303,12 @@ static int dummy_urb_enqueue(
- 		dum_hcd->next_frame_urbp = urbp;
- 	if (usb_pipetype(urb->pipe) == PIPE_CONTROL)
- 		urb->error_count = 1;		/* mark as a new urb */
-+	dev_info(dummy_dev(dum_hcd), "Enqueue %p type %d\n", urb,
-+		usb_pipetype(urb->pipe));
- 
- 	/* kick the scheduler, it'll do the rest */
- 	if (!hrtimer_active(&dum_hcd->timer))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
- 
-  done:
-@@ -1325,9 +1329,15 @@ static int dummy_urb_dequeue(struct usb_
- 
- 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
- 	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
--			!list_empty(&dum_hcd->urbp_list))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
--
-+			!list_empty(&dum_hcd->urbp_list)) {
-+		dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+				HRTIMER_MODE_REL_SOFT);
-+	} else {
-+		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %p active %d\n",
-+				rc, urb, hrtimer_active(&dum_hcd->timer));
-+	}
-+	dum_hcd->alanflag = true;
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
- 	return rc;
- }
-@@ -1813,6 +1823,10 @@ static enum hrtimer_restart dummy_timer(
- 
- 	/* look at each urb queued by the host side driver */
- 	spin_lock_irqsave(&dum->lock, flags);
-+	if (dum_hcd->alanflag) {
-+		dum_hcd->alanflag = false;
-+		dev_info(dummy_dev(dum_hcd), "Timer handler\n");
-+	}
- 
- 	if (!dum_hcd->udev) {
- 		dev_err(dummy_dev(dum_hcd),
-@@ -1984,6 +1998,7 @@ return_urb:
- 			ep->already_seen = ep->setup_stage = 0;
- 
- 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
-+		dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
- 		spin_unlock(&dum->lock);
- 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
- 		spin_lock(&dum->lock);
-@@ -1995,8 +2010,7 @@ return_urb:
- 		usb_put_dev(dum_hcd->udev);
- 		dum_hcd->udev = NULL;
- 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
--		/* want a 1 msec delay here */
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
- 	}
- 
-@@ -2391,7 +2405,8 @@ static int dummy_bus_resume(struct usb_h
- 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 		set_link_state(dum_hcd);
- 		if (!list_empty(&dum_hcd->urbp_list))
--			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
-+			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+					HRTIMER_MODE_REL_SOFT);
- 		hcd->state = HC_STATE_RUNNING;
- 	}
- 	spin_unlock_irq(&dum_hcd->dum->lock);
-
+jon
 
