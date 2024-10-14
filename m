@@ -1,104 +1,105 @@
-Return-Path: <linux-kernel+bounces-364151-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364152-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 981AC99CBD8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:47:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DFF399CBD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:48:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F8F8B23605
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:47:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 447501F23E7A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:48:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBF831AAE31;
-	Mon, 14 Oct 2024 13:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38B741AB535;
+	Mon, 14 Oct 2024 13:47:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qTSMvxyj"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fbvpbFLG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01DB1A76CF;
-	Mon, 14 Oct 2024 13:47:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E8421AAE39
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728913642; cv=none; b=DxzdOkv7fNVFkpy/EAAzY0CDx+rDalf1GyAJayuxFjpxyULHAAYpy1hBdjUpPERQGhicYJ5cR/L/vBzuU8MZ/fD5jb9W5Q9Lb3qw+R42u0ySi7i+rLVVyCy1zMblswaJkLBYBBK1bJ3FofhQ2KeAE0lu3fOoQEKChs4c9wljnAc=
+	t=1728913646; cv=none; b=P8NVENaAnMyHsGpMmozJ7n7cAK5/FKhz0j6akbeQ0Ajyrk6GB129S6f1yfO/goisjVgNGJoTJtlJlbWglFxm+aeHRwJ0RagRXSWgmIA0DXGxzhZYRaT2rEYtJfOgUDiE6YaG9WoCeA2yrpmupST+C760CXIJH9dJnemOYG/Wym8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728913642; c=relaxed/simple;
-	bh=3OAOfemYJoqMDpLWwCsskLGBMLnb24Bl6yTaO9IqrGY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ps6YSREfxU/ECrDeHWGwJSCYjlZ+dl+fewCZOkGylSOvKEXDCBI8XwRI1nx6rGOebofKob4NOiJhQH1c2aIHKB5497DEegLx8lIJFIDnftUJC0Q8BIkGS0267ddlHp1Nu8CdKOxSuQGz6joIneZNsRxX9QnLAJJsZkHqG7FfjnY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qTSMvxyj; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=i7uD83M8HdHBtttrAgqQuwu1eZyhNYan0ZXlz7wnjPo=; b=qTSMvxyjq/zqIukuaYJf0dKMyr
-	/H6go9IP3ae/pnexIcgBVZTNNmJXT7De+nOgjcptF9AjcrisS7UoWZTw+X5jhS/PMeVc6K608qhty
-	ryO3YMpeMn3vkutjVMTVFWDlE5Ec4kU0hEGaZN77vrwknZr5OGMozpGQC5B1J3irFqMI=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t0LPU-009vjJ-Rj; Mon, 14 Oct 2024 15:46:56 +0200
-Date: Mon, 14 Oct 2024 15:46:56 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>
-Subject: Re: [PATCH v3 05/16] net: dwmac-dwc-qos-eth: Use helper rgmii_clock
-Message-ID: <1f38695e-642d-41e5-bf95-d4a4c55e416b@lunn.ch>
-References: <20241013-upstream_s32cc_gmac-v3-0-d84b5a67b930@oss.nxp.com>
- <20241013-upstream_s32cc_gmac-v3-5-d84b5a67b930@oss.nxp.com>
+	s=arc-20240116; t=1728913646; c=relaxed/simple;
+	bh=nwwq7OHMaX1nC9S9saGAcAH78OrbUQ+EHs3XR03niTg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Xan+9PDrRU1h4C+Klg9KLJ848bP7k2P00c+wLwjm+2D6HvbSkbd44rWTGjrmFDY4vB+wtj2tOJMFQ+LKLXLVNiyYT8hrpcHbM2cbF8qxC7N3clmlGVGf3CwBNjaOtJkv4FF3aVp3W7FOa+YNAjjgDk8LWc4FEZxkngGVHqTGSn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fbvpbFLG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F2CBEC4CED0;
+	Mon, 14 Oct 2024 13:47:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728913646;
+	bh=nwwq7OHMaX1nC9S9saGAcAH78OrbUQ+EHs3XR03niTg=;
+	h=Date:From:To:Cc:Subject:From;
+	b=fbvpbFLGJacz7KdskTSpqFr5dESrRgMLSudV03eEwOE4BWmMszKDkhE9Dc6HvVQmB
+	 BObfvY03gdlnj5csdiKAZ+YCh/Vf1+fna4ecPxhyuqQtZIxd3xo+bolmddD4HGdTgk
+	 MSj95NwsdWsQt8Yy7/R9IrSWxaQ2nvV1rU74FgXyHrBy7eXRiHfY3VSXdMLoDDwoAL
+	 PWpIsayPhR5TP90B9XtJ/QWAPdJ5HpNSUB/2UmdCs/bWuzotr/vW0V+/GAXT4cuqcb
+	 okXyEKXhUAENIBQhpH/98qS9M5jqYJOpEICzqKW+h1eaJ38dXTsJG9UEsIMT6B0lcE
+	 pHLgCpJfAG7tg==
+Date: Mon, 14 Oct 2024 21:47:19 +0800
+From: Gao Xiang <xiang@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	chao@kernel.org
+Subject: [GIT PULL] erofs fixes for 6.12-rc4
+Message-ID: <Zw0g5xS5WXYve0Hj@debian>
+Mail-Followup-To: Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-erofs@lists.ozlabs.org, LKML <linux-kernel@vger.kernel.org>,
+	chao@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241013-upstream_s32cc_gmac-v3-5-d84b5a67b930@oss.nxp.com>
 
-On Sun, Oct 13, 2024 at 11:27:40PM +0200, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> ???
+Hi Linus,
 
-It does need to say something. The change is also not 100% obviously
-correct. So you could explain the change a bit.
+Could you consider these three fixes for 6.12-rc4?
 
+The main one fixes a syzbot issue due to the invalid inode type out
+of file-backed mounts.  The others are minor cleanups without actual
+logic changes.
 
-    Andrew
+All commits have been in -next and no potential merge conflict is
+observed.
 
----
-pw-bot: cr
+Thanks,
+Gao Xiang
+
+The following changes since commit 9852d85ec9d492ebef56dc5f229416c925758edc:
+
+  Linux 6.12-rc1 (2024-09-29 15:06:19 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/xiang/erofs.git tags/erofs-for-6.12-rc4-fixes
+
+for you to fetch changes up to ae54567eaa87fd863ab61084a3828e1c36b0ffb0:
+
+  erofs: get rid of kaddr in `struct z_erofs_maprecorder` (2024-10-11 13:36:58 +0800)
+
+----------------------------------------------------------------
+Changes since last update:
+
+ - Make sure only regular inodes can be used for file-backed mounts;
+
+ - Two minor codebase cleanups.
+
+----------------------------------------------------------------
+Gao Xiang (3):
+      erofs: ensure regular inodes for file-backed mounts
+      erofs: get rid of z_erofs_try_to_claim_pcluster()
+      erofs: get rid of kaddr in `struct z_erofs_maprecorder`
+
+ fs/erofs/super.c | 13 ++++++++++---
+ fs/erofs/zdata.c | 29 +++++++++--------------------
+ fs/erofs/zmap.c  | 32 ++++++++++++--------------------
+ 3 files changed, 31 insertions(+), 43 deletions(-)
 
