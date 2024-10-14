@@ -1,121 +1,92 @@
-Return-Path: <linux-kernel+bounces-363204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363136-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DF7699BEFA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:11:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5F0E499BE4B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:42:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 03E302865B8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:11:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 247AB2832C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:42:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA81D1BE238;
-	Mon, 14 Oct 2024 03:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X5ci9VT8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F87D84037;
+	Mon, 14 Oct 2024 03:42:24 +0000 (UTC)
+Received: from szxga07-in.huawei.com (szxga07-in.huawei.com [45.249.212.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0527514B94C;
-	Mon, 14 Oct 2024 03:59:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8CC6231CA6;
+	Mon, 14 Oct 2024 03:42:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728878393; cv=none; b=TEb6Xed5NYZIJJS3CKSidHY4pPIycl9tNbjbh3ztQ8ycwiwY3BmaxRL00IuZw6bmS6ZQ3WFW8FF99/aRSkW7JAx7UHUsBd/ggXm1UYLbcM8nRO+0qqeRZCnmaumZY40Yg3vX2XOYdiJZVoi8dZk75HWUwpzCcccJn+ZAAgKg4mw=
+	t=1728877343; cv=none; b=B5Zqhf8GUR1cYuGd7x8Bp/DIsPTNEVynPACzSYWMxQ9l4fLe2yWz61Pa2KkR4igldEypZeEYfioQaqsr8HF4ycee0E7LL3xjzZFh4AtGUXmIWfAo3fC0QK2ssSHL80BBraA+foka65KPCU5UAlGlraQ5rsCB8jL3V7Q7L9bWVgM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728878393; c=relaxed/simple;
-	bh=Kv08AcQYawT4zeVOx48O02koGjgfjaQZDebQkt+tZ5A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ROagnGAKRk8X+IPzwbIsdwhZf2cWCJxICwUobDuTv+pr2vxwXC/Mdm8IV/SNZh8zpodZfkmO5Af6Dgqpd57o/HKutejDWfPcx0GcLJT4ltn/bRwy2QNAKAHikcPjjteBsF22MuPJ/UJgM4NaczaGemep7NNHHgybXBIxuRkt/+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X5ci9VT8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0DF3C4CECF;
-	Mon, 14 Oct 2024 03:59:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728878392;
-	bh=Kv08AcQYawT4zeVOx48O02koGjgfjaQZDebQkt+tZ5A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=X5ci9VT8C/J3cz6itmHAJx9VXShIM9nq+CdrBv7ugk1NrIWaBIO77oeTm7EOH+VnE
-	 /Mx+UsUV/E/EnCeZVwnR4AhZd/SskaJRx4VVAUPwR1KJX9Fgy8y94M0dDBGphS6mpo
-	 fvwYb7cFU3Cju//XJPPwqdWNenn6ZYGyORSCeWxpjq7eZXA791SqK5fXlP3sXEvXvc
-	 PEg1jqDX2oEYAJVX1ypxLX8JCYa73vq7D90kNoI416PPS2Y8vkF7BUtLlq80dd411n
-	 PZlE+s6BaoXtdSWOqe5K+5gKfhX6Rg393ZNm6TWB0DjzRa1ruzhHac9IS/rOOkZeFm
-	 sBOhzGuqlOVLQ==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Dai Ngo <dai.ngo@oracle.com>,
-	Trond Myklebust <trond.myklebust@hammerspace.com>,
-	Anna Schumaker <anna.schumaker@oracle.com>,
-	Sasha Levin <sashal@kernel.org>,
-	trondmy@kernel.org,
-	anna@kernel.org,
-	linux-nfs@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.10 2/3] NFS: remove revoked delegation from server's delegation list
-Date: Sun, 13 Oct 2024 23:59:42 -0400
-Message-ID: <20241014035948.2261641-2-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241014035948.2261641-1-sashal@kernel.org>
-References: <20241014035948.2261641-1-sashal@kernel.org>
+	s=arc-20240116; t=1728877343; c=relaxed/simple;
+	bh=ZJ5ogckYMccQ182afl7uMmAuafSGOq5THxK+uUkXlJo=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Cl8tgiHw2I/SW4dbQMV2zwWTNwieZHdtgATflrIqrOmYJ/yMvJnOjSYfs/EPGwdG+iayIV0eEH/PsK3SC5fK5xwn0ulhoekLjUaIl5d1FRGhzOkUwGyvHlTG3JY1Kw0k+Ep46eNcsj6V8WDHJtz1dGRD3GyGCtrg7L/n5fxb/CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga07-in.huawei.com (SkyGuard) with ESMTP id 4XRjgd6sZWz1S9xH;
+	Mon, 14 Oct 2024 11:41:01 +0800 (CST)
+Received: from kwepemf500004.china.huawei.com (unknown [7.202.181.242])
+	by mail.maildlp.com (Postfix) with ESMTPS id CAC6F1A016C;
+	Mon, 14 Oct 2024 11:42:13 +0800 (CST)
+Received: from lihuafei.huawei.com (10.90.53.74) by
+ kwepemf500004.china.huawei.com (7.202.181.242) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 14 Oct 2024 11:42:13 +0800
+From: Li Huafei <lihuafei1@huawei.com>
+To: <atrajeev@linux.vnet.ibm.com>, <namhyung@kernel.org>
+CC: <peterz@infradead.org>, <mingo@redhat.com>, <acme@kernel.org>,
+	<mark.rutland@arm.com>, <alexander.shishkin@linux.intel.com>,
+	<jolsa@kernel.org>, <irogers@google.com>, <adrian.hunter@intel.com>,
+	<kan.liang@linux.intel.com>, <kjain@linux.ibm.com>, <sesse@google.com>,
+	<linux-perf-users@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<lihuafei1@huawei.com>
+Subject: [PATCH 1/3] perf disasm: Use disasm_line__free() to properly free disasm_line
+Date: Mon, 14 Oct 2024 19:42:46 +0800
+Message-ID: <20241014114248.212711-1-lihuafei1@huawei.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.10.226
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemf500004.china.huawei.com (7.202.181.242)
 
-From: Dai Ngo <dai.ngo@oracle.com>
+The structure disasm_line contains members that require dynamically
+allocated memory and need to be freed correctly using
+disasm_line__free().
 
-[ Upstream commit 7ef60108069b7e3cc66432304e1dd197d5c0a9b5 ]
+This patch fixes the incorrect release in
+symbol__disassemble_capstone().
 
-After the delegation is returned to the NFS server remove it
-from the server's delegations list to reduce the time it takes
-to scan this list.
-
-Network trace captured while running the below script shows the
-time taken to service the CB_RECALL increases gradually due to
-the overhead of traversing the delegation list in
-nfs_delegation_find_inode_server.
-
-The NFS server in this test is a Solaris server which issues
-CB_RECALL when receiving the all-zero stateid in the SETATTR.
-
-mount=/mnt/data
-for i in $(seq 1 20)
-do
-   echo $i
-   mkdir $mount/testtarfile$i
-   time  tar -C $mount/testtarfile$i -xf 5000_files.tar
-done
-
-Signed-off-by: Dai Ngo <dai.ngo@oracle.com>
-Reviewed-by: Trond Myklebust <trond.myklebust@hammerspace.com>
-Signed-off-by: Anna Schumaker <anna.schumaker@oracle.com>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
+Fixes: 6d17edc113de ("perf annotate: Use libcapstone to disassemble")
+Signed-off-by: Li Huafei <lihuafei1@huawei.com>
 ---
- fs/nfs/delegation.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ tools/perf/util/disasm.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/fs/nfs/delegation.c b/fs/nfs/delegation.c
-index 1eb6c7a142ff0..2354b7d41b468 100644
---- a/fs/nfs/delegation.c
-+++ b/fs/nfs/delegation.c
-@@ -963,6 +963,11 @@ void nfs_delegation_mark_returned(struct inode *inode,
+diff --git a/tools/perf/util/disasm.c b/tools/perf/util/disasm.c
+index f05ba7739c1e..42222d61ceb5 100644
+--- a/tools/perf/util/disasm.c
++++ b/tools/perf/util/disasm.c
+@@ -1717,7 +1717,7 @@ static int symbol__disassemble_capstone(char *filename, struct symbol *sym,
+ 		 */
+ 		list_for_each_entry_safe(dl, tmp, &notes->src->source, al.node) {
+ 			list_del(&dl->al.node);
+-			free(dl);
++			disasm_line__free(dl);
+ 		}
  	}
- 
- 	nfs_mark_delegation_revoked(delegation);
-+	clear_bit(NFS_DELEGATION_RETURNING, &delegation->flags);
-+	spin_unlock(&delegation->lock);
-+	if (nfs_detach_delegation(NFS_I(inode), delegation, NFS_SERVER(inode)))
-+		nfs_put_delegation(delegation);
-+	goto out_rcu_unlock;
- 
- out_clear_returning:
- 	clear_bit(NFS_DELEGATION_RETURNING, &delegation->flags);
+ 	count = -1;
 -- 
-2.43.0
+2.25.1
 
 
