@@ -1,120 +1,174 @@
-Return-Path: <linux-kernel+bounces-364663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 646E699D799
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:40:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F63099D79A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 295E1284145
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:40:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D16571F22D9B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED4431CC893;
-	Mon, 14 Oct 2024 19:40:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5271CEAC4;
+	Mon, 14 Oct 2024 19:40:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="cRdgRODf"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="oKA+srqN"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9D173A1B6;
-	Mon, 14 Oct 2024 19:40:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88D853A1B6
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:40:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728934809; cv=none; b=PA7ANq2TLGgCIRkGr8NP7V9JvqG6idgC6pPND8H3xyLeqqOPGJmlLbhhiwWvPZHODjXnj3agCF1FzabQ9ot0cYt9om9HXBIUpuP04W+YC1Kb8TxvaUFIRQqjkCOD+6NYqDdKCXIqz+1wyBlO1oNTfg7cY+G7qeqe1/Hd81P+QCg=
+	t=1728934816; cv=none; b=PLZgBCLUsL+Ss3BsFGcmlzVEtnKHnpVSp0iLb14RD9QfL52jTE+kykDobWvZy0zhZLHedjeIe2H1F1FxFvpxhSDbyacfg0mZHPEvM2sDIOqsltOtVmjOP1xjdZLKO6zsY5o/+gSBrvxi3NnpjxLTxv1Wtdd3vo9OBS6QEFm87Lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728934809; c=relaxed/simple;
-	bh=gon8OVgfeokbF9dH8vAU/I2q1MXEJEK/bKmrbJyCTC0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=U0xu8EQSCEIkVUzW4SFF0AmdfSgB9SApnktFAkmMFiZ8rHErITb9sp/0LCjm7BEj/ARuYPsOnIpCuLHefKJs6+++Lx+SOuHh82JqTKlWqXcT+D6xP5/D4dXp4+TRSnXQN07FOFhGV6pCD6mszOJB83SoYJbkewmRGvapLnpI6Ag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=cRdgRODf; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EB92Yf018340;
-	Mon, 14 Oct 2024 19:39:57 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Awl4z4MGhITyUFRVeT3/YC6IRZPD4SDnGGUgmfXsRPI=; b=cRdgRODfBR0JFcil
-	2pjEElr7LnDW53Au4U6uKtVKRp/NxDAxyhS0IU66WSOqqy2/PQM5xt7nTeti3l9p
-	+RXxmjene+0VvXQxcKX9e7HNcoVfG7TyRqZLhl6rNpfvmJatmrS6ehEkiHNqPBRA
-	mnE7qE5d2lF9a5h4lBq8yzL67touwd7sdSNpvRGfi7oBxcZPb31ZWB9lfQ2YaVqb
-	BJ2jhxtoUMs8MeGuy2I0R2q6iLXoC/P8ZiQfSHl5kXb0kKJPRtPKXJkQ32Np8qss
-	18OwOob+zocZsxXfu2vybYJDziqzkjk8Er5BrWFucskxpW2gv24ysnkbbl3xnxZt
-	pACtHg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427gpxndx1-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 19:39:57 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EJduQF026953
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 19:39:56 GMT
-Received: from [10.110.109.95] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
- 2024 12:39:55 -0700
-Message-ID: <37d53ab8-e9d8-4fe1-89fd-dfc5fd551771@quicinc.com>
-Date: Mon, 14 Oct 2024 12:39:55 -0700
+	s=arc-20240116; t=1728934816; c=relaxed/simple;
+	bh=8UlFUDMW5VTEW1JOagcwIb4P9KBMnhM47q+PGuy2TQg=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=t2rrNaor5S5Am8LxcX7mXuGUuONxFqGbsezs5YSTfP0rtyBOExvgXlkfEapDhnjmHM6sAlbjIzTetGJmoINQaSJ8KHM8yDXVe/xCCguyRuUyFHhbii53r4HPw+6qlNkkwipXzQora0KNOQG0Yq4zJsJf6PGNxXWDLzAvwGqOGEo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=oKA+srqN; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e38fabff35so21265837b3.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:40:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728934813; x=1729539613; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=aNvP+xKsd/SNtLPYM7rhsr5LITn25Gjd7fO4ZucOjz8=;
+        b=oKA+srqNeTwFNNedDMLzN8YmIYlX+sbLltfo7H0V4TUfM2Smg55Thx9TAWQrUsucn1
+         o3IM2Mv+UyeSpvcVp0hpskCBsuXh+099leI5xQNDSgEX4aO3/JgyznWm+yrc9/nuVOlO
+         P/CW5hIiN4yuca8W1v+Tv2C0zslRd7oZMMTbh7acibM/yY15k3GPI2KCxbu1aNHdPkg0
+         xHBqwWcyEthJaH+8ZygmQIVZMHzTq+93tSq29seUrlVPDs0EEYl0RnfVsT32ibY6P4S5
+         oVTBBV2w8Yq5d5mkaVC5AqFnI/i/9nkrckBS6MVGu8n0Jh6MofFCxWwkqmFv//CrYEBT
+         Y/tg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728934813; x=1729539613;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=aNvP+xKsd/SNtLPYM7rhsr5LITn25Gjd7fO4ZucOjz8=;
+        b=BJ6PiXnHIoq3+Ww18xtuZYtLFWlw0wBnEJByASiqAb0FZSGy1JuUsM7dDUqpHEYBlO
+         +VydOSz+KZ8yA9k0No2LoJSdXzXMDs3kdTowIjp6yXsL3PiER1c58Ztko2Pebvqvn6Pt
+         4FI70nOddveMD9TH4aCCwHxoBt1FSR2QMjNXT/dmpMkz3fOemwNrqvH2QpW3Rvgbpg/0
+         8OGkfyfH9Zcu04WeRB7QCikKRk6QN+RxWuUO2piQ2tU2q0qhYTXHMiVV/zyPrgvFm/ol
+         pKTn4JYjBApNo4XtOxClbC8na8/e9cwroj+aU1YnouKeLToW7oL4rPbfILRZ1l3odC4c
+         Q8Ng==
+X-Forwarded-Encrypted: i=1; AJvYcCVqhKYX9Pw0c7iyaJxCbQ2L/N0VXd6fLZcgUSmudApE93edmP0QEyJiqzHr9DWKzL0IsuijntGxGpdVt3g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzh8p/4FLr06gM5sLTq7q6HILHrrnZpzj4LzxWk/KLpMzGX5cgQ
+	j0UqoQjAokZ5tLY+0ivYjnQmHRkhinscA2MusBpehn5dn7Y4c3kGiCzGUPemW9l5DSC/yOlr3YZ
+	rOA==
+X-Google-Smtp-Source: AGHT+IFNAe0j0iW5CkhnIRBKFr2QTlyeGoZ/Bq8VIyc0IMwXAoxeBKGj3yLGpydnM9aldsdbJePbO/xT5ls=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a05:690c:4c07:b0:6e3:8562:ffa with SMTP id
+ 00721157ae682-6e385621623mr599917b3.5.1728934813608; Mon, 14 Oct 2024
+ 12:40:13 -0700 (PDT)
+Date: Mon, 14 Oct 2024 12:40:12 -0700
+In-Reply-To: <Zw1rnEONZ8iJQvMQ@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] drm/msm/dsi: improve/fix dsc pclk calculation
-To: Jonathan Marek <jonathan@marek.ca>, <freedreno@lists.freedesktop.org>
-CC: Rob Clark <robdclark@gmail.com>,
-        Dmitry Baryshkov
-	<dmitry.baryshkov@linaro.org>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten
-	<marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, "Simona
- Vetter" <simona@ffwll.ch>,
-        Jessica Zhang <quic_jesszhan@quicinc.com>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        "open list:DRM DRIVER for Qualcomm display
- hardware" <linux-arm-msm@vger.kernel.org>,
-        "open list:DRM DRIVER for Qualcomm
- display hardware" <dri-devel@lists.freedesktop.org>,
-        open list
-	<linux-kernel@vger.kernel.org>
-References: <20241007050157.26855-1-jonathan@marek.ca>
-Content-Language: en-US
-From: Abhinav Kumar <quic_abhinavk@quicinc.com>
-In-Reply-To: <20241007050157.26855-1-jonathan@marek.ca>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Uqu6iplxeBK2bCeos95vSYOQJ1_gUMVo
-X-Proofpoint-ORIG-GUID: Uqu6iplxeBK2bCeos95vSYOQJ1_gUMVo
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 clxscore=1015
- suspectscore=0 impostorscore=0 lowpriorityscore=0 mlxscore=0 phishscore=0
- malwarescore=0 mlxlogscore=633 priorityscore=1501 spamscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410140139
+Mime-Version: 1.0
+References: <20241009181742.1128779-1-seanjc@google.com> <20241009181742.1128779-6-seanjc@google.com>
+ <d09669af3cc7758c740f9860f7f1f2ab5998eb3d.camel@intel.com> <Zw1rnEONZ8iJQvMQ@google.com>
+Message-ID: <Zw1znGMufMEL-cuw@google.com>
+Subject: Re: [PATCH 5/7] KVM: x86: Move kvm_set_apic_base() implementation to
+ lapic.c (from x86.c)
+From: Sean Christopherson <seanjc@google.com>
+To: Kai Huang <kai.huang@intel.com>
+Cc: "pbonzini@redhat.com" <pbonzini@redhat.com>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="us-ascii"
 
-
-
-On 10/6/2024 10:01 PM, Jonathan Marek wrote:
-> drm_mode_vrefresh() can introduce a large rounding error, avoid it.
+On Mon, Oct 14, 2024, Sean Christopherson wrote:
+> On Mon, Oct 14, 2024, Kai Huang wrote:
+> > On Wed, 2024-10-09 at 11:17 -0700, Sean Christopherson wrote:
+> > > Move kvm_set_apic_base() to lapic.c so that the bulk of KVM's local APIC
+> > > code resides in lapic.c, regardless of whether or not KVM is emulating the
+> > > local APIC in-kernel.  This will also allow making various helpers visible
+> > > only to lapic.c.
+> > > 
+> > > No functional change intended.
+> > > 
+> > > Signed-off-by: Sean Christopherson <seanjc@google.com>
+> > > ---
+> > >  arch/x86/kvm/lapic.c | 21 +++++++++++++++++++++
+> > >  arch/x86/kvm/x86.c   | 21 ---------------------
+> > >  2 files changed, 21 insertions(+), 21 deletions(-)
+> > > 
+> > > diff --git a/arch/x86/kvm/lapic.c b/arch/x86/kvm/lapic.c
+> > > index fe30f465611f..6239cfd89aad 100644
+> > > --- a/arch/x86/kvm/lapic.c
+> > > +++ b/arch/x86/kvm/lapic.c
+> > > @@ -2628,6 +2628,27 @@ void kvm_lapic_set_base(struct kvm_vcpu *vcpu, u64 value)
+> > >  	}
+> > >  }
+> > >  
+> > > +int kvm_set_apic_base(struct kvm_vcpu *vcpu, struct msr_data *msr_info)
+> > > +{
+> > > +	enum lapic_mode old_mode = kvm_get_apic_mode(vcpu);
+> > > +	enum lapic_mode new_mode = kvm_apic_mode(msr_info->data);
+> > > +	u64 reserved_bits = kvm_vcpu_reserved_gpa_bits_raw(vcpu) | 0x2ff |
+> > > +		(guest_cpuid_has(vcpu, X86_FEATURE_X2APIC) ? 0 : X2APIC_ENABLE);
+> > > +
+> > > +	if ((msr_info->data & reserved_bits) != 0 || new_mode == LAPIC_MODE_INVALID)
+> > > +		return 1;
+> > > +	if (!msr_info->host_initiated) {
+> > > +		if (old_mode == LAPIC_MODE_X2APIC && new_mode == LAPIC_MODE_XAPIC)
+> > > +			return 1;
+> > > +		if (old_mode == LAPIC_MODE_DISABLED && new_mode == LAPIC_MODE_X2APIC)
+> > > +			return 1;
+> > > +	}
+> > > +
+> > > +	kvm_lapic_set_base(vcpu, msr_info->data);
+> > > +	kvm_recalculate_apic_map(vcpu->kvm);
+> > > +	return 0;
+> > > +}
+> > 
+> > Nit:
+> > 
+> > It is a little bit weird to use 'struct msr_data *msr_info' as function
+> > parameter if kvm_set_apic_base() is in lapic.c.  Maybe we can change to take
+> > apic_base and host_initialized directly.
+> > 
+> > A side gain is we can get rid of using the 'struct msr_data apic_base_msr' local
+> > variable in __set_sregs_common() when calling kvm_apic_set_base():
 > 
-> Fixes: 7c9e4a554d4a ("drm/msm/dsi: Reduce pclk rate for compression")
-> Signed-off-by: Jonathan Marek <jonathan@marek.ca>
-> ---
->   drivers/gpu/drm/msm/dsi/dsi_host.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
+> Ooh, nice.  I agree, it'd be better to pass in separate parameters.
 > 
+> Gah, and looking at this with fresh eyes reminded me why I even started poking at
+> this code in the first place.  Patch 1's changelog does a poor job of calling it
+> out,
 
-Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
+Duh, because patch 1 doesn't change any of that.  KVM already skips setting the
+map DIRTY if neither MSR_IA32_APICBASE_ENABLE nor X2APIC_ENABLE is toggled.  So
+it's really just the (IIRC, rare) collision with an already-dirty map that's nice
+to avoid.
+
+> but the main impetus for this series was to avoid kvm_recalculate_apic_map()
+> when doing KVM_SET_SREGS without modifying APIC_BASE.  That's _mostly_ handled by
+> patch 1, but it doesn't completely fix things because if the map is already DIRTY,
+> then KVM will unnecessarily fall into kvm_recalculate_apic_map()'s slow path, even
+> though some other vCPU/task is responsible for refreshing the calculation.
+> 
+> I'll send a v2 with your suggested change, a better changelog for patch 1, and
+> another patch at the end to short-circuit kvm_apic_set_base() (not just the inner
+> helper) if the new value is the same as the old value.
+> 
+> Thanks Kai!
+> 
+> > static int __set_sregs_common(...)
+> > {
+> >         struct msr_data apic_base_msr;
+> > 	...
+> > 
+> >         apic_base_msr.data = sregs->apic_base;
+> >         apic_base_msr.host_initiated = true;
+> >         if (kvm_set_apic_base(vcpu, &apic_base_msr))
+> >                 return -EINVAL;
+> > 	...
+> > }
+> > 
 
