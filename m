@@ -1,132 +1,389 @@
-Return-Path: <linux-kernel+bounces-363778-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA37999C6E2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:12:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2663199C6D5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:11:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB7411C23097
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:12:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6811F21BF0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:11:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 121AE161902;
-	Mon, 14 Oct 2024 10:10:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46C9519C542;
+	Mon, 14 Oct 2024 10:09:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="LEXhWo72"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="x7lUj/JG"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA6CC15DBD5;
-	Mon, 14 Oct 2024 10:10:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41660189F42
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:09:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728900613; cv=none; b=Fkoyrx0rsyFrl/0eN6Z8f2Scli4wqrnAl8QigVFBWnhFSoXBnbtxIUHf5H3bMwOIkows8rYmcThyK5DtkYK24Yyd11fAXKp9Dm/0xpd5jKl6pOYSHR4vUoiIr9JvqYOea210X5W++iTlRSA5yFgU3xA0lnNoG4GVf2Tws0GHqkk=
+	t=1728900587; cv=none; b=nn2gd6uWLb/YypDAHWPOuk6zYAAnRbMeCtidX4nMOSduva4W0grHmfxDDIHzJhEEBQlXj4bk1VDXRxjoiscIijNKM5EGfL8hs3wVaU8PAagNVkbn1b6u0lriEj3ymT8RhbEbKit/BceznLJSxtSsHu+pMVO72jPpGs88j2YpL6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728900613; c=relaxed/simple;
-	bh=R9nDdMYCodv3mgjnQ3UUV16ToRI3sVOOcpQ/+cwAnTw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q6LeCWNmKpCdLuQiGYfs2LLZtz2x0S+3+mLkCoGB50BtgselN/KegKSCHnhcJLWeMLGvfTWk8NyM4zOr5eTWyePEiMzUsPXHymP6VaScWdRa8Pc+RVVMi1rkvaMEb3+rXzBLXWpRjr/IzsfLRnKdfy+IxBHeyJzLsaFhs9fGyO4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=LEXhWo72; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from [127.0.0.1] (p578adb1c.dip0.t-ipconnect.de [87.138.219.28])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits))
-	(No client certificate requested)
-	(Authenticated sender: marex@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id B3B7589041;
-	Mon, 14 Oct 2024 12:10:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1728900609;
-	bh=QiUcJ5vcf2TcgSQTpOZdp1C5MCiNDwYEw8zZRWzqkOQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=LEXhWo72oK2AmGD8j3W9kqbymw42C0DBbUTfe37wOqQys1PXaBp6JVKvvAH5GnACD
-	 ek6Em+m1PMzxDRFjkHwSbGeDCe0bgFoNT5hAzDDUNVGbjDIJtY3sgkV2l9vwWwXfDX
-	 z6lzHMIVks6PVUSEVTwYeFMRevzWp1zwI0m9nu02C8JwirmjCmu85DgG+r0dqbdPLa
-	 eCDQ3/WEnp2EAkSzxzclufuRqiLXeNVfr9g+spBiXgvvQXhxAlzoG60kjC5nH39eQo
-	 cKC2Y844XhDSVurTFJ8YG/ZJe0MeUN6UoMJPkK0liyrcZcnXEVJC8ugStDdiSPfUva
-	 PfwrYm3wh3WFw==
-Message-ID: <8c13b0aa-7fb1-493c-9abc-5e5cfd982855@denx.de>
-Date: Mon, 14 Oct 2024 10:52:38 +0200
+	s=arc-20240116; t=1728900587; c=relaxed/simple;
+	bh=gkLlpX8zGk/sq05ketrSq4u68mrPO0IK9oeWUJVZrRg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=HhQhPd+XLH028IM+U5+zrKhzW2h8YcfbUNuMs7HShcgptJIPqA5C3CLmnvgoPVHAUVyU3UiFeZRqmDT+XcIV+N3M9XHnaMW6UnWo04pW2aQHdxdRrCkyFn0fsIOEtjJ0meNeaGPgDrmt3j3Qo4L9Ragw6y/IopFQb+nf8I/XGsU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=x7lUj/JG; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43117ed8adbso44700265e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:09:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728900582; x=1729505382; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+SHLszmkklMPiq4o73VwLE60eOpWf7fcDN0meHMNboA=;
+        b=x7lUj/JG6tQSnYVEAiRvqYrNL55p387OTGwUf9SVgS23brxVGxrQrn57NXF9z2nQpb
+         tE+QmMtLyDkZmeyGPJFgKJR1p9qKvpZW5xdjwV9K4g4nl+R5SyXWwYusAr9EtWygKLLN
+         NuDhwI9EXB8nD9CVlqa3V9in+e2topXPmwNN6y4O2AX4c0qSKDPopFBc1YbejU5Y12OY
+         4h+nKKtIwsswbUfrrFoYJuziaXmw8jDpeW2m7Y5GvKLgZ89IZ2H9YPqaTIfa1JWBHSvh
+         2HXsveLOXQM6otM4IaXlt1zBDGHZu5RV/sqljzsEs4EM2b5kiqF6+dRL0Y8q6yJcNaMm
+         YujA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728900582; x=1729505382;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+SHLszmkklMPiq4o73VwLE60eOpWf7fcDN0meHMNboA=;
+        b=RlLTfxSf+CFuKgplnIiy6GEzUcAhgvI5XqdJ9CqEXJGP8/CIegnV+vfULygYHxlZKW
+         Wf2HPTqcfVzkVV2UzQLEIWdCyQbsbur3xBwbCJGZRFs51xLhw+K72u/8/U7jPxGv5M72
+         Ytnkf68DQNPFL2dw63EcDM/6KfsBNqJrgPhzL5LzKKPjh/Xz+gxw8xm75Iyc7A/R6zTn
+         JoG9ABpaYE6qNRk2gkQGCXKIoYhzolTaV+5Qmv8Gnh0OwZ2npZiKEDIgt0vQ4y/T5aMU
+         uYra5T49AyYHCRUb3NurJGrvlaxbeCQPQV6cUJ0Q3bqzJenzk9uSEGFzP/BBwevTMJZt
+         oHjA==
+X-Forwarded-Encrypted: i=1; AJvYcCVmGQNFwYybXPlE0TgSJvsCLBCYVc85ch8gTUkl8NlLRBW51qCiNlZMaa19iefo1MluQktg+x4Wck0G62I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMOKrJ8kMwHh0RYd7iQz3sICxl+yGbIn827z0QhfiGvwKhmR6l
+	nQwFhhJTk1TfUNPN+RlnJQQKWjFVr9mnDkJPkmut985E8/LTPsw7VQ7SiG07MH4=
+X-Google-Smtp-Source: AGHT+IGDGgRBNZkEpyt7dYapywyU0a+oftNyPqPoOfUtGfTF33EKYShOLYyAa6UqAKTVpFu8GVQajw==
+X-Received: by 2002:adf:e542:0:b0:37d:43d4:88b7 with SMTP id ffacd0b85a97d-37d5ff27b72mr7496050f8f.3.1728900582533;
+        Mon, 14 Oct 2024 03:09:42 -0700 (PDT)
+Received: from [127.0.1.1] (host-79-45-239-138.retail.telecomitalia.it. [79.45.239.138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ee0afsm10969352f8f.102.2024.10.14.03.09.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 03:09:42 -0700 (PDT)
+From: Angelo Dureghello <adureghello@baylibre.com>
+X-Google-Original-From: Angelo Dureghello <adureghello@baylibre.org>
+Date: Mon, 14 Oct 2024 12:08:11 +0200
+Subject: [PATCH v6 5/8] iio: dac: ad3552r: changes to use FIELD_PREP
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/4] hwrng: stm32 - implement support for STM32MP25x
- platforms
-To: Gatien CHEVALLIER <gatien.chevallier@foss.st.com>,
- Olivia Mackall <olivia@selenic.com>, Herbert Xu
- <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Lionel Debieve <lionel.debieve@foss.st.com>
-Cc: linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-stm32@st-md-mailman.stormreply.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
- <20241011-rng-mp25-v2-v2-2-76fd6170280c@foss.st.com>
- <318dbd5e-f547-4d78-b42e-4dcacc08d328@denx.de>
- <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
-Content-Language: en-US
-From: Marek Vasut <marex@denx.de>
-In-Reply-To: <f191d034-4116-4169-8c05-201450412bbd@foss.st.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-5-eeef0c1e0e56@baylibre.com>
+References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
+To: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Olivier Moysan <olivier.moysan@foss.st.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, dlechner@baylibre.com, 
+ Mark Brown <broonie@kernel.org>, 
+ Angelo Dureghello <adureghello@baylibre.com>
+X-Mailer: b4 0.14.1
 
-On 10/14/24 10:38 AM, Gatien CHEVALLIER wrote:
-> 
-> 
-> On 10/11/24 18:17, Marek Vasut wrote:
->> On 10/11/24 5:41 PM, Gatien Chevallier wrote:
->>
->> [...]
->>
->>> @@ -551,6 +565,41 @@ static int stm32_rng_probe(struct 
->>> platform_device *ofdev)
->>>       priv->rng.read = stm32_rng_read;
->>>       priv->rng.quality = 900;
->>> +    if (!priv->data->nb_clock || priv->data->nb_clock > 2)
->>> +        return -EINVAL;
->>> +
->>> +    priv->clk_bulk = devm_kzalloc(dev, priv->data->nb_clock * 
->>> sizeof(*priv->clk_bulk),
->>> +                      GFP_KERNEL);
->>> +    if (!priv->clk_bulk)
->>> +        return -ENOMEM;
->>
->> Try this:
->>
->> ret = devm_clk_bulk_get(dev, priv->data->nb_clock, priv->clk_bulk);
->> ...
->> // Swap the clock if they are not in the right order:
->> if (priv->data->nb_clock == 2 &&
->>      strcmp(__clk_get_name(priv->clk_bulk[0].clk), "core"))
->> {
->>   const char *id = priv->clk_bulk[1].id;
->>   struct clk *clk = priv->clk_bulk[1].clk;
->>   priv->clk_bulk[1].id = priv->clk_bulk[0].id;
->>   priv->clk_bulk[1].clk = priv->clk_bulk[0].clk;
->>   priv->clk_bulk[0].id = id;
->>   priv->clk_bulk[0].clk = clk;
->> }
->>
-> 
-> Hi Marek,
-> 
-> This won't work as the name returned by this API is clk->core->name.
-> AFAICT, it doesn't correspond to the names present in the device tree
-> under the "clock-names" property.
-> Any other idea or are you fine with what's below?
-Hmmm, it is not great, but at least it reduces the changes throughout 
-the driver, so that is an improvement.
+From: Angelo Dureghello <adureghello@baylibre.com>
 
-I guess one could do some of_clk_get() and clk_is_match() in probe to 
-look up the clock in OF by name and then compare which clock is which 
-before swapping them in clk_bulk[] array, but that might be too convoluted?
+Changes to use FIELD_PREP, so that driver-specific ad3552r_field_prep
+is removed. Variables (arrays) that was used to call ad3552r_field_prep
+are removed too.
+
+Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+---
+ drivers/iio/dac/ad3552r.c | 166 ++++++++++++++--------------------------------
+ 1 file changed, 49 insertions(+), 117 deletions(-)
+
+diff --git a/drivers/iio/dac/ad3552r.c b/drivers/iio/dac/ad3552r.c
+index 7d61b2fe6624..6fb06e2e3193 100644
+--- a/drivers/iio/dac/ad3552r.c
++++ b/drivers/iio/dac/ad3552r.c
+@@ -210,46 +210,6 @@ static const s32 gains_scaling_table[] = {
+ 	[AD3552R_CH_GAIN_SCALING_0_125]		= 125
+ };
+ 
+-enum ad3552r_dev_attributes {
+-	/* - Direct register values */
+-	/* From 0-3 */
+-	AD3552R_SDO_DRIVE_STRENGTH,
+-	/*
+-	 * 0 -> Internal Vref, vref_io pin floating (default)
+-	 * 1 -> Internal Vref, vref_io driven by internal vref
+-	 * 2 or 3 -> External Vref
+-	 */
+-	AD3552R_VREF_SELECT,
+-	/* Read registers in ascending order if set. Else descending */
+-	AD3552R_ADDR_ASCENSION,
+-};
+-
+-enum ad3552r_ch_attributes {
+-	/* DAC powerdown */
+-	AD3552R_CH_DAC_POWERDOWN,
+-	/* DAC amplifier powerdown */
+-	AD3552R_CH_AMPLIFIER_POWERDOWN,
+-	/* Select the output range. Select from enum ad3552r_ch_output_range */
+-	AD3552R_CH_OUTPUT_RANGE_SEL,
+-	/*
+-	 * Over-rider the range selector in order to manually set the output
+-	 * voltage range
+-	 */
+-	AD3552R_CH_RANGE_OVERRIDE,
+-	/* Manually set the offset voltage */
+-	AD3552R_CH_GAIN_OFFSET,
+-	/* Sets the polarity of the offset. */
+-	AD3552R_CH_GAIN_OFFSET_POLARITY,
+-	/* PDAC gain scaling */
+-	AD3552R_CH_GAIN_SCALING_P,
+-	/* NDAC gain scaling */
+-	AD3552R_CH_GAIN_SCALING_N,
+-	/* Rfb value */
+-	AD3552R_CH_RFB,
+-	/* Channel select. When set allow Input -> DAC and Mask -> DAC */
+-	AD3552R_CH_SELECT,
+-};
+-
+ struct ad3552r_ch_data {
+ 	s32	scale_int;
+ 	s32	scale_dec;
+@@ -285,45 +245,6 @@ struct ad3552r_desc {
+ 	unsigned int		num_ch;
+ };
+ 
+-static const u16 addr_mask_map[][2] = {
+-	[AD3552R_ADDR_ASCENSION] = {
+-			AD3552R_REG_ADDR_INTERFACE_CONFIG_A,
+-			AD3552R_MASK_ADDR_ASCENSION
+-	},
+-	[AD3552R_SDO_DRIVE_STRENGTH] = {
+-			AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+-			AD3552R_MASK_SDO_DRIVE_STRENGTH
+-	},
+-	[AD3552R_VREF_SELECT] = {
+-			AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+-			AD3552R_MASK_REFERENCE_VOLTAGE_SEL
+-	},
+-};
+-
+-/* 0 -> reg addr, 1->ch0 mask, 2->ch1 mask */
+-static const u16 addr_mask_map_ch[][3] = {
+-	[AD3552R_CH_DAC_POWERDOWN] = {
+-			AD3552R_REG_ADDR_POWERDOWN_CONFIG,
+-			AD3552R_MASK_CH_DAC_POWERDOWN(0),
+-			AD3552R_MASK_CH_DAC_POWERDOWN(1)
+-	},
+-	[AD3552R_CH_AMPLIFIER_POWERDOWN] = {
+-			AD3552R_REG_ADDR_POWERDOWN_CONFIG,
+-			AD3552R_MASK_CH_AMPLIFIER_POWERDOWN(0),
+-			AD3552R_MASK_CH_AMPLIFIER_POWERDOWN(1)
+-	},
+-	[AD3552R_CH_OUTPUT_RANGE_SEL] = {
+-			AD3552R_REG_ADDR_CH0_CH1_OUTPUT_RANGE,
+-			AD3552R_MASK_CH_OUTPUT_RANGE_SEL(0),
+-			AD3552R_MASK_CH_OUTPUT_RANGE_SEL(1)
+-	},
+-	[AD3552R_CH_SELECT] = {
+-			AD3552R_REG_ADDR_CH_SELECT_16B,
+-			AD3552R_MASK_CH(0),
+-			AD3552R_MASK_CH(1)
+-	}
+-};
+-
+ static u8 _ad3552r_reg_len(u8 addr)
+ {
+ 	switch (addr) {
+@@ -399,11 +320,6 @@ static int ad3552r_read_reg(struct ad3552r_desc *dac, u8 addr, u16 *val)
+ 	return 0;
+ }
+ 
+-static u16 ad3552r_field_prep(u16 val, u16 mask)
+-{
+-	return (val << __ffs(mask)) & mask;
+-}
+-
+ /* Update field of a register, shift val if needed */
+ static int ad3552r_update_reg_field(struct ad3552r_desc *dac, u8 addr, u16 mask,
+ 				    u16 val)
+@@ -416,21 +332,11 @@ static int ad3552r_update_reg_field(struct ad3552r_desc *dac, u8 addr, u16 mask,
+ 		return ret;
+ 
+ 	reg &= ~mask;
+-	reg |= ad3552r_field_prep(val, mask);
++	reg |= val;
+ 
+ 	return ad3552r_write_reg(dac, addr, reg);
+ }
+ 
+-static int ad3552r_set_ch_value(struct ad3552r_desc *dac,
+-				enum ad3552r_ch_attributes attr,
+-				u8 ch,
+-				u16 val)
+-{
+-	/* Update register related to attributes in chip */
+-	return ad3552r_update_reg_field(dac, addr_mask_map_ch[attr][0],
+-				       addr_mask_map_ch[attr][ch + 1], val);
+-}
+-
+ #define AD3552R_CH_DAC(_idx) ((struct iio_chan_spec) {		\
+ 	.type = IIO_VOLTAGE,					\
+ 	.output = true,						\
+@@ -510,8 +416,14 @@ static int ad3552r_write_raw(struct iio_dev *indio_dev,
+ 					val);
+ 		break;
+ 	case IIO_CHAN_INFO_ENABLE:
+-		err = ad3552r_set_ch_value(dac, AD3552R_CH_DAC_POWERDOWN,
+-					   chan->channel, !val);
++		if (chan->channel == 0)
++			val = FIELD_PREP(AD3552R_MASK_CH_DAC_POWERDOWN(0), !val);
++		else
++			val = FIELD_PREP(AD3552R_MASK_CH_DAC_POWERDOWN(1), !val);
++
++		err = ad3552r_update_reg_field(dac, AD3552R_REG_ADDR_POWERDOWN_CONFIG,
++					       AD3552R_MASK_CH_DAC_POWERDOWN(chan->channel),
++					       val);
+ 		break;
+ 	default:
+ 		err = -EINVAL;
+@@ -715,9 +627,9 @@ static int ad3552r_reset(struct ad3552r_desc *dac)
+ 	}
+ 
+ 	return ad3552r_update_reg_field(dac,
+-					addr_mask_map[AD3552R_ADDR_ASCENSION][0],
+-					addr_mask_map[AD3552R_ADDR_ASCENSION][1],
+-					val);
++					AD3552R_REG_ADDR_INTERFACE_CONFIG_A,
++					AD3552R_MASK_ADDR_ASCENSION,
++					FIELD_PREP(AD3552R_MASK_ADDR_ASCENSION, val));
+ }
+ 
+ static void ad3552r_get_custom_range(struct ad3552r_desc *dac, s32 i, s32 *v_min,
+@@ -812,20 +724,20 @@ static int ad3552r_configure_custom_gain(struct ad3552r_desc *dac,
+ 				     "mandatory custom-output-range-config property missing\n");
+ 
+ 	dac->ch_data[ch].range_override = 1;
+-	reg |= ad3552r_field_prep(1, AD3552R_MASK_CH_RANGE_OVERRIDE);
++	reg |= FIELD_PREP(AD3552R_MASK_CH_RANGE_OVERRIDE, 1);
+ 
+ 	err = fwnode_property_read_u32(gain_child, "adi,gain-scaling-p", &val);
+ 	if (err)
+ 		return dev_err_probe(dev, err,
+ 				     "mandatory adi,gain-scaling-p property missing\n");
+-	reg |= ad3552r_field_prep(val, AD3552R_MASK_CH_GAIN_SCALING_P);
++	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_P, val);
+ 	dac->ch_data[ch].p = val;
+ 
+ 	err = fwnode_property_read_u32(gain_child, "adi,gain-scaling-n", &val);
+ 	if (err)
+ 		return dev_err_probe(dev, err,
+ 				     "mandatory adi,gain-scaling-n property missing\n");
+-	reg |= ad3552r_field_prep(val, AD3552R_MASK_CH_GAIN_SCALING_N);
++	reg |= FIELD_PREP(AD3552R_MASK_CH_GAIN_SCALING_N, val);
+ 	dac->ch_data[ch].n = val;
+ 
+ 	err = fwnode_property_read_u32(gain_child, "adi,rfb-ohms", &val);
+@@ -841,9 +753,9 @@ static int ad3552r_configure_custom_gain(struct ad3552r_desc *dac,
+ 	dac->ch_data[ch].gain_offset = val;
+ 
+ 	offset = abs((s32)val);
+-	reg |= ad3552r_field_prep((offset >> 8), AD3552R_MASK_CH_OFFSET_BIT_8);
++	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_BIT_8, (offset >> 8));
+ 
+-	reg |= ad3552r_field_prep((s32)val < 0, AD3552R_MASK_CH_OFFSET_POLARITY);
++	reg |= FIELD_PREP(AD3552R_MASK_CH_OFFSET_POLARITY, (s32)val < 0);
+ 	addr = AD3552R_REG_ADDR_CH_GAIN(ch);
+ 	err = ad3552r_write_reg(dac, addr,
+ 				offset & AD3552R_MASK_CH_OFFSET_BITS_0_7);
+@@ -886,9 +798,9 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 	}
+ 
+ 	err = ad3552r_update_reg_field(dac,
+-				       addr_mask_map[AD3552R_VREF_SELECT][0],
+-				       addr_mask_map[AD3552R_VREF_SELECT][1],
+-				       val);
++				       AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
++				       AD3552R_MASK_REFERENCE_VOLTAGE_SEL,
++				       FIELD_PREP(AD3552R_MASK_REFERENCE_VOLTAGE_SEL, val));
+ 	if (err)
+ 		return err;
+ 
+@@ -900,9 +812,9 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 		}
+ 
+ 		err = ad3552r_update_reg_field(dac,
+-					       addr_mask_map[AD3552R_SDO_DRIVE_STRENGTH][0],
+-					       addr_mask_map[AD3552R_SDO_DRIVE_STRENGTH][1],
+-					       val);
++					       AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
++					       AD3552R_MASK_SDO_DRIVE_STRENGTH,
++					       FIELD_PREP(AD3552R_MASK_SDO_DRIVE_STRENGTH, val));
+ 		if (err)
+ 			return err;
+ 	}
+@@ -938,9 +850,15 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 						     "Invalid adi,output-range-microvolt value\n");
+ 
+ 			val = err;
+-			err = ad3552r_set_ch_value(dac,
+-						   AD3552R_CH_OUTPUT_RANGE_SEL,
+-						   ch, val);
++			if (ch == 0)
++				val = FIELD_PREP(AD3552R_MASK_CH_OUTPUT_RANGE_SEL(0), val);
++			else
++				val = FIELD_PREP(AD3552R_MASK_CH_OUTPUT_RANGE_SEL(1), val);
++
++			err = ad3552r_update_reg_field(dac,
++						       AD3552R_REG_ADDR_CH0_CH1_OUTPUT_RANGE,
++						       AD3552R_MASK_CH_OUTPUT_RANGE_SEL(ch),
++						       val);
+ 			if (err)
+ 				return err;
+ 
+@@ -958,7 +876,14 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 		ad3552r_calc_gain_and_offset(dac, ch);
+ 		dac->enabled_ch |= BIT(ch);
+ 
+-		err = ad3552r_set_ch_value(dac, AD3552R_CH_SELECT, ch, 1);
++		if (ch == 0)
++			val = FIELD_PREP(AD3552R_MASK_CH(0), 1);
++		else
++			val = FIELD_PREP(AD3552R_MASK_CH(1), 1);
++
++		err = ad3552r_update_reg_field(dac,
++					       AD3552R_REG_ADDR_CH_SELECT_16B,
++					       AD3552R_MASK_CH(ch), val);
+ 		if (err < 0)
+ 			return err;
+ 
+@@ -970,8 +895,15 @@ static int ad3552r_configure_device(struct ad3552r_desc *dac)
+ 	/* Disable unused channels */
+ 	for_each_clear_bit(ch, &dac->enabled_ch,
+ 			   dac->model_data->num_hw_channels) {
+-		err = ad3552r_set_ch_value(dac, AD3552R_CH_AMPLIFIER_POWERDOWN,
+-					   ch, 1);
++		if (ch == 0)
++			val = FIELD_PREP(AD3552R_MASK_CH_OUTPUT_RANGE_SEL(0), 1);
++		else
++			val = FIELD_PREP(AD3552R_MASK_CH_OUTPUT_RANGE_SEL(1), 1);
++
++		err = ad3552r_update_reg_field(dac,
++					       AD3552R_REG_ADDR_POWERDOWN_CONFIG,
++					       AD3552R_MASK_CH_OUTPUT_RANGE_SEL(ch),
++					       val);
+ 		if (err)
+ 			return err;
+ 	}
+
+-- 
+2.45.0.rc1
+
 
