@@ -1,149 +1,227 @@
-Return-Path: <linux-kernel+bounces-364372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C485699D3CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:46:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABED399D3D0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:47:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 405601F21523
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:46:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6272E287A11
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:47:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067A41AC450;
-	Mon, 14 Oct 2024 15:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC57E196;
+	Mon, 14 Oct 2024 15:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="B05UN3kA"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bFIdZdAz"
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2046.outbound.protection.outlook.com [40.107.101.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6E1175B1;
-	Mon, 14 Oct 2024 15:45:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728920748; cv=none; b=k9ODE5zTKKwY39bL1ghTu+7Vz0voM5QI+kz5Oma3OsdwHVu2iX2rv44Ytx1LB9dt6yIW4w/EBswcCO9zrqfUjC4pVcn6WV/A4oelRYzZl+XPnSMcGt418Eww3hBNk9QTbra1X2BhRsQ8YlUoOiasc86hVdaPV6LL4swUsVw1MFo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728920748; c=relaxed/simple;
-	bh=NV3daSXdDYmEG8Lr0Ex4MIWgg+SUR7cPY5VoPueLcsE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kOwUdkIr+MvjPpbVPjjVcxDqlbtVfbrTKSX23yTFs0a/mdIDGNmLdwuojKKPMDUkMC+glnrUPxsEwWlK30AB8IRoAptB2lmMCLTgr8At86RxL6KAqwWjBT8iDHnUUqHzBiJeGBTbcdvajfwKN4sPWX58BYiQRNBajvl/zL5QVw4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=B05UN3kA; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e2ab5bbc01so788831a91.2;
-        Mon, 14 Oct 2024 08:45:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728920746; x=1729525546; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=urBdkgegMF7XQRvU3yEsW/lOkG2RPkpWnSJ5/Oj21Uo=;
-        b=B05UN3kAceDozoC3vqveVXXo0kK0Xr8ImEpBc0+amPq8odFWp4auAPfD5owqa0b34W
-         diShDtnXOEMqhyCbtSmdzDqpyB/smTScPqDz7OyAKkyh/6WVeUKqw1MNBg0MGZOB+SpQ
-         vy0qYghYA1AWUjxu6htJk5n/QWLIsAQDj7opJlSOkHKYtQZFs9gD0ds1TyxzjXNJPd5z
-         s0M7wkIwGVfNQnxwAr6TsZ6lGxqKIwa91ygEIwo5k4eeoDTSQCosUrsI1mZAY3ruLagR
-         tc13CQInx1/pBvU3brSNB1NvWpwp79i3FfaW75xq709e8J+l1hJ9kaqOukgxujz+BJkE
-         lKYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728920746; x=1729525546;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=urBdkgegMF7XQRvU3yEsW/lOkG2RPkpWnSJ5/Oj21Uo=;
-        b=Aozyzaw2uFqTQl9hYNIjHB63ZtNn9VJ25Mel/Hdc438aZsgI0xUxQU/v/NH7N1+LwV
-         750m0j5dgEIJ/eKH7sV0dIwHlX9dTpZrDAZJNGWcYF2YncEGZ2mpxAVDcB8PwW2X7scA
-         oHXK7pNuRiLHe0s213vcMPM9rSlf7o4dvxuXI15PTdQECWVh3HH3GZqsssjDeklMohBq
-         9qjx+IKNsQPgsgiq2Mjvs/hKQv3owtjwhBbxQQMHWocCXF6etKI8JahnNGfsLzoPnfNi
-         cjURbrMOt/m8EvGSIp/8xZDHbVknVfZCoZuRfBbu4IdaTd1Xk4tayDE83hyDBABUCuCK
-         n99Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWMTR7t3MGNrvTaIGqkez7zuiFHZbmVEDOhZyaorQ+URq7K+NX0xtbQfkieQlkOZaFBoLvgCJcbSvKJsGg=@vger.kernel.org, AJvYcCWo4BA5CsIIM+4gs2ZIi6XQenS/rGxjvkJ5VZgrG/wTEalnBA8AbTvsAintrg3v+hvjsWORaqylC3vC@vger.kernel.org
-X-Gm-Message-State: AOJu0YztbF/VQV7J6JlFKCdnmzg25WsuSmRvk4Ac4DJdSR6xGXdd8r4/
-	LIVnBdcRqGXbBf/76D4vvRc1zH0MwGxQKLthYLZP9rOqpHN6wpOGKZciDc2voa7rbZVr3gRDygc
-	ZANEJVKmUD5hgrC6m8WSRW7DSKCM=
-X-Google-Smtp-Source: AGHT+IFsBRoPEXbTXS5Ff46RFH5X1jTMu4OeBPJkvDso2hrabHpmHawU+KMeOBCQH9atwTLfKwg8xP9P9VMxCT5ReGE=
-X-Received: by 2002:a17:90a:474f:b0:2e1:682b:361e with SMTP id
- 98e67ed59e1d1-2e2f0c3b7e4mr5933462a91.4.1728920746330; Mon, 14 Oct 2024
- 08:45:46 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E791BC58;
+	Mon, 14 Oct 2024 15:46:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.46
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728920810; cv=fail; b=eZRcie8HHl7oYh4yIT5K47D40OOpbuSB5h045T02Ag1qxfFazTwn6HJy4S472hncFRJ7BMwDiJ351KrBJEggVkTkGW2sS3WYjCg3xbhQw2/ycm7k6VHOWH+JVqb80/azkATkqbSIWKA40wfmvzFG7NkJFsjGpGCUVq9gNMi1m2M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728920810; c=relaxed/simple;
+	bh=d34Bpdh1lneeDBoexiT3OsJzmlOvnvb8aaMw876uUjQ=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bb/KjsLv4kv/2hkn7YOVHyCl24sRSZuQN1dW1Zgn++WYpwOELaTNeVOIE9D/T/6MATWE+loOkYTEvrjinpIPUCdUhUrtIrxGi5giQjIVlr2DPXwj+nlu3c6OaIebIWtFPnunIkQYsC1eDPqR7JehHzK4EC3uogurLkKOv8Sxasg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bFIdZdAz; arc=fail smtp.client-ip=40.107.101.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kv0+wwq7LosGZyHXJDJdJOifz6lIjd8yM+QnOiYAx/zL6kmca7C1XVuU8/y0Cy36DO7wDOIqk66uJbqHtZ1T8QSZ5FMx30qyH2flCSJqGqwgu0daxbv3nzbGZ1iydCmSoLOXnGD+wqv4ZQ5EEb6Jvnt30+y8a/OxOJzRpksp+oOzRcK9Lx0DuY48NnQ+HK4cGPT1UOZ5XtqKrPJ/JQHDkg5RtSjxL1/o7dkCY9512bsB2h8kjwNdbXHdVwT++E5E+5bVNDpoagPEr1E01YmYEdhwztrZbOEZLK/3Se89I0XmDGQEVaOyQpfLXlOJJOquWzym3J/zuxCaL/RSCieW1A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=hprnuArEAjorRpkGumKoidT5EeMLiZUBmcyeYN5xzfk=;
+ b=grYI1HcMdCqQzH7uC9mKXqEwn3PnaOTujXo84KStBHTHi9K68s4bz22ZNAGQ7N5QgzdXKrVio1Tl4oB1uuouG8ffcvyk4qZWTCbGTlvGMC4IAlJpozKJI4YpgI4xaNmK0zqywR43b3t2pwMu2tVpT8csN5pVAkLHbChApCwtEFNI0TIpKJoYJke8Hrm83awFDn8aUvDdBh1UBT1fDQDKwo4NmJo6zzmCf22TSNxleZZLKX/PBmJ3Km/wxE0p8XzTacU7Pkb8DItZjkZsKfjUkIzA7SUaLYz2SbD0Go/AAPzbRIbjjnNNAgd7pR9W38ch1dJlFbT4vh7gw9VXLKFi9A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
+ dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=hprnuArEAjorRpkGumKoidT5EeMLiZUBmcyeYN5xzfk=;
+ b=bFIdZdAznIdKI9tyq3QBmZhw+n9Fjhgz5+/lQsJCXeblmTbC3VZIcZiHMjzk/nsoMpM8nJTvzHb5A+gnYoHCom+9U8ReEKxHdS0oted99kiagzyIKu89gcCt3+MDJdn2F3nJKUAjsRXnmc0zkN97QnYkBqYeTlNZw031CSUUtru2ZlBGWPENATiZYw2OB9r6ms6xROFaW1szOQKE7ZNfzIss3xO6G32JAwaU38x/FMehq7wsurYmoJn3vxXTwLwkY3N5H5ZA0hXuUeIByyqaOnIdPJS+owO33avTOKU/W7vb+uvAkYvk80OwC+Y8aWOTZ0zGrqiEpqGk6b8YIut63Q==
+Received: from SJ0PR13CA0199.namprd13.prod.outlook.com (2603:10b6:a03:2c3::24)
+ by CH3PR12MB8852.namprd12.prod.outlook.com (2603:10b6:610:17d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Mon, 14 Oct
+ 2024 15:46:42 +0000
+Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
+ (2603:10b6:a03:2c3:cafe::65) by SJ0PR13CA0199.outlook.office365.com
+ (2603:10b6:a03:2c3::24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.16 via Frontend
+ Transport; Mon, 14 Oct 2024 15:46:42 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
+ smtp.mailfrom=nvidia.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=nvidia.com;
+Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
+ 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
+ client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
+Received: from mail.nvidia.com (216.228.117.161) by
+ SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8048.13 via Frontend Transport; Mon, 14 Oct 2024 15:46:42 +0000
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
+ (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Oct
+ 2024 08:46:27 -0700
+Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
+ (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Oct
+ 2024 08:46:26 -0700
+Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.9)
+ with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
+ Transport; Mon, 14 Oct 2024 08:46:25 -0700
+Date: Mon, 14 Oct 2024 08:46:23 -0700
+From: Nicolin Chen <nicolinc@nvidia.com>
+To: Zhangfei Gao <zhangfei.gao@linaro.org>
+CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
+	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
+	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
+	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
+	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
+	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<smostafa@google.com>, <yi.l.liu@intel.com>, <aik@amd.com>,
+	<patches@lists.linux.dev>
+Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
+ related struct
+Message-ID: <Zw08z9TOFL57z07O@Asurada-Nvidia>
+References: <cover.1728491453.git.nicolinc@nvidia.com>
+ <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
+ <CABQgh9Eaj_vy1=sS2Pf7RC7Vy5PopDfwoshECULEU-jK3JF_sQ@mail.gmail.com>
+ <Zwn/4m8Ac0xEiJi8@Asurada-Nvidia>
+ <CABQgh9Ft=xxJK-bjS6wCZ5BN4AiKtF9fzdBkevA3x2yb_4O4Kg@mail.gmail.com>
+ <CABQgh9HP1M8GAXMwf0ZNn5EpMBAvJU3JLRWcN5H1wfGrqXSe1Q@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014152502.1477809-1-superm1@kernel.org>
-In-Reply-To: <20241014152502.1477809-1-superm1@kernel.org>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Mon, 14 Oct 2024 11:45:34 -0400
-Message-ID: <CADnq5_PCHZtmGN4Frknz+10xVMypwpDuW7_kYbTmvihcayCPew@mail.gmail.com>
-Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
- VGA device
-To: Mario Limonciello <superm1@kernel.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, 
-	"open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, 
-	dri-devel@lists.freedesktop.org, 
-	Mario Limonciello <mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>, 
-	"Luke D . Jones" <luke@ljones.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CABQgh9HP1M8GAXMwf0ZNn5EpMBAvJU3JLRWcN5H1wfGrqXSe1Q@mail.gmail.com>
+X-NV-OnPremToCloud: ExternallySecured
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|CH3PR12MB8852:EE_
+X-MS-Office365-Filtering-Correlation-Id: 15a857e0-683b-442e-6f4b-08dcec676695
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|1800799024|7416014|36860700013|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?5bXMduE3M44uTgdgKqRc7f2AzaY740v1hmDmf6nOOiM+Z7mmpeGtnPAWAbXh?=
+ =?us-ascii?Q?vZ/Vag9XBEqAR/tJuotXWHa8U8SC8gy1bEGEkBHgxmppekcS8DotbwoM4T0h?=
+ =?us-ascii?Q?pnxonCGoSnNOBingY0R8I3hKQgTXcO1VGOphtTcZ8dfHUAu8iDz+NGSpyiJO?=
+ =?us-ascii?Q?8TaxeMmqy9MDwm2WyAWtLprkfohrbaLyck3kA/3zccMFD/UyXyd6jSTj+Rzr?=
+ =?us-ascii?Q?1RLJQzJd3Yrej660fJ/zDlpSfd/q7chslHSCukU8MLIGTEbVPHLSnkxEqbSN?=
+ =?us-ascii?Q?YlFxHqPhT+aq53GeIrOwuGtgud+h6z1D2CFuaZfTK2POx7d343UQ8fqEIr5K?=
+ =?us-ascii?Q?GtpkHB7w2j0cPXdfA4kd2dIHpsev7hr0s2ZAEzPyxd6JxKgpPJh9rAe6va1o?=
+ =?us-ascii?Q?03aZSgwSkNCMEb6B6yt9h39zTRaHumKAzNrrJFG50I2Jp6TbnB7TgBpaHTGV?=
+ =?us-ascii?Q?t63MLlzZRJb9bN3c/3K3cZvP5f5WPH1B467oGFB7j27UNlqVxz/cj2+58VFN?=
+ =?us-ascii?Q?5L6m4bVyKxUsY84HtuOJOGArfUnUmYVmwcgQXhSc4XgNPWxPdMO3VkwvhKT+?=
+ =?us-ascii?Q?srb0caSnN3Vl+OBIu9Sw2+o4FIJoz6DD/znGKqn7BkS0DOrifre840EojNAo?=
+ =?us-ascii?Q?1qhZ/RuVZ/JUDrcU7bcLA3jDdwFUzqrBbYhuRr4jA6R2+MwzhgBEs+d2um7c?=
+ =?us-ascii?Q?znDutcQBRAba3LaV0GpIITWZVxZOX6KgvSDBkf9l0srck1TIqQyCMbujMptc?=
+ =?us-ascii?Q?heCfemfbv0xxOsMPXRKNrXzHj3A/pRx4b45Ki/tZwiFWSssXhWWNDCXS27yc?=
+ =?us-ascii?Q?K9ZhAnLVtrYNBkEhpXkx7dJCE+6FRi0O/ajYTsyj4kvYLv/vqmEYJ0fiEziL?=
+ =?us-ascii?Q?i7yWeslAI7gAgGbavV5IcF6pqP7T0JhC/hoeihfW7U+9Yrww50DGPSmBFFCT?=
+ =?us-ascii?Q?NqOnSUQ4ig0yxtCM1S2newOT2zg0SCZoq3RhxyAV6k+9/BKAppuaPn6X8ode?=
+ =?us-ascii?Q?c1NB3fOU6bQIBBNy4+Ar3Zwpqn672Zbqn1QGM0JeRNB3FeVUXWJuqcQsGZ6z?=
+ =?us-ascii?Q?RSFib5BBr5cib9URJGqjeZ7WF/IKvNR5pQau0UVXoMOYDdsSD+9wdG+bigyQ?=
+ =?us-ascii?Q?qwG66M3vF4vVa5bdR5JDN93HL7is5gBvTH3zFg2Vw1IKTf3fhuo/zhySfVdS?=
+ =?us-ascii?Q?dKKIwE6YvJfykGkbZGRonGP703BZYa/++qm4SQ/c8QBhby4U7mGQN4zVTjSF?=
+ =?us-ascii?Q?YUH/4+598TSkuG4GyiOLUcyVAQDTpfAhmZNVwSRv+pi9y7LMXSyj1yFOgO4F?=
+ =?us-ascii?Q?Zi9DctfTmo4yLtj60aiHdjLzolNXMZki5jH49qb0P7JzhEj++ow9Pgk+dKWx?=
+ =?us-ascii?Q?u51BmxU=3D?=
+X-Forefront-Antispam-Report:
+	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 15:46:42.5373
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 15a857e0-683b-442e-6f4b-08dcec676695
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SJ5PEPF000001F1.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8852
 
-On Mon, Oct 14, 2024 at 11:25=E2=80=AFAM Mario Limonciello <superm1@kernel.=
-org> wrote:
->
-> From: Mario Limonciello <mario.limonciello@amd.com>
->
-> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display device=
-.
->
-> ```
-> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForce RTX=
- 4070 Max-Q / Mobile] (rev a1)
-> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI] Strix =
-[Radeon 880M / 890M] (rev c1)
-> ```
+On Mon, Oct 14, 2024 at 03:58:55PM +0800, Zhangfei Gao wrote:
 
-For clarity, the iGPU is not a VGA class device.  The "primary" should
-not have any dependency on the VGA PCI class, but I'm not sure how
-exactly the kernel handles this case.  In this case, the primary
-should be the iGPU which is not a VGA PCI class device.
+> > > > > +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
+> > > > > +                                               size_t size,
+> > > > > +                                               enum iommufd_object_type type)
+> > > > > +{
+> > > > > +       struct iommufd_object *obj;
+> > > > > +       int rc;
+> > > > > +
+> > > > > +       obj = kzalloc(size, GFP_KERNEL_ACCOUNT);
+> > > > > +       if (!obj)
+> > > > > +               return ERR_PTR(-ENOMEM);
+> > > > > +       obj->type = type;
+> > > > > +       /* Starts out bias'd by 1 until it is removed from the xarray */
+> > > > > +       refcount_set(&obj->shortterm_users, 1);
+> > > > > +       refcount_set(&obj->users, 1);
+> > > >
+> > > > here set refcont 1
+> > > >
+> > > > iommufd_device_bind -> iommufd_object_alloc(ictx, idev,
+> > > > IOMMUFD_OBJ_DEVICE): refcont -> 1
+> > > > refcount_inc(&idev->obj.users); refcount -> 2
+> > > > will cause iommufd_device_unbind fail.
+> > > >
+> > > > May remove refcount_inc(&idev->obj.users) in iommufd_device_bind
+> > >
+> > > Hmm, why would it fail? Or is it failing on your system?
+> >
+> > Not sure, still in check, it may only be on my platform.
+> >
+> > it hit
+> > iommufd_object_remove:
+> > if (WARN_ON(obj != to_destroy))
+> >
+> > iommufd_device_bind refcount=2
+> > iommufd_device_attach refcount=3
+> > //still not sure which operation inc the count?
+> > iommufd_device_detach refcount=4
+> >
+> 
+> Have a question,
+> when should iommufd_vdevice_destroy be called, before or after
+> iommufd_device_unbind.
 
-Alex
+Before.
 
->
-> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as the
-> boot VGA device, but really the eDP is connected to the AMD PCI display
-> device.
->
-> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA device.
->
-> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
-> Reported-by: Luke D. Jones <luke@ljones.dev>
-> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
-> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
-> ---
->  drivers/pci/vgaarb.c | 7 -------
->  1 file changed, 7 deletions(-)
->
-> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
-> index 78748e8d2dba..05ac2b672d4b 100644
-> --- a/drivers/pci/vgaarb.c
-> +++ b/drivers/pci/vgaarb.c
-> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_device *vg=
-adev)
->                 return true;
->         }
->
-> -       /*
-> -        * Vgadev has neither IO nor MEM enabled.  If we haven't found an=
-y
-> -        * other VGA devices, it is the best candidate so far.
-> -        */
-> -       if (!boot_vga)
-> -               return true;
-> -
->         return false;
->  }
->
-> --
-> 2.43.0
->
+> Now iommufd_vdevice_destroy (ref--) is after unbind, hits the if
+> (!refcount_dec_if_one(&obj->users)) check.
+
+Hmm, where do we have an iommufd_vdevice_destroy after unbind?
+
+> iommufd_device_bind
+> iommufd_device_attach
+> iommufd_vdevice_alloc_ioctl
+> 
+> iommufd_device_detach
+> iommufd_device_unbind // refcount check fail
+> iommufd_vdevice_destroy ref--
+
+Things should be symmetric. As you suspected, vdevice should be
+destroyed before iommufd_device_detach.
+
+A vdev is an object on top of a vIOMMU obj and an idev obj, so
+it takes a refcount from each of them. That's why idev couldn't
+unbind.
+
+Thanks
+Nicolin
 
