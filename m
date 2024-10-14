@@ -1,85 +1,85 @@
-Return-Path: <linux-kernel+bounces-363128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363130-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFCC99BE3A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:35:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E1CF99BE3E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 05:37:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2736283004
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:35:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7BC5FB22BE8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAB9B73176;
-	Mon, 14 Oct 2024 03:35:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F086132122;
+	Mon, 14 Oct 2024 03:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="S9rZEn1q"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="THF4EWLJ"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83C231F941
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:35:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F216F12C7FD
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728876944; cv=none; b=QyJ29NL8w3LkJJHY+hTHuGOXPz1rWdyYEhILEanqbNaLO7rmG6NBj9uQ0otwk9lSluT1I3plw8pJPbWrDSLSmzu4eM28K9Pxy2Q/7URcTkhB2zJrmAZHBmta7jLpcbPXCuN0dHzIpuq8PZks74uA4xHvceT64Mfcro6rDVK34JY=
+	t=1728877030; cv=none; b=NHE38+Q4GBcDbDVaA/fW6x3JjOyfNs4OPlUmKaphwGsIkveM1uZzCy4/chEjWAAOlaLikCzSfJj7CpRC0s8Vm8VajPWJXVmvyCg/aSEShUNg9RshUTrOCL0Jt7JgmVyj1hwF6MBwN3Qx0gCVuHphbZTHI+iKari2mDqoMww6jdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728876944; c=relaxed/simple;
-	bh=wKxJl6oENGANSiXShKg/bM2yv2gp1+3wAHZgzm0P77A=;
+	s=arc-20240116; t=1728877030; c=relaxed/simple;
+	bh=bHy7Eq3yi1f0f1G6dWorSDu62t++C0tAgtiG0iyj23Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZtsSMTMCRu/GPv3CloJ2D8utLHf5dGZ2gEqf0VJzZB4NYJ0oRLpliE9ypHvDadXctVlKGdIODm5buWVSY/QwV9MkKxwmcznru8s5fp/+crwOnHYtYyxl6nSQVNKqwvGQE20r+L/93ktH0f8xKZhHipWmAOVBKBDTluuq0rfEPkQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=S9rZEn1q; arc=none smtp.client-ip=209.85.167.54
+	 To:Cc:Content-Type; b=BLEGjhEAgBVG2k08FG0ZlRaf8APjrT2Qj5sDFfrvKiWNxLkZtRF7EXwjMlmK8N5b94bxNTf3mHFG1Qw4dE4EATPFFvZFXa+Q/14KSuNheawfknTXmdaSndzG3qOT6ylh4Qg1ETXexr+TVAxk8n+NEKrX/WKZxp1f5+QPVaiQpk8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=THF4EWLJ; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-5369f1c7cb8so4755337e87.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 20:35:42 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539e7e73740so1007786e87.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 20:37:08 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=broadcom.com; s=google; t=1728876941; x=1729481741; darn=vger.kernel.org;
+        d=broadcom.com; s=google; t=1728877027; x=1729481827; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wKxJl6oENGANSiXShKg/bM2yv2gp1+3wAHZgzm0P77A=;
-        b=S9rZEn1q8E523X/WfvcRqFxJBY3tTx84ObWBqCMG1stxRyMMRQk5GVuEIbmmMujfSZ
-         Bu43kD19VUg4bYUoyn+uuzU7C49PUX25X/dYBc5Zsy7ErmTRyAEWLQ6pjQxzV025uJ4W
-         2mzXPnxk2HtANqfwEV45SwteE+ZZe8n1jqlbw=
+        bh=bHy7Eq3yi1f0f1G6dWorSDu62t++C0tAgtiG0iyj23Q=;
+        b=THF4EWLJKY5s5gjq9baVuj/myAtyXeXqf5wSuSwUOt9rCl2uLsU9ESk/AF57VP+Um4
+         zxaJZ4HB5FsIJHblLavjPDRw2+y4DI2DIflpHhuTwPUuSS6ijODh8NTrJaPuIIJClhYO
+         TSzTRo+oUuz5rIS/CiadwBAtcsGMS913dOpCA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728876941; x=1729481741;
+        d=1e100.net; s=20230601; t=1728877027; x=1729481827;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wKxJl6oENGANSiXShKg/bM2yv2gp1+3wAHZgzm0P77A=;
-        b=mtKxmA2AFhdbHiFoLSlFdSsHigwD39qL4V4JpYqf2rn+/Yj1tiEcW/VzFsqAtNBuJU
-         RWAW+VSbUbwx/Ep4Bx+cQdxofhcR3FwHNtRiLtEuIAfiGLLgCZP6+dAwIB90yTbXme4V
-         Q8E3mdkpsxDvUQhFilVTJRwtQ2UlAynq1QRjRX/JXBPISVMhKD6RAdxMjr1EQEdddeUX
-         STBfLkjg6KS9qnHzfE2/ZMmX2woQt3JqLkAGqJ0kAgMHlxSrixYFOeNFTcGLsYCqNxgZ
-         lqx0fet7inzvBnCC9RugjarFraaF+B+OnEGU96FiH6h8O1rbMXRnAC0DRQyezXIVTKaw
-         Ykpg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkRbzmZR5hZ3I/76TtfwZK7VCNT1j9H2ccG+mwOr2JBXUDJQmxzf9UaF0sVIuAxpsvm4OtKis/V87f9Ng=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3lQl8MqvK021ROQoMs+xC2noaqYDt0RYlIX0WIUBzfeJ4N5Ld
-	pWE2DVoKTmQSwHXdk7N+Oyp0+oijCCkqLdUZR0BlJ7EnZ3yy8hLjQWqPyDeo7XR6FeTdaO56kuv
-	vn8RLRm22Tt65M4yetlFlDi9jD1CIOAu+r66G
-X-Google-Smtp-Source: AGHT+IGYePP+4axdhs1h95/AO5+4yDuBuqTDjw4a0gpEpUGu+nUTbIOvO3NujsK1/Z6m7YqBmE8TNBruNqS/m4QPBxU=
-X-Received: by 2002:a05:6512:6d0:b0:539:8fcd:51f with SMTP id
- 2adb3069b0e04-539e552a76amr2135242e87.30.1728876940769; Sun, 13 Oct 2024
- 20:35:40 -0700 (PDT)
+        bh=bHy7Eq3yi1f0f1G6dWorSDu62t++C0tAgtiG0iyj23Q=;
+        b=D5IybQuXf3Cko6TBlyjMilKBrUHRAgow7h9rMEzac4ObxkmKgHTBUdkhLmPC8tBXoQ
+         5AqdLbqX2HTedDL8AAVnhh9ji2/HemVdQ0e2kdkX2OE51Q/b2bTLCJ6mHdOblniHjecc
+         kfuPL8mxGa04roz58FeaxNlfiTg29nGGJosUJ2TtfEQBw7yOxA4D4Aa62BxuxfbMy5Jq
+         6mO0IAmXVMcnoC86qlEu1Ktz6Th6kptMI8A1WZyPFCBk+bbueZKTMa9CtHtg5OzPtF0i
+         mFp3nxc8QmRilYI7/bR5u92c+CE7sYoeQKSRdeuErzkAkNQq8EZGmawS8+Zcejeb2PzE
+         sy9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUM6KIDzn2n6krpcdjr9EvrbKbEL/IfE4bA1szELE/PK4iMI+4dlhfR+2m2EZ9uhk0YqGMauME9aexefEI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLXweqlXYg6nvkl3xxpFYCOyzDYAq3ucCV0zr6xigX8hxtgPbI
+	qK72NhdxKetC67ABYz6WfpSRV/1V/pRs98mte/4MUW9u8md3Ucull+vG51zsYG1y4CzumG1Gqrn
+	efpMugv5YEoZK6bEU5PEBfQRRNYqe6x78kRDP
+X-Google-Smtp-Source: AGHT+IFJRiQEU1/TraxHlku88W49/ENsUKH98CJ6IzougoryxVhMyRSgwKqbaChTY44Wiq51kn9a6vsO0VtGzbYdHLQ=
+X-Received: by 2002:a05:6512:12ca:b0:536:9ef3:3b0d with SMTP id
+ 2adb3069b0e04-539da3b4635mr3888121e87.2.1728877027054; Sun, 13 Oct 2024
+ 20:37:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241013203831.88051-1-linux@treblig.org> <20241013203831.88051-2-linux@treblig.org>
-In-Reply-To: <20241013203831.88051-2-linux@treblig.org>
+References: <20241013203831.88051-1-linux@treblig.org> <20241013203831.88051-6-linux@treblig.org>
+In-Reply-To: <20241013203831.88051-6-linux@treblig.org>
 From: Kalesh Anakkur Purayil <kalesh-anakkur.purayil@broadcom.com>
-Date: Mon, 14 Oct 2024 09:05:29 +0530
-Message-ID: <CAH-L+nMoojA3nhQBR7u8HHduxmvbP62md8Y=aw6Bq-viVnZHWA@mail.gmail.com>
-Subject: Re: [PATCH net-next 1/6] cxgb4: Remove unused cxgb4_alloc/free_encap_mac_filt
+Date: Mon, 14 Oct 2024 09:06:55 +0530
+Message-ID: <CAH-L+nNKS67sqfV4ECqhBjyDW68EQE1OGcZp1xGXnFiXn1D1SA@mail.gmail.com>
+Subject: Re: [PATCH net-next 5/6] cxgb4: Remove unused cxgb4_l2t_alloc_switching
 To: linux@treblig.org
 Cc: bharat@chelsio.com, davem@davemloft.net, edumazet@google.com, 
 	kuba@kernel.org, pabeni@redhat.com, netdev@vger.kernel.org, 
 	linux-kernel@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="000000000000efedea0624678794"
+	boundary="00000000000015cf560624678da8"
 
---000000000000efedea0624678794
+--00000000000015cf560624678da8
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
@@ -87,21 +87,22 @@ On Mon, Oct 14, 2024 at 2:10=E2=80=AFAM <linux@treblig.org> wrote:
 >
 > From: "Dr. David Alan Gilbert" <linux@treblig.org>
 >
-> cxgb4_alloc_encap_mac_filt() and cxgb4_free_encap_mac_filt() have been
-> unused since
-> commit 28b3870578ef ("cxgb4: Re-work the logic for mps refcounting")
+> cxgb4_l2t_alloc_switching() has been unused since it was added in
+> commit f7502659cec8 ("cxgb4: Add API to alloc l2t entry; also update
+> existing ones")
 >
-> Remove them.
+> Remove it.
 >
 > Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
 
 Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
 
+
 --=20
 Regards,
 Kalesh A P
 
---000000000000efedea0624678794
+--00000000000015cf560624678da8
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -173,14 +174,14 @@ a30CvRuhokNO6Jzh7ZFtjKVMzYas3oo6HXgA+slRszMu4pc+fRPO41FHjeDM76e6P5OnthhnD+NY
 x6xokUN65DN1bn2MkeNs0nQpizDqd0QxggJtMIICaQIBATBrMFsxCzAJBgNVBAYTAkJFMRkwFwYD
 VQQKExBHbG9iYWxTaWduIG52LXNhMTEwLwYDVQQDEyhHbG9iYWxTaWduIEdDQyBSMyBQZXJzb25h
 bFNpZ24gMiBDQSAyMDIwAgw3wUUJsDUiPdpordMwDQYJYIZIAWUDBAIBBQCggdQwLwYJKoZIhvcN
-AQkEMSIEIH/bAoGUDAI35KBF8Gz3YREJu9dMgSRw0Jtzi9hLvLhbMBgGCSqGSIb3DQEJAzELBgkq
-hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAxNDAzMzU0MVowaQYJKoZIhvcNAQkPMVwwWjAL
+AQkEMSIEIBuLeXZG/OgtzHfAhKtM5+JkwdNCNi2jrPhGwdiYvCG2MBgGCSqGSIb3DQEJAzELBgkq
+hkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI0MTAxNDAzMzcwN1owaQYJKoZIhvcNAQkPMVwwWjAL
 BglghkgBZQMEASowCwYJYIZIAWUDBAEWMAsGCWCGSAFlAwQBAjAKBggqhkiG9w0DBzALBgkqhkiG
-9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBTvfGS/QUb
-tN2oAA5ZMtFAZVTCspWzaYDAgzUk+cRBCQHDTi67ZwV2A3SXovuX9AuJc+2tZllOPqL193sPCOQz
-TF79NmDOj2yeF6WVehSsJBqKXmwSmvG59ieRFRmqQ0XIdKaS2frCNbZDPWIrUtM5RJg2UWCD4ItH
-pdE+EDTSFlGRLAXczS4eP7271FO81A+o4GnHtUqbe//OM1+1uNggsSNwmNzsDffr0STxAhDyg3H/
-dBBbIOSh5gfrctpC6IKa8aAvAzABLLJ61+nd/mh6lNlAtuq48pB5RtMU3cqerrSoQ93y6cVBIXnq
-Ys5NWGOGmuQVNqDhXZ7d8A+rAi7r
---000000000000efedea0624678794--
+9w0BAQowCwYJKoZIhvcNAQEHMAsGCWCGSAFlAwQCATANBgkqhkiG9w0BAQEFAASCAQBhFO1NBd6l
+CfIurEpto426JxMWbDn8vM+wVhLR3YEmwPxa+TtLi3WQ8EvjGmhjjJF0DHgND89PGRRNBz2NnDG6
+0Jjv4oSPa7B8Ml6+yKAHmXH4U9Oa1jkBOwWD1ZXBHw2P7i7UlH7Blj92f/ilhtKq93SW10Nyplpe
+oHg5IjFU2JvGU8xfscW21v/3wrb2/fpVbnA2HG5b9v1uSxFB1wpcyuaPmDFPRQSozBqxJMa0DmgY
+YRA8X3lXajUktwWNy6SADvojpCQX+bbXCaN/zr7Jz2SyRgeq0+uPl2aidSRozdVHQStXpQoYJJXo
+vswdnl3r6Pt1NAzHnRn/xn0tlYTB
+--00000000000015cf560624678da8--
 
