@@ -1,82 +1,96 @@
-Return-Path: <linux-kernel+bounces-363337-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 959FB99C0E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:13:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45EC99C0A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:04:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B78B2817CC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:13:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 63B67282EA5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25BBA1487D6;
-	Mon, 14 Oct 2024 07:13:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55E9F1465BA;
+	Mon, 14 Oct 2024 07:04:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="Xe54NCsc"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="1qlRRVC5"
+Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3284714601C;
-	Mon, 14 Oct 2024 07:13:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8989C13C9CF
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:04:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728890007; cv=none; b=bGZTiFmrEllWazbOK099mTNwClKGLhhe9EAy3g32EbJjq05wq51c87yZpXcN9i00YzYlD+GEK8WCqsLkY3tNkvd+OhTJOMZQekUf8VcAV3hedYsN2olsPyJkt6f+2OAb+Vk3WtJSDWC2893UAejctO0/jQjwCsHlSlJZ5hGwf+k=
+	t=1728889462; cv=none; b=Q+C0+lQeukgk55BO+ai63twsQFcIK31NLJldaRf7IF6lFa80UfLolT8FyQ5z5il/ZFRaA/A/rTrHHl1wzg13US6D0m9WzBnuH+somia7yTKtFuYAdDn7aZr+2VjZKb6OjbGyzkiMkCbICkA7oOdQfpOGeA+s5HrLdIxLAMjqHeY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728890007; c=relaxed/simple;
-	bh=zgxvLRR3w3kjqFDgWGHDCjUaqXkNWkNYk3LGPt7EkZU=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=jXlZ52MIsYQGOfWBCkOLIqh9/VJqLoLXg6jEV3fyUbMlt9c4WSJ3tYDMJdZGHH81yR0a3l8SuPOlKK/gWtxPtFH3qHBBS2sEQylh6J9jS66V3Ok7IxYT64qs1Oxqaju96njo54uqywuI3CF90DTc4uMkmA71Gz7XzZlGWKBVMuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=Xe54NCsc; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1728889420;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=httTAT48fu+3mO0g6dqX16B/PSb/AZaAB5kFQ49ZHpw=;
-	b=Xe54NCscJgu36LAoRk5nICKys82aNg3+GsjFGnInFdAafoHCnhLMlKiQlH9O9rDNupMsmm
-	/gCyhwOm/RbFmKrvS8PEkAkjJHf6xiJMhZO9BSLdAZ/l8T36cBzyTFNdE+PqZhdfV+RWWB
-	5M1lZzm3KwY8vIO/cfRIt4BhpcJeJdI=
-From: Sven Eckelmann <sven@narfation.org>
-To: Julia Lawall <Julia.Lawall@inria.fr>, vbabka@suse.cz,
- linus.luessing@c0d3.blue
-Cc: Marek Lindner <mareklindner@neomailbox.ch>,
- kernel-janitors@vger.kernel.org, paulmck@kernel.org,
- Simon Wunderlich <sw@simonwunderlich.de>, Antonio Quartulli <a@unstable.cc>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- b.a.t.m.a.n@lists.open-mesh.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Subject:
- Re: [PATCH 06/17] batman-adv: replace call_rcu by kfree_rcu for simple
- kmem_cache_free callback
-Date: Mon, 14 Oct 2024 09:03:30 +0200
-Message-ID: <6091264.lOV4Wx5bFT@ripper>
-In-Reply-To: <20241013201704.49576-7-Julia.Lawall@inria.fr>
-References:
- <20241013201704.49576-1-Julia.Lawall@inria.fr>
- <20241013201704.49576-7-Julia.Lawall@inria.fr>
+	s=arc-20240116; t=1728889462; c=relaxed/simple;
+	bh=NNv6gvfmx2HjUFMGU+o2ltt/UiZOt25h1rUaIZXBx2s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mnkscYN+X68Iy9mmyXv2U0HCFlExLatvSsFEMQgxJxy4eakrcSfYSkaYHTOP3MKjNyaJ1nWS5FtWU+SOcFvQop3MEgg/C32IzxtPkvKNriPH8eRhlrQNb9IG+aMqyAsM3J+PXbP48hU1tkXgDgVJ9ovz22CjudC/ABmCa/tL+Dc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=1qlRRVC5; arc=none smtp.client-ip=209.85.208.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb443746b8so5130861fa.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:04:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728889459; x=1729494259; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vGaIhPPoqC5MI9WRgwGY99B8fU3f7PY4Vcuv5+yQqFs=;
+        b=1qlRRVC5r5zo5QpkK4ITdgJm27XooPDYEPA9lLISmwFFfWFtpUAVjGtp1M50zt6vzE
+         6d3ocD9PKu7DPWMe6eD3POXL5jASG6wVGhCu/e5Y7Bv8uLDP/oBTsj82LzCsAfIkqNM7
+         fswnm54f2Po2PNeSSvl9/AKPW2eyuXPKE3JmSYtuPlwp8PsnLrQcfUabpKHikwyVeV89
+         GFDnBftcA7RC8JAZzIxHc77uhWD/vHNK8x5dmVkQU8kPSEFy76djUNKE2SviqJeJJWHV
+         /p4HScwn4u7+yoBwYmX6neZAtHgvEmIeI7UBn+nCkq/QfCfDCfYlNsQT0zOgRqz4dkOm
+         leKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728889459; x=1729494259;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGaIhPPoqC5MI9WRgwGY99B8fU3f7PY4Vcuv5+yQqFs=;
+        b=a0NxLPyK8gbt/XAzPx48AifjyECxplI74DKwQ58Z9kHZR5Fft9jCB87aVRhRI5NiYN
+         GAWtuLZjkJp0XATm9yBxEQZgbse//4PxWcBwRps/gq3hf0HXom+/tK1aqdflPz9fIiTx
+         8vfjvIxXISdNUKgOQwaKJJQKbPLjbtmEWHyrgWhMMelb4WoUQsEW+kCIEOJvdAL4GDJ7
+         0wxqqP0g1WvKofBzVY5Y2AMn83A+uaHkgsSWvzwe7Sq3o3BP4YUx3drbLNdgBiY/e7Zc
+         kKTa3VtG+IWmCECSDNCdjoK+w49DqP8VBqOe7wW7IpzRFwOXTTzDcsiqAM1PwOpBphdQ
+         y7sA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsyvb9NL2J6tmyxiMTYjvWwJwxe0cubXXMHiHGHhCMZNnL3DsmLMqzZyCPWwvZP/WIyTcyM7FHl5TWRgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzpKEGv099lqjSHe3Fqw0+OjSWw24RFd1aO49vpFjndKK/F0Z+s
+	xvExgwd3Gu4n9U6cN4aMgueuWVQak5UDD7ReelP9XF9aE9dhrQh3WvzYu8/tl+o=
+X-Google-Smtp-Source: AGHT+IEm+t/0wxGBRiGGCCWGQXQM/paXJQi/z5wDFT45Y4vSsDzbKlZTz1XXD3y2hVv/E6wIFsje1Q==
+X-Received: by 2002:a2e:6111:0:b0:2f9:ce91:dea9 with SMTP id 38308e7fff4ca-2fb327a6df0mr33120871fa.32.1728889458495;
+        Mon, 14 Oct 2024 00:04:18 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c9370d2196sm4631649a12.7.2024.10.14.00.04.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 00:04:18 -0700 (PDT)
+Message-ID: <7982b197-8ca6-4621-b983-2a6b24aad2b6@blackwall.org>
+Date: Mon, 14 Oct 2024 10:04:16 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4957463.31r3eYUQgx";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 08/17] net: bridge: replace call_rcu by kfree_rcu for
+ simple kmem_cache_free callback
+To: Julia Lawall <Julia.Lawall@inria.fr>, Roopa Prabhu <roopa@nvidia.com>
+Cc: kernel-janitors@vger.kernel.org, vbabka@suse.cz, paulmck@kernel.org,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ bridge@lists.linux.dev, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241013201704.49576-1-Julia.Lawall@inria.fr>
+ <20241013201704.49576-9-Julia.Lawall@inria.fr>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20241013201704.49576-9-Julia.Lawall@inria.fr>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
---nextPart4957463.31r3eYUQgx
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-Date: Mon, 14 Oct 2024 09:03:30 +0200
-Message-ID: <6091264.lOV4Wx5bFT@ripper>
-In-Reply-To: <20241013201704.49576-7-Julia.Lawall@inria.fr>
-MIME-Version: 1.0
-
-On Sunday, 13 October 2024 22:16:53 CEST Julia Lawall wrote:
+On 13/10/2024 23:16, Julia Lawall wrote:
 > Since SLOB was removed and since
 > commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() from kmem_cache_destroy()"),
 > it is not necessary to use call_rcu when the callback only performs
@@ -87,133 +101,38 @@ On Sunday, 13 October 2024 22:16:53 CEST Julia Lawall wrote:
 > Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
 > 
 > ---
->  net/batman-adv/translation-table.c |   47 ++-----------------------------------
->  1 file changed, 3 insertions(+), 44 deletions(-)
-
-
-This was tried and we noticed that it is not safe [1]. So, I would get 
-confirmation that commit 6c6c47b063b5 ("mm, slab: call kvfree_rcu_barrier() 
-from kmem_cache_destroy()") is fixing the problem which we had at that time. 
-The commit message sounds like it but I just want to be sure.
-
-Kind regards,
-	Sven
-
-[1] https://lore.kernel.org/r/20240612133357.2596-1-linus.luessing@c0d3.blue
-
+>  net/bridge/br_fdb.c |    9 +--------
+>  1 file changed, 1 insertion(+), 8 deletions(-)
 > 
-> diff --git a/net/batman-adv/translation-table.c b/net/batman-adv/translation-table.c
-> index 2243cec18ecc..b21ff3c36b07 100644
-> --- a/net/batman-adv/translation-table.c
-> +++ b/net/batman-adv/translation-table.c
-> @@ -208,20 +208,6 @@ batadv_tt_global_hash_find(struct batadv_priv *bat_priv, const u8 *addr,
->  	return tt_global_entry;
+> diff --git a/net/bridge/br_fdb.c b/net/bridge/br_fdb.c
+> index 642b8ccaae8e..1cd7bade9b3b 100644
+> --- a/net/bridge/br_fdb.c
+> +++ b/net/bridge/br_fdb.c
+> @@ -73,13 +73,6 @@ static inline int has_expired(const struct net_bridge *br,
+>  	       time_before_eq(fdb->updated + hold_time(br), jiffies);
 >  }
 >  
-> -/**
-> - * batadv_tt_local_entry_free_rcu() - free the tt_local_entry
-> - * @rcu: rcu pointer of the tt_local_entry
-> - */
-> -static void batadv_tt_local_entry_free_rcu(struct rcu_head *rcu)
+> -static void fdb_rcu_free(struct rcu_head *head)
 > -{
-> -	struct batadv_tt_local_entry *tt_local_entry;
-> -
-> -	tt_local_entry = container_of(rcu, struct batadv_tt_local_entry,
-> -				      common.rcu);
-> -
-> -	kmem_cache_free(batadv_tl_cache, tt_local_entry);
+> -	struct net_bridge_fdb_entry *ent
+> -		= container_of(head, struct net_bridge_fdb_entry, rcu);
+> -	kmem_cache_free(br_fdb_cache, ent);
 > -}
 > -
->  /**
->   * batadv_tt_local_entry_release() - release tt_local_entry from lists and queue
->   *  for free after rcu grace period
-> @@ -236,7 +222,7 @@ static void batadv_tt_local_entry_release(struct kref *ref)
->  
->  	batadv_softif_vlan_put(tt_local_entry->vlan);
->  
-> -	call_rcu(&tt_local_entry->common.rcu, batadv_tt_local_entry_free_rcu);
-> +	kfree_rcu(tt_local_entry, common.rcu);
+>  static int fdb_to_nud(const struct net_bridge *br,
+>  		      const struct net_bridge_fdb_entry *fdb)
+>  {
+> @@ -329,7 +322,7 @@ static void fdb_delete(struct net_bridge *br, struct net_bridge_fdb_entry *f,
+>  	if (test_and_clear_bit(BR_FDB_DYNAMIC_LEARNED, &f->flags))
+>  		atomic_dec(&br->fdb_n_learned);
+>  	fdb_notify(br, f, RTM_DELNEIGH, swdev_notify);
+> -	call_rcu(&f->rcu, fdb_rcu_free);
+> +	kfree_rcu(f, rcu);
 >  }
 >  
->  /**
-> @@ -254,20 +240,6 @@ batadv_tt_local_entry_put(struct batadv_tt_local_entry *tt_local_entry)
->  		 batadv_tt_local_entry_release);
->  }
->  
-> -/**
-> - * batadv_tt_global_entry_free_rcu() - free the tt_global_entry
-> - * @rcu: rcu pointer of the tt_global_entry
-> - */
-> -static void batadv_tt_global_entry_free_rcu(struct rcu_head *rcu)
-> -{
-> -	struct batadv_tt_global_entry *tt_global_entry;
-> -
-> -	tt_global_entry = container_of(rcu, struct batadv_tt_global_entry,
-> -				       common.rcu);
-> -
-> -	kmem_cache_free(batadv_tg_cache, tt_global_entry);
-> -}
-> -
->  /**
->   * batadv_tt_global_entry_release() - release tt_global_entry from lists and
->   *  queue for free after rcu grace period
-> @@ -282,7 +254,7 @@ void batadv_tt_global_entry_release(struct kref *ref)
->  
->  	batadv_tt_global_del_orig_list(tt_global_entry);
->  
-> -	call_rcu(&tt_global_entry->common.rcu, batadv_tt_global_entry_free_rcu);
-> +	kfree_rcu(tt_global_entry, common.rcu);
->  }
->  
->  /**
-> @@ -407,19 +379,6 @@ static void batadv_tt_global_size_dec(struct batadv_orig_node *orig_node,
->  	batadv_tt_global_size_mod(orig_node, vid, -1);
->  }
->  
-> -/**
-> - * batadv_tt_orig_list_entry_free_rcu() - free the orig_entry
-> - * @rcu: rcu pointer of the orig_entry
-> - */
-> -static void batadv_tt_orig_list_entry_free_rcu(struct rcu_head *rcu)
-> -{
-> -	struct batadv_tt_orig_list_entry *orig_entry;
-> -
-> -	orig_entry = container_of(rcu, struct batadv_tt_orig_list_entry, rcu);
-> -
-> -	kmem_cache_free(batadv_tt_orig_cache, orig_entry);
-> -}
-> -
->  /**
->   * batadv_tt_orig_list_entry_release() - release tt orig entry from lists and
->   *  queue for free after rcu grace period
-> @@ -433,7 +392,7 @@ static void batadv_tt_orig_list_entry_release(struct kref *ref)
->  				  refcount);
->  
->  	batadv_orig_node_put(orig_entry->orig_node);
-> -	call_rcu(&orig_entry->rcu, batadv_tt_orig_list_entry_free_rcu);
-> +	kfree_rcu(orig_entry, rcu);
->  }
->  
->  /**
-> 
+>  /* Delete a local entry if no other port had the same address.
 > 
 
-
---nextPart4957463.31r3eYUQgx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCZwzCQwAKCRBND3cr0xT1
-y7i+AQDVLdYz744YITcGjxNtokduQbc/TMXye8cDpvnUIRqeswEA3w/Kg7zDNvz2
-rI43KEYfCJOuJv0+vY4mZmhJob37RQw=
-=/WZq
------END PGP SIGNATURE-----
-
---nextPart4957463.31r3eYUQgx--
-
-
+Acked-by: Nikolay Aleksandrov <razor@blackwall.org>
 
 
