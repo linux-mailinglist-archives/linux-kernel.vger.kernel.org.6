@@ -1,93 +1,112 @@
-Return-Path: <linux-kernel+bounces-364233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0845599CE50
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:42:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DB0B99CE59
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:42:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BB781C22D78
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:42:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811EE1C22B16
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564271AA797;
-	Mon, 14 Oct 2024 14:42:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mvse/qDo"
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 281DC4A24;
+	Mon, 14 Oct 2024 14:42:48 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB071AB6FC;
-	Mon, 14 Oct 2024 14:42:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 378ED20EB;
+	Mon, 14 Oct 2024 14:42:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916941; cv=none; b=sI2Qi99hGajziSzrP0tESqHvqNoyw4aXtUzNtULyejcmt5HJ0tB5LtAmcqa3t6/LuZpAlAQZmY7L6ulYHym61xxexQKJHQpfWmNs4EjpX3zWz0vENMI5MgecWAsIYKalvdeW2EYGH+xjBqnP64S0gD6CBTsgPZIjkPhYa0od+Yk=
+	t=1728916967; cv=none; b=oIq9ixxiJkW2ldnbxS66Idv6jNz1YhIceyp9aAcKLIYCczTnwHla7SquC3ssDHQhLL8YFwCZjN+NTln1joaMqnV3neFc6FwL6jqsTPBFtr/ZSY/OzpvNJnuzP67VRx0buvr6dW4f0rAMUIwG/ANUU73epCRz1n1mTe7kB44iXSQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916941; c=relaxed/simple;
-	bh=yp/vq9zlbq1HhG6QQGenrbEj/Q0rtKpwP4zYqsnuJjg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Lvsngb7xyjgTcjQLOOT6p6lGlH2w5dxU5m35k38pFJ3EVtoGw7R3D0A0BSptTnwxxMTruoEWc/7zgtScmdPa5uF5LGhcRSZj5wMCkktfS5sWuhN+ece0KTyaG7R9onTsap8UtERuKDkgahjPbEuzECSIbCUXqCVk/GDqBeNwyJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mvse/qDo; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e2e4d16c2fso36812227b3.3;
-        Mon, 14 Oct 2024 07:42:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728916939; x=1729521739; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b7yd6ocGPa+qHv0lpNEK+1T1208owehkBcsL1QtHm1E=;
-        b=Mvse/qDoDBR/cwSUlSlaOarM8nvWCigOAWkCRpNXPf/nY/0TSCqyNrwsstgIHEYkAP
-         WhmOhvPE+kwnY5E9lRymqOsTntcWJhgVQxgzuawUi/m2jma3VNP3lTNglQdZ/NWt5c/V
-         bP2AaqqFOViaY9aCR8wEATnMebJJb6ZL+tHkbZJu8qxSKA+hOY6BYYcz82m9GSaTAKqf
-         9dPyFQk4IX1FTchFOeFocpWh1kFSZ4eLnV/VN2UIsbPdIgQxRPSs38VRuQ9m8OSQ0QaQ
-         btunCAtETWutaBd639CGxueiMGh9+cGcMKWaXfQrCAWrW9rFCfIDcMkUEKVUzkYmu72O
-         qTgg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916939; x=1729521739;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b7yd6ocGPa+qHv0lpNEK+1T1208owehkBcsL1QtHm1E=;
-        b=ssM/bp2ZZGHQsMB6f25hVN6ScUY5QG6n11GViWtmFKcPbEHONn9DLkQWBH84x61YZh
-         u9wCXFNBUc6YtrsvCLY82sMWeCACa0xF+DSTka6AmB3IeppjitQynN6YlkV/lExrz2WE
-         wl1WfN1tr6MbqEc2MKrevEHDEapE32IFiQblwonh536s90ujpSKoUt7anVt5v1KqA2bV
-         xzHurw6bgAGfe7gnpZZQq9gP6DlTyL5GF6ftQTQC/9USRQrT7OiwKsvDj1PF7FQcxJHl
-         U5qD5urL+P1AiO/0Ib+bojMh8sFSo58sQggYG1JxkoWPyj86NaglBSE3/RYsIjxQpFDY
-         JboQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXGuDjLOXQs+9Y60cojrM24k7Gmc7k0qHbS8xAVoiFduADgB+GXB/0z/lZlNFZjMVGYm+pAvwftkljGqUM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/IZbPDftZNSVjwF04ZsLe/cNXF7oTvyGmUIvsso9jC4DZ9TSY
-	JQmLH3dSupbJ6VL2fwZW3qV+J/YeCDR864FCL6UXnrPVPZgnHfPhv8+DGA==
-X-Google-Smtp-Source: AGHT+IFrpVozxAesIjCHUikzshrhyh8y99zvIO4C2XJjdes/VeBu3a+00IFj9Z4GGk++ezrzMs0IYA==
-X-Received: by 2002:a05:690c:6711:b0:6db:deb7:d693 with SMTP id 00721157ae682-6e364347ac3mr62466697b3.22.1728916939240;
-        Mon, 14 Oct 2024 07:42:19 -0700 (PDT)
-Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332bad8basm15669867b3.70.2024.10.14.07.42.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 07:42:18 -0700 (PDT)
-Message-ID: <c1485484-15c1-4be5-b320-01443f4f3ae2@gmail.com>
-Date: Mon, 14 Oct 2024 10:42:16 -0400
+	s=arc-20240116; t=1728916967; c=relaxed/simple;
+	bh=RSNRR2r08+yny9EY39TfsT1UKltcCVUbC34wSkBYbRk=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=f8oLWiB6zAw/hQgdvigL0xGC7wPtNmWJDvT+IyF9K0o8X6MkaJr3RNDrhkMKagsqISwViesSG0Fd6sCCcuDTPLC5t9gZ9UWWMAgswP2d497/Pxz3lQP3DyAchGGOAERvHR34pGIw1k5z0UFjXA6w6k6iaBiIBDDSSKQakW0JeHo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS0KG6Nxwz6GC8c;
+	Mon, 14 Oct 2024 22:41:06 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 8F831140A77;
+	Mon, 14 Oct 2024 22:42:41 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
+ 2024 16:42:40 +0200
+Date: Mon, 14 Oct 2024 15:42:38 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v13 05/18] cxl: Move mailbox related bits to the same
+ context
+Message-ID: <20241014154238.000055a3@Huawei.com>
+In-Reply-To: <20241009124120.1124-6-shiju.jose@huawei.com>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+	<20241009124120.1124-6-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 7/7] linux-kbuild: fix: process config options set to "y"
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org, javier.carrasco.cruz@gmail.com
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
- <20240913171205.22126-8-david.hunter.linux@gmail.com>
- <CAK7LNATf=1WD5a8azGZGJ73-irm8uvBZujvuW3CUncXbix+10w@mail.gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <CAK7LNATf=1WD5a8azGZGJ73-irm8uvBZujvuW3CUncXbix+10w@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Version 2: 
-https://lore.kernel.org/all/20241014141345.5680-7-david.hunter.linux@gmail.com/
+On Wed, 9 Oct 2024 13:41:06 +0100
+<shiju.jose@huawei.com> wrote:
+
+> From: Dave Jiang <dave.jiang@intel.com>
+> 
+> Create a new 'struct cxl_mailbox' and move all mailbox related bits to
+> it. This allows isolation of all CXL mailbox data in order to export
+> some of the calls to external kernel callers and avoid exporting of CXL
+> driver specific bits such has device states. The allocation of
+> 'struct cxl_mailbox' is also split out with cxl_mailbox_create() so the
+Ira called this out in the v4 posting from Dave.
+Change text to say cxl_mailbox_init()
+
+> mailbox can be created independently.
+> 
+> Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> Reviewed-by: Alejandro Lucero <alucerop@amd.com>
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> Link: https://patch.msgid.link/20240724185649.2574627-2-dave.jiang@intel.com
+
+That link is to an old version.
+https://lore.kernel.org/linux-cxl/20240905223711.1990186-1-dave.jiang@intel.com/
+Is what you have in the cover letter change log so needs to be that here
+as well.
+
+I'll review this on Dave's thread rather than here.   Dave, we'll need
+a immutable branch for this one once you think it's ready for queuing up.
+
+If we can do that soon that would be good as it's either gating this
+series and is a precursor for the type2 stuff.
+If we are sure only this stuff will make the coming merge window
+(crosses fingers) then we an take it via Borislav's tree
+- perhaps we should discuss this on the sync call tomorrow.
 
