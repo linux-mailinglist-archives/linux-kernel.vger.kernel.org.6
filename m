@@ -1,317 +1,209 @@
-Return-Path: <linux-kernel+bounces-363294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363291-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8647B99C01C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:37:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 152F399C014
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9E2A1C22493
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:37:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3A54282A63
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:35:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0077F1448C7;
-	Mon, 14 Oct 2024 06:36:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74B8144D01;
+	Mon, 14 Oct 2024 06:35:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gl7KmPlo"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="oZjV7se+"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 310C683CC1;
-	Mon, 14 Oct 2024 06:36:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728887812; cv=fail; b=hC9yqLIM0uRWobpSkvXKoVcSYz69HPp45bNFCm3duemWZK/Dta9n+TO5BB+LzmKer8U1UH0L+j2HiYox4LfZ4bJAW2jYHoGUalMY06NbkjzWOe3HnvEDXL0I3B1LAGwQ3cK6pqvEqD8L0qHfpNFCnKIBmYSB4n1sSaFX4yVyzq0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728887812; c=relaxed/simple;
-	bh=SR2YybBCWvvH9X2UGaQ4pXt014krnVy68TZ47/IiZ1w=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=izKFzWejDpjt3TwV3PEuo6QwU5/wzzRlrPwIVqbsgjDMUrBPlAqj0FtUta/5oS3LmtS4z74SKyIiSNKdYC4ZqewtUfn0hos1+UrPfxZJdhCxj1t7ErQd2x7R1fvT9cqArM0l7dHd3o0W636dnQvA8PsK2sFxKENYMFBZ0hJjFWI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gl7KmPlo; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728887810; x=1760423810;
-  h=date:from:to:cc:subject:message-id:reply-to:references:
-   in-reply-to:mime-version;
-  bh=SR2YybBCWvvH9X2UGaQ4pXt014krnVy68TZ47/IiZ1w=;
-  b=gl7KmPlomp1kyxYcTfAp0BZ+NdTQF0qExIDIuUw3dAoYPdj5IJchAKgs
-   6e96Qv9Ni7/Zk+UlQViGTeFkIMobwJ/Ux9MzbT0vErTA+QaQhRVrWlNTa
-   0F/kfZJd9SYt8l+pwYfdArPbNWmgSWGyBbFpXq6qDsw9YZmQUDzv7FdMP
-   1xap0jYCYCsNxnqyRGcIn/fK0jJU6qlzYNOaWbwQGFDSmtVQK64O6SN+3
-   K3KWcnf6/Nqa1IVHY9m14JEe0GzG17qx7Qm1l/gjgXS88qgiS2euZ+gyc
-   KiCUOWq/RKFHPm8yTsxOs5EshwyrKgdkwfu8kC6+27j6xbyecWxbrnHm9
-   A==;
-X-CSE-ConnectionGUID: IIpmdK7oSICk4hfWLiNLlg==
-X-CSE-MsgGUID: V3xa7yICQquvFtBxpHjIow==
-X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="32017305"
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="32017305"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 23:36:50 -0700
-X-CSE-ConnectionGUID: UXOxeHtASeK1/nBs0tMdKQ==
-X-CSE-MsgGUID: k7im6wmlS6qoLv5w0QlTvw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="108232573"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa001.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 13 Oct 2024 23:36:48 -0700
-Received: from fmsmsx610.amr.corp.intel.com (10.18.126.90) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 13 Oct 2024 23:36:47 -0700
-Received: from fmsmsx611.amr.corp.intel.com (10.18.126.91) by
- fmsmsx610.amr.corp.intel.com (10.18.126.90) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Sun, 13 Oct 2024 23:36:47 -0700
-Received: from fmsedg601.ED.cps.intel.com (10.1.192.135) by
- fmsmsx611.amr.corp.intel.com (10.18.126.91) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Sun, 13 Oct 2024 23:36:47 -0700
-Received: from NAM12-MW2-obe.outbound.protection.outlook.com (104.47.66.49) by
- edgegateway.intel.com (192.55.55.70) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Sun, 13 Oct 2024 23:36:47 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kMcSH2t5fga0kasnxm/wk6RxHoFumVK82gru1kxG0Fk/SIEghbk6De14EnBmHwzE1VLd4mCcIzi6RBdxX2wJYH0sIsojIRzkHb6LJt4FkpF3A45ReBBybjmOehXjv/zAzo3JSmOv8c5ovvi6IMr2b0ZVlwPd1ugZ2er3ksyT5Zpywga++0HbGkM68f/S3U6FM6afMc40rtrKQvnp94wEM97hl/4PHXfUCwt3fAHsSquvkyygfJ+E6pvLL8l2KmJYN2eKZrsd8feJfZ00XUcPHUl8s7O6KTiN8qk4TmRAzW2WN33NBa0TivIk5EDZBDWAuhftKx5r6GzlQwRtL5jQrA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5M1QtRuQF0oshZ2qNuSUIzJkgAFhY4jmIW0e1XIfFwI=;
- b=l6kSl9Y7/yoso0w//6L/eO4geUSgjBS11OK3etWpQ5zFQVt0WC7J2R87QWgGQFSUJPSa14SU7jqZLgzLQ8N6Ykp3x8GtoK3d18wybswGPE8l7edU/G+BnDNLLuBlaCsUelJ5yx1jXZgPYyma3+cbaxehsOami4mh41+PsX02c9xfsusScFTCAiYspYf2jlDSp14sGZAgDuyad62bviB/FnWf1Im8G+YIcL7iBFN+4VJHHBxC8W+JyxbI0lcWRrz9YGEG6zrnt4FxXrG48vS0kIh1f2FJdvsM81MdWo6YXSgis7ytRaglFuwfpLak+GdAVgLBilZD8ZA5ex8bHi/2Lw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com (2603:10b6:8:71::6) by
- PH7PR11MB6605.namprd11.prod.outlook.com (2603:10b6:510:1b0::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.25; Mon, 14 Oct
- 2024 06:36:45 +0000
-Received: from DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca]) by DS7PR11MB5966.namprd11.prod.outlook.com
- ([fe80::e971:d8f4:66c4:12ca%6]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 06:36:45 +0000
-Date: Mon, 14 Oct 2024 14:34:28 +0800
-From: Yan Zhao <yan.y.zhao@intel.com>
-To: Paolo Bonzini <pbonzini@redhat.com>
-CC: Rick Edgecombe <rick.p.edgecombe@intel.com>, <seanjc@google.com>,
-	<kvm@vger.kernel.org>, <kai.huang@intel.com>, <dmatlack@google.com>,
-	<isaku.yamahata@gmail.com>, <nik.borisov@suse.com>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 13/21] KVM: TDX: Handle TLB tracking for TDX
-Message-ID: <Zwy7dMTMR2bIDtzM@yzhao56-desk.sh.intel.com>
-Reply-To: Yan Zhao <yan.y.zhao@intel.com>
-References: <20240904030751.117579-1-rick.p.edgecombe@intel.com>
- <20240904030751.117579-14-rick.p.edgecombe@intel.com>
- <e4ebdfca-fcb8-43fb-a15b-591d083b286f@redhat.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <e4ebdfca-fcb8-43fb-a15b-591d083b286f@redhat.com>
-X-ClientProxiedBy: KL1PR0401CA0014.apcprd04.prod.outlook.com
- (2603:1096:820:f::19) To DS7PR11MB5966.namprd11.prod.outlook.com
- (2603:10b6:8:71::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8124C13B5B4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728887732; cv=none; b=X1fRuc+98VmUZ14iy02CzravvKfM2lZza4HS4GEB1Dybpc6/wU20ir7nNSgckV1oMg461CGZd7Spkb6h/e+6ihkhTlb2eAvG665igdUMH+exnAok60mW7u3aAUt2QkT0mtkDZk6Dynt0Ng8Z2/ejsCxmZArQ4DmslfrtTXqYPGk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728887732; c=relaxed/simple;
+	bh=ZGBoVdbwgat/NxUEjyYnv4uZ19nNnybh9UIeSIN7bUE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NkM5z7jgF7WN0CfElQd/DQom6J2fFSfpfVluNzh3nUICp2gDFNvvfuvqBoANlz3tvGxStBphfxDE08A32tLySwWGQVXhohJRYSbLduWhDIxNeNaF3XmxckVnwJ8Uxe+AOxXNAranoYxHj9Ba0IJqK8okAbR1Y4qJ0s6Q+LShFdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=oZjV7se+; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0c40849cso95173966b.3
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:35:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728887729; x=1729492529; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=EzkqcrvTVaKqpqDByKdgad826mxzpVo//v8QIefMOL8=;
+        b=oZjV7se+MygIvrpcqkj1fVVSQjt60aQ7CiM+JUr6kHJeTXlb/iAjysm2vlfAnsUODv
+         lQx3ft0MZJOuumMJHSWgWYgu2qKemVeXb5PBoKx0/mrvAWh/8/RHSElFGesjriNh70u/
+         JEhMNQUvWLseauVOt4/zVYhrr8/l+H82CwFK7hWjGh2d3L13a1/3gp8071MNALWj1kib
+         o0o8dju8wb1zHeYuJttJ72tNQ7a/yimpjjnr+hFaOzy3XSaYFp+/QrURpE4J/wCW/N3S
+         1zqTdxSuejztMbyv+DBcHhvpkqhnrWPyVa686DZxtBfW4ylStj5sDD+uRDRM2iGsvn4W
+         CLSA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728887729; x=1729492529;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=EzkqcrvTVaKqpqDByKdgad826mxzpVo//v8QIefMOL8=;
+        b=aALm5IKEVX+0vhXMB76NPdZ5iqyONsy+scEHhdNcfpdy8HJ39Y2b9e9eGzBIbXZf95
+         A4k8bnxV/lTTJJ+tlOXMZ8ytjsHF+HBEC9cksyRiPmGcDDFUrRZy50OVxV+V0ZLNlWZr
+         tf7cj6GoJvmV8Xpdw2tgPhHkesbrcad74VmQL3MDUPrg7+BHzovRFPozPJlABJb4QAxL
+         Mx2EUL9Y/1ODCnRDo3lH/DP4wD/USyWp1DKg6WFWsfcqMHEybNEI3dcqxCCTUhFatOHL
+         NpM+GPehdcAxExyLCs0sWtC+bvaX+eF3KekYF6byGISPNiDCd7m26Efs/tuAzzBe8cxZ
+         bY6A==
+X-Forwarded-Encrypted: i=1; AJvYcCUrDXbDi57Idxxp2uSYsB37571LEtD0ey00HNGqaR/FfYZMH6nsAbbpZZegLh1n7URpLimD9wHIodBR3HY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVLVoFH6FVrwBDK+HT+iQ3mT9V8IwX5DHUMG7ihHwGvVrvhGlv
+	QcnCO2FH5viQ4uI/OyTUmGKHnJ8e4ElOorK41bTlo9rGNfdnD/yesGLor09XeEw=
+X-Google-Smtp-Source: AGHT+IHtsfhY77d2hmhJ/UeBZXQQAahrdwUCAyfXzQzRvrPqdSAngDAVOM6fkmoaHNagJzIo6u/AkQ==
+X-Received: by 2002:a17:907:d01:b0:a99:403e:2578 with SMTP id a640c23a62f3a-a99b9313475mr1017156666b.5.1728887728814;
+        Sun, 13 Oct 2024 23:35:28 -0700 (PDT)
+Received: from [192.168.0.245] ([62.73.69.208])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99ee8da1besm278784766b.216.2024.10.13.23.35.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 13 Oct 2024 23:35:28 -0700 (PDT)
+Message-ID: <9f9f3cf0-7a78-40f1-b8d5-f06a2d428210@blackwall.org>
+Date: Mon, 14 Oct 2024 09:35:26 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR11MB5966:EE_|PH7PR11MB6605:EE_
-X-MS-Office365-Filtering-Correlation-Id: 82459624-9c08-4266-de4f-08dcec1a9276
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?RUocLGaiHzTfpMYDCuLnld05nGEZrvfxOKtkfQhuEDzPp9ToITLHIXpVn/Hb?=
- =?us-ascii?Q?T0gpgNMVi85fCFyH1mcm8xbYfXHtGCWCKGtrqcE4AEaJ5g1qdcO4qGRZx9js?=
- =?us-ascii?Q?Noxp7vYOLTcwxrDnXqTCoAkFMiEkbtNKuVAaLF+g5KC07QXCuLwwFZVYDej7?=
- =?us-ascii?Q?EbGcePnYNvz/40qmHJzvGi9CLVlkX71gTEWRB1s/tGZzCUxeoqVsKbx0/5sB?=
- =?us-ascii?Q?8mIFaGLypNx2aymn9g71bChYvg4v4FGFsBmSCRBOSMlz0V0v0eeBEp8c8Lqi?=
- =?us-ascii?Q?jET5vsHOVa0mSIqlEtTE+rV4E4wNfS+AsmJ12GYmEfEFwIAh9ijGOX5fCiKd?=
- =?us-ascii?Q?nlS79RE/yocQ5YoqKIiCeD7k3ZYPSsqK8VqMz8JJN6FkM3h4EKzUz1rqj/Sl?=
- =?us-ascii?Q?H24vKHYs2d7KHq55K5i4/2Z9BkWgF2jh0VaPKktdZeY//uobnOWulcYXAMhn?=
- =?us-ascii?Q?XFoXXMhINrzSCLI8Uw+adWv5gYe/nUzngPsxhq0afE8QqkavmNJfLSRbKtw9?=
- =?us-ascii?Q?E/BiO7+KiQN44ngfUR3xiFe3IJNp6ncR7UuiNz+2ahrc9oyzxrpzzKNykbKT?=
- =?us-ascii?Q?zQBqh8JJ1Aco4vG+CxGfvH5CmEQ43aVXhUGG2F/U3a/O0MVXZEz+VUBf8aLE?=
- =?us-ascii?Q?UQa6jPyU2mZNv0um3mS6uIZofMz/00H+YscVRjDVnQNGi+AkHolNONJtXHpe?=
- =?us-ascii?Q?w0l7D+IqbkQzTOERUweRlHh1BPsWeeaRWdR4vUtHqZSXOxSKoMwZCk1IzxzJ?=
- =?us-ascii?Q?zwdUJ1iBIz9wwPnlFi0NmFTEFy6MbFyO81RRtdi3KL5RlJvJifcdquT7VAUF?=
- =?us-ascii?Q?XDI5d/a/kRUQpoClA5HDhiAjbr37gYESOtezfsgzoiufIpkH/WM1MaOQbesK?=
- =?us-ascii?Q?Sijt7ml7DKlNgBiMKGJ/EeQ5V+pGWpM/KH8vXVpxWo0D0fdVANTbe0v4T99z?=
- =?us-ascii?Q?ZFTwDYVElsz4vjm7oTdTNcFWb3ZWOjUie/47Rq+Pz+yaXpJnpd6ADIUY1L6j?=
- =?us-ascii?Q?wqVvoZwd1kxuXOuIFuSVXexOvUlELXrm3px7D7Y5yn3RP74EhI/dVk49bwPS?=
- =?us-ascii?Q?6m+XhGgZjDYYow9RyWDF+1vf7cZSi/9sRjs+WAege2aIixKlaoBsVbHiQ447?=
- =?us-ascii?Q?iQ5k19O2vQKYCG7RWHltj7jRLkVS0hjqOg/H+bBpYNWkskyklHcSzzuRrikv?=
- =?us-ascii?Q?QfIJA1dZRE9WnaLY7+FRHSy8uA+Y9vaLA+cwXo4J4r/2JdImvnbUqQMGJX9Y?=
- =?us-ascii?Q?a1rWbxo5VlzcMMiCLR8v1dPGyPthujCzC/1DJdJgPQ=3D=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR11MB5966.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?otaoSZHat8IcNLte1rhvJblFz+fyFvCpHUAq6tUjIc7Nlg9zfIRpXxZtext8?=
- =?us-ascii?Q?NbbZtlXr9TgEHLsnwacd8nu1yCPruN2r+tWt4StZ1BmqoBMIIYJD1cmAy0oT?=
- =?us-ascii?Q?OiuoNUXXOfOhu7mvaxN57Aqt2a6lwoeoeve/WqgU8A6eNk+Gv9Qj+gVy11+V?=
- =?us-ascii?Q?10J2WFKNZhW954uqFbxJf6Pq3o6LhhzcrYQ+lHHe2fFB3Rog8bH0iIsmcLs0?=
- =?us-ascii?Q?rBesRnS+Xv4gwQUEsPsZUseJ/cUmp2A/XYFWq5olpEZ0YIYsaOmt1dBkEKY6?=
- =?us-ascii?Q?IDfRkRZ+v8S/z4MquXqJKpqOXjTkD/TWatz/EM3nnkPYX5zziWgRAUShDiW5?=
- =?us-ascii?Q?WIM4GsfyMlz8mdP3LThqK/+hPpvWrtRsZtrYNLmgfDwMq0jWz9GKFKyNtqJw?=
- =?us-ascii?Q?oFqht62Rn6INRxOEHm6z553GpExAsQyYzcm8Rge+oQa2FcFmykXLkvvW+4ZI?=
- =?us-ascii?Q?qyGWIiJgYdHRC2Zu1oov3PHLiIcpdfDY8KnqPMVcE0InhzdxiTTVH1iPy2vQ?=
- =?us-ascii?Q?P0x3tJTi48DfDPf5dgG4Zozf6rZrpvUP1T4Ppz6JaxiQOd90dIu3h9KrEEYk?=
- =?us-ascii?Q?0MTYqTMv06kV6qbAMQKtG4iIwq0R4swDmjv8Siy+Q+Kpj8dSd5vENJniIlLZ?=
- =?us-ascii?Q?UQoNMCQ1+zfOil5P3gklwOgJ9Y0djZKWionODvRfTMiz2rXx7LaLsAttMOBh?=
- =?us-ascii?Q?US6ZEsLJYlEOjTg42M2J2ACkr2bLLtFjgaea943FpVAq7giHQWapp9imAPbc?=
- =?us-ascii?Q?AVEpwTlhbcXEvc991wjFFvr/RQe//GBKfW1upxSHK/MzS/shQLzOuU1rUm9d?=
- =?us-ascii?Q?uDJL+eOnw9Asy9ESvRT4OvrWzterAlQOCJKEpsb638twkjMR4qNGBeJ06pIc?=
- =?us-ascii?Q?ngTbvQZcegi5QQUC5snr0xlfQvkAboG0LLT0YQ1qPqdJYaeTlB+KESWS1j8e?=
- =?us-ascii?Q?liX2ACVTqVxKqr3rrZdeWT30CLK96urtVafSRj6DLXUValxV9msQEtRJx0ha?=
- =?us-ascii?Q?xY4A46mE8r2i9Z/50UF68gnTdYHBfx7dmYBM9mHLWLRvZPB4XInEJMELD753?=
- =?us-ascii?Q?3LtKWJ27XUBnuQoqTDpAJXS/MY+cc5rlKz7DOgN9hdAWZg6ZkdkAk+gHSFHf?=
- =?us-ascii?Q?rNJH7HoJrGmEr6wxXaTxcZCmu0ftYt3SUJ3KKCQ3hQhf1Ri2hlNpzo6757Uh?=
- =?us-ascii?Q?r6Cf959a4lDWcJzpWSfF3gw3jdufjzIk1DSneiH9UKPRxa1iZIYLoS7E0t6n?=
- =?us-ascii?Q?XA2pbeDspY/AwbWWbeuGbKs9JlLeA+B9etey8H4JfezVH6d7fDchtzhJbwGy?=
- =?us-ascii?Q?YapTNwWEl3sg6Bh4npAQ/oTxU6FhhvyC2xk1JTFU2rYx9+FYq6Uc+Hgriu0J?=
- =?us-ascii?Q?UJ8mV43YnpwOl4pZu2ORAaV9+3864/FFylRIu3Ey2+XF62tXMOfD3oq48KwN?=
- =?us-ascii?Q?mVK6fnVlACkyBthP8RKdbS1XS9FTLG21P2HkPLm+BnNegz5ciJ0qVXrsyGAZ?=
- =?us-ascii?Q?QxRxpSih0/mpnfGaLl4mYa5VKFdhrubFz2WassO1qplavivW3zkWy5CSY40a?=
- =?us-ascii?Q?L6TWSbyGnQ/2sfMOFTRKFo85mleP1gh0z4VUAehM?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 82459624-9c08-4266-de4f-08dcec1a9276
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR11MB5966.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 06:36:45.2182
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: VQY19rvIREf1d/iXQVQUUCurWGLpPxItEKTgSOfIspL+BWEXE2ZDCANs84Gl6i9cazh3ok2PhwWDaXiVkbI5Ng==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6605
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v1 net-next 00/12] bridge-fastpath and related
+ improvements
+To: Eric Woudstra <ericwouds@gmail.com>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
+ Matthias Brugger <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Jiri Pirko <jiri@resnulli.us>,
+ Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Lorenzo Bianconi <lorenzo@kernel.org>,
+ Frank Wunderlich <frank-w@public-files.de>,
+ Daniel Golle <daniel@makrotopia.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org
+References: <20241013185509.4430-1-ericwouds@gmail.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20241013185509.4430-1-ericwouds@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Sep 10, 2024 at 10:16:27AM +0200, Paolo Bonzini wrote:
-> On 9/4/24 05:07, Rick Edgecombe wrote:
-> > +static void vt_flush_tlb_all(struct kvm_vcpu *vcpu)
-> > +{
-> > +	/*
-> > +	 * TDX calls tdx_track() in tdx_sept_remove_private_spte() to ensure
-> > +	 * private EPT will be flushed on the next TD enter.
-> > +	 * No need to call tdx_track() here again even when this callback is as
-> > +	 * a result of zapping private EPT.
-> > +	 * Just invoke invept() directly here to work for both shared EPT and
-> > +	 * private EPT.
-> > +	 */
-> > +	if (is_td_vcpu(vcpu)) {
-> > +		ept_sync_global();
-> > +		return;
-> > +	}
-> > +
-> > +	vmx_flush_tlb_all(vcpu);
-> > +}
-> > +
-> > +static void vt_flush_tlb_current(struct kvm_vcpu *vcpu)
-> > +{
-> > +	if (is_td_vcpu(vcpu)) {
-> > +		tdx_flush_tlb_current(vcpu);
-> > +		return;
-> > +	}
-> > +
-> > +	vmx_flush_tlb_current(vcpu);
-> > +}
-> > +
+On 13/10/2024 21:54, Eric Woudstra wrote:
+> This patchset makes it possible to set up a (hardware offloaded) fastpath
+> for bridged interfaces.
 > 
-> I'd do it slightly different:
+
+The subject and this sentence are misleading, you're talking about netfilter bridge
+fastpath offload, please mention it in both places. When you just say bridge fast
+path, I think of the software fast path.
+
+> To set up the fastpath with offloading, add this extra flowtable:
 > 
-> static void vt_flush_tlb_all(struct kvm_vcpu *vcpu)
-> {
-> 	if (is_td_vcpu(vcpu)) {
-> 		tdx_flush_tlb_all(vcpu);
-> 		return;
-> 	}
-> 
-> 	vmx_flush_tlb_all(vcpu);
-> }
-Thanks!
-This is better.
-
-> 
-> static void vt_flush_tlb_current(struct kvm_vcpu *vcpu)
-> {
-> 	if (is_td_vcpu(vcpu)) {
-> 		/*
-> 		 * flush_tlb_current() is used only the first time for
-> 		 * the vcpu runs, since TDX supports neither shadow
-> 		 * nested paging nor SMM.  Keep this function simple.
-> 		 */
-> 		tdx_flush_tlb_all(vcpu);
-Could we still keep tdx_flush_tlb_current()?
-Though both tdx_flush_tlb_all() and tdx_flush_tlb_current() simply invoke
-ept_sync_global(), their purposes are different:
-
-- The ept_sync_global() in tdx_flush_tlb_current() is intended to avoid
-  retrieving private EPTP required for the single-context invalidation for
-  shared EPT;
-- while the ept_sync_global() in tdx_flush_tlb_all() is right for shared EPT.
-
-Adding a tdx_flush_tlb_current() can help document the differences in tdx.c.
-
-like this:
-
-void tdx_flush_tlb_current(struct kvm_vcpu *vcpu)
-{
-        /*
-         * flush_tlb_current() is invoked when the first time for the vcpu to
-         * run or when root of shared EPT is invalidated.
-         * KVM only needs to flush the TLB for shared EPT because the TDX module
-         * handles TLB invalidation for private EPT in tdh_vp_enter();
-         *
-         * A single context invalidation for shared EPT can be performed here.
-         * However, this single context invalidation requires the private EPTP
-         * rather than the shared EPTP to flush TLB for shared EPT, as shared
-         * EPT uses private EPTP as its ASID for TLB invalidation.
-         *
-         * To avoid reading back private EPTP, perform a global invalidation for
-         * shared EPT instead to keep this function simple.
-         */
-        ept_sync_global();
-}
-
-void tdx_flush_tlb_all(struct kvm_vcpu *vcpu)
-{
-        /*
-         * TDX has called tdx_track() in tdx_sept_remove_private_spte() to
-         * ensure that private EPT will be flushed on the next TD enter. No need
-         * to call tdx_track() here again even when this callback is a result of
-         * zapping private EPT.
-         *
-         * Due to the lack of the context to determine which EPT has been
-         * affected by zapping, invoke invept() directly here for both shared
-         * EPT and private EPT for simplicity, though it's not necessary for
-         * private EPT.          *
-         */
-        ept_sync_global();
-}
-
-
-
-> 		return;
-> 	}
-> 
-> 	vmx_flush_tlb_current(vcpu);
+> table bridge filter {
+>         flowtable fb {
+>                 hook ingress priority filter
+>                 devices = { lan0, lan1, lan2, lan3, lan4, wlan0, wlan1 }
+>                 flags offload
+>         }
+>         chain forward {
+>                 type filter hook forward priority filter; policy accept;
+> 		ct state established flow add @fb
+>         }
 > }
 > 
+> Creating a separate fastpath for bridges.
+> 
+>          forward fastpath bypass
+>  .----------------------------------------.
+> /                                          \
+> |                        IP - forwarding    |
+> |                       /                \  v
+> |                      /                  wan ...
+> |                     /
+> |                     |
+> |                     |
+> |                   brlan.1
+> |                     |
+> |    +-------------------------------+
+> |    |           vlan 1              |
+> |    |                               |
+> |    |     brlan (vlan-filtering)    |
+> |    +---------------+               |
+> |    |  DSA-SWITCH   |               |
+> |    |               |    vlan 1     |
+> |    |               |      to       |
+> |    |   vlan 1      |   untagged    |
+> |    +---------------+---------------+
+> .         /                   \
+>  ------>lan0                 wlan1
+>         .  ^                 ^
+>         .  |                 |
+>         .  \_________________/
+>         .  bridge fastpath bypass
+>         .
+>         ^
+>      vlan 1 tagged packets
+> 
+> To have the ability to handle xmit direct with outgoing encaps in the
+> bridge fastpass bypass, we need to be able to handle them without going
+> through vlan/pppoe devices. So I've applied, amended and squashed wenxu's
+> patchset. This patch also makes it possible to egress from vlan-filtering
+> brlan to lan0 with vlan tagged packets, if the bridge master port is doing
+> the vlan tagging, instead of the vlan-device. Without this patch, this is
+> not possible in the bridge-fastpath and also not in the forward-fastpath,
+> as seen in the figure above.
+> 
+> There are also some more fixes for filling in the forward path. These
+> fixes also apply to for the forward-fastpath. They include handling
+> DEV_PATH_MTK_WDMA in nft_dev_path_info() and avoiding
+> DEV_PATH_BR_VLAN_UNTAG_HW for bridges with ports that use dsa.
+> 
+> Conntrack bridge only tracks untagged and 802.1q. To make the bridge
+> fastpath experience more similar to the forward fastpath experience,
+> I've added double vlan, pppoe and pppoe-in-q tagged packets to bridge
+> conntrack and to bridge filter chain.
+> 
+> Eric Woudstra (12):
+>   netfilter: nf_flow_table_offload: Add nf_flow_encap_push() for xmit
+>     direct
+>   netfilter: bridge: Add conntrack double vlan and pppoe
+>   netfilter: nft_chain_filter: Add bridge double vlan and pppoe
+>   bridge: br_vlan_fill_forward_path_pvid: Add port to port
+>   bridge: br_fill_forward_path add port to port
+>   net: core: dev: Add dev_fill_bridge_path()
+>   netfilter :nf_flow_table_offload: Add nf_flow_rule_bridge()
+>   netfilter: nf_flow_table_inet: Add nf_flowtable_type flowtable_bridge
+>   netfilter: nft_flow_offload: Add NFPROTO_BRIDGE to validate
+>   netfilter: nft_flow_offload: Add DEV_PATH_MTK_WDMA to
+>     nft_dev_path_info()
+>   bridge: br_vlan_fill_forward_path_mode no _UNTAG_HW for dsa
+>   netfilter: nft_flow_offload: Add bridgeflow to nft_flow_offload_eval()
+> 
+>  include/linux/netdevice.h                  |   2 +
+>  include/net/netfilter/nf_flow_table.h      |   3 +
+>  net/bridge/br_device.c                     |  20 ++-
+>  net/bridge/br_private.h                    |   2 +
+>  net/bridge/br_vlan.c                       |  24 +++-
+>  net/bridge/netfilter/nf_conntrack_bridge.c |  86 ++++++++++--
+>  net/core/dev.c                             |  77 +++++++++--
+>  net/netfilter/nf_flow_table_inet.c         |  13 ++
+>  net/netfilter/nf_flow_table_ip.c           |  96 ++++++++++++-
+>  net/netfilter/nf_flow_table_offload.c      |  13 ++
+>  net/netfilter/nft_chain_filter.c           |  20 ++-
+>  net/netfilter/nft_flow_offload.c           | 154 +++++++++++++++++++--
+>  12 files changed, 463 insertions(+), 47 deletions(-)
+> 
 
-> and put the implementation details close to tdx_track:
-> void tdx_flush_tlb_all(struct kvm_vcpu *vcpu)
-> {
-> 	/*
-> 	 * TDX calls tdx_track() in tdx_sept_remove_private_spte() to
-> 	 * ensure private EPT will be flushed on the next TD enter.
-> 	 * No need to call tdx_track() here again, even when this
-> 	 * callback is a result of zapping private EPT.  Just
-> 	 * invoke invept() directly here, which works for both shared
-> 	 * EPT and private EPT.
-> 	 */
-> 	ept_sync_global();
-> }
-Got it! 
 
