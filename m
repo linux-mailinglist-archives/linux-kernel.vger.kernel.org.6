@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-364680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A34899D7D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:04:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF75199D7DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:05:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 91D02B20C31
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:04:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 32FE5B2125D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:05:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CB5E1CF2AF;
-	Mon, 14 Oct 2024 20:03:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BFD01CF2B6;
+	Mon, 14 Oct 2024 20:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N/u4CEKE"
-Received: from mail-lj1-f175.google.com (mail-lj1-f175.google.com [209.85.208.175])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="bFNy/FGK"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA351CCEE4;
-	Mon, 14 Oct 2024 20:03:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6FB21CF2A4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728936236; cv=none; b=isVuYEn+ib+kySeegjxWaEOolBQVdcZe3w3N1+AjhNiUWP00K964FgCsbr9CuXIxgkGmA5r8+cd8AWF8zJvxeKlYYHsDwE83c8S0HWoSaBNqJwptonvU2aD8rNpTcBrgYhhfgyr68Y2yFz6WaYW0/ovwXOps3l0KDD2sAaHVBMY=
+	t=1728936346; cv=none; b=rGcIrwl37gYPuZ1gzmW9lzFd63Rb30mt83mZw0bthrNaWlkgrytZX6v4Q5awAqZ5PX6rLAICBuXXZQ6bCFaKwXvJ0a4VnLetHnFN9pR2F4r0anr4vO0QWMw6LF/R06lEZ0GPjc3XteYSrk4Sf0Bcm9LHxc7S1Iz1XeNU1uCPDsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728936236; c=relaxed/simple;
-	bh=31eAeCf1Pu8m37jDhpFlOugCH/adcm0tfpKkul9cMhE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sNDcPnQdX6K3uyubC63Fb3AsMqaVz3/li1hmHA1IvUyqjU3hdaqAMx3aLa73wESSR4BtoogftH9p+Iz9v9QCxAAmOx+C/snTKiu4JThXJ79AueBSCt1fee2xnMHgiYkF+6cpCZjfQbesYZAQLkOnEdh+czhNAdFfr7MpHF9hLW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N/u4CEKE; arc=none smtp.client-ip=209.85.208.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f175.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso6826491fa.1;
-        Mon, 14 Oct 2024 13:03:54 -0700 (PDT)
+	s=arc-20240116; t=1728936346; c=relaxed/simple;
+	bh=/p0fsinLEF+6jqle9DFYB7wdd7XNPvVlqtJXR24v4JQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Xcyg7VGf/Bj7KC3kUHyd3natr9I2MKAXeOA5JEcaSNGPj6PKua5qZDfQkWOO+A43YZgKizZEDOpWyIZ6lZbH9Rr/EMuVq8nkolzjC9PsWFM4h8DZBqFzNC4cZa3kaFa/WH5IGZuJuHqfSCMp+8cSgUqYh43A4wjP7kFv+/h4mf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=bFNy/FGK; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37d4a5ecc44so3301061f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:05:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728936233; x=1729541033; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=w5Ryw9wfAFFqkya8ePoot2rbTzCnReGstxM2eHbD8gA=;
-        b=N/u4CEKEED2Vo7jTP3HMU0gdPqi+Jnk0MG5XYgrFRoAm0EAYDzMz9j8jur6pmDBvVu
-         IjA0arERM524A9a2Vi/qCugILxxweJkA9sljQGYeWFPxR4BjM9uZF9BAsNNynw/QQ1Vm
-         ulDgNyDVVmHlSw+i9mV4m/ZN9v6ZmgKMYddRf1DPG9mAFGYLqdRqEH8G4OiU9/Wtyh2X
-         b5OUoYWTjU0slsmwc0k7aCjMSKjuBto9kCi5hQOCaVHi+8uaDt7fH2x+aeC8ICq6bdQn
-         CIW8IhCOxmRfY8OZ2SBB9X+aobxxUeIE6PCPD1jDeaKKpvbYXujdUMXyBP4ctWMfY9B8
-         oMrQ==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728936343; x=1729541143; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/p0fsinLEF+6jqle9DFYB7wdd7XNPvVlqtJXR24v4JQ=;
+        b=bFNy/FGKbuW8mqxxfuPRBmPajG5CWHd19UEPFs1T8mG3DI6lkasD5ru18XmRvhH7j6
+         s+kuFpSuzJ/8jiGYai9w2Yjo/A2qXDep/XkdknD481d/D9yhHn1U81SXYJncrtgW6EK3
+         cxgwMQb5SPi3kYJ4CbXuDdFL+btv9O8Gzw5KD2wmPIFT3wJAYcIQB9GtsS+mWpg1BWQl
+         sz28upbeggmdlQuEYDjaj8sO0qAaObHMGpW543gkAvtlX71j+EJ46kw2tUeoSkhCHfH6
+         EknILaN41mbKoJL1fQ+hnAj4sDDrCgk11zpKNgrqQJiWvA8Dei1H7AzqJlvInHEAFbTm
+         Ax7A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728936233; x=1729541033;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=w5Ryw9wfAFFqkya8ePoot2rbTzCnReGstxM2eHbD8gA=;
-        b=CJcDL7Bq8fD/EGY9nhdF5Fv3k9JyDIi22HUoyN5iRLfCUIgMfC00mLs2/M5Ed9rPhE
-         uSZW0YPSr1WIY89inM7aeXkj0kx5BPBETIaPu9ECTfmU2lXYMcqvpBMfxZfIcPZb0xdF
-         Rh0W7Lxdw7jUk9+tM6TkzfJgphZRA0o/0JQB+ZhfBDLIpxUjsjVPZ023rllMW7+z5MGU
-         4jb+ONYCSAqSS0+sCPbdTf146/PD0CkSBtQj4985PGzh77RnlAo2kuV6Lt7gqCLhr89c
-         fkP2QlpnBbYjroUU2LGHuxQH6xoX2tYA4HwT3CaWQmAH0jJoR/lFWcrBuP7J8VPjHdUE
-         2qWg==
-X-Forwarded-Encrypted: i=1; AJvYcCUgdS0Wr5i0V7z9Po3zzzKNZ5iGtL+WGoUAeGr329EZD6Kzz9D0Dmk8w2pTFsffj1kWqfPj4Ld1Tlk=@vger.kernel.org, AJvYcCWL3iJfiM/raTJOagIG5LE6RmNy+25puU7F2FiJ7AxmA0IcjpU7ivle4zXrXViKUITVAuEtGtZydOj52qSi@vger.kernel.org, AJvYcCWoBITtyIMGMrMgEivWhEuUMDirC1gAWMyoJR5iy4VtsDnw/ii7Seoz3P8WtWVgLqilr1F1S4R964qKy6IauTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC834Yt6eHbF6VlYUFk916tS0onvqXOPFnrlOFS7+guu1+oci0
-	u9SRaP/t2+9HGwVfdiyztRwpWpc1yCABMEcdE/HBuydBD7qK3Ihb+Wc42u4jzHjtzscVxpvlUup
-	H0ggOUbglnwO0u1GC/dNfzxBJ5OM=
-X-Google-Smtp-Source: AGHT+IFRmi6V6Ogg7qI8ZXexlusZsNA7Qz1B5IAbwBMMsBtLcm7B+OCU6xd5Kd0nmmVbExkF9aykbWG6gnMV1FWDVR4=
-X-Received: by 2002:a2e:515a:0:b0:2fb:411e:d979 with SMTP id
- 38308e7fff4ca-2fb411ed9d7mr25971451fa.31.1728936232926; Mon, 14 Oct 2024
- 13:03:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728936343; x=1729541143;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/p0fsinLEF+6jqle9DFYB7wdd7XNPvVlqtJXR24v4JQ=;
+        b=hf5zScIoh7Nh9HYK/mvgbRklOGBtfG8oFGnO1MjkS1WZQwO602DIm40DxWT3iZGl6P
+         r0ERdNbsmenBvgbYHwcZFa+g10wKvtJt0X88ImKr6cz1YIUMzuKK5WQd4aR1iwPni9dw
+         e/0zHoH/X5uQFD/ZW/27rEEorVzB3fO6ogrCeLcxGQN6AwwEJJ6+ih+5iNhx3Om/NYm6
+         gi+sBbEa0zr+Obc+a3tM/RLBUI22WRADDOfuTUZCaOkZfvi6MRaAdwk165kqTOyaIPIw
+         k/YYBzOndaVDopGi7fsfOUh9hUIi6J+Etz7v9bpEP4W+QZQQIvuarpRWsvrH2ZclEVhe
+         pE3A==
+X-Gm-Message-State: AOJu0YwHBWKrjOgDe+jnx6uqSpWuv81C2cxVDPvnGe0fXIiZjAWx7Bbm
+	oEqCFhm2v2mtwvi5OZOKb/sgrmOb4xb/SajzRBSQuQu0zK5Q/ujMyk5pSqJF02Q=
+X-Google-Smtp-Source: AGHT+IFOPR8MYYQWwDkLVexcUVJZet9k0gP7hpDIjbBtdgwb/++D2QZVJSpb0Xd1vOfW2SNUD6dHNA==
+X-Received: by 2002:a05:6000:cf:b0:37d:5133:8cba with SMTP id ffacd0b85a97d-37d55204527mr8720364f8f.20.1728936343009;
+        Mon, 14 Oct 2024 13:05:43 -0700 (PDT)
+Received: from localhost ([2a02:8071:b783:6940:9cc:1a74:296e:df4d])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b9180adsm12253910f8f.112.2024.10.14.13.05.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 13:05:42 -0700 (PDT)
+Date: Mon, 14 Oct 2024 22:05:40 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-kernel@vger.kernel.org, Rob Herring <robh+dt@kernel.org>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	"open list:PWM SUBSYSTEM" <linux-pwm@vger.kernel.org>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"moderated list:BROADCOM BCM7XXX ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, justin.chen@broadcom.com
+Subject: Re: [PATCH 0/2] pwm: brcmstb: Support configurable open-drain mode
+Message-ID: <2lxrtu6mnzs4v6h3x7skbmxwtdmhgn7g3qmmxyr5n4lof6lkb2@6rfckn2g45ho>
+References: <20241012025603.1644451-1-florian.fainelli@broadcom.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAJZ5v0iUaszpE=J3_wLhdmBrrDdTSL1Rs-mgjL8koC1kk4apOA@mail.gmail.com>
-In-Reply-To: <CAJZ5v0iUaszpE=J3_wLhdmBrrDdTSL1Rs-mgjL8koC1kk4apOA@mail.gmail.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Mon, 14 Oct 2024 16:03:40 -0400
-Message-ID: <CABBYNZL_EtFQ-n5K8fFQJpCJmDksLpJ38RMcoawgttCHP6Hwwg@mail.gmail.com>
-Subject: Re: [Regression] Bluetooth mouse broken in 6.12-rc3
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Luiz Augusto von Dentz <luiz.von.dentz@intel.com>, Kiran K <kiran.k@intel.com>, 
-	"Thorsten Leemhuis (regressions address)" <regressions@leemhuis.info>, Linux PM <linux-pm@vger.kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	"open list:BLUETOOTH DRIVERS" <linux-bluetooth@vger.kernel.org>, Marcel Holtmann <marcel@holtmann.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-Hi Rafael,
-
-On Mon, Oct 14, 2024 at 2:37=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.or=
-g> wrote:
->
-> Hi Luiz,
->
-> Unfortunately, commit 610712298b11 ("Bluetooth: btusb: Don't fail
-> external suspend requests") from you that appeared in 6.12-rc3
-> prevents my Logitech Bluetooth mouse from connecting to the host
-> (btusb).  The LED activity on the mouse indicates that it tries to
-> associate, but there is no response.  It looks like the host is
-> suspended before the device can connect to it and it cannot be woken
-> up for some reason.
->
-> It worked no problem in 6.12-rc2 and the above commit is the only BT
-> one in 6.12-rc3.  Also reverting it makes things work again.
->
-> In the "good" case (for example, in 6.12-rc3 with the above commit
-> reverted), the following messages are present in the kernel log:
->
-> [  251.748734] Bluetooth: HIDP (Human Interface Emulation) ver 1.2
-> [  251.748763] Bluetooth: HIDP socket layer initialized
-> [  251.773010] hid-generic 0005:046D:B016.0001: unknown main item tag 0x0
-> [  251.774432] input: Bluetooth Mouse M336/M337/M535 Mouse as
-> /devices/pci0000:00/0000:00:14.0/usb1/1-7/1-7:1.0/bluetooth/hci0/hci0:1/0=
-005:046D:B016.0001/input/input14
-> [  251.775733] input: Bluetooth Mouse M336/M337/M535 Consumer Control
-> as /devices/pci0000:00/0000:00:14.0/usb1/1-7/1-7:1.0/bluetooth/hci0/hci0:=
-1/0005:046D:B016.0001/input/input15
-> [  251.777163] input: Bluetooth Mouse M336/M337/M535 Keyboard as
-> /devices/pci0000:00/0000:00:14.0/usb1/1-7/1-7:1.0/bluetooth/hci0/hci0:1/0=
-005:046D:B016.0001/input/input18
-> [  251.815905] hid-generic 0005:046D:B016.0001: input,hidraw0:
-> BLUETOOTH HID v12.03 Mouse [Bluetooth Mouse M336/M337/M535] on
-> 9c:b6:d0:96:8e:c8
->
-> In the "bad" case (for example, in unmodified 6.12-rc3) they are not
-> there at all.
-
-Thanks for the report, we had quite a few similar reports and I will
-send a fix sortly.
-
-> Thanks!
->
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="74noghsmn7dtdnbd"
+Content-Disposition: inline
+In-Reply-To: <20241012025603.1644451-1-florian.fainelli@broadcom.com>
 
 
---=20
-Luiz Augusto von Dentz
+--74noghsmn7dtdnbd
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Subject: Re: [PATCH 0/2] pwm: brcmstb: Support configurable open-drain mode
+MIME-Version: 1.0
+
+Hello Florian,
+
+On Fri, Oct 11, 2024 at 07:56:01PM -0700, Florian Fainelli wrote:
+> This patch series updates the pwm-brcmstb driver to not assume an
+> open-drain mode, but instead get that sort of configuration from Device
+> Tree using the 'open-drain' property.
+
+Just for me to be sure to understand correctly: A kernel without your
+patch #2 behaves identical to a kernel with that patch if the open-drain
+property is present, right?
+
+It's not clear to me why totem-pole is the better default and the commit
+logs don't justify the updated default. Can you improve here?
+
+Best regards
+Uwe
+
+--74noghsmn7dtdnbd
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcNeZEACgkQj4D7WH0S
+/k5NLAgAnE0plbMtCwz2Wv6bQ8vEDVdoNHD3hCUdvomaNZPj5Dy1f0/u2J5Hj/NW
+KRn/AUbVCJYGa4LQ+7MJ5VMLY8GGeAYgpv1jdnBMJJX9yXp1Hwovz8akFV1Hc8LI
+fQPoBICMk+bVDNB8j5iFplnH5G5cDespFv56Nns0ImOp3maL5CjojP1RZmUsayM6
+3RQafWpyPIkhuI4mrjAtGSAoLoWig7E08ZD2UPIs0vw9phZEB08fUhW6CGf88pev
+fNHViOI4wyumI7l9RO2LvotnV1syhNy052zzgM1e43WwxosYhKfG2xmbGRaOTkGT
+P/6yQseolE3vX7bwd14iAgbYEmoY5g==
+=fdY+
+-----END PGP SIGNATURE-----
+
+--74noghsmn7dtdnbd--
 
