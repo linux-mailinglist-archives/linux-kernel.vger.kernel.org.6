@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-364225-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 554EA99CDF3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:38:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 92BDA99CDFD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:38:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 011B51F23C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:38:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D79A1F23A1D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:38:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3688F1AAE08;
-	Mon, 14 Oct 2024 14:38:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5371E1AB530;
+	Mon, 14 Oct 2024 14:38:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SsFDWGdF"
-Received: from mail-yb1-f171.google.com (mail-yb1-f171.google.com [209.85.219.171])
+	dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b="gduqPEKH"
+Received: from dispatch1-us1.ppe-hosted.com (dispatch1-us1.ppe-hosted.com [148.163.129.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4617E1AA793;
-	Mon, 14 Oct 2024 14:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC4E539FCE;
+	Mon, 14 Oct 2024 14:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.129.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916685; cv=none; b=Dj5/f3ULstvq4qRp2pMJWb6cj1510qDCj3OMshkS5qlDEbgMDGQkiBMxDSSH233140/XApVHeLlU/7bkx5245EFa/qIZefIZNBNXM+cmUCPB0qGNLXu6ZKnZsFvaN4rUiTmLEmpJXQomGDDDAI3/T+ceQfIxyLJUtJJ8QiDZ2uE=
+	t=1728916707; cv=none; b=JDrFX1/AA+jqgoRXBd3YGL1Qv/VlPKzdZWWaKiNuv0IZfzAyNXzyT3lcGZHn7HbKK7MKoMPCoSkv798j1MKDMkDxaknqK6w3TSKYKmzlxth0rpCGIDR+tjsPo7FmC4kHr3XjlQWagEovWFocczS8PjK4HLNZGwLqbsMh+4gnnyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916685; c=relaxed/simple;
-	bh=owwnjThLfakHhe5ARwRbi6jw739M9wIYH8WQUXH0+RY=;
+	s=arc-20240116; t=1728916707; c=relaxed/simple;
+	bh=rIOk+Vwz/1HL7W9RTMCVy0ZbHehUo9hbp2zs0N4Q2dg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y0Suz1gmUbBw2nsJ3StxF8oHn7fN+Z3aJSSmQagAR8hF9ITXBVjL8yoQlsQSaNwmPMJOTOJepEN7d160+7b5qA0Z4RN+uPB+8wEEPfiIVBGdnRH2fLOUduV+kNhnRsKgU76OmaKiilUwwG8cihBqamLpu3GFReFs67IPRWe6HHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SsFDWGdF; arc=none smtp.client-ip=209.85.219.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f171.google.com with SMTP id 3f1490d57ef6-e290200a560so3751831276.1;
-        Mon, 14 Oct 2024 07:38:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728916683; x=1729521483; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=WU/WSO9mNbBclMCOEiZKWLWuiGoo8N3sN7OChae2Z90=;
-        b=SsFDWGdFitiddy7rHWxZzMoVktAS2hF+Qzr/bMddkx5UKXDdhc8LR5L74MiSVwyUTS
-         ADjwqQBPnqAAoFLmJfSgjqSpZfhHsI0wxw3AgntP3lku6cIDx5Kf46SuXx0Vet/TG3mA
-         afMNDrmLK18/2x+zH+bCGl2fOsjITVn0kxvsGhRhN+B46b5gDKYx3VNczwZSFZfdQa2K
-         2TzblSB10KrAk0FeZLfr7Gtu1wmnGY8U7MlMDihJV7tMqC0wazeKZgcZq6O5snMMsotH
-         xHPQDT9oxq5PnwF0IjKc3hCCfyhEFSPISNUCtDKZZ3kRtKx3TFIEDUqqO6iXv6Vg9qef
-         zrAQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916683; x=1729521483;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WU/WSO9mNbBclMCOEiZKWLWuiGoo8N3sN7OChae2Z90=;
-        b=i0rAOaBD4yXLcbzLYZVCo8lRYks7xGsTajl9fUC1ms6vXpviHAHI2FUgGESb6vX4uV
-         6/rlxE3N/6dHr0lom7j1te/fvKmxWpic3xvj/6AQ6SAAPBr6ajib5HkROuzyPgsA7+iw
-         m1zDvit0QuRvEznEVJSKzRhqdA2mnEjaM5oIu4fFIGmVU4GXTGncCXTw7qrGE4OZMa5h
-         vRLhhzIMAf7/ZrrMKV9h/M1VNuiRDv168Ns0+qfWpkxlv7tzKIA6YzQXvBynWBn9SLwh
-         XEbq0N/E3yMC057d2/HrUlReC4d/nu1jMS44O2eOGgPM/8c1Kxy01fBpKFwABiZ8+2LO
-         nZfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXGIPtxq/anjVpHFqQmfAfK4Vxk4K6DSiOTx5O4nUS1xywl/INa7XvEDnkn0lvlQClfFqrSEHlZm2EPLyc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRVHtLYZSNCRnVco76MDcRIy3Zd3vSrQ2aM5buvmVQCWsaEwN3
-	/Ca2HNXrrINNSi67qXWNeplIvDKfNF6P9550XId1tAHryVOdOolH0KTcxw==
-X-Google-Smtp-Source: AGHT+IE5XmDhEqAbGBxzDIa2YqzZtcy+1skVyM8fpjHB8iw+at+jdN0IZDc8rQ/WNP9LTsS+IPefnQ==
-X-Received: by 2002:a05:6902:27c7:b0:e25:ce5f:42cc with SMTP id 3f1490d57ef6-e2931b557ccmr5759254276.32.1728916683220;
-        Mon, 14 Oct 2024 07:38:03 -0700 (PDT)
-Received: from [192.168.1.145] (57-135-107-183.static4.bluestreamfiber.net. [57.135.107.183])
-        by smtp.gmail.com with ESMTPSA id 3f1490d57ef6-e290ef5e065sm2450841276.51.2024.10.14.07.38.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 07:38:02 -0700 (PDT)
-Message-ID: <fff1f9ce-28b2-4ba1-a118-3a7cef722bdc@gmail.com>
-Date: Mon, 14 Oct 2024 10:38:02 -0400
+	 In-Reply-To:Content-Type; b=nRAktu1mKhHJVLBLFZ9uQG7UbRu2XnvqJo2/Qmo9YeFC/x4NOOJJ6+qXgEELWmHZ8+d8bL4Q+EYwEaQan/PVY/YZoEJWPDuWOA7LNZIfWqeyKUHF8+q/n8peE5YbUH3H/X/6a0mYM5DMMzBawyzu1IOuzi6eAHdp/fslR32twkQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com; spf=pass smtp.mailfrom=candelatech.com; dkim=pass (1024-bit key) header.d=candelatech.com header.i=@candelatech.com header.b=gduqPEKH; arc=none smtp.client-ip=148.163.129.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=candelatech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=candelatech.com
+X-Virus-Scanned: Proofpoint Essentials engine
+Received: from mail3.candelatech.com (mail.candelatech.com [208.74.158.173])
+	by mx1-us1.ppe-hosted.com (PPE Hosted ESMTP Server) with ESMTP id 8012E280074;
+	Mon, 14 Oct 2024 14:38:17 +0000 (UTC)
+Received: from [192.168.1.23] (unknown [98.97.40.128])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by mail3.candelatech.com (Postfix) with ESMTPSA id 7F9F113C2B0;
+	Mon, 14 Oct 2024 07:38:16 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail3.candelatech.com 7F9F113C2B0
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=candelatech.com;
+	s=default; t=1728916697;
+	bh=rIOk+Vwz/1HL7W9RTMCVy0ZbHehUo9hbp2zs0N4Q2dg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=gduqPEKHFvPz0L+KhrbZM8DxLBWGIhtif3y1suu/r2qkSBDk4uDoorIbJi6eJttEL
+	 cSoXznrhIks3OcWTKODW9xPx0SQBViKHxCsaMhbrYWT06dPt6BDFUbNyGuzwRvtHWh
+	 s4vbyNDYUyysyP4B/tKyPRUdH66PdlRQAZzEnbzs=
+Message-ID: <01ef8d01-dbcb-4f11-844e-77dc26aba640@candelatech.com>
+Date: Mon, 14 Oct 2024 07:38:16 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,38 +56,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 4/7] linux-kbuild: fix: ensure selected configs were
- turned on in original
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
- shuah@kernel.org, javier.carrasco.cruz@gmail.com
-References: <20240913171205.22126-1-david.hunter.linux@gmail.com>
- <20240913171205.22126-5-david.hunter.linux@gmail.com>
- <CAK7LNARdzUro3A00wU7XScXa=582vtY+nZ5-zkN89_3mS70Fag@mail.gmail.com>
-Content-Language: en-US
-From: David Hunter <david.hunter.linux@gmail.com>
-In-Reply-To: <CAK7LNARdzUro3A00wU7XScXa=582vtY+nZ5-zkN89_3mS70Fag@mail.gmail.com>
+Subject: Re: [syzbot] [wireless?] INFO: task hung in cfg80211_event_work (4)
+To: Aleksandr Nogikh <nogikh@google.com>
+Cc: syzbot <syzbot+5506b2556159a1ab6923@syzkaller.appspotmail.com>,
+ davem@davemloft.net, edumazet@google.com, johannes@sipsolutions.net,
+ kuba@kernel.org, linux-kernel@vger.kernel.org,
+ linux-wireless@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com,
+ syzkaller-bugs@googlegroups.com
+References: <6707f07f.050a0220.64b99.001b.GAE@google.com>
+ <05d3d02d-69c7-24a4-c2b2-26bdb53556db@candelatech.com>
+ <CANp29Y5Jc9VG107iV1jKJuLi4H20TUpYLuLWzddan0=39qwCKw@mail.gmail.com>
+Content-Language: en-MW
+From: Ben Greear <greearb@candelatech.com>
+Organization: Candela Technologies
+In-Reply-To: <CANp29Y5Jc9VG107iV1jKJuLi4H20TUpYLuLWzddan0=39qwCKw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-MDID: 1728916699-2K60TzSXQmLz
+X-MDID-O:
+ us5;ut7;1728916699;2K60TzSXQmLz;<greearb@candelatech.com>;f36838b540d6b7b03dfe4aef3d303aa8
+X-PPE-TRUSTED: V=1;DIR=OUT;
 
-On 9/23/24 23:45, Masahiro Yamada wrote:
+On 10/14/24 02:54, Aleksandr Nogikh wrote:
+> Hi Ben,
+> 
+> On Fri, Oct 11, 2024 at 11:50 AM Ben Greear <greearb@candelatech.com> wrote:
+>>
+>> On 10/10/24 08:19, syzbot wrote:
+>>> Hello,
+>>>
+>>> syzbot found the following issue on:
+>>>
+>>> HEAD commit:    2a130b7e1fcd Merge tag 'kbuild-fixes-v6.12' of git://git.k..
+>>> git tree:       upstream
+>>> console output: https://syzkaller.appspot.com/x/log.txt?x=1206e79f980000
+>>> kernel config:  https://syzkaller.appspot.com/x/.config?x=f38c36a955431c1
+>>> dashboard link: https://syzkaller.appspot.com/bug?extid=5506b2556159a1ab6923
+>>> compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+>>> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=155b8327980000
+>>
+>> This looks like something I saw in 6.11 and 6.10.  My guess was that one of the
+>> running processes that lockdep does not print locks for is holding the wiphy mtx.
+>>
+>> Maybe it would help if syzbot would use sysrq to dump all running tasks to the console, and maybe
+>> lockdep could print locks for running processes, even if they are marked as potentially
+>> unreliable?
+> 
+> Thanks for the suggestions!
+> 
+> We do have an open issue re. SysRq:
+> https://github.com/google/syzkaller/issues/4200
+> I've noted a +1 to that.
+> 
+> Regarding the locks -- they are actually already printed in the
+> original bug report, under "Showing all locks held in the system:". Or
+> did you mean something else?
 
-> I believe defined($orig_configs{$conf} is always true here
-> because it was already checked a few lines above.
-> 
-> 
->      # We only need to process if the depend config is a module
->      if (!defined($orig_configs{$conf}) || $orig_configs{$conf} eq "y") {
->          next;
->      }
-> 
-> 
-> If $conf is not present in the original .config,
-> the 'next' statement skips the current iteration.
-> 
+Notice that some processes say they have locks but do not print them.  Lockep
+skips printing locks for running processes that are not the current process.
 
+I have added some local code to try printing them anyway, will see if it helps
+any...
 
-Good point, I will remove this portion for the series patch.
+Thanks,
+Ben
 
+-- 
+Ben Greear <greearb@candelatech.com>
+Candela Technologies Inc  http://www.candelatech.com
 
 
