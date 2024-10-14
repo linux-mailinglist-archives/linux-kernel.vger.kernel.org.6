@@ -1,47 +1,37 @@
-Return-Path: <linux-kernel+bounces-364008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BD7B99C9C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:12:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C5E5D99C9C9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:12:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDAE1281EB3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:12:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F6BC282A7F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:12:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58A0019F46D;
-	Mon, 14 Oct 2024 12:12:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sr9eR9rt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234A919F436;
+	Mon, 14 Oct 2024 12:12:33 +0000 (UTC)
+Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E2619D086;
-	Mon, 14 Oct 2024 12:12:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61BB719F421
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:12:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728907940; cv=none; b=uZeOtrqnhlnQ6WU56zzOvfE+zmlehJUYew0C9+nNp8/MeMWFWfSabWSL9AfP74yG/cdgRuF0dkRz9aseqsoeG8zS3rfjEDCkvV4ApH1imUSu9y8iNLlHQBdidnrmf5FkDuB8/c+AZ/rXURW5gIoQgNZHOWHwPbmzpkCTLC82Z+4=
+	t=1728907952; cv=none; b=LX4WEiqpIpg57Dnc4BoG4Hf1qdiopmnAfTT90yawdgRAW/Z8bGJFGPfbIHWwQ1xkh9RQl2edATVt2qkuLF+7H6MMXR8ZMTH+Y9mxcPbCLrHsyRJe92hciM/yrk7T9ntB5IxTkc2EmZVCS4ImkAGyP8w8LXN0U0WYvwix6zLkGag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728907940; c=relaxed/simple;
-	bh=5s90H2Dujhli4g9NQkly4j1smt2b9w+YbHmuVt/j444=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WmWxav2aDWkgCsxRBmt0ZRR9AwzTrCxjmNIMFtciy+rgBD7s6kt2hTKWe11QPlvEd59WmBym+mYMmpALMjfeuOp3I15oBHT1+bNGy2frSw2USK7gLJ5ObhOeoYn7wDwvwnA8GR7kMBmY7+Ecp2haAuXwQ0gSkyQDAJtK/0TgXx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sr9eR9rt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79F9BC4CEC3;
-	Mon, 14 Oct 2024 12:12:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728907940;
-	bh=5s90H2Dujhli4g9NQkly4j1smt2b9w+YbHmuVt/j444=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=sr9eR9rtlyhWnX5ErCtzLja6VFP9EPSoOvAOJ2cDIwe2k7dWjfpPhhCIByFh0DbL2
-	 8ZLm4opKXaLvkpIOz0U0WhS1W7QHz9TelaYJg+9ye+9yfR4sbRvvLZ4t3wxM+3QQvm
-	 5O7SB5ADlpEIaXNLjihFrJR/kvLryS/rk3Oi86Lo74hjF02VYBiKvuNoC630PmlKZG
-	 BR95hCy25l6dujYOlJJLQSn+erH3Ss2H/I3E22YPDhcxcuf89bTW93c4y9P09JdkhW
-	 QpoK8KPMk7548EotP+JRNfZvYgBayezZocTxmXmnBwwEQz46O37NkVU7CI12JdAWlp
-	 Jvf5L3DeK0+Vg==
-Message-ID: <5e8c4f51-cc38-4bb8-a75e-5152544a31c4@kernel.org>
-Date: Mon, 14 Oct 2024 14:12:11 +0200
+	s=arc-20240116; t=1728907952; c=relaxed/simple;
+	bh=cIQPLLPfrXCdF+cPGC1rmVdjvRswT/WXKja1n8pT6g8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=dUJWAd/b5e2ddD7IdPL9C6hT6nPJMrOtdCty06y8Bli82ztJ7kb1epsvjWIukBEJvK2itbfpcQyOctoUfo7q4hA7p1EykXpBtmySjVvWVccmfnpb1Wfu06WXu5fGXR+47rElx4ZJpModTEl4faJhcqfU6UJq0Muj3OXeB9xBVWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
+Received: by mail.gandi.net (Postfix) with ESMTPSA id AF0F4E0007;
+	Mon, 14 Oct 2024 12:12:25 +0000 (UTC)
+Message-ID: <d39e4832-50f3-4fc8-ba95-a2d6eefa5abe@ghiti.fr>
+Date: Mon, 14 Oct 2024 14:12:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,76 +39,74 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/9] arm64: dts: mediatek: mt8188: Assign GCE aliases
-To: Fei Shao <fshao@chromium.org>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Matthias Brugger <matthias.bgg@gmail.com>
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
-References: <20241014111053.2294519-1-fshao@chromium.org>
- <20241014111053.2294519-2-fshao@chromium.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] RISC-V: ACPI: fix early_ioremap to early_memremap
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241014111053.2294519-2-fshao@chromium.org>
-Content-Type: text/plain; charset=UTF-8
+To: Yunhui Cui <cuiyunhui@bytedance.com>, punit.agrawal@bytedance.com,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ sunilvl@ventanamicro.com, ajones@ventanamicro.com, alexghiti@rivosinc.com,
+ jeeheng.sia@starfivetech.com, haibo1.xu@intel.com,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241014094705.71775-1-cuiyunhui@bytedance.com>
+From: Alexandre Ghiti <alex@ghiti.fr>
+In-Reply-To: <20241014094705.71775-1-cuiyunhui@bytedance.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-GND-Sasl: alex@ghiti.fr
 
-On 14/10/2024 13:09, Fei Shao wrote:
-> Create and assign aliases for the MediaTek GCE mailboxes.
+Hi Yunhui,
 
-Why?
+On 14/10/2024 11:47, Yunhui Cui wrote:
+> When SVPBMT is enabled, __acpi_map_table() will directly access the
+> data in DDR through the IO attribute, rather than through hardware
+> cache consistency, resulting in incorrect data in the obtained ACPI
+> table.
+>
+> The log: ACPI: [ACPI:0x18] Invalid zero length.
+>
+> We do not assume whether the bootloader flushes or not. We should
+> access in a cacheable way instead of maintaining cache consistency
+> by software.
+>
+> Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+> ---
+>   arch/riscv/kernel/acpi.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/riscv/kernel/acpi.c b/arch/riscv/kernel/acpi.c
+> index 6e0d333f57e5..3177c9af8764 100644
+> --- a/arch/riscv/kernel/acpi.c
+> +++ b/arch/riscv/kernel/acpi.c
+> @@ -210,7 +210,7 @@ void __init __iomem *__acpi_map_table(unsigned long phys, unsigned long size)
+>   	if (!size)
+>   		return NULL;
+>   
+> -	return early_ioremap(phys, size);
+> +	return early_memremap(phys, size);
+>   }
+>   
+>   void __init __acpi_unmap_table(void __iomem *map, unsigned long size)
 
-Your commit msg still does not explain why you are doing things. What
-you are doing is pretty easy to see.
 
+It makes sense to me since with this, we don't have to care about how 
+the firmware mapped the table. And it mimics all other architectures 
+(arm64, loongarch and x86).
 
+Here is the corresponding fixes tag:
 
-Best regards,
-Krzysztof
+Fixes: 3b426d4b5b14 ("RISC-V: ACPI : Fix for usage of pointers in 
+different address space")
+
+With the corresponding fix in __acpi_unmap_table() as pointed by Sunil, 
+you can add:
+
+Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+
+And regarding the sparse error, I don't see any other architecture 
+casting to __iomem, so maybe that's not necessary anymore?
+
+Thanks,
+
+Alex
+
 
 
