@@ -1,89 +1,66 @@
-Return-Path: <linux-kernel+bounces-364641-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364642-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCB099D74F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:24:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB19A99D751
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:25:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E6601C21429
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:24:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5E5028349A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:25:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 918871C761F;
-	Mon, 14 Oct 2024 19:24:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0D1C1CBE82;
+	Mon, 14 Oct 2024 19:25:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="DkC4hHyo"
-Received: from mail-yb1-f176.google.com (mail-yb1-f176.google.com [209.85.219.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="eYN2letm"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C72F1C5798
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:24:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90ECE153BF8
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:25:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728933880; cv=none; b=FGmfahvc8tJgDz6U6JHsRx25X3stGu/4CMcidzFKR8eZbIgc2b8V87nnp5JsCfUlzsbh8ZX+6gIE9ETtGmXoMVPelFxFnaByIrt2G9eRjHifF4a3LBFq0n1gC3uNbH+aNOp+3HuGOba2bUZS/3W8mMXwzE/TPI7ONV02k84VvBg=
+	t=1728933932; cv=none; b=jRdTy5WveEPOAMLiA1lKOPGJuvi2E8LZO5xdQkPDWNhKGScf4Ts2j0anlyHgRhva4mwWjuZApb6JgqbEw0kS4Pwg5Rso/IINfIAIOqwuKB4y1Bn6sOM9KOK6hXGGe9aFuNKtTOO+8Z3px2HR3V62VPmIFND4iSrOb0fY8vvHgrA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728933880; c=relaxed/simple;
-	bh=Krf8aUu9wJoYrroG/l+uabcNMWjlfsDG1ymMzmhkTyw=;
+	s=arc-20240116; t=1728933932; c=relaxed/simple;
+	bh=/C1M3kBSw1GQ4tghNRnai+0ZPO7ND0uvItlSGuwCu84=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RK6u4E6Nkz2E0o+LQAaPtJqWjKqicUICLZRL4UCH0RdKVNgfdYM8SQbWYUJ8bISc9E8nmgIn5KjwGXDB4X5QEojOwqdbs6NG1CG7Mi+n2qv9aYqnpOiGKUDjIMc+7iQWRYwFqSl2xBkoa0KoIEwSo5c7mSlueJBerweQAHZWTtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=DkC4hHyo; arc=none smtp.client-ip=209.85.219.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-yb1-f176.google.com with SMTP id 3f1490d57ef6-e28ff55468dso4705005276.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:24:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1728933877; x=1729538677; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=chhtCPjzLYuNIHNBBWk7CoEmzEQjqCwVNlf9vMYQjEU=;
-        b=DkC4hHyoKOUu5lqfT4RriCwsqzVTRVjeDUDB7hzD59kf1VLMYzdy6dyGoGiHRKpv9x
-         Y3Qtn67eS1n/zOutNb2a5JEAFU8b+k5d57afZPmt18F1tG74HbzZvhvGS8D8kl1iARmq
-         uc43s2qsWqFcXcowQtIYIQEx1uT0V/UFmtqBuk6BqGc5wS/i/LOOyUAfmGWLY/0eLpac
-         hXyU1Y19xiBJTSCmspfiW+zSbs0zSN4EuQ6kTCYRUGex4xHpQjwoy6ILsif36Rj1c3UM
-         /Jg9NqSOZDdat+ieY/XNVAVYhvy9oFxFrl2NrNBTZAwzLmK89iExmNDbmSWLrmzpr2C2
-         y4pA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728933877; x=1729538677;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=chhtCPjzLYuNIHNBBWk7CoEmzEQjqCwVNlf9vMYQjEU=;
-        b=WTmjo2x8rAYWBK+/PLsGF826bOf+JT6EGkRZdB5fblWj8ocE32/NGsTMGXbLgQ93Ti
-         geX9FlTggSJmq2sIPNST35HBNw+p++fBK57v0DNX288nifjy4JkOE8LG2fZ+Zw7UCbq9
-         GdT3umWOCDyEOfmoBNDuXB0IVcTw4Gx6/i3Ucnzp66mnto4eKghEPaHwguvfM32KxdCl
-         g7WRN+V0O08QwpVFf+5F2psvnV58+ySd8RI38a+UitdEo4GXxEFZu5+1NtJGwlDS8qKN
-         iZplWzPdmfxrafb/GNDFWbf2oDGCeDGz9tm3JYHnIgRXa84bDLXiENLol5iDYez0fz3o
-         g2zg==
-X-Forwarded-Encrypted: i=1; AJvYcCVg1LfdyVgcLL4JTHmaO6w1nwcW7MuFcfF6eBMiOKzzZeBU0tZCNvIIy4X5uIWzq3C0DIwnQxkBhDyVgZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzarRv4+YRVd7PRGZWcNEVNQU14DexikT3EYCYm9EjnvXUF4BTA
-	Uw8CV7X13bSKXdGboONvmWnmOr7fUmx2rAdzaLrM/t55jujwL/dCGs/IHx+QjmbwJF4i6uHoNVq
-	e
-X-Google-Smtp-Source: AGHT+IGiLMckZF/iDwtCPeOtlulkrsk3VgmFpLFFqeCWFo2lkhBdtTvvDGgrE7l+kfpS3rSDr/CbOw==
-X-Received: by 2002:a05:6902:154c:b0:e29:2783:8707 with SMTP id 3f1490d57ef6-e29278387f9mr10259571276.48.1728933877447;
-        Mon, 14 Oct 2024 12:24:37 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b11497ad55sm448982585a.112.2024.10.14.12.24.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 12:24:36 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.95)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1t0QgG-008ikr-0S;
-	Mon, 14 Oct 2024 16:24:36 -0300
-Date: Mon, 14 Oct 2024 16:24:36 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Baolu Lu <baolu.lu@linux.intel.com>
-Cc: iommu@lists.linux.dev, Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-	Kevin Tian <kevin.tian@intel.com>, Yi Liu <yi.l.liu@intel.com>,
-	Vasant Hegde <vasant.hegde@amd.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/7] iommu/vt-d: Enhance compatibility check for paging
- domain attach
-Message-ID: <20241014192436.GD1825128@ziepe.ca>
-References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
- <20241011042722.73930-4-baolu.lu@linux.intel.com>
- <20241011162703.GL762027@ziepe.ca>
- <7f829e9e-5db9-4861-8a58-27a57edbd9da@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=S7NpTlfvtBKY2If9tebE4UdV5W02pF2PJjg3uJhiOFXsLw59wrsJOBf3h4PjmVNtgDW1N8cRImyaXus8bx0GbeYhXROABME3wkHP+asg3pMFGpXu++OH3kMlWOKvmfI6lj/4rnMYppBZQj6jWtpbHZj5bZzPLYZJrnJurY8DoOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=eYN2letm; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=KbqNdN2Y5HnLjsHleGHb9I+pHDMIFEfOOXdWTLleOyI=; b=eYN2letm418fcZiIF65uMquWvb
+	R0KLEgeRSkwzeA3ZJlC8gArHw7qAdWi7vGWHZ3qM/Y+P6S4avLoPMr75+oe242O3Q/2C+TGa2yYON
+	GJLwBy4u3OrSjKqyNe+0WYLSJG08ZVpb4AMl7V2rAiNU6uQs2T7Od0PWvu9Ek3FxGjb1/zuVfWyI2
+	HZF9rwgRYGDgT1Mm/IsXANR8IrKunRiAiZ8EOkoefWAd2wbH+2BZRV/UiIh4Be74vmvYA4zKfLfMq
+	EdGDdk5jQVklL5DeNsvziYwTOUL4dwnR6lH4GHf+CBnw1qB6rQfDT7LywxMwL9ujLiFzr0Ff/v1zX
+	DIfsshBg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t0Qgx-00000002ZWn-447K;
+	Mon, 14 Oct 2024 19:25:20 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 503D13004AF; Mon, 14 Oct 2024 21:25:19 +0200 (CEST)
+Date: Mon, 14 Oct 2024 21:25:19 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Lucas De Marchi <lucas.demarchi@intel.com>
+Cc: linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Umesh Nerlige Ramappa <umesh.nerlige.ramappa@intel.com>,
+	Ian Rogers <irogers@google.com>,
+	Tvrtko Ursulin <tvrtko.ursulin@igalia.com>
+Subject: Re: [PATCH 3/5] perf: Add pmu get/put
+Message-ID: <20241014192519.GN16066@noisy.programming.kicks-ass.net>
+References: <20241008183501.1354695-1-lucas.demarchi@intel.com>
+ <20241008183501.1354695-4-lucas.demarchi@intel.com>
+ <20241014173246.GI16066@noisy.programming.kicks-ass.net>
+ <lunkl4llip7aafnyctwztggum37wsiznktb7z3ly73batmt6bu@m75kow4b4u6y>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,35 +69,80 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <7f829e9e-5db9-4861-8a58-27a57edbd9da@linux.intel.com>
+In-Reply-To: <lunkl4llip7aafnyctwztggum37wsiznktb7z3ly73batmt6bu@m75kow4b4u6y>
 
-On Mon, Oct 14, 2024 at 09:25:03AM +0800, Baolu Lu wrote:
-> > > +	if (domain->type & __IOMMU_DOMAIN_PAGING) {
+On Mon, Oct 14, 2024 at 01:20:34PM -0500, Lucas De Marchi wrote:
+> On Mon, Oct 14, 2024 at 07:32:46PM +0200, Peter Zijlstra wrote:
+
+> > I'm confused.. probably because I still don't have any clue about
+> > drivers and the above isn't really telling me much either.
 > > 
-> > It looks like this entire function is already never called for
-> > anything but paging?
-> > 
-> > The only three callers are:
-> > 
-> > 	.default_domain_ops = &(const struct iommu_domain_ops) {
-> > 		.attach_dev		= intel_iommu_attach_device,
-> > 		.set_dev_pasid		= intel_iommu_set_dev_pasid,
-> > 
-> > and
-> > 
-> > static const struct iommu_domain_ops intel_nested_domain_ops = {
-> > 	.attach_dev		= intel_nested_attach_dev,
-> > 
-> > And none of those cases can be anything except a paging domain by
-> > definition.
+> > I don't see how you get rid of the try_module_get() we do per event;
+> > without that you can't unload the module.
 > 
-> A nested domain is not a paging domain. It represents a user-space page
-> table that nested on a parent paging domain. Perhaps I overlooked
-> anything?
+> I don't get rid of the try_module_get(). They serve diffeerent purposes.
+> Having a reference to the module prevents the _module_ going away (and
+> hence the function pointers we call into from perf). It doesn't prevent
+> the module unbinding from the HW.  A module may have N instances if it's
+> bound to N devices.
+> 
+> This can be done today to unbind the HW (integrated graphics) from the
+> i915 module:
+> 
+> 	# echo 0000:00:02.0 > /sys/bus/pci/drivers/i915/unbind
+> 
+> The ref taken by these new get()/put() are related to preventing the
+> data going away - the driver can use that to take a ref on something
+> that will survive the unbind.
 
-It only calls it on the s2_parent which is always a paging domain?
+OK, for some reason I thought to remember that you wanted to be able to
+unload the module too.
 
-	ret = prepare_domain_attach_device(&dmar_domain->s2_domain->domain, dev);
+> > And I don't see how you think it is safe to free a pmu while there are
+> > still events around.
+> 
+> so, we don't actually free it - the pmu is unregistered but the
+> `struct pmu` and (possibly) its container are still around after unregister.
+> When the get/put are used, the driver can keep the data around, which is
+> then free'd when the last reference is put.
 
-Jason
+Aaaaah, okay. So the implementation knows to nop out all device
+interaction when it gets unbound, but the events and pmu data stick
+around until they're naturally killed off?
+
+Ah, reading the below patches that is indeed what i915 does. pmu->closed
+makes this so.
+
+The dummy thing you posted in this thread, does perf_event_disable() on
+all previously created events, and this is not sound. Userspace can do
+PERF_EVENT_IOC_ENABLE on them and then things will go side-ways fast.
+And I was afraid i915 was doing this same.
+
+> - Subject: [PATCH 3/8] drm/i915/pmu: Fix crash due to use-after-free
+
+So reading that Changelog, you would like a replacement for pmu->closed
+as well.
+
+I suppose, one way to go about doing this is to have
+perf_pmu_unregister() replace a bunch of methods. Notably you have
+pmu->closed in:
+
+  - event_init()
+  - read()
+  - start()
+  - stop()
+  - add()
+
+Having perf_pmu_unregister() overwrite those function pointers with
+something akin to your pmu->closed would go a long way, right? It would
+require using READ_ONCE() for calling the methods, which would make
+things a little ugly :/
+
+But I also think we want to force all the events into STATE_ERROR, and
+I'm not immediately sure how best to go about doing that. Adding better
+return value handling to ->add() is trivial enough, and perhaps calling
+perf_pmu_resched() is sufficient to cycle everything.
+
+Let me ponder that a little bit.
+
 
