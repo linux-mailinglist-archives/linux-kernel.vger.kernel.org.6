@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-364728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D779F99D879
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:48:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5268E99D885
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:50:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 760F51F21375
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:48:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 811A21C211AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:50:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6D991D12FA;
-	Mon, 14 Oct 2024 20:48:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B841D0E05;
+	Mon, 14 Oct 2024 20:50:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A3oHYq2i"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="Qn7p/5u8";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="oiklqbPy"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D16361D0BA4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:48:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A49A14D439;
+	Mon, 14 Oct 2024 20:50:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728938918; cv=none; b=hz6xaZCjdrthmxnz2egJgc0JJBc6u52ipdmal/KAAQ87uX/k5SwDV0i2p6WyJfDTE4wuqYcYaEyWptdUAYa6eZw0ymlCTmz6fXqV9UtGgsEqQpqZjAZRMO+KiFF9zgPLcDv7pLbyGwwKQwGZDSJbbU2y8iZYigKjLhduWVxEYYI=
+	t=1728939053; cv=none; b=O05AMU2dUSJ+OT2qNicAnGLF5kv6RG5jJ7NKGDS09CxcH2/wvF0lKA3nA5Jum5gkCrKryRy17OH7V1yrHmDtm+ycvecs5Ue1TMaDRl2UmURmo6SRZPA8LNTREARL7Dlh/hM3Yhk5wm1IFHoFnT/hC5m8Z+EwYjgUxp01/fGMaqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728938918; c=relaxed/simple;
-	bh=oLiOJMlbQiOQsxhqpnja9W8p5wjHHPLRN1lJCefWKIQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=h1Nv+GpsEAtZfCvsjWzlRSn2mgTEWIn07fbUBxT3UJKJpai1TliPPLvEoe0YggAM6yO6JbZ0XxFa2id4KSqnobBD/pw87VJQETxBm25zHg/sNZloEcBS4PG3kJvCJr4C+KgsWsG/TuR2Z3ahZDyPf6gyCL/hJHzT3JJyO6pLAvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A3oHYq2i; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20c8ac50b79so327665ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:48:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728938916; x=1729543716; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oLiOJMlbQiOQsxhqpnja9W8p5wjHHPLRN1lJCefWKIQ=;
-        b=A3oHYq2icxsJJhuHZJ76PIZC/B8owrWq4oGhC0ybqMsNnT926a2I7NDiDIO0WNOAk3
-         SUyyM+SF1O6+m19vpzWc+oCTO1VNmadjYUAn4ERqYrA7ANLIn7iigwaHP/UUDerddsOD
-         bYs+yT+sJejmyMZMeQdVBnrMscZ9rAJKqvcVlkG7HjxljptNamPs7xFovEvkVFehplUI
-         nbkvOyXaMuoAM3SKAuQpsS451DMXhdf2cxLM0DN6nWF9YP4omRYfHuVNZJB9RDLa3Kv1
-         m5M3A1LLsmYwJJ/T69m5sZBCQmIkG8+oz5HdkrWGJQVapJdKfQQuxln6G5GMjw88s+Fw
-         HReg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728938916; x=1729543716;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oLiOJMlbQiOQsxhqpnja9W8p5wjHHPLRN1lJCefWKIQ=;
-        b=YgTdz5O6EQAF4BnKlz0rWyaWUPmKCa+2hcg64X2P0odYdWlABbfHm9WpJE17fJl+PB
-         gVl/Jo99YJLwMT+UB6S1R2NSGcArjlB5pqlIBPDR2DmMx2dViWsrV7YTqg7wo7+ofYh4
-         4KV6HaMvcpG4r2Z6L8wvcr7jJvvn2eWGP+WTkDYfybDCUQ/RgqD1rIpSo+ucchLHDq9x
-         gZ8UPQ/QRWfovqiUImHN40SlVAmyChWxnVaWOi5/4O26bXYW4NBWAiv2DlWvSZ6dmZXO
-         toYGeTrM/SnG7u0Stegj9ISHG+JiR0TyNpl/rL/1Liac4BBo8V2mLzrsBfSQsSycpIrh
-         4Z0g==
-X-Forwarded-Encrypted: i=1; AJvYcCXbeyO1lljnkZzy18u+46QlJGRvOt/7hXVCIZZWtF3eiVw0IOveY5z0xAMrJwctq0dlsH1H5906TtDhNRM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8/DXP4E8CTsfVpxFaKKWAQXTr0xBv8uXQrIl1nejsZW0byLYb
-	W3FDhTL8OXM1c9nBT/UDoCaItaNUZHDaMsEWgUIP3n4/NuZ/PDWqs1qSU0UPO0/4cw1Bkbygk57
-	rJaJ/WUbF5p/VeB5wdIQ4Xruc/asFVBh4bxVQ
-X-Google-Smtp-Source: AGHT+IElWbl5AVByUDgVhkR4DJhOP0D4H2xXZYriU+tuWxs0dxelbS2co5cCS0cZFwpG8zDMPaW/VapnM4qXE+UzLNw=
-X-Received: by 2002:a17:902:ea0d:b0:20b:a6f5:2770 with SMTP id
- d9443c01a7336-20cbce0d691mr4772125ad.6.1728938915788; Mon, 14 Oct 2024
- 13:48:35 -0700 (PDT)
+	s=arc-20240116; t=1728939053; c=relaxed/simple;
+	bh=MFSqcmv5mo5wth8zzxQu2vIn2rZtGDVYxVmiNss7a4w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNkdiRAOwt4WOACKY0dg5LQ+ocLRKILnUUbCxgC0YvXVcfZW77AX84/8lWrfmr+yZxTYTMC+ZNY/RtJCk0DMH8joWvVp5QGBR+2Oa8ZvKzEFZKAOgPq4O62CCj5b+0ajvXlwgfpXc3L1nBCjkv8QG+STXURrP/dkm3HOu+ppu64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=Qn7p/5u8; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=oiklqbPy; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-07.internal (phl-compute-07.phl.internal [10.202.2.47])
+	by mailfout.phl.internal (Postfix) with ESMTP id 24E2513805E7;
+	Mon, 14 Oct 2024 16:50:49 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-07.internal (MEProxy); Mon, 14 Oct 2024 16:50:49 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1728939049;
+	 x=1729025449; bh=w9YMR57cvzUfCNAMCQSKbu+O9RIDGvbwoJsod76P/6o=; b=
+	Qn7p/5u82udD6Vho/E5Bw5pGIzCfKjT4u5PgCtLFlIa/VfJW7TanYFbslPUbcgOE
+	dg00kBNKQ57dC0JgkYfPXSM7KYf2y6dJqoBZ8FXbxNbz4zobF+5cSjt6hDcn5RPv
+	tbpwWDniNj6Zk2T+MQh2xAVGtS1khUftAvONRIwrqTmX+UTBM92AZWz7V4nlMYcl
+	0+sWD2NAi/l2dED5iiDZdl0jk6wdISzmkhGHPwpPY2rmYdXi7ilFUW7mpuE8y1r8
+	5zfSq79Kr4u8XylGIO5yoM1E0mCFEG/s0vWgf4/TeRV/K9854im+MQ7OHHIjQbSQ
+	IamBYGgn5/bPEuUQVhjR9g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728939049; x=
+	1729025449; bh=w9YMR57cvzUfCNAMCQSKbu+O9RIDGvbwoJsod76P/6o=; b=o
+	iklqbPyYUuGFmnF66gT+kn0T/eOQFBHXbYOAgJUPLsRQZecn3JiEFeX/+iRnNFMi
+	M93AXyytyYv5jGiRKJNe76W7NZkjz825A+G7ihF1E+B+uvrHlIWeYTtgYWmqAvFd
+	klTGZZMPjb3xdzTrct5gKxxcGPSc+JTCXdDM+uhNqCeIYPpyt8DdL8aLgMnAunQF
+	j3XoURI2uNy6QIb3EsdYh3Saq/T5T/cEebu8kOIMoRsepAoPuCl4IgKkkPegooJH
+	5M4TRdNn5u8lIYbpAKmTl+pEZkItrHSmFQIhJ5XgqxEyvob9AYsEY6n5tufoLBFK
+	sVAW7hmhEXMAmwfAPLKUA==
+X-ME-Sender: <xms:KIQNZ2dp0tdQCfkBIiaUNkxgmkyYhQacsODc6bnioiOF2lwLVpDQHA>
+    <xme:KIQNZwOHM7TB8IB9JSzaaWCWK-2ilPECc5rH6Tk9EVrSsbmMXcJz2qN7Alcd1pBda
+    ealWEbgfKMaBU7ztN8>
+X-ME-Received: <xmr:KIQNZ3iGYQ3p8xzmLgQpnt4CcDxGYmf8xuq5uaQuOGNHOek_tiBcIJ3M3NxND785yzHpueuQsDv-egITr_ia5MGvXxzmd1XoPg>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgudehgecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecusecvtfgvtghiphhivg
+    hnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtugfgjgesthekredttddt
+    jeenucfhrhhomheppfhikhhlrghsucfunpguvghrlhhunhguuceonhhikhhlrghsrdhsoh
+    guvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgeqnecuggftrfgrthhtvghrnhepveet
+    gedtvddvhfdtkeeghfeffeehteehkeekgeefjeduieduueelgedtheekkeetnecuvehluh
+    hsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomhepnhhikhhlrghsrdhs
+    ohguvghrlhhunhgusehrrghgnhgrthgvtghhrdhsvgdpnhgspghrtghpthhtohepuddtpd
+    hmohguvgepshhmthhpohhuthdprhgtphhtthhopeifrghnghhhrghifeeksehhuhgrfigv
+    ihdrtghomhdprhgtphhtthhopegurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtg
+    hpthhtohepvgguuhhmrgiivghtsehgohhoghhlvgdrtghomhdprhgtphhtthhopehkuhgs
+    rgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrsggvnhhisehrvgguhhgrthdrtg
+    homhdprhgtphhtthhopegrnhgurhgvfieslhhunhhnrdgthhdprhgtphhtthhopeiihhgr
+    nhhggihirghogihuheeshhhurgifvghirdgtohhmpdhrtghpthhtohepnhgvthguvghvse
+    hvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhgvnhgvshgr
+    shdqshhotgesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:KIQNZz992ZzhrgjfNQee3HA-x7A5AmtfWameHw8vOp55Q80xan3Zzw>
+    <xmx:KIQNZyuyeIO1E1ARyiAVouK9KDcQaL3x-BwqbqsPwItQ2w_SKLi8IA>
+    <xmx:KIQNZ6EaAXUu07uB8cvPK6XfmBToFhkHMRXs78Dl9EpySkcdQw9cwQ>
+    <xmx:KIQNZxOObmy05iQ9HF_ej1MxwOPRiUD0q7OWUPQFLxAGX6bPKzPOHw>
+    <xmx:KYQNZzkl7L6rPihQn6DowucmgiiN8bVNmhTfXlyBHrtHGzBiTF3_EGqE>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
+ 14 Oct 2024 16:50:47 -0400 (EDT)
+Date: Mon, 14 Oct 2024 22:50:44 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Wang Hai <wanghai38@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew@lunn.ch, zhangxiaoxu5@huawei.com,
+	netdev@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net] net: ethernet: rtsn: fix potential memory leak in
+ rtsn_start_xmit()
+Message-ID: <20241014205044.GA2838422@ragnatech.se>
+References: <20241014144250.38802-1-wanghai38@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-2-andrii@kernel.org>
- <haivdc546utidpbb626qsmuwsa3f3aorurqn5khwsqqxflpu3w@xbdqwoty4blv> <CAEf4BzYRiE9vYCRLmiRHD+fqb_ROwqrb0sX6sktqDNdfeH85DA@mail.gmail.com>
-In-Reply-To: <CAEf4BzYRiE9vYCRLmiRHD+fqb_ROwqrb0sX6sktqDNdfeH85DA@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 14 Oct 2024 13:48:23 -0700
-Message-ID: <CAJuCfpF+YeXVYuEuTt_XKFJuSbu_BxWU96znnfnwG6mMQC7ETA@mail.gmail.com>
-Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce mmap_lock_speculation_{start|end}
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>, Andrii Nakryiko <andrii@kernel.org>, 
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, peterz@infradead.org, 
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, 
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
-	paulmck@kernel.org, willy@infradead.org, akpm@linux-foundation.org, 
-	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, mhocko@kernel.org, 
-	vbabka@suse.cz, hannes@cmpxchg.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241014144250.38802-1-wanghai38@huawei.com>
 
-On Mon, Oct 14, 2024 at 1:27=E2=80=AFPM Andrii Nakryiko
-<andrii.nakryiko@gmail.com> wrote:
->
-> On Sun, Oct 13, 2024 at 12:56=E2=80=AFAM Shakeel Butt <shakeel.butt@linux=
-.dev> wrote:
-> >
-> > On Thu, Oct 10, 2024 at 01:56:41PM GMT, Andrii Nakryiko wrote:
-> > > From: Suren Baghdasaryan <surenb@google.com>
-> > >
-> > > Add helper functions to speculatively perform operations without
-> > > read-locking mmap_lock, expecting that mmap_lock will not be
-> > > write-locked and mm is not modified from under us.
-> > >
-> > > Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> > > Link: https://lore.kernel.org/bpf/20240912210222.186542-1-surenb@goog=
-le.com
-> >
-> > Looks good to me. mmap_lock_speculation_* functions could use kerneldoc
-> > but that can be added later.
->
-> Yep, though probably best if Suren can do that in the follow up, as he
-> knows all the right words to use :)
+Hello Wang,
 
-Will add to my TODO list.
+Thanks for finding this.
 
->
-> >
-> > Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
-> >
->
-> Thanks!
->
-> >
+On 2024-10-14 22:42:50 +0800, Wang Hai wrote:
+> The rtsn_start_xmit() returns NETDEV_TX_OK without freeing skb
+> in case of skb->len being too long, add dev_kfree_skb_any() to fix it.
+> 
+> Fixes: b0d3969d2b4d ("net: ethernet: rtsn: Add support for Renesas Ethernet-TSN")
+> Signed-off-by: Wang Hai <wanghai38@huawei.com>
+
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+
+> ---
+>  drivers/net/ethernet/renesas/rtsn.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/net/ethernet/renesas/rtsn.c b/drivers/net/ethernet/renesas/rtsn.c
+> index f9f63c61d792..6b3f7fca8d15 100644
+> --- a/drivers/net/ethernet/renesas/rtsn.c
+> +++ b/drivers/net/ethernet/renesas/rtsn.c
+> @@ -1057,6 +1057,7 @@ static netdev_tx_t rtsn_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+>  	if (skb->len >= TX_DS) {
+>  		priv->stats.tx_dropped++;
+>  		priv->stats.tx_errors++;
+> +		dev_kfree_skb_any(skb);
+>  		goto out;
+>  	}
+>  
+> -- 
+> 2.17.1
+> 
+
+-- 
+Kind Regards,
+Niklas Söderlund
 
