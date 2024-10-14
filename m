@@ -1,440 +1,203 @@
-Return-Path: <linux-kernel+bounces-364244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EEC2199CEB4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:46:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19DFB99CE93
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFEEA1C23224
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:46:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D1561C230E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD3F31BDC3;
-	Mon, 14 Oct 2024 14:45:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C26391AB503;
+	Mon, 14 Oct 2024 14:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="tT3+rx3H"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="MqamQImQ"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2076.outbound.protection.outlook.com [40.107.20.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 741E01AE016;
-	Mon, 14 Oct 2024 14:45:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917120; cv=none; b=EnrJI6VIcxgrRM3c3a0KOjBwz0tr5+fRYinua7ap4u1SQX4nEjAPrXZBGBtc6UdDXzOAIaJ5/AnG/bYGI6fnWnYJspPpvr4CkF5xEq4cbE0p2RR7d6ZnqWQqE+Me8z8ABzvNLfMUKoMdrpfI+LCC1RoaqzTTObNqHN1GnpOIkXE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917120; c=relaxed/simple;
-	bh=kngt6PH1jQG8nueJe7mApazrVwkJvrhlv4+PlIRsGDQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Yb015oFwPDwgqHfDPuCHSPzQPdriNp5sfmN4RorKajvNg4XXYb8ExHWjNQXLiVGFBVaKPYFS68HyFzSzTIQemh6FT+Sthf0BYDIbR9EVmNBP1awkdI751bDRBlzttlrDcfe6+9ZZfuoBXRaFEPOdbhjJyq2atmREjb6gJh0pMjU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=tT3+rx3H; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender
-	:Reply-To:Content-Type:Content-ID:Content-Description;
-	bh=x2RvqpC8+IfQdTh9a4TcoeqjBfsFV+sBkBXafg9HWK0=; b=tT3+rx3HlUIE1i/3OgF0mzpmYW
-	IbK1W/ri8OF/EVJwn6z4ciekGxKe0RWkNSDy7Vw+mNuaknz5U5PqS9EtPCj9ZeQCDlsU4GoYdyJiN
-	P2B92FPqA98x+y7L+yxNuu9f5HsfAbaQpiOu/kKiS0j+/yNcmTq1KcYo8xmCy108CvztutY562PlE
-	KW0m4DVs6eujTKG+J2vomeXqdCBRZ8qKU0n3Hx2vnP2gOHdItMiG2+Af6p+SL2Uk98LLAzz8fP/O5
-	hZ+ux3/i3JOZCtkI/bMS6k88qADb8nx7nglRoGfcg3ZVd9FHzTU9AD1uYqVIfUWtYtkIBY+ks6sE1
-	1mUOkMpw==;
-Received: from 2a02-8389-2341-5b80-350d-7b06-b28a-173d.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:350d:7b06:b28a:173d] helo=localhost)
-	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t0MJv-00000005WxY-0IoK;
-	Mon, 14 Oct 2024 14:45:16 +0000
-From: Christoph Hellwig <hch@lst.de>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: linux-alpha@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-snps-arc@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-csky@vger.kernel.org,
-	linux-hexagon@vger.kernel.org,
-	loongarch@lists.linux.dev,
-	linux-m68k@lists.linux-m68k.org,
-	linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org,
-	linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org,
-	linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org,
-	linux-um@lists.infradead.org,
-	linux-arch@vger.kernel.org
-Subject: [PATCH 1/2] asm-generic: provide generic page_to_phys and phys_to_page implementations
-Date: Mon, 14 Oct 2024 16:44:58 +0200
-Message-ID: <20241014144506.51754-2-hch@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D237C6E6;
+	Mon, 14 Oct 2024 14:45:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.76
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728917112; cv=fail; b=d8hAbu0wwIp3Wuf96a6yNXOWEEgztWtYW542TiL9pQ7LCsxyiJoBy1jRLZxVtlp4sLVfN/gRN4tP1/z81u1FrvcgO8e0g5IqoHWHwCkhDUS8Kd7xaMrSIYyYgfZq1w0IZ6eeLoo5Atiogo65c+xoNMkbmtBFV3N/C4xR5r3Nxaw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728917112; c=relaxed/simple;
+	bh=Hbieep6HOA1BXpqkHWj1Kuqul8JShJPUEsHzo1B9Fts=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=VKrSArtQikhnTHQE4FrOyydRiv8EWXk0rQu+E6tGzDD8CP+tyY/u+MviZBRkMaV2tJVwPzFdWE07I2Ju8JL/GywzobPHaBJroKltOqyBC+x+s1SVS7RIBMXKm9uCQCFLnhaQO3r4ukEEMm0GZNxzeyVeZDX48yeP7GAWGUGgcic=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=MqamQImQ; arc=fail smtp.client-ip=40.107.20.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YIP/bnpam62j/EJO/ZD7MuqfzcbUBtjwYQjScwOqgNmOFD6izBde6VwLmukzOdxwinx57wqZMCrnym/wmQ2Vuyjvm9dYL/wN0UkXiu0o7RBV1zgdJ+W43v5YJqEx+V/P7sgoESgyYo6wYunIeiVxAk2r4u/quNIfaYOXDFVXxq788is4OqPNHljT8/YjM+5OMoSxYwt9YFuKykGtElmfutkI5QLopa5PIMKULCFi8OwisYYCSzXPqP+7QHaX+/XMWgxCbK05R71PXkm/dvydQ8euBAb1WU499enRqxqYPEUgw7TL37EdksCjXsBCDYB5Q+eyYY1/7MTn9ssJOPwTBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=CnRoIwI1Wl7Msu+AlgavNm69yp33C0DFCzbbuh606Do=;
+ b=fQgwys3BD1H7CXHJxmcA/BCgYn5LNfYTQU1915BmONqHVhfkeUxlYXhmyIuRIRjzTyg8OoySiVCDU9wlmSZC5k29vH/wzXQKBw0FJEQFZfgz/0ngBhQHQhiTH3VNIcdAzdxKwM6N+hncpQPzuSyYnO+O9qWnrjCKc67EXFjQkU3Qy8Pu09fGkTNKddsQsY0eh9R8nGLaNaMdKEyvrqn2xVxJMx/wcVueUrK6hIdOoBZ6TTx5AHZ2mAhF8CWoDex1MxTcMEr9/D3x3LmltA6VtunoYQU7J940RnsZuJXis4CTT6IU+ntEg+hBSDT7aT//UKYInwxoO36rnJq99Ouxcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
+ dkim=pass header.d=oss.nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
+ s=selector1-NXP1-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=CnRoIwI1Wl7Msu+AlgavNm69yp33C0DFCzbbuh606Do=;
+ b=MqamQImQ2sRb1p/vi8PapdF02ASv2UHso0IZKXkEEW1b70IMku8vedhR4ODYrYQ5MWePHcFlT3PeqJWjxuxDZ3hvl6mYBYuPo6CWMeyS+/NPWW/OJrNCjQxd6RHuD41R/0iLaQBhn98zRNrVctOP1PvyMHYWSR8iX1CO/qYvKsVsI4S0vT+RgnhcWjwtHoot3KaG/REw3I+H8kkHxffV2gQfKZi5OLH+PaM+uwrGYbOt/GNBC0R4gm22/gp9xjV8FfDoVEl6o5/RYkzeUvKBM5pgJWh5KPtxp41qYtrUW0nUTi6NPmMorgBbKnlwdKm3RHy0t9AiQKpKpBPAsxylDw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=oss.nxp.com;
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com (2603:10a6:10:352::15)
+ by GV1PR04MB10275.eurprd04.prod.outlook.com (2603:10a6:150:1ad::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
+ 2024 14:45:06 +0000
+Received: from DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd]) by DU0PR04MB9251.eurprd04.prod.outlook.com
+ ([fe80::708f:69ee:15df:6ebd%5]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 14:45:05 +0000
+From: Ciprian Costea <ciprianmarian.costea@oss.nxp.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Chester Lin <chester62515@gmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	NXP S32 Linux Team <s32@nxp.com>,
+	Christophe Lizzi <clizzi@redhat.com>,
+	Alberto Ruiz <aruizrui@redhat.com>,
+	Enric Balletbo <eballetb@redhat.com>,
+	Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
+Subject: [PATCH v2 0/2] add NXP LINFlexD UART clock support for S32G2/S32G3
+Date: Mon, 14 Oct 2024 17:44:59 +0300
+Message-ID: <20241014144501.388050-1-ciprianmarian.costea@oss.nxp.com>
 X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241014144506.51754-1-hch@lst.de>
-References: <20241014144506.51754-1-hch@lst.de>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: AS4P250CA0011.EURP250.PROD.OUTLOOK.COM
+ (2603:10a6:20b:5df::13) To DU0PR04MB9251.eurprd04.prod.outlook.com
+ (2603:10a6:10:352::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR04MB9251:EE_|GV1PR04MB10275:EE_
+X-MS-Office365-Filtering-Correlation-Id: d7ea343b-1db2-4a00-d2e0-08dcec5ecad7
+X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WGREU1VaeVNBUWxLYlZBZ0FwNG1SUnNmbGV5dFh2UXhKbjRqa1pBdndmUUh0?=
+ =?utf-8?B?ZVBraS9sS0lkdVpDeHRmWk1rQzd3M3MwT2tmZDdVa1Y3ZTdLeVFnblBvVU56?=
+ =?utf-8?B?azZFV2R0Tm1TM3FPb1N1ZzVyaW1yZC9EZWZYcHpRa0RQd3lCMThNb1JSZFVz?=
+ =?utf-8?B?ZTZENFBqVG5NSXZNbEVpM09zcDh4amIwWjhjT1lFSk1CRkE2cmNRM3dBaDUv?=
+ =?utf-8?B?dG15TzNNeGxXdEtqYWNMRGxuanBBdTYxYUZTZXU4ZXgzVzNtTkhhcGo3WkIx?=
+ =?utf-8?B?OHo2TzY4NDRlSjA2dWYzRFAyVVNLTnN3WGlxNDd6amFCZ2Nsa0RkSWRQZitL?=
+ =?utf-8?B?YTlxOXhHVytsTHRKOEliVWt3VXNBdGhXYVRtU1E1WnVHQ2xDeVlYazVtMkVi?=
+ =?utf-8?B?OU5SYm9sZS83eWNGNzZpNDJHTzlac3F3ZGJTeHp4OFFBU3l3ZlJWZExvbWdY?=
+ =?utf-8?B?aHRESG1pWUg5QzNHWnVsWTRUK3JjL29XdmdhWEtxNEZURG8veGZHMDlpeEo0?=
+ =?utf-8?B?QUdaMDhqb3M3ajlOUkJkQWUwd3VVeHh0TjV0Z1JraWF0eUhha3pSZGpJSkR3?=
+ =?utf-8?B?cVZZVCtyTEQwSDlVU05RTmdiTlpudlBCTFBGSENhU09EczFIT0NnWFhGT045?=
+ =?utf-8?B?UElaUmIxaUtUQUZqaTE1eEVGNGJXanI4dUhETFRlcWZLZHN0dFo3Q2xaYXlM?=
+ =?utf-8?B?bE1RTkt3VTNIZkQ3Y3l5Sk1nOEZyOU01cGFnbklYb2xReHhncjN1OFlkZytS?=
+ =?utf-8?B?QkxEczRRRG9uY3lmVlNWSWN4OUdUcEtXN0pMMUFPYXFKYUQwUTV1eW9wMkgx?=
+ =?utf-8?B?Yk1GaW0rYjFPVnliL0xrOHcxcEpyeS81YlRUVG9SY1Nyc1B3Z3I0NHRlVHJh?=
+ =?utf-8?B?NjVsUThub1d1MTFSWnV6WS9xQlNtNjZhSkpOanlObFIwcEtlbXpJU282WTI1?=
+ =?utf-8?B?SkdXbC9BR1JFSGNPNlVINEcwMHRiQ2xhVW1LdHNBbllMN29KVXlQeEJBbks2?=
+ =?utf-8?B?dVN4NXhVNC9SK2tVZTU2L0lCU2hIUHdzT0N3SjQweWFoZVM3TG1yb2dMaGNU?=
+ =?utf-8?B?RXJYTlZRenBhTDBKVUhFVzVmanB0NE5rcFFEeTgxYitGdmdRcERBQkh1YzlU?=
+ =?utf-8?B?VzY3cVBHZnRpK1NRZFNjRVhxbG1PMm01NW1Ob216TUVsQmpidmJ6aWhEWU1o?=
+ =?utf-8?B?WVNiTUd4YmxZRjZYdW9aV09CQXpZWWJHT1FkQzI4MkFqZnZqb3EwQyt2UG1s?=
+ =?utf-8?B?S3M2WUdxOG1JMVQydTlFYndjUk1JcGE0c1NuTmROUU42bGdOajRIcWxlVUhC?=
+ =?utf-8?B?d2pydzg4dzZYUzNBeGU1aGk2Qk9PVERCeG5DZEUydGpMb01tSmU0cG1YRndD?=
+ =?utf-8?B?V1dvemdNcWdHemVBekhDZks0RE1TOU5McTNGb0VCWHYrWnF5TTErM0lvejBk?=
+ =?utf-8?B?RVdIVFc0dk1QYmNkWThhY0dwMW11UjJCeFNGNVlNbGdyWEdZMDE0b3hzUEEx?=
+ =?utf-8?B?QkZQd2Y1YVJOYnRsSW1DNFVoZjRKdm1pOWxhaVFienZ2K3hzWlhmbnlXYmlF?=
+ =?utf-8?B?eDdDQmFQb25PdWtyeWNVczRUWU5BcStHTU1lY2JiYTEyZ3U0RDBXdlFLV1R2?=
+ =?utf-8?B?Tjg0ZWozK3ZiMDhFTXZGRWgzMmFOQWhHL09neVovUkhuSmIxSmRxRm9ZK3Jv?=
+ =?utf-8?B?ak9rbFlMRE5abUt2Wmswa1RzR0FITVpwczBrWVJ0bWI3a2psSWw3Um5RPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR04MB9251.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?RXVoN2wwNG1pdlVmVWhhamUyUU9La2t0d2pGUHF0enJwNGJuUlk0RWczU0F3?=
+ =?utf-8?B?TnJPNjBNUXhrcHc4SW5OWGtteFl3RUpDbzhGN1ZOR1E2TytGM0pzbEt2SGE3?=
+ =?utf-8?B?RkpXN1FGeGxlQmpsM25rWEUwYlphQ0dvaDB5M2VsZ3g0QWFDNmZVQWozOCt3?=
+ =?utf-8?B?bEM1dDJ2QWJIb1lsa3JOK0VsdjZncFVVRDV5Sy90YlpkU0pUSXg2ZytGZzNG?=
+ =?utf-8?B?aDcvbkVkWFJKdGpiYlo4dlk2TDhmZzlmUCtsZjVBSHFEYXhSSTRSRE1ON3I5?=
+ =?utf-8?B?d05RTDdwRnpTTm10Q1B5L3R0V1M5NzB1bGUxZWVvMWNMSUs0QURpTnYwVDhR?=
+ =?utf-8?B?ZytMNnVlOExQRldDRHBsajhDV256S2plSmNxYVpHSzljVFBzSUFWQVdJL2Zm?=
+ =?utf-8?B?NDhsc3pGMnJSWjFaZWdzR0tOWk15WW9qNnQyNVBmem53OGpzMUk4aEVnaUFu?=
+ =?utf-8?B?L3FyMjh4anlENWRmditESDdFcEQ3U25hbnZTNEU5MXkwa1lycVMzMlVzTU1s?=
+ =?utf-8?B?clJNbUJrSk42anNFN0FIOEh0REw5M0kyUVptN1J1akkyL2VJZnBJUjduNlVk?=
+ =?utf-8?B?bkhkMWZaaXBQK2Q1NzA0NFhpWjlxNm9MV0Zzbk1hTWx5S3d2aWxoUmVNaEFJ?=
+ =?utf-8?B?V2hjK3hTNS8xWjZlbm1NelM2alJ1V3BPNFNJQzlUaTExTG1KWnpMSGFzOGw2?=
+ =?utf-8?B?eWJwUUxFSGRPZ2hNeEFVdHN1WG9oV1p0Z2NVNmtERm1vVlJ6NUthNVNkQVI4?=
+ =?utf-8?B?MStvTTZtVDBwM0lhRkFCWVlTVkhOcUpzQzZKWEltRml2amtoYWZhK3Z6YVhk?=
+ =?utf-8?B?NEtVK29PdlFEVUNCbkNycmZzTVpTa2R2S2JYeVJESzRXTHh0YzZ4cFYyMk9p?=
+ =?utf-8?B?VVF2dDkvQVpncWhST0lrcGtsMFp6UWsrZUdxN3FMRGZKWER4NXNndnViNVV3?=
+ =?utf-8?B?OU9lZFFqMkVTMHB4UHl2cC9RYWY4Q0dwdjRuMTNXNThSeTNKWlRWSzV2amdD?=
+ =?utf-8?B?Z2pWQjduRmRaTHlxalYrcEI5bURCRFRLM1d0eE5HL0t5YmkxY0hNMEpHYXBS?=
+ =?utf-8?B?bXlLT0hsNHN1V3p4MThyRW9nT0RXQW8xTm84TDIvZHkzbVpoS003cnFrZ2dn?=
+ =?utf-8?B?Q0hLMmFDa0lsc2VkenU0d1BYL0gyZkRUZUV0aCtib3ozOCszbTYzYUV1eTNr?=
+ =?utf-8?B?bzdJYzBPaEhuVEhVZlNEMnBxMG5WWDFiVEpOdFJNbUpEOVlqaDVMRThwWldO?=
+ =?utf-8?B?VFhsRGVzMWUvZjVyalcvYzVKSG1nejFMT1ZGR3RVOFk1MXlST3NPUVNBSW54?=
+ =?utf-8?B?L3QyMVp5N2xwMEluYXlpVlFUWDlOU1dvM0RlWFZRb3ByUzhsczlYanFUYk9G?=
+ =?utf-8?B?K3dCVUFuOWdOY09HSTFLV05OeExrU2RubERuUldEMU5OWGtiZWI3ck14SHRa?=
+ =?utf-8?B?QzNrQ1lWK2JWRnZnQUV5dElnY2dpazdlclg3bjgvVWZSSnZIUVNXMWZzbElJ?=
+ =?utf-8?B?eG1XOGdxYmRHc3htc3UxOHBsLzdjR0FndGtGQjRNby91YVhmM25CMWxLMlZ6?=
+ =?utf-8?B?aEdOS05qMGJ1SVptZk1hWXF3a01Od1AwU3RnTkJvVlNOdFJQaFRnZ0pIbXE3?=
+ =?utf-8?B?WmpzZGlNdVNCeXBMdkFmamxPcFFlZzdqMGZpV2UxdmYyNm9iKzRIVmVBaFNJ?=
+ =?utf-8?B?bHQxTUZLVGQ4WE52VWovQlJZczA2ZDliUS9WT21uTUZOT0JPZTl5ZkRtVSto?=
+ =?utf-8?B?NjVUS2I0VHNDRkxLUGpkaHg1cGwySVlnR2VhZ0hkVnd2RkU1U2FkZjFlTHlt?=
+ =?utf-8?B?KzFCczRoZnpVSHg5WGxnMXNnNmRwQjNPWVVXNXg1aGxCUEtoaUswby9qRnND?=
+ =?utf-8?B?RmFBRVQ1Nm9acy9LejhnRnphYmplOVVzLzd1UFJJMHUrVWg3NHN5ek15c2tv?=
+ =?utf-8?B?cUVabm94eWVIdWFxcDhtNHNSdTlJUVBGR1laYlhaSER6WnljMXVKaXdsek9L?=
+ =?utf-8?B?dkJzcllpZkh3Ky9ZYjVIWC9MRmFTZUd6TjF5YmRqaCtjMUpwNGxwU01WVGls?=
+ =?utf-8?B?SWU3dXBTSXBQNWduNE5JZGFPcjVmd1MrWWxtSDNMSVZUeGZFZVR5dmJlcktN?=
+ =?utf-8?B?WlN5WStzaGhVSEFsT0dxMnhyK3Z5WTkvWnUyQWFGd2VMODJlSzYxZUdBRFdj?=
+ =?utf-8?B?UXc9PQ==?=
+X-OriginatorOrg: oss.nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d7ea343b-1db2-4a00-d2e0-08dcec5ecad7
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR04MB9251.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 14:45:05.6430
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 4SlSiFxMV/5VXol/LSbDfa6eqfAzNhzpCw0iLQrLFbOTrHHgXZwaJ3JMRdUjZFhinC6vwendf89j+JGZLrR9gV28wEtQvABL9h6PiIQXJug=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10275
 
-page_to_phys is duplicated by all architectures, and from some strange
-reason placed in <asm/io.h> where it doesn't fit at all.
+From: Ciprian Marian Costea <ciprianmarian.costea@oss.nxp.com>
 
-phys_to_page is only provided by a few architectures despite having a lot
-of open coded users.
+LINFlexD UART driver is used by S32 SoC family.
+Add clocking support as optional in order to not break
+existing support for S32V234 SoC.
 
-Provide generic versions in <asm-generic/memory_model.h> to make these
-helpers more easily usable.
+A separate patch adding clock definitions to
+the S32G2/S32G3 based boards devicetree will be sent
+for review.
 
-Note with this patch powerpc loses the CONFIG_DEBUG_VIRTUAL pfn_valid
-check.  It will be added back in a generic version later.
+Changes in V2:
+- Updated bindings by adding more information related to
+required LINFlexD clocks
 
-Signed-off-by: Christoph Hellwig <hch@lst.de>
----
- arch/alpha/include/asm/io.h         |  1 -
- arch/arc/include/asm/io.h           |  3 ---
- arch/arm/include/asm/memory.h       |  6 ------
- arch/arm64/include/asm/memory.h     |  6 ------
- arch/csky/include/asm/page.h        |  3 ---
- arch/hexagon/include/asm/page.h     |  6 ------
- arch/loongarch/include/asm/page.h   |  3 ---
- arch/m68k/include/asm/virtconvert.h |  3 ---
- arch/microblaze/include/asm/page.h  |  1 -
- arch/mips/include/asm/io.h          |  5 -----
- arch/nios2/include/asm/io.h         |  3 ---
- arch/openrisc/include/asm/page.h    |  2 --
- arch/parisc/include/asm/page.h      |  1 -
- arch/powerpc/include/asm/io.h       | 12 ------------
- arch/riscv/include/asm/page.h       |  3 ---
- arch/s390/include/asm/page.h        |  2 --
- arch/sh/include/asm/page.h          |  1 -
- arch/sparc/include/asm/page.h       |  2 --
- arch/um/include/asm/pgtable.h       |  2 --
- arch/x86/include/asm/io.h           |  5 -----
- arch/xtensa/include/asm/page.h      |  1 -
- include/asm-generic/memory_model.h  |  3 +++
- 22 files changed, 3 insertions(+), 71 deletions(-)
+Ciprian Marian Costea (2):
+  dt-bindings: linflexuart: add clock definitions
+  serial: fsl_linflexuart: add clock support
 
-diff --git a/arch/alpha/include/asm/io.h b/arch/alpha/include/asm/io.h
-index b191d87f89c401..65fe1e54c6da09 100644
---- a/arch/alpha/include/asm/io.h
-+++ b/arch/alpha/include/asm/io.h
-@@ -88,7 +88,6 @@ static inline void * phys_to_virt(unsigned long address)
- 
- #define virt_to_phys		virt_to_phys
- #define phys_to_virt		phys_to_virt
--#define page_to_phys(page)	page_to_pa(page)
- 
- /* Maximum PIO space address supported?  */
- #define IO_SPACE_LIMIT 0xffff
-diff --git a/arch/arc/include/asm/io.h b/arch/arc/include/asm/io.h
-index f57cb5a6b62403..00171a212b3cb2 100644
---- a/arch/arc/include/asm/io.h
-+++ b/arch/arc/include/asm/io.h
-@@ -42,9 +42,6 @@ static inline void ioport_unmap(void __iomem *addr)
- #define iowrite16be(v,p)	({ __iowmb(); __raw_writew((__force u16)cpu_to_be16(v), p); })
- #define iowrite32be(v,p)	({ __iowmb(); __raw_writel((__force u32)cpu_to_be32(v), p); })
- 
--/* Change struct page to physical address */
--#define page_to_phys(page)		(page_to_pfn(page) << PAGE_SHIFT)
--
- #define __raw_readb __raw_readb
- static inline u8 __raw_readb(const volatile void __iomem *addr)
- {
-diff --git a/arch/arm/include/asm/memory.h b/arch/arm/include/asm/memory.h
-index ef2aa79ece5ad5..7c2fa7dcec6d4b 100644
---- a/arch/arm/include/asm/memory.h
-+++ b/arch/arm/include/asm/memory.h
-@@ -147,12 +147,6 @@ extern unsigned long vectors_base;
- #define DTCM_OFFSET	UL(0xfffe8000)
- #endif
- 
--/*
-- * Convert a page to/from a physical address
-- */
--#define page_to_phys(page)	(__pfn_to_phys(page_to_pfn(page)))
--#define phys_to_page(phys)	(pfn_to_page(__phys_to_pfn(phys)))
--
- /*
-  * PLAT_PHYS_OFFSET is the offset (from zero) of the start of physical
-  * memory.  This is used for XIP and NoMMU kernels, and on platforms that don't
-diff --git a/arch/arm64/include/asm/memory.h b/arch/arm64/include/asm/memory.h
-index 0480c61dbb4f30..b9b992908a569c 100644
---- a/arch/arm64/include/asm/memory.h
-+++ b/arch/arm64/include/asm/memory.h
-@@ -353,12 +353,6 @@ extern phys_addr_t __phys_addr_symbol(unsigned long x);
- #define __phys_to_virt(x)	((unsigned long)((x) - PHYS_OFFSET) | PAGE_OFFSET)
- #define __phys_to_kimg(x)	((unsigned long)((x) + kimage_voffset))
- 
--/*
-- * Convert a page to/from a physical address
-- */
--#define page_to_phys(page)	(__pfn_to_phys(page_to_pfn(page)))
--#define phys_to_page(phys)	(pfn_to_page(__phys_to_pfn(phys)))
--
- /*
-  * Note: Drivers should NOT use these.  They are the wrong
-  * translation for translating DMA addresses.  Use the driver
-diff --git a/arch/csky/include/asm/page.h b/arch/csky/include/asm/page.h
-index 0ca6c408c07f27..a5afdfe27dc62d 100644
---- a/arch/csky/include/asm/page.h
-+++ b/arch/csky/include/asm/page.h
-@@ -43,9 +43,6 @@ extern void *memcpy(void *to, const void *from, size_t l);
- #define clear_page(page)	memset((page), 0, PAGE_SIZE)
- #define copy_page(to, from)	memcpy((to), (from), PAGE_SIZE)
- 
--#define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
--#define phys_to_page(paddr)	(pfn_to_page(PFN_DOWN(paddr)))
--
- struct page;
- 
- #include <abi/page.h>
-diff --git a/arch/hexagon/include/asm/page.h b/arch/hexagon/include/asm/page.h
-index 8a6af57274c2db..aba4d790130518 100644
---- a/arch/hexagon/include/asm/page.h
-+++ b/arch/hexagon/include/asm/page.h
-@@ -118,12 +118,6 @@ static inline void clear_page(void *page)
- #define clear_user_page(page, vaddr, pg)	clear_page(page)
- #define copy_user_page(to, from, vaddr, pg)	copy_page(to, from)
- 
--/*
-- * page_to_phys - convert page to physical address
-- * @page - pointer to page entry in mem_map
-- */
--#define page_to_phys(page)      (page_to_pfn(page) << PAGE_SHIFT)
--
- static inline unsigned long virt_to_pfn(const void *kaddr)
- {
- 	return __pa(kaddr) >> PAGE_SHIFT;
-diff --git a/arch/loongarch/include/asm/page.h b/arch/loongarch/include/asm/page.h
-index e85df33f11c772..8b4e6b280f2b86 100644
---- a/arch/loongarch/include/asm/page.h
-+++ b/arch/loongarch/include/asm/page.h
-@@ -81,9 +81,6 @@ struct page *tlb_virt_to_page(unsigned long kaddr);
- #define pfn_to_phys(pfn)	__pfn_to_phys(pfn)
- #define phys_to_pfn(paddr)	__phys_to_pfn(paddr)
- 
--#define page_to_phys(page)	pfn_to_phys(page_to_pfn(page))
--#define phys_to_page(paddr)	pfn_to_page(phys_to_pfn(paddr))
--
- #ifndef CONFIG_KFENCE
- 
- #define page_to_virt(page)	__va(page_to_phys(page))
-diff --git a/arch/m68k/include/asm/virtconvert.h b/arch/m68k/include/asm/virtconvert.h
-index 0a27905b0036ff..32e27bddb7d430 100644
---- a/arch/m68k/include/asm/virtconvert.h
-+++ b/arch/m68k/include/asm/virtconvert.h
-@@ -28,9 +28,6 @@ static inline void *phys_to_virt(unsigned long address)
- 	return __va(address);
- }
- 
--/* Permanent address of a page. */
--#define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
--
- /*
-  * IO bus memory addresses are 1:1 with the physical address,
-  * deprecated globally but still used on two machines.
-diff --git a/arch/microblaze/include/asm/page.h b/arch/microblaze/include/asm/page.h
-index 8810f4f1c3b02d..ecd4bf2779a0bb 100644
---- a/arch/microblaze/include/asm/page.h
-+++ b/arch/microblaze/include/asm/page.h
-@@ -101,7 +101,6 @@ extern int page_is_ram(unsigned long pfn);
- 
- #  define virt_to_page(kaddr)	(pfn_to_page(__pa(kaddr) >> PAGE_SHIFT))
- #  define page_to_virt(page)   __va(page_to_pfn(page) << PAGE_SHIFT)
--#  define page_to_phys(page)     (page_to_pfn(page) << PAGE_SHIFT)
- 
- #  define ARCH_PFN_OFFSET	(memory_start >> PAGE_SHIFT)
- # endif /* __ASSEMBLY__ */
-diff --git a/arch/mips/include/asm/io.h b/arch/mips/include/asm/io.h
-index af58d6ae06b85e..0bddb568af7c1c 100644
---- a/arch/mips/include/asm/io.h
-+++ b/arch/mips/include/asm/io.h
-@@ -125,11 +125,6 @@ static inline unsigned long isa_virt_to_bus(volatile void *address)
- 	return virt_to_phys(address);
- }
- 
--/*
-- * Change "struct page" to physical address.
-- */
--#define page_to_phys(page)	((dma_addr_t)page_to_pfn(page) << PAGE_SHIFT)
--
- void __iomem *ioremap_prot(phys_addr_t offset, unsigned long size,
- 		unsigned long prot_val);
- void iounmap(const volatile void __iomem *addr);
-diff --git a/arch/nios2/include/asm/io.h b/arch/nios2/include/asm/io.h
-index 746853ac7d8d38..36e3550673b34b 100644
---- a/arch/nios2/include/asm/io.h
-+++ b/arch/nios2/include/asm/io.h
-@@ -28,9 +28,6 @@
- void __iomem *ioremap(unsigned long physaddr, unsigned long size);
- void iounmap(void __iomem *addr);
- 
--/* Pages to physical address... */
--#define page_to_phys(page)	virt_to_phys(page_to_virt(page))
--
- /* Macros used for converting between virtual and physical mappings. */
- #define phys_to_virt(vaddr)	\
- 	((void *)((unsigned long)(vaddr) | CONFIG_NIOS2_KERNEL_REGION_BASE))
-diff --git a/arch/openrisc/include/asm/page.h b/arch/openrisc/include/asm/page.h
-index 1d5913f67c312f..45d6c440729ce3 100644
---- a/arch/openrisc/include/asm/page.h
-+++ b/arch/openrisc/include/asm/page.h
-@@ -80,8 +80,6 @@ static inline unsigned long virt_to_pfn(const void *kaddr)
- #define virt_to_page(addr) \
- 	(mem_map + (((unsigned long)(addr)-PAGE_OFFSET) >> PAGE_SHIFT))
- 
--#define page_to_phys(page)      ((dma_addr_t)page_to_pfn(page) << PAGE_SHIFT)
--
- #define virt_addr_valid(kaddr)	(pfn_valid(virt_to_pfn(kaddr)))
- 
- #endif /* __ASSEMBLY__ */
-diff --git a/arch/parisc/include/asm/page.h b/arch/parisc/include/asm/page.h
-index 4bea2e95798f02..6cb5b02aca9a77 100644
---- a/arch/parisc/include/asm/page.h
-+++ b/arch/parisc/include/asm/page.h
-@@ -168,7 +168,6 @@ extern int npmem_ranges;
- 
- #define virt_addr_valid(kaddr)	pfn_valid(__pa(kaddr) >> PAGE_SHIFT)
- 
--#define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
- #define virt_to_page(kaddr)     pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
- 
- #include <asm-generic/memory_model.h>
-diff --git a/arch/powerpc/include/asm/io.h b/arch/powerpc/include/asm/io.h
-index 52e1b1d15ff63a..fd92ac4501693c 100644
---- a/arch/powerpc/include/asm/io.h
-+++ b/arch/powerpc/include/asm/io.h
-@@ -969,18 +969,6 @@ static inline void * phys_to_virt(unsigned long address)
- }
- #define phys_to_virt phys_to_virt
- 
--/*
-- * Change "struct page" to physical address.
-- */
--static inline phys_addr_t page_to_phys(struct page *page)
--{
--	unsigned long pfn = page_to_pfn(page);
--
--	WARN_ON(IS_ENABLED(CONFIG_DEBUG_VIRTUAL) && !pfn_valid(pfn));
--
--	return PFN_PHYS(pfn);
--}
--
- /*
-  * 32 bits still uses virt_to_bus() for its implementation of DMA
-  * mappings se we have to keep it defined here. We also have some old
-diff --git a/arch/riscv/include/asm/page.h b/arch/riscv/include/asm/page.h
-index 32d308a3355fd4..16f4141f005561 100644
---- a/arch/riscv/include/asm/page.h
-+++ b/arch/riscv/include/asm/page.h
-@@ -194,9 +194,6 @@ extern phys_addr_t __phys_addr_symbol(unsigned long x);
- #define virt_to_page(vaddr)	(pfn_to_page(virt_to_pfn(vaddr)))
- #define page_to_virt(page)	(pfn_to_virt(page_to_pfn(page)))
- 
--#define page_to_phys(page)	(pfn_to_phys(page_to_pfn(page)))
--#define phys_to_page(paddr)	(pfn_to_page(phys_to_pfn(paddr)))
--
- #define sym_to_pfn(x)           __phys_to_pfn(__pa_symbol(x))
- 
- unsigned long kaslr_offset(void);
-diff --git a/arch/s390/include/asm/page.h b/arch/s390/include/asm/page.h
-index 73e1e03317b433..16d62a4eccccef 100644
---- a/arch/s390/include/asm/page.h
-+++ b/arch/s390/include/asm/page.h
-@@ -245,9 +245,7 @@ static inline unsigned long __phys_addr(unsigned long x, bool is_31bit)
- #define phys_to_pfn(phys)	((phys) >> PAGE_SHIFT)
- #define pfn_to_phys(pfn)	((pfn) << PAGE_SHIFT)
- 
--#define phys_to_page(phys)	pfn_to_page(phys_to_pfn(phys))
- #define phys_to_folio(phys)	page_folio(phys_to_page(phys))
--#define page_to_phys(page)	pfn_to_phys(page_to_pfn(page))
- #define folio_to_phys(page)	pfn_to_phys(folio_pfn(folio))
- 
- static inline void *pfn_to_virt(unsigned long pfn)
-diff --git a/arch/sh/include/asm/page.h b/arch/sh/include/asm/page.h
-index f780b467e75d7c..4e82ea84a06fce 100644
---- a/arch/sh/include/asm/page.h
-+++ b/arch/sh/include/asm/page.h
-@@ -147,7 +147,6 @@ typedef struct page *pgtable_t;
- #endif
- 
- #define pfn_to_kaddr(pfn)	__va((pfn) << PAGE_SHIFT)
--#define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
- 
- /*
-  * PFN = physical frame number (ie PFN 0 == physical address 0)
-diff --git a/arch/sparc/include/asm/page.h b/arch/sparc/include/asm/page.h
-index 5e44cdf2a8f2bd..1a00cc0a1893eb 100644
---- a/arch/sparc/include/asm/page.h
-+++ b/arch/sparc/include/asm/page.h
-@@ -2,8 +2,6 @@
- #ifndef ___ASM_SPARC_PAGE_H
- #define ___ASM_SPARC_PAGE_H
- 
--#define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
--
- #if defined(__sparc__) && defined(__arch64__)
- #include <asm/page_64.h>
- #else
-diff --git a/arch/um/include/asm/pgtable.h b/arch/um/include/asm/pgtable.h
-index 83373c9963e7c9..faab5a2a4b061f 100644
---- a/arch/um/include/asm/pgtable.h
-+++ b/arch/um/include/asm/pgtable.h
-@@ -287,9 +287,7 @@ static inline int pte_same(pte_t pte_a, pte_t pte_b)
-  * and a page entry and page directory to the page they refer to.
-  */
- 
--#define phys_to_page(phys) pfn_to_page(phys_to_pfn(phys))
- #define __virt_to_page(virt) phys_to_page(__pa(virt))
--#define page_to_phys(page) pfn_to_phys(page_to_pfn(page))
- #define virt_to_page(addr) __virt_to_page((const unsigned long) addr)
- 
- #define mk_pte(page, pgprot) \
-diff --git a/arch/x86/include/asm/io.h b/arch/x86/include/asm/io.h
-index 1d60427379c939..ed580c7f9d0aaf 100644
---- a/arch/x86/include/asm/io.h
-+++ b/arch/x86/include/asm/io.h
-@@ -151,11 +151,6 @@ static inline void *phys_to_virt(phys_addr_t address)
- }
- #define phys_to_virt phys_to_virt
- 
--/*
-- * Change "struct page" to physical address.
-- */
--#define page_to_phys(page)    ((dma_addr_t)page_to_pfn(page) << PAGE_SHIFT)
--
- /*
-  * ISA I/O bus memory addresses are 1:1 with the physical address.
-  * However, we truncate the address to unsigned int to avoid undesirable
-diff --git a/arch/xtensa/include/asm/page.h b/arch/xtensa/include/asm/page.h
-index 4db56ef052d223..dc3d5b094ecd98 100644
---- a/arch/xtensa/include/asm/page.h
-+++ b/arch/xtensa/include/asm/page.h
-@@ -195,7 +195,6 @@ static inline unsigned long ___pa(unsigned long va)
- #define virt_to_page(kaddr)	pfn_to_page(__pa(kaddr) >> PAGE_SHIFT)
- #define page_to_virt(page)	__va(page_to_pfn(page) << PAGE_SHIFT)
- #define virt_addr_valid(kaddr)	pfn_valid(__pa(kaddr) >> PAGE_SHIFT)
--#define page_to_phys(page)	(page_to_pfn(page) << PAGE_SHIFT)
- 
- #endif /* __ASSEMBLY__ */
- 
-diff --git a/include/asm-generic/memory_model.h b/include/asm-generic/memory_model.h
-index 6796abe1900e30..a73a140cbecdd7 100644
---- a/include/asm-generic/memory_model.h
-+++ b/include/asm-generic/memory_model.h
-@@ -64,6 +64,9 @@ static inline int pfn_valid(unsigned long pfn)
- #define page_to_pfn __page_to_pfn
- #define pfn_to_page __pfn_to_page
- 
-+#define page_to_phys(page)	PFN_PHYS(page_to_pfn(page))
-+#define phys_to_page(phys)	pfn_to_page(PHYS_PFN(phys))
-+
- #endif /* __ASSEMBLY__ */
- 
- #endif
+ .../bindings/serial/fsl,s32-linflexuart.yaml  | 27 ++++++++
+ drivers/tty/serial/fsl_linflexuart.c          | 67 ++++++++++++++-----
+ 2 files changed, 78 insertions(+), 16 deletions(-)
+
 -- 
 2.45.2
 
