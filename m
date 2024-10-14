@@ -1,80 +1,47 @@
-Return-Path: <linux-kernel+bounces-363992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD80699C97D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:54:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0F7E099C983
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:55:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 038221C22291
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:54:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71C9B2856A4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E0FF19E98B;
-	Mon, 14 Oct 2024 11:54:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA66319F40B;
+	Mon, 14 Oct 2024 11:54:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RnaM7Qlj"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FV5EPMmH"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BEF189521
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:54:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED8AF1684B4;
+	Mon, 14 Oct 2024 11:54:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906875; cv=none; b=H/GiNodOS9JKT8BJVqswbqw52VsU5OPZo8XwtIUq5WTdLkQyW9b1TbAjtGnmIP1YghSbx3nb2r+Zbs8/qDhXZNWJotfeFaXZ5qC+tzAewMatklwzQ4bkKBlX98hyE/XHt+Fr8snBedKl4oI2uckw8ks2h6Izfn0SR7nfrDp1je4=
+	t=1728906895; cv=none; b=PrqwP+JS9YMU9JmQa4jz7dY7M/Ftfux4Xj0gEPLuH3qIiXnbAf1e17THzr34+wLuIiteEUgCyXmJhwPAbVCBVOF4MUXjjwAQ6tTfQpbjeiIq4D4zYPkl9g0vcEn67bzdYUY5/hq4W5xu5/3X9E1JdJDYqK9p2W5MIkwbYWzo0ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906875; c=relaxed/simple;
-	bh=PXrpMgAf1em09n35snAXFKH9s/dIccNzU92Hs01D30I=;
+	s=arc-20240116; t=1728906895; c=relaxed/simple;
+	bh=+NUoB2KWnhXVxPJy2rBq9yU3lqucDq8xA8mF45ThAu0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SXI41i0QUmCR5gjUs2MsULRY+0cLPPnDudFzB7Krk5q0ItSSE2WgXjzw2Ple7ddhbOj2kh+3ULcrS/Y1j8zwRpSUNbqQxUHTEFGLJBDYNjrQ58YFjLQbnX8CqgpS+2D3BSH5fMyqg9gm6i1MdHdc+GZ47v5NZfEtcTzeI6G5how=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RnaM7Qlj; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728906873;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Sw8SdMoxvkqT+oJ6QjaS4Mdlocpgg8B3j/K0BV38W8E=;
-	b=RnaM7QljAr+dyCUPEJa5yIQtwvxWPoU15CcyiYn8J9qszpzDw4u+Z/sTKY+D+rvdJW4aIz
-	g108XoEIUHDespx7hVeXsusa+NRZErWszKxqY2u/Tk1A7Wz389huU1bRZco9Hag6JnCTm0
-	sSzhjlfQoEQa4QJ+cd9y7x9Lys5v+fQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-226-J_iO2SA9PbqBbkWRPI5W2w-1; Mon, 14 Oct 2024 07:54:32 -0400
-X-MC-Unique: J_iO2SA9PbqBbkWRPI5W2w-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d5ca5bfc8so1276084f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:54:32 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728906871; x=1729511671;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Sw8SdMoxvkqT+oJ6QjaS4Mdlocpgg8B3j/K0BV38W8E=;
-        b=LcvYWwwLhzYUDp8MXU9oolMVDfk5U7qL1XZL4mmaARdulcOzYauHGc8fY1qTyFEORw
-         TAUcZ4pnWByf/89qWIv5PZYF4kr8qtBNArwRTuykjTLepELA/kVeDJxg8aiDUh09kPey
-         IAt25L/fqKyRWJxIDcTTvWNH+Vd7SR+Ox7NdwCuLSGIONWpSkcO94bjQs8bS4Pjhe36Y
-         DA1hv7z8qdeLHav3uN1joSynu5puel6qQpIh+wfxHz9Io6GIXUZdBnzf/8aCn29AhG5O
-         erU+07QCuFOapGgSu1B0gVzk8554s1sUsIXjP/y21mqTUDtn/mylBE9G9oeKR6spRptG
-         l3Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCW24vxsvGGliIcsjxPUc6uUJHlaNzffP3m0eI6EZCTmrq0G1wDrNsfc4+vBalRNY4s47j3zZeqYTlT0dtE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzU7EIbX2kK48JtBf8j5OgJ9+RFJYk0x5HJzvlE7nAqgwaqo3u7
-	RPDn8cojzXIK0MEfV+pHckOmmkZ7eHR4A/HdnYuRjrz7ia0PZoupnNUKiety1pZ2yOcUBNnQ9Ly
-	hZvXpYvVsDOcBG1x1ZFE7m+bBJEEOuHIa9ua9StqxsYZCF4iVaxb4J+KsC1KZ8g==
-X-Received: by 2002:a05:6000:1092:b0:375:c4c7:c7ac with SMTP id ffacd0b85a97d-37d552cb121mr7706954f8f.49.1728906870991;
-        Mon, 14 Oct 2024 04:54:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEACD/nWJW6zvguB1SSmBU+FZvicY4wNaBqIk+Gz5VEXsWYT2ZpRvnBnDHGA7inU6EB3h6eQw==
-X-Received: by 2002:a05:6000:1092:b0:375:c4c7:c7ac with SMTP id ffacd0b85a97d-37d552cb121mr7706932f8f.49.1728906870578;
-        Mon, 14 Oct 2024 04:54:30 -0700 (PDT)
-Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd584sm11152917f8f.31.2024.10.14.04.54.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 04:54:30 -0700 (PDT)
-Message-ID: <2c854e5e-c200-4ed9-bf21-778779af7e5b@redhat.com>
-Date: Mon, 14 Oct 2024 13:54:27 +0200
+	 In-Reply-To:Content-Type; b=BT5ce7nlnHnGONlxo3yBLs1pDvCbLJIOImNCdHmfdB/cKCkf1zhtDKPohJioqKcaevuIx9NX570bLBUpW5DBkaSf6qz9ZFlDLWHoHuwKfsTc8E6zJn9CjOk24u3yU11SjBVjVWzIlLESgr3IZyJw9V1eeVdCpil7BcPWc712TOQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FV5EPMmH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39FCCC4CEC3;
+	Mon, 14 Oct 2024 11:54:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728906894;
+	bh=+NUoB2KWnhXVxPJy2rBq9yU3lqucDq8xA8mF45ThAu0=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=FV5EPMmHWLILjQG7AjnIK/KE7REyPg1aPSj4yBfGI130RJRgoLpit3fUqfpLCdft2
+	 DevorJj2/Jte8qGD6523sskV0f/ILtOKzPmXrjPQkKhfeok7MD3e92tM1C7A2nJk9O
+	 kXoGAQ55beroPbZPGTkTCujf8GybU2r+VDUQsaeP0MNy2SCz3RKdxC0NdrIVjiPnZb
+	 sNyoc6bLYFihXol/rMtSB7dS4ORuDTS/PD7KT5lZlXjY0b01FaOat+jNwBykaCo0Bi
+	 ehKClRHVlmPNgWGkFonijYRjMgHpH+awob4I0SPoSYveAg/CS2PtALeTRCYSpnfxvH
+	 llbYYTgbyJhcg==
+Message-ID: <e954a3b7-296f-4dbf-8325-b5993d11da92@kernel.org>
+Date: Mon, 14 Oct 2024 13:54:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,130 +49,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] memory: extern memory_block_size_bytes and
- set_memory_block_size_order
-To: Gregory Price <gourry@gourry.net>
-Cc: linux-cxl@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
- linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
- dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
- osalvador@suse.de, gregkh@linuxfoundation.org, rafael@kernel.org,
- akpm@linux-foundation.org, dan.j.williams@intel.com,
- Jonathan.Cameron@huawei.com, alison.schofield@intel.com, rrichter@amd.com,
- terry.bowman@amd.com, lenb@kernel.org, dave.jiang@intel.com,
- ira.weiny@intel.com
-References: <20241008044355.4325-1-gourry@gourry.net>
- <20241008044355.4325-2-gourry@gourry.net>
- <039e8c87-c5da-4469-b10e-e57dd5662cff@redhat.com>
- <ZwVG8Z3GRYLoL_Jk@PC2K9PVX.TheFacebook.com>
- <d3203f2c-eff6-4e84-80cd-3c6f58dab292@redhat.com>
- <ZwVOE6JRS8Fd9_a8@PC2K9PVX.TheFacebook.com>
+Subject: Re: [PATCH v4 00/28] Qualcomm iris video decoder driver
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Hans Verkuil <hverkuil@xs4all.nl>,
+ Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: David Hildenbrand <david@redhat.com>
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <ZwVOE6JRS8Fd9_a8@PC2K9PVX.TheFacebook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 08.10.24 17:21, Gregory Price wrote:
-> On Tue, Oct 08, 2024 at 05:02:33PM +0200, David Hildenbrand wrote:
->> On 08.10.24 16:51, Gregory Price wrote:
->>>>> +int __weak set_memory_block_size_order(unsigned int order)
->>>>> +{
->>>>> +	return -ENODEV;
->>>>> +}
->>>>> +EXPORT_SYMBOL_GPL(set_memory_block_size_order);
->>>>
->>>> I can understand what you are trying to achieve, but letting arbitrary
->>>> modules mess with this sounds like a bad idea.
->>>>
->>>
->>> I suppose the alternative is trying to scan the CEDT from inside each
->>> machine, rather than the ACPI driver?  Seems less maintainable.
->>>
->>> I don't entirely disagree with your comment.  I hummed and hawwed over
->>> externing this - hence the warning in the x86 machine.
->>>
->>> Open to better answers.
->>
->> Maybe an interface to add more restrictions on the maximum size might be
->> better (instead of setting the size/order, you would impose another upper
->> limit).
+On 14/10/2024 11:07, Dikshita Agarwal wrote:
+> Introduce support for Qualcomm new video acceleration hardware i.e.
+> iris, used for video stream decoding.
 > 
-> That is effectively what set_memory_block_size_order is, though.  Once
-> blocks are exposed to the allocators, its no longer safe to change the
-> size (in part because it was built assuming it wouldn't change, but I
-> imagine there are other dragons waiting in the shadows to bite me).
-
-Yes, we must run very early.
-
-How is this supposed to interact with code like
-
-set_block_size()
-
-that also calls set_memory_block_size_order() on UV systems (assuming 
-there will be CXL support sooner or later?)?
-
-
+> Iris is a multi pipe based hardware that offloads video stream decoding
+> from the application processor (AP). It supports H.264 decoding.
+> The AP communicates with hardware through a well defined protocol,
+> called as host firmware interface (HFI), which provides fine-grained
+> and asynchronous control over individual hardware features.
 > 
-> So this would basically amount to a lock-bit being set in the architecture,
-> beyond which block size can no longer be changed and a big ol' splat
-> can be generated that says "NO TOUCH".
+> This driver implements upgraded HFI gen2 to communicate with firmware.
+> It supports SM8550 which is based out of HFI gen 2. It also supports
+> SM8250 which is based out of HFI gen1.
 > 
->> Just imagine having various users of such an interface ..
+> This driver comes with below capabilities:
+> - V4L2 complaint video driver with M2M and STREAMING capability.
+> - Supports H264 decoder.
 > 
-> I don't wanna D:
+> This driver comes with below features:
+> - Centralized resource management.
+> - Centralized management of core and instance states.
+> - Defines platform specific capabilities and features. As a results, it
+>   provides a single point of control to enable/disable a given feature
+>   depending on specific platform capabilities.
+> - Handles various video recommended sequences, like DRC, Drain, Seek,
+>   EOS.
+> - Implements asynchronous communication with hardware to achieve better
+>   experience in low latency usecases.
+> - Output and capture planes are controlled independently. Thereby
+>   providing a way to reconfigure individual plane.
+> - Native hardware support of LAST flag which is mandatory to align with
+>   port reconfiguration and DRAIN sequence as per V4L guidelines.
+> 
+> Changes since v3:
 
-Right, and it also doesn't make sense as explained in my other comment: 
-this should never apply to loaded modules. :)
+You send the patches with b4, so why do you strip the link to previous
+series? It makes out life just more difficult. Include the link, how the
+b4 instructs you.
 
--- 
-Cheers,
-
-David / dhildenb
+Best regards,
+Krzysztof
 
 
