@@ -1,391 +1,538 @@
-Return-Path: <linux-kernel+bounces-364203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B230F99CCAD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:23:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 247B499CCA9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:22:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A94D1C21802
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:23:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 488E41C218DC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:22:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355B61A76C4;
-	Mon, 14 Oct 2024 14:22:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED2941547F3;
+	Mon, 14 Oct 2024 14:22:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b="M9I48B2w";
-	dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b="Y7qjiG6W"
-Received: from mx07-00376f01.pphosted.com (mx07-00376f01.pphosted.com [185.132.180.163])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FE5fTdDo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VZVabL8q";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FE5fTdDo";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="VZVabL8q"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4769A14A614
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:22:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=185.132.180.163
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728915777; cv=fail; b=oTeBruAY0pE5eQ/gSM7/9dMLFeu9PgG3fmDMUGZkzDhWFMRwkx+/P1JTZe2OKHpGL3G7NI3V78P8q0w+zJmvXMDhKqBeR6CE/Z+IfI1SrDRiHxahpRDK1aY9ZEdCimDFs0mfevMTS0gAI18yAE4COS7QHcRZXvn/yw8PlScTh4Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728915777; c=relaxed/simple;
-	bh=bKDs89vRDrhqv9UVH3sdT9iFeVq6qgwLBt8GcQY9pgM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=ZoeHIkeUaEFqy8GedBNhS9Is9bMVwzUsQS5POHJkhPGZncCE0FNqghXFXU16ZXrP0XWTZ9609jPIaVLLht+ByhfTyajGPzCxQ5fj/eNibCMkJUVC2He/JxDpzety7kV8wsLAs4O0Rq3/f/4L4F+QZK00tmjDnpY8RnHd32GCpKg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com; spf=pass smtp.mailfrom=imgtec.com; dkim=pass (2048-bit key) header.d=imgtec.com header.i=@imgtec.com header.b=M9I48B2w; dkim=pass (1024-bit key) header.d=IMGTecCRM.onmicrosoft.com header.i=@IMGTecCRM.onmicrosoft.com header.b=Y7qjiG6W; arc=fail smtp.client-ip=185.132.180.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=imgtec.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=imgtec.com
-Received: from pps.filterd (m0168889.ppops.net [127.0.0.1])
-	by mx07-00376f01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E689cD003071;
-	Mon, 14 Oct 2024 15:22:42 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=imgtec.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=dk201812; bh=Y1W73LQbn0Pua5uG7QH4AADD2
-	X8OHkLtOO++ToKXmvo=; b=M9I48B2wqWSkQXyYp4Gw7T83NsuhFw6uKOh4MOehL
-	QM1btgNeRxlEquPnfj9kPwwRDGL6p80g1ga0Wblr8OFbH+/HAHaBM5H3/xpyxQWb
-	67WDDiVRIRAq70Us4KbsyB64+2r4DGUgClI6Q0LPRDvmFZT+WGsgwpqIOuKSn9RS
-	uviAye95+LWM+RzoIpaZf/HdXYeurdD489RktrT4WuToEYsndO3EBw/63EXrAxcq
-	N+g24kq+yNckxDrIp0fbHJiZnwlHca6w05qzG9WU3ohxAkSPuG0KMBADYmYjHagS
-	pxIEc49fDIY04NeZo+AJVxgvT05tjKuTt2jehNvituwpg==
-Received: from cwxp265cu009.outbound.protection.outlook.com (mail-ukwestazlp17011027.outbound.protection.outlook.com [40.93.68.27])
-	by mx07-00376f01.pphosted.com (PPS) with ESMTPS id 427h6w29dp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 15:22:41 +0100 (BST)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SauoFDARB9R8AjAUbkIa6PJYGujdU9K3nU1dJFmDCEXQpHRZhz69cf1xoXPU5DNmEh/qX5RocdlYplrUw9YPwoH1M0xm6vyuzJRSW3Vler4vNaNPE1tbDDm0ySE3kjhtTceyqh1StPAcT4gploKOeOytFfMnEvFirwz4Yr4+gyT8KE/nKQ0euTnvEIJDlC9g2b2n0bASBSU+db7bEkMzF2t4GBfpr5X8aAG53Ldjxj+FYqDz97VGZVzlKQnE9mdvRvY9iBe/16QwoKwlAo3PB4Zk81ZVkgo77OtlzXnroX2nx6d2490EM4ZoDj+Nj41SvuWJylKEhUT6iTpfKgFeAw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Y1W73LQbn0Pua5uG7QH4AADD2X8OHkLtOO++ToKXmvo=;
- b=xTt2jC4D+Gde2UfbdEyXvYtdUvzrH70O8eZciRnjJ+LZ49/ZOBMy98/gAJZIhXzyPJz3ef79C0K8+u/X0Tuankjt96c9saeGRuEFb+nAC5CzDeRjQqtJ3xpUq+WPWKqJc2B4rdWsa95ypE/x3Lo3fUiwEi2pQ6bAy/NE4xnSEQLkeSCESbVGStuCfijWaANDJ7BsDbObkonfnyLkuQeE546KYLk0GKTry+vKwBZgRSzPIIygK9YeSZipQGaD26YRgQadc55jrdK6dS7rX5Phi062tpf7/fwIuf/VcQmrl0wIjpwlrn2D4ifSHZC4n2pU7VzuhXAfM9aKdmYoMIBAqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=imgtec.com; dmarc=pass action=none header.from=imgtec.com;
- dkim=pass header.d=imgtec.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=IMGTecCRM.onmicrosoft.com; s=selector2-IMGTecCRM-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=Y1W73LQbn0Pua5uG7QH4AADD2X8OHkLtOO++ToKXmvo=;
- b=Y7qjiG6Wgj6LVxro2gUV8xKYTJgYaGU9aM6MWR9aAwQbdVTotvV2TlanH+Ov6bLmfHRNi+4BxSjLEeQrONMv5x84Ffzy9CDaXbrDtxUQTCTyJBlRhRp5lwfzyN5b4yEzW66JCMQ654hbWMn+BGR/lRcWM0FChlWbXwmvaOYHAjE=
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM (2603:10a6:400:e7::8) by
- LO0P265MB5894.GBRP265.PROD.OUTLOOK.COM (2603:10a6:600:289::8) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.27; Mon, 14 Oct 2024 14:22:38 +0000
-Received: from CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15]) by CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
- ([fe80::8e9d:6b2f:9881:1e15%3]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 14:22:38 +0000
-From: Matt Coster <Matt.Coster@imgtec.com>
-To: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>
-CC: Brendan King <Brendan.King@imgtec.com>,
-        Frank Binns
-	<Frank.Binns@imgtec.com>,
-        Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
-        "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 1/2] drm/imagination: Add a per-file PVR context list
-Thread-Topic: [PATCH v2 1/2] drm/imagination: Add a per-file PVR context list
-Thread-Index: AQHbHkSFDE160/GjWkq3Mfb72eyJpg==
-Date: Mon, 14 Oct 2024 14:22:38 +0000
-Message-ID: <e0686c53-b16b-4202-9f74-abe5139e24d3@imgtec.com>
-References: <bf5cdfa3-5196-485a-b5ed-5a0e698dfc40@imgtec.com>
-In-Reply-To: <bf5cdfa3-5196-485a-b5ed-5a0e698dfc40@imgtec.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach: yes
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CWXP265MB3397:EE_|LO0P265MB5894:EE_
-x-ms-office365-filtering-correlation-id: 5ba05169-b26b-4c42-f80d-08dcec5ba80b
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?OVNrOUx1VUtzdUlhalE0K3oyZXZOU0tLZlk4Kzg0Qi9WT08wQzVsSXFqWGpz?=
- =?utf-8?B?YXZlS2pBYmNubjhWUExDTkdrZnpCUUpicTcreENHaDlKdEtrWWRKNTRVa2Vi?=
- =?utf-8?B?c3pIRnM0eUF2MlFXOGVFbGNpaUg4Y0xMazR3QmxTdzVJMkVHOXBpU0p2NW9u?=
- =?utf-8?B?dUxkTWVMQUxWbXg2UHIreFBMZkYvcW1FWXdmV3pkL2hVNUkzZ2pBVUJzUUhS?=
- =?utf-8?B?ZTQ1SmM0cVBjYTQrWGgydE9McWYvalc2c2VMSFVxd0luQkFBWENrRW1UUStN?=
- =?utf-8?B?TjhSZzBxdHg2MVNBTW5rdEZ6UG4zNXdZSG91V0haM01LdmROS0VhMDZGWmFh?=
- =?utf-8?B?TlMyT244c0s1QkJmM3JGT0pvQ2JhV0s4M09VVWRFZ3p3ZVZJRzM4UUIzSmdU?=
- =?utf-8?B?UGdPU2tEK2ZKemkxdDNOckZUM3dWSGk1MmYxZTZsazl2OURhYlpsbHpGQmMw?=
- =?utf-8?B?d205OE0rTnJkOS9SdU9LRENpVWx3cFYwUTY3ckc2L0dvN29qYWtlNGRlREk3?=
- =?utf-8?B?VHVhZDFBcVVKT0xSTUNRaXdJWk85TlpmcEgweGNyTnA3TEQvM1JFQWZaemtO?=
- =?utf-8?B?M1RCbWZ0YWd2UWJyaG9FVEhNT0pacG4zS1dWNy9mN2xXLzFWMDUrVGJaemxQ?=
- =?utf-8?B?RkNJcXVBNksxQnZWRTZQZjBibW9kNVFUUk11N2JCN2J0ZmNjUFJKbU9pQkNW?=
- =?utf-8?B?MFFRZWwwVXVpNXBUWk40NzVOcDl3SlVjZU9yRXJFQlRlNllRVnJLQVZYNWVH?=
- =?utf-8?B?amVMNkVkQWNsaUUrbWZyZDJ0QU9ZbURFRDg4dlgrQmVBNERSS2Zxb1F2d0hR?=
- =?utf-8?B?Q2lBcDh1eG9pakFMTXIvcjJyaWhCV21zTzE5ZWZIT3YyMitsaVNaVVNUSjFY?=
- =?utf-8?B?c2xEaDgrVWJ1emNmd3FHQTIrWFpjaXdtZ1liU25DZDN3K2ltcXUvcmJZTVhI?=
- =?utf-8?B?R1VNOVpybm1scFRhRFVTbGtQZzE0Uy82elYvclkrSFhmZVRKZjNOMWdQby9U?=
- =?utf-8?B?c0oxOXJOUmkvZjB1RUhDZ1NlMTZVNE9Uemk5bkg1VWJYeFpNM2FrbloyNTJL?=
- =?utf-8?B?aVdUVHIvZXJHY3V1RFpRb3h6Vko0SUNlRUJWVXNxTTFYMmVNRllSWHRuNkRU?=
- =?utf-8?B?T09uQUZFU25IaCtDcGx1MlovTThCYlJYdk5LaU1GYnJETmFybkF5TzJTN3Va?=
- =?utf-8?B?T1R1OXdhNEQxcWZ3QWFSRHdOOHh1TkZKcHNLMk1VZ0ZyUy9wNnRGcng0Y3dn?=
- =?utf-8?B?R2JpUlRmcHVqdmhDNld1cTJSd24yVDdIcklKNnYyMkpwOVpSQnBrWnpSM2dU?=
- =?utf-8?B?aG1JZDc1UU94ZjVOUGlleThqbVNBRUJvOVlUNHhmUklaakwvUG8xK0d2dlRG?=
- =?utf-8?B?SkIzaFZTWEJuNnNnaHREU3dGNDVEQ2JBYm9lNFBodVh6WFEvZnh6bFB1dGhG?=
- =?utf-8?B?SWtIRDJmaGx2WTA2dy8zYnlDVHJ2TExGMmpQbWFLdkFVcWpVSW12RlFBak15?=
- =?utf-8?B?U0tTZ3lIQ0ROMWluaDE5dER2Mkl4NEp1Z3c1REs2N2NTSGhhd25wdDFSM1Bm?=
- =?utf-8?B?NHB2dzFaK0dNa1JuUCtBMzVrVjJWQlowZnNCeU1NdUtWWUtjMHR3UFVOcnlS?=
- =?utf-8?B?NHhEOElzU2l4ODduL0FvMis0WGppTE1sM2hPbFFZU0pBdk44K3JFNGVYKzZ5?=
- =?utf-8?B?RWNFVDhBSmh5a3RwLzZiY0wyeWtjU1JiSHM1TXhQRU5SUk4raXNFeGgwYzl0?=
- =?utf-8?B?c290aWwxQlZqVnFGR0Qrc1BLZ29FOUpXbjhmNHNOVjZteWY5QjhBalcreEFy?=
- =?utf-8?B?ZjRRbWFjV01hRzMwczUzdz09?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?cXpyK2hVK1lWUHdZVlBDM2xrcitDSXllc3JoWjIvTjc5cXk3YmliQWRlVFBT?=
- =?utf-8?B?Yy9oSnFValQvYmxITWVaa1pRZlZocGtwS2xYaFpvRTRuNXA0QVpkbjdCV2Fr?=
- =?utf-8?B?T01PeXBQaGE3VjlHSUVEM2J1dGFIcTlWTkxKY2F3VXd6bkc0MmxML2w1V1gz?=
- =?utf-8?B?Q0RKL0V4UGorcmNrUEtCaWtGZ3JQQ2NWSkMrZFM2dGdnU3pFd1Nja25RTXJ5?=
- =?utf-8?B?VTluUkFXVFNFZjN6eTZnZ2d2cmZRS3VEQWQzN2NQYjdwOTlISGVLUDdMaVJX?=
- =?utf-8?B?M3pndTFUeXdaallaSEtSWDJ2T3JVV3VIS0plOTZMQjUzVzJtSUxGdm81VHBn?=
- =?utf-8?B?czNsaDd5VHhXa2N5Q1VwWXVEZWZybFV1TlRyaVhGMHhSRklTKzFRaTVuTEs0?=
- =?utf-8?B?czVWa3cvVG8wcmJjazgwVW9VR21pTjZFZEU1L3YvdS9xTmFySTQybE9Qbjlw?=
- =?utf-8?B?ZEVJQVhNWTY3djVZY0g2MUp6NXhQYmlzaUtzZnNHWS9hanpWa2RnTDAva200?=
- =?utf-8?B?bndSd0ZaU0pkZGladTI3MXJyN0JXOENtSEdkQkdxVE1iRkEwdC96Y2U4TkVR?=
- =?utf-8?B?OEZuL21SaGxHM0N4N2swQldIbXhzZXltYUZjVHVMWWE5aGpzVEh6Wkx1My9S?=
- =?utf-8?B?U2tiY0t4VU1TUndPSnkwQ2pGWXJsc2Y2bjJaOG9jcWt0Q2xiUURPUXZ0R01p?=
- =?utf-8?B?d0hjOTN0UnB5ZVZiL1dkcGtUVXZSWm9IVkpIYUQ3eXE1bStzK0JzdVVqQi9w?=
- =?utf-8?B?b0wvQVZWeWdVeGlLSE1KS2xHUStLenI0Z08xMFZyUDIxRXlIbDQ4Qkd3dzkr?=
- =?utf-8?B?K2cxRytPSHFHRWxGc29sS2w4Z2cxbUNkaG9rL3RmL3Y4N3BQaVdBZElFRjFv?=
- =?utf-8?B?ZjQ1MFp1b2s0RDZIQnZ3VlBUSEs3WGYzbk8wY3NrWWttYVF2czlLb3Q4S00x?=
- =?utf-8?B?UmVpYVdNT1BsSm9pVFBqWHdHU2xFRmk2OVFZbFFUZmNtY3NHWll0b2wyTnZQ?=
- =?utf-8?B?dE9ZZm9MaFdKYWQzRFpNbGh5Tm13cFczSCtFa2tobUluVFhmeFRndUowd3Ur?=
- =?utf-8?B?blhONTN6VWEvWmtXTkVQaTRQcGorTE4rYXRBL29iOTVaUUs4aGRySjlrZjNu?=
- =?utf-8?B?dFNvdEtWZVZHczF1ajBQZTF4cEpUL2ZxT1l3UUdoR2dONHVHd0ZteFVUV3VW?=
- =?utf-8?B?YW5xSjd5aGJETXd2NkNYZkozempZSjZ2Y3ZWR09GTmdJZ1VmbElUeHNLUjhW?=
- =?utf-8?B?ODRKS09OU1JjVnhiRExoc2NFSGNncGR4YitMT2Y0ZTdBR3NrblRmVWNnbWFC?=
- =?utf-8?B?T1Zqb2RFY2pQOHV2UEEzZUx1K1BrSkkxWHhYY0h1OEE0WUQ3OXRVTElDbEdl?=
- =?utf-8?B?TW42ckZPOXBKTDdZd3hIT3VweGFNSVdYdFpDWGhlUmlSZVFVSVpFd0t3WXN2?=
- =?utf-8?B?M29LS2ZaT0NiVlMzdEg2RnhHWjduRVhSZldHL2xzZlYvL1ZYU2l6NktjQUxp?=
- =?utf-8?B?RHp2N0llSGJDT1VXbm04bmJUMWY1dlVkakx6Mkx3NXNPaDZReFBaazVzNDA3?=
- =?utf-8?B?MHJDcHJJOURaRjhSbHVubFp0aEJVYjBEYVFqSFdQN0loeGVFRTVrQkpUQ0Ju?=
- =?utf-8?B?MUt3SkwyOU5Jd3IrTjA1VVFDdWwzNmZXM3paWS9MR2NoKzVZL0dRM29KMitm?=
- =?utf-8?B?TkxMcXlmN3ZnVzhmNE03SkVqcVBYVWtMaUtVYzJCanZkSGNmSEJSQ1VmY3Jm?=
- =?utf-8?B?b0ViaCtYVnZpYzZ5cmdPRzlaSE9WMFkyaVIzZFBTQ2crb2RVNlhOWEp2K0N6?=
- =?utf-8?B?aW85cVFYTlpySmNKWSsvSjNGMXVwek1nbjJSczlwS0NIb2NkK2FhZnZDaU1Y?=
- =?utf-8?B?WFVrRklZR2hvZU5INjRIdzdsYVpMMXR4dTkvc3FlaHBKV1d5MUR2bm1qUUI5?=
- =?utf-8?B?bkJ5MjNaekNDaStWa25yMmJVelM3NGtkc3BhaWZlMWFIdGthc2NSRTBYVnVI?=
- =?utf-8?B?Z3lHRWVMTEpxVWFpK0Z4Q2pTdmcweCtib3d5WC9GSDcwL0lta0toOGZJS01v?=
- =?utf-8?B?TjZGOHhYaExlUitrWEN6amhOdnA4VHR3cHJEelRTamdNTHZkOFMvNGF5T0xz?=
- =?utf-8?B?SEEwaEI5RHZTS3VhMVkza3pyVEQwOWxlT3UyWEpieUE0K2g2MGZYUEZWMDhS?=
- =?utf-8?B?UXc9PQ==?=
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------vUxJuVnRFiGBB4ltNmZwLKMK"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62F06E571
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728915763; cv=none; b=knq++Sa2r9DlqiU2KJfta2yEINpbaFJnAIyA0RgyYRMOAm++NIC1n4ViA//yt/9KmiE+rIhZcqYUgHECxmo6GngJPD7TrmMxsztxhhiUv5quDFzqYE0mtHOHnqG1tq0Rr3vfby9lcOqW3cF3+QrkaM9ZwI2MIU5pvy2S7mQ2whQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728915763; c=relaxed/simple;
+	bh=gNfwZPiPRpzGUtP7oqJbTfdW6R2pPP8E8ZFROI5gtWE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sY0poOfQ4iUCdRokPMQqnGQrrzXzFk1NzNfiBnvWbxH2CsIkx0JGCqfkNSKlmoFyhXSUrtVobC1yIpRo4tOTd9OSSsYjaqCNnW0cmEi9vYzaTbTA/DUQAGQwSnQlecSmeshxEczztlJtKki89y5N+3xj5urJYCBh7zevFQ0WHkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FE5fTdDo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VZVabL8q; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FE5fTdDo; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=VZVabL8q; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 652A91F793;
+	Mon, 14 Oct 2024 14:22:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728915759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KH2agdZ/HVjvaNuR068wqqnkeVeVY2POa398uHmb9rk=;
+	b=FE5fTdDobz8PwL17qDaLalniQgtzcLr7tuZEHwlFJqWRQBUYHyU4UH0LFCPzeUZG71jfie
+	c3DRbZAu/42c2pTcam2HgTQ+L3/NLjJGNowDcFweDtyxakozQxVdMnk9xEvWJ7xLzARx6G
+	xKVL+hs9bh8LS0nuqsZSb11sQFUUTMk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728915759;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KH2agdZ/HVjvaNuR068wqqnkeVeVY2POa398uHmb9rk=;
+	b=VZVabL8qeReBh54D+xhTiNcQbFmOVYRG++IEs0BWQWamx7wIoZ4A7DuZLOn5pDSmTlCwOd
+	yr7elb+WzHDxGDCA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=FE5fTdDo;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=VZVabL8q
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728915759; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KH2agdZ/HVjvaNuR068wqqnkeVeVY2POa398uHmb9rk=;
+	b=FE5fTdDobz8PwL17qDaLalniQgtzcLr7tuZEHwlFJqWRQBUYHyU4UH0LFCPzeUZG71jfie
+	c3DRbZAu/42c2pTcam2HgTQ+L3/NLjJGNowDcFweDtyxakozQxVdMnk9xEvWJ7xLzARx6G
+	xKVL+hs9bh8LS0nuqsZSb11sQFUUTMk=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728915759;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=KH2agdZ/HVjvaNuR068wqqnkeVeVY2POa398uHmb9rk=;
+	b=VZVabL8qeReBh54D+xhTiNcQbFmOVYRG++IEs0BWQWamx7wIoZ4A7DuZLOn5pDSmTlCwOd
+	yr7elb+WzHDxGDCA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 53A0D13A51;
+	Mon, 14 Oct 2024 14:22:39 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id rMKBFC8pDWelZgAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 14:22:39 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 10713A0896; Mon, 14 Oct 2024 16:22:39 +0200 (CEST)
+Date: Mon, 14 Oct 2024 16:22:39 +0200
+From: Jan Kara <jack@suse.cz>
+To: Hui Guo <guohui.study@gmail.com>
+Cc: Dave Kleikamp <shaggy@kernel.org>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	"Matthew Wilcox (Oracle)" <willy@infradead.org>,
+	Lizhi Xu <lizhi.xu@windriver.com>,
+	jfs-discussion@lists.sourceforge.net, linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: BUG: unable to handle kernel NULL pointer dereference in
+ write_special_inodes
+Message-ID: <20241014142239.7h53tahoczkmaww2@quack3>
+References: <CAHOo4gKf2mjPX8oAxCBUc74=+OToMdu6pe6iALGCOmXjToFaKw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: imgtec.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CWXP265MB3397.GBRP265.PROD.OUTLOOK.COM
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5ba05169-b26b-4c42-f80d-08dcec5ba80b
-X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2024 14:22:38.4687
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 0d5fd8bb-e8c2-4e0a-8dd5-2c264f7140fe
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: P0uSY9D1bynJ1Y3MF1JhMj+Q+CjNdQXTmrasMZC+0kect1Tckc/IluKUDEZOcWv5DkqRvADEEfy35aF6ebuj+Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LO0P265MB5894
-X-Authority-Analysis: v=2.4 cv=LbZu6Sfi c=1 sm=1 tr=0 ts=670d2932 cx=c_pps a=OsxvgCVCPgftFDG+4S7SsQ==:117 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=DAUX931o1VcA:10 a=WnR_qW7rlZcA:10 a=NgoYpvdbvlAA:10 a=r_1tXGB3AAAA:8 a=2zjTdtMHGxF8P-iNuwwA:9
- a=QEXdDO2ut3YA:10 a=lyOg1_WVnN3a3aLNPZIA:9 a=FfaGCDsud1wA:10 a=t8nPyN_e6usw4ciXM-Pk:22
-X-Proofpoint-ORIG-GUID: 6BKH6nL-rZfBRCRV4uujK9O7Ump1k5dJ
-X-Proofpoint-GUID: 6BKH6nL-rZfBRCRV4uujK9O7Ump1k5dJ
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHOo4gKf2mjPX8oAxCBUc74=+OToMdu6pe6iALGCOmXjToFaKw@mail.gmail.com>
+X-Rspamd-Queue-Id: 652A91F793
+X-Spam-Score: -2.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-2.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FREEMAIL_TO(0.00)[gmail.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:email,suse.cz:dkim]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
---------------vUxJuVnRFiGBB4ltNmZwLKMK
-Content-Type: multipart/mixed; boundary="------------o50onOTlKGAl0QaRkrN6eO2i";
- protected-headers="v1"
-From: Matt Coster <matt.coster@imgtec.com>
-To: dri-devel@lists.freedesktop.org
-Cc: Brendan King <brendan.king@imgtec.com>,
- Frank Binns <frank.binns@imgtec.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
- linux-kernel@vger.kernel.org
-Message-ID: <e0686c53-b16b-4202-9f74-abe5139e24d3@imgtec.com>
-Subject: [PATCH v2 1/2] drm/imagination: Add a per-file PVR context list
-References: <bf5cdfa3-5196-485a-b5ed-5a0e698dfc40@imgtec.com>
-In-Reply-To: <bf5cdfa3-5196-485a-b5ed-5a0e698dfc40@imgtec.com>
+Hello,
 
---------------o50onOTlKGAl0QaRkrN6eO2i
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+On Sat 12-10-24 17:13:40, Hui Guo wrote:
+> we found a crash "BUG: unable to handle kernel NULL pointer
+> dereference in write_special_inodes" in upstream, and reproduced it
+> successfully.
 
-From: Brendan King <brendan.king@imgtec.com>
+The reproducer is just mounting corrupted JFS image. Unless Shaggy is
+willing to dive into this I don't think this will be acted upon because JFS
+is mostly dead.
 
-This adds a linked list of VM contexts which is needed for the next patch=
+									Honza
 
-to be able to correctly track VM contexts for destruction on file close.
-
-It is only safe for VM contexts to be removed from the list and destroyed=
-
-when not in interrupt context.
-
-Signed-off-by: Brendan King <brendan.king@imgtec.com>
-Signed-off-by: Matt Coster <matt.coster@imgtec.com>
----
-Changes in v1 -> v2:
- - Add justification to the commit message so it stands on its own (e.g.
-   during bisect)
----
- drivers/gpu/drm/imagination/pvr_context.c | 14 ++++++++++++++
- drivers/gpu/drm/imagination/pvr_context.h |  3 +++
- drivers/gpu/drm/imagination/pvr_device.h  | 10 ++++++++++
- drivers/gpu/drm/imagination/pvr_drv.c     |  3 +++
- 4 files changed, 30 insertions(+)
-
-diff --git a/drivers/gpu/drm/imagination/pvr_context.c b/drivers/gpu/drm/=
-imagination/pvr_context.c
-index eded5e955cc0..255c93582734 100644
---- a/drivers/gpu/drm/imagination/pvr_context.c
-+++ b/drivers/gpu/drm/imagination/pvr_context.c
-@@ -17,10 +17,14 @@
-=20
- #include <drm/drm_auth.h>
- #include <drm/drm_managed.h>
-+
-+#include <linux/bug.h>
- #include <linux/errno.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
- #include <linux/sched.h>
- #include <linux/slab.h>
-+#include <linux/spinlock.h>
- #include <linux/string.h>
- #include <linux/types.h>
- #include <linux/xarray.h>
-@@ -354,6 +358,10 @@ int pvr_context_create(struct pvr_file *pvr_file, st=
-ruct drm_pvr_ioctl_create_co
- 		return err;
- 	}
-=20
-+	spin_lock(&pvr_dev->ctx_list_lock);
-+	list_add_tail(&ctx->file_link, &pvr_file->contexts);
-+	spin_unlock(&pvr_dev->ctx_list_lock);
-+
- 	return 0;
-=20
- err_destroy_fw_obj:
-@@ -380,6 +388,11 @@ pvr_context_release(struct kref *ref_count)
- 		container_of(ref_count, struct pvr_context, ref_count);
- 	struct pvr_device *pvr_dev =3D ctx->pvr_dev;
-=20
-+	WARN_ON(in_interrupt());
-+	spin_lock(&pvr_dev->ctx_list_lock);
-+	list_del(&ctx->file_link);
-+	spin_unlock(&pvr_dev->ctx_list_lock);
-+
- 	xa_erase(&pvr_dev->ctx_ids, ctx->ctx_id);
- 	pvr_context_destroy_queues(ctx);
- 	pvr_fw_object_destroy(ctx->fw_obj);
-@@ -451,6 +464,7 @@ void pvr_destroy_contexts_for_file(struct pvr_file *p=
-vr_file)
- void pvr_context_device_init(struct pvr_device *pvr_dev)
- {
- 	xa_init_flags(&pvr_dev->ctx_ids, XA_FLAGS_ALLOC1);
-+	spin_lock_init(&pvr_dev->ctx_list_lock);
- }
-=20
- /**
-diff --git a/drivers/gpu/drm/imagination/pvr_context.h b/drivers/gpu/drm/=
-imagination/pvr_context.h
-index 0c7b97dfa6ba..a5b0a82a54a1 100644
---- a/drivers/gpu/drm/imagination/pvr_context.h
-+++ b/drivers/gpu/drm/imagination/pvr_context.h
-@@ -85,6 +85,9 @@ struct pvr_context {
- 		/** @compute: Transfer queue. */
- 		struct pvr_queue *transfer;
- 	} queues;
-+
-+	/** @file_link: pvr_file PVR context list link. */
-+	struct list_head file_link;
- };
-=20
- static __always_inline struct pvr_queue *
-diff --git a/drivers/gpu/drm/imagination/pvr_device.h b/drivers/gpu/drm/i=
-magination/pvr_device.h
-index b574e23d484b..6d0dfacb677b 100644
---- a/drivers/gpu/drm/imagination/pvr_device.h
-+++ b/drivers/gpu/drm/imagination/pvr_device.h
-@@ -23,6 +23,7 @@
- #include <linux/kernel.h>
- #include <linux/math.h>
- #include <linux/mutex.h>
-+#include <linux/spinlock_types.h>
- #include <linux/timer.h>
- #include <linux/types.h>
- #include <linux/wait.h>
-@@ -293,6 +294,12 @@ struct pvr_device {
-=20
- 	/** @sched_wq: Workqueue for schedulers. */
- 	struct workqueue_struct *sched_wq;
-+
-+	/**
-+	 * @ctx_list_lock: Lock to be held when accessing the context list in
-+	 *  struct pvr_file.
-+	 */
-+	spinlock_t ctx_list_lock;
- };
-=20
- /**
-@@ -344,6 +351,9 @@ struct pvr_file {
- 	 * This array is used to allocate handles returned to userspace.
- 	 */
- 	struct xarray vm_ctx_handles;
-+
-+	/** @contexts: PVR context list. */
-+	struct list_head contexts;
- };
-=20
- /**
-diff --git a/drivers/gpu/drm/imagination/pvr_drv.c b/drivers/gpu/drm/imag=
-ination/pvr_drv.c
-index 1a0cb7aa9cea..fb17196e05f4 100644
---- a/drivers/gpu/drm/imagination/pvr_drv.c
-+++ b/drivers/gpu/drm/imagination/pvr_drv.c
-@@ -28,6 +28,7 @@
- #include <linux/export.h>
- #include <linux/fs.h>
- #include <linux/kernel.h>
-+#include <linux/list.h>
- #include <linux/mod_devicetable.h>
- #include <linux/module.h>
- #include <linux/moduleparam.h>
-@@ -1326,6 +1327,8 @@ pvr_drm_driver_open(struct drm_device *drm_dev, str=
-uct drm_file *file)
- 	 */
- 	pvr_file->pvr_dev =3D pvr_dev;
-=20
-+	INIT_LIST_HEAD(&pvr_file->contexts);
-+
- 	xa_init_flags(&pvr_file->ctx_handles, XA_FLAGS_ALLOC1);
- 	xa_init_flags(&pvr_file->free_list_handles, XA_FLAGS_ALLOC1);
- 	xa_init_flags(&pvr_file->hwrt_handles, XA_FLAGS_ALLOC1);
---=20
-2.47.0
-
-
-
---------------o50onOTlKGAl0QaRkrN6eO2i--
-
---------------vUxJuVnRFiGBB4ltNmZwLKMK
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQS4qDmoJvwmKhjY+nN5vBnz2d5qsAUCZw0pLgUDAAAAAAAKCRB5vBnz2d5qsA3j
-AQDpHZXgelDi+95aNWJLjHSgoxQjugN9MCMkXukMViBJAgEAo205ysrQY7iPmp39pN6sKwhvKhXW
-dySf6C5vI9YnQQ4=
-=o+H3
------END PGP SIGNATURE-----
-
---------------vUxJuVnRFiGBB4ltNmZwLKMK--
+> 
+> 
+> HEAD Commit: 9852d85ec9d492ebef56dc5f229416c925758edc(tag 'v6.12-rc1')
+> kernel config: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/6.12.config
+> 
+> repro report: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/e4653eb3a7397c5782f96343fe9dbc5dada06496/repro.report
+> console output:
+> https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/e4653eb3a7397c5782f96343fe9dbc5dada06496/repro.log
+> syz reproducer:
+> https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/e4653eb3a7397c5782f96343fe9dbc5dada06496/repro.prog
+> c reproducer: https://raw.githubusercontent.com/androidAppGuard/KernelBugs/main/9852d85ec9d492ebef56dc5f229416c925758edc/e4653eb3a7397c5782f96343fe9dbc5dada06496/repro.cprog
+> 
+> 
+> Please let me know if there is anything I can help.
+> Best,
+> Hui Guo
+> 
+> This is the crash log I got by reproducing the bug based on the above
+> environment，
+> I have piped this log through decode_stacktrace.sh for better
+> understand the cause of the bug.
+> ================================================================================
+> executing program
+> syzkaller login: [ 43.704796][ T8242] loop3: detected capacity change
+> from 0 to 32768
+> [ 43.707859][ T8215] loop0: detected capacity change from 0 to 32768
+> [ 43.733656][ T8239] loop2: detected capacity change from 0 to 32768
+> [ 43.759686][ T8234] loop1: detected capacity change from 0 to 32768
+> [ 43.921958][ T8248] loop5: detected capacity change from 0 to 32768
+> [ 43.947086][ T8243] loop4: detected capacity change from 0 to 32768
+> [ 43.969139][ T8250] loop9: detected capacity change from 0 to 32768
+> [ 43.986996][ T8254] loop14: detected capacity change from 0 to 32768
+> [ 44.060631][ T8218] BUG: kernel NULL pointer dereference, address:
+> 0000000000000030
+> [ 44.061395][ T8218] #PF: supervisor read access in kernel mode
+> [ 44.061959][ T8218] #PF: error_code(0x0000) - not-present page
+> [ 44.062526][ T8218] PGD 0 P4D 0
+> [ 44.062898][ T8218] Oops: Oops: 0000 [#1] PREEMPT SMP NOPTI
+> [ 44.063564][ T8218] CPU: 1 UID: 0 PID: 8218 Comm: syz-executor368 Not
+> tainted 6.12.0-rc1 #5
+> [ 44.064885][ T8218] Hardware name: QEMU Standard PC (i440FX + PIIX,
+> 1996), BIOS 1.15.0-1 04/01/2014
+> [ 44.065764][ T8218] RIP: 0010:write_special_inodes
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:208
+> (discriminator 3))
+> [ 44.066375][ T8218] Code: 53 e8 6c 30 68 ff 49 8b 45 00 49 39 c5 74
+> 43 48 8d 58 c8 e8 5a 30 68 ff 48 8b 43 10 48 8b 78 30 2e e8 4c 0d 39
+> 03 48 8b 43 28 <48> 8b 78 30 2e e8 3e 0d 39 03 48 8b 83 b0 00 00 00 48
+> 8b 78 30 2e
+> All code
+> ========
+> 0: 53 push %rbx
+> 1: e8 6c 30 68 ff call 0xffffffffff683072
+> 6: 49 8b 45 00 mov 0x0(%r13),%rax
+> a: 49 39 c5 cmp %rax,%r13
+> d: 74 43 je 0x52
+> f: 48 8d 58 c8 lea -0x38(%rax),%rbx
+> 13: e8 5a 30 68 ff call 0xffffffffff683072
+> 18: 48 8b 43 10 mov 0x10(%rbx),%rax
+> 1c: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 20: 2e e8 4c 0d 39 03 cs call 0x3390d72
+> 26: 48 8b 43 28 mov 0x28(%rbx),%rax
+> 2a:* 48 8b 78 30 mov 0x30(%rax),%rdi <-- trapping instruction
+> 2e: 2e e8 3e 0d 39 03 cs call 0x3390d72
+> 34: 48 8b 83 b0 00 00 00 mov 0xb0(%rbx),%rax
+> 3b: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 3f: 2e cs
+> 
+> Code starting with the faulting instruction
+> ===========================================
+> 0: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 4: 2e e8 3e 0d 39 03 cs call 0x3390d48
+> a: 48 8b 83 b0 00 00 00 mov 0xb0(%rbx),%rax
+> 11: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 15: 2e cs
+> [ 44.068207][ T8218] RSP: 0018:ffff88800f2c3ce8 EFLAGS: 00010286
+> [ 44.068812][ T8218] RAX: 0000000000000000 RBX: ffff88800e279c00 RCX:
+> ffffffff814acf4f
+> [ 44.069570][ T8218] RDX: ffff88800dde3300 RSI: ffffffff814acf5b RDI:
+> 0000000000000005
+> [ 44.070349][ T8218] RBP: ffff88800f2c3d00 R08: ffff88800a50e3d0 R09:
+> 0000000000000001
+> [ 44.071123][ T8218] R10: 0000000000000000 R11: 0000000000000001 R12:
+> ffffffff814b2420
+> [ 44.071889][ T8218] R13: ffff888040fd5200 R14: ffff888040fd5280 R15:
+> 0000000000000000
+> [ 44.072665][ T8218] FS: 00005555717b43c0(0000)
+> GS:ffff88807ee00000(0000) knlGS:0000000000000000
+> [ 44.073532][ T8218] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 44.074184][ T8218] CR2: 0000000000000030 CR3: 000000000d8fa000 CR4:
+> 0000000000350ef0
+> [ 44.074962][ T8218] Call Trace:
+> [ 44.075300][ T8218] <TASK>
+> [ 44.075599][ T8218] ? show_regs
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/dumpstack.c:479)
+> [ 44.076065][ T8218] ? __die
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/dumpstack.c:421
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/dumpstack.c:434)
+> [ 44.076490][ T8218] ? page_fault_oops
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/mm/fault.c:711)
+> [ 44.077009][ T8218] ? srso_return_thunk
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/lib/retpoline.S:224)
+> [ 44.077511][ T8218] ? __kvm_handle_async_pf
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/kernel/kvm.c:262)
+> [ 44.078096][ T8218] ? exc_page_fault
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/mm/fault.c:1265
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/mm/fault.c:1481
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/mm/fault.c:1539)
+> [ 44.078637][ T8218] ? asm_exc_page_fault
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./arch/x86/include/asm/idtentry.h:623)
+> [ 44.079197][ T8218] ? __pfx_filemap_flush
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/mm/filemap.c:463)
+> [ 44.079730][ T8218] ? filemap_fdatawrite_wbc
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/mm/filemap.c:393)
+> [ 44.080314][ T8218] ? filemap_fdatawrite_wbc
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/mm/filemap.c:401)
+> [ 44.080893][ T8218] ? write_special_inodes
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:208
+> (discriminator 3))
+> [ 44.081423][ T8218] ? write_special_inodes
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:208
+> (discriminator 3))
+> [ 44.081967][ T8218] lmLogSync
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:937)
+> [ 44.082412][ T8218] ? srso_return_thunk
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/lib/retpoline.S:224)
+> [ 44.082917][ T8218] ? __sanitizer_cov_trace_const_cmp4
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/kcov.c:316)
+> [ 44.083568][ T8218] ? srso_return_thunk
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/lib/retpoline.S:224)
+> [ 44.083893][ T8253] loop11: detected capacity change from 0 to 32768
+> [ 44.084063][ T8218] ? jfs_flush_journal
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:1615)
+> [ 44.085204][ T8218] jfs_syncpt
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:1041)
+> [ 44.085640][ T8218] jfs_sync_fs
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/super.c:688)
+> [ 44.086107][ T8218] ? __pfx_jfs_sync_fs
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/super.c:674)
+> [ 44.086625][ T8218] sync_filesystem
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/sync.c:57
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/sync.c:30)
+> [ 44.087120][ T8218] generic_shutdown_super
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:624)
+> [ 44.087674][ T8218] kill_block_super
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:1697)
+> [ 44.088178][ T8218] deactivate_locked_super
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:434
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:475)
+> [ 44.088742][ T8218] deactivate_super
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/super.c:508)
+> [ 44.089265][ T8218] cleanup_mnt
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:250
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:1374)
+> [ 44.089734][ T8218] __cleanup_mnt
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/namespace.c:1381)
+> [ 44.090212][ T8218] task_work_run
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./include/linux/sched.h:2031
+> (discriminator 1)
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/task_work.c:230
+> (discriminator 1))
+> [ 44.090688][ T8218] syscall_exit_to_user_mode
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./include/linux/resume_user_mode.h:50
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/entry/common.c:114
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/./include/linux/entry-common.h:328
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/entry/common.c:207
+> /data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/kernel/entry/common.c:218)
+> [ 44.091087][ T8247] loop10: detected capacity change from 0 to 32768
+> [ 44.091253][ T8218] do_syscall_64
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/entry/common.c:102)
+> [ 44.092312][ T8218] entry_SYSCALL_64_after_hwframe
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/arch/x86/entry/entry_64.S:130)
+> [ 44.092931][ T8218] RIP: 0033:0x7f44ff534f8b
+> [ 44.093385][ T8218] Code: 08 00 48 83 c4 08 5b 5d c3 66 0f 1f 44 00
+> 00 c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 f3 0f 1e fa b8 a6
+> 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 05 c3 0f 1f 40 00 48 c7 c2 b8 ff
+> ff ff f7 d8
+> All code
+> ========
+> 0: 08 00 or %al,(%rax)
+> 2: 48 83 c4 08 add $0x8,%rsp
+> 6: 5b pop %rbx
+> 7: 5d pop %rbp
+> 8: c3 ret
+> 9: 66 0f 1f 44 00 00 nopw 0x0(%rax,%rax,1)
+> f: c3 ret
+> 10: 66 2e 0f 1f 84 00 00 cs nopw 0x0(%rax,%rax,1)
+> 17: 00 00 00
+> 1a: 0f 1f 44 00 00 nopl 0x0(%rax,%rax,1)
+> 1f: f3 0f 1e fa endbr64
+> 23: b8 a6 00 00 00 mov $0xa6,%eax
+> 28: 0f 05 syscall
+> 2a:* 48 3d 00 f0 ff ff cmp $0xfffffffffffff000,%rax <-- trapping instruction
+> 30: 77 05 ja 0x37
+> 32: c3 ret
+> 33: 0f 1f 40 00 nopl 0x0(%rax)
+> 37: 48 c7 c2 b8 ff ff ff mov $0xffffffffffffffb8,%rdx
+> 3e: f7 d8 neg %eax
+> 
+> Code starting with the faulting instruction
+> ===========================================
+> 0: 48 3d 00 f0 ff ff cmp $0xfffffffffffff000,%rax
+> 6: 77 05 ja 0xd
+> 8: c3 ret
+> 9: 0f 1f 40 00 nopl 0x0(%rax)
+> d: 48 c7 c2 b8 ff ff ff mov $0xffffffffffffffb8,%rdx
+> 14: f7 d8 neg %eax
+> [ 44.095191][ T8218] RSP: 002b:00007ffc50d9a3b8 EFLAGS: 00000202
+> ORIG_RAX: 00000000000000a6
+> [ 44.096010][ T8218] RAX: 0000000000000000 RBX: 000000000000a5ee RCX:
+> 00007f44ff534f8b
+> [ 44.096766][ T8218] RDX: 00007f44ff4e4e88 RSI: 0000000000000009 RDI:
+> 00007ffc50d9a470
+> [ 44.097530][ T8218] RBP: 00007ffc50d9a470 R08: 0000000000000000 R09:
+> 00007ffc50d9a240
+> [ 44.098292][ T8218] R10: 00005555717b57b3 R11: 0000000000000202 R12:
+> 00007ffc50d9b500
+> [ 44.099058][ T8218] R13: 00005555717b5770 R14: 00007ffc50d9a3d8 R15:
+> 00007ffc50d9b560
+> [ 44.099831][ T8218] </TASK>
+> [ 44.100138][ T8218] Modules linked in:
+> [ 44.100537][ T8218] CR2: 0000000000000030
+> [ 44.100952][ T8218] ---[ end trace 0000000000000000 ]---
+> [ 44.101472][ T8218] RIP: 0010:write_special_inodes
+> (/data/ghui/docker_data/linux_kernel/upstream/linux_v6.11/fs/jfs/jfs_logmgr.c:208
+> (discriminator 3))
+> [ 44.102070][ T8218] Code: 53 e8 6c 30 68 ff 49 8b 45 00 49 39 c5 74
+> 43 48 8d 58 c8 e8 5a 30 68 ff 48 8b 43 10 48 8b 78 30 2e e8 4c 0d 39
+> 03 48 8b 43 28 <48> 8b 78 30 2e e8 3e 0d 39 03 48 8b 83 b0 00 00 00 48
+> 8b 78 30 2e
+> All code
+> ========
+> 0: 53 push %rbx
+> 1: e8 6c 30 68 ff call 0xffffffffff683072
+> 6: 49 8b 45 00 mov 0x0(%r13),%rax
+> a: 49 39 c5 cmp %rax,%r13
+> d: 74 43 je 0x52
+> f: 48 8d 58 c8 lea -0x38(%rax),%rbx
+> 13: e8 5a 30 68 ff call 0xffffffffff683072
+> 18: 48 8b 43 10 mov 0x10(%rbx),%rax
+> 1c: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 20: 2e e8 4c 0d 39 03 cs call 0x3390d72
+> 26: 48 8b 43 28 mov 0x28(%rbx),%rax
+> 2a:* 48 8b 78 30 mov 0x30(%rax),%rdi <-- trapping instruction
+> 2e: 2e e8 3e 0d 39 03 cs call 0x3390d72
+> 34: 48 8b 83 b0 00 00 00 mov 0xb0(%rbx),%rax
+> 3b: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 3f: 2e cs
+> 
+> Code starting with the faulting instruction
+> ===========================================
+> 0: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 4: 2e e8 3e 0d 39 03 cs call 0x3390d48
+> a: 48 8b 83 b0 00 00 00 mov 0xb0(%rbx),%rax
+> 11: 48 8b 78 30 mov 0x30(%rax),%rdi
+> 15: 2e cs
+> [ 44.103876][ T8218] RSP: 0018:ffff88800f2c3ce8 EFLAGS: 00010286
+> [ 44.104474][ T8218] RAX: 0000000000000000 RBX: ffff88800e279c00 RCX:
+> ffffffff814acf4f
+> [ 44.105248][ T8218] RDX: ffff88800dde3300 RSI: ffffffff814acf5b RDI:
+> 0000000000000005
+> [ 44.106014][ T8218] RBP: ffff88800f2c3d00 R08: ffff88800a50e3d0 R09:
+> 0000000000000001
+> [ 44.106771][ T8218] R10: 0000000000000000 R11: 0000000000000001 R12:
+> ffffffff814b2420
+> [ 44.107538][ T8218] R13: ffff888040fd5200 R14: ffff888040fd5280 R15:
+> 0000000000000000
+> [ 44.108300][ T8218] FS: 00005555717b43c0(0000)
+> GS:ffff88807ee00000(0000) knlGS:0000000000000000
+> [ 44.109164][ T8218] CS: 0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> [ 44.109809][ T8218] CR2: 0000000000000030 CR3: 000000000d8fa000 CR4:
+> 0000000000350ef0
+> [ 44.110572][ T8218] Kernel panic - not syncing: Fatal exception
+> [ 44.111289][ T8218] Kernel Offset: disabled
+> [ 44.111722][ T8218] Rebooting in 86400 seconds..
+> 
+> VM DIAGNOSIS:
+> 07:10:48 Registers:
+> info registers vcpu 0
+> RAX=0000000000000000 RBX=0000000000001000 RCX=ffffffff814aca55
+> RDX=ffff88800aa46600
+> RSI=0000000000000000 RDI=0000000000000001 RBP=ffff88800ee03cf8
+> RSP=ffff88800ee03ce0
+> R8 =0000000000001000 R9 =ffffea0000b68ac0 R10=0000000000000000
+> R11=0000000000000001
+> R12=ffffea0000b68ac0 R13=0000000000001000 R14=0000000000ed2000
+> R15=0000000000001000
+> RIP=ffffffff8134ec2f RFL=00000293 [--S-A-C] CPL=0 II=0 A20=1 SMM=0 HLT=0
+> ES =0000 0000000000000000 00000000 00000000
+> CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
+> SS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS [-WA]
+> DS =0000 0000000000000000 00000000 00000000
+> FS =0000 00005555717b43c0 00000000 00000000
+> GS =0000 ffff88803ea00000 00000000 00000000
+> LDT=0000 fffffe0000000000 00000000 00000000
+> TR =0040 fffffe0000003000 00004087 00008b00 DPL=0 TSS64-busy
+> GDT= fffffe0000001000 0000007f
+> IDT= fffffe0000000000 00000fff
+> CR0=80050033 CR2=00007ffc50d99bd8 CR3=000000000e6c8000 CR4=00350ef0
+> DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000
+> DR3=0000000000000000
+> DR6=00000000ffff0ff0 DR7=0000000000000400
+> EFER=0000000000001d01
+> FCW=037f FSW=0000 [ST=0] FTW=00 MXCSR=00001f80
+> FPR0=0000000000000000 0000 FPR1=0000000000000000 0000
+> FPR2=0000000000000000 0000 FPR3=0000000000000000 0000
+> FPR4=0000000000000000 0000 FPR5=0000000000000000 0000
+> FPR6=0000000000000000 0000 FPR7=0000000000000000 0000
+> YMM00=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM01=0000000000000000 0000000000000000 00000000ff000000 00000000000000ff
+> YMM02=0000000000000000 0000000000000000 00000000ff000000 00000000000000ff
+> YMM03=0000000000000000 0000000000000000 00007ffc50d9b520 00007ffc50d9b520
+> YMM04=0000000000000000 0000000000000000 0000000000000000 00007ffc50d9b55f
+> YMM05=0000000000000000 0000000000000000 cfff5ffebffcefff d7ffa23fffafff49
+> YMM06=0000000000000000 0000000000000000 1d3ff77236800000 07fec5b8a9ffbb91
+> YMM07=0000000000000000 0000000000000000 ffb2196e227feee7 ffd6adce7ffafff5
+> YMM08=0000000000000000 0000000000000000 7665642f00736672 65646e69622f2e00
+> YMM09=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM10=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM11=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM12=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM13=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM14=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM15=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> info registers vcpu 1
+> RAX=0000000000000063 RBX=0000000000000000 RCX=0000000000000000
+> RDX=00000000000003f8
+> RSI=ffffffff82a1d59a RDI=ffffffff880cbfc0 RBP=ffff88800f2c3828
+> RSP=ffff88800f2c3810
+> R8 =302e34342020205b R9 =205b5d3436353336 R10=0000000000000063
+> R11=205d383132385420
+> R12=ffffffff880cbfc0 R13=0000000000000063 R14=ffffffff87fb4b3a
+> R15=0000000000000000
+> RIP=ffffffff82a1d5b1 RFL=00000002 [-------] CPL=0 II=0 A20=1 SMM=0 HLT=0
+> ES =0000 0000000000000000 00000000 00000000
+> CS =0010 0000000000000000 ffffffff 00a09b00 DPL=0 CS64 [-RA]
+> SS =0018 0000000000000000 ffffffff 00c09300 DPL=0 DS [-WA]
+> DS =0000 0000000000000000 00000000 00000000
+> FS =0000 00005555717b43c0 00000000 00000000
+> GS =0000 ffff88807ee00000 00000000 00000000
+> LDT=0000 fffffe0000000000 00000000 00000000
+> TR =0040 fffffe000003e000 00004087 00008b00 DPL=0 TSS64-busy
+> GDT= fffffe000003c000 0000007f
+> IDT= fffffe0000000000 00000fff
+> CR0=80050033 CR2=0000000000000030 CR3=000000000d8fa000 CR4=00350ef0
+> DR0=0000000000000000 DR1=0000000000000000 DR2=0000000000000000
+> DR3=0000000000000000
+> DR6=00000000ffff0ff0 DR7=0000000000000400
+> EFER=0000000000001d01
+> FCW=037f FSW=0000 [ST=0] FTW=00 MXCSR=00001f80
+> FPR0=0000000000000000 0000 FPR1=0000000000000000 0000
+> FPR2=0000000000000000 0000 FPR3=0000000000000000 0000
+> FPR4=0000000000000000 0000 FPR5=0000000000000000 0000
+> FPR6=0000000000000000 0000 FPR7=0000000000000000 0000
+> YMM00=0000000000000000 0000000000000000 0000000000989680 0000000000000000
+> YMM01=0000000000000000 0000000000000000 0000000000000000 0000000000989680
+> YMM02=0000000000000000 0000000000000000 00007f44ff5c3bc0 00007f44ff5c3bc0
+> YMM03=0000000000000000 0000000000000000 00007ffc50d9b560 00007ffc50d9b560
+> YMM04=0000000000000000 0000000000000000 0000000000000000 00007ffc50d9b59f
+> YMM05=0000000000000000 0000000000000000 0000000000000000 00007f44ff5b84b0
+> YMM06=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM07=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM08=0000000000000000 0000000000000000 7665642f00736672 65646e69622f2e00
+> YMM09=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM10=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM11=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM12=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM13=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+> YMM14=0000000000000000 0000000000000000 0000000000000000 0000000000000000
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
