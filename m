@@ -1,171 +1,169 @@
-Return-Path: <linux-kernel+bounces-363379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25D4E99C18B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:39:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36BE699C180
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0A421F21242
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:39:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67DB1F2370B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820A014E2ED;
-	Mon, 14 Oct 2024 07:38:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8D0149DFF;
+	Mon, 14 Oct 2024 07:38:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="y1916qdS";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="y1916qdS"
-Received: from bayard.4d2.org (bayard.4d2.org [5.78.89.93])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHCqTora"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2697614AD24;
-	Mon, 14 Oct 2024 07:38:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.78.89.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84829149C7A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:38:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891535; cv=none; b=k2xaDxd5znPzU42mHnM7coR4QkcD0D/8O7EQ38xhciVuqmVICZFU3Udmixo4vso67Coka8sloWpq4SnykJpUJtG1iieTs4ZwcCrCBCW9JS4muQLKyjVsqpJ8+27ISACppa6B+WzGZyV3TiVIblwGnrcka0jzr0yJyUjaCFI9Lws=
+	t=1728891521; cv=none; b=OT5yNQ0LlazqNglkgw4YJmryzT7auybNzvWfVITEyd8cy5nHfLXCUsNFDq6f2btQxMyoYmqbLmT/72T/TZpWAhWTjrES6nubH40qbKoVRrtaKCCHf0y1AAa4/sxkSqEy5Hf7HR/Ob3LI0LS6QrsHRk8GlAQjmdt/huDo+MDKW3g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891535; c=relaxed/simple;
-	bh=DwDhlRnfpNqUwydKjC1DfKRcf6/WtjZO99jAwo/5zu0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=k4glcYkD25WhJ3aQB3pYDULzFH0rNPZxcb1BYuVGVGCAvKMrguX8fIsTbqD5KQ3Nd+U4BcrYR9HFL65Ax7kizjBWSmk9d6TRXue03tazqX59eS42LRakhhJxOSiyzXt8grjKKnQ5LuxCiOmccqHEM/0Q9LUDbQ2xq4e95vP5Fa0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=y1916qdS; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=y1916qdS; arc=none smtp.client-ip=5.78.89.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from bayard.4d2.org (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id D1357122FE1E;
-	Mon, 14 Oct 2024 00:38:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1728891533; bh=DwDhlRnfpNqUwydKjC1DfKRcf6/WtjZO99jAwo/5zu0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=y1916qdSUQSOFUWoMsWsKiK+hPQ9abzy46MMb+1BK7HiIzjV+YkPmX0kMXsCMN4oZ
-	 nt55DEO0RHjD4Y5yzgnYGjj/1rgOBu1x2dgvVouuuPVYAJeVaNB9/16fxzCYq9DuKX
-	 tXumTql/PSWyIllPnLqHSDm3U+JdJ55N4mENBoYNFfswHEPmsw57vIDA+kz0vuwhG7
-	 Mu+vVjVk+YIj+nddSMQHtKwNy4rKrgIeyp18Yd5AFea4mGmgTKRDxRrur/mbT73sDV
-	 KwftQJFPGnFE71ByhL6yc4+DnOaAVpTHUi00X6YPpUUEhcMOtp31BxULUMs76mnkDH
-	 ROQ3gXcYYLYQw==
-X-Virus-Scanned: amavisd-new at 4d2.org
-Authentication-Results: bayard.4d2.org (amavisd-new); dkim=pass (2048-bit key)
- header.d=4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by bayard.4d2.org (bayard.4d2.org [127.0.0.1]) (amavisd-new, port 10024)
- with ESMTP id bJZxxpwYIaA4; Mon, 14 Oct 2024 00:38:53 -0700 (PDT)
-Received: from localhost.localdomain (unknown [110.52.220.241])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id 1679B122FE21;
-	Mon, 14 Oct 2024 00:38:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1728891533; bh=DwDhlRnfpNqUwydKjC1DfKRcf6/WtjZO99jAwo/5zu0=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=y1916qdSUQSOFUWoMsWsKiK+hPQ9abzy46MMb+1BK7HiIzjV+YkPmX0kMXsCMN4oZ
-	 nt55DEO0RHjD4Y5yzgnYGjj/1rgOBu1x2dgvVouuuPVYAJeVaNB9/16fxzCYq9DuKX
-	 tXumTql/PSWyIllPnLqHSDm3U+JdJ55N4mENBoYNFfswHEPmsw57vIDA+kz0vuwhG7
-	 Mu+vVjVk+YIj+nddSMQHtKwNy4rKrgIeyp18Yd5AFea4mGmgTKRDxRrur/mbT73sDV
-	 KwftQJFPGnFE71ByhL6yc4+DnOaAVpTHUi00X6YPpUUEhcMOtp31BxULUMs76mnkDH
-	 ROQ3gXcYYLYQw==
-From: Haylen Chu <heylenay@4d2.org>
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Chen Wang <unicorn_wang@outlook.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-pm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	Haylen Chu <heylenay@4d2.org>
-Subject: [PATCH v5 3/3] riscv: dts: sophgo: cv18xx: Add sensor device and thermal zone
-Date: Mon, 14 Oct 2024 07:38:13 +0000
-Message-ID: <20241014073813.23984-4-heylenay@4d2.org>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241014073813.23984-1-heylenay@4d2.org>
-References: <20241014073813.23984-1-heylenay@4d2.org>
+	s=arc-20240116; t=1728891521; c=relaxed/simple;
+	bh=aFFisPPZd/Hre79PkGYujlf0RBJz+NA9/OJB7V4sSdA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ne+yVaayWWMXg6EgTJZKtwdmj0aifkVhRCVBS0BxHCtWA3ldqbF+sivlVOxce5Jb+5tA5nu4Y9UGUpYHOIgLrlUmRooOO9ObPIwADOBUHeox6Ga9JKe2+RVhI1mxZHbFMPZMw+GzUsfTtjGRHW2smMfmh7kNoZXLK2qpp/h8m1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iHCqTora; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43124843b04so17193265e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:38:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728891518; x=1729496318; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=xMboIFiAJRNW3TNHj6EYhFbnvgnNhzRdZUv2visdWo8=;
+        b=iHCqToraGfvR3BVEG5ohbaIlOnxGwKbN0Vc0hQj0lw6pWU/O3oEOq771Sk2Jp3YkBV
+         Q9SDIX4G1ayxfWL1q5VpZ7jQZtHH5AGqoIqK5BxJ8+DU1woMD3KrCJfnYzUQTfJK3wpP
+         Hwqeq8ODOHNyGjOtZWxgB3N7QvxMHFIuf4D0p1ZN+aoPuCf9aq8wThdyXfXqromtLzdy
+         YGTwjOGMqtZCrsmF4hQweGlxAh6/B+2FfxCZYcIL8tnhVUdzWr9qQDB8stCRq+P+PPJc
+         ZH3yPRtDji/KBi7NL7Lzhfivu5MMGxffqMnurcmVZ7df+9O8WsHtuk827B7rep+pwt1u
+         +bcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728891518; x=1729496318;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xMboIFiAJRNW3TNHj6EYhFbnvgnNhzRdZUv2visdWo8=;
+        b=tk3LA+NzaoO159Psiff3J8j30QUduHmNRmKpcMI5/KYzqXzzo7C7YF2HKNoixWNX7H
+         zLC/QFZrVUwo1RCIkMhNgXb0LK1wZ60b95t3YUwNwzOTTvRhbCRoo5BkbaOluY6GsRuY
+         uhsOUJYHyNL/3qxrCo4H47Q3DHaC/8jwslQj+AYStAAvTrZiZRn1yyemJ0N7m8h5yeZa
+         ZS3QjvAuBXTXeIGWoFfJAcjk5DHr+u9jbA0YLifGUOJIGJbygVkFy/w5qM0FVi8vE8AP
+         yNOkTPS7/3znmskPhe/dbZLCkilA4jd5QX0d77GMeeUe+CzCtfS6irnE3+vVcu6gD9yl
+         s7aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVnCD5NnCIiUoA1dPJ6U7VWqcMeUHne5ZrzBQmiNtVDneUVbLaz9SBiRSC809ZpQ7R45grUozq/9P+J/dQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVC1pD5VCA2rFvrF/dyfdTbZEepeHOAWe9Sc6vZiDfktl353TS
+	r2My33x5+YNi55/UHGgbW5IgHGP5pZtZyfEW/1jj4VZ+GrBNpXG2n4HkrcKIE80=
+X-Google-Smtp-Source: AGHT+IFxsH70du3q5AUZEen2YEsI0WawZmJ/dpo9/jyFxSTdY0Q5+qOHG3tFo7fOc0Q9dVBYFBL3OA==
+X-Received: by 2002:a05:600c:3b9b:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-4311deb5ef8mr81559385e9.2.1728891517777;
+        Mon, 14 Oct 2024 00:38:37 -0700 (PDT)
+Received: from [127.0.1.1] ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffabdsm112169075e9.14.2024.10.14.00.38.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 00:38:36 -0700 (PDT)
+From: Abel Vesa <abel.vesa@linaro.org>
+Date: Mon, 14 Oct 2024 10:38:20 +0300
+Subject: [PATCH v2] arm64: dts: qcom: x1e80100: Add Broadcast_AND region in
+ LLCC block
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241014-x1e80100-dts-llcc-add-broadcastand_region-v2-1-5ee6ac128627@linaro.org>
+X-B4-Tracking: v=1; b=H4sIAGvKDGcC/52NQQ6CMBAAv0J6dk1bwaIn/2GIKe0Cm5DWbAnBk
+ P7dyhM8zhxmdpGQCZO4V7tgXClRDAX0qRJusmFEIF9YaKlraVQLm8JWKinBLwnm2Tmw3kPP0Xp
+ n02KDfzGOpQLmZmp1QdS2HUTpvRkH2o7Xsys8UVoif471qn72n8uqQIGW/RX9UDeNwcdMwXI8R
+ x5Fl3P+AkI8vMTjAAAA
+X-Change-ID: 20240718-x1e80100-dts-llcc-add-broadcastand_region-797413ee2a8f
+To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Rajendra Nayak <quic_rjendra@quicinc.com>, 
+ Sibi Sankar <quic_sibis@quicinc.com>, 
+ Konrad Dybcio <konradybcio@kernel.org>
+Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
+X-Mailer: b4 0.15-dev-dedf8
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2285; i=abel.vesa@linaro.org;
+ h=from:subject:message-id; bh=aFFisPPZd/Hre79PkGYujlf0RBJz+NA9/OJB7V4sSdA=;
+ b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDMp03ZKoBF3gZn4wyNlkQ/qu0EqcxoioktmGs
+ bg8r8yqmHSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZwzKdAAKCRAbX0TJAJUV
+ Vm2lD/9Lqer8HmlyUImWfB6FeBaJDYfjgrtmXwjXzbAIKCocA3fE0YMpVjPmbA/z36lJsDH4gwY
+ sAQ61APXU5f2f+yrU+2VR0go86I2GK/9ivOmVZ3WewROKYw/Ze3YdJABpXNhDxizGgNKe2XNCW+
+ d3/rl01u+FM4OPQEjrbXILs0EKU8nE7v31OCcNK6DeDBOA12+NvAkxK/vSDUeF+xcoynUXPJ5nd
+ Zz3N9XEARiT+7xjgPHlxrcuXB08mcJgrNY72Ta0mSL4hldIvbmvuNqklYQC7Mlr+Kpol3uSbjhK
+ Aog4wNf2oA8hdxd1czmzeEG0df6AYhXmYfns3LufWpoj8h70h1TJ2l0RGgPqaGzca27s424aU6q
+ Oh+mp+LCzgdDQXB0ZWYg3mEpAcR1wiYuuWDB1IgKu9xJgeywbbKywsRC9DQaI4HTC0txgHqMx/2
+ dGtxBrn48ZxLIMKeucUfqu+jeBCTu0ho8r/jwnTPdQ87A3GqsQ3I/xe+/NukjVhCpszchH6UHJS
+ QnrJ5QLxK3/nNRqV3vKlL40DAeWNpProB0XkApp0nh5uW1GcrFoqpBaBYQ0eQTeuxX6aUhkdV9P
+ Nqecy6AC2uIzD5iK1dk5Y3/YPVA0sIGpeYh8Nwd1C+4UbKQ/Kxi8y3K3ga6irhFHCeA4ffMZG03
+ FOKgbm7rpSVKGfw==
+X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
+ fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
 
-Add common sensor device for Sophgo CV18xx SoCs and thermal zone for
-CV1800b SoC.
+Add missing Broadcast_AND region to the LLCC block for x1e80100,
+as the LLCC version on this platform is 4.1 and it provides the region.
 
-Signed-off-by: Haylen Chu <heylenay@4d2.org>
+This also fixes the following error caused by the missing region:
+
+[    3.797768] qcom-llcc 25000000.system-cache-controller: error -EINVAL: invalid resource (null)
+
+This error started showing up only after the new regmap region called
+Broadcast_AND that has been added to the llcc-qcom driver.
+
+Cc: stable@vger.kernel.org # 6.11: 055afc34fd21: soc: qcom: llcc: Add regmap for Broadcast_AND region
+Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
+Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
 ---
- arch/riscv/boot/dts/sophgo/cv1800b.dtsi | 28 +++++++++++++++++++++++++
- arch/riscv/boot/dts/sophgo/cv18xx.dtsi  |  8 +++++++
- 2 files changed, 36 insertions(+)
+Changes in v2:
+- fixed subject line to say x1e80100 instead of sm8450
+- mentioned the reason why the new error is showing up
+  and how it is related to the llcc-qcom driver
+- cc'ed stable with patch dependency for cherry-picking
+- Link to v1: https://lore.kernel.org/r/20240718-x1e80100-dts-llcc-add-broadcastand_region-v1-1-20b6edf4557e@linaro.org
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++--
+ 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-index ec9530972ae2..af53c9ec3197 100644
---- a/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv1800b.dtsi
-@@ -12,6 +12,34 @@ memory@80000000 {
- 		device_type = "memory";
- 		reg = <0x80000000 0x4000000>;
- 	};
-+
-+	thermal-zones {
-+		soc-thermal {
-+			polling-delay-passive   = <1000>;
-+			polling-delay           = <1000>;
-+			thermal-sensors         = <&soc_temp>;
-+
-+			trips {
-+				soc_passive: soc-passive {
-+					temperature     = <75000>;
-+					hysteresis      = <5000>;
-+					type            = "passive";
-+				};
-+
-+				soc_hot: soc-hot {
-+					temperature     = <85000>;
-+					hysteresis      = <5000>;
-+					type            = "hot";
-+				};
-+
-+				soc_critical: soc-critical {
-+					temperature     = <100000>;
-+					hysteresis      = <0>;
-+					type            = "critical";
-+				};
-+			};
-+		};
-+	};
- };
- 
- &plic {
-diff --git a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-index b724fb6d9689..0465561f7043 100644
---- a/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-+++ b/arch/riscv/boot/dts/sophgo/cv18xx.dtsi
-@@ -133,6 +133,14 @@ portd: gpio-controller@0 {
- 			};
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 0e6802c1d2d8375987c614ec69c440e2f38d25c6..fbf1acf8b0d84a2d2c723785242a65f47e63340b 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -6093,7 +6093,8 @@ system-cache-controller@25000000 {
+ 			      <0 0x25a00000 0 0x200000>,
+ 			      <0 0x25c00000 0 0x200000>,
+ 			      <0 0x25e00000 0 0x200000>,
+-			      <0 0x26000000 0 0x200000>;
++			      <0 0x26000000 0 0x200000>,
++			      <0 0x26200000 0 0x200000>;
+ 			reg-names = "llcc0_base",
+ 				    "llcc1_base",
+ 				    "llcc2_base",
+@@ -6102,7 +6103,8 @@ system-cache-controller@25000000 {
+ 				    "llcc5_base",
+ 				    "llcc6_base",
+ 				    "llcc7_base",
+-				    "llcc_broadcast_base";
++				    "llcc_broadcast_base",
++				    "llcc_broadcast_and_base";
+ 			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
  		};
  
-+		soc_temp: thermal-sensor@30e0000 {
-+			compatible = "sophgo,cv1800-thermal";
-+			reg = <0x30e0000 0x100>;
-+			clocks = <&clk CLK_TEMPSEN>;
-+			interrupts = <16 IRQ_TYPE_LEVEL_HIGH>;
-+			#thermal-sensor-cells = <0>;
-+		};
-+
- 		i2c0: i2c@4000000 {
- 			compatible = "snps,designware-i2c";
- 			reg = <0x04000000 0x10000>;
+
+---
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+change-id: 20240718-x1e80100-dts-llcc-add-broadcastand_region-797413ee2a8f
+
+Best regards,
 -- 
-2.46.2
+Abel Vesa <abel.vesa@linaro.org>
 
 
