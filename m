@@ -1,125 +1,171 @@
-Return-Path: <linux-kernel+bounces-363056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363059-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5DA8999BD66
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:41:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301FB99BD69
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:44:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 882561C21638
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:41:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E70E1F21E84
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:44:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD0A51BF2B;
-	Mon, 14 Oct 2024 01:41:28 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC66B17BD3;
+	Mon, 14 Oct 2024 01:43:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="eQEun3r8"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1858A33C9;
-	Mon, 14 Oct 2024 01:41:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D98721C687
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:43:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728870088; cv=none; b=YgxE/zs3t2BTDlGBxx9rMOjTOPQ/fjiUGDqf5fCqxqlVp4oPm2Z3ObtyykPjaabACt6vF1D22Os9Xhq0p7RQItLyMEHmoNVT5K2UdwIwOtpIXL1QtvDdp4UpsKtRILDUvN+VI+7hBpUKnGRmd6GXj3IlXm1a4bXv9nNJ7hpVO3I=
+	t=1728870236; cv=none; b=KpUPm4PVjwGl6RufjVqV+gEZ1fvj83mj3e6BHZH83Q+rsjd+hZkKNBkNJXKciLBSsNKcxjQ+9gLl2E51ChQWsYJE01UFdjxtUQQpLniu1aG/7NevtjRH8xh2FmXl/33nH/YbuV9U/dJ234SMRJVHIOiM6vh8j73DnZ1FB5plKmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728870088; c=relaxed/simple;
-	bh=TdCHwWz4sXw6njN8WJhsKWZAf1bnPKKCf3KpoO3tKss=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XG7sbn1bB5zysmmXXaI1aP0g8sxPCXs7ZycMAOaSfFe6g07n18ciVFc0lOjwmsUAVrn2uLCyvjgFRIngPswQg1rwdDNlaIiOYYUTdv9gYKDq5EowUrVUimu1krn8O3viMf8GE3vd00RxylvkuleEBMB/1bk4obY1TTHZb30kl74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 68aca91c89cd11efa216b1d71e6e1362-20241014
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_QP
-	HR_CTT_TXT, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_PRE_RE, HR_SJ_WS, HR_TO_COUNT
-	HR_TO_DOMAIN_COUNT, HR_TO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED
-	SA_TRUSTED, SA_EXISTED, SN_EXISTED, SPF_NOPASS, DKIM_NOPASS
-	DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO
-	GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:9ff6e3c0-5b76-4859-8774-c80e20e4a7ba,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:28,RULE:Release_Ham,ACTIO
-	N:release,TS:23
-X-CID-INFO: VERSION:1.1.38,REQID:9ff6e3c0-5b76-4859-8774-c80e20e4a7ba,IP:0,URL
-	:0,TC:0,Content:0,EDM:0,RT:0,SF:-5,FILE:0,BULK:28,RULE:Release_Ham,ACTION:
-	release,TS:23
-X-CID-META: VersionHash:82c5f88,CLOUDID:3f1e48a7c0e02e2a3527d876512fa148,BulkI
-	D:2409062205428B690IWE,BulkQuantity:56,Recheck:0,SF:19|64|66|38|17|102,TC:
-	nil,Content:1|-5,EDM:-3,IP:nil,URL:1,File:nil,RT:nil,Bulk:40|20,QS:nil,BEC
-	:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,
-	TF_CID_SPAM_OBB,TF_CID_SPAM_FCD
-X-UUID: 68aca91c89cd11efa216b1d71e6e1362-20241014
-X-User: duanchenghao@kylinos.cn
-Received: from [172.30.80.21] [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 1020920721; Mon, 14 Oct 2024 09:41:18 +0800
-Message-ID: <eb119532f37c84aedab32df9169e64abf894f006.camel@kylinos.cn>
-Subject: Re: [PATCH] USB: Fix the issue of task recovery failure caused by
- USB status when S4 wakes up
-From: duanchenghao <duanchenghao@kylinos.cn>
-To: Alan Stern <stern@rowland.harvard.edu>, "Gopal, Saranya"
-	 <saranya.gopal@intel.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Hongyu Xie
- <xy521521@gmail.com>,  gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org,  linux-pm@vger.kernel.org,
- linux-usb@vger.kernel.org, niko.mauno@vaisala.com,  pavel@ucw.cz,
- stanley_chang@realtek.com, tj@kernel.org, Hongyu Xie <xiehongyu1@kylinos.cn>
-Date: Mon, 14 Oct 2024 09:41:15 +0800
-In-Reply-To: <74848334-7cd7-4ce1-ad96-5dd29d70d3bb@rowland.harvard.edu>
-References: <bddecd4e-d3c8-448e-8a22-84bbc98c4d1b@kylinos.cn>
-	 <b2ec107d4797f6e1e8e558f97c0ad1be6d46572c.camel@kylinos.cn>
-	 <84a4f66a-5b0e-46a8-8746-be6cd7d49629@rowland.harvard.edu>
-	 <fa347849defa66a7d4af23ac6317ae5b37357ea4.camel@kylinos.cn>
-	 <2c368013-8363-4a4e-bfee-2f0b14d01162@rowland.harvard.edu>
-	 <5f2f6b979e95e4c2bc33ea0277112939164f6024.camel@kylinos.cn>
-	 <d70e070f-5224-402c-ac27-0703b4010b18@rowland.harvard.edu>
-	 <0ad92e8fef2f07672aa8e97bc04f20657469ac6e.camel@kylinos.cn>
-	 <b8eb28f3-504d-4d26-8b02-ca1ae7309a70@rowland.harvard.edu>
-	 <f27bcdb6c5ddd4e91a1dc9f86b4f0c55c50671a8.camel@kylinos.cn>
-	 <74848334-7cd7-4ce1-ad96-5dd29d70d3bb@rowland.harvard.edu>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728870236; c=relaxed/simple;
+	bh=HEJCwlbRp7/Ddp0AfEPMEbkW2EAlHA4Yqq9H5+MRUkg=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=BKKLjZUAjj3x3nskKGvVptPhUOt71k6SSVNoYSjoUrxkWjsUZQ0Rg55YebcdOdE5/Cg6tajpWPL5TAsjy49oqM+Ej75pgQRoDv65VqEET1v/xIi30JhYKwOhEGIR5oTWnC0QrFrLAH3pbNM3rkxV6g+up9OphUC0bMXYZD78EJE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=eQEun3r8; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p4.samsung.com (unknown [182.195.41.56])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241014014343epoutp012ca7b21291e586d1cc90d1c5cfbdd823~_Lk7a_4o70757607576epoutp01-
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:43:43 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241014014343epoutp012ca7b21291e586d1cc90d1c5cfbdd823~_Lk7a_4o70757607576epoutp01-
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1728870223;
+	bh=5tNDyzmv7hh4tEfaKy/ETU6TxQAsf/m9S2xTXYxFnFY=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=eQEun3r872qviaLuMXrQunZomGFGNd9ObIMIyFQ1+DW0JfX+/m9rIWS9EmPG7E1Cv
+	 xAfGcgJP1NH9gItWebN8Qlnf3sERCttta1qmRgAprhMcWZU8/4gIPkJUSrtvHOUMuO
+	 0Vy2dbiaIjLGYrnjCHXRQi6Pu/opmX3JiT6wUf80=
+Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
+	epcas2p4.samsung.com (KnoxPortal) with ESMTP id
+	20241014014342epcas2p40ed2c85cbe3090d77a4a66e906e5c4e0~_Lk7F6ehY0308503085epcas2p4Y;
+	Mon, 14 Oct 2024 01:43:42 +0000 (GMT)
+Received: from epsmges2p2.samsung.com (unknown [182.195.36.88]) by
+	epsnrtp4.localdomain (Postfix) with ESMTP id 4XRg4G164lz4x9Px; Mon, 14 Oct
+	2024 01:43:42 +0000 (GMT)
+X-AuditID: b6c32a46-da9ff7000000262a-e4-670c774d4508
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmges2p2.samsung.com (Symantec Messaging Gateway) with SMTP id
+	AD.24.09770.D477C076; Mon, 14 Oct 2024 10:43:42 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+Subject: RE:(2) [PATCH v2] libf2fs: Fix calculation of usable segments for
+ single
+Reply-To: yonggil.song@samsung.com
+Sender: Yonggil Song <yonggil.song@samsung.com>
+From: Yonggil Song <yonggil.song@samsung.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+CC: Chao Yu <chao@kernel.org>, "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Dongjin Kim <dongjin_.kim@samsung.com>,
+	Siwoo Jung <siu.jung@samsung.com>, Daejun Park <daejun7.park@samsung.com>,
+	Yonggil Song <yonggil.song@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <ZwlFkBAV2yxf1DBt@google.com>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241014014341epcms2p3467a0b744b7bfc269871c8e75e80c896@epcms2p3>
+Date: Mon, 14 Oct 2024 10:43:41 +0900
+X-CMS-MailID: 20241014014341epcms2p3467a0b744b7bfc269871c8e75e80c896
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTVNevnCfd4M8fJovTU88yWax6EG7x
+	46SJxZP1s5gtLi1yt7i8aw6bxfmJr5kspp4/wuTA4bFpVSebx+4Fn5k8+rasYvT4vEkugCUq
+	2yYjNTEltUghNS85PyUzL91WyTs43jne1MzAUNfQ0sJcSSEvMTfVVsnFJ0DXLTMH6AYlhbLE
+	nFKgUEBicbGSvp1NUX5pSapCRn5xia1SakFKToF5gV5xYm5xaV66Xl5qiZWhgYGRKVBhQnbG
+	05/TWAtWC1Sc3vOUuYHxAU8XIyeHhICJxLGbzexdjFwcQgI7GCV6P/xk6mLk4OAVEJT4u0MY
+	pEZYIFhi098ZbCC2kICSxLUDvSwQcX2JzYuXsYPYbAK6En83LAezRQRUJA4tugw2k1ngMpPE
+	uxvP2SCW8UrMaH/KAmFLS2xfvpURxOYU0JK42n4PqkZD4seyXmYIW1Ti5uq37DD2+2PzGSFs
+	EYnWe2ehagQlHvzcDRWXlFh06DwThJ0v8XfFdaiZNRJbG9qg4voS1zo2gt3AK+ArceXWe7A5
+	LAKqElse7oG6zUWi7TiEzSwgL7H97RxmUJgwC2hKrN+lD2JKCChLHLkFVcEn0XH4LzvMhzvm
+	PYHapCaxedNmVghbRuLC4zZGiFYPibOfgyYwKs5ChPMsJKtmIaxawMi8ilEstaA4Nz212KjA
+	CB61yfm5mxjBiVHLbQfjlLcf9A4xMnEwHmKU4GBWEuF9P5UzXYg3JbGyKrUoP76oNCe1+BCj
+	KdCTE5mlRJPzgak5ryTe0MTSwMTMzNDcyNTAXEmc917r3BQhgfTEktTs1NSC1CKYPiYOTqkG
+	pjtW9TVfTLQlF3lt/Zh5btrSg89nfLi+60WxR3WO9PNjDbNPtn/m2V/ylvV1TziDzcLlC73E
+	D8lZu1tMadH52MLYpcdz/KpEPVNu5ceQLe6ac2/seKCzJvXKAvvwCW1+25hn7FwvHxZ0ep23
+	0d4LG9/8dLrweHHf5jwVZsbHUqn1qhWnxbQXnDz0YOY5CcHtIkFG9Q+mfO4yNOubkrm6mffi
+	ag5XNccJ/dPq435lq1ovlrRdt+frtLR7lnJF9z/E5wefXeG57Gb+zCt7zT2VueujX8z+t6T9
+	1MJ33Ndm5BqVqW6ZpiKpEuo3+5Rj1Kp62RbW99eN1mREr8t7KrOqkWfHFOHtslUF0pFsAQeZ
+	JyixFGckGmoxFxUnAgCGG5ZkFQQAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303
+References: <ZwlFkBAV2yxf1DBt@google.com>
+	<20241010043123epcms2p2ad514eb5e4a94413d8b26aea56f772a8@epcms2p2>
+	<20241010021506epcms2p21d877e3c72389b41805db31f391d2b42@epcms2p2>
+	<e26d7399-a0a7-4646-8e93-267cb20018cf@kernel.org>
+	<20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p8>
+	<20241010045935epcms2p7ab5f54e9789b36ea496abcb100a7878f@epcms2p7>
+	<CGME20241007052122epcms2p8a7a733c92a8da751ac64af8a29de0303@epcms2p3>
 
-=E5=9C=A8 2024-10-12=E6=98=9F=E6=9C=9F=E5=85=AD=E7=9A=84 11:01 -0400=EF=BC=
-=8CAlan Stern=E5=86=99=E9=81=93=EF=BC=9A
-Hi Saranya,
+> On 10/10, Yonggil Song wrote:
+> > There was a problem that did not subtract the super block area when calculating
+> > the usable segments for a single zoned device with a conventional zone.
+> > This resulted in incorrect the overprovision and reserved area.
+> > 
+> > 	<256MiB legacy block + zoned block w/ 32MiB zone size>
+> > 	Info: Overprovision ratio = 3.570%
+> > 	Info: Overprovision segments = 656 (GC reserved = 560)
+> > 
+> > 	<8 conventional zone + 1016 sequential zone w/ 32MiB zone size>
+> > 	Info: Overprovision ratio = 3.700%
+> > 	Info: Overprovision segments = 676 (GC reserved = 578)
+> > 
+> > This patch addresses the problem by subtracting the super block area when
+> > there is only one zoned device.
+> > 
+> > Signed-off-by: Yonggil Song <yonggil.song@samsung.com>
+> > ---
+> >  lib/libf2fs_zoned.c | 5 +++++
+> >  1 file changed, 5 insertions(+)
+> > 
+> > diff --git a/lib/libf2fs_zoned.c b/lib/libf2fs_zoned.c
+> > index 89ba5ad73a76..1a0985378789 100644
+> > --- a/lib/libf2fs_zoned.c
+> > +++ b/lib/libf2fs_zoned.c
+> > @@ -555,6 +555,11 @@ uint32_t f2fs_get_usable_segments(struct f2fs_super_block *sb)
+> >  	}
+> >  	usable_segs -= (get_sb(main_blkaddr) - get_sb(segment0_blkaddr)) >>
+> >  						get_sb(log_blocks_per_seg);
+> > +
+> > +	/* single zoned device needs to remove a super block area */
+> > +	if (c.ndevs == 1 && c.devices[0].zoned_model == F2FS_ZONED_HM)
+> 
+> Does this work?
+> 
+Yes, it works.
 
-> On Sat, Oct 12, 2024 at 05:51:41PM +0800, duanchenghao wrote:
-> >=20
-> > Hi Alan,
-> >=20
-> > The V3 patch has been sent. Please review it to check if it aligns
-> > with
-> > the solution you described.
->=20
-> Yes, that is what I meant.
->=20
-> Have you and all the other people at kylinos.cn tested the patch to
-> make=20
-> sure that it fixes the problem?
->=20
-> Alan Stern
+I have attached the results of test on null_blk below.
+If you have any concerns, please feedback.
 
-If you have time, you can arrange to test your issue using the V3
-version. This way, we can jointly verify whether the problem has been
-resolved.
+						before				after
+legacy block (32GB)				136 (GC reserved = 130)		136 (GC reserved = 130)
+single zoned block				676 (GC reserved = 578)		656 (GC reserved = 560)
+(32GB, 32MB zone, 8 conv, 1016 seq)
+legacy + zoned multi				656 (GC reserved = 560)		656 (GC reserved = 560)
+(32GB, 256MB legacy block + 32MB zone, 1016 seq)
 
-Thanks
-Duan Chenghao
-
-
-
+Thanks.
+> > +		usable_segs -= (get_sb(segment0_blkaddr) >> get_sb(log_blocks_per_seg));
+> > +
+> >  	return usable_segs;
+> >  #endif
+> >  	return get_sb(segment_count_main);
+> > -- 
+> > 2.43.0
 
