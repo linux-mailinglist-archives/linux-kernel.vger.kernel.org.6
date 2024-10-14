@@ -1,136 +1,259 @@
-Return-Path: <linux-kernel+bounces-364467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC0F299D500
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:53:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B91AC99D4FD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:52:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9F48D283D03
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:53:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C56B283B87
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:52:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BFB11BFE06;
-	Mon, 14 Oct 2024 16:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D5911B85E1;
+	Mon, 14 Oct 2024 16:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="IIJ02sFf"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNbMbYpM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3795B12F375;
-	Mon, 14 Oct 2024 16:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8692C12F375;
+	Mon, 14 Oct 2024 16:52:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728924771; cv=none; b=IXp5kZcfYzRktrKS26epl+QexIDiJ8EjeKcQG7+3KvbP8CJNWXcX2JctKVpebwKgJIHOJq38169CN43fF+Uz/9YQA8sOLQgmGThIoRDtgXWnbt2Tjwl1+dgs3l+wPFQqrOJ1qwmDWQZSwjXGX+w7PH/xwQuW/p1s0RGrk9U8mZw=
+	t=1728924764; cv=none; b=hIfA4ONzSKNfFAXFF/XHA9mkFPULu6sOU9nbdKg0YGK8UbDjEntoAQwJaCDB9VDWYfYV5PciGiHr5GqqzOyuDWKDyUFDqIyhiQ1laVo3gt2A9whmWKHIhC18EV1BkLM8EqzFGWnOLCBwKDtJ5JxSDUb+bSpHAYedl34wboV5/D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728924771; c=relaxed/simple;
-	bh=Ztkly/rMkaWdVNeB/73idbucB5sLB8qFFs1eUamlwaY=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t9tdzhhpncqBDH6EuhIysusHdhx1wR2rGzasSwDTQNEEHu7xWUMTbtB3/3bIWvMdVEEzh429vz/gKJidf23kKPRfkJtkRAV3xFWAs8AHQPdvuBsPMIyTPYPiqm28462RLv71zcY29y6zvBSiHu2kIomoByxr9x76174vPhGZF+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=IIJ02sFf; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49EGqd1t108401;
-	Mon, 14 Oct 2024 11:52:39 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1728924759;
-	bh=Jr7pHIsb68Geivv92aN4TTQByvEqaA6UjhGr+i1/TUI=;
-	h=Date:From:To:CC:Subject:References:In-Reply-To;
-	b=IIJ02sFfgOcRzFF8zuOFZawow6HHECA9uQflxVkStpUXxYKz2ZiWNA+Z+6Hme05rN
-	 VlUDfw1mx0RdGq03VKkVGvTvFAylIch8XgQeTMQ3NY1iFCfVdqJHWplqFnbrxSOJQI
-	 bRPbDAPuhqzg7E96pRdfs0Ypve4SJHB6BGrEUdN8=
-Received: from DFLE113.ent.ti.com (dfle113.ent.ti.com [10.64.6.34])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49EGqdlL038661
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 14 Oct 2024 11:52:39 -0500
-Received: from DFLE108.ent.ti.com (10.64.6.29) by DFLE113.ent.ti.com
- (10.64.6.34) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
- Oct 2024 11:52:38 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE108.ent.ti.com
- (10.64.6.29) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Mon, 14 Oct 2024 11:52:38 -0500
-Received: from localhost (uda0133052.dhcp.ti.com [128.247.81.232])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49EGqcSG069925;
-	Mon, 14 Oct 2024 11:52:38 -0500
-Date: Mon, 14 Oct 2024 11:52:38 -0500
-From: Nishanth Menon <nm@ti.com>
-To: Arnd Bergmann <arnd@arndb.de>
-CC: Andrew Davis <afd@ti.com>, Arnd Bergmann <arnd@kernel.org>,
-        Bjorn
- Andersson <andersson@kernel.org>,
-        Mathieu Poirier
-	<mathieu.poirier@linaro.org>,
-        Martyn Welch <martyn.welch@collabora.com>,
-        Hari
- Nagalla <hnagalla@ti.com>, Jassi Brar <jassisinghbrar@gmail.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] mailbox, remoteproc: k3-m4+: fix compile testing
-Message-ID: <20241014165238.nbllvtnxrxbwg344@frying>
-References: <20241007132441.2732215-1-arnd@kernel.org>
- <4d8a9786-ee4b-43b8-9207-e048c66349fe@ti.com>
- <e6c84b91-20ce-474a-87f8-9faeb64f3724@app.fastmail.com>
+	s=arc-20240116; t=1728924764; c=relaxed/simple;
+	bh=V7zNXXyyQzSwGrOl5cHUysVJu4T1slE00U66JtRJ88U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qzu8ikHz/lHq1ry4JuOMGE0SUd5L8KMYDjLzMT24jvk+5deJ5S/6mlcEavmzM1rtTY5AndOUOfalgDFb+VvAlZYU/ordeFIcZDXBRUr9FQNjRVOPDqmCWmQVWwLVaRBsSPiRfvmueIi4mmWx62sbwh3IwN2JXGpg8OXrqgo+IjM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNbMbYpM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0A078C4CEC3;
+	Mon, 14 Oct 2024 16:52:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728924764;
+	bh=V7zNXXyyQzSwGrOl5cHUysVJu4T1slE00U66JtRJ88U=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=FNbMbYpMULoJlnBGJTsChuppVWYKo/aKpDFnXBu4wLKKk6X/2bd45U5nETPXwo7/v
+	 L+BZQgUJMNyFwA66Jw6jgIybwvWmNt0Xfio0lBhrKQ0y8wfdSinM4DpEadvBTVMKQI
+	 DC8xMDcJIam7q8iAx521KSWI7ALmL6IQtKy1hUMdWSE/mbuK3YLbcoyRmNuok2iUvx
+	 +tfafWKdV7ZLmrpxnVAAQDLw/ovk2+PY95kVxOsmxlx7evC9cSmhVeKV54Fs1eYb47
+	 djhz00xd41/uRRAjvKBNwU189SzHRinHbtyzl5Ygjts3zvIsqoQVgzeHBhVAURvRsr
+	 Au39J+DHGpILA==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id AC0EBCE0B68; Mon, 14 Oct 2024 09:52:43 -0700 (PDT)
+Date: Mon, 14 Oct 2024 09:52:43 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@meta.com, rostedt@goodmis.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
+Subject: Re: [PATCH rcu 03/12] srcu: Renaming in preparation for additional
+ reader flavor
+Message-ID: <36076d14-6732-4bbc-b96e-9bab1212c9dd@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
+ <20241009180719.778285-3-paulmck@kernel.org>
+ <6853d494-0262-4a6a-b538-338695677f57@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <e6c84b91-20ce-474a-87f8-9faeb64f3724@app.fastmail.com>
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+In-Reply-To: <6853d494-0262-4a6a-b538-338695677f57@amd.com>
 
-On 15:43-20241014, Arnd Bergmann wrote:
-> On Mon, Oct 14, 2024, at 14:56, Andrew Davis wrote:
-> > On 10/7/24 8:23 AM, Arnd Bergmann wrote:
-> >>   config TI_K3_M4_REMOTEPROC
-> >>   	tristate "TI K3 M4 remoteproc support"
-> >> -	depends on ARCH_OMAP2PLUS || ARCH_K3
-> >> -	select MAILBOX
-> >> -	select OMAP2PLUS_MBOX
-> >> +	depends on ARCH_K3 || COMPILE_TEST
-> >> +	depends on TI_SCI_PROTOCOL || (COMPILE_TEST && TI_SCI_PROTOCOL=n)
-> >
-> > This line is odd. IMHO "COMPILE_TEST" should only be added to ARCH_*
-> > dependencies, as often only one ARCH can be selected which prevents
-> > compile testing drivers with various multiple architecture deps in
-> > one compile test.
+On Mon, Oct 14, 2024 at 02:40:35PM +0530, Neeraj Upadhyay wrote:
+> On 10/9/2024 11:37 PM, Paul E. McKenney wrote:
+> > Currently, there are only two flavors of readers, normal and NMI-safe.
+> > A number of fields, functions, and types reflect this restriction.
+> > This renaming-only commit prepares for the addition of light-weight
+> > (as in memory-barrier-free) readers.  OK, OK, there is also a drive-by
+> > white-space fixeup!
+> > 
+> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
+> > Cc: Alexei Starovoitov <ast@kernel.org>
+> > Cc: Andrii Nakryiko <andrii@kernel.org>
+> > Cc: Peter Zijlstra <peterz@infradead.org>
+> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
+> > Cc: <bpf@vger.kernel.org>
+> > ---
+> >  include/linux/srcu.h     | 21 ++++++++++-----------
+> >  include/linux/srcutree.h |  2 +-
+> >  kernel/rcu/srcutree.c    | 22 +++++++++++-----------
+> >  3 files changed, 22 insertions(+), 23 deletions(-)
+> > 
+> > diff --git a/include/linux/srcu.h b/include/linux/srcu.h
+> > index 835bbb2d1f88a..06728ef6f32a4 100644
+> > --- a/include/linux/srcu.h
+> > +++ b/include/linux/srcu.h
+> > @@ -181,10 +181,9 @@ static inline int srcu_read_lock_held(const struct srcu_struct *ssp)
+> >  #define SRCU_NMI_SAFE		0x2
+> >  
+> >  #if defined(CONFIG_PROVE_RCU) && defined(CONFIG_TREE_SRCU)
+> > -void srcu_check_nmi_safety(struct srcu_struct *ssp, bool nmi_safe);
+> > +void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor);
+> >  #else
+> > -static inline void srcu_check_nmi_safety(struct srcu_struct *ssp,
+> > -					 bool nmi_safe) { }
+> > +static inline void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor) { }
+> >  #endif
+> >  
+> >  
+> > @@ -245,7 +244,7 @@ static inline int srcu_read_lock(struct srcu_struct *ssp) __acquires(ssp)
+> >  {
+> >  	int retval;
+> >  
+> > -	srcu_check_nmi_safety(ssp, false);
+> > +	srcu_check_read_flavor(ssp, false);
 > 
-> I generally agree, but the TI_SCI_PROTOCOL interface
-> definitions that were added in aa276781a64a ("firmware: Add basic
-> support for TI System Control Interface (TI-SCI) protocol")
-> appear to explicitly support the case of compile-testing.
-> 
-> See also 13678f3feb30 ("reset: ti-sci: honor TI_SCI_PROTOCOL
-> setting when not COMPILE_TEST").
-> 
-> > Normal dependencies, on the other hand, can simply be enabled if one
-> > wants to compile test its dependent drivers. In this case, TI_SCI_PROTOCOL
-> > cannot be enabled as it has a dependency up the chain that doesn't
-> > allow selecting when not on a TI platform. We can fix that as I posted
-> > here[0]. With that fix in, this line can be simply become:
-> >
-> > depends on TI_SCI_PROTOCOL
-> 
-> That's certainly fine with me, but if we do this, I would suggest
-> also removing the stub functions from
-> include/linux/soc/ti/ti_sci_protocol.h, and the dependency in the
-> reset driver.
-> 
-> Adding Nishanth Menon to Cc, to see if he has a preference.
-> 
->      Arnd
+> As srcu_check_read_flavor() takes an "int" now, passing a macro for the type of reader would
+> be better here?
 
-While I am OK to do the cleanups and make the drivers independent,
-I am also looking to make TISCI stuff independent and be a module
-itself. So, dropping the stubs will probably get in the way as we move
-ahead with those plans.
+Agreed, and a later commit does introduce macros.
 
--- 
-Regards,
-Nishanth Menon
-Key (0xDDB5849D1736249D) / Fingerprint: F8A2 8693 54EB 8232 17A3  1A34 DDB5 849D 1736 249D
+> >  	retval = __srcu_read_lock(ssp);
+> >  	srcu_lock_acquire(&ssp->dep_map);
+> >  	return retval;
+> > @@ -262,7 +261,7 @@ static inline int srcu_read_lock_nmisafe(struct srcu_struct *ssp) __acquires(ssp
+> >  {
+> >  	int retval;
+> >  
+> > -	srcu_check_nmi_safety(ssp, true);
+> > +	srcu_check_read_flavor(ssp, true);
+> >  	retval = __srcu_read_lock_nmisafe(ssp);
+> >  	rcu_try_lock_acquire(&ssp->dep_map);
+> >  	return retval;
+> > @@ -274,7 +273,7 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
+> >  {
+> >  	int retval;
+> >  
+> > -	srcu_check_nmi_safety(ssp, false);
+> > +	srcu_check_read_flavor(ssp, false);
+> >  	retval = __srcu_read_lock(ssp);
+> >  	return retval;
+> >  }
+> > @@ -303,7 +302,7 @@ srcu_read_lock_notrace(struct srcu_struct *ssp) __acquires(ssp)
+> >  static inline int srcu_down_read(struct srcu_struct *ssp) __acquires(ssp)
+> >  {
+> >  	WARN_ON_ONCE(in_nmi());
+> > -	srcu_check_nmi_safety(ssp, false);
+> > +	srcu_check_read_flavor(ssp, false);
+> >  	return __srcu_read_lock(ssp);
+> >  }
+> >  
+> > @@ -318,7 +317,7 @@ static inline void srcu_read_unlock(struct srcu_struct *ssp, int idx)
+> >  	__releases(ssp)
+> >  {
+> >  	WARN_ON_ONCE(idx & ~0x1);
+> > -	srcu_check_nmi_safety(ssp, false);
+> > +	srcu_check_read_flavor(ssp, false);
+> >  	srcu_lock_release(&ssp->dep_map);
+> >  	__srcu_read_unlock(ssp, idx);
+> >  }
+> > @@ -334,7 +333,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
+> >  	__releases(ssp)
+> >  {
+> >  	WARN_ON_ONCE(idx & ~0x1);
+> > -	srcu_check_nmi_safety(ssp, true);
+> > +	srcu_check_read_flavor(ssp, true);
+> >  	rcu_lock_release(&ssp->dep_map);
+> >  	__srcu_read_unlock_nmisafe(ssp, idx);
+> >  }
+> > @@ -343,7 +342,7 @@ static inline void srcu_read_unlock_nmisafe(struct srcu_struct *ssp, int idx)
+> >  static inline notrace void
+> >  srcu_read_unlock_notrace(struct srcu_struct *ssp, int idx) __releases(ssp)
+> >  {
+> > -	srcu_check_nmi_safety(ssp, false);
+> > +	srcu_check_read_flavor(ssp, false);
+> >  	__srcu_read_unlock(ssp, idx);
+> >  }
+> >  
+> > @@ -360,7 +359,7 @@ static inline void srcu_up_read(struct srcu_struct *ssp, int idx)
+> >  {
+> >  	WARN_ON_ONCE(idx & ~0x1);
+> >  	WARN_ON_ONCE(in_nmi());
+> > -	srcu_check_nmi_safety(ssp, false);
+> > +	srcu_check_read_flavor(ssp, false);
+> >  	__srcu_read_unlock(ssp, idx);
+> >  }
+> >  
+> > diff --git a/include/linux/srcutree.h b/include/linux/srcutree.h
+> > index ed57598394de3..ab7d8d215b84b 100644
+> > --- a/include/linux/srcutree.h
+> > +++ b/include/linux/srcutree.h
+> > @@ -25,7 +25,7 @@ struct srcu_data {
+> >  	/* Read-side state. */
+> >  	atomic_long_t srcu_lock_count[2];	/* Locks per CPU. */
+> >  	atomic_long_t srcu_unlock_count[2];	/* Unlocks per CPU. */
+> > -	int srcu_nmi_safety;			/* NMI-safe srcu_struct structure? */
+> > +	int srcu_reader_flavor;			/* Reader flavor for srcu_struct structure? */
+> 
+> This is a mask for the reader flavor, so s/srcu_reader_flavor/srcu_reader_flavor_mask ?
+
+Yes, it is a mask, but one that should only ever have a single bit set.
+So calling it a mask might or might not be a service to the reader.
+
+							Thanx, Paul
+
+> - Neeraj
+> 
+> >  
+> >  	/* Update-side state. */
+> >  	spinlock_t __private lock ____cacheline_internodealigned_in_smp;
+> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
+> > index e29c6cbffbcb0..18f2eae5e14bd 100644
+> > --- a/kernel/rcu/srcutree.c
+> > +++ b/kernel/rcu/srcutree.c
+> > @@ -460,7 +460,7 @@ static unsigned long srcu_readers_unlock_idx(struct srcu_struct *ssp, int idx)
+> >  
+> >  		sum += atomic_long_read(&cpuc->srcu_unlock_count[idx]);
+> >  		if (IS_ENABLED(CONFIG_PROVE_RCU))
+> > -			mask = mask | READ_ONCE(cpuc->srcu_nmi_safety);
+> > +			mask = mask | READ_ONCE(cpuc->srcu_reader_flavor);
+> >  	}
+> >  	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask >> 1)),
+> >  		  "Mixed NMI-safe readers for srcu_struct at %ps.\n", ssp);
+> > @@ -699,25 +699,25 @@ EXPORT_SYMBOL_GPL(cleanup_srcu_struct);
+> >  
+> >  #ifdef CONFIG_PROVE_RCU
+> >  /*
+> > - * Check for consistent NMI safety.
+> > + * Check for consistent reader flavor.
+> >   */
+> > -void srcu_check_nmi_safety(struct srcu_struct *ssp, bool nmi_safe)
+> > +void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor)
+> >  {
+> > -	int nmi_safe_mask = 1 << nmi_safe;
+> > -	int old_nmi_safe_mask;
+> > +	int reader_flavor_mask = 1 << read_flavor;
+> > +	int old_reader_flavor_mask;
+> >  	struct srcu_data *sdp;
+> >  
+> >  	/* NMI-unsafe use in NMI is a bad sign */
+> > -	WARN_ON_ONCE(!nmi_safe && in_nmi());
+> > +	WARN_ON_ONCE(!read_flavor && in_nmi());
+> >  	sdp = raw_cpu_ptr(ssp->sda);
+> > -	old_nmi_safe_mask = READ_ONCE(sdp->srcu_nmi_safety);
+> > -	if (!old_nmi_safe_mask) {
+> > -		WRITE_ONCE(sdp->srcu_nmi_safety, nmi_safe_mask);
+> > +	old_reader_flavor_mask = READ_ONCE(sdp->srcu_reader_flavor);
+> > +	if (!old_reader_flavor_mask) {
+> > +		WRITE_ONCE(sdp->srcu_reader_flavor, reader_flavor_mask);
+> >  		return;
+> >  	}
+> > -	WARN_ONCE(old_nmi_safe_mask != nmi_safe_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_nmi_safe_mask, nmi_safe_mask);
+> > +	WARN_ONCE(old_reader_flavor_mask != reader_flavor_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_reader_flavor_mask, reader_flavor_mask);
+> >  }
+> > -EXPORT_SYMBOL_GPL(srcu_check_nmi_safety);
+> > +EXPORT_SYMBOL_GPL(srcu_check_read_flavor);
+> >  #endif /* CONFIG_PROVE_RCU */
+> >  
+> >  /*
+> 
 
