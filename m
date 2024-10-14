@@ -1,174 +1,141 @@
-Return-Path: <linux-kernel+bounces-363265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77A0499BFD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:10:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1B7699BFD3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:10:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9B0701C22235
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:10:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60A33284240
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:10:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 725CC13E028;
-	Mon, 14 Oct 2024 06:10:31 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24C2C13D893;
+	Mon, 14 Oct 2024 06:10:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="e5kxh8wd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7487713CFA3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:10:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BF7314375D;
+	Mon, 14 Oct 2024 06:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728886231; cv=none; b=VDFTf5h/FcVKQrsI4oQBKy6jg+BvmmmbA5B826amNTnoeanqfrFmsGoxozbCHVGrrMKUXicTivRc5mJGNhRdP5MBopUYDuWOrtY6tMJvtb0HC+H6Ul2T5o6ArWdxuA3iiimosVfMMeTbm2RBntZni8sKuwcE80m2AKeUdCzCQco=
+	t=1728886240; cv=none; b=gwI0pXf/1WwMVQtyWJY3NMe8wVXYrLmugVms92n0oE2oYls597XHiUpH47nIM4Ni/jtLkdTbe3Ey4ZzBVyvpiX4Z/IHQzv2n5mqSHq/Z6zYqITI3wYty1dlHkMsygut8xeIMamnLOVqbR7VqSmQnKuwA/4LBF1F/SYfRLNleQ28=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728886231; c=relaxed/simple;
-	bh=do0VxF7OqQ6ake4Ma2eDjCtwPUt1cvw4UHN2k71Uk8M=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=DSx+iGSAL2JXC8xQKxGz6gIs2A/ZCegYFMp6SzSIsVvhCImw156q08AT6c0NKMV8rhthK+iS+yn+r5yYO5+ubyR99XKAuHAzIhNT8js8IuubscMnI8ifOYtwvAOaHE3PvNxmnVRFutqCVhvILusQbdsZVioWP6cWqMO2phg5f6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a1a8b992d3so33987735ab.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:10:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728886228; x=1729491028;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=TPfhhO5qUG9J5CacmHWLOTkZYLLMWoOolVBwmexxbAo=;
-        b=o+QILJBqeCU7Z8pjhbkQQP0QN/LS1aovLZ0FaYfxs5ZBQOlQV6Ejfgutwl8Nf8wUBr
-         FyW+n6mGSZJ1RQdwm9W4pIr8exafrjqfOE2/WCDF2+GVbUVC+lIG2ojj6tmMXeancHOi
-         ia40KJWluHj2yr5rSrkY+8bISexkw93WwQIplENW5zR7NkGmJN8RlVb0CEodwzwEcAen
-         CLJ0DpsVtRN6qHwuf9glhK7DyzWNviCS583fJBjKG2CKEe+essX4M0Zu3ebIouBN5Grm
-         Ji+N5q9gLV7UbJoYX4Z/D+ywxrUPzcy8KEjtzjEAAp7yQLqOO6VSyNAHe7WXv94d6uGA
-         ucCg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4YeYESFDnRnNTu+Q7F8IYLFfsE8PveUiLpZJxFyO+PPE4sFmrxxlU51FqGazay63CqyLrvSaBID4itYg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1SpMM2cYBG4+AwQiQYHZAsgvPAHvbFGP3/hvXRk6AEQUOyDp1
-	OYgnpHqiH50NmiyhU4rPnmv4y91dL7f8XNgr/cWjnvF8NTtLNVFEmkNE03qUmBT3yENKSX4ICvV
-	/AtLYr6Rs59810tqFWXQ4tYpOuRtmAGGJ9f86K4pNm2kEAPaFnYX8lRg=
-X-Google-Smtp-Source: AGHT+IFApPwVNettqVx2RNTBBzNIzdL6X9KJnsnP2BNNDCvJzplW4pmK1ALW9Kfvozlx/dcq9OMvSBFxgy39Ng6Sm07ptCY7cMxW
+	s=arc-20240116; t=1728886240; c=relaxed/simple;
+	bh=vtOULXzKh1W2zjoRRH7MNf2bpYcEKecnN3dY3aNLMSE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VqclVnQcdKc1Pm50jiEmXbiWQENGq4CsAGgWDyw/OHzUjeYn1Q+5ZYAPLFEbgTl00Ujv1UkWbK+krUfd63wHsoSbGUYXiYvn6hpUlUJhwQ4MV3fQluiwWluZuQ+sMPcdOE7VJAUtchuXsBG6kxjDJgx5GOA+JRHYHHmT1B+fGQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=e5kxh8wd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44453C4CEC3;
+	Mon, 14 Oct 2024 06:10:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1728886239;
+	bh=vtOULXzKh1W2zjoRRH7MNf2bpYcEKecnN3dY3aNLMSE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=e5kxh8wdesQJ0pTug01/NkZeExuwthoVgZUktUVr+s/szlFweo7jeFGN5DGAw641X
+	 1HqC/vulNeN0xjiBXuGBENKV/QLDFKwV/tobl31ROkTUGKA/9r+x/rAa1R/qNGU/b1
+	 mJIYxxMrwmdXVJ2c+gJB78DB7j/keAhi5pGYExM4=
+Date: Mon, 14 Oct 2024 08:10:37 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Jisheng Zhang <jszhang@kernel.org>
+Cc: Jiri Slaby <jirislaby@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, linuxppc-dev@lists.ozlabs.org,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH] tty: hvc: riscv_sbi: instantiate the legcay console
+ earlier
+Message-ID: <2024101402-starlet-riverside-02d4@gregkh>
+References: <20241014000857.3032-1-jszhang@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c26c:0:b0:3a0:8e7c:b4ae with SMTP id
- e9e14a558f8ab-3a3b5844ab8mr75164165ab.2.1728886228400; Sun, 13 Oct 2024
- 23:10:28 -0700 (PDT)
-Date: Sun, 13 Oct 2024 23:10:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670cb5d4.050a0220.3e960.0054.GAE@google.com>
-Subject: [syzbot] [netfs?] general protection fault in netfs_write_collection_worker
-From: syzbot <syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com>
-To: dhowells@redhat.com, jlayton@kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, netfs@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014000857.3032-1-jszhang@kernel.org>
 
-Hello,
+On Mon, Oct 14, 2024 at 08:08:57AM +0800, Jisheng Zhang wrote:
+> The hvc_instantiate() is an early console discovery mechanism, it is
+> usually called before allocating hvc terminal devices. In fact, if
+> we check hvc_riscv_sbi's hvc_instantiate() return value, we'll find
+> that it's -1. So the calling hvc_instantiate() is too late.
+> 
+> We can remove the hvc_instantiate() to only rely on the hvc_alloc() to
+> register the kernel console. We can also move its calling earlier so
+> the kernel console is registered earlier, so that we can get kernel
+> console msg earlier. We take the 2nd choice in this patch.
+> 
+> Before the patch:
+> [    0.367440] printk: legacy console [hvc0] enabled
+> [    0.401397] Serial: 8250/16550 driver, 4 ports, IRQ sharing disabled
+> 
+> After the patch:
+> 
+> [    0.004665] printk: legacy console [hvc0] enabled
+> [    0.050183] Calibrating delay loop (skipped), value calculated using timer frequency.. 20.00 BogoMIPS (lpj=100000)
+> 
+> As can be seen, now the kernel console is registered much earlier before
+> the BogoMIPS calibrating.
+> 
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 
-syzbot found the following issue on:
+What commit id does this fix?
 
-HEAD commit:    e32cde8d2bd7 Merge tag 'sched_ext-for-6.12-rc1-fixes-1' of..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=136ae580580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=1b5201b91035a876
-dashboard link: https://syzkaller.appspot.com/bug?extid=af5c06208fa71bf31b16
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> ---
+>  drivers/tty/hvc/hvc_riscv_sbi.c | 17 +++++++++++++++--
+>  1 file changed, 15 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/tty/hvc/hvc_riscv_sbi.c b/drivers/tty/hvc/hvc_riscv_sbi.c
+> index cede8a572594..d2ecfbf7c84a 100644
+> --- a/drivers/tty/hvc/hvc_riscv_sbi.c
+> +++ b/drivers/tty/hvc/hvc_riscv_sbi.c
+> @@ -68,12 +68,10 @@ static int __init hvc_sbi_init(void)
+>  		err = PTR_ERR_OR_ZERO(hvc_alloc(0, 0, &hvc_sbi_dbcn_ops, 256));
+>  		if (err)
+>  			return err;
+> -		hvc_instantiate(0, 0, &hvc_sbi_dbcn_ops);
+>  	} else if (IS_ENABLED(CONFIG_RISCV_SBI_V01)) {
+>  		err = PTR_ERR_OR_ZERO(hvc_alloc(0, 0, &hvc_sbi_v01_ops, 256));
+>  		if (err)
+>  			return err;
+> -		hvc_instantiate(0, 0, &hvc_sbi_v01_ops);
+>  	} else {
+>  		return -ENODEV;
+>  	}
+> @@ -81,3 +79,18 @@ static int __init hvc_sbi_init(void)
+>  	return 0;
+>  }
+>  device_initcall(hvc_sbi_init);
+> +
+> +static int __init hvc_sbi_console_init(void)
+> +{
+> +	int err;
+> +
+> +	if (sbi_debug_console_available)
+> +		err = hvc_instantiate(0, 0, &hvc_sbi_dbcn_ops);
+> +	else if (IS_ENABLED(CONFIG_RISCV_SBI_V01))
+> +		err = hvc_instantiate(0, 0, &hvc_sbi_v01_ops);
+> +	else
+> +		return -ENODEV;
+> +
+> +	return err < 0 ? -ENODEV : 0;
 
-Unfortunately, I don't have any reproducer for this issue yet.
+Please spell out a ? : line, it's not required here.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-e32cde8d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b8759dd370e1/vmlinux-e32cde8d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/c770fb4b8507/bzImage-e32cde8d.xz
+> +}
+> +console_initcall(hvc_sbi_console_init);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+af5c06208fa71bf31b16@syzkaller.appspotmail.com
+Are you sure this will always work properly?  For some reason the
+original code did not do this, you might want to check the
+lore.kernel.org archives to find out why.
 
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000001: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000008-0x000000000000000f]
-CPU: 0 UID: 0 PID: 1109 Comm: kworker/u32:8 Not tainted 6.12.0-rc1-syzkaller-00031-ge32cde8d2bd7 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Workqueue: events_unbound netfs_write_collection_worker
-RIP: 0010:folioq_folio include/linux/folio_queue.h:277 [inline]
-RIP: 0010:netfs_writeback_unlock_folios fs/netfs/write_collect.c:107 [inline]
-RIP: 0010:netfs_collect_write_results fs/netfs/write_collect.c:493 [inline]
-RIP: 0010:netfs_write_collection_worker+0x1c97/0x4780 fs/netfs/write_collect.c:551
-Code: 4c 39 fb 0f 83 25 04 00 00 e8 e5 94 54 ff 44 8b 2c 24 41 83 fd 1e 0f 87 77 23 00 00 4a 8d 44 ed 08 48 89 44 24 30 48 c1 e8 03 <42> 80 3c 30 00 0f 85 4f 23 00 00 4a 8b 5c ed 08 48 89 df e8 d1 da
-RSP: 0018:ffffc90005d6fae8 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffffffff8238f165
-RDX: ffff888026c4a440 RSI: ffffffff8238f40b RDI: 0000000000000005
-RBP: 0000000000000000 R08: ffff88805f4fc600 R09: 000000000000001e
-R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000002c
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffff88805f4fc5fa
-FS:  0000000000000000(0000) GS:ffff88806a600000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055960e035c38 CR3: 0000000056af8000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- process_one_work+0x9c5/0x1ba0 kernel/workqueue.c:3229
- process_scheduled_works kernel/workqueue.c:3310 [inline]
- worker_thread+0x6c8/0xf00 kernel/workqueue.c:3391
- kthread+0x2c1/0x3a0 kernel/kthread.c:389
- ret_from_fork+0x45/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:folioq_folio include/linux/folio_queue.h:277 [inline]
-RIP: 0010:netfs_writeback_unlock_folios fs/netfs/write_collect.c:107 [inline]
-RIP: 0010:netfs_collect_write_results fs/netfs/write_collect.c:493 [inline]
-RIP: 0010:netfs_write_collection_worker+0x1c97/0x4780 fs/netfs/write_collect.c:551
-Code: 4c 39 fb 0f 83 25 04 00 00 e8 e5 94 54 ff 44 8b 2c 24 41 83 fd 1e 0f 87 77 23 00 00 4a 8d 44 ed 08 48 89 44 24 30 48 c1 e8 03 <42> 80 3c 30 00 0f 85 4f 23 00 00 4a 8b 5c ed 08 48 89 df e8 d1 da
-RSP: 0018:ffffc90005d6fae8 EFLAGS: 00010202
-RAX: 0000000000000001 RBX: 0000000000000000 RCX: ffffffff8238f165
-RDX: ffff888026c4a440 RSI: ffffffff8238f40b RDI: 0000000000000005
-RBP: 0000000000000000 R08: ffff88805f4fc600 R09: 000000000000001e
-R10: 0000000000000000 R11: 0000000000000000 R12: 000000000000002c
-R13: 0000000000000000 R14: dffffc0000000000 R15: ffff88805f4fc5fa
-FS:  0000000000000000(0000) GS:ffff88806a800000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007f989f7fd870 CR3: 000000000df7c000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	4c 39 fb             	cmp    %r15,%rbx
-   3:	0f 83 25 04 00 00    	jae    0x42e
-   9:	e8 e5 94 54 ff       	call   0xff5494f3
-   e:	44 8b 2c 24          	mov    (%rsp),%r13d
-  12:	41 83 fd 1e          	cmp    $0x1e,%r13d
-  16:	0f 87 77 23 00 00    	ja     0x2393
-  1c:	4a 8d 44 ed 08       	lea    0x8(%rbp,%r13,8),%rax
-  21:	48 89 44 24 30       	mov    %rax,0x30(%rsp)
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	0f 85 4f 23 00 00    	jne    0x2384
-  35:	4a 8b 5c ed 08       	mov    0x8(%rbp,%r13,8),%rbx
-  3a:	48 89 df             	mov    %rbx,%rdi
-  3d:	e8                   	.byte 0xe8
-  3e:	d1 da                	rcr    %edx
+thanks,
 
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+greg k-h
 
