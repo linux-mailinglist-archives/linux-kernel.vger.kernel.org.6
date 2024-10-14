@@ -1,63 +1,52 @@
-Return-Path: <linux-kernel+bounces-364464-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364465-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 415B699D4FA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:51:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E315099D4FB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:51:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C018DB22952
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:51:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B29D51C226C4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:51:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78C41B4F3E;
-	Mon, 14 Oct 2024 16:51:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484101AF4F6;
+	Mon, 14 Oct 2024 16:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eD49wm8e"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CDxIQvYk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E489288B1;
-	Mon, 14 Oct 2024 16:51:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0905198A1B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:51:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728924677; cv=none; b=hrd0ILmqSYs+Frbtw6DqsJdQT+8PY4F6ZId1gU1E2CVlDG/RKVgo9+PF0lKCp8q6kHtAjdfPsVSE1egd9J2Va0iCA0PQXyzjnQiq81WZh+C7jJ/8qYIK9NOjzwM0h9/EWNY/PJuU9Jfx/Y4hkQX8vTSeBKGu9oNAYTef9E4fzWA=
+	t=1728924703; cv=none; b=H3ygL+5pkEsYPW9q4cMo6VPv615U9TwUm5cveFLcWJ8d3Z5c5vOy1r84h3Wi2h2HWk4ZveuPLi0oruXAdh7e1z6iFnvbPls8P47PhDVYZZk1toyB5w5WIvmOwwxUJIx53F9Ffo0Ec2CiCQsbIQsp2qiB7hROMs6GofDxT4TvQzM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728924677; c=relaxed/simple;
-	bh=HVkCAK28Uz4v2yjt6+6+8HaHLau4B2tiGzMBjwo5yvw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o4S9qFY5FjZAMxgQKep2h0aU+SMDqyqXW+GO9iJ8pZs7m+/qGk4lf93tJ7ynJF4zszpkoEWAM6wUK6IuyByiWII6xQCjWHEstTptmGE+wUK1FgqHZQadDsqQ14a/4HGxSu07kdeopvzCu8GSZSvHHvA5j8ml/wskq5OrUm8PZU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eD49wm8e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F7D9C4CEC3;
-	Mon, 14 Oct 2024 16:51:16 +0000 (UTC)
+	s=arc-20240116; t=1728924703; c=relaxed/simple;
+	bh=xSiLdWCKW0d4kOhTcAew6y0uEJ0fLcClKUQ6HGQMe7s=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=F2VGTd6Cs+3uOGgQO6URaqiQVPtaJpmPi63WkvWkvh0lMqduWJnYYCEF/Hkhv2htziTjt+ZR56D6zKLN3Mf91/BC9otuA9tfC09/kYPz+nh3DvMomqBUgBuxtJxAkF49kfvK3DQCQIl19wAMjMzAWxsAd5/6RIYU4tdPeKB2BPI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CDxIQvYk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F9BCC4CEC3;
+	Mon, 14 Oct 2024 16:51:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728924676;
-	bh=HVkCAK28Uz4v2yjt6+6+8HaHLau4B2tiGzMBjwo5yvw=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=eD49wm8eSZIYMXleMB9YbI5akYYyLT9prVZNXEKSzVFlgu7E66pfEvdB9XbCfwmr9
-	 dSENrcMazgWojRRN8wA8RTkpS20mm4vtSKEpDP79Wc3cq+UFnDuzSfUUMN9a5OxrYD
-	 HYOzLf/6sIxa4ayZFNwJbiJvtuYoE53N3n7EiiYU7Updvg68YkfTi4ndvJumsusii5
-	 GS41w7IjAC9oHZUwZoKkH201h7BninzBg/xVVfXlsyyUfOEoOMhKFK+Hf/8xsobphG
-	 6h4ZP8EMejn7b+EMwyNGl3+iwNYGOZ50sBaUpMM6yAa834kd/brgGkM+sDEJGt+ieg
-	 kj7DOhEbl84Dg==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 3C736CE0B68; Mon, 14 Oct 2024 09:51:16 -0700 (PDT)
-Date: Mon, 14 Oct 2024 09:51:16 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: frederic@kernel.org, rcu@vger.kernel.org, linux-kernel@vger.kernel.org,
-	kernel-team@meta.com, rostedt@goodmis.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>, bpf@vger.kernel.org
-Subject: Re: [PATCH rcu 04/12] srcu: Bit manipulation changes for additional
- reader flavor
-Message-ID: <6f8934c8-8499-48ec-89fa-e3f356fae419@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ff986c31-9cd0-45e5-aa31-9aedf582325f@paulmck-laptop>
- <20241009180719.778285-4-paulmck@kernel.org>
- <abf6c382-7b70-4cdb-9227-7dfd21e60c45@amd.com>
+	s=k20201202; t=1728924703;
+	bh=xSiLdWCKW0d4kOhTcAew6y0uEJ0fLcClKUQ6HGQMe7s=;
+	h=Date:From:To:Cc:Subject:From;
+	b=CDxIQvYkzps2tEUA1nid3QnaaScefKoVsxxJ/YsVq2hJw/Tm8jEvmgFq4DLcghoib
+	 UDO/d0S4UNBUGlje6uldHURjTnWlwEIhjy7v5QrAdTZyJje1Fkzof1xe8vcR+u/APY
+	 gMhg/dDM+jytA2ZIJeyh3Jww9h68fUWGLJm7BCwey1C2Ut6ycKBH3BYH7Fm9n+lXvR
+	 4lGGpqUMxbGJd0AoQIvEfZFiGSgXlxwLTbLn5CthzykzH2brR6CypieYyNT6s27/Z5
+	 bfSctjGEBQMajfb6hPrFIcSaqE33Zbyv0jXGN2hEUqgcQoCEn47PXyflXogDEiO8hx
+	 LooI8mqA6TMmw==
+Date: Mon, 14 Oct 2024 16:51:41 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] f2fs fix for 6.12-rc4
+Message-ID: <Zw1MHWwr3fRgJpLr@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +55,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <abf6c382-7b70-4cdb-9227-7dfd21e60c45@amd.com>
 
-On Mon, Oct 14, 2024 at 02:42:33PM +0530, Neeraj Upadhyay wrote:
-> On 10/9/2024 11:37 PM, Paul E. McKenney wrote:
-> > Currently, there are only two flavors of readers, normal and NMI-safe.
-> > Very straightforward state updates suffice to check for erroneous
-> > mixing of reader flavors on a given srcu_struct structure.  This commit
-> > upgrades the checking in preparation for the addition of light-weight
-> > (as in memory-barrier-free) readers.
-> > 
-> > Signed-off-by: Paul E. McKenney <paulmck@kernel.org>
-> > Cc: Alexei Starovoitov <ast@kernel.org>
-> > Cc: Andrii Nakryiko <andrii@kernel.org>
-> > Cc: Peter Zijlstra <peterz@infradead.org>
-> > Cc: Kent Overstreet <kent.overstreet@linux.dev>
-> > Cc: <bpf@vger.kernel.org>
-> > ---
-> >  kernel/rcu/srcutree.c | 7 ++++---
-> >  1 file changed, 4 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/kernel/rcu/srcutree.c b/kernel/rcu/srcutree.c
-> > index 18f2eae5e14bd..abe55777c4335 100644
-> > --- a/kernel/rcu/srcutree.c
-> > +++ b/kernel/rcu/srcutree.c
-> > @@ -462,7 +462,7 @@ static unsigned long srcu_readers_unlock_idx(struct srcu_struct *ssp, int idx)
-> >  		if (IS_ENABLED(CONFIG_PROVE_RCU))
-> >  			mask = mask | READ_ONCE(cpuc->srcu_reader_flavor);
-> >  	}
-> > -	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask >> 1)),
-> > +	WARN_ONCE(IS_ENABLED(CONFIG_PROVE_RCU) && (mask & (mask - 1)),
-> >  		  "Mixed NMI-safe readers for srcu_struct at %ps.\n", ssp);
-> >  	return sum;
-> >  }
-> > @@ -712,8 +712,9 @@ void srcu_check_read_flavor(struct srcu_struct *ssp, int read_flavor)
-> >  	sdp = raw_cpu_ptr(ssp->sda);
-> >  	old_reader_flavor_mask = READ_ONCE(sdp->srcu_reader_flavor);
-> >  	if (!old_reader_flavor_mask) {
-> > -		WRITE_ONCE(sdp->srcu_reader_flavor, reader_flavor_mask);
-> > -		return;
-> > +		old_reader_flavor_mask = cmpxchg(&sdp->srcu_reader_flavor, 0, reader_flavor_mask);
-> 
-> This looks to be separate independent fix?
+Hi Linus,
 
-I would say that it is part of the upgrade.  The old logic worked if there
-are only two flavors, but the cmpxchg() is required for more than two.
+Could you please consider applying this patch in f2fs?
 
-							Thanx, Paul
+Thanks,
 
-> - Neeraj
-> 
-> > +		if (!old_reader_flavor_mask)
-> > +			return;
-> >  	}
-> >  	WARN_ONCE(old_reader_flavor_mask != reader_flavor_mask, "CPU %d old state %d new state %d\n", sdp->cpu, old_reader_flavor_mask, reader_flavor_mask);
-> >  }
-> 
+The following changes since commit 8cf0b93919e13d1e8d4466eb4080a4c4d9d66d7b:
+
+  Linux 6.12-rc2 (2024-10-06 15:32:27 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-6.12-rc4
+
+for you to fetch changes up to 332fade75d0ecd88cd19556fce0f9cc8322de434:
+
+  f2fs: allow parallel DIO reads (2024-10-11 15:12:07 +0000)
+
+----------------------------------------------------------------
+f2fs fix for 6.12-rc4
+
+This includes an urgent fix to resolve DIO read performance regression caused by
+0cac51185e65 ("f2fs: fix to avoid racing in between read and OPU dio write").
+
+----------------------------------------------------------------
+Jaegeuk Kim (1):
+      f2fs: allow parallel DIO reads
+
+ fs/f2fs/file.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
