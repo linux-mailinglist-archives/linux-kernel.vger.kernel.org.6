@@ -1,359 +1,205 @@
-Return-Path: <linux-kernel+bounces-364788-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364789-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A78799D960
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:50:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B3399D962
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:54:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EA2A81F233A7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:50:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 10AFFB216D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:54:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC261D3643;
-	Mon, 14 Oct 2024 21:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 516A31D0E3E;
+	Mon, 14 Oct 2024 21:54:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="crKd26Fh"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b="FKPJFFcs"
+Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 427D91474B7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A96C81474B7
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:54:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728942633; cv=none; b=FbQOOXhAwDe5WGD/ps/n2e9PIGmAzk7EJLJORc12fhSSZvxaxd0eSWViBQ2SLr1GTHzpN+c3esWDQ30yW+jED/Bwe0eLY/XwZ5HdHVVKabbOxZsYbtOAWlAf2L5EA0JtwKQOZx1qx3kxSFFzBEHx1URA4c4JZOfCizJ1buAxU7M=
+	t=1728942847; cv=none; b=IIuriCERylpvEFggA5kfRwr9Al3NfcpcxbH6BbaJSarC6CYvtiT5K8Ur24IV6P7WwpCSFpxVAVKIV/1fY+dsMoDxLfDQqThevWGO+w8IOM8S8eff8p/cv1yQCfG5Wr4+f2m16EFAZU6V45rt5lecHXEjB7becVUPWVBYB10SP4A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728942633; c=relaxed/simple;
-	bh=MdiBWBgWff0+rMNg2h+OGqlXtz32Rg48h+3ogQJ/Swo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rP1qRbKqAfqp4WT9vsnBYTXz9sd9wY6RQXiQljhyaF9b9SlVPrYF9NlZQOFmJ70yejfSbfieu4/mpYFxDuE9LepnjchtzbXk5StKQcv3AlOkph6IaAmp0zKXZqfWvAhEgYhNPZ14nVGl5jNnWsWxYLOCWQLRIlLovfks8Lx3hBU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=crKd26Fh; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e5f526645so49096b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:50:31 -0700 (PDT)
+	s=arc-20240116; t=1728942847; c=relaxed/simple;
+	bh=K/Ct3IZFPedMTA/teu2nd5ZIsr8fp6lOGXWENzl8zWU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HKMWrQkoYhsuZU2EiLZ9eNBSeIeoJNiBfGaugjeOhUX0vtw2hlDdaMC6F3oxCwIyaPh5CIZCw/sX5qTAT6gzyoTS/ML7cs1E4PbRXJzoN/fWRiUcP9K3yr3Zfe8f7R43jDCTpx24206VMVkN0AdyHXYNMkcIbrXjcrbvl7Z6SAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com; spf=pass smtp.mailfrom=cloud.com; dkim=pass (1024-bit key) header.d=citrix.com header.i=@citrix.com header.b=FKPJFFcs; arc=none smtp.client-ip=209.85.167.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=citrix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloud.com
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e63c8678so2324230e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:54:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1728942630; x=1729547430; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gCqzm4XprfPZ6h5KSF8yerh8aBwfFdviFsIk/AJKr8Q=;
-        b=crKd26Fhzsg5O4WZORKEeV7TbrPzGd88Dj1BJUYsliGXQjmb1idkJmNUg/x07Dbuem
-         l2tLRyLnRvl/+yJpDf4fNLT/n5rg7KUcAI/Gtt7nSMmyrjSj31IoMvrfF78GbAImzNet
-         hqAPJqV6gBGpO3IpWbCXCuSh6s/aBFOxsJ9Gg=
+        d=citrix.com; s=google; t=1728942844; x=1729547644; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=K/Ct3IZFPedMTA/teu2nd5ZIsr8fp6lOGXWENzl8zWU=;
+        b=FKPJFFcsg+yieYLfqg/NxM3fOcTUqyuuTr/algezW9CNddROS8aWjk8ChcjVvG2fT3
+         K8SlgkoxGxeb2q4gVBif8wvwDflabkLQifqPajZpWa+tsvSR4qS1GZkxbuqUGTQEczGS
+         qbU5pWHt+QBZaz+PlGCQol56p6KKf7KZbnt0g=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728942630; x=1729547430;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gCqzm4XprfPZ6h5KSF8yerh8aBwfFdviFsIk/AJKr8Q=;
-        b=hL+6ux5iBTneZTnlOmRSdCdQiNr3Hi3vKqB6xMUkNnB/4Chcnina7V/BSzmgnYtvuk
-         95i2+UysTLYoUIOrUrEe2BgWYuz/jZfrte8Qks/J4ocgk7EK2H6PFv3i4pozSKDW7jQu
-         zplWXvOtO1PB4+UEf418reijaCtnRnvPLS9GFg3Gb1B2gXf0d2rlh7fWTQbjInnMQvHQ
-         /ay1nvZ0s1p02M/KDvghpfs9obGyMcb0/XIbi/r2IXZAtiLvsJOZpwl95jQmY5OfG+ba
-         qJbYnDYZAgu5zD+j1Ceq51xf5glLE5L9eV8hUA8TL0Kw4BOQ0fcTdB7mE9BbNf1L5hIh
-         GQJA==
-X-Gm-Message-State: AOJu0Yz/YCw5yvbr0/T65g2JvulXfBejEtHXnwIcgZqV2Uk/CjbvBdQB
-	n7D/6uD/JR008WYKEEI4i2W0PwNeHBjLMu46gUT1i57mn+jvj17oX9p2TaB7nA==
-X-Google-Smtp-Source: AGHT+IHJibLG55dv20aw5zAlf9R+lVo01HQFW7VTQTck/5caHO6/ZiNO6n2U3rR/biiiYKEMvgayNg==
-X-Received: by 2002:a05:6a00:1ad3:b0:71e:5400:1b35 with SMTP id d2e1a72fcca58-71e54001b7bmr4887430b3a.5.1728942630535;
-        Mon, 14 Oct 2024 14:50:30 -0700 (PDT)
-Received: from localhost (56.4.82.34.bc.googleusercontent.com. [34.82.4.56])
-        by smtp.gmail.com with UTF8SMTPSA id d2e1a72fcca58-71e4a77cb0bsm5458012b3a.193.2024.10.14.14.50.30
+        d=1e100.net; s=20230601; t=1728942844; x=1729547644;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=K/Ct3IZFPedMTA/teu2nd5ZIsr8fp6lOGXWENzl8zWU=;
+        b=R2YxPHir5vhWuUACj93APKclHhEu31Qe5hYIt+qrNkMZXHSdsyk7GatDMy9H+H/Mtz
+         OigvNkec+hqmGRRLJRkSEfhAWsX4tZazXrpLT+akA2IeJyrYCS3Q9Ez4kI3x0JE9cePi
+         u0G3zGRY34kvpwXmoA0pwsCgeSd4kzzcmL8cp03oocO19GH0JWwNiVlU5+p/u/3ANjgq
+         KgprcgLm02EZKY6Pvz0vSg0Yr177WjsdL8OCaNGSsIQOJAdHpogMPbzZrM6oA9mPVyJq
+         B7J4SC4jF0xut7+7ZE1o6fEDxjS3wB0uVakI+sYvB1wV3tqhH+33baqkGC9Agaa3wF1i
+         w+LA==
+X-Forwarded-Encrypted: i=1; AJvYcCWZAYjcenu4fQEo9sMkT16E7MouuykUu/fTvV36UKZwQ2S/+kgM9aiCqYSuIEt8Q6oupPRrzXsqy1EBkfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyO+1G4W6cfqNF+0SfHLq3XZTEeCfoNPiZBppipZzzYEXs7pSIK
+	t0v87x7WONJoF/d7xG5BejbJP2PavxC6FmTzU+rRdYH4sxEOvn6WdM/zGEdCHhc=
+X-Google-Smtp-Source: AGHT+IEX8G18uEBj1LBNLu2Z12W3g2RV+IgTbg4b4lPizIvPx2/xtALGJw0QLonxHtdDROftLYBOiA==
+X-Received: by 2002:a05:6512:3083:b0:539:964c:16d4 with SMTP id 2adb3069b0e04-539e551ff2dmr4391214e87.36.1728942843619;
+        Mon, 14 Oct 2024 14:54:03 -0700 (PDT)
+Received: from [192.168.1.10] (host-92-26-98-202.as13285.net. [92.26.98.202])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4313f5698casm45105e9.14.2024.10.14.14.54.02
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 14:50:30 -0700 (PDT)
-From: jeffxu@chromium.org
-To: akpm@linux-foundation.org,
-	keescook@chromium.org,
-	jannh@google.com,
-	torvalds@linux-foundation.org,
-	adhemerval.zanella@linaro.org,
-	oleg@redhat.com
-Cc: linux-kernel@vger.kernel.org,
-	linux-hardening@vger.kernel.org,
-	linux-mm@kvack.org,
-	jorgelo@chromium.org,
-	sroettger@google.com,
-	ojeda@kernel.org,
-	adobriyan@gmail.com,
-	anna-maria@linutronix.de,
-	mark.rutland@arm.com,
-	linus.walleij@linaro.org,
-	Jason@zx2c4.com,
-	deller@gmx.de,
-	rdunlap@infradead.org,
-	davem@davemloft.net,
-	hch@lst.de,
-	peterx@redhat.com,
-	hca@linux.ibm.com,
-	f.fainelli@gmail.com,
-	gerg@kernel.org,
-	dave.hansen@linux.intel.com,
-	mingo@kernel.org,
-	ardb@kernel.org,
-	Liam.Howlett@Oracle.com,
-	mhocko@suse.com,
-	42.hyeyoo@gmail.com,
-	peterz@infradead.org,
-	ardb@google.com,
-	enh@google.com,
-	rientjes@google.com,
-	groeck@chromium.org,
-	lorenzo.stoakes@oracle.com,
-	Jeff Xu <jeffxu@chromium.org>
-Subject: [RFC PATCH v2 1/1] exec: seal system mappings
-Date: Mon, 14 Oct 2024 21:50:20 +0000
-Message-ID: <20241014215022.68530-2-jeffxu@google.com>
-X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
-In-Reply-To: <20241014215022.68530-1-jeffxu@google.com>
-References: <20241014215022.68530-1-jeffxu@google.com>
+        Mon, 14 Oct 2024 14:54:03 -0700 (PDT)
+Message-ID: <7e621780-3b19-4b60-b8a5-c0727c1eb5fd@citrix.com>
+Date: Mon, 14 Oct 2024 22:54:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 13/14] x86: BHI stubs
+To: "Constable, Scott D" <scott.d.constable@intel.com>,
+ Peter Zijlstra <peterz@infradead.org>
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>, "x86@kernel.org" <x86@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "Milburn, Alyssa" <alyssa.milburn@intel.com>,
+ "joao@overdrivepizza.com" <joao@overdrivepizza.com>,
+ "jose.marchesi@oracle.com" <jose.marchesi@oracle.com>,
+ "hjl.tools@gmail.com" <hjl.tools@gmail.com>,
+ "ndesaulniers@google.com" <ndesaulniers@google.com>,
+ "samitolvanen@google.com" <samitolvanen@google.com>,
+ "nathan@kernel.org" <nathan@kernel.org>, "ojeda@kernel.org"
+ <ojeda@kernel.org>, "kees@kernel.org" <kees@kernel.org>,
+ "alexei.starovoitov@gmail.com" <alexei.starovoitov@gmail.com>
+References: <20240927194856.096003183@infradead.org>
+ <20240927194925.707462984@infradead.org>
+ <20240930213030.ixbsyzziy6frh62f@treble>
+ <54d392d3-32b3-4832-89e1-d2ada1af22a8@citrix.com>
+ <20240930223848.ulipiky3uw52ej56@treble>
+ <20241001110310.GM5594@noisy.programming.kicks-ass.net>
+ <a7912ce1-131e-4b30-bed4-2576441c6212@citrix.com>
+ <20241003121739.GB17263@noisy.programming.kicks-ass.net>
+ <630467e0-6cd4-441d-a2cd-070a002c6f95@citrix.com>
+ <PH7PR11MB757220761F23360280DF4A0DBB442@PH7PR11MB7572.namprd11.prod.outlook.com>
+Content-Language: en-GB
+From: Andrew Cooper <andrew.cooper3@citrix.com>
+Autocrypt: addr=andrew.cooper3@citrix.com; keydata=
+ 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
+ 6+ahAA==
+In-Reply-To: <PH7PR11MB757220761F23360280DF4A0DBB442@PH7PR11MB7572.namprd11.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Jeff Xu <jeffxu@chromium.org>
+On 14/10/2024 6:50 pm, Constable, Scott D wrote:
+> Hello Andrew,
+>
+> Your observation is valid. If we assume that the hashing function used by FineIBT is uniformly distributed, then the distribution of hashes at the call site and at the call target is [0,2^32-1]. The difference of the two hashes computed in R10 will have the same distribution because of wrap-around, and the mean of this distribution is 2^31-1. Therefore, to reasonably bypass the proposed mitigation, I believe an attacker would need the hardened pointer to be added/subtracted to/from an attacker-controlled 64-bit value, or an attacker-controlled 32-bit value scaled by 2, 4, or 8. Therefore, I think it would be reasonable to additionally apply the CMOV hardening to any 32-/64-bit integral parameters, including enums. I scanned the kernel (Ubuntu noble 6.8 config) and found that 77% of parameters to indirect call targets are pointers (which we already harden) and less than 20% are 32-/64-bit integrals and enums.
+>
+> I think that this proposal would also address some other potential corner cases, such as:
+> - an attacker-controlled 32-/64-bit attacker-controlled integral parameter is used to index into a fixed-address array
+> - an attacker-controlled 64-bit attacker-controlled integral parameter is cast into a pointer
+>
+> Does this proposal address your concern?
 
-Seal vdso, vvar, sigpage, uprobes and vsyscall.
+Hello,
 
-Those mappings are readonly or executable only, sealing can protect
-them from ever changing during the life time of the process. For
-complete descriptions of memory sealing, please see mseal.rst [1].
+Thankyou for the analysis, and I'm glad I'm not just clutching at straws.
 
-System mappings such as vdso, vvar, and sigpage (for arm) are
-generated by the kernel during program initialization. These mappings
-are designated as non-writable, and sealing them will prevent them
-from ever becoming writeable.
+However, I'm not sure if extending this to other cases works very well. 
+While the second point is probably easy for the compiler to figure out,
+the former is looking a little bit more like a halting problem.
 
-Unlike the aforementioned mappings, the uprobe mapping is not
-established during program startup. However, its lifetime is the same
-as the process's lifetime [2], thus sealable.
+One key aspect is "how far can speculation continue beyond a
+mispredicted Jcc", but it occurs to me since the last email that there
+is no answer that Intel will give here.  It is uarch dependent and
+expected to increase on future parts, so safety wise we must assume
+infinite.
 
-The vdso, vvar, sigpage, and uprobe mappings all invoke the
-_install_special_mapping() function. As no other mappings utilize this
-function, it is logical to incorporate sealing logic within
-_install_special_mapping(). This approach avoids the necessity of
-modifying code across various architecture-specific implementations.
+And infinite is no good, so we must reason about "good enough".
 
-The vsyscall mapping, which has its own initialization function, is
-sealed in the XONLY case, it seems to be the most common and secure
-case of using vsyscall.
+My gut feeling is that blindly using the residual from the hash check
+isn't good enough.  7 years of  speculation fixes have shown that the
+researchers are constantly proving "this will be good enough" wrong.
 
-It is important to note that the CHECKPOINT_RESTORE feature (CRIU) may
-alter the mapping of vdso, vvar, and sigpage during restore
-operations. Consequently, this feature cannot be universally enabled
-across all systems. To address this, a kernel configuration option has
-been introduced to enable or disable this functionality. Note, uprobe
-is always sealed and not controlled by this kernel configuration.
+So, instead of simply using the residual, why don't we explicitly set
+%r10 to a known value?
 
-[1] Documentation/userspace-api/mseal.rst
-[2] https://lore.kernel.org/all/CABi2SkU9BRUnqf70-nksuMCQ+yyiWjo3fM4XkRkL-NrCZxYAyg@mail.gmail.com/
+Because we need to preserve flags from original hash check, we can't use
+any of the simple zeroing idioms, but we could use MOV $0, %r10 before
+the CMOVs targetting the pointer parameters.
 
-Signed-off-by: Jeff Xu <jeffxu@chromium.org>
----
- .../admin-guide/kernel-parameters.txt         | 10 ++++
- arch/x86/entry/vsyscall/vsyscall_64.c         |  9 +++-
- fs/exec.c                                     | 53 +++++++++++++++++++
- include/linux/fs.h                            |  1 +
- kernel/events/uprobes.c                       |  2 +-
- mm/mmap.c                                     |  1 +
- security/Kconfig                              | 26 +++++++++
- 7 files changed, 99 insertions(+), 3 deletions(-)
+But, if we're using a long-ish encoding anyway, why not MOV $GB(2)-1, %r10 ?
 
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index e7bfe1bde49e..02e5eb23d76f 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -1538,6 +1538,16 @@
- 			Permit 'security.evm' to be updated regardless of
- 			current integrity status.
- 
-+	exec.seal_system_mappings = [KNL]
-+			Format: { never | always }
-+			Seal system mappings: vdso, vvar, sigpage, uprobes,
-+			vsyscall.
-+			This overwrites KCONFIG CONFIG_SEAL_SYSTEM_MAPPINGS_*
-+			- 'never':  never seal system mappings.
-+			- 'always': always seal system mappings.
-+			If not specified or invalid, default is the KCONFIG value.
-+			This option has no effect if CONFIG_64BIT=n
-+
- 	early_page_ext [KNL,EARLY] Enforces page_ext initialization to earlier
- 			stages so cover more early boot allocations.
- 			Please note that as side effect some optimizations
-diff --git a/arch/x86/entry/vsyscall/vsyscall_64.c b/arch/x86/entry/vsyscall/vsyscall_64.c
-index 2fb7d53cf333..20a3000550d2 100644
---- a/arch/x86/entry/vsyscall/vsyscall_64.c
-+++ b/arch/x86/entry/vsyscall/vsyscall_64.c
-@@ -32,6 +32,7 @@
- #include <linux/mm_types.h>
- #include <linux/syscalls.h>
- #include <linux/ratelimit.h>
-+#include <linux/fs.h>
- 
- #include <asm/vsyscall.h>
- #include <asm/unistd.h>
-@@ -366,8 +367,12 @@ void __init map_vsyscall(void)
- 		set_vsyscall_pgtable_user_bits(swapper_pg_dir);
- 	}
- 
--	if (vsyscall_mode == XONLY)
--		vm_flags_init(&gate_vma, VM_EXEC);
-+	if (vsyscall_mode == XONLY) {
-+		unsigned long vm_flags = VM_EXEC;
-+
-+		update_seal_exec_system_mappings(&vm_flags);
-+		vm_flags_init(&gate_vma, vm_flags);
-+	}
- 
- 	BUILD_BUG_ON((unsigned long)__fix_to_virt(VSYSCALL_PAGE) !=
- 		     (unsigned long)VSYSCALL_ADDR);
-diff --git a/fs/exec.c b/fs/exec.c
-index 77364806b48d..5030879cda47 100644
---- a/fs/exec.c
-+++ b/fs/exec.c
-@@ -68,6 +68,7 @@
- #include <linux/user_events.h>
- #include <linux/rseq.h>
- #include <linux/ksm.h>
-+#include <linux/fs_parser.h>
- 
- #include <linux/uaccess.h>
- #include <asm/mmu_context.h>
-@@ -2159,3 +2160,55 @@ fs_initcall(init_fs_exec_sysctls);
- #ifdef CONFIG_EXEC_KUNIT_TEST
- #include "tests/exec_kunit.c"
- #endif
-+
-+#ifdef CONFIG_64BIT
-+/*
-+ * Kernel cmdline overwrite for CONFIG_SEAL_SYSTEM_MAPPINGS_X
-+ */
-+enum seal_system_mappings_type {
-+	SEAL_SYSTEM_MAPPINGS_NEVER,
-+	SEAL_SYSTEM_MAPPINGS_ALWAYS
-+};
-+
-+static enum seal_system_mappings_type seal_system_mappings __ro_after_init =
-+	IS_ENABLED(CONFIG_SEAL_SYSTEM_MAPPINGS_ALWAYS) ? SEAL_SYSTEM_MAPPINGS_ALWAYS :
-+	SEAL_SYSTEM_MAPPINGS_NEVER;
-+
-+static const struct constant_table value_table_sys_mapping[] __initconst = {
-+	{ "never", SEAL_SYSTEM_MAPPINGS_NEVER},
-+	{ "always", SEAL_SYSTEM_MAPPINGS_ALWAYS},
-+	{ }
-+};
-+
-+static int __init early_seal_system_mappings_override(char *buf)
-+{
-+	if (!buf)
-+		return -EINVAL;
-+
-+	seal_system_mappings = lookup_constant(value_table_sys_mapping,
-+			buf, seal_system_mappings);
-+
-+	return 0;
-+}
-+
-+early_param("exec.seal_system_mappings", early_seal_system_mappings_override);
-+
-+static bool seal_system_mappings_enabled(void)
-+{
-+	if (seal_system_mappings == SEAL_SYSTEM_MAPPINGS_ALWAYS)
-+		return true;
-+
-+	return false;
-+}
-+
-+void update_seal_exec_system_mappings(unsigned long *vm_flags)
-+{
-+	if (!(*vm_flags & VM_SEALED) && seal_system_mappings_enabled())
-+		*vm_flags |= VM_SEALED;
-+
-+}
-+#else
-+void update_seal_exec_system_mappings(unsigned long *vm_flags)
-+{
-+}
-+#endif /* CONFIG_64BIT */
-diff --git a/include/linux/fs.h b/include/linux/fs.h
-index 42444ec95c9b..6e44aca4b24b 100644
---- a/include/linux/fs.h
-+++ b/include/linux/fs.h
-@@ -3079,6 +3079,7 @@ ssize_t __kernel_read(struct file *file, void *buf, size_t count, loff_t *pos);
- extern ssize_t kernel_write(struct file *, const void *, size_t, loff_t *);
- extern ssize_t __kernel_write(struct file *, const void *, size_t, loff_t *);
- extern struct file * open_exec(const char *);
-+extern void update_seal_exec_system_mappings(unsigned long *vm_flags);
-  
- /* fs/dcache.c -- generic fs support functions */
- extern bool is_subdir(struct dentry *, struct dentry *);
-diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
-index c47a0bf25e58..e9876fae8887 100644
---- a/kernel/events/uprobes.c
-+++ b/kernel/events/uprobes.c
-@@ -1506,7 +1506,7 @@ static int xol_add_vma(struct mm_struct *mm, struct xol_area *area)
- 	}
- 
- 	vma = _install_special_mapping(mm, area->vaddr, PAGE_SIZE,
--				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO,
-+				VM_EXEC|VM_MAYEXEC|VM_DONTCOPY|VM_IO|VM_SEALED,
- 				&xol_mapping);
- 	if (IS_ERR(vma)) {
- 		ret = PTR_ERR(vma);
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 57fd5ab2abe7..d4717e34a60d 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -2133,6 +2133,7 @@ struct vm_area_struct *_install_special_mapping(
- 	unsigned long addr, unsigned long len,
- 	unsigned long vm_flags, const struct vm_special_mapping *spec)
- {
-+	update_seal_exec_system_mappings(&vm_flags);
- 	return __install_special_mapping(mm, addr, len, vm_flags, (void *)spec,
- 					&special_mapping_vmops);
- }
-diff --git a/security/Kconfig b/security/Kconfig
-index 28e685f53bd1..4ec8045339c3 100644
---- a/security/Kconfig
-+++ b/security/Kconfig
-@@ -51,6 +51,32 @@ config PROC_MEM_NO_FORCE
- 
- endchoice
- 
-+choice
-+	prompt "Seal system mappings"
-+	default SEAL_SYSTEM_MAPPINGS_NEVER
-+	help
-+	  Seal system mappings such as vdso, vvar, sigpage, uprobes and
-+	  vsyscall.
-+	  Note: kernel command line exec.seal_system_mappings overwrites this.
-+
-+config SEAL_SYSTEM_MAPPINGS_NEVER
-+	bool "Traditional behavior - not sealed"
-+	help
-+	  Do not seal system mappings.
-+	  This is default.
-+
-+config SEAL_SYSTEM_MAPPINGS_ALWAYS
-+	bool "Always seal system mappings"
-+	depends on 64BIT
-+	depends on !CHECKPOINT_RESTORE
-+	help
-+	  Seal system mappings such as vdso, vvar, sigpage, uprobes and
-+	  vsyscall.
-+	  Note: CHECKPOINT_RESTORE might relocate vdso mapping during restore,
-+	  and remap will fail if the mapping is sealed, therefore
-+	  !CHECKPOINT_RESTORE is added as dependency.
-+endchoice
-+
- config SECURITY
- 	bool "Enable different security models"
- 	depends on SYSFS
--- 
-2.47.0.rc1.288.g06298d1525-goog
+This way, in the bad speculation path we'll set all pointers to 2G,
+which removes most of the risk with backwards references, and makes the
+behaviour invariant of the hash residual (which itself reduces the
+opportunities to leak the hash value).
 
+So I suppose the real question is whether one extra MOV is acceptable,
+and is it good enough?  My gut feeling is yes to both.
+
+
+To the extra cases, they can of course be added if the compiler support
+isn't too horrible, independently of the extra MOV.  But, if 77% of
+parameters to indirect functions are pointers anyway, isn't it work
+considering CMOV-ing all parameter registers and turning the 57 stubs
+into just 6, and improve I$ locality?
+
+~Andrew
 
