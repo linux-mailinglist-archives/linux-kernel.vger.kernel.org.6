@@ -1,107 +1,93 @@
-Return-Path: <linux-kernel+bounces-364401-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27A5E99D42F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:04:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0581299D433
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE4201F22DE3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:04:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2735C1C22104
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:05:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959081ACDED;
-	Mon, 14 Oct 2024 16:04:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39954156256;
-	Mon, 14 Oct 2024 16:04:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195C31AD3E5;
+	Mon, 14 Oct 2024 16:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j0ky43CR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9B3175B1
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:05:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728921881; cv=none; b=E49giC3m+fZaShoPznq2kqISG+O5gJta41oEHpPvbEB/bImDZEIU3e4f3QkPQsuO8bQ1fCdfRZppC6BNchNE1X3g8NI2XcSEKYDX3l9s0KlOztujHdFdzhOX++gYEJPfB+0PTNvTKeHPf+a5pSYPxgeV3Qrf2dlGxfCHvFAKnZg=
+	t=1728921944; cv=none; b=RaW8Nzeg/m5PWt5X0PWq513Zj0YShMGHGgRkyEt/fatg0egMjAsdC5AYF22pmr7hQ/fvxDgseSx0euw5aJl/DdB75UK/yIwI3N6GeWBdKQ8e3HDE/1mXbVK5//2EVCh2z+E8MfmhIXfil54UdmxboY/NOAcMdltgPUSSFxmxQRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728921881; c=relaxed/simple;
-	bh=141OZSwUZquYB5d7J1zr2IvqrEuo8P55ju64vN7jspU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VWhF6nDnqcDrNXlxjeXtH5kkVoDmNyij7ZxuvY2Tz7aYXG8goLe492qiDDLTsgcdt/oRGbFoWaAaCTc2p6aCDa8y1FSnGsOz31dD6cDbo75yHVNEh7WXDeVMfJRfkq/SuMxW7DuugF1nENDvMzN9Ud7idd1x+9YKj12N/CkmWKo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 377621007;
-	Mon, 14 Oct 2024 09:05:08 -0700 (PDT)
-Received: from [10.1.33.17] (e127648.arm.com [10.1.33.17])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 57AFD3F71E;
-	Mon, 14 Oct 2024 09:04:36 -0700 (PDT)
-Message-ID: <d67d420f-8cd4-4b56-8a93-ebbd513268e8@arm.com>
-Date: Mon, 14 Oct 2024 17:04:34 +0100
+	s=arc-20240116; t=1728921944; c=relaxed/simple;
+	bh=FUNAbuY9VUcTA6rdkAbpB+TVHERbMMF8fyXegm8bPCA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lpx9JQsM6bWQZXqMz/s/sj/muRvZRI53RJjVnBiyrJ6yjPU0mzQFFzTMaeWd0xt/VNFyiMl8020+kDCceg1ZqUc+2fyMQJL8suomxUglll/P9O5J47ov4pNhKxh9l+r8sj3bSV/eE/jgUBoyI8+iobIU2UmPXf9bv6dhCkndhH0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j0ky43CR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DBC5FC4CEC3;
+	Mon, 14 Oct 2024 16:05:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728921944;
+	bh=FUNAbuY9VUcTA6rdkAbpB+TVHERbMMF8fyXegm8bPCA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j0ky43CRdBYlLqSD4pVVStMEw9RnvSHgsyM+mNapUSvdEu/ji90zrTmNpCgUa+/TW
+	 MQCFkR8RwUq3+1YuP2fLMfqIiWQczdDyV9sLl8OIjfwXA3leapGA1AwCXwnOA4fpcb
+	 rmYf/t3h4stqk+7XYXpJ43hqU4dwo6vGosSn1F2dB4el0EuJKiHTosgz+viFwm4WFo
+	 TCt6H1gigkORIonvsjmDlDr7oeY0uF+6V79A5QHOUno4x28czobP7qKfNSwBZX2IC/
+	 xTH/k05IsgQZRGBCoo9s7+2yaxbrJl39R38LfaqxNW0JVxnRdoqxSntopY6OF/A4qC
+	 40Wvn6S5+iuGA==
+Date: Mon, 14 Oct 2024 17:05:39 +0100
+From: Will Deacon <will@kernel.org>
+To: Robin Murphy <robin.murphy@arm.com>
+Cc: Mark Rutland <mark.rutland@arm.com>,
+	Ba Jing <bajing@cmss.chinamobile.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] perf: arm-ccn: remove unused macros
+Message-ID: <20241014160539.GA17809@willie-the-truck>
+References: <20241012091629.2369-1-bajing@cmss.chinamobile.com>
+ <ZwziGzex9RmVlcNa@J2N7QTR9R3>
+ <24019386-6ecc-4715-9486-503ccc828113@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 08/16] sched/fair: Extend util_est to improve rampup
- time
-To: Qais Yousef <qyousef@layalina.io>, Ingo Molnar <mingo@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- Vincent Guittot <vincent.guittot@linaro.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Juri Lelli <juri.lelli@redhat.com>, Steven Rostedt <rostedt@goodmis.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>, John Stultz
- <jstultz@google.com>, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240820163512.1096301-1-qyousef@layalina.io>
- <20240820163512.1096301-9-qyousef@layalina.io>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <20240820163512.1096301-9-qyousef@layalina.io>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <24019386-6ecc-4715-9486-503ccc828113@arm.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On 8/20/24 17:35, Qais Yousef wrote:
-> Utilization invariance can cause big delays. When tasks are running,
-> accumulate non-invairiant version of utilization to help tasks to settle
-> down to their new util_avg values faster.
+On Mon, Oct 14, 2024 at 04:40:52PM +0100, Robin Murphy wrote:
+> On 14/10/2024 10:19 am, Mark Rutland wrote:
+> > On Sat, Oct 12, 2024 at 05:16:29PM +0800, Ba Jing wrote:
+> > > By reading the code, I found these marcos are never
+> > > referenced in the code. Just remove them.
+> > > 
+> > > Signed-off-by: Ba Jing <bajing@cmss.chinamobile.com>
+> > 
+> > These are control bit values, so I don't see a strong reason to delete
+> > them unless we're certain we're not going to use them in future.
+> > 
+> > Anyhow, Robin Murphy wrote this driver, so its up to him. Please Cc him
+> > for any changes to this driver in future.
 > 
-> Keep track of delta_exec during runnable across activations to help
-> update util_est for a long running task accurately. util_est shoudl
-> still behave the same at enqueue/dequeue.
+> Er, this is CCN - FWIW I didn't claim this one, nor CCI, as supported in my
+> maintainers entry largely because active development on them has long
+> finished, but also because I *didn't* write them, so wouldn't claim to
+> understand them much better than you or Will do ;)
+> 
+> However, I'd agree that there doesn't seem to be any significant benefit to
+> removing these (certainly showing at a glance that ALL_ERRORS_DISABLE is
+> composed equivalently to PMU_EVENTS_DISABLE seems like no bad thing.)
 
-For periodic tasks that have longer slices (~tick) this overestimates
-util_est by a lot.
-AFAICS this also breaks util_est for co-scheduling tasks of different slice
-lengths.
+Yup. FWIW, I wasn't intending to take any of the patches removing unused
+#defines in the PMU drivers. I'll pick the one removing an unused
+'list_head', though, as that at least makes a structure a bit smaller.
 
-I'm testing with HZ=1000, but should work for any. On a RK3399, all pinned
-to one big.
-
-Having task A be 10ms period with 20% util (running for 2ms when scheduled)
-and tasks B+ with 1ms period and 1% util.
-
-I guess 9/16 tries to work around that somewhat but without any leeway that
-doesn't work. Even rt-app tasks will vary slightly in their util_est values:
-
-
-Task A only:
-mainline:
-A:
-util_avg: 192 util_est: 204
-
-9/16 sched/fair: util_est: Take into account periodic tasks
-A:
-util_avg: 185 util_est: 423
-
-8 tasks:
-mainline:
-A:
-util_avg: 229 util_est: 229
-The rest
-util_avg:  12 util_est:  24
-
-9/16 sched/fair: util_est: Take into account periodic tasks
-A:
-util_avg: 242 util_est: 643
-The rest:
-util_avg:  12 util_est:  50
+Will
 
