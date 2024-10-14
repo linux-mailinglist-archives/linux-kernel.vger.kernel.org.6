@@ -1,188 +1,163 @@
-Return-Path: <linux-kernel+bounces-363984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 51BCF99C949
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:47:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9F5D99C99F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B73B1C22083
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:47:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 500361F227B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B50E419E7E3;
-	Mon, 14 Oct 2024 11:46:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C82D17C990;
+	Mon, 14 Oct 2024 12:01:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="XjfDzzMA"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="ZmjJb/WD"
+Received: from out203-205-221-239.mail.qq.com (out203-205-221-239.mail.qq.com [203.205.221.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A5F019F422;
-	Mon, 14 Oct 2024 11:46:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FFD33C5
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:01:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.205.221.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906400; cv=none; b=UqWNfMJ8qTCWaDCJANu9OebtbVhKd1QuT2R++DHXCGPGBLVNcSgvB9Cam6DeQD35OLjchuDDNw9Ktye3eH+nVDuX1Q8Cahk+J1YtevzUdNowaI3i6DGmepXJx8pU+vo5YNqRIDDJk5vnYsxP/+y25OJH9TGTzrhNXhZonctAYsg=
+	t=1728907269; cv=none; b=a+UoOsEMDTd25bLKfN/6zqqrDuNijhbheWHDIqCLAWM5tDfpo5hOIqcUkMaLo3rVv5i9Y2VxNhOIpikbwJbktw/cMSVzqNmKk1bf7sDpp8qGHcoXJgwbj70gNGJUbRhtVR2Srb6z+OlxlJ2pdcSWyKavcwyNq3QAI8r/A+xhtzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906400; c=relaxed/simple;
-	bh=nTB1qOgsvVknB33T9r8+Bbv1xBHou1dnMPWpaOoUv5Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/OSo8AHjcOc5JugUvs2hVoY44JsqQI/7t/sjeQKvqi0Vnrdz2nbXQYV+zmeaOqJsSmYuDy06QFIu7D6SuUcy1XeiApOJcrQvHzeltwQm+mCXeNculjnBt3xIYzAwBSZYg5/6O5U0llNsCpOlMMsuzlccV0Q+IIfBiCNwufjcao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=XjfDzzMA; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EAKn05018859;
-	Mon, 14 Oct 2024 11:46:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=
-	message-id:date:mime-version:subject:to:cc:references:from
-	:in-reply-to:content-type:content-transfer-encoding; s=pp1; bh=F
-	VlyaQ+gYkGeMLGjxM2G2pW6ZmjtXH1UNeMo2MSk11c=; b=XjfDzzMAhryv0gt02
-	8cD+pPVzC8kLNbhixCzB5pgpw7ScU0u43nKUQXngXG3wjiY/lOFlt8zr5GScCOXw
-	Y8lx43lnbu9mnf/KN4KfvcOIoooWkx4cdtS9MrHBiwzdjp2uMkGCNeKVkteTnK1w
-	1UOinO3ee14gz/h0PTGa8PyPHr7e8Yudk7WXB7dkLDKJNzZ0gmfUPqMIHeSLKNpK
-	j4o7rdd2/sHT7Ri/AWS6M7V2AZ8Ce3OgCdivaH8UoiZpmOmDvJ/JaXTucKn/wrc1
-	8w+3PrxyS2ZU0PkPCJpd1xS9wWaqwXdVUaKZNzlLK69uX1CEhG9cpsGZAYvjEJ7G
-	iTiGw==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4291f88bwa-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:46:37 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EB3fsh002408;
-	Mon, 14 Oct 2024 11:46:36 GMT
-Received: from smtprelay07.wdc07v.mail.ibm.com ([172.16.1.74])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4284eme96g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:46:36 +0000
-Received: from smtpav06.dal12v.mail.ibm.com (smtpav06.dal12v.mail.ibm.com [10.241.53.105])
-	by smtprelay07.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EBkZlb26542622
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 11:46:35 GMT
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3DA3B58043;
-	Mon, 14 Oct 2024 11:46:35 +0000 (GMT)
-Received: from smtpav06.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 828B358059;
-	Mon, 14 Oct 2024 11:46:33 +0000 (GMT)
-Received: from [9.179.1.71] (unknown [9.179.1.71])
-	by smtpav06.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Mon, 14 Oct 2024 11:46:33 +0000 (GMT)
-Message-ID: <3463a84c-1f68-4d60-b705-3079491f0176@linux.ibm.com>
-Date: Mon, 14 Oct 2024 13:46:32 +0200
+	s=arc-20240116; t=1728907269; c=relaxed/simple;
+	bh=+MGkNQ1ds8E8v8RGXN1V0YRWJzr7vHOwLdZd9qDzmUM=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=Qp9XipeG+WBq83bFmZMoRFJXzCW+Zcwt77t1vyqNeVjpBjfIrfc2zc+A9n8fDZwtw4I65UNsHXIIO5e5mfS77YFm1AwWWg7abRAgMl5UeJsqtfkIihYP0D+V7QcZo73blsIiq5MdCVQQW+mLBnLLcGGP4BG0zLkFdqQC+56wEhQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=ZmjJb/WD; arc=none smtp.client-ip=203.205.221.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728907264; bh=uLKofkemKMYHtX/PsB7KQi/N9gxjHQpFupUrdYhHAhY=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=ZmjJb/WDiIrzUhBHJ4TmYuADzDZZqmwlxmXo+ay01Obsy2PKZCd4mlFoE0cgnLSYK
+	 TkGCP5+/vkWu7nVMUbNNBlYrFQXZ3zKC8A7zVg1AZ2QluqjWFylpo8X6ywftlzQWk0
+	 NFcSmw/rU5RgyWUD/R9pYrIchEcTGANXboVk8Wy8=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb21-0.qq.com (NewEsmtp) with SMTP
+	id BF991C39; Mon, 14 Oct 2024 19:47:57 +0800
+X-QQ-mid: xmsmtpt1728906477t03q5dfpn
+Message-ID: <tencent_C8EA75F1764366383C3F373A972436904A09@qq.com>
+X-QQ-XMAILINFO: OEaI/iTChbug+xsPGDkvuYbGfD19sPwcXHGzkR1Lt7tkFjakCAU/XAx4lFAvL1
+	 fvxaS/id0o+7ndeT0m4JMpC8O8VAKa8dIGa3CZFg9dOpoBF1gwkTwKO+oyDmzfh4XmDv55JHH8AE
+	 hzHJEWVPlhW90iYFCEpMZ7atME6BZxuGQCAfpbWBrg3MdFJ2x5wAmfFerXQFCR+iB0onIU3SgxcG
+	 q+fryRgAAIjiINhKcS/H/WH5Kc991h6MXjKDgM3LK0mvJrg8E8wCHHihSNnsUB6QqZs10Yy3TmIO
+	 BpHCknCBPSU5ZxRkhzchNCw7q5bwPgtwI3s38CbmUgC0X7nhWVypQ1ookU5j5KS+SeZpJPMSclyU
+	 hgGKD16f/dpMT3TrtKPEqXHB/5+kQkB/W/saqfZ56nrCNFq6kT/cSjSPFKI2Tzf1GQSjkfGJGzB/
+	 jxOlj2Sr+FTvQHYVx5mZTQ6NSE07wsZKD1um878tk5X0ST9HwkhbheH1FVXGaXyZWT060VlVNQpv
+	 Hc7J5GcUcYvIOirNjK6XgM9BRgm8X70dTLr3mt0mjFw4hbkuyAb2pyAd1OgkjB61KVImISKrfCdr
+	 5VRbYIzWe56du1DW+363oygBPxEfL7sn/za5/oOzLoJhLli9/2J8rT6Sk2VXOzhIsIzmh2+gslpY
+	 IzR1APIoLxonaSavtrGHWeTVitYB56/xvtORMHAcDYDIKUMJZoyRM+3HCbDP8l97B2uYDG0GpKwG
+	 F4pTQSmCkO7Mpc60C/tP7qUXm4KLsA9EUxaSibGvDKiptrt7WmewlKiDTSJmEe5WCyJYCo4F0J/M
+	 n8TCM8BhbJJGzqgUY9vfAcAHGqc1oKaYBZ5L2O5XRJL4TJvBKIQ50Yg9hcam3VHLXh0MYlMGU0QO
+	 I0TKXOTBUSiphLJrHxAd6D94H1lw57sCtsVT8ZOW/Tw7+vFWTCCkIZaNAMJEM5bFw3pG9xSbhIMG
+	 RlgW9RVc3QcrHwrs1siINSJLKuRo80jc7pqRxQyrOZXnz3txFmUhLTh5WM6eqfpvrbAGCPcqXq2+
+	 5zrSoaRw==
+X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
+From: Edward Adam Davis <eadavis@qq.com>
+To: joseph.qi@linux.alibaba.com
+Cc: eadavis@qq.com,
+	jlbec@evilplan.org,
+	linux-kernel@vger.kernel.org,
+	mark@fasheh.com,
+	ocfs2-devel@lists.linux.dev,
+	syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V3] ocfs2: add a sanity check for i_size
+Date: Mon, 14 Oct 2024 19:47:58 +0800
+X-OQ-MSGID: <20241014114757.3480221-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <431f1d14-ba07-4903-ab02-b4628e0f1973@linux.alibaba.com>
+References: <431f1d14-ba07-4903-ab02-b4628e0f1973@linux.alibaba.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/6] s390/uv: Retrieve UV secrets support
-To: Janosch Frank <frankja@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org
-Cc: Ingo Franzki <ifranzki@linux.ibm.com>,
-        Harald Freudenberger <freude@linux.ibm.com>,
-        Christoph Schlameuss <schlameuss@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>
-References: <20241002160532.2425734-1-seiden@linux.ibm.com>
- <20241002160532.2425734-3-seiden@linux.ibm.com>
- <6ea3cfb4-47ab-478e-b5f0-0a02ec28b37d@linux.ibm.com>
-Content-Language: en-US
-From: Steffen Eiden <seiden@linux.ibm.com>
-In-Reply-To: <6ea3cfb4-47ab-478e-b5f0-0a02ec28b37d@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: FqPOUGdPH1lZcXz-12-1m45TxTYAlIij
-X-Proofpoint-ORIG-GUID: FqPOUGdPH1lZcXz-12-1m45TxTYAlIij
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 phishscore=0 mlxlogscore=742 malwarescore=0 impostorscore=0
- spamscore=0 priorityscore=1501 mlxscore=0 suspectscore=0 clxscore=1015
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140083
 
-Thanks for your comments Janosch.
+Syzbot reported a BUG in ocfs2_read_virt_blocks.
+------------[ cut here ]------------
+kernel BUG at fs/ocfs2/extent_map.c:971!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN PTI
+CPU: 1 UID: 0 PID: 5221 Comm: syz-executor117 Not tainted 6.12.0-rc2-syzkaller-00006-g87d6aab2389e #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+RIP: 0010:ocfs2_read_virt_blocks+0xaa3/0xb20 fs/ocfs2/extent_map.c:971
+Code: 8b 54 24 30 8b 4c 24 1c 4c 8b 44 24 38 45 89 e1 ff 74 24 48 e8 7e 0a 0c 00 48 83 c4 08 eb 25 e8 43 d2 34 08 e8 ee d1 0c fe 90 <0f> 0b e8 e6 d1 0c fe 4c 89 e8 45 89 e5 49 89 c4 e9 01 f7 ff ff e8
+RSP: 0018:ffffc90002e2e820 EFLAGS: 00010293
+RAX: ffffffff83881432 RBX: 0000000000000000 RCX: ffff88802d3e9e00
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: ffffc90002e2e9f0 R08: ffffffff83880eae R09: 1ffffffff203781d
+R10: dffffc0000000000 R11: fffffbfff203781e R12: ffff8880764d8878
+R13: 0000000000000000 R14: 0000000000000000 R15: 1ffff920005c5d18
+FS:  000055557cd55380(0000) GS:ffff8880b8700000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00005628fd41e058 CR3: 000000002d2e6000 CR4: 00000000003526f0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ ocfs2_read_dir_block+0x106/0x5c0 fs/ocfs2/dir.c:508
+ ocfs2_find_dir_space_el fs/ocfs2/dir.c:3427 [inline]           // status = ocfs2_read_dir_block(dir, 0, &bh, 0);
+ ocfs2_prepare_dir_for_insert+0x3f2/0x5c60 fs/ocfs2/dir.c:4274
+ ocfs2_mknod+0xcaf/0x2b40 fs/ocfs2/namei.c:292
+ ocfs2_create+0x1ab/0x480 fs/ocfs2/namei.c:672
+ lookup_open fs/namei.c:3595 [inline]
+ open_last_lookups fs/namei.c:3694 [inline]
+ path_openat+0x1c03/0x3590 fs/namei.c:3930
+ do_filp_open+0x235/0x490 fs/namei.c:3960
+ do_sys_openat2+0x13e/0x1d0 fs/open.c:1415
+ do_sys_open fs/open.c:1430 [inline]
+ __do_sys_openat fs/open.c:1446 [inline]
+ __se_sys_openat fs/open.c:1441 [inline]
+ __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-On 10/7/24 2:31 PM, Janosch Frank wrote:
-> On 10/2/24 6:05 PM, Steffen Eiden wrote:
->> Provide a kernel API to retrieve secrets from the UV secret store.
->> Add two new functions:
->> * `uv_get_secret_metadata` - get metadata for a given secret identifier
->> * `uv_retrieve_secret` - get the secret value for the secret index
->>
->> With those two functions one can extract the secret for a given secret
->> id, if the secret is retrievable.
->>
->> Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
->> ---
->>   arch/s390/include/asm/uv.h | 131 ++++++++++++++++++++++++++++++++++++-
->>   arch/s390/kernel/uv.c      | 127 ++++++++++++++++++++++++++++++++++-
->>   2 files changed, 256 insertions(+), 2 deletions(-)
->>
->> diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
->> index 94ff58336e8e..aef333aaaef4 100644
->> --- a/arch/s390/include/asm/uv.h
->> +++ b/arch/s390/include/asm/uv.h
->> @@ -62,6 +62,7 @@
->>   #define UVC_CMD_ADD_SECRET        0x1031
->>   #define UVC_CMD_LIST_SECRETS        0x1033
->>   #define UVC_CMD_LOCK_SECRETS        0x1034
->> +#define UVC_CMD_RETR_SECRET        0x1035
->>   /* Bits in installed uv calls */
->>   enum uv_cmds_inst {
->> @@ -95,6 +96,7 @@ enum uv_cmds_inst {
->>       BIT_UVC_CMD_ADD_SECRET = 29,
->>       BIT_UVC_CMD_LIST_SECRETS = 30,
->>       BIT_UVC_CMD_LOCK_SECRETS = 31,
->> +    BIT_UVC_CMD_RETR_SECRETS = 33,
-> 
-> One is SECRET and the other is SECRET_S_.
-> I know that you coded this according to spec, but sometimes we need to fix the spec. I've contacted the spec authors to fix it on their end if possible.
-Yes we should fix the specs.
-I will use singular forms on both constants.
+In this path, v_block(0), flags(0), and nr(1) are fixed values that are
+hard coded, so if i_size is 0, the bug will be triggered.
 
-> 
-> [...]
-> 
+Reported-and-tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+V1 -> V2: keep rc to 0 when falgs contains READHEAD
+V2 -> V3: check i_size only and alert subject and comments
 
->> + * Do the actual search for `uv_get_secret_metadata`
->> + *
->> + * Context: might sleep
->> + */
->> +static int find_secret(const u8 secret_id[UV_SECRET_ID_LEN],
->> +               struct uv_secret_list *list,
->> +               struct uv_secret_list_item_hdr *secret)
->> +{
->> +    u16 start_idx = 0;
->> +    u16 list_rc;
->> +    int ret;
->> +
->> +    do {
->> +        uv_list_secrets((u8 *)list, start_idx, &list_rc, NULL);
->> +        if (!(list_rc == UVC_RC_EXECUTED || list_rc == UVC_RC_MORE_DATA)) {
-> 
-> Inverting this conditional would get rid of 3 characters.
-> Did you chose to implement it like this on purpose?
-> 
-No special purpose behind that. In fact, I prefer your shorter variant.
-Thanks, I'll change that.
+ fs/ocfs2/extent_map.c | 6 +++++-
+ 1 file changed, 5 insertions(+), 1 deletion(-)
 
->> +            if (list_rc == UVC_RC_INV_CMD)
->> +                return -ENODEV;
->> +            else
->> +                return -EIO;
->> +        }
->> +        ret = find_secret_in_page(secret_id, list, secret);
->> +        if (ret == 0)
->> +            return ret;
->> +        start_idx = list->next_secret_idx;
->> +    } while (list_rc == UVC_RC_MORE_DATA && start_idx < list->next_secret_idx);
->> +
->> +    return -ENOENT;
-> 
-> 
+#syz test
 
-Steffen
+diff --git a/fs/ocfs2/extent_map.c b/fs/ocfs2/extent_map.c
+index f7672472fa82..29d27a70dbdd 100644
+--- a/fs/ocfs2/extent_map.c
++++ b/fs/ocfs2/extent_map.c
+@@ -961,13 +961,17 @@ int ocfs2_read_virt_blocks(struct inode *inode, u64 v_block, int nr,
+ 	int rc = 0;
+ 	u64 p_block, p_count;
+ 	int i, count, done = 0;
++	loff_t i_size = i_size_read(inode);
+ 
+ 	trace_ocfs2_read_virt_blocks(
+ 	     inode, (unsigned long long)v_block, nr, bhs, flags,
+ 	     validate);
+ 
++	if (!i_size)
++		return -EINVAL;
++
+ 	if (((v_block + nr - 1) << inode->i_sb->s_blocksize_bits) >=
+-	    i_size_read(inode)) {
++	    i_size) {
+ 		BUG_ON(!(flags & OCFS2_BH_READAHEAD));
+ 		goto out;
+ 	}
+-- 
+2.43.0
+
 
