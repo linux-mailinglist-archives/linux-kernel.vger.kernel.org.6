@@ -1,90 +1,129 @@
-Return-Path: <linux-kernel+bounces-364141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3794B99CBA2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:37:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F36BC99CBA4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:37:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5E8FC1C2225E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:37:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA8441F22A88
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:37:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 68AC71AAE1D;
-	Mon, 14 Oct 2024 13:37:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CF4A1AAE16;
+	Mon, 14 Oct 2024 13:37:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="qZ1uS9e0"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="OSAx8+m6"
+Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EC51514CB;
-	Mon, 14 Oct 2024 13:37:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E5541A76A3
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728913027; cv=none; b=RE1YJ8AXnGelu5iy8SaPH4+C02mCzCKRIwjP0p/1PxzVN7YWeEd28xcAj1iTSLv23b0Ysg9m8OJDbJqE0wgmOM+tR2i2xAhnZhprJ+7QnfM1pWcekQnV17y/4/Itj1450K3om7rZdPsqko/A5azi8lDml3q/QboHACGc2nEZfgo=
+	t=1728913039; cv=none; b=Fl0d8tV66tmBDw4A6LSUe5YKTwmqjV1Sxn0zLCxLwPP7xgGRckZYpcVvG3TaLl1aoqlORmjSpNT6KrdHNJUiyjfAQiPA2jXVmRccHiQJHBRch46YCH2hE217C8RSrrTBtZlcZgjMbQhoiNN5XPQemk8iR/1F/3QIBsph7a302NY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728913027; c=relaxed/simple;
-	bh=2396StbdL4oUeYyEyO3PnaqMTvVOnE0Vjf2IuT0fY9g=;
+	s=arc-20240116; t=1728913039; c=relaxed/simple;
+	bh=Gs8yQqJiEPrpcaAZVy5Me9kxtOxLIeh+5JzVS1n4afg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QOxdz118EMInwj5uK+f1RpvigSwttkcfexiF+8son53CmvWAYwG7tIM5YRuGx4FxgfFzdbX+XF5qnkdOOu3SU2fLTMDtWMb80PS86h/2uprbD+TXxMpZwp35Qf73upRJ/8ZDhBxfuWhxQ31sdtNXriW25LcrpPXnYD5+tUg5CQM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=qZ1uS9e0; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=zzV0POEfsxpQFudwXMex/Qq8ERcOm2RINXdYeXPqIGg=; b=qZ1uS9e0IebaN6hZQdkIXlHEhi
-	aCmmpdZVv4N7+W77Vonq5ez7l2k60srRRXGxMdYCS53CAS6057tRK+q6fxbo53qi9BcqyWO/4KlS8
-	+1A31ztI2WwvWW8m0U+0rylWD8eg2sm4ojH+K6mUHwrwH3ce4gLK4DUmvEdL8PZHsIf0=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t0LFn-009ven-5N; Mon, 14 Oct 2024 15:36:55 +0200
-Date: Mon, 14 Oct 2024 15:36:55 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Sky Huang <SkyLake.Huang@mediatek.com>,
-	Gerhard Engleder <gerhard@engleder-embedded.com>
-Cc: Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org,
-	Steven Liu <Steven.Liu@mediatek.com>
-Subject: Re: [RFC PATCH net-next 1/1] net: phy: Add capability to
- enable/disable 2.5G/5G/10G AN in ethtool
-Message-ID: <1c55b353-ddaf-48f2-985c-5cb67bd5cb0c@lunn.ch>
-References: <20241014060603.29878-1-SkyLake.Huang@mediatek.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=LesdKyOPrU5c7cOV+wld7vURUUeTB1Bg+Qv/+/HIsu/CWYACh6RKmXhYudUt+8sPp5uwqa38eIYK72K0J23kGBXpbk5lDqAHgpfwA6qlMWTUCbAgvtL7rMwl8bk4A3/t8pyqV9zCW9ifvEznmLdz9BUW4qhBhJb5v4M7t1HZ5UM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=OSAx8+m6; arc=none smtp.client-ip=209.85.167.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539d9fffea1so2985761e87.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:37:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1728913035; x=1729517835; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=iOn+At6E0BNzEl4WQ5SD3/qKTI8tXp+PBn7/nxLGbuA=;
+        b=OSAx8+m61ZMc6VGLvcpOndNUXXSdWnOKH7a45I6lqb+hxqxPFbb2vpx0OuX8nZ2U+Z
+         8KlgLOOiyHxbt8MZmHPN806wMwMmoPD//UH/F6piuvk7uzy1lqOJS2GdYKjDyLNRoYLu
+         K5HxkThQEQ+UqjnNEGPh/IllVQgKy2fVdDaddAf09sROe8V0Q8Dr79wqRR6iTKEOX4TP
+         euFSTQZgmTokkuqUwjn8O3uvxjQqXg309qWR2aMdQWHBbEHKu1hFCRAMQqDWn/JFlZmY
+         uFNF46REwL6cEjlRYPwlQjw+F+16StwPFcFQnZdjBSkO4OhFG/0V6vMFG942jjubj7IX
+         WLOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728913035; x=1729517835;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iOn+At6E0BNzEl4WQ5SD3/qKTI8tXp+PBn7/nxLGbuA=;
+        b=lus4UTvnsB9I1h3zJ0oE8UtyTPIudQfYzYq/sOOHailPVcU0gZkTt81EesnOJ+hhBK
+         Fq7V9FEbTRhkU/0lqDeCHrng2E68woYESFwBSK2V+UYch4NZoW1BZN1PxDAfBvhFx/bq
+         Bte9sTddpIRUSt02aUPY2UlSk1FtHXTA/nfstyfHFm3hU4w/WXVQXgoHBGHrKSTJF9kA
+         V5luKrFtYSA8ekM4xCS3YElpriTcVufsrCMemu6nzY+COHZ+ML0cU1N3n+bh4sgSYump
+         52DXXlEcwqOm70OnlLODn15LUk9YylHCKJG7zKzwbnNAX7FmIKRZyd3kO45V17C3s/RJ
+         5Rrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXsXEeBk2/9PmjMDpMGO5KEzc69MJP1GlaqDkmWLGqNlOofrdb4vuPShFhncEa4Lw4baTeEzRgYbvCBzOs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSyUVUPA7iphTH4ZFAOcQXdxhtABzwYRYqE3FGYgeAUdFK+/db
+	z6iX7Zyikf/AEGSWwxShaVMuJ0PQp822DXyQR7TpTu1emSKeJG5pSkRa7cBbGVo=
+X-Google-Smtp-Source: AGHT+IH86U7CDo7HSsXH39ATDKaR2Ec3/LHDSIR2tYXCbN7J5SkSn0+U9/jLZE05OhdsZhPGGApsvA==
+X-Received: by 2002:a05:6512:1322:b0:539:8ad5:5093 with SMTP id 2adb3069b0e04-539da4f8aacmr4766947e87.35.1728913035424;
+        Mon, 14 Oct 2024 06:37:15 -0700 (PDT)
+Received: from blackdock.suse.cz ([193.86.92.181])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182d7929sm121587275e9.4.2024.10.14.06.37.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:37:15 -0700 (PDT)
+Date: Mon, 14 Oct 2024 15:37:13 +0200
+From: Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>
+To: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+Cc: tj@kernel.org, lizefan.x@bytedance.com, hannes@cmpxchg.org, 
+	roman.gushchin@linux.dev, cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	wangweiyang2@huawei.com
+Subject: Re: [PATCH] cgroup: Fix potential overflow issue when checking
+ max_depth
+Message-ID: <hbkgbz3cmnd5e5qftzlmulc2so6jhvn6k7klpuqkod5hi3l6sp@53xgyxqgwhg2>
+References: <20241012072246.158766-1-xiujianfeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="zuyrdh3jv2s4v2gq"
 Content-Disposition: inline
-In-Reply-To: <20241014060603.29878-1-SkyLake.Huang@mediatek.com>
+In-Reply-To: <20241012072246.158766-1-xiujianfeng@huaweicloud.com>
 
-On Mon, Oct 14, 2024 at 02:06:03PM +0800, Sky Huang wrote:
-> From: "SkyLake.Huang" <skylake.huang@mediatek.com>
-> 
-> For phy loopback test, we need to disable AN. In this way,
-> users can disable/enable phy AN more conveniently.
 
-Please take a look at:
+--zuyrdh3jv2s4v2gq
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-https://lore.kernel.org/netdev/20241013202430.93851-1-gerhard@engleder-embedded.com/T/
+Hello.
 
-We need a good understanding of how 802.3 expects loopback to be used,
-and a commit message based on what 802.3 says. Our current
-understanding is that 1G and above requires auto-neg for correct
-operation, so we don't want to allow autoneg to be disabled in normal
-operation. It could be we need to special case loopback somehow.
+On Sat, Oct 12, 2024 at 07:22:46AM GMT, Xiu Jianfeng <xiujianfeng@huaweiclo=
+ud.com> wrote:
+> It's worth mentioning that this issue is unlikely to occur in reality,
+> as it's impossible to have a depth of INT_MAX hierarchy, but should be
+> be avoided logically.
 
-	Andrew
+Strictly speaking the overflow would be undefined behavior (Out of curiousi=
+ty --
+have you figured this out with a checker tool or code reading?)
+Logically (neglecting UB), max_depth=3DINT_MAX would behave like intended
+(no limit).
+
+> Fixes: 1a926e0bbab8 ("cgroup: implement hierarchy limits")
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+> ---
+>  kernel/cgroup/cgroup.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+
+Reviewed-by: Michal Koutn=FD <mkoutny@suse.com>
+
+--zuyrdh3jv2s4v2gq
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQTd6mfF2PbEZnpdoAkt3Wney77BSQUCZw0ehwAKCRAt3Wney77B
+SZ55AP4r4/UR9XA22f9r4OEC208fBm629qmMWSYAzVkjrue4qgEAoNy7iVQHBmKg
+mUxEPIAvVO7bL4Mv0eQaolnVxB/x6wA=
+=2oAc
+-----END PGP SIGNATURE-----
+
+--zuyrdh3jv2s4v2gq--
 
