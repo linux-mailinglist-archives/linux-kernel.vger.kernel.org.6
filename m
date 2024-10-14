@@ -1,142 +1,109 @@
-Return-Path: <linux-kernel+bounces-363706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFC1699C5D5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:35:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE11C99C5DB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:36:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 935BD283FD2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:35:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EFA9D1C22BFA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:36:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACAC9156227;
-	Mon, 14 Oct 2024 09:35:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49062156887;
+	Mon, 14 Oct 2024 09:36:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="PGxm1Fmp"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZZlqLdla"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E59D13DDAA;
-	Mon, 14 Oct 2024 09:35:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A497114A60F;
+	Mon, 14 Oct 2024 09:36:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898505; cv=none; b=rpcT6hWd2KipAqZaOQOUcytO5u1SbLvycb176OWGh3FXhl9CN6cNAbq0PqSReTWVAcwjPofIUsTYOipLqPhpz0iaGA6Us8he06PtsFBpKczC+EiKBKry40uxrYER9537IHXv+cp8WA7aJgRSUARWcq9J8ZboLqguEq4ZNSmOsKE=
+	t=1728898584; cv=none; b=JZhlx3HZ2QMDRM7DGE3IDSXLJcndEsMm03TmPD4Eq3yJcYNKzlYsBAJxRH98GWiQ1crOINYGZflkXikFhbIgW8cHGpoAcnE7pi4NxFL8RPEVWSVsY01ClkKGW5ixo7cRDIjbb7P9gHc+AQOwdQ3LsjmIi4vmiUBw87BVqX4DRz8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898505; c=relaxed/simple;
-	bh=x+/ck9aSh/7gVu837hFafgBrqLRUSUaV7ySbBYzEog4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=dapbfAsPnst0WLZ0uRboa85LtLnt5OgSendgRtSIvD2GpmCNcF13T9LBDiy+k7PDPEbyaKBu1a3EOSaMkrIRSokE1aeVFRIDUoO9BMsMKpiHkNw/eMBVEDHTZ8l+WanjZWTkdp4gSVaL+Y5QrcnZ53cOkAvKtn27XacUQnDO5EQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=PGxm1Fmp; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1728898499;
-	bh=8yoW/bMMuUhsNoIY+v03cV8Q96rOm7zzVNxOIEq8g1Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=PGxm1FmpnYKCOYZYldJbve93zPeip8NT8lNVexJfj88C+KlBtt0XdbTEYrHZAvz1V
-	 B58uehx94E4sgjuY+XEpn1IQkx2SpdYJYY8wEggF7xP7T61kW/caf4yiV0lILKw2N4
-	 zf0K5Y/DT4AOlxmLmzEuk5LbAdMKnnuNzcWmXR9apHO6VnEimT+ogxzj7+oH0wa6Bw
-	 Qe4k2nuLx8KTUYrwqFQklRQpchinn74TXgmmfA49qZjxGaBgbOpdS99PsfNJE+tZd9
-	 UwvwBS/y3GB3Sa+tSx5O/DCEXvnzt/v0ppfakLsbIZdZ1O4OUB2NOFWKYA0/Cq8JGr
-	 5m5WbVOeW3dIg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XRsWz6R99z4wbr;
-	Mon, 14 Oct 2024 20:34:55 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Steven Rostedt <rostedt@goodmis.org>, linux-kernel@vger.kernel.org
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mark Rutland
- <mark.rutland@arm.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>, linux-arch@vger.kernel.org, "x86@kernel.org"
- <x86@kernel.org>, Will Deacon <will@kernel.org>, Huacai Chen
- <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, Nicholas Piggin
- <npiggin@gmail.com>, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Paul Walmsley <paul.walmsley@sifive.com>, Palmer
- Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Heiko
- Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>, Alexander
- Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, Catalin
- Marinas <catalin.marinas@arm.com>
-Subject: Re: [for-next][PATCH 4/4] ftrace: Consolidate ftrace_regs accessor
- functions for archs using pt_regs
-In-Reply-To: <20241011132956.899228335@goodmis.org>
-References: <20241011132941.339392460@goodmis.org>
- <20241011132956.899228335@goodmis.org>
-Date: Mon, 14 Oct 2024 20:34:52 +1100
-Message-ID: <87iktv58oz.fsf@mail.lhotse>
+	s=arc-20240116; t=1728898584; c=relaxed/simple;
+	bh=qBsDQzAs7QP3X6cKNCdApLam/YNuSrGBVVymI8+/YI0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YxIIYOMzS128yBjSvvdeunuB0Uobe70HGZne3OuphLJk0Jtfvf83Wot6SNgxGHsmR8R25tAi/wRflvkw90Jjfwfba/8z+OQDQe1uON63WudPXQ78FzmNffLSBfYtRLashGBO9AZ58lOPlO+YMh/7SQH15GCZhWeUuvniAW1KO18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZZlqLdla; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49524C4CEC3;
+	Mon, 14 Oct 2024 09:36:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728898584;
+	bh=qBsDQzAs7QP3X6cKNCdApLam/YNuSrGBVVymI8+/YI0=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=ZZlqLdlafNYwTQp3iI6kjWi2EgQo9Meag/2vRweHt4QP1snZ0W0Elr5wgiN4V+eEj
+	 qy6Hpp6Ditayif0vktZFh2pewpX/V7lBF+/TUzKpiyn2jJgNnwmD/JpcXnrBLTQXKM
+	 +ep1sq6jSo2Pia4oODy2Vhf5nwgbOIDIgz+JvUVujdVCjVnagGzZg7da9/HXPp36Uc
+	 h4teqzrRrPLRQRScFWwCzoPdw6aDnQF2dJYyoUFRxhHJmXJ8MwG9UeTF6i3jgjXzbi
+	 SE+JlhgpsqWKuGrJGJprdR75iIN7metAVc8dLRR0HddZp5EzgAm/SMlKRcced3a63e
+	 ghui9ZmMtkjfg==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e690479cso1533499e87.3;
+        Mon, 14 Oct 2024 02:36:24 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVPrbMJpHijytl3NmLnHiNKMh0VzzoHTvVRms0iRmF7BCmUyig9gCopDPyy/HIETA2Rh3+NDNMxOURl9406bXY=@vger.kernel.org, AJvYcCWEDpy+KlwFffkb1aErAqHMz60TZnuqoCWw+c5zxoZH9DMmgRkT7kA/lnExQMVXtTT8GdmzVpjqEIa0Emcb@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRVDI626FL3yO1hFi0gbrL5pKz064Jv/r2COnA/cfbNXYWa8an
+	yVfzlvP/6pzFYkM6SDbywV29Aa4izUf85VEQpwyZAvCmZ40LSNPlhBfROWMGH4udmXeTnc0Aldb
+	ed6jfFtigxqHJXwI5vjnCJCNYKi8=
+X-Google-Smtp-Source: AGHT+IGt5EXUDsyicAY+SuCAlZVRwBl+6YpbpfCaQBaSxgEH6ByDW9QmHgxUn/tZZr9bNYXXcX0C91ipOf90HXHxHTA=
+X-Received: by 2002:ac2:4c46:0:b0:539:968a:91a8 with SMTP id
+ 2adb3069b0e04-539e571da42mr3496869e87.47.1728898582693; Mon, 14 Oct 2024
+ 02:36:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241011170847.334429-10-ardb+git@google.com> <20241011170847.334429-16-ardb+git@google.com>
+ <20241014042833.GA20015@sol.localdomain>
+In-Reply-To: <20241014042833.GA20015@sol.localdomain>
+From: Ard Biesheuvel <ardb@kernel.org>
+Date: Mon, 14 Oct 2024 11:36:10 +0200
+X-Gmail-Original-Message-ID: <CAMj1kXERhCiKMqCr7wCPitQCcPNj7uuEJsgC9jGxSdBWxAwqdg@mail.gmail.com>
+Message-ID: <CAMj1kXERhCiKMqCr7wCPitQCcPNj7uuEJsgC9jGxSdBWxAwqdg@mail.gmail.com>
+Subject: Re: [PATCH v3 6/8] crypto: x86/crc32c - Use idiomatic relative jump table
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: Ard Biesheuvel <ardb+git@google.com>, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
+	keescook@chromium.org, linux-hardening@vger.kernel.org, nathan@kernel.org, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Jan Beulich <jbeulich@suse.com>, "Jose E. Marchesi" <jemarch@gnu.org>, Kees Cook <kees@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Steven Rostedt <rostedt@goodmis.org> writes:
-> From: Steven Rostedt <rostedt@goodmis.org>
+On Mon, 14 Oct 2024 at 06:28, Eric Biggers <ebiggers@kernel.org> wrote:
 >
-> Most architectures use pt_regs within ftrace_regs making a lot of the
-> accessor functions just calls to the pt_regs internally. Instead of
-> duplication this effort, use a HAVE_ARCH_FTRACE_REGS for architectures
-> that have their own ftrace_regs that is not based on pt_regs and will
-> define all the accessor functions, and for the architectures that just use
-> pt_regs, it will leave it undefined, and the default accessor functions
-> will be used.
+> On Fri, Oct 11, 2024 at 07:08:54PM +0200, Ard Biesheuvel wrote:
+> > diff --git a/arch/x86/crypto/crc32c-pcl-intel-asm_64.S b/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
+> > index bbcff1fb78cb..45b005935194 100644
+> > --- a/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
+> > +++ b/arch/x86/crypto/crc32c-pcl-intel-asm_64.S
+> > @@ -53,7 +53,7 @@
+> >  .endm
+> >
+> >  .macro JMPTBL_ENTRY i
+> > -.quad .Lcrc_\i
+> > +.long .Lcrc_\i - jump_table
+> >  .endm
+> >
+> >  .macro JNC_LESS_THAN j
+> > @@ -169,7 +169,8 @@ SYM_FUNC_START(crc_pcl)
+> >
+> >       ## branch into array
+> >       leaq    jump_table(%rip), %bufp
+> > -     mov     (%bufp,%rax,8), %bufp
+> > +     movslq  (%bufp,%rax,4), len
+> > +     addq    len, %bufp
+> >       JMP_NOSPEC bufp
 >
-> Note, this will also make it easier to add new accessor functions to
-> ftrace_regs as it will mean having to touch less architectures.
+> I think it would be much better to just get rid of the jump table here.
 >
-> Cc: <linux-arch@vger.kernel.org>
-> Cc: "x86@kernel.org" <x86@kernel.org>
-> Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Cc: Mark Rutland <mark.rutland@arm.com>
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Huacai Chen <chenhuacai@kernel.org>
-> Cc: WANG Xuerui <kernel@xen0n.name>
-> Cc: Michael Ellerman <mpe@ellerman.id.au>
-> Cc: Nicholas Piggin <npiggin@gmail.com>
-> Cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> Cc: Naveen N Rao <naveen@kernel.org>
-> Cc: Madhavan Srinivasan <maddy@linux.ibm.com>
-> Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> Cc: Albert Ou <aou@eecs.berkeley.edu>
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Thomas Gleixner <tglx@linutronix.de>
-> Cc: Ingo Molnar <mingo@kernel.org>
-> Cc: Borislav Petkov <bp@alien8.de>
-> Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> Link: https://lore.kernel.org/20241010202114.2289f6fd@gandalf.local.home
-> Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Acked-by: Heiko Carstens <hca@linux.ibm.com> # s390
-> Acked-by: Catalin Marinas <catalin.marinas@arm.com>
-> Suggested-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  arch/arm64/include/asm/ftrace.h     |  1 +
->  arch/loongarch/include/asm/ftrace.h | 25 +-------------------
->  arch/powerpc/include/asm/ftrace.h   | 26 +--------------------
-  
-Acked-by: Michael Ellerman <mpe@ellerman.id.au> (powerpc)
 
-cheers
+Good point.
 
->  arch/riscv/include/asm/ftrace.h     |  1 +
->  arch/s390/include/asm/ftrace.h      | 26 +--------------------
->  arch/x86/include/asm/ftrace.h       | 21 +----------------
->  include/linux/ftrace.h              | 32 ++++++-------------------
->  include/linux/ftrace_regs.h         | 36 +++++++++++++++++++++++++++++
->  8 files changed, 49 insertions(+), 119 deletions(-)
->  create mode 100644 include/linux/ftrace_regs.h
+> I have done this at
+> https://lore.kernel.org/linux-crypto/20241014042447.50197-4-ebiggers@kernel.org/
+>
+
+I'll go and take a look - thanks.
 
