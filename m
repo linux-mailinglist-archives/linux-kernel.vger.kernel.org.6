@@ -1,263 +1,128 @@
-Return-Path: <linux-kernel+bounces-364013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364021-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB3199C9E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:16:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E500299C9FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:23:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 388991C227C8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:16:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEB51F23006
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:23:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BE8C1A2626;
-	Mon, 14 Oct 2024 12:15:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5C5C19E7F7;
+	Mon, 14 Oct 2024 12:23:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uvsaXnRt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hvFDJ9eT";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uvsaXnRt";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="hvFDJ9eT"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b="jfUo5Jbg"
+Received: from out162-62-57-252.mail.qq.com (out162-62-57-252.mail.qq.com [162.62.57.252])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C6EA7E574;
-	Mon, 14 Oct 2024 12:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9CE0156F3F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:23:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.62.57.252
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728908153; cv=none; b=UicYAtYiPDptdfWB78MSx09PoQ8uNYEZgQi0W/0UJmtJbklcdHRLihZBzbyXG52jxQ+wSCgcvjCfgqtqDPK37xRisvg23bTi7TGeHOf3pEEppm2AXtd3hIPvLBWL7cq/N2fSkAgJkdAjJ9Ta5n6kBHAPzTVtzXRlwzjgHiag3L8=
+	t=1728908584; cv=none; b=h/9tVNk++CiXHIBxEj5HTnepTE4JlrWVk3t+b/vYpL63QOZrOLwzrXJ/ymdakgeTN7xhDrkf2liq7ot/cxaf3tdohW/lGEk27k9K8LbcQXkUX4cvQW+FU5GwS7LOLKi5RXhprH3kfemC0LSN4WpeOxrHc4HL5sT2247BPov1oAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728908153; c=relaxed/simple;
-	bh=5d2c7ZAEnzATLLjfWg9H82Rdb9FEcueex7OdpeKxgpc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDkm2roH1Y6lfZiAS4nfS4SPlN+wduOdU7F3X2UqmjehL7L2pR2A8JHC+rYtl2piMFKcWt6NMCSY/GIqj8z3wjExojXTmyNc1zAx6q77n5m8irC47gPAMePdFBtzelLR+xD53JJhg/Gdec97ditD8He3XwDa+5M/7COAVOO+Hv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uvsaXnRt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hvFDJ9eT; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uvsaXnRt; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=hvFDJ9eT; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 412C221D9B;
-	Mon, 14 Oct 2024 12:15:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728908150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
-	b=uvsaXnRtmvBy5j9IlTnxcI+HUt6yoCF8TGK2pJufwUH7wQO8F5HdsfV32pU0iQtWpwONh6
-	HZHc91sSYVVjVArI3tsA8wrBHX3ryPRteLMeuh4Tts3GgE1K+BXbGM9tDCHOHg7Xg0yCNk
-	dSSzNgSiNfMntIGi3OeLALa/2jWAAio=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728908150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
-	b=hvFDJ9eT2lywgt5kxuJQn4/mpkgtOZicv0yV3DEbky4wq9eppRT3cxFXECJ7G9zeNGxOuL
-	4USkNmr0JZ/IdlCQ==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1728908150; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
-	b=uvsaXnRtmvBy5j9IlTnxcI+HUt6yoCF8TGK2pJufwUH7wQO8F5HdsfV32pU0iQtWpwONh6
-	HZHc91sSYVVjVArI3tsA8wrBHX3ryPRteLMeuh4Tts3GgE1K+BXbGM9tDCHOHg7Xg0yCNk
-	dSSzNgSiNfMntIGi3OeLALa/2jWAAio=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1728908150;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6L9TArDqU/9AyY6LyABBa12emgFStrRqvC34y1X/bLg=;
-	b=hvFDJ9eT2lywgt5kxuJQn4/mpkgtOZicv0yV3DEbky4wq9eppRT3cxFXECJ7G9zeNGxOuL
-	4USkNmr0JZ/IdlCQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3277B13A51;
-	Mon, 14 Oct 2024 12:15:50 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 89RPDHYLDWdDPgAAD6G6ig
-	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 12:15:50 +0000
-Received: by quack3.suse.cz (Postfix, from userid 1000)
-	id C9447A0896; Mon, 14 Oct 2024 14:15:45 +0200 (CEST)
-Date: Mon, 14 Oct 2024 14:15:45 +0200
-From: Jan Kara <jack@suse.cz>
-To: Kaixiong Yu <yukaixiong@huawei.com>
-Cc: akpm@linux-foundation.org, mcgrof@kernel.org,
-	ysato@users.sourceforge.jp, dalias@libc.org,
-	glaubitz@physik.fu-berlin.de, luto@kernel.org, tglx@linutronix.de,
-	mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-	hpa@zytor.com, viro@zeniv.linux.org.uk, brauner@kernel.org,
-	jack@suse.cz, kees@kernel.org, j.granados@samsung.com,
-	willy@infradead.org, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	lorenzo.stoakes@oracle.com, trondmy@kernel.org, anna@kernel.org,
-	chuck.lever@oracle.com, jlayton@kernel.org, neilb@suse.de,
-	okorniev@redhat.com, Dai.Ngo@oracle.com, tom@talpey.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, paul@paul-moore.com, jmorris@namei.org,
-	linux-sh@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
-	linux-nfs@vger.kernel.org, netdev@vger.kernel.org,
-	linux-security-module@vger.kernel.org, dhowells@redhat.com,
-	haifeng.xu@shopee.com, baolin.wang@linux.alibaba.com,
-	shikemeng@huaweicloud.com, dchinner@redhat.com, bfoster@redhat.com,
-	souravpanda@google.com, hannes@cmpxchg.org, rientjes@google.com,
-	pasha.tatashin@soleen.com, david@redhat.com, ryan.roberts@arm.com,
-	ying.huang@intel.com, yang@os.amperecomputing.com,
-	zev@bewilderbeest.net, serge@hallyn.com, vegard.nossum@oracle.com,
-	wangkefeng.wang@huawei.com, sunnanyong@huawei.com
-Subject: Re: [PATCH v3 -next 10/15] fs: drop_caches: move sysctl to
- fs/drop_caches.c
-Message-ID: <20241014121545.bdgwsw66i2yborjo@quack3>
-References: <20241010152215.3025842-1-yukaixiong@huawei.com>
- <20241010152215.3025842-11-yukaixiong@huawei.com>
+	s=arc-20240116; t=1728908584; c=relaxed/simple;
+	bh=/t+NgTaA1O61+C6GOXGVB3E7nwGJQe2W1TYCLhCGnH4=;
+	h=Message-ID:From:To:Cc:Subject:Date:In-Reply-To:References:
+	 MIME-Version; b=ZxmtE+KX/EjwgZ7Z4dC4E0nTnH/WSCiAzB/Wx/l+Rb7ybGm7eRDuWLsptn/Oej54sIUYxt/ZS5yfuApm1Y+yhDVyJ7NLxmX5iJ4PH6dEaRovB/PiCdYVgGhgV/zek5vOHtl8lODmXWCtJrT4sNbOIsjHOoebzBA/+ygq7Wy1L9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com; spf=pass smtp.mailfrom=qq.com; dkim=pass (1024-bit key) header.d=qq.com header.i=@qq.com header.b=jfUo5Jbg; arc=none smtp.client-ip=162.62.57.252
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=qq.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qq.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qq.com; s=s201512;
+	t=1728908576; bh=4HCykBH28vledngsFUmD4YXkYerFdTE4qgvqgqxi7rk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References;
+	b=jfUo5Jbg5veFS99J8XqZfl3NL0WQgOi0AwqJj9+hxUD0WHgvubnBMCfzWewXxxmI2
+	 F/MONebXRm08omychRWt5szquSWFODK2Tv99Pziyl6l5D0QiSK+PJeOZ/j94/CK3/q
+	 gT+8b/HfkDA7BPeggF8eld46OPk+kGP2p/2KScfM=
+Received: from pek-lxu-l1.wrs.com ([111.198.224.50])
+	by newxmesmtplogicsvrszb16-1.qq.com (NewEsmtp) with SMTP
+	id 425A6A9D; Mon, 14 Oct 2024 20:16:37 +0800
+X-QQ-mid: xmsmtpt1728908197tdz7iw01b
+Message-ID: <tencent_52D2C2064D49A96EDAEECB8C93A7C486C906@qq.com>
+X-QQ-XMAILINFO: NQR8mRxMnur9EjBHd0TTbrm1+xYycH76X0HNjKDgqNQ0LRu0Y/SnxSrCy2/NMQ
+	 r0TGgE/ADXODk/BAt6kCBh1StYOnPTi7rjaQiJAQ9+vw6uvxLyVuMNP5+txXCUtbqd160JuLdpEC
+	 k4x7eE1WjZuNP0h9t8Pzm3A1ouWMKFcAYgztPcmItfUfMdKfY6+nALvXUkGVIqjQ/iSCy/TOb5aj
+	 88pQMrDzUAaYDGZ75Ew7HPGTd1kqihFGOH13+rwg3dZU6rWlUB+GzYbgAj7ANfmhP/Ku6+OQLPB4
+	 0vRJh76U4RAIoxl7dlpfSSJRQm0XL4k0hh1K02pgESLaTWBXOZ3ce9bjRvgDxelIOQcv+JJ6Ht1d
+	 Qoi6k4wW7CUtXpS/s3FecjiB48rBKgGyl41Z2xAb+XOibU8SqulbDxC4HdI+tTW9ACZAP0YR29U+
+	 7woqbxl27H0HPdTd21mXvb+XPCjiVNB4CIXT6WE8KWDidlFTMEjAZqpx/dVudbQ8z0In48UUlWU0
+	 2ucJLU3Sd62iUvHFTLliBorT6ZALY2+668d9gqliKqQQE+7RTflMOEjE8/vSQ/e9gxvJaxWq0o6L
+	 ERgeGV3myGI2W9hOLemHOO3Y5kVyfIiqTKRcQ/t2dzmjgOPb7FX04Nl1BnOFHTxuDqRieyFMp05Q
+	 eb151k9TXOn/l3A09I1w0an8Fyw+SUar+Mn/0C5tV0q+P7HTZsg2bF+ig5l4XXJeM6ZXNk08SQGm
+	 88pNgbC0wbB7986ZgLNjR6o/VSSbEe6ADOSE/ZF72GP/O3MYl8H7FqcpkaU78itf/0JitXgicXo8
+	 vq20fljUQG7uaRyb6pErP7EJPGMradqZcAdC8MMurFvAjFgmdCKLLR4I7Je7GUeTtcDvPHc25pOt
+	 4dRhX9me67qFuU8iMmuR9Blpf7KLzq3nkYyIL2C8BwlrR/t7nAHgKakUdXXifVVux3VK6kWMKkLC
+	 4LojNhLuPLoXUlTyt5vTv5jRMbUEOxuTAtsr/4StmSt+iANaMyoQ==
+X-QQ-XMRINFO: NyFYKkN4Ny6FSmKK/uo/jdU=
+From: Edward Adam Davis <eadavis@qq.com>
+To: lkp@intel.com
+Cc: almaz.alexandrovich@paragon-software.com,
+	eadavis@qq.com,
+	linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev,
+	ntfs3@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev,
+	syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com,
+	syzkaller-bugs@googlegroups.com
+Subject: [PATCH V2] ntfs3: Fix WARNING in ntfs_extend_initialized_size
+Date: Mon, 14 Oct 2024 20:16:38 +0800
+X-OQ-MSGID: <20241014121637.3511987-2-eadavis@qq.com>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <202410101748.6VtnyCOG-lkp@intel.com>
+References: <202410101748.6VtnyCOG-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010152215.3025842-11-yukaixiong@huawei.com>
-X-Spam-Score: -3.80
-X-Spamd-Result: default: False [-3.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_RHS_NOT_FQDN(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	MISSING_XM_UA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_THREE(0.00)[3];
-	FROM_HAS_DN(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_TLS_LAST(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_GT_50(0.00)[61];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email,huawei.com:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Transfer-Encoding: 8bit
 
-On Thu 10-10-24 23:22:10, Kaixiong Yu wrote:
-> The sysctl_drop_caches to fs/drop_caches.c, move it to
-> fs/drop_caches.c from /kernel/sysctl.c. And remove the
-> useless extern variable declaration from include/linux/mm.h
-> 
-> Signed-off-by: Kaixiong Yu <yukaixiong@huawei.com>
-> Reviewed-by: Kees Cook <kees@kernel.org>
+Syzbot reported a WARNING in ntfs_extend_initialized_size.
+The data type of in->i_valid and to is u64 in ntfs_file_mmap().
+If their values are greater than LLONG_MAX, overflow will occur because
+the data types of the parameters valid and new_valid corresponding to
+the function ntfs_extend_initialized_size() are loff_t.
 
-Looks good. Feel free to add:
+Before calling ntfs_extend_initialized_size() in the ntfs_file_mmap(),
+the "ni->i_valid < to" has been determined, so the same WARN_ON determination
+is not required in ntfs_extend_initialized_size(). 
+Just execute the ntfs_extend_initialized_size() in ntfs_extend() to make
+a WARN_ON check.
 
-Reviewed-by: Jan Kara <jack@suse.cz>
+Reported-and-tested-by: syzbot+e37dd1dfc814b10caa55@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=e37dd1dfc814b10caa55
+Signed-off-by: Edward Adam Davis <eadavis@qq.com>
+---
+V1 -> V2: typo for ni->i_valid
 
-								Honza
+ fs/ntfs3/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> ---
-> v3:
->  - change the title
-> ---
->  fs/drop_caches.c   | 23 +++++++++++++++++++++--
->  include/linux/mm.h |  6 ------
->  kernel/sysctl.c    |  9 ---------
->  3 files changed, 21 insertions(+), 17 deletions(-)
-> 
-> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
-> index d45ef541d848..f2551ace800f 100644
-> --- a/fs/drop_caches.c
-> +++ b/fs/drop_caches.c
-> @@ -14,7 +14,7 @@
->  #include "internal.h"
->  
->  /* A global variable is a bit ugly, but it keeps the code simple */
-> -int sysctl_drop_caches;
-> +static int sysctl_drop_caches;
->  
->  static void drop_pagecache_sb(struct super_block *sb, void *unused)
->  {
-> @@ -48,7 +48,7 @@ static void drop_pagecache_sb(struct super_block *sb, void *unused)
->  	iput(toput_inode);
->  }
->  
-> -int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
-> +static int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  		void *buffer, size_t *length, loff_t *ppos)
->  {
->  	int ret;
-> @@ -77,3 +77,22 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
->  	}
->  	return 0;
->  }
-> +
-> +static struct ctl_table drop_caches_table[] = {
-> +	{
-> +		.procname	= "drop_caches",
-> +		.data		= &sysctl_drop_caches,
-> +		.maxlen		= sizeof(int),
-> +		.mode		= 0200,
-> +		.proc_handler	= drop_caches_sysctl_handler,
-> +		.extra1		= SYSCTL_ONE,
-> +		.extra2		= SYSCTL_FOUR,
-> +	},
-> +};
-> +
-> +static int __init init_vm_drop_caches_sysctls(void)
-> +{
-> +	register_sysctl_init("vm", drop_caches_table);
-> +	return 0;
-> +}
-> +fs_initcall(init_vm_drop_caches_sysctls);
-> diff --git a/include/linux/mm.h b/include/linux/mm.h
-> index c7f73bf32024..ed2e7425c838 100644
-> --- a/include/linux/mm.h
-> +++ b/include/linux/mm.h
-> @@ -3791,12 +3791,6 @@ static inline int in_gate_area(struct mm_struct *mm, unsigned long addr)
->  
->  extern bool process_shares_mm(struct task_struct *p, struct mm_struct *mm);
->  
-> -#ifdef CONFIG_SYSCTL
-> -extern int sysctl_drop_caches;
-> -int drop_caches_sysctl_handler(const struct ctl_table *, int, void *, size_t *,
-> -		loff_t *);
-> -#endif
-> -
->  void drop_slab(void);
->  
->  #ifndef CONFIG_MMU
-> diff --git a/kernel/sysctl.c b/kernel/sysctl.c
-> index 373e018b950c..d638a1bac9af 100644
-> --- a/kernel/sysctl.c
-> +++ b/kernel/sysctl.c
-> @@ -2024,15 +2024,6 @@ static struct ctl_table kern_table[] = {
->  };
->  
->  static struct ctl_table vm_table[] = {
-> -	{
-> -		.procname	= "drop_caches",
-> -		.data		= &sysctl_drop_caches,
-> -		.maxlen		= sizeof(int),
-> -		.mode		= 0200,
-> -		.proc_handler	= drop_caches_sysctl_handler,
-> -		.extra1		= SYSCTL_ONE,
-> -		.extra2		= SYSCTL_FOUR,
-> -	},
->  	{
->  		.procname	= "vfs_cache_pressure",
->  		.data		= &sysctl_vfs_cache_pressure,
-> -- 
-> 2.34.1
-> 
+diff --git a/fs/ntfs3/file.c b/fs/ntfs3/file.c
+index 6202895a4542..c42454a62314 100644
+--- a/fs/ntfs3/file.c
++++ b/fs/ntfs3/file.c
+@@ -178,7 +178,6 @@ static int ntfs_extend_initialized_size(struct file *file,
+ 	}
+ 
+ 	WARN_ON(is_compressed(ni));
+-	WARN_ON(valid >= new_valid);
+ 
+ 	for (;;) {
+ 		u32 zerofrom, len;
+@@ -400,6 +399,7 @@ static int ntfs_extend(struct inode *inode, loff_t pos, size_t count,
+ 	}
+ 
+ 	if (extend_init && !is_compressed(ni)) {
++		WARN_ON(ni->i_valid >= pos);
+ 		err = ntfs_extend_initialized_size(file, ni, ni->i_valid, pos);
+ 		if (err)
+ 			goto out;
 -- 
-Jan Kara <jack@suse.com>
-SUSE Labs, CR
+2.43.0
+
+
 
