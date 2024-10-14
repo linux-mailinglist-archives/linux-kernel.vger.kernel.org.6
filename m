@@ -1,286 +1,115 @@
-Return-Path: <linux-kernel+bounces-363756-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D8299C6A3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:01:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58CB099C6A5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:02:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB86A1C22EE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:01:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B94FB20B8E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8642158A33;
-	Mon, 14 Oct 2024 10:01:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="V5uarZlt"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2066.outbound.protection.outlook.com [40.107.22.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFA5E158D6A;
+	Mon, 14 Oct 2024 10:02:24 +0000 (UTC)
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB3B15886C;
-	Mon, 14 Oct 2024 10:01:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728900090; cv=fail; b=ml38JNUCptG9QUrMNh8kJ6PmjUyiQwIMLbUnuWlpVuVvzGtPXL7Q6s1AOeMTJCt2TG4ndBallmKxL9gSxTIogeq2XG2C/K4u/Ayt88tMkhHjG12Lo2UZ3AMTsFS5ue1sgMYy2KCNnDcsL4YoP+Smbw9PCSQD64Y3aBtwVuNnuRc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728900090; c=relaxed/simple;
-	bh=rjExYRn6yCnhup12BVvD5r31q3LxtQ46MBKTX+vE8qQ=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=c0v450eAnpibYwyr84m2iXISJfVcXM+FfC6vmSA1w80hP17ErIQRMtvyK6R1Y36MPoB1foub4GLFbjL60er46pvL4tJNuDZuDwishAbkbJdUoeHLwKfYEs96k/hXvsehetQKhk02ZbijDHoIJ7MhqtNwESr9gfZzO3MbIpElOW8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=V5uarZlt; arc=fail smtp.client-ip=40.107.22.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=sWUA7XX89e9KFRDqv3uqdZ0Kxp1AyhYHY4ptLQTWp1WX6BjLkjEUIVYdfmE2KHw21gHJx5C/HqJLkWr9bqMiDUzfsSiMxcUDhCTjtqd9g9ydCWy90sEg/MxfavqS7Xc6Qbpyi87cgv/deWtXz5/DHoZHg00ZbS8o9K0A2lGUNl9HApNfbbn2E1qlNiTyLGffDN5P99kjY3xv9dsHZWHu5MXJqPKHSs+JU4yNreOXfJAIeHdPe2dOqjplTh3SOfMciLaWxCFL8ieAWPqd9o9lt+DlERW0qDpPTy5CsSBctERbNMrltOyEAC1+8MR7JrhdjuGu8ANAyav6kcx/EvxXHw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=5GiyX47Jecs7gxaIbccktqFZ7qKULFgehH0FnnszTM8=;
- b=rwRVyfqWcW3MNd7HRqO9wLZ11GfyQsX7/YAZUg2F7Dq6fRiQaZ2W46Q7JqfooI0/HUTxBebfrJrgq8ReExtJr+SSDY04VRt50xKV2kAs7Z8Ms4RqYiKWhJMuwU1iJHPmzONiv7qCykT4KzJXSp67lwggeIu7voc7KUgvMLWBA1VdkYk5XpHXFO/jpVO4p1pv+b/NsnFsq7k1+P+iZSNVpyxNsC0NcM0qNWaysClUS7NfmzdT/I4c52gEpKwgYzAZdh60sXLJ8LX7ZmtBZXMr1Fd6BnWimdKisq3zKok45c7YUZDk3Vl+WiIvSsdohs7X3AQnYfe+XhQwSVOZj2iCsg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=5GiyX47Jecs7gxaIbccktqFZ7qKULFgehH0FnnszTM8=;
- b=V5uarZlt5zcnhhAT16GlhwpnTIVzUv5+hjs1xr5O9ROVQ1ekhSZOi6Kg9HG41EzchO0WLxmJW7olnH30Uf+AJy4fbOInxUXbO37LmrWB4/zXTWr7XicvImifXnuwcMJFMjFqca4/wACXp6DDpYMlfD51w7SH3lX2VCDf0VE+Dr6v2Bdr+uADAA8yoJ3T93ozNit/PEMIY8TRQBRSU6GY00Iw/iiZVj9Qq1OjdcUt37AhVMYXu4HT32c5cYOFa4llfhmqtQv57z1O1zJaMuvEnmv/X6Jg0SxjH4863w4dN0BWSmnYDFvA68VQNS/L26BRqvUv6wZa0sHSlimBYGvCCw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by AM9PR04MB8147.eurprd04.prod.outlook.com (2603:10a6:20b:3e0::22) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.27; Mon, 14 Oct
- 2024 10:01:25 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 10:01:25 +0000
-Message-ID: <20dfe41f-7aca-4321-a5e9-5c6b8513b400@nxp.com>
-Date: Mon, 14 Oct 2024 18:01:49 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
- to HDMI converter
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com,
- neil.armstrong@linaro.org, rfoss@kernel.org,
- Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
- jernej.skrabec@gmail.com, airlied@gmail.com, simona@ffwll.ch,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
- shawnguo@kernel.org, s.hauer@pengutronix.de, kernel@pengutronix.de,
- festevam@gmail.com, catalin.marinas@arm.com, will@kernel.org,
- quic_bjorande@quicinc.com, geert+renesas@glider.be, arnd@arndb.de,
- nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de,
- marex@denx.de, isaac.scott@ideasonboard.com, biju.das.jz@bp.renesas.com
-References: <20241012073543.1388069-1-victor.liu@nxp.com>
- <20241012073543.1388069-6-victor.liu@nxp.com>
- <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
- <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com>
- <dvcdy32dig3w3r3a7eib576zaumsoxw4xb5iw6u6b2rds3zaov@lvdevbyl6skf>
- <90e0c4ac-1636-4936-ba40-2f7693bc6b32@nxp.com>
- <lcogrc6uztckwwwsuag5tlk5otidmo7rudsl7zshe3wpfot3wc@ziljns5phhfe>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <lcogrc6uztckwwwsuag5tlk5otidmo7rudsl7zshe3wpfot3wc@ziljns5phhfe>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDA43A48
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:02:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728900144; cv=none; b=OJOv5F+wb1kWt0TZFoqpjtYPwlCY58O+HiespvCinddht9Y0hlOovtv/JBpYrm9Zn0HcTVGpKaDUywAAvu4uyp3F/Hnzia47pPH9L1W2LPmYwP3WfpMRJh1Htgc1m3OWR6XdZh6xQlPT4hWSxJYmmenocL5Bz86fSdRDnvE1GJs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728900144; c=relaxed/simple;
+	bh=jlsQtarNpe34EsDgNKRoj4X9vNQH1uOi0WK+67cJu3w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=F6+ebLqmPeE+l1yHRL+fnBDWr1TR0N21DWs8NN/Pr3ngUJZT6bu8gjurrwwIWnCJdhmKGnGitD2qyahtFA8heBLFDIvu/PTgwW55zHxs8iGQ4N5qE45mJ5ID7VNqZFx0VT68KcucBHWdz/a9mRsY9vI7o1u16XSiy7m3JszPkx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d462c91a9so2615141f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:02:22 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728900141; x=1729504941;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=e/udzLybNFaG6mOUJeBh4+tOxHs5e8HdKHPtDl9SIds=;
+        b=kYfchSCy12Bt/PY2NV9IGybDJLvbv5Mo5EnxzFXyfEczo1b73AIscXYXzKpGwS/1eY
+         NhH641ic/BGAF8+lSekdAbd0jlZCk6ZUvFd5hMsaC7ursB1bKzZj8fv9bWEDUng9i0x5
+         kD9soydz7iblLr4yL4jGgy0w4p7zLYtuuM6UPnSP2CtGuAd6FEYTTAxIQEAbIuInXdzY
+         SYI55fiDqlr7mV/dys6R2derrNDq3xNj8y3wHAWexcVaypoif1L4WfeKVWtxsagK700H
+         vQrfmLq5EsSR+aCP9CEkmDWVOmOfSXFydvZPEvCzh0mumWjd6fxLfZdbzbQAGGZfFrPL
+         znFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXLmC9C1zdpUd/B8WM1aAZ2vZcyZffSmHmUUGREBsN9v5OtZ8vlnaSNZUpkTu02ueeDoME84nQFP03z8L0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzC/pLZofVwQhOxE2BeYcTJvExY289AXgNmi5aK29Nx4VfjzUoM
+	naHPbeyrwsM+tITEmpwS5viJ+u9hoJKRCbORsRHQflRdRUemxRan
+X-Google-Smtp-Source: AGHT+IEJ+poe8SBBvLHLgKlwbsh3OSXonsWxgCXSH+9A9PLOxsESA5YYGlttx6i2HKcCWjjI6T7MLA==
+X-Received: by 2002:adf:ee4d:0:b0:37d:3964:e0f1 with SMTP id ffacd0b85a97d-37d55184dd3mr7540527f8f.4.1728900140882;
+        Mon, 14 Oct 2024 03:02:20 -0700 (PDT)
+Received: from localhost (fwdproxy-lla-007.fbsv.net. [2a03:2880:30ff:7::face:b00c])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffca7sm115134315e9.20.2024.10.14.03.02.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 03:02:20 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+To: akpm@linux-foundation.org
+Cc: Elliot Berman <quic_eberman@quicinc.com>,
+	Carlos Llamas <cmllamas@google.com>,
+	Stephen Boyd <swboyd@chromium.org>,
+	Luca Ceresoli <luca.ceresoli@bootlin.com>,
+	Xiong Nandi <xndchn@gmail.com>,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH v2] scripts/decode_stacktrace.sh: remove trailing space
+Date: Mon, 14 Oct 2024 03:02:10 -0700
+Message-ID: <20241014100213.1873611-1-leitao@debian.org>
+X-Mailer: git-send-email 2.43.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|AM9PR04MB8147:EE_
-X-MS-Office365-Filtering-Correlation-Id: e4450f7d-776b-4876-3835-08dcec3729e9
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?NW1MUFM0WHNodE9GRWtOOEE4WmN5aEFnWGh2V0EzbVp1aEdEUGdEcEZZSnVC?=
- =?utf-8?B?SER1NWltZ0pyTmdVWDR3K1lRaVM2NjREclA1Vi84RTZZd0UyRTB0Z0d0V25C?=
- =?utf-8?B?MkVwcmdhTmhmTDZlc1BsdmoyMldmTWpJOWdsR05RZlBOSVRDcVhhOEp3N24v?=
- =?utf-8?B?ekRHN2tKMW9TaHpqKzFlWnNSdGRBbEJUUW43WE42OStEc3lLSnhwWm5OeTRa?=
- =?utf-8?B?QVFWeWtzaXlrM3N4K0JaV002TFBqWE1oMW9FaW1BY1BiNzJ2bzZqVEhOTVZD?=
- =?utf-8?B?TGxIOTdidldsNEI5OUxST3R2bUZwRlBld0twOEtFTUl0ZktwZVBaZnRTc2F1?=
- =?utf-8?B?dWcrbHpSa3UwdnRZRWYvTmhIcDZpdCtUTlNYOUllRmlFV2VjQTV2WjVZdWNh?=
- =?utf-8?B?QnJ0QlB5RHdneHVoN0xQdW4yUWFjUW9TY3VTdzVNVkZXUlFCcXF4SkhBVXJo?=
- =?utf-8?B?cmg3WGZEMU54bUw0M3pZdnI5dGNmbS9VRmlJRXRZZFJuMjBMRE9VWHE1ZkNa?=
- =?utf-8?B?UUxHMDZmU3BVSFd3Z0VHRVlMMlRJeGllOGVtLzZJd0JHWUNuQlZJc3NjNEVy?=
- =?utf-8?B?N1JXR1lmclJTNGJRR1diN0ljOGNKYzRjZ2pCOHhjdnZxQWFnZFdCOGdRMm93?=
- =?utf-8?B?cFZjWnU1VlUrQitiSDBJV0ticTh6bVRaTU5CL2tITmtSVHhmaStTSi85MHQv?=
- =?utf-8?B?TTRHZ1U1U0JzUnFPbnRiOU5HOUd5ZWQ0RGR0Rk1IcEk2ZWhyMEJjUTRWUE93?=
- =?utf-8?B?bnp0VllsRE9mbmNIaFRmbWVINnZsNm9iNXptYlpVWjd0MmV6SEprSlhJYzhS?=
- =?utf-8?B?UkZvbVpweTBIMFVPakhPcmJ2UkZEV1N4bXhmZlZwMWxtRW1lZExFWTNsSVV6?=
- =?utf-8?B?OFo1WkRrSk1tNXo2WEh2VThxekF0allCRHhWRFY0L2JUQ1FnUFA1SFR0Wi9u?=
- =?utf-8?B?c295M0dqNS9KU3pDOFN2d2tVWFVqQWx5WlhBUHVzRzBiRElsc0pYWmJlV3do?=
- =?utf-8?B?MzJMRERxZVl0QTVlejE3Z0dkbEU2R01SOXJmY1hOTTF1ODcxRXJPR0daalVh?=
- =?utf-8?B?SElXZEhzQTQ4U2p0UEFkdEFCbWVmZnErK2RQL0htT2FUaXBJMHMyWml1MFg3?=
- =?utf-8?B?M0Q0U3Y1WW9VZmpyTnhWalpOSVVEam9pNHVKWVNINXZGRWg4TXhoYjVqR1dm?=
- =?utf-8?B?eGZqQW1HM0F3Y2JLNzYrWVZOOTNxZEdwd0NGbGFNa3JPQXUxVUZhWjZUdEsr?=
- =?utf-8?B?MjNRcDU3S2NWcDNBNkUvZ29ERHg5bDk2bWJQOTh0L2lFUkxld3Z3YlIrNkZh?=
- =?utf-8?B?VjJiRWhGeTZXQmJ6MmJvanZPNEJxY284ME1HVkE5NUYvb1U1cEQxTDBWN29D?=
- =?utf-8?B?aGdsTnltK0YxWDRlK3pBK000alQvWXdncHVPV0xGamxhS0VNbjF5anA5eDFn?=
- =?utf-8?B?Zkp4WWw3MkZDQ2xmZzRJQ0RBTkxvZ09mcGNRdDNmeTZFUTRHTTFOdWwyYWlK?=
- =?utf-8?B?NEVndmg5UXdCQ21RaGl3eUVHcUEwQXU2K3VyRC82YzdGSU9TL09hdFVYN2Y3?=
- =?utf-8?B?cVY3ZGM0NjJGaGt6d0puM0Q5dU85d002VW5ranRxano2U3hWN3ZyaEtYZFh2?=
- =?utf-8?B?aEg4K05qQXlEQkFLWlhUMm13eXczcElzNklZTmhKTDdSb00xVTl6UnFrWHBE?=
- =?utf-8?B?L1p5NWE1SkdBWm03REQwY09QK2piS3J0UHFhTHIxYkhWWW54ZWdNNjFBPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?RG9aaDRSQXJOOU4vN295NkN1N29NN1RlZFl4OFJWcVprcGEra2h1OVFOdFpM?=
- =?utf-8?B?MnZCbTlRS0dwdXAxRlhKU2l4TlF4ZGkrNmNOVWp1ZVhMMncrMGVmU0o1bW4r?=
- =?utf-8?B?OW5lcDhvVXBRMSs5S3VoamlGNURGTlY0dVQ0UHRia2JPZVZQMFJiVS9ianRa?=
- =?utf-8?B?cGs3d3IxQmpwVkRnb0kyODJXKzN5alNQdHhJTUo3UWhGY3luckFPV0p3bUwx?=
- =?utf-8?B?bnVnOU15RDkrZkNKRVhwaG5oTkE4MktNM1QvVHhIcExXejR1NGNyeEI3aFhW?=
- =?utf-8?B?QWJpRkFNSUNIb0VDMnRsVGFtRnM4am8yMlRXVnZHSzVsQXV4aTRqYktpZGU4?=
- =?utf-8?B?Rmd5M0dHWUFLQWlXQTBEK1Q4THZEWUJHOUZiVnQ0MTRyUWpYRmNvaXozVnlH?=
- =?utf-8?B?dDNlZ1VMZEU2TkFYSTk2SG9OQVRHc3hyWEYyMWF0SnMrMDBWUkdUV0RxcVBr?=
- =?utf-8?B?SmFMYWtiNWYyQXA1M1oyYnBEZEZ3ekFIUUgzdXNNUVFGUEdkYzFZeXZMV3Mv?=
- =?utf-8?B?VTErbVMxM3BXc2s1U2F2SUlzSGFTdWc5elZaSXJOYmpCREJrOU94SnNXcTAx?=
- =?utf-8?B?Z0g2YnFOTHBZdk9BdXovZVovcjdvRFNjcVhseCtHRGZpREpobmREWll3TkVl?=
- =?utf-8?B?ZlovVVpuSGxYWjJRT3VQZk82MzZoL0FnYlU4Yk1EeGNpWmY5U2hCL25PY3B5?=
- =?utf-8?B?YXJldmtCQUs0dkJMTUIwRWM3ckRxWkNiS1c0UVo2L3hray9qSFRRMnVFYUpW?=
- =?utf-8?B?VlFBNFBFbmozbEtSaEQ2WVhYNmRNV2dWZ21Hc0hINGVZK05SOWlFNkJKZ05u?=
- =?utf-8?B?L202alhjVVFMWXRSTEd1Wk1vait4R1NrbENjZVcwSkxFVEZDRGdVbDJyRnNl?=
- =?utf-8?B?a3I5MzMvQ0tzM3M2WjR1TFBZdWxpUXF4bEl1MStPZmlGR1duZ1ZEV1FvMlAr?=
- =?utf-8?B?VjZIV1NELzkrVkh1am1aV01DMnZqOFZmUm5mMVlxU2FkRTAzWkdpNkVlWmVa?=
- =?utf-8?B?clZIZjlHalEyWlBaQ1l2OGkveHFORkpqaWFBbytFaUwyWm9vb1RxdU8reUZ6?=
- =?utf-8?B?ZnFHUzBCclVzS3RvVE1OSUdDYUhkMzhsV0xCcFRFS2FzeHg4OXFqRHNvNWw4?=
- =?utf-8?B?ZzNORGVvTmtRcXZ1QkR4Nmt3ZmZrcjlhKzZ0bWMvblU1SHVGbkZoSDJWaUVa?=
- =?utf-8?B?R0JwS3liN2RQazVvVkhyanA0bHI5VGtSV0p1NEl0U255MUdEUHhSd0JybG9x?=
- =?utf-8?B?ZjlYV1hOTUdKcWlqY05jeExjSFNTQjhIQWpDMXdMSE1aTVFZQkRkT1BYMyts?=
- =?utf-8?B?Z3B1aStacFBpemdybHZSZlZwcEpiR0NsbHFUVEx2SkJtWmlXMXFRcWtMcmVj?=
- =?utf-8?B?U2haVmFrckxYenB5Y2NKUCtxbDk3SmhSRk01M3FnVUFreTBLc3FSL052MXJt?=
- =?utf-8?B?ek80M0o4dmRvdHZTZ0ljZlRaOC81cWhvSTU1cHVETk9mZWh1c2J2aVpOY3li?=
- =?utf-8?B?TVBTSU9RcS9RN3NBaFVQMWRHWU1ob2NFcFFJaHdlR0pNSUlhLzQwcWEzbVlJ?=
- =?utf-8?B?bnpqQ1FXSGVNSHB3Q3YyV3BJV3I5ZEVBSy95V01CVGM5a0xNbk5KQUxZY0pM?=
- =?utf-8?B?ZFE5R05KNzBydEZjMXBTbHZtUktSKzFRUk1BamNqUTBIMnRMcFJiYUlFWUVp?=
- =?utf-8?B?RDJNTFE1OTZvQmRDQUlqRXpzV3JqVllMNlp5UkNRVW4vbVg1TEtLc3Y4NGkv?=
- =?utf-8?B?TUY5OHIyeWR5MDRDRjZpQmxsRjk1djBiZk1WY1hTLzhCMW10R1owbFhGV2Iw?=
- =?utf-8?B?dU1xdGtJeUU2QnNZR2xNTFpJb2tmdEF5SmxqQjRmYTRQNW5HelQ4VWYrU0Fs?=
- =?utf-8?B?Z1Z5Z2szZkFzUU1xWW1WWk5hL1RRdUNXYUVKdUdESGJSNFRZN2NnRkRnZUo4?=
- =?utf-8?B?cDZpSGkvMGc3dEp0eWF6VUxqZEhVVkhGd3JjS3Y5Y1h6NkttU1FpdjQ0RUFn?=
- =?utf-8?B?K3N2S01vOXYxLzg4R2VRNlV4OXBJb0pmUWhsTkc5UUs3Z2h6QXlyaGpVeGk5?=
- =?utf-8?B?b2UyL2FRV1RwU1BTbmtreFk0bXhNaC91UUlxakNQZmZmUXVpNnlwZ2s4ZkI3?=
- =?utf-8?Q?FqHjtv4PW8ujSov4G9j983QFD?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e4450f7d-776b-4876-3835-08dcec3729e9
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 10:01:25.1893
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: U7FmsZ0i4DhmiZxrckASH+1bdsAiGD+tskp7v3SqTEa4fNcN5T1C55dbRjNRbNa5EMpK7VFJJElKuzRri2blOA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB8147
+Content-Transfer-Encoding: 8bit
 
-On 10/14/2024, Dmitry Baryshkov wrote:
+decode_stacktrace.sh adds a trailing space at the end of the decoded
+stack if the module is not set (in most of the lines), which makes the
+some lines of the stack having trailing space and some others not.
 
-[...]
+Do not add an extra space at the end of the line if module is not set,
+adding consistency in output formatting.
 
->>>>> My suggestion would be to add a single root-level property which
->>>>> specifies which port provides even pixel data.
->>>>
->>>> That won't work.  The LVDS source side expects the ports of
->>>> the sink side specify dual-lvds-{odd,even}-pixels properties.
->>>
->>> I didn't notice that these properties are already defined.
->>>
->>> As these properties are common between several schema files, please
->>> extract them to a common schema file (like lvds.yaml).
->>
->> I'm not sure how to do that. Is it obvious?
->> Please shed some light. 
->>
->> Only two panel schema files are defining even/odd pixels now -
->> advantech,idk-2121wr.yaml and panel-simple-lvds-dual-ports.yaml.
->> Maybe, extract them later when more schema files(especially for
->> bridges) try to define the same?  I'd like to keep a low profile
->> for now.
-> 
-> I'd say, please extract those now. Adding third is more than enough and
-> should be avoided. Extracting is pretty simple. One patch to move the
-> definition and descriptions from panel-simple-lvds-dual-ports to a
-> common location (e.g. lvds-dual-ports.yaml). Leave the required
-> constrains in place. Second patch is to add oneOf constraints to the
-> ports. 
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Reviewed-by: Elliot Berman <quic_eberman@quicinc.com>
+Reviewed-by: Carlos Llamas <cmllamas@google.com>
+Reviewed-by: Stephen Boyd <swboyd@chromium.org>
+---
+Changelog:
+v2:
+ * Add double squared brackets instead of a single one (Carlos)
 
-oneOf just sits below ports so that single-port and dual-port
-are documented separately?  That won't pass dt_binding_check
-as the v1 binding has proved that warnings will be generated.
+ scripts/decode_stacktrace.sh | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
-> port@0 might get the same oneOf + the
-> dual-lvds-{odd,even}-pixels:false case, allowing a single-port
-> definition.
-
-I don't catch this.
-Below snippet is a draft lvds-dual-port.yaml.
-How can it be referenced in ite,it6263.yaml?
-
----8<---
-allOf:                                                                           
-  - $ref: lvds.yaml#                                                             
-                                                                                 
-properties:                                                                      
-  ports:                                                                         
-    $ref: /schemas/graph.yaml#/properties/ports                                  
-                                                                                 
-    properties:                                                                  
-      port@0:                                                                    
-        $ref: /schemas/graph.yaml#/$defs/port-base                               
-        unevaluatedProperties: false                                             
-        description: the first LVDS input link                                   
-                                                                                 
-        properties:                                                              
-          dual-lvds-odd-pixels:                                                  
-            type: boolean                                                        
-            description: the first sink port for odd pixels                      
-                                                                                 
-          dual-lvds-even-pixels:                                                           
-            type: boolean                                                        
-            description: the first sink port for even pixels                     
-                                                                                 
-        oneOf:                                                                   
-          - required: [dual-lvds-even-pixels]                                    
-          - required: [dual-lvds-odd-pixels]                                     
-                                                                                 
-      port@1:                                                                    
-        $ref: /schemas/graph.yaml#/$defs/port-base                               
-        unevaluatedProperties: false                                             
-        description: the second LVDS input link                                  
-                                                                                 
-        properties:                                                              
-          dual-lvds-even-pixels:                                                 
-            type: boolean                                                        
-            description: the second sink port for even pixels                    
-                                                                                 
-          dual-lvds-odd-pixels:                                                  
-            type: boolean                                                        
-            description: the second sink port for odd pixels                     
-                                                                                 
-        oneOf:                                                                   
-          - required: [dual-lvds-even-pixels]                                    
-          - required: [dual-lvds-odd-pixels]                                     
-                                                                                 
-    required:                                                                    
-      - port@0                                                                   
-      - port@1                                                                   
-                                                                                 
-unevaluatedProperties: false   
----8<---
-
+diff --git a/scripts/decode_stacktrace.sh b/scripts/decode_stacktrace.sh
+index 826836d264c6..46fa18b80fc1 100755
+--- a/scripts/decode_stacktrace.sh
++++ b/scripts/decode_stacktrace.sh
+@@ -311,7 +311,12 @@ handle_line() {
+ 	parse_symbol # modifies $symbol
+ 
+ 	# Add up the line number to the symbol
+-	echo "${words[@]}" "$symbol $module"
++	if [[ -z ${module} ]]
++	then
++		echo "${words[@]}" "$symbol"
++	else
++		echo "${words[@]}" "$symbol $module"
++	fi
+ }
+ 
+ while read line; do
 -- 
-Regards,
-Liu Ying
+2.43.5
 
 
