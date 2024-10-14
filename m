@@ -1,364 +1,189 @@
-Return-Path: <linux-kernel+bounces-363528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363530-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA94D99C384
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:37:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FFD399C38A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:38:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B2902824B0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:37:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D706AB264BC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:38:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1A2B114B965;
-	Mon, 14 Oct 2024 08:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60E114D70F;
+	Mon, 14 Oct 2024 08:37:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="aMNQEKsf"
-Received: from EUR03-DBA-obe.outbound.protection.outlook.com (mail-dbaeur03on2086.outbound.protection.outlook.com [40.107.104.86])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kb1QAJvA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0AFF514A60F;
-	Mon, 14 Oct 2024 08:36:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.104.86
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895016; cv=fail; b=pTk3H/tAa8p+nVKmsY3B/MKnMWtVziT5biM+F/kNhol8gDCOb4l+9P2ND+7O5CdwzRkT0ExzwiNeoloj53Q6+o4UqyP+lYpGEbce4oMMxCwN1UW6MSS8LZNKwDf9gaic/oKl5UKrIblrKqrFjXODTalspxBQciHspWLB8N0Gr3k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895016; c=relaxed/simple;
-	bh=au1UQ2u6mc0ZeRky/7tJQoyTsCKvM8Rh9Ht5uQNRUN0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=i0ITHBVWwjOgvSSc4u3U1S2z4NM6HukjvQFfikLSc6C6lgFYT8bHMO7n3aXb4G2vEgmdrCVmvWSMA5OJRfZqT0/Wv00dccjAk2v7Xkgr/LuNWLU+xAowuItmnjuNjdmD3RTqz5KtvRYs6FLbrrgbJU3LYRWNsZrKQUlXpXYU6qA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=aMNQEKsf; arc=fail smtp.client-ip=40.107.104.86
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=vv/kALJR376URfIzibVLLw0Wsg0il7onrwuhj/et5xLshzIMn7QOUTbozWgMpEZzVsd2Jzvye1v8Bs5QeLadsh0Nm3whQkRrvLtgJwn9HLvUp+EPPqqc0nsMcC73Fck++ovTzk5pJ540yYMpfkBGosWuVM5yERVZPQ+41V8xo7T3y5FVY36sOUOppFFgJ5ZukxAWVsZkBok8WvV8fn41/zIP2qpQzLv6Ajdtpqpa1Oqz7e9Ioh3rOC0HSJ56hwuiYWMivry8/b2abYl7bQ9KWlYbmWiu+hCNlRB0e/meY6nGg6eGu0nIOK5+18bzVtuZkpGdYCtwXlb/DreVLcA8cw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LNg9qcC4dgKwKHJfdSXP7POPIvmRyZpCxNOxbVhb+ao=;
- b=lVHrMt9oJUvza3KWw2Lt13D9eVFL+ogI/9NexDYMB970Rno1qoTKity3rWxHGACdbuA0J9iS2rKHpHFDsgzK/sv6qdlyBcxh2Y7HULKUbrpxU0F0yxGrhJEZ5KPYF6EF7Vp/g/ygMqQt0i1KCQp249q4EhUAL2x8c75ZT6Op9Cl+LS6uT3rHBkt0o6y61HLcq9vKZuW7iFrAZFZ/n4g2GU/HtJCKBDFCPprT3s1nhx/oFFA39R1g5L/VgZWP9tF4qFtKfNAO9isbTySmszm6S9Pw95TFdoUO6p36Epgp+XZ6JY49iRD4UNlAvIy3NYDUCgqpdycijRDEgx+N0IRsxQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LNg9qcC4dgKwKHJfdSXP7POPIvmRyZpCxNOxbVhb+ao=;
- b=aMNQEKsfKtP0oYmzlEwyVNfAAuszUPc4k8VfBnkBEhr/0KzdOrF4bDnNfu6ynnO7kdgqGyh+U++cLL7fiUoOa9unkry5s0L3d57HPKQsaz96V5AOMfKyMESIfrua7gdKI2J2qK5Nu/ez2g/tr1TF1KlFrzRSUDbPHjKCNJD3+QGENAbrfNAUxHScoHmqvtdKJhQORug2GeTQsnWwaog4ZKpNvLv64uw8jYyZWjIFZc2pWbU4UYFOLf9mCT08YDU5WC/4n/ZCO0td/vB2S0MUgHDsuy9LKZ3AB3JSnE7PHBJcWQ9t4fu2gw17mZPVqrUhZN9GUaveOxBeZgYtYM2Axw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
- by GV1PR04MB10944.eurprd04.prod.outlook.com (2603:10a6:150:210::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.25; Mon, 14 Oct
- 2024 08:36:50 +0000
-Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
- ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
- 08:36:50 +0000
-Message-ID: <89584c16-fa99-4361-bbbe-471893f67e75@nxp.com>
-Date: Mon, 14 Oct 2024 16:37:14 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 6/9] drm/bridge: Add ITE IT6263 LVDS to HDMI converter
-To: Biju Das <biju.das.jz@bp.renesas.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>,
- "neil.armstrong@linaro.org" <neil.armstrong@linaro.org>,
- "rfoss@kernel.org" <rfoss@kernel.org>,
- "laurent.pinchart" <laurent.pinchart@ideasonboard.com>,
- "jonas@kwiboo.se" <jonas@kwiboo.se>,
- "jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>,
- "airlied@gmail.com" <airlied@gmail.com>, "simona@ffwll.ch"
- <simona@ffwll.ch>,
- "maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>,
- "mripard@kernel.org" <mripard@kernel.org>,
- "tzimmermann@suse.de" <tzimmermann@suse.de>,
- "robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
- <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "shawnguo@kernel.org" <shawnguo@kernel.org>,
- "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>,
- "kernel@pengutronix.de" <kernel@pengutronix.de>,
- "festevam@gmail.com" <festevam@gmail.com>,
- "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
- "will@kernel.org" <will@kernel.org>,
- "quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>,
- "geert+renesas@glider.be" <geert+renesas@glider.be>,
- "arnd@arndb.de" <arnd@arndb.de>,
- "nfraprado@collabora.com" <nfraprado@collabora.com>,
- "o.rempel@pengutronix.de" <o.rempel@pengutronix.de>,
- "y.moog@phytec.de" <y.moog@phytec.de>, "marex@denx.de" <marex@denx.de>,
- "isaac.scott@ideasonboard.com" <isaac.scott@ideasonboard.com>
-References: <20241012073543.1388069-1-victor.liu@nxp.com>
- <20241012073543.1388069-7-victor.liu@nxp.com>
- <dtloyyghjep5rm34qjjinvhvrar5jzj3n24czvpdmnkfesntjq@t2uijuez7myj>
- <f47bc3f1-20d9-4f7e-acdd-85eabdb8d743@nxp.com>
- <TY3PR01MB11346C710A5E7621314C5DADC86442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Liu Ying <victor.liu@nxp.com>
-Content-Language: en-US
-In-Reply-To: <TY3PR01MB11346C710A5E7621314C5DADC86442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-X-ClientProxiedBy: SI2PR01CA0017.apcprd01.prod.exchangelabs.com
- (2603:1096:4:191::19) To AM7PR04MB7046.eurprd04.prod.outlook.com
- (2603:10a6:20b:113::22)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1100B1474A4;
+	Mon, 14 Oct 2024 08:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728895071; cv=none; b=I7Rf3i5VANAHFH5yyBGvr0qZHIqNALzoakzrUXXxWKJ4mZwAYVnjXqDXWKJz6w7bglL9DpW8I26PqWpvrbdgm42v22PzPgQ/s3QCPVVtZaMGdrOpq1sX5xQ6kC+N+5yZW23yd4eC2rtwZV8V7cN2DsG8ef9qSMIH7liewi9HYbk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728895071; c=relaxed/simple;
+	bh=sAS2+CLCIrNcSJuSiRhzOJEAziqoeifAxCd0Bp4fzPA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CgqxqyoRE209Vs8acCGUk39CMTCSfbzqxlbJCt0pD8GMTNCwG7bcLbDIP4aXCz10t/L7hZQvrpz5Qbfj5QI/Hb974nkXJfl4PC+PCLou4iui7tMtvvGtV3z72qhKSC6QV3BqHtGu75irr6nGYG/djKZiZ3CpMsDvnmu8tn/BQY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kb1QAJvA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9A389C4CEC3;
+	Mon, 14 Oct 2024 08:37:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728895070;
+	bh=sAS2+CLCIrNcSJuSiRhzOJEAziqoeifAxCd0Bp4fzPA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kb1QAJvAMMbFR30zd8Oikxs0WV9+jZ88dAniWmS84fPvZKZqg0nVLZ/duNeWqesRX
+	 DxWJHnaxjzDAPL3mCI1hHIpMEu8kuWKqbwQMxe2E38HDCnFp3nG8qhSuSYmqBrDUgA
+	 BLXdOsPIussGPSJ239K0Slr/sQC2Yeull0dhVcvkNbxS6raOMbC3MXH/tMH/nu+q6O
+	 2Aa03OEZejg+DN1Tq5kkAhGTj2ZtO0ynyfWf9D5cOyunlOs+CPVtvFXTjsncQPHGy3
+	 dCpMdCDSEFcNy9zB3A4zq+vIIoPsJNMgwjJ2m2BsBgkLZp1UNgbjw8RlSX/IHRC0To
+	 USGpci6XwYI1w==
+Message-ID: <0eea6407-9477-4fe6-a37a-c7996ccaf706@kernel.org>
+Date: Mon, 14 Oct 2024 10:37:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|GV1PR04MB10944:EE_
-X-MS-Office365-Filtering-Correlation-Id: d18d3bea-8cfb-4661-641d-08dcec2b591c
-X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
- =?utf-8?B?OWs5dEd5SlVaYTJvSjk4TWxxOWJJZmdFV2RKMTVSKy92Q0VoUE9MQ3hKQUxN?=
- =?utf-8?B?MWdGeUhsbnFNa0VDM2VYZmUyWWxHL3RyYWVSZnFwa1BKSS84K0NUYXI0Tlo0?=
- =?utf-8?B?bVIzcTlZNGpnYXFFQzVIeUh6OUdWOGxVaS9vWC9QQ0QyekVVaW8vSGFiZldq?=
- =?utf-8?B?aWZ1SEF2RlBIbSsyZUFFSzJpOHo2Y1A2YlhMMi9lSEM1WGxFZ1NZWUVUY09z?=
- =?utf-8?B?c3lhQTVHTEkwWW9KemlyQjd4dzE0b2lCZHovcEFGRTg1ZjcyUFBzMFlDb1Rx?=
- =?utf-8?B?UXJabmNJWVpJUGpBZkhIRlJRakduQnV1Mk1tRW5WdElRMnBZQUlsQUxDdXp2?=
- =?utf-8?B?RWJHNTBCSFBMMC9OdGlLK25iZGQ0bjFvKytnYXpabVoxb3dHRlNFbHBKMzY3?=
- =?utf-8?B?eTBmUFQ0NFlhYTM1MVpFZmliNytrNU5LNElNSnBwTVpmbTdrTTVPTktEc1BO?=
- =?utf-8?B?QmJ5RW1JblplU0Z4akZjbkpqY1Q4dXhtVktIeVhlemRRMklnaXptNUdZQTZN?=
- =?utf-8?B?Zzl5UHcwdktiTTh2OW1tNlhlLzMwOGxsd2dKMXFLMHVSN21xbG9IRENZNzJX?=
- =?utf-8?B?TmVNZzBnNkNhbis5VDR2RDRXU2Q5alNzTDVDMWhrYWJ0T1phQy9iaXFSdDU3?=
- =?utf-8?B?MnZOOUFIdk80dlA1R2Z3c1RDN3NDOEc4UkE4bk1BRS8vRGE0b2RqWnRHLzhT?=
- =?utf-8?B?dlhPV1pqb0tURWpyUUJ5Nlp3aUZvSXlTbVVDdkF6enQzWnkrQWFGOVlMTC9z?=
- =?utf-8?B?VWk4VVE0U3IyK29sTGNxdFh4L1RyblNodk53dUJ5cURHcWZUS2c5bnE2SjUx?=
- =?utf-8?B?UERRSms4emhxSFR1NmR6bmJ2Q0FPREhQWnlERGdZVUMzbFBBRnFsbDBhNGlq?=
- =?utf-8?B?MExuMXhGMWFNTDl2UHhjamN3eUtLRUcyZVg1amRZc0RhMk04OXpxVTVCVHhj?=
- =?utf-8?B?VzBpWlREMmZuRnlKck1Tb1dCN1hXRVBLMDdsLzBCQm1obW4xNFVPN3RzRnUv?=
- =?utf-8?B?VUYwMnM5WUJDSVVnRXdmY2F3czlwUktTaG5ES25GbnF6Tlo0UDZva3dTaGw2?=
- =?utf-8?B?UW1rSHRJdkRBR1ExUHJBZWREU2JDRzFrUHRZeHVneWRtL21pV2d5R2U3NGhz?=
- =?utf-8?B?OCs4R05ZbnhpUmNGWlZCemE5c0lWN0hQWDlrQlh2WEh3a0pPZGdONFN6bm5h?=
- =?utf-8?B?dkVlNzZOOU9vV2ZJWnFObXZFQ2hESzBIanRxemZ4Z3ROZ3RrOWNMTjhSUXUw?=
- =?utf-8?B?Zm56ejJhbVdaVmtnUnNDcVpVTjZsNi9JZ1pMU0x2NjYrMlpYTUlSeDhsOTN5?=
- =?utf-8?B?blhnYk5LQkFTVTFyeUljL0lYcnhHRmZ2ek5SakNIRlY1V21nMUFuRldVdk1I?=
- =?utf-8?B?Ukp2eC9XTDVUZVdXOGRkczV1U044azVETDgrQVRzbWh1WGhGd1lTbmRhV0d4?=
- =?utf-8?B?eGpnaVFNOVhiY0N3QlJORzZQSHJLZ2J2SGVvQ1hCYlVMVzBhYzArOGFIZ2VL?=
- =?utf-8?B?NzZDb0ExcFFEbG5EdjR5Z0hQMW9rZlNjOXdlT3A0RWVTWmZlOEhyanAzTUZY?=
- =?utf-8?B?SGNFdmhUNCtOUUk5aFNaMFgzZk1tNzRWYVBNTytxanlyMElMR1BEQmlBZXR6?=
- =?utf-8?B?OVhIL3A3dUpKQmgrZm96SHBudkNhbWZiMHZsZ0cwRmtNN1ptMjVTamhRWTJL?=
- =?utf-8?B?WGMzb0Z2cGRqYnpQcTVTeW9pd2tMMzRnTDNkZHlPcFUyOUtmZWhqUWxRPT0=?=
-X-Forefront-Antispam-Report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
- =?utf-8?B?ZFBuMXFzdWo3UmkzNHRsUEJKb1V2MWtXUXliVXN6OUM4UlhpdjZpU1I4U3VI?=
- =?utf-8?B?b1FCbmVtLzBEa05vbXlyVHBUWVhrZUNQVVJ2TzBKSFJmSlErYzMzY1ZtNzk4?=
- =?utf-8?B?UXZ1a0cxS0pMNVoveDFKTHI3QkJubzVIVjFiYXVCRVBZaHVDVUY5K2ltdXp0?=
- =?utf-8?B?WjVQZW9OdGs5WlZnS0FPOENNZUNGTkU2N2dId1RpRVdPNlVlbXdOdit5eGk1?=
- =?utf-8?B?SWxLalN1TjgwWW84VytkMVp6c1htOEpCSU1Jb1lJZFR2d0F1TmtDQlpDR0Nr?=
- =?utf-8?B?Ty9LRHFMU2ZVTS9OZ3czUEdtNFFFeWs0YlpMTVhYWlVEZld2Z0R6VWJnNjVj?=
- =?utf-8?B?UlpuN2QvSVpESEN4NkNnR3FoaXUxQk96UkNudWUrTGsyM2UwcmVrdEZudVkz?=
- =?utf-8?B?QytxRWhjeHh3d0FkWWxjZWRhVXFHb1NqVmdFd0dsU2ZLRUxWbVN6QWdLdURh?=
- =?utf-8?B?V0JPalhmdDJzbTk0ak50bkRFMGljeTVqbC9QOHMwN2U1MitaTlduSTQ3QlZK?=
- =?utf-8?B?aS9yK0RaM3QxU2dZS1dVT0Q4SEVjS0k3ZkdyZVBJY1hvdnpzWWxmeERoSjUw?=
- =?utf-8?B?WC85RDZDS2tqNVdpZEcyZjhJK0J6TEhoaHJNM0dmZkh5VUFrbHNUZ05kMHRU?=
- =?utf-8?B?RXFNc3BGaVE0aXNmcnJGWDlqY1Z3L3FEV2dOZ1ExcWtVUFI2Y2tDcDR1RGFL?=
- =?utf-8?B?VjRMMm5WYnBoT0M3WDF6S0Y4MmZ4dmdDbWpIWTFxWUZQWDY3bmN0Zzkzd3Zy?=
- =?utf-8?B?TmJxcnp5cnNSMHlpeGNaaWoyRnFZYU4rNExNT01VK2krS3YxbEhCaXZQV1Br?=
- =?utf-8?B?Mlo0M2JXVkgzWUlINWhJM1psMFhrdHluc3N6SjV3K1F1L05sWWlpQVcydHNt?=
- =?utf-8?B?WlQ5UDRxcmh4MXQzR0gvTUxtNXhGT1pKZFJrdGZ1aERyTEtTWUcxYSs0WjUw?=
- =?utf-8?B?anZvOERVckF2K3A1V1c4QWYvMTVLaXFsOVMraUFjL3c2TkhOMXJiV2xHZXNs?=
- =?utf-8?B?bjBDc2FHQ1YxRGRWWUw1bGZjL25kaHNIQ29GT1dkUHJwTmVQWUZjLzBGQ25i?=
- =?utf-8?B?Y21kRnE1Y1hDREJLdm9kMGcyU3Y1UWlIbDV5Rkt5L01CYWJnNlZ0ZWxjdGZl?=
- =?utf-8?B?bUVBbGhRS0RnUjNDcGo4VGg3WmFGeC8wSE5qRkFkWHlNVzJvdHIzMWxDc2Jq?=
- =?utf-8?B?MHZ0c0UvaWxueGw3NWluL0dDSVNmcDN3bjAvTlFmMnJKbkoxbSsyUWU1dSsy?=
- =?utf-8?B?bGhYcXRFRzM2NDc2ZjhoK05hMDZNNlNkNmI5dHk4U01BbVhxTjhoUWtCUy8w?=
- =?utf-8?B?cUF2YVg2SVBnOGFLTDl2emRKZ2RIeENtYXM3NURidWFwak93MjlBYUh0UWxF?=
- =?utf-8?B?QlluYVBNR0FXYjgyTXAwWEFGdGp6Y1E4ZDhpUXNGUHBIZFdUYno2VnUvbVlt?=
- =?utf-8?B?cHQ5V09SUGx0RlBZVjRJbVI4Rk9pWWZmN09aa3J3OEM2d1IxZUp0R0pUVjJ0?=
- =?utf-8?B?R3gzYlEvMFB6NjJmWnlRU0d5OTFkZ25oekJZaEwrbmVOR1U0dU9mS1BlblFL?=
- =?utf-8?B?QU9xNjcydG1oS0F5QkZsdnoxcDkyNnJ4NXVkZEtPSnYrZC9GaSt4TGg3SnFL?=
- =?utf-8?B?Rk9DcGZQb1dzQ2h5WTZnd2RneGIvdnMrM0N2czM1aDZkZ2UrdHdON241YXIy?=
- =?utf-8?B?YlFHODJQcUJCU2ZhYjQ5SnRxZnNOTm1zRGVzZ1k1WUtLVVFJMnhYUzZQUXQ4?=
- =?utf-8?B?aHNDRFVrTlJVeVVDNUx4QlNvQzVQQm0xLzZsZmlGR1hzVVZuNHRiSFRraFlw?=
- =?utf-8?B?NkVDVVhwWjJDSHNYZDVOVXd2dEFGY1grUEltdDUvdHBQdTZEcFdvNHYycUtF?=
- =?utf-8?B?ZWI2dFRMMEQzZmdLdWo2ZFdTOEJmNGFwcDJUWmZocEpubHl3VHMrd2gvb3pN?=
- =?utf-8?B?ZHFGMno4QTE5NDk0WWJ3S2p0ekRUd3hMU01maUQ3TmNwNnJncVVoL0JHN2NZ?=
- =?utf-8?B?a05DS01jYjZTUG9VUk9iNWd6blhaRjhJODB6akVMb1IyZHA3TTgwclNqWmQ5?=
- =?utf-8?B?bGViL2ttcDQyNE9TQ3BLbFJLQXVQVnpKSGVCYnNNd3VlaGFlakU1SWVoRkFl?=
- =?utf-8?Q?D8C7rkI2uvNIXlqx8zfeSEU86?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d18d3bea-8cfb-4661-641d-08dcec2b591c
-X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 08:36:50.5411
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7jaJOKZziN57oyyBekXEuHfh1hKk4DqD8nhZmJTva0+CjUGW6NbbnBzK6rcTovJGsJmnmVVQAGug0eTvuocxUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GV1PR04MB10944
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] dt-bindings: spi: Add realtek,rtl9300-snand
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>
+Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-mips@vger.kernel.org
+References: <20241006233347.333586-1-chris.packham@alliedtelesis.co.nz>
+ <20241006233347.333586-2-chris.packham@alliedtelesis.co.nz>
+ <3tu6x2644lxvvbk74nv5qva7qupsvgxyxkwc5g5n7n4bh3mbwi@457wbps4kpns>
+ <963a57ec-c09d-4a4e-b8b8-a89354cf3264@alliedtelesis.co.nz>
+ <8bf08456-0780-4dfe-9153-37ef5d01285b@alliedtelesis.co.nz>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <8bf08456-0780-4dfe-9153-37ef5d01285b@alliedtelesis.co.nz>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/14/2024, Biju Das wrote:
-> Hi Liu Ying,
-
-Hi Biju,
-
+On 07/10/2024 22:49, Chris Packham wrote:
 > 
->> -----Original Message-----
->> From: Liu Ying <victor.liu@nxp.com>
->> Sent: Monday, October 14, 2024 8:18 AM
->> Subject: Re: [PATCH v2 6/9] drm/bridge: Add ITE IT6263 LVDS to HDMI converter
+> On 8/10/24 08:58, Chris Packham wrote:
 >>
->> On 10/14/2024, Dmitry Baryshkov wrote:
->>> On Sat, Oct 12, 2024 at 03:35:40PM +0800, Liu Ying wrote:
->>>> Add basic HDMI video output support. Currently, only RGB888 output
->>>> pixel format is supported.  At the LVDS input side, the driver
->>>> supports single LVDS link and dual LVDS links with "jeida-24" LVDS
->>>> mapping.
+>> On 7/10/24 19:40, Krzysztof Kozlowski wrote:
+>>> On Mon, Oct 07, 2024 at 12:33:45PM +1300, Chris Packham wrote:
+>>>> Add a dtschema for the SPI-NAND controller on the RTL9300 SoCs. The
+>>>> controller supports
+>>>>   * Serial/Dual/Quad data with
+>>>>   * PIO and DMA data read/write operation
+>>>>   * Configurable flash access timing
 >>>>
->>>> Product link:
->>>> https://www.ite.com.tw/en/product/cate1/IT6263
->>>>
->>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>>>> Signed-off-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
 >>>> ---
->>>> v2:
->>>> * Add AVI inforframe support.  (Maxime)
->>>> * Add DRM_MODE_CONNECTOR_HDMIA.  (Biju)
->>>> * Rename it6263_reset() to it6263_hw_reset().  (Biju)
->>>> * Check number of LVDS link data lanes.  (Biju)
+>>>>   .../bindings/spi/realtek,rtl9300-snand.yaml   | 58 
+>>>> +++++++++++++++++++
+>>>>   1 file changed, 58 insertions(+)
+>>>>   create mode 100644 
+>>>> Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
 >>>>
->>>>  drivers/gpu/drm/bridge/Kconfig      |   8 +
->>>>  drivers/gpu/drm/bridge/Makefile     |   1 +
->>>>  drivers/gpu/drm/bridge/ite-it6263.c | 919
->>>> ++++++++++++++++++++++++++++
->>>>  3 files changed, 928 insertions(+)
->>>>  create mode 100644 drivers/gpu/drm/bridge/ite-it6263.c
->>>>
->>>
->>> [...]
->>>
->>>> +static int it6263_parse_dt(struct it6263 *it) {
->>>> +	struct device *dev = it->dev;
->>>> +	struct device_node *port0, *port1;
->>>> +	int ret;
+>>>> diff --git 
+>>>> a/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml 
+>>>> b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
+>>>> new file mode 100644
+>>>> index 000000000000..c66aea24cb35
+>>>> --- /dev/null
+>>>> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9300-snand.yaml
+>>>> @@ -0,0 +1,58 @@
+>>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>>> +%YAML 1.2
+>>>> +---
+>>>> +$id: http://devicetree.org/schemas/spi/realtek,rtl9300-snand.yaml#
+>>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
 >>>> +
->>>> +	ret = of_property_read_u8(dev->of_node, "ite,lvds-link-num-data-lanes",
->>>> +				  &it->lvds_link_num_dlanes);
->>>> +	if (ret) {
->>>> +		dev_err(dev, "failed to get LVDS link number of data lanes: %d\n",
->>>> +			ret);
->>>> +		return ret;
->>>> +	}
+>>>> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
 >>>> +
->>>> +	it->next_bridge = devm_drm_of_get_bridge(dev, dev->of_node, 2, 0);
->>>> +	if (IS_ERR(it->next_bridge))
->>>> +		return dev_err_probe(dev, PTR_ERR(it->next_bridge),
->>>> +				     "failed to get next bridge\n");
+>>>> +maintainers:
+>>>> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
 >>>> +
->>>> +	port0 = of_graph_get_port_by_id(dev->of_node, 0);
->>>> +	port1 = of_graph_get_port_by_id(dev->of_node, 1);
->>>> +	if (port0 && port1) {
->>>> +		if (of_property_read_bool(port0, "dual-lvds-even-pixels") &&
->>>> +		    of_property_read_bool(port1, "dual-lvds-odd-pixels")) {
->>>> +			it->lvds_dual_link = true;
->>>> +			it->lvds_link12_swap = true;
->>>> +		} else if (of_property_read_bool(port0, "dual-lvds-odd-pixels") &&
->>>> +			   of_property_read_bool(port1, "dual-lvds-even-pixels")) {
->>>> +			it->lvds_dual_link = true;
->>>> +		}
+>>>> +description:
+>>>> +  The Realtek RTL9300 SoCs have a built in SPI-NAND controller. It 
+>>>> supports
+>>>> +  typical SPI-NAND page cache operations in single, dual or quad IO 
+>>>> mode.
 >>>> +
->>>> +		if (!it->lvds_dual_link) {
->>>> +			dev_err(dev,
->>>> +				"failed to get LVDS dual link pixel order\n");
->>>> +			ret = -EINVAL;
->>>> +		}
->>>
->>> Please use drm_of_lvds_get_dual_link_pixel_order(), it validates that
->>> the DT definition is sound: one port for odd pixels, one port for even
->>> pixels.
+>>>> +properties:
+>>>> +  compatible:
+>>>> +    items:
+>>> Why 9300 cannot be alone? What does 9300 mean even? Wildcards and family
+>>> models are not allowed in general.
 >>
->> It cannot be used, because it get the pixel order for the LVDS source not sink. IT6263 is the LVDS
->> sink.
+>> The main thing about the RTL9300 is that that is what all the Realtek 
+>> documents use to refer to these chips and the specific numbers are 
+>> akin to the manufacturing part number that you'd actually order (maybe 
+>> that's a bit of a stretch).
 >>
->>  * drm_of_lvds_get_dual_link_pixel_order - Get LVDS dual-link pixel order
->>  * @port1: First DT port node of the Dual-link LVDS source
->>  * @port2: Second DT port node of the Dual-link LVDS source
-> 
-> 
-> Can't you use drm_of_lvds_get_dual_link_pixel_order() from host for the same use case. See [1]?
+>> The SoC/CPU block probably does exist as a separate silicon die that 
+>> they connect to the different switch blocks in the chips that they 
+>> sell but I don't think you can get "just" the SoC. There is every 
+>> chance that we'll see that same SoC/CPU block pop up in new chips (I 
+>> see references to a RTL9302D in some documents). I'd like to be able 
+>> to support these chips using "rtl9300" but if that's violating the 
+>> wildcard rule I can drop it.
+>>
+> Maybe it's helpful to think of the RTL9300 as the IP block that is 
+> integrated into the RTL9301, RTL9302B, etc.
 
-Yes, just need to get the remote LVDS source ports first.
-I just proposed a snippet in a separate reply to use this function.
-Let's see if Dmitry likes it or not.
+Yeah, it could work but we discourage this pattern. New devices from
+930x might not be compatible with 9300 and then it is unclear what
+"9300" actually mean.
 
-> 
-> [1]
-> https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git/tree/drivers/gpu/drm/renesas/rcar-du/rcar_lvds.c?h=next-20241011
-> 
-> lvds_bridge0: lvds-to-hdmi-bridge@4c {
-> 		compatible = "ite,it6263";
-> 		reg = <0x4c>;
-> 		ports {
-> 			#address-cells = <1>;
-> 			#size-cells = <0>;
-> 
-> 			port@0 {
-> 				reg = <0>;
-> 				dual-lvds-odd-pixels;
-> 				lvds0_in0: endpoint@0 {
-> 					remote-endpoint = <&lvds0_out>;
-> 				};
-> 			};
-> 
-> 			port@1 {
-> 				reg = <1>;
-> 				dual-lvds-even-pixels;
-> 				lvds0_in1: endpoint@1 {
-> 					remote-endpoint = <&lvds1_out>;
-> 				};
-> 			};
-> 
-> 			port@2 {
-> 				reg = <2>;
-> 				it6263_out: endpoint@2 {
-> 					remote-endpoint = <&lvds_to_hdmi_con_out>;
-> 				};
-> 			};
-> 		};
-> 	};
-> };
-> 
-> Cheers,
-> Biju
-> 
-> 
->>
->>>
->>>> +	} else if (port1) {
->>>> +		ret = -EINVAL;
->>>> +		dev_err(dev, "single input LVDS port1 is not supported\n");
->>>> +	} else if (!port0) {
->>>> +		ret = -EINVAL;
->>>> +		dev_err(dev, "no input LVDS port\n");
->>>> +	}
->>>> +
->>>> +	of_node_put(port0);
->>>> +	of_node_put(port1);
->>>> +
->>>> +	return ret;
->>>> +}
->>>> +
->>>
->>
->> --
->> Regards,
->> Liu Ying
-> 
+The generic recommendation: please go with specific compatibles and use
+one specific compatible as fallback for others.
 
--- 
-Regards,
-Liu Ying
+Best regards,
+Krzysztof
 
 
