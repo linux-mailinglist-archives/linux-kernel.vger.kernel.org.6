@@ -1,147 +1,138 @@
-Return-Path: <linux-kernel+bounces-364213-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364216-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BE4099CD2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:29:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BECA499CD71
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:32:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6059E281414
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:29:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29F81B23A01
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:32:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0461AA793;
-	Mon, 14 Oct 2024 14:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2D0A610B;
+	Mon, 14 Oct 2024 14:32:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="epnwuTXI"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="FDSpz+Mx"
+Received: from mx0a-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD71018035
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3D8D200CB;
+	Mon, 14 Oct 2024 14:32:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916181; cv=none; b=n3tR7WfQtcwXyd8earz+54GLvM0XCiu6cxKxiR/DvBL03wyfA5oaU9EDqxq8CQLg1taY5FFWWvVs2FwuTvol+lejXFVXHl2gGvE5vrwqWeVyKip7eXoEY7Iv48VrMgVnfq5IH2GGjt0qrMfXE4VXPy3KF+bW0o8mH5LB81iq/fI=
+	t=1728916362; cv=none; b=IoDhQOS/Hb5Uku9+4V+YBBnYV5irTZQRYIb421iFDX4ZbfOLYtNzxgtQntNusodMPf+4r918nge9N5xNbUNXw87XEJK02tS8aeHQVKNe+5hwvF23FNv1evqRIgIa/ATW8z21xhiXLvd+BNq7xXqF17uAGWfT4N+osSqRxVReNuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916181; c=relaxed/simple;
-	bh=1rpXd0MNL/xUML30VuQIma2h8PYQvhkF0ow5qY5IEzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=eCdabOTu1vED5fQyBp8x9hKxUrmhh4YZ+hBUcPma8YLKoGQrXA71hAW5Jr2we3EvcH43066p7WOgOa0jLp3l8vqfSGQE2SpX3ef17QrsuFBM3SxvqTLzgtsOtTC8xjXpYmegnHVkMJ3wQwIgpfL6b3yQmdpibHXpWpknU0T0MPE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=epnwuTXI; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso2851932a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:29:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728916178; x=1729520978; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6PmpippfRD0AVdWVQukdvNDDCNPYHvTfxXjiJDA988=;
-        b=epnwuTXIwYeUQ/MMmpsaWECDu3MDY3Ew/rulefv7zJmBKeRx+Iawrkm96dw5kBbb0D
-         QGcCREeAEbTEb2ngJF6GpAO1pMTqg3FiM0i44qI4OyNGFaKrkydSLNFFh/u7aLWpF9JI
-         EiiGpt851U0L3cXwJthbm4Cf7pFuBwP/EpT3rb7qQhxKsR6Lnj9zPwcRq+AMEcgv0uoU
-         o1fpDXb9CnL4iI1br5Z48llMjpLP5me+yFScBOBVyDj5+2DLsSclETxbcrsO+Y4BLOUG
-         2EaUG5DKxKH43M4PWjZT/jK1VpYv8Lph4ggUn1cCxKIXBp+X2oRcvTnyBvuIc2dTB5Aq
-         iOTg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916178; x=1729520978;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=p6PmpippfRD0AVdWVQukdvNDDCNPYHvTfxXjiJDA988=;
-        b=kVKP2tfCHEgrjJh+oOnd0isI3lJl5QErpW6u4OiNpStlnx5MqKBIPnO0WgrhHXRuNw
-         iLepOKRM4k4IKkr5GR7oK51L/2uiEqP9H0ThxKuTedeaIP1uv96jTNLwf4cbCljqC5H2
-         tZKjBNrGXA4VBBZUJFhxgfcH5D9iidTF3iLz7HS8xUR7xiP5b02vHjFwn3RBK9Fis6I/
-         SfiZe6BA+FHdDUNcHsAR4JbIzATGYlaiRJ9HjnheF8iPqzo0Y8urOivgHyjRBVf9xTvn
-         y8jzIWyCVei4ERx0wl0mSu5QJ/uxKS7o0w9lIik2Pn/MLi76dVcsLnpu2lQ2hmSb5IIm
-         ZGkQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU0BxOZdTmBDtaLKMjQLbOn5fQjaF3k+gh4QHTbKuNFUbVPklqn+dIyN5aEHfQ5I04boz3jbTSwG9IQtMA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiEpIB+KllCV+FpCEzHhLPrl98w91/IWx+Q+ZnS5hlCAnAIyJP
-	xXHRT1MnR2Xl/Pk8znYk7c5hh789NTzd9mBCpc830cAEIZvoib+wWdWoSBJ+JGQF2SPHW9KLyV7
-	AijyRxH4P4g7aiRSqPvuPkbIGLbI=
-X-Google-Smtp-Source: AGHT+IGPar8POCQpGQzKdZSoGAdDaFCFze21kQy/l/MmqMJ+f5P/jiLtykXJzQtNS+c8V39xOL2sigGPfyIycfMe4lc=
-X-Received: by 2002:a17:907:928b:b0:a9a:123d:3f1a with SMTP id
- a640c23a62f3a-a9a123d52b7mr174548566b.17.1728916177781; Mon, 14 Oct 2024
- 07:29:37 -0700 (PDT)
+	s=arc-20240116; t=1728916362; c=relaxed/simple;
+	bh=c0u3Pu/qy15aftAdNYCISXdLMBzECvsxP/W1mOpcBE0=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YmHvgQJrmoqALIC6Z6+8VyT/kSZyrtClPVwEJlRxoNRngiQaNOgY2a2uA3g5pA17lW4vEPG+iLf7oaPjL8+qm0zq1fjSeF5/1qSNNqo2agklRbBSaBHbBakLBWJU5/jBAZMAlE0aWofh/Cj8TTIve2F3dV0RCIzDAuZes17XMLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=FDSpz+Mx; arc=none smtp.client-ip=148.163.135.77
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
+Received: from pps.filterd (m0167089.ppops.net [127.0.0.1])
+	by mx0a-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EABjsB006039;
+	Mon, 14 Oct 2024 10:32:23 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=DKIM; bh=TQ7n8XPd6rg1I/RlFcUOK+2lObv
+	JUAcI4gx/EAXc3kA=; b=FDSpz+MxG2B3kgTaMYCPIEgtTy1wuhGkStp8G/E3Syg
+	gpVt3hu5XXfOWMv34gbtgSJ4SxXlTJkWO+kmzl3w2kybwUVzmfpJwVhbOvxPp+ju
+	HTbukYStXslgrmCZWb8dKOYJ5KBjoJbZZIMvvkHVOXG1Ro+teXKvIBNfF9r7ZxSo
+	zBaeoHVZV/1yWEIVc31fFbMUu6DJa3mWOI7JXn0cj7ECCemBCoLL+lMUlEfOC17r
+	3jKabfJgMzpwn5rVZ7iedRqW9Nr5CeYkm7fGs4OIyooEzoVPvg0u7D9cJl+eLkD6
+	Yp40SQUKa4zQrwnobCF+4b03AWs8wQ1xKADDv4Yr+cw==
+Received: from nwd2mta4.analog.com ([137.71.173.58])
+	by mx0a-00128a01.pphosted.com (PPS) with ESMTPS id 427p137c4x-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 10:32:22 -0400 (EDT)
+Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
+	by nwd2mta4.analog.com (8.14.7/8.14.7) with ESMTP id 49EEWK0C041582
+	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 14 Oct 2024 10:32:20 -0400
+Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by ASHBMBX9.ad.analog.com
+ (10.64.17.10) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.986.14; Mon, 14 Oct
+ 2024 10:32:20 -0400
+Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
+ (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
+ Transport; Mon, 14 Oct 2024 10:32:19 -0400
+Received: from HYB-hYN1yfF7zRm.ad.analog.com (HYB-hYN1yfF7zRm.ad.analog.com [10.48.65.186])
+	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49EEW6bA014258;
+	Mon, 14 Oct 2024 10:32:08 -0400
+From: Ramona Alexandra Nechita <ramona.nechita@analog.com>
+To: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+        Cosmin Tanislav <cosmin.tanislav@analog.com>,
+        Michael Hennerich
+	<Michael.Hennerich@analog.com>,
+        Alexandru Ardelean
+	<alexandru.ardelean@analog.com>,
+        Rob Herring <robh+dt@kernel.org>,
+        Krzysztof
+ Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+        Nuno Sa <nuno.sa@analog.com>, David Lechner <dlechner@baylibre.com>,
+        Andy Shevchenko
+	<andy.shevchenko@gmail.com>,
+        Ana-Maria Cusco <ana-maria.cusco@analog.com>,
+        Ramona Alexandra Nechita <ramona.nechita@analog.com>,
+        George Mois
+	<george.mois@analog.com>, <linux-iio@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>
+Subject: [PATCH v7 0/3] Add support for AD777x family
+Date: Mon, 14 Oct 2024 17:31:57 +0300
+Message-ID: <20241014143204.30195-1-ramona.nechita@analog.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241006082926.20647-1-quic_pintu@quicinc.com>
-In-Reply-To: <20241006082926.20647-1-quic_pintu@quicinc.com>
-From: Pintu Agarwal <pintu.ping@gmail.com>
-Date: Mon, 14 Oct 2024 19:59:25 +0530
-Message-ID: <CAOuPNLggU3VcVCfRSpOe1Pxd9ObW6S3SWpprcr-t8gcGvB4ysA@mail.gmail.com>
-Subject: Re: [PATCH v5] sched/psi: fix memory barrier without comment warnings
-To: Pintu Kumar <quic_pintu@quicinc.com>
-Cc: hannes@cmpxchg.org, surenb@google.com, peterz@infradead.org, 
-	mingo@redhat.com, juri.lelli@redhat.com, vincent.guittot@linaro.org, 
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com, 
-	mgorman@suse.de, vschneid@redhat.com, christophe.jaillet@wanadoo.fr, 
-	linux-kernel@vger.kernel.org, joe@perches.com, skhan@linuxfoundation.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ADIRuleOP-NewSCL: Rule Triggered
+X-Proofpoint-ORIG-GUID: Mu0u1vHc2uyERCcRXk1zhS-8gqjQHpLe
+X-Proofpoint-GUID: Mu0u1vHc2uyERCcRXk1zhS-8gqjQHpLe
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 mlxlogscore=999
+ mlxscore=0 malwarescore=0 adultscore=0 spamscore=0 suspectscore=0
+ priorityscore=1501 lowpriorityscore=0 phishscore=0 bulkscore=0
+ impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140105
 
-Hi,
+v6:
+  * https://lore.kernel.org/all/20240926135418.8342-1-ramona.nechita@analog.com/
+v6:
+  * Patch3:
+    - miscellanous changes regarding coding style
+    - switched timestamp type to aligned_s64
+    - removed length variable from spi_write/read
+    - modified the cast from reg_access
+    - used mult_frac from math.h in the calculation of the frequency function
+    - declared struct device in probe funcrion and reduced the number of lines
+    - removed shadowed error codes
+    - renamed spi_transfer structures to 't'
+    - added comments to all the fsleep function calls
 
-On Sun, 6 Oct 2024 at 13:59, Pintu Kumar <quic_pintu@quicinc.com> wrote:
->
-> These warnings were reported by checkpatch.
-> Fix them with minor changes.
-> No functional changes.
->
-> WARNING: memory barrier without comment
-> +       t = smp_load_acquire(trigger_ptr);
->
-> WARNING: memory barrier without comment
-> +       smp_store_release(&seq->private, new);
->
-> Signed-off-by: Pintu Kumar <quic_pintu@quicinc.com>
->
-> ---
-> Changes in V5:
-> Corrected api name and missing () in comments as suggested by Christophe JAILLET.
-> V4: https://lore.kernel.org/all/a8393bc0-6f56-4e40-b971-4a837cf28323@wanadoo.fr/
-> Changes in V4:
-> Added () in comment as well suggested by Christophe JAILLET.
-> V3: https://lore.kernel.org/all/00aeb243-3d47-42be-b52c-08b39c5fef07@wanadoo.fr/
-> Changes in V3:
-> Removed signature of Joe as requested. No other change.
-> V2: https://lore.kernel.org/all/CAOuPNLi1mUKW_vv0E6Ynzvdw_rHvCye+nAf2bWv6Qj9A8ofX1g@mail.gmail.com/
-> Changes in V2:
-> Retain printk_deferred warnings as suggested by Joe Perches.
-> V1: https://lore.kernel.org/all/a848671f803ba2b4ab14b0f7b09f0f53a8dd1c4b.camel@perches.com/
-> ---
->  kernel/sched/psi.c | 2 ++
->  1 file changed, 2 insertions(+)
->
-> diff --git a/kernel/sched/psi.c b/kernel/sched/psi.c
-> index 020d58967d4e..907fa3830c8e 100644
-> --- a/kernel/sched/psi.c
-> +++ b/kernel/sched/psi.c
-> @@ -1474,6 +1474,7 @@ __poll_t psi_trigger_poll(void **trigger_ptr,
->         if (static_branch_likely(&psi_disabled))
->                 return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
->
-> +       /* Pairs with the smp_store_release() in psi_write() */
->         t = smp_load_acquire(trigger_ptr);
->         if (!t)
->                 return DEFAULT_POLLMASK | EPOLLERR | EPOLLPRI;
-> @@ -1557,6 +1558,7 @@ static ssize_t psi_write(struct file *file, const char __user *user_buf,
->                 return PTR_ERR(new);
->         }
->
-> +       /* Pairs with the smp_load_acquire() in psi_trigger_poll() */
->         smp_store_release(&seq->private, new);
->         mutex_unlock(&seq->lock);
->
-> --
-> 2.17.1
->
-Addressed all review comments on this latest v5.
-Any further comments on this patchset ?
+Ramona Alexandra Nechita (3):
+  dt-bindings: iio: adc: add a7779 doc
+  Documentation: ABI: added filter mode doc in sysfs-bus-iio
+  drivers: iio: adc: add support for ad777x family
 
-Thanks,
-Pintu
+ Documentation/ABI/testing/sysfs-bus-iio       |  22 +
+ .../ABI/testing/sysfs-bus-iio-adc-ad4130      |  46 -
+ .../bindings/iio/adc/adi,ad7779.yaml          | 110 +++
+ MAINTAINERS                                   |   1 -
+ drivers/iio/adc/Kconfig                       |  11 +
+ drivers/iio/adc/Makefile                      |   1 +
+ drivers/iio/adc/ad7779.c                      | 909 ++++++++++++++++++
+ 7 files changed, 1053 insertions(+), 47 deletions(-)
+ delete mode 100644 Documentation/ABI/testing/sysfs-bus-iio-adc-ad4130
+ create mode 100644 Documentation/devicetree/bindings/iio/adc/adi,ad7779.yaml
+ create mode 100644 drivers/iio/adc/ad7779.c
+
+-- 
+2.43.0
+
 
