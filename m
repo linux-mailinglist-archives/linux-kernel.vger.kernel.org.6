@@ -1,138 +1,199 @@
-Return-Path: <linux-kernel+bounces-364032-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364033-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA04C99CA2B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:31:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94A9299CA32
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:32:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EBE6F1C20FCE
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:31:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E29285D6D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:32:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB03015B104;
-	Mon, 14 Oct 2024 12:31:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 820841A4B76;
+	Mon, 14 Oct 2024 12:31:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cJKWJRNG"
-Received: from mail-yw1-f196.google.com (mail-yw1-f196.google.com [209.85.128.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="RcpdjOZv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0FE31A4E8A;
-	Mon, 14 Oct 2024 12:30:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2401219F401;
+	Mon, 14 Oct 2024 12:31:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728909060; cv=none; b=nfWLTLlZ8+qWdG7QSZd7D3p+kXa+omVkc9L5DkHrrpWT0mxmWHFnEVkLoooXapUt9p3yY2jywgW9EqtLAIIAMgMpLeMQl72AbrB5iGJE4/pQwHc3AhxY0zJRbo/rZSW+7o/WxqPQmbu10tfBO5nn8tB3GN4DKbkkyJYm4rMi9Ws=
+	t=1728909110; cv=none; b=NuihHPjHOd+Jufvpt/xL0dZ4bFt4kBnrc6F33GsBToS0PJRTKhvnW6n2BOMaX0OZf72hF1JbK2y0QbsFA8BzAhmHCSS1FNLUccJIPn1rrZbS+Y+j0q2fx5kpnauvebIvHoNuNLdYD0Rxii5c5cO+YOAphjfspBDH9VEB0vSb9r0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728909060; c=relaxed/simple;
-	bh=pHECoy3/r9XXzpDOOuZYAKk4VzIkq3Z702n4d5UrFMY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=e6imMM+Z+ghfu6ten3i7YWla4wwgMAR7cDFyUhGNi0Su6AZnIBmUJohjcR5Z6BB7wyqf4xLU+/3aDhaTksWn3pRlXyQYBOwQWAos7reMzD8FKPysgGCDOm9TkQVcHs7HaJzjZm+apPTAUy5Ou1G5XBdnaJGUNGK6ZD92aJUqtdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cJKWJRNG; arc=none smtp.client-ip=209.85.128.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f196.google.com with SMTP id 00721157ae682-6e2e3e4f65dso36788847b3.3;
-        Mon, 14 Oct 2024 05:30:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728909057; x=1729513857; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M0dC5BuFU28/f2J/fAJcT8u8dNYYIjtMKBLL/kYiXms=;
-        b=cJKWJRNGsjrryEGe0+xC6wBqWbwsyHid6M3ekrnJ1A4Lo7UiX+1/AY+Nc6lbKrPbj/
-         KTFEuG3xO64lEtb5z6y5Q4ySPu7Q9Pg865mW6PTuP8crO9YSerZHf1/YNGL26oONnE9y
-         r9YHejxLiQTS1wQYDAoBrDIS31KgK5zKMoT1ZK87FPTj833KDw2DPxs333+so6obcO0l
-         D+FcEwSHP5f0nMvlGCs+pXL2HfJxjs+Pa9+49yQwtMa2COPAnTsHauIOBdaTnDuAVP52
-         InyR0ObG1eD2GON5RCVrFJM7DJOuNbvccOKMBzf4TGDiXswbjjpSbpMjjFfYvS33LTrg
-         Gudw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728909057; x=1729513857;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M0dC5BuFU28/f2J/fAJcT8u8dNYYIjtMKBLL/kYiXms=;
-        b=IEcANQoE+y23fUlQl/Wy3i4345/BIvmR0FBfyMjm2UEccWiwCSMv8EX3NsKGODp/fa
-         GOE39ulVMvqw8EIoKNq5bjTGK0U/mMbPyVooT0kjONN9cYefP1zRzVfD0OBPS9GUGroT
-         /Rl9XWc86NLtQMc0obQsr3jB33z4pViuxo3HHBc05j4ejdoAIBmT/N4jenvr5xRxiY/P
-         TpxvTAku8w62lmVd3mk7zu81Osw0l9j2vYi+GUy1PIG6jHHW+DxNI1F2SkuYEj7FUKZo
-         0x5OxJhpTQcDvGq28gP7sgJRzOkvRwE0xSUx6uHc57cWpq2mPzQl9e6i2AgYuJLE1Hk0
-         WJDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxmnKw34RGW6tnv0Zrhg2g7IyYc9OJDLdl78Yz4JCGIKzvyHR7UHT3im99tODIOs3glQHxLeyR@vger.kernel.org, AJvYcCVqrfJ55UCA6c+I4+u7F8hbPju0yvSRRYt1kqvYvpam4sVpRRFkCDt/EteL+jd9qnFYheV285Zuher9wk4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU8qwywYxgF7dw2VpHhwzFrO2d0nfcEnSEvJVG9zyzrQWeYhU5
-	a+TY3xAnnnYD7PrcN65JKDxXeV0DnBKDbycmKdonxZqO1z7iA/EibipDhxEL1cQD7cI7bQvHgeu
-	IQlnavZz5CsXH0TN5jeUAVwGvvzQ=
-X-Google-Smtp-Source: AGHT+IHd16g5nn1RyWruTrHC4hhTzSkHepD6pSwIfQXNCMzh1LDAgrPS/tLW+iu0r6lafI+lcf6W0Xoitkn+nI3Muw8=
-X-Received: by 2002:a05:690c:60c2:b0:6e2:1570:2d3d with SMTP id
- 00721157ae682-6e3471e8b79mr89219927b3.0.1728909057646; Mon, 14 Oct 2024
- 05:30:57 -0700 (PDT)
+	s=arc-20240116; t=1728909110; c=relaxed/simple;
+	bh=r05FTpPiFLp4Eqg+kJgufKymtFtEjZiy2BjFVmzwfXk=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=okNQMXafedyBkwawkUu+RzTChMmsdApzTXhNhmPL3ZXZZnhU/6ulnuthAAT7r02G4okIHa5loEu4OBTCuBF/L82hmVOYiSWjC8L93zs2s4OXyzFJgy4T3XhjyP1k/2TVdKoZokEA0yavXK4sTNMe2ASo66JCg4GdXlyWHDrHqNw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=RcpdjOZv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EAtbwC002959;
+	Mon, 14 Oct 2024 12:31:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=UscJRMZH2H6KkosByWavrn3L
+	yRF5g4uyaoTc+Bl7iqI=; b=RcpdjOZvD+sLHCkQ8L5VXaQ6FDXlc/yjY3N27OuP
+	JoaR9353PSNs/6LSVbLrexE2DXcYnpCt+nRGikAiqMFYjw7ZDlGMj/RTPqlLuJTy
+	WWPEXSWZEuTbBzFmw1vkOaz2YJtubuUdf+6atCpY71h4ScNi9P4T2PSYxo/mIGxB
+	LZTl5+z1MghccZgFyGTJgQU1/ee2yiW8h28xBdT+YXwlxa2ARiOOyNjCfyngtigV
+	F1r1poMU2XubzALNr1FqEPT7YjP+eayIkQIAGaAx1PpwG2VoOQvPBU+qVxDlkL8Y
+	4+QeBOaky7tdtJZA0hYwBvXjaX8uwXMkJIgf0EBh1PQIvg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427efnck8b-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 12:31:44 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ECVhrV005525
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 12:31:43 GMT
+Received: from hu-shashim-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Mon, 14 Oct 2024 05:31:39 -0700
+Date: Mon, 14 Oct 2024 18:01:35 +0530
+From: Shiraz Hashim <quic_shashim@quicinc.com>
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: <neil.armstrong@linaro.org>, Mukesh Ojha <quic_mojha@quicinc.com>,
+        "Bjorn
+ Andersson" <andersson@kernel.org>,
+        Mathieu Poirier
+	<mathieu.poirier@linaro.org>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Bartosz Golaszewski
+	<bartosz.golaszewski@linaro.org>,
+        Manivannan Sadhasivam
+	<manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-remoteproc@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6/6] remoteproc: qcom: Enable map/unmap and SHM bridge
+ support
+Message-ID: <20241014123135.GB2147073@hu-shashim-hyd.qualcomm.com>
+References: <20241004212359.2263502-1-quic_mojha@quicinc.com>
+ <20241004212359.2263502-7-quic_mojha@quicinc.com>
+ <9eb910d4-e521-4c14-8e73-8fd3d5ff9573@linaro.org>
+ <ZwP1t45ni/gk754B@hu-mojha-hyd.qualcomm.com>
+ <ZwTPghV36CSIpkE4@hu-mojha-hyd.qualcomm.com>
+ <dfe46653-5243-47c8-8de9-17a38d13da53@linaro.org>
+ <20241011050518.GJ1421305@hu-shashim-hyd.qualcomm.com>
+ <rbek5diyuwhquhbhk6pukzv474xug3pupcqqc2svrceyodvem5@obah2ahgmcox>
+ <20241011070907.GK1421305@hu-shashim-hyd.qualcomm.com>
+ <CAA8EJpr7KmTXv8WyxuhAprHoPku_YCt0fz74gd+44OeOT0uKqg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009022830.83949-1-dongml2@chinatelecom.cn>
- <20241009022830.83949-13-dongml2@chinatelecom.cn> <ZwvKEait2FZ7K03c@shredder.mtl.com>
-In-Reply-To: <ZwvKEait2FZ7K03c@shredder.mtl.com>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Mon, 14 Oct 2024 20:30:57 +0800
-Message-ID: <CADxym3Z4kyVh2W60ub2QtzcRXHCmFfhmprht0_p_bBdbiJVM0A@mail.gmail.com>
-Subject: Re: [PATCH net-next v7 12/12] net: vxlan: use kfree_skb_reason() in encap_bypass_if_local()
-To: Ido Schimmel <idosch@nvidia.com>
-Cc: kuba@kernel.org, aleksander.lobakin@intel.com, horms@kernel.org, 
-	davem@davemloft.net, edumazet@google.com, pabeni@redhat.com, 
-	dsahern@kernel.org, dongml2@chinatelecom.cn, amcohen@nvidia.com, 
-	gnault@redhat.com, bpoirier@nvidia.com, b.galvani@gmail.com, 
-	razor@blackwall.org, petrm@nvidia.com, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <CAA8EJpr7KmTXv8WyxuhAprHoPku_YCt0fz74gd+44OeOT0uKqg@mail.gmail.com>
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 7qo1rY2jnMZfk1RFxJeje44gbP1zs_Gk
+X-Proofpoint-ORIG-GUID: 7qo1rY2jnMZfk1RFxJeje44gbP1zs_Gk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
+ mlxscore=0 suspectscore=0 malwarescore=0 impostorscore=0
+ priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1015 adultscore=0
+ lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140090
 
-On Sun, Oct 13, 2024 at 9:24=E2=80=AFPM Ido Schimmel <idosch@nvidia.com> wr=
-ote:
->
-> On Wed, Oct 09, 2024 at 10:28:30AM +0800, Menglong Dong wrote:
-> > Replace kfree_skb() with kfree_skb_reason() in encap_bypass_if_local, a=
-nd
-> > no new skb drop reason is added in this commit.
+On Fri, Oct 11, 2024 at 10:12:09AM +0300, Dmitry Baryshkov wrote:
+> On Fri, 11 Oct 2024 at 10:09, Shiraz Hashim <quic_shashim@quicinc.com> wrote:
 > >
-> > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > Reviewed-by: Simon Horman <horms@kernel.org>
-> > Reviewed-by: Kalesh AP <kalesh-anakkur.purayil@broadcom.com>
-> > ---
-> >  drivers/net/vxlan/vxlan_core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
+> > On Fri, Oct 11, 2024 at 09:23:05AM +0300, Dmitry Baryshkov wrote:
+> > > On Fri, Oct 11, 2024 at 10:35:18AM GMT, Shiraz Hashim wrote:
+> > > > On Thu, Oct 10, 2024 at 08:57:56AM +0200, neil.armstrong@linaro.org wrote:
+> > > > > On 08/10/2024 08:21, Mukesh Ojha wrote:
+> > > > > > On Mon, Oct 07, 2024 at 08:22:39PM +0530, Mukesh Ojha wrote:
+> > > > > > > On Mon, Oct 07, 2024 at 10:05:08AM +0200, neil.armstrong@linaro.org wrote:
+> > > > > > > > On 04/10/2024 23:23, Mukesh Ojha wrote:
+> > > > > > > > > For Qualcomm SoCs runnning with Qualcomm EL2 hypervisor(QHEE), IOMMU
+> > > > > > > > > translation for remote processors is managed by QHEE and if the same SoC
+> > > > > > > > > run under KVM, remoteproc carveout and devmem region should be IOMMU
+> > > > > > > > > mapped from Linux PAS driver before remoteproc is brought up and
+> > > > > > > > > unmapped once it is tear down and apart from this, SHM bridge also need
+> > > > > > > > > to set up to enable memory protection on both remoteproc meta data
+> > > > > > > > > memory as well as for the carveout region.
+> > > > > > > > >
+> > > > > > > > > Enable the support required to run Qualcomm remoteprocs on non-QHEE
+> > > > > > > > > hypervisors.
+> > > > > > > > >
+> > > > > > > > > Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
+> > > > > > > > > ---
+> > > > > > > > >    drivers/remoteproc/qcom_q6v5_pas.c | 41 +++++++++++++++++++++++++++++-
+> > > > > > > > >    1 file changed, 40 insertions(+), 1 deletion(-)
+> > > > > > > > >
+> > > > > > > > > diff --git a/drivers/remoteproc/qcom_q6v5_pas.c b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > > > > > > > index ac339145e072..13bd13f1b989 100644
+> > > > > > > > > --- a/drivers/remoteproc/qcom_q6v5_pas.c
+> > > > > > > > > +++ b/drivers/remoteproc/qcom_q6v5_pas.c
+> > > >
+> > > > <snip>
+> > > >
+> > > > > > > > > +         struct of_phandle_args args;
+> > > > > > > > > +
+> > > > > > > > > +         ret = of_parse_phandle_with_args(pdev->dev.of_node, "iommus", "#iommu-cells", 0, &args);
+> > > > > > > > > +         if (ret < 0)
+> > > > > > > > > +                 return ret;
+> > > > > > > > > +
+> > > > > > > > > +         rproc->has_iommu = true;
+> > > > > > > > > +         adsp->sid = args.args[0];
+> > > > > > > > > +         of_node_put(args.np);
+> > > > > > > > > +         ret = adsp_devmem_init(adsp);
+> > > > > > > > > +         if (ret)
+> > > > > > > > > +                 return ret;
+> > > > > > > >
+> > > > > > > > Why don't you get this table from the firmware like presumably
+> > > > > > > > QHEE does ?
+> > > > > > >
+> > > > > > > Well, AFAIK, QHEE(EL2) has this information statically present
+> > > > > > > and does not get it from anywhere., but will confirm this
+> > > > > > > twice..
+> > > > > >
+> > > > > > Double confirmed, device memory region required by remoteproc is
+> > > > > > statically present with QHEE.
+> > > > >
+> > > > > Right, in this case why those tables can't be embedded in the elf
+> > > > > .resource_table like it's done with qcom_q6v5_adsp.c by calling
+> > > > > rproc_elf_load_rsc_table() and let the remoteproc framework load the
+> > > > > resource table and setup the devmem ssmu_map ?
+> > > >
+> > > > Mainly for two reasons -
+> > > >
+> > > > firmware images on platforms where we like to bring additional no-qhee
+> > > > support do not have resource table.
+> > > >
+> > > > QCOM PAS implementation for secure remoteproc supports single TZ call
+> > > > of auth_and_rest that authenticates and brings remoteproc out of
+> > > > reset. And we don't have provision to authenticate resource table
+> > > > before it is used for devmem/iommu setup.
+> > >
+> > > So normally TZ / QHEE have the platform-specific resource table? Isn't
+> > > it tied to the firmware binary?
 > >
-> > diff --git a/drivers/net/vxlan/vxlan_core.c b/drivers/net/vxlan/vxlan_c=
-ore.c
-> > index da4de19d0331..f7e94bb8e30e 100644
-> > --- a/drivers/net/vxlan/vxlan_core.c
-> > +++ b/drivers/net/vxlan/vxlan_core.c
-> > @@ -2341,7 +2341,7 @@ static int encap_bypass_if_local(struct sk_buff *=
-skb, struct net_device *dev,
-> >                       DEV_STATS_INC(dev, tx_errors);
-> >                       vxlan_vnifilter_count(vxlan, vni, NULL,
-> >                                             VXLAN_VNI_STATS_TX_ERRORS, =
-0);
-> > -                     kfree_skb(skb);
-> > +                     kfree_skb_reason(skb, SKB_DROP_REASON_VXLAN_INVAL=
-ID_HDR);
->
-> Shouldn't this be SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND ?
->
+> > Yes this table is with QHEE and not firmware binary. Now with no-qhee
+> > case, this patch series is proposing to get it from device tree.
+> 
+> If it is platform-specific (rather than being device-specific), then
+> it should go to the driver, not the DT.
 
-Enn.....It should be SKB_DROP_REASON_VXLAN_VNI_NOT_FOUND. I even wonder
-why I used SKB_DROP_REASON_VXLAN_INVALID_HDR here.
+Just to be clear, your reference to platform is SoC specific and
+device is board ?
 
-It seems that we need a new version, and I'll follow you comment
-in the other patches of this series too.
-
-Thanks!
-Menglong Dong
-
-> >
-> >                       return -ENOENT;
-> >               }
-> > --
-> > 2.39.5
-> >
+regards
+Shiraz
 
