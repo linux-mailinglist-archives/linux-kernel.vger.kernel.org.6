@@ -1,150 +1,153 @@
-Return-Path: <linux-kernel+bounces-364615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38AE699D6ED
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:01:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3616099D6F0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BB63B21217
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:01:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 691A5B214E0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:03:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABBE1CACF3;
-	Mon, 14 Oct 2024 19:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 446D91CACF3;
+	Mon, 14 Oct 2024 19:02:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="llYDHDQI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FJrzfcM3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3D9013C810;
-	Mon, 14 Oct 2024 19:01:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C3C26296;
+	Mon, 14 Oct 2024 19:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932505; cv=none; b=hnpfOFhNpzFsqGjVUhpyTLnMWZtDj9trKMzOM/Nw4Jv8EJYFUYrrM4bv9BpxtTq/uXd797rDuFeTu3rhZh6EQ1q1XZOvpStXrc79NzKMY9YRjb0e5s1RIRL96DKigpu4Tycf6hY4UVqzfVr+1pc2SqlGJmll92EUM1lsCl1+VBc=
+	t=1728932576; cv=none; b=Wc9fjOoOAxF/0fB3YsnbgzmRyBsPwyTzQSPoKhNXJG3sQ/fvR5uAI7y3Z3atPg6xzN2FuPOqazHnGDrsjVWuxD53V/bQ4i+/Pi5OG4IP2/AntXos9IObAczrSe9hQQHvNLmfVtYaa1Ci5eBEjr696OhfC7bO7KMUhIKWIeKoEss=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932505; c=relaxed/simple;
-	bh=4B/4MKRiZMEAx3KlSKct+QBFZ1DTuDQEOf7PADj4UYE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=njYqvPwxwQLmBEBIRhLRX21BeUF13bWYbNpuMU4Pp8seKt5BjTsL/jQXV5Ty1AipwNhgQgMHPUOH6hf6TMVpWf92faoMvDvgqHJW0PEp9a8C3ZckMhMHEo9+AK3HesuL8d2ZKE0vEZBdjpJX0nxIXFNMCqJ5D4hGNb5RRToko5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=llYDHDQI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5A59AC4CEC3;
-	Mon, 14 Oct 2024 19:01:44 +0000 (UTC)
+	s=arc-20240116; t=1728932576; c=relaxed/simple;
+	bh=S4arwuzO7j1jhWd47g0uoukq8DJJ4fWBq2BNobj+aYE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eEb8iu1ymtfYcI1ZcUx7IaGi7SD4xaCtY1aGxdcUk/Nw9vb3iM3JWGe4Abdh2pqS2aGdeta22I8sPa0Lb68z19wj3QDlI7rzBZq7tdEEeMgiN+5WToLSOw0pRuNLPzv4hJVqdlhp7XKECRYN/SmgmGRHdvNN1asI+QGDnZ89BCE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FJrzfcM3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67466C4AF09;
+	Mon, 14 Oct 2024 19:02:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728932504;
-	bh=4B/4MKRiZMEAx3KlSKct+QBFZ1DTuDQEOf7PADj4UYE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=llYDHDQIkfBeL0ZFDnSSgtqfLxoWdgvdPQQopLaTh+W9roGjh6pHAihxCtKvjbeiz
-	 wrXDNxYaPBV1FqD3nwk/3XYS6tVExcudDEkF40u11/es90SNLxLgEqHKl90Bz1sm8/
-	 UE+OSwTwgfZeTZ5J5FhTealJUO8mYpq5b9wbmYQA9b1Lwm5kbcD2A7Hz0MRFUXysVb
-	 ql+tPM3W3hmDIUQGaM4lwFS/ufGdl+dQJJAMuhF3Jax0Bp7+aq6uc1oeUo74yE6RY1
-	 KUoQCo+a8R1KttTQuGt8RzU9Ij4Kv1zZJNls5IYCd4SPowfxKwEAOsnoFw2o4vmQBx
-	 EZr/wgp+Hbv9A==
-Date: Mon, 14 Oct 2024 12:01:42 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: David Laight <David.Laight@aculab.com>
-Cc: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>
-Subject: Re: [PATCH 3/3] crypto: x86/crc32c - eliminate jump table and
- excessive unrolling
-Message-ID: <20241014190142.GA1137@sol.localdomain>
-References: <20241014042447.50197-1-ebiggers@kernel.org>
- <20241014042447.50197-4-ebiggers@kernel.org>
- <a6c0c04a0486404ca4db3fd57a809d5b@AcuMS.aculab.com>
+	s=k20201202; t=1728932576;
+	bh=S4arwuzO7j1jhWd47g0uoukq8DJJ4fWBq2BNobj+aYE=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=FJrzfcM3db9LMyFqGD0McuCfW5vQyJWws3eb53Nmcl98QJWehOZ+Hj6mo5k0CVoy+
+	 Z2pdlcLzUEO44rXQhR418TQyBBBUvH4Y9uviHGulNNgx3oO9qY4wuHHi3k26swa4Ly
+	 vQvJ2nVgCv+LS1Gi3sRZP9EleiOyHMeHftTNhprCmO4X6Is1atfq8Ax/qSLuIUYHFH
+	 aH8RMsoqrAbIMd16uBIASKVrAf1db71NwR72vZuLZLFdWb1hKJllsvftpKZtzmle+F
+	 Kkl+QN2XTpOUpJmnK4Nht5RFARNucP9p/p8hRJQVdULTjBJcX/du5YySfiRAMLHNTr
+	 Z3oLHmDN4RukQ==
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e2e4d16c2fso39302487b3.3;
+        Mon, 14 Oct 2024 12:02:56 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVma8Ka9WPB/OVqHqzwDeqlaPpGthVxNZe0bN5RPG1ff84XhQUzUZx2l+tmN2XhI6YwMJ4roecTGvmdDOZB@vger.kernel.org, AJvYcCWhI4MNIdv5KiniQkiMhDzUTYDvAfP3jSve7cqqAz/LnLhmHI9Nd8BKhlMJDpGqyZA+SbYI8PQEQtGk@vger.kernel.org, AJvYcCXTXdG3TivN6Os5+2oxbDhLXfDjzRxL3gqXNsjNuR0pCaCXmFiAeTYs4So2YMAtwrPC7WZa7P7lPDhH/Q==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzolZu0pjM9z1+bUZK3sPHCjNFlo7afy5aH4gREf+m8nMP3cYNd
+	0GWYg1ZqCXJFl/IdkdGij1ocvUYKTelrabt4WwOBSK2UG6UcnczAskfYxmeBQXN0SWRsuBtYjXs
+	WOscfPQLOdhvRS86rclHaVSvlNQ==
+X-Google-Smtp-Source: AGHT+IG1Um+TeY+p/HlTwahS1LZNEmjEHI6QEzViuZbWFDN/48qQYMlejknzr8AsHrp6NBMHHATDBJ03Iku1z4EHf24=
+X-Received: by 2002:a05:690c:9692:b0:6d5:90f:d497 with SMTP id
+ 00721157ae682-6e364153287mr68863237b3.19.1728932575616; Mon, 14 Oct 2024
+ 12:02:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a6c0c04a0486404ca4db3fd57a809d5b@AcuMS.aculab.com>
+References: <20241011120520.140318-1-y.oudjana@protonmail.com>
+ <20241011120520.140318-2-y.oudjana@protonmail.com> <20241011165640.GA2475122-robh@kernel.org>
+ <2608306c-da19-4160-b0c7-dbb8935abc42@collabora.com>
+In-Reply-To: <2608306c-da19-4160-b0c7-dbb8935abc42@collabora.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 14 Oct 2024 14:02:37 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ864ZM8qgqfuyKsS5H=gsVm=nOrikQ4cuObEVBJX75JQ@mail.gmail.com>
+Message-ID: <CAL_JsqJ864ZM8qgqfuyKsS5H=gsVm=nOrikQ4cuObEVBJX75JQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
+ Pull pinctrl node changes from MT6795 document
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Yassine Oudjana <yassine.oudjana@gmail.com>, Sean Wang <sean.wang@kernel.org>, 
+	Linus Walleij <linus.walleij@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	Yassine Oudjana <y.oudjana@protonmail.com>, Andy Teng <andy.teng@mediatek.com>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 04:30:05PM +0000, David Laight wrote:
-> From: Eric Biggers
-> > Sent: 14 October 2024 05:25
-> > 
-> > crc32c-pcl-intel-asm_64.S has a loop with 1 to 127 iterations fully
-> > unrolled and uses a jump table to jump into the correct location.  This
-> > optimization is misguided, as it bloats the binary code size and
-> > introduces an indirect call.  x86_64 CPUs can predict loops well, so it
-> > is fine to just use a loop instead.  Loop bookkeeping instructions can
-> > compete with the crc instructions for the ALUs, but this is easily
-> > mitigated by unrolling the loop by a smaller amount, such as 4 times.
-> 
-> Do you need to unroll it at all?
+On Mon, Oct 14, 2024 at 3:27=E2=80=AFAM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> Il 11/10/24 18:56, Rob Herring ha scritto:
+> > On Fri, Oct 11, 2024 at 03:03:46PM +0300, Yassine Oudjana wrote:
+> >> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> >>
+> >> mediatek,pinctrl-mt6795.yaml has different node name patterns which ma=
+tch
+> >> bindings of other MediaTek pin controllers, ref for pinmux-node.yaml w=
+hich
+> >> has a description of the pinmux property, as well as some additional
+> >> descriptions for some pin configuration properties. Pull those changes
+> >> into mediatek,mt6779-pinctrl.yaml and adjust the example DTS to match =
+in
+> >> preparation to combine the MT6795 document into it.
+> >>
+> >> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> >> ---
+> >>   .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 38 ++++++++++++++---=
+--
+> >>   1 file changed, 28 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779=
+-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-p=
+inctrl.yaml
+> >> index 3bbc00df5548d..352a88d7b135e 100644
+> >> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctr=
+l.yaml
+> >> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctr=
+l.yaml
+> >> @@ -111,12 +111,12 @@ allOf:
+> >>           - "#interrupt-cells"
+> >>
+> >>   patternProperties:
+> >> -  '-[0-9]*$':
+> >> +  '-pins$':
+> >
+> > Worst case, this could be an ABI break. Best case, it's churn for
+> > mt6779. Is it worth unifying?
+> >
+> All those MediaTek pinctrl bindings are mostly the same, where only the p=
+in
+> definitions in the binding header does actually change.
+>
+> I think that it's worth unifying them, not only to get rid of the duplica=
+tion
+> but mostly for consistency between all of those subnode names which are w=
+ildly
+> differing for no real reason... and consistency is a long time issue with
+> MediaTek bindings/dts in general (which is way way way better now, but st=
+ill)...
+>
+> Besides - just for context and nothing else: the driver doesn't care abou=
+t
+> the names of the subnodes, anyway... so while this is technically an ABI =
+break
+> it's not really creating any functionality issue, and then, actually, Yas=
+sine
+> is also modifying the devicetrees to comply with his consistency changes,=
+ so,
+> in my own perspective, it's still acceptable.
 
-It looks like on most CPUs, no.  On Haswell, Emerald Rapids, Zen 2 it does not
-make a significant difference.  However, it helps on Zen 5.
+Wait, I thought there were no users?
 
-> > +	# Unroll the loop by a factor of 4 to reduce the overhead of the loop
-> > +	# bookkeeping instructions, which can compete with crc32q for the ALUs.
-> > +.Lcrc_3lanes_4x_loop:
-> > +	crc32q	(bufp), crc_init_q
-> > +	crc32q	(bufp,chunk_bytes_q), crc1
-> > +	crc32q	(bufp,chunk_bytes_q,2), crc2
-> > +	crc32q	8(bufp), crc_init_q
-> > +	crc32q	8(bufp,chunk_bytes_q), crc1
-> > +	crc32q	8(bufp,chunk_bytes_q,2), crc2
-> > +	crc32q	16(bufp), crc_init_q
-> > +	crc32q	16(bufp,chunk_bytes_q), crc1
-> > +	crc32q	16(bufp,chunk_bytes_q,2), crc2
-> > +	crc32q	24(bufp), crc_init_q
-> > +	crc32q	24(bufp,chunk_bytes_q), crc1
-> > +	crc32q	24(bufp,chunk_bytes_q,2), crc2
-> > +	add	$32, bufp
-> > +	sub	$4, %eax
-> > +	jge	.Lcrc_3lanes_4x_loop
-> 
-> If you are really lucky you'll get two memory reads/clock.
-> So you won't ever to do than two crc32/clock.
-> Looking at Agner's instruction latency tables I don't think
-> any cpu can do more that one per clock, or pipeline them.
-> I think that means you don't even need two (never mind 3)
-> buffers.
+We generally only consider node names ABI when/if something or someone
+cares. Most of the time it doesn't matter. For the pinctrl nodes, it's
+really just a question of churn renaming a lot of nodes.
 
-On most Intel and AMD CPUs (I tested Haswell for old Intel, Emerald Rapids for
-new Intel, and Zen 2 for slightly-old AMD), crc32q has 3 cycle latency and 1 per
-cycle throughput.  So you do need at least 3 streams.
+Ultimately, it's up to you. I only care that the implications of the
+changes are clear in the commit msg.
 
-AMD Zen 5 has much higher crc32q throughput and seems to want up to 7 streams.
-This is not implemented yet.
-
-> Most modern x86 can do 4 or 5 (or even more) ALU operations
-> per clock - depending on the combination of instructions.
-> 
-> Replace the loop termination with a comparison of 'bufp'
-> against a pre-calculated limit and you get two instructions
-> (that might get merged into one u-op) for the loop overhead.
-> They'll run in parallel with the crc32q instructions.
-
-That's actually still three instructions: add, cmp, and jne.
-
-I tried it on both Intel and AMD, and it did not help.
-
-> I've never managed to get a 1-clock loop, but two is easy.
-> You might find that just:
-> 10:
-> 	crc32q	(bufp), crc
-> 	crc32q	8(bufp), crc
-> 	add		$16, bufp
-> 	cmp		bufp, buf_lim
-> 	jne		10b
-> will run at 8 bytes/clock on modern intel cpu.
-
-No, the latency of crc32q is still three cycles.  You need three streams.
-
-> You can write that in C with a simple asm function for the crc32
-> instruction itself.
-
-Well, the single-stream CRC32C implementation already does that; see
-arch/x86/crypto/crc32c-intel_glue.c.  Things are not as simple for this
-multi-stream implementation, which uses pclmulqdq to combine the CRCs.
-
-- Eric
+Rob
 
