@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-363989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F27E99C96F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:52:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94C0D99C973
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3266E1C2157E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:52:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C65CF1C220B0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:53:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E70919E98B;
-	Mon, 14 Oct 2024 11:52:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CC6519E971;
+	Mon, 14 Oct 2024 11:53:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eH/HXgZb"
-Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="xzfukRlW"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F4519340F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:52:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A3C19340F
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:53:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906771; cv=none; b=FjGjK+2ruJhJied5tHdptJeOcudrSc7QbvYkUjUtvV/+80d/PRYaf7kRIUNyErPJ8GeVduxXbSiErPj7Xwn9/mIP6B2ZoppCJNBrSMgkPDh6Kcb5Srks1ycrUWsdagx6Ygdx8Pk6YymzhrWGs9pFdgzbYdnlCIZv6XpwV4mvLiE=
+	t=1728906801; cv=none; b=b6Z2sRrCUdOgRChjlwvST+jCTffklh6G06CtN4MBIyJCLODyzCQVY8tS/JY7ddYMz9AQ340dZ+9i9TIHBZc+oUFVxKhbBzT+p6jazq/vMv9yis2ptmRKrphTBqHpBDnafDZQxUst+GpEG4tx1ysEij0Wb0RHkJzTC8rd2DLoAp8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906771; c=relaxed/simple;
-	bh=Ea+mqTjEURNHHEAwyekm0Gan3YTWCmqnZhSkTvou0Cg=;
+	s=arc-20240116; t=1728906801; c=relaxed/simple;
+	bh=y26WP+8TPkw99lMdoFWJeEoTevLZ04L7MB6taLqjdx8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVSHepNsr5THfD77NyZx3T1Nk4gkxsLVvaGoJovXAf27wvRDNs3MfmzXL77nbGChjSCBpBCnl2S6IkLtKsBDhUN39pS2QbWcBhb0VlriBuOncxInh8vjQqHTGeZEs9iQsWvR8YzbL0SdSW4kGEJb2UUDIRc1p48HUMF4AzAkqZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eH/HXgZb; arc=none smtp.client-ip=209.85.208.171
+	 Content-Type:Content-Disposition:In-Reply-To; b=Iq62abvVjs9AA8/ulpODx4Q7u7I0MTNyL4t3dZUwA+9AlaCwwyI4o3wTu2gVv7waoabzuaXHF0sECIn0q6V0l/Vvx+SDluhS6DpBWJDQSnvmv11FEb1OUz8ieuahigFFcj9gYDKB7061lXzrLieFVL4hrf3T1H9/J6dZFb7CjvM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=xzfukRlW; arc=none smtp.client-ip=209.85.167.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso7305001fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:52:49 -0700 (PDT)
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e63c8678so1699444e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:53:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728906768; x=1729511568; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1728906797; x=1729511597; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FasUY+27JFwaZjFeTC/WhRBPBBVBy6YfkzShBDyclc0=;
-        b=eH/HXgZbfQbbLjS77K395ReeUszx+ABiWjlumJpwYcXXTUzA1vB9tfVEgK1+VgVZmi
-         twnn4lm7A1rw0R6/6dVTIqorD7d2UfIUQwVx/ENFu4SVhYDcAyEDIi+9tazJjjEMHP4D
-         w4FxHyTze68WYAVtbsX0MA69q39N65kcrp0pr4kPVSEr9CfsZ2SD5FQsR41UIyaGgqse
-         toEDQckCYwouVndsCO1NmvWhRbSCxRgcmhykZ4PlsuOPi7tuiWpIptYEsUkgSbhMWqRy
-         XIjxzmK68IIH9z54gxjE4LxousmH/Qg6F/h9b4sfDSjCtcQ75kXBGqFyrpMyA9wN6pSa
-         6KlQ==
+        bh=lXutyinsioeduBN1ANUedSGpi+lN6zkBNkpYVXz8SBM=;
+        b=xzfukRlWRNOQ3vyTKkhCPxF0LDFquUpdG+GI+4/vvluuWHFQQP3TSOJRAWpSOXUeGb
+         5AC1wrXxXdKR6+oOwJMdndP8xuJRoZQzPRrAnLOZmyb1/D/bD5/h2QdyOLqsS150gexd
+         XZJlzgxMrdrp8QK1RZTf2/RuVPVrasasHboSP75pY5orz3Z3ay79sNQ+pxV8WAeMu8vY
+         CoC/J8YhAddNgLzy8WnWPgO9F8oXzfhK5lQk2H36IbIqDLeTJ5kKkyYz9AGl4Y2UnfP3
+         5b0OLhvEYZvfYvoSsapckIpvsRwcwB1aMxPKmL4shPQBUA/aTWU74qwYGYZshx6LGDLG
+         AN/Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728906768; x=1729511568;
+        d=1e100.net; s=20230601; t=1728906797; x=1729511597;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FasUY+27JFwaZjFeTC/WhRBPBBVBy6YfkzShBDyclc0=;
-        b=IDFHPUdPKsjUrNlQJSr6wvZHY8VFNQp2rp1QkL8AVXNF35neu9sp9qzBOp1xUhSxDR
-         VOb4btD7U04bqqjkQYZmnkpw82BHZXsAOkhtwBjfCyCBsnrYxJkr8H0+x7Vq6tSYOWgy
-         sE+zHxLEw8er9Oju3c120U8MKqR83GBm9NCUEhMs3IIRXniMDe7vX4mNNOjrnG4T0v27
-         v7/GXkb1zODIyZrMSt8uTEi7ZX3O8gxzsNZERcGKdRwNQAKw9cCJMnkwvqsGMHLYpJw5
-         F/pjR5pMoaenNKXE9770OoeChRzyJTk4sNRfsH0RXrk7xkNwsP7iQUsyzuBe4iLhGCn9
-         Z+Mw==
-X-Forwarded-Encrypted: i=1; AJvYcCXZ/HHBFA/QDGPM8E18geYIfFkkacZhXNqnbEW/pXEXDNLxglEvxP3T0UAA4crdfO8ghHMH862vLhb42M8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywgag/qqkXHIM1uITYeK69NZO7CkVWAMq/mVOEwuoOmk/+c7q2q
-	JGMd04OF+HCQxOR0rNKWeUNMz9naLznd6ae2io9XAu09BGsXMoXGLf73NIPRHVs=
-X-Google-Smtp-Source: AGHT+IHvOIGeABb4m0MJqsfhsfRK0zmSYZ2zkqLdCAdpl0opDqTIu+xf0BdvG/swZBDSwYCHy0q1Ag==
-X-Received: by 2002:a05:651c:211b:b0:2fb:5786:251f with SMTP id 38308e7fff4ca-2fb57862748mr7762271fa.37.1728906767868;
-        Mon, 14 Oct 2024 04:52:47 -0700 (PDT)
+        bh=lXutyinsioeduBN1ANUedSGpi+lN6zkBNkpYVXz8SBM=;
+        b=A3Yh5HKR0ZQWIWSqGmBY44FLe0eUp0WFgjLCL27/tUJsC9B/j/cbmF1omoHEq+jDN2
+         2en7p148FQpCvsgPU0E1a43YiCq1eo8RWSTot8wwgOZ7HqzABFuM1zv7SCFadXVqPrBn
+         d9ifyuFWn72/JNCrWvG5IZnzr4JWKSy3K9ZQoOdM5XAMkw//7yDML66dIiOurrwfkNLq
+         jKb1ewYWT1KyS80bJpFwmbXJsgtVXWaj710ci5BwMzJJItWOqSv99w/kOq/O/UI2UkMn
+         NJR4RE9lJumWIvRp/j4BFJOKoIwBaNOIXJkqqR7gwhAk2xg17fXEvPKNqHBow31tgbmk
+         KtSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWtl07+FRJO1344u03XDDnUIbx8UB0nMD+WAI556hhZN29H7rT01/1Uu9ZpXmsItkl/8uve9Fp0FiQJ9/8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwF76V6Rk0Lv7ptnR45gTt9UQJgJmQGlpGNDNaDC0+4K7mbMCW+
+	Z+vQmhaM5F6AWqw/QWBsyB8i7NGJQPpAeE1lJiv/UDY0wy9nKmaV+9Hhtnp/ofU=
+X-Google-Smtp-Source: AGHT+IGe2wtr0DTqglXGDZDAqNeDCeqKaarBInzPOg6nFlThmpKx5vXb8rTb6jYSk73JB+HKA2RlLg==
+X-Received: by 2002:a05:6512:280c:b0:52e:7448:e137 with SMTP id 2adb3069b0e04-539e54d77a1mr3345987e87.6.1728906797122;
+        Mon, 14 Oct 2024 04:53:17 -0700 (PDT)
 Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb24706343sm14556531fa.77.2024.10.14.04.52.45
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539e21219d0sm1146912e87.128.2024.10.14.04.53.14
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:52:46 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:52:44 +0300
+        Mon, 14 Oct 2024 04:53:15 -0700 (PDT)
+Date: Mon, 14 Oct 2024 14:53:13 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 To: Hermes Wu <Hermes.Wu@ite.com.tw>
 Cc: Pin-yen Lin <treapking@chromium.org>, 
@@ -77,11 +77,11 @@ Cc: Pin-yen Lin <treapking@chromium.org>,
 	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
 	Simona Vetter <simona@ffwll.ch>, "open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, 
 	open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 03/10] drm/bridge: it6505: add AUX operation for HDCP
- KSV list read
-Message-ID: <2nceoodtqfspaxs5ipmrezivknexqwi4yc4mr4lak6yjgowpz5@evhz3vy45lb4>
+Subject: Re: [PATCH v5 04/10] drm/bridge: it6505: Change definition
+ MAX_HDCP_DOWN_STREAM_COUNT
+Message-ID: <lazvxlk24rzsdgjwk5ym5dbrr5jwtznftryzbxdxitt5i6xjv5@blhmwclr3ay6>
 References: <20241001064305.32180-1-Hermes.Wu@ite.com.tw>
- <20241001064305.32180-4-Hermes.Wu@ite.com.tw>
+ <20241001064305.32180-5-Hermes.Wu@ite.com.tw>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,105 +90,24 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241001064305.32180-4-Hermes.Wu@ite.com.tw>
+In-Reply-To: <20241001064305.32180-5-Hermes.Wu@ite.com.tw>
 
-On Tue, Oct 01, 2024 at 02:43:02PM +0800, Hermes Wu wrote:
+On Tue, Oct 01, 2024 at 02:43:03PM +0800, Hermes Wu wrote:
 > From: Hermes Wu <Hermes.wu@ite.com.tw>
 > 
-> HDCP KSV list readback can choose to use AUX FIFO or general data register.
-> For some DisplayPort devices, the KSV list must be read in 5 byte boundaries.
-> The original AUX read command does not support these devices.
+> A HDCP source device shall support max downstream to 127 devices.
+> Change definition MAX_HDCP_DOWN_STREAM_COUNT to 127
 > 
-> The AUX command operation control register "REG_AUX_CMD_REQ" uses b[3:0] as AUX operacion control, and b[7:4] are status bits and read only.
-> To change KSV read operation uses "CMD_AUX_NATIVE_READ" from using the data registers to using AUX FIFO.
-> The extended command "CMD_AUX_GET_KSV_LIST" is added as "CMD_AUX_NATIVE_READ" with the 0x10 flag which selects AUX FIFO mode.
-
-Please keep the commit message wrapped at 72-75 chars.
-
-Other than that:
-
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-
-
+> KSVs shall save for DRM blocked devices check.
+> This results in struct it6505 growth by ~0.5 KiB.
 > 
 > Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
 > ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 16 +++++++++++-----
->  1 file changed, 11 insertions(+), 5 deletions(-)
+>  drivers/gpu/drm/bridge/ite-it6505.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/bridge/ite-it6505.c b/drivers/gpu/drm/bridge/ite-it6505.c
-> index 864fab7e388f..9a022c095af4 100644
-> --- a/drivers/gpu/drm/bridge/ite-it6505.c
-> +++ b/drivers/gpu/drm/bridge/ite-it6505.c
-> @@ -126,6 +126,7 @@
->  #define REG_AUX_OUT_DATA0 0x27
->  
->  #define REG_AUX_CMD_REQ 0x2B
-> +#define M_AUX_REQ_CMD 0x0F
->  #define AUX_BUSY BIT(5)
->  
->  #define REG_AUX_DATA_0_7 0x2C
-> @@ -324,6 +325,9 @@ enum aux_cmd_type {
->  	CMD_AUX_NATIVE_READ = 0x0,
->  	CMD_AUX_NATIVE_WRITE = 0x5,
->  	CMD_AUX_I2C_EDID_READ = 0xB,
-> +
-> +	/* KSV read with AUX FIFO extend from CMD_AUX_NATIVE_READ*/
-> +	CMD_AUX_GET_KSV_LIST = 0x10,
->  };
->  
->  enum aux_cmd_reply {
-> @@ -965,7 +969,8 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
->  	it6505_set_bits(it6505, REG_AUX_CTRL, AUX_USER_MODE, AUX_USER_MODE);
->  
->  aux_op_start:
-> -	if (cmd == CMD_AUX_I2C_EDID_READ) {
-> +	/* HW AUX FIFO supports only EDID and DCPD KSV FIFO area */
-> +	if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
->  		/* AUX EDID FIFO has max length of AUX_FIFO_MAX_SIZE bytes. */
->  		size = min_t(size_t, size, AUX_FIFO_MAX_SIZE);
->  		/* Enable AUX FIFO read back and clear FIFO */
-> @@ -996,7 +1001,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
->  				  size);
->  
->  	/* Aux Fire */
-> -	it6505_write(it6505, REG_AUX_CMD_REQ, cmd);
-> +	it6505_write(it6505, REG_AUX_CMD_REQ, FIELD_GET(M_AUX_REQ_CMD, cmd));
->  
->  	ret = it6505_aux_wait(it6505);
->  	if (ret < 0)
-> @@ -1030,7 +1035,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
->  		goto aux_op_start;
->  	}
->  
-> -	if (cmd == CMD_AUX_I2C_EDID_READ) {
-> +	if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
->  		for (i = 0; i < size; i++) {
->  			ret = it6505_read(it6505, REG_AUX_DATA_FIFO);
->  			if (ret < 0)
-> @@ -1055,7 +1060,7 @@ static ssize_t it6505_aux_operation(struct it6505 *it6505,
->  	ret = i;
->  
->  aux_op_err:
-> -	if (cmd == CMD_AUX_I2C_EDID_READ) {
-> +	if (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) {
->  		/* clear AUX FIFO */
->  		it6505_set_bits(it6505, REG_AUX_CTRL,
->  				AUX_EN_FIFO_READ | CLR_EDID_FIFO,
-> @@ -1076,7 +1081,8 @@ static ssize_t it6505_aux_do_transfer(struct it6505 *it6505,
->  				      size_t size, enum aux_cmd_reply *reply)
->  {
->  	int i, ret_size, ret = 0, request_size;
-> -	int fifo_max_size = (cmd == CMD_AUX_I2C_EDID_READ) ? AUX_FIFO_MAX_SIZE : 4;
-> +	int fifo_max_size = (cmd == CMD_AUX_I2C_EDID_READ || cmd == CMD_AUX_GET_KSV_LIST) ?
-> +						 AUX_FIFO_MAX_SIZE : 4;
->  
->  	mutex_lock(&it6505->aux_lock);
->  	i = 0;
-> -- 
-> 2.34.1
-> 
+
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
 -- 
 With best wishes
