@@ -1,214 +1,182 @@
-Return-Path: <linux-kernel+bounces-363046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95A7999BD48
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:24:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7E899BD49
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 03:25:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1A6201F21D9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:24:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CE9A1C21530
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 01:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98668101EE;
-	Mon, 14 Oct 2024 01:24:35 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C5112B71;
+	Mon, 14 Oct 2024 01:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DR9/Piwp"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EE71171C
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:24:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC28F9D9
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:25:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728869075; cv=none; b=nkJJJHypWJF2d1RfZCYgi3WNU8H2XGEs8w94p9X5IdG7jn+08HiDnu/3YxA09gmUaWaqhwjg8gkIIYJ3dOmovDnLh45mhyLqMk6HHTCTq73+D/Hh7EOyFoW71KcjmpMEItmC3JW6Xg64NV92nd4d5LJCs91rFI3GkB0xJVRma5g=
+	t=1728869110; cv=none; b=XImCLvkM4lWH55uEJaIe/6lpLz9nZXgslbpe5QFfD4eU6RLEcyRv6WAcoTw++21Q0IqPx74zcirum6C40ye02cdGn5G3LUxe3OmT5x1yDJtmAccLuXit5u9qvfD0OR7oA/Ed+OyAkaqU3syJ2w4S7nVbwXG8yPM6fz7epMIs5LQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728869075; c=relaxed/simple;
-	bh=BFl7TmfHJhkhGQVBlv7GqszMaPh1Vsk5zimOvdSrV64=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=it006eHcJ5qqCN0j2isASVc+n0YnQAK/qwffJGFESmZn02QgGzBSONeOnNn0+1C7/twBh9C48cDG/h4fV9bOUnGw+gFT8JJrKJLb9xUbx4aNo5aA9K/+rmxeoNBEROTrjsTsBPCM1Cz5d+PSD+nemYHPQK8GG0iCg73idt8T1lE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b4395dedso28657075ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 18:24:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728869072; x=1729473872;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=AhR+YBOmGdmNfdYCu74B1dPdNH77/rrRtE4b/gY0pQA=;
-        b=JkhseF12LCzYPjmabXbknWMS6JbFFetJ7mf3Ck7lHZ1CfwSawVtkkyPTjD/if7paJd
-         X3dkNHGIC7c5Z9HmCpaYqUXnjHoBb22PGTL87diCYx+649EaLLu3orOG1MFtFCk1QOF5
-         liVUrMfrpQZNF9oKCiKVISUl9Zgwx8DdP1MiMIYEDm5mAXXZHCOj63+oBwFm/FrRoBjI
-         htZxk/S5E5qjIjc/8ZsFyOg6wPSjxRkAc4/NPqlVvNoQxtoN7Z0x3av2MITfuKpZgb8Z
-         HrKQxwjFedhtr6I7iVLuT/KnSOMj4UnbtAw1wcJc2Uvns9ndGzma7aErVoOAqfwBXjo8
-         fqQA==
-X-Gm-Message-State: AOJu0Yy3dAK1eIz9LioiaMd3weAFKfqhF8/7mS8uTCeIriXyjZPwvJx7
-	ef1Tb1OvTmjVCp5QXGUNjAQ+ctIy2ZhtqKUWmGk++JIgVCfzMRmEWMz9Rn2fc9+WeorH15Mn0vE
-	4mNyuMXQvNcdaqNZQFazuZRHoSXWZPL3SvHhle0NiG/GiqdTXYLyz18U=
-X-Google-Smtp-Source: AGHT+IEDZyGfMsSNRCSbLh7Lj7IOigWtuK6JD+7r7UVEuAEtZWZp7fV0ZkXKgCm3n5ibTFUy1jotTZXOBep+6Y4Vf7L8ESwJyDnt
+	s=arc-20240116; t=1728869110; c=relaxed/simple;
+	bh=/UGDAC+4PK1ck+fBKjjaMv0EW+NPqEfMx+m4dWl/y/g=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=t+xq0w9cMQ7XfnMuav3MRQ4CLtkD4vQbus8MgoHRuLiX5uEq5gyyzBbHuDMdf4KK3SXwLdG4/udWeCYPk+qLPYUWIY6CxJABfQAv1b04PlM0GLStI4o2VUfRHlc0JOSViQxjsAKxtTRDB+YmlTq5YNnyUedLiM4BvYUqYd9Q+NE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DR9/Piwp; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728869108; x=1760405108;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=/UGDAC+4PK1ck+fBKjjaMv0EW+NPqEfMx+m4dWl/y/g=;
+  b=DR9/Piwp9GCmnIrS7628fEwxs3R66gJpPcPw/d5wAmryUD5k0Zs3TicO
+   1Xz7MHNQs0kXaWthNszrHX9+yLtEdOurBZgxN+jMGLukVjDu8H9Bl4gXl
+   C8OpzrY276mJdEBJeT9qeUh5jgABqMnLFiIbDLooLYf2z/SC+bj0/btaV
+   gAsp5Lkj4LSvC4pg3+7UexPkHE3jn5mpkOUGyzgNpPpCkxFovj7eTh7nU
+   3O2wFeSZF+7sabrpet/Le59aHkFzshK7+H22X54Ap1DLybHGzRBY2dUH3
+   +LnBUWAfqWz7slWNY1lhIvIUGo0B5rY5qHKSXx8UYFEn1B+b3cl1NchSU
+   Q==;
+X-CSE-ConnectionGUID: 4XYGdq9IQ9+PycRa1BqoSQ==
+X-CSE-MsgGUID: Uj0lquRkSJeLnkv7VpKF2Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="38847169"
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="38847169"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 18:25:08 -0700
+X-CSE-ConnectionGUID: ynU1ahT2T1amC3rS/YcacQ==
+X-CSE-MsgGUID: qCjarkRsQHu5eA7haGiJyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="81420591"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 18:25:06 -0700
+Message-ID: <7f829e9e-5db9-4861-8a58-27a57edbd9da@linux.intel.com>
+Date: Mon, 14 Oct 2024 09:25:03 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1548:b0:3a3:6045:f8bd with SMTP id
- e9e14a558f8ab-3a3b5f7845dmr91039845ab.5.1728869072424; Sun, 13 Oct 2024
- 18:24:32 -0700 (PDT)
-Date: Sun, 13 Oct 2024 18:24:32 -0700
-In-Reply-To: <6709234e.050a0220.3e960.0011.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670c72d0.050a0220.4cbc0.003d.GAE@google.com>
-Subject: Re: [syzbot] Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-From: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Yi Liu <yi.l.liu@intel.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/7] iommu/vt-d: Enhance compatibility check for paging
+ domain attach
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
+ <20241011042722.73930-4-baolu.lu@linux.intel.com>
+ <20241011162703.GL762027@ziepe.ca>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241011162703.GL762027@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
-
-***
-
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-Author: stern@rowland.harvard.edu
-
-On Sun, Oct 13, 2024 at 01:34:05PM -0700, syzbot wrote:
-> Hello,
+On 2024/10/12 0:27, Jason Gunthorpe wrote:
+> On Fri, Oct 11, 2024 at 12:27:18PM +0800, Lu Baolu wrote:
 > 
-> syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+>> @@ -1623,27 +1623,15 @@ static int domain_context_mapping_one(struct dmar_domain *domain,
+>>   
+>>   	copied_context_tear_down(iommu, context, bus, devfn);
+>>   	context_clear_entry(context);
+>> -
+>>   	context_set_domain_id(context, did);
+>>   
+>> -	/*
+>> -	 * Skip top levels of page tables for iommu which has
+>> -	 * less agaw than default. Unnecessary for PT mode.
+>> -	 */
+>> -	for (agaw = domain->agaw; agaw > iommu->agaw; agaw--) {
+>> -		ret = -ENOMEM;
+>> -		pgd = phys_to_virt(dma_pte_addr(pgd));
+>> -		if (!dma_pte_present(pgd))
+>> -			goto out_unlock;
+>> -	}
+> 
+> Yikes, this is nasty racy stuff, glad to see it go
+> 
+> But should the agaw stuff be in its own patch?
 
-Okay, that's more like it.  This exercise has focused my mind on one 
-particular spot in the code, and I believe I see the problem.  The 
-driver needs to do a more careful job keeping track of whether the 
-hrtimer callback is pending; neither hrtimer_active() nor 
-dum_hcd->rh_state is quite the right thing to test.  In particular, the 
-root hub can be in the DUMMY_RH_RUNNING state without the timer being 
-active.
+The agaw stuff is now in the paging domain allocation path.
 
-This patch adds a flag for a pending timer callback, on top of all the 
-other debugging material.  Let's see if it fixes the problem.
+'agaw' represents the levels that the page table could support. With the
+domain allocation callbacks always have a valid device pointer, the page
+table levels of a domain could be determined during allocation.
 
-Alan Stern
+When the domain is attached to a new device, the domain's levels will be
+checked again the iommu capabilities of the device. If the iommu is not
+capable of supporting the page levels, -EINVAL (not compatible) will be
+returned, suggesting that the caller should use a new domain for the
+device.
 
-#syz test: https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git
-usb-testing
+> 
+>> @@ -3506,27 +3483,26 @@ int prepare_domain_attach_device(struct iommu_domain *domain,
+>>   	if (domain->dirty_ops && !ssads_supported(iommu))
+>>   		return -EINVAL;
+>>   
+>> -	/* check if this iommu agaw is sufficient for max mapped address */
+>> -	addr_width = agaw_to_width(iommu->agaw);
+>> -	if (addr_width > cap_mgaw(iommu->cap))
+>> -		addr_width = cap_mgaw(iommu->cap);
+>> -
+>> -	if (dmar_domain->max_addr > (1LL << addr_width))
+>> +	if (dmar_domain->iommu_coherency !=
+>> +			iommu_paging_structure_coherency(iommu))
+>>   		return -EINVAL;
+>> -	dmar_domain->gaw = addr_width;
+>> -
+>> -	/*
+>> -	 * Knock out extra levels of page tables if necessary
+>> -	 */
+>> -	while (iommu->agaw < dmar_domain->agaw) {
+>> -		struct dma_pte *pte;
+>> -
+>> -		pte = dmar_domain->pgd;
+>> -		if (dma_pte_present(pte)) {
+>> -			dmar_domain->pgd = phys_to_virt(dma_pte_addr(pte));
+>> -			iommu_free_page(pte);
+>> -		}
+>> -		dmar_domain->agaw--;
+>> +
+>> +	if (domain->type & __IOMMU_DOMAIN_PAGING) {
+> 
+> It looks like this entire function is already never called for
+> anything but paging?
+> 
+> The only three callers are:
+> 
+> 	.default_domain_ops = &(const struct iommu_domain_ops) {
+> 		.attach_dev		= intel_iommu_attach_device,
+> 		.set_dev_pasid		= intel_iommu_set_dev_pasid,
+> 
+> and
+> 
+> static const struct iommu_domain_ops intel_nested_domain_ops = {
+> 	.attach_dev		= intel_nested_attach_dev,
+> 
+> And none of those cases can be anything except a paging domain by
+> definition.
 
-Index: usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-===================================================================
---- usb-devel.orig/drivers/usb/gadget/udc/dummy_hcd.c
-+++ usb-devel/drivers/usb/gadget/udc/dummy_hcd.c
-@@ -50,7 +50,7 @@
- #define POWER_BUDGET	500	/* in mA; use 8 for low-power port testing */
- #define POWER_BUDGET_3	900	/* in mA */
- 
--#define DUMMY_TIMER_INT_NSECS	125000 /* 1 microframe */
-+#define DUMMY_INT_KTIME	ns_to_ktime(125000)	 /* 1 microframe */
- 
- static const char	driver_name[] = "dummy_hcd";
- static const char	driver_desc[] = "USB Host+Gadget Emulator";
-@@ -254,9 +254,12 @@ struct dummy_hcd {
- 	u32				stream_en_ep;
- 	u8				num_stream[30 / 2];
- 
-+	unsigned			timer_pending:1;
- 	unsigned			active:1;
- 	unsigned			old_active:1;
- 	unsigned			resuming:1;
-+
-+	bool				alanflag;
- };
- 
- struct dummy {
-@@ -1303,9 +1306,11 @@ static int dummy_urb_enqueue(
- 		urb->error_count = 1;		/* mark as a new urb */
- 
- 	/* kick the scheduler, it'll do the rest */
--	if (!hrtimer_active(&dum_hcd->timer))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+	if (!dum_hcd->timer_pending) {
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
-+		dum_hcd->timer_pending = 1;
-+	}
- 
-  done:
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
-@@ -1324,10 +1329,17 @@ static int dummy_urb_dequeue(struct usb_
- 	spin_lock_irqsave(&dum_hcd->dum->lock, flags);
- 
- 	rc = usb_hcd_check_unlink_urb(hcd, urb, status);
--	if (!rc && dum_hcd->rh_state != DUMMY_RH_RUNNING &&
--			!list_empty(&dum_hcd->urbp_list))
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
--
-+	if (!rc && !dum_hcd->timer_pending &&
-+			!list_empty(&dum_hcd->urbp_list)) {
-+		dev_info(dummy_dev(dum_hcd), "Dequeue restart %p\n", urb);
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+				HRTIMER_MODE_REL_SOFT);
-+		dum_hcd->timer_pending = 1;
-+	} else {
-+		dev_info(dummy_dev(dum_hcd), "Dequeue norestart: %d %p\n",
-+				rc, urb);
-+	}
-+	dum_hcd->alanflag = true;
- 	spin_unlock_irqrestore(&dum_hcd->dum->lock, flags);
- 	return rc;
- }
-@@ -1813,6 +1825,9 @@ static enum hrtimer_restart dummy_timer(
- 
- 	/* look at each urb queued by the host side driver */
- 	spin_lock_irqsave(&dum->lock, flags);
-+	dum_hcd->timer_pending = 0;
-+	if (dum_hcd->alanflag)
-+		dev_info(dummy_dev(dum_hcd), "Timer handler\n");
- 
- 	if (!dum_hcd->udev) {
- 		dev_err(dummy_dev(dum_hcd),
-@@ -1984,6 +1999,8 @@ return_urb:
- 			ep->already_seen = ep->setup_stage = 0;
- 
- 		usb_hcd_unlink_urb_from_ep(dummy_hcd_to_hcd(dum_hcd), urb);
-+		if (dum_hcd->alanflag)
-+			dev_info(dummy_dev(dum_hcd), "Giveback %p\n", urb);
- 		spin_unlock(&dum->lock);
- 		usb_hcd_giveback_urb(dummy_hcd_to_hcd(dum_hcd), urb, status);
- 		spin_lock(&dum->lock);
-@@ -1995,11 +2012,12 @@ return_urb:
- 		usb_put_dev(dum_hcd->udev);
- 		dum_hcd->udev = NULL;
- 	} else if (dum_hcd->rh_state == DUMMY_RH_RUNNING) {
--		/* want a 1 msec delay here */
--		hrtimer_start(&dum_hcd->timer, ns_to_ktime(DUMMY_TIMER_INT_NSECS),
-+		hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
- 				HRTIMER_MODE_REL_SOFT);
-+		dum_hcd->timer_pending = 1;
- 	}
- 
-+	dum_hcd->alanflag = false;
- 	spin_unlock_irqrestore(&dum->lock, flags);
- 
- 	return HRTIMER_NORESTART;
-@@ -2390,8 +2408,11 @@ static int dummy_bus_resume(struct usb_h
- 	} else {
- 		dum_hcd->rh_state = DUMMY_RH_RUNNING;
- 		set_link_state(dum_hcd);
--		if (!list_empty(&dum_hcd->urbp_list))
--			hrtimer_start(&dum_hcd->timer, ns_to_ktime(0), HRTIMER_MODE_REL_SOFT);
-+		if (!list_empty(&dum_hcd->urbp_list)) {
-+			hrtimer_start(&dum_hcd->timer, DUMMY_INT_KTIME,
-+					HRTIMER_MODE_REL_SOFT);
-+			dum_hcd->timer_pending = 1;
-+		}
- 		hcd->state = HC_STATE_RUNNING;
- 	}
- 	spin_unlock_irq(&dum_hcd->dum->lock);
-@@ -2522,6 +2543,7 @@ static void dummy_stop(struct usb_hcd *h
- 	struct dummy_hcd	*dum_hcd = hcd_to_dummy_hcd(hcd);
- 
- 	hrtimer_cancel(&dum_hcd->timer);
-+	dum_hcd->timer_pending = 0;
- 	device_remove_file(dummy_dev(dum_hcd), &dev_attr_urbs);
- 	dev_info(dummy_dev(dum_hcd), "stopped\n");
- }
+A nested domain is not a paging domain. It represents a user-space page
+table that nested on a parent paging domain. Perhaps I overlooked
+anything?
+
+> 
+> So this if should go away, or be turned into a WARN_ON.
+> 
+> Jason
+
+Thanks,
+baolu
 
