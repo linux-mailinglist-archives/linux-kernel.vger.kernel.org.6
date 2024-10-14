@@ -1,59 +1,58 @@
-Return-Path: <linux-kernel+bounces-363361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF0AC99C14A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:29:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6919D99C14D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:30:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F06281C22BEF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A9FB1C22BD4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71DFE14B08A;
-	Mon, 14 Oct 2024 07:29:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 180EB14885B;
+	Mon, 14 Oct 2024 07:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UD/1c2LK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UeJNpMYH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C987C149C4D;
-	Mon, 14 Oct 2024 07:29:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6767D231CA6;
+	Mon, 14 Oct 2024 07:30:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728890948; cv=none; b=FGWMOzpSuk/jRjjjnN3SdIdMAhvwcEQFaJhfYCQd92T5GYUuWUFfaPO+HfM6os1Cuo3Mk8u40VISgxxafIHR0QFLVXiv6yxlQH+qDdrEPmfKmXB8FyP0z0bN0FJKPSgRhLECZURRaDoBzWjpdXwH/KgIonjmrzSCJgCqkHHKjgQ=
+	t=1728891036; cv=none; b=tUuUy3kyoZax0N/B820Va8vNlQaBzglsFCKtjdBVpOt9tHWA7KN8FsT0s9o4aAB/9lk0NrKjGKhGWezoL9c6akVlyrRogj6xkMt6SGWYya8A210w9PQhHUioctRMDLtfS3QncskY56mDEeMY+eJtS/w0wZm8LOi+DMSSjr9kM5U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728890948; c=relaxed/simple;
-	bh=aveYbHuznRE0CLFdZ+yNLmHKHVrJklEvhvr//84Jf90=;
+	s=arc-20240116; t=1728891036; c=relaxed/simple;
+	bh=P3aaTckR145CBhhIT9sxL5MYofyfDXU+6ZGA0hh+3fc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o/71nDAWRbQ8zZZbwxubLoSWHS25BjmtPSqT5OL6FqF3iuhsjWE5TeYEoSB6ZpR/UW8GxCfltlLV/o9HGfHXAjOH0IzOWEhR22F4j0PMoLKHvQVCZfSo3XGX53HZ+isSnYfp+QBxp7OF05mIbK8QE3ixRoJ3S7jfs2VGjiLYEMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UD/1c2LK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C0ADC4CEC3;
-	Mon, 14 Oct 2024 07:29:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=awDnEahlxzIpKd6LqABnBj/IvA8plD6RKBD/RziOsEDyRmTSIvCmbgxPoFX7uO4SDz/uOX4Pmt9S3k9pT4QHxL6iTaj93WCzuuQGH4Ukn5djgu+AN6STy9oDw/R3pxZAyqd5abCS/W6ju3eOJF0AA0diqK7E//wAxzhRrgTziHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UeJNpMYH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 221B8C4CEC3;
+	Mon, 14 Oct 2024 07:30:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728890948;
-	bh=aveYbHuznRE0CLFdZ+yNLmHKHVrJklEvhvr//84Jf90=;
+	s=k20201202; t=1728891036;
+	bh=P3aaTckR145CBhhIT9sxL5MYofyfDXU+6ZGA0hh+3fc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UD/1c2LKksdY8WX41g8hpgrOafZHQxS2jZbkPQmSAWT8PQy832/+4yjjQF9MGhP9G
-	 s6vGp6gY7hY8yJH4b6vQtHv/tJ7K6VceKLS8B0/O0EQmtYZnSNN6tNMrC89Y+ag3Ga
-	 xuzpnhBhYWq/P7uDaEoVwPQ/lzxInnUVfSOz2a0bMTe3RA+kyMo7T/KT73CxV4r937
-	 9vBKfPQ4mGa4FZUuaoMGv3+4kl0MyYu8tgO/ULRexs7erxyaLB9NfhuZGA1dYJpaHR
-	 cQaKi73VLfIhO1sD3RC7lFKovrwRhlHXRYHP73ZyaULJmO28eDCX28hLILAXnqiArW
-	 m2ydyy7inoZeA==
-Date: Mon, 14 Oct 2024 09:29:03 +0200
+	b=UeJNpMYHJK8VDuYMGPjRKnIgcyW2UbmJ7bGzi/+k3oAFb5UNImobXQ8IOamcsHZd/
+	 RLkjgY49pJgLKhRZ9VO246jbFG7XCxA0sfW2ECtBpJHxebiUAxvzDFZJAHwKbcEhN/
+	 Iac6Sys4zv/zkxl3fM4NQJ0fcm3RQ/RErni1yf2iIx258j+41OkKt1WEE2STAGP/Aq
+	 X6J5vmdkCxdgUIlrZRIqaQJQ22N9D/MG0Tr3SPedAu3CkfosoOSurK3NXI2lUqb9l1
+	 C8H1NUACKLNsMrsIZu4BiTs9QPHpPUiSkVYapTkRlULhfuUTKTTdyOTKaYsRXjJ7i3
+	 y7X7mbFcQZNTg==
+Date: Mon, 14 Oct 2024 09:30:32 +0200
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Gatien Chevallier <gatien.chevallier@foss.st.com>
-Cc: Olivia Mackall <olivia@selenic.com>, 
-	Herbert Xu <herbert@gondor.apana.org.au>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Lionel Debieve <lionel.debieve@foss.st.com>, marex@denx.de, linux-crypto@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-stm32@st-md-mailman.stormreply.com, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/4] dt-bindings: rng: add st,stm32mp25-rng support
-Message-ID: <v4c7vwoqfposhm3bxnidjzwb7via7flf2em45qbgjjncwfvv74@n2rsz3ujpdoc>
-References: <20241011-rng-mp25-v2-v2-0-76fd6170280c@foss.st.com>
- <20241011-rng-mp25-v2-v2-1-76fd6170280c@foss.st.com>
+To: guoniu.zhou@oss.nxp.com
+Cc: linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com, 
+	jacopo@jmondi.org, mchehab@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, shawnguo@kernel.org, s.hauer@pengutronix.de, 
+	kernel@pengutronix.d, festevam@gmail.com, devicetree@vger.kernel.org, 
+	imx@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] dt-bindings: media: nxp,imx8-isi: Add i.MX8ULP
+ ISI compatible string
+Message-ID: <6skgxfgvnd5f7zx5gcobcvp7krjskupo52c4op25i4qmmgti5w@3tn3hkmh3e2l>
+References: <20241012084732.1036652-1-guoniu.zhou@oss.nxp.com>
+ <20241012084732.1036652-3-guoniu.zhou@oss.nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,45 +61,21 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241011-rng-mp25-v2-v2-1-76fd6170280c@foss.st.com>
+In-Reply-To: <20241012084732.1036652-3-guoniu.zhou@oss.nxp.com>
 
-On Fri, Oct 11, 2024 at 05:41:41PM +0200, Gatien Chevallier wrote:
->    clocks:
-> -    maxItems: 1
-> +    minItems: 1
-> +    maxItems: 2
-> +
-> +  clock-names:
-> +    minItems: 1
-> +    items:
-> +      - const: core
-> +      - const: bus
->  
->    resets:
->      maxItems: 1
-> @@ -57,6 +65,26 @@ allOf:
->        properties:
->          st,rng-lock-conf: false
->  
-> +  - if:
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - st,stm32-rng
-> +              - st,stm32mp13-rng
-> +    then:
-> +      properties:
-> +        clocks:
-> +          maxItems: 1
-> +        clock-names: false
-> +    else:
-> +      properties:
-> +        clocks:
-> +          minItems: 2
-> +          maxItems: 2
+On Sat, Oct 12, 2024 at 04:47:35PM +0800, guoniu.zhou@oss.nxp.com wrote:
+> From: "Guoniu.zhou" <guoniu.zhou@nxp.com>
 
-Missing clock-names constraint. They *always* go in sync with clocks.
+Are you sure your name includes the dot? Or you just use login as full
+name?
+
+> 
+> Add the compatible string support for i.MX8ULP ISI.
+> 
+> Signed-off-by: Guoniu.zhou <guoniu.zhou@nxp.com>
+> ---
+>  Documentation/devicetree/bindings/media/nxp,imx8-isi.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
 Best regards,
 Krzysztof
