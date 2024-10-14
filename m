@@ -1,118 +1,89 @@
-Return-Path: <linux-kernel+bounces-363668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1D199C571
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9C2D99C573
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4272E28B2B4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:22:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 631461F24582
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:22:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C1C41A4E88;
-	Mon, 14 Oct 2024 09:18:31 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E80A615820C;
+	Mon, 14 Oct 2024 09:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XNZqVbGx"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02C94166F16;
-	Mon, 14 Oct 2024 09:18:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0520C149011
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:19:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897510; cv=none; b=JvTefZfmhrsZymibYYheF6/kQTpvWaz7ziZxab2IXRGEKsMRoHEq3ZO4G7rfJHEfhUAo6wHdjiws+a2JKZNM4jF0mNjnEU29AAfJOKwpstjlp54Q0ve1WQABwXI/LuRylO+tf68cB++IqumGhN1dim/IdLmkhCA1jvmUw4HlgbY=
+	t=1728897566; cv=none; b=pex6sHGfYN2npmtwLDDwnr9qFKkWFiAB0Vvlny6Iu+oEFTYF1NAdRq4sbHXxI4EpXwGvHiXNtLiVFrnjG2GsKdF12hbucpOERj2FFM2uP0jp6ZsN37qf5XZ66qaEKTwvuIj6TAPNSEWTqkjsz+Rpfn6iNjIViOgXTD2vKS1m88s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897510; c=relaxed/simple;
-	bh=EkLpX6UtaHBiuLA6UQQFw0leVksrHOsz288ZZo9ULRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JqY19IxFaDuEm9k2HSZudKaiIewFEnGeV6qulU4on3dawYgDkVFMVDC1HttJkmrqMv7sLDsXNmK7HKo3qr6OXNg77uWms/OZ0gLoK1VBTtnkdOo+B9eW4NZDT7fTuXmrxtZJpsPGLxZb/WpKwKQZ8qe0zT5GOHHS4xkYhEPxqPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e2f4c1f79bso33620227b3.1;
-        Mon, 14 Oct 2024 02:18:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728897507; x=1729502307;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XM7Hx7BDiEIgSKXCd36v4PFuRuWUiWCSpOVzrnoLBC0=;
-        b=m3c0MlGJ8hYGG1XqMNnM9huknk0Nbqptpwc5nZNNiVTSOZYTShOdxQPGx70idnWvJ6
-         z2UqtB2uOMcY10nMCL4cA6ILGpbQpdIWrWIWK5JCxQjTCTfjatjKI1L93vwdW2O8wtvX
-         tNYnYBi+lcGB7Dfhc6eFr9saPZzhByQchPfCilWZIx8C6f4YABQdLoLmou3IDeUVErC2
-         4CBy+N9birdWQ766qFqajvOj2FxFlxUwCsny91DBIFnNsb0wW4Rmld1SXgXvJjnLM3eC
-         0kxgF+EuTQjLAtIBjdnW60tr+rfvxHTw1X6/vsjAIJJK3gi0hM+se7IPdhLfqlGUfXmm
-         Q5nw==
-X-Forwarded-Encrypted: i=1; AJvYcCUVOqmI3/pv19bJbRjAiYR1r6AT1Gkt1TvhfJ3oY9a7hfM0YLrTgwYM+m6rrwuvgYxYPtPQzSpDnUM=@vger.kernel.org, AJvYcCVaaKdv4WRem2Q7MQGhg8waEMcWdmjwGq3q84oNLMI6RAIfNHOWYwYO+92dQ/wQO7tXhAJjZK4UvugRUqPQ@vger.kernel.org, AJvYcCXvoedd9edNPEJQyPNovWxR3ssP7tYqxLVRs1MpEHvsG63LqmNh44MEbBLaUBanwRYx33fa/2Qb@vger.kernel.org
-X-Gm-Message-State: AOJu0YzH30vMRMC/pqURfwU2IwPuRC7aplr12XGpsJJG7BwdONgUmuPh
-	phcVsvOAfMI+MRQ+dWq71wV6X3XgMW+ej/1hw47cVWtfPyxo36KU5q/QOeen
-X-Google-Smtp-Source: AGHT+IEoez0LlbuacHkjyQSLu7nO/WJeMIrU9tb2YD68IT9xAIGfMIslwhqUlq2J+ZVODM4qk7XuRQ==
-X-Received: by 2002:a05:690c:4487:b0:6dd:ba9b:2ca7 with SMTP id 00721157ae682-6e347c6e752mr50167907b3.46.1728897507500;
-        Mon, 14 Oct 2024 02:18:27 -0700 (PDT)
-Received: from mail-yw1-f177.google.com (mail-yw1-f177.google.com. [209.85.128.177])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e332c269e7sm14769057b3.76.2024.10.14.02.18.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 02:18:27 -0700 (PDT)
-Received: by mail-yw1-f177.google.com with SMTP id 00721157ae682-6dbc9a60480so33108317b3.0;
-        Mon, 14 Oct 2024 02:18:27 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU3LG1M1hsnfz+D6fHjXxDX8lyji2TqftmR1Xe06inQ2TOuz8rfHfTXHwGQIMXMz1rcMRSNVYR6OVY=@vger.kernel.org, AJvYcCUD6/55XpL6qP2aN4Jm1YlbAi+AOnObDVLo+G89CQf4Uq2U/ttPt2ZndEKh2kalIvL2SIOhQCrm@vger.kernel.org, AJvYcCWMT3XbUuT68J2od8SuQ7/Pmpldda28HGjn8KOra8n5t5Vi7WXuaK9Qe/waxpyCiOew0n+EhRtpEH7czlQs@vger.kernel.org
-X-Received: by 2002:a05:690c:38b:b0:6e2:b263:104a with SMTP id
- 00721157ae682-6e3479ca932mr84287817b3.23.1728897507018; Mon, 14 Oct 2024
- 02:18:27 -0700 (PDT)
+	s=arc-20240116; t=1728897566; c=relaxed/simple;
+	bh=wVNYUbvUl3sPG53le+WJDckMtDV+JM8zWMYsaYz1umk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Hm0IdmnsZFsuPRAZxJAK7313UqwWX0Yu/QyfOcgbe0kIkZBh+H9jxPni+5KH0wdyaJZYwF27FyxH2dbJeKqBl3F12lW4IR8iUhxi3FmjX20r9JiWF2MafxCnqIf4jkQipgmVFG4DalxBqwQxbFYI/S8ifjRhdUxzUgMKmgMlFrg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XNZqVbGx; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728897560;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=Dj7fxHIiOkLjML343LBKlVwG31MU/qAIpzhZyO5s5uo=;
+	b=XNZqVbGxPAt4UpWQJEvW9S6vOheuiEE+d+ckHEJ4Dkn0nJ7iFM5gbzGHS7oVKxebT+Jm8e
+	v2r2JQHQFi9t+gamFt0DGppufz9iJZIM0gcBrUB72qlywyg0N8gIFjQyG1Bg4nFNwHxXa6
+	6BFmFUv4Q9+At1ZRicReL7Zj9QvROPE=
+From: Thorsten Blum <thorsten.blum@linux.dev>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Thorsten Blum <thorsten.blum@linux.dev>,
+	linux-kbuild@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kconfig: nconf: Use TAB to cycle thru dialog buttons
+Date: Mon, 14 Oct 2024 11:18:28 +0200
+Message-ID: <20241014091828.23446-2-thorsten.blum@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAHk-=wg061j_0+a0wen8E-wxSzKx_TGCkKw-r1tvsp5fLeT0pA@mail.gmail.com>
- <20241014072731.3807160-1-geert@linux-m68k.org> <711d7f6d-b785-7560-f4dc-c6aad2cce99@linux-m68k.org>
- <20241014085819.GO77519@kernel.org>
-In-Reply-To: <20241014085819.GO77519@kernel.org>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 14 Oct 2024 11:18:14 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWedOgc4S12FwQR8_80aqgRJ2pwrKWsNb5Svt6776ti3Q@mail.gmail.com>
-Message-ID: <CAMuHMdWedOgc4S12FwQR8_80aqgRJ2pwrKWsNb5Svt6776ti3Q@mail.gmail.com>
-Subject: Re: Build regressions/improvements in v6.12-rc3
-To: Simon Horman <horms@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-crypto@vger.kernel.org, 
-	linuxppc-dev@lists.ozlabs.org, dmaengine@vger.kernel.org, 
-	netdev@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-Hi Simon,
+Add the ability to cycle through dialog buttons with the TAB key.
 
-On Mon, Oct 14, 2024 at 10:58=E2=80=AFAM Simon Horman <horms@kernel.org> wr=
-ote:
-> On Mon, Oct 14, 2024 at 10:38:20AM +0200, Geert Uytterhoeven wrote:
-> >   + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: e=
-rror: format '%x' expects argument of type 'unsigned int', but argument 4 h=
-as type 'resource_size_t {aka long long unsigned int}' [-Werror=3Dformat=3D=
-]:  =3D> 126:37
-> >   + /kisskb/src/drivers/net/ethernet/freescale/fs_enet/mii-bitbang.c: e=
-rror: format '%x' expects argument of type 'unsigned int', but argument 4 h=
-as type 'resource_size_t' {aka 'long long unsigned int'} [-Werror=3Dformat=
-=3D]:  =3D> 126:46
->
-> I wonder what the correct string format is in these cases?
-> I didn't have a good idea the last time I looked.
+Signed-off-by: Thorsten Blum <thorsten.blum@linux.dev>
+---
+ scripts/kconfig/nconf.gui.c | 9 +++++++++
+ 1 file changed, 9 insertions(+)
 
-"%pa" + taking the address of the resource_size_t object.
+diff --git a/scripts/kconfig/nconf.gui.c b/scripts/kconfig/nconf.gui.c
+index 72b605efe549..aeac9e5b06ee 100644
+--- a/scripts/kconfig/nconf.gui.c
++++ b/scripts/kconfig/nconf.gui.c
+@@ -277,6 +277,15 @@ int btn_dialog(WINDOW *main_window, const char *msg, int btn_num, ...)
+ 		case KEY_RIGHT:
+ 			menu_driver(menu, REQ_RIGHT_ITEM);
+ 			break;
++		case 9: /* TAB */
++			if (btn_num > 1) {
++				/* cycle through buttons */
++				if (item_index(current_item(menu)) == btn_num-1)
++					menu_driver(menu, REQ_FIRST_ITEM);
++				else
++					menu_driver(menu, REQ_NEXT_ITEM);
++			}
++			break;
+ 		case 10: /* ENTER */
+ 		case 27: /* ESCAPE */
+ 		case ' ':
+-- 
+2.47.0
 
-https://elixir.bootlin.com/linux/v6.11.3/source/Documentation/core-api/prin=
-tk-formats.rst#L229
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
