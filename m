@@ -1,172 +1,256 @@
-Return-Path: <linux-kernel+bounces-363945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363944-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A30F99C8E3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:29:17 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 023CA99C93A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFB60B24E43
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:25:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21F11B27ADE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD18158DD1;
-	Mon, 14 Oct 2024 11:24:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D6EE1802DD;
+	Mon, 14 Oct 2024 11:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="fMHpMYrj"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ODIwSEM9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6lZTgVc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="ODIwSEM9";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="j6lZTgVc"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765F333C5;
-	Mon, 14 Oct 2024 11:24:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E0C153BED;
+	Mon, 14 Oct 2024 11:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728905078; cv=none; b=DRXAUUCuGWX2z6m6D5Yq55DGf+I07QUkRPRt1dA7BJtrLkgiWP39V+mbXFBRrS1ok9/Bvf10FVsNOkRxiDBnKD0R5z0PHQSn5fnPdg4CIJqKjS9sM4SdqcJp6znDm1ti5PMtSJNsyw3mgV/7OKCR1EToZW1yt19uHBMvFk/xvi4=
+	t=1728905053; cv=none; b=QePigl3SL9Q8PwDicH0rRuKaTfAdlLXo/0R4YvBHBqkGEtwNzpJ9J1y/N2N47rehH4JseRo61iFpPrueHAHm6wshSE2cRDwwnr+YTj2Im/1l6qRotn1ctMDVX09fGc2ObmKmoN6VDdxFCLRwMwbPMlphNjnKEsTGfExpfIQz99A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728905078; c=relaxed/simple;
-	bh=bzgJLoHJNIFDjxLUz4r8x6yxP7VLh/FeHmsesfMOCxw=;
+	s=arc-20240116; t=1728905053; c=relaxed/simple;
+	bh=On7z+z0xlAx1Au7qeHzAiTOIxa/+fU28ylKaXB0m3E0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sTm7Sypc/QXmM6ajMtUdr1+wDrPgLBQtbbY65XQYC+KBgFDrlpE7t95ob3518abHvlFdq76siwngGTW6rld4jVLYO6PL4otG0ckLxN4W6GRUNDmPG5tLbF1aSCbEuRwozj/fSldOqLh/oc/3ubM9KUQch9252QARDD/3tWIBZS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=fMHpMYrj; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EBJSbg005273;
-	Mon, 14 Oct 2024 11:24:27 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=u0BQtRuHL+zfMcIRkrmTGSZb0xc
-	viN2f3uOCWalGQDI=; b=fMHpMYrjbgtrKtEKRikcuHTvkNAUkcgqzfay9ZZt2r5
-	nNppWMw5ohyF+1Kl0pZtMHcjaFdvb2p74tVvwwI7zULR4++V3pSMomH0qqKAjsIJ
-	6EH41BCPXMQoAHO+CXG2wDpM+uMqlHbhH+IDq7SzOp0Me/b6WyYvucSuqOo5nhaY
-	9lUfDF03IHHd1w/cUNjsyVm5FYDmmRg6wK8vZTee2eFarwfBTrLKuPExIrOpf9Gh
-	x8FBRqOEBJ15vrY6UumuiZ4m8UmjU41Jy+tKOfcgK733CPr3kOHSkchqAT3LG9KJ
-	4JMdQ5i0Ah4Bc5oFnQJrj2xvEVgm7vft5z0gwyEHkbA==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4292ax00ha-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:24:27 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EBOQcO018307;
-	Mon, 14 Oct 2024 11:24:26 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4292ax00gk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:24:26 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49E8eXvb005218;
-	Mon, 14 Oct 2024 11:23:35 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 4285nhwwjd-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:23:34 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EBNXSg53936610
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 11:23:33 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4C7A120040;
-	Mon, 14 Oct 2024 11:23:33 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 589102004D;
-	Mon, 14 Oct 2024 11:23:31 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.109.253.82])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 11:23:31 +0000 (GMT)
-Date: Mon, 14 Oct 2024 16:53:28 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: John Garry <john.g.garry@oracle.com>
-Cc: "Darrick J. Wong" <djwong@kernel.org>, linux-xfs@vger.kernel.org,
-        Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        dchinner@redhat.com, Chandan Babu R <chandan.babu@oracle.com>,
-        Christoph Hellwig <hch@lst.de>
-Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
- extsize
-Message-ID: <Zwz/MMcxj3eBHEG+@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
- <20241011163830.GX21853@frogsfrogsfrogs>
- <20241011164057.GY21853@frogsfrogsfrogs>
- <ZwzgFTX7H35+6S9U@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
- <a940924c-5e04-43f1-81f9-1d164fd384cc@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=fbJ5SEr+YakPd4Q4XCj9U6oj/rc5Dt17EhL4xJzW+PTBLzdk1aRrDHaMpMWa67tr5lbCTUvitF9PFndc8CTmc5os52BE6ruPZLnePJar5NMM6crEH5YLklfkCOkbLYmDqwcwbbv8Zen5RWGS+975fx8O7BXhzIfjV5OS7syTO5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ODIwSEM9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6lZTgVc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=ODIwSEM9; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=j6lZTgVc; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6C24A1FB91;
+	Mon, 14 Oct 2024 11:24:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728905049; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
+	b=ODIwSEM9Xorq6nFBsNx2Xy+TBdVgu3KLUIN4eLrvnE7j9K62VVLQOhlWGPtRdwai8rYTLb
+	BoZ6e/4KgSvUkhu2LLRi0ZIMR/kYJASH822eD3iag6akleXhNTf5644zXo/RyVBKC6V5SD
+	x7VkNr/sNT1VcWY0Da0jZroAGldSPEQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728905049;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
+	b=j6lZTgVceb8gtwnHK/S3JIx2clkv9NDCWn07ly7b+UUm44qWAL3KzpbFNgdkOslrietf8x
+	qhXXFn4V7oq51IAA==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=ODIwSEM9;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=j6lZTgVc
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728905049; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
+	b=ODIwSEM9Xorq6nFBsNx2Xy+TBdVgu3KLUIN4eLrvnE7j9K62VVLQOhlWGPtRdwai8rYTLb
+	BoZ6e/4KgSvUkhu2LLRi0ZIMR/kYJASH822eD3iag6akleXhNTf5644zXo/RyVBKC6V5SD
+	x7VkNr/sNT1VcWY0Da0jZroAGldSPEQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728905049;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=EMnytouJs0/lKHqI+kq1mVU5YSiaKvf/nCGCdLOi3Rk=;
+	b=j6lZTgVceb8gtwnHK/S3JIx2clkv9NDCWn07ly7b+UUm44qWAL3KzpbFNgdkOslrietf8x
+	qhXXFn4V7oq51IAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 615FB13A51;
+	Mon, 14 Oct 2024 11:24:09 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id jQHAF1n/DGcwLQAAD6G6ig
+	(envelope-from <jack@suse.cz>); Mon, 14 Oct 2024 11:24:09 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id 1E034A0896; Mon, 14 Oct 2024 13:24:09 +0200 (CEST)
+Date: Mon, 14 Oct 2024 13:24:09 +0200
+From: Jan Kara <jack@suse.cz>
+To: Amir Goldstein <amir73il@gmail.com>
+Cc: Jan Kara <jack@suse.cz>, brauner@kernel.org,
+	Benjamin Coddington <bcodding@redhat.com>,
+	Ye Bin <yebin@huaweicloud.com>, viro@zeniv.linux.org.uk,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	yebin10@huawei.com, zhangxiaoxu5@huawei.com
+Subject: Re: [PATCH 2/3] sysctl: add support for drop_caches for individual
+ filesystem
+Message-ID: <20241014112409.y77ftn3jqc7smxfp@quack3>
+References: <20241010112543.1609648-1-yebin@huaweicloud.com>
+ <20241010112543.1609648-3-yebin@huaweicloud.com>
+ <20241010121607.54ttcmdfmh7ywho7@quack3>
+ <5A1217C0-A778-4A9A-B9D8-5F0401DC1013@redhat.com>
+ <20241010170405.m5l4wutd4csj3v6d@quack3>
+ <CAOQ4uxiR9ssLb8b6WBFhYJpDrSEvMfALx12w3sOzjB8qe_7t_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <a940924c-5e04-43f1-81f9-1d164fd384cc@oracle.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: VTMZm80lSJlN8L9Pvt1nDSOG0haWcxWC
-X-Proofpoint-GUID: is7-q5a75Pn22hjf7jSC7yqoVF3wInMH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_10,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- lowpriorityscore=0 mlxlogscore=745 malwarescore=0 suspectscore=0
- mlxscore=0 phishscore=0 spamscore=0 bulkscore=0 adultscore=0
- priorityscore=1501 clxscore=1011 classifier=spam adjust=0 reason=mlx
- scancount=1 engine=8.19.0-2409260000 definitions=main-2410140080
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAOQ4uxiR9ssLb8b6WBFhYJpDrSEvMfALx12w3sOzjB8qe_7t_g@mail.gmail.com>
+X-Rspamd-Queue-Id: 6C24A1FB91
+X-Spam-Score: -4.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCVD_COUNT_THREE(0.00)[3];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	TO_DN_SOME(0.00)[];
+	FREEMAIL_TO(0.00)[gmail.com];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	MISSING_XM_UA(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[huawei.com:email,suse.com:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Oct 14, 2024 at 10:56:57AM +0100, John Garry wrote:
-> On 14/10/2024 10:10, Ojaswin Mujoo wrote:
-> > On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
-> > > On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
-> > > > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
-> > > > > Extsize is allowed to be set on files with no data in it.
+On Fri 11-10-24 13:44:57, Amir Goldstein wrote:
+> On Thu, Oct 10, 2024 at 7:04 PM Jan Kara <jack@suse.cz> wrote:
+> >
+> > On Thu 10-10-24 09:35:46, Benjamin Coddington wrote:
+> > > On 10 Oct 2024, at 8:16, Jan Kara wrote:
+> > >
+> > > > On Thu 10-10-24 19:25:42, Ye Bin wrote:
+> > > >> From: Ye Bin <yebin10@huawei.com>
+> > > >>
+> > > >> In order to better analyze the issue of file system uninstallation caused
+> > > >> by kernel module opening files, it is necessary to perform dentry recycling
+> > > >
+> > > > I don't quite understand the use case you mention here. Can you explain it
+> > > > a bit more (that being said I've needed dropping caches for a particular sb
+> > > > myself a few times for debugging purposes so I generally agree it is a
+> > > > useful feature).
+> > > >
+> > > >> on a single file system. But now, apart from global dentry recycling, it is
+> > > >> not supported to do dentry recycling on a single file system separately.
+> > > >> This feature has usage scenarios in problem localization scenarios.At the
+> > > >> same time, it also provides users with a slightly fine-grained
+> > > >> pagecache/entry recycling mechanism.
+> > > >> This patch supports the recycling of pagecache/entry for individual file
+> > > >> systems.
+> > > >>
+> > > >> Signed-off-by: Ye Bin <yebin10@huawei.com>
+> > > >> ---
+> > > >>  fs/drop_caches.c   | 43 +++++++++++++++++++++++++++++++++++++++++++
+> > > >>  include/linux/mm.h |  2 ++
+> > > >>  kernel/sysctl.c    |  9 +++++++++
+> > > >>  3 files changed, 54 insertions(+)
+> > > >>
+> > > >> diff --git a/fs/drop_caches.c b/fs/drop_caches.c
+> > > >> index d45ef541d848..99d412cf3e52 100644
+> > > >> --- a/fs/drop_caches.c
+> > > >> +++ b/fs/drop_caches.c
+> > > >> @@ -77,3 +77,46 @@ int drop_caches_sysctl_handler(const struct ctl_table *table, int write,
+> > > >>    }
+> > > >>    return 0;
+> > > >>  }
+> > > >> +
+> > > >> +int drop_fs_caches_sysctl_handler(const struct ctl_table *table, int write,
+> > > >> +                            void *buffer, size_t *length, loff_t *ppos)
+> > > >> +{
+> > > >> +  unsigned int major, minor;
+> > > >> +  unsigned int ctl;
+> > > >> +  struct super_block *sb;
+> > > >> +  static int stfu;
+> > > >> +
+> > > >> +  if (!write)
+> > > >> +          return 0;
+> > > >> +
+> > > >> +  if (sscanf(buffer, "%u:%u:%u", &major, &minor, &ctl) != 3)
+> > > >> +          return -EINVAL;
+> > > >
+> > > > I think specifying bdev major & minor number is not a great interface these
+> > > > days. In particular for filesystems which are not bdev based such as NFS. I
+> > > > think specifying path to some file/dir in the filesystem is nicer and you
+> > > > can easily resolve that to sb here as well.
+> > >
+> > > Slight disagreement here since NFS uses set_anon_super() and major:minor
+> > > will work fine with it.
+> >
+> > OK, fair point, anon bdev numbers can be used. But filesystems using
+> > get_tree_nodev() would still be problematic.
+> >
+> > > I'd prefer it actually since it avoids this
+> > > interface having to do a pathwalk and make decisions about what's mounted
+> > > where and in what namespace.
+> >
+> > I don't understand the problem here. We'd do user_path_at(AT_FDCWD, ...,
+> > &path) and then take path.mnt->mnt_sb. That doesn't look terribly
+> > complicated to me. Plus it naturally deals with issues like namespacing
+> > etc. although they are not a huge issue here because the functionality
+> > should be restricted to CAP_SYS_ADMIN anyway.
+> >
 > 
-> Should this be "Extsize should only be allowed to be set on files with no
-> data written."
+> Both looking up bdev and looking up path from write() can make syzbot
+> and lockdep very upset:
+> https://lore.kernel.org/linux-fsdevel/00000000000098f75506153551a1@google.com/
 
-Sure, I can make the change.
+OK, thanks for the reference.
 
+> I thought Christian had a proposal for dropping cache per-sb API via
+> fadvise() or something?
 > 
-> > For this,
-> > > > > we were checking if the files have extents but missed to check if
-> > > > > delayed extents were present. This patch adds that check.
-> > > > > 
-> > > > > While we are at it, also refactor this check into a helper since
-> > > > > its used in some other places as well like xfs_inactive() or
-> > > > > xfs_ioctl_setattr_xflags()
-> > > > > 
-> > > > > **Without the patch (SUCCEEDS)**
-> > > > > 
-> > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> > > > > 
-> > > > > wrote 1024/1024 bytes at offset 0
-> > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> > > > > 
-> > > > > **With the patch (FAILS as expected)**
-> > > > > 
-> > > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> > > > > 
-> > > > > wrote 1024/1024 bytes at offset 0
-> > > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> > > > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-> > > > > 
-> > > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
-> > > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> > > > 
-> > > > Looks good now,
-> > > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> > > 
-> > > That said, could you add a fixes tag for the xfs_ioctl_setattr_*
-> > > changes, please?
-> > 
-> > Hi Darrick,
-> > 
-> > Sure I'll send a new version. Thanks for the review!
-> > 
-> > Regards,
-> > ojaswin
-> > 
-> Feel free to add the following if you like:
-> 
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
+> Why use sysfs API for this and not fd to reference an sb?
 
-Thanks John!
+I guess because the original drop_caches is in the sysfs. But yes, in
+principle we could use fd pointing to the filesystem for this. I'm just not
+sure fadvise(2) is really the right syscall for this because it is
+currently all about page cache of a file and this call should shrink also
+the dcache / icache. But ioctl() (not sure if this debug-mostly
+functionality is worth a syscall) implemented in VFS would certainly be
+possible and perhaps nicer than sysfs interface.
 
-Regards,
-ojaswin
+								Honza
+-- 
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
