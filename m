@@ -1,148 +1,112 @@
-Return-Path: <linux-kernel+bounces-364724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585EE99D86B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:39:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4E5D99D871
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:40:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1992A282F4F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:39:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0230A1C22195
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AABF15ECDF;
-	Mon, 14 Oct 2024 20:39:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2B381CFED2;
+	Mon, 14 Oct 2024 20:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="rvRbnYTj"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HFuElu+S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02579142E77
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:38:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BBBA142E77
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 20:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728938339; cv=none; b=qsIDkvD+Lq9zZs9GEVwGx+x1wQbr7UBc6gOb7kR31UuEsIqlBzE23lDLt13kbmLYNZxJPgLdSij1X5+lLInJaaF6VRxK86RQZAJyOnICSa+H5hIxifJbUepBPoSsIdMGQcOcvy+eZkehDN/+W23p3VeiXmvRlYRDd2J/93r3xEY=
+	t=1728938405; cv=none; b=q/WXK9t4xdue0e5oWLBxmYNSvK/qSpSoYLqDF9/Y9GOs9L1kwUWCCNKUzxqSfujuy3/sKST1CH9+DTobhdtEIKdlwlqg9pALTHo1B9lIbBg2FDu1yshyz3uE1HkVA/4A8R0DhCTQoRGYzZM8pXRFFxPV7Bb11eDLnjVw1q4OmLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728938339; c=relaxed/simple;
-	bh=nEaffIp+CJuW+N1iMoCee0jOln2gnRywVic31Yjps30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OJgsMk1Q9fzq5M0QBbK8FudjVPRQGBxeI/dOqBXpWzPaDk18N5mWb2TgqdS751/3fvaCiJaRuaRSqf/SzwPfQvVH6MxEbW0nVHuqNdJ3rAtTOpCXbkEPQTod/IDLgWn3Vy8Bp8T8bZvZARuUHT12rOMfAuIQodYfKpBPtivbhyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=rvRbnYTj; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id 6EEAC2C0276;
-	Tue, 15 Oct 2024 09:38:49 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728938329;
-	bh=baEpGfW7rxqNpgz/S8mcS2prZpYssy/RFfM0CNMgx9A=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rvRbnYTjCePWHxkqDNxQy2BugsYUg5xCKn+f4nXMuHhx641ObimRtiZx3AcNMy6jl
-	 7ZiUHBLPki+CUI/C1WDW6IYD0SILY3LKAx4MTksbpU3tRZViqYuJlbqwvCoai/MqDc
-	 6A7/3Uwo3raVk2OVIxFhj0EcjdmzsMyZQwxfJ5mHYkG5e0RlYK+vhiVN1a06lIQdd2
-	 x5Aolorh4RXV+JdE8awHjKL172p8o0g2H4m3NSGWn8UTpsqnorJ+gtVmQR/aTG0Dqy
-	 F9HRwfYdyScEfQZIdraJjI3Df+QRuEwnCmLadfUxRKkn/7VTR6xkXPrR8jWG6XI2ok
-	 P5tkdZ5npORwg==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670d81590000>; Tue, 15 Oct 2024 09:38:49 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id 53E3913EE32;
-	Tue, 15 Oct 2024 09:38:49 +1300 (NZDT)
-Message-ID: <bd802a5c-e09e-4f4d-9d37-b87d85efb4e4@alliedtelesis.co.nz>
-Date: Tue, 15 Oct 2024 09:38:49 +1300
+	s=arc-20240116; t=1728938405; c=relaxed/simple;
+	bh=jdA4urDUlX9oa+27zIWMzrgqKWEUDdFIx4Fo/O7KlvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wc/uN2nM5goUTp31uE8uTnc6GbLR1qI/R/7P7JdOhv9YN3LR688c0O4pD56EoaitcuRlG+tzZkVbgXrUweRmh4qEipEI6CjGGLaSACWmvVAFEVyBEG8h9iLj7ukiFY1vqFpQElzDXJm99PwF0ziKLVsqs1B3tZvjq23gCGxvjnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HFuElu+S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A439C4CEC3;
+	Mon, 14 Oct 2024 20:40:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728938404;
+	bh=jdA4urDUlX9oa+27zIWMzrgqKWEUDdFIx4Fo/O7KlvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HFuElu+SVtzqwDgmjeU1JWKQYmuKgX4GnzMG0gCTsAibTA3nYyf2G9LcNiOVxosrV
+	 pxYYnhvaSOmS5iC83oVC3Te+yxCqwp6RrVWNGH88FsSyK+nCD7k4OF3SbAQ3IC2Yze
+	 AeZNsPo9OHZB0sDGcV6DAIztS5qc7HKTzR2qvGIYsGCcgeY+eELAaTol7cQew3gZsJ
+	 F5yLuyd8UHb6k6j0nUBVioY9Jbgdg+m4oQJn/4uCz4tLThrIIygVFRqqt1ZrkLNReU
+	 N7JDUaPXmrIPGpp1S/zpIXddTHOPchTtSSQ9cmi8E6pdqCGsVVa+s/X5JeNV/55QGf
+	 1osOivDFVCT7g==
+Date: Mon, 14 Oct 2024 13:40:01 -0700
+From: Kees Cook <kees@kernel.org>
+To: Feng Tang <feng.tang@intel.com>
+Cc: Vlastimil Babka <vbabka@suse.cz>, Marco Elver <elver@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Shuah Khan <skhan@linuxfoundation.org>,
+	David Gow <davidgow@google.com>, Danilo Krummrich <dakr@kernel.org>,
+	Alexander Potapenko <glider@google.com>,
+	Andrey Ryabinin <ryabinin.a.a@gmail.com>,
+	Dmitry Vyukov <dvyukov@google.com>,
+	Vincenzo Frascino <vincenzo.frascino@arm.com>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"kasan-dev@googlegroups.com" <kasan-dev@googlegroups.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Eric Dumazet <edumazet@google.com>
+Subject: Re: [PATCH v2 0/5] mm/slub: Improve data handling of krealloc() when
+ orig_size is enabled
+Message-ID: <202410141338.EA1D30F3@keescook>
+References: <20240911064535.557650-1-feng.tang@intel.com>
+ <d3dd32ba-2866-40ce-ad2b-a147dcd2bf86@suse.cz>
+ <CANpmjNM5XjwwSc8WrDE9=FGmSScftYrbsvC+db+82GaMPiQqvQ@mail.gmail.com>
+ <49ef066d-d001-411e-8db7-f064bdc2104c@suse.cz>
+ <2382d6e1-7719-4bf9-8a4a-1e2c32ee7c9f@suse.cz>
+ <ZwzNtGALCG9jUNUD@feng-clx.sh.intel.com>
+ <a34e6796-e550-465c-92dc-ee659716b918@suse.cz>
+ <Zw0UKtx5d2hnHvDV@feng-clx.sh.intel.com>
+ <0e8d49d2-e89b-44df-9dff-29e8f24de105@suse.cz>
+ <Zw0otGNgqPUeTdWJ@feng-clx.sh.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH v4 1/3] dt-bindings: spi: Add realtek,rtl9301-snand
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: broonie@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, tsbogend@alpha.franken.de, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-mips@vger.kernel.org
-References: <20241014015245.2513738-1-chris.packham@alliedtelesis.co.nz>
- <20241014015245.2513738-2-chris.packham@alliedtelesis.co.nz>
- <nuadh2elbry2qc4l7rdngfvs4inbsmo2vg2w72w5d4cgpnail2@zidp7kzxp7qp>
-Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <nuadh2elbry2qc4l7rdngfvs4inbsmo2vg2w72w5d4cgpnail2@zidp7kzxp7qp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670d8159 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=62ntRvTiAAAA:8 a=gEfo2CItAAAA:8 a=G81r_u4-8cHXR2Yzib8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22 a=sptkURWiP4Gy88Gu7hUp:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zw0otGNgqPUeTdWJ@feng-clx.sh.intel.com>
 
+On Mon, Oct 14, 2024 at 10:20:36PM +0800, Feng Tang wrote:
+> On Mon, Oct 14, 2024 at 03:12:09PM +0200, Vlastimil Babka wrote:
+> > On 10/14/24 14:52, Feng Tang wrote:
+> > > On Mon, Oct 14, 2024 at 10:53:32AM +0200, Vlastimil Babka wrote:
+> > >> On 10/14/24 09:52, Feng Tang wrote:
+> > > OK, originally I tried not to expose internals of __ksize(). Let me
+> > > try this way.
+> > 
+> > ksize() makes assumptions that a user outside of slab itself is calling it.
+> > 
+> > But we (well mostly Kees) also introduced kmalloc_size_roundup() to avoid
+> > querying ksize() for the purposes of writing beyond the original
+> > kmalloc(size) up to the bucket size. So maybe we can also investigate if the
+> > skip_orig_size_check() mechanism can be removed now?
+> 
+> I did a quick grep, and fortunately it seems that the ksize() user are
+> much less than before. We used to see some trouble in network code, which
+> is now very clean without the need to skip orig_size check. Will check
+> other call site later.
 
-On 14/10/24 20:12, Krzysztof Kozlowski wrote:
-> On Mon, Oct 14, 2024 at 02:52:43PM +1300, Chris Packham wrote:
->  =20
->> diff --git a/Documentation/devicetree/bindings/spi/realtek,rtl9301-sna=
-nd.yaml b/Documentation/devicetree/bindings/spi/realtek,rtl9301-snand.yam=
-l
->> new file mode 100644
->> index 000000000000..397b32b41e86
->> --- /dev/null
->> +++ b/Documentation/devicetree/bindings/spi/realtek,rtl9301-snand.yaml
->> @@ -0,0 +1,59 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://scanmail.trustwave.com/?c=3D20988&d=3D3cSM59Be7zhiOY6j70B=
-GhTh0kCvZ-1Nf0f5XJZnTzQ&u=3Dhttp%3a%2f%2fdevicetree%2eorg%2fschemas%2fspi=
-%2frealtek%2crtl9301-snand%2eyaml%23
->> +$schema: http://scanmail.trustwave.com/?c=3D20988&d=3D3cSM59Be7zhiOY6=
-j70BGhTh0kCvZ-1Nf0a1RIsqGnw&u=3Dhttp%3a%2f%2fdevicetree%2eorg%2fmeta-sche=
-mas%2fcore%2eyaml%23
->> +
->> +title: SPI-NAND Flash Controller for Realtek RTL9300 SoCs
->> +
->> +maintainers:
->> +  - Chris Packham <chris.packham@alliedtelesis.co.nz>
->> +
->> +description:
->> +  The Realtek RTL9300 SoCs have a built in SPI-NAND controller. It su=
-pports
->> +  typical SPI-NAND page cache operations in single, dual or quad IO m=
-ode.
->> +
->> +properties:
->> +  compatible:
->> +    enum:
->> +      - realtek,rtl9301-snand
->> +      - realtek,rtl9302b-snand
->> +      - realtek,rtl9302c-snand
->> +      - realtek,rtl9303-snand
-> All of them look compatible with each other, why not using fallback to
-> 9301? That's common and expected pattern.
+Right -- only things that are performing a reallocation should be using
+ksize(). e.g. see __slab_build_skb()
 
-So something like
-
-properties:
- =C2=A0 compatible:
- =C2=A0=C2=A0=C2=A0 oneOf:
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 -=C2=A0 enum:
- =C2=A0=C2=A0=C2=A0=C2=A0 =C2=A0 =C2=A0 =C2=A0 =C2=A0 - realtek,rtl9302b-=
-snand
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - rea=
-ltek,rtl9302c-snand
- =C2=A0 =C2=A0 =C2=A0=C2=A0 =C2=A0=C2=A0=C2=A0=C2=A0 - realtek,rtl9303-sn=
-and
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: realtek,rtl9301-snand
- =C2=A0=C2=A0=C2=A0=C2=A0 - items:
- =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 const: realtek,rtl9301-snand
-
-Or am I over thinking it and I should just use only a single "const:=20
-realtek,rtl9301-snand"?
-
->
-> Best regards,
-> Krzysztof
->
+-- 
+Kees Cook
 
