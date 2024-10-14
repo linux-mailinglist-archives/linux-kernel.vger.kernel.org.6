@@ -1,161 +1,118 @@
-Return-Path: <linux-kernel+bounces-363979-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363980-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CE0499C939
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:45:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3321D99C93F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:46:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A277A1F228A4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:45:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DCF941F21417
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:46:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C986D19D8B5;
-	Mon, 14 Oct 2024 11:45:34 +0000 (UTC)
-Received: from frasgout12.his.huawei.com (frasgout12.his.huawei.com [14.137.139.154])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC3519F40B;
+	Mon, 14 Oct 2024 11:45:43 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D4F58F64;
-	Mon, 14 Oct 2024 11:45:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=14.137.139.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D35A5158A19;
+	Mon, 14 Oct 2024 11:45:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906334; cv=none; b=DB0z9SM7MGKTi+qdr7DVdmiHc4EYAKxDM7WLkF3NVT2ksb7vWQqS3OSRWreNt9V5ocsXKmjIEgfYncNeT10tDJHvJf+fvKxpEXyyxOjNwEe6i7Wu83aoNW2qPxtKyoFzlLZYvZMX+2JLlrAwmLLSq6NzrE1C6URzCibs4LCN2+o=
+	t=1728906343; cv=none; b=p117JZPsWFq7iC9MvdiKgys8xz97AHKCh6w8gLcXrv2pB0GzCUtgKYED8MGbrBjL9/4O69TCue0Ahoqm6/TjChEZDx3P4SQYEMrluplWaYhYDLsjTfk/QGGs1VWYKHEo6HQF1nvDNK7wJ/dNDwlIyPh+xvyIoC2UcJxEkbqDG3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906334; c=relaxed/simple;
-	bh=VoLnJvOlLRHecuqbnEsmCdzipd3c3Z0TDF+JCNNRUn8=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ELtZ2XsxA/Tj7pqNWueYlOY4tKyqtAH9u13SG9wIrwU1KaoopvKiK2P6pogoTyabt2XN7dJ8/gDi6rLy+nPRco7FGdPAh5thQW1ffTYy/X9xetjaUm6+N7s4CXi7EYIPwV6Y8ShR/6MomX9co1ygRYmgcIOfmKw5mwPMKe3A8VE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=14.137.139.154
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.18.186.29])
-	by frasgout12.his.huawei.com (SkyGuard) with ESMTP id 4XRvrK36g8z9v7JM;
-	Mon, 14 Oct 2024 19:19:13 +0800 (CST)
-Received: from mail02.huawei.com (unknown [7.182.16.47])
-	by mail.maildlp.com (Postfix) with ESMTP id B168C1405A1;
-	Mon, 14 Oct 2024 19:45:15 +0800 (CST)
-Received: from [127.0.0.1] (unknown [10.204.63.22])
-	by APP1 (Coremail) with SMTP id LxC2BwDXZy9CBA1n8ArVAg--.16371S2;
-	Mon, 14 Oct 2024 12:45:15 +0100 (CET)
-Message-ID: <3ab95195af7db9d2bd482f46a69305f2f386cc32.camel@huaweicloud.com>
-Subject: Re: [PATCH 2/3] ima: Ensure lock is held when setting iint pointer
- in inode security blob
-From: Roberto Sassu <roberto.sassu@huaweicloud.com>
-To: Mimi Zohar <zohar@linux.ibm.com>, Paul Moore <paul@paul-moore.com>
-Cc: dmitry.kasatkin@gmail.com, eric.snowberg@oracle.com, jmorris@namei.org, 
-	serge@hallyn.com, linux-integrity@vger.kernel.org, 
-	linux-security-module@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bpf@vger.kernel.org, ebpqwerty472123@gmail.com, Roberto Sassu
-	 <roberto.sassu@huawei.com>
-Date: Mon, 14 Oct 2024 13:45:02 +0200
-In-Reply-To: <92c528d8848f78869888a746643e1cf2969df62a.camel@linux.ibm.com>
-References: <20241008165732.2603647-1-roberto.sassu@huaweicloud.com>
-	 <20241008165732.2603647-2-roberto.sassu@huaweicloud.com>
-	 <CAHC9VhRkMwLqVFfWMvMOJ6x4UNUK=C_cMVW7Op9icz28MMDYdQ@mail.gmail.com>
-	 <69ed92fde951b20a9b976d48803fe9b5daaa9eea.camel@huaweicloud.com>
-	 <92c528d8848f78869888a746643e1cf2969df62a.camel@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1728906343; c=relaxed/simple;
+	bh=kvBg45epIZBluaGPE8QC6UH9A/pJOQir32Ks9euA3nA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H0h6bnqdtnLf3QScVFGR9Hx4mZOWxrD88krHXPpqBQcUsPNLIrXyZGKOL7UGp2OJyZSPkIYYkCSgLZeZJWFO5HmH+A3RFxN8ACF19iwS7c6xVSj1jtgNW0NycACt4kVRut8fX6G9osdQQSUtRuoKGZ6EN5C0KCtU1cf4uq6XFig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: hLIAoa5kTRCWVwVH7PmeNw==
+X-CSE-MsgGUID: eXlziHwHRxS9kGtWYELmDg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39371261"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="39371261"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:45:42 -0700
+X-CSE-ConnectionGUID: I6LRMQnuTia7F1G6zsgNJQ==
+X-CSE-MsgGUID: y1/A7EKwS36Pokn0s+H9Rw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="82326571"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:45:36 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t0JW1-00000002sv1-1GM4;
+	Mon, 14 Oct 2024 14:45:33 +0300
+Date: Mon, 14 Oct 2024 14:45:33 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v3 4/6] iio: adc: adi-axi-adc: set data format
+Message-ID: <Zw0EXXDJPjWtLCIr@smile.fi.intel.com>
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-4-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-CM-TRANSID:LxC2BwDXZy9CBA1n8ArVAg--.16371S2
-X-Coremail-Antispam: 1UD129KBjvJXoW7CFWDuw4DJr1xur45XrWUArb_yoW5JrWfpF
-	Wvg3WUGayUXFW7ur4SqasxZFWSg3yfWFWkWw45Jw1qvFyqvF1jqr48Jr1Uury5Cr4xKw1I
-	vr42ga13uw1qyrJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Jr0_JF4l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8JVWxJwA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_Gr0_Gr1UM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lFIxGxcIEc7CjxVA2Y2ka0xkIwI1lc7CjxVAaw2AF
-	wI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUF1
-	v3UUUUU
-X-CM-SenderInfo: purev21wro2thvvxqx5xdzvxpfor3voofrz/1tbiAQAQBGcMffgJKQADsY
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014094154.9439-4-antoniu.miclaus@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Fri, 2024-10-11 at 15:30 -0400, Mimi Zohar wrote:
-> On Wed, 2024-10-09 at 17:43 +0200, Roberto Sassu wrote:
-> > On Wed, 2024-10-09 at 11:41 -0400, Paul Moore wrote:
-> > > On Tue, Oct 8, 2024 at 12:57=E2=80=AFPM Roberto Sassu
-> > > <roberto.sassu@huaweicloud.com> wrote:
-> > > >=20
-> > > > From: Roberto Sassu <roberto.sassu@huawei.com>
-> > > >=20
-> > > > IMA stores a pointer of the ima_iint_cache structure, containing in=
-tegrity
-> > > > metadata, in the inode security blob. However, check and assignment=
- of this
-> > > > pointer is not atomic, and it might happen that two tasks both see =
-that the
-> > > > iint pointer is NULL and try to set it, causing a memory leak.
-> > > >=20
-> > > > Ensure that the iint check and assignment is guarded, by adding a l=
-ockdep
-> > > > assertion in ima_inode_get().
-> > > >=20
-> > > > Consequently, guard the remaining ima_inode_get() calls, in
-> > > > ima_post_create_tmpfile() and ima_post_path_mknod(), to avoid the l=
-ockdep
-> > > > warnings.
-> > > >=20
-> > > > Signed-off-by: Roberto Sassu <roberto.sassu@huawei.com>
-> > > > ---
-> > > >  security/integrity/ima/ima_iint.c |  5 +++++
-> > > >  security/integrity/ima/ima_main.c | 14 ++++++++++++--
-> > > >  2 files changed, 17 insertions(+), 2 deletions(-)
-> > > >=20
-> > > > diff --git a/security/integrity/ima/ima_iint.c b/security/integrity=
-/ima/ima_iint.c
-> > > > index c176fd0faae7..fe676ccec32f 100644
-> > > > --- a/security/integrity/ima/ima_iint.c
-> > > > +++ b/security/integrity/ima/ima_iint.c
-> > > > @@ -87,8 +87,13 @@ static void ima_iint_free(struct ima_iint_cache =
-*iint)
-> > > >   */
-> > > >  struct ima_iint_cache *ima_inode_get(struct inode *inode)
-> > > >  {
-> > > > +       struct ima_iint_cache_lock *iint_lock;
-> > > >         struct ima_iint_cache *iint;
-> > > >=20
-> > > > +       iint_lock =3D ima_inode_security(inode->i_security);
-> > > > +       if (iint_lock)
-> > > > +               lockdep_assert_held(&iint_lock->mutex);
-> > > > +
-> > > >         iint =3D ima_iint_find(inode);
-> > > >         if (iint)
-> > > >                 return iint;
-> > >=20
-> > > Can you avoid the ima_iint_find() call here and just do the following=
-?
-> > >=20
-> > >   /* not sure if you need to check !iint_lock or not? */
-> > >   if (!iint_lock)
-> > >     return NULL;
-> > >   iint =3D iint_lock->iint;
-> > >   if (!iint)
-> > >     return NULL;
-> >=20
-> > Yes, I also like it much more.
->=20
-> Yes, testing iint_lock and then iint_lock->iint should be fine, but the l=
-ogic
-> needs to be inverted.  ima_inode_get() should return the existing iint, i=
-f it
-> exists, or allocate the memory.
+On Mon, Oct 14, 2024 at 12:40:38PM +0300, Antoniu Miclaus wrote:
+> Add support for selecting the data format within the AXI ADC ip.
 
-Right, I checked the patches I'm about to send, they do that.
+IP
 
-Thanks
+...
 
-Roberto
+>  #define ADI_AXI_ADC_REG_CTRL			0x0044
+>  #define    ADI_AXI_ADC_CTRL_DDR_EDGESEL_MASK	BIT(1)
+>  
+> +#define ADI_AXI_ADC_REG_CNTRL_3			0x004c
+> +#define ADI_AXI_ADC_CNTRL_3_CUSTOM_CONTROL_MSK	GENMASK(7, 0)
+
+And here is no (additional) indentation at all and no proper prefix...
+Can you be consistent (to some extent) with the existing code? Or
+update it to be consistent all over the places.
+
+>  #define ADI_AXI_ADC_REG_DRP_STATUS		0x0074
+>  #define   ADI_AXI_ADC_DRP_LOCKED		BIT(17)
+
+...
+
+> +static int axi_adc_data_size_set(struct iio_backend *back,
+> +				 ssize_t size)
+
+This is perfectly one line. We wrap at 80. I believe your text editor
+configuration has to be adjusted for this project.
+
+-- 
+With Best Regards,
+Andy Shevchenko
+
 
 
