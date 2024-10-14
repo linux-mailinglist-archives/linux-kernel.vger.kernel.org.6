@@ -1,256 +1,249 @@
-Return-Path: <linux-kernel+bounces-364228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 681E899CE24
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:40:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CBCD99CE33
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:41:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E01B01F23C77
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:40:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9935A1F23C53
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:41:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B8E71AB522;
-	Mon, 14 Oct 2024 14:40:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dugPc5QJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD1A20EB;
-	Mon, 14 Oct 2024 14:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DFCA1AB52D;
+	Mon, 14 Oct 2024 14:41:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529E7611E;
+	Mon, 14 Oct 2024 14:41:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916833; cv=none; b=LI1gLhYdpNm8gWXq0DNefLYDhGTyDhoCmp/UrVplo6CWW0WyKaHcTeWibYvvMkGvi65ruDiqMp6FI+gu8ay5eQ2h+q5eSZyeyvGuvchiyFG11Bk2Xfuu0FrJ1NMWIFpbgXCNrRck7fGGi3yVGbbPd2A52fGlA1wQX3+QXowK4R0=
+	t=1728916878; cv=none; b=G0Y6NCUrYcz6IGflU+/P8A/VclhtxutzEcHWQ8WDvIqhYjDwdOaPmu0MEO2MC1OyQnHW33M9SKTsBShGkPkC78jaJVUZ088VdSrPqoo4bXe0/w7dGXPl1Xw6BdbFmFTuOBDfUoLcnNfjYCzV+18lUWvC+/U/zcp3aguJJfVNkYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916833; c=relaxed/simple;
-	bh=TCs3xkXWgvME9Y1v/pXMkT+tacYIyXi39AFnDEF1W10=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=dXEjuGVKWvxA1xL3cTctyu8yjCUOzHYRQ56vCuJY61UgnhidfQdTjt/XZ2b+exEexU6vI+x+snS888PZQuYl8nANtGuQ56tUHFCjgtbk4MSlvFkkC6s7GIG6OWSGcq9J5W7o1ZCseArDmY/GPwVB3e3rj1p75kkRiLrzJeFRV7o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dugPc5QJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 196A9C4AF0B;
-	Mon, 14 Oct 2024 14:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728916833;
-	bh=TCs3xkXWgvME9Y1v/pXMkT+tacYIyXi39AFnDEF1W10=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=dugPc5QJQCPBK3y9DLtRHTRnq3bcrdSeBO8i8X8Ib22XdBq1KZqSo2cjC08qED5iH
-	 kifDeksp9tqS/BVeWD38HjkYkNvF4e9UkK+XALT4ngG66azDtFlEcOIzAvXtAAONyz
-	 ijBushqozJy9L8T8RHx2ljCTbRsH/GHF9tGbBxqJsSM1A95/WGP+wNxhJtOR+4vGZh
-	 z92WL3hk1nnMaRZIGK2wq2tUr2/o5llSOMVqvrvdAZi5v508Tl7JRffBfi1EGIfs2/
-	 5GqEPw8HDJkcSL1NTGnn4WXPir1XQuHHrjSftCHftgunlChYyNQE40oRQ9FW/+0NLA
-	 Xp7rfr/LLyhwA==
-Date: Mon, 14 Oct 2024 23:40:28 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Ma Qiao <mqaio@linux.alibaba.com>, Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org,
- mathieu.desnoyers@efficios.com, namhyung.kim@lge.com, oleg@redhat.com,
- linux-kernel@vger.kernel.org, bpf@vger.kernel.org
-Subject: Re: [PATCH] uprobe: avoid out-of-bounds memory access of fetching
- args
-Message-Id: <20241014234028.6dc14fe26dce74f2b90a8a4f@kernel.org>
-In-Reply-To: <20241014061405.3139467-1-mqaio@linux.alibaba.com>
-References: <20241014061405.3139467-1-mqaio@linux.alibaba.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728916878; c=relaxed/simple;
+	bh=DFO1aR4GLZZo4R8pIqMvQlWpP7eE9cLB5QesFzKUEqg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dGw+oNTtB2BSH8C2yIQAg+Brh3svu5mwivFASUDcP42d9/xcOBx4bjUmeADJW8TXSNT1DKZFA2SNmaGisaq4QX1Uaw6pBrd9ZRqeTcspU89kzDTN9OD6j+waiFfHgFxDV4nVDxeEfUVJsqFeFPrxvjHJ7YY2ALbfYh4KNVsQt7Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6198F1007;
+	Mon, 14 Oct 2024 07:41:44 -0700 (PDT)
+Received: from [10.57.21.126] (unknown [10.57.21.126])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id BD6853F51B;
+	Mon, 14 Oct 2024 07:41:09 -0700 (PDT)
+Message-ID: <f3ce0718-064d-48e4-a681-7058157127b0@arm.com>
+Date: Mon, 14 Oct 2024 15:41:07 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 10/11] virt: arm-cca-guest: TSM_REPORT support for
+ realms
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, Gavin Shan <gshan@redhat.com>,
+ kvm@vger.kernel.org, kvmarm@lists.linux.dev
+Cc: Sami Mujawar <sami.mujawar@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, Dan Williams <dan.j.williams@intel.com>,
+ "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20241004144307.66199-1-steven.price@arm.com>
+ <20241004144307.66199-11-steven.price@arm.com>
+ <5a3432d1-6a79-434c-bc93-6317c8c6435c@redhat.com>
+ <6c306817-fbd7-402c-8425-a4523ed43114@arm.com>
+ <7a83461d-40fd-4e61-8833-5dae2abaf82b@arm.com>
+ <5999b021-0ae3-4d90-ae29-f18f187fd115@redhat.com>
+ <11cff100-3406-4608-9993-c29caf3d086d@arm.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <11cff100-3406-4608-9993-c29caf3d086d@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Oct 2024 14:14:05 +0800
-Ma Qiao <mqaio@linux.alibaba.com> wrote:
+On 14/10/2024 09:56, Suzuki K Poulose wrote:
+> On 12/10/2024 07:06, Gavin Shan wrote:
+>> On 10/12/24 2:22 AM, Suzuki K Poulose wrote:
+>>> On 11/10/2024 15:14, Steven Price wrote:
+>>>> On 08/10/2024 05:12, Gavin Shan wrote:
+>>>>> On 10/5/24 12:43 AM, Steven Price wrote:
+>>>>>> From: Sami Mujawar <sami.mujawar@arm.com>
+>>>>>>
+>>>>>> Introduce an arm-cca-guest driver that registers with
+>>>>>> the configfs-tsm module to provide user interfaces for
+>>>>>> retrieving an attestation token.
+>>>>>>
+>>>>>> When a new report is requested the arm-cca-guest driver
+>>>>>> invokes the appropriate RSI interfaces to query an
+>>>>>> attestation token.
+>>>>>>
+>>>>>> The steps to retrieve an attestation token are as follows:
+>>>>>>     1. Mount the configfs filesystem if not already mounted
+>>>>>>        mount -t configfs none /sys/kernel/config
+>>>>>>     2. Generate an attestation token
+>>>>>>        report=/sys/kernel/config/tsm/report/report0
+>>>>>>        mkdir $report
+>>>>>>        dd if=/dev/urandom bs=64 count=1 > $report/inblob
+>>>>>>        hexdump -C $report/outblob
+>>>>>>        rmdir $report
+>>>>>>
+>>>>>> Signed-off-by: Sami Mujawar <sami.mujawar@arm.com>
+>>>>>> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+>>>>>> Signed-off-by: Steven Price <steven.price@arm.com>
+>>>>>> ---
+>>>>>> v3: Minor improvements to comments and adapt to the renaming of
+>>>>>> GRANULE_SIZE to RSI_GRANULE_SIZE.
+>>>>>> ---
+>>>>>>    drivers/virt/coco/Kconfig                     |   2 +
+>>>>>>    drivers/virt/coco/Makefile                    |   1 +
+>>>>>>    drivers/virt/coco/arm-cca-guest/Kconfig       |  11 +
+>>>>>>    drivers/virt/coco/arm-cca-guest/Makefile      |   2 +
+>>>>>>    .../virt/coco/arm-cca-guest/arm-cca-guest.c   | 211
+>>>>>> ++++++++++++ ++++++
+>>>>>>    5 files changed, 227 insertions(+)
+>>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/Kconfig
+>>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/Makefile
+>>>>>>    create mode 100644 drivers/virt/coco/arm-cca-guest/arm-cca-guest.c
+>>
+>> [...]
+>>
+>>>>>> +/**
+>>>>>> + * arm_cca_report_new - Generate a new attestation token.
+>>>>>> + *
+>>>>>> + * @report: pointer to the TSM report context information.
+>>>>>> + * @data:  pointer to the context specific data for this module.
+>>>>>> + *
+>>>>>> + * Initialise the attestation token generation using the
+>>>>>> challenge data
+>>>>>> + * passed in the TSM descriptor. Allocate memory for the attestation
+>>>>>> token
+>>>>>> + * and schedule calls to retrieve the attestation token on the
+>>>>>> same CPU
+>>>>>> + * on which the attestation token generation was initialised.
+>>>>>> + *
+>>>>>> + * The challenge data must be at least 32 bytes and no more than 64
+>>>>>> bytes. If
+>>>>>> + * less than 64 bytes are provided it will be zero padded to 64
+>>>>>> bytes.
+>>>>>> + *
+>>>>>> + * Return:
+>>>>>> + * * %0        - Attestation token generated successfully.
+>>>>>> + * * %-EINVAL  - A parameter was not valid.
+>>>>>> + * * %-ENOMEM  - Out of memory.
+>>>>>> + * * %-EFAULT  - Failed to get IPA for memory page(s).
+>>>>>> + * * A negative status code as returned by
+>>>>>> smp_call_function_single().
+>>>>>> + */
+>>>>>> +static int arm_cca_report_new(struct tsm_report *report, void *data)
+>>>>>> +{
+>>>>>> +    int ret;
+>>>>>> +    int cpu;
+>>>>>> +    long max_size;
+>>>>>> +    unsigned long token_size;
+>>>>>> +    struct arm_cca_token_info info;
+>>>>>> +    void *buf;
+>>>>>> +    u8 *token __free(kvfree) = NULL;
+>>>>>> +    struct tsm_desc *desc = &report->desc;
+>>>>>> +
+>>>>>> +    if (!report)
+>>>>>> +        return -EINVAL;
+>>>>>> +
+>>>>>
+>>>>> This check seems unnecessary and can be dropped.
+>>>>
+>>>> Ack
+>>>>
+>>>>>> +    if (desc->inblob_len < 32 || desc->inblob_len > 64)
+>>>>>> +        return -EINVAL;
+>>>>>> +
+>>>>>> +    /*
+>>>>>> +     * Get a CPU on which the attestation token generation will be
+>>>>>> +     * scheduled and initialise the attestation token generation.
+>>>>>> +     */
+>>>>>> +    cpu = get_cpu();
+>>>>>> +    max_size = rsi_attestation_token_init(desc->inblob,
+>>>>>> desc->inblob_len);
+>>>>>> +    put_cpu();
+>>>>>> +
+>>>>>
+>>>>> It seems that put_cpu() is called early, meaning the CPU can go
+>>>>> away before
+>>>>> the subsequent call to arm_cca_attestation_continue() ?
+>>>>
+>>>> Indeed, good spot. I'll move it to the end of the function and update
+>>>> the error paths below.
+>>>
+>>> Actually this was on purpose, not to block the CPU hotplug. The
+>>> attestation must be completed on the same CPU.
+>>>
+>>> We can detect the failure from "smp_call" further down and make sure
+>>> we can safely complete the operation or restart it.
+>>>
+>>
+>> Yes, It's fine to call put_cpu() early since we're tolerant to error
+>> introduced
+>> by CPU unplug. It's a bit confused that rsi_attestation_token_init()
+>> is called
+>> on the local CPU while arm_cca_attestation_continue() is called on
+>> same CPU
+>> with help of smp_call_function_single(). Does it make sense to unify
+>> so that
+>> both will be invoked with the help of smp_call_function_single() ?
+>>
+>>      int cpu = smp_processor_id();
+>>
+>>      /*
+>>       * The calling and target CPU can be different after the calling
+>> process
+>>       * is migrated to another different CPU. It's guaranteed the
+>> attestatation
+>>       * always happen on the target CPU with smp_call_function_single().
+>>       */
+>>      ret = smp_call_function_single(cpu,
+>> rsi_attestation_token_init_wrapper,
+>>                                     (void *)&info, true);
+> 
+> Well, we want to allocate sufficient size buffer (size returned from
+> token_init())  outside an atomic context (thus not in smp_call_function()).
+> 
+> May be we could make this "allocation" restriction in a comment to
+> make it clear, why we do it this way.
 
-> From: Qiao Ma <mqaio@linux.alibaba.com>
-> 
-> Uprobe needs to fetch args into a percpu buffer, and then copy to ring
-> buffer to avoid non-atomic context problem.
-> 
-> Sometimes user-space strings, arrays can be very large, but the size of
-> percpu buffer is only page size. And store_trace_args() won't check
-> whether these data exceeds a single page or not, caused out-of-bounds
-> memory access.
-> 
-> It could be reproduced by following steps:
-> 1. build kernel with CONFIG_KASAN enabled
-> 2. save follow program as test.c
-> 
-> ```
-> \#include <stdio.h>
-> \#include <stdlib.h>
-> \#include <string.h>
-> 
-> // If string length large than MAX_STRING_SIZE, the fetch_store_strlen()
-> // will return 0, cause __get_data_size() return shorter size, and
-> // store_trace_args() will not trigger out-of-bounds access.
-> // So make string length less than 4096.
-> \#define STRLEN 4093
-> 
-> void generate_string(char *str, int n)
-> {
->     int i;
->     for (i = 0; i < n; ++i)
->     {
->         char c = i % 26 + 'a';
->         str[i] = c;
->     }
->     str[n-1] = '\0';
-> }
-> 
-> void print_string(char *str)
-> {
->     printf("%s\n", str);
-> }
-> 
-> int main()
-> {
->     char tmp[STRLEN];
-> 
->     generate_string(tmp, STRLEN);
->     print_string(tmp);
-> 
->     return 0;
-> }
-> ```
-> 3. compile program
-> `gcc -o test test.c`
-> 
-> 4. get the offset of `print_string()`
-> ```
-> objdump -t test | grep -w print_string
-> 0000000000401199 g     F .text  000000000000001b              print_string
-> ```
-> 
-> 5. configure uprobe with offset 0x1199
-> ```
-> off=0x1199
-> 
-> cd /sys/kernel/debug/tracing/
-> echo "p /root/test:${off} arg1=+0(%di):ustring arg2=\$comm arg3=+0(%di):ustring"
->  > uprobe_events
-> echo 1 > events/uprobes/enable
-> echo 1 > tracing_on
-> ```
-> 
-> 6. run `test`, and kasan will report error.
-> ==================================================================
-> BUG: KASAN: use-after-free in strncpy_from_user+0x1d6/0x1f0
-> Write of size 8 at addr ffff88812311c004 by task test/499CPU: 0 UID: 0 PID: 499 Comm: test Not tainted 6.12.0-rc3+ #18
-> Hardware name: Red Hat KVM, BIOS 1.16.0-4.al8 04/01/2014
-> Call Trace:
->  <TASK>
->  dump_stack_lvl+0x55/0x70
->  print_address_description.constprop.0+0x27/0x310
->  kasan_report+0x10f/0x120
->  ? strncpy_from_user+0x1d6/0x1f0
->  strncpy_from_user+0x1d6/0x1f0
->  ? rmqueue.constprop.0+0x70d/0x2ad0
->  process_fetch_insn+0xb26/0x1470
->  ? __pfx_process_fetch_insn+0x10/0x10
->  ? _raw_spin_lock+0x85/0xe0
->  ? __pfx__raw_spin_lock+0x10/0x10
->  ? __pte_offset_map+0x1f/0x2d0
->  ? unwind_next_frame+0xc5f/0x1f80
->  ? arch_stack_walk+0x68/0xf0
->  ? is_bpf_text_address+0x23/0x30
->  ? kernel_text_address.part.0+0xbb/0xd0
->  ? __kernel_text_address+0x66/0xb0
->  ? unwind_get_return_address+0x5e/0xa0
->  ? __pfx_stack_trace_consume_entry+0x10/0x10
->  ? arch_stack_walk+0xa2/0xf0
->  ? _raw_spin_lock_irqsave+0x8b/0xf0
->  ? __pfx__raw_spin_lock_irqsave+0x10/0x10
->  ? depot_alloc_stack+0x4c/0x1f0
->  ? _raw_spin_unlock_irqrestore+0xe/0x30
->  ? stack_depot_save_flags+0x35d/0x4f0
->  ? kasan_save_stack+0x34/0x50
->  ? kasan_save_stack+0x24/0x50
->  ? mutex_lock+0x91/0xe0
->  ? __pfx_mutex_lock+0x10/0x10
->  prepare_uprobe_buffer.part.0+0x2cd/0x500
->  uprobe_dispatcher+0x2c3/0x6a0
->  ? __pfx_uprobe_dispatcher+0x10/0x10
->  ? __kasan_slab_alloc+0x4d/0x90
->  handler_chain+0xdd/0x3e0
->  handle_swbp+0x26e/0x3d0
->  ? __pfx_handle_swbp+0x10/0x10
->  ? uprobe_pre_sstep_notifier+0x151/0x1b0
->  irqentry_exit_to_user_mode+0xe2/0x1b0
->  asm_exc_int3+0x39/0x40
-> RIP: 0033:0x401199
-> Code: 01 c2 0f b6 45 fb 88 02 83 45 fc 01 8b 45 fc 3b 45 e4 7c b7 8b 45 e4 48 98 48 8d 50 ff 48 8b 45 e8 48 01 d0 ce
-> RSP: 002b:00007ffdf00576a8 EFLAGS: 00000206
-> RAX: 00007ffdf00576b0 RBX: 0000000000000000 RCX: 0000000000000ff2
-> RDX: 0000000000000ffc RSI: 0000000000000ffd RDI: 00007ffdf00576b0
-> RBP: 00007ffdf00586b0 R08: 00007feb2f9c0d20 R09: 00007feb2f9c0d20
-> R10: 0000000000000001 R11: 0000000000000202 R12: 0000000000401040
-> R13: 00007ffdf0058780 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> 
-> This commit enforces the buffer's maxlen less than a page-size to avoid
-> store_trace_args() out-of-memory access.
-> 
-> Fixes: dcad1a204f72 ("tracing/uprobes: Fetch args before reserving a ring buffer")
-> Signed-off-by: Qiao Ma <mqaio@linux.alibaba.com>
-> ---
->  kernel/trace/trace_probe_tmpl.h | 2 +-
->  kernel/trace/trace_uprobe.c     | 6 ++++++
->  2 files changed, 7 insertions(+), 1 deletion(-)
-> 
-> diff --git a/kernel/trace/trace_probe_tmpl.h b/kernel/trace/trace_probe_tmpl.h
-> index 2caf0d2afb322..0338d9468bb4d 100644
-> --- a/kernel/trace/trace_probe_tmpl.h
-> +++ b/kernel/trace/trace_probe_tmpl.h
-> @@ -269,7 +269,7 @@ store_trace_args(void *data, struct trace_probe *tp, void *rec, void *edata,
->  		ret = process_fetch_insn(arg->code, rec, edata, dl, base);
->  		if (arg->dynamic && likely(ret > 0)) {
->  			dyndata += ret;
-> -			maxlen -= ret;
-> +			maxlen = max(maxlen - ret, 0);
+So if I've followed this correctly the get_cpu() route doesn't work
+because of the need to allocate outblob. So using
+smp_call_function_single() for all calls seems to be the best approach,
+along with a comment explaining what's going on. So how about:
 
-Hmm, do you see this part does something wrong?
-If this exceed maxlen here, that means a buffer overflow. Please make it WARN_ON_ONCE().
+	/*
+	 * The attestation token 'init' and 'continue' calls must be
+	 * performed on the same CPU. smp_call_function_single() is used
+	 * instead of simply calling get_cpu() because of the need to
+	 * allocate outblob based on the returned value from the 'init'
+	 * call and that cannot be done in an atomic context.
+	 */
+	cpu = smp_processor_id();
 
->  		}
->  	}
->  }
-> diff --git a/kernel/trace/trace_uprobe.c b/kernel/trace/trace_uprobe.c
-> index c40531d2cbadd..e972855a5a6bf 100644
-> --- a/kernel/trace/trace_uprobe.c
-> +++ b/kernel/trace/trace_uprobe.c
-> @@ -875,6 +875,7 @@ struct uprobe_cpu_buffer {
->  };
->  static struct uprobe_cpu_buffer __percpu *uprobe_cpu_buffer;
->  static int uprobe_buffer_refcnt;
-> +#define MAX_UCB_BUFFER_SIZE PAGE_SIZE
->  
->  static int uprobe_buffer_init(void)
->  {
-> @@ -979,6 +980,11 @@ static struct uprobe_cpu_buffer *prepare_uprobe_buffer(struct trace_uprobe *tu,
->  	ucb = uprobe_buffer_get();
->  	ucb->dsize = tu->tp.size + dsize;
->  
-> +	if (WARN_ON_ONCE(ucb->dsize > MAX_UCB_BUFFER_SIZE)) {
-> +		ucb->dsize = MAX_UCB_BUFFER_SIZE;
-> +		dsize = MAX_UCB_BUFFER_SIZE - tu->tp.size;
-> +	}
-> +
+	info.challenge = desc->inblob;
+	info.challenge_size = desc->inblob_len;
 
-This part looks good to me.
+	ret = smp_call_function_single(cpu, arm_cca_attestation_init,
+				       &info, true);
+	if (ret)
+		return ret;
+	max_size = info.result;
 
-Thank you!
+(with appropriate updates to the 'info' struct and a new
+arm_cca_attestation_init() wrapper for rsi_attestation_token_init()).
 
->  	store_trace_args(ucb->buf, &tu->tp, regs, NULL, esize, dsize);
->  
->  	*ucbp = ucb;
-> -- 
-> 2.39.3
-> 
+Steve
 
-
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
