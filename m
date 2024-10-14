@@ -1,187 +1,128 @@
-Return-Path: <linux-kernel+bounces-364817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5483F99D9CE
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:33:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C5899D9D2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:34:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C040D1F22DD0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:33:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4408AB21DC6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:34:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 869261CF2AF;
-	Mon, 14 Oct 2024 22:32:54 +0000 (UTC)
-Received: from eu-smtp-delivery-151.mimecast.com (eu-smtp-delivery-151.mimecast.com [185.58.85.151])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B6101D3184;
+	Mon, 14 Oct 2024 22:34:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="Iqkn3Wiv"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38A7C1CC179
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.58.85.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113051D014A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:34:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728945174; cv=none; b=BJirKk+5CrJSazV44PhId5xQ9X77LmzTyiZNklOhG7sxirsBRXgM533R4p3Wtf2Iearj2cLuV3FYM0p2qPuDOGIZeXlHedaRXdpD/GDCzYBOGg/EeCmmznLPG0knitAZVQPkkpHevsSzhhPu9+4+Rj8GEfbz7koi/2JgTPGX6fY=
+	t=1728945284; cv=none; b=Zwr209nOue+/j6EccPU9ppdRONytP9X3FWz2/UZntJXLsqzvm41AJ3mYjNapfKmx2ExohZAAapNwWunahTCaSdfDP2Elo5fs4xjaU9xlEG07j3AnpfvVM4/R401y0i0ybILnn9ynDiFfMwhiVgtzg1stFhJzN1AWuuUYD7gEBS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728945174; c=relaxed/simple;
-	bh=lOgJFq0LLEJA0XwyBLiDDV1tjkLg9QoAS9sBzOHo3SU=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 MIME-Version:Content-Type; b=llusKAwsSmRiPqYz+k1O5aXJTp/DYjfFGSYrP1oZJYzbhtsnP+8LuX7k9oJmH60KT/O1+P1sfx/GrgLbFtZjoGMX4kURYRke10ph+OxtWZfWWKu7YtxPYDxkAfcQ2x00d2OI9VMCpJ3AeGG6tUsUxlEPAaQWrrTDWwwjPOKtoko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM; spf=pass smtp.mailfrom=aculab.com; arc=none smtp.client-ip=185.58.85.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ACULAB.COM
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aculab.com
-Received: from AcuMS.aculab.com (156.67.243.121 [156.67.243.121]) by
- relay.mimecast.com with ESMTP with both STARTTLS and AUTH (version=TLSv1.2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_CBC_SHA384) id
- uk-mta-248-g4t_2AaNPGeNePHQ-LTnjg-1; Mon, 14 Oct 2024 23:32:49 +0100
-X-MC-Unique: g4t_2AaNPGeNePHQ-LTnjg-1
-Received: from AcuMS.Aculab.com (10.202.163.6) by AcuMS.aculab.com
- (10.202.163.6) with Microsoft SMTP Server (TLS) id 15.0.1497.48; Mon, 14 Oct
- 2024 23:32:48 +0100
-Received: from AcuMS.Aculab.com ([::1]) by AcuMS.aculab.com ([::1]) with mapi
- id 15.00.1497.048; Mon, 14 Oct 2024 23:32:48 +0100
-From: David Laight <David.Laight@ACULAB.COM>
-To: 'Eric Biggers' <ebiggers@kernel.org>
-CC: "linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"x86@kernel.org" <x86@kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, Ard Biesheuvel <ardb@kernel.org>, "Josh
- Poimboeuf" <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>
-Subject: RE: [PATCH 3/3] crypto: x86/crc32c - eliminate jump table and
- excessive unrolling
-Thread-Topic: [PATCH 3/3] crypto: x86/crc32c - eliminate jump table and
- excessive unrolling
-Thread-Index: AQHbHfE2Of1hyBaCckeJTHnfIiWE7LKGaWewgAAg9QCAADe7IA==
-Date: Mon, 14 Oct 2024 22:32:48 +0000
-Message-ID: <00c9c7c84e9043689942fc1f36e28591@AcuMS.aculab.com>
-References: <20241014042447.50197-1-ebiggers@kernel.org>
- <20241014042447.50197-4-ebiggers@kernel.org>
- <a6c0c04a0486404ca4db3fd57a809d5b@AcuMS.aculab.com>
- <20241014190142.GA1137@sol.localdomain>
-In-Reply-To: <20241014190142.GA1137@sol.localdomain>
-Accept-Language: en-GB, en-US
-X-MS-Has-Attach: 
-X-MS-TNEF-Correlator: 
-x-ms-exchange-transport-fromentityheader: Hosted
+	s=arc-20240116; t=1728945284; c=relaxed/simple;
+	bh=0svh9Uot8vREZKTrMbrDMI2/+fvvVG4XSf//0Rw2jkQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q8DPLei4iMNrZsTLoQ1Kp3c/OfDY5NmStqajyv4km9tXY/yk/xyHgp/PJd2TPjbObc9T5ocr5KAnWx+xOOHOn+Ui6865hZIaxccIh8SH/aPlb9nKLxG1z+wmQWI6KP7FlhN9JHEMCnk47sZuKqvx8F8RjZ89suFCz8pgqgl2oUE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=Iqkn3Wiv; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <ebd6486a-f4b8-40c7-9221-86d1a97c6adb@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1728945279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tIBWRVchPRccvlCmxWKjuSOmpx3Nqox2GMVKFrMi5s4=;
+	b=Iqkn3WivAiA3hZpoeofAP+PFOofRDWyMh31/E/XYt4cUZdNcmpcqH9yZcsVVg6VEYbZXqj
+	F2JBfN40R7k7BcHJp3pvj2GlsGa7tqPL4CrdgHFnD6iSpSDGDf/1f7h4L14hPm3mtBQjcW
+	1lbIEefpqXcRwgEw/xdJ5QcKvV6ZHGw=
+Date: Mon, 14 Oct 2024 15:34:33 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Mimecast-Spam-Score: 0
-X-Mimecast-Originator: aculab.com
-Content-Language: en-US
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] tools/resolve_btfids: Fix 'variable' may be used
+ uninitialized warnings
+Content-Language: en-GB
+To: Eder Zulian <ezulian@redhat.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+ haoluo@google.com, jolsa@kernel.org, acme@redhat.com, vmalik@redhat.com,
+ williams@redhat.com
+References: <20241011200005.1422103-1-ezulian@redhat.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20241011200005.1422103-1-ezulian@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Migadu-Flow: FLOW_OUT
 
-...
-> > Do you need to unroll it at all?
 
-> It looks like on most CPUs, no.  On Haswell, Emerald Rapids, Zen 2 it doe=
-s not
-> make a significant difference.  However, it helps on Zen 5.
+On 10/11/24 1:00 PM, Eder Zulian wrote:
+> - tools/bpf/resolve_btfids/main.c: Initialize 'set' and 'set8' pointers
+>    to NULL in to fix compiler warnings.
+>
+> - tools/lib/bpf/btf_dump.c: Initialize 'new_off' and 'pad_bits' to 0 and
+>    'pad_type' to  NULL to prevent compiler warnings.
+>
+> - tools/lib/subcmd/parse-options.c: Initiazlide pointer 'o' to NULL
+>    avoiding a compiler warning.
+>
+> Tested on x86_64 with clang version 17.0.6 and gcc (GCC) 13.3.1.
+>
+> $ cd tools/bpf/resolve_btfids
+> $ for c in gcc clang; do \
+> for o in fast g s z $(seq 0 3); do \
+> make clean && \
+> make HOST_CC=${c} "HOSTCFLAGS=-O${o} -Wall" 2>&1 | tee ${c}-O${o}.out; \
+> done; done && grep 'warning:\|error:' *.out
+>
+> [...]
+> clang-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+>
+> The above warnings and/or errors are not observed after applying this
+> patch.
+>
+> Signed-off-by: Eder Zulian <ezulian@redhat.com>
 
-I wonder if one of the loop instructions is using the ALU
-unit you really want to be processing a crc32?
-If the cpu has fused arithmetic+jump u-ops then trying to get the
-decoder to use one of those may help.
+Currently compilation is okay although it uses -O0.
 
-Is Zen 5 actually slower than the other systems?
-I've managed to get clock cycle counts using the performance counters
-that more of less match the predicted values.
-You can't use 'rdtsc' because the cpu frequence isn't stable.
-
-...
-> > If you are really lucky you'll get two memory reads/clock.
-> > So you won't ever to do than two crc32/clock.
-> > Looking at Agner's instruction latency tables I don't think
-> > any cpu can do more that one per clock, or pipeline them.
-> > I think that means you don't even need two (never mind 3)
-> > buffers.
->=20
-> On most Intel and AMD CPUs (I tested Haswell for old Intel, Emerald Rapid=
-s for
-> new Intel, and Zen 2 for slightly-old AMD), crc32q has 3 cycle latency an=
-d 1 per
-> cycle throughput.  So you do need at least 3 streams.
-
-Bah, I missed the latency column :-)
-
-> AMD Zen 5 has much higher crc32q throughput and seems to want up to 7 str=
-eams.
-> This is not implemented yet.
-
-The copy of the tables I have is old - doesn't contain Zen-5.
-Does that mean that 2 (or more) of its alu 'units' can do crc32
-so you can do more than 1/clock (along with the memory reads).
-
-One thought is how much of it is actually worth while!
-If the data isn't already in the L1 data cache then the cache
-loads almost certainly dominate - especially if you have to
-do out to 'real memory'.
-You can benchmark the loops by repeatedly accessing the same
-data - but that isn't what will actually happen.
-
-> > Most modern x86 can do 4 or 5 (or even more) ALU operations
-> > per clock - depending on the combination of instructions.
-> >
-> > Replace the loop termination with a comparison of 'bufp'
-> > against a pre-calculated limit and you get two instructions
-> > (that might get merged into one u-op) for the loop overhead.
-> > They'll run in parallel with the crc32q instructions.
->=20
-> That's actually still three instructions: add, cmp, and jne.
-
-I was really thinking of the loop I quoted later.
-The one that uses negative offsets from the end of the buffer.
-That has an 'add' and a 'jnz' - which might even fuse into a
-single u-op.
-Maybe even constrained to p6 - so won't go near p1.
-(I don't have a recent AMD cpu)
-
-It may not actually matter.
-The add/subtract/cmp are only dependant on themselves.
-Similarly the jne is only dependant on the result of the sub/cmp.
-In principle they can all run in the same clock (for different
-loop cycles) since the rest of the loop only needs one of the
-ALU blocks (on Intel only P1 can do crc).
-But I failed to get a 1 clock loop (using ADC - which doesn't
-have a latency issue).
-It might be impossible because a predicted-taken conditional jmp
-has a latency of 2.
-
-> I tried it on both Intel and AMD, and it did not help.
->=20
-> > I've never managed to get a 1-clock loop, but two is easy.
-> > You might find that just:
-> > 10:
-> > =09crc32q=09(bufp), crc
-> > =09crc32q=098(bufp), crc
-> > =09add=09=09$16, bufp
-> > =09cmp=09=09bufp, buf_lim
-> > =09jne=09=0910b
-> > will run at 8 bytes/clock on modern intel cpu.
->=20
-> No, the latency of crc32q is still three cycles.  You need three streams.
-
-If you need three streams to get one crc32/clock then, in theory,
-you can get two more simple ALU ops, at least one memory read and
-a jump in every clock - even on Sandy bridge.
-So they are unlikely to dominate the loop whatever you do.
-
-If the loop is too long you can get a stall (probably) because a register
-has to be read back from the real register file and not just forwarded
-from a previous use/alu result.
-I've gained a clock back by adding an extra instruction in the middle
-of a loop!
-But the not-unrolled (multi-stream) loop isn't long enough for that
-to be an issue.
-
-Enough rambling.
-
-=09David
-
--
-Registered Address Lakeside, Bramley Road, Mount Farm, Milton Keynes, MK1 1=
-PT, UK
-Registration No: 1397386 (Wales)
+One choice is to move from -O0 to -O2 and fix corresponding -Wmaybe-uninitialized issues.
+Otherwise, since there is no bug, not sure whether we should make changes or not.
+Maintainers can decide the next step.
 
 
