@@ -1,81 +1,111 @@
-Return-Path: <linux-kernel+bounces-364845-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364846-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65A699DA22
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC11F99DA2A
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:37:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13E661C21169
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 34ED71F22DC1
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E03331D9A51;
-	Mon, 14 Oct 2024 23:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 981FC1D9A67;
+	Mon, 14 Oct 2024 23:36:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ZEVoWlIU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="q5Qbr6Ma"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 319F922318;
-	Mon, 14 Oct 2024 23:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A110D1D9A46
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 23:36:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728948755; cv=none; b=uDF2N0wfnWnQB+PbPjjQEU4levrls3qkI1i77s5aJpzj8DEfTXpt+S4k9Pr+ek9CLBVxU2uDwBSxOFYs8EVw5MKNOHwEWnjZgnf0fnUMXYwN4Q+8i5AZOQ9WZNG9WVlt54I3T2Hmv516StfE6W6SFLqsqatM01IbQtiuVCfP2So=
+	t=1728949016; cv=none; b=iKIRMu+3D+VT2jXK01GtN75rtsNwOFZIkhVJEPQgsFEa9bDDngyJ7ZDszD3ArE89I7ly76i5QcsQQ9s7/r1nOa3YkhnVTe0eQC5bGzCRuCbl2p8p1TKIPRtMzqJkow478lP+2k6ND6DxmTU9TTQFmEknbFY9Ii2tIXHnr4TNRnU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728948755; c=relaxed/simple;
-	bh=XQtg5cP9HyV6IrbyncC2iesICzlVjTnl+DHBfU7OiPk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=JSmuROIjr7EZgMSyC4Qn2O2+JycN4IQEvG/9AfOAz3vGOoWX4NCakcFs9GLNBYSdgbk2SHeJps0Go/OXqP/xM4URoq53ej/0s9d5a+iobGkYGkkLyKI4RyVy2fLVKjF/aAGsA+tqDhOrtvetism8V+m0Wz+0CKlYHUL4zmCHAzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ZEVoWlIU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8207AC4CEC3;
-	Mon, 14 Oct 2024 23:32:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1728948753;
-	bh=XQtg5cP9HyV6IrbyncC2iesICzlVjTnl+DHBfU7OiPk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ZEVoWlIUzBiHRwiJR0vPiV3sOzA1+w7KorKdKv6p5yt8GoUOvwIAOf1mWchML/eEX
-	 sFx8ngFC5i4W1MzuadMKYyQCSadRyKidWKeIiyV4jKIF3jufwLxSV0/A6APJBuHc1o
-	 /Ui2PQkp7mTYbmOEHmB/Uf2iJEILLXV+5+9CuEFo=
-Date: Mon, 14 Oct 2024 16:32:31 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de,
- mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com,
- tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com,
- ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com,
- hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net,
- willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com,
- souravpanda@google.com, keescook@chromium.org, dennis@kernel.org,
- jhubbard@nvidia.com, yuzhao@google.com, vvvvvv@google.com,
- rostedt@goodmis.org, iamjoonsoo.kim@lge.com, rientjes@google.com,
- minchan@google.com, kaleshsingh@google.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-mm@kvack.org, linux-modules@vger.kernel.org, kernel-team@android.com
-Subject: Re: [PATCH v3 0/5] page allocation tag compression
-Message-Id: <20241014163231.9ef058c82de8a6073b3edfdc@linux-foundation.org>
-In-Reply-To: <20241014203646.1952505-1-surenb@google.com>
-References: <20241014203646.1952505-1-surenb@google.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728949016; c=relaxed/simple;
+	bh=9lQ11KBt43uQ5J9JR5JWrhkSeYstXcy9pl4223UHEE0=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=UAz88izB//PwDRl0kysOCeMWm/lXLfAsI3ENIMXPW75w3WSiZfv68UyYvg9RwwNhMq1kXVUF12RdzguGschf0xLLiqQFm2rTAQl+DIlctbo4Laa+KuZKaRZUsuiwShbfKV+HmnaJrX6QKMQjki9coaZFlZFw4aF9Mubu3woN39U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=q5Qbr6Ma; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e3204db795so70017217b3.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:36:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728949013; x=1729553813; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zm6GRvpYVPkv4rqmcHo9pBIrnZWQHVu3C3S3LK/OgI4=;
+        b=q5Qbr6MaqI7zz/3A99gTIAbvhpULKJUA3yL3NQotwIJ286dQE9tiW2xwSkioFwixiG
+         16tXjs+9iN/bAC8aMP2ms4c/2UmYVhUSUSCjFsQzuzrWrIRgb7W/dI74V/fEwS4tq8Ix
+         wVhBELhd2r3XZRkahlrfO3rYWd5nrGIrG1rrudcNoaMBbkLbMvw7DHwtr2S+E/vK27hu
+         UB7UxMfYszMXhIJ3W3gQDv7Yee/PG1PH47q9bTD3yjpWEYIaeHCbVN2w17XPhneJtqvn
+         ORBrIcZChjtwhSHR+TCrrxNV9Df87tfejS8gQmMbZXR7o0cMGX04NhjXTJxFccvw6E0n
+         n59w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728949013; x=1729553813;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=zm6GRvpYVPkv4rqmcHo9pBIrnZWQHVu3C3S3LK/OgI4=;
+        b=KrC9yOrsHTiMK5JZZMz+OAkumOfQyl1a81AukdWyBzTgzBXReLSAtoTS8+7mYiimWS
+         C/sVETA9KC/b6D/jVVCLX43O0fAG0jnVxDEivJ9Z7ZTtQXVBjN1lrN6h1ad80WO/N+vV
+         +mES+dOhlVUevM6CQSvRNuQQeZaC0DOhh/CvbYs35o/QcJm2BqFGBLZW9oYMAXld6s8+
+         AdyOJnYrbil1+pjSzZipZVImnln5pHmrk8r7SXRYnelZviio5pZo0d3/rM5wTIs3Hhry
+         lPIuWQn4+pMbaBV5vH9pO8Q3T4V3fnQw2UWc8+b8QQ+28/ZFfCkAxk1FJUnAuKktuGox
+         2AEA==
+X-Forwarded-Encrypted: i=1; AJvYcCVL0mimjAn1rvw6nW3GSJQ8zVxwZ8B+/4P0gmsVkKpzcOyAeZbGZ88OuDoP+66UEiPJVytulgykwOTxaoo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymjbNVzZVSDwdoS5MG4wtz+flySN/txOKN+19b0GSaYUbsIPfo
+	rzqWKjLEg/GBOkizxKe6Grsp1HGhz2fPe99HmQ2QbtY1WdErUNwFaHoxdpnxeLXNo2vu9vumEtt
+	how==
+X-Google-Smtp-Source: AGHT+IGrlmmIMbrq1eDFzk8slt5Bv/bjfFyuOUS+xM//3TUnJKMB1jMjboz4gv8IycU3lIMwe83TEFFGqyA=
+X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
+ (user=seanjc job=sendgmr) by 2002:a25:2e02:0:b0:e22:5fcb:5e22 with SMTP id
+ 3f1490d57ef6-e2919d75c76mr8304276.3.1728949013311; Mon, 14 Oct 2024 16:36:53
+ -0700 (PDT)
+Date: Mon, 14 Oct 2024 16:36:51 -0700
+In-Reply-To: <20241004140810.34231-1-nikwip@amazon.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+References: <20241004140810.34231-1-nikwip@amazon.de>
+Message-ID: <Zw2rE7-ZTCFpNE5G@google.com>
+Subject: Re: [PATCH 0/7] KVM: x86: Introduce new ioctl KVM_HYPERV_SET_TLB_FLUSH_INHIBIT
+From: Sean Christopherson <seanjc@google.com>
+To: Nikolas Wipper <nikwip@amazon.de>
+Cc: Vitaly Kuznetsov <vkuznets@redhat.com>, Nicolas Saenz Julienne <nsaenz@amazon.com>, 
+	Alexander Graf <graf@amazon.de>, James Gowans <jgowans@amazon.com>, nh-open-source@amazon.com, 
+	Paolo Bonzini <pbonzini@redhat.com>, Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>, 
+	Nikolas Wipper <nik.wipper@gmx.de>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	x86@kernel.org, linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-On Mon, 14 Oct 2024 13:36:41 -0700 Suren Baghdasaryan <surenb@google.com> wrote:
-
-> Patch #2 copies module tags into virtually contiguous memory which
-> serves two purposes:
-> - Lets us deal with the situation when module is unloaded while there
-> are still live allocations from that module. Since we are using a copy
-> version of the tags we can safely unload the module. Space and gaps in
-> this contiguous memory are managed using a maple tree.
-
-Does this make "lib: alloc_tag_module_unload must wait for pending
-kfree_rcu calls" unneeded?  If so, that patch was cc:stable
-(justifyably), so what to do about that?
+On Fri, Oct 04, 2024, Nikolas Wipper wrote:
+> This series introduces a new ioctl KVM_HYPERV_SET_TLB_FLUSH_INHIBIT. It
+> allows hypervisors to inhibit remote TLB flushing of a vCPU coming from
+> Hyper-V hyper-calls (namely HvFlushVirtualAddressSpace(Ex) and
+> HvFlushirtualAddressList(Ex)). It is required to implement the
+> HvTranslateVirtualAddress hyper-call as part of the ongoing effort to
+> emulate VSM within KVM and QEMU. The hyper-call requires several new KVM
+> APIs, one of which is KVM_HYPERV_SET_TLB_FLUSH_INHIBIT.
+> 
+> Once the inhibit flag is set, any processor attempting to flush the TLB on
+> the marked vCPU, with a HyperV hyper-call, will be suspended until the
+> flag is cleared again. During the suspension the vCPU will not run at all,
+> neither receiving events nor running other code. It will wake up from
+> suspension once the vCPU it is waiting on clears the inhibit flag. This
+> behaviour is specified in Microsoft's "Hypervisor Top Level Functional
+> Specification" (TLFS).
+> 
+> The vCPU will block execution during the suspension, making it transparent
+> to the hypervisor.
+ 
+s/hypervisor/VMM.  In the world of KVM, the typical terminology is that KVM itself
+is the hypervisor, and the userspace side is the VMM.  It's not perfect, but it's
+good enough and fairly ubiquitous at this point, and thus many readers will be
+quite confused as to how a vCPU blocking is transparent to KVM :-)
 
