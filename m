@@ -1,116 +1,161 @@
-Return-Path: <linux-kernel+bounces-363737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363741-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B169299C661
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:50:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A43099C66F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:51:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E4F128456B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:50:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD6B428573C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:51:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072B7158531;
-	Mon, 14 Oct 2024 09:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE9CB158DD1;
+	Mon, 14 Oct 2024 09:50:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="V7CXkB+e"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="V3CJq7RF"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.153.233])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33800156C5E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:49:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD222158DC4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.153.233
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899392; cv=none; b=Cpr9gMyzZ9JOZgkoHD4T1FvWADyDvPR80w1YsT85QcAFoDR+OnLJd63Kv9GMK9rAOY4mcrhHURz+F41rX/sjvXEs/3sCX5PB3YU2j/JVsbfmz2b0KWwKyFQqHybP1zoC3QqAxtEp+3Je7YKCnZmSMtk1Ruk6/h8gVXxd4UTZOKA=
+	t=1728899430; cv=none; b=h0W5KX+JkC7TrcVQfykWpC+J0qksJjuKgQhBVZUKHaK6F/sR0b56VPCf5x1GUhNgsQM+Dql1peFEYbbttRcMPc3IRF35L7wZ20rC/4f68V8gmFfqofnhez+qN2asqqAwdbqN0rm/L+8dTsqtVyhpX+D7g0eIeibXuklU/tU6spI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899392; c=relaxed/simple;
-	bh=itMazNT5IeHaWiGMC76BKTAnxUDQZPiJp1MX6wqPgUQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=vBxfaFabzBscq67piW4fajhMKxaD4QzpIOcGOV1wWEXBNzFAdXFP5vtgr5Ar4SK9LQviVP8fOvojui4PjLrqxCihagLfgYDpS2LgCxs0i5l56IfVElxjI+st0KPjL0Ysn4iVTU88l0Z6xvUYP4+9Xh14S33Dzb85m7Us4VEJ6Sw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=V7CXkB+e; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 97457E0003;
-	Mon, 14 Oct 2024 09:49:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728899383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=9aFx25tuhpkab3VLe5pFlLF4S8kUqB2ME9LU6u6s7R8=;
-	b=V7CXkB+eoiNjHEDAlFMYvE1Wf7ibLqhDoUAlDMSZsgjtW/NtkHTUA6C86J3INKIL+h24ue
-	qwow9vaMF3+v8cyneRgveqE5v5GaiqyYfQP+PzwK/VPR0cSNB92zhORabBtYcXqXKQPsHz
-	k7k0Qt+9hooTinTU2U4mZkIT1qeoXivhWt3uj5PUAK9FvMNwJDuilksTtZP3aI2vp++z4I
-	QkdLLNCg932dVc3EGOroHYb7M/0pWvDF/eEaCT4zW2GwLvh002SpUZ6X9Ux+4MNI6kUH0t
-	43wdgGYNs4sZ7jOBcME7oMN8dgSU+Ub7XpvULJI5GyX1+PdYLr1U+gVIzPg4sQ==
-From: Gregory CLEMENT <gregory.clement@bootlin.com>
-To: Andrew Davis <afd@ti.com>, Andre Przywara <andre.przywara@arm.com>,
- Russell King <linux@armlinux.org.uk>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team
- <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Andrew Lunn
- <andrew@lunn.ch>, Sebastian
- Hesselbarth <sebastian.hesselbarth@gmail.com>, Daniel Mack
- <daniel@zonque.org>, Haojian
- Zhuang <haojian.zhuang@gmail.com>, Robert Jarzmik <robert.jarzmik@free.fr>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- imx@lists.linux.dev, Andrew Davis <afd@ti.com>
-Subject: Re: [PATCH v3 0/6] Switch more ARM plats to sys-off handler API
-In-Reply-To: <20241011201645.797394-1-afd@ti.com>
-References: <20241011201645.797394-1-afd@ti.com>
-Date: Mon, 14 Oct 2024 11:49:41 +0200
-Message-ID: <87cyk3c8ui.fsf@BLaptop.bootlin.com>
+	s=arc-20240116; t=1728899430; c=relaxed/simple;
+	bh=NkBDkiht3me8b2RWwXoEEEEvGTjmDHBukmLCCQGzqkI=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tArEDWaFYBQZNA1s9/Bh8oduXBcXB7US42qZCZ5ZmKI4cll2IDT594w0kTgBz2A8RuaDSqWrrIOBkUAnovTu/9uyFuNLdSFCXB7JkFdkPcWE8ceDA+UqfTr3MauwiAZ3mgP8aLoI1R5Fdla8t/OFW7RONrnpXS2YwGRbEUMpSKA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=V3CJq7RF; arc=none smtp.client-ip=68.232.153.233
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1728899428; x=1760435428;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=NkBDkiht3me8b2RWwXoEEEEvGTjmDHBukmLCCQGzqkI=;
+  b=V3CJq7RFxxkvYl2yd5fW/Nse+gUiOcinvYdkyEXIdWWfUk4CybiqIJAZ
+   MpCZSuRMXf9TE9gLCNSqLnEez2HAepGu846uLzDX5ErGvf+KNVuWJx4eS
+   7PUkiaq4lb7ksgbZMIVW4YhTxVHYxNZbD/5bqTzK1L8cbdVaeukr1iOFl
+   aM02BQemGp+SWZy+e3QMrq5iw/BOth6JYCMW1LcKL1FDkMJdowlSd01sz
+   /TTlL/Vj29o/AOqLwJUuZ8uXI5lgOXzXgMI13qGrCPfoGrEx0ZmdAYjNP
+   H/OlFmYY+TiJFM9t6Cwge5ckD/KTJoMTkj1Z3hC6LBoSsILW4exfRJVeO
+   w==;
+X-CSE-ConnectionGUID: 6GkUoRpBTjazw9ZDotKAkg==
+X-CSE-MsgGUID: TPW6ZCp2TmCpx0urBWje2w==
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="36319939"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa1.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 14 Oct 2024 02:50:25 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex03.mchp-main.com (10.10.85.151) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Mon, 14 Oct 2024 02:50:02 -0700
+Received: from che-lt-i67131.microchip.com (10.10.85.11) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Mon, 14 Oct 2024 02:49:56 -0700
+From: Manikandan Muralidharan <manikandan.m@microchip.com>
+To: <sam@ravnborg.org>, <bbrezillon@kernel.org>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<nicolas.ferre@microchip.com>, <alexandre.belloni@bootlin.com>,
+	<claudiu.beznea@tuxon.dev>, <Hari.PrasathGE@microchip.com>,
+	<durai.manickamkr@microchip.com>, <manikandan.m@microchip.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+Subject: [PATCH] drm: atmel-hlcdc: fix atmel_xlcdc_plane_setup_scaler()
+Date: Mon, 14 Oct 2024 15:19:42 +0530
+Message-ID: <20241014094942.325211-1-manikandan.m@microchip.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 Content-Type: text/plain
-X-GND-Sasl: gregory.clement@bootlin.com
 
-Hello Andrew,
+From: Cyrille Pitchen <cyrille.pitchen@microchip.com>
 
-> Hello all,
->
-> Continuing the quest to remove the legacy pm_power_off() global
-> function handler. Remove uses from arch/arm/ using the helper
-> register_platform_power_off().
+On SoCs, like the SAM9X75, which embed the XLCDC ip, the registers that
+configure the unified scaling engine were not filled with proper values.
 
-I am in CC of this series, however, I am not the maintainer of any of
-these platforms, and I don't remember making any changes related to your
-series recently. Could you tell me what you expect from me?
+Indeed, for YCbCr formats, the VXSCFACT bitfield of the HEOCFG25
+register and the HXSCFACT bitfield of the HEOCFG27 register were
+incorrect.
 
-Thanks,
+For 4:2:0 formats, both vertical and horizontal factors for
+chroma chanels should be divided by 2 from the factors for the luma
+channel. Hence:
 
-Gregory
+HEOCFG24.VXSYFACT = VFACTOR
+HEOCFG25.VSXCFACT = VFACTOR / 2
+HEOCFG26.HXSYFACT = HFACTOR
+HEOCFG27.HXSCFACT = HFACTOR / 2
 
->
-> Thanks,
-> Andrew
->
-> Changes for v3:
->  - Rebase on v6.12-rc1
->
-> Changes for v2:
->  - Collect Reviewed/Acked-bys
->  - Rebase on v6.11-rc1
->
-> Andrew Davis (6):
->   ARM: highbank: Switch to new sys-off handler API
->   ARM: imx: Switch to new sys-off handler API
->   ARM: pxa: Switch to new sys-off handler API
->   ARM: sa1100: Switch to new sys-off handler API
->   ARM: vt8500: Switch to new sys-off handler API
->   arm/xen: Switch to new sys-off handler API
->
->  arch/arm/mach-highbank/highbank.c | 2 +-
->  arch/arm/mach-imx/pm-imx6.c       | 6 ++----
->  arch/arm/mach-pxa/spitz.c         | 2 +-
->  arch/arm/mach-sa1100/generic.c    | 2 +-
->  arch/arm/mach-vt8500/vt8500.c     | 2 +-
->  arch/arm/xen/enlighten.c          | 2 +-
->  6 files changed, 7 insertions(+), 9 deletions(-)
->
-> -- 
-> 2.39.2
+However, for 4:2:2 formats, only the horizontal factor for chroma
+chanels should be divided by 2 from the factor for the luma channel;
+the vertical factor is the same for all the luma and chroma channels.
+Hence:
+
+HEOCFG24.VXSYFACT = VFACTOR
+HEOCFG25.VXSCFACT = VFACTOR
+HEOCFG26.HXSYFACT = HFACTOR
+HEOCFG27.HXSCFACT = HFACTOR / 2
+
+Fixes: d498771b0b83 ("drm: atmel_hlcdc: Add support for XLCDC using IP specific driver ops")
+Signed-off-by: Cyrille Pitchen <cyrille.pitchen@microchip.com>
+---
+ .../gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c   | 27 ++++++++++++++++---
+ 1 file changed, 24 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+index 4bcaf2cd7672..41c7351ae811 100644
+--- a/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
++++ b/drivers/gpu/drm/atmel-hlcdc/atmel_hlcdc_plane.c
+@@ -365,13 +365,34 @@ void atmel_xlcdc_plane_setup_scaler(struct atmel_hlcdc_plane *plane,
+ 				    xfactor);
+ 
+ 	/*
+-	 * With YCbCr 4:2:2 and YCbYcr 4:2:0 window resampling, configuration
+-	 * register LCDC_HEOCFG25.VXSCFACT and LCDC_HEOCFG27.HXSCFACT is half
++	 * With YCbCr 4:2:0 window resampling, configuration register
++	 * LCDC_HEOCFG25.VXSCFACT and LCDC_HEOCFG27.HXSCFACT values are half
+ 	 * the value of yfactor and xfactor.
++	 *
++	 * On the other hand, with YCbCr 4:2:2 window resampling, only the
++	 * configuration register LCDC_HEOCFG27.HXSCFACT value is half the value
++	 * of the xfactor; the value of LCDC_HEOCFG25.VXSCFACT is yfactor (no
++	 * division by 2).
+ 	 */
+-	if (state->base.fb->format->format == DRM_FORMAT_YUV420) {
++	switch (state->base.fb->format->format) {
++	/* YCbCr 4:2:2 */
++	case DRM_FORMAT_YUYV:
++	case DRM_FORMAT_UYVY:
++	case DRM_FORMAT_YVYU:
++	case DRM_FORMAT_VYUY:
++	case DRM_FORMAT_YUV422:
++	case DRM_FORMAT_NV61:
++		xfactor /= 2;
++		break;
++
++	/* YCbCr 4:2:0 */
++	case DRM_FORMAT_YUV420:
++	case DRM_FORMAT_NV21:
+ 		yfactor /= 2;
+ 		xfactor /= 2;
++		break;
++	default:
++		break;
+ 	}
+ 
+ 	atmel_hlcdc_layer_write_cfg(&plane->layer, desc->layout.scaler_config + 2,
+-- 
+2.25.1
+
 
