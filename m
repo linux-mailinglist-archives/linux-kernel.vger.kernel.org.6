@@ -1,137 +1,156 @@
-Return-Path: <linux-kernel+bounces-364448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED9C99D4C7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:36:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A73699D4CF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:37:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1344EB232B9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:36:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318631F23BAF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:37:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A293D1BDAB9;
-	Mon, 14 Oct 2024 16:35:51 +0000 (UTC)
-Received: from pegase2.c-s.fr (pegase2.c-s.fr [93.17.235.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874F71B4F24;
+	Mon, 14 Oct 2024 16:37:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="cVhrqnpb"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9711A1B85D7
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:35:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.17.235.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765C9231C92
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 16:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728923751; cv=none; b=YYqalDtp7JM2YJcIURz5dt+zsX27S9qRHCZdxXEkQconke84R1x5gfXCfAORJ1jtwR9O04lqkRetRhAU7N1tFVuBAUlyVr6POjKkG8cyVlwmN3s9nvWUfqCSJHXrywUYfE3N3U7LpZmSm5xtIOYIf3KNuuNUyA6R4+K9g5gI7u0=
+	t=1728923855; cv=none; b=QXuC9f6E6wfA45dHidpebuWFqX8ksWfOTJYhuVI8UqM+KYQXFOSkt3tmkCwrHib2RjzTb54hhDOG8cGs57xiWCKCfK3on9/ObTWnN9W4iQ130b+rS1RGETF59pFEBn+7fCjEPqWVNGrcFCkRS/kr6cz96wTVGTG1dTWydlVUGLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728923751; c=relaxed/simple;
-	bh=d173Jk96NCJr1l+5dnAPhO3yiGJFo0DF39NFHAaWTRw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OcSavMy8zWP3n1sU41BGS30t6nQZG9f2G8fqyQmnSEaNDqSJlT8IJXD/0Y3h9VJ1vOKcsIoWE7tUCLDOuxmHZT9j4UyoEgnn9+3MlQFv57N34v+vKgevTrI5pDBqDswJbS9DNvvJRdEYQwvn7UB1hI71QRfRo836YZyffDu22Ew=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu; spf=pass smtp.mailfrom=csgroup.eu; arc=none smtp.client-ip=93.17.235.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=csgroup.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=csgroup.eu
-Received: from localhost (mailhub3.si.c-s.fr [172.26.127.67])
-	by localhost (Postfix) with ESMTP id 4XS2sV0NNfz9sPd;
-	Mon, 14 Oct 2024 18:35:42 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from pegase2.c-s.fr ([172.26.127.65])
-	by localhost (pegase2.c-s.fr [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id buVrh9wG_YJs; Mon, 14 Oct 2024 18:35:41 +0200 (CEST)
-Received: from messagerie.si.c-s.fr (messagerie.si.c-s.fr [192.168.25.192])
-	by pegase2.c-s.fr (Postfix) with ESMTP id 4XS2sT65Hrz9rvV;
-	Mon, 14 Oct 2024 18:35:41 +0200 (CEST)
-Received: from localhost (localhost [127.0.0.1])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id BA8588B766;
-	Mon, 14 Oct 2024 18:35:41 +0200 (CEST)
-X-Virus-Scanned: amavisd-new at c-s.fr
-Received: from messagerie.si.c-s.fr ([127.0.0.1])
-	by localhost (messagerie.si.c-s.fr [127.0.0.1]) (amavisd-new, port 10023)
-	with ESMTP id H0wbCbiFQOXZ; Mon, 14 Oct 2024 18:35:41 +0200 (CEST)
-Received: from [192.168.233.7] (POS169783.IDSI0.si.c-s.fr [192.168.233.7])
-	by messagerie.si.c-s.fr (Postfix) with ESMTP id E17658B764;
-	Mon, 14 Oct 2024 18:35:39 +0200 (CEST)
-Message-ID: <615e9d81-dac8-41de-9831-5792bdb3f3bf@csgroup.eu>
-Date: Mon, 14 Oct 2024 18:35:39 +0200
+	s=arc-20240116; t=1728923855; c=relaxed/simple;
+	bh=bTtG4MB3yjrdSPMsQ2e3jywBt+U40h9Vr1j3XOPrBNE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=DvrDTp25bOnE74I16RtyDkUNRvO96ZOQ3/Bdj1X5jJ1Muf/5REmXyCdiLJ4wF8JYvQMhj9BwNvTvgD8wQKEDxP4IPLJuXLU23C64izaUerUnMNMVDcSrQyZEx+sOv4AejJbHOYOWZgvWYM1hFV3n3ja7LwCkACmi6hWiBQitQAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=cVhrqnpb; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e3fce4a60so2032118b3a.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:37:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728923854; x=1729528654; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Eq6RmtQgXylpaIuQSD/eFivfyV/YbUHAedXEkzzSSXc=;
+        b=cVhrqnpbKclAuARyWtF73cvf6JxI6cb5Oal04gv5+1y3HofmxXUZ66xOdXJFwoaaL2
+         LurlygUEHq922C31Mw36x8UxXZShejvxwOFvD8F3MxMcrQTRhyaAcZYPHaZKsbtZ3DSc
+         W/hsR8r/ElkhXQvAYnLSEE/MuPpaGpjarGESc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728923854; x=1729528654;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Eq6RmtQgXylpaIuQSD/eFivfyV/YbUHAedXEkzzSSXc=;
+        b=GjnhjTka+vod5RzGxFhlA/Gp+egrceJTbrGiwdOF8LsMjfXgMiwiWJUncom3JEHrHR
+         wKvA789qzixgtz2VM5TKu/aZnIvlEOAWllFZSmRlWtyePNmHv6lKwPZ4Pm14/6pl2lii
+         fHHq8hFwBxIkMY5MgTsiZckxpM3MI4woGIp1e+FBW5M1Zw1Gw+0RBfUULMspfJRdENue
+         pft69b92tQtf//tJAnL3c9xNueua6BnUVUJqu0EPuNo+OeFFz75M5DE6feNvmRB0DnhN
+         byRQOtOArcRiaTKgqSs63WKQdq3O/4LAOUaILNE/eCkLk4MGnDlYwakgNyJkoxsKP4ja
+         +DUw==
+X-Forwarded-Encrypted: i=1; AJvYcCXrGF9bFo3f6d/kySDuZxqY/fGGFxwfjilbZxYl0VqT67XsE52RpamNcTpM81C4KtKFczVmxYoA0VS0t9Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDWCD7gxR/ROC7lSmZJIe6mW/nZI/cN+B6CN0bwqKWKNNUsubw
+	imjLxAW/z26aHyI/sIlz8aCXyG5YuhSVbXhT4rRSxhsQTuJXEPi3LHqF3F2TmQ==
+X-Google-Smtp-Source: AGHT+IFrI6AyFlAD+rPt6sq8RJjzjcPvxnHIHU5bh4fmZllt0MuEFWzqp3sZJTWGMBx/myacl4Lxew==
+X-Received: by 2002:a05:6a00:9282:b0:717:9154:b5d6 with SMTP id d2e1a72fcca58-71e37f4ed89mr19746704b3a.22.1728923853741;
+        Mon, 14 Oct 2024 09:37:33 -0700 (PDT)
+Received: from dianders.sjc.corp.google.com ([2620:15c:9d:2:1e71:8a09:a3b:1e00])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71e51dc0617sm4383693b3a.165.2024.10.14.09.37.32
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 09:37:32 -0700 (PDT)
+From: Douglas Anderson <dianders@chromium.org>
+To: Rob Clark <robdclark@gmail.com>,
+	Abhinav Kumar <quic_abhinavk@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: Stephen Boyd <swboyd@chromium.org>,
+	Douglas Anderson <dianders@chromium.org>,
+	David Airlie <airlied@gmail.com>,
+	Marijn Suijten <marijn.suijten@somainline.org>,
+	Sean Paul <sean@poorly.run>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org,
+	freedreno@lists.freedesktop.org,
+	linux-arm-msm@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 1/3] drm/msm: Avoid NULL dereference in msm_disp_state_print_regs()
+Date: Mon, 14 Oct 2024 09:36:08 -0700
+Message-ID: <20241014093605.1.Ia1217cecec9ef09eb3c6d125360cc6c8574b0e73@changeid>
+X-Mailer: git-send-email 2.47.0.rc1.288.g06298d1525-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [linux-next:master] [x86/module] 6661cae1aa:
- WARNING:at_arch/x86/mm/pat/set_memory.c:#__cpa_process_fault
-To: Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@intel.com>
-Cc: kernel test robot <oliver.sang@intel.com>, oe-lkp@lists.linux.dev,
- lkp@intel.com, Linux Memory Management List <linux-mm@kvack.org>,
- Andrew Morton <akpm@linux-foundation.org>,
- Andreas Larsson <andreas@gaisler.com>, Andy Lutomirski <luto@kernel.org>,
- Ard Biesheuvel <ardb@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
- Borislav Petkov <bp@alien8.de>, Brian Cain <bcain@quicinc.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Christoph Hellwig <hch@infradead.org>,
- Dave Hansen <dave.hansen@linux.intel.com>, Dinh Nguyen
- <dinguyen@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>,
- Guo Ren <guoren@kernel.org>, Helge Deller <deller@gmx.de>,
- Huacai Chen <chenhuacai@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Johannes Berg <johannes@sipsolutions.net>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- Luis Chamberlain <mcgrof@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Matt Turner <mattst88@gmail.com>,
- Max Filippov <jcmvbkbc@gmail.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Michal Simek <monstr@monstr.eu>, Oleg Nesterov <oleg@redhat.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Peter Zijlstra <peterz@infradead.org>,
- Richard Weinberger <richard@nod.at>, Russell King <linux@armlinux.org.uk>,
- Song Liu <song@kernel.org>, Stafford Horne <shorne@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- Thomas Gleixner <tglx@linutronix.de>, Uladzislau Rezki <urezki@gmail.com>,
- Vineet Gupta <vgupta@kernel.org>, Will Deacon <will@kernel.org>,
- linux-kernel@vger.kernel.org
-References: <202410111408.8fe6f604-lkp@intel.com>
- <ZwkjPKKxRKUoJuOE@kernel.org>
- <73d5a6ed-da3c-448e-8cf8-6abb59cb2c36@intel.com>
- <ZwlG9NENb3GWT8Ea@kernel.org>
- <f2af0c30-c7d7-472d-9aa3-ffa311b2e777@intel.com>
- <ZwuCLKivIJkB7aza@kernel.org>
-Content-Language: fr-FR
-From: Christophe Leroy <christophe.leroy@csgroup.eu>
-In-Reply-To: <ZwuCLKivIJkB7aza@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+If the allocation in msm_disp_state_dump_regs() failed then
+`block->state` can be NULL. The msm_disp_state_print_regs() function
+_does_ have code to try to handle it with:
 
+  if (*reg)
+    dump_addr = *reg;
 
-Le 13/10/2024 à 10:17, Mike Rapoport a écrit :
-> On Fri, Oct 11, 2024 at 09:30:33AM -0700, Dave Hansen wrote:
->> On 10/11/24 08:40, Mike Rapoport wrote:
->>> On Fri, Oct 11, 2024 at 07:00:01AM -0700, Dave Hansen wrote:
->>>> On 10/11/24 06:08, Mike Rapoport wrote:
->>>>> This patch disables ROX caches on 32-bit, it should fix the issue.
->>>> While I'm not going to shed a tear for 32-bit, what's the actual
->>>> compatibility issue with 32-bit?
->>>  From the stack trace it looks like execmem tries to update the direct map
->>> for highmem memory, and cpa is not happy about it.
->>
->> First of all, if it's a highmem problem, shouldn't the check be for
->> CONFIG_HIGHMEM and not on 32-bit vs. 64-bit?  We do have non-highmem
->> 32-bit configs.
-> 
-> 32 bit also does not have ARCH_HUGE_VMALLOC and execmem cache will be
-> anyway populated with 4k pages, so I don't see why it would be useful on 32
-> bit all.
->   
+...but since "dump_addr" is initialized to NULL the above is actually
+a noop. The code then goes on to dereference `dump_addr`.
 
-Are you talking about X86 only or any architecture ?
+Make the function print "Registers not stored" when it sees a NULL to
+solve this. Since we're touching the code, fix
+msm_disp_state_print_regs() not to pointlessly take a double-pointer
+and properly mark the pointer as `const`.
 
-On powerpc we have:
+Fixes: 98659487b845 ("drm/msm: add support to take dpu snapshot")
+Signed-off-by: Douglas Anderson <dianders@chromium.org>
+---
 
-arch/powerpc/Kconfig:   select HAVE_ARCH_HUGE_VMALLOC           if 
-HAVE_ARCH_HUGE_VMAP
-arch/powerpc/Kconfig:   select HAVE_ARCH_HUGE_VMAP              if 
-PPC_RADIX_MMU || PPC_8xx
+ drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c | 15 ++++++++-------
+ 1 file changed, 8 insertions(+), 7 deletions(-)
 
-PPC_8xx is 32 bits.
+diff --git a/drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c b/drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c
+index add72bbc28b1..bb149281d31f 100644
+--- a/drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c
++++ b/drivers/gpu/drm/msm/disp/msm_disp_snapshot_util.c
+@@ -48,20 +48,21 @@ static void msm_disp_state_dump_regs(u32 **reg, u32 aligned_len, void __iomem *b
+ 	}
+ }
+ 
+-static void msm_disp_state_print_regs(u32 **reg, u32 len, void __iomem *base_addr,
+-		struct drm_printer *p)
++static void msm_disp_state_print_regs(const u32 *dump_addr, u32 len,
++		void __iomem *base_addr, struct drm_printer *p)
+ {
+ 	int i;
+-	u32 *dump_addr = NULL;
+ 	void __iomem *addr;
+ 	u32 num_rows;
+ 
++	if (!dump_addr) {
++		drm_printf(p, "Registers not stored\n");
++		return;
++	}
++
+ 	addr = base_addr;
+ 	num_rows = len / REG_DUMP_ALIGN;
+ 
+-	if (*reg)
+-		dump_addr = *reg;
+-
+ 	for (i = 0; i < num_rows; i++) {
+ 		drm_printf(p, "0x%lx : %08x %08x %08x %08x\n",
+ 				(unsigned long)(addr - base_addr),
+@@ -89,7 +90,7 @@ void msm_disp_state_print(struct msm_disp_state *state, struct drm_printer *p)
+ 
+ 	list_for_each_entry_safe(block, tmp, &state->blocks, node) {
+ 		drm_printf(p, "====================%s================\n", block->name);
+-		msm_disp_state_print_regs(&block->state, block->size, block->base_addr, p);
++		msm_disp_state_print_regs(block->state, block->size, block->base_addr, p);
+ 	}
+ 
+ 	drm_printf(p, "===================dpu drm state================\n");
+-- 
+2.47.0.rc1.288.g06298d1525-goog
 
-Christophe
 
