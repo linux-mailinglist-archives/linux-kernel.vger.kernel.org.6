@@ -1,140 +1,173 @@
-Return-Path: <linux-kernel+bounces-364802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364803-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 425FA99D99E
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:06:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C56AE99D9A2
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:07:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2AFD1F23635
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:06:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 293AD1F23794
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:07:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E9B31D1F44;
-	Mon, 14 Oct 2024 22:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4ED5C1D31AF;
+	Mon, 14 Oct 2024 22:07:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="aa6rcK+U"
-Received: from out-182.mta0.migadu.com (out-182.mta0.migadu.com [91.218.175.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SqWS0yis"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D171D0140
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:06:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 482B813BC02;
+	Mon, 14 Oct 2024 22:07:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728943572; cv=none; b=SWG4JUH1ABQl3Yfzuit7xpnYumKYiGBx0BCrNsuS9vq1ObnBi4LL3J/R93m4C6yavIm6+2YNTSxzHLQxKCK92PZjyGraoXXm4JFSc/yFttezS0apV5TMzANQGzp8humYQNmhDu/jFpyX+tOv/7smZn4gkXNbmb/Xb4mllNY1tFk=
+	t=1728943638; cv=none; b=mPJNlY4SnVKuzxWcUz4rlmfmAOTFMEiNUdjYE0YCuX1QFsnxykIwcmC3BmosipDCsaT/L3jDSzhPBLSnS1Wl25gHhE0N0mVlIBzagTK/IWESThnOwi93w4oFpquMKR3DHLdsih+2rMjlZPJ+SeCEVzh87MYIClryHK4130kTaIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728943572; c=relaxed/simple;
-	bh=5qTbAz9HdW7boogj3+5WSD1OI0ME1rdWeb8QLX1Yb74=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=lpwRJWDiyWus9eR3dTrAUmEEp8OVDZM/Ye8Dpv/6+K6R5ayP0uTvYGuicj+sDa8mysLv6aOBkiQAWWM4JWUoejtfq8tqtLPcsu3F3Bz8suWWm7HmSul/UKM4Z9f8PXc7fMTymo7z5aALZYLE2pL0r/rHL0tDfczUfFsp7OtMGDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=aa6rcK+U; arc=none smtp.client-ip=91.218.175.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728943568;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=6Eg2qUencFOdUUjQJy4th10S6VBboP5vdfVxJHTHFD0=;
-	b=aa6rcK+U1YP9YjIK5G4PEjvZs7EnQMeWXMiS4sqxEEPElCLAwmxVnRT2J5DfqsrnpBGILb
-	DuPHa6/zzLIFJga72ibL5HIdDlE4qOqM4JvYN10f70G25eVVw6mX5oOhUD9ipR+N+yeDpB
-	9l4pbldTC+kBRHc7Of7R7jZ2W1ChPoQ=
-From: Andrea Righi <andrea.righi@linux.dev>
-To: Tejun Heo <tj@kernel.org>,
-	David Vernet <void@manifault.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>
-Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>,
-	Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH v2] sched_ext: Trigger ops.update_idle() from pick_task_idle()
-Date: Tue, 15 Oct 2024 00:06:03 +0200
-Message-ID: <20241014220603.35280-1-andrea.righi@linux.dev>
+	s=arc-20240116; t=1728943638; c=relaxed/simple;
+	bh=BXoqDheXy+2BwaKLV2FiDxisztcZ2Mr3gf7y1y0b2KY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SLi48oCQSrVv6knRh2wPZOZpU34wA8BQ4g0S1uBjZQtNsEZSnLYdZsJQPyOUrgYZTHsR3VZ+qUn8pGwipn323eK+TZUTsmUAkb4oU0zY3w67KznF50SYAr2iCKiRrKl9qHRGJxI5s7OpFlrizQwtpoD1lxr4cVPmtIl1xYeeC10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SqWS0yis; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2c6bc4840so3348757a91.2;
+        Mon, 14 Oct 2024 15:07:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728943636; x=1729548436; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=i8w6ffEpFO7SbSBhrFi9OhNa1QYyGwUObySt3ab3Ei0=;
+        b=SqWS0yis6JOBAhGq0V09lH4aqQ95YS0FHD49MBz8KPP/H7x8Zxtx9IkhzfoCS5LLRz
+         x5tiW1K2DEqzMsKbMqLUkX/ZIGQ0+TS5JGsvD6CpFHfsN76FrqU5xNtFhdxkbzuhiVQT
+         BjWeQH5IcAzx5mwG5M71nHbZJK2Cl55zeKvtTX+o2v7Zx5FIlgjfWbyKVUw81xgMi3DO
+         t2cMj5huQzwdg3o18D4oPuaUPC1dN9XNkcF3PP++WYAtzl3ZSA+vIvW322VgQSKlqyWu
+         xKtr3caSJsLrGxYV02oO60lVbUczUR6FAq/4InapBB8vR2j0B6pFpW5jRj911ybpVZOB
+         SqQg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728943636; x=1729548436;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=i8w6ffEpFO7SbSBhrFi9OhNa1QYyGwUObySt3ab3Ei0=;
+        b=ra7IvIheto1XwAK6Ql1hK0cT4RdpIrXX8n4Pf79kYGSPtrztRcSdHywlIplJjGDJcW
+         ByopkY/GIgg2aIzGb916+N9XF4W8wLJx78I5B+G2H2n0VpRGZGaTNeuGPqDNMvaiU0Ll
+         8tUmQkt/Tz/1VVx3kzqKOdGEQ8+HGl/mktknr61KwAeEFBlanHUQys1BVVMazwDz2qnd
+         Jlr8gBC0W6iT7CrA+7AoBREJ2dBfkGfGPfV0iprlxJpeYqAujmmyLxIEesmd/RgzYC+K
+         bLe3AMW1d2i36Cv5ziZVk+P9vlsUhg//wAIiSsKDFnJ+oaa/sX58Ehkyst6QbhPwxcD1
+         g94Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVnucGWM+BVtgWcdHyZtoRlm/zAvaYA5Hs/MUTx6Agc54R55L+gcRHH+2KdH3Z4AfiucBRYQl3Tv3ZfMJg=@vger.kernel.org, AJvYcCWxEMqZQkv5ptmm3DONIavVSyJYO6t6ZOPBK64nrLe/cWoL8w5Il5W1C6u8E8MYfK4+OazvKQJsBecZY6//RLTU@vger.kernel.org, AJvYcCXN5CQJ0yDhxAJXrOWeTYloSlhsVCBENQrGjfNg4d4w6jbrQGf41fSJPS0SaMZGhMi+Je6LQdyJ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5+qA6/aAgr4pX/jnvNKhtKC4DbA1zeYxbC7uV1C6fKToRf+AS
+	Uy5+NYS/Dq/U+4dyLfkOH6BlxvOik3gT/C1dkX7jXVu4RjMisqPcOEvzn3U0QBV/03PQDJuYMkf
+	I/PFU5GB+QIGZ3Cel2dd7juqBD8Q=
+X-Google-Smtp-Source: AGHT+IHkyDEUmmGGnyUt7sO+5LG4pdrQyOuHncFHLBQRb0Zc7Ja7f7NQho3LtKeKQZKMj2cJZacYqB1cIXzt/cm2gMw=
+X-Received: by 2002:a17:90a:a00f:b0:2e2:92fe:35d5 with SMTP id
+ 98e67ed59e1d1-2e315356673mr12536398a91.31.1728943636516; Mon, 14 Oct 2024
+ 15:07:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+References: <20241014213313.15100-1-leocstone@gmail.com>
+In-Reply-To: <20241014213313.15100-1-leocstone@gmail.com>
+From: Dmitry Safonov <0x7f454c46@gmail.com>
+Date: Mon, 14 Oct 2024 23:07:04 +0100
+Message-ID: <CAJwJo6anjg4rBDLhgHL+vVtQ0FTWvK089p3D_xNNmcDTrXRL+w@mail.gmail.com>
+Subject: Re: [RFC PATCH] selftest/tcp-ao: Add filter tests
+To: Leo Stone <leocstone@gmail.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, shuah@kernel.org, rdunlap@infradead.org, 
+	mnassiri@ciena.com, jiapeng.chong@linux.alibaba.com, colin.i.king@gmail.com, 
+	netdev@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, anupnewsmail@gmail.com, 
+	linux-kernel-mentees@lists.linuxfoundation.org
+Content-Type: text/plain; charset="UTF-8"
 
-With the consolidation of put_prev_task/set_next_task(), see
-commit 436f3eed5c69 ("sched: Combine the last put_prev_task() and the
-first set_next_task()"), we are now skipping the transition between
-these two functions when the previous and the next tasks are the same.
+Hi Leo,
 
-As a result, ops.update_idle() is now called only once when the CPU
-transitions to the idle class. If the CPU stays active (e.g., through a
-call to scx_bpf_kick_cpu()), ops.update_idle() will not be triggered
-again since the task remains unchanged (rq->idle).
+On Mon, 14 Oct 2024 at 22:37, Leo Stone <leocstone@gmail.com> wrote:
+>
+> Add tests that check if getsockopt(TCP_AO_GET_KEYS) returns the right
+> keys when using different filters.
+>
+> Sample output:
+>
+> > # ok 114 filter keys: by sndid, rcvid, address
+> > # ok 115 filter keys: by sndid, rcvid
+> > # ok 116 filter keys: by is_current
+> > # ok 117 filter keys: by is_rnext
+>
+> Signed-off-by: Leo Stone <leocstone@gmail.com>
+> ---
+> This patch is meant to address the TODO in setsockopt-closed.c:
+> > /*
+> >  * TODO: check getsockopt(TCP_AO_GET_KEYS) with different filters
+> >  * returning proper nr & keys;
+> >  */
+>
+> Is this a reasonable way to do these tests? If so, what cases should I
+> add?
 
-While this behavior seems generally correct, it can cause issues in
-certain sched_ext scenarios.
+Your change does look reasonable to me.
+I think you could add one more test here for passing
+(FILTER_TEST_NKEYS/2) to getsockopt() as tcp_ao_getsockopt::nkeys with
+get_all = 1, and check that the value in tcp_ao_getsockopt::nkeys
+after getsockopt() reflects the number of matched keys
+(FILTER_TEST_NKEYS).
 
-For example, a BPF scheduler might use logic like the following to keep
-the CPU active under specific conditions:
+See also minor nits inline.
 
-void BPF_STRUCT_OPS(sched_update_idle, s32 cpu, bool idle)
-{
-	if (!idle)
-		return;
-	if (condition)
-		scx_bpf_kick_cpu(cpu, 0);
-}
+[..]
+> +static void filter_keys_checked(int sk, struct tcp_ao_getsockopt *filter,
+> +                               struct tcp_ao_getsockopt *expected,
+> +                               unsigned int nexpected, const char *tst)
+> +{
+> +       struct tcp_ao_getsockopt all_keys[FILTER_TEST_NKEYS] = {};
+> +       struct tcp_ao_getsockopt filtered_keys[FILTER_TEST_NKEYS] = {};
+> +       socklen_t len = sizeof(struct tcp_ao_getsockopt);
+> +
+> +       fetch_all_keys(sk, all_keys);
+> +       memcpy(&filtered_keys[0], filter, sizeof(struct tcp_ao_getsockopt));
+> +       filtered_keys[0].nkeys = FILTER_TEST_NKEYS;
+> +       if (getsockopt(sk, IPPROTO_TCP, TCP_AO_GET_KEYS, filtered_keys, &len))
+> +               test_error("getsockopt");
 
-A call to scx_bpf_kick_cpu() wakes up the CPU, so in theory,
-ops.update_idle() should be triggered again until the condition becomes
-false. However, this doesn't happen, and scx_bpf_kick_cpu() doesn't
-produce the expected effect.
+I think the following two checks would be better s/test_error/test_fail/.
+The difference between _error() and _fail() is that for the later
+exit() is not called, which allows the person running the test to
+gather all "not okay" cases.
+So, in tcp_ao selftests I used _error() only for failures where
+nothing meaningful could be done afterwards, i.e. memory allocation or
+socket() creation.
 
-In practice, this change badly impacts performance in user-space
-schedulers that rely on ops.update_idle() to activate user-space
-components.
+> +       if (filtered_keys[0].nkeys != nexpected)
+> +               test_error("wrong nr of keys, expected %u got %u", nexpected,
+> +                          filtered_keys[0].nkeys);
+> +       if (compare_mkts(expected, nexpected, filtered_keys, filtered_keys[0].nkeys))
+> +               test_error("got wrong keys back");
 
-For instance, in the case of scx_rustland, performance drops
-significantly (e.g., gaming benchmarks fall from ~60fps to ~10fps).
+^ in those two it seems to be better to do
+: test_fail("...")
+: goto out_close;
 
-To address this, trigger ops.update_idle() from pick_task_idle() rather
-than set_next_task_idle(). This restores the correct behavior of
-ops.update_idle() and it allows to fix the performance regression in
-scx_rustland.
+which would allow to go through other "filter" and "duplicate"
+selftests even if one of the "filter" tests has failed.
 
-Fixes: 7c65ae81ea86 ("sched_ext: Don't call put_prev_task_scx() before picking the next task")
-Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
----
- kernel/sched/idle.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+[..]
+>  static void *client_fn(void *arg)
+>  {
+>         if (inet_pton(TEST_FAMILY, __TEST_CLIENT_IP(2), &tcp_md5_client) != 1)
+>                 test_error("Can't convert ip address");
+>         extend_tests();
+>         einval_tests();
+> +       filter_tests();
+>         duplicate_tests();
+>         /*
+>          * TODO: check getsockopt(TCP_AO_GET_KEYS) with different filters
 
-ChangeLog v1 -> v2:
-  - move the logic from put_prev_set_next_task() to scx_update_idle()
+^ please, remove the related TODO comment, I think you just fixed it :-)
 
-diff --git a/kernel/sched/idle.c b/kernel/sched/idle.c
-index d2f096bb274c..5a10cbc7e9df 100644
---- a/kernel/sched/idle.c
-+++ b/kernel/sched/idle.c
-@@ -459,13 +459,13 @@ static void put_prev_task_idle(struct rq *rq, struct task_struct *prev, struct t
- static void set_next_task_idle(struct rq *rq, struct task_struct *next, bool first)
- {
- 	update_idle_core(rq);
--	scx_update_idle(rq, true);
- 	schedstat_inc(rq->sched_goidle);
- 	next->se.exec_start = rq_clock_task(rq);
- }
- 
- struct task_struct *pick_task_idle(struct rq *rq)
- {
-+	scx_update_idle(rq, true);
- 	return rq->idle;
- }
- 
--- 
-2.47.0
-
+Thank you for the patch,
+             Dmitry
 
