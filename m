@@ -1,148 +1,159 @@
-Return-Path: <linux-kernel+bounces-364714-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 775FC99D846
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:33:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6404D99D849
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:35:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 002C61F22B64
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:33:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 29D8D282ABF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:35:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F2661D14E1;
-	Mon, 14 Oct 2024 20:32:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 520F41D0E08;
+	Mon, 14 Oct 2024 20:34:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b="FMRJYNmU"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="QyxhfCJh"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4A381D0F46;
-	Mon, 14 Oct 2024 20:32:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9004C7C;
+	Mon, 14 Oct 2024 20:34:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728937976; cv=none; b=MBpwQw0MvTbPBBfTrepC8MzOnvL3rnas9Ojp4Q33BIw7B3NzlCbgIkvpoSsHRjg3VuYAsQv3qdY4B1xpefT7++ZfrSAgUtMAy21sccr+oXaRI/qok6JK2662uZgZ0Ba2SQUWvmAEnbBjyVxexB4Luy+uZlh55e/MLdBiTlQuxzI=
+	t=1728938095; cv=none; b=ptatjZtpefUgAUELeHLk6G7WJo8wlVRxVAkRiiWBA6ytSGfqhhRec96RPmlPpdrfK+z3mLeGNu+kS3U97Ge1I4LgoOkTfh5R3aEm6inIBTDyI7noMKuhE/yNnkqQdzoSk2b/dU1oGgOhM+uVnvoHXDzUpDA57NliiDSDy9Xlx1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728937976; c=relaxed/simple;
-	bh=hTUJoPrnkbQXJg5xgopHbrh5CvOJ9FXkwrT5Y7U4tiU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FKRJhtpWSsNyD9lvU4Rf7jzBk8ffWbjr2k6nIPvoTRcEyi1Ff1kdmE5kudz1AW5JzedXupXBp7Xz20XG4wLfnnxjUeyNkJhIAS68deC8tjg6tbMRxgAVoBEgrxcULtz/KzyhzMuICpGhRz2ATucCpPSY/6H9S59epGwnY7nMZgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=deller@gmx.de header.b=FMRJYNmU; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1728937971; x=1729542771; i=deller@gmx.de;
-	bh=8iK/lwusazoVmWDx14MxRKCz0zzqnH40q8KQDzTJg8k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=FMRJYNmUocN9W73nV68292yKAgVCKbKaLDgiFUuhQGGHfZu5DqFfj8CUReQ4KVn1
-	 gCWOJCPLDEPPOwHnn4Xn8Y9jXm5G2IKtpBKGufny8Wz8YsDNFX8hJsQGqqFsMmptB
-	 TTNwEhVWujkiFf8KTbl2rIjUtU0AUWNdAS7y8196UqObatEoppWk+X55rnrmv+9GR
-	 X/uyIVQnl8nSSQNRoi/X70KZulbiMmd5k+qMtEiL47uLsztzgPAcmcwAw4gkm0AQL
-	 YHWzcTgyqtv6XOeTCRFHRd156hzemMhmege//01QlK139Q/uO95HGBV27eaiOx0rd
-	 3Fx2P9QsWl6M3jVYVQ==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.20.55] ([109.250.63.79]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MZkpb-1tUI7g1XCJ-00QS0r; Mon, 14
- Oct 2024 22:32:51 +0200
-Message-ID: <fab752c8-0193-4d97-bbe5-40c426ede668@gmx.de>
-Date: Mon, 14 Oct 2024 22:32:50 +0200
+	s=arc-20240116; t=1728938095; c=relaxed/simple;
+	bh=Lk4I6UURrH3IQswz39h4iub5KOG09WnFz6iqw+Qh2c4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qqgl0GPbZEH6G7Y4hpciWaAF5ococCNx8PyhxUb/pxdabL41jzRxnWOuf1SiPud+HFO0q1Ryc1vaiuJZfUbF6OaJjfpUEhyuhbg/x/ctC7CpqIaRp7lZLo7cAH15R382V5AT7QBJZ6TOsp5Zj3Ynl9Z4Npjotek8ciNTIz9ym0k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=QyxhfCJh; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (unknown [23.233.251.139])
+	by perceval.ideasonboard.com (Postfix) with ESMTPSA id F24A71A7D;
+	Mon, 14 Oct 2024 22:33:07 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1728937990;
+	bh=Lk4I6UURrH3IQswz39h4iub5KOG09WnFz6iqw+Qh2c4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QyxhfCJhunR/Xb9ItJfdPZNAZ6mYdQj27QWwv2Du955G5zLoPClW+Vk055gwMLbTi
+	 fFxioz/SvtwVJsDt148PYGPeAPMjhnWXBogFCM0Kte8uo6nL3dRfr7nsDOfTIFVTle
+	 /xpqnFB1CLB37dhtKZGLKaJAwXG1jVYD6vo1j8I4=
+Date: Mon, 14 Oct 2024 23:34:41 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Martin Kepplinger <martink@posteo.de>,
+	Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
+	"Paul J. Murphy" <paul.j.murphy@intel.com>,
+	Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
+	Tommaso Merciai <tomm.merciai@gmail.com>,
+	Martin Hecht <martin.hecht@avnet.eu>,
+	Zhi Mao <zhi.mao@mediatek.com>,
+	Alain Volmat <alain.volmat@foss.st.com>,
+	Mikhail Rudenko <mike.rudenko@gmail.com>,
+	Ricardo Ribalda <ribalda@kernel.org>,
+	Kieran Bingham <kieran.bingham@ideasonboard.com>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Dongchun Zhu <dongchun.zhu@mediatek.com>,
+	Quentin Schulz <quentin.schulz@theobroma-systems.com>,
+	Todor Tomov <todor.too@gmail.com>, linux-media@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
+ various schema
+Message-ID: <20241014203441.GF5522@pendragon.ideasonboard.com>
+References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
+ <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
+ <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] video: fix inconsistent indentation warning
-To: SurajSonawane2415 <surajsonawane0215@gmail.com>, adaplas@gmail.com
-Cc: linux-fbdev@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241006071514.5577-1-surajsonawane0215@gmail.com>
-Content-Language: en-US
-From: Helge Deller <deller@gmx.de>
-Autocrypt: addr=deller@gmx.de; keydata=
- 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
-In-Reply-To: <20241006071514.5577-1-surajsonawane0215@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:mNj/a86cD8apEWRxcMjWatukRifswok09XShWf9Q7PfLVTiUZ2G
- 5bV5pTEgV7HclerciNJVDVklKnQKE6J/4jqeNQsA8wOv0190uLu1EJXDUeXPh+IjBO+XRNd
- KQt6Wz5Q1O3O9qNIIKpjwHxhflpNkta8AD7YxyF0zroGSPODBeH3dhdMYMowW1xeOTcElJ5
- 4WcvEM25c/vzdPoZpKN8g==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:b10LvR2bUhM=;WWcraPVa2+BsBoEoSmo41Xm5IrS
- 8adCG3MGy7L6SMxBm+O6ZdkzLmVilMeaSqBuZPKS6P8VuO77+t583qFN0hzthHWUNW4K6wvde
- b5H501/jxd2kPACCQNj+3JNblAmqqwgFwNGzDav8Zn9wW5CJQXpKKeiIXV++Nb2xtjJ2tr+Os
- +S5xf5OKF3gnwxJVl4DS4t5l3W96HuKmo5M8Udsn9LwQfzJwai+SwVnAyTu8tzCLnZZcws4x5
- BhJeRL2lV6S7nwgBqSiGiyVk4CTV0LlGw11adQbUkqBS03vxFpPHfzCYcoJmcNd0KvlzPeKNj
- 7F1P7cYXrx35LupGgW2RK4nXk0BFkK9uz0yRGv14Prq1fTpi8iuUkMu3nbCU8fVh9gkHGj/WY
- 3Qklz5yP54lzxSwlWNTZU7gDbIhT8zgHraGXqt9rG9gOpMJV7zsDWWH5xtl446ha9w5QkqV6s
- auhEdBklaeT2N/EQMwyNX7PmRGiLBytKjiUI1OnICxexXPt2WUV0fQeRSBrxUNgWJb93YZUal
- EFjIu0R3GSlfAoeqqjJCh6FPb09OwSam+kc/U+WQHxJ5/RrvtLKg1WzJ4q5Gvb6owc4KwOHxd
- mgvALqcYCObsnTZarGfJK4SPo5Gtx+KTBXzK2VkwICKCXUzv/lwnuI2fHi3KnCqdw+yWHZ8RS
- gNN+j5IWUcXPH4sfLDYb35+LHVNjoqufQCjUcJahyOww61xTg5zPzDFwDQMy+hCRqWjCjhh6b
- 5u9l2rb+sDZ+M+ohxfLKvvZVx8ka+7MVN0BxVfLsydB6UPEFKctXCbIj3KobjBX+F77VSiTIy
- i3aO7WJPkI2Wp5hTMeaBnkfA==
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
 
-On 10/6/24 09:15, SurajSonawane2415 wrote:
-> Fix the indentation to ensure consistent code style and improve
-> readability, and to fix this warning:
-> drivers/video/fbdev/nvidia/nv_hw.c:1512 NVLoadStateExt() warn:
-> inconsistent indenting
->
-> Signed-off-by: SurajSonawane2415 <surajsonawane0215@gmail.com>
-> ---
->   drivers/video/fbdev/nvidia/nv_hw.c | 8 ++++----
->   1 file changed, 4 insertions(+), 4 deletions(-)
+On Mon, Oct 14, 2024 at 09:43:07AM +0200, Krzysztof Kozlowski wrote:
+> On Sat, Oct 12, 2024 at 04:02:50PM +0100, Bryan O'Donoghue wrote:
+> > Remove extraneous assigned-clock* from media/i2c/* schemas, retain in the
+> > relevant examples.
+> > 
+> > Link: https://lore.kernel.org/linux-media/j7kgz2lyxnler5qwd7yiazdq6fmsv77kyozdrxf33h54ydakjz@uqjhwhoyv6re
+> > Signed-off-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+> > ---
+> >  Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml | 8 --------
+> >  Documentation/devicetree/bindings/media/i2c/ovti,ov5648.yaml | 8 --------
+> >  Documentation/devicetree/bindings/media/i2c/ovti,ov8865.yaml | 8 --------
+> >  Documentation/devicetree/bindings/media/i2c/ovti,ov9282.yaml | 4 ----
+> >  Documentation/devicetree/bindings/media/i2c/sony,imx258.yaml | 4 ----
+> >  Documentation/devicetree/bindings/media/i2c/sony,imx334.yaml | 4 ----
+> >  Documentation/devicetree/bindings/media/i2c/sony,imx335.yaml | 4 ----
+> >  Documentation/devicetree/bindings/media/i2c/sony,imx412.yaml | 4 ----
+> >  8 files changed, 44 deletions(-)
+> > 
+> > diff --git a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> > index 60f19e1152b33128cf3baa15b8c70a874ca6d52e..d18ead8f7fc43bfacc291aed85b5ca9166c46edb 100644
+> > --- a/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> > +++ b/Documentation/devicetree/bindings/media/i2c/hynix,hi846.yaml
+> > @@ -28,12 +28,6 @@ properties:
+> >      items:
+> >        - description: Reference to the mclk clock.
+> >  
+> > -  assigned-clocks:
+> > -    maxItems: 1
+> > -
+> > -  assigned-clock-rates:
+> > -    maxItems: 1
+> > -
+> >    reset-gpios:
+> >      description: Reference to the GPIO connected to the RESETB pin. Active low.
+> >      maxItems: 1
+> > @@ -82,8 +76,6 @@ required:
+> >    - compatible
+> >    - reg
+> >    - clocks
+> > -  - assigned-clocks
+> > -  - assigned-clock-rates
+> 
+> That's not extraneous, but has a meaning that without assigned-clocks
+> this device or driver will not operate.
 
-applied.
+How so ? Even if we assume that the device requires a specific clock
+frequency (which is often not the case for camera sensors, the
+limitation usually comes from drivers, so the constraint shouldn't be
+expressed in the bindings in that case), there is no overall requirement
+to assign a clock rate as in many cases the clock will come from a
+fixed-frequency oscillator. This seems to be a constraint that is
+outside of the scope of DT bindings. It is similar to regulators, where
+the regulator consumer doesn't have a way to express supported voltages
+in its DT bindings.
 
-Thanks!
-Helge
+> File should rather stay as is.
+> 
+> >    - vddio-supply
+> >    - vdda-supply
+> >    - vddd-supply
 
+[snip]
+
+-- 
+Regards,
+
+Laurent Pinchart
 
