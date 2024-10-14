@@ -1,117 +1,110 @@
-Return-Path: <linux-kernel+bounces-364131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41E3B99CB75
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:19:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D6E999CB78
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:20:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C57B8B2526F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:19:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1F63B27484
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:20:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E6821A7AF7;
-	Mon, 14 Oct 2024 13:19:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A20911A0B07;
+	Mon, 14 Oct 2024 13:20:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T/nqCKst"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CzpAG0sq"
+Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0B55611E;
-	Mon, 14 Oct 2024 13:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B69092E659;
+	Mon, 14 Oct 2024 13:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911952; cv=none; b=kZjyfoHzT5qroXGDwgwC3OSiPRe/7wu3nNG3elzMOvQd7rtoWpfzITud7BjbsItIb3GpUnm0iHiXiSEhdyJW/uQdD8Jf4YsY606UoLx5Z3ypHEgVtQFPP4ZHmE+qgzlaoUqAI2C+EkMFOx053X90SolVNfqEpWwYv56UQ4heBv4=
+	t=1728912016; cv=none; b=h8uTCuoEPnnBStskjTh3PTt8zUrVWS3e2AetXWTKhDvtXzzkH6Ho2QK0xrmg48eCzoRJo0rNRndKdbjFI/uC3je3+rUp7a0s++Azerj9xH/8r4f5m0BcmH2agYGadxVyCj4MF0KEA5e9SHq3moFuOANMu/H73KiBTrp+kckK0zo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911952; c=relaxed/simple;
-	bh=JGKigdVvMLsH2/kU1hL1nsXpEbmGXTAgoSDJw55UxFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oiWE5s32XntNQ2m4XC3uXWTcdnoMcemxXkaeXDulMVpj4yX4GVBD/9gEGC+42sD1Un0hBYdkhrkmdBr3oQjRjDaXDKeV+gWcCR3zVvfenvRkA5wN/CpnWoP5fgEV6TVaw4zPOEEoVaz8NYpMV+s3KYBGYauVaSCk9tDiR4amqNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T/nqCKst; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE49AC4CEC3;
-	Mon, 14 Oct 2024 13:19:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728911952;
-	bh=JGKigdVvMLsH2/kU1hL1nsXpEbmGXTAgoSDJw55UxFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=T/nqCKst6pRIAcqnLe5hg1LCOMvlRlgtGoK2rWQ4Y66VzJxqxE0MfNlzlvHmf4Hgw
-	 ZkBtQ62j/ZXvye5sipLr6CG2kOfxTBf85xCy6z9LkVCzVo72C3qxMtntZhgr2mff6A
-	 EtUF+SoB4WqpSkdr24eYLBldbSYerikp3iDx3Jzf5BXA2SFq33j7ewyFogaKUo588s
-	 UsWlFZFTCiYtjEFWQDwhRvdX7TFGOI6ddJ5rNOsUo6tqqrwiHyJZg45yS0nYMrVajO
-	 mvG+oC/kI4F7gmDbE3mDLRa8Je+xz0uy+GeRfV4M2nCMLgsuS0q4tITOkCz9q47JgV
-	 K4144lBtC8oUw==
-Date: Mon, 14 Oct 2024 14:19:06 +0100
-From: Will Deacon <will@kernel.org>
-To: Besar Wicaksono <bwicaksono@nvidia.com>
-Cc: suzuki.poulose@arm.com, robin.murphy@arm.com, catalin.marinas@arm.com,
-	mark.rutland@arm.com, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org,
-	treding@nvidia.com, jonathanh@nvidia.com, vsethi@nvidia.com,
-	rwiley@nvidia.com, rknight@nvidia.com
-Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
-Message-ID: <20241014131903.GB17353@willie-the-truck>
-References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
- <20240918215846.1424282-3-bwicaksono@nvidia.com>
+	s=arc-20240116; t=1728912016; c=relaxed/simple;
+	bh=g1ApVtXktfn/7ob3WMQ7xB9x/GOzNyYOBnXLIeK05R4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=OGA2ayGnwwk4cd98Fwc57VD3fVPoncNALqu8qjmIAzDHBlxxROubMWZzt0AqnloDUpV1ovcFHOL+4sg5t5puSKOhvcBto4+OfABwD56hygTBsyhTA2u4aTU8ZO3cbt0k56AITsiPxGyorDM3wpgwvZUmHGkOaDyBTKYVLqaWKMY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CzpAG0sq; arc=none smtp.client-ip=209.85.216.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2e8c8915eso2943689a91.3;
+        Mon, 14 Oct 2024 06:20:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728912014; x=1729516814; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=PnIQCT5EAf4D/q+zlrns+kyFpnKjw9kFZRzD9+mWzjg=;
+        b=CzpAG0sq06L6t+zx2xBuAPerMmk7JWKPjLtccFE28c4vNAZRr3/tWYMBMUn/rRcs2P
+         ZcIDJX0G7YodT1XozHwQfhqhY4JyXzTm7PSFY576mYJYhnYN+ow5pLBwv0Rjawin+TFg
+         oeMVvEfwF7krl8vfPnhBz7H6R6ZkngFP2lcEsKMbSVlyRuCjcu8e2jZVX3i+xyAPkV8N
+         6gwULNgbLxnDB20cE62H5v3gJxzbCE0RSFkqsm7lC761j1U4OmmH0DAbVX1LZLo8qgHR
+         86wnYmld2p4zcXMCtvAv2ACux+rj9/qHTmqJBxpJDcjh9QCHrjLrTdSu5cBNWgSNFZub
+         uifA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728912014; x=1729516814;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=PnIQCT5EAf4D/q+zlrns+kyFpnKjw9kFZRzD9+mWzjg=;
+        b=ki/L7wetJ9H3r2uDhnYeTWr+8/c5Joqceh332+nl4K2qkajFx4IRj4r0cF/4soaKUo
+         h9+QR1RCFkX1kKe+nHVYw74SXO6Dv2pYmTOBKCIsogkeAIztiYeSji3H4Q8ItMEMKAWp
+         jxPkiFaLCcHCo2+29FxpXwdGyX0N6+8AveaMCSB2efN+PFER0sxVwMqB9a1RLjkWq70d
+         4Oa0T8ZN5CrD9Q1BGzyV6Ih2l4U0ndS06iG5lOU+vDj+STdBXSVL4gS/2DWQRafGiBBl
+         8I0/voZuIqLReVahw7mfdVIvIhR81TmxBNtRl1abrRIWhlxmD5X+lLBlt8z7owCrfs33
+         QaAw==
+X-Forwarded-Encrypted: i=1; AJvYcCXA3W0T8gFJ+kF3bmgAQ7K+kM4TxxmwXcKObyovHTZJWpia7pRppQXukQ2j0pdAY+74XL/Hro+bKWQxE1Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcgGWDi+2ko0mJh5vPLxlbhURpKwI6IGDz5CLhMmQb/wIgz/SA
+	8qBbRF5q2/+hRqaz1vWpJ/oq4KTqEA6W2Gm9K2Xg1qEDNsoLFHiWUZtrvf0Y
+X-Google-Smtp-Source: AGHT+IHO5ZiYHWJlNRSnYuVh3AsdjH83YDljE/J3KhsHBNSRMG6dcWxOciWNP7TQ5pEDCI55/QXQ7w==
+X-Received: by 2002:a17:90b:3b90:b0:2e2:cd6b:c6ca with SMTP id 98e67ed59e1d1-2e3153589c9mr9923489a91.25.1728912013932;
+        Mon, 14 Oct 2024 06:20:13 -0700 (PDT)
+Received: from localhost.localdomain ([187.120.154.170])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e2bf0b3011sm10124558a91.1.2024.10.14.06.20.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:20:13 -0700 (PDT)
+From: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+To: trintaeoitogc@gmail.com,
+	scott@spiteful.org,
+	bhelgaas@google.com
+Cc: linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] PCI: cpcihp: remove uneccessary field
+Date: Mon, 14 Oct 2024 10:19:17 -0300
+Message-ID: <20241014131917.324667-1-trintaeoitogc@gmail.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240918215846.1424282-3-bwicaksono@nvidia.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Wed, Sep 18, 2024 at 09:58:45PM +0000, Besar Wicaksono wrote:
-> Rename loc* and rem* events in CNVLINK PMU to cmem* and gmem* events.
-> 
-> Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> ---
->  drivers/perf/arm_cspmu/nvidia_cspmu.c | 21 ++++++++++++++++++++-
->  1 file changed, 20 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> index ea2d44adfa7c..d1cd9975e71a 100644
-> --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> @@ -112,6 +112,25 @@ static struct attribute *mcf_pmu_event_attrs[] = {
->  	NULL,
->  };
->  
-> +static struct attribute *mcf_cnvlink_pmu_event_attrs[] = {
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes_cmem,			0x0),
-> +	ARM_CSPMU_EVENT_ATTR(rd_bytes_gmem,			0x1),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes_cmem,			0x2),
-> +	ARM_CSPMU_EVENT_ATTR(wr_bytes_gmem,			0x3),
-> +	ARM_CSPMU_EVENT_ATTR(total_bytes_cmem,			0x4),
-> +	ARM_CSPMU_EVENT_ATTR(total_bytes_gmem,			0x5),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req_cmem,			0x6),
-> +	ARM_CSPMU_EVENT_ATTR(rd_req_gmem,			0x7),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req_cmem,			0x8),
-> +	ARM_CSPMU_EVENT_ATTR(wr_req_gmem,			0x9),
-> +	ARM_CSPMU_EVENT_ATTR(total_req_cmem,			0xa),
-> +	ARM_CSPMU_EVENT_ATTR(total_req_gmem,			0xb),
-> +	ARM_CSPMU_EVENT_ATTR(rd_cum_outs_cmem,			0xc),
-> +	ARM_CSPMU_EVENT_ATTR(rd_cum_outs_gmem,			0xd),
-> +	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> +	NULL,
-> +};
-> +
->  static struct attribute *generic_pmu_event_attrs[] = {
->  	ARM_CSPMU_EVENT_ATTR(cycles, ARM_CSPMU_EVT_CYCLES_DEFAULT),
->  	NULL,
-> @@ -234,7 +253,7 @@ static const struct nv_cspmu_match nv_cspmu_match[] = {
->  	  .filter_default_val = NV_CNVL_FILTER_ID_MASK,
->  	  .name_pattern = "nvidia_cnvlink_pmu_%u",
->  	  .name_fmt = NAME_FMT_SOCKET,
-> -	  .event_attr = mcf_pmu_event_attrs,
-> +	  .event_attr = mcf_cnvlink_pmu_event_attrs,
->  	  .format_attr = cnvlink_pmu_format_attrs
->  	},
+The hardware_test field in cpci_hp_controller_ops is uneccessary because
+no file is being used. How a pointer need a space in memory for storage
+the address (4 bytes in 32bits systems and 8 bytes in 64 bits sustems),
+remove this dead code to reduce resource consumption.
 
-Hmm. Isn't this a user-visible change? For example, will scripts driving
-'perf' with the old event names continue to work after this patch?
+Signed-off-by: Guilherme Giacomo Simoes <trintaeoitogc@gmail.com>
+---
+ drivers/pci/hotplug/cpci_hotplug.h | 1 -
+ 1 file changed, 1 deletion(-)
 
-Will
+diff --git a/drivers/pci/hotplug/cpci_hotplug.h b/drivers/pci/hotplug/cpci_hotplug.h
+index 6d8970d8c3f2..03fa39ab0c88 100644
+--- a/drivers/pci/hotplug/cpci_hotplug.h
++++ b/drivers/pci/hotplug/cpci_hotplug.h
+@@ -44,7 +44,6 @@ struct cpci_hp_controller_ops {
+ 	int (*enable_irq)(void);
+ 	int (*disable_irq)(void);
+ 	int (*check_irq)(void *dev_id);
+-	int (*hardware_test)(struct slot *slot, u32 value);
+ 	u8  (*get_power)(struct slot *slot);
+ 	int (*set_power)(struct slot *slot, int value);
+ };
+-- 
+2.46.2
+
 
