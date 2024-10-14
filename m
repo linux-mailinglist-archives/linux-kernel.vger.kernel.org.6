@@ -1,227 +1,261 @@
-Return-Path: <linux-kernel+bounces-364374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABED399D3D0
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:47:04 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6AEB99D3CE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:46:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6272E287A11
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:47:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA1411C25A54
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC57E196;
-	Mon, 14 Oct 2024 15:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96796171671;
+	Mon, 14 Oct 2024 15:46:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="bFIdZdAz"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2046.outbound.protection.outlook.com [40.107.101.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ALCEt0uU"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E791BC58;
-	Mon, 14 Oct 2024 15:46:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.46
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728920810; cv=fail; b=eZRcie8HHl7oYh4yIT5K47D40OOpbuSB5h045T02Ag1qxfFazTwn6HJy4S472hncFRJ7BMwDiJ351KrBJEggVkTkGW2sS3WYjCg3xbhQw2/ycm7k6VHOWH+JVqb80/azkATkqbSIWKA40wfmvzFG7NkJFsjGpGCUVq9gNMi1m2M=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728920810; c=relaxed/simple;
-	bh=d34Bpdh1lneeDBoexiT3OsJzmlOvnvb8aaMw876uUjQ=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Bb/KjsLv4kv/2hkn7YOVHyCl24sRSZuQN1dW1Zgn++WYpwOELaTNeVOIE9D/T/6MATWE+loOkYTEvrjinpIPUCdUhUrtIrxGi5giQjIVlr2DPXwj+nlu3c6OaIebIWtFPnunIkQYsC1eDPqR7JehHzK4EC3uogurLkKOv8Sxasg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=bFIdZdAz; arc=fail smtp.client-ip=40.107.101.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kv0+wwq7LosGZyHXJDJdJOifz6lIjd8yM+QnOiYAx/zL6kmca7C1XVuU8/y0Cy36DO7wDOIqk66uJbqHtZ1T8QSZ5FMx30qyH2flCSJqGqwgu0daxbv3nzbGZ1iydCmSoLOXnGD+wqv4ZQ5EEb6Jvnt30+y8a/OxOJzRpksp+oOzRcK9Lx0DuY48NnQ+HK4cGPT1UOZ5XtqKrPJ/JQHDkg5RtSjxL1/o7dkCY9512bsB2h8kjwNdbXHdVwT++E5E+5bVNDpoagPEr1E01YmYEdhwztrZbOEZLK/3Se89I0XmDGQEVaOyQpfLXlOJJOquWzym3J/zuxCaL/RSCieW1A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=hprnuArEAjorRpkGumKoidT5EeMLiZUBmcyeYN5xzfk=;
- b=grYI1HcMdCqQzH7uC9mKXqEwn3PnaOTujXo84KStBHTHi9K68s4bz22ZNAGQ7N5QgzdXKrVio1Tl4oB1uuouG8ffcvyk4qZWTCbGTlvGMC4IAlJpozKJI4YpgI4xaNmK0zqywR43b3t2pwMu2tVpT8csN5pVAkLHbChApCwtEFNI0TIpKJoYJke8Hrm83awFDn8aUvDdBh1UBT1fDQDKwo4NmJo6zzmCf22TSNxleZZLKX/PBmJ3Km/wxE0p8XzTacU7Pkb8DItZjkZsKfjUkIzA7SUaLYz2SbD0Go/AAPzbRIbjjnNNAgd7pR9W38ch1dJlFbT4vh7gw9VXLKFi9A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=hprnuArEAjorRpkGumKoidT5EeMLiZUBmcyeYN5xzfk=;
- b=bFIdZdAznIdKI9tyq3QBmZhw+n9Fjhgz5+/lQsJCXeblmTbC3VZIcZiHMjzk/nsoMpM8nJTvzHb5A+gnYoHCom+9U8ReEKxHdS0oted99kiagzyIKu89gcCt3+MDJdn2F3nJKUAjsRXnmc0zkN97QnYkBqYeTlNZw031CSUUtru2ZlBGWPENATiZYw2OB9r6ms6xROFaW1szOQKE7ZNfzIss3xO6G32JAwaU38x/FMehq7wsurYmoJn3vxXTwLwkY3N5H5ZA0hXuUeIByyqaOnIdPJS+owO33avTOKU/W7vb+uvAkYvk80OwC+Y8aWOTZ0zGrqiEpqGk6b8YIut63Q==
-Received: from SJ0PR13CA0199.namprd13.prod.outlook.com (2603:10b6:a03:2c3::24)
- by CH3PR12MB8852.namprd12.prod.outlook.com (2603:10b6:610:17d::14) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.18; Mon, 14 Oct
- 2024 15:46:42 +0000
-Received: from SJ5PEPF000001F1.namprd05.prod.outlook.com
- (2603:10b6:a03:2c3:cafe::65) by SJ0PR13CA0199.outlook.office365.com
- (2603:10b6:a03:2c3::24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.16 via Frontend
- Transport; Mon, 14 Oct 2024 15:46:42 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- SJ5PEPF000001F1.mail.protection.outlook.com (10.167.242.69) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8048.13 via Frontend Transport; Mon, 14 Oct 2024 15:46:42 +0000
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Oct
- 2024 08:46:27 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail203.nvidia.com
- (10.129.68.9) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4; Mon, 14 Oct
- 2024 08:46:26 -0700
-Received: from Asurada-Nvidia (10.127.8.11) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.4 via Frontend
- Transport; Mon, 14 Oct 2024 08:46:25 -0700
-Date: Mon, 14 Oct 2024 08:46:23 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: Zhangfei Gao <zhangfei.gao@linaro.org>
-CC: <jgg@nvidia.com>, <kevin.tian@intel.com>, <will@kernel.org>,
-	<joro@8bytes.org>, <suravee.suthikulpanit@amd.com>, <robin.murphy@arm.com>,
-	<dwmw2@infradead.org>, <baolu.lu@linux.intel.com>, <shuah@kernel.org>,
-	<linux-kernel@vger.kernel.org>, <iommu@lists.linux.dev>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kselftest@vger.kernel.org>,
-	<eric.auger@redhat.com>, <jean-philippe@linaro.org>, <mdf@kernel.org>,
-	<mshavit@google.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<smostafa@google.com>, <yi.l.liu@intel.com>, <aik@amd.com>,
-	<patches@lists.linux.dev>
-Subject: Re: [PATCH v3 03/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
- related struct
-Message-ID: <Zw08z9TOFL57z07O@Asurada-Nvidia>
-References: <cover.1728491453.git.nicolinc@nvidia.com>
- <88114b5c725bb3300a9599d3eeebded221a0b1f9.1728491453.git.nicolinc@nvidia.com>
- <CABQgh9Eaj_vy1=sS2Pf7RC7Vy5PopDfwoshECULEU-jK3JF_sQ@mail.gmail.com>
- <Zwn/4m8Ac0xEiJi8@Asurada-Nvidia>
- <CABQgh9Ft=xxJK-bjS6wCZ5BN4AiKtF9fzdBkevA3x2yb_4O4Kg@mail.gmail.com>
- <CABQgh9HP1M8GAXMwf0ZNn5EpMBAvJU3JLRWcN5H1wfGrqXSe1Q@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFE5F196;
+	Mon, 14 Oct 2024 15:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728920791; cv=none; b=NhAO+5k3CDKnYFF1WjiDsboXu7IuFsDeJI4J0/cp7j2rzP+ExfyRIkxHuhNu6zOmvsYgHwMrsd4e6otMHLZXNIH2v3vKF/27lDUWjm3imm+wr/Z3JKLvVI0+JqigRHSEt/qAwE6OVirlueZU5pO3I7B5IZDzbSPGAhRR22hxEds=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728920791; c=relaxed/simple;
+	bh=cxGpsM/buSYu3pTRW68LEieOicsZzpEFO0dAjHdsYGs=;
+	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
+	 To:Date:Message-ID; b=K6bF0wyNaewGxxBv+sw6sRjnCWL96xH4VW7P/MjgEXy3GLi9RRcG9sX43FBQpNCR0PQRcWX5Ze+SUhBPGq2xBgjeekxwbhrKh/06qTMjuFtXqXRvQMGVHCGmpMyrQnFpPSYuDVAeqcBZJf6bCOQP8n+Y+oD+qPyCd65nVFWqcdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ALCEt0uU; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-430f6bc9ca6so34699015e9.2;
+        Mon, 14 Oct 2024 08:46:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728920788; x=1729525588; darn=vger.kernel.org;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cxGpsM/buSYu3pTRW68LEieOicsZzpEFO0dAjHdsYGs=;
+        b=ALCEt0uUXrEWpJtdHL8RY0TIMKgEngtt9e0GtiVrfC9a8vAEt9RejbwVpPePDg0St+
+         ed0vGRkvIaJmWmPnOb4kT8vLTHBniT8zSynDsAyy+5uejIq5Jgq4UCfpOdx00MmH5W9J
+         R3dzGoyOyYlyOUjV0AYxIE2UBeA9BsjMFzuEfi8iLU44DFaNoE42Ak1rpf9/9HE6ZMmJ
+         dkbgYk0d2FE9bIWExxxbMWfzvZWOTSkicK0+pv9wcHn7zdSBiS7NDSbx7YIqgdVSoSme
+         8ZQNdFSNBF3wuD455uC8JDxB+sGliRuHObzJ4An0VCd8UZ27NICFafzKHCTrG3jTSenB
+         xFzA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728920788; x=1729525588;
+        h=user-agent:message-id:date:to:cc:from:subject:references
+         :in-reply-to:content-transfer-encoding:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cxGpsM/buSYu3pTRW68LEieOicsZzpEFO0dAjHdsYGs=;
+        b=bdJ67Ws9Xf0yoUqPbJIRV8NBT8gzXrj+oy5oYGLfFazNgigBtFro74ZlgdyFI0XgAR
+         Fh+XLT5gwpxuaNa+rD+/vy9E5pwI4BZU0pc7R/7+QdXMIzRGfkUr9+bwG6ybbiQChAOh
+         qD3Er2kt4CPLKfZVz2OsvmYqvdT5kVU8BtLcDraqhQwgTAb4MPuxZRQOCqPQ/YmEnyq5
+         r4Dvq1WcBN8bzA4ihmmbfu8X4RvPc+fzLHLc2U5TzhnNueUsJ+JCF/1gY9W+Dv+q4wwX
+         B44Y/Qqv99AIAr46n5WAQJhr5/K5HRa4wVjRUl1fAghWMC6YElHLTEZ2EwYZBp66wlPo
+         2wEg==
+X-Forwarded-Encrypted: i=1; AJvYcCUwwYlEsE4gsN0YiMr2rRcy9aFeE1v/ueeXl8txd5E6XVs05o5w5olnt3WV3fhROhjWU40CkpwUkc0=@vger.kernel.org, AJvYcCWRADVDKzK+pAu1o9KOvmHuKD548Aur4cbVykqzC3DpMQ2rANa59S5FNqeN5L39YHyqQQS437KuLkqf90+G@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBghk7grKkajQQoycRqCsbqRmlrRgX6ItOwbicI0dOYOIP/3rY
+	47/U6rAFiCJE9fEVv2L52NmZXSjVGUB3+iFGP6egWSUs8/F8Ag65KH84n7ig
+X-Google-Smtp-Source: AGHT+IEUhTOMajNBn8OQg+65jQfGUteQJ145m04pOx3jvSaXJG4bX1j7umqLc29CCWkX0tK/c8ytYA==
+X-Received: by 2002:a5d:5352:0:b0:37d:4894:6878 with SMTP id ffacd0b85a97d-37d5fe95846mr6267029f8f.10.1728920788056;
+        Mon, 14 Oct 2024 08:46:28 -0700 (PDT)
+Received: from localhost (host-79-18-120-72.retail.telecomitalia.it. [79.18.120.72])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6bd266sm11626177f8f.40.2024.10.14.08.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 08:46:27 -0700 (PDT)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CABQgh9HP1M8GAXMwf0ZNn5EpMBAvJU3JLRWcN5H1wfGrqXSe1Q@mail.gmail.com>
-X-NV-OnPremToCloud: ExternallySecured
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ5PEPF000001F1:EE_|CH3PR12MB8852:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15a857e0-683b-442e-6f4b-08dcec676695
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|1800799024|7416014|36860700013|82310400026;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?5bXMduE3M44uTgdgKqRc7f2AzaY740v1hmDmf6nOOiM+Z7mmpeGtnPAWAbXh?=
- =?us-ascii?Q?vZ/Vag9XBEqAR/tJuotXWHa8U8SC8gy1bEGEkBHgxmppekcS8DotbwoM4T0h?=
- =?us-ascii?Q?pnxonCGoSnNOBingY0R8I3hKQgTXcO1VGOphtTcZ8dfHUAu8iDz+NGSpyiJO?=
- =?us-ascii?Q?8TaxeMmqy9MDwm2WyAWtLprkfohrbaLyck3kA/3zccMFD/UyXyd6jSTj+Rzr?=
- =?us-ascii?Q?1RLJQzJd3Yrej660fJ/zDlpSfd/q7chslHSCukU8MLIGTEbVPHLSnkxEqbSN?=
- =?us-ascii?Q?YlFxHqPhT+aq53GeIrOwuGtgud+h6z1D2CFuaZfTK2POx7d343UQ8fqEIr5K?=
- =?us-ascii?Q?GtpkHB7w2j0cPXdfA4kd2dIHpsev7hr0s2ZAEzPyxd6JxKgpPJh9rAe6va1o?=
- =?us-ascii?Q?03aZSgwSkNCMEb6B6yt9h39zTRaHumKAzNrrJFG50I2Jp6TbnB7TgBpaHTGV?=
- =?us-ascii?Q?t63MLlzZRJb9bN3c/3K3cZvP5f5WPH1B467oGFB7j27UNlqVxz/cj2+58VFN?=
- =?us-ascii?Q?5L6m4bVyKxUsY84HtuOJOGArfUnUmYVmwcgQXhSc4XgNPWxPdMO3VkwvhKT+?=
- =?us-ascii?Q?srb0caSnN3Vl+OBIu9Sw2+o4FIJoz6DD/znGKqn7BkS0DOrifre840EojNAo?=
- =?us-ascii?Q?1qhZ/RuVZ/JUDrcU7bcLA3jDdwFUzqrBbYhuRr4jA6R2+MwzhgBEs+d2um7c?=
- =?us-ascii?Q?znDutcQBRAba3LaV0GpIITWZVxZOX6KgvSDBkf9l0srck1TIqQyCMbujMptc?=
- =?us-ascii?Q?heCfemfbv0xxOsMPXRKNrXzHj3A/pRx4b45Ki/tZwiFWSssXhWWNDCXS27yc?=
- =?us-ascii?Q?K9ZhAnLVtrYNBkEhpXkx7dJCE+6FRi0O/ajYTsyj4kvYLv/vqmEYJ0fiEziL?=
- =?us-ascii?Q?i7yWeslAI7gAgGbavV5IcF6pqP7T0JhC/hoeihfW7U+9Yrww50DGPSmBFFCT?=
- =?us-ascii?Q?NqOnSUQ4ig0yxtCM1S2newOT2zg0SCZoq3RhxyAV6k+9/BKAppuaPn6X8ode?=
- =?us-ascii?Q?c1NB3fOU6bQIBBNy4+Ar3Zwpqn672Zbqn1QGM0JeRNB3FeVUXWJuqcQsGZ6z?=
- =?us-ascii?Q?RSFib5BBr5cib9URJGqjeZ7WF/IKvNR5pQau0UVXoMOYDdsSD+9wdG+bigyQ?=
- =?us-ascii?Q?qwG66M3vF4vVa5bdR5JDN93HL7is5gBvTH3zFg2Vw1IKTf3fhuo/zhySfVdS?=
- =?us-ascii?Q?dKKIwE6YvJfykGkbZGRonGP703BZYa/++qm4SQ/c8QBhby4U7mGQN4zVTjSF?=
- =?us-ascii?Q?YUH/4+598TSkuG4GyiOLUcyVAQDTpfAhmZNVwSRv+pi9y7LMXSyj1yFOgO4F?=
- =?us-ascii?Q?Zi9DctfTmo4yLtj60aiHdjLzolNXMZki5jH49qb0P7JzhEj++ow9Pgk+dKWx?=
- =?us-ascii?Q?u51BmxU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(36860700013)(82310400026);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 15:46:42.5373
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15a857e0-683b-442e-6f4b-08dcec676695
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SJ5PEPF000001F1.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8852
+Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <e4cad20ed2f8d31bf71bc595ab54c64d96bfb4b4.camel@microchip.com>
+References: <20241011134454.45283-1-victor.duicu@microchip.com> <172872753469.9340.10387646359307852048@njaxe.localdomain> <e4cad20ed2f8d31bf71bc595ab54c64d96bfb4b4.camel@microchip.com>
+Subject: Re: [PATCH v3] iio: adc: pac1921: add ACPI support to Microchip pac1921.
+From: Matteo Martelli <matteomartelli3@gmail.com>
+Cc: Marius.Cristea@microchip.com, linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org
+To: Victor.Duicu@microchip.com, jic23@kernel.org, lars@metafoo.de
+Date: Mon, 14 Oct 2024 17:46:26 +0200
+Message-ID: <172892078642.158534.11658754591922958169@njaxe.localdomain>
+User-Agent: alot/0.11
 
-On Mon, Oct 14, 2024 at 03:58:55PM +0800, Zhangfei Gao wrote:
+Quoting Victor.Duicu@microchip.com (2024-10-14 12:08:05)
+> On Sat, 2024-10-12 at 12:05 +0200, Matteo Martelli wrote:
+> > EXTERNAL EMAIL: Do not click links or open attachments unless you
+> > know the content is safe
+> >=20
+> > Quoting victor.duicu@microchip.com=C2=A0(2024-10-11 15:44:54)
+> > > From: Victor Duicu <victor.duicu@microchip.com>
+> > >=20
+> > > This patch implements ACPI support to Microchip pac1921.
+> > > The driver can read shunt resistor value and label from ACPI table.
+> > >=20
+> > > The patch was tested on a minnowboard(64b) and sama5(32b).
+> > > In order to avoid overflow when reading 64b values from ACPi table
+> > > or
+> > > devicetree it is necessary:
+> > > - the revision of .dsl file must be 2 or greater to enable 64b
+> > > arithmetic.
+> > > - the shunt resistor variable in devicetree must have the prefix
+> > > "/bits/ 64".
+> > >=20
+> > > Differences related to previous versions:
+> > > v3:
+> > > - simplify and make inline function pac1921_shunt_is_valid. Make
+> > > argument u64.
+> > > - fix link to DSM documentation.
+> > > - in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt
+> > > value is
+> > > read as u64.
+> > > - in pac1921_parse_of_fw remove code for reading label value from
+> > > devicetree.
+> > > - in pac1921_write_shunt_resistor cast the multiply result to u64
+> > > in order
+> > > to fix overflow.
+> > >=20
+> > > v2:
+> > > - remove name variable from priv. Driver reads label attribute with
+> > > sysfs.
+> > > - define pac1921_shunt_is_valid function.
+> > > - move default assignments in pac1921_probe to original position.
+> > > - roll back coding style changes.
+> > > - add documentation for DSM(the linked document was used as
+> > > reference).
+> > > - remove acpi_match_device in pac1921_match_acpi_device.
+> > > - remove unnecessary null assignment and comment.
+> > > - change name of function pac1921_match_of_device to
+> > > pac1921_parse_of_fw.
+> > >=20
+> > > v1:
+> > > - initial version for review.
+> > >=20
+> > > Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
 
-> > > > > +struct iommufd_object *iommufd_object_alloc_elm(struct iommufd_ctx *ictx,
-> > > > > +                                               size_t size,
-> > > > > +                                               enum iommufd_object_type type)
-> > > > > +{
-> > > > > +       struct iommufd_object *obj;
-> > > > > +       int rc;
-> > > > > +
-> > > > > +       obj = kzalloc(size, GFP_KERNEL_ACCOUNT);
-> > > > > +       if (!obj)
-> > > > > +               return ERR_PTR(-ENOMEM);
-> > > > > +       obj->type = type;
-> > > > > +       /* Starts out bias'd by 1 until it is removed from the xarray */
-> > > > > +       refcount_set(&obj->shortterm_users, 1);
-> > > > > +       refcount_set(&obj->users, 1);
-> > > >
-> > > > here set refcont 1
-> > > >
-> > > > iommufd_device_bind -> iommufd_object_alloc(ictx, idev,
-> > > > IOMMUFD_OBJ_DEVICE): refcont -> 1
-> > > > refcount_inc(&idev->obj.users); refcount -> 2
-> > > > will cause iommufd_device_unbind fail.
-> > > >
-> > > > May remove refcount_inc(&idev->obj.users) in iommufd_device_bind
-> > >
-> > > Hmm, why would it fail? Or is it failing on your system?
-> >
-> > Not sure, still in check, it may only be on my platform.
-> >
-> > it hit
-> > iommufd_object_remove:
-> > if (WARN_ON(obj != to_destroy))
-> >
-> > iommufd_device_bind refcount=2
-> > iommufd_device_attach refcount=3
-> > //still not sure which operation inc the count?
-> > iommufd_device_detach refcount=4
-> >
-> 
-> Have a question,
-> when should iommufd_vdevice_destroy be called, before or after
-> iommufd_device_unbind.
+...
 
-Before.
+> > > =C2=A0/*
+> > > =C2=A0 * Check if first integration after configuration update has
+> > > completed.
+> > > =C2=A0 *
+> > > @@ -792,13 +801,13 @@ static ssize_t
+> > > pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> > > =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0 return ret;
+> > >=20
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rshunt_uohm =3D val * MICRO + v=
+al_fract;
+> > > -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (rshunt_uohm =3D=3D 0 || rsh=
+unt_uohm > INT_MAX)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 rshunt_uohm =3D (u64)val * MICR=
+O + val_fract;
+> >=20
+> > In commit a9bb0610b2fa ("iio: pac1921: remove unnecessary explicit
+> > casts"),
+> > unnecessary explicit casts had been removed since it seems the
+> > preferred
+> > approach in order to improve readability. This (u64)val cast seems
+> > unnecessary
+> > as well thus I would keep the expression without it.
+>=20
+> While testing on SamA5 board , the multiplication between val and MICRO
+> can overflow when val is greater than INT_MAX. The cast to (u64) is
+> necessary to correctly calculate the new shunt value.
+>=20
 
-> Now iommufd_vdevice_destroy (ref--) is after unbind, hits the if
-> (!refcount_dec_if_one(&obj->users)) check.
+You are right, the (u64) explicit cast is necessary and I think the
+issue is relevant even when val is lesser than INT_MAX: on 32bit
+architectures, val * MICRO is implicitly casted to u32, thus a resulting
+value of that multiplication that is bigger than INT_MAX could pass as
+valid even if it's not. For example if val is 0x40000000, val * MICRO
+would be casted to 0 even if way bigger than INT_MAX.
 
-Hmm, where do we have an iommufd_vdevice_destroy after unbind?
+...
 
-> iommufd_device_bind
-> iommufd_device_attach
-> iommufd_vdevice_alloc_ioctl
-> 
-> iommufd_device_detach
-> iommufd_device_unbind // refcount check fail
-> iommufd_vdevice_destroy ref--
+> > > +static int pac1921_parse_of_fw(struct i2c_client *client, struct
+> > > pac1921_priv *priv,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct iio_dev *indio_dev)
+> > > +{
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 int ret;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 struct device *dev =3D &client-=
+>dev;
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 u64 temp;
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ret =3D device_property_read_u6=
+4(dev, "shunt-resistor-micro-
+> > > ohms", &temp);
+> >=20
+> > Since the driver would discard a value out of INT boundaries, I don't
+> > see the
+> > need to read a value larger than u32 that would be discarded anyway.
+> > To my
+> > understanding, device_property_read_u32() should fail for an
+> > overflowing value
+> > thus I would keep device_property_read_u32() here, and at that point
+> > the temp
+> > var would not be necessary as well. I think it would also help to
+> > keep the patch
+> > diff confined in the ACPI extension context.
+>=20
+> If the value in .dtso is greater than 32b, at compilation it will be
+> truncated, and the incorrect value will be accepted by the driver. By
+> adding "/bits/ 64" in the devicetree to shunt resistor the value will
+> not be truncated. This way values on 32b and 64b can be read correctly.
+>=20
 
-Things should be symmetric. As you suspected, vdevice should be
-destroyed before iommufd_device_detach.
+I see your point but if I understand this correctly with this change the
+shunt-resistor-micro-ohms field in the DT should always be specified
+with /bits/ 64, even for values in 32bit boundaries. I might be wrong
+but this looks like something that should be documented in
+Documentation/devicetree/bindings, especially since all the other
+shunt-resistor-micro-ohms instances look to be interpreted as u32.
+Also, I think that such change would fit better in a different patch as
+it is not related to the introduction of ACPI support.
 
-A vdev is an object on top of a vIOMMU obj and an idev obj, so
-it takes a refcount from each of them. That's why idev couldn't
-unbind.
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (ret)
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return dev_err_probe(dev, ret,
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 "Cann=
+ot read shunt resistor
+> > > property\n");
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (pac1921_shunt_is_valid(temp=
+))
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0 return dev_err_probe(dev, -EINVAL, "Invalid shunt
+> > > resistor: %u\n",
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv-=
+>rshunt_uohm);
+> >=20
+> > The error should be returned when the shunt is NOT valid.
+> >=20
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 priv->rshunt_uohm =3D (u32)temp;
+> >=20
+> > The temp var should not be necessary if switching back to
+> > device_property_read_u32(),
+> > otherwise I would remove the unnecessary explicit cast for the above
+> > reason.
+> >=20
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 pac1921_calc_current_scales(pri=
+v);
+> > > +
+> > > +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 return 0;
+> > > +}
+> > > +
 
-Thanks
-Nicolin
+Thanks,
+Matteo Martelli
 
