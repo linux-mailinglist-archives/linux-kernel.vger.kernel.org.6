@@ -1,279 +1,184 @@
-Return-Path: <linux-kernel+bounces-364390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364393-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2385A99D406
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:57:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B715299D40E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:58:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8A09283B1C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:57:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF1E1C24FAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:58:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00C411AC887;
-	Mon, 14 Oct 2024 15:56:32 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51A1C7269;
+	Mon, 14 Oct 2024 15:56:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="fNN7CBpZ"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 735D31B4F2B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F038E1B4F14
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:56:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728921391; cv=none; b=d1td/dfcqpfSqcFeGioIyFjm2rrOcC+TePbeG8Zn55m5To3h121g/JAe4YAlkTSiedoxs25s+3nmALY/SkEeWtD6uf5WIX/7U7B/4V2Y9lx5e7Y67OL53OFvmYMQz5+448X/rL2NQnT8Qv5v8HWLBhrYJEu3VcyJagTvgiwdy7Y=
+	t=1728921407; cv=none; b=Ys1Qtd6/qXkhQOhGPmuivvSvbjMjN+psi+NyG9tNDr9iJutbovbg3TZ3HbE0mM1Y1SFapfsEIaGaMztsc3gV5uUXJGQyEUMiYkL1aSUVfbxbg6Hg+uyzTEBKPr4HcGV9CIbpgznO1PAvNJweNS8PA/4tNrrhnYv2hAxCWX+hRik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728921391; c=relaxed/simple;
-	bh=AzM8yCudKL/4KeKny9ltyvt0QXG8orRcNq/+fyyPBtI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Xl78zALui0daIvuKXyciei/UfTfo/9+cBCTs1YEvwl8zIaKUFJbXdLdUUDHWDp3gA7tf/T/GftOvBJQaQ8TtQ879JQvgor52qnt3DYiIvDPtAAAS1RpAm1wDBKw9Yv+mjqvuBypru4zMBRNNkshXlDBMi2xHE5pdEz3ffMO85Sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3b4395dedso33694645ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:56:29 -0700 (PDT)
+	s=arc-20240116; t=1728921407; c=relaxed/simple;
+	bh=Rbd/ChyGTacobL4pWk0kh3qA0AC/MXgdsddJsO3lpNY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rRV2E/HzQVFhEHPniSbldrKIEAjYHCXmUY+DmDLUIQEXdRAHN6niIb/TNYCreNNmMW+LDcQDu+LQ4EnrV1892HADO5e5YdcV8C0es7ikbela59JBCS6cK9np6pucOFlbFLJV4Rbsd/1f4l54aWM0rDr1DmOFxLQwhnc5ku288SE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=fNN7CBpZ; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbf0769512so20438206d6.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:56:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=rowland.harvard.edu; s=google; t=1728921404; x=1729526204; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=be1hrvlUsBpjG6CtOzQIeoA7DeG52DJehIShe6TxuJg=;
+        b=fNN7CBpZ+RHAZ0Qde8Z82kQspHHC2JsPP0FsUXRE7FgRmaJkoLc/xJo9nj+65HVti1
+         Uewm9bZnst7sddSWiFiqNzY6mVbexJfZCEvNQfkb4deuv0kkCRPLAxm+d40WpSAS/a4T
+         OvBFMAUspub0j8RP4UfEM/XxsVgmgpdPgsixkBVSb+U4fEufjWHAeG2aHXetfyQftHjm
+         28x3OSP/6hxlCvrOUIrOBbQRaaHSPfyeczzk6u3LXdaAeceThqBuvRKNdnC4VMyGhJU2
+         +5TeoWhYhKv3ygVqq7326U/HTszG9SNTkod7SA+RGOQMxocMYnqmV5cca9p/zdLkDatt
+         OJAA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728921388; x=1729526188;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=yYF57znd3ki9dmfyxMDvoxK5mg2h780n/C12lu1gMM4=;
-        b=LwJTRzGiwZACAHxZHfj+XjWvP1fm9UP1ub1zMOM+4qLYKpOvHEQVE8hg5ePihOXxR9
-         Fi5A34cVkqB3Z69BdM+Z/sVFUlxXBW6YQF7ORpfZNylTa5ed5P5pqLX0A4nmpnNlHslP
-         mFC0k3orRU+pobTInGB1Y+8yc8YXoVHNVnzaB0guxDfSAt6Vyt4IXc55VRACT+x+IbSn
-         l1arxOQoTzGO+KQoMeo2D4UxObH2kNxo9wnCRrQ8NsenXS/cIvB41mPu/QCgcg9ckPHD
-         0skWu7HrN0DMHsmlokqNfWDXu0IzQQLDIMozA3YJhLcXvjGtn6wEf18OPewcYdmxCCHD
-         iZug==
-X-Forwarded-Encrypted: i=1; AJvYcCVzmB67snhish3k0efUPaAgRap7k71jRdFxAR9eZFGEFMaB+D0p5H6lt9yCVj+xg5+773URUBZ+8+Oqkdw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5ojFT/X9Ia/Q05eF2RFbX6gZtuL+6EzThuZnXtmqirvRUU+mI
-	kBvEg6JrnMGcz1QUNNUWdzUWHlJHKnk83N4gckpLnA2ZIruKxSxEMkhqaNLwRx3miAKpsEoa/q8
-	pr1T0VY0thuBBBSduXQCTBiAg+F5WPX7ZaiHyrNMxN0WaAE4XROvsRTQ=
-X-Google-Smtp-Source: AGHT+IHcm7AwL3u0sHOo7bJKHAjHxaxilCfKOYYwh8FM3EPouZSNgZoCIomO4hQ7pMgpHh2itQ/1+/B9SNz59e5bbwY3I5Wy9z4L
+        d=1e100.net; s=20230601; t=1728921404; x=1729526204;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=be1hrvlUsBpjG6CtOzQIeoA7DeG52DJehIShe6TxuJg=;
+        b=N7vUdQEHdZACKvEclHDba5eTwPP2et/Suogl8189cnpOwlM1Vbm2a1geTYkh2L6W0V
+         y1PdntzVX7odUM10c9XUB8IoIqbZVG4y42BWHGsLKOpa134atXZKMFmpAUNxuPObHhxv
+         uz31kgxWuwebbRP9buN63V0YNIvOs/kNLzEtFnOLy9PGrj76vB1E0fPzoRhek0Mj6WrF
+         PBrqpN3HSiSJ80u3IXyho8cje8aOyVVmNI+OrgvHJnal3i8t7LwV1DyP9xe2AyVb4NkJ
+         unYg4+xMBM9MxpK0Su09FQF05c2MMqNwYF8vPeHO2ckYX4U2xBtSThCFw54Syj01rAin
+         dibw==
+X-Forwarded-Encrypted: i=1; AJvYcCXYwOTB1BKHrumN8vyI6bZfJHTt4mLchp7xiEAP7dw5qvDcDuW1fKupm8uuj+ocQA/pi4DGJG/urYWypcQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBtyHbDHWmWIsLzTLWJSN17TbRSDYaQC9ka2PciMcwn8ePsTnU
+	EUd0WaBuNhc9ZLDLpVvFmLSGbCUZWYrX8VPZbanh5iIFDlM4QBk+eR/9twwDnA==
+X-Google-Smtp-Source: AGHT+IGdot33FySr+PpKn3xDNoWp1lPSKAmLfTIJ2M3YboljTXEQHme1fTL63RXssphS6RehdMyzzg==
+X-Received: by 2002:a05:6214:5b06:b0:6cb:d1ae:27a6 with SMTP id 6a1803df08f44-6cbf0095668mr170844676d6.24.1728921403730;
+        Mon, 14 Oct 2024 08:56:43 -0700 (PDT)
+Received: from rowland.harvard.edu ([2601:19b:681:fd10::c666])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608bf1sm47088546d6.91.2024.10.14.08.56.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 08:56:43 -0700 (PDT)
+Date: Mon, 14 Oct 2024 11:56:40 -0400
+From: Alan Stern <stern@rowland.harvard.edu>
+To: Guan-Yu Lin <guanyulin@google.com>
+Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
+	mathias.nyman@intel.com, yajun.deng@linux.dev,
+	sumit.garg@linaro.org, kekrby@gmail.com, oneukum@suse.com,
+	dianders@chromium.org, perex@perex.cz, tiwai@suse.com,
+	niko.mauno@vaisala.com, andreyknvl@gmail.com,
+	christophe.jaillet@wanadoo.fr, tj@kernel.org,
+	stanley_chang@realtek.com, quic_jjohnson@quicinc.com,
+	ricardo@marliere.net, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
+	badhri@google.com, albertccwang@google.com, quic_wcheng@quicinc.com,
+	pumahsu@google.com
+Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system
+ sleep
+Message-ID: <9b5fe5d2-77a7-40b7-b260-856c35d9dcec@rowland.harvard.edu>
+References: <20241014085816.1401364-1-guanyulin@google.com>
+ <20241014085816.1401364-6-guanyulin@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16cf:b0:3a0:8edc:d133 with SMTP id
- e9e14a558f8ab-3a3b5f94601mr102121005ab.9.1728921388510; Mon, 14 Oct 2024
- 08:56:28 -0700 (PDT)
-Date: Mon, 14 Oct 2024 08:56:28 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
-Subject: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in add_delayed_ref
-From: syzbot <syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241014085816.1401364-6-guanyulin@google.com>
 
-Hello,
+On Mon, Oct 14, 2024 at 08:50:29AM +0000, Guan-Yu Lin wrote:
+> Sharing a USB controller with another entity via xhci-sideband driver
+> creates power management complexities. To prevent the USB controller
+> from being inadvertently deactivated while in use by the other entity, a
+> usage-count based mechanism is implemented. This allows the system to
+> manage power effectively, ensuring the controller remains available
+> whenever needed.
+> 
+> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
+> ---
+>  drivers/usb/core/driver.c         | 10 ++++++++++
+>  drivers/usb/core/hcd.c            |  1 +
+>  drivers/usb/core/usb.c            |  1 +
+>  drivers/usb/dwc3/core.c           | 13 +++++++++++++
+>  drivers/usb/dwc3/core.h           |  8 ++++++++
+>  drivers/usb/host/xhci-plat.c      | 10 ++++++++++
+>  drivers/usb/host/xhci-plat.h      |  7 +++++++
+>  sound/usb/qcom/qc_audio_offload.c |  3 +++
+>  8 files changed, 53 insertions(+)
+> 
+> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
+> index e713cf9b3dd2..eb85cbb1a2ff 100644
+> --- a/drivers/usb/core/driver.c
+> +++ b/drivers/usb/core/driver.c
+> @@ -1583,6 +1583,11 @@ int usb_suspend(struct device *dev, pm_message_t msg)
+>  	struct usb_device	*udev = to_usb_device(dev);
+>  	int r;
+>  
+> +	if (msg.event == PM_EVENT_SUSPEND && usb_sideband_check(udev)) {
+> +		dev_dbg(dev, "device accessed via sideband\n");
+> +		return 0;
+> +	}
 
-syzbot found the following issue on:
+I'm not so sure about this.  By returning early, you prevent the drivers 
+bound to this device from suspending.  But they can't operate properly 
+when the system is in a low-power mode.  Won't that cause problems?
 
-HEAD commit:    d61a00525464 Add linux-next specific files for 20241011
-git tree:       linux-next
-console output: https://syzkaller.appspot.com/x/log.txt?x=16f9a887980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8554528c7f4bf3fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=c3a3a153f0190dca5be9
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1266c727980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ce9440580000
+Maybe this really belongs in usb_suspend_device(), and its counterpart 
+belongs in usb_resume_device().
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/f615720e9964/disk-d61a0052.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/c4a45c7583c6/vmlinux-d61a0052.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/d767ab86d0d0/bzImage-d61a0052.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/e1c3551adc6e/mount_0.gz
+> +
+>  	unbind_no_pm_drivers_interfaces(udev);
+>  
+>  	/* From now on we are sure all drivers support suspend/resume
+> @@ -1619,6 +1624,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
+>  	struct usb_device	*udev = to_usb_device(dev);
+>  	int			status;
+>  
+> +	if (msg.event == PM_EVENT_RESUME && usb_sideband_check(udev)) {
+> +		dev_dbg(dev, "device accessed via sideband\n");
+> +		return 0;
+> +	}
+> +
+>  	/* For all calls, take the device back to full power and
+>  	 * tell the PM core in case it was autosuspended previously.
+>  	 * Unbind the interfaces that will need rebinding later,
+> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
+> index 1ff7d901fede..9876b3940281 100644
+> --- a/drivers/usb/core/hcd.c
+> +++ b/drivers/usb/core/hcd.c
+> @@ -2593,6 +2593,7 @@ struct usb_hcd *__usb_create_hcd(const struct hc_driver *driver,
+>  	timer_setup(&hcd->rh_timer, rh_timer_func, 0);
+>  #ifdef CONFIG_PM
+>  	INIT_WORK(&hcd->wakeup_work, hcd_resume_work);
+> +	refcount_set(&hcd->sb_usage_count, 0);
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
+Did I miss something?  I didn't notice this field in any of the earlier 
+patches.  Was it already created by the prerequisite series?  If so, why 
+didn't that series do this initialization?
 
-BTRFS info (device loop0): first mount of filesystem 395ef67a-297e-477c-816d-cd80a5b93e5d
-BTRFS info (device loop0): using sha256 (sha256-avx2) checksum algorithm
-BTRFS info (device loop0): using free-space-tree
-==================================================================
-BUG: KASAN: slab-use-after-free in add_delayed_ref+0x12ca/0x1e00 fs/btrfs/delayed-ref.c:1077
-Read of size 8 at addr ffff888027c83570 by task syz-executor406/11166
+>  #endif
+>  
+>  	INIT_WORK(&hcd->died_work, hcd_died_work);
+> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
+> index 0b4685aad2d5..d315d066a56b 100644
+> --- a/drivers/usb/core/usb.c
+> +++ b/drivers/usb/core/usb.c
+> @@ -671,6 +671,7 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
+>  	dev->state = USB_STATE_ATTACHED;
+>  	dev->lpm_disable_count = 1;
+>  	atomic_set(&dev->urbnum, 0);
+> +	refcount_set(&dev->sb_usage_count, 0);
 
-CPU: 1 UID: 0 PID: 11166 Comm: syz-executor406 Not tainted 6.12.0-rc2-next-20241011-syzkaller #0
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_address_description mm/kasan/report.c:377 [inline]
- print_report+0x169/0x550 mm/kasan/report.c:488
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- add_delayed_ref+0x12ca/0x1e00 fs/btrfs/delayed-ref.c:1077
- btrfs_alloc_tree_block+0xdfb/0x1440 fs/btrfs/extent-tree.c:5209
- btrfs_force_cow_block+0x526/0x1da0 fs/btrfs/ctree.c:573
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4314
- btrfs_create_new_inode+0xe27/0x1f60 fs/btrfs/inode.c:6344
- btrfs_create_common+0x1d4/0x2e0 fs/btrfs/inode.c:6578
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f5219f05379
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 41 1d 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b0 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f5219eb3168 EFLAGS: 00000246 ORIG_RAX: 0000000000000102
-RAX: ffffffffffffffda RBX: 00007f5219f8b6c8 RCX: 00007f5219f05379
-RDX: 0000000000000000 RSI: 0000000020000200 RDI: 0000000000000005
-RBP: 00007f5219f8b6c0 R08: 00007f5219eb36c0 R09: 0000000000000000
-R10: 00007f5219eb36c0 R11: 0000000000000246 R12: 00007f5219f8b6cc
-R13: 0000000000000016 R14: 00007fff9f716d90 R15: 00007fff9f716e78
- </TASK>
+And doesn't this belong in the 3/5 patch, the one that creates the 
+sb_usage_count field?
 
-Allocated by task 11166:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- unpoison_slab_object mm/kasan/common.c:319 [inline]
- __kasan_slab_alloc+0x66/0x80 mm/kasan/common.c:345
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4094 [inline]
- slab_alloc_node mm/slub.c:4143 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4150
- add_delayed_ref+0x13a/0x1e00 fs/btrfs/delayed-ref.c:1020
- btrfs_alloc_tree_block+0xdfb/0x1440 fs/btrfs/extent-tree.c:5209
- btrfs_force_cow_block+0x526/0x1da0 fs/btrfs/ctree.c:573
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4314
- btrfs_create_new_inode+0xe27/0x1f60 fs/btrfs/inode.c:6344
- btrfs_create_common+0x1d4/0x2e0 fs/btrfs/inode.c:6578
- vfs_mkdir+0x2f9/0x4f0 fs/namei.c:4257
- do_mkdirat+0x264/0x3a0 fs/namei.c:4280
- __do_sys_mkdirat fs/namei.c:4295 [inline]
- __se_sys_mkdirat fs/namei.c:4293 [inline]
- __x64_sys_mkdirat+0x87/0xa0 fs/namei.c:4293
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Freed by task 55:
- kasan_save_stack mm/kasan/common.c:47 [inline]
- kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
- kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
- poison_slab_object mm/kasan/common.c:247 [inline]
- __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
- kasan_slab_free include/linux/kasan.h:233 [inline]
- slab_free_hook mm/slub.c:2329 [inline]
- slab_free mm/slub.c:4588 [inline]
- kmem_cache_free+0x1a2/0x440 mm/slub.c:4690
- btrfs_put_delayed_ref_head fs/btrfs/delayed-ref.h:358 [inline]
- cleanup_ref_head fs/btrfs/extent-tree.c:1932 [inline]
- __btrfs_run_delayed_refs+0x3d34/0x4680 fs/btrfs/extent-tree.c:2113
- btrfs_run_delayed_refs+0xe3/0x2c0 fs/btrfs/extent-tree.c:2213
- btrfs_commit_transaction+0x4be/0x3740 fs/btrfs/transaction.c:2197
- btrfs_qgroup_rescan_worker+0x17ac/0x1c60 fs/btrfs/qgroup.c:3864
- btrfs_work_helper+0x390/0xc50 fs/btrfs/async-thread.c:314
- process_one_work kernel/workqueue.c:3229 [inline]
- process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
- worker_thread+0x870/0xd30 kernel/workqueue.c:3391
- kthread+0x2f0/0x390 kernel/kthread.c:389
- ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-The buggy address belongs to the object at ffff888027c83570
- which belongs to the cache btrfs_delayed_ref_head of size 328
-The buggy address is located 0 bytes inside of
- freed 328-byte region [ffff888027c83570, ffff888027c836b8)
-
-The buggy address belongs to the physical page:
-page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x27c82
-head: order:1 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
-flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
-page_type: f5(slab)
-raw: 00fff00000000040 ffff88802fe6a000 ffffea0001ecef00 dead000000000004
-raw: 0000000000000000 0000000080140014 00000001f5000000 0000000000000000
-head: 00fff00000000040 ffff88802fe6a000 ffffea0001ecef00 dead000000000004
-head: 0000000000000000 0000000080140014 00000001f5000000 0000000000000000
-head: 00fff00000000001 ffffea00009f2081 ffffffffffffffff 0000000000000000
-head: 0000000000000002 0000000000000000 00000000ffffffff 0000000000000000
-page dumped because: kasan: bad access detected
-page_owner tracks the page as allocated
-page last allocated via order 1, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5557, tgid 5556 (syz-executor406), ts 235052280151, free_ts 234997412486
- set_page_owner include/linux/page_owner.h:32 [inline]
- post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
- prep_new_page mm/page_alloc.c:1545 [inline]
- get_page_from_freelist+0x3129/0x3270 mm/page_alloc.c:3493
- __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4769
- alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
- alloc_slab_page+0x6a/0x120 mm/slub.c:2399
- allocate_slab+0x5a/0x2f0 mm/slub.c:2565
- new_slab mm/slub.c:2618 [inline]
- ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3805
- __slab_alloc+0x58/0xa0 mm/slub.c:3895
- __slab_alloc_node mm/slub.c:3970 [inline]
- slab_alloc_node mm/slub.c:4131 [inline]
- kmem_cache_alloc_noprof+0x268/0x380 mm/slub.c:4150
- add_delayed_ref+0x13a/0x1e00 fs/btrfs/delayed-ref.c:1020
- btrfs_free_tree_block+0x354/0xd80 fs/btrfs/extent-tree.c:3455
- btrfs_force_cow_block+0xf44/0x1da0 fs/btrfs/ctree.c:622
- btrfs_cow_block+0x35e/0xa40 fs/btrfs/ctree.c:754
- btrfs_search_slot+0xbdd/0x30d0 fs/btrfs/ctree.c:2116
- btrfs_insert_empty_items+0x9c/0x1a0 fs/btrfs/ctree.c:4314
- btrfs_create_new_inode+0xe27/0x1f60 fs/btrfs/inode.c:6344
-page last free pid 5558 tgid 5558 stack trace:
- reset_page_owner include/linux/page_owner.h:25 [inline]
- free_pages_prepare mm/page_alloc.c:1108 [inline]
- free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2674
- __slab_free+0x31b/0x3d0 mm/slub.c:4499
- qlink_free mm/kasan/quarantine.c:163 [inline]
- qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
- kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
- __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
- kasan_slab_alloc include/linux/kasan.h:250 [inline]
- slab_post_alloc_hook mm/slub.c:4094 [inline]
- slab_alloc_node mm/slub.c:4143 [inline]
- kmem_cache_alloc_noprof+0x1d9/0x380 mm/slub.c:4150
- getname_flags+0xb7/0x540 fs/namei.c:139
- do_sys_openat2+0xd2/0x1d0 fs/open.c:1409
- do_sys_open fs/open.c:1430 [inline]
- __do_sys_openat fs/open.c:1446 [inline]
- __se_sys_openat fs/open.c:1441 [inline]
- __x64_sys_openat+0x247/0x2a0 fs/open.c:1441
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Memory state around the buggy address:
- ffff888027c83400: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888027c83480: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
->ffff888027c83500: fb fb fb fb fb fb fc fc fc fc fc fc fc fc fa fb
-                                                             ^
- ffff888027c83580: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
- ffff888027c83600: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
-==================================================================
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Alan Stern
 
