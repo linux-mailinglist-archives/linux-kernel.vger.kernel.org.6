@@ -1,156 +1,106 @@
-Return-Path: <linux-kernel+bounces-364146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D5F99CBB7
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:41:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4450899CBCB
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DC43E1C22336
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:41:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D84AFB22AD6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:46:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35F341AAE24;
-	Mon, 14 Oct 2024 13:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B19BC2744E;
+	Mon, 14 Oct 2024 13:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="A1kWSnBt"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b="OYKL0oFj"
+Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C3821514CB;
-	Mon, 14 Oct 2024 13:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A7BC8F70
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:46:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728913282; cv=none; b=O4kFelpfc3bWZGwLrcdC4CPJwdvDsqj8Wu/UJcEko2lF/6SkzcYx2mfnOrohRbSxl7amwBK31sX+azYeo7dOHJerOb+W8pRa2tOzY6fm5qVh/gRuXewH9BEqZpu4/+q9ui+8/HaQ15wKvSxkh6ImxjoPgTZ04zhe5SeTnhvfhOU=
+	t=1728913593; cv=none; b=gV2DGuOe7EmYb0VytNV9e6zcIn5Y4VbQdxYtMHUtLe0I+h2afNu6VW0pRxxw8HzqjIC9BwhMhrwZsdNNv9FMHUSh/5KRwJ3Bz2w1SnFuU8cZI8Gs8zFYkmpM0K+Vzf3B+0U4Nl+GXP/ufhnG/xdsYTOC2W6vRA5xlV6s6pbaOZ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728913282; c=relaxed/simple;
-	bh=NILg4tqzsVL0wLhELbKghHTZAqAzPu7Mn94ypvVJycI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ww+NWTWfCv/cIEWY6VlICasMTSg9OUSTGGIC+8arMQNf+tRAtSVSp1CgcWORKI/cVfV3jLJl/rs52FNSGkcMlcuHmbl4sDY+0a9S4CtBHe6rm7ImNtgaFrk8SS4Qxn9Ld95mTcncSqKLe/HVgVGxyQ/7iOmzaOWfyJy1ApCGOIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=A1kWSnBt; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=O/yDHelZkZbEyouxYDEGSFyuC5vdHTQjMNQBxEU6cxs=; b=A1kWSnBtnNvgq117bQonvW7NGB
-	ivzTefIRpDZr5RKxS59WshY6ydHPOP70BVMfmFz/UrESTk+lj5+ylhVB9+pu2Vz+nBJmC8M4t4TV4
-	jqrfgqU+Ku4heNIzvZz7Glq1kZzRhooGJW5zrDPXqIzwMjIoqqVHk+350Z2xMISLyduQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t0LJb-009vh1-Sn; Mon, 14 Oct 2024 15:40:51 +0200
-Date: Mon, 14 Oct 2024 15:40:51 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: jan.petrous@oss.nxp.com
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	Russell King <linux@armlinux.org.uk>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Minda Chen <minda.chen@starfivetech.com>,
-	Nicolas Ferre <nicolas.ferre@microchip.com>,
-	Claudiu Beznea <claudiu.beznea@tuxon.dev>,
-	Iyappan Subramanian <iyappan@os.amperecomputing.com>,
-	Keyur Chudgar <keyur@os.amperecomputing.com>,
-	Quan Nguyen <quan@os.amperecomputing.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	imx@lists.linux.dev, devicetree@vger.kernel.org,
-	NXP S32 Linux Team <s32@nxp.com>,
-	"Russell King (Oracle)" <rmk+kernel@armlinux.org.uk>
-Subject: Re: [PATCH v3 04/16] net: phy: Add helper for mapping RGMII link
- speed to clock rate
-Message-ID: <4686019c-f6f1-4248-9555-c736813417b7@lunn.ch>
-References: <20241013-upstream_s32cc_gmac-v3-0-d84b5a67b930@oss.nxp.com>
- <20241013-upstream_s32cc_gmac-v3-4-d84b5a67b930@oss.nxp.com>
+	s=arc-20240116; t=1728913593; c=relaxed/simple;
+	bh=/qI5UcMNRHR66S9xG4yowTz/slqyiym4+xUDmifwVCg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TBifk7+1zzDk7W9GLP3VFrnySSR+PHnyfHMF6UqTA1sy8qOiOf1zwPeOGBbl0zCUY/ZArmmXTfoHVCHkbB19OTWoqmUYt6zkSX6vdE3itl9QF8fDpsYsBmCcyR3060YOlxaYGlaHYVeY9iFTV7c/WkgHm8TrHuL2JGITS4uXstY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com; spf=none smtp.mailfrom=batbytes.com; dkim=pass (2048-bit key) header.d=batbytes-com.20230601.gappssmtp.com header.i=@batbytes-com.20230601.gappssmtp.com header.b=OYKL0oFj; arc=none smtp.client-ip=209.85.219.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=batbytes.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=batbytes.com
+Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6cbf693d794so21679686d6.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:46:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=batbytes-com.20230601.gappssmtp.com; s=20230601; t=1728913590; x=1729518390; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=crqj33oZHxX79g7WIfZIRty3wF/s5+QQhWMYPqOuedM=;
+        b=OYKL0oFj9Lp8Cij6UBXwAhgphRqppNuqwBOkdHRvDl6r3UqgLINm6Rq0CLpaNdrG+D
+         773ShV4LZ1AaMMMsBH27lfYjhiRW1D91tDnr2pxTrvaLLZug9dOPADmDtXS9K7rgRIIi
+         j8YXkVZHPe6nTf6HRXYcrMiKfRJ2wzs+BUOdge0fGnsOXgi+qshjtwN9Uj6G/B0eoZ7C
+         dmwl3wxmTFurzwLkAzJPhFS5vqVVbTVdb4VISVgGo68oqEZ/aGokGEqzfzELDX17E559
+         dVCT6Epw5UgHcviCyj7M1Tvo4XJ78ew+F3FBZmzyvdwZ1Z1IDuPH7dnNdC4NHU952UGJ
+         QZvg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728913590; x=1729518390;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=crqj33oZHxX79g7WIfZIRty3wF/s5+QQhWMYPqOuedM=;
+        b=gri/cOCGLzw2gHMuJxIgG7pyDm3pc7/TZCMKoTTAUe+ZUcIh573AjCY3/lQjTKF2RK
+         6GUN05MgqWnSO+5y5o/Nn8tcELmK4FO5Byxfw/LeIgc2i2an7fPaCg9i4/imFBSnJo9l
+         Dy6OREzQ8EA97DpY5pOcP7A5UG+gI5Pm/DAe40EBQU/vODfpNstkFZ3F+XKjANcy7heg
+         eyyuo+JXA8O0+hjfTdXAjL9HVBQzAwkkIuuaHd3J2OBw4g5Vc8aAIhPgAuAZgz6wk2w2
+         xRcuuKb7v/xDl7GihpobunoljVTZ+piKGyIh0fDNZvTYnEsFd9Nf0y/MdLwEKBunrvWL
+         y2fA==
+X-Forwarded-Encrypted: i=1; AJvYcCVgXUYTqMmvCCtc/oC7fN+DS1wYxonbFreadZ2WSyKeuNdktgmPlHvSeqOB0d6wJOHBE8Y9rzAYKb5mjJY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjBhsR3TfmlbqsHvogseJiY/EUhBTmtxerqW+G4tG4FemF9Xk0
+	EGR7fwc+qha5E+BehlZHAY/zNA/80RtzkQAYSWl+sbAD2nXLtAxz5s89FqF0GQ==
+X-Google-Smtp-Source: AGHT+IEiC+HwEdLjgAYy8MxWH9fW+9EeCReHgvGFDOV5UFEUPy97V6+O/7xZcMFu75Yfallz1txEFA==
+X-Received: by 2002:ad4:5f46:0:b0:6cb:440c:c44 with SMTP id 6a1803df08f44-6cbe52024a8mr256666466d6.1.1728913590195;
+        Mon, 14 Oct 2024 06:46:30 -0700 (PDT)
+Received: from batbytes.com ([216.212.123.7])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe85a7700sm45584966d6.7.2024.10.14.06.46.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:46:29 -0700 (PDT)
+From: Patrick Donnelly <batrick@batbytes.com>
+To: Ilya Dryomov <idryomov@gmail.com>,
+	Xiubo Li <xiubli@redhat.com>
+Cc: Patrick Donnelly <pdonnell@redhat.com>,
+	ceph-devel@vger.kernel.org (open list:CEPH DISTRIBUTED FILE SYSTEM CLIENT (CEPH)),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH 0/2] ceph: use entity name from new device string
+Date: Mon, 14 Oct 2024 09:46:22 -0400
+Message-ID: <20241014134625.700634-1-batrick@batbytes.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013-upstream_s32cc_gmac-v3-4-d84b5a67b930@oss.nxp.com>
+Content-Transfer-Encoding: 8bit
 
-On Sun, Oct 13, 2024 at 11:27:39PM +0200, Jan Petrous via B4 Relay wrote:
-> From: "Jan Petrous (OSS)" <jan.petrous@oss.nxp.com>
-> 
-> The helper rgmii_clock() implemented Russel's hint during stmmac
-> glue driver review:
-> 
->   > We seem to have multiple cases of very similar logic in lots of stmmac
->   > platform drivers, and I think it's about time we said no more to this.
->   > So, what I think we should do is as follows:
->   >
->   > add the following helper - either in stmmac, or more generically
->   > (phylib? - in which case its name will need changing.)
->   >
->   > static long stmmac_get_rgmii_clock(int speed)
->   > {
->   >        switch (speed) {
->   >        case SPEED_10:
->   >                return 2500000;
->   >
->   >        case SPEED_100:
->   >                return 25000000;
->   >
->   >        case SPEED_1000:
->   >                return 125000000;
->   >
->   >        default:
->   >                return -ENVAL;
->   >        }
->   > }
->   >
->   > Then, this can become:
->   >
->   >        long tx_clk_rate;
->   >
->   >        ...
->   >
->   >        tx_clk_rate = stmmac_get_rgmii_clock(speed);
->   >        if (tx_clk_rate < 0) {
->   >                dev_err(gmac->dev, "Unsupported/Invalid speed: %d\n", speed);
->   >                return;
->   >        }
->   >
->   >        ret = clk_set_rate(gmac->tx_clk, tx_clk_rate);
-> 
-> Suggested-by: Russell King (Oracle) <rmk+kernel@armlinux.org.uk>
-> Signed-off-by: Jan Petrous (OSS) <jan.petrous@oss.nxp.com>
+From: Patrick Donnelly <pdonnell@redhat.com>
 
-But of an unusual commit message, but it does explain the "Why?".
+Respinning this because the last series accidentally included patches from
+another set.
 
-Reviewed-by: Andrew Lunn <andrew@lunn.ch>
+Patrick Donnelly (2):
+  ceph: requalify some char pointers as const
+  ceph: extract entity name from device id
 
->  
-> +/**
-> + * rgmii_clock - map link speed to the clock rate
-> + * @speed: link speed value
-> + *
-> + * Description: maps RGMII supported link speeds
-> + * into the clock rates.
-> + */
+ fs/ceph/super.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-A Returns: line would be nice. 
 
-	Andrew
+base-commit: 7234e2ea0edd00bfb6bb2159e55878c19885ce68
+-- 
+Patrick Donnelly, Ph.D.
+He / Him / His
+Red Hat Partner Engineer
+IBM, Inc.
+GPG: 19F28A586F808C2402351B93C3301A3E258DD79D
+
 
