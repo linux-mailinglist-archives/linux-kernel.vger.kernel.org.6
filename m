@@ -1,100 +1,138 @@
-Return-Path: <linux-kernel+bounces-363458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9301999C2BC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:14:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E9E999C2BE
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C3CFA1C25486
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:14:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 21E45B244BF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23A9E1531D5;
-	Mon, 14 Oct 2024 08:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2459714D428;
+	Mon, 14 Oct 2024 08:14:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="ceH6GsK0"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="vWDEEk7O"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0312C14AD2E;
-	Mon, 14 Oct 2024 08:14:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 504E21534FB
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:14:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728893651; cv=none; b=qEcXD+BmQJQNHL0hUV9WDEzYhJcW6eit4iS5ZZiEXa+31HyKVxwXMgm/SGeaUqsGcqSBKMP7Fs9jWm70GGV+gyZZvqZCVesdR4ad7gUSEywibPXbc04+wspP+IEKioaL/zP/Y1sHGI1bkY5U4hNg1pi1bsvWFRloVqcSIPUQ9mc=
+	t=1728893654; cv=none; b=IEbz5PnV9DLZ+xUHHNpOfLRXArCDu9yzV0S6P0LqM9oK4/hPTYWXLJ8kIGyfzbVaEJUr/zm7r+/gk7SE/tM+uUMst9c1hM2c/7H4YnjgYqWzQjb1ueVVN8XpXXltEDD6+vEo3zAN58JI9pFbGLiR25CV2bQlnK76Qa1/hfL28KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728893651; c=relaxed/simple;
-	bh=EKD07Qj6JcVqClDp8w5hX4Ow8T50FvUf1cSyUeXs/8M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=c45AFVKCq7T+Nwk7sDDdi6aFa/C5IEwBLJeztYWvZKV6QIsp/fa3qvSiPHosWXM0ipWl4rcP+az0CQNHQFOi5XLLO7/sFBO3Zy4GTLh14Wdbx6M2ZXC+G55U1kolLj2cwHSM3TNOzSO/zoeONGAjIvPbqoV9byYxH3PyVG107FQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=ceH6GsK0; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=Wk8EcJ/7b4OEG+IFikYEtXUWa6XJYMvqVFBhG68Lv7Q=; b=ceH6GsK0E6q43xq2xtT81K5DtF
-	3Nv2eWGdf1mapppB0kDWQVaJ2UaTYBDWU2VnALi+jCZfOvEhbOubKwj/k5GWwIl5Z/L5pVgoLCA2v
-	fl1ZNnPuY4jH12qm20XvZgXEFuKOj55yxd5DeypDIOTvRr2DLZhLuYgojbFs3ZWKwj8I9vsjhh9Yz
-	t4rN/M1l8bCR4Lb49UiBA46djQowVK5t4LppB3HjTqDLEdGvZA82l15S8xI8ainkw+9UBJvjsk37Z
-	19vllUQfPQ48dNNu2iJMCGmfvBPSlWj5GdivVduMjfRslZoROENMKpnk4b64wT3K3Bi9ieN16NbUp
-	GeSC4EKw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t0GDG-000000012qw-0aZ2;
-	Mon, 14 Oct 2024 08:13:58 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 1C7BB300777; Mon, 14 Oct 2024 10:13:58 +0200 (CEST)
-Date: Mon, 14 Oct 2024 10:13:58 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Kuan-Wei Chiu <visitorckw@gmail.com>
-Cc: colyli@suse.de, kent.overstreet@linux.dev, msakai@redhat.com,
-	corbet@lwn.net, mingo@redhat.com, acme@kernel.org,
-	namhyung@kernel.org, akpm@linux-foundation.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, jserv@ccns.ncku.edu.tw,
-	linux-kernel@vger.kernel.org, linux-bcache@vger.kernel.org,
-	dm-devel@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-perf-users@vger.kernel.org, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 1/3] lib/min_heap: Introduce non-inline versions of min
- heap API functions
-Message-ID: <20241014081358.GS17263@noisy.programming.kicks-ass.net>
-References: <20241013184703.659652-1-visitorckw@gmail.com>
- <20241013184703.659652-2-visitorckw@gmail.com>
+	s=arc-20240116; t=1728893654; c=relaxed/simple;
+	bh=kDeKtA48vlIstldhcaMnAGLV9wwoJYEqb8JMCFUeUoY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bFjmNdDXIp2Em4QxVZFIB+mv1bh1Ccri9k2xn6iZCmSd66WPnFoujVtG/7dxXOeoyK7a7885oh5dsBWUtTD83DoJs2Qm4v46U4aHJEHeeD1Li4uwUqkGGVDDYQo0ENkCVCVOe1MKZymQhMmIALu/dri8aMnqqkM9v4VHhQ8nzOg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=vWDEEk7O; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so858733e87.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:14:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728893650; x=1729498450; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KwU602zOXCbu4j31YwMdMD6lR63QBoFZv++MYJ4Nm8M=;
+        b=vWDEEk7OuWuLnSosLKjVZvj9GCX5rhI3jNUAVhEXVVxGZzfdF0o4IzFnX47fjNafy7
+         x4RW41ynlxtHRmbBNZ0CEZYclRcNXTyOfSbzfyUmi/R49qXowSDW2rOb3NXcGyF6UY71
+         9OoJu5IlWyzPoiJg86TadHHD5F+QDmMa3Jm4PUp5zO/w7G/Dz1peJHm+VZm846RJWVhT
+         BUZHqxiUumKbT5NYwdFeX1M48bsuZ8oVZHq1IB1HoL8S855z6HIEjR3P4HEG/AStkuKL
+         SRcgbpahSDCqZxt2/K3xhMVJRgUCFaEb1joTERj18+h+d1yAPFuQfjm+UE8Dq4MPdSnZ
+         7QEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728893650; x=1729498450;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KwU602zOXCbu4j31YwMdMD6lR63QBoFZv++MYJ4Nm8M=;
+        b=RqgaYXPh/7FSVx3SdmBRr0FmZyoFUJvlUjd9iynm1cVrPIN4AcRcW/SMGS6YG2+5+H
+         teRIzmI61zXj4Ip/vlRmh/L6b+pxjx6WTsIrfPoIx51J+4QUG7ecMUW6pk/bQ6XT2njA
+         XuXT08R3H1xgPNUSJM5F/suzh9USuedsM+tqaX52/3gObK8NcJcK8H2BnbjkLjlmIc0e
+         Ysb0zeTmsiTWLbnUtUkTaqwsqtQbyjerzHGf4cDPQqJtYOuQXrC0LuTnmkzaQSiCN8aH
+         4p+DyDoIuZENQCJk4ipELwhsjH+lX/W/N7jbNXn0T9rkU8hoPD69X5EiuVKG4zcfmM6Y
+         5ONg==
+X-Forwarded-Encrypted: i=1; AJvYcCXM+MJzNVPvDPkvDSPtyOstYBBDRP1E0GS28020EGuMCuP4JDQ0KyALdOGfNM3Ma/QOT0gV+uEO4vY0IQU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGa/cN3B0YMiJLJebu/3xV038zxELXbv2kTo4bkNV28VEObYms
+	zzmNsj7ouX8XpdO76oP4+SDkb7St0uIJwKqXhVjX4OoK9NtdlYtKUAIrrQD45zYfqhnGiuIlY8E
+	YnHVPLUWkuii6f3SVGRCvj5S8R+YR1ItFnY7Ppg==
+X-Google-Smtp-Source: AGHT+IGvqtA7VIzCWrsC1qte6LpHBfjaHr3QOEo5IRja8a19prdnTOQ6bMD+Sa5w163pTMP2XSnG/50il0qtDLS8Bik=
+X-Received: by 2002:a05:6512:3d23:b0:533:4689:973c with SMTP id
+ 2adb3069b0e04-539da4e0b49mr3981750e87.23.1728893650339; Mon, 14 Oct 2024
+ 01:14:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241013184703.659652-2-visitorckw@gmail.com>
+References: <20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org>
+ <20241010-gpio-notify-in-kernel-events-v2-6-b560411f7c59@linaro.org> <20241014022433.GD20620@rigel>
+In-Reply-To: <20241014022433.GD20620@rigel>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Mon, 14 Oct 2024 10:13:59 +0200
+Message-ID: <CAMRc=MddUUx-iDUWY53nStzt9nutRzB=EkGyaHa+e37Wm+10+A@mail.gmail.com>
+Subject: Re: [PATCH v2 6/6] gpiolib: notify user-space about in-kernel line
+ state changes
+To: Kent Gibson <warthog618@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 02:47:01AM +0800, Kuan-Wei Chiu wrote:
-> All current min heap API functions are marked with '__always_inline'.
-> However, as the number of users increases, inlining these functions
-> everywhere leads to a significant increase in kernel size.
-> 
-> In performance-critical paths, such as when perf events are enabled and
-> min heap functions are called on every context switch, it is important
-> to retain the inline versions for optimal performance. To balance this,
-> the original inline functions are kept, and additional non-inline
-> versions of the functions have been added in lib/min_heap.c.
+On Mon, Oct 14, 2024 at 4:24=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
+wrote:
+>
+> On Thu, Oct 10, 2024 at 11:10:27AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > We currently only notify user-space about line config changes that are
+> > made from user-space. Any kernel config changes are not signalled.
+> >
+> > Let's improve the situation by emitting the events closer to the source=
+.
+> > To that end let's call the relevant notifier chain from the functions
+> > setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
+> > gpiod_toggle_active_low(). This covers all the options that we can
+> > inform the user-space about. We ignore events which don't have
+> > corresponding flags exported to user-space on purpose - otherwise the
+> > user would see a config-changed event but the associated line-info woul=
+d
+> > remain unchanged.
+> >
+> > gpiod_direction_output/input() can be called from any context.
+> > Fortunately, we now emit line state events using an atomic notifier
+> > chain, so it's no longer an issue.
+> >
+> > Let's also add non-notifying wrappers around the direction setters in
+> > order to not emit superfluous reconfigure events when requesting the
+> > lines as the initial config should be part of the request notification.
+> >
+>
+> So lines requested from kernel space will result in a LINE_REQUESTED and
+> then a series of LINE_CHANGED_CONFIG?  Whereas for lines requested from
+> userspace those will be collapsed into the one LINE_REQUESTED event?
 
-The reason it is all __always_inline is because then the whole
-min_heap_callbacks thing can be constant propagated and the func->less()
-etc calls become direct calls.
+No, why? I added the notification about the request to
+gpiod_find_and_request() which is called by all the kernel getters and
+it already configures all the flags without emitting events and calls
+the non-notify variant of the direction setter. When a kernel driver
+requests a GPIO, I only see a single event UNLESS after the
+gpiod_get() call returns, it sets direction or changes config - just
+like user-space.
 
-Doing out of line for this stuff, makes them indirect calls, and
-indirect calls are super retarded expensive ever since spectre. But also
-things like kCFI add significant cost to indirect calls.
+Bart
 
-Something that would be a trivial subtract instruction becomes this
-giant mess of an indirect function call.
-
-Given the whole min_heap thing is basically a ton of less() and swp()
-calls, I really don't think this trade off makes any kind of sense.
+> That's not ideal, but I realise making the rest of the kernel behave as
+> per cdev would be non-trivial, so ok - it all comes out in the wash.
+> And it is clearly better than nothing.
+>
+> Cheers,
+> Kent.
+>
 
