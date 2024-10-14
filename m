@@ -1,127 +1,113 @@
-Return-Path: <linux-kernel+bounces-363034-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363035-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2ACF199BD25
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:49:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6965399BD29
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:54:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3EFE1F218D3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:49:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0D21C2127D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:54:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C89D4C7C;
-	Mon, 14 Oct 2024 00:49:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FF84C7E;
+	Mon, 14 Oct 2024 00:53:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b="dDYfCCbG"
-Received: from gate2.alliedtelesis.co.nz (gate2.alliedtelesis.co.nz [202.36.163.20])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="oA2eLbcN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 293563FD4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:48:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.36.163.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25767211C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:53:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728866939; cv=none; b=dlVuyAZ3K9Ba6k73MP2qwsuHWlcWatCbJuZUkX+XgZYX3Se3RZUYrIosBga+4IfAiRJFN7viSqIl4ORmwKB9Ba8+zgJ1qunKZ5pSQnUXh3jTgJ0Vl0+zUttcJCHOrfMcrlxopsb08w0U0CfsH4r6mjcQqW4VUxNch1ZjPeKJ4PQ=
+	t=1728867238; cv=none; b=imR/UpG3xSnR8N+DhMb5vX0CehoykEyOills8ZQ0JrwGsDQQ98sIE9DpsBK877qrmGHRLmxHrWNJh7DLDeDOsKxWA460A/Wn9f3dAN5hzm6j5RBjrPAcpoNf2G4KeJLmwAicWjAWiRmQrWYRSKMWFacavk3o/08WqxRbhI7KZbE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728866939; c=relaxed/simple;
-	bh=IK/+jnfHuCbDOQyrOzCmeSis+MuzTanErDfuCeYtH9k=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NHclhtX18djh7qP35oRbRPnnn4RAzACNcBm1hmMw8VmelsI+PYzYy5I7s9QN2b0koWOd46UBipEkmyk6NO84VAuu06or8uklvPzCEdmCDxqoLux7R1I7FAXI+DkKbGDDcDucXp1sg9JDZjayGWY8DWBmmewN7Fd6AJcHysH8Wjw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz; spf=pass smtp.mailfrom=alliedtelesis.co.nz; dkim=pass (2048-bit key) header.d=alliedtelesis.co.nz header.i=@alliedtelesis.co.nz header.b=dDYfCCbG; arc=none smtp.client-ip=202.36.163.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=alliedtelesis.co.nz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alliedtelesis.co.nz
-Received: from svr-chch-seg1.atlnz.lc (mmarshal3.atlnz.lc [10.32.18.43])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by gate2.alliedtelesis.co.nz (Postfix) with ESMTPS id E16262C0404;
-	Mon, 14 Oct 2024 13:48:54 +1300 (NZDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alliedtelesis.co.nz;
-	s=mail181024; t=1728866934;
-	bh=O4zdt/Cjmlaout6iODGs924VsI5ahGfN1gpPJKcIjNw=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dDYfCCbGzAlNzM0FZhsKd5XZYsPX3eM8vRTj0W4aAkbaHJ8PPLNxFcgp7psVLZxfT
-	 hKBMFwGKF0FNMyQgSeajU6ZmQ+71CgIOoY5CD1vpsXEa4QQ9WXmvVHh0il1l6ATjdh
-	 Wxae7Nr0RjS/UPHVtvHhuf5ePP7t7X04ykXaLtARVeza2RA2J6xPZMuw5JeeWAs3TY
-	 k4ghYJm+9xsSPwPsXMZrt6+W2afTG+R/PObSd8IO6B/Kq+Mt8r2DClMCDC3T2LpOvX
-	 QcMHA1PCTmHiaP3TMH520fhHfUpAuMnBCszZ4vVuDvCmbcewfw095MkF1j6kyIsQzE
-	 OX1Mqf45S+nrA==
-Received: from pat.atlnz.lc (Not Verified[10.32.16.33]) by svr-chch-seg1.atlnz.lc with Trustwave SEG (v8,2,6,11305)
-	id <B670c6a760000>; Mon, 14 Oct 2024 13:48:54 +1300
-Received: from [10.33.22.30] (chrisp-dl.ws.atlnz.lc [10.33.22.30])
-	by pat.atlnz.lc (Postfix) with ESMTP id C72BC13ED7B;
-	Mon, 14 Oct 2024 13:48:54 +1300 (NZDT)
-Message-ID: <fa953c09-d22c-483a-8860-92f1ebaa6162@alliedtelesis.co.nz>
-Date: Mon, 14 Oct 2024 13:48:54 +1300
+	s=arc-20240116; t=1728867238; c=relaxed/simple;
+	bh=tvdjtp+Xnx1kD3Mp10OKWBEyWKfiORomy9/EsUTbXVo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=F55Wa+l9s6VDBjLRsOhlmLa0HEwu7SdGD6B0cWnfeodqA2elJ9ooA7efM27kBrH35doXxhCkphrHgAZgRIueGzi3RzlVp5t8RbmBcbDLkYq5Bd1kFDRs31RxVgjQlC6Ykh3x6Jaj4eoZqk65mBtiqWhQ5qSLxNdtgzCZVPC45IQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=oA2eLbcN; arc=none smtp.client-ip=198.175.65.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728867237; x=1760403237;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=tvdjtp+Xnx1kD3Mp10OKWBEyWKfiORomy9/EsUTbXVo=;
+  b=oA2eLbcNB603Ldwv2NXE3DpqNvHkVljGhPszIH0xtp1VACg1x/q7dYDE
+   3KEgBlcnTfiOqOvtKKj/oB2T+6aoe/Xx1fUc/ZUZGU4/qqpOqRjpVbFHt
+   CtN/Jq7imjiz8LvqcbjvLVQ7WhcnX2ZOnQrXu6MmtG8BRT4Jx8WphEg+m
+   ztNM0qjSmwpkVCitplSdqDmwJgI3Ze2vVJUiEPJsmnKtFc751QC1cKJC0
+   oQdmnt7fVun/h0xmk9T+rYHsudGG+uMkz9NeQls0RaWWF54Jq/KMUFd6e
+   m/JCK5n4i4t/7YAkj5FsQ505Hw+x2jbWIuGsmvT072UzUmsNnYerJBvkU
+   w==;
+X-CSE-ConnectionGUID: dTIPIlIGQ/G82Wkht3vEHw==
+X-CSE-MsgGUID: 3kEBxK9LQHCnNygigRYkYA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="39586811"
+X-IronPort-AV: E=Sophos;i="6.11,201,1725346800"; 
+   d="scan'208";a="39586811"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa104.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 17:53:56 -0700
+X-CSE-ConnectionGUID: P6TlyDfiSLeoxzqQAhzZzw==
+X-CSE-MsgGUID: 6jX5D+mwSx+g1AvqEqinSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,201,1725346800"; 
+   d="scan'208";a="77753768"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 13 Oct 2024 17:53:54 -0700
+Message-ID: <b2926672-216c-49cf-abea-9848aa52f109@linux.intel.com>
+Date: Mon, 14 Oct 2024 08:53:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH] fixup! i2c: Add driver for the RTL9300 I2C controller
-To: Andi Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20240925215847.3594898-7-chris.packham@alliedtelesis.co.nz>
- <20240929200934.965955-1-chris.packham@alliedtelesis.co.nz>
- <rldg7q2je4alzn2qridg4ls5vakwioaphquog24jejwynmfd6z@2irqdiizethm>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, iommu@lists.linux.dev,
+ Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
+ Robin Murphy <robin.murphy@arm.com>, Kevin Tian <kevin.tian@intel.com>,
+ Yi Liu <yi.l.liu@intel.com>, Vasant Hegde <vasant.hegde@amd.com>,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/7] iommu/vt-d: Add domain_alloc_paging support
+To: Jason Gunthorpe <jgg@ziepe.ca>
+References: <20241011042722.73930-1-baolu.lu@linux.intel.com>
+ <20241011042722.73930-2-baolu.lu@linux.intel.com>
+ <20241011132252.GJ762027@ziepe.ca>
 Content-Language: en-US
-From: Chris Packham <chris.packham@alliedtelesis.co.nz>
-In-Reply-To: <rldg7q2je4alzn2qridg4ls5vakwioaphquog24jejwynmfd6z@2irqdiizethm>
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241011132252.GJ762027@ziepe.ca>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-SEG-SpamProfiler-Analysis: v=2.4 cv=ca1xrWDM c=1 sm=1 tr=0 ts=670c6a76 a=KLBiSEs5mFS1a/PbTCJxuA==:117 a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=62ntRvTiAAAA:8 a=VwQbUJbxAAAA:8 a=QyXUC8HyAAAA:8 a=IvJyAl676Ggpr9NaoQsA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=pToNdpNmrtiFLRE6bQ9Z:22
-X-SEG-SpamProfiler-Score: 0
-x-atlnz-ls: pat
+Content-Transfer-Encoding: 7bit
 
-Hi Andi,
+On 2024/10/11 21:22, Jason Gunthorpe wrote:
+> On Fri, Oct 11, 2024 at 12:27:16PM +0800, Lu Baolu wrote:
+> 
+>> +static struct iommu_domain *intel_iommu_domain_alloc_paging(struct device *dev)
+>> +{
+>> +	struct dmar_domain *dmar_domain;
+>> +	bool first_stage;
+>> +
+>> +	first_stage = first_level_by_default(0);
+>> +	dmar_domain = paging_domain_alloc(dev, first_stage);
+>> +	if (IS_ERR(dmar_domain))
+>> +		return ERR_CAST(dmar_domain);
+>> +
+>> +	return &dmar_domain->domain;
+>> +}
+> With the direction that Vasant's series is going in, I think this
+> should be skipped and instead your other patch to make
+> domain_alloc_user (which we will rename) a full functional replacement
+> is the right thing.
 
-On 2/10/24 23:57, Andi Shyti wrote:
-> Hi Chris,
->
-> On Mon, Sep 30, 2024 at 09:09:34AM GMT, Chris Packham wrote:
->> Hi Andi,
->>
->> This is a fixup for the spare complaint from the kernel test robot
->> https://scanmail.trustwave.com/?c=3D20988&d=3D8Kn95gKUGD1_OL8d257ypj3k=
-PxHsjXG_y2-BvWXRiQ&u=3Dhttps%3a%2f%2flore%2ekernel%2eorg%2flkml%2f2024092=
-91025%2eP4M4O1F2-lkp%40intel%2ecom%2f%23t
->>
->> Not sure if you want to fold this into what is already in
->> andi-shyti/i2c/i2c-host or if you want me to send it as a new patch.
-> no worries, I can take care of it.
->
-> Andi
+I think it's too early to remove domain_alloc_paging from the iommu
+driver. Vasant's series makes most of the paging domain allocation go
+through domain_alloc_user ops, but for those that are non-PASID related,
+it still goes through domain_alloc_paging. So perhaps we can clean up
+after both series are merged.
 
-Just chasing up this series.=C2=A0 Did it land anywhere? Were you waiting=
- for=20
-me to send a v6?
-
-I think I've clarified the SoC naming with Krzysztof so he might like me=20
-to send a v6 dropping the wildcard rtl9300. But I didn't want to send a=20
-v6 if v5 was already sitting in a tree somewhere else.
-
->> ---
->>   drivers/i2c/busses/i2c-rtl9300.c | 2 +-
->>   1 file changed, 1 insertion(+), 1 deletion(-)
->>
->> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c=
--rtl9300.c
->> index ed9a45a9d803..f0bb0ede79ce 100644
->> --- a/drivers/i2c/busses/i2c-rtl9300.c
->> +++ b/drivers/i2c/busses/i2c-rtl9300.c
->> @@ -318,7 +318,7 @@ static const struct i2c_algorithm rtl9300_i2c_algo=
- =3D {
->>   	.functionality	=3D rtl9300_i2c_func,
->>   };
->>  =20
->> -struct i2c_adapter_quirks rtl9300_i2c_quirks =3D {
->> +static struct i2c_adapter_quirks rtl9300_i2c_quirks =3D {
->>   	.flags		=3D I2C_AQ_NO_CLK_STRETCH,
->>   	.max_read_len	=3D 16,
->>   	.max_write_len	=3D 16,
->> --=20
->> 2.46.2
->>
+Thanks,
+baolu
 
