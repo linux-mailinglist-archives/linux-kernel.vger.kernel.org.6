@@ -1,1314 +1,382 @@
-Return-Path: <linux-kernel+bounces-363740-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363717-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC72299C66E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:50:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1314899C5F9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B94A2851D4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:50:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6FD5284D28
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:40:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D84415F33A;
-	Mon, 14 Oct 2024 09:50:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABF01581EE;
+	Mon, 14 Oct 2024 09:40:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b="lE0lBirw"
-Received: from mx0b-00128a01.pphosted.com (mx0a-00128a01.pphosted.com [148.163.135.77])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="C1l9dZsk"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2052.outbound.protection.outlook.com [40.107.22.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 591F9158D79;
-	Mon, 14 Oct 2024 09:50:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.135.77
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728899423; cv=none; b=kf5pK0pKbbIdq7b4sxBN0zhJeGs3B6UZeEEcU7w4Vu3PBKROp4qQ5zO5PALUH/wKsTlKgDazqLfsFLSU5OqwGC4KQoKyhsrb/O37jOYbpQplWRBMwWLydg/XTOHjAe7dYQtIo013AJADCbxRVHxWTqqOtQY3rhVVLTm86e6FkkY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728899423; c=relaxed/simple;
-	bh=BnAqHaK1KHbY+yYoGKejNK+TcTxj7H8ds15TBJi7xl4=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cfHXXYLkpV7eDMAx3bEp4mrcgzZLGXS/X3UVV1xJQGnpDj13bvXBMsjNU+AwHp79m3AGHsscW+2uBOaer1leUaqc8na3FYsTFcj7T2pzs6hUBY0IlMzqIMG78kgYuNHAg8OELnWHQee+2QM8l4kOLv7yqP9SZZsDUBJuRtr+oiw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com; spf=pass smtp.mailfrom=analog.com; dkim=pass (2048-bit key) header.d=analog.com header.i=@analog.com header.b=lE0lBirw; arc=none smtp.client-ip=148.163.135.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=analog.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=analog.com
-Received: from pps.filterd (m0375855.ppops.net [127.0.0.1])
-	by mx0b-00128a01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49E5v0RT009657;
-	Mon, 14 Oct 2024 05:49:54 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=analog.com; h=
-	content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=DKIM; bh=gkUNs
-	Znh5usewb4ViGv2EBCJXj7/ozFgDUPz0hJwpFo=; b=lE0lBirwhLKIfEbYKwZ2V
-	EbYov/f4rK65bSwG33YU+7EG0wOAp8KbhPyfFkWcyjYLnkP3C2h6uoiOYXSDJ6Nb
-	mY9pesDBIq0tI/Czuzhps4NZOiX9gXZx5l7fjDJRFPFNtSQDa0c3HhMpwpgnuU6d
-	4puUHpuXUX0/fisvs2CtVUbEv+Pr9UHgp02xQ4pjStIcMAqHFm03k9nIoRg+Rbza
-	PlAH4p6M7yD/2VyxxHX6/QBjigS8D6YUI9xuYwfqEmfKSTB4V3prEEEcMk94RpND
-	wMhZTKqZR4BhK3IX3WukuTRzcU8RWdSzLrtQQm/WyzgC/RiEbtGW4mVWZLICYwhm
-	w==
-Received: from nwd2mta3.analog.com ([137.71.173.56])
-	by mx0b-00128a01.pphosted.com (PPS) with ESMTPS id 428wkq8tyw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 05:49:54 -0400 (EDT)
-Received: from ASHBMBX9.ad.analog.com (ASHBMBX9.ad.analog.com [10.64.17.10])
-	by nwd2mta3.analog.com (8.14.7/8.14.7) with ESMTP id 49E9nrMS028032
-	(version=TLSv1/SSLv3 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Mon, 14 Oct 2024 05:49:53 -0400
-Received: from ASHBCASHYB4.ad.analog.com (10.64.17.132) by
- ASHBMBX9.ad.analog.com (10.64.17.10) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 14 Oct 2024 05:49:53 -0400
-Received: from ASHBMBX8.ad.analog.com (10.64.17.5) by
- ASHBCASHYB4.ad.analog.com (10.64.17.132) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.986.14; Mon, 14 Oct 2024 05:49:52 -0400
-Received: from zeus.spd.analog.com (10.66.68.11) by ashbmbx8.ad.analog.com
- (10.64.17.5) with Microsoft SMTP Server id 15.2.986.14 via Frontend
- Transport; Mon, 14 Oct 2024 05:49:52 -0400
-Received: from amiclaus-VirtualBox.ad.analog.com ([10.65.36.213])
-	by zeus.spd.analog.com (8.15.1/8.15.1) with ESMTP id 49E9m0Gq024017;
-	Mon, 14 Oct 2024 05:49:42 -0400
-From: Antoniu Miclaus <antoniu.miclaus@analog.com>
-To: Lars-Peter Clausen <lars@metafoo.de>,
-        Michael Hennerich
-	<Michael.Hennerich@analog.com>,
-        Jonathan Cameron <jic23@kernel.org>, "Rob
- Herring" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        "Conor
- Dooley" <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-        Olivier Moysan
-	<olivier.moysan@foss.st.com>,
-        =?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?=
-	<ukleinek@kernel.org>,
-        Andy Shevchenko <andy@kernel.org>,
-        David Lechner
-	<dlechner@baylibre.com>,
-        Marcelo Schmitt <marcelo.schmitt@analog.com>,
-        "Ivan
- Mikhaylov" <fr0st61te@gmail.com>,
-        Marius Cristea
-	<marius.cristea@microchip.com>,
-        Dumitru Ceclan <mitrutzceclan@gmail.com>,
-        Antoniu Miclaus <antoniu.miclaus@analog.com>,
-        =?UTF-8?q?Jo=C3=A3o=20Paulo=20Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
-        Alisa-Dariana Roman <alisadariana@gmail.com>,
-        Mike Looijmans
-	<mike.looijmans@topic.nl>,
-        AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>,
-        Sergiu Cuciurean
-	<sergiu.cuciurean@analog.com>,
-        Dragos Bogdan <dragos.bogdan@analog.com>, <linux-iio@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pwm@vger.kernel.org>
-Subject: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
-Date: Mon, 14 Oct 2024 12:40:40 +0300
-Message-ID: <20241014094154.9439-6-antoniu.miclaus@analog.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241014094154.9439-1-antoniu.miclaus@analog.com>
-References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F09E71547E4;
+	Mon, 14 Oct 2024 09:40:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.52
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728898826; cv=fail; b=g4Meo7UhS9BPu/xqoXcIEtaG/BT4AwDY8cxwpcOzQGLuQIc8qzPtIRE2YXxkfw1d3nZ4l9VKbK22jHrujV2ozU7Lm7mFiUoi96M/VmpqggJYGd+7STc4s6CgysaUYwUD1IqS+TQaq9ZANda8K1wOzhhBzizE6Tr/ZqFXmZ14H6A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728898826; c=relaxed/simple;
+	bh=jp3w+g66nLKAMHszxV8SSduJY/N5miqB2T/D5cWSxn4=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lFbs+5ZUe5BhFo5FgZbpEIL6sjDQeqmBQVroATcPCjbvdK6VLwD9Iu/b2/h5agHmSvTYpCH9jwIM2eLKejKaEyp18pbuZ83h7nqq7wChBvvv1l4I6oXU4669qMMGmbjL8veVkPLZiQZujsCIBMNNkKcEfVKm7G3Ui28ow6yyerQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=C1l9dZsk; arc=fail smtp.client-ip=40.107.22.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=P1C6ISiulvRFMBuk/Bk8lXMYrj4KdtTBdlXZus+ze378mJAtqOiLE0oU1rEzlYJxftHFICn9IsvYfcM2xzP08nY+bVGZPgqnTDgEcgUIPw+SopXEFfDNz5rfEpRmPPs44et43ORc/VNRBh7SgJY/273snVQQxMWChVQJ/IUy7+nGqNeKi/yHSPdrNAUM2i7xWbzTGVNzN7yDr/CHRPROeud0iqajWcMz1CAbtg56odlQnvZNiyAY6Vi8q8vYcw4qahN8V0OntSBHdkp5LC2l9DaAld8igMezui+M+z5XZMaFjLUEQieezUFg1s/sWA8gawFY8rAwnw7ngZHMBYbkNA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=ZgN+835PjLn5CUeZW2Sv2rBl2MJpdY1l6W19UsiZbX8=;
+ b=s+EI9Y+k4QJvBu7QWafl8Llykp6mNZZrFp8VwEX/q+7q0UX2Yo6+CNu6YcXi1gISsQrmaufosNjmE0L9WldEaUiAVl07oDYp3VssRlGRtbGARN65m+CJARKhRvACvSnRMzELdJ7Rbz7+6B4fT+ohN08nQvFn1JrTvO4D7GU8bVJ/tVy3wqcIQUj46vy2IFnNUffDQIRyd4o/jNB5NY1KGZs3Tv6Aa4TYhx8lCNs6bW580PH9m69HsWeVdvxWdJcpNh00xDjf58mA2ZPGphgJTt2ViQ55cXqihRa5dX2ryIWFHSb0JFFRXyyJAyGjMVpknkm+R6+RLKYDNOTu1puu8A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=ZgN+835PjLn5CUeZW2Sv2rBl2MJpdY1l6W19UsiZbX8=;
+ b=C1l9dZskL7AUyFCJPEsd244pgVjtuhuywCcG0OVRWPr2VtpT82z2KUWpsDuEYi6r1s7MtlYcsAls8jRbdh7CpNN9OFvO1+tmIHfbPubK7FjZHSDgGaQJIJ6f/u046wwYRLxRaz1Lx/YgAbm2gIfywKlqIED4VPthpPQ7R8P9ZLK7UtrqvPttmojCG4BEZPAi2AUeGvAlhTiaIj+lAWWoRs45+GKIDWudJVlAGarpDtirP0dDfFDaEHTQUrRIyVgcVqnDAgnjB2NIDR26xpjl649XAeXWKsyPiAm5DHXemUDGckCOomWQ1l3616uI+IwWzj+zBnD6/qP3zQ+lMtpdfw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
+ by PAXPR04MB8389.eurprd04.prod.outlook.com (2603:10a6:102:1bf::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
+ 2024 09:40:20 +0000
+Received: from AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90]) by AM7PR04MB7046.eurprd04.prod.outlook.com
+ ([fe80::d1ce:ea15:6648:6f90%4]) with mapi id 15.20.8048.020; Mon, 14 Oct 2024
+ 09:40:20 +0000
+Message-ID: <67868643-570d-45d9-b9c8-c90efcf6a2c2@nxp.com>
+Date: Mon, 14 Oct 2024 17:40:45 +0800
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/8] drm/bridge: fsl-ldb: Use clk_round_rate() to validate
+ "ldb" clock rate
+To: Maxime Ripard <mripard@kernel.org>
+Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, andrzej.hajda@intel.com,
+ neil.armstrong@linaro.org, rfoss@kernel.org,
+ Laurent.pinchart@ideasonboard.com, jonas@kwiboo.se,
+ jernej.skrabec@gmail.com, maarten.lankhorst@linux.intel.com,
+ tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch, robh@kernel.org,
+ krzk+dt@kernel.org, conor+dt@kernel.org, shawnguo@kernel.org,
+ s.hauer@pengutronix.de, kernel@pengutronix.de, festevam@gmail.com,
+ catalin.marinas@arm.com, will@kernel.org, quic_bjorande@quicinc.com,
+ geert+renesas@glider.be, dmitry.baryshkov@linaro.org, arnd@arndb.de,
+ nfraprado@collabora.com, o.rempel@pengutronix.de, y.moog@phytec.de
+References: <20240930052903.168881-1-victor.liu@nxp.com>
+ <20240930052903.168881-5-victor.liu@nxp.com>
+ <2on4bu5jsxvaxckqz3wouwrf2z6nwbtv34ek4xda2dvobqhbsf@g7z7kxq5xrxi>
+ <5fb80bf6-96be-4654-bd54-dc4f1d5136ae@nxp.com>
+ <20241011-mottled-translucent-dodo-8877e6@houat>
+ <6be9d2ac-7e0b-4b6a-885d-ad40158a2998@nxp.com>
+ <20241014-meteoric-acrid-corgi-f81a04@houat>
+From: Liu Ying <victor.liu@nxp.com>
+Content-Language: en-US
+In-Reply-To: <20241014-meteoric-acrid-corgi-f81a04@houat>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SG3P274CA0017.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:be::29)
+ To AM7PR04MB7046.eurprd04.prod.outlook.com (2603:10a6:20b:113::22)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ADIRuleOP-NewSCL: Rule Triggered
-X-Proofpoint-GUID: Ur9zJq_No1-qbHXIfYHqkDaq52XzTKrd
-X-Proofpoint-ORIG-GUID: Ur9zJq_No1-qbHXIfYHqkDaq52XzTKrd
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 malwarescore=0
- clxscore=1015 priorityscore=1501 lowpriorityscore=0 phishscore=0
- mlxlogscore=999 impostorscore=0 spamscore=0 suspectscore=0 bulkscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140071
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM7PR04MB7046:EE_|PAXPR04MB8389:EE_
+X-MS-Office365-Filtering-Correlation-Id: ec837fec-4191-466a-ecae-08dcec3437e4
+X-LD-Processed: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+ =?utf-8?B?cmxPeHpheWFnRU1WRGhXQzhPWllvUmtmczY0cEhkbXJJazFCQVpXWWRoakZ1?=
+ =?utf-8?B?cHZlRm5tR0tiRkwzSExXVFNDWEVmMFZiOHNIRjlkc0o0T0NMREVwbHNnZXNH?=
+ =?utf-8?B?a0tDQUFrN0pnU0pZM3JNL0RvS0pJa1g0K05HbmRxQVZJcmdXQXhxUy9ZdVRl?=
+ =?utf-8?B?VWNwRHlQTGhtdlJUOXR4ZnE3R0RUTVk0NHlZdkxjMDdGVGxrQXowaUIvV2Fs?=
+ =?utf-8?B?MkxOeWFpVnpLOG9aUTM1NFc0d0RsWHQzY1EzOUdyb3J0Z3VwN2wxSzdSRTdr?=
+ =?utf-8?B?MHhUU0JZdFFFT2dmeEpvSHlBNlk4SlUzRzd6QWVzQ0tzWk1TY2l6MFRBWi8v?=
+ =?utf-8?B?QmlhSjVTQ2xVV2s3Q3M2aTlCY2ViM1Y2Q3lsVUw1WTR3TU9HdDJWNm1PRFJj?=
+ =?utf-8?B?YVR6ZFNwL0ZZS00wQVkrcnlnRXZST2dwZnRiU0Ivc3YzWXZxMXVvV09Dejhq?=
+ =?utf-8?B?dldqcDhXcWNpc01rK09GVWpFOHR0cjFBTkFIZ1dGNVRFMXg3aTNrRUQ3SFcx?=
+ =?utf-8?B?Z3Nld2VBNHZFblJmcllGL3NqNVpCZW93ZzFhWHZYcUdtWk41OGxNcy9MZEN6?=
+ =?utf-8?B?SE00TUZvd1B0eUFwYmxTYi91Tjdjek9PUVdmbmt4RWt5VkxOdnF1OXljNnFJ?=
+ =?utf-8?B?VGdYbzV1SkVtenhvSk0rOTZpWGFWNW92RGxrZUtYMUEzWWZ5dHFqQ1pIM1hj?=
+ =?utf-8?B?TXJsbTNCQnZwK05FRWl4VkNoTExNVFJYSFpLcTRBTVdJL0NzalpIWjc3TnB6?=
+ =?utf-8?B?UVB6UVpKV0hQWFhIUDkzK3RVUW1vV29lclB5dXZrNHQvWmgrNWI4Z3ZXTDJR?=
+ =?utf-8?B?Sm05Wmo2dFZjY2ZCdUFaZ2lMQ29kK3ZhT2xBOEI2RkN5OGoycDV1K2RmOGh6?=
+ =?utf-8?B?RHdieXBPVVZtNzMybTg2dXNCdHdMQmhyMFFHbmZMb0gzUStpSnExbUVyQmhJ?=
+ =?utf-8?B?cWVwVFNpRzAxZHc5U2RRa3VvQzV4VzZ0Ni8vMHFyYklxUGJFZ05sWllqVXF1?=
+ =?utf-8?B?NG1aZWJDZTk3Y3M5ZXM5V3BNazdJLzVpWmEvQjlERFdaV3JWMitrSGlPMXlU?=
+ =?utf-8?B?Ti9tZG1ncHlubUZHSE0rTTd3MzJMVlRDR3BqazdIaUUwRmErR3VWRUhtc1hM?=
+ =?utf-8?B?MGhMQzNvQlpzYTJxa3F6RElKMEthMGx5WHVGcTJwbmRCT04va25YVmd5Q2FJ?=
+ =?utf-8?B?L21jcHNLNDU2WjdoQU9MZVFkSmtYS01ITjBWWXNQcFR1WE1hblJ5TWdsQkpB?=
+ =?utf-8?B?azVWUTgzZnpLd3VRMGNIenFEa0NQSUYxY0x1M0JEQmZSVW95ZGJyOFVhTkJT?=
+ =?utf-8?B?RmZEeFZXU1VkTzgvOXlrQytKQVhnaTNXOU5zMGtyeHNPSmtPVFo3VEZYVUd5?=
+ =?utf-8?B?TldlK1pBVlExRVIzRGt4bTlRTG9Ld0NvMmkwZXNvR2lEcmFvN1gwYndXNlZw?=
+ =?utf-8?B?TVdkbmhUWW1WZFJMZEdWa0Y1WEMvc1ZHNyt3bFVERXFFT05OSjRZSmpDTlJh?=
+ =?utf-8?B?LytNeEROK05RaWk0dVJTQ1JaVTB5UjY0UTNraGJKdWl1RE9yWXVHSzhDVGkx?=
+ =?utf-8?B?UlE5d2h6K2VYS01GUFlXbkRZUUNCekZYTEswWE9sd3lRcVBTRlNPaDFNVFE2?=
+ =?utf-8?B?TzROMjJ1YkFjSjNNVkhiL3BvT2I5LzdzOXVWL2NkeEdkRkRKRTU2Umt2MUE5?=
+ =?utf-8?B?Ulc1NTdkeERRUngxRFhYU05CTmlhOFNMS0VsMHRTc2czWnBpS1M3VUtBPT0=?=
+X-Forefront-Antispam-Report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM7PR04MB7046.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+ =?utf-8?B?eWo3QlNYUnB0ZjN3Y0hXVGlhMDJCZUp2eXJqRE5IZmhxNjZGYk9JSE5Hb1FC?=
+ =?utf-8?B?UnhFSmN4QkZvR1dWaDZuVjRXSjhKdVlERWlZbS9US3R1WmRmSXlJMzFRNS8y?=
+ =?utf-8?B?VHhrd2d0bzRHQk91Uk9GemphYW5TVUkxcnhEdUZ1bFZReGFkN1J0NDJROXVN?=
+ =?utf-8?B?ZUNNd0grd3JXenhPNloyUE02UUtFbjFzRG55VzNOc01iQkF1NUNtN0hXR3dX?=
+ =?utf-8?B?R1B3U3lrOERIaDJGL2tBNVVzWnVuWnpRaVBBdnJiMnRsN1pUVDdrWElUT1lv?=
+ =?utf-8?B?blpHb043QURFZDBwSXBWVEZzMVQvQUdDUEYrVjd5UUpZSkpFWnEzS0dZWjFU?=
+ =?utf-8?B?b1RJWGQrbEtJTnF6cjIzV2hxcENCSDZqYXJadi9rR0FHaGFDVFY3K3JqRjBT?=
+ =?utf-8?B?QWNuRkhHNElkSXJGcmNkVU05Szk4c252aFhzZmpxSnF3UU83S1ZiczA2Z0lO?=
+ =?utf-8?B?UjVnamVmT1U1a2M4byt6Y0svZWRaSFdwdTV2WEVqTUF2dDQ4YVRrM2F4bzBF?=
+ =?utf-8?B?alJjTlU3d1Z3aUxYYTJnL0RwTlkxcm1TTm5qR0dzNnhtOWpXalBtYmRYM3Rq?=
+ =?utf-8?B?Z1EybVlySDFrQ3ozbTBtUWhoWlBBdjVudllpOENmSHRhUXhWMG9ZSXNEYzdH?=
+ =?utf-8?B?L1NvZ0xudTRBOVREWldycXpwV1YyUy9EaEwvUFdIYmJTcDNYeVkveGdleUpO?=
+ =?utf-8?B?VXFjaE5aaTlqU1hjVTI2Y2MwMkkwcVhFYmoweEZmUWl5L0d0dkpCaUZsYzI4?=
+ =?utf-8?B?cWZSV3RKdDZKZnVOdlR0NTBIVmticFhmRjlCYVQ3ZzdEV01IZ2tkcVdqZDhS?=
+ =?utf-8?B?ZElkODRDdWJHMFQ1eTVnbWExVjAyU0dCUkdzTVJoQjVKVzdndnJKN1NnWFk2?=
+ =?utf-8?B?MXMyMTBjbHJ2dWx1bWhvalYxak10ZDJRMTFFWGZzVFRxc001aVJZeEkzeFcw?=
+ =?utf-8?B?VVQ2eFNYQW1OUHpiVWF4bGF2T2wraGRhK0VRN2U1Q3EyU1RxcWZqSnBLZ0Mw?=
+ =?utf-8?B?YjhMZ2FpZ2srS0I1UjZlZzhhRTV2NlQzZzZuWTE0THlqdTZGM0srSEJOc28x?=
+ =?utf-8?B?ZktxV2thYTZ6UHVTb21PRTlydGNrTjhwZGxFMVBtM2xTUlZwTVFXNFd1dVF0?=
+ =?utf-8?B?STNOb3dmenFxb2dNUWUwREt4ZXI3ckdnWEVMMDYrd0lyd0tPR1cybVVIbXlU?=
+ =?utf-8?B?eGdFWG9Ud0ZDSTNOZVEwWlZUMVZQL2tNVlFibFBnWkJxanEvVitRZkVScU9W?=
+ =?utf-8?B?QWc2dEVSQy9yOTc3NjVuTGcwZG11a29OaFRkR0F1WUNENjdENERTbFA2elZ6?=
+ =?utf-8?B?MUM2ZlAwMGR4Q05kenZUbitiK1dpdnpPM0xoMGI5UmFlQ3NuSURUMVlTbEp1?=
+ =?utf-8?B?TS9JNjNjMms2STlHTUkvbjdxUHdWVEx0Qm40a1lxMWorbVJtL3g0MHBTMW5s?=
+ =?utf-8?B?dTJDSmtMMXpVUTNRNUozMy83VERwTlFQaEFabWlkVE9iVUR6L1l3WWJYVERn?=
+ =?utf-8?B?ZEQvdXEyck9hUFVPQ0c3Uy9GVEYvZDg5M3ByUlVrZGJpb3V6QVNNWUpTclJa?=
+ =?utf-8?B?TTJ3bmVycWdrSXUyUmFES0R5aUIzbiszQitpSk9FODA0MXU4UU9DL1FLQTFl?=
+ =?utf-8?B?SDJiWHp3S3ZCMkpBZE5GVjRIY2JTOENmczdRb3VhMFBaS2gxS0Rpem14OUxX?=
+ =?utf-8?B?bDRUMWFwS25SWHN6YWdrNVJEazZHbG9mMjBUMFE2OVVVS3NuQzE4VElzZVda?=
+ =?utf-8?B?blRxUGlaMVFINHVpdlIxc29FTjJ4bnBMbVYxazhwc3ZveU5ZbXFWUy8xTXV0?=
+ =?utf-8?B?ZTl6ODd1TGtMMU42azluNkV6ZDdtRmxqM2w2MUc3M2tDVU9hTjlMcEpIaUxn?=
+ =?utf-8?B?TnplQjlxZUIzUjdVMDVha2lTU2lqN3JCVTFuNnZtK1NVR3BjOHFWb240Z1Vq?=
+ =?utf-8?B?dVVmRHFIbDVnb3JJOC9GRkp5V2RQbVAwMzV1RUtUSzFGMWVzUFYrNTNRaDFV?=
+ =?utf-8?B?U2t6d2pHSURraDl1MlJxQWRreW0ydGhrR1RHOVZlWDAxVitlNUxtUXR5Q2RV?=
+ =?utf-8?B?WHF6R1dqcUl6c0swQlZ1RldxY3g0Y2VBV2hnVTQrRTFrTkJ4OVJXYklYZ0l5?=
+ =?utf-8?Q?EYaQ+lRD1+OD8FE3WXOiY0wpE?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: ec837fec-4191-466a-ecae-08dcec3437e4
+X-MS-Exchange-CrossTenant-AuthSource: AM7PR04MB7046.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 09:40:20.2769
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 9px26DEwx/SdtMpT/t6In8gCcuHnepjFWzUKqL17vTlPBPWxnYIScvUnrwz44G90TdD3djgc0Qiccw+xOQryUA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8389
 
-Add support for the AD485X a fully buffered, 8-channel simultaneous
-sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-differential, wide common-mode range inputs.
+On 10/14/2024, Maxime Ripard wrote:
+> On Sat, Oct 12, 2024 at 02:18:16PM GMT, Liu Ying wrote:
+>> On 10/11/2024, Maxime Ripard wrote:
+>>> On Mon, Sep 30, 2024 at 03:55:30PM GMT, Liu Ying wrote:
+>>>> On 09/30/2024, Maxime Ripard wrote:
+>>>>> On Mon, Sep 30, 2024 at 01:28:59PM GMT, Liu Ying wrote:
+>>>>>> Multiple display modes could be read from a display device's EDID.
+>>>>>> Use clk_round_rate() to validate the "ldb" clock rate for each mode
+>>>>>> in drm_bridge_funcs::mode_valid() to filter unsupported modes out.
+>>>>>>
+>>>>>> Also, if the "ldb" clock and the pixel clock are sibling in clock
+>>>>>> tree, use clk_round_rate() to validate the pixel clock rate against
+>>>>>> the "ldb" clock.  This is not done in display controller driver
+>>>>>> because drm_crtc_helper_funcs::mode_valid() may not decide to do
+>>>>>> the validation or not if multiple encoders are connected to the CRTC,
+>>>>>> e.g., i.MX93 LCDIF may connect with MIPI DSI controller, LDB and
+>>>>>> parallel display output simultaneously.
+>>>>>>
+>>>>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
+>>>>>> ---
+>>>>>>  drivers/gpu/drm/bridge/fsl-ldb.c | 22 ++++++++++++++++++++++
+>>>>>>  1 file changed, 22 insertions(+)
+>>>>>>
+>>>>>> diff --git a/drivers/gpu/drm/bridge/fsl-ldb.c b/drivers/gpu/drm/bridge/fsl-ldb.c
+>>>>>> index b559f3e0bef6..ee8471c86617 100644
+>>>>>> --- a/drivers/gpu/drm/bridge/fsl-ldb.c
+>>>>>> +++ b/drivers/gpu/drm/bridge/fsl-ldb.c
+>>>>>> @@ -11,6 +11,7 @@
+>>>>>>  #include <linux/of_graph.h>
+>>>>>>  #include <linux/platform_device.h>
+>>>>>>  #include <linux/regmap.h>
+>>>>>> +#include <linux/units.h>
+>>>>>>  
+>>>>>>  #include <drm/drm_atomic_helper.h>
+>>>>>>  #include <drm/drm_bridge.h>
+>>>>>> @@ -64,6 +65,7 @@ struct fsl_ldb_devdata {
+>>>>>>  	u32 lvds_ctrl;
+>>>>>>  	bool lvds_en_bit;
+>>>>>>  	bool single_ctrl_reg;
+>>>>>> +	bool ldb_clk_pixel_clk_sibling;
+>>>>>>  };
+>>>>>>  
+>>>>>>  static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
+>>>>>> @@ -74,11 +76,13 @@ static const struct fsl_ldb_devdata fsl_ldb_devdata[] = {
+>>>>>>  	[IMX8MP_LDB] = {
+>>>>>>  		.ldb_ctrl = 0x5c,
+>>>>>>  		.lvds_ctrl = 0x128,
+>>>>>> +		.ldb_clk_pixel_clk_sibling = true,
+>>>>>>  	},
+>>>>>>  	[IMX93_LDB] = {
+>>>>>>  		.ldb_ctrl = 0x20,
+>>>>>>  		.lvds_ctrl = 0x24,
+>>>>>>  		.lvds_en_bit = true,
+>>>>>> +		.ldb_clk_pixel_clk_sibling = true,
+>>>>>>  	},
+>>>>>>  };
+>>>>>>  
+>>>>>> @@ -269,11 +273,29 @@ fsl_ldb_mode_valid(struct drm_bridge *bridge,
+>>>>>>  		   const struct drm_display_info *info,
+>>>>>>  		   const struct drm_display_mode *mode)
+>>>>>>  {
+>>>>>> +	unsigned long link_freq, pclk_rate, rounded_pclk_rate;
+>>>>>>  	struct fsl_ldb *fsl_ldb = to_fsl_ldb(bridge);
+>>>>>>  
+>>>>>>  	if (mode->clock > (fsl_ldb_is_dual(fsl_ldb) ? 160000 : 80000))
+>>>>>>  		return MODE_CLOCK_HIGH;
+>>>>>>  
+>>>>>> +	/* Validate "ldb" clock rate. */
+>>>>>> +	link_freq = fsl_ldb_link_frequency(fsl_ldb, mode->clock);
+>>>>>> +	if (link_freq != clk_round_rate(fsl_ldb->clk, link_freq))
+>>>>>> +		return MODE_NOCLOCK;
+>>>>>> +
+>>>>>> +	/*
+>>>>>> +	 * Use "ldb" clock to validate pixel clock rate,
+>>>>>> +	 * if the two clocks are sibling.
+>>>>>> +	 */
+>>>>>> +	if (fsl_ldb->devdata->ldb_clk_pixel_clk_sibling) {
+>>>>>> +		pclk_rate = mode->clock * HZ_PER_KHZ;
+>>>>>> +
+>>>>>> +		rounded_pclk_rate = clk_round_rate(fsl_ldb->clk, pclk_rate);
+>>>>>> +		if (rounded_pclk_rate != pclk_rate)
+>>>>>> +			return MODE_NOCLOCK;
+>>>>>> +	}
+>>>>>> +
+>>>>>
+>>>>> I guess this is to workaround the fact that the parent rate would be
+>>>>> changed, and thus the sibling rate as well? This should be documented in
+>>>>> a comment if so.
+>>>>
+>>>> This is to workaround the fact that the display controller driver
+>>>> (lcdif_kms.c) cannot do the mode validation against pixel clock, as
+>>>> the commit message mentions.
+>>>
+>>> That part is still not super clear to me, but it's also not super
+>>> important to the discussion.
+>>
+>> As kerneldoc of drm_crtc_helper_funcs::mode_valid mentions that
+>> it is not allowed to look at anything else but the passed-in mode,
+>> it doesn't know of the connected encoder(s)/bridge(s) and thus
+>> cannot decide if it should do mode validation against pixel clock
+>> or not.  Encoder/bridge drivers could adjust pixel clock rates
+>> for display modes.  So, mode validation against pixel clock should
+>> be done in this bridge driver.
+>>
+>> In fact, the pixel clock should have been defined as a DT property
+>> in fsl,ldb.yaml because the clock routes to LDB as an input signal.
+>> However, it's too late...  If the DT property was defined in the
+>> first place, then this driver can naturally do mode validation
+>> against pixel clock instead of this workaround.
+>>
+>>>
+>>> My point is: from a clock API standpoint, there's absolutely no reason
+>>> to consider sibling clocks. clk_round_rate() should give you the rate
+>>
+>> Agree, but it's a workaround.
+>>
+>>> you want. If it affects other clocks it shouldn't, it's a clock driver
+>>> bug.
+>>
+>> The sibling clocks are the same type of clocks from HW design
+>> point of view and derived from the same clock parent/PLL.
+>> That's the reason why the workaround works.
+>>
+>>>
+>>> You might want to workaround it, but this is definitely not something
+>>> you should gloss over: it's a hack, it needs to be documented as such.
+>>
+>> I can add some documentation in next version to clarify this
+>> a bit.
+>>
+>>>
+>>>> The parent clock is IMX8MP_VIDEO_PLL1_OUT and it's clock rate is not
+>>>> supposed to be changed any more once IMX8MP_VIDEO_PLL1 clock rate is
+>>>> set by using DT assigned-clock-rates property.  For i.MX8MP EVK, the
+>>>> clock rate is assigned to 1039500000Hz in imx8mp.dtsi in media_blk_ctrl
+>>>> node.
+>>>
+>>> There's two things wrong with what you just described:
+>>>
+>>>   - assigned-clock-rates never provided the guarantee that the clock
+>>>     rate wouldn't change later on. So if you rely on that, here's your
+>>>     first bug.
+>>
+>> I'm not relying on that.
+> 
+> Sure you do. If anything in the kernel changes the rate of the
+> VIDEO_PLL1 clock, then it's game over and "clock rate is not supposed to
+> be changed any more once IMX8MP_VIDEO_PLL1 clock rate is set by using DT
+> assigned-clock-rates property." isn't true anymore.
 
-Signed-off-by: Antoniu Miclaus <antoniu.miclaus@analog.com>
----
- - rename ad485x occurences with ad4851
- - list all supported parts in Kconfig
- - drop product id macro definitions and use values inline.
- - drop scale/offset from device state and encode them directly.
- - use switch..case for realbits if..else statement.
- - replace {} -> { }
- - drop scale table from chip info and use it inline.
- - use alphanumeric order for spi_id table and of_match table.
- - improve commit description.
- - use bitmap instead of bool matrix.
- - use pow-of-2 alignment for scale_avail
- - use MICRO/MEGA where missing.
- - include bitfield.h
- - increse lower limit of clamp() to 1.
- - add error message for devm_pwm_get().
- - implement oversampling ratio and adjust the packet_format based on it.
- drivers/iio/adc/Kconfig  |   13 +
- drivers/iio/adc/Makefile |    1 +
- drivers/iio/adc/ad4851.c | 1113 ++++++++++++++++++++++++++++++++++++++
- 3 files changed, 1127 insertions(+)
- create mode 100644 drivers/iio/adc/ad4851.c
+"clock rate is not supposed to be changed any more once IMX8MP_VIDEO_PLL1
+clock rate is set by using DT assigned-clock-rates property." implies
+that IMX8MP_VIDEO_PLL1 is used only by certain display pipelines as DT
+writer can deliberately assign it as the parent clock of clocks like
+display controller's pixel clock, which means nothing else in the
+kernel would change the rate of the IMX8MP_VIDEO_PLL1 clock.
 
-diff --git a/drivers/iio/adc/Kconfig b/drivers/iio/adc/Kconfig
-index f60fe85a30d5..93e53794ce89 100644
---- a/drivers/iio/adc/Kconfig
-+++ b/drivers/iio/adc/Kconfig
-@@ -36,6 +36,19 @@ config AD4130
- 	  To compile this driver as a module, choose M here: the module will be
- 	  called ad4130.
- 
-+config AD4851
-+	tristate "Analog Device AD4851 DAS Driver"
-+	depends on SPI
-+	select REGMAP_SPI
-+	select IIO_BACKEND
-+	help
-+	  Say yes here to build support for Analog Devices AD4851, AD4852,
-+	  AD4853, AD4854, AD4855, AD4856, AD4857, AD4858, AD4858I high speed
-+	  data acquisition system (DAS).
-+
-+	  To compile this driver as a module, choose M here: the module will be
-+	  called ad4851.
-+
- config AD7091R
- 	tristate
- 
-diff --git a/drivers/iio/adc/Makefile b/drivers/iio/adc/Makefile
-index d370e066544e..1a873bf1a917 100644
---- a/drivers/iio/adc/Makefile
-+++ b/drivers/iio/adc/Makefile
-@@ -7,6 +7,7 @@
- obj-$(CONFIG_AB8500_GPADC) += ab8500-gpadc.o
- obj-$(CONFIG_AD_SIGMA_DELTA) += ad_sigma_delta.o
- obj-$(CONFIG_AD4130) += ad4130.o
-+obj-$(CONFIG_AD4851) += ad4851.o
- obj-$(CONFIG_AD7091R) += ad7091r-base.o
- obj-$(CONFIG_AD7091R5) += ad7091r5.o
- obj-$(CONFIG_AD7091R8) += ad7091r8.o
-diff --git a/drivers/iio/adc/ad4851.c b/drivers/iio/adc/ad4851.c
-new file mode 100644
-index 000000000000..99c9367de383
---- /dev/null
-+++ b/drivers/iio/adc/ad4851.c
-@@ -0,0 +1,1113 @@
-+// SPDX-License-Identifier: GPL-2.0-only
-+/*
-+ * Analog Devices AD4851 DAS driver
-+ *
-+ * Copyright 2024 Analog Devices Inc.
-+ */
-+
-+#include <linux/array_size.h>
-+#include <linux/bitfield.h>
-+#include <linux/bits.h>
-+#include <linux/delay.h>
-+#include <linux/device.h>
-+#include <linux/err.h>
-+#include <linux/minmax.h>
-+#include <linux/mod_devicetable.h>
-+#include <linux/module.h>
-+#include <linux/mutex.h>
-+#include <linux/pwm.h>
-+#include <linux/regmap.h>
-+#include <linux/regulator/consumer.h>
-+#include <linux/spi/spi.h>
-+#include <linux/types.h>
-+#include <linux/units.h>
-+
-+#include <linux/iio/backend.h>
-+#include <linux/iio/iio.h>
-+
-+#include <asm/unaligned.h>
-+
-+#define AD4851_REG_INTERFACE_CONFIG_A	0x00
-+#define AD4851_REG_INTERFACE_CONFIG_B	0x01
-+#define AD4851_REG_PRODUCT_ID_L		0x04
-+#define AD4851_REG_PRODUCT_ID_H		0x05
-+#define AD4851_REG_DEVICE_CTRL		0x25
-+#define AD4851_REG_PACKET		0x26
-+#define AD4851_REG_OVERSAMPLE		0x27
-+
-+#define AD4851_REG_CH_CONFIG_BASE	0x2A
-+#define AD4851_REG_CHX_SOFTSPAN(ch)	((0x12 * (ch)) + AD4851_REG_CH_CONFIG_BASE)
-+#define AD4851_REG_CHX_OFFSET(ch)	(AD4851_REG_CHX_SOFTSPAN(ch) + 0x01)
-+#define AD4851_REG_CHX_OFFSET_LSB(ch)	AD4851_REG_CHX_OFFSET(ch)
-+#define AD4851_REG_CHX_OFFSET_MID(ch)	(AD4851_REG_CHX_OFFSET_LSB(ch) + 0x01)
-+#define AD4851_REG_CHX_OFFSET_MSB(ch)	(AD4851_REG_CHX_OFFSET_MID(ch) + 0x01)
-+#define AD4851_REG_CHX_GAIN(ch)		(AD4851_REG_CHX_OFFSET(ch) + 0x03)
-+#define AD4851_REG_CHX_GAIN_LSB(ch)	AD4851_REG_CHX_GAIN(ch)
-+#define AD4851_REG_CHX_GAIN_MSB(ch)	(AD4851_REG_CHX_GAIN(ch) + 0x01)
-+#define AD4851_REG_CHX_PHASE(ch)	(AD4851_REG_CHX_GAIN(ch) + 0x02)
-+#define AD4851_REG_CHX_PHASE_LSB(ch)	AD4851_REG_CHX_PHASE(ch)
-+#define AD4851_REG_CHX_PHASE_MSB(ch)	(AD4851_REG_CHX_PHASE_LSB(ch) + 0x01)
-+
-+#define AD4851_REG_TESTPAT_0(c)		(0x38 + (c) * 0x12)
-+#define AD4851_REG_TESTPAT_1(c)		(0x39 + (c) * 0x12)
-+#define AD4851_REG_TESTPAT_2(c)		(0x3A + (c) * 0x12)
-+#define AD4851_REG_TESTPAT_3(c)		(0x3B + (c) * 0x12)
-+
-+#define AD4851_SW_RESET			(BIT(7) | BIT(0))
-+#define AD4851_SDO_ENABLE		BIT(4)
-+#define AD4851_SINGLE_INSTRUCTION	BIT(7)
-+#define AD4851_ECHO_CLOCK_MODE		BIT(0)
-+
-+#define AD4851_PACKET_FORMAT_0		0
-+#define AD4851_PACKET_FORMAT_1		1
-+#define AD4851_PACKET_FORMAT_MASK	GENMASK(1, 0)
-+
-+#define AD4851_OS_EN_MSK		BIT(7)
-+#define AD4851_OS_RATIO_MSK		GENMASK(3, 0)
-+
-+#define AD4851_TEST_PAT			BIT(2)
-+
-+#define AD4858_PACKET_SIZE_20		0
-+#define AD4858_PACKET_SIZE_24		1
-+#define AD4858_PACKET_SIZE_32		2
-+
-+#define AD4857_PACKET_SIZE_16		0
-+#define AD4857_PACKET_SIZE_24		1
-+
-+#define AD4851_TESTPAT_0_DEFAULT	0x2A
-+#define AD4851_TESTPAT_1_DEFAULT	0x3C
-+#define AD4851_TESTPAT_2_DEFAULT	0xCE
-+#define AD4851_TESTPAT_3_DEFAULT(c)	(0x0A + (0x10 * (c)))
-+
-+#define AD4851_SOFTSPAN_0V_2V5		0
-+#define AD4851_SOFTSPAN_N2V5_2V5	1
-+#define AD4851_SOFTSPAN_0V_5V		2
-+#define AD4851_SOFTSPAN_N5V_5V		3
-+#define AD4851_SOFTSPAN_0V_6V25		4
-+#define AD4851_SOFTSPAN_N6V25_6V25	5
-+#define AD4851_SOFTSPAN_0V_10V		6
-+#define AD4851_SOFTSPAN_N10V_10V	7
-+#define AD4851_SOFTSPAN_0V_12V5		8
-+#define AD4851_SOFTSPAN_N12V5_12V5	9
-+#define AD4851_SOFTSPAN_0V_20V		10
-+#define AD4851_SOFTSPAN_N20V_20V	11
-+#define AD4851_SOFTSPAN_0V_25V		12
-+#define AD4851_SOFTSPAN_N25V_25V	13
-+#define AD4851_SOFTSPAN_0V_40V		14
-+#define AD4851_SOFTSPAN_N40V_40V	15
-+
-+#define AD4851_MAX_LANES		8
-+#define AD4851_MAX_IODELAY		32
-+
-+#define AD4851_T_CNVH_NS		40
-+
-+struct ad4851_chip_info {
-+	const char *name;
-+	unsigned int product_id;
-+	const unsigned int (*scale_table)[2];
-+	int num_scales;
-+	const int *offset_table;
-+	int num_offset;
-+	const struct iio_chan_spec *channels;
-+	unsigned int num_channels;
-+	unsigned long throughput;
-+	unsigned int resolution;
-+};
-+
-+struct ad4851_state {
-+	struct spi_device *spi;
-+	struct pwm_device *cnv;
-+	struct iio_backend *back;
-+	/*
-+	 * Synchronize access to members the of driver state, and ensure
-+	 * atomicity of consecutive regmap operations.
-+	 */
-+	struct mutex lock;
-+	struct regmap *regmap;
-+	const struct ad4851_chip_info *info;
-+	struct gpio_desc *pd_gpio;
-+	unsigned long sampling_freq;
-+	unsigned int (*scales)[2];
-+	int *offsets;
-+};
-+
-+static int ad4851_reg_access(struct iio_dev *indio_dev,
-+			     unsigned int reg,
-+			     unsigned int writeval,
-+			     unsigned int *readval)
-+{
-+	struct ad4851_state *st = iio_priv(indio_dev);
-+
-+	if (readval)
-+		return regmap_read(st->regmap, reg, readval);
-+
-+	return regmap_write(st->regmap, reg, writeval);
-+}
-+
-+static int ad4851_set_sampling_freq(struct ad4851_state *st, unsigned int freq)
-+{
-+	struct pwm_state cnv_state = {
-+		.duty_cycle = AD4851_T_CNVH_NS,
-+		.enabled = true,
-+	};
-+	int ret;
-+
-+	freq = clamp(freq, 1, st->info->throughput);
-+
-+	cnv_state.period = DIV_ROUND_CLOSEST_ULL(GIGA, freq);
-+
-+	ret = pwm_apply_might_sleep(st->cnv, &cnv_state);
-+	if (ret)
-+		return ret;
-+
-+	st->sampling_freq = freq;
-+
-+	return 0;
-+}
-+
-+static const int ad4851_oversampling_ratios[] = {
-+	1,
-+	2,
-+	4,
-+	8,
-+	16,
-+	32,
-+	64,
-+	128,
-+	256,
-+	512,
-+	1024,
-+	2048,
-+	4096,
-+	8192,
-+	16384,
-+	32768,
-+	65536,
-+};
-+
-+static int ad4851_osr_to_regval(int ratio)
-+{
-+	int i;
-+
-+	for (i = 1; i < ARRAY_SIZE(ad4851_oversampling_ratios); i++)
-+		if (ratio == ad4851_oversampling_ratios[i])
-+			return i - 1;
-+
-+	return -EINVAL;
-+}
-+
-+static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
-+					 const struct iio_chan_spec *chan,
-+					 unsigned int osr)
-+{
-+	unsigned int val;
-+	int ret;
-+
-+	guard(mutex)(&st->lock);
-+
-+	if (osr == 1) {
-+		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-+					 AD4851_OS_EN_MSK, 0);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-+					 AD4851_OS_EN_MSK, AD4851_OS_EN_MSK);
-+		if (ret)
-+			return ret;
-+
-+		val = ad4851_osr_to_regval(osr);
-+		if (val < 0)
-+			return -EINVAL;
-+
-+		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-+					 AD4851_OS_RATIO_MSK, val);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	switch (chan->scan_type.realbits) {
-+	case 20:
-+		switch (osr) {
-+		case 1:
-+			val = 20;
-+			break;
-+		default:
-+			val = 24;
-+			break;
-+		}
-+		break;
-+	case 16:
-+		val = 16;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	ret = iio_backend_data_size_set(st->back, val);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
-+				  AD4851_PACKET_FORMAT_MASK, (osr == 1) ? 0 : 1);
-+}
-+
-+static int ad4851_get_oversampling_ratio(struct ad4851_state *st, unsigned int *val)
-+{
-+	unsigned int osr;
-+	int ret;
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_OVERSAMPLE, &osr);
-+	if (ret)
-+		return ret;
-+
-+	if (!FIELD_GET(AD4851_OS_EN_MSK, osr))
-+		*val = 1;
-+	else
-+		*val = ad4851_oversampling_ratios[FIELD_GET(AD4851_OS_RATIO_MSK, osr)];
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static int ad4851_setup(struct ad4851_state *st)
-+{
-+	unsigned int product_id;
-+	int ret;
-+
-+	ret = ad4851_set_sampling_freq(st, HZ_PER_MHZ);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
-+			   AD4851_SW_RESET);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_B,
-+			   AD4851_SINGLE_INSTRUCTION);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_INTERFACE_CONFIG_A,
-+			   AD4851_SDO_ENABLE);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_PRODUCT_ID_L, &product_id);
-+	if (ret)
-+		return ret;
-+
-+	if (product_id != st->info->product_id)
-+		dev_info(&st->spi->dev, "Unknown product ID: 0x%02X\n",
-+			 product_id);
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_DEVICE_CTRL,
-+			   AD4851_ECHO_CLOCK_MODE);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(st->regmap, AD4851_REG_PACKET, 0);
-+}
-+
-+static int ad4851_find_opt(bool *field, u32 size, u32 *ret_start)
-+{
-+	unsigned int i, cnt = 0, max_cnt = 0, max_start = 0;
-+	int start;
-+
-+	for (i = 0, start = -1; i < size; i++) {
-+		if (field[i] == 0) {
-+			if (start == -1)
-+				start = i;
-+			cnt++;
-+		} else {
-+			if (cnt > max_cnt) {
-+				max_cnt = cnt;
-+				max_start = start;
-+			}
-+			start = -1;
-+			cnt = 0;
-+		}
-+	}
-+
-+	if (cnt > max_cnt) {
-+		max_cnt = cnt;
-+		max_start = start;
-+	}
-+
-+	if (!max_cnt)
-+		return -ENOENT;
-+
-+	*ret_start = max_start;
-+
-+	return max_cnt;
-+}
-+
-+static int ad4851_calibrate(struct ad4851_state *st)
-+{
-+	unsigned int opt_delay, lane_num, delay, i, s, c;
-+	enum iio_backend_interface_type interface_type;
-+	DECLARE_BITMAP(pn_status, AD4851_MAX_LANES * AD4851_MAX_IODELAY);
-+	bool status;
-+	int ret;
-+
-+	ret = iio_backend_interface_type_get(st->back, &interface_type);
-+	if (ret)
-+		return ret;
-+
-+	switch (interface_type) {
-+	case IIO_BACKEND_INTERFACE_CMOS:
-+		lane_num = st->info->num_channels;
-+		break;
-+	case IIO_BACKEND_INTERFACE_LVDS:
-+		lane_num = 1;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	if (st->info->resolution == 16) {
-+		ret = iio_backend_data_size_set(st->back, 24);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(st->regmap, AD4851_REG_PACKET,
-+				   AD4851_TEST_PAT | AD4857_PACKET_SIZE_24);
-+		if (ret)
-+			return ret;
-+	} else {
-+		ret = iio_backend_data_size_set(st->back, 32);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(st->regmap, AD4851_REG_PACKET,
-+				   AD4851_TEST_PAT | AD4858_PACKET_SIZE_32);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < st->info->num_channels; i++) {
-+		ret = regmap_write(st->regmap, AD4851_REG_TESTPAT_0(i),
-+				   AD4851_TESTPAT_0_DEFAULT);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(st->regmap, AD4851_REG_TESTPAT_1(i),
-+				   AD4851_TESTPAT_1_DEFAULT);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(st->regmap, AD4851_REG_TESTPAT_2(i),
-+				   AD4851_TESTPAT_2_DEFAULT);
-+		if (ret)
-+			return ret;
-+
-+		ret = regmap_write(st->regmap, AD4851_REG_TESTPAT_3(i),
-+				   AD4851_TESTPAT_3_DEFAULT(i));
-+		if (ret)
-+			return ret;
-+
-+		ret = iio_backend_chan_enable(st->back, i);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < lane_num; i++) {
-+		for (delay = 0; delay < AD4851_MAX_IODELAY; delay++) {
-+			ret = iio_backend_iodelay_set(st->back, i, delay);
-+			if (ret)
-+				return ret;
-+			ret = iio_backend_chan_status(st->back, i, &status);
-+			if (ret)
-+				return ret;
-+
-+			if (status)
-+				set_bit(i * AD4851_MAX_IODELAY + delay, pn_status);
-+			else
-+				clear_bit(i * AD4851_MAX_IODELAY + delay, pn_status);
-+		}
-+	}
-+
-+	for (i = 0; i < lane_num; i++) {
-+		status = test_bit(i * AD4851_MAX_IODELAY, pn_status);
-+		c = ad4851_find_opt(&status, AD4851_MAX_IODELAY, &s);
-+		if (c < 0)
-+			return c;
-+
-+		opt_delay = s + c / 2;
-+		ret = iio_backend_iodelay_set(st->back, i, opt_delay);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	for (i = 0; i < st->info->num_channels; i++) {
-+		ret = iio_backend_chan_disable(st->back, i);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	ret = iio_backend_data_size_set(st->back, 20);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(st->regmap, AD4851_REG_PACKET, 0);
-+}
-+
-+static int ad4851_get_calibscale(struct ad4851_state *st, int ch, int *val, int *val2)
-+{
-+	unsigned int reg_val;
-+	int gain;
-+	int ret;
-+
-+	guard(mutex)(&st->lock);
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_CHX_GAIN_MSB(ch),
-+			  &reg_val);
-+	if (ret)
-+		return ret;
-+
-+	gain = (reg_val & 0xFF) << 8;
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_CHX_GAIN_LSB(ch),
-+			  &reg_val);
-+	if (ret)
-+		return ret;
-+
-+	gain |= reg_val & 0xFF;
-+
-+	*val = gain;
-+	*val2 = 32768;
-+
-+	return IIO_VAL_FRACTIONAL;
-+}
-+
-+static int ad4851_set_calibscale(struct ad4851_state *st, int ch, int val,
-+				 int val2)
-+{
-+	unsigned long long gain;
-+	u8 buf[0];
-+	int ret;
-+
-+	if (val < 0 || val2 < 0)
-+		return -EINVAL;
-+
-+	gain = val * MICRO + val2;
-+	gain = DIV_U64_ROUND_CLOSEST(gain * 32768, MICRO);
-+
-+	put_unaligned_be16(gain, buf);
-+
-+	guard(mutex)(&st->lock);
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_CHX_GAIN_MSB(ch),
-+			   buf[0]);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(st->regmap, AD4851_REG_CHX_GAIN_LSB(ch),
-+			    buf[1]);
-+}
-+
-+static int ad4851_get_calibbias(struct ad4851_state *st, int ch, int *val)
-+{
-+	unsigned int lsb, mid, msb;
-+	int ret;
-+
-+	guard(mutex)(&st->lock);
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_CHX_OFFSET_MSB(ch),
-+			  &msb);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_CHX_OFFSET_MID(ch),
-+			  &mid);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_CHX_OFFSET_LSB(ch),
-+			  &lsb);
-+	if (ret)
-+		return ret;
-+
-+	if (st->info->resolution == 16) {
-+		*val = msb << 8;
-+		*val |= mid;
-+		*val = sign_extend32(*val, 15);
-+	} else {
-+		*val = msb << 12;
-+		*val |= mid << 4;
-+		*val |= lsb >> 4;
-+		*val = sign_extend32(*val, 19);
-+	}
-+
-+	return IIO_VAL_INT;
-+}
-+
-+static int ad4851_set_calibbias(struct ad4851_state *st, int ch, int val)
-+{
-+	u8 buf[3] = { 0 };
-+	int ret;
-+
-+	if (val < 0)
-+		return -EINVAL;
-+
-+	if (st->info->resolution == 16)
-+		put_unaligned_be16(val, buf);
-+	else
-+		put_unaligned_be24(val << 4, buf);
-+
-+	guard(mutex)(&st->lock);
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_CHX_OFFSET_LSB(ch), buf[2]);
-+	if (ret)
-+		return ret;
-+
-+	ret = regmap_write(st->regmap, AD4851_REG_CHX_OFFSET_MID(ch), buf[1]);
-+	if (ret)
-+		return ret;
-+
-+	return regmap_write(st->regmap, AD4851_REG_CHX_OFFSET_MSB(ch), buf[0]);
-+}
-+
-+static const unsigned int ad4851_scale_table[][2] = {
-+	{ 2500, 0x0 },
-+	{ 5000, 0x1 },
-+	{ 5000, 0x2 },
-+	{ 10000, 0x3 },
-+	{ 6250, 0x04 },
-+	{ 12500, 0x5 },
-+	{ 10000, 0x6 },
-+	{ 20000, 0x7 },
-+	{ 12500, 0x8 },
-+	{ 25000, 0x9 },
-+	{ 20000, 0xA },
-+	{ 40000, 0xB },
-+	{ 25000, 0xC },
-+	{ 50000, 0xD },
-+	{ 40000, 0xE },
-+	{ 80000, 0xF },
-+};
-+
-+static const int ad4857_offset_table[] = {
-+	0, -32768,
-+};
-+
-+static const int ad4858_offset_table[] = {
-+	0, -524288,
-+};
-+
-+static const unsigned int ad4851_scale_avail[] = {
-+	2500, 5000,
-+	10000, 6250,
-+	12500, 20000,
-+	25000, 40000,
-+	50000, 80000,
-+};
-+
-+static void __ad4851_get_scale(struct ad4851_state *st, int scale_tbl,
-+			       unsigned int *val, unsigned int *val2)
-+{
-+	const struct ad4851_chip_info *info = st->info;
-+	const struct iio_chan_spec *chan = &info->channels[0];
-+	unsigned int tmp;
-+
-+	tmp = ((unsigned long long)scale_tbl * MICRO) >> chan->scan_type.realbits;
-+	*val = tmp / MICRO;
-+	*val2 = tmp % MICRO;
-+}
-+
-+static int ad4851_set_scale(struct ad4851_state *st,
-+			    const struct iio_chan_spec *chan, int val, int val2)
-+{
-+	unsigned int scale_val[2];
-+	unsigned int i;
-+	bool single_ended = false;
-+
-+	for (i = 0; i < ARRAY_SIZE(ad4851_scale_table); i++) {
-+		__ad4851_get_scale(st, ad4851_scale_table[i][0],
-+				   &scale_val[0], &scale_val[1]);
-+		if (scale_val[0] != val || scale_val[1] != val2)
-+			continue;
-+
-+		/*
-+		 * Adjust the softspan value (differential or single ended)
-+		 * based on the scale value selected and current offset of
-+		 * the channel.
-+		 *
-+		 * If the offset is 0 then continue iterations until finding
-+		 * the next matching scale value which always corresponds to
-+		 * the single ended mode.
-+		 */
-+		if (!st->offsets[chan->channel] && !single_ended) {
-+			single_ended = true;
-+			continue;
-+		}
-+
-+		return regmap_write(st->regmap,
-+				    AD4851_REG_CHX_SOFTSPAN(chan->channel),
-+				    ad4851_scale_table[i][1]);
-+	}
-+
-+	return -EINVAL;
-+}
-+
-+static int ad4851_get_scale(struct ad4851_state *st,
-+			    const struct iio_chan_spec *chan, int *val,
-+			    int *val2)
-+{
-+	unsigned int i, softspan_val;
-+	int ret;
-+
-+	ret = regmap_read(st->regmap, AD4851_REG_CHX_SOFTSPAN(chan->channel),
-+			  &softspan_val);
-+	if (ret)
-+		return ret;
-+
-+	for (i = 0; i < ARRAY_SIZE(ad4851_scale_table); i++) {
-+		if (softspan_val == ad4851_scale_table[i][1])
-+			break;
-+	}
-+
-+	if (i == ARRAY_SIZE(ad4851_scale_table))
-+		return -EIO;
-+
-+	__ad4851_get_scale(st, ad4851_scale_table[i][0], val, val2);
-+
-+	return IIO_VAL_INT_PLUS_MICRO;
-+}
-+
-+static int ad4851_set_offset(struct ad4851_state *st,
-+			     const struct iio_chan_spec *chan, int val)
-+{
-+	guard(mutex)(&st->lock);
-+
-+	if (val != st->offsets[chan->channel])
-+		return 0;
-+
-+	st->offsets[chan->channel] = val;
-+	/* Restore to the default range if offset changes */
-+	if (st->offsets[chan->channel])
-+		return regmap_write(st->regmap,
-+					AD4851_REG_CHX_SOFTSPAN(chan->channel),
-+					AD4851_SOFTSPAN_N40V_40V);
-+	return regmap_write(st->regmap,
-+				AD4851_REG_CHX_SOFTSPAN(chan->channel),
-+				AD4851_SOFTSPAN_0V_40V);
-+}
-+
-+static int ad4851_scale_offset_fill(struct ad4851_state *st)
-+{
-+	unsigned int i, val1, val2;
-+
-+	st->offsets = devm_kcalloc(&st->spi->dev, st->info->num_channels,
-+				   sizeof(*st->offsets), GFP_KERNEL);
-+	if (!st->offsets)
-+		return -ENOMEM;
-+
-+	st->scales = devm_kmalloc_array(&st->spi->dev, ARRAY_SIZE(ad4851_scale_avail),
-+					sizeof(*st->scales), GFP_KERNEL);
-+	if (!st->scales)
-+		return -ENOMEM;
-+
-+	for (i = 0; i < ARRAY_SIZE(ad4851_scale_avail); i++) {
-+		__ad4851_get_scale(st, ad4851_scale_avail[i], &val1, &val2);
-+		st->scales[i][0] = val1;
-+		st->scales[i][1] = val2;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ad4851_read_raw(struct iio_dev *indio_dev,
-+			   const struct iio_chan_spec *chan,
-+			   int *val, int *val2, long info)
-+{
-+	struct ad4851_state *st = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		*val = st->sampling_freq;
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_CALIBSCALE:
-+		return ad4851_get_calibscale(st, chan->channel, val, val2);
-+	case IIO_CHAN_INFO_SCALE:
-+		return ad4851_get_scale(st, chan, val, val2);
-+	case IIO_CHAN_INFO_CALIBBIAS:
-+		return ad4851_get_calibbias(st, chan->channel, val);
-+	case IIO_CHAN_INFO_OFFSET:
-+		scoped_guard(mutex, &st->lock)
-+			*val = st->offsets[chan->channel];
-+		return IIO_VAL_INT;
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		return ad4851_get_oversampling_ratio(st, val);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad4851_write_raw(struct iio_dev *indio_dev,
-+			    struct iio_chan_spec const *chan,
-+			    int val, int val2, long info)
-+{
-+	struct ad4851_state *st = iio_priv(indio_dev);
-+
-+	switch (info) {
-+	case IIO_CHAN_INFO_SAMP_FREQ:
-+		return ad4851_set_sampling_freq(st, val);
-+	case IIO_CHAN_INFO_SCALE:
-+		return ad4851_set_scale(st, chan, val, val2);
-+	case IIO_CHAN_INFO_CALIBSCALE:
-+		return ad4851_set_calibscale(st, chan->channel, val, val2);
-+	case IIO_CHAN_INFO_CALIBBIAS:
-+		return ad4851_set_calibbias(st, chan->channel, val);
-+	case IIO_CHAN_INFO_OFFSET:
-+		return ad4851_set_offset(st, chan, val);
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		return ad4851_set_oversampling_ratio(st, chan, val);
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+static int ad4851_update_scan_mode(struct iio_dev *indio_dev,
-+				   const unsigned long *scan_mask)
-+{
-+	struct ad4851_state *st = iio_priv(indio_dev);
-+	unsigned int c;
-+	int ret;
-+
-+	for (c = 0; c < st->info->num_channels; c++) {
-+		if (test_bit(c, scan_mask))
-+			ret = iio_backend_chan_enable(st->back, c);
-+		else
-+			ret = iio_backend_chan_disable(st->back, c);
-+		if (ret)
-+			return ret;
-+	}
-+
-+	return 0;
-+}
-+
-+static int ad4851_read_avail(struct iio_dev *indio_dev,
-+			     struct iio_chan_spec const *chan,
-+			     const int **vals, int *type, int *length,
-+			     long mask)
-+{
-+	struct ad4851_state *st = iio_priv(indio_dev);
-+
-+	switch (mask) {
-+	case IIO_CHAN_INFO_SCALE:
-+		*vals = (const int *)st->scales;
-+		*type = IIO_VAL_INT_PLUS_MICRO;
-+		/* Values are stored in a 2D matrix */
-+		*length = ARRAY_SIZE(ad4851_scale_avail) * 2;
-+		return IIO_AVAIL_LIST;
-+	case IIO_CHAN_INFO_OFFSET:
-+		*vals = st->info->offset_table;
-+		*type = IIO_VAL_INT;
-+		*length = st->info->num_offset;
-+		return IIO_AVAIL_LIST;
-+	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
-+		*vals = ad4851_oversampling_ratios;
-+		*length = ARRAY_SIZE(ad4851_oversampling_ratios);
-+		*type = IIO_VAL_INT;
-+		return IIO_AVAIL_LIST;
-+	default:
-+		return -EINVAL;
-+	}
-+}
-+
-+#define AD4851_IIO_CHANNEL(index, real, storage)			\
-+{									\
-+	.type = IIO_VOLTAGE,						\
-+	.info_mask_separate = BIT(IIO_CHAN_INFO_CALIBSCALE) |		\
-+		BIT(IIO_CHAN_INFO_CALIBBIAS) |				\
-+		BIT(IIO_CHAN_INFO_SCALE) |				\
-+		BIT(IIO_CHAN_INFO_OFFSET),				\
-+	.info_mask_shared_by_all = BIT(IIO_CHAN_INFO_SAMP_FREQ) |	\
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
-+	.info_mask_shared_by_type_available =				\
-+		BIT(IIO_CHAN_INFO_SCALE) |				\
-+		BIT(IIO_CHAN_INFO_OFFSET) |				\
-+		BIT(IIO_CHAN_INFO_OVERSAMPLING_RATIO),			\
-+	.indexed = 1,							\
-+	.channel = index,						\
-+	.scan_index = index,						\
-+	.scan_type = {							\
-+		.sign = 's',						\
-+		.realbits = real,					\
-+		.storagebits = storage,					\
-+	},								\
-+}
-+
-+static const struct iio_chan_spec ad4858_channels[] = {
-+	AD4851_IIO_CHANNEL(0, 20, 32),
-+	AD4851_IIO_CHANNEL(1, 20, 32),
-+	AD4851_IIO_CHANNEL(2, 20, 32),
-+	AD4851_IIO_CHANNEL(3, 20, 32),
-+	AD4851_IIO_CHANNEL(4, 20, 32),
-+	AD4851_IIO_CHANNEL(5, 20, 32),
-+	AD4851_IIO_CHANNEL(6, 20, 32),
-+	AD4851_IIO_CHANNEL(7, 20, 32),
-+};
-+
-+static const struct iio_chan_spec ad4857_channels[] = {
-+	AD4851_IIO_CHANNEL(0, 16, 16),
-+	AD4851_IIO_CHANNEL(1, 16, 16),
-+	AD4851_IIO_CHANNEL(2, 16, 16),
-+	AD4851_IIO_CHANNEL(3, 16, 16),
-+	AD4851_IIO_CHANNEL(4, 16, 16),
-+	AD4851_IIO_CHANNEL(5, 16, 16),
-+	AD4851_IIO_CHANNEL(6, 16, 16),
-+	AD4851_IIO_CHANNEL(7, 16, 16),
-+};
-+
-+static const struct ad4851_chip_info ad4851_info = {
-+	.name = "ad4851",
-+	.product_id = 0x67,
-+	.offset_table = ad4857_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4857_offset_table),
-+	.channels = ad4857_channels,
-+	.num_channels = ARRAY_SIZE(ad4857_channels),
-+	.throughput = 250 * KILO,
-+	.resolution = 16,
-+};
-+
-+static const struct ad4851_chip_info ad4852_info = {
-+	.name = "ad4852",
-+	.product_id = 0x66,
-+	.offset_table = ad4858_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4858_offset_table),
-+	.channels = ad4858_channels,
-+	.num_channels = ARRAY_SIZE(ad4858_channels),
-+	.throughput = 250 * KILO,
-+	.resolution = 20,
-+};
-+
-+static const struct ad4851_chip_info ad4853_info = {
-+	.name = "ad4853",
-+	.product_id = 0x65,
-+	.offset_table = ad4857_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4857_offset_table),
-+	.channels = ad4857_channels,
-+	.num_channels = ARRAY_SIZE(ad4857_channels),
-+	.throughput = 1 * MEGA,
-+	.resolution = 16,
-+};
-+
-+static const struct ad4851_chip_info ad4854_info = {
-+	.name = "ad4854",
-+	.product_id = 0x64,
-+	.offset_table = ad4858_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4858_offset_table),
-+	.channels = ad4858_channels,
-+	.num_channels = ARRAY_SIZE(ad4858_channels),
-+	.throughput = 1 * MEGA,
-+	.resolution = 20,
-+};
-+
-+static const struct ad4851_chip_info ad4855_info = {
-+	.name = "ad4855",
-+	.product_id = 0x63,
-+	.offset_table = ad4857_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4857_offset_table),
-+	.channels = ad4857_channels,
-+	.num_channels = ARRAY_SIZE(ad4857_channels),
-+	.throughput = 250 * KILO,
-+	.resolution = 16,
-+};
-+
-+static const struct ad4851_chip_info ad4856_info = {
-+	.name = "ad4856",
-+	.product_id = 0x62,
-+	.offset_table = ad4858_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4858_offset_table),
-+	.channels = ad4858_channels,
-+	.num_channels = ARRAY_SIZE(ad4858_channels),
-+	.throughput = 250 * KILO,
-+	.resolution = 20,
-+};
-+
-+static const struct ad4851_chip_info ad4857_info = {
-+	.name = "ad4857",
-+	.product_id = 0x61,
-+	.offset_table = ad4857_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4857_offset_table),
-+	.channels = ad4857_channels,
-+	.num_channels = ARRAY_SIZE(ad4857_channels),
-+	.throughput = 1 * MEGA,
-+	.resolution = 16,
-+};
-+
-+static const struct ad4851_chip_info ad4858_info = {
-+	.name = "ad4858",
-+	.product_id = 0x60,
-+	.offset_table = ad4858_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4858_offset_table),
-+	.channels = ad4858_channels,
-+	.num_channels = ARRAY_SIZE(ad4858_channels),
-+	.throughput = 1 * MEGA,
-+	.resolution = 20,
-+};
-+
-+static const struct ad4851_chip_info ad4858i_info = {
-+	.name = "ad4858i",
-+	.product_id = 0x6F,
-+	.offset_table = ad4858_offset_table,
-+	.num_offset = ARRAY_SIZE(ad4858_offset_table),
-+	.channels = ad4858_channels,
-+	.num_channels = ARRAY_SIZE(ad4858_channels),
-+	.throughput = 1 * MEGA,
-+	.resolution = 20,
-+};
-+
-+static const struct iio_info ad4851_iio_info = {
-+	.debugfs_reg_access = ad4851_reg_access,
-+	.read_raw = ad4851_read_raw,
-+	.write_raw = ad4851_write_raw,
-+	.update_scan_mode = ad4851_update_scan_mode,
-+	.read_avail = ad4851_read_avail,
-+};
-+
-+static const struct regmap_config regmap_config = {
-+	.reg_bits = 16,
-+	.val_bits = 8,
-+	.read_flag_mask = BIT(7),
-+};
-+
-+static const char * const ad4851_power_supplies[] = {
-+	"vcc",	"vdd", "vee", "vio",
-+};
-+
-+static int ad4851_probe(struct spi_device *spi)
-+{
-+	struct iio_dev *indio_dev;
-+	struct ad4851_state *st;
-+	int ret;
-+
-+	indio_dev = devm_iio_device_alloc(&spi->dev, sizeof(*st));
-+	if (!indio_dev)
-+		return -ENOMEM;
-+
-+	st = iio_priv(indio_dev);
-+	st->spi = spi;
-+
-+	ret = devm_mutex_init(&spi->dev, &st->lock);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_regulator_bulk_get_enable(&spi->dev,
-+					     ARRAY_SIZE(ad4851_power_supplies),
-+					     ad4851_power_supplies);
-+	if (ret)
-+		return dev_err_probe(&spi->dev, ret,
-+				     "failed to get and enable supplies\n");
-+
-+	ret = devm_regulator_get_enable_optional(&spi->dev, "vddh");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(&spi->dev, ret, "failed to get vddh voltage\n");
-+
-+	ret = devm_regulator_get_enable_optional(&spi->dev, "vddl");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(&spi->dev, ret, "failed to get vddl voltage\n");
-+
-+	ret = devm_regulator_get_enable_optional(&spi->dev, "vrefbuf");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(&spi->dev, ret, "failed to get vrefbuf voltage\n");
-+
-+	ret = devm_regulator_get_enable_optional(&spi->dev, "vddl");
-+	if (ret < 0 && ret != -ENODEV)
-+		return dev_err_probe(&spi->dev, ret, "failed to get vrefio voltage\n");
-+
-+	st->pd_gpio = devm_gpiod_get_optional(&spi->dev, "pd", GPIOD_OUT_LOW);
-+	if (IS_ERR(st->pd_gpio))
-+		return dev_err_probe(&spi->dev, PTR_ERR(st->pd_gpio),
-+				     "Error on requesting pd GPIO\n");
-+
-+	st->cnv = devm_pwm_get(&spi->dev, NULL);
-+	if (IS_ERR(st->cnv))
-+		return dev_err_probe(&spi->dev, PTR_ERR(st->cnv),
-+				     "Error on requesting pwm\n");
-+
-+	st->info = spi_get_device_match_data(spi);
-+	if (!st->info)
-+		return -ENODEV;
-+
-+	st->regmap = devm_regmap_init_spi(spi, &regmap_config);
-+	if (IS_ERR(st->regmap))
-+		return PTR_ERR(st->regmap);
-+
-+	ret = ad4851_scale_offset_fill(st);
-+	if (ret)
-+		return ret;
-+
-+	ret = ad4851_setup(st);
-+	if (ret)
-+		return ret;
-+
-+	indio_dev->name = st->info->name;
-+	indio_dev->channels = st->info->channels;
-+	indio_dev->num_channels = st->info->num_channels;
-+	indio_dev->info = &ad4851_iio_info;
-+
-+	st->back = devm_iio_backend_get(&spi->dev, NULL);
-+	if (IS_ERR(st->back))
-+		return PTR_ERR(st->back);
-+
-+	ret = devm_iio_backend_request_buffer(&spi->dev, st->back, indio_dev);
-+	if (ret)
-+		return ret;
-+
-+	ret = devm_iio_backend_enable(&spi->dev, st->back);
-+	if (ret)
-+		return ret;
-+
-+	ret = ad4851_calibrate(st);
-+	if (ret)
-+		return ret;
-+
-+	return devm_iio_device_register(&spi->dev, indio_dev);
-+}
-+
-+static const struct of_device_id ad4851_of_match[] = {
-+	{ .compatible = "adi,ad4858", .data = &ad4851_info, },
-+	{ .compatible = "adi,ad4857", .data = &ad4852_info, },
-+	{ .compatible = "adi,ad4856", .data = &ad4853_info, },
-+	{ .compatible = "adi,ad4855", .data = &ad4854_info, },
-+	{ .compatible = "adi,ad4854", .data = &ad4855_info, },
-+	{ .compatible = "adi,ad4853", .data = &ad4856_info, },
-+	{ .compatible = "adi,ad4852", .data = &ad4857_info, },
-+	{ .compatible = "adi,ad4851", .data = &ad4858_info, },
-+	{ .compatible = "adi,ad4858i", .data = &ad4858i_info, },
-+	{}
-+};
-+
-+static const struct spi_device_id ad4851_spi_id[] = {
-+	{ "ad4851", (kernel_ulong_t)&ad4851_info },
-+	{ "ad4852", (kernel_ulong_t)&ad4852_info },
-+	{ "ad4853", (kernel_ulong_t)&ad4853_info },
-+	{ "ad4854", (kernel_ulong_t)&ad4854_info },
-+	{ "ad4855", (kernel_ulong_t)&ad4855_info },
-+	{ "ad4856", (kernel_ulong_t)&ad4856_info },
-+	{ "ad4857", (kernel_ulong_t)&ad4857_info },
-+	{ "ad4858", (kernel_ulong_t)&ad4858_info },
-+	{ "ad4858i", (kernel_ulong_t)&ad4858i_info },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(spi, ad4851_spi_id);
-+
-+static struct spi_driver ad4851_driver = {
-+	.probe = ad4851_probe,
-+	.driver = {
-+		.name   = "ad4851",
-+		.of_match_table = ad4851_of_match,
-+	},
-+	.id_table = ad4851_spi_id,
-+};
-+module_spi_driver(ad4851_driver);
-+
-+MODULE_AUTHOR("Sergiu Cuciurean <sergiu.cuciurean@analog.com>");
-+MODULE_AUTHOR("Dragos Bogdan <dragos.bogdan@analog.com>");
-+MODULE_AUTHOR("Antoniu Miclaus <antoniu.miclaus@analog.com>");
-+MODULE_DESCRIPTION("Analog Devices AD4851 DAS driver");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(IIO_BACKEND);
+> 
+>> Instead, the PLL clock rate is not supposed to change since
+>> IMX8MP_CLK_MEDIA_LDB clock("ldb" clock parent clock) hasn't the
+>> CLK_SET_RATE_PARENT flag. And, we don't want to change the PLL clock
+>> rate at runtime because the PLL can be used by i.MX8MP MIPI DSI and
+>> LDB display pipelines at the same time, driven by two LCDIFv3 display
+>> controllers respectively with two imx-lcdif KMS instances. We don't
+>> want to see the two display pipelines to step on each other.
+>>
+>>>
+>>>   - If the parent clock rate must not change, why does that clock has
+>>>     SET_RATE_PARENT then? Because that's the bug you're trying to work
+>>>     around.
+>>
+>> IMX8MP_CLK_MEDIA_LDB clock hasn't the CLK_SET_RATE_PARENT flag.
+>> I'm fine with the "ldb" clock tree from the current clock driver
+>> PoV - just trying to validate pixel clock rate as a workaround.
+> 
+> As far as I can see, the ldb clock is IMX8MP_CLK_MEDIA_LDB_ROOT in
+> imx8mp.dtsi. That clock is defined using imx_clk_hw_gate2_shared2 that
+> does set CLK_SET_RATE_PARENT.
+
+I said IMX8MP_CLK_MEDIA_LDB, not IMX8MP_CLK_MEDIA_LDB_ROOT.
+IMX8MP_CLK_MEDIA_LDB clock is IMX8MP_CLK_MEDIA_LDB_ROOT clock's
+parent clock.
+IMX8MP_CLK_MEDIA_LDB clock hasn't the CLK_SET_RATE_PARENT flag.
+
+IMX8MP_VIDEO_PLL1
+  IMX8MP_VIDEO_PLL1_BYPASS
+    IMX8MP_VIDEO_PLL1_OUT
+      IMX8MP_CLK_MEDIA_LDB
+        IMX8MP_CLK_MEDIA_LDB_ROOT  ->  "ldb" clock
+
+> 
+> Maxime
+
 -- 
-2.46.2
+Regards,
+Liu Ying
 
 
