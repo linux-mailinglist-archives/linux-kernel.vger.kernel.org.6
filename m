@@ -1,64 +1,73 @@
-Return-Path: <linux-kernel+bounces-363666-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363667-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4618599C568
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A81099C56C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:22:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7725F1C22BFC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:22:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 422A51C2160D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:22:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BEB515C122;
-	Mon, 14 Oct 2024 09:17:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116BC1A265D;
+	Mon, 14 Oct 2024 09:17:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzA7OxAy"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iDv8PVkn"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F41D14B08E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:17:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9BDDB16190B
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897449; cv=none; b=m2h2jmYr07UcAi4VXFF+hfuWSv4tYvVNOc+pTABoBDdBIPwXmqgea9SqJ+akMbRMhhLfxkbzL2TagCkx7nX7rpoi0Zr2c+pnwdgXATKgbm/Ubx0Fn7sKV0hhVQ/CJ8UOP/gdMXm6UMmcvWtFAAaIINYhYbUXd82w6z2U+bOQa6Q=
+	t=1728897472; cv=none; b=tylxZnWUEWufZCjIYJ1WTyG7brj8UETajC9ZNeB4qrgoCkJXhiUBF7yjSJ2bU2YnREuDlOzAP8eiWRVEuQfG2xMCTskkmGRT9pPsyh7EBH+qGZG9mi1RX3oQDvr+E/yYn85nyelBB7GBDmSaHiVC7rkdOwG8a7eL2cNMX19dMMg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897449; c=relaxed/simple;
-	bh=u6TaFVZONqi9zP1yGL5nvvE5e03tHzhpbIR4tHpq/k8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=UVJTKz0rRHqb7ihyoJgUv1L/lmAJ5yTFAhIQRY249emZ4fmP1AibdNuECkOzaO72LYmXtshwrTQZOVwXLRDpze7Ym86PYA8L2Mpj1JBQcOR7U7JCFD+zpeDog96Y9TlqKFzx7+rk2/7yf6o/TirL6mNQXbP1IrrDOJBMbs6k08w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzA7OxAy; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728897449; x=1760433449;
-  h=message-id:date:mime-version:subject:to:references:from:
-   in-reply-to:content-transfer-encoding;
-  bh=u6TaFVZONqi9zP1yGL5nvvE5e03tHzhpbIR4tHpq/k8=;
-  b=KzA7OxAy/tq3l4N4lZHmGG0rmuzIkb1cVJq67PvHarUaFNhoTWZzbL4S
-   a4unPa/E1vB/oo4B1TWNZJ1EzsPeeIDKGEvSqMN2u5iYWPwlDq/9lr3Dk
-   gQNqC17WwOTgXM4UyxPqogy2+UNbxuSVRUjtJ5n3EDUxeLbutZ2ysjFoR
-   xwUsLM3XJfTSVXS5ejfZdNitdbM78JKtaA0a4TzPcew/VYlbuPgsHRI3g
-   mivD0I7mGrZnKcFciQSkqksPVMquXmcDlkjOX9JaZwcdIIEB2vtUjSbaW
-   fsToJIavMCPKtistDGrh1P+aKcJWc3NmNzoHHOYrP9yZamZ+htxV8Ds6a
-   g==;
-X-CSE-ConnectionGUID: oNVImLLRRFy2XHWJEkTd8w==
-X-CSE-MsgGUID: SmNo05OiTHyF9HH1bIrBiQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11224"; a="53657005"
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="53657005"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 02:17:28 -0700
-X-CSE-ConnectionGUID: JRiJQlePRXOh5zXqsUbWhg==
-X-CSE-MsgGUID: obGBvDAPSdmfwoP+isWSkA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="77446041"
-Received: from nirmoyda-mobl.ger.corp.intel.com (HELO [10.245.177.190]) ([10.245.177.190])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 02:17:22 -0700
-Message-ID: <b545ed9c-787e-4840-b91f-3544bda0f2f0@linux.intel.com>
-Date: Mon, 14 Oct 2024 11:17:19 +0200
+	s=arc-20240116; t=1728897472; c=relaxed/simple;
+	bh=De9fFe1s07CApLkIdJB6+zLnUZdDCLyrYscPzlA+yCk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qe2Z8q+slmJm5XC4ymSEIrAyvGkMANMRQ8cqSoOOa6qSFJ7329ZVpMX0BRtJfFjlh4iMjHOuRNgBn9zL3HNSb9At0th9z+5vGLdsdE8gYw07qnlt3FbiJIrGZNJsujRJzp/wzU9SNd7e8Ag9xHHhga/reACW7vuuWdZx8FM5iXc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iDv8PVkn; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d6756659eso921233f8f.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 02:17:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728897469; x=1729502269; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0EPH13A2Xjjojfy4tUVU8gXPPxXzoo4So4iK5SvPwko=;
+        b=iDv8PVkn4sKcq5NvKcatjqrcqGd0ZO6AKFg4vYEakWPjtwh1gei9CGX8qb64qG/JHV
+         yOcul78Hygi/8k/VVGfzZr3n7IQ2nt5gp1emmeOE2cZrCMzAQEPlAVq6lol0lbJNCZOg
+         RWyhvWQTCmk42Y/DAEMa+4frTUo+Vf8yWcwb14wZFsny6CWYo5CCZqb8R1k+dxlxV31E
+         VVgYWLSYET2x728agQws7/vkGpWgrqN6bJ/oWaY5SHTvwrp7etQsNO36OJGwSKojdtga
+         hSAlFJfl4msm1GcWyUzMlN8w3vIyvwHDgZcVG8y0pF4pK1cc79pZE+JEUCIY2GaMTOl0
+         xC9w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728897469; x=1729502269;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0EPH13A2Xjjojfy4tUVU8gXPPxXzoo4So4iK5SvPwko=;
+        b=UZOJV0wf1svdM8xB8DtQL9SelIx4yGvnsWmKLeUxWuaX6J00HK+DxjJ3o72/hH5nQa
+         eIYWs3ENO2pIYlteCvaV2rTlka8JLGgoOEcERgYlSimZo5zWDE3Ak3Zxmr2J9LZHDSgB
+         lMDYqeyW5tB4N9Bh5fvHEDXSq7TgtrnU59UrSQjMV0LtFm9s1VO3VUvdBx2rA9DtvJGJ
+         Hp5lOHhos4wBjAwXpBQVywblm41dAxZVzz5fq5RtdD5agBnyBWKXMnmq6skBui19EgWp
+         cYCH7fFsEleUP41YNTx8NrOlx0/TGCT2XW5cyp8l9iin70TqG41BB+xpBDcj87X+4CbM
+         pIfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUvVWG5jnTJDZSCrkgpdaJ8ucjoJsNh8ATYewJQ/PKj8oJrtQStxtJKiDUU8sLJPJHa33gVH6hNV+Fz2To=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8/SNQ0Y/ZhuGL/la2JIU9e7Xjw6k9zXuTwlUR4L4o/l+92pHM
+	erDqC80hngVuIydd13kPc5qi5sLRBeWMvg12bpF+gNqcX8wHrQkD32qKdkdvRbk=
+X-Google-Smtp-Source: AGHT+IE4kzG+KSag4TfyVTDMk6wc38ssMJ1GBxTqPVc4j+ZamIlnnj9r3s3bhZhzBCbu0+3LXwvRig==
+X-Received: by 2002:a05:6000:1104:b0:37c:d1bc:2666 with SMTP id ffacd0b85a97d-37d5fe954e9mr4791980f8f.4.1728897468922;
+        Mon, 14 Oct 2024 02:17:48 -0700 (PDT)
+Received: from [192.168.1.3] ([89.47.253.130])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b6ebe2csm10831502f8f.65.2024.10.14.02.17.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 02:17:48 -0700 (PDT)
+Message-ID: <2036d7c3-8d4f-415a-9530-0758d440523f@linaro.org>
+Date: Mon, 14 Oct 2024 10:17:47 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,68 +75,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] drm/ttm/tests: Fix memory leak in
- ttm_tt_simple_create()
-To: Jinjie Ruan <ruanjinjie@huawei.com>, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, airlied@gmail.com, simona@ffwll.ch,
- christian.koenig@amd.com, ray.huang@amd.com, dmitry.baryshkov@linaro.org,
- dave.stevenson@raspberrypi.com, mcanal@igalia.com,
- quic_jjohnson@quicinc.com, karolina.stolarek@intel.com,
- Arunpravin.PaneerSelvam@amd.com, thomas.hellstrom@linux.intel.com,
- asomalap@amd.com, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <20241014071632.989108-1-ruanjinjie@huawei.com>
- <20241014071632.989108-3-ruanjinjie@huawei.com>
+Subject: Re: [PATCH 1/1 perf-tools] perf trace: The return from 'write' isn't
+ a pid
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>,
+ Alan Maguire <alan.maguire@oracle.com>, Howard Chu <howardchu95@gmail.com>,
+ Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
+ Kan Liang <kan.liang@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <Zwl6q8PMuyBz1k9d@x1>
 Content-Language: en-US
-From: Nirmoy Das <nirmoy.das@linux.intel.com>
-In-Reply-To: <20241014071632.989108-3-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <Zwl6q8PMuyBz1k9d@x1>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
-On 10/14/2024 9:16 AM, Jinjie Ruan wrote:
-> modprobe ttm_device_test and then rmmod ttm_device_test, the fllowing
-> memory leaks occurs:
->
-> The ttm->pages allocated in ttm_tt_init() is not freed after calling
-> ttm_tt_simple_create(), which cause the memory leak:
->
-> 	unreferenced object 0xffffff80caf27750 (size 8):
-> 	  comm "kunit_try_catch", pid 2242, jiffies 4295055735
-> 	  hex dump (first 8 bytes):
-> 	    c0 1e 3d c3 fe ff ff ff                          ..=.....
-> 	  backtrace (crc 3d11615a):
-> 	    [<000000007f57312a>] kmemleak_alloc+0x34/0x40
-> 	    [<000000008c6c4c7e>] __kmalloc_node_noprof+0x304/0x3e4
-> 	    [<00000000679c1182>] __kvmalloc_node_noprof+0x1c/0x144
-> 	    [<000000006aed0a3d>] ttm_tt_init+0x138/0x28c [ttm]
-> 	    [<000000005c331998>] drm_gem_shmem_free+0x60/0x534 [drm_shmem_helper]
-> 	    [<0000000022b4f375>] kunit_try_run_case+0x13c/0x3ac
-> 	    [<00000000c525d725>] kunit_generic_run_threadfn_adapter+0x80/0xec
-> 	    [<000000002db94a1f>] kthread+0x2e8/0x374
-> 	    [<000000002c457ad7>] ret_from_fork+0x10/0x20
-> 	......
->
-> Fix it by calling ttm_tt_fini() in the exit function.
->
-> Cc: stable@vger.kernel.org
-> Fixes: e6f7c641fae3 ("drm/ttm/tests: Add tests for ttm_tt")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Reviewed-by: Nirmoy Das <nirmoy.das@intel.com>
+
+On 11/10/2024 8:21 pm, Arnaldo Carvalho de Melo wrote:
+> When adding a explicit beautifier for the 'write' syscall when the BPF
+> based buffer collector was introduced there was a cut'n'paste error that
+> carried the syscall_fmt->errpid setting from a nearby syscall (waitid)
+> that returns a pid.
+> 
+> So the write return was being suppressed by the return pretty printer,
+> remove that field, reverting it back to the default return handler, that
+> prints positive numbers as-is and interpret negative values as errnos.
+> 
+> I actually introduced the problem while making Howard's original patch
+> work just with the 'write' syscall, as we couldn't just look for any
+> buffers, the ones that are filled in by the kernel couldn't use the same
+> sys_enter BPF collector.
+> 
+> Fixes: b257fac12f38d7f5 ("perf trace: Pretty print buffer data")
+> Reported-by: James Clark <james.clark@linaro.org>
+> Link: https://lore.kernel.org/lkml/bcf50648-3c7e-4513-8717-0d14492c53b9@linaro.org
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Alan Maguire <alan.maguire@oracle.com>
+> Cc: Howard Chu <howardchu95@gmail.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 > ---
->  drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c | 1 +
->  1 file changed, 1 insertion(+)
->
-> diff --git a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-> index b91c13f46225..9ff216ec58ef 100644
-> --- a/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-> +++ b/drivers/gpu/drm/ttm/tests/ttm_kunit_helpers.c
-> @@ -54,6 +54,7 @@ static struct ttm_tt *ttm_tt_simple_create(struct ttm_buffer_object *bo, u32 pag
->  
->  static void ttm_tt_simple_destroy(struct ttm_device *bdev, struct ttm_tt *ttm)
->  {
-> +	ttm_tt_fini(ttm);
->  	kfree(ttm);
->  }
->  
+>   tools/perf/builtin-trace.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+> index f6e8475290739a10..d3f11b90d0255c7e 100644
+> --- a/tools/perf/builtin-trace.c
+> +++ b/tools/perf/builtin-trace.c
+> @@ -1399,7 +1399,7 @@ static const struct syscall_fmt syscall_fmts[] = {
+>   	  .arg = { [2] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
+>   	{ .name	    = "waitid",	    .errpid = true,
+>   	  .arg = { [3] = { .scnprintf = SCA_WAITID_OPTIONS, /* options */ }, }, },
+> -	{ .name	    = "write",	    .errpid = true,
+> +	{ .name	    = "write",
+>   	  .arg = { [1] = { .scnprintf = SCA_BUF /* buf */, .from_user = true, }, }, },
+>   };
+>   
+
+Fixes the return value:
+
+   0.000 ( 0.010 ms): echo/100910 write(fd: 1, buf: , count: 6) 
+
+                 = 6
+
+I still see the missing address for buf, but I suppose that's a separate 
+issue that's introduced in the same commit. Also whether the address was 
+even useful I don't know.
+
+Reviewed-by: James Clark <james.clark@linaro.org>
+
 
