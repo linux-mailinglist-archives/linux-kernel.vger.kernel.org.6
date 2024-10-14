@@ -1,102 +1,62 @@
-Return-Path: <linux-kernel+bounces-363724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363726-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070FE99C615
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:42:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7375499C619
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:42:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B5BB928740C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1ACFA1F22CD9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:42:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7DF2157494;
-	Mon, 14 Oct 2024 09:41:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="YwdRrv5A"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4649015667B;
-	Mon, 14 Oct 2024 09:41:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B65F15884A;
+	Mon, 14 Oct 2024 09:42:18 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6BB156F39
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:42:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728898906; cv=none; b=oZoOpwJC/g2CBGyNeeJCbFA30kIzGzOg4X+z2cI6Go/hFDfBrtMy/XvlSCzTgfIYWFD1YfrZCumol0oR3Qc9w4FyeCPr7iHX9JL31nEA2TWJoC8OayQXubsJse54qIq5Bx2/TsjVdbEnHeYOmp10yaNd2/RBykXrK3rchYBAOZ0=
+	t=1728898937; cv=none; b=oAvPjiZN+2+OrW2JJ38nA/xnefL+ImPi8jsFZuzji/s/QV4dVk2ExlBPs90JEifHutMWhxoQd8+eAI9oNd8wNaoqt4n46iwA+DhwAFnj8Lz2ZF7gmbM+OuDHnXvtfdrm5rgHIIzGIIwK/hI3nOwlQkxS/5YAwLFW8hL7F2Rpv2Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728898906; c=relaxed/simple;
-	bh=yCGgobmiVdwTNNdbyRmVwVi6Iiw+424PNT5NYttS6ws=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QzMiv7CkntzJlnuArRUXduCrAPhHACtYDkGFhNrL0RUsnVqahGC853yNqm5b8WTqd+ct5DIBMdizQtd2x2+wcnxcrFavNZU7szb+RlcwMmAHlPxkThqie0wKiY6XqcxfZ/m/Tyv7IwyiweRL+96MDagGk04/2gSIGrJ421R+S8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=YwdRrv5A; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:Content-Type:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=uLuSOnIKTDUr1b3Y37tkpjiPZ4FItYSw5P1gi506wlo=; b=YwdRrv5A8ufzJdVqzIeRcxOzXo
-	qW2QNkcmMiso/Z8yFOHhvo3lImCp5xKMEaWqvowPdATTRFRB3OVeQy3HS7/Cnl+iZWC94/ppF4pBp
-	kdlNq8xvMAGSbSJg53X6MDnspg5vIEpFJOAWuppnbVFipl009VCrj4IUBnEeGU1SLdOj9les/Fn1D
-	m1D/seHfdRN5sxA2/Rlrs/Gf0Mv/lDGY37t09OxUS4ztr0PX1C8ctJnmwU06uNkE6cUGs+LXzL7jq
-	HBH6MzFWUk7kM1OBP2yj9kx1tbK+vJQRpQNf4nknkAzTQms8yRuEdh8TXZtR38K1rzfE5xPBOGVRY
-	4zxSl1dw==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=phil.lan)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t0Ha5-0006uK-H9; Mon, 14 Oct 2024 11:41:37 +0200
-From: Heiko Stuebner <heiko@sntech.de>
-To: conor+dt@kernel.org,
-	Karthikeyan Krishnasamy <karthikeyan@linumiz.com>,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	alexandre.belloni@bootlin.com
-Cc: Heiko Stuebner <heiko@sntech.de>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-rockchip@lists.infradead.org,
-	linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: (subset) [PATCH v3 0/6] Add support Relfor Saib board which is based on Rockchip RV1109 SoC
-Date: Mon, 14 Oct 2024 11:41:34 +0200
-Message-ID: <172889888554.115816.9413952717396718584.b4-ty@sntech.de>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240912142451.2952633-1-karthikeyan@linumiz.com>
-References: <20240912142451.2952633-1-karthikeyan@linumiz.com>
+	s=arc-20240116; t=1728898937; c=relaxed/simple;
+	bh=qJcliQeqBzue97fNDY1nWNca3J5whJG7qSMM/6IwCW8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UsTCCozDr388RlFsQgyclW5QWXFQdFKbRFKmVOv1dJyp9VvIm85e0GrraZCgGJbIMzEfqxmQc85c/DdEVIQhP2cUPYT43vhjWeC4vScj7Js0EvW2jv8Z1lvzpv3fNSW9V80ONT3chEZjYdDfJYCI+sw4YVrC6P+Gu9E4jyey82k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DA9521424;
+	Mon, 14 Oct 2024 02:42:44 -0700 (PDT)
+Received: from [10.57.78.229] (unknown [10.57.78.229])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 26CE73F71E;
+	Mon, 14 Oct 2024 02:42:13 -0700 (PDT)
+Message-ID: <9e81d3b6-3567-48f0-994e-9cd60fd71955@arm.com>
+Date: Mon, 14 Oct 2024 10:42:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] ARM: Add support for Cortex-M85 processor
+To: Jisheng Zhang <jszhang@kernel.org>, Russell King <linux@armlinux.org.uk>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20241013132435.2825-1-jszhang@kernel.org>
+Content-Language: en-GB
+From: Vladimir Murzin <vladimir.murzin@arm.com>
+In-Reply-To: <20241013132435.2825-1-jszhang@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, 12 Sep 2024 19:54:45 +0530, Karthikeyan Krishnasamy wrote:
-> Rockchip RV1109 is compatible with Rockchip RV1126.
-> In this series, adding required missing peripheral in
-> RV1126 and its pin mux.
+On 10/13/24 14:24, Jisheng Zhang wrote:
+> Add processor info object for ARM Cortex-M85 CPU which inherits the
+> setup procedure, the processor and cache operation function from
+> Cortex-M7 processor info object.
 > 
-> Relfor Saib board is equipped with 1GB of RAM and 4GB of eMMC
-> Pheripherals like Bluetooth 4.2, Wifi 5G, audio-codec,
-> ir transmitter and receiver, etc
-> 
-> [...]
+> Signed-off-by: Jisheng Zhang <jszhang@kernel.org>
 
-Applied, thanks!
-
-[2/6] ARM: dts: rockchip: Add watchdog node for RV1126
-      commit: cbad02491459d64522852da07736ddc1f04cbaef
-[4/6] dt-bindings: vendor-prefixes: Add Relfor labs
-      commit: d0c9f9b848d0ee57e785c393cd4d618b5753e68d
-[5/6] dt-bindings: arm: rockchip: Add Relfor Saib
-      commit: c1386c02d5d457a1713c8e866102c4418a1c736c
-[6/6] ARM: dts: rockchip: Add Relfor Saib board
-      commit: bdb2696ac5786ed3f43520e700347fe2152ea199
-
-Best regards,
--- 
-Heiko Stuebner <heiko@sntech.de>
+Reviewed-by: Vladimir Murzin <vladimir.murzin@arm.com>
 
