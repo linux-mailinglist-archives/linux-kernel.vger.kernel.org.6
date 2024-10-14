@@ -1,249 +1,168 @@
-Return-Path: <linux-kernel+bounces-364482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364483-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A24F99D528
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:02:22 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308F699D52B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:02:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4CB32848B3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:02:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D878B269D2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 729EF1BFE05;
-	Mon, 14 Oct 2024 17:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PJwgO812"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C5251C1ACF;
+	Mon, 14 Oct 2024 17:02:27 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46FFB29CA;
-	Mon, 14 Oct 2024 17:02:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CF481BE854;
+	Mon, 14 Oct 2024 17:02:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728925332; cv=none; b=FY718Y7ikKrFm1WcrPWDdjY3ZfNL0VjRCTIYT0BGoogEYRloWlq0ENNzDOhOp98RpjfWdmAxEaWzeaLlj/GFW3TlV0bXQjf6B78jY2YtuPWFuNne/+o2E5gUcP28QsUzrF+pS0flBwC2MutxndYabCBfYcUmIrCZBu0DwnL1v2I=
+	t=1728925346; cv=none; b=bvmp4GVn/LkgccGp0P3pnuog7/yuom8H9LSlyPZg0P5b/Gtuenku2Mb0NIepV0nIu1HA5FM+h08oXnIip1C+cbsBz2LbkF4sw/bYe/bFFjpXvezVdvtm8M9Tu2TBgCV5Rht9bU0cFbOtbLV3PrRJtVaB6H3Kn255OHFiS+L48TU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728925332; c=relaxed/simple;
-	bh=uZqm/vVvL62S3Ei5w3HeKSAwjQt1+NE5f4nmgTdVDDs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Y/bH5/exUB6XabeLXPfxSr4e8SntZqfM/yKpaLASO7gSVD/axque6IDlJ6lRFJQ55YrvGM8mJfp6lnMVxXHyLy0vdb8p6xch8PtDZ0NhM3ybXy9z43A01YRdP0ivFMtxePBvWO8Ca/DXpx0DVyNZKDeIoEuFOlJGs9gd+ks5jAw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PJwgO812; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20c7ee8fe6bso31946495ad.2;
-        Mon, 14 Oct 2024 10:02:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728925330; x=1729530130; darn=vger.kernel.org;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bxg86KR6sOyXP7avilmE6FsFPoosRZPYDwPpN3nt2Uc=;
-        b=PJwgO812AOPqmOKrDQ156JE2MsyUyNB/D17BX1zL4CvSN0JHXyzYlm//YttQX8zK7l
-         iL4lAQa1NjIAyitoubdZsp5p7TDmbLfGq6pLwt+8QjqnXOWcTxneQ+baXbRJ6myDpUho
-         IY1oI9zYhDrwEE4/cR5Ia7PuU2+Nyfo4nRI5wZpHHK3z3ydV1uuX5B9sZCa+JREr9f1d
-         4qrvXQEIKqA+x/62MDRYvvIML4JX8Ae3YC02+H/+f+tpNzp1daBjDuURYypn9tgJ81iM
-         yxxOtSbrkAJTixE2KD4l11KmKo3o7fH56M2Wbi8F+0mdXTh3nFNhVxHSpR9jEzvqwj4e
-         9WhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728925330; x=1729530130;
-        h=content-transfer-encoding:content-disposition:mime-version
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bxg86KR6sOyXP7avilmE6FsFPoosRZPYDwPpN3nt2Uc=;
-        b=Z0N32X5NXQiYx+rrFo2n2XhfADVBux+kn+cKmwWoUBUdRdTnvi+LIEFCYKV79N+8El
-         daRhxaiQReG9BMjcFVtzlBf+rqF4b+EUGGjZ/IaT10CUrODGWFqG6zREQsyFDS5VS48n
-         Yk3lPVm/8PZRKZ0XD68Ngn5Srg8g/hLkAWD5TXvBZ//9+LU0gG2gNGDJPyrOjRUyMMDp
-         CWq3Tvq0A0LXXpNojrOUcduXEivRfg678PXYeeu8peFXqXxNg4DnBjIEbmSjyZUtIzMh
-         u/yFrm60ngAXokjX5f4yMknK4Lr6rv5rgfg61Jd2DRLNPThwmvEz82CJK+ErPp3GF6Mt
-         bPeA==
-X-Forwarded-Encrypted: i=1; AJvYcCWBDzjL3Tq5cCo2hFFmZZRs6/m977a/c8h0gsv9NiCU7/5IMipvpYXaFafS9voX1oLX3cOOZr/ZZf/fn+6V@vger.kernel.org, AJvYcCWvjbjfRx9r8DJYObyS99gUs3pHET26P3VpQeRMz4XS1iNcMIV9W9jyVg/iEoNipXktOMDjkThWtpax@vger.kernel.org, AJvYcCXRfx2UG/i/zQDEb4fOX4JLvCqRQLLGbz6mOm/mv0C1w7bFYI4zYFGWOYYyE0rYL0ZED7fRaxFUoTBh@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJDhOmug6Q2gHzGI6G2Zvi+NGKpontHre9bdyY/5QF5NmT8wsc
-	Vi1mpeaJHKeyWtmdHpGtkuoYtZhciNB6J0Tan16aisDY01FG7IQA
-X-Google-Smtp-Source: AGHT+IGrNaPDXhQd14eA9GwXNdIBi1lCohPeL2NTT8DoIcvH3Sksioy2sSVKcUB2GhWas7pIiNADfg==
-X-Received: by 2002:a17:902:ccc6:b0:20c:9eb3:c1ff with SMTP id d9443c01a7336-20ca170f318mr153969845ad.59.1728925330247;
-        Mon, 14 Oct 2024 10:02:10 -0700 (PDT)
-Received: from Emma ([2401:4900:1c96:4540:5054:ff:fe53:2787])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20c8c34aaaasm68567345ad.290.2024.10.14.10.02.09
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 10:02:09 -0700 (PDT)
-Date: Mon, 14 Oct 2024 17:02:07 +0000
-From: Karan Sanghavi <karansanghvi98@gmail.com>
-To: Mark Brown <broonie@kernel.org>, Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Florian Fainelli <florian.fainelli@broadcom.com>,
-	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	linux-spi@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-rpi-kernel@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Shuah Khan <skhan@linuxfoundation.org>,
-	Karan Sanghavi <karansanghvi98@gmail.com>
-Subject: [PATCH] dt-bindings: spi: Add bcm2835-aux-spi.yaml file.
-Message-ID: <Zw1Oj1utiBJ9Sosg@Emma>
+	s=arc-20240116; t=1728925346; c=relaxed/simple;
+	bh=vkupR3+rWlCaZao5/CLj0g4WFEKCHfS/VpFVvhggC54=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=q+CGWzq5V6r7WdM5om6JbknyjIyYfvWYYlAsw0ljEl9nDLJJFTiqiaF0RAG4RxiqkqNKFWXusrmhpas2ZUk9wdQWhfDMvb+LuScBvJRZXid0l+DyEXgxI8KjhVd8oblOWPykbZhOp/s+6FON+Q7HB/BLTE+iQVT+DMPiyNTMitw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS3QR2yBmz6J6qD;
+	Tue, 15 Oct 2024 01:00:47 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 734101404F5;
+	Tue, 15 Oct 2024 01:02:22 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
+ 2024 19:02:19 +0200
+Date: Mon, 14 Oct 2024 18:02:17 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Shiju Jose <shiju.jose@huawei.com>
+CC: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
+	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "bp@alien8.de" <bp@alien8.de>,
+	"tony.luck@intel.com" <tony.luck@intel.com>, "rafael@kernel.org"
+	<rafael@kernel.org>, "lenb@kernel.org" <lenb@kernel.org>,
+	"mchehab@kernel.org" <mchehab@kernel.org>, "dan.j.williams@intel.com"
+	<dan.j.williams@intel.com>, "dave@stgolabs.net" <dave@stgolabs.net>,
+	"dave.jiang@intel.com" <dave.jiang@intel.com>, "alison.schofield@intel.com"
+	<alison.schofield@intel.com>, "vishal.l.verma@intel.com"
+	<vishal.l.verma@intel.com>, "ira.weiny@intel.com" <ira.weiny@intel.com>,
+	"david@redhat.com" <david@redhat.com>, "Vilas.Sridharan@amd.com"
+	<Vilas.Sridharan@amd.com>, "leo.duran@amd.com" <leo.duran@amd.com>,
+	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>, "rientjes@google.com"
+	<rientjes@google.com>, "jiaqiyan@google.com" <jiaqiyan@google.com>,
+	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>, "dave.hansen@linux.intel.com"
+	<dave.hansen@linux.intel.com>, "naoya.horiguchi@nec.com"
+	<naoya.horiguchi@nec.com>, "james.morse@arm.com" <james.morse@arm.com>,
+	"jthoughton@google.com" <jthoughton@google.com>, "somasundaram.a@hpe.com"
+	<somasundaram.a@hpe.com>, "erdemaktas@google.com" <erdemaktas@google.com>,
+	"pgonda@google.com" <pgonda@google.com>, "duenwen@google.com"
+	<duenwen@google.com>, "gthelen@google.com" <gthelen@google.com>,
+	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
+	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
+	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
+	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>, tanxiaofei
+	<tanxiaofei@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>, "Roberto
+ Sassu" <roberto.sassu@huawei.com>, "kangkang.shen@futurewei.com"
+	<kangkang.shen@futurewei.com>, wanghuiqiang <wanghuiqiang@huawei.com>,
+	Linuxarm <linuxarm@huawei.com>
+Subject: Re: [PATCH v13 15/18] EDAC: Add memory repair control feature
+Message-ID: <20241014180217.0000299a@Huawei.com>
+In-Reply-To: <162f5e44507b46029eebb007dedef0d5@huawei.com>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+	<20241009124120.1124-16-shiju.jose@huawei.com>
+	<20241014172312.00007034@Huawei.com>
+	<162f5e44507b46029eebb007dedef0d5@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-Converted the brcm,bcm2835-aux-spi.txt file to
-its respective yaml file format.
+On Mon, 14 Oct 2024 17:39:12 +0100
+Shiju Jose <shiju.jose@huawei.com> wrote:
 
-Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
----
+> >-----Original Message-----
+> >From: Jonathan Cameron <jonathan.cameron@huawei.com>
+> >Sent: 14 October 2024 17:23
+> >To: Shiju Jose <shiju.jose@huawei.com>
+> >Cc: linux-edac@vger.kernel.org; linux-cxl@vger.kernel.org; linux-
+> >acpi@vger.kernel.org; linux-mm@kvack.org; linux-kernel@vger.kernel.org;
+> >bp@alien8.de; tony.luck@intel.com; rafael@kernel.org; lenb@kernel.org;
+> >mchehab@kernel.org; dan.j.williams@intel.com; dave@stgolabs.net;
+> >dave.jiang@intel.com; alison.schofield@intel.com; vishal.l.verma@intel.com;
+> >ira.weiny@intel.com; david@redhat.com; Vilas.Sridharan@amd.com;
+> >leo.duran@amd.com; Yazen.Ghannam@amd.com; rientjes@google.com;
+> >jiaqiyan@google.com; Jon.Grimm@amd.com; dave.hansen@linux.intel.com;
+> >naoya.horiguchi@nec.com; james.morse@arm.com; jthoughton@google.com;
+> >somasundaram.a@hpe.com; erdemaktas@google.com; pgonda@google.com;
+> >duenwen@google.com; gthelen@google.com;
+> >wschwartz@amperecomputing.com; dferguson@amperecomputing.com;
+> >wbs@os.amperecomputing.com; nifan.cxl@gmail.com; tanxiaofei
+> ><tanxiaofei@huawei.com>; Zengtao (B) <prime.zeng@hisilicon.com>; Roberto
+> >Sassu <roberto.sassu@huawei.com>; kangkang.shen@futurewei.com;
+> >wanghuiqiang <wanghuiqiang@huawei.com>; Linuxarm
+> ><linuxarm@huawei.com>
+> >Subject: Re: [PATCH v13 15/18] EDAC: Add memory repair control feature
+> >
+> >On Wed, 9 Oct 2024 13:41:16 +0100
+> ><shiju.jose@huawei.com> wrote:
+> >  
+> >> From: Shiju Jose <shiju.jose@huawei.com>
+> >>
+> >> Add generic EDAC memory repair control, eg. PPR(Post Package Repair),
+> >> memory sparing etc, control driver in order to control memory repairs
+> >> in the system. Supports sPPR(soft PPR), hPPR(hard PPR), soft/hard
+> >> memory sparing, memory sparing at cacheline/row/bank/rank granularity etc.
+> >> Device with memory repair features registers with EDAC device driver,
+> >> which retrieves memory repair descriptor from EDAC memory repair
+> >> driver and exposes the sysfs repair control attributes to userspace in
+> >> /sys/bus/edac/devices/<dev-name>/mem_repairX/.
+> >>
+> >> The common memory repair control interface abstracts the control of an
+> >> arbitrary memory repair functionality to a common set of functions.
+> >> The sysfs memory repair attribute nodes would be present only if the
+> >> client driver has implemented the corresponding attribute callback
+> >> function and passed in ops to the EDAC device driver during registration.
+> >>
+> >> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>  
+> [...]
+> >  
+> >> +
+> >> +What:		/sys/bus/edac/devices/<dev-name>/mem_repairX/hpa
+> >> +Date:		Oct 2024
+> >> +KernelVersion:	6.12
+> >> +Contact:	linux-edac@vger.kernel.org
+> >> +Description:
+> >> +		(WO) Set HPA (Host Physical Address) for memory repair.  
+> >
+> >Can we not just read back what was written?  Seems like userspace might expect
+> >that?  
+> I am fine to add read back.
+> I did not add read back  for controls because there was no such requirement from the client driver and
+> also tried to reduce the number of callbacks in the initial version. 
 
-While running
-make CHECK_DTBS=y broadcom/bcm2711-rpi-4-b.dtb,
-I encountered an error related to the compatible property
-for brcm,bcm2835-aux-spi. To resolve this, I converted the
-text file to a YAML binding file and checked it with
+I think we can for now at least just cache in the core code.
+If we have future implementations where more validation is possible
+then we can add optional callbacks at that stage.
 
-make dt_binding_check DT_SCHEMA_FILES=brcm,bcm2835-aux-spi.yaml
+Jonathan
 
-and
-
-make CHECK_DTBS=y broadcom/bcm2711-rpi-4-b.dtb
-
-and generates no error.
-
-However, I have a question regarding the cs-gpios property.
-The BCM2711 datasheet mentions that each Universal SPI
-Master has 3 independent chip selects. I’m wondering
-if this means these chip select (CS) pins are native,
-or if we still need to attach GPIOs to them.
-If GPIOs are required for these 3 CS pins,
-does that mean we also need to include them in the
-device tree schema? and also as arequired property in
-binding?
-
- .../bindings/spi/brcm,bcm2835-aux-spi.txt     | 38 -----------
- .../bindings/spi/brcm,bcm2835-aux-spi.yaml    | 66 +++++++++++++++++++
- 2 files changed, 66 insertions(+), 38 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
- create mode 100644 Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
-deleted file mode 100644
-index d7668f41b03b..000000000000
---- a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.txt
-+++ /dev/null
-@@ -1,38 +0,0 @@
--Broadcom BCM2835 auxiliary SPI1/2 controller
--
--The BCM2835 contains two forms of SPI master controller, one known simply as
--SPI0, and the other known as the "Universal SPI Master"; part of the
--auxiliary block. This binding applies to the SPI1/2 controller.
--
--Required properties:
--- compatible: Should be "brcm,bcm2835-aux-spi".
--- reg: Should contain register location and length for the spi block
--- interrupts: Should contain shared interrupt of the aux block
--- clocks: The clock feeding the SPI controller - needs to
--	  point to the auxiliary clock driver of the bcm2835,
--	  as this clock will enable the output gate for the specific
--	  clock.
--- cs-gpios: the cs-gpios (native cs is NOT supported)
--	    see also spi-bus.txt
--
--Example:
--
--spi1@7e215080 {
--	compatible = "brcm,bcm2835-aux-spi";
--	reg = <0x7e215080 0x40>;
--	interrupts = <1 29>;
--	clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	cs-gpios = <&gpio 18>, <&gpio 17>, <&gpio 16>;
--};
--
--spi2@7e2150c0 {
--	compatible = "brcm,bcm2835-aux-spi";
--	reg = <0x7e2150c0 0x40>;
--	interrupts = <1 29>;
--	clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI2>;
--	#address-cells = <1>;
--	#size-cells = <0>;
--	cs-gpios = <&gpio 43>, <&gpio 44>, <&gpio 45>;
--};
-diff --git a/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-new file mode 100644
-index 000000000000..4c24cf2fe214
---- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/brcm,bcm2835-aux-spi.yaml
-@@ -0,0 +1,66 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/spi/brcm,bcm2835-aux-spi.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Broadcom BCM2835 Auxiliary SPI1/2 Controller
-+
-+maintainers:
-+  - Karan Sanghavi <karansanghvi98@gmail.com>
-+
-+description: |
-+  The BCM2835 contains two forms of SPI master controller. One is known simply as
-+  SPI0, and the other as the "Universal SPI Master," part of the auxiliary block.
-+  This binding applies to the SPI1 and SPI2 auxiliary controllers.
-+
-+allOf:
-+  - $ref: spi-controller.yaml#
-+
-+properties:
-+  compatible:
-+    enum:
-+      - brcm,bcm2835-aux-spi
-+    description: Broadcom BCM2835 Auxiliary SPI controller for SPI1 and SPI2.
-+
-+  reg:
-+    maxItems: 1
-+
-+  interrupts:
-+    maxItems: 1
-+
-+  clocks:
-+    items:
-+      - description: Reference to the auxiliary clock driver for the BCM2835.
-+
-+required:
-+  - compatible
-+  - reg
-+  - interrupts
-+  - clocks
-+
-+unevaluatedProperties: false
-+
-+examples:
-+  - |
-+    #include <dt-bindings/clock/bcm2835-aux.h>
-+    spi@7e215080 {
-+        compatible = "brcm,bcm2835-aux-spi";
-+        reg = <0x7e215080 0x40>;
-+        interrupts = <1 29>;
-+        clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI1>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
-+
-+  - |
-+    #include <dt-bindings/clock/bcm2835-aux.h>
-+    spi@7e2150c0 {
-+        compatible = "brcm,bcm2835-aux-spi";
-+        reg = <0x7e2150c0 0x40>;
-+        interrupts = <1 29>;
-+        clocks = <&aux_clocks BCM2835_AUX_CLOCK_SPI2>;
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+    };
-+
--- 
-2.43.0
+> 
+> Thanks,
+> Shiju
 
 
