@@ -1,155 +1,132 @@
-Return-Path: <linux-kernel+bounces-364612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D91D99D6E1
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:57:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12B5199D6E5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:58:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C1BCE1C23593
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:57:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF6081F236E9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBCC61CACD0;
-	Mon, 14 Oct 2024 18:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F11381CACE1;
+	Mon, 14 Oct 2024 18:58:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="b4XmhwEJ"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l3yLn9ZW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6D274683;
-	Mon, 14 Oct 2024 18:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B4C4683;
+	Mon, 14 Oct 2024 18:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728932236; cv=none; b=l6U9Ke8WlgYs3hpiNksQOJ5WdCIXGdtw0tEXLpoQWJqqAuf8dgPjvJPj6KtBjJl5R9ECC12cgk6Trj3Lvvs/xe48ONHWNVnR4skytQM0xQdb/BHIFiG143qyzpA4+skqWoEagCjJax+3MyfibV6USNU49aitTho5Bqyy1zmKLL4=
+	t=1728932292; cv=none; b=NurtN1xIhtqHdRpve9qiTzfr4wWpsoPrq5LH3LroiQUjq+TEbXhrrtrdwDckj5/ubfZJeyAi+gb0giSozTlZ6H6tA6whjXOeq9CJUnJ0HprQU2bu4VzpBOHtu/6KnWAgWEdt5D6OOUEqP0ZGEMuHX4CS1QmiGMJyuldkhB3o67o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728932236; c=relaxed/simple;
-	bh=fgr0i0rvV98CmIMqJYxJOVbmMJNJIhlNgjRfyq6A+4c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kbqxHpXq6ufjImlOjIimr0ixojpAvaYdLks88U8bkldDttyTgWa3hQ3fDLF4PbpoNPISDCo4Ch75OpWY3DioGtCvQIvOOrUTzH8EEetn35QMA8vLR201uIqTrhqE8JV5czPIB4HU64UZvjN0zIXNBl6CZlzO5DZUO3PxZK9Fy4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=b4XmhwEJ; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHpttt016170;
-	Mon, 14 Oct 2024 18:57:07 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=date
-	:from:to:cc:subject:message-id:references:mime-version
-	:content-type:in-reply-to; s=pp1; bh=lqsWR+jAr90MdTD6bipNip5TTrR
-	kZNsTNWK1ovh714w=; b=b4XmhwEJ8kZjtypCGp0cOsK6GQkjPMXqa4EzpZIs84d
-	YOGBTXbn1W2WXMTpPReTFgrC7BeP9UmmiKBVpcY1P6f9Cykz30sStQ1Dc/F9BY9e
-	YVM7X2n4afWsy4MYJZSRIA2LaSeJiz3GDOkllZCJQtQc6vx0sM/aHRdbAlt/Mktn
-	Z0SuaGi7Kxq3pgF5SZuEWuDKpSkDS1XSD1p5U3PP3P9o0wosyUdhbS6l5vPIOeyi
-	fWiImR2tF2RfFPzlooBztYRKnRvsUWiO+OdipYH9NvoqD2CBSROcH0kj893n4uyE
-	XKAUPuz6f1Bxen++oKll3e9wILw36P4h5GE+JV5YZQg==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42982qr7ex-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:57:07 +0000 (GMT)
-Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49EIv6GJ020091;
-	Mon, 14 Oct 2024 18:57:06 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42982qr7er-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:57:06 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49EHdVwP027480;
-	Mon, 14 Oct 2024 18:57:05 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4283txg63q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 18:57:05 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49EIv2bP55050696
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 14 Oct 2024 18:57:02 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F30CA2004E;
-	Mon, 14 Oct 2024 18:57:01 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 03BE92004B;
-	Mon, 14 Oct 2024 18:57:01 +0000 (GMT)
-Received: from osiris (unknown [9.171.66.174])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon, 14 Oct 2024 18:57:00 +0000 (GMT)
-Date: Mon, 14 Oct 2024 20:56:59 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
-        linux-doc@vger.kernel.org, kvm@vger.kernel.org,
-        Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
-        Cornelia Huck <cohuck@redhat.com>,
-        Janosch Frank <frankja@linux.ibm.com>,
-        Claudio Imbrenda <imbrenda@linux.ibm.com>,
-        "Michael S. Tsirkin" <mst@redhat.com>,
-        Jason Wang <jasowang@redhat.com>,
-        Xuan Zhuo <xuanzhuo@linux.alibaba.com>,
-        Eugenio =?iso-8859-1?Q?P=E9rez?= <eperezma@redhat.com>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH v2 0/7] virtio-mem: s390 support
-Message-ID: <20241014185659.10447-H-hca@linux.ibm.com>
-References: <20241014144622.876731-1-david@redhat.com>
+	s=arc-20240116; t=1728932292; c=relaxed/simple;
+	bh=0cNdfxlaAERI2ZFlY9O5b6oEJR0zLiQVvjIssZNT7uA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e8/AgVeSta3zjSdcEGCy5HerHa6sH7iyeAQLyQJTcUQ2juCdK6JyedLk52dg4lTCswlHpXmkkh/pEbQY4sNxFxl/vFs1quKPFAuOapaklwrX/rPOZVqXbPWW6USj9796HN0dnXuJvRf/IC/c5AOW5EpROuRV/Jv6VRKbp+UYKVQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l3yLn9ZW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFA8BC4CED2;
+	Mon, 14 Oct 2024 18:58:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728932291;
+	bh=0cNdfxlaAERI2ZFlY9O5b6oEJR0zLiQVvjIssZNT7uA=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=l3yLn9ZWGzwmeKqHx5fGWbnkT/m9/UciHrCSJZVYcU53aUoevp/gleaS/f9tEbAuS
+	 9obNFAtScyRsaWjGPym1pRdg9wlBY8pNmcD+//s+U3D5a5AaU83Cblx7Ah8No78Txp
+	 xJ9S2l0HhN7zbfI5Q1UADxk9daxJYM5SIv7wDqDg9oTRrSNtvB7lGj+cfujcjAbvGC
+	 1V/bmYhvYw29W27lV8bkT6fBtoaKEUm7lTlYAsIM6vMSJyl9HpNMc74Yl3Lvz+WM1T
+	 T6svYEJBkJQeXzorEBuCjtjc46M14Ip54DoyUH9e1x177RDHeBpDy6Y09ytey/HW7q
+	 YRHplFP2s8H6w==
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb5a9c7420so2501291fa.3;
+        Mon, 14 Oct 2024 11:58:11 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUu9B086OuvIgZAhSIopDsLHw6M4HaAhhZTKR3NWG9/odkwH+YxlLS0PtFWpXDLyKCouEz3zhwe/6jPag==@vger.kernel.org, AJvYcCWXtbrWj5kc+FN4wAx7PMyzmUVA0s/LjBy76dDyyVxtn0q+8rPsQJPBh0tPSbp4er+W3pEGksUpozsd@vger.kernel.org, AJvYcCXig7FPgvvdONX9jTYW6xJsF65OF7oOydt7i+n4cs6GOodjd0xDqGzTjmqUht/gyVOkFHWF/9PDMHCr40b7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwK8toJvtfxYGfdBH828KHLnxw7x8rEVMWLz+rYk9YAbPUz4f7X
+	IzOlUyyz8RPvQFXu5dX9iE29gqURmJIGYTqJtb69fNMXnRq1W9mR7hNiYB1iVBhWqkTcP0iniUD
+	wc25agIukJvshLRdguHH2fYiogw==
+X-Google-Smtp-Source: AGHT+IGB7JJYiM5L2evoekVIoH09vgK4CE4aQy4IbaJ7FdMyUJ22wtpfWp4Rpcz4KtN6+j3CywO20ZHiH68G5gGpwl4=
+X-Received: by 2002:a05:6512:23a9:b0:539:9594:b226 with SMTP id
+ 2adb3069b0e04-539e5620d75mr3724058e87.34.1728932290183; Mon, 14 Oct 2024
+ 11:58:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014144622.876731-1-david@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: 6uFDGy-zlz1QTPEIrQYEpX_XW_Pumpmi
-X-Proofpoint-ORIG-GUID: Or6XZdCkJUWtzOmMfibubfT24pmJTuiG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-14_12,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 bulkscore=0
- suspectscore=0 adultscore=0 priorityscore=1501 impostorscore=0
- mlxlogscore=999 phishscore=0 clxscore=1015 malwarescore=0 spamscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140135
+References: <20241011120520.140318-1-y.oudjana@protonmail.com>
+ <20241011120520.140318-2-y.oudjana@protonmail.com> <20241011165640.GA2475122-robh@kernel.org>
+ <e410cdb6-84a7-482b-9234-3f61077b8151@gmail.com>
+In-Reply-To: <e410cdb6-84a7-482b-9234-3f61077b8151@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 14 Oct 2024 13:57:56 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqKdHsf0A38XJ+rwsu2FyLfMmFyL+BHKnTGg0=0A7CfUmQ@mail.gmail.com>
+Message-ID: <CAL_JsqKdHsf0A38XJ+rwsu2FyLfMmFyL+BHKnTGg0=0A7CfUmQ@mail.gmail.com>
+Subject: Re: [PATCH v6 1/8] dt-bindings: pinctrl: mediatek,mt6779-pinctrl:
+ Pull pinctrl node changes from MT6795 document
+To: Yassine Oudjana <yassine.oudjana@gmail.com>
+Cc: Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	Yassine Oudjana <y.oudjana@protonmail.com>, Andy Teng <andy.teng@mediatek.com>, 
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 04:46:12PM +0200, David Hildenbrand wrote:
-> Let's finally add s390 support for virtio-mem; my last RFC was sent
-> 4 years ago, and a lot changed in the meantime.
-> 
-> The latest QEMU series is available at [1], which contains some more
-> details and a usage example on s390 (last patch).
-> 
-> There is not too much in here: The biggest part is querying a new diag(500)
-> STORAGE_LIMIT hypercall to obtain the proper "max_physmem_end".
-> 
-> The last two patches are not strictly required but certainly nice-to-have.
-> 
-> Note that -- in contrast to standby memory -- virtio-mem memory must be
-> configured to be automatically onlined as soon as hotplugged. The easiest
-> approach is using the "memhp_default_state=" kernel parameter or by using
-> proper udev rules. More details can be found at [2].
-> 
-> I have reviving+upstreaming a systemd service to handle configuring
-> that on my todo list, but for some reason I keep getting distracted ...
-> 
-> I tested various things, including:
->  * Various memory hotplug/hotunplug combinations
->  * Device hotplug/hotunplug
->  * /proc/iomem output
->  * reboot
->  * kexec
->  * kdump: make sure we don't hotplug memory
-> 
-> One remaining work item is kdump support for virtio-mem memory. This will
-> be sent out separately once initial support landed.
+On Sat, Oct 12, 2024 at 3:09=E2=80=AFAM Yassine Oudjana
+<yassine.oudjana@gmail.com> wrote:
+>
+>
+> On 11/10/2024 7:56 pm, Rob Herring wrote:
+> > On Fri, Oct 11, 2024 at 03:03:46PM +0300, Yassine Oudjana wrote:
+> >> From: Yassine Oudjana <y.oudjana@protonmail.com>
+> >>
+> >> mediatek,pinctrl-mt6795.yaml has different node name patterns which ma=
+tch
+> >> bindings of other MediaTek pin controllers, ref for pinmux-node.yaml w=
+hich
+> >> has a description of the pinmux property, as well as some additional
+> >> descriptions for some pin configuration properties. Pull those changes
+> >> into mediatek,mt6779-pinctrl.yaml and adjust the example DTS to match =
+in
+> >> preparation to combine the MT6795 document into it.
+> >>
+> >> Signed-off-by: Yassine Oudjana <y.oudjana@protonmail.com>
+> >> ---
+> >>   .../pinctrl/mediatek,mt6779-pinctrl.yaml      | 38 ++++++++++++++---=
+--
+> >>   1 file changed, 28 insertions(+), 10 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779=
+-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-p=
+inctrl.yaml
+> >> index 3bbc00df5548d..352a88d7b135e 100644
+> >> --- a/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctr=
+l.yaml
+> >> +++ b/Documentation/devicetree/bindings/pinctrl/mediatek,mt6779-pinctr=
+l.yaml
+> >> @@ -111,12 +111,12 @@ allOf:
+> >>           - "#interrupt-cells"
+> >>
+> >>   patternProperties:
+> >> -  '-[0-9]*$':
+> >> +  '-pins$':
+> >
+> > Worst case, this could be an ABI break. Best case, it's churn for
+> > mt6779. Is it worth unifying?
+>
+> It's better than keeping different patterns, isn't it? We wouldn't have
+> ended up here if they were made as one in the beginning as it was ought
+> to be considering how similar the hardware is. It's easier to change now
+> since nothing is using it yet.
 
-Besides the open kdump question, which I think is quite important, how
-is this supposed to go upstream?
+I can only assume there are users unless you tell me otherwise (in the
+commit msg).
 
-This could go via s390, however in any case this needs reviews and/or
-Acks from kvm folks.
+Rob
 
