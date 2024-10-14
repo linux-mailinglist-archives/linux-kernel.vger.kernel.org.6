@@ -1,124 +1,100 @@
-Return-Path: <linux-kernel+bounces-363570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47D8D99C41A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:53:19 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1ADC799C41C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:53:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78EB21C22803
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:53:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BD811C20321
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:53:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEC3B1531E3;
-	Mon, 14 Oct 2024 08:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B8C815697A;
+	Mon, 14 Oct 2024 08:52:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b="k6bE0d/L";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="eik0b+53"
-Received: from fout-b7-smtp.messagingengine.com (fout-b7-smtp.messagingengine.com [202.12.124.150])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E70hk0Zh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4288D14F126;
-	Mon, 14 Oct 2024 08:52:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.150
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65FD6156649;
+	Mon, 14 Oct 2024 08:52:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895946; cv=none; b=g67v6MMSX+xVwU/mjdx0rRfgemelyJQ6dRrcATF4/gpN/Ou8wzSKjQ88f9wIm007Ki40znZeMiZqtdDDwJ6crfittqucDl3BxcbC8MUnzYfD/74d1Di19YZWrzb2uRkrt4gce8C07DQBgG96IAzhE6nMASukFTqpenaS4WYzpls=
+	t=1728895951; cv=none; b=otGZvbgsEf16INUg6GE2asMk9DFwb0MPjc7Ha9jA3JCf7ulfiMsJGy9pxlIr/fqH1breCfFrLNKaOPk7tJ/WOhDmK4+2PQilTSYHW0CSr9GWojmzLSn/EGOrrEdu82uWJwdZxWTRLW2mgP+zC24I4gKLyGhcss2zOR0t2PuJ+KA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895946; c=relaxed/simple;
-	bh=UhYaUzHVY8nMAfdeHenLnAfjyBjBpTQSNCFScqg6X/Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bPdn32mFXIBdwrVKKL/4HyC77w0TuhkbT0B+azYR1qudXFf52lxsHUyE2fprNiPt6KaubzyKbcOFza+9UjeBuagxiakSknbeGjcWKpT18hhe9JABW/nfTVaGPSw+xu7Kxj1Klue1qKP40/to7osbg1Nl63ryr8VJj9nvovCRObs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com; spf=pass smtp.mailfrom=kroah.com; dkim=pass (2048-bit key) header.d=kroah.com header.i=@kroah.com header.b=k6bE0d/L; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=eik0b+53; arc=none smtp.client-ip=202.12.124.150
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kroah.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kroah.com
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id F3010114008E;
-	Mon, 14 Oct 2024 04:52:21 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-05.internal (MEProxy); Mon, 14 Oct 2024 04:52:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kroah.com; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1728895941; x=1728982341; bh=2cZybKjM9D
-	cFIqUkv4bmvjg5bZFx69NeviweXujIacs=; b=k6bE0d/L0a807uJPUsp6sSsLJF
-	2IqzoA+AzrJth2GPI2YkSJuTg5As6fxjr06pt8qylyvHrY7E2NIhvm5150xZKCyM
-	AxMEeqwAY2n+cvHSIJSaMrviWhIyxeSdozv47I+qf1e6RA+xBegJH28baIFoWQWT
-	9friiwdltOUC0c1VNS4LJRys0XflkGEm48D+jbtd8lDyYtGElzCsZByGMf5/3IM4
-	QJDAtNEqsE4OgmfvffbDDQBjD8gyGgYH6yenK7HtVHIO0575Ex3WMhSUHOQQiRvg
-	wCWw2Pc5nLXffwG6NHqim5NNpTwdjdL5/hUVW8gzfDsHI1hLYa40MhNRr9Ug==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm2; t=1728895941; x=1728982341; bh=2cZybKjM9DcFIqUkv4bmvjg5bZFx
-	69NeviweXujIacs=; b=eik0b+53T9C6lSMzhzxiNF0ujMifij6WxBkUONSy8qNk
-	WW+M/ZxqM41w5D/X7aqDPH+RXyHm7HicpAFaWnH1iLSgqQNPvyaP4g54/TPH6dMO
-	TWVMFl4yIAtsW6k4MKoqQ1VpsyRHXXpdXnEkPDZHoolynYBQrolVVxlEfA+Qtn5y
-	1esUjjn9DkKs1fd43IhFo3M26w77U9fTNyj+ugwMaeRlLBXiF+HxoTo8oT7v3T8Q
-	QPIxUKOmHTuWh1t2hRsaMPzOylFIXOvfjXVo02M6/A11ataPF9FERxUu0KzOqYll
-	MlsJrvzCK6T3+ImLDB6/wU28ORyk3u03Z5wYpJyk7w==
-X-ME-Sender: <xms:xdsMZ6COQCb4QDLse78uYTQFE_d7fqK1ONvAGeh40GollnnpDJ3png>
-    <xme:xdsMZ0iWFs3qxnqOroiVIr0ACdOl3HpLeLBubMDOxjZzbAi_gg9kJxWgjtm3LJ-cG
-    _TClzHEkijXjg>
-X-ME-Received: <xmr:xdsMZ9kEY4_6c0L807LwkjQDxXlZ8LYx53iRcFMNE6zC82Z429KEpaBWzRIlHgqTK-bKybV3H1G6Ywzerir1iDOqgBCBbfhscMCvtQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgtdekucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepifhrvghgucfmjfcuoehgrhgvgheskhhrohgrhhdrtghomheqnecuggftrf
-    grthhtvghrnhepheegvdevvdeljeeugfdtudduhfekledtiefhveejkeejuefhtdeufefh
-    gfehkeetnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomh
-    epghhrvghgsehkrhhorghhrdgtohhmpdhnsggprhgtphhtthhopeekpdhmohguvgepshhm
-    thhpohhuthdprhgtphhtthhopehsfhhrsegtrghnsgdrrghuuhhgrdhorhhgrdgruhdprh
-    gtphhtthhopeguphgvnhhklhgvrhesghhmrghilhdrtghomhdprhgtphhtthhopehlihhn
-    uhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlih
-    hnuhigqdhnvgigthesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:xdsMZ4xyc-48AIDtuzPEFeQlWgW4OfGjwGFlpx7q1ine2_2cACdrLQ>
-    <xmx:xdsMZ_RRZX2MZkx10pXa5ry-DgAHUvVu0WZoCXcUWBwbTcZrd3xVtA>
-    <xmx:xdsMZza5mxHD2bpCtzHgue5Inw6bBVCO5DmvjvB8hMClLAeSXuM5OQ>
-    <xmx:xdsMZ4TxGWw7O2QllnIjEm32Oq70SZWYmtmdxwyzTU4lzcjN100C_A>
-    <xmx:xdsMZ6HVMPjWY3wWeyNtXN8OejL5wK43baWqJV3js68cdR8warmj8AW4>
-Feedback-ID: i787e41f1:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Mon,
- 14 Oct 2024 04:52:20 -0400 (EDT)
-Date: Mon, 14 Oct 2024 10:52:19 +0200
-From: Greg KH <greg@kroah.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Dave Penkler <dpenkler@gmail.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the staging tree
-Message-ID: <2024101453-ladybug-esteemed-66b2@gregkh>
-References: <20241014162054.2b91b5af@canb.auug.org.au>
+	s=arc-20240116; t=1728895951; c=relaxed/simple;
+	bh=LvBVOsVsySllUZqeEJfWUG07PKJiq8gAXIXFiMbcpQQ=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=HiKzkR1rGcPEuJgsfr3rsZpxO3lFRoikSeclw9eEBMY/PwJGTxgrWlyvchVRKSut+6yEl5T7D9+UJfNrSzg1eM62BsKGqwplc36FmIIRd3yM8vvdP4U8x/rLsr4Q3Fh+8gvpf9LTb7g+8dwJqS/PLpuuwgtROcO5rsg0+coJ264=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E70hk0Zh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 652EFC4CEC7;
+	Mon, 14 Oct 2024 08:52:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728895950;
+	bh=LvBVOsVsySllUZqeEJfWUG07PKJiq8gAXIXFiMbcpQQ=;
+	h=From:Subject:Date:To:Cc:From;
+	b=E70hk0Zh7QcT3BNPhmXoD3gRqa0Y34f6m1ca+wb6idqqB/JxDi2sLy8fOaJCMerw9
+	 OzaUt/U6S30CX5PV+Wy1lYwgGIrO0aj/IKUQjdfa6x7/Yv3mTKmWDivjpERkIGeND1
+	 SKn+J0JwYyecQg+0ge5Z+S+L80oAGS7PkAuFviGb2z7tUZjfWLktJxGrxjtgMb+xo7
+	 MhYEi+D8EfayTG0KG4meCB1sl/xTlM3M2jTCXJT9B2lI85pblRg5ViCx8l6P7P9Stz
+	 Tfb+nIHLCbIRde3Zg6WE8GzeoDA1gHB/rki2rL8Gg+b4umhAsu0tTQN7A5JsYiKuAm
+	 j/AixHC5a3yBw==
+From: Simon Horman <horms@kernel.org>
+Subject: [PATCH net-next v2 0/2] net: String format safety updates
+Date: Mon, 14 Oct 2024 09:52:24 +0100
+Message-Id: <20241014-string-thing-v2-0-b9b29625060a@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014162054.2b91b5af@canb.auug.org.au>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAMjbDGcC/22NzQrCMBCEX6Xs2UiS/lg9+R7SQ4xrsihJ2YRQK
+ X13Y89eBj6G+WaFhEyY4NKswFgoUQwV9KEB601wKOhRGbTUnZJKiZSZghPZ/9KeTTda3d/b0wh
+ 1MjM+adl1NwiYRcAlw1QbTylH/uw/Re39f2VRQgpjbS+Hfhhl215fyAHfx8gOpm3bvieLDeCzA
+ AAA
+To: Andrew Lunn <andrew@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+ Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+ Paolo Abeni <pabeni@redhat.com>
+Cc: Bill Wendling <morbo@google.com>, 
+ Daniel Machon <daniel.machon@microchip.com>, 
+ Florian Fainelli <f.fainelli@gmail.com>, 
+ Jiawen Wu <jiawenwu@trustnetic.com>, Justin Stitt <justinstitt@google.com>, 
+ Mengyuan Lou <mengyuanlou@net-swift.com>, 
+ Nathan Chancellor <nathan@kernel.org>, 
+ Nick Desaulniers <ndesaulniers@google.com>, 
+ Richard Cochran <richardcochran@gmail.com>, 
+ Vladimir Oltean <olteanv@gmail.com>, 
+ Woojung Huh <woojung.huh@microchip.com>, UNGLinuxDriver@microchip.com, 
+ netdev@vger.kernel.org, llvm@lists.linux.dev, linux-kernel@vger.kernel.org
+X-Mailer: b4 0.14.0
 
-On Mon, Oct 14, 2024 at 04:20:54PM +1100, Stephen Rothwell wrote:
-> Hi all,
-> 
-> After merging the staging tree, today's linux-next build (x86_64
-> allmodconfig) failed like this:
-> 
-> ERROR: modpost: "isapnp_read_byte" [drivers/staging/gpib/hp_82341/hp_82341.ko] undefined!
-> 
-> Caused by commit
-> 
->   6d4f8749cd5d ("staging: gpib: Add hp82341x GPIB driver")
-> 
-> isapnp_read_byte() is not exported to modules.
-> 
-> I have used the staging tree from next-20241011 for today.
+Hi,
 
-Thanks for this, I'll go mark this driver as BROKEN right now until it
-can be properly cleaned up to use exported functions.
+This series addresses string format safety issues that are
+flagged by tooling in files touched by recent patches.
 
-greg k-h
+I do not believe that any of these issues are bugs.
+Rather, I am providing these updates as I think there is a value
+in addressing such warnings so real problems stand out.
+
+---
+Changes in v2:
+- Dropped accel/qaic patch; it is not for net-next
+- See per-patch changelogs
+- Link to v1: https://lore.kernel.org/r/20241011-string-thing-v1-0-acc506568033@kernel.org
+
+---
+Simon Horman (2):
+      net: dsa: microchip: copy string using strscpy
+      net: txgbe: Pass string literal as format argument of alloc_workqueue()
+
+ drivers/net/dsa/microchip/ksz_ptp.c            | 2 +-
+ drivers/net/ethernet/wangxun/txgbe/txgbe_phy.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+base-commit: 6aac56631831e1386b6edd3c583c8afb2abfd267
+
 
