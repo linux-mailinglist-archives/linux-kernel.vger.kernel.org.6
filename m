@@ -1,129 +1,145 @@
-Return-Path: <linux-kernel+bounces-363816-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6F3E99C763
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:46:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15AA399C762
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2428A1C2256E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:46:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B47941F21BF5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:45:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E228199249;
-	Mon, 14 Oct 2024 10:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C7E197A8A;
+	Mon, 14 Oct 2024 10:45:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="RYNXvKeb"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pIEK9U3S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77FF715CD55
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:45:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C9BD54670;
+	Mon, 14 Oct 2024 10:45:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728902739; cv=none; b=A1EXdxVg4PPEhcBj3TT5baL99bd/3RdUw606oh6M/laOu5P6Y9k4SQJG/p7Y2l8xRg36/b5T8KtOpFRJDmfsYechmNBgp4VX67IxC4uSpOxt9fbxZNHvq/75Txh5/EAnpoYCKTDeMt4G4Yn/eZxM1EC02GIxburhQTqMuMNZ8Og=
+	t=1728902737; cv=none; b=tiNVLKcGznBjLs9MF+Qc4fvB7/qwM/j12/nGqpDuUFlYfgXP9wuDOMwmm2cU/WDehNV0j9v6Od4bTSkCQ5c1E/S5S2Kkovutt4GHNLwY+TCslfHVceX4L9GdVpcxPF1agsN5XEO6GdT1XPuQFk5eoKerENCpQNqW7xFHli1X+8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728902739; c=relaxed/simple;
-	bh=yoLyLZ9ZX/fObQ8mnxyo/4YWg5mFnXFKiHF5SttoGY4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OJuhKAIpCcC0IonAufYxM7HsXiYZbSwiaq8n6ZMhZMn9BQESF+3PgjK7EB7Ti5mlihElxB+tmrbW86fIKfcTucDrIXYbajP8FsZ2lvbSCFyCivk6zKf/JdHr2bwhFn6K+hitX91Sv31Xr0v+mfUzmpDquhoxpTOFrFEjZsKyxuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=RYNXvKeb; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1728902737; x=1760438737;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=yoLyLZ9ZX/fObQ8mnxyo/4YWg5mFnXFKiHF5SttoGY4=;
-  b=RYNXvKebVky0iTgRVzE2+uUO3DC6w9qMzRzLa4vgnFKBxp5ngMeTI3A7
-   QjrHesPqVc25YS0xD1SRxNlXY1rkLpCWvEVaExO7lnC1joKY+NZNVY3zt
-   S/VQMkJDASVVpJU6o+KA5CWsHQLZsAyv3robc/NZ9RnbgdTtjFJz/64GA
-   9MKACt1Wkt6/2cJOCrDbjVuaSk4d2pp65eNnJ1rpUjIhtkndO3ko1wYCT
-   zMN+T1UCPfWorRz747Mrzc+VmlK+ttOiCiNRx441/NrTIVVn8zz9/3Lfx
-   B6r/mnGUoKIQqK7T3Q9reF5WfpGNfZdK9uhiQGgXvQoF6H6cIr9vSYcJc
-   A==;
-X-CSE-ConnectionGUID: N9teoZaqRGSPNWUMXNtENQ==
-X-CSE-MsgGUID: ENIeMujRS0KMS+AOf7sfSA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="38799586"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="38799586"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 03:45:36 -0700
-X-CSE-ConnectionGUID: AVT9CvHaSd+sarV/5vZSpQ==
-X-CSE-MsgGUID: rgWQ74yqRC6qNPMh7MzA4A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
-   d="scan'208";a="114990292"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa001.jf.intel.com with ESMTP; 14 Oct 2024 03:45:34 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E5B722E6; Mon, 14 Oct 2024 13:45:32 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Joerg Roedel <jroedel@suse.de>,
-	Lu Baolu <baolu.lu@linux.intel.com>,
-	Tina Zhang <tina.zhang@intel.com>,
-	iommu@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: David Woodhouse <dwmw2@infradead.org>,
-	Joerg Roedel <joro@8bytes.org>,
-	Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Subject: [PATCH v1 1/1] iommu/vt-d: Increase buffer size for device name
-Date: Mon, 14 Oct 2024 13:45:29 +0300
-Message-ID: <20241014104529.4025937-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1728902737; c=relaxed/simple;
+	bh=ND07tjjWpjaxxUHhF6bHURYHzf+68TVHeOsi+PLFOE4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pmnOHWyvoyuPsSeax1/79uK++JYwEEYfDfS36I8Ak2x0u71geLr/XcFyr0pdCSC9jGb3rGPXi4R1nIz5IQBQSmL1AhCoMUm80PtANMy9PhDD21xcQh7DHbjCWiWigbJocSec1zwhLmPQtJ8B/MO6P4v8gqwDLNi3fdlcHJpB5Zs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pIEK9U3S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9572AC4CEC3;
+	Mon, 14 Oct 2024 10:45:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728902736;
+	bh=ND07tjjWpjaxxUHhF6bHURYHzf+68TVHeOsi+PLFOE4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pIEK9U3SWFUlbzfh5RgvtEsYZG6qhXFM7twQwRfGifCGPWn2n8m+OO15tY3nRu171
+	 C8fXyKn3hdzzD7LjI8Wg/ru+KxG/iP1hQQ/32f65bj5CpSWxWg2/T5QDcsycbfNFrg
+	 xvBTZpqmkZ+crLTje2LRy/PALBLMjwmtf8HqhjNCilBuLgyf98sGXvBFOEy0Yf0gbt
+	 BCbHiT7uWLr4h+YVsbMDkk6qeOXtFlzzhYbWlCFjrR8xkUA81QTVwzqyFE/D/WnnmT
+	 9Cwf3KhwcgaJ9qeK8Byb+rFJ3bewdrAv46bL4/+3Q6FY8TgTK/7zbhNGwybMdryIOE
+	 N5l42DFx9eTiA==
+Message-ID: <354b544e-3799-4421-aeb3-8401dffb34d6@kernel.org>
+Date: Mon, 14 Oct 2024 12:45:31 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and
+ peripherals
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>, quic_fenglinw@quicinc.com,
+ quic_tingweiz@quicinc.com, kernel@quicinc.com,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-GCC is not happy with the current code, e.g.:
+On 14/10/2024 12:08, Tingguo Cheng wrote:
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index 4ef969a6af150933c72a7a83374a5a2657eebc1b..b79c22730920e3097425e1d1933e744205b3c18e 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -6,6 +6,7 @@
+>  
+>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>  #include "qcs615.dtsi"
+> +#include "qcs615-pmic.dtsi"
+>  / {
+>  	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>  	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index ac4c4c751da1fbb28865877555ba317677bc6bd2..9793161db515a2ef1df6465c8d0a04a11e71ffc1 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> @@ -517,6 +517,29 @@ sram@c3f0000 {
+>  			reg = <0x0 0x0c3f0000 0x0 0x400>;
+>  		};
+>  
+> +		spmi_bus: qcom,spmi@c440000 {
 
-.../iommu/intel/dmar.c:1063:9: note: ‘sprintf’ output between 6 and 15 bytes into a destination of size 13
- 1063 |         sprintf(iommu->name, "dmar%d", iommu->seq_id);
+Please do not send your downstream code... Don't just copy and paste
+that stuff.
 
-When `make W=1` is supplied, this prevents kernel building. Fix it by
-increasing the buffer size for device name and use sizeoF() instead of
-hard coded constants.
+Rewrite it from scratch or use the upstream as template. I find it waste
+of time to comment or fix the same issue over and over again. The
+problem is the way you work - copying and sending downstream at us. This
+must stop.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/iommu/intel/dmar.c  | 2 +-
- drivers/iommu/intel/iommu.h | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/iommu/intel/dmar.c b/drivers/iommu/intel/dmar.c
-index eaf862e8dea1..e16c2b1d7633 100644
---- a/drivers/iommu/intel/dmar.c
-+++ b/drivers/iommu/intel/dmar.c
-@@ -1060,7 +1060,7 @@ static int alloc_iommu(struct dmar_drhd_unit *drhd)
- 		err = iommu->seq_id;
- 		goto error;
- 	}
--	sprintf(iommu->name, "dmar%d", iommu->seq_id);
-+	snprintf(iommu->name, sizeof(iommu->name), "dmar%d", iommu->seq_id);
- 
- 	err = map_iommu(iommu, drhd);
- 	if (err) {
-diff --git a/drivers/iommu/intel/iommu.h b/drivers/iommu/intel/iommu.h
-index 1497f3112b12..61701c1c22d3 100644
---- a/drivers/iommu/intel/iommu.h
-+++ b/drivers/iommu/intel/iommu.h
-@@ -720,7 +720,7 @@ struct intel_iommu {
- 	int		msagaw; /* max sagaw of this iommu */
- 	unsigned int	irq, pr_irq, perf_irq;
- 	u16		segment;     /* PCI segment# */
--	unsigned char 	name[13];    /* Device Name */
-+	unsigned char 	name[16];    /* Device Name */
- 
- #ifdef CONFIG_INTEL_IOMMU
- 	unsigned long 	*domain_ids; /* bitmap of domains */
--- 
-2.43.0.rc1.1336.g36b5255a03ac
+Best regards,
+Krzysztof
 
 
