@@ -1,215 +1,181 @@
-Return-Path: <linux-kernel+bounces-363442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2A9199C27B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:04:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BDCA99C285
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:06:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1E0AD1C23043
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:04:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 380711F23506
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69C714A0A3;
-	Mon, 14 Oct 2024 08:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BFC114AD2E;
+	Mon, 14 Oct 2024 08:06:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gIHfPUOg"
-Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jGAGlW9q"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 343FB1487DD
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:04:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B72AD9474;
+	Mon, 14 Oct 2024 08:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728893055; cv=none; b=dWJcVlChUqZWkNxDqIwUOLxsMbSo4MktY2wWvGekXvYV0lbMltepjz+EpFmjwU0A9wvCB1AC+EHpu0mRNYmDs+RzXgVtmCA+GHZF2SdLsq1pt1TNY4VOWmBtaCJG9y8AiKuKZ+8Bk462e3TI1sEz91uKYOUHJz1Xw9KRYLI1b4w=
+	t=1728893201; cv=none; b=pN3wJFIZV4jsOScOjW7+pwcyYoDG0ZOCU/QsQKvn7QWvQsBKlD52c+yV+ABc7J8256kC96Rh1Tt/qNJ6Kq68yZC+hwVXwXpj3pr8QT+AXqHAuXKSWGI5r92alBHPvRogEne6Xu9YhW3XBnlEinbNdCdbBb0Fdk4y40fGSGmNcB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728893055; c=relaxed/simple;
-	bh=z14LnEzbw8ecnz2pepCIwD/33XkeC75KpcnYPH7d/W4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YTRZV4ABCL3T2ayZEY5HQcFFXQmCDrbuOtksXyKlNLIyO9CYmOWUTJ+igas/Ts1rQskO6Sn7rNdHFF0i6uFLLoOJPTGLFkCMP8OZ4ygqqdXSTD4Hz5ON4Q6qUaApi+dXo3SVwLtywoQfnz5VQE0lUT7xAACKEzx1U+oV/l4zMxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gIHfPUOg; arc=none smtp.client-ip=209.85.167.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f76a6f0dso448462e87.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728893051; x=1729497851; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=gRbPdgNIVrqSTf/1E3KOMlBjVq1ghJobEnRvorOgv2Y=;
-        b=gIHfPUOgXYJqDjRgU9JwHznFc6N3fzL7YP9MhDdROOiLBAquTxbdHQRTkaaLfOwWzi
-         ACWSDILZcHJELPZwfA05ljCtKxFBliy/4oFU9aWJd29IyNrTcpcdV0IvxnMZ0ak3xGrb
-         3dLqIp+0jxJNkSf1Z0tWVi+IcIguh5hZKU3rT76B8psVxOKTHwVVIpXVszbDyqZ8e34B
-         DN8rrjNkO6PEXP6UnVHpmAM2cDwmIlh0Msp6pENNWCYP0C3bZ+6v1oQTa2OqX2A78Cql
-         GsJctpdaNta43WZ6LyxkN/M3vFRn/lwl3ncJsuVi4l/v0dHkjZttuGA4oHli+v39bGjF
-         up0A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728893051; x=1729497851;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gRbPdgNIVrqSTf/1E3KOMlBjVq1ghJobEnRvorOgv2Y=;
-        b=TKVwGX4jnZSTdY+WPP46MDJJsDAUxHzzglCWVxdOP3dmE6f5B98tS6t5md+2WQ0kl8
-         WkqjohBI1ITppxF7fprGS92xdAShtF1z7mySOzcHwL5V9Kq3aQKRYHzpOEneCBHnCaeX
-         IZLwy8BHr1jpKD9h+z2Vl3EbA3VBtGEdgmHxriI0T8WU4YgTn2fY9kRTP1k6X4RZl5wT
-         Zmdaskjy8x9xDkgZMuGr36VRTj5hKXUf6ZLG7YGIYD6XZT08sl9Zm/Zn3PFKyRicU+TP
-         8/EUB8hUJJJFOa7kuXKbmZS3+YCZQsXnPWbjtG+z+Mn7OQdnz/PDwBikjxzCfmDrpU4L
-         50Lw==
-X-Forwarded-Encrypted: i=1; AJvYcCU3jH7Txy0tkjGoobBjtXyabBjuKBUbNWt9PUv/VEQdpJq7gQm3iRyRYM2cyYhM2wP8xJy3N3epJnPW5UA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywuwjvoq/gm/otnbUOxnnFC6X6Qi9n9aFGi+xV9Hs2LOCDXpNLV
-	HgO5XKUEX9SpNLHilsF7NWVEBAfD0leT4htCEgG2CtgP/FlTL9dogm4vNy8Vt4s=
-X-Google-Smtp-Source: AGHT+IGMVMiVX34iHP51EtutG0xflfB9SX3ApfsR35FJAr5dmbDQdsvuJ7+4vRPFrG4oPA0bt0o7Hg==
-X-Received: by 2002:a05:6512:114f:b0:535:6992:f2cb with SMTP id 2adb3069b0e04-539da586e45mr4472475e87.42.1728893051314;
-        Mon, 14 Oct 2024 01:04:11 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539e9b46546sm738844e87.301.2024.10.14.01.04.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 01:04:10 -0700 (PDT)
-Date: Mon, 14 Oct 2024 11:04:09 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Liu Ying <victor.liu@nxp.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
-	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, 
-	"arnd@arndb.de" <arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>, 
-	"o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "y.moog@phytec.de" <y.moog@phytec.de>, 
-	"marex@denx.de" <marex@denx.de>, "isaac.scott@ideasonboard.com" <isaac.scott@ideasonboard.com>
-Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
- to HDMI converter
-Message-ID: <ki7zj2qvf64oi45kcnxl4maoxfvxtawko3vcdikg7dc5q6gw7u@5obyfvyylb3w>
-References: <20241012073543.1388069-1-victor.liu@nxp.com>
- <20241012073543.1388069-6-victor.liu@nxp.com>
- <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
- <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com>
- <dvcdy32dig3w3r3a7eib576zaumsoxw4xb5iw6u6b2rds3zaov@lvdevbyl6skf>
- <90e0c4ac-1636-4936-ba40-2f7693bc6b32@nxp.com>
- <TY3PR01MB11346530A53C8085561713B6086442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1728893201; c=relaxed/simple;
+	bh=sSQ/JLtfOylYmetmA4x1PJlINm2mWwdgTelJNw1+qv8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kx7p0J2lh8OkBMqKEZlelU5zdC1jrqmNVI4BOL59Iml47bLkQVaMx6AQRDnD2azMunK/x1w0Ls0JYCjONcD5J1viBc8qW8OgY+IQFV6bkjDy9iF+RJeoQc1yAhW5R8UsA0JenjCjJn3Nq1vcaFVCRCxi6sIK+1qzpUPg50ZciEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jGAGlW9q; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1728893198;
+	bh=sSQ/JLtfOylYmetmA4x1PJlINm2mWwdgTelJNw1+qv8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=jGAGlW9qACfI26EUDUV9ViwMCdDvwOhgDdmF4wXFH4qKTONWDsWczOgCX4imvaOmH
+	 RcTOLerC2LWpfDhNXVQVpqUrA3eph8tCQiy0N29Vv2JLTv2HvR+lvSzkwUsL29oYPW
+	 9HgsBum46bSbUbojdRFc3n5OQOR8FiKBO/Xjzi2/yzhc87WdFFFv3cBjiTm3h0taW6
+	 mIn/VBWwLEpExGXCoPSXPm7SdaiuDZoJRsE2+t3QCxwcOt7mnY7Nbqmcss56oEsHbz
+	 HyqhcxIjjTTSgMxoVHsCrioltl/OgvtX3naJY5Oawcx5ntQ2bycFqv4gBdqFkMCUNE
+	 FbpmQOqJqH7Ag==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5405217E10C7;
+	Mon, 14 Oct 2024 10:06:37 +0200 (CEST)
+Message-ID: <863458cb-cac7-40c0-856d-edc0fa6ee6a6@collabora.com>
+Date: Mon, 14 Oct 2024 10:06:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB11346530A53C8085561713B6086442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 0/7] MediaTek DVFSRC Bus Bandwidth and Regulator knobs
+To: Rob Herring <robh@kernel.org>
+Cc: djakov@kernel.org, krzysztof.kozlowski+dt@linaro.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, lgirdwood@gmail.com,
+ broonie@kernel.org, keescook@chromium.org, gustavoars@kernel.org,
+ henryc.chen@mediatek.com, linux-pm@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ kernel@collabora.com, wenst@chromium.org, amergnat@baylibre.com
+References: <20240610085735.147134-1-angelogioacchino.delregno@collabora.com>
+ <CAL_Jsq+F_pwhVLD1HF7=sYLp2w5kpc53UmzzffxyKzwh8WZthw@mail.gmail.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <CAL_Jsq+F_pwhVLD1HF7=sYLp2w5kpc53UmzzffxyKzwh8WZthw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 07:39:16AM +0000, Biju Das wrote:
-> Hi Liu and Dmitry,
+Il 12/10/24 00:15, Rob Herring ha scritto:
+> On Mon, Jun 10, 2024 at 3:57 AM AngeloGioacchino Del Regno
+> <angelogioacchino.delregno@collabora.com> wrote:
+>>
+>> Changes in v6:
+>>   - Fixed build with clang (thanks Nathan!)
+>>   - Removed unused mtk_rmw() macro in mtk-dvfsrc.c
+>>   - Added MODULE_DESCRIPTION() to mtk-dvfsrc-regulator.c
+>>
+>> Changes in v5:
+>>   - Fixed Kconfig dependencies in interconnect
+>>   - Fixed module build for dvfsrc and interconnect
+>>
+>> Changes in v4:
+>>   - Updated patch [3/7] to actually remove address/size cells
+>>     as the old version got unexpectedly pushed in v3.
+>>
+>> Changes in v3:
+>>   - Removed examples from interconnect and regulator bindings
+>>     and kept example node with interconnect and regulator in
+>>     the main DVFSRC binding as suggested
+>>   - Removed 'reg' from interconnect and regulator, removed both
+>>     address and size cells from the main DVFSRC binding as that
+>>     was not really needed
+>>   - Added anyOf-required entries in the regulator binding as it
+>>     doesn't make sense to probe it without any regulator subnode
+>>
+>> Changes in v2:
+>>   - Fixed issues with regulator binding about useless quotes and
+>>     wrong binding path (oops)
+>>   - Removed useless 'items' from DVFSRC main binding
+>>   - Allowed address/size cells to DVFSRC main binding to resolve
+>>     validation issues on the regulator and interconnect bindings
+>>   - Changed dvfsrc node name to `system-controller`, as the DVFSRC
+>>     is actually able to control multiple system components.
+>>   - Added a commit to remove mtk-dvfs-regulator.c before adding the
+>>     new, refactored regulator driver
+>>
+>>
+>> This series adds support for the MediaTek Dynamic Voltage and Frequency
+>> Scaling Resource Controller (DVFSRC), found on many MediaTek SoCs.
+>>
+>> This hardware collects requests from both software and the various remote
+>> processors embededd into the SoC, and decides about a minimum operating
+>> voltage and a minimum DRAM frequency to fulfill those requests, in an
+>> effort to provide the best achievable performance per watt.
+>>
+>> Such hardware IP is capable of transparently performing direct register
+>> R/W on all of the DVFSRC-controlled regulators and SoC bandwidth knobs.
+>>
+>> Summarizing how the DVFSRC works for Interconnect:
+>>
+>>               ICC provider         ICC Nodes
+>>                                ----          ----
+>>               _________       |CPU |   |--- |VPU |
+>>      _____   |         |-----  ----    |     ----
+>>     |     |->|  DRAM   |       ----    |     ----
+>>     |DRAM |->|scheduler|----- |GPU |   |--- |DISP|
+>>     |     |->|  (EMI)  |       ----    |     ----
+>>     |_____|->|_________|---.   -----   |     ----
+>>                 /|\         `-|MMSYS|--|--- |VDEC|
+>>                  |             -----   |     ----
+>>                  |                     |     ----
+>>                  | change DRAM freq    |--- |VENC|
+>>               --------                 |     ----
+>>      SMC --> | DVFSRC |                |     ----
+>>               --------                 |--- |IMG |
+>>                                        |     ----
+>>                                        |     ----
+>>                                        |--- |CAM |
+>>                                              ----
+>>
+>> ...and for regulators, it's simply...
+>>     SMC -> DVFSRC -> Regulator voltage decider -> (vreg) Registers R/W
+>>
+>> Please note that this series is based on an old (abandoned) series from
+>> MediaTek [1], and reuses some parts of the code found in that.
+>>
+>> Besides, included in this series, there's also a refactoring of the
+>> mtk-dvfsrc-regulator driver, which never got compiled at all, and would
+>> not build anyway because of missing headers and typos: that commit did
+>> not get any Fixes tag because, well, backporting makes no sense at all
+>> as the DVFSRC support - which is critical for that driver to work - is
+>> introduced with *this series*! :-)
+>>
+>> P.S.: The DVFSRC regulator is a requirement for the MediaTek UFSHCI
+>>        controller's crypto boost feature, which is already upstream but
+>>        lacking the actual regulator to work....... :-)
+>>
+>> [1]: https://lore.kernel.org/all/20210812085846.2628-1-dawei.chien@mediatek.com/
+>>
+>> AngeloGioacchino Del Regno (7):
+>>    dt-bindings: regulator: Add bindings for MediaTek DVFSRC Regulators
+>>    dt-bindings: interconnect: Add MediaTek EMI Interconnect bindings
+>>    dt-bindings: soc: mediatek: Add DVFSRC bindings for MT8183 and MT8195
+>>    soc: mediatek: Add MediaTek DVFS Resource Collector (DVFSRC) driver
 > 
-> > -----Original Message-----
-> > From: Liu Ying <victor.liu@nxp.com>
-> > Sent: Monday, October 14, 2024 6:34 AM
-> > Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS to HDMI converter
-> > 
-> > On 10/14/2024, Dmitry Baryshkov wrote:
-> > > On Sat, Oct 12, 2024 at 05:14:13PM +0800, Liu Ying wrote:
-> > >> On 10/12/2024, Dmitry Baryshkov wrote:
-> > >>> On Sat, Oct 12, 2024 at 03:35:39PM +0800, Liu Ying wrote:
-> > >>>> Document ITE IT6263 LVDS to HDMI converter.
-> > >>>>
-> > >>>> Product link:
-> > >>>> https://www.ite.com.tw/en/product/cate1/IT6263
-> > >>>>
-> > >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> > >>>> ---
-> > >>>> v2:
-> > >>>> * Document number of LVDS link data lanes.  (Biju)
-> > >>>> * Simplify ports property by dropping "oneOf".  (Rob)
-> > >>>>
-> > >>>>  .../bindings/display/bridge/ite,it6263.yaml   | 276 ++++++++++++++++++
-> > >>>>  1 file changed, 276 insertions(+)
-> > >>>>  create mode 100644
-> > >>>> Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> > >>>>
-> > >>>> diff --git
-> > >>>> a/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> > >>>> b/Documentation/devicetree/bindings/display/bridge/ite,it6263.yaml
-> > >>>> new file mode 100644
-> > >>>> index 000000000000..bc2bbec07623
-> > >>>> --- /dev/null
-> > >>>> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it6263.y
-> > >>>> +++ aml
-> > >>>> @@ -0,0 +1,276 @@
-> > >>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause) %YAML
-> > >>>> +1.2
-> > >>>> +---
-> > >>>> +$id: http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
-> > >>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > >>>> +
-> > >>>> +title: ITE IT6263 LVDS to HDMI converter
-> > >>>> +
-> > >>>> +maintainers:
-> > >>>> +  - Liu Ying <victor.liu@nxp.com>
-> > >>>> +
-> > >>>> +description: |
-> > >>>> +  The IT6263 is a high-performance single-chip De-SSC(De-Spread
-> > >>>> +Spectrum) LVDS
-> > >>>> +  to HDMI converter.  Combined with LVDS receiver and HDMI 1.4a
-> > >>>> +transmitter,
-> > >>>> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
-> > >>>> +  The built-in LVDS receiver can support single-link and dual-link
-> > >>>> +LVDS inputs,
-> > >>>> +  and the built-in HDMI transmitter is fully compliant with HDMI
-> > >>>> +1.4a/3D, HDCP
-> > >>>> +  1.2 and backward compatible with DVI 1.0 specification.
-> > >>>> +
-> > >>>> +  The IT6263 also encodes and transmits up to 8 channels of I2S
-> > >>>> + digital audio,  with sampling rate up to 192KHz and sample size
-> > >>>> + up to 24 bits. In addition,  an S/PDIF input port takes in compressed audio of up to 192KHz
-> > frame rate.
-> > >>>> +
-> > >>>> +  The newly supported High-Bit Rate(HBR) audio by HDMI
-> > >>>> + specifications v1.3 is  provided by the IT6263 in two interfaces:
-> > >>>> + the four I2S input ports or the  S/PDIF input port.  With both
-> > >>>> + interfaces the highest possible HBR frame rate  is supported at up to 768KHz.
-> > >>>> +
-> > >>>> +properties:
-> > >>>
-> > >>> No LVDS data-mapping support?
-> > >>
-> > >> It is enough to document number of LVDS link data lanes because OS
-> > >> should be able to determine the data-mapping by looking at the number
-> > >> and the data-mapping capability of the other side of the LVDS link.
-> > >
-> > > From what I can see, data-mapping is specified on the consumer sink
-> > > side of the LVDS link. This means it should go to the bridge's device node.
-> > 
-> > Then, I won't define data-lanes, because data-mapping implies it, e.g., jeida-24 implies data lanes
-> > 0/1/2/3, see lvds-data-mapping.yaml.
-> > 
-> > Please let me know which one you prefer.
+> Looks like the driver got picked up, but not the binding.
+> mediatek,mt8183-dvfsrc and mediatek,mt8195-dvfsrc show up in next as
+> undocumented.
 > 
-> Assume a top level use case where a user changes the format from JEDAI to VESA using On screen 
-> display or modetest(if some one adds support for lvds-mapping) then setting of the lvds data mapping
-> should be dynamic.
-> 
-> Maybe for initial version hardcode with JEDAI or VESA as default and provide a way to override
-> the host driver and bridge with requested lvds-data mapping dynamically later??
+Thanks for making me notice. Adding it up right now.
 
-The ite,lvds-link-num-data-lanes property should be removed, it is not
-standard. I foresee two ways to specify the number of lanes used: either
-the data-lanes property or the data-mapping property. Granted that
-data-mapping replaces the data-lanes functionality for LVDS links, I
-think it's better to use it from the start.
-
-Frankly speaking, what is the usecase for specifying the data mapping
-dynamically? What kind of uAPI do you have in mind and what is the
-usecase for it?
-
--- 
-With best wishes
-Dmitry
+Cheers,
+Angelo
 
