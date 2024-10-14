@@ -1,136 +1,101 @@
-Return-Path: <linux-kernel+bounces-363397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363402-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0EEFD99C1CD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:45:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A8F99C1D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7979CB22153
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:45:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 97149B24D91
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:46:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6082414A4E9;
-	Mon, 14 Oct 2024 07:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C06A29474;
+	Mon, 14 Oct 2024 07:45:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="FJDlmUXe"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="s1WX9os8"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F0D20328
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:45:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8D61531D5;
+	Mon, 14 Oct 2024 07:45:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891933; cv=none; b=gObtKhM0oa86utL8rfrGSQHPetINT5vCk7uuhvQ69PQoPez82owIDhvcyJBuxDWqFfv3KPMbcYASMJ2Db+j95iefaKirGiUQDiSXntb955Q1wR0pYovvVxvLoPiXxpExWQPYXRz3eJz1ODqhe9/R3dqfILrCkJKQshMWT/XOIkw=
+	t=1728891955; cv=none; b=W+OE2D24fHQgjzuf/zrA54iYxsXuz3rlMRl8FZ8ghyiCuWboOvFFsShTFfMNifMjObvB8rstuMDdbpmUGXc4jMn3D5VKXODzcEqgw7KRdBWIonNf9itriLquoHjHzVJmSw8PWEOg6Sjg/SR8t/NjgIE8JPtZoNqphc3oRwUkoqc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891933; c=relaxed/simple;
-	bh=6gyvojCm2IXQQIl/5oD5XY1x6/gG5ZCkK0b5m04Aa1w=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Kr3xxoEMhL01DFMOKXBzmmd1Or8yLYWNBHCWRd9dAVtxsdBIhQMn8CBQJNCm066PfSmvIIouDKOhdRDciHnvNG5noDs1Fq5o7sSK3t1pPVHofPJaWApo7dAD6G2q/d9pg/qoVe6VMTk6Yp2LvN9Wzr7+BY7SBPnbx4SylW0+Dfc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=FJDlmUXe; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2f7657f9f62so36193811fa.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:45:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1728891930; x=1729496730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=UAg31nfJH8ImnccLAcI3kFowtfKReTd3tZlo/lfn8x8=;
-        b=FJDlmUXe5tizMRP2uzoo0RDmRDutpR8nC9OV9kZXWgeIoR7aWLFwo+xxbQtcuOpWqa
-         wt3cpF566Z1k01H331ZG9FTbMP5s6QxpPBEXp14LibGtNOTaUnglA+Ud8G+pNmV9I0EX
-         xq+t72D4G0gX4uE9lEUtjgqI4VBxHn3FfTPHnQC3c3ahzZm1i1JwCVRO5yeP6liUtoi9
-         t+JZS+1Qw+FVp2s6BBYIIQlyU3rpklDp0Tz4JOCqP6wTHQNHZRLEZ8q6k6x9+pomQWTS
-         Gpj5/WJfG3wceDeDjner4U36a/BxK3aVbqb2l/zT3Xl7F0j1r3txdQlbUNSesHHTocFL
-         QK0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728891930; x=1729496730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=UAg31nfJH8ImnccLAcI3kFowtfKReTd3tZlo/lfn8x8=;
-        b=R5l3Ht0xyskqs2Yg1TjVvNELYMibV8ZY4/zmVdlTyZX2g6bhW/8fQIfyHOSmFuFE8s
-         rEYdeVzOFgG6mGOFAkvA6PcMSCMh8U26G+Hfmjvp2mfkV9mAgWCOhVTZ1a1yOHWGU3/8
-         p5zqAVCNt464K1uztTyFk6KR24pAFbrFRKM0F7dWr8/9ghpL8IPmqstc+XE8anB4GlAo
-         FK3q5pmhrNqR7rh+cUMfiZTK+uUM5bWB9WjrweuqHcYjYUrZf7swf87Y3Ylo57QG28Qy
-         z2oya5yfRnmmftkd1bzNB3APsqdy4ioBDL30DdwX85lHn+oOniumHfvLaD4PN84H6HPH
-         XhlA==
-X-Forwarded-Encrypted: i=1; AJvYcCXFzuYttVAXyeqScTb0Na+JA1E4v0Lv/ppiDo+VRXmY1ZMWKpIYSh3SVkflcZjg14Q9uKs068vJLnn2kto=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwC80ZBPzNkr2HrEOosLLZ8+WlxYLbJvbjt5ySNFv+8FZ2Oz9CO
-	pwoL0T2x5NenlAg8LyoVYoX8HIvlA4p96bdQa71vZq1qDUcUuscc7zqqx1bIgMhZrtDZVQFXFHU
-	d65BtSygsjaFbZuTiepN5LiKGANcFrWwAoTPPFzl6lj/pxpphfNw=
-X-Google-Smtp-Source: AGHT+IHqfbw9C7nF34x2aWxdA78v3qQtTazKDUJuWEHzP5Iw7u8fStGIHS9BcXsRs+AS2mrM/UToBx7wsYzxSzGxYU0=
-X-Received: by 2002:ac2:4f0b:0:b0:539:f675:84d7 with SMTP id
- 2adb3069b0e04-539f67585e2mr1068883e87.32.1728891930192; Mon, 14 Oct 2024
- 00:45:30 -0700 (PDT)
+	s=arc-20240116; t=1728891955; c=relaxed/simple;
+	bh=yEvxxRf9TXg9M/Rmq5k+ytY0zA0b+0QoWrYllZ+xMRw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HtOauDb1BJqbKUK9ZXUWSeWPrp0dVd2jkuyBkEK5arQDDRyi83bt+teTb7zJJaI7/vVRDoYTjiX7DnAA5FqUteWXCkBYEyEDaF04H3gcnA7gKOBohNLayg0/X8eRSIrfVOGGqnM15oxBJelVE4idgPGy0VkcN0/We5fSEsGVOdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=s1WX9os8; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49E7jXTc087290;
+	Mon, 14 Oct 2024 02:45:33 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1728891933;
+	bh=BBjjHktL3eks10w8gRP2iSSOj2j20CKXBn5MezkiEkc=;
+	h=From:To:CC:Subject:Date;
+	b=s1WX9os8gpVI3dbIfODu+cwfLyIE1ArRrEjpAbuZmKckJUegDJMgVQbdC9PLSE/l2
+	 +m7lEN4MMmHDtpUCVUZZglz7/MBpSmebcq2fMo4I4eo0D8AsmdR40/mriZpShKHT/C
+	 esbt43zTne03RdV6Jyyc6NzlEJgRSrL91BI5gorM=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49E7jXVB010211
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Mon, 14 Oct 2024 02:45:33 -0500
+Received: from DLEE111.ent.ti.com (157.170.170.22) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Mon, 14
+ Oct 2024 02:45:32 -0500
+Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE111.ent.ti.com
+ (157.170.170.22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Mon, 14 Oct 2024 02:45:32 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49E7jWOW068538;
+	Mon, 14 Oct 2024 02:45:32 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49E7jWD2025327;
+	Mon, 14 Oct 2024 02:45:32 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>
+CC: <conor+dt@kernel.org>, <krzk+dt@kernel.org>, <robh@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <kristo@kernel.org>,
+        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
+Subject: [PATCH 0/4] Add pa-stats Support
+Date: Mon, 14 Oct 2024 13:15:23 +0530
+Message-ID: <20241014074527.1121613-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241010-gpio-notify-in-kernel-events-v2-0-b560411f7c59@linaro.org>
- <20241010-gpio-notify-in-kernel-events-v2-2-b560411f7c59@linaro.org> <20241014015817.GA20620@rigel>
-In-Reply-To: <20241014015817.GA20620@rigel>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Mon, 14 Oct 2024 09:45:19 +0200
-Message-ID: <CAMRc=MewhPi3O6qM7E699gpwcegNiAsizioDjREn7cOM1xHevA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/6] gpio: cdev: prepare gpio_desc_to_lineinfo() for
- being called from atomic
-To: Kent Gibson <warthog618@gmail.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Mon, Oct 14, 2024 at 3:58=E2=80=AFAM Kent Gibson <warthog618@gmail.com> =
-wrote:
->
-> On Thu, Oct 10, 2024 at 11:10:23AM +0200, Bartosz Golaszewski wrote:
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > In order to prepare gpio_desc_to_lineinfo() to being called from atomic
-> > context, add a new argument - bool atomic - which, if set, indicates
-> > that no sleeping functions must be called (currently: only
-> > pinctrl_gpio_can_use_line()).
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> > ---
-> >       unsigned long dflags;
-> >       const char *label;
-> > @@ -2402,9 +2402,13 @@ static void gpio_desc_to_lineinfo(struct gpio_de=
-sc *desc,
-> >           test_bit(FLAG_USED_AS_IRQ, &dflags) ||
-> >           test_bit(FLAG_EXPORT, &dflags) ||
-> >           test_bit(FLAG_SYSFS, &dflags) ||
-> > -         !gpiochip_line_is_valid(guard.gc, info->offset) ||
-> > -         !pinctrl_gpio_can_use_line(guard.gc, info->offset))
-> > +         !gpiochip_line_is_valid(guard.gc, info->offset))
-> >               info->flags |=3D GPIO_V2_LINE_FLAG_USED;
-> > +
-> > +     if (!atomic) {
-> > +             if (!pinctrl_gpio_can_use_line(guard.gc, info->offset))
-> > +                     info->flags |=3D GPIO_V2_LINE_FLAG_USED;
-> > +     }
-> >
->
-> Should be else if.
->
+This series adds ti,pa-stats node to AM64x and AM65x dts files.
+The driver and binding patches are already merged.
 
-If we're not atomic, let's call pinctrl_gpio_can_use_line() and update
-the flag accordingly. If we're in atomic, just don't do it. In any
-case do the rest. Looks good to me, am I missing something?
+MD Danish Anwar (4):
+  arm64: dts: ti: k3-am65-main: Add ti,pruss-pa-st node
+  arm64: dts: ti: k3-am654-icssg2: Add ti,pa-stats property
+  arm64: dts: ti: k3-am64-main: Add ti,pruss-pa-st node
+  arm64: dts: ti: k3-am64: Add ti,pa-stats property
 
-Bart
+ arch/arm64/boot/dts/ti/k3-am64-main.dtsi    | 10 ++++++++++
+ arch/arm64/boot/dts/ti/k3-am642-evm.dts     |  1 +
+ arch/arm64/boot/dts/ti/k3-am65-main.dtsi    | 15 +++++++++++++++
+ arch/arm64/boot/dts/ti/k3-am654-icssg2.dtso |  1 +
+ arch/arm64/boot/dts/ti/k3-am654-idk.dtso    |  2 ++
+ 5 files changed, 29 insertions(+)
 
->
-> >       if (test_bit(FLAG_IS_OUT, &dflags))
-> >               info->flags |=3D GPIO_V2_LINE_FLAG_OUTPUT;
-> > @@ -2502,7 +2506,7 @@ static int lineinfo_get_v1(struct gpio_chardev_da=
-ta *cdev, void __user *ip,
-> >                       return -EBUSY;
-> >       }
-> >
+
+base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
+-- 
+2.34.1
+
 
