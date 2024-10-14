@@ -1,92 +1,341 @@
-Return-Path: <linux-kernel+bounces-364519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8D83B99D5A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:34:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C27A99D5AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:37:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D0628536C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:34:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BFB01C2267D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:37:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C49FB1C3025;
-	Mon, 14 Oct 2024 17:34:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F821C75E1;
+	Mon, 14 Oct 2024 17:37:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="C92HOHSp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 090B91B85C2
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 17:34:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2290B29A0;
+	Mon, 14 Oct 2024 17:36:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728927245; cv=none; b=ruO8LZcIF74gcqFixhuMrZu/cn9akZNrt5cybYnw75YObbEy+WmKh6WDknwzbQ2tQq+xo0VMTk1FRHoGlDfZZcnxg6DXezajTi7vHZ3ekdGPIuoUUwAEZT3qdYhNK19pSGeYxKU68YJAK95ORzc1eYdfx3QW8x0dkwd7BUGV3xo=
+	t=1728927421; cv=none; b=tBUC7AntbnbutSGAVI6igzRlc4KOn8b58yFAGthsA1LYftcG9klEgejBQUQg4CqEIkqPTlbr1BQoG8NXJ/8KAYYIfqRyzYXlz1/vjN87yiRxpepHTj8CXX9N+uVsVmdnIi70w9nliV+4HCiPZ4ZGMxDFrB7xjZgPgJ4QbhYidJs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728927245; c=relaxed/simple;
-	bh=hVJROpK94N+N0CbGBD+w/8HK/Ot9QUak+hyhoEqDJw0=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=nkK6pERNF4YZHoISjFm3f9b7XytTSL5k4lyCyZC/yjIQZ6chJvr9wYwluC3i+PrCGusdR01Sb5D3h0oKBqb9yanAb0nuO+gpmKjSYrLzY+Eq3fGS98r98YHWyUqW/QQW9ZfJ8kfjTD1lni7L87lr7mGK+hO8is3DRRrudRyaWfg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso8651505ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:34:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728927243; x=1729532043;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sIz6aeA35Dtdd+gzrdbE7pqbjuTVS8L8sDpKqV/lA8Y=;
-        b=AKCHNBtl4Txjjs7KZwqBipoLpHguRoxrSVGJDoWz9srw6geuKUu9KgDG6FFk/D5JxI
-         F2IWMvjxZ6a3w8UFyE4jxzsOQ/63tnl0/bKZ9AZb+C1bgIOm7Yzb8fYSoJukE5nmjxN2
-         61yI4E5s8It7mjzainfAH9yB7P2znBCuNJ3vs1caBcdltLcEuGaifRunW33IEDcJucQD
-         yigYk053ollqDUdMLV3XMUzxKhNrrAomDJXnTm7Lfl8+997Mf6jRqgnB+71DREVFNbxU
-         gJ7h46/GLpAyMqD0vB/G0xjnpFrPH++tLpsQWwWEm0fKcegPAKN4w5c3//3cTfC59yGv
-         OOnA==
-X-Forwarded-Encrypted: i=1; AJvYcCU/Dkl9Sr6FXNPw3rtjJ/gTCZFQkwMo5GbbjuMipjACu8RI2Qs4Wqmddq92XqpOV3aJIaSoM+7jT03rj60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8LuS7NIaBntfDapquPA/bWo03PxNJ+RRXu/F4+5Ie+4AhBOYj
-	3DuCBG+y4bujqP6lAyquIrmPv0n+mQT2sTO8SgQErlIWGU1qepeKN+W2a9/VNTV0ZlszuC5En2E
-	CthAQqZy6gDrFLYO+80BJ3kIsftJKM8qNgt+AfpGfWs8Sok33kR3czxc=
-X-Google-Smtp-Source: AGHT+IFptQUwr0vWB48z5MQA+lS055fW8KzC0Z/W0lDTudEaSMJjoJ1IOd4t4h9R8987EX2vPCMiQLHfteJkx5Pp1+5r9pczYkFY
+	s=arc-20240116; t=1728927421; c=relaxed/simple;
+	bh=qOvyEqW0fULJAxjg0DiRegvK4wtMXhzBMJMQuY/MzBY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NIGE7z576uiXIbkLzFFRkIa3s5KY5PUJ67bZ6rUwInXhQq/q6TgJ2APsDNFVy5j0nehgXKS2FrKB0EuP7BlQ6QTsINRHZn83wQnWOdf/OJx1ys79R8T1YSEJyMWHCYbKEe+K0dxI9Dsf0oJ4ilxTWx0W9uDqqFbWpdPv2DhGM70=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=C92HOHSp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A78C2C4CED9;
+	Mon, 14 Oct 2024 17:36:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728927419;
+	bh=qOvyEqW0fULJAxjg0DiRegvK4wtMXhzBMJMQuY/MzBY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=C92HOHSpdPZ2m2MTBl5C01uBqvwganHVQJ11JVWSFZc+p6Q+GM1ldlDnAdAE4pihz
+	 fe8lXRqIsdShk0qnHOo+LGMx9/xcbyDnCETo46EKeg5/OeMVUx727b6HaOjZ/em9Ar
+	 FrjiZOlKj9l6LoxiqKkXNHo9F9ZtKwgS+8VB4TSqTTTEJJygnsDE21sS/ARdlGcguL
+	 cbp4amC7QexMfQIikRuXa0L4cHQ3nY6oB0c9T3YSP8nuvr0BdFwymPUNaxGfXrR2ah
+	 PGuuwfPjMiAPosP1tL5QGOEqL7nRCEoYqP4V8uVcjIxL94dM3yi2t40Ga0ZznovkKX
+	 KM9ENEoF3DjIg==
+Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539fbbadf83so1107244e87.0;
+        Mon, 14 Oct 2024 10:36:59 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUCsZRjGVgKNpUGfJj/8LUxKjvx4AqfBCarC+qtnErfw7aQyd4W0RDaavah08qZWNpEtlZFVzVCuQSs@vger.kernel.org, AJvYcCX1Fdcoakkp3zaqcOBadKEAxG3EPxkqusQYZyJAx7CT8AJDb+QC/YSwUe5DWbuExsvsTjxdkJzZDiVx+TeN@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXPQDUuPInOySlPJ6kRLGQdHy6GOVUi7FGAF2Rbfbt3CjVgAIr
+	49wWpUP5J7f1en6OT2HGbcN1HaCB71x6Q08ENMFaKEb1/xMnfKm3AB0ZuVudxcu+PEgXDowruXx
+	aB76EXMjUAgPdkgluUt1rypuqKw==
+X-Google-Smtp-Source: AGHT+IFf6Y0wAjF+7yqTeCoSqo7n28uDDtB9UljeOD1dh4pkGJYIoadHhPjcP9Tq4VyMNuRvNFdymi1nGdUVFgwjr9o=
+X-Received: by 2002:a05:6512:114f:b0:535:6992:f2cb with SMTP id
+ 2adb3069b0e04-539da586e45mr5694104e87.42.1728927417791; Mon, 14 Oct 2024
+ 10:36:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:b28:b0:3a0:8f99:5e00 with SMTP id
- e9e14a558f8ab-3a3bcd962cbmr67041665ab.4.1728927243134; Mon, 14 Oct 2024
- 10:34:03 -0700 (PDT)
-Date: Mon, 14 Oct 2024 10:34:03 -0700
-In-Reply-To: <670d3f2c.050a0220.3e960.0066.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670d560b.050a0220.4cbc0.004e.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] KASAN: slab-use-after-free Read in add_delayed_ref
-From: syzbot <syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, fdmanana@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, wqu@suse.com
+References: <20241014085148.71105-1-angelogioacchino.delregno@collabora.com> <20241014085148.71105-2-angelogioacchino.delregno@collabora.com>
+In-Reply-To: <20241014085148.71105-2-angelogioacchino.delregno@collabora.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 14 Oct 2024 12:36:44 -0500
+X-Gmail-Original-Message-ID: <CAL_Jsq+hpTPCkuXoCF88nyS_D+iFZB5osrt1q04RxffDsY7cXw@mail.gmail.com>
+Message-ID: <CAL_Jsq+hpTPCkuXoCF88nyS_D+iFZB5osrt1q04RxffDsY7cXw@mail.gmail.com>
+Subject: Re: [PATCH v12 1/3] dt-bindings: display: mediatek: Add OF graph
+ support for board path
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	conor+dt@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	daniel@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org, 
+	tzimmermann@suse.de, matthias.bgg@gmail.com, shawn.sung@mediatek.com, 
+	yu-chang.lee@mediatek.com, ck.hu@mediatek.com, jitao.shi@mediatek.com, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, wenst@chromium.org, 
+	kernel@collabora.com, sui.jingfeng@linux.dev, michael@walle.cc, 
+	sjoerd@collabora.com, Alexandre Mergnat <amergnat@baylibre.com>, 
+	Michael Walle <mwalle@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-syzbot has bisected this issue to:
+On Mon, Oct 14, 2024 at 3:51=E2=80=AFAM AngeloGioacchino Del Regno
+<angelogioacchino.delregno@collabora.com> wrote:
+>
+> The display IPs in MediaTek SoCs support being interconnected with
+> different instances of DDP IPs (for example, merge0 or merge1) and/or
+> with different DDP IPs (for example, rdma can be connected with either
+> color, dpi, dsi, merge, etc), forming a full Display Data Path that
+> ends with an actual display.
+>
+> The final display pipeline is effectively board specific, as it does
+> depend on the display that is attached to it, and eventually on the
+> sensors supported by the board (for example, Adaptive Ambient Light
+> would need an Ambient Light Sensor, otherwise it's pointless!), other
+> than the output type.
+>
+> Add support for OF graphs to most of the MediaTek DDP (display) bindings
+> to add flexibility to build custom hardware paths, hence enabling board
+> specific configuration of the display pipeline and allowing to finally
+> migrate away from using hardcoded paths.
+>
+> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+> Reviewed-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Tested-by: Alexandre Mergnat <amergnat@baylibre.com>
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> Tested-by: Michael Walle <mwalle@kernel.org> # on kontron-sbc-i1200
+> Signed-off-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
+abora.com>
+> ---
+>  .../display/mediatek/mediatek,aal.yaml        | 40 +++++++++++++++++++
+>  .../display/mediatek/mediatek,ccorr.yaml      | 21 ++++++++++
+>  .../display/mediatek/mediatek,color.yaml      | 22 ++++++++++
+>  .../display/mediatek/mediatek,dither.yaml     | 22 ++++++++++
+>  .../display/mediatek/mediatek,dpi.yaml        | 25 +++++++++++-
+>  .../display/mediatek/mediatek,dsc.yaml        | 24 +++++++++++
+>  .../display/mediatek/mediatek,dsi.yaml        | 27 ++++++++++++-
+>  .../display/mediatek/mediatek,ethdr.yaml      | 22 ++++++++++
+>  .../display/mediatek/mediatek,gamma.yaml      | 19 +++++++++
+>  .../display/mediatek/mediatek,merge.yaml      | 23 +++++++++++
+>  .../display/mediatek/mediatek,od.yaml         | 22 ++++++++++
+>  .../display/mediatek/mediatek,ovl-2l.yaml     | 22 ++++++++++
+>  .../display/mediatek/mediatek,ovl.yaml        | 22 ++++++++++
+>  .../display/mediatek/mediatek,postmask.yaml   | 21 ++++++++++
+>  .../display/mediatek/mediatek,rdma.yaml       | 22 ++++++++++
+>  .../display/mediatek/mediatek,ufoe.yaml       | 21 ++++++++++
+>  16 files changed, 372 insertions(+), 3 deletions(-)
+>
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+aal.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.=
+yaml
+> index cf24434854ff..47ddba5c41af 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yam=
+l
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,aal.yam=
+l
+> @@ -62,6 +62,27 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      maxItems: 1
+>
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      Input and output ports can have multiple endpoints, each of those
+> +      connects to either the primary, secondary, etc, display pipeline.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: AAL input port
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          AAL output to the next component's input, for example could be=
+ one
+> +          of many gamma, overdrive or other blocks.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -89,5 +110,24 @@ examples:
+>             power-domains =3D <&scpsys MT8173_POWER_DOMAIN_MM>;
+>             clocks =3D <&mmsys CLK_MM_DISP_AAL>;
+>             mediatek,gce-client-reg =3D <&gce SUBSYS_1401XXXX 0x5000 0x10=
+00>;
+> +
+> +           ports {
+> +               #address-cells =3D <1>;
+> +               #size-cells =3D <0>;
+> +
+> +               port@0 {
+> +                   reg =3D <0>;
+> +                   aal0_in: endpoint {
+> +                       remote-endpoint =3D <&ccorr0_out>;
+> +                   };
+> +               };
+> +
+> +               port@1 {
+> +                   reg =3D <1>;
+> +                   aal0_out: endpoint {
+> +                       remote-endpoint =3D <&gamma0_in>;
+> +                   };
+> +               };
+> +           };
+>         };
+>      };
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+ccorr.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,cc=
+orr.yaml
+> index 9f8366763831..fca8e7bb0cbc 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,ccorr.y=
+aml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,ccorr.y=
+aml
+> @@ -57,6 +57,27 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      maxItems: 1
+>
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      Input and output ports can have multiple endpoints, each of those
+> +      connects to either the primary, secondary, etc, display pipeline.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: CCORR input port
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          CCORR output to the input of the next desired component in the
+> +          display pipeline, usually only one of the available AAL blocks=
+.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+>  required:
+>    - compatible
+>    - reg
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+color.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,co=
+lor.yaml
+> index 7df786bbad20..6160439ce4d7 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,color.y=
+aml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,color.y=
+aml
+> @@ -65,6 +65,28 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      maxItems: 1
+>
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      Input and output ports can have multiple endpoints, each of those
+> +      connects to either the primary, secondary, etc, display pipeline.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: COLOR input port
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          COLOR output to the input of the next desired component in the
+> +          display pipeline, for example one of the available CCORR or AA=
+L
+> +          blocks.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+>  required:
+>    - compatible
+>    - reg
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+dither.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,d=
+ither.yaml
+> index 6fceb1f95d2a..abaf27916d13 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dither.=
+yaml
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dither.=
+yaml
+> @@ -56,6 +56,28 @@ properties:
+>      $ref: /schemas/types.yaml#/definitions/phandle-array
+>      maxItems: 1
+>
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +    description:
+> +      Input and output ports can have multiple endpoints, each of those
+> +      connects to either the primary, secondary, etc, display pipeline.
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: DITHER input, usually from a POSTMASK or GAMMA bloc=
+k.
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description:
+> +          DITHER output to the input of the next desired component in th=
+e
+> +          display pipeline, for example one of the available DSC compres=
+sors,
+> +          DP_INTF, DSI, LVDS or others.
+> +
+> +    required:
+> +      - port@0
+> +      - port@1
+> +
+>  required:
+>    - compatible
+>    - reg
+> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
+dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.=
+yaml
+> index 3a82aec9021c..b567e3d58aa1 100644
+> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
+l
+> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
+l
+> @@ -71,13 +71,34 @@ properties:
+>        Output port node. This port should be connected to the input port =
+of an
+>        attached HDMI, LVDS or DisplayPort encoder chip.
+>
+> +  ports:
+> +    $ref: /schemas/graph.yaml#/properties/ports
+> +
+> +    properties:
+> +      port@0:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: DPI input port
+> +
+> +      port@1:
+> +        $ref: /schemas/graph.yaml#/properties/port
+> +        description: DPI output to an HDMI, LVDS or DisplayPort encoder =
+input
 
-commit a3aad8f4f5d9d9a977ee5be32b07bcc083cc8d28
-Author: Filipe Manana <fdmanana@suse.com>
-Date:   Tue Sep 24 16:12:32 2024 +0000
+This is wrong. The existing 'port' is the output. 'port' and 'port@0'
+are treated as the same thing. Since you are adding an input port, the
+new port has to be 'port@1' (or any number but 0).
 
-    btrfs: qgroups: remove bytenr field from struct btrfs_qgroup_extent_record
+I haven't looked at the driver code, but it should request port 0 and
+always get the output port. And requesting port 1 will return an error
+or the input port.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14596887980000
-start commit:   d61a00525464 Add linux-next specific files for 20241011
-git tree:       linux-next
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=16596887980000
-console output: https://syzkaller.appspot.com/x/log.txt?x=12596887980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8554528c7f4bf3fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=c3a3a153f0190dca5be9
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1266c727980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17ce9440580000
-
-Reported-by: syzbot+c3a3a153f0190dca5be9@syzkaller.appspotmail.com
-Fixes: a3aad8f4f5d9 ("btrfs: qgroups: remove bytenr field from struct btrfs_qgroup_extent_record")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Rob
 
