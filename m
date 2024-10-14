@@ -1,53 +1,55 @@
-Return-Path: <linux-kernel+bounces-364847-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D860799DA2C
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:37:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DD7999DA41
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 01:40:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 744CE283096
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:37:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33806284626
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:40:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44E41DAC80;
-	Mon, 14 Oct 2024 23:36:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83AC31D9A67;
+	Mon, 14 Oct 2024 23:40:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q1IiPZ3D"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sNREWJew"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07A511D9A6F;
-	Mon, 14 Oct 2024 23:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5B01D9A4F;
+	Mon, 14 Oct 2024 23:40:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728949017; cv=none; b=SXlWJuptPq5hen3YqlUMLQqoy3FiKJW5/eczb1HP7wTJOy40jK4sXR+BNq7qi6fc+A0ShJAeIFxuHEjz8JKTC0bm6t5g0bAWu3oLjIXVc94oKWKdHvvtaEREzkPV/KLO/bUaf6JtNw3GSlLmDzNYSlPKDvMMBDbBl57JqMuAY0c=
+	t=1728949208; cv=none; b=gHiPmkU6nmk5S+74YYagEI7XkcZv84fxiQt9tY7vgSoCAW1uD6zwVLItNX6abj1zHdI9aeanpb1WkIOrWotNfMhxoTlTRwYmKsVPuj+qNRmxsxI6MsbXrcVsUNGuspga3EhO4GHlIE9WM5mM1kcJESdm1y5JYt3SfmLQS4Z8xXU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728949017; c=relaxed/simple;
-	bh=aEYfd+irzfCo/P1ISiBPvIl+H1cO9NIiTbWBKh5EdkY=;
+	s=arc-20240116; t=1728949208; c=relaxed/simple;
+	bh=hV2Dnku3EWTu96PzCRW2R6Rs27TYxCY8SoD28gsuado=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K5euqDbRs3RdtdeFB5CAenVIltH0whgydf1x6See5oSOIHm7fQpRXuiK0O9wviS2TuJPoMKrSJ965cGo2mKbplG01Vtghvq+mXlTECssfSe2eaOtTZ+0A1yVIeqBIneM/IoFcHVfzWNrYjyJiJXcReoqmvW+EX8rPx10wb2jSSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q1IiPZ3D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C035C4CEC7;
-	Mon, 14 Oct 2024 23:36:55 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=kp5qkv9MNJ8YN3/QK4zdD59oBixqMRGn0MThU7WGiz1DnF8Sm12JPzvSpJy+qmKOdI2UtUoADUMwOAu6jWsyQv9AcjawhwFhaXPoyJlpOIP2BEySMS3d1vROs9nUH3eH6Rp7lCMsOYhU8hwyn+jnT6SZgkKz4aLZgdbohe4N6/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sNREWJew; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7E67EC4CEC3;
+	Mon, 14 Oct 2024 23:40:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728949016;
-	bh=aEYfd+irzfCo/P1ISiBPvIl+H1cO9NIiTbWBKh5EdkY=;
+	s=k20201202; t=1728949207;
+	bh=hV2Dnku3EWTu96PzCRW2R6Rs27TYxCY8SoD28gsuado=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Q1IiPZ3DYRgiO+7kFv+VsXTKeFc2fYBVAt7Wv9GnoIQyRH+eMVFgqCi0wfxNPwlY4
-	 f7JBOehb0Y2t2KHfzY/feU2W1d1/uenOlFOD/vIPBgYq4s83KM476ftqyhmfcZI2Bb
-	 k9ZVUeuYdqP/oXqqlyTiOGTohjNqvFreRR1lgKzSP6/K550836hEX8Ve9/j4K9AvTW
-	 NENPNOpQU8FS8qLMTjzCi9fkgk4jRymmd9ftJg0DUknryH4sl8klqHbIS2Hptt8onE
-	 QKc2R0fLmKxQGuUjhC/icrBIz6df26qSImiBZJU48doCFKfh0K8noa3SxzOjp5kmV0
-	 71knPoZgdUZQw==
-Date: Mon, 14 Oct 2024 18:36:53 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: anish kumar <yesanishhere@gmail.com>
-Cc: mathieu.poirier@linaro.org, linux-remoteproc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] remoteproc: elf_loader: redundant check remove
-Message-ID: <jerzlrs3vwtf6wb4bhgprmsdmfm7usv7qec34hfzj7q6oxhqwd@7isqdegmqwei>
-References: <20241014054820.59860-1-yesanishhere@gmail.com>
+	b=sNREWJewmjUQRFJbYck0YF1p6z9iicovewIsjCmSTwjg7x/y0+XWPBWLXZohSUVu3
+	 umAtKEesTXtfVJNiqcPabB78hhkPWqoJvDLEb7k3IEizuEbbwFXz/o5w+rqbmHPYUi
+	 XClvyXcNznsKHsQ6fN0Zs2Hqg3DoBCaqjIN4MGvy7HxJc/IvQFV5pByfe5y1xQ3TX0
+	 9cLXg0bYl0+yk5yHD/CoQT5fuiA4DkbfxwiE2nURP52NzB/Abivuiu4Z0EmMiHcuVA
+	 QslaKthh9voiWdyoTX2iKhlUesMZFxZatf06R0hwDiuz75Cttq9kxD08YLimGN4JTY
+	 iXt7BHJUhFUDA==
+Date: Mon, 14 Oct 2024 13:40:06 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Xiu Jianfeng <xiujianfeng@huaweicloud.com>
+Cc: lizefan.x@bytedance.com, hannes@cmpxchg.org, mkoutny@suse.com,
+	roman.gushchin@linux.dev, cgroups@vger.kernel.org,
+	linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
+Subject: Re: [PATCH] cgroup: Fix potential overflow issue when checking
+ max_depth
+Message-ID: <Zw2r1v5X33rtF7kG@slm.duckdns.org>
+References: <20241012072246.158766-1-xiujianfeng@huaweicloud.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,39 +58,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241014054820.59860-1-yesanishhere@gmail.com>
+In-Reply-To: <20241012072246.158766-1-xiujianfeng@huaweicloud.com>
 
-On Sun, Oct 13, 2024 at 10:48:20PM GMT, anish kumar wrote:
-> offset will always be positive number and adding
-> and comparing to the same variable 'size' will
-> always result in check being false always.
-> Remove this superfluous check.
+On Sat, Oct 12, 2024 at 07:22:46AM +0000, Xiu Jianfeng wrote:
+> From: Xiu Jianfeng <xiujianfeng@huawei.com>
 > 
-
-What if offset + size overflows?
-
-Regards,
-Bjorn
-
-> Signed-off-by: anish kumar <yesanishhere@gmail.com>
-> ---
->  drivers/remoteproc/remoteproc_elf_loader.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+> cgroup.max.depth is the maximum allowed descent depth below the current
+> cgroup. If the actual descent depth is equal or larger, an attempt to
+> create a new child cgroup will fail. However due to the cgroup->max_depth
+> is of int type and having the default value INT_MAX, the condition
+> 'level > cgroup->max_depth' will never be satisfied, and it will cause
+> an overflow of the level after it reaches to INT_MAX.
 > 
-> diff --git a/drivers/remoteproc/remoteproc_elf_loader.c b/drivers/remoteproc/remoteproc_elf_loader.c
-> index 94177e416047..c6d893e9c15e 100644
-> --- a/drivers/remoteproc/remoteproc_elf_loader.c
-> +++ b/drivers/remoteproc/remoteproc_elf_loader.c
-> @@ -278,7 +278,7 @@ find_table(struct device *dev, const struct firmware *fw)
->  		table = (struct resource_table *)(elf_data + offset);
->  
->  		/* make sure we have the entire table */
-> -		if (offset + size > fw_size || offset + size < size) {
-> +		if (offset + size > fw_size) {
->  			dev_err(dev, "resource table truncated\n");
->  			return NULL;
->  		}
-> -- 
-> 2.39.3 (Apple Git-146)
+> Fix it by starting the level from 0 and using '>=' instead.
 > 
+> It's worth mentioning that this issue is unlikely to occur in reality,
+> as it's impossible to have a depth of INT_MAX hierarchy, but should be
+> be avoided logically.
+> 
+> Fixes: 1a926e0bbab8 ("cgroup: implement hierarchy limits")
+> Signed-off-by: Xiu Jianfeng <xiujianfeng@huawei.com>
+
+Applied to cgroup/for-6.12-fixes.
+
+Thanks.
+
+-- 
+tejun
 
