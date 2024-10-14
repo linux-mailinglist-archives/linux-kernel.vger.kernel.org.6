@@ -1,58 +1,55 @@
-Return-Path: <linux-kernel+bounces-364586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 151BE99D688
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:32:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9550799D68F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7EF1BB21494
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:32:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D70A1F23818
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:32:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E0591BF80C;
-	Mon, 14 Oct 2024 18:32:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C551C9DFD;
+	Mon, 14 Oct 2024 18:32:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wpd4GmnL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hV0zh66C"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BB06231C95;
-	Mon, 14 Oct 2024 18:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B638219E7ED;
+	Mon, 14 Oct 2024 18:32:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728930755; cv=none; b=G2Y6y0k8oXgeJVpEdREA7zjBH4SAwdWhfi905lllzJCwlnGp0iTIK1Ta74qhzABGgmwW984qlEkCu2kkKbsORLB9DlZs48ZIQ6ovhTIbBa7J5hTxjTknZ9k00f8cd7L1UphAMIcwbAwoM7gGQKVx+uUXTxlE3zPHM9HSlrRO3p4=
+	t=1728930771; cv=none; b=iay99XUNeMevYyVPmdw4V/Ki9ki4fs8i0/jBKfzr8yBClpW/ijJUDUgIN39Q+/S00Dpl2cWYUgYWboRG3CaE8w434ZozCBxZhPpE3EnUb/zvn8W553Y8lehsxSJx4vb+eprBakY9KEGsskeABqUomI6vwp9L7KMxqFi1wr8OQ7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728930755; c=relaxed/simple;
-	bh=3fsaV5CvX3cLmJSdgeCPLfOI3HAupGcliKAGMyZq3bk=;
+	s=arc-20240116; t=1728930771; c=relaxed/simple;
+	bh=sO51GMgByJ6JnVNj3QRFR3sjKRvr2FVJyry1vQaOVME=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=dDArEP4gLwLtoWvW8+Tm3Ej7DS2IoPlHDxy7WraOZtbeGzlZU77+MspSv8iksUBchlziwjq3kY0HdpcSv6hptimWm75hjFW0qAWvtHpFMdOGajl7n4ekV3NEi01JBpkKk23Gvl4u+xD9JeyoeP7ntapzt4NW5nuIT5vMkmlAl90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wpd4GmnL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EE09C4CEC3;
-	Mon, 14 Oct 2024 18:32:31 +0000 (UTC)
+	 MIME-Version:Content-Type; b=Bu2Od2UvuGxqVZ4qdSOSViUCmv6X2f3GJ7itPpH92BtaJU0bB/w2KCl1FQvM0LZRU6aVNreUMYZk0MQWEbFPWXaCzi6gz4Pjv4CUGdJcl6qeyQC1FuIQ8GMz0lCNkrGKsj6xIkpCW5bgy66zdO4Q3skiVhK3bkqfskrS3E116wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hV0zh66C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84B8BC4CED0;
+	Mon, 14 Oct 2024 18:32:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728930755;
-	bh=3fsaV5CvX3cLmJSdgeCPLfOI3HAupGcliKAGMyZq3bk=;
+	s=k20201202; t=1728930771;
+	bh=sO51GMgByJ6JnVNj3QRFR3sjKRvr2FVJyry1vQaOVME=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=Wpd4GmnLk9hx4OxHN/ciqsN/Ct7oEUlbV9E3RcFTD7y8AGs68h/Oz3Z5h7A2aO/5L
-	 H6RXd2Gf/HtQ1SVMqXwUqKXDAkywcUIXzSoktPxtGu2eLd0FoEK87smG5ktDThyG53
-	 wmj1ABTifAvRXtyX8SSSltGbNP43ymB2ymTaHFxm4pCniU2p1CwToTK0bSahaFiyQ4
-	 txnHa8SsihLet05+J/KgZUuw5C/vNBQzC9c9JGALwYtprKPRI2vZ/iFxSIhkdJ6dEk
-	 qUw3v8pOFjdujOG+9xjaIlynGtgzgOueGSROPckaviSQhF292LPMad3VDF/vKc+Flg
-	 bYXiMYuLsEeCg==
+	b=hV0zh66CP/cj19SUdCRXg/9zPzd72lgKs8WQyq7JGjgVxaO/RVN7mATm0FziNGj4h
+	 9tBDiZgk08ksAfXSIbxLudDD6aY1UvSruJPhJSbc5N7uax2xR3DpRLlHcVLAkcZmd+
+	 NWr8lvdcREsPLpfxm8CaR+7kwEOqfcYWsyVF34PciKld7RzYeSgtB8wlBL5KoSN9oP
+	 tCF5eDC0uhnlExq6HmPreoG+snj8vBgt7NZGWlttKtBnP/4MksBnugITYpifgLJKou
+	 JhccmCB0sJXswkFgOjrj262dbAkkcBL/qMs6grro8zFLNzcP9W271273AeaZl/fHdY
+	 aNMD76E6r9y7w==
 From: Vinod Koul <vkoul@kernel.org>
-To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
- Jai Luthra <jai.luthra@linux.dev>
-Cc: Vignesh Raghavendra <vigneshr@ti.com>, 
- Francesco Dolcini <francesco.dolcini@toradex.com>, 
- Devarsh Thakkar <devarsht@ti.com>, Rishikesh Donadkar <r-donadkar@ti.com>, 
- dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20240930-z_cnt-v2-1-9d38aba149a2@linux.dev>
-References: <20240930-z_cnt-v2-1-9d38aba149a2@linux.dev>
-Subject: Re: [PATCH v2] dmaengine: ti: k3-udma: Set EOP for all TRs in
- cyclic BCDMA transfer
-Message-Id: <172893075181.75950.15122834753763958777.b4-ty@kernel.org>
-Date: Tue, 15 Oct 2024 00:02:31 +0530
+To: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ dmaengine@vger.kernel.org, 
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+Cc: Jonathan Corbet <corbet@lwn.net>
+In-Reply-To: <20241007150436.2183575-1-andriy.shevchenko@linux.intel.com>
+References: <20241007150436.2183575-1-andriy.shevchenko@linux.intel.com>
+Subject: Re: [PATCH v1 0/3] dmaengine: acpi: devm APIs and other cleanups
+Message-Id: <172893076913.76035.9347520801343215565.b4-ty@kernel.org>
+Date: Tue, 15 Oct 2024 00:02:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,24 +61,25 @@ Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.14.2
 
 
-On Mon, 30 Sep 2024 13:02:54 -0400, Jai Luthra wrote:
-> When receiving data in cyclic mode from PDMA peripherals, where reload
-> count is set to infinite, any TR in the set can potentially be the last
-> one of the overall transfer. In such cases, the EOP flag needs to be set
-> in each TR and PDMA's Static TR "Z" parameter should be set, matching
-> the size of the TR.
+On Mon, 07 Oct 2024 18:03:22 +0300, Andy Shevchenko wrote:
+> Here is a set of a few cleanups mostly related to ACPI DMA devm APIs.
+> No functional changes intended.
 > 
-> This is required for the teardown to function properly and cleanup the
-> internal state memory. This only affects platforms using BCDMA and not
-> those using UDMA-P, which could set EOP flag in the teardown TR
-> automatically.
+> Andy Shevchenko (3):
+>   dmaengine: acpi: Drop unused devm_acpi_dma_controller_free()
+>   dmaengine: acpi: Simplify devm_acpi_dma_controller_register()
+>   dmaengine: acpi: Clean up headers
 > 
 > [...]
 
 Applied, thanks!
 
-[1/1] dmaengine: ti: k3-udma: Set EOP for all TRs in cyclic BCDMA transfer
-      commit: d35f40642904b017d1301340734b91aef69d1c0c
+[1/3] dmaengine: acpi: Drop unused devm_acpi_dma_controller_free()
+      commit: 6e3ea06240adfef7b46e2338dd824541c31de06d
+[2/3] dmaengine: acpi: Simplify devm_acpi_dma_controller_register()
+      commit: c0fecce865535f77e7a8220175b126392dfe99dc
+[3/3] dmaengine: acpi: Clean up headers
+      commit: 662f045332addc961940e48eb920caa954abbf09
 
 Best regards,
 -- 
