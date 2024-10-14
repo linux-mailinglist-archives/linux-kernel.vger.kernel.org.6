@@ -1,244 +1,225 @@
-Return-Path: <linux-kernel+bounces-363023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363024-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31A3099BCE2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:17:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1DA6099BCE4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 02:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B17151F21651
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:17:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D19B1281625
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 00:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 476604A3E;
-	Mon, 14 Oct 2024 00:16:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F6A95672;
+	Mon, 14 Oct 2024 00:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U4hTK+jD"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b="EU+hVKVU"
+Received: from APC01-TYZ-obe.outbound.protection.outlook.com (mail-tyzapc01on2133.outbound.protection.outlook.com [40.107.117.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE6D94A1C;
-	Mon, 14 Oct 2024 00:16:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728865018; cv=none; b=jUJDf3exBfktKdYwdr8MpufGIWwqRcJJxvc8V2wmJ81Pr4AuB0T2/xKhi2cGhpVLml1JjnWwuCZFK/xQTp0ANXflK9kucTaQyjVASNeUdYeG1eQ9EfSKVd+To9KGNBRStHksQYLPlUAwRzPHlozMFq2qcTgk2k6pEveeeIWwxcc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728865018; c=relaxed/simple;
-	bh=H8LxFpLQGQlVeBckQzM3hRiLd9BKZU8Ty5mnHd1LooY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aoK4KvYii0XtkvInLXLoNDZG24veXD54SL6XH1OJQgIb1ikDAu2udwe2qvJ9v9pOyDTkMO2h0ZVYjryb6jXvzwomqpZe0lu/5MytnJY6S4PlEMVkcs6T2Z8UBPBIx5/2QZSeYcBUEt6WxPEzAYyWBB/TxeyMdwipwkzCvOL3yeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U4hTK+jD; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d4ac91d97so3163853f8f.2;
-        Sun, 13 Oct 2024 17:16:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728865015; x=1729469815; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ji81C34IVdT9C8xuuIvF1XCFX9JFwMotyJlYw7dOsL0=;
-        b=U4hTK+jDlqSQq7q2n1yrsa6rNX2ZA9+nisss+pjKT7WmespnizUPH44GezCPt1hjy3
-         lWSK78hKxW+nARjC1zrJ+9QllYfi8ejx85orPfoovQwruj1DskhCgPJ/3B+Ep7EH41kl
-         WV1hIk8oE3Fo+JqaMCCfbYkZNp6cdsblCb6iNct7Kv9hyIWajYC71IbZJBMR5GBXyq95
-         q8Pq8bacpkFF2vAiaRAf3tqk4YdP7kmmfMq4qcettSpWvMUiQFwrT93pyYazYegHyaZf
-         MLrcXIp1DUvDBynW4ADVEfyKJQ6DTdpklZACggXnsYsNf+BMDLog090LBE0fTt/yE85p
-         HV8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728865015; x=1729469815;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ji81C34IVdT9C8xuuIvF1XCFX9JFwMotyJlYw7dOsL0=;
-        b=GMxO9Nv27Q7ggGB59y2zTehcfeBwFihinlXHfoqmOnWnNW4wy/K9ZF5yU9+ikD8KfU
-         k8xtYe9nhvtxRMkOP7ijqRXRUUkgLpchw5KSe2HauuZNeZxNXtWSNQ6y5GfI3I56omKH
-         76w6KL5FfWCGO3Ifnb+VZjz2m0uFwtyntDF6qabqMglCnb4Qm1iqhPEJzolcY+2wEPFl
-         mChXaxtoI88HB6onj2oLrJeQSDufT9Zz7EptPLZW5VYm6ZHZT67A2RChUJelaSTa3pdO
-         wjQEgrS8aPDHytENxxB5JUkwmmx71u5Y3Z3dmfRnVEBlGjjkNwOXihCdSdro4aGxRrHR
-         Rx1A==
-X-Forwarded-Encrypted: i=1; AJvYcCWY1csCKIyLNu4FyMmqHYQ/TJy2CXRV+oSVBfUCJFRCJhZC2p3v+0MSYRsAngLaEDiDuOxvrGPAwgyb2g==@vger.kernel.org, AJvYcCXdJgEvyOnKLzSUXKyGRSi3M/8gKonyHJJVree600V++okylJGfZwU2+mYUlU1P/UmsghiynqXhEa3QdcpZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8Ppf65ZEDszP4nCS2ybAQHFTGbVenghhvEhCM1CI83CuDpb8d
-	rIKMxKWdt2J8uDxSKlouN5OTPtG9/oW+cueemXkLqye9asdJ3kbkENuClZQKIVg/mwq1RRXpAYS
-	V3GdQijvKfQlpKJ+vWedizgB9W07Jj90=
-X-Google-Smtp-Source: AGHT+IE94o4RcEzV+yHpUgBK0EBhLOjDSLOep2wdDVS0V8FUM9VsdXWy7fZDuHMO20nJ685e0qJBID78AoE60xIsHu4=
-X-Received: by 2002:a05:6000:1c1:b0:37c:cfa4:d998 with SMTP id
- ffacd0b85a97d-37d601db8d0mr5668700f8f.49.1728865014504; Sun, 13 Oct 2024
- 17:16:54 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC260C2C9;
+	Mon, 14 Oct 2024 00:17:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.117.133
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728865037; cv=fail; b=QtULrLtla2P+++WoWI2oelp5CQPKDOvaaaRczRh6ppSyeHfQwV49p1N5dpoyL0fmZ6E9FSYUuDMWH/ocPAGdJ32cReFxGxxzy98VqPX8cthRYRZm9Jv9SEx7ksFeRvQLBB5huoujv8Ir21aIRr/yAs5xibXYMthJmFtR8v5cMUM=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728865037; c=relaxed/simple;
+	bh=0hXORSX90PA6Rlihp6e8p40mKIAz22TUMUFQjlJ4g3s=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=vGjH5JTOX7jMGNDsKrubgrtfkLNmQ3+9JXjwqYV4ntkhm9fiT6CGN1DGZ9O+I3pm5wLINRBfBQOPy0aoll9dIWTOTV2hgEq+QWEFyeQvYMXPCywIA/vCIDPDc98Pb+P9XUQMDxiirOogN033f+RvKocfZoj3jsYcBKg58mjnmgw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com; spf=pass smtp.mailfrom=aspeedtech.com; dkim=pass (2048-bit key) header.d=aspeedtech.com header.i=@aspeedtech.com header.b=EU+hVKVU; arc=fail smtp.client-ip=40.107.117.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=aspeedtech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=aspeedtech.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FmOuR6yjwhcrG8M3APwKTC+l4uPhFwme/TdtQt0Fr2eW3BNZ8chEqPkjqUepyJ6d0C82VmzexYxKjSyx2dq9SAOmojIhxnsd4a0xBqUO4tGhz35oKrWl94uingK3xr+OLz8qN/SljZO2PderDOqicZZx7cQlD+4/ZiYez74dPrQmN3qM642X7ftJWY57pZVm+Q4KE9jQoi5HJzTBtYeePwSpepIJXq/NgRhIhFaLG5DQtx1zkRcduQGseS8RIKPPL+jxa1gMFODleEdPjQ/cyj83S16yE01a0HuRgJI0NpnfiTvKWn8rtm9pCEJpVDlF9reGruteNt8g2RmJOXDiqA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=thP95kHS7gHAxdKa6+C7kKQjgmXtKrkJ8qkOxwk8nMU=;
+ b=ul3CFqHgVzMRB61JPV/4Hsk9YlQpuUwU+15Ot4tZ67e7GXQZbXmFQ1Ysv/b8Q7ygb2ngPprYUxUytieZUt+JWDlKdVZDdllMv3XXAQiNfNMpGUfMHKgrgb/mr26ewRppYP6iJFjH2zWCIES1iHb1xil/+DZuWTS4kTzgLAY+yTqp3k4raabkl/0sA+oXkZmVsaV1X+BeBQILOe6P1p4b6PBkZeeSV0dMhacA0eEAsW3bT3KKtyvpwzDV5P92B5MYxk+vDS2jclzqFdJHsL9Yy505PzHKjlQMFv6ostHt2LVClbtuA3EWCO9rkD3K2O6ut9rFjPrJjSoVyb5mzJe2mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=aspeedtech.com; dmarc=pass action=none
+ header.from=aspeedtech.com; dkim=pass header.d=aspeedtech.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=aspeedtech.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=thP95kHS7gHAxdKa6+C7kKQjgmXtKrkJ8qkOxwk8nMU=;
+ b=EU+hVKVUIyhKRMeAW2RNsCuoEIu5i+bSVsh+so0BCkOYHOseb3DRUvAQzk6l+bDSS+ERN8FTwA2ZMrRFn7adWxodiPCxj9SrfXqCWBIHd9keKgbjXhvR0f+E5yA6ZAIYLoP86yovsdLW2wCYcoOrWrtPcff7tZT1Is/pB33xjfS98Xmi45P3ZISQdtZUrSqbpJphE/2ATEN4iglFB8FawDDRssJ/f0HBfokOlH5pVkWQPbRazUc6CirU2g3Ysswz15ro3XPAmtB7XzvFpZmdEphy0GrmC4aj5JPKb6RLXC3NpHDJxzwpo0OGbBoaRzjhdPHI4kObjK50nIVHBY/p6g==
+Received: from PSAPR06MB4949.apcprd06.prod.outlook.com (2603:1096:301:ad::9)
+ by KL1PR06MB6071.apcprd06.prod.outlook.com (2603:1096:820:ca::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.15; Mon, 14 Oct
+ 2024 00:17:06 +0000
+Received: from PSAPR06MB4949.apcprd06.prod.outlook.com
+ ([fe80::7bdd:639a:6b94:37bf]) by PSAPR06MB4949.apcprd06.prod.outlook.com
+ ([fe80::7bdd:639a:6b94:37bf%5]) with mapi id 15.20.8069.009; Mon, 14 Oct 2024
+ 00:17:05 +0000
+From: Kevin Chen <kevin_chen@aspeedtech.com>
+To: Dan Carpenter <dan.carpenter@linaro.org>
+CC: "tglx@linutronix.de" <tglx@linutronix.de>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, "joel@jms.id.au"
+	<joel@jms.id.au>, "andrew@codeconstruct.com.au"
+	<andrew@codeconstruct.com.au>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, BMC-SW <BMC-SW@aspeedtech.com>
+Subject: RE: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
+Thread-Topic: [PATCH v3 2/2] irqchip/aspeed-intc: Add support for AST27XX INTC
+Thread-Index: AQHbGkKMCnGgBPvFn0OoVljQ1X0eJrKBiCQAgAPgAAA=
+Date: Mon, 14 Oct 2024 00:17:05 +0000
+Message-ID:
+ <PSAPR06MB494904BAC3F09133E3E0121189442@PSAPR06MB4949.apcprd06.prod.outlook.com>
+References: <20241009115813.2908803-1-kevin_chen@aspeedtech.com>
+ <20241009115813.2908803-3-kevin_chen@aspeedtech.com>
+ <37525238-c9f8-4f0e-b4e5-4e2f05fab775@stanley.mountain>
+In-Reply-To: <37525238-c9f8-4f0e-b4e5-4e2f05fab775@stanley.mountain>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=aspeedtech.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: PSAPR06MB4949:EE_|KL1PR06MB6071:EE_
+x-ms-office365-filtering-correlation-id: b99c3506-512a-46be-45f5-08dcebe58903
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|366016|7416014|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?ie5rZByGUx8gmwB5t5x5Zb8ddx2aJo3Dz2GVC2huvP1j0RnvSDJ4aqxdYpwA?=
+ =?us-ascii?Q?SsT/RcY7+FfOxqs+nv+noyM0Q2zy5BI50scW+Y2UPn0nWEZCA+jhzexgTymP?=
+ =?us-ascii?Q?nzJQiugEm51y9fnbaIG5FzqzKz92B9DJijNkHHTS3YzmdpcJaa21SHLNh/bv?=
+ =?us-ascii?Q?8RjO79VHclUT28e/AItpMoW4hTYIlTSVPHsyFDeQHIFFNo04ch2ehyjcJdCz?=
+ =?us-ascii?Q?MGEyJdGjPZB1Q1vSJyNocna+UkVdtgu67sf5UuQEwDxexCAbNEEqwcMDoDT+?=
+ =?us-ascii?Q?YiOVO5ZbcglcglsrTsb/q1lAxZmJYtuSD08S5xpwWnHt8Y0/58WfAuBd3GpQ?=
+ =?us-ascii?Q?pSA38Kv0ixTZZwZ0nQWptN4ClUGwFldpy1KQ9dmfL8zAVHQ0BtIBQH8NKl11?=
+ =?us-ascii?Q?Y8CBe6z36vztDyk0898Au7HNlPHCAOdU2gciVo/5xbuweNysoyM3hkb48PeA?=
+ =?us-ascii?Q?aFyYWYI0u2d1NHh0uUJ7NNr6Xlu2SBkSaA0TupIRXJEXDJDnHyIM68avePPF?=
+ =?us-ascii?Q?+MbKUvWlkCTMyikY/HyB9RPWw6kool0eymcdYfvMu15MDN3jg5q+X4p25Yq2?=
+ =?us-ascii?Q?nrG7XZsbCba5tyrIOTsOiPEBtljOF9sZ8aALrJ6zTsmtU6JBWIygHnlDQAGH?=
+ =?us-ascii?Q?XMSEEdZA77BoLQzxzj1uJB8/d33EOnhzTlITX3LS83QAKpEYa1FCFPgmqPWW?=
+ =?us-ascii?Q?L8hrMgAorRgR/dq8kUEFtASQObSqMYKEgqnPFL1nyxzUHQ7YgbgAB92TKJ9z?=
+ =?us-ascii?Q?aHpRNlhTt0/uOikKzQHWNImZ012azNIKsN5Lf6z+5JWmHoJCgiM0KJTjZ2wO?=
+ =?us-ascii?Q?T4Bp1KoMhbLvVCCrfR67fM+PyvqXfYLqQQ8ra/q0piRNE/KqkHRWAFhr7b2U?=
+ =?us-ascii?Q?mv06MwnqEkGZtc9tN2HVsqVK8PP2xY1FgOiRi174nmAyCc700DVZ38u0s242?=
+ =?us-ascii?Q?dLuU6M5y7vIfr4dB83PDwZUfhhk+6IdoQ1Wo0XuDFUd5o0aNZS2gwyjqsFvV?=
+ =?us-ascii?Q?EUZpmOo4LvT89BxTBjIfvEQOcDC0U7YmhcRpJaD0lcGBoyZFw59bfxJWDJZR?=
+ =?us-ascii?Q?opLMrpnuyGTcgpLOt9y8issGHXJ7L0a+Bh5zoHzmuyBF4jsqechpFrSAE13L?=
+ =?us-ascii?Q?rhxZYdz//SCnTfvUPHwqPNvFihJm2fRzAY7IUw8mho4WikWSYsRwwz+V7ezX?=
+ =?us-ascii?Q?pD/LwL30UGa4x17tSvosjanELdVpOBNDdZq1AqjWnuQAvFAqRnEsHZY7+AIy?=
+ =?us-ascii?Q?Pp6v/91PilwbsxgHLmtbAyD5uhVfXDI5dRmFnGRIVqDw0vcYRdBcRqS3tLnD?=
+ =?us-ascii?Q?q/nLVvTY+Fwo9gD5vorf4GGZ?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR06MB4949.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1102;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?JmKlUuEipmaIXqz+ZEOecpbNJ0tDoXeeBu9wNSDHLQMwSWrlp3U/bUeIShvy?=
+ =?us-ascii?Q?Rla+p0mhSRVKk/jrsuCcPPS1BIDev5hwCT8TWV8YtOwq6Hm+MZL0v85fbGPN?=
+ =?us-ascii?Q?e9qtlsizF/izEx/DbgVaxftTIeatR1UvqZIH6I1gMpxHK71EzDYB3tHYvSXH?=
+ =?us-ascii?Q?grC3UyM/gaHVekcDyIvXdHM4Ge+xhFheIIIevjqpwq1FGHAcJdU9x1SiWQbj?=
+ =?us-ascii?Q?PK9fpmWhY8yy0Etz03FIOhSXRINTlCb2o56D2ZvgElrqhtBtHt6RQ7MHDTyV?=
+ =?us-ascii?Q?XL377uuUpTr69DUGtTNuhG9/r8b9AGqScSnTO57uM19E9oKf1I/EVEQ7C7w5?=
+ =?us-ascii?Q?jcbl21Bnc6eX4XUM5MV/5UQXaaTEHV+nNoPPgqSNAtLWWguueLLCNq9QONLc?=
+ =?us-ascii?Q?w5GnmACMKaxSM1Zeu52xcKSm6snFrJN6PHhq5g2HYeN/mAL9StU+J2ePG5h8?=
+ =?us-ascii?Q?wJ4AbP3M/xs5V4TZFv3d6G+htLeXIMnBO8Pi/yLZ79aIRRMBnc9Ty9G7Z54l?=
+ =?us-ascii?Q?JI2caJme3FlfHdNFoyBhb/WN0aelzt+uOMa1FqFz2KIlV7kQFZ2UewX97cYN?=
+ =?us-ascii?Q?BjjN1Ac2FiF5jlcJE5icOlVUY8benzVaDFT2s/8DFP99YNWz1lKY1/Tfditk?=
+ =?us-ascii?Q?r0MXFomdHN8QPS70oR2rDcELZVf+L/DbkYOfsei3rFDzKAwgcFU7vY9Jk7+a?=
+ =?us-ascii?Q?0pr7NxuPp2bHh9dbNVQm+BOBsaU9aiLc7VQCUMJCac5Kpj3uAxZ2Jgs/x/vq?=
+ =?us-ascii?Q?jobfkWThh3Ema7G02pCwm/1qnXZO7W1g5/BZ0DjowABpB1ai1Kel+5jcZYpy?=
+ =?us-ascii?Q?YsHviyoWSsMrDQznikUSfzIG9SYGvbqsMY2agpcTebNjyk0Q4mTezpC1355g?=
+ =?us-ascii?Q?zJe6R5EcTDSWn1ldiU5QIExwyLRyKy7AppPkMr8etBxeALm1/7diOgeK2Hzm?=
+ =?us-ascii?Q?yRXcxQJUrxeY44c8eJLsCWoyS3ymiu6Qx5mriiF/29jrMku4+UEDytm3URpg?=
+ =?us-ascii?Q?1eTpMYuli8dRM9J7+sUxmpx9s1YS7D88QSxrC3zQVCDRgXWRS6OGl0g1IfF2?=
+ =?us-ascii?Q?Yxez9wZ1I6kWwukJyAgtlBzEeBpjMVc5iGXE2vIQtqjNGtm3dCnLIdh7PAmi?=
+ =?us-ascii?Q?RJ69wIgmZdgeO/7yqv6fE9m4DF649MF8TOZZ2K2A5Zg1tcx7TY28RS9gNJJS?=
+ =?us-ascii?Q?2mUuw59G+OeXXBBLLQLy0cAlMdMJwpAaRGNQfzxVhktuMF4+gRZRGqEJkQd7?=
+ =?us-ascii?Q?MwmJJkEu0DdsKrncQCFIqTEs7lH65d1dl8MeXMuhs6VIKs7BmIkWM+3zYtPD?=
+ =?us-ascii?Q?FdOid7QqR+fZwYpG/dK3EuEMXR1sZEOCcq2TEMUgrMwprHJKDuXfxxasmk/0?=
+ =?us-ascii?Q?4aMtb4DqJ4Cw+EitpmRT+IVIj+hAYrxacQ3/NoV9DRdWE6yaKi+0Si8ZZJYA?=
+ =?us-ascii?Q?L3A3TxL4q/fXxBCuLZyakPhPZSoPzlvYcKgJhizE3puQJStIPZFmCYI54s8U?=
+ =?us-ascii?Q?mPc4X248emp4kRK6xxwuw9cghuni5pXwD/pEFvOnnxZALk73i0W9+CGFBVqy?=
+ =?us-ascii?Q?HPJJGlm9NinQu1+xDrRqXqYDIPIle+JullgpCVdx?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240925100303.9112-1-alex.vinarskis@gmail.com>
- <20240925100303.9112-2-alex.vinarskis@gmail.com> <2xb4vqlt2gdrmioyx7tjaw2vfw55pmhvz54q7f2ldrkikzzxge@737bp5ms6gwc>
-In-Reply-To: <2xb4vqlt2gdrmioyx7tjaw2vfw55pmhvz54q7f2ldrkikzzxge@737bp5ms6gwc>
-From: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-Date: Mon, 14 Oct 2024 02:16:43 +0200
-Message-ID: <CAMcHhXoKdXODc+4Bs-o2WXvxXiWpJHLBupnoqLyTa9m5KrNWbA@mail.gmail.com>
-Subject: Re: [PATCH v1 1/2] HID: i2c-hid: introduce re-power-on quirk
-To: Benjamin Tissoires <bentiss@kernel.org>
-Cc: Jiri Kosina <jikos@kernel.org>, linux-input@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+X-OriginatorOrg: aspeedtech.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: PSAPR06MB4949.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b99c3506-512a-46be-45f5-08dcebe58903
+X-MS-Exchange-CrossTenant-originalarrivaltime: 14 Oct 2024 00:17:05.7951
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43d4aa98-e35b-4575-8939-080e90d5a249
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: tHCpSmdXB9x+9zPd7OuXlV9kFD9+nphe+8HIHDAlgkI5Gg3IIpYsDpfqLK5Re1OL06rC9+wX1I1rtqNs4giDpma5iY9G+w1nMzjbev2Dy64=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR06MB6071
 
-On Wed, 25 Sept 2024 at 13:54, Benjamin Tissoires <bentiss@kernel.org> wrote:
->
-> On Sep 25 2024, Aleksandrs Vinarskis wrote:
-> > It appears some keyboards from vendor 'QTEC' will not work properly until
-> > suspend & resume.
-> >
-> > Empirically narrowed down to solution of re-sending power on command
-> > _after_ initialization was completed before the end of initial probing.
-> >
-> > Signed-off-by: Aleksandrs Vinarskis <alex.vinarskis@gmail.com>
-> > ---
-> >  drivers/hid/i2c-hid/i2c-hid-core.c | 7 ++++++-
-> >  1 file changed, 6 insertions(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/hid/i2c-hid/i2c-hid-core.c b/drivers/hid/i2c-hid/i2c-hid-core.c
-> > index 632eaf9e11a6..087ca2474176 100644
-> > --- a/drivers/hid/i2c-hid/i2c-hid-core.c
-> > +++ b/drivers/hid/i2c-hid/i2c-hid-core.c
-> > @@ -50,6 +50,7 @@
-> >  #define I2C_HID_QUIRK_BAD_INPUT_SIZE         BIT(3)
-> >  #define I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET  BIT(4)
-> >  #define I2C_HID_QUIRK_NO_SLEEP_ON_SUSPEND    BIT(5)
-> > +#define I2C_HID_QUIRK_RE_POWER_ON            BIT(6)
-> >
-> >  /* Command opcodes */
-> >  #define I2C_HID_OPCODE_RESET                 0x01
-> > @@ -1048,7 +1049,11 @@ static int i2c_hid_core_register_hid(struct i2c_hid *ihid)
-> >               return ret;
-> >       }
-> >
-> > -     return 0;
-> > +     /* At least some QTEC devices need this after initialization */
-> > +     if (ihid->quirks & I2C_HID_QUIRK_RE_POWER_ON)
-> > +             ret = i2c_hid_set_power(ihid, I2C_HID_PWR_ON);
->
-> I'd rather not have this in i2c-hid-core.c, TBH.
->
-> We do have a nice split separation of i2c-hid which allows to add vendor
-> specific i2c-hid-of drivers. We currently have 2 (goodix and elan) and a
-> third wouldn't be much of an issue.
-
-Hi,
-
-Thanks for the input.
-I did some further digging, as I did not understand how to implement
-your suggestion right away, and in addition I think I am a bit short
-on data about this keyboard to create a dedicated driver. I am still
-not 100% sure how to proceed, so would like to share my findings
-first, perhaps you would have something else to add.
-
-Firstly, I am not quite sure what/who is the 'QTEC' manufacturer. I
-could not find it online by VID. In DSDT tables it's listed as
-'QTEC0001', which sounds very generic. Only existing reference to QTEC
-that I could find in the kernel was in this [1] patch, where it
-appears to be a combo Elan touchpad+keyboard device, at least based on
-VID, though it was listed in ACPI as 'QTEC0001' as well. This is not
-the case with this device, as VID is a new, never seen before value.
-Which in turn means we could not use ACPI ID matching in case of a
-dedicated driver.
-
-For reference, XPS 9345 has also a somewhat combo solution - the
-keyboard has a separate touchbar-like Functions keys row. I opened up
-the device to inspect it - keyboard's IC is marked as ECE117, which
-appears to be a Microchip keyboard IC [2]. Touchbar is routed to the
-motherboard via a different connector, which may be routed back to the
-same IC via the keyboard's connector (based on the amount of wires in
-the keyboard-motherboard connector being way more than just
-sda/scl/gnd/3v3/5v), but I cannot be sure without in-detail electrical
-tests. This puzzles me a bit, as in addition, IC's datasheet refers to
-being connected to 'host EC' rather than just host - perhaps then
-otherwise, the onboard EC (present on this laptop, but no drivers
-available for linux at present) is acting like a bridge that is
-presented as this 'combo' device. Either way, neither of this explains
-what is actually from QTEC, and rather points it to be an embedded
-firmware from Dell, if I interpret my findings correctly, but please
-correct me if you think otherwise.
-
-Finally, during the BIOS update, one of the stages mentioned 'updating
-ELAN touchbar firmware' (not keyboard). Which confirms suspicion that
-the 'combo' device may be created by onboard EC, since any press of
-keyboard's usual or Function keys sends data from the same 'QTEC'
-keyboard as if it was one device, and it certainly does not identify
-as ELAN.
-
->
-> I'm not really happy of this admittely simple solution in this patch
-> because:
-> - what if QTEC "fixes" that behavior in the future?
-
-That is a very valid point indeed. Especially with PID being rather
-useless, and ACPI ID apparently being shared with other devices, this
-may become an issue, as only VID stays unique - at least for now.
-However, I did not fully understand how making a dedicated driver is
-advantageous over a quirk, if we are limited by VID matching either
-way? Or did you mean to only have that keyboard selectable by dt via
-compatible?
-
-> - what if you actually need to enable/disable regulators like goodix and
->   elan do
-
-At least at the moment it seems there is no need for that.
-
->
-> So to me, a better solution would be to create a i2c-hid-of-qtec.c,
-> assign a new compatible for this keyboard, and try to fix up the initial
-> powerup in .power_up in that particular driver. This way, we can extend
-
-If I managed to narrow down the issue correctly, fixing the
-'.power_up' stage won't resolve the particular issue unfortunately. As
-per my original patch, re-running power on command has to be done
-_after_ device registration (which in turn is after power up phase).
-If I would be to move re-power up any earlier, eg, between power up
-and `i2c_hid_init_irq`, it would have no effect again, the keyboard
-won't work until suspend & resume. In other words it appears that the
-process of registering hid what 'breaks' the controller, and power-up
-command has to be resent only after it. This is also how I discovered
-the solution in the first place - suspending the laptop and resuming
-it magically 'fixed' the keyboard. Given that due to lack of
-schematics no regulators are defined in device tree at the moment, I
-deduced that it was software init that broke the keyboard, and
-pm_resume 'fixed' it, which then allowed me to narrow it down to the
-proposed patch. But again, please correct me if you think I
-interpreted it wrong.
-
-I thus tried to implement this quirk similarly to existing
-`I2C_HID_QUIRK_NO_WAKEUP_AFTER_RESET`, which is used for ELAN
-touchscreens and is present in this core file, and not in
-i2c-hid-of-elan.c. I do agree that making a dedicated i2c-hid-of-
-driver is cleaner, though I am not sure I understood full advantage of
-it in this context, and not sure it will actually solve a particular
-issue as its not the problem with power up itself. On the other hand,
-perhaps as you mentioned enabling/disabling regulators first would in
-turn fix this weird behaviour? Though sadly I have no way to test it,
-since only got a  using a dummy regulator for this keyboard...
-
-Would like to hear your thoughts,
-Thanks in advance,
-Alex
-
-[1] https://patchwork.kernel.org/project/linux-input/patch/20190415161108.16419-1-jeffrey.l.hugo@gmail.com/#22595417
-[2] https://ww1.microchip.com/downloads/en/DeviceDoc/00001860D.pdf
-
-> the driver for the regulators, and we can also fix this issue while being
-> sure we do not touch at anything else.
->
-> Anyway, glad to see the bringup of the new arm based XPS-13 taking
-> shape!
->
-> Cheers,
-> Benjamin
->
->
+> > +static int __init aspeed_intc_ic_of_init(struct device_node *node,
+> > +					 struct device_node *parent)
+> > +{
+> > +	struct aspeed_intc_ic *intc_ic;
+> > +	int ret =3D 0;
+> > +	int irq, i;
 > > +
-> > +     return ret;
-> >  }
-> >
-> >  static int i2c_hid_core_probe_panel_follower(struct i2c_hid *ihid)
-> > --
-> > 2.43.0
-> >
+> > +	intc_ic =3D kzalloc(sizeof(*intc_ic), GFP_KERNEL);
+> > +	if (!intc_ic)
+> > +		return -ENOMEM;
+> > +
+> > +	intc_ic->base =3D of_iomap(node, 0);
+> > +	if (!intc_ic->base) {
+> > +		pr_err("Failed to iomap intc_ic base\n");
+> > +		ret =3D -ENOMEM;
+> > +		goto err_free_ic;
+> > +	}
+> > +	writel(0xffffffff, intc_ic->base + INTC_INT_STATUS_REG);
+> > +	writel(0x0, intc_ic->base + INTC_INT_ENABLE_REG);
+> > +
+> > +	intc_ic->irq_domain =3D irq_domain_add_linear(node, 32,
+> > +						    &aspeed_intc_ic_irq_domain_ops, intc_ic);
+> > +	if (!intc_ic->irq_domain) {
+> > +		ret =3D -ENOMEM;
+> > +		goto err_iounmap;
+> > +	}
+> > +
+> > +	raw_spin_lock_init(&intc_ic->gic_lock);
+> > +	raw_spin_lock_init(&intc_ic->intc_lock);
+> > +
+> > +	/* Check all the irq numbers valid. If not, unmaps all the base and f=
+rees
+> the data. */
+> > +	for (i =3D 0; i < of_irq_count(node); i++) {
+> > +		irq =3D irq_of_parse_and_map(node, i);
+> > +		if (!irq) {
+> > +			pr_err("Failed to get irq number\n");
+> > +			ret =3D -EINVAL;
+> > +			goto err_iounmap;
+> > +		}
+> > +	}
+> > +
+> > +	for (i =3D 0; i < of_irq_count(node); i++) {
+> > +		irq =3D irq_of_parse_and_map(node, i);
+> > +			irq_set_chained_handler_and_data(irq,
+> aspeed_intc_ic_irq_handler, intc_ic);
+>=20
+> There is an extra tab on this line.
+OK. Fixed. Thanks a lot.
+
+>=20
+> regards,
+> dan carpenter
+>=20
+> > +	}
+> > +
+> > +	return 0;
+>=20
+
 
