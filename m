@@ -1,70 +1,73 @@
-Return-Path: <linux-kernel+bounces-364804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DC5B99D9A4
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:08:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B156599D9A9
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:08:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 00A1528328C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:08:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E29761C2148A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:08:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F5EE1D2F40;
-	Mon, 14 Oct 2024 22:08:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3081D1E79;
+	Mon, 14 Oct 2024 22:08:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="Il9SQWVh"
-Received: from mail-io1-f42.google.com (mail-io1-f42.google.com [209.85.166.42])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lT+tEeVN"
+Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com [209.85.210.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 203E6156230
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82FE61D0F61
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728943685; cv=none; b=ttSkGLnV4/If9ybNfyNvhJCfRqQAiR+OswClSVmumnVNhDNUzq17vqgigmTB7liI7brSMlTV0F9NdkkIe5m4G79oEmkZzyXXTWFQPxoCHQtDsAc5Do/BV6aIpkC9ujUk4CPS9xMPdz055H3y+nZwusLexZMavma6P56KSCiQj4Q=
+	t=1728943731; cv=none; b=Y/T15g1P7ojvXVkXmFPKu0bkDS0fQ1LTv/xbn374eAVTYtUeGBS4SABWDwe8XY2I1hB9joiDGuEQmYCEGyfGg/fcPJ2UwyDcRd3C5RthPq/EzVVttfKVUnEUrifEyy14UyTPbOfDd0q6ohPizj6H9eUkmRevN0hynzGO+2WJ3Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728943685; c=relaxed/simple;
-	bh=fTKWSQXF0ypFNbAGzzmAXxs+vQUO0TtdrsoT5dchpDI=;
+	s=arc-20240116; t=1728943731; c=relaxed/simple;
+	bh=RwiWGV2rzLk4cT6vGo2hf7iXveFtHH9FPuvO1qveBSk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QvNG98AMIiH+Wf1i2bgBTZ0CfRwZeK47dsTqhP4CMz/buaUl6giIgaf6I0IbyEwtBPedlTZkLmoorQsyhzFv92W0FlQlYrgRdx/31b0da9RksUW5gA3xCS3Ee7prlBtngkpt4ZFHvjF3f86t07YH5HbRiDEooKfpPPcVAB3fJ2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=Il9SQWVh; arc=none smtp.client-ip=209.85.166.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f42.google.com with SMTP id ca18e2360f4ac-8369b14fb91so139986739f.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:08:03 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=a95UZmad7tIC9TBhLHM5/M6ocz4U7Huhix5IQbeG9/olU/8L8DH3/n6cQKm/EG+r/JZtz+E48m9+i3O34SnTqFOUvptfbVu2r+sndlvuALgZJTAZ09sEL5HzF+kT2daCJ2ZOgf/zWAASmQsqo3HdeLTpQ/DyWEOEFPwq6Zty/kE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lT+tEeVN; arc=none smtp.client-ip=209.85.210.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-716a7fabf31so1501356a34.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:08:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1728943683; x=1729548483; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728943728; x=1729548528; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6fZn3HVozUCHpAhBChYhgj2VZJQrei88clT/tksTBQE=;
-        b=Il9SQWVhQg/3nUHO+hFuKfjNm7gcAJYnnLurr+a+lunXBXJMbZDHZ4p2KIbkib1P0c
-         AqNw0XQdPPWUNB9TaTQqkmimHhfd39QsQb3vDi5Cy+ISaFC5etcTpx/29TXriJWvAtnC
-         DlFtvfBkJLXqXhs8WF0bCcxry9Ww7PS1L6zPY=
+        bh=CE71Pg+9qQgmK3mJbmPthhcZO1J5ofFDM3FllRmUogo=;
+        b=lT+tEeVN0xGWgs+x4V9vNAiPWxKgu1AV3NjGgTIrMBGIXOf9+MhPnUKn1w9Q5QnPgU
+         LQ/Z6dcbU1eYPKyXskY/O37o6ts3TRvVT9MXhf0TNXCvaPhA+jnUe/ta2i47mxVN+F/o
+         wdSRHBLIYBx6837VAgQkbrwhCgl+J+0ASnprk/URj03MpbYCpRxwS+KNw+OH3sP4bi2N
+         9plioMKvVNGuPbEh9ovOa0OoNUFPMrrulp0lVt7kuUPg3/TrCBKXT49FGLTyOlnVxxNL
+         p3+AH3FV+Otvi/Hqhn1bVRKSIID056yOlCNUasyj+lmK/aR/pCcjKRB/m2Kc9e805QDp
+         +3Aw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728943683; x=1729548483;
+        d=1e100.net; s=20230601; t=1728943728; x=1729548528;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6fZn3HVozUCHpAhBChYhgj2VZJQrei88clT/tksTBQE=;
-        b=nnfn5mDphNHR588UliCjQFxEN/7RAHfJK2Bz7W0VHDiHBGDgmMm51f0MBR/QLTjPQu
-         Q3aDH551IfpyhVpkSJN5NlrC7JRkfjb1W8s9DpWD2t6pCMF2bAMxC5uy6Kpt+Nb6Tt0d
-         7o9AvddBG7Hs9tYAzEw9SndKKesAIo2x+2fTIXzWUJnp0A/OQS+ReFPYGyd1vxwILWgQ
-         GaL49JythRYG6Gz5UwS8QybCMQ6caDsrocIUYMuO/cTfyIwy0N6Viy1prck7Ox7QWGjK
-         umpXTCA4t5OS2QQWhb98IMgybGRTi0s6KYL41gjMSllGaUOTZPaIkYg8nagK2o4SCuWT
-         nT+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVa1jmfYgjL09CbgaqeJ01hL41JkEVtQvT9obnrO+KpgutAMdh87xi8QcfPOZ2NTFlN/sPAezYvDDIgtJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKE/9rf2v23fIxqFFhV0thq3vQw+GTLPDv9uPnstEwECf1Mp5e
-	DFWIvOnauEpdgxnkLTT54A3DCgd6gf9rDP/wcQr6XfDdPrgL5Y+sLZWhEm8mevI=
-X-Google-Smtp-Source: AGHT+IEuDLbunmWHWlwlQRiIV3BbNDg9RT+R6jVm4OC3F9c7hmK3Ji+75kCKpzDyIE0dB4QOU+n1nw==
-X-Received: by 2002:a05:6602:6413:b0:835:359b:8a07 with SMTP id ca18e2360f4ac-837952203bdmr949334239f.16.1728943683193;
-        Mon, 14 Oct 2024 15:08:03 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83a8b2aa42asm446339f.21.2024.10.14.15.08.02
+        bh=CE71Pg+9qQgmK3mJbmPthhcZO1J5ofFDM3FllRmUogo=;
+        b=qnM4MvOHMrehHmcTHhKQgRK1txJZPxDCltlMmFizRWzqdwRh78naM+bXW2UN9z7RpV
+         qW6O6cmky+N95bttOA4viNFtuxWm2FR4Pr0b+BaAlPTSc6UsU+Fptz7SQLzEgThlQ7f5
+         AAB1UM1QJOQskTVtlWM7xfzCxOqx63LsjETTRoli1skY9rzXF1Z3WpIsxhmySBSQ1BIZ
+         uQdoYZLyROJWgsvZ1Bm3sryxcNMJmmRv0h/ucuKgY/Zok0uyssroicQd3VRZ6EpfCoyZ
+         Hkk6LASoYoGpg/t/FoHgZ9zp4GzeYGk5ohfQRT/MhhTjEMiGlCtD8GDCX/isLRF1zp/i
+         TMLA==
+X-Forwarded-Encrypted: i=1; AJvYcCVqLIvSol0Yz0Lxay+lxDFBdtfeWgbdog15hfffrbZh8bKnFEXBHEym/y7KOIIdctqxJ2vYW+F3t8UQUbA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxiAyi569YFgkkhbJM/vxcD+e01E84H1gpcB2hJiTg95D9DTmZF
+	XCV+JLB/OgAVsFVKnH5OdvHO+qmVp+/CkgUbm3xe/n/AfuI6B0umADtEKnrhZoc=
+X-Google-Smtp-Source: AGHT+IHJnl83Mw1D/U95VcdXHn7KiobS+KbDMYq68e+4vVzo3kcSL5k6sBEGoQjwDIdvMPPL4KFOQw==
+X-Received: by 2002:a05:6830:65c4:b0:703:6434:aba8 with SMTP id 46e09a7af769-717df1e1178mr7335220a34.0.1728943728669;
+        Mon, 14 Oct 2024 15:08:48 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717fb9f022asm13921a34.27.2024.10.14.15.08.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 15:08:02 -0700 (PDT)
-Message-ID: <606f8672-cd66-4828-99b9-2356c738acc2@linuxfoundation.org>
-Date: Mon, 14 Oct 2024 16:08:01 -0600
+        Mon, 14 Oct 2024 15:08:48 -0700 (PDT)
+Message-ID: <c70139f8-c0ba-4e28-9477-964db3fbfbba@baylibre.com>
+Date: Mon, 14 Oct 2024 17:08:47 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -72,65 +75,60 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests: timers: Remove unneeded semicolon
-To: John Stultz <jstultz@google.com>
-Cc: Chen Ni <nichen@iscas.ac.cn>, tglx@linutronix.de, sboyd@kernel.org,
- anna-maria@linutronix.de, frederic@kernel.org, shuah@kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241010073707.4038081-1-nichen@iscas.ac.cn>
- <87492b3f-84d1-426f-ad71-7784a1c1dfc3@linuxfoundation.org>
- <CANDhNCr5X3gkSRR7cWZ13DDbepV3Nb1tQ5E3XuAaJx_5vZ=PCw@mail.gmail.com>
+Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
+To: Andy Shevchenko <andy@kernel.org>,
+ Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+ Olivier Moysan <olivier.moysan@foss.st.com>,
+ =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>,
+ Marcelo Schmitt <marcelo.schmitt@analog.com>,
+ Ivan Mikhaylov <fr0st61te@gmail.com>,
+ Marius Cristea <marius.cristea@microchip.com>,
+ Dumitru Ceclan <mitrutzceclan@gmail.com>,
+ =?UTF-8?Q?Jo=C3=A3o_Paulo_Gon=C3=A7alves?= <joao.goncalves@toradex.com>,
+ Alisa-Dariana Roman <alisadariana@gmail.com>,
+ Mike Looijmans <mike.looijmans@topic.nl>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+ Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+ Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-pwm@vger.kernel.org
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-6-antoniu.miclaus@analog.com>
+ <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com>
 Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <CANDhNCr5X3gkSRR7cWZ13DDbepV3Nb1tQ5E3XuAaJx_5vZ=PCw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 10/11/24 18:47, John Stultz wrote:
-> On Fri, Oct 11, 2024 at 4:00 PM Shuah Khan <skhan@linuxfoundation.org> wrote:
->>
->> On 10/10/24 01:37, Chen Ni wrote:
->>> Remove unnecessary semicolons reported by Coccinelle/coccicheck and the
->>> semantic patch at scripts/coccinelle/misc/semicolon.cocci.
->>>
->>> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
->>> ---
->>>    tools/testing/selftests/timers/set-timer-lat.c | 2 +-
->>>    1 file changed, 1 insertion(+), 1 deletion(-)
->>>
->>> diff --git a/tools/testing/selftests/timers/set-timer-lat.c b/tools/testing/selftests/timers/set-timer-lat.c
->>> index 5365e9ae61c3..7a1a2382538c 100644
->>> --- a/tools/testing/selftests/timers/set-timer-lat.c
->>> +++ b/tools/testing/selftests/timers/set-timer-lat.c
->>> @@ -79,7 +79,7 @@ char *clockstring(int clockid)
->>>                return "CLOCK_BOOTTIME_ALARM";
->>>        case CLOCK_TAI:
->>>                return "CLOCK_TAI";
->>> -     };
->>> +     }
->>>        return "UNKNOWN_CLOCKID";
->>>    }
->>>
->>
->> Looks good to me.
->>
->> John, I will apply this for next of you are okay with it.
+On 10/14/24 8:14 AM, Andy Shevchenko wrote:
+> On Mon, Oct 14, 2024 at 12:40:40PM +0300, Antoniu Miclaus wrote:
+>> Add support for the AD485X a fully buffered, 8-channel simultaneous
+>> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+>> differential, wide common-mode range inputs.
 > 
-> Acked-by: John Stultz <jstultz@google.com>
 
-Thank you. Applied linux-kselftest next for Linux 6.13-rc1.
+...
 
+>> +	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+>> +				  AD4851_PACKET_FORMAT_MASK, (osr == 1) ? 0 : 1);
 > 
->> Also I noticed clockstring() is defined in multiple tests.
->> Any thoughts on removing the duplicates and adding it to
->> a header file? This will add a dependency on another source
->> file, but might be good to remove the duplicate code.
+> I would do it with a conditional
 > 
-> Sure, no objections.
+> 	if (osr ...)
+> 		return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+> 					  AD4851_PACKET_FORMAT_MASK, 0);
+> 
+> 	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+> 				  AD4851_PACKET_FORMAT_MASK, 1);
+> 
+If we do this, regmap_set_bits() and regmap_clear_bits() would
+be even better.
 
-Thanks. I will send patch in soon.
 
-thanks,
--- Shuah
 
