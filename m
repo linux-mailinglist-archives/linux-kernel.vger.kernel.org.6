@@ -1,281 +1,243 @@
-Return-Path: <linux-kernel+bounces-363222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D97E99BF2F
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:38:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5508D99BF32
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02DC91F22390
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:38:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 55DCE1C2164E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 04:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8738248C;
-	Mon, 14 Oct 2024 04:38:42 +0000 (UTC)
-Received: from bg1.exmail.qq.com (bg1.exmail.qq.com [114.132.124.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1419052F88;
+	Mon, 14 Oct 2024 04:45:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YEmjXqw3"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50987231CB1;
-	Mon, 14 Oct 2024 04:38:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.132.124.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 688BF4A1C;
+	Mon, 14 Oct 2024 04:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728880721; cv=none; b=B4I/R7vbFLN830xHLHgdk7gseJWJrkfxr4D77ZC8g3zTYMPgpf1JBFT1y0eUiZdQ6Fm0gptQd6C0FFa2FN4Pb8i1C2O0PffQBYj+vJqnOV2SUsUjObsg/ZtqHgN33mcUE4vlNNzEfVCn28eS5yZ8BaAW8xOi8OftKKtvo0yqISc=
+	t=1728881105; cv=none; b=FwNo7EbT4IbqYIukdZw8c47FZT06Nl9TUuRqqyiVeo3VPFVCUSzv8Gu3+17Z/Q4dFJ5FzwY05ZYlzLuNIZ/bGThjJ1iiCgzbA84g9iJrmdKP4T+htTCwe1yLGnNj9R0164m/2iKX50pccheLfm2LJzErmazarKzBm89r1j3kCOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728880721; c=relaxed/simple;
-	bh=VnMOFtM0rlHaYJg0Ihqs5/eTndvXXGk4vEpt32Iqk/I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YGAkL8PExaaGHF5c/yKM3Ld0e3zUn/DyP0Bg3p+6tyOYd+MVs6EODCQ939lTfauL9ScG7aRon5A6WgeW0UUcBCd3m42goEM7Rg9RG9IlI1z00jEqxjs4k7pKRuZ5sFVF6f0URH04oy4KNSffvEm/TlRFu32spefLqrIsJfJMkMQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com; spf=pass smtp.mailfrom=radxa.com; arc=none smtp.client-ip=114.132.124.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=radxa.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=radxa.com
-X-QQ-mid: bizesmtpip4t1728880692tn6r7d7
-X-QQ-Originating-IP: EQSBChDx8AzRGfPF8zb2/7A9tODnohSmh1T0qLU6P6M=
-Received: from [IPV6:240f:10b:7440:1:5070:3965 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Mon, 14 Oct 2024 12:38:07 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 0
-X-BIZMAIL-ID: 13288931529560564606
-Message-ID: <CE605641E53903DC+0f0ea6b2-9423-4aa2-ac9d-652a9ac5c237@radxa.com>
-Date: Mon, 14 Oct 2024 13:38:06 +0900
+	s=arc-20240116; t=1728881105; c=relaxed/simple;
+	bh=l3Z8viThKZh1oiS+/bkaB8EpTs79utadXuECg1YEoao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NaEv9wtmLJzVcgOTrxAtskiJ3IjBdrn+NVinHAeuXoH9cOqY8F4GGxxgyNTQMdSFLAJ5Pq7QZUDNE9LB7oesFDKj8M0Tj6uoEfi0xTl9knj8VXeewo4kJITj1Vnlt+gNx8XCEltN6NhPIdrgtzVg05z48e+Bxo1nJdk3FmnZVrk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YEmjXqw3; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so2375754f8f.1;
+        Sun, 13 Oct 2024 21:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728881102; x=1729485902; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0UKeLghLjeCgQYXLcqszTN85GeABrzJa0W3ZVrL32nU=;
+        b=YEmjXqw3YKgouiIuIDvMcL9pH2RkR6JiINNjJzfIMmkEOpJQ1YpFnhKY16ILQE3Pg3
+         YxHVP2NJd7YszBoekD3GJe0DrRuOBjdHuEKM3mOzgOuPJwhrLbNKzEMN3wJjWUB5QDwW
+         UPLvOvah/WLTHnnn0FVxU09pUuA3S9vPVIneUmKNrHXsI4EARnhenBQd/VbvIEBoo0a6
+         3H2yULXsgOQ/z10pNPAiVb6t2KaaVCQ5bVAqhXc4BzUPZ1OImZZl2GcV06s6/Od1b7Sv
+         RARZ0h7zK7cH606207dgY0Ee7WYMpbCYth4XpC9XpDYeOuXX2/s6lyqDRgshGaQJBtTh
+         HzCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728881102; x=1729485902;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0UKeLghLjeCgQYXLcqszTN85GeABrzJa0W3ZVrL32nU=;
+        b=RNxfbNQlVXbKSaqzy/aWnUFhaO7SM407gbZBMeW69tFkZ9h+7T7h7rN2kaIly6dzsS
+         BFdjhorEvvCiTCoVhycmStVyV0q+5cLl9hQjD15P1dLhyEOtCGhvFVpMrrPE7ifHVZ+X
+         PqvR1YP6qFoem4O4/bmRleXPL4DDelZ8q6jg71kSHUEXc5qR8I/li1MKkp6sC+ubwA9n
+         RMa4ztmN2r7flOPLwYiuTu+aDRXhnkLGszFv7F4g8ktMvnr/OpLKWd9Og2R1pVZZlJIs
+         yvOR4Q9Gc0OjI33nqp1CAkBzhcYJRdyQLaHazcBnC88/6OMSIWf3Js0gRPxZkph8KBTk
+         KGqg==
+X-Forwarded-Encrypted: i=1; AJvYcCVR0x9dtpchiXMc+8kJC1jm42IzdLoVgffmIAgf3J4dNx/jWipGoOWK8UIzw/kdZa6G1iPXVz/2YG3ZOjZq@vger.kernel.org, AJvYcCVlKPZ1DLW0xAEuf/Ikz9JDRvjE/ZoN4bAdvRoMYidjQ78FluQuGMwjLgEyfFgHt9FThvvsArJwXoIy@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlAE2fef2K/v3pVCy53pwMqVjVNXBayA7gBACzYeAI8X0wtLT7
+	NSKmB0/BZm+0LXkVl6mKx8BdkQmh7JmjbC422mbRCnOFbcEy3OrYpWkVKpC6rAgUgJ+hcnqRj3C
+	EoiksTESDUSiiiMri2eR4/EJ860Y=
+X-Google-Smtp-Source: AGHT+IGAK9ALbpvZxrD4MsOrzSNBBfXAkPN05nxOFAoxUQMJYEijL97sQKwLLbqOqimNKPU29nqDYewjzNuG70qqOc8=
+X-Received: by 2002:adf:fa8d:0:b0:37d:36f2:e2cb with SMTP id
+ ffacd0b85a97d-37d54debf9fmr7723606f8f.0.1728881101342; Sun, 13 Oct 2024
+ 21:45:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add new SoC dtsi for the
- RK3566T variant
-To: Dragan Simic <dsimic@manjaro.org>, linux-rockchip@lists.infradead.org
-Cc: heiko@sntech.de, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, TL Lim <tllim@pine64.org>,
- Marek Kraus <gamiee@pine64.org>, Tom Cubie <tom@radxa.com>,
- Nicolas Frattaroli <frattaroli.nicolas@gmail.com>,
- Jonas Karlman <jonas@kwiboo.se>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <95fc64aaf6d3ac7124926bcb0c664406b4e5fe3d.1728752527.git.dsimic@manjaro.org>
-Content-Language: en-US
-From: FUKAUMI Naoki <naoki@radxa.com>
-In-Reply-To: <95fc64aaf6d3ac7124926bcb0c664406b4e5fe3d.1728752527.git.dsimic@manjaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: bizesmtpip:radxa.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: NvH2zBBgt3uT+tf1ztEnscQb8q8EJj8iUYLudHj4RY97astqYsjZu+Lm
-	x8a0ZDoKYyIcSM8mtC1By0wX69RgXlnrqhUZoVb5r/dQBzGPq5L9AbDNgPgORYUbKq5cfOF
-	W32HGGlYbcUSOd4lRRJGJjH0mVl3fGjWc33dfa8+O5LJ3xTkYanzK3V5452JNLBYENjdosc
-	TxnNIgsXsBkAvHJ3bo20NrC5cqLqD2aY8Dj1Mr8UfOzmkjX4Vir7a103t4TnjB+8kn6xnT7
-	mdbmZhEEhfQ8NRYL9dHTvaVI3i/+SHJfh4FfUtuWr+NJY1THg9yYqN6kiJgHDaiuV6VFW5l
-	TJrfcTx26/U796KKr4602oKug1pagtuRwCGAQNiNQP6Xcn7lPhBdSt9hMExfAUeLlV42TTy
-	xytU/dfp0nc80dPNCzLnCQrsTNS/HHJ5uTiAUBGawTw5VbxbuMewjfGqEFvXFLvUCUJQ7p3
-	6ODl55A+qKJ0VvNX0xqDDWJSv+FnuLCEgfUWwn8A2q63LXp7xNk6FUMOh7c/zW8XLpXF2vz
-	sr3P5nwQhxsjRmDSMgcLXrYOJs+NhF6Xib849PuXJehGhmRenIQ5LBEec2iZGTcP1ZB/DxI
-	Jo0tM76+7+f1nqSQjlSRr32aY6P92v9pvrdXuBPMrvDwwHNSDErg2mIzrN6q+HbXs/JvPQI
-	Bd8qtYO4tdA9XarWp8XJlf+fplEEETcdLot/6Cb1Pihc8ujXp+Ou8nuN2a+rg8IGLh5h14x
-	4zPbqQVtwe+Es67KrQ6v0C8xSGwhr9AxUwe2tCrGzt8e2XVImDBpCVOJair0jvfEckrkEH6
-	BnEeBZPbj7BQNcwapVaYze0oykKwHDnx9XBqrgVcuCCvxSStuPj29vw3VyeZ7mjTbcg8/A7
-	lRQMq701yuzR+wShogqfCSxQ+BuPVTKE/89++Y1DvDJioNCOYnPtyfFcfRWnzxcYYU1JaKk
-	eqQ7O9WceS2RwlYcSNIrbHeOUbsoEGxlmS+dYGtRR4knInw==
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+References: <20241013213305.310844-1-cenk.uluisik@googlemail.com>
+In-Reply-To: <20241013213305.310844-1-cenk.uluisik@googlemail.com>
+From: Jimmy Hon <honyuenkwun@gmail.com>
+Date: Sun, 13 Oct 2024 23:44:50 -0500
+Message-ID: <CALWfF7L7mHV-MwsQLMmA4kx_trWCO4mn36ooyjc5fVq_DL4nzw@mail.gmail.com>
+Subject: Re: [PATCH V3 1/2] arm64: dts: rockchip: Add rk3588-orangepi-5b
+ device tree and refactor
+To: Cenk Uluisik <cenk.uluisik@googlemail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heiko Stuebner <heiko@sntech.de>, 
+	Chris Morgan <macromorgan@hotmail.com>, Jonas Karlman <jonas@kwiboo.se>, 
+	Michael Riesch <michael.riesch@wolfvision.net>, Andy Yan <andyshrk@163.com>, 
+	Dragan Simic <dsimic@manjaro.org>, Jing Luo <jing@jing.rocks>, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Sun, Oct 13, 2024 at 4:33=E2=80=AFPM Cenk Uluisik
+<cenk.uluisik@googlemail.com> wrote:
+>
+> Implements a slightly modified rk3588s-orangepi-5b.dts from the vendor.
+> Unfortunately the &wireless_bluetooth and &wireless_wlan overlays don't s=
+eem
+> to compile, so I removed them for now:
+>
+> Error: arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts:20.1-20 Label=
+ or path wireless_bluetooth not found
+> Error: arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts:24.1-15 Label=
+ or path wireless_wlan not found
+>
+> Bigger parts of the rk3588s-orangepi-5.dts file were moved into a new
+> rk3588s-orangepi-5.dtsi file, so that both device trees from the orangepi=
+-5 and 5b include from it and avoid including from the .dts.
+>
+> How does this board differ from the original Orange Pi 5?
+>   - builtin eMMC storage
+>   - no SPI NOR flash (u-boot, preboot etc. initiates from within the eMMC
+>     storage)
+>   - ap6275p Wifi module (like the Orange Pi 5 Plus)
+>   - builtin BlueTooth module
+>
+> Beside that everything is exactly the same as far as I know.
 
-On 10/13/24 02:04, Dragan Simic wrote:
-> Add new SoC dtsi file for the RK3566T variant of the Rockchip RK3566 SoC.
-> The difference between the RK3566T variant and the "full-fat" RK3566 variant
-> is in fewer supported CPU and GPU OPPs on the RK3566T, and in the absence of
-> a functional NPU, which we currently don't have to worry about.
-> 
-> Examples of the boards based on the RK3566T include the Pine64 Quartz64 Zero
-> SBC, [2] the Radxa ROCK 3C and the Radxa ZERO 3E/3W SBCs.  Unfortunately,
-> Radxa doesn't mention the use of RK3566T officially, but its official SBC
-> specifications do state that the maximum frequency for the Cortex-A55 cores
-> on those SBCs is lower than the "full-fat" RK3566's 1.8 GHz, which makes
-> spotting the presence of the RK3566T SoC variant rather easy. [3][4][5]  An
-> additional, helpful cue is that Radxa handles the CPU and GPU OPPs for the
-> RK3566T variant separately in its downstream kernel. [6]
-> 
-> The CPU and GPU OPPs supported on the RK3566T SoC variant are taken from the
-> vendor kernel source, [1] which uses the values of the "opp-supported-hw" OPP
-> properties to determine which ones are supported on a particular SoC variant.
-> The actual values of the "opp-supported-hw" properties make it rather easy
-> to see what OPPs are supported on the RK3566T SoC variant, but that, rather
-> unfortunately, clashes with the maximum frequencies advertised officially
-> for the Cortex-A55 CPU cores on the above-mentioned SBCs. [2][3][4][5]  The
-> vendor kernel source indicates that the maximum frequency for the CPU cores
-> is 1.4 GHz, while the SBC specifications state that to be 1.6 GHz.  Unless
-> that discrepancy is resolved somehow, let's take the safe approach and use
-> the lower maximum frequency for the CPU cores.
-> 
-> Update the dts files of the currently supported RK3566T-based boards to use
-> the new SoC dtsi for the RK3566T variant.  This actually takes the CPU cores
-> and the GPUs found on these boards out of their earlier overclocks, but it
-> also means that the officially advertised specifications [2][3][4][5] of the
-> highest supported frequencies for the Cortex-A55 CPU cores on these boards
-> may actually be wrong, as already explained above.
-> 
-> The correctness of the introduced changes was validated by decompiling and
-> comparing all affected board dtb files before and after these changes.
-> 
-> [1] https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
-> [2] https://wiki.pine64.org/wiki/Quartz64
-> [3] https://dl.radxa.com/rock3/docs/hw/3c/radxa_rock3c_product_brief.pdf
-> [4] https://dl.radxa.com/zero3/docs/hw/3e/radxa_zero_3e_product_brief.pdf
-> [5] https://dl.radxa.com/zero3/docs/hw/3w/radxa_zero_3w_product_brief.pdf
-> [6] https://github.com/radxa/kernel/commit/2dfd51da472e7ebb5ef0d3db78f902454af826b8
-> 
-> Cc: TL Lim <tllim@pine64.org>
-> Cc: Marek Kraus <gamiee@pine64.org>
-> Cc: Tom Cubie <tom@radxa.com>
-> Cc: FUKAUMI Naoki <naoki@radxa.com>
-> Helped-by: Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
-> Helped-by: Jonas Karlman <jonas@kwiboo.se>
-> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
-> ---
->   .../dts/rockchip/rk3566-radxa-zero-3.dtsi     |  2 +-
->   .../boot/dts/rockchip/rk3566-rock-3c.dts      |  2 +-
->   arch/arm64/boot/dts/rockchip/rk3566t.dtsi     | 90 +++++++++++++++++++
->   3 files changed, 92 insertions(+), 2 deletions(-)
->   create mode 100644 arch/arm64/boot/dts/rockchip/rk3566t.dtsi
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-> index de390d92c35e..1ee5d96a46a1 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
-> @@ -3,7 +3,7 @@
->   #include <dt-bindings/gpio/gpio.h>
->   #include <dt-bindings/leds/common.h>
->   #include <dt-bindings/soc/rockchip,vop2.h>
-> -#include "rk3566.dtsi"
-> +#include "rk3566t.dtsi"
+Another difference is the Orange Pi 5 has a M.2 NVMe M-key PCI 2.0x1
+slot (hooked to combphy0_ps) whereas the Orange Pi 5b uses combphy0_ps
+for the WiFi.
+I mention this because the vendor kernel defines each boards pcie2 differen=
+tly
+https://github.com/orangepi-xunlong/linux-orangepi/blob/orange-pi-6.1-rk35x=
+x/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts#L441
+https://github.com/orangepi-xunlong/linux-orangepi/blob/orange-pi-6.1-rk35x=
+x/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts#L373
 
-could you drop this change for now?
+The Orange Pi 5 with the M.2 socket has a regulator defined hooked to
+"GPIO0_C5" (i.e. PCIE_PWREN_H) whereas the Orange Pi 5B has GPIO0_C5
+hooked to BT_WAKE_HOST.
 
-We(Radxa) think we use RK3566.
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> @@ -1,766 +1,10 @@
+> -// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
+> -
 
-and vendor kernel[6] refers efuse value to determine it's -T or not.
-can you do similar way?
+> -       vcc3v3_pcie20: vcc3v3-pcie20-regulator {
+> -               compatible =3D "regulator-fixed";
+> -               enable-active-high;
+> -               gpios =3D <&gpio0 RK_PC5 GPIO_ACTIVE_HIGH>;
+> -               regulator-name =3D "vcc3v3_pcie20";
+> -               regulator-boot-on;
+> -               regulator-min-microvolt =3D <1800000>;
+> -               regulator-max-microvolt =3D <1800000>;
+> -               startup-delay-us =3D <50000>;
+> -               vin-supply =3D <&vcc5v0_sys>;
+> -       };
+As mentioned at the top, you may want to only define this in the
+Orange Pi 5 board, and leave it out of the Orange Pi 5B board.
 
->   / {
->   	chosen {
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts b/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
-> index f2cc086e5001..9a8f4f774dbc 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
-> @@ -5,7 +5,7 @@
->   #include <dt-bindings/leds/common.h>
->   #include <dt-bindings/pinctrl/rockchip.h>
->   #include <dt-bindings/soc/rockchip,vop2.h>
-> -#include "rk3566.dtsi"
-> +#include "rk3566t.dtsi"
+> -&pcie2x1l2 {
+> -       reset-gpios =3D <&gpio3 RK_PD1 GPIO_ACTIVE_HIGH>;
+> -       vpcie3v3-supply =3D <&vcc3v3_pcie20>;
+> -       status =3D "okay";
+> -};
+Then this can be defined differently between the Orange Pi 5 vs Orange Pi 5=
+b.
 
-same here.
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts b/arch/a=
+rm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+> similarity index 99%
+> copy from arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> copy to arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+> index feea6b20a6bf..739c4d9f58e0 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dts
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5.dtsi
+> @@ -10,9 +10,6 @@
+>  #include "rk3588s.dtsi"
+>
+>  / {
+> -       model =3D "Xunlong Orange Pi 5";
+> -       compatible =3D "xunlong,orangepi-5", "rockchip,rk3588s";
+> -
+>         aliases {
+>                 ethernet0 =3D &gmac1;
+>                 mmc0 =3D &sdmmc;
+Since the sdhci is enabled for the Orange Pi 5b, it'd be nice to add
+an alias for it.
 
-Best regards,
+Heiko, can we change the sdmmc alias to be mmc1, and let the sdhci be
+mmc0? That way it's consistent with all the other rk3588 DTS? A change
+like this could break existing users if they coded using /dev/mmc0
+device file.
 
---
-FUKAUMI Naoki
-Radxa Computer (Shenzhen) Co., Ltd.
+Seems like it's only the NanoPi and Orange Pi 5 rk3588 that use a
+different convention. The Orange Pi 5 Plus is consistent with the
+other rk3588 device trees.
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arc=
+h/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts?h=3Dv6.11#n20
 
->   / {
->   	model = "Radxa ROCK 3C";
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566t.dtsi b/arch/arm64/boot/dts/rockchip/rk3566t.dtsi
+This is the new default that rockchip wants to use.
+https://github.com/orangepi-xunlong/linux-orangepi/commit/bce92d16b230b8e93=
+c2831fb7768839fd7bbab04
+
+Orange Pi flipped it in their 5.10 kernel.
+https://github.com/orangepi-xunlong/linux-orangepi/commit/7e6c3163aa7e58b19=
+730aa2aa259f1bb957cbca0#diff-0c7ddd2f22091009f8e7a4970aa293bfae425f25d0fe2c=
+19418b886ec9eab3fa
+
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts b/arch/=
+arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts
 > new file mode 100644
-> index 000000000000..cd89bd3b125b
+> index 000000000000..049227af0252
 > --- /dev/null
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566t.dtsi
-> @@ -0,0 +1,90 @@
+> +++ b/arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dts
+> @@ -0,0 +1,18 @@
 > +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
 > +
-> +#include "rk3566-base.dtsi"
+> +/dts-v1/;
+> +
+> +#include "rk3588s-orangepi-5.dtsi"
 > +
 > +/ {
-> +	cpu0_opp_table: opp-table-0 {
-> +		compatible = "operating-points-v2";
-> +		opp-shared;
-> +
-> +		opp-408000000 {
-> +			opp-hz = /bits/ 64 <408000000>;
-> +			opp-microvolt = <850000 850000 1150000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +
-> +		opp-600000000 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <850000 850000 1150000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +
-> +		opp-816000000 {
-> +			opp-hz = /bits/ 64 <816000000>;
-> +			opp-microvolt = <850000 850000 1150000>;
-> +			clock-latency-ns = <40000>;
-> +			opp-suspend;
-> +		};
-> +
-> +		opp-1104000000 {
-> +			opp-hz = /bits/ 64 <1104000000>;
-> +			opp-microvolt = <900000 900000 1150000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +
-> +		opp-1416000000 {
-> +			opp-hz = /bits/ 64 <1416000000>;
-> +			opp-microvolt = <1025000 1025000 1150000>;
-> +			clock-latency-ns = <40000>;
-> +		};
-> +	};
-> +
-> +	gpu_opp_table: opp-table-1 {
-> +		compatible = "operating-points-v2";
-> +
-> +		opp-200000000 {
-> +			opp-hz = /bits/ 64 <200000000>;
-> +			opp-microvolt = <850000 850000 1000000>;
-> +		};
-> +
-> +		opp-300000000 {
-> +			opp-hz = /bits/ 64 <300000000>;
-> +			opp-microvolt = <850000 850000 1000000>;
-> +		};
-> +
-> +		opp-400000000 {
-> +			opp-hz = /bits/ 64 <400000000>;
-> +			opp-microvolt = <850000 850000 1000000>;
-> +		};
-> +
-> +		opp-600000000 {
-> +			opp-hz = /bits/ 64 <600000000>;
-> +			opp-microvolt = <900000 900000 1000000>;
-> +		};
-> +
-> +		opp-700000000 {
-> +			opp-hz = /bits/ 64 <700000000>;
-> +			opp-microvolt = <950000 950000 1000000>;
-> +		};
-> +	};
+> +       model =3D "Xunlong Orange Pi 5B";
+> +       compatible =3D "rockchip,rk3588s-orangepi-5b", "rockchip,rk3588";
+The second part of the compatible should be "rockchip,rk3588s" to
+match the binding.
 > +};
 > +
-> +&cpu0 {
-> +	operating-points-v2 = <&cpu0_opp_table>;
+> +&sdhci {
+> +       status =3D "okay";
 > +};
+The mainline dtsi does not have the sdhci node elaborated on for the
+Orange Pi 5 like the vendor kernel does. Do you want to add it to the
+common dtsi?
+https://github.com/orangepi-xunlong/linux-orangepi/blob/orange-pi-6.1-rk35x=
+x/arch/arm64/boot/dts/rockchip/rk3588s-orangepi.dtsi#L461-L470
+The Orange Pi 5 Plus has a similar sdhci node definition in mainline at
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/arc=
+h/arm64/boot/dts/rockchip/rk3588-orangepi-5-plus.dts?h=3Dv6.11#n433
 > +
-> +&cpu1 {
-> +	operating-points-v2 = <&cpu0_opp_table>;
+> +&sfc {
+> +       status =3D "disabled";
 > +};
-> +
-> +&cpu2 {
-> +	operating-points-v2 = <&cpu0_opp_table>;
-> +};
-> +
-> +&cpu3 {
-> +	operating-points-v2 = <&cpu0_opp_table>;
-> +};
-> +
-> +&gpu {
-> +	operating-points-v2 = <&gpu_opp_table>;
-> +};
+Since the sfc is a difference between board variants, would it be a
+better practice to mark the node disabled in the common dtsi, and mark
+it enabled only in the 5.dts?
+
+> \ No newline at end of file
+> --
+> 2.46.0
+>
 
