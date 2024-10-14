@@ -1,336 +1,201 @@
-Return-Path: <linux-kernel+bounces-364342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3EBB99D300
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:32:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B904899D2F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:32:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5F07C28985A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:32:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EC7128462C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 775FD1D0784;
-	Mon, 14 Oct 2024 15:29:09 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF8E01B86CC;
+	Mon, 14 Oct 2024 15:28:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="teMRFsJT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EC11D0490;
-	Mon, 14 Oct 2024 15:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0347C1AC8A2;
+	Mon, 14 Oct 2024 15:28:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728919748; cv=none; b=EfWM/OTl4Yu4pHfwTYMcevkJ1kqy+VxIlOki2vX0UNoPkKscWXMqaI/wwDc5wRopK5URaDzbl1Cg63/TT7LFXvQnLK1fimK0/9AsZXLpA4B3RZKjvonTUOj9S/qXG8uSE8VN1gcNS/bD92VcUwh4mxkszxk29sdJ+Ae/MiEpse8=
+	t=1728919737; cv=none; b=QqtUWt5Yf7xmTFz/w/saZ18TYm/keYGR8wShCpdF6E2s6zMZVaqEGseTiYP2DYmnDvF7JUqRxXpSf6woVoKWnVePDaCQ+NV2Z3bCv1lZHvDGb3EJz+YqYQKiO9B/OUui/dtmnGP6IMLmc6MeEgFSRZyUdRqhI+dU/fWovkFENb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728919748; c=relaxed/simple;
-	bh=UGy2SwRvnSWU52bBfkJxu3GqglzWihxSmimXlWUaqnY=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=oAeCiTQ2PtvYbyZeMnNHiqhrp/u23xP5OEdV2MQHyx9dDbhAMQHFuUo3QbKfnPsZmNGGHS9KU1zVLyE24TIV0wEQKZdSK3W1Qdi0JBx4cDC5SYz4ozz0j15JGG4coZazEqOvjH19JfYr1FtBIqo8JY7djw6n5LSD7ZSlnyfSih4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS1Lh1Zr4z6G9YN;
-	Mon, 14 Oct 2024 23:27:24 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 1145A140A77;
-	Mon, 14 Oct 2024 23:28:59 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 17:28:57 +0200
-Date: Mon, 14 Oct 2024 16:28:56 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 10/18] cxl/memfeature: Add CXL memory device patrol
- scrub control feature
-Message-ID: <20241014162856.00007752@Huawei.com>
-In-Reply-To: <20241009124120.1124-11-shiju.jose@huawei.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-11-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1728919737; c=relaxed/simple;
+	bh=pQZv6GZ+jQ1th/w/KrcOev97rk6hwUPITrzUVoXvwvM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V+SXGigI0MmFYPxT6s/MCQJ7x4RqgdzatkeY1n58JgeTmib9z2fepuQfF6zG9SPWnF0fFQZUpmCB4Jj4eHLOlbrdMSAk1YChZMCkYEz1GiHARssnInZNy+Y1BQVrSSHiARFPjdzTYWLTLux2H+g3KlHR3E7wrG9gh6XDGTeDBXg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=teMRFsJT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 858DDC4CEC3;
+	Mon, 14 Oct 2024 15:28:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728919736;
+	bh=pQZv6GZ+jQ1th/w/KrcOev97rk6hwUPITrzUVoXvwvM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=teMRFsJTS0YLTnJma9yhxigXNdbY9FiEKuX3I1a00OaDLUOXlo4cf9CV+1Vrh9eQO
+	 nFUa1QW4AJgbjdnd9cIonLfwZVN6gdADzBFV0uJ7Nho73yXhgYduP11zNZP4LC/CUA
+	 iSPlCwbYMOXxtC1xWpxlgDkZBTUT9qo+IBn4wiY1m7aJn1DODllhLI5yJ6u7pps9x1
+	 53M2xc93NuM2zElEpxz/sDizygilYNEWLHHMtGehRKN4LWnZ0eqZNXYuHCDre2xm9m
+	 CoOqBc/MM49pSy0TJh/7c0SM2QqQKpwe6pl6wfS7LZXhYrSgHImRArhK3reGkhIyfp
+	 NQRLgObjdt0iw==
+Date: Mon, 14 Oct 2024 08:28:56 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+Cc: linux-xfs@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+	linux-kernel@vger.kernel.org, dchinner@redhat.com,
+	Chandan Babu R <chandan.babu@oracle.com>,
+	Christoph Hellwig <hch@lst.de>
+Subject: Re: [PATCH v3] xfs: Check for delayed allocations before setting
+ extsize
+Message-ID: <20241014152856.GG21853@frogsfrogsfrogs>
+References: <20241011145427.266614-1-ojaswin@linux.ibm.com>
+ <20241011163830.GX21853@frogsfrogsfrogs>
+ <20241011164057.GY21853@frogsfrogsfrogs>
+ <ZwzlPR6044V/Siph@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZwzlPR6044V/Siph@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
 
-On Wed, 9 Oct 2024 13:41:11 +0100
-<shiju.jose@huawei.com> wrote:
-
-> From: Shiju Jose <shiju.jose@huawei.com>
+On Mon, Oct 14, 2024 at 03:02:45PM +0530, Ojaswin Mujoo wrote:
+> On Fri, Oct 11, 2024 at 09:40:57AM -0700, Darrick J. Wong wrote:
+> > On Fri, Oct 11, 2024 at 09:38:30AM -0700, Darrick J. Wong wrote:
+> > > On Fri, Oct 11, 2024 at 08:24:27PM +0530, Ojaswin Mujoo wrote:
+> > > > Extsize is allowed to be set on files with no data in it. For this,
+> > > > we were checking if the files have extents but missed to check if
+> > > > delayed extents were present. This patch adds that check.
+> > > > 
+> > > > While we are at it, also refactor this check into a helper since
+> > > > its used in some other places as well like xfs_inactive() or
+> > > > xfs_ioctl_setattr_xflags()
+> > > > 
+> > > > **Without the patch (SUCCEEDS)**
+> > > > 
+> > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > > 
+> > > > wrote 1024/1024 bytes at offset 0
+> > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > > 
+> > > > **With the patch (FAILS as expected)**
+> > > > 
+> > > > $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
+> > > > 
+> > > > wrote 1024/1024 bytes at offset 0
+> > > > 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
+> > > > xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
+> > > > 
+> > > > Reviewed-by: Christoph Hellwig <hch@lst.de>
+> > > > Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+> > > 
+> > > Looks good now,
+> > > Reviewed-by: Darrick J. Wong <djwong@kernel.org>
+> > 
+> > That said, could you add a fixes tag for the xfs_ioctl_setattr_*
+> > changes, please?
 > 
-> CXL spec 3.1 section 8.2.9.9.11.1 describes the device patrol scrub control
-> feature. The device patrol scrub proactively locates and makes corrections
-> to errors in regular cycle.
+> Actually a small doubt Darrick regarding the Fixes commit (asked inline
+> below):
 > 
-> Allow specifying the number of hours within which the patrol scrub must be
-> completed, subject to minimum and maximum limits reported by the device.
-> Also allow disabling scrub allowing trade-off error rates against
-> performance.
+> > 
+> > --D
+> > 
+> > > --D
+> > > 
+> > > > ---
+> > > >  fs/xfs/xfs_inode.c | 2 +-
+> > > >  fs/xfs/xfs_inode.h | 5 +++++
+> > > >  fs/xfs/xfs_ioctl.c | 4 ++--
+> > > >  3 files changed, 8 insertions(+), 3 deletions(-)
+> > > > 
+> > > > diff --git a/fs/xfs/xfs_inode.c b/fs/xfs/xfs_inode.c
+> > > > index bcc277fc0a83..19dcb569a3e7 100644
+> > > > --- a/fs/xfs/xfs_inode.c
+> > > > +++ b/fs/xfs/xfs_inode.c
+> > > > @@ -1409,7 +1409,7 @@ xfs_inactive(
+> > > >  
+> > > >  	if (S_ISREG(VFS_I(ip)->i_mode) &&
+> > > >  	    (ip->i_disk_size != 0 || XFS_ISIZE(ip) != 0 ||
+> > > > -	     ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0))
+> > > > +	     xfs_inode_has_filedata(ip)))
+> > > >  		truncate = 1;
+> > > >  
+> > > >  	if (xfs_iflags_test(ip, XFS_IQUOTAUNCHECKED)) {
+> > > > diff --git a/fs/xfs/xfs_inode.h b/fs/xfs/xfs_inode.h
+> > > > index 97ed912306fd..03944b6c5fba 100644
+> > > > --- a/fs/xfs/xfs_inode.h
+> > > > +++ b/fs/xfs/xfs_inode.h
+> > > > @@ -292,6 +292,11 @@ static inline bool xfs_is_cow_inode(struct xfs_inode *ip)
+> > > >  	return xfs_is_reflink_inode(ip) || xfs_is_always_cow_inode(ip);
+> > > >  }
+> > > >  
+> > > > +static inline bool xfs_inode_has_filedata(const struct xfs_inode *ip)
+> > > > +{
+> > > > +	return ip->i_df.if_nextents > 0 || ip->i_delayed_blks > 0;
+> > > > +}
+> > > > +
+> > > >  /*
+> > > >   * Check if an inode has any data in the COW fork.  This might be often false
+> > > >   * even for inodes with the reflink flag when there is no pending COW operation.
+> > > > diff --git a/fs/xfs/xfs_ioctl.c b/fs/xfs/xfs_ioctl.c
+> > > > index a20d426ef021..2567fd2a0994 100644
+> > > > --- a/fs/xfs/xfs_ioctl.c
+> > > > +++ b/fs/xfs/xfs_ioctl.c
+> > > > @@ -481,7 +481,7 @@ xfs_ioctl_setattr_xflags(
+> > > >  
+> > > >  	if (rtflag != XFS_IS_REALTIME_INODE(ip)) {
+> > > >  		/* Can't change realtime flag if any extents are allocated. */
+> > > > -		if (ip->i_df.if_nextents || ip->i_delayed_blks)
+> > > > +		if (xfs_inode_has_filedata(ip))
+> > > >  			return -EINVAL;
+> > > >  
+> > > >  		/*
+> > > > @@ -602,7 +602,7 @@ xfs_ioctl_setattr_check_extsize(
+> > > >  	if (!fa->fsx_valid)
+> > > >  		return 0;
+> > > >  
+> > > > -	if (S_ISREG(VFS_I(ip)->i_mode) && ip->i_df.if_nextents &&
+> > > > +	if (S_ISREG(VFS_I(ip)->i_mode) && xfs_inode_has_filedata(ip) &&
 > 
-> Add support for CXL memory device based patrol scrub control.
-> Register with EDAC device driver , which gets the scrub attr descriptors
-> from EDAC scrub and exposes sysfs scrub control attributes to the
-> userspace. For example CXL device based scrub control for the CXL mem0
-> device is exposed in /sys/bus/edac/devices/cxl_mem0/scrubX/
+> So seems like there have been lots of changes to this particular line
+> mostly as a part of refactoring other areas but seems like the actual
+> commit that introduced it was:
 > 
-> Also add support for region based CXL memory patrol scrub control.
-> CXL memory region may be interleaved across one or more CXL memory devices.
-> For example region based scrub control for CXL region1 is exposed in
-> /sys/bus/edac/devices/cxl_region1/scrubX/
+>   commit e94af02a9cd7b6590bec81df9d6ab857d6cf322f
+>   Author: Eric Sandeen <sandeen@sgi.com>
+>   Date:   Wed Nov 2 15:10:41 2005 +1100
+>   
+>       [XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not
+>       using xfs rt
 > 
-> Open Questions:
-> Q1: CXL 3.1 spec defined patrol scrub control feature at CXL memory devices
-> with supporting set scrub cycle and enable/disable scrub. but not based on
-> HPA range. Thus presently scrub control for a region is implemented based
-> on all associated CXL memory devices.
-
-That is exactly what I'd expect.
-
-> What is the exact use case for the CXL region based scrub control?
-> How the HPA range, which Dan asked for region based scrubbing is used?
-> Does spec change is required for patrol scrub control feature with support
-> for setting the HPA range?
-
-Can't discuss future spec here :(  + we should support current specification
-even if it is changing (can't say if it is!)
-
-This came up at LPC briefly. The HPA range is only useful as a userspace
-short cut to find the right control.  So not necessary initially for
-the reason you state - we can't control it.
-
-Whilst we may scrub by region, it's just a way to control scrubbing of
-a set of interleaved devices.  So what you have here is fine as it
-stands.
-
+> Before this we were actually checking ip->i_delayed_blks correctly. So just wanted 
+> to confirm that the fixes would have the above commit right?
 > 
-> Q2: Both CXL device based and CXL region based scrub control would be
-> enabled at the same time in a system?
-
-Typically no, but we should make the interface do something consistent.
-
-1) Go with highest scrub frequency requested via either path.
-2) Go with latest scrub frequency to be requested.
-
-Given it is a corner case I don't think we care which.
-
-The device based scrub is appropriate for 'pre use' scrub control
-to find out if we have dodgy hardware.
-Region scrub is the logical thing to do once it is in use. In some
-cases the region will include the whole of all devices in an interleave
-set.
-
-So I don't see either of these questions as a blocker on current
-implementation.
-
+> If this looks okay I'll send a revision with this above tags:
 > 
-> Co-developed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-> Signed-off-by: Shiju Jose <shiju.jose@huawei.com>
-A few trivial things inline.
+> Fixes: e94af02a9cd7 ("[XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not using xfs rt")
 
-> ---
->  Documentation/edac/edac-scrub.rst |  74 ++++++
->  drivers/cxl/Kconfig               |  18 ++
->  drivers/cxl/core/Makefile         |   1 +
->  drivers/cxl/core/memfeature.c     | 383 ++++++++++++++++++++++++++++++
->  drivers/cxl/core/region.c         |   6 +
->  drivers/cxl/cxlmem.h              |   7 +
->  drivers/cxl/mem.c                 |   4 +
->  7 files changed, 493 insertions(+)
->  create mode 100644 Documentation/edac/edac-scrub.rst
->  create mode 100644 drivers/cxl/core/memfeature.c
+Yeah, that sounds fine.  Want to write a quick fstest to bang on
+xfs_ioctl_setattr_check_extsize to force everyone to backport it? :)
+
+--D
+
+> Thanks,
+> Ojaswin
 > 
-> diff --git a/Documentation/edac/edac-scrub.rst b/Documentation/edac/edac-scrub.rst
-> new file mode 100644
-> index 000000000000..243035957e99
-> --- /dev/null
-> +++ b/Documentation/edac/edac-scrub.rst
-> @@ -0,0 +1,74 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +===================
-> +EDAC Scrub control
-> +===================
-> +
-> +Copyright (c) 2024 HiSilicon Limited.
-> +
-> +:Author:   Shiju Jose <shiju.jose@huawei.com>
-> +:License:  The GNU Free Documentation License, Version 1.2
-> +          (dual licensed under the GPL v2)
-> +:Original Reviewers:
-> +
-> +- Written for: 6.12
-
-Update to 6.13
-
-> +- Updated for:
-
-> diff --git a/drivers/cxl/Kconfig b/drivers/cxl/Kconfig
-> index 99b5c25be079..b717a152d2a5 100644
-> --- a/drivers/cxl/Kconfig
-> +++ b/drivers/cxl/Kconfig
-> @@ -145,4 +145,22 @@ config CXL_REGION_INVALIDATION_TEST
->  	  If unsure, or if this kernel is meant for production environments,
->  	  say N.
->  
-> +config CXL_RAS_FEAT
-> +	tristate "CXL: Memory RAS features"
-> +	depends on CXL_PCI
-> +	depends on CXL_MEM
-> +	depends on EDAC
-> +	help
-> +	  The CXL memory RAS feature control is optional allows host to control
-> +	  the RAS features configurations of CXL Type 3 devices.
-> +
-> +	  Registers with the EDAC device subsystem to expose control attributes
-> +	  of CXL memory device's RAS features to the user.
-> +	  Provides interface functions to support configuring the CXL memory
-> +	  device's RAS features.
-> +
-> +	  Say 'y/n' to enable/disable CXL.mem device'ss RAS features control.
-
-'s or s' but not 'ss
-(singular or plural forms)
-
-> +	  See section 8.2.9.9.11 of CXL 3.1 specification for the detailed
-> +	  information of CXL memory device features.
-> +
->  endif
-
-> diff --git a/drivers/cxl/core/memfeature.c b/drivers/cxl/core/memfeature.c
-> new file mode 100644
-> index 000000000000..84d6e887a4fa
-> --- /dev/null
-> +++ b/drivers/cxl/core/memfeature.c
-> @@ -0,0 +1,383 @@
-> +// SPDX-License-Identifier: GPL-2.0-or-later
-> +/*
-> + * CXL memory RAS feature driver.
-> + *
-> + * Copyright (c) 2024 HiSilicon Limited.
-> + *
-> + *  - Supports functions to configure RAS features of the
-> + *    CXL memory devices.
-> + *  - Registers with the EDAC device subsystem driver to expose
-> + *    the features sysfs attributes to the user for configuring
-> + *    CXL memory RAS feature.
-> + */
-> +
-> +#define pr_fmt(fmt)	"CXL MEM FEAT: " fmt
-> +
-> +#include <cxlmem.h>
-> +#include <linux/cleanup.h>
-> +#include <linux/limits.h>
-> +#include <cxl.h>
-
-Reorder includes to put the cxl ones at the end and others
-in alphabetical order.
-
-> +#include <linux/edac.h>
->
-> +static int cxl_ps_get_attrs(struct device *dev, void *drv_data,
-> +			    struct cxl_memdev_ps_params *params)
-> +{
-> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
-> +	struct cxl_memdev *cxlmd;
-> +	struct cxl_dev_state *cxlds;
-> +	struct cxl_memdev_state *mds;
-> +	u16 min_scrub_cycle = 0;
-> +	int i, ret;
-> +
-> +	if (cxl_ps_ctx->cxlr) {
-> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
-> +		struct cxl_region_params *p = &cxlr->params;
-> +
-> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
-> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
-> +
-> +			cxlmd = cxled_to_memdev(cxled);
-> +			cxlds = cxlmd->cxlds;
-> +			mds = to_cxl_memdev_state(cxlds);
-> +			ret = cxl_mem_ps_get_attrs(mds, params);
-> +			if (ret)
-> +				return ret;
-> +
-> +			if (params->min_scrub_cycle_hrs > min_scrub_cycle)
-> +				min_scrub_cycle = params->min_scrub_cycle_hrs;
-> +		}
-> +		params->min_scrub_cycle_hrs = min_scrub_cycle;
-> +		return 0;
-> +	}
-> +	cxlmd = cxl_ps_ctx->cxlmd;
-> +	cxlds = cxlmd->cxlds;
-> +	mds = to_cxl_memdev_state(cxlds);
-> +
-See below - this is the similar example I refer to.
-
-> +	return cxl_mem_ps_get_attrs(mds, params);
-> +}
-
-> +
-> +static int cxl_ps_set_attrs(struct device *dev, void *drv_data,
-> +			    struct cxl_memdev_ps_params *params,
-> +			    enum cxl_scrub_param param_type)
-> +{
-> +	struct cxl_patrol_scrub_context *cxl_ps_ctx = drv_data;
-> +	struct cxl_memdev *cxlmd;
-> +	struct cxl_dev_state *cxlds;
-> +	struct cxl_memdev_state *mds;
-> +	int ret, i;
-> +
-> +	if (cxl_ps_ctx->cxlr) {
-> +		struct cxl_region *cxlr = cxl_ps_ctx->cxlr;
-> +		struct cxl_region_params *p = &cxlr->params;
-> +
-> +		for (i = p->interleave_ways - 1; i >= 0; i--) {
-> +			struct cxl_endpoint_decoder *cxled = p->targets[i];
-> +
-> +			cxlmd = cxled_to_memdev(cxled);
-> +			cxlds = cxlmd->cxlds;
-> +			mds = to_cxl_memdev_state(cxlds);
-> +			ret = cxl_mem_ps_set_attrs(dev, drv_data, mds,
-> +						   params, param_type);
-> +			if (ret)
-> +				return ret;
-> +		}
-
-Maybe return here?
-
-> +	} else {
-> +		cxlmd = cxl_ps_ctx->cxlmd;
-> +		cxlds = cxlmd->cxlds;
-> +		mds = to_cxl_memdev_state(cxlds);
-> +
-> +		return cxl_mem_ps_set_attrs(dev, drv_data, mds, params, param_type);
-
-Then indent of this hunk can drop. Similar to the case above.
-
-> +	}
-> +
-> +	return 0;
-> +}
-
+> > > >  	    XFS_FSB_TO_B(mp, ip->i_extsize) != fa->fsx_extsize)
+> > > >  		return -EINVAL;
+> > > >  
+> > > > -- 
+> > > > 2.43.5
+> > > > 
+> > > > 
+> > > 
+> 
 
