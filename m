@@ -1,96 +1,131 @@
-Return-Path: <linux-kernel+bounces-364106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5580D99CB34
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:12:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1313799CB4E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:15:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0E8E1F22743
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:12:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 95691B23AB5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:15:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB68E1ADFE9;
-	Mon, 14 Oct 2024 13:10:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA50B17625C;
+	Mon, 14 Oct 2024 13:13:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W/N1SIdC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="Lx35A2N4"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FBE51AD9F8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A01381AE003
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911448; cv=none; b=XmEKjsWtwqsx4x2KKbGXtAHjZi7rMDBRG4AY7XMvbXhX+sn8y9kiwLxlD5+boLL/xYogU2tkCcBGrrgAJvAKOWdVIITD0O6QkEHX6uTe1vUSLaQ/ORM2eqBEph+eCVtxBKfgV5nC53CDTf0SQza5G4wWvDijeRnznebdKR/g5I4=
+	t=1728911587; cv=none; b=CvEriHy/zHTZTkzMuvtzCfK7N1BOg3zgu9IBR+p7354W1/NfmlNAElEfF663nc2vDO7Y/ccVfMfPfEbrMyYBsJxSC7OLvgdRzpUZvsE5O2pCYbs3611UpqHoCXHaqWsz/g0HWmfTSHXdpQhKLelPkIOB7GbRAPnW3tqh/MymoVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911448; c=relaxed/simple;
-	bh=YlnMitl1nLOteyh8gA+2LBlWbZHa6L6A0MLvuZ7ayak=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PlzDtrjKbXEmDxwzRmPNLmntNwu4WnAqp7wgTCPy1SawPD+ADAIVdhtY1lKKtVRirOupG69Awex22T1hZGqrd++APnaBWFdSN9Ez0pT6LObz6whBYe6+oIZ6U0bxJs1Hk1ZVonMkEWuZylpXxpCcgOggW9/a1FoMdDawLmNwZe8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W/N1SIdC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7ECABC4CEC6;
-	Mon, 14 Oct 2024 13:10:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728911447;
-	bh=YlnMitl1nLOteyh8gA+2LBlWbZHa6L6A0MLvuZ7ayak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W/N1SIdCG1aBBJJORv5NeHppZz0CcrlCsVaqL5XsMwJANKnLFSeaDYGJ28SVevTtA
-	 wmKbAXRv5Almy7vC5SHjDBZdkkuIkqCds7XUaM1ThVIAG28grmZWopCIPlyJZ1tIHn
-	 98oMgDpG3uPPMlDcuMf1NPMmPgGHkBCDoBEz5ABEzvkwhXzDqndK+aeT0Bc3HmgaJ7
-	 YcfkwnBl3mpkIHkOoHWgYCJnuC1CEU+Jmae/cVLN497GcfhnYmGV1j5Z8j94VckNHi
-	 5jNv6/yR/V9vb2l5fIobcC2d7EhHnD7q5TKQOCnoqxvmy1N1ZJRB4rw0CJm0iHIjXD
-	 OlQ5X7OZCT2NQ==
-Date: Mon, 14 Oct 2024 14:10:43 +0100
-From: Will Deacon <will@kernel.org>
-To: Ryo Takakura <ryotkkr98@gmail.com>
-Cc: catalin.marinas@arm.com, broonie@kernel.org, mark.rutland@arm.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: Remove the check for CONFIG_TINY_RCU
-Message-ID: <20241014131042.GA17353@willie-the-truck>
-References: <20240914090040.166671-1-ryotkkr98@gmail.com>
+	s=arc-20240116; t=1728911587; c=relaxed/simple;
+	bh=cBmS4a05aaR7mbhMwQWco/X9t659MyL7blbdEaWcl0s=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=ErJf2CO90PKG2tFLncSUjpF5CxycwbHTSN69HcwI5siU3sMUjTtvGplC4L+AEGwqje9zQRd3WBg82wMgerMxMd2VK8R2+ymCrt4DO/y5JjPIshSM0GJP0K4nT4AoiqEdaMOcslYjMJtAX6gQcs0ifxjKUk2Z9pSgzsLAnIKynJM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=Lx35A2N4; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-430ee5c9570so50003355e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:13:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=9elements.com; s=google; t=1728911584; x=1729516384; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aQ3fiwac6368tQvYZ51DF5qc0QaxNfwumSk8n6WYLF4=;
+        b=Lx35A2N4vxj7OYWfIIAkoF+xhkj9bAU2IO+3j78890L17Esrp71Mwb+AAh9u+WrqX6
+         gU5zeMao/GInt/yAVNmmjun6KRd+evEA90cnTD9B/0/08Ai69JrDwumKvzwgJsyLZTID
+         jC1joJYNs4HEefC2LeACKUhW2s7wmqmvTSmA98qcbhsEYgmHqP00ZJZvNglwyfqZ1MtY
+         u3EICXy7TbWZKszgsr4ihPTVa6pSrhJrjyJFZ2DW3D133Vg5nWhK6DcttZM2F69O6/ZZ
+         a33RL9ltcW0Izm5N2f5XwwTElaNiK2v1xXsami6ouT7m3wM1XaEWonnxZ06GNEZLN5jm
+         f2vw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728911584; x=1729516384;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=aQ3fiwac6368tQvYZ51DF5qc0QaxNfwumSk8n6WYLF4=;
+        b=h0Njr8HFnVLqJtcUp16hQDPg5rPeoooN5RJdg5bJe5v6c13F5OcHExuhdhS+VtmRtW
+         DdlsPMsogJaP6k9oQbLIpxGkC+6Qh+hH/a+aSPddfEtCdNyrfDq8loNU/wED0GB4rTGc
+         9vqrOEnRn/bhBktGhZ1lxCuqosCj7/Zj2RkgflPu0yi5HP8IwST6zIRE7KKM4k2Gyl1M
+         GVQ8uUfbdaMUuCtH5iXprQUFWY/3V79YUY+gw9dVvqeXDFqwPh6G3mX9hGb6lX8fHHJo
+         OR5gkkWDWFpSbWgiQDbAtKhqCMdRrAnGMpwvWNy6W+lqErGOXU5Nx/ySITHPd951IKv4
+         xYOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWn86gOs4pDquHRHbifcygYX/8F6r5Y7S9t6Z6jCSY0lAERUJuBJ1k8ZxEm2JwbtE3kI9a+LNLiXwKObrA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxmM5ygD+YJ6Z/79ma8JK1jKW7VZ0Vd0Mjt+UC2DfRWiuluTKpY
+	4lq9gBR3HktlbpQjR4Oh9YFiZd6RSGy53/4Qjr/GXxtX4aqrDQpg5O8uV3HOZCc=
+X-Google-Smtp-Source: AGHT+IH2GWLzAQw/te43dYy0dVJiY21oZeXtwmtdL2hpOlzksZL6MD4EorkNDlnjyP7fdTbxMbpEeA==
+X-Received: by 2002:a05:6000:11ce:b0:37d:3e6d:6a00 with SMTP id ffacd0b85a97d-37d600d329cmr7828611f8f.47.1728911584053;
+        Mon, 14 Oct 2024 06:13:04 -0700 (PDT)
+Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d605c197bsm7103718f8f.38.2024.10.14.06.13.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:13:03 -0700 (PDT)
+From: Patrick Rudolph <patrick.rudolph@9elements.com>
+To: u-boot@lists.denx.de,
+	linux-kernel@vger.kernel.org
+Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
+	Simon Glass <sjg@chromium.org>,
+	Tom Rini <trini@konsulko.com>
+Subject: [PATCH v8 31/37] armv8: cpu: Enable ACPI parking protocol
+Date: Mon, 14 Oct 2024 15:10:47 +0200
+Message-ID: <20241014131152.267405-32-patrick.rudolph@9elements.com>
+X-Mailer: git-send-email 2.46.2
+In-Reply-To: <20241014131152.267405-1-patrick.rudolph@9elements.com>
+References: <20241014131152.267405-1-patrick.rudolph@9elements.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240914090040.166671-1-ryotkkr98@gmail.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+Content-Transfer-Encoding: 8bit
 
-On Sat, Sep 14, 2024 at 06:00:40PM +0900, Ryo Takakura wrote:
-> Since the commit 4b3dc9679cf77 ("arm64: force CONFIG_SMP=y and remove
-> redundant #ifdefs"), arm64 defaults to CONFIG_SMP but TINY_RCU is cofigured
-> only for !SMP systems.
-> 
-> Remove the check for CONFIG_TINY_RCU as it should always be false.
-> 
-> Signed-off-by: Ryo Takakura <ryotkkr98@gmail.com>
-> ---
->  arch/arm64/kernel/entry-common.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/kernel/entry-common.c b/arch/arm64/kernel/entry-common.c
-> index b77a15955f28..a9765364fc67 100644
-> --- a/arch/arm64/kernel/entry-common.c
-> +++ b/arch/arm64/kernel/entry-common.c
-> @@ -40,7 +40,7 @@ static __always_inline void __enter_from_kernel_mode(struct pt_regs *regs)
->  {
->  	regs->exit_rcu = false;
->  
-> -	if (!IS_ENABLED(CONFIG_TINY_RCU) && is_idle_task(current)) {
-> +	if (is_idle_task(current)) {
->  		lockdep_hardirqs_off(CALLER_ADDR0);
->  		ct_irq_enter();
->  		trace_hardirqs_off_finish();
+Update the generic entry point code to support the ACPI parking protocol.
+The ACPI parking protocol can be used when PSCI is not available to bring
+up secondary CPU cores.
 
-I think this code was deliberately written to follow kernel/entry/common.c
-as closely as possible, as we should be able to switch over to that at
-some point.
+When enabled secondary CPUs will enter U-Boot proper and spin in their own
+4KiB reserved memory page, which also acts as mailbox with the OS to
+release the CPU.
 
-Come to think of it, Mark, what work is needed before we can move to the
-generic code? Is there anything you need a hand with?
+TEST: Boots all CPUs on qemu-system-aarch64 -machine raspi4b
 
-Will
+Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
+Reviewed-by: Simon Glass <sjg@chromium.org>
+---
+ arch/arm/cpu/armv8/start.S | 12 ++++++++++++
+ 1 file changed, 12 insertions(+)
+
+diff --git a/arch/arm/cpu/armv8/start.S b/arch/arm/cpu/armv8/start.S
+index 7461280261..544a4a5364 100644
+--- a/arch/arm/cpu/armv8/start.S
++++ b/arch/arm/cpu/armv8/start.S
+@@ -178,6 +178,18 @@ pie_fixup_done:
+ 	branch_if_master x0, master_cpu
+ 	b	spin_table_secondary_jump
+ 	/* never return */
++#elif defined(CONFIG_ACPI_PARKING_PROTOCOL) && !defined(CONFIG_SPL_BUILD)
++	branch_if_master x0, master_cpu
++	/*
++	 * Waits for ACPI parking protocol memory to be allocated and the spin-table
++	 * code to be written. Once ready the secondary CPUs will jump and spin in
++	 * their own 4KiB memory region, which is also used as mailbox, until released
++	 * by the OS.
++	 * The mechanism is similar to the DT enable-method = "spin-table", but works
++	 * with ACPI enabled platforms.
++	 */
++	b	acpi_pp_secondary_jump
++	/* never return */
+ #elif defined(CONFIG_ARMV8_MULTIENTRY)
+ 	branch_if_master x0, master_cpu
+ 
+-- 
+2.46.2
+
 
