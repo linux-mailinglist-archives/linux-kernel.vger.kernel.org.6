@@ -1,219 +1,132 @@
-Return-Path: <linux-kernel+bounces-364644-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364645-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47F5B99D759
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:26:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 340C999D75C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:27:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BB231C228D8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:26:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B853AB23667
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:27:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F7FE1CDFC9;
-	Mon, 14 Oct 2024 19:26:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8B3D1CC163;
+	Mon, 14 Oct 2024 19:27:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="HKM7/9zG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vCwNd6IK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33F6E1CCEE4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 19:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F346A7F7FC;
+	Mon, 14 Oct 2024 19:27:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728933973; cv=none; b=syuYgxgk4xmOexb2v0Fzc9XbXJGsPw3e50912+quz8adeVlJPdRtPOcKhOa3MZu+3J+nYTeXd9JB+izUwC6rzwFJgSm3ER7ykL4lZYDu1sNyK5+aBX48MyNjCE/py4eHVFyiZUJwQ9IXPi13HvgmF9rq/4BB5uIwQgwjGLSJtJo=
+	t=1728934030; cv=none; b=ZPMvwoRXJHjTLp98O7jF9cKhpz12MCEvpNkuz2KVVkU1V2mV5rislY+TYoxygyxX9HbHKN5QFuuU/oWiVa1D3wz8/fmcPEx6Br2R2f8QCZutBoeZ8W/oA9WNYP1jxkMxFO2f+b/swzq/neZzbGkqW+K41KWjU5i1JhA4+Gmd/8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728933973; c=relaxed/simple;
-	bh=mzpLzrClCHVleqISh7AUGsmPYpB2iOLEtRLRcBrdom0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ApPjczVek1r1RsVlQ7FYXAeSwbWDhk+nGoxtxDkO8iwwbcARaePYTPOOfRmzYvSVplbiiMwAevfJoijxOt5PnfOGHHg2QozmokSZwfe3CFx2R2ghlbNplny6FwKSmIesr2AbC6Hr25GTmhWittRX9rGIKTrQUFCyJLUw6sDXGsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=HKM7/9zG; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728933971;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DuTddS/X2ZHJjeoQk4qhcSOa+j0yfxlG1Fj2goHGJ/Y=;
-	b=HKM7/9zGRaLsddzsjs47y9mK4+utGe7xyAnmmMVQYdkrj1uWaYPCOrw4kmVhfsqbNh9e9R
-	c4S3u8uH6T+RnEUjKrNLduoe8w5rxH8nOBOK7VfeoTIwUX3RmLDiSdDw2e26SYvz28r48+
-	xlrNtyadKryuotlUZUciVOokloIxp2g=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-686-Cw1rYa-HM0yJkLPlg_B6sg-1; Mon, 14 Oct 2024 15:26:08 -0400
-X-MC-Unique: Cw1rYa-HM0yJkLPlg_B6sg-1
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-37d458087c0so2732425f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:26:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728933967; x=1729538767;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=DuTddS/X2ZHJjeoQk4qhcSOa+j0yfxlG1Fj2goHGJ/Y=;
-        b=DoutCYfMvLo7/Yoj5lYPqqur4VIjdsI7qW4GJp+LtT2mz9bp8uRQk3S7ZqGD50Msmo
-         86iMzhHki1VGHhzYf7QzAOs8ixKhTG3nLsGSu+Et/+x2QX4Hf7a/f8iW13POUWqNH5S2
-         xjBeQ+5UOdTdDiB7rOGvJKnsQgVXectTkZUL42jW6YV73gFmIGZYuEoRXJVubO99dmie
-         Fq0Z0HHMDQ0J3TxqJvpO5olXL7sEORRzf+M4SUi+amg+KRsHb7qI5JVnXr81bIaK4KQ2
-         hbaplwL5z8S0zTqhkGCyH6EJxv0jXq+Fi0+7eEJCsoHB+h0i9QhcY4r/zlXV1uAt7coi
-         JcGA==
-X-Gm-Message-State: AOJu0Yzr2BYRoCy3NuUvEgNtivho8P1XWsJ2S9aj/Qjcw+bVaaJpWypc
-	IkKRSJBL1wpRBlLIEN6on9+wDtojQYyLenAcXnuEgx7rgAjnwvz9pNoa4HhDn37QhCpgPi7ChyA
-	XKryRvvsI3unCiW4unt4qh+ECqDpik4/+XzSR1mah4Bf46PgESaqBp88+ncqrwQ==
-X-Received: by 2002:a5d:6502:0:b0:37d:321e:ef0c with SMTP id ffacd0b85a97d-37d481749f6mr13355024f8f.11.1728933966974;
-        Mon, 14 Oct 2024 12:26:06 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSqIUDVAQ8yDJ3M4cXNcdYJWjEhFZPZWWc8/QCZ41ZlMC+nT4x3VWwvTySfdaFjPhnyy97+Q==
-X-Received: by 2002:a5d:6502:0:b0:37d:321e:ef0c with SMTP id ffacd0b85a97d-37d481749f6mr13355004f8f.11.1728933966496;
-        Mon, 14 Oct 2024 12:26:06 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c71e:600:9fbb:f0bf:d958:5c70? (p200300cbc71e06009fbbf0bfd9585c70.dip0.t-ipconnect.de. [2003:cb:c71e:600:9fbb:f0bf:d958:5c70])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffd14sm128833165e9.18.2024.10.14.12.26.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 12:26:05 -0700 (PDT)
-Message-ID: <f93b2c89-821a-4da1-8953-73ccd129a074@redhat.com>
-Date: Mon, 14 Oct 2024 21:26:03 +0200
+	s=arc-20240116; t=1728934030; c=relaxed/simple;
+	bh=F6vEvPmuUdtzsK0vCJAXI7DtzpOr0J56DU/nlL3w+1c=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=b2qf1L/f08ow4+oWuL6lVChXueMIaSLuEUmc+yc4rFC+Nwn3Of4vSJdK6+FkFnhqtF8gAIiZYqC57uN2kLv/nMnz12/8XYKkbOUpZtOaBqaoV9ieSxlmFtdt3DQCVL3FegT+OzTtJ//zVgJDmIOtj7JI7QK3ZTZnUBIEge+82Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vCwNd6IK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5FABCC4CEC3;
+	Mon, 14 Oct 2024 19:27:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728934029;
+	bh=F6vEvPmuUdtzsK0vCJAXI7DtzpOr0J56DU/nlL3w+1c=;
+	h=From:Subject:Date:To:Cc:From;
+	b=vCwNd6IKrX3beID6+DUJOEPbN70gTY94qULkF38vHTSbGI73VhAvNkNu3jD6lDoUO
+	 kM6iCy5YNd20/q8PzR9NG7R7duT2ym+cmu7xqh5+mh8Cs5hAazosHi5bt5ONNSlKCb
+	 lT4FUmdgqepPnzjmJB6vunkmpyHW0g3ble3vT7DCmlpCuSd9LT50KEX6z8M1m5D6kr
+	 DIFjXwK4yBXNzWcs5xxqjNx3t65+L09lzAAd2AMPLp4xl9lMgsofFQgBIWy6JklJsn
+	 /+nL9MSQ+qeKwKI39YMamiEFb1LLQ66GbRwUit/mif7BL0Wpf8qSxZHhAsqHx3gzoo
+	 kl5nwSOE2Y++g==
+From: Jeff Layton <jlayton@kernel.org>
+Subject: [PATCH 0/6] nfsd: update the delstid patches for latest draft
+ changes
+Date: Mon, 14 Oct 2024 15:26:48 -0400
+Message-Id: <20241014-delstid-v1-0-7ce8a2f4dd24@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- linux-s390@vger.kernel.org, virtualization@lists.linux.dev,
- linux-doc@vger.kernel.org, kvm@vger.kernel.org,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>, Thomas Huth <thuth@redhat.com>,
- Cornelia Huck <cohuck@redhat.com>, Janosch Frank <frankja@linux.ibm.com>,
- Claudio Imbrenda <imbrenda@linux.ibm.com>,
- "Michael S. Tsirkin" <mst@redhat.com>, Jason Wang <jasowang@redhat.com>,
- Xuan Zhuo <xuanzhuo@linux.alibaba.com>, =?UTF-8?Q?Eugenio_P=C3=A9rez?=
- <eperezma@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- Jonathan Corbet <corbet@lwn.net>, Mario Casquero <mcasquer@redhat.com>
-References: <20241014144622.876731-1-david@redhat.com>
- <20241014144622.876731-2-david@redhat.com>
- <20241014182054.10447-D-hca@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <20241014182054.10447-D-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAHlwDWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDA0MT3ZTUnOKSzBTdpDQDUyMjg8QUSxNDJaDqgqLUtMwKsEnRsbW1AAc
+ 6tx9ZAAAA
+X-Change-ID: 20241014-delstid-bf05220ad941
+To: Chuck Lever <chuck.lever@oracle.com>, Neil Brown <neilb@suse.de>, 
+ Olga Kornievskaia <okorniev@redhat.com>, Dai Ngo <Dai.Ngo@oracle.com>, 
+ Tom Talpey <tom@talpey.com>, Jonathan Corbet <corbet@lwn.net>, 
+ Trond Myklebust <trondmy@kernel.org>, Anna Schumaker <anna@kernel.org>, 
+ Thomas Haynes <loghyr@gmail.com>
+Cc: linux-nfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, Jeff Layton <jlayton@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2115; i=jlayton@kernel.org;
+ h=from:subject:message-id; bh=F6vEvPmuUdtzsK0vCJAXI7DtzpOr0J56DU/nlL3w+1c=;
+ b=owEBbQKS/ZANAwAIAQAOaEEZVoIVAcsmYgBnDXCECmSggnwshJHB1PlHjFbrF/jhRbiBMvOER
+ kEd4/HX9D+JAjMEAAEIAB0WIQRLwNeyRHGyoYTq9dMADmhBGVaCFQUCZw1whAAKCRAADmhBGVaC
+ FaxYEACWuq4gR9UPFxChyhw/pKyDLBEtdIotg7syeB7Mj0n/a4/mX1MY/UIPv/qiTccxhNaRNqQ
+ SnQo7zOKWZW6cIwuJVWYwY2vmuzi7vyUG2B0S3KAuj2L2AbCFLrxhASyqmQXHH70zuxE5Z80RmC
+ LiTGzmDN/TUx8wPlEmDsBbpdHwcId3hvGCRv23nM7UYstFjH9TDf6gHWZhVBOwcCujcr8QlmkAl
+ YaMxPxJgL2ekzRB1QCWQABDV4jrce9OJj06zN5YiU3Mc16OrnqAgyib1BotrQUuPEI2dhqp+nYa
+ cvjxveuCxhrs5CqsaOrGAV7TQdK4Dm1RHmSh7agnPkwE5lL7FPmmy0RByRZUpKgAeGBs8DSO31J
+ p31mc8E55ATK3HnLltBRBVPuB2n3iS6bjz9zMJEXR/Ze+Ti3KJjPZqp01zfobiDLec6lj6HrxtP
+ YmygEOTtNxObDpJ1jqJuokt9DrC9OC9HJIwxs9RVNYR6WEaaz6d0L+rZyynAUfGqbeawOsOZCfo
+ Qo6uM5VWf4h02uIsLKh+ptebQ1B7z2VEsrI6uBwPSjqY4y5K3MaN0iIXflaLh5pN99mDAhYdMqA
+ e4/b5vR7u/Kkhype2CLbzPIyIbQcLNZZkk50bT4r4LQWRKHfVODhwntzgmGYRDHbmBoQXxGW30P
+ 6oyF2JYFqmvIs5g==
+X-Developer-Key: i=jlayton@kernel.org; a=openpgp;
+ fpr=4BC0D7B24471B2A184EAF5D3000E684119568215
 
-On 14.10.24 20:20, Heiko Carstens wrote:
-> On Mon, Oct 14, 2024 at 04:46:13PM +0200, David Hildenbrand wrote:
->> s390 currently always results in is_kdump_kernel() == false, because
->> it sets "elfcorehdr_addr = ELFCORE_ADDR_MAX;" early during setup_arch to
->> deactivate the elfcorehdr= kernel parameter.
->>
->> Let's follow the powerpc example and implement our own logic.
->>
->> This is required for virtio-mem to reliably identify a kdump
->> environment to not try hotplugging memory.
->>
->> Tested-by: Mario Casquero <mcasquer@redhat.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   arch/s390/include/asm/kexec.h | 4 ++++
->>   arch/s390/kernel/crash_dump.c | 6 ++++++
->>   2 files changed, 10 insertions(+)
-> 
-> Looks like this could work. But the comment in smp.c above
-> dump_available() needs to be updated.
+This patchset is an update to the delstid patches that went into Chuck's
+nfsd-next branch recently. The original versions of the spec left out
+OPEN_DELEGATE_READ_ATTRS_DELEG and OPEN_DELEGATE_WRITE_ATTRS_DELEG. This
+set adds proper support for them.
 
-A right, I remember that there was some outdated documentation.
+My suggestion is to drop these two patches from nfsd-next:
 
-> 
-> Are you willing to do that, or should I provide an addon patch?
-> 
+    544c67cc0f26 nfsd: handle delegated timestamps in SETATTR
+    eee2c04ca5c1 nfsd: add support for delegated timestamps
 
-I can squash the following:
+...and then apply this set on top of the remaining pile. The resulting
+set is a bit larger than the original, as I took the liberty of adding
+some more symbols to the autogenerated part of the spec.
 
-diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-index 4df56fdb2488..a4f538876462 100644
---- a/arch/s390/kernel/smp.c
-+++ b/arch/s390/kernel/smp.c
-@@ -587,16 +587,16 @@ int smp_store_status(int cpu)
-   *    with sigp stop-and-store-status. The firmware or the boot-loader
-   *    stored the registers of the boot CPU in the absolute lowcore in the
-   *    memory of the old system.
-- * 3) kdump and the old kernel did not store the CPU state,
-- *    or stand-alone kdump for DASD
-- *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
-+ * 3) kdump or stand-alone kdump for DASD
-+ *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
-   *    The state for all CPUs except the boot CPU needs to be collected
-   *    with sigp stop-and-store-status. The kexec code or the boot-loader
-   *    stored the registers of the boot CPU in the memory of the old system.
-- * 4) kdump and the old kernel stored the CPU state
-- *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
-- *    This case does not exist for s390 anymore, setup_arch explicitly
-- *    deactivates the elfcorehdr= kernel parameter
-+ *
-+ * Note that the old Kdump mode where the old kernel stored the CPU state
-+ * does no longer exist: setup_arch explicitly deactivates the elfcorehdr=
-+ * kernel parameter. The is_kudmp_kernel() implementation on s390 is independent
-+ * of the elfcorehdr= parameter.
-   */
-  static bool dump_available(void)
-  {
+Signed-off-by: Jeff Layton <jlayton@kernel.org>
+---
+Jeff Layton (6):
+      nfsd: drop inode parameter from nfsd4_change_attribute()
+      nfsd: switch to autogenerated definitions for open_delegation_type4
+      nfsd: rename NFS4_SHARE_WANT_* constants to OPEN4_SHARE_ACCESS_WANT_*
+      nfsd: prepare delegation code for handing out *_ATTRS_DELEG delegations
+      nfsd: add support for delegated timestamps
+      nfsd: handle delegated timestamps in SETATTR
 
+ Documentation/sunrpc/xdr/nfs4_1.x    |  22 ++++-
+ fs/nfsd/nfs4callback.c               |  42 ++++++++-
+ fs/nfsd/nfs4proc.c                   |  26 ++++-
+ fs/nfsd/nfs4state.c                  | 178 ++++++++++++++++++++++++++---------
+ fs/nfsd/nfs4xdr.c                    |  57 ++++++++---
+ fs/nfsd/nfs4xdr_gen.c                |  19 +++-
+ fs/nfsd/nfs4xdr_gen.h                |   2 +-
+ fs/nfsd/nfsd.h                       |   2 +
+ fs/nfsd/nfsfh.c                      |  11 +--
+ fs/nfsd/nfsfh.h                      |   3 +-
+ fs/nfsd/state.h                      |  18 ++++
+ fs/nfsd/xdr4cb.h                     |  10 +-
+ include/linux/nfs4.h                 |   2 +-
+ include/linux/sunrpc/xdrgen/nfs4_1.h |  35 ++++++-
+ include/linux/time64.h               |   5 +
+ 15 files changed, 348 insertions(+), 84 deletions(-)
+---
+base-commit: 9f8009c5be9367d01cd1627d6a379b4c642d8a28
+change-id: 20241014-delstid-bf05220ad941
 
-Does that sound reasonable? I'm not so sure about the "2) stand-alone kdump for
-SCSI/NVMe (zfcp/nvme dump with swapped memory)": is that really "kdump" ?
-
+Best regards,
 -- 
-Cheers,
-
-David / dhildenb
+Jeff Layton <jlayton@kernel.org>
 
 
