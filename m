@@ -1,249 +1,213 @@
-Return-Path: <linux-kernel+bounces-363930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363931-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF7A99C8F5
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:33:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E206499C89D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:20:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3668B2AE38
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:20:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68E141F243F4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:20:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DE0F1A7AE3;
-	Mon, 14 Oct 2024 11:16:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 678EE17C990;
+	Mon, 14 Oct 2024 11:17:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ve6xDzpA"
-Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="EyTM4y0P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931E41AB6ED
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:16:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97E60156F3A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:17:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904596; cv=none; b=oF+P1EablG/NkomYIkoMkk+kebnvxBpoUkPO8s7T4cKRNEfnxx94khMO2a+hh4EHbSnLRxIq7OSuV3Bf4qy7afmEr9C86m0I3Hny315yuj6kGjCfSe9KoXROd3DcPOXqexKUxKgp8tFIwDDArFuVX3RtwRH3SKYklkI6NGnGZas=
+	t=1728904647; cv=none; b=kC2NH8RN8ixQE4YYh+dpqQ+Z3wJ9WNn3LJtgsasp50PIfKvcyn15mpdBY6zYFJBQ5yeAsuDdDFTAlRHxT65bvaz3+W7SmYxN6CLUnLiVfh96YimGEYIXGz8ldtw2Wj26XBVXjLG4z3OoMgKFly0SERLPuglOP877DFYBYc36EXE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904596; c=relaxed/simple;
-	bh=q8xn13G2JLnINWn7XM/JZSqwR/jIxOEPsASBJ+UhOFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=o7vkHddGzDZvcB4WWuwomtwu+rM/rMGwW1kiHmg/ow2hZrU/gILlLdpHE7Sm1OwIyZBwPy/cNAKD/SSKJ4rF7+3qNpOrMJZTMSISBtJajv8s23tTpu5gFE3w7l6eAr1XkzCpbVqA0zWQC/zXozYm3iqZ2DeVDlYozgSSUGsVeMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ve6xDzpA; arc=none smtp.client-ip=209.85.208.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb51f39394so6376891fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:16:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728904593; x=1729509393; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6iKMYh9oSOiPHX5MB8zVYm5Uz7Q4gZEo4Fjhxbd/uKo=;
-        b=ve6xDzpA2y7WtmUBJet57yxraZQdz8FAyydO1mjxXlpRi5D3+DipI+MK+zS5WZGphZ
-         9fvx2y5XTwN6FJXamrqyzEiR6JpXJbEEk23bs0gXFWrVyiC3vWusA61jcggBSptgAw+U
-         RD+657zwYeYyk4dHkVVTmMFVzQYVScXCrHuTjcNgaMFUoTFSCHEvXBbzcM8d94Mk7iY+
-         oZ95SMbAH0g9OJYztANDhT8gFAEsDskS1Si519Gr59tV8rCQXdINwoUls5YuRCerUjjH
-         UPnViiE9fdI29CcTavgXVC9WfRjb2yO/UK1UAyClQbztdxa2f72PMTrmvyZ+KOpeFYGW
-         PaIw==
+	s=arc-20240116; t=1728904647; c=relaxed/simple;
+	bh=AdrCz5TQyjL368SqkMsGbALovCURVew64GlLWY0THNk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VLbHGpam4jvBR1it14DY+gOzZu+oEA+5jV+gQciswkwKqGy+88DO0K3kyU6qw+aBMnvOCsOHZkEclpCi3XBVx3IhZ3QMBh5iDnU11hos49gq5Cws1bQXRmvIkigVB1vXZ75FclYkcESxQ7e4b4HoTODYC/H1BbULzdgIMVmcN2g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=EyTM4y0P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728904644;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=2Z20Hm7NvoaOPIqaaBV3dbvsrnKroLLcxG4BMXJ1Npk=;
+	b=EyTM4y0Pl2mSz6kS1TO46GgEx26sjuque9Fw6Occp+P315f/rgylCtAnxh5tEinKnBDiTb
+	HbcJjrXmX/o0AMR3SqXi0CzH1j72L6/qBBbhpvqo4ke69ttM2iCB4uAeGJMNPLSf5HUfgV
+	W+tnSYD9QY/Sb+sQDPfte2qAxbWPVgs=
+Received: from mail-lf1-f71.google.com (mail-lf1-f71.google.com
+ [209.85.167.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-284-Rs105iVtPw-JbIiAM4FP6A-1; Mon, 14 Oct 2024 07:17:23 -0400
+X-MC-Unique: Rs105iVtPw-JbIiAM4FP6A-1
+Received: by mail-lf1-f71.google.com with SMTP id 2adb3069b0e04-53691cd5a20so3754399e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:17:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728904593; x=1729509393;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6iKMYh9oSOiPHX5MB8zVYm5Uz7Q4gZEo4Fjhxbd/uKo=;
-        b=tFo3zUly7PlhT2v3NeGd/Utm/YrZYdb5x3vgyANDW+rw/B8IwnFc7mjdOAy8LaDrPL
-         5jVCPmikfFNK9eaHpKjr0wogD5zLeVqSIR7s4ywjtKys91UrwB9RmhPw/Rzi/rxU4Hqm
-         40hWfzXX5CaT1BEG8KrlW2v1355GMA+Rj3oVzbV9s0HEhCq9xdXPisBUlvp5NsP7uL4G
-         xhvmrHjpRM8eVjYPbVINM6lXsh0GINKb96rZQ+zxDXzeNusle9NE6hv/lvEIDNYCmfYF
-         DMaCjaVBoyGcEPHSPtOfO/2HUY+gxZ8dKBu/ELyySIL0eIg8wSt4JOCLv3REATv1pYn1
-         9ENQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUB6UgYqBrCSehyoZIi21oz7qAxBmGUqbmBr99jLSEKmEmsVIXHRuxXF/vMuOHWQE1+l6d6aNQmIUKc2gM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws5tT62/+vjLEt/NUxTOxJFqvn/8m3Fp2K+ToHVxQDjQTBQ/4K
-	oXDVRUOwwveW0g2p+ObtsPIAYkNETOs/89BguF9UZ9IeLFPOoVE+exi2am11wxI=
-X-Google-Smtp-Source: AGHT+IFyRE26TjB4tT/MsFr8imPfDicH3NsN5nWBwmwpqRjbY5FCggbJmvwRTRVlwm6RGPRd3jbmvQ==
-X-Received: by 2002:a2e:e19:0:b0:2f5:2e2:eadf with SMTP id 38308e7fff4ca-2fb3270ab14mr38619491fa.10.1728904592591;
-        Mon, 14 Oct 2024 04:16:32 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb50148d25sm3695571fa.97.2024.10.14.04.16.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:16:31 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:16:28 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: Liu Ying <victor.liu@nxp.com>, 
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>, "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "imx@lists.linux.dev" <imx@lists.linux.dev>, 
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>, "andrzej.hajda@intel.com" <andrzej.hajda@intel.com>, 
-	"neil.armstrong@linaro.org" <neil.armstrong@linaro.org>, "rfoss@kernel.org" <rfoss@kernel.org>, 
-	"laurent.pinchart" <laurent.pinchart@ideasonboard.com>, "jonas@kwiboo.se" <jonas@kwiboo.se>, 
-	"jernej.skrabec@gmail.com" <jernej.skrabec@gmail.com>, "airlied@gmail.com" <airlied@gmail.com>, 
-	"simona@ffwll.ch" <simona@ffwll.ch>, 
-	"maarten.lankhorst@linux.intel.com" <maarten.lankhorst@linux.intel.com>, "mripard@kernel.org" <mripard@kernel.org>, 
-	"tzimmermann@suse.de" <tzimmermann@suse.de>, "robh@kernel.org" <robh@kernel.org>, 
-	"krzk+dt@kernel.org" <krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>, 
-	"shawnguo@kernel.org" <shawnguo@kernel.org>, "s.hauer@pengutronix.de" <s.hauer@pengutronix.de>, 
-	"kernel@pengutronix.de" <kernel@pengutronix.de>, "festevam@gmail.com" <festevam@gmail.com>, 
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>, 
-	"quic_bjorande@quicinc.com" <quic_bjorande@quicinc.com>, "geert+renesas@glider.be" <geert+renesas@glider.be>, 
-	"arnd@arndb.de" <arnd@arndb.de>, "nfraprado@collabora.com" <nfraprado@collabora.com>, 
-	"o.rempel@pengutronix.de" <o.rempel@pengutronix.de>, "y.moog@phytec.de" <y.moog@phytec.de>, 
-	"marex@denx.de" <marex@denx.de>, "isaac.scott@ideasonboard.com" <isaac.scott@ideasonboard.com>
-Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS
- to HDMI converter
-Message-ID: <p42wdftkplib2c3hrnobinhytglok53cunqywtbcdfcp4gg7cg@4oclcixgcxso>
-References: <20241012073543.1388069-1-victor.liu@nxp.com>
- <20241012073543.1388069-6-victor.liu@nxp.com>
- <4a7rwguypyaspgr5akpxgw4c45gph4h3lx6nkjv3znn32cldrk@k7qskts7ws73>
- <07b47f70-5dab-4813-97fa-388a0c0f42e9@nxp.com>
- <dvcdy32dig3w3r3a7eib576zaumsoxw4xb5iw6u6b2rds3zaov@lvdevbyl6skf>
- <90e0c4ac-1636-4936-ba40-2f7693bc6b32@nxp.com>
- <TY3PR01MB11346530A53C8085561713B6086442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <ki7zj2qvf64oi45kcnxl4maoxfvxtawko3vcdikg7dc5q6gw7u@5obyfvyylb3w>
- <TY3PR01MB113463A0E53DAA7481926219186442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+        d=1e100.net; s=20230601; t=1728904642; x=1729509442;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Z20Hm7NvoaOPIqaaBV3dbvsrnKroLLcxG4BMXJ1Npk=;
+        b=rD3RoKAewFLPfCfhVOqFN+k/M2KZqOyzOe+qffCAfogC1iOTUTHPjmsUtspb8avX85
+         JCzjnyn/NhN3K+fATvOXmzxVzsaxciFvya7IA2cQ6C4G3WNPoJoVoMVuJmiCsMvrPWkG
+         6sEyh81OPDFYi24a1F8K9gLkPgJDWo6Mod9CnFEu1Sdzrjw8Ls8Qd8THABaqsFMqy1kA
+         YUzkVb3PvYWGjIACSO1f7mKCK77qLBwVS1++MoYkjX+xQ4hkAMVwl40PmfKlZK7djM/E
+         S20FM6BMdeJ6MJpjUMhab5Bj8rfb/UK2HOybN4CNW2RcT/McwH+7VBKou9O6De1byI5i
+         QboA==
+X-Forwarded-Encrypted: i=1; AJvYcCX01eCWWkAH1PTKxh5cJW7Q2O76ecqOrnm6jsIxAskf+4c9xKCanuO9iOLXbsDysTQCIREKBH0cYgnoQXk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb22A13FApdaI8C6NTD3ehLXWlgEX1Ok5DBL8MIdMmBodiwIJZ
+	L20TMixVispRZLPt7lMYqoe2bisw8qC66GT+wimLy2aexXrMAQhHPlIMElt3JEpZ6FI6LWwr4UL
+	bfqmsg4vUPj7r94pN36Os09Xh6ddROW6a9BnKkAVLI1xi8LmsBjgP09FW1eUo
+X-Received: by 2002:a05:6512:3085:b0:539:f93d:eb3d with SMTP id 2adb3069b0e04-539f93dedf9mr949021e87.46.1728904641719;
+        Mon, 14 Oct 2024 04:17:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFbhkyTUng0BBXHiCbt8YBIXjwPpHNKvU13Nia1aMAMxSPrcXkzbeul0nRmdlFmP/GxEZkPHA==
+X-Received: by 2002:a05:6512:3085:b0:539:f93d:eb3d with SMTP id 2adb3069b0e04-539f93dedf9mr948994e87.46.1728904641255;
+        Mon, 14 Oct 2024 04:17:21 -0700 (PDT)
+Received: from [192.168.0.113] (185-219-167-205-static.vivo.cz. [185.219.167.205])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430ccf1f797sm151207925e9.4.2024.10.14.04.17.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 04:17:20 -0700 (PDT)
+Message-ID: <ba11f117-3ac6-4747-92d5-65a3012e598c@redhat.com>
+Date: Mon, 14 Oct 2024 13:17:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <TY3PR01MB113463A0E53DAA7481926219186442@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/resolve_btfids: Fix 'variable' may be used
+ uninitialized warnings
+To: Eder Zulian <ezulian@redhat.com>, bpf@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
+ martin.lau@linux.dev, eddyz87@gmail.com, song@kernel.org,
+ yonghong.song@linux.dev, john.fastabend@gmail.com, kpsingh@kernel.org,
+ sdf@fomichev.me, haoluo@google.com, jolsa@kernel.org, acme@redhat.com,
+ williams@redhat.com
+References: <20241011200005.1422103-1-ezulian@redhat.com>
+From: Viktor Malik <vmalik@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20241011200005.1422103-1-ezulian@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Mon, Oct 14, 2024 at 08:09:44AM +0000, Biju Das wrote:
-> Hi Dmitry,
+On 10/11/24 22:00, Eder Zulian wrote:
+> - tools/bpf/resolve_btfids/main.c: Initialize 'set' and 'set8' pointers
+>   to NULL in to fix compiler warnings.
 > 
-> > -----Original Message-----
-> > From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> > Sent: Monday, October 14, 2024 9:04 AM
-> > Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE IT6263 LVDS to HDMI converter
-> > 
-> > On Mon, Oct 14, 2024 at 07:39:16AM +0000, Biju Das wrote:
-> > > Hi Liu and Dmitry,
-> > >
-> > > > -----Original Message-----
-> > > > From: Liu Ying <victor.liu@nxp.com>
-> > > > Sent: Monday, October 14, 2024 6:34 AM
-> > > > Subject: Re: [PATCH v2 5/9] dt-bindings: display: bridge: Add ITE
-> > > > IT6263 LVDS to HDMI converter
-> > > >
-> > > > On 10/14/2024, Dmitry Baryshkov wrote:
-> > > > > On Sat, Oct 12, 2024 at 05:14:13PM +0800, Liu Ying wrote:
-> > > > >> On 10/12/2024, Dmitry Baryshkov wrote:
-> > > > >>> On Sat, Oct 12, 2024 at 03:35:39PM +0800, Liu Ying wrote:
-> > > > >>>> Document ITE IT6263 LVDS to HDMI converter.
-> > > > >>>>
-> > > > >>>> Product link:
-> > > > >>>> https://www.ite.com.tw/en/product/cate1/IT6263
-> > > > >>>>
-> > > > >>>> Signed-off-by: Liu Ying <victor.liu@nxp.com>
-> > > > >>>> ---
-> > > > >>>> v2:
-> > > > >>>> * Document number of LVDS link data lanes.  (Biju)
-> > > > >>>> * Simplify ports property by dropping "oneOf".  (Rob)
-> > > > >>>>
-> > > > >>>>  .../bindings/display/bridge/ite,it6263.yaml   | 276 ++++++++++++++++++
-> > > > >>>>  1 file changed, 276 insertions(+)  create mode 100644
-> > > > >>>> Documentation/devicetree/bindings/display/bridge/ite,it6263.yam
-> > > > >>>> l
-> > > > >>>>
-> > > > >>>> diff --git
-> > > > >>>> a/Documentation/devicetree/bindings/display/bridge/ite,it6263.y
-> > > > >>>> aml
-> > > > >>>> b/Documentation/devicetree/bindings/display/bridge/ite,it6263.y
-> > > > >>>> aml
-> > > > >>>> new file mode 100644
-> > > > >>>> index 000000000000..bc2bbec07623
-> > > > >>>> --- /dev/null
-> > > > >>>> +++ b/Documentation/devicetree/bindings/display/bridge/ite,it62
-> > > > >>>> +++ 63.y
-> > > > >>>> +++ aml
-> > > > >>>> @@ -0,0 +1,276 @@
-> > > > >>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > >>>> +%YAML
-> > > > >>>> +1.2
-> > > > >>>> +---
-> > > > >>>> +$id:
-> > > > >>>> +http://devicetree.org/schemas/display/bridge/ite,it6263.yaml#
-> > > > >>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > >>>> +
-> > > > >>>> +title: ITE IT6263 LVDS to HDMI converter
-> > > > >>>> +
-> > > > >>>> +maintainers:
-> > > > >>>> +  - Liu Ying <victor.liu@nxp.com>
-> > > > >>>> +
-> > > > >>>> +description: |
-> > > > >>>> +  The IT6263 is a high-performance single-chip
-> > > > >>>> +De-SSC(De-Spread
-> > > > >>>> +Spectrum) LVDS
-> > > > >>>> +  to HDMI converter.  Combined with LVDS receiver and HDMI
-> > > > >>>> +1.4a transmitter,
-> > > > >>>> +  the IT6263 supports LVDS input and HDMI 1.4 output by conversion function.
-> > > > >>>> +  The built-in LVDS receiver can support single-link and
-> > > > >>>> +dual-link LVDS inputs,
-> > > > >>>> +  and the built-in HDMI transmitter is fully compliant with
-> > > > >>>> +HDMI 1.4a/3D, HDCP
-> > > > >>>> +  1.2 and backward compatible with DVI 1.0 specification.
-> > > > >>>> +
-> > > > >>>> +  The IT6263 also encodes and transmits up to 8 channels of
-> > > > >>>> + I2S digital audio,  with sampling rate up to 192KHz and
-> > > > >>>> + sample size up to 24 bits. In addition,  an S/PDIF input port
-> > > > >>>> + takes in compressed audio of up to 192KHz
-> > > > frame rate.
-> > > > >>>> +
-> > > > >>>> +  The newly supported High-Bit Rate(HBR) audio by HDMI
-> > > > >>>> + specifications v1.3 is  provided by the IT6263 in two interfaces:
-> > > > >>>> + the four I2S input ports or the  S/PDIF input port.  With
-> > > > >>>> + both interfaces the highest possible HBR frame rate  is supported at up to 768KHz.
-> > > > >>>> +
-> > > > >>>> +properties:
-> > > > >>>
-> > > > >>> No LVDS data-mapping support?
-> > > > >>
-> > > > >> It is enough to document number of LVDS link data lanes because
-> > > > >> OS should be able to determine the data-mapping by looking at the
-> > > > >> number and the data-mapping capability of the other side of the LVDS link.
-> > > > >
-> > > > > From what I can see, data-mapping is specified on the consumer
-> > > > > sink side of the LVDS link. This means it should go to the bridge's device node.
-> > > >
-> > > > Then, I won't define data-lanes, because data-mapping implies it,
-> > > > e.g., jeida-24 implies data lanes 0/1/2/3, see lvds-data-mapping.yaml.
-> > > >
-> > > > Please let me know which one you prefer.
-> > >
-> > > Assume a top level use case where a user changes the format from JEDAI
-> > > to VESA using On screen display or modetest(if some one adds support
-> > > for lvds-mapping) then setting of the lvds data mapping should be dynamic.
-> > >
-> > > Maybe for initial version hardcode with JEDAI or VESA as default and
-> > > provide a way to override the host driver and bridge with requested lvds-data mapping dynamically
-> > later??
-> > 
-> > The ite,lvds-link-num-data-lanes property should be removed, it is not standard. I foresee two ways to
-> > specify the number of lanes used: either the data-lanes property or the data-mapping property. Granted
-> > that data-mapping replaces the data-lanes functionality for LVDS links, I think it's better to use it
-> > from the start.
-> > 
-> > Frankly speaking, what is the usecase for specifying the data mapping dynamically? What kind of uAPI
-> > do you have in mind and what is the usecase for it?
+> - tools/lib/bpf/btf_dump.c: Initialize 'new_off' and 'pad_bits' to 0 and
+>   'pad_type' to  NULL to prevent compiler warnings.
 > 
-> It simple just want to change from VESA to JEDAI, how do you change it with existing DRM framework?
+> - tools/lib/subcmd/parse-options.c: Initiazlide pointer 'o' to NULL
 
-Why do you want to change it on the fly?
+Typo: "Initiazlide" -> "Initialize"
 
-> Currently I see LVDS panel driver use drm_of_lvds_get_data_mapping(bus_node) to get this info.
-> IT6263 bridge device can use that API to get that info.
-> 
-> Some vendors use VESA as default LVDS data mapping whereas some others use JEDAI.
+>   avoiding a compiler warning.
 
-I think this is logical. Bus format is set by the system design
-constraints. In theory one can use buf format negotiation for the same
-purpose.
+I think that the three changes should be split into three patches so
+that we don't have one patch touching three different tools.
+
+Then, maintainers can also decide whether they prefer your patch of
+subcmd or the one mentioned in the other thread.
+
+Viktor
 
 > 
-> Cheers,
-> Biju
+> Tested on x86_64 with clang version 17.0.6 and gcc (GCC) 13.3.1.
+> 
+> $ cd tools/bpf/resolve_btfids
+> $ for c in gcc clang; do \
+> for o in fast g s z $(seq 0 3); do \
+> make clean && \
+> make HOST_CC=${c} "HOSTCFLAGS=-O${o} -Wall" 2>&1 | tee ${c}-O${o}.out; \
+> done; done && grep 'warning:\|error:' *.out
+> 
+> [...]
+> clang-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> clang-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> clang-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-O1.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O1.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O2.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O2.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O3.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-O3.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-Ofast.out:main.c:163:9: warning: ‘set8’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-Ofast.out:main.c:163:9: warning: ‘set’ may be used uninitialized [-Wmaybe-uninitialized]
+> gcc-Og.out:btf_dump.c:903:42: error: ‘new_off’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Og.out:btf_dump.c:917:25: error: ‘pad_type’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Og.out:btf_dump.c:930:20: error: ‘pad_bits’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Os.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> gcc-Oz.out:parse-options.c:832:9: error: ‘o’ may be used uninitialized [-Werror=maybe-uninitialized]
+> 
+> The above warnings and/or errors are not observed after applying this
+> patch.
+> 
+> Signed-off-by: Eder Zulian <ezulian@redhat.com>
+> ---
+>  tools/bpf/resolve_btfids/main.c  | 4 ++--
+>  tools/lib/bpf/btf_dump.c         | 4 ++--
+>  tools/lib/subcmd/parse-options.c | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/bpf/resolve_btfids/main.c b/tools/bpf/resolve_btfids/main.c
+> index d54aaa0619df..bd9f960bce3d 100644
+> --- a/tools/bpf/resolve_btfids/main.c
+> +++ b/tools/bpf/resolve_btfids/main.c
+> @@ -679,8 +679,8 @@ static int sets_patch(struct object *obj)
+>  
+>  	next = rb_first(&obj->sets);
+>  	while (next) {
+> -		struct btf_id_set8 *set8;
+> -		struct btf_id_set *set;
+> +		struct btf_id_set8 *set8 = NULL;
+> +		struct btf_id_set *set = NULL;
+>  		unsigned long addr, off;
+>  		struct btf_id *id;
+>  
+> diff --git a/tools/lib/bpf/btf_dump.c b/tools/lib/bpf/btf_dump.c
+> index 8440c2c5ad3e..468392f9882d 100644
+> --- a/tools/lib/bpf/btf_dump.c
+> +++ b/tools/lib/bpf/btf_dump.c
+> @@ -867,8 +867,8 @@ static void btf_dump_emit_bit_padding(const struct btf_dump *d,
+>  	} pads[] = {
+>  		{"long", d->ptr_sz * 8}, {"int", 32}, {"short", 16}, {"char", 8}
+>  	};
+> -	int new_off, pad_bits, bits, i;
+> -	const char *pad_type;
+> +	int new_off = 0, pad_bits = 0, bits, i;
+> +	const char *pad_type = NULL;
+>  
+>  	if (cur_off >= next_off)
+>  		return; /* no gap */
+> diff --git a/tools/lib/subcmd/parse-options.c b/tools/lib/subcmd/parse-options.c
+> index eb896d30545b..555d617c1f50 100644
+> --- a/tools/lib/subcmd/parse-options.c
+> +++ b/tools/lib/subcmd/parse-options.c
+> @@ -807,7 +807,7 @@ static int option__cmp(const void *va, const void *vb)
+>  static struct option *options__order(const struct option *opts)
+>  {
+>  	int nr_opts = 0, nr_group = 0, nr_parent = 0, len;
+> -	const struct option *o, *p = opts;
+> +	const struct option *o = NULL, *p = opts;
+>  	struct option *opt, *ordered = NULL, *group;
+>  
+>  	/* flatten the options that have parents */
 
--- 
-With best wishes
-Dmitry
 
