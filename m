@@ -1,395 +1,378 @@
-Return-Path: <linux-kernel+bounces-363495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD0D999C316
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:27:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CD1899C31B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D681C2210D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:27:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17C9282C5B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:27:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDF015383F;
-	Mon, 14 Oct 2024 08:24:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D85B155C82;
+	Mon, 14 Oct 2024 08:24:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DFINg5j0"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBHAjEAN"
+Received: from mail-ua1-f43.google.com (mail-ua1-f43.google.com [209.85.222.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CF114E2ED
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:24:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58B4715535A;
+	Mon, 14 Oct 2024 08:24:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894250; cv=none; b=DasazuLhFchSjKCsKE6ugW2wr9DcOQnI7KAaPtCOCtC1yc+5enMt0GJM7fQSekK+IsSl1mIjF3rix+EwpSqe5pQggLvvXWtfs3BiMvPXAPWIU4nKNqbz3vRIQDkLkQp2Q/Pj2DSjZ4ffFyCbDsPTiKKw48q6FN2jXi9q6xrLjbU=
+	t=1728894257; cv=none; b=jke02GhL3f0J3rMRGeHfOviDpHmIk22AJ5eekxi0ti8kHfWSVLT0U7c2OHKQGzo7lIPHDPySuX8cuH4ksDCzczRbttdFjHqc+aRDI9yDAaxO5nyTOtnfZ7GbVA1d+sTClmWcOhUqv6PzFCT4DLEOLTS09Fry9HW34egSkEQpHps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894250; c=relaxed/simple;
-	bh=HFT9h1iwDbbGGqhuLYDes10rtPk+7HF11pTDotWn1ls=;
+	s=arc-20240116; t=1728894257; c=relaxed/simple;
+	bh=ZpTpCMLS1t0Xe/dtWrFlh4/vrQtyUIXH8VhzqXs7QX0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ixGO7IZWpPzJ1xmJgH1K1Dc9jgR1UronNNA6zbQYxO7bz+uJHpDUEDiN61shG69TyJiqXNqzKJ+PC4pBU7B5sDWuRscoHRGhyF2in45S3vMlv8ls85P/ScAiK0CuAcz52cCoxN2nuInDSnVV1FK2JNGUs/BXo/Lg5P12bVPhiSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DFINg5j0; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb501492ccso4853191fa.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:24:07 -0700 (PDT)
+	 To:Cc:Content-Type; b=TlVIDMsn4SVEf75gWLE1TIGEdCAHvoHrOCYVptq6o+s4WWhT6eUzhlK0IU92evrCVe5LsThPsdsqYG6hyfXZmgzComOa2M3IBd72RSnIlVqEbGyrUjyfPkF4wGlEllBnfA+Lq68vdEsWM7erx5GE7JDwNZ9wfVh9gvm06UDZePw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBHAjEAN; arc=none smtp.client-ip=209.85.222.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f43.google.com with SMTP id a1e0cc1a2514c-84f1ac129c7so1052813241.1;
+        Mon, 14 Oct 2024 01:24:15 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1728894246; x=1729499046; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=D6jtpd6aBQ5+6Ifa9J9iKjXNdXlmp6ptoc+HtBMR1fs=;
-        b=DFINg5j0n+23W56MfbnD8TSXJF+NBW4J1zWLe7tXoTwzbKUSlXDxQzqy5Esm61P8sY
-         1UF+pVMSmLaFL5dtr8G9E1Z1rPJZkEyN1gry+Q3J7bLUDpQTfNVGvw8tVFj2LFmgItRU
-         weNInv5QDrMWhj7JtJXKxn+nMFrk+WZfufqrS0mY8kLYOTx9HS+xvgapsGkFlYjueN/a
-         MrxO4x4aMzddy631ySHTnxRQJ7hvDDXdCIkdHd/3nvPgYs8wuySnkXNBRlnkZTjBZYY8
-         1dZ5Uh0tgd6kOamcbA/utSlcg47E0pI6/WUJPadJXb23SCPs8ZQ8pC5M9e9tIP7dTEoB
-         ba9Q==
+        d=gmail.com; s=20230601; t=1728894254; x=1729499054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=m3h2PE7vwOhhQtkKSXOUfxYJYudoNEBV4oSe5DndjYQ=;
+        b=NBHAjEANaa6eZWTwQtYdW/AQe12cRCYfrNECKlU4Fl9QT5TvQQG2ofZtXvW4Hpt9kJ
+         e7T4Tak6iJAkgvbMJGuSpm5hNtQDpl3nhPrRkKhsNh3rRqcnOkVYeq6BpDgtYaw567SJ
+         fGLwkT/8+a9RwbLGWXkxA+5wYS7D0ztwBbS9FWvKx3DZO8qnr9n/YVHkia4fzqNWrgxg
+         nAnr/qfLzKbjBsopKtuYDmcrfBmBmVolEEj4b6sO5C09BGb/dGUV5ugtBhtur7XE7EUv
+         q4p2673eWOlaqPhkCsXEsvAqOJHU136Qbotyindmz5k8bs0KQH5LfQph9Pvn+BONZVir
+         qgvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728894246; x=1729499046;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D6jtpd6aBQ5+6Ifa9J9iKjXNdXlmp6ptoc+HtBMR1fs=;
-        b=hOYGMySfm/GtFS1fjlLCJghiNgSu0msmyGU01IT/A7xD9f1T7rHSjUZM4zRxhJlNRs
-         F7EKGkhJBd8t3pLM4J2YLpVwvvA88EtRTnKe/o7+MwzZmI4T8p8yemxUlybEWCOeo8qz
-         EzYkGpPLnBlKCIoumABpiHNjcRxUAKPrtNw9TDSE2BKeypQAe9ANCBYGz1PMpdyPyPM9
-         5S0V2syqwleMluCYmOn/lopwlT36qxajq3BzKYOFCE6OeI8fI6b0gQuvrAUHhOI/0fh2
-         MGI24E+BAGsb9TOt2MjnudFlC65YlM8Y1WEgY+ZYt3f2dknMyWLJVAHyQJ9AacO3x/zv
-         0apw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+TaNPDMOjx2vCWLwZaOc5qT1mlKKJ+iJ08NvcBN7u/dy7XJYJKku/B5+6pgpMwgJV0AqeCQqaJ1lOLOM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw72K/M44QsVehLWBB2SxrqHgPZMuS4BtI++rn6vqiLYNBDrPe4
-	Peak0TbjVBzscltDe8eXbo+Itqa97oriUDS6UVL+h3TFog2+d3dHK7BxjqJQga8eySoKos1TyMS
-	/zv9xt85LrPHdRXcCWA9XdncoYBCPWhYimuB6
-X-Google-Smtp-Source: AGHT+IEIr3NQylCfcrZzzzlzR4+C9G7lQob/gAkh6rW7SnRgALtyVccRYC6I/9Z9kVu3Y1H0WliHmqAYbkvTrWhn1ck=
-X-Received: by 2002:a2e:b892:0:b0:2fa:d354:1435 with SMTP id
- 38308e7fff4ca-2fb325d4154mr41752831fa.0.1728894245639; Mon, 14 Oct 2024
- 01:24:05 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1728894254; x=1729499054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m3h2PE7vwOhhQtkKSXOUfxYJYudoNEBV4oSe5DndjYQ=;
+        b=exch0YR/SLscPyQ2Bl4tsqSBeuoCObi9GXml1ltTHGRaXu46g2H2pO9cREclFhza6B
+         nJxxV7JJwaKdxrIFTRidyt2V1t8aJwi65rdLVmWKbpAW64jK4eVi8/hiLvK6rv+ISuY7
+         Fq5DkCwwhZ5+pVCEZW+mVFH2/iXrTWHBIQXBFKwp5dVFCzevAX3M9AaP2UzUyHRyvCSm
+         7kurwT4bf5gUWqLpSzS0/p0diTOHrW54nFikOoRj42WmQ7Cuc0WExcX/CSX8kyqw1kip
+         68bsLdKNVPpX5vLcMcyR7/JYpiq2ObMvR/qwl5tNBle1M7DqVr1CE5WV3R/mWVhaUrmf
+         wO+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU6rdfE8IWsACml4H1VFs6HNBJi4CBuolZRgYedPC7Q9X/FznSgYN3VHQ0fVnQnytNrPllKIbUhghKbltOfAZiGsRTg2+7b@vger.kernel.org, AJvYcCVQiQamV6i7RaHrWFeXhIs4IrhA3FX2XVB7fEmA39ZRQpcJ2DTzW7GPC1bs1ePN0ndvPYBS/CUgAVA=@vger.kernel.org, AJvYcCWKxJfSHPIuyf6eQW/HKEAXXfKXdU5DgsHSruwxwoNew3EFBRF928F10evlAooiBewpABfHY9IgpalDbL0I@vger.kernel.org, AJvYcCWaIbmIA2KmFgWBA0CGTId5qP1rZV4VlYb3xk9vqcjoHKyC6uzGUVNTbDA8oaSfpb8Rnh7NsUL+hivEIP2dlw==@vger.kernel.org, AJvYcCWdN+55+EQDDsQ8E9YuoJKWge589lf0B/nwLDvjC+8W4JRWbCuItNt8Wa/ENe0pWYjgNfDJ33IysTYIFe2wXfUD@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyxnwd+Pw1yDxay7ptB38LRMZpFQWjAUCAng8bdFj0BhS8PcXCU
+	ZHdlD8JpU9KL1WtIEh3ZHVvULYHMG8IDCmmG075uEi9ePc0kvGRVhDy1e7JVWhFEACQK4blU2p1
+	T9n+8TFHy+NW3fxOcWbcf8RpuL5A=
+X-Google-Smtp-Source: AGHT+IFENCyRieMBccdaVEVaZX7EEFceoq8zbv+3ZefOKTVeVjrNi6O/1gqc4m/ojVzNp7gq0BDNcUAqEDjbuprQhQY=
+X-Received: by 2002:a05:6102:a4a:b0:4a4:8f4f:136e with SMTP id
+ ada2fe7eead31-4a48f4f16a1mr675367137.15.1728894253974; Mon, 14 Oct 2024
+ 01:24:13 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <670cb3bd.050a0220.4cbc0.0040.GAE@google.com>
-In-Reply-To: <670cb3bd.050a0220.4cbc0.0040.GAE@google.com>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Mon, 14 Oct 2024 10:23:54 +0200
-Message-ID: <CACT4Y+Ya4i3JwDghU1efqDETwyPGn3gwA5MHVj2-P65ku8nYjA@mail.gmail.com>
-Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in compat_sys_open
-To: syzbot <syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com>, 
-	David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
+References: <20241011184422.977903-1-mic@digikod.net> <20241011184422.977903-2-mic@digikod.net>
+ <CAOQ4uxi502PNn8eyKt9BExXVhbpx04f0XTeLg771i6wPOrLadA@mail.gmail.com> <20241014.waet2se6Jeiw@digikod.net>
+In-Reply-To: <20241014.waet2se6Jeiw@digikod.net>
+From: Amir Goldstein <amir73il@gmail.com>
+Date: Mon, 14 Oct 2024 10:24:02 +0200
+Message-ID: <CAOQ4uxjGEo9qwAjdYKeojuKiraUh8=qW6-qZCiv08+8OiDRj7g@mail.gmail.com>
+Subject: Re: [PATCH v20 1/6] exec: Add a new AT_CHECK flag to execveat(2)
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Christian Brauner <brauner@kernel.org>, 
+	Kees Cook <keescook@chromium.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	Paul Moore <paul@paul-moore.com>, Serge Hallyn <serge@hallyn.com>, "Theodore Ts'o" <tytso@mit.edu>, 
+	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
+	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
+	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, Eric Biggers <ebiggers@kernel.org>, 
+	Eric Chiang <ericchiang@google.com>, Fan Wu <wufan@linux.microsoft.com>, 
+	Florian Weimer <fweimer@redhat.com>, Geert Uytterhoeven <geert@linux-m68k.org>, 
+	James Morris <jamorris@linux.microsoft.com>, Jan Kara <jack@suse.cz>, 
+	Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Jordan R Abrahams <ajordanr@google.com>, Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, 
+	Luca Boccassi <bluca@debian.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	"Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Matthew Garrett <mjg59@srcf.ucam.org>, Matthew Wilcox <willy@infradead.org>, 
+	Miklos Szeredi <mszeredi@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>, 
+	Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, Scott Shell <scottsh@microsoft.com>, 
+	Shuah Khan <shuah@kernel.org>, Stephen Rothwell <sfr@canb.auug.org.au>, 
+	Steve Dower <steve.dower@python.org>, Steve Grubb <sgrubb@redhat.com>, 
+	Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
+	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
+	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, 
+	linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-security-module@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 14 Oct 2024 at 08:01, syzbot
-<syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com> wrote:
+On Mon, Oct 14, 2024 at 9:39=E2=80=AFAM Micka=C3=ABl Sala=C3=BCn <mic@digik=
+od.net> wrote:
 >
-> Hello,
+> On Sun, Oct 13, 2024 at 11:25:11AM +0200, Amir Goldstein wrote:
+> > On Fri, Oct 11, 2024 at 8:45=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@d=
+igikod.net> wrote:
+> > >
+> > > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+> > > allowed for execution.  The main use case is for script interpreters =
+and
+> > > dynamic linkers to check execution permission according to the kernel=
+'s
+> > > security policy. Another use case is to add context to access logs e.=
+g.,
+> > > which script (instead of interpreter) accessed a file.  As any
+> > > executable code, scripts could also use this check [1].
+> > >
+> > > This is different from faccessat(2) + X_OK which only checks a subset=
+ of
+> > > access rights (i.e. inode permission and mount options for regular
+> > > files), but not the full context (e.g. all LSM access checks).  The m=
+ain
+> > > use case for access(2) is for SUID processes to (partially) check acc=
+ess
+> > > on behalf of their caller.  The main use case for execveat(2) + AT_CH=
+ECK
+> > > is to check if a script execution would be allowed, according to all =
+the
+> > > different restrictions in place.  Because the use of AT_CHECK follows
+> > > the exact kernel semantic as for a real execution, user space gets th=
+e
+> > > same error codes.
+> > >
+> > > An interesting point of using execveat(2) instead of openat2(2) is th=
+at
+> > > it decouples the check from the enforcement.  Indeed, the security ch=
+eck
+> > > can be logged (e.g. with audit) without blocking an execution
+> > > environment not yet ready to enforce a strict security policy.
+> > >
+> > > LSMs can control or log execution requests with
+> > > security_bprm_creds_for_exec().  However, to enforce a consistent and
+> > > complete access control (e.g. on binary's dependencies) LSMs should
+> > > restrict file executability, or mesure executed files, with
+> > > security_file_open() by checking file->f_flags & __FMODE_EXEC.
+> > >
+> > > Because AT_CHECK is dedicated to user space interpreters, it doesn't
+> > > make sense for the kernel to parse the checked files, look for
+> > > interpreters known to the kernel (e.g. ELF, shebang), and return ENOE=
+XEC
+> > > if the format is unknown.  Because of that, security_bprm_check() is
+> > > never called when AT_CHECK is used.
+> > >
+> > > It should be noted that script interpreters cannot directly use
+> > > execveat(2) (without this new AT_CHECK flag) because this could lead =
+to
+> > > unexpected behaviors e.g., `python script.sh` could lead to Bash bein=
+g
+> > > executed to interpret the script.  Unlike the kernel, script
+> > > interpreters may just interpret the shebang as a simple comment, whic=
+h
+> > > should not change for backward compatibility reasons.
+> > >
+> > > Because scripts or libraries files might not currently have the
+> > > executable permission set, or because we might want specific users to=
+ be
+> > > allowed to run arbitrary scripts, the following patch provides a dyna=
+mic
+> > > configuration mechanism with the SECBIT_EXEC_RESTRICT_FILE and
+> > > SECBIT_EXEC_DENY_INTERACTIVE securebits.
+> > >
+> > > This is a redesign of the CLIP OS 4's O_MAYEXEC:
+> > > https://github.com/clipos-archive/src_platform_clip-patches/blob/f5cb=
+330d6b684752e403b4e41b39f7004d88e561/1901_open_mayexec.patch
+> > > This patch has been used for more than a decade with customized scrip=
+t
+> > > interpreters.  Some examples can be found here:
+> > > https://github.com/clipos-archive/clipos4_portage-overlay/search?q=3D=
+O_MAYEXEC
+> > >
+> > > Cc: Al Viro <viro@zeniv.linux.org.uk>
+> > > Cc: Christian Brauner <brauner@kernel.org>
+> > > Cc: Kees Cook <keescook@chromium.org>
+> > > Cc: Paul Moore <paul@paul-moore.com>
+> > > Cc: Serge Hallyn <serge@hallyn.com>
+> > > Link: https://docs.python.org/3/library/io.html#io.open_code [1]
+> > > Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> > > Link: https://lore.kernel.org/r/20241011184422.977903-2-mic@digikod.n=
+et
+> > > ---
+> > >
+> > > Changes since v19:
+> > > * Remove mention of "role transition" as suggested by Andy.
+> > > * Highlight the difference between security_bprm_creds_for_exec() and
+> > >   the __FMODE_EXEC check for LSMs (in commit message and LSM's hooks)=
+ as
+> > >   discussed with Jeff.
+> > > * Improve documentation both in UAPI comments and kernel comments
+> > >   (requested by Kees).
+> > >
+> > > New design since v18:
+> > > https://lore.kernel.org/r/20220104155024.48023-3-mic@digikod.net
+> > > ---
+> > >  fs/exec.c                  | 18 ++++++++++++++++--
+> > >  include/linux/binfmts.h    |  7 ++++++-
+> > >  include/uapi/linux/fcntl.h | 31 +++++++++++++++++++++++++++++++
+> > >  kernel/audit.h             |  1 +
+> > >  kernel/auditsc.c           |  1 +
+> > >  security/security.c        | 10 ++++++++++
+> > >  6 files changed, 65 insertions(+), 3 deletions(-)
+> > >
+> > > diff --git a/fs/exec.c b/fs/exec.c
+> > > index 6c53920795c2..163c659d9ae6 100644
+> > > --- a/fs/exec.c
+> > > +++ b/fs/exec.c
+> > > @@ -891,7 +891,7 @@ static struct file *do_open_execat(int fd, struct=
+ filename *name, int flags)
+> > >                 .lookup_flags =3D LOOKUP_FOLLOW,
+> > >         };
+> > >
+> > > -       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH)) !=3D 0)
+> > > +       if ((flags & ~(AT_SYMLINK_NOFOLLOW | AT_EMPTY_PATH | AT_CHECK=
+)) !=3D 0)
+> > >                 return ERR_PTR(-EINVAL);
+> > >         if (flags & AT_SYMLINK_NOFOLLOW)
+> > >                 open_exec_flags.lookup_flags &=3D ~LOOKUP_FOLLOW;
+> > > @@ -1545,6 +1545,20 @@ static struct linux_binprm *alloc_bprm(int fd,=
+ struct filename *filename, int fl
+> > >         }
+> > >         bprm->interp =3D bprm->filename;
+> > >
+> > > +       /*
+> > > +        * At this point, security_file_open() has already been calle=
+d (with
+> > > +        * __FMODE_EXEC) and access control checks for AT_CHECK will =
+stop just
+> > > +        * after the security_bprm_creds_for_exec() call in bprm_exec=
+ve().
+> > > +        * Indeed, the kernel should not try to parse the content of =
+the file
+> > > +        * with exec_binprm() nor change the calling thread, which me=
+ans that
+> > > +        * the following security functions will be not called:
+> > > +        * - security_bprm_check()
+> > > +        * - security_bprm_creds_from_file()
+> > > +        * - security_bprm_committing_creds()
+> > > +        * - security_bprm_committed_creds()
+> > > +        */
+> > > +       bprm->is_check =3D !!(flags & AT_CHECK);
+> > > +
+> > >         retval =3D bprm_mm_init(bprm);
+> > >         if (!retval)
+> > >                 return bprm;
+> > > @@ -1839,7 +1853,7 @@ static int bprm_execve(struct linux_binprm *bpr=
+m)
+> > >
+> > >         /* Set the unchanging part of bprm->cred */
+> > >         retval =3D security_bprm_creds_for_exec(bprm);
+> > > -       if (retval)
+> > > +       if (retval || bprm->is_check)
+> > >                 goto out;
+> > >
+> > >         retval =3D exec_binprm(bprm);
+> > > diff --git a/include/linux/binfmts.h b/include/linux/binfmts.h
+> > > index e6c00e860951..8ff0eb3644a1 100644
+> > > --- a/include/linux/binfmts.h
+> > > +++ b/include/linux/binfmts.h
+> > > @@ -42,7 +42,12 @@ struct linux_binprm {
+> > >                  * Set when errors can no longer be returned to the
+> > >                  * original userspace.
+> > >                  */
+> > > -               point_of_no_return:1;
+> > > +               point_of_no_return:1,
+> > > +               /*
+> > > +                * Set by user space to check executability according=
+ to the
+> > > +                * caller's environment.
+> > > +                */
+> > > +               is_check:1;
+> > >         struct file *executable; /* Executable to pass to the interpr=
+eter */
+> > >         struct file *interpreter;
+> > >         struct file *file;
+> > > diff --git a/include/uapi/linux/fcntl.h b/include/uapi/linux/fcntl.h
+> > > index 87e2dec79fea..e606815b1c5a 100644
+> > > --- a/include/uapi/linux/fcntl.h
+> > > +++ b/include/uapi/linux/fcntl.h
+> > > @@ -154,6 +154,37 @@
+> > >                                            usable with open_by_handle=
+_at(2). */
+> > >  #define AT_HANDLE_MNT_ID_UNIQUE        0x001   /* Return the u64 uni=
+que mount ID. */
+> > >
+> > > +/*
+> > > + * AT_CHECK only performs a check on a regular file and returns 0 if=
+ execution
+> > > + * of this file would be allowed, ignoring the file format and then =
+the related
+> > > + * interpreter dependencies (e.g. ELF libraries, script's shebang).
+> > > + *
+> > > + * Programs should always perform this check to apply kernel-level c=
+hecks
+> > > + * against files that are not directly executed by the kernel but pa=
+ssed to a
+> > > + * user space interpreter instead.  All files that contain executabl=
+e code,
+> > > + * from the point of view of the interpreter, should be checked.  Ho=
+wever the
+> > > + * result of this check should only be enforced according to
+> > > + * SECBIT_EXEC_RESTRICT_FILE or SECBIT_EXEC_DENY_INTERACTIVE.  See s=
+ecurebits.h
+> > > + * documentation and the samples/check-exec/inc.c example.
+> > > + *
+> > > + * The main purpose of this flag is to improve the security and cons=
+istency of
+> > > + * an execution environment to ensure that direct file execution (e.=
+g.
+> > > + * `./script.sh`) and indirect file execution (e.g. `sh script.sh`) =
+lead to the
+> > > + * same result.  For instance, this can be used to check if a file i=
+s
+> > > + * trustworthy according to the caller's environment.
+> > > + *
+> > > + * In a secure environment, libraries and any executable dependencie=
+s should
+> > > + * also be checked.  For instance, dynamic linking should make sure =
+that all
+> > > + * libraries are allowed for execution to avoid trivial bypass (e.g.=
+ using
+> > > + * LD_PRELOAD).  For such secure execution environment to make sense=
+, only
+> > > + * trusted code should be executable, which also requires integrity =
+guarantees.
+> > > + *
+> > > + * To avoid race conditions leading to time-of-check to time-of-use =
+issues,
+> > > + * AT_CHECK should be used with AT_EMPTY_PATH to check against a fil=
+e
+> > > + * descriptor instead of a path.
+> > > + */
+> >
+> > If you ask me, the very elaborate comment above belongs to execveat(2)
+> > man page and is way too verbose for a uapi header.
 >
-> syzbot found the following issue on:
+> OK, but since this new flags raised a lot of questions, I guess a
+> dedicated Documentation/userspace-api/check-exec.rst file with thit
+> AT*_CHECK and the related securebits would be useful instead of the
+> related inlined documentation.
 >
-> HEAD commit:    27cc6fdf7201 Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
-> git tree:       upstream
-> console output: https://syzkaller.appspot.com/x/log.txt?x=13043307980000
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=e3e4d87a80ed4297
-> dashboard link: https://syzkaller.appspot.com/bug?extid=0e1748603cc9f2dfc87d
-> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-> userspace arch: i386
+> >
+> > > +#define AT_CHECK               0x10000
+> >
+> > Please see the comment "Per-syscall flags for the *at(2) family of sysc=
+alls."
+> > above. If this is a per-syscall flag please use one of the per-syscall
+> > flags, e.g.:
+> >
+> > /* Flags for execveat2(2) */
+> > #define AT_EXECVE_CHECK     0x0001   /* Only perform a check if
+> > execution would be allowed */
 >
-> Unfortunately, I don't have any reproducer for this issue yet.
+> I missed this part, this prefix makes sense, thanks.
 >
-> Downloadable assets:
-> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-27cc6fdf.raw.xz
-> vmlinux: https://storage.googleapis.com/syzbot-assets/ae2f7d656e32/vmlinux-27cc6fdf.xz
-> kernel image: https://storage.googleapis.com/syzbot-assets/1b06a62cc1e5/bzImage-27cc6fdf.xz
->
-> IMPORTANT: if you fix the issue, please add the following tag to the commit:
-> Reported-by: syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com
->
-> BUG: TASK stack guard page was hit at ffffc90002b3ffb8 (stack is ffffc90002b40000..ffffc90002b48000)
-> Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
-> CPU: 0 UID: 0 PID: 12425 Comm: syz.2.2179 Not tainted 6.12.0-rc1-syzkaller-00306-g27cc6fdf7201 #0
-> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-> RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
-> Code: 90 90 90 90 90 55 48 89 e5 41 57 41 56 41 89 d6 48 ba 00 00 00 00 00 fc ff df 41 55 41 54 53 48 83 e4 f0 48 81 ec 10 01 00 00 <48> c7 44 24 30 b3 8a b5 41 48 8d 44 24 30 48 c7 44 24 38 38 51 57
-> RSP: 0018:ffffc90002b3ffc0 EFLAGS: 00010086
-> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000003
-> RDX: dffffc0000000000 RSI: ffff888021edaf98 RDI: ffff888021eda440
-> RBP: ffffc90002b40100 R08: 0000000000000000 R09: 0000000000000006
-> R10: ffffffff9698ad37 R11: 0000000000000002 R12: dffffc0000000000
-> R13: ffff888021edaf98 R14: 0000000000000008 R15: ffff888021eda440
-> FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f56f6b40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: ffffc90002b3ffb8 CR3: 000000005f61e000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> Call Trace:
->  <#DF>
->  </#DF>
->  <TASK>
->  mark_usage kernel/locking/lockdep.c:4646 [inline]
->  __lock_acquire+0x906/0x3ce0 kernel/locking/lockdep.c:5156
->  lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
->  rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
->  rcu_read_lock include/linux/rcupdate.h:849 [inline]
->  page_ext_get+0x3a/0x310 mm/page_ext.c:525
->  __set_page_owner+0x9a/0x790 mm/page_owner.c:322
->  set_page_owner include/linux/page_owner.h:32 [inline]
->  post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
->  prep_new_page mm/page_alloc.c:1545 [inline]
->  get_page_from_freelist+0x101e/0x3070 mm/page_alloc.c:3457
->  __alloc_pages_noprof+0x223/0x25c0 mm/page_alloc.c:4733
->  alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
->  alloc_slab_page mm/slub.c:2412 [inline]
->  allocate_slab mm/slub.c:2578 [inline]
->  new_slab+0x2ba/0x3f0 mm/slub.c:2631
->  ___slab_alloc+0xd1d/0x16f0 mm/slub.c:3818
->  __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
->  __slab_alloc_node mm/slub.c:3961 [inline]
->  slab_alloc_node mm/slub.c:4122 [inline]
->  kmem_cache_alloc_noprof+0x2ae/0x2f0 mm/slub.c:4141
->  p9_tag_alloc+0x9c/0x870 net/9p/client.c:281
->  p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
->  p9_client_zc_rpc.constprop.0+0x105/0x880 net/9p/client.c:793
->  p9_client_read_once+0x443/0x820 net/9p/client.c:1560
->  p9_client_read+0x13f/0x1b0 net/9p/client.c:1524
->  v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
->  netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
->  netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
 
-+netfs maintainers, looks like infinite recursion in netfs code
+Not only the prefix, also the overloaded value.
 
-#syz set subsystems: netfs
-
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
->  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
->  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
->  netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
->  netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
->  netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
->  netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
->  v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
->  __kernel_read+0x3f1/0xb50 fs/read_write.c:527
->  integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
->  ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
->  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
->  ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
->  ima_collect_measurement+0x8a7/0xa10 security/integrity/ima/ima_api.c:293
->  process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
->  ima_file_check+0xc1/0x110 security/integrity/ima/ima_main.c:572
->  security_file_post_open+0x8e/0x210 security/security.c:3127
->  do_open fs/namei.c:3776 [inline]
->  path_openat+0x1419/0x2d60 fs/namei.c:3933
->  do_filp_open+0x1dc/0x430 fs/namei.c:3960
->  do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
->  do_sys_open fs/open.c:1430 [inline]
->  __do_compat_sys_open fs/open.c:1481 [inline]
->  __se_compat_sys_open fs/open.c:1479 [inline]
->  __ia32_compat_sys_open+0x147/0x1e0 fs/open.c:1479
->  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
->  __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
->  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
->  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-> RIP: 0023:0xf740e579
-> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-> RSP: 002b:00000000f56f656c EFLAGS: 00000296 ORIG_RAX: 0000000000000005
-> RAX: ffffffffffffffda RBX: 0000000020000240 RCX: 0000000000000b00
-> RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000000
-> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
->  </TASK>
-> Modules linked in:
-> ---[ end trace 0000000000000000 ]---
-> RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
-> Code: 90 90 90 90 90 55 48 89 e5 41 57 41 56 41 89 d6 48 ba 00 00 00 00 00 fc ff df 41 55 41 54 53 48 83 e4 f0 48 81 ec 10 01 00 00 <48> c7 44 24 30 b3 8a b5 41 48 8d 44 24 30 48 c7 44 24 38 38 51 57
-> RSP: 0018:ffffc90002b3ffc0 EFLAGS: 00010086
-> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000003
-> RDX: dffffc0000000000 RSI: ffff888021edaf98 RDI: ffff888021eda440
-> RBP: ffffc90002b40100 R08: 0000000000000000 R09: 0000000000000006
-> R10: ffffffff9698ad37 R11: 0000000000000002 R12: dffffc0000000000
-> R13: ffff888021edaf98 R14: 0000000000000008 R15: ffff888021eda440
-> FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f56f6b40
-> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
-> CR2: ffffc90002b3ffb8 CR3: 000000005f61e000 CR4: 0000000000352ef0
-> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-> ----------------
-> Code disassembly (best guess):
->    0:   90                      nop
->    1:   90                      nop
->    2:   90                      nop
->    3:   90                      nop
->    4:   90                      nop
->    5:   55                      push   %rbp
->    6:   48 89 e5                mov    %rsp,%rbp
->    9:   41 57                   push   %r15
->    b:   41 56                   push   %r14
->    d:   41 89 d6                mov    %edx,%r14d
->   10:   48 ba 00 00 00 00 00    movabs $0xdffffc0000000000,%rdx
->   17:   fc ff df
->   1a:   41 55                   push   %r13
->   1c:   41 54                   push   %r12
->   1e:   53                      push   %rbx
->   1f:   48 83 e4 f0             and    $0xfffffffffffffff0,%rsp
->   23:   48 81 ec 10 01 00 00    sub    $0x110,%rsp
-> * 2a:   48 c7 44 24 30 b3 8a    movq   $0x41b58ab3,0x30(%rsp) <-- trapping instruction
->   31:   b5 41
->   33:   48 8d 44 24 30          lea    0x30(%rsp),%rax
->   38:   48                      rex.W
->   39:   c7                      .byte 0xc7
->   3a:   44 24 38                rex.R and $0x38,%al
->   3d:   38 51 57                cmp    %dl,0x57(%rcx)
->
->
-> ---
-> This report is generated by a bot. It may contain errors.
-> See https://goo.gl/tpsmEJ for more information about syzbot.
-> syzbot engineers can be reached at syzkaller@googlegroups.com.
->
-> syzbot will keep track of this issue. See:
-> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->
-> If the report is already addressed, let syzbot know by replying with:
-> #syz fix: exact-commit-title
->
-> If you want to overwrite report's subsystems, reply with:
-> #syz set subsystems: new-subsystem
-> (See the list of subsystem names on the web dashboard)
->
-> If the report is a duplicate of another one, reply with:
-> #syz dup: exact-subject-of-another-report
->
-> If you want to undo deduplication, reply with:
-> #syz undup
->
-> --
-> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
-> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
-> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/670cb3bd.050a0220.4cbc0.0040.GAE%40google.com.
+Thanks,
+Amir.
 
