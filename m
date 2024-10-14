@@ -1,39 +1,51 @@
-Return-Path: <linux-kernel+bounces-363301-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363302-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CCA699C035
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0358499C038
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:45:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86EA8B22A23
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:45:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 977EFB2320E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:45:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 595EA140E34;
-	Mon, 14 Oct 2024 06:44:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C3E722339
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:44:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65960140E50;
+	Mon, 14 Oct 2024 06:45:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="z51YFBRP"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2B8536B;
+	Mon, 14 Oct 2024 06:45:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888295; cv=none; b=DtkTGjdmI+QWlt9BoO+iTvuj+KPybECVeJ1XFeD5xi4zojCt1LjElJA1rDff434uYLp4Xm+0bPOyt5WihC4xJYitUPKye8CsfJoV1XWwrH++XvGdBGidSIcDWIFt6HurUc+NuP69p6K5a7uW5n70RwIh5MY4pzg9Fa4XoE2Ht08=
+	t=1728888345; cv=none; b=duNsipHlHlK7uGusfETpU+i6BfLL8vIAW1JIx+OkM9tB/OSDnOm9Zx7p3jD8+Szob7BUpxNQXfQdI8njwPyyTqaJYd3p+e5sdX4r6L6Z+g8GEfrh38hhghfWiiHiGbCRqECEaDuDtCT7e37gygpn7/LmsUoOJ2rFytVcCSa5MK0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888295; c=relaxed/simple;
-	bh=mRnwpYJ6FzQnnt/AaDMcQ5itYkFTmZ1i5DzsO7Z/15g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iqyWLPnwG9UHvXnZ15V7qwnaooW+ftIcqXXyLehdInBbQkFJc4W6+VPnpze1I326oxh8Euxw7fn+JEdH8C6U+D+Wgzl8qX4qbTUB/A8+tgQBvD81MeOhYpgYnyv6FsXvlzfmvgeAni7dXOsXG/F7XPPKX1RBLvASXFX9IapYzJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id B76C71007;
-	Sun, 13 Oct 2024 23:45:20 -0700 (PDT)
-Received: from [10.163.38.184] (unknown [10.163.38.184])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 9E6053F51B;
-	Sun, 13 Oct 2024 23:44:46 -0700 (PDT)
-Message-ID: <62410f7d-2642-4218-8e8e-a384dbe86954@arm.com>
-Date: Mon, 14 Oct 2024 12:14:48 +0530
+	s=arc-20240116; t=1728888345; c=relaxed/simple;
+	bh=5+7U5NsPCJJ1SeC7sthTmtpMjLOa80ghowv7qWW2nio=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:Cc:
+	 In-Reply-To:Content-Type; b=A/ZIxf8snGIdlT/bMVHXHhaXxMK95Hsls5nfeFC22NBEfnjVJ+NblYoakPDmg+ZYeA+gLfg7Y1IcotcA8RDAc5344mZih0oZgVM4TG8aWuAfL//1jC5BpeL3ZnScnJVIJvX6BB+eEz2EkKOEdm1ul1WXYXr4exGrLDaeTcU+KzM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=z51YFBRP; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:Cc:From:References:To:Subject:MIME-Version:Date:Message-ID:From:
+	Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:Content-Type:
+	Content-Transfer-Encoding:Content-ID:Content-Description:In-Reply-To:
+	References; bh=zfAhj9c9aib/1i6GUjRiuU0PI8OaiFSyn9NGekauN9U=; t=1728888344;
+	x=1729320344; b=z51YFBRPPSV94xmfSo3YYSTUZXPMBj7XiTLKwkuRv3VTRWqmBxL+FkPlnpPU1
+	CTonKWpOAoamBjrOWNDM8JSF6uwqJCzQNpKfagb1dSoRMgsqjkafKPaHPcFm8L4QTRBgoSmUf3Amt
+	juoBmTKV4Z7Mg8IQWUmbEqqYvs/JNPEZ3YI99UW5b/f3DqNX9zV+DMO+yMjwnmEi+fEXYJOOVRN3v
+	JAC80aXMBTheZQved93S1CLKvwKfEck3k+MpHrpJU8X1A4AVa5Avb5WkxDMncwz4Xxp64Y0C2hryy
+	hHILJ7jWS3rRqbXTrDYtu9FhQdSqXCw2AI8x2Zqdt/lKyyWOWA==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t0Epj-0000HP-9Q; Mon, 14 Oct 2024 08:45:35 +0200
+Message-ID: <06bab5c5-e9fd-4741-bab7-6b199cfac18a@leemhuis.info>
+Date: Mon, 14 Oct 2024 08:45:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,75 +53,64 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v3 -next] cma: Enforce non-zero pageblock_order during
- cma_init_reserved_mem()
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, linux-mm@kvack.org
-Cc: linuxppc-dev@lists.ozlabs.org, Sourabh Jain <sourabhjain@linux.ibm.com>,
- Hari Bathini <hbathini@linux.ibm.com>, Zi Yan <ziy@nvidia.com>,
- David Hildenbrand <david@redhat.com>,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>,
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
- Michael Ellerman <mpe@ellerman.id.au>,
- Madhavan Srinivasan <maddy@linux.ibm.com>,
- "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>,
- Donet Tom <donettom@linux.vnet.ibm.com>, LKML
- <linux-kernel@vger.kernel.org>, Sachin P Bappalige <sachinpb@linux.ibm.com>
-References: <054b416302486c2d3fdd5924b624477929100bf6.1728656994.git.ritesh.list@gmail.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <054b416302486c2d3fdd5924b624477929100bf6.1728656994.git.ritesh.list@gmail.com>
+Subject: Re: Bad commit backported on the v5.15.y branch ?
+To: Jay Buddhabhatti <jay.buddhabhatti@amd.com>
+References: <AM9P192MB1316ABE1A8E1D41C4243F596D7792@AM9P192MB1316.EURP192.PROD.OUTLOOK.COM>
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Content-Language: en-US, de-DE
+Cc: Greg KH <gregkh@linuxfoundation.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Sasha Levin <sashal@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
+ Joel GUITTET <jguittet.opensource@witekio.com>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "stable@vger.kernel.org" <stable@vger.kernel.org>
+In-Reply-To: <AM9P192MB1316ABE1A8E1D41C4243F596D7792@AM9P192MB1316.EURP192.PROD.OUTLOOK.COM>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1728888344;2a23363c;
+X-HE-SMSGID: 1t0Epj-0000HP-9Q
 
+On 11.10.24 10:48, Joel GUITTET wrote:
+> 
+> I faced some issue related to scaling frequency on ZynqMP device
+> using v5.15.167 kernel. As an exemple setting the scaling frequency
+> below show it's not properly set:
+> 
+> cat /sys/devices/system/cpu/cpufreq/policy0/
+> scaling_available_frequencies 299999 399999 599999 1199999
+> 
+> echo 399999 > /sys/devices/system/cpu/cpufreq/policy0/
+> scaling_setspeed
+> 
+> cat /sys/devices/system/cpu/cpufreq/policy0/scaling_cur_freq 399999
+> 
+> cat /sys/devices/system/cpu/cpufreq/policy0/cpuinfo_cur_freq 299999
+> ====> Should be 399999
+> 
+> After analysis of this issue with the help of Xilinx, it appears
+> that a commit was backported on the 5.15.y branch, but probably it
+> should not, or not as is. The commit is
+> 9117fc44fd3a9538261e530ba5a022dfc9519620 modifying drivers/clk/
+> zynqmp/divider.c.
 
+FWIW, that is 1fe15be1fb6135 ("drivers: clk: zynqmp: update divider
+round rate logic") [v6.8-rc1].
 
-On 10/11/24 20:26, Ritesh Harjani (IBM) wrote:
-> cma_init_reserved_mem() checks base and size alignment with
-> CMA_MIN_ALIGNMENT_BYTES. However, some users might call this during
-> early boot when pageblock_order is 0. That means if base and size does
-> not have pageblock_order alignment, it can cause functional failures
-> during cma activate area.
-> 
-> So let's enforce pageblock_order to be non-zero during
-> cma_init_reserved_mem().
-> 
-> Acked-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> ---
-> v2 -> v3: Separated the series into 2 as discussed in v2.
-> [v2]: https://lore.kernel.org/linuxppc-dev/cover.1728585512.git.ritesh.list@gmail.com/
-> 
->  mm/cma.c | 9 +++++++++
->  1 file changed, 9 insertions(+)
-> 
-> diff --git a/mm/cma.c b/mm/cma.c
-> index 3e9724716bad..36d753e7a0bf 100644
-> --- a/mm/cma.c
-> +++ b/mm/cma.c
-> @@ -182,6 +182,15 @@ int __init cma_init_reserved_mem(phys_addr_t base, phys_addr_t size,
->  	if (!size || !memblock_is_region_reserved(base, size))
->  		return -EINVAL;
-> 
-> +	/*
-> +	 * CMA uses CMA_MIN_ALIGNMENT_BYTES as alignment requirement which
-> +	 * needs pageblock_order to be initialized. Let's enforce it.
-> +	 */
-> +	if (!pageblock_order) {
-> +		pr_err("pageblock_order not yet initialized. Called during early boot?\n");
-> +		return -EINVAL;
-> +	}
-> +
->  	/* ensure minimal alignment required by mm core */
->  	if (!IS_ALIGNED(base | size, CMA_MIN_ALIGNMENT_BYTES))
->  		return -EINVAL;
-> --
-> 2.46.0
-> 
-> 
+> Is anybody reading this message able to answer why it was
+> backported ?
 
-LGTM, hopefully this comment regarding CMA_MIN_ALIGNMENT_BYTES alignment
-requirement will also probably remind us, to drop this new check in case
-CMA_MIN_ALIGNMENT_BYTES no longer depends on pageblock_order later.
+Looks like because it fixes a bug. I CCed the original author and those
+that handled the patch, maybe they can help us out and tell us what's
+the best strategy forward here.
 
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+> The information I have until now is that it is intended
+> recent kernel version. Dependencies for this modification is
+> currently under clarification with Xilinx (maybe another commit to
+> backport).
+> 
+> By the way, reverting this commit fix the issue shown above.
+Does 6.12-rc work fine for you? Because if not, we should fix the
+problem there.
+
+Ciao, Thorsten
 
