@@ -1,169 +1,110 @@
-Return-Path: <linux-kernel+bounces-363377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36BE699C180
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:38:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7895999C18C
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:39:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A67DB1F2370B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:38:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3D200282A2D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:39:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8D0149DFF;
-	Mon, 14 Oct 2024 07:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A10F14B075;
+	Mon, 14 Oct 2024 07:38:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="iHCqTora"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="BP3EQp+L"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84829149C7A
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:38:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69ABE14C59C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:38:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891521; cv=none; b=OT5yNQ0LlazqNglkgw4YJmryzT7auybNzvWfVITEyd8cy5nHfLXCUsNFDq6f2btQxMyoYmqbLmT/72T/TZpWAhWTjrES6nubH40qbKoVRrtaKCCHf0y1AAa4/sxkSqEy5Hf7HR/Ob3LI0LS6QrsHRk8GlAQjmdt/huDo+MDKW3g=
+	t=1728891536; cv=none; b=pCyuK+1kvLTWnydyiLY149omRsjXAAYv27qtBtVIAtIzEUmNvyYcuXwlzKAeG3j8mfrwXvt78VewvW4x/u6VcqyngAoz0oalfyI1hWCgQWoAjf8auvXcHJ4fLsjIAtDdm4hTKuxmYuz8zrnmYi/VaqZlEXfSL08hUye2fxirYPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891521; c=relaxed/simple;
-	bh=aFFisPPZd/Hre79PkGYujlf0RBJz+NA9/OJB7V4sSdA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ne+yVaayWWMXg6EgTJZKtwdmj0aifkVhRCVBS0BxHCtWA3ldqbF+sivlVOxce5Jb+5tA5nu4Y9UGUpYHOIgLrlUmRooOO9ObPIwADOBUHeox6Ga9JKe2+RVhI1mxZHbFMPZMw+GzUsfTtjGRHW2smMfmh7kNoZXLK2qpp/h8m1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=iHCqTora; arc=none smtp.client-ip=209.85.128.51
+	s=arc-20240116; t=1728891536; c=relaxed/simple;
+	bh=YcicH1ItN6kLVKM7/Tm3x62viWefn0sozbyVtQZ2cJs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HWwx4zJDvIMF+jAwGOMp26LGX/Q/+gginqIdum7JiACpyGKVQDQJU7oyX+7YXYJyYdOGlJK3n0thaKESzklyl2rhZrLkWcciDNnK34l7aVsbvbypTmHakUqRRiSkOy9m7ZFtISWhHYTkm7AlihuMEwN/QYYU46h7mUP+BSn6IR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=BP3EQp+L; arc=none smtp.client-ip=209.85.167.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43124843b04so17193265e9.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:38:39 -0700 (PDT)
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f84907caso555595e87.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:38:54 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728891518; x=1729496318; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=xMboIFiAJRNW3TNHj6EYhFbnvgnNhzRdZUv2visdWo8=;
-        b=iHCqToraGfvR3BVEG5ohbaIlOnxGwKbN0Vc0hQj0lw6pWU/O3oEOq771Sk2Jp3YkBV
-         Q9SDIX4G1ayxfWL1q5VpZ7jQZtHH5AGqoIqK5BxJ8+DU1woMD3KrCJfnYzUQTfJK3wpP
-         Hwqeq8ODOHNyGjOtZWxgB3N7QvxMHFIuf4D0p1ZN+aoPuCf9aq8wThdyXfXqromtLzdy
-         YGTwjOGMqtZCrsmF4hQweGlxAh6/B+2FfxCZYcIL8tnhVUdzWr9qQDB8stCRq+P+PPJc
-         ZH3yPRtDji/KBi7NL7Lzhfivu5MMGxffqMnurcmVZ7df+9O8WsHtuk827B7rep+pwt1u
-         +bcQ==
+        d=linaro.org; s=google; t=1728891533; x=1729496333; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rk4QxLNEwsyzZXP0YPS09TQSucKgCrUhh8MMP3HebVA=;
+        b=BP3EQp+L3kPJUWKHUZFQnFYkz36qVVVDYd6vxFEi08+HKakMOsm+SVTpPx/nMKknb7
+         XYG4nuOQ0s1r5TDTHyxpZjqZ1Rs+EM7x9wBvol8GYf6j2uo74VhoXordqyUAHUCiCtQa
+         YCQVqJz0iWzfTXtZD+0Z29rex14dKHQlS75fgtF1OzRLjopoldO7BMWPTqDhFiJXxboi
+         khJxZmQaRXbygezOkVV0jxCyg1AcslGtd5zl7X0ajXj/FAob+N693b+iFnRBNjrNCcqH
+         YCMDZ2yLfrDz0h+mXQPahMgqIyWLQb3Pl5zHjvPLRB8W35WrSBcqZZM4pj9eriN1sMWj
+         lDpQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728891518; x=1729496318;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xMboIFiAJRNW3TNHj6EYhFbnvgnNhzRdZUv2visdWo8=;
-        b=tk3LA+NzaoO159Psiff3J8j30QUduHmNRmKpcMI5/KYzqXzzo7C7YF2HKNoixWNX7H
-         zLC/QFZrVUwo1RCIkMhNgXb0LK1wZ60b95t3YUwNwzOTTvRhbCRoo5BkbaOluY6GsRuY
-         uhsOUJYHyNL/3qxrCo4H47Q3DHaC/8jwslQj+AYStAAvTrZiZRn1yyemJ0N7m8h5yeZa
-         ZS3QjvAuBXTXeIGWoFfJAcjk5DHr+u9jbA0YLifGUOJIGJbygVkFy/w5qM0FVi8vE8AP
-         yNOkTPS7/3znmskPhe/dbZLCkilA4jd5QX0d77GMeeUe+CzCtfS6irnE3+vVcu6gD9yl
-         s7aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVnCD5NnCIiUoA1dPJ6U7VWqcMeUHne5ZrzBQmiNtVDneUVbLaz9SBiRSC809ZpQ7R45grUozq/9P+J/dQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyVC1pD5VCA2rFvrF/dyfdTbZEepeHOAWe9Sc6vZiDfktl353TS
-	r2My33x5+YNi55/UHGgbW5IgHGP5pZtZyfEW/1jj4VZ+GrBNpXG2n4HkrcKIE80=
-X-Google-Smtp-Source: AGHT+IFxsH70du3q5AUZEen2YEsI0WawZmJ/dpo9/jyFxSTdY0Q5+qOHG3tFo7fOc0Q9dVBYFBL3OA==
-X-Received: by 2002:a05:600c:3b9b:b0:42c:b843:792b with SMTP id 5b1f17b1804b1-4311deb5ef8mr81559385e9.2.1728891517777;
-        Mon, 14 Oct 2024 00:38:37 -0700 (PDT)
-Received: from [127.0.1.1] ([82.76.168.176])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffabdsm112169075e9.14.2024.10.14.00.38.35
+        d=1e100.net; s=20230601; t=1728891533; x=1729496333;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Rk4QxLNEwsyzZXP0YPS09TQSucKgCrUhh8MMP3HebVA=;
+        b=WVugA6S303Hxxv2xEQ1DogNK9Whl9FqTWZXl9xq8UmWiuw1tAe5GZ8ShHHP6wjgvyn
+         iEgL7+r+gM5HeYU0K5l2cwy87WONcKaUtfjph/FN50RlrL6FT9C5TmB+/olYmy+xSS2u
+         ihSIGdYxy41MhNXnN3kAuxCcvqmiSCbudlSzF3AKMKpMR7HqJxfoJtkjAOeZe0OxVxIP
+         0fkmcZydM5Xh8DKXnoPwAPD3amuewsKOGXuOwEsxmbkErp9h9gkhhWxcDXTQOHtX6Nis
+         yE2urvzzvROX/UxsB+w9UZqAnQyQeOgPbiq1CpMTWIOSdhdW+gaCV1ITo5DkEyfzQhw5
+         4vxg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgn2Br29ffVe5lA2NJUt0bwUqiHP/gQ9SXN1CGPWcGfFcDkR4A3L3h70ZK+LFNHEiUWvTp5lYemtHdQbc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwA3jCMEbgm+ND399AqU7VNajaYNeCFYyHkZLFf60aXQZCBxxdD
+	zscynmhBAERnZY8XMErMiRNsN0ncUqPZLfTXxjTspPSYiuwfK+K/VTXZ2jwNdyk=
+X-Google-Smtp-Source: AGHT+IGNuE7vrBBXDi1MiauEpNLyh+kIr9HGY+e68HLWEmc/QK6X0iLQvyhPZqFQLW8amaU8CG2fyg==
+X-Received: by 2002:a05:6512:baa:b0:539:e94d:b490 with SMTP id 2adb3069b0e04-539e94dbcd1mr1984693e87.43.1728891532559;
+        Mon, 14 Oct 2024 00:38:52 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539eb3416a4sm667052e87.278.2024.10.14.00.38.51
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 00:38:36 -0700 (PDT)
-From: Abel Vesa <abel.vesa@linaro.org>
-Date: Mon, 14 Oct 2024 10:38:20 +0300
-Subject: [PATCH v2] arm64: dts: qcom: x1e80100: Add Broadcast_AND region in
- LLCC block
+        Mon, 14 Oct 2024 00:38:52 -0700 (PDT)
+Date: Mon, 14 Oct 2024 10:38:50 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Advait Dhamorikar <advaitdhamorikar@gmail.com>
+Cc: Sam Ravnborg <sam@ravnborg.org>, 
+	Boris Brezillon <bbrezillon@kernel.org>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Nicolas Ferre <nicolas.ferre@microchip.com>, Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Claudiu Beznea <claudiu.beznea@tuxon.dev>, dri-devel@lists.freedesktop.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, skhan@linuxfoundation.org, 
+	anupnewsmail@gmail.com, kernel test robot <lkp@intel.com>, 
+	Dan Carpenter <error27@gmail.com>
+Subject: Re: [PATCH v2] drm/atmel_hlcdc: Fix uninitialized variable
+Message-ID: <rr7pp6a77tmur62vu2xdpasokokta7g6kcgjcd4iydmzyqpd5e@z45genf4gsv3>
+References: <20241007150904.9840-1-advaitdhamorikar@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241014-x1e80100-dts-llcc-add-broadcastand_region-v2-1-5ee6ac128627@linaro.org>
-X-B4-Tracking: v=1; b=H4sIAGvKDGcC/52NQQ6CMBAAv0J6dk1bwaIn/2GIKe0Cm5DWbAnBk
- P7dyhM8zhxmdpGQCZO4V7tgXClRDAX0qRJusmFEIF9YaKlraVQLm8JWKinBLwnm2Tmw3kPP0Xp
- n02KDfzGOpQLmZmp1QdS2HUTpvRkH2o7Xsys8UVoif471qn72n8uqQIGW/RX9UDeNwcdMwXI8R
- x5Fl3P+AkI8vMTjAAAA
-X-Change-ID: 20240718-x1e80100-dts-llcc-add-broadcastand_region-797413ee2a8f
-To: Bjorn Andersson <andersson@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Rajendra Nayak <quic_rjendra@quicinc.com>, 
- Sibi Sankar <quic_sibis@quicinc.com>, 
- Konrad Dybcio <konradybcio@kernel.org>
-Cc: Johan Hovold <johan@kernel.org>, linux-arm-msm@vger.kernel.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- stable@vger.kernel.org, Abel Vesa <abel.vesa@linaro.org>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2285; i=abel.vesa@linaro.org;
- h=from:subject:message-id; bh=aFFisPPZd/Hre79PkGYujlf0RBJz+NA9/OJB7V4sSdA=;
- b=owEBbQKS/ZANAwAKARtfRMkAlRVWAcsmYgBnDMp03ZKoBF3gZn4wyNlkQ/qu0EqcxoioktmGs
- bg8r8yqmHSJAjMEAAEKAB0WIQRO8+4RTnqPKsqn0bgbX0TJAJUVVgUCZwzKdAAKCRAbX0TJAJUV
- Vm2lD/9Lqer8HmlyUImWfB6FeBaJDYfjgrtmXwjXzbAIKCocA3fE0YMpVjPmbA/z36lJsDH4gwY
- sAQ61APXU5f2f+yrU+2VR0go86I2GK/9ivOmVZ3WewROKYw/Ze3YdJABpXNhDxizGgNKe2XNCW+
- d3/rl01u+FM4OPQEjrbXILs0EKU8nE7v31OCcNK6DeDBOA12+NvAkxK/vSDUeF+xcoynUXPJ5nd
- Zz3N9XEARiT+7xjgPHlxrcuXB08mcJgrNY72Ta0mSL4hldIvbmvuNqklYQC7Mlr+Kpol3uSbjhK
- Aog4wNf2oA8hdxd1czmzeEG0df6AYhXmYfns3LufWpoj8h70h1TJ2l0RGgPqaGzca27s424aU6q
- Oh+mp+LCzgdDQXB0ZWYg3mEpAcR1wiYuuWDB1IgKu9xJgeywbbKywsRC9DQaI4HTC0txgHqMx/2
- dGtxBrn48ZxLIMKeucUfqu+jeBCTu0ho8r/jwnTPdQ87A3GqsQ3I/xe+/NukjVhCpszchH6UHJS
- QnrJ5QLxK3/nNRqV3vKlL40DAeWNpProB0XkApp0nh5uW1GcrFoqpBaBYQ0eQTeuxX6aUhkdV9P
- Nqecy6AC2uIzD5iK1dk5Y3/YPVA0sIGpeYh8Nwd1C+4UbKQ/Kxi8y3K3ga6irhFHCeA4ffMZG03
- FOKgbm7rpSVKGfw==
-X-Developer-Key: i=abel.vesa@linaro.org; a=openpgp;
- fpr=6AFF162D57F4223A8770EF5AF7BF214136F41FAE
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007150904.9840-1-advaitdhamorikar@gmail.com>
 
-Add missing Broadcast_AND region to the LLCC block for x1e80100,
-as the LLCC version on this platform is 4.1 and it provides the region.
+On Mon, Oct 07, 2024 at 08:39:04PM +0530, Advait Dhamorikar wrote:
+> atmel_hlcdc_plane_update_buffers: may use an uninitialized
+> sr variable when the if condition remains unsatisfied.
+> The variable may contain an arbitrary value left from earlier computations.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <error27@gmail.com>
+> Closes: https://lore.kernel.org/r/202409240320.MZPgi3Up-lkp@intel.com/
+> Signed-off-by: Advait Dhamorikar <advaitdhamorikar@gmail.com>
 
-This also fixes the following error caused by the missing region:
+Fixes: d498771b0b83 ("drm: atmel_hlcdc: Add support for XLCDC using IP specific driver ops")
 
-[    3.797768] qcom-llcc 25000000.system-cache-controller: error -EINVAL: invalid resource (null)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 
-This error started showing up only after the new regmap region called
-Broadcast_AND that has been added to the llcc-qcom driver.
-
-Cc: stable@vger.kernel.org # 6.11: 055afc34fd21: soc: qcom: llcc: Add regmap for Broadcast_AND region
-Fixes: af16b00578a7 ("arm64: dts: qcom: Add base X1E80100 dtsi and the QCP dts")
-Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
----
-Changes in v2:
-- fixed subject line to say x1e80100 instead of sm8450
-- mentioned the reason why the new error is showing up
-  and how it is related to the llcc-qcom driver
-- cc'ed stable with patch dependency for cherry-picking
-- Link to v1: https://lore.kernel.org/r/20240718-x1e80100-dts-llcc-add-broadcastand_region-v1-1-20b6edf4557e@linaro.org
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index 0e6802c1d2d8375987c614ec69c440e2f38d25c6..fbf1acf8b0d84a2d2c723785242a65f47e63340b 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -6093,7 +6093,8 @@ system-cache-controller@25000000 {
- 			      <0 0x25a00000 0 0x200000>,
- 			      <0 0x25c00000 0 0x200000>,
- 			      <0 0x25e00000 0 0x200000>,
--			      <0 0x26000000 0 0x200000>;
-+			      <0 0x26000000 0 0x200000>,
-+			      <0 0x26200000 0 0x200000>;
- 			reg-names = "llcc0_base",
- 				    "llcc1_base",
- 				    "llcc2_base",
-@@ -6102,7 +6103,8 @@ system-cache-controller@25000000 {
- 				    "llcc5_base",
- 				    "llcc6_base",
- 				    "llcc7_base",
--				    "llcc_broadcast_base";
-+				    "llcc_broadcast_base",
-+				    "llcc_broadcast_and_base";
- 			interrupts = <GIC_SPI 266 IRQ_TYPE_LEVEL_HIGH>;
- 		};
- 
-
----
-base-commit: d61a00525464bfc5fe92c6ad713350988e492b88
-change-id: 20240718-x1e80100-dts-llcc-add-broadcastand_region-797413ee2a8f
-
-Best regards,
 -- 
-Abel Vesa <abel.vesa@linaro.org>
-
+With best wishes
+Dmitry
 
