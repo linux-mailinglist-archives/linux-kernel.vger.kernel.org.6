@@ -1,127 +1,127 @@
-Return-Path: <linux-kernel+bounces-364054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C3E99CA9B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:48:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED9A99CA9D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:49:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 214111F21024
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:48:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B230A1C22B3F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:49:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBF871AE006;
-	Mon, 14 Oct 2024 12:47:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A48C15C15F;
+	Mon, 14 Oct 2024 12:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="UaeVhZSM"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fXdA3DBh"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BD731ABEDF;
-	Mon, 14 Oct 2024 12:47:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 71F8D1A76A4
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 12:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728910023; cv=none; b=C07dBtmIrT74cg6IOse5XXB9TtEiztl6MR/gKzLaTV/uTih5Eg4GJ+Vr7LBLOPIhEudVF46+jCy5h9lR/++K4eTXMTeUP++ybaSTiunFLZyBgN8ityS2In/I6uk6EifPU75R5y5gNASua7V8iO8mT7PBNFA9jEoUPmTVbUMsUfY=
+	t=1728910117; cv=none; b=ToT3qftvf1nmZ7aWsZA/7q5sZcALEgfnfeqwfnXM0xBbN5z7tJa0QuHOAiaXuNzhiaBgBe0CycZusSlI3vZd92PpjlVQ4aDByDTD8SrFo6siznvUq3VcaiCJDvzLZud951mqKSExgu7XpBOTDzC4SkDR9MprFmx0PjShlrq+Vbw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728910023; c=relaxed/simple;
-	bh=rFTXzuJcR06ddN4070uzIzRRC/MmzJK4wQKN2A4qj28=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=iJ9e8dbQHo3k8PBNpl1lil1QfOl5zQDDENfCdxSRpi/C4GCruwLf4NwKuq3KhOMw9Rtg1+4SUnwoeItImU9yKPCU6WsGQphFW3KIlwxrmQWhXingiWjtxwYXFA0Is/jyPRfmNq1uhGB9SdyUQcLPDCWetm98gJnYsiZuTj3Pj8M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=UaeVhZSM; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id C3560E0004;
-	Mon, 14 Oct 2024 12:46:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728910019;
+	s=arc-20240116; t=1728910117; c=relaxed/simple;
+	bh=MhLSQQZS4zqkgAHrN17LB8PubEgDApvdabVlLEP6zsc=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=ICtouDymsiOUsfZwK8Z8rY3TI6QyYNT044F82GywhQzaAGgPXhktj463cJbqQU+TttnJZj3Bk3g5s/Ch8PymHr9qO+IWcKXkl6z2dCnf/8zZ0h0hrV1EdHTwBZfrb9OR+BkoK1SYvk9awX5N7nfwQLxhAaChsxcCwXYxgvLUzU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fXdA3DBh; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728910114;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=jyXjSeqKBZyL71QqcutV8ArwuYnG2LnYxkOoexou8f4=;
-	b=UaeVhZSMOLqXf3943rottRZjFgBaSRTpNrforsOsAFFOc3ODMYV5tMOHBMOG0W7XFnRa3+
-	eMKoopHwpv0cDfHK8p9jHM3aF3tLVNJHNV2tbmT9aE7rHRFF+bbdIODXxbD9gUVe7pu64r
-	LQNA+dPu/TdAYqOp0ib5JZ5cxwEr5Uh3olHieteGw0vJzuH5hwCiHjBiXDabJCR0Qpa23Y
-	w5HLIZ/F5VoWd4asTi8eXdt6mg8lFV0P+6sfZnOxM0nfANQ4FrPKG654B6Fftya8yJknms
-	3LbKeCOoFd5aQfEUw9Utod/bYMOx3gTx3mu6hlRc9XX0jjDpUoeLIBf8DNAiUA==
-From: Herve Codina <herve.codina@bootlin.com>
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-	Andy Shevchenko <andy.shevchenko@gmail.com>,
-	Simon Horman <horms@kernel.org>,
-	Lee Jones <lee@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Derek Kiernan <derek.kiernan@amd.com>,
-	Dragan Cvetic <dragan.cvetic@amd.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Herve Codina <herve.codina@bootlin.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	Daniel Machon <daniel.machon@microchip.com>,
-	UNGLinuxDriver@microchip.com,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Saravana Kannan <saravanak@google.com>
-Cc: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Horatiu Vultur <horatiu.vultur@microchip.com>,
-	Andrew Lunn <andrew@lunn.ch>,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Allan Nielsen <allan.nielsen@microchip.com>,
-	Steen Hegelund <steen.hegelund@microchip.com>,
-	Luca Ceresoli <luca.ceresoli@bootlin.com>,
-	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
-	=?UTF-8?q?Cl=C3=A9ment=20L=C3=A9ger?= <clement.leger@bootlin.com>
-Subject: [PATCH v10 6/6] reset: mchp: sparx5: set the dev member of the reset controller
-Date: Mon, 14 Oct 2024 14:46:35 +0200
-Message-ID: <20241014124636.24221-7-herve.codina@bootlin.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241014124636.24221-1-herve.codina@bootlin.com>
-References: <20241014124636.24221-1-herve.codina@bootlin.com>
+	bh=jz+O7ng0GFJAWN74rY5sF0aBksxpe7VRWGO4WN6Z/Hk=;
+	b=fXdA3DBhiYOBT/AmQBIuyTlGSV9atxLbSuNJ76mxfnC0TbxAjiMzSyW1j7p8e5pJLjDLsE
+	FPu5r99C4g50hMLKWNfVuakzgzhfvlPj2ujGmlpY6do1d6d+fWNJCMHgfl+PJhCHTao5MO
+	/BXQotfTg5QPO2qKET9dajsTBUMmeqs=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-gd6cIE5WM8eLNaXmN-j2Kg-1; Mon, 14 Oct 2024 08:48:33 -0400
+X-MC-Unique: gd6cIE5WM8eLNaXmN-j2Kg-1
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d4854fa0eso2059716f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 05:48:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728910112; x=1729514912;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jz+O7ng0GFJAWN74rY5sF0aBksxpe7VRWGO4WN6Z/Hk=;
+        b=nFMvuwkhgh/U62c0GsqKnTBnucf7qPfv3l28jW0hMdqtCf47FsWPCSEJXFqLyIzhO/
+         Aw1ld5cwmhmdXoBoLHlp/m/sAA4A9jYc5p/Ll+s3VYRwu3fdgSCqV2uHMFhWXajPz60M
+         DA9NQKC8jxzuIq4XkC8CzTG24QVdXyA42eoLp+U3mil7xIIMA0gGkeZVGW8PKcsunmtD
+         DgLa4bj42R9pSVjpRj2dfVzuOaOd3LErYnE5F6SpOgFFXTIYf2PriFNFaBF7RDAnq3V5
+         SA8ZoQ3pQygyW912/VjacYf+VKUirGqZiy2fphtyaZqT+RYZPWWkqiu3IiJmdeewMQHA
+         uONA==
+X-Forwarded-Encrypted: i=1; AJvYcCV50TuEKkFGfAQAHvlVdkR9lIC+DktPX6zZ2Vkp4ocx00cL/1IDVxxv+EVccxxYatV4R4ckIDDdN4duqWU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzt6h5eJyUoxuMq3g60UHCZvNhtU5Z39gAbAmUcin5zbu7wOJxM
+	8nKQpngConef+/wB5UEHoRba+yFVk5XwnXByXXnXcDrMQoZ0rg9mgeiziJb+goFcpSU5ddo5PDa
+	folxyrREyhAh+ApyMIfSUTpnzYfmCflb9KaNxPtv/vPWuXIXvneytGzLgQCxKBA==
+X-Received: by 2002:a05:600c:3b13:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-4311decab14mr92387655e9.12.1728910111953;
+        Mon, 14 Oct 2024 05:48:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFNKMVr8mP2u3/Zc4ug5AuewCTZ9DL/dFTdj/lE65CnsD7NnambyLw3qSxBo5sKDk5QAfMgnA==
+X-Received: by 2002:a05:600c:3b13:b0:42c:baf9:bee7 with SMTP id 5b1f17b1804b1-4311decab14mr92387475e9.12.1728910111614;
+        Mon, 14 Oct 2024 05:48:31 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7ee4aasm11245969f8f.95.2024.10.14.05.48.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 05:48:31 -0700 (PDT)
+Message-ID: <e8b90d70-d5dd-4ae9-8088-ca940d1fd9fa@redhat.com>
+Date: Mon, 14 Oct 2024 14:48:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/panic: Select ZLIB_DEFLATE for
+ DRM_PANIC_SCREEN_QR_CODE
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Miguel Ojeda <ojeda@kernel.org>, David Airlie <airlied@gmail.com>,
+ Simona Vetter <simona@ffwll.ch>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
+References: <20241003230734.653717-1-ojeda@kernel.org>
+ <609cf7e5-0fd6-4636-b5b1-b63fe319db28@redhat.com>
+Content-Language: en-US, fr
+In-Reply-To: <609cf7e5-0fd6-4636-b5b1-b63fe319db28@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: herve.codina@bootlin.com
 
-From: Clément Léger <clement.leger@bootlin.com>
+On 04/10/2024 09:14, Jocelyn Falempe wrote:
+> On 04/10/2024 01:07, Miguel Ojeda wrote:
+>> Under `CONFIG_DRM_PANIC_SCREEN_QR_CODE=y`, zlib is used:
+>>
+>>      ld.lld: error: undefined symbol: zlib_deflate_workspacesize
+>>      >>> referenced by drm_panic.c
+>>      >>>               drivers/gpu/drm/drm_panic.o:(drm_panic_qr_init) 
+>> in archive vmlinux.a
+>>
+>> Thus select `CONFIG_ZLIB_DEFLATE`.
+> 
+> Hi, good catch, yes it should select the zlib deflate.
+> 
+> Reviewed-by: Jocelyn Falempe <jfalempe@redhat.com>
 
-In order to guarantee the device will not be deleted by the reset
-controller consumer, set the dev member of the reset controller.
+I've just pushed it to drm-misc-next.
 
-Signed-off-by: Clément Léger <clement.leger@bootlin.com>
-Signed-off-by: Herve Codina <herve.codina@bootlin.com>
-Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-Reviewed-by: Philipp Zabel <p.zabel@pengutronix.de>
----
- drivers/reset/reset-microchip-sparx5.c | 1 +
- 1 file changed, 1 insertion(+)
+Thanks for your contribution.
 
-diff --git a/drivers/reset/reset-microchip-sparx5.c b/drivers/reset/reset-microchip-sparx5.c
-index c4cc0edbb250..aa5464be7053 100644
---- a/drivers/reset/reset-microchip-sparx5.c
-+++ b/drivers/reset/reset-microchip-sparx5.c
-@@ -154,6 +154,7 @@ static int mchp_sparx5_reset_probe(struct platform_device *pdev)
- 		return err;
- 
- 	ctx->rcdev.owner = THIS_MODULE;
-+	ctx->rcdev.dev = &pdev->dev;
- 	ctx->rcdev.nr_resets = 1;
- 	ctx->rcdev.ops = &sparx5_reset_ops;
- 	ctx->rcdev.of_node = dn;
 -- 
-2.46.2
+
+Jocelyn
+
+> 
+> Best regards,
+> 
 
 
