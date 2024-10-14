@@ -1,196 +1,92 @@
-Return-Path: <linux-kernel+bounces-364222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C80C99CDA8
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:35:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFF8B99CDE6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:37:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49E4281CEA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:35:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3B08283A83
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:37:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1831AB6EB;
-	Mon, 14 Oct 2024 14:34:42 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A0431AB517;
+	Mon, 14 Oct 2024 14:37:26 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E91E1798C;
-	Mon, 14 Oct 2024 14:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0D044A24;
+	Mon, 14 Oct 2024 14:37:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916482; cv=none; b=PlSJnki3JLWIVuXVuzltTkpxLhXi/7tMB9sqMXy3GYKZ6iOjw0xGicUd/U2qo8fOxBQxlGwUFyi70CEEJ1q/0H9bWzTX9CL9Y6pVTfzKObFxMn5AMt+DmHmfslbtj3vjuHEOMtP4IC6AQFts3tfKZ7jcAZdxKLg95Yv89IZyhzk=
+	t=1728916646; cv=none; b=TWjcQOIvOr9pQKDKU4ixeINZJOMt8Vf19d4FwXUyFSMwuTP5Miql161QkbAgTMYeHHtNAxSfWTfG7qHzRU7dMcFTgZSfd4kgf5SOa3TY8Q+iH3ZzFZannDBEkV4ifuKbFm2iW4eAH5/I5hVt6BGBR6jPT90lDmYarYKZtQ0BKoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916482; c=relaxed/simple;
-	bh=qNdam3C9gOrjO/3CDlp0IBHlqJ8S+hvHMEtUfCt3Rl0=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lvcEfYm6L2erc/WpIM0hArjkdyBIN9hoUJRgf/gy9GGkFGCHKH+6ANtcMLUxoXTWeIdE5skK569QsOiTAyPasMJcFpdparANBQJUBfY69tVyxVRYQSpTMbw+adtE6RSjCD7kHmF0Udh8fP/ryR+GjwMvVPQxXg43YLiX2dlh3+8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+	s=arc-20240116; t=1728916646; c=relaxed/simple;
+	bh=seOGrShxODMYZ05aHugBbw0isx2IFEiunBYacuosxBs=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ca6JrU6P205Zj7aNtwagi5Qi0HmuKIBnPGtQVgiZzDBgPlTH5ZI3g/vTboEvT2+y9MuKB986dUPwYYRa0bA9sjTsX4I58A4W7Lnf0g1UO99tzxxk3IWYCAkbSQX5FbzE+wf+5qH17rBUtrIfjg1tNNsbQShjj9yfHA/L7iDapyo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.231])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS0992tBXz67j73;
-	Mon, 14 Oct 2024 22:34:05 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 550F7140AB8;
-	Mon, 14 Oct 2024 22:34:37 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XS0CW6nw2z2DdNw;
+	Mon, 14 Oct 2024 22:36:07 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id C895D140158;
+	Mon, 14 Oct 2024 22:37:19 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
+ (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
- 2024 16:34:35 +0200
-Date: Mon, 14 Oct 2024 15:34:34 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: <shiju.jose@huawei.com>
-CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
-	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
-	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
-	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
-	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
-	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
-	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
-	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
-	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
-	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
-	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
-	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
-	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
-	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
-	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
-	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 04/18] cxl: move cxl headers to new include/cxl/
- directory
-Message-ID: <20241014153434.00001ec5@Huawei.com>
-In-Reply-To: <20241009124120.1124-5-shiju.jose@huawei.com>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
-	<20241009124120.1124-5-shiju.jose@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+ 2024 22:37:18 +0800
+From: Wang Hai <wanghai38@huawei.com>
+To: <radhey.shyam.pandey@amd.com>, <davem@davemloft.net>,
+	<edumazet@google.com>, <kuba@kernel.org>, <pabeni@redhat.com>,
+	<michal.simek@amd.com>, <andre.przywara@arm.com>, <zhangxiaoxu5@huawei.com>
+CC: <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-kernel@vger.kernel.org>, <wanghai38@huawei.com>
+Subject: [PATCH net] net: xilinx: axienet: fix potential memory leak in axienet_start_xmit()
+Date: Mon, 14 Oct 2024 22:37:04 +0800
+Message-ID: <20241014143704.31938-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
 
-On Wed, 9 Oct 2024 13:41:05 +0100
-<shiju.jose@huawei.com> wrote:
+The axienet_start_xmit() returns NETDEV_TX_OK without freeing skb
+in case of dma_map_single() fails, add dev_kfree_skb_any() to fix it.
 
-> From: Dave Jiang <dave.jiang@intel.com>
-> 
-> Group all cxl related kernel headers into include/cxl/ directory.
-> 
-> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
-> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
-> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
+Fixes: 71791dc8bdea ("net: axienet: Check for DMA mapping errors")
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/net/ethernet/xilinx/xilinx_axienet_main.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-
-> ---
->  MAINTAINERS                                | 3 +--
->  drivers/acpi/apei/einj-cxl.c               | 2 +-
->  drivers/acpi/apei/ghes.c                   | 2 +-
->  drivers/cxl/core/port.c                    | 2 +-
->  drivers/cxl/cxlmem.h                       | 2 +-
->  include/{linux/einj-cxl.h => cxl/einj.h}   | 0
->  include/{linux/cxl-event.h => cxl/event.h} | 0
->  7 files changed, 5 insertions(+), 6 deletions(-)
->  rename include/{linux/einj-cxl.h => cxl/einj.h} (100%)
->  rename include/{linux/cxl-event.h => cxl/event.h} (100%)
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index cc40a9d9b8cd..ae17d28c5f73 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -5620,8 +5620,7 @@ L:	linux-cxl@vger.kernel.org
->  S:	Maintained
->  F:	Documentation/driver-api/cxl
->  F:	drivers/cxl/
-> -F:	include/linux/einj-cxl.h
-> -F:	include/linux/cxl-event.h
-> +F:	include/cxl/
->  F:	include/uapi/linux/cxl_mem.h
->  F:	tools/testing/cxl/
->  
-> diff --git a/drivers/acpi/apei/einj-cxl.c b/drivers/acpi/apei/einj-cxl.c
-> index 8b8be0c90709..4f81a119ec08 100644
-> --- a/drivers/acpi/apei/einj-cxl.c
-> +++ b/drivers/acpi/apei/einj-cxl.c
-> @@ -7,9 +7,9 @@
->   *
->   * Author: Ben Cheatham <benjamin.cheatham@amd.com>
->   */
-> -#include <linux/einj-cxl.h>
->  #include <linux/seq_file.h>
->  #include <linux/pci.h>
-> +#include <cxl/einj.h>
->  
->  #include "apei-internal.h"
->  
-> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-> index 623cc0cb4a65..ada93cfde9ba 100644
-> --- a/drivers/acpi/apei/ghes.c
-> +++ b/drivers/acpi/apei/ghes.c
-> @@ -27,7 +27,6 @@
->  #include <linux/timer.h>
->  #include <linux/cper.h>
->  #include <linux/cleanup.h>
-> -#include <linux/cxl-event.h>
->  #include <linux/platform_device.h>
->  #include <linux/mutex.h>
->  #include <linux/ratelimit.h>
-> @@ -50,6 +49,7 @@
->  #include <acpi/apei.h>
->  #include <asm/fixmap.h>
->  #include <asm/tlbflush.h>
-> +#include <cxl/event.h>
->  #include <ras/ras_event.h>
->  
->  #include "apei-internal.h"
-> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
-> index 1d5007e3795a..e0b28a6730c1 100644
-> --- a/drivers/cxl/core/port.c
-> +++ b/drivers/cxl/core/port.c
-> @@ -3,7 +3,6 @@
->  #include <linux/platform_device.h>
->  #include <linux/memregion.h>
->  #include <linux/workqueue.h>
-> -#include <linux/einj-cxl.h>
->  #include <linux/debugfs.h>
->  #include <linux/device.h>
->  #include <linux/module.h>
-> @@ -11,6 +10,7 @@
->  #include <linux/slab.h>
->  #include <linux/idr.h>
->  #include <linux/node.h>
-> +#include <cxl/einj.h>
->  #include <cxlmem.h>
->  #include <cxlpci.h>
->  #include <cxl.h>
-> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
-> index afb53d058d62..a81a8982bf93 100644
-> --- a/drivers/cxl/cxlmem.h
-> +++ b/drivers/cxl/cxlmem.h
-> @@ -6,8 +6,8 @@
->  #include <linux/cdev.h>
->  #include <linux/uuid.h>
->  #include <linux/rcuwait.h>
-> -#include <linux/cxl-event.h>
->  #include <linux/node.h>
-> +#include <cxl/event.h>
->  #include "cxl.h"
->  
->  /* CXL 2.0 8.2.8.5.1.1 Memory Device Status Register */
-> diff --git a/include/linux/einj-cxl.h b/include/cxl/einj.h
-> similarity index 100%
-> rename from include/linux/einj-cxl.h
-> rename to include/cxl/einj.h
-> diff --git a/include/linux/cxl-event.h b/include/cxl/event.h
-> similarity index 100%
-> rename from include/linux/cxl-event.h
-> rename to include/cxl/event.h
+diff --git a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+index ea7d7c03f48e..53cf1a927278 100644
+--- a/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
++++ b/drivers/net/ethernet/xilinx/xilinx_axienet_main.c
+@@ -1046,6 +1046,7 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 		if (net_ratelimit())
+ 			netdev_err(ndev, "TX DMA mapping error\n");
+ 		ndev->stats.tx_dropped++;
++		dev_kfree_skb_any(skb);
+ 		return NETDEV_TX_OK;
+ 	}
+ 	desc_set_phys_addr(lp, phys, cur_p);
+@@ -1066,6 +1067,7 @@ axienet_start_xmit(struct sk_buff *skb, struct net_device *ndev)
+ 			ndev->stats.tx_dropped++;
+ 			axienet_free_tx_chain(lp, orig_tail_ptr, ii + 1,
+ 					      true, NULL, 0);
++			dev_kfree_skb_any(skb);
+ 			return NETDEV_TX_OK;
+ 		}
+ 		desc_set_phys_addr(lp, phys, cur_p);
+-- 
+2.17.1
 
 
