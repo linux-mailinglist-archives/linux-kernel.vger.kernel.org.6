@@ -1,114 +1,222 @@
-Return-Path: <linux-kernel+bounces-363985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 045F799C976
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:53:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19A1899C95A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:50:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3391B2505A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:50:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 923811F210D7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:50:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E6B19E7E2;
-	Mon, 14 Oct 2024 11:50:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17C7619F12A;
+	Mon, 14 Oct 2024 11:50:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CvEJHHaY"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ijUIuulF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1028819E806
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8EB13C67C
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 11:50:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728906603; cv=none; b=WGqRDP4RR88xcYydcJ7NWPQcRhuJdMvVwUZDcXghFN/CRqEGamxfvMAIHvsimNf6gLjTuf0T5mm/O2u9GxPG3DtIZO+MIq0FlwOrKoPM64OAoeGBl787H4vXez/cW0r0EAbSOFgkJBO0HybnCk18oYPEg3Y2u1EfPoEqVTk7aoA=
+	t=1728906613; cv=none; b=ez5G+b/kugVOnutLzzqaFDnZSLK/W67SG/G1OhKxqGUT803UM0evW/kgJHG0fEZd/coWGd6VhVePR1Oj2K2mKNsoY28vwtmCjxQtTcSGIqixsXyv4R9wSDX7wZDbf6zotHIEOVgCFDP8Og07qj17xOWwqsRcClDHb9a165DHZEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728906603; c=relaxed/simple;
-	bh=ygYWdRNLEPgpU0RcfDsUTagJdgEPb//UzGUn4Ts4m2Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qO1j5gMlp4y0uYE99n4QJ6JMU6Pgo2lZm2DjKjbLfAXGXNS+u91x1yhq8B6iNzUAyL+5+HEgcqGOlIn0RkwmfjuTq6HkfHMYZKKlF7tJ5VBiGwrTP05I9bxK8VB2Rak06i82bCSBOjqj1CBamdEFjB+XtM5D6gMJhMn8YuLYgAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CvEJHHaY; arc=none smtp.client-ip=209.85.167.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539e3f35268so2320095e87.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728906600; x=1729511400; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=iew+RP5Fy2E/40HugkpA9EDa/gYy4wZkIO70iXxUijM=;
-        b=CvEJHHaYyh6oNBN4VCQZmezRuBTPMuuvBjiJbzS6nRBmx3fkreVGrGdPnjz4lUOOjI
-         8GljKDBlriYJaZSGHYY7viZLi+YfY35gjsQR7dT1bjhxJoNr5ZJrTXxXxIoRFQeW9UVK
-         U9Rzf98XZOZrtmknh48KJySCkRmHb47VlPrUDKeU2Cey4jIngTETo3O/HVh56qUt+kJ8
-         JFzZH4tNru0aViwkSYNXdBA3OBbPyblv/K67k2ISMtxQCTB6FggGilAzBhN3eqEWrSl0
-         DoGS21M9B/jCoOzoXhtcSWLhTzf8rucuqGjHOugL2R5oQSDSd+Ul9fjP25PgAvrlPeyy
-         7QYw==
+	s=arc-20240116; t=1728906613; c=relaxed/simple;
+	bh=ej2oJo7FjWLjwyn8EarcLeDwAHzM0k8oP27ePKxkGF8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ONOvlUUS26mNcOvUocig2Wj7WdpEmeKjMW/szvDbuwpYR/bj2fR097om+9d1Z5zfCIp5D23lp8M6ZExCudV1QPqNN31ynzmfCj/Wy8RL3FcCvqKqTHVfIfrXJ4yqD2Br+/1gg1f6ExMvbmFwhxFlEwNbQdZN6KEVif3ZlL1NJjA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ijUIuulF; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1728906610;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=bHKRdzrsASSDCDG09qNrYYOs1yqvFqCl/DrkRyuPvzs=;
+	b=ijUIuulFjqQrm/OwymKY55EfYZ+t7nhbFv80hT6npemUNeR1qTNtv/L5C9mfS+vzv19rLB
+	pIev47TNP+msGb5ygJZ0PKIMA97oObrKrAkxAFQlMOVCIhyGrGJgb7yiTm38q23gd7ocQf
+	aQMxS+pvMy+YseRmSifq+qdeJlUTUSg=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-43-WAPl8eY-NMaA47mwd3ic-A-1; Mon, 14 Oct 2024 07:50:09 -0400
+X-MC-Unique: WAPl8eY-NMaA47mwd3ic-A-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d45de8bbfso2572222f8f.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 04:50:09 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728906600; x=1729511400;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=iew+RP5Fy2E/40HugkpA9EDa/gYy4wZkIO70iXxUijM=;
-        b=J85XawzQGhON+CrE0CNUpR5e0fmo30hlWzeD2JX+yCkjYL8KfYoBi4VTjrMcHz8VkB
-         G3Yk/m2Jyi4bAys/79NlzG6pvvexaykFJRFoY3dSjn49THs/pdZV1Vhomoezsk3DBWfU
-         9r22dDF1E+S2Ql3NBKwHLd4oKIBBy4etQYCkHoPL65MPyW4vuzyC9BVsReSlm3CjG0Yn
-         iaAuPtAZb6kU2mdHO+b0ctkAGfKN+DqVJkFIz4DI1q+BrzwQE2rVolPjzxBIgjcZw2DQ
-         8b+SOQIAIMcU9pw7MMNnWxyzvLbaQN1a9kjVS5sA2QIUSMe1mmUKQEuCx18+B0BK9eWG
-         deHg==
-X-Forwarded-Encrypted: i=1; AJvYcCXkozdJRn1ITFt0lZV1VvMdWY3VOLBAPiC9MM5KH7cfR+s+MTNIsOlkHLNpaGs5z6+TzpO6BehW+8pYHfU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy97L4bLt3uw0bmfiKDCoU3NvpFbdQUBhzyLKM2H8icC5gU97nG
-	FYV+elhqPgNHoBT908cKCc+e/+rS1G8U9+lleNZ1oHiMBS/56mcR2lqe27s7a/I=
-X-Google-Smtp-Source: AGHT+IHeZFlUvv6UeKWga3KrcKpVyfEpfE58+7vHUSg0GUxX8MLLjQZt1fSXn5N5ExlcM614tFbcJA==
-X-Received: by 2002:a05:6512:ad3:b0:539:d428:fbdd with SMTP id 2adb3069b0e04-539e574b00emr2705259e87.53.1728906599992;
-        Mon, 14 Oct 2024 04:49:59 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-539efe446c7sm585904e87.271.2024.10.14.04.49.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 04:49:59 -0700 (PDT)
-Date: Mon, 14 Oct 2024 14:49:57 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Hermes Wu <Hermes.Wu@ite.com.tw>
-Cc: Pin-yen Lin <treapking@chromium.org>, 
-	Kenneth Hung <Kenneth.hung@ite.com.tw>, Pet Weng <Pet.Weng@ite.com.tw>, 
-	Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
-	Robert Foss <rfoss@kernel.org>, Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
-	Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Allen Chen <allen.chen@ite.com.tw>, 
-	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>, open list <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH v5 01/10] drm/bridge: it6505: Change definition of
- AUX_FIFO_MAX_SIZE
-Message-ID: <2wi23no7jee5hpiyplipjhdmze6a2rulnmhrmukchlp3zui4np@c5yacstbzuxl>
-References: <20241001064305.32180-1-Hermes.Wu@ite.com.tw>
- <20241001064305.32180-2-Hermes.Wu@ite.com.tw>
+        d=1e100.net; s=20230601; t=1728906608; x=1729511408;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=bHKRdzrsASSDCDG09qNrYYOs1yqvFqCl/DrkRyuPvzs=;
+        b=vA77yHiKKSJ19qaJTiRHbub26KrXUfTIgqET2BaU8Y6fhClqYT4PvNyQ6mfrZcrHq7
+         RkdMthdcm+KdNzk+TGDgvlJ3wmceu9zs8ylyrILRVxkIpP1GvEM4UJSd8X2OXsAoLJsX
+         3yIyzRRrCcU3CLKHq4/IqVBoWqUWgV79XCsFw8jldbYtaSIrJJekBWwiTFfduO5oW3Ws
+         L7tFORQECpv9+8sD7o88W7p3zKG6/W+QDUUcqzr3zNlR7RmXBNCZP0kSSGxrebYoC54v
+         1z3g/2JY8Xhg2mNGdCnCu2vmNiXwEx5Z2GczjNb8R7h+f8W/adf23gfU8ibOpJmF7ibL
+         U4Gg==
+X-Forwarded-Encrypted: i=1; AJvYcCWgELixDnRrT3tYUjdR/paX+QTCNhnXuHbGv4asGXT/ySHaFp/h9MyKX3Mo2GXm5vI2mE5fC0I+EDybSQQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKYnP5DSYbzPVyWMQZDlKCWWkVe8L1hpotAE+s8/nGL0HNQ7y1
+	DDPRpMnl6WO3u+jA29LlwjQxqgqxXsuWShIkqdPczvonMhhYtsdrxLmPwCVtx3gYVsQ1SZy39Tt
+	KwPheDNMVqSjGgaMvvibJn0l8cuvAmFgiSKHH1TiVc4DvBzEXXvTLqPDSArBTag==
+X-Received: by 2002:a5d:540a:0:b0:37d:47e0:45fb with SMTP id ffacd0b85a97d-37d5ff86f1dmr6891400f8f.21.1728906608347;
+        Mon, 14 Oct 2024 04:50:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFYAyoizc1NBJkIlcYaJ0Tc0Q7WNTy3sLLGVuc57+TUYOtZJGmKImzG++BPWmFtWkxeDYuE2w==
+X-Received: by 2002:a5d:540a:0:b0:37d:47e0:45fb with SMTP id ffacd0b85a97d-37d5ff86f1dmr6891372f8f.21.1728906607930;
+        Mon, 14 Oct 2024 04:50:07 -0700 (PDT)
+Received: from ?IPV6:2a09:80c0:192:0:5dac:bf3d:c41:c3e7? ([2a09:80c0:192:0:5dac:bf3d:c41:c3e7])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ffc51sm118499215e9.15.2024.10.14.04.50.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 04:50:06 -0700 (PDT)
+Message-ID: <1791f0e4-1c4e-41cd-b34b-cf63dedec912@redhat.com>
+Date: Mon, 14 Oct 2024 13:50:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241001064305.32180-2-Hermes.Wu@ite.com.tw>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/3] acpi,srat: reduce memory block size if CFMWS has a
+ smaller alignment
+To: Dan Williams <dan.j.williams@intel.com>, Gregory Price
+ <gourry@gourry.net>, Ira Weiny <ira.weiny@intel.com>
+Cc: linux-cxl@vger.kernel.org, x86@kernel.org, linux-mm@kvack.org,
+ linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, hpa@zytor.com,
+ osalvador@suse.de, gregkh@linuxfoundation.org, rafael@kernel.org,
+ akpm@linux-foundation.org, Jonathan.Cameron@huawei.com,
+ alison.schofield@intel.com, rrichter@amd.com, terry.bowman@amd.com,
+ lenb@kernel.org, dave.jiang@intel.com
+References: <20241008044355.4325-1-gourry@gourry.net>
+ <20241008044355.4325-4-gourry@gourry.net>
+ <6705489bdc79b_125a729415@iweiny-mobl.notmuch>
+ <ZwVNAYiyUaoc8Pax@PC2K9PVX.TheFacebook.com>
+ <670561ebe74b7_964fe29460@dwillia2-xfh.jf.intel.com.notmuch>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <670561ebe74b7_964fe29460@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 01, 2024 at 02:43:00PM +0800, Hermes Wu wrote:
-> From: Hermes Wu <Hermes.wu@ite.com.tw>
-> 
-> The hardware AUX FIFO is 16 bytes
-> Change definition of AUX_FIFO_MAX_SIZE to 16
-> 
-> Fixes: b5c84a9edcd4 ("drm/bridge: add it6505 driver")
-> Signed-off-by: Hermes Wu <Hermes.wu@ite.com.tw>
-> ---
->  drivers/gpu/drm/bridge/ite-it6505.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
+On 08.10.24 18:46, Dan Williams wrote:
+> Gregory Price wrote:
+>> On Tue, Oct 08, 2024 at 09:58:35AM -0500, Ira Weiny wrote:
+>>> Gregory Price wrote:
+>>>> The CXL Fixed Memory Window allows for memory aligned down to the
+>>>> size of 256MB.  However, by default on x86, memory blocks increase
+>>>> in size as total System RAM capacity increases. On x86, this caps
+>>>> out at 2G when 64GB of System RAM is reached.
+>>>>
+>>>> When the CFMWS regions are not aligned to memory block size, this
+>>>> results in lost capacity on either side of the alignment.
+>>>>
+>>>> Parse all CFMWS to detect the largest common denomenator among all
+>>>> regions, and reduce the block size accordingly.
+>>>>
+>>>> This can only be done when MEMORY_HOTPLUG and SPARSEMEM configs are
+>>>> enabled, but the surrounding code may not necessarily require these
+>>>> configs, so build accordingly.
+>>>>
+>>>> Suggested-by: Dan Williams <dan.j.williams@intel.com>
+>>>> Signed-off-by: Gregory Price <gourry@gourry.net>
+>>>> ---
+> [..]
+>>> To help address David's comment as well;
+>>>
+>>> Is there a way to scan all the alignments of the windows and pass the
+>>> desired alignment to the arch in a new call and have the arch determine if
+>>> changing the order is ok?
+>>>
+>>
+>> At least on x86, it's only OK during init, so it would probably look like
+>> setting a static bit (like the global value in x86) and just refusing to
+>> update once it is locked.
+>>
+>> I could implement that on the x86 side as an example.
+>>
+>> FWIW: this was Dan's suggestion (quoting discord, sorry Dan!)
+>> ```
+>>      I am assuming we would call it here
+>>          drivers/acpi/numa/srat.c::acpi_parse_cfmws()
+>>      which should be before page-allocator init
+>> ```
+>>
+>> It's only safe before page-allocator init (i.e. once blocks start getting
+>> populated and used), and this area occurs before that.
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Sorry for the late reply. It must also be called before 
+memory_dev_init(), which happens after the buddy is up IIRC.
+
+> 
+> I will note though that drivers/acpi/numa/srat.c is always built-in, so
+> there is no need for set_memory_block_size_order() to be EXPORT_SYMBOL
+> for modules to play with, just an extern for NUMA init to access.
+
+That's the magic piece I was missing.
+
+Because it didn't make too much sense for me a call to this function 
+would ever makes sense after modules where loaded.
+
+This really only works that early during boot, that modules are not 
+loaded yet.
+
+So this patch here should be dropped.
 
 -- 
-With best wishes
-Dmitry
+Cheers,
+
+David / dhildenb
+
 
