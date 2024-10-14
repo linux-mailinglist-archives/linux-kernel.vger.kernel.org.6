@@ -1,111 +1,128 @@
-Return-Path: <linux-kernel+bounces-364524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F5499D5B2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:39:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AE3499D5B4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:40:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E68283FC3
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:39:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D4EB1C22845
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:40:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 089A41C6886;
-	Mon, 14 Oct 2024 17:39:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EDD81C6886;
+	Mon, 14 Oct 2024 17:40:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NVJidN8v"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BMg/5VDv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30831BFE10;
-	Mon, 14 Oct 2024 17:39:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E52331B85C2;
+	Mon, 14 Oct 2024 17:40:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728927554; cv=none; b=YoLGmVCouJVSwDHEynavEul7bx2e4zmxFCXx9urGNmAieMF7n3jU6DHZv2HkkvFMUSVhqn1zz1PKSt3fno7F4JbJpLAtKnCLuo4iXgXPo49XaguZpI6g7ACC+eZW/k1a58KKH38sr7Lbos1E493xEC8a3zPNqOfChTZkfnaVf+Y=
+	t=1728927640; cv=none; b=qnGZYyTxPvUDclzsTAvj1ImVoh1uRCwfv4Q0g+BTAvBygHl7S1D9uOKTzYi/f3FmyvI5VtHnRfqhXf1IAco8S4kseyICC3vFtF7Jl9e/h3Sp9qgOu+1w6tjlOSIT6vA9iY3bqC/nwa49a7r4zm0vLB8H0GemaZfxZFSF0IlzuCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728927554; c=relaxed/simple;
-	bh=BiWAn6AqL8nUbF7YupmT9miDzo9h2ugqfnahYsV0y+k=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wurg9riAac/jJzLxo2Wg6SbO9h8a/X03i3A4dQkSpbPAE2qdExoJm2lNgFzUPaX7CuwUvoQv5BuMxnY09+kWv17zxK81KN5zW0Ombg49jbCRF1D7bjy++r0AqEASeB0MjWJocYa7AT+sYex+VIoNnnlJDdPIxr4ed2uAHopd/Go=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NVJidN8v; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d5aedd177so2113540f8f.1;
-        Mon, 14 Oct 2024 10:39:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728927551; x=1729532351; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ex9dSK9Fr9Mrms2dZEi46OXusqhHyEOAsbZ50rRI7gk=;
-        b=NVJidN8vvQuiVEAUto0JstURxOp5ZeKvxZsZSVMTt+G5ycDgwmqln70bXo75Jq7TcR
-         uaS2Z+7cdtcAo8Q9dMDnoV08UKaT5sSeUtyAAWKGD8a8TiVnHleTi9/yJB2OxcVrkJtJ
-         swjIy5xudNZs75SoR+3lEBRC+JdEaSJpfDfKbIZwYIY8uHoTrzPEqByWHTaOwuZaJUPj
-         7vPUXSOsmkrUiQN0zHP9O9yytnoCJT9fjM3110m+9vgsXVIDo2dyIh1VPIOz+nn6jl+a
-         Ssb6XwctijrHw+PIkJ5EC4zh6t8XXr91guPxdbwXRhST9b+5sZG9PL/eBYArt287TCfd
-         CZJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728927551; x=1729532351;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ex9dSK9Fr9Mrms2dZEi46OXusqhHyEOAsbZ50rRI7gk=;
-        b=Q3a2w+w66VRF3bI7XansnR/OQwnFARQxz/e7b9jp9nCXTDEVElKCSnm8ywQmTCd/yc
-         YazOSYl4TweUFNNuE78gWLrfb38vLxeBzd/gwkfxHOOKs8PzhRzneEhnfRHseDmlgakR
-         EqmJ1zoAC8/QtkvJmsYnonO7XcwvmenW6IiLTOnuatPc7O8RORQ5/n8pPh8goQkGiwdT
-         Cxx8mp/yGzlHUb/TAJN3MArnSurauxDjPfaJSDCQrX+qMZ9zSpD3zvm7ISyN7TOJPft6
-         D8kHJelWS8xaNA/4oI0ttjwfZMBScQGU0s9/gyFs5Q2jGFbbZT6s/2KbH7dmfyuQYClu
-         O+xQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUQm7MH1/Y2NkPaNaO7pzTBaTqnXwBzXCrd8QfqXQud0m/QBR4w7Pc6PtapmxB6IYWMkWBflcto46nf@vger.kernel.org, AJvYcCWOvkX+hTl/UpwhoLcAtjCzewdaRK8SvQOgyK39veQikfeUnu5DZgzgAv5jLeDzy1GhrVQpm42GB76P4OeL@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2v18G+MIKr73dpQxXsAa2AeffxvPnzJNqvgdMAeHazy2/sdIz
-	87GNBiKWYFezSIVCJV1v+UC/LzU7Og5SXPnxh7V9ccOFnUrPnLSckp2+zNc9PfZ6Qki2idGKI09
-	KPMFvoEFtiGAyNMpdS9+UfAcpz78=
-X-Google-Smtp-Source: AGHT+IG8Ioyzz6mOTNODHp+6JGPrDIqTDoYoXcA8KANumMT330PJOmG1Ry29YovlxV6hBGItqkJAhM6agEIpW0+j5LI=
-X-Received: by 2002:adf:ea45:0:b0:37d:2e78:8875 with SMTP id
- ffacd0b85a97d-37d552ce636mr9080330f8f.56.1728927550932; Mon, 14 Oct 2024
- 10:39:10 -0700 (PDT)
+	s=arc-20240116; t=1728927640; c=relaxed/simple;
+	bh=CE2jAihREu31K2gSwN/JmJLC0IVQkicu4On1Qb6A8x0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Q6g8AXGI3Y/AFavjt0f6XnlVk0n8g/u3X57ZnMf377t7FFtBNhPhFbQUPuY56AQOpyxZzFkSEAwpX2RU+6gonUFN+eHye4togmo6JMz5cOR9LxKbU5/1gRAeEYPznE9er9pReRNOTY/gDzaa404JCuYpiyjVyQJtb1dKpE5AmYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BMg/5VDv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EAimx6002048;
+	Mon, 14 Oct 2024 17:40:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	F5hZ5EUZXMbCP1ZXJ2JWDyH5ysO7SiX/CMGlhtAacwg=; b=BMg/5VDvEaaohuP3
+	25KifaB1w+1ItGlT+GH6ixrp79xrVqnQo5UHZQHTUM8ysQ40olkiJBQmP1dINLVk
+	a0wqZvCZ5atd6AuxsB1wBVXyHu6wvQ3ei1KILqBFoLmpooH25CgXhdgwk/+EQCR6
+	KgRY8556Szce/vBbiIONrZp5fRbsw5P4pvkw33doJJTSj9ckuJ44iMOLAiHsj5u5
+	91pTreAIUKO+m0H28kB4p5BxemEsjPBksrteAaMS1nM3GqPqZFlXUgi4zH6ctNqm
+	omYRK9CdaZPft2XoxLvumMYhcWX5Uc1FO5m2oMipEnjT17MTnqatBf/D3WVpka6o
+	BstlBw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427g45d9da-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 17:40:14 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EHeDDG031148
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 17:40:13 GMT
+Received: from [10.110.64.87] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
+ 2024 10:40:13 -0700
+Message-ID: <7ba5148d-8a82-4312-8fcb-45cb7ca34b5e@quicinc.com>
+Date: Mon, 14 Oct 2024 10:40:12 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014113026.78853-1-cenk.uluisik@googlemail.com> <172891445477.1127378.13874736914700071280.robh@kernel.org>
-In-Reply-To: <172891445477.1127378.13874736914700071280.robh@kernel.org>
-From: Jimmy Hon <honyuenkwun@gmail.com>
-Date: Mon, 14 Oct 2024 12:38:59 -0500
-Message-ID: <CALWfF7JNcNi5Gs04V5arJQEw89MJKPy6oRDxh-jdtmo-oCAu0A@mail.gmail.com>
-Subject: Re: [PATCH v4 1/2] arm64: dts: rockchip: Add rk3588-orangepi-5b
- device tree and refactor
-To: Cenk Uluisik <cenk.uluisik@googlemail.com>
-Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, devicetree@vger.kernel.org, 
-	Heiko Stuebner <heiko@sntech.de>, Chris Morgan <macromorgan@hotmail.com>, Andy Yan <andyshrk@163.com>, 
-	Jagan Teki <jagan@edgeble.ai>, linux-arm-kernel@lists.infradead.org, 
-	Tim Lunn <tim@feathertop.org>, linux-rockchip@lists.infradead.org, 
-	Dragan Simic <dsimic@manjaro.org>, Jonas Karlman <jonas@kwiboo.se>, 
-	Michael Riesch <michael.riesch@wolfvision.net>, Jing Luo <jing@jing.rocks>, 
-	Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	"Rob Herring (Arm)" <robh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] PCI: starfive: Enable PCIe controller's runtime PM
+ before probing host bridge
+To: Bjorn Helgaas <helgaas@kernel.org>
+CC: <kevin.xie@starfivetech.com>, <lpieralisi@kernel.org>, <kw@linux.com>,
+        <manivannan.sadhasivam@linaro.org>, <robh@kernel.org>,
+        <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <quic_krichai@quicinc.com>,
+        Marek Szyprowski <m.szyprowski@samsung.com>
+References: <20241014172321.GA612738@bhelgaas>
+Content-Language: en-US
+From: Mayank Rana <quic_mrana@quicinc.com>
+In-Reply-To: <20241014172321.GA612738@bhelgaas>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: Bvlx5p7ShDuAHMvJ3u_yxGWi3ijNPc00
+X-Proofpoint-ORIG-GUID: Bvlx5p7ShDuAHMvJ3u_yxGWi3ijNPc00
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxlogscore=837
+ lowpriorityscore=0 malwarescore=0 spamscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 priorityscore=1501 adultscore=0 clxscore=1015 suspectscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140127
 
-> New warnings running 'make CHECK_DTBS=y rockchip/rk3588s-orangepi-5.dtb rockchip/rk3588s-orangepi-5b.dtb' for 20241014113026.78853-1-cenk.uluisik@googlemail.com:
->
-> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dtb: gpio-func: leds-gpio: {'rockchip,pins': [[0, 2, 0, 245]], 'phandle': 253} is not of type 'array'
->         from schema $id: http://devicetree.org/schemas/gpio/gpio-consumer.yaml#
-Regarding the "leds-gpio" warning, DTS checking script might not like
-that id. You could probably avoid it by naming it "green-led". Similar
-to what the Orange Pi 5 Plus does. This would be a separate bugfix
-commit before any of the other changes in this series.
+Hi Bjorn
 
-> arch/arm64/boot/dts/rockchip/rk3588s-orangepi-5b.dtb: vcc-3v3-sd-s0-regulator: Unevaluated properties are not allowed ('enable-active-low' was unexpected)
->         from schema $id: http://devicetree.org/schemas/regulator/fixed-regulator.yaml#
-The enable-active-low has already been addressed in
-https://git.kernel.org/pub/scm/linux/kernel/git/mmind/linux-rockchip.git/commit/?h=v6.12-armsoc/dtsfixes&id=f4d29bebaa6118c1e51e8f1c21ce2b34f43e1479
-So you can avoid the error if you start with v6.12-armsoc as your baseline.
+On 10/14/2024 10:23 AM, Bjorn Helgaas wrote:
+> On Mon, Oct 14, 2024 at 09:26:07AM -0700, Mayank Rana wrote:
+>> PCIe controller device (i.e. PCIe starfive device) is parent to PCIe host
+>> bridge device. To enable runtime PM of PCIe host bridge device (child
+>> device), it is must to enable parent device's runtime PM to avoid seeing
+>> the below warning from PM core:
+>>
+>> pcie-starfive 940000000.pcie: Enabling runtime PM for inactive device
+>> with active children
+>>
+>> Fix this issue by enabling starfive pcie controller device's runtime PM
+>> before calling pci_host_probe() in plda_pcie_host_init().
+>>
+>> Tested-by: Marek Szyprowski <m.szyprowski@samsung.com>
+>> Signed-off-by: Mayank Rana <quic_mrana@quicinc.com>
+>> Reviewed-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> 
+> I want this in the same series as Krishna's patch to turn on runtime
+> PM of host bridges.  That's how I know they need to be applied in
+> order.  If they're not in the same series, they're likely to be
+> applied out of order.Thank you for quick response and suggestion.
 
-Regarding the "leds-gpio" warning, DTS checking script might not like
-that id. You could probably avoid it by naming it "green-led". Similar
-to what the Orange Pi 5 Plus does. This would be a separate bugfix
-commit before any of the other changes.
 
-Jimmy
+Hi Krishna
+
+Please add this proposed change as part of your changes to enable 
+runtime PM of host bridges.
+
+Regards,
+Mayank
 
