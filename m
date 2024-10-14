@@ -1,184 +1,307 @@
-Return-Path: <linux-kernel+bounces-364393-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B715299D40E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:58:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D064A99D415
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 17:58:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BEF1E1C24FAC
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:58:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4AC7C1F246F8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:58:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51A1C7269;
-	Mon, 14 Oct 2024 15:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 860C71AC885;
+	Mon, 14 Oct 2024 15:57:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b="fNN7CBpZ"
-Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rjCsFmYp"
+Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F038E1B4F14
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 830ED1AC884
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728921407; cv=none; b=Ys1Qtd6/qXkhQOhGPmuivvSvbjMjN+psi+NyG9tNDr9iJutbovbg3TZ3HbE0mM1Y1SFapfsEIaGaMztsc3gV5uUXJGQyEUMiYkL1aSUVfbxbg6Hg+uyzTEBKPr4HcGV9CIbpgznO1PAvNJweNS8PA/4tNrrhnYv2hAxCWX+hRik=
+	t=1728921452; cv=none; b=PiV8xkpOe7Fnee8JZ3wn/zF0kCYjndpHkW2GuzNCXm6WJwvP+g8UvdxtthJzNW6yKw6/3ztYjlpyOqaOs1JRyC1d9W5WVMhq09od5Tn8BAqi1A7MErkM1EFElXFXsPryrWe0r7vHZIz1FFcdGrvrfvzGMu7UvigfnjqmO4eyL4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728921407; c=relaxed/simple;
-	bh=Rbd/ChyGTacobL4pWk0kh3qA0AC/MXgdsddJsO3lpNY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRV2E/HzQVFhEHPniSbldrKIEAjYHCXmUY+DmDLUIQEXdRAHN6niIb/TNYCreNNmMW+LDcQDu+LQ4EnrV1892HADO5e5YdcV8C0es7ikbela59JBCS6cK9np6pucOFlbFLJV4Rbsd/1f4l54aWM0rDr1DmOFxLQwhnc5ku288SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu; spf=fail smtp.mailfrom=g.harvard.edu; dkim=pass (2048-bit key) header.d=rowland.harvard.edu header.i=@rowland.harvard.edu header.b=fNN7CBpZ; arc=none smtp.client-ip=209.85.219.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rowland.harvard.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=g.harvard.edu
-Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-6cbf0769512so20438206d6.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:56:44 -0700 (PDT)
+	s=arc-20240116; t=1728921452; c=relaxed/simple;
+	bh=iz21pBdE6/PrAsEcs5M2ooHdZ/I9dVVWFMpdoI6Oacs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cROjAYiizYKdWunEf3O1naJMTd9wMht/mhbx4953vCTwVJkP2+DP6XmSYKxhWjH2Ab2JnP8paecBePf19rvQaz28N6t3ad+wvwJvZJ6oBon5qVgjhmwVxBLVp7fToCxINv0dtzX5aDbCkNLKDIV8anYCFShxjJr03Q/vilITnic=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rjCsFmYp; arc=none smtp.client-ip=209.85.208.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c932b47552so20535a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:57:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=rowland.harvard.edu; s=google; t=1728921404; x=1729526204; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=be1hrvlUsBpjG6CtOzQIeoA7DeG52DJehIShe6TxuJg=;
-        b=fNN7CBpZ+RHAZ0Qde8Z82kQspHHC2JsPP0FsUXRE7FgRmaJkoLc/xJo9nj+65HVti1
-         Uewm9bZnst7sddSWiFiqNzY6mVbexJfZCEvNQfkb4deuv0kkCRPLAxm+d40WpSAS/a4T
-         OvBFMAUspub0j8RP4UfEM/XxsVgmgpdPgsixkBVSb+U4fEufjWHAeG2aHXetfyQftHjm
-         28x3OSP/6hxlCvrOUIrOBbQRaaHSPfyeczzk6u3LXdaAeceThqBuvRKNdnC4VMyGhJU2
-         +5TeoWhYhKv3ygVqq7326U/HTszG9SNTkod7SA+RGOQMxocMYnqmV5cca9p/zdLkDatt
-         OJAA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728921404; x=1729526204;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1728921449; x=1729526249; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=be1hrvlUsBpjG6CtOzQIeoA7DeG52DJehIShe6TxuJg=;
-        b=N7vUdQEHdZACKvEclHDba5eTwPP2et/Suogl8189cnpOwlM1Vbm2a1geTYkh2L6W0V
-         y1PdntzVX7odUM10c9XUB8IoIqbZVG4y42BWHGsLKOpa134atXZKMFmpAUNxuPObHhxv
-         uz31kgxWuwebbRP9buN63V0YNIvOs/kNLzEtFnOLy9PGrj76vB1E0fPzoRhek0Mj6WrF
-         PBrqpN3HSiSJ80u3IXyho8cje8aOyVVmNI+OrgvHJnal3i8t7LwV1DyP9xe2AyVb4NkJ
-         unYg4+xMBM9MxpK0Su09FQF05c2MMqNwYF8vPeHO2ckYX4U2xBtSThCFw54Syj01rAin
-         dibw==
-X-Forwarded-Encrypted: i=1; AJvYcCXYwOTB1BKHrumN8vyI6bZfJHTt4mLchp7xiEAP7dw5qvDcDuW1fKupm8uuj+ocQA/pi4DGJG/urYWypcQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBtyHbDHWmWIsLzTLWJSN17TbRSDYaQC9ka2PciMcwn8ePsTnU
-	EUd0WaBuNhc9ZLDLpVvFmLSGbCUZWYrX8VPZbanh5iIFDlM4QBk+eR/9twwDnA==
-X-Google-Smtp-Source: AGHT+IGdot33FySr+PpKn3xDNoWp1lPSKAmLfTIJ2M3YboljTXEQHme1fTL63RXssphS6RehdMyzzg==
-X-Received: by 2002:a05:6214:5b06:b0:6cb:d1ae:27a6 with SMTP id 6a1803df08f44-6cbf0095668mr170844676d6.24.1728921403730;
-        Mon, 14 Oct 2024 08:56:43 -0700 (PDT)
-Received: from rowland.harvard.edu ([2601:19b:681:fd10::c666])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6cbe8608bf1sm47088546d6.91.2024.10.14.08.56.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 08:56:43 -0700 (PDT)
-Date: Mon, 14 Oct 2024 11:56:40 -0400
-From: Alan Stern <stern@rowland.harvard.edu>
-To: Guan-Yu Lin <guanyulin@google.com>
-Cc: Thinh.Nguyen@synopsys.com, gregkh@linuxfoundation.org,
-	mathias.nyman@intel.com, yajun.deng@linux.dev,
-	sumit.garg@linaro.org, kekrby@gmail.com, oneukum@suse.com,
-	dianders@chromium.org, perex@perex.cz, tiwai@suse.com,
-	niko.mauno@vaisala.com, andreyknvl@gmail.com,
-	christophe.jaillet@wanadoo.fr, tj@kernel.org,
-	stanley_chang@realtek.com, quic_jjohnson@quicinc.com,
-	ricardo@marliere.net, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-sound@vger.kernel.org,
-	badhri@google.com, albertccwang@google.com, quic_wcheng@quicinc.com,
-	pumahsu@google.com
-Subject: Re: [PATCH v5 5/5] usb: host: enable sideband transfer during system
- sleep
-Message-ID: <9b5fe5d2-77a7-40b7-b260-856c35d9dcec@rowland.harvard.edu>
-References: <20241014085816.1401364-1-guanyulin@google.com>
- <20241014085816.1401364-6-guanyulin@google.com>
+        bh=m6UcN7D6a3Y3HeZfL95jmfp9Wnz9QqZMWgnGuOo2iKI=;
+        b=rjCsFmYprXtPatr1uyZAR/3ztftfC8w4/fhGfnQ99SwUU3H5xalnl47IkBz/RQXXTM
+         pf0fqwMFVponM3Uim5PC/ipyo4A45L95aIaVdvGdW//WTxwRfM5iUAkbmI96z+ZRWRjw
+         qatVAMAvuDHrsYpeobwNwn2Kos7kkMMfS8mFt9DDL3NEDaTaVvb9bKNRLtdGloyJZ7//
+         GfHZHDdLE69fjcQkQOxqi2EMj5VOs0Y63bObJo4MFctXXyg5EFVoxPg6Wxrua2T3Kps+
+         NXtL1mzhTVcmFe2aH2SDeQk4EbSISVbCNHN65FU2UoqvWM0EmRCmEHkhxlMhEa+wXdNV
+         LhLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728921449; x=1729526249;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=m6UcN7D6a3Y3HeZfL95jmfp9Wnz9QqZMWgnGuOo2iKI=;
+        b=Vw+ZZLGd7c74VY3gTHHwivvmJGBHlvNYlvgcISaJVJEB8SoGtbUVLhP40NOq+0A1X3
+         vXpWZk/NlpHR9N0KN43tLDMm41iNQw7DiA0IFUMPr6dkUQ5W8wB1dmIHbruz/RbHLifE
+         4y+Ao9flpo2woZp/rl9/ks1bN0onPjYj5jWCWmr3i7gSHVDC2BLMkpmgE8bc+aWsq92d
+         Hb3DGD/qrmzXrPwXR9bd58jZb0KB0VMmxoMA2cI4W2piGFoRVlj2Ms77+ZG4KcaAIQ3q
+         MS5I5RVOwBenHYw3rRlC7XzeZkjWJXroyuNFiW8xN2QCwQADxMkK7CB+EpqSmUb6A9Jm
+         gHLQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX/W9TLqMJ2J6nQU8veiEMVrfg8VQ835Z3x00T10ZpbVfQBlWmx5/WR8pb2d2yWM0CtVgOVh44+ie0VfXg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwuYXfD4Gjlou3UCS/UQN4/y49QESdoBladBJ9mz6nocoJ1YVa7
+	xxLcn6NtIDWBAre3dRU/3+lKRuwRjuBYjrkmluCrYQQoGe9U27y5dEtqICvRiNvGpBQ5kZpRNCS
+	m5Fq2r/3lvL9ToVBq+9B0poYb4dJM57rd7q9E
+X-Google-Smtp-Source: AGHT+IEGtZ74IajYTANuZOCN6og9uIMTu7SYAYG5PbPVPdswaALt2lAU33R1qlhZZ1AD7R94hwvEgAiDaN9IhA3SQdQ=
+X-Received: by 2002:a05:6402:3586:b0:5c5:c44d:484e with SMTP id
+ 4fb4d7f45d1cf-5c95c5c820dmr391530a12.1.1728921448200; Mon, 14 Oct 2024
+ 08:57:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241014085816.1401364-6-guanyulin@google.com>
+References: <cover.1727440966.git.lorenzo.stoakes@oracle.com>
+ <a578ee9bb656234d3a19bf9e97c3012378d31a19.1727440966.git.lorenzo.stoakes@oracle.com>
+ <CAG48ez3ursoL-f=mYpV79Do18XPPt+MPPHNUBv6uFE1GhpOwSA@mail.gmail.com> <868739d2-0869-462f-ac86-1a8d1dccb0a4@lucifer.local>
+In-Reply-To: <868739d2-0869-462f-ac86-1a8d1dccb0a4@lucifer.local>
+From: Jann Horn <jannh@google.com>
+Date: Mon, 14 Oct 2024 17:56:50 +0200
+Message-ID: <CAG48ez3vqbqyWb4bLdpqSUnhwqGo2OQetecNhEGPdCGDr94nbQ@mail.gmail.com>
+Subject: Re: [RFC PATCH 3/4] mm: madvise: implement lightweight guard page mechanism
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, Suren Baghdasaryan <surenb@google.com>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Matthew Wilcox <willy@infradead.org>, 
+	Vlastimil Babka <vbabka@suse.cz>, "Paul E . McKenney" <paulmck@kernel.org>, 
+	David Hildenbrand <david@redhat.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	Muchun Song <muchun.song@linux.dev>, Richard Henderson <richard.henderson@linaro.org>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner <mattst88@gmail.com>, 
+	Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	"James E . J . Bottomley" <James.Bottomley@hansenpartnership.com>, Helge Deller <deller@gmx.de>, 
+	Chris Zankel <chris@zankel.net>, Max Filippov <jcmvbkbc@gmail.com>, Arnd Bergmann <arnd@arndb.de>, 
+	linux-alpha@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-parisc@vger.kernel.org, linux-arch@vger.kernel.org, 
+	Shuah Khan <shuah@kernel.org>, Christian Brauner <brauner@kernel.org>, linux-kselftest@vger.kernel.org, 
+	Sidhartha Kumar <sidhartha.kumar@oracle.com>, Vlastimil Babka <vbabka@suze.cz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 08:50:29AM +0000, Guan-Yu Lin wrote:
-> Sharing a USB controller with another entity via xhci-sideband driver
-> creates power management complexities. To prevent the USB controller
-> from being inadvertently deactivated while in use by the other entity, a
-> usage-count based mechanism is implemented. This allows the system to
-> manage power effectively, ensuring the controller remains available
-> whenever needed.
-> 
-> Signed-off-by: Guan-Yu Lin <guanyulin@google.com>
-> ---
->  drivers/usb/core/driver.c         | 10 ++++++++++
->  drivers/usb/core/hcd.c            |  1 +
->  drivers/usb/core/usb.c            |  1 +
->  drivers/usb/dwc3/core.c           | 13 +++++++++++++
->  drivers/usb/dwc3/core.h           |  8 ++++++++
->  drivers/usb/host/xhci-plat.c      | 10 ++++++++++
->  drivers/usb/host/xhci-plat.h      |  7 +++++++
->  sound/usb/qcom/qc_audio_offload.c |  3 +++
->  8 files changed, 53 insertions(+)
-> 
-> diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-> index e713cf9b3dd2..eb85cbb1a2ff 100644
-> --- a/drivers/usb/core/driver.c
-> +++ b/drivers/usb/core/driver.c
-> @@ -1583,6 +1583,11 @@ int usb_suspend(struct device *dev, pm_message_t msg)
->  	struct usb_device	*udev = to_usb_device(dev);
->  	int r;
->  
-> +	if (msg.event == PM_EVENT_SUSPEND && usb_sideband_check(udev)) {
-> +		dev_dbg(dev, "device accessed via sideband\n");
-> +		return 0;
-> +	}
+On Mon, Oct 14, 2024 at 1:09=E2=80=AFPM Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+> On Fri, Oct 11, 2024 at 08:11:36PM +0200, Jann Horn wrote:
+> > On Fri, Sep 27, 2024 at 2:51=E2=80=AFPM Lorenzo Stoakes <lorenzo.stoake=
+s@oracle.com> wrote:
+> > >                 return 0;
+> > >         default:
+> > >                 /* be safe, default to 1. list exceptions explicitly =
+*/
+> > [...]
+> > > +static long madvise_guard_poison(struct vm_area_struct *vma,
+> > > +                                struct vm_area_struct **prev,
+> > > +                                unsigned long start, unsigned long e=
+nd)
+> > > +{
+> > > +       long err;
+> > > +       bool retried =3D false;
+> > > +
+> > > +       *prev =3D vma;
+> > > +       if (!is_valid_guard_vma(vma, /* allow_locked =3D */false))
+> > > +               return -EINVAL;
+> > > +
+> > > +       /*
+> > > +        * Optimistically try to install the guard poison pages first=
+. If any
+> > > +        * non-guard pages are encountered, give up and zap the range=
+ before
+> > > +        * trying again.
+> > > +        */
+> > > +       while (true) {
+> > > +               unsigned long num_installed =3D 0;
+> > > +
+> > > +               /* Returns < 0 on error, =3D=3D 0 if success, > 0 if =
+zap needed. */
+> > > +               err =3D walk_page_range_mm(vma->vm_mm, start, end,
+> > > +                                        &guard_poison_walk_ops,
+> > > +                                        &num_installed);
+> > > +               /*
+> > > +                * If we install poison markers, then the range is no=
+ longer
+> > > +                * empty from a page table perspective and therefore =
+it's
+> > > +                * appropriate to have an anon_vma.
+> > > +                *
+> > > +                * This ensures that on fork, we copy page tables cor=
+rectly.
+> > > +                */
+> > > +               if (err >=3D 0 && num_installed > 0) {
+> > > +                       int err_anon =3D anon_vma_prepare(vma);
+> >
+> > I'd move this up, to before we create poison PTEs. There's no harm in
+> > attaching an anon_vma to the VMA even if the rest of the operation
+> > fails; and I think it would be weird to have error paths that don't
+> > attach an anon_vma even though they .
+>
+> I think you didn't finish this sentence :)
 
-I'm not so sure about this.  By returning early, you prevent the drivers 
-bound to this device from suspending.  But they can't operate properly 
-when the system is in a low-power mode.  Won't that cause problems?
+Oops...
 
-Maybe this really belongs in usb_suspend_device(), and its counterpart 
-belongs in usb_resume_device().
+> I disagree, we might have absolutely no need to do it, and I'd rather onl=
+y
+> do so _if_ we have to.
 
-> +
->  	unbind_no_pm_drivers_interfaces(udev);
->  
->  	/* From now on we are sure all drivers support suspend/resume
-> @@ -1619,6 +1624,11 @@ int usb_resume(struct device *dev, pm_message_t msg)
->  	struct usb_device	*udev = to_usb_device(dev);
->  	int			status;
->  
-> +	if (msg.event == PM_EVENT_RESUME && usb_sideband_check(udev)) {
-> +		dev_dbg(dev, "device accessed via sideband\n");
-> +		return 0;
-> +	}
-> +
->  	/* For all calls, take the device back to full power and
->  	 * tell the PM core in case it was autosuspended previously.
->  	 * Unbind the interfaces that will need rebinding later,
-> diff --git a/drivers/usb/core/hcd.c b/drivers/usb/core/hcd.c
-> index 1ff7d901fede..9876b3940281 100644
-> --- a/drivers/usb/core/hcd.c
-> +++ b/drivers/usb/core/hcd.c
-> @@ -2593,6 +2593,7 @@ struct usb_hcd *__usb_create_hcd(const struct hc_driver *driver,
->  	timer_setup(&hcd->rh_timer, rh_timer_func, 0);
->  #ifdef CONFIG_PM
->  	INIT_WORK(&hcd->wakeup_work, hcd_resume_work);
-> +	refcount_set(&hcd->sb_usage_count, 0);
+But there's no downside to erroring out after having installed an
+anon_vma, right?
 
-Did I miss something?  I didn't notice this field in any of the earlier 
-patches.  Was it already created by the prerequisite series?  If so, why 
-didn't that series do this initialization?
+> It feels like the logical spot to do it and, while the cases where it
+> wouldn't happen are ones where pages are already poisoned (the
+> vma->anon_vma =3D=3D NULL test will fail so basically a no-op) or error o=
+n page
+> walk.
 
->  #endif
->  
->  	INIT_WORK(&hcd->died_work, hcd_died_work);
-> diff --git a/drivers/usb/core/usb.c b/drivers/usb/core/usb.c
-> index 0b4685aad2d5..d315d066a56b 100644
-> --- a/drivers/usb/core/usb.c
-> +++ b/drivers/usb/core/usb.c
-> @@ -671,6 +671,7 @@ struct usb_device *usb_alloc_dev(struct usb_device *parent,
->  	dev->state = USB_STATE_ATTACHED;
->  	dev->lpm_disable_count = 1;
->  	atomic_set(&dev->urbnum, 0);
-> +	refcount_set(&dev->sb_usage_count, 0);
+My understanding is that some of the MM code basically assumes that a
+VMA without an anon_vma and without userfault-WP can't contain any
+state that needs to be preserved; or something along those lines. As
+you pointed out, fork() is one such case (which maybe doesn't matter
+so much because it can't race with this operation).
 
-And doesn't this belong in the 3/5 patch, the one that creates the 
-sb_usage_count field?
+khugepaged also relies on this assumption in retract_page_tables(),
+though that function is not used on anonymous VMAs. If MADVISE_GUARD
+is extended to cover file VMAs in the future, then I think we could
+race with retract_page_tables() in a functionally relevant way even
+when MADVISE_GUARD succeeds: If khugepaged preempts us between the
+page walk and installing the anon_vma, retract_page_tables() could
+observe that we don't have an anon_vma yet and throw away a page table
+in which we just installed guard PTEs.
 
-Alan Stern
+Though I guess really that's not the main reason why I'm saying this;
+my main reason is that almost any other path that has to ensure an
+anon_vma is present does that part first (usually because the ordering
+matters and this way around is more or less the only possible
+ordering). So even if there are some specific reasons why you can do
+the ordering the other way around here, it kinda stands out to me as
+being weird...
+
+> > > +                       if (err_anon)
+> > > +                               err =3D err_anon;
+> > > +               }
+> > > +
+> > > +               if (err <=3D 0)
+> > > +                       return err;
+> > > +
+> > > +               if (!retried)
+> > > +                       /*
+> > > +                        * OK some of the range have non-guard pages =
+mapped, zap
+> > > +                        * them. This leaves existing guard pages in =
+place.
+> > > +                        */
+> > > +                       zap_page_range_single(vma, start, end - start=
+, NULL);
+> > > +               else
+> > > +                       /*
+> > > +                        * If we reach here, then there is a racing f=
+ault that
+> > > +                        * has populated the PTE after we zapped. Giv=
+e up and
+> > > +                        * let the user know to try again.
+> > > +                        */
+> > > +                       return -EAGAIN;
+> >
+> > Hmm, yeah, it would be nice if we could avoid telling userspace to
+> > loop on -EAGAIN but I guess we don't have any particularly good
+> > options here? Well, we could bail out with -EINTR if a (fatal?) signal
+> > is pending and otherwise keep looping... if we'd tell userspace "try
+> > again on -EAGAIN", we might as well do that in the kernel...
+>
+> The problem is you could conceivably go on for quite some time, while
+> holding and contending a HIGHLY contended lock (mm->mmap_lock) so I'd
+> really rather let userspace take care of it.
+
+Hmm... so if the retry was handled in-kernel, you'd basically ideally
+have the retry happen all the way up in do_madvise(), where the mmap
+lock can be dropped and re-taken?
+
+> You could avoid this by having the walker be a _replace_ operation, that =
+is
+> - if we encounter an existing mapping, replace in-place with a poison
+> marker rather than install marker/zap.
+>
+> However doing that would involve either completely abstracting such logic
+> from scratch (a significant task in itself) to avoid duplication which be
+> hugely off-topic for the patch set or worse, duplicating a whole bunch of
+> page walking logic once again.
+
+Mmh, yeah, you'd have to extract the locked part of zap_pte_range()
+and add your own copy of all the stuff that happens higher up for
+setting up TLB flushes and such... I see how that would be a massive
+pain and error-prone.
+
+> By being optimistic and simply having the user having to handle looping
+> which seems reasonable (again, it's weird if you're installing poison
+> markers and another thread could be racing you) we avoid all of that.
+
+I guess one case in which that could happen legitimately is if you
+race a MADV_POISON on the area 0x1ff000-0x200100 (first page is
+populated, second page is not, pmd entry corresponding to 0x200000 is
+clear) with a page fault at 0x200200? So you could have a scenario
+like:
+
+1. MADV_POISON starts walk_page_range()
+2. MADV_POISON sees non-zero, non-poison PTE at 0x1ff000, stops the walk
+3. MADV_POISON does zap_page_range_single()
+4. pagefault at 0x200200 happens and populates with a hugepage
+5. MADV_POISON enters walk_page_range()
+6. MADV_POISON splits the THP
+7. MADV_POISON sees a populated PTE
+
+> > > +               update_mmu_cache(walk->vma, addr, pte);
+> > > +       }
+> > > +
+> > > +       return 0;
+> > > +}
+> > > +
+> > > +static const struct mm_walk_ops guard_unpoison_walk_ops =3D {
+> > > +       .pte_entry              =3D guard_unpoison_pte_entry,
+> > > +       .walk_lock              =3D PGWALK_RDLOCK,
+> > > +};
+> >
+> > It is a _little_ weird that unpoisoning creates page tables when they
+> > don't already exist, which will also prevent creating THP entries on
+> > fault in such areas afterwards... but I guess it doesn't really matter
+> > given that poisoning has that effect, too, and you probably usually
+> > won't call MADV_GUARD_UNPOISON on an area that hasn't been poisoned
+> > before... so I guess this is not an actionable comment.
+>
+> It doesn't? There's no .install_pte so if an entries are non-present we
+> ignore.
+
+Ah, right, of course. Nevermind.
+
+> HOWEVER, we do split THP. I don't think there's any way around it unless =
+we
+> extended the page walker to handle this more gracefully (pmd level being
+> able to hint that we shouldn't do that or something), but that's really o=
+ut
+> of scope here.
+
+I think the `walk->action =3D=3D ACTION_CONTINUE` check in
+walk_pmd_range() would let you do that, see wp_clean_pmd_entry() for
+an example. But yeah I guess that might just be unnecessary
+complexity.
+
+> The idea is that a caller can lazily call MADV_GUARD_UNPOISON on a range
+> knowing things stay as they were, I guess we can add to the manpage a not=
+e
+> that this will split THP?
+
+Yeah, might make sense...
 
