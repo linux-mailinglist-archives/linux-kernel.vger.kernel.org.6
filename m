@@ -1,164 +1,261 @@
-Return-Path: <linux-kernel+bounces-363418-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0097999C22D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:55:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A91299C238
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 247741C2564B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:55:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A676281552
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDD55157E78;
-	Mon, 14 Oct 2024 07:53:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3B8154C0B;
+	Mon, 14 Oct 2024 07:55:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E+0MSFvU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="NlAfSGNT"
+Received: from mail-ua1-f42.google.com (mail-ua1-f42.google.com [209.85.222.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF60515687D
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30D7714D444
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:55:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728892429; cv=none; b=fi4+N2xIuZI/2EGMqEr61b/8X0cVLGJlrkIvAVa9VDKjFUdP0MGPT8hHyG59LnJg7JfTJIg4FtbCsx3fsRb6XJk0bzpZqOyH83Ho6RpUGocTzDRa+iR+NoKE+HHx0hc2fnlcIu7+lJDKOVd8WQi0jztr1f/jBB6kbcOGjcWmVtU=
+	t=1728892512; cv=none; b=LYx4K4IQ1k9647FtzdZ5d8UREB/YHW40gK7k2qpCdl+xwTklf/VdH+rH5xZOSgGBaWqaYqV32BipZ/+GDALYYAJbViuR1+uHqRl5U6Dsi/pa3XJ9Pt6YdTGscTWfQBYYrC+gBkAgxBaIC7n6EUFVHlmwCSa+MU1AvMEIb452B40=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728892429; c=relaxed/simple;
-	bh=nDMOGSQ2XtB3JrRu0EJ9o56SNXK6RwOh++m09iUxd1k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nljPThOozQcwLSiBn5eqCQI7t5sjDl2E5PDzUaa0K/U0/NsZKeqhmDj69+SpvF7faT+bzlmhq+ZZQ11uMaF4UOXoN/qgWEYA5LOiXxOn9JygqV9RILC8i4eFH0wvp8+CnJ47jvCp1pgmwrimll02DArGEqf6d4IA+uhfOUUPWnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E+0MSFvU; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1728892426;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=0OVHqbDsKjJZaqCqMxaVmR0wTbzvoxMvtns9x4ea75c=;
-	b=E+0MSFvUoW0z5PNWvXHkPNR23a5QpwM6ocZm0qD37cHIWEJvmgMqXwNo8sWY4QuC4W29ga
-	m4UJDTKMzmBYBFojEp4jJGpt6lDE+G1NfexoMtixgGUd8YTljnHwM6IK6jmDRY1zx16UiL
-	dqdN6NIJ4Wd6eagkZaeYPoQNpJQNylc=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-561-vYlLRQIaPPmurbbu2lzimQ-1; Mon, 14 Oct 2024 03:53:43 -0400
-X-MC-Unique: vYlLRQIaPPmurbbu2lzimQ-1
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-a9a1b872d8bso6384966b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:53:43 -0700 (PDT)
+	s=arc-20240116; t=1728892512; c=relaxed/simple;
+	bh=/FHlN6HHgoAhJm5fCT39FnjmFin0WXZ+OjosxjWQkWM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MDqiWkUNLn1EIch7D2bdm/2hB+ejEjFQh5m7QU1lVa8xtUz8xj1sljxCIUKdAiHBp8ycUWHlyudVxbk8MY1CYuyqG5u+WS6kAiZUcAHlWQNCUqQdcPnGkapZ89vxOYb8zKBMxUgIuK6E+tJYkwA7MmtrFyS6AzihgvnKDZ50R1k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=NlAfSGNT; arc=none smtp.client-ip=209.85.222.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ua1-f42.google.com with SMTP id a1e0cc1a2514c-84fd057a973so892620241.3
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:55:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1728892509; x=1729497309; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QU12UzpgqRbbbtAMZe9QorlWm8OXzhMHZ1TfI8T6l4g=;
+        b=NlAfSGNT9dTdKoN/qa21vKrbDStwWC6K8Sc8dsliuZ6tFRK+rcsR8EanzRf/lwOFHc
+         pmvsyfwAGt7g/m67hzQNgTNuaphtVWDd1wfOzPfAYP6KXjNmZIGaxOTVouM0fHW99gvM
+         PcMyrgTN8Ii9TKp+v4R7r1jwGMt7jRkqBb/Rw=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728892422; x=1729497222;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1728892509; x=1729497309;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=0OVHqbDsKjJZaqCqMxaVmR0wTbzvoxMvtns9x4ea75c=;
-        b=lhMHy+9y5RN6xKKhgkEvBKuOhKTmubp0laRu4kuuXRmU35ybCVoKHvWGB+KQPXLC5d
-         Qbid6ahT+hZ/YPLqHu8oN2FBssfGKVlmGQba7B2AhDbMosCxyQ6PG3RJ36hSBSFWpgPR
-         Jy1TKPoEzXNrGQbCOlCRCLzcmp2PO1HtLCVopRNE0rNo1pxJHA4v4mQfcwzQdl0OUK/O
-         ptGAOxxj3vFtgzmy83y8GYnihFFyPEGpadfvtDzce4PZ2b/2+O3RvnR1AGKbCynJA7ow
-         H2Cf5YqBShwyo5z9dDskjcVTUMBaCbMibiNaICceQ6a0vgiX3syyVmGYr2rk8Cz/wc5G
-         7KKg==
-X-Forwarded-Encrypted: i=1; AJvYcCWsqVu7bPgb5kqj6p5xkFpdl7WF7lZGb8ELf42QAw0lQkm8DqvkWbkT/GDqbLvA/mKCmLitZS81+j07DSc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYgTiwGn0FSi8gRyxpM+yxPUvgoq9XmK3uAeklNUTukifqKzSu
-	R435i1B7gWyHBgw4/SirtwXohex3tjv3VHtgnlC530YFoGJtWZmO3iX/KVWyFSSXwuKtdVIhIbD
-	wbVEET3bnUKyvPMLvw9JIcalf4IeMQ7di95MqnrCyUQQ0WQjhCoAaobtEoSvG6w==
-X-Received: by 2002:a17:907:3a96:b0:a9a:183a:b84e with SMTP id a640c23a62f3a-a9a183abb4emr54363466b.40.1728892422224;
-        Mon, 14 Oct 2024 00:53:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8RdNLydaZorD0CCxm2b4SOOSEXdTQ49hlT5/qPmabsGXJC6XJB2cZBBIAjLdsQqSMvFgt4Q==
-X-Received: by 2002:a17:907:3a96:b0:a9a:183a:b84e with SMTP id a640c23a62f3a-a9a183abb4emr54360066b.40.1728892421849;
-        Mon, 14 Oct 2024 00:53:41 -0700 (PDT)
-Received: from eisenberg.fritz.box (200116b82d3798001d5778cfc1aeb0b3.dip.versatel-1u1.de. [2001:16b8:2d37:9800:1d57:78cf:c1ae:b0b3])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a99f86fa986sm243291666b.92.2024.10.14.00.53.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 00:53:41 -0700 (PDT)
-From: Philipp Stanner <pstanner@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	Wu Hao <hao.wu@intel.com>,
-	Tom Rix <trix@redhat.com>,
-	Moritz Fischer <mdf@kernel.org>,
-	Xu Yilun <yilun.xu@intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Damien Le Moal <dlemoal@kernel.org>,
-	Hannes Reinecke <hare@suse.de>,
-	Al Viro <viro@zeniv.linux.org.uk>,
-	Keith Busch <kbusch@kernel.org>,
-	Philipp Stanner <pstanner@redhat.com>,
-	Li Zetao <lizetao1@huawei.com>
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fpga@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	netdev@vger.kernel.org,
-	linux-pci@vger.kernel.org
-Subject: [PATCH v7 5/5] ethernet: cavium: Replace deprecated PCI functions
-Date: Mon, 14 Oct 2024 09:53:26 +0200
-Message-ID: <20241014075329.10400-6-pstanner@redhat.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241014075329.10400-1-pstanner@redhat.com>
-References: <20241014075329.10400-1-pstanner@redhat.com>
+        bh=QU12UzpgqRbbbtAMZe9QorlWm8OXzhMHZ1TfI8T6l4g=;
+        b=HinstJJIDD5gLraI+FjuqdMdsbuObavm1MJVLH5CoemPXTHouTlJQ4InwRI3tb8hB5
+         9i9BnE6rlu4NWBrTbfV7T4AmH6vlkZqg2YktY+J2M0f2z322r/HOqs/0yBg7775lnY6c
+         HkEWMIKhER2iXbMovd4gD8V0nJq2iNKcIAg49WoXTpWB3itnnRZgDWgN57KW9/u1+T5i
+         xQulSIdRdobmAcQiSXEjtmNaFZybo9XFE1cMsnf1aq2t2ALg2Gz8sljUFr75RlHZO5G7
+         djHNMBRKfQakjPqb6vNBtHViyIeV8XZKYgaJpQXeqxCLF9QhfKsrna3eOkjp35hZzm38
+         e06w==
+X-Forwarded-Encrypted: i=1; AJvYcCWGgakKi5m9mwH1mMIpfQMrUmAlEsK6cnCJkJQUNO6Vrw2BUWY/6pQGbwYXmo+7rag9a9xqJ1Y8CePbiYw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzX+9Z2mXF9PLl0QU3SWfEesf5gj1Ucv7rHFdesFZNmEVsOFBEK
+	xjXY2cdo930ZvUuaKSNsLfeT1T3GPjkfcUtqibuIVFu+YbSk/3xNv537Sta4GKZbOit+Gcwnjeg
+	=
+X-Google-Smtp-Source: AGHT+IFl4gZNQMBjw0B16MSpzVeCZu08VhRHU9DjU5QrVUpcoFHlH7GsqB0/IDkalD2XV28FjB/2RA==
+X-Received: by 2002:a05:6102:1627:b0:492:abbe:8923 with SMTP id ada2fe7eead31-4a46595e89emr6345700137.6.1728892509306;
+        Mon, 14 Oct 2024 00:55:09 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4a48ef192bcsm207005137.3.2024.10.14.00.55.06
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 00:55:07 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4a482407e84so337555137.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:55:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVZTRzLhMzg8F6LykBLnev5Zylf1SwIVNlMjpYFBL/mwdHa3VjjAFjS2mFobRepL2U8yAdskPCBDPC6rTg=@vger.kernel.org
+X-Received: by 2002:a05:6102:6c3:b0:4a3:ddc5:37a4 with SMTP id
+ ada2fe7eead31-4a465992f5fmr6744394137.11.1728892506439; Mon, 14 Oct 2024
+ 00:55:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20240923132521.22785-1-liankun.yang@mediatek.com>
+In-Reply-To: <20240923132521.22785-1-liankun.yang@mediatek.com>
+From: Fei Shao <fshao@chromium.org>
+Date: Mon, 14 Oct 2024 15:54:29 +0800
+X-Gmail-Original-Message-ID: <CAC=S1nhp4DUSCTs84Rukao6=ptawaDNWokbaKXs6uZnW1bX1yQ@mail.gmail.com>
+Message-ID: <CAC=S1nhp4DUSCTs84Rukao6=ptawaDNWokbaKXs6uZnW1bX1yQ@mail.gmail.com>
+Subject: Re: [PATCH v5 1/1] drm/mediatek: Fix get efuse issue for MT8188 DPTX
+To: Liankun Yang <liankun.yang@mediatek.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com, 
+	simona@ffwll.ch, matthias.bgg@gmail.com, 
+	angelogioacchino.delregno@collabora.com, ck.hu@mediatek.com, 
+	shuijing.li@mediatek.com, jitao.shi@mediatek.com, mac.shen@mediatek.com, 
+	peng.liu@mediatek.com, Project_Global_Chrome_Upstream_Group@mediatek.com, 
+	dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pcim_iomap_regions() and pcim_iomap_table() have been deprecated by
-the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
-pcim_iomap_table(), pcim_iomap_regions_request_all()").
+On Mon, Sep 23, 2024 at 9:26=E2=80=AFPM Liankun Yang <liankun.yang@mediatek=
+.com> wrote:
+>
+> Update efuse data for MT8188 displayport.
+>
+> The DP monitor can not display when DUT connected to USB-c to DP dongle.
+> Analysis view is invalid DP efuse data.
+>
+> Fixes: 350c3fe907fb ("drm/mediatek: dp: Add support MT8188 dp/edp functio=
+n")
+> Reviewed-by: Matthias Brugger <matthias.bgg@gmail.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Signed-off-by: Liankun Yang <liankun.yang@mediatek.com>
 
-Furthermore, the driver contains an unneeded call to
-pcim_iounmap_regions() in its probe() function's error unwind path.
+Tested on MT8188-based Lenovo Chromebook Duet 11.
 
-Replace the deprecated PCI functions with pcim_iomap_region().
+Reviewed-by: Fei Shao <fshao@chromium.org>
+Tested-by: Fei Shao <fshao@chromium.org>
 
-Remove the unnecessary call to pcim_iounmap_regions().
 
-Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-Acked-by: Paolo Abeni <pabeni@redhat.com>
----
- drivers/net/ethernet/cavium/common/cavium_ptp.c | 7 +++----
- 1 file changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/net/ethernet/cavium/common/cavium_ptp.c b/drivers/net/ethernet/cavium/common/cavium_ptp.c
-index 9fd717b9cf69..984f0dd7b62e 100644
---- a/drivers/net/ethernet/cavium/common/cavium_ptp.c
-+++ b/drivers/net/ethernet/cavium/common/cavium_ptp.c
-@@ -239,12 +239,11 @@ static int cavium_ptp_probe(struct pci_dev *pdev,
- 	if (err)
- 		goto error_free;
- 
--	err = pcim_iomap_regions(pdev, 1 << PCI_PTP_BAR_NO, pci_name(pdev));
-+	clock->reg_base = pcim_iomap_region(pdev, PCI_PTP_BAR_NO, pci_name(pdev));
-+	err = PTR_ERR_OR_ZERO(clock->reg_base);
- 	if (err)
- 		goto error_free;
- 
--	clock->reg_base = pcim_iomap_table(pdev)[PCI_PTP_BAR_NO];
--
- 	spin_lock_init(&clock->spin_lock);
- 
- 	cc = &clock->cycle_counter;
-@@ -292,7 +291,7 @@ static int cavium_ptp_probe(struct pci_dev *pdev,
- 	clock_cfg = readq(clock->reg_base + PTP_CLOCK_CFG);
- 	clock_cfg &= ~PTP_CLOCK_CFG_PTP_EN;
- 	writeq(clock_cfg, clock->reg_base + PTP_CLOCK_CFG);
--	pcim_iounmap_regions(pdev, 1 << PCI_PTP_BAR_NO);
-+	pcim_iounmap_region(pdev, PCI_PTP_BAR_NO);
- 
- error_free:
- 	devm_kfree(dev, clock);
--- 
-2.46.2
-
+> ---
+> Changes in V5:
+> - No change.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240905124041.=
+3658-1-liankun.yang@mediatek.com/
+>
+> Changes in V4:
+> - Remove excess newlines.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240903121028.=
+20689-1-liankun.yang@mediatek.com/
+>
+> Changes in V3
+> - Update change log position in commit message.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240902133736.=
+16461-1-liankun.yang@mediatek.com/
+>
+> Changes in V2
+> - Add Fixes tag.
+> - Update the commit title.
+> - Update the commit description.
+> Per suggestion from the previous thread:
+> https://patchwork.kernel.org/project/linux-mediatek/patch/20240510061716.=
+31103-1-liankun.yang@mediatek.com/
+> ---
+>  drivers/gpu/drm/mediatek/mtk_dp.c | 85 ++++++++++++++++++++++++++++++-
+>  1 file changed, 84 insertions(+), 1 deletion(-)
+>
+> diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c b/drivers/gpu/drm/mediatek=
+/mtk_dp.c
+> index d8796a904eca..f2bee617f063 100644
+> --- a/drivers/gpu/drm/mediatek/mtk_dp.c
+> +++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+> @@ -145,6 +145,89 @@ struct mtk_dp_data {
+>         u16 audio_m_div2_bit;
+>  };
+>
+> +static const struct mtk_dp_efuse_fmt mt8188_dp_efuse_fmt[MTK_DP_CAL_MAX]=
+ =3D {
+> +       [MTK_DP_CAL_GLB_BIAS_TRIM] =3D {
+> +               .idx =3D 0,
+> +               .shift =3D 10,
+> +               .mask =3D 0x1f,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0x1e,
+> +               .default_val =3D 0xf,
+> +       },
+> +       [MTK_DP_CAL_CLKTX_IMPSE] =3D {
+> +               .idx =3D 0,
+> +               .shift =3D 15,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_PMOS_0] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 0,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_PMOS_1] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 8,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_PMOS_2] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 16,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_PMOS_3] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 24,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_NMOS_0] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 4,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_NMOS_1] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 12,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_NMOS_2] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 20,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +       [MTK_DP_CAL_LN_TX_IMPSEL_NMOS_3] =3D {
+> +               .idx =3D 1,
+> +               .shift =3D 28,
+> +               .mask =3D 0xf,
+> +               .min_val =3D 1,
+> +               .max_val =3D 0xe,
+> +               .default_val =3D 0x8,
+> +       },
+> +};
+> +
+>  static const struct mtk_dp_efuse_fmt mt8195_edp_efuse_fmt[MTK_DP_CAL_MAX=
+] =3D {
+>         [MTK_DP_CAL_GLB_BIAS_TRIM] =3D {
+>                 .idx =3D 3,
+> @@ -2771,7 +2854,7 @@ static SIMPLE_DEV_PM_OPS(mtk_dp_pm_ops, mtk_dp_susp=
+end, mtk_dp_resume);
+>  static const struct mtk_dp_data mt8188_dp_data =3D {
+>         .bridge_type =3D DRM_MODE_CONNECTOR_DisplayPort,
+>         .smc_cmd =3D MTK_DP_SIP_ATF_VIDEO_UNMUTE,
+> -       .efuse_fmt =3D mt8195_dp_efuse_fmt,
+> +       .efuse_fmt =3D mt8188_dp_efuse_fmt,
+>         .audio_supported =3D true,
+>         .audio_pkt_in_hblank_area =3D true,
+>         .audio_m_div2_bit =3D MT8188_AUDIO_M_CODE_MULT_DIV_SEL_DP_ENC0_P0=
+_DIV_2,
+> --
+> 2.45.2
+>
+>
 
