@@ -1,96 +1,127 @@
-Return-Path: <linux-kernel+bounces-364634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8D6999D73C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:22:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44B9399D740
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:23:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47CD8B22689
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:22:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76DB51C20DD2
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:23:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DCD21CCB51;
-	Mon, 14 Oct 2024 19:22:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 586CE1CC177;
+	Mon, 14 Oct 2024 19:22:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="I4XfgSLL"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="KH1RNvPZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3355D1CC154;
-	Mon, 14 Oct 2024 19:22:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765B71CBE8B;
+	Mon, 14 Oct 2024 19:22:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728933751; cv=none; b=aZpE0Oj9ZLQ1U+vLU3NNmaWj2IGi/cTgz1ayrMBjTKxCFOxEDyKnNk9W7W9++g8swPgdx2uKdU5L1HxHRiKTSv8dY9yKFlsihNYN2gdSziAg8SnN+gp9gvf5lMZ0IRv/KzT87OjoOFnU9BTklxjgWwMlHlFNrj233NuAz96964o=
+	t=1728933778; cv=none; b=Vd39g6Tq5eyYSIJK6FKyC1Zfk0Eylz5dNNrzrJe8rdGap0ve/wRVfQ7UCKvOm3UJmZieJn/XZSh5WnH6mXDyxAV5aPAxqobM/0pK6dcjFW3fEJHAxMKQV8Vsh+DcG5ZIrknZodXWxuBGFOpOWD4ldmYzlJL4E2Own9Hjm9FrfYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728933751; c=relaxed/simple;
-	bh=Uz25GdoBKOI7VrVOnxLarmxVsm9R2vLGXmqdlT8ztU4=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=FpUXyUrDy6U+w8klpE8MsmIphK13+EFg4Ez16mRRqOMEusnNgX2fqMi1XxvE+/C71yWx7D+z3sg57wdD4cIRE3d/B+lH8i17gsv5UNP4pL6AxJA9S3kmF1rs8DTpdvQVtPb6YNfZ+K55QDVWW/stIMZP65t4odR93q5a0dZwGRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=I4XfgSLL; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net 4E87142BFE
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1728933749; bh=0OD7mq9D7slGeSUu09o+pF9OpII1JMTQup9OqHIXJxM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=I4XfgSLL1jOYOgTtemmSISayl0I43ZdyA4xtC2Nkka0678HjIX3QTWaMuJ5aJTq2/
-	 SK+egBqWhqVL5DRK+uDlUV2yioAPrqKH/pF/KonV6qCEQhQvqIemfrT0KQq8G7nkul
-	 gitOprxjZO0nKWjpy3mdTdzMF7UNopo7Mf2OmHUeYkKpw0rfpEWYHJUiUmnXxrsh60
-	 g++2OPCqrnD2+p847V4XYM8iUrfcfuwGs4MjViKmH6ncuQR4PtKRN6MSptpr6zC5ZZ
-	 VCy6nX5JGinyuqW61MEOTjIAc7YQGjRrwTKGPvvbnEb5017t/9Gr/ba6vRpQjUQe1Q
-	 psJ10x3y5kaAw==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id 4E87142BFE;
-	Mon, 14 Oct 2024 19:22:29 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: Vishnu Sanal T <t.v.s10123@gmail.com>, linux-doc@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Vishnu Sanal T <t.v.s10123@gmail.com>
-Subject: Re: [PATCH v2] fix grammar on false-sharing.rst
-In-Reply-To: <20241007191253.112697-2-t.v.s10123@gmail.com>
-References: <20241002100852.70982-2-t.v.s10123@gmail.com>
- <20241007191253.112697-2-t.v.s10123@gmail.com>
-Date: Mon, 14 Oct 2024 13:22:28 -0600
-Message-ID: <87a5f6sd57.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1728933778; c=relaxed/simple;
+	bh=u0t0qNkf0QAtWuaQXJkECXunLokaWI6GNjPYrhSs6Fo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=EIzGv1qGSdfFPhvpr8Mqd5Md5qhOnNMsEiSBl9p6/Mrk95iDXGayxpX5x1N5vpvnH4qVklSXBMPN/3a2n2vUmsJ6u1XWWo/1rjUgDvknSlduGh7NurxhAtWMmGftnYB3dH3/NFDixID9kqp7nr8I/BufI7ZJwfjsaijvUteLgGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=KH1RNvPZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EB551u004976;
+	Mon, 14 Oct 2024 19:22:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	+IFnL4mUMiitkJabSAAeUc+H/UvzVDoulSrPcPlL1KI=; b=KH1RNvPZcZ/qRI6t
+	gC2ACP2gFUsltxUqhfnsJACkT4/US0zycLAHi2KhWFrF9hqBHc0UEuTSXEb94PCT
+	iw+Y6NqB2fXuMHAt7swgGiBRKuWp4jD2Ovse2FQ04sQfw4WfjghkJ8DgQj3pS4eq
+	5S9PN54vnMa7uOrpDT6VlN0t8a6ZrK6mATgRkFMHp0seqJkSS9UmIWDZgvz3C+xt
+	s3NLDohSHGrETzwVlzae2ZqGamYGz/rtovuO1vmXLVCTrrd9Pi44FSbwvCT5CwaO
+	jpf9Y9xhNsTqC5xyO6xBkytXyaiV7wREJrY9kfvgLVraLojRG1+dpMP7C5EPmbbU
+	qQOfPA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427jd8waer-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 19:22:40 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EJMeFO026699
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 14 Oct 2024 19:22:40 GMT
+Received: from [10.110.109.95] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Mon, 14 Oct
+ 2024 12:22:39 -0700
+Message-ID: <e938ac3d-48f3-488a-96df-80c94b7686cf@quicinc.com>
+Date: Mon, 14 Oct 2024 12:22:38 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] drm/msm/hdmi: drop pll_cmp_to_fdata from hdmi_phy_8998
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+        Rob Clark
+	<robdclark@gmail.com>, Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        David Airlie <airlied@gmail.com>, Simona
+ Vetter <simona@ffwll.ch>,
+        Nathan Chancellor <nathan@kernel.org>,
+        Nick
+ Desaulniers <ndesaulniers@google.com>,
+        Bill Wendling <morbo@google.com>,
+        Justin Stitt <justinstitt@google.com>
+CC: <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>,
+        <llvm@lists.linux.dev>, Jani Nikula <jani.nikula@intel.com>
+References: <20240922-msm-drop-unused-func-v1-1-c5dc083415b8@linaro.org>
+Content-Language: en-US
+From: Abhinav Kumar <quic_abhinavk@quicinc.com>
+In-Reply-To: <20240922-msm-drop-unused-func-v1-1-c5dc083415b8@linaro.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: qdud2PHy7wMKhm9ZGVxgrNFYTxrpsi4i
+X-Proofpoint-ORIG-GUID: qdud2PHy7wMKhm9ZGVxgrNFYTxrpsi4i
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0
+ lowpriorityscore=0 phishscore=0 suspectscore=0 impostorscore=0 bulkscore=0
+ mlxscore=0 mlxlogscore=887 malwarescore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410140137
 
-Vishnu Sanal T <t.v.s10123@gmail.com> writes:
 
-> Fix slight grammar mistake on kernel-hacking/false-sharing.rst
->
-> Signed-off-by: Vishnu Sanal T <t.v.s10123@gmail.com>
+
+On 9/21/2024 2:14 PM, Dmitry Baryshkov wrote:
+> The pll_cmp_to_fdata() was never used by the working code. Drop it to
+> prevent warnings with W=1 and clang.
+> 
+> Reported-by: Jani Nikula <jani.nikula@intel.com>
+> Closes: https://lore.kernel.org/dri-devel/3553b1db35665e6ff08592e35eb438a574d1ad65.1725962479.git.jani.nikula@intel.com
+> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
 > ---
-> Changes in v2:
->
-> - revert inadverdent mistake introduced on the word "randomizes"
-> ---
->  Documentation/kernel-hacking/false-sharing.rst | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/Documentation/kernel-hacking/false-sharing.rst b/Documentation/kernel-hacking/false-sharing.rst
-> index 122b0e124656..eb0596734e55 100644
-> --- a/Documentation/kernel-hacking/false-sharing.rst
-> +++ b/Documentation/kernel-hacking/false-sharing.rst
-> @@ -196,9 +196,9 @@ the hotspot switches to a new place.
->  
->  Miscellaneous
->  =============
-> -One open issue is that kernel has an optional data structure
-> +One open issue is that the kernel has an optional data structure
->  randomization mechanism, which also randomizes the situation of cache
-> -line sharing of data members.
-> +line sharing among data members.
->  
-Applied, thanks.
+>   drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c | 9 ---------
+>   1 file changed, 9 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c
+> index 0e3a2b16a2ce..e6ffaf92d26d 100644
+> --- a/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c
+> +++ b/drivers/gpu/drm/msm/hdmi/hdmi_phy_8998.c
+> @@ -153,15 +153,6 @@ static inline u32 pll_get_pll_cmp(u64 fdata, unsigned long ref_clk)
+>   	return dividend - 1;
+>   }
+>   
 
-jon
+Reviewed-by: Abhinav Kumar <quic_abhinavk@quicinc.com>
 
