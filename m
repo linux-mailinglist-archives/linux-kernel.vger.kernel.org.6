@@ -1,293 +1,395 @@
-Return-Path: <linux-kernel+bounces-363494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 374BC99C315
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD0D999C316
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EAFE02817BF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:27:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D681C2210D
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A6EB1514F8;
-	Mon, 14 Oct 2024 08:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDF015383F;
+	Mon, 14 Oct 2024 08:24:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hLtFceQ3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DFINg5j0"
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C20B14D70B
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:23:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5CF114E2ED
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728894204; cv=none; b=Z79lCILCro3rAZSXI1MO5IGpA+ogmk/mUAX01AGYQTv7FbY30xDQ8qsbtd4kjVm9ZV9IuocZeo2cRiQXwQ8LG9RiozDUz5+BGQ0PYGV8+WdBO98jFyRSNtln/9jrAdy2OIsRagC6m7goTTZKiXihPFQbOJ5cXiimrvP/MoVncqU=
+	t=1728894250; cv=none; b=DasazuLhFchSjKCsKE6ugW2wr9DcOQnI7KAaPtCOCtC1yc+5enMt0GJM7fQSekK+IsSl1mIjF3rix+EwpSqe5pQggLvvXWtfs3BiMvPXAPWIU4nKNqbz3vRIQDkLkQp2Q/Pj2DSjZ4ffFyCbDsPTiKKw48q6FN2jXi9q6xrLjbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728894204; c=relaxed/simple;
-	bh=9mA8AaUmchnfF2qhcV9gtbwfXEQCEWwq8dE88hy1+no=;
+	s=arc-20240116; t=1728894250; c=relaxed/simple;
+	bh=HFT9h1iwDbbGGqhuLYDes10rtPk+7HF11pTDotWn1ls=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QMPRcjTJJGD3gyWsFS90zPW+I5E0fOFjhZW9YqXaYpu58a4B9eBM3lwnVvN+OGKLrHlGGeHlk03qiYI+BOF+qeorkuy7N6txToC8upAPZT7pTxyXk9e/neojE3tlgup6qjYAiGgZCrirFCtYpYPPCHpkRmG1SbUdfrCiz2BCtiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hLtFceQ3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C1E8C4CEC3
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:23:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728894204;
-	bh=9mA8AaUmchnfF2qhcV9gtbwfXEQCEWwq8dE88hy1+no=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=hLtFceQ3ixwQ9lkspmWflGECibR6QcPwqSPSqQqvQj1dWtWTiS/Sz9ub2HaicflAJ
-	 UBOwWGTr9HOVpJZbwpfqFXv7N+5ywFssuZuSLMR+tYaWsSSAO13iHxsp4P9fF3+5Ik
-	 B1bm0pds+g7hqaGRjAo9XSYstTW+2Pv28WxSL9M4qk41RZ4wTjWQ5XMUM2BEq7a6md
-	 W3enTdt2WvC67SNJjSCATG3VW895cyRPdLiBsqjQQ0Lcc/FlZczNmcTre8HxA1Oemv
-	 4CQeN9foOYnH+osu/rsD3ohDb9qGBAd3Vc4FnMHyOoDTivn09IuEbocyJ+9WqqcFwK
-	 HgUpmBaYu3tTA==
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9952ea05c5so619176666b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:23:23 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUap9owIct5jhzj0rOMw1yGotRLknDgCedZpJ/QkN+kNEaEaU4T4s2WhwUjYeWjA7KGaZ1yJllxIF6umCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyPfldnpM7oJO0HEX3lGBfnv+lvKzKrlS1lwAXUOasROcfJia/c
-	+7ErMekTG6Dv5H3m5DDW7CIZ2zXbBOLE7qsffk2s6zHMBFSBFLh2uh52iUijFjw3173XL7j80l4
-	Mzaf6iQ4Cw9CQfe02kg1NpcEyCZw=
-X-Google-Smtp-Source: AGHT+IEAX1babB4ZxNcCopIY49tKCSXyzO1kJ6eClhmFjfoDbQH4e2FlUTkjdvYhH3sI0hp+4ww7sLBhxUMonckSD34=
-X-Received: by 2002:a17:906:d552:b0:a99:ff2c:78fc with SMTP id
- a640c23a62f3a-a99ff2c7a1amr440746266b.57.1728894202617; Mon, 14 Oct 2024
- 01:23:22 -0700 (PDT)
+	 To:Cc:Content-Type; b=ixGO7IZWpPzJ1xmJgH1K1Dc9jgR1UronNNA6zbQYxO7bz+uJHpDUEDiN61shG69TyJiqXNqzKJ+PC4pBU7B5sDWuRscoHRGhyF2in45S3vMlv8ls85P/ScAiK0CuAcz52cCoxN2nuInDSnVV1FK2JNGUs/BXo/Lg5P12bVPhiSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DFINg5j0; arc=none smtp.client-ip=209.85.208.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb501492ccso4853191fa.2
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:24:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1728894246; x=1729499046; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=D6jtpd6aBQ5+6Ifa9J9iKjXNdXlmp6ptoc+HtBMR1fs=;
+        b=DFINg5j0n+23W56MfbnD8TSXJF+NBW4J1zWLe7tXoTwzbKUSlXDxQzqy5Esm61P8sY
+         1UF+pVMSmLaFL5dtr8G9E1Z1rPJZkEyN1gry+Q3J7bLUDpQTfNVGvw8tVFj2LFmgItRU
+         weNInv5QDrMWhj7JtJXKxn+nMFrk+WZfufqrS0mY8kLYOTx9HS+xvgapsGkFlYjueN/a
+         MrxO4x4aMzddy631ySHTnxRQJ7hvDDXdCIkdHd/3nvPgYs8wuySnkXNBRlnkZTjBZYY8
+         1dZ5Uh0tgd6kOamcbA/utSlcg47E0pI6/WUJPadJXb23SCPs8ZQ8pC5M9e9tIP7dTEoB
+         ba9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728894246; x=1729499046;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=D6jtpd6aBQ5+6Ifa9J9iKjXNdXlmp6ptoc+HtBMR1fs=;
+        b=hOYGMySfm/GtFS1fjlLCJghiNgSu0msmyGU01IT/A7xD9f1T7rHSjUZM4zRxhJlNRs
+         F7EKGkhJBd8t3pLM4J2YLpVwvvA88EtRTnKe/o7+MwzZmI4T8p8yemxUlybEWCOeo8qz
+         EzYkGpPLnBlKCIoumABpiHNjcRxUAKPrtNw9TDSE2BKeypQAe9ANCBYGz1PMpdyPyPM9
+         5S0V2syqwleMluCYmOn/lopwlT36qxajq3BzKYOFCE6OeI8fI6b0gQuvrAUHhOI/0fh2
+         MGI24E+BAGsb9TOt2MjnudFlC65YlM8Y1WEgY+ZYt3f2dknMyWLJVAHyQJ9AacO3x/zv
+         0apw==
+X-Forwarded-Encrypted: i=1; AJvYcCU+TaNPDMOjx2vCWLwZaOc5qT1mlKKJ+iJ08NvcBN7u/dy7XJYJKku/B5+6pgpMwgJV0AqeCQqaJ1lOLOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw72K/M44QsVehLWBB2SxrqHgPZMuS4BtI++rn6vqiLYNBDrPe4
+	Peak0TbjVBzscltDe8eXbo+Itqa97oriUDS6UVL+h3TFog2+d3dHK7BxjqJQga8eySoKos1TyMS
+	/zv9xt85LrPHdRXcCWA9XdncoYBCPWhYimuB6
+X-Google-Smtp-Source: AGHT+IEIr3NQylCfcrZzzzlzR4+C9G7lQob/gAkh6rW7SnRgALtyVccRYC6I/9Z9kVu3Y1H0WliHmqAYbkvTrWhn1ck=
+X-Received: by 2002:a2e:b892:0:b0:2fa:d354:1435 with SMTP id
+ 38308e7fff4ca-2fb325d4154mr41752831fa.0.1728894245639; Mon, 14 Oct 2024
+ 01:24:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014063328.1216497-1-maobibo@loongson.cn> <CAAhV-H5_SUnrf0PwOUFOA0EumKvGOmgqUq=Cx61Ub5AW=MPo=A@mail.gmail.com>
- <24ea8b02-8c94-d561-cef0-01044b610a1e@loongson.cn> <CAAhV-H7NqzO-FLmYoUySp5KYKJM+aN_s7g4i+qBixx5jwnbW=Q@mail.gmail.com>
- <5c1e0199-24ce-50d2-1cbc-5c9949a17563@loongson.cn>
-In-Reply-To: <5c1e0199-24ce-50d2-1cbc-5c9949a17563@loongson.cn>
-From: Huacai Chen <chenhuacai@kernel.org>
-Date: Mon, 14 Oct 2024 16:23:11 +0800
-X-Gmail-Original-Message-ID: <CAAhV-H6JKNBgsLdAsKHp3rttpY+0KGabac2m87-PsT4FH_H=Ew@mail.gmail.com>
-Message-ID: <CAAhV-H6JKNBgsLdAsKHp3rttpY+0KGabac2m87-PsT4FH_H=Ew@mail.gmail.com>
-Subject: Re: [PATCH] LoongArch: Fix cpu hotplug issue
-To: maobibo <maobibo@loongson.cn>
-Cc: loongarch@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	lixianglai@loongson.cn, WANG Xuerui <kernel@xen0n.name>
+References: <670cb3bd.050a0220.4cbc0.0040.GAE@google.com>
+In-Reply-To: <670cb3bd.050a0220.4cbc0.0040.GAE@google.com>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Mon, 14 Oct 2024 10:23:54 +0200
+Message-ID: <CACT4Y+Ya4i3JwDghU1efqDETwyPGn3gwA5MHVj2-P65ku8nYjA@mail.gmail.com>
+Subject: Re: [syzbot] [mm?] BUG: stack guard page was hit in compat_sys_open
+To: syzbot <syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com>, 
+	David Howells <dhowells@redhat.com>, Jeff Layton <jlayton@kernel.org>, netfs@lists.linux.dev
+Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 14, 2024 at 4:01=E2=80=AFPM maobibo <maobibo@loongson.cn> wrote=
-:
+On Mon, 14 Oct 2024 at 08:01, syzbot
+<syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com> wrote:
 >
-> Huacai,
+> Hello,
 >
-> On 2024/10/14 =E4=B8=8B=E5=8D=883:39, Huacai Chen wrote:
-> > On Mon, Oct 14, 2024 at 3:21=E2=80=AFPM maobibo <maobibo@loongson.cn> w=
-rote:
-> >>
-> >> Huacai,
-> >>
-> >> On 2024/10/14 =E4=B8=8B=E5=8D=883:05, Huacai Chen wrote:
-> >>> Hi, Bibo,
-> >>>
-> >>> I'm a little confused, so please correct me if I'm wrong.
-> >>>
-> >>> On Mon, Oct 14, 2024 at 2:33=E2=80=AFPM Bibo Mao <maobibo@loongson.cn=
-> wrote:
-> >>>>
-> >>>> On LoongArch system, there are two places to set cpu numa node. One
-> >>>> is in arch specified function smp_prepare_boot_cpu(), the other is
-> >>>> in generic function early_numa_node_init(). The latter will overwrit=
-e
-> >>>> the numa node information.
-> >>>>
-> >>>> However for hot-added cpu, cpu_logical_map() fails to its physical
-> >>>> cpuid at beginning since it is not enabled in ACPI MADT table. So
-> >>>> function early_cpu_to_node() also fails to get its numa node for
-> >>>> hot-added cpu, and generic function early_numa_node_init() will
-> >>>> overwrite incorrect numa node.
-> >>> For hot-added cpus, we will call acpi_map_cpu() -->
-> >>> acpi_map_cpu2node() --> set_cpuid_to_node(), and set_cpuid_to_node()
-> >>> operates on __cpuid_to_node[]. So I think early_cpu_to_node() should
-> >>> be correct?
-> >>
-> >> __cpuid_to_node[] is correct which is physical cpuid to numa node,
-> >> however cpu_logical_map(cpu) is not set. It fails to get physical cpui=
-d
-> >> from logic cpu.
-> >>
-> >> int early_cpu_to_node(int cpu)
-> >> {
-> >>           int physid =3D cpu_logical_map(cpu);
-> >>
-> >> <<<<<<<<<<< Here physid is -1.
-> > early_cpu_to_node() is not supposed to be called after boot, and if it
-> Which calls early_cpu_to_node() after boot?
+> syzbot found the following issue on:
 >
-> > is really needed, I think a better solution is:
-> >
-> > diff --git a/arch/loongarch/kernel/acpi.c b/arch/loongarch/kernel/acpi.=
-c
-> > index f1a74b80f22c..998cf45fd3b7 100644
-> > --- a/arch/loongarch/kernel/acpi.c
-> > +++ b/arch/loongarch/kernel/acpi.c
-> > @@ -311,6 +311,8 @@ static int __ref acpi_map_cpu2node(acpi_handle
-> > handle, int cpu, int physid)
-> >
-> >          nid =3D acpi_get_node(handle);
-> >          if (nid !=3D NUMA_NO_NODE) {
-> > +               __cpu_number_map[physid] =3D cpu;
-> > +               __cpu_logical_map[cpu] =3D physid;
-> This does not solve the problem. The above has been done in function
-> cpu =3D set_processor_mask(physid, ACPI_MADT_ENABLED);
+> HEAD commit:    27cc6fdf7201 Merge tag 'linux_kselftest-fixes-6.12-rc2' of..
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=13043307980000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=e3e4d87a80ed4297
+> dashboard link: https://syzkaller.appspot.com/bug?extid=0e1748603cc9f2dfc87d
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> userspace arch: i386
 >
-> static int set_processor_mask(u32 id, u32 flags)
-> {
-> ...
->          if (flags & ACPI_MADT_ENABLED) {
->                  num_processors++;
->                  set_cpu_present(cpu, true);
->                  __cpu_number_map[cpuid] =3D cpu;
->                  __cpu_logical_map[cpu] =3D cpuid;
->          }
+> Unfortunately, I don't have any reproducer for this issue yet.
 >
-> The problem is that
->          smp_prepare_boot_cpu(); /* arch-specific boot-cpu hooks */
-> <<<<<<<<<<<<<<<<
-> set_cpu_numa_node() is called in function smp_prepare_boot_cpu()
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-27cc6fdf.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/ae2f7d656e32/vmlinux-27cc6fdf.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/1b06a62cc1e5/bzImage-27cc6fdf.xz
 >
->          early_numa_node_init();
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+0e1748603cc9f2dfc87d@syzkaller.appspotmail.com
 >
-> static void __init early_numa_node_init(void)
-> {
-> #ifdef CONFIG_USE_PERCPU_NUMA_NODE_ID
-> #ifndef cpu_to_node
->          int cpu;
->
->          /* The early_cpu_to_node() should be ready here. */
->          for_each_possible_cpu(cpu)
->                  set_cpu_numa_node(cpu, early_cpu_to_node(cpu));
-> <<<<<<<<<<<<<<<<
-> * however here early_cpu_to_node is -1, so that cpu_to_node(cpu) will
-> always return -1 in late. *, which causes cpu hotadd problem.
-Still confused. For ACPI_MADT_ENABLED cpus, everything is right after
-early_numa_node_init(). For !ACPI_MADT_ENABLED cpus, cpu_to_node()
-returns -1 after early_numa_node_init() and before hot-add, but if
-acpi_map_cpu() do things right, cpu_to_node() should still work well
-after hot-add.
+> BUG: TASK stack guard page was hit at ffffc90002b3ffb8 (stack is ffffc90002b40000..ffffc90002b48000)
+> Oops: stack guard page: 0000 [#1] PREEMPT SMP KASAN NOPTI
+> CPU: 0 UID: 0 PID: 12425 Comm: syz.2.2179 Not tainted 6.12.0-rc1-syzkaller-00306-g27cc6fdf7201 #0
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
+> Code: 90 90 90 90 90 55 48 89 e5 41 57 41 56 41 89 d6 48 ba 00 00 00 00 00 fc ff df 41 55 41 54 53 48 83 e4 f0 48 81 ec 10 01 00 00 <48> c7 44 24 30 b3 8a b5 41 48 8d 44 24 30 48 c7 44 24 38 38 51 57
+> RSP: 0018:ffffc90002b3ffc0 EFLAGS: 00010086
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000003
+> RDX: dffffc0000000000 RSI: ffff888021edaf98 RDI: ffff888021eda440
+> RBP: ffffc90002b40100 R08: 0000000000000000 R09: 0000000000000006
+> R10: ffffffff9698ad37 R11: 0000000000000002 R12: dffffc0000000000
+> R13: ffff888021edaf98 R14: 0000000000000008 R15: ffff888021eda440
+> FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f56f6b40
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: ffffc90002b3ffb8 CR3: 000000005f61e000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> Call Trace:
+>  <#DF>
+>  </#DF>
+>  <TASK>
+>  mark_usage kernel/locking/lockdep.c:4646 [inline]
+>  __lock_acquire+0x906/0x3ce0 kernel/locking/lockdep.c:5156
+>  lock_acquire.part.0+0x11b/0x380 kernel/locking/lockdep.c:5825
+>  rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
+>  rcu_read_lock include/linux/rcupdate.h:849 [inline]
+>  page_ext_get+0x3a/0x310 mm/page_ext.c:525
+>  __set_page_owner+0x9a/0x790 mm/page_owner.c:322
+>  set_page_owner include/linux/page_owner.h:32 [inline]
+>  post_alloc_hook+0x2d1/0x350 mm/page_alloc.c:1537
+>  prep_new_page mm/page_alloc.c:1545 [inline]
+>  get_page_from_freelist+0x101e/0x3070 mm/page_alloc.c:3457
+>  __alloc_pages_noprof+0x223/0x25c0 mm/page_alloc.c:4733
+>  alloc_pages_mpol_noprof+0x2c9/0x610 mm/mempolicy.c:2265
+>  alloc_slab_page mm/slub.c:2412 [inline]
+>  allocate_slab mm/slub.c:2578 [inline]
+>  new_slab+0x2ba/0x3f0 mm/slub.c:2631
+>  ___slab_alloc+0xd1d/0x16f0 mm/slub.c:3818
+>  __slab_alloc.constprop.0+0x56/0xb0 mm/slub.c:3908
+>  __slab_alloc_node mm/slub.c:3961 [inline]
+>  slab_alloc_node mm/slub.c:4122 [inline]
+>  kmem_cache_alloc_noprof+0x2ae/0x2f0 mm/slub.c:4141
+>  p9_tag_alloc+0x9c/0x870 net/9p/client.c:281
+>  p9_client_prepare_req+0x19f/0x4d0 net/9p/client.c:644
+>  p9_client_zc_rpc.constprop.0+0x105/0x880 net/9p/client.c:793
+>  p9_client_read_once+0x443/0x820 net/9p/client.c:1560
+>  p9_client_read+0x13f/0x1b0 net/9p/client.c:1524
+>  v9fs_issue_read+0x115/0x310 fs/9p/vfs_addr.c:74
+>  netfs_retry_read_subrequests fs/netfs/read_retry.c:60 [inline]
+>  netfs_retry_reads+0x153a/0x1d00 fs/netfs/read_retry.c:232
 
-Huacai
++netfs maintainers, looks like infinite recursion in netfs code
+
+#syz set subsystems: netfs
+
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_retry_reads+0x155e/0x1d00 fs/netfs/read_retry.c:235
+>  netfs_rreq_assess+0x5d3/0x870 fs/netfs/read_collect.c:369
+>  netfs_rreq_terminated+0xe5/0x110 fs/netfs/read_collect.c:405
+>  netfs_dispatch_unbuffered_reads fs/netfs/direct_read.c:103 [inline]
+>  netfs_unbuffered_read fs/netfs/direct_read.c:127 [inline]
+>  netfs_unbuffered_read_iter_locked+0x12f6/0x19b0 fs/netfs/direct_read.c:221
+>  netfs_unbuffered_read_iter+0xc5/0x100 fs/netfs/direct_read.c:256
+>  v9fs_file_read_iter+0xbf/0x100 fs/9p/vfs_file.c:361
+>  __kernel_read+0x3f1/0xb50 fs/read_write.c:527
+>  integrity_kernel_read+0x7f/0xb0 security/integrity/iint.c:28
+>  ima_calc_file_hash_tfm+0x2c9/0x3e0 security/integrity/ima/ima_crypto.c:480
+>  ima_calc_file_shash security/integrity/ima/ima_crypto.c:511 [inline]
+>  ima_calc_file_hash+0x1ba/0x490 security/integrity/ima/ima_crypto.c:568
+>  ima_collect_measurement+0x8a7/0xa10 security/integrity/ima/ima_api.c:293
+>  process_measurement+0x1271/0x2370 security/integrity/ima/ima_main.c:372
+>  ima_file_check+0xc1/0x110 security/integrity/ima/ima_main.c:572
+>  security_file_post_open+0x8e/0x210 security/security.c:3127
+>  do_open fs/namei.c:3776 [inline]
+>  path_openat+0x1419/0x2d60 fs/namei.c:3933
+>  do_filp_open+0x1dc/0x430 fs/namei.c:3960
+>  do_sys_openat2+0x17a/0x1e0 fs/open.c:1415
+>  do_sys_open fs/open.c:1430 [inline]
+>  __do_compat_sys_open fs/open.c:1481 [inline]
+>  __se_compat_sys_open fs/open.c:1479 [inline]
+>  __ia32_compat_sys_open+0x147/0x1e0 fs/open.c:1479
+>  do_syscall_32_irqs_on arch/x86/entry/common.c:165 [inline]
+>  __do_fast_syscall_32+0x73/0x120 arch/x86/entry/common.c:386
+>  do_fast_syscall_32+0x32/0x80 arch/x86/entry/common.c:411
+>  entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+> RIP: 0023:0xf740e579
+> Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+> RSP: 002b:00000000f56f656c EFLAGS: 00000296 ORIG_RAX: 0000000000000005
+> RAX: ffffffffffffffda RBX: 0000000020000240 RCX: 0000000000000b00
+> RDX: 0000000000000008 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+>  </TASK>
+> Modules linked in:
+> ---[ end trace 0000000000000000 ]---
+> RIP: 0010:mark_lock+0x25/0xc60 kernel/locking/lockdep.c:4686
+> Code: 90 90 90 90 90 55 48 89 e5 41 57 41 56 41 89 d6 48 ba 00 00 00 00 00 fc ff df 41 55 41 54 53 48 83 e4 f0 48 81 ec 10 01 00 00 <48> c7 44 24 30 b3 8a b5 41 48 8d 44 24 30 48 c7 44 24 38 38 51 57
+> RSP: 0018:ffffc90002b3ffc0 EFLAGS: 00010086
+> RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000003
+> RDX: dffffc0000000000 RSI: ffff888021edaf98 RDI: ffff888021eda440
+> RBP: ffffc90002b40100 R08: 0000000000000000 R09: 0000000000000006
+> R10: ffffffff9698ad37 R11: 0000000000000002 R12: dffffc0000000000
+> R13: ffff888021edaf98 R14: 0000000000000008 R15: ffff888021eda440
+> FS:  0000000000000000(0000) GS:ffff88802b400000(0063) knlGS:00000000f56f6b40
+> CS:  0010 DS: 002b ES: 002b CR0: 0000000080050033
+> CR2: ffffc90002b3ffb8 CR3: 000000005f61e000 CR4: 0000000000352ef0
+> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+> ----------------
+> Code disassembly (best guess):
+>    0:   90                      nop
+>    1:   90                      nop
+>    2:   90                      nop
+>    3:   90                      nop
+>    4:   90                      nop
+>    5:   55                      push   %rbp
+>    6:   48 89 e5                mov    %rsp,%rbp
+>    9:   41 57                   push   %r15
+>    b:   41 56                   push   %r14
+>    d:   41 89 d6                mov    %edx,%r14d
+>   10:   48 ba 00 00 00 00 00    movabs $0xdffffc0000000000,%rdx
+>   17:   fc ff df
+>   1a:   41 55                   push   %r13
+>   1c:   41 54                   push   %r12
+>   1e:   53                      push   %rbx
+>   1f:   48 83 e4 f0             and    $0xfffffffffffffff0,%rsp
+>   23:   48 81 ec 10 01 00 00    sub    $0x110,%rsp
+> * 2a:   48 c7 44 24 30 b3 8a    movq   $0x41b58ab3,0x30(%rsp) <-- trapping instruction
+>   31:   b5 41
+>   33:   48 8d 44 24 30          lea    0x30(%rsp),%rax
+>   38:   48                      rex.W
+>   39:   c7                      .byte 0xc7
+>   3a:   44 24 38                rex.R and $0x38,%al
+>   3d:   38 51 57                cmp    %dl,0x57(%rcx)
 >
-> Regards
-> Bibo Mao
 >
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
 >
-> >                  set_cpuid_to_node(physid, nid);
-> >                  node_set(nid, numa_nodes_parsed);
-> >                  set_cpu_numa_node(cpu, nid);
-> >
-> > Huacai
-> >
-> >>
-> >>           if (physid < 0)
-> >>                   return NUMA_NO_NODE;
-> >>
-> >>           return __cpuid_to_node[physid];
-> >> }
-> >>
-> >> Regards
-> >> Bibo Mao
-> >>>
-> >>> Huacai
-> >>>
-> >>>>
-> >>>> Here static array __cpu_to_node and api set_early_cpu_to_node()
-> >>>> is added, so that early_cpu_to_node is consistent with function
-> >>>> cpu_to_node() for hot-added cpu.
-> >>>>
-> >>>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
-> >>>> ---
-> >>>>    arch/loongarch/include/asm/numa.h |  2 ++
-> >>>>    arch/loongarch/kernel/numa.c      | 10 +++++++++-
-> >>>>    arch/loongarch/kernel/smp.c       |  1 +
-> >>>>    3 files changed, 12 insertions(+), 1 deletion(-)
-> >>>>
-> >>>> diff --git a/arch/loongarch/include/asm/numa.h b/arch/loongarch/incl=
-ude/asm/numa.h
-> >>>> index b5f9de9f102e..e8e6fcfb006a 100644
-> >>>> --- a/arch/loongarch/include/asm/numa.h
-> >>>> +++ b/arch/loongarch/include/asm/numa.h
-> >>>> @@ -50,6 +50,7 @@ static inline void set_cpuid_to_node(int cpuid, s1=
-6 node)
-> >>>>    }
-> >>>>
-> >>>>    extern int early_cpu_to_node(int cpu);
-> >>>> +extern void set_early_cpu_to_node(int cpu, s16 node);
-> >>>>
-> >>>>    #else
-> >>>>
-> >>>> @@ -57,6 +58,7 @@ static inline void early_numa_add_cpu(int cpuid, s=
-16 node)    { }
-> >>>>    static inline void numa_add_cpu(unsigned int cpu)              { =
-}
-> >>>>    static inline void numa_remove_cpu(unsigned int cpu)           { =
-}
-> >>>>    static inline void set_cpuid_to_node(int cpuid, s16 node)      { =
-}
-> >>>> +static inline void set_early_cpu_to_node(int cpu, s16 node)    { }
-> >>>>
-> >>>>    static inline int early_cpu_to_node(int cpu)
-> >>>>    {
-> >>>> diff --git a/arch/loongarch/kernel/numa.c b/arch/loongarch/kernel/nu=
-ma.c
-> >>>> index 84fe7f854820..62508aace644 100644
-> >>>> --- a/arch/loongarch/kernel/numa.c
-> >>>> +++ b/arch/loongarch/kernel/numa.c
-> >>>> @@ -34,6 +34,9 @@ static struct numa_meminfo numa_meminfo;
-> >>>>    cpumask_t cpus_on_node[MAX_NUMNODES];
-> >>>>    cpumask_t phys_cpus_on_node[MAX_NUMNODES];
-> >>>>    EXPORT_SYMBOL(cpus_on_node);
-> >>>> +static s16 __cpu_to_node[NR_CPUS] =3D {
-> >>>> +       [0 ... CONFIG_NR_CPUS - 1] =3D NUMA_NO_NODE
-> >>>> +};
-> >>>>
-> >>>>    /*
-> >>>>     * apicid, cpu, node mappings
-> >>>> @@ -117,11 +120,16 @@ int early_cpu_to_node(int cpu)
-> >>>>           int physid =3D cpu_logical_map(cpu);
-> >>>>
-> >>>>           if (physid < 0)
-> >>>> -               return NUMA_NO_NODE;
-> >>>> +               return __cpu_to_node[cpu];
-> >>>>
-> >>>>           return __cpuid_to_node[physid];
-> >>>>    }
-> >>>>
-> >>>> +void set_early_cpu_to_node(int cpu, s16 node)
-> >>>> +{
-> >>>> +       __cpu_to_node[cpu] =3D node;
-> >>>> +}
-> >>>> +
-> >>>>    void __init early_numa_add_cpu(int cpuid, s16 node)
-> >>>>    {
-> >>>>           int cpu =3D __cpu_number_map[cpuid];
-> >>>> diff --git a/arch/loongarch/kernel/smp.c b/arch/loongarch/kernel/smp=
-.c
-> >>>> index 9afc2d8b3414..998668be858c 100644
-> >>>> --- a/arch/loongarch/kernel/smp.c
-> >>>> +++ b/arch/loongarch/kernel/smp.c
-> >>>> @@ -512,6 +512,7 @@ void __init smp_prepare_boot_cpu(void)
-> >>>>                           set_cpu_numa_node(cpu, node);
-> >>>>                   else {
-> >>>>                           set_cpu_numa_node(cpu, rr_node);
-> >>>> +                       set_early_cpu_to_node(cpu, rr_node);
-> >>>>                           rr_node =3D next_node_in(rr_node, node_onl=
-ine_map);
-> >>>>                   }
-> >>>>           }
-> >>>>
-> >>>> base-commit: 6485cf5ea253d40d507cd71253c9568c5470cd27
-> >>>> --
-> >>>> 2.39.3
-> >>>>
-> >>>>
-> >>
-> >>
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 >
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
 >
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+>
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+>
+> If you want to undo deduplication, reply with:
+> #syz undup
+>
+> --
+> You received this message because you are subscribed to the Google Groups "syzkaller-bugs" group.
+> To unsubscribe from this group and stop receiving emails from it, send an email to syzkaller-bugs+unsubscribe@googlegroups.com.
+> To view this discussion on the web visit https://groups.google.com/d/msgid/syzkaller-bugs/670cb3bd.050a0220.4cbc0.0040.GAE%40google.com.
 
