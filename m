@@ -1,142 +1,190 @@
-Return-Path: <linux-kernel+bounces-364594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7395799D6A2
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:37:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718D399D6A7
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:39:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A55BD1C2324A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:37:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5BEC1F22138
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 18:39:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228461C9ED5;
-	Mon, 14 Oct 2024 18:37:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E4351C9DFD;
+	Mon, 14 Oct 2024 18:39:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MvTH/000"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OXY2EjFl"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DDD1AB6FC;
-	Mon, 14 Oct 2024 18:37:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51EF21C304A;
+	Mon, 14 Oct 2024 18:39:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728931033; cv=none; b=l0p3MWdG0vIVd0uJ1e4RG/l6xprOl4ZCHVx+TRu18h5MLBnvQrr0ei8S19e/yWeOksvEkhVdToxppfHdHLtIMCa8EHKn+hqhwWWadzJV7EWqhdKiisxBMExKn0EalbmGg3Py0EzfYR3VQz4zYCDzKDhyT/cFsLS3GhLj767vMNE=
+	t=1728931162; cv=none; b=mpfFfOu79WlVQbVfJXRTeQz6oNQpFgU1z7OhaF2dAddUkvrK76RM0tI73+2rY+8RdjWL0535IsruaMdVi1riOMgLhNXJoquX1f30ZDj3dbsExxW0tR/PDU42tHRmYsbm+vqjZVg+pNp8VR3MA6MLApjN43U0QGErlf9PfNmFjew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728931033; c=relaxed/simple;
-	bh=VYkzv62Tv2hPBGCkoeopLT5+FAqEnNT/1ZDpLUILkMs=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DEL/gPd196x8epcCePUItlY/+46boCXpqBghVolDyNKhmPOGu0X9mF1DnyXVnaQ1IL8Gnt34KiUTGHWEHJpLAopK/dX5CVdd8rqIf4Ji9kDwz3XyWitMRboCEnxf701MIeccEhMkaBT0xfpXcvWMH6fu7xwtCYvzVeqZMipzVAU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MvTH/000; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D018C4CEC3;
-	Mon, 14 Oct 2024 18:37:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1728931033;
-	bh=VYkzv62Tv2hPBGCkoeopLT5+FAqEnNT/1ZDpLUILkMs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=MvTH/000qxj3FRGeoUrZ9ZJ2d9Sv7C/hZwti0S8ZhivwTkgFjXf6iUeKmaeJW/V8n
-	 eh9HmiGGiAZ9AJGLzZx/x/iQsrWsMq2s0KTWY5ig0e2Yyo/vyY1MhqMAxyQ1RdGUQ3
-	 NfA42MRlR18uPZQSa0CUQOvrLiu962/fhBwVEFEQqcl3/zRiu0ZUgb7hO6nCvx9oEN
-	 Kj4Mxg5aRnQ+qXfl1TkldyqIj7Ot983Mi+HYcIQ/UTSCyHIXjXSQg6Wk2MzrTCurf/
-	 HUxSCk0L6T+jMZq+4kg+sfiH+lfRv02vKDmroRXf0yqQxgGAHFO19KXRxJNvTHjdRW
-	 4P2zF+fs87w8w==
-Date: Mon, 14 Oct 2024 19:37:01 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Julien Stephan <jstephan@baylibre.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Lars-Peter Clausen
- <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Nuno
- =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, David Lechner
- <dlechner@baylibre.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Liam Girdwood
- <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Jonathan Corbet
- <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-doc@vger.kernel.org
-Subject: Re: [PATCH 2/6] dt-bindings: iio: adc: ad7380: fix ad7380-4
- reference supply
-Message-ID: <20241014193701.40e3785a@jic23-huawei>
-In-Reply-To: <CAEHHSvaGTKFA1mUeONXUQ=aTirVemHWFc_E-i76sQgtQ5_Svtg@mail.gmail.com>
-References: <20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com>
-	<20241007-ad7380-fix-supplies-v1-2-badcf813c9b9@baylibre.com>
-	<v7in5n6ktmu5kfzlndn4eujmk5n66fmft4lvwuvucqbcv5r5hb@etdqvn6ev6nl>
-	<20241010192218.12808268@jic23-huawei>
-	<CAEHHSvaGTKFA1mUeONXUQ=aTirVemHWFc_E-i76sQgtQ5_Svtg@mail.gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1728931162; c=relaxed/simple;
+	bh=bNpe9cGfuFuN6XB+KYQ51+s+Hd11yBzJgAeFEbeoD6A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CioI9y/EorTANKcQtiZbN2fRvDpya8DpyUun9EhuUK8u8XoKOJx175QUw4X8DFD98QyMicHlPsM7Kons2xmfRJ1khz5uUUXd/p7HMd66hOv5A5TpQ0M75qrP3295o12Kr+8SVvxkRnQcs/G7i3Jcll5GOOHjZpKOKgioApRr6Sk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OXY2EjFl; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a01810fffso248884866b.3;
+        Mon, 14 Oct 2024 11:39:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728931158; x=1729535958; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0r76MqNhjQHMwaWhdIiFLyHSJMjIu1KOA2CjoqqtSM4=;
+        b=OXY2EjFlzksb4rZ1/h4TyMe84zB3/BOs+N1XOniemroGr32udFgIsFAdKlpQlqtW56
+         cq5gMs6edRwjKnCDJR7hQd1Mraz/rGFeDF+GLBL+M3wzbRHxFgSaLmdu3gOthkTTAgYH
+         5NR3FCIBrhkVNLFeG2YUjUTJBDOMCJQpUdXvd+mv3Ktk2I2Jbv+k11LG0ZmJAhsZnLxn
+         IUcm0zspxsxunSOyXT6Nwy+K+q748e7mxSZoFBMmDj02jwNPJVLuFHZHSMZD944v1uiY
+         2BsYI50rHL57m4H4FgkmGfw3AoG7HTPk9zEqau7mxphIwN+vkPu4IeLLw8nXbM+ISfBO
+         nfAQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728931158; x=1729535958;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0r76MqNhjQHMwaWhdIiFLyHSJMjIu1KOA2CjoqqtSM4=;
+        b=uLvnamltNihLkMzCcEoMM5n0/8yK5p8nwzskfxsOafAcd09ol7DoOlN8etLTBdgi70
+         cQXqzFeQ78bN0KP4u1fVJ7TMDSSC5Fq3EwPC+JiineHraTKpBHZ1bMWOoKnTvv1rKzg5
+         IBWv4e3kha8Q1aX49GZDL/A7QZSHs41B8ZWdf0T96LN5KvzWXYB0/oLD34DXaLtb44b5
+         tyltUaODnJtyq1hsrQHmMVCI1mdFUUe4wQAOWXrFPTkZWXFctavde1SI2l0ROnuNzrrz
+         bmn8yQzc20L5rGCGD2USaAF0CbzdwY7aUP3NslFB6m3sDvB+KRMNaTQ9Hs+/8wr7sAsg
+         sogg==
+X-Forwarded-Encrypted: i=1; AJvYcCVqpinzsiDGvJHRD5PvTg4TaTOiBlJ8DislyLfuxcO6KehYhoD/2OBm54CwbO4a9RYdUPcXD3GSvo7HsVqYYQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1LiDQBZe3C+UiBOd5nPzbgNBpNML5ESF2o8MACvysz5tzi4TU
+	FA2oHd1XlVaEx+cO5GY5fFfV5PxgyqBx9LIF5fPdpQXX8JdPWeNS
+X-Google-Smtp-Source: AGHT+IFhhSROBO9GfBivL9KwataGn4/0YIUxuXdkFCm1rEekyN3xQH7THl7pb75iTikmddIrLHixIA==
+X-Received: by 2002:a17:906:da83:b0:a7a:9144:e23a with SMTP id a640c23a62f3a-a99e3e437f4mr874605066b.43.1728931158353;
+        Mon, 14 Oct 2024 11:39:18 -0700 (PDT)
+Received: from [192.168.2.105] (p54a0712c.dip0.t-ipconnect.de. [84.160.113.44])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a16989a01sm126620866b.116.2024.10.14.11.39.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 11:39:17 -0700 (PDT)
+Message-ID: <a02e3e0b-8a9b-47d5-87cf-2c957a474daa@gmail.com>
+Date: Mon, 14 Oct 2024 20:39:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC] ipw2100 ipw2200 ps3_gelic rtl8712 --- Are we ready for wext
+ cleanup?
+To: Kalle Valo <kvalo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, "David S . Miller" <davem@davemloft.net>,
+ Alexandre Belloni <alexandre.belloni@bootlin.com>,
+ Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Geert Uytterhoeven <geert@linux-m68k.org>, Geoff Levand
+ <geoff@infradead.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Jakub Kicinski <kuba@kernel.org>, Jeff Johnson <quic_jjohnson@quicinc.com>,
+ Johannes Berg <johannes@sipsolutions.net>,
+ Larry Finger <Larry.Finger@lwfinger.net>,
+ Nicolas Ferre <nicolas.ferre@microchip.com>, Pavel Machek <pavel@ucw.cz>,
+ Stanislaw Gruszka <stf_xl@wp.pl>,
+ Gregory Greenman <gregory.greenman@intel.com>,
+ linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-wireless@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>,
+ Stefan Lippers-Hollmann <s.l-h@gmx.de>
+References: <a7eb3db4-ad0d-451a-9106-90d481bd3231@gmail.com>
+ <87iktv58tn.fsf@kernel.org>
+Content-Language: en-US
+From: Philipp Hortmann <philipp.g.hortmann@gmail.com>
+In-Reply-To: <87iktv58tn.fsf@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Mon, 14 Oct 2024 11:00:39 +0200
-Julien Stephan <jstephan@baylibre.com> wrote:
+On 14.10.24 11:32, Kalle Valo wrote:
+> Philipp Hortmann <philipp.g.hortmann@gmail.com> writes:
+> 
+>> origin of this question was the following patch series from Arnd Bergmann
+>> [PATCH 00/10] Remove obsolete and orphaned wifi drivers
+>> https://lore.kernel.org/linux-staging/20231023131953.2876682-1-arnd@kernel.org/
+>>
+>> Here the remaining files that use iw_handler_def:
+>> drivers/net/ethernet/toshiba/ps3_gelic_wireless.c:static const struct
+>> iw_handler_def gelic_wl_wext_handler_def = {
+>> drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct
+>> iw_handler_def ipw2100_wx_handler_def;
+>> drivers/net/wireless/intel/ipw2x00/ipw2100.c:static const struct
+>> iw_handler_def ipw2100_wx_handler_def = {
+>> drivers/net/wireless/intel/ipw2x00/ipw2200.c:static const struct
+>> iw_handler_def ipw_wx_handler_def = {
+>> drivers/staging/rtl8712/os_intfs.c:     pnetdev->wireless_handlers =
+>> (struct iw_handler_def *)
+>> drivers/staging/rtl8712/rtl871x_ioctl.h:extern struct iw_handler_def
+>> r871x_handlers_def;
+>> drivers/staging/rtl8712/rtl871x_ioctl_linux.c:struct iw_handler_def
+>> r871x_handlers_def = {
+>>
+>>
+>> In this Email Greg writes over rtl8192e:
+>> https://lore.kernel.org/linux-staging/2024100810-payback-suds-8c15@gregkh/
+>> "...
+>> No staging driver should ever get in the way of api changes elsewhere in
+>> the kernel, that's one of the rules of this part of the tree.  So from
+>> my opinion, it's fine to delete it now.  It can always come back in a
+>> new way later on.
+>> ..."
+>>
+>> So it should not be an issue to remove rtl8712.
+>>
+>> Stefan Lippers-Hollmann was one year ago still using the ipw2200.
+>> https://lore.kernel.org/linux-staging/20231024014302.0a0b79b0@mir/
+>>
+>> Here my opinion why I think we should reconsider this:
+>>
+>> I really like to use old hardware. One of my computers is from trash
+>> and the other one is bought for 50€ three years ago. But non of my
+>> hardware is from before 2012. Do we as a community really need to
+>> support hardware from 2003 in kernel 6.13 for WLAN that evolved so
+>> rapidly? I do not think so.
+>>
+>> People around me are complaining that the 2,4GHz WLAN is difficult to
+>> use because so many devices are using it. Such slow devices consume a
+>> lot of time to send and receive the data and block therefore other
+>> devices.
+>>
+>> The longterm kernels will still support this hardware for years.
+>>
+>> Please explain to our very high value resources (Maintainers,
+>> Developers with wext and mac80211 expierience) that you cannot find
+>> any other solution that is within technical possibility and budget
+>> (USB WLAN Stick or exchange of WLAN module) and that they need to
+>> invest their time for maintenance.
+>> Here the example of invested time from Johannes Berg:
+>> https://lore.kernel.org/all/20241007213525.8b2d52b60531.I6a27aaf30bded9a0977f07f47fba2bd31a3b3330@changeid/
+>>
+>> I cannot ask the Linux kernel community to support my test hardware
+>> just because I bought it some time ago. Rather, I have to show that I
+>> use it for private or business purposes on a regular basis and that I
+>> cannot easily change.
+>>
+>> Using this hardware is security wise not state of the art as WPA3 is
+>> not supported. We put so much effort into security. Why not here?
+> 
+> I didn't quite get what you are saying here, are you proposing that we
+> should remove ancient drivers faster?
+> 
 
-> Le jeu. 10 oct. 2024 =C3=A0 20:22, Jonathan Cameron <jic23@kernel.org> a =
-=C3=A9crit :
-> >
-> > On Tue, 8 Oct 2024 09:52:50 +0200
-> > Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > =20
-> > > On Mon, Oct 07, 2024 at 05:45:45PM +0200, Julien Stephan wrote: =20
-> > > > ad7380-4 is the only device from ad738x family that doesn't have an
-> > > > internal reference. Moreover its external reference is called REFIN=
- in
-> > > > the datasheet while all other use REFIO as an optional external
-> > > > reference. If refio-supply is omitted the internal reference is
-> > > > used.
-> > > >
-> > > > Fix the binding by adding refin-supply and makes it required for
-> > > > ad7380-4 only. =20
-> > >
-> > > Maybe let's just use refio as refin? Reference-IO fits here well.
-> > > Otherwise you have two supplies for the same. =20
-> > Whilst it is ugly, the effort this series is going to in order
-> > to paper over a naming mismatch makes me agree with Krzysztof.
-> >
-> > I think adding a comment to the dt-binding would be sensible
-> > though as people might fall into this hole.
-> > =20
->=20
-> Hi Jonathan and Krzysztof,
->=20
-> I am currently adding support for another chip to this family
-> (ADAQ4380-4) and it also uses REFIN.. but in another way ad7380-4
-> does..
-> So:
-> - ad7380-4 does not have any internal reference and use a mandatory
-> refin supply as external reference
-> - adaq4380-4 does not have external reference but uses a 3V internal
-> reference derived from a 5V mandatory refin supply
-> - all others (AFAIK) use an optional refio external reference. If
-> omitted, use an internal 2.5V reference.
->=20
-> I am not sure using a single refio-supply for all will make things
-> clearer.. What do you think? Should I also send the adaq series now to
-> bring more context? (I wanted feedback on this series first).
->=20
+Hi Kalle,
 
-Sounds like that context would be useful if you have it more or less
-ready to send anyway.  I don't have particularly strong views on this
-either way.  If we 'fix' the case you have here, old bindings should
-continue to work for the part you are moving over (though no need
-to have them in the dt-bindings file).
+I propose to delete the last three drivers that are using wireless 
+extension:
+ps3_gelic_wireless
+ipw2x00
+rtl8712
 
-Jonathan
+Thanks for your response.
 
-> Cheers
-> Julien
->=20
-> > Other than the missing ret =3D, rest of series looks fine to me
-> >
-> > Jonathan
-> > =20
-> > >
-> > > Best regards,
-> > > Krzysztof
-> > > =20
-> > =20
+Bye Philipp
+
 
 
