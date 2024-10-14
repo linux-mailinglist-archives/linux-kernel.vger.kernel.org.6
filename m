@@ -1,45 +1,47 @@
-Return-Path: <linux-kernel+bounces-363307-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363308-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 261A599C060
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:50:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id E584399C062
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:51:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 494B11C22522
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:50:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52F50B22895
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:51:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77E3F144304;
-	Mon, 14 Oct 2024 06:50:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F8CC1459F6;
+	Mon, 14 Oct 2024 06:50:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="cFIafSMD"
-Received: from out30-101.freemail.mail.aliyun.com (out30-101.freemail.mail.aliyun.com [115.124.30.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OikLSEgx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F1A14600F
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:50:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 67ACD13A24D;
+	Mon, 14 Oct 2024 06:50:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888629; cv=none; b=QoMIPwx2sNAgvm6eT8JjRYfhRsVKR/X62+6PhicCznBR+j0EF8Jv297Ktzof37J6V2qi4jvHUY/OoxJdSqNt08IA6MqvfrusMzd874xXu+8aju9a37BuuJboQih3NOtCpd5P98sTlgOIg37cmZ+WAbL+IX2oRSCLLkdV0OIE6u0=
+	t=1728888657; cv=none; b=VX0IlYKMdjVtyLlQPvIWYfEoiNFeQUaGOweF47Bb/EHqtQQukWS87EdEiF8FHJcOE1rG+spbLNnY3MKKJhP221cHda6AePGG9xofDXkjuN59SXtnUizQo6CJhD3W09oXlT4/347YBZL9jg9Yd1418PfuhCCKd4BSMyjxse0zhh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888629; c=relaxed/simple;
-	bh=qJF+kpQrONvE39M3qR5kHo2W0/05cB7CFCdC9OtQgQQ=;
+	s=arc-20240116; t=1728888657; c=relaxed/simple;
+	bh=5fwQDtuZJ/Bi5IWJSnGY6namt6pSnRXtrjudA9qIXhQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tUFMbAC0L8UoyzYYHsZu8B0q/+Ht0XYDk1wvkiSBo1R7gHkEIfh2Bqu1yAYrIdyNkpYkoPNKZID0E/O/8IxY0Hc+UJQHWRoRD36R6jUvLgBlzatJwZ/kur4L0wtLEVEBoyK0NlsfE9iMAPUrnxMxgNAm/ALwIbs4Ehz9SKgz6WU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=cFIafSMD; arc=none smtp.client-ip=115.124.30.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1728888624; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=qqDE2FOehZs6toIhTzk0+At3PD0AOMbhKevFe2pY4/Q=;
-	b=cFIafSMDI8LYgeitNTWjodSLaeFs2vGagh8YiXfcKvszlBzksm8dR/gY/EBnuU7En4UNkQwa8aOl3h55OmOYhTH7ZvsbUfR/jJw/uSCF8ceXUZsSvF2XWmLQsSESou65NH4nlfK4wO1iJelJSEHTgavKs39VYCBEatIbEyCjYVg=
-Received: from 30.246.164.22(mailfrom:tianjia.zhang@linux.alibaba.com fp:SMTPD_---0WH1pQO._1728888622 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 14 Oct 2024 14:50:23 +0800
-Message-ID: <78a18ddd-4704-49ce-86b2-05693ac9b032@linux.alibaba.com>
-Date: Mon, 14 Oct 2024 14:50:21 +0800
+	 In-Reply-To:Content-Type; b=Q6AIYsiw8+JuzfpC1CcTc6xSbCdlLqzwdyAGxWX5AWZeAfrJIrY81RYIybHLuRLEp9BJWULOV9BTud8MBxskJJPrPIyGbP2rApdb1HvBDVSZqlY9fpgZ5c8mlfv9zamY/3PGinZH4VRPpO4NsXvJuw6dAyUSfU+rBBYgwI1S3ys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OikLSEgx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10E4BC4CECE;
+	Mon, 14 Oct 2024 06:50:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728888656;
+	bh=5fwQDtuZJ/Bi5IWJSnGY6namt6pSnRXtrjudA9qIXhQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=OikLSEgxvQ/fcEAxUnjoMJaWuQcyDjzgHvleJaYTLT1RavHgsL3i0/Yzy0wNeJrQQ
+	 eTEhsKcI3zUd7snnF2VraEuaCezkG5TpwnMA+8VM1eB5QUmjvNugJutc7JG3Ynp3oZ
+	 abFprHe8KBSibQM71ElL/fMdt6iYMGBXhYFqMxBzdbfNH1mqUs8wfU4nNbKfo1V5sB
+	 9yOapvIO+Bdkk6AkaDpE6FE6Any7H6oaqogkDm30mwQmJhu3oIG680Kj7eFdNmmvMD
+	 xknVzMO2qml7hhuj8oMYZCn6BZMrp4rK3BcZzA8SZx6dQKWHG17xMdSuFm4U6QgQGX
+	 YNmHPIIOMAXng==
+Message-ID: <52ce41b7-72e1-48ad-86e4-5cfac67f8174@kernel.org>
+Date: Mon, 14 Oct 2024 08:50:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,99 +49,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] KVM: arm64: nVHE: gen-hyprel: Silent build warnings
+Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
+ error path for fw_node
+To: Umang Jain <umang.jain@ideasonboard.com>,
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>,
+ Florian Fainelli <florian.fainelli@broadcom.com>,
+ Broadcom internal kernel review list
+ <bcm-kernel-feedback-list@broadcom.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Stefan Wahren <wahrenst@gmx.net>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+Cc: linux-rpi-kernel@lists.infradead.org,
+ linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
+ <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-To: Nick Desaulniers <ndesaulniers@google.com>
-Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- Joey Gouly <joey.gouly@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas
- <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- Nathan Chancellor <nathan@kernel.org>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, =?UTF-8?Q?Pierre-Cl=C3=A9ment_Tosi?=
- <ptosi@google.com>, linux-arm-kernel@lists.infradead.org,
- kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, llvm@lists.linux.dev
-References: <20241009085751.35976-1-tianjia.zhang@linux.alibaba.com>
- <86set55yca.wl-maz@kernel.org>
- <b3c21234-73a0-43dd-8365-9039c62b7aa7@linux.alibaba.com>
- <CAKwvOdnkTOjV_j6zGAkghgU0L_tLkb=8Nh3Qzvdb1N-tV61wag@mail.gmail.com>
-From: "tianjia.zhang" <tianjia.zhang@linux.alibaba.com>
-In-Reply-To: <CAKwvOdnkTOjV_j6zGAkghgU0L_tLkb=8Nh3Qzvdb1N-tV61wag@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <e88e5faf-d88a-4ce9-948a-c976c2969cad@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Nick,
-
-On 10/10/24 11:23 PM, Nick Desaulniers wrote:
-> On Thu, Oct 10, 2024 at 1:13 AM tianjia.zhang
-> <tianjia.zhang@linux.alibaba.com> wrote:
+On 13/10/2024 13:36, Umang Jain wrote:
+> Hi Javier,
+> 
+> Thank you for the patch.
+> 
+> On 13/10/24 4:12 pm, Javier Carrasco wrote:
+>> An error path was introduced without including the required call to
+>> of_node_put() to decrement the node's refcount and avoid leaking memory.
+>> If the call to kzalloc() for 'mgmt' fails, the probe returns without
+>> decrementing the refcount.
 >>
+>> Use the automatic cleanup facility to fix the bug and protect the code
+>> against new error paths where the call to of_node_put() might be missing
+>> again.
 >>
+>> Cc: stable@vger.kernel.org
+>> Fixes: 1c9e16b73166 ("staging: vc04_services: vchiq_arm: Split driver static and runtime data")
+>> Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+>> ---
+>>   drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c | 6 ++----
+>>   1 file changed, 2 insertions(+), 4 deletions(-)
 >>
->> On 10/9/24 7:07 PM, Marc Zyngier wrote:
->>> On Wed, 09 Oct 2024 09:57:51 +0100,
->>> Tianjia Zhang <tianjia.zhang@linux.alibaba.com> wrote:
->>>>
->>>> This patch silent the some mismatch format build warnings
->>>> with clang, like:
->>>>
->>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:233:2: warning: format specifies
->>>>     type 'unsigned long' but the argument has type 'Elf64_Off'
->>>>     (aka 'unsigned long long') [-Wformat]
->>>>       233 |         assert_ne(off, 0UL, "%lu");
->>>>           |         ^~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>           |                              %llu
->>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:193:34: note: expanded from macro 'assert_ne'
->>>>       193 | #define assert_ne(lhs, rhs, fmt)        assert_op(lhs, rhs, fmt, !=)
->>>>           |                                         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:188:19: note: expanded from macro 'assert_op'
->>>>       187 |                                 " failed (lhs=" fmt ", rhs=" fmt        \
->>>>           |                                                 ~~~
->>>>       188 |                                 ", line=%d)", _lhs, _rhs, __LINE__);    \
->>>>           |                                               ^~~~
->>>>     arch/arm64/kvm/hyp/nvhe/gen-hyprel.c:167:17: note: expanded from macro 'fatal_error'
->>>>       166 |                 fprintf(stderr, "error: %s: " fmt "\n",                 \
->>>>           |                                               ~~~
->>>>       167 |                         elf.path, ## __VA_ARGS__);                      \
->>>>           |                                      ^~~~~~~~~~~
->>>>
->>>> Signed-off-by: Tianjia Zhang <tianjia.zhang@linux.alibaba.com>
->>>
->>> I don't see these warnings. What version of LLVM are you using?
->>>
->>
->> I compiled the kernel on Apple Silicon M3 Pro in macOS 15.0.1, Maybe this is
->> a special scenario that is rarely used.
+>> diff --git a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>> index 27ceaac8f6cc..792cf3a807e1 100644
+>> --- a/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>> +++ b/drivers/staging/vc04_services/interface/vchiq_arm/vchiq_arm.c
+>> @@ -1332,7 +1332,8 @@ MODULE_DEVICE_TABLE(of, vchiq_of_match);
+>>   
+>>   static int vchiq_probe(struct platform_device *pdev)
+>>   {
+>> -	struct device_node *fw_node;
+>> +	struct device_node *fw_node __free(device_node) =
+>> +		of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-firmware");
 > 
-> Right, so I had an initial patch set for building the kernel from a
-> MacOS host.  I sent a v1, but didn't chase sending a v2 at the time
-> because there didn't appear to be any interest.
+> How about :
 > 
-> https://www.phoronix.com/news/Linux-Compile-On-macOS
+> +	struct device_node *fw_node __free(device_node) = NULL;
 > 
-> Since then, I saw a v2 or even a v3 fly by (I was cc'ed).
+>>   	const struct vchiq_platform_info *info;
+>>   	struct vchiq_drv_mgmt *mgmt;
+>>   	int ret;
+>> @@ -1341,8 +1342,6 @@ static int vchiq_probe(struct platform_device *pdev)
+>>   	if (!info)
+>>   		return -EINVAL;
+>>   
+>> -	fw_node = of_find_compatible_node(NULL, NULL,
+>> -					  "raspberrypi,bcm2835-firmware");
 > 
-> One issue I recall building from MacOS was that MacOS does not have an
-> <elf.h> (their object file format is not ELF, but Mach-O).  I had to
-> install some dependency through homebrew for that header.
-> 
-> Just a guess but:
-> Perhaps it defines Elf64_Off as a `unsigned long` incorrectly, and
-> should be defining it as an `unsigned long long`.  I'd check if that's
-> the case and if so, Tianjia, you may want to report that issue on the
-> thread where folks are reposting the MacOS host support.
-> 
+> And undo this (i.e. keep the of_find_compatible_node() call here
 
-Thanks for the information, great work, very useful attempt.
+The point of using cleanup is to have constructor and destructor in one
+place, not split. This is not in the spirit of cleanup. Linus also
+commented on this and cleanup.h *explicitly* recommends not doing so. It
+also lead to real bugs from time to time, so no, please do not insist on
+such weird way.
 
-I have successfully compiled the latest 6.11 rc2 on macOS 15.0.1 Apple
-Silicon M3 chip. It seems that compiling on this version of the kernel
-is easier. I just added three header files, elf.h, byteswap.h and
-endian.h, and add the missing definitions. In addition, I fixed
-scriptsj/mod/file2alias.c as you did, and it compiled successfully
-without encountering other exceptions. The dependent toolchains are
-all installed through brew, include make, llvm and lld.
-
-Cheers,
-Tianjia
+Best regards,
+Krzysztof
 
 
