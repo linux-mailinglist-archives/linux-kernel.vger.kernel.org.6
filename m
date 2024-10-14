@@ -1,174 +1,316 @@
-Return-Path: <linux-kernel+bounces-364124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D3E1D99CB64
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:17:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAC3F99CB68
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F0EE281F6A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:17:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C722B220E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:18:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89A261ABED8;
-	Mon, 14 Oct 2024 13:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dhrdtaqV"
-Received: from mail-qk1-f180.google.com (mail-qk1-f180.google.com [209.85.222.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEBD1AC426;
+	Mon, 14 Oct 2024 13:14:39 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5995A1ABEB4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 13:14:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5561ABECB;
+	Mon, 14 Oct 2024 13:14:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911676; cv=none; b=aJqF4MZqcbJNVz6/q1tfgV9I5Uj7TKDHc5xqVzKVv6JyWbvvtuqZho9Np62s5224Xh8Ahkhm9uZGahmzgmbbB2CH/6oOGym8y539zhh9pbUsewW38zYvcPI0hkye4grO8qApmkVIHmaJ4EPCg/RASKXXyVoF/eaUNItVtlh2ZpI=
+	t=1728911679; cv=none; b=UEGPqw1QYvVKYb2EEvQc3bfZH85MEwF1yd52x3S68Tj0O/GupKJRw7bA4HBT4bLbOM9ohpCW63J+irK4I3cR6CXPiiQOROB72pT/1diR9ok1EpOzY3O9z3uzynMvUun8G1Qn/wxKFQ3mblrgEbj4UTwtR7BUJ2VxIY9YA2ssof8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911676; c=relaxed/simple;
-	bh=3AI3XhXvRGcP/N5oxZ4NF2AZexCtH/3/RLDrW+YPt24=;
-	h=From:To:Cc:Subject:Date:Message-Id; b=OzerBN/5nySdj8aMGsHn+tg8z7y8cpkLLdgQHFuFuOMqwlcBh8n77chcdXZe92hB+GzPSG+oL9RbT9KGKV7/GRxfPZpjUlTCQM+iVldg5u67c0ftdfUYM2jMqWSKUOlQXnXZjNfScqCy1sIKqBVFXRO0igL+BVBTouJ+0HCyk1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dhrdtaqV; arc=none smtp.client-ip=209.85.222.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f180.google.com with SMTP id af79cd13be357-7b1205e0e03so186462985a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:14:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1728911674; x=1729516474; darn=vger.kernel.org;
-        h=message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HZoT5PblpjMSYAGgJ9Q4ES+Ig5qmcNlUIU6W5cu9hZ4=;
-        b=dhrdtaqV9J3CL/WI6QQes8WbwwblCggESWt9wlJC53w2481kSoofb2dLl5xlaCwW2b
-         WGoODz4qdKQcCggYjB5NGXuwrGeAoF7iXAV0yg4tZ8z0WwBV4cjtjy/d5XgaJqz7KR5D
-         xVK9lkvEQwPPHB1ILwxDrl86ZKi/yv6f4zK/LZxi1dXfuNZXNRp/jNJoVPOwOmoO1aqd
-         gLncehrjJtiC1/OTDUPSIslDHSAfQeab0WxmHZsGQF4tJgyNqcRb2jnpgug1RhnY6dJw
-         QhNUF44kuw4rB8YcQ5LBDEFW/KI0uj+2yfB2f4TO4mFLf1p/8W04oxiRjyve/urZ5kmK
-         IJfA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728911674; x=1729516474;
-        h=message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HZoT5PblpjMSYAGgJ9Q4ES+Ig5qmcNlUIU6W5cu9hZ4=;
-        b=a2+dkqC10g7uTKFc4+EAWN1WzR1q1kx/4milVYZ+NOEmr0wECAoxTepXA2V2I3W3X4
-         rUhDYLx1nWa78UWMyzUhc/1mpzTapuuZk3Z2Xxo4cbQI1OeBz6C2mUSW/VO3wBt7DIIY
-         Z1Q1w2SSF8+gfqXDVRYYRyTWC5rXy5v583LucJR3kPaLRXJwQOrUO4hAj+/qXiBWqA3T
-         9puXCmiFvMt1kz5inNZglTq8VbZ4KorHqGDzrO2QQ1invn3TnSRZdUqnSpN3DMcq5BLy
-         9DbYlR+CJMFvALxZqFwX3kd22w9H88uNSfr7/2uxGy2Eh1Z5WsxqI1r3M6tSFqiGFBce
-         OY9w==
-X-Gm-Message-State: AOJu0Yz+Q+Nk9QquHXo2oET9kqLx0rU6siG21RPtulU7jtyIT07mAU6l
-	sz50sWnpWYrUDZKJhsNFXg6TBN8VLXmSNz805S8cQ55qdQ+6Eb0Ft4maCWof
-X-Google-Smtp-Source: AGHT+IHsiRcvZ7SKufp4ei3jPGJnjeed4QvsNN31zu1bjPVkj/2AgD617s19iXz37Ou6N57ameBPuQ==
-X-Received: by 2002:a05:620a:4454:b0:7ab:ec86:c91f with SMTP id af79cd13be357-7b11a37feb6mr2062194885a.36.1728911673712;
-        Mon, 14 Oct 2024 06:14:33 -0700 (PDT)
-Received: from localhost.localdomain ([4.15.194.220])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b1149562e0sm415730785a.91.2024.10.14.06.14.33
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 14 Oct 2024 06:14:33 -0700 (PDT)
-From: Vimal Agrawal <avimalin@gmail.com>
-X-Google-Original-From: Vimal Agrawal <vimal.agrawal@sophos.com>
-To: linux-kernel@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	arnd@arndb.de
-Cc: avimalin@gmail.com,
-	vimal.agrawal@sophos.com
-Subject: [PATCH] misc: misc_minor_alloc to allocate ids for all dynamic/misc dynamic minors
-Date: Mon, 14 Oct 2024 13:14:16 +0000
-Message-Id: <20241014131416.27324-1-vimal.agrawal@sophos.com>
-X-Mailer: git-send-email 2.17.1
+	s=arc-20240116; t=1728911679; c=relaxed/simple;
+	bh=xXwO4yEcDBCtdafekjGBgr3jCuXdIIzWlt3mftDTRWI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fl7EZf72Q9mxuo1wnr9ai7xyc0Gmw3ziatfWbH/9OiH0VhyAVNASALeYXHravExx+z4TpzXoTEHS+lXZrR3WpYZT4Wmf1f1Im09+bMs143o5Q+YuoLWHgl44yiWbxmjXk8qRyk5Cv78y1G3l3vGHTJ061Ff89mB/picN6HfuQEc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
+X-CSE-ConnectionGUID: YqpTYbecSTq0wBZcMKLiKw==
+X-CSE-MsgGUID: iP8gxxCHR3erMdMjUdPUFQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28056318"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="28056318"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 06:14:36 -0700
+X-CSE-ConnectionGUID: rsQQmIELTc2V7MzR6xPP4g==
+X-CSE-MsgGUID: tW5MjrUZQgqZIzRKycMaMA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
+   d="scan'208";a="77222177"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 06:14:31 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andy@kernel.org>)
+	id 1t0Ku3-00000002uP8-3VE2;
+	Mon, 14 Oct 2024 16:14:27 +0300
+Date: Mon, 14 Oct 2024 16:14:27 +0300
+From: Andy Shevchenko <andy@kernel.org>
+To: Antoniu Miclaus <antoniu.miclaus@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>,
+	Michael Hennerich <Michael.Hennerich@analog.com>,
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
+	Olivier Moysan <olivier.moysan@foss.st.com>,
+	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Marcelo Schmitt <marcelo.schmitt@analog.com>,
+	Ivan Mikhaylov <fr0st61te@gmail.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Dumitru Ceclan <mitrutzceclan@gmail.com>,
+	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
+	Alisa-Dariana Roman <alisadariana@gmail.com>,
+	Mike Looijmans <mike.looijmans@topic.nl>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
+	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pwm@vger.kernel.org
+Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
+Message-ID: <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com>
+References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
+ <20241014094154.9439-6-antoniu.miclaus@analog.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241014094154.9439-6-antoniu.miclaus@analog.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-misc_minor_alloc was allocating id for minor only in case of
-MISC_DYNAMIC_MINOR but misc_minor_free was always freeing ids
-using ida_free causing a mismatch and following
-warn:
-> > WARNING: CPU: 0 PID: 159 at lib/idr.c:525 ida_free+0x3e0/0x41f
-> > ida_free called for id=127 which is not allocated.
-> > <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<
+On Mon, Oct 14, 2024 at 12:40:40PM +0300, Antoniu Miclaus wrote:
+> Add support for the AD485X a fully buffered, 8-channel simultaneous
+> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
+> differential, wide common-mode range inputs.
+
 ...
-> > [<60941eb4>] ida_free+0x3e0/0x41f
-> > [<605ac993>] misc_minor_free+0x3e/0xbc
-> > [<605acb82>] misc_deregister+0x171/0x1b3
 
-misc_minor_alloc is changed to allocate id from ida for all dynamic/
-misc dynamic minors
+> +config AD4851
+> +	tristate "Analog Device AD4851 DAS Driver"
+> +	depends on SPI
+> +	select REGMAP_SPI
+> +	select IIO_BACKEND
+> +	help
+> +	  Say yes here to build support for Analog Devices AD4851, AD4852,
+> +	  AD4853, AD4854, AD4855, AD4856, AD4857, AD4858, AD4858I high speed
+> +	  data acquisition system (DAS).
 
-Signed-off-by: Vimal Agrawal <vimal.agrawal@sophos.com>
----
- drivers/char/misc.c | 33 ++++++++++++++++++++++++++-------
- 1 file changed, 26 insertions(+), 7 deletions(-)
+I think I already commented on this... Anyway, it's much better to support when
+this list is broke down on per device per line. In such a case it's less churn
+if we need to remove or add an entry in the future.
 
-diff --git a/drivers/char/misc.c b/drivers/char/misc.c
-index 541edc26ec89..fbe51e776c15 100644
---- a/drivers/char/misc.c
-+++ b/drivers/char/misc.c
-@@ -63,16 +63,28 @@ static DEFINE_MUTEX(misc_mtx);
- #define DYNAMIC_MINORS 128 /* like dynamic majors */
- static DEFINE_IDA(misc_minors_ida);
- 
--static int misc_minor_alloc(void)
-+static int misc_minor_alloc(int minor)
- {
- 	int ret;
- 
--	ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
--	if (ret >= 0) {
--		ret = DYNAMIC_MINORS - ret - 1;
--	} else {
--		ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
-+	if (minor == MISC_DYNAMIC_MINOR) {
-+		/* allocate free id */
-+		ret = ida_alloc_max(&misc_minors_ida, DYNAMIC_MINORS - 1, GFP_KERNEL);
-+		if (ret >= 0) {
-+			ret = DYNAMIC_MINORS - ret - 1;
-+		} else {
-+			ret = ida_alloc_range(&misc_minors_ida, MISC_DYNAMIC_MINOR + 1,
- 				      MINORMASK, GFP_KERNEL);
-+		}
-+	} else {
-+		/* specific minor, check if it is in dynamic or misc dynamic range  */
-+		if (minor < DYNAMIC_MINORS) {
-+			minor = DYNAMIC_MINORS - minor - 1;
-+			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
-+		}
-+
-+		if (minor > MISC_DYNAMIC_MINOR)
-+			ret = ida_alloc_range(&misc_minors_ida, minor, minor, GFP_KERNEL);
- 	}
- 	return ret;
- }
-@@ -219,7 +231,7 @@ int misc_register(struct miscdevice *misc)
- 	mutex_lock(&misc_mtx);
- 
- 	if (is_dynamic) {
--		int i = misc_minor_alloc();
-+		int i = misc_minor_alloc(misc->minor);
- 
- 		if (i < 0) {
- 			err = -EBUSY;
-@@ -228,6 +240,7 @@ int misc_register(struct miscdevice *misc)
- 		misc->minor = i;
- 	} else {
- 		struct miscdevice *c;
-+		int i;
- 
- 		list_for_each_entry(c, &misc_list, list) {
- 			if (c->minor == misc->minor) {
-@@ -235,6 +248,12 @@ int misc_register(struct miscdevice *misc)
- 				goto out;
- 			}
- 		}
-+
-+		i = misc_minor_alloc(misc->minor);
-+		if (i < 0) {
-+			err = -EBUSY;
-+			goto out;
-+		}
- 	}
- 
- 	dev = MKDEV(MISC_MAJOR, misc->minor);
+> +	  To compile this driver as a module, choose M here: the module will be
+> +	  called ad4851.
+
+Also, with all these devices to be supported why not ad485x as the name of
+the driver? Is it a preference by the IIO subsystem?
+
+...
+
+> +#include <asm/unaligned.h>
+
+linux/unaligned nowadays (I learnt it quite recently).
+(It requires v6.12-rc2).
+
+...
+
+> +struct ad4851_chip_info {
+
+Have you run `pahole`? It seems you may reduce the memory footprint of this
+structure.
+
+> +	const char *name;
+> +	unsigned int product_id;
+> +	const unsigned int (*scale_table)[2];
+> +	int num_scales;
+> +	const int *offset_table;
+> +	int num_offset;
+> +	const struct iio_chan_spec *channels;
+> +	unsigned int num_channels;
+> +	unsigned long throughput;
+> +	unsigned int resolution;
+> +};
+
+...
+
+> +static const int ad4851_oversampling_ratios[] = {
+> +	1,
+> +	2,
+> +	4,
+> +	8,
+> +	16,
+> +	32,
+> +	64,
+> +	128,
+> +	256,
+> +	512,
+> +	1024,
+> +	2048,
+> +	4096,
+> +	8192,
+> +	16384,
+> +	32768,
+> +	65536,
+
+I believe you can compact them to be 4 or 8 per line
+
+	1, 2, 4, 8, 16, 32, 64, 128,			/* 0-7 */
+	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,	/* 8-15 */
+	65536,						/* 16 */
+
+> +};
+
+...
+
+> +static int ad4851_osr_to_regval(int ratio)
+> +{
+> +	int i;
+> +
+> +	for (i = 1; i < ARRAY_SIZE(ad4851_oversampling_ratios); i++)
+> +		if (ratio == ad4851_oversampling_ratios[i])
+> +			return i - 1;
+> +
+> +	return -EINVAL;
+> +}
+> +
+> +static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
+> +					 const struct iio_chan_spec *chan,
+> +					 unsigned int osr)
+> +{
+> +	unsigned int val;
+> +	int ret;
+> +
+> +	guard(mutex)(&st->lock);
+> +
+> +	if (osr == 1) {
+> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+> +					 AD4851_OS_EN_MSK, 0);
+> +		if (ret)
+> +			return ret;
+> +	} else {
+
+0 is listed here. Is it a problem?
+
+> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+> +					 AD4851_OS_EN_MSK, AD4851_OS_EN_MSK);
+> +		if (ret)
+> +			return ret;
+> +
+> +		val = ad4851_osr_to_regval(osr);
+> +		if (val < 0)
+> +			return -EINVAL;
+> +
+> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
+> +					 AD4851_OS_RATIO_MSK, val);
+> +		if (ret)
+> +			return ret;
+> +	}
+> +
+> +	switch (chan->scan_type.realbits) {
+> +	case 20:
+> +		switch (osr) {
+> +		case 1:
+> +			val = 20;
+> +			break;
+> +		default:
+
+Ditto.
+
+> +			val = 24;
+> +			break;
+> +		}
+> +		break;
+> +	case 16:
+> +		val = 16;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	ret = iio_backend_data_size_set(st->back, val);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+> +				  AD4851_PACKET_FORMAT_MASK, (osr == 1) ? 0 : 1);
+
+I would do it with a conditional
+
+	if (osr ...)
+		return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+					  AD4851_PACKET_FORMAT_MASK, 0);
+
+	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
+				  AD4851_PACKET_FORMAT_MASK, 1);
+
+But looking at the above I would split this to three functions, that outer will
+look like
+
+int ...(...)
+{
+	if (osr ...)
+		return _osr_X(...);
+	return _osr_Y(...);
+}
+
+> +}
+
+...
+
+> +static int ad4851_find_opt(bool *field, u32 size, u32 *ret_start)
+> +{
+> +	unsigned int i, cnt = 0, max_cnt = 0, max_start = 0;
+> +	int start;
+> +
+> +	for (i = 0, start = -1; i < size; i++) {
+> +		if (field[i] == 0) {
+> +			if (start == -1)
+> +				start = i;
+> +			cnt++;
+> +		} else {
+> +			if (cnt > max_cnt) {
+> +				max_cnt = cnt;
+> +				max_start = start;
+> +			}
+> +			start = -1;
+> +			cnt = 0;
+> +		}
+> +	}
+
+This magic has to be commented... I have a déjà vu that I have commented on all
+this, but it hasn't been addressed!
+
+> +	if (cnt > max_cnt) {
+> +		max_cnt = cnt;
+> +		max_start = start;
+> +	}
+> +
+> +	if (!max_cnt)
+> +		return -ENOENT;
+> +
+> +	*ret_start = max_start;
+> +
+> +	return max_cnt;
+> +}
+
+Also the cover letter is missing.
+
+I would recommend you to use my "smart" script [1] for sending series, it has
+some good heuristics on whom to include into the email thread and handles
+missed cover letters for the series.
+
+[1]: https://github.com/andy-shev/home-bin-tools/blob/master/ge2maintainer.sh
+
 -- 
-2.17.1
+With Best Regards,
+Andy Shevchenko
+
 
 
