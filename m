@@ -1,133 +1,152 @@
-Return-Path: <linux-kernel+bounces-364826-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCCE99D9E9
-	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:57:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA3E899D9EB
+	for <lists+linux-kernel@lfdr.de>; Tue, 15 Oct 2024 00:57:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC961282DE9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:57:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 016B2B224E8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:57:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8BDA1D90A4;
-	Mon, 14 Oct 2024 22:57:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB091D9A4E;
+	Mon, 14 Oct 2024 22:57:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l6CxgkVp"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B64E21D5AD8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 22:57:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 634981D90DC;
+	Mon, 14 Oct 2024 22:57:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728946625; cv=none; b=WCTAv1pcmJK8sR+0qjm22/WHjMFrKxhM3MNRIRwv8xmW72rv5T7KyIzi6h0HuLMkepf5BY0Sn3qQz200Mp85LUpfFcBRS4PZzZUXkqHiQLnBB5CQcPt7dN5AxUbOX1d7JCwjrcywXLR5ET6YcpzJvR7MdIasyUq6CJ9pVKu4gFc=
+	t=1728946629; cv=none; b=LinBnV5t6KIN4CJ6KqjoFp9SVyBSUgSj0g4PjRv4gW5KxsgznniUZdH95IbzGPcDmU20OHy5hMt2Uof1xHVat7ph/gwUb60KX5Ti/bug+r+EgpQjJVcD+SygTGhduZ06n0DoxqE2E8DWu0nCSiKi6VO2dXIa1AV8cxBdTxj7jhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728946625; c=relaxed/simple;
-	bh=7OB7aQj+G7t79dnpT9VQ21yncHwdHmrzo77ALh4hy5k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HkmN0dEmDDzfFByehDgS13UZ0itwBqtmzaAIRHq8N+eFP/tr/4e3c+GMDTYYuGD4PyGhhXamy/v9UhSaO2ct+84O9X/qJWBQhhLLRLN83xGBeT4YcfYM2daXNyz/dLepjz+pbf+DDW+TJ4DWq8nwInBkKiX+kCKjkYHDEVah1QI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b7129255so52406145ab.2
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 15:57:03 -0700 (PDT)
+	s=arc-20240116; t=1728946629; c=relaxed/simple;
+	bh=y/+Efzu0CbNAW2Ip0FGGUr9WxdTU/rrRzyz1hVkviR4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=trDIDW+QZqUOPb1l9OIwnk4edsCwVTdMLBFT1FbD+nR3YmcwS78ltGJmCUu5drqXd8eWkHzJ6KWGoCu9/ghmKNINIRTJgT5xNazE4w2D3msDkyt8PwSbf4nQ2UI230Yn5CvYm9E63KK2MOICXlGdDoxnDwTJ5XwIws14mG8R5pU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l6CxgkVp; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4604bd47e35so17094711cf.0;
+        Mon, 14 Oct 2024 15:57:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728946627; x=1729551427; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=i67fpSjh+Dirl8Ccxww+GnLbI9wyWBrdwWeXoHhTy+g=;
+        b=l6CxgkVp1sl36yuku5E8IdKlSSpoyutVoT1qQx/M5rdpchWbivj344TAYoMaCM1NOl
+         5hOdYqa1WCkf7BrNeBnJ2OpF3Th1Re0nUw4kmCKKvQkH1YYibdX6rasLiGKSsO8vEE/+
+         owclTUFNnaSjgCQaVARBsB6i7KictlQ4W/2KS1l0bSGuyEubSMY+4D/otfoJqMYcz00k
+         6s1jTKtRnlWKV9QpJHR2xqTXve503U9ov5+XiSzr+3HKp25oPZZGJAcPAA2euLlwR2xk
+         Jz6RtIO4V87wcq7Pi34MIVfg2ZCk5dsxr+V5QONmg97EE3ulgZQDvMf2cvld56Od9OI+
+         RBqA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728946623; x=1729551423;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=t4Y2tkvFwgL+3Fd3UKk/Xg6HBDmHA9cHy+j8T2yHM4o=;
-        b=bbTxXZHYS2X4VUtc6ByxRutdepUud4L8C15rH9o7YZ0AJg8CpugBDVnu8g2CrWJ65n
-         fF+LLc1QHFJfMnplhqmaZ7U/u9JgLC5W7AigMyfpSvdizdC2XVP8SU6pMU+RnFNUOorV
-         O3KbX+cWGVtB+JSqqdbp4DnU4sihUyGNBu2s1oy1bHLP4eAYa0Xzm8BqAIEwa1O2qF7j
-         Dem3aSKQkuuNNlRhGdDpC5PrzQdJZ5u/L+Y7/S+zGGkK2nxAE0JUNjj7MSDsld8OnPF9
-         2kqRCrEVze0R1u7bDDOQ5/uduThK1jYYqt/kYncmga7avFvXzaCmH/hppcJQqfDvpxs1
-         oYGg==
-X-Gm-Message-State: AOJu0Yw20zhU4ZmaTlJU9z0qhUl9v942PfVOXttu5WJ///rYOtacNzQe
-	cE+RrOVVxfozyUtoKEHjEnhRamsT3WOqGF+aJbYR1pjNBCzRaTNYC0eI2pLxLKLwnx7xHkeldTA
-	k2yY1CbzopS2RDNekBcnD0J9M6k9bbd8ewX9o+QaZw65Aye0OeCa3Otg=
-X-Google-Smtp-Source: AGHT+IFns66AOZFAoX4MQ1+IPcw7TNYafcYK2BRPv8fmfGO9iUiLczbHfg7upnczDpeA6beT0qaUsa0BkhyfA/N5nR6FMzsNZO2G
+        d=1e100.net; s=20230601; t=1728946627; x=1729551427;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i67fpSjh+Dirl8Ccxww+GnLbI9wyWBrdwWeXoHhTy+g=;
+        b=LtDG7Pvc/ogzZMqQxF22Me2SXCoZqD8mwvPjG2djyuqGCMCjdJcE6ao1TVSbT8UWq7
+         z7d2BoRmxbCcLsu0PIvlspocgUTLN5NWQKXwWWxjN7WN36YF2NaqcuX5hdM+pUrou/0y
+         Rejfo4E019c0B9h3Yi/y0OySBbBx0V4IfxpGa+iNLZq4PISifwTHOWYspZhN7g1GgVht
+         UhMK8/UiPOb6o4ZVnMToGjgvQ3pAj/6UD5Cs6Pds0Bqrjt09+/aYY4Wbf0DutIG7abLj
+         jWtFxgRvcSID6LmvIDQiahvXfNoL5fFznKRi/HIbgHPirOYUy41zTGfQgDqr88clWLWK
+         EWCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVopXgc7w6cETX1pjkb9U1Y0FIv7l2ilLY5mrjOhDtVWYeQH30DNax0Vh9WguItqdUmDB7Ei73D1j2U4pI=@vger.kernel.org, AJvYcCVysfGSA5vfixnTrFJq0lZ1fGlSLSaGAFWNkvmsIkFbLXXXM7n+godFQcWbWDl+Z5dln7B8Ik/f@vger.kernel.org
+X-Gm-Message-State: AOJu0YxfkOSyC0FLlO3zeV0vkuAjH4pyd5msZ90r5y7NhQKLoRdM6NRZ
+	qAJTRUI9BuEFFf6QuubwLL7xU2IgDw21GxES2w95Cn0t0+dbHnNL
+X-Google-Smtp-Source: AGHT+IHQAMn1MUu0nISn9GmA4thougK+bENTrKj/HcQ1vzxwZXLrQ46JGBS8k8MvvxUXRDNfNA6lVg==
+X-Received: by 2002:a05:620a:45a6:b0:7b1:11ff:4513 with SMTP id af79cd13be357-7b11a3b9219mr1813801285a.63.1728946627192;
+        Mon, 14 Oct 2024 15:57:07 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b136164e4fsm4007285a.2.2024.10.14.15.57.04
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 14 Oct 2024 15:57:06 -0700 (PDT)
+Message-ID: <d2f91529-9d8d-458a-83c3-a605e46f70c4@gmail.com>
+Date: Mon, 14 Oct 2024 15:57:03 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:ca4e:0:b0:3a0:b631:76d4 with SMTP id
- e9e14a558f8ab-3a3b5f7a928mr93521655ab.1.1728946622744; Mon, 14 Oct 2024
- 15:57:02 -0700 (PDT)
-Date: Mon, 14 Oct 2024 15:57:02 -0700
-In-Reply-To: <d662ba74-2c02-4298-adfe-f12b3d65471c@rowland.harvard.edu>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <670da1be.050a0220.f16b.0003.GAE@google.com>
-Subject: Re: [syzbot] [usb?] INFO: task hung in usb_port_suspend
-From: syzbot <syzbot+f342ea16c9d06d80b585@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, stern@rowland.harvard.edu, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6.6 000/213] 6.6.57-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+Cc: patches@lists.linux.dev, linux-kernel@vger.kernel.org,
+ torvalds@linux-foundation.org, akpm@linux-foundation.org,
+ linux@roeck-us.net, shuah@kernel.org, patches@kernelci.org,
+ lkft-triage@lists.linaro.org, pavel@denx.de, jonathanh@nvidia.com,
+ sudipm.mukherjee@gmail.com, srw@sladewatkins.net, rwarsow@gmx.de,
+ conor@kernel.org, allen.lkml@gmail.com, broonie@kernel.org
+References: <20241014141042.954319779@linuxfoundation.org>
+Content-Language: en-US
+From: Florian Fainelli <f.fainelli@gmail.com>
+Autocrypt: addr=f.fainelli@gmail.com; keydata=
+ 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
+ HGuUuzv+GKZ6nsysJw==
+In-Reply-To: <20241014141042.954319779@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hello,
+On 10/14/24 07:18, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.6.57 release.
+> There are 213 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 16 Oct 2024 14:09:57 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.57-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
 
-syzbot tried to test the proposed patch but the build/boot failed:
+On ARCH_BRCMSTB using 32-bit and 64-bit ARM kernels, build tested on 
+BMIPS_GENERIC:
 
-kernel clean failed: failed to run ["make" "-j" "0" "ARCH=x86_64" "distclean"]: exit status 2
-make: the '-j' option requires a positive integer argument
-Usage: make [options] [target] ...
-Options:
-  -b, -m                      Ignored for compatibility.
-  -B, --always-make           Unconditionally make all targets.
-  -C DIRECTORY, --directory=DIRECTORY
-                              Change to DIRECTORY before doing anything.
-  -d                          Print lots of debugging information.
-  --debug[=FLAGS]             Print various types of debugging information.
-  -e, --environment-overrides
-                              Environment variables override makefiles.
-  -E STRING, --eval=STRING    Evaluate STRING as a makefile statement.
-  -f FILE, --file=FILE, --makefile=FILE
-                              Read FILE as a makefile.
-  -h, --help                  Print this message and exit.
-  -i, --ignore-errors         Ignore errors from recipes.
-  -I DIRECTORY, --include-dir=DIRECTORY
-                              Search DIRECTORY for included makefiles.
-  -j [N], --jobs[=N]          Allow N jobs at once; infinite jobs with no arg.
-  -k, --keep-going            Keep going when some targets can't be made.
-  -l [N], --load-average[=N], --max-load[=N]
-                              Don't start multiple jobs unless load is below N.
-  -L, --check-symlink-times   Use the latest mtime between symlinks and target.
-  -n, --just-print, --dry-run, --recon
-                              Don't actually run any recipe; just print them.
-  -o FILE, --old-file=FILE, --assume-old=FILE
-                              Consider FILE to be very old and don't remake it.
-  -O[TYPE], --output-sync[=TYPE]
-                              Synchronize output of parallel jobs by TYPE.
-  -p, --print-data-base       Print make's internal database.
-  -q, --question              Run no recipe; exit status says if up to date.
-  -r, --no-builtin-rules      Disable the built-in implicit rules.
-  -R, --no-builtin-variables  Disable the built-in variable settings.
-  -s, --silent, --quiet       Don't echo recipes.
-  --no-silent                 Echo recipes (disable --silent mode).
-  -S, --no-keep-going, --stop
-                              Turns off -k.
-  -t, --touch                 Touch targets instead of remaking them.
-  --trace                     Print tracing information.
-  -v, --version               Print the version number of make and exit.
-  -w, --print-directory       Print the current directory.
-  --no-print-directory        Turn off -w, even if it was turned on implicitly.
-  -W FILE, --what-if=FILE, --new-file=FILE, --assume-new=FILE
-                              Consider FILE to be infinitely new.
-  --warn-undefined-variables  Warn when an undefined variable is referenced.
-
-This program built for x86_64-pc-linux-gnu
-Report bugs to <bug-make@gnu.org>
-
-
-
-Tested on:
-
-commit:         64f3b5a6 Merge 6.12-rc3 into usb-next
-git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/gregkh/usb.git usb-testing
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4510af5d637450fb
-dashboard link: https://syzkaller.appspot.com/bug?extid=f342ea16c9d06d80b585
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=109f9727980000
-
+Tested-by: Florian Fainelli <florian.fainelli@broadcom.com>
+-- 
+Florian
 
