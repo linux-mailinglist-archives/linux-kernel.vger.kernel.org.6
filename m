@@ -1,80 +1,62 @@
-Return-Path: <linux-kernel+bounces-363386-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363387-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6015899C1A6
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:41:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF3F99C1AA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 11CBD1F226BD
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:41:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33D0C1F221FF
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:41:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CBDD1531D5;
-	Mon, 14 Oct 2024 07:40:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49CC514D6EB;
+	Mon, 14 Oct 2024 07:40:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b="MjihJLQ7"
-Received: from smtp-42ad.mail.infomaniak.ch (smtp-42ad.mail.infomaniak.ch [84.16.66.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pQGK204I"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3132214B972
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:40:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=84.16.66.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B31114A624;
+	Mon, 14 Oct 2024 07:40:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728891607; cv=none; b=KiCOJO4N3MKw1S9VhOoqrpV7vknj0rTXSKl5kVgB+CC1JHijG7/cL5eHUMfTcBRraJlioOViqR5YfDHkLFx9PGKa51zdAIMM5ZYXFnhCT49WKBn0g9x2hslXI9AE8FLbvMUBOothlGfiCq2pdiKOMifPJnM9XcnEXkrR4cm0SJw=
+	t=1728891618; cv=none; b=TwrQ7ReqI36Mgo+KDQYHHoNwgBFp9gAnV1HlOKT0m4NUq6mujfzg5YWHYC0oZwn5b3ZKztR1mOTynv0sZqEhZZOUjl7BXpoyNig8+gYlfi5HW09onNbUCF9XZodYbt79af8stIdP54Tt3WDabOkTQGhWBgc85U4+9kaOGQN3nuA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728891607; c=relaxed/simple;
-	bh=0ONNd/EutDTP9Itu+LrZh1WTLUTA4HIYQ4CmxGnKeEo=;
+	s=arc-20240116; t=1728891618; c=relaxed/simple;
+	bh=Wcac2XZQHtmBThH5hyHn0l9csa4sK/TVqzzdehNcWEc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nL8S79+rWymm7X+kHTLbm4cyUb+W3nrGRF4ydHNEz1YAslDMkTbXPgwmXbyurp5LPxq2tqyg9PxsuwEDTRYXSj/e0ILia9KWjDKhx9gmkT7XGFzf1WhJ1o5esV+SN7/HQCppsmiM0eaTsDcZfPtCp+YOEzZMe8QJnRTgZXOocPI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net; spf=pass smtp.mailfrom=digikod.net; dkim=pass (1024-bit key) header.d=digikod.net header.i=@digikod.net header.b=MjihJLQ7; arc=none smtp.client-ip=84.16.66.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=digikod.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=digikod.net
-Received: from smtp-4-0001.mail.infomaniak.ch (smtp-4-0001.mail.infomaniak.ch [10.7.10.108])
-	by smtp-4-3000.mail.infomaniak.ch (Postfix) with ESMTPS id 4XRpzJ4rxpz6bW;
-	Mon, 14 Oct 2024 09:39:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=digikod.net;
-	s=20191114; t=1728891596;
-	bh=IK21ziFHzeZTWewfpsK1ouln6YyY8LRReKv9clTkIaM=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=XYp9CB8Ze/9O/9Mi+qPVHzZ1fAZXcpsrwWdFUD0nqif2+O9imaV4V0QAf7uZAosZNpaAzJ7n0I6z/lrRUiTtpsNh1v0GMLO9CnBgxjji64YPk2zYvnWgaXEr79EU69p6qXuP3yIezQLrzJqwO2X9Mio2Y+833lxHkokm0WVGTOA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pQGK204I; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 86F5CC4CEC3;
+	Mon, 14 Oct 2024 07:40:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1728891617;
+	bh=Wcac2XZQHtmBThH5hyHn0l9csa4sK/TVqzzdehNcWEc=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MjihJLQ7ZELqcL/G/6u3K+i36UXfZ4tGFKcErgGdZmintyw0hzKJDN1KBSwjxEY22
-	 tuqaaFGJ1p9oOkqQRv2T1BPWhR5ARSffT78kVukyLG0h2AW+h6+dyIbLXadW4iuYzw
-	 XQXfFasFeo2Y6UcTuWQ8sHMu0Ev3sW8kffRMZHr8=
-Received: from unknown by smtp-4-0001.mail.infomaniak.ch (Postfix) with ESMTPA id 4XRpzH4DLDzKsD;
-	Mon, 14 Oct 2024 09:39:55 +0200 (CEST)
-Date: Mon, 14 Oct 2024 09:39:52 +0200
-From: =?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?= <mic@digikod.net>
-To: "Serge E. Hallyn" <serge@hallyn.com>
-Cc: Al Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Kees Cook <keescook@chromium.org>, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Paul Moore <paul@paul-moore.com>, Theodore Ts'o <tytso@mit.edu>, 
-	Adhemerval Zanella Netto <adhemerval.zanella@linaro.org>, Alejandro Colomar <alx@kernel.org>, 
-	Aleksa Sarai <cyphar@cyphar.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Andy Lutomirski <luto@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Christian Heimes <christian@python.org>, 
-	Dmitry Vyukov <dvyukov@google.com>, Elliott Hughes <enh@google.com>, 
-	Eric Biggers <ebiggers@kernel.org>, Eric Chiang <ericchiang@google.com>, 
-	Fan Wu <wufan@linux.microsoft.com>, Florian Weimer <fweimer@redhat.com>, 
-	Geert Uytterhoeven <geert@linux-m68k.org>, James Morris <jamorris@linux.microsoft.com>, 
-	Jan Kara <jack@suse.cz>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Jordan R Abrahams <ajordanr@google.com>, 
-	Lakshmi Ramasubramanian <nramas@linux.microsoft.com>, Luca Boccassi <bluca@debian.org>, 
-	Luis Chamberlain <mcgrof@kernel.org>, "Madhavan T . Venkataraman" <madvenka@linux.microsoft.com>, 
-	Matt Bobrowski <mattbobrowski@google.com>, Matthew Garrett <mjg59@srcf.ucam.org>, 
-	Matthew Wilcox <willy@infradead.org>, Miklos Szeredi <mszeredi@redhat.com>, 
-	Mimi Zohar <zohar@linux.ibm.com>, Nicolas Bouchinet <nicolas.bouchinet@ssi.gouv.fr>, 
-	Scott Shell <scottsh@microsoft.com>, Shuah Khan <shuah@kernel.org>, 
-	Stephen Rothwell <sfr@canb.auug.org.au>, Steve Dower <steve.dower@python.org>, 
-	Steve Grubb <sgrubb@redhat.com>, Thibaut Sautereau <thibaut.sautereau@ssi.gouv.fr>, 
-	Vincent Strubel <vincent.strubel@ssi.gouv.fr>, Xiaoming Ni <nixiaoming@huawei.com>, 
-	Yin Fengwei <fengwei.yin@intel.com>, kernel-hardening@lists.openwall.com, linux-api@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-integrity@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Subject: Re: [PATCH v20 1/6] exec: Add a new AT_CHECK flag to execveat(2)
-Message-ID: <20241014.ke5eeKoo6doh@digikod.net>
-References: <20241011184422.977903-1-mic@digikod.net>
- <20241011184422.977903-2-mic@digikod.net>
- <20241013030416.GA1056921@mail.hallyn.com>
+	b=pQGK204IOJEOFB2eQYIjXUxFQwV3E51A1qVpfa/WwbX7JCtebBipm/AbDpFfTdXZS
+	 lXCF/bsJ6bi6tjRx+fzVjqhHLZzR9xOCPIO0pqeaXX2acNREA08hwdgtQzaXAcSTUR
+	 ggXYB1HA6eXG2uV3uA0kxMlUa8Z/FPCgx3vKyzem0Zj6OCWfPzyRXLjvFnP86rp8ZF
+	 q8Jos+wCeVyzdv7iMWKVFZI9rg2QOSoe6NhewPuZTyqdE7AOPAKatvbkQ7bKUDoxBJ
+	 4fcReYuU738t5PJ663As+jiKA2tfAgqDkBuG2N3aBehdeQ52mxWo3DV05Ct4I9eT9P
+	 7ZRUgJcciHR/g==
+Date: Mon, 14 Oct 2024 09:40:13 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Akhil P Oommen <quic_akhilpo@quicinc.com>
+Cc: Rob Clark <robdclark@gmail.com>, Sean Paul <sean@poorly.run>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, Marijn Suijten <marijn.suijten@somainline.org>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, freedreno@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH RFC 3/3] arm64: dts: qcom: x1e80100: Add ACD levels for
+ GPU
+Message-ID: <5axuqj4hetfkgg2f53ph4um24b7xfyumktreglxqyzfsdhy25e@deucq7vqxq5l>
+References: <20241012-gpu-acd-v1-0-1e5e91aa95b6@quicinc.com>
+ <20241012-gpu-acd-v1-3-1e5e91aa95b6@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,22 +65,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241013030416.GA1056921@mail.hallyn.com>
-X-Infomaniak-Routing: alpha
+In-Reply-To: <20241012-gpu-acd-v1-3-1e5e91aa95b6@quicinc.com>
 
-On Sat, Oct 12, 2024 at 10:04:16PM -0500, Serge E. Hallyn wrote:
-> On Fri, Oct 11, 2024 at 08:44:17PM +0200, Mickaël Salaün wrote:
-> > Add a new AT_CHECK flag to execveat(2) to check if a file would be
+On Sat, Oct 12, 2024 at 01:59:30AM +0530, Akhil P Oommen wrote:
+> Update GPU node to include acd level values.
 > 
-> Apologies for both bikeshedding and missing earlier discussions.
+> Signed-off-by: Akhil P Oommen <quic_akhilpo@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 11 ++++++++++-
+>  1 file changed, 10 insertions(+), 1 deletion(-)
 > 
-> But AT_CHECK sounds quite generic.  How about AT_EXEC_CHECK, or
-> AT_CHECK_EXEC_CREDS?  (I would suggest just AT_CHECK_CREDS since
-> it's for use in execveat(2), but as it's an AT_ flag, it's
-> probably worth being more precise).
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index a36076e3c56b..e6c500480eb1 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -3323,60 +3323,69 @@ zap-shader {
+>  			};
+>  
+>  			gpu_opp_table: opp-table {
+> -				compatible = "operating-points-v2";
+> +				compatible = "operating-points-v2-adreno";
 
-As Amir pointed out, we need at least to use the AT_EXECVE_CHECK_
-prefix, and I agree with the AT_EXECVE_CHECK name because it's about
-checking the whole execve request, not sepcifically a "creds" part.
+This nicely breaks all existing users of this DTS. Sorry, no. We are way
+past initial bringup/development. One year past.
+
+Best regards,
+Krzysztof
+
 
