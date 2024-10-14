@@ -1,153 +1,171 @@
-Return-Path: <linux-kernel+bounces-363309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABFF199C064
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:51:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC19299C068
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77CBF281C7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:51:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BBC41C223F6
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 06:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8646D1448C7;
-	Mon, 14 Oct 2024 06:51:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DDDD1459F6;
+	Mon, 14 Oct 2024 06:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="E8v1l2Vk"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="VHAUuRnd"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD1C13A24D;
-	Mon, 14 Oct 2024 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64C3113A24D
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728888665; cv=none; b=CsTJAKjKwFeLWm3q708giYF4Fiwcrh5kCgXcfafjmeL8Ah8TRNp68gX2bTvTUMQ0UKda6jyU22e6C/BTpCnNvWM2KIQBlIn9dMsZIBYNKpkS0/9bXSWHLkii+T0bw1nA49VX4kplPNBXDyTCMSEf9mFtluWjRHLb8fy7uwED1RE=
+	t=1728888761; cv=none; b=YC2qjg8Le2x60OL+ytapMfcgWj+ewxLC3KOcnYdPIasBI6w+qvFEb/C9FzBFb2Ukvo+WsblYwfT+Zxwhv5hKExZS1mIqSpGNTkiOodTlr7i0IiColGXJYVsLHoI9+DJpswp3s1nSzUfV285WneYn35tWnVNHXZ+nCZh+tTtTBN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728888665; c=relaxed/simple;
-	bh=6b8oLxcs9H9SAwiBm6vrXA0N5GfD9SIv1m9TpwWOC20=;
+	s=arc-20240116; t=1728888761; c=relaxed/simple;
+	bh=83XRFk3icY9wacBXH9h6a+cfKmvsk+bmke0LBwK7HB4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=QFpUcCOsweLO/VeyjRAJ6f3pHQvJHGtEyBf07oOnSijrLaZIDY1VkMHaA5fYqFjojV+KaIJLXvTuWSOLz+k160muUcCDJlXeQbLcjjJdGDZCbgOhIi5QX5mNrUxXrg+AfsLio/RNyi2euvNGc6lwPwYf2JxXj7BasZxaXLeJWoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=E8v1l2Vk; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=bDIJc0lzPWFuK32g4GsXmjt7r9miciNd9/zrnLYf/jQ=; b=E8v1l2Vk8bPbWumsFcQAJiVwME
-	rnrK+33WV59LVA3WiXWQHpnWVLMlOiLK5r3sLOJlDiJ1sWT/6cTtMijybEkBzPiqNijepaEbGRnoz
-	klaB+0dKyA1E7oLoT0FlW18xetZ00+U/1KnsnledyT7x7SwnbJmwm3O1TnX/gz9nCLcNEEUKZbh8p
-	V0xGc46QoHsArYKdf/EJx4fZ4tK/RmcDLd9hqhc9CMYveJA/GrOfBBBp8KRFq0HEs1lG0NyuaODAv
-	4e5Bxmr44e3L/TAZl36plB+YQhpa0qBxsMyNBLCWlRBu9vELtoCALZgDQLRgMu0JAKpyd9ZhRltNY
-	+FhJISbw==;
-Received: from i53875b34.versanet.de ([83.135.91.52] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1t0Euz-0005Vq-2C; Mon, 14 Oct 2024 08:51:01 +0200
-From: Heiko =?ISO-8859-1?Q?St=FCbner?= <heiko@sntech.de>
-To: vkoul@kernel.org, kishon@kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, Frank Wang <frawang.cn@gmail.com>
-Cc: linux-phy@lists.infradead.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org, william.wu@rock-chips.com,
- tim.chen@rock-chips.com, yubing.zhang@rock-chips.com,
- Frank Wang <frank.wang@rock-chips.com>
-Subject: Re: [PATCH 2/2] phy: rockchip: usbdp: add rk3576 device match data
-Date: Mon, 14 Oct 2024 08:50:59 +0200
-Message-ID: <13616137.uLZWGnKmhe@diego>
-In-Reply-To: <20241014020342.15974-2-frawang.cn@gmail.com>
-References:
- <20241014020342.15974-1-frawang.cn@gmail.com>
- <20241014020342.15974-2-frawang.cn@gmail.com>
+	 MIME-Version:Content-Type; b=c+Etd3xcQbiCBfJ+zfmCKuwUz/yAxfDvmqBH6ahQUzUhZWr9hT4CtQPdirRJRmOJ44oZMCf1SetGxtiSCVaNozws9ChplYLMbNYncfSvmDB8EwROqplicCyTtcpXm6P0M9wijombRBR4gvzB8s5tKFgKC4Zl/TKJ6E7Rcr/IwKI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=VHAUuRnd; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d50fad249so2432239f8f.1
+        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:52:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1728888756; x=1729493556; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AdmKUc4kFogREmsbxxmoAtht2YH4/2nhAs+tY0ThKo0=;
+        b=VHAUuRndYrj7UYwRjDU6JsiGLRTdbKywLvT6jBKs8XPwmgISpyCKBUgVN3RZXZc7my
+         GFnIkSfS7KCu39IHfakDM8E0sJY4XCfeKbqC69FCE3nzwKcaMtzxbalMyMohMZ7F9QGw
+         06KZBt90CuJYKHUJrloTuRNGwKh9U3jv5jR+2810U3iJMcL5RvGVimN6Q4L1t1Yux1XY
+         QyiMyPKRdqRobG19wnyKbJl2JuhE8qog3KrNlwwvvRPZ9wH2obRogX4PSaTTwE/Q3w1Y
+         55hjOWzCBnLTaZtqxirapKdODeCs5KcYzPSYLzLgZybkatSZKNh3UBcHlR3cOTvrOg8C
+         K5Ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728888756; x=1729493556;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=AdmKUc4kFogREmsbxxmoAtht2YH4/2nhAs+tY0ThKo0=;
+        b=RVieLie//OW/ay220KN3h//w+/cOi8uXXxDuc8aV061P0WpCuQ/0k31Zs41RMh6xQs
+         2sYD21oCvyQu5JgHzlAnKMqAqgNNhhGhzBLYYRdMnx0NNQf0Xokuvfu9YTHAU7x0S2ex
+         paqqIOeZvBcl20Vv6FZUX9inyyTXM4LQmCW72G0D0Nzja5VXJ+/Nlh/mN9fDXTFBcmmt
+         DYzWmaq3l7n/Jq6oqJIUqlTCXkDM9TJM36v1A4gAvn5qnt4lY4FDALUURXbygY+Y8aDb
+         bYeBNm3r5HRI3srA+iXuGvqRoKeVA2aD7zEeoe2INm1zURgpoRvkXY5mnGAmZoOFH87s
+         Q2iQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWit7aYqx5Ey+b+CGZb7WSOo/YAKmW33vLgmJTMEGQYTHCAFSCfB0a2WxvPaX+6g0lBE98tcxD9nZkJeak=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLqiaSK3nN459sdnd8bKMHvyBdDNC7FJN1A28RaAUWIKk2h3Dc
+	p3xMgnSIZI06lOQafYbp6z5J8jzl+YY6Xr4dY2Kj4LhDcqhKYyaWhGWCFqIL3FA=
+X-Google-Smtp-Source: AGHT+IGuyHZT1722tVQ09zXnlH2EaOt5XrcR2LNEFWPIJz5U60GmJ8IMR+aiu+0LiMHuJ+mx11tRTA==
+X-Received: by 2002:adf:b31b:0:b0:376:37e:2729 with SMTP id ffacd0b85a97d-37d551f2873mr7123855f8f.31.1728888756451;
+        Sun, 13 Oct 2024 23:52:36 -0700 (PDT)
+Received: from blindfold.localnet ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37d4b7a05b3sm10628180f8f.76.2024.10.13.23.52.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 13 Oct 2024 23:52:36 -0700 (PDT)
+From: Richard Weinberger <richard@sigma-star.at>
+To: devicetree@vger.kernel.org, Saravana Kannan <saravanak@google.com>
+Cc: robh@kernel.org, linux-kernel@vger.kernel.org, upstream+devicetree@sigma-star.at
+Subject: Re: [PATCH] [RFC] of: Add debug aid to find unused device tree properties
+Date: Mon, 14 Oct 2024 08:52:35 +0200
+Message-ID: <3316101.aeNJFYEL58@somecomputer>
+In-Reply-To: <CAGETcx_+Poy8b_QhKY21Wg9=TBjtxrhCmFWTq8Qv6rLSJMURCw@mail.gmail.com>
+References: <20241013200730.20542-1-richard@nod.at> <CAGETcx_+Poy8b_QhKY21Wg9=TBjtxrhCmFWTq8Qv6rLSJMURCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="UTF-8"
 
-Am Montag, 14. Oktober 2024, 04:03:42 CEST schrieb Frank Wang:
-> From: Frank Wang <frank.wang@rock-chips.com>
-> 
-> This adds RK3576 device match data support.
-> 
-> Signed-off-by: Frank Wang <frank.wang@rock-chips.com>
+Saravana,
 
-Nice, that the rk3576 support fits in so easily :-)
+Am Montag, 14. Oktober 2024, 04:37:10 CEST schrieb 'Saravana Kannan' via up=
+stream:
+> On Sun, Oct 13, 2024 at 1:07=E2=80=AFPM Richard Weinberger <richard@nod.a=
+t> wrote:
+> >
+> > This is a proof-of-concept patch that introduces a debug feature I find
+> > particularly useful.  I frequently encounter situations where I'm
+> > uncertain if my device tree configuration is correct or being utilized
+> > by the kernel.  This is especially common when porting device trees
+> > from vendor kernels, as some properties may have slightly different
+> > names in the upstream kernel, or upstream drivers may not use certain
+> > properties at all.
+>=20
+> Why not just add debug logs? You can print the full path of the
+> properties being read and it should be easy to grep for the property
+> you care about.
 
-Reviewed-by: Heiko Stuebner <heiko@sntech.de>
+This approach works only well when I know what property I care about.
+The problem I'm addressing is more like  importing a device tree (usually
+something wonky from vendor tree) and want check whether all properties
+stated in the device tree get actually used.
+If something is not being used, I need to investigate...
 
-> ---
->  drivers/phy/rockchip/phy-rockchip-usbdp.c | 41 +++++++++++++++++++++++
->  1 file changed, 41 insertions(+)
-> 
-> diff --git a/drivers/phy/rockchip/phy-rockchip-usbdp.c b/drivers/phy/rockchip/phy-rockchip-usbdp.c
-> index 2c51e5c62d3e..5b1e8a3806ed 100644
-> --- a/drivers/phy/rockchip/phy-rockchip-usbdp.c
-> +++ b/drivers/phy/rockchip/phy-rockchip-usbdp.c
-> @@ -1538,6 +1538,43 @@ static const char * const rk_udphy_rst_list[] = {
->  	"init", "cmn", "lane", "pcs_apb", "pma_apb"
->  };
->  
-> +static const struct rk_udphy_cfg rk3576_udphy_cfgs = {
-> +	.num_phys = 1,
-> +	.phy_ids = { 0x2b010000 },
-> +	.num_rsts = ARRAY_SIZE(rk_udphy_rst_list),
-> +	.rst_list = rk_udphy_rst_list,
-> +	.grfcfg	= {
-> +		/* u2phy-grf */
-> +		.bvalid_phy_con		= RK_UDPHY_GEN_GRF_REG(0x0010, 1, 0, 0x2, 0x3),
-> +		.bvalid_grf_con		= RK_UDPHY_GEN_GRF_REG(0x0000, 15, 14, 0x1, 0x3),
-> +
-> +		/* usb-grf */
-> +		.usb3otg0_cfg		= RK_UDPHY_GEN_GRF_REG(0x0030, 15, 0, 0x1100, 0x0188),
-> +
-> +		/* usbdpphy-grf */
-> +		.low_pwrn		= RK_UDPHY_GEN_GRF_REG(0x0004, 13, 13, 0, 1),
-> +		.rx_lfps		= RK_UDPHY_GEN_GRF_REG(0x0004, 14, 14, 0, 1),
-> +	},
-> +	.vogrfcfg = {
-> +		{
-> +			.hpd_trigger	= RK_UDPHY_GEN_GRF_REG(0x0000, 11, 10, 1, 3),
-> +			.dp_lane_reg    = 0x0000,
-> +		},
-> +	},
-> +	.dp_tx_ctrl_cfg = {
-> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
-> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
-> +		rk3588_dp_tx_drv_ctrl_hbr2,
-> +		rk3588_dp_tx_drv_ctrl_hbr3,
-> +	},
-> +	.dp_tx_ctrl_cfg_typec = {
-> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
-> +		rk3588_dp_tx_drv_ctrl_rbr_hbr_typec,
-> +		rk3588_dp_tx_drv_ctrl_hbr2,
-> +		rk3588_dp_tx_drv_ctrl_hbr3,
-> +	},
-> +};
-> +
->  static const struct rk_udphy_cfg rk3588_udphy_cfgs = {
->  	.num_phys = 2,
->  	.phy_ids = {
-> @@ -1584,6 +1621,10 @@ static const struct rk_udphy_cfg rk3588_udphy_cfgs = {
->  };
->  
->  static const struct of_device_id rk_udphy_dt_match[] = {
-> +	{
-> +		.compatible = "rockchip,rk3576-usbdp-phy",
-> +		.data = &rk3576_udphy_cfgs
-> +	},
->  	{
->  		.compatible = "rockchip,rk3588-usbdp-phy",
->  		.data = &rk3588_udphy_cfgs
-> 
+>=20
+> > By writing 'y' to <debugfs>/of_mark_queried, every queried device tree
+>=20
+> A lot of querying is going to happen at boot time. So, I'm not sure if
+> this method of enabling it is helpful. If we do this, make it a kernel
+> command line.
 
+It works differently.
+As soon CONFIG_OF_DEBUG is enabled, every queried property gets ->queried
+set to true.
+Writing to of_mark_queried updates just the sysfs representation of the
+device tree.
 
+That way one can analyze the tree also step by step.
+E.g. learning what properties have been queried while bootup and later,
+what was queried after loading kernel modules.
+
+>=20
+> > property will gain S_IWUSR in sysfs.  While abusing S_IWUSR is
+> > admittedly a crude hack, it works for now.   I'm open to better ideas,
+> > perhaps using an xattr?
+>=20
+> This seems quite convoluted. Why not just add another file per node
+> that lists all the queried properties?
+
+AFAICT, adding another file will confuse dtc since dtc treats every file
+in sysfs as property.
+
+>=20
+> > That way, dtc can easily add an annotation to unused device trees when
+> > reading from /proc/device-tree.
+>=20
+> I'm not too familiar with this part. Can you elaborate more?
+
+E.g.
+$  ./dtc/dtc -I fs -O dts /proc/device-tree
+=2E..
+        intc@8000000 {
+=2E..
+                v2m@8020000 {
+                        msi-controller;
+                        compatible =3D "arm,gic-v2m-frame";
+                        reg =3D <0x00 0x8020000 0x00 0x1000>;
+                        lala =3D "lulu"; /* not queried */=20
+                };
+        };
+=2E..
+
+With my kernel patch and minimal changes to dtc, it is able to tell me that
+nobody has read the property "lala" in my device tree.
+
+Thanks,
+//richard
+
+=2D-=20
+=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8B=E2=80=8Bsigma star gmbh | Eduard-Bodem=
+=2DGasse 6, 6020 Innsbruck, AUT
+UID/VAT Nr: ATU 66964118 | FN: 374287y
 
 
 
