@@ -1,150 +1,251 @@
-Return-Path: <linux-kernel+bounces-364681-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4AF99D7D9
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 22:05:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F2D999D7C0
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:50:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9508B212CB
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 20:05:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B3B51B212D9
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 19:50:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7501C1CF2B6;
-	Mon, 14 Oct 2024 20:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54D2B1CDFA8;
+	Mon, 14 Oct 2024 19:50:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="Xu8K4lx1";
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b="NEBmQmwH"
-Received: from fallback20.i.mail.ru (fallback20.i.mail.ru [79.137.243.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SKHOW7mr"
+Received: from mail-lf1-f43.google.com (mail-lf1-f43.google.com [209.85.167.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C7301CCED8;
-	Mon, 14 Oct 2024 20:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=79.137.243.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9B801487DF;
+	Mon, 14 Oct 2024 19:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728936312; cv=none; b=ZVORdUteqHQUVd/jHiK4kSGJoClGyovA0uZpjl5qNW6BFIoFuZYsoRqpQLdVvNe2CA4p/7Fcp+PqwbhQEjTGJZXt3PaqmYEkazOXX9z6aLoVi365OQ1vhYe0YvxMvQML7iVap1le9M9bDLzE4eDmpNR65PIVzeYdiLeWRxm85QQ=
+	t=1728935407; cv=none; b=sa6l3yubWPXMTc9QGM+IdRudJZEV19VZdx8YQ6pjNuVQ/+Z1nVXiIS066LJtYAL/8pfOLHhzAKmk2n9nH80k9rERT07YjBpMM0nN8SpO/fhPPd8IP71vGeoRi36pVvB4F7sBuy7/Wxr9pp6B09kDRIE0zLHrnAbtTPvIi7ODV8o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728936312; c=relaxed/simple;
-	bh=+wvtWXeeW+kNT1fmKKhThrB3xWRbIJ7nSgFtLroVjwk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=gYsRDEv3lyhk8xaFxQved3vBkQ+QSygLFTiMQWagkxHxIa0rMLs0lBbEdWNWWQkoEi+8SKsTxK5KoZOOzAtZO9xubP5EUqptf4kD26sbiQ4XQ5OgcfrLET2UgSf1hB/zJ778UVxHtxwConM2e75e3EEheO6Ptatz4bWgetCjeds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com; spf=pass smtp.mailfrom=jiaxyga.com; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=Xu8K4lx1; dkim=pass (1024-bit key) header.d=jiaxyga.com header.i=@jiaxyga.com header.b=NEBmQmwH; arc=none smtp.client-ip=79.137.243.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=jiaxyga.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jiaxyga.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com; s=mailru;
-	h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:From:Subject:Content-Type:Content-Transfer-Encoding:To:Cc; bh=nNzuh9W+BAqQXUDW/DqosGkqXBuTkMV/nRiKIKVvpcA=;
-	t=1728936309;x=1729026309; 
-	b=Xu8K4lx1huCYNLzrKooU0DH3YBXGZ4qAjXCwxecAuVeNkq37IAmfKoFkswhw3/YIHJwmbGid0DOUaVKgxtfakZycNQC+9xRNo2vYKHu3L07PkyS27j9rzlLuTAJKUCJT1C0J2HteLVzfTPfqesAAOqDoDeJiHdszBi47ey46IiI=;
-Received: from [10.113.26.114] (port=45910 helo=smtp57.i.mail.ru)
-	by fallback20.i.mail.ru with esmtp (envelope-from <danila@jiaxyga.com>)
-	id 1t0R3g-008vXQ-0n; Mon, 14 Oct 2024 22:48:48 +0300
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=jiaxyga.com
-	; s=mailru; h=Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:
-	Message-ID:Date:Subject:Cc:To:From:From:Sender:Reply-To:To:Cc:Content-Type:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive:
-	X-Cloud-Ids:Disposition-Notification-To;
-	bh=nNzuh9W+BAqQXUDW/DqosGkqXBuTkMV/nRiKIKVvpcA=; t=1728935328; x=1729025328; 
-	b=NEBmQmwH30lnfj0zOjTEvYBg2WptIC7nOyV5JAoEzB1FqbAhUrDgRJwuuFKj4gMXzw6D8XTdZVr
-	mRjEXeJmy6Bpl5zUbz7iDT+fxw7aE99HRwDOi5+iBbiseTUCRVu5wMNQnV4R/l4F7EbnhT4BzXbLM
-	nqVUzCME4ktxghYlWLk=;
-Received: by exim-smtp-57f79c7799-kvcm4 with esmtpa (envelope-from <danila@jiaxyga.com>)
-	id 1t0R3R-00000000HNn-26LZ; Mon, 14 Oct 2024 22:48:33 +0300
-From: Danila Tikhonov <danila@jiaxyga.com>
-To: andersson@kernel.org,
-	konradybcio@kernel.org,
-	robh@kernel.org,
-	krzk+dt@kernel.org,
-	conor+dt@kernel.org,
-	fekz115@gmail.com
-Cc: cros-qcom-dts-watchers@chromium.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Danila Tikhonov <danila@jiaxyga.com>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: [RESEND PATCH v2 1/1] arm64: dts: qcom: sc7280: Add 0x81 Adreno speed bin
-Date: Mon, 14 Oct 2024 22:48:25 +0300
-Message-ID: <20241014194825.44406-2-danila@jiaxyga.com>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241014194825.44406-1-danila@jiaxyga.com>
-References: <20241014194825.44406-1-danila@jiaxyga.com>
+	s=arc-20240116; t=1728935407; c=relaxed/simple;
+	bh=JQdVav4g/f8FSyzu2263+6QYRv4zspMrf7aDYmCgngk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nxhF1I6ZPwq5oLE0+wleopzwi6CgXRSsO4Dc6ixRak3fuwgHBt9vKvfK9jKssA/qCJuFacNImsfWSFkq8b+YWg/VybUbsiNFSREmny+v2tZZJavI1tfd7X0s9JTRn7tRIajiuXCHcWmkVWOpRijyGmmULjiqj2Vkmvuc1/qHXWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SKHOW7mr; arc=none smtp.client-ip=209.85.167.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f6e1f756so1487554e87.0;
+        Mon, 14 Oct 2024 12:50:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728935404; x=1729540204; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=Qb7G3h2Xy7lt8voZGAC1N6xxQ4OoXhNwcK/4eUCoKvc=;
+        b=SKHOW7mrHhDVo0gcM2skmO+aFXX65r6B4qwDXS0abVJOmmY8qcmT+cq7EMspihoXCK
+         PfdtRIKUkeETsi/XrW70NFZdH8LVCTp1LAzD23c6y9G0rVNTy037nTG2G/32uZZ4NS4/
+         kJyGy7yWMjSlLGGQV5UOC6b9fkcbkF+JAVS9Ft49NuJ7tXX+Q4xr18hPJwij4MXI53mH
+         hCw6ERVQbuCKLsU6n2Vf5wfGGLtBOx1RQzftWhOxJCriyEFHTwUjs60ymX4WJLN+Pwq+
+         rSxknCQpzXSJPn10rygBk20fb/v94pZkQf9o9QwklKS3X/A+SLMVlAk7Igs+libP0I06
+         x0WQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728935404; x=1729540204;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qb7G3h2Xy7lt8voZGAC1N6xxQ4OoXhNwcK/4eUCoKvc=;
+        b=vNdDGb3wMr5aWg5aHtA9ObN+PthWk4KlZFhkQqdxumBTxOQd/P/yUeYT09MrmdtXhY
+         uZcGIUQuI+FFeERZ4W43uQootSfqukEufPfkr6b07ggmxlia6UWP7KASLewzHBTG9s1u
+         s0/7O/ajM8IsZEAwz0+YRfD3Cty/Z0NNHyfXnbOrwUkzdb4plIK8VECALHJID4l6PJ84
+         ckKRZrVZirgF5taQqyFhEyloZP2HTtER9uA2zlfndbuhw5J3l40FazXWBzCiIGKFp6WN
+         2AELjVJrabmsBmTxvbS9QRptpGpNdbi+DnGQyEzuBXrBwaPyStGjTp9iMTWo5tVObGIM
+         dDpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPoEMKbxXFBPG4AU9oB/PUukDv/117ZQhY8PIieS3i4hz+9/LkxZeO96eZ0id/mE3QYBa3aQkmpfTJ@vger.kernel.org, AJvYcCWm6dy94Kj/FsxeUH6Fgor5SA1JXd1LGUqugkec4665kMRUooUEUb1NJTPWyJlFxGmbyFdQMbW/Kr/u@vger.kernel.org, AJvYcCWwm/YLUhqBE1KKbp92xZshtNv0h7LUtPiB8n2x9XuuajhIaVbIMGktEwnYlK+KeHLwJqnAUzVezDS1DdK0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyc2TdX9V/Zqd5LAJNAoJxBO4NbMfZN/MG6yBLPWWqknyYCUn78
+	0lYnJyob2R9yj11vq29dQDwuG3J7MeONVpk4qVrDR06fpkygXP4b
+X-Google-Smtp-Source: AGHT+IGLmgkthupiwQYt9dDWj+G0ZaP8nvb1BjVvBp5bD+nergMGW0L2XdA+lpNV4AcStb+xZpcbyQ==
+X-Received: by 2002:a05:6512:6ca:b0:539:f995:5b00 with SMTP id 2adb3069b0e04-539f9957713mr2071923e87.7.1728935403471;
+        Mon, 14 Oct 2024 12:50:03 -0700 (PDT)
+Received: from vamoirid-laptop ([2a04:ee41:82:7577:e435:fb96:76da:7162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-431182ff6d3sm129646255e9.12.2024.10.14.12.50.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 12:50:02 -0700 (PDT)
+Date: Mon, 14 Oct 2024 21:50:00 +0200
+From: Vasileios Amoiridis <vassilisamir@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: lars@metafoo.de, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, andriy.shevchenko@linux.intel.com,
+	ang.iglesiasg@gmail.com, linus.walleij@linaro.org,
+	biju.das.jz@bp.renesas.com, javier.carrasco.cruz@gmail.com,
+	semen.protsenko@linaro.org, 579lpy@gmail.com, ak@it-klinger.de,
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, christophe.jaillet@wanadoo.fr
+Subject: Re: [PATCH v8 1/4] iio: pressure: bmp280: Use sleep and forced mode
+ for oneshot captures
+Message-ID: <Zw116IDMKFZ-MKIi@vamoirid-laptop>
+References: <20241007194945.66192-1-vassilisamir@gmail.com>
+ <20241007194945.66192-2-vassilisamir@gmail.com>
+ <20241012170333.37059686@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Mailru-Src: smtp
-X-4EC0790: 10
-X-7564579A: 646B95376F6C166E
-X-77F55803: 4F1203BC0FB41BD93347B6B2CAA5CFEE642B8753852C12B9C1761D26FA01738E182A05F5380850404B42FC2425DC84F33DE06ABAFEAF6705CD4CAD9ADDD3152E13C45BCBF80DB7AA4212A8CB8A084C4A
-X-7FA49CB5: FF5795518A3D127A4AD6D5ED66289B5278DA827A17800CE7CFFD65163E56A654EA1F7E6F0F101C67BD4B6F7A4D31EC0BCC500DACC3FED6E28638F802B75D45FF8AA50765F7900637775FFFCA96730EC9EA1F7E6F0F101C6723150C8DA25C47586E58E00D9D99D84E1BDDB23E98D2D38BC08E230531AC9C90060336FFF0C393407053895519BD0ED70659800122DDFAFEA471835C12D1D9774AD6D5ED66289B5278DA827A17800CE7ECE82AE7387CF2AD9FA2833FD35BB23D2EF20D2F80756B5F868A13BD56FB6657A471835C12D1D977725E5C173C3A84C374207B34A79F3760117882F4460429728AD0CFFFB425014E868A13BD56FB6657D81D268191BDAD3DC09775C1D3CA48CFA607D462841869D1BA3038C0950A5D36C8A9BA7A39EFB766D91E3A1F190DE8FDBA3038C0950A5D36D5E8D9A59859A8B667DACB3AE4B8FF8576E601842F6C81A1F004C906525384303E02D724532EE2C3F43C7A68FF6260569E8FC8737B5C224952D31B9D28593E51E827F84554CEF50127C277FBC8AE2E8B974A882099E279BDAAAE862A0553A39223F8577A6DFFEA7C0E67A00557831CF643847C11F186F3C59DAA53EE0834AAEE
-X-C1DE0DAB: 0D63561A33F958A5599BAF3EC0AD78CC5002B1117B3ED6960DDF9B07C4B401605D145BB8EF0DE66B823CB91A9FED034534781492E4B8EEAD09F854029C6BD0DAC79554A2A72441328621D336A7BC284946AD531847A6065A535571D14F44ED41
-X-C8649E89: 1C3962B70DF3F0ADE00A9FD3E00BEEDF3FED46C3ACD6F73ED3581295AF09D3DF87807E0823442EA2ED31085941D9CD0AF7F820E7B07EA4CFCE1DF0CE873FA683BB8137D4C2A5031ADE98847B8024DE32163725C3E817BCDD5B8C288B04B80C1C7C85317C21026A49A9049D5CF543A6DE7D87006C6522FAD3D82A262C40F0E56942BF32D1DA1046D202C26D483E81D6BE72B480F99247062FEE42F474E8A1C6FD34D382445848F2F3
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojLPWNB68Sl1Ix75lwjY39LQ==
-X-Mailru-Sender: 9EB879F2C80682A09F26F806C73949810EB9BC1412517BD5AAE6F637C7150CBC2751E3629D4A76E5B090D92EA22FB7CE2C62728BC403A049225EC17F3711B6CF1A6F2E8989E84EC137BFB0221605B344978139F6FA5A77F05FEEDEB644C299C0ED14614B50AE0675
-X-Mras: Ok
-X-7564579A: 78E4E2B564C1792B
-X-77F55803: 6242723A09DB00B4E23526250136A413FCC71D50D2AC2E68784773A26408DE62049FFFDB7839CE9E3928B87FA8A99B44623695520E6B861FD121BC155CF15BA7EC36587DC4EDE98B
-X-7FA49CB5: 0D63561A33F958A56BCED09FF701568B7B20013DD3CA9ED44A0F5B974F0060A18941B15DA834481FA18204E546F3947C454D481E49D84BC7F6B57BC7E64490618DEB871D839B7333395957E7521B51C2DFABB839C843B9C08941B15DA834481F8AA50765F7900637378F05E399FBC093389733CBF5DBD5E9B5C8C57E37DE458BD96E472CDF7238E0725E5C173C3A84C3A8421AA044726D3235872C767BF85DA2F004C90652538430E4A6367B16DE6309
-X-D57D3AED: 3ZO7eAau8CL7WIMRKs4sN3D3tLDjz0dLbV79QFUyzQ2Ujvy7cMT6pYYqY16iZVKkSc3dCLJ7zSJH7+u4VD18S7Vl4ZUrpaVfd2+vE6kuoey4m4VkSEu530nj6fImhcD4MUrOEAnl0W826KZ9Q+tr5ycPtXkTV4k65bRjmOUUP8cvGozZ33TWg5HZplvhhXbhDGzqmQDTd6OAevLeAnq3Ra9uf7zvY2zzsIhlcp/Y7m53TZgf2aB4JOg4gkr2biojLPWNB68Sl1KoLjr6dO/sQw==
-X-Mailru-MI: 8000000000000800
-X-Mras: Ok
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241012170333.37059686@jic23-huawei>
 
-From: Eugene Lepshy <fekz115@gmail.com>
+On Sat, Oct 12, 2024 at 05:03:33PM +0100, Jonathan Cameron wrote:
+> On Mon,  7 Oct 2024 21:49:42 +0200
+> Vasileios Amoiridis <vassilisamir@gmail.com> wrote:
+> 
+> > Add forced mode support in sensors BMP28x, BME28x, BMP3xx and BMP58x.
+> > Sensors BMP18x and BMP085 are old and do not support this feature so
+> > their operation is not affected at all.
+> > 
+> > Essentially, up to now, the rest of the sensors were used in normal mode
+> > all the time. This means that they are continuously doing measurements
+> > even though these measurements are not used. Even though the sensor does
+> > provide PM support, to cover all the possible use cases, the sensor needs
+> > to go into sleep mode and wake up whenever necessary.
+> > 
+> > The idea is that the sensor is by default in sleep mode, wakes up in
+> > forced mode when a oneshot capture is requested, or in normal mode
+> > when the buffer is enabled. The difference lays in the fact that in
+> > forced mode, the sensor does only one conversion and goes back to sleep
+> > while in normal mode, the sensor does continuous measurements with the
+> > frequency that was set in the ODR registers.
+> > 
+> > The bmpX_chip_config() functions which are responsible for applying
+> > the requested configuration to the sensor, are modified accordingly
+> > in order to set the sensor by default in sleep mode.
+> > 
+> > DEEP STANDBY, Low Power NORMAL and CONTINUOUS modes, supported only by
+> > the BMP58x version, are not added.
+> > 
+> > Reviewed-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+> > Signed-off-by: Vasileios Amoiridis <vassilisamir@gmail.com>
+> Hi Vasilieos
+> 
+> Given it looks like you'll be doing a v9 anyway, a few comments inline
+> on some minor simplifications and potential readability improvements.
+> 
+> Thanks,
+> 
+> Jonathan
+> 
 
-A642L (speedbin 0x81) uses index 4, so this commit sets the fourth bit
-for A642L supported opps.
+Hi Jonathan,
 
-Signed-off-by: Eugene Lepshy <fekz115@gmail.com>
-Signed-off-by: Danila Tikhonov <danila@jiaxyga.com>
-Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
----
- arch/arm64/boot/dts/qcom/sc7280.dtsi | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> > ---
+> >  drivers/iio/pressure/bmp280-core.c | 296 +++++++++++++++++++++++++++--
+> >  drivers/iio/pressure/bmp280.h      |  21 ++
+> >  2 files changed, 296 insertions(+), 21 deletions(-)
+> > 
+> > diff --git a/drivers/iio/pressure/bmp280-core.c b/drivers/iio/pressure/bmp280-core.c
+> > index 6811619c6f11..9ad29cf4c2ac 100644
+> > --- a/drivers/iio/pressure/bmp280-core.c
+> > +++ b/drivers/iio/pressure/bmp280-core.c
+> > @@ -16,6 +16,11 @@
+> 
+> 
+> > @@ -1522,6 +1610,71 @@ static int bmp380_preinit(struct bmp280_data *data)
+> >  	return bmp380_cmd(data, BMP380_CMD_SOFT_RESET);
+> >  }
+> >  
+> > +static const u8 bmp380_operation_mode[] = {
+> > +	BMP380_MODE_SLEEP, BMP380_MODE_FORCED, BMP380_MODE_NORMAL,
+> > +};
+> 
+> As below - I'd assign these to specific entries to make the fairly obvious association
+> even more obvious!
+> 
 
-diff --git a/arch/arm64/boot/dts/qcom/sc7280.dtsi b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-index b41230651def..7c75340b3a46 100644
---- a/arch/arm64/boot/dts/qcom/sc7280.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sc7280.dtsi
-@@ -2841,14 +2841,14 @@ opp-315000000 {
- 					opp-hz = /bits/ 64 <315000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_LOW_SVS>;
- 					opp-peak-kBps = <1804000>;
--					opp-supported-hw = <0x07>;
-+					opp-supported-hw = <0x17>;
- 				};
- 
- 				opp-450000000 {
- 					opp-hz = /bits/ 64 <450000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS>;
- 					opp-peak-kBps = <4068000>;
--					opp-supported-hw = <0x07>;
-+					opp-supported-hw = <0x17>;
- 				};
- 
- 				/* Only applicable for SKUs which has 550Mhz as Fmax */
-@@ -2863,14 +2863,14 @@ opp-550000000-1 {
- 					opp-hz = /bits/ 64 <550000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L1>;
- 					opp-peak-kBps = <6832000>;
--					opp-supported-hw = <0x06>;
-+					opp-supported-hw = <0x16>;
- 				};
- 
- 				opp-608000000 {
- 					opp-hz = /bits/ 64 <608000000>;
- 					opp-level = <RPMH_REGULATOR_LEVEL_SVS_L2>;
- 					opp-peak-kBps = <8368000>;
--					opp-supported-hw = <0x06>;
-+					opp-supported-hw = <0x16>;
- 				};
- 
- 				opp-700000000 {
--- 
-2.47.0
+ACK! Makes total sense. Thanks for your time!
 
+Cheers,
+Vasilis
+
+> > +
+> > +static int bmp380_set_mode(struct bmp280_data *data, enum bmp280_op_mode mode)
+> > +{
+> > +	int ret;
+> > +
+> > +	switch (mode) {
+> > +	case BMP280_SLEEP:
+> > +	case BMP280_FORCED:
+> > +	case BMP280_NORMAL:
+> > +		break;
+> > +	default:
+> > +		return -EINVAL;
+> 
+> Currently there aren't others. So the compiler should shout if you try to pass
+> something else. Hence this check shouldn't be needed.
+> 
+> > +	}
+> > +
+> > +	ret = regmap_write_bits(data->regmap, BMP380_REG_POWER_CONTROL,
+> > +				BMP380_MODE_MASK,
+> > +				FIELD_PREP(BMP380_MODE_MASK,
+> > +					   bmp380_operation_mode[mode]));
+> > +	if (ret) {
+> > +		dev_err(data->dev, "failed to  write power control register.\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	data->op_mode = mode;
+> > +
+> > +	return 0;
+> > +}
+> >
+> 
+> >  	return PTR_ERR_OR_ZERO(devm_nvmem_register(config.dev, &config));
+> >  }
+> >  
+> > +static const u8 bmp580_operation_mode[] = {
+> > +	BMP580_MODE_SLEEP, BMP580_MODE_FORCED, BMP580_MODE_NORMAL,
+> 
+> For these, explicit setting will make it more obvious.
+> 	[BMP280_SLEEP] = BMP580_MODE_SLEEP,
+> etc
+> 
+> > +};
+> > +
+> > +static int bmp580_set_mode(struct bmp280_data *data, enum bmp280_op_mode mode)
+> > +{
+> > +	struct device *dev = data->dev;
+> > +	int ret;
+> > +
+> > +	switch (mode) {
+> > +	case BMP280_SLEEP:
+> > +	case BMP280_NORMAL:
+> > +		break;
+> > +	case BMP280_FORCED:
+> > +		ret = regmap_set_bits(data->regmap, BMP580_REG_DSP_CONFIG,
+> > +				      BMP580_DSP_IIR_FORCED_FLUSH);
+> > +		if (ret) {
+> > +			dev_err(dev, "Could not flush IIR filter constants.\n");
+> > +			return ret;
+> > +		}
+> > +		break;
+> > +	default:
+> There are only the values above, and we should hopefully be able to rely
+> on compiler warnings to shout at us if a future modification adds more.
+> 
+> So should be able to drop the default here.
+> 
+> > +		return -EINVAL;
+> > +	}
+> > +
+> > +	ret = regmap_write_bits(data->regmap, BMP580_REG_ODR_CONFIG,
+> > +				BMP580_MODE_MASK,
+> > +				FIELD_PREP(BMP580_MODE_MASK,
+> > +					   bmp580_operation_mode[mode]));
+> > +	if (ret) {
+> > +		dev_err(dev, "failed to  write power control register.\n");
+> > +		return ret;
+> > +	}
+> > +
+> > +	data->op_mode = mode;
+> > +
+> > +	return 0;
+> > +}
+> 
 
