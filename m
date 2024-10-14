@@ -1,119 +1,265 @@
-Return-Path: <linux-kernel+bounces-364267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46ACF99CF95
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:56:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1E999CFC3
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:57:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E11A41F21163
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:56:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6E25AB249F5
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:57:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8D71C302C;
-	Mon, 14 Oct 2024 14:53:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97C201C3051;
+	Mon, 14 Oct 2024 14:55:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="VfZa4+ww";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="MDkxkrjl"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A8Cd7Hox";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D2kxP8TM";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="A8Cd7Hox";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="D2kxP8TM"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 805BE1C2DC8
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:53:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D30761AC884
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:55:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728917599; cv=none; b=bqvMQ3tWhs+5wm8fcp8nwZSNBwn7tBth+SLvhZfVmeX6qgQYNc+Ajlbe1R8O+Ozd/qNCSk0QAd6hwvMnu47tiFB2MwSWG/qZ1i64zR5QBxK036PqxauKqHIcd5BVVGIcALmSdksHKSOyJbFZzLMtyprkIAV5+hRWTVY7453v+7M=
+	t=1728917705; cv=none; b=PZq85uTXSit10V0dGW4IPn/IUKIQvsV0+UORLXVcj0fEE9eX4gKsax9AgZMz5tyyiCxcXDXryrcLqNWIekR04Le8WRNFr6AS/xBAQVtKaZl3LY5s9f9u41Djkg+IFt1jwXCUbL9NPrd1aoX/Kh1vzE5yH7B0ilvgYEi0NPLnE7o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728917599; c=relaxed/simple;
-	bh=jGA0WMHaso6T+Vi8W16GcyyK+jEPdMwx5wLOnpCwjPU=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=bX0vfAM9+7CcLjz664JkWpLBdr20Q5Fq1C1e+IaGchin8Z7d9bLqdn5pVZUchYm40m27VqaRAtK3GUgL/pYlgXlFwS9Y5G30FJ43KjEVuX6nLCnzfX5oaDTLRAUVjjLn9I3MBrtZBOGHO95w+2PTs1PZdTlsYNEM4bwAhRGVZfw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=VfZa4+ww; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=MDkxkrjl; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 962021140117;
-	Mon, 14 Oct 2024 10:53:16 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Mon, 14 Oct 2024 10:53:16 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1728917596;
-	 x=1729003996; bh=jGA0WMHaso6T+Vi8W16GcyyK+jEPdMwx5wLOnpCwjPU=; b=
-	VfZa4+ww7rsBFLcfaiXGqwa6gsukIo2/5lMuSR5BvEWBYZ7moCqVKwHjaS5Z7sMP
-	1tlI9tybeQ2fJquw/u+W/qkzsudmjibsof+ln7jXibPAtdQVJgOHeCP71Z9HFicM
-	34jt7Kk1BZlLaqRb7XkPps4dTX4HRTTZY/QG/WBlALZZJYZMchD19CAvLdekwDYA
-	qeqHP/Dppl+DQM/h1v94GbCe/bWMIPAteT984r3exXIjqW6GzyFh8zYqN4zrfGlZ
-	feCwEdojzYybcUoHFPCyU90j/CWXZJCGno6hiX2iJC+MDXdBrzDk7o3csckt7awL
-	lM1alKXGB248dy858TsCTg==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm2; t=1728917596; x=
-	1729003996; bh=jGA0WMHaso6T+Vi8W16GcyyK+jEPdMwx5wLOnpCwjPU=; b=M
-	DkxkrjltfuT+Nr/6oVu4TSz9JetYkkzEmAHQe23lL0r1W/CVxH97wRZBz+DDfGwN
-	faeVF9S61DuerxvlgQnu9ewdzFEA8e+GH9b0y6yKfugFOg8bVBbSv9iHdJbtarjS
-	V19CYracMqS2xpVhZ8OFj7Z89RQWgEjNRZP/GZJDvSaWznehQ4YILoLe+n2MmlYn
-	SNx/i/6bV2ZLGTUUCtmBaGsb9OeqQOWOBsM43sZ+J7aIcNlvDdBSv10cC0ZeABJK
-	UJetOuqXPLSt4D6hCWS0wur5o30TmX4oHWwxaejY4Ufc2MBuLMXFe5HLVKijksP8
-	ezwnYgTsP/5zRNgDPGL6g==
-X-ME-Sender: <xms:XDANZ-L_LabBgFi96z_HWzHQSWyoyuc7b-HFoVlL2nGKVNWC7s_RXw>
-    <xme:XDANZ2IbyT1G5WI8nIh7iscVjPS4fwe6XpRRaMAfo87A2vWIfPjrzFF8b7FLY-Qge
-    Z0pry6eZVLmvyj6T4E>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeghedgkeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgepudenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepkedp
-    mhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepmhgrrhhthihnrdifvghltghhsegtoh
-    hllhgrsghorhgrrdgtohhmpdhrtghpthhtohepjhgrshhsihhsihhnghhhsghrrghrsehg
-    mhgrihhlrdgtohhmpdhrtghpthhtoheprghnuggvrhhsshhonheskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtohepmhgrthhhihgvuhdrphhoihhrihgvrheslhhinhgrrhhordhorhhg
-    pdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrh
-    gruggvrggurdhorhhgpdhrtghpthhtoheprghfugesthhirdgtohhmpdhrtghpthhtohep
-    hhhnrghgrghllhgrsehtihdrtghomhdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlh
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:XDANZ-sM8y6aBzEKKq4iIIu1cxumVuBTongaLQr75bdBsOyjsbNPEg>
-    <xmx:XDANZzYOn1KY4VaVGo3i0h5-n1TQtdjQ-xPCUwaCrxTrSzVqePV94A>
-    <xmx:XDANZ1ZViT6fPyXPqYsUQFiwM9N5Rjq0nZN4AkbeV-NeoNkHVBSsiA>
-    <xmx:XDANZ_A1U8NJFNUJT9VHS_9GlopNed5o5S_cDz22V3APQDFw0EiEPQ>
-    <xmx:XDANZx5CGF27OpRkgnT70oI-Qh7lw5512YFrgd1OOtb1BkPwByY5rrQe>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 642E82220071; Mon, 14 Oct 2024 10:53:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1728917705; c=relaxed/simple;
+	bh=1j89w/mcbIa859ixmIc+Chf2D395sYVECktWhbhTA10=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Q9odyE0AZI5/PhpUMl3oYCCmt8fY/wwRw0EwHkvWhUrNcPrTcDoMXTlQbchFRxAy4ZtpWx9gm/80eKcsAYrcgPh0P+CGMTcjW1/ub36mS6n24Zs1f88Hay+Dfv+0Ef7a1sAkv3c/gJARMxKf0VuGuMYiLCMyoCWvnaTRwOgGveM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A8Cd7Hox; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D2kxP8TM; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=A8Cd7Hox; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=D2kxP8TM; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 0146D21D47;
+	Mon, 14 Oct 2024 14:55:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728917702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
+	b=A8Cd7HoxtEgUSE4BixmbeprkurMYm9+3Wc6kvNINAZKb04JrAGJNuu5VmZdHBDm+y/3UAd
+	ftrFhdBGM7gb96Cpo+NXvaPxSP1upW6G2ihqw/w/RmFmgXetsBosZ9Bb2cownFSPuvrpa0
+	lDnwI4FvwNvzfDoLjYI0c94cjtUR1g4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728917702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
+	b=D2kxP8TMdF6oqs8X6+OwTMJs4zthHhWlfDhlZB8LYetfYLYQtsl+th6MaY+dBz9LChBCpQ
+	GVpSqBygfUI1mpAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1728917702; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
+	b=A8Cd7HoxtEgUSE4BixmbeprkurMYm9+3Wc6kvNINAZKb04JrAGJNuu5VmZdHBDm+y/3UAd
+	ftrFhdBGM7gb96Cpo+NXvaPxSP1upW6G2ihqw/w/RmFmgXetsBosZ9Bb2cownFSPuvrpa0
+	lDnwI4FvwNvzfDoLjYI0c94cjtUR1g4=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1728917702;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=W8u9gbZijSd45DjThUUJz+yJSLX8ITYzCAOg+8vtfF8=;
+	b=D2kxP8TMdF6oqs8X6+OwTMJs4zthHhWlfDhlZB8LYetfYLYQtsl+th6MaY+dBz9LChBCpQ
+	GVpSqBygfUI1mpAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D84CE13A42;
+	Mon, 14 Oct 2024 14:55:01 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id NMEFNMUwDWcscAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 14 Oct 2024 14:55:01 +0000
+Message-ID: <7726cccb-78f8-4696-ac7e-57598c35576d@suse.cz>
+Date: Mon, 14 Oct 2024 16:55:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Mon, 14 Oct 2024 14:52:56 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Andrew Davis" <afd@ti.com>, "Jassi Brar" <jassisinghbrar@gmail.com>,
- "Bjorn Andersson" <andersson@kernel.org>,
- "Mathieu Poirier" <mathieu.poirier@linaro.org>,
- "Martyn Welch" <martyn.welch@collabora.com>, "Hari Nagalla" <hnagalla@ti.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Message-Id: <20cd2e17-e118-4421-870c-363fb46e8a5b@app.fastmail.com>
-In-Reply-To: <20241014144821.15094-3-afd@ti.com>
-References: <20241014144821.15094-1-afd@ti.com>
- <20241014144821.15094-3-afd@ti.com>
-Subject: Re: [PATCH 2/2] mailbox: ti-msgmgr: Allow building under COMPILE_TEST
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] mm/slub: Avoid list corruption when removing a slab
+ from the full list
+Content-Language: en-US
+To: David Rientjes <rientjes@google.com>, "yuan.gao" <yuan.gao@ucloud.cn>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>, penberg@kernel.org,
+ iamjoonsoo.kim@lge.com, akpm@linux-foundation.org, roman.gushchin@linux.dev,
+ 42.hyeyoo@gmail.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20241011102020.58087-1-yuan.gao@ucloud.cn>
+ <c7b03b1e-e000-279d-f845-5808653ac3bf@gentwo.org>
+ <i5vqm2ucpjzfbeteamphorouzoep3qxmh3prq5d76g4sazjarf@d3rfku3r5735>
+ <572f7473-1781-388b-103e-d4382f58f2f9@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <572f7473-1781-388b-103e-d4382f58f2f9@google.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Score: -2.80
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	SUSPICIOUS_RECIPS(1.50)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	TAGGED_RCPT(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FREEMAIL_ENVRCPT(0.00)[gmail.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	FREEMAIL_CC(0.00)[gentwo.org,kernel.org,lge.com,linux-foundation.org,linux.dev,gmail.com,kvack.org,vger.kernel.org];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Mon, Oct 14, 2024, at 14:48, Andrew Davis wrote:
-> The TI message manager driver can be compiled without ARCH_KEYSTONE
-> nor ARCH_K3 enabled. Allow it to be built under COMPILE_TEST.
->
-> Signed-off-by: Andrew Davis <afd@ti.com>
+On 10/13/24 22:46, David Rientjes wrote:
+> On Sat, 12 Oct 2024, yuan.gao wrote:
+> 
+>> On 24/10/11 11:07AM, Christoph Lameter (Ampere) wrote:
+>> > On Fri, 11 Oct 2024, yuan.gao wrote:
+>> > 
+>> > > When an object belonging to the slab got freed later, the remove_full()
+>> > > function is called. Because the slab is neither on the partial list nor
+>> > > on the full list, it eventually lead to a list corruption.
+>> > 
+>> > We detect list poison....
+>> > 
+>> > > diff --git a/mm/slab.h b/mm/slab.h
+>> > > index 6c6fe6d630ce..7681e71d9a13 100644
+>> > > --- a/mm/slab.h
+>> > > +++ b/mm/slab.h
+>> > > @@ -73,6 +73,10 @@ struct slab {
+>> > >  						struct {
+>> > >  							unsigned inuse:16;
+>> > >  							unsigned objects:15;
+>> > > +							/*
+>> > > +							 * Reuse frozen bit for slab with debug enabled:
+>> > 
+>> > "If slab debugging is enabled then the frozen bit can bereused to
+>> >  indicate that the slab was corrupted"
+>> > 
+>> > > index 5b832512044e..b9265e9f11aa 100644
+>> > > --- a/mm/slub.c
+>> > > +++ b/mm/slub.c
+>> > > @@ -1423,6 +1423,11 @@ static int check_slab(struct kmem_cache *s, struct slab *slab)
+>> > >  			slab->inuse, slab->objects);
+>> > >  		return 0;
+>> > >  	}
+>> > > +	if (slab->frozen) {
+>> > > +		slab_err(s, slab, "Corrupted slab");
+>> > 
+>> > 
+>> > "Slab folio disabled due to metadata corruption" ?
+>> > 
+>> > 
+>> 
+>> Yes, that's what I meant. 
+>> Perhaps I should change the description from "Corrupted slab" to
+>> "Metadata corrupt"?
+>> 
+> 
+> I think the point here is that slab page corruption is different from slab 
+> metadata corruption :)
+> 
+> The suggested phrasing, "Slab folio disabled due to metadata corruption", 
+> sounds good to me.
 
-Acked-by: Arnd Bergmann <arnd@arndb.de>
+What about:
+
+"Slab disabled due to previous consistency check failure" ?
+
+> 
+>> > > @@ -2744,7 +2750,10 @@ static void *alloc_single_from_partial(struct kmem_cache *s,
+>> > >  	slab->inuse++;
+>> > >
+>> > >  	if (!alloc_debug_processing(s, slab, object, orig_size)) {
+>> > > -		remove_partial(n, slab);
+>> > > +		if (folio_test_slab(slab_folio(slab))) {
+
+Your patch adds add_full() here as in the previous versions. I wouldn't do
+it anymore. Thanks to the frozen bit check in check_slab(), no further list
+manipulation should happen that would trigger the list poison being detected.
+
+Adding to full list would rather mean each sysfs-triggered validation will
+reach the slab and output the new slab_err() message, which is not useful.
+We want the corrupted slab to stay away from everything else, and only be
+informed of further object freeing attempts.
+
+>> > 
+>> > 
+>> > Does folio_test_slab test for the frozen bit??
+>> > 
+>> 
+>> For slab folios, slab->fronzen has been set to 1.
+>> For non-slab folios, we should not call remove_partial().
+>> I'm not sure if I understand this correctly.
+>> 
+>> Thanks
+>> 
+
 
