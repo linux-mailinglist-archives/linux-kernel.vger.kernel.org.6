@@ -1,132 +1,167 @@
-Return-Path: <linux-kernel+bounces-363927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 585F899C91A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:37:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D157F99C89A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:20:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3009B23B7B
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:19:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90CDA288DDD
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBAC1AAE39;
-	Mon, 14 Oct 2024 11:15:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24CCC1ABEA1;
+	Mon, 14 Oct 2024 11:16:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="YpNkJ+u/"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="l9OUfd6J"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 43C1B1AAE1C;
-	Mon, 14 Oct 2024 11:15:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBA731AB6E6;
+	Mon, 14 Oct 2024 11:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728904548; cv=none; b=A82V6y/G0M0eq/AmZlblYPYys09LqLli1SpyzxgGn0RNUuyYg8zyyjsxjFUWazQKElJvKQtig0NQMZ0ijtL/maE1UfTlNF1ZJ1u+5sEWVBfzM2g8LkL5q4v2uyn+WJcwEatqdehZ5MBXe4l0qT0EPo3MvNolCnCpT9NgLVAF6LM=
+	t=1728904575; cv=none; b=IYTDyeQ9s3xWK9och9NgxBy9ocQMSQ9j3lwm6M0uRXc8UugnbA8thpRHglDUOVNMrnA0BI40uwAwrldxeW7dcMIlPLoyX/u8EwrmyRwEGWzqAihavi1dcF2AwqVzwQyld505Y4dlvfQf3bHKBck3LC0bLGEh9P2IB77NcSnuOlg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728904548; c=relaxed/simple;
-	bh=xr45fFqc1gMer3lDp6WwB/kdB92RxiFR6kohxICAQrk=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EdWFoTwQIKNafdN0VZNQJ85uvoH2Vsr98UpXlslwGvgqDh6rXtJ8NP0n1PvpLLjQuhC5AVdoRtAzDjwasOVQWLMkOCDM+ZKjvFIQucfsXXF1QhfjOEy688CvC6yDly9PEsMa8YWMSz+78LusWsIduDYu8znZxIQHMVPdY4y0RmE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=YpNkJ+u/; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49EAXPu3013148;
-	Mon, 14 Oct 2024 11:15:43 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	CLWb6Om8R2ZyMoHQGhEblj//9SZFIkymB14rtGCcFro=; b=YpNkJ+u/NWHbNOHE
-	ack2M1dBkhk0vmrP+LGA7A9KJU2L9kIpZ57Ox2Oc4kb5JAwbdfuydFsmQ49jIjdb
-	+1vPpzxRmBewHGRber+wSMyipFfX2HC3LnSH858triVjB7hKkImL595IAR8cxT20
-	R1bsVHCqgDCA1uDBW1HFnPSikn/1cCnUpaytdEHNC/0pPmoCpnxTj724ZqcHAFbQ
-	gWql9GpLRIZ5wPnlldA/MTduc73aNc2+wnDiqF5h80mLCJVOPN1lI0Vczh0stKQD
-	BZ1CCEaObJ3drEIiY3z1DK/7NxW6SaN6xk6o7nrJZE16u1OT2aHTRYPUwAv5pFtd
-	GUZcUQ==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 427efncdkv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:15:43 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49EBFgxh030960
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 14 Oct 2024 11:15:42 GMT
-Received: from hu-kuldsing-hyd.qualcomm.com (10.80.80.8) by
- nalasex01b.na.qualcomm.com (10.47.209.197) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Mon, 14 Oct 2024 04:15:40 -0700
-From: Kuldeep Singh <quic_kuldsing@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>,
-        Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 2/2] firmware: qcom: qcom_tzmem: Implement sanity checks
-Date: Mon, 14 Oct 2024 16:45:27 +0530
-Message-ID: <20241014111527.2272428-3-quic_kuldsing@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
-References: <20241014111527.2272428-1-quic_kuldsing@quicinc.com>
+	s=arc-20240116; t=1728904575; c=relaxed/simple;
+	bh=diqbe8v7QmoEpj4SUWtjif2WUvBD6+uTDFf6w7M0FM8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=IhAQFG8+l1SD8w70SwFVEj6XMyoYsu6FoToxNTVD2g4dwFhXAOPxQt0xP8LmWn6oQI88/YN8egyIBBfMysMHOzA/OexgUEYCfbMrhx4UZG6xa0zlG9SPw1JaJ7NOdX4pUMUKGn++0vLQO4xdtoWd6lF+v5UyrZkroZahNRROT4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=l9OUfd6J; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1728904574; x=1760440574;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=diqbe8v7QmoEpj4SUWtjif2WUvBD6+uTDFf6w7M0FM8=;
+  b=l9OUfd6JWf3ykrdmBQjDgJeYibGj/VEhJKvZGcOYfOVAz+Uxm6pZ1myu
+   mrzvEvV91Ly/Rox6g4hVhiwt3mmiHJM8pTK//b3MGyYG2fJyqOB/f9rTo
+   pxzy9lt6YTH/ZSgCSTUj7wN3TfKlvAJvJIk0YLwgJSOI2hiRcLAjZKFSC
+   CV5uGZ1iU95HRplradipscc0ZgjWZ88pp9f1jZcjKcwaWtkNCTYMWBnKO
+   okzBAdLoPyLgK4pUwdc4okbmoOczm1UXO72KE51A0bhMzkC0EtA8+vXMG
+   1KTBdO0hrTyun6QYW/3xjgeKyexyArWkeMIEoN/TbEZppZmoWN1T9TAqA
+   Q==;
+X-CSE-ConnectionGUID: ZjoftGdhT2qBfphbjwhsQA==
+X-CSE-MsgGUID: +qeTcIC/QgWWOSu7LOD83w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="45721216"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="45721216"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:16:14 -0700
+X-CSE-ConnectionGUID: F7kxP5ktT96AFNZ0M+Zjdg==
+X-CSE-MsgGUID: 14W+s8UkRyyg6QVnDq6lyg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,202,1725346800"; 
+   d="scan'208";a="77171383"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 04:16:09 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t0J3W-00000002sPr-1VL8;
+	Mon, 14 Oct 2024 14:16:06 +0300
+Date: Mon, 14 Oct 2024 14:16:06 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Chen-Yu Tsai <wenst@chromium.org>
+Cc: Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Wolfram Sang <wsa@kernel.org>, Benson Leung <bleung@chromium.org>,
+	Tzung-Bi Shih <tzungbi@kernel.org>, chrome-platform@lists.linux.dev,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org,
+	Douglas Anderson <dianders@chromium.org>,
+	Johan Hovold <johan@kernel.org>, Jiri Kosina <jikos@kernel.org>,
+	linux-i2c@vger.kernel.org
+Subject: Re: [PATCH v8 4/8] i2c: Introduce OF component probe function
+Message-ID: <Zwz9djqb0Q6Ujmo_@smile.fi.intel.com>
+References: <20241008073430.3992087-1-wenst@chromium.org>
+ <20241008073430.3992087-5-wenst@chromium.org>
+ <ZwfvuA2WhD_0P3gL@smile.fi.intel.com>
+ <CAGXv+5Hm62hFsF27B-cEWTJ_AKrhcfCPaqR7BxmpwnjABzwHTQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: SZc445PLYuEnqjRQ7YqfjwymXp8YfFGH
-X-Proofpoint-ORIG-GUID: SZc445PLYuEnqjRQ7YqfjwymXp8YfFGH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 bulkscore=0 phishscore=0
- mlxscore=0 suspectscore=0 malwarescore=0 impostorscore=0
- priorityscore=1501 mlxlogscore=999 spamscore=0 clxscore=1015 adultscore=0
- lowpriorityscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410140081
+In-Reply-To: <CAGXv+5Hm62hFsF27B-cEWTJ_AKrhcfCPaqR7BxmpwnjABzwHTQ@mail.gmail.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-The qcom_tzmem driver currently has exposed APIs that lack validations
-on required input parameters. This oversight can lead to unexpected null
-pointer dereference crashes.
+On Mon, Oct 14, 2024 at 11:53:47AM +0800, Chen-Yu Tsai wrote:
+> On Thu, Oct 10, 2024 at 11:16 PM Andy Shevchenko
+> <andriy.shevchenko@linux.intel.com> wrote:
+> > On Tue, Oct 08, 2024 at 03:34:23PM +0800, Chen-Yu Tsai wrote:
 
-To address this issue, add sanity for required input parameters.
+...
 
-Signed-off-by: Kuldeep Singh <quic_kuldsing@quicinc.com>
----
- drivers/firmware/qcom/qcom_tzmem.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+> > Fresh reading of the commit message make me think why the firmware or
+> > bootloader on such a device can't form a dynamic OF (overlay?) to fulfill
+> > the need?
+> 
+> The firmware / bootloader on existing devices are practically not upgradable.
+> On the other hand, the kernel is very easy to upgrade or swap out.
+> 
+> For said shipped devices, there is also nothing to key the detection
+> off of besides actually powering things up and doing I2C transfers,
+> which takes time that the firmware has little to spare. We (ChromeOS)
+> require that the bootloader jump into the kernel within 1 second of
+> power on. That includes DRAM calibration, whatever essential hardware
+> initialization, and loading and uncompressing the kernel. Anything
+> non-essential that can be done in the kernel is going to get deferred
+> to the kernel.
+> 
+> Also, due to project timelines oftentimes the devices are shipped with a
+> downstream kernel with downstream device trees. We don't want to tie the
+> firmware too tightly to the device tree in case the downstream stuff gets
+> reworked when upstreamed.
 
-diff --git a/drivers/firmware/qcom/qcom_tzmem.c b/drivers/firmware/qcom/qcom_tzmem.c
-index 92b365178235..977e48fec32f 100644
---- a/drivers/firmware/qcom/qcom_tzmem.c
-+++ b/drivers/firmware/qcom/qcom_tzmem.c
-@@ -203,6 +203,9 @@ qcom_tzmem_pool_new(const struct qcom_tzmem_pool_config *config)
- 
- 	might_sleep();
- 
-+	if (!config->policy)
-+		return ERR_PTR(-EINVAL);
-+
- 	switch (config->policy) {
- 	case QCOM_TZMEM_POLICY_STATIC:
- 		if (!config->initial_size)
-@@ -412,6 +415,9 @@ void qcom_tzmem_free(void *vaddr)
- {
- 	struct qcom_tzmem_chunk *chunk;
- 
-+	if (!vaddr)
-+		return;
-+
- 	scoped_guard(spinlock_irqsave, &qcom_tzmem_chunks_lock)
- 		chunk = radix_tree_delete_item(&qcom_tzmem_chunks,
- 					       (unsigned long)vaddr, NULL);
+Okay, I was always under impression that DT has at least one nice feature in
+comparison with ACPI that it can be replaced / updated in much quicker /
+independent manner. What you are telling seems like the same issue that
+ACPI-based platforms have. However, there they usually put all possible devices
+into DSDT and firmware enables them via run-time (ACPI) variables. Are you
+trying to implement something similar here?
+
+...
+
+> > Another question is that we have the autoprobing mechanism for I2C for ages,
+> > why that one can't be (re-)used / extended to cover these cases?
+> 
+> I haven't looked into it very much, but a quick read of
+> Documentation/i2c/instantiating-devices.rst suggests that it's solving
+> a different problem?
+> 
+> In our case, we know that it is just one of a handful of possible
+> devices that we already described in the device tree. We don't need
+> to probe the full address range nor the full range of drivers. We
+> already have a hacky workaround in place, but that mangles the
+> device tree in a way that doesn't really match the hardware.
+> 
+> The components that we are handling don't seem to have any hardware
+> ID register, nor do their drivers implement the .detect() callback.
+> There's also power sequencing (regulator and GPIO lines) and interrupt
+> lines from the device tree that need to be handled, something that is
+> missing in the autoprobe path.
+> 
+> Based on the above I don't think the existing autoprobe is a good fit.
+> Trying to shoehorn it in is likely going to be a mess.
+> 
+> Doug's original cover letter describes the problem in more detail,
+> including why we think this should be done in the kernel, not the
+> firmware:
+> https://lore.kernel.org/all/20230921102420.RFC.1.I9dddd99ccdca175e3ceb1b9fa1827df0928c5101@changeid/
+
+Perhaps it needs to be summarised to cover at least this question along with
+the above?
+
 -- 
-2.34.1
+With Best Regards,
+Andy Shevchenko
+
 
 
