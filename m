@@ -1,155 +1,128 @@
-Return-Path: <linux-kernel+bounces-363767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 087A799C6BA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:09:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9116E99C9AC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:04:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BCEC5281F7E
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:08:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 302521F22E6E
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 12:04:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67C2C15B546;
-	Mon, 14 Oct 2024 10:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="bBV9IsKr"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026C1158DD4
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 10:08:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21CB619F436;
+	Mon, 14 Oct 2024 12:04:42 +0000 (UTC)
+Received: from elvis.franken.de (elvis.franken.de [193.175.24.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1F9E158853;
+	Mon, 14 Oct 2024 12:04:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.175.24.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728900529; cv=none; b=sKfA8A/uoicujsKgxZQHOqzCgHObGVkImpaSsZQSYv6KrMn63IJ28dYO1lZWnB/QkK7V2j0eO78BIF0QTopEIkLiNjhxVXbxtbcNWEmxF4AOc++lC3TOS69xD024cQ2PaOb0WfPnMORmeQN9O9Y5zwBQIZ32ntg8EUuixSKaXKI=
+	t=1728907481; cv=none; b=DTbGw4tIwCooXNU7YLykb3986JPPeE9QqnDhaqFlIU6nT9hPagnVfRsZScVNk5BXRhzjPYcCD6Afg+c1ZCAPnBARVjm12Thq5KHRseiq1FcOhJyT2DWsjZEnuFrK0yM/95TzY34/iLJLgiOVvEa1uykejRooEr7xsSCnWup7Wg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728900529; c=relaxed/simple;
-	bh=/sWlEGgfHHX9djG/FSb50XLkDF+y1KqaTESwoXdZHSs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=U6WcJFTcJJHl0tO23MdfnRaSiDujw2nBnbuwSWcU+9dTvPWI2fp3JnAoKfqE8bXIubmjpS8oaDYh0u3CiZv8jYp4/dyyGct4tgTNo4lz7k9BVCi1vhIRD7j8qEj41Ewx5Qfd1GYHsWYC6PIAwU5dGUMqk7Pav1HmdLmIpDEG6nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=bBV9IsKr; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5c94dd7e1c0so3783742a12.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 03:08:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1728900526; x=1729505326; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=FWUSe6Dna6tclDo/Nzgx/0TudE4bBGcoklr8vby/lzw=;
-        b=bBV9IsKr8UqJv708BP/R7LOJWTtRDlsUMKQ+SNWIjeqa78UzM5Rwvtax9xpXkLHSXj
-         j+CKXgNFIQWtD7afS6hsH+gB6FUGl1PI5QsWjjrw0jcYf/zPcdkJIna1YnL6KO3mDu4G
-         aaCw7rpzsxpnB43RgzBIflrrofve/WhD4rKkV1ES7vQYb+wZrxqH+e/hx2tyYhMKae1T
-         48gAjORiNJusW9oc0woSiwIz3dN8gcKJh0Z2Xfz9yNhLQDOyamse8pLLt1xFuP8S9mSw
-         I86JxGG5KNcAkwDLSaTSIPo3nWdc01a2aJOxzwYgTaKWnE8tuKtV0AOAZFDFD+4q8Cfz
-         RntA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728900526; x=1729505326;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FWUSe6Dna6tclDo/Nzgx/0TudE4bBGcoklr8vby/lzw=;
-        b=t6uIAkv5vqJegowKPOJoHEgIpFH9xnnz/GhGi9D7AlR0PTN2PU9OZ5ZwfUbI60pVw7
-         1w9hglH+XVqZp8SdAENd69odq76YtlJKvkRX9HbD4dVpXZIae5nJgM6oNPN+qlQ1kQy0
-         MDicYRouMxGvOH+IIpOBy5oqpeLJgXJ/nP53owg+Xs0fswTVRBnkDq0N/1hISn+cMFiW
-         gfkBup4hH1oTT5VcMgkzd0NneA8PKcS1UeJo3aUBRYE95n62PbNN694Oj5X+AAllQvxZ
-         pDS0DByQhqGVefJ4pfwIEN5m6kgTGVJmjeenY4JkPfUcNrk8Y/ewKTyTcElcclIJYjP9
-         FZuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXFVwxlcmPZbKxFBGBqrr50mEb3YVKguDDlF7Du7wkrDy8zPy8MaYAr79WDguerTE30Y8nFFE+0mHSUwzM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy4518lc4NFHuN8gfCBs2ua5W/NgqwSQkINn655f/5RqWCax1RP
-	flUxLNlHF2NWtNtQN7aFkm0euTssXq8PiQSEhtE7zN7WWiyEyE6lYAz/A41iEqY=
-X-Google-Smtp-Source: AGHT+IESQDbU2/QoUk/jd6BnyeOUUPQzo77RwiIkyssfzTbI61MYXbPAfDvLUJDHZOc5ItYRiz14Fw==
-X-Received: by 2002:a05:6402:5191:b0:5c9:5e43:9480 with SMTP id 4fb4d7f45d1cf-5c95e43f157mr4714225a12.7.1728900526354;
-        Mon, 14 Oct 2024 03:08:46 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5c937152f12sm4802674a12.44.2024.10.14.03.08.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 03:08:45 -0700 (PDT)
-Message-ID: <0240feca-541d-4aa9-abde-c0b0b0b477e5@linaro.org>
-Date: Mon, 14 Oct 2024 11:08:43 +0100
+	s=arc-20240116; t=1728907481; c=relaxed/simple;
+	bh=fg3fTJ5VYz/p+QTt7x8s+mXKsYLH63g3EFVGYZqcGlE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=E3q10rUXETgqY5GREnulYqZwsMLdURqZ6yIgoSyo5SiOEl8De0bRS22KKqIR0ilXsuMIteNckX/RPUyjZVz8y42EF08oOIrzSb7SrIUfaC8M/78pAtCE71ri4iQt5j+Tlk5GWug6qBNO6SkyAAMgiC+PMEE1ajmX1fKlG2FZ7/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de; spf=pass smtp.mailfrom=alpha.franken.de; arc=none smtp.client-ip=193.175.24.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=alpha.franken.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alpha.franken.de
+Received: from uucp by elvis.franken.de with local-rmail (Exim 3.36 #1)
+	id 1t0GMH-0005eb-00; Mon, 14 Oct 2024 10:23:17 +0200
+Received: by alpha.franken.de (Postfix, from userid 1000)
+	id 4F922C0161; Mon, 14 Oct 2024 10:23:09 +0200 (CEST)
+Date: Mon, 14 Oct 2024 10:23:09 +0200
+From: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+To: "Maciej W. Rozycki" <macro@orcam.me.uk>
+Cc: Konstantin Ryabitsev <konstantin@linuxfoundation.org>,
+	linux-edac@vger.kernel.org, linux-hams@vger.kernel.org,
+	linux-mips@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] MAINTAINERS: Retire Ralf Baechle
+Message-ID: <ZwzU7c9qlxxKckGI@alpha.franken.de>
+References: <alpine.DEB.2.21.2410131952550.40463@angie.orcam.me.uk>
+ <alpine.DEB.2.21.2410132006220.40463@angie.orcam.me.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] media: dt-bindings: Remove assigned-clock-* from
- various schema
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>, Shawn Guo
- <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, Martin Kepplinger <martink@posteo.de>,
- Paul Kocialkowski <paul.kocialkowski@bootlin.com>,
- "Paul J. Murphy" <paul.j.murphy@intel.com>,
- Daniele Alessandrelli <daniele.alessandrelli@intel.com>,
- Tommaso Merciai <tomm.merciai@gmail.com>,
- Martin Hecht <martin.hecht@avnet.eu>, Zhi Mao <zhi.mao@mediatek.com>,
- Alain Volmat <alain.volmat@foss.st.com>,
- Mikhail Rudenko <mike.rudenko@gmail.com>,
- Ricardo Ribalda <ribalda@kernel.org>,
- Kieran Bingham <kieran.bingham@ideasonboard.com>,
- Umang Jain <umang.jain@ideasonboard.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Dongchun Zhu <dongchun.zhu@mediatek.com>,
- Quentin Schulz <quentin.schulz@theobroma-systems.com>,
- Todor Tomov <todor.too@gmail.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- linux-media@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org
-References: <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-0-a2bb12a1796d@linaro.org>
- <20241012-b4-linux-next-202041004-i2c-media-yaml-fixes-v1-1-a2bb12a1796d@linaro.org>
- <w4ta26svh34gojqpakrgp5cpsempedkewkmbllyvs5z5fm274z@jqs3tvunxq2s>
- <ca48de1b-b45e-4b27-a186-3bb7eb5859fa@linaro.org>
- <9e3d86b4-fad7-4467-af7c-9195855cd318@kernel.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <9e3d86b4-fad7-4467-af7c-9195855cd318@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <alpine.DEB.2.21.2410132006220.40463@angie.orcam.me.uk>
 
-On 14/10/2024 09:44, Krzysztof Kozlowski wrote:
-> On 14/10/2024 10:29, Bryan O'Donoghue wrote:
->> On 14/10/2024 08:43, Krzysztof Kozlowski wrote:
->>>> -  - assigned-clocks
->>>> -  - assigned-clock-rates
->>> That's not extraneous, but has a meaning that without assigned-clocks
->>> this device or driver will not operate.
->>>
->>> File should rather stay as is.
->>
->> Hmm, I've obviously missed a trick here.
->>
->> I'll check it out.
+On Sun, Oct 13, 2024 at 08:34:44PM +0100, Maciej W. Rozycki wrote:
+> Ralf Baechle has been inactive for years now and the linux-mips.org site 
+> has gone down.  No replacement contact information is available.  Thomas 
+> has been kind enough to step up as a maintainer for EDAC-CAVIUM OCTEON 
+> and IOC3 ETHERNET DRIVER.
 > 
-> My response was probably not complete: this still might be extraneous,
-> because maybe the driver/device do not care. But in general requiring
-> assigned-clocks could have a meaning.
+> Update MAINTAINERS, CREDITS, and .get_maintainer.ignore accordingly.
+> 
+> Signed-off-by: Maciej W. Rozycki <macro@orcam.me.uk>
+> ---
+>  .get_maintainer.ignore |    1 +
+>  CREDITS                |    5 +++++
+>  MAINTAINERS            |   13 +++++--------
+>  3 files changed, 11 insertions(+), 8 deletions(-)
+> 
+> linux-maintainers-ralf.diff
+> Index: linux-macro/.get_maintainer.ignore
+> ===================================================================
+> --- linux-macro.orig/.get_maintainer.ignore
+> +++ linux-macro/.get_maintainer.ignore
+> @@ -3,3 +3,4 @@ Alan Cox <root@hraefn.swansea.linux.org.
+>  Christoph Hellwig <hch@lst.de>
+>  Jeff Kirsher <jeffrey.t.kirsher@intel.com>
+>  Marc Gonzalez <marc.w.gonzalez@free.fr>
+> +Ralf Baechle <ralf@linux-mips.org>
+> Index: linux-macro/CREDITS
+> ===================================================================
+> --- linux-macro.orig/CREDITS
+> +++ linux-macro/CREDITS
+> @@ -185,6 +185,11 @@ P: 1024/AF7B30C1 CF 97 C2 CC 6D AE A7 FE
+>  D: Linux/MIPS port
+>  D: Linux/68k hacker
+>  D: AX25 maintainer
+> +D: EDAC-CAVIUM OCTEON maintainer
+> +D: IOC3 ETHERNET DRIVER maintainer
+> +D: NETROM NETWORK LAYER maintainer
+> +D: ROSE NETWORK LAYER maintainer
+> +D: TURBOCHANNEL SUBSYSTEM maintainer
+>  S: Hauptstrasse 19
+>  S: 79837 St. Blasien
+>  S: Germany
+> Index: linux-macro/MAINTAINERS
+> ===================================================================
+> --- linux-macro.orig/MAINTAINERS
+> +++ linux-macro/MAINTAINERS
+> @@ -8081,10 +8081,10 @@ S:	Maintained
+>  F:	drivers/edac/highbank*
+>  
+>  EDAC-CAVIUM OCTEON
+> -M:	Ralf Baechle <ralf@linux-mips.org>
+> +M:	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+>  L:	linux-edac@vger.kernel.org
+>  L:	linux-mips@vger.kernel.org
+> -S:	Supported
+> +S:	Maintained
+>  F:	drivers/edac/octeon_edac*
+>  
+>  EDAC-CAVIUM THUNDERX
+> @@ -11902,7 +11902,7 @@ F:	Documentation/devicetree/bindings/iio
+>  F:	drivers/iio/gyro/mpu3050*
+>  
+>  IOC3 ETHERNET DRIVER
+> -M:	Ralf Baechle <ralf@linux-mips.org>
+> +M:	Thomas Bogendoerfer <tsbogend@alpha.franken.de>
+>  L:	linux-mips@vger.kernel.org
+>  S:	Maintained
+>  F:	drivers/net/ethernet/sgi/ioc3-eth.c
+> @@ -16043,9 +16043,8 @@ F:	net/netfilter/
+>  F:	tools/testing/selftests/net/netfilter/
 
-No I see what you mean
+Acked-by: Thomas Bogendoerfer <tsbogend@alpha.franken.de>
 
-Even though assigned-clock* is a property of the SoC this driver..
-
-drivers/media/i2c/hi846.c
-         mclk_freq = clk_get_rate(hi846->clock);
-         if (mclk_freq != 25000000)
-                 dev_warn(&client->dev,
-                          "External clock freq should be 25000000, not 
-%u.\n",
-                          mclk_freq);
-
-doesn't support setting the clock.
-
-So it actually is a requirement, yes.
-
----
-bod
+-- 
+Crap can work. Given enough thrust pigs will fly, but it's not necessarily a
+good idea.                                                [ RFC1925, 2.3 ]
 
