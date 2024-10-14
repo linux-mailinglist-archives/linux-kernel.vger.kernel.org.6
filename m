@@ -1,180 +1,139 @@
-Return-Path: <linux-kernel+bounces-363532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3BF599C392
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:39:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2678899C393
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 10:39:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 55A4DB2449C
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:39:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3DF4E1C22681
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 08:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE2C14BF87;
-	Mon, 14 Oct 2024 08:39:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4897114E2CD;
+	Mon, 14 Oct 2024 08:39:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ineZg90O"
-Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Xn6rA8L3"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A10D1494A5;
-	Mon, 14 Oct 2024 08:39:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 035FF14A62A
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 08:39:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728895159; cv=none; b=VdXctjSAEPIBZTLqL23jdsIoCh6Eewu6KH3plagpvK2aizB9fqHdKxa4P77hrgr41pIPCweK0Cv1ycLJvt+Bv9nvdmk5kktybbyCMpYuir8D6dtK8aGrsnuSMtG33sxSjwQ4sLXfSbOzLL3Ta9mZYxUl+nRPnemfu9YR5p2u29c=
+	t=1728895191; cv=none; b=aUw445XoQjJ0/94nbF2TblTJgtnIzeV4IQrG7Mqt/KpYdyGMjPNoN0HUrMOQXpx7obicyNiQmpOxl7tK3T9tpuoiqcn9J1CEyL9d+0rkZHfFfKdZGW9wjj6vcFVwTvVEw7luXaOvHfsaYiOo/HJdguZ28Kxcyn8x2OZWHBKxbwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728895159; c=relaxed/simple;
-	bh=WKXyTfzMjSpiItvyXmW2STbUw7WLem8FH5AsaAwozOM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=Z9e88IbO7oaHkqiuPKIaN7nG45Ew8n8D/Eue3n022CZiiqU2ELxJ+X9x0eyNXcP4GpNfpXUp1gKamsMGg7c6F+y5lto7OR4GWol4Hs8x3+b94V9JUgA13iN+r2i885enO1Sr+cP8b8JAEUmOAc+hChXdN0qApnFdn1vJiMxHAts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ineZg90O; arc=none smtp.client-ip=217.70.183.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id D401A40005;
-	Mon, 14 Oct 2024 08:39:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1728895149;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:  in-reply-to:in-reply-to;
-	bh=xwwJA2Ql/p3nTNZMaPBavk6qkt9+5ofr39jFUmX7VhI=;
-	b=ineZg90OqmePX7mn3689VWQggegHmILcoG+eV2jVywRM+7g+p6UNSiRSJyfBWUJ+1GCCfd
-	N8TWq03ukFGTAa172JFIlVMqkcq1QihyPs/3m0Uz02NYvcO4NR+YgDWs+WcwW6XzXG+Jfb
-	9m18RWEXQSm11lM86z9eHmkbUTFQx2bpbqQUKJ8qx4Hd5wwuXQYqHoUIkGU/d7yBbSIl7T
-	WDTiM5eAAEQSrX9WPlQsCFysoD4leiJU14/CJSHLyZBKjlIHa0gy+5iI9+6LaXItSW1K3T
-	48hQd5kerhAjSvuzslYODURuuS1EeGE+AMDvWxYDMlKK2VYRANGS/YoLXahROg==
-Date: Mon, 14 Oct 2024 10:39:06 +0200
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-To: Maira Canal <mairacanal@riseup.net>
-Cc: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
-	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
-Subject: Re: [PATCH v12 09/15] drm/vkms: Remove useless drm_rotation_simplify
-Message-ID: <ZwzYqihbReaLFn-c@louis-chauvet-laptop>
-Mail-Followup-To: Maira Canal <mairacanal@riseup.net>,
-	Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>,
-	Melissa Wen <melissa.srw@gmail.com>,
-	Haneen Mohammed <hamohammed.sa@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org,
-	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi,
-	Simona Vetter <simona.vetter@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com,
-	jeremie.dautheribes@bootlin.com, miquel.raynal@bootlin.com,
-	seanpaul@google.com, marcheu@google.com, nicolejadeyee@google.com
+	s=arc-20240116; t=1728895191; c=relaxed/simple;
+	bh=j5KMbLgM/cSlGqVgmYOvM8MYfFCjZQKVkWvHc4WNE28=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kJgo5n4a1faDc3oBb38R+hVjQbhzHOP3o0WFeJBf5Vo/ZZZdo1zVVIw313chx9Urg6wON4PZUG+L0AJPSRLQ4c3BhZMvIdJVXJU1TBzawgnitTsPiq1/zGUs1RQ2IO2tn9R07rfIKRveuAWGGOO2bRPibfB1mASOwNIPNApcofA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Xn6rA8L3; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a999521d0c3so665213266b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 01:39:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1728895188; x=1729499988; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=CRVP8PnREQKgMzWy1TiJYpVDO1N8UeyJCGoiVpxt1nM=;
+        b=Xn6rA8L3gSSWJbDc/53AjH8PYuU5tlpmy2JPWbbBNVDeccx8WLLzc/Decr1dFoCkk6
+         yT+OXUIOO6jwK+962d80mU/krg/SGJj0z8P3gzjY6tekNx+z2I6jTk1lBykcKqqi0b3z
+         W5kL9qFdmTl4gP2JRtIveywYdP7bWPI6eFzaDcukCb+QANmuUGv3vsybU6GAHzmrdwDJ
+         Ig3/feIsBxgavjwGDOn/n2rB6cfVgW9QY3/mpWmeZ6ZAhbB+wDKbTEL26JC9lx6HVQo6
+         GdLiNO0MTkODxmD7ryGsExPcbp6+Rwtdf7SqazGMrSJ6qs9Tmc3mmUMUWMS+Xzgo65wb
+         zLjQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728895188; x=1729499988;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CRVP8PnREQKgMzWy1TiJYpVDO1N8UeyJCGoiVpxt1nM=;
+        b=qfQkviBmG3C82hbNr8mr3zsUzw7U/tI9lQQ7n++1lLWng87gifrdAEow6d96A6a5qu
+         Gt957O0iWXpKMJoEse4+dJNE/8WSwSG70d2ZvK6I9RMbtOJNC4AUbFEjH1a5qnzYO0Cj
+         oxiCk888DekkvaiC9CAOdZTsk5ZsEgw9jJPpllnmTFcPvh3mtK6QJlhEtHOB6EUSqMSG
+         J5d5FChFogLsvOpAFRtXT/eslb5StKjHC+p0/wm8GFbAf4IIwLBotcJ3kVsSPwyZn0+H
+         yzT6CtIYra8bBaU7Cook/5IJohMynlvYk9revf6Phhq597hUdAmx+KUAalmVQtC1hCOq
+         csSA==
+X-Forwarded-Encrypted: i=1; AJvYcCUuKFdUTysmw95V/ghuLUyXy+LK545zZ/wSbcrm/J/xlw6OWEMAaiv26AhH+oHxMBFSfLinL38fR/GJk3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwD0B2MKE1DgWIbxP2Yr2zIO+rKtuviE/Qxi5yCN7hjy1j2xnb
+	jUk/EKOA/IgABIQLe7WBP2UfMXiKhlBGDsS/qxAhS9usgeOVswFr5XMDHEkpUdg=
+X-Google-Smtp-Source: AGHT+IF/zFtsig2aX112+izRkjqLmgdoEyL1+SlRLxD7y4x/PjYyilPPAsZa/YaFD38CdWCPTvN9dw==
+X-Received: by 2002:a17:907:d17:b0:a99:ee42:1f38 with SMTP id a640c23a62f3a-a99ee421fdamr662474666b.31.1728895188121;
+        Mon, 14 Oct 2024 01:39:48 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a0e1913a0sm121377066b.75.2024.10.14.01.39.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 01:39:47 -0700 (PDT)
+Date: Mon, 14 Oct 2024 11:39:44 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Stefan Wahren <wahrenst@gmx.net>,
+	Umang Jain <umang.jain@ideasonboard.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] staging: vchiq_arm: Fix missing refcount decrement in
+ error path for fw_node
+Message-ID: <20d12a96-c06b-4204-9a57-69a4bac02867@stanley.mountain>
+References: <20241013-vchiq_arm-of_node_put-v1-1-f72b2a6e47d0@gmail.com>
+ <a4283afc-f869-4048-90b4-1775acb9adda@stanley.mountain>
+ <47c7694c-25e1-4fe1-ae3c-855178d3d065@gmail.com>
+ <767f08b7-be82-4b5e-bf82-3aa012a2ca5a@stanley.mountain>
+ <8c0bbde9-aba9-433f-b36b-2d467f6a1b66@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <608074ed-567c-4e6d-b1c2-9e0ecf1d102b@riseup.net>
-X-GND-Sasl: louis.chauvet@bootlin.com
+In-Reply-To: <8c0bbde9-aba9-433f-b36b-2d467f6a1b66@gmail.com>
 
-On 11/10/24 - 10:53, Maira Canal wrote:
-> Hi Louis,
+On Mon, Oct 14, 2024 at 10:15:25AM +0200, Javier Carrasco wrote:
+> On 14/10/2024 10:12, Dan Carpenter wrote:
+> > On Mon, Oct 14, 2024 at 09:59:49AM +0200, Javier Carrasco wrote:
+> >> This approach is great as long as the maintainer accepts mid-scope
+> >> variable declaration and the goto instructions get refactored, as stated
+> >> in cleanup.h.
+> >>
+> >> The first point is not being that problematic so far, but the second one
+> >> is trickier, and we all have to take special care to avoid such issues,
+> >> even if they don't look dangerous in the current code, because adding a
+> >> goto where there cleanup attribute is already used can be overlooked as
+> >> well.
+> >>
+> > 
+> > To be honest, I don't really understand this paragraph.  I think maybe you're
+> > talking about if we declare the variable at the top and forget to initialize it
+> > to NULL?  It leads to an uninitialized variable if we exit the function before
+> > it is initialized.
+> > 
 > 
-> On 10/11/24 06:36, Louis Chauvet wrote:
-> > 
-> > Hi all,
-> > 
-> > Until this point, this series has not received any major comments since
-> > v9. I will commit patches 1-9 next week if there are no further comments.
-> > 
+> No, I am talking about declaring the variable mid-scope, and later on
+> adding a goto before that declaration in a different patch, let's say
+> far above the variable declaration. As soon as a goto is added, care
+> must be taken to make sure that we don't have variables with the cleanup
+> attribute in the scope. Just something to take into account.
 > 
-> Although we are maintainers of VKMS, it isn't recommended that we push
-> our own changes without even the Ack of another person. Please, read the
-> "drm-misc Committer Guidelines" [1].
 
-Hi Maíra, Maxime,
+Huh.  That's an interesting point.  If you have:
 
-I apologize for this rushed commit request. I sent the initial email with 
-a delay before the commit action because I was not sure about the 
-procedure and wanted to give others a chance to raise any concerns. 
-Unfortunately, I overlooked the need to collect an Ack/Review for each 
-patch, even when there hadn't been any responses for several months. I'm 
-sorry for this oversight.
+	if (ret)
+		goto done;
 
-> I can ack patches 05/15, 07/15, and 09/15, but it would be more
-> beneficial for the community if you ask for an ack (from me or from the
-> DRM maintainers, which are always around), instead of saying that you
-> are going to commit the patches without any review.
+	struct device_node *fw_node __free(device_node) = something;
 
-I will be happy to ask for acknowledgments if needed, but as you mentioned 
-multiple times: nobody is paid to maintain VKMS. Since you did not comment 
-these series since July, when you told me you would review my patches, I 
-assumed it was either okay or you no longer had the time to maintain 
-(which I completely understand).
+Then fw_node isn't initialized when we get to done.  However, in my simple test
+this triggered a build failure with Clang so I believe we would catch this sort
+of bug pretty quickly.
 
-So, I hereby formally request reviews/ACKs for the following series:
+regards,
+dan carpenter
 
-[this series]:https://lore.kernel.org/all/20241007-yuv-v12-0-01c1ada6fec8@bootlin.com/
-[2]:https://lore.kernel.org/all/20241007-b4-new-color-formats-v2-0-d47da50d4674@bootlin.com/
-[3]:https://lore.kernel.org/all/20240516-writeback_line_by_line-v1-0-7b2e3bf9f1c9@bootlin.com/
-
-(I have to send a v2 for [3] because of rebase conflict, but nothing else 
-changed)
-
-Thanks a lot,
-Louis Chauvet
- 
-> [1] https://drm.pages.freedesktop.org/maintainer-tools/committer/committer-drm-misc.html
-> 
-> Best Regards,
-> - Maíra
-> 
-> > For patches 10-15, I am currently waiting for feedback from Maxime to
-> > send the next iteration with a fix for kunit tests.
-> > 
-> > Thanks,
-> > Louis Chauvet
-> > 
-> > On 07/10/24 - 18:10, Louis Chauvet wrote:
-> > > As all the rotation are now supported by VKMS, this simplification does
-> > > not make sense anymore, so remove it.
-> > > 
-> > > Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
-> > > ---
-> > >   drivers/gpu/drm/vkms/vkms_plane.c | 7 +------
-> > >   1 file changed, 1 insertion(+), 6 deletions(-)
-> > > 
-> > > diff --git a/drivers/gpu/drm/vkms/vkms_plane.c b/drivers/gpu/drm/vkms/vkms_plane.c
-> > > index 8875bed76410..5a028ee96c91 100644
-> > > --- a/drivers/gpu/drm/vkms/vkms_plane.c
-> > > +++ b/drivers/gpu/drm/vkms/vkms_plane.c
-> > > @@ -115,12 +115,7 @@ static void vkms_plane_atomic_update(struct drm_plane *plane,
-> > >   	frame_info->fb = fb;
-> > >   	memcpy(&frame_info->map, &shadow_plane_state->data, sizeof(frame_info->map));
-> > >   	drm_framebuffer_get(frame_info->fb);
-> > > -	frame_info->rotation = drm_rotation_simplify(new_state->rotation, DRM_MODE_ROTATE_0 |
-> > > -									  DRM_MODE_ROTATE_90 |
-> > > -									  DRM_MODE_ROTATE_270 |
-> > > -									  DRM_MODE_REFLECT_X |
-> > > -									  DRM_MODE_REFLECT_Y);
-> > > -
-> > > +	frame_info->rotation = new_state->rotation;
-> > >   	vkms_plane_state->pixel_read_line = get_pixel_read_line_function(fmt);
-> > >   }
-> > > 
-> > > -- 
-> > > 2.46.2
-> > > 
 
