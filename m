@@ -1,181 +1,196 @@
-Return-Path: <linux-kernel+bounces-364221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A96C99CD9A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:34:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C80C99CDA8
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 16:35:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BBD452809CA
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:34:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E49E4281CEA
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 14:35:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 558D31ABEBA;
-	Mon, 14 Oct 2024 14:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="LHAn4QAG"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1831AB6EB;
+	Mon, 14 Oct 2024 14:34:42 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C64AB1A76AC
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:34:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E91E1798C;
+	Mon, 14 Oct 2024 14:34:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728916444; cv=none; b=C4twGdYaOSZJoTE4NdWYLCahjNrmtjsPXfll9NHw9terRItZM5vFbW1J6WpiDTTs44GrICJbMhNYUa5CG5r2uUOaC1FRxx5WyjKEvRdzVCDHPLq507ZNPP+aABJ1p9U6ixqiv8Gb4D8BsSqlq+/bfK+AEVG+xVDkwfpEL6sB45M=
+	t=1728916482; cv=none; b=PlSJnki3JLWIVuXVuzltTkpxLhXi/7tMB9sqMXy3GYKZ6iOjw0xGicUd/U2qo8fOxBQxlGwUFyi70CEEJ1q/0H9bWzTX9CL9Y6pVTfzKObFxMn5AMt+DmHmfslbtj3vjuHEOMtP4IC6AQFts3tfKZ7jcAZdxKLg95Yv89IZyhzk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728916444; c=relaxed/simple;
-	bh=3OxyjW6caETvvuftipAto/JP5HGaH56ZmiLo8YxjIgk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nafc5ukJGPOcQhd6mXF+BNSy3SWTfxBKdHFFZYM565y52kbaIXgFFapuhDr2S/DFcumRaPcKzLdNDs6gtNGxhHFdxJAcMzo7jwclUUUdaIc8AyN/NOrCpgpbaR+en4QqOFi5X5kwmnWR7Ok/i+amU4qSlOo1q9/VPkaUrP0Byp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=LHAn4QAG; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-836f1b47cdfso202442239f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:34:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1728916442; x=1729521242; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BZFiFSV2S6ephEEXxaRsM/YTIpGDjHwKVrQbLRq0m74=;
-        b=LHAn4QAGSll1eE/HMgAwesfDfZ68OE/RRaEsD53z96UgS329eLqZavLF1uk2z1t8BA
-         O4pMhWYXEPf8inAMuGPmlnDm157PkFemJaWjMqRtilnfLSIn/OzLcKZctoHOYlO8PFq/
-         5QF/kby6lWI0nyQIlGomPaPX2B4YcQOsyUwgrq6mYrwlRa+p+7At3UpL1iwajhC2Q3I/
-         rADy7FvjGp2/+XMC9Exm/izwIMaQYy1c76iLwb1vMDg9A2u5YpNmcI9gW2jfCqsF1wRL
-         SkjpYV7rnAdK6r/2lVMlrBB/xVx3Nmex1nOmOwVZN4nbkteh/enZoY1GnftzlyFoTijk
-         Gzbw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728916442; x=1729521242;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BZFiFSV2S6ephEEXxaRsM/YTIpGDjHwKVrQbLRq0m74=;
-        b=l8g4ObucLCAzX0in6tt3An00OPE0W9BAXFlLjI77PaNkqS90hQXcy67TfSrRZbD4Q6
-         AJ1nnlctoS+kgFztCJZ0JubmOFYoZNX6atMqqnEdpIQSDAxArWRBrNo2aAK9M2xhhsIX
-         mWQEtxLDv1BfSFf11Zw+OYiOFE8tKogb0Nn2sYZiStIT2qo4AUR1uwRD5B0BPOvvJLGC
-         rKTczTG92YGhkLv3rWSRXDixkBombwcAd04ICaDwQXLclsCNQgLaRMc6YtfQKWZzpWOw
-         ZpYMM6+y13KUMC02IdJgcwHL/ZeNS9Noea09IqgAqb9QZRi7qF7Yq9DUElGsaM8sRnsx
-         bntg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyWBwERmh/s/ONpQpKfE2aQgzzNfmlDvSj5Uq5IIWyAbsY7Am26cQ+DLGykCfSLmboNSWwQOYavxUSVek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvWnzUPDC5zSgKZ4xEk+2eFFclSXmvejbr+++cUZ3b9YTxyAfW
-	UZsb5mLEtHFRfwrUsfW3d0qogH+aT2+1mplOKwKnVj6RidJoQS1VU5FaGxQMZ58hpYlrBqkaCep
-	s7PKSYInkwzjUuinGIdWndH2mlkZRsG4FZc/JTw==
-X-Google-Smtp-Source: AGHT+IFYJowFNk6TiJAeIlJ6VE4pS1HwOZ1J0S0O0mVVAaMh1gyG2y64c+9AiCOVdFTYNqR+gnZqJMfVyAe4szQJ6+M=
-X-Received: by 2002:a05:6602:3f91:b0:837:7e21:1677 with SMTP id
- ca18e2360f4ac-837929fd68fmr950720739f.4.1728916441860; Mon, 14 Oct 2024
- 07:34:01 -0700 (PDT)
+	s=arc-20240116; t=1728916482; c=relaxed/simple;
+	bh=qNdam3C9gOrjO/3CDlp0IBHlqJ8S+hvHMEtUfCt3Rl0=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lvcEfYm6L2erc/WpIM0hArjkdyBIN9hoUJRgf/gy9GGkFGCHKH+6ANtcMLUxoXTWeIdE5skK569QsOiTAyPasMJcFpdparANBQJUBfY69tVyxVRYQSpTMbw+adtE6RSjCD7kHmF0Udh8fP/ryR+GjwMvVPQxXg43YLiX2dlh3+8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XS0992tBXz67j73;
+	Mon, 14 Oct 2024 22:34:05 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 550F7140AB8;
+	Mon, 14 Oct 2024 22:34:37 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Mon, 14 Oct
+ 2024 16:34:35 +0200
+Date: Mon, 14 Oct 2024 15:34:34 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: <shiju.jose@huawei.com>
+CC: <linux-edac@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-acpi@vger.kernel.org>, <linux-mm@kvack.org>,
+	<linux-kernel@vger.kernel.org>, <bp@alien8.de>, <tony.luck@intel.com>,
+	<rafael@kernel.org>, <lenb@kernel.org>, <mchehab@kernel.org>,
+	<dan.j.williams@intel.com>, <dave@stgolabs.net>, <dave.jiang@intel.com>,
+	<alison.schofield@intel.com>, <vishal.l.verma@intel.com>,
+	<ira.weiny@intel.com>, <david@redhat.com>, <Vilas.Sridharan@amd.com>,
+	<leo.duran@amd.com>, <Yazen.Ghannam@amd.com>, <rientjes@google.com>,
+	<jiaqiyan@google.com>, <Jon.Grimm@amd.com>, <dave.hansen@linux.intel.com>,
+	<naoya.horiguchi@nec.com>, <james.morse@arm.com>, <jthoughton@google.com>,
+	<somasundaram.a@hpe.com>, <erdemaktas@google.com>, <pgonda@google.com>,
+	<duenwen@google.com>, <gthelen@google.com>, <wschwartz@amperecomputing.com>,
+	<dferguson@amperecomputing.com>, <wbs@os.amperecomputing.com>,
+	<nifan.cxl@gmail.com>, <tanxiaofei@huawei.com>, <prime.zeng@hisilicon.com>,
+	<roberto.sassu@huawei.com>, <kangkang.shen@futurewei.com>,
+	<wanghuiqiang@huawei.com>, <linuxarm@huawei.com>
+Subject: Re: [PATCH v13 04/18] cxl: move cxl headers to new include/cxl/
+ directory
+Message-ID: <20241014153434.00001ec5@Huawei.com>
+In-Reply-To: <20241009124120.1124-5-shiju.jose@huawei.com>
+References: <20241009124120.1124-1-shiju.jose@huawei.com>
+	<20241009124120.1124-5-shiju.jose@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008-v5_user_cfi_series-v6-0-60d9fe073f37@rivosinc.com>
- <20241008-v5_user_cfi_series-v6-33-60d9fe073f37@rivosinc.com>
- <CANXhq0pXVS2s-hZNusPLoQ4qPkyi1S2BTQ-FyAvcz=cDctKQng@mail.gmail.com>
- <Zwj7aZj36TBGzpZa@finisterre.sirena.org.uk> <CANXhq0q49k6q3ZGYqzczMeFr+_rrfa9mL7FMu62xPHeUKfvhMw@mail.gmail.com>
- <ZwmAdRb5BRkPLbWg@debug.ba.rivosinc.com>
-In-Reply-To: <ZwmAdRb5BRkPLbWg@debug.ba.rivosinc.com>
-From: Zong Li <zong.li@sifive.com>
-Date: Mon, 14 Oct 2024 22:33:50 +0800
-Message-ID: <CANXhq0rH_07JRGbBnMTntPxhOQcXzxrcRJ0WAN7T6oQX7DaNoQ@mail.gmail.com>
-Subject: Re: [PATCH v6 33/33] kselftest/riscv: kselftest for user mode cfi
-To: Deepak Gupta <debug@rivosinc.com>
-Cc: Mark Brown <broonie@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
-	"H. Peter Anvin" <hpa@zytor.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Christian Brauner <brauner@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Oleg Nesterov <oleg@redhat.com>, Eric Biederman <ebiederm@xmission.com>, Kees Cook <kees@kernel.org>, 
-	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, alistair.francis@wdc.com, 
-	richard.henderson@linaro.org, jim.shu@sifive.com, andybnac@gmail.com, 
-	kito.cheng@sifive.com, charlie@rivosinc.com, atishp@rivosinc.com, 
-	evan@rivosinc.com, cleger@rivosinc.com, alexghiti@rivosinc.com, 
-	samitolvanen@google.com, rick.p.edgecombe@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml500006.china.huawei.com (7.191.161.198) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Sat, Oct 12, 2024 at 3:46=E2=80=AFAM Deepak Gupta <debug@rivosinc.com> w=
-rote:
->
-> On Fri, Oct 11, 2024 at 07:43:30PM +0800, Zong Li wrote:
-> >On Fri, Oct 11, 2024 at 6:18=E2=80=AFPM Mark Brown <broonie@kernel.org> =
-wrote:
-> >>
-> >> On Fri, Oct 11, 2024 at 01:44:55PM +0800, Zong Li wrote:
-> >> > On Wed, Oct 9, 2024 at 7:46=E2=80=AFAM Deepak Gupta <debug@rivosinc.=
-com> wrote:
-> >>
-> >> > > +       if (si->si_code =3D=3D SEGV_CPERR) {
-> >>
-> >> > Hi Deepak,
-> >> > I got some errors when building this test, I suppose they should be
-> >> > fixed in the next version.
-> >>
-> >> > riscv_cfi_test.c: In function 'sigsegv_handler':
-> >> > riscv_cfi_test.c:17:28: error: 'SEGV_CPERR' undeclared (first use in
-> >> > this function); did you mean 'SEGV_ACCERR'?
-> >> >    17 |         if (si->si_code =3D=3D SEGV_CPERR) {
-> >> >       |                            ^~~~~~~~~~
-> >> >       |                            SEGV_ACCERR
-> >> >
-> >>
-> >> Did you run "make headers_install" prior to building kselftest to get
-> >> the current kernel's headers available for userspace builds?
-> >
-> >Yes, I have run "make header" and "make header_install" before
-> >building the kselftest. This error happens when I cross compiled it,
-> >perhaps I can help to check if it is missing some header files or
-> >header search path.
->
-> That's wierd.
->
-> It doesn't fail for me even if I do not do `make headers_install`. But I =
-am
-> building kernel and selftests with toolchain which supports shadow stack =
-and
-> landing pad. It's defined in `siginfo.h`. When I built toolchain, I did p=
-oint
-> it at the latest kernel headers. May be that's the trick.
->
-> """
->
-> $ grep -nir SEGV_CPERR /scratch/debug/linux/kbuild/usr/include/*
-> /scratch/debug/linux/kbuild/usr/include/asm-generic/siginfo.h:240:#define=
- SEGV_CPERR    10      /* Control protection fault */
->
-> $ grep -nir SEGV_CPERR /scratch/debug/open_src/sifive_cfi_toolchain/INSTA=
-LL_Sept18/sysroot/usr/*
-> /scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/i=
-nclude/asm-generic/siginfo.h:240:#define SEGV_CPERR    10      /* Control p=
-rotection fault */
-> /scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/i=
-nclude/bits/siginfo-consts.h:139:  SEGV_CPERR                  /* Control p=
-rotection fault.  */
-> /scratch/debug/open_src/sifive_cfi_toolchain/INSTALL_Sept18/sysroot/usr/i=
-nclude/bits/siginfo-consts.h:140:#  define SEGV_CPERR  SEGV_CPERR
->
-> """
+On Wed, 9 Oct 2024 13:41:05 +0100
+<shiju.jose@huawei.com> wrote:
 
-In my case, because the test files don't explicitly include siginfo.h,
-I assume it's expected that siginfo.h will be included through
-signal.h. Regarding the header search path, it will eventually locate
-signal.h in toolchain_path/sysroot/usr/include/. In my
-toolchain_path/sysroot/usr/include/signal.h, it doesn't include any
-signal.h; instead, signal.h will be included from
-toolchain_path/sysroot/usr/include/linux/signal.h or
-kernel_src/usr/include/linux/signal.h rather than
-toolchain/sysroot/usr/include/signal.h. I think that is why I lost the
-SEGV_CPERR definition. Is there any difference with you?
+> From: Dave Jiang <dave.jiang@intel.com>
+> 
+> Group all cxl related kernel headers into include/cxl/ directory.
+> 
+> Signed-off-by: Dave Jiang <dave.jiang@intel.com>
+> Reviewed-by: Alison Schofield <alison.schofield@intel.com>
+> Reviewed-by: Ira Weiny <ira.weiny@intel.com>
 
->
+Reviewed-by: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+
+> ---
+>  MAINTAINERS                                | 3 +--
+>  drivers/acpi/apei/einj-cxl.c               | 2 +-
+>  drivers/acpi/apei/ghes.c                   | 2 +-
+>  drivers/cxl/core/port.c                    | 2 +-
+>  drivers/cxl/cxlmem.h                       | 2 +-
+>  include/{linux/einj-cxl.h => cxl/einj.h}   | 0
+>  include/{linux/cxl-event.h => cxl/event.h} | 0
+>  7 files changed, 5 insertions(+), 6 deletions(-)
+>  rename include/{linux/einj-cxl.h => cxl/einj.h} (100%)
+>  rename include/{linux/cxl-event.h => cxl/event.h} (100%)
+> 
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index cc40a9d9b8cd..ae17d28c5f73 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -5620,8 +5620,7 @@ L:	linux-cxl@vger.kernel.org
+>  S:	Maintained
+>  F:	Documentation/driver-api/cxl
+>  F:	drivers/cxl/
+> -F:	include/linux/einj-cxl.h
+> -F:	include/linux/cxl-event.h
+> +F:	include/cxl/
+>  F:	include/uapi/linux/cxl_mem.h
+>  F:	tools/testing/cxl/
+>  
+> diff --git a/drivers/acpi/apei/einj-cxl.c b/drivers/acpi/apei/einj-cxl.c
+> index 8b8be0c90709..4f81a119ec08 100644
+> --- a/drivers/acpi/apei/einj-cxl.c
+> +++ b/drivers/acpi/apei/einj-cxl.c
+> @@ -7,9 +7,9 @@
+>   *
+>   * Author: Ben Cheatham <benjamin.cheatham@amd.com>
+>   */
+> -#include <linux/einj-cxl.h>
+>  #include <linux/seq_file.h>
+>  #include <linux/pci.h>
+> +#include <cxl/einj.h>
+>  
+>  #include "apei-internal.h"
+>  
+> diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
+> index 623cc0cb4a65..ada93cfde9ba 100644
+> --- a/drivers/acpi/apei/ghes.c
+> +++ b/drivers/acpi/apei/ghes.c
+> @@ -27,7 +27,6 @@
+>  #include <linux/timer.h>
+>  #include <linux/cper.h>
+>  #include <linux/cleanup.h>
+> -#include <linux/cxl-event.h>
+>  #include <linux/platform_device.h>
+>  #include <linux/mutex.h>
+>  #include <linux/ratelimit.h>
+> @@ -50,6 +49,7 @@
+>  #include <acpi/apei.h>
+>  #include <asm/fixmap.h>
+>  #include <asm/tlbflush.h>
+> +#include <cxl/event.h>
+>  #include <ras/ras_event.h>
+>  
+>  #include "apei-internal.h"
+> diff --git a/drivers/cxl/core/port.c b/drivers/cxl/core/port.c
+> index 1d5007e3795a..e0b28a6730c1 100644
+> --- a/drivers/cxl/core/port.c
+> +++ b/drivers/cxl/core/port.c
+> @@ -3,7 +3,6 @@
+>  #include <linux/platform_device.h>
+>  #include <linux/memregion.h>
+>  #include <linux/workqueue.h>
+> -#include <linux/einj-cxl.h>
+>  #include <linux/debugfs.h>
+>  #include <linux/device.h>
+>  #include <linux/module.h>
+> @@ -11,6 +10,7 @@
+>  #include <linux/slab.h>
+>  #include <linux/idr.h>
+>  #include <linux/node.h>
+> +#include <cxl/einj.h>
+>  #include <cxlmem.h>
+>  #include <cxlpci.h>
+>  #include <cxl.h>
+> diff --git a/drivers/cxl/cxlmem.h b/drivers/cxl/cxlmem.h
+> index afb53d058d62..a81a8982bf93 100644
+> --- a/drivers/cxl/cxlmem.h
+> +++ b/drivers/cxl/cxlmem.h
+> @@ -6,8 +6,8 @@
+>  #include <linux/cdev.h>
+>  #include <linux/uuid.h>
+>  #include <linux/rcuwait.h>
+> -#include <linux/cxl-event.h>
+>  #include <linux/node.h>
+> +#include <cxl/event.h>
+>  #include "cxl.h"
+>  
+>  /* CXL 2.0 8.2.8.5.1.1 Memory Device Status Register */
+> diff --git a/include/linux/einj-cxl.h b/include/cxl/einj.h
+> similarity index 100%
+> rename from include/linux/einj-cxl.h
+> rename to include/cxl/einj.h
+> diff --git a/include/linux/cxl-event.h b/include/cxl/event.h
+> similarity index 100%
+> rename from include/linux/cxl-event.h
+> rename to include/cxl/event.h
+
 
