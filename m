@@ -1,248 +1,88 @@
-Return-Path: <linux-kernel+bounces-363317-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363318-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 740D099C086
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:00:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9230299C08B
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:00:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DAE9EB2204D
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:00:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3ED4B1C2262F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 07:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5C1C145B25;
-	Mon, 14 Oct 2024 07:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="KqfUwbpq"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98D04148FF5;
+	Mon, 14 Oct 2024 07:00:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73E68143C7E
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 06:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCCFC148833
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 07:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728889200; cv=none; b=ksVYMG6UIkkjKeCSPfKTXS+bCu99NKwGRzRLMz3vMEdmBr7s+RL9TrfQ6BNKh8VDtc6XMlo7D/pU9Bo1NPrHlC9fpm/1qWwcpA2whmuuReQjbngEyquzt3TDkZB2Ihx9RYJfHyJ9OFtBYwNFoQ97fD/L5JudRy3KJaGa7SSywtI=
+	t=1728889205; cv=none; b=W0emN7+0KY8tjhMbbQO5CSuwfLoVLwkLjrEekYzklWTVe9tGF36R3aw2y5fNV8Zg0Ps49g5dLIF99wnXu06Bipw7WZ0kp8vY85N1pOIBRqzCujUmuq4wnE0F2pgzx2ejbvgloHUdpKH6tpwDqmFAOwL49pBJ3HqHhCY3UdoE3wU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728889200; c=relaxed/simple;
-	bh=xKtOQZK5HutUaVl6kbbOU9Qu7Ar2joczRXup5ujyrgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kxEtVjLnOAb52YDDTlF4pggeTj+CzmsugHmJQFaFEbRYKmIqpGla3QAw+BdgWwxd4rDRCThqodF5DNvPsTsXuICREzylfu8HUYAl2tmKZ/UZBhCnK8spO7d/ZBjHizpH44/6SvRIwimtBIrnUeqtZ0ODMMvgr+feSAZf2tFzsmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=KqfUwbpq; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99b1f43aceso525955066b.0
-        for <linux-kernel@vger.kernel.org>; Sun, 13 Oct 2024 23:59:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1728889197; x=1729493997; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=SbvyoL9Luo/70/PTVBa7h557couwK2dRn3xz6x5mHho=;
-        b=KqfUwbpqQ1gzt++iVRYbKYodeC5q6EqZM81NuUSPt94AA7DSrvMhhpTOvmCC6Omt7E
-         eZ8uPiw6rmjA+UaqjWoOVrwEub0lgjTjv9KZx7ydj14aChqkaldxgu1/8qs8HPowIifu
-         DcdFuCgwrAxzP++14QY6RJ/DMzzsOb5VcDqt9CslirzHEL3Gh72eKnQ6iWuUJoT2HDgx
-         8tbJyi6X2CkkwEYriX1kMTWCjKk4Abfz5K52eXeHA86HIACWgBd8gwnht+Ky8pJroc2y
-         TZdO4PKQnEpvAK9Z2eS/bWDKR3fsG1O31VPRau8Vvidxl7O3BR9vG5hVGqdES2AHdrn1
-         UY1g==
+	s=arc-20240116; t=1728889205; c=relaxed/simple;
+	bh=UVeWoj5Og+wsSq9WC972/2Jqtj7IYT6e/JNvd8LqKOA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iRDsCzqtX/969jwrnM60VWTaHE0FQNNFxqeComDzfLXjqZ7y3tqTCd726xGYv9EBCEol74LSHWWLT1+q35M4ZwNHitwr1xeDotJBUMzKeK3imDSEu6b3avtKb8M1Zjo1PZ6VyasljYibBVLi7P8etmr/wY+7nPrflylYdN0XujI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3b7ecad71so11731045ab.0
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 00:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728889197; x=1729493997;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1728889203; x=1729494003;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=SbvyoL9Luo/70/PTVBa7h557couwK2dRn3xz6x5mHho=;
-        b=FiCuHvsvkzvvYHtT7cHjAhyxBF40MiHcQeURaMUudcKLA40wIeRik6BXqDTgKeEU3T
-         SFcUwnzu5l6MNRve5m3BVNwEOjzHyJPeUKXF3nMeHsIAqjua4xp5IXivJNvZd4gTNPFr
-         xYYZvgEk9eA5Lj2JDJwD/c68Yrz8w2E8MJze4bzczbBiZMMvWjk0Sd2iH4gWJXgEIiTC
-         rrb8AOyEbThuXwejluHrKmU3huzXtT9ltw2SWxeS1bF/NxJ+NkdpTrJr9j1wVHI0NJVp
-         GrWCoip1gChdpuMDM/H+fEgAS9wiExuwJxG1G0MDFBVCqC4SknDjZmg5OvG25BTyuN/8
-         HuGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOu1g5Tn8F44zrOvXBS23FQaqwd/+M2sNnVvXlMo9iCD7JT2H9fyYQjpWauAUq0n2KRH6uciSswvCveSo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwTzPnSVISYRCwvqyAnfrql9bAriYeHtrMFsyQ1vjHws2UPgePn
-	XlEgW+a9yIkq4zzM61cVtCAODDhABYRmWJOOaf4Uzycn+x47km5SBxu9ebRDTmw=
-X-Google-Smtp-Source: AGHT+IGOUfK99ago/evOrlGj0pi4YFg7EEKNgJdbazY59vps+t6ylGtngYjJWYkKZ58+i22OdP1stg==
-X-Received: by 2002:a17:906:eec7:b0:a77:ab9e:9202 with SMTP id a640c23a62f3a-a99a0eb9349mr1327215166b.4.1728889196586;
-        Sun, 13 Oct 2024 23:59:56 -0700 (PDT)
-Received: from [192.168.0.245] ([62.73.69.208])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a13f42e8bsm62471966b.58.2024.10.13.23.59.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 13 Oct 2024 23:59:56 -0700 (PDT)
-Message-ID: <c3678626-7f5c-4446-9b4d-2650ddf5d5a6@blackwall.org>
-Date: Mon, 14 Oct 2024 09:59:54 +0300
+        bh=5tQ9QvYQlzu+5EQLgcSwBsHR+7o1ULHR0qfz4ooAiis=;
+        b=AnJJ+qh7yrH+LJc92fi5CcXf/W0bHEJG152WTwbmQhHSDE+OD8fTRQZHDjI9ypQ3rt
+         wuSKXVXrn/kVVrxnb7x9i9WrgpplsdnxyG2isoq4tD7SIu3eXXHrqkZ4+2YiYFkdSgB/
+         wru8dSxAXCmIW7NXl/hK0KzThjJc+rLwJpk27EIeyOo35WFpwAtmpvj3djzoL/SuY4da
+         gQ4LzVxecE+NNT5QcSslTSYeslav8UoBa1HVnaODs6vTUfY1RzN+XBDMFizOofSRA6Rk
+         ZZzMD8ZHtgkCnO0SU+ScfQRs9h2JJeXYb2xaAmA93ZRpwpUnZexkoHFMeDN7+9/esPyt
+         tRGA==
+X-Forwarded-Encrypted: i=1; AJvYcCVGmq66jVcLgdkZi9Qga/a6wDCzwqswD5eozlEmdWRUI0iQ89TbHmneRFXCtDRQHZ6N2rAmllkgBQcVJLk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw0PlgtofKAcKK+xnwuA5wPbIUeTTUor65MAejurz2mUOZXEsWB
+	r9WCHF2ZM0eZQQndA9+NuKgsMvdQAauLNtHfQqbU5qQRoZy1C4Pq8ssiGWeioWmhcHtOhwkbHzB
+	UCYeAfHc5g8XlTx0xX0YI/oSTzIfxRtpmI9HlBbMraCqa+sR+TMPOKK0=
+X-Google-Smtp-Source: AGHT+IFPLvjoT1nCozSMVZ+82FBS4ca4DzmtsttPjqOJfzG/6nwVAEmMWDEs1IpVyod9cH6mpqA6VJA3nNIidyPjIoR/8n2wPf0e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v1 net-next 06/12] net: core: dev: Add
- dev_fill_bridge_path()
-To: Eric Woudstra <ericwouds@gmail.com>, "David S. Miller"
- <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Pablo Neira Ayuso <pablo@netfilter.org>,
- Jozsef Kadlecsik <kadlec@netfilter.org>, Roopa Prabhu <roopa@nvidia.com>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Jiri Pirko <jiri@resnulli.us>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Lorenzo Bianconi <lorenzo@kernel.org>,
- Frank Wunderlich <frank-w@public-files.de>,
- Daniel Golle <daniel@makrotopia.org>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
- bridge@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org
-References: <20241013185509.4430-1-ericwouds@gmail.com>
- <20241013185509.4430-7-ericwouds@gmail.com>
-Content-Language: en-US
-From: Nikolay Aleksandrov <razor@blackwall.org>
-In-Reply-To: <20241013185509.4430-7-ericwouds@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a92:ca4a:0:b0:3a0:4250:165f with SMTP id
+ e9e14a558f8ab-3a3b5c7389dmr79375795ab.0.1728889202945; Mon, 14 Oct 2024
+ 00:00:02 -0700 (PDT)
+Date: Mon, 14 Oct 2024 00:00:02 -0700
+In-Reply-To: <658bf0ce-9565-4b47-9043-a853374a74fa@suse.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <670cc172.050a0220.3e960.0058.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] kernel BUG in ocfs2_read_virt_blocks
+From: syzbot <syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com>
+To: eadavis@qq.com, heming.zhao@suse.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	ocfs2-devel@lists.linux.dev, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 13/10/2024 21:55, Eric Woudstra wrote:
-> New function dev_fill_bridge_path(), similar to dev_fill_forward_path().
-> It handles starting from a bridge port instead of the bridge master.
-> The structures ctx and nft_forward_info need to be already filled in with
-> the (vlan) encaps.
-> 
-> Signed-off-by: Eric Woudstra <ericwouds@gmail.com>
-> ---
->  include/linux/netdevice.h |  2 +
->  net/core/dev.c            | 77 ++++++++++++++++++++++++++++++++-------
->  2 files changed, 66 insertions(+), 13 deletions(-)
-> 
-> diff --git a/include/linux/netdevice.h b/include/linux/netdevice.h
-> index e87b5e488325..9d80f650345e 100644
-> --- a/include/linux/netdevice.h
-> +++ b/include/linux/netdevice.h
-> @@ -3069,6 +3069,8 @@ void dev_remove_offload(struct packet_offload *po);
->  
->  int dev_get_iflink(const struct net_device *dev);
->  int dev_fill_metadata_dst(struct net_device *dev, struct sk_buff *skb);
-> +int dev_fill_bridge_path(struct net_device_path_ctx *ctx,
-> +			 struct net_device_path_stack *stack);
->  int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
->  			  struct net_device_path_stack *stack);
->  struct net_device *__dev_get_by_flags(struct net *net, unsigned short flags,
-> diff --git a/net/core/dev.c b/net/core/dev.c
-> index cd479f5f22f6..49959c4904fc 100644
-> --- a/net/core/dev.c
-> +++ b/net/core/dev.c
-> @@ -713,44 +713,95 @@ static struct net_device_path *dev_fwd_path(struct net_device_path_stack *stack)
->  	return &stack->path[k];
->  }
->  
-> -int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
-> -			  struct net_device_path_stack *stack)
-> +static int dev_fill_forward_path_common(struct net_device_path_ctx *ctx,
-> +					struct net_device_path_stack *stack)
->  {
->  	const struct net_device *last_dev;
-> -	struct net_device_path_ctx ctx = {
-> -		.dev	= dev,
-> -	};
->  	struct net_device_path *path;
->  	int ret = 0;
->  
-> -	memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
-> -	stack->num_paths = 0;
-> -	while (ctx.dev && ctx.dev->netdev_ops->ndo_fill_forward_path) {
-> -		last_dev = ctx.dev;
-> +	while (ctx->dev && ctx->dev->netdev_ops->ndo_fill_forward_path) {
-> +		last_dev = ctx->dev;
->  		path = dev_fwd_path(stack);
->  		if (!path)
->  			return -1;
->  
->  		memset(path, 0, sizeof(struct net_device_path));
-> -		ret = ctx.dev->netdev_ops->ndo_fill_forward_path(&ctx, path);
-> +		ret = ctx->dev->netdev_ops->ndo_fill_forward_path(ctx, path);
->  		if (ret < 0)
->  			return -1;
->  
-> -		if (WARN_ON_ONCE(last_dev == ctx.dev))
-> +		if (WARN_ON_ONCE(last_dev == ctx->dev))
->  			return -1;
->  	}
->  
-> -	if (!ctx.dev)
-> +	if (!ctx->dev)
->  		return ret;
->  
->  	path = dev_fwd_path(stack);
->  	if (!path)
->  		return -1;
->  	path->type = DEV_PATH_ETHERNET;
-> -	path->dev = ctx.dev;
-> +	path->dev = ctx->dev;
-> +
-> +	return ret;
-> +}
-> +
-> +int dev_fill_bridge_path(struct net_device_path_ctx *ctx,
-> +			 struct net_device_path_stack *stack)
-> +{
-> +	const struct net_device *last_dev, *br_dev;
-> +	struct net_device_path *path;
-> +	int ret = 0;
-> +
-> +	stack->num_paths = 0;
-> +
-> +	if (!ctx->dev || !netif_is_bridge_port(ctx->dev))
-> +		return -1;
-> +
-> +	br_dev = netdev_master_upper_dev_get_rcu((struct net_device *)ctx->dev);
-> +	if (!br_dev || !br_dev->netdev_ops->ndo_fill_forward_path)
-> +		return -1;
-> +
-> +	last_dev = ctx->dev;
-> +	path = dev_fwd_path(stack);
-> +	if (!path)
-> +		return -1;
-> +
-> +	memset(path, 0, sizeof(struct net_device_path));
-> +	ret = br_dev->netdev_ops->ndo_fill_forward_path(ctx, path);
-> +	if (ret < 0)
-> +		return -1;
-> +
-> +	if (!ctx->dev || WARN_ON_ONCE(last_dev == ctx->dev))
-> +		return -1;
-> +
-> +	if (!netif_is_bridge_master(ctx->dev))
+Hello,
 
-hmm, do we expect ctx->dev to be a bridge master? Looking at
-br_fill_forward_path, it seems to be == fdb->dst->dev which
-should be the target port
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> +		return dev_fill_forward_path_common(ctx, stack);
-> +
-> +	path = dev_fwd_path(stack);
-> +	if (!path)
-> +		return -1;
-> +	path->type = DEV_PATH_ETHERNET;
-> +	path->dev = ctx->dev;
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(dev_fill_bridge_path);
-> +
-> +int dev_fill_forward_path(const struct net_device *dev, const u8 *daddr,
-> +			  struct net_device_path_stack *stack)
-> +{
-> +	struct net_device_path_ctx ctx = {
-> +		.dev	= dev,
-> +	};
-> +
-> +	memcpy(ctx.daddr, daddr, sizeof(ctx.daddr));
-> +
-> +	stack->num_paths = 0;
-> +
-> +	return dev_fill_forward_path_common(&ctx, stack);
-> +}
->  EXPORT_SYMBOL_GPL(dev_fill_forward_path);
->  
->  /**
+Reported-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
+Tested-by: syzbot+797d4829dafe3f11dce7@syzkaller.appspotmail.com
 
+Tested on:
+
+commit:         6485cf5e Merge tag 'hid-for-linus-2024101301' of git:/..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=17169440580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=164d2822debd8b0d
+dashboard link: https://syzkaller.appspot.com/bug?extid=797d4829dafe3f11dce7
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12e20030580000
+
+Note: testing is done by a robot and is best-effort only.
 
