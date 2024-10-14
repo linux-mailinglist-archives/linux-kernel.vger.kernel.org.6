@@ -1,203 +1,180 @@
-Return-Path: <linux-kernel+bounces-364754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7402B99D8DF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:16:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B58C99D8E4
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 23:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3281C282064
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:16:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AFF1281AAC
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 21:17:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC1A71D0F5D;
-	Mon, 14 Oct 2024 21:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2106156F44;
+	Mon, 14 Oct 2024 21:17:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BVgp73N3"
-Received: from mail-ot1-f45.google.com (mail-ot1-f45.google.com [209.85.210.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VNDBMS6n"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E8194683
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:16:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930E814B965
+	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 21:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728940598; cv=none; b=PnW7T1dmWb2b+zoMkg2Hoylm78NNFznzYVm2B4a+6wNOMVaqq2ecuZYZ3oTB+3tZuH1+UC8c0PSNnZaOwl2zttRyWqFA/1Jwnz5BD/J6U+p6hltMylGBRZ24Yb0AVqQgJlq1wGfD03DwQLQE0pW2ZRiBiJ81boHXuXuk3J0yia0=
+	t=1728940626; cv=none; b=ADN8jCRG+xdazhr172bLLaDKSQOXwKTTRGBxQrINZzH2oA0n/uc4VWs098ABA5Bc9NiPj/oSelemtMqJQpP3g/qFgphXjpiqSyG5+H8kRpEm3ITVoLB5FhMWyFmO9UAp/fx0h3iK6XBMrPN1cEXSFa3oRvjXcMOZHKsRJEvwEqI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728940598; c=relaxed/simple;
-	bh=f6easdfqrPfEnPDvs3ECRq5IhG9j+NYiwlv/FKvt+YM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fU6IzYtxtu9kMm3YwbPYXOaFdmETdN9WufA8KreVAQp1rEkBMM/GrzF0PcxydBEIptErEsEngOJ+tJ5Lj5l9y9XuyLJQoa+gdHOb2cM0hQRoLDOaJM+bQ652majrXk0qVG04s39iHzACcK9oGPYDmZ/fRHfNQKbBM5ecB3zj7vY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BVgp73N3; arc=none smtp.client-ip=209.85.210.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f45.google.com with SMTP id 46e09a7af769-717d524a382so998709a34.0
-        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:16:36 -0700 (PDT)
+	s=arc-20240116; t=1728940626; c=relaxed/simple;
+	bh=ZI3U8sCOJ726YZ30gGwRvvoQ5UXBS01WMq3brNnRKuk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LIzWSa+twU3OJHVTAqmGHslfblIao++1+DY2I7kaLOVT9z+Y0CkWFyp6c5G0Mx4c+Uht48NswCOY0eA0k+BvORumwc2/Wk3JvtOykX8sTmBeZ5mjXOLsidCSs6EcXcKjstMoJhwycC83Z0H7yIwfBoB8f5fz2n159txvwXwcAbU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VNDBMS6n; arc=none smtp.client-ip=209.85.160.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4601a471aecso501791cf.1
+        for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 14:17:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1728940596; x=1729545396; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5m42CC3PapBhKGzBxcu9Dx95Q+EHToydn7yFpDgci+4=;
-        b=BVgp73N3JhsY3zDeNUdWwZPiOrS4RlX18Je1MYy5jqCj9pPsjAq7nBS2HF6W5tgjIZ
-         exy8N7WFYyAn3DFT2hQR9ycEiKmUC8+06tr6bIFg0Y/JciLPlOYrLtu+orWqlRiyK8qb
-         ETevDmCnWAJPkvGH4ccbRdZLKUF4OHb23p9CIl0rixKbTlrAknvTPUtHlKcdKv2LWLaf
-         uYXJqMqszza1+YkX4tyemkZUyUwUvL6xKBzG/Qtx+L+vpHg2ZbPZendT5UpCjsM7Ro3S
-         Jd+XSvOhJu33EGBo/ICFbuNiVSR9Vg8k9JlHni1gJahSjasfTNqKYlN0hNUH9Rcvengo
-         PY4A==
+        d=google.com; s=20230601; t=1728940623; x=1729545423; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rHb7NtoAh9gjfT6eZG97rGp2AF3tFOHSjIj6ouJz5Jk=;
+        b=VNDBMS6nJtQsXHg1tmol9WWSGlyG+8HKOyLI3+5ffjrN0BuVhvNyw8W57qRjsgDuie
+         8W6vjW23IftYn7I8a8LzjOa/akFZTBugmgNeGM1Jn6lEoxG1Fe9ATRBiVF1nOQgYIuzw
+         3Dea06z1BLeZFjjMzm2ie1veuhaCx1tvfweUzK0Ww6auubTgSDYvE28zjfsZod/8WeWh
+         2i0KOk8cm9ov3KEJlsTEgIWJHhXJ7ev35dB1HQZpNUx6ixf4ZCLQKpm9m9v2CEGQEyYK
+         VgFD70ezaM4HV5lFjJ6mZtdeU47CQZ+ZG3AzdlL2Qtp3x/WSZJXQtkwwE/3Z9aZI6GNu
+         +7eA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1728940596; x=1729545396;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5m42CC3PapBhKGzBxcu9Dx95Q+EHToydn7yFpDgci+4=;
-        b=LGabm3TzDPMtX92n8MSpvbPvKe+CZEYVfg7P+Bogpj8azhv5pUs/by2+Gc16ItvDLC
-         NQ2i5lsTMslq0T9QTp6//hxxwrwR0R9uuL9TiP/Teq5gnjxsdkU5InRo9ryvyU2uHCFT
-         jw5GxmiajgB6xrc9wyHwRB+jAM13fYRbzkx5Tc9lPN1kwy/+OWmxd4cYdSpOpXbCN6b6
-         gfnB1HvSmiEQzJxXancM0Sb+tfL41v40UD+tLewcg79ZcAyaeI3yNGyPPJO40+GemR5X
-         L6CzdmS4IizJnmo3rOtreASZiyoMGt2iCs9bNFBUiL9ohMmHrB6oCKHediXUtYhz8i/Y
-         6wvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWLR1lrzWBvGoQmflzt+0KvVvyPwLzAm0YBCUjEX36felkQzVFTiAQkshNg45zzSpTw0bjqt8wwDXSU5k4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyW+Dnvz4CpDkiGHJh8jbOvPNw8VAg37RaTDmUtPJRfNVf/jteY
-	F9IZVo4Kx//7NSJ02eONaj9ANsBE8lr2a6jaY2kvSQ2mtnXpPAIExKbo8pa3hL8=
-X-Google-Smtp-Source: AGHT+IGlm/3GJ8ER5//2iW0FSaOd66EDmjQR0gqPzN7pR3wtTGkaRxx6MGDI0EyDKiUa5FigTQ6cQw==
-X-Received: by 2002:a05:6830:7102:b0:70d:f448:575c with SMTP id 46e09a7af769-717df28464bmr6785039a34.7.1728940595838;
-        Mon, 14 Oct 2024 14:16:35 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-717d0005fbcsm2120967a34.50.2024.10.14.14.16.34
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 14 Oct 2024 14:16:35 -0700 (PDT)
-Message-ID: <022be235-f028-4b6e-9589-b0066df5d459@baylibre.com>
-Date: Mon, 14 Oct 2024 16:16:34 -0500
+        d=1e100.net; s=20230601; t=1728940623; x=1729545423;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=rHb7NtoAh9gjfT6eZG97rGp2AF3tFOHSjIj6ouJz5Jk=;
+        b=hFHnIY5NktHDy8LiwDGnM5KSQihOVucc/UvcbhKFikNTZK+dTeaFnGJGQiRjqGwR5R
+         CZLJiESCloncEJkk7g8BEkHEFd00/PGdoRV4s9GOHsBLqjTXdga5KryKfHfLxF86WWNE
+         P/xx/f6nOgc6ydH/2ZpOhctom90GrJSQ6k8nBpfthzalF+OGM++a0FE3B6SFS1AmC/SP
+         V+/EBUr0MOOLraeBwuFtB/QAAe6ggoZlJWP394iNG0H16gCowo8wv/Tja/aGPpgBdnZj
+         +A8PO3n5RN51Pi/gZfPcZrjNnq5qY/NCeOfDKzMsBazoIQg7Zk3CzZJOum2ba0AiACTE
+         bn0Q==
+X-Gm-Message-State: AOJu0YwXk1XM5cJ3+QOCQekd/9xAyMy58b7qIRDOxiY7nCsULEGUL1u9
+	M6UJfSpBsRFKD80JVdiJOqS8YaqR/q1/qHMAyDFwEIQvRIMdwORoM+nRzQ9Rye9oGJpmxxKLrQm
+	qQa8l9sPgi2rhcyJg1yNTvnBFGDt4wS93a0kg
+X-Google-Smtp-Source: AGHT+IG1b7oU0kZLAEWD5hgOJFQGchfVhmH4qbX+aT93IIjRDuRwkmmDWWwjoBxrsP4yYyMAPebwXvZWRqMK+tLF+yE=
+X-Received: by 2002:a05:622a:7d0b:b0:45e:fea6:a3b1 with SMTP id
+ d75a77b69052e-46059c78199mr5347011cf.19.1728940623190; Mon, 14 Oct 2024
+ 14:17:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 8/8] iio: dac: adi-axi-dac: add registering of child
- fdt node
-To: Angelo Dureghello <adureghello@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>
-Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-References: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-0-eeef0c1e0e56@baylibre.com>
- <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-8-eeef0c1e0e56@baylibre.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <20241014-wip-bl-ad3552r-axi-v0-iio-testing-v6-8-eeef0c1e0e56@baylibre.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241014125703.2287936-4-ardb+git@google.com> <20241014125703.2287936-5-ardb+git@google.com>
+In-Reply-To: <20241014125703.2287936-5-ardb+git@google.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Mon, 14 Oct 2024 14:16:52 -0700
+Message-ID: <CAJuCfpGXBH0FQppLppSkCLeRwCJsAGUMWL6F+G1TdqU4d=q4og@mail.gmail.com>
+Subject: Re: [PATCH 1/2] codetag: Use dot prefix for section name
+To: Ard Biesheuvel <ardb+git@google.com>
+Cc: linux-kernel@vger.kernel.org, Ard Biesheuvel <ardb@kernel.org>, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Kent Overstreet <kent.overstreet@linux.dev>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kbuild@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/14/24 5:08 AM, Angelo Dureghello wrote:
-> From: Angelo Dureghello <adureghello@baylibre.com>
-> 
-> Change to obtain the fdt use case as reported in the
-> adi,ad3552r.yaml file in this patchset.
-> 
-> The DAC device is defined as a child node of the backend.
-> Registering the child fdt node as a platform devices.
-> 
-> Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+On Mon, Oct 14, 2024 at 5:57=E2=80=AFAM Ard Biesheuvel <ardb+git@google.com=
+> wrote:
+>
+> From: Ard Biesheuvel <ardb@kernel.org>
+>
+> Sections typically use leading dots in their names, and deviating from
+> this breaks some assumptions in the existing code, e.g., in strip_relocs
+> on x86, which filters out .rela.* and .rela__* sections.
+>
+>   [65] alloc_tags        PROGBITS         0000000000000000  03a57958
+>        0000000000026340  0000000000000000  WA       0     0     8
+>   [66] .relaalloc_tags   RELA             0000000000000000  08dbb868
+>        0000000000044c40  0000000000000018   I      280    65     8
+>
+> So use a leading dot for the alloc_tags sections.
+
+No issues with renaming the section but please note that I posted a
+patch [1] today that will have conflicts with this renaming.
+
+[1] https://lore.kernel.org/all/20241014203646.1952505-3-surenb@google.com/
+
+>
+> Signed-off-by: Ard Biesheuvel <ardb@kernel.org>
 > ---
->  drivers/iio/dac/adi-axi-dac.c | 53 +++++++++++++++++++++++++++++++++++++++++++
->  1 file changed, 53 insertions(+)
-> 
-> diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
-> index b887c6343f96..f85e3138d428 100644
-> --- a/drivers/iio/dac/adi-axi-dac.c
-> +++ b/drivers/iio/dac/adi-axi-dac.c
-> @@ -29,6 +29,8 @@
->  #include <linux/iio/buffer.h>
->  #include <linux/iio/iio.h>
->  
-> +#include "ad3552r-hs.h"
-> +
->  /*
->   * Register definitions:
->   *   https://wiki.analog.com/resources/fpga/docs/axi_dac_ip#register_map
-> @@ -738,6 +740,39 @@ static int axi_dac_bus_reg_read(struct iio_backend *back, u32 reg, u32 *val,
->  	return regmap_read(st->regmap, AXI_DAC_CUSTOM_RD_REG, val);
->  }
->  
-> +static void axi_dac_child_remove(void *data)
-> +{
-> +	struct platform_device *pdev = data;
-> +
-> +	platform_device_unregister(pdev);
-> +}
-> +
-> +static int axi_dac_create_platform_device(struct axi_dac_state *st,
-> +					  struct fwnode_handle *child)
-> +{
-> +	struct ad3552r_hs_platform_data pdata = {
-> +		.bus_reg_read = axi_dac_bus_reg_read,
-> +		.bus_reg_write = axi_dac_bus_reg_write,
-> +	};
-> +	struct platform_device_info pi = {
-> +		.parent = st->dev,
-> +		.name = fwnode_get_name(child),
-> +		.id = PLATFORM_DEVID_AUTO,
-> +		.fwnode = child,
-> +		.data = &pdata,
-> +		.size_data = sizeof(pdata),
-> +	};
-> +	struct platform_device *pdev;
-> +
-> +	pdev = platform_device_register_full(&pi);
-> +	if (IS_ERR(pdev))
-> +		return PTR_ERR(pdev);
-> +
-> +	device_set_node(&pdev->dev, child);
+>  include/asm-generic/codetag.lds.h | 2 +-
+>  include/linux/alloc_tag.h         | 4 ++--
+>  2 files changed, 3 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/asm-generic/codetag.lds.h b/include/asm-generic/code=
+tag.lds.h
+> index 64f536b80380..dcd18351ba2f 100644
+> --- a/include/asm-generic/codetag.lds.h
+> +++ b/include/asm-generic/codetag.lds.h
+> @@ -5,7 +5,7 @@
+>  #define SECTION_WITH_BOUNDARIES(_name) \
+>         . =3D ALIGN(8);                   \
+>         __start_##_name =3D .;            \
+> -       KEEP(*(_name))                  \
+> +       KEEP(*(. ## _name))             \
+>         __stop_##_name =3D .;
 
-Not sure why Nuno suggested adding device_set_node(). It is
-redundant since platform_device_register_full() already does
-the same thing.
+I think leaving the SECTION_WITH_BOUNDARIES() definition as is and
+changing its users to pass the name with the dot would be more
+explicit and more flexible.
+The only user today is CODETAG_SECTIONS() at [2], so I would add the
+dot in there instead.
 
-(And setting it after platform_device_register_full() would
-be too late anyway since drivers may have already probed.)
+[2] https://elixir.bootlin.com/linux/v6.12-rc2/source/include/asm-generic/c=
+odetag.lds.h#L12
 
-> +
-> +	return devm_add_action_or_reset(st->dev, axi_dac_child_remove, pdev);
-> +}
-> +
->  static const struct iio_backend_ops axi_dac_generic_ops = {
->  	.enable = axi_dac_enable,
->  	.disable = axi_dac_disable,
-> @@ -874,6 +909,24 @@ static int axi_dac_probe(struct platform_device *pdev)
->  		return dev_err_probe(&pdev->dev, ret,
->  				     "failed to register iio backend\n");
->  
-> +	device_for_each_child_node_scoped(&pdev->dev, child) {
-> +		int val;
-> +
-> +		/* Processing only reg 0 node */
-> +		ret = fwnode_property_read_u32(child, "reg", &val);
-> +		if (ret)
-> +			return dev_err_probe(&pdev->dev, ret,
-> +						"child node missing.");
+Thanks,
+Suren.
 
-Shouldn't the error message say that there is a problem with the reg
-property? We already have a handle to the child node, so the child node
-isn't missing.
-
-> +		if (val != 0)
-> +			return dev_err_probe(&pdev->dev, -EINVAL,
-> +						"invalid node address.");
-> +
-> +		ret = axi_dac_create_platform_device(st, child);
-> +		if (ret)
-> +			return dev_err_probe(&pdev->dev, -EINVAL,
-> +						"could not create device.");
-> +	}
-> +
->  	dev_info(&pdev->dev, "AXI DAC IP core (%d.%.2d.%c) probed\n",
->  		 ADI_AXI_PCORE_VER_MAJOR(ver),
->  		 ADI_AXI_PCORE_VER_MINOR(ver),
-> 
-
+>
+>  #define CODETAG_SECTIONS()             \
+> diff --git a/include/linux/alloc_tag.h b/include/linux/alloc_tag.h
+> index 1f0a9ff23a2c..d45a8a582970 100644
+> --- a/include/linux/alloc_tag.h
+> +++ b/include/linux/alloc_tag.h
+> @@ -76,7 +76,7 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_allo=
+c_tag);
+>
+>  #define DEFINE_ALLOC_TAG(_alloc_tag)                                    =
+       \
+>         static struct alloc_tag _alloc_tag __used __aligned(8)           =
+       \
+> -       __section("alloc_tags") =3D {                                    =
+         \
+> +       __section(".alloc_tags") =3D {                                   =
+         \
+>                 .ct =3D CODE_TAG_INIT,                                   =
+         \
+>                 .counters =3D &_shared_alloc_tag };
+>
+> @@ -85,7 +85,7 @@ DECLARE_PER_CPU(struct alloc_tag_counters, _shared_allo=
+c_tag);
+>  #define DEFINE_ALLOC_TAG(_alloc_tag)                                    =
+       \
+>         static DEFINE_PER_CPU(struct alloc_tag_counters, _alloc_tag_cntr)=
+;      \
+>         static struct alloc_tag _alloc_tag __used __aligned(8)           =
+       \
+> -       __section("alloc_tags") =3D {                                    =
+         \
+> +       __section(".alloc_tags") =3D {                                   =
+         \
+>                 .ct =3D CODE_TAG_INIT,                                   =
+         \
+>                 .counters =3D &_alloc_tag_cntr };
+>
+> --
+> 2.47.0.rc1.288.g06298d1525-goog
+>
 
