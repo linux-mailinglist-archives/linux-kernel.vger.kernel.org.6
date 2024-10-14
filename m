@@ -1,202 +1,191 @@
-Return-Path: <linux-kernel+bounces-363672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-363675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D839C99C57A
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DD7EA99C583
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 11:23:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 65C481F23CDF
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:23:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B3DA1F23C6F
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 09:23:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5437C156C71;
-	Mon, 14 Oct 2024 09:21:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0526C16F288;
+	Mon, 14 Oct 2024 09:22:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="RnPu2CZJ"
-Received: from out-187.mta0.migadu.com (out-187.mta0.migadu.com [91.218.175.187])
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="tc7rJU4P"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05olkn2084.outbound.protection.outlook.com [40.92.90.84])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29D8E149011
-	for <linux-kernel@vger.kernel.org>; Mon, 14 Oct 2024 09:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.187
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728897685; cv=none; b=utg5zszIeDfyH6a9chR9v5WZAetl9WmSPFIexTuuO1IWb6P/fCNJLzQvkocM+sGjkU7tM5qjQbRhMag188mF1fLiM5gIzTc7n4HXE6HMb90uXJT2JJN3EAvwxeBPkrxHeYxAQQur1wU10kCt4FrmEqxT+Et9qetUwquJPIv/pcM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728897685; c=relaxed/simple;
-	bh=WbdRHsABvw9rRtX0jHr8qhzyc9rMEgmKP9p0cpEXH0Q=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=HlEDrWIS0sDo9YTkAHHJ9p1M7Rsi1dNg7LCNUf38D8KLAK8WmZZICce/olVhudF5ntq3FMwv2kXjIK6bYgMxKswR94TRFQQj3DRNfBfPLyvmbH5+AiJrl2rmSSUPfIHcqeeJn0WDRrUPhHjDjIhFyvfkDGQ9lQZUG9Codp7BNzE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=RnPu2CZJ; arc=none smtp.client-ip=91.218.175.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Content-Type: text/plain;
-	charset=us-ascii
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1728897680;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rDLvmbpwBfA3AyjgpvHbE9AIuFgUDlphGRxMHgOTuB0=;
-	b=RnPu2CZJK1y9rgidOoDUE41DYexoIQHwu1m4rL2edEVGUlvaLF1jS/vVvSgnzkRjd/LFNo
-	F/C2rCh6h5bp8no4vRbgzRcgm9cKqyXcUXyxuEpl+g7TxlL8zRDPaXKXwCNM1MTrWC+DIz
-	nqsaas5VhiDqO3d/X19wvqSlTaaejck=
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5183D15B546;
+	Mon, 14 Oct 2024 09:22:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.92.90.84
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1728897730; cv=fail; b=YAlkcd5YqJWvpFX9E1hftx6piORJP2trfOQ914i052nddAF4xxJhmAbDXEKKKhmGS9Cr9V3aFZK8DHVyl/cTD4StxZGvWG0AUK7T76ORNzPo8FYPREE0MDOqfEJ0wY//ahdUPY4uQNt8F9pLW3/5lNbPdrnrGIMROAHUkbgIrZw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1728897730; c=relaxed/simple;
+	bh=9ulxQdit+rGXl48oOMSNU2e2NGLx2VdX5OtigzaV0Mg=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=rqFDsFSeO11mFQc9dn7uwrFHl9awu/iqQDeICq4iNjYHBmxKN8R8YhNjik+r9EZc3flxcc7FuNUVnb50TdFXv5ZxtYyG6HsSJqSgAGFyW0F1sC++lDAXsRjQTNPQaoqxDFCVDS0qmVOYZr9scjyudSwDR5p12VA1WRoBj4ZAFEI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=tc7rJU4P; arc=fail smtp.client-ip=40.92.90.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Ok9Z69uEpvftni1IXcZ2o0CnAo+vP4eLJnfQ3E4Rw4w2BotgRBb/sEuSwyQ1Qes6TKEYHK68eSpYb3khWiz7O6toza2Imm5zuge+fgF3aEQa9GNwdQVNIizOVB3MroetcIDLiNHVS3sAQMs4/s1v4H9s+12vkEM5j4sX3TquGHLM1kVMIpSMWzyxSykNtK187U/dAEeAGxUFadhROnkFcki3D1nUebDIueGb0hVBMj+mvayKRpAOCbnm42bpVVQGJhEBUlfBvKMxL7VHNsPZggNC8vO+v8UJwxzDgm5ryRNd3cgBlKBgMxlWX1BeQVuOzrpeeiEIs4faHvcPBEjagQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=VRSsGNcek8SbuhFMieVURqPmtndJRkbAiZjce3o2z6k=;
+ b=cZwKF5Ozb6G2xAlXOaI2mNt6FfmZuiQCWt81f4yWSZZA659bQPeY88pPVkSMaXuSZIx4mnQrBUhy0FF4nszmx+wtuMa7YP7y5knsl532MhgDqxpLT3ucP8YAfQBiXY+Ql4Si0iHTKk8Y4OMlVZYSa92IJ4k9r1vJL+cDetmZi8pESls8lYF0ToilIUBzkFR2LNV4f6zusjTGOpUuNOTXs3Mpqnx+eZaLJdEUTQntuV9OMZ9+ab2wbVEebN5C2rEKBX/8WRp9sZ0eQCMsSWrq4z09OaM4hc9nWCmvoTwZ0R10i4AfG5+M3XtUfXd54Z5klG16EU1W+0I6rgg/9Rm1rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=VRSsGNcek8SbuhFMieVURqPmtndJRkbAiZjce3o2z6k=;
+ b=tc7rJU4PorVPW0vMxEbWK/WStZ8MQ5aL/grOC5KlcxCeU0XmrmXKyUOZ8axJMsZuCiRPQPVFlXixadokvO7IgrFX/oaelw2QX2Mr84mjV1lJtevZ+pPtQeRREic2ylRGQJ6gTqcDdyCdPG4Gg7rijOcPh461ulyo+4sggAzBsR1K8XkAevoY3UbevU91atStZEp55AberZVt+Vgl30Zpp6JZtch+1tX7YNEzxKXZqQZRHFrndQNGdGpFOAj2gt+FeTOeALhkzIVFgtC+6/STBkRout0Ss4Pw0sadANZQiTyIVEMOO7ou7ZIl4bC667A9GK6VHw7j0+n0jg7LVOpKOQ==
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com (2603:10a6:20b:e4::10)
+ by AS8PR03MB6949.eurprd03.prod.outlook.com (2603:10a6:20b:293::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8048.26; Mon, 14 Oct
+ 2024 09:22:05 +0000
+Received: from AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7]) by AM6PR03MB5848.eurprd03.prod.outlook.com
+ ([fe80::4b97:bbdb:e0ac:6f7%4]) with mapi id 15.20.8048.017; Mon, 14 Oct 2024
+ 09:22:05 +0000
+From: Juntong Deng <juntong.deng@outlook.com>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	john.fastabend@gmail.com,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	memxor@gmail.com,
+	snorcht@gmail.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH bpf-next 1/2] bpf: Add bpf_task_from_vpid() kfunc
+Date: Mon, 14 Oct 2024 10:21:08 +0100
+Message-ID:
+ <AM6PR03MB5848E50DA58F79CDE65433C399442@AM6PR03MB5848.eurprd03.prod.outlook.com>
+X-Mailer: git-send-email 2.39.5
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: LO4P265CA0074.GBRP265.PROD.OUTLOOK.COM
+ (2603:10a6:600:2bd::13) To AM6PR03MB5848.eurprd03.prod.outlook.com
+ (2603:10a6:20b:e4::10)
+X-Microsoft-Original-Message-ID:
+ <20241014092108.15948-1-juntong.deng@outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3818.100.11.1.3\))
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Muchun Song <muchun.song@linux.dev>
-In-Reply-To: <1dc9acbd-351f-4755-8c56-d3d77aaccfb2@huawei.com>
-Date: Mon, 14 Oct 2024 17:20:34 +0800
-Cc: Anshuman Khandual <anshuman.khandual@arm.com>,
- Chen Ridong <chenridong@huaweicloud.com>,
- akpm@linux-foundation.org,
- david@fromorbit.com,
- zhengqi.arch@bytedance.com,
- roman.gushchin@linux.dev,
- linux-mm@kvack.org,
- linux-kernel@vger.kernel.org,
- wangweiyang2@huawei.com
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <F8EBBED0-6D7D-4A23-AC8C-3E395EA1BF12@linux.dev>
-References: <20241014032336.482088-1-chenridong@huaweicloud.com>
- <c34b962b-8b9a-41e5-a54e-364b826c5e2a@arm.com>
- <178A7AC8-0BDA-42CA-86B2-E1C13F3E1E8B@linux.dev>
- <1dc9acbd-351f-4755-8c56-d3d77aaccfb2@huawei.com>
-To: chenridong <chenridong@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+MIME-Version: 1.0
+X-MS-Exchange-MessageSentRepresentingType: 1
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM6PR03MB5848:EE_|AS8PR03MB6949:EE_
+X-MS-Office365-Filtering-Correlation-Id: b6c566bb-2a46-460e-1816-08dcec31ab15
+X-Microsoft-Antispam:
+	BCL:0;ARA:14566002|19110799003|5072599009|461199028|5062599005|8060799006|15080799006|3412199025|440099028;
+X-Microsoft-Antispam-Message-Info:
+	5A17Ez9hyJfntIy5ItYzJHFVGM3OeQuH0atADF5ciEmL8xsTHm4f8um5kVt8dpztjzCTiKEnri+kUKx9kuBlm0HSHVNRepfvy0jORQRq8SxQaBothLMJUMZMYKtAgZw6/lKznoQR+TpxRyrRfuTjhKdpCD9KVCIktnGBXfVUxMdWbe0XAEdsTQKXX1gPYCy7mEJuu1rbhCVQ3XxV5LOht0x1o38unDPtsapxVHbRy1ZdCGms9bsZUMAq36u6H5yI2MpnR233ZvRAaaW52eF4WAq799FYjbSqvbdRTq0LyP6JzoHUVBgI+es813lfK3QVBElA2yXHp08tKq6Md/JZVFGNAc+ULAgS8KzxOnRwkvP4EC7VraNUsCkq4IcDBZXMBYZz/i4KqGDRiKledKF+plTA1dz3q7gTv4reOBEEm0f9osCe+v9UlBP8kjmEJ6dR/bNp371AU8G0rI2SV5qTNW6XoL1TRWd1fBuFNqyywZ87oM1AMNqiZNQP67lY5kBxJURLdAoNuotZvwHIMM96qDcDzajtgla+EGQ6HTlbbwlEWip1os9opWjXD+tN2GCBfcnEbUFNGOUXfQt5CP3NIluNPxmv6jwqTMjMmK5upFn2662+QGyQ41C6bBtGaFc+UbjIQuo5btV3CcHLf2b0u4vshttOm0wZBugDEYvvhE3pFoF+UuqD4ZQyQ1OkVGq98KNaHPHEBTvZ0zFm0YjZqsWSjmZBrsEclGNQAOa6y2U=
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?hZSpOXfG+LkAyjUPMJ3vJgBYad5RJMdBqLaWilrCli2hetcaHRlzo4WLBC31?=
+ =?us-ascii?Q?kfr0Jzmxx7s0ytju9/klSuUwz5W71JIRfy30Pe04pYCzyC4HRs3v3fZVIDSU?=
+ =?us-ascii?Q?KYtDtJOdVIZPguFXP+/lYh/KbWoFJ7UHycBsYByVmloBwrfneP8FAlDYbJ2N?=
+ =?us-ascii?Q?Pz45DKc8eUaVV6U1IA5T3BJN3hkrSGhxQqbfyNaB2idg4FHBnabfPQ2/XG1Q?=
+ =?us-ascii?Q?91Yf8CbZgxQ9fIuRupd+HknDKcahp/QBHWyW/ArgXQzQrr/f4teNOUmycA6+?=
+ =?us-ascii?Q?NcrSbx5i7WwI5+rdqz3TF1y1Q075iLSnnmM5z8rk1ALPpP+6kRw8DnhrFSCu?=
+ =?us-ascii?Q?qBy1Cwuc3bsvGCjlJ1uKkA2omBiX1p8Sk+9O8aFWZysLuEoA6ygeyi5ryosO?=
+ =?us-ascii?Q?KOG2tUOFORiFn+VK5OhSnZ4GxfuQopQxk7K3Gk+tWuTXp8A2U0whqcs4rGUb?=
+ =?us-ascii?Q?h5QvZ2XZAA9gy6c7LtA6+k7bon85jkEsDu5wkOl9+Vl0c4e6C4Gb9NxBUD30?=
+ =?us-ascii?Q?LS3JzdMKyJVy+NXLuXTFnL4WyJtf/YKZNniCasI6puVaWMFuLxCa0J4aCVqD?=
+ =?us-ascii?Q?GbC4LGQGPSmxb3t2rXZoyZxncfiPhi0IDgLHR4q7exm/jAx1mq3mTMxJZQEo?=
+ =?us-ascii?Q?b5ymFhcYOjOb3rWM4h/rLF7REo22uqekBG7gku5ZS59NqXSeq1C342ZEU8da?=
+ =?us-ascii?Q?WDvgjBNog0kqbMcipq6xmaXcY+ML1Pc4WYHG6CR5p8j2IaPO3Pylvc3E65+h?=
+ =?us-ascii?Q?voZokSJ5kSLiMJOkcX2i1kuoaIfs9nub77meyneAq07z3NX/F0hzcMtWVzSk?=
+ =?us-ascii?Q?qhVeUf2U7MKaCkNrYIL4cCUuBVpbIbZxgeS9WArP88QjrNL3acMCMi6qmQf+?=
+ =?us-ascii?Q?6abbHPamcJN48gyHfjW4lN9U8lK/DoOLBS6L96t7TmZ2Dqe/F6PiHM/eSxxT?=
+ =?us-ascii?Q?uhQGmwoCNMeGJiyZfcXEiSLdS5aANf2UNUh6JolYERc/pRXleRygAX+OSJL3?=
+ =?us-ascii?Q?8iKGLqH1Obl4Lrw0RxSjfiG2iHG8KrPkIPIQhxLReA0v87FaZPs6TGGHZKBR?=
+ =?us-ascii?Q?JCEp+g9QzziiH9kc/Oif6tlljfeXeNpuntiWj3ON/PTNKoAZ+plT4CON+Ky0?=
+ =?us-ascii?Q?GqLLaqKAvZkwS0VbegPVvs7aeGYf0vuqmZXmCcjlT12t+r7DtjGmyPMSuCsq?=
+ =?us-ascii?Q?ihOl67r1dLTTZOvxFTT10jTsXItup1JKvHeQCoDdgco+j6GpW+K4c/pmeM8w?=
+ =?us-ascii?Q?ykbeRO8iBD0Ui+BUioBl?=
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b6c566bb-2a46-460e-1816-08dcec31ab15
+X-MS-Exchange-CrossTenant-AuthSource: AM6PR03MB5848.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 14 Oct 2024 09:22:05.0251
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg:
+	00000000-0000-0000-0000-000000000000
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR03MB6949
 
+bpf_task_from_pid() that currently exists looks up the
+struct task_struct corresponding to the pid in the root pid
+namespace (init_pid_ns).
 
+This patch adds bpf_task_from_vpid() which looks up the
+struct task_struct corresponding to vpid in the pid namespace
+of the current process.
 
-> On Oct 14, 2024, at 17:04, chenridong <chenridong@huawei.com> wrote:
->=20
->=20
->=20
-> On 2024/10/14 16:43, Muchun Song wrote:
->>> On Oct 14, 2024, at 16:13, Anshuman Khandual =
-<anshuman.khandual@arm.com> wrote:
->>>=20
->>>=20
->>>=20
->>> On 10/14/24 08:53, Chen Ridong wrote:
->>>> From: Chen Ridong <chenridong@huawei.com>
->>>>=20
->>>> A memleak was found as bellow:
->>>>=20
->>>> unreferenced object 0xffff8881010d2a80 (size 32):
->>>>  comm "mkdir", pid 1559, jiffies 4294932666
->>>>  hex dump (first 32 bytes):
->>>>    00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  =
-................
->>>>    40 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00  =
-@...............
->>>>  backtrace (crc 2e7ef6fa):
->>>>    [<ffffffff81372754>] __kmalloc_node_noprof+0x394/0x470
->>>>    [<ffffffff813024ab>] alloc_shrinker_info+0x7b/0x1a0
->>>>    [<ffffffff813b526a>] mem_cgroup_css_online+0x11a/0x3b0
->>>>    [<ffffffff81198dd9>] online_css+0x29/0xa0
->>>>    [<ffffffff811a243d>] cgroup_apply_control_enable+0x20d/0x360
->>>>    [<ffffffff811a5728>] cgroup_mkdir+0x168/0x5f0
->>>>    [<ffffffff8148543e>] kernfs_iop_mkdir+0x5e/0x90
->>>>    [<ffffffff813dbb24>] vfs_mkdir+0x144/0x220
->>>>    [<ffffffff813e1c97>] do_mkdirat+0x87/0x130
->>>>    [<ffffffff813e1de9>] __x64_sys_mkdir+0x49/0x70
->>>>    [<ffffffff81f8c928>] do_syscall_64+0x68/0x140
->>>>    [<ffffffff8200012f>] entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>>>=20
->>>> In the alloc_shrinker_info function, when shrinker_unit_alloc =
-return
->>>> err, the info won't be freed. Just fix it.
->>>>=20
->>>> Fixes: 307bececcd12 ("mm: shrinker: add a secondary array for =
-shrinker_info::{map, nr_deferred}")
->>>> Signed-off-by: Chen Ridong <chenridong@huawei.com>
->>>> ---
->>>> mm/shrinker.c | 1 +
->>>> 1 file changed, 1 insertion(+)
->>>>=20
->>>> diff --git a/mm/shrinker.c b/mm/shrinker.c
->>>> index dc5d2a6fcfc4..92270413190d 100644
->>>> --- a/mm/shrinker.c
->>>> +++ b/mm/shrinker.c
->>>> @@ -97,6 +97,7 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>>>=20
->>>> err:
->>>> mutex_unlock(&shrinker_mutex);
->>>> + kvfree(info);
->>>> free_shrinker_info(memcg);
->>>> return -ENOMEM;
->>>> }
->>>=20
->>> There are two scenarios when "goto err:" gets called
->>>=20
->>> - When shrinker_info allocations fails, no kvfree() is required
->>> - but after this change kvfree() would be called even
->>>  when the allocation had failed originally, which does
->>>    not sound right
->> Yes. In this case, @info is NULL and kvfree could handle NULL.
->> It seems strange but the final behaviour correct.
->>>=20
->>> - shrinker_unit_alloc() fails, kvfree() is actually required
->>>=20
->>> I guess kvfree() should be called just after shrinker_unit_alloc()
->>> fails but before calling into "goto err".
->> We could do it like this, which avoids ambiguity (if someone ignores
->> that kvfree could handle NULL). Something like:
->> --- a/mm/shrinker.c
->> +++ b/mm/shrinker.c
->> @@ -88,13 +88,14 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->>                         goto err;
->>                 info->map_nr_max =3D shrinker_nr_max;
->>                 if (shrinker_unit_alloc(info, NULL, nid))
->> -                       goto err;
->> +                       goto free;
->>                 =
-rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->>         }
->>         mutex_unlock(&shrinker_mutex);
->>         return ret;
->> -
->> +free:
->> +       kvfree(info);
->>  err:
->>         mutex_unlock(&shrinker_mutex);
->>         free_shrinker_info(memcg);
->> Thanks.
->>>=20
->>> But curious, should not both kvzalloc_node()/kvfree() be avoided
->>> while inside mutex lock to avoid possible lockdep issues ?
-> How about:
->=20
-> diff --git a/mm/shrinker.c b/mm/shrinker.c
-> index dc5d2a6fcfc4..7baee7f00497 100644
-> --- a/mm/shrinker.c
-> +++ b/mm/shrinker.c
-> @@ -87,9 +87,9 @@ int alloc_shrinker_info(struct mem_cgroup *memcg)
->                 if (!info)
->                         goto err;
->                 info->map_nr_max =3D shrinker_nr_max;
-> +               =
-rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->                 if (shrinker_unit_alloc(info, NULL, nid))
->                         goto err;
-> -               =
-rcu_assign_pointer(memcg->nodeinfo[nid]->shrinker_info, info);
->         }
->         mutex_unlock(&shrinker_mutex);
+This is useful for getting information about other processes
+in the same pid namespace.
 
-No. We should make sure the @info is fully initialized before others
-could see it. That's why rcu_assign_pointer is used here.
+Signed-off-by: Juntong Deng <juntong.deng@outlook.com>
+---
+ kernel/bpf/helpers.c | 20 ++++++++++++++++++++
+ 1 file changed, 20 insertions(+)
 
->=20
-> I think this is concise.
->=20
-> Best regards,
-> Ridong
+diff --git a/kernel/bpf/helpers.c b/kernel/bpf/helpers.c
+index 4053f279ed4c..e977c12d60e1 100644
+--- a/kernel/bpf/helpers.c
++++ b/kernel/bpf/helpers.c
+@@ -2521,6 +2521,25 @@ __bpf_kfunc struct task_struct *bpf_task_from_pid(s32 pid)
+ 	return p;
+ }
+ 
++/**
++ * bpf_task_from_vpid - Find a struct task_struct from its vpid by looking it up
++ * in the pid namespace of the current task. If a task is returned, it must
++ * either be stored in a map, or released with bpf_task_release().
++ * @vpid: The vpid of the task being looked up.
++ */
++__bpf_kfunc struct task_struct *bpf_task_from_vpid(s32 vpid)
++{
++	struct task_struct *p;
++
++	rcu_read_lock();
++	p = find_task_by_vpid(vpid);
++	if (p)
++		p = bpf_task_acquire(p);
++	rcu_read_unlock();
++
++	return p;
++}
++
+ /**
+  * bpf_dynptr_slice() - Obtain a read-only pointer to the dynptr data.
+  * @p: The dynptr whose data slice to retrieve
+@@ -3034,6 +3053,7 @@ BTF_ID_FLAGS(func, bpf_task_under_cgroup, KF_RCU)
+ BTF_ID_FLAGS(func, bpf_task_get_cgroup1, KF_ACQUIRE | KF_RCU | KF_RET_NULL)
+ #endif
+ BTF_ID_FLAGS(func, bpf_task_from_pid, KF_ACQUIRE | KF_RET_NULL)
++BTF_ID_FLAGS(func, bpf_task_from_vpid, KF_ACQUIRE | KF_RET_NULL)
+ BTF_ID_FLAGS(func, bpf_throw)
+ BTF_KFUNCS_END(generic_btf_ids)
+ 
+-- 
+2.39.5
 
 
