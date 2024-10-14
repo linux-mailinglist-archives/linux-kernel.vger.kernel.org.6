@@ -1,316 +1,158 @@
-Return-Path: <linux-kernel+bounces-364125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-364126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAC3F99CB68
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:18:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A03499CB6A
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 15:18:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C722B220E4
-	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:18:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C64CFB22352
+	for <lists+linux-kernel@lfdr.de>; Mon, 14 Oct 2024 13:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DEBD1AC426;
-	Mon, 14 Oct 2024 13:14:39 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCA401A7060;
+	Mon, 14 Oct 2024 13:16:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MYFOZXY2"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D5561ABECB;
-	Mon, 14 Oct 2024 13:14:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F5484A3E;
+	Mon, 14 Oct 2024 13:16:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1728911679; cv=none; b=UEGPqw1QYvVKYb2EEvQc3bfZH85MEwF1yd52x3S68Tj0O/GupKJRw7bA4HBT4bLbOM9ohpCW63J+irK4I3cR6CXPiiQOROB72pT/1diR9ok1EpOzY3O9z3uzynMvUun8G1Qn/wxKFQ3mblrgEbj4UTwtR7BUJ2VxIY9YA2ssof8=
+	t=1728911800; cv=none; b=OL2zbXcV3LUm9+VPMs5/APFqOwi1FbPtFHzo44xMX3v5WsqjDVgneCYuWa1SyqUvJM1wQR8kua7cjzBWauALwte93+Nscv3j2Zeqr1XD1BZo4qSFhGBSuLyeJCFQsG0uD9AkgGDQ0bxiUcDyvcHkl5eB6ZymnuyYjUZBX+3va+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1728911679; c=relaxed/simple;
-	bh=xXwO4yEcDBCtdafekjGBgr3jCuXdIIzWlt3mftDTRWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fl7EZf72Q9mxuo1wnr9ai7xyc0Gmw3ziatfWbH/9OiH0VhyAVNASALeYXHravExx+z4TpzXoTEHS+lXZrR3WpYZT4Wmf1f1Im09+bMs143o5Q+YuoLWHgl44yiWbxmjXk8qRyk5Cv78y1G3l3vGHTJ061Ff89mB/picN6HfuQEc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=fail smtp.mailfrom=kernel.org; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kernel.org
-X-CSE-ConnectionGUID: YqpTYbecSTq0wBZcMKLiKw==
-X-CSE-MsgGUID: iP8gxxCHR3erMdMjUdPUFQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="28056318"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="28056318"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 06:14:36 -0700
-X-CSE-ConnectionGUID: rsQQmIELTc2V7MzR6xPP4g==
-X-CSE-MsgGUID: tW5MjrUZQgqZIzRKycMaMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,203,1725346800"; 
-   d="scan'208";a="77222177"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa007.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 14 Oct 2024 06:14:31 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andy@kernel.org>)
-	id 1t0Ku3-00000002uP8-3VE2;
-	Mon, 14 Oct 2024 16:14:27 +0300
-Date: Mon, 14 Oct 2024 16:14:27 +0300
-From: Andy Shevchenko <andy@kernel.org>
-To: Antoniu Miclaus <antoniu.miclaus@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Nuno Sa <nuno.sa@analog.com>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Marcelo Schmitt <marcelo.schmitt@analog.com>,
-	Ivan Mikhaylov <fr0st61te@gmail.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Dumitru Ceclan <mitrutzceclan@gmail.com>,
-	=?iso-8859-1?Q?Jo=E3o_Paulo_Gon=E7alves?= <joao.goncalves@toradex.com>,
-	Alisa-Dariana Roman <alisadariana@gmail.com>,
-	Mike Looijmans <mike.looijmans@topic.nl>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Sergiu Cuciurean <sergiu.cuciurean@analog.com>,
-	Dragos Bogdan <dragos.bogdan@analog.com>, linux-iio@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pwm@vger.kernel.org
-Subject: Re: [PATCH v3 6/6] iio: adc: ad4851: add ad485x driver
-Message-ID: <Zw0ZM0vQXJep3dFJ@smile.fi.intel.com>
-References: <20241014094154.9439-1-antoniu.miclaus@analog.com>
- <20241014094154.9439-6-antoniu.miclaus@analog.com>
+	s=arc-20240116; t=1728911800; c=relaxed/simple;
+	bh=qe08cPMfzQajnQupPuyS8gl/j/iYhFZGr01Yq9ms1Ow=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CNqK5VBDDGGp/Ct8zoKmSOM2jfv5YEPQxZEnu/fJfTh7O/VtjkotoW1kEAbSt8/kfFfVp0KX6oD8h7FLnIou+vcKfwlZexGT7GXO1VwoP25qeuMZ7DpFEU1hgQq1ghbazhi2zGN78vvgnRgskITdbgtA1Va0lEMfOTjPpis05oA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MYFOZXY2; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431291b27f1so17660635e9.0;
+        Mon, 14 Oct 2024 06:16:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1728911797; x=1729516597; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qiu63abS+lcmc+QEZqAra0R6AmKde2YbO88Y6AxKGhw=;
+        b=MYFOZXY2ttXV+EtzqOwZ+rN2DEfJ+J38LTgTjx/r+3c9ywGp7fT+cXe9p2q1xsSdhI
+         SYvkwPIQrdJZc0cW1OGtG1lIlY+hKjIVdI8KZwPFgaK9g5UIt6PV9KBCB8n5qNyiX998
+         gWstbJcjixviwgg8kUhE37Rky98hSM2kVulbarur0gKrpI0H6240scNuX8K/NHaA3P6b
+         7aYOMwwEY9N3Rbme+fA3NTWtwXc9erouIIFjBBPO6xD8O38p6cYm5VUjREVVPyvTuqTs
+         /gC5f2c88xvLyrLweZGDdV3UQ8aoyDR1aHJF1vMyntclhM9vk8XxGKy2Okl6ZXFDHu4w
+         ygig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1728911797; x=1729516597;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qiu63abS+lcmc+QEZqAra0R6AmKde2YbO88Y6AxKGhw=;
+        b=CPu3191X46ewCnFokkJ5I5yM8tAPZ527qfnFOZAYYGBgT6AajQ3ESMDNI4zRmSynm3
+         nSgomtC+q2ZqjozZ4r8AE9YBtzIvW7aUkWs7GHX3Lr2eMjQSjsZLpErrowrmucwQtb7p
+         wYC+2uOtJ5/PAMy90TAhLnXWxvMU6gvr6rUIEey7cRSrOFim390+dvJtDpQJITVHiI4S
+         7VzInZuPUkwjJoIjuvG/YpxHHJalpziDoJ5z04DhCFYnrinmrsQGIjoQOdfDJVPYj3tt
+         ErLFoNKIUlpuJd+thwqjwB0KJukXHdxhTR6XIx36knGfIOs5LWKEEerkdv3ZYUVt9F4J
+         DUEA==
+X-Forwarded-Encrypted: i=1; AJvYcCWsTku47vul9a+BEdmRFNiK8PdDUVQPnPl5CBI1joHpTtHegswTmopQSxsDx5mCaw41ICsxQ2NRJOuIgU0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/NDF1IpuHO5vsDCUctnNn+nxNTCkBG71c97PXNbeoMfF1HgxB
+	hRGB65g1preXVlWnAEojtjxUNQJfsF373Ab/t1XbZhJ9tYiD23AF
+X-Google-Smtp-Source: AGHT+IFcCp01a+hQ3E59skIEwWoYCKjNqEuIfGS+TTlAmsmQTY97kQB30zIN0dZ9uu9D+NYoMH5lpg==
+X-Received: by 2002:a05:600c:1d0e:b0:42c:c080:7954 with SMTP id 5b1f17b1804b1-4311df55bc4mr96397855e9.30.1728911796745;
+        Mon, 14 Oct 2024 06:16:36 -0700 (PDT)
+Received: from eichest-laptop.lan ([2a02:168:af72:0:d130:f8ef:c6c1:55ee])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-430d748d42fsm153420425e9.43.2024.10.14.06.16.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 14 Oct 2024 06:16:36 -0700 (PDT)
+From: Stefan Eichenberger <eichest@gmail.com>
+To: o.rempel@pengutronix.de,
+	kernel@pengutronix.de,
+	andi.shyti@kernel.org,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de,
+	festevam@gmail.com,
+	francesco.dolcini@toradex.com,
+	l.stach@pengutronix.de,
+	arnd@arndb.de,
+	Frank.Li@nxp.com
+Cc: linux-i2c@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/3] i2c: imx: prevent rescheduling in non-dma mode
+Date: Mon, 14 Oct 2024 15:15:11 +0200
+Message-ID: <20241014131635.205489-1-eichest@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241014094154.9439-6-antoniu.miclaus@analog.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-On Mon, Oct 14, 2024 at 12:40:40PM +0300, Antoniu Miclaus wrote:
-> Add support for the AD485X a fully buffered, 8-channel simultaneous
-> sampling, 16/20-bit, 1 MSPS data acquisition system (DAS) with
-> differential, wide common-mode range inputs.
+While running tests on an i.MX8M Mini connected to a TI ADS1015 ADC, we
+found that the ADC would stop responding to i2c requests because it
+would timeout after the bus was idle for 25ms. This timeout could be
+traced back to the rescheduling events in the i2c-imx driver. The
+problem is that if the system is under heavy load, the schedule call and
+the wait_event_timeout may be rescheduled too late to reach the 25ms
+timeout. The same problem may occur with other SMBus devices. Therefore,
+this patchset removes the scheduling calls for non-DMA mode by handling
+the interrupt events directly in the ISR instead of scheduling a task to
+handle the events.
 
-...
+This patch will introduce some bigger changes because the logic for
+handling events in the ISR had to be rewritten. Therefore we have tested
+the following combinations:
+- i.MX8M Mini with dma
+- i.MX8M Mini without dma
+- i.MX8M Plus with dma
+- i.MX8M Plus without dma
+- i.MX7D with dma
+- i.MX7D without dma
+- i.MX7D atomic mode
 
-> +config AD4851
-> +	tristate "Analog Device AD4851 DAS Driver"
-> +	depends on SPI
-> +	select REGMAP_SPI
-> +	select IIO_BACKEND
-> +	help
-> +	  Say yes here to build support for Analog Devices AD4851, AD4852,
-> +	  AD4853, AD4854, AD4855, AD4856, AD4857, AD4858, AD4858I high speed
-> +	  data acquisition system (DAS).
+Because we do not have any devices that use the SMBus block transfer
+mode, we were not able to test it. 
 
-I think I already commented on this... Anyway, it's much better to support when
-this list is broke down on per device per line. In such a case it's less churn
-if we need to remove or add an entry in the future.
+The ideas are based on the RFC:
+https://lore.kernel.org/all/20240531142437.74831-1-eichest@gmail.com/
+However, the handling of events in the ISR is new, because further
+testing showed that it was not enough to simply remove the schedule
+call.
 
-> +	  To compile this driver as a module, choose M here: the module will be
-> +	  called ad4851.
+Changes since v4:
+- Drop patch 3 use relaxed readb and writeb (Arnd)
+- Make multi master default again and use simple-master as property (Lucas)
+- Print a debug message instead of an error if read and write fails. An
+  error message would spam the kernel log when using i2cdetect -r -y 0.
+- Fix error message in read (read instead of write)
 
-Also, with all these devices to be supported why not ad485x as the name of
-the driver? Is it a preference by the IIO subsystem?
+Changes since v3:
+- Fixed style issues with checkpatch.pl --strict (Andi)
+- Add comments to explain the code (Andi)
 
-...
+Changes since v2:
+- Add Acked-by tags from Oleksij
+- Renamed i2c_imx_start_read to i2c_imx_prepare_read
+- I did not add a Fixes tag because the issues from Flavio have a
+  different root cause and are not fixed by this patchset
 
-> +#include <asm/unaligned.h>
+Changes since v1:
+- Add Reviewed-by tags from Frank
+- Add new patch to use readb_relaxed and writeb_relaxed (Frank)
+- Update commit message for patch 1 with some clarifications (Frank)
 
-linux/unaligned nowadays (I learnt it quite recently).
-(It requires v6.12-rc2).
+Stefan Eichenberger (3):
+  i2c: imx: do not poll for bus busy in single master mode
+  i2c: imx: separate atomic, dma and non-dma use case
+  i2c: imx: prevent rescheduling in non dma mode
 
-...
-
-> +struct ad4851_chip_info {
-
-Have you run `pahole`? It seems you may reduce the memory footprint of this
-structure.
-
-> +	const char *name;
-> +	unsigned int product_id;
-> +	const unsigned int (*scale_table)[2];
-> +	int num_scales;
-> +	const int *offset_table;
-> +	int num_offset;
-> +	const struct iio_chan_spec *channels;
-> +	unsigned int num_channels;
-> +	unsigned long throughput;
-> +	unsigned int resolution;
-> +};
-
-...
-
-> +static const int ad4851_oversampling_ratios[] = {
-> +	1,
-> +	2,
-> +	4,
-> +	8,
-> +	16,
-> +	32,
-> +	64,
-> +	128,
-> +	256,
-> +	512,
-> +	1024,
-> +	2048,
-> +	4096,
-> +	8192,
-> +	16384,
-> +	32768,
-> +	65536,
-
-I believe you can compact them to be 4 or 8 per line
-
-	1, 2, 4, 8, 16, 32, 64, 128,			/* 0-7 */
-	256, 512, 1024, 2048, 4096, 8192, 16384, 32768,	/* 8-15 */
-	65536,						/* 16 */
-
-> +};
-
-...
-
-> +static int ad4851_osr_to_regval(int ratio)
-> +{
-> +	int i;
-> +
-> +	for (i = 1; i < ARRAY_SIZE(ad4851_oversampling_ratios); i++)
-> +		if (ratio == ad4851_oversampling_ratios[i])
-> +			return i - 1;
-> +
-> +	return -EINVAL;
-> +}
-> +
-> +static int ad4851_set_oversampling_ratio(struct ad4851_state *st,
-> +					 const struct iio_chan_spec *chan,
-> +					 unsigned int osr)
-> +{
-> +	unsigned int val;
-> +	int ret;
-> +
-> +	guard(mutex)(&st->lock);
-> +
-> +	if (osr == 1) {
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_EN_MSK, 0);
-> +		if (ret)
-> +			return ret;
-> +	} else {
-
-0 is listed here. Is it a problem?
-
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_EN_MSK, AD4851_OS_EN_MSK);
-> +		if (ret)
-> +			return ret;
-> +
-> +		val = ad4851_osr_to_regval(osr);
-> +		if (val < 0)
-> +			return -EINVAL;
-> +
-> +		ret = regmap_update_bits(st->regmap, AD4851_REG_OVERSAMPLE,
-> +					 AD4851_OS_RATIO_MSK, val);
-> +		if (ret)
-> +			return ret;
-> +	}
-> +
-> +	switch (chan->scan_type.realbits) {
-> +	case 20:
-> +		switch (osr) {
-> +		case 1:
-> +			val = 20;
-> +			break;
-> +		default:
-
-Ditto.
-
-> +			val = 24;
-> +			break;
-> +		}
-> +		break;
-> +	case 16:
-> +		val = 16;
-> +		break;
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	ret = iio_backend_data_size_set(st->back, val);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
-> +				  AD4851_PACKET_FORMAT_MASK, (osr == 1) ? 0 : 1);
-
-I would do it with a conditional
-
-	if (osr ...)
-		return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
-					  AD4851_PACKET_FORMAT_MASK, 0);
-
-	return regmap_update_bits(st->regmap, AD4851_REG_PACKET,
-				  AD4851_PACKET_FORMAT_MASK, 1);
-
-But looking at the above I would split this to three functions, that outer will
-look like
-
-int ...(...)
-{
-	if (osr ...)
-		return _osr_X(...);
-	return _osr_Y(...);
-}
-
-> +}
-
-...
-
-> +static int ad4851_find_opt(bool *field, u32 size, u32 *ret_start)
-> +{
-> +	unsigned int i, cnt = 0, max_cnt = 0, max_start = 0;
-> +	int start;
-> +
-> +	for (i = 0, start = -1; i < size; i++) {
-> +		if (field[i] == 0) {
-> +			if (start == -1)
-> +				start = i;
-> +			cnt++;
-> +		} else {
-> +			if (cnt > max_cnt) {
-> +				max_cnt = cnt;
-> +				max_start = start;
-> +			}
-> +			start = -1;
-> +			cnt = 0;
-> +		}
-> +	}
-
-This magic has to be commented... I have a déjà vu that I have commented on all
-this, but it hasn't been addressed!
-
-> +	if (cnt > max_cnt) {
-> +		max_cnt = cnt;
-> +		max_start = start;
-> +	}
-> +
-> +	if (!max_cnt)
-> +		return -ENOENT;
-> +
-> +	*ret_start = max_start;
-> +
-> +	return max_cnt;
-> +}
-
-Also the cover letter is missing.
-
-I would recommend you to use my "smart" script [1] for sending series, it has
-some good heuristics on whom to include into the email thread and handles
-missed cover letters for the series.
-
-[1]: https://github.com/andy-shev/home-bin-tools/blob/master/ge2maintainer.sh
+ drivers/i2c/busses/i2c-imx.c | 370 ++++++++++++++++++++++++++++++-----
+ 1 file changed, 320 insertions(+), 50 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
